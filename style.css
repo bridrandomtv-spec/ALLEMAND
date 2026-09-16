@@ -538,3 +538,148 @@ table.conj tr:last-child td{border:none}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media print{.topbar,.foot,.chat-in,.welcome-cta,.tabs,.filters,.pager{display:none}
   body{background:#fff;color:#000}.card,.fiche{box-shadow:none;border-color:#ccc}}
+
+/* ── v2.1 · القاعة الافتراضية + مكتبة القواعد ── */
+
+/* Onglets internes d'un module */
+.onglets{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px;
+  background:var(--p2);border:1px solid var(--b);border-radius:14px;padding:5px}
+.onglets::-webkit-scrollbar{display:none}
+.ong{flex:0 0 auto;padding:9px 16px;border-radius:11px;font-size:12.5px;font-weight:700;
+  color:var(--m);transition:.2s;white-space:nowrap}
+.ong:hover{color:var(--t);background:var(--p)}
+.ong.on{color:#fff;background:linear-gradient(135deg,var(--vert),var(--vert2));
+  box-shadow:0 4px 14px rgba(0,98,51,.5)}
+
+/* En-tête de la classe virtuelle */
+.classe-hero{display:flex;gap:20px;align-items:stretch;flex-wrap:wrap;
+  background:linear-gradient(140deg,rgba(0,98,51,.3),rgba(12,42,26,.94) 58%,transparent);
+  border-color:var(--b2)}
+.ch-l{flex:1;min-width:230px}
+.ch-badge{display:inline-block;font-size:11px;font-weight:700;color:var(--or2);
+  background:rgba(232,182,76,.12);border:1px solid rgba(232,182,76,.34);
+  padding:4px 13px;border-radius:999px;margin-bottom:11px}
+.classe-hero h2{font-family:var(--ff-ar-display);font-size:23px;margin:0 0 6px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ch-sub{color:var(--m);font-size:12.5px}
+.ch-r{flex:0 0 auto;min-width:250px;display:flex;flex-direction:column;gap:11px;justify-content:center}
+.ch-next{background:rgba(4,20,12,.55);border:1px solid var(--b);border-radius:15px;padding:14px}
+.ch-k{font-size:10.5px;color:var(--m);text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px}
+.ch-v{font-family:var(--ff-de-display);font-size:19px;color:#fff;direction:ltr;text-align:right;
+  line-height:1.4;margin-bottom:4px}
+.ch-m{font-size:11.5px;color:var(--m);font-family:var(--ff-de);direction:ltr;text-align:right}
+.live-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
+  color:var(--m);background:var(--b);padding:3px 11px;border-radius:999px;margin-top:9px}
+.live-pill.on{color:var(--r);background:rgba(255,107,125,.14);border:1px solid rgba(255,107,125,.35)}
+.live-pill i{width:7px;height:7px;border-radius:50%;background:currentColor;animation:blink2 1.5s infinite}
+
+/* Créneaux de l'emploi du temps */
+.jour-lbl{display:flex;align-items:baseline;gap:10px;margin:17px 0 9px;padding-bottom:7px;
+  border-bottom:1px solid var(--b)}
+.jour-lbl b{font-family:var(--ff-ar-display);font-size:16px;color:var(--or2)}
+.jour-lbl span{font-family:var(--ff-de);font-size:12px;color:var(--m);direction:ltr}
+.cren{display:grid;grid-template-columns:96px 108px 1fr;gap:13px;align-items:center;
+  background:var(--nuit3);border:1px solid var(--b);border-right:3px solid var(--b2);
+  border-radius:13px;padding:13px;margin-bottom:9px;transition:.2s}
+.cren:hover{border-color:var(--a);transform:translateX(-3px)}
+.cren.all{border-right-color:var(--vert2);background:rgba(0,98,51,.11)}
+.cren.vide{grid-template-columns:1fr;text-align:center;color:var(--m);font-size:12.5px;
+  border-style:dashed;opacity:.65}
+.cren-j b{display:block;font-size:13.5px}
+.cren-j span{font-size:10.5px;color:var(--m);direction:ltr}
+.cren-h{font-family:var(--ff-de);font-size:14px;font-weight:700;color:var(--a2);direction:ltr;
+  text-align:center;background:var(--p);border-radius:10px;padding:7px}
+.cren-b b{font-size:14px}
+.cren-l{font-family:var(--ff-de-display);font-size:13.5px;color:var(--or2);direction:ltr;
+  text-align:right;margin:2px 0}
+.cren-p{font-size:11.5px;color:var(--m);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* Leçons */
+.lecon{display:flex;gap:13px;align-items:flex-start;padding:15px;border:1px solid var(--b);
+  border-radius:15px;margin-bottom:10px;background:var(--p2);transition:.22s;cursor:pointer}
+.lecon:hover{border-color:var(--a);transform:translateX(-4px)}
+.l-num{width:44px;height:44px;flex:0 0 auto;border-radius:13px;display:flex;align-items:center;
+  justify-content:center;font-family:var(--ff-de);font-weight:800;font-size:16px;
+  background:var(--b);color:var(--a2)}
+.l-num.done{background:var(--g);color:#04140c}
+.l-b{flex:1;min-width:0}
+.l-t{font-family:var(--ff-de-display);font-size:17px;font-weight:700;direction:ltr;text-align:right;
+  color:#fff;line-height:1.35}
+.l-ar{font-size:12.5px;color:var(--m);margin-top:2px}
+.l-p{font-size:11.5px;color:var(--a2);margin-top:3px}
+
+/* Messages */
+.msgrow{display:flex;gap:12px;align-items:flex-start;padding:13px;border-radius:14px;
+  border:1px solid transparent;margin-bottom:8px;cursor:pointer;transition:.2s;position:relative}
+.msgrow:hover{background:var(--nuit3);border-color:var(--b)}
+.msgrow.lu{opacity:.62}
+.msg-av{width:42px;height:42px;flex:0 0 auto;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:14px;color:#04140c;
+  background:linear-gradient(140deg,var(--or2),var(--or))}
+.msg-b{flex:1;min-width:0}
+.msg-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:3px}
+.msg-h b{font-size:13.5px}
+.msg-d{font-size:11px;color:var(--m);margin-right:auto}
+.msg-t{font-size:13px;color:var(--m);line-height:1.7}
+.dot-new{position:absolute;top:16px;left:14px;width:9px;height:9px;border-radius:50%;
+  background:var(--r);box-shadow:0 0 9px var(--r)}
+
+/* Professeurs */
+.profs{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.profc{background:var(--nuit3);border:1px solid var(--b);border-radius:16px;padding:16px;
+  display:flex;gap:13px;transition:.22s}
+.profc:hover{border-color:var(--a);transform:translateY(-3px)}
+.profc.feat{border-color:rgba(232,182,76,.5);
+  background:linear-gradient(160deg,rgba(232,182,76,.1),var(--nuit3))}
+.pc-av{width:52px;height:52px;flex:0 0 auto;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:17px;color:#04140c;
+  background:linear-gradient(140deg,var(--or2),var(--or))}
+.pc-b{flex:1;min-width:0}
+.pc-t{font-size:14.5px;font-weight:700;font-family:var(--ff-ar-display);
+  display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.pc-m{font-size:11.5px;color:var(--m);margin-top:3px}
+.pc-d{font-size:12px;color:var(--m);margin-top:6px;line-height:1.65}
+.pc-f{display:flex;justify-content:space-between;align-items:center;gap:11px;
+  margin-top:11px;padding-top:11px;border-top:1px dashed var(--b);flex-wrap:wrap}
+.pc-p{font-size:12.5px;color:var(--m)}
+.pc-p b{font-family:var(--ff-de);font-size:18px;color:var(--or2)}
+
+/* Salle de classe virtuelle (modale) */
+.salle{display:grid;grid-template-columns:1fr 150px;gap:11px}
+.salle-vid,.salle-moi{background:linear-gradient(160deg,#071d12,#04140c);border:1px solid var(--b);
+  border-radius:15px;min-height:170px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:8px;position:relative}
+.salle-vid{border-color:var(--b2)}
+.salle-av{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:32px;background:var(--p);border:2px solid var(--or)}
+.salle-av.sm{width:42px;height:42px;font-size:21px}
+.salle-nom{font-size:12.5px;color:var(--m)}
+.salle-vid .live-pill{position:absolute;top:11px;right:13px;margin:0}
+
+/* ── Grammaire ── */
+.gram-fiche .g-exp{font-size:13px;color:var(--m);line-height:1.8;margin-top:11px}
+.exemples{display:flex;flex-direction:column;gap:9px}
+.ex-i{background:var(--nuit3);border:1px solid var(--b);border-right:3px solid var(--a);
+  border-radius:0 13px 13px 0;padding:12px}
+.ex-de{font-family:var(--ff-de-display);font-size:16.5px;direction:ltr;text-align:left;
+  color:#fff;display:flex;justify-content:space-between;align-items:center;gap:11px;line-height:1.6}
+.ex-ar{font-size:12.5px;color:var(--m);margin-top:5px;font-family:var(--ff-ar-display)}
+.warn-box{background:rgba(255,107,125,.09);border:1px solid rgba(255,107,125,.32);
+  border-radius:14px;padding:14px;margin-top:15px;font-size:13px;line-height:1.85}
+.warn-box b{color:var(--r);display:block;margin-bottom:5px;font-family:var(--ff-ar-display)}
+.tip-box{background:rgba(232,182,76,.09);border:1px solid rgba(232,182,76,.32);
+  border-radius:14px;padding:14px;margin-top:11px;font-size:13px;line-height:1.85}
+.tip-box b{color:var(--or2);display:block;margin-bottom:5px;font-family:var(--ff-ar-display)}
+.warn-box s,.tip-box s{color:var(--r)}
+.gram-fiche{cursor:pointer}
+
+@media(max-width:860px){
+  .profs{grid-template-columns:1fr}
+  .salle{grid-template-columns:1fr}
+  .cren{grid-template-columns:1fr;gap:9px}
+  .cren-h{text-align:center}
+  .classe-hero{flex-direction:column}
+  .ch-r{min-width:0;width:100%}
+  .l-t{font-size:16px}
+}
+@media print{.onglets,.ch-r,.pc-f,.msgrow{display:none}}
