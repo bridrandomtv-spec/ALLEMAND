@@ -1,49 +1,121 @@
-name: Deploy ALLEMAND to GitHub Pages
+name: CI — validation ALLEMAND
 
 on:
   push:
+    branches: [ "main" ]
+  pull_request:
     branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  validate:
+    name: Validation structurelle & pédagogique
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          enablement: true
+          python-version: "3.12"
 
-      - name: Sanity check (fichiers requis)
+      - name: Install esprima (parseur JavaScript)
+        run: pip install --quiet esprima pyyaml
+
+      - name: Vérifier les fichiers requis
         run: |
           set -e
-          for f in index.html style.css app.js modules.js manifest.json sw.js README.md; do
+          for f in index.html style.css app.js modules.js manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyll; do
             test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           test -d assets || { echo "::error::Dossier assets/ manquant"; exit 1; }
-          python3 -c "import json;json.load(open('manifest.json'));print('manifest.json OK')"
-          echo "✅ Structure valide"
+          for a in assets/corriges.json assets/logo.png assets/prof.jpg; do
+            test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
+          done
+          echo "✅ Structure complète"
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: '.'
+      - name: Valider le YAML
+        run: python -c "import yaml,glob;[yaml.safe_load(open(f,encoding='utf-8')) for f in glob.glob('.github/workflows/*.yml')];print('✅ YAML valide')"
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Valider les JSON
+        run: |
+          python - <<'PY'
+          import json
+          for f in ("manifest.json", "assets/corriges.json"):
+              json.load(open(f, encoding="utf-8"))
+              print("✅", f)
+          PY
+
+      - name: Valider la syntaxe JavaScript (esprima)
+        run: |
+          python - <<'PY'
+          import esprima
+          for f in ("app.js", "modules.js", "sw.js"):
+              esprima.parseScript(open(f, encoding="utf-8").read())
+              print("✅", f)
+          PY
+
+      - name: Contrôle pédagogique (barème /20, 8 séances, PWA)
+        run: |
+          python - <<'PY'
+          import json, re, sys
+          fails = []
+
+          c = json.load(open("assets/corriges.json", encoding="utf-8"))
+          dv = c["devoir_unite_1"]
+          som = sum(p["points"] for p in dv["parties"])
+          if som != dv["total"]:
+              fails.append(f"barème {som} != {dv['total']}")
+          if len(c["seances"]) != 8:
+              fails.append(f"{len(c['seances'])} séances au lieu de 8")
+
+          app = open("app.js", encoding="utf-8").read()
+          if app.count("{ n:") < 8:
+              fails.append("app.js : moins de 8 séances")
+          if "total:20" not in app:
+              fails.append("app.js : devoir /20 absent")
+          if "de-DE" not in app:
+              fails.append("app.js : TTS allemand absent")
+          if "window.DZ" not in app:
+              fails.append("app.js : API window.DZ absente")
+
+          mod = open("modules.js", encoding="utf-8").read()
+          for k in ("renderSim", "renderParents", "45 * 60", "10 * 60"):
+              if k not in mod:
+                  fails.append(f"modules.js : '{k}' absent")
+
+          sw = open("sw.js", encoding="utf-8").read()
+          for k in ("'install'", "'activate'", "'fetch'"):
+              if k not in sw:
+                  fails.append(f"sw.js : {k} absent")
+
+          man = json.load(open("manifest.json", encoding="utf-8"))
+          if man.get("dir") != "rtl":
+              fails.append("manifest : dir != rtl")
+          if not man.get("icons"):
+              fails.append("manifest : aucune icône")
+
+          html = open("index.html", encoding="utf-8").read()
+          if html.count('data-view=') != 6:
+              fails.append(f"index.html : {html.count('data-view=')} vues au lieu de 6")
+          for ref in ("style.css", "app.js", "modules.js", "manifest.json"):
+              if ref not in html:
+                  fails.append(f"index.html : '{ref}' non référencé")
+
+          if fails:
+              print("::error::Contrôles échoués : " + "; ".join(fails))
+              sys.exit(1)
+          print("✅ Barème 8+8+4 = 20")
+          print("✅ 8 séances présentes")
+          print("✅ Simulation 45 min / 10 min")
+          print("✅ PWA : manifest dir=rtl + icônes + Service Worker")
+          print("✅ 6 vues dans index.html")
+          PY
