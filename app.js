@@ -182,7 +182,11 @@ const UNITES = [
   { n:2, de:'Familie und Freunde',    ar:'العائلة والأصدقاء', icon:'👨‍👩‍👧', cecrl:'A1→A2',
     seances:(window.UNITE2 ? UNITE2.seances : []),
     devoir: (window.UNITE2 ? UNITE2.devoir  : null),
-    duree:  (window.UNITE2 && UNITE2.meta ? UNITE2.meta.duree_totale : 465) }
+    duree:  (window.UNITE2 && UNITE2.meta ? UNITE2.meta.duree_totale : 465) },
+  { n:3, de:'Schule und Ausbildung',  ar:'المدرسة والتكوين',  icon:'🏫', cecrl:'A2',
+    seances:(window.UNITE3 ? UNITE3.seances : []),
+    devoir: (window.UNITE3 ? UNITE3.devoir  : null),
+    duree:  (window.UNITE3 && UNITE3.meta ? UNITE3.meta.duree_totale : 465) }
 ];
 
 let SEANCES = UNITES[0].seances;
