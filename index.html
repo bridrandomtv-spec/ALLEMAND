@@ -148,6 +148,10 @@
           <p>الوحدة 1 — 8 حصص تفاعلية</p><span class="mini-n" id="cSeances">8</span></div>
         <div class="card mini" data-go="biblio"><div class="mini-i">🗂️</div><h3>المكتبة</h3>
           <p>فروض · اختبارات · بكالوريا · حوليات</p><span class="mini-n" id="cBdd">—</span></div>
+        <div class="card mini" data-go="classe"><div class="mini-i">🏫</div><h3>القسم</h3>
+          <p>الرزنامة · الدروس · الحضور · النقاط</p><span class="mini-n">5</span></div>
+        <div class="card mini" data-go="grammaire"><div class="mini-i">📘</div><h3>القواعد</h3>
+          <p>28 قاعدة — A1 → B2</p><span class="mini-n">28</span></div>
         <div class="card mini" data-go="devoir"><div class="mini-i">📝</div><h3>الفرض</h3>
           <p>الوحدة 1 · /20 مع التصحيح</p><span class="mini-n">20</span></div>
         <div class="card mini" data-go="simulation"><div class="mini-i">⏱️</div><h3>المحاكاة</h3>
@@ -190,6 +194,24 @@
       </div>
       <div class="card" id="seancesGrid"></div>
       <div id="seanceDetail"></div>
+    </section>
+
+    <!-- CLASSE VIRTUELLE -->
+    <section data-view="classe" class="view" hidden>
+      <div class="page-head">
+        <h1>🏫 القاعة الافتراضية</h1>
+        <p>الرزنامة · الدروس · الحضور · النقاط · الرسائل · الأساتذة</p>
+      </div>
+      <div id="classeBody"></div>
+    </section>
+
+    <!-- GRAMMAIRE -->
+    <section data-view="grammaire" class="view" hidden>
+      <div class="page-head">
+        <h1>📘 مكتبة القواعد — <span class="de-display">Grammatik</span></h1>
+        <p>28 قاعدة مشروحة بالعربية · 2AS الفصل 1/2/3 + 3AS/BAC · CEFR A1 → B2</p>
+      </div>
+      <div id="gramBody"></div>
     </section>
 
     <!-- BIBLIOTHÈQUE -->
@@ -268,6 +290,8 @@
 <script src="bdd.js"></script>
 <script src="app.js"></script>
 <script src="modules.js"></script>
+<script src="classe.js"></script>
+<script src="grammaire.js"></script>
 <script src="library.js"></script>
 </body>
 </html>
