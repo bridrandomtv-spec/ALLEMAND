@@ -33,9 +33,10 @@ jobs:
       - name: Vérifier les fichiers requis
         run: |
           set -e
-          for f in index.html style.css auth.js bdd.js unite2.js app.js modules.js live.js \
-                   classe.js grammaire.js examen.js prof.js library.js manifest.json sw.js \
-                   README.md 404.html robots.txt sitemap.xml .nojekyll; do
+          for f in index.html style.css auth.js bdd.js unite2.js unite3.js app.js \
+                   modules.js live.js classe.js grammaire.js examen.js prof.js \
+                   library.js manifest.json sw.js README.md 404.html robots.txt \
+                   sitemap.xml .nojekyll; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -46,7 +47,7 @@ jobs:
                    assets/bdd/bac_archive.json assets/bdd/live.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 20 fichiers racine + 13 assets présents"
+          echo "✅ 21 fichiers racine + 13 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -332,13 +333,14 @@ jobs:
         run: |
           python - <<'PY'
           import esprima
-          FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'app.js', 'modules.js',
-                      'live.js', 'classe.js', 'grammaire.js', 'examen.js',
-                      'prof.js', 'library.js', 'sw.js')
+          FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'unite3.js',
+                      'app.js', 'modules.js', 'live.js', 'classe.js',
+                      'grammaire.js', 'examen.js', 'prof.js', 'library.js',
+                      'sw.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/12 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/13 fichiers JS valides')
           PY
 
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
@@ -364,7 +366,8 @@ jobs:
                      'function uniteSelector', 'function paintUniteHead',
                      'get DEVOIR(){ return DEVOIR; }', 'get SEANCES(){ return SEANCES; }',
                      'function allTabs', 'function isProf', "'profboard'", "'examen'",
-                     "'live'", 'window.renderLive')
+                     "'live'", 'window.renderLive', 'window.UNITE3',
+                     'Schule und Ausbildung')
           for k in APP_REQ:
               if k not in app:
                   fails.append('app.js : ' + k + ' absent')
@@ -378,6 +381,29 @@ jobs:
                     'DZ.loadSeances()', 'new Proxy({}'):
               if k not in mod:
                   fails.append('modules.js : ' + k + ' absent')
+          u3 = rd('unite3.js')
+          U3_REQ = ('SEANCES_U3', 'DEVOIR_U3', 'CORRIGE_U3', 'UNITE3_META',
+                    'window.UNITE3', 'Schulfächer', 'Modalverben',
+                    'Ein Tag in der Schule', 'Textproduktion', 'Konsolidierung',
+                    'erreurs_frequentes')
+          for k in U3_REQ:
+              if k not in u3:
+                  fails.append('unite3.js : ' + k + ' absent')
+          if u3.count('{ n:') < 8:
+              fails.append('unite3.js : moins de 8 seances')
+          p3 = re.findall(r"\{\s*id:'(I|II|III)',\s*t:", u3)
+          if len(p3) != 3:
+              fails.append('unite3.js : ' + str(len(p3)) + ' parties au lieu de 3')
+          for k in ('pts:8', 'pts:4', 'total:20'):
+              if k not in u3:
+                  fails.append('unite3.js : bareme ' + k + ' absent')
+          blk = re.search(r'const UNITES = \[(.*?)\n\];', app, re.S)
+          if not blk:
+              fails.append('app.js : registre UNITES introuvable')
+          else:
+              n_un = len(re.findall(r'\{ n:\d+, de:', blk.group(1)))
+              if n_un != 3:
+                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 3')
           for k in ('SEANCES_U2', 'DEVOIR_U2', 'CORRIGE_U2', 'window.UNITE2',
                     'Possessivartikel', 'Adjektive', 'gefallen', 'Die Familie Sommer',
                     'Textproduktion', 'Konsolidierung'):
@@ -448,8 +474,8 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v2.5.0',
-                    './unite2.js', './live.js', './classe.js', './grammaire.js',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v2.6.0',
+                    './unite2.js', './unite3.js', './live.js', './classe.js', './grammaire.js',
                     './examen.js', './prof.js', './assets/bdd/eleves.json',
                     './assets/bdd/bac_archive.json', './assets/bdd/live.json'):
               if k not in sw:
@@ -479,13 +505,19 @@ jobs:
                     'id="liveBody"', 'id="classeBody"', 'id="gramBody"',
                     'id="biblioBody"', 'id="seancesHead"', 'id="devoirTitle"',
                     'id="miniProf"')
+          HTML_REQ = ('Freie Universität Berlin', 'منهجية الأستاذ',
+                      'البرنامج الرسمي', 'Dichter und Denker',
+                      'Schule und Ausbildung', 'جامعة الجزائر')
+          for txt in HTML_REQ:
+              if txt not in html:
+                  fails.append('index.html : contenu ' + txt + ' absent')
           for ident in ID_REQ:
               if ident not in html:
                   fails.append('index.html : ' + ident + ' absent')
           ordre = re.findall(r'<script src="([^"]+)"', html)
-          attendu = ['auth.js', 'bdd.js', 'unite2.js', 'app.js', 'modules.js',
-                     'live.js', 'classe.js', 'grammaire.js', 'examen.js', 'prof.js',
-                     'library.js']
+          attendu = ['auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'app.js',
+                     'modules.js', 'live.js', 'classe.js', 'grammaire.js',
+                     'examen.js', 'prof.js', 'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -497,14 +529,16 @@ jobs:
                      '.live-head', '.live-grid', '.live-side', '.video-zone',
                      '.vid.big', '.ctrl-bar', '.live-chat', '.lmsg', '.tb-board',
                      '.tb-ex', '.pr-list', '.pr-i', '.ag-list', '.float-react',
-                     '.live-mini', 'v2.5')
+                     '.live-mini', 'v2.5', '.meth', '.meth-g', '.meth-i', '.mh-n',
+                     '.prog-off', '.po-grid', '.po-t', 'v2.6')
           for k in CSS_REQ:
               if k not in css:
                   fails.append('style.css : ' + k + ' absent')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 13 vues · 12 onglets statiques + 1 dynamique (profboard)')
-          print('✅ Bareme 8+8+4 = 20 · U1 8 seances + U2 8 seances + BAC 68 sujets')
+          print('✅ Bareme 8+8+4 = 20 · U1+U2+U3 = 24 seances · BAC 68 sujets')
+          print('✅ Registre UNITES = 3 · CV professeur · methodologie 4 etapes')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
           print('✅ Roles : allTabs() + isProf() + compte demo prof')
           print('✅ Salle en direct : flux video, chat IA, tableau 8 planches, presence 32')
@@ -512,7 +546,7 @@ jobs:
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
           print('✅ Portail de connexion + 11 scripts dans l ordre + 5 polices')
           print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive + live')
-          print('✅ PWA v2.5 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ PWA v2.6 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
