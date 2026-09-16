@@ -149,6 +149,8 @@
           <p>الوحدة 1 — 8 حصص تفاعلية</p><span class="mini-n" id="cSeances">8</span></div>
         <div class="card mini" data-go="biblio"><div class="mini-i">🗂️</div><h3>المكتبة</h3>
           <p>فروض · اختبارات · بكالوريا · حوليات</p><span class="mini-n" id="cBdd">—</span></div>
+        <div class="card mini live-mini" data-go="live"><div class="mini-i">📹</div><h3>القاعة المباشرة</h3>
+          <p><span class="live-dot"><i></i></span> بثّ حيّ الآن · 32 تلميذ</p><span class="mini-n">🔴</span></div>
         <div class="card mini" data-go="classe"><div class="mini-i">🏫</div><h3>القسم</h3>
           <p>الرزنامة · الدروس · الحضور · النقاط</p><span class="mini-n">5</span></div>
         <div class="card mini" data-go="grammaire"><div class="mini-i">📘</div><h3>القواعد</h3>
@@ -199,6 +201,15 @@
       </div>
       <div class="card" id="seancesGrid"></div>
       <div id="seanceDetail"></div>
+    </section>
+
+    <!-- SALLE DE CLASSE EN DIRECT -->
+    <section data-view="live" class="view" hidden>
+      <div class="page-head">
+        <h1>📹 القاعة الافتراضية المباشرة</h1>
+        <p>بثّ حيّ · محادثة القسم · اللوح الأبيض · الحضور · البرنامج — 🔒 لا يُسجَّل أي شيء</p>
+      </div>
+      <div id="liveBody"></div>
     </section>
 
     <!-- CLASSE VIRTUELLE -->
@@ -314,6 +325,7 @@
 <script src="unite2.js"></script>
 <script src="app.js"></script>
 <script src="modules.js"></script>
+<script src="live.js"></script>
 <script src="classe.js"></script>
 <script src="grammaire.js"></script>
 <script src="examen.js"></script>
