@@ -34,7 +34,7 @@ jobs:
       - name: Vérifier les fichiers requis
         run: |
           set -e
-          for f in index.html style.css auth.js bdd.js app.js modules.js classe.js \
+          for f in index.html style.css auth.js bdd.js unite2.js app.js modules.js classe.js \
            grammaire.js library.js manifest.json sw.js README.md 404.html \
            robots.txt sitemap.xml .nojekyll; do
             test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
@@ -109,7 +109,7 @@ jobs:
         run: |
           python - <<'PY'
           import esprima
-          for f in ("auth.js", "bdd.js", "app.js", "modules.js", "classe.js", "grammaire.js", "library.js", "sw.js"):
+          for f in ("auth.js", "bdd.js", "unite2.js", "app.js", "modules.js", "classe.js", "grammaire.js", "library.js", "sw.js"):
               esprima.parseScript(open(f, encoding="utf-8").read())
               print("✅", f)
           PY
@@ -178,14 +178,34 @@ jobs:
           if 'id="gate"' not in html:      fails.append("index.html : portail #gate absent")
           if 'id="shell"' not in html:     fails.append("index.html : app shell absent")
           ordre = re.findall(r'<script src="([^"]+)"', html)
-          if ordre != ["auth.js","bdd.js","app.js","modules.js","classe.js","grammaire.js","library.js"]:
+          if ordre != ["auth.js","bdd.js","unite2.js","app.js","modules.js","classe.js","grammaire.js","library.js"]:
               fails.append(f"index.html : ordre des scripts {ordre}")
           for police in ("amiri","tajawal","reem-kufi","cormorant-garamond","inter"):
               if police not in html: fails.append(f"index.html : police '{police}' absente")
 
           if fails:
               print("::error::" + "; ".join(fails)); sys.exit(1)
-          print("✅ Bareme 8+8+4 = 20 · 8 seances")
+          u2 = open("unite2.js", encoding="utf-8").read()
+          if "SEANCES_U2" not in u2:      fails.append("unite2.js : SEANCES_U2 absent")
+          if "DEVOIR_U2" not in u2:       fails.append("unite2.js : DEVOIR_U2 absent")
+          if "CORRIGE_U2" not in u2:      fails.append("unite2.js : CORRIGE_U2 absent")
+          if "window.UNITE2" not in u2:   fails.append("unite2.js : export window.UNITE2 absent")
+          if u2.count("{ n:") < 8:        fails.append(f"unite2.js : {u2.count('{ n:')} seances < 8")
+          if u2.count("{ id:'I") != 3:    fails.append("unite2.js : devoir U2 != 3 parties")
+          for k in ("Possessivartikel", "Adjektive", "gefallen", "Die Familie Sommer",
+                    "Textproduktion", "Konsolidierung"):
+              if k not in u2: fails.append(f"unite2.js : '{k}' absent")
+
+          if "get DEVOIR(){ return DEVOIR; }" not in app:
+              fails.append("app.js : DEVOIR non expose en getter (multi-unites casse)")
+          if "function selectUnite" not in app:
+              fails.append("app.js : selectUnite absent")
+          if "function loadSeances" not in app:
+              fails.append("app.js : stockage par unite absent")
+          if app.count("load(LS.seances") != 0:
+              fails.append("app.js : reste des load(LS.seances) non migrés")
+
+                    print("✅ Bareme 8+8+4 = 20 · 8 seances")
           print("✅ Portail de connexion + 8 vues + ordre des scripts")
           print("✅ 5 polices (Amiri/Tajawal/Reem Kufi/Cormorant/Inter)")
           print("✅ BDD : moteur + UI + referentiel")
