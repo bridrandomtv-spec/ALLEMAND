@@ -40,7 +40,8 @@ jobs:
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
                    assets/bdd/referentiel.json assets/bdd/devoirs.json \
-                   assets/bdd/compositions.json assets/bdd/bac.json assets/bdd/annales.json; do
+                   assets/bdd/compositions.json assets/bdd/bac.json assets/bdd/annales.json \
+                   assets/bdd/grammaire.json assets/bdd/classe.json; do
             test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
           echo "✅ Structure complète (14 fichiers racine + 8 assets)"
@@ -107,7 +108,7 @@ jobs:
         run: |
           python - <<'PY'
           import esprima
-          for f in ("auth.js", "bdd.js", "app.js", "modules.js", "library.js", "sw.js"):
+          for f in ("auth.js", "bdd.js", "app.js", "modules.js", "classe.js", "grammaire.js", "library.js", "sw.js"):
               esprima.parseScript(open(f, encoding="utf-8").read())
               print("✅", f)
           PY
@@ -137,6 +138,19 @@ jobs:
           for k in ("renderSim", "renderParents", "45 * 60", "10 * 60"):
               if k not in mod: fails.append(f"modules.js : '{k}' absent")
 
+          cl = open("classe.js", encoding="utf-8").read()
+          for k in ("function vueEmploi", "function vueLecons", "function vuePresence",
+                    "function vueNotes", "function vueMessages", "function vueProfs",
+                    "function rejoindre", "assets/bdd/classe.json"):
+              if k not in cl: fails.append(f"classe.js : '{k}' absent")
+
+          gr = open("grammaire.js", encoding="utf-8").read()
+          for k in ("function filtrer", "function carte", "function fiche",
+                    "assets/bdd/grammaire.json"):
+              if k not in gr: fails.append(f"grammaire.js : '{k}' absent")
+          if "Object.prototype" in gr:
+              fails.append("grammaire.js : pollution d'Object.prototype interdite")
+
           bdd = open("bdd.js", encoding="utf-8").read()
           for k in ("function normalise", "function search", "function pages", "assets/bdd/"):
               if k not in bdd: fails.append(f"bdd.js : '{k}' absent")
@@ -159,11 +173,11 @@ jobs:
           if len(man.get("shortcuts", [])) < 4: fails.append("manifest : moins de 4 raccourcis")
 
           html = open("index.html", encoding="utf-8").read()
-          if html.count('data-view=') != 8: fails.append(f"index.html : {html.count('data-view=')} vues != 8")
+          if html.count('data-view=') != 10: fails.append(f"index.html : {html.count('data-view=')} vues != 10")
           if 'id="gate"' not in html:      fails.append("index.html : portail #gate absent")
           if 'id="shell"' not in html:     fails.append("index.html : app shell absent")
           ordre = re.findall(r'<script src="([^"]+)"', html)
-          if ordre != ["auth.js","bdd.js","app.js","modules.js","library.js"]:
+          if ordre != ["auth.js","bdd.js","app.js","modules.js","classe.js","grammaire.js","library.js"]:
               fails.append(f"index.html : ordre des scripts {ordre}")
           for police in ("amiri","tajawal","reem-kufi","cormorant-garamond","inter"):
               if police not in html: fails.append(f"index.html : police '{police}' absente")
@@ -175,6 +189,35 @@ jobs:
           print("✅ 5 polices (Amiri/Tajawal/Reem Kufi/Cormorant/Inter)")
           print("✅ BDD : moteur + UI + referentiel")
           print("✅ PWA v2 : manifest dir=rtl, 4 raccourcis, Service Worker")
+
+          gm = json.load(open("assets/bdd/grammaire.json", encoding="utf-8"))
+          if len(gm["items"]) < 25:
+              fails.append(f"grammaire : {len(gm['items'])} regles < 25")
+          if len(gm["chapitres"]) != 4:
+              fails.append(f"grammaire : {len(gm['chapitres'])} chapitres != 4")
+          for r in gm["items"]:
+              for k in ("id","titre_de","titre_ar","explication","exemples","erreur_courante","astuce","cefr"):
+                  if not r.get(k):
+                      fails.append(f"regle {r.get('id')} : champ '{k}' vide"); break
+              if not r.get("exemples") or len(r["exemples"]) < 4:
+                  fails.append(f"regle {r['id']} : moins de 4 exemples"); break
+          print(f"✅ Grammaire : {len(gm['items'])} regles · {len(gm['chapitres'])} chapitres · CEFR A1→B2")
+
+          cv = json.load(open("assets/bdd/classe.json", encoding="utf-8"))
+          for k in ("sections","jours","jours_de","emploi","lecons","presence","notes","messages","profs","prochaine"):
+              if k not in cv: fails.append(f"classe.json : cle '{k}' absente")
+          if len(cv.get("sections", [])) != 5:
+              fails.append(f"classe : {len(cv.get('sections', []))} sections != 5")
+          if len(cv.get("lecons", [])) < 6:
+              fails.append("classe : moins de 6 lecons")
+          if len(cv.get("profs", [])) < 5:
+              fails.append("classe : moins de 5 professeurs")
+          for l in cv.get("lecons", []):
+              for k in ("n","de","ar","objectifs","vocabulaire","grammaire","statut"):
+                  if k not in l: fails.append(f"lecon {l.get('n')} : '{k}' absent")
+          print(f"✅ Classe virtuelle : {len(cv['sections'])} sections · {len(cv['lecons'])} lecons · "
+                f"{len(cv['presence'])} presences · {len(cv['notes'])} notes · "
+                f"{len(cv['messages'])} messages · {len(cv['profs'])} professeurs")
           PY
 
   # ══════════════ 2. DÉPLOIEMENT ══════════════
