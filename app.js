@@ -394,16 +394,30 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['accueil','seances','classe','grammaire','biblio','devoir','simulation','prof','parents','compte'];
+const VIEWS = ['accueil','seances','classe','grammaire','biblio','devoir','simulation','prof','parents','profboard','compte'];
 const TABS  = [['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
                ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],['compte','⚙️ حسابي']];
+
+/* Onglet réservé au rôle « prof » — inséré avant « حسابي » */
+function allTabs(){
+  const t = TABS.slice();
+  if(window.AUTH && AUTH.session){
+    const s = AUTH.session();
+    if(s && s.role === 'prof') t.splice(t.length - 1, 0, ['profboard','🧑‍🏫 لوحة الأستاذ']);
+  }
+  return t;
+}
+function isProf(){
+  try{ const s = window.AUTH && AUTH.session ? AUTH.session() : null; return !!(s && s.role === 'prof'); }
+  catch(e){ return false; }
+}
 let currentView = 'accueil';
 
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
-  c.innerHTML = TABS.map(t =>
+  c.innerHTML = allTabs().map(t =>
     '<button class="tab' + (t[0] === currentView ? ' on' : '') + '" data-go="' + t[0] + '">' + t[1] + '</button>'
   ).join('');
 }
@@ -424,6 +438,8 @@ function go(view){
   if(view === 'simulation') renderSim();
   if(view === 'parents')    renderParents();
   if(view === 'compte')     renderCompte();
+  if(view === 'profboard' && window.renderProfBoard) window.renderProfBoard();
+  const mp = $('#miniProf'); if(mp) mp.hidden = !isProf();
   if(view === 'prof'){ const l = $('#chatLog'); if(l && l.children.length === 0) initChat(); }
   if(view === 'accueil')    renderStats();
 }
@@ -890,6 +906,7 @@ function enterApp(s){
   if(gate) gate.hidden = true;
   if(shell) shell.hidden = false;
   renderTabs(); renderStats(); renderWelcome(); renderSectionBar(); renderUserChip();
+  const mp0 = $('#miniProf'); if(mp0) mp0.hidden = !isProf();
   const c = $('#cBdd');
   if(c && window.BDD && BDD.state.ready) c.textContent = BDD.kpis().total;
   bindGateEvents();
