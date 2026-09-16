@@ -74,7 +74,8 @@
           '<span class="live-pill' + (p.statut === 'en_cours' ? ' on' : '') + '">' +
             '<i></i> ' + (p.statut === 'en_cours' ? 'جارية الآن' : 'مجدولة') + '</span>' +
         '</div>' +
-        '<button class="btn btn-p" id="btnRejoindre">📹 انضم إلى الحصة</button>' +
+        '<button class="btn btn-p" data-go="live">📹 انضم إلى القاعة المباشرة</button>' +
+        '<button class="btn btn-o" id="btnRejoindre">🖥️ معاينة القاعة</button>' +
       '</div></div>';
   }
 
