@@ -318,9 +318,10 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['accueil','seances','devoir','simulation','prof','parents'];
-const TABS  = [['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],['devoir','📝 الفرض'],
-               ['simulation','⏱️ المحاكاة'],['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء']];
+const VIEWS = ['accueil','seances','biblio','devoir','simulation','prof','parents','compte'];
+const TABS  = [['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],['biblio','🗂️ المكتبة'],
+               ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
+               ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],['compte','⚙️ حسابي']];
 let currentView = 'accueil';
 
 function renderTabs(){
@@ -337,10 +338,13 @@ function go(view){
   renderTabs();
   const tb = $('#tabs'); if(tb) tb.classList.remove('open');
   window.scrollTo({top:0, behavior:'smooth'});
+  document.dispatchEvent(new CustomEvent('dz:view', { detail: view }));
   if(view === 'seances')    renderSeances();
+  if(view === 'biblio' && window.renderBiblio) window.renderBiblio();
   if(view === 'devoir')     renderDevoir();
   if(view === 'simulation') renderSim();
   if(view === 'parents')    renderParents();
+  if(view === 'compte')     renderCompte();
   if(view === 'prof'){ const l = $('#chatLog'); if(l && l.children.length === 0) initChat(); }
   if(view === 'accueil')    renderStats();
 }
@@ -632,8 +636,8 @@ function sendChat(v){
 
 /* ─────────────── INITIALISATION ─────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  renderTabs(); renderStats();
   setTimeout(() => { const sp = $('#splash'); if(sp) sp.classList.add('off'); }, 900);
+  bootGate();
 
   document.addEventListener('click', ev => {
     const sug = ev.target.closest('[data-sug]');
@@ -755,9 +759,240 @@ function answerQCM(btn){
   st.ans[id] = {v:chosen, ok:correct, pts:correct ? found.pts : 0}; store(LS.devoir, st);
 }
 
+/* ══════════ PORTAIL DE CONNEXION ══════════ */
+function bootGate(){
+  const gate = $('#gate'), shell = $('#shell');
+  const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+
+  if(window.AUTH){
+    try{
+      const ref = (window.BDD && BDD.state.ref && BDD.state.ref.items && BDD.state.ref.items[0]) || null;
+      AUTH.initSelects(ref ? ref.wilayas : null);
+    }catch(e){ AUTH.initSelects(null); }
+  }
+
+  if(s){ enterApp(s); return; }
+
+  if(shell) shell.hidden = true;
+  if(!gate) return;
+  gate.hidden = false;
+  paintGateStats();
+
+  if(window.BDD && !BDD.state.ready && !BDD.state._loading){
+    BDD.state._loading = true;
+    BDD.load(null).then(() => {
+      paintGateStats();
+      try{
+        const r = BDD.state.ref && BDD.state.ref.items ? BDD.state.ref.items[0] : null;
+        AUTH.initSelects(r ? r.wilayas : null);
+      }catch(e){}
+      const c = $('#cBdd'); if(c && BDD.state.ready) c.textContent = BDD.kpis().total;
+    });
+  }
+}
+
+function paintGateStats(){
+  const el = $('#gateStats'); if(!el) return;
+  const a = window.AUTH ? AUTH.stats() : { comptes:0, sections:5, eleves:142, wilayas:58 };
+  const bdd = (window.BDD && BDD.state.ready) ? BDD.kpis().total : 684;
+  el.innerHTML = [[bdd,'وثيقة'],[a.eleves,'تلميذ'],[a.sections,'أقسام'],[a.wilayas,'ولاية']]
+    .map(x => '<div class="gstat"><div class="gstat-n">' + x[0] + '</div>' +
+              '<div class="gstat-l">' + x[1] + '</div></div>').join('');
+}
+
+function enterApp(s){
+  const gate = $('#gate'), shell = $('#shell');
+  if(gate) gate.hidden = true;
+  if(shell) shell.hidden = false;
+  renderTabs(); renderStats(); renderWelcome(); renderSectionBar(); renderUserChip();
+  const c = $('#cBdd');
+  if(c && window.BDD && BDD.state.ready) c.textContent = BDD.kpis().total;
+  bindGateEvents();
+  const hash = String(location.hash || '').replace('#','');
+  go(VIEWS.indexOf(hash) !== -1 ? hash : 'accueil');
+}
+
+function bindGateEvents(){
+  if(bindGateEvents._done) return;
+  bindGateEvents._done = true;
+
+  $$('.gtab').forEach(b => b.addEventListener('click', () => {
+    $$('.gtab').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    const isLogin = b.dataset.gate === 'login';
+    const lf = $('#loginForm'), sf = $('#signupForm');
+    if(lf) lf.hidden = !isLogin;
+    if(sf) sf.hidden = isLogin;
+  }));
+
+  [['#eye1','#loginPass'],['#eye2','#suPass']].forEach(p => {
+    const e = $(p[0]), i = $(p[1]);
+    if(e && i) e.addEventListener('click', () => {
+      i.type = i.type === 'password' ? 'text' : 'password';
+      e.textContent = i.type === 'password' ? '👁️' : '🙈';
+    });
+  });
+
+  const lf = $('#loginForm');
+  if(lf) lf.addEventListener('submit', ev => {
+    ev.preventDefault();
+    const err = $('#loginErr'); if(err) err.hidden = true;
+    const r = AUTH.login($('#loginUser').value, $('#loginPass').value, $('#loginClasse').value);
+    if(r.ok){ toast('🎉 أهلاً بك ' + r.session.nom + ' — القسم ' + r.session.classe_ar, 'ok');
+              enterApp(r.session); }
+    else if(err){ err.hidden = false; err.textContent = r.err; }
+  });
+
+  const bd = $('#btnDemo');
+  if(bd) bd.addEventListener('click', () => {
+    const u = $('#loginUser'), p = $('#loginPass');
+    if(u) u.value = 'ahmed'; if(p) p.value = '1234';
+    if(lf) lf.dispatchEvent(new Event('submit', { cancelable:true }));
+  });
+
+  const sf = $('#signupForm');
+  if(sf) sf.addEventListener('submit', ev => {
+    ev.preventDefault();
+    const err = $('#suErr'); if(err) err.hidden = true;
+    const w = String($('#suWilaya').value || '').split('|');
+    const niv = $('#suNiveau').value;
+    const r = AUTH.signup({
+      nom:$('#suName').value, mail:$('#suMail').value, pass:$('#suPass').value,
+      niveau:niv, filiere:$('#suFiliere').value,
+      wilaya:w[1] || 'Bouira', code_wilaya:w[0] || '10',
+      role:$('#suRole').value, classe:niv + '-1'
+    });
+    if(r.ok){ toast('✅ تم إنشاء حسابك — أهلاً ' + r.session.nom, 'ok'); enterApp(r.session); }
+    else if(err){ err.hidden = false; err.textContent = r.err; }
+  });
+
+  const uc = $('#userChip');
+  if(uc) uc.addEventListener('click', () => go('compte'));
+
+  document.addEventListener('dz:auth', e => {
+    if(!e.detail){
+      const sh = $('#shell'), gt = $('#gate');
+      if(sh) sh.hidden = true;
+      if(gt){ gt.hidden = false; paintGateStats(); }
+    } else { renderUserChip(); renderSectionBar(); renderWelcome(); renderStats(); }
+  });
+}
+
+/* ══════════ BANDEAU DE BIENVENUE ══════════ */
+function renderWelcome(){
+  const el = $('#welcomeBox'); if(!el) return;
+  const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+  if(!s){ el.innerHTML = ''; return; }
+  const h = new Date().getHours();
+  const salut = h < 12 ? 'صباح الخير' : 'مساء الخير';
+  const de = h < 12 ? 'Guten Morgen' : (h < 18 ? 'Guten Tag' : 'Guten Abend');
+  const st = load(LS.seances, {done:[]});
+  const next = SEANCES.filter(x => (st.done || []).indexOf(x.n) === -1)[0];
+  const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
+
+  el.innerHTML =
+    '<h1>' + salut + '، ' + esc(s.nom) + ' 👋</h1>' +
+    '<p>مرحباً بك في قسمك الافتراضي <b>' + esc(s.classe_ar) + '</b> — ' +
+      'الثانوية الافتراضية الجزائرية · شعبة <b>' + esc(s.filiere) + '</b>.<br>' +
+      '<span class="de-display">' + esc(de) + '! Willkommen in deiner virtuellen Klasse.</span></p>' +
+    '<div class="welcome-cta">' +
+      (next ? '<button class="btn btn-p" data-go="seances">📚 الحصة ' + next.n + ' — ' +
+               esc(next.ar) + '</button>'
+            : '<button class="btn btn-p" data-go="seances">📚 مراجعة الحصص</button>') +
+      '<button class="btn btn-g" data-go="biblio">🗂️ المكتبة' +
+        (k ? ' (' + k.total + ')' : '') + '</button>' +
+      '<button class="btn btn-o" data-go="devoir">📝 الفرض /20</button>' +
+    '</div>' +
+    '<div class="welcome-meta">' +
+      '<span class="sec-pill">🏫 ' + esc(s.classe_ar) + ' · ' + s.eleves + ' تلميذ</span>' +
+      '<span class="sec-pill or">📖 المادة : ' + esc(s.matiere || 'اللغة الألمانية') + '</span>' +
+      '<span class="sec-pill rg">🎓 ' + esc(s.niveau) + '</span>' +
+      '<span class="sec-live"><i></i> ' + esc(s.prof || 'الأستاذ خريف أحمد') + ' · متصل الآن</span>' +
+    '</div>';
+}
+
+/* ══════════ BARRE DE SECTION ══════════ */
+function renderSectionBar(){
+  const el = $('#sectionBar'); if(!el) return;
+  const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+  if(!s){ el.innerHTML = ''; return; }
+  const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
+  el.innerHTML =
+    '<span class="sec-pill">🇩🇿 جمهورية جزائرية</span>' +
+    '<span class="sec-pill or">🏫 قسم ' + esc(s.classe_ar) + ' · ' + s.eleves + ' تلميذ</span>' +
+    '<span class="sec-pill">📖 ' + esc(s.matiere || 'اللغة الألمانية') + '</span>' +
+    '<span class="sec-pill rg">🎓 ' + esc(s.niveau) + ' — البرنامج الرسمي MEN</span>' +
+    (k ? '<span class="sec-pill">🗂️ ' + k.total + ' وثيقة</span>' : '') +
+    '<span class="sec-live"><i></i> الأستاذ 🤖 متصل · يتحدث العربية</span>';
+}
+
+/* ══════════ PASTILLE UTILISATEUR ══════════ */
+function renderUserChip(){
+  const el = $('#userChip'); if(!el) return;
+  const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+  if(!s){ el.innerHTML = ''; return; }
+  const ini = String(s.nom || '؟').trim().charAt(0);
+  el.innerHTML = '<span class="uc-av">' + esc(ini) + '</span>' +
+                 '<span class="uc-n">' + esc(s.nom) + '</span>';
+}
+
+/* ══════════ VUE COMPTE ══════════ */
+function renderCompte(){
+  const el = $('#compteBody'); if(!el) return;
+  const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+  if(!s){ el.innerHTML = '<div class="card empty"><div class="empty-i">🔐</div><p>غير متصل</p></div>'; return; }
+  const st = load(LS.seances, {done:[], exo:{}});
+  const sim = load(LS.sim, {best:null, tries:[]});
+  const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
+
+  function row(a,b){ return '<div class="rep-row"><span>' + a + '</span>' +
+                            '<span class="rep-v">' + esc(b) + '</span></div>'; }
+
+  el.innerHTML =
+    '<div class="card"><h2>👤 معلوماتي</h2>' +
+      row('الاسم الكامل', s.nom) + row('المعرّف', '@' + s.user) +
+      row('الدور', (window.AUTH ? (AUTH.ROLES[s.role] || s.role) : s.role)) +
+      row('المستوى', s.niveau) + row('الشعبة', s.filiere) +
+      row('الولاية', (s.code_wilaya || '') + ' — ' + (s.wilaya || '')) +
+      row('القسم', s.classe_ar + ' · ' + s.eleves + ' تلميذ') +
+      row('الأستاذ', s.prof || 'الأستاذ خريف أحمد') +
+      row('النقاط', (s.points || 0) + ' نقطة') +
+      row('آخر دخول', new Date(s.loginAt || Date.now()).toLocaleString('fr-DZ')) +
+    '</div>' +
+    '<div class="card"><h2>📊 تقدمي</h2>' +
+      row('الحصص المكتملة', (st.done || []).length + ' / 8') +
+      row('التمارين المنجزة', Object.keys(st.exo || {}).length) +
+      row('المحاكيات', (sim.tries || []).length) +
+      row('أفضل نتيجة', sim.best !== null && sim.best !== undefined ? sim.best + '/20' : '—') +
+      (k ? row('وثائق المكتبة', k.total + ' متاحة') : '') +
+    '</div>' +
+    '<div class="card"><h2>🔒 الخصوصية</h2><div class="privacy">' +
+      'حسابك وبياناتك محفوظة <b>على جهازك فقط</b> (localStorage) — لا تُرسل لأي خادم. ' +
+      'نتائج المحاكاة سرّية ولا يطّلع عليها أحد إلا بقرارك.</div></div>' +
+    '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
+      '<button class="btn btn-o" id="btnSound2">🔊 النطق الألماني</button>' +
+      '<button class="btn btn-r" id="btnLogout">🚪 تسجيل الخروج</button>' +
+    '</div>';
+
+  const lo = $('#btnLogout');
+  if(lo) lo.addEventListener('click', () => {
+    if(confirm('تسجيل الخروج من القسم؟')){ AUTH.logout(); toast('👋 إلى اللقاء',''); }
+  });
+  const bs2 = $('#btnSound2');
+  if(bs2) bs2.addEventListener('click', () => {
+    soundOn = !soundOn; store(LS.sound, soundOn);
+    const b = $('#btnSound'); if(b) b.classList.toggle('muted', !soundOn);
+    toast(soundOn ? '🔊 النطق مُفعَّل' : '🔇 النطق مُعطَّل', soundOn ? 'ok' : '');
+  });
+}
+
+
 /* ── API publique pour modules.js ── */
 window.DZ = {
   $:$, $$:$$, load:load, store:store, esc:esc, toast:toast, speak:speak, go:go,
   PROF:PROF, SEANCES:SEANCES, DEVOIR:DEVOIR, LS:LS, WA_NUMBER:WA_NUMBER,
-  renderStats:renderStats, addMsg:addMsg, currentView:() => currentView
+  renderStats:renderStats, addMsg:addMsg, currentView:() => currentView,
+  renderWelcome:renderWelcome, renderSectionBar:renderSectionBar,
+  renderUserChip:renderUserChip, renderCompte:renderCompte,
+  bootGate:bootGate, enterApp:enterApp
 };
