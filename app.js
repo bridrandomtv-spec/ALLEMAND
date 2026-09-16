@@ -971,8 +971,14 @@ function renderWelcome(){
   const h = new Date().getHours();
   const salut = h < 12 ? 'صباح الخير' : 'مساء الخير';
   const de = h < 12 ? 'Guten Morgen' : (h < 18 ? 'Guten Tag' : 'Guten Abend');
-  const st = load(LS.seances, {done:[]});
+  const st = loadSeances();
   const next = SEANCES.filter(x => (st.done || []).indexOf(x.n) === -1)[0];
+  let totDone = 0, totSeanc = 0;
+  UNITES.forEach(u => {
+    if(!u.seances || !u.seances.length) return;
+    totSeanc += u.seances.length;
+    totDone  += (loadSeancesFor(u.n).done || []).length;
+  });
   const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
 
   el.innerHTML =
@@ -988,6 +994,11 @@ function renderWelcome(){
         (k ? ' (' + k.total + ')' : '') + '</button>' +
       '<button class="btn btn-o" data-go="devoir">📝 الفرض /20</button>' +
     '</div>' +
+    '<div class="welcome-prog"><div class="progress-wrap"><div class="progress" style="width:' +
+      (totSeanc ? Math.round(totDone / totSeanc * 100) : 0) + '%"></div></div>' +
+      '<div class="progress-lbl">📈 تقدّمك الإجمالي : ' + totDone + ' / ' + totSeanc +
+      ' حصص عبر ' + UNITES.filter(u => u.seances && u.seances.length).length +
+      ' وحدات — الوحدة الحالية : <b>' + uniteActive().n + '</b></div></div>' +
     '<div class="welcome-meta">' +
       '<span class="sec-pill">🏫 ' + esc(s.classe_ar) + ' · ' + s.eleves + ' تلميذ</span>' +
       '<span class="sec-pill or">📖 المادة : ' + esc(s.matiere || 'اللغة الألمانية') + '</span>' +
