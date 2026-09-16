@@ -1203,3 +1203,35 @@ table.conj tr:last-child td{border:none}
   .tb-board.plein{inset:6px}
 }
 @media print{.live-side,.ctrl-bar,.video-zone,.live-head .lh-r{display:none}}
+
+
+/* ── v2.6 · منهجية الأستاذ + البرنامج الرسمي MEN ── */
+.meth{margin-top:16px;padding-top:16px;border-top:1px solid var(--b)}
+.meth h3{font-family:var(--ff-ar-display);font-size:15.5px;margin-bottom:13px;color:var(--or2)}
+.meth-g{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.meth-i{display:flex;gap:11px;align-items:flex-start;background:var(--nuit3);
+  border:1px solid var(--b);border-radius:14px;padding:13px;transition:.22s}
+.meth-i:hover{border-color:var(--a);transform:translateY(-3px)}
+.mh-n{width:29px;height:29px;flex:0 0 auto;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-family:var(--ff-de);font-size:14px;font-weight:800;color:#04140c;
+  background:linear-gradient(140deg,var(--or2),var(--or))}
+.meth-i b{font-size:13.5px;display:block;font-family:var(--ff-ar-display)}
+.meth-i p{font-size:11.5px;color:var(--m);margin-top:3px;line-height:1.65}
+
+.prog-off{border-color:rgba(0,98,51,.5);
+  background:linear-gradient(160deg,rgba(0,98,51,.14),var(--p2))}
+.po-sub{font-size:12px;color:var(--m);margin:-8px 0 14px}
+.po-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.po-t{background:var(--nuit3);border:1px solid var(--b);border-radius:15px;padding:14px;
+  position:relative;transition:.22s}
+.po-t:hover{border-color:var(--a);transform:translateY(-3px)}
+.po-h{font-family:var(--ff-ar-display);font-size:15px;font-weight:700;margin-bottom:3px}
+.po-d{font-size:11px;color:var(--or2);margin-bottom:9px}
+.po-u{font-size:12px;color:var(--m);line-height:1.85;margin-bottom:11px}
+.po-t .chip{position:absolute;top:13px;left:13px}
+
+@media(max-width:860px){
+  .po-grid{grid-template-columns:1fr}
+  .meth-g{grid-template-columns:1fr}
+}
+@media print{.meth,.prog-off{break-inside:avoid}}
