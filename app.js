@@ -17,7 +17,7 @@ const LS = {
 };
 
 /* ─────────────── UNITÉ 1 : Sich vorstellen (8 séances) ─────────────── */
-const SEANCES = [
+const SEANCES_U1 = [
   { n:1, de:'Begrüßung und sich vorstellen', ar:'التحية والتعارف', dur:60,
     obj:['التحية بالألمانية','التعريف بالاسم','الوداع'],
     lex:[['Guten Morgen','صباح الخير'],['Guten Tag','نهارك سعيد'],['Guten Abend','مساء الخير'],
@@ -124,7 +124,7 @@ const SEANCES = [
 ];
 
 /* ─────────────── DEVOIR OFFICIEL — الوحدة 1 (/20) ─────────────── */
-const DEVOIR = {
+const DEVOIR_U1 = {
   titre:'Évaluation — Einheit 1 : Sich vorstellen', duree:45, total:20,
   parties:[
     { id:'I', t:'📖 Compréhension de l’écrit — Leseverstehen', pts:8,
@@ -172,6 +172,82 @@ const DEVOIR = {
       ]}
   ]
 };
+
+/* ─────────────── REGISTRE DES UNITÉS ─────────────── */
+let currentUnite = 1;
+
+const UNITES = [
+  { n:1, de:'Sich vorstellen',        ar:'التعريف بالنفس',    icon:'👋', cecrl:'A1',
+    seances:SEANCES_U1, devoir:DEVOIR_U1, duree:465 },
+  { n:2, de:'Familie und Freunde',    ar:'العائلة والأصدقاء', icon:'👨‍👩‍👧', cecrl:'A1→A2',
+    seances:(window.UNITE2 ? UNITE2.seances : []),
+    devoir: (window.UNITE2 ? UNITE2.devoir  : null),
+    duree:  (window.UNITE2 && UNITE2.meta ? UNITE2.meta.duree_totale : 465) }
+];
+
+let SEANCES = UNITES[0].seances;
+let DEVOIR   = UNITES[0].devoir;
+
+function uniteActive(){ return UNITES.filter(u => u.n === currentUnite)[0] || UNITES[0]; }
+
+function selectUnite(n){
+  const u = UNITES.filter(x => x.n === n)[0];
+  if(!u){ toast('⚠️ الوحدة غير متوفرة','ko'); return; }
+  if(!u.seances || !u.seances.length){ toast('🔒 محتوى الوحدة ' + n + ' غير جاهز','ko'); return; }
+  currentUnite = n;
+  SEANCES = u.seances;
+  DEVOIR   = u.devoir || DEVOIR_U1;
+  const d = $('#seanceDetail'); if(d) d.innerHTML = '';
+  renderSeances(); paintUniteHead(); renderStats();
+  toast('📚 الوحدة ' + n + ' : ' + u.de + ' — ' + u.ar, 'ok');
+}
+
+function uniteSelector(){
+  return '<div class="unite-sel">' + UNITES.map(u => {
+    const dispo = !!(u.seances && u.seances.length);
+    const st = loadSeancesFor(u.n);
+    const done = (st.done || []).length;
+    return '<button class="ucard' + (u.n === currentUnite ? ' on' : '') + (dispo ? '' : ' off') + '"' +
+      (dispo ? ' data-unite="' + u.n + '"' : ' disabled') + '>' +
+      '<div class="ucard-n">الوحدة ' + u.n + '</div>' +
+      '<div class="ucard-de de-display">' + esc(u.de) + '</div>' +
+      '<div class="ucard-ar">' + u.icon + ' ' + esc(u.ar) + '</div>' +
+      '<div class="ucard-m"><span class="chip' + (dispo ? ' ok' : '') + '">' +
+        (dispo ? done + '/' + u.seances.length + ' حصص' : '🔒 قريباً') + '</span>' +
+        '<span class="chip">' + esc(u.cecrl) + '</span>' +
+        '<span class="chip">⏱️ ' + Math.round(u.duree / 60) + ' س</span></div></button>';
+  }).join('') + '</div>';
+}
+
+function paintUniteHead(){
+  const u = uniteActive();
+  const hd = $('#seancesHead');
+  if(hd) hd.innerHTML = '<h1>📚 الوحدة ' + u.n + ' : <span class="de-display">' + esc(u.de) + '</span></h1>' +
+    '<p>' + esc(u.ar) + ' — ' + u.seances.length + ' حصص · ' + Math.round(u.duree / 60) +
+    ' ساعة · المستوى ' + esc(u.cecrl) + ' · البرنامج الرسمي MEN</p>' +
+    '<div class="progress-wrap"><div class="progress" id="progSeances"></div></div>' +
+    '<div class="progress-lbl" id="progLbl"></div>';
+  const dt = $('#devoirTitle');
+  if(dt) dt.innerHTML = '📝 فرض الوحدة ' + u.n + ' <span class="pill">/20</span>';
+  const ds = $('#devoirSub');
+  if(ds) ds.textContent = 'Évaluation — ' + u.de + ' · المدة : ' + u.duree +
+                          ' دقيقة · التصحيح النموذجي + سلّم التنقيط';
+  const p = $('#progSeances');
+  if(p){
+    const st = loadSeances();
+    const pct = Math.round((st.done || []).length / u.seances.length * 100);
+    p.style.width = pct + '%';
+    const l = $('#progLbl');
+    if(l) l.textContent = (st.done || []).length + ' / ' + u.seances.length + ' حصص · ' + pct + '%';
+  }
+}
+
+/* ── Stockage isolé par unité ── */
+function uniteKey(n){ return LS.seances + ':u' + (n || currentUnite); }
+function loadSeancesFor(n){ return load(uniteKey(n), {done:[], exo:{}}); }
+function loadSeances(){ return load(uniteKey(), {done:[], exo:{}}); }
+function saveSeances(v){ store(uniteKey(), v); }
+
 
 /* ─────────────── IA DU PROFESSEUR VIRTUEL ─────────────── */
 const PROF = {
@@ -340,7 +416,7 @@ function go(view){
   const tb = $('#tabs'); if(tb) tb.classList.remove('open');
   window.scrollTo({top:0, behavior:'smooth'});
   document.dispatchEvent(new CustomEvent('dz:view', { detail: view }));
-  if(view === 'seances')    renderSeances();
+  if(view === 'seances'){ renderSeances(); paintUniteHead(); }
   if(view === 'biblio' && window.renderBiblio) window.renderBiblio();
   if(view === 'classe' && window.renderClasse) window.renderClasse();
   if(view === 'grammaire' && window.renderGrammaire) window.renderGrammaire();
@@ -354,7 +430,7 @@ function go(view){
 
 /* ─────────────── ACCUEIL : STATISTIQUES ─────────────── */
 function renderStats(){
-  const st   = load(LS.seances, {done:[], exo:{}});
+  const st   = loadSeances();
   const done = (st.done || []).length;
   const sim  = load(LS.sim, {});
   const best = (sim.best !== undefined && sim.best !== null) ? sim.best + '/20' : '—';
@@ -367,11 +443,14 @@ function renderStats(){
 
 /* ─────────────── SÉANCES ─────────────── */
 function renderSeances(){
-  const st   = load(LS.seances, {done:[], exo:{}});
+  const st   = loadSeances();
   const done = st.done || [];
   const g = $('#seancesGrid'); if(!g) return;
 
-  g.innerHTML = '<h2>📖 الحصص الثمانية</h2>' + SEANCES.map(s => {
+  g.innerHTML = uniteSelector() +
+    '<h2>📖 الوحدة ' + uniteActive().n + ' : <span class="de-display">' +
+    esc(uniteActive().de) + '</span> — ' + esc(uniteActive().ar) + '</h2>' +
+    SEANCES.map(s => {
     const isDone = done.indexOf(s.n) !== -1;
     const locked = s.n > 1 && done.indexOf(s.n - 1) === -1 && !isDone;
     const meta = s.ex === 'devoir'
@@ -392,7 +471,7 @@ function renderSeances(){
 
 function openSeance(n){
   const s = SEANCES.filter(x => x.n === n)[0]; if(!s) return;
-  const st = load(LS.seances, {done:[], exo:{}});
+  const st = loadSeances();
   st.done = st.done || []; st.exo = st.exo || {};
   const box = $('#seanceDetail'); if(!box) return;
 
@@ -480,8 +559,8 @@ function handleOpt(btn){
   if(fb){ fb.className = 'fbk show ' + (chosen === e.a ? 'ok' : 'ko');
           fb.innerHTML = (chosen === e.a ? '✅ إجابة صحيحة! ' : '❌ إجابة خاطئة. ') + e.why; }
 
-  const st = load(LS.seances, {done:[], exo:{}}); st.exo = st.exo || {};
-  st.exo[key] = {a:chosen, ok:chosen === e.a}; store(LS.seances, st);
+  const st = loadSeances(); st.exo = st.exo || {};
+  st.exo[key] = {a:chosen, ok:chosen === e.a}; saveSeances(st);
   renderStats();
 }
 
@@ -491,16 +570,16 @@ function handleTextCheck(key){
   if(!val){ if(fb){ fb.className = 'fbk show ko'; fb.innerHTML = '✍️ اكتب شيئاً أولاً!'; } return; }
   const rep = PROF.repondre(val), ok = rep.indexOf('✅') === 0;
   if(fb){ fb.className = 'fbk show ' + (ok ? 'ok' : 'ko'); fb.innerHTML = rep; }
-  const st = load(LS.seances, {done:[], exo:{}}); st.exo = st.exo || {};
-  st.exo[key] = {val:val, ok:ok}; store(LS.seances, st);
+  const st = loadSeances(); st.exo = st.exo || {};
+  st.exo[key] = {val:val, ok:ok}; saveSeances(st);
   renderStats();
 }
 
 function markSeanceDone(){
   const n = currentSeanceNum(); if(!n) return;
-  const st = load(LS.seances, {done:[], exo:{}}); st.done = st.done || [];
+  const st = loadSeances(); st.done = st.done || [];
   if(st.done.indexOf(n) === -1){
-    st.done.push(n); store(LS.seances, st);
+    st.done.push(n); saveSeances(st);
     toast('🎉 أحسنت! تم إنهاء الحصة ' + n + '/8', 'ok');
   }
   renderSeances(); renderStats(); openSeance(n);
@@ -643,6 +722,9 @@ document.addEventListener('DOMContentLoaded', () => {
   bootGate();
 
   document.addEventListener('click', ev => {
+    const un = ev.target.closest('[data-unite]');
+    if(un){ selectUnite(+un.dataset.unite); return; }
+
     const sug = ev.target.closest('[data-sug]');
     if(sug){ sendChat(sug.dataset.sug); return; }
 
@@ -944,7 +1026,7 @@ function renderCompte(){
   const el = $('#compteBody'); if(!el) return;
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
   if(!s){ el.innerHTML = '<div class="card empty"><div class="empty-i">🔐</div><p>غير متصل</p></div>'; return; }
-  const st = load(LS.seances, {done:[], exo:{}});
+  const st = loadSeances();
   const sim = load(LS.sim, {best:null, tries:[]});
   const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
 
@@ -997,5 +1079,8 @@ window.DZ = {
   renderStats:renderStats, addMsg:addMsg, currentView:() => currentView,
   renderWelcome:renderWelcome, renderSectionBar:renderSectionBar,
   renderUserChip:renderUserChip, renderCompte:renderCompte,
-  bootGate:bootGate, enterApp:enterApp
+  bootGate:bootGate, enterApp:enterApp,
+  loadSeances:loadSeances, saveSeances:saveSeances,
+  UNITES:UNITES, uniteActive:uniteActive, selectUnite:selectUnite,
+  currentUnite:() => currentUnite
 };
