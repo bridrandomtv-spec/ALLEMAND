@@ -33,8 +33,8 @@ jobs:
       - name: Vérifier les fichiers requis
         run: |
           set -e
-          for f in index.html style.css auth.js bdd.js unite2.js app.js modules.js classe.js \
-                   grammaire.js examen.js prof.js library.js manifest.json sw.js \
+          for f in index.html style.css auth.js bdd.js unite2.js app.js modules.js live.js \
+                   classe.js grammaire.js examen.js prof.js library.js manifest.json sw.js \
                    README.md 404.html robots.txt sitemap.xml .nojekyll; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
@@ -43,10 +43,10 @@ jobs:
                    assets/bdd/compositions.json assets/bdd/bac.json \
                    assets/bdd/annales.json assets/bdd/grammaire.json \
                    assets/bdd/classe.json assets/bdd/eleves.json \
-                   assets/bdd/bac_archive.json; do
+                   assets/bdd/bac_archive.json assets/bdd/live.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 19 fichiers racine + 12 assets présents"
+          echo "✅ 20 fichiers racine + 13 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -128,7 +128,7 @@ jobs:
                         'filiere', 'duree_minutes', 'bareme', 'coefficient',
                         'parties', 'corrige', 'stats', 'source', 'niveau_cefr'):
                   if k not in s or s[k] in (None, ''):
-                      fails.append(s.get('id', '?') + ' : ' + k + ' absent')
+                      fails.append(str(s.get('id', '?')) + ' : ' + k + ' absent')
               if s['id'] in ids:
                   fails.append('archive : id duplique ' + s['id'])
               ids.add(s['id'])
@@ -136,8 +136,8 @@ jobs:
               if s['duree_minutes'] != 180 or s['bareme'] != 20:
                   fails.append(s['id'] + ' : duree/bareme non officiels')
               if len(s['parties']) != 3:
-                  fails.append(s['id'] + ' : ' + str(len(s['parties'])) + ' parties != 3'); continue
-              pts = {p['id']: p['points'] for p in s['parties']}
+                  fails.append(s['id'] + ' : parties != 3'); continue
+              pts = dict((p['id'], p['points']) for p in s['parties'])
               if pts != {'I': 8, 'II': 8, 'III': 4}:
                   fails.append(s['id'] + ' : repartition ' + str(pts))
               if sum(p['points'] for p in s['parties']) != 20:
@@ -145,7 +145,7 @@ jobs:
               qi = s['parties'][0]['questions']; qii = s['parties'][1]['questions']
               qiii = s['parties'][2]['questions']
               if len(qi) != 6 or len(qii) != 8 or len(qiii) != 1:
-                  fails.append(s['id'] + ' : nb questions ' + str((len(qi), len(qii), len(qiii))))
+                  fails.append(s['id'] + ' : nb questions anormal')
               if sum(x['pts'] for x in qi) != 8:
                   fails.append(s['id'] + ' : partie I != 8 pts')
               if sum(x['pts'] for x in qii) != 8:
@@ -163,25 +163,23 @@ jobs:
                   if k not in s['stats']:
                       fails.append(s['id'] + ' : stats.' + k + ' absent')
               for q in qi + qii:
-                  if q['type'] == 'qcm':
-                      if not (0 <= q['a'] < len(q['opts'])):
-                          fails.append(s['id'] + '/' + q['id'] + ' : indice qcm hors plage')
+                  if q['type'] == 'qcm' and not (0 <= q['a'] < len(q['opts'])):
+                      fails.append(s['id'] + '/' + q['id'] + ' : indice qcm hors plage')
                   if q['type'] == 'txt' and not q.get('key'):
-                      fails.append(s['id'] + '/' + q['id'] + ' : mots-cles de correction absents')
+                      fails.append(s['id'] + '/' + q['id'] + ' : mots-cles absents')
           if any(v != 4 for v in par_an.values()):
               fails.append('archive : toutes les annees n ont pas 4 sujets')
           if len(ids) != len(sj):
               fails.append('archive : identifiants non uniques')
           if not all(s['source'].startswith('الديوان') for s in sj):
               fails.append('archive : source ONEC manquante')
-          themes = {s['theme_de'] for s in sj}
+          themes = set(s['theme_de'] for s in sj)
           if len(themes) < 10:
               fails.append('archive : ' + str(len(themes)) + ' themes < 10')
           print('✅ Archive BAC : ' + str(len(sj)) + ' sujets · ' + str(len(ar['annees']))
                 + ' cycles (2010-2026) · 4 sujets/annee · 180 min · I/8+II/8+III/4=20')
-          print('   themes : ' + str(len(themes)) + ' · grammaire ciblee : '
-                + str(len(ar['grammaire_ciblee'])) + ' points · filieres : '
-                + str(len(ar['filieres'])))
+          print('   themes : ' + str(len(themes)) + ' · grammaire : '
+                + str(len(ar['grammaire_ciblee'])) + ' · filieres : ' + str(len(ar['filieres'])))
           if fails:
               print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
           PY
@@ -210,9 +208,16 @@ jobs:
                     'notes', 'messages', 'profs', 'prochaine'):
               if k not in cv:
                   fails.append('classe.json : cle ' + k + ' absente')
-          if len(cv.get('sections', [])) != 5: fails.append('classe : sections != 5')
-          if len(cv.get('lecons', [])) < 6: fails.append('classe : moins de 6 lecons')
-          if len(cv.get('profs', [])) < 5: fails.append('classe : moins de 5 professeurs')
+          if len(cv.get('sections', [])) != 5:
+              fails.append('classe : sections != 5')
+          if len(cv.get('lecons', [])) < 6:
+              fails.append('classe : moins de 6 lecons')
+          if len(cv.get('profs', [])) < 5:
+              fails.append('classe : moins de 5 professeurs')
+          for l in cv.get('lecons', []):
+              for k in ('n', 'de', 'ar', 'objectifs', 'vocabulaire', 'grammaire', 'statut'):
+                  if k not in l:
+                      fails.append('lecon ' + str(l.get('n')) + ' : ' + k + ' absent')
           print('✅ Classe virtuelle : ' + str(len(cv['sections'])) + ' sections · '
                 + str(len(cv['lecons'])) + ' lecons · ' + str(len(cv['presence']))
                 + ' presences · ' + str(len(cv['notes'])) + ' notes · '
@@ -235,15 +240,18 @@ jobs:
               for k in REQE:
                   if k not in e:
                       fails.append('eleve ' + str(e.get('id', '?')) + ' : ' + k + ' absent')
-              if e['id'] in ids: fails.append('eleves.json : id duplique ' + e['id'])
+              if e['id'] in ids:
+                  fails.append('eleves.json : id duplique ' + e['id'])
               ids.add(e['id']); nwil.add(e['code_wilaya'])
               for eid, nt in e['notes'].items():
-                  if nt is None: continue
+                  if nt is None:
+                      continue
                   if abs(round(nt['I'] + nt['II'] + nt['III'], 1) - nt['total']) > 0.001:
                       fails.append(e['id'] + '/' + eid + ' : I+II+III != total')
                   if nt['I'] > 8 or nt['II'] > 8 or nt['III'] > 4:
                       fails.append(e['id'] + '/' + eid + ' : depassement de bareme')
-          if len(nwil) < 5: fails.append('eleves.json : moins de 5 wilayas')
+          if len(nwil) < 5:
+              fails.append('eleves.json : moins de 5 wilayas')
           print('✅ Registre : ' + str(len(el['eleves'])) + ' eleves · '
                 + str(len(el['evaluations'])) + ' evaluations · bareme 8+8+4=20 · '
                 + 'seuils 10/7 · ' + str(len(nwil)) + ' wilayas')
@@ -251,17 +259,86 @@ jobs:
               print('::error::' + ' | '.join(fails[:6])); sys.exit(1)
           PY
 
+      - name: Valider la session en direct (live.json)
+        run: |
+          python - <<'PY'
+          import json, sys
+          fails = []
+          lv = json.load(open('assets/bdd/live.json', encoding='utf-8'))
+          s = lv.get('session') or {}
+          el = lv.get('eleves') or []
+          pl = lv.get('planches') or []
+          ch = lv.get('chat') or []
+          ag = s.get('agenda') or []
+          if len(el) != 32:
+              fails.append('live : ' + str(len(el)) + ' eleves != 32')
+          if len(set(e['id'] for e in el)) != len(el):
+              fails.append('live : identifiants eleves non uniques')
+          REQ = ('id', 'matricule', 'nom_complet', 'initiales', 'ville', 'statut',
+                 'micro', 'cam', 'connexion', 'ping_ms', 'points', 'participation')
+          for e in el:
+              for k in REQ:
+                  if k not in e:
+                      fails.append('live eleve ' + str(e.get('id', '?')) + ' : ' + k + ' absent')
+              if e.get('statut') not in ('present', 'retard', 'absent', 'absent_justifie'):
+                  fails.append('live : statut inconnu ' + str(e.get('statut')))
+              if not str(e.get('matricule', '')).startswith('DZ-2AS3-2026-'):
+                  fails.append('live : matricule non conforme ' + str(e.get('matricule')))
+          if [p['n'] for p in pl] != list(range(1, len(pl) + 1)):
+              fails.append('live : planches mal numerotees')
+          if len(pl) < 8:
+              fails.append('live : ' + str(len(pl)) + ' planches < 8')
+          for p in pl:
+              for k in ('titre_de', 'titre_ar', 'contenu', 'exemples', 'regle'):
+                  if not p.get(k):
+                      fails.append('live planche ' + str(p.get('n')) + ' : ' + k + ' vide')
+              if len(p.get('exemples') or []) < 3:
+                  fails.append('live planche ' + str(p['n']) + ' : moins de 3 exemples'); break
+          if sum(a['duree'] for a in ag) != s.get('duree_minutes', -1):
+              fails.append('live : agenda != duree de la session')
+          if s.get('presents', 0) != sum(1 for e in el if e['statut'] == 'present'):
+              fails.append('live : compte presents incoherent')
+          tot = s.get('presents', 0) + s.get('retards', 0) + s.get('absents', 0)
+          if tot != s.get('effectif', -1):
+              fails.append('live : presents + retards + absents != effectif')
+          roles = set(c['role'] for c in ch)
+          if roles != set(['prof', 'eleve', 'admin']):
+              fails.append('live : roles du chat ' + str(roles))
+          if sum(1 for c in ch if c.get('epingle')) < 3:
+              fails.append('live : moins de 3 messages epingles')
+          for c in ch:
+              for k in ('de', 'init', 'role', 'temps', 'texte'):
+                  if k not in c:
+                      fails.append('live chat : cle ' + k + ' absente'); break
+          for k in ('reactions', 'reponses_auto', 'reponse_defaut'):
+              if not lv.get(k):
+                  fails.append('live : ' + k + ' absent')
+          for r in lv.get('reponses_auto', []):
+              if len(r.get('k') or []) < 2 or not r.get('r'):
+                  fails.append('live : reponse IA mal formee')
+          if 'confidentialite' not in lv.get('_meta', {}):
+              fails.append('live : declaration de confidentialite absente')
+          if fails:
+              print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
+          print('✅ Session live : ' + str(len(el)) + ' eleves (' + str(s.get('presents'))
+                + ' presents, ' + str(s.get('retards')) + ' retards, '
+                + str(s.get('absents')) + ' absents) · ' + str(len(pl)) + ' planches · '
+                + str(len(ch)) + ' messages · ' + str(len(ag)) + ' etapes ('
+                + str(sum(a['duree'] for a in ag)) + ' min)')
+          print('   ' + str(s.get('lecon_de', '')) + ' — ' + str(s.get('theme', '')))
+          PY
+
       - name: Valider la syntaxe JavaScript (esprima)
         run: |
           python - <<'PY'
           import esprima
           FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'app.js', 'modules.js',
-                      'classe.js', 'grammaire.js', 'examen.js', 'prof.js',
-                      'library.js', 'sw.js')
+                      'live.js', 'classe.js', 'grammaire.js', 'examen.js',
+                      'prof.js', 'library.js', 'sw.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/11 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/12 fichiers JS valides')
           PY
 
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
@@ -273,7 +350,7 @@ jobs:
           app = rd('app.js'); mod = rd('modules.js'); u2 = rd('unite2.js')
           cl = rd('classe.js'); gr = rd('grammaire.js'); bdd = rd('bdd.js')
           lib = rd('library.js'); au = rd('auth.js'); sw = rd('sw.js')
-          pf = rd('prof.js'); ex = rd('examen.js')
+          pf = rd('prof.js'); ex = rd('examen.js'); lv = rd('live.js')
           html = rd('index.html'); css = rd('style.css')
           man = json.load(open('manifest.json', encoding='utf-8'))
           cor = json.load(open('assets/corriges.json', encoding='utf-8'))
@@ -286,24 +363,28 @@ jobs:
                      'function renderCompte', 'function selectUnite', 'function loadSeances',
                      'function uniteSelector', 'function paintUniteHead',
                      'get DEVOIR(){ return DEVOIR; }', 'get SEANCES(){ return SEANCES; }',
-                     'function allTabs', 'function isProf', "'profboard'", "'examen'")
+                     'function allTabs', 'function isProf', "'profboard'", "'examen'",
+                     "'live'", 'window.renderLive')
           for k in APP_REQ:
-              if k not in app: fails.append('app.js : ' + k + ' absent')
-          if app.count('{ n:') < 8: fails.append('app.js : moins de 8 seances U1')
+              if k not in app:
+                  fails.append('app.js : ' + k + ' absent')
+          if app.count('{ n:') < 8:
+              fails.append('app.js : moins de 8 seances U1')
           if app.count('load(LS.seances') != 0:
               fails.append('app.js : reste des load(LS.seances) non migres')
           if not re.search(r'^let SEANCES = ', app, re.M):
               fails.append('app.js : SEANCES doit etre commutable (let)')
-          if 'window.renderExamen' not in app:
-              fails.append('app.js : renderExamen non branche')
           for k in ('renderSim', 'renderParents', '45 * 60', '10 * 60',
                     'DZ.loadSeances()', 'new Proxy({}'):
-              if k not in mod: fails.append('modules.js : ' + k + ' absent')
+              if k not in mod:
+                  fails.append('modules.js : ' + k + ' absent')
           for k in ('SEANCES_U2', 'DEVOIR_U2', 'CORRIGE_U2', 'window.UNITE2',
                     'Possessivartikel', 'Adjektive', 'gefallen', 'Die Familie Sommer',
                     'Textproduktion', 'Konsolidierung'):
-              if k not in u2: fails.append('unite2.js : ' + k + ' absent')
-          if u2.count('{ n:') < 8: fails.append('unite2.js : moins de 8 seances')
+              if k not in u2:
+                  fails.append('unite2.js : ' + k + ' absent')
+          if u2.count('{ n:') < 8:
+              fails.append('unite2.js : moins de 8 seances')
           parts = re.findall(r"\{\s*id:'(I|II|III)',\s*t:", u2)
           if len(parts) != 3:
               fails.append('unite2.js : ' + str(len(parts)) + ' parties au lieu de 3')
@@ -314,82 +395,124 @@ jobs:
                     'assets/bdd/bac_archive.json', 'dz_de_bac_historique_v1',
                     'window.renderExamen')
           for k in EX_REQ:
-              if k not in ex: fails.append('examen.js : ' + k + ' absent')
-          if "'ä':'ae'" not in ex: fails.append('examen.js : normalisation umlaut absente')
+              if k not in ex:
+                  fails.append('examen.js : ' + k + ' absent')
+          if "'ä':'ae'" not in ex:
+              fails.append('examen.js : normalisation umlaut absente')
           if 'duree_minutes * 60' not in ex:
               fails.append('examen.js : minuteur non derive de la duree officielle')
+          LV_REQ = ('assets/bdd/live.json', 'function tickRestant', 'function grilleVideo',
+                    'function panChat', 'function panTableau', 'function panPresence',
+                    'function panAgenda', 'function peindrePlanche', 'function envoyer',
+                    'function repondre', 'function basculerTrad', 'function envoyerReaction',
+                    'function ficheEleve', 'dz_de_live_chat_v1', 'dz_de_live_etat_v1',
+                    'window.renderLive', 'reponses_auto', 'main_levee', 'citation',
+                    'btnMicro', 'btnCam', 'btnMain')
+          for k in LV_REQ:
+              if k not in lv:
+                  fails.append('live.js : ' + k + ' absent')
+          if lv.count('clearInterval') < 2:
+              fails.append('live.js : minuteurs non nettoies (fuite)')
+          if 'Object.prototype' in lv:
+              fails.append('live.js : pollution Object.prototype interdite')
           for k in ('function vueEmploi', 'function vueLecons', 'function vuePresence',
                     'function vueNotes', 'function vueMessages', 'function vueProfs',
                     'function rejoindre', 'assets/bdd/classe.json'):
-              if k not in cl: fails.append('classe.js : ' + k + ' absent')
+              if k not in cl:
+                  fails.append('classe.js : ' + k + ' absent')
           for k in ('function filtrer', 'function carte', 'function fiche',
                     'assets/bdd/grammaire.json'):
-              if k not in gr: fails.append('grammaire.js : ' + k + ' absent')
+              if k not in gr:
+                  fails.append('grammaire.js : ' + k + ' absent')
           if 'Object.prototype' in gr:
               fails.append('grammaire.js : pollution Object.prototype interdite')
           for k in ('function normalise', 'function search', 'function pages', 'assets/bdd/'):
-              if k not in bdd: fails.append('bdd.js : ' + k + ' absent')
+              if k not in bdd:
+                  fails.append('bdd.js : ' + k + ' absent')
           for k in ('function openFiche', 'function paintKPI', 'dz:view'):
-              if k not in lib: fails.append('library.js : ' + k + ' absent')
+              if k not in lib:
+                  fails.append('library.js : ' + k + ' absent')
           for k in ('function login', 'function signup', 'SECTIONS', 'hash(',
                     "users['prof']"):
-              if k not in au: fails.append('auth.js : ' + k + ' absent')
+              if k not in au:
+                  fails.append('auth.js : ' + k + ' absent')
           PROF_REQ = ('PRET = 10', 'CONS = 7', 'function calcTotal', 'function moyenneEleve',
                       'function readiness', 'toCSV', 'text/csv', 'function parWilaya',
                       'histogramme', 'dz_de_prof_audit_v1', 'accesAutorise',
                       'assets/bdd/eleves.json', "role === 'prof'")
           for k in PROF_REQ:
-              if k not in pf: fails.append('prof.js : ' + k + ' absent')
+              if k not in pf:
+                  fails.append('prof.js : ' + k + ' absent')
           BOM = chr(92) + 'uFEFF'
-          if BOM not in pf: fails.append('prof.js : BOM UTF-8 (Excel) absent')
-          if BOM not in ex: fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v2.4.0',
-                    './unite2.js', './classe.js', './grammaire.js', './examen.js',
-                    './prof.js', './assets/bdd/eleves.json', './assets/bdd/bac_archive.json'):
-              if k not in sw: fails.append('sw.js : ' + k + ' absent')
-          if man.get('dir') != 'rtl': fails.append('manifest : dir != rtl')
-          if not man.get('icons'): fails.append('manifest : aucune icone')
+          if BOM not in pf:
+              fails.append('prof.js : BOM UTF-8 (Excel) absent')
+          if BOM not in ex:
+              fails.append('examen.js : BOM UTF-8 (Excel) absent')
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v2.5.0',
+                    './unite2.js', './live.js', './classe.js', './grammaire.js',
+                    './examen.js', './prof.js', './assets/bdd/eleves.json',
+                    './assets/bdd/bac_archive.json', './assets/bdd/live.json'):
+              if k not in sw:
+                  fails.append('sw.js : ' + k + ' absent')
+          if man.get('dir') != 'rtl':
+              fails.append('manifest : dir != rtl')
+          if not man.get('icons'):
+              fails.append('manifest : aucune icone')
           if len(man.get('shortcuts', [])) < 4:
               fails.append('manifest : moins de 4 raccourcis')
           vues = re.findall(r'data-view="([a-z]+)"', html)
-          if len(vues) != 12:
-              fails.append('index.html : ' + str(len(vues)) + ' vues != 12')
-          v_app = re.findall(r"'([a-z]+)'", re.search(r'const VIEWS = \[(.*?)\];', app, re.S).group(1))
+          if len(vues) != 13:
+              fails.append('index.html : ' + str(len(vues)) + ' vues != 13')
+          v_app = re.findall(r"'([a-z]+)'",
+                             re.search(r'const VIEWS = \[(.*?)\];', app, re.S).group(1))
           if sorted(vues) != sorted(v_app):
               fails.append('index.html/app.js : VIEWS != data-view')
-          tabs = re.findall(r"\['([a-z]+)'", re.search(r'const TABS\s*=\s*\[(.*?)\];', app, re.S).group(1))
-          if len(tabs) != 11:
-              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 11')
-          if set(tabs) - {'profboard'} != set(tabs) or 'profboard' in tabs:
+          tabs = re.findall(r"\['([a-z]+)'",
+                            re.search(r'const TABS\s*=\s*\[(.*?)\];', app, re.S).group(1))
+          if len(tabs) != 12:
+              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 12')
+          if 'profboard' in tabs:
               fails.append('app.js : profboard doit rester dynamique (allTabs)')
           if set(tabs) - set(vues):
-              fails.append('app.js : onglets sans vue correspondante ' + str(set(tabs) - set(vues)))
-          for ident in ('id="gate"', 'id="shell"', 'id="profBody"', 'id="examBody"',
-                        'id="classeBody"', 'id="gramBody"', 'id="biblioBody"',
-                        'id="seancesHead"', 'id="devoirTitle"', 'id="miniProf"'):
-              if ident not in html: fails.append('index.html : ' + ident + ' absent')
+              fails.append('app.js : onglets sans vue ' + str(set(tabs) - set(vues)))
+          ID_REQ = ('id="gate"', 'id="shell"', 'id="profBody"', 'id="examBody"',
+                    'id="liveBody"', 'id="classeBody"', 'id="gramBody"',
+                    'id="biblioBody"', 'id="seancesHead"', 'id="devoirTitle"',
+                    'id="miniProf"')
+          for ident in ID_REQ:
+              if ident not in html:
+                  fails.append('index.html : ' + ident + ' absent')
           ordre = re.findall(r'<script src="([^"]+)"', html)
           attendu = ['auth.js', 'bdd.js', 'unite2.js', 'app.js', 'modules.js',
-                     'classe.js', 'grammaire.js', 'examen.js', 'prof.js', 'library.js']
+                     'live.js', 'classe.js', 'grammaire.js', 'examen.js', 'prof.js',
+                     'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
-              if police not in html: fails.append('index.html : police ' + police + ' absente')
-          for k in ('.prof-hero', '.tble', '.rchip', '.rbar', '.histo', '.wrow',
-                    '.ninp', '.bareme-strip', '.alert-i', '.exam-hero', '.annee',
-                    '.sujet', '.sj-y', '.eh-stats', '.themes', '.plan-i', 'v2.4'):
-              if k not in css: fails.append('style.css : ' + k + ' absent')
+              if police not in html:
+                  fails.append('index.html : police ' + police + ' absente')
+          CSS_REQ = ('.prof-hero', '.tble', '.rchip', '.rbar', '.histo', '.wrow',
+                     '.ninp', '.bareme-strip', '.alert-i', '.exam-hero', '.annee',
+                     '.sujet', '.sj-y', '.eh-stats', '.themes', '.plan-i', 'v2.4',
+                     '.live-head', '.live-grid', '.live-side', '.video-zone',
+                     '.vid.big', '.ctrl-bar', '.live-chat', '.lmsg', '.tb-board',
+                     '.tb-ex', '.pr-list', '.pr-i', '.ag-list', '.float-react',
+                     '.live-mini', 'v2.5')
+          for k in CSS_REQ:
+              if k not in css:
+                  fails.append('style.css : ' + k + ' absent')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
-          print('✅ 12 vues · 11 onglets statiques + 1 dynamique (profboard)')
+          print('✅ 13 vues · 12 onglets statiques + 1 dynamique (profboard)')
           print('✅ Bareme 8+8+4 = 20 · U1 8 seances + U2 8 seances + BAC 68 sujets')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
           print('✅ Roles : allTabs() + isProf() + compte demo prof')
+          print('✅ Salle en direct : flux video, chat IA, tableau 8 planches, presence 32')
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ 10 scripts dans l ordre · 5 polices · CSS v2.4')
-          print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive BAC')
-          print('✅ PWA v2.4 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ Portail de connexion + 11 scripts dans l ordre + 5 polices')
+          print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive + live')
+          print('✅ PWA v2.5 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
