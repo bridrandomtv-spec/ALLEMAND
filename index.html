@@ -69,7 +69,8 @@
         <div class="gerr" id="loginErr" hidden></div>
         <button type="submit" class="btn btn-p btn-block btn-lg">🚀 الدخول إلى القسم</button>
         <button type="button" class="btn btn-o btn-block" id="btnDemo">🎮 دخول تجريبي (تلميذ)</button>
-        <p class="ghint">💡 حساب تجريبي : <code>ahmed</code> / <code>1234</code></p>
+        <p class="ghint">💡 حسابات تجريبية : <code>ahmed</code> / <code>1234</code> (تلميذ)
+          · <code>prof</code> / <code>1234</code> (أستاذ → لوحة الأستاذ)</p>
       </form>
 
       <!-- Inscription -->
@@ -152,6 +153,8 @@
           <p>الرزنامة · الدروس · الحضور · النقاط</p><span class="mini-n">5</span></div>
         <div class="card mini" data-go="grammaire"><div class="mini-i">📘</div><h3>القواعد</h3>
           <p>28 قاعدة — A1 → B2</p><span class="mini-n">28</span></div>
+        <div class="card mini" id="miniProf" data-go="profboard" hidden><div class="mini-i">🧑‍🏫</div><h3>لوحة الأستاذ</h3>
+          <p>32 تلميذ · إدخال النقاط · CSV</p><span class="mini-n">32</span></div>
         <div class="card mini" data-go="devoir"><div class="mini-i">📝</div><h3>الفرض</h3>
           <p>الوحدة 1 · /20 مع التصحيح</p><span class="mini-n">20</span></div>
         <div class="card mini" data-go="simulation"><div class="mini-i">⏱️</div><h3>المحاكاة</h3>
@@ -267,6 +270,15 @@
       <div id="parentsBody"></div>
     </section>
 
+    <!-- TABLEAU DE BORD PROFESSEUR -->
+    <section data-view="profboard" class="view" hidden>
+      <div class="page-head">
+        <h1>🧑‍🏫 لوحة الأستاذ</h1>
+        <p>سجلّ القسم · إدخال النقاط · الجاهزية · الإحصائيات · التصدير CSV — 🔒 مساحة محجوزة للأساتذة</p>
+      </div>
+      <div id="profBody"></div>
+    </section>
+
     <!-- COMPTE -->
     <section data-view="compte" class="view" hidden>
       <div class="page-head"><h1>⚙️ حسابي</h1><p>معلوماتي · تقدمي · الخصوصية</p></div>
@@ -293,6 +305,7 @@
 <script src="modules.js"></script>
 <script src="classe.js"></script>
 <script src="grammaire.js"></script>
+<script src="prof.js"></script>
 <script src="library.js"></script>
 </body>
 </html>
