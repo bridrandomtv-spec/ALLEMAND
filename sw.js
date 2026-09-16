@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v2.0.0';
+const VERSION = 'dz-de-v2.1.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -18,6 +18,8 @@ const PRECACHE = [
   './bdd.js',
   './app.js',
   './modules.js',
+  './classe.js',
+  './grammaire.js',
   './library.js',
   './manifest.json',
   './404.html',
@@ -32,7 +34,9 @@ const BDD_FILES = [
   './assets/bdd/devoirs.json',
   './assets/bdd/compositions.json',
   './assets/bdd/bac.json',
-  './assets/bdd/annales.json'
+  './assets/bdd/annales.json',
+  './assets/bdd/grammaire.json',
+  './assets/bdd/classe.json'
 ];
 
 /* Polices CDN (optionnel — échec toléré hors-ligne) */
