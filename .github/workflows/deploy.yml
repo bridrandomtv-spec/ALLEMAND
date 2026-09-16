@@ -60,10 +60,16 @@ jobs:
           import json, os, sys
           fails = []
           ref = json.load(open("assets/bdd/referentiel.json", encoding="utf-8"))
+          ritems = ref.get("items", {})
+          if not isinstance(ritems, dict):
+              fails.append("referentiel.json : 'items' doit etre un objet")
+          for cle in ("wilayas", "niveaux", "filieres", "types",
+                      "unites_2AS", "unites_3AS", "annees_scolaires", "difficulte"):
+              if cle not in ritems:
+                  fails.append(f"referentiel.json : cle '{cle}' absente")
+          if len(ritems.get("wilayas", [])) != 58:
+              fails.append(f"referentiel : {len(ritems.get('wilayas', []))}/58 wilayas")
           total, types = 0, {}
-          for src in ref["items"]:
-              if src.get("type") in ("devoirs","compositions","bac","annales"):
-                  pass
           for f in ("devoirs","compositions","bac","annales"):
               p = f"assets/bdd/{f}.json"
               if not os.path.exists(p):
