@@ -9,7 +9,13 @@
 (function(){
   if(!window.DZ){ console.error('[modules.js] app.js non chargé'); return; }
   const DZ = window.DZ;
-  const { $, $$, load, store, esc, toast, DEVOIR, LS, WA_NUMBER } = DZ;
+  const { $, $$, load, store, esc, toast, LS, WA_NUMBER } = DZ;
+  /* DEVOIR et SEANCES sont commutables (multi-unités) → accès dynamique */
+  const devoir = () => DZ.DEVOIR;
+  const DEVOIR = new Proxy({}, { get: (t, k) => {
+    if (k === 'parties') return devoir().parties;
+    return devoir()[k];
+  }});
 
   /* ══════════════ MODULE 1 — SIMULATION CHRONOMÉTRÉE ══════════════ */
   const MODES = [
@@ -259,7 +265,7 @@
   /* ══════════════ MODULE 2 — ESPACE PARENTS ══════════════ */
   function renderParents(){
     const box = $('#parentsBody'); if(!box) return;
-    const st   = load(LS.seances, {done:[], exo:{}});
+    const st   = DZ.loadSeances();
     const sim  = load(LS.sim, {best:null, tries:[]});
     const cfg  = load(LS.parent, {nom:''});
 
