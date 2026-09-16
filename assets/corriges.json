@@ -1,0 +1,412 @@
+{
+  "_meta": {
+    "titre": "برنامج الأصل — التصحيحات النموذجية الرسمية",
+    "auteur": "Prof. Kharif Ahmed",
+    "matiere": "اللغة الألمانية — السنة الثانية ثانوي",
+    "unite": 1,
+    "unite_titre": "Sich vorstellen — التعريف بالنفس",
+    "version": "1.0.0",
+    "confidentialite": "Les résultats de simulation sont stockés localement (localStorage) et ne quittent jamais l'appareil de l'élève.",
+    "bareme_total": 20,
+    "duree_minutes": 45
+  },
+  "devoir_unite_1": {
+    "titre": "Évaluation — Einheit 1 : Sich vorstellen",
+    "duree": 45,
+    "total": 20,
+    "parties": [
+      {
+        "id": "I",
+        "titre": "Compréhension de l'écrit — Leseverstehen",
+        "points": 8,
+        "support": "Texte « Lena Fischer »",
+        "corriges": [
+          {
+            "id": "I.1",
+            "type": "vrai_faux",
+            "question": "Lena kommt aus Österreich.",
+            "reponse": "Falsch",
+            "points": 1,
+            "justification": "Ich komme aus Deutschland."
+          },
+          {
+            "id": "I.2",
+            "type": "vrai_faux",
+            "question": "Lena ist 16 Jahre alt.",
+            "reponse": "Richtig",
+            "points": 1,
+            "justification": "Ich bin 16 Jahre alt."
+          },
+          {
+            "id": "I.3",
+            "type": "vrai_faux",
+            "question": "Lena hat zwei Schwestern.",
+            "reponse": "Richtig",
+            "points": 1,
+            "justification": "Ich habe zwei Schwestern."
+          },
+          {
+            "id": "I.4",
+            "type": "vrai_faux",
+            "question": "Lena lernt Spanisch in der Schule.",
+            "reponse": "Falsch",
+            "points": 1,
+            "justification": "Sie lernt Englisch und Französisch."
+          },
+          {
+            "id": "I.5",
+            "type": "texte",
+            "question": "Wie heißt Lenas Mutter?",
+            "reponse": "Sie heißt Anna.",
+            "points": 2,
+            "mots_cles": [
+              "anna"
+            ],
+            "justification": "…meine Mutter heißt Anna."
+          },
+          {
+            "id": "I.6",
+            "type": "texte",
+            "question": "Wo wohnt Lena?",
+            "reponse": "Sie wohnt in München.",
+            "points": 2,
+            "mots_cles": [
+              "münchen",
+              "munchen",
+              "munich"
+            ],
+            "justification": "Ich wohne in München."
+          }
+        ]
+      },
+      {
+        "id": "II",
+        "titre": "Langue — Sprachbausteine",
+        "points": 8,
+        "corriges": [
+          {
+            "id": "II.1",
+            "type": "qcm",
+            "question": "Ich ___ 16 Jahre alt.",
+            "reponse": "bin",
+            "points": 1,
+            "regle": "L'âge s'exprime avec sein."
+          },
+          {
+            "id": "II.2",
+            "type": "qcm",
+            "question": "___ du Geschwister?",
+            "reponse": "Hast",
+            "points": 1,
+            "regle": "du → hast"
+          },
+          {
+            "id": "II.3",
+            "type": "qcm",
+            "question": "Wir ___ aus Algerien.",
+            "reponse": "sind",
+            "points": 1,
+            "regle": "wir → sind"
+          },
+          {
+            "id": "II.4",
+            "type": "qcm",
+            "question": "Lena ___ zwei Schwestern.",
+            "reponse": "hat",
+            "points": 1,
+            "regle": "sie (3e pers. sg.) → hat"
+          },
+          {
+            "id": "II.5",
+            "type": "texte",
+            "question": "___ kommst du? (من أين أنت؟)",
+            "reponse": "Woher",
+            "points": 1,
+            "mots_cles": [
+              "woher"
+            ],
+            "regle": "Woher = من أين"
+          },
+          {
+            "id": "II.6",
+            "type": "texte",
+            "question": "___ heißt du? (ما اسمك؟)",
+            "reponse": "Wie",
+            "points": 1,
+            "mots_cles": [
+              "wie"
+            ],
+            "regle": "Wie = كيف"
+          },
+          {
+            "id": "II.7",
+            "type": "traduction",
+            "question": "عمري 16 سنة",
+            "reponse": "Ich bin 16 Jahre alt.",
+            "points": 1,
+            "mots_cles": [
+              "ich bin 16",
+              "ich bin sechzehn"
+            ],
+            "regle": "sein + âge"
+          },
+          {
+            "id": "II.8",
+            "type": "traduction",
+            "question": "أنا من الجزائر",
+            "reponse": "Ich komme aus Algerien.",
+            "points": 1,
+            "mots_cles": [
+              "aus algerien"
+            ],
+            "regle": "kommen aus + pays"
+          }
+        ]
+      },
+      {
+        "id": "III",
+        "titre": "Production écrite — Schreiben",
+        "points": 4,
+        "consigne": "اكتب فقرة من 5 أسطر تعرّف فيها بنفسك (الاسم، العمر، البلد، العائلة، الهوايات).",
+        "grille_evaluation": [
+          {
+            "critere": "استعمال صحيح لـ sein / haben",
+            "points": 1.5
+          },
+          {
+            "critere": "مفردات الوحدة 1 (5 كلمات على الأقل)",
+            "points": 1.0
+          },
+          {
+            "critere": "ترتيب الأفكار والتماسك",
+            "points": 1.0
+          },
+          {
+            "critere": "الإملاء وعلامات الترقيم",
+            "points": 0.5
+          }
+        ],
+        "modele_reponse": "Hallo! Ich heiße Amine Benali. Ich bin 16 Jahre alt. Ich komme aus Algerien und ich wohne in Bouira. Ich habe einen Bruder und eine Schwester. Meine Hobbys sind Fußball und Musik. Tschüs!"
+      }
+    ],
+    "bareme": {
+      "I": 8,
+      "II": 8,
+      "III": 4,
+      "total": 20
+    },
+    "appreciation": {
+      "16-20": "ممتاز — Sehr gut 🏆",
+      "14-15.9": "جيد جداً — Gut 👏",
+      "10-13.9": "حسن — Befriedigend 📖",
+      "0-9.9": "يحتاج مراجعة الوحدة 1 — 🔁"
+    }
+  },
+  "seances": [
+    {
+      "n": 1,
+      "de": "Begrüßung und sich vorstellen",
+      "ar": "التحية والتعارف",
+      "duree": 60,
+      "objectifs": [
+        "التحية بالألمانية",
+        "التعريف بالاسم",
+        "الوداع"
+      ],
+      "corriges_exercices": [
+        {
+          "q": "Comment dit-on «صباح الخير» ?",
+          "reponse": "Guten Morgen"
+        },
+        {
+          "q": "Formule officielle pour dire au revoir",
+          "reponse": "Auf Wiedersehen"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "de": "Persönliche Informationen",
+      "ar": "المعلومات الشخصية",
+      "duree": 60,
+      "objectifs": [
+        "العمر",
+        "البلد والمدينة",
+        "العائلة"
+      ],
+      "corriges_exercices": [
+        {
+          "q": "Ich ___ 16 Jahre alt.",
+          "reponse": "bin"
+        },
+        {
+          "q": "Woher kommst du?",
+          "reponse": "Ich komme aus Algerien."
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "de": "Das Verb «sein»",
+      "ar": "الفعل sein",
+      "duree": 60,
+      "objectifs": [
+        "تصريف sein في الحاضر",
+        "الاستعمال مع الصفة",
+        "الجنسية"
+      ],
+      "tableau": {
+        "ich": "bin",
+        "du": "bist",
+        "er/sie/es": "ist",
+        "wir": "sind",
+        "ihr": "seid",
+        "sie/Sie": "sind"
+      },
+      "corriges_exercices": [
+        {
+          "q": "Du ___ mein Freund.",
+          "reponse": "bist"
+        },
+        {
+          "q": "Wir ___ aus Algerien.",
+          "reponse": "sind"
+        },
+        {
+          "q": "___ Sie Herr Kharif?",
+          "reponse": "Sind"
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "de": "Das Verb «haben»",
+      "ar": "الفعل haben",
+      "duree": 60,
+      "objectifs": [
+        "تصريف haben",
+        "التعبير عن الملكية",
+        "الأرقام مع haben"
+      ],
+      "tableau": {
+        "ich": "habe",
+        "du": "hast",
+        "er/sie/es": "hat",
+        "wir": "haben",
+        "ihr": "habt",
+        "sie/Sie": "haben"
+      },
+      "corriges_exercices": [
+        {
+          "q": "___ du Geschwister?",
+          "reponse": "Hast"
+        },
+        {
+          "q": "Lena ___ zwei Schwestern.",
+          "reponse": "hat"
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "de": "Textverständnis : Lena Fischer",
+      "ar": "فهم نص تقديمي",
+      "duree": 60,
+      "objectifs": [
+        "قراءة نص ألماني",
+        "استخراج المعلومات",
+        "الإجابة بجمل كاملة"
+      ],
+      "corriges_exercices": [
+        {
+          "q": "Lena vient d'Autriche",
+          "reponse": "Falsch — Deutschland"
+        },
+        {
+          "q": "Lena a deux sœurs",
+          "reponse": "Richtig"
+        },
+        {
+          "q": "Âge de Lena",
+          "reponse": "16"
+        },
+        {
+          "q": "Ville",
+          "reponse": "München"
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "de": "Textproduktion (Aufgabe)",
+      "ar": "إنتاج كتابي — المهمة النهائية",
+      "duree": 60,
+      "objectifs": [
+        "كتابة فقرة تقديمية",
+        "ترتيب الأفكار",
+        "استعمال sein/haben"
+      ],
+      "modele_reponse": "Hallo! Ich heiße Amine Benali. Ich bin 16 Jahre alt. Ich komme aus Algerien und ich wohne in Bouira. Meine Familie ist klein. Ich habe einen Bruder und eine Schwester. Meine Hobbys sind Fußball und Musik. Tschüs!"
+    },
+    {
+      "n": 7,
+      "de": "Konsolidierung + Selbstevaluation",
+      "ar": "تثبيت وتقويم ذاتي",
+      "duree": 60,
+      "objectifs": [
+        "مراجعة شاملة",
+        "التقويم الذاتي",
+        "التصحيح الجماعي"
+      ],
+      "corriges_exercices": [
+        {
+          "q": "Wie ___ du?",
+          "reponse": "heißt"
+        },
+        {
+          "q": "أنا من الجزائر",
+          "reponse": "Ich bin aus Algerien."
+        },
+        {
+          "q": "Guten Morgen!",
+          "reponse": "صباح الخير"
+        },
+        {
+          "q": "ihr ___ (haben)",
+          "reponse": "habt"
+        },
+        {
+          "q": "Das ___ meine Mutter.",
+          "reponse": "ist"
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "de": "Évaluation de l'unité",
+      "ar": "فرض الوحدة",
+      "duree": 45,
+      "objectifs": [
+        "اختبار كتابي /20",
+        "45 دقيقة",
+        "تصحيح نموذجي"
+      ],
+      "renvoi": "devoir_unite_1"
+    }
+  ],
+  "contact": {
+    "whatsapp": "+213555577931",
+    "whatsapp_affiche": "0555 57 79 31",
+    "message_type": "الاسم + «حصّة ألماني مجانية»",
+    "offre": "حصّة أولى مجانية — سارية حتى 30 سبتمبر 2026",
+    "places": "محدودة — الأولوية للتسجيل"
+  },
+  "professeur": {
+    "nom": "خريف أحمد — Kharif Ahmed",
+    "experience": "15 سنة في التعليم الثانوي",
+    "diplome": "Goethe-Zertifikat C2",
+    "ouvrage": "الألمانية بسهولة",
+    "taux_reussite_bac": "98%"
+  },
+  "devise": "الرجوع إلى الأصل فضيلة — نرافق أبناءكم نحو النجاح... خطوة بخطوة"
+}
