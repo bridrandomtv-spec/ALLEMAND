@@ -1,7 +1,7 @@
 {
-  "name": "برنامج الأصل — Allemand Prof. Kharif Ahmed",
-  "short_name": "الألمانية 🇩🇪",
-  "description": "منصة تعليم اللغة الألمانية — السنة الثانية ثانوي · الوحدة 1 : Sich vorstellen",
+  "name": "الثانوية الافتراضية الجزائرية — برنامج الأصل · اللغة الألمانية",
+  "short_name": "برنامج الأصل 🇩🇪",
+  "description": "منصة تعليم اللغة الألمانية — فروض · اختبارات · بكالوريا · حوليات · 8 حصص · أستاذ افتراضي · فضاء الأولياء",
   "lang": "ar",
   "dir": "rtl",
   "scope": "./",
@@ -14,8 +14,8 @@
     "minimal-ui"
   ],
   "orientation": "portrait-primary",
-  "background_color": "#0b1020",
-  "theme_color": "#0b1020",
+  "background_color": "#04140c",
+  "theme_color": "#04140c",
   "categories": [
     "education"
   ],
@@ -51,9 +51,21 @@
   ],
   "shortcuts": [
     {
+      "name": "المكتبة",
+      "short_name": "المكتبة",
+      "description": "684 فرض · اختبار · بكالوريا · حوليات",
+      "url": "./index.html#biblio",
+      "icons": [
+        {
+          "src": "assets/logo.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
       "name": "الحصص",
       "short_name": "الحصص",
-      "description": "الوحدة 1 — 8 حصص",
+      "description": "الوحدة 1 — 8 حصص تفاعلية",
       "url": "./index.html#seances",
       "icons": [
         {
@@ -65,7 +77,7 @@
     {
       "name": "الفرض",
       "short_name": "الفرض",
-      "description": "فرض الوحدة 1 (/20)",
+      "description": "فرض الوحدة 1 (/20) مع التصحيح",
       "url": "./index.html#devoir",
       "icons": [
         {
@@ -75,9 +87,9 @@
       ]
     },
     {
-      "name": "الأستاذ الافتراضي",
+      "name": "الأستاذ",
       "short_name": "الأستاذ",
-      "description": "تحدّث مع الأستاذ خريف",
+      "description": "محادثة مع الأستاذ خريف أحمد",
       "url": "./index.html#prof",
       "icons": [
         {
