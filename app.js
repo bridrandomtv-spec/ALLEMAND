@@ -318,8 +318,9 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['accueil','seances','biblio','devoir','simulation','prof','parents','compte'];
-const TABS  = [['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],['biblio','🗂️ المكتبة'],
+const VIEWS = ['accueil','seances','classe','grammaire','biblio','devoir','simulation','prof','parents','compte'];
+const TABS  = [['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
+               ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
                ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],['compte','⚙️ حسابي']];
 let currentView = 'accueil';
@@ -341,6 +342,8 @@ function go(view){
   document.dispatchEvent(new CustomEvent('dz:view', { detail: view }));
   if(view === 'seances')    renderSeances();
   if(view === 'biblio' && window.renderBiblio) window.renderBiblio();
+  if(view === 'classe' && window.renderClasse) window.renderClasse();
+  if(view === 'grammaire' && window.renderGrammaire) window.renderGrammaire();
   if(view === 'devoir')     renderDevoir();
   if(view === 'simulation') renderSim();
   if(view === 'parents')    renderParents();
