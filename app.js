@@ -1075,7 +1075,10 @@ function renderCompte(){
 /* ── API publique pour modules.js ── */
 window.DZ = {
   $:$, $$:$$, load:load, store:store, esc:esc, toast:toast, speak:speak, go:go,
-  PROF:PROF, SEANCES:SEANCES, DEVOIR:DEVOIR, LS:LS, WA_NUMBER:WA_NUMBER,
+  PROF:PROF, LS:LS, WA_NUMBER:WA_NUMBER,
+  /* SEANCES et DEVOIR sont commutables (multi-unités) → exposés en getters */
+  get SEANCES(){ return SEANCES; },
+  get DEVOIR(){ return DEVOIR; },
   renderStats:renderStats, addMsg:addMsg, currentView:() => currentView,
   renderWelcome:renderWelcome, renderSectionBar:renderSectionBar,
   renderUserChip:renderUserChip, renderCompte:renderCompte,
