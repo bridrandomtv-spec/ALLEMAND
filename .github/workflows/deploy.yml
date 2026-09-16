@@ -1,0 +1,47 @@
+name: Deploy ALLEMAND to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Sanity check (fichiers requis)
+        run: |
+          set -e
+          for f in index.html style.css app.js modules.js manifest.json sw.js README.md; do
+            test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
+          done
+          test -d assets || { echo "::error::Dossier assets/ manquant"; exit 1; }
+          python3 -c "import json;json.load(open('manifest.json'));print('manifest.json OK')"
+          echo "✅ Structure valide"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
