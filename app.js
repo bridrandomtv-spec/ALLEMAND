@@ -394,8 +394,9 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['accueil','seances','classe','grammaire','biblio','examen','devoir','simulation','prof','parents','profboard','compte'];
+const VIEWS = ['accueil','seances','live','classe','grammaire','biblio','examen','devoir','simulation','prof','parents','profboard','compte'];
 const TABS  = [['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
+               ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
                ['examen','🎓 البكالوريا'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
@@ -434,6 +435,7 @@ function go(view){
   if(view === 'seances'){ renderSeances(); paintUniteHead(); }
   if(view === 'biblio' && window.renderBiblio) window.renderBiblio();
   if(view === 'examen' && window.renderExamen) window.renderExamen();
+  if(view === 'live' && window.renderLive) window.renderLive();
   if(view === 'classe' && window.renderClasse) window.renderClasse();
   if(view === 'grammaire' && window.renderGrammaire) window.renderGrammaire();
   if(view === 'devoir')     renderDevoir();
