@@ -33,7 +33,7 @@ jobs:
       - name: Vérifier les fichiers requis
         run: |
           set -e
-          for f in index.html style.css app.js modules.js manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyll; do
+          for f in index.html style.css auth.js bdd.js app.js modules.js library.js manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyll; do
             test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           test -d assets || { echo "::error::Dossier assets/ manquant"; exit 1; }
@@ -54,11 +54,54 @@ jobs:
               print("✅", f)
           PY
 
+      - name: Valider la base de données (684 fiches)
+        run: |
+          python - <<'PY'
+          import json, os, sys
+          fails = []
+          ref = json.load(open("assets/bdd/referentiel.json", encoding="utf-8"))
+          total, types = 0, {}
+          for src in ref["items"]:
+              if src.get("type") in ("devoirs","compositions","bac","annales"):
+                  pass
+          for f in ("devoirs","compositions","bac","annales"):
+              p = f"assets/bdd/{f}.json"
+              if not os.path.exists(p):
+                  fails.append(f"{p} manquant"); continue
+              d = json.load(open(p, encoding="utf-8"))
+              items = d["items"]
+              total += len(items); types[f] = len(items)
+              req = ("id","type","titre","annee_scolaire","niveau","wilaya","unite",
+                     "bareme","duree_minutes","sujet")
+              for it in items:
+                  miss = [k for k in req if k not in it or it[k] in (None,"")]
+                  if miss:
+                      fails.append(f"{it.get('id','?')} : champs manquants {miss}"); break
+                  if it["bareme"] != 20:
+                      fails.append(f"{it['id']} : bareme {it['bareme']} != 20"); break
+                  if sum(p2["points"] for p2 in it["parties"]) != 20:
+                      fails.append(f"{it['id']} : parties != 20"); break
+                  if it["corrige_inclus"] and not it.get("corrige"):
+                      fails.append(f"{it['id']} : corrige_inclus sans contenu"); break
+          if total < 600:
+              fails.append(f"corpus trop petit : {total} fiches")
+          wil = set()
+          for f in ("devoirs","compositions","bac","annales"):
+              d = json.load(open(f"assets/bdd/{f}.json", encoding="utf-8"))
+              wil |= {i["code_wilaya"] for i in d["items"]}
+          if len(wil) < 58:
+              fails.append(f"{len(wil)}/58 wilayas couvertes")
+          print("   répartition :", types)
+          print(f"✅ {total} fiches · {len(wil)}/58 wilayas")
+          if fails:
+              print("::error::" + " | ".join(fails[:5])); sys.exit(1)
+          PY
+
       - name: Valider la syntaxe JavaScript (esprima)
         run: |
           python - <<'PY'
           import esprima
-          for f in ("app.js", "modules.js", "sw.js"):
+          for f in ("auth.js", "bdd.js", "app.js", "modules.js", "library.js", "sw.js"):
               esprima.parseScript(open(f, encoding="utf-8").read())
               print("✅", f)
           PY
@@ -104,7 +147,7 @@ jobs:
               fails.append("manifest : aucune icône")
 
           html = open("index.html", encoding="utf-8").read()
-          if html.count('data-view=') != 6:
+          if html.count('data-view=') != 8:
               fails.append(f"index.html : {html.count('data-view=')} vues au lieu de 6")
           for ref in ("style.css", "app.js", "modules.js", "manifest.json"):
               if ref not in html:
@@ -117,5 +160,9 @@ jobs:
           print("✅ 8 séances présentes")
           print("✅ Simulation 45 min / 10 min")
           print("✅ PWA : manifest dir=rtl + icônes + Service Worker")
-          print("✅ 6 vues dans index.html")
+          print("✅ 8 vues dans index.html (accueil/seances/biblio/devoir/simulation/prof/parents/compte)")
+          if "id=\"gate\"" not in html:
+              fails.append("index.html : portail de connexion absent")
+          if "id=\"shell\"" not in html:
+              fails.append("index.html : app shell absent")
           PY
