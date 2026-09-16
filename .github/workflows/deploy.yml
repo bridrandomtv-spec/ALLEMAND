@@ -34,8 +34,9 @@ jobs:
       - name: Vérifier les fichiers requis
         run: |
           set -e
-          for f in index.html style.css auth.js bdd.js app.js modules.js library.js \
-                   manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyll; do
+          for f in index.html style.css auth.js bdd.js app.js modules.js classe.js \
+           grammaire.js library.js manifest.json sw.js README.md 404.html \
+           robots.txt sitemap.xml .nojekyll; do
             test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
