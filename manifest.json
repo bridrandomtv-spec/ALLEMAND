@@ -1,0 +1,92 @@
+{
+  "name": "برنامج الأصل — Allemand Prof. Kharif Ahmed",
+  "short_name": "الألمانية 🇩🇪",
+  "description": "منصة تعليم اللغة الألمانية — السنة الثانية ثانوي · الوحدة 1 : Sich vorstellen",
+  "lang": "ar",
+  "dir": "rtl",
+  "scope": "./",
+  "start_url": "./index.html",
+  "id": "./index.html",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "categories": [
+    "education"
+  ],
+  "iarc_rating_id": "",
+  "screenshots": [
+    {
+      "src": "assets/prof.jpg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "الأستاذ خريف أحمد — منصة برنامج الأصل"
+    }
+  ],
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "الحصص",
+      "short_name": "الحصص",
+      "description": "الوحدة 1 — 8 حصص",
+      "url": "./index.html#seances",
+      "icons": [
+        {
+          "src": "assets/logo.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "الفرض",
+      "short_name": "الفرض",
+      "description": "فرض الوحدة 1 (/20)",
+      "url": "./index.html#devoir",
+      "icons": [
+        {
+          "src": "assets/logo.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "الأستاذ الافتراضي",
+      "short_name": "الأستاذ",
+      "description": "تحدّث مع الأستاذ خريف",
+      "url": "./index.html#prof",
+      "icons": [
+        {
+          "src": "assets/logo.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
