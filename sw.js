@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v1.0.0';
+const VERSION = 'dz-de-v2.0.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -14,12 +14,25 @@ const PRECACHE = [
   './',
   './index.html',
   './style.css',
+  './auth.js',
+  './bdd.js',
   './app.js',
   './modules.js',
+  './library.js',
   './manifest.json',
+  './404.html',
   './assets/corriges.json',
   './assets/prof.jpg',
   './assets/logo.png'
+];
+
+/* Base de données : 684 fiches, chargées en arrière-plan après l'installation */
+const BDD_FILES = [
+  './assets/bdd/referentiel.json',
+  './assets/bdd/devoirs.json',
+  './assets/bdd/compositions.json',
+  './assets/bdd/bac.json',
+  './assets/bdd/annales.json'
 ];
 
 /* Polices CDN (optionnel — échec toléré hors-ligne) */
@@ -43,6 +56,12 @@ self.addEventListener('install', event => {
       cdnCache.add(new Request(url, { mode: 'no-cors' })).catch(() => null)
     ));
     await self.skipWaiting();
+    /* Pré-téléchargement différé de la base de données (684 fiches) */
+    setTimeout(() => {
+      caches.open(CACHE_ASSETS).then(c => {
+        BDD_FILES.forEach(u => c.add(new Request(u, { cache: 'reload' })).catch(() => null));
+      });
+    }, 4000);
   })());
 });
 
