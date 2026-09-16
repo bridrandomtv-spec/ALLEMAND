@@ -162,12 +162,17 @@
             (it.num_global >= (D.items||[]).length ? ' disabled' : '') + '>‹ التالية</button>' +
         '</div>' +
         '<div class="fiche-src" style="margin-top:13px;text-align:center">🔖 ' + esc(it.id) +
-          ' · ' + esc(it.chapitre) + ' · règle ' + it.ordre + '/' + it.chapitre_nombre() + '</div>' +
+          ' · ' + esc(it.chapitre) + ' · règle ' + it.ordre + '/' + nbChap(it.chapitre) + '</div>' +
       '</div>';
     m.hidden = false; document.body.style.overflow = 'hidden';
     const pr = $('#gPrint'); if(pr) pr.addEventListener('click', () => window.print());
     const pv = $('#gPrev'); if(pv && !pv.disabled) pv.addEventListener('click', () => nav(it.num_global - 1));
     const nx = $('#gNext'); if(nx && !nx.disabled) nx.addEventListener('click', () => nav(it.num_global + 1));
+  }
+
+  function nbChap(id){
+    const c = CH.filter(x => x.id === id)[0];
+    return c ? c.nombre : (D.items || []).filter(x => x.chapitre === id).length;
   }
 
   function nav(n){
@@ -186,12 +191,6 @@
     if(ch){ chap = (chap === ch.dataset.chap) ? 'tous' : ch.dataset.chap; render(); return; }
     const g = ev.target.closest('[data-regle]');
     if(g){ fiche(g.dataset.regle); return; }
-  });
-
-  /* petit correctif : nombre de règles du chapitre */
-  document.addEventListener('DOMContentLoaded', () => {});
-  Object.defineProperty(Object.prototype, 'chapitre_nombre', {
-    value: function(){ return 0; }, enumerable: false, configurable: true, writable: true
   });
 
   document.addEventListener('dz:view', e => { if(e.detail === 'grammaire') boot(); });
