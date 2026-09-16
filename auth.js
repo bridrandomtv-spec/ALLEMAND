@@ -45,8 +45,16 @@ const AUTH = (function(){
         wilaya:'Bouira', code_wilaya:'10', classe:'2AS-3',
         points:850, created:now(), lastLogin:null
       };
-      wr(K_USERS, users);
     }
+    if(!users['prof']){
+      users['prof'] = {
+        user:'prof', pass:hash('1234'), nom:'الأستاذ خريف أحمد', mail:'kharif@deutsch-dz.edu',
+        role:'prof', niveau:'2AS', filiere:'Lettres et Langues',
+        wilaya:'Bouira', code_wilaya:'10', classe:'2AS-3',
+        points:0, created:now(), lastLogin:null
+      };
+    }
+    wr(K_USERS, users);
     return users;
   }
 
