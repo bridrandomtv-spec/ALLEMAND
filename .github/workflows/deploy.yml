@@ -15,7 +15,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # ══════════════ 1. VALIDATION ══════════════
   validate:
     name: Validation structurelle & pédagogique
     runs-on: ubuntu-latest
@@ -28,223 +27,239 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install esprima + pyyaml
+      - name: Installer esprima + pyyaml
         run: pip install --quiet esprima pyyaml
 
       - name: Vérifier les fichiers requis
         run: |
           set -e
           for f in index.html style.css auth.js bdd.js unite2.js app.js modules.js classe.js \
-           grammaire.js library.js manifest.json sw.js README.md 404.html \
-           robots.txt sitemap.xml .nojekyll; do
-            test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
+                   grammaire.js library.js manifest.json sw.js README.md 404.html \
+                   robots.txt sitemap.xml .nojekyll; do
+              test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
                    assets/bdd/referentiel.json assets/bdd/devoirs.json \
-                   assets/bdd/compositions.json assets/bdd/bac.json assets/bdd/annales.json \
-                   assets/bdd/grammaire.json assets/bdd/classe.json; do
-            test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
+                   assets/bdd/compositions.json assets/bdd/bac.json \
+                   assets/bdd/annales.json assets/bdd/grammaire.json \
+                   assets/bdd/classe.json; do
+              test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ Structure complète (14 fichiers racine + 8 assets)"
+          echo "✅ 17 fichiers racine + 10 assets présents"
 
       - name: Valider le YAML
-        run: python -c "import yaml,glob;[yaml.safe_load(open(f,encoding='utf-8')) for f in glob.glob('.github/workflows/*.yml')];print('✅ YAML valide')"
+        run: |
+          python - <<'PY'
+          import glob, yaml
+          for f in glob.glob('.github/workflows/*.yml'):
+              yaml.safe_load(open(f, encoding='utf-8'))
+              print('✅ YAML valide :', f)
+          PY
 
       - name: Valider les JSON
         run: |
           python - <<'PY'
           import json
-          for f in ("manifest.json", "assets/corriges.json"):
-              json.load(open(f, encoding="utf-8"))
-              print("✅", f)
+          for f in ('manifest.json', 'assets/corriges.json'):
+              json.load(open(f, encoding='utf-8'))
+              print('✅', f)
           PY
 
       - name: Valider la base de données (684 fiches)
         run: |
           python - <<'PY'
-          import json, os, sys
+          import json, os, sys, re
           fails = []
-          ref = json.load(open("assets/bdd/referentiel.json", encoding="utf-8"))
-          ritems = ref.get("items", {})
+          ref = json.load(open('assets/bdd/referentiel.json', encoding='utf-8'))
+          ritems = ref.get('items', {})
           if not isinstance(ritems, dict):
-              fails.append("referentiel.json : 'items' doit etre un objet")
-          for cle in ("wilayas", "niveaux", "filieres", "types",
-                      "unites_2AS", "unites_3AS", "annees_scolaires", "difficulte"):
+              fails.append('referentiel.json : items doit etre un objet')
+          for cle in ('wilayas', 'niveaux', 'filieres', 'types', 'unites_2AS',
+                      'unites_3AS', 'annees_scolaires', 'difficulte'):
               if cle not in ritems:
                   fails.append(f"referentiel.json : cle '{cle}' absente")
-          if len(ritems.get("wilayas", [])) != 58:
+          if len(ritems.get('wilayas', [])) != 58:
               fails.append(f"referentiel : {len(ritems.get('wilayas', []))}/58 wilayas")
-
           total, types, wil = 0, {}, set()
-          REQ = ("id","type","titre","annee_scolaire","niveau","wilaya","unite",
-                 "bareme","duree_minutes","sujet")
-          for f in ("devoirs","compositions","bac","annales"):
-              p = f"assets/bdd/{f}.json"
+          REQ = ('id', 'type', 'titre', 'annee_scolaire', 'niveau', 'wilaya',
+                 'unite', 'bareme', 'duree_minutes', 'sujet')
+          for f in ('devoirs', 'compositions', 'bac', 'annales'):
+              p = f'assets/bdd/{f}.json'
               if not os.path.exists(p):
-                  fails.append(f"{p} manquant"); continue
-              items = json.load(open(p, encoding="utf-8"))["items"]
+                  fails.append(f'{p} manquant'); continue
+              items = json.load(open(p, encoding='utf-8'))['items']
               total += len(items); types[f] = len(items)
               for it in items:
-                  miss = [k for k in REQ if k not in it or it[k] in (None, "")]
+                  miss = [k for k in REQ if k not in it or it[k] in (None, '')]
                   if miss:
                       fails.append(f"{it.get('id','?')} : champs manquants {miss}"); break
-                  if it["bareme"] != 20:
-                      fails.append(f"{it['id']} : bareme {it['bareme']} != 20"); break
-                  if sum(x["points"] for x in it["parties"]) != 20:
+                  if it['bareme'] != 20:
+                      fails.append(f"{it['id']} : bareme != 20"); break
+                  if sum(x['points'] for x in it['parties']) != 20:
                       fails.append(f"{it['id']} : parties != 20"); break
-                  if it["corrige_inclus"] and not it.get("corrige"):
+                  if it['corrige_inclus'] and not it.get('corrige'):
                       fails.append(f"{it['id']} : corrige_inclus sans contenu"); break
-                  wil.add(it["code_wilaya"])
+                  wil.add(it['code_wilaya'])
           if total < 600:
-              fails.append(f"corpus trop petit : {total} fiches")
+              fails.append(f'corpus trop petit : {total} fiches')
           if len(wil) < 58:
-              fails.append(f"{len(wil)}/58 wilayas couvertes")
-          print("   repartition :", types)
-          print(f"✅ {total} fiches · {len(wil)}/58 wilayas")
+              fails.append(f'{len(wil)}/58 wilayas couvertes')
+          print('   repartition :', types)
+          print(f'✅ {total} fiches · {len(wil)}/58 wilayas')
+          gm = json.load(open('assets/bdd/grammaire.json', encoding='utf-8'))
+          if len(gm['items']) < 25:
+              fails.append(f"grammaire : {len(gm['items'])} regles < 25")
+          if len(gm['chapitres']) != 4:
+              fails.append(f"grammaire : {len(gm['chapitres'])} chapitres != 4")
+          for r in gm['items']:
+              for k in ('id', 'titre_de', 'titre_ar', 'explication', 'exemples',
+                        'erreur_courante', 'astuce', 'cefr'):
+                  if not r.get(k):
+                      fails.append(f"regle {r.get('id')} : champ '{k}' vide"); break
+              if len(r.get('exemples') or []) < 4:
+                  fails.append(f"regle {r['id']} : moins de 4 exemples"); break
+          print(f"✅ Grammaire : {len(gm['items'])} regles · {len(gm['chapitres'])} chapitres · CEFR A1-B2")
+          cv = json.load(open('assets/bdd/classe.json', encoding='utf-8'))
+          for k in ('sections', 'jours', 'jours_de', 'emploi', 'lecons',
+                    'presence', 'notes', 'messages', 'profs', 'prochaine'):
+              if k not in cv:
+                  fails.append(f"classe.json : cle '{k}' absente")
+          if len(cv.get('sections', [])) != 5:
+              fails.append(f"classe : {len(cv.get('sections', []))} sections != 5")
+          if len(cv.get('lecons', [])) < 6:
+              fails.append('classe : moins de 6 lecons')
+          if len(cv.get('profs', [])) < 5:
+              fails.append('classe : moins de 5 professeurs')
+          for l in cv.get('lecons', []):
+              for k in ('n', 'de', 'ar', 'objectifs', 'vocabulaire', 'grammaire', 'statut'):
+                  if k not in l:
+                      fails.append(f"lecon {l.get('n')} : '{k}' absent")
+          print(f"✅ Classe virtuelle : {len(cv['sections'])} sections · {len(cv['lecons'])} lecons · "
+                f"{len(cv['presence'])} presences · {len(cv['notes'])} notes · "
+                f"{len(cv['messages'])} messages · {len(cv['profs'])} professeurs")
           if fails:
-              print("::error::" + " | ".join(fails[:5])); sys.exit(1)
+              print('::error::' + ' | '.join(fails[:6])); sys.exit(1)
           PY
 
       - name: Valider la syntaxe JavaScript (esprima)
         run: |
           python - <<'PY'
           import esprima
-          for f in ("auth.js", "bdd.js", "unite2.js", "app.js", "modules.js", "classe.js", "grammaire.js", "library.js", "sw.js"):
-              esprima.parseScript(open(f, encoding="utf-8").read())
-              print("✅", f)
+          FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'app.js', 'modules.js',
+                      'classe.js', 'grammaire.js', 'library.js', 'sw.js')
+          for f in FICHIERS:
+              esprima.parseScript(open(f, encoding='utf-8').read())
+              print('✅', f)
+          print(f'✅ {len(FICHIERS)}/9 fichiers JS valides')
           PY
 
-      - name: Contrôle pédagogique & PWA
+      - name: Contrôle pédagogique, multi-unités & PWA
         run: |
           python - <<'PY'
           import json, re, sys
           fails = []
-
-          c = json.load(open("assets/corriges.json", encoding="utf-8"))
-          dv = c["devoir_unite_1"]
-          if sum(p["points"] for p in dv["parties"]) != dv["total"]:
-              fails.append("bareme corriges.json incoherent")
-          if len(c["seances"]) != 8:
-              fails.append(f"{len(c['seances'])} seances au lieu de 8")
-
-          app = open("app.js", encoding="utf-8").read()
-          if app.count("{ n:") < 8:            fails.append("app.js : moins de 8 seances")
-          if "total:20" not in app:            fails.append("app.js : devoir /20 absent")
-          if "de-DE" not in app:               fails.append("app.js : TTS allemand absent")
-          if "window.DZ" not in app:           fails.append("app.js : API window.DZ absente")
-          if "function bootGate" not in app:   fails.append("app.js : portail de connexion absent")
-          if "function renderCompte" not in app: fails.append("app.js : vue compte absente")
-
-          mod = open("modules.js", encoding="utf-8").read()
-          for k in ("renderSim", "renderParents", "45 * 60", "10 * 60"):
-              if k not in mod: fails.append(f"modules.js : '{k}' absent")
-
-          cl = open("classe.js", encoding="utf-8").read()
-          for k in ("function vueEmploi", "function vueLecons", "function vuePresence",
-                    "function vueNotes", "function vueMessages", "function vueProfs",
-                    "function rejoindre", "assets/bdd/classe.json"):
-              if k not in cl: fails.append(f"classe.js : '{k}' absent")
-
-          gr = open("grammaire.js", encoding="utf-8").read()
-          for k in ("function filtrer", "function carte", "function fiche",
-                    "assets/bdd/grammaire.json"):
-              if k not in gr: fails.append(f"grammaire.js : '{k}' absent")
-          if "Object.prototype" in gr:
+          app = open('app.js', encoding='utf-8').read()
+          mod = open('modules.js', encoding='utf-8').read()
+          u2  = open('unite2.js', encoding='utf-8').read()
+          cl  = open('classe.js', encoding='utf-8').read()
+          gr  = open('grammaire.js', encoding='utf-8').read()
+          bdd = open('bdd.js', encoding='utf-8').read()
+          lib = open('library.js', encoding='utf-8').read()
+          au  = open('auth.js', encoding='utf-8').read()
+          sw  = open('sw.js', encoding='utf-8').read()
+          html = open('index.html', encoding='utf-8').read()
+          man = json.load(open('manifest.json', encoding='utf-8'))
+          cor = json.load(open('assets/corriges.json', encoding='utf-8'))
+          dv = cor['devoir_unite_1']
+          if sum(p['points'] for p in dv['parties']) != dv['total']:
+              fails.append('bareme corriges.json incoherent')
+          if len(cor['seances']) != 8:
+              fails.append(f"{len(cor['seances'])} seances au lieu de 8")
+          for k, v in (('total:20', app), ('de-DE', app), ('window.DZ', app),
+                       ('function bootGate', app), ('function renderCompte', app),
+                       ('function selectUnite', app), ('function loadSeances', app),
+                       ('function uniteSelector', app), ('function paintUniteHead', app)):
+              if k not in v:
+                  fails.append(f'app.js : {k} absent')
+          if app.count('{ n:') < 8:
+              fails.append('app.js : moins de 8 seances U1')
+          if app.count('load(LS.seances') != 0:
+              fails.append('app.js : reste des load(LS.seances) non migres')
+          if 'get DEVOIR(){ return DEVOIR; }' not in app:
+              fails.append('app.js : DEVOIR non expose en getter (multi-unites casse)')
+          if 'get SEANCES(){ return SEANCES; }' not in app:
+              fails.append('app.js : SEANCES non expose en getter')
+          if not re.search(r'^let SEANCES = ', app, re.M):
+              fails.append('app.js : SEANCES doit etre commutable (let)')
+          for k in ('renderSim', 'renderParents', '45 * 60', '10 * 60', 'DZ.loadSeances()'):
+              if k not in mod:
+                  fails.append(f"modules.js : '{k}' absent")
+          if 'new Proxy({}' not in mod:
+              fails.append('modules.js : DEVOIR dynamique (Proxy) absent')
+          for k in ('SEANCES_U2', 'DEVOIR_U2', 'CORRIGE_U2', 'window.UNITE2',
+                    'Possessivartikel', 'Adjektive', 'gefallen',
+                    'Die Familie Sommer', 'Textproduktion', 'Konsolidierung'):
+              if k not in u2:
+                  fails.append(f"unite2.js : '{k}' absent")
+          if u2.count('{ n:') < 8:
+              fails.append(f"unite2.js : {u2.count(chr(123) + ' n:')} seances < 8")
+          parts = re.findall(r"\{\s*id:'(I|II|III)',\s*t:", u2)
+          if len(parts) != 3:
+              fails.append(f'unite2.js : devoir U2 a {len(parts)} parties au lieu de 3')
+          for k in ('function vueEmploi', 'function vueLecons', 'function vuePresence',
+                    'function vueNotes', 'function vueMessages', 'function vueProfs',
+                    'function rejoindre', 'assets/bdd/classe.json'):
+              if k not in cl:
+                  fails.append(f"classe.js : '{k}' absent")
+          for k in ('function filtrer', 'function carte', 'function fiche',
+                    'assets/bdd/grammaire.json'):
+              if k not in gr:
+                  fails.append(f"grammaire.js : '{k}' absent")
+          if 'Object.prototype' in gr:
               fails.append("grammaire.js : pollution d'Object.prototype interdite")
-
-          bdd = open("bdd.js", encoding="utf-8").read()
-          for k in ("function normalise", "function search", "function pages", "assets/bdd/"):
-              if k not in bdd: fails.append(f"bdd.js : '{k}' absent")
-
-          lib = open("library.js", encoding="utf-8").read()
-          for k in ("function openFiche", "function paintKPI", "dz:view"):
-              if k not in lib: fails.append(f"library.js : '{k}' absent")
-
-          au = open("auth.js", encoding="utf-8").read()
-          for k in ("function login", "function signup", "SECTIONS", "hash("):
-              if k not in au: fails.append(f"auth.js : '{k}' absent")
-
-          sw = open("sw.js", encoding="utf-8").read()
-          for k in ("'install'", "'activate'", "'fetch'", "dz-de-v2"):
-              if k not in sw: fails.append(f"sw.js : {k} absent")
-
-          man = json.load(open("manifest.json", encoding="utf-8"))
-          if man.get("dir") != "rtl":     fails.append("manifest : dir != rtl")
-          if not man.get("icons"):        fails.append("manifest : aucune icone")
-          if len(man.get("shortcuts", [])) < 4: fails.append("manifest : moins de 4 raccourcis")
-
-          html = open("index.html", encoding="utf-8").read()
-          if html.count('data-view=') != 10: fails.append(f"index.html : {html.count('data-view=')} vues != 10")
-          if 'id="gate"' not in html:      fails.append("index.html : portail #gate absent")
-          if 'id="shell"' not in html:     fails.append("index.html : app shell absent")
+          for k in ('function normalise', 'function search', 'function pages', 'assets/bdd/'):
+              if k not in bdd:
+                  fails.append(f"bdd.js : '{k}' absent")
+          for k in ('function openFiche', 'function paintKPI', 'dz:view'):
+              if k not in lib:
+                  fails.append(f"library.js : '{k}' absent")
+          for k in ('function login', 'function signup', 'SECTIONS', 'hash('):
+              if k not in au:
+                  fails.append(f"auth.js : '{k}' absent")
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v2.2.0',
+                    './unite2.js', './classe.js', './grammaire.js'):
+              if k not in sw:
+                  fails.append(f'sw.js : {k} absent')
+          if man.get('dir') != 'rtl':
+              fails.append('manifest : dir != rtl')
+          if not man.get('icons'):
+              fails.append('manifest : aucune icone')
+          if len(man.get('shortcuts', [])) < 4:
+              fails.append('manifest : moins de 4 raccourcis')
+          if html.count('data-view=') != 10:
+              fails.append(f"index.html : {html.count('data-view=')} vues != 10")
+          if 'id="gate"' not in html:
+              fails.append('index.html : portail #gate absent')
+          if 'id="shell"' not in html:
+              fails.append('index.html : app shell absent')
           ordre = re.findall(r'<script src="([^"]+)"', html)
-          if ordre != ["auth.js","bdd.js","unite2.js","app.js","modules.js","classe.js","grammaire.js","library.js"]:
-              fails.append(f"index.html : ordre des scripts {ordre}")
-          for police in ("amiri","tajawal","reem-kufi","cormorant-garamond","inter"):
-              if police not in html: fails.append(f"index.html : police '{police}' absente")
-
+          attendu = ['auth.js', 'bdd.js', 'unite2.js', 'app.js', 'modules.js',
+                     'classe.js', 'grammaire.js', 'library.js']
+          if ordre != attendu:
+              fails.append(f'index.html : ordre des scripts {ordre}')
+          for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
+              if police not in html:
+                  fails.append(f"index.html : police '{police}' absente")
           if fails:
-              print("::error::" + "; ".join(fails)); sys.exit(1)
-          u2 = open("unite2.js", encoding="utf-8").read()
-          if "SEANCES_U2" not in u2:      fails.append("unite2.js : SEANCES_U2 absent")
-          if "DEVOIR_U2" not in u2:       fails.append("unite2.js : DEVOIR_U2 absent")
-          if "CORRIGE_U2" not in u2:      fails.append("unite2.js : CORRIGE_U2 absent")
-          if "window.UNITE2" not in u2:   fails.append("unite2.js : export window.UNITE2 absent")
-          if u2.count("{ n:") < 8:        fails.append(f"unite2.js : {u2.count('{ n:')} seances < 8")
-          import re as _re
-          _p = _re.findall(r"\{\s*id:'(I|II|III)',\s*t:", u2)
-          if len(_p) != 3:
-              fails.append(f"unite2.js : devoir U2 a {len(_p)} parties au lieu de 3")
-          for k in ("Possessivartikel", "Adjektive", "gefallen", "Die Familie Sommer",
-                    "Textproduktion", "Konsolidierung"):
-              if k not in u2: fails.append(f"unite2.js : '{k}' absent")
-
-          if "get DEVOIR(){ return DEVOIR; }" not in app:
-              fails.append("app.js : DEVOIR non expose en getter (multi-unites casse)")
-          if "function selectUnite" not in app:
-              fails.append("app.js : selectUnite absent")
-          if "function loadSeances" not in app:
-              fails.append("app.js : stockage par unite absent")
-          if app.count("load(LS.seances") != 0:
-              fails.append("app.js : reste des load(LS.seances) non migrés")
-
-                    print("✅ Bareme 8+8+4 = 20 · 8 seances")
-          print("✅ Portail de connexion + 8 vues + ordre des scripts")
-          print("✅ 5 polices (Amiri/Tajawal/Reem Kufi/Cormorant/Inter)")
-          print("✅ BDD : moteur + UI + referentiel")
-          print("✅ PWA v2 : manifest dir=rtl, 4 raccourcis, Service Worker")
-
-          gm = json.load(open("assets/bdd/grammaire.json", encoding="utf-8"))
-          if len(gm["items"]) < 25:
-              fails.append(f"grammaire : {len(gm['items'])} regles < 25")
-          if len(gm["chapitres"]) != 4:
-              fails.append(f"grammaire : {len(gm['chapitres'])} chapitres != 4")
-          for r in gm["items"]:
-              for k in ("id","titre_de","titre_ar","explication","exemples","erreur_courante","astuce","cefr"):
-                  if not r.get(k):
-                      fails.append(f"regle {r.get('id')} : champ '{k}' vide"); break
-              if not r.get("exemples") or len(r["exemples"]) < 4:
-                  fails.append(f"regle {r['id']} : moins de 4 exemples"); break
-          print(f"✅ Grammaire : {len(gm['items'])} regles · {len(gm['chapitres'])} chapitres · CEFR A1→B2")
-
-          cv = json.load(open("assets/bdd/classe.json", encoding="utf-8"))
-          for k in ("sections","jours","jours_de","emploi","lecons","presence","notes","messages","profs","prochaine"):
-              if k not in cv: fails.append(f"classe.json : cle '{k}' absente")
-          if len(cv.get("sections", [])) != 5:
-              fails.append(f"classe : {len(cv.get('sections', []))} sections != 5")
-          if len(cv.get("lecons", [])) < 6:
-              fails.append("classe : moins de 6 lecons")
-          if len(cv.get("profs", [])) < 5:
-              fails.append("classe : moins de 5 professeurs")
-          for l in cv.get("lecons", []):
-              for k in ("n","de","ar","objectifs","vocabulaire","grammaire","statut"):
-                  if k not in l: fails.append(f"lecon {l.get('n')} : '{k}' absent")
-          print(f"✅ Classe virtuelle : {len(cv['sections'])} sections · {len(cv['lecons'])} lecons · "
-                f"{len(cv['presence'])} presences · {len(cv['notes'])} notes · "
-                f"{len(cv['messages'])} messages · {len(cv['profs'])} professeurs")
+              print('::error::' + '; '.join(fails)); sys.exit(1)
+          print('✅ Bareme 8+8+4 = 20 · 8 seances U1 + 8 seances U2')
+          print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
+          print('✅ Portail de connexion + 10 vues + ordre des 8 scripts')
+          print('✅ 5 polices (Amiri/Tajawal/Reem Kufi/Cormorant/Inter)')
+          print('✅ Classe virtuelle + bibliotheque + BDD 684 fiches')
+          print('✅ PWA v2.2 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
-  # ══════════════ 2. DÉPLOIEMENT ══════════════
   deploy:
     name: Déploiement GitHub Pages
     needs: validate
