@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="برنامج الأصل — منصة تعليم اللغة الألمانية للأستاذ خريف أحمد. السنة الثانية ثانوي.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>🇩🇪 برنامج الأصل — Prof. Kharif Ahmed</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/cairo@latest/arabic-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/cairo@latest/arabic-700-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/latin-700-normal.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="splash" class="splash">
+  <div class="splash-logo">🇩🇪</div>
+  <div class="splash-title">برنامج الأصل</div>
+  <div class="splash-sub">DEUTSCH-DZ · Prof. Kharif Ahmed</div>
+  <div class="splash-bar"><span></span></div>
+</div>
+
+<div id="offlineBanner" class="offline-banner" hidden>📴 وضع عدم الاتصال — تعمل المنصة من الذاكرة المحلية</div>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <button class="burger" id="btnBurger" aria-label="القائمة">☰</button>
+    <div class="brand">
+      <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'">
+      <div>
+        <div class="brand-t">برنامج الأصل</div>
+        <div class="brand-s">الرجوع إلى الأصل فضيلة</div>
+      </div>
+    </div>
+    <div class="topbar-act">
+      <span class="net-dot" id="netDot" title="حالة الاتصال"></span>
+      <button class="icon-btn" id="btnInstall" hidden title="تثبيت التطبيق">⬇️</button>
+      <button class="icon-btn" id="btnSound" title="النطق الصوتي">🔊</button>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+
+<main id="app">
+
+  <section data-view="accueil" class="view">
+    <div class="hero">
+      <div class="hero-badge">✨ الموسم الدراسي 2026/2025</div>
+      <h1>اللغة الألمانية<br><span class="grad">من الصفر إلى الاحتراف</span></h1>
+      <p class="hero-p">منصة تعليمية جزائرية 100% مبنية على <b>البرنامج الرسمي لوزارة التربية الوطنية</b>،
+      مع تجميع أفضل الفروض والاختبارات من ثانويات الوطن.</p>
+      <div class="hero-cta">
+        <button class="btn btn-p" data-go="seances">🚀 ابدأ التعلّم</button>
+        <button class="btn btn-g" data-go="devoir">📝 الفرض الأول</button>
+      </div>
+      <div class="hero-offer">
+        🎁 <b>عرض افتتاحي</b> — حصّة أولى مجانية &nbsp;·&nbsp; ⏰ ساري حتى <b>30 سبتمبر 2026</b> &nbsp;·&nbsp; ⚡ الأماكن محدودة
+      </div>
+    </div>
+
+    <div class="stats" id="statsHome"></div>
+
+    <div class="card">
+      <h2>👨‍🏫 الأستاذ خريف أحمد</h2>
+      <div class="prof">
+        <img src="assets/prof.jpg" alt="الأستاذ خريف أحمد" onerror="this.outerHTML='<div class=prof-ph>👨‍🏫</div>'">
+        <ul class="prof-list">
+          <li>🎓 15 سنة خبرة في التعليم الثانوي</li>
+          <li>🇩🇪 شهادة Goethe-Zertifikat C2</li>
+          <li>✍️ مؤلف كتاب «الألمانية بسهولة»</li>
+          <li>📊 98% نسبة نجاح في البكالوريا</li>
+        </ul>
+      </div>
+      <button class="btn btn-o btn-block" data-go="prof">💬 تحدّث مع الأستاذ الافتراضي</button>
+    </div>
+
+    <div class="grid2">
+      <div class="card mini" data-go="simulation">
+        <div class="mini-i">⏱️</div><h3>محاكاة الفرض</h3>
+        <p>وضع حقيقي 45 دقيقة أو مصغّر 10 دقائق، بتصحيح آلي فوري.</p>
+      </div>
+      <div class="card mini" data-go="parents">
+        <div class="mini-i">👨‍👩‍👧</div><h3>فضاء الأولياء</h3>
+        <p>تقرير أسبوعي + تواصل مباشر عبر واتساب.</p>
+      </div>
+    </div>
+
+    <div class="card contact">
+      <h2>📲 التسجيل والحجز</h2>
+      <p>ابعث على واتساب : <b>الاسم</b> + «حصّة ألماني مجانية»</p>
+      <a class="btn btn-w btn-block" href="https://wa.me/213555577931?text=%D8%AD%D8%B5%D8%A9%20%D8%A3%D9%84%D9%85%D8%A7%D9%86%D9%8A%20%D9%85%D8%AC%D8%A7%D9%86%D9%8A%D8%A9" target="_blank" rel="noopener">
+        💬 واتساب : 0555 57 79 31
+      </a>
+    </div>
+  </section>
+
+  <section data-view="seances" class="view" hidden>
+    <div class="page-head">
+      <h1>📚 الوحدة 1 : Sich vorstellen</h1>
+      <p>التعريف بالنفس — 8 حصص · 60 دقيقة لكل حصة</p>
+      <div class="progress-wrap"><div class="progress" id="progSeances"></div></div>
+      <div class="progress-lbl" id="progLbl"></div>
+    </div>
+    <div class="card" id="seancesGrid"></div>
+    <div id="seanceDetail"></div>
+  </section>
+
+  <section data-view="devoir" class="view" hidden>
+    <div class="page-head">
+      <h1>📝 فرض الوحدة 1 <span class="pill">/20</span></h1>
+      <p>Évaluation — الوحدة الأولى · المدة : 45 دقيقة</p>
+    </div>
+    <div id="devoirBody"></div>
+  </section>
+
+  <section data-view="simulation" class="view" hidden>
+    <div class="page-head">
+      <h1>⏱️ محاكاة الفرض</h1>
+      <p>🔒 النتيجة سرّية — تُحفظ على جهازك فقط (منهج الحصة 7)</p>
+    </div>
+    <div id="simBody"></div>
+  </section>
+
+  <section data-view="prof" class="view" hidden>
+    <div class="page-head">
+      <h1>🤖 الأستاذ الافتراضي</h1>
+      <p>🇩🇿 يتحدث العربية · 🇩🇪 يتحدث الألمانية · مدرَّب على محتوى الوحدة 1</p>
+    </div>
+    <div class="chat card">
+      <div class="chat-log" id="chatLog"></div>
+      <div class="chat-sug" id="chatSug"></div>
+      <form class="chat-in" id="chatForm">
+        <input type="text" id="chatInput" placeholder="اكتب سؤالك بالألمانية أو بالعربية…" autocomplete="off">
+        <button type="submit" class="btn btn-p">➤</button>
+      </form>
+    </div>
+  </section>
+
+  <section data-view="parents" class="view" hidden>
+    <div class="page-head">
+      <h1>👨‍👩‍👧 فضاء الأولياء</h1>
+      <p>متابعة أسبوعية شفّافة + تواصل مباشر</p>
+    </div>
+    <div id="parentsBody"></div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div>جميع الحقوق محفوظة © 2026 — الأستاذ خريف أحمد 🇩🇿</div>
+  <div class="foot-q">الرجوع إلى الأصل فضيلة — نرافق أبناءكم نحو النجاح... خطوة بخطوة</div>
+</footer>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="app.js"></script>
+<script src="modules.js"></script>
+</body>
+</html>
