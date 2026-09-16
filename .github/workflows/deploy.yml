@@ -191,7 +191,10 @@ jobs:
           if "CORRIGE_U2" not in u2:      fails.append("unite2.js : CORRIGE_U2 absent")
           if "window.UNITE2" not in u2:   fails.append("unite2.js : export window.UNITE2 absent")
           if u2.count("{ n:") < 8:        fails.append(f"unite2.js : {u2.count('{ n:')} seances < 8")
-          if u2.count("{ id:'I") != 3:    fails.append("unite2.js : devoir U2 != 3 parties")
+          import re as _re
+          _p = _re.findall(r"\{\s*id:'(I|II|III)',\s*t:", u2)
+          if len(_p) != 3:
+              fails.append(f"unite2.js : devoir U2 a {len(_p)} parties au lieu de 3")
           for k in ("Possessivartikel", "Adjektive", "gefallen", "Die Familie Sommer",
                     "Textproduktion", "Konsolidierung"):
               if k not in u2: fails.append(f"unite2.js : '{k}' absent")
