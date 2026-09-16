@@ -34,9 +34,15 @@ jobs:
         run: |
           set -e
           for f in index.html style.css auth.js bdd.js unite2.js app.js modules.js classe.js \
-                   grammaire.js library.js manifest.json sw.js README.md 404.html \
-                   robots.txt sitemap.xml .nojekyll; do
+           grammaire.js library.js prof.js manifest.json sw.js README.md 404.html \
+           robots.txt sitemap.xml .nojekyll; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
+          done
+          for a in assets/corriges.json assets/logo.png assets/prof.jpg \
+                   assets/bdd/referentiel.json assets/bdd/devoirs.json \
+                   assets/bdd/compositions.json assets/bdd/bac.json \
+                   assets/bdd/annales.json assets/bdd/grammaire.json \
+                   assets/bdd/classe.json assets/bdd/eleves.json; do       test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
                    assets/bdd/referentiel.json assets/bdd/devoirs.json \
@@ -150,7 +156,7 @@ jobs:
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print(f'✅ {len(FICHIERS)}/9 fichiers JS valides')
+          print(f'✅ {len(FICHIERS)}/10 fichiers JS valides')
           PY
 
       - name: Contrôle pédagogique, multi-unités & PWA
@@ -236,8 +242,8 @@ jobs:
               fails.append('manifest : aucune icone')
           if len(man.get('shortcuts', [])) < 4:
               fails.append('manifest : moins de 4 raccourcis')
-          if html.count('data-view=') != 10:
-              fails.append(f"index.html : {html.count('data-view=')} vues != 10")
+          if html.count('data-view=') != 11:
+              fails.append(f"index.html : {html.count('data-view=')} vues != 11")
           if 'id="gate"' not in html:
               fails.append('index.html : portail #gate absent')
           if 'id="shell"' not in html:
@@ -257,7 +263,9 @@ jobs:
           print('✅ Portail de connexion + 10 vues + ordre des 8 scripts')
           print('✅ 5 polices (Amiri/Tajawal/Reem Kufi/Cormorant/Inter)')
           print('✅ Classe virtuelle + bibliotheque + BDD 684 fiches')
-          print('✅ PWA v2.2 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ Tableau de bord professeur : 32 eleves, saisie I/II/III, readiness 10/7, CSV BOM')
+    print('✅ Role prof : allTabs() + isProf() + compte demo')
+    print('✅ PWA v2.3 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
