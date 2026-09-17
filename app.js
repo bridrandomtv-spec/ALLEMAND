@@ -237,7 +237,23 @@ const UNITES = [
   { n:12, de:'Umweltprobleme',               ar:'مشاكل البيئة', icon:'🌍', cecrl:'B2',
     niveau:'3AS', seances:(window.UNITE12 ? UNITE12.seances : []),
     devoir: (window.UNITE12 ? UNITE12.devoir  : null),
-    duree:  (window.UNITE12 && UNITE12.meta ? UNITE12.meta.duree_totale : 360) }
+    duree:  (window.UNITE12 && UNITE12.meta ? UNITE12.meta.duree_totale : 360) },
+  { n:13, de:'Gesundheit und Lebensweise',    ar:'الصحة ونمط الحياة',     icon:'🏥', cecrl:'B2',
+    niveau:'3AS', seances:(window.UNITE13 ? UNITE13.seances : []),
+    devoir: (window.UNITE13 ? UNITE13.devoir  : null),
+    duree:  (window.UNITE13 && UNITE13.meta ? UNITE13.meta.duree_totale : 360) },
+  { n:14, de:'Globalisierung',                ar:'العولمة',               icon:'🌐', cecrl:'B2',
+    niveau:'3AS', seances:(window.UNITE14 ? UNITE14.seances : []),
+    devoir: (window.UNITE14 ? UNITE14.devoir  : null),
+    duree:  (window.UNITE14 && UNITE14.meta ? UNITE14.meta.duree_totale : 360) },
+  { n:15, de:'Medienwelt',                    ar:'عالم الإعلام',          icon:'📰', cecrl:'B2',
+    niveau:'3AS', seances:(window.UNITE15 ? UNITE15.seances : []),
+    devoir: (window.UNITE15 ? UNITE15.devoir  : null),
+    duree:  (window.UNITE15 && UNITE15.meta ? UNITE15.meta.duree_totale : 360) },
+  { n:16, de:'Kultureller Dialog',            ar:'الحوار الثقافي',        icon:'🤝', cecrl:'B2',
+    niveau:'3AS', seances:(window.UNITE16 ? UNITE16.seances : []),
+    devoir: (window.UNITE16 ? UNITE16.devoir  : null),
+    duree:  (window.UNITE16 && UNITE16.meta ? UNITE16.meta.duree_totale : 360) }
 ];
 
 let SEANCES = UNITES[0].seances;
