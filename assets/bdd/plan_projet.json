@@ -1,0 +1,724 @@
+{
+ "_meta":{
+  "titre":"LinguaConnect — Plan de projet",
+  "sous_titre":"L'allemand pour les lycéens algériens 🇩🇿 🇩🇪",
+  "version":"1.0.0",
+  "date":"Septembre 2026",
+  "auteur":"Prof. Kharif Ahmed",
+  "confidentialite":"Document confidentiel — Tous droits réservés",
+  "statut":"Dossier de présentation (partenaires MEN · investisseurs · tuteurs)",
+  "badges":[
+   {
+    "icon":"🇩🇿",
+    "label":"Algérie"
+   },
+   {
+    "icon":"🇩🇪",
+    "label":"Deutsch"
+   },
+   {
+    "icon":"🎓",
+    "label":"Lycée"
+   }
+  ],
+  "sections":[
+   "contexte",
+   "public",
+   "programme",
+   "fonctionnalites",
+   "obstacles",
+   "tarifs",
+   "marche",
+   "concurrence",
+   "revenus",
+   "equipe",
+   "roadmap"
+  ],
+  "contact":{
+   "whatsapp":"+213555577931",
+   "whatsapp_affiche":"0555 57 79 31",
+   "email":"contact@deutsch-dz.edu",
+   "site":"https://bridrandomtv-spec.github.io/ALLEMAND/"
+  }
+ },
+ "contexte":{
+  "id":"contexte",
+  "num":"01",
+  "icon":"🌍",
+  "titre":"Contexte",
+  "texte":"En Algérie, l'allemand est enseigné comme 2ᵉ langue vivante à partir de la 2ᵉ année secondaire. Des milliers d'élèves à travers les 58 wilayas ont besoin de soutien pour réussir leur année et le BAC, mais l'accès aux cours particuliers reste limité et coûteux.",
+  "chiffres":[
+   {
+    "v":"58",
+    "l":"wilayas concernées",
+    "i":"📍"
+   },
+   {
+    "v":"150 000",
+    "l":"élèves concernés",
+    "i":"🎓"
+   },
+   {
+    "v":"1500-3000",
+    "l":"DA / heure de cours particulier",
+    "i":"💰"
+   },
+   {
+    "v":"2ᵉ LV",
+    "l":"statut de l'allemand au lycée",
+    "i":"📘"
+   }
+  ]
+ },
+ "probleme":{
+  "id":"probleme",
+  "num":"02",
+  "icon":"😟",
+  "titre":"Problème actuel",
+  "texte":"Manque de professeurs d'allemand qualifiés, surtout dans les wilayas éloignées. Les cours particuliers sont chers (1500-3000 DA/heure) et limités aux grandes villes.",
+  "points":[
+   "Professeurs qualifiés concentrés dans les grandes villes",
+   "Cours particuliers à 1500-3000 DA/heure — inaccessibles pour la majorité",
+   "Aucun support aligné sur le programme officiel MEN",
+   "Pas de suivi pour les parents",
+   "Les élèves des wilayas du Sud n'ont aucune offre"
+  ]
+ },
+ "solution":{
+  "id":"solution",
+  "num":"03",
+  "icon":"💡",
+  "titre":"Notre solution",
+  "texte":"Plateforme 100 % en ligne, alignée sur le programme officiel du MEN, avec professeur virtuel bilingue 🇩🇿/🇩🇪, salle de classe en direct, banque de 684 documents authentiques et espace parents.",
+  "piliers":[
+   {
+    "icon":"📚",
+    "t":"Contenu officiel MEN",
+    "d":"6 unités × 8 séances pour la 2AS · 83 règles de grammaire · 68 sujets de BAC 2010→2026"
+   },
+   {
+    "icon":"🤖",
+    "t":"Professeur virtuel bilingue",
+    "d":"Explication en arabe d'abord, exemples allemands ensuite, correction automatique des phrases"
+   },
+   {
+    "icon":"📹",
+    "t":"Salle de classe en direct",
+    "d":"Chat de classe, tableau blanc, présence, agenda — 32 élèves par section"
+   },
+   {
+    "icon":"👨‍👩‍👧",
+    "t":"Espace parents",
+    "d":"Notes I/II/III, présence datée, rapport PDF, حصص القادمة, messages des professeurs"
+   },
+   {
+    "icon":"📴",
+    "t":"Fonctionne hors-ligne",
+    "d":"PWA installable · Service Worker · 13 fichiers JSON en cache différé"
+   },
+   {
+    "icon":"🔒",
+    "t":"Résultats confidentiels",
+    "d":"Aucune donnée nominative envoyée à un serveur — tout reste sur l'appareil"
+   }
+  ]
+ },
+ "public":{
+  "id":"public",
+  "num":"04",
+  "icon":"🎯",
+  "titre":"Public cible",
+  "segments":[
+   {
+    "icon":"🎓",
+    "t":"Élèves 2AS",
+    "n":"~90 000",
+    "d":"2ᵉ année secondaire — 6 unités du programme officiel, 3 trimestres"
+   },
+   {
+    "icon":"🏆",
+    "t":"Candidats au BAC",
+    "n":"~45 000",
+    "d":"3AS toutes filières — préparation intensive, archive 2010→2026"
+   },
+   {
+    "icon":"👨‍👩‍👧",
+    "t":"Parents",
+    "n":"~150 000",
+    "d":"Suivi transparent des résultats et de la présence"
+   },
+   {
+    "icon":"👨‍🏫",
+    "t":"Professeurs",
+    "n":"~2 000",
+    "d":"Tableau de bord de saisie, statistiques, export CSV"
+   },
+   {
+    "icon":"🏢",
+    "t":"Entreprises (B2B)",
+    "n":"—",
+    "d":"Formation linguistique corporate — contrats annuels"
+   }
+  ]
+ },
+ "programme":{
+  "id":"programme",
+  "num":"05",
+  "icon":"📘",
+  "titre":"Programme couvert",
+  "annees":[
+   {
+    "niveau":"2AS",
+    "statut":"✅ Livré",
+    "unites":6,
+    "seances":48,
+    "devoirs":6,
+    "detail":"Sich vorstellen · Familie und Freunde · Schule und Ausbildung · Alltag und Freizeit · Essen und Trinken · Reisen und Verkehr"
+   },
+   {
+    "niveau":"3AS",
+    "statut":"🔜 En préparation",
+    "unites":10,
+    "seances":80,
+    "devoirs":10,
+    "detail":"Persönlichkeit und Identität · Staatsbürgerschaft · Leben in der Gesellschaft · Wissenschaft und Technologie · Wirtschaft und Arbeit · Umweltprobleme · Gesundheit und Lebensweise · Globalisierung · Medienwelt · Kultureller Dialog"
+   },
+   {
+    "niveau":"BAC",
+    "statut":"✅ Livré",
+    "unites":20,
+    "seances":68,
+    "devoirs":68,
+    "detail":"Archive officielle 2010→2026 · 17 cycles · 4 sujets par année · 180 minutes · corrigés détaillés"
+   }
+  ],
+  "ressources":[
+   {
+    "v":"684",
+    "l":"documents authentiques",
+    "i":"🗂️"
+   },
+   {
+    "v":"83",
+    "l":"règles de grammaire",
+    "i":"📘"
+   },
+   {
+    "v":"48",
+    "l":"séances interactives 2AS",
+    "i":"📚"
+   },
+   {
+    "v":"68",
+    "l":"sujets de BAC",
+    "i":"🎓"
+   },
+   {
+    "v":"30",
+    "l":"questions de quiz",
+    "i":"🎯"
+   },
+   {
+    "v":"10",
+    "l":"devoirs officiels",
+    "i":"📄"
+   },
+   {
+    "v":"32",
+    "l":"élèves suivis",
+    "i":"👥"
+   },
+   {
+    "v":"58",
+    "l":"wilayas géolocalisées",
+    "i":"🗺️"
+   }
+  ]
+ },
+ "fonctionnalites":{
+  "id":"fonctionnalites",
+  "num":"06",
+  "icon":"⚙️",
+  "titre":"Fonctionnalités livrées",
+  "vues":16,
+  "onglets":15,
+  "scripts":19,
+  "fichiers":48,
+  "taille_mo":3.12,
+  "liste":[
+   {
+    "v":"🏠",
+    "t":"Accueil",
+    "d":"CV du professeur · méthodologie 4 étapes · programme officiel MEN · 2 citations"
+   },
+   {
+    "v":"📚",
+    "t":"الحصص",
+    "d":"6 unités × 8 séances · sélecteur d'unité · progression isolée par unité"
+   },
+   {
+    "v":"📹",
+    "t":"القاعة المباشرة",
+    "d":"Flux vidéo · chat IA · tableau 8 planches · présence 32 · agenda"
+   },
+   {
+    "v":"🏫",
+    "t":"القسم",
+    "d":"Emploi du temps · leçons · présence · notes · messages · professeurs"
+   },
+   {
+    "v":"📘",
+    "t":"القواعد",
+    "d":"83 règles · 5 chapitres · CEFR A1→B2 · narration 🔊 · recherche normalisée"
+   },
+   {
+    "v":"📄",
+    "t":"الفروض الرسمية",
+    "d":"10 devoirs · 10 lycées · onglets 📄/✅ · notation auto /20"
+   },
+   {
+    "v":"🗺️",
+    "t":"الإحصائيات",
+    "d":"Carte SVG 58 wilayas · donut · histogramme · heatmap · tableau triable"
+   },
+   {
+    "v":"🗂️",
+    "t":"المكتبة",
+    "d":"684 documents · 9 filtres · fiches détaillées"
+   },
+   {
+    "v":"📝",
+    "t":"الفرض",
+    "d":"Devoir de l'unité active · I/8 II/8 III/4 · corrigé officiel"
+   },
+   {
+    "v":"🎓",
+    "t":"البكالوريا",
+    "d":"68 sujets 2010→2026 · minuteur 180′ · readiness 10/7 · plan d'action"
+   },
+   {
+    "v":"🎯",
+    "t":"تمارين",
+    "d":"30 questions · 6 unités · séries de 5 · feedback + explication"
+   },
+   {
+    "v":"⏱️",
+    "t":"المحاكاة",
+    "d":"45′ ou 10′ · conditions réelles · verdict prêt/à consolider/non prêt"
+   },
+   {
+    "v":"🤖",
+    "t":"الأستاذ",
+    "d":"20 entrées · 19 sujets · 9 cas de référence validés · correction de phrases · TTS de-DE"
+   },
+   {
+    "v":"👨‍👩‍👧",
+    "t":"الأولياء",
+    "d":"Multi-enfants · examens · présence · rapport PDF/TXT · tarifs"
+   },
+   {
+    "v":"🧑‍🏫",
+    "t":"لوحة الأستاذ",
+    "d":"32 élèves · saisie I/II/III · histogramme · CSV BOM · journal d'audit"
+   },
+   {
+    "v":"⚙️",
+    "t":"حسابي",
+    "d":"Portail de connexion · 3 rôles · progression · paramètres"
+   }
+  ]
+ },
+ "obstacles":{
+  "id":"obstacles",
+  "num":"07",
+  "icon":"🚧",
+  "titre":"Obstacles et solutions concrètes",
+  "items":[
+   {
+    "icon":"🌐",
+    "t":"Connexion internet variable",
+    "d":"Dans les wilayas du Sud et les zones rurales, la connexion est parfois faible.",
+    "sol":[
+     "Mode hors-ligne (PWA + Service Worker)",
+     "Qualité vidéo adaptative",
+     "Téléchargement des contenus",
+     "Optimisation mobile data"
+    ]
+   },
+   {
+    "icon":"💰",
+    "t":"Pouvoir d'achat limité",
+    "d":"Les familles algériennes ont un budget restreint pour l'éducation.",
+    "sol":[
+     "Tarifs très bas (1500 DA/mois)",
+     "Bourses pour élèves méritants",
+     "Groupes pour réduire les coûts"
+    ]
+   },
+   {
+    "icon":"👨‍🏫",
+    "t":"Peu de professeurs qualifiés",
+    "d":"Offre d'enseignants d'allemand très inférieure à la demande.",
+    "sol":[
+     "Recrutement national",
+     "Formation de professeurs",
+     "Contenus pré-enregistrés",
+     "IA pour compléter"
+    ]
+   },
+   {
+    "icon":"💳",
+    "t":"Paiement en ligne",
+    "d":"Peu de familles ont une carte bancaire internationale.",
+    "sol":[
+     "CIB",
+     "Edahabia",
+     "BaridiMob",
+     "CCP",
+     "Paiement cash via points relais (Yalidine, ZR Express)"
+    ]
+   }
+  ]
+ },
+ "tarifs":{
+  "id":"tarifs",
+  "num":"08",
+  "icon":"💳",
+  "titre":"Tarifs et moyens de paiement",
+  "offres":[
+   {
+    "t":"الحصّة الواحدة",
+    "prix":"1 500 د.ج",
+    "duree":"60 دقيقة",
+    "populaire":false,
+    "inclus":[
+     "حصّة مباشرة",
+     "تصحيح الواجب",
+     "تقرير للولي"
+    ]
+   },
+   {
+    "t":"الباقة الشهرية",
+    "prix":"4 500 د.ج",
+    "duree":"4 حصص / شهر",
+    "populaire":true,
+    "inclus":[
+     "4 حصص مباشرة",
+     "فرضان شهريان",
+     "تقرير أسبوعي للولي",
+     "وصول كامل للمكتبة (684 وثيقة)"
+    ]
+   },
+   {
+    "t":"تحضير البكالوريا",
+    "prix":"12 000 د.ج",
+    "duree":"السنة كاملة",
+    "populaire":false,
+    "inclus":[
+     "24 حصّة",
+     "أرشيف BAC 2010→2026 (68 موضوعاً)",
+     "4 محاكيات بظروف حقيقية",
+     "متابعة فردية"
+    ]
+   }
+  ],
+  "paiement":[
+   "CIB",
+   "Edahabia",
+   "BaridiMob",
+   "CCP",
+   "نقداً عبر نقاط الاستلام"
+  ],
+  "comparaison":{
+   "marche":"1500-3000 DA / heure",
+   "nous":"1500 DA / mois (4 séances)",
+   "economie":"jusqu'à 87 %"
+  }
+ },
+ "marche":{
+  "id":"marche",
+  "num":"09",
+  "icon":"📈",
+  "titre":"Opportunités de marché",
+  "items":[
+   {
+    "icon":"📈",
+    "t":"Marché en croissance",
+    "d":"E-learning +15 %/an, demande post-COVID"
+   },
+   {
+    "icon":"🧠",
+    "t":"IA générative",
+    "d":"Correction phonétique, chatbots, personnalisation"
+   },
+   {
+    "icon":"🌍",
+    "t":"Marché francophone",
+    "d":"Zone sous-servie, forte demande Afrique/Canada"
+   },
+   {
+    "icon":"🏢",
+    "t":"B2B entreprises",
+    "d":"Formation linguistique corporate, gros contrats"
+   }
+  ],
+  "impact":[
+   {
+    "icon":"🎯",
+    "t":"Impact éducatif",
+    "d":"Améliorer les résultats au BAC allemand dans toute l'Algérie"
+   },
+   {
+    "icon":"💼",
+    "t":"Opportunités",
+    "d":"Ouvrir aux élèves les portes des études et carrières en Allemagne"
+   },
+   {
+    "icon":"🌍",
+    "t":"Rayonnement",
+    "d":"Renforcer les liens culturels et économiques Algérie-Allemagne"
+   }
+  ]
+ },
+ "concurrence":{
+  "id":"concurrence",
+  "num":"10",
+  "icon":"⚔️",
+  "titre":"Positionnement concurrentiel",
+  "table":[
+   {
+    "nom":"Preply",
+    "pays":"Ukraine / Global",
+    "modele":"Tuteurs 1-to-1 en vidéo"
+   },
+   {
+    "nom":"iTalki",
+    "pays":"Chine / Global",
+    "modele":"Tuteurs communautaires & pro"
+   },
+   {
+    "nom":"Cambly",
+    "pays":"USA",
+    "modele":"Conversation avec natifs anglais"
+   },
+   {
+    "nom":"Verbling",
+    "pays":"USA",
+    "modele":"Cours en direct avec pros"
+   },
+   {
+    "nom":"Lingoda",
+    "pays":"Allemagne",
+    "modele":"Classes en petits groupes"
+   },
+   {
+    "nom":"Busuu / OpenEnglish",
+    "pays":"Global",
+    "modele":"Cours structurés en vidéo"
+   }
+  ],
+  "comparaison":{
+   "colonnes":[
+    "Concurrents généralistes",
+    "Cours particuliers locaux",
+    "LinguaConnect"
+   ],
+   "lignes":[
+    {
+     "critere":"Aligné sur le programme MEN",
+     "v":[
+      "❌ لا",
+      "❌ لا",
+      "✅ نعم"
+     ]
+    },
+    {
+     "critere":"Prix accessible (≤ 1500 DA/mois)",
+     "v":[
+      "❌ لا",
+      "❌ لا",
+      "✅ نعم"
+     ]
+    },
+    {
+     "critere":"Explication en arabe",
+     "v":[
+      "❌ لا",
+      "✅ نعم",
+      "✅ نعم"
+     ]
+    },
+    {
+     "critere":"Fonctionne hors-ligne",
+     "v":[
+      "❌ لا",
+      "❌ لا",
+      "✅ نعم"
+     ]
+    },
+    {
+     "critere":"Espace parents + rapport PDF",
+     "v":[
+      "❌ لا",
+      "❌ لا",
+      "✅ نعم"
+     ]
+    },
+    {
+     "critere":"Archive BAC 2010→2026 corrigée",
+     "v":[
+      "❌ لا",
+      "⚠️ partiel",
+      "✅ نعم"
+     ]
+    },
+    {
+     "critere":"Expérience de l'élève",
+     "v":[
+      "🤖 آلية",
+      "مملة",
+      "🌟 ممتازة"
+     ]
+    }
+   ]
+  },
+  "avantage":"«الأستاذ خريف أحمد الذكي» = base de connaissances de ses réponses réelles + moteur qui comprend l'intention de l'élève + personnalité authentique (ses maximes, son style, son dialecte algérien)."
+ },
+ "revenus":{
+  "id":"revenus",
+  "num":"11",
+  "icon":"💰",
+  "titre":"Revenus prévisionnels",
+  "annees":[
+   {
+    "a":"Année 1",
+    "eleves":2000,
+    "ca_da":"36 M DA",
+    "ca_usd":"~250 000 $"
+   },
+   {
+    "a":"Année 2",
+    "eleves":10000,
+    "ca_da":"180 M DA",
+    "ca_usd":"~1.2 M $"
+   },
+   {
+    "a":"Année 3",
+    "eleves":30000,
+    "ca_da":"540 M DA",
+    "ca_usd":"~3.7 M $"
+   }
+  ],
+  "mensuel_annee1":[
+   1.2,
+   1.8,
+   2.4,
+   2.8,
+   3.0,
+   3.2,
+   2.6,
+   3.0,
+   3.4,
+   3.8,
+   4.2,
+   4.6
+  ],
+  "hypothese":"1500 DA/mois × 2000 élèves en année 1 → 36 M DA. Croissance ×5 puis ×3 (effet réseau + B2B + marché francophone)."
+ },
+ "equipe":{
+  "id":"equipe",
+  "num":"12",
+  "icon":"👥",
+  "titre":"Équipe nécessaire",
+  "sous_titre":"Une équipe réduite et pluridisciplinaire pour démarrer.",
+  "membres":[
+   {
+    "icon":"👨‍💼",
+    "t":"Fondateur / CEO",
+    "n":"1 personne",
+    "d":"Vision, partenariats MEN, financement"
+   },
+   {
+    "icon":"💻",
+    "t":"Développeur full-stack",
+    "n":"1-2 personnes",
+    "d":"Plateforme web + mobile, PWA, paiements"
+   },
+   {
+    "icon":"🎨",
+    "t":"Designer UX/UI",
+    "n":"1 personne",
+    "d":"Maquettes, identité visuelle, accessibilité"
+   },
+   {
+    "icon":"👨‍🏫",
+    "t":"Responsable pédagogique",
+    "n":"1 personne",
+    "d":"Alignement MEN, conception des séances, formation des tuteurs"
+   },
+   {
+    "icon":"📣",
+    "t":"Community manager",
+    "n":"1 personne",
+    "d":"Réseaux sociaux, recrutement des élèves, support"
+   },
+   {
+    "icon":"🧑‍🏫",
+    "t":"Tuteurs bêta",
+    "n":"20 personnes",
+    "d":"Premiers professeurs recrutés pour la phase pilote"
+   }
+  ]
+ },
+ "roadmap":{
+  "id":"roadmap",
+  "num":"13",
+  "icon":"🗓️",
+  "titre":"Prochaines étapes — 30 jours",
+  "sous_titre":"Voici les actions immédiates pour lancer le projet dans les 30 prochains jours.",
+  "etapes":[
+   {
+    "n":1,
+    "q":"Semaine 1-2",
+    "t":"Valider le business model",
+    "d":"Valider le business model, constituer l'équipe fondatrice, sécuriser le financement initial."
+   },
+   {
+    "n":2,
+    "q":"Mois 1",
+    "t":"Finaliser le produit",
+    "d":"Finaliser les maquettes UX/UI, choisir la stack technique, démarrer le développement."
+   },
+   {
+    "n":3,
+    "q":"Mois 2",
+    "t":"Recruter et pré-inscrire",
+    "d":"Recruter les 20 premiers tuteurs bêta, lancer la campagne de pré-inscription étudiants."
+   },
+   {
+    "n":4,
+    "q":"Mois 3",
+    "t":"Lancement bêta publique",
+    "d":"Lancement de la version bêta publique, collecte de feedback, itérations rapides."
+   }
+  ],
+  "verifications":[
+   {
+    "t":"Nom de domaine",
+    "d":"Vérifier linguaconnect.com sur OVH, Namecheap ou GoDaddy"
+   },
+   {
+    "t":"Marque déposée",
+    "d":"Consulter l'INPI (France) et l'EUIPO (Europe)"
+   },
+   {
+    "t":"Réseaux sociaux",
+    "d":"Disponibilité du handle sur Instagram, TikTok, LinkedIn"
+   },
+   {
+    "t":"Noms alternatifs",
+    "d":"LinguaLive · Tutoria · Speakly · Polyglot DZ · DeutschDZ"
+   }
+  ]
+ }
+}
