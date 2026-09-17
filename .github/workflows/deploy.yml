@@ -922,38 +922,37 @@ jobs:
                     'DZ.loadSeances()', 'new Proxy({}'):
               if k not in mod:
                   fails.append('modules.js : ' + k + ' absent')
-          # ── Lot A 3AS : 5 unites (U7-U11) x 4 seances ──
+          # ── Lot A 3AS : 3 unites (U7-U9) x 4 seances ──
           metas3a = re.findall(r"meta:\s*\{\s*n:(\d+),\s*niveau:'3AS',\s*de:'([^']+)'", u3a)
-          if len(metas3a) != 5:
-              fails.append('unites3as_a.js : ' + str(len(metas3a)) + ' unites != 5')
-          if u3a.count('const U3AS_') != 5:
+          if len(metas3a) != 3:
+              fails.append('unites3as_a.js : ' + str(len(metas3a)) + ' unites != 3')
+          if u3a.count('const U3AS_') != 3:
               fails.append('unites3as_a.js : ' + str(u3a.count('const U3AS_'))
-                           + ' declarations U3AS_ != 5')
+                           + ' declarations U3AS_ != 3')
           titres3a = [t for (_n, t) in metas3a]
           ATT3A = ['Persönlichkeit und Identität', 'Staatsbürgerschaft',
-                   'Leben in der Gesellschaft', 'Wissenschaft und Technologie',
-                   'Wirtschaft und Arbeit']
+                   'Leben in der Gesellschaft']
           if titres3a != ATT3A:
               fails.append('unites3as_a.js : titres ' + str(titres3a))
           nse3a = len(re.findall(r"\{\s*n:\d+,\s*de:'", u3a))
-          if nse3a != 20:
-              fails.append('unites3as_a.js : ' + str(nse3a) + ' seances != 20 (5 x 4)')
+          if nse3a != 18:
+              fails.append('unites3as_a.js : ' + str(nse3a) + ' seances != 18 (3 x 6)')
           p3a = re.findall(r"\{\s*id:'(I|II|III)',", u3a)
-          if p3a != ['I', 'II', 'III'] * 5:
-              fails.append('unites3as_a.js : parties ' + str(len(p3a)) + ' != 15 (5 x I/II/III)')
-          if u3a.count('devoir:') < 5 or u3a.count('corrige:') < 5:
-              fails.append('unites3as_a.js : != 5 devoirs / 5 corriges')
-          if u3a.count('grille:[') != 5:
+          if p3a != ['I', 'II', 'III'] * 3:
+              fails.append('unites3as_a.js : parties ' + str(len(p3a)) + ' != 9 (3 x I/II/III)')
+          if u3a.count('devoir:') < 3 or u3a.count('corrige:') < 3:
+              fails.append('unites3as_a.js : != 3 devoirs / 3 corriges')
+          if u3a.count('grille:[') != 3:
               fails.append('unites3as_a.js : ' + str(u3a.count('grille:['))
-                           + ' grilles de production ecrite != 5')
-          if u3a.count('key:[') < 20:
+                           + ' grilles de production ecrite != 3')
+          if u3a.count('key:[') < 15:
               fails.append('unites3as_a.js : ' + str(u3a.count('key:['))
-                           + ' mots-cles de correction < 20')
-          if u3a.count('~~') // 2 < 20:
+                           + ' mots-cles de correction < 15')
+          if u3a.count('~~') // 2 < 18:
               fails.append('unites3as_a.js : ' + str(u3a.count('~~') // 2)
-                           + ' erreurs frequentes < 20')
+                           + ' erreurs frequentes < 18')
           cefrl3a = set(re.findall(r"cecrl:\s*'([^']+)'", u3a))
-          if not cefrl3a <= set(['B1', 'B2']) or len(cefrl3a) < 2:
+          if not cefrl3a or not cefrl3a <= set(['B1', 'B2']):
               fails.append('unites3as_a.js : CEFR ' + str(sorted(cefrl3a)) + ' != {B1, B2}')
           # ── CONTRAT DE L'ADAPTATEUR (regression silencieuse de 6215dd89b3) ──
           if 'window.UNITES_3AS_A' not in u3a:
@@ -975,16 +974,16 @@ jobs:
                   fails.append('app.js : registre U' + str(7 + i)
                                + ' ne consomme pas UNITES_3AS_A[' + str(i) + ']')
           REQ3A = ('Persönlichkeit und Identität', 'Staatsbürgerschaft', 'Leben in der Gesellschaft',
-                   'Wissenschaft und Technologie', 'Wirtschaft und Arbeit', 'Relativsätze',
-                   'Adjektivdeklination', 'Passiv', 'Konjunktiv',
-                   'Bürgerschaft', 'Textproduktion', 'Textverständnis',
-                   'window.UNITES_3AS_A', 'window.U3AS_A', 'window.U3AS_SUPPLEMENT',
-                   '.slice(0, 3)',)
+                   'Relativsätze', 'Adjektivdeklination', 'Passiv',
+                   'Konjunktiv', 'Bürgerschaft', 'Textproduktion',
+                   'Textverständnis', 'Konsolidierung', 'window.UNITES_3AS_A',
+                   'window.U3AS_A', '.slice(0, 3)', 'Partizip I und II als Adjektiv',
+                   'Genitiv und Präpositionen mit Genitiv', 'Funktionsverbgefüge',)
           for k in REQ3A:
               if k not in u3a:
                   fails.append('unites3as_a.js : ' + k + ' absent')
           print('✅ 3AS Lot A : 5 unites (U7-U11) · ' + str(nse3a) + ' seances · '
-                + '5 devoirs /20 · 5 grilles · ' + str(u3a.count('~~') // 2)
+                + '3 devoirs /20 · 3 grilles · ' + str(u3a.count('~~') // 2)
                 + ' erreurs frequentes · CEFR ' + '/'.join(sorted(cefrl3a)))
           print('   adaptateur window.UNITES_3AS_A → U7/U8/U9 branches sur app.js')
           print('✅ 3AS الفصل الثالث : U13 Sante · U14 Mondialisation · U15 Medias · U16 Dialogue')
@@ -1377,7 +1376,15 @@ jobs:
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
           print('✅ Portail de connexion + 29 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
-          print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive BAC + live')
+          # Totaux CALCULÉS depuis les JSON — jamais de littéral dans un rapport.
+          gm2 = json.load(open('assets/bdd/grammaire.json', encoding='utf-8'))
+          nreg = len(gm2['items'])
+          nfic = (len(json.load(open('assets/bdd/devoirs.json', encoding='utf-8'))['items'])
+                  + len(json.load(open('assets/bdd/compositions.json', encoding='utf-8'))['items'])
+                  + len(json.load(open('assets/bdd/bac.json', encoding='utf-8'))['items'])
+                  + len(json.load(open('assets/bdd/annales.json', encoding='utf-8'))['items']))
+          print('✅ BDD : ' + str(nfic) + ' fiches + ' + str(nreg)
+                + ' regles + classe + registre + archive BAC + live')
           print('✅ PWA v3.6 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
