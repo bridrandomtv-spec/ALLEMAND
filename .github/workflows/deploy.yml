@@ -35,7 +35,7 @@ jobs:
           set -e
           for f in index.html style.css auth.js bdd.js unite2.js unite3.js unite4.js \
                    unite5.js unite6.js app.js modules.js live.js classe.js grammaire.js \
-                   examen.js officiels.js stats.js prof.js parents.js library.js \
+                   examen.js officiels.js stats.js quiz.js prof.js parents.js library.js \
                    manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyll; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
@@ -49,7 +49,7 @@ jobs:
                    assets/bdd/wilayas_geo.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 27 fichiers racine + 16 assets présents"
+          echo "✅ 28 fichiers racine + 16 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -430,6 +430,7 @@ jobs:
           som = sum(x['note'] * (x['coef'] or 1) for x in enf[0]['examens'])
           cof = sum((x['coef'] or 1) for x in enf[0]['examens'])
           mp = round(som / cof, 2) if cof else 0
+          print('✅ Quiz interactif : 30 questions, 6 unites, series de 5, feedback immediat')
           print('✅ Moteur IA : 9 cas de reference du professeur + estCopie + texte Lena officiel')
           print('✅ Statistiques nationales : carte 58 wilayas, 6 onglets, heatmap, BAC')
           print('✅ Devoirs officiels : 10 devoirs · 10 lycees · onglets sujet/solution · notation /20')
@@ -743,11 +744,12 @@ jobs:
           FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
                       'unite5.js', 'unite6.js', 'app.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
-                      'stats.js', 'prof.js', 'parents.js', 'library.js', 'sw.js')
+                      'stats.js', 'quiz.js', 'prof.js', 'parents.js', 'library.js',
+                      'sw.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/19 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/20 fichiers JS valides')
           PY
 
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
@@ -764,6 +766,7 @@ jobs:
           pa = rd('parents.js')
           of = rd('officiels.js')
           st = rd('stats.js')
+          qz = rd('quiz.js')
           html = rd('index.html'); css = rd('style.css')
           man = json.load(open('manifest.json', encoding='utf-8'))
           cor = json.load(open('assets/corriges.json', encoding='utf-8'))
@@ -777,10 +780,10 @@ jobs:
                      'function uniteSelector', 'function paintUniteHead',
                      'get DEVOIR(){ return DEVOIR; }', 'get SEANCES(){ return SEANCES; }',
                      'function allTabs', 'function isProf', "'profboard'", "'examen'",
-                     "'live'", "'officiels'", "'stats'", 'window.renderLive',
-                     'window.renderStats2', 'window.UNITE2', 'window.UNITE3',
-                     'window.UNITE4', 'window.UNITE5', 'window.UNITE6',
-                     'Schule und Ausbildung', 'Alltag und Freizeit',
+                     "'live'", "'officiels'", "'stats'", "'quiz'",
+                     'window.renderLive', 'window.renderStats2', 'window.renderQuiz',
+                     'window.UNITE2', 'window.UNITE3', 'window.UNITE4', 'window.UNITE5',
+                     'window.UNITE6', 'Schule und Ausbildung', 'Alltag und Freizeit',
                      'Essen und Trinken', 'Reisen und Verkehr')
           for k in APP_REQ:
               if k not in app:
@@ -886,6 +889,43 @@ jobs:
               fails.append('stats.js : pollution Object.prototype interdite')
           if 'BDD.state.ready' not in st:
               fails.append('stats.js : ne reutilise pas le moteur BDD deja charge')
+          QZ_REQ = ('QUIZ_BANK', 'PAR_SERIE = 5', 'function nouvelleSerie', 'function vueAccueil',
+                    'function vueJeu', 'function vueResultat', 'function repondre',
+                    'function terminer', 'dz_de_quiz_best_v1', 'dz_de_quiz_hist_v1',
+                    'window.renderQuiz', 'idxs.indexOf(q.c)', "e.detail === 'quiz'",
+                    'data-unite', 'qzMelange')
+          for k in QZ_REQ:
+              if k not in qz:
+                  fails.append('quiz.js : ' + k + ' absent')
+          if 'Object.prototype' in qz:
+              fails.append('quiz.js : pollution Object.prototype interdite')
+          qs = re.findall(r"\{\s*u:(\d),\s*q:'(?:[^'\\]|\\.)*',\s*\n\s*o:\[(.*?)\],\s*c:(\d),",
+                        qz, re.S)
+          if len(qs) != 30:
+              fails.append('quiz.js : ' + str(len(qs)) + ' questions != 30')
+          par_u = {}
+          for (u, _o, c) in qs:
+              par_u[int(u)] = par_u.get(int(u), 0) + 1
+              if not (0 <= int(c) <= 3):
+                  fails.append('quiz.js : index de bonne réponse hors plage (unite ' + u + ')')
+              if len(re.findall(r"'(?:[^'\\]|\\.)*'", _o)) != 4:
+                  fails.append('quiz.js : question sans 4 options (unite ' + u + ')')
+          attendu_qz = dict((i, 5) for i in range(1, 7))
+          if par_u != attendu_qz:
+              fails.append('quiz.js : repartition ' + str(par_u) + ' != ' + str(attendu_qz))
+          U1_ATT = ['كيف تقول «أنا أسمي...» بالألمانية؟', 'تصريف الفعل sein مع «ich» ؟',
+                    'أداة الاستفهام بمعنى «من أين» ؟', 'كيف تقول «مساء الخير» بالألمانية؟',
+                    'رتّب : alt / ich / 16 / Jahre / bin']
+          u1 = re.findall(r"\{\s*u:1,\s*q:'([^']*)'", qz)
+          if u1 != U1_ATT:
+              fails.append('quiz.js : les 5 questions officielles U1 ont ete alterees')
+          u1c = [int(c) for (u, _o, c) in qs if u == '1']
+          if u1c != [1, 2, 1, 2, 1]:
+              fails.append('quiz.js : bonnes reponses U1 ' + str(u1c) + ' != [1, 2, 1, 2, 1]')
+          if qz.count("e:'") < 30:
+              fails.append('quiz.js : moins de 30 explications')
+          print('✅ Quiz : ' + str(len(qs)) + ' questions · 6 unites x 5 · '
+                + '5 officielles U1 (reponses 1,2,1,2,1) · series de 5 · options melangees')
           OF_REQ = ('assets/bdd/devoirs_officiels.json', 'function carteDevoir',
                     'function rendreSujet', 'function rendreCorrige', 'function noter',
                     'function exporter', 'function filtrer', 'function saveRep',
@@ -968,9 +1008,9 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.2.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.3.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './live.js',
-                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './prof.js', './parents.js',
+                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
                     './assets/bdd/live.json', './assets/bdd/parents.json', './assets/bdd/devoirs_officiels.json', './assets/bdd/wilayas_geo.json'):
               if k not in sw:
@@ -982,16 +1022,16 @@ jobs:
           if len(man.get('shortcuts', [])) < 4:
               fails.append('manifest : moins de 4 raccourcis')
           vues = re.findall(r'data-view="([a-z]+)"', html)
-          if len(vues) != 15:
-              fails.append('index.html : ' + str(len(vues)) + ' vues != 15')
+          if len(vues) != 16:
+              fails.append('index.html : ' + str(len(vues)) + ' vues != 16')
           v_app = re.findall(r"'([a-z]+)'",
                              re.search(r'const VIEWS = \[(.*?)\];', app, re.S).group(1))
           if sorted(vues) != sorted(v_app):
               fails.append('index.html/app.js : VIEWS != data-view')
           tabs = re.findall(r"\['([a-z]+)'",
                             re.search(r'const TABS\s*=\s*\[(.*?)\];', app, re.S).group(1))
-          if len(tabs) != 14:
-              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 14')
+          if len(tabs) != 15:
+              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 15')
           if 'profboard' in tabs:
               fails.append('app.js : profboard doit rester dynamique (allTabs)')
           if set(tabs) - set(vues):
@@ -999,7 +1039,7 @@ jobs:
           ID_REQ = ('id="gate"', 'id="shell"', 'id="profBody"', 'id="examBody"',
                     'id="liveBody"', 'id="classeBody"', 'id="gramBody"',
                     'id="biblioBody"', 'id="seancesHead"', 'id="devoirTitle"',
-                    'id="miniProf"', 'id="officielsBody"', 'id="statsBody"')
+                    'id="miniProf"', 'id="officielsBody"', 'id="statsBody"', 'id="quizBody"')
           for ident in ID_REQ:
               if ident not in html:
                   fails.append('index.html : ' + ident + ' absent')
@@ -1013,7 +1053,7 @@ jobs:
           attendu = ['auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
                      'unite5.js', 'unite6.js', 'app.js', 'modules.js', 'live.js',
                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
-                     'prof.js', 'parents.js', 'stats.js', 'library.js']
+                     'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -1037,13 +1077,16 @@ jobs:
                      '.st-map', '.dz-outline', '.wpt', '.st-legend', '.st-tip',
                      '.donut', '.donut-seg', '.donut-hole', '.legende', '.lg-i',
                      '.stack', '.chart-col', '.cc-b', '.diff-bar', '.db', '.hmc',
-                     'v3.2')
+                     'v3.2', '.qz-hero', '.qz-unites', '.qz-u', '.qz-hist', '.qh',
+                     '.qz-play', '.qz-top', '.qz-q', '.qz-badge', '.qz-opts', '.qz-o',
+                     '.qz-l', '.qz-fb', '.qz-ex', '.qz-nav', '.qz-rev', '.qr-n',
+                     '.qr-e', 'v3.3')
           for k in CSS_REQ:
               if k not in css:
                   fails.append('style.css : ' + k + ' absent')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
-          print('✅ 15 vues · 14 onglets statiques + 1 dynamique (profboard)')
+          print('✅ 16 vues · 15 onglets statiques + 1 dynamique (profboard)')
           print('✅ Bareme 8+8+4 = 20 sur U1 → U6 = 48 seances')
           print('✅ Registre UNITES = 6 · espace parents multi-enfants · année 2AS bouclée (الفصل 1 + 2 + 3 complets)')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
@@ -1052,10 +1095,10 @@ jobs:
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 18 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 19 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive BAC + live')
-          print('✅ PWA v3.2 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ PWA v3.3 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
