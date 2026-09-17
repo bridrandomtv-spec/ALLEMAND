@@ -16,7 +16,8 @@
    "II":8,
    "III":4,
    "total":20
-  }
+  },
+  "referentiel_profs":"Fiches professeurs unifiées avec classe.json — source : écran « احجز » de la maquette"
  },
  "enfants":[
   {
@@ -646,7 +647,7 @@
    "exp":"١٠ سنوات خبرة",
    "note":"٥٫٠",
    "etoiles":5,
-   "avis":95,
+   "avis":"٩٥",
    "desc":"متخصصة في القواعد والنطق، طريقة تفاعلية وممتعة",
    "tags":[
     "القواعد",
@@ -654,17 +655,21 @@
     "المبتدئين"
    ],
    "prix":1800,
-   "dispo":true
+   "dispo":true,
+   "exp_n":10,
+   "note_n":5.0,
+   "avis_n":95,
+   "prix_n":1800
   },
   {
    "init":"عق",
    "nom":"عمر قاسمي",
    "titre":"أستاذ الألمانية 🇩🇿",
    "ville":"قسنطينة",
-   "exp":"١٢ سنة خبرة",
+   "exp":"١٢ سنوات خبرة",
    "note":"٤٫٨",
    "etoiles":5,
-   "avis":142,
+   "avis":"١٤٢",
    "desc":"خبير في تحضير البكالوريا، مواضيع امتحانية مفصلة",
    "tags":[
     "البكالوريا",
@@ -672,7 +677,11 @@
     "الفهم"
    ],
    "prix":2000,
-   "dispo":true
+   "dispo":true,
+   "exp_n":12,
+   "note_n":4.8,
+   "avis_n":142,
+   "prix_n":2000
   },
   {
    "init":"يب",
@@ -682,7 +691,7 @@
    "exp":"٩ سنوات خبرة",
    "note":"٤٫٩",
    "etoiles":5,
-   "avis":89,
+   "avis":"٨٩",
    "desc":"مهتم بالثقافة الألمانية، دروس ممتعة وتفاعلية",
    "tags":[
     "الثقافة",
@@ -690,7 +699,11 @@
     "السفر"
    ],
    "prix":1600,
-   "dispo":true
+   "dispo":true,
+   "exp_n":9,
+   "note_n":4.9,
+   "avis_n":89,
+   "prix_n":1600
   }
  ],
  "tarifs":[
