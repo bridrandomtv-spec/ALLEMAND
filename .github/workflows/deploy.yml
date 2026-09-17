@@ -981,6 +981,58 @@ jobs:
           man = json.load(open('manifest.json', encoding='utf-8'))
           cor = json.load(open('assets/corriges.json', encoding='utf-8'))
           dv = cor['devoir_unite_1']
+          # ── Tests T2 / T3 de la suite de validation du professeur ──
+          PLAT = {'I.1_vrai_faux': ['Falsch', 'Richtig', 'Richtig', 'Falsch'],
+                  'II.1_conjugaison': ['bin', 'hast', 'sind', 'hat'],
+                  'II.2_w_fragen': ['Wie', 'Woher', 'Wo', 'Wie'],
+                  'II.3_ordre': ['Ich bin 16 Jahre alt.', 'Ich komme aus Algerien.'],
+                  'II.4_salutations': ['Guten Morgen', 'Tschüs', 'Guten Abend',
+                                       'Auf Wiedersehen']}
+          for cle, att in PLAT.items():
+              if cor.get(cle) != att:
+                  fails.append('corriges.json : ' + cle + ' = ' + str(cor.get(cle))
+                               + ' != ' + str(att))
+          if not str(cor.get('III_modele', '')).startswith('Ich heiße'):
+              fails.append('corriges.json : III_modele ne commence pas par « Ich heiße »')
+          if 'Ich wohne in Blida' not in str(cor.get('III_modele', '')):
+              fails.append('corriges.json : III_modele sans « Ich wohne in Blida » (modele officiel)')
+          if 'Ich lerne Deutsch' not in str(cor.get('III_modele', '')):
+              fails.append('corriges.json : III_modele sans « Ich lerne Deutsch » — '
+                           + 'le moteur T1-T7 ne pourrait pas accorder la 5e information')
+          # coherence cle plate <-> structure imbriquee (une seule verite)
+          pII = [p for p in dv['parties'] if p['id'] == 'II'][0]
+          cII = pII.get('corriges') or []
+          if len(cII) != 14:
+              fails.append('corriges.json : partie II = ' + str(len(cII)) + ' items != 14 '
+                           + '(4 groupes officiels)')
+          grp = {}
+          for it in cII:
+              grp.setdefault(it.get('groupe'), []).append(it)
+          if sorted(grp.keys()) != [1, 2, 3, 4]:
+              fails.append('corriges.json : partie II groupes ' + str(sorted(grp.keys())))
+          else:
+              for gi, cle in ((1, 'II.1_conjugaison'), (2, 'II.2_w_fragen'),
+                              (3, 'II.3_ordre'), (4, 'II.4_salutations')):
+                  vals = [x['reponse'] for x in grp[gi]]
+                  if vals != cor[cle]:
+                      fails.append('corriges.json : groupe ' + str(gi) + ' ' + str(vals)
+                                   + ' != cle plate ' + str(cor[cle]))
+              if abs(sum(x['points'] for x in cII) - 8) > 0.01:
+                  fails.append('corriges.json : partie II somme '
+                               + str(sum(x['points'] for x in cII)) + ' != 8')
+          pIII = [p for p in dv['parties'] if p['id'] == 'III'][0]
+          if pIII.get('modele_reponse') != cor['III_modele']:
+              fails.append('corriges.json : modele_reponse imbrique != III_modele plat')
+          gIII = pIII.get('grille_evaluation') or []
+          if abs(sum(x['points'] for x in gIII) - 4) > 0.01:
+              fails.append('corriges.json : grille III somme '
+                           + str(sum(x['points'] for x in gIII)) + ' != 4')
+          if not any('مضمون' in str(x.get('critere', '')) for x in gIII):
+              fails.append('corriges.json : grille III sans critere « مضمون »')
+          if not any('لغة' in str(x.get('critere', '')) for x in gIII):
+              fails.append('corriges.json : grille III sans critere « لغة »')
+          print('✅ T2/T3 professeur : corriges.json cles plates conformes · partie II '
+                + '4 groupes (14 items, 8 pts) · grille III مضمون 2 + لغة 2 · modele Omar/Blida')
           if sum(p['points'] for p in dv['parties']) != dv['total']:
               fails.append('bareme corriges.json incoherent')
           if len(cor['seances']) != 8:
@@ -1317,6 +1369,14 @@ jobs:
           for k in OF_REQ:
               if k not in of:
                   fails.append('officiels.js : ' + k + ' absent')
+          if 'prêt ✅' in of or 'à consolider ⚠️' in of or 'non prêt ❌' in of:
+              fails.append('officiels.js : libelles de readiness en francais '
+                           + '(maquette : مستعد / يحتاج تدعيم / غير مستعد)')
+          for lab in ('مستعد ✅', 'يحتاج تدعيم ⚠️', 'غير مستعد ❌'):
+              if lab not in of:
+                  fails.append('officiels.js : libelle readiness ' + lab + ' absent')
+          if 'const PRET = 10, CONS = 7;' not in of:
+              fails.append('officiels.js : seuils readiness != 10 / 7')
           MOT_REQ = ("0.4 * nbInfos", "INFOS[d.unite] || INFOS[1]",
                      "['bin', 'komme', 'wohne', 'lerne'].every", 'clels_manquantes',
                      'grille officielle')
@@ -1427,9 +1487,9 @@ jobs:
           HTML_REQ = ('Freie Universität Berlin', 'منهجية الأستاذ',
                       'البرنامج الرسمي', 'Dichter und Denker',
                       'Schule und Ausbildung', 'Alltag und Freizeit', 'Essen und Trinken', 'Reisen und Verkehr', 'جامعة الجزائر', 'Persönlichkeit und Identität', 'po-3as',
-                                'الدروس الرسمية', 'منهاج ٢٠٢٦/٢٠٢٧', '٦ دروس',
+                                'الدروس الرسمية', 'منهاج 2026/2027', '6 دروس',
                                 'سبتمبر - ديسمبر', 'جانفي - مارس', 'أفريل - جوان',
-                                '٣ / ٦ مكتمل', 'لم يبدأ بعد', 'po-3as', 'po-bar', 'po-note')
+                                '3 / 6 مكتمل', 'لم يبدأ بعد', 'po-3as', 'po-bar', 'po-note')
           for txt in HTML_REQ:
               if txt not in html:
                   fails.append('index.html : contenu ' + txt + ' absent')
