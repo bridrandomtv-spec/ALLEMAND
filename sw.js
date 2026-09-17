@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.6.0';
+const VERSION = 'dz-de-v3.7.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -37,6 +37,7 @@ const PRECACHE = [
   './stats.js',
   './quiz.js',
   './projet.js',
+  './reservation.js',
   './journee.js',
   './library.js',
   './examen.js',
@@ -65,6 +66,7 @@ const BDD_FILES = [
   './assets/bdd/devoirs_officiels.json',
   './assets/bdd/wilayas_geo.json',
   './assets/bdd/plan_projet.json',
+  './assets/bdd/reservation.json',
   './assets/bdd/journee.json',
   './assets/bdd/live.json'
 ];
