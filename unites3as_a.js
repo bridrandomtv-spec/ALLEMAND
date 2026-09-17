@@ -1554,3 +1554,27 @@ const U3AS_5 = {
 
 /* ══════════ EXPOSITION GLOBALE ══════════ */
 window.U3AS_A = [U3AS_1, U3AS_2, U3AS_3, U3AS_4, U3AS_5];
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   ADAPTATEUR — contrat du registre UNITES d'app.js
+   app.js (lignes 217-228) lit, pour U7/U8/U9 :
+       UNITES_3AS_A[i].seances · UNITES_3AS_A[i].devoir · UNITES_3AS_A[i].duree_totale
+   Le lot A expose { meta:{ duree_totale }, seances, devoir, corrige }.
+   On projette donc les 3 premières unités (U7 · U8 · U9) dans la forme attendue,
+   en remontant duree_totale au premier niveau. Sans cet adaptateur,
+   window.UNITES_3AS_A reste undefined et les 3 unités apparaissent VIDES.
+   ══════════════════════════════════════════════════════════════════════ */
+window.UNITES_3AS_A = (window.U3AS_A || []).slice(0, 3).map(function (u) {
+  return {
+    meta:         u.meta || {},
+    seances:      u.seances || [],
+    devoir:       u.devoir || null,
+    corrige:      u.corrige || null,
+    duree_totale: (u.meta && u.meta.duree_totale) || 360
+  };
+});
+
+/* Les unités 4 et 5 du lot A (Fortschritt und seine Grenzen · Arbeitswelt und Bewerbung)
+   restent disponibles pour un branchement ultérieur (U13/U14). */
+window.U3AS_SUPPLEMENT = (window.U3AS_A || []).slice(3);
