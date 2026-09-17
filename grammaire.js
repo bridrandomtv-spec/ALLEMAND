@@ -44,7 +44,7 @@
     const st = $('#bddStatus2');
     box.innerHTML =
       '<div class="bdd-status ok" id="bddStatus2">📘 <b class="de-in">' + (D.items||[]).length +
-        '</b> قاعدة · 4 فصول · CEFR A1 → B2 · ' +
+        '</b> قاعدة · ' + CH.length + ' فصول · CEFR A1 → B2 · ' +
         '<b class="de-in">' + items.length + '</b> نتيجة</div>' +
       '<div class="filters">' +
         '<div class="filters-h"><b>🔎 البحث في القواعد</b>' +
@@ -60,7 +60,8 @@
           '</select></div></div>' +
         '<div class="frow">' +
           '<div class="fld2"><span>🎓 المستوى</span><select id="gNiv">' +
-            opt2('tous','الكل',niveau) + opt2('2AS','السنة الثانية',niveau) + opt2('3AS','السنة الثالثة / BAC',niveau) +
+            opt2('tous','الكل',niveau) + opt2('2AS','السنة الثانية ثانوي',niveau) +
+            opt2('3AS','السنة الثالثة ثانوي',niveau) + opt2('BAC','تحضير البكالوريا',niveau) +
           '</select></div>' +
           '<div class="fld2"><span>🌍 CEFR</span><select id="gCefr">' +
             opt2('tous','الكل',cefr) + opt2('A1','A1 — مبتدئ',cefr) + opt2('A2','A2 — أساسي',cefr) +
@@ -68,7 +69,8 @@
           '</select></div></div>' +
         '<div class="chips">' + CH.map(c =>
           '<span class="fchip' + (chap === c.id ? ' on' : '') + '" data-chap="' + esc(c.id) + '">' +
-          c.icone + ' ' + esc(c.titre) + ' · ' + c.nombre + '</span>').join('') + '</div>' +
+          c.icone + ' ' + esc(c.titre) + ' · ' + (c.produit || c.nombre) + '</span>').join('') +
+          '<span class="fchip">🧮 المجموع ' + (D.items||[]).length + ' قاعدة</span></div>' +
       '</div>' +
       '<div id="gList">' + (items.length ? items.map(carte).join('')
         : '<div class="card empty"><div class="empty-i">🔍</div><h3>لا توجد قاعدة مطابقة</h3>' +
@@ -105,10 +107,11 @@
         '<button class="btn btn-o btn-sm">📖 القاعدة كاملة</button></div></article>';
   }
   function badgeClass(ch){
+    if(ch === 'BAC')        return 'annales';
     if(ch.indexOf('T1') !== -1) return 'devoir';
     if(ch.indexOf('T2') !== -1) return 'composition';
-    if(ch.indexOf('T3') !== -1) return 'annales';
-    return 'bac';
+    if(ch.indexOf('T3') !== -1) return 'bac';
+    return 'annales';
   }
 
   function bind(){
