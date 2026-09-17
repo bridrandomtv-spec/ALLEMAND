@@ -144,6 +144,12 @@
       <div class="welcome" id="welcomeBox"></div>
       <div class="stats" id="statsHome"></div>
 
+      <!-- 📅 حصص اليوم + accès rapide (rendu par journee.js) -->
+      <div id="todayBody"></div>
+
+      <!-- 📘 Aperçu de l'unité 1 (rendu par journee.js) -->
+      <div id="apercuBody"></div>
+
       <div class="grid3">
         <div class="card mini" data-go="seances"><div class="mini-i">📚</div><h3>الحصص</h3>
           <p>الوحدة 1 — 8 حصص تفاعلية</p><span class="mini-n" id="cSeances">8</span></div>
@@ -177,7 +183,7 @@
           <p>تقرير أسبوعي + واتساب</p><span class="mini-n">📊</span></div>
       </div>
 
-      <div class="card prof-card">
+      <div class="card prof-card" hidden>
         <h2>👨‍🏫 الأستاذ خريف أحمد <span class="pill de-in">Der Lehrer Kharif Ahmed</span></h2>
         <div class="prof">
           <img src="assets/prof.jpg" alt="الأستاذ خريف أحمد" onerror="this.outerHTML='<div class=prof-ph>👨‍🏫</div>'">
@@ -241,6 +247,9 @@
         <p>حصّة أولى <b>مجانية</b> — ⏰ ساري حتى <b>30 سبتمبر 2026</b> — ⚡ الأماكن محدودة، الأولوية للتسجيل</p>
         <a class="btn btn-w btn-block" href="https://wa.me/213555577931?text=%D8%AD%D8%B5%D8%A9%20%D8%A3%D9%84%D9%85%D8%A7%D9%86%D9%8A%20%D9%85%D8%AC%D8%A7%D9%86%D9%8A%D8%A9" target="_blank" rel="noopener">💬 واتساب : 0555 57 79 31</a>
       </div>
+    
+      <!-- 📋 السيرة الذاتية 4 blocs + 🧠 IA + 💡 méthodologie + 👋 CTA + 2 citations (rendu par journee.js) -->
+      <div id="cvBody"></div>
     </section>
 
     <!-- SÉANCES -->
@@ -427,6 +436,7 @@
 <script src="stats.js"></script>
 <script src="quiz.js"></script>
 <script src="projet.js"></script>
+<script src="journee.js"></script>
 <script src="library.js"></script>
 </body>
 </html>
