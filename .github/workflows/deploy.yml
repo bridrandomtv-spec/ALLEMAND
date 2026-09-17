@@ -922,7 +922,7 @@ jobs:
                     'DZ.loadSeances()', 'new Proxy({}'):
               if k not in mod:
                   fails.append('modules.js : ' + k + ' absent')
-          # ── Lot A 3AS : 3 unites (U7-U9) x 4 seances ──
+          # ── Lot A 3AS : 3 unites (U7-U9) x 6 seances ──
           metas3a = re.findall(r"meta:\s*\{\s*n:(\d+),\s*niveau:'3AS',\s*de:'([^']+)'", u3a)
           if len(metas3a) != 3:
               fails.append('unites3as_a.js : ' + str(len(metas3a)) + ' unites != 3')
@@ -982,7 +982,7 @@ jobs:
           for k in REQ3A:
               if k not in u3a:
                   fails.append('unites3as_a.js : ' + k + ' absent')
-          print('✅ 3AS Lot A : 5 unites (U7-U11) · ' + str(nse3a) + ' seances · '
+          print('✅ 3AS Lot A : 3 unites (U7-U9) · ' + str(nse3a) + ' seances · '
                 + '3 devoirs /20 · 3 grilles · ' + str(u3a.count('~~') // 2)
                 + ' erreurs frequentes · CEFR ' + '/'.join(sorted(cefrl3a)))
           print('   adaptateur window.UNITES_3AS_A → U7/U8/U9 branches sur app.js')
