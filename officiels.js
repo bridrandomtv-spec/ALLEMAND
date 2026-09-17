@@ -325,6 +325,13 @@
   }
 
   /* ══════ Notation automatique ══════ */
+  function clels_manquantes(clefs, trouvees){
+    const m = [];
+    clefs.forEach((o, i) => { if(!trouvees[i]) m.push(o.k); });
+    return m.slice(0, 3).join(' · ');
+  }
+
+
   function noter(d){
     const r = repsDevoir(d.id);
     const sc = { I:0, II:0, III:0 };
@@ -359,19 +366,63 @@
 
     const pIII = d.parties.filter(p => p.id === 'III')[0];
     const txt = String(r['III'] || '');
-    const phrases = txt.split(/[.!?]/).map(s => s.trim()).filter(s => s.length > 2);
-    const infos = (pIII.grille['مضمون'].infos || []).length;
-    const trouvees = Math.min(infos, phrases.length);
-    const contenu = Math.round(0.4 * trouvees * 10) / 10;
-    const verbes = ['bin','habe','heiße','komme','wohne','lerne','ist','hat','mache','gehe'];
-    const conj = verbes.filter(v => new RegExp('\\b' + v + '\\b', 'i').test(txt)).length;
-    const maj = phrases.filter(s => /^[A-ZÄÖÜ]/.test(s)).length;
-    const langue = (conj >= 3 ? 1 : (conj >= 1 ? 0.5 : 0)) + (maj >= 4 ? 1 : (maj >= 2 ? 0.5 : 0));
-    sc.III = Math.min(4, Math.round((Math.min(2, contenu) + Math.min(2, langue)) * 10) / 10);
-    detail.push({ id:'III', q:'إنتاج كتابي', rep: trouvees + ' جملة · ' + conj + ' تصريف · ' +
-                  maj + ' majuscule', sol:pIII.modele.slice(0, 60) + '…', ok: sc.III >= 2,
-                  pts:4, regle:'مضمون ' + Math.min(2, contenu) + '/2 (0,4 × ' + trouvees +
-                  ') · لغة ' + Math.min(2, langue) + '/2' });
+
+    /* ══ مضمون 2 نقاط — 5 informations × 0,4 (moteur officiel T1-T7) ══
+       Les 5 informations attendues dépendent de l'unité du devoir. */
+    const INFOS = {
+      1: [ {k:'الاسم',       re:/ich\s+hei\u00dfe|mein\s+name/i},
+           {k:'العمر',       re:/jahre\s+alt|\d+\s*jahre/i},
+           {k:'البلد',       re:/komme\s+aus|algerien|deutschland/i},
+           {k:'المدينة',     re:/wohne/i},
+           {k:'ما تتعلّمه',  re:/lerne|schule|studiere/i} ],
+      2: [ {k:'membre de la famille', re:/vater|mutter|bruder|schwester|familie/i},
+           {k:'possession (mein/dein)', re:/mein|dein|sein|ihr|unser/i},
+           {k:'adjectif descriptif',    re:/nett|klein|gro\u00df|alt|jung|lustig|fleißig/i},
+           {k:'âge ou nombre',          re:/jahre\s+alt|\d+/i},
+           {k:'activité commune',       re:/spiele|gehe|treffe|m\u00f6gen|gern/i} ],
+      3: [ {k:'matière scolaire',  re:/deutsch|mathematik|physik|informatik|geschichte|fach/i},
+           {k:'horaire (um/am)',   re:/\bum\s+\d|\bam\s+|uhr/i},
+           {k:'lieu de l\u2019école', re:/schule|klassenzimmer|bibliothek|turnhalle|mensa/i},
+           {k:'verbe modal',       re:/kann|musst?|will|darf|soll|m\u00f6chte/i},
+           {k:'opinion (weil)',    re:/weil|lieblingsfach|gef\u00e4llt/i} ],
+      4: [ {k:'heure',            re:/\bum\s+\d|uhr|halb|morgen|abend/i},
+           {k:'verbe séparable',  re:/auf\s*\.?\s*$|stehe.*auf|sehe.*fern|komme.*mit|r\u00e4ume.*auf/i},
+           {k:'activité',         re:/spiele|h\u00f6re|lese|treffe|gehe/i},
+           {k:'fréquence',        re:/immer|oft|manchmal|selten|nie|jeden/i},
+           {k:'lieu (Dativ)',     re:/mit\s+|nach\s+|zu\s+|bei\s+|im\s+|am\s+/i} ],
+      5: [ {k:'aliment',          re:/apfel|brot|fleisch|gem\u00fcse|obst|reis|k\u00e4se|ei/i},
+           {k:'boisson',          re:/wasser|tee|kaffee|milch|saft/i},
+           {k:'impératif',        re:/schneiden\s+sie|waschen\s+sie|kochen\s+sie|geben\s+sie|nehmen\s+sie/i},
+           {k:'quantité ou ordre', re:/zuerst|dann|danach|schlie\u00dflich|prise|minuten|liter/i},
+           {k:'politesse',        re:/h\u00e4tte\s+gern|k\u00f6nnten\s+sie|bitte/i} ],
+      6: [ {k:'moyen de transport', re:/mit\s+dem\s+(zug|bus|auto|flugzeug)|zu\s+fu\u00df/i},
+           {k:'destination (nach)', re:/nach\s+|reise|gefahren|geflogen/i},
+           {k:'Perfekt avec sein',  re:/bin\s+.*\s*(gefahren|gereist|geflogen|angekommen|gegangen)|sind\s+.*\s*(gefahren|gereist|angekommen)/i},
+           {k:'durée ou date',      re:/stunden|tagen|tagen|juli|sommer|woche/i},
+           {k:'comparatif (… als)', re:/als\s|schneller|besser|gr\u00f6\u00dfer|sch\u00f6ner|mehr/i} ],
+    };
+    const clefs = INFOS[d.unite] || INFOS[1];
+    const trouvees = clefs.map(o => o.re.test(txt) ? 1 : 0);
+    const nbInfos = trouvees.reduce((a, b) => a + b, 0);
+    const contenu = Math.round(0.4 * nbInfos * 100) / 100;
+
+    /* ══ لغة 2 نقاط — BINAIRE : conjugaison complète (1) + majuscules (1) ══ */
+    const conj = ['bin', 'komme', 'wohne', 'lerne'].every(w =>
+                   new RegExp('\\b' + w + '\\b', 'i').test(txt)) &&
+                 /jahre\s+alt/i.test(txt);
+    const phrases = txt.split(/[.!?]/).map(s => s.trim()).filter(s => s.length > 1);
+    const maj = phrases.filter(s => /^[A-Z\u00c4\u00d6\u00dc]/.test(s)).length;
+    const langue = (conj ? 1 : 0) + (maj >= 4 ? 1 : 0);
+    sc.III = Math.min(4, Math.round((Math.min(2, contenu) + langue) * 100) / 100);
+
+    const manquantes = clels_manquantes(clefs, trouvees);
+    detail.push({ id:'III', q:'إنتاج كتابي',
+      rep: nbInfos + '/5 معلومات · ' + phrases.length + ' جملة · ' + maj + ' majuscule' +
+           (manquantes ? ' · manque : ' + manquantes : ''),
+      sol: pIII.modele.slice(0, 70) + '…', ok: sc.III >= 2, pts: 4,
+      regle: 'مضمون ' + Math.min(2, contenu).toFixed(1) + '/2 (0,4 × ' + nbInfos +
+             ') · لغة ' + langue + '/2 (conjugaison ' + (conj ? '✅' : '❌') +
+             ' · majuscules ' + (maj >= 4 ? '✅' : '❌') + ') — grille officielle' });
 
     Object.keys(sc).forEach(k => { sc[k] = Math.round(sc[k] * 10) / 10; });
     const total = Math.round((sc.I + sc.II + sc.III) * 10) / 10;
