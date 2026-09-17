@@ -103,7 +103,45 @@ const U3AS_1 = {
                    'Das Buch, das habe ich gelesen, ist gut.'],a:1,
              why:'Dans la relative, le verbe conjugué est <b>à la fin</b>.'}]},
 
-    { n:3, de:'Textverständnis : «Identität in zwei Kulturen»', ar:'فهم نص — الهوية في ثقافتين', dur:60,
+        { n:3, de:'Partizip I und II als Adjektiv', ar:'اسم الفاعل واسم المفعول كصفات', dur:60,
+      obj:['décrire une personne avec un participe','Partizip I (actif, en cours) vs Partizip II (passif, accompli)','déclinaison du participe-adjectif'],
+      lex:[['der lächelnde Mensch','الإنسان المبتسم'],['das weinende Kind','الطفل الباكي'],
+           ['die gestellte Frage','السؤال المطروح'],['der geachtete Lehrer','الأستاذ المحترم'],
+           ['die wachsende Persönlichkeit','الشخصية المتنامية'],['das verletzte Gefühl','الشعور المجروح'],
+           ['ein überzeugender Mensch','إنسان مقنع'],['die anerkannte Leistung','الإنجاز المعترف به'],
+           ['selbstsicher','واثق من نفسه'],['zurückhaltend','متحفّظ'],['auffällig','لافت'],
+           ['zuverlässig','موثوق']],
+      gram:{t:'Deux participes, deux voix — décrire sans relative',
+        tbl:[['Partizip I (Infinitiv + d)','actif, en cours','der lächelnde Mann'],
+             ['Partizip II (ge…t/en)','passif, accompli','die gestellte Frage'],
+             ['Partizip I','celui qui agit','das weinende Kind'],
+             ['Partizip II','ce qui est subi','das gelöste Problem']],
+        b:['Un participe employé comme adjectif se <b>décline</b> : '
+       + '<span class="de-in">der lachend<b>e</b> · des lachend<b>en</b> · '
+       + 'die lachend<b>en</b> Kinder</span>.',
+         'Équivalence avec la relative : <span class="de-in">der Mann, <b>der dort steht</b></span> '
+       + '= <span class="de-in">der <b>dort stehende</b> Mann</span>.',
+         'Pas de Partizip I avec les verbes d’état.',
+         'Les verbes conjugués avec <b>sein</b> forment un Partizip I actif mais pas de '
+       + 'Partizip II adjectival : <span class="de-in">das schlaf<b>ende</b> Kind</span> '
+       + 'mais pas <span class="de-in">das geschlafene Kind</span>.'],
+        ex:'<span class="de-in">Die <b>selbstsichere</b>, aber <b>zurückhaltende</b> Schülerin '
+       + 'beantwortete die <b>gestellte</b> Frage mit einem <b>überzeugenden</b> Argument.</span>'},
+      exos:[{q:'«die ___ Preise» (qui montent)',opts:['steigenden','gestiegenen','gesteigerten','steigender'],a:0,
+             why:'Action en cours, voix active → <b>Partizip I</b> décliné.'},
+            {q:'«die gestern ___ Studie»',opts:['veröffentlichte','veröffentlichende','veröffentlichen','veröffentliche'],a:0,
+             why:'Action subie et accomplie → <b>Partizip II</b> décliné.'},
+            {q:'Partizip I de «wachsen» :',opts:['wachsend','gewachsen','wachs','gewachsend'],a:0,
+             why:'Infinitif + <b>-d</b>.'},
+            {q:'«der Mann, der dort steht» équivaut à :',
+             opts:['der dort stehende Mann','der dort gestandene Mann','der dort stehen Mann','der stehende dort Mann'],a:0,
+             why:'La relative active se remplace par le <b>Partizip I</b> placé avant le nom.'},
+            {q:'Quel participe est IMPOSSIBLE ?',opts:['das schlafende Kind','das weinende Kind',
+                                                       'das geschlafene Kind','das lachende Kind'],a:2,
+             why:'<span class="de-in">schlafen</span> se conjugue avec <b>sein</b> : pas de '
+             + 'Partizip II adjectival.'}]},
+
+    { n:4, de:'Textverständnis : «Identität in zwei Kulturen»', ar:'فهم نص — الهوية في ثقافتين', dur:60,
       obj:['قراءة نص تحليلي','استخراج الحجج والأمثلة','repérage des connecteurs','الإجابة بجمل كاملة'],
       texte:'<div class="reading"><p><b>Identität in zwei Kulturen</b></p>'
           + '<p>Yacine ist 18 Jahre alt und lebt seit sechs Jahren in Köln. Geboren wurde er '
@@ -147,7 +185,7 @@ const U3AS_1 = {
              why:'<span class="de-in">Er wünscht sich, dass man ihn zuerst als Person '
                + 'wahrnimmt und nicht als Herkunft.</span>'}]},
 
-    { n:4, de:'Textproduktion — «Wer bin ich?»', ar:'إنتاج كتابي ✍️ من أكون؟', dur:60,
+    { n:5, de:'Textproduktion — «Wer bin ich?»', ar:'إنتاج كتابي ✍️ من أكون؟', dur:60,
       obj:['كتابة نص وصفي-تحليلي 12 سطراً','3 جمل موصولة','comparatif + superlatif','connecteurs logiques'],
       consigne:'<div class="exo"><div class="q-t"><b>📌 المهمة :</b> اكتب نصاً من '
           + '<b>10 إلى 12 سطراً</b> تصف فيه شخصيتك وهويتك، مع احترام الشروط :'
@@ -176,8 +214,38 @@ const U3AS_1 = {
            + 'würde ich gern Dolmetscher werden, denn Sprachen sind die Brücke, '
            + 'die Menschen verbindet.</p></div></div>',
       exos:[{type:'texte',q:'✍️ اكتب نصّك هنا (سيصححه الأستاذ الافتراضي):',
-             ph:'Ich heiße … Wenn ich mich beschreiben müsste, würde ich sagen, dass …'}]}
-  ],
+             ph:'Ich heiße … Wenn ich mich beschreiben müsste, würde ich sagen, dass …'}]},
+
+    { n:6, de:'Konsolidierung + Évaluation 📝', ar:'تثبيت وتقويم — الشخصية والهوية', dur:60,
+      obj:['révision transversale U7','auto-évaluation','correction guidée des erreurs fréquentes','préparation au devoir /20'],
+      exos:[{q:'«Ich bin ___ ehrgeiziger Schüler.»',opts:['ein','einen','einem','eine'],a:0,
+             why:'Attribut du sujet → <b>Nominativ</b> : ein ehrgeiziger Schüler.'},
+            {q:'«Der Mann, ___ ich kenne, ist Algerier.»',opts:['den','der','dem','des'],a:0,
+             why:'Dans la relative, « que » est COD → <b>Akkusativ</b> : den.'},
+            {q:'Partizip I de «überzeugen» :',opts:['überzeugend','überzeugt','überzeuge','geüberzeugend'],a:0,
+             why:'Infinitif + <b>-d</b> → überzeugend (actif, en cours).'},
+            {q:'«Meiner Meinung ___ ist Identität nicht fest.»',opts:['nach','ist','zu','für'],a:0,
+             why:'<span class="de-in">Meiner Meinung <b>nach</b></span> — nach se place après.'},
+            {q:'«Ich würde gern selbstbewusster ___ .»',opts:['werden','sein werden','geworden','würde'],a:0,
+             why:'Après un modal, l’infinitif simple en fin de phrase.'},
+            {q:'«Die ___ Frage war schwierig.» (posée)',opts:['gestellte','stellende','gestellten','stellte'],a:0,
+             why:'Action subie et accomplie → Partizip II décliné.'},
+            {q:'Comparatif de «selbstbewusst» :',opts:['selbstbewusster','mehr selbstbewusst',
+                                                       'selbstbewusstest','am selbstbewusst'],a:0,
+             why:'Adjectif long → simple <b>-er</b> (pas de mehr).'},
+            {q:'«___ ich jung war, kannte ich mich nicht.»',opts:['Als','Wenn','Wann','Ob'],a:0,
+             why:'Événement unique du passé → <b>als</b> (et non wenn).'},
+            {q:'«Ich interessiere ___ für Psychologie.»',opts:['mich','mir','sich','—'],a:0,
+             why:'<span class="de-in">sich interessieren <b>für</b></span> → ich = <b>mich</b>.'},
+            {q:'«Was fällt dir an deinem Charakter am ___ auf?»',opts:['meisten','mehr','viel','liebsten'],a:0,
+             why:'Superlatif de viel → <b>am meisten</b>.'},
+            {q:'«Ein Mensch, der andere respektiert, ___ sympathisch.»',opts:['wirkt','wirken',
+                                                                               'wirke','gewirkt'],a:0,
+             why:'Sujet singulier → <b>wirkt</b>.'},
+            {q:'Quelle tournure introduit une définition au BAC ?',
+             opts:['Ich sage, dass…','Unter … versteht man …','Es gibt …','Man kann …'],a:1,
+             why:'<span class="de-in"><b>Unter … versteht man …</b></span> = formule académique.'}]}
+    ],
 
   devoir: {
     titre:'Évaluation — 3AS Einheit 1 : Persönlichkeit und Identität',
@@ -401,7 +469,47 @@ const U3AS_2 = {
                    'Die Tür war geöffnet.','Die Tür ist geöffnet worden.'],a:1,
              why:'<b>wird</b> + P.II = Vorgangspassiv (processus en cours).'}]},
 
-    { n:3, de:'Textverständnis : «Was heißt Bürger sein?»', ar:'فهم نص — ما معنى أن تكون مواطناً؟', dur:60,
+        { n:3, de:'Genitiv und Präpositionen mit Genitiv', ar:'حالة الملك وحروف الجر معه', dur:60,
+      obj:['construire le génitif','12 prépositions régissant le génitif','génitif du nom propre','éviter le datif de substitution'],
+      lex:[['die Rechte der Bürger','حقوق المواطنين'],['die Pflicht des Staates','واجب الدولة'],
+           ['wegen des Wetters','بسبب الطقس'],['trotz der Kritik','رغم النقد'],
+           ['während der Sitzung','أثناء الجلسة'],['statt des Berichts','بدل التقرير'],
+           ['außerhalb der Stadt','خارج المدينة'],['innerhalb eines Jahres','في غضون سنة'],
+           ['anhand der Zahlen','استناداً إلى الأرقام'],['dank der Verfassung','بفضل الدستور'],
+           ['laut des Gesetzes','وفق القانون'],['zugunsten der Armen','لصالح الفقراء']],
+      gram:{t:'Le génitif — appartenance et 12 prépositions',
+        tbl:[['maskulin / neutrum','-s ou -es','des Bürgers · des Gesetzes'],
+             ['feminin','article seul','der Verfassung · der Stadt'],
+             ['Plural','article seul','der Bürger · der Gesetze'],
+             ['nom propre','-s sans apostrophe','Ahmeds Meinung']],
+        b:['Les <b>12 prépositions</b> exigeant TOUJOURS le génitif : '
+       + '<b>wegen · trotz · während · statt / anstatt · außerhalb · innerhalb · '
+       + 'oberhalb · unterhalb · anhand · kraft · laut · zugunsten</b>.',
+         'À l’oral, beaucoup remplacent par le datif '
+       + '(<span class="de-in">wegen dem Wetter</span>) — <b>à l’écrit du BAC, le génitif est exigé</b>.',
+         'Le masculin et le neutre prennent <b>-s</b> (ou <b>-es</b> après s/ß/x/z/tz) : '
+       + '<span class="de-in">des Bus<b>ses</b> · des Gesetz<b>es</b></span>.',
+         'Génitif saxon des noms propres : <span class="de-in">Ahmed<b>s</b> Buch</span> '
+       + '(apostrophe seulement si le nom finit par s).'],
+        ex:'<span class="de-in">Trotz <b>der</b> Kritik <b>des</b> Parlaments wurde das Gesetz '
+       + '<b>während</b> <b>der</b> Sitzung verabschiedet — <b>zugunsten</b> <b>der</b> '
+       + 'Bürgerinnen und Bürger.</span>'},
+      exos:[{q:'«das Auto ___ Vaters»',opts:['des','dem','den','der'],a:0,
+             why:'Génitif masculin : <b>des</b> Vaters (+ -s au nom).'},
+          {q:'«Wegen ___ Regens blieben wir zu Hause.»',opts:['des','dem','den','der'],a:0,
+             why:'<span class="de-in">wegen</span> + <b>Génitif</b> → des Regens.'},
+          {q:'«Trotz ___ Schwierigkeiten gab er nicht auf.»',opts:['der','den','dem','des'],a:0,
+             why:'<span class="de-in">trotz</span> + Génitif pluriel → <b>der</b> Schwierigkeiten.'},
+          {q:'Quelle préposition N’exige PAS le génitif ?',opts:['während','anhand','seit','statt'],a:2,
+             why:'<span class="de-in">seit</span> exige le <b>Datif</b>.'},
+          {q:'«des Gesetzes» prend -es parce que…',
+           opts:['le mot finit par -s/ß/x/z/tz','c’est un pluriel','c’est féminin','c’est un nom propre'],a:0,
+             why:'Après s, ß, x, z, tz on ajoute <b>-es</b> pour la prononciation.'},
+          {q:'Génitif d’un nom propre ne finissant pas par s :',
+           opts:['Ahmeds Buch',"Ahmed's Buch",'Ahmed Buch','Buch Ahmeds'],a:0,
+             why:'Pas d’apostrophe en allemand dans ce cas.'}]},
+
+    { n:4, de:'Textverständnis : «Was heißt Bürger sein?»', ar:'فهم نص — ما معنى أن تكون مواطناً؟', dur:60,
       obj:['قراءة نص حجاجي','repérage de la thèse et des arguments','connecteurs concessifs','الإجابة بجمل كاملة'],
       texte:'<div class="reading"><p><b>Was heißt Bürger sein?</b></p>'
           + '<p>Wer an Staatsbürgerschaft denkt, denkt zuerst an einen Ausweis. Doch die '
@@ -445,7 +553,7 @@ const U3AS_2 = {
              why:'<span class="de-in">… dass Staatsbürgerschaft <b>kein Zustand, sondern eine '
                + 'Praxis</b> ist.</span>'}]},
 
-    { n:4, de:'Textproduktion — «Aktive Bürgerschaft»', ar:'إنتاج كتابي ✍️ المواطنة الفاعلة', dur:60,
+    { n:5, de:'Textproduktion — «Aktive Bürgerschaft»', ar:'إنتاج كتابي ✍️ المواطنة الفاعلة', dur:60,
       obj:['كتابة نص حجاجي 12 سطراً','3 صيغ مبني للمجهول','these/argument/exemple','Concessif + causal'],
       consigne:'<div class="exo"><div class="q-t"><b>📌 المهمة :</b> اكتب نصاً حجاجياً من '
           + '<b>10 إلى 12 سطراً</b> حول « المواطنة الفاعلة »، مع احترام الشروط :'
@@ -473,8 +581,40 @@ const U3AS_2 = {
            + 'ehrenamtlich engagieren, denn eine Gesellschaft ist so stark wie ihre Bürger.</p>'
            + '</div></div>',
       exos:[{type:'texte',q:'✍️ اكتب نصّك الحجاجي هنا:',
-             ph:'Heutzutage wird viel über … diskutiert. Meiner Meinung nach …'}]}
-  ],
+             ph:'Heutzutage wird viel über … diskutiert. Meiner Meinung nach …'}]},
+
+    { n:6, de:'Konsolidierung + Évaluation 📝', ar:'تثبيت وتقويم — المواطنة', dur:60,
+      obj:['révision transversale U8','Passiv aux 3 temps','Génitif vs Datif','préparation au devoir /20'],
+      exos:[{q:'«Das Gesetz ___ gestern verabschiedet.»',opts:['wurde','ist','hat','wird'],a:0,
+             why:'Passif au Präteritum : <b>wurde</b> + Partizip II.'},
+            {q:'«Das Gesetz ist verabschiedet ___ .» (Perfekt Passiv)',opts:['worden','geworden',
+                                                                            'wordet','sein'],a:0,
+             why:'Au Passiv on emploie <b>worden</b>, jamais geworden.'},
+            {q:'«Das Problem lässt ___ lösen.»',opts:['sich','werden','zu','—'],a:0,
+             why:'Substitut du Passif : <span class="de-in"><b>sich lassen</b> + Infinitiv</span>.'},
+            {q:'«Wegen ___ Gesetzes»',opts:['des','dem','den','die'],a:0,
+             why:'<span class="de-in">wegen</span> + <b>Génitif</b>.'},
+            {q:'«Die Rechte ___ Bürger sind geschützt.»',opts:['der','den','dem','des'],a:0,
+             why:'Génitif pluriel → <b>der</b> Bürger.'},
+            {q:'«Der Staat muss die Bürger ___ .» (protéger)',opts:['schützen','geschützt',
+                                                                   'schützt','schützend'],a:0,
+             why:'Après un modal, l’infinitif simple en fin de phrase.'},
+            {q:'«___ der Kritik wurde das Projekt fortgesetzt.»',opts:['Trotz','Wegen','Dank','Statt'],a:0,
+             why:'Concession → <b>trotz</b> + Génitif.'},
+            {q:'Complément d’agent (personne) au Passiv :',opts:['von + Datif','durch + Akkusativ',
+                                                                'mit + Datif','aus + Datif'],a:0,
+             why:'Auteur → <b>von</b> + Datif ; moyen/cause → <b>durch</b> + Akkusativ.'},
+            {q:'«Man ___ die Verfassung ändern.» (possibilité)',opts:['kann','könnte nicht',
+                                                                     'muss nicht','darf nicht'],a:0,
+             why:'Possibilité → <b>kann</b>.'},
+            {q:'«Die Pflicht ___ Staates»',opts:['des','dem','den','der'],a:0,
+             why:'Génitif masculin : <b>des</b> Staates.'},
+            {q:'«Ohne Rechte ___ es keine Pflichten.»',opts:['gibt','geben','gebe','gab'],a:0,
+             why:'Expression figée : <span class="de-in">es <b>gibt</b> + Akkusativ</span>.'},
+            {q:'«Ein guter Bürger ___ sich für die Gemeinschaft.»',opts:['engagiert','engagieren',
+                                                                        'engagierte','engagierend'],a:0,
+             why:'Verbe pronominal au présent, 3ᵉ personne : <b>engagiert sich</b>.'}]}
+    ],
 
   devoir: {
     titre:'Évaluation — 3AS Einheit 2 : Staatsbürgerschaft',
@@ -705,7 +845,51 @@ const U3AS_3 = {
             {q:'«Ich wünschte, ich ___ helfen.»',opts:['könnte','kann','konnte','würde'],a:0,
              why:'Souhait irréel → <b>könnte</b> (Konjunktiv II de können).'}]},
 
-    { n:3, de:'Textverständnis : «Generationen unter einem Dach»', ar:'فهم نص — أجيال تحت سقف واحد', dur:60,
+        { n:3, de:'Funktionsverbgefüge (Nomen-Verb-Verbindungen)', ar:'التراكيب الاسمية-الفعلية', dur:60,
+      obj:['employer les tournures nominales du registre soutenu','transformer verbe → Funktionsverbgefüge','nuancer le registre'],
+      lex:[['eine Entscheidung treffen = entscheiden','اتخاذ قرار'],
+           ['Kritik üben an = kritisieren','انتقاد'],
+           ['in Kauf nehmen = akzeptieren','القبول بـ على مضض'],
+           ['zur Verfügung stellen','وضع تحت التصرّف'],
+           ['in Betracht ziehen = erwägen','أخذ بعين الاعتبار'],
+           ['zum Ausdruck bringen = ausdrücken','التعبير عن'],
+           ['zur Kenntnis nehmen','أخذ علماً بـ'],
+           ['in Frage kommen','وارد / ممكن'],
+           ['unter Druck setzen','الضغط على'],
+           ['Verantwortung übernehmen','تحمّل المسؤولية'],
+           ['Bezug nehmen auf','الإشارة إلى'],
+           ['eine Rolle spielen','لعب دور']],
+      gram:{t:'Pourquoi ces tournures rapportent des points au BAC',
+        tbl:[['verbe simple','registre courant','Sie kritisiert das Gesetz.'],
+             ['Funktionsverbgefüge','registre soutenu','Sie übt Kritik an dem Gesetz.'],
+             ['verbe simple','registre courant','Wir entscheiden heute.'],
+             ['Funktionsverbgefüge','registre soutenu','Wir treffen heute eine Entscheidung.']],
+        b:['Structure : <b>nom abstrait</b> + <b>verbe faible</b>. Le sens est porté par le NOM, '
+       + 'le verbe est vidé de sa substance.',
+         'Le nom impose son <b>cas</b> : <span class="de-in">Kritik üben <b>an</b> + Datif</span> · '
+       + '<span class="de-in">Bezug nehmen <b>auf</b> + Akkusativ</span> · '
+       + '<span class="de-in">Verantwortung <b>für</b> + Akkusativ</span>.',
+         'Le verbe est <b>figé</b> : on dit <b>treffen</b> une Entscheidung, jamais '
+       + '<span class="de-in">machen</span>.',
+         'Ces tournures signalent un niveau B2 et sont attendues en production écrite.'],
+        ex:'<span class="de-in">Die Regierung <b>hat</b> die Forderungen der Jugend '
+       + '<b>zur Kenntnis genommen</b> und <b>übt</b> nun <b>Kritik an</b> den bisherigen '
+       + 'Maßnahmen; eine Reform <b>kommt</b> daher <b>in Frage</b>.</span>'},
+      exos:[{q:'«eine Entscheidung ___ »',opts:['treffen','machen','geben','nehmen'],a:0,
+             why:'Collocation figée : <span class="de-in">eine Entscheidung <b>treffen</b></span>.'},
+          {q:'«Kritik ___ an der Regierung»',opts:['üben','machen','tun','geben'],a:0,
+             why:'<span class="de-in">Kritik <b>üben an</b> + Datif</span>.'},
+          {q:'«Bezug nehmen ___ »',opts:['auf + Akkusativ','an + Datif','für + Akkusativ','mit + Datif'],a:0,
+             why:'<span class="de-in">Bezug nehmen <b>auf</b> + Akkusativ</span>.'},
+          {q:'«in Kauf nehmen» signifie :',opts:['accepter à contrecœur','acheter','refuser','oublier'],a:0,
+             why:'Accepter un inconvénient inévitable.'},
+          {q:'Équivalent soutenu de «kritisieren» :',opts:['Kritik üben an','Kritik machen auf',
+                                                          'Kritik geben für','Kritik nehmen an'],a:0,
+             why:'Le verbe est <b>üben</b> et la préposition <b>an</b> + Datif.'},
+          {q:'«Verantwortung ___ die Zukunft»',opts:['für','an','über','auf'],a:0,
+             why:'<span class="de-in">Verantwortung <b>für</b> + Akkusativ</span>.'}]},
+
+    { n:4, de:'Textverständnis : «Generationen unter einem Dach»', ar:'فهم نص — أجيال تحت سقف واحد', dur:60,
       obj:['قراءة نص سوسيولوجي','استخراج الحجج','repérage du Konjunktiv','الإجابة بجمل كاملة'],
       texte:'<div class="reading"><p><b>Generationen unter einem Dach</b></p>'
           + '<p>Früher lebten in Algerien oft drei Generationen zusammen: Großeltern, Eltern '
@@ -754,7 +938,7 @@ const U3AS_3 = {
              why:'Dernière phrase : <span class="de-in">getrennte Wohnungen, aber gemeinsame '
                + 'Sonntage</span>.'}]},
 
-    { n:4, de:'Textproduktion — «Zusammenleben der Generationen»', ar:'إنتاج كتابي ✍️ تعايش الأجيال', dur:60,
+    { n:5, de:'Textproduktion — «Zusammenleben der Generationen»', ar:'إنتاج كتابي ✍️ تعايش الأجيال', dur:60,
       obj:['كتابة نص تحليلي 12 سطراً','2 جمل افتراضية','Génitif + connecteurs ثنائية','تحليل موضوعي'],
       consigne:'<div class="exo"><div class="q-t"><b>📌 المهمة :</b> اكتب نصاً تحليلياً من '
           + '<b>10 إلى 12 سطراً</b> حول « تعايش الأجيال في الجزائر » :'
@@ -783,8 +967,44 @@ const U3AS_3 = {
            + 'entscheidend ist der regelmäßige Kontakt. Meiner Ansicht nach wäre eine Lösung '
            + 'der Zukunft: getrennte Wohnungen, aber gemeinsame Sonntage.</p></div></div>',
       exos:[{type:'texte',q:'✍️ اكتب نصّك التحليلي هنا:',
-             ph:'In Algerien wird seit Jahren über … diskutiert.'}]}
-  ],
+             ph:'In Algerien wird seit Jahren über … diskutiert.'}]},
+
+    { n:6, de:'Konsolidierung + Évaluation 📝', ar:'تثبيت وتقويم — الحياة في المجتمع', dur:60,
+      obj:['révision transversale U9','Irrealis + Funktionsverbgefüge','connecteurs avancés','préparation au devoir /20'],
+      exos:[{q:'«Wenn alle mitmachen würden, ___ die Gesellschaft gerechter.»',opts:['wäre','würde',
+                                                                                    'ist','war'],a:0,
+             why:'<span class="de-in">sein</span> au Konjunktiv II = <b>wäre</b>.'},
+            {q:'«Eine Entscheidung ___ »',opts:['treffen','machen','geben','setzen'],a:0,
+             why:'Collocation figée du Funktionsverbgefüge.'},
+            {q:'«___ die Gesellschaft sich wandelt, bleiben die Werte bestehen.»',
+             opts:['Obwohl','Trotz','Wegen','Statt'],a:0,
+             why:'Conjonction concessive → <b>obwohl</b> + verbe final.'},
+            {q:'«Je mehr Menschen sich engagieren, ___ stärker wird die Gemeinschaft.»',
+             opts:['desto','umso mehr','als','wie'],a:0,
+             why:'<span class="de-in">je … <b>desto</b></span> + Komparativ.'},
+            {q:'«In einer Gesellschaft, ___ Solidarität zählt, lebt man besser.»',
+             opts:['in der','in dem','in die','wohin'],a:0,
+             why:'Relative avec préposition : die Gesellschaft → <b>in der</b>.'},
+            {q:'«Man ___ nicht nur an sich selbst denken.»',opts:['sollte','sollten','solltest',
+                                                                 'soll'],a:0,
+             why:'<span class="de-in">man</span> = 3ᵉ personne singulier → <b>sollte</b>.'},
+            {q:'«Kritik ___ an den Maßnahmen»',opts:['üben','machen','tun','nehmen'],a:0,
+             why:'Verbe figé : <b>üben</b>.'},
+            {q:'«___ allem darf man die Jugend nicht vergessen.»',opts:['Vor','Nach','Bei','Mit'],a:0,
+             why:'<span class="de-in"><b>Vor</b> allem</span> = surtout.'},
+            {q:'«Die Gesellschaft besteht ___ Menschen verschiedener Herkunft.»',
+             opts:['aus','von','mit','für'],a:0,
+             why:'<span class="de-in">bestehen <b>aus</b> + Datif</span>.'},
+            {q:'«Es ist wichtig, dass jeder ___ Verantwortung übernimmt.»',
+             opts:['seine','sein','ihre','seinen'],a:0,
+             why:'Le possessif s’accorde avec <b>jeder</b> (masculin) : seine.'},
+            {q:'«Hätten alle mitgemacht, ___ das Projekt gelungen.»',opts:['wäre','würde','hätte',
+                                                                          'ist'],a:0,
+             why:'Passé irréel avec sein : <b>wäre</b> + Partizip II.'},
+            {q:'Quel connecteur exprime la conséquence ?',opts:['deshalb','obwohl','während',
+                                                               'statt'],a:0,
+             why:'<span class="de-in"><b>deshalb</b></span> = c’est pourquoi (verbe en 2).'}]}
+    ],
 
   devoir: {
     titre:'Évaluation — 3AS Einheit 3 : Leben in der Gesellschaft',
