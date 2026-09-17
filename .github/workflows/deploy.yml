@@ -220,6 +220,23 @@ jobs:
                   fails.append('regle ' + r['id'] + ' : moins de 3 mots-cles')
               if len(r.get('exemples') or []) < 4:
                   fails.append('regle ' + r['id'] + ' moins de 4 exemples'); break
+          ATT_CHAP = {'2AS-T1': 16, '2AS-T2': 15, '2AS-T3': 14, '3AS-BAC': 18, 'BAC': 20}
+          reel = dict((c['id'], c['nombre']) for c in gm['chapitres'])
+          if reel != ATT_CHAP:
+              fails.append('grammaire : repartition ' + str(reel) + ' != ' + str(ATT_CHAP))
+          comptage = {}
+          for r in gm['items']:
+              comptage[r['chapitre']] = comptage.get(r['chapitre'], 0) + 1
+          if comptage != ATT_CHAP:
+              fails.append('grammaire : items par chapitre ' + str(comptage))
+          cefrs = set(r['cefr'] for r in gm['items'])
+          if not cefrs <= set(['A1', 'A2', 'B1', 'B2']):
+              fails.append('grammaire : CEFR inconnus ' + str(cefrs))
+          nums = [r['num_global'] for r in gm['items']]
+          if nums != list(range(1, len(gm['items']) + 1)):
+              fails.append('grammaire : num_global non continu')
+          if len(set(r['id'] for r in gm['items'])) != len(gm['items']):
+              fails.append('grammaire : identifiants non uniques')
           print('✅ Grammaire : ' + str(len(gm['items'])) + ' regles · '
                 + str(len(gm['chapitres'])) + ' chapitres · CEFR A1-B2 · ' + str(compte))
           cv = json.load(open('assets/bdd/classe.json', encoding='utf-8'))
