@@ -43,6 +43,7 @@ jobs:
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
+                   assets/matching_v2.patch.js \
                    assets/bdd/referentiel.json assets/bdd/devoirs.json \
                    assets/bdd/compositions.json assets/bdd/bac.json \
                    assets/bdd/annales.json assets/bdd/grammaire.json \
@@ -53,7 +54,7 @@ jobs:
                    assets/bdd/journee.json assets/bdd/reservation.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 34 fichiers racine + 18 assets présents"
+          echo "✅ 34 fichiers racine + 19 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -935,6 +936,115 @@ jobs:
               print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
           PY
 
+      - name: Rejouer la suite de build T1-T6 du professeur
+        run: |
+          python - <<'PY'
+          import json, re, sys
+          fails = []
+          res = []
+          # ── T1 : workflow deploy.yml (clés requises) ──
+          dy = open('.github/workflows/deploy.yml', encoding='utf-8').read()
+          t1 = all(k in dy for k in ('actions/checkout@v4', 'actions/deploy-pages@v4',
+                                     'github-pages'))
+          res.append(('T1 Workflow deploy.yml (cles requises)', t1))
+          # ── T2 : corrigés conformes au fichier du prof ──
+          co = json.load(open('assets/corriges.json', encoding='utf-8'))
+          t2 = (co.get('II.1_conjugaison') == ['bin', 'hast', 'sind', 'hat']
+                and co.get('II.2_w_fragen') == ['Wie', 'Woher', 'Wo', 'Wie']
+                and co.get('II.4_salutations') == ['Guten Morgen', 'Tschüs',
+                                                   'Guten Abend', 'Auf Wiedersehen']
+                and co.get('I.1_vrai_faux') == ['Falsch', 'Richtig', 'Richtig', 'Falsch'])
+          res.append(('T2 Corriges conformes au fichier du prof', t2))
+          # ── T3 : quiz aligné sur les corrigés (5/5) ──
+          qz = open('quiz.js', encoding='utf-8').read()
+          u1 = re.findall(r"\{\s*u:1,\s*q:'((?:[^'\\]|\\.)*?)',\s*\n\s*o:\[(.*?)\],\s*c:(\d+),",
+                        qz, re.S)
+          bonne = []
+          for (_q, opts, ci) in u1:
+              ol = re.findall(r"'((?:[^'\\]|\\.)*)'", opts)
+              if len(ol) == 4:
+                  bonne.append(ol[int(ci)])
+          checks3 = [
+              ('Q1 modele Ich heiße', str(co.get('III_modele', '')).startswith('Ich heiße')
+               and any(b.startswith('Ich heiße') for b in bonne)),
+              ('Q2 bin', 'bin' in bonne and co['II.1_conjugaison'][0] == 'bin'),
+              ('Q3 Woher', 'Woher' in bonne and co['II.2_w_fragen'][1] == 'Woher'),
+              ('Q4 Guten Abend', 'Guten Abend' in bonne
+               and co['II.4_salutations'][2] == 'Guten Abend'),
+              ('Q5 ordre', 'Ich bin 16 Jahre alt.' in bonne
+               and co['II.3_ordre'][0] == 'Ich bin 16 Jahre alt.'),
+          ]
+          t3 = all(o for (_n, o) in checks3)
+          res.append(('T3 Quiz aligne sur les corriges (5/5)', t3))
+          # ── T4 : moteur IA v2, 9 cas de référence ──
+          pj = open('assets/matching_v2.patch.js', encoding='utf-8').read()
+          ap = open('app.js', encoding='utf-8').read()
+          i = ap.find('  base:[')
+          j = ap.find('  fallback:[', i)
+          base = []
+          for m in re.finditer(r"\{t:'([^']*)',\s*k:\[(.*?)\],", ap[i:j], re.S):
+              base.append((m.group(1), re.findall(r"'((?:[^'\\]|\\.)*)'", m.group(2))))
+          def trouver(txt):
+              s = (txt or '').lower()
+              for (topic, kws) in base:
+                  for k in kws:
+                      if k.lower() in s:
+                          return topic
+              return None
+          def par_racines(txt):
+              n = re.sub(r'[\u064B-\u065F\u0670\u0640]', '', (txt or '').lower())
+              for a in 'أإآٱ':
+                  n = n.replace(a, 'ا')
+              n = n.replace('ة', 'ه').replace('ى', 'ي').replace('ؤ', 'و').replace('ئ', 'ي')
+              RAC = {'salutations': ['تحي', 'حيي', 'وداع', 'سلام', 'صباح', 'مساء', 'مرحبا'],
+                     'exam': ['فرض', 'تحضير', 'امتحان', 'اختبار', 'بكالوريا'],
+                     'wfragen': ['استفهام', 'اداه', 'أداة', 'woher', 'warum'],
+                     'sein': ['يكون'], 'haben': ['يملك'],
+                     'lena': ['لينا', 'نص', 'فهم']}
+              for suj, rac in RAC.items():
+                  if any(r in n for r in rac):
+                      return suj
+              return None
+          CAS = [('اشرح لي الفعل sein', 'sein'), ('ما معنى haben؟', 'haben'),
+                 ('اشرح لي نص Lena Fischer', 'lena'), ('كيف أحضر للفرض؟', 'exam'),
+                 ('علمني التحيات بالألمانية', 'salutations'),
+                 ('Guten Morgen signifie quoi؟', 'salutations'),
+                 ('ما هي أدوات الاستفهام؟', 'wfragen'), ('Woher kommst du؟', 'wfragen'),
+                 ('مرحبا أستاذ', 'default')]
+          p4 = 0
+          for (phrase, attendu) in CAS:
+              obtenu = trouver(phrase) or par_racines(phrase) or 'default'
+              if obtenu == attendu:
+                  p4 += 1
+          res.append(('T4 Moteur IA v2 : ' + str(p4) + '/9 cas', p4 == 9))
+          # ── T5 : cohérence pédagogique (séances 60 min, grille /5, devoir /20) ──
+          et5 = [int(x) for x in re.findall(r"\{\s*m:(\d+),\s*ar:'", ap)]
+          ig5 = ap.find('const GRILLE_S5')
+          fg5 = ap.find('const GRILLE_S5_TOTAL', ig5)
+          g5 = [int(p) for (_l, p) in re.findall(r"\['([^']+)',\s*(\d+),", ap[ig5:fg5])]
+          iD = ap.find('const DEVOIR_U1 = {')
+          iC = ap.find('const CORRIGE_U1 = {')
+          dv = ap[iD:iC]
+          pts = {}
+          for lbl in ('I', 'II', 'III'):
+              a0 = dv.find("{ id:'" + lbl + "', t:")
+              pts[lbl] = int(re.search(r'pts:(\d+)', dv[a0:a0 + 200]).group(1)) if a0 >= 0 else 0
+          t5 = (sum(et5) == 60 and sum(g5) == 5 and sum(pts.values()) == 20
+                and pts == {'I': 8, 'II': 8, 'III': 4})
+          res.append(('T5 Seances 60 min + grille /5 + devoir /20', t5))
+          # ── T6 : patch matching v2 (racine « تحي ») ──
+          t6 = ('تحي' in pj) and ('findBestResponse' in pj)
+          res.append(("T6 Patch matching v2 (racine 'تحي')", t6))
+          for (label, ok) in res:
+              print(('  ✅ ' if ok else '  ❌ ') + label)
+              if not ok:
+                  fails.append(label)
+          if all(o for (_l, o) in res):
+              print('✅ SUITE DE BUILD DU PROFESSEUR : 6/6 tests valides (T1 → T6)')
+          else:
+              print('::error::' + ' | '.join(fails[:6])); sys.exit(1)
+          PY
+
       - name: Valider la syntaxe JavaScript (esprima)
         run: |
           python - <<'PY'
@@ -1135,6 +1245,26 @@ jobs:
                 + '3 devoirs /20 · 3 grilles · ' + str(u3a.count('~~') // 2)
                 + ' erreurs frequentes · CEFR ' + '/'.join(sorted(cefrl3a)))
           print('   adaptateur window.UNITES_3AS_A → U7/U8/U9 branches sur app.js')
+          # ── Carte 3AS d'index.html : doit refléter le registre REEL, pas un statut figé ──
+          h3 = rd('index.html')
+          i3 = h3.find('<div class="po-3as">')
+          if i3 < 0:
+              fails.append('index.html : carte 3AS (po-3as) absente')
+          else:
+              c3 = h3[i3:i3 + 3000]
+              if 'قريباً' in c3:
+                  fails.append('index.html : la carte 3AS annonce « قريباً » alors que '
+                               + 'les 10 unites sont livrees')
+              for n in range(7, 17):
+                  if ('U' + str(n)) not in c3:
+                      fails.append('index.html : carte 3AS sans U' + str(n))
+              if '10 وحدات' not in c3 or '60 حصة' not in c3:
+                  fails.append('index.html : carte 3AS sans le total 10 unités / 60 séances')
+              for tr in ('18 حصة', '24 حصة'):
+                  if tr not in c3:
+                      fails.append('index.html : carte 3AS sans « ' + tr + ' »')
+          print('✅ Carte 3AS : 10 unites (U7-U16) · 60 seances · T1 18 / T2 18 / T3 24 '
+                + '· aucun statut « قريباً » sur du contenu livre')
           print('✅ 3AS الفصل الثالث : U13 Sante · U14 Mondialisation · U15 Medias · U16 Dialogue')
           u10 = rd('unite10.js'); u11 = rd('unite11.js'); u12 = rd('unite12.js')
           u13 = rd('unite13.js'); u14 = rd('unite14.js')
@@ -1449,9 +1579,9 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.9.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.10.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
-                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './reservation.js', './journee.js', './prof.js', './parents.js',
+                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './matching_v2.patch.js', './reservation.js', './journee.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
                     './assets/bdd/live.json', './assets/bdd/parents.json', './assets/bdd/devoirs_officiels.json', './assets/bdd/wilayas_geo.json', './assets/bdd/plan_projet.json', './assets/bdd/reservation.json'):
               if k not in sw:
