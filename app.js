@@ -692,6 +692,93 @@ function renderSeances(){
   const l = $('#progLbl'); if(l) l.textContent = done.length + ' / ' + SEANCES.length + ' حصص · ' + pct + '%';
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   RYTHME OFFICIEL D'UNE SÉANCE — maquette du professeur
+   5 étapes chronométrées : [5, 15, 15, 15, 10] = 60 minutes
+   Validé par le test T5 : « Séances 60' + grille /5 + devoir /20 »
+   ══════════════════════════════════════════════════════════════════════ */
+const ETAPES_SEANCE = [
+  { m:5,  ar:'إحماء وتذكير',        de:'Wiedereinstieg',              i:'🔔' },
+  { m:15, ar:'المفردات',            de:'Wortschatz',                  i:'🔑' },
+  { m:15, ar:'القواعد',             de:'Grammatik',                   i:'📘' },
+  { m:15, ar:'التطبيق والتمارين',    de:'Anwendung und Übung',         i:'✏️' },
+  { m:10, ar:'خلاصة وواجب منزلي',   de:'Zusammenfassung + Hausaufgabe', i:'🏁' }
+];
+const ETAPES_TOTAL = ETAPES_SEANCE.reduce(function(a, e){ return a + e.m; }, 0);   /* 60 */
+
+/* Barème proportionnel pour les séances plus courtes (45 min, 90 min…). */
+function etapesPour(dur){
+  const d = Number(dur) || ETAPES_TOTAL;
+  if(d === ETAPES_TOTAL) return ETAPES_SEANCE;
+  return ETAPES_SEANCE.map(function(e){
+    return { m: Math.max(3, Math.round(e.m * d / ETAPES_TOTAL)),
+             ar: e.ar, de: e.de, i: e.i };
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   GRILLE DE CRITÈRES — production écrite de séance, notée sur 5
+   Maquette : {"5 informations": 2, "conjugaison + alt": 1,
+               "place du verbe": 1, "lisibilité": 1}  →  total 5
+   ══════════════════════════════════════════════════════════════════════ */
+const GRILLE_S5 = [
+  ['5 informations',      2, 'الاسم · العمر · البلد · المدينة · ما تتعلّمه (0,4 / معلومة)'],
+  ['conjugaison + alt',   1, 'sein/haben/kommen/wohnen/lernen correctement conjugués + « Jahre alt »'],
+  ['place du verbe',      1, 'le verbe conjugué en 2ᵉ position dans chaque phrase'],
+  ['lisibilité',          1, 'majuscules aux noms, ponctuation, orthographe']
+];
+const GRILLE_S5_TOTAL = GRILLE_S5.reduce(function(a, g){ return a + g[1]; }, 0);   /* 5 */
+
+/* Une séance de production écrite se note sur 5, sauf grille explicite. */
+function estTextproduktion(s){
+  if(!s) return false;
+  const t = String(s.de || '') + ' ' + String(s.ar || '');
+  return /Textproduktion|إنتاج كتابي|Schreiben/i.test(t);
+}
+function grillePour(s){
+  if(!s) return null;
+  if(Array.isArray(s.grille) && s.grille.length) return s.grille;
+  return estTextproduktion(s) ? GRILLE_S5 : null;
+}
+
+/* Ligne de temps des 5 étapes, insérée en tête de chaque séance. */
+function renderEtapes(s){
+  const et = etapesPour(s && s.dur);
+  const tot = et.reduce(function(a, e){ return a + e.m; }, 0);
+  let cum = 0;
+  return '<div class="etapes">'
+    + '<div class="et-h"><b>⏱️ déroulé de la séance</b>'
+    + '<span>' + et.length + ' étapes · ' + tot + ' min</span></div>'
+    + '<div class="et-bar">' + et.map(function(e){
+        cum += e.m;
+        return '<i style="flex:' + e.m + '" title="' + esc(e.de) + ' — ' + e.m + ' min"></i>';
+      }).join('') + '</div>'
+    + '<div class="et-l">' + et.map(function(e, k){
+        const debut = et.slice(0, k).reduce(function(a, x){ return a + x.m; }, 0);
+        return '<div class="et-i"><span class="et-n">' + e.i + '</span>'
+          + '<b>' + esc(e.ar) + '</b>'
+          + '<i class="de-display">' + esc(e.de) + '</i>'
+          + '<span class="et-m">' + e.m + ' د</span>'
+          + '<span class="et-t">' + debut + '′ → ' + (debut + e.m) + '′</span></div>';
+      }).join('') + '</div></div>';
+}
+
+/* Grille de notation /5 pour la production écrite. */
+function renderGrille(g){
+  if(!g || !g.length) return '';
+  const tot = g.reduce(function(a, x){ return a + (Number(x[1]) || 0); }, 0);
+  return '<div class="grille5"><div class="g5-h"><b>📊 السلّم — grille de notation</b>'
+    + '<span class="g5-t">/ ' + tot + '</span></div>'
+    + '<table class="bareme g5-tab"><tr><th>المعيار</th><th>التفصيل</th><th>النقطة</th></tr>'
+    + g.map(function(x){
+        return '<tr><td><b>' + esc(x[0]) + '</b></td>'
+          + '<td style="text-align:right;color:var(--m);font-size:12px">' + esc(x[2] || '') + '</td>'
+          + '<td class="g5-p">' + x[1] + '</td></tr>';
+      }).join('')
+    + '<tr class="g5-tot"><td colspan="2">المجموع</td><td class="g5-p">' + tot + '</td></tr>'
+    + '</table></div>';
+}
+
 function openSeance(n){
   const s = SEANCES.filter(x => x.n === n)[0]; if(!s) return;
   const st = loadSeances();
@@ -709,10 +796,13 @@ function openSeance(n){
     box.innerHTML = h; box.scrollIntoView({behavior:'smooth', block:'start'}); return;
   }
 
+  h += renderEtapes(s);
+
   if(s.obj) h += '<div class="gram"><h4>🎯 أهداف الحصة</h4><ul style="margin:0 20px;font-size:13px;color:var(--m)">'
     + s.obj.map(o => '<li>' + esc(o) + '</li>').join('') + '</ul></div>';
   if(s.texte) h += s.texte;
   if(s.consigne) h += s.consigne;
+  h += renderGrille(grillePour(s));
 
   if(s.lex) h += '<h3 style="margin:17px 0 10px">🔑 المفردات — Wortschatz '
     + '<button class="btn btn-o btn-sm" id="speakAll" style="margin-right:8px">🔊 استمع للكل</button></h3>'
