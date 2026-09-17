@@ -1358,7 +1358,15 @@ jobs:
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 17 vues · 16 onglets statiques + 1 dynamique (profboard)')
-          print('✅ Bareme 8+8+4 = 20 sur U1 → U16 = 90 seances (2AS + 3AS)')
+          # Total de séances CALCULÉ depuis les sources — jamais de littéral dans un rapport.
+          tot_seances = len(re.findall(r'\{ n:\d+, de:', app))
+          for _f in ('unite2.js', 'unite3.js', 'unite4.js', 'unite5.js', 'unite6.js',
+                       'unite10.js', 'unite11.js', 'unite12.js', 'unite13.js',
+                       'unite14.js', 'unite15.js', 'unite16.js'):
+              tot_seances += len(re.findall(r'\{ n:\d+, de:', rd(_f)))
+          tot_seances += len(re.findall(r'\{ n:\d+, de:', u3a))
+          print('✅ Bareme 8+8+4 = 20 sur U1 → U16 · ' + str(tot_seances)
+                + ' seances mesurees (2AS + 3AS)')
           print('✅ Registre UNITES = 16 · espace parents multi-enfants · 2AS bouclée (U1-U6) + 3AS U7-U12 (الفصل 1 et 2 complets) (الفصل 1 + 2 + 3 complets)')
           print('✅ Garde-fou Node : 12/12 unites resolues a l execution, aucune vide')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
