@@ -108,7 +108,25 @@ for (const m of morceaux) {
       const corps = app.slice(deb, fin > deb ? fin : app.length);
       const nb = (corps.match(/\{\s*n:\d+,\s*de:'/g) || []).length;
       if (nb < 8) fails.push(`U1 : SEANCES_U1 ne contient que ${nb} séances (< 8)`);
-      resolues.push({ n: Number(n), origine, seances: nb, devoir: true, parties: 3 });
+      /* Mesure RÉELLE du devoir U1 dans app.js — jamais de valeur codée en dur. */
+      const dDeb = app.indexOf('const DEVOIR_U1');
+      const dFin = app.indexOf('const CORRIGE_U1', dDeb);
+      const dCorps = app.slice(dDeb, dFin > dDeb ? dFin : app.length);
+      const nParties = (dCorps.match(/id:\s*'(?:I|II|III)'\s*,/g) || []).length;
+      if (nParties !== 3) {
+        fails.push(`U1 : DEVOIR_U1 a ${nParties} parties, attendu 3 (I/II/III)`);
+      }
+      const ptsU1 = [...dCorps.matchAll(/id:\s*'(?:I|II|III)'[^}]*?pts:\s*(\d+)/g)]
+        .map(mm => Number(mm[1]));
+      const sommeU1 = ptsU1.reduce((a, b) => a + b, 0);
+      if (ptsU1.length === 3 && sommeU1 !== 20) {
+        fails.push(`U1 : barème ${sommeU1}/20 ≠ 20`);
+      }
+      const mDuree = m.match(/duree:\s*(\d+)/);
+      resolues.push({
+        n: Number(n), origine, seances: nb, devoir: nParties === 3,
+        parties: nParties, duree: mDuree ? Number(mDuree[1]) : null, de: '',
+      });
       continue;
     }
   }
@@ -156,7 +174,8 @@ for (const u of resolues) {
   const drapeau = (u.seances > 0 && u.devoir) ? '✅' : '❌';
   console.log(`     ${drapeau} U${String(u.n).padStart(2)}  ${String(u.seances).padStart(2)} séances`
     + ` · devoir ${u.devoir ? '✓' : '✗'} (${u.parties}/3 parties)`
-    + ` · ${String(u.duree).padStart(3)} min · via ${u.origine}`
+    + ` · ${u.duree === null || u.duree === undefined
+        ? '  —' : String(u.duree).padStart(3)} min · via ${u.origine}`
     + (u.de ? ` · ${u.de}` : ''));
 }
 
