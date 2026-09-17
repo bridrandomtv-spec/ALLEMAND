@@ -43,9 +43,12 @@
     const items = filtrer();
     const st = $('#bddStatus2');
     box.innerHTML =
-      '<div class="bdd-status ok" id="bddStatus2">📘 <b class="de-in">' + (D.items||[]).length +
-        '</b> قاعدة · ' + CH.length + ' فصول · CEFR A1 → B2 · ' +
-        '<b class="de-in">' + items.length + '</b> نتيجة</div>' +
+      st.className = 'bdd-status ok';
+      const cefrs = Array.from(new Set((D.items || []).map(x => x.cefr))).sort();
+      st.innerHTML = '📘 <b class="de-in">' + (D.items || []).length +
+        '</b> قاعدة · <b class="de-in">' + (D.chapitres || []).length +
+        '</b> فصول · CEFR ' + cefrs.join(' → ') + ' · <b class="de-in">' +
+        items.length + '</b> نتيجة';
       '<div class="filters">' +
         '<div class="filters-h"><b>🔎 البحث في القواعد</b>' +
           '<button class="btn btn-o btn-sm" id="gReset">↺ إعادة الضبط</button></div>' +
@@ -107,11 +110,12 @@
         '<button class="btn btn-o btn-sm">📖 القاعدة كاملة</button></div></article>';
   }
   function badgeClass(ch){
-    if(ch === 'BAC')        return 'annales';
+    if(!ch) return 'devoir';
     if(ch.indexOf('T1') !== -1) return 'devoir';
     if(ch.indexOf('T2') !== -1) return 'composition';
-    if(ch.indexOf('T3') !== -1) return 'bac';
-    return 'annales';
+    if(ch.indexOf('T3') !== -1) return 'annales';
+    if(ch.indexOf('3AS') !== -1) return 'bac';
+    return 'bac';
   }
 
   function bind(){
