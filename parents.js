@@ -417,9 +417,7 @@
         '<div class="chips" style="margin:8px 0">' +
           (p.tags||[]).map(t => '<span class="fchip on">' + esc(t) + '</span>').join('') + '</div>' +
         '<div class="pc-f"><div class="pc-p"><b>' + p.prix.toLocaleString('fr-FR') + '</b> د.ج / ساعة</div>' +
-        '<a class="btn btn-g btn-sm" target="_blank" rel="noopener" href="' + waLink(
-          'السلام عليكم، أريد حجز حصّة خصوصية مع ' + p.nom + ' للتلميذ ' + enfant.nom_complet) +
-        '">احجز</a></div></div></div>').join('') + '</div></div>' +
+        '<button class="btn btn-g btn-sm" data-go="reservation">احجز</button></div></div></div>').join('') + '</div></div>' +
       '<div class="card"><h2>💳 العروض والأسعار</h2>' +
       '<div class="tarifs">' + (D.tarifs || []).map(t =>
         '<div class="tarif' + (t.populaire ? ' pop' : '') + '">' +
