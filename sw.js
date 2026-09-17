@@ -21,6 +21,7 @@ const PRECACHE = [
   './unite4.js',
   './unite5.js',
   './unite6.js',
+  './unites3as_a.js',
   './app.js',
   './modules.js',
   './live.js',
