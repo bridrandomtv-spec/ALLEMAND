@@ -1389,7 +1389,7 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.8.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.9.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './reservation.js', './journee.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
@@ -1474,10 +1474,80 @@ jobs:
                      '.rs-badge', '.rs-types', '.rs-ty', '.rs-form', '.rs-fld', '.rs-opts',
                      '.rs-o', '.rs-prix', '.rs-pr', '.rs-total', '.rs-ref', '.rs-stats',
                      '.rs-st', '.rs-liste', '.rs-item', '.rs-ih', '.rs-it', '.rs-ib',
-                     '.rs-ia', '.rs-late', '.rs-mini', 'v3.7', '.etapes', '.et-bar', '.et-i', '.et-m', '.grille5', '.g5-h', '.g5-t', 'g5-tab', '.g5-p', 'v3.8')
+                     '.rs-ia', '.rs-late', '.rs-mini', 'v3.7', '.etapes', '.et-bar', '.et-i', '.et-m', '.grille5', '.g5-h', '.g5-t', 'g5-tab', '.g5-p', 'v3.8', '.lecon.lock', '.l-tri', '.l-prog', '.fchip.imp', '.exo-s', '.exo-b', '.exo-de', '.exo-lock', '.exo-n', '.ch-k2', 'v3.9')
           for k in CSS_REQ:
               if k not in css:
                   fails.append('style.css : ' + k + ' absent')
+          # ── Points 7 / 8 / 10 de la maquette : الدروس · التمارين · chapeau de classe ──
+          clj = json.load(open('assets/bdd/classe.json', encoding='utf-8'))
+          lc = clj['lecons']
+          if len(lc) != 6:
+              fails.append('classe.json : ' + str(len(lc)) + ' lecons != 6')
+          ATT_LEC = ['Meine Familie', 'Meine Schule', 'Mein Tagesablauf',
+                     'Hobbys und Freizeit', 'Essen und Trinken', 'Reisen und Verkehr']
+          if [x['de'] for x in lc] != ATT_LEC:
+              fails.append('classe.json : titres de lecons ' + str([x['de'] for x in lc]))
+          if [x['ar'] for x in lc][3] != 'الهوايات':
+              fails.append('classe.json : L4 ar != الهوايات (maquette)')
+          stc = dict((s, sum(1 for x in lc if x['statut'] == s))
+                     for s in ('termine', 'en_cours', 'verrouille'))
+          if stc != {'termine': 2, 'en_cours': 1, 'verrouille': 3}:
+              fails.append('classe.json : statuts ' + str(stc)
+                           + ' != 2 termine / 1 en_cours / 3 verrouille')
+          if [x.get('progression') for x in lc] != [100, 100, 65, 0, 0, 0]:
+              fails.append('classe.json : progressions ' + str([x.get('progression') for x in lc]))
+          for x in lc:
+              for kk in ('vocabulaire', 'grammaire', 'activite'):
+                  if not x.get(kk):
+                      fails.append('classe.json : lecon ' + str(x['n']) + ' sans ' + kk)
+          L1 = [x for x in lc if x['n'] == 1][0]
+          if (L1['vocabulaire'], L1['grammaire'], L1['activite']) != (
+                  'أفراد الأسرة', 'أدوات التعريف', 'وصف العائلة'):
+              fails.append('classe.json : triplet L1 non conforme a la maquette')
+          L3 = [x for x in lc if x['n'] == 3][0]
+          if (L3['vocabulaire'], L3['grammaire'], L3['activite']) != (
+                  'الأوقات والأنشطة', 'الأفعال الانفصالية', 'وصف يومك'):
+              fails.append('classe.json : triplet L3 non conforme a la maquette')
+          if L3.get('important') != 'مهمة':
+              fails.append('classe.json : L3 sans marqueur « مهمة »')
+          ex = clj.get('exercices')
+          if not ex or len(ex.get('items') or []) != 4:
+              fails.append('classe.json : bloc exercices absent ou != 4 items')
+          else:
+              it = ex['items']
+              if [e['score'] for e in it] != ['10/10', '8/10', 'جاري', '🔒 مقفل']:
+                  fails.append('classe.json : scores exercices ' + str([e['score'] for e in it]))
+              if [e['icone'] for e in it] != ['✓', '✓', '▶', '🔒']:
+                  fails.append('classe.json : icones exercices ' + str([e['icone'] for e in it]))
+              ATT_CONS = ['طابق بين الوقت بالكلمة والرقم', 'صَرِّف الأفعال التالية في الحاضر',
+                          'اقرأ النص وأجب عن الأسئلة', 'اكتب فقرة عن روتينك اليومي (80 كلمة)']
+              if [e['consigne'] for e in it] != ATT_CONS:
+                  fails.append('classe.json : consignes exercices non conformes a la maquette')
+          ch = clj.get('chapeau')
+          if not ch:
+              fails.append('classe.json : bloc chapeau absent')
+          else:
+              ATT_CH = {'filiere': 'شعبة آداب ولغات',
+                        'prof_complement': 'مدعوم بالذكاء الاصطناعي - يتحدث العربية',
+                        'duree_restante': '٣٥ دقيقة',
+                        'presents_titre': 'التلاميذ الحاضرون',
+                        'presents_valeur': '٣٢ تلميذ'}
+              for kk, v in ATT_CH.items():
+                  if ch.get(kk) != v:
+                      fails.append('classe.json : chapeau.' + kk + ' = ' + str(ch.get(kk)) + ' != ' + v)
+          if 'const liste = v => Array.isArray(v)' not in cl:
+              fails.append('classe.js : helper liste() absent — .map plantera sur une chaine')
+          if re.search(r'\(\w+\.(?:grammaire|vocabulaire|objectifs)\s*\|\|\s*\[\]\)\.map', cl):
+              fails.append('classe.js : reste un .map non protege sur grammaire/vocabulaire/objectifs')
+          for kk in ("st === 'verrouille' ? ['🔒 مقفل', 'ko']", 'function vueExercices(){',
+                     'h += vueExercices();', 'l-tri', 'l-prog', 'fchip imp',
+                     'chapeau || {}).filiere', 'duree_restante', 'presents_titre',
+                     'prof_complement', 'data-go="quiz"'):
+              if kk not in cl:
+                  fails.append('classe.js : ' + kk + ' absent')
+          print('✅ Maquette 7/8/10 : 6 lecons (2 termine · 1 en_cours 65 % · 3 verrouille) '
+                + '· triplet المفردات/القواعد/النشاط · 4 exercices (10/10 · 8/10 · جاري · مقفل) '
+                + '· chapeau (شعبة آداب ولغات · IA · ٣٥ دقيقة · ٣٢ تلميذ)')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 18 vues · 17 onglets statiques + 1 dynamique (profboard)')
@@ -1542,7 +1612,7 @@ jobs:
                   + len(json.load(open('assets/bdd/annales.json', encoding='utf-8'))['items']))
           print('✅ BDD : ' + str(nfic) + ' fiches + ' + str(nreg)
                 + ' regles + classe + registre + archive BAC + live')
-          print('✅ PWA v3.8 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ PWA v3.9 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
