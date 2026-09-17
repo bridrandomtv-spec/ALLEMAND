@@ -1,0 +1,747 @@
+{
+ "_meta":{
+  "titre":"فضاء الأولياء — Tableau de bord parent",
+  "titre_de":"Elternbereich",
+  "version":"1.0.0",
+  "etablissement":"الثانوية الافتراضية الجزائرية",
+  "annee_scolaire":"2026/2027",
+  "auteur":"Prof. Kharif Ahmed",
+  "confidentialite":"Données strictement locales (localStorage). Aucun serveur, aucune transmission. Le rapport parent est généré à la demande et partagé uniquement par le parent (WhatsApp / PDF / impression).",
+  "seuils_readiness":{
+   "pret":10,
+   "a_consolider":7
+  },
+  "bareme":{
+   "I":8,
+   "II":8,
+   "III":4,
+   "total":20
+  }
+ },
+ "enfants":[
+  {
+   "id":"2AS3-04",
+   "matricule":"DZ-2AS3-2026-004",
+   "prenom":"أحمد",
+   "nom":"محمد",
+   "nom_complet":"أحمد محمد",
+   "initiales":"أم",
+   "sexe":"M",
+   "naissance":"2009-03-14",
+   "age":16,
+   "section":"2AS-3",
+   "section_ar":"٢AS-٣",
+   "niveau":"2AS",
+   "filiere":"آداب ولغات",
+   "filiere_de":"Lettres et Langues",
+   "code_wilaya":"10",
+   "wilaya":"البويرة",
+   "ville":"البويرة",
+   "lycee":"الثانوية الافتراضية الجزائرية",
+   "points":850,
+   "seances_terminees":3,
+   "simulations":2,
+   "meilleure_sim":14.5,
+   "presence_pct":80,
+   "absences":1,
+   "retards":0,
+   "appreciation_generale":"تلميذ جادّ ومتابع، يحتاج تعزيزاً في القواعد.",
+   "examens":[
+    {
+     "id":"EX-01",
+     "type":"اختبار",
+     "statut":"مكتمل",
+     "icon":"📊",
+     "titre":"اختبار الفصل الأول",
+     "date":"١٥ أكتوبر ٢٠٢٦",
+     "date_iso":"2026-10-15",
+     "note":15,
+     "bareme":20,
+     "coef":3,
+     "detail":{
+      "I":6.0,
+      "II":6.0,
+      "III":3.0
+     },
+     "appreciation":"عمل جيد جداً، واصل على هذا المنوال",
+     "readiness":"pret"
+    },
+    {
+     "id":"EX-02",
+     "type":"فرض",
+     "statut":"مكتمل",
+     "icon":"📝",
+     "titre":"الفرض الأول",
+     "date":"٢٨ سبتمبر ٢٠٢٦",
+     "date_iso":"2026-09-28",
+     "note":14,
+     "bareme":20,
+     "coef":1,
+     "detail":{
+      "I":5.5,
+      "II":5.5,
+      "III":3.0
+     },
+     "appreciation":"إتقان جيد للقواعد، انتبه للإملاء",
+     "readiness":"pret"
+    },
+    {
+     "id":"EX-03",
+     "type":"مستمر",
+     "statut":"مستمر",
+     "icon":"🎯",
+     "titre":"المشاركة + الواجبات",
+     "date":"مستمر",
+     "date_iso":null,
+     "note":14.5,
+     "bareme":20,
+     "coef":1,
+     "detail":{
+      "I":6.0,
+      "II":5.5,
+      "III":3.0
+     },
+     "appreciation":"مشاركة منتظمة في القسم",
+     "readiness":"pret"
+    }
+   ],
+   "examen_a_venir":{
+    "icon":"📋",
+    "statut":"قادم",
+    "titre":"الفرض الأول — الفصل الأول",
+    "quand":"الاثنين 15 أكتوبر 2026",
+    "duree":"المدة: ساعة واحدة",
+    "programme":"المواضيع: الدروس 1، 2، 3",
+    "coef":"المعامل: 1",
+    "cta":"📚 استعد للامتحان"
+   },
+   "presence":[
+    {
+     "ok":true,
+     "jour":"الثلاثاء 16 سبتمبر 2026",
+     "lecon":"الدرس 3: Mein Tagesablauf",
+     "statut":"حاضر",
+     "heure":"14:05"
+    },
+    {
+     "ok":true,
+     "jour":"الأحد 14 سبتمبر 2026",
+     "lecon":"الدرس 2: Meine Schule",
+     "statut":"حاضر",
+     "heure":"08:02"
+    },
+    {
+     "ok":true,
+     "jour":"الخميس 11 سبتمبر 2026",
+     "lecon":"الدرس 1: Meine Familie",
+     "statut":"حاضر",
+     "heure":"14:00"
+    },
+    {
+     "ok":false,
+     "jour":"الثلاثاء 09 سبتمبر 2026",
+     "lecon":"حصة الاستقبال والتعريف",
+     "statut":"غائب - مبرر",
+     "heure":null
+    },
+    {
+     "ok":true,
+     "jour":"الأحد 07 سبتمبر 2026",
+     "lecon":"بداية السنة الدراسية",
+     "statut":"حاضر",
+     "heure":"08:00"
+    }
+   ],
+   "exercices":[
+    {
+     "n":1,
+     "titre":"تمرين 1: المفردات - الأوقات",
+     "consigne":"طابق بين الوقت بالكلمة والرقم",
+     "statut":"termine",
+     "score":10,
+     "max":10
+    },
+    {
+     "n":2,
+     "titre":"تمرين 2: القواعد - تصريف الأفعال",
+     "consigne":"صَرِّف الأفعال التالية في الحاضر",
+     "statut":"termine",
+     "score":8,
+     "max":10
+    },
+    {
+     "n":3,
+     "titre":"تمرين 3: الفهم الكتابي",
+     "consigne":"اقرأ النص وأجب عن الأسئلة",
+     "statut":"en_cours",
+     "score":null,
+     "max":10
+    },
+    {
+     "n":4,
+     "titre":"تمرين 4: التعبير الكتابي",
+     "consigne":"اكتب فقرة عن روتينك اليومي (80 كلمة)",
+     "statut":"verrouille",
+     "score":null,
+     "max":10
+    }
+   ],
+   "programme_officiel":[
+    {
+     "trimestre":"الفصل الأول",
+     "icon":"📘",
+     "lecons":6,
+     "periode":"سبتمبر - ديسمبر",
+     "complet":3,
+     "total":6,
+     "statut":"en_cours",
+     "label":"٣ / ٦ مكتمل"
+    },
+    {
+     "trimestre":"الفصل الثاني",
+     "icon":"📗",
+     "lecons":6,
+     "periode":"جانفي - مارس",
+     "complet":0,
+     "total":6,
+     "statut":"a_venir",
+     "label":"لم يبدأ بعد"
+    },
+    {
+     "trimestre":"الفصل الثالث",
+     "icon":"📙",
+     "lecons":6,
+     "periode":"أفريل - جوان",
+     "complet":0,
+     "total":6,
+     "statut":"a_venir",
+     "label":"لم يبدأ بعد"
+    }
+   ],
+   "lecons_officielles":[
+    {
+     "n":1,
+     "de":"Meine Familie",
+     "ar":"عائلتي",
+     "duree":45,
+     "statut":"termine",
+     "prof":"أ. خريف أحمد",
+     "icon":"👨‍👩‍👧",
+     "vocabulaire":"أفراد الأسرة",
+     "grammaire":"أدوات التعريف",
+     "activite":"وصف العائلة"
+    },
+    {
+     "n":2,
+     "de":"Meine Schule",
+     "ar":"مدرستي",
+     "duree":45,
+     "statut":"termine",
+     "prof":"أ. خريف أحمد",
+     "icon":"🏫",
+     "vocabulaire":"المواد الدراسية",
+     "grammaire":"الفعل sein",
+     "activite":"وصف المدرسة"
+    },
+    {
+     "n":3,
+     "de":"Mein Tagesablauf",
+     "ar":"روتيني اليومي",
+     "duree":90,
+     "statut":"en_cours",
+     "progression":65,
+     "prof":"أ. خريف أحمد",
+     "icon":"⏰",
+     "vocabulaire":"الأوقات والأنشطة",
+     "grammaire":"الأفعال الانفصالية",
+     "activite":"وصف يومك"
+    },
+    {
+     "n":4,
+     "de":"Hobbys und Freizeit",
+     "ar":"الهوايات",
+     "duree":45,
+     "statut":"verrouille",
+     "prof":"أ. خريف أحمد",
+     "icon":"⚽",
+     "vocabulaire":"الهوايات والرياضة",
+     "grammaire":"الفعل haben",
+     "activite":"التحدث عن الهوايات"
+    },
+    {
+     "n":5,
+     "de":"Essen und Trinken",
+     "ar":"المأكل والمشرب",
+     "duree":45,
+     "statut":"verrouille",
+     "prof":"أ. ليلى حمداوي",
+     "icon":"🍽️",
+     "vocabulaire":"الأطعمة",
+     "grammaire":"Akkusativ",
+     "activite":"طلب في المطعم"
+    },
+    {
+     "n":6,
+     "de":"Reisen und Verkehr",
+     "ar":"السفر والنقل",
+     "duree":45,
+     "statut":"verrouille",
+     "prof":"أ. كريم بن علي",
+     "icon":"🚌",
+     "vocabulaire":"وسائل النقل",
+     "grammaire":"Perfekt",
+     "activite":"شراء تذكرة"
+    }
+   ]
+  },
+  {
+   "id":"2AS3-06",
+   "matricule":"DZ-2AS3-2026-006",
+   "prenom":"سارة",
+   "nom":"محمد",
+   "nom_complet":"سارة محمد",
+   "initiales":"سم",
+   "sexe":"F",
+   "naissance":"2010-07-02",
+   "age":15,
+   "section":"2AS-3",
+   "section_ar":"٢AS-٣",
+   "niveau":"2AS",
+   "filiere":"آداب ولغات",
+   "filiere_de":"Lettres et Langues",
+   "code_wilaya":"10",
+   "wilaya":"البويرة",
+   "ville":"البويرة",
+   "lycee":"الثانوية الافتراضية الجزائرية",
+   "points":620,
+   "seances_terminees":2,
+   "simulations":1,
+   "meilleure_sim":11.0,
+   "presence_pct":100,
+   "absences":0,
+   "retards":1,
+   "appreciation_generale":"تلميذة منتظمة، تحتاج متابعة في التعبير الكتابي.",
+   "examens":[
+    {
+     "id":"EX-01",
+     "type":"اختبار",
+     "statut":"مكتمل",
+     "icon":"📊",
+     "titre":"اختبار الفصل الأول",
+     "date":"١٥ أكتوبر ٢٠٢٦",
+     "date_iso":"2026-10-15",
+     "note":12.5,
+     "bareme":20,
+     "coef":3,
+     "detail":{
+      "I":5.0,
+      "II":4.5,
+      "III":3.0
+     },
+     "appreciation":"فهم جيد للنص، القواعد تحتاج مراجعة",
+     "readiness":"pret"
+    },
+    {
+     "id":"EX-02",
+     "type":"فرض",
+     "statut":"مكتمل",
+     "icon":"📝",
+     "titre":"الفرض الأول",
+     "date":"٢٨ سبتمبر ٢٠٢٦",
+     "date_iso":"2026-09-28",
+     "note":9.5,
+     "bareme":20,
+     "coef":1,
+     "detail":{
+      "I":4.0,
+      "II":3.5,
+      "III":2.0
+     },
+     "appreciation":"يحتاج تثبيتاً في تصريف الأفعال",
+     "readiness":"a_consolider"
+    },
+    {
+     "id":"EX-03",
+     "type":"مستمر",
+     "statut":"مستمر",
+     "icon":"🎯",
+     "titre":"المشاركة + الواجبات",
+     "date":"مستمر",
+     "date_iso":null,
+     "note":16,
+     "bareme":20,
+     "coef":1,
+     "detail":{
+      "I":6.5,
+      "II":6.0,
+      "III":3.5
+     },
+     "appreciation":"مشاركة ممتازة وواجبات منتظمة",
+     "readiness":"pret"
+    }
+   ],
+   "examen_a_venir":{
+    "icon":"📋",
+    "statut":"قادم",
+    "titre":"الفرض الأول — الفصل الأول",
+    "quand":"الاثنين 15 أكتوبر 2026",
+    "duree":"المدة: ساعة واحدة",
+    "programme":"المواضيع: الدروس 1، 2، 3",
+    "coef":"المعامل: 1",
+    "cta":"📚 استعد للامتحان"
+   },
+   "presence":[
+    {
+     "ok":true,
+     "jour":"الثلاثاء 16 سبتمبر 2026",
+     "lecon":"الدرس 3: Mein Tagesablauf",
+     "statut":"حاضر",
+     "heure":"14:00"
+    },
+    {
+     "ok":true,
+     "jour":"الأحد 14 سبتمبر 2026",
+     "lecon":"الدرس 2: Meine Schule",
+     "statut":"حاضر",
+     "heure":"08:00"
+    },
+    {
+     "ok":true,
+     "jour":"الخميس 11 سبتمبر 2026",
+     "lecon":"الدرس 1: Meine Familie",
+     "statut":"حاضر",
+     "heure":"14:03"
+    },
+    {
+     "ok":true,
+     "jour":"الثلاثاء 09 سبتمبر 2026",
+     "lecon":"حصة الاستقبال والتعريف",
+     "statut":"حاضر",
+     "heure":"14:10"
+    },
+    {
+     "ok":true,
+     "jour":"الأحد 07 سبتمبر 2026",
+     "lecon":"بداية السنة الدراسية",
+     "statut":"حاضر",
+     "heure":"08:00"
+    }
+   ],
+   "exercices":[
+    {
+     "n":1,
+     "titre":"تمرين 1: المفردات - الأوقات",
+     "consigne":"طابق بين الوقت بالكلمة والرقم",
+     "statut":"termine",
+     "score":9,
+     "max":10
+    },
+    {
+     "n":2,
+     "titre":"تمرين 2: القواعد - تصريف الأفعال",
+     "consigne":"صَرِّف الأفعال التالية في الحاضر",
+     "statut":"en_cours",
+     "score":null,
+     "max":10
+    },
+    {
+     "n":3,
+     "titre":"تمرين 3: الفهم الكتابي",
+     "consigne":"اقرأ النص وأجب عن الأسئلة",
+     "statut":"verrouille",
+     "score":null,
+     "max":10
+    },
+    {
+     "n":4,
+     "titre":"تمرين 4: التعبير الكتابي",
+     "consigne":"اكتب فقرة عن روتينك اليومي (80 كلمة)",
+     "statut":"verrouille",
+     "score":null,
+     "max":10
+    }
+   ],
+   "programme_officiel":[
+    {
+     "trimestre":"الفصل الأول",
+     "icon":"📘",
+     "lecons":6,
+     "periode":"سبتمبر - ديسمبر",
+     "complet":2,
+     "total":6,
+     "statut":"en_cours",
+     "label":"٢ / ٦ مكتمل"
+    },
+    {
+     "trimestre":"الفصل الثاني",
+     "icon":"📗",
+     "lecons":6,
+     "periode":"جانفي - مارس",
+     "complet":0,
+     "total":6,
+     "statut":"a_venir",
+     "label":"لم يبدأ بعد"
+    },
+    {
+     "trimestre":"الفصل الثالث",
+     "icon":"📙",
+     "lecons":6,
+     "periode":"أفريل - جوان",
+     "complet":0,
+     "total":6,
+     "statut":"a_venir",
+     "label":"لم يبدأ بعد"
+    }
+   ],
+   "lecons_officielles":[
+    {
+     "n":1,
+     "de":"Meine Familie",
+     "ar":"عائلتي",
+     "duree":45,
+     "statut":"termine",
+     "prof":"أ. خريف أحمد",
+     "icon":"👨‍👩‍👧",
+     "vocabulaire":"أفراد الأسرة",
+     "grammaire":"أدوات التعريف",
+     "activite":"وصف العائلة"
+    },
+    {
+     "n":2,
+     "de":"Meine Schule",
+     "ar":"مدرستي",
+     "duree":45,
+     "statut":"termine",
+     "prof":"أ. خريف أحمد",
+     "icon":"🏫",
+     "vocabulaire":"المواد الدراسية",
+     "grammaire":"الفعل sein",
+     "activite":"وصف المدرسة"
+    },
+    {
+     "n":3,
+     "de":"Mein Tagesablauf",
+     "ar":"روتيني اليومي",
+     "duree":90,
+     "statut":"en_cours",
+     "progression":30,
+     "prof":"أ. خريف أحمد",
+     "icon":"⏰",
+     "vocabulaire":"الأوقات والأنشطة",
+     "grammaire":"الأفعال الانفصالية",
+     "activite":"وصف يومك"
+    },
+    {
+     "n":4,
+     "de":"Hobbys und Freizeit",
+     "ar":"الهوايات",
+     "duree":45,
+     "statut":"verrouille",
+     "prof":"أ. خريف أحمد",
+     "icon":"⚽",
+     "vocabulaire":"الهوايات والرياضة",
+     "grammaire":"الفعل haben",
+     "activite":"التحدث عن الهوايات"
+    }
+   ]
+  }
+ ],
+ "prochaines_seances":[
+  {
+   "mois":"سبتمبر",
+   "jour":"١٦",
+   "heure":"١٤:٠٠",
+   "heure_iso":"2026-09-16T14:00",
+   "matiere":"الألمانية - المحادثة",
+   "prof":"الأستاذ كريم بن علي",
+   "init":"كب",
+   "duree":"٦٠ دقيقة",
+   "action":"انضم",
+   "type":"join",
+   "salle":"قاعة 15",
+   "section":"٢AS-٣"
+  },
+  {
+   "mois":"سبتمبر",
+   "jour":"١٧",
+   "heure":"١٠:٣٠",
+   "heure_iso":"2026-09-17T10:30",
+   "matiere":"القواعد - الأزمنة الماضية",
+   "prof":"الأستاذة ليلى حمداوي",
+   "init":"لح",
+   "duree":"٤٥ دقيقة",
+   "action":"بعد ٢٤ ساعة",
+   "type":"soon",
+   "salle":"قاعة 14",
+   "section":"٢AS-٢"
+  },
+  {
+   "mois":"سبتمبر",
+   "jour":"١٩",
+   "heure":"١٨:٠٠",
+   "heure_iso":"2026-09-19T18:00",
+   "matiere":"تحضير البكالوريا - موضوع تعبيري",
+   "prof":"الأستاذ عمر قاسمي",
+   "init":"عق",
+   "duree":"٦٠ دقيقة",
+   "action":"بعد ٣ أيام",
+   "type":"later",
+   "salle":"قاعة 21",
+   "section":"٣AS-١"
+  }
+ ],
+ "messages_profs":[
+  {
+   "init":"كب",
+   "nom":"كريم بن علي",
+   "role":"prof",
+   "temps":"١٤:٠٥",
+   "texte":"Sehr gut! Heute sprechen wir über den Tagesablauf.",
+   "non_lus":3,
+   "urgent":false
+  },
+  {
+   "init":"لح",
+   "nom":"ليلى حمداوي",
+   "role":"prof",
+   "temps":"أمس",
+   "texte":"لا تنسى واجبك! Hausaufgaben : Seite 30, Übung 4.",
+   "non_lus":1,
+   "urgent":true
+  },
+  {
+   "init":"عق",
+   "nom":"عمر قاسمي",
+   "role":"prof",
+   "temps":"إثنين",
+   "texte":"ممتاز! أراك الجمعة في حصة تحضير البكالوريا.",
+   "non_lus":0,
+   "urgent":false
+  },
+  {
+   "init":"نم",
+   "nom":"نورة مزاري",
+   "role":"prof",
+   "temps":"أحد",
+   "texte":"أحسنت! تقدمك رائع في الفهم الكتابي.",
+   "non_lus":0,
+   "urgent":false
+  },
+  {
+   "init":"إد",
+   "nom":"الإدارة",
+   "role":"admin",
+   "temps":"السبت",
+   "texte":"📢 اجتماع الأولياء يوم السبت 04 أكتوبر على الساعة 10:00 — القاعة المتعددة الخدمات.",
+   "non_lus":1,
+   "urgent":true
+  }
+ ],
+ "profs_particuliers":[
+  {
+   "init":"لح",
+   "nom":"ليلى حمداوي",
+   "titre":"أستاذة الألمانية 🇩🇿",
+   "ville":"وهران",
+   "exp":"١٠ سنوات خبرة",
+   "note":"٥٫٠",
+   "etoiles":5,
+   "avis":95,
+   "desc":"متخصصة في القواعد والنطق، طريقة تفاعلية وممتعة",
+   "tags":[
+    "القواعد",
+    "النطق",
+    "المبتدئين"
+   ],
+   "prix":1800,
+   "dispo":true
+  },
+  {
+   "init":"عق",
+   "nom":"عمر قاسمي",
+   "titre":"أستاذ الألمانية 🇩🇿",
+   "ville":"قسنطينة",
+   "exp":"١٢ سنة خبرة",
+   "note":"٤٫٨",
+   "etoiles":5,
+   "avis":142,
+   "desc":"خبير في تحضير البكالوريا، مواضيع امتحانية مفصلة",
+   "tags":[
+    "البكالوريا",
+    "التعبير الكتابي",
+    "الفهم"
+   ],
+   "prix":2000,
+   "dispo":true
+  },
+  {
+   "init":"يب",
+   "nom":"ياسين بوزيد",
+   "titre":"أستاذ الألمانية 🇩🇿",
+   "ville":"عنابة",
+   "exp":"٩ سنوات خبرة",
+   "note":"٤٫٩",
+   "etoiles":5,
+   "avis":89,
+   "desc":"مهتم بالثقافة الألمانية، دروس ممتعة وتفاعلية",
+   "tags":[
+    "الثقافة",
+    "المحادثة",
+    "السفر"
+   ],
+   "prix":1600,
+   "dispo":true
+  }
+ ],
+ "tarifs":[
+  {
+   "offre":"الحصّة الواحدة",
+   "prix":"1 500 د.ج",
+   "duree":"60 دقيقة",
+   "inclus":[
+    "حصّة مباشرة",
+    "تصحيح الواجب",
+    "تقرير للولي"
+   ],
+   "populaire":false
+  },
+  {
+   "offre":"الباقة الشهرية",
+   "prix":"4 500 د.ج",
+   "duree":"4 حصص / شهر",
+   "inclus":[
+    "4 حصص مباشرة",
+    "فرضان شهريان",
+    "تقرير أسبوعي للولي",
+    "وصول كامل للمكتبة (684 وثيقة)"
+   ],
+   "populaire":true
+  },
+  {
+   "offre":"تحضير البكالوريا",
+   "prix":"12 000 د.ج",
+   "duree":"السنة كاملة",
+   "inclus":[
+    "24 حصّة",
+    "أرشيف BAC 2010→2026 (68 موضوعاً)",
+    "4 محاكيات بظروف حقيقية",
+    "متابعة فردية"
+   ],
+   "populaire":false
+  }
+ ],
+ "moyens_paiement":[
+  "CIB",
+  "Edahabia",
+  "BaridiMob",
+  "CCP",
+  "نقداً عبر نقاط الاستلام"
+ ],
+ "contact":{
+  "whatsapp":"+213555577931",
+  "whatsapp_affiche":"0555 57 79 31",
+  "message_type":"الاسم + «حصّة ألماني مجانية»",
+  "offre":"حصّة أولى مجانية — سارية حتى 30 سبتمبر 2026",
+  "email":"contact@deutsch-dz.edu"
+ }
+}
