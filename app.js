@@ -283,61 +283,132 @@ function saveSeances(v){ store(uniteKey(), v); }
 const PROF = {
   nom:'Prof. Kharif Ahmed',
   base:[
-    {k:['salut','bonjour','salam','السلام','مرحبا','hi','hallo','hey','bonsoir','صباح'],
+    {t:'default', k:['salut','bonjour','salam','السلام','مرحبا','hi','hallo','hey','bonsoir','صباح'],
      r:['وعليكم السلام يا ولدي 🇩🇿 <span class="de-in">Hallo! Wie geht es dir?</span>',
         'أهلاً بك! <span class="de-in">Guten Tag!</span> كيف حالك اليوم؟']},
-    {k:['wie geht','كيف حالك','ça va','labas','لاباس','بخير'],
+    {t:'default', k:['wie geht','كيف حالك','ça va','labas','لاباس','بخير'],
      r:['<span class="de-in">Mir geht es gut, danke! Und dir?</span> — بخير الحمد لله، و أنت؟',
         'الحمد لله. تذكّر: <span class="de-in">Wie geht es dir?</span> = كيف حالك؟ (غير رسمي)']},
-    {k:['wie heißt','ما اسمك','اسمي','mon nom','name ist'],
-     r:['<span class="de-in">Ich heiße Kharif Ahmed.</span> — و أنت؟ <span class="de-in">Wie heißt du?</span>',
-        'للتعريف بالاسم: <span class="de-in">Ich heiße …</span> أو <span class="de-in">Mein Name ist …</span>']},
-    {k:['wie alt','كم عمري','العمر','âge','jahre alt'],
-     r:['<span class="de-in">Ich bin 16 Jahre alt.</span> — نستعمل <b>sein</b> وليس <b>haben</b> للحديث عن العمر!',
+    {t:'salutations', k:['تحية','التحيات','تحيات','salutation','begrüßung','grüße','guten morgen',
+                         'guten abend','guten tag','gute nacht','صباح الخير','مساء الخير'],
+     r:['🌅 <b>التحيات بالألمانية</b> — <span class="de-in">Guten Morgen</span> (صباحاً، قبل 10 سا) · '
+      + '<span class="de-in">Guten Tag</span> (نهاراً) · <span class="de-in">Guten Abend</span> (مساءً) · '
+      + '<span class="de-in">Gute Nacht</span> (قبل النوم).',
+       '👋 <b>الوداع</b> — رسمي: <span class="de-in">Auf Wiedersehen!</span> · '
+      + 'غير رسمي: <span class="de-in">Tschüs!</span> · <span class="de-in">Bis bald!</span> (إلى اللقاء قريباً).',
+       '⚠️ الانتباه: <span class="de-in">Gut<b>en</b> Morgen</span> (Akkusativ مذكر) لكن '
+      + '<span class="de-in">Gut<b>e</b> Nacht</span> (مؤنث).']},
+    {t:'wfragen', k:['استفهام','أدوات الاستفهام','w-fragen','wfragen','w fragen','fragen-wort',
+                     'woher','wohin','warum','wann','wie viel','questions en w'],
+     r:['❓ <b>أدوات الاستفهام W-Fragen</b> — كلها تبدأ بحرف W، و<b>تأتي في أول الجملة</b>، '
+      + 'يليها الفعل مباشرة:<br>'
+      + '<span class="de-in"><b>Wie</b> heißt du?</span> = ما اسمك؟<br>'
+      + '<span class="de-in"><b>Woher</b> kommst du?</span> = من أين أنت؟<br>'
+      + '<span class="de-in"><b>Wo</b> wohnst du?</span> = أين تسكن؟<br>'
+      + '<span class="de-in"><b>Wie alt</b> bist du?</span> = كم عمرك؟<br>'
+      + '<span class="de-in"><b>Wann</b> beginnt der Unterricht?</span> = متى يبدأ الدرس؟<br>'
+      + '<span class="de-in"><b>Warum</b> lernst du Deutsch?</span> = لماذا تتعلّم الألمانية؟',
+       '🔑 القاعدة الذهبية: <b>W-Wort + verbe + sujet</b>. لا تضع الفاعل قبل الفعل!<br>'
+      + '~~Wie du heißt?~~ ❌ → <span class="de-in">Wie <b>heißt du</b>?</span> ✅']},
+    {t:'artikel', k:['أدوات التعريف','ادوات التعريف','أداة التعريف','der die das','artikel',
+                     'bestimmter','unbestimmter','ein eine'],
+     r:['🔤 <b>أدوات التعريف</b> — الألمانية لها <b>3 أجناس</b>:<br>'
+      + '<span class="de-in"><b>der</b></span> مذكر: <span class="de-in">der Vater · der Tisch</span><br>'
+      + '<span class="de-in"><b>die</b></span> مؤنث: <span class="de-in">die Mutter · die Lampe</span><br>'
+      + '<span class="de-in"><b>das</b></span> محايد: <span class="de-in">das Kind · das Buch</span><br>'
+      + '<span class="de-in"><b>die</b></span> الجمع (دائماً): <span class="de-in">die Eltern · die Kinder</span>',
+       '📝 <b>أداة التنكير</b>: <span class="de-in">ein</span> (مذكر/محايد) · '
+      + '<span class="de-in">eine</span> (مؤنث) — ولا توجد في الجمع.<br>'
+      + '⚠️ <span class="de-in"><b>das</b> Mädchen</span> (البنت) محايد! الجنس لا يتبع المعنى دائماً.']},
+    {t:'sein', k:['sein','يكون','تصريف sein','الفعل sein','verbe sein','conjugue sein'],
+     r:['تصريف <b>sein</b>: <span class="de-in">ich bin · du bist · er/sie/es ist · wir sind · '
+      + 'ihr seid · sie/Sie sind</span><br>'
+      + 'مثال: <span class="de-in">Ich <b>bin</b> algerisch.</span> = أنا جزائري.',
+       '⚠️ <b>sein</b> يستعمل أيضاً للعمر: <span class="de-in">Ich <b>bin</b> 16 Jahre alt.</span> '
+      + '— وليس <b>haben</b> كما في العربية والفرنسية!']},
+    {t:'haben', k:['haben','يملك','تصريف haben','الفعل haben','verbe haben','conjugue haben'],
+     r:['تصريف <b>haben</b>: <span class="de-in">ich habe · du hast · er/sie/es hat · wir haben · '
+      + 'ihr habt · sie/Sie haben</span><br>'
+      + 'مثال: <span class="de-in">Ich <b>habe</b> zwei Schwestern.</span> = لديّ أختان.',
+       '⚠️ احفظ الشذوذين: <span class="de-in">du <b>hast</b></span> و '
+      + '<span class="de-in">er <b>hat</b></span> — حرف b يختفي!']},
+    {t:'nom', k:['wie heißt','ما اسمك','اسمي','mon nom','name ist','heiße'],
+     r:['<span class="de-in">Ich heiße Kharif Ahmed.</span> — و أنت؟ '
+      + '<span class="de-in">Wie heißt du?</span>',
+        'للتعريف بالاسم: <span class="de-in">Ich heiße …</span> أو '
+      + '<span class="de-in">Mein Name ist …</span>']},
+    {t:'alter', k:['wie alt','كم عمري','العمر','âge','jahre alt','alter'],
+     r:['<span class="de-in">Ich bin 16 Jahre alt.</span> — نستعمل <b>sein</b> وليس <b>haben</b> '
+      + 'للحديث عن العمر!',
         'قاعدة ذهبية: <span class="de-in">Ich <b>bin</b> … Jahre alt.</span>']},
-    {k:['sein','يكون','تصريف sein'],
-     r:['تصريف <b>sein</b>: <span class="de-in">ich bin · du bist · er/sie/es ist · wir sind · ihr seid · sie/Sie sind</span>',
-        'مثال: <span class="de-in">Ich <b>bin</b> algerisch.</span> = أنا جزائري.']},
-    {k:['haben','يملك','تصريف haben'],
-     r:['تصريف <b>haben</b>: <span class="de-in">ich habe · du hast · er/sie/es hat · wir haben · ihr habt · sie/Sie haben</span>',
-        'مثال: <span class="de-in">Ich <b>habe</b> zwei Schwestern.</span> = لديّ أختان.']},
-    {k:['woher','من أين','origine','herkunft','d’où','dou'],
+    {t:'herkunft', k:['woher','من أين','origine','herkunft','d’où','dou','komme aus'],
      r:['<span class="de-in">Woher kommst du?</span> — <span class="de-in">Ich komme aus Algerien.</span>',
-        'انتبه: <b>aus</b> إجبارية مع البلد.']},
-    {k:['wo wohn','أين تسكن','wohnst','مدينة','ville'],
+        'انتبه: <b>aus</b> إجبارية مع البلد. أما البلدان المؤنثة/الجمع فتأخذ أداة: '
+      + '<span class="de-in">in <b>der</b> Schweiz · in <b>den</b> USA</span>.']},
+    {t:'wohnen', k:['wo wohn','أين تسكن','wohnst','مدينة','ville','wohne'],
      r:['<span class="de-in">Wo wohnst du?</span> — <span class="de-in">Ich wohne in Bouira.</span>',
         'مع المدينة نستعمل <b>in</b>: <span class="de-in">Ich wohne <b>in</b> München.</span>']},
-    {k:['familie','famille','عائلة','أخت','أخ','schwester','bruder','vater','mutter'],
-     r:['العائلة: <span class="de-in">der Vater · die Mutter · die Schwester · der Bruder · die Eltern</span>',
+    {t:'familie', k:['familie','famille','عائلة','أخت','أخ','schwester','bruder','vater','mutter'],
+     r:['العائلة: <span class="de-in">der Vater · die Mutter · die Schwester · der Bruder · '
+      + 'die Eltern · die Geschwister</span>',
         '<span class="de-in">Ich habe eine Schwester und zwei Brüder.</span> = لديّ أخت و أخوان.']},
-    {k:['hobby','loisir','هواية','sport','musik','fußball'],
+    {t:'lena', k:['lena','fischer','نص','texte','فهم','leseverstehen','lesetext'],
+     r:['📖 <b>نص Lena Fischer</b> (النص الرسمي للفرض):<br>'
+      + '<span class="de-in">«Hallo! Ich heiße Lena Fischer. Ich bin <b>17</b> Jahre alt und komme '
+      + 'aus Deutschland. Ich wohne in <b>München</b>. Ich habe eine große Familie: '
+      + '<b>einen Bruder</b> und <b>zwei Schwestern</b>. Mein Bruder ist <b>20</b> und heißt '
+      + '<b>Tim</b>. Meine Schwester <b>Anna</b> ist <b>15</b>. Am Morgen sage ich immer: '
+      + '«Guten Morgen, Mama!» Und am Abend: «Gute Nacht!»»</span>',
+       '🎯 <b>ما يجب حفظه عن Lena</b>: 17 سنة · من ألمانيا (ليست من الجزائر) · تسكن في ميونيخ '
+      + '(ليست برلين) · أخ واحد Tim (20) · أختان إحداهما Anna (15) · تحيّ أمها صباحاً وتقول '
+      + 'Gute Nacht مساءً.',
+       '💡 في فهم النص: أجب <b>بجملة كاملة</b> مأخوذة من النص — هذا ما يمنحك النقطة كاملة. '
+      + 'و احذر الفخاخ: الأسئلة تغيّر رقماً أو مكاناً واحداً فقط.']},
+    {t:'hobby', k:['hobby','loisir','هواية','sport','musik','fußball'],
      r:['<span class="de-in">Meine Hobbys sind Fußball und Musik.</span>',
         'الهوايات: <span class="de-in">Fußball · Musik · Lesen · Schwimmen · Reisen</span>']},
-    {k:['lena','texte','نص','فهم','leseverstehen'],
-     r:['نص <b>Lena Fischer</b>: عمرها 16، من ألمانيا، تسكن في ميونيخ، لها أختان (Marie و Sophie).',
-        'في فهم النص: أجب <b>بجملة كاملة</b> من النص — هذا ما يمنحك النقاط كاملة.']},
-    {k:['tschüs','au revoir','مع السلامة','wiedersehen','à bientôt'],
-     r:['<span class="de-in">Auf Wiedersehen!</span> (رسمي) أو <span class="de-in">Tschüs!</span> (غير رسمي)',
+    {t:'tschüs', k:['tschüs','au revoir','مع السلامة','wiedersehen','à bientôt'],
+     r:['<span class="de-in">Auf Wiedersehen!</span> (رسمي) أو <span class="de-in">Tschüs!</span> '
+      + '(غير رسمي)',
         'و إلى اللقاء يا ولدي — <span class="de-in">Bis bald!</span>']},
-    {k:['danke','شكرا','merci'],
-     r:['<span class="de-in">Bitte schön!</span> — العفو 🇩🇿','<span class="de-in">Gern geschehen!</span> — على الرحب و السعة.']},
-    {k:['bac','baccalauréat','بكالوريا','نجاح','réussir'],
-     r:['السرّ في النجاح: <b>20 دقيقة يومياً</b> + مراجعة المفردات بصوت عالٍ. 98% من تلاميذي نجحوا بهذه الطريقة.',
+    {t:'danke', k:['danke','شكرا','merci'],
+     r:['<span class="de-in">Bitte schön!</span> — العفو 🇩🇿',
+        '<span class="de-in">Gern geschehen!</span> — على الرحب و السعة']},
+    {t:'exam', k:['تحضير','أحضر','احضر','استعد','فرض','اختبار','امتحان','examen','devoir',
+                  'prüfung','vorbereiten','كيف أحضر'],
+     r:['📝 <b>كيف تحضّر للفرض؟</b> منهجي المجرَّب في 5 خطوات:<br>'
+      + '1️⃣ اقرأ <b>نص Lena Fischer</b> مرتين و استخرج الأرقام و الأسماء.<br>'
+      + '2️⃣ أتقن <b>sein</b> و <b>haben</b> — وحدهما يساويان نقطتين في <span class="de-in">'
+      + 'صرّف الأفعال</span>.<br>'
+      + '3️⃣ احفظ <b>W-Fragen</b>: Wie · Woher · Wo · Wie alt · Wann · Warum.<br>'
+      + '4️⃣ تدرّب على <b>ترتيب الجملة</b>: الفاعل + الفعل في المركز الثاني.<br>'
+      + '5️⃣ احفظ <b>التحيات الأربع</b> + الوداع الرسمي و غير الرسمي.',
+       '⏱️ <b>إدارة الوقت (45 دقيقة)</b>: فهم المكتوب 15 د · قسم اللغة 15 د · '
+      + 'الإنتاج الكتابي 10 د · المراجعة 5 د.<br>'
+      + '🧮 السلّم: 📖 8 ن + 🔤 8 ن + ✍️ 4 ن = <b>20</b>.',
+       '🎯 جرّب الآن <b>⏱️ المحاكاة</b> بظروف حقيقية (45 دقيقة أو 10 دقائق) — '
+      + 'التصحيح آلي و النتيجة سرّية على جهازك.']},
+    {t:'bac', k:['bac','baccalauréat','بكالوريا','نجاح','réussir'],
+     r:['السرّ في النجاح: <b>20 دقيقة يومياً</b> + مراجعة المفردات بصوت عالٍ. '
+      + '98% من تلاميذي نجحوا بهذه الطريقة.',
         'نصيحتي: أتقن <b>sein</b> و <b>haben</b> أولاً، ثم الباقي يأتي بسهولة.']},
-    {k:['corrige','صحح','تصحيح','note','نقطة','bareme','barème'],
+    {t:'corrige', k:['corrige','صحح','تصحيح','note','نقطة','bareme','barème','سلّم'],
      r:['التصحيح النموذجي في قسم <b>📝 الفرض</b> — اضغط «إظهار التصحيح» بعد محاولة الحل.',
         'في المحاكاة، التصحيح آلي وفوري والنتيجة تبقى <b>سرّية</b> على جهازك.']},
-    {k:['inscription','تسجيل','حجز','prix','ثمن','واتساب','whatsapp','gratuit'],
-     r:['للتسجيل: واتساب <b>0555 57 79 31</b> — ابعث اسمك + «حصّة ألماني مجانية». 🎁 الحصّة الأولى مجانية حتى 30 سبتمبر 2026.',
+    {t:'inscription', k:['inscription','تسجيل','حجز','prix','ثمن','واتساب','whatsapp','gratuit'],
+     r:['للتسجيل: واتساب <b>0555 57 79 31</b> — ابعث اسمك + «حصّة ألماني مجانية». '
+      + '🎁 الحصّة الأولى مجانية حتى 30 سبتمبر 2026.',
         'الأماكن محدودة يا ولدي — الأولوية للتسجيل.']}
   ],
   fallback:[
-    'سؤال جيد! اشرح لي أكثر، أو اسألني عن: <span class="de-in">sein</span>، <span class="de-in">haben</span>، العائلة، أو نص Lena Fischer.',
-    'لم أفهم تماماً — تذكّر أسئلة الوحدة 1: <span class="de-in">Wie heißt du? Woher kommst du? Wie alt bist du?</span>',
+    'سؤال جيد! اشرح لي أكثر، أو اسألني عن: <span class="de-in">sein</span>، '
+    + '<span class="de-in">haben</span>، أدوات الاستفهام، التحيات، العائلة، أو نص Lena Fischer.',
+    'لم أفهم تماماً — تذكّر أسئلة الوحدة 1: <span class="de-in">Wie heißt du? '
+    + 'Woher kommst du? Wie alt bist du?</span>',
     '«الرجوع إلى الأصل فضيلة» — عُد إلى الحصة المناسبة في قسم 📚 الحصص ثم اسألني مجدداً.',
-    'جرّب أن تكتب جملتك بالألمانية وسأصحّحها فوراً. مثال: <span class="de-in">Ich bin 16 Jahre alt.</span>'
+    'جرّب أن تكتب جملتك بالألمانية وسأصحّحها فوراً. مثال: '
+    + '<span class="de-in">Ich bin 16 Jahre alt.</span>'
   ],
-
   /* Correction automatique d'une phrase allemande (règles de l'unité 1) */
   corriger(txt){
     const s = String(txt || '').trim();
@@ -367,14 +438,42 @@ const PROF = {
     return {ok:false, msg:'🔍 <b>تصحيح الأستاذ :</b><br>• ' + errs.slice(0,4).join('<br>• ')};
   },
 
-  repondre(txt){
+  /* Trouve le sujet de cours demandé (identifiant `t`) — moteur find_topic_v2.
+     Retourne l'entrée correspondante, ou null si aucune ne matche. */
+  trouver(txt){
     const s = String(txt || '').toLowerCase();
-    const c = PROF.corriger(txt);
-    if(c) return c.msg;
+    if(!s) return null;
     for(const it of PROF.base){
-      if(it.k.some(k => s.indexOf(k.toLowerCase()) !== -1))
-        return it.r[Math.floor(Math.random() * it.r.length)];
+      if(it.k.some(k => s.indexOf(String(k).toLowerCase()) !== -1)) return it;
     }
+    return null;
+  },
+
+  /* Ordre de résolution — corrige l'ancien bug où corriger() court-circuitait
+     TOUTE la base de connaissances dès qu'un caractère latin apparaissait. */
+  repondre(txt){
+    const s = String(txt || '');
+    const low = s.toLowerCase();
+    const arabe = /[\u0600-\u06FF]/.test(s);
+
+    /* 1) Demande explicite de correction : «صحّح : …» / «corrige …» */
+    if(/^\s*(صحّ?ح(ي|لي)?|corrige[rz]?\b|verifie[rz]?\b)/i.test(s)){
+      const phrase = s.replace(/^\s*(صحّ?ح(ي|لي)?|corrige[rz]?|verifie[rz]?)\s*[:\-–]?\s*/i, '');
+      const c = PROF.corriger(phrase || s);
+      if(c) return c.msg;
+    }
+
+    /* 2) Sujet de cours demandé (explication, règle, texte, méthode…) */
+    const it = PROF.trouver(s);
+    if(it) return it.r[Math.floor(Math.random() * it.r.length)];
+
+    /* 3) Aucune leçon reconnue ET phrase en allemand pur → on la corrige */
+    if(!arabe){
+      const c = PROF.corriger(s);
+      if(c) return c.msg;
+    }
+
+    /* 4) Repli */
     return PROF.fallback[Math.floor(Math.random() * PROF.fallback.length)];
   }
 };
@@ -712,8 +811,9 @@ function showCorrigeDevoir(){
 }
 
 /* ─────────────── CHAT — PROFESSEUR VIRTUEL ─────────────── */
-const SUGS = ['Wie heißt du?','Conjugue sein','Conjugue haben','Woher kommst du?',
-              'صحّح : Ich bin 16 Jahre alt','Qui est Lena Fischer?','كيف أسجّل؟'];
+/* 4 pastilles de la maquette + 6 thèmes rapides du professeur */
+const SUGS = ['🔤 أدوات التعريف','✏️ تمارين','💬 محادثة','❓ سؤال'];
+const TOPICS = ['الفعل sein','الفعل haben','W-Fragen','نص Lena','تحضير الفرض','التحيات'];
 
 function initChat(){
   const log = $('#chatLog'); if(!log) return;
@@ -727,7 +827,11 @@ function initChat(){
       + '<span class="de-in">Also — wie geht es dir?</span>');
   }
   const sg = $('#chatSug');
-  if(sg) sg.innerHTML = SUGS.map(s => '<button class="sug" data-sug="' + esc(s) + '">' + esc(s) + '</button>').join('');
+  if(sg) sg.innerHTML =
+    SUGS.map(s => '<button class="sug" data-sug="' + esc(s) + '">' + esc(s) + '</button>').join('') +
+    '<div class="sug-sep"></div>' +
+    TOPICS.map(t => '<button class="sug topic" data-sug="اشرح لي ' + esc(t) + '">'
+      + esc(t) + '</button>').join('');
   const f = $('#chatForm');
   if(f && !f.dataset.bound){
     f.dataset.bound = '1';
