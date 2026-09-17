@@ -5,7 +5,8 @@
   "annee_scolaire":"2026/2027",
   "etablissement":"الثانوية الافتراضية الجزائرية",
   "referentiel_profs":"Fiches professeurs unifiées — source : écran de réservation « احجز » de la maquette du professeur",
-  "conformite_maquette":"Points 7 (lecons : progression/statut/triplet), 8 (exercices 10-10 · 8-10 · جاري · مقفل) et 10 (chapeau : شعبة آداب ولغات · IA · ٣٥ دقيقة · التلاميذ الحاضرون) alignés sur la maquette"
+  "conformite_maquette":"Points 7 (lecons : progression/statut/triplet), 8 (exercices 10-10 · 8-10 · جاري · مقفل) et 10 (chapeau : شعبة آداب ولغات · IA · ٣٥ دقيقة · التلاميذ الحاضرون) alignés sur la maquette",
+  "chiffres":"La maquette mélange volontairement les deux systèmes, les deux sont respectés : indo-arabes pour la carte du programme officiel (٦ دروس · ٣ / ٦ مكتمل · ٢٠٢٦/٢٠٢٧), les examens (١٥/٢٠ · ١٤٫٥/٢٠), حصص القادمة (١٦ · ١٤:٠٠ · ٦٠ دقيقة) et le marketplace des professeurs (١٠ سنوات · ٥٫٠ · ١٨٠٠ د.ج) ; latins pour l'en-tête de classe (35 دقيقة · 32 تلميذ), les exercices (10/10 · 8/10) et les leçons officielles (45 دقيقة · جاري - 65 %)."
  },
  "sections":[
   {
@@ -568,10 +569,10 @@
   "prof_titre":"الأستاذ 🤖",
   "prof_complement":"مدعوم بالذكاء الاصطناعي - يتحدث العربية",
   "bienvenue":"مرحباً بك في قسمك الافتراضي، أحمد 👋",
-  "duree_restante":"٣٥ دقيقة",
+  "duree_restante":"35 دقيقة",
   "duree_restante_min":35,
   "presents_titre":"التلاميذ الحاضرون",
-  "presents_valeur":"٣٢ تلميذ",
+  "presents_valeur":"32 تلميذ",
   "prochaine_titre":"الحصة القادمة"
  }
 }
