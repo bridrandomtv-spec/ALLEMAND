@@ -34,10 +34,10 @@ jobs:
         run: |
           set -e
           for f in index.html style.css auth.js bdd.js unite2.js unite3.js unite4.js \
-                   unite5.js unite6.js unites3as_a.js app.js modules.js live.js classe.js \
-                   grammaire.js examen.js officiels.js stats.js quiz.js projet.js prof.js \
-                   parents.js journee.js library.js manifest.json sw.js README.md \
-                   404.html robots.txt sitemap.xml .nojekyll; do
+                   unite5.js unite6.js unites3as_a.js unite10.js unite11.js unite12.js \
+                   app.js modules.js live.js classe.js grammaire.js examen.js officiels.js \
+                   prof.js parents.js stats.js quiz.js projet.js journee.js library.js \
+                   manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyll; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -50,7 +50,7 @@ jobs:
                    assets/bdd/wilayas_geo.json assets/bdd/plan_projet.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 30 fichiers racine + 17 assets présents"
+          echo "✅ 33 fichiers racine + 17 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -843,14 +843,15 @@ jobs:
           python - <<'PY'
           import esprima
           FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
-                      'unite5.js', 'unite6.js', 'unites3as_a.js', 'app.js', 'modules.js',
-                      'live.js', 'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
-                      'stats.js', 'quiz.js', 'projet.js', 'prof.js', 'parents.js',
-                      'journee.js', 'library.js', 'sw.js')
+                      'unite5.js', 'unite6.js', 'unites3as_a.js', 'unite10.js',
+                      'unite11.js', 'unite12.js', 'app.js', 'modules.js', 'live.js',
+                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
+                      'stats.js', 'quiz.js', 'projet.js', 'journee.js', 'prof.js',
+                      'parents.js', 'library.js', 'sw.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/23 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/26 fichiers JS valides')
           PY
 
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
@@ -886,7 +887,7 @@ jobs:
                      'function allTabs', 'function isProf', "'profboard'", "'examen'",
                      "'live'", "'officiels'", "'stats'", "'quiz'", "'projet'",
                      'window.renderLive', 'window.renderStats2', 'window.renderQuiz',
-                     'window.renderProjet', 'window.UNITES_3AS_A', 'window.UNITE2', 'window.UNITE3',
+                     'window.renderProjet', 'window.UNITES_3AS_A', 'window.UNITE2', 'window.UNITE3', 'window.UNITE10', 'window.UNITE11', 'window.UNITE12',
                                 'Persönlichkeit und Identität', 'Staatsbürgerschaft',
                      'window.UNITE4', 'window.UNITE5', 'window.UNITE6',
                      'Schule und Ausbildung', 'Alltag und Freizeit',
@@ -905,10 +906,10 @@ jobs:
               fails.append('app.js : registre UNITES introuvable')
           else:
               n_un = len(re.findall(r'\{ n:\d+, de:', blk.group(1)))
-              if n_un != 9:
-                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 9')
+              if n_un != 12:
+                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 12')
               else:
-                  print('   registre UNITES : ' + str(n_un) + '/9 unites')
+                  print('   registre UNITES : ' + str(n_un) + '/12 unites')
           for k in ('renderSim', 'renderParents', '45 * 60', '10 * 60',
                     'DZ.loadSeances()', 'new Proxy({}'):
               if k not in mod:
@@ -947,6 +948,55 @@ jobs:
                   fails.append('unites3as_a.js : ' + k + ' absent')
           print('✅ 3AS : 3 unites (U7/U8/U9) · 18 seances · 3 devoirs /20 · '
                 + str(u3a.count('~~') // 2) + ' erreurs frequentes · CEFR B1-B2')
+          u10 = rd('unite10.js'); u11 = rd('unite11.js'); u12 = rd('unite12.js')
+          B3 = {'unite10.js': (u10, 10), 'unite11.js': (u11, 11), 'unite12.js': (u12, 12)}
+          for nom_b, (src_b, nb) in B3.items():
+              REQ_B = ('SEANCES_U' + str(nb), 'DEVOIR_U' + str(nb), 'CORRIGE_U' + str(nb),
+                       'UNITE' + str(nb) + '_META', 'window.UNITE' + str(nb),
+                       "niveau: '3AS'", "trimestre: 2", "cecrl: 'B2'",
+                       'Textproduktion', 'Konsolidierung', 'erreurs_frequentes',
+                       'Modellösung', 'seuils')
+              for k in REQ_B:
+                  if k not in src_b:
+                      fails.append(nom_b + ' : ' + k + ' absent')
+              nse_b = len(re.findall(r'\{ n:\d+, de:', src_b))
+              if nse_b != 6:
+                  fails.append(nom_b + ' : ' + str(nse_b) + ' seances != 6')
+              p_b = re.findall(r"\{ id:'(I|II|III)', t:", src_b)
+              if len(p_b) != 3:
+                  fails.append(nom_b + ' : ' + str(len(p_b)) + ' parties != 3')
+              for k in ('pts:8', 'pts:4', 'total:20'):
+                  if k not in src_b:
+                      fails.append(nom_b + ' : bareme ' + k + ' absent')
+              iD_b = src_b.find('const DEVOIR_U' + str(nb) + ' = {')
+              iC_b = src_b.find('const CORRIGE_U' + str(nb) + ' = {')
+              if iD_b < 0 or iC_b < iD_b:
+                  fails.append(nom_b + ' : bornes du devoir introuvables')
+              else:
+                  dev_b = src_b[iD_b:iC_b]
+                  iI = dev_b.find("{ id:'I', t:"); iII = dev_b.find("{ id:'II', t:")
+                  iIII = dev_b.find("{ id:'III', t:")
+                  for lbl_b, blk_b, att_b in (('I', dev_b[iI:iII], 8),
+                                              ('II', dev_b[iII:iIII], 8),
+                                              ('III', dev_b[iIII:], 4)):
+                      pts_b = [int(x) for x in re.findall(r'pts:(\d+)', blk_b)]
+                      if not pts_b or pts_b[0] != att_b:
+                          fails.append(nom_b + ' : partie ' + lbl_b + ' declaree ' +
+                                       str(pts_b[:1]) + ' != ' + str(att_b))
+                      elif sum(pts_b[1:]) != att_b:
+                          fails.append(nom_b + ' : partie ' + lbl_b + ' somme ' +
+                                       str(sum(pts_b[1:])) + ' != ' + str(att_b))
+              if src_b.count('key:[') < 6:
+                  fails.append(nom_b + ' : ' + str(src_b.count('key:[')) + ' mots-cles < 6')
+              if src_b.count('~~') < 16:
+                  fails.append(nom_b + ' : ' + str(src_b.count('~~') // 2) + ' erreurs < 8')
+              if "'16-20'" not in src_b or "'0-9.9'" not in src_b:
+                  fails.append(nom_b + ' : seuils de notation absents')
+              print('✅ ' + nom_b + ' : ' + str(nse_b) + ' seances · 3 parties · '
+                    + 'bareme 8+8+4=20 verifie par somme · ' + str(src_b.count('key:['))
+                    + ' mots-cles · ' + str(src_b.count('~~') // 2) + ' erreurs')
+          print('✅ 3AS الفصل الثاني : U10 Wissenschaft · U11 Wirtschaft und Arbeit · '
+                + 'U12 Umweltprobleme — 18 seances, 3 devoirs /20')
           JN_REQ = ('todayBody', 'cvBody', 'apercuBody', 'window.renderJournee',
                     'window.renderCV', 'window.renderApercu', "e.detail === 'accueil'",
                     "e.detail === 'classe'")
@@ -1177,8 +1227,8 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.5.0',
-                    './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './live.js',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.5.1',
+                    './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
                     './assets/bdd/live.json', './assets/bdd/parents.json', './assets/bdd/devoirs_officiels.json', './assets/bdd/wilayas_geo.json', './assets/bdd/plan_projet.json'):
@@ -1220,8 +1270,9 @@ jobs:
                   fails.append('index.html : contenu ' + txt + ' absent')
           ordre = re.findall(r'<script src="([^"]+)"', html)
           attendu = ['auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
-                     'unite5.js', 'unite6.js', 'unites3as_a.js', 'app.js', 'modules.js',
-                     'live.js', 'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
+                     'unite5.js', 'unite6.js', 'unites3as_a.js', 'unite10.js',
+                     'unite11.js', 'unite12.js', 'app.js', 'modules.js', 'live.js',
+                     'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                      'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'projet.js',
                      'journee.js', 'library.js']
           if ordre != attendu:
@@ -1264,8 +1315,8 @@ jobs:
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 17 vues · 16 onglets statiques + 1 dynamique (profboard)')
-          print('✅ Bareme 8+8+4 = 20 sur U1 → U9 = 66 seances (2AS + 3AS)')
-          print('✅ Registre UNITES = 9 · espace parents multi-enfants · année 2AS bouclée + 3AS ouverte (U7/U8/U9) (الفصل 1 + 2 + 3 complets)')
+          print('✅ Bareme 8+8+4 = 20 sur U1 → U12 = 84 seances (2AS + 3AS)')
+          print('✅ Registre UNITES = 12 · espace parents multi-enfants · 2AS bouclée (U1-U6) + 3AS U7-U12 (الفصل 1 et 2 complets) (الفصل 1 + 2 + 3 complets)')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
           print('✅ Roles : allTabs() + isProf() + compte demo prof')
           print('✅ Salle en direct : flux video, chat IA, tableau 8 planches, presence 32')
