@@ -1,0 +1,316 @@
+{
+ "_meta":{
+  "titre":"حجز الحصص الخصوصية — Réservation de cours particuliers",
+  "titre_de":"Kursbuchung",
+  "version":"1.0.0",
+  "auteur":"Prof. Kharif Ahmed",
+  "source":"Maquette officielle du professeur — fenêtre « احجز »",
+  "devise":"د.ج",
+  "frais_service_pct":10,
+  "delai_annulation_h":24,
+  "premiere_seance_gratuite_min":30,
+  "offre_gratuite_jusqu_au":"2026-09-30",
+  "confidentialite":"Les réservations restent sur l'appareil (localStorage). La confirmation passe par WhatsApp — aucun serveur intermédiaire.",
+  "contact":{
+   "whatsapp":"+213555577931",
+   "whatsapp_affiche":"0555 57 79 31",
+   "email":"contact@deutsch-dz.edu"
+  },
+  "exemple_maquette":{
+   "prof":"James Wilson (maquette générique)",
+   "duree":60,
+   "prix_affiche":"25,00 €",
+   "frais":"2,50 €",
+   "total":"27,50 €",
+   "note":"La maquette affichait des euros ; la plateforme facture en dinars algériens avec le même mécanisme (cours + 10 % de frais de service)."
+  }
+ },
+ "types_cours":[
+  {
+   "id":"conversation",
+   "ar":"محادثة عامة",
+   "de":"Konversation",
+   "icon":"💬"
+  },
+  {
+   "id":"grammaire",
+   "ar":"القواعد",
+   "de":"Grammatik",
+   "icon":"📘"
+  },
+  {
+   "id":"bac",
+   "ar":"تحضير البكالوريا",
+   "de":"BAC-Vorbereitung",
+   "icon":"🎓"
+  },
+  {
+   "id":"ecrit",
+   "ar":"التعبير الكتابي",
+   "de":"Schreiben",
+   "icon":"✍️"
+  },
+  {
+   "id":"vocabulaire",
+   "ar":"المفردات",
+   "de":"Wortschatz",
+   "icon":"🔤"
+  },
+  {
+   "id":"prononciation",
+   "ar":"النطق",
+   "de":"Aussprache",
+   "icon":"🎙️"
+  }
+ ],
+ "durees":[
+  {
+   "min":30,
+   "coef":0.55,
+   "ar":"٣٠ دقيقة"
+  },
+  {
+   "min":60,
+   "coef":1.0,
+   "ar":"٦٠ دقيقة"
+  },
+  {
+   "min":90,
+   "coef":1.4,
+   "ar":"٩٠ دقيقة"
+  }
+ ],
+ "creneaux":[
+  {
+   "h":"14:00",
+   "ar":"١٤:٠٠"
+  },
+  {
+   "h":"15:00",
+   "ar":"١٥:٠٠"
+  },
+  {
+   "h":"16:00",
+   "ar":"١٦:٠٠"
+  },
+  {
+   "h":"17:00",
+   "ar":"١٧:٠٠"
+  },
+  {
+   "h":"18:00",
+   "ar":"١٨:٠٠"
+  },
+  {
+   "h":"19:00",
+   "ar":"١٩:٠٠"
+  }
+ ],
+ "profs":[
+  {
+   "id":"kharif",
+   "init":"خا",
+   "nom":"الأستاذ خريف أحمد",
+   "nom_de":"Prof. Kharif Ahmed",
+   "titre":"الأستاذ المؤسس 🇩🇿",
+   "ville":"البويرة",
+   "exp_n":15,
+   "exp":"١٥ سنة خبرة",
+   "note_n":4.9,
+   "note":"٤٫٩",
+   "avis_n":128,
+   "avis":"١٢٨",
+   "prix_n":2500,
+   "desc":"دكتوراه في اللغة الألمانية · مُكوِّن للأساتذة في وزارة التربية الوطنية · مؤلف كتاب «الألمانية بسهولة»",
+   "tags":[
+    "القواعد",
+    "البكالوريا",
+    "النطق"
+   ],
+   "types":[
+    "grammaire",
+    "bac",
+    "ecrit",
+    "prononciation",
+    "conversation",
+    "vocabulaire"
+   ],
+   "fondateur":true
+  },
+  {
+   "id":"karim",
+   "init":"كب",
+   "nom":"الأستاذ كريم بن علي",
+   "nom_de":"Karim Ben Ali",
+   "titre":"أستاذ الألمانية 🇩🇿",
+   "ville":"وهران",
+   "exp_n":8,
+   "exp":"٨ سنوات خبرة",
+   "note_n":4.9,
+   "note":"٤٫٩",
+   "avis_n":128,
+   "avis":"١٢٨",
+   "prix_n":1900,
+   "desc":"متخصص في المحادثة والنطق، طريقة تفاعلية وممتعة",
+   "tags":[
+    "المحادثة",
+    "النطق",
+    "المبتدئين"
+   ],
+   "types":[
+    "conversation",
+    "prononciation",
+    "vocabulaire",
+    "grammaire"
+   ]
+  },
+  {
+   "id":"leyla",
+   "init":"لح",
+   "nom":"الأستاذة ليلى حمداوي",
+   "nom_de":"Leila Hamdaoui",
+   "titre":"أستاذة الألمانية 🇩🇿",
+   "ville":"وهران",
+   "exp_n":10,
+   "exp":"١٠ سنوات خبرة",
+   "note_n":5.0,
+   "note":"٥٫٠",
+   "avis_n":95,
+   "avis":"٩٥",
+   "prix_n":1800,
+   "desc":"متخصصة في القواعد والنطق، طريقة تفاعلية وممتعة",
+   "tags":[
+    "القواعد",
+    "النطق",
+    "المبتدئين"
+   ],
+   "types":[
+    "grammaire",
+    "prononciation",
+    "vocabulaire",
+    "conversation"
+   ]
+  },
+  {
+   "id":"omar",
+   "init":"عق",
+   "nom":"الأستاذ عمر قاسمي",
+   "nom_de":"Omar Kacemi",
+   "titre":"أستاذ الألمانية 🇩🇿",
+   "ville":"قسنطينة",
+   "exp_n":12,
+   "exp":"١٢ سنة خبرة",
+   "note_n":4.8,
+   "note":"٤٫٨",
+   "avis_n":142,
+   "avis":"١٤٢",
+   "prix_n":2000,
+   "desc":"خبير في تحضير البكالوريا، مواضيع امتحانية مفصلة",
+   "tags":[
+    "البكالوريا",
+    "التعبير الكتابي",
+    "الفهم"
+   ],
+   "types":[
+    "bac",
+    "ecrit",
+    "grammaire",
+    "vocabulaire"
+   ]
+  },
+  {
+   "id":"yacine",
+   "init":"يب",
+   "nom":"الأستاذ ياسين بوزيد",
+   "nom_de":"Yacine Bouzid",
+   "titre":"أستاذ الألمانية 🇩🇿",
+   "ville":"عنابة",
+   "exp_n":9,
+   "exp":"٩ سنوات خبرة",
+   "note_n":4.9,
+   "note":"٤٫٩",
+   "avis_n":89,
+   "avis":"٨٩",
+   "prix_n":1600,
+   "desc":"مهتم بالثقافة الألمانية، دروس ممتعة وتفاعلية",
+   "tags":[
+    "الثقافة",
+    "المحادثة",
+    "السفر"
+   ],
+   "types":[
+    "conversation",
+    "vocabulaire",
+    "bac",
+    "prononciation"
+   ]
+  },
+  {
+   "id":"noura",
+   "init":"نم",
+   "nom":"الأستاذة نورة مزاري",
+   "nom_de":"Noura Mezari",
+   "titre":"أستاذة الألمانية 🇩🇿",
+   "ville":"سطيف",
+   "exp_n":7,
+   "exp":"٧ سنوات خبرة",
+   "note_n":4.7,
+   "note":"٤٫٧",
+   "avis_n":76,
+   "avis":"٧٦",
+   "prix_n":1500,
+   "desc":"متخصصة في المحادثة والتعبير الشفهي، دروس ممتعة وتفاعلية",
+   "tags":[
+    "المحادثة",
+    "التعبير الشفهي",
+    "الفهم"
+   ],
+   "types":[
+    "conversation",
+    "ecrit",
+    "vocabulaire",
+    "grammaire"
+   ]
+  }
+ ],
+ "regles":[
+  "الحصّة الأولى <b>مجانية</b> (٣٠ دقيقة) حتى ٣٠ سبتمبر ٢٠٢٦",
+  "فريق الدعم يؤكد الحجز عبر واتساب خلال ساعة",
+  "الإلغاء مجاني حتى <b>٢٤ ساعة</b> قبل الموعد",
+  "الدفع : CIB · Edahabia · BaridiMob · CCP · نقداً عبر نقاط الاستلام (Yalidine · ZR Express)"
+ ],
+ "moyens_paiement":[
+  "CIB",
+  "Edahabia",
+  "BaridiMob",
+  "CCP",
+  "نقداً عبر نقاط الاستلام"
+ ],
+ "tarifs_reference":{
+  "marche":"1 500 – 3 000 د.ج / ساعة",
+  "nous":"1 500 – 2 500 د.ج / heure (frais de service 10 % inclus au total)",
+  "economie":"jusqu'à 50 % par rapport au marché"
+ },
+ "statuts":[
+  {
+   "id":"en_attente",
+   "ar":"⏳ في انتظار التأكيد",
+   "de":"In Bearbeitung"
+  },
+  {
+   "id":"confirmee",
+   "ar":"✅ مؤكَّدة",
+   "de":"Bestätigt"
+  },
+  {
+   "id":"terminee",
+   "ar":"🏁 منجزة",
+   "de":"Abgeschlossen"
+  },
+  {
+   "id":"annulee",
+   "ar":"❌ ملغاة",
+   "de":"Storniert"
+  }
+ ]
+}
