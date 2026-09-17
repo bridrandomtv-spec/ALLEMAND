@@ -1235,3 +1235,138 @@ table.conj tr:last-child td{border:none}
   .meth-g{grid-template-columns:1fr}
 }
 @media print{.meth,.prog-off{break-inside:avoid}}
+
+
+/* ── v2.9 · 👨‍👩‍👧 فضاء الأولياء ── */
+.par-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;
+  background:linear-gradient(140deg,rgba(79,140,255,.16),rgba(12,42,26,.95) 58%,transparent);
+  border-color:var(--b2)}
+.par-hero h2{font-family:var(--ff-ar-display);font-size:24px;margin:7px 0 5px}
+.ph-act{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* Sélecteur multi-enfants */
+.enf-sel{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:12px;
+  margin-bottom:17px}
+.enf{display:flex;gap:12px;align-items:center;background:linear-gradient(165deg,var(--p),var(--p2));
+  border:2px solid var(--b);border-radius:17px;padding:13px 15px;transition:.24s;text-align:right;
+  cursor:pointer;position:relative;overflow:hidden}
+.enf::after{content:'';position:absolute;top:0;right:0;left:0;height:3px;
+  background:linear-gradient(90deg,var(--vert) 0 33.3%,#f4f7f5 33.3% 66.6%,var(--rouge) 66.6% 100%);
+  opacity:.4;transition:.24s}
+.enf:hover{transform:translateY(-4px);border-color:var(--a);box-shadow:0 14px 32px rgba(0,0,0,.34)}
+.enf:hover::after{opacity:1}
+.enf.on{border-color:var(--or);background:linear-gradient(165deg,rgba(232,182,76,.12),var(--p2))}
+.enf.on::after{opacity:1}
+.enf-av{width:46px;height:46px;flex:0 0 auto;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:15px;color:#04140c;
+  background:linear-gradient(140deg,var(--or2),var(--or))}
+.enf-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.enf-b b{font-size:14.5px;font-family:var(--ff-ar-display)}
+.enf-b i{font-size:11px;color:var(--m);font-style:normal;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+.enf-n{font-family:var(--ff-de);font-size:23px;font-weight:800;color:var(--m);flex:0 0 auto}
+.enf-n.ok{color:var(--g)}.enf-n.mid{color:var(--am)}.enf-n.ko{color:var(--r)}
+
+/* Examen à venir */
+.exam-next{background:var(--nuit3);border:1px solid var(--b);border-right:3px solid var(--am);
+  border-radius:0 14px 14px 0;padding:15px}
+.en-h{display:flex;align-items:center;gap:9px;margin-bottom:9px;font-size:19px}
+.en-t{font-family:var(--ff-ar-display);font-size:16px;font-weight:700;color:var(--or2);
+  margin-bottom:9px}
+.en-l{font-size:12.5px;color:var(--m);padding:4px 0;border-bottom:1px dashed var(--b)}
+.en-l:last-of-type{border-bottom:none}
+
+/* Prochaines séances */
+.prx-list{display:flex;flex-direction:column;gap:11px}
+.prx{display:flex;gap:13px;align-items:center;background:var(--nuit3);border:1px solid var(--b);
+  border-radius:15px;padding:13px;transition:.22s}
+.prx:hover{border-color:var(--a);transform:translateX(-4px)}
+.prx.live{border-color:rgba(210,16,52,.45);background:rgba(210,16,52,.08)}
+.prx.soon{border-color:rgba(255,180,84,.4);background:rgba(255,180,84,.06)}
+.prx-d{flex:0 0 auto;width:66px;text-align:center;background:var(--p);border:1px solid var(--b);
+  border-radius:12px;padding:8px 4px}
+.prx-d b{display:block;font-family:var(--ff-de);font-size:22px;font-weight:800;color:var(--or2);
+  line-height:1}
+.prx-d span{display:block;font-size:10px;color:var(--m);margin-top:2px}
+.prx-d i{display:block;font-family:var(--ff-de);font-size:12.5px;color:var(--a2);
+  margin-top:5px;font-style:normal;direction:ltr}
+.prx-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.prx-b b{font-size:14px;font-family:var(--ff-ar-display)}
+.prx-b i{font-size:11.5px;color:var(--m);font-style:normal}
+.prx-m{font-size:11px;color:var(--b2)}
+.prx-t{font-size:11.5px;font-weight:700;color:var(--am);background:rgba(255,180,84,.11);
+  border:1px solid rgba(255,180,84,.32);padding:5px 12px;border-radius:999px;white-space:nowrap}
+
+/* Exercices */
+.exos-list{display:flex;flex-direction:column;gap:10px}
+.exo-i{display:flex;gap:13px;align-items:center;background:var(--nuit3);border:1px solid var(--b);
+  border-radius:14px;padding:13px;transition:.2s;cursor:pointer}
+.exo-i:hover{border-color:var(--a);transform:translateX(-3px)}
+.exo-i.ok{border-right:3px solid var(--g)}
+.exo-i.mid{border-right:3px solid var(--am)}
+.exo-i:not(.ok):not(.mid){opacity:.62;cursor:not-allowed}
+.ex-ic{width:36px;height:36px;flex:0 0 auto;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;font-size:16px;font-weight:800;background:var(--p);color:var(--m)}
+.exo-i.ok .ex-ic{background:rgba(61,220,132,.16);color:var(--g)}
+.exo-i.mid .ex-ic{background:rgba(255,180,84,.15);color:var(--am)}
+.ex-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ex-b b{font-size:13.5px}
+.ex-b i{font-size:11.5px;color:var(--m);font-style:normal}
+.ex-s{flex:0 0 auto;text-align:left}
+.ex-s b{font-family:var(--ff-de);font-size:17px;font-weight:800}
+.ex-s b.ok{color:var(--g)}.ex-s b.mid{color:var(--am)}
+
+/* Leçons officielles */
+.lecons-off{display:flex;flex-direction:column;gap:10px}
+.lo-i{display:flex;gap:13px;align-items:flex-start;background:var(--nuit3);border:1px solid var(--b);
+  border-radius:14px;padding:13px;transition:.2s}
+.lo-i:hover{border-color:var(--a)}
+.lo-i.ok{border-right:3px solid var(--g)}
+.lo-i.mid{border-right:3px solid var(--am)}
+.lo-i:not(.ok):not(.mid){opacity:.62}
+.lo-n{width:42px;height:42px;flex:0 0 auto;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;font-size:20px;background:var(--p);border:1px solid var(--b)}
+.lo-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.lo-b b{font-size:13.5px}
+.lo-b i{font-size:11.5px;color:var(--m);font-style:normal;line-height:1.6}
+.lo-m{color:var(--b2);font-size:11px}
+
+/* Badge de messages non lus */
+.badge-c{position:absolute;top:12px;left:14px;min-width:19px;height:19px;border-radius:999px;
+  background:var(--rouge);color:#fff;font-family:var(--ff-de);font-size:10.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;padding:0 5px;
+  box-shadow:0 0 9px rgba(210,16,52,.6)}
+
+/* Tarifs */
+.tarifs{display:grid;grid-template-columns:repeat(auto-fit,minmax(214px,1fr));gap:13px}
+.tarif{background:var(--nuit3);border:1px solid var(--b);border-radius:17px;padding:19px 16px;
+  text-align:center;position:relative;transition:.24s}
+.tarif:hover{transform:translateY(-5px);border-color:var(--a);box-shadow:0 15px 34px rgba(0,0,0,.34)}
+.tarif.pop{border-color:rgba(232,182,76,.55);
+  background:linear-gradient(165deg,rgba(232,182,76,.12),var(--nuit3))}
+.tar-badge{position:absolute;top:-11px;right:50%;transform:translateX(50%);font-size:10.5px;
+  font-weight:800;background:linear-gradient(135deg,var(--or),#d19b2c);color:#231a05;
+  padding:4px 13px;border-radius:999px;white-space:nowrap}
+.tar-t{font-family:var(--ff-ar-display);font-size:15.5px;font-weight:700;margin-bottom:9px}
+.tar-p{font-family:var(--ff-de);font-size:29px;font-weight:800;color:var(--or2);line-height:1}
+.tar-d{font-size:11.5px;color:var(--m);margin:5px 0 13px}
+.tar-u{list-style:none;text-align:right;margin-bottom:15px}
+.tar-u li{font-size:12px;color:var(--m);padding:5px 0;border-bottom:1px dashed var(--b)}
+.tar-u li:last-child{border-bottom:none}
+
+/* Programme officiel (variante parent) */
+.po-lbl{font-size:11px;color:var(--a2);margin:7px 0 9px;font-family:var(--ff-de);direction:rtl}
+
+@media(max-width:860px){
+  .par-hero{flex-direction:column}
+  .ph-act{width:100%}
+  .prx{flex-wrap:wrap}
+  .prx-d{width:58px}
+  .tarifs{grid-template-columns:1fr}
+  .exo-i,.lo-i{flex-wrap:wrap}
+}
+@media print{
+  .ph-act,.onglets,.enf-sel,.tarifs,.prx-t,.exos-list{display:none}
+  .par-hero{background:none}
+  .card{break-inside:avoid}
+}
