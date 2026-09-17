@@ -1389,7 +1389,7 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.7.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.8.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './reservation.js', './journee.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
@@ -1474,7 +1474,7 @@ jobs:
                      '.rs-badge', '.rs-types', '.rs-ty', '.rs-form', '.rs-fld', '.rs-opts',
                      '.rs-o', '.rs-prix', '.rs-pr', '.rs-total', '.rs-ref', '.rs-stats',
                      '.rs-st', '.rs-liste', '.rs-item', '.rs-ih', '.rs-it', '.rs-ib',
-                     '.rs-ia', '.rs-late', '.rs-mini', 'v3.7')
+                     '.rs-ia', '.rs-late', '.rs-mini', 'v3.7', '.etapes', '.et-bar', '.et-i', '.et-m', '.grille5', '.g5-h', '.g5-t', 'g5-tab', '.g5-p', 'v3.8')
           for k in CSS_REQ:
               if k not in css:
                   fails.append('style.css : ' + k + ' absent')
@@ -1488,6 +1488,39 @@ jobs:
                        'unite14.js', 'unite15.js', 'unite16.js'):
               tot_seances += len(re.findall(r'\{ n:\d+, de:', rd(_f)))
           tot_seances += len(re.findall(r'\{ n:\d+, de:', u3a))
+          # ── Test T5 de la maquette : Séances 60' + grille /5 + devoir /20 ──
+          et5 = [int(x) for x in re.findall(r"\{\s*m:(\d+),\s*ar:'", app)]
+          if et5 != [5, 15, 15, 15, 10]:
+              fails.append('app.js : rythme de seance ' + str(et5) + ' != [5, 15, 15, 15, 10]')
+          if sum(et5) != 60:
+              fails.append('app.js : rythme total ' + str(sum(et5)) + ' != 60 min')
+          i_g5 = app.find('const GRILLE_S5')
+          f_g5 = app.find('const GRILLE_S5_TOTAL', i_g5)
+          if i_g5 < 0 or f_g5 < i_g5:
+              fails.append('app.js : GRILLE_S5 introuvable')
+          else:
+              g5 = re.findall(r"\['([^']+)',\s*(\d+),", app[i_g5:f_g5])
+              reels = [(lbl.replace('é', 'e'), int(p)) for (lbl, p) in g5]
+              att_g5 = [('5 informations', 2), ('conjugaison + alt', 1),
+                          ('place du verbe', 1), ('lisibilite', 1)]
+              if reels != att_g5:
+                  fails.append('app.js : grille /5 ' + str(reels) + ' != ' + str(att_g5))
+              if sum(p for (_l, p) in reels) != 5:
+                  fails.append('app.js : grille somme ' + str(sum(p for (_l, p) in reels))
+                               + ' != 5')
+          for fn in ('function etapesPour(dur)', 'function grillePour(s)',
+                     'function estTextproduktion(s)', 'function renderEtapes(s)',
+                     'function renderGrille(g)'):
+              if fn not in app:
+                  fails.append('app.js : ' + fn + ' absent')
+          if 'h += renderEtapes(s);' not in app:
+              fails.append('app.js : renderEtapes non branche dans openSeance')
+          if 'h += renderGrille(grillePour(s));' not in app:
+              fails.append('app.js : renderGrille non branche apres la consigne')
+          if 'Math.round(e.m * d / ETAPES_TOTAL)' not in app:
+              fails.append('app.js : bareme des etapes non proportionnel a la duree')
+          print('✅ T5 maquette : seances 60 min en 5 etapes [5,15,15,15,10] · '
+                + 'grille production ecrite /5 (4 criteres) · devoir /20 (8+8+4)')
           print('✅ Bareme 8+8+4 = 20 sur U1 → U16 · ' + str(tot_seances)
                 + ' seances mesurees (2AS + 3AS)')
           print('✅ Registre UNITES = 16 · espace parents multi-enfants · 2AS bouclée (U1-U6) + 3AS U7-U12 (الفصل 1 et 2 complets) (الفصل 1 + 2 + 3 complets)')
@@ -1509,7 +1542,7 @@ jobs:
                   + len(json.load(open('assets/bdd/annales.json', encoding='utf-8'))['items']))
           print('✅ BDD : ' + str(nfic) + ' fiches + ' + str(nreg)
                 + ' regles + classe + registre + archive BAC + live')
-          print('✅ PWA v3.7 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ PWA v3.8 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
