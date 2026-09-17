@@ -265,6 +265,7 @@
       '<button class="btn btn-p" id="offNoter">🧮 صحّح ورقتي</button>' +
       '<button class="btn btn-o" id="offVider">🗑️ مسح إجاباتي</button>' +
       '<button class="btn btn-g" id="offVoir">✅ عرض الحل</button>' +
+      '<button class="btn btn-o" id="offDl">📥 تصدير النتيجة</button>' +
       '<button class="btn btn-o" id="offPrint">🖨️ طباعة</button>' +
       '<a class="btn btn-w" id="offWa" target="_blank" rel="noopener" href="#">💬 أرسل للأستاذ</a>' +
       '</div><div id="offMsg"></div></div>';
@@ -427,6 +428,24 @@
     return L.join('\n');
   }
 
+  /* ══════ Téléchargement du résultat (BOM UTF-8 → lisible sous Excel) ══════ */
+  function telecharger(){
+    if(!ouvert) return;
+    const n = noter(ouvert);
+    const nom = 'resultat-' + ouvert.id + '-' + Date.now() + '.txt';
+    try{
+      const blob = new Blob(['\uFEFF' + exporter()], { type:'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = nom;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      toast('📥 تم تنزيل النتيجة (' + n.total.toFixed(1) + '/20)', 'ok');
+    }catch(e){
+      toast('⚠️ تعذّر التنزيل — المتصفح لا يدعم Blob', 'ko');
+    }
+  }
+
   /* ══════ Événements ══════ */
   document.addEventListener('click', ev => {
     const o = ev.target.closest('[data-ouvrir]');
@@ -453,6 +472,7 @@
     if(ev.target.closest('#offReset')){
       fTrim = fUnite = fWilaya = fLycee = 'tous'; fq = '';
       render(); return; }
+    if(ev.target.closest('#offDl')){ telecharger(); return; }
     if(ev.target.closest('#offWa')){
       window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(exporter().slice(0, 1800)), '_blank');
       return; }
@@ -506,5 +526,6 @@
   document.addEventListener('dz:view', e => { if(e.detail === 'officiels') boot(); });
   window.renderOfficiels = boot;
   window.DZ_OFFICIELS = { boot:boot, render:render, noter:noter, exporter:exporter,
+                          telecharger:telecharger,
                           PRET:PRET, CONS:CONS };
 })();
