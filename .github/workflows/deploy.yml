@@ -34,10 +34,10 @@ jobs:
         run: |
           set -e
           for f in index.html style.css auth.js bdd.js unite2.js unite3.js unite4.js \
-                   unite5.js unite6.js app.js modules.js live.js classe.js grammaire.js \
-                   examen.js officiels.js stats.js quiz.js projet.js prof.js parents.js \
-                   library.js manifest.json sw.js README.md 404.html robots.txt \
-                   sitemap.xml .nojekyll; do
+                   unite5.js unite6.js unites3as_a.js app.js modules.js live.js classe.js \
+                   grammaire.js examen.js officiels.js stats.js quiz.js projet.js prof.js \
+                   parents.js journee.js library.js manifest.json sw.js README.md \
+                   404.html robots.txt sitemap.xml .nojekyll; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -50,7 +50,7 @@ jobs:
                    assets/bdd/wilayas_geo.json assets/bdd/plan_projet.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 29 fichiers racine + 17 assets présents"
+          echo "✅ 30 fichiers racine + 17 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -431,6 +431,7 @@ jobs:
           som = sum(x['note'] * (x['coef'] or 1) for x in enf[0]['examens'])
           cof = sum((x['coef'] or 1) for x in enf[0]['examens'])
           mp = round(som / cof, 2) if cof else 0
+          print('✅ 3AS : filtre de niveau 2AS/3AS persistant + badge + barre de progression')
           print('✅ Plan de projet LinguaConnect : 13 sections, revenus 36→540 M DA, roadmap')
           print('✅ Quiz interactif : 30 questions, 6 unites, series de 5, feedback immediat')
           print('✅ Moteur IA : 9 cas de reference du professeur + estCopie + texte Lena officiel')
@@ -842,14 +843,14 @@ jobs:
           python - <<'PY'
           import esprima
           FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
-                      'unite5.js', 'unite6.js', 'app.js', 'modules.js', 'live.js',
-                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
+                      'unite5.js', 'unite6.js', 'unites3as_a.js', 'app.js', 'modules.js',
+                      'live.js', 'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                       'stats.js', 'quiz.js', 'projet.js', 'prof.js', 'parents.js',
-                      'library.js', 'sw.js')
+                      'journee.js', 'library.js', 'sw.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/21 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/23 fichiers JS valides')
           PY
 
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
@@ -860,6 +861,7 @@ jobs:
           def rd(p): return open(p, encoding='utf-8').read()
           app = rd('app.js'); mod = rd('modules.js')
           u2 = rd('unite2.js'); u3 = rd('unite3.js'); u4 = rd('unite4.js'); u5 = rd('unite5.js'); u6 = rd('unite6.js')
+          u3a = rd('unites3as_a.js')
           cl = rd('classe.js'); gr = rd('grammaire.js'); bdd = rd('bdd.js')
           lib = rd('library.js'); au = rd('auth.js'); sw = rd('sw.js')
           pf = rd('prof.js'); ex = rd('examen.js'); lv = rd('live.js')
@@ -883,7 +885,8 @@ jobs:
                      'function allTabs', 'function isProf', "'profboard'", "'examen'",
                      "'live'", "'officiels'", "'stats'", "'quiz'", "'projet'",
                      'window.renderLive', 'window.renderStats2', 'window.renderQuiz',
-                     'window.renderProjet', 'window.UNITE2', 'window.UNITE3',
+                     'window.renderProjet', 'window.UNITES_3AS_A', 'window.UNITE2', 'window.UNITE3',
+                                'Persönlichkeit und Identität', 'Staatsbürgerschaft',
                      'window.UNITE4', 'window.UNITE5', 'window.UNITE6',
                      'Schule und Ausbildung', 'Alltag und Freizeit',
                      'Essen und Trinken', 'Reisen und Verkehr')
@@ -901,14 +904,48 @@ jobs:
               fails.append('app.js : registre UNITES introuvable')
           else:
               n_un = len(re.findall(r'\{ n:\d+, de:', blk.group(1)))
-              if n_un != 6:
-                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 6')
+              if n_un != 9:
+                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 9')
               else:
-                  print('   registre UNITES : ' + str(n_un) + '/6 unites')
+                  print('   registre UNITES : ' + str(n_un) + '/9 unites')
           for k in ('renderSim', 'renderParents', '45 * 60', '10 * 60',
                     'DZ.loadSeances()', 'new Proxy({}'):
               if k not in mod:
                   fails.append('modules.js : ' + k + ' absent')
+          nums3a = re.findall(r'^\s*n: (\d+), de: ', u3a, re.M)
+          if nums3a != ['7', '8', '9']:
+              fails.append('unites3as_a.js : unites ' + str(nums3a) + ' != [7, 8, 9]')
+          if u3a.count("niveau: '3AS'") != 3:
+              fails.append('unites3as_a.js : ' + str(u3a.count("niveau: '3AS'"))
+                           + ' unites 3AS != 3')
+          nse3a = len(re.findall(r"\{ n:\d+, de:'", u3a))
+          if nse3a != 18:
+              fails.append('unites3as_a.js : ' + str(nse3a) + ' seances != 18 (6 x 3)')
+          p3a = re.findall(r"\{ id:'(I|II|III)', t:", u3a)
+          if p3a != ['I', 'II', 'III'] * 3:
+              fails.append('unites3as_a.js : parties ' + str(len(p3a)) + ' != 9 (3 x I/II/III)')
+          if u3a.count('devoir: {') != 3 or u3a.count('corrige: {') != 3:
+              fails.append('unites3as_a.js : != 3 devoirs / 3 corriges')
+          if u3a.count('grille:[') != 3:
+              fails.append('unites3as_a.js : != 3 grilles de production ecrite')
+          if u3a.count('key:[') < 18:
+              fails.append('unites3as_a.js : ' + str(u3a.count('key:['))
+                           + ' mots-cles de correction < 18')
+          if u3a.count('~~') // 2 < 24:
+              fails.append('unites3as_a.js : ' + str(u3a.count('~~') // 2)
+                           + ' erreurs frequentes < 24')
+          REQ3A = ('window.UNITES_3AS_A', 'Persönlichkeit und Identität', 'Staatsbürgerschaft',
+                   'Leben in der Gesellschaft', 'Adjektivdeklination', 'Relativsätze',
+                              'Leben in der Gesellschaft',
+                   'Das Passiv', 'Passiv mit Modalverben', 'Der Konjunktiv II', 'Genitiv',
+                   'zweiteilige Konnektoren', 'Wer bin ich?', 'Was ist ein guter Bürger?',
+                   'Jung und Alt', 'Textproduktion', 'Konsolidierung', "cecrl: 'B1'",
+                   "cecrl: 'B2'")
+          for k in REQ3A:
+              if k not in u3a:
+                  fails.append('unites3as_a.js : ' + k + ' absent')
+          print('✅ 3AS : 3 unites (U7/U8/U9) · 18 seances · 3 devoirs /20 · '
+                + str(u3a.count('~~') // 2) + ' erreurs frequentes · CEFR B1-B2')
           UNITES = {
               'unite2.js': (u2, ['SEANCES_U2', 'DEVOIR_U2', 'CORRIGE_U2', 'window.UNITE2',
                                   'Possessivartikel', 'Adjektive', 'gefallen',
@@ -1132,8 +1169,8 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.4.0',
-                    './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './live.js',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.5.0',
+                    './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
                     './assets/bdd/live.json', './assets/bdd/parents.json', './assets/bdd/devoirs_officiels.json', './assets/bdd/wilayas_geo.json', './assets/bdd/plan_projet.json'):
@@ -1163,22 +1200,22 @@ jobs:
           ID_REQ = ('id="gate"', 'id="shell"', 'id="profBody"', 'id="examBody"',
                     'id="liveBody"', 'id="classeBody"', 'id="gramBody"',
                     'id="biblioBody"', 'id="seancesHead"', 'id="devoirTitle"',
-                    'id="miniProf"', 'id="officielsBody"', 'id="statsBody"', 'id="quizBody"', 'id="projetBody"')
+                    'id="miniProf"', 'id="officielsBody"', 'id="statsBody"', 'id="quizBody"', 'id="projetBody"', 'id="journeeBody"')
           for ident in ID_REQ:
               if ident not in html:
                   fails.append('index.html : ' + ident + ' absent')
           HTML_REQ = ('Freie Universität Berlin', 'منهجية الأستاذ',
                       'البرنامج الرسمي', 'Dichter und Denker',
-                      'Schule und Ausbildung', 'Alltag und Freizeit', 'Essen und Trinken', 'Reisen und Verkehr', 'جامعة الجزائر')
+                      'Schule und Ausbildung', 'Alltag und Freizeit', 'Essen und Trinken', 'Reisen und Verkehr', 'جامعة الجزائر', 'Persönlichkeit und Identität', 'po-3as')
           for txt in HTML_REQ:
               if txt not in html:
                   fails.append('index.html : contenu ' + txt + ' absent')
           ordre = re.findall(r'<script src="([^"]+)"', html)
           attendu = ['auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
-                     'unite5.js', 'unite6.js', 'app.js', 'modules.js', 'live.js',
-                     'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
+                     'unite5.js', 'unite6.js', 'unites3as_a.js', 'app.js', 'modules.js',
+                     'live.js', 'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                      'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'projet.js',
-                     'library.js']
+                     'journee.js', 'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -1211,25 +1248,26 @@ jobs:
                      '.pj-vues', '.pj-vue', '.pj-obs', '.pj-ob', '.pj-sol', '.pj-tarifs',
                      '.pj-tar', '.pj-cmp2', '.pj-rev', '.pj-rv', '.pj-chart', '.pjc',
                      '.pj-eq', '.pj-em', '.pj-rm', '.pj-rmi', '.pj-ver', '.pj-pied',
-                     '.pj-mini', 'v3.4')
+                     '.pj-mini', 'v3.4', '.niv-sel', '.niv', '.ucard-top', '.ucard-lv',
+                     '.ucard-bar', '.po-3as', '.po-3h', 'v3.5')
           for k in CSS_REQ:
               if k not in css:
                   fails.append('style.css : ' + k + ' absent')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 17 vues · 16 onglets statiques + 1 dynamique (profboard)')
-          print('✅ Bareme 8+8+4 = 20 sur U1 → U6 = 48 seances')
-          print('✅ Registre UNITES = 6 · espace parents multi-enfants · année 2AS bouclée (الفصل 1 + 2 + 3 complets)')
+          print('✅ Bareme 8+8+4 = 20 sur U1 → U9 = 66 seances (2AS + 3AS)')
+          print('✅ Registre UNITES = 9 · espace parents multi-enfants · année 2AS bouclée + 3AS ouverte (U7/U8/U9) (الفصل 1 + 2 + 3 complets)')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
           print('✅ Roles : allTabs() + isProf() + compte demo prof')
           print('✅ Salle en direct : flux video, chat IA, tableau 8 planches, presence 32')
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 20 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 22 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive BAC + live')
-          print('✅ PWA v3.4 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ PWA v3.5 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
