@@ -563,7 +563,8 @@ jobs:
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
           print('✅ Portail de connexion + 11 scripts dans l ordre + 5 polices')
-          print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive + live')
+          print('✅ BDD : 684 fiches + ' + str(len(gm['items'])) + ' regles de grammaire '
+                + '+ classe + registre + archive BAC + session live')
           print('✅ PWA v2.6 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
