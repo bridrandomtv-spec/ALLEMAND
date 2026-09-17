@@ -1283,9 +1283,9 @@ jobs:
               for n in range(7, 17):
                   if ('U' + str(n)) not in c3:
                       fails.append('index.html : carte 3AS sans U' + str(n))
-              if '10 وحدات' not in c3 or '60 حصة' not in c3:
+              if '١٠ وحدات' not in c3 or '٦٠ حصة' not in c3:
                   fails.append('index.html : carte 3AS sans le total 10 unités / 60 séances')
-              for tr in ('18 حصة', '24 حصة'):
+              for tr in ('١٨ حصة', '٢٤ حصة'):
                   if tr not in c3:
                       fails.append('index.html : carte 3AS sans « ' + tr + ' »')
           print('✅ Carte 3AS : 10 unites (U7-U16) · 60 seances · T1 18 / T2 18 / T3 24 '
@@ -1642,9 +1642,9 @@ jobs:
           HTML_REQ = ('Freie Universität Berlin', 'منهجية الأستاذ',
                       'البرنامج الرسمي', 'Dichter und Denker',
                       'Schule und Ausbildung', 'Alltag und Freizeit', 'Essen und Trinken', 'Reisen und Verkehr', 'جامعة الجزائر', 'Persönlichkeit und Identität', 'po-3as',
-                                'الدروس الرسمية', 'منهاج 2026/2027', '6 دروس',
+                                'الدروس الرسمية', 'منهاج ٢٠٢٦/٢٠٢٧', '٦ دروس',
                                 'سبتمبر - ديسمبر', 'جانفي - مارس', 'أفريل - جوان',
-                                '3 / 6 مكتمل', 'لم يبدأ بعد', 'po-3as', 'po-bar', 'po-note')
+                                '٣ / ٦ مكتمل', 'لم يبدأ بعد', 'po-3as', 'po-bar', 'po-note')
           for txt in HTML_REQ:
               if txt not in html:
                   fails.append('index.html : contenu ' + txt + ' absent')
@@ -1748,9 +1748,9 @@ jobs:
           else:
               ATT_CH = {'filiere': 'شعبة آداب ولغات',
                         'prof_complement': 'مدعوم بالذكاء الاصطناعي - يتحدث العربية',
-                        'duree_restante': '٣٥ دقيقة',
+                        'duree_restante': '35 دقيقة',
                         'presents_titre': 'التلاميذ الحاضرون',
-                        'presents_valeur': '٣٢ تلميذ'}
+                        'presents_valeur': '32 تلميذ'}
               for kk, v in ATT_CH.items():
                   if ch.get(kk) != v:
                       fails.append('classe.json : chapeau.' + kk + ' = ' + str(ch.get(kk)) + ' != ' + v)
@@ -1787,6 +1787,23 @@ jobs:
               fails.append('index.html : #gate ou #shell absent — page vide au chargement')
           print('✅ index.html : solde <div> = 0 · 5 polices fontsource en URLs valides · '
                 + '#gate/#shell presents · lang=ar dir=rtl')
+          # ── Systèmes de chiffres : la maquette mélange volontairement les deux ──
+          cp = html[html.find('class="prog-off"'):html.find('class="offer"')]
+          CHIFFRES_AR = ('٦ دروس', '٣ / ٦ مكتمل', 'منهاج ٢٠٢٦/٢٠٢٧',
+                         '١٠ وحدات', '٦٠ حصة', '١٨ حصة', '٢٤ حصة')
+          for c in CHIFFRES_AR:
+              if c not in cp:
+                  fails.append('index.html : carte programme sans « ' + c
+                               + ' » (chiffres indo-arabes exigés par la maquette)')
+          if re.findall(r'>\s*[0-9]+\s*(?:دروس|وحدات|حصة)<', cp):
+              fails.append('index.html : compteurs LATINS dans la carte programme '
+                           + str(re.findall(r'>\s*[0-9]+\s*(?:دروس|وحدات|حصة)<', cp)))
+          UIDS = sorted(set(re.findall(r'U[0-9]+', cp)), key=lambda x: int(x[1:]))
+          if UIDS != ['U' + str(n) for n in range(7, 17)]:
+              fails.append('index.html : identifiants d\'unite ' + str(UIDS)
+                           + ' != U7..U16 (doivent rester en latins)')
+          print('✅ Chiffres : carte programme en indo-arabes (٦ دروس · ٣ / ٦ مكتمل · '
+                + '٢٠٢٦/٢٠٢٧ · ١٠ وحدات · ٦٠ حصة) · identifiants U7-U16 en latins')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 18 vues · 17 onglets statiques + 1 dynamique (profboard)')
