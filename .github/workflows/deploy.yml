@@ -1788,7 +1788,14 @@ jobs:
           print('✅ index.html : solde <div> = 0 · 5 polices fontsource en URLs valides · '
                 + '#gate/#shell presents · lang=ar dir=rtl')
           # ── Systèmes de chiffres : la maquette mélange volontairement les deux ──
-          cp = html[html.find('class="prog-off"'):html.find('class="offer"')]
+          cp_i = html.find('<div class="card prog-off">')
+          cp_j = html.find('<div class="card offer">', cp_i)
+          if cp_i < 0 or cp_j <= cp_i:
+              fails.append('index.html : carte programme introuvable (bornes '
+                           + str(cp_i) + '/' + str(cp_j) + ')')
+              cp = ''
+          else:
+              cp = html[cp_i:cp_j]
           CHIFFRES_AR = ('٦ دروس', '٣ / ٦ مكتمل', 'منهاج ٢٠٢٦/٢٠٢٧',
                          '١٠ وحدات', '٦٠ حصة', '١٨ حصة', '٢٤ حصة')
           for c in CHIFFRES_AR:
