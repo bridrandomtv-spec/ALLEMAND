@@ -867,7 +867,7 @@ jobs:
           attendu = ['auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
                      'unite5.js', 'unite6.js', 'app.js', 'modules.js', 'live.js',
                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
-                     'stats.js', 'prof.js', 'parents.js', 'library.js']
+                     'prof.js', 'parents.js', 'stats.js', 'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
