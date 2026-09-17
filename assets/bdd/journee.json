@@ -1,0 +1,382 @@
+{
+ "_meta":{
+  "titre":"📅 حصص اليوم — الجدول اليومي والأسبوعي",
+  "version":"1.0.0",
+  "annee_scolaire":"2026/2027",
+  "auteur":"Prof. Kharif Ahmed",
+  "date_reference":"2026-09-16",
+  "jour_reference":"الثلاثاء",
+  "confidentialite":"Données de démonstration — aucune donnée nominative transmise."
+ },
+ "aujourdhui":[
+  {
+   "matiere":"الألمانية",
+   "icone":"🇩🇪",
+   "lecon":"الدرس 3 - Mein Tagesablauf",
+   "heure":"14:00",
+   "heure_iso":"2026-09-16T14:00",
+   "duree":90,
+   "prof":"الأستاذ خريف أحمد",
+   "init":"خا",
+   "salle":"قاعة 15",
+   "section":"٢AS-٣",
+   "statut":"en_cours",
+   "vue":"live",
+   "cta":"📹 انضم الآن",
+   "couleur":"vert",
+   "matiere_principale":true
+  },
+  {
+   "matiere":"الرياضيات",
+   "icone":"📐",
+   "lecon":"الدوال العددية",
+   "heure":"10:00",
+   "heure_iso":"2026-09-16T10:00",
+   "duree":60,
+   "prof":"الأستاذ عمر قاسمي",
+   "init":"عق",
+   "salle":"قاعة 21",
+   "section":"٢AS-٣",
+   "statut":"termine",
+   "vue":"classe",
+   "cta":"📋 التفاصيل",
+   "couleur":"bleu",
+   "matiere_principale":false
+  },
+  {
+   "matiere":"الفيزياء",
+   "icone":"⚡",
+   "lecon":"الظواهر الكهربائية",
+   "heure":"16:00",
+   "heure_iso":"2026-09-16T16:00",
+   "duree":60,
+   "prof":"الأستاذة نورة مزاري",
+   "init":"نم",
+   "salle":"مخبر 2",
+   "section":"٢AS-٣",
+   "statut":"a_venir",
+   "vue":"classe",
+   "cta":"⏰ بعد ساعتين",
+   "couleur":"ambre",
+   "matiere_principale":false
+  }
+ ],
+ "semaine":[
+  {
+   "jour":"الأحد",
+   "jour_de":"Sonntag",
+   "cours":[
+    {
+     "matiere":"الألمانية",
+     "icone":"🇩🇪",
+     "lecon":"الدرس 1 - Meine Familie",
+     "heure":"08:00",
+     "duree":45,
+     "salle":"قاعة 15",
+     "statut":"termine"
+    },
+    {
+     "matiere":"الرياضيات",
+     "icone":"📐",
+     "lecon":"المتتاليات",
+     "heure":"10:00",
+     "duree":60,
+     "salle":"قاعة 21",
+     "statut":"termine"
+    }
+   ]
+  },
+  {
+   "jour":"الاثنين",
+   "jour_de":"Montag",
+   "cours":[
+    {
+     "matiere":"الفيزياء",
+     "icone":"⚡",
+     "lecon":"المكثفات",
+     "heure":"09:00",
+     "duree":60,
+     "salle":"مخبر 2",
+     "statut":"termine"
+    },
+    {
+     "matiere":"التاريخ والجغرافيا",
+     "icone":"🌍",
+     "lecon":"الحرب العالمية الثانية",
+     "heure":"14:00",
+     "duree":60,
+     "salle":"قاعة 12",
+     "statut":"termine"
+    }
+   ]
+  },
+  {
+   "jour":"الثلاثاء",
+   "jour_de":"Dienstag",
+   "cours":[
+    {
+     "matiere":"الرياضيات",
+     "icone":"📐",
+     "lecon":"الدوال العددية",
+     "heure":"10:00",
+     "duree":60,
+     "salle":"قاعة 21",
+     "statut":"termine"
+    },
+    {
+     "matiere":"الألمانية",
+     "icone":"🇩🇪",
+     "lecon":"الدرس 3 - Mein Tagesablauf",
+     "heure":"14:00",
+     "duree":90,
+     "salle":"قاعة 15",
+     "statut":"en_cours"
+    },
+    {
+     "matiere":"الفيزياء",
+     "icone":"⚡",
+     "lecon":"الظواهر الكهربائية",
+     "heure":"16:00",
+     "duree":60,
+     "salle":"مخبر 2",
+     "statut":"a_venir"
+    }
+   ]
+  },
+  {
+   "jour":"الأربعاء",
+   "jour_de":"Mittwoch",
+   "cours":[
+    {
+     "matiere":"الألمانية",
+     "icone":"🇩🇪",
+     "lecon":"الدرس 4 - Hobbys und Freizeit",
+     "heure":"08:00",
+     "duree":45,
+     "salle":"قاعة 15",
+     "statut":"a_venir"
+    },
+    {
+     "matiere":"الفلسفة",
+     "icone":"🧠",
+     "lecon":"الإدراك",
+     "heure":"11:00",
+     "duree":60,
+     "salle":"قاعة 18",
+     "statut":"a_venir"
+    }
+   ]
+  },
+  {
+   "jour":"الخميس",
+   "jour_de":"Donnerstag",
+   "cours":[
+    {
+     "matiere":"الرياضيات",
+     "icone":"📐",
+     "lecon":"النهايات",
+     "heure":"09:00",
+     "duree":60,
+     "salle":"قاعة 21",
+     "statut":"a_venir"
+    },
+    {
+     "matiere":"الألمانية",
+     "icone":"🇩🇪",
+     "lecon":"فرض محروس — الوحدة 1",
+     "heure":"14:00",
+     "duree":60,
+     "salle":"قاعة 15",
+     "statut":"a_venir",
+     "examen":true
+    }
+   ]
+  }
+ ],
+ "acces_rapide":[
+  {
+   "icone":"📚",
+   "titre":"الحصص",
+   "sous":"8 حصص",
+   "vue":"seances",
+   "couleur":"vert"
+  },
+  {
+   "icone":"📝",
+   "titre":"الفرض",
+   "sous":"مع التصحيح",
+   "vue":"devoir",
+   "couleur":"bleu"
+  },
+  {
+   "icone":"🎯",
+   "titre":"تمارين",
+   "sous":"تفاعلية",
+   "vue":"quiz",
+   "couleur":"violet"
+  },
+  {
+   "icone":"💬",
+   "titre":"الأستاذ",
+   "sous":"محادثة ذكية",
+   "vue":"prof",
+   "couleur":"rouge"
+  }
+ ],
+ "cv":{
+  "nom":"الأستاذ خريف أحمد",
+  "nom_de":"Der Lehrer Kharif Ahmed",
+  "titre":"أستاذ اللغة الألمانية - التعليم الثانوي",
+  "devise":"الرجوع إلى الأصل فضيلة. نرافق أبناءكم نحو النجاح... خطوة بخطوة",
+  "badges":[
+   "15 سنة خبرة",
+   "🇩🇪 Goethe C2",
+   "✍️ مؤلف «الألمانية بسهولة»"
+  ],
+  "bloc_candidature":{
+   "titre":"الأستاذ المؤسس",
+   "whatsapp":"0555577931",
+   "cta":"📱 واتساب"
+  },
+  "blocs":[
+   {
+    "icone":"🎓",
+    "titre":"الشهادة العلمية",
+    "lignes":[
+     "دكتوراه في اللغة الألمانية - جامعة الجزائر",
+     "ماجستير من جامعة برلين الحرة 🇩🇪"
+    ]
+   },
+   {
+    "icone":"💼",
+    "titre":"المسار المهني",
+    "lignes":[
+     "أستاذ في التعليم الثانوي منذ 2011",
+     "مُكوِّن للأساتذة في وزارة التربية الوطنية"
+    ]
+   },
+   {
+    "icone":"🌍",
+    "titre":"الخبرة الدولية",
+    "lignes":[
+     "5 سنوات في ألمانيا (برلين، ميونخ)",
+     "شهادة Goethe-Zertifikat C2"
+    ]
+   },
+   {
+    "icone":"📚",
+    "titre":"المؤلفات",
+    "lignes":[
+     "مؤلف كتاب «الألمانية بسهولة» للتعليم الثانوي",
+     "مشارك في إعداد البرنامج الرسمي MEN"
+    ]
+   }
+  ],
+  "tags":[
+   "تحضير BAC",
+   "القواعد",
+   "المحادثة",
+   "Goethe",
+   "النطق"
+  ],
+  "citation_ar":"تعلم اللغة الألمانية ليس صعباً كما يعتقد البعض. المهم أن يكون لديك أستاذ يفهمك ويشرح لك بلغتك الأم أولاً، ثم يأخذ بيدك خطوة بخطوة.",
+  "citation_de":"Die deutsche Sprache ist die Sprache der Dichter und Denker. Mit Geduld und Übung könnt ihr sie meistern!",
+  "citation_de_ar":"اللغة الألمانية هي لغة الشعراء والمفكرين. بالصبر والممارسة، ستتمكنون من إتقانها!",
+  "citation_contexte":"auf Deutsch · بالألمانية",
+  "methodologie":[
+   {
+    "n":"1️⃣",
+    "titre":"الشرح بالعربية أولاً",
+    "detail":"أبدأ بشرح القاعدة بلغتك الأم حتى تفهمها جيداً"
+   },
+   {
+    "n":"2️⃣",
+    "titre":"الأمثلة الحية",
+    "detail":"أمثلة من حياتنا اليومية في الجزائر"
+   },
+   {
+    "n":"3️⃣",
+    "titre":"التطبيق العملي",
+    "detail":"فروض حقيقية من ثانويات جزائرية"
+   },
+   {
+    "n":"4️⃣",
+    "titre":"التصحيح المفصل",
+    "detail":"شرح كل خطأ بالعربية والألمانية"
+   }
+  ],
+  "pret_a_apprendre":{
+   "titre":"👋 هل أنت مستعد للتعلم معي؟",
+   "sous":"ابدأ الآن محادثة معي أو انضم إلى القاعة الافتراضية",
+   "boutons":[
+    {
+     "label":"💬 محادثة",
+     "vue":"prof",
+     "style":"p"
+    },
+    {
+     "label":"📹 القاعة",
+     "vue":"live",
+     "style":"g"
+    }
+   ]
+  },
+  "ia":{
+   "icone":"🧠",
+   "titre":"ذكاء اصطناعي متقدم",
+   "sous":"مُدرَّب على المنهاج الجزائري",
+   "detail":"الأستاذ الافتراضي يفهم مستواك ويقدم شرحاً مخصصاً بالعربية، مع أمثلة من البرنامج الرسمي.",
+   "regle_or":"💡 قاعدة ذهبية: البوادئ الشائعة للانفصال هي: auf, aus, ein, mit, nach, vor, zu"
+  }
+ },
+ "unite1_apercu":{
+  "titre":"الوحدة 1: Sich vorstellen - التعريف بالنفس",
+  "niveau":"السنة الثانية ثانوي - الوحدة 1",
+  "programme":"برنامج الأستاذ خريف أحمد لتعليم الألمانية",
+  "objectifs":[
+   "التعريف بالنفس (الاسم، العمر، الجنسية)",
+   "وصف العائلة",
+   "التحيات والتوديع",
+   "تصريف sein و haben",
+   "أدوات الاستفهام W-Fragen"
+  ],
+  "contenu_devoir":[
+   "📖 فهم المكتوب (8 نقاط)",
+   "🔤 اللغة (8 نقاط)",
+   "✍️ إنتاج كتابي (4 نقاط)"
+  ],
+  "duree_devoir":45,
+  "cta":[
+   {
+    "label":"📚 ابدأ التعلم",
+    "vue":"seances"
+   },
+   {
+    "label":"💬 تحدث مع الأستاذ",
+    "vue":"prof"
+   }
+  ],
+  "stats":[
+   {
+    "icone":"📚",
+    "v":"8",
+    "l":"حصص الوحدة"
+   },
+   {
+    "icone":"📝",
+    "v":"1",
+    "l":"فرض الوحدة"
+   },
+   {
+    "icone":"🏆",
+    "v":"/20",
+    "l":"نقطة كاملة"
+   },
+   {
+    "icone":"⏱️",
+    "v":"45'",
+    "l":"مدة الفرض"
+   }
+  ]
+ }
+}
