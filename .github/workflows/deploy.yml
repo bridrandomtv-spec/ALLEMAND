@@ -1579,7 +1579,7 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.10.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.11.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
@@ -1742,6 +1742,26 @@ jobs:
           print('✅ Maquette 7/8/10 : 6 lecons (2 termine · 1 en_cours 65 % · 3 verrouille) '
                 + '· triplet المفردات/القواعد/النشاط · 4 exercices (10/10 · 8/10 · جاري · مقفل) '
                 + '· chapeau (شعبة آداب ولغات · IA · ٣٥ دقيقة · ٣٢ تلميذ)')
+          # ── Intégrité de index.html (la page blanche venait de là) ──
+          SOLDE_DIV = len(re.findall(r'<div\b', html)) - html.count('</div>')
+          if SOLDE_DIV != 0:
+              fails.append('index.html : solde <div> = ' + str(SOLDE_DIV)
+                           + ' — un </div> en trop ferme #shell prematurément')
+          CASSES = re.findall(r'href="(https://cdn\.jsdelivr\.net/fontsource/css/[^"]+)"', html)
+          if CASSES:
+              fails.append('index.html : ' + str(len(CASSES)) + ' feuille(s) de style '
+                           + 'BLOQUANTE(S) au format fontsource/css inexistant (404)')
+          for fam in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
+              if ('npm/@fontsource/' + fam + '/index.css') not in html:
+                  fails.append('index.html : police ' + fam + ' absente ou URL invalide')
+          if len(re.findall(r'cdn\.jsdelivr\.net/npm/@fontsource/', html)) != 5:
+              fails.append('index.html : liens fontsource != 5')
+          if '<html lang="ar" dir="rtl">' not in html:
+              fails.append('index.html : <html lang=ar dir=rtl> absent')
+          if 'id="gate"' not in html or 'id="shell"' not in html:
+              fails.append('index.html : #gate ou #shell absent — page vide au chargement')
+          print('✅ index.html : solde <div> = 0 · 5 polices fontsource en URLs valides · '
+                + '#gate/#shell presents · lang=ar dir=rtl')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 18 vues · 17 onglets statiques + 1 dynamique (profboard)')
