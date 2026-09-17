@@ -424,10 +424,11 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['accueil','seances','live','classe','grammaire','biblio','officiels','examen','devoir','simulation','prof','parents','profboard','compte'];
+const VIEWS = ['accueil','seances','live','classe','grammaire','biblio','stats','officiels','examen','devoir','simulation','prof','parents','profboard','compte'];
 const TABS  = [['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
+               ['stats','🗺️ الإحصائيات'],
                ['officiels','📄 الفروض'],['examen','🎓 البكالوريا'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
                ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],['compte','⚙️ حسابي']];
@@ -464,6 +465,7 @@ function go(view){
   document.dispatchEvent(new CustomEvent('dz:view', { detail: view }));
   if(view === 'seances'){ renderSeances(); paintUniteHead(); }
   if(view === 'biblio' && window.renderBiblio) window.renderBiblio();
+  if(view === 'stats' && window.renderStats2) window.renderStats2();
   if(view === 'officiels' && window.renderOfficiels) window.renderOfficiels();
   if(view === 'examen' && window.renderExamen) window.renderExamen();
   if(view === 'live' && window.renderLive) window.renderLive();
