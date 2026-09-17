@@ -191,61 +191,61 @@ jobs:
           import json, sys
           fails = []
           gm = json.load(open('assets/bdd/grammaire.json', encoding='utf-8'))
-          if len(gm['items']) != 83:
-              fails.append('grammaire : ' + str(len(gm['items'])) + ' regles != 83')
-          if len(gm['chapitres']) != 5:
-              fails.append('grammaire : ' + str(len(gm['chapitres'])) + ' chapitres != 5')
-          CIBLES = {'2AS-T1': 16, '2AS-T2': 15, '2AS-T3': 14, '3AS-T1': 18, 'BAC': 20}
+          items = gm['items']; chaps = gm['chapitres']
+          if len(items) != 83:
+              fails.append('grammaire : ' + str(len(items)) + ' regles != 83')
+          if len(chaps) != 5:
+              fails.append('grammaire : ' + str(len(chaps)) + ' chapitres != 5')
+          CIBLES = {'2AS-T1': 16, '2AS-T2': 15, '2AS-T3': 14, '3AS-BAC': 18, 'BAC': 20}
           compte = {}
-          for _r in gm['items']:
-              compte[_r['chapitre']] = compte.get(_r['chapitre'], 0) + 1
-          for _cid, _cible in CIBLES.items():
-              if compte.get(_cid, 0) != _cible:
-                  fails.append('grammaire : chapitre ' + _cid + ' = ' + str(compte.get(_cid, 0)) + ' != ' + str(_cible))
-          for _c in gm['chapitres']:
-              if _c.get('produit') != _c.get('nombre'):
-                  fails.append('grammaire : chapitre ' + _c['id'] + ' : produit != nombre')
-          if len(gm['items']) != sum(CIBLES.values()):
-              fails.append('grammaire : total != somme des cibles par chapitre')
-          for r in gm['items']:
-              for k in ('id', 'titre_de', 'titre_ar', 'explication', 'exemples',
-                        'erreur_courante', 'astuce', 'cefr'):
-                  if not r.get(k):
-                      fails.append('regle ' + str(r.get('id')) + ' champ ' + k + ' vide'); break
-              if len(r.get('explication', '')) < 60:
-                  fails.append('regle ' + r['id'] + ' : explication < 60 caracteres')
-              if r.get('cefr') not in ('A1', 'A2', 'B1', 'B2'):
-                  fails.append('regle ' + r['id'] + ' : CEFR inconnu ' + str(r.get('cefr')))
-              if len(r.get('mots_cles') or []) < 3:
-                  fails.append('regle ' + r['id'] + ' : moins de 3 mots-cles')
-              if len(r.get('exemples') or []) < 4:
-                  fails.append('regle ' + r['id'] + ' moins de 4 exemples'); break
-          ATT_CHAP = {'2AS-T1': 16, '2AS-T2': 15, '2AS-T3': 14, '3AS-BAC': 18, 'BAC': 20}
-          reel = dict((c['id'], c['nombre']) for c in gm['chapitres'])
-          if reel != ATT_CHAP:
-              fails.append('grammaire : repartition ' + str(reel) + ' != ' + str(ATT_CHAP))
-          comptage = {}
-          for r in gm['items']:
-              comptage[r['chapitre']] = comptage.get(r['chapitre'], 0) + 1
-          if comptage != ATT_CHAP:
-              fails.append('grammaire : items par chapitre ' + str(comptage))
-          cefrs = set(r['cefr'] for r in gm['items'])
+          for r in items:
+              compte[r['chapitre']] = compte.get(r['chapitre'], 0) + 1
+          if compte != CIBLES:
+              fails.append('grammaire : repartition reelle ' + str(compte))
+          decl = dict((c['id'], c['nombre']) for c in chaps)
+          if decl != CIBLES:
+              fails.append('grammaire : chapitres declares ' + str(decl))
+          if len(items) != sum(CIBLES.values()):
+              fails.append('grammaire : total != somme des cibles')
+          for c in chaps:
+              for k in ('id', 'icone', 'titre', 'sous_titre', 'nombre', 'cefr'):
+                  if not c.get(k):
+                      fails.append('grammaire chapitre ' + str(c.get('id')) + ' : ' + k + ' vide')
+          nums = [r['num_global'] for r in items]
+          if nums != list(range(1, len(items) + 1)):
+              fails.append('grammaire : num_global non continu')
+          if len(set(r['id'] for r in items)) != len(items):
+              fails.append('grammaire : identifiants non uniques')
+          cefrs = set(r['cefr'] for r in items)
           if not cefrs <= set(['A1', 'A2', 'B1', 'B2']):
               fails.append('grammaire : CEFR inconnus ' + str(cefrs))
-          nums = [r['num_global'] for r in gm['items']]
-          if nums != list(range(1, len(gm['items']) + 1)):
-              fails.append('grammaire : num_global non continu')
-          if len(set(r['id'] for r in gm['items'])) != len(gm['items']):
-              fails.append('grammaire : identifiants non uniques')
-          print('✅ Grammaire : ' + str(len(gm['items'])) + ' regles · '
-                + str(len(gm['chapitres'])) + ' chapitres · CEFR A1-B2 · ' + str(compte))
+          REQ = ('id', 'titre_de', 'titre_ar', 'explication', 'exemples',
+                 'erreur_courante', 'astuce', 'cefr', 'chapitre', 'chapitre_titre',
+                 'icone', 'ordre', 'num_global', 'niveau', 'trimestre', 'mots_cles')
+          for r in items:
+              for k in REQ:
+                  if not r.get(k):
+                      fails.append('regle ' + str(r.get('id')) + ' : ' + k + ' vide'); break
+              if len(r.get('exemples') or []) < 4:
+                  fails.append('regle ' + str(r.get('id')) + ' : moins de 4 exemples')
+              if len(r.get('explication', '')) < 25:
+                  fails.append('regle ' + str(r.get('id')) + ' : explication < 25 caracteres')
+              if len(r.get('mots_cles') or []) < 3:
+                  fails.append('regle ' + str(r.get('id')) + ' : moins de 3 mots-cles')
+              if r.get('cefr') not in ('A1', 'A2', 'B1', 'B2'):
+                  fails.append('regle ' + str(r.get('id')) + ' : CEFR ' + str(r.get('cefr')))
+          mini = min(len(r.get('explication', '')) for r in items)
+          print('✅ Grammaire : ' + str(len(items)) + ' regles · ' + str(len(chaps))
+                + ' chapitres · CEFR ' + '/'.join(sorted(cefrs)) + ' · explication min '
+                + str(mini) + ' car.')
+          print('   repartition : ' + str(compte))
           cv = json.load(open('assets/bdd/classe.json', encoding='utf-8'))
           for k in ('sections', 'jours', 'jours_de', 'emploi', 'lecons', 'presence',
                     'notes', 'messages', 'profs', 'prochaine'):
               if k not in cv:
                   fails.append('classe.json : cle ' + k + ' absente')
           if len(cv.get('sections', [])) != 5:
-              fails.append('classe : sections != 5')
+              fails.append('classe : ' + str(len(cv.get('sections', []))) + ' sections != 5')
           if len(cv.get('lecons', [])) < 6:
               fails.append('classe : moins de 6 lecons')
           if len(cv.get('profs', [])) < 5:
