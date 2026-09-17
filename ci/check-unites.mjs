@@ -195,6 +195,6 @@ if (fails.length) {
   for (const f of fails) console.log('  ❌ ' + f);
   process.exit(1);
 }
-console.log(`  ✅ ${resolues.length}/12 unités résolues à l'exécution, aucune vide`);
+console.log(`  ✅ ${resolues.length}/${morceaux.length} unités résolues à l'exécution, aucune vide`);
 console.log('     (seances > 0 · devoir non null · 3 parties · barème /20 · duree_totale présente)');
 process.exit(0);
