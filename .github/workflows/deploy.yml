@@ -430,6 +430,7 @@ jobs:
           som = sum(x['note'] * (x['coef'] or 1) for x in enf[0]['examens'])
           cof = sum((x['coef'] or 1) for x in enf[0]['examens'])
           mp = round(som / cof, 2) if cof else 0
+          print('✅ Moteur IA : 9 cas de reference du professeur + estCopie + texte Lena officiel')
           print('✅ Statistiques nationales : carte 58 wilayas, 6 onglets, heatmap, BAC')
           print('✅ Devoirs officiels : 10 devoirs · 10 lycees · onglets sujet/solution · notation /20')
           print('✅ Espace parents : ' + str(len(enf)) + ' enfants · '
@@ -628,6 +629,109 @@ jobs:
           print('   bbox lat ' + str(b['lat_min']) + '/' + str(b['lat_max'])
                 + ' · lon ' + str(b['lon_min']) + '/' + str(b['lon_max'])
                 + ' · viewBox ' + ge['_meta']['viewbox'])
+          if fails:
+              print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
+          PY
+
+      - name: Valider le moteur IA du professeur (9 cas de référence)
+        run: |
+          python - <<'PY'
+          import re, sys
+          fails = []
+          src = open('app.js', encoding='utf-8').read()
+          i = src.find('  base:[')
+          j = src.find('  fallback:[', i)
+          if i < 0 or j < 0:
+              print('::error::app.js : PROF.base introuvable'); sys.exit(1)
+          bloc = src[i:j]
+          base = []
+          for m in re.finditer(r"\{t:'([^']*)',\s*k:\[(.*?)\],", bloc, re.S):
+              base.append((m.group(1), re.findall(r"'((?:[^'\\]|\\.)*)'", m.group(2))))
+          if len(base) < 18:
+              fails.append('IA : ' + str(len(base)) + ' entrees dans PROF.base < 18')
+          sujets = set(t for (t, _) in base)
+          REQUIS = set(['sein', 'haben', 'lena', 'exam', 'salutations', 'wfragen',
+                        'artikel', 'familie', 'herkunft', 'wohnen', 'nom', 'alter',
+                        'hobby', 'bac', 'corrige', 'inscription', 'default', 'tschüs',
+                        'danke'])
+          manq = REQUIS - sujets
+          if manq:
+              fails.append('IA : sujets manquants ' + str(sorted(manq)))
+          def trouver(txt):
+              s = (txt or '').lower()
+              for (topic, kws) in base:
+                  for k in kws:
+                      if k.lower() in s:
+                          return topic
+              return None
+          CAS = [('اشرح لي الفعل sein', 'sein'),
+                 ('ما معنى haben؟', 'haben'),
+                 ('اشرح لي نص Lena Fischer', 'lena'),
+                 ('كيف أحضر للفرض؟', 'exam'),
+                 ('علمني التحيات بالألمانية', 'salutations'),
+                 ('Guten Morgen signifie quoi؟', 'salutations'),
+                 ('ما هي أدوات الاستفهام؟', 'wfragen'),
+                 ('Woher kommst du؟', 'wfragen'),
+                 ('مرحبا أستاذ', 'default')]
+          for (phrase, attendu) in CAS:
+              obtenu = trouver(phrase) or 'default'
+              if obtenu != attendu:
+                  fails.append('IA cas « ' + phrase + ' » → ' + obtenu + ' (attendu ' + attendu + ')')
+          THEMES = [('اشرح لي الفعل sein', 'sein'), ('اشرح لي الفعل haben', 'haben'),
+                    ('اشرح لي W-Fragen', 'wfragen'), ('اشرح لي نص Lena', 'lena'),
+                    ('اشرح لي تحضير الفرض', 'exam'), ('اشرح لي التحيات', 'salutations')]
+          for (phrase, attendu) in THEMES:
+              if (trouver(phrase) or 'default') != attendu:
+                  fails.append('IA theme rapide « ' + phrase + ' » mal route')
+          SUJET = re.compile(r'^(ich|du|er|sie|es|wir|ihr|man|mein|meine|der|die|das'
+                             r'|am|um|heute|morgen)\b', re.I)
+          def est_copie(s):
+              t = (s or '').strip()
+              if re.search(r'[\u0600-\u06FF]', t):
+                  return False
+              if re.search(r'[?\u061F]\s*$', t):
+                  return False
+              return bool(SUJET.match(t))
+          COPIES = ['Ich bist 16 Jahre alt.', 'Ich habe zwei Schwestern.',
+                    'Ich komme Algerien.', 'Er ist 20 Jahre alt.',
+                    'Wir wohnen in Bouira.', 'Mein Vater heißt Thomas.',
+                    'Der Zug fährt um 8 Uhr ab.', 'Heute gehe ich in die Schule.']
+          for c in COPIES:
+              if not est_copie(c):
+                  fails.append('IA : « ' + c + ' » non reconnue comme copie a corriger')
+          if 'estCopie(s){' not in src:
+              fails.append('IA : PROF.estCopie() absent')
+          if 'PROF.estCopie(s)' not in src:
+              fails.append('IA : estCopie() non branche dans repondre()')
+          if 'PROF.trouver(s)' not in src:
+              fails.append('IA : PROF.trouver() non branche dans repondre()')
+          ordre = [src.find('PROF.corriger(phrase'), src.find('PROF.estCopie(s)'),
+                   src.find('PROF.trouver(s)')]
+          if ordre != sorted(ordre) or -1 in ordre:
+              fails.append('IA : ordre de resolution incorrect ' + str(ordre))
+          k = src.find("{t:'lena'")
+          l = src.find("{t:'hobby'", k)
+          if k < 0 or l < 0:
+              fails.append('IA : entree lena introuvable')
+          else:
+              lena = src[k:l]
+              for attendu in ('17', 'Tim', 'Anna', 'München', 'Gute Nacht'):
+                  if attendu not in lena:
+                      fails.append('IA entree lena : ' + attendu + ' absent (texte officiel)')
+              for interdit in ('Marie', 'Sophie', 'عمرها 16'):
+                  if interdit in lena:
+                      fails.append('IA entree lena : contenu invente « ' + interdit + ' » encore present')
+          for chip in ('أدوات التعريف', 'تمارين', 'محادثة', 'سؤال'):
+              if chip not in src:
+                  fails.append('IA : pastille « ' + chip + ' » absente de SUGS')
+          if 'const TOPICS = [' not in src:
+              fails.append('IA : TOPICS (themes rapides) absent')
+          for t in ('الفعل sein', 'الفعل haben', 'W-Fragen', 'نص Lena', 'تحضير الفرض', 'التحيات'):
+              if t not in src:
+                  fails.append('IA : theme rapide « ' + t + ' » absent')
+          print('✅ Moteur IA du professeur : ' + str(len(base)) + ' entrees · '
+                + str(len(sujets)) + ' sujets · 9/9 cas de reference · 6/6 themes rapides · '
+                + '8/8 copies detectees · 4/4 pastilles')
           if fails:
               print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
           PY
