@@ -1495,3 +1495,105 @@ table.conj tr:last-child td{border:none}
   .off-card{break-inside:avoid}
   .qr-i{border:1px solid #999}
 }
+
+
+/* ── v3.2 · 🗺️ الإحصائيات nationales ── */
+.st-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:19px;flex-wrap:wrap;
+  background:linear-gradient(140deg,rgba(0,98,51,.32),rgba(12,42,26,.94) 55%,transparent);
+  border-color:var(--b2)}
+.st-hero h2{font-family:var(--ff-ar-display);font-size:23px;margin:7px 0 5px}
+.st-kpis{display:grid;grid-template-columns:repeat(3,minmax(78px,1fr));gap:8px;flex:0 0 auto}
+.stk{background:rgba(4,20,12,.55);border:1px solid var(--b);border-radius:13px;padding:10px 6px;
+  text-align:center;position:relative}
+.stk-n{font-family:var(--ff-de);font-size:19px;font-weight:800;color:var(--or2);line-height:1}
+.stk-l{font-size:9.5px;color:var(--m);margin-top:3px}
+.stk-i{position:absolute;top:6px;left:8px;font-size:11px;opacity:.55}
+
+/* Carte SVG */
+.st-map-wrap{position:relative;background:linear-gradient(165deg,#04140c,#071d12);
+  border:1px solid var(--b);border-radius:18px;padding:13px;margin-bottom:15px;overflow:hidden}
+.st-map{width:100%;height:auto;max-height:600px;display:block}
+.dz-outline{stroke:rgba(232,182,76,.55);stroke-width:1.6;stroke-linejoin:round;
+  filter:drop-shadow(0 0 12px rgba(0,98,51,.5))}
+.wpt{stroke:rgba(4,20,12,.85);stroke-width:1.1;cursor:pointer;transition:.2s}
+.wpt:hover{stroke:var(--or);stroke-width:2.2;filter:drop-shadow(0 0 7px var(--or))}
+.wpt.a{fill:#3ddc84;fill-opacity:.88}
+.wpt.b{fill:#e8b64c;fill-opacity:.84}
+.wpt.c{fill:#4f8cff;fill-opacity:.78}
+.wpt.z{fill:#5a6b62;fill-opacity:.5}
+.st-legend{position:absolute;bottom:15px;right:15px;background:rgba(4,20,12,.86);
+  border:1px solid var(--b);border-radius:13px;padding:11px 13px;font-size:11px;backdrop-filter:blur(7px)}
+.lg-t{font-weight:700;color:var(--or2);margin-bottom:7px;font-size:11.5px}
+.lg-r{display:flex;align-items:center;gap:7px;color:var(--m);padding:2px 0}
+.lg-d{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
+.lg-d.a{background:#3ddc84}.lg-d.b{background:#e8b64c}
+.lg-d.c{background:#4f8cff}.lg-d.z{background:#5a6b62}
+.lg-n{color:var(--b2);font-size:9.5px;margin-top:7px;max-width:148px;line-height:1.5}
+.st-tip{position:absolute;pointer-events:none;z-index:9;min-width:180px;max-width:236px;
+  background:rgba(4,20,12,.95);border:1px solid var(--or);border-radius:12px;padding:10px 12px;
+  font-size:11.5px;line-height:1.6;box-shadow:0 9px 26px rgba(0,0,0,.55)}
+.st-tip b{display:block;color:var(--or2);font-family:var(--ff-ar-display);font-size:13px;margin-bottom:3px}
+.st-tip span{display:block;color:var(--m)}
+
+/* Donut */
+.donut-wrap{display:flex;justify-content:center;padding:6px 0 13px}
+.donut{width:196px;height:196px;transform:rotate(-90deg)}
+.donut-seg{transition:stroke-width .25s}
+.donut-seg:hover{stroke-width:7.6}
+.donut-hole{fill:var(--p2)}
+.donut-n{fill:var(--t);font-family:var(--ff-de);font-size:8.2px;font-weight:800;
+  text-anchor:middle;transform:rotate(90deg);transform-origin:21px 21px}
+.donut-l{fill:var(--m);font-size:3.1px;text-anchor:middle;
+  transform:rotate(90deg);transform-origin:21px 21px}
+.legende{display:flex;flex-direction:column;gap:8px}
+.lg-i{display:flex;gap:9px;align-items:center;background:var(--nuit3);border:1px solid var(--b);
+  border-radius:12px;padding:9px 12px;font-size:12.5px;flex-wrap:wrap}
+.lg-c{width:13px;height:13px;border-radius:4px;flex:0 0 auto}
+.lg-i b{font-family:var(--ff-ar-display)}
+.lg-i i{font-family:var(--ff-de-display);font-size:11.5px;color:var(--m);font-style:normal;
+  direction:ltr;flex:1;min-width:110px;text-align:left}
+.lg-v{font-family:var(--ff-de);font-weight:800;color:var(--a2);margin-right:auto}
+.stack{display:flex;height:30px;border-radius:11px;overflow:hidden;background:var(--b);
+  border:1px solid var(--b2)}
+.stack span{display:block;height:100%;transition:width .7s cubic-bezier(.22,1,.36,1)}
+.stack span:hover{filter:brightness(1.22)}
+
+/* Histogramme vertical */
+.chart-col{display:flex;gap:5px;align-items:flex-end;height:186px;padding:13px 3px 0}
+.chart-col.tall{height:226px}
+.cc{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;min-width:0}
+.cc-v{font-family:var(--ff-de);font-size:10px;font-weight:800;color:var(--m);min-height:13px}
+.cc-v.on{color:var(--or2)}
+.cc-b{flex:1;width:100%;display:flex;align-items:flex-end;background:var(--nuit3);
+  border-radius:7px;overflow:hidden;border:1px solid var(--b)}
+.cc-b i{display:block;width:100%;border-radius:6px 6px 0 0;
+  background:linear-gradient(180deg,var(--or),var(--vert2));
+  transition:height .8s cubic-bezier(.22,1,.36,1)}
+.cc-b i.bac{background:linear-gradient(180deg,#e8b64c,#d21034)}
+.cc-b i.hi{background:linear-gradient(180deg,#3ddc84,#1f9c5c)}
+.cc-b i.lo{background:linear-gradient(180deg,#7f8c85,#4d5a53)}
+.cc-l{font-family:var(--ff-de);font-size:9px;color:var(--m);direction:ltr;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+/* Barre de difficulté + heatmap */
+.diff-bar{display:flex;height:32px;border-radius:11px;overflow:hidden;background:var(--b);
+  border:1px solid var(--b2)}
+.db{display:flex;align-items:center;justify-content:center;font-family:var(--ff-de);
+  font-size:11.5px;font-weight:800;color:#04140c;transition:width .7s}
+.db.d1{background:linear-gradient(135deg,#3ddc84,#2bb96c)}
+.db.d2{background:linear-gradient(135deg,#ffb454,#e09b34)}
+.db.d3{background:linear-gradient(135deg,#ff6b7d,#d94a5b);color:#fff}
+.rleg span.d1{color:var(--g)}.rleg span.d2{color:var(--am)}.rleg span.d3{color:var(--r)}
+table.hm td.hmc{font-family:var(--ff-de);font-weight:800;text-align:center;color:#04140c}
+.tc-z{color:var(--b2);opacity:.5}
+
+@media(max-width:1080px){.st-hero{flex-direction:column}.st-kpis{width:100%}}
+@media(max-width:760px){
+  .st-kpis{grid-template-columns:repeat(3,1fr)}
+  .st-legend{position:static;margin-top:11px;display:flex;gap:13px;flex-wrap:wrap;align-items:center}
+  .lg-t{margin:0}.lg-n{display:none}
+  .chart-col{height:146px}.chart-col.tall{height:176px}
+  .donut{width:162px;height:162px}
+  .st-map{max-height:430px}
+}
+@media print{.st-legend,.st-tip,.filters{display:none}.st-map-wrap{background:#fff}}
