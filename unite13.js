@@ -115,7 +115,7 @@ const SEANCES_U13 = [
          ['fünf Portionen pro Tag','خمس حصص في اليوم']],
     gram:{t:'Impératif — donner un conseil sanitaire, 3 formes',
       tbl:[['du','<b>Iss</b> mehr Gemüse!','radical sans -st ni pronom (verbes forts : umlaut perdu)'],
-           ['ihr',''<b>Esst</b> mehr Gemüse!''.replace("''","'), 'forme du présent'],
+           ['ihr','<b>Esst</b> mehr Gemüse!','forme du présent'],
            ['Sie','<b>Essen Sie</b> mehr Gemüse!','infinitif + Sie']],
       b:['<b>sollen</b> = conseil reçu d’un tiers : <span class="de-in">Der Arzt sagt, ich '
        + '<b>soll</b> mehr trinken.</span>',
