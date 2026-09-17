@@ -2,7 +2,7 @@
  "_meta":{
   "titre":"LinguaConnect — Plan de projet",
   "sous_titre":"L'allemand pour les lycéens algériens 🇩🇿 🇩🇪",
-  "version":"1.0.0",
+  "version":"1.1.0",
   "date":"Septembre 2026",
   "auteur":"Prof. Kharif Ahmed",
   "confidentialite":"Document confidentiel — Tous droits réservés",
@@ -39,7 +39,8 @@
    "whatsapp_affiche":"0555 57 79 31",
    "email":"contact@deutsch-dz.edu",
    "site":"https://bridrandomtv-spec.github.io/ALLEMAND/"
-  }
+  },
+  "maj":"Synchronisé sur l'état réel du dépôt après ajout de la 17ᵉ vue (📋 Plan de projet) — 20 scripts, 50 fichiers, 3,21 Mo"
  },
  "contexte":{
   "id":"contexte",
@@ -240,11 +241,11 @@
   "num":"06",
   "icon":"⚙️",
   "titre":"Fonctionnalités livrées",
-  "vues":16,
-  "onglets":15,
-  "scripts":19,
-  "fichiers":48,
-  "taille_mo":3.12,
+  "vues":17,
+  "onglets":16,
+  "scripts":20,
+  "fichiers":50,
+  "taille_mo":3.21,
   "liste":[
    {
     "v":"🏠",
@@ -325,6 +326,11 @@
     "v":"⚙️",
     "t":"حسابي",
     "d":"Portail de connexion · 3 rôles · progression · paramètres"
+   },
+   {
+    "v":"📋",
+    "t":"Plan de projet",
+    "d":"Dossier de présentation LinguaConnect — 13 sections · navigation collante · revenus prévisionnels · comparaison concurrentielle · roadmap 30 jours · PDF"
    }
   ]
  },
