@@ -1018,20 +1018,45 @@ jobs:
                   p4 += 1
           res.append(('T4 Moteur IA v2 : ' + str(p4) + '/9 cas', p4 == 9))
           # ── T5 : cohérence pédagogique (séances 60 min, grille /5, devoir /20) ──
-          et5 = [int(x) for x in re.findall(r"\{\s*m:(\d+),\s*ar:'", ap)]
+          # T5 — les 3 rythmes de séance de la maquette (et non un seul)
+          RYT5 = {'defaut': [5, 15, 15, 15, 10],
+                  'lecture': [5, 5, 10, 15, 10, 10, 5],
+                  'ecriture': [5, 10, 20, 10, 10, 5]}
+          i_ep5 = ap.find('const ETAPES_PAR_TYPE = {')
+          t5 = i_ep5 >= 0
+          if not t5:
+              fails.append('T5 : ETAPES_PAR_TYPE absent')
+          for cle5, att5 in RYT5.items():
+              ic5 = ap.find(cle5 + ': [', i_ep5) if i_ep5 >= 0 else -1
+              if ic5 < 0:
+                  t5 = False
+                  fails.append('T5 : rythme ' + cle5 + ' absent')
+                  continue
+              rl5 = [int(x) for x in re.findall(r'm:(\d+)', ap[ic5:ap.find('],', ic5)])]
+              if rl5 != att5 or sum(rl5) != 60:
+                  t5 = False
+                  fails.append('T5 : rythme ' + cle5 + ' ' + str(rl5) + ' != ' + str(att5))
           ig5 = ap.find('const GRILLE_S5')
           fg5 = ap.find('const GRILLE_S5_TOTAL', ig5)
-          g5 = [int(p) for (_l, p) in re.findall(r"\['([^']+)',\s*(\d+),", ap[ig5:fg5])]
-          iD = ap.find('const DEVOIR_U1 = {')
-          iC = ap.find('const CORRIGE_U1 = {')
-          dv = ap[iD:iC]
-          pts = {}
-          for lbl in ('I', 'II', 'III'):
-              a0 = dv.find("{ id:'" + lbl + "', t:")
-              pts[lbl] = int(re.search(r'pts:(\d+)', dv[a0:a0 + 200]).group(1)) if a0 >= 0 else 0
-          t5 = (sum(et5) == 60 and sum(g5) == 5 and sum(pts.values()) == 20
-                and pts == {'I': 8, 'II': 8, 'III': 4})
-          res.append(('T5 Seances 60 min + grille /5 + devoir /20', t5))
+          g5s = [int(p) for (_l, p) in re.findall(r"\['([^']+)',\s*(\d+),", ap[ig5:fg5])]
+          iD5 = ap.find('const DEVOIR_U1 = {')
+          iC5 = ap.find('const CORRIGE_U1 = {')
+          dv5 = ap[iD5:iC5]
+          p5 = {}
+          for lbl5 in ('I', 'II', 'III'):
+              q5 = dv5.find("{ id:'" + lbl5 + "', t:")
+              m5 = re.search(r'pts:(\d+)', dv5[q5:q5 + 220]) if q5 >= 0 else None
+              p5[lbl5] = int(m5.group(1)) if m5 else 0
+          if sum(g5s) != 5 or len(g5s) != 4:
+              t5 = False
+              fails.append('T5 : grille /5 = ' + str(g5s))
+          if p5 != {'I': 8, 'II': 8, 'III': 4} or sum(p5.values()) != 20:
+              t5 = False
+              fails.append('T5 : devoir /20 = ' + str(p5))
+          if "{ n:7, de:'Hôpital des erreurs'" not in ap:
+              t5 = False
+              fails.append('T5 : seance 7 « Hopital des erreurs » absente')
+          res.append(('T5 3 rythmes (5/7/6 etapes) + grille /5 + devoir /20 + S7', t5))
           # ── T6 : patch matching v2 (racine « تحي ») ──
           t6 = ('تحي' in pj) and ('findBestResponse' in pj)
           res.append(("T6 Patch matching v2 (racine 'تحي')", t6))
