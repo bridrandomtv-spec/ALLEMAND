@@ -37,7 +37,7 @@ jobs:
                    unite5.js unite6.js unites3as_a.js unite10.js unite11.js unite12.js \
                    app.js modules.js live.js classe.js grammaire.js examen.js officiels.js \
                    prof.js parents.js stats.js quiz.js projet.js journee.js library.js \
-                   manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyll; do
+                   manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyllci/check-unites.mjs; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -854,6 +854,12 @@ jobs:
           print('✅ ' + str(len(FICHIERS)) + '/26 fichiers JS valides')
           PY
 
+      - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
+        run: |
+          set -e
+          node --version
+          node ci/check-unites.mjs
+
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
         run: |
           python - <<'PY'
@@ -1348,6 +1354,7 @@ jobs:
           print('✅ 17 vues · 16 onglets statiques + 1 dynamique (profboard)')
           print('✅ Bareme 8+8+4 = 20 sur U1 → U12 = 84 seances (2AS + 3AS)')
           print('✅ Registre UNITES = 12 · espace parents multi-enfants · 2AS bouclée (U1-U6) + 3AS U7-U12 (الفصل 1 et 2 complets) (الفصل 1 + 2 + 3 complets)')
+          print('✅ Garde-fou Node : 12/12 unites resolues a l execution, aucune vide')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
           print('✅ Roles : allTabs() + isProf() + compte demo prof')
           print('✅ Salle en direct : flux video, chat IA, tableau 8 planches, presence 32')
