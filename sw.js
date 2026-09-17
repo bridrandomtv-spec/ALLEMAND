@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v2.7.0';
+const VERSION = 'dz-de-v2.8.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -19,6 +19,7 @@ const PRECACHE = [
   './unite2.js',
   './unite3.js',
   './unite4.js',
+  './unite5.js',
   './app.js',
   './modules.js',
   './live.js',
