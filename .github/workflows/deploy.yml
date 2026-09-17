@@ -35,8 +35,8 @@ jobs:
           set -e
           for f in index.html style.css auth.js bdd.js unite2.js unite3.js unite4.js \
                    unite5.js app.js modules.js live.js classe.js grammaire.js examen.js \
-                   prof.js library.js manifest.json sw.js README.md 404.html robots.txt \
-                   sitemap.xml .nojekyll; do
+                   prof.js parents.js library.js manifest.json sw.js README.md 404.html \
+                   robots.txt sitemap.xml .nojekyll; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -44,10 +44,11 @@ jobs:
                    assets/bdd/compositions.json assets/bdd/bac.json \
                    assets/bdd/annales.json assets/bdd/grammaire.json \
                    assets/bdd/classe.json assets/bdd/eleves.json \
-                   assets/bdd/bac_archive.json assets/bdd/live.json; do
+                   assets/bdd/bac_archive.json assets/bdd/live.json \
+                   assets/bdd/parents.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 22 fichiers racine + 13 assets présents"
+          echo "✅ 24 fichiers racine + 14 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -364,17 +365,94 @@ jobs:
           print('   ' + str(s.get('lecon_de', '')) + ' — ' + str(s.get('theme', '')))
           PY
 
+      - name: Valider l'espace parents (parents.json)
+        run: |
+          python - <<'PY'
+          import json, sys
+          fails = []
+          pa = json.load(open('assets/bdd/parents.json', encoding='utf-8'))
+          m = pa['_meta']; enf = pa['enfants']
+          if m['seuils_readiness'] != {'pret': 10, 'a_consolider': 7}:
+              fails.append('parents : seuils readiness != 10 / 7')
+          if m['bareme'] != {'I': 8, 'II': 8, 'III': 4, 'total': 20}:
+              fails.append('parents : bareme != 8+8+4=20')
+          if 'confidentialite' not in m:
+              fails.append('parents : declaration de confidentialite absente')
+          if len(enf) < 2:
+              fails.append('parents : moins de 2 enfants (multi-enfants)')
+          for e in enf:
+              REQE = ('id', 'matricule', 'nom_complet', 'section_ar', 'niveau', 'filiere',
+                      'code_wilaya', 'ville', 'examens', 'presence', 'exercices',
+                      'programme_officiel', 'lecons_officielles', 'examen_a_venir',
+                      'appreciation_generale')
+              for k in REQE:
+                  if k not in e:
+                      fails.append('enfant ' + str(e.get('id', '?')) + ' : ' + k + ' absent')
+              if len(e.get('examens') or []) < 3:
+                  fails.append(str(e.get('id')) + ' : moins de 3 examens')
+              for x in e.get('examens') or []:
+                  dd = x.get('detail') or {}
+                  if dd:
+                      tot = dd.get('I', 0) + dd.get('II', 0) + dd.get('III', 0)
+                      if abs(tot - x['note']) > 0.001:
+                          fails.append(str(e.get('id')) + '/' + str(x.get('id')) + ' : I+II+III != note')
+                      if dd.get('I', 0) > 8 or dd.get('II', 0) > 8 or dd.get('III', 0) > 4:
+                          fails.append(str(e.get('id')) + '/' + str(x.get('id')) + ' : depassement')
+              if len(e.get('presence') or []) < 5:
+                  fails.append(str(e.get('id')) + ' : moins de 5 releves de presence')
+              for p in e.get('presence') or []:
+                  for k in ('ok', 'jour', 'lecon', 'statut'):
+                      if k not in p:
+                          fails.append(str(e.get('id')) + ' presence : ' + k + ' absent')
+              if len(e.get('programme_officiel') or []) != 3:
+                  fails.append(str(e.get('id')) + ' : programme != 3 trimestres')
+              st_ex = set(x['statut'] for x in (e.get('exercices') or []))
+              if not st_ex.issubset(set(['termine', 'en_cours', 'verrouille'])):
+                  fails.append(str(e.get('id')) + ' : statut exercice inconnu ' + str(st_ex))
+          for k in ('prochaines_seances', 'messages_profs', 'profs_particuliers',
+                    'tarifs', 'moyens_paiement', 'contact'):
+              if not pa.get(k):
+                  fails.append('parents.json : ' + k + ' absent')
+          if len(pa.get('prochaines_seances') or []) < 3:
+              fails.append('parents : moins de 3 seances a venir')
+          for s in pa.get('prochaines_seances') or []:
+              for k in ('mois', 'jour', 'heure', 'heure_iso', 'matiere', 'prof',
+                        'duree', 'action', 'type'):
+                  if k not in s:
+                      fails.append('seance a venir : ' + k + ' absent')
+          roles = set(x['role'] for x in (pa.get('messages_profs') or []))
+          if 'prof' not in roles:
+              fails.append('parents : aucun message de professeur')
+          for pay in ('CIB', 'Edahabia', 'BaridiMob', 'CCP'):
+              if pay not in pa.get('moyens_paiement', []):
+                  fails.append('parents : moyen de paiement ' + pay + ' absent')
+          som = sum(x['note'] * (x['coef'] or 1) for x in enf[0]['examens'])
+          cof = sum((x['coef'] or 1) for x in enf[0]['examens'])
+          mp = round(som / cof, 2) if cof else 0
+          print('✅ Espace parents : ' + str(len(enf)) + ' enfants · '
+                + str(len(pa['prochaines_seances'])) + ' seances a venir · '
+                + str(len(pa['messages_profs'])) + ' messages · '
+                + str(len(pa['profs_particuliers'])) + ' professeurs · '
+                + str(len(pa['tarifs'])) + ' tarifs')
+          print('   enfant 1 : moyenne ponderee ' + str(mp) + '/20 · '
+                + str(len(enf[0]['examens'])) + ' examens · '
+                + str(len(enf[0]['presence'])) + ' releves de presence')
+          if fails:
+              print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
+          PY
+
       - name: Valider la syntaxe JavaScript (esprima)
         run: |
           python - <<'PY'
           import esprima
           FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
                       'unite5.js', 'app.js', 'modules.js', 'live.js', 'classe.js',
-                      'grammaire.js', 'examen.js', 'prof.js', 'library.js', 'sw.js')
+                      'grammaire.js', 'examen.js', 'prof.js', 'parents.js',
+                      'library.js', 'sw.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/15 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/16 fichiers JS valides')
           PY
 
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
@@ -388,6 +466,7 @@ jobs:
           cl = rd('classe.js'); gr = rd('grammaire.js'); bdd = rd('bdd.js')
           lib = rd('library.js'); au = rd('auth.js'); sw = rd('sw.js')
           pf = rd('prof.js'); ex = rd('examen.js'); lv = rd('live.js')
+          pa = rd('parents.js')
           html = rd('index.html'); css = rd('style.css')
           man = json.load(open('manifest.json', encoding='utf-8'))
           cor = json.load(open('assets/corriges.json', encoding='utf-8'))
@@ -488,6 +567,28 @@ jobs:
           for k in LV_REQ:
               if k not in lv:
                   fails.append('live.js : ' + k + ' absent')
+          BOM = chr(92) + 'uFEFF'
+          PA_REQ = ('assets/bdd/parents.json', 'function selecteurEnfants',
+                    'function moyennePonderee', 'function moyenneSimple', 'function readiness',
+                    'PRET = 10', 'CONS = 7', 'function vueSynthese', 'function vueExamens',
+                    'function vuePresence', 'function vueExercices', 'function vueProgramme',
+                    'function vueProchaines', 'function vueMessages', 'function vueCours',
+                    'function genererRapport', 'function texteRapport', 'function notifier',
+                    'dz_de_parent_enfant_v1', 'dz_de_parent_msg_v1', 'window.renderParents',
+                    'window.print', 'examen_a_venir', 'programme_officiel',
+                    'lecons_officielles', 'profs_particuliers', 'moyens_paiement',
+                    'verrouille', 'non_lus')
+          for k in PA_REQ:
+              if k not in pa:
+                  fails.append('parents.js : ' + k + ' absent')
+          if 'Object.prototype' in pa:
+              fails.append('parents.js : pollution Object.prototype interdite')
+          if BOM not in pa:
+              fails.append('parents.js : BOM UTF-8 absent (rapport TXT illisible sous Excel)')
+          if 'window.renderParents = boot' not in pa:
+              fails.append('parents.js : n ecrase pas window.renderParents')
+          if pa.count('clearInterval') < 1:
+              fails.append('parents.js : compte a rebours non nettoye')
           if lv.count('clearInterval') < 2:
               fails.append('live.js : minuteurs non nettoies (fuite)')
           if 'Object.prototype' in lv:
@@ -525,11 +626,11 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v2.8.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v2.9.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './live.js',
-                    './classe.js', './grammaire.js', './examen.js', './prof.js',
+                    './classe.js', './grammaire.js', './examen.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
-                    './assets/bdd/live.json'):
+                    './assets/bdd/live.json', './assets/bdd/parents.json'):
               if k not in sw:
                   fails.append('sw.js : ' + k + ' absent')
           if man.get('dir') != 'rtl':
@@ -569,7 +670,7 @@ jobs:
           ordre = re.findall(r'<script src="([^"]+)"', html)
           attendu = ['auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
                      'unite5.js', 'app.js', 'modules.js', 'live.js', 'classe.js',
-                     'grammaire.js', 'examen.js', 'prof.js', 'library.js']
+                     'grammaire.js', 'examen.js', 'prof.js', 'parents.js', 'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -582,7 +683,10 @@ jobs:
                      '.vid.big', '.ctrl-bar', '.live-chat', '.lmsg', '.tb-board',
                      '.tb-ex', '.pr-list', '.pr-i', '.ag-list', '.float-react',
                      '.live-mini', 'v2.5', '.meth', '.meth-g', '.meth-i', '.mh-n',
-                     '.prog-off', '.po-grid', '.po-t', 'v2.6')
+                     '.prog-off', '.po-grid', '.po-t', 'v2.6', '.par-hero', '.ph-act',
+                     '.enf-sel', '.enf', '.enf-av', '.exam-next', '.prx-list', '.prx',
+                     '.prx-d', '.exos-list', '.exo-i', '.lecons-off', '.lo-i',
+                     '.tarifs', '.tarif', '.badge-c', 'v2.9')
           for k in CSS_REQ:
               if k not in css:
                   fails.append('style.css : ' + k + ' absent')
@@ -590,16 +694,17 @@ jobs:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 13 vues · 12 onglets statiques + 1 dynamique (profboard)')
           print('✅ Bareme 8+8+4 = 20 sur U1 → U5 = 40 seances')
-          print('✅ Registre UNITES = 5 · الفصل 2 complet + الفصل 3 ouvert (U5)')
+          print('✅ Registre UNITES = 5 · espace parents multi-enfants · الفصل 2 complet + الفصل 3 ouvert (U5)')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
           print('✅ Roles : allTabs() + isProf() + compte demo prof')
           print('✅ Salle en direct : flux video, chat IA, tableau 8 planches, presence 32')
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
+          print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 14 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 15 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive BAC + live')
-          print('✅ PWA v2.8 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ PWA v2.9 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
