@@ -76,20 +76,28 @@ const SEANCES_U1 = [
   { n:5, de:'Textverständnis : Lena Fischer', ar:'فهم نص تقديمي', dur:60,
     obj:['قراءة نص ألماني','استخراج المعلومات','الإجابة بجمل كاملة'],
     texte:'<div class="reading"><p><b>Lena Fischer</b></p>'
-        + '<p>Hallo! Ich heiße Lena Fischer. Ich bin 16 Jahre alt und ich komme aus Deutschland. '
-        + 'Ich wohne in München mit meiner Familie.</p>'
-        + '<p>Mein Vater heißt Thomas und meine Mutter heißt Anna. Ich habe zwei Schwestern. '
-        + 'Sie heißen Marie und Sophie.</p>'
-        + '<p>In der Schule lerne ich Englisch und Französisch. Meine Hobbys sind Musik und Sport. '
-        + 'Am Morgen sage ich immer: «Guten Morgen, Mama!»</p></div>',
-    exos:[{q:'Richtig oder Falsch : Lena vient d’Autriche.',opts:['Richtig (صحيح)','Falsch (خطأ)'],a:1,
-           why:'Elle vient d’<b>Allemagne</b> — <span class="de-in">Ich komme aus Deutschland.</span>'},
-          {q:'Richtig oder Falsch : Lena a deux sœurs.',opts:['Richtig (صحيح)','Falsch (خطأ)'],a:0,
-           why:'<span class="de-in">Ich habe zwei Schwestern.</span> → صحيح.'},
-          {q:'Quel âge a Lena ?',opts:['15','16','17','18'],a:1,
-           why:'<span class="de-in">Ich bin 16 Jahre alt.</span>'},
-          {q:'Où habite-t-elle ?',opts:['Berlin','München','Wien','Hamburg'],a:1,
-           why:'<span class="de-in">Ich wohne in München.</span>'}]},
+        + '<p>Hallo! Ich heiße Lena Fischer. Ich bin 17 Jahre alt und komme aus Deutschland. '
+        + 'Ich wohne in München. Ich habe eine große Familie: einen Bruder und zwei Schwestern. '
+        + 'Mein Bruder ist 20 und heißt Tim. Meine Schwester Anna ist 15. '
+        + 'Am Morgen sage ich immer: «Guten Morgen, Mama!» Und am Abend: «Gute Nacht!»</p></div>',
+    exos:[{q:'Richtig oder Falsch : Lena kommt aus Algerien.',
+           opts:['Richtig (صحيح)','Falsch (خطأ)'],a:1,
+           why:'<span class="de-in">Ich komme aus <b>Deutschland</b>.</span>'},
+          {q:'Richtig oder Falsch : Lena ist 17 Jahre alt.',
+           opts:['Richtig (صحيح)','Falsch (خطأ)'],a:0,
+           why:'<span class="de-in">Ich bin <b>17</b> Jahre alt.</span>'},
+          {q:'Richtig oder Falsch : Tim ist 20 Jahre alt.',
+           opts:['Richtig (صحيح)','Falsch (خطأ)'],a:0,
+           why:'<span class="de-in">Mein Bruder ist <b>20</b> und heißt Tim.</span>'},
+          {q:'Richtig oder Falsch : Lena wohnt in Berlin.',
+           opts:['Richtig (صحيح)','Falsch (خطأ)'],a:1,
+           why:'<span class="de-in">Ich wohne in <b>München</b>.</span>'},
+          {q:'Wie viele Schwestern hat Lena?',opts:['eine','zwei','drei','keine'],a:1,
+           why:'<span class="de-in">Ich habe … <b>zwei</b> Schwestern</span> (Anna, 15) '
+             + '+ einen Bruder (Tim, 20).'},
+          {q:'Was sagt Lena am Abend?',
+           opts:['Guten Morgen, Mama!','Gute Nacht!','Auf Wiedersehen!','Tschüs!'],a:1,
+           why:'<span class="de-in">Und am Abend: <b>Gute Nacht!</b></span>'}]},
 
   { n:6, de:'Textproduktion (Aufgabe)', ar:'إنتاج كتابي ✍️ — المهمة النهائية', dur:60,
     obj:['كتابة فقرة تقديمية','ترتيب الأفكار','استعمال sein/haben'],
@@ -129,23 +137,29 @@ const DEVOIR_U1 = {
   parties:[
     { id:'I', t:'📖 Compréhension de l’écrit — Leseverstehen', pts:8,
       texte:'<div class="reading"><p><b>Lena Fischer</b></p>'
-          + '<p>Hallo! Ich heiße Lena Fischer. Ich bin 16 Jahre alt und ich komme aus Deutschland. '
-          + 'Ich wohne in München mit meiner Familie. Mein Vater heißt Thomas und meine Mutter heißt Anna. '
-          + 'Ich habe zwei Schwestern. Sie heißen Marie und Sophie. In der Schule lerne ich Englisch und '
-          + 'Französisch. Meine Hobbys sind Musik und Sport. Am Morgen sage ich immer: «Guten Morgen, Mama!»</p></div>',
+          + '<p>Hallo! Ich heiße Lena Fischer. Ich bin 17 Jahre alt und komme aus Deutschland. '
+          + 'Ich wohne in München. Ich habe eine große Familie: einen Bruder und zwei Schwestern. '
+          + 'Mein Bruder ist 20 und heißt Tim. Meine Schwester Anna ist 15. '
+          + 'Am Morgen sage ich immer: «Guten Morgen, Mama!» Und am Abend: «Gute Nacht!»</p></div>',
       questions:[
-        {id:'I.1',type:'vf',t:'Lena kommt aus Österreich.',pts:1,rep:'Falsch',
-         just:'<span class="de-in">Ich komme aus Deutschland.</span>'},
-        {id:'I.2',type:'vf',t:'Lena ist 16 Jahre alt.',pts:1,rep:'Richtig',
-         just:'<span class="de-in">Ich bin 16 Jahre alt.</span>'},
-        {id:'I.3',type:'vf',t:'Lena hat zwei Schwestern.',pts:1,rep:'Richtig',
-         just:'<span class="de-in">Ich habe zwei Schwestern.</span>'},
-        {id:'I.4',type:'vf',t:'Lena lernt Spanisch in der Schule.',pts:1,rep:'Falsch',
-         just:'Elle apprend l’anglais et le français.'},
-        {id:'I.5',type:'txt',t:'Wie heißt Lenas Mutter?',pts:2,rep:'Sie heißt Anna.',
-         just:'<span class="de-in">…meine Mutter heißt Anna.</span>',key:['anna']},
-        {id:'I.6',type:'txt',t:'Wo wohnt Lena?',pts:2,rep:'Sie wohnt in München.',
-         just:'<span class="de-in">Ich wohne in München.</span>',key:['münchen','munchen','munich']}
+        {id:'I.1.a',type:'vf',t:'Lena kommt aus Algerien.',pts:1,rep:'Falsch',
+         just:'<span class="de-in">Ich komme aus Deutschland.</span> — nicht Algerien.'},
+        {id:'I.1.b',type:'vf',t:'Lena ist 17.',pts:1,rep:'Richtig',
+         just:'<span class="de-in">Ich bin 17 Jahre alt.</span>'},
+        {id:'I.1.c',type:'vf',t:'Tim ist 20 Jahre alt.',pts:1,rep:'Richtig',
+         just:'<span class="de-in">Mein Bruder ist 20 und heißt Tim.</span>'},
+        {id:'I.1.d',type:'vf',t:'Lena wohnt in Berlin.',pts:1,rep:'Falsch',
+         just:'<span class="de-in">Ich wohne in München.</span> — nicht Berlin.'},
+        {id:'I.2.a',type:'txt',t:'Wie heißt Lena mit Nachnamen?',pts:1,rep:'Sie heißt Fischer.',
+         just:'<span class="de-in">Ich heiße Lena Fischer.</span>',key:['fischer']},
+        {id:'I.2.b',type:'txt',t:'Wo wohnt Lena?',pts:1,rep:'Sie wohnt in München.',
+         just:'<span class="de-in">Ich wohne in München.</span>',key:['münchen','munchen','muenchen']},
+        {id:'I.2.c',type:'txt',t:'Wie viele Schwestern hat Lena?',pts:1,rep:'Sie hat zwei Schwestern.',
+         just:'<span class="de-in">Ich habe … zwei Schwestern.</span>',key:['zwei','2']},
+        {id:'I.2.d',type:'txt',t:'Was sagt Lena am Morgen?',pts:1,
+         rep:'Sie sagt: «Guten Morgen, Mama!»',
+         just:'<span class="de-in">Am Morgen sage ich immer: Guten Morgen, Mama!</span>',
+         key:['guten morgen']}
       ]},
     { id:'II', t:'🔤 Langue — Sprachbausteine', pts:8,
       questions:[
