@@ -2247,3 +2247,24 @@ tr.g5-tot td{border-bottom:none;border-top:2px solid var(--b2);padding-top:11px;
   .exo-n{min-width:44px;font-size:15px}
 }
 @media print{.lecon,.exo-i{break-inside:avoid}}
+
+
+/* ── v3.10 · 📜 Programme officiel — carte des 3 trimestres (maquette) ── */
+.po-h{display:flex;justify-content:space-between;align-items:center;gap:9px;margin-bottom:6px}
+.po-h b{font-family:var(--ff-ar-display);font-size:15px;color:#fff}
+.po-n{font-family:var(--ff-ar-display);font-size:11px;font-weight:800;color:var(--or2);
+  background:rgba(232,182,76,.12);border:1px solid rgba(232,182,76,.32);
+  padding:3px 10px;border-radius:999px;white-space:nowrap}
+.po-p{font-size:11.5px;color:var(--m);margin-bottom:10px}
+.po-bar{height:7px;background:var(--b);border-radius:99px;overflow:hidden;margin-bottom:9px}
+.po-bar i{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--vert2),var(--or));
+  transition:width .8s cubic-bezier(.22,1,.36,1)}
+.po-s{font-family:var(--ff-ar-display);font-size:12px;color:var(--m);margin-bottom:8px}
+.po-s.ok{color:var(--g);font-weight:700}
+.po-b{width:100%;margin-top:11px}
+.po-note{margin-top:15px;padding:13px;background:rgba(232,182,76,.07);
+  border:1px solid rgba(232,182,76,.26);border-radius:13px;font-size:12.5px;
+  color:var(--m);line-height:1.9}
+.po-note b{color:var(--or2);font-family:var(--ff-ar-display)}
+@media print{.po-b{display:none}.po-t{break-inside:avoid}}
