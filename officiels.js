@@ -427,7 +427,7 @@
     Object.keys(sc).forEach(k => { sc[k] = Math.round(sc[k] * 10) / 10; });
     const total = Math.round((sc.I + sc.II + sc.III) * 10) / 10;
     return { sc:sc, total:total, detail:detail,
-             ready: total >= PRET ? 'prêt ✅' : (total >= CONS ? 'à consolider ⚠️' : 'non prêt ❌') };
+             ready: total >= PRET ? 'مستعد ✅' : (total >= CONS ? 'يحتاج تدعيم ⚠️' : 'غير مستعد ❌') };
   }
 
   function afficherNote(){
