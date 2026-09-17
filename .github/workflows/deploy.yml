@@ -1772,39 +1772,77 @@ jobs:
                        'unite14.js', 'unite15.js', 'unite16.js'):
               tot_seances += len(re.findall(r'\{ n:\d+, de:', rd(_f)))
           tot_seances += len(re.findall(r'\{ n:\d+, de:', u3a))
-          # ── Test T5 de la maquette : Séances 60' + grille /5 + devoir /20 ──
-          et5 = [int(x) for x in re.findall(r"\{\s*m:(\d+),\s*ar:'", app)]
-          if et5 != [5, 15, 15, 15, 10]:
-              fails.append('app.js : rythme de seance ' + str(et5) + ' != [5, 15, 15, 15, 10]')
-          if sum(et5) != 60:
-              fails.append('app.js : rythme total ' + str(sum(et5)) + ' != 60 min')
+          # ── Test T5 de la maquette : 3 rythmes de séance + grille /5 + devoir /20 ──
+          RYT_ATT = {'defaut': [5, 15, 15, 15, 10],
+                     'lecture': [5, 5, 10, 15, 10, 10, 5],
+                     'ecriture': [5, 10, 20, 10, 10, 5]}
+          i_ep = app.find('const ETAPES_PAR_TYPE = {')
+          if i_ep < 0:
+              fails.append('app.js : ETAPES_PAR_TYPE absent')
+          else:
+              for cle, att in RYT_ATT.items():
+                  ic = app.find(cle + ': [', i_ep)
+                  if ic < 0:
+                      fails.append('app.js : rythme ' + cle + ' absent')
+                      continue
+                  fc = app.find('],', ic)
+                  reels = [int(x) for x in re.findall(r'm:(\d+)', app[ic:fc])]
+                  if reels != att:
+                      fails.append('app.js : rythme ' + cle + ' ' + str(reels) + ' != ' + str(att))
+                  elif sum(reels) != 60:
+                      fails.append('app.js : rythme ' + cle + ' somme ' + str(sum(reels)) + ' != 60')
+          if 'function typeSeance(s)' not in app:
+              fails.append('app.js : typeSeance() absent — le rythme ne peut pas etre choisi')
+          if 'function etapesPour(s)' not in app:
+              fails.append('app.js : etapesPour(s) absent')
+          if 'ETAPES_PAR_TYPE[cle]' not in app and 'ETAPES_PAR_TYPE[' not in app:
+              fails.append('app.js : etapesPour ne lit pas ETAPES_PAR_TYPE')
+          if 'Math.max(3, Math.round(e.m * d / total))' not in app:
+              fails.append('app.js : barème des étapes non proportionnel à la durée')
           i_g5 = app.find('const GRILLE_S5')
           f_g5 = app.find('const GRILLE_S5_TOTAL', i_g5)
           if i_g5 < 0 or f_g5 < i_g5:
               fails.append('app.js : GRILLE_S5 introuvable')
           else:
-              g5 = re.findall(r"\['([^']+)',\s*(\d+),", app[i_g5:f_g5])
-              reels = [(lbl.replace('é', 'e'), int(p)) for (lbl, p) in g5]
+              g5 = [(lbl.replace('é', 'e'), int(p))
+                    for (lbl, p) in re.findall(r"\['([^']+)',\s*(\d+),", app[i_g5:f_g5])]
               att_g5 = [('5 informations', 2), ('conjugaison + alt', 1),
-                          ('place du verbe', 1), ('lisibilite', 1)]
-              if reels != att_g5:
-                  fails.append('app.js : grille /5 ' + str(reels) + ' != ' + str(att_g5))
-              if sum(p for (_l, p) in reels) != 5:
-                  fails.append('app.js : grille somme ' + str(sum(p for (_l, p) in reels))
-                               + ' != 5')
-          for fn in ('function etapesPour(dur)', 'function grillePour(s)',
-                     'function estTextproduktion(s)', 'function renderEtapes(s)',
-                     'function renderGrille(g)'):
-              if fn not in app:
-                  fails.append('app.js : ' + fn + ' absent')
-          if 'h += renderEtapes(s);' not in app:
-              fails.append('app.js : renderEtapes non branche dans openSeance')
-          if 'h += renderGrille(grillePour(s));' not in app:
-              fails.append('app.js : renderGrille non branche apres la consigne')
-          if 'Math.round(e.m * d / ETAPES_TOTAL)' not in app:
-              fails.append('app.js : bareme des etapes non proportionnel a la duree')
-          print('✅ T5 maquette : seances 60 min en 5 etapes [5,15,15,15,10] · '
-                + 'grille production ecrite /5 (4 criteres) · devoir /20 (8+8+4)')
+                        ('place du verbe', 1), ('lisibilite', 1)]
+              if g5 != att_g5:
+                  fails.append('app.js : grille /5 ' + str(g5) + ' != ' + str(att_g5))
+              if sum(p for (_l, p) in g5) != 5:
+                  fails.append('app.js : grille somme != 5')
+          iD = app.find('const DEVOIR_U1 = {')
+          iC = app.find('const CORRIGE_U1 = {')
+          dv1 = app[iD:iC]
+          pts1 = {}
+          for lbl in ('I', 'II', 'III'):
+              p0 = dv1.find("{ id:'" + lbl + "', t:")
+              mm = re.search(r'pts:(\d+)', dv1[p0:p0 + 220]) if p0 >= 0 else None
+              pts1[lbl] = int(mm.group(1)) if mm else 0
+          if pts1 != {'I': 8, 'II': 8, 'III': 4} or sum(pts1.values()) != 20:
+              fails.append('app.js : devoir U1 ' + str(pts1) + " != {'I': 8, 'II': 8, 'III': 4}")
+          # ── Séance 7 : « Hôpital des erreurs » (maquette) ──
+          i7 = app.find("{ n:7, de:'Hôpital des erreurs'")
+          if i7 < 0:
+              fails.append('app.js : séance 7 « Hôpital des erreurs » absente')
+          else:
+              i8 = app.find('{ n:8,', i7)
+              s7 = app[i7:i8 if i8 > i7 else len(app)]
+              if 'مستشفى الأخطاء' not in s7:
+                  fails.append('app.js : séance 7 sans titre arabe « مستشفى الأخطاء »')
+              if 'dur:60' not in s7:
+                  fails.append('app.js : séance 7 sans dur:60')
+              n7 = len(re.findall(r"\{q:'🏥", s7))
+              if n7 < 10:
+                  fails.append('app.js : séance 7 = ' + str(n7) + ' erreurs à diagnostiquer < 10')
+              if s7.count('why:') < n7:
+                  fails.append('app.js : séance 7 = ' + str(s7.count('why:'))
+                               + ' explications pour ' + str(n7) + ' exercices')
+              if 'Textproduktion' in s7 or 'Textverständnis' in s7:
+                  fails.append('app.js : séance 7 classée à tort en lecture/écriture')
+          print('✅ T5 maquette : 3 rythmes (defaut 5 · lecture 7 · ecriture 6 etapes, 60 min chacun) '
+                + '· grille /5 (4 criteres) · devoir /20 (8+8+4) · S7 Hopital des erreurs (10 patients)')
           print('✅ Bareme 8+8+4 = 20 sur U1 → U16 · ' + str(tot_seances)
                 + ' seances mesurees (2AS + 3AS)')
           print('✅ Registre UNITES = 16 · espace parents multi-enfants · 2AS bouclée (U1-U6) + 3AS U7-U12 (الفصل 1 et 2 complets) (الفصل 1 + 2 + 3 complets)')
