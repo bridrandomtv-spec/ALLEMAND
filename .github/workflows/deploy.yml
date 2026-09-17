@@ -1675,7 +1675,10 @@ jobs:
                   + len(json.load(open('assets/bdd/annales.json', encoding='utf-8'))['items']))
           print('✅ BDD : ' + str(nfic) + ' fiches + ' + str(nreg)
                 + ' regles + classe + registre + archive BAC + live')
-          print('✅ PWA v3.10 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          # Version du Service Worker LUE dans sw.js — jamais de littéral dans un rapport.
+          mv = re.search(r"dz-de-v([\d.]+)", sw)
+          print('✅ PWA v' + (mv.group(1) if mv else '?') + ' : manifest dir=rtl, '
+                + str(len(man.get('shortcuts') or [])) + ' raccourcis, Service Worker')
           PY
 
   deploy:
