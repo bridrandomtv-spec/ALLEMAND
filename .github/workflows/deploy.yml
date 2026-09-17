@@ -862,6 +862,7 @@ jobs:
           app = rd('app.js'); mod = rd('modules.js')
           u2 = rd('unite2.js'); u3 = rd('unite3.js'); u4 = rd('unite4.js'); u5 = rd('unite5.js'); u6 = rd('unite6.js')
           u3a = rd('unites3as_a.js')
+          jn = rd('journee.js')
           cl = rd('classe.js'); gr = rd('grammaire.js'); bdd = rd('bdd.js')
           lib = rd('library.js'); au = rd('auth.js'); sw = rd('sw.js')
           pf = rd('prof.js'); ex = rd('examen.js'); lv = rd('live.js')
@@ -946,6 +947,13 @@ jobs:
                   fails.append('unites3as_a.js : ' + k + ' absent')
           print('✅ 3AS : 3 unites (U7/U8/U9) · 18 seances · 3 devoirs /20 · '
                 + str(u3a.count('~~') // 2) + ' erreurs frequentes · CEFR B1-B2')
+          JN_REQ = ('todayBody', 'cvBody', 'apercuBody', 'window.renderJournee',
+                    'window.renderCV', 'window.renderApercu', "e.detail === 'accueil'",
+                    "e.detail === 'classe'")
+          for k in JN_REQ:
+              if k not in jn:
+                  fails.append('journee.js : ' + k + ' absent')
+          print('✅ حصص اليوم : 3 rendus (todayBody / cvBody / apercuBody) branches sur accueil+classe')
           UNITES = {
               'unite2.js': (u2, ['SEANCES_U2', 'DEVOIR_U2', 'CORRIGE_U2', 'window.UNITE2',
                                   'Possessivartikel', 'Adjektive', 'gefallen',
@@ -1200,7 +1208,7 @@ jobs:
           ID_REQ = ('id="gate"', 'id="shell"', 'id="profBody"', 'id="examBody"',
                     'id="liveBody"', 'id="classeBody"', 'id="gramBody"',
                     'id="biblioBody"', 'id="seancesHead"', 'id="devoirTitle"',
-                    'id="miniProf"', 'id="officielsBody"', 'id="statsBody"', 'id="quizBody"', 'id="projetBody"', 'id="journeeBody"')
+                    'id="miniProf"', 'id="officielsBody"', 'id="statsBody"', 'id="quizBody"', 'id="projetBody"', 'id="todayBody"', 'id="cvBody"', 'id="apercuBody"')
           for ident in ID_REQ:
               if ident not in html:
                   fails.append('index.html : ' + ident + ' absent')
