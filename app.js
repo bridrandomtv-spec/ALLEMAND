@@ -538,14 +538,15 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','profboard','compte'];
+const VIEWS = ['accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','projet','profboard','compte'];
 const TABS  = [['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
                ['stats','🗺️ الإحصائيات'],['quiz','🎯 تمارين'],
                ['officiels','📄 الفروض'],['examen','🎓 البكالوريا'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
-               ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],['compte','⚙️ حسابي']];
+               ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],
+               ['projet','📋 Plan de projet'],['compte','⚙️ حسابي']];
 
 /* Onglet réservé au rôle « prof » — inséré avant « حسابي » */
 function allTabs(){
@@ -590,6 +591,7 @@ function go(view){
   if(view === 'simulation') renderSim();
   if(view === 'parents')    renderParents();
   if(view === 'compte')     renderCompte();
+  if(view === 'projet' && window.renderProjet) window.renderProjet();
   if(view === 'profboard' && window.renderProfBoard) window.renderProfBoard();
   const mp = $('#miniProf'); if(mp) mp.hidden = !isProf();
   if(view === 'prof'){ const l = $('#chatLog'); if(l && l.children.length === 0) initChat(); }
