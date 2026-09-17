@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.2.0';
+const VERSION = 'dz-de-v3.3.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -27,6 +27,7 @@ const PRECACHE = [
   './classe.js',
   './grammaire.js',
   './stats.js',
+  './quiz.js',
   './library.js',
   './examen.js',
   './officiels.js',
