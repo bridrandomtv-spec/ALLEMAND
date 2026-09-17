@@ -914,40 +914,71 @@ jobs:
                     'DZ.loadSeances()', 'new Proxy({}'):
               if k not in mod:
                   fails.append('modules.js : ' + k + ' absent')
-          nums3a = re.findall(r'^\s*n: (\d+), de: ', u3a, re.M)
-          if nums3a != ['7', '8', '9']:
-              fails.append('unites3as_a.js : unites ' + str(nums3a) + ' != [7, 8, 9]')
-          if u3a.count("niveau: '3AS'") != 3:
-              fails.append('unites3as_a.js : ' + str(u3a.count("niveau: '3AS'"))
-                           + ' unites 3AS != 3')
-          nse3a = len(re.findall(r"\{ n:\d+, de:'", u3a))
-          if nse3a != 18:
-              fails.append('unites3as_a.js : ' + str(nse3a) + ' seances != 18 (6 x 3)')
-          p3a = re.findall(r"\{ id:'(I|II|III)', t:", u3a)
-          if p3a != ['I', 'II', 'III'] * 3:
-              fails.append('unites3as_a.js : parties ' + str(len(p3a)) + ' != 9 (3 x I/II/III)')
-          if u3a.count('devoir: {') != 3 or u3a.count('corrige: {') != 3:
-              fails.append('unites3as_a.js : != 3 devoirs / 3 corriges')
-          if u3a.count('grille:[') != 3:
-              fails.append('unites3as_a.js : != 3 grilles de production ecrite')
-          if u3a.count('key:[') < 18:
+          # ── Lot A 3AS : 5 unites (U7-U11) x 4 seances ──
+          metas3a = re.findall(r"meta:\s*\{\s*n:(\d+),\s*niveau:'3AS',\s*de:'([^']+)'", u3a)
+          if len(metas3a) != 5:
+              fails.append('unites3as_a.js : ' + str(len(metas3a)) + ' unites != 5')
+          if u3a.count('const U3AS_') != 5:
+              fails.append('unites3as_a.js : ' + str(u3a.count('const U3AS_'))
+                           + ' declarations U3AS_ != 5')
+          titres3a = [t for (_n, t) in metas3a]
+          ATT3A = ['Persönlichkeit und Identität', 'Staatsbürgerschaft',
+                   'Leben in der Gesellschaft', 'Wissenschaft und Technologie',
+                   'Wirtschaft und Arbeit']
+          if titres3a != ATT3A:
+              fails.append('unites3as_a.js : titres ' + str(titres3a))
+          nse3a = len(re.findall(r"\{\s*n:\d+,\s*de:'", u3a))
+          if nse3a != 20:
+              fails.append('unites3as_a.js : ' + str(nse3a) + ' seances != 20 (5 x 4)')
+          p3a = re.findall(r"\{\s*id:'(I|II|III)',", u3a)
+          if p3a != ['I', 'II', 'III'] * 5:
+              fails.append('unites3as_a.js : parties ' + str(len(p3a)) + ' != 15 (5 x I/II/III)')
+          if u3a.count('devoir:') < 5 or u3a.count('corrige:') < 5:
+              fails.append('unites3as_a.js : != 5 devoirs / 5 corriges')
+          if u3a.count('grille:[') != 5:
+              fails.append('unites3as_a.js : ' + str(u3a.count('grille:['))
+                           + ' grilles de production ecrite != 5')
+          if u3a.count('key:[') < 20:
               fails.append('unites3as_a.js : ' + str(u3a.count('key:['))
-                           + ' mots-cles de correction < 18')
-          if u3a.count('~~') // 2 < 24:
+                           + ' mots-cles de correction < 20')
+          if u3a.count('~~') // 2 < 20:
               fails.append('unites3as_a.js : ' + str(u3a.count('~~') // 2)
-                           + ' erreurs frequentes < 24')
-          REQ3A = ('window.UNITES_3AS_A', 'Persönlichkeit und Identität', 'Staatsbürgerschaft',
-                   'Leben in der Gesellschaft', 'Adjektivdeklination', 'Relativsätze',
-                              'Leben in der Gesellschaft',
-                   'Das Passiv', 'Passiv mit Modalverben', 'Der Konjunktiv II', 'Genitiv',
-                   'zweiteilige Konnektoren', 'Wer bin ich?', 'Was ist ein guter Bürger?',
-                   'Jung und Alt', 'Textproduktion', 'Konsolidierung', "cecrl: 'B1'",
-                   "cecrl: 'B2'")
+                           + ' erreurs frequentes < 20')
+          cefrl3a = set(re.findall(r"cecrl:\s*'([^']+)'", u3a))
+          if not cefrl3a <= set(['B1', 'B2']) or len(cefrl3a) < 2:
+              fails.append('unites3as_a.js : CEFR ' + str(sorted(cefrl3a)) + ' != {B1, B2}')
+          # ── CONTRAT DE L'ADAPTATEUR (regression silencieuse de 6215dd89b3) ──
+          if 'window.UNITES_3AS_A' not in u3a:
+              fails.append('unites3as_a.js : ADAPTATEUR window.UNITES_3AS_A ABSENT — '
+                           + 'U7/U8/U9 s afficheraient VIDES en ligne')
+          if 'window.U3AS_A' not in u3a:
+              fails.append('unites3as_a.js : export window.U3AS_A absent')
+          if '.slice(0, 3)' not in u3a:
+              fails.append('unites3as_a.js : adaptateur ne projette pas les 3 premieres unites')
+          iad = u3a.find('window.UNITES_3AS_A')
+          if iad > 0:
+              adapt = u3a[iad:]
+              for champ in ('seances:', 'devoir:', 'corrige:', 'duree_totale:'):
+                  if champ not in adapt:
+                      fails.append('unites3as_a.js : adaptateur sans ' + champ
+                                   + ' (app.js le lit au 1er niveau)')
+          for i in (0, 1, 2):
+              if ('UNITES_3AS_A[' + str(i) + ']') not in app:
+                  fails.append('app.js : registre U' + str(7 + i)
+                               + ' ne consomme pas UNITES_3AS_A[' + str(i) + ']')
+          REQ3A = ('Persönlichkeit und Identität', 'Staatsbürgerschaft', 'Leben in der Gesellschaft',
+                   'Wissenschaft und Technologie', 'Wirtschaft und Arbeit', 'Relativsätze',
+                   'Adjektivdeklination', 'Passiv', 'Konjunktiv',
+                   'Bürgerschaft', 'Textproduktion', 'Textverständnis',
+                   'window.UNITES_3AS_A', 'window.U3AS_A', 'window.U3AS_SUPPLEMENT',
+                   '.slice(0, 3)',)
           for k in REQ3A:
               if k not in u3a:
                   fails.append('unites3as_a.js : ' + k + ' absent')
-          print('✅ 3AS : 3 unites (U7/U8/U9) · 18 seances · 3 devoirs /20 · '
-                + str(u3a.count('~~') // 2) + ' erreurs frequentes · CEFR B1-B2')
+          print('✅ 3AS Lot A : 5 unites (U7-U11) · ' + str(nse3a) + ' seances · '
+                + '5 devoirs /20 · 5 grilles · ' + str(u3a.count('~~') // 2)
+                + ' erreurs frequentes · CEFR ' + '/'.join(sorted(cefrl3a)))
+          print('   adaptateur window.UNITES_3AS_A → U7/U8/U9 branches sur app.js')
           u10 = rd('unite10.js'); u11 = rd('unite11.js'); u12 = rd('unite12.js')
           B3 = {'unite10.js': (u10, 10), 'unite11.js': (u11, 11), 'unite12.js': (u12, 12)}
           for nom_b, (src_b, nb) in B3.items():
