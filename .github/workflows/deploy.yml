@@ -37,8 +37,9 @@ jobs:
                    unite5.js unite6.js unites3as_a.js unite10.js unite11.js unite12.js \
                    unite13.js unite14.js unite15.js unite16.js app.js modules.js live.js \
                    classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
-                   journee.js prof.js parents.js library.js manifest.json sw.js README.md \
-                   404.html robots.txt sitemap.xml .nojekyll ci/check-unites.mjs; do
+                   reservation.js journee.js prof.js parents.js library.js manifest.json \
+                   sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
+                   ci/check-unites.mjs; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -48,10 +49,11 @@ jobs:
                    assets/bdd/classe.json assets/bdd/eleves.json \
                    assets/bdd/bac_archive.json assets/bdd/live.json \
                    assets/bdd/parents.json assets/bdd/devoirs_officiels.json \
-                   assets/bdd/wilayas_geo.json assets/bdd/plan_projet.json; do
+                   assets/bdd/wilayas_geo.json assets/bdd/plan_projet.json \
+                   assets/bdd/journee.json assets/bdd/reservation.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 33 fichiers racine + 17 assets présents"
+          echo "✅ 34 fichiers racine + 18 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -433,6 +435,7 @@ jobs:
           cof = sum((x['coef'] or 1) for x in enf[0]['examens'])
           mp = round(som / cof, 2) if cof else 0
           print('✅ 3AS : filtre de niveau 2AS/3AS persistant + badge + barre de progression')
+          print('✅ Reservation de cours : 6 profs, 6 types, 3 durees, 6 creneaux, frais 10 %')
           print('✅ Plan de projet LinguaConnect : 13 sections, revenus 36→540 M DA, roadmap')
           print('✅ Quiz interactif : 30 questions, 6 unites, series de 5, feedback immediat')
           print('✅ Moteur IA : 9 cas de reference du professeur + estCopie + texte Lena officiel')
@@ -839,6 +842,99 @@ jobs:
               print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
           PY
 
+      - name: Valider la réservation de cours (reservation.json)
+        run: |
+          python - <<'PY'
+          import json, sys
+          fails = []
+          rs = json.load(open('assets/bdd/reservation.json', encoding='utf-8'))
+          m = rs['_meta']
+          if m['frais_service_pct'] != 10:
+              fails.append('reservation : frais de service ' + str(m['frais_service_pct']) + ' != 10')
+          if m['delai_annulation_h'] != 24:
+              fails.append('reservation : delai annulation != 24 h')
+          if m['premiere_seance_gratuite_min'] != 30:
+              fails.append('reservation : 1re seance gratuite != 30 min')
+          if 'confidentialite' not in m:
+              fails.append('reservation : confidentialite absente')
+          if len(rs['profs']) != 6:
+              fails.append('reservation : ' + str(len(rs['profs'])) + ' profs != 6')
+          if len(set(p['id'] for p in rs['profs'])) != 6:
+              fails.append('reservation : identifiants de profs dupliques')
+          if len(set(p['init'] for p in rs['profs'])) != 6:
+              fails.append('reservation : initiales de profs dupliquees')
+          if len(rs['types_cours']) != 6:
+              fails.append('reservation : ' + str(len(rs['types_cours'])) + ' types != 6')
+          ids_t = set(t['id'] for t in rs['types_cours'])
+          if len(ids_t) != 6:
+              fails.append('reservation : identifiants de types dupliques')
+          if [d['min'] for d in rs['durees']] != [30, 60, 90]:
+              fails.append('reservation : durees != 30/60/90')
+          if [d['coef'] for d in rs['durees']] != [0.55, 1.0, 1.4]:
+              fails.append('reservation : coefficients != 0.55/1.0/1.4')
+          if [c['h'] for c in rs['creneaux']] != ['14:00','15:00','16:00','17:00','18:00','19:00']:
+              fails.append('reservation : creneaux != 14:00-19:00')
+          if len(rs['statuts']) != 4:
+              fails.append('reservation : ' + str(len(rs['statuts'])) + ' statuts != 4')
+          for p in rs['profs']:
+              for k in ('id', 'init', 'nom', 'ville', 'exp_n', 'note_n', 'avis_n',
+                        'prix_n', 'desc', 'tags', 'types'):
+                  if k not in p or p[k] in (None, '', []):
+                      fails.append('reservation prof ' + str(p.get('id')) + ' : ' + k + ' vide')
+              if not (1000 <= p['prix_n'] <= 5000):
+                  fails.append('reservation ' + p['id'] + ' : prix hors plage 1000-5000 DA')
+              if not (3.0 <= p['note_n'] <= 5.0):
+                  fails.append('reservation ' + p['id'] + ' : note hors plage 3.0-5.0')
+              if len(p.get('types') or []) < 3:
+                  fails.append('reservation ' + p['id'] + ' : moins de 3 types de cours')
+              if len(p.get('tags') or []) < 3:
+                  fails.append('reservation ' + p['id'] + ' : moins de 3 specialites')
+              inconnus = set(p.get('types') or []) - ids_t
+              if inconnus:
+                  fails.append('reservation ' + p['id'] + ' : types inconnus ' + str(inconnus))
+          if sum(1 for p in rs['profs'] if p.get('fondateur')) != 1:
+              fails.append('reservation : != 1 fondateur identifie')
+          cv = json.load(open('assets/bdd/classe.json', encoding='utf-8'))
+          pa = json.load(open('assets/bdd/parents.json', encoding='utf-8'))
+          def nc(x):
+              return x['nom'].replace('الأستاذ ', '').replace('الأستاذة ', '')
+          pc = dict((nc(x), x) for x in cv['profs'])
+          pp = dict((x['nom'], x) for x in pa['profs_particuliers'])
+          pr = dict((nc(x), x) for x in rs['profs'])
+          commun = sorted(set(pc) & set(pp) & set(pr))
+          if len(commun) < 3:
+              fails.append('reservation : seulement ' + str(len(commun))
+                               + ' fiches communes aux 3 fichiers profs')
+          for nom in commun:
+              for k in ('ville', 'exp_n', 'note_n', 'avis_n', 'prix_n'):
+                  vals = [pc[nom].get(k), pp[nom].get(k), pr[nom].get(k)]
+                  if len(set(vals)) != 1:
+                      fails.append('reservation prof ' + nom + ' : ' + k + ' divergent '
+                                   + str(vals) + ' (classe/parents/reservation)')
+              if pc[nom].get('specialites') != pr[nom].get('tags'):
+                  fails.append('reservation prof ' + nom + ' : specialites != tags')
+          pct = m['frais_service_pct']
+          for p in rs['profs']:
+              for dd in rs['durees']:
+                  cours = round(p['prix_n'] * dd['coef'])
+                  frais = round(cours * pct / 100)
+                  if cours + frais <= 0:
+                      fails.append('reservation : total nul pour ' + p['id'] + ' ' + str(dd['min']))
+          ex = m.get('exemple_maquette')
+          if not ex:
+              fails.append('reservation : exemple de la maquette non documente')
+          prix = [p['prix_n'] for p in rs['profs']]
+          print('✅ Reservation : ' + str(len(rs['profs'])) + ' profs ('
+                + str(min(prix)) + '-' + str(max(prix)) + ' DA/h) · '
+                + str(len(rs['types_cours'])) + ' types · 3 durees 30/60/90 · '
+                + str(len(rs['creneaux'])) + ' creneaux · frais ' + str(pct) + ' % · '
+                + 'annulation ' + str(m['delai_annulation_h']) + ' h')
+          print('   coherence croisee : ' + str(len(commun))
+                + ' fiches profs identiques dans classe/parents/reservation')
+          if fails:
+              print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
+          PY
+
       - name: Valider la syntaxe JavaScript (esprima)
         run: |
           python - <<'PY'
@@ -848,12 +944,12 @@ jobs:
                       'unite11.js', 'unite12.js', 'unite13.js', 'unite14.js',
                       'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
-                      'stats.js', 'quiz.js', 'projet.js', 'journee.js', 'prof.js',
-                      'parents.js', 'library.js', 'sw.js')
+                      'stats.js', 'quiz.js', 'projet.js', 'reservation.js', 'journee.js',
+                      'prof.js', 'parents.js', 'library.js', 'sw.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/30 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/31 fichiers JS valides')
           PY
 
       - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
@@ -880,6 +976,7 @@ jobs:
           st = rd('stats.js')
           qz = rd('quiz.js')
           pj = rd('projet.js')
+          rv = rd('reservation.js')
           html = rd('index.html'); css = rd('style.css')
           man = json.load(open('manifest.json', encoding='utf-8'))
           cor = json.load(open('assets/corriges.json', encoding='utf-8'))
@@ -893,9 +990,9 @@ jobs:
                      'function uniteSelector', 'function paintUniteHead',
                      'get DEVOIR(){ return DEVOIR; }', 'get SEANCES(){ return SEANCES; }',
                      'function allTabs', 'function isProf', "'profboard'", "'examen'",
-                     "'live'", "'officiels'", "'stats'", "'quiz'", "'projet'",
+                     "'live'", "'officiels'", "'stats'", "'quiz'", "'projet'", "'reservation'",
                      'window.renderLive', 'window.renderStats2', 'window.renderQuiz',
-                     'window.renderProjet', 'window.UNITES_3AS_A', 'window.UNITE2', 'window.UNITE3', 'window.UNITE10', 'window.UNITE11', 'window.UNITE12',
+                     'window.renderProjet', 'window.renderReservation', 'window.UNITES_3AS_A', 'window.UNITE2', 'window.UNITE3', 'window.UNITE10', 'window.UNITE11', 'window.UNITE12',
                                 'Persönlichkeit und Identität', 'Staatsbürgerschaft',
                      'window.UNITE4', 'window.UNITE5', 'window.UNITE6',
                      'Schule und Ausbildung', 'Alltag und Freizeit',
@@ -1171,6 +1268,30 @@ jobs:
                     'pj-chart', 'mensuel_annee1', 'pj-cmp2', 'pj-sol', 'pj-tar',
                     'pj-rmn', 'pj-ver', 'pj-eq', 'function pied', 'window.print()',
                     "'213555577931'", 'window.renderProjet', "e.detail === 'projet'")
+          RV_REQ = ('assets/bdd/reservation.json', 'function vueListe', 'function vueResa',
+                    'function vueMes', 'function profCard', 'function calculer',
+                    'function reference', 'function confirmer', 'function annuler',
+                    'function texteConfirmation', 'function libelleDate', 'function offreExpiree',
+                    'function recPrix', 'function majPrix', 'dz_de_reservations_v1',
+                    'dz_de_premiere_gratuite_v1', 'window.renderReservation',
+                    'data-reserver', 'data-champ', 'data-annuler', 'peut_annuler_jusqu',
+                    'premiere_seance_gratuite_min', 'frais_service_pct', 'delai_annulation_h',
+                    "e.detail === 'reservation'")
+          for k in RV_REQ:
+              if k not in rv:
+                  fails.append('reservation.js : ' + k + ' absent')
+          if 'cours * pct / 100' not in rv:
+              fails.append('reservation.js : frais de service non calcules en pourcentage')
+          if 'Math.round(prof.prix_n * duree.coef)' not in rv:
+              fails.append('reservation.js : prix du cours non proportionnel a la duree')
+          if 'Object.prototype' in rv:
+              fails.append('reservation.js : pollution Object.prototype interdite')
+          if 'navigator.clipboard.writeText' not in rv:
+              fails.append('reservation.js : copie presse-papiers absente')
+          if "waLink(" not in rv:
+              fails.append('reservation.js : confirmation WhatsApp absente')
+          print('✅ Reservation : 3 vues · calcul cours + frais 10 % = total · reference generee · '
+                + 'annulation 24 h · 1re seance gratuite · confirmation WhatsApp')
           for k in PJ_REQ:
               if k not in pj:
                   fails.append('projet.js : ' + k + ' absent')
@@ -1268,7 +1389,7 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.6.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.7.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
@@ -1282,16 +1403,16 @@ jobs:
           if len(man.get('shortcuts', [])) < 4:
               fails.append('manifest : moins de 4 raccourcis')
           vues = re.findall(r'data-view="([a-z]+)"', html)
-          if len(vues) != 17:
-              fails.append('index.html : ' + str(len(vues)) + ' vues != 17')
+          if len(vues) != 18:
+              fails.append('index.html : ' + str(len(vues)) + ' vues != 18')
           v_app = re.findall(r"'([a-z]+)'",
                              re.search(r'const VIEWS = \[(.*?)\];', app, re.S).group(1))
           if sorted(vues) != sorted(v_app):
               fails.append('index.html/app.js : VIEWS != data-view')
           tabs = re.findall(r"\['([a-z]+)'",
                             re.search(r'const TABS\s*=\s*\[(.*?)\];', app, re.S).group(1))
-          if len(tabs) != 16:
-              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 16')
+          if len(tabs) != 17:
+              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 17')
           if 'profboard' in tabs:
               fails.append('app.js : profboard doit rester dynamique (allTabs)')
           if set(tabs) - set(vues):
@@ -1316,7 +1437,7 @@ jobs:
                      'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                      'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'projet.js',
-                     'journee.js', 'library.js']
+                     'reservation.js', 'journee.js', 'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -1349,14 +1470,17 @@ jobs:
                      '.pj-vues', '.pj-vue', '.pj-obs', '.pj-ob', '.pj-sol', '.pj-tarifs',
                      '.pj-tar', '.pj-cmp2', '.pj-rev', '.pj-rv', '.pj-chart', '.pjc',
                      '.pj-eq', '.pj-em', '.pj-rm', '.pj-rmi', '.pj-ver', '.pj-pied',
-                     '.pj-mini', 'v3.4', '.niv-sel', '.niv', '.ucard-top', '.ucard-lv',
-                     '.ucard-bar', '.po-3as', '.po-3h', 'v3.5')
+                     '.pj-mini', 'v3.4', '.rs-hero', '.rs-grid', '.rs-card', '.rs-av',
+                     '.rs-badge', '.rs-types', '.rs-ty', '.rs-form', '.rs-fld', '.rs-opts',
+                     '.rs-o', '.rs-prix', '.rs-pr', '.rs-total', '.rs-ref', '.rs-stats',
+                     '.rs-st', '.rs-liste', '.rs-item', '.rs-ih', '.rs-it', '.rs-ib',
+                     '.rs-ia', '.rs-late', '.rs-mini', 'v3.7')
           for k in CSS_REQ:
               if k not in css:
                   fails.append('style.css : ' + k + ' absent')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
-          print('✅ 17 vues · 16 onglets statiques + 1 dynamique (profboard)')
+          print('✅ 18 vues · 17 onglets statiques + 1 dynamique (profboard)')
           # Total de séances CALCULÉ depuis les sources — jamais de littéral dans un rapport.
           tot_seances = len(re.findall(r'\{ n:\d+, de:', app))
           for _f in ('unite2.js', 'unite3.js', 'unite4.js', 'unite5.js', 'unite6.js',
@@ -1374,7 +1498,7 @@ jobs:
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 29 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 30 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           # Totaux CALCULÉS depuis les JSON — jamais de littéral dans un rapport.
           gm2 = json.load(open('assets/bdd/grammaire.json', encoding='utf-8'))
@@ -1385,7 +1509,7 @@ jobs:
                   + len(json.load(open('assets/bdd/annales.json', encoding='utf-8'))['items']))
           print('✅ BDD : ' + str(nfic) + ' fiches + ' + str(nreg)
                 + ' regles + classe + registre + archive BAC + live')
-          print('✅ PWA v3.6 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ PWA v3.7 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
