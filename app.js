@@ -189,30 +189,43 @@ const DEVOIR_U1 = {
 
 /* ─────────────── REGISTRE DES UNITÉS ─────────────── */
 let currentUnite = 1;
+let niveauActif = load('dz_de_niveau_v1', 'tous');
 
 const UNITES = [
-  { n:1, de:'Sich vorstellen',        ar:'التعريف بالنفس',    icon:'👋', cecrl:'A1',
+  { n:1, de:'Sich vorstellen',        ar:'التعريف بالنفس',    icon:'👋', cecrl:'A1', niveau:'2AS',
     seances:SEANCES_U1, devoir:DEVOIR_U1, duree:465 },
-  { n:2, de:'Familie und Freunde',    ar:'العائلة والأصدقاء', icon:'👨‍👩‍👧', cecrl:'A1→A2',
+  { n:2, de:'Familie und Freunde',    ar:'العائلة والأصدقاء', icon:'👨‍👩‍👧', cecrl:'A1→A2', niveau:'2AS',
     seances:(window.UNITE2 ? UNITE2.seances : []),
     devoir: (window.UNITE2 ? UNITE2.devoir  : null),
     duree:  (window.UNITE2 && UNITE2.meta ? UNITE2.meta.duree_totale : 465) },
-  { n:3, de:'Schule und Ausbildung',  ar:'المدرسة والتكوين',  icon:'🏫', cecrl:'A2',
+  { n:3, de:'Schule und Ausbildung',  ar:'المدرسة والتكوين',  icon:'🏫', cecrl:'A2', niveau:'2AS',
     seances:(window.UNITE3 ? UNITE3.seances : []),
     devoir: (window.UNITE3 ? UNITE3.devoir  : null),
     duree:  (window.UNITE3 && UNITE3.meta ? UNITE3.meta.duree_totale : 465) },
-  { n:4, de:'Alltag und Freizeit',    ar:'الحياة اليومية وأوقات الفراغ', icon:'⚽', cecrl:'A2',
+  { n:4, de:'Alltag und Freizeit',    ar:'الحياة اليومية وأوقات الفراغ', icon:'⚽', cecrl:'A2', niveau:'2AS',
     seances:(window.UNITE4 ? UNITE4.seances : []),
     devoir: (window.UNITE4 ? UNITE4.devoir  : null),
     duree:  (window.UNITE4 && UNITE4.meta ? UNITE4.meta.duree_totale : 465) },
-  { n:5, de:'Essen und Trinken',      ar:'المأكل والمشرب',      icon:'🍽️', cecrl:'A2',
+  { n:5, de:'Essen und Trinken',      ar:'المأكل والمشرب',      icon:'🍽️', cecrl:'A2', niveau:'2AS',
     seances:(window.UNITE5 ? UNITE5.seances : []),
     devoir: (window.UNITE5 ? UNITE5.devoir  : null),
     duree:  (window.UNITE5 && UNITE5.meta ? UNITE5.meta.duree_totale : 465) },
-  { n:6, de:'Reisen und Verkehr',     ar:'السفر والنقل',       icon:'🚌', cecrl:'A2',
+  { n:6, de:'Reisen und Verkehr',     ar:'السفر والنقل',       icon:'🚌', cecrl:'A2', niveau:'2AS',
     seances:(window.UNITE6 ? UNITE6.seances : []),
     devoir: (window.UNITE6 ? UNITE6.devoir  : null),
-    duree:  (window.UNITE6 && UNITE6.meta ? UNITE6.meta.duree_totale : 465) }
+    duree:  (window.UNITE6 && UNITE6.meta ? UNITE6.meta.duree_totale : 465) },
+  { n:7, de:'Persönlichkeit und Identität', ar:'الشخصية والهوية', icon:'🪞', cecrl:'B1',
+    niveau:'3AS', seances:(window.UNITES_3AS_A ? UNITES_3AS_A[0].seances : []),
+    devoir: (window.UNITES_3AS_A ? UNITES_3AS_A[0].devoir  : null),
+    duree:  (window.UNITES_3AS_A ? UNITES_3AS_A[0].duree_totale : 360) },
+  { n:8, de:'Staatsbürgerschaft',           ar:'المواطنة',       icon:'🏛️', cecrl:'B1',
+    niveau:'3AS', seances:(window.UNITES_3AS_A ? UNITES_3AS_A[1].seances : []),
+    devoir: (window.UNITES_3AS_A ? UNITES_3AS_A[1].devoir  : null),
+    duree:  (window.UNITES_3AS_A ? UNITES_3AS_A[1].duree_totale : 360) },
+  { n:9, de:'Leben in der Gesellschaft',    ar:'الحياة في المجتمع', icon:'🤝', cecrl:'B2',
+    niveau:'3AS', seances:(window.UNITES_3AS_A ? UNITES_3AS_A[2].seances : []),
+    devoir: (window.UNITES_3AS_A ? UNITES_3AS_A[2].devoir  : null),
+    duree:  (window.UNITES_3AS_A ? UNITES_3AS_A[2].duree_totale : 360) }
 ];
 
 let SEANCES = UNITES[0].seances;
@@ -233,17 +246,28 @@ function selectUnite(n){
 }
 
 function uniteSelector(){
-  return '<div class="unite-sel">' + UNITES.map(u => {
+  const niv = niveauActif || 'tous';
+  const list = niv === 'tous' ? UNITES : UNITES.filter(u => (u.niveau || '2AS') === niv);
+  const NIV = [['tous','🎓 الكل'],['2AS','2️⃣ ثانية ثانوي'],['3AS','3️⃣ ثالثة ثانوي · BAC']];
+  return '<div class="niv-sel">' + NIV.map(n =>
+      '<button class="niv' + (niv === n[0] ? ' on' : '') + '" data-niveau="' + n[0] + '">' +
+      n[1] + '</button>').join('') + '</div>' +
+    '<div class="unite-sel">' + list.map(u => {
     const dispo = !!(u.seances && u.seances.length);
     const st = loadSeancesFor(u.n);
     const done = (st.done || []).length;
+    const tot = (u.seances || []).length || 8;
+    const pct = Math.round(done / tot * 100);
     return '<button class="ucard' + (u.n === currentUnite ? ' on' : '') + (dispo ? '' : ' off') + '"' +
       (dispo ? ' data-unite="' + u.n + '"' : ' disabled') + '>' +
-      '<div class="ucard-n">الوحدة ' + u.n + '</div>' +
-      '<div class="ucard-de de-display">' + esc(u.de) + '</div>' +
-      '<div class="ucard-ar">' + u.icon + ' ' + esc(u.ar) + '</div>' +
+      '<div class="ucard-top"><span class="ucard-n">الوحدة ' + u.n + '</span>' +
+        '<span class="ucard-lv' + (u.niveau === '3AS' ? ' bac' : '') + '">' +
+        esc(u.niveau || '2AS') + '</span></div>' +
+      '<div class="ucard-de de-display">' + u.icon + ' ' + esc(u.de) + '</div>' +
+      '<div class="ucard-ar">' + esc(u.ar) + '</div>' +
+      '<div class="ucard-bar"><i style="width:' + pct + '%"></i></div>' +
       '<div class="ucard-m"><span class="chip' + (dispo ? ' ok' : '') + '">' +
-        (dispo ? done + '/' + u.seances.length + ' حصص' : '🔒 قريباً') + '</span>' +
+        (dispo ? done + '/' + tot + ' حصص · ' + pct + '%' : '🔒 قريباً') + '</span>' +
         '<span class="chip">' + esc(u.cecrl) + '</span>' +
         '<span class="chip">⏱️ ' + Math.round(u.duree / 60) + ' س</span></div></button>';
   }).join('') + '</div>';
@@ -897,6 +921,30 @@ document.addEventListener('DOMContentLoaded', () => {
   bootGate();
 
   document.addEventListener('click', ev => {
+    const nv = ev.target.closest('[data-niveau]');
+    if(nv){
+      niveauActif = nv.dataset.niveau;
+      store('dz_de_niveau_v1', niveauActif);
+      const host = $('.niv-sel');
+      if(host && host.parentElement){
+        const ancien = $('.unite-sel');
+        host.outerHTML = uniteSelector().split('</div>')[0] + '</div>';
+      }
+      const sel = $('.unite-sel');
+      if(sel && sel.outerHTML){
+        const tmp = document.createElement('div');
+        tmp.innerHTML = uniteSelector();
+        const nv2 = $('.niv-sel'), us2 = $('.unite-sel');
+        if(nv2 && tmp.querySelector('.niv-sel')) nv2.outerHTML = tmp.querySelector('.niv-sel').outerHTML;
+        if(us2 && tmp.querySelector('.unite-sel')) us2.outerHTML = tmp.querySelector('.unite-sel').outerHTML;
+      }
+      const n = UNITES.filter(u => (u.niveau || '2AS') === (niveauActif === 'tous' ? 'x' : niveauActif)).length;
+      toast(niveauActif === 'tous' ? '🎓 كل الوحدات'
+            : (niveauActif === '3AS' ? '3️⃣ السنة الثالثة ثانوي — برنامج البكالوريا'
+                                     : '2️⃣ السنة الثانية ثانوي'), 'ok');
+      return;
+    }
+
     const un = ev.target.closest('[data-unite]');
     if(un){ selectUnite(+un.dataset.unite); return; }
 
@@ -1272,5 +1320,7 @@ window.DZ = {
   bootGate:bootGate, enterApp:enterApp,
   loadSeances:loadSeances, saveSeances:saveSeances,
   UNITES:UNITES, uniteActive:uniteActive, selectUnite:selectUnite,
-  currentUnite:() => currentUnite
+  currentUnite:() => currentUnite,
+  get niveauActif(){ return niveauActif; },
+  setNiveau:(n) => { niveauActif = n; store('dz_de_niveau_v1', n); }
 };
