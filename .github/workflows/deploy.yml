@@ -440,6 +440,36 @@ jobs:
           print('   enfant 1 : moyenne ponderee ' + str(mp) + '/20 · '
                 + str(len(enf[0]['examens'])) + ' examens · '
                 + str(len(enf[0]['presence'])) + ' releves de presence')
+          cv = json.load(open('assets/bdd/classe.json', encoding='utf-8'))
+          def nomcourt(x):
+              return x['nom'].replace('الأستاذ ', '').replace('الأستاذة ', '')
+          pc = dict((nomcourt(x), x) for x in cv['profs'])
+          pp = dict((x['nom'], x) for x in pa['profs_particuliers'])
+          commun = sorted(set(pc) & set(pp))
+          if len(commun) < 3:
+              fails.append('profs : seulement ' + str(len(commun)) + ' fiches communes aux 2 fichiers')
+          for nom in commun:
+              x = pc[nom]; y = pp[nom]
+              for k in ('ville', 'exp_n', 'note_n', 'avis_n', 'prix_n'):
+                  if x.get(k) != y.get(k):
+                      fails.append('prof ' + nom + ' : ' + k + ' ' + str(x.get(k))
+                                   + ' (classe) != ' + str(y.get(k)) + ' (parents)')
+              if x.get('specialites') != y.get('tags'):
+                  fails.append('prof ' + nom + ' : specialites != tags')
+              if x.get('desc') != y.get('desc'):
+                  fails.append('prof ' + nom + ' : description divergente')
+          for nom, y in pp.items():
+              for k in ('exp_n', 'note_n', 'avis_n', 'prix_n'):
+                  if not isinstance(y.get(k), (int, float)):
+                      fails.append('prof ' + nom + ' : ' + k + ' non numerique')
+              if not (1000 <= y.get('prix_n', 0) <= 5000):
+                  fails.append('prof ' + nom + ' : prix hors plage 1000-5000 DA')
+              if not (3.0 <= y.get('note_n', 0) <= 5.0):
+                  fails.append('prof ' + nom + ' : note hors plage 3.0-5.0')
+              if len(y.get('tags') or []) < 3:
+                  fails.append('prof ' + nom + ' : moins de 3 specialites')
+          print('✅ Fiches professeurs : ' + str(len(commun)) + ' fiches croisees classe/parents '
+                + '· coherence ville/exp/note/avis/prix/specialites verifiee')
           if fails:
               print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
           PY
@@ -762,6 +792,18 @@ jobs:
           for k in OF_REQ:
               if k not in of:
                   fails.append('officiels.js : ' + k + ' absent')
+          MOT_REQ = ("0.4 * nbInfos", "INFOS[d.unite] || INFOS[1]",
+                     "['bin', 'komme', 'wohne', 'lerne'].every", 'clels_manquantes',
+                     'grille officielle')
+          for k in MOT_REQ:
+              if k not in of:
+                  fails.append('officiels.js : moteur T1-T7 ' + k + ' absent')
+          bloc3 = of[of.find("const pIII"):of.find('function afficherNote')]
+          if '0.5' in bloc3:
+              fails.append('officiels.js : palier 0.5 residuel dans la partie III '
+                           + '(le moteur officiel note en binaire)')
+          if 'Math.min(infos, phrases.length)' in of:
+              fails.append('officiels.js : contenu encore calcule en nombre de phrases')
           if 'Object.prototype' in of:
               fails.append('officiels.js : pollution Object.prototype interdite')
           PA_REQ = ('assets/bdd/parents.json', 'function selecteurEnfants',
