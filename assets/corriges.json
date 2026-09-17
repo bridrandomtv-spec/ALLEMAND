@@ -8,7 +8,8 @@
     "version": "1.0.0",
     "confidentialite": "Les résultats de simulation sont stockés localement (localStorage) et ne quittent jamais l'appareil de l'élève.",
     "bareme_total": 20,
-    "duree_minutes": 45
+    "duree_minutes": 45,
+    "conformite": "Texte et corrigés alignés sur le document source du professeur"
   },
   "devoir_unite_1": {
     "titre": "Évaluation — Einheit 1 : Sich vorstellen",
@@ -19,65 +20,89 @@
         "id": "I",
         "titre": "Compréhension de l'écrit — Leseverstehen",
         "points": 8,
-        "support": "Texte « Lena Fischer »",
+        "support": "Texte officiel « Lena Fischer »",
         "corriges": [
           {
-            "id": "I.1",
+            "id": "I.1.a",
             "type": "vrai_faux",
-            "question": "Lena kommt aus Österreich.",
+            "question": "Lena kommt aus Algerien.",
             "reponse": "Falsch",
             "points": 1,
-            "justification": "Ich komme aus Deutschland."
+            "justification": "Lena kommt aus Deutschland, nicht Algerien."
           },
           {
-            "id": "I.2",
+            "id": "I.1.b",
             "type": "vrai_faux",
-            "question": "Lena ist 16 Jahre alt.",
+            "question": "Lena ist 17.",
             "reponse": "Richtig",
             "points": 1,
-            "justification": "Ich bin 16 Jahre alt."
+            "justification": "« Ich bin 17 Jahre alt. »"
           },
           {
-            "id": "I.3",
+            "id": "I.1.c",
             "type": "vrai_faux",
-            "question": "Lena hat zwei Schwestern.",
+            "question": "Tim ist 20 Jahre alt.",
             "reponse": "Richtig",
             "points": 1,
-            "justification": "Ich habe zwei Schwestern."
+            "justification": "« Mein Bruder ist 20 und heißt Tim. »"
           },
           {
-            "id": "I.4",
+            "id": "I.1.d",
             "type": "vrai_faux",
-            "question": "Lena lernt Spanisch in der Schule.",
+            "question": "Lena wohnt in Berlin.",
             "reponse": "Falsch",
             "points": 1,
-            "justification": "Sie lernt Englisch und Französisch."
+            "justification": "Sie wohnt in München, nicht Berlin."
           },
           {
-            "id": "I.5",
+            "id": "I.2.a",
             "type": "texte",
-            "question": "Wie heißt Lenas Mutter?",
-            "reponse": "Sie heißt Anna.",
-            "points": 2,
+            "question": "Wie heißt Lena mit Nachnamen?",
+            "reponse": "Sie heißt Fischer.",
+            "points": 1,
             "mots_cles": [
-              "anna"
+              "fischer"
             ],
-            "justification": "…meine Mutter heißt Anna."
+            "justification": "« Ich heiße Lena Fischer. »"
           },
           {
-            "id": "I.6",
+            "id": "I.2.b",
             "type": "texte",
             "question": "Wo wohnt Lena?",
             "reponse": "Sie wohnt in München.",
-            "points": 2,
+            "points": 1,
             "mots_cles": [
               "münchen",
               "munchen",
-              "munich"
+              "muenchen"
             ],
-            "justification": "Ich wohne in München."
+            "justification": "« Ich wohne in München. »"
+          },
+          {
+            "id": "I.2.c",
+            "type": "texte",
+            "question": "Wie viele Schwestern hat Lena?",
+            "reponse": "Sie hat zwei Schwestern.",
+            "points": 1,
+            "mots_cles": [
+              "zwei",
+              "2"
+            ],
+            "justification": "« Ich habe … zwei Schwestern. »"
+          },
+          {
+            "id": "I.2.d",
+            "type": "texte",
+            "question": "Was sagt Lena am Morgen?",
+            "reponse": "Sie sagt: «Guten Morgen, Mama!»",
+            "points": 1,
+            "mots_cles": [
+              "guten morgen"
+            ],
+            "justification": "« Am Morgen sage ich immer: Guten Morgen, Mama! »"
           }
-        ]
+        ],
+        "texte": "Hallo! Ich heiße Lena Fischer. Ich bin 17 Jahre alt und komme aus Deutschland. Ich wohne in München. Ich habe eine große Familie: einen Bruder und zwei Schwestern. Mein Bruder ist 20 und heißt Tim. Meine Schwester Anna ist 15. Am Morgen sage ich immer: Guten Morgen, Mama! Und am Abend: Gute Nacht!"
       },
       {
         "id": "II",
