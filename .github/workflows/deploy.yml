@@ -34,9 +34,9 @@ jobs:
         run: |
           set -e
           for f in index.html style.css auth.js bdd.js unite2.js unite3.js unite4.js \
-                   unite5.js app.js modules.js live.js classe.js grammaire.js examen.js \
-                   prof.js parents.js library.js manifest.json sw.js README.md 404.html \
-                   robots.txt sitemap.xml .nojekyll; do
+                   unite5.js unite6.js app.js modules.js live.js classe.js grammaire.js \
+                   examen.js prof.js parents.js library.js manifest.json sw.js README.md \
+                   404.html robots.txt sitemap.xml .nojekyll; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -48,7 +48,7 @@ jobs:
                    assets/bdd/parents.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 24 fichiers racine + 14 assets présents"
+          echo "✅ 25 fichiers racine + 14 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -446,13 +446,13 @@ jobs:
           python - <<'PY'
           import esprima
           FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
-                      'unite5.js', 'app.js', 'modules.js', 'live.js', 'classe.js',
-                      'grammaire.js', 'examen.js', 'prof.js', 'parents.js',
+                      'unite5.js', 'unite6.js', 'app.js', 'modules.js', 'live.js',
+                      'classe.js', 'grammaire.js', 'examen.js', 'prof.js', 'parents.js',
                       'library.js', 'sw.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/16 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/17 fichiers JS valides')
           PY
 
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
@@ -462,7 +462,7 @@ jobs:
           fails = []
           def rd(p): return open(p, encoding='utf-8').read()
           app = rd('app.js'); mod = rd('modules.js')
-          u2 = rd('unite2.js'); u3 = rd('unite3.js'); u4 = rd('unite4.js'); u5 = rd('unite5.js')
+          u2 = rd('unite2.js'); u3 = rd('unite3.js'); u4 = rd('unite4.js'); u5 = rd('unite5.js'); u6 = rd('unite6.js')
           cl = rd('classe.js'); gr = rd('grammaire.js'); bdd = rd('bdd.js')
           lib = rd('library.js'); au = rd('auth.js'); sw = rd('sw.js')
           pf = rd('prof.js'); ex = rd('examen.js'); lv = rd('live.js')
@@ -481,8 +481,9 @@ jobs:
                      'get DEVOIR(){ return DEVOIR; }', 'get SEANCES(){ return SEANCES; }',
                      'function allTabs', 'function isProf', "'profboard'", "'examen'",
                      "'live'", 'window.renderLive', 'window.UNITE2', 'window.UNITE3',
-                     'window.UNITE4', 'window.UNITE5', 'Schule und Ausbildung',
-                     'Alltag und Freizeit', 'Essen und Trinken')
+                     'window.UNITE4', 'window.UNITE5', 'window.UNITE6',
+                     'Schule und Ausbildung', 'Alltag und Freizeit',
+                     'Essen und Trinken', 'Reisen und Verkehr')
           for k in APP_REQ:
               if k not in app:
                   fails.append('app.js : ' + k + ' absent')
@@ -497,10 +498,10 @@ jobs:
               fails.append('app.js : registre UNITES introuvable')
           else:
               n_un = len(re.findall(r'\{ n:\d+, de:', blk.group(1)))
-              if n_un != 5:
-                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 5')
+              if n_un != 6:
+                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 6')
               else:
-                  print('   registre UNITES : ' + str(n_un) + '/5 unites')
+                  print('   registre UNITES : ' + str(n_un) + '/6 unites')
           for k in ('renderSim', 'renderParents', '45 * 60', '10 * 60',
                     'DZ.loadSeances()', 'new Proxy({}'):
               if k not in mod:
@@ -523,6 +524,10 @@ jobs:
                                   'window.UNITE5', 'Lebensmittel', 'Akkusativ', 'Imperativ',
                                   'hätte gern', 'Gesund essen', 'Textproduktion',
                                   'Konsolidierung', 'erreurs_frequentes']),
+              'unite6.js': (u6, ['SEANCES_U6', 'DEVOIR_U6', 'CORRIGE_U6', 'UNITE6_META',
+                                  'window.UNITE6', 'Verkehrsmittel', 'Fahrkarten',
+                                  'Nach dem Weg fragen', 'Eine Reise nach Berlin',
+                                  'Textproduktion', 'Konsolidierung', 'erreurs_frequentes']),
           }
           for nom_u, (src_u, mots) in UNITES.items():
               for k in mots:
@@ -626,8 +631,8 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v2.9.0',
-                    './unite2.js', './unite3.js', './unite4.js', './unite5.js', './live.js',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.0.0',
+                    './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
                     './assets/bdd/live.json', './assets/bdd/parents.json'):
@@ -663,14 +668,15 @@ jobs:
                   fails.append('index.html : ' + ident + ' absent')
           HTML_REQ = ('Freie Universität Berlin', 'منهجية الأستاذ',
                       'البرنامج الرسمي', 'Dichter und Denker',
-                      'Schule und Ausbildung', 'Alltag und Freizeit', 'Essen und Trinken', 'جامعة الجزائر')
+                      'Schule und Ausbildung', 'Alltag und Freizeit', 'Essen und Trinken', 'Reisen und Verkehr', 'جامعة الجزائر')
           for txt in HTML_REQ:
               if txt not in html:
                   fails.append('index.html : contenu ' + txt + ' absent')
           ordre = re.findall(r'<script src="([^"]+)"', html)
           attendu = ['auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
-                     'unite5.js', 'app.js', 'modules.js', 'live.js', 'classe.js',
-                     'grammaire.js', 'examen.js', 'prof.js', 'parents.js', 'library.js']
+                     'unite5.js', 'unite6.js', 'app.js', 'modules.js', 'live.js',
+                     'classe.js', 'grammaire.js', 'examen.js', 'prof.js', 'parents.js',
+                     'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -693,18 +699,18 @@ jobs:
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 13 vues · 12 onglets statiques + 1 dynamique (profboard)')
-          print('✅ Bareme 8+8+4 = 20 sur U1 → U5 = 40 seances')
-          print('✅ Registre UNITES = 5 · espace parents multi-enfants · الفصل 2 complet + الفصل 3 ouvert (U5)')
+          print('✅ Bareme 8+8+4 = 20 sur U1 → U6 = 48 seances')
+          print('✅ Registre UNITES = 6 · espace parents multi-enfants · année 2AS bouclée (الفصل 1 + 2 + 3 complets)')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
           print('✅ Roles : allTabs() + isProf() + compte demo prof')
           print('✅ Salle en direct : flux video, chat IA, tableau 8 planches, presence 32')
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 15 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 16 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive BAC + live')
-          print('✅ PWA v2.9 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ PWA v3.0 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
