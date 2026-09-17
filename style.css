@@ -2199,3 +2199,51 @@ tr.g5-tot td{border-bottom:none;border-top:2px solid var(--b2);padding-top:11px;
   .etapes,.grille5{break-inside:avoid;border:1px solid #ccc;background:#fff}
   .et-i{background:#fff}
 }
+
+
+/* ── v3.9 · 📖 الدروس الرسمية + ✅ التمارين + chapeau de classe ── */
+.lecon.lock{opacity:.62}
+.lecon.lock:hover{opacity:.86}
+.l-tri{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.l-tri span{font-size:11.5px;color:var(--m);background:var(--nuit3);border:1px solid var(--b);
+  border-radius:10px;padding:5px 10px;line-height:1.7}
+.l-tri b{font-family:var(--ff-ar-display);font-size:11px;color:var(--or2);margin-left:5px}
+.l-prog{height:7px;background:var(--b);border-radius:99px;overflow:hidden;margin-top:9px}
+.l-prog i{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--vert2),var(--or));
+  transition:width .8s cubic-bezier(.22,1,.36,1)}
+.fchip.imp{background:rgba(255,107,125,.13);border-color:rgba(255,107,125,.4);color:var(--r)}
+.chip.ko{background:rgba(90,107,98,.16);border-color:var(--b2);color:var(--m)}
+
+/* ✅ التمارين — 4 exercices officiels */
+.exo-i{display:flex;gap:12px;align-items:center;background:var(--nuit3);border:1px solid var(--b);
+  border-radius:14px;padding:13px;margin-bottom:9px;border-right:3px solid var(--b2);
+  transition:.22s;flex-wrap:wrap}
+.exo-i:hover{border-color:var(--a);transform:translateX(-3px)}
+.exo-i.ok{border-right-color:var(--g)}
+.exo-i.ex{border-right-color:var(--am)}
+.exo-i.ko{border-right-color:var(--b2);opacity:.66}
+.exo-s{width:32px;height:32px;flex:0 0 auto;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:15px;font-weight:800;background:var(--b);color:var(--m)}
+.exo-i.ok .exo-s{background:rgba(61,220,132,.16);color:var(--g)}
+.exo-i.ex .exo-s{background:rgba(255,180,84,.16);color:var(--am)}
+.exo-b{flex:1;min-width:170px;display:flex;flex-direction:column;gap:3px}
+.exo-b b{font-family:var(--ff-ar-display);font-size:13.5px}
+.exo-b i{font-size:11.5px;color:var(--m);font-style:normal;line-height:1.7}
+.exo-de{font-family:var(--ff-de-display);font-size:11px;color:var(--a2);direction:ltr;
+  text-align:right}
+.exo-lock{font-size:10.5px;color:var(--b2)}
+.exo-n{font-family:var(--ff-de);font-size:17px;font-weight:800;color:var(--m);flex:0 0 auto;
+  min-width:52px;text-align:center}
+.exo-n.ok{color:var(--g)}.exo-n.ex{color:var(--am)}.exo-n.ko{color:var(--b2);font-size:12px}
+
+/* chapeau de classe */
+.ch-k2{font-size:11.5px;color:var(--m);margin-top:6px;line-height:1.75}
+.ch-k2 b{font-family:var(--ff-ar-display);color:var(--or2);font-size:12.5px}
+
+@media(max-width:760px){
+  .l-tri{flex-direction:column;gap:5px}
+  .exo-i{gap:9px}
+  .exo-n{min-width:44px;font-size:15px}
+}
+@media print{.lecon,.exo-i{break-inside:avoid}}
