@@ -225,7 +225,19 @@ const UNITES = [
   { n:9, de:'Leben in der Gesellschaft',    ar:'الحياة في المجتمع', icon:'🤝', cecrl:'B2',
     niveau:'3AS', seances:(window.UNITES_3AS_A ? UNITES_3AS_A[2].seances : []),
     devoir: (window.UNITES_3AS_A ? UNITES_3AS_A[2].devoir  : null),
-    duree:  (window.UNITES_3AS_A ? UNITES_3AS_A[2].duree_totale : 360) }
+    duree:  (window.UNITES_3AS_A ? UNITES_3AS_A[2].duree_totale : 360) },
+  { n:10, de:'Wissenschaft und Technologie', ar:'العلوم والتكنولوجيا', icon:'🔬', cecrl:'B2',
+    niveau:'3AS', seances:(window.UNITE10 ? UNITE10.seances : []),
+    devoir: (window.UNITE10 ? UNITE10.devoir  : null),
+    duree:  (window.UNITE10 && UNITE10.meta ? UNITE10.meta.duree_totale : 360) },
+  { n:11, de:'Wirtschaft und Arbeit',        ar:'الاقتصاد والعمل', icon:'💼', cecrl:'B2',
+    niveau:'3AS', seances:(window.UNITE11 ? UNITE11.seances : []),
+    devoir: (window.UNITE11 ? UNITE11.devoir  : null),
+    duree:  (window.UNITE11 && UNITE11.meta ? UNITE11.meta.duree_totale : 360) },
+  { n:12, de:'Umweltprobleme',               ar:'مشاكل البيئة', icon:'🌍', cecrl:'B2',
+    niveau:'3AS', seances:(window.UNITE12 ? UNITE12.seances : []),
+    devoir: (window.UNITE12 ? UNITE12.devoir  : null),
+    duree:  (window.UNITE12 && UNITE12.meta ? UNITE12.meta.duree_totale : 360) }
 ];
 
 let SEANCES = UNITES[0].seances;
