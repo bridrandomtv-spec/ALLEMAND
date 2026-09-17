@@ -127,14 +127,15 @@ for (const m of morceaux) {
     if (parties.length !== 3) {
       fails.push(`U${n} (${origine}) : devoir à ${parties.length} parties, attendu 3 (I/II/III)`);
     } else {
-      const somme = parties.reduce((a, p) => a + (Number(p.points ?? p.pts) || 0), 0);
+      const somme = parties.reduce(
+        (a, p) => a + (Number(p.points !== undefined ? p.points : p.pts) || 0), 0);
       if (somme !== 20) {
         fails.push(`U${n} (${origine}) : barème ${somme}/20 ≠ 20`);
       }
     }
   }
   /* duree_totale : app.js la lit AU PREMIER NIVEAU pour le lot 3AS */
-  const duree = src.duree_totale ?? (src.meta && src.meta.duree_totale);
+  const duree = src.duree_totale || (src.meta && src.meta.duree_totale);
   if (!duree) {
     fails.push(`U${n} (${origine}) : duree_totale introuvable (ni au 1er niveau ni sous .meta)`);
   }
