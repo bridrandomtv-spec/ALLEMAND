@@ -34,8 +34,8 @@ jobs:
         run: |
           set -e
           for f in index.html style.css auth.js bdd.js unite2.js unite3.js unite4.js \
-                   app.js modules.js live.js classe.js grammaire.js examen.js prof.js \
-                   library.js manifest.json sw.js README.md 404.html robots.txt \
+                   unite5.js app.js modules.js live.js classe.js grammaire.js examen.js \
+                   prof.js library.js manifest.json sw.js README.md 404.html robots.txt \
                    sitemap.xml .nojekyll; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
@@ -352,13 +352,12 @@ jobs:
           python - <<'PY'
           import esprima
           FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
-                      'app.js', 'modules.js', 'live.js', 'classe.js',
-                      'grammaire.js', 'examen.js', 'prof.js', 'library.js',
-                      'sw.js')
+                      'unite5.js', 'app.js', 'modules.js', 'live.js', 'classe.js',
+                      'grammaire.js', 'examen.js', 'prof.js', 'library.js', 'sw.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/14 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/15 fichiers JS valides')
           PY
 
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
@@ -368,7 +367,7 @@ jobs:
           fails = []
           def rd(p): return open(p, encoding='utf-8').read()
           app = rd('app.js'); mod = rd('modules.js')
-          u2 = rd('unite2.js'); u3 = rd('unite3.js'); u4 = rd('unite4.js')
+          u2 = rd('unite2.js'); u3 = rd('unite3.js'); u4 = rd('unite4.js'); u5 = rd('unite5.js')
           cl = rd('classe.js'); gr = rd('grammaire.js'); bdd = rd('bdd.js')
           lib = rd('library.js'); au = rd('auth.js'); sw = rd('sw.js')
           pf = rd('prof.js'); ex = rd('examen.js'); lv = rd('live.js')
@@ -386,7 +385,8 @@ jobs:
                      'get DEVOIR(){ return DEVOIR; }', 'get SEANCES(){ return SEANCES; }',
                      'function allTabs', 'function isProf', "'profboard'", "'examen'",
                      "'live'", 'window.renderLive', 'window.UNITE2', 'window.UNITE3',
-                     'window.UNITE4', 'Schule und Ausbildung', 'Alltag und Freizeit')
+                     'window.UNITE4', 'window.UNITE5', 'Schule und Ausbildung',
+                     'Alltag und Freizeit', 'Essen und Trinken')
           for k in APP_REQ:
               if k not in app:
                   fails.append('app.js : ' + k + ' absent')
@@ -401,53 +401,53 @@ jobs:
               fails.append('app.js : registre UNITES introuvable')
           else:
               n_un = len(re.findall(r'\{ n:\d+, de:', blk.group(1)))
-              if n_un != 4:
-                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 4')
+              if n_un != 5:
+                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 5')
               else:
-                  print('   registre UNITES : ' + str(n_un) + '/4 unites')
+                  print('   registre UNITES : ' + str(n_un) + '/5 unites')
           for k in ('renderSim', 'renderParents', '45 * 60', '10 * 60',
                     'DZ.loadSeances()', 'new Proxy({}'):
               if k not in mod:
                   fails.append('modules.js : ' + k + ' absent')
-          for k in ('SEANCES_U2', 'DEVOIR_U2', 'CORRIGE_U2', 'window.UNITE2', 'Possessivartikel', 'Adjektive', 'gefallen', 'Die Familie Sommer', 'Textproduktion', 'Konsolidierung', 'erreurs_frequentes'):
-              if k not in u2:
-                  fails.append('unite2.js : ' + k + ' absent')
-          if u2.count('{ n:') < 8:
-              fails.append('unite2.js : moins de 8 seances')
-          _p = re.findall(r"\{\s*id:'(I|II|III)',\s*t:", u2)
-          if len(_p) != 3:
-              fails.append('unite2.js : ' + str(len(_p)) + ' parties au lieu de 3')
-          for k in ('pts:8', 'pts:4', 'total:20'):
-              if k not in u2:
-                  fails.append('unite2.js : bareme ' + k + ' absent')
-          if u2.count('key:[') < 6:
-              fails.append('unite2.js : moins de 6 mots-cles de correction auto')
-          for k in ('SEANCES_U3', 'DEVOIR_U3', 'CORRIGE_U3', 'UNITE3_META', 'window.UNITE3', 'Schulfächer', 'Modalverben', 'Ein Tag in der Schule', 'Textproduktion', 'Konsolidierung', 'erreurs_frequentes'):
-              if k not in u3:
-                  fails.append('unite3.js : ' + k + ' absent')
-          if u3.count('{ n:') < 8:
-              fails.append('unite3.js : moins de 8 seances')
-          _p = re.findall(r"\{\s*id:'(I|II|III)',\s*t:", u3)
-          if len(_p) != 3:
-              fails.append('unite3.js : ' + str(len(_p)) + ' parties au lieu de 3')
-          for k in ('pts:8', 'pts:4', 'total:20'):
-              if k not in u3:
-                  fails.append('unite3.js : bareme ' + k + ' absent')
-          if u3.count('key:[') < 6:
-              fails.append('unite3.js : moins de 6 mots-cles de correction auto')
-          for k in ('SEANCES_U4', 'DEVOIR_U4', 'CORRIGE_U4', 'UNITE4_META', 'window.UNITE4', 'Tagesablauf', 'Satzklammer', 'Präpositionen mit Dativ', 'Verabredungen', 'Wollen wir', 'Lass uns', 'Ein Tag aus meinem Leben', 'Textproduktion', 'Konsolidierung', 'erreurs_frequentes'):
-              if k not in u4:
-                  fails.append('unite4.js : ' + k + ' absent')
-          if u4.count('{ n:') < 8:
-              fails.append('unite4.js : moins de 8 seances')
-          _p = re.findall(r"\{\s*id:'(I|II|III)',\s*t:", u4)
-          if len(_p) != 3:
-              fails.append('unite4.js : ' + str(len(_p)) + ' parties au lieu de 3')
-          for k in ('pts:8', 'pts:4', 'total:20'):
-              if k not in u4:
-                  fails.append('unite4.js : bareme ' + k + ' absent')
-          if u4.count('key:[') < 6:
-              fails.append('unite4.js : moins de 6 mots-cles de correction auto')
+          UNITES = {
+              'unite2.js': (u2, ['SEANCES_U2', 'DEVOIR_U2', 'CORRIGE_U2', 'window.UNITE2',
+                                  'Possessivartikel', 'Adjektive', 'gefallen',
+                                  'Die Familie Sommer', 'Textproduktion', 'Konsolidierung',
+                                  'erreurs_frequentes']),
+              'unite3.js': (u3, ['SEANCES_U3', 'DEVOIR_U3', 'CORRIGE_U3', 'UNITE3_META',
+                                  'window.UNITE3', 'Schulfächer', 'Modalverben',
+                                  'Ein Tag in der Schule', 'Textproduktion', 'Konsolidierung',
+                                  'erreurs_frequentes']),
+              'unite4.js': (u4, ['SEANCES_U4', 'DEVOIR_U4', 'CORRIGE_U4', 'UNITE4_META',
+                                  'window.UNITE4', 'Tagesablauf', 'Satzklammer',
+                                  'Präpositionen mit Dativ', 'Verabredungen', 'Wollen wir',
+                                  'Lass uns', 'Ein Tag aus meinem Leben', 'Textproduktion',
+                                  'Konsolidierung', 'erreurs_frequentes']),
+              'unite5.js': (u5, ['SEANCES_U5', 'DEVOIR_U5', 'CORRIGE_U5', 'UNITE5_META',
+                                  'window.UNITE5', 'Lebensmittel', 'Akkusativ', 'Imperativ',
+                                  'hätte gern', 'Gesund essen', 'Textproduktion',
+                                  'Konsolidierung', 'erreurs_frequentes']),
+          }
+          for nom_u, (src_u, mots) in UNITES.items():
+              for k in mots:
+                  if k not in src_u:
+                      fails.append(nom_u + ' : ' + k + ' absent')
+              if src_u.count('{ n:') < 8:
+                  fails.append(nom_u + ' : moins de 8 seances')
+              _p = re.findall(r"\{\s*id:'(I|II|III)',\s*t:", src_u)
+              if len(_p) != 3:
+                  fails.append(nom_u + ' : ' + str(len(_p)) + ' parties au lieu de 3')
+              for k in ('pts:8', 'pts:4', 'total:20'):
+                  if k not in src_u:
+                      fails.append(nom_u + ' : bareme ' + k + ' absent')
+              if src_u.count('key:[') < 6:
+                  fails.append(nom_u + ' : moins de 6 mots-cles de correction auto')
+              if src_u.count('~~') < 16:
+                  fails.append(nom_u + ' : ' + str(src_u.count('~~') // 2)
+                               + ' erreurs frequentes < 8 (standard du projet)')
+              print('✅ ' + nom_u + ' : ' + str(src_u.count('{ n:')) + ' seances · '
+                    + str(len(_p)) + ' parties · bareme /20 · '
+                    + str(src_u.count('~~') // 2) + ' erreurs frequentes')
           EX_REQ = ('PRET = 10', 'CONS = 7', 'BAR = { I:8, II:8, III:4 }',
                     'function corriger', 'function vueAnnees', 'function vueSujets',
                     'function vueEpreuve', 'function vueResultat', 'function readiness',
@@ -508,8 +508,8 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v2.7.0',
-                    './unite2.js', './unite3.js', './unite4.js', './live.js',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v2.8.0',
+                    './unite2.js', './unite3.js', './unite4.js', './unite5.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './prof.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
                     './assets/bdd/live.json'):
@@ -545,14 +545,14 @@ jobs:
                   fails.append('index.html : ' + ident + ' absent')
           HTML_REQ = ('Freie Universität Berlin', 'منهجية الأستاذ',
                       'البرنامج الرسمي', 'Dichter und Denker',
-                      'Schule und Ausbildung', 'Alltag und Freizeit', 'جامعة الجزائر')
+                      'Schule und Ausbildung', 'Alltag und Freizeit', 'Essen und Trinken', 'جامعة الجزائر')
           for txt in HTML_REQ:
               if txt not in html:
                   fails.append('index.html : contenu ' + txt + ' absent')
           ordre = re.findall(r'<script src="([^"]+)"', html)
           attendu = ['auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
-                     'app.js', 'modules.js', 'live.js', 'classe.js', 'grammaire.js',
-                     'examen.js', 'prof.js', 'library.js']
+                     'unite5.js', 'app.js', 'modules.js', 'live.js', 'classe.js',
+                     'grammaire.js', 'examen.js', 'prof.js', 'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -572,17 +572,17 @@ jobs:
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 13 vues · 12 onglets statiques + 1 dynamique (profboard)')
-          print('✅ Bareme 8+8+4 = 20 sur U1 · U2 · U3 · U4 = 32 seances')
-          print('✅ Registre UNITES = 4 · الفصل الثاني complet (U3 + U4)')
+          print('✅ Bareme 8+8+4 = 20 sur U1 → U5 = 40 seances')
+          print('✅ Registre UNITES = 5 · الفصل 2 complet + الفصل 3 ouvert (U5)')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
           print('✅ Roles : allTabs() + isProf() + compte demo prof')
           print('✅ Salle en direct : flux video, chat IA, tableau 8 planches, presence 32')
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 13 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 14 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive BAC + live')
-          print('✅ PWA v2.7 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ PWA v2.8 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
