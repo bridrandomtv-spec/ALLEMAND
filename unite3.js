@@ -372,7 +372,9 @@ const CORRIGE_U3 = {
     '~~halb neun = 9:30~~ → <b>halb neun = 8:30</b> ! Erreur n°1 des candidats algériens.',
     '~~Ich gehe in der Schule~~ (mouvement) → <b>in die Schule</b> (Akkusativ).',
     '~~am Montag habe ich Deutsch in Montag~~ → une seule préposition : <b>am Montag</b>.',
-    '~~das Faches~~ → pluriel avec umlaut : <b>die Fächer</b>.'
+    '~~das Faches~~ → pluriel avec umlaut : <b>die Fächer</b>.',
+    '~~Am Montag ich habe Deutsch~~ → le verbe reste en position 2 : <span class="de-in">Am Montag <b>habe ich</b> Deutsch</span> (inversion !)',
+    '~~Ich habe keine Zeit nicht~~ → double négation interdite : <span class="de-in">Ich habe <b>keine</b> Zeit</span>.'
   ]
 };
 
