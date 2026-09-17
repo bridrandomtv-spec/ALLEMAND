@@ -114,20 +114,45 @@ const SEANCES_U1 = [
          + 'Am Abend sage ich: «Gute Nacht!»</p><p>Tschüs!</p></div></div>',
     exos:[{type:'texte',q:'✍️ اكتب فقرتك هنا (سيصححها الأستاذ الافتراضي):',ph:'Hallo! Ich heiße …'}]},
 
-  { n:7, de:'Konsolidierung + Selbstevaluation', ar:'تثبيت وتقويم ذاتي', dur:60,
-    obj:['مراجعة شاملة','التقويم الذاتي','التصحيح الجماعي'],
-    exos:[{q:'«Wie ___ du?» — «Ich heiße Sara.»',opts:['heißt','heiße','heißen','bist'],a:0,
-           why:'<span class="de-in">du</span> → <b>heißt</b>.'},
-          {q:'Choisis la traduction de «أنا من الجزائر» :',
-           opts:['Ich wohne in Algerien.','Ich bin aus Algerien.','Ich habe Algerien.','Ich komme Algerien.'],a:1,
-           why:'<span class="de-in">Ich bin aus …</span> / <span class="de-in">Ich komme <b>aus</b> …</span> — الـ aus إجبارية.'},
-          {q:'«Guten Morgen!» se dit :',opts:['مساء الخير','صباح الخير','تصبح على خير','إلى اللقاء'],a:1,
-           why:'<span class="de-in">Guten Morgen</span> = صباح الخير.'},
-          {q:'«ihr ___» (haben)',opts:['habe','hast','hat','habt'],a:3,why:'<span class="de-in">ihr</span> → <b>habt</b>.'},
-          {q:'Complète : «Das ___ meine Mutter.»',opts:['bin','ist','sind','hast'],a:1,
-           why:'<span class="de-in">das</span> (3e pers. sg.) → <b>ist</b>.'}]},
+    { n:7, de:'Hôpital des erreurs', ar:'مستشفى الأخطاء 🏥 — شخّص وصحّح', dur:60,
+    obj:['تشخيص الأخطاء الشائعة في الوحدة 1','تصحيحها مع التعليل بالقاعدة',
+         'التقويم الذاتي قبل فرض الوحدة'],
+    consigne:'<div class="exo"><div class="q-t"><b>🏥 مستشفى الأخطاء :</b> كل جملة下面 مريضة. '
+           + 'شخّص المرض ثم اكتب الجملة الصحيحة. <b>10 مرضى</b> — النجاح من 8 فما فوق.</div></div>',
+    exos:[{q:'🏥 «Ich bist 16 Jahre alt.» — quel est le mal ?',
+           opts:['bist → bin','Ich → ich','16 → sechzehn','alt → alte'],a:0,
+           why:'<span class="de-in">ich <b>bin</b></span> — sein est irrégulier à la 1ʳᵉ personne.'},
+          {q:'🏥 «Ich habe 16 Jahre alt.» — quel est le mal ?',
+           opts:['habe → bin','16 → sechzehn','Jahre → Jahr','alt → alten'],a:0,
+           why:'L’âge se dit avec <b>sein</b>, jamais avec haben : '
+             + '<span class="de-in">Ich <b>bin</b> 16 Jahre alt.</span>'},
+          {q:'🏥 «Ich komme Algerien.» — que manque-t-il ?',
+           opts:['aus','in','von','zu'],a:0,
+           why:'<span class="de-in">kommen <b>aus</b> + pays</span> — la préposition est obligatoire.'},
+          {q:'🏥 «Wo wohnst du?» → «Ich wohne München.» — quel est le mal ?',
+           opts:['il manque « in »','München → Munchen','wohne → wohnst','du → Sie'],a:0,
+           why:'Avec une ville : <span class="de-in">Ich wohne <b>in</b> München.</span>'},
+          {q:'🏥 «Wie alt bist du?» → «Ich bin sechzehn Jahre.» — que manque-t-il ?',
+           opts:['alt','alt sein','Jahre alt','sehr'],a:2,
+           why:'L’expression complète est <span class="de-in">Jahre <b>alt</b></span>.'},
+          {q:'🏥 «du hast» conjugué à «ihr» :',opts:['habt','hast','hat','habe'],a:0,
+           why:'<span class="de-in">ihr <b>habt</b></span> — le b disparaît à la 2ᵉ du singulier '
+             + '(<b>hast</b>) et à la 3ᵉ (<b>hat</b>), pas au pluriel.'},
+          {q:'🏥 «Guten Morgen!» s’emploie :',
+           opts:['le matin, jusqu’à 10 h','l’après-midi','le soir','avant de dormir'],a:0,
+           why:'<span class="de-in">Guten Morgen</span> le matin · <b>Guten Tag</b> la journée · '
+             + '<b>Guten Abend</b> le soir · <b>Gute Nacht</b> avant de dormir.'},
+          {q:'🏥 «Auf Wiedersehen!» est :',
+           opts:['formel','familier','une salutation du matin','une question'],a:0,
+           why:'<span class="de-in">Auf Wiedersehen</span> = formel · <b>Tschüs</b> = familier.'},
+          {q:'🏥 «Woher kommst du?» demande :',
+           opts:['l’origine','la ville actuelle','l’âge','le nom'],a:0,
+           why:'<b>Woher</b> = d’où (origine). <b>Wo</b> = où (position). <b>Wohin</b> = vers où.'},
+          {q:'🏥 «Ich heiße Sara.» — la question correspondante est :',
+           opts:['Wie heißt du?','Wo wohnst du?','Wie alt bist du?','Woher kommst du?'],a:0,
+           why:'<span class="de-in"><b>Wie heißt du?</b></span> appelle <b>Ich heiße …</b>'}]},
 
-  { n:8, de:'Évaluation de l’unité 📝', ar:'فرض الوحدة', dur:45,
+{ n:8, de:'Évaluation de l’unité 📝', ar:'فرض الوحدة', dur:45,
     obj:['اختبار كتابي /20','45 دقيقة','تصحيح نموذجي'], ex:'devoir'}
 ];
 
@@ -697,21 +722,69 @@ function renderSeances(){
    5 étapes chronométrées : [5, 15, 15, 15, 10] = 60 minutes
    Validé par le test T5 : « Séances 60' + grille /5 + devoir /20 »
    ══════════════════════════════════════════════════════════════════════ */
-const ETAPES_SEANCE = [
-  { m:5,  ar:'إحماء وتذكير',        de:'Wiedereinstieg',              i:'🔔' },
-  { m:15, ar:'المفردات',            de:'Wortschatz',                  i:'🔑' },
-  { m:15, ar:'القواعد',             de:'Grammatik',                   i:'📘' },
-  { m:15, ar:'التطبيق والتمارين',    de:'Anwendung und Übung',         i:'✏️' },
-  { m:10, ar:'خلاصة وواجب منزلي',   de:'Zusammenfassung + Hausaufgabe', i:'🏁' }
-];
+/* ══════════════════════════════════════════════════════════════════════
+   RYTHMES OFFICIELS DES SÉANCES — test T5 de la maquette du professeur
+     sum([5, 15, 15, 15, 10])     == 60   · 5 étapes · séance type
+     sum([5, 5, 10, 15, 10, 10, 5]) == 60 · 7 étapes · compréhension de texte
+     sum([5, 10, 20, 10, 10, 5])  == 60   · 6 étapes · production écrite
+   Le rythme est choisi par TYPE de séance, puis mis à l'échelle si la
+   durée réelle diffère de 60 minutes (45 min, 90 min…).
+   ══════════════════════════════════════════════════════════════════════ */
+const ETAPES_PAR_TYPE = {
+  /* Rythme par défaut — vocabulaire + grammaire + application */
+  defaut: [
+    { m:5,  ar:'إحماء وتذكير',       de:'Wiedereinstieg',                i:'🔔' },
+    { m:15, ar:'المفردات',           de:'Wortschatz',                    i:'🔑' },
+    { m:15, ar:'القواعد',            de:'Grammatik',                     i:'📘' },
+    { m:15, ar:'التطبيق والتمارين',   de:'Anwendung und Übung',           i:'✏️' },
+    { m:10, ar:'خلاصة وواجب منزلي',  de:'Zusammenfassung + Hausaufgabe', i:'🏁' }
+  ],
+  /* Rythme compréhension de texte — double lecture guidée (7 étapes) */
+  lecture: [
+    { m:5,  ar:'إحماء ومقدمة للنص',        de:'Wiedereinstieg + Einstieg ins Thema', i:'🔔' },
+    { m:5,  ar:'المفردات الصعبة',          de:'Schlüsselwörter',                     i:'🔑' },
+    { m:10, ar:'القراءة الأولى (صامتة)',    de:'Erstes Lesen (still)',                i:'📖' },
+    { m:15, ar:'القراءة الثانية + الأسئلة', de:'Zweites Lesen + Fragen',              i:'📖' },
+    { m:10, ar:'صحيح / خطأ',               de:'Richtig oder Falsch',                 i:'✏️' },
+    { m:10, ar:'التصحيح المعلَّل',          de:'Begründete Korrektur',                i:'✅' },
+    { m:5,  ar:'خلاصة',                    de:'Zusammenfassung',                     i:'🏁' }
+  ],
+  /* Rythme production écrite — 20 minutes de rédaction (6 étapes) */
+  ecriture: [
+    { m:5,  ar:'إحماء + تذكير بالنموذج',   de:'Wiedereinstieg + Modell',             i:'🔔' },
+    { m:10, ar:'تحليل المطلوب',            de:'Aufgabenanalyse',                     i:'📋' },
+    { m:20, ar:'الكتابة',                  de:'Schreiben',                           i:'✍️' },
+    { m:10, ar:'مراجعة متبادلة',           de:'Gegenseitige Korrektur',              i:'🔍' },
+    { m:10, ar:'التنقيط بالشبكة /5',       de:'Bewertung mit dem Raster (/5)',       i:'📊' },
+    { m:5,  ar:'النموذج الرسمي + خلاصة',   de:'Modellösung + Zusammenfassung',       i:'🏁' }
+  ]
+};
+
+/* Compatibilité : ETAPES_SEANCE désigne le rythme par défaut. */
+const ETAPES_SEANCE = ETAPES_PAR_TYPE.defaut;
 const ETAPES_TOTAL = ETAPES_SEANCE.reduce(function(a, e){ return a + e.m; }, 0);   /* 60 */
 
-/* Barème proportionnel pour les séances plus courtes (45 min, 90 min…). */
-function etapesPour(dur){
-  const d = Number(dur) || ETAPES_TOTAL;
-  if(d === ETAPES_TOTAL) return ETAPES_SEANCE;
-  return ETAPES_SEANCE.map(function(e){
-    return { m: Math.max(3, Math.round(e.m * d / ETAPES_TOTAL)),
+/* Détermine le rythme d'après le type de la séance (surchargeable via s.rythme). */
+function typeSeance(s){
+  if(!s) return 'defaut';
+  if(s.rythme && ETAPES_PAR_TYPE[s.rythme]) return s.rythme;
+  const t = String(s.de || '') + ' ' + String(s.ar || '');
+  if(/Textproduktion|إنتاج كتابي|Schreiben|expression écrite/i.test(t)) return 'ecriture';
+  if(/Textverständnis|فهم نص|Leseverstehen|Lecture|قراءة/i.test(t)) return 'lecture';
+  return 'defaut';
+}
+
+/* Barème proportionnel pour les séances qui ne durent pas 60 minutes.
+   Accepte soit l'objet séance, soit une durée brute (rétro-compatibilité). */
+function etapesPour(s){
+  const seance = (s && typeof s === 'object') ? s : { dur: s };
+  const cle = typeSeance(seance);
+  const base = ETAPES_PAR_TYPE[cle] || ETAPES_PAR_TYPE.defaut;
+  const total = base.reduce(function(a, e){ return a + e.m; }, 0);
+  const d = Number(seance.dur) || total;
+  if(d === total) return base;
+  return base.map(function(e){
+    return { m: Math.max(3, Math.round(e.m * d / total)),
              ar: e.ar, de: e.de, i: e.i };
   });
 }
@@ -743,12 +816,16 @@ function grillePour(s){
 
 /* Ligne de temps des 5 étapes, insérée en tête de chaque séance. */
 function renderEtapes(s){
-  const et = etapesPour(s && s.dur);
+  const et = etapesPour(s);
+  const tyc = typeSeance(s);
+  const LIB = { defaut:'rythme standard', lecture:'rythme lecture guidée',
+                ecriture:'rythme production écrite' };
   const tot = et.reduce(function(a, e){ return a + e.m; }, 0);
   let cum = 0;
   return '<div class="etapes">'
     + '<div class="et-h"><b>⏱️ déroulé de la séance</b>'
-    + '<span>' + et.length + ' étapes · ' + tot + ' min</span></div>'
+    + '<span>' + et.length + ' étapes · ' + tot + ' min · '
+      + esc(LIB[tyc] || tyc) + '</span></div>'
     + '<div class="et-bar">' + et.map(function(e){
         cum += e.m;
         return '<i style="flex:' + e.m + '" title="' + esc(e.de) + ' — ' + e.m + ' min"></i>';
