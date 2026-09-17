@@ -1055,11 +1055,11 @@ jobs:
                       'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                       'stats.js', 'quiz.js', 'projet.js', 'reservation.js', 'journee.js',
-                      'prof.js', 'parents.js', 'library.js', 'sw.js')
+                      'prof.js', 'parents.js', 'library.js', 'sw.js', 'assets/matching_v2.patch.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/31 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/32 fichiers JS valides')
           PY
 
       - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
@@ -1581,7 +1581,7 @@ jobs:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
           for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.10.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
-                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './matching_v2.patch.js', './reservation.js', './journee.js', './prof.js', './parents.js',
+                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
                     './assets/bdd/live.json', './assets/bdd/parents.json', './assets/bdd/devoirs_officiels.json', './assets/bdd/wilayas_geo.json', './assets/bdd/plan_projet.json', './assets/bdd/reservation.json'):
               if k not in sw:
@@ -1630,7 +1630,8 @@ jobs:
                      'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                      'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'projet.js',
-                     'journee.js', 'reservation.js', 'library.js']
+                     'journee.js', 'reservation.js', 'assets/matching_v2.patch.js',
+                     'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -1794,7 +1795,7 @@ jobs:
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 30 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 31 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           # Totaux CALCULÉS depuis les JSON — jamais de littéral dans un rapport.
           gm2 = json.load(open('assets/bdd/grammaire.json', encoding='utf-8'))
