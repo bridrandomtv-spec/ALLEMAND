@@ -1391,9 +1391,9 @@ jobs:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
           for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.7.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
-                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './prof.js', './parents.js',
+                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './reservation.js', './journee.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
-                    './assets/bdd/live.json', './assets/bdd/parents.json', './assets/bdd/devoirs_officiels.json', './assets/bdd/wilayas_geo.json', './assets/bdd/plan_projet.json'):
+                    './assets/bdd/live.json', './assets/bdd/parents.json', './assets/bdd/devoirs_officiels.json', './assets/bdd/wilayas_geo.json', './assets/bdd/plan_projet.json', './assets/bdd/reservation.json'):
               if k not in sw:
                   fails.append('sw.js : ' + k + ' absent')
           if man.get('dir') != 'rtl':
@@ -1420,7 +1420,7 @@ jobs:
           ID_REQ = ('id="gate"', 'id="shell"', 'id="profBody"', 'id="examBody"',
                     'id="liveBody"', 'id="classeBody"', 'id="gramBody"',
                     'id="biblioBody"', 'id="seancesHead"', 'id="devoirTitle"',
-                    'id="miniProf"', 'id="officielsBody"', 'id="statsBody"', 'id="quizBody"', 'id="projetBody"', 'id="todayBody"', 'id="cvBody"', 'id="apercuBody"')
+                    'id="miniProf"', 'id="officielsBody"', 'id="statsBody"', 'id="quizBody"', 'id="projetBody"', 'id="reservationBody"', 'id="todayBody"', 'id="cvBody"', 'id="apercuBody"')
           for ident in ID_REQ:
               if ident not in html:
                   fails.append('index.html : ' + ident + ' absent')
@@ -1437,7 +1437,7 @@ jobs:
                      'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                      'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'projet.js',
-                     'reservation.js', 'journee.js', 'library.js']
+                     'journee.js', 'reservation.js', 'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
