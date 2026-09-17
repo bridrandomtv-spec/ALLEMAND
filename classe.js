@@ -12,6 +12,10 @@
       c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   const K_MSG = 'dz_de_msg_lus_v1';
+  /* Un champ de leçon peut être un TABLEAU (format historique) ou une CHAÎNE
+     (format de la maquette officielle : « المفردات: أفراد الأسرة »). `liste()` normalise
+     les deux — sans lui, `.map` sur une chaîne vide l'onglet 📖 الدروس. */
+  const liste = v => Array.isArray(v) ? v : (v ? [v] : []);
   let D = null;
   let onglet = 'apercu';
 
@@ -60,17 +64,31 @@
     const p = D.prochaine || {};
     return '<div class="card classe-hero">' +
       '<div class="ch-l">' +
-        '<div class="ch-badge">🇩🇿 ' + esc(D._meta.etablissement) + ' · ' + esc(D._meta.annee_scolaire) + '</div>' +
+        '<div class="ch-badge">🇩🇿 ' +
+          esc((D.chapeau || {}).etablissement || D._meta.etablissement) + ' · ' +
+          esc(D._meta.annee_scolaire) + '</div>' +
         '<h2>قسم ' + esc(sec.ar) + ' <span class="pill">' + sec.eleves + ' تلميذ</span></h2>' +
-        '<div class="ch-sub">' + esc(sec.filiere) + ' · ' + esc(sec.niveau) +
+        '<div class="ch-sub">' + esc((D.chapeau || {}).filiere || sec.filiere) +
+          ' · ' + esc(sec.niveau) +
           ' · ' + esc(sec.salle) + ' · الأستاذ الرئيسي : <b>' + esc(sec.prof_principal) + '</b></div>' +
       '</div>' +
       '<div class="ch-r">' +
         '<div class="ch-next">' +
-          '<div class="ch-k">🕐 الحصة القادمة</div>' +
+          '<div class="ch-k">🕐 ' +
+            esc((D.chapeau || {}).prochaine_titre || 'الحصة القادمة') + '</div>' +
           '<div class="ch-v de-display">' + esc(p.lecon || '—') + '</div>' +
           '<div class="ch-m">' + esc(p.date || '') + ' · ' + esc(p.heure || '') +
-            ' · ' + (p.duree || 0) + ' د · ' + esc(p.salle || '') + '</div>' +
+            ' · ' + (p.duree || 0) + ' د · ' + esc(p.salle || '') +
+            ((D.chapeau || {}).duree_restante
+              ? ' · ⏳ المدة المتبقية : <b>' + esc(D.chapeau.duree_restante) + '</b>'
+              : '') + '</div>' +
+          '<div class="ch-k2">👥 ' +
+            esc((D.chapeau || {}).presents_titre || 'التلاميذ الحاضرون') + ' : <b>' +
+            esc((D.chapeau || {}).presents_valeur || (sec.eleves + ' تلميذ')) +
+            '</b></div>' +
+          ((D.chapeau || {}).prof_complement
+            ? '<div class="ch-k2">🤖 ' + esc((D.chapeau || {}).prof_titre || 'الأستاذ') +
+              ' — ' + esc(D.chapeau.prof_complement) + '</div>' : '') +
           '<span class="live-pill' + (p.statut === 'en_cours' ? ' on' : '') + '">' +
             '<i></i> ' + (p.statut === 'en_cours' ? 'جارية الآن' : 'مجدولة') + '</span>' +
         '</div>' +
@@ -155,25 +173,72 @@
   }
 
   function vueLecons(){
-    let h = '<div class="card"><h2>📖 الدروس — Lektionen</h2>';
+    let h = '<div class="card"><h2>📖 الدروس — Lektionen</h2>'
+      + '<div class="ch-sub" style="margin:-6px 0 14px">كل درس مُعدّ بعناية من '
+      + 'الأستاذ خريف أحمد · السنة الثانية ثانوي — منهاج ٢٠٢٦/٢٠٢٧</div>';
     h += (D.lecons || []).map(l => {
       const st = l.statut;
-      const lbl = st === 'termine' ? ['✅ مكتمل','ok'] : st === 'en_cours' ? ['🔴 جاري','ex'] : ['🔒 قادم',''];
-      return '<div class="lecon" data-lecon="' + l.n + '">' +
+      const prog = Number(l.progression) || 0;
+      const lbl = st === 'termine'    ? ['✅ مكتمل', 'ok']
+                : st === 'en_cours'   ? ['▶ جاري' + (prog ? ' - ' + prog + '%' : ''), 'ex']
+                : st === 'verrouille' ? ['🔒 مقفل', 'ko']
+                :                       ['🔒 قادم', ''];
+      const gram = liste(l.grammaire);
+      const tri = (l.vocabulaire || gram.length || l.activite)
+        ? '<div class="l-tri">'
+          + (l.vocabulaire ? '<span><b>المفردات</b> ' + esc(liste(l.vocabulaire).join(' · ')) + '</span>' : '')
+          + (gram.length   ? '<span><b>القواعد</b> '  + esc(gram.join(' · ')) + '</span>' : '')
+          + (l.activite    ? '<span><b>النشاط</b> '   + esc(liste(l.activite).join(' · ')) + '</span>' : '')
+          + '</div>'
+        : '';
+      return '<div class="lecon' + (st === 'verrouille' ? ' lock' : '') + '"'
+        + ' data-lecon="' + l.n + '">' +
         '<div class="l-num' + (st === 'termine' ? ' done' : '') + '">' + l.n + '</div>' +
-        '<div class="l-b"><div class="l-t de-display">Lektion ' + l.n + ' — ' + esc(l.de) + '</div>' +
+        '<div class="l-b"><div class="l-t de-display">Lektion ' + l.n + ' — ' + esc(l.de) +
+          (l.important ? ' <span class="fchip imp">❗ ' + esc(l.important) + '</span>' : '') + '</div>' +
         '<div class="l-ar">' + esc(l.ar) + ' · ⏱️ ' + l.duree + ' د · ' + esc(l.date) +
           (l.heure ? ' · ' + esc(l.heure) : '') + '</div>' +
-        '<div class="l-p">' + esc(l.prof) + '</div>' +
+        '<div class="l-p">' + esc(l.prof) + '</div>' + tri +
+        (prog ? '<div class="l-prog"><i style="width:' + prog + '%"></i></div>' : '') +
         '<div class="chips" style="margin-top:7px">' +
-          (l.grammaire || []).map(g => '<span class="fchip on">' + esc(g) + '</span>').join('') +
+          gram.map(g => '<span class="fchip on">' + esc(g) + '</span>').join('') +
         '</div></div>' +
         '<span class="chip ' + lbl[1] + '">' + lbl[0] + '</span></div>';
     }).join('');
     h += '</div>';
+    h += vueExercices();
     return h;
   }
 
+  /* ✅ التمارين — les 4 exercices officiels de la maquette (10/10 · 8/10 · جاري · 🔒 مقفل) */
+  function vueExercices(){
+    const ex = D.exercices;
+    if(!ex || !(ex.items || []).length) return '';
+    const finis = ex.items.filter(e => e.statut === 'termine');
+    const pts = finis.reduce((a, e) => a + (Number(e.note) || 0), 0);
+    const mx = finis.reduce((a, e) => a + (Number(e.max) || 0), 0);
+    return '<div class="card"><h2>' + esc(ex.titre || '✅ التمارين') + '</h2>'
+      + '<div class="ch-sub" style="margin:-6px 0 14px">' + esc(ex.sous_titre || '')
+      + (mx ? ' · acquis : <b>' + pts + '/' + mx + '</b>' : '') + '</div>'
+      + '<div class="exos-list">' + ex.items.map(e => {
+          const cls = e.statut === 'termine' ? 'ok'
+                    : e.statut === 'en_cours' ? 'ex'
+                    : e.statut === 'verrouille' ? 'ko' : '';
+          return '<div class="exo-i ' + cls + '">'
+            + '<span class="exo-s">' + esc(e.icone || '•') + '</span>'
+            + '<div class="exo-b"><b>' + esc(e.titre) + '</b>'
+            + '<i>' + esc(e.consigne) + '</i>'
+            + (e.de ? '<span class="exo-de de-display">' + esc(e.de) + '</span>' : '')
+            + (e.deblocage ? '<span class="exo-lock">🔒 ' + esc(e.deblocage) + '</span>' : '')
+            + '</div>'
+            + '<span class="exo-n ' + cls + '">' + esc(e.score) + '</span>'
+            + (e.statut === 'verrouille' ? ''
+              : '<button class="btn btn-o btn-sm" data-go="quiz">▶</button>')
+            + '</div>';
+        }).join('') + '</div>'
+      + '<div class="privacy" style="margin-top:12px">🎯 « ▶ » ouvre le module '
+      + '<b>تمارين</b> — 30 questions · 6 unités · correction immédiate.</div></div>';
+  }
   function vuePresence(){
     const t = tauxPresence();
     let h = '<div class="card"><h2>✅ سجلّ الحضور</h2>' +
@@ -354,13 +419,13 @@
         '</div>' +
         '<div style="margin-bottom:13px"><b>🎯 الأهداف</b>' +
           '<ul style="margin:8px 22px;font-size:13.5px;color:var(--m)">' +
-          (l.objectifs || []).map(o => '<li>' + esc(o) + '</li>').join('') + '</ul></div>' +
+          liste(l.objectifs).map(o => '<li>' + esc(o) + '</li>').join('') + '</ul></div>' +
         '<div style="margin-bottom:13px"><b>🔑 المفردات — Wortschatz</b><div class="lex" style="margin-top:9px">' +
-          (l.vocabulaire || []).map(v => '<div class="lex-i"><div><div class="lex-de">' + esc(v[0]) +
+          liste(l.vocabulaire).map(v => '<div class="lex-i"><div><div class="lex-de">' + esc(v[0]) +
             '</div><div class="lex-ar">' + esc(v[1]) + '</div></div>' +
             '<button class="speak" data-speak="' + esc(v[0]) + '">🔊</button></div>').join('') + '</div></div>' +
         '<div><b>📘 القواعد المرتبطة</b><div class="chips" style="margin-top:8px">' +
-          (l.grammaire || []).map(g => '<span class="fchip on">' + esc(g) + '</span>').join('') + '</div></div>' +
+          liste(l.grammaire).map(g => '<span class="fchip on">' + esc(g) + '</span>').join('') + '</div></div>' +
         '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:16px">' +
           '<button class="btn btn-o btn-block" data-go="grammaire">📘 افتح مكتبة القواعد</button>' +
           '<button class="btn btn-g btn-block" data-go="seances">📚 الحصص التفاعلية</button>' +
