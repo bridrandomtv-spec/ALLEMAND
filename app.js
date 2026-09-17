@@ -449,12 +449,21 @@ const PROF = {
     return null;
   },
 
+  /* Une phrase allemande DÉCLARATIVE (sujet + verbe, pas de point d'interrogation)
+     est une copie à corriger — pas une demande de leçon. Sans cette règle,
+     « Ich bist 16 Jahre alt. » tombait sur la leçon d'âge (mot-clé « jahre alt »)
+     au lieu d'être corrigée. */
+  estCopie(s){
+    const t = String(s || '').trim();
+    if(/[\u0600-\u06FF]/.test(t)) return false;              /* contient de l'arabe */
+    if(/[?؟]\s*$/.test(t)) return false;                     /* question */
+    return /^(ich|du|er|sie|es|wir|ihr|man|mein|meine|mein|der|die|das|am|um|heute|morgen)\b/i.test(t);
+  },
+
   /* Ordre de résolution — corrige l'ancien bug où corriger() court-circuitait
      TOUTE la base de connaissances dès qu'un caractère latin apparaissait. */
   repondre(txt){
     const s = String(txt || '');
-    const low = s.toLowerCase();
-    const arabe = /[\u0600-\u06FF]/.test(s);
 
     /* 1) Demande explicite de correction : «صحّح : …» / «corrige …» */
     if(/^\s*(صحّ?ح(ي|لي)?|corrige[rz]?\b|verifie[rz]?\b)/i.test(s)){
@@ -463,17 +472,23 @@ const PROF = {
       if(c) return c.msg;
     }
 
-    /* 2) Sujet de cours demandé (explication, règle, texte, méthode…) */
-    const it = PROF.trouver(s);
-    if(it) return it.r[Math.floor(Math.random() * it.r.length)];
-
-    /* 3) Aucune leçon reconnue ET phrase en allemand pur → on la corrige */
-    if(!arabe){
+    /* 2) Copie allemande déclarative → correction prioritaire */
+    if(PROF.estCopie(s)){
       const c = PROF.corriger(s);
       if(c) return c.msg;
     }
 
-    /* 4) Repli */
+    /* 3) Sujet de cours demandé (explication, règle, texte, méthode…) */
+    const it = PROF.trouver(s);
+    if(it) return it.r[Math.floor(Math.random() * it.r.length)];
+
+    /* 4) Latin pur sans sujet déclaré → on tente quand même la correction */
+    if(!/[\u0600-\u06FF]/.test(s)){
+      const c = PROF.corriger(s);
+      if(c) return c.msg;
+    }
+
+    /* 5) Repli */
     return PROF.fallback[Math.floor(Math.random() * PROF.fallback.length)];
   }
 };
