@@ -429,7 +429,7 @@ jobs:
           som = sum(x['note'] * (x['coef'] or 1) for x in enf[0]['examens'])
           cof = sum((x['coef'] or 1) for x in enf[0]['examens'])
           mp = round(som / cof, 2) if cof else 0
-          print('✅ Froids officiels : 10 devoirs · 10 lycees · onglets sujet/solution · notation /20')
+          print('✅ Devoirs officiels : 10 devoirs · 10 lycees · onglets sujet/solution · notation /20')
           print('✅ Espace parents : ' + str(len(enf)) + ' enfants · '
                 + str(len(pa['prochaines_seances'])) + ' seances a venir · '
                 + str(len(pa['messages_profs'])) + ' messages · '
@@ -532,7 +532,7 @@ jobs:
               fails.append('officiels : devoir 1 != ثانوية الأمير / وهران (maquette)')
           if ds[1]['lycee'] != 'ثانوية منصور' or ds[1]['wilaya'] != 'قسنطينة':
               fails.append('officiels : devoir 2 != ثانوية منصور / قسنطينة (maquette)')
-          print('✅ Froids officiels : ' + str(len(ds)) + ' devoirs · '
+          print('✅ Devoirs officiels : ' + str(len(ds)) + ' devoirs · '
                 + str(len(do['lycees'])) + ' lycees · '
                 + str(len(set(x['code_wilaya'] for x in ds))) + ' wilayas · '
                 + str(len(set(x['unite'] for x in ds))) + ' unites · 3 trimestres')
