@@ -312,7 +312,17 @@ const CORRIGE_U2 = {
     '~~Ich habe ein Bruder~~ → <b>einen</b> Bruder (Akkusativ masculin)',
     '~~Das gefällt mich~~ → Das gefällt <b>mir</b> (Datif)',
     '~~Ich habe nicht Schwester~~ → Ich habe <b>keine</b> Schwester',
-    '~~Sein Schwester~~ → <b>Seine</b> Schwester (accord en genre)'
+    '~~Sein Schwester~~ → <b>Seine</b> Schwester (accord en genre)',
+    '~~Ich habe 16 Jahre~~ → l’âge se dit avec <b>sein</b> : Ich <b>bin</b> 16 Jahre alt.',
+    '~~die Geschwisters~~ → pluriel sans -s : <b>die Geschwister</b> '
+    + '(et c’est déjà un pluriel, jamais «der Geschwister»).',
+    '~~Mein Vatter~~ → un seul t : <b>mein Vater</b> ; attention aussi à '
+    + '<span class="de-in">die Mutter</span> (deux t) et <span class="de-in">die Tochter</span>.',
+    '~~Ich habe nicht Schwester~~ → négation d’un nom sans article : Ich habe '
+    + '<b>keine</b> Schwester.',
+    '~~Das gefällt mich~~ → <span class="de-in">gefallen</span> régit le '
+    + '<b>Datif</b> : Das gefällt <b>mir</b>.',
+    '~~die Großeltern ist~~ → pluriel : <span class="de-in">die Großeltern <b>sind</b></span>.'
   ]
 };
 
