@@ -190,7 +190,11 @@ const UNITES = [
   { n:4, de:'Alltag und Freizeit',    ar:'الحياة اليومية وأوقات الفراغ', icon:'⚽', cecrl:'A2',
     seances:(window.UNITE4 ? UNITE4.seances : []),
     devoir: (window.UNITE4 ? UNITE4.devoir  : null),
-    duree:  (window.UNITE4 && UNITE4.meta ? UNITE4.meta.duree_totale : 465) }
+    duree:  (window.UNITE4 && UNITE4.meta ? UNITE4.meta.duree_totale : 465) },
+  { n:5, de:'Essen und Trinken',      ar:'المأكل والمشرب',      icon:'🍽️', cecrl:'A2',
+    seances:(window.UNITE5 ? UNITE5.seances : []),
+    devoir: (window.UNITE5 ? UNITE5.devoir  : null),
+    duree:  (window.UNITE5 && UNITE5.meta ? UNITE5.meta.duree_totale : 465) }
 ];
 
 let SEANCES = UNITES[0].seances;
