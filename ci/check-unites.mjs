@@ -23,6 +23,7 @@ globalThis.window = globalThis;
 const FICHIERS = [
   'unite2.js', 'unite3.js', 'unite4.js', 'unite5.js', 'unite6.js',
   'unites3as_a.js', 'unite10.js', 'unite11.js', 'unite12.js',
+  'unite13.js', 'unite14.js', 'unite15.js', 'unite16.js',
 ];
 const fails = [];
 const charge = [];
@@ -56,8 +57,8 @@ if (!blk) {
 /* Découpe en entrées : chaque entrée commence par « { n:<numéro>, » */
 const morceaux = blk[1].split(/\{\s*n:/).slice(1);
 console.log(`  entrées du registre : ${morceaux.length}`);
-if (morceaux.length !== 12) {
-  fails.push(`app.js : registre UNITES = ${morceaux.length} entrées, attendu 12`);
+if (morceaux.length !== 16) {
+  fails.push(`app.js : registre UNITES = ${morceaux.length} entrées, attendu 16`);
 }
 
 /* ── 3) Résolution de chaque unité, comme le ferait le navigateur ────── */
@@ -180,7 +181,7 @@ for (const u of resolues) {
 }
 
 const vides = resolues.filter(u => u.seances === 0 || !u.devoir);
-const manquantes = 12 - resolues.length;
+const manquantes = 16 - resolues.length;
 if (manquantes > 0) {
   fails.push(`${manquantes} unité(s) du registre non résolue(s) — voir les erreurs ci-dessus`);
 }
