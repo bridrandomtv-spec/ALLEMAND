@@ -35,9 +35,10 @@ jobs:
           set -e
           for f in index.html style.css auth.js bdd.js unite2.js unite3.js unite4.js \
                    unite5.js unite6.js unites3as_a.js unite10.js unite11.js unite12.js \
-                   app.js modules.js live.js classe.js grammaire.js examen.js officiels.js \
-                   prof.js parents.js stats.js quiz.js projet.js journee.js library.js \
-                   manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyll ci/check-unites.mjs; do
+                   unite13.js unite14.js unite15.js unite16.js app.js modules.js live.js \
+                   classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
+                   journee.js prof.js parents.js library.js manifest.json sw.js README.md \
+                   404.html robots.txt sitemap.xml .nojekyll ci/check-unites.mjs; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -844,14 +845,15 @@ jobs:
           import esprima
           FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
                       'unite5.js', 'unite6.js', 'unites3as_a.js', 'unite10.js',
-                      'unite11.js', 'unite12.js', 'app.js', 'modules.js', 'live.js',
+                      'unite11.js', 'unite12.js', 'unite13.js', 'unite14.js',
+                      'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                       'stats.js', 'quiz.js', 'projet.js', 'journee.js', 'prof.js',
                       'parents.js', 'library.js', 'sw.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/26 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/30 fichiers JS valides')
           PY
 
       - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
@@ -897,7 +899,7 @@ jobs:
                                 'Persönlichkeit und Identität', 'Staatsbürgerschaft',
                      'window.UNITE4', 'window.UNITE5', 'window.UNITE6',
                      'Schule und Ausbildung', 'Alltag und Freizeit',
-                     'Essen und Trinken', 'Reisen und Verkehr')
+                     'Essen und Trinken', 'Reisen und Verkehr', 'Gesundheit und Lebensweise', 'Globalisierung', 'Medienwelt', 'Kultureller Dialog')
           for k in APP_REQ:
               if k not in app:
                   fails.append('app.js : ' + k + ' absent')
@@ -912,10 +914,10 @@ jobs:
               fails.append('app.js : registre UNITES introuvable')
           else:
               n_un = len(re.findall(r'\{ n:\d+, de:', blk.group(1)))
-              if n_un != 12:
-                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 12')
+              if n_un != 16:
+                  fails.append('app.js : registre UNITES = ' + str(n_un) + ' au lieu de 16')
               else:
-                  print('   registre UNITES : ' + str(n_un) + '/12 unites')
+                  print('   registre UNITES : ' + str(n_un) + '/16 unites')
           for k in ('renderSim', 'renderParents', '45 * 60', '10 * 60',
                     'DZ.loadSeances()', 'new Proxy({}'):
               if k not in mod:
@@ -985,12 +987,15 @@ jobs:
                 + '5 devoirs /20 · 5 grilles · ' + str(u3a.count('~~') // 2)
                 + ' erreurs frequentes · CEFR ' + '/'.join(sorted(cefrl3a)))
           print('   adaptateur window.UNITES_3AS_A → U7/U8/U9 branches sur app.js')
+          print('✅ 3AS الفصل الثالث : U13 Sante · U14 Mondialisation · U15 Medias · U16 Dialogue')
           u10 = rd('unite10.js'); u11 = rd('unite11.js'); u12 = rd('unite12.js')
-          B3 = {'unite10.js': (u10, 10), 'unite11.js': (u11, 11), 'unite12.js': (u12, 12)}
-          for nom_b, (src_b, nb) in B3.items():
+          u13 = rd('unite13.js'); u14 = rd('unite14.js')
+          u15 = rd('unite15.js'); u16 = rd('unite16.js')
+          B3 = {'unite10.js': (u10, 10, 2), 'unite11.js': (u11, 11, 2), 'unite12.js': (u12, 12, 2), 'unite13.js': (u13, 13, 3), 'unite14.js': (u14, 14, 3), 'unite15.js': (u15, 15, 3), 'unite16.js': (u16, 16, 3)}
+          for nom_b, (src_b, nb, trim_b) in B3.items():
               REQ_B = ('SEANCES_U' + str(nb), 'DEVOIR_U' + str(nb), 'CORRIGE_U' + str(nb),
                        'UNITE' + str(nb) + '_META', 'window.UNITE' + str(nb),
-                       "niveau: '3AS'", "trimestre: 2", "cecrl: 'B2'",
+                       "niveau: '3AS'", "trimestre: " + str(trim_b), "cecrl: 'B2'",
                        'Textproduktion', 'Konsolidierung', 'erreurs_frequentes',
                        'Modellösung', 'seuils')
               for k in REQ_B:
@@ -1264,8 +1269,8 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.5.1',
-                    './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './live.js',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.6.0',
+                    './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
                     './assets/bdd/live.json', './assets/bdd/parents.json', './assets/bdd/devoirs_officiels.json', './assets/bdd/wilayas_geo.json', './assets/bdd/plan_projet.json'):
@@ -1308,7 +1313,8 @@ jobs:
           ordre = re.findall(r'<script src="([^"]+)"', html)
           attendu = ['auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
                      'unite5.js', 'unite6.js', 'unites3as_a.js', 'unite10.js',
-                     'unite11.js', 'unite12.js', 'app.js', 'modules.js', 'live.js',
+                     'unite11.js', 'unite12.js', 'unite13.js', 'unite14.js',
+                     'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                      'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'projet.js',
                      'journee.js', 'library.js']
@@ -1352,8 +1358,8 @@ jobs:
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 17 vues · 16 onglets statiques + 1 dynamique (profboard)')
-          print('✅ Bareme 8+8+4 = 20 sur U1 → U12 = 84 seances (2AS + 3AS)')
-          print('✅ Registre UNITES = 12 · espace parents multi-enfants · 2AS bouclée (U1-U6) + 3AS U7-U12 (الفصل 1 et 2 complets) (الفصل 1 + 2 + 3 complets)')
+          print('✅ Bareme 8+8+4 = 20 sur U1 → U16 = 90 seances (2AS + 3AS)')
+          print('✅ Registre UNITES = 16 · espace parents multi-enfants · 2AS bouclée (U1-U6) + 3AS U7-U12 (الفصل 1 et 2 complets) (الفصل 1 + 2 + 3 complets)')
           print('✅ Garde-fou Node : 12/12 unites resolues a l execution, aucune vide')
           print('✅ Multi-unites : getters DZ.DEVOIR/SEANCES + selectUnite + stockage isole')
           print('✅ Roles : allTabs() + isProf() + compte demo prof')
@@ -1361,10 +1367,10 @@ jobs:
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 22 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 29 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           print('✅ BDD : 684 fiches + 28 regles + classe + registre + archive BAC + live')
-          print('✅ PWA v3.5 : manifest dir=rtl, 4 raccourcis, Service Worker')
+          print('✅ PWA v3.6 : manifest dir=rtl, 4 raccourcis, Service Worker')
           PY
 
   deploy:
