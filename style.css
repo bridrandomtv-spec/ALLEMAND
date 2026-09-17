@@ -1966,3 +1966,48 @@ table.hm td.hmc{font-family:var(--ff-de);font-weight:800;text-align:center;color
   .pj-p,.pj-obd,.pj-vue p,.pj-em p,.pj-rmi p,.pj-ve p{color:#333}
   .pj-pied{break-inside:avoid}
 }
+
+
+/* ── v3.5 · 🎓 السنة الثالثة ثانوي — sélecteur de niveau + cartes d'unité ── */
+.niv-sel{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px;padding:8px;
+  background:var(--p2);border:1px solid var(--b);border-radius:15px}
+.niv{flex:1;min-width:132px;padding:12px 15px;border-radius:12px;background:var(--nuit3);
+  border:1px solid var(--b);font-family:var(--ff-ar-display);font-size:13.5px;font-weight:700;
+  color:var(--m);cursor:pointer;transition:.22s;white-space:nowrap}
+.niv:hover{border-color:var(--a);color:var(--t);transform:translateY(-2px)}
+.niv.on{color:#04140c;background:linear-gradient(135deg,var(--or2),var(--or));
+  border-color:transparent;box-shadow:0 7px 20px rgba(232,182,76,.3)}
+
+/* Carte d'unité enrichie */
+.ucard{position:relative;text-align:right;padding:17px 16px 15px;overflow:hidden}
+.ucard-top{display:flex;justify-content:space-between;align-items:center;gap:9px;
+  margin-bottom:9px}
+.ucard-n{font-family:var(--ff-ar-display);font-size:15px;font-weight:700;color:var(--or2)}
+.ucard-lv{font-family:var(--ff-de);font-size:10.5px;font-weight:800;color:var(--a2);
+  background:rgba(79,140,255,.13);border:1px solid rgba(79,140,255,.34);
+  padding:3px 10px;border-radius:999px;letter-spacing:.04em}
+.ucard-lv.bac{color:var(--or2);background:rgba(232,182,76,.13);
+  border-color:rgba(232,182,76,.42)}
+.ucard-de{font-family:var(--ff-de-display);font-size:17px;direction:ltr;text-align:right;
+  color:#fff;margin-bottom:4px;line-height:1.35}
+.ucard-ar{font-family:var(--ff-ar-display);font-size:13px;color:var(--m);margin-bottom:11px}
+.ucard-bar{height:5px;border-radius:999px;background:var(--b);overflow:hidden;margin-bottom:10px}
+.ucard-bar i{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,var(--vert2),var(--or));
+  transition:width .85s cubic-bezier(.22,1,.36,1)}
+.ucard.on .ucard-bar i{background:linear-gradient(90deg,var(--or),#d19b2c)}
+.ucard.off{opacity:.58;cursor:not-allowed}
+.ucard.off:hover{transform:none;border-color:var(--b)}
+
+/* Bloc 3AS du programme officiel */
+.po-3as{margin-top:17px;padding-top:17px;border-top:2px dashed var(--b2)}
+.po-3h{font-family:var(--ff-ar-display);font-size:16px;font-weight:700;color:var(--or2);
+  margin-bottom:13px;display:flex;align-items:center;gap:9px}
+.po-3h::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--b2),transparent)}
+
+@media(max-width:860px){
+  .niv-sel{flex-direction:column}
+  .niv{min-width:0;width:100%}
+  .ucard-de{font-size:15.5px}
+}
+@media print{.niv-sel{display:none}.ucard{break-inside:avoid}}
