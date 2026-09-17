@@ -37,7 +37,7 @@ jobs:
                    unite5.js unite6.js unites3as_a.js unite10.js unite11.js unite12.js \
                    app.js modules.js live.js classe.js grammaire.js examen.js officiels.js \
                    prof.js parents.js stats.js quiz.js projet.js journee.js library.js \
-                   manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyllci/check-unites.mjs; do
+                   manifest.json sw.js README.md 404.html robots.txt sitemap.xml .nojekyll ci/check-unites.mjs; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
