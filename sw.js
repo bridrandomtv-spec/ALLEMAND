@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.10.0';
+const VERSION = 'dz-de-v3.11.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -74,10 +74,11 @@ const BDD_FILES = [
 
 /* Polices CDN (optionnel — échec toléré hors-ligne) */
 const CDN = [
-  'https://cdn.jsdelivr.net/fontsource/css/cairo@latest/arabic-400-normal.css',
-  'https://cdn.jsdelivr.net/fontsource/css/cairo@latest/arabic-700-normal.css',
-  'https://cdn.jsdelivr.net/fontsource/css/inter@latest/latin-400-normal.css',
-  'https://cdn.jsdelivr.net/fontsource/css/inter@latest/latin-700-normal.css'
+  'https://cdn.jsdelivr.net/npm/@fontsource/amiri/index.css',
+  'https://cdn.jsdelivr.net/npm/@fontsource/tajawal/index.css',
+  'https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css',
+  'https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css',
+  'https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css'
 ];
 
 /* ── INSTALLATION ── */
