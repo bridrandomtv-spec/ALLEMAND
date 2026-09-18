@@ -1644,6 +1644,8 @@ function bindGateEvents(){
     const r = AUTH.signup({
       nom:$('#suName').value, mail:$('#suMail').value, pass:$('#suPass').value,
       niveau:niv, filiere:$('#suFiliere').value,
+        filiere_ar: ($('#suFiliere') && $('#suFiliere').selectedOptions[0]) ? $('#suFiliere').selectedOptions[0].textContent : '',
+        specialite: ($('#suSpecialite') && !$('#suSpecialite').hidden && $('#suSpecialite').selectedOptions[0]) ? $('#suSpecialite').selectedOptions[0].textContent : '',
       wilaya:w[1] || 'Bouira', code_wilaya:w[0] || '10',
       role:$('#suRole').value, classe:niv + '-1'
     });
