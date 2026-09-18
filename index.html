@@ -90,6 +90,12 @@
             <select id="suSpecialite" hidden></select></label>
           <label class="fld"><span>📍 الولاية</span>
             <select id="suWilaya"></select></label>
+          <label class="fld"><span>🚻 الجنس</span>
+            <select id="suGenre">
+              <option value="">— اختياري —</option>
+              <option value="m">ذكر (طالب)</option>
+              <option value="f">أنثى (طالبة)</option>
+            </select></label>
           <label class="fld"><span>👥 الدور</span>
             <select id="suRole">
               <option value="eleve">تلميذ</option>
@@ -440,6 +446,15 @@
       <div id="reservationBody"></div>
     </section>
 
+    <!-- GUIDE / MODE D'EMPLOI -->
+    <section data-view="guide" class="view" hidden>
+      <div class="page-head">
+        <h1>📖 دليل الاستعمال</h1>
+        <p>هدف المنصة · كيفية الاستعمال حسب دورك · أول خطوات</p>
+      </div>
+      <div id="guideBody"></div>
+    </section>
+
     <!-- MATIERES -->
     <section data-view="matieres" class="view" hidden>
       <div class="page-head">
@@ -507,6 +522,7 @@
 <script src="reservation.js"></script>
 <script src="assets/matching_v2.patch.js"></script>
 <script src="matieres.js"></script>
+<script src="guide.js"></script>
 <script src="library.js"></script>
 </body>
 </html>
