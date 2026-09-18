@@ -2,6 +2,15 @@
    الثانوية الافتراضية الجزائرية — برنامج الأصل · style.css
    Design system premium · 🇩🇿 RTL (Amiri/Tajawal) + 🇩🇪 LTR (Cormorant/Inter)
    ══════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════
+   [hidden] DOIT gagner contre toute classe qui impose un display.
+   Sans cette règle, .gate{display:flex} et .modal{display:flex} (spécificité 0,1,0)
+   écrasent le [hidden] de la feuille UA (spécificité 0,0,0) : #gate reste affiché
+   après la connexion (au-dessus de #shell) et #modal vide recouvre tout d'un
+   voile semi-transparent. C'est la cause racine du « l'application ne s'ouvre pas ».
+   ══════════════════════════════════════════════════════════════════════ */
+[hidden]{display:none !important}
+
 :root{
   --vert:#006233; --vert2:#0a8a4a; --vert3:#0d3d24;
   --rouge:#d21034; --or:#e8b64c; --or2:#f5d78a;
