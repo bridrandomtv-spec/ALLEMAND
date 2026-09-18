@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.17.0';
+const VERSION = 'dz-de-v3.18.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -40,6 +40,7 @@ const PRECACHE = [
   './assets/matching_v2.patch.js',
   './reservation.js',
   './journee.js',
+  './matieres.js',
   './library.js',
   './examen.js',
   './officiels.js',
@@ -68,6 +69,7 @@ const BDD_FILES = [
   './assets/bdd/wilayas_geo.json',
   './assets/bdd/plan_projet.json',
   './assets/bdd/reservation.json',
+  './assets/bdd/matieres.json',
   './assets/bdd/journee.json',
   './assets/bdd/live.json'
 ];
