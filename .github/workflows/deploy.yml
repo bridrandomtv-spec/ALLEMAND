@@ -39,7 +39,7 @@ jobs:
                    classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
                    reservation.js journee.js prof.js parents.js library.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
-                   ci/check-unites.mjs; do
+                   ci/check-unites.mjs matieres.js; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -51,10 +51,10 @@ jobs:
                    assets/bdd/bac_archive.json assets/bdd/live.json \
                    assets/bdd/parents.json assets/bdd/devoirs_officiels.json \
                    assets/bdd/wilayas_geo.json assets/bdd/plan_projet.json \
-                   assets/bdd/journee.json assets/bdd/reservation.json; do
+                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 34 fichiers racine + 19 assets présents"
+          echo "✅ 35 fichiers racine + 20 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -1604,9 +1604,9 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.17.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.18.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
-                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './prof.js', './parents.js',
+                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './matieres.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
                     './assets/bdd/live.json', './assets/bdd/parents.json', './assets/bdd/devoirs_officiels.json', './assets/bdd/wilayas_geo.json', './assets/bdd/plan_projet.json', './assets/bdd/reservation.json'):
               if k not in sw:
@@ -1618,16 +1618,16 @@ jobs:
           if len(man.get('shortcuts', [])) < 4:
               fails.append('manifest : moins de 4 raccourcis')
           vues = re.findall(r'data-view="([a-z]+)"', html)
-          if len(vues) != 18:
-              fails.append('index.html : ' + str(len(vues)) + ' vues != 18')
+          if len(vues) != 19:
+              fails.append('index.html : ' + str(len(vues)) + ' vues != 19')
           v_app = re.findall(r"'([a-z]+)'",
                              re.search(r'const VIEWS = \[(.*?)\];', app, re.S).group(1))
           if sorted(vues) != sorted(v_app):
               fails.append('index.html/app.js : VIEWS != data-view')
           tabs = re.findall(r"\['([a-z]+)'",
                             re.search(r'const TABS\s*=\s*\[(.*?)\];', app, re.S).group(1))
-          if len(tabs) != 17:
-              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 17')
+          if len(tabs) != 18:
+              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 18')
           if 'profboard' in tabs:
               fails.append('app.js : profboard doit rester dynamique (allTabs)')
           if set(tabs) - set(vues):
@@ -1849,7 +1849,7 @@ jobs:
                       'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                       'stats.js', 'quiz.js', 'projet.js', 'reservation.js',
-                      'journee.js', 'prof.js', 'parents.js', 'library.js']
+                      'journee.js', 'matieres.js', 'prof.js', 'parents.js', 'library.js']
           consommes = set(re.findall(r'window\.([A-Za-z_$][\w$]*)', app))
           assignes = set()
           for jf in JS_FILES:
@@ -1911,7 +1911,7 @@ jobs:
                 + '6 filières 2AS/3AS · 4 spécialités تقني رياضي')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
-          print('✅ 18 vues · 17 onglets statiques + 1 dynamique (profboard)')
+          print('✅ 19 vues · 18 onglets statiques + 1 dynamique (profboard)')
           # Total de séances CALCULÉ depuis les sources — jamais de littéral dans un rapport.
           tot_seances = len(re.findall(r'\{ n:\d+, de:', app))
           for _f in ('unite2.js', 'unite3.js', 'unite4.js', 'unite5.js', 'unite6.js',
@@ -2000,7 +2000,7 @@ jobs:
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 31 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 32 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           # Totaux CALCULÉS depuis les JSON — jamais de littéral dans un rapport.
           gm2 = json.load(open('assets/bdd/grammaire.json', encoding='utf-8'))
