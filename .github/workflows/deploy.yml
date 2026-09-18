@@ -39,7 +39,7 @@ jobs:
                    classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
                    reservation.js journee.js prof.js parents.js library.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
-                   ci/check-unites.mjs matieres.js; do
+                   ci/check-unites.mjs matieres.js guide.js; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -51,10 +51,10 @@ jobs:
                    assets/bdd/bac_archive.json assets/bdd/live.json \
                    assets/bdd/parents.json assets/bdd/devoirs_officiels.json \
                    assets/bdd/wilayas_geo.json assets/bdd/plan_projet.json \
-                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json; do
+                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json assets/bdd/onboarding.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 35 fichiers racine + 21 assets présents"
+          echo "✅ 36 fichiers racine + 22 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -1084,7 +1084,7 @@ jobs:
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/32 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/33 fichiers JS valides')
           PY
 
       - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
@@ -1604,9 +1604,9 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.19.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.20.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
-                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './matieres.js', './prof.js', './parents.js',
+                    './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './guide.js', './matieres.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
                     './assets/bdd/live.json', './assets/bdd/parents.json', './assets/bdd/devoirs_officiels.json', './assets/bdd/wilayas_geo.json', './assets/bdd/plan_projet.json', './assets/bdd/reservation.json'):
               if k not in sw:
@@ -1618,16 +1618,16 @@ jobs:
           if len(man.get('shortcuts', [])) < 4:
               fails.append('manifest : moins de 4 raccourcis')
           vues = re.findall(r'data-view="([a-z]+)"', html)
-          if len(vues) != 19:
-              fails.append('index.html : ' + str(len(vues)) + ' vues != 19')
+          if len(vues) != 20:
+              fails.append('index.html : ' + str(len(vues)) + ' vues != 20')
           v_app = re.findall(r"'([a-z]+)'",
                              re.search(r'const VIEWS = \[(.*?)\];', app, re.S).group(1))
           if sorted(vues) != sorted(v_app):
               fails.append('index.html/app.js : VIEWS != data-view')
           tabs = re.findall(r"\['([a-z]+)'",
                             re.search(r'const TABS\s*=\s*\[(.*?)\];', app, re.S).group(1))
-          if len(tabs) != 18:
-              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 18')
+          if len(tabs) != 19:
+              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 19')
           if 'profboard' in tabs:
               fails.append('app.js : profboard doit rester dynamique (allTabs)')
           if set(tabs) - set(vues):
@@ -1656,7 +1656,7 @@ jobs:
                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                      'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'projet.js',
                      'journee.js', 'reservation.js', 'assets/matching_v2.patch.js',
-                     'matieres.js', 'library.js']
+                     'guide.js', 'matieres.js', 'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -1849,7 +1849,7 @@ jobs:
                       'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                       'stats.js', 'quiz.js', 'projet.js', 'reservation.js',
-                      'journee.js', 'matieres.js', 'prof.js', 'parents.js', 'library.js']
+                      'journee.js', 'matieres.js', 'guide.js', 'prof.js', 'parents.js', 'library.js']
           consommes = set(re.findall(r'window\.([A-Za-z_$][\w$]*)', app))
           assignes = set()
           for jf in JS_FILES:
@@ -1928,9 +1928,33 @@ jobs:
               fails.append('auth.js : suWilaya n utilise pas le miroir WILAYAS')
           print('✅ Wilayas : 58 officielles dans wilaya.json + miroir statique auth.js · '
                 + 'select حساب جديد jamais vide')
+          # ── Onboarding : trhibib + objectif + mode d'emploi à la création de compte ──
+          ob = json.load(open('assets/bdd/onboarding.json', encoding='utf-8'))
+          if len(ob.get('objectif', {}).get('points', [])) < 6:
+              fails.append('onboarding.json : objectif < 6 points')
+          for role in ('eleve', 'prof', 'parent'):
+              if not ob.get('mode_emploi', {}).get(role):
+                  fails.append('onboarding.json : mode d\'emploi absent pour ' + role)
+          for cle in ('eleve_m', 'eleve_f', 'prof', 'parent'):
+              if not ob.get('bienvenue', {}).get(cle):
+                  fails.append('onboarding.json : message de bienvenue absent : ' + cle)
+          if '{nom}' not in ob['bienvenue']['eleve_f'] or '{nom}' not in ob['bienvenue']['eleve_m']:
+              fails.append('onboarding.json : bienvenue non personnalisable ({nom})')
+          gd = rd('guide.js')
+          for k in ('function montreOnboarding(', 'function renderGuide(',
+                    'dz_de_onboarded_v1', 'data-onb="objectif"', 'guideHTML'):
+              if k not in gd:
+                  fails.append('guide.js : ' + k + ' absent')
+          idx2 = rd('index.html')
+          if 'id="suGenre"' not in idx2:
+              fails.append('index.html : champ genre absent (personnalisation طالب/طالبة)')
+          if 'data-view="guide"' not in idx2:
+              fails.append('index.html : vue guide absente')
+          print('✅ Onboarding : bienvenue par role+genre · objectif 6 points · '
+                + 'mode d\'emploi eleve/prof/parent · vue 📖 الدليل')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
-          print('✅ 19 vues · 18 onglets statiques + 1 dynamique (profboard)')
+          print('✅ 20 vues · 19 onglets statiques + 1 dynamique (profboard)')
           # Total de séances CALCULÉ depuis les sources — jamais de littéral dans un rapport.
           tot_seances = len(re.findall(r'\{ n:\d+, de:', app))
           for _f in ('unite2.js', 'unite3.js', 'unite4.js', 'unite5.js', 'unite6.js',
@@ -2019,7 +2043,7 @@ jobs:
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 32 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 33 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           # Totaux CALCULÉS depuis les JSON — jamais de littéral dans un rapport.
           gm2 = json.load(open('assets/bdd/grammaire.json', encoding='utf-8'))
