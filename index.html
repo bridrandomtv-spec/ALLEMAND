@@ -144,7 +144,8 @@
 
     <!-- ACCUEIL -->
     <section data-view="accueil" class="view">
-      <div class="welcome" id="welcomeBox"></div>
+            <div id="accueilMemo"></div>
+<div class="welcome" id="welcomeBox"></div>
       <div class="stats" id="statsHome"></div>
 
       <!-- 📅 حصص اليوم + accès rapide (rendu par journee.js) -->
@@ -446,6 +447,15 @@
       <div id="reservationBody"></div>
     </section>
 
+    <!-- REVISION ESPACEE -->
+    <section data-view="revision" class="view" hidden>
+      <div class="page-head">
+        <h1>🧠 mémoire des erreurs</h1>
+        <p>chaque faute devient un rendez-vous : J+1 → J+3 → J+7 → J+21</p>
+      </div>
+      <div id="memoBody"></div>
+    </section>
+
     <!-- GUIDE / MODE D'EMPLOI -->
     <section data-view="guide" class="view" hidden>
       <div class="page-head">
@@ -522,6 +532,7 @@
 <script src="reservation.js"></script>
 <script src="assets/matching_v2.patch.js"></script>
 <script src="matieres.js"></script>
+<script src="memoire.js"></script>
 <script src="guide.js"></script>
 <script src="library.js"></script>
 </body>
