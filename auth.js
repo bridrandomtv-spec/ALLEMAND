@@ -50,6 +50,27 @@ const AUTH = (function(){
   };
   const FILIERES_LISTE = FILIERES_23.map(f => f.ar);   /* compatibilité ancien format */
 
+  /* 58 wilayas officielles — miroir de assets/bdd/wilaya.json.
+     Statique pour que #suWilaya soit peuplé IMMÉDIATEMENT au chargement du
+     portail, sans attendre le fetch asynchrone de la BDD. */
+  const WILAYAS = [
+    ['01','أدرار'], ['02','الشلف'], ['03','الأغواط'], ['04','أم البواقي'],
+    ['05','باتنة'], ['06','بجاية'], ['07','بسكرة'], ['08','بشار'],
+    ['09','البليدة'], ['10','البويرة'], ['11','تمنراست'], ['12','تبسة'],
+    ['13','تلمسان'], ['14','تيارت'], ['15','تيزي وزو'], ['16','الجزائر'],
+    ['17','الجلفة'], ['18','جيجل'], ['19','سطيف'], ['20','سعيدة'],
+    ['21','سكيكدة'], ['22','سيدي بلعباس'], ['23','عنابة'], ['24','قالمة'],
+    ['25','قسنطينة'], ['26','المدية'], ['27','مستغانم'], ['28','المسيلة'],
+    ['29','معسكر'], ['30','ورقلة'], ['31','وهران'], ['32','البيض'],
+    ['33','إليزي'], ['34','برج بوعريريج'], ['35','بومرداس'], ['36','الطارف'],
+    ['37','تندوف'], ['38','تيسمسيلت'], ['39','الوادي'], ['40','خنشلة'],
+    ['41','سوق أهراس'], ['42','تيبازة'], ['43','ميلة'], ['44','عين الدفلى'],
+    ['45','النعامة'], ['46','عين تموشنت'], ['47','غرداية'], ['48','غليزان'],
+    ['49','تيميمون'], ['50','برج باجي مختار'], ['51','أولاد جلال'], ['52','بني عباس'],
+    ['53','عين صالح'], ['54','عين قزام'], ['55','تقرت'], ['56','جانت'],
+    ['57','المغير'], ['58','المنيعة']
+  ];
+
   /* Peuple #suFiliere selon le niveau, et #suSpecialite si تقني رياضي. */
   function peuplerFilieres(niveau){
     const fi = document.getElementById('suFiliere');
@@ -197,9 +218,13 @@ const AUTH = (function(){
       peuplerFilieres(nv.value || '2AS');
     }
     const wi = document.getElementById('suWilaya');
-    if(wi && wilayas && wilayas.length){
-      wi.innerHTML = wilayas.map(w =>
-        '<option value="' + w.code + '|' + w.nom + '">' + w.code + ' — ' + w.nom + '</option>').join('');
+    if(wi){
+      /* wilayas fournies (BDD) sinon le miroir statique : le select n'est JAMAIS vide. */
+      const src = (wilayas && wilayas.length)
+        ? wilayas.map(w => [w.code || w.c, w.nom_ar || w.nom || w.ar])
+        : WILAYAS;
+      wi.innerHTML = src.map(w =>
+        '<option value="' + w[0] + '|' + w[1] + '">' + w[0] + ' — ' + w[1] + '</option>').join('');
     }
   }
 
