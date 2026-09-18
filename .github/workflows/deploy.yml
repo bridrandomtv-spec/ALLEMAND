@@ -1850,7 +1850,7 @@ jobs:
                       'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                       'stats.js', 'quiz.js', 'projet.js', 'reservation.js',
-                      'journee.js', 'matieres.js', 'guide.js', 'memoire.js', 'masar.js', 'corpus.js', 'prof.js', 'parents.js', 'library.js']
+                      'journee.js', 'matieres.js', 'guide.js', 'memoire.js', 'masar.js', 'corpus.js', 'rag.js', 'prof.js', 'parents.js', 'library.js']
           consommes = set(re.findall(r'window\.([A-Za-z_$][\w$]*)', app))
           assignes = set()
           for jf in JS_FILES:
