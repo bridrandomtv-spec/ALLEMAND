@@ -1098,7 +1098,7 @@ jobs:
           python - <<'PY'
           import json, re, sys
           fails = []
-          def rd(p): return open(p, encoding='utf-8').read()
+          def rd(p, enc='utf-8'): return open(p, encoding='utf-8').read()
           app = rd('app.js'); mod = rd('modules.js')
           u2 = rd('unite2.js'); u3 = rd('unite3.js'); u4 = rd('unite4.js'); u5 = rd('unite5.js'); u6 = rd('unite6.js')
           u3a = rd('unites3as_a.js')
