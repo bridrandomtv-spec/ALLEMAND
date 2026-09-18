@@ -172,3 +172,10 @@ const BDD = (function(){
     reset:reset, logVue:logVue, vuesLocales:vuesLocales, normalise:normalise
   };
 })();
+
+/* ══ Exposition explicite sur window ══
+   Un `const`/`function` au niveau racine d'un script CLASSIQUE crée une
+   liaison dans l'environnement lexical global, PAS une propriété de window.
+   Les consommateurs testent `window.X` : sans cette ligne ils voyaient
+   undefined et le module restait muet (portail de connexion vide). */
+window.BDD = BDD;
