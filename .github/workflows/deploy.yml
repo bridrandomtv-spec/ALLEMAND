@@ -1940,16 +1940,6 @@ jobs:
                   fails.append('onboarding.json : message de bienvenue absent : ' + cle)
           if '{nom}' not in ob['bienvenue']['eleve_f'] or '{nom}' not in ob['bienvenue']['eleve_m']:
               fails.append('onboarding.json : bienvenue non personnalisable ({nom})')
-          # ── REACCUEIL : bouton 📖 dans حسابي + envoi 📧 au courrier inscrit ──
-          for k in ('function envoyerAccueil(', 'function texteAccueil(',
-                    'function carteCompte(', 'btnReonb', 'btnMailAccueil', 'mailto:'):
-              if k not in gd:
-                  fails.append('guide.js : ' + k + ' absent (re-accueil / envoi mail)')
-          if 'montreOnboarding(s, true)' not in gd:
-              fails.append('guide.js : re-accueil non force (montreOnboarding(s, true))')
-          if 's.mail' not in gd:
-              fails.append('guide.js : envoi mail n utilise pas le courrier inscrit (s.mail)')
-          print('✅ Re-accueil : bouton 📖 dans حسابي + envoi 📧 au courrier inscrit (mailto)')
           gd = rd('guide.js')
           for k in ('function montreOnboarding(', 'function renderGuide(',
                     'dz_de_onboarded_v1', 'data-onb="objectif"', 'guideHTML'):
@@ -1962,6 +1952,16 @@ jobs:
               fails.append('index.html : vue guide absente')
           print('✅ Onboarding : bienvenue par role+genre · objectif 6 points · '
                 + 'mode d\'emploi eleve/prof/parent · vue 📖 الدليل')
+          # ── REACCUEIL : bouton 📖 dans حسابي + envoi 📧 au courrier inscrit ──
+          for k in ('function envoyerAccueil(', 'function texteAccueil(',
+                    'function carteCompte(', 'btnReonb', 'btnMailAccueil', 'mailto:'):
+              if k not in gd:
+                  fails.append('guide.js : ' + k + ' absent (re-accueil / envoi mail)')
+          if 'montreOnboarding(s, true)' not in gd:
+              fails.append('guide.js : re-accueil non force (montreOnboarding(s, true))')
+          if 's.mail' not in gd:
+              fails.append('guide.js : envoi mail n utilise pas le courrier inscrit (s.mail)')
+          print('✅ Re-accueil : bouton 📖 dans حسابي + envoi 📧 au courrier inscrit (mailto)')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 20 vues · 19 onglets statiques + 1 dynamique (profboard)')
