@@ -39,7 +39,7 @@ jobs:
                    classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
                    reservation.js journee.js prof.js parents.js library.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
-                   ci/check-unites.mjs matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js; do
+                   ci/check-unites.mjs matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -51,7 +51,7 @@ jobs:
                    assets/bdd/bac_archive.json assets/bdd/live.json \
                    assets/bdd/parents.json assets/bdd/devoirs_officiels.json \
                    assets/bdd/wilayas_geo.json assets/bdd/plan_projet.json \
-                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json assets/bdd/onboarding.json assets/bdd/config.json assets/bdd/corpus.json assets/bdd/corpus_index.json; do
+                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json assets/bdd/onboarding.json assets/bdd/config.json assets/bdd/corpus.json assets/bdd/corpus_index.json assets/bdd/malakhiss.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
           echo "✅ 36 fichiers racine + 22 assets présents"
@@ -1080,11 +1080,11 @@ jobs:
                       'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                       'stats.js', 'quiz.js', 'projet.js', 'reservation.js', 'journee.js',
-                      'prof.js', 'parents.js', 'library.js', 'banque.js', 'sw.js', 'assets/matching_v2.patch.js')
+                      'prof.js', 'parents.js', 'library.js', 'banque.js', 'malakhiss.js', 'sw.js', 'assets/matching_v2.patch.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/38 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/39 fichiers JS valides')
           PY
 
       - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
@@ -1604,7 +1604,7 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.29.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.30.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './guide.js', './matieres.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
@@ -1618,16 +1618,16 @@ jobs:
           if len(man.get('shortcuts', [])) < 4:
               fails.append('manifest : moins de 4 raccourcis')
           vues = re.findall(r'data-view="([a-z]+)"', html)
-          if len(vues) != 25:
-              fails.append('index.html : ' + str(len(vues)) + ' vues != 25')
+          if len(vues) != 26:
+              fails.append('index.html : ' + str(len(vues)) + ' vues != 26')
           v_app = re.findall(r"'([a-z]+)'",
                              re.search(r'const VIEWS = \[(.*?)\];', app, re.S).group(1))
           if sorted(vues) != sorted(v_app):
               fails.append('index.html/app.js : VIEWS != data-view')
           tabs = re.findall(r"\['([a-z]+)'",
                             re.search(r'const TABS\s*=\s*\[(.*?)\];', app, re.S).group(1))
-          if len(tabs) != 24:
-              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 24')
+          if len(tabs) != 25:
+              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 25')
           if 'profboard' in tabs:
               fails.append('app.js : profboard doit rester dynamique (allTabs)')
           if set(tabs) - set(vues):
@@ -1657,7 +1657,8 @@ jobs:
                      'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'projet.js',
                      'journee.js', 'reservation.js', 'assets/matching_v2.patch.js',
                      'matieres.js', 'memoire.js', 'masar.js', 'corpus.js',
-                     'rag.js', 'banque.js', 'guide.js', 'library.js']
+                     'rag.js', 'banque.js', 'malakhiss.js', 'guide.js',
+                     'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -1996,6 +1997,28 @@ jobs:
           rg = rd('rag.js')
           # ── BANQUE_ORIG : contenu original A+B+C+D présent et cohérent ──
           co = json.load(open('assets/bdd/contenu_original.json', encoding='utf-8'))
+          # ── MALAKHISS_CHK : ملخصات الوحدات الـ16 présentes et complètes ──
+          mk = json.load(open('assets/bdd/malakhiss.json', encoding='utf-8'))
+          ml = mk.get('malakhiss') or []
+          if len(ml) != 16:
+              fails.append('malakhiss.json : ' + str(len(ml)) + ' ملخصات != 16')
+          for m in ml:
+              for kk in ('unite', 'niveau', 'titre_de', 'titre_ar', 'idee',
+                          'vocabulaire', 'grammaire', 'structures', 'conseils'):
+                  if not m.get(kk):
+                      fails.append('malakhiss.json : ملخص U' + str(m.get('unite'))
+                                   + ' sans ' + kk)
+              if len(m.get('vocabulaire') or []) < 5 or len(m.get('grammaire') or []) < 2:
+                  fails.append('malakhiss.json : ملخص U' + str(m.get('unite'))
+                               + ' trop pauvre')
+          mx = rd('malakhiss.js')
+          for kk in ('function render(', 'window.renderMalakhiss', 'malakhiss.json'):
+              if kk not in mx:
+                  fails.append('malakhiss.js : ' + kk + ' absent')
+          idx9 = rd('index.html')
+          if 'data-view="malakhiss"' not in idx9 or 'id="malakhissBody"' not in idx9:
+              fails.append('index.html : vue malakhiss absente')
+          print('✅ Malakhiss : 16 ملخصات unités (2AS+3AS) completes · vue 📑 presente')
           nbx = len(co.get('B_exercices') or [])
           if nbx < 50:
               fails.append('contenu_original.json : ' + str(nbx) + ' exercices < 50')
@@ -2078,7 +2101,7 @@ jobs:
           print('✅ Mémoire : Leitner 4 boîtes branché sur quiz · vue révision · carte accueil')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
-          print('✅ 25 vues · 24 onglets statiques + 1 dynamique (profboard)')
+          print('✅ 26 vues · 25 onglets statiques + 1 dynamique (profboard)')
           # Total de séances CALCULÉ depuis les sources — jamais de littéral dans un rapport.
           tot_seances = len(re.findall(r'\{ n:\d+, de:', app))
           for _f in ('unite2.js', 'unite3.js', 'unite4.js', 'unite5.js', 'unite6.js',
@@ -2167,7 +2190,7 @@ jobs:
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 38 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 39 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           # Totaux CALCULÉS depuis les JSON — jamais de littéral dans un rapport.
           gm2 = json.load(open('assets/bdd/grammaire.json', encoding='utf-8'))
