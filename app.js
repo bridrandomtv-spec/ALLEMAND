@@ -616,7 +616,7 @@ function speak(text){
 
 /* ─────────────── NAVIGATION ─────────────── */
 const VIEWS = ['accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'compte'];
-const TABS  = [['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
+const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
                ['stats','🗺️ الإحصائيات'],['quiz','🎯 تمارين'],
@@ -683,6 +683,7 @@ function go(view){
   if(view === 'matieres' && window.renderMatieres) window.renderMatieres();
   if(view === 'guide' && window.renderGuide) window.renderGuide();
   if(view === 'revision' && window.renderMemoire) window.renderMemoire();
+  if(view === 'masar' && window.renderMasar) window.renderMasar();
   if(view === 'projet' && window.renderProjet) window.renderProjet();
   if(view === 'profboard' && window.renderProfBoard) window.renderProfBoard();
   const mp = $('#miniProf'); if(mp) mp.hidden = !isProf();
@@ -1565,10 +1566,7 @@ function enterApp(s){
   if(shell) shell.hidden = false;
 
   /* Chaque étape est ISOLÉE. Avant ce correctif, un seul widget en échec (par exemple
-     renderStats) interrompait enterApp() AVANT go('accueil') : #shell était visible mais
-     aucune vue n'était affichée, et rien ne disait pourquoi. Désormais toutes les étapes
-     sont tentées, la première erreur est nommée dans le panneau, les suivantes en console. */
-  const hash = String(location.hash || '').replace('#', '');
+     renderStats) interrompait enterApp() AVANT go('masar');
   const etapes = [
     ['renderTabs',       renderTabs],
     ['renderStats',      renderStats],
