@@ -132,6 +132,7 @@ const AUTH = (function(){
         points:0, created:now(), lastLogin:null
       };
     }
+    u.genre = o.genre || '';
     wr(K_USERS, users);
     return users;
   }
