@@ -1,0 +1,146 @@
+/* ══════════════════════════════════════════════════════════════════════
+   الثانوية الافتراضية الجزائرية — guide.js
+   🎉 رسالة ترحيب + 🎯 هدف المنصة + 📖 دليل الاستعمال (mode d'emploi)
+   · Affiché UNE seule fois après création de compte / première connexion.
+   · Personnalisé par rôle (تلميذ · أستاذ · ولي) et genre (طالب / طالبة).
+   · Vue 📖 الدليل accessible à tout moment depuis la navigation.
+   ══════════════════════════════════════════════════════════════════════ */
+'use strict';
+
+(function(){
+  const $  = (s,c) => (c||document).querySelector(s);
+  const $$ = (s,c) => Array.prototype.slice.call((c||document).querySelectorAll(s));
+  const esc = s => String(s==null?'':s).replace(/[&<>"']/g,
+      c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const K_ONB = 'dz_de_onboarded_v1';
+
+  let D = null;
+  let roleActif = 'eleve';
+
+  async function charge(){
+    if(D) return D;
+    try{
+      const r = await fetch('assets/bdd/onboarding.json', { cache:'force-cache' });
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      D = await r.json();
+    }catch(e){ D = null; }
+    return D;
+  }
+
+  /* ── Message de bienvenue personnalisé ── */
+  function messageBienvenue(s){
+    if(!D) return null;
+    const b = D.bienvenue || {};
+    const genre = (s.genre || s.genre_ar || '');
+    const fem = /أنثى|طالبة|f/.test(genre);
+    let tpl;
+    if(s.role === 'prof')        tpl = b.prof;
+    else if(s.role === 'parent') tpl = b.parent;
+    else                         tpl = fem ? b.eleve_f : b.eleve_m;
+    if(!tpl) return null;
+    return tpl.replace(/\{nom\}/g, s.nom || '').replace(/\{classe\}/g, s.classe_ar || s.classe || '');
+  }
+
+  /* ── Modale d'onboarding (une seule fois) ── */
+  async function montreOnboarding(s, force){
+    const d = await charge(); if(!d) return;
+    let deja = false;
+    try{ deja = localStorage.getItem(K_ONB + ':' + (s.user || s.nom)) === '1'; }catch(e){}
+    if(deja && !force) return;
+
+    const msg = messageBienvenue(s) || '';
+    const role = (s.role === 'prof') ? 'prof' : (s.role === 'parent') ? 'parent' : 'eleve';
+    roleActif = role;
+
+    const box = document.createElement('div');
+    box.id = 'onbModal';
+    box.className = 'onb';
+    box.innerHTML =
+        '<div class="onb-card">'
+      +   '<button class="onb-x" id="onbClose" aria-label="fermer">✕</button>'
+      +   '<div class="onb-welcome">' + esc(msg).replace(/\n/g, '<br>') + '</div>'
+      +   '<div class="onb-tabs">'
+      +     '<button class="onb-t on" data-onb="objectif">🎯 هدف المنصة</button>'
+      +     '<button class="onb-t" data-onb="guide">📖 دليل الاستعمال</button>'
+      +     '<button class="onb-t" data-onb="pas">🚀 أول خطوات</button>'
+      +   '</div>'
+      +   '<div class="onb-body" id="onbBody"></div>'
+      +   '<div class="onb-foot">'
+      +     '<button class="btn btn-p btn-block" id="onbOk">✅ فهمت، لنبدأ</button>'
+      +   '</div>'
+      + '</div>';
+    document.body.appendChild(box);
+
+    const corps = $('#onbBody', box);
+    function peint(ong){
+      $$('.onb-t', box).forEach(b => b.classList.toggle('on', b.dataset.onb === ong));
+      if(ong === 'objectif'){
+        corps.innerHTML = '<p class="onb-ch">' + esc(d.objectif.chapeau) + '</p>'
+          + '<div class="onb-pts">' + d.objectif.points.map(p =>
+              '<div class="onb-p"><span>' + esc(p.icon) + '</span><div><b>' + esc(p.t) +
+              '</b><i>' + esc(p.d) + '</i></div></div>').join('') + '</div>';
+      }else if(ong === 'guide'){
+        corps.innerHTML = guideHTML(d, role);
+      }else{
+        corps.innerHTML = '<ol class="onb-steps">' + (d.premiers_pas || []).map(p =>
+          '<li>' + esc(p) + '</li>').join('') + '</ol>';
+      }
+    }
+    peint('objectif');
+    $$('.onb-t', box).forEach(b => b.addEventListener('click', () => peint(b.dataset.onb)));
+
+    function ferme(){
+      try{ localStorage.setItem(K_ONB + ':' + (s.user || s.nom), '1'); }catch(e){}
+      box.remove();
+    }
+    $('#onbClose', box).addEventListener('click', ferme);
+    $('#onbOk', box).addEventListener('click', ferme);
+  }
+
+  function guideHTML(d, role){
+    const steps = (d.mode_emploi || {})[role] || [];
+    return '<div class="onb-steps2">' + steps.map(p =>
+        '<div class="onb-g"><span class="onb-gi">' + esc(p.icon) + '</span><div><b>' +
+        esc(p.t) + '</b><i>' + esc(p.d) + '</i></div></div>').join('') + '</div>';
+  }
+
+  /* ── Vue 📖 الدليل (persistante) ── */
+  async function renderGuide(){
+    const box = $('#guideBody'); if(!box) return;
+    const d = await charge();
+    if(!d){ box.innerHTML = '<div class="bdd-status err">❌ تعذّر تحميل الدليل</div>'; return; }
+    let s = null;
+    try{ s = (window.AUTH && AUTH.session) ? AUTH.session() : null; }catch(e){}
+    const role = s ? ((s.role === 'prof') ? 'prof' : (s.role === 'parent') ? 'parent' : 'eleve')
+                   : roleActif;
+
+    let h = '<div class="gd-hero"><span class="gd-crest">📖</span><div>'
+      + '<h2>دليل الاستعمال — mode d’emploi</h2>'
+      + '<p class="gd-sub">كيف تستفيد من المنصة حسب دورك</p></div></div>'
+      + '<div class="gd-roles">'
+      +   [['eleve','🎓 تلميذ / طالبة'],['prof','🧑‍🏫 أستاذ'],['parent','👨‍👩‍👧 وليّ أمر']]
+            .map(r => '<button class="gd-r' + (r[0] === role ? ' on' : '') + '" data-grole="' + r[0] + '">'
+              + r[1] + '</button>').join('')
+      + '</div>'
+      + '<div class="gd-obj"><h3>' + esc(d.objectif.titre) + '</h3>'
+      +   '<p>' + esc(d.objectif.chapeau) + '</p>'
+      +   '<div class="onb-pts">' + d.objectif.points.map(p =>
+              '<div class="onb-p"><span>' + esc(p.icon) + '</span><div><b>' + esc(p.t) +
+              '</b><i>' + esc(p.d) + '</i></div></div>').join('') + '</div></div>'
+      + '<div id="gdSteps">' + guideHTML(d, role) + '</div>'
+      + '<div class="gd-pas"><h3>🚀 أول خطوات لك</h3><ol class="onb-steps">'
+      +   (d.premiers_pas || []).map(p => '<li>' + esc(p) + '</li>').join('') + '</ol></div>';
+    box.innerHTML = h;
+    $$('.gd-r', box).forEach(b => b.addEventListener('click', () => {
+      roleActif = b.dataset.grole;
+      $$('.gd-r', box).forEach(x => x.classList.toggle('on', x === b));
+      $('#gdSteps', box).innerHTML = guideHTML(d, roleActif);
+    }));
+  }
+
+  window.renderGuide = renderGuide;
+  window.montrerOnboarding = montreOnboarding;
+  document.addEventListener('dz:view', e => { if(e.detail === 'guide') renderGuide(); });
+  /* Après une authentification, proposer l'onboarding si première fois. */
+  document.addEventListener('dz:auth', e => { if(e.detail) montreOnboarding(e.detail, false); });
+})();
