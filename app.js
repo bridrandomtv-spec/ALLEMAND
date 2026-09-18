@@ -647,6 +647,25 @@ function renderTabs(){
   ).join('');
 }
 
+/* 🧭 prochaine séance non faite du niveau actif (pour masar.js). */
+function prochaineSeance(){
+  const st = loadSeances();
+  const done = st.done || [];
+  for(const u of UNITES){
+    const niv = u.niveau || '2AS';
+    if(niveauActif !== 'tous' && niv !== niveauActif) continue;
+    const ses = u.seances || [];
+    const faites = ses.filter(s => done.indexOf(s.n) !== -1).length;
+    if(faites < ses.length){
+      const suivante = ses.filter(s => done.indexOf(s.n) === -1)[0] || null;
+      return { unite: u.n, titre: u.de, ar: u.ar, faites: faites,
+               total: ses.length, prochaine: suivante };
+    }
+  }
+  return null;
+}
+window.prochaineSeance = prochaineSeance;
+
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
   currentView = view;
