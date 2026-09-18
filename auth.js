@@ -12,6 +12,8 @@ const AUTH = (function(){
 
   /* ── Sections de la classe virtuelle (comme sur la photo) ── */
   const SECTIONS = [
+    { id:'1AS-1', ar:'١AS-١', niveau:'1AS', eleves:30, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
+    { id:'1AS-2', ar:'١AS-', niveau:'1AS', eleves:28, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
     { id:'2AS-1', ar:'٢AS-١', niveau:'2AS', eleves:32, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
     { id:'2AS-2', ar:'٢AS-٢', niveau:'2AS', eleves:28, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
     { id:'2AS-3', ar:'٢AS-٣', niveau:'2AS', eleves:32, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
@@ -19,8 +21,63 @@ const AUTH = (function(){
     { id:'3AS-2', ar:'٣AS-٢', niveau:'3AS', eleves:24, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' }
   ];
 
-  const FILIERES = ['Lettres et Langues','Langues Étrangères','Gestion et Économie',
-                    'Sciences Expérimentales','Mathématiques','Techniques Mathématiques'];
+  /* ── Niveaux et filières RÉELS 2026-2027, libellés en arabe ──
+     Source : organisation officielle du secondaire algérien.
+     1AS : 2 troncs communs.  2AS et 3AS : 6 filières, dont تقني رياضي
+     décliné en 4 spécialités d'ingénierie. */
+  const NIVEAUX = [
+    { id:'1AS', ar:'السنة الأولى ثانوي' },
+    { id:'2AS', ar:'السنة الثانية ثانوي' },
+    { id:'3AS', ar:'السنة الثالثة ثانوي' }
+  ];
+  const FILIERES_23 = [
+    { id:'sciences', ar:'علوم تجريبية' },
+    { id:'math',     ar:'رياضيات' },
+    { id:'tech',     ar:'تقني رياضي', specialites:[
+        { id:'elec',     ar:'هندسة كهربائية' },
+        { id:'civil',    ar:'هندسة مدنية' },
+        { id:'meca',     ar:'هندسة ميكانيكية' },
+        { id:'procedes', ar:'هندسة الطرائق' } ] },
+    { id:'gestion',  ar:'تسيير واقتصاد' },
+    { id:'philo',    ar:'آداب وفلسفة' },
+    { id:'langues',  ar:'لغات أجنبية' }
+  ];
+  const FILIERES = {
+    '1AS': [ { id:'tc-lettres',  ar:'جذع مشترك آداب' },
+             { id:'tc-sciences', ar:'جذع مشترك علوم وتكنولوجيا' } ],
+    '2AS': FILIERES_23,
+    '3AS': FILIERES_23
+  };
+  const FILIERES_LISTE = FILIERES_23.map(f => f.ar);   /* compatibilité ancien format */
+
+  /* Peuple #suFiliere selon le niveau, et #suSpecialite si تقني رياضي. */
+  function peuplerFilieres(niveau){
+    const fi = document.getElementById('suFiliere');
+    const sp = document.getElementById('suSpecialite');
+    const liste = FILIERES[niveau] || FILIERES['2AS'];
+    if(fi){
+      fi.innerHTML = liste.map(f =>
+        '<option value="' + f.id + '">' + f.ar + '</option>').join('');
+    }
+    majSpecialite();
+    function majSpecialite(){
+      if(!sp) return;
+      const sel = liste.filter(f => f.id === (fi ? fi.value : ''))[0];
+      if(sel && sel.specialites && sel.specialites.length){
+        sp.hidden = false;
+        sp.innerHTML = sel.specialites.map(s =>
+          '<option value="' + s.id + '">' + s.ar + '</option>').join('');
+      }else{
+        sp.hidden = true;
+        sp.innerHTML = '';
+      }
+    }
+    if(fi && !fi._casc){
+      fi._casc = true;
+      fi.addEventListener('change', majSpecialite);
+    }
+  }
+
   const ROLES = { eleve:'تلميذ', parent:'ولي', prof:'أستاذ' };
 
   /* ── Utilitaires ── */
@@ -95,7 +152,7 @@ const AUTH = (function(){
                 SECTIONS.filter(c => c.niveau === o.niveau)[0] || SECTIONS[2];
     const u = { user:key, pass:hash(o.pass), nom:o.nom.trim(), mail:mail,
                 role:o.role || 'eleve', niveau:o.niveau || '2AS',
-                filiere:o.filiere || FILIERES[0], wilaya:o.wilaya || 'Bouira',
+                filiere:o.filiere, filiere_ar:o.filiere_ar || '', specialite:o.specialite || '' || FILIERES[0], wilaya:o.wilaya || 'Bouira',
                 code_wilaya:o.code_wilaya || '10', classe:sec.id,
                 points:0, created:now(), lastLogin:now() };
     users[key] = u; wr(K_USERS, users);
@@ -123,15 +180,22 @@ const AUTH = (function(){
     return s.points;
   }
 
-  function initSelects(wilayas){
+    function initSelects(wilayas){
     const cl = document.getElementById('loginClasse');
-    if(cl) cl.innerHTML = SECTIONS.map(c =>
-      '<option value="' + c.id + '">' + c.ar + ' — ' + c.niveau + ' · ' + c.eleves + ' تلميذ</option>').join('');
+    if(cl) cl.innerHTML = SECTIONS.map(c => {
+      const niv = (NIVEAUX.filter(n => n.id === c.niveau)[0] || {}).ar || c.niveau;
+      return '<option value="' + c.id + '">' + c.ar + ' — ' + niv + ' · ' + c.eleves + ' تلميذ</option>';
+    }).join('');
     const nv = document.getElementById('suNiveau');
-    if(nv) nv.innerHTML = ['2AS','3AS'].map(n =>
-      '<option value="' + n + '">' + (n === '2AS' ? 'السنة الثانية ثانوي' : 'السنة الثالثة ثانوي') + '</option>').join('');
-    const fi = document.getElementById('suFiliere');
-    if(fi) fi.innerHTML = FILIERES.map(f => '<option value="' + f + '">' + f + '</option>').join('');
+    if(nv){
+      nv.innerHTML = NIVEAUX.map(n =>
+        '<option value="' + n.id + '">' + n.ar + '</option>').join('');
+      if(!nv._casc){
+        nv._casc = true;
+        nv.addEventListener('change', () => peuplerFilieres(nv.value));
+      }
+      peuplerFilieres(nv.value || '2AS');
+    }
     const wi = document.getElementById('suWilaya');
     if(wi && wilayas && wilayas.length){
       wi.innerHTML = wilayas.map(w =>
