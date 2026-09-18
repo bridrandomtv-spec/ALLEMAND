@@ -316,6 +316,15 @@ const QUIZ_BANK = [
     q._rep = i;
     const bon = i === q.c;
     if(bon) score++;
+    /* 🧠 mémoire : chaque erreur devient une carte de révision espacée. */
+    if(!bon && window.MEMOIRE && window.MEMOIRE.record){
+      try{
+        const opts = (q.o || q.opts || []);
+        window.MEMOIRE.record({ q: q.q, bad: opts[i], good: opts[q.c],
+          comp: q.comp || ('unité ' + (q.u || filtre)),
+          unite: q.u || filtre, src: 'quiz' });
+      }catch(e){}
+    }
 
     $$('#qzOpts .qz-o').forEach((b, k) => {
       b.disabled = true;
