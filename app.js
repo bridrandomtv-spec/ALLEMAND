@@ -647,7 +647,7 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'compte'];
+const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'compte'];
 const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
@@ -655,7 +655,7 @@ const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],
                ['officiels','📄 الفروض'],['examen','🎓 البكالوريا'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
                ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],
-               ['reservation','🗓️ احجز حصّة'],['projet','📋 Plan de projet'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 révision'], ['corpus','📚 Corpus'], ['rag','🔎 اسأل'], ['compte','⚙️ حسابي']];
+               ['reservation','🗓️ احجز حصّة'],['projet','📋 Plan de projet'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 révision'], ['corpus','📚 Corpus'], ['rag','🔎 اسأل'], ['banque','✍️ Banque'], ['compte','⚙️ حسابي']];
 
 /* Onglet réservé au rôle « prof » — inséré avant « حسابي » */
 function allTabs(){
@@ -737,6 +737,7 @@ function go(view){
   if(view === 'masar' && window.renderMasar) window.renderMasar();
   if(view === 'corpus' && window.renderCorpus) window.renderCorpus();
   if(view === 'rag' && window.renderRag) window.renderRag();
+  if(view === 'banque' && window.renderBanque) window.renderBanque();
   if(view === 'projet' && window.renderProjet) window.renderProjet();
   if(view === 'profboard' && window.renderProfBoard) window.renderProfBoard();
   const mp = $('#miniProf'); if(mp) mp.hidden = !isProf();
