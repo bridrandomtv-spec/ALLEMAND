@@ -1976,15 +1976,14 @@ jobs:
                                + ' — le dépôt est PUBLIC, la clé doit vivre en secret du Worker')
           wrk = rd('worker/resend-welcome.js')
           if 'env.RESEND_API_KEY' not in wrk:
-    fails.append('worker : cle Resend doit etre lue via env')
-if "localStorage.getItem('dz_resend_key')" not in rd('guide.js'):
-    fails.append('guide.js : chemin direct Resend sans lecture localStorage')
-if 'api.resend.com/emails' not in rd('guide.js'):
-    fails.append('guide.js : appel direct api.resend.com absent')
-              fails.append('worker : la clé Resend doit être lue via env.RESEND_API_KEY')
+              fails.append('worker : cle Resend doit etre lue via env.RESEND_API_KEY')
+          if "localStorage.getItem('dz_resend_key')" not in rd('guide.js'):
+              fails.append('guide.js : chemin direct Resend sans lecture localStorage')
+          if 'api.resend.com/emails' not in rd('guide.js'):
+              fails.append('guide.js : appel direct api.resend.com absent')
           cfg = json.load(open('assets/bdd/config.json', encoding='utf-8'))
           if cfg.get('resend_proxy') and 're_' in str(cfg.get('resend_proxy')):
-              fails.append('config.json : resend_proxy contient une clé — interdit')
+              fails.append('config.json : resend_proxy contient une cle — interdit')
           print('✅ Anti-fuite : aucune clé Resend dans le dépôt · Worker lit env.RESEND_API_KEY')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
