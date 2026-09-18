@@ -1206,6 +1206,89 @@ window.addEventListener('unhandledrejection', function(ev){
   panneauPanne(ev && ev.reason, 'promesse rejetée');
 });
 
+/* ══════════════════════════════════════════════════════════════════════
+   AUTO-DIAGNOSTIC DE DÉMARRAGE — écrit dans la console ET dans un bloc
+   visible copiable. Aucune erreur JS n'étant remontée, il faut pouvoir
+   LIRE l'état réel du DOM pour savoir ce qui est masqué.
+   ══════════════════════════════════════════════════════════════════════ */
+function etatDemarrage(){
+  const q = s => document.querySelector(s);
+  const qa = s => Array.prototype.slice.call(document.querySelectorAll(s));
+  const g = q('#gate'), sh = q('#shell'), sp = q('#splash');
+  const vues = qa('.view');
+  const visibles = vues.filter(v => !v.hidden);
+  const et = {
+    gate:        g  ? (g.hidden ? 'hidden' : 'VISIBLE') : 'ABSENT',
+    shell:       sh ? (sh.hidden ? 'hidden' : 'VISIBLE') : 'ABSENT',
+    splash:      sp ? (sp.classList.contains('off') ? 'off (masqué)' : 'ACTIF (couvre tout)')
+                    : 'ABSENT',
+    bootFail:    q('#bootFail') ? 'AFFICHÉ' : 'non',
+    vues:        vues.length,
+    vuesVisibles: visibles.length,
+    vueActive:   visibles.length ? visibles.map(v => v.dataset.view).join(',') : 'AUCUNE',
+    tabs:        qa('#tabs .tab').length,
+    tabActive:   (q('#tabs .tab.on') || {}).textContent || '—',
+    contenuShell: sh ? sh.innerHTML.length : 0,
+    contenuAccueil: (q('[data-view="accueil"]') || {}).innerHTML
+                      ? q('[data-view="accueil"]').innerHTML.length : 0,
+    bodyChildren: document.body ? document.body.children.length : 0,
+    cssApplique:  getComputedStyle(document.body).backgroundColor,
+    policeBody:   getComputedStyle(document.body).fontFamily.slice(0, 40),
+    session:      (window.AUTH && AUTH.session) ? (AUTH.session() ? 'présente' : 'aucune')
+                                                : 'AUTH absent',
+    uniteActive:  (typeof uniteActive === 'function' && uniteActive())
+                    ? (uniteActive().n + ' — ' + uniteActive().de) : '—',
+    seances:      (typeof SEANCES !== 'undefined' && SEANCES) ? SEANCES.length : 0,
+    unites:       (typeof UNITES !== 'undefined' && UNITES) ? UNITES.length : 0
+  };
+  return et;
+}
+
+function journalDemarrage(origine){
+  let et;
+  try{ et = etatDemarrage(); }
+  catch(e){ et = { erreur: String(e && e.message || e) }; }
+  const lignes = Object.keys(et).map(k => '  ' + k + ' : ' + et[k]);
+  const txt = '[DZ démarrage' + (origine ? ' · ' + origine : '') + ']\n' + lignes.join('\n');
+  try{ console.info(txt); }catch(e){}
+  return txt;
+}
+
+/* Bloc visible et copiable — utile quand la console n'est pas accessible (mobile). */
+function boutonDiagnostic(){
+  if(document.getElementById('dzDiagBtn')) return;
+  const b = document.createElement('button');
+  b.id = 'dzDiagBtn';
+  b.textContent = '🩺 diagnostic';
+  b.setAttribute('title', 'Afficher l’état réel du démarrage (copiable)');
+  b.style.cssText = 'position:fixed;z-index:9998;left:10px;bottom:10px;background:#12351f;'
+    + 'color:#9fe8bd;border:1px solid #2f6b45;border-radius:999px;padding:8px 13px;'
+    + 'font:600 11.5px system-ui,sans-serif;cursor:pointer;opacity:.72';
+  b.addEventListener('mouseenter', () => { b.style.opacity = '1'; });
+  b.addEventListener('mouseleave', () => { b.style.opacity = '.72'; });
+  b.addEventListener('click', () => {
+    const txt = journalDemarrage('manuel');
+    if(document.getElementById('dzDiagOut')){
+      document.getElementById('dzDiagOut').remove();
+      return;
+    }
+    const pre = document.createElement('pre');
+    pre.id = 'dzDiagOut';
+    pre.setAttribute('dir', 'ltr');
+    pre.style.cssText = 'position:fixed;z-index:9998;left:10px;right:10px;bottom:52px;'
+      + 'max-height:52vh;overflow:auto;margin:0;background:#08130c;color:#9fe8bd;'
+      + 'border:1px solid #2f6b45;border-radius:13px;padding:12px 14px;'
+      + 'font:11px/1.6 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;'
+      + 'word-break:break-word;text-align:left;direction:ltr';
+    pre.textContent = txt;
+    document.body.appendChild(pre);
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).catch(() => {});
+    }
+  });
+  document.body.appendChild(b);
+}
+
 /* ─────────────── INITIALISATION ─────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => { const sp = $('#splash'); if(sp) sp.classList.add('off'); }, 900);
@@ -1214,14 +1297,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }catch(errBoot){
     panneauPanne(errBoot, 'bootGate');
   }
+  /* État réel du DOM, dans la console ET via le bouton 🩺 en bas à gauche. */
+  setTimeout(() => { journalDemarrage('après bootGate'); boutonDiagnostic(); }, 1600);
   /* Filet : si après 3,5 s ni #gate ni #shell n'est visible, on force le portail. */
   setTimeout(() => {
     const g = $('#gate'), sh = $('#shell');
     const rien = (!g || g.hidden) && (!sh || sh.hidden);
     if(rien){
       forceGate();
-      panneauPanne(new Error('aucun écran visible apres 3,5 s '
-        + '(#gate et #shell tous deux hidden)'), 'watchdog');
+      panneauPanne(new Error('aucun écran visible apres 3,5 s — '
+        + journalDemarrage('watchdog').replace(/\n/g, ' | ')), 'watchdog');
     }
   }, 3500);
 
@@ -1315,8 +1400,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let deferredPrompt = null;
   window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault(); deferredPrompt = e;
-    const bi = $('#btnInstall'); if(bi) bi.hidden = false;
+    deferredPrompt = e;
+    const bi = $('#btnInstall');
+    /* On ne détourne l'invite que si notre bouton est réellement atteignable.
+       Sur le portail de connexion #shell est masqué : sans cette garde, le
+       navigateur journalise « Banner not shown: preventDefault() called ». */
+    const sh = $('#shell');
+    if(bi && sh && !sh.hidden){
+      e.preventDefault();
+      bi.hidden = false;
+    }
   });
   const bi = $('#btnInstall');
   if(bi) bi.addEventListener('click', async () => {
