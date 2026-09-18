@@ -1870,6 +1870,22 @@ jobs:
               fails.append('bdd.js : window.BDD non expose explicitement')
           print('✅ Contrat window : ' + str(len(consommes - NATIFS))
                 + ' modules exposes et consommes · AUTH et BDD assignes explicitement')
+          # ── Le portail doit être interactif MÊME sans session ──
+          # bindGateEvents() pose les écouteurs des onglets login/signup, du submit et du
+          # bouton démo. S'il n'est appelé que dans enterApp(), un visiteur frais voit un
+          # portail muet (« حساب جديد » mort). bootGate doit donc le poser aussi.
+          kb = app.find('function bootGate')
+          if kb < 0:
+              fails.append('app.js : fonction bootGate introuvable')
+          else:
+              fb = app.find('}', app.find('paintGateStats', kb))
+              corps = app[kb:fb if fb > kb else kb + 3000]
+              if 'bindGateEvents()' not in corps:
+                  fails.append('app.js : bootGate ne pose pas bindGateEvents() — portail '
+                               + 'muet sans session (compte nouveau mort)')
+          if 'bindGateEvents._done' not in app:
+              fails.append('app.js : bindGateEvents non idempotent (risque de double écoute)')
+          print('✅ Portail interactif sans session : bootGate pose bindGateEvents()')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 18 vues · 17 onglets statiques + 1 dynamique (profboard)')
