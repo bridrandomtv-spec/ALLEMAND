@@ -2277,3 +2277,43 @@ tr.g5-tot td{border-bottom:none;border-top:2px solid var(--b2);padding-top:11px;
   color:var(--m);line-height:1.9}
 .po-note b{color:var(--or2);font-family:var(--ff-ar-display)}
 @media print{.po-b{display:none}.po-t{break-inside:avoid}}
+
+/* ── v3.18 · 📚 سجل المواد (lycée virtuel complet) ── */
+.mat-hero{display:flex;gap:15px;align-items:center;margin-bottom:16px}
+.mat-crest{font-size:44px;filter:drop-shadow(0 6px 16px rgba(0,98,51,.5))}
+.mat-t h2{font-family:var(--ff-ar-display);font-size:clamp(20px,4vw,27px);margin:0 0 3px}
+.mat-sub{color:var(--m);font-size:12.5px;margin:0}
+.mat-sel{display:flex;gap:11px;flex-wrap:wrap;margin:14px 0}
+.mat-f{flex:1;min-width:170px;margin:0}
+.mat-f span{display:block;font-size:11.5px;color:var(--or2);margin-bottom:5px;
+  font-family:var(--ff-ar-display)}
+.mat-f select{width:100%;background:var(--nuit3);border:1px solid var(--b);border-radius:11px;
+  padding:10px 12px;color:var(--t);font-family:var(--ff-ar);font-size:13px}
+.mat-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px;
+  margin-top:4px}
+.mat-st{background:var(--nuit3);border:1px solid var(--b);border-radius:12px;padding:11px 8px;
+  text-align:center}
+.mat-st b{display:block;font-family:var(--ff-de);font-size:21px;font-weight:800;color:var(--or2)}
+.mat-st span{font-size:10.5px;color:var(--m)}
+.mat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;
+  margin:16px 0}
+.mat-c{background:linear-gradient(168deg,var(--p),var(--p2));border:1px solid var(--b);
+  border-radius:16px;padding:15px;display:flex;flex-direction:column;gap:8px;transition:.22s}
+.mat-c:hover{transform:translateY(-4px);border-color:var(--a);box-shadow:0 12px 30px rgba(0,0,0,.34)}
+.mat-c.on{border-color:rgba(61,220,132,.45)}
+.mat-ch{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mat-i{font-size:26px}
+.mat-stt{font-size:10.5px;color:var(--m);background:var(--b);padding:3px 9px;border-radius:999px}
+.mat-stt.ok{color:var(--g);background:rgba(61,220,132,.13)}
+.mat-n{font-family:var(--ff-ar-display);font-size:16px}
+.mat-de{font-family:var(--ff-de-display);font-size:12px;color:var(--a2);font-style:normal;
+  direction:ltr;text-align:right}
+.mat-d{color:var(--m);font-size:12px;margin:0;line-height:1.7;flex:1}
+.mat-kv{display:flex;gap:14px;font-size:11.5px;color:var(--m)}
+.mat-kv b{color:var(--or2);font-family:var(--ff-de);font-size:14px}
+.mat-vision{margin-top:16px}
+.mat-how{margin:10px 0 0 20px;color:var(--m);font-size:12.5px;line-height:2}
+.mat-how code{background:var(--nuit3);border:1px solid var(--b);border-radius:6px;
+  padding:1px 6px;font-size:11px;direction:ltr;display:inline-block}
+@media(max-width:640px){.mat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.mat-grid{grid-template-columns:1fr}}
