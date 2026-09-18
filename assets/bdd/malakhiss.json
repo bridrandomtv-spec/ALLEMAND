@@ -5,8 +5,8 @@
   "licence":"اجتهاد أصلي من الأستاذ خريف أحمد — ملخصات محررة ذاتيًا، لا نسخ من أي كتاب",
   "note":"كل ملخص محرر أصليًا ليغطي كفاءات الوحدة : الفكرة، المفردات، القواعد، البنى النموذجية، ونصيحتان. لا يتضمن أي نص من الكتب المدرسية.",
   "nb":16,
-  "dourous_nb":16,
-  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. الدفعات : الوحدة 1 (8) + الوحدة 2 (8)."
+  "dourous_nb":24,
+  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. الدفعات : U1 (8) + U2 (8) + U3 (8)."
  },
  "malakhiss":[
   {
@@ -766,6 +766,145 @@
    "regle":"توزيع الوقت 8/8/4 : 18 د / 18 د / 9 د.",
    "exemple":"Relis ta production : vérifie les possessifs et les pluriels.",
    "intibah":"في الفهم، أجب بجملة كاملة لا بكلمة واحدة."
+  },
+  {
+   "unite":3,
+   "n":1,
+   "titre_ar":"تقديم المدرسة",
+   "titre_de":"Die Schule vorstellen",
+   "idee":"نصّ تعريفي بالمدرسة: الأقسام، الساحة، الإدارة.",
+   "mots":[
+    "die Schule",
+    "die Klasse",
+    "der Hof",
+    "das Büro",
+    "der Direktor",
+    "das Gebäude"
+   ],
+   "regle":"Artikel: die Schule / die Klasse / der Hof / das Büro.",
+   "exemple":"Unsere Schule hat einen großen Hof und viele Klassen.",
+   "intibah":"احفظ الجنس مع الاسم دائمًا: der/die/das."
+  },
+  {
+   "unite":3,
+   "n":2,
+   "titre_ar":"المواد المدرسية",
+   "titre_de":"Die Schulfächer",
+   "idee":"نصّ يقدّم المواد: الرياضيات، الألمانية، التاريخ…",
+   "mots":[
+    "das Fach",
+    "Mathematik",
+    "Deutsch",
+    "Geschichte",
+    "Biologie",
+    "Lieblingsfach"
+   ],
+   "regle":"Mein Lieblingsfach ist … + begründen mit weil.",
+   "exemple":"Mein Lieblingsfach ist Deutsch, weil es interessant ist.",
+   "intibah":"weil تدفع الفعل المصرّف إلى آخر الجملة."
+  },
+  {
+   "unite":3,
+   "n":3,
+   "titre_ar":"الأوقات والجدول",
+   "titre_de":"Uhrzeiten und Stundenplan",
+   "idee":"نصّ عن الجدول الأسبوعي والأوقات.",
+   "mots":[
+    "der Stundenplan",
+    "um acht Uhr",
+    "halb zehn",
+    "der Montag",
+    "die Pause",
+    "beginnen"
+   ],
+   "regle":"التعبير عن الوقت: um + ساعة / halb + الساعة التالية.",
+   "exemple":"Der Unterricht beginnt um acht Uhr. Pause ist um halb zehn.",
+   "intibah":"halb zehn = 9:30 وليس 10:30."
+  },
+  {
+   "unite":3,
+   "n":4,
+   "titre_ar":"الأفعال الانفصالية",
+   "titre_de":"Trennbare Verben",
+   "idee":"نصّ يومي يُبرز aufstehen / anfangen / aufhören.",
+   "mots":[
+    "aufstehen",
+    "anfangen",
+    "aufhören",
+    "zumachen",
+    "aufmachen",
+    "fernsehen"
+   ],
+   "regle":"البادئة الانفصالية تذهب إلى آخر الجملة: Ich stehe um sechs Uhr auf.",
+   "exemple":"Die Schule fängt um acht Uhr an.",
+   "intibah":"في الجملة الرئيسية فقط تنفصل البادئة؛ في المصدر/الماضي المركّب تبقى متصلة (aufzustehen, aufgestanden)."
+  },
+  {
+   "unite":3,
+   "n":5,
+   "titre_ar":"فهم نص عن اليوم المدرسي",
+   "titre_de":"Leseverstehen : Schultag",
+   "idee":"نصّ قراءة ليوم مدرسي كامل: استخراج الترتيب الزمني.",
+   "mots":[
+    "zuerst",
+    "dann",
+    "danach",
+    "am Nachmittag",
+    "am Abend",
+    "die Hausaufgabe"
+   ],
+   "regle":"رتّب الأحداث بواسطة zuerst/dann/danach أثناء القراءة.",
+   "exemple":"Zuerst frühstücke ich, dann gehe ich zur Schule.",
+   "intibah":"أسئلة الترتيب تُجاب بسلسلة زمنية لا بجملة منفردة."
+  },
+  {
+   "unite":3,
+   "n":6,
+   "titre_ar":"إنتاج كتابي : يومي المدرسي",
+   "titre_de":"Textproduktion : mein Schultag",
+   "idee":"ورشة كتابة: فقرة عن اليوم المدرسي (5 أسطر).",
+   "mots":[
+    "zuerst",
+    "dann",
+    "am Nachmittag",
+    "meine Hausaufgaben",
+    "um … Uhr"
+   ],
+   "regle":"خطة: استيقاظ → مدرسة → مواد → بعد الظهر → خاتمة.",
+   "exemple":"Ich stehe um sechs Uhr auf. Dann gehe ich zur Schule.",
+   "intibah":"استعمل رابطًا زمنيًا واحدًا على الأقل في كل جملة."
+  },
+  {
+   "unite":3,
+   "n":7,
+   "titre_ar":"تثبيت وتقويم",
+   "titre_de":"Konsolidierung",
+   "idee":"حصة تجميع: تمارين على الأوقات والأفعال الانفصالية.",
+   "mots":[
+    "Wiederholung",
+    "Übung",
+    "Fehler",
+    "Tipp"
+   ],
+   "regle":"ميّز: um + ساعة / halb + التالية؛ البادئة في الآخر.",
+   "exemple":"Ich mache die Hausaufgaben und sehe dann fern.",
+   "intibah":"راجع أخطاءك في 🧠 الذاكرة قبل الفرض."
+  },
+  {
+   "unite":3,
+   "n":8,
+   "titre_ar":"فرض الوحدة",
+   "titre_de":"Unitstest",
+   "idee":"فرض تقييمي /20 على الوحدة 3 (فهم + لغة + إنتاج).",
+   "mots":[
+    "Test",
+    "Note",
+    "Zeit",
+    "Korrektur"
+   ],
+   "regle":"توزيع الوقت 8/8/4 : 18 د / 18 د / 9 د.",
+   "exemple":"Vérifie les verbes séparables : préfixe en fin de phrase.",
+   "intibah":"في الإنتاج، نظّم فقرتك زمنيًا لتضمن نقاط التماسك."
   }
  ]
 }
