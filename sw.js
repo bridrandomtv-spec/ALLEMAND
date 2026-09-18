@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.20.0';
+const VERSION = 'dz-de-v3.21.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
