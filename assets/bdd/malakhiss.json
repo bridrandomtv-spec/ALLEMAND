@@ -5,8 +5,8 @@
   "licence":"اجتهاد أصلي من الأستاذ خريف أحمد — ملخصات محررة ذاتيًا، لا نسخ من أي كتاب",
   "note":"كل ملخص محرر أصليًا ليغطي كفاءات الوحدة : الفكرة، المفردات، القواعد، البنى النموذجية، ونصيحتان. لا يتضمن أي نص من الكتب المدرسية.",
   "nb":16,
-  "dourous_nb":8,
-  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. الدفعة الحالية : الوحدة 1 (8 دروس)."
+  "dourous_nb":16,
+  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. الدفعات : الوحدة 1 (8) + الوحدة 2 (8)."
  },
  "malakhiss":[
   {
@@ -628,6 +628,144 @@
    "regle":"إدارة الوقت: 8/8/4 → خصص 18 د / 18 د / 9 د.",
    "exemple":"Lire deux fois la consigne avant de répondre.",
    "intibah":"في الإنتاج، اكتب 5 أسطر كاملة لتضمن نقاط المضمون."
+  },
+  {
+   "unite":2,
+   "n":1,
+   "titre_ar":"تقديم العائلة",
+   "titre_de":"Die Familie vorstellen",
+   "idee":"نصّ تعريفي بالعائلة: عرض أفراد الأسرة واحدًا واحدًا.",
+   "mots":[
+    "die Familie",
+    "die Eltern",
+    "der Vater",
+    "die Mutter",
+    "das Kind",
+    "die Geschwister"
+   ],
+   "regle":"artikel der/die/das + تقديم بـ Das ist / Das sind.",
+   "exemple":"Das ist mein Vater. / Das sind meine Eltern.",
+   "intibah":"الجمع دائمًا die مهما كان جنس المفرد."
+  },
+  {
+   "unite":2,
+   "n":2,
+   "titre_ar":"أفراد الأسرة والصفات",
+   "titre_de":"Familienmitglieder und Eigenschaften",
+   "idee":"نصّ وصفي: صفات أفراد الأسرة (كبير/صغير، لطيف/صارم).",
+   "mots":[
+    "groß",
+    "klein",
+    "nett",
+    "streng",
+    "jung",
+    "alt"
+   ],
+   "regle":"الصفة الخبر لا تُصرَّف: Der Vater ist streng.",
+   "exemple":"Meine Mutter ist nett und mein Bruder ist klein.",
+   "intibah":"الصفة قبل الاسم تُصرَّف (نهايات)، أما بعد sein فتبقى بدون نهاية."
+  },
+  {
+   "unite":2,
+   "n":3,
+   "titre_ar":"أدوات الملكية",
+   "titre_de":"Possessivartikel",
+   "idee":"نصّ حواري عن الملكية: mein/dein/sein/ihr.",
+   "mots":[
+    "mein",
+    "dein",
+    "sein",
+    "ihr",
+    "unser",
+    "euer"
+   ],
+   "regle":"Possessif يتبع المالك: mein (أنا) / dein (أنت) / sein (هو) / ihr (هي).",
+   "exemple":"Ist das dein Buch? — Nein, das ist mein Buch.",
+   "intibah":"نهاية الـ Possessiv تتبع الاسم: mein Bruder / meine Schwester / mein Buch."
+  },
+  {
+   "unite":2,
+   "n":4,
+   "titre_ar":"الجمع والنفي kein",
+   "titre_de":"Pluriel und Negation kein",
+   "idee":"نصّ يدرّب على الجمع وعلى النفي بـ kein.",
+   "mots":[
+    "die Brüder",
+    "die Schwestern",
+    "keine",
+    "Kinder",
+    "Leute",
+    "Eltern"
+   ],
+   "regle":"kein + nom pour nier un nom : Ich habe keine Geschwister.",
+   "exemple":"Hast du Geschwister? — Nein, ich habe keine Geschwister.",
+   "intibah":"لا تخلط بين nicht (ينفي الفعل/الصفة) و kein (ينفي الاسم)."
+  },
+  {
+   "unite":2,
+   "n":5,
+   "titre_ar":"فهم نص عن العائلة",
+   "titre_de":"Leseverstehen : Familie",
+   "idee":"نصّ قراءة عن عائلة ألمانية: استخراج عدد الأفراد وأسمائهم.",
+   "mots":[
+    "der Onkel",
+    "die Tante",
+    "der Cousin",
+    "die Kusine",
+    "die Oma",
+    "der Opa"
+   ],
+   "regle":"استراتيجية: ضع جدولًا (الاسم / الصلة / العمر) أثناء القراءة.",
+   "exemple":"Die Oma heißt Maria und der Cousin heißt Tim.",
+   "intibah":"أسئلة « من/كم » تُجاب من النص حرفيًا؛ لا تستنتج."
+  },
+  {
+   "unite":2,
+   "n":6,
+   "titre_ar":"إنتاج كتابي : عائلتي",
+   "titre_de":"Textproduktion : meine Familie",
+   "idee":"ورشة كتابة: فقرة وصف العائلة (5 أسطر).",
+   "mots":[
+    "Meine Familie ist…",
+    "Ich habe…",
+    "Mein Vater ist…",
+    "Meine Mutter ist…"
+   ],
+   "regle":"خطة: تقديم العائلة → الأفراد → صفتان → خاتمة شعور.",
+   "exemple":"Meine Familie ist groß. Ich habe zwei Brüder. Ich liebe meine Familie.",
+   "intibah":"استعمل Possessiv صحيحًا وراجع نهايات الجمع."
+  },
+  {
+   "unite":2,
+   "n":7,
+   "titre_ar":"تثبيت وتقويم",
+   "titre_de":"Konsolidierung",
+   "idee":"حصة تجميع: تمارين مختلطة على الملكية والجمع والنفي.",
+   "mots":[
+    "Wiederholung",
+    "Übung",
+    "Fehler",
+    "Tipp"
+   ],
+   "regle":"ميّز: mein/dein/sein/ihr حسب المالك؛ kein للنفي الاسم.",
+   "exemple":"Das ist sein Buch, nicht mein Buch.",
+   "intibah":"راجع أخطاءك في 🧠 الذاكرة قبل الفرض."
+  },
+  {
+   "unite":2,
+   "n":8,
+   "titre_ar":"فرض الوحدة",
+   "titre_de":"Unitstest",
+   "idee":"فرض تقييمي /20 على الوحدة 2 (فهم + لغة + إنتاج).",
+   "mots":[
+    "Test",
+    "Note",
+    "Zeit",
+    "Korrektur"
+   ],
+   "regle":"توزيع الوقت 8/8/4 : 18 د / 18 د / 9 د.",
+   "exemple":"Relis ta production : vérifie les possessifs et les pluriels.",
+   "intibah":"في الفهم، أجب بجملة كاملة لا بكلمة واحدة."
   }
  ]
 }
