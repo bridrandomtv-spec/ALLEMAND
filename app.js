@@ -1504,6 +1504,15 @@ function bootGate(){
   if(shell) shell.hidden = true;
   if(!gate) return;
   gate.hidden = false;
+  /* Le portail doit être INTERACTIF même sans session : sans cet appel, les onglets
+     login/signup, la soumission du formulaire et le bouton démo restent morts sur une
+     visite fraîche (bindGateEvents n'était posé que dans enterApp, donc qu'avec session).
+     Idempotent via bindGateEvents._done. */
+  try{ bindGateEvents(); }
+  catch(errBind){
+    try{ console.error('[bootGate] bindGateEvents :', errBind); }catch(e2){}
+    panneauPanne(errBind, 'bootGate → bindGateEvents');
+  }
   /* Le portail est démasqué AVANT tout rendu : un échec de paintGateStats ne doit plus
      laisser l'écran vide. */
   try{ paintGateStats(); }
