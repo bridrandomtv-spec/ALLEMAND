@@ -1,0 +1,962 @@
+{
+ "_meta":{
+  "titre":"Contenu pédagogique ORIGINAL — programme algérien 2ᵉ génération",
+  "version":"1.0.0",
+  "licence":"production propre (Prof. Kharif Ahmed) — aucun contenu de manuel reproduit",
+  "note":"Tout le contenu ci-dessous est ORIGINAL : textes, exercices et sujets rédigés pour couvrir les compétences officielles, sans reproduire aucun manuel.",
+  "sections":{
+   "A_extension_u7":1,
+   "B_exercices":50,
+   "C_fiches":12,
+   "D_sujets":2
+  }
+ },
+ "A_extension_u7":{
+  "unite":7,
+  "niveau":"3AS",
+  "titre":"Persönlichkeit und Identität — extension originale",
+  "texte":{
+   "titre":"Wer bin ich eigentlich?",
+   "corps":"Ich heiße Salim und bin achtzehn Jahre alt. Ich wohne in Blida, am Fuß des Atlasgebirges. Meine Freunde sagen, ich sei ruhig, aber ich lache gern. In meiner Freizeit fotografiere ich die Berge und höre algerische Musik. Manchmal frage ich mich: Wer bin ich eigentlich? Bin ich mein Name, meine Stadt, meine Träume? Ich glaube, ich bin alles zusammen: meine Familie, meine Sprache und meine Wünsche. Deshalb lerne ich Deutsch — um meine Welt einem größeren Publikum zu erzählen.",
+   "mots":78
+  },
+  "exercices":[
+   {
+    "q":"Wo wohnt Salim?",
+    "opts":[
+     "In Blida",
+     "In Alger",
+     "In Oran",
+     "In Blida?"
+    ],
+    "a":0,
+    "why":"« Ich wohne in Blida, am Fuß des Atlasgebirges. »"
+   },
+   {
+    "q":"Was macht Salim in seiner Freizeit?",
+    "opts":[
+     "Er fotografiert und hört Musik",
+     "Er spielt Fußball",
+     "Er liest Zeitung",
+     "Er kocht"
+    ],
+    "a":0,
+    "why":"« Ich fotografiere die Berge und höre algerische Musik. »"
+   },
+   {
+    "q":"Vrai ou faux : Salim lerne Deutsch, um zu reisen.",
+    "opts":[
+     "Faux : pour raconter sa monde",
+     "Vrai",
+     "Faux : pour le travail",
+     "Faux : pour sa famille"
+    ],
+    "a":0,
+    "why":"« um meine Welt einem größeren Publikum zu erzählen »."
+   },
+   {
+    "q":"« Meine Freunde sagen, ich ___ ruhig. »",
+    "opts":[
+     "sei",
+     "bin",
+     "bin?",
+     "habe"
+    ],
+    "a":0,
+    "why":"Discours indirect : Konjunktiv I « sei »."
+   }
+  ]
+ },
+ "B_exercices":[
+  {
+   "id":"b01",
+   "comp":"conjugaison",
+   "niveau":"2AS",
+   "q":"Ich ___ müde.",
+   "opts":[
+    "bin",
+    "bist",
+    "ist",
+    "sind"
+   ],
+   "a":0,
+   "why":"ich → bin (sein)."
+  },
+  {
+   "id":"b02",
+   "comp":"conjugaison",
+   "niveau":"2AS",
+   "q":"Du ___ ein Buch.",
+   "opts":[
+    "hast",
+    "hat",
+    "haben",
+    "habe"
+   ],
+   "a":0,
+   "why":"du → hast (b tombe)."
+  },
+  {
+   "id":"b03",
+   "comp":"conjugaison",
+   "niveau":"2AS",
+   "q":"Wir ___ aus Algerien.",
+   "opts":[
+    "kommen",
+    "kommt",
+    "kommst",
+    "komme"
+   ],
+   "a":0,
+   "why":"wir → kommen."
+  },
+  {
+   "id":"b04",
+   "comp":"conjugaison",
+   "niveau":"2AS",
+   "q":"Er ___ jeden Tag Fußball.",
+   "opts":[
+    "spielt",
+    "spielst",
+    "spielen",
+    "spiele"
+   ],
+   "a":0,
+   "why":"er → -t."
+  },
+  {
+   "id":"b05",
+   "comp":"conjugaison",
+   "niveau":"2AS",
+   "q":"___ du Geschwister?",
+   "opts":[
+    "Hast",
+    "Hat",
+    "Haben",
+    "Habe"
+   ],
+   "a":0,
+   "why":"du → Hast."
+  },
+  {
+   "id":"b06",
+   "comp":"conjugaison",
+   "niveau":"2AS",
+   "q":"Sie (pl.) ___ Deutsch.",
+   "opts":[
+    "lernen",
+    "lernt",
+    "lernst",
+    "lerne"
+   ],
+   "a":0,
+   "why":"sie pl. → lernen."
+  },
+  {
+   "id":"b07",
+   "comp":"conjugaison",
+   "niveau":"2AS",
+   "q":"Ich ___ 17 Jahre alt.",
+   "opts":[
+    "bin",
+    "bist",
+    "ist",
+    "habe"
+   ],
+   "a":0,
+   "why":"âge = sein."
+  },
+  {
+   "id":"b08",
+   "comp":"conjugaison",
+   "niveau":"2AS",
+   "q":"Mein Vater ___ Lehrer.",
+   "opts":[
+    "ist",
+    "bin",
+    "sind",
+    "hat"
+   ],
+   "a":0,
+   "why":"3ᵉ pers. sing. = ist."
+  },
+  {
+   "id":"b09",
+   "comp":"conjugaison",
+   "niveau":"2AS",
+   "q":"___ ihr aus Blida?",
+   "opts":[
+    "Seid",
+    "Sind",
+    "Sein",
+    "Habt"
+   ],
+   "a":0,
+   "why":"ihr → Seid."
+  },
+  {
+   "id":"b10",
+   "comp":"conjugaison",
+   "niveau":"2AS",
+   "q":"Es ___ kalt.",
+   "opts":[
+    "ist",
+    "bin",
+    "sind",
+    "hat"
+   ],
+   "a":0,
+   "why":"es → ist."
+  },
+  {
+   "id":"b11",
+   "comp":"conjugaison",
+   "niveau":"3AS",
+   "q":"Sie (sing.) ___ ein Auto.",
+   "opts":[
+    "hat",
+    "hast",
+    "haben",
+    "habe"
+   ],
+   "a":0,
+   "why":"sie sing. → hat."
+  },
+  {
+   "id":"b12",
+   "comp":"conjugaison",
+   "niveau":"3AS",
+   "q":"Ich ___ gern Musik.",
+   "opts":[
+    "höre",
+    "hörst",
+    "hört",
+    "hören"
+   ],
+   "a":0,
+   "why":"ich → -e."
+  },
+  {
+   "id":"b13",
+   "comp":"w-fragen",
+   "niveau":"2AS",
+   "q":"___ heißt du?",
+   "opts":[
+    "Wie",
+    "Wo",
+    "Wer",
+    "Wann"
+   ],
+   "a":0,
+   "why":"Wie = comment/nom."
+  },
+  {
+   "id":"b14",
+   "comp":"w-fragen",
+   "niveau":"2AS",
+   "q":"___ kommst du?",
+   "opts":[
+    "Woher",
+    "Wo",
+    "Wohin",
+    "Wer"
+   ],
+   "a":0,
+   "why":"Woher = origine."
+  },
+  {
+   "id":"b15",
+   "comp":"w-fragen",
+   "niveau":"2AS",
+   "q":"___ wohnst du?",
+   "opts":[
+    "Wo",
+    "Woher",
+    "Wohin",
+    "Wann"
+   ],
+   "a":0,
+   "why":"Wo = position."
+  },
+  {
+   "id":"b16",
+   "comp":"w-fragen",
+   "niveau":"2AS",
+   "q":"___ alt bist du?",
+   "opts":[
+    "Wie",
+    "Wer",
+    "Wo",
+    "Was"
+   ],
+   "a":0,
+   "why":"Wie alt = âge."
+  },
+  {
+   "id":"b17",
+   "comp":"w-fragen",
+   "niveau":"2AS",
+   "q":"___ ist dein Lehrer?",
+   "opts":[
+    "Wer",
+    "Wo",
+    "Wann",
+    "Wie"
+   ],
+   "a":0,
+   "why":"Wer = personne."
+  },
+  {
+   "id":"b18",
+   "comp":"w-fragen",
+   "niveau":"2AS",
+   "q":"___ beginnt die Schule?",
+   "opts":[
+    "Wann",
+    "Wo",
+    "Wer",
+    "Wie"
+   ],
+   "a":0,
+   "why":"Wann = temps."
+  },
+  {
+   "id":"b19",
+   "comp":"w-fragen",
+   "niveau":"2AS",
+   "q":"___ viele Geschwister hast du?",
+   "opts":[
+    "Wie",
+    "Wo",
+    "Wer",
+    "Wann"
+   ],
+   "a":0,
+   "why":"Wie viele = combien."
+  },
+  {
+   "id":"b20",
+   "comp":"w-fragen",
+   "niveau":"2AS",
+   "q":"___ gehst du in die Schule?",
+   "opts":[
+    "Wohin",
+    "Wo",
+    "Woher",
+    "Wann"
+   ],
+   "a":0,
+   "why":"Wohin = direction."
+  },
+  {
+   "id":"b21",
+   "comp":"akkusativ",
+   "niveau":"2AS",
+   "q":"Ich sehe ___ Mann.",
+   "opts":[
+    "den",
+    "dem",
+    "der",
+    "das"
+   ],
+   "a":0,
+   "why":"der → den à l'Akk."
+  },
+  {
+   "id":"b22",
+   "comp":"akkusativ",
+   "niveau":"2AS",
+   "q":"Ich habe ___ Bruder.",
+   "opts":[
+    "einen",
+    "einem",
+    "ein",
+    "eine"
+   ],
+   "a":0,
+   "why":"ein → einen."
+  },
+  {
+   "id":"b23",
+   "comp":"akkusativ",
+   "niveau":"2AS",
+   "q":"Sie liebt ___ Mutter.",
+   "opts":[
+    "die",
+    "der",
+    "dem",
+    "den"
+   ],
+   "a":0,
+   "why":"die inchangé."
+  },
+  {
+   "id":"b24",
+   "comp":"akkusativ",
+   "niveau":"2AS",
+   "q":"Wir kaufen ___ Buch.",
+   "opts":[
+    "das",
+    "dem",
+    "den",
+    "der"
+   ],
+   "a":0,
+   "why":"das inchangé."
+  },
+  {
+   "id":"b25",
+   "comp":"akkusativ",
+   "niveau":"3AS",
+   "q":"Er sieht ___ Frau.",
+   "opts":[
+    "die",
+    "der",
+    "dem",
+    "den"
+   ],
+   "a":0,
+   "why":"die inchangé."
+  },
+  {
+   "id":"b26",
+   "comp":"dativ",
+   "niveau":"3AS",
+   "q":"Ich helfe ___ Freund.",
+   "opts":[
+    "dem",
+    "den",
+    "der",
+    "das"
+   ],
+   "a":0,
+   "why":"helfen + Datif."
+  },
+  {
+   "id":"b27",
+   "comp":"dativ",
+   "niveau":"3AS",
+   "q":"Sie gibt ___ Kind ein Buch.",
+   "opts":[
+    "dem",
+    "den",
+    "das",
+    "die"
+   ],
+   "a":0,
+   "why":"das → dem."
+  },
+  {
+   "id":"b28",
+   "comp":"dativ",
+   "niveau":"3AS",
+   "q":"Ich danke ___ Lehrer.",
+   "opts":[
+    "dem",
+    "den",
+    "der",
+    "das"
+   ],
+   "a":0,
+   "why":"danken + Datif."
+  },
+  {
+   "id":"b29",
+   "comp":"perfekt",
+   "niveau":"3AS",
+   "q":"Ich ___ Deutsch gelernt.",
+   "opts":[
+    "habe",
+    "hat",
+    "haben",
+    "bin"
+   ],
+   "a":0,
+   "why":"haben + Partizip II."
+  },
+  {
+   "id":"b30",
+   "comp":"perfekt",
+   "niveau":"3AS",
+   "q":"Er ___ nach Hause gegangen.",
+   "opts":[
+    "ist",
+    "hat",
+    "haben",
+    "habe"
+   ],
+   "a":0,
+   "why":"mouvement = sein."
+  },
+  {
+   "id":"b31",
+   "comp":"perfekt",
+   "niveau":"3AS",
+   "q":"Wir ___ Fußball gespielt.",
+   "opts":[
+    "haben",
+    "hat",
+    "seid",
+    "bin"
+   ],
+   "a":0,
+   "why":"spielen = haben."
+  },
+  {
+   "id":"b32",
+   "comp":"perfekt",
+   "niveau":"3AS",
+   "q":"Sie ___ ein Buch gelesen.",
+   "opts":[
+    "hat",
+    "ist",
+    "haben",
+    "habe"
+   ],
+   "a":0,
+   "why":"lesen = haben."
+  },
+  {
+   "id":"b33",
+   "comp":"perfekt",
+   "niveau":"3AS",
+   "q":"Ich ___ aufgestanden.",
+   "opts":[
+    "bin",
+    "habe",
+    "hat",
+    "haben"
+   ],
+   "a":0,
+   "why":"aufstehen = sein."
+  },
+  {
+   "id":"b34",
+   "comp":"perfekt",
+   "niveau":"3AS",
+   "q":"Er ___ gekommen.",
+   "opts":[
+    "ist",
+    "hat",
+    "haben",
+    "habe"
+   ],
+   "a":0,
+   "why":"kommen = sein."
+  },
+  {
+   "id":"b35",
+   "comp":"perfekt",
+   "niveau":"3AS",
+   "q":"Wir ___ gelernt.",
+   "opts":[
+    "haben",
+    "seid",
+    "hat",
+    "bin"
+   ],
+   "a":0,
+   "why":"lernen = haben."
+  },
+  {
+   "id":"b36",
+   "comp":"perfekt",
+   "niveau":"3AS",
+   "q":"Sie ___ zu Hause geblieben.",
+   "opts":[
+    "ist",
+    "hat",
+    "haben",
+    "habe"
+   ],
+   "a":0,
+   "why":"bleiben = sein."
+  },
+  {
+   "id":"b37",
+   "comp":"expression",
+   "niveau":"2AS",
+   "q":"Phrase correcte :",
+   "opts":[
+    "Ich bin 16 Jahre alt.",
+    "Ich habe 16 Jahre alt.",
+    "Ich bin 16 Jahre.",
+    "Ich habe 16 Jahre."
+   ],
+   "a":0,
+   "why":"âge = sein + Jahre alt."
+  },
+  {
+   "id":"b38",
+   "comp":"expression",
+   "niveau":"2AS",
+   "q":"Ordre correct :",
+   "opts":[
+    "Ich spiele jeden Tag Fußball.",
+    "Jeden Tag ich spiele Fußball.",
+    "Spiele ich jeden Tag Fußball.",
+    "Ich jeden Tag spiele Fußball."
+   ],
+   "a":0,
+   "why":"verbe en 2 position."
+  },
+  {
+   "id":"b39",
+   "comp":"expression",
+   "niveau":"3AS",
+   "q":"Connecteur de cause :",
+   "opts":[
+    "weil",
+    "und",
+    "oder",
+    "aber"
+   ],
+   "a":0,
+   "why":"weil = parce que."
+  },
+  {
+   "id":"b40",
+   "comp":"expression",
+   "niveau":"3AS",
+   "q":"Pour opposer deux idées :",
+   "opts":[
+    "aber",
+    "und",
+    "oder",
+    "denn"
+   ],
+   "a":0,
+   "why":"aber = mais."
+  },
+  {
+   "id":"b41",
+   "comp":"expression",
+   "niveau":"3AS",
+   "q":"Pour une conséquence :",
+   "opts":[
+    "deshalb",
+    "weil",
+    "obwohl",
+    "wenn"
+   ],
+   "a":0,
+   "why":"deshalb = c'est pourquoi."
+  },
+  {
+   "id":"b42",
+   "comp":"expression",
+   "niveau":"3AS",
+   "q":"Perfekt correct :",
+   "opts":[
+    "Ich habe ein Buch gelesen.",
+    "Ich ein Buch habe gelesen.",
+    "Ich habe ein Buch lesen.",
+    "Habe ich ein Buch gelesen."
+   ],
+   "a":0,
+   "why":"haben + Partizip II en fin."
+  },
+  {
+   "id":"b43",
+   "comp":"expression",
+   "niveau":"3AS",
+   "q":"Début de lettre formelle :",
+   "opts":[
+    "Sehr geehrte Damen und Herren,",
+    "Hallo du,",
+    "Tschüs,",
+    "Hey,"
+   ],
+   "a":0,
+   "why":"formule formelle."
+  },
+  {
+   "id":"b44",
+   "comp":"vocabulaire",
+   "niveau":"2AS",
+   "q":"die Schule =",
+   "opts":[
+    "l'école",
+    "la maison",
+    "le marché",
+    "la rue"
+   ],
+   "a":0,
+   "why":"die Schule = école."
+  },
+  {
+   "id":"b45",
+   "comp":"vocabulaire",
+   "niveau":"2AS",
+   "q":"der Unterricht =",
+   "opts":[
+    "le cours",
+    "le devoir",
+    "le livre",
+    "le cahier"
+   ],
+   "a":0,
+   "why":"Unterricht = cours."
+  },
+  {
+   "id":"b46",
+   "comp":"vocabulaire",
+   "niveau":"2AS",
+   "q":"die Hausaufgabe =",
+   "opts":[
+    "le devoir à la maison",
+    "la classe",
+    "le tableau",
+    "la craie"
+   ],
+   "a":0,
+   "why":"Hausaufgabe."
+  },
+  {
+   "id":"b47",
+   "comp":"vocabulaire",
+   "niveau":"2AS",
+   "q":"der Lehrer =",
+   "opts":[
+    "l'enseignant",
+    "l'élève",
+    "le directeur",
+    "le surveillant"
+   ],
+   "a":0,
+   "why":"Lehrer."
+  },
+  {
+   "id":"b48",
+   "comp":"vocabulaire",
+   "niveau":"2AS",
+   "q":"die Note =",
+   "opts":[
+    "la note",
+    "la leçon",
+    "la page",
+    "la ligne"
+   ],
+   "a":0,
+   "why":"Note = note."
+  },
+  {
+   "id":"b49",
+   "comp":"vocabulaire",
+   "niveau":"2AS",
+   "q":"lernen =",
+   "opts":[
+    "apprendre",
+    "enseigner",
+    "oublier",
+    "répéter"
+   ],
+   "a":0,
+   "why":"lernen = apprendre."
+  },
+  {
+   "id":"b50",
+   "comp":"vocabulaire",
+   "niveau":"2AS",
+   "q":"die Prüfung =",
+   "opts":[
+    "l'examen",
+    "la récréation",
+    "la cantine",
+    "la bibliothèque"
+   ],
+   "a":0,
+   "why":"Prüfung."
+  }
+ ],
+ "C_fiches":[
+  {
+   "id":"c01",
+   "comp":"sein",
+   "regle":"ich bin · du bist · er/sie/es ist · wir sind · ihr seid · sie/Sie sind",
+   "exemple":"Ich bin müde. / Sie ist Lehrerin.",
+   "piege":"Ne pas utiliser haben pour l'âge ou l'état."
+  },
+  {
+   "id":"c02",
+   "comp":"haben",
+   "regle":"ich habe · du hast · er/sie/es hat · wir haben · ihr habt · sie/Sie haben",
+   "exemple":"Ich habe ein Buch.",
+   "piege":"Le b tombe à du hast et er hat."
+  },
+  {
+   "id":"c03",
+   "comp":"W-Fragen",
+   "regle":"wie · wer · wo · woher · wohin · wann · warum",
+   "exemple":"Woher kommst du? — Ich komme aus Algerien.",
+   "piege":"Ne pas confondre wo (position) / woher (origine) / wohin (direction)."
+  },
+  {
+   "id":"c04",
+   "comp":"Akkusativ",
+   "regle":"der → den · ein → einen · die/das inchangés",
+   "exemple":"Ich sehe den Mann.",
+   "piege":"Seuls le masculin singulier change."
+  },
+  {
+   "id":"c05",
+   "comp":"Dativ",
+   "regle":"der/das → dem · die → der · verbes : helfen, danken, geben",
+   "exemple":"Ich helfe dem Freund.",
+   "piege":"helfen/danken veulent toujours le Datif."
+  },
+  {
+   "id":"c06",
+   "comp":"Perfekt",
+   "regle":"haben ou sein + Partizip II ; mouvement/état = sein",
+   "exemple":"Ich habe gelernt. / Er ist gekommen.",
+   "piege":"Les verbes de mouvement prennent sein."
+  },
+  {
+   "id":"c07",
+   "comp":"Position du verbe",
+   "regle":"verbe conjugué en 2 position en phrase déclarative",
+   "exemple":"Ich spiele jeden Tag Fußball.",
+   "piege":"Ne pas placer le sujet après le verbe sauf inversion."
+  },
+  {
+   "id":"c08",
+   "comp":"Négation",
+   "regle":"nicht (verbe/adjectif) vs kein (nom avec article indéfini)",
+   "exemple":"Ich habe kein Buch. / Er kommt nicht.",
+   "piege":"kein s'accorde comme ein."
+  },
+  {
+   "id":"c09",
+   "comp":"Pronoms",
+   "regle":"ich/mich/mir · er/ihn/ihm · sie/sie/ihr",
+   "exemple":"Er sieht mich. / Ich helfe ihm.",
+   "piege":"Accusatif (objet direct) vs Datif (objet indirect)."
+  },
+  {
+   "id":"c10",
+   "comp":"Prépositions",
+   "regle":"aus + Datif (origine) · in + Datif/Akk · an/auf selon cas",
+   "exemple":"Ich komme aus Algerien.",
+   "piege":"aus toujours Datif."
+  },
+  {
+   "id":"c11",
+   "comp":"Adjectifs attributs",
+   "regle":"invariables quand attributs après sein",
+   "exemple":"Das Auto ist schnell.",
+   "piege":"Pas d'accord quand l'adjectif est attribut."
+  },
+  {
+   "id":"c12",
+   "comp":"Connecteurs",
+   "regle":"weil pousse le verbe à la fin · und/aber/deshalb ordre normal",
+   "exemple":"Ich lerne, weil ich die Prüfung bestehe.",
+   "piege":"weil = verbe conjugué en fin de subordonnée."
+  }
+ ],
+ "D_sujets":[
+  {
+   "id":"ent-3as-1",
+   "niveau":"3AS",
+   "duree":120,
+   "titre":"Sujet d'entraînement 1 — Freundschaft",
+   "comprehension":{
+    "texte":"Meine beste Freundin heißt Amira. Wir kennen uns seit der Grundschule. Obwohl wir sehr verschieden sind, verstehen wir uns gut. Amira ist mutig und offen, ich bin eher ruhig. Wenn ich Probleme habe, hört sie mir zu und gibt mir Rat. Letzte Woche haben wir zusammen für die Deutschprüfung gelernt. Ich glaube, eine echte Freundschaft ist wie eine Pflanze: man muss sie jeden Tag pflegen, sonst geht sie kaputt.",
+    "questions":[
+     {
+      "q":"Seit wann kennen sich die beiden?",
+      "rep":"Seit der Grundschule."
+     },
+     {
+      "q":"Wie ist Amira?",
+      "rep":"Mutig und offen."
+     },
+     {
+      "q":"Was macht Amira, wenn die Erzählerin Probleme hat?",
+      "rep":"Sie hört zu und gibt Rat."
+     },
+     {
+      "q":"Womit vergleicht die Erzählerin die Freundschaft?",
+      "rep":"Mit einer Pflanze."
+     }
+    ]
+   },
+   "langue":[
+    {
+     "q":"« Obwohl wir verschieden sind, verstehen wir uns gut. » : le connecteur exprime…",
+     "rep":"la concession (bien que)."
+    },
+    {
+     "q":"Conjuguez « verstehen » à la 3ᵉ pers. pluriel au Prétérit.",
+     "rep":"sie verstanden."
+    },
+    {
+     "q":"Transformez : « Wir haben zusammen gelernt. » à la forme négative.",
+     "rep":"Wir haben nicht zusammen gelernt."
+    },
+    {
+     "q":"Donnez le Partizip II de « pflegen ».",
+     "rep":"gepflegt."
+    }
+   ],
+   "expression":"Erzählen Sie von einer wichtigen Freundschaft in Ihrem Leben (80-100 Wörter).",
+   "bareme":{
+    "I":8,
+    "II":8,
+    "III":4
+   }
+  },
+  {
+   "id":"ent-2as-1",
+   "niveau":"2AS",
+   "duree":120,
+   "titre":"Sujet d'entraînement 2 — Mein Tagesablauf",
+   "comprehension":{
+    "texte":"Ich stehe jeden Tag um sechs Uhr auf. Zuerst frühstücke ich mit meiner Familie, dann gehe ich zu Fuß zur Schule. Der Unterricht beginnt um acht Uhr. Am Nachmittag mache ich meine Hausaufgaben und helfe meiner Mutter. Am Abend lese ich ein Buch oder sehe ich fern? Nein, ich lerne Deutsch, denn ich möchte später Ingenieur werden. Um halb zehn gehe ich ins Bett.",
+    "questions":[
+     {
+      "q":"Wann steht er auf?",
+      "rep":"Um sechs Uhr."
+     },
+     {
+      "q":"Wie geht er zur Schule?",
+      "rep":"Zu Fuß."
+     },
+     {
+      "q":"Was macht er am Nachmittag?",
+      "rep":"Hausaufgaben und der Mutter helfen."
+     },
+     {
+      "q":"Warum lernt er Deutsch?",
+      "rep":"Weil er Ingenieur werden möchte."
+     }
+    ]
+   },
+   "langue":[
+    {
+     "q":"Conjuguez « aufstehen » à la 3ᵉ pers. sing. au présent.",
+     "rep":"er steht auf."
+    },
+    {
+     "q":"Donnez le contraire de « aufstehen ».",
+     "rep":"aufstehen ↔ ins Bett gehen / aufstehen vs einschlafen."
+    },
+    {
+     "q":"Remplacez par un pronom : « Ich sehe den Bus. »",
+     "rep":"Ich sehe ihn."
+    },
+    {
+     "q":"Mettez au Perfekt : « Ich gehe zur Schule. »",
+     "rep":"Ich bin zur Schule gegangen."
+    }
+   ],
+   "expression":"Beschreiben Sie Ihren Tagesablauf (60-80 Wörter).",
+   "bareme":{
+    "I":8,
+    "II":8,
+    "III":4
+   }
+  }
+ ]
+}
