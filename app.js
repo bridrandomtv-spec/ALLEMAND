@@ -647,7 +647,7 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'compte'];
+const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'compte'];
 const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
@@ -655,7 +655,7 @@ const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],
                ['officiels','📄 الفروض'],['examen','🎓 البكالوريا'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
                ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],
-               ['reservation','🗓️ احجز حصّة'],['projet','📋 Plan de projet'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 révision'], ['corpus','📚 Corpus'], ['compte','⚙️ حسابي']];
+               ['reservation','🗓️ احجز حصّة'],['projet','📋 Plan de projet'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 révision'], ['corpus','📚 Corpus'], ['rag','🔎 اسأل'], ['compte','⚙️ حسابي']];
 
 /* Onglet réservé au rôle « prof » — inséré avant « حسابي » */
 function allTabs(){
@@ -736,6 +736,7 @@ function go(view){
   if(view === 'revision' && window.renderMemoire) window.renderMemoire();
   if(view === 'masar' && window.renderMasar) window.renderMasar();
   if(view === 'corpus' && window.renderCorpus) window.renderCorpus();
+  if(view === 'rag' && window.renderRag) window.renderRag();
   if(view === 'projet' && window.renderProjet) window.renderProjet();
   if(view === 'profboard' && window.renderProfBoard) window.renderProfBoard();
   const mp = $('#miniProf'); if(mp) mp.hidden = !isProf();
@@ -1162,7 +1163,16 @@ function addMsg(who, txt, noSave){
   return d;
 }
 
-function sendChat(v){
+async function sendChat(v){
+  /* 🔎 RAG gardé : si le corpus répond avec confiance, on sert l'extrait verbatim
+     AVANT le tuteur à règles ; jamais de texte inventé. */
+  if(window.RAG && window.RAG.cherche){
+    try{
+      const rr = await window.RAG.cherche(v);
+      const ff = window.RAG.formule(rr);
+      if(ff){ addMsg('bot', ff); return; }
+    }catch(e){}
+  }
   addMsg('me', esc(v));
   const log = $('#chatLog');
   const tp = document.createElement('div');
