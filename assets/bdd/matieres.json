@@ -1,0 +1,292 @@
+{
+ "_meta":{
+  "titre":"سجل المواد — الثانوية الافتراضية الجزائرية",
+  "version":"1.0.0",
+  "annee":"2026/2027",
+  "vision":"L'application devient un lycée virtuel complet : chaque matière a son propre registre d'unités et de séances, branché sur le même moteur que l'allemand. L'allemand est la première matière active ; les autres sont déclarées ici pour être branchées une à une sans toucher au moteur.",
+  "auteur":"Prof. Kharif Ahmed",
+  "confidentialite":"Données pédagogiques locales, aucun serveur externe."
+ },
+ "matieres":[
+  {
+   "id":"allemand",
+   "ar":"اللغة الألمانية",
+   "de":"Deutsch",
+   "icon":"🇩🇪",
+   "statut":"actif",
+   "unites":16,
+   "seances":108,
+   "desc":"المادة الأولى النشطة — منهاج 2AS/3AS كامل"
+  },
+  {
+   "id":"math",
+   "ar":"الرياضيات",
+   "icon":"📐",
+   "statut":"programme",
+   "desc":"جبر، تحليل، هندسة"
+  },
+  {
+   "id":"physique",
+   "ar":"العلوم الفيزيائية",
+   "icon":"",
+   "statut":"programme",
+   "desc":"ميكانيك، كهرباء، كيمياء"
+  },
+  {
+   "id":"svt",
+   "ar":"العلوم الطبيعية",
+   "icon":"🧬",
+   "statut":"programme",
+   "desc":"علوم الحياة والأرض"
+  },
+  {
+   "id":"francais",
+   "ar":"اللغة الفرنسية",
+   "icon":"🇫🇷",
+   "statut":"programme",
+   "desc":"لغة أجنبية أولى"
+  },
+  {
+   "id":"anglais",
+   "ar":"اللغة الإنجليزية",
+   "icon":"🇬🇧",
+   "statut":"programme",
+   "desc":"لغة أجنبية"
+  },
+  {
+   "id":"arabe",
+   "ar":"اللغة العربية",
+   "icon":"📖",
+   "statut":"programme",
+   "desc":"نحو، بلاغة، أدب"
+  },
+  {
+   "id":"philo",
+   "ar":"الفلسفة",
+   "icon":"🤔",
+   "statut":"programme",
+   "desc":"منطق، فلسفة عامة"
+  },
+  {
+   "id":"histgeo",
+   "ar":"التاريخ والجغرافيا",
+   "icon":"🗺️",
+   "statut":"programme",
+   "desc":"تاريخ وطني وعالمي، جغرافيا"
+  },
+  {
+   "id":"eco",
+   "ar":"الاقتصاد",
+   "icon":"📊",
+   "statut":"programme",
+   "desc":"اقتصاد عام ومحاسبة"
+  },
+  {
+   "id":"info",
+   "ar":"الإعلام الآلي",
+   "icon":"💻",
+   "statut":"programme",
+   "desc":"خوارزميات وبرمجة"
+  },
+  {
+   "id":"islam",
+   "ar":"التربية الإسلامية",
+   "icon":"🕌",
+   "statut":"programme",
+   "desc":"عقيدة، سيرة، فقه"
+  },
+  {
+   "id":"sport",
+   "ar":"التربية البدنية",
+   "icon":"🏃",
+   "statut":"programme",
+   "desc":"تربية بدنية ورياضية"
+  }
+ ],
+ "par_niveau":{
+  "1AS":{
+   "tc-lettres":[
+    "arabe",
+    "francais",
+    "anglais",
+    "math",
+    "physique",
+    "svt",
+    "histgeo",
+    "islam",
+    "info",
+    "sport"
+   ],
+   "tc-sciences":[
+    "arabe",
+    "francais",
+    "anglais",
+    "math",
+    "physique",
+    "svt",
+    "histgeo",
+    "islam",
+    "info",
+    "sport"
+   ]
+  },
+  "2AS":{
+   "sciences":[
+    "arabe",
+    "francais",
+    "anglais",
+    "math",
+    "physique",
+    "svt",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "info",
+    "sport"
+   ],
+   "math":[
+    "arabe",
+    "francais",
+    "anglais",
+    "math",
+    "physique",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "info",
+    "sport"
+   ],
+   "tech":[
+    "arabe",
+    "francais",
+    "anglais",
+    "math",
+    "physique",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "info",
+    "sport"
+   ],
+   "gestion":[
+    "arabe",
+    "francais",
+    "anglais",
+    "math",
+    "eco",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "info",
+    "sport"
+   ],
+   "philo":[
+    "arabe",
+    "francais",
+    "anglais",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "info",
+    "sport"
+   ],
+   "langues":[
+    "arabe",
+    "francais",
+    "anglais",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "info",
+    "sport"
+   ]
+  },
+  "3AS":{
+   "sciences":[
+    "arabe",
+    "francais",
+    "anglais",
+    "math",
+    "physique",
+    "svt",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "sport"
+   ],
+   "math":[
+    "arabe",
+    "francais",
+    "anglais",
+    "math",
+    "physique",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "sport"
+   ],
+   "tech":[
+    "arabe",
+    "francais",
+    "anglais",
+    "math",
+    "physique",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "sport"
+   ],
+   "gestion":[
+    "arabe",
+    "francais",
+    "anglais",
+    "math",
+    "eco",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "sport"
+   ],
+   "philo":[
+    "arabe",
+    "francais",
+    "anglais",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "sport"
+   ],
+   "langues":[
+    "arabe",
+    "francais",
+    "anglais",
+    "histgeo",
+    "philo",
+    "allemand",
+    "islam",
+    "sport"
+   ]
+  }
+ },
+ "statuts":{
+  "actif":{
+   "ar":"نشطة الآن",
+   "icon":"🟢"
+  },
+  "programme":{
+   "ar":"مبرمجة — قريبًا",
+   "icon":"🗓️"
+  }
+ }
+}
