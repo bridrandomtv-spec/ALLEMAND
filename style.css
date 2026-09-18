@@ -2417,3 +2417,27 @@ tr.g5-tot td{border-bottom:none;border-top:2px solid var(--b2);padding-top:11px;
 .mm-ht b{display:block;font-family:var(--ff-ar-display);font-size:14px}
 .mm-ht i{font-style:normal;font-size:11.5px;color:var(--m)}
 @media(max-width:520px){.mm-l{grid-template-columns:1fr 70px 38px}.mm-n{display:none}}
+
+/* ── v3.24 · 🧭 مسارك : une seule prochaine action ── */
+.ms-hero{display:flex;gap:14px;align-items:center;margin-bottom:15px}
+.ms-crest{font-size:40px}
+.ms-hero h2{font-family:var(--ff-ar-display);font-size:clamp(22px,4.4vw,28px);margin:0 0 3px}
+.ms-sub{color:var(--m);font-size:12.5px;margin:0}
+.ms-next{border-color:rgba(61,220,132,.45);border-width:2px}
+.ms-next.prio{border-color:rgba(232,182,76,.5)}
+.ms-next.ok{border-color:rgba(61,220,132,.35)}
+.ms-tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.04em;
+  color:var(--g);background:rgba(61,220,132,.13);border-radius:999px;padding:3px 11px;margin-bottom:9px}
+.ms-next.prio .ms-tag{color:var(--or2);background:rgba(232,182,76,.14)}
+.ms-next h3{font-family:var(--ff-ar-display);font-size:18px;margin:0 0 6px}
+.ms-why{color:var(--m);font-size:12.5px;line-height:1.8;margin:0 0 12px}
+.ms-why b{color:var(--or2)}
+.ms-bar{height:8px;background:var(--b);border-radius:99px;overflow:hidden;margin-bottom:13px}
+.ms-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--vert2),var(--or))}
+.ms-bar.big{height:11px}
+.ms-weak h3,.ms-prog h3{font-family:var(--ff-ar-display);font-size:15px;margin:0 0 11px}
+.ms-w{display:grid;grid-template-columns:1fr 90px 40px;gap:9px;align-items:center;
+  padding:7px 0;border-bottom:1px dashed var(--b)}
+.ms-w span:first-child{font-size:12.5px;color:var(--t)}
+.ms-w b{font-family:var(--ff-de);font-size:12px;color:var(--or2);text-align:left}
+@media(max-width:480px){.ms-w{grid-template-columns:1fr 70px 36px}}
