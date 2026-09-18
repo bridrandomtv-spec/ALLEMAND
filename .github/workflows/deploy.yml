@@ -1886,6 +1886,29 @@ jobs:
           if 'bindGateEvents._done' not in app:
               fails.append('app.js : bindGateEvents non idempotent (risque de double écoute)')
           print('✅ Portail interactif sans session : bootGate pose bindGateEvents()')
+          # ── Filières et niveaux RÉELS 2026-2027, en arabe (compte nouveau) ──
+          au_src = rd('auth.js')
+          NIV_AR = ['السنة الأولى ثانوي', 'السنة الثانية ثانوي', 'السنة الثالثة ثانوي']
+          FIL_AR = ['جذع مشترك آداب', 'جذع مشترك علوم وتكنولوجيا', 'علوم تجريبية',
+                    'رياضيات', 'تقني رياضي', 'تسيير واقتصاد', 'آداب وفلسفة', 'لغات أجنبية']
+          SPEC_AR = ['هندسة كهربائية', 'هندسة مدنية', 'هندسة ميكانيكية', 'هندسة الطرائق']
+          for lib in NIV_AR + FIL_AR + SPEC_AR:
+              if lib not in au_src:
+                  fails.append('auth.js : libellé arabe manquant : ' + lib)
+          if "id:'1AS'" not in au_src or "id:'2AS'" not in au_src or "id:'3AS'" not in au_src:
+              fails.append('auth.js : niveaux 1AS/2AS/3AS absents')
+          if 'peuplerFilieres' not in au_src:
+              fails.append('auth.js : cascade niveau→filière→spécialité absente')
+          for sec_ar in ('١AS-', '١AS-'):
+              if sec_ar not in au_src:
+                  fails.append('auth.js : section ' + sec_ar + ' absente ou libellé tronqué')
+          if re.search(r"ar:'١AS-',", au_src):
+              fails.append('auth.js : libellé de section tronqué « ١AS- »')
+          idx_html = rd('index.html')
+          if 'id="suSpecialite"' not in idx_html:
+              fails.append('index.html : champ #suSpecialite absent du formulaire حساب جديد')
+          print('✅ Filières 2026-2027 : 3 niveaux arabes · 2 troncs communs 1AS · '
+                + '6 filières 2AS/3AS · 4 spécialités تقني رياضي')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 18 vues · 17 onglets statiques + 1 dynamique (profboard)')
