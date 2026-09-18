@@ -39,7 +39,7 @@ jobs:
                    classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
                    reservation.js journee.js prof.js parents.js library.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
-                   ci/check-unites.mjs matieres.js guide.js worker/resend-welcome.js memoire.js; do
+                   ci/check-unites.mjs matieres.js guide.js worker/resend-welcome.js memoire.js masar.js; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -1084,7 +1084,7 @@ jobs:
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/34 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/35 fichiers JS valides')
           PY
 
       - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
@@ -1104,7 +1104,7 @@ jobs:
           u3a = rd('unites3as_a.js')
           jn = rd('journee.js')
           cl = rd('classe.js'); gr = rd('grammaire.js'); bdd = rd('bdd.js')
-          lib = rd('library.js'); au = rd('auth.js'); sw = rd('sw.js')
+          lib = rd('library.js'); au = rd('auth.js'); sw = rd('masar.js', 'sw.js')
           pf = rd('prof.js'); ex = rd('examen.js'); lv = rd('live.js')
           pa = rd('parents.js')
           of = rd('officiels.js')
@@ -1604,7 +1604,7 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.23.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.24.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './guide.js', './matieres.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
@@ -1618,16 +1618,16 @@ jobs:
           if len(man.get('shortcuts', [])) < 4:
               fails.append('manifest : moins de 4 raccourcis')
           vues = re.findall(r'data-view="([a-z]+)"', html)
-          if len(vues) != 21:
-              fails.append('index.html : ' + str(len(vues)) + ' vues != 20')
+          if len(vues) != 22:
+              fails.append('index.html : ' + str(len(vues)) + ' vues != 22')
           v_app = re.findall(r"'([a-z]+)'",
                              re.search(r'const VIEWS = \[(.*?)\];', app, re.S).group(1))
           if sorted(vues) != sorted(v_app):
               fails.append('index.html/app.js : VIEWS != data-view')
           tabs = re.findall(r"\['([a-z]+)'",
                             re.search(r'const TABS\s*=\s*\[(.*?)\];', app, re.S).group(1))
-          if len(tabs) != 20:
-              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 19')
+          if len(tabs) != 21:
+              fails.append('app.js : ' + str(len(tabs)) + ' onglets statiques != 21')
           if 'profboard' in tabs:
               fails.append('app.js : profboard doit rester dynamique (allTabs)')
           if set(tabs) - set(vues):
@@ -1656,7 +1656,8 @@ jobs:
                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                      'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'projet.js',
                      'journee.js', 'reservation.js', 'assets/matching_v2.patch.js',
-                     'matieres.js', 'memoire.js', 'guide.js', 'library.js']
+                     'matieres.js', 'memoire.js', 'masar.js', 'guide.js',
+                     'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
@@ -1849,7 +1850,7 @@ jobs:
                       'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                       'stats.js', 'quiz.js', 'projet.js', 'reservation.js',
-                      'journee.js', 'matieres.js', 'guide.js', 'memoire.js', 'prof.js', 'parents.js', 'library.js']
+                      'journee.js', 'matieres.js', 'guide.js', 'memoire.js', 'masar.js', 'prof.js', 'parents.js', 'library.js']
           consommes = set(re.findall(r'window\.([A-Za-z_$][\w$]*)', app))
           assignes = set()
           for jf in JS_FILES:
@@ -1987,6 +1988,18 @@ jobs:
           print('✅ Anti-fuite : aucune clé Resend dans le dépôt · Worker lit env.RESEND_API_KEY')
           # ── MEMOIRE_LEITNER : la mémoire des erreurs doit exister et être branchée ──
           mm = rd('memoire.js')
+          # ── MASAR_NEXT : l'écran « une seule prochaine action » doit exister ──
+          ms = rd('masar.js')
+          for k in ('function render(', 'window.renderMasar', 'MEMOIRE.dues',
+                    'prochaineSeance', 'ms-next'):
+              if k not in ms:
+                  fails.append('masar.js : ' + k + ' absent')
+          if 'window.prochaineSeance' not in rd('app.js'):
+              fails.append('app.js : prochaineSeance() absent (masar en dépend)')
+          idx5 = rd('index.html')
+          if 'data-view="masar"' not in idx5 or 'id="masarBody"' not in idx5:
+              fails.append('index.html : vue masar absente')
+          print('✅ Masar : prochaine action priorisée par la mémoire (révision > neuf)')
           for k in ('function record(', 'function dues(', 'function grade(',
                     'function carteErreurs(', 'JOURS', 'dz_de_memorie_v1'):
               if k not in mm:
@@ -2001,7 +2014,7 @@ jobs:
           print('✅ Mémoire : Leitner 4 boîtes branché sur quiz · vue révision · carte accueil')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
-          print('✅ 20 vues · 19 onglets statiques + 1 dynamique (profboard)')
+          print('✅ 22 vues · 21 onglets statiques + 1 dynamique (profboard)')
           # Total de séances CALCULÉ depuis les sources — jamais de littéral dans un rapport.
           tot_seances = len(re.findall(r'\{ n:\d+, de:', app))
           for _f in ('unite2.js', 'unite3.js', 'unite4.js', 'unite5.js', 'unite6.js',
@@ -2090,7 +2103,7 @@ jobs:
           print('✅ Module BAC : minuteur 180 min derive, readiness 10/7, plan d action')
           print('✅ Espace parents : multi-enfants, rapport PDF/TXT, tarifs CIB/Edahabia')
           print('✅ Tableau de bord prof : 32 eleves, saisie I/II/III, CSV BOM')
-          print('✅ Portail de connexion + 34 scripts dans l ordre + 5 polices')
+          print('✅ Portail de connexion + 35 scripts dans l ordre + 5 polices')
           print('✅ CV professeur + methodologie 4 etapes + programme officiel MEN')
           # Totaux CALCULÉS depuis les JSON — jamais de littéral dans un rapport.
           gm2 = json.load(open('assets/bdd/grammaire.json', encoding='utf-8'))
