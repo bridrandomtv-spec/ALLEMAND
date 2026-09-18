@@ -151,3 +151,10 @@ const AUTH = (function(){
            update:update, addUserPoints:addUserPoints,
            listClasses:listClasses, initSelects:initSelects, stats:stats, hash:hash };
 })();
+
+/* ══ Exposition explicite sur window ══
+   Un `const`/`function` au niveau racine d'un script CLASSIQUE crée une
+   liaison dans l'environnement lexical global, PAS une propriété de window.
+   Les consommateurs testent `window.X` : sans cette ligne ils voyaient
+   undefined et le module restait muet (portail de connexion vide). */
+window.AUTH = AUTH;
