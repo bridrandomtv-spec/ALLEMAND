@@ -650,10 +650,21 @@ function renderTabs(){
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
   currentView = view;
-  $$('.view').forEach(s => { s.hidden = s.dataset.view !== view; });
+  /* Une seule vue visible, garantie : hidden + display inline (aucune règle CSS
+     ne peut forcer l'affichage d'une vue inactive, cf bug [hidden] écrasé). */
+  $$('.view').forEach(s => {
+    const actif = s.dataset.view === view;
+    s.hidden = !actif;
+    s.style.display = actif ? '' : 'none';
+  });
   renderTabs();
-  const tb = $('#tabs'); if(tb) tb.classList.remove('open');
-  window.scrollTo({top:0, behavior:'smooth'});
+  /* Ferme TOUT tiroir de navigation mobile (plusieurs sélecteurs possibles). */
+  $$('#tabs, .tabs, .drawer, #navDrawer').forEach(t => t.classList.remove('open'));
+  const bg = $('#tabsBg') || $('#drawerBg') || $('.drawer-bg');
+  if(bg) bg.hidden = true;
+  /* Remonte en haut IMMÉDIATEMENT : sur mobile un scroll 'smooth' donne l'impression
+     que rien n'a changé et que le contenu s'est ajouté sous la page d'accueil. */
+  window.scrollTo(0, 0);
   document.dispatchEvent(new CustomEvent('dz:view', { detail: view }));
   if(view === 'seances'){ renderSeances(); paintUniteHead(); }
   if(view === 'biblio' && window.renderBiblio) window.renderBiblio();
