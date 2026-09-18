@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.22.0';
+const VERSION = 'dz-de-v3.23.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -41,6 +41,7 @@ const PRECACHE = [
   './reservation.js',
   './journee.js',
   './guide.js',
+  './memoire.js',
   './matieres.js',
   './library.js',
   './examen.js',
@@ -174,8 +175,24 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  /* 3) Ressources locales → cache d'abord, mise à jour en arrière-plan */
+  /* 3) Ressources locales → RÉSEAU d'abord pour .js/.html (jamais de code périmé),
+     cache d'abord pour le reste (images, json) afin de rester hors-ligne. */
   event.respondWith((async () => {
+    const estCode = /\.(js|html)$/.test(url.pathname) || url.pathname === '/';
+    if(estCode){
+      try{
+        const fresh = await fetch(req);
+        if(fresh && fresh.status === 200){
+          const c = await caches.open(CACHE_STATIC);
+          c.put(req, fresh.clone()).catch(() => {});
+        }
+        return fresh;
+      }catch(e){
+        const hit = await caches.match(req);
+        if(hit) return hit;
+        return new Response('hors ligne', { status:504 });
+      }
+    }
     const cached = await caches.match(req);
     const network = fetch(req).then(res => {
       if (res && res.status === 200 && res.type === 'basic') {
