@@ -1,0 +1,491 @@
+{
+ "_meta":{
+  "titre":"ملخصات الوحدات — الجيل الثاني (اجتهاد أصلي)",
+  "version":"1.0.0",
+  "licence":"اجتهاد أصلي من الأستاذ خريف أحمد — ملخصات محررة ذاتيًا، لا نسخ من أي كتاب",
+  "note":"كل ملخص محرر أصليًا ليغطي كفاءات الوحدة : الفكرة، المفردات، القواعد، البنى النموذجية، ونصيحتان. لا يتضمن أي نص من الكتب المدرسية.",
+  "nb":16
+ },
+ "malakhiss":[
+  {
+   "id":"m01",
+   "unite":1,
+   "niveau":"2AS",
+   "titre_de":"Sich vorstellen",
+   "titre_ar":"التعريف بالنفس",
+   "idee":"التعرف على الذات والغير: الاسم، العمر، البلد، المدينة، اللغة.",
+   "vocabulaire":[
+    "heißen",
+    "wohnen",
+    "kommen aus",
+    "lernen",
+    "sprechen",
+    "alt"
+   ],
+   "grammaire":[
+    "sein : ich bin / du bist / er ist / wir sind",
+    "haben : ich habe / du hast / er hat",
+    "W-Fragen : wie / wo / woher / wie alt"
+   ],
+   "structures":[
+    "Ich heiße … / Ich bin … Jahre alt.",
+    "Ich komme aus Algerien und wohne in Blida.",
+    "Ich lerne Deutsch als Fremdsprache."
+   ],
+   "conseils":[
+    "استعمل sein للعمر والحالة، وhaben للملكية.",
+    "رتّب الجملة: الفعل في المركز الثاني."
+   ]
+  },
+  {
+   "id":"m02",
+   "unite":2,
+   "niveau":"2AS",
+   "titre_de":"Familie und Freunde",
+   "titre_ar":"العائلة والأصدقاء",
+   "idee":"وصف العائلة والعلاقات: أفراد الأسرة، الصفات، الملكية.",
+   "vocabulaire":[
+    "die Familie",
+    "die Eltern",
+    "der Bruder",
+    "die Schwester",
+    "der Freund",
+    "die Freundin"
+   ],
+   "grammaire":[
+    "Possessivartikel : mein / dein / sein / ihr",
+    "Pluriel : die Eltern, die Geschwister",
+    "Négation : kein + nom"
+   ],
+   "structures":[
+    "Das ist mein Bruder. / Sie ist meine Schwester.",
+    "Ich habe keine Geschwister.",
+    "Meine Eltern wohnen in Blida."
+   ],
+   "conseils":[
+    "kein سبقت الاسم المنكور للنفي.",
+    "الصفات تبقى بدون نهاية حين تكون خبرًا."
+   ]
+  },
+  {
+   "id":"m03",
+   "unite":3,
+   "niveau":"2AS",
+   "titre_de":"Schule und Ausbildung",
+   "titre_ar":"المدرسة والتكوين",
+   "idee":"الحياة المدرسية: المواد، الأوقات، الأنشطة، الرأي.",
+   "vocabulaire":[
+    "die Schule",
+    "das Fach",
+    "der Unterricht",
+    "die Stunde",
+    "die Hausaufgabe",
+    "die Note"
+   ],
+   "grammaire":[
+    "Présent des verbes réguliers",
+    "Verbes à particule séparable : aufstehen, anfangen",
+    "Exprimer l'heure : um acht Uhr"
+   ],
+   "structures":[
+    "Der Unterricht beginnt um acht Uhr.",
+    "Ich stehe um sechs Uhr auf.",
+    "Mein Lieblingsfach ist Mathematik."
+   ],
+   "conseils":[
+    "الأفعال الانفصالية: البادئة في آخر الجملة.",
+    "um + ساعة."
+   ]
+  },
+  {
+   "id":"m04",
+   "unite":4,
+   "niveau":"2AS",
+   "titre_de":"Alltag und Freizeit",
+   "titre_ar":"اليوميات وأوقات الفراغ",
+   "idee":"وصف اليوم والهوايات: التردد، الأنشطة، التفضيل.",
+   "vocabulaire":[
+    "der Tagesablauf",
+    "die Freizeit",
+    "das Hobby",
+    "spielen",
+    "lesen",
+    "fernsehen"
+   ],
+   "grammaire":[
+    "Présent + compléments de temps",
+    "gern / lieber / am liebsten",
+    "Fréquence : immer, oft, manchmal, nie"
+   ],
+   "structures":[
+    "Am Nachmittag spiele ich Fußball.",
+    "Ich lese lieber als fernsehen.",
+    "Am Wochenende treffe ich meine Freunde."
+   ],
+   "conseils":[
+    "gern + verbe = aimer faire.",
+    "am liebsten = الأفضل."
+   ]
+  },
+  {
+   "id":"m05",
+   "unite":5,
+   "niveau":"2AS",
+   "titre_de":"Essen und Trinken",
+   "titre_ar":"الأكل والشرب",
+   "idee":"المأكولات والمشروبات، الطلب في المطعم، الكميات.",
+   "vocabulaire":[
+    "das Essen",
+    "das Trinken",
+    "das Brot",
+    "der Saft",
+    "kaufen",
+    "bestellen"
+   ],
+   "grammaire":[
+    "Akkusatif après essen/trinken/bestellen",
+    "Artikel indéfini : ein / eine / einen",
+    "Quantités : ein Kilo, ein Liter"
+   ],
+   "structures":[
+    "Ich esse gern Brot. / Ich trinke Saft.",
+    "Ich bestelle einen Salat.",
+    "Ich kaufe ein Kilo Äpfel."
+   ],
+   "conseils":[
+    "المفعول به المباشر accusatif بعد أفعال الأكل والشرب.",
+    "جمع Äpfel من Apfel."
+   ]
+  },
+  {
+   "id":"m06",
+   "unite":6,
+   "niveau":"2AS",
+   "titre_de":"Reisen und Verkehr",
+   "titre_ar":"السفر والتنقل",
+   "idee":"وسائل النقل، السفر، شراء التذكرة، الاتجاهات.",
+   "vocabulaire":[
+    "die Reise",
+    "der Zug",
+    "der Bus",
+    "das Ticket",
+    "fahren",
+    "reisen"
+   ],
+   "grammaire":[
+    "Perfekt avec sein pour les verbes de mouvement",
+    "Prépositions de lieu : nach, in, zu",
+    "Fragen : Wohin? / Wann?"
+   ],
+   "structures":[
+    "Ich bin nach Algerien gefahren.",
+    "Wir fahren mit dem Zug nach Oran.",
+    "Ich habe ein Ticket gekauft."
+   ],
+   "conseils":[
+    "verbes de mouvement = sein au Perfekt.",
+    "mit + Dativ pour le moyen."
+   ]
+  },
+  {
+   "id":"m07",
+   "unite":7,
+   "niveau":"3AS",
+   "titre_de":"Persönlichkeit und Identität",
+   "titre_ar":"الشخصية والهوية",
+   "idee":"التعبير عن الذات، الصفات، الرأي، الهوية.",
+   "vocabulaire":[
+    "die Persönlichkeit",
+    "die Identität",
+    "die Eigenschaft",
+    "ruhig",
+    "mutig",
+    "offen"
+   ],
+   "grammaire":[
+    "Konjunktiv I au discours indirect : er sei, er habe",
+    "Adjectifs épithètes accordés",
+    "Comparatif : ruhiger als, offener als"
+   ],
+   "structures":[
+    "Meine Freunde sagen, ich sei ruhig.",
+    "Ich bin mutiger als früher.",
+    "Meine Identität ist meine Sprache und meine Stadt."
+   ],
+   "conseils":[
+    "discours indirect = Konjunktiv I.",
+    "comparatif + als."
+   ]
+  },
+  {
+   "id":"m08",
+   "unite":8,
+   "niveau":"3AS",
+   "titre_de":"Staatsbürgerschaft",
+   "titre_ar":"المواطنة",
+   "idee":"حقوق وواجبات المواطن، المشاركة، المسؤولية.",
+   "vocabulaire":[
+    "der Bürger",
+    "das Recht",
+    "die Pflicht",
+    "die Verantwortung",
+    "teilnehmen",
+    "wählen"
+   ],
+   "grammaire":[
+    "Passif présent : wird + Partizip II",
+    "Verbes à préposition : teilnehmen an + Dat",
+    "Modalverben : müssen, sollen, dürfen"
+   ],
+   "structures":[
+    "Jeder Bürger hat Rechte und Pflichten.",
+    "Wir müssen an der Gesellschaft teilnehmen.",
+    "Die Regeln werden von allen respektiert."
+   ],
+   "conseils":[
+    "teilnehmen an + Dativ.",
+    "Passif = wird + participe II."
+   ]
+  },
+  {
+   "id":"m09",
+   "unite":9,
+   "niveau":"3AS",
+   "titre_de":"Leben in der Gesellschaft",
+   "titre_ar":"الحياة في المجتمع",
+   "idee":"العلاقات الاجتماعية، التضامن، الاختلاف.",
+   "vocabulaire":[
+    "die Gesellschaft",
+    "das Zusammenleben",
+    "die Toleranz",
+    "helfen",
+    "unterstützen",
+    "respektieren"
+   ],
+   "grammaire":[
+    "Dativ après helfen/danken",
+    "Connecteurs : weil, deshalb, obwohl",
+    "Pronoms relatifs : der, die, das, die"
+   ],
+   "structures":[
+    "Ich helfe meinem Nachbarn.",
+    "Wir respektieren einander, obwohl wir verschieden sind.",
+    "Die Menschen, die helfen, sind wichtig."
+   ],
+   "conseils":[
+    "obwohl = bien que (verbe à la fin).",
+    "relatif selon genre et fonction."
+   ]
+  },
+  {
+   "id":"m10",
+   "unite":10,
+   "niveau":"3AS",
+   "titre_de":"Wissenschaft und Technologie",
+   "titre_ar":"العلوم والتكنولوجيا",
+   "idee":"دور العلم والتقنية في الحياة، الإيجابيات والسلبيات.",
+   "vocabulaire":[
+    "die Wissenschaft",
+    "die Technologie",
+    "die Erfindung",
+    "das Internet",
+    "nutzen",
+    "entwickeln"
+   ],
+   "grammaire":[
+    "Passif : wurde + Partizip II (prétérit)",
+    "Connecteurs d'opposition : zwar…aber",
+    "Exprimer l'opinion : Ich finde, dass…"
+   ],
+   "structures":[
+    "Das Internet wurde weltweit genutzt.",
+    "Zwar ist Technik nützlich, aber sie hat Nachteile.",
+    "Ich finde, dass wir verantwortungsvoll forschen müssen."
+   ],
+   "conseils":[
+    "zwar…aber = certes…mais.",
+    "dass pousse le verbe à la fin."
+   ]
+  },
+  {
+   "id":"m11",
+   "unite":11,
+   "niveau":"3AS",
+   "titre_de":"Wirtschaft und Arbeit",
+   "titre_ar":"الاقتصاد والعمل",
+   "idee":"عالم الشغل، المهن، الاقتصاد، الاستهلاك.",
+   "vocabulaire":[
+    "die Wirtschaft",
+    "die Arbeit",
+    "der Beruf",
+    "verdienen",
+    "sparen",
+    "konsumieren"
+   ],
+   "grammaire":[
+    "Futur : werden + infinitif",
+    "Verbes de perception + infinitif sans zu",
+    "Exprimer le but : um…zu"
+   ],
+   "structures":[
+    "Ich werde Ingenieur werden.",
+    "Wir sparen, um ein Haus zu kaufen.",
+    "Er arbeitet, um Geld zu verdienen."
+   ],
+   "conseils":[
+    "um…zu = من أجل (même sujet).",
+    "futur = werden + infinitif."
+   ]
+  },
+  {
+   "id":"m12",
+   "unite":12,
+   "niveau":"3AS",
+   "titre_de":"Umweltprobleme",
+   "titre_ar":"مشاكل البيئة",
+   "idee":"التلوث، حماية البيئة، الحلول المستدامة.",
+   "vocabulaire":[
+    "die Umwelt",
+    "die Verschmutzung",
+    "der Müll",
+    "schützen",
+    "recyceln",
+    "vermeiden"
+   ],
+   "grammaire":[
+    "Passif avec modal : muss recycelt werden",
+    "Connecteurs de cause/conséquence",
+    "Impératif de conseil : Schütze die Umwelt!"
+   ],
+   "structures":[
+    "Die Umwelt muss geschützt werden.",
+    "Wir sollten weniger Müll produzieren.",
+    "Recycle den Müll, um die Natur zu schützen!"
+   ],
+   "conseils":[
+    "passif + modal = modal + Partizip II + werden.",
+    "sollten = conseil."
+   ]
+  },
+  {
+   "id":"m13",
+   "unite":13,
+   "niveau":"3AS",
+   "titre_de":"Gesundheit und Lebensweise",
+   "titre_ar":"الصحة ونمط الحياة",
+   "idee":"الصحة، التغذية، الرياضة، الوقاية.",
+   "vocabulaire":[
+    "die Gesundheit",
+    "die Ernährung",
+    "die Bewegung",
+    "krank",
+    "gesund",
+    "rauchen"
+   ],
+   "grammaire":[
+    "Verbes de état + Dativ : Es geht mir gut",
+    "Conseil avec sollten",
+    "Exprimer la cause : wegen + Genitiv"
+   ],
+   "structures":[
+    "Es geht mir gut. / Ich fühle mich krank.",
+    "Wir sollten mehr Sport treiben.",
+    "Wegen des Rauchens ist er krank."
+   ],
+   "conseils":[
+    "wegen + génitif.",
+    "sich fühlen + adjectif."
+   ]
+  },
+  {
+   "id":"m14",
+   "unite":14,
+   "niveau":"3AS",
+   "titre_de":"Globalisierung",
+   "titre_ar":"العولمة",
+   "idee":"العولمة، التبادل الثقافي، الاقتصاد العالمي.",
+   "vocabulaire":[
+    "die Globalisierung",
+    "der Austausch",
+    "die Kultur",
+    "der Markt",
+    "handeln",
+    "verbinden"
+   ],
+   "grammaire":[
+    "Konjunktiv II de l'irréel : wäre, hätte, würde",
+    "Connecteurs : einerseits…andererseits",
+    "Exprimer l'hypothèse : wenn + Konjunktiv II"
+   ],
+   "structures":[
+    "Wenn die Welt ein Dorf wäre, würden wir uns kennen.",
+    "Einerseits verbindet die Globalisierung, andererseits zerstört sie Kulturen.",
+    "Die Märkte wären offen."
+   ],
+   "conseils":[
+    "Konjunktiv II = irréel/hypothèse.",
+    "einerseits…andererseits = d'une part…d'autre part."
+   ]
+  },
+  {
+   "id":"m15",
+   "unite":15,
+   "niveau":"3AS",
+   "titre_de":"Medienwelt",
+   "titre_ar":"عالم الإعلام",
+   "idee":"وسائل الإعلام، الشبكات، المعلومات، النقد.",
+   "vocabulaire":[
+    "die Medien",
+    "die Nachricht",
+    "die Zeitung",
+    "das Netzwerk",
+    "informieren",
+    "glauben"
+   ],
+   "grammaire":[
+    "Discours indirect avec dass / ob",
+    "Verbes de communication + Datif",
+    "Exprimer le doute : Ich bezweifle, dass…"
+   ],
+   "structures":[
+    "Er sagt, dass die Nachricht stimmt.",
+    "Ich bezweifle, ob das wahr ist.",
+    "Wir informieren uns über das Netzwerk."
+   ],
+   "conseils":[
+    "ob = si (question indirecte).",
+    "informieren über + Akk."
+   ]
+  },
+  {
+   "id":"m16",
+   "unite":16,
+   "niveau":"3AS",
+   "titre_de":"Kultureller Dialog",
+   "titre_ar":"الحوار الثقافي",
+   "idee":"الحوار بين الثقافات، التسامح، الهوية المشتركة.",
+   "vocabulaire":[
+    "der Dialog",
+    "die Kultur",
+    "das Verständnis",
+    "die Vielfalt",
+    "austauschen",
+    "verstehen"
+   ],
+   "grammaire":[
+    "Gérondif / participe présent : beim Lesen",
+    "Connecteurs additifs : sowohl…als auch",
+    "Exprimer l'accord : Ich stimme dir zu."
+   ],
+   "structures":[
+    "Beim Lesen lernen wir andere Kulturen kennen.",
+    "Sowohl Algerien als auch Deutschland haben reiche Kulturen.",
+    "Ich stimme dir zu."
+   ],
+   "conseils":[
+    "sowohl…als auch = aussi bien…que.",
+    "beim + nom verbal."
+   ]
+  }
+ ]
+}
