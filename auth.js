@@ -13,7 +13,7 @@ const AUTH = (function(){
   /* ── Sections de la classe virtuelle (comme sur la photo) ── */
   const SECTIONS = [
     { id:'1AS-1', ar:'١AS-١', niveau:'1AS', eleves:30, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
-    { id:'1AS-2', ar:'١AS-', niveau:'1AS', eleves:28, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
+    { id:'1AS-2', ar:'١AS-٢', niveau:'1AS', eleves:28, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
     { id:'2AS-1', ar:'٢AS-١', niveau:'2AS', eleves:32, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
     { id:'2AS-2', ar:'٢AS-٢', niveau:'2AS', eleves:28, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
     { id:'2AS-3', ar:'٢AS-٣', niveau:'2AS', eleves:32, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
