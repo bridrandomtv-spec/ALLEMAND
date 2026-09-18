@@ -1104,7 +1104,7 @@ jobs:
           u3a = rd('unites3as_a.js')
           jn = rd('journee.js')
           cl = rd('classe.js'); gr = rd('grammaire.js'); bdd = rd('bdd.js')
-          lib = rd('library.js'); au = rd('auth.js'); sw = rd('memoire.js')
+          lib = rd('library.js'); au = rd('auth.js'); sw = rd('sw.js')
           pf = rd('prof.js'); ex = rd('examen.js'); lv = rd('live.js')
           pa = rd('parents.js')
           of = rd('officiels.js')
