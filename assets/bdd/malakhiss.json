@@ -4,7 +4,9 @@
   "version":"1.0.0",
   "licence":"اجتهاد أصلي من الأستاذ خريف أحمد — ملخصات محررة ذاتيًا، لا نسخ من أي كتاب",
   "note":"كل ملخص محرر أصليًا ليغطي كفاءات الوحدة : الفكرة، المفردات، القواعد، البنى النموذجية، ونصيحتان. لا يتضمن أي نص من الكتب المدرسية.",
-  "nb":16
+  "nb":16,
+  "dourous_nb":8,
+  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. الدفعة الحالية : الوحدة 1 (8 دروس)."
  },
  "malakhiss":[
   {
@@ -486,6 +488,146 @@
     "sowohl…als auch = aussi bien…que.",
     "beim + nom verbal."
    ]
+  }
+ ],
+ "dourous":[
+  {
+   "unite":1,
+   "n":1,
+   "titre_ar":"التحية والتعارف",
+   "titre_de":"Begrüßung und sich vorstellen",
+   "idee":"نصّ تعريفي قصير يفتح الوحدة: لقاء بين تلميذين يتبادلان التحية والاسم.",
+   "mots":[
+    "Hallo",
+    "Guten Tag",
+    "Tschüs",
+    "Auf Wiedersehen",
+    "heißen",
+    "Wie geht's?"
+   ],
+   "regle":"صيغ التحية حسب الوقت + فعل heißen لتصريف الاسم.",
+   "exemple":"Hallo! Ich heiße Sara. Wie heißt du? — Ich heiße Omar.",
+   "intibah":"التحية الرسمية (Guten Tag) تختلف عن غير الرسمية (Hallo / Tschüs)."
+  },
+  {
+   "unite":1,
+   "n":2,
+   "titre_ar":"المعلومات الشخصية",
+   "titre_de":"Persönliche Informationen",
+   "idee":"نصّ يقدّم بطاقة هوية: العمر، البلد، المدينة، اللغة.",
+   "mots":[
+    "alt",
+    "Jahre",
+    "Land",
+    "Stadt",
+    "Sprache",
+    "wohnen"
+   ],
+   "regle":"sein للعمر (Ich bin 16 Jahre alt) + kommen aus / wohnen in.",
+   "exemple":"Ich bin 16 Jahre alt und komme aus Algerien. Ich wohne in Blida.",
+   "intibah":"لا تستعمل haben للعمر؛ الصيغة الصحيحة sein + Jahre alt."
+  },
+  {
+   "unite":1,
+   "n":3,
+   "titre_ar":"الفعل sein",
+   "titre_de":"Das Verb «sein»",
+   "idee":"نصّ حواري يُبرز تصريف sein في مواقف يومية.",
+   "mots":[
+    "bin",
+    "bist",
+    "ist",
+    "sind",
+    "seid",
+    "müde"
+   ],
+   "regle":"تصريف sein : ich bin / du bist / er ist / wir sind / ihr seid / sie sind.",
+   "exemple":"Ich bin müde. / Bist du bereit? / Wir sind Freunde.",
+   "intibah":"sein شاذّ: لا يشبه الأفعال النظامية، احفظه كاملًا."
+  },
+  {
+   "unite":1,
+   "n":4,
+   "titre_ar":"الفعل haben",
+   "titre_de":"Das Verb «haben»",
+   "idee":"نصّ عن الملكية والعائلة يُبرز haben.",
+   "mots":[
+    "habe",
+    "hast",
+    "hat",
+    "haben",
+    "Bruder",
+    "Schwester"
+   ],
+   "regle":"تصريف haben : ich habe / du hast / er hat / wir haben / ihr habt / sie haben.",
+   "exemple":"Ich habe einen Bruder. / Hast du ein Hobby?",
+   "intibah":"الـ b يسقط في du hast و er hat؛ لا تقل «du habst»."
+  },
+  {
+   "unite":1,
+   "n":5,
+   "titre_ar":"فهم نص تقديمي",
+   "titre_de":"Leseverstehen : Sich vorstellen",
+   "idee":"نصّ قراءة (Lena Fischer) يُدرَّب فيه على استخراج المعلومات.",
+   "mots":[
+    "Nachname",
+    "Geschwister",
+    "München",
+    "Deutschland",
+    "Morgen"
+   ],
+   "regle":"استراتيجية القراءة: ابحث عن الأسماء والأرقام والأماكن أولًا.",
+   "exemple":"Lena heißt mit Nachnamen Fischer und wohnt in München.",
+   "intibah":"في أسئلة صح/خطأ، عد دائمًا إلى الجملة الأصلية في النص."
+  },
+  {
+   "unite":1,
+   "n":6,
+   "titre_ar":"إنتاج كتابي",
+   "titre_de":"Textproduktion : sich vorstellen",
+   "idee":"ورشة كتابة: فقرة تعريف بالنفس من 5 أسطر.",
+   "mots":[
+    "Ich heiße",
+    "Ich bin",
+    "Ich komme aus",
+    "Ich wohne",
+    "Ich lerne"
+   ],
+   "regle":"خطة الفقرة: تحية → اسم/عمر → بلد/مدينة → عائلة/هوايات → خاتمة.",
+   "exemple":"Hallo! Ich heiße … Ich bin … Jahre alt. Ich komme aus … Tschüs!",
+   "intibah":"الفعل في المركز الثاني؛ لا تبدأ الجملة الثانية بفعل."
+  },
+  {
+   "unite":1,
+   "n":7,
+   "titre_ar":"تثبيت وتقويم",
+   "titre_de":"Konsolidierung",
+   "idee":"حصة تجميع: تمارين مختلطة على sein/haben والتحية والمعلومات.",
+   "mots":[
+    "Wiederholung",
+    "Übung",
+    "Fehler",
+    "Tipp"
+   ],
+   "regle":"ميّز: sein للحالة/العمر، haben للملكية.",
+   "exemple":"Ich bin 17 und habe zwei Schwestern.",
+   "intibah":"راجع أخطاءك في 🧠 الذاكرة قبل الفرض."
+  },
+  {
+   "unite":1,
+   "n":8,
+   "titre_ar":"فرض الوحدة",
+   "titre_de":"Unitstest",
+   "idee":"فرض تقييمي /20 على كامل الوحدة (فهم + لغة + إنتاج).",
+   "mots":[
+    "Test",
+    "Note",
+    "Zeit",
+    "Korrektur"
+   ],
+   "regle":"إدارة الوقت: 8/8/4 → خصص 18 د / 18 د / 9 د.",
+   "exemple":"Lire deux fois la consigne avant de répondre.",
+   "intibah":"في الإنتاج، اكتب 5 أسطر كاملة لتضمن نقاط المضمون."
   }
  ]
 }
