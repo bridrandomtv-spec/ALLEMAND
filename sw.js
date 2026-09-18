@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.29.0';
+const VERSION = 'dz-de-v3.30.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -78,6 +78,7 @@ const BDD_FILES = [
   './assets/bdd/corpus.json',
   './assets/bdd/corpus_index.json',
   './assets/bdd/contenu_original.json',
+  './assets/bdd/malakhiss.json',
   './assets/bdd/config.json',
   './assets/bdd/journee.json',
   './assets/bdd/live.json'
