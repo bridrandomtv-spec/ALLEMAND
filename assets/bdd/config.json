@@ -1,0 +1,7 @@
+{
+ "_meta":{
+  "titre":"Configuration runtime de la plateforme",
+  "note":"resend_proxy : URL de TON Worker Cloudflare (worker/resend-welcome.js). Vide = le bouton 📧 retombe sur mailto. La clé Resend n'est JAMAIS ici : elle vit en secret d'environnement du Worker."
+ },
+ "resend_proxy":""
+}
