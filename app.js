@@ -1111,10 +1111,119 @@ function sendChat(v){
   }, 480 + Math.random() * 420);
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   FILET DE SÉCURITÉ AU DÉMARRAGE — la page ne doit JAMAIS rester vide
+   Symptôme traité : « l'application ne s'ouvre pas mais il y a un message
+   en bas » → #gate et #shell tous deux `hidden`, seul le toast perce.
+   Leçon retenue du projet CABBA : « le message d'erreur existait mais
+   n'était pas visible ». Ici l'erreur devient visible ET actionnable.
+   ══════════════════════════════════════════════════════════════════════ */
+function forceGate(){
+  try{
+    const g = document.querySelector('#gate'), sh = document.querySelector('#shell');
+    if(sh) sh.hidden = true;
+    if(g) g.hidden = false;
+    const sp = document.querySelector('#splash');
+    if(sp) sp.classList.add('off');
+  }catch(e){}
+}
+
+function panneauPanne(err, origine){
+  forceGate();
+  if(document.getElementById('bootFail')) return;
+  const msg = (err && (err.message || String(err))) || 'erreur inconnue';
+  const pile = (err && err.stack) ? String(err.stack).split('\n').slice(0, 4).join('\n') : '';
+  const box = document.createElement('div');
+  box.id = 'bootFail';
+  box.setAttribute('dir', 'rtl');
+  box.style.cssText = 'position:fixed;z-index:9999;left:12px;right:12px;bottom:12px;'
+    + 'max-width:640px;margin:0 auto;background:#2a0d12;border:2px solid #ff6b7d;'
+    + 'border-radius:16px;padding:15px 17px;color:#ffd9de;font:13px/1.75 system-ui,'
+    + 'sans-serif;box-shadow:0 18px 44px rgba(0,0,0,.6);text-align:right';
+  box.innerHTML =
+      '<div style="font-weight:800;font-size:15px;margin-bottom:7px">'
+    + '⚠️ démarrage incomplet <span style="opacity:.7;font-weight:400">('
+    + String(origine || 'boot') + ')</span></div>'
+    + '<div style="opacity:.85;margin-bottom:9px">المنصة لم تُحمَّل بالكامل. '
+    + 'السبب التقني ظاهر أدناه — جرّب « إعادة الضبط » أولاً.</div>'
+    + '<code style="display:block;background:#170609;border:1px solid #6b2230;'
+    + 'border-radius:10px;padding:9px 11px;font:11.5px/1.6 ui-monospace,Menlo,Consolas,'
+    + 'monospace;direction:ltr;text-align:left;color:#ff9aa6;white-space:pre-wrap;'
+    + 'word-break:break-word;max-height:132px;overflow:auto">'
+    + String(msg).replace(/[&<>]/g, function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; })
+    + (pile ? '\n' + pile.replace(/[&<>]/g, function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }) : '')
+    + '</code>'
+    + '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:12px">'
+    + '<button id="bfReset" style="flex:1;min-width:150px;background:#ff6b7d;color:#2a0d12;'
+    + 'border:none;border-radius:11px;padding:11px 14px;font:700 13px system-ui;cursor:pointer">'
+    + '🔄 إعادة الضبط (vider le cache)</button>'
+    + '<button id="bfReload" style="flex:1;min-width:120px;background:transparent;'
+    + 'color:#ffd9de;border:1px solid #ff6b7d;border-radius:11px;padding:11px 14px;'
+    + 'font:700 13px system-ui;cursor:pointer">↻ إعادة التحميل</button>'
+    + '<button id="bfClose" style="background:transparent;color:#ffd9de;border:1px solid #6b2230;'
+    + 'border-radius:11px;padding:11px 14px;font:700 13px system-ui;cursor:pointer">✕</button>'
+    + '</div>';
+  (document.body || document.documentElement).appendChild(box);
+  const rst = document.getElementById('bfReset');
+  if(rst) rst.addEventListener('click', function(){
+    try{
+      /* 1) Service Workers : désenregistrement + purge de TOUS les caches */
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.getRegistrations().then(function(regs){
+          regs.forEach(function(r){ try{ r.unregister(); }catch(e){} });
+        }).catch(function(){});
+      }
+      if('caches' in window){
+        caches.keys().then(function(ks){
+          ks.forEach(function(k){ caches.delete(k); });
+        }).catch(function(){});
+      }
+      /* 2) stockage local (session, progression, réservations) */
+      try{ localStorage.clear(); }catch(e){}
+      try{ sessionStorage.clear(); }catch(e){}
+      /* 3) rechargement forcé, hors cache */
+      setTimeout(function(){ window.location.reload(); }, 450);
+    }catch(e){ window.location.reload(); }
+  });
+  const rl = document.getElementById('bfReload');
+  if(rl) rl.addEventListener('click', function(){ window.location.reload(); });
+  const cl = document.getElementById('bfClose');
+  if(cl) cl.addEventListener('click', function(){ box.remove(); });
+}
+
+/* Erreurs non rattrapées n'importe où → panneau visible (plus de page blanche muette). */
+window.addEventListener('error', function(ev){
+  if(ev && ev.target && (ev.target.src || ev.target.href)){
+    /* échec de chargement d'une ressource : on le journalise sans bloquer */
+    try{ console.warn('[ressource]', ev.target.src || ev.target.href); }catch(e){}
+    return;
+  }
+  panneauPanne(ev && ev.error ? ev.error : new Error(ev && ev.message), 'erreur globale');
+});
+window.addEventListener('unhandledrejection', function(ev){
+  panneauPanne(ev && ev.reason, 'promesse rejetée');
+});
+
 /* ─────────────── INITIALISATION ─────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => { const sp = $('#splash'); if(sp) sp.classList.add('off'); }, 900);
-  bootGate();
+  try{
+    bootGate();
+  }catch(errBoot){
+    panneauPanne(errBoot, 'bootGate');
+  }
+  /* Filet : si après 3,5 s ni #gate ni #shell n'est visible, on force le portail. */
+  setTimeout(() => {
+    const g = $('#gate'), sh = $('#shell');
+    const rien = (!g || g.hidden) && (!sh || sh.hidden);
+    if(rien){
+      forceGate();
+      panneauPanne(new Error('aucun écran visible apres 3,5 s '
+        + '(#gate et #shell tous deux hidden)'), 'watchdog');
+    }
+  }, 3500);
 
   document.addEventListener('click', ev => {
     const nv = ev.target.closest('[data-niveau]');
@@ -1226,7 +1335,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  renderSeances();
+  try{ renderSeances(); }
+  catch(errRs){ panneauPanne(errRs, 'renderSeances'); }
 });
 
 /* ── Réponses du devoir (VF / QCM) — utilisées par modules.js ── */
