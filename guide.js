@@ -167,7 +167,49 @@
     return t;
   }
 
-  function envoyerAccueil(s){
+
+  /* ══════════════════════════════════════════════════════════════════════
+     Envoi RÉEL via Resend, à travers TON Worker (worker/resend-welcome.js).
+     La clé Resend vit en secret du Worker, JAMAIS ici (dépôt public).
+     config.json → resend_proxy vide = repli mailto.
+     ══════════════════════════════════════════════════════════════════════ */
+  let CFG = null;
+  async function chargeConfig(){
+    if(CFG) return CFG;
+    try{
+      const r = await fetch('assets/bdd/config.json', { cache:'no-store' });
+      CFG = r.ok ? await r.json() : { resend_proxy: '' };
+    }catch(e){ CFG = { resend_proxy: '' }; }
+    return CFG;
+  }
+
+  async function envoiResend(s){
+    const cfg = await chargeConfig();
+    let proxy = (cfg && cfg.resend_proxy) || '';
+    try{ proxy = localStorage.getItem('dz_resend_proxy') || proxy; }catch(e){}
+    if(!proxy) return { ok:false, raison:'proxy non configure' };
+    try{
+      const r = await fetch(proxy, {
+        method:'POST', headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ to: s.mail || s.email, nom: s.nom, role: s.role, genre: s.genre })
+      });
+      const j = await r.json().catch(() => ({}));
+      return { ok: !!j.ok, raison: j.err || ('http ' + r.status), id: j.id };
+    }catch(e){
+      return { ok:false, raison: String(e && e.message || e) };
+    }
+  }
+  window.envoiResend = envoiResend;
+
+  async function envoyerAccueil(s){
+    /* 1) envoi RÉEL via Resend (Worker) si configuré */
+    const res = await envoiResend(s);
+    if(res.ok){
+      try{ toast('📧 أُرسلت نسخة إلى ' + (s.mail || s.email || 'بريدك'), 'ok'); }catch(e){}
+      return;
+    }
+    /* 2) repli : client mail pré-adressé + pré-rempli */
+    try{ toast('⚠️ الإرسال الآلي غير مفعّل (' + res.raison + ') — فتح البريد', 'ko'); }catch(e){}
     const to = s.mail || s.email || '';
     const sujet = 'مرحبًا بك في الثانوية الافتراضية الجزائرية — دليل الاستعمال';
     const href = 'mailto:' + encodeURIComponent(to) +
