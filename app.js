@@ -1216,7 +1216,22 @@ function etatDemarrage(){
   const qa = s => Array.prototype.slice.call(document.querySelectorAll(s));
   const g = q('#gate'), sh = q('#shell'), sp = q('#splash');
   const vues = qa('.view');
-  const visibles = vues.filter(v => !v.hidden);
+  /* Une vue dont l'ancêtre #shell est `hidden` n'est PAS réellement visible à l'écran,
+     même si son propre attribut hidden vaut false. Mesurer `!v.hidden` seul donnait
+     « vuesVisibles : 1 · vueActive : accueil » sur le portail de connexion — un chiffre
+     faux qui masquait l'état réel. On mesure la visibilité EFFECTIVE (offsetParent). */
+  const reellementVisible = el => {
+    if(!el) return false;
+    let n = el;
+    while(n && n !== document.body){
+      if(n.hidden) return false;
+      const cs = getComputedStyle(n);
+      if(cs.display === 'none' || cs.visibility === 'hidden') return false;
+      n = n.parentElement;
+    }
+    return Boolean(el.offsetParent) || getComputedStyle(el).position === 'fixed';
+  };
+  const visibles = vues.filter(reellementVisible);
   const et = {
     gate:        g  ? (g.hidden ? 'hidden' : 'VISIBLE') : 'ABSENT',
     shell:       sh ? (sh.hidden ? 'hidden' : 'VISIBLE') : 'ABSENT',
@@ -1229,6 +1244,12 @@ function etatDemarrage(){
     tabs:        qa('#tabs .tab').length,
     tabActive:   (q('#tabs .tab.on') || {}).textContent || '—',
     contenuShell: sh ? sh.innerHTML.length : 0,
+    contenuGate:  g  ? g.innerHTML.length  : 0,
+    champsGate:   g  ? g.querySelectorAll('input,select,button').length : 0,
+    sectionsGate: (q('#loginClasse') || {}).length || 0,
+    wilayasGate:  (q('#suWilaya')    || {}).length || 0,
+    gateReel:     reellementVisible(g),
+    shellReel:    reellementVisible(sh),
     contenuAccueil: (q('[data-view="accueil"]') || {}).innerHTML
                       ? q('[data-view="accueil"]').innerHTML.length : 0,
     bodyChildren: document.body ? document.body.children.length : 0,
