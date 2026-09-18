@@ -1611,55 +1611,16 @@ function paintGateStats(){
 }
 
 function enterApp(s){
+  /* Version MINIMALE et robuste : aucune variable intermédiaire fragile.
+     Le rendu de chaque widget est fait par go() (déjà isolé par vue).
+     Atterrissage sur 🧭 مسارك (ou le hash si présent). */
   const gate = $('#gate'), shell = $('#shell');
-  /* L'écran est démasqué EN PREMIER : quoi qu'il arrive ensuite, la page n'est plus vide. */
   if(gate) gate.hidden = true;
   if(shell) shell.hidden = false;
-
-  /* Chaque étape est ISOLÉE. Avant ce correctif, un seul widget en échec (par exemple
-     renderStats) interrompait enterApp() AVANT go('masar');
-  const etapes = [
-    ['renderTabs',       renderTabs],
-    ['renderStats',      renderStats],
-    ['renderWelcome',    renderWelcome],
-    ['renderSectionBar', renderSectionBar],
-    ['renderUserChip',   renderUserChip],
-    ['miniProf',         function(){ const mp0 = $('#miniProf');
-                                     if(mp0) mp0.hidden = !isProf(); }],
-    ['cBdd',             function(){ const c = $('#cBdd');
-                                     if(c && window.BDD && BDD.state.ready){
-                                       c.textContent = BDD.kpis().total; } }],
-    ['bindGateEvents',   bindGateEvents],
-    ['go(' + (VIEWS.indexOf(hash) !== -1 ? hash : 'accueil') + ')',
-                         function(){ go(VIEWS.indexOf(hash) !== -1 ? hash : 'accueil'); }]
-  ];
-  let premiere = null;
-  const echecs = [];
-  for(let i = 0; i < etapes.length; i++){
-    try{
-      etapes[i][1]();
-    }catch(errEtape){
-      echecs.push(etapes[i][0]);
-      if(!premiere) premiere = { nom: etapes[i][0], err: errEtape };
-      try{ console.error('[enterApp] échec de ' + etapes[i][0] + ' :', errEtape); }catch(e2){}
-    }
-  }
-  /* go() est vital : si lui seul a échoué, on retente une fois sur 'accueil'. */
-  const aucuneVue = !$$('.view').some(v => !v.hidden);
-  if(aucuneVue){
-    try{ go('accueil'); }
-    catch(errGo){
-      if(!premiere) premiere = { nom: 'go(accueil)', err: errGo };
-      try{ console.error('[enterApp] échec du repli go(accueil) :', errGo); }catch(e3){}
-    }
-  }
-  if(premiere){
-    panneauPanne(new Error(premiere.nom + '() a échoué : ' +
-      (premiere.err && premiere.err.message ? premiere.err.message : String(premiere.err)) +
-      (echecs.length > 1 ? '  ·  ' + echecs.length + ' étapes en échec : ' + echecs.join(', ') : '')),
-      'enterApp → ' + premiere.nom);
-  }
+  const hash = String(location.hash || '').replace('#', '');
+  go(VIEWS.indexOf(hash) !== -1 ? hash : 'masar');
 }
+
 
 function bindGateEvents(){
   if(bindGateEvents._done) return;
