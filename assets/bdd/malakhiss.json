@@ -5,8 +5,8 @@
   "licence":"اجتهاد أصلي من الأستاذ خريف أحمد — ملخصات محررة ذاتيًا، لا نسخ من أي كتاب",
   "note":"كل ملخص محرر أصليًا ليغطي كفاءات الوحدة : الفكرة، المفردات، القواعد، البنى النموذجية، ونصيحتان. لا يتضمن أي نص من الكتب المدرسية.",
   "nb":16,
-  "dourous_nb":24,
-  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. الدفعات : U1 (8) + U2 (8) + U3 (8)."
+  "dourous_nb":32,
+  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. الدفعات : U1-U4 (8 دروس لكل وحدة)."
  },
  "malakhiss":[
   {
@@ -905,6 +905,143 @@
    "regle":"توزيع الوقت 8/8/4 : 18 د / 18 د / 9 د.",
    "exemple":"Vérifie les verbes séparables : préfixe en fin de phrase.",
    "intibah":"في الإنتاج، نظّم فقرتك زمنيًا لتضمن نقاط التماسك."
+  },
+  {
+   "unite":4,
+   "n":1,
+   "titre_ar":"تقديم اليوميات",
+   "titre_de":"Den Tagesablauf vorstellen",
+   "idee":"نصّ يسرد يومًا كاملًا مرتّبًا زمنيًا.",
+   "mots":[
+    "der Tagesablauf",
+    "morgens",
+    "mittags",
+    "abends",
+    "die Routine",
+    "der Alltag"
+   ],
+   "regle":"ظروف الوقت morgens/mittags/abends بدون حرف جر.",
+   "exemple":"Morgens stehe ich auf, abends lese ich.",
+   "intibah":"لا تقل « am morgens »؛ الصحيح morgens وحدها."
+  },
+  {
+   "unite":4,
+   "n":2,
+   "titre_ar":"الهوايات",
+   "titre_de":"Hobbys",
+   "idee":"نصّ حواري عن الهوايات وتفضيلات الأصدقاء.",
+   "mots":[
+    "das Hobby",
+    "Fußball spielen",
+    "Musik hören",
+    "lesen",
+    "schwimmen",
+    "treffen"
+   ],
+   "regle":"هوايات بأفعال: Fußball spielen / Musik hören (المصدر في الآخر).",
+   "exemple":"Mein Hobby ist Fußballspielen. / Ich spiele gern Fußball.",
+   "intibah":"بعد ist نضع الاسم/المصدر المركّب: Fußballspielen."
+  },
+  {
+   "unite":4,
+   "n":3,
+   "titre_ar":"gern / lieber / am liebsten",
+   "titre_de":"gern / lieber / am liebsten",
+   "idee":"نصّ مقارن بين تفضيلات ثلاثة أشخاص.",
+   "mots":[
+    "gern",
+    "lieber",
+    "am liebsten",
+    "vorziehen",
+    "mögen"
+   ],
+   "regle":"تدرّج التفضيل: gern → lieber → am liebsten.",
+   "exemple":"Ich lese gern. / Ich lese lieber als fernsehen. / Am liebsten schwimme ich.",
+   "intibah":"lieber تقارن بين اثنين؛ am liebsten للأفضل مطلقًا."
+  },
+  {
+   "unite":4,
+   "n":4,
+   "titre_ar":"التردد : immer/oft/manchmal/nie",
+   "titre_de":"Häufigkeit : immer/oft/manchmal/nie",
+   "idee":"نصّ إحصائي عن عادات الأسبوع.",
+   "mots":[
+    "immer",
+    "oft",
+    "manchmal",
+    "selten",
+    "nie",
+    "jeden Tag"
+   ],
+   "regle":"ظرف التردد يأتي قبل الفعل الرئيسي: Ich spiele oft Fußball.",
+   "exemple":"Ich gehe selten ins Kino. / Nie rauche ich.",
+   "intibah":"إذا بدأ الظرف الجملة ينقلب الترتيب: Nie rauche ich."
+  },
+  {
+   "unite":4,
+   "n":5,
+   "titre_ar":"فهم نص عن أوقات الفراغ",
+   "titre_de":"Leseverstehen : Freizeit",
+   "idee":"نصّ قراءة عن نشاط نهاية الأسبوع: استخراج من/متى/ماذا.",
+   "mots":[
+    "das Wochenende",
+    "der Verein",
+    "das Training",
+    "der Ausflug",
+    "mit Freunden"
+   ],
+   "regle":"أجب بأسئلة W : Wer? Wann? Was? Mit wem?",
+   "exemple":"Am Wochenende trifft er sich mit Freunden im Verein.",
+   "intibah":"حدّد الفاعل والوقت والنشاط قبل الإجابة."
+  },
+  {
+   "unite":4,
+   "n":6,
+   "titre_ar":"إنتاج كتابي : وقت فراغي",
+   "titre_de":"Textproduktion : meine Freizeit",
+   "idee":"ورشة كتابة: فقرة عن وقت الفراغ (5 أسطر).",
+   "mots":[
+    "In meiner Freizeit",
+    "am Wochenende",
+    "am liebsten",
+    "mit Freunden",
+    "weil"
+   ],
+   "regle":"خطة: هواية رئيسية + تردد + مع من + سبب (weil).",
+   "exemple":"In meiner Freizeit spiele ich am liebsten Fußball, weil es Spaß macht.",
+   "intibah":"weil تدفع الفعل إلى الآخر؛ راجع الترتيب."
+  },
+  {
+   "unite":4,
+   "n":7,
+   "titre_ar":"تثبيت وتقويم",
+   "titre_de":"Konsolidierung",
+   "idee":"حصة تجميع: تمارين على التفضيل والتردد.",
+   "mots":[
+    "Wiederholung",
+    "Übung",
+    "Fehler",
+    "Tipp"
+   ],
+   "regle":"ميّز gern/lieber/am liebsten وموضع ظرف التردد.",
+   "exemple":"Ich schwimme lieber, als ich laufe.",
+   "intibah":"راجع أخطاءك في 🧠 الذاكرة قبل الفرض."
+  },
+  {
+   "unite":4,
+   "n":8,
+   "titre_ar":"فرض الوحدة",
+   "titre_de":"Unitstest",
+   "idee":"فرض تقييمي /20 على الوحدة 4 (فهم + لغة + إنتاج).",
+   "mots":[
+    "Test",
+    "Note",
+    "Zeit",
+    "Korrektur"
+   ],
+   "regle":"توزيع الوقت 8/8/4 : 18 د / 18 د / 9 د.",
+   "exemple":"Vérifie la position des adverbes de fréquence.",
+   "intibah":"في الإنتاج، استعمل am liebsten مرة واحدة على الأقل."
   }
  ]
 }
