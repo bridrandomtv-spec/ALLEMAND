@@ -2366,3 +2366,10 @@ tr.g5-tot td{border-bottom:none;border-top:2px solid var(--b2);padding-top:11px;
 .gd-pas{background:var(--nuit3);border:1px solid var(--b);border-radius:16px;padding:16px}
 .gd-pas h3{font-family:var(--ff-ar-display);font-size:15px;margin:0 0 8px}
 @media(max-width:560px){.onb-card{padding:19px 15px}.onb-pts{grid-template-columns:1fr}}
+
+/* ── v3.21 · carte « إعادة عرض الترحيب » dans حسابي ── */
+.onb-carte{margin-top:16px;border-color:rgba(61,220,132,.35)}
+.onb-carte h3{font-family:var(--ff-ar-display);font-size:15.5px;margin:0 0 7px}
+.onb-carte-p{color:var(--m);font-size:12.5px;line-height:1.8;margin:0 0 12px}
+.onb-carte-b{display:flex;gap:9px;flex-wrap:wrap}
+@media(max-width:480px){.onb-carte-b{flex-direction:column}.onb-carte-b .btn{width:100%}}
