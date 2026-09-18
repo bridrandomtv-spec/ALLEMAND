@@ -132,7 +132,6 @@ const AUTH = (function(){
         points:0, created:now(), lastLogin:null
       };
     }
-    u.genre = o.genre || '';
     wr(K_USERS, users);
     return users;
   }
@@ -174,7 +173,7 @@ const AUTH = (function(){
                 SECTIONS.filter(c => c.niveau === o.niveau)[0] || SECTIONS[2];
     const u = { user:key, pass:hash(o.pass), nom:o.nom.trim(), mail:mail,
                 role:o.role || 'eleve', niveau:o.niveau || '2AS',
-                filiere:o.filiere, filiere_ar:o.filiere_ar || '', specialite:o.specialite || '' || FILIERES[0], wilaya:o.wilaya || 'Bouira',
+                filiere:o.filiere, filiere_ar:o.filiere_ar || '', specialite:o.specialite || '', wilaya:o.wilaya || 'Bouira',
                 code_wilaya:o.code_wilaya || '10', classe:sec.id,
                 points:0, created:now(), lastLogin:now() };
     users[key] = u; wr(K_USERS, users);
