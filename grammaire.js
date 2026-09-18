@@ -41,14 +41,13 @@
   function render(){
     const box = $('#gramBody'); if(!box) return;
     const items = filtrer();
-    const st = $('#bddStatus2');
+    const cefrs = Array.from(new Set((D.items || []).map(x => x.cefr))).sort();
+    const statut = '📘 <b class="de-in">' + (D.items || []).length +
+      '</b> قاعدة · <b class="de-in">' + (D.chapitres || []).length +
+      '</b> فصول · CEFR ' + cefrs.join(' → ') + ' · <b class="de-in">' +
+      items.length + '</b> نتيجة';
     box.innerHTML =
-      st.className = 'bdd-status ok';
-      const cefrs = Array.from(new Set((D.items || []).map(x => x.cefr))).sort();
-      st.innerHTML = '📘 <b class="de-in">' + (D.items || []).length +
-        '</b> قاعدة · <b class="de-in">' + (D.chapitres || []).length +
-        '</b> فصول · CEFR ' + cefrs.join(' → ') + ' · <b class="de-in">' +
-        items.length + '</b> نتيجة';
+      '<div class="bdd-status ok">' + statut + '</div>' +
       '<div class="filters">' +
         '<div class="filters-h"><b>🔎 البحث في القواعد</b>' +
           '<button class="btn btn-o btn-sm" id="gReset">↺ إعادة الضبط</button></div>' +
