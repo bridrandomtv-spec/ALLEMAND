@@ -5,6 +5,38 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
+
+/* ══════════════════════════════════════════════════════════════════════
+   AUTO-GUÉRISON : un ancien Service Worker (cache-first) peut servir un
+   app.js périmé après un correctif → ReferenceError au démarrage.
+   Première erreur de boot = on désenregistre le SW, vide les caches et
+   recharge UNE fois (garde sessionStorage pour ne pas boucler).
+   ══════════════════════════════════════════════════════════════════════ */
+(function(){
+  let deja = false;
+  window.addEventListener('error', function(){
+    if(deja) return;
+    try{
+      if(sessionStorage.getItem('dz_selfheal') === '1') return;
+      sessionStorage.setItem('dz_selfheal', '1');
+      deja = true;
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.getRegistrations().then(function(rs){
+          rs.forEach(function(r){ try{ r.unregister(); }catch(e){} });
+        }).catch(function(){});
+      }
+      if('caches' in window){
+        caches.keys().then(function(ks){ ks.forEach(function(k){ caches.delete(k); }); })
+          .catch(function(){});
+      }
+      setTimeout(function(){ location.reload(); }, 350);
+    }catch(e){}
+  }, true);
+  window.addEventListener('load', function(){
+    try{ sessionStorage.removeItem('dz_selfheal'); }catch(e){}
+  });
+})();
+
 /* ─────────────── CONSTANTES GLOBALES ─────────────── */
 const WA_NUMBER = '213555577931';
 const LS = {
