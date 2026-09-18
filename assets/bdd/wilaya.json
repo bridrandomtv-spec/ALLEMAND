@@ -1,0 +1,359 @@
+{
+ "_meta":{
+  "titre":"ولايات الجزائر — liste de sélection",
+  "version":"1.0.0",
+  "source":"Découpage officiel (58 wilayas, décembre 2019). Miroir sélectionnable de assets/bdd/wilayas_geo.json (qui porte en plus lat/lon/region pour la carte).",
+  "note":"L'Algérie compte 58 wilayas, pas 69. Si une liste à 69 entrées est fournie (wilayas déléguées ou autre découpage), elle se substitue telle quelle ici.",
+  "usage":"Peuple #suWilaya du formulaire حساب جديد immédiatement, sans attendre la BDD."
+ },
+ "wilayas":[
+  {
+   "code":"01",
+   "ar":"أدرار",
+   "fr":"Adrar",
+   "region":"Sud"
+  },
+  {
+   "code":"02",
+   "ar":"الشلف",
+   "fr":"Chlef",
+   "region":"Centre"
+  },
+  {
+   "code":"03",
+   "ar":"الأغواط",
+   "fr":"Laghouat",
+   "region":"Hauts-Plateaux"
+  },
+  {
+   "code":"04",
+   "ar":"أم البواقي",
+   "fr":"Oum El Bouaghi",
+   "region":"Est"
+  },
+  {
+   "code":"05",
+   "ar":"باتنة",
+   "fr":"Batna",
+   "region":"Est"
+  },
+  {
+   "code":"06",
+   "ar":"بجاية",
+   "fr":"Béjaïa",
+   "region":"Centre"
+  },
+  {
+   "code":"07",
+   "ar":"بسكرة",
+   "fr":"Biskra",
+   "region":"Sud"
+  },
+  {
+   "code":"08",
+   "ar":"بشار",
+   "fr":"Béchar",
+   "region":"Sud"
+  },
+  {
+   "code":"09",
+   "ar":"البليدة",
+   "fr":"Blida",
+   "region":"Centre"
+  },
+  {
+   "code":"10",
+   "ar":"البويرة",
+   "fr":"Bouira",
+   "region":"Centre"
+  },
+  {
+   "code":"11",
+   "ar":"تمنراست",
+   "fr":"Tamanrasset",
+   "region":"Grand Sud"
+  },
+  {
+   "code":"12",
+   "ar":"تبسة",
+   "fr":"Tébessa",
+   "region":"Est"
+  },
+  {
+   "code":"13",
+   "ar":"تلمسان",
+   "fr":"Tlemcen",
+   "region":"Ouest"
+  },
+  {
+   "code":"14",
+   "ar":"تيارت",
+   "fr":"Tiaret",
+   "region":"Hauts-Plateaux"
+  },
+  {
+   "code":"15",
+   "ar":"تيزي وزو",
+   "fr":"Tizi Ouzou",
+   "region":"Centre"
+  },
+  {
+   "code":"16",
+   "ar":"الجزائر",
+   "fr":"Alger",
+   "region":"Centre"
+  },
+  {
+   "code":"17",
+   "ar":"الجلفة",
+   "fr":"Djelfa",
+   "region":"Hauts-Plateaux"
+  },
+  {
+   "code":"18",
+   "ar":"جيجل",
+   "fr":"Jijel",
+   "region":"Est"
+  },
+  {
+   "code":"19",
+   "ar":"سطيف",
+   "fr":"Sétif",
+   "region":"Est"
+  },
+  {
+   "code":"20",
+   "ar":"سعيدة",
+   "fr":"Saïda",
+   "region":"Ouest"
+  },
+  {
+   "code":"21",
+   "ar":"سكيكدة",
+   "fr":"Skikda",
+   "region":"Est"
+  },
+  {
+   "code":"22",
+   "ar":"سيدي بلعباس",
+   "fr":"Sidi Bel Abbès",
+   "region":"Ouest"
+  },
+  {
+   "code":"23",
+   "ar":"عنابة",
+   "fr":"Annaba",
+   "region":"Est"
+  },
+  {
+   "code":"24",
+   "ar":"قالمة",
+   "fr":"Guelma",
+   "region":"Est"
+  },
+  {
+   "code":"25",
+   "ar":"قسنطينة",
+   "fr":"Constantine",
+   "region":"Est"
+  },
+  {
+   "code":"26",
+   "ar":"المدية",
+   "fr":"Médéa",
+   "region":"Centre"
+  },
+  {
+   "code":"27",
+   "ar":"مستغانم",
+   "fr":"Mostaganem",
+   "region":"Ouest"
+  },
+  {
+   "code":"28",
+   "ar":"المسيلة",
+   "fr":"M'Sila",
+   "region":"Hauts-Plateaux"
+  },
+  {
+   "code":"29",
+   "ar":"معسكر",
+   "fr":"Mascara",
+   "region":"Ouest"
+  },
+  {
+   "code":"30",
+   "ar":"ورقلة",
+   "fr":"Ouargla",
+   "region":"Sud"
+  },
+  {
+   "code":"31",
+   "ar":"وهران",
+   "fr":"Oran",
+   "region":"Ouest"
+  },
+  {
+   "code":"32",
+   "ar":"البيض",
+   "fr":"El Bayadh",
+   "region":"Hauts-Plateaux"
+  },
+  {
+   "code":"33",
+   "ar":"إليزي",
+   "fr":"Illizi",
+   "region":"Grand Sud"
+  },
+  {
+   "code":"34",
+   "ar":"برج بوعريريج",
+   "fr":"Bordj Bou Arreridj",
+   "region":"Est"
+  },
+  {
+   "code":"35",
+   "ar":"بومرداس",
+   "fr":"Boumerdès",
+   "region":"Centre"
+  },
+  {
+   "code":"36",
+   "ar":"الطارف",
+   "fr":"El Tarf",
+   "region":"Est"
+  },
+  {
+   "code":"37",
+   "ar":"تندوف",
+   "fr":"Tindouf",
+   "region":"Grand Sud"
+  },
+  {
+   "code":"38",
+   "ar":"تيسمسيلت",
+   "fr":"Tissemsilt",
+   "region":"Hauts-Plateaux"
+  },
+  {
+   "code":"39",
+   "ar":"الوادي",
+   "fr":"El Oued",
+   "region":"Sud"
+  },
+  {
+   "code":"40",
+   "ar":"خنشلة",
+   "fr":"Khenchela",
+   "region":"Est"
+  },
+  {
+   "code":"41",
+   "ar":"سوق أهراس",
+   "fr":"Souk Ahras",
+   "region":"Est"
+  },
+  {
+   "code":"42",
+   "ar":"تيبازة",
+   "fr":"Tipaza",
+   "region":"Centre"
+  },
+  {
+   "code":"43",
+   "ar":"ميلة",
+   "fr":"Mila",
+   "region":"Est"
+  },
+  {
+   "code":"44",
+   "ar":"عين الدفلى",
+   "fr":"Aïn Defla",
+   "region":"Centre"
+  },
+  {
+   "code":"45",
+   "ar":"النعامة",
+   "fr":"Naâma",
+   "region":"Ouest"
+  },
+  {
+   "code":"46",
+   "ar":"عين تموشنت",
+   "fr":"Aïn Témouchent",
+   "region":"Ouest"
+  },
+  {
+   "code":"47",
+   "ar":"غرداية",
+   "fr":"Ghardaïa",
+   "region":"Sud"
+  },
+  {
+   "code":"48",
+   "ar":"غليزان",
+   "fr":"Relizane",
+   "region":"Ouest"
+  },
+  {
+   "code":"49",
+   "ar":"تيميمون",
+   "fr":"Timimoun",
+   "region":"Grand Sud"
+  },
+  {
+   "code":"50",
+   "ar":"برج باجي مختار",
+   "fr":"Bordj Badji Mokhtar",
+   "region":"Grand Sud"
+  },
+  {
+   "code":"51",
+   "ar":"أولاد جلال",
+   "fr":"Ouled Djellal",
+   "region":"Sud"
+  },
+  {
+   "code":"52",
+   "ar":"بني عباس",
+   "fr":"Béni Abbès",
+   "region":"Grand Sud"
+  },
+  {
+   "code":"53",
+   "ar":"عين صالح",
+   "fr":"In Salah",
+   "region":"Grand Sud"
+  },
+  {
+   "code":"54",
+   "ar":"عين قزام",
+   "fr":"In Guezzam",
+   "region":"Grand Sud"
+  },
+  {
+   "code":"55",
+   "ar":"تقرت",
+   "fr":"Touggourt",
+   "region":"Sud"
+  },
+  {
+   "code":"56",
+   "ar":"جانت",
+   "fr":"Djanet",
+   "region":"Grand Sud"
+  },
+  {
+   "code":"57",
+   "ar":"المغير",
+   "fr":"El M'Ghair",
+   "region":"Sud"
+  },
+  {
+   "code":"58",
+   "ar":"المنيعة",
+   "fr":"El Meniaa",
+   "region":"Sud"
+  }
+ ]
+}
