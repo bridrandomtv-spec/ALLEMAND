@@ -184,10 +184,37 @@
   }
 
   async function envoiResend(s){
+    /* Ordre de résolution de la clé / du transport :
+       1) clé collée UNE fois par le propriétaire dans ⚙️ حسابي → localStorage
+          (dz_resend_key) : appel DIRECT api.resend.com, comme ton ancienne app.
+       2) config.json → resend_proxy : ton Worker Cloudflare (clé en secret d'env),
+          la seule option sûre pour TOUS les visiteurs d'un dépôt public.
+       3) repli mailto pré-rempli. */
+    let cle = '';
+    try{ cle = localStorage.getItem('dz_resend_key') || ''; }catch(e){}
+    if(cle){
+      try{
+        const r = await fetch('https://api.resend.com/emails', {
+          method:'POST',
+          headers:{ 'Authorization':'Bearer ' + cle, 'Content-Type':'application/json' },
+          body: JSON.stringify({
+            from: (localStorage.getItem('dz_resend_from') || 'onboarding@resend.dev'),
+            to: [s.mail || s.email],
+            subject: 'مرحبًا بك في الثانوية الافتراضية الجزائرية — دليل الاستعمال',
+            html: htmlAccueil(s)
+          })
+        });
+        const j = await r.json().catch(() => ({}));
+        if(r.ok) return { ok:true, id:j.id };
+        return { ok:false, raison:(j && j.message) || ('http ' + r.status) };
+      }catch(e){
+        return { ok:false, raison:String(e && e.message || e) };
+      }
+    }
     const cfg = await chargeConfig();
     let proxy = (cfg && cfg.resend_proxy) || '';
     try{ proxy = localStorage.getItem('dz_resend_proxy') || proxy; }catch(e){}
-    if(!proxy) return { ok:false, raison:'proxy non configure' };
+    if(!proxy) return { ok:false, raison:'aucune clé locale ni proxy configuré' };
     try{
       const r = await fetch(proxy, {
         method:'POST', headers:{ 'Content-Type':'application/json' },
@@ -200,6 +227,7 @@
     }
   }
   window.envoiResend = envoiResend;
+
 
   async function envoyerAccueil(s){
     /* 1) envoi RÉEL via Resend (Worker) si configuré */
@@ -259,6 +287,78 @@
   }
   document.addEventListener('dz:view', e => {
     if(e.detail === 'compte') setTimeout(carteCompte, 60);
+  });
+
+  /* HTML du message (partagé appel direct / Worker) */
+  function htmlAccueil(s){
+    const fem = /أنثى|طالبة|f/.test(s.genre || '');
+    const salut = s.role === 'prof' ? ('مرحبًا بك أستاذ ' + (s.nom || ''))
+                : s.role === 'parent' ? ('مرحبًا بك وليّ الأمر ' + (s.nom || ''))
+                : ('مرحبًا بك يا ' + (s.nom || ''));
+    const guide = s.role === 'prof'
+      ? ['🧑‍🏫 لوحة الأستاذ : نقاط، CSV، قاعة مباشرة','📝 الفروض الرسمية /20','🤖 مساعد التمارين']
+      : s.role === 'parent'
+      ? ['📈 تقرير أسبوعي : نقاط وحضور','📅 الحصص والفروض القادمة','💬 مراسلة الأستاذ']
+      : ['📚 اتبع الحصص بالترتيب (تصحيح فوري)','📝 حلّ الفرض /20 مع التصحيح','🎓 أرشيف البكالوريا · 🤖 اسأل 24/7'];
+    return '<div dir="rtl" style="font-family:Tahoma,Segoe UI,sans-serif;background:#04140c;'
+      + 'color:#e8edf8;padding:26px;border-radius:18px">'
+      + '<h2 style="color:#3ddc84;margin:0 0 6px">🇩🇿 الثانوية الافتراضية الجزائرية</h2>'
+      + '<p style="font-size:17px;line-height:1.9">' + salut + ' 👋</p>'
+      + '<p style="color:#9fb3c8;line-height:1.9">« الرجوع إلى الأصل فضيلة » — منصّة مجانية '
+      + 'مطابقة لمنهاج وزارة التربية.</p>'
+      + '<h3 style="color:#e8b64c">📖 دليل الاستعمال</h3>'
+      + '<ul style="line-height:2;color:#9fb3c8">' + guide.map(g => '<li>' + g + '</li>').join('')
+      + '</ul>'
+      + '<p style="margin-top:16px"><a href="https://bridrandomtv-spec.github.io/ALLEMAND/" '
+      + 'style="background:#3ddc84;color:#04140c;padding:11px 20px;border-radius:11px;'
+      + 'text-decoration:none;font-weight:700">🚀 فتح المنصة</a></p></div>';
+  }
+  window.htmlAccueil = htmlAccueil;
+
+
+  /* Carte « 🔑 مفتاح Resend » dans ⚙️ حسابي — clé stockée UNIQUEMENT dans ce navigateur. */
+  function carteCle(){
+    let s = null;
+    try{ s = (window.AUTH && AUTH.session) ? AUTH.session() : null; }catch(e){}
+    if(!s) return;
+    const host = $('#compteBody'); if(!host || $('#cleCard')) return;
+    const card = document.createElement('div');
+    card.id = 'cleCard';
+    card.className = 'card onb-carte';
+    let cle = '';
+    try{ cle = localStorage.getItem('dz_resend_key') || ''; }catch(e){}
+    card.innerHTML =
+        '<h3>🔑 مفتاح Resend (اختياري)</h3>'
+      + '<p class="onb-carte-p">لإرسال البريد <b>مباشرة من المتصفح</b> كما في تطبيقك القديم. '
+      + 'المفتاح يُحفظ <b>في هذا المتصفح فقط</b>، ولا يُرفع أبدًا إلى المنصة. '
+      + 'اتركه فارغًا لاستعمال البريد العادي (mailto).</p>'
+      + '<div class="onb-carte-b">'
+      +   '<input type="password" id="cleResend" placeholder="re_…" value="' + cle + '" '
+      +     'style="flex:1;min-width:180px;background:var(--nuit3);border:1px solid var(--b);'
+      +     'border-radius:10px;padding:9px 12px;color:var(--t);font:12px ui-monospace,monospace">'
+      +   '<button class="btn btn-p btn-sm" id="btnCleOk">💾 حفظ</button>'
+      +   '<button class="btn btn-o btn-sm" id="btnCleTest">📧 اختبار إرسال</button>'
+      + '</div>'
+      + '<p class="onb-carte-p" id="cleMsg" style="margin-top:9px"></p>';
+    host.appendChild(card);
+    $('#btnCleOk', card).addEventListener('click', () => {
+      const v = ($('#cleResend', card).value || '').trim();
+      try{
+        if(v) localStorage.setItem('dz_resend_key', v);
+        else localStorage.removeItem('dz_resend_key');
+      }catch(e){}
+      $('#cleMsg', card).textContent = v ? '✅ محفوظ في هذا المتصفح فقط' : '🗑️ تم الحذف';
+    });
+    $('#btnCleTest', card).addEventListener('click', async () => {
+      const msg = $('#cleMsg', card);
+      msg.textContent = '⏳ جارٍ الإرسال…';
+      const r = await envoiResend(s);
+      msg.textContent = r.ok ? ('✅ أُرسلت إلى ' + (s.mail || s.email))
+                             : ('⚠️ ' + (r.raison || 'échec'));
+    });
+  }
+  document.addEventListener('dz:view', e => {
+    if(e.detail === 'compte') setTimeout(carteCle, 80);
   });
 
   window.renderGuide = renderGuide;
