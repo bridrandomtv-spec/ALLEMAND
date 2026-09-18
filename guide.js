@@ -87,6 +87,7 @@
       }
     }
     peint('objectif');
+    greffeBoutonMail(box, s);
     $$('.onb-t', box).forEach(b => b.addEventListener('click', () => peint(b.dataset.onb)));
 
     function ferme(){
@@ -137,6 +138,86 @@
       $('#gdSteps', box).innerHTML = guideHTML(d, roleActif);
     }));
   }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     📧 Envoi d'une copie de l'accueil au courrier inscrit.
+     IMPORTANT (transparence) : ce site est STATIQUE (GitHub Pages), sans
+     serveur. Un navigateur ne peut PAS envoyer un courrier seul. On ouvre
+     donc le client mail de l'utilisateur, pré-adressé à SON courrier inscrit
+     et pré-rempli avec le message complet : il ne reste qu'à appuyer Envoyer.
+     Pour un envoi 100% automatique il faudrait un service externe
+     (EmailJS / Formspree / un backend) avec une clé — à brancher ici le jour
+     où tu en crées une.
+     ══════════════════════════════════════════════════════════════════ */
+  function texteAccueil(s){
+    if(!D) return '';
+    const msg = (messageBienvenue(s) || '').replace(/<br\s*\/?>/g, '\n');
+    const role = (s.role === 'prof') ? 'prof' : (s.role === 'parent') ? 'parent' : 'eleve';
+    const steps = (D.mode_emploi || {})[role] || [];
+    let t = msg + '\n\n' + (D.objectif.titre || '') + '\n' + (D.objectif.chapeau || '') + '\n';
+    (D.objectif.points || []).forEach(p => { t += '  ' + p.icon + ' ' + p.t + ' — ' + p.d + '\n'; });
+    t += '\n📖 دليل الاستعمال :\n';
+    steps.forEach(p => { t += '  ' + p.t + ' : ' + p.d + '\n'; });
+    t += '\n🚀 أول خطوات :\n';
+    (D.premiers_pas || []).forEach(p => { t += '  • ' + p + '\n'; });
+    t += '\n— الثانوية الافتراضية الجزائرية · https://bridrandomtv-spec.github.io/ALLEMAND/\n';
+    /* mailto a une limite pratique (~2000 caractères) : on tronque proprement. */
+    if(t.length > 1800) t = t.slice(0, 1797) + '…';
+    return t;
+  }
+
+  function envoyerAccueil(s){
+    const to = s.mail || s.email || '';
+    const sujet = 'مرحبًا بك في الثانوية الافتراضية الجزائرية — دليل الاستعمال';
+    const href = 'mailto:' + encodeURIComponent(to) +
+                 '?subject=' + encodeURIComponent(sujet) +
+                 '&body=' + encodeURIComponent(texteAccueil(s));
+    window.location.href = href;
+    try{ console.info('[guide] mailto ouvert vers ' + (to || '(adresse vide)')); }catch(e){}
+  }
+  window.envoyerAccueil = envoyerAccueil;
+  window.texteAccueil = texteAccueil;
+
+  /* Bouton 📧 dans la modale d'onboarding */
+  function greffeBoutonMail(box, s){
+    const foot = $('.onb-foot', box); if(!foot) return;
+    if($('#onbMail', foot)) return;
+    const b = document.createElement('button');
+    b.id = 'onbMail';
+    b.className = 'btn btn-o btn-block';
+    b.style.marginTop = '8px';
+    b.textContent = '📧 إرسال نسخة إلى بريدي (' + (s.mail || s.email || '—') + ')';
+    b.addEventListener('click', () => envoyerAccueil(s));
+    foot.appendChild(b);
+  }
+
+  /* Carte « إعادة عرض الترحيب » dans ⚙️ حسابي */
+  function carteCompte(){
+    let s = null;
+    try{ s = (window.AUTH && AUTH.session) ? AUTH.session() : null; }catch(e){}
+    if(!s) return;
+    const host = $('#compteBody'); if(!host) return;
+    if($('#onbCard')) return;
+    const card = document.createElement('div');
+    card.id = 'onbCard';
+    card.className = 'card onb-carte';
+    card.innerHTML =
+        '<h3>📖 الترحيب ودليل الاستعمال</h3>'
+      + '<p class="onb-carte-p">أعد عرض رسالة الترحيب وهدف المنصة ودليل الاستعمال، '
+      + 'أو أرسل نسخة كاملة إلى بريدك المسجّل.</p>'
+      + '<div class="onb-carte-b">'
+      +   '<button class="btn btn-p btn-sm" id="btnReonb">📖 إعادة عرض الترحيب</button>'
+      +   '<button class="btn btn-o btn-sm" id="btnMailAccueil">📧 إرسال نسخة إلى '
+      +     esc(s.mail || s.email || 'بريدي') + '</button>'
+      + '</div>';
+    host.appendChild(card);
+    $('#btnReonb', card).addEventListener('click', () => montreOnboarding(s, true));
+    $('#btnMailAccueil', card).addEventListener('click', () => envoyerAccueil(s));
+  }
+  document.addEventListener('dz:view', e => {
+    if(e.detail === 'compte') setTimeout(carteCompte, 60);
+  });
 
   window.renderGuide = renderGuide;
   window.montrerOnboarding = montreOnboarding;
