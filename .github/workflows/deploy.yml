@@ -39,7 +39,7 @@ jobs:
                    classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
                    reservation.js journee.js prof.js parents.js library.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
-                   ci/check-unites.mjs matieres.js guide.js; do
+                   ci/check-unites.mjs matieres.js guide.js worker/resend-welcome.js; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -51,7 +51,7 @@ jobs:
                    assets/bdd/bac_archive.json assets/bdd/live.json \
                    assets/bdd/parents.json assets/bdd/devoirs_officiels.json \
                    assets/bdd/wilayas_geo.json assets/bdd/plan_projet.json \
-                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json assets/bdd/onboarding.json; do
+                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json assets/bdd/onboarding.json assets/bdd/config.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
           echo "✅ 36 fichiers racine + 22 assets présents"
@@ -1604,7 +1604,7 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.21.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.22.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './guide.js', './matieres.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
@@ -1962,6 +1962,25 @@ jobs:
           if 's.mail' not in gd:
               fails.append('guide.js : envoi mail n utilise pas le courrier inscrit (s.mail)')
           print('✅ Re-accueil : bouton 📖 dans حسابي + envoi 📧 au courrier inscrit (mailto)')
+          # ── ANTI_FUITE : aucune clé secrète dans le dépôt PUBLIC ──
+          import re as _re
+          SENSIBLES = ['worker/resend-welcome.js', 'assets/bdd/config.json', 'guide.js',
+                       'app.js', 'index.html', 'sw.js', 'auth.js']
+          for p in SENSIBLES:
+              try:
+                  c = rd(p)
+              except Exception:
+                  continue
+              if _re.search(r'\bre_[A-Za-z0-9_]{8,}', c):
+                  fails.append('ANTI_FUITE : clé Resend (re_…) trouvée dans ' + p
+                               + ' — le dépôt est PUBLIC, la clé doit vivre en secret du Worker')
+          wrk = rd('worker/resend-welcome.js')
+          if 'env.RESEND_API_KEY' not in wrk:
+              fails.append('worker : la clé Resend doit être lue via env.RESEND_API_KEY')
+          cfg = json.load(open('assets/bdd/config.json', encoding='utf-8'))
+          if cfg.get('resend_proxy') and 're_' in str(cfg.get('resend_proxy')):
+              fails.append('config.json : resend_proxy contient une clé — interdit')
+          print('✅ Anti-fuite : aucune clé Resend dans le dépôt · Worker lit env.RESEND_API_KEY')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 20 vues · 19 onglets statiques + 1 dynamique (profboard)')
