@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.18.0';
+const VERSION = 'dz-de-v3.19.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -70,6 +70,7 @@ const BDD_FILES = [
   './assets/bdd/plan_projet.json',
   './assets/bdd/reservation.json',
   './assets/bdd/matieres.json',
+  './assets/bdd/wilaya.json',
   './assets/bdd/journee.json',
   './assets/bdd/live.json'
 ];
