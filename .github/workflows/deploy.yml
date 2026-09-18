@@ -1604,7 +1604,7 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.14.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.15.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
@@ -1827,6 +1827,49 @@ jobs:
           print('✅ Filet de securite : bootGate/renderSeances proteges · watchdog 3,5 s · '
                 + 'window.onerror + unhandledrejection · bouton « إعادة الضبط » '
                 + '(unregister SW + purge caches + localStorage.clear)')
+          # ── CONTRAT_WINDOW : tout `window.X` consommé doit être explicitement assigné ──
+          # Un const/let/function au niveau racine d'un script CLASSIQUE crée une liaison
+          # dans l'environnement lexical global, PAS une propriété de window. C'est ce qui
+          # rendait window.AUTH et window.BDD undefined : le portail de connexion restait
+          # sans sections et la base documentaire ne se chargeait jamais. Ni esprima ni un
+          # controle de presence de chaine ne peuvent le voir : il faut ce test croise.
+          NATIFS = set(['addEventListener', 'removeEventListener', 'location', 'scrollTo',
+                        'scroll', 'innerWidth', 'innerHeight', 'open', 'close', 'print',
+                        'matchMedia', 'getComputedStyle', 'requestAnimationFrame',
+                        'setTimeout', 'setInterval', 'clearTimeout', 'clearInterval',
+                        'localStorage', 'sessionStorage', 'caches', 'navigator',
+                        'serviceWorker', 'Notification', 'speechSynthesis',
+                        'SpeechSynthesisUtterance', 'Audio', 'fetch', 'alert', 'confirm',
+                        'prompt', 'history', 'document', 'getSelection', 'dispatchEvent',
+                        'CustomEvent', 'performance', 'crypto', 'Intl', 'atob', 'btoa',
+                        'URL', 'Worker'])
+          JS_FILES = ['auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
+                      'unite5.js', 'unite6.js', 'unites3as_a.js', 'unite10.js',
+                      'unite11.js', 'unite12.js', 'unite13.js', 'unite14.js',
+                      'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
+                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
+                      'stats.js', 'quiz.js', 'projet.js', 'reservation.js',
+                      'journee.js', 'prof.js', 'parents.js', 'library.js']
+          consommes = set(re.findall(r'window\.([A-Za-z_$][\w$]*)', app))
+          assignes = set()
+          for jf in JS_FILES:
+              try:
+                  assignes |= set(re.findall(r'window\.([A-Za-z_$][\w$]*)\s*=', rd(jf)))
+              except Exception:
+                  fails.append('contrat window : ' + jf + ' illisible')
+          orphelins = sorted(n for n in consommes
+                             if n not in assignes and n not in NATIFS)
+          if orphelins:
+              fails.append('CONTRAT_WINDOW : app.js teste ' + str(orphelins)
+                           + ' mais aucun script ne fait window.X = X — ces modules '
+                           + 'restent muets (const/let/function top-level n est PAS '
+                           + 'une propriete de window)')
+          if 'window.AUTH = AUTH;' not in au:
+              fails.append('auth.js : window.AUTH non expose explicitement')
+          if 'window.BDD = BDD;' not in bdd:
+              fails.append('bdd.js : window.BDD non expose explicitement')
+          print('✅ Contrat window : ' + str(len(consommes - NATIFS))
+                + ' modules exposes et consommes · AUTH et BDD assignes explicitement')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 18 vues · 17 onglets statiques + 1 dynamique (profboard)')
