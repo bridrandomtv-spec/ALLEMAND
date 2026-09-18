@@ -51,10 +51,10 @@ jobs:
                    assets/bdd/bac_archive.json assets/bdd/live.json \
                    assets/bdd/parents.json assets/bdd/devoirs_officiels.json \
                    assets/bdd/wilayas_geo.json assets/bdd/plan_projet.json \
-                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json; do
+                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 35 fichiers racine + 20 assets présents"
+          echo "✅ 35 fichiers racine + 21 assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -1604,7 +1604,7 @@ jobs:
               fails.append('prof.js : BOM UTF-8 (Excel) absent')
           if BOM not in ex:
               fails.append('examen.js : BOM UTF-8 (Excel) absent')
-          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.18.0',
+          for k in ("'install'", "'activate'", "'fetch'", 'dz-de-v3.19.0',
                     './unite2.js', './unite3.js', './unite4.js', './unite5.js', './unite6.js', './unites3as_a.js', './unite10.js', './unite11.js', './unite12.js', './unite13.js', './unite14.js', './unite15.js', './unite16.js', './live.js',
                     './classe.js', './grammaire.js', './examen.js', './officiels.js', './stats.js', './quiz.js', './projet.js', './assets/matching_v2.patch.js', './reservation.js', './journee.js', './matieres.js', './prof.js', './parents.js',
                     './assets/bdd/eleves.json', './assets/bdd/bac_archive.json',
@@ -1909,6 +1909,25 @@ jobs:
               fails.append('index.html : champ #suSpecialite absent du formulaire حساب جديد')
           print('✅ Filières 2026-2027 : 3 niveaux arabes · 2 troncs communs 1AS · '
                 + '6 filières 2AS/3AS · 4 spécialités تقني رياضي')
+          # ── Wilayas : 58 officielles, select jamais vide ──
+          wj = json.load(open('assets/bdd/wilaya.json', encoding='utf-8'))
+          wl = wj.get('wilayas') or []
+          if len(wl) != 58:
+              fails.append('wilaya.json : ' + str(len(wl)) + ' wilayas != 58 (decoupage officiel)')
+          codes_w = [w['code'] for w in wl]
+          if len(set(codes_w)) != 58 or codes_w[0] != '01' or codes_w[-1] != '58':
+              fails.append('wilaya.json : codes incoherents ' + str(codes_w[:3]) + '…' + str(codes_w[-3:]))
+          if 'const WILAYAS = [' not in au_src:
+              fails.append('auth.js : miroir statique WILAYAS absent — #suWilaya serait vide')
+          n_w = len(re.findall(r"\['\d\d','", au_src))
+          if n_w != 58:
+              fails.append('auth.js : WILAYAS = ' + str(n_w) + ' entrées != 58')
+          if "getElementById('suWilaya')" not in au_src:
+              fails.append('auth.js : #suWilaya non peuple dans initSelects')
+          if 'WILAYAS' not in au_src[au_src.find("suWilaya"):au_src.find("suWilaya")+600]:
+              fails.append('auth.js : suWilaya n utilise pas le miroir WILAYAS')
+          print('✅ Wilayas : 58 officielles dans wilaya.json + miroir statique auth.js · '
+                + 'select حساب جديد jamais vide')
           if fails:
               print('::error::' + '; '.join(fails)); sys.exit(1)
           print('✅ 19 vues · 18 onglets statiques + 1 dynamique (profboard)')
