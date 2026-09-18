@@ -5,8 +5,8 @@
   "licence":"اجتهاد أصلي من الأستاذ خريف أحمد — ملخصات محررة ذاتيًا، لا نسخ من أي كتاب",
   "note":"كل ملخص محرر أصليًا ليغطي كفاءات الوحدة : الفكرة، المفردات، القواعد، البنى النموذجية، ونصيحتان. لا يتضمن أي نص من الكتب المدرسية.",
   "nb":16,
-  "dourous_nb":32,
-  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. الدفعات : U1-U4 (8 دروس لكل وحدة)."
+  "dourous_nb":40,
+  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. الدفعات : U1-U5 (8 دروس لكل وحدة)."
  },
  "malakhiss":[
   {
@@ -1042,6 +1042,145 @@
    "regle":"توزيع الوقت 8/8/4 : 18 د / 18 د / 9 د.",
    "exemple":"Vérifie la position des adverbes de fréquence.",
    "intibah":"في الإنتاج، استعمل am liebsten مرة واحدة على الأقل."
+  },
+  {
+   "unite":5,
+   "n":1,
+   "titre_ar":"تقديم المأكولات والمشروبات",
+   "titre_de":"Essen und Trinken vorstellen",
+   "idee":"نصّ تعريفي بأشهر المأكولات والمشروبات.",
+   "mots":[
+    "das Brot",
+    "der Käse",
+    "der Saft",
+    "das Wasser",
+    "der Tee",
+    "das Obst"
+   ],
+   "regle":"Artikel مع الأطعمة: der Käse / das Brot / der Saft.",
+   "exemple":"Ich esse Brot und trinke Saft.",
+   "intibah":"احفظ الجنس مع كل اسم طعام جديد."
+  },
+  {
+   "unite":5,
+   "n":2,
+   "titre_ar":"في المطعم : الطلب",
+   "titre_de":"Im Restaurant bestellen",
+   "idee":"نصّ حواري بين نادل وزبون: طلب ودفع.",
+   "mots":[
+    "bestellen",
+    "die Speisekarte",
+    "der Kellner",
+    "zahlen",
+    "kosten",
+    "nehmen"
+   ],
+   "regle":"صيغ الطلب: Ich möchte … / Ich nehme … / Ich bestelle …",
+   "exemple":"Ich möchte einen Salat und ein Wasser, bitte.",
+   "intibah":"المفعول به بعد bestellen/nehmen accusatif: einen Salat."
+  },
+  {
+   "unite":5,
+   "n":3,
+   "titre_ar":"Akkusativ بعد أفعال الأكل",
+   "titre_de":"Akkusativ nach Essensverben",
+   "idee":"نصّ يدرّب المفعول به بعد essen/trinken/bestellen.",
+   "mots":[
+    "einen",
+    "eine",
+    "ein",
+    "den",
+    "die",
+    "das"
+   ],
+   "regle":"der → den / ein → einen ؛ die/das بلا تغيير.",
+   "exemple":"Ich esse einen Apfel. / Sie trinkt die Milch.",
+   "intibah":"الأنثى والمحايد لا يتغيران في accusatif."
+  },
+  {
+   "unite":5,
+   "n":4,
+   "titre_ar":"الكميات والوحدات",
+   "titre_de":"Mengen und Einheiten",
+   "idee":"نصّ تسوّق: كيلوغرام، لتر، قطعة.",
+   "mots":[
+    "ein Kilo",
+    "ein Liter",
+    "ein Stück",
+    "eine Tasse",
+    "ein Glas",
+    "kaufen"
+   ],
+   "regle":"الكمية + اسم: ein Kilo Äpfel / eine Tasse Tee.",
+   "exemple":"Ich kaufe ein Kilo Äpfel und zwei Liter Milch.",
+   "intibah":"الجمع بعد الكمية: ein Kilo Äpfel (جمع)."
+  },
+  {
+   "unite":5,
+   "n":5,
+   "titre_ar":"فهم نص عن التغذية",
+   "titre_de":"Leseverstehen : Ernährung",
+   "idee":"نصّ قراءة عن تغذية صحية: استخراج الممنوع والمسموح.",
+   "mots":[
+    "gesund",
+    "ungesund",
+    "viel",
+    "wenig",
+    "süß",
+    "fettig"
+   ],
+   "regle":"ميّز في النص: was ist gesund / was ist ungesund.",
+   "exemple":"Viel Obst ist gesund. / Zu viel Süßes ist ungesund.",
+   "intibah":"أسئلة الصح/الخطأ تُجاب من النص حرفيًا."
+  },
+  {
+   "unite":5,
+   "n":6,
+   "titre_ar":"إنتاج كتابي : وصف وجبة",
+   "titre_de":"Textproduktion : eine Mahlzeit",
+   "idee":"ورشة كتابة: وصف وجبةfavorite (5 أسطر).",
+   "mots":[
+    "Zum Frühstück",
+    "Ich esse",
+    "Ich trinke",
+    "am liebsten",
+    "lecker"
+   ],
+   "regle":"خطة: الوجبة → ماذا تأكل/تشرب → التفضيل → رأي.",
+   "exemple":"Zum Frühstück esse ich Brot und trinke Tee. Das ist lecker.",
+   "intibah":"رتّب: وقت الوجبة أولًا ثم الأكل ثم المشروب."
+  },
+  {
+   "unite":5,
+   "n":7,
+   "titre_ar":"تثبيت وتقويم",
+   "titre_de":"Konsolidierung",
+   "idee":"حصة تجميع: تمارين على accusatif والكميات.",
+   "mots":[
+    "Wiederholung",
+    "Übung",
+    "Fehler",
+    "Tipp"
+   ],
+   "regle":"ميّز einen/eine/ein حسب الجنس في accusatif.",
+   "exemple":"Ich bestelle einen Tee und eine Suppe.",
+   "intibah":"راجع أخطاءك في 🧠 الذاكرة قبل الفرض."
+  },
+  {
+   "unite":5,
+   "n":8,
+   "titre_ar":"فرض الوحدة",
+   "titre_de":"Unitstest",
+   "idee":"فرض تقييمي /20 على الوحدة 5 (فهم + لغة + إنتاج).",
+   "mots":[
+    "Test",
+    "Note",
+    "Zeit",
+    "Korrektur"
+   ],
+   "regle":"توزيع الوقت 8/8/4 : 18 د / 18 د / 9 د.",
+   "exemple":"Vérifie les articles à l'accusatif dans ta production.",
+   "intibah":"في الفهم، استخرج كلمتين صحيحتين وكلمتين خاطئتين قبل الإجابة."
   }
  ]
 }
