@@ -1656,7 +1656,7 @@ jobs:
                      'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                      'prof.js', 'parents.js', 'stats.js', 'quiz.js', 'projet.js',
                      'journee.js', 'reservation.js', 'assets/matching_v2.patch.js',
-                     'guide.js', 'matieres.js', 'library.js']
+                     'matieres.js', 'guide.js', 'library.js']
           if ordre != attendu:
               fails.append('index.html : ordre des scripts ' + str(ordre))
           for police in ('amiri', 'tajawal', 'reem-kufi', 'cormorant-garamond', 'inter'):
