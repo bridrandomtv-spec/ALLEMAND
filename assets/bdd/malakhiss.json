@@ -5,8 +5,8 @@
   "licence":"اجتهاد أصلي من الأستاذ خريف أحمد — ملخصات محررة ذاتيًا، لا نسخ من أي كتاب",
   "note":"كل ملخص محرر أصليًا ليغطي كفاءات الوحدة : الفكرة، المفردات، القواعد، البنى النموذجية، ونصيحتان. لا يتضمن أي نص من الكتب المدرسية.",
   "nb":16,
-  "dourous_nb":40,
-  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. الدفعات : U1-U5 (8 دروس لكل وحدة)."
+  "dourous_nb":48,
+  "dourous_note":"ملخصات نصوص الدروس وحدة بوحدة — تحرير أصلي. 2AS مكتمل (U1-U6) ؛ التالي 3AS U7."
  },
  "malakhiss":[
   {
@@ -1181,6 +1181,144 @@
    "regle":"توزيع الوقت 8/8/4 : 18 د / 18 د / 9 د.",
    "exemple":"Vérifie les articles à l'accusatif dans ta production.",
    "intibah":"في الفهم، استخرج كلمتين صحيحتين وكلمتين خاطئتين قبل الإجابة."
+  },
+  {
+   "unite":6,
+   "n":1,
+   "titre_ar":"تقديم وسائل النقل",
+   "titre_de":"Verkehrsmittel vorstellen",
+   "idee":"نصّ تعريفي بوسائل النقل: قطار، حافلة، سيارة، طائرة.",
+   "mots":[
+    "der Zug",
+    "der Bus",
+    "das Auto",
+    "das Flugzeug",
+    "das Fahrrad",
+    "fahren"
+   ],
+   "regle":"المittel مع fahren: mit dem Zug / mit dem Bus (mit + Dativ).",
+   "exemple":"Ich fahre mit dem Bus zur Schule.",
+   "intibah":"mit دائمًا Dativ: mit dem Zug (وليس den Zug)."
+  },
+  {
+   "unite":6,
+   "n":2,
+   "titre_ar":"السفر والوجهات",
+   "titre_de":"Reisen und Ziele",
+   "idee":"نصّ عن وجهات السفر: nach / in / zu.",
+   "mots":[
+    "die Reise",
+    "das Ziel",
+    "nach Berlin",
+    "in die Türkei",
+    "zu Hause",
+    "fahren"
+   ],
+   "regle":"nach + اسم بلد/مدينة بلا artikel ؛ in + بلد بـ artikel.",
+   "exemple":"Wir fahren nach Oran. / Sie fliegt in die Türkei.",
+   "intibah":"nach بلا artikel؛ in تستعمل مع البلدان ذات الـ article."
+  },
+  {
+   "unite":6,
+   "n":3,
+   "titre_ar":"Perfekt مع sein لأفعال الحركة",
+   "titre_de":"Perfekt mit sein",
+   "idee":"نصّ سردي عن رحلة منتهية يُبرز Perfekt بـ sein.",
+   "mots":[
+    "gefahren",
+    "gegangen",
+    "geflogen",
+    "gekommen",
+    "geblieben",
+    "gereist"
+   ],
+   "regle":"أفعال الحركة/تغيّر الحالة = sein + Partizip II.",
+   "exemple":"Ich bin nach Algerien gefahren. / Sie ist gekommen.",
+   "intibah":"لا تخلط: fahren → ist gefahren (حركة) ؛ kaufen → hat gekauft."
+  },
+  {
+   "unite":6,
+   "n":4,
+   "titre_ar":"شراء التذكرة والاتجاهات",
+   "titre_de":"Tickets kaufen und Richtungen",
+   "idee":"نصّ حواري في المحطة: شراء تذكرة وسؤال عن الاتجاه.",
+   "mots":[
+    "das Ticket",
+    "der Bahnhof",
+    "der Bahnsteig",
+    "einfach",
+    "hin und zurück",
+    "kosten"
+   ],
+   "regle":"السؤال عن السعر: Was kostet …? / Wie viel kostet …?",
+   "exemple":"Eine Fahrkarte nach Blida, bitte. Was kostet sie?",
+   "intibah":"hin und zurück = ذهاب وإياب؛ einfach = ذهاب فقط."
+  },
+  {
+   "unite":6,
+   "n":5,
+   "titre_ar":"فهم نص عن رحلة",
+   "titre_de":"Leseverstehen : eine Reise",
+   "idee":"نصّ قراءة عن رحلة عائلية: استخراج الوجهة/الوسيلة/المدة.",
+   "mots":[
+    "der Urlaub",
+    "die Familie",
+    "das Meer",
+    "eine Woche",
+    "mitnehmen",
+    "ankommen"
+   ],
+   "regle":"استخرج: Wohin? Womit? Wie lange? Mit wem?",
+   "exemple":"Die Familie fährt eine Woche ans Meer.",
+   "intibah":"ans Meer = an + das Meer (اتجاه)."
+  },
+  {
+   "unite":6,
+   "n":6,
+   "titre_ar":"إنتاج كتابي : وصف رحلة",
+   "titre_de":"Textproduktion : eine Reise beschreiben",
+   "idee":"ورشة كتابة: فقرة عن رحلة قمت بها (5 أسطر) بالـ Perfekt.",
+   "mots":[
+    "Letzten Sommer",
+    "bin … gefahren",
+    "mit meiner Familie",
+    "es war schön"
+   ],
+   "regle":"خطة: متى/أين/مع من → الوسيلة → نشاطان → انطباع.",
+   "exemple":"Letzten Sommer bin ich mit meiner Familie nach Bejaia gefahren.",
+   "intibah":"استعمل Perfekt بـ sein للأفعال الحركة في السرد."
+  },
+  {
+   "unite":6,
+   "n":7,
+   "titre_ar":"تثبيت وتقويم",
+   "titre_de":"Konsolidierung",
+   "idee":"حصة تجميع: تمارين على Perfekt بـ sein وحروف الاتجاه.",
+   "mots":[
+    "Wiederholung",
+    "Übung",
+    "Fehler",
+    "Tipp"
+   ],
+   "regle":"ميّز sein/haben في Perfekt حسب نوع الفعل.",
+   "exemple":"Wir sind gefahren, aber wir haben ein Ticket gekauft.",
+   "intibah":"راجع أخطاءك في 🧠 الذاكرة قبل الفرض."
+  },
+  {
+   "unite":6,
+   "n":8,
+   "titre_ar":"فرض الوحدة",
+   "titre_de":"Unitstest",
+   "idee":"فرض تقييمي /20 على الوحدة 6 (فهم + لغة + إنتاج).",
+   "mots":[
+    "Test",
+    "Note",
+    "Zeit",
+    "Korrektur"
+   ],
+   "regle":"توزيع الوقت 8/8/4 : 18 د / 18 د / 9 د.",
+   "exemple":"Vérifie sein/haben au Perfekt dans ta production.",
+   "intibah":"في السرد استعمل Perfekt لا Présent."
   }
  ]
 }
