@@ -5,6 +5,7 @@ on:
     paths:
       - 'docs/archive/documents/**'
       - 'tools/indexer_pdf.py'
+      - '.github/workflows/indexer.yml'
 permissions:
   contents: write
 jobs:
@@ -29,4 +30,5 @@ jobs:
           git config user.email 'bridrandomtv-spec@users.noreply.github.com'
           git add assets/bdd/corpus.json assets/bdd/corpus_index.json
           git diff --cached --quiet || git commit -m 'feat(corpus): indexation PDF + OCR des scans (tesseract deu+ara)'
+          git pull --rebase origin main
           git push
