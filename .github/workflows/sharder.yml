@@ -1,0 +1,26 @@
+name: Sharder l'index du corpus
+on:
+  push:
+    paths:
+      - 'tools/sharder_index.py'
+      - 'assets/bdd/corpus_index.json'
+permissions:
+  contents: write
+jobs:
+  shard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Construire les shards
+        run: python tools/sharder_index.py
+      - name: Committer les shards
+        run: |
+          git config user.name 'Prof. Kharif Ahmed'
+          git config user.email 'bridrandomtv-spec@users.noreply.github.com'
+          git add assets/bdd/shards assets/bdd/shards_manifest.json
+          git diff --cached --quiet || git commit -m 'perf(corpus): index decoupe en shards de 250 chunks (chargement progressif mobile)'
+          git pull --rebase origin main
+          git push
