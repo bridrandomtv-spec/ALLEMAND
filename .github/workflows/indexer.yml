@@ -1,6 +1,10 @@
 name: Indexer les PDF du corpus
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'docs/archive/documents/**'
+      - 'tools/indexer_pdf.py'
 permissions:
   contents: write
 jobs:
