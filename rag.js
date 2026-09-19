@@ -85,25 +85,19 @@
 
 
   /* ══════════════════════════════════════════════════════════════════════
-     Routeur pédagogique v2 :
-     · « لم أفهم / اشرح / لخص + N »        → شرح الوحدة من الملخصات
-     · « تمارين / أعطني تمارين + N »       → تمارين MCQ من البنك، تصحيح فوري
-     · « … بالألمانية / auf Deutsch »      → شرح بالألمانية + نطق de-DE تلقائي
-     · sinon                               → retrieval RAG shardé
+     Routeur pédagogique v3 — مكتبة أسئلة الطالب الجزائري
+     10 أنواع : شرح / تمارين / فرض / باك / قاعدة / مفردات / نطق / مراجعة /
+     توجيه / تصحيح  · 134 صيغة (عر + جزائرية + فر + ألم)
      ══════════════════════════════════════════════════════════════════════ */
-  let MAL = null, BAN = null;
-  async function chargeMalakhiss(){
-    if(MAL !== null) return MAL;
-    try{ const r = await fetch('assets/bdd/malakhiss.json', { cache:'force-cache' });
-         MAL = r.ok ? await r.json() : null; }catch(e){ MAL = null; }
-    return MAL;
-  }
-  async function chargeBanque(){
-    if(BAN !== null) return BAN;
-    try{ const r = await fetch('assets/bdd/contenu_original.json', { cache:'force-cache' });
-         BAN = r.ok ? await r.json() : null; }catch(e){ BAN = null; }
-    return BAN;
-  }
+  let MAL = null, BAN = null, VOC = null, QUEST = null, CORP = null;
+  async function cj(url){ try{ const r = await fetch(url, { cache:'force-cache' });
+      return r.ok ? await r.json() : null; }catch(e){ return null; } }
+  async function chargeMalakhiss(){ if(MAL === null) MAL = await cj('assets/bdd/malakhiss.json'); return MAL; }
+  async function chargeBanque(){ if(BAN === null) BAN = await cj('assets/bdd/contenu_original.json'); return BAN; }
+  async function chargeVoc(){ if(VOC === null) VOC = await cj('assets/bdd/vocabulaire_eleve.json'); return VOC; }
+  async function chargeQuest(){ if(QUEST === null) QUEST = await cj('assets/bdd/questions_eleve.json'); return QUEST; }
+  async function chargeCorp(){ if(CORP === null) CORP = await cj('assets/bdd/corpus.json'); return CORP; }
+
   const ORD = { 'الاول':1,'الأول':1,'الثاني':2,'الثالث':3,'الرابع':4,'الخامس':5,'السادس':6,
                 'السابع':7,'الثامن':8,'التاسع':9,'العاشر':10,'الحادي':11,'الثاني عشر':12,
                 'واحد':1,'اثنان':2,'ثلاثة':3,'اربعة':4,'خمسة':5,'ستة':6 };
@@ -116,10 +110,73 @@
     if(m) return +m[1];
     return null;
   }
-  const INTENT = /(لم افهم|لم أفهم|ما فهمت|ما فهمتش|اشرح|شرح|لخص|لخّص|وضح|وضّح|ما هو|ماهي|ما هي|ماذا يعني|مش فاهم|مش فاهمة|je ne comprends|explique|تمارين|تمرين|اعطني|أعطني|exercice|übung|أعد|اعد)/;
-  const INTENT_EXO = /(تمارين|تمرين|اعطني|أعطني|exercice|übung|train)/;
-  const INTENT_DE = /(بالألمانية|بالالمانية|auf deutsch|en allemand)/;
-
+  async function matchType(q){
+    const Q = await chargeQuest();
+    if(!Q) return null;
+    const s = String(q || '').toLowerCase();
+    for(const t of (Q.types || [])){
+      for(const m of (t.motifs || [])){
+        if(s.indexOf(m.toLowerCase()) !== -1) return t;
+      }
+    }
+    return null;
+  }
+  const REGLES = [
+    { k: ['sein'], l: 'sein' }, { k: ['haben'], l: 'haben' },
+    { k: ['perfekt'], l: 'Perfekt' }, { k: ['akkusativ'], l: 'Akkusativ' },
+    { k: ['dativ'], l: 'Dativ' }, { k: ['komparativ','comparatif'], l: 'Komparativ' },
+    { k: ['konjunktiv'], l: 'Konjunktiv' }, { k: ['passiv'], l: 'Passiv' },
+    { k: ['futur'], l: 'Futur' }, { k: ['w-fragen','w fragen'], l: 'W-Fragen' },
+    { k: ['weil'], l: 'weil' }, { k: ['obwohl'], l: 'obwohl' },
+    { k: ['sowohl'], l: 'sowohl…als auch' }, { k: ['um zu','um…zu'], l: 'um…zu' },
+    { k: ['beim'], l: 'beim + Infinitiv' }, { k: ['präsens','present'], l: 'Präsens' }
+  ];
+  function trouveRegle(q){
+    const s = String(q || '').toLowerCase();
+    for(const r of REGLES){ for(const k of r.k){ if(s.indexOf(k) !== -1) return r.l; } }
+    return null;
+  }
+  function uniteDeRegle(mal, label){
+    const low = label.toLowerCase();
+    return (mal.malakhiss || []).filter(u =>
+      (u.grammaire || []).join(' ').toLowerCase().indexOf(low) !== -1)[0] || null;
+  }
+  function chipsUnites(q){
+    let h = '<b>🤔 حدد الوحدة أولًا</b><br><span class="rag-src">اضغط على وحدتك :</span>'
+      + '<div class="rq-chips">';
+    for(let n = 1; n <= 16; n++){
+      h += '<button type="button" class="rq-u" data-u="' + n + '">الوحدة ' + n + '</button>';
+    }
+    return h + '</div>';
+  }
+  function resumeUnite(u, n, enDe){
+    const lecons = (MAL.dourous || []).filter(d => d.unite === n);
+    let h = '<b>📘 الوحدة ' + n + ' — ' + esc(enDe ? u.titre_de : u.titre_ar)
+      + (enDe ? '' : ' · ' + esc(u.titre_de)) + '</b>'
+      + '<br><span class="rag-src">' + (enDe ? 'Erklärung auf Deutsch' : 'شرح من ملخصاتك — لا اختلاق')
+      + '</span>'
+      + '<div class="rag-x">' + (enDe ? '📘 ' : '💡 ') + esc(enDe ? u.titre_de : u.idee) + '</div>'
+      + '<div class="rg-sec"><b>🔑 ' + (enDe ? 'Wortschatz' : 'مفردات') + '</b><div class="mk-chips">'
+      + (u.vocabulaire || []).slice(0, 6).map(v => '<span class="mk-ch de-in">' + esc(v) + '</span>').join('')
+      + '</div></div>'
+      + '<div class="rg-sec"><b>📘 ' + (enDe ? 'Grammatik' : 'القاعدة') + '</b><ul>'
+      + (u.grammaire || []).slice(0, 3).map(g => '<li class="de-in">' + esc(g) + '</li>').join('')
+      + '</ul></div>'
+      + '<div class="rg-sec"><b>🗣️ ' + (enDe ? 'Beispiele' : 'أمثلة') + '</b><ul>'
+      + (u.structures || []).slice(0, 3).map(s => '<li class="de-in">' + esc(s) + '</li>').join('')
+      + '</ul></div>';
+    if(!enDe){
+      h += '<div class="rg-sec mk-tip"><b>⚠️ انتبه</b><ul>'
+        + (u.conseils || []).slice(0, 2).map(c => '<li>' + esc(c) + '</li>').join('') + '</ul></div>'
+        + '<div class="rg-sec"><b>📖 دروس الوحدة (' + lecons.length + ')</b><ul>'
+        + lecons.slice(0, 8).map(l => '<li>د' + l.n + ' · ' + esc(l.titre_ar) + '</li>').join('')
+        + '</ul></div>';
+    }
+    h += '<div class="rg-sec"><button type="button" class="voz-speak"'
+      + (enDe ? ' data-lang="de-DE"' : '') + '>🔊</button> '
+      + (enDe ? 'Anhören' : 'استمع للشرح') + '</div>';
+    return h;
+  }
   function mapComps(u){
     const g = (u.grammaire || []).join(' ').toLowerCase();
     const cs = [];
@@ -131,92 +188,137 @@
     if(!cs.length) cs.push('vocabulaire');
     return cs;
   }
-
-  /* correction immédiate des MCQ injectés */
-  function bindExos(out, exos){
+  function bindExos(out, exos, modeFard){
+    let ok = 0, done = 0;
     out.querySelectorAll('.rq-c').forEach(card => {
       const x = exos[+card.dataset.i]; if(!x) return;
       card.querySelectorAll('.rq-o').forEach(b => b.addEventListener('click', () => {
+        if(b.disabled) return;
         const k = +b.dataset.k;
         card.querySelectorAll('.rq-o').forEach((bb, kk) => {
           bb.disabled = true; bb.classList.remove('ok', 'ko');
           if(kk === x.a) bb.classList.add('ok');
           else if(kk === k) bb.classList.add('ko');
         });
+        done++; if(k === x.a) ok++;
         const fb = card.querySelector('.rq-fb');
-        if(fb){ fb.hidden = false;
-          fb.className = 'rq-fb ' + (k === x.a ? 'ok' : 'ko');
+        if(fb){ fb.hidden = false; fb.className = 'rq-fb ' + (k === x.a ? 'ok' : 'ko');
           fb.innerHTML = (k === x.a ? '✅ صحيح! ' : '❌ خطأ. ') + '💡 ' + esc(x.why); }
         if(window.MEMOIRE && k !== x.a){
           try{ window.MEMOIRE.record({ q: x.q, bad: x.opts[k], good: x.opts[x.a],
                                        comp: x.comp, unite: null, src: 'rag-exo' }); }catch(e){}
+        }
+        if(modeFard && done === exos.length){
+          const sc = out.querySelector('.rq-score');
+          if(sc){ sc.hidden = false;
+            sc.innerHTML = '📊 نتيجتك : <b>' + ok + ' / ' + exos.length + '</b> · '
+              + Math.round(ok / exos.length * 20) + '/20'; }
         }
       }));
     });
   }
 
   async function reponsePedagogique(q){
-    if(!INTENT.test(String(q || ''))) return null;
+    const t = await matchType(q);
+    if(!t) return null;
     const n = numeroUnite(q);
-    if(!n) return null;
     const mal = await chargeMalakhiss();
-    if(!mal) return null;
-    const u = (mal.malakhiss || []).filter(m => m.unite === n)[0];
+
+    /* ── أنواع لا تحتاج وحدة ── */
+    if(t.id === 'bac'){
+      const corp = await chargeCorp();
+      const suj = (corp && corp.documents || []).filter(d =>
+        d.type === 'sujet' || d.type === 'annale').slice(0, 10);
+      return { html: '<b>🎓 تحضير البكالوريا</b><br><span class="rag-src">'
+        + suj.length + ' مواضيع/سنوات متوفرة في corpus</span><ul>'
+        + suj.map(s => '<li>' + esc(s.titre) + '</li>').join('')
+        + '</ul><div class="rg-sec">افتح onglet 🎓 البكالوريا للتدريب الكامل بتوقيت رسمي.</div>' };
+    }
+    if(t.id === 'tawjih'){
+      return { html: '<b>🧭 خطة مراجعة فعّالة</b><ul>'
+        + '<li>٢ دقيقة تركيز +  دقائق راحة (بومودورو)</li>'
+        + '<li>ابدأ بـ 🧠 مراجعة البطاقات المستحقة قبل أي جديد</li>'
+        + '<li>بعد كل حصة : ٣ تمارين فورية من ✍️ Banque</li>'
+        + '<li>كل خطأ يعود تلقائيًا في 🧭 مسارك (J+1/3/7/21)</li>'
+        + '<li>قبل الفرض : ملخص الوحدة + فرض تجريبي من 🔎</li>'
+        + '<li>نام مبكرًا : التثبيت يحدث أثناء النوم</li></ul>' };
+    }
+    if(t.id === 'tashih'){
+      return { html: '<b>✍️ لتصحيح جملة</b><br>اكتب جملتك في onglet 🤖 الأستاذ '
+        + '(يفهم الجملة ويصحّحها مع القاعدة).<br><span class="rag-src">مثال : '
+        + '« Ich habe ein Buch gelesen. » → تصحيح + شرح</span>' };
+    }
+    if(t.id === 'nataq'){
+      const m = String(q).match(/([A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß\- ]{2,})/);
+      const w = m ? m[1].trim() : '';
+      if(!w) return null;
+      return { html: '<b>🔊 النطق</b><div class="rag-x de-in">' + esc(w) + '</div>'
+        + '<span class="rag-src">يُنطق الآن بالألمانية…</span>', speakWord: w };
+    }
+    if(t.id === 'vocab'){
+      const voc = await chargeVoc();
+      const mots = (voc && voc.mots) || [];
+      const mq = String(q).match(/([A-Za-zÄÖÜäöüß]{3,})|([\u0600-\u06FF]{3,})/);
+      const mot = mq ? (mq[1] || mq[2] || '').toLowerCase() : '';
+      const f = mots.filter(x => (x.de || '').toLowerCase() === mot
+                              || (x.ar || '').indexOf(mq ? (mq[2] || mq[1] || '') : '') !== -1)[0];
+      if(f){
+        return { html: '<b>🔤 المفردة</b><div class="rag-x de-in">' + esc(f.de) + '</div>'
+          + '<div class="rg-sec"><b>بالعربية</b> ' + esc(f.ar) + ' · رقم ' + f.n + '</div>'
+          + '<div class="rg-sec"><button type="button" class="voz-speak" data-lang="de-DE">🔊</button> استمع</div>',
+          speakWord: f.de };
+      }
+      return null;   /* → repli RAG */
+    }
+    if(t.id === 'regle'){
+      const label = trouveRegle(q);
+      if(label && mal){
+        const u = uniteDeRegle(mal, label);
+        if(u){
+          const g = (u.grammaire || []).filter(x =>
+            x.toLowerCase().indexOf(label.toLowerCase()) !== -1);
+          return { html: '<b>📘 قاعدة ' + esc(label) + '</b> (الوحدة ' + u.unite + ')<ul>'
+            + (g.length ? g : (u.grammaire || []).slice(0, 2))
+                .map(x => '<li class="de-in">' + esc(x) + '</li>').join('') + '</ul>'
+            + '<div class="rg-sec"><b>🗣️ أمثلة</b><ul>'
+            + (u.structures || []).slice(0, 2).map(s => '<li class="de-in">' + esc(s) + '</li>').join('')
+            + '</ul></div>'
+            + '<div class="rg-sec"><button type="button" class="voz-speak">🔊</button> استمع</div>' };
+        }
+      }
+      return null;   /* → repli RAG */
+    }
+
+    /* ── أنواع تحتاج وحدة ── */
+    if(!n) return { html: chipsUnites(q) };
+    const u = (mal && mal.malakhiss || []).filter(m => m.unite === n)[0];
     if(!u) return null;
     const niv = n <= 6 ? '2AS' : '3AS';
 
-    /* ── branche TAMARIN : MCQ du banque ── */
-    if(INTENT_EXO.test(String(q))){
+    if(t.id === 'sharh' || t.id === 'murajaa'){
+      const enDe = /بالألمانية|بالالمانية|auf deutsch|en allemand/.test(String(q));
+      return { html: resumeUnite(u, n, enDe), speak: enDe ? 'de' : null };
+    }
+    if(t.id === 'tamarin' || t.id === 'fard'){
       const ban = await chargeBanque();
-      if(ban){
-        const comps = mapComps(u);
-        const exos = (ban.B_exercices || []).filter(x =>
-            comps.indexOf(x.comp) !== -1 && x.niveau === niv).slice(0, 6);
-        if(exos.length){
-          const h = '<b>✍️ تمارين على الوحدة ' + n + ' — ' + esc(u.titre_ar) + '</b>'
-            + '<br><span class="rag-src">من بنك المحتوى الأصلي — تصحيح فوري · '
-            + exos.length + ' تمارين</span>'
-            + '<div class="rq-list">' + exos.map((x, i) =>
-                '<div class="rq-c" data-i="' + i + '"><b class="rq-q">' + esc(x.q) + '</b>'
-              + '<div class="rq-opts">' + x.opts.map((o, k) =>
-                  '<button type="button" class="rq-o" data-k="' + k + '">' + esc(o)
-                + '</button>').join('') + '</div>'
-              + '<div class="rq-fb" hidden></div></div>').join('') + '</div>';
-          return { html: h, exos: exos };
-        }
-      }
+      if(!ban) return null;
+      const comps = mapComps(u);
+      const exos = (ban.B_exercices || []).filter(x =>
+          comps.indexOf(x.comp) !== -1 && x.niveau === niv).slice(0, t.id === 'fard' ? 8 : 6);
+      if(!exos.length) return null;
+      const fard = t.id === 'fard';
+      return { html: '<b>' + (fard ? '📝 فرض تجريبي' : '✍️ تمارين') + ' — الوحدة ' + n
+        + ' · ' + esc(u.titre_ar) + '</b><br><span class="rag-src">من البنك الأصلي — تصحيح فوري'
+        + (fard ? ' · نتيجة /20 في الأخير' : '') + '</span>'
+        + (fard ? '<div class="rq-score" hidden></div>' : '')
+        + '<div class="rq-list">' + exos.map((x, i) =>
+            '<div class="rq-c" data-i="' + i + '"><b class="rq-q">' + esc(x.q) + '</b>'
+          + '<div class="rq-opts">' + x.opts.map((o, k) =>
+              '<button type="button" class="rq-o" data-k="' + k + '">' + esc(o) + '</button>').join('')
+          + '</div><div class="rq-fb" hidden></div></div>').join('') + '</div>',
+        exos: exos, fard: fard };
     }
-
-    /* ── branche SHARH (allemand si demandé) ── */
-    const lecons = (mal.dourous || []).filter(d => d.unite === n);
-    const enDe = INTENT_DE.test(String(q));
-    let h = '<b>📘 الوحدة ' + n + ' — ' + esc(enDe ? u.titre_de : u.titre_ar)
-      + (enDe ? '' : ' · ' + esc(u.titre_de)) + '</b>'
-      + '<br><span class="rag-src">' + (enDe ? 'Erklärung auf Deutsch — aus deinen Zusammenfassungen'
-                                             : 'شرح مبسّط من ملخصاتك — لا اختلاق') + '</span>'
-      + '<div class="rag-x">' + (enDe ? '📘 ' : '💡 ') + esc(enDe ? u.titre_de : u.idee) + '</div>'
-      + '<div class="rg-sec"><b>🔑 ' + (enDe ? 'Wortschatz' : 'مفردات مفتاحية') + '</b><div class="mk-chips">'
-      + (u.vocabulaire || []).slice(0, 6).map(v => '<span class="mk-ch de-in">' + esc(v) + '</span>').join('')
-      + '</div></div>'
-      + '<div class="rg-sec"><b>📘 ' + (enDe ? 'Grammatik' : 'القاعدة') + '</b><ul>'
-      + (u.grammaire || []).slice(0, 3).map(g => '<li class="de-in">' + esc(g) + '</li>').join('')
-      + '</ul></div>'
-      + '<div class="rg-sec"><b>🗣️ ' + (enDe ? 'Beispiele' : 'مثال') + '</b><ul>'
-      + (u.structures || []).slice(0, (enDe ? 3 : 2)).map(s => '<li class="de-in">' + esc(s) + '</li>').join('')
-      + '</ul></div>';
-    if(!enDe){
-      h += '<div class="rg-sec mk-tip"><b>⚠️ انتبه</b><ul>'
-        + (u.conseils || []).slice(0, 2).map(c => '<li>' + esc(c) + '</li>').join('') + '</ul></div>';
-    }
-    if(lecons.length && !enDe){
-      h += '<div class="rg-sec"><b>📖 دروس الوحدة (' + lecons.length + ')</b><ul>'
-        + lecons.slice(0, 8).map(l => '<li>د' + l.n + ' · ' + esc(l.titre_ar) + '</li>').join('')
-        + '</ul></div>';
-    }
-    h += '<div class="rg-sec"><button type="button" class="voz-speak"'
-      + (enDe ? ' data-lang="de-DE"' : '') + '>🔊</button> '
-      + (enDe ? 'Jetzt anhören' : 'اضغط للاستماع إلى الشرح') + '</div>';
-    return { html: h, speak: enDe ? 'de' : null };
+    return null;
   }
 
   function formule(r){
@@ -252,7 +354,15 @@
       const ped = await reponsePedagogique(q);
       if(ped){
         out.innerHTML = '<div class="rg-ok rg-ped">' + ped.html + '</div>';
-        bindExos(out, ped.exos || []);
+        bindExos(out, ped.exos || [], !!ped.fard);
+        out.querySelectorAll('.rq-u').forEach(b => b.addEventListener('click', () => {
+          const inp = $('#ragQ');
+          if(inp){ inp.value = q + ' الوحدة ' + b.dataset.u;
+            const f = $('#ragForm');
+            if(f){ if(f.requestSubmit) f.requestSubmit();
+                   else f.dispatchEvent(new Event('submit', { cancelable: true })); } }
+        }));
+        if(ped.speakWord) parler(ped.speakWord, 'de-DE');
         out.querySelectorAll('.voz-speak').forEach(b => b.addEventListener('click', () => {
           parler((out.querySelector('.rag-x') || out).textContent, b.dataset.lang || null);
         }));
