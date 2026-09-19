@@ -88,10 +88,10 @@
 
   /* ajoute 🔊 à chaque nouvelle réponse */
   function observeReponses(conteneur, selecteurReponse){
-    if(!conteneur || cont.dataset.vozo === '1') return;
-    cont.dataset.vozo = '1';
+    if(!conteneur || conteneur.dataset.vozo === '1') return;
+    conteneur.dataset.vozo = '1';
     const mo = new MutationObserver(() => {
-      cont.querySelectorAll(selecteurReponse).forEach(r => {
+      conteneur.querySelectorAll(selecteurReponse).forEach(r => {
         if(r.querySelector('.voz-speak')) return;
         const b = document.createElement('button');
         b.type = 'button'; b.className = 'voz-speak'; b.textContent = '🔊';
@@ -99,7 +99,7 @@
         r.appendChild(b);
       });
     });
-    mo.observe(cont, { childList: true, subtree: true });
+    mo.observe(conteneur, { childList: true, subtree: true });
   }
 
   function branche(){
