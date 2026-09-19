@@ -4,6 +4,7 @@ on:
     paths:
       - 'tools/sharder_index.py'
       - 'assets/bdd/corpus_index.json'
+      - '.github/workflows/sharder.yml'
 permissions:
   contents: write
 jobs:
