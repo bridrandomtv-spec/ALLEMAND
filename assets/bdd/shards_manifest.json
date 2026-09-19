@@ -1,0 +1,1 @@
+{"version":"1.0.0","nb_shards":2,"total_chunks":396,"shards":[{"file":"shard_00.json","nb_chunks":250,"nb_termes":8809},{"file":"shard_01.json","nb_chunks":146,"nb_termes":8610}]}
