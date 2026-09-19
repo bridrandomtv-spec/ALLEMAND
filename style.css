@@ -2646,3 +2646,9 @@ tr.g5-tot td{border-bottom:none;border-top:2px solid var(--b2);padding-top:11px;
 .cj-tab td.de-in{font-family:var(--ff-de);direction:ltr;text-align:left}
 .cj-p{color:var(--m);font-family:var(--ff-de);font-size:11.5px}
 .cj-tab tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+
+/* ── v3.40 · tableau de conjugaison en LTR (la page est RTL) ── */
+.cj-tab{direction:ltr}
+.cj-tab th,.cj-tab td{text-align:left}
+.cj-tab td.cj-p{text-align:left}
+.cj-wrap{direction:ltr;text-align:left}
