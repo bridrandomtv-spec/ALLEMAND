@@ -2596,3 +2596,23 @@ tr.g5-tot td{border-bottom:none;border-top:2px solid var(--b2);padding-top:11px;
 .voz-speak{background:var(--nuit3);border:1px solid var(--b);border-radius:9px;
   padding:3px 9px;font-size:13px;cursor:pointer;margin-inline-start:8px;vertical-align:middle}
 .voz-speak:hover{border-color:var(--g)}
+
+/* ── v3.35 · MCQ injectés par le routeur RAG ── */
+.rq-list{display:flex;flex-direction:column;gap:11px;margin-top:12px}
+.rq-c{background:var(--nuit3);border:1px solid var(--b);border-radius:13px;padding:12px 13px}
+.rq-q{font-family:var(--ff-de);font-size:13px;display:block;margin-bottom:9px;line-height:1.7}
+.rq-opts{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.rq-o{background:var(--p);border:1px solid var(--b);border-radius:10px;padding:8px 10px;
+  color:var(--t);font-family:var(--ff-de);font-size:12px;cursor:pointer;text-align:left}
+.rq-o:hover{border-color:var(--a)}
+.rq-o.ok{border-color:var(--g);background:rgba(61,220,132,.15);color:var(--g)}
+.rq-o.ko{border-color:var(--r);background:rgba(210,16,52,.13);color:#ff9aa6}
+.rq-o:disabled{opacity:.85;cursor:default}
+.rq-fb{margin-top:9px;border-radius:10px;padding:8px 11px;font-size:12px;line-height:1.7}
+.rq-fb.ok{background:rgba(61,220,132,.1);border:1px solid rgba(61,220,132,.3);color:var(--g)}
+.rq-fb.ko{background:rgba(210,16,52,.09);border:1px solid rgba(210,16,52,.3);color:#ff9aa6}
+.rg-sec{margin-top:11px}
+.rg-sec b{font-family:var(--ff-ar-display);font-size:12.5px;color:var(--or2);display:block;margin-bottom:6px}
+.rg-sec ul{margin:0;padding-right:16px;color:var(--m);font-size:12.5px;line-height:1.9}
+.rg-sec ul li.de-in{font-family:var(--ff-de);direction:ltr;text-align:left}
+@media(max-width:520px){.rq-opts{grid-template-columns:1fr}}
