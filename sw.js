@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.32.0';
+const VERSION = 'dz-de-v3.33.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -76,7 +76,8 @@ const BDD_FILES = [
   './assets/bdd/wilaya.json',
   './assets/bdd/onboarding.json',
   './assets/bdd/corpus.json',
-  './assets/bdd/corpus_index.json',
+  './assets/bdd/shards_manifest.json',
+  './assets/bdd/shards/shard_00.json',
   './assets/bdd/contenu_original.json',
   './assets/bdd/malakhiss.json',
   './assets/bdd/sujet14_farid.json',
