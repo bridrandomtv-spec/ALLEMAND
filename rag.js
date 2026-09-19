@@ -1,13 +1,10 @@
 /* ══════════════════════════════════════════════════════════════════════
-   الثانوية الافتراضية الجزائرية — rag.js
-   🔎 RAG GARDÉ : retrieval-augmented generation SANS génération
-   ──────────────────────────────────────────────────────────────────────
-   Principe : une question ouverte est cherchée dans TON corpus
-   (corpus_index.json = index inversé de chunks). La réponse est TOUJOURS
-   un EXTRAIT VERBATIM d'un chunk de TA base + sa source + sa licence.
-   Jamais de texte inventé : si le score est sous le seuil, on répond
-   « je ne sais pas » + la règle la plus proche, jamais une règle fabriquée.
-   Aucun LLM, aucun coût, aucune hallucination, fonctionne hors-ligne.
+   الثانوية الافتراضية الجزائرية — rag.js  (v2 : index shardé)
+   🔎 RAG GARDÉ : la réponse est TOUJOURS un extrait verbatim d'un chunk du
+   corpus + sa source. Jamais inventé.
+   · Si shards_manifest.json existe : recherche shard par shard (mémoire
+     bornée à 1 shard, chargement progressif, arrêt précoce si match fort).
+   · Sinon : repli sur l'index unique corpus_index.json.
    ══════════════════════════════════════════════════════════════════════ */
 'use strict';
 
@@ -15,88 +12,111 @@
   const $  = (s,c) => (c||document).querySelector(s);
   const esc = s => String(s==null?'':s).replace(/[&<>"']/g,
       c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const SEUIL = 2;          /* au moins 2 termes communs pour considérer pertinent */
-  let IDX = null, CORP = null;
+  const SEUIL = 2;
+  let MAN = null, LEGACY = null;
 
-  async function charge(){
-    if(!IDX){
-      try{
-        const r = await fetch('assets/bdd/corpus_index.json', { cache:'force-cache' });
-        IDX = r.ok ? await r.json() : null;
-      }catch(e){ IDX = null; }
-    }
-    if(!CORP){
-      try{
-        const r = await fetch('assets/bdd/corpus.json', { cache:'force-cache' });
-        CORP = r.ok ? await r.json() : { documents: [] };
-      }catch(e){ CORP = { documents: [] }; }
-    }
-    return { IDX: IDX, CORP: CORP };
+  async function chargeManifest(){
+    if(MAN !== null) return MAN;
+    try{
+      const r = await fetch('assets/bdd/shards_manifest.json', { cache:'no-store' });
+      MAN = r.ok ? await r.json() : null;
+    }catch(e){ MAN = null; }
+    return MAN;
   }
-
+  async function chargeLegacy(){
+    if(LEGACY !== null) return LEGACY;
+    try{
+      const r = await fetch('assets/bdd/corpus_index.json', { cache:'force-cache' });
+      LEGACY = r.ok ? await r.json() : null;
+    }catch(e){ LEGACY = null; }
+    return LEGACY;
+  }
   function termes(q){
     return Array.from(new Set(
-      String(q || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06FF]{3,}/g) || []));
+      String(q || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06ff]{3,}/g) || []));
   }
 
-  /* cherche : retourne { score, texte, doc } ou null */
+  /* recherche shard par shard : un seul shard en mémoire à la fois */
   async function cherche(q){
-    const c = await charge();
-    if(!c.IDX || !c.IDX.chunks) return null;
     const ts = termes(q);
     if(!ts.length) return null;
+    const man = await chargeManifest();
+    if(man && man.shards && man.shards.length){
+      let best = null;
+      for(const sh of man.shards){
+        let data = null;
+        try{
+          const r = await fetch('assets/bdd/shards/' + sh.file, { cache:'force-cache' });
+          if(r.ok) data = await r.json();
+        }catch(e){}
+        if(!data) continue;
+        const scores = {};
+        ts.forEach(t => { (data.termes[t] || []).forEach(cid => {
+          scores[cid] = (scores[cid] || 0) + 1; }); });
+        for(const cid in scores){
+          const sc = scores[cid];
+          if(sc >= SEUIL && (!best || sc > best.score)){
+            const chunk = (data.chunks || []).filter(c => c.n === +cid)[0];
+            if(chunk) best = { score: sc, texte: chunk.texte, doc: chunk.doc };
+          }
+        }
+        if(best && best.score >= SEUIL + 3) break;   /* match fort : arrêt précoce */
+      }
+      return best;
+    }
+    const idx = await chargeLegacy();
+    if(!idx) return null;
     const scores = {};
-    ts.forEach(t => {
-      (c.IDX.termes[t] || []).forEach(cid => { scores[cid] = (scores[cid] || 0) + 1; });
-    });
-    let best = null, bestScore = 0;
-    Object.keys(scores).forEach(cid => {
-      if(scores[cid] > bestScore){ bestScore = scores[cid]; best = +cid; }
-    });
-    if(best === null || bestScore < SEUIL) return null;
-    const chunk = c.IDX.chunks[best];
-    if(!chunk) return null;
-    const doc = (c.CORP.documents || []).filter(d => d.id === chunk.doc)[0] || null;
-    return { score: bestScore, texte: chunk.texte, doc: doc };
+    ts.forEach(t => { (idx.termes[t] || []).forEach(cid => {
+      scores[cid] = (scores[cid] || 0) + 1; }); });
+    let best = null;
+    for(const cid in scores){
+      const sc = scores[cid];
+      if(sc >= SEUIL && (!best || sc > best.score)){
+        const ch = idx.chunks[+cid];
+        if(ch) best = { score: sc, texte: ch.texte, doc: ch.doc };
+      }
+    }
+    return best;
   }
 
-  /* réponse prête à afficher : extrait verbatim + source + licence */
   function formule(r){
     if(!r) return null;
     const extrait = String(r.texte || '').split(/\s+/).slice(0, 70).join(' ');
     return '📚 <b>من قاعدة معرفتك</b> — '
-      + (r.doc ? '« ' + esc(r.doc.titre) + ' » (' + esc(r.doc.licence || '—') + ')' : 'corpus')
-      + ' :<br><span class="rag-x">« ' + esc(extrait) + ' … »</span>'
-      + '<br><span class="rag-src">réponse extraite de ta base (score ' + r.score
-      + ') — jamais inventée.</span>';
+      + '<span class="rag-src">score ' + r.score + ' · chunk ' + (r.doc || '') + '</span>'
+      + '<br><span class="rag-x">« ' + esc(extrait) + ' … »</span>'
+      + '<br><span class="rag-src">réponse extraite de ta base — jamais inventée.</span>';
   }
 
-  /* vue 🔎 اسأل المنصة */
   async function render(){
     const box = $('#ragBody'); if(!box) return;
+    const man = await chargeManifest();
+    const info = man
+      ? (man.nb_shards + ' shards · ' + man.total_chunks + ' chunks · chargement progressif')
+      : 'index unique (repli)';
     box.innerHTML =
         '<div class="rg-hero"><span class="rg-crest">🔎</span><div>'
       + '<h2>اسأل المنصة (RAG gardé)</h2>'
       + '<p class="rg-sub">la réponse vient TOUJOURS d’un extrait de ton corpus — '
-      + 'jamais inventée · hors-ligne</p></div></div>'
+      + 'jamais inventée · ' + info + '</p></div></div>'
       + '<div class="card rg-box">'
       + '<form id="ragForm"><input type="search" id="ragQ" '
-      + 'placeholder="مثال : كيف أصرف sein ؟ · ما قاعدة الأفعال الانفصالية ؟"></form>'
+      + 'placeholder="مثال : Was ist die Meinungsfreiheit ? · Die Kontrolle · Heimat"></form>'
       + '<div id="ragOut" class="rg-out"></div></div>';
     $('#ragForm').addEventListener('submit', async ev => {
       ev.preventDefault();
       const q = ($('#ragQ').value || '').trim();
       const out = $('#ragOut');
       if(!q){ out.innerHTML = ''; return; }
-      out.innerHTML = '<div class="rg-load">⏳ recherche dans ton corpus…</div>';
+      out.innerHTML = '<div class="rg-load">⏳ recherche dans les shards…</div>';
       const r = await cherche(q);
       const f = formule(r);
       out.innerHTML = f
         ? '<div class="rg-ok">' + f + '</div>'
         : '<div class="rg-non">🤷 <b>لا أعرف / je ne sais pas.</b><br>'
-          + 'Aucun extrait de ton corpus ne répond avec assez de confiance. '
-          + 'Je n’invente jamais : ajoute le document via '
-          + '<code>tools/ingest_corpus.py</code> puis repose la question.</div>';
+          + 'Aucun extrait du corpus ne répond avec assez de confiance. '
+          + 'Je n’invente jamais.</div>';
     });
   }
 
