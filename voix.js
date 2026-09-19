@@ -50,6 +50,19 @@
     return cand[0] || vs[0] || null;
   }
 
+  /* retire emojis & symboles : sinon le TTS les LIT (« 💡 » → « ampoule électrique » !) */
+  function nettoie(t){
+    return String(t || '')
+      .replace(/[\u{1F000}-\u{1FAFF}]/gu, ' ')
+      .replace(/[\u{2600}-\u{27BF}]/gu, ' ')
+      .replace(/[\u{2B00}-\u{2BFF}]/gu, ' ')
+      .replace(/[\u{2190}-\u{21FF}]/gu, ' ')
+      .replace(/\u{FE0F}/gu, '')
+      .replace(/\u{200D}/gu, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   /* découpe le texte en segments arabe / latin */
   function segments(t){
     const out = [];
@@ -75,7 +88,9 @@
       const next = () => {
         if(i >= segs.length) return;
         const s = segs[i++];
-        const u = new SpeechSynthesisUtterance(s.txt);
+        const txt = nettoie(s.txt);
+        if(!txt){ next(); return; }
+        const u = new SpeechSynthesisUtterance(txt);
         u.lang = (lang && segs.length === 1) ? lang : (s.type === 'ar' ? 'ar-DZ' : 'de-DE');
         const v = voixPour(u.lang);
         if(v) u.voice = v;
