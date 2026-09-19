@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""tools/indexer_pdf.py - extrait le texte des PDF d'un dossier et indexe dans le corpus.
+"""
+# trigger: indexation initiale des 265 PDF de docs/archive/documents
+tools/indexer_pdf.py - extrait le texte des PDF d'un dossier et indexe dans le corpus.
 Ne copie AUCUN fichier : seule la texte est indexe (url = chemin d'origine).
 Usage : python tools/indexer_pdf.py docs/archive/documents
 """
