@@ -13,10 +13,7 @@
   const $ = (s,c) => (c||document).querySelector(s);
 
   /* noms de voix FÉMININES à éviter */
-  const FEM = /anna|petra|katja|marlene|hedda|yelda|vicki|nina|lena|marie|claire|amelie|zira|
-hazel|susan|samantha|karen|moira|tessa|fiona|veena|lekha|katya|milena|irina|elena|laura|paulina|
-monica|carmit|salli|joanna|kendra|kimberly|ivy|emma|amy|laila|leila|hoda|maryam|sara|salma|amira|
-naira|zeina|rania|fatima|aisha|hala|nour|yasmin|rim|salem?/i;
+  const FEM = /anna|petra|katja|marlene|hedda|yelda|vicki|nina|lena|marie|claire|amelie|zira|hazel|susan|samantha|karen|moira|tessa|fiona|veena|lekha|katya|milena|irina|elena|laura|paulina|monica|carmit|salli|joanna|kendra|kimberly|ivy|emma|amy|laila|leila|hoda|maryam|sara|salma|amira|naira|zeina|rania|fatima|aisha|hala|nour|yasmin|rim/i;
   /* noms de voix MASCULINES préférées */
   const MALE = {
     de: ['markus','stefan','christoph','jörg','jorg','hans','klaus','dieter','thomas','david',
