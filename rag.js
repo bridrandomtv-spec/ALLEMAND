@@ -13,6 +13,9 @@
   const esc = s => String(s==null?'':s).replace(/[&<>"']/g,
       c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const SEUIL = 2;
+  function parler(t){ try{ if('speechSynthesis' in window){
+    speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t);
+    u.lang = /[\u0600-\u06FF]/.test(t) ? 'ar-DZ' : 'de-DE'; speechSynthesis.speak(u); } }catch(e){} }
   let MAN = null, LEGACY = null;
 
   async function chargeManifest(){
@@ -80,6 +83,72 @@
     return best;
   }
 
+
+  /* ══════════════════════════════════════════════════════════════════════
+     Routeur pédagogique : « لم أفهم الدرس/الوحدة N » n'est PAS une question
+     de retrieval → on explique le cours depuis les ملخصات, pas « je ne sais pas ».
+     ══════════════════════════════════════════════════════════════════════ */
+  let MAL = null;
+  async function chargeMalakhiss(){
+    if(MAL !== null) return MAL;
+    try{
+      const r = await fetch('assets/bdd/malakhiss.json', { cache:'force-cache' });
+      MAL = r.ok ? await r.json() : null;
+    }catch(e){ MAL = null; }
+    return MAL;
+  }
+  const ORD = { 'الاول':1,'الأول':1,'الثاني':2,'الثالث':3,'الرابع':4,'الخامس':5,'السادس':6,
+                'السابع':7,'الثامن':8,'التاسع':9,'العاشر':10,'الحادي':11,'الثاني عشر':12,
+                'عشر':10,'واحد':1,'اثنان':2,'ثلاثة':3,'اربعة':4,'خمسة':5,'ستة':6 };
+  function numeroUnite(q){
+    const s = String(q || '');
+    let m = s.match(/(?:الوحدة|وحدة|u)\s*[:\-]?\s*(\d{1,2})/i);
+    if(m) return +m[1];
+    m = s.match(/(\d{1,2})\s*(?:ة|ـ)?\s*(?:وحدة)/);
+    if(m) return +m[1];
+    for(const k in ORD){
+      if(s.indexOf(k) !== -1) return ORD[k];
+    }
+    m = s.match(/(?:الدرس|درس)\s*[:\-]?\s*(\d{1,2})/);
+    if(m) return +m[1];
+    return null;
+  }
+  const INTENT = /(لم افهم|لم أفهم|ما فهمت|ما فهمتش|لم افهمها|اشرح|شرح|لخص|لخّص|وضح|وضّح|ما هو|ماهي|ما هي|ماذا يعني|يعني ايه|مش فاهم|مش فاهمة|je ne comprends|explique)/;
+
+  async function reponsePedagogique(q){
+    if(!INTENT.test(String(q || ''))) return null;
+    const n = numeroUnite(q);
+    if(!n) return null;
+    const mal = await chargeMalakhiss();
+    if(!mal) return null;
+    const u = (mal.malakhiss || []).filter(m => m.unite === n)[0];
+    if(!u) return null;
+    const lecons = (mal.dourous || []).filter(d => d.unite === n);
+    let h = '<b>📘 الوحدة ' + n + ' — ' + esc(u.titre_ar) + ' · ' + esc(u.titre_de) + '</b>'
+      + '<br><span class="rag-src">شرح مبسّط من ملخصاتك — لا اختلاق</span>'
+      + '<div class="rag-x">💡 ' + esc(u.idee) + '</div>'
+      + '<div class="rg-sec"><b>🔑 مفردات مفتاحية</b><div class="mk-chips">'
+      + (u.vocabulaire || []).slice(0, 6).map(v => '<span class="mk-ch de-in">' + esc(v) + '</span>').join('')
+      + '</div></div>'
+      + '<div class="rg-sec"><b>📘 القاعدة</b><ul>'
+      + (u.grammaire || []).slice(0, 3).map(g => '<li class="de-in">' + esc(g) + '</li>').join('')
+      + '</ul></div>'
+      + '<div class="rg-sec"><b>🗣️ مثال</b><ul>'
+      + (u.structures || []).slice(0, 2).map(s => '<li class="de-in">' + esc(s) + '</li>').join('')
+      + '</ul></div>'
+      + '<div class="rg-sec mk-tip"><b>⚠️ انتبه</b><ul>'
+      + (u.conseils || []).slice(0, 2).map(c => '<li>' + esc(c) + '</li>').join('')
+      + '</ul></div>';
+    if(lecons.length){
+      h += '<div class="rg-sec"><b>📖 دروس الوحدة (' + lecons.length + ')</b><ul>'
+        + lecons.slice(0, 8).map(l => '<li>د' + l.n + ' · ' + esc(l.titre_ar) + '</li>').join('')
+        + '</ul></div>';
+    }
+    h += '<div class="rg-sec"><button type="button" class="voz-speak" data-ped="1">🔊</button> '
+      + 'اضغط للاستماع إلى الشرح</div>';
+    return h;
+  }
+
   function formule(r){
     if(!r) return null;
     const extrait = String(r.texte || '').split(/\s+/).slice(0, 70).join(' ');
@@ -109,6 +178,16 @@
       const q = ($('#ragQ').value || '').trim();
       const out = $('#ragOut');
       if(!q){ out.innerHTML = ''; return; }
+      out.innerHTML = '<div class="rg-load">⏳ analyse de ta demande…</div>';
+      const ped = await reponsePedagogique(q);
+      if(ped){
+        out.innerHTML = '<div class="rg-ok rg-ped">' + ped + '</div>';
+        const b = out.querySelector('.voz-speak');
+        if(b) b.addEventListener('click', () => {
+          parler((out.querySelector('.rag-x') || out).textContent);
+        });
+        return;
+      }
       out.innerHTML = '<div class="rg-load">⏳ recherche dans les shards…</div>';
       const r = await cherche(q);
       const f = formule(r);
