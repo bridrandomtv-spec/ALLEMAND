@@ -218,7 +218,95 @@
     });
   }
 
+  /* ══════════════════════════════════════════════════════════════════════
+     محرك تصريف محلي (20 فعلًا : Präsens / Präteritum / Perfekt)
+     جواب فوري موثوق لـ « كيف أصرف/اتصرف X؟ » — بدون استرجاع ولا اختلاق.
+     ══════════════════════════════════════════════════════════════════════ */
+  const PERS = ['ich','du','er / sie / es','wir','ihr','sie / Sie'];
+  const CONJ = {
+    'sein':      { p:['bin','bist','ist','sind','seid','sind'],
+                   t:['war','warst','war','waren','wart','waren'], p2:'ist gewesen' },
+    'haben':     { p:['habe','hast','hat','haben','habt','haben'],
+                   t:['hatte','hattest','hatte','hatten','hattet','hatten'], p2:'hat gehabt' },
+    'werden':    { p:['werde','wirst','wird','werden','werdet','werden'],
+                   t:['wurde','wurdest','wurde','wurden','wurdet','wurden'], p2:'ist geworden' },
+    'gehen':     { p:['gehe','gehst','geht','gehen','geht','gehen'],
+                   t:['ging','gingst','ging','gingen','gingt','gingen'], p2:'ist gegangen' },
+    'kommen':    { p:['komme','kommst','kommt','kommen','kommt','kommen'],
+                   t:['kam','kamst','kam','kamen','kamt','kamen'], p2:'ist gekommen' },
+    'machen':    { p:['mache','machst','macht','machen','macht','machen'],
+                   t:['machte','machtest','machte','machten','machtet','machten'], p2:'hat gemacht' },
+    'lernen':    { p:['lerne','lernst','lernt','lernen','lernt','lernen'],
+                   t:['lernte','lerntest','lernte','lernten','lerntet','lernten'], p2:'hat gelernt' },
+    'spielen':   { p:['spiele','spielst','spielt','spielen','spielt','spielen'],
+                   t:['spielte','spieltest','spielte','spielten','spieltet','spielten'], p2:'hat gespielt' },
+    'lesen':     { p:['lese','liest','liest','lesen','lest','lesen'],
+                   t:['las','last','las','lasen','last','lasen'], p2:'hat gelesen' },
+    'schreiben': { p:['schreibe','schreibst','schreibt','schreiben','schreibt','schreiben'],
+                   t:['schrieb','schriebst','schrieb','schrieben','schriebt','schrieben'], p2:'hat geschrieben' },
+    'fahren':    { p:['fahre','fährst','fährt','fahren','fahrt','fahren'],
+                   t:['fuhr','fuhrst','fuhr','fuhren','fuhrt','fuhren'], p2:'ist gefahren' },
+    'schlafen':  { p:['schlafe','schläfst','schläft','schlafen','schlaft','schlafen'],
+                   t:['schlief','schliefst','schlief','schliefen','schlieft','schliefen'], p2:'hat geschlafen' },
+    'essen':     { p:['esse','isst','isst','essen','esst','essen'],
+                   t:['aß','aßt','aß','aßen','aßt','aßen'], p2:'hat gegessen' },
+    'trinken':   { p:['trinke','trinkst','trinkt','trinken','trinkt','trinken'],
+                   t:['trank','trankst','trank','tranken','trankt','tranken'], p2:'hat getrunken' },
+    'nehmen':    { p:['nehme','nimmst','nimmt','nehmen','nehmt','nehmen'],
+                   t:['nahm','nahmst','nahm','nahmen','nahmt','nahmen'], p2:'hat genommen' },
+    'geben':     { p:['gebe','gibst','gibt','geben','gebt','geben'],
+                   t:['gab','gabst','gab','gaben','gabt','gaben'], p2:'hat gegeben' },
+    'helfen':    { p:['helfe','hilfst','hilft','helfen','helft','helfen'],
+                   t:['half','halfst','half','halfen','halft','halfen'], p2:'hat geholfen' },
+    'wissen':    { p:['weiß','weißt','weiß','wissen','wisst','wissen'],
+                   t:['wusste','wusstest','wusste','wussten','wusstet','wussten'], p2:'hat gewusst' },
+    'können':    { p:['kann','kannst','kann','können','könnt','können'],
+                   t:['konnte','konntest','konnte','konnten','konntet','konnten'], p2:'hat gekonnt' },
+    'müssen':    { p:['muss','musst','muss','müssen','müsst','müssen'],
+                   t:['musste','musstest','musste','mussten','musstet','mussten'], p2:'hat gemusst' },
+    'wollen':    { p:['will','willst','will','wollen','wollt','wollen'],
+                   t:['wollte','wolltest','wollte','wollten','wolltet','wollten'], p2:'hat gewollt' },
+    'dürfen':    { p:['darf','darfst','darf','dürfen','dürft','dürfen'],
+                   t:['durfte','durftest','durfte','durften','durftet','durften'], p2:'hat gedurft' },
+    'mögen':     { p:['mag','magst','mag','mögen','mögt','mögen'],
+                   t:['mochte','mochtest','mochte','mochten','mochtet','mochten'], p2:'hat gemocht' }
+  };
+  const CONJ_INTENT = /(صرف|تصرف|اتصرف|أتصرف|صرفلي|صرف لي|conjug|konjug|forme|كيف ا|كيف أ|كيف ن)/;
+  function trouveVerbe(q){
+    const s = (' ' + String(q || '').toLowerCase() + ' ');
+    for(const v in CONJ){
+      if(s.indexOf(' ' + v + ' ') !== -1 || s.indexOf(' ' + v + '؟') !== -1
+         || s.indexOf(' ' + v + '?') !== -1) return v;
+    }
+    return null;
+  }
+  function tableauConj(v){
+    const c = CONJ[v];
+    let h = '<b>📘 تصريف « ' + esc(v) + ' »</b>'
+      + '<br><span class="rag-src">Präsens · Präteritum · Perfekt — جدول موثوق، لا استرجاع</span>'
+      + '<table class="cj-tab"><tr><th></th><th>Präsens</th><th>Präteritum</th></tr>';
+    for(let i = 0; i < 6; i++){
+      h += '<tr><td class="cj-p">' + PERS[i] + '</td>'
+        + '<td class="de-in">' + esc(c.p[i]) + '</td>'
+        + '<td class="de-in">' + esc(c.t[i]) + '</td></tr>';
+    }
+    h += '</table><div class="rg-sec"><b>Perfekt</b> <span class="de-in">' + esc(c.p2)
+      + '</span></div>'
+      + '<div class="rg-sec"><button type="button" class="voz-speak" data-lang="de-DE">🔊</button> '
+      + 'استمع للتصريف</div>';
+    return h;
+  }
+  function parleConj(v){
+    const c = CONJ[v];
+    return PERS.map((p, i) => p + ' ' + c.p[i]).join('. ') + '. Perfekt: ' + c.p2 + '.';
+  }
+
   async function reponsePedagogique(q){
+    /* conjugaison prioritaire : « كيف اتصرف sein » / « صرف haben » / « sein » seul */
+    const vb = trouveVerbe(q);
+    if(vb && (CONJ_INTENT.test(String(q)) || String(q).trim().toLowerCase() === vb)){
+      return { html: tableauConj(vb), speakWord: null, conj: vb };
+    }
     const t = await matchType(q);
     if(!t) return null;
     const n = numeroUnite(q);
@@ -363,6 +451,10 @@
                    else f.dispatchEvent(new Event('submit', { cancelable: true })); } }
         }));
         if(ped.speakWord) parler(ped.speakWord, 'de-DE');
+        if(ped.conj){
+          const bs = out.querySelector('.voz-speak');
+          if(bs) bs.addEventListener('click', () => parler(parleConj(ped.conj), 'de-DE'));
+        }
         out.querySelectorAll('.voz-speak').forEach(b => b.addEventListener('click', () => {
           parler((out.querySelector('.rag-x') || out).textContent, b.dataset.lang || null);
         }));
