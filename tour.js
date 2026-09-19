@@ -106,5 +106,22 @@
       if(s && !dejaFait()) start();
     }, 900);
   });
+  /* bouton « إعادة الجولة » dans 📖 الدليل */
+  document.addEventListener('dz:view', e => {
+    if(e.detail !== 'guide') return;
+    setTimeout(() => {
+      const gb = $('#guideBody');
+      if(gb && !$('#tbReplay')){
+        const b = document.createElement('button');
+        b.id = 'tbReplay'; b.type = 'button';
+        b.className = 'btn btn-o btn-sm';
+        b.style.marginTop = '12px';
+        b.textContent = '🎬 إعادة الجولة المظلَّلة';
+        b.addEventListener('click', () => window.TOUR.start());
+        gb.appendChild(b);
+      }
+    }, 250);
+  });
+
   window.TOUR = { start: start, steps: STEPS.length };
 })();
