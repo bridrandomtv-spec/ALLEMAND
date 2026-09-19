@@ -1,54 +1,135 @@
 /* ══════════════════════════════════════════════════════════════════════
-   الثانوية الافتراضية الجزائرية — voix.js
-   🎙️ الصوت : المنصة تسمع سؤالك وتتكلّم بالجواب
-   · 🎤  = إملاء بالسؤال (allemand)   · 🗣 = إملاء بالعربية
-   · 🔊  = نطق الجواب (de-DE أو ar حسب لغة النص)
-   · يعمل على 🔎 اسأل المنصة (RAG) و 🤖 الأستاذ (chat)
-   · تقنيات المتصفح فقط (SpeechRecognition + speechSynthesis) — بلا خادم
+   الثانوية الافتراضية الجزائرية — voix.js  (v3 : voix masculine PRO)
+   · 🔊 = lecture SEGMENTÉE : chaque passage arabe lu en ar-DZ, chaque passage
+     allemand lu en de-DE → plus de mélange des langues dans une même phrase.
+   · Voix MASCULINE choisie automatiquement (listes de voix mâles connues),
+     réglable manuellement via le sélecteur 🎛 (mémorisé).
+   · pitch 0.85 / rate 0.92 → timbre posé, professionnel.
+   · 🎤 /  = dictée (de-DE / ar-DZ) sur 🔎 RAG et 🤖 chat.
    ══════════════════════════════════════════════════════════════════════ */
 'use strict';
 
 (function(){
   const $ = (s,c) => (c||document).querySelector(s);
 
-  function SR(){ return window.SpeechRecognition || window.webkitSpeechRecognition || null; }
-  function ttsDispo(){ return ('speechSynthesis' in window); }
+  /* noms de voix FÉMININES à éviter */
+  const FEM = /anna|petra|katja|marlene|hedda|yelda|vicki|nina|lena|marie|claire|amelie|zira|
+hazel|susan|samantha|karen|moira|tessa|fiona|veena|lekha|katya|milena|irina|elena|laura|paulina|
+monica|carmit|salli|joanna|kendra|kimberly|ivy|emma|amy|laila|leila|hoda|maryam|sara|salma|amira|
+naira|zeina|rania|fatima|aisha|hala|nour|yasmin|rim|salem?/i;
+  /* noms de voix MASCULINES préférées */
+  const MALE = {
+    de: ['markus','stefan','christoph','jörg','jorg','hans','klaus','dieter','thomas','david',
+         'felix','jonas','conrad','bernd','google deutsch','microsoft stefan','android de'],
+    ar: ['maged','majed','tarik','abdulrahman','hamza','naayf','faisal','saud','hamed','karim',
+         'omar','youssef','google بالعربية','microsoft naayf','android ar','algeria','dz']
+  };
+  let CHOSEN = '';
+  try{ CHOSEN = localStorage.getItem('dz_voice') || ''; }catch(e){}
 
-  function langueDe(t){
-    return /[\u0600-\u06FF]/.test(String(t||'')) ? 'ar-DZ' : 'de-DE';
+  function toutesVoix(){
+    return ('speechSynthesis' in window) ? (window.speechSynthesis.getVoices() || []) : [];
+  }
+  function voixPour(lang){
+    const vs = toutesVoix();
+    if(!vs.length) return null;
+    const code = String(lang || '').slice(0, 2).toLowerCase();
+    const cand = vs.filter(v => (v.lang || '').toLowerCase().indexOf(code) === 0);
+    if(CHOSEN){
+      const c = cand.find(v => v.name === CHOSEN) || vs.find(v => v.name === CHOSEN);
+      if(c) return c;
+    }
+    const pref = MALE[code] || [];
+    for(const p of pref){
+      const f = cand.find(v => (v.name || '').toLowerCase().indexOf(p) !== -1);
+      if(f) return f;
+    }
+    const nf = cand.find(v => !FEM.test(v.name || ''));
+    if(nf) return nf;
+    for(const p of pref){
+      const f = vs.find(v => (v.name || '').toLowerCase().indexOf(p) !== -1);
+      if(f) return f;
+    }
+    return cand[0] || vs[0] || null;
   }
 
-  /* ── نطق نص ── */
+  /* découpe le texte en segments arabe / latin */
+  function segments(t){
+    const out = [];
+    let cur = '', type = null;
+    const AR = /[\u0600-\u06FF]/, LA = /[A-Za-zÀ-ÿ]/;
+    for(const ch of String(t || '')){
+      let ty = AR.test(ch) ? 'ar' : (LA.test(ch) ? 'la' : type);
+      if(type === null){ type = ty || 'ar'; cur = ch; continue; }
+      if(ty === type){ cur += ch; }
+      else { if(cur.trim()) out.push({ type: type, txt: cur }); cur = ch; type = ty; }
+    }
+    if(cur.trim()) out.push({ type: type, txt: cur });
+    return out;
+  }
+
+  /* lecture segmentée, voix masculine, enchaînée */
   function parler(texte, lang){
-    if(!ttsDispo()) return false;
+    if(!('speechSynthesis' in window)) return false;
     try{
       window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(String(texte));
-      u.lang = lang || langueDe(texte);
-      u.rate = 0.95;
-      window.speechSynthesis.speak(u);
+      const segs = segments(texte);
+      let i = 0;
+      const next = () => {
+        if(i >= segs.length) return;
+        const s = segs[i++];
+        const u = new SpeechSynthesisUtterance(s.txt);
+        u.lang = (lang && segs.length === 1) ? lang : (s.type === 'ar' ? 'ar-DZ' : 'de-DE');
+        const v = voixPour(u.lang);
+        if(v) u.voice = v;
+        u.rate = 0.92; u.pitch = 0.85;
+        u.onend = next; u.onerror = next;
+        window.speechSynthesis.speak(u);
+      };
+      next();
       return true;
     }catch(e){ return false; }
   }
 
-  /* ── إملاء صوتي ── */
+  function SR(){ return window.SpeechRecognition || window.webkitSpeechRecognition || null; }
   function ecouter(lang, onTexte, onErr){
     const C = SR();
     if(!C){ if(onErr) onErr('non supporté'); return null; }
     try{
       const r = new C();
       r.lang = lang; r.interimResults = false; r.maxAlternatives = 1;
-      r.onresult = ev => {
-        const t = ev.results[0][0].transcript;
-        if(onTexte) onTexte(t);
-      };
+      r.onresult = ev => { const t = ev.results[0][0].transcript; if(onTexte) onTexte(t); };
       r.onerror = ev => { if(onErr) onErr(ev.error); };
       r.start();
       return r;
     }catch(e){ if(onErr) onErr('start'); return null; }
   }
 
-  /* ── boutons micro injectés dans un formulaire ── */
+  /* sélecteur de voix 🎛 (mâles en premier) */
+  function greffeChoix(form){
+    if(!form || form.dataset.vozc === '1') return;
+    form.dataset.vozc = '1';
+    const sel = document.createElement('select');
+    sel.className = 'voz-choix'; sel.title = 'choix de la voix';
+    const maj = () => {
+      const vs = toutesVoix();
+      const tri = vs.slice().sort((a, b) => {
+        const am = !FEM.test(a.name || '') ? 0 : 1, bm = !FEM.test(b.name || '') ? 0 : 1;
+        return am - bm || (a.lang || '').localeCompare(b.lang || '');
+      });
+      sel.innerHTML = '<option value="">🎛 voix auto (masculine)</option>' +
+        tri.map(v => '<option value="' + v.name + '"' + (v.name === CHOSEN ? ' selected' : '') + '>'
+          + (!FEM.test(v.name || '') ? '👨 ' : '👩 ') + v.name + ' (' + v.lang + ')</option>').join('');
+    };
+    maj();
+    if('speechSynthesis' in window) window.speechSynthesis.onvoiceschanged = maj;
+    sel.addEventListener('change', () => {
+      CHOSEN = sel.value;
+      try{ localStorage.setItem('dz_voice', CHOSEN); }catch(e){}
+    });
+    form.insertBefore(sel, form.firstChild);
+  }
+
   function greffeMicros(form, inputSel){
     if(!form || form.dataset.voz === '1') return;
     form.dataset.voz = '1';
@@ -66,27 +147,24 @@
         ecouter(b.dataset.l,
           t => { b.classList.remove('on'); inp.value = t;
                  if(form.requestSubmit) form.requestSubmit();
-                 else form.dispatchEvent(new Event('submit', {cancelable:true})); },
+                 else form.dispatchEvent(new Event('submit', { cancelable: true })); },
           () => b.classList.remove('on'));
       });
     });
   }
 
-  /* ── bouton 🔊 sur un conteneur de réponse ── */
-  function greffeHautParleur(host, selecteurTexte){
+  function greffeHautParleur(host){
     if(!host || host.dataset.vozs === '1') return;
     host.dataset.vozs = '1';
     host.addEventListener('click', ev => {
       const btn = ev.target.closest('.voz-speak');
-      if(btn){
-        const zone = btn.closest(selecteurTexte) || host;
-        const txt = (zone.querySelector('.rag-x, .msg-txt, .voz-src') || zone).textContent;
-        parler(txt);
-      }
+      if(!btn) return;
+      const zone = btn.closest('.rg-ok, .msg.bot') || host;
+      const src = zone.querySelector('.rag-x') || zone;
+      parler(src.textContent, btn.dataset.lang || null);
     });
   }
 
-  /* ajoute 🔊 à chaque nouvelle réponse */
   function observeReponses(conteneur, selecteurReponse){
     if(!conteneur || conteneur.dataset.vozo === '1') return;
     conteneur.dataset.vozo = '1';
@@ -95,7 +173,7 @@
         if(r.querySelector('.voz-speak')) return;
         const b = document.createElement('button');
         b.type = 'button'; b.className = 'voz-speak'; b.textContent = '🔊';
-        b.title = 'انطق الجواب';
+        b.title = 'انطق الجواب بصوت رجل';
         r.appendChild(b);
       });
     });
@@ -103,23 +181,22 @@
   }
 
   function branche(){
-    /* 🔎 RAG */
     const rf = $('#ragForm');
     if(rf){
-      greffeMicros(rf, '#ragQ');
+      greffeMicros(rf, '#ragQ'); greffeChoix(rf);
       const out = $('#ragOut');
-      if(out){ observeReponses(out, '.rg-ok'); greffeHautParleur(out, '.rg-ok'); }
+      if(out){ observeReponses(out, '.rg-ok'); greffeHautParleur(out); }
     }
-    /* 🤖 chat */
     const cf = $('#chatForm');
     if(cf){
-      greffeMicros(cf, '#chatInput');
+      greffeMicros(cf, '#chatInput'); greffeChoix(cf);
       const log = $('#chatLog');
-      if(log){ observeReponses(log, '.msg.bot'); greffeHautParleur(log, '.msg.bot'); }
+      if(log){ observeReponses(log, '.msg.bot'); greffeHautParleur(log); }
     }
   }
 
-  window.VOIX = { parler: parler, ecouter: ecouter, dispo: () => !!SR(), tts: ttsDispo };
+  window.VOIX = { parler: parler, ecouter: ecouter, voixPour: voixPour,
+                  dispo: () => !!SR(), tts: () => ('speechSynthesis' in window) };
   document.addEventListener('dz:view', () => setTimeout(branche, 120));
   document.addEventListener('DOMContentLoaded', () => setTimeout(branche, 300));
 })();
