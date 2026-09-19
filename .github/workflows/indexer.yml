@@ -1,0 +1,24 @@
+name: Indexer les PDF du corpus
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Installer pypdf
+        run: pip install pypdf
+      - name: Extraire et indexer les PDF
+        run: python tools/indexer_pdf.py docs/archive/documents
+      - name: Committer le corpus indexe
+        run: |
+          git config user.name 'Prof. Kharif Ahmed'
+          git config user.email 'bridrandomtv-spec@users.noreply.github.com'
+          git add assets/bdd/corpus.json assets/bdd/corpus_index.json
+          git diff --cached --quiet || git commit -m 'feat(corpus): indexation PDF docs/archive/documents (extraction + chunks)'
+          git push
