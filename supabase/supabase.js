@@ -78,5 +78,27 @@ async function fileUrl(chemin){
   return r.error ? null : r.data.signedUrl;
 }
 
-window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb };
+async function myProfile(){
+  const u = await me(); if(!u) return null;
+  const c = await sb();
+  const r = await c.from('profiles').select('*').eq('id', u.id).single();
+  return r.data || null;
+}
+async function listProfiles(){
+  const c = await sb();
+  const r = await c.from('profiles').select('*').order('created_at', { ascending: false });
+  return r.error ? { ok: false, err: r.error.message } : { ok: true, rows: r.data || [] };
+}
+async function listNotes(){
+  const c = await sb();
+  const r = await c.from('notes').select('*').order('at', { ascending: false });
+  return r.error ? { ok: false, err: r.error.message } : { ok: true, rows: r.data || [] };
+}
+async function setRole(id, role){
+  const c = await sb();
+  const r = await c.from('profiles').update({ role: role }).eq('id', id);
+  return r.error ? { ok: false, err: r.error.message } : { ok: true };
+}
+
+window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
