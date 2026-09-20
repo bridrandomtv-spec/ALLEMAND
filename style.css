@@ -2668,3 +2668,26 @@ tr.g5-tot td{border-bottom:none;border-top:2px solid var(--b2);padding-top:11px;
 .cd-f{display:flex;justify-content:space-between;align-items:center;gap:8px;
   background:var(--nuit3);border:1px solid var(--b);border-radius:10px;padding:7px 10px;font-size:12px}
 .cd-load{color:var(--m);font-size:13px}
+
+/* ── v3.42 · 🛡️ admin ── */
+.ad-hero{display:flex;gap:14px;align-items:center;margin-bottom:15px}
+.ad-crest{font-size:40px}
+.ad-hero h2{font-family:var(--ff-ar-display);font-size:clamp(19px,4vw,25px);margin:0 0 3px}
+.ad-sub{color:var(--m);font-size:12.5px;margin:0}
+.ad-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.ad-s{background:var(--nuit3);border:1px solid var(--b);border-radius:14px;padding:9px 16px;
+  text-align:center;min-width:86px}
+.ad-s b{display:block;font-family:var(--ff-de);font-size:21px;font-weight:800;color:var(--or2)}
+.ad-s span{font-size:10.5px;color:var(--m)}
+.ad-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+.ad-grid .card b{font-family:var(--ff-ar-display);font-size:14px}
+.ad-tab{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+.ad-tab th{background:var(--nuit3);color:var(--or2);padding:6px 8px;border:1px solid var(--b);
+  text-align:right;font-size:11px}
+.ad-tab td{padding:6px 8px;border:1px solid var(--b);color:var(--t)}
+.ad-role{background:var(--p);border:1px solid var(--b);border-radius:8px;color:var(--t);
+  font-size:11.5px;padding:3px 6px}
+.ad-deny b{font-family:var(--ff-ar-display);font-size:15px}
+.ad-deny pre{background:var(--nuit3);border:1px solid var(--b);border-radius:10px;padding:10px;
+  font-size:11.5px;direction:ltr;text-align:left;overflow:auto}
+.ad-load{color:var(--m);font-size:13px}
