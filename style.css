@@ -2652,3 +2652,19 @@ tr.g5-tot td{border-bottom:none;border-top:2px solid var(--b2);padding-top:11px;
 .cj-tab th,.cj-tab td{text-align:left}
 .cj-tab td.cj-p{text-align:left}
 .cj-wrap{direction:ltr;text-align:left}
+
+/* ── v3.41 · ☁️ cloud ── */
+.cd-hero{display:flex;gap:14px;align-items:center;margin-bottom:15px}
+.cd-crest{font-size:40px}
+.cd-hero h2{font-family:var(--ff-ar-display);font-size:clamp(19px,4vw,25px);margin:0 0 3px}
+.cd-sub{color:var(--m);font-size:12.5px;margin:0}
+.cd-box input{width:100%;background:var(--nuit3);border:1px solid var(--b);border-radius:12px;
+  padding:11px 14px;color:var(--t);font-family:var(--ff-ar);font-size:13.5px;margin-bottom:10px}
+.cd-err{color:#ff9aa6;font-size:12px;margin-top:9px}
+.cd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.cd-grid .card b{font-family:var(--ff-ar-display);font-size:14px;display:block;margin-bottom:10px}
+.cd-msg{font-size:12px;color:var(--g);margin-top:9px}
+.cd-list{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+.cd-f{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  background:var(--nuit3);border:1px solid var(--b);border-radius:10px;padding:7px 10px;font-size:12px}
+.cd-load{color:var(--m);font-size:13px}
