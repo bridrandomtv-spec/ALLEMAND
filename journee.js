@@ -19,7 +19,7 @@
 
   async function charger(){
     if(D) return D;
-    const r = await fetch(SRC, { cache:'force-cache' });
+    const r = await fetch(SRC, { cache:'no-store' });
     if(!r.ok) throw new Error('HTTP ' + r.status);
     D = await r.json();
     return D;
