@@ -307,7 +307,7 @@
       '<div class="pc-av">' + esc(p.init) + '</div>' +
       '<div class="pc-b"><div class="pc-t">' + esc(p.nom) +
         (p.featured ? ' <span class="chip ok">⭐ المؤسس</span>' : '') + '</div>' +
-      '<div class="pc-m">🇩🇿 ' + esc(p.ville) + ' · ' + p.exp + ' سنة خبرة · ' +
+      '<div class="pc-m">🇩🇿 ' + esc(p.ville) + (p.exp ? ' · ' + p.exp + ' سنة خبرة' : '') + ' · ' +
         '★ ' + p.note.toFixed(1) + ' (' + p.avis + ' رأي)</div>' +
       '<div class="pc-d">' + esc(p.desc) + '</div>' +
       '<div class="chips" style="margin:8px 0">' +
