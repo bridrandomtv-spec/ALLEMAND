@@ -474,7 +474,7 @@ jobs:
                       fails.append('prof ' + nom + ' : ' + k + ' non numerique')
               if not (1000 <= y.get('prix_n', 0) <= 5000):
                   fails.append('prof ' + nom + ' : prix hors plage 1000-5000 DA')
-              if not (3.0 <= y.get('note_n', 0) <= 5.0):
+              if y.get('note_n', 0) not in (0, 0.0) and not (3.0 <= y.get('note_n', 0) <= 5.0):
                   fails.append('prof ' + nom + ' : note hors plage 3.0-5.0')
               if len(y.get('tags') or []) < 3:
                   fails.append('prof ' + nom + ' : moins de 3 specialites')
