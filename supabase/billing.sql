@@ -1,6 +1,5 @@
 -- ══════════════════════════════════════════════════════════════════
 --  billing.sql — monétisation : abonnements + sponsors + pubs
---  (à Run dans Supabase SQL Editor)
 -- ══════════════════════════════════════════════════════════════════
 create table if not exists public.subscriptions (
   id bigint generated always as identity primary key,
