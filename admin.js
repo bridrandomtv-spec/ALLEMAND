@@ -71,6 +71,59 @@
       s.style.borderColor = r.ok ? 'var(--g)' : 'var(--r)';
       if(r.ok) setTimeout(render, 400);
     }));
+    const mono = document.createElement('div');
+    mono.className = 'ad-mono'; box.appendChild(mono); renderMono(mono);
+  }
+  async function renderMono(mono){
+    const [rb, rb2, rb3] = await Promise.all([
+      window.SB.listSubs(), window.SB.listSponsors(), window.SB.activeAds()]);
+    const subs = rb.ok ? rb.rows : [], sps = rb2.ok ? rb2.rows : [], ads = rb3.ok ? rb3.rows : [];
+    const CA = subs.filter(s => s.statut === 'actif').reduce((t, s) => t + s.montant, 0);
+    mono.innerHTML =
+      '<div class="ad-grid" style="margin-top:12px">'
+      + '<div class="card"><b>💳 Abonnements (' + subs.length + ' · '
+      + CA.toLocaleString('fr-FR') + ' DA actifs)</b>'
+      + '<table class="ad-tab"><tr><th>user</th><th>plan</th><th>DA</th><th>statut</th><th></th></tr>'
+      + subs.map(s => '<tr><td>' + esc(s.user_id.slice(0, 8)) + '</td><td>' + esc(s.plan)
+        + '</td><td>' + s.montant + '</td><td>' + esc(s.statut) + '</td><td>'
+        + ((s.statut === 'preuve' || s.statut === 'en_attente')
+            ? '<button class="btn btn-p btn-sm" data-subok="' + s.id + '" data-plan="' + s.plan
+              + '">✅</button> <button class="btn btn-o btn-sm" data-subko="' + s.id + '">❌</button>'
+              + (s.preuve ? '<div class="ad-prev">reçu : ' + esc(s.preuve) + '</div>' : '')
+            : '') + '</td></tr>').join('') + '</table></div>'
+      + '<div class="card"><b>📢 Sponsors (' + sps.length + ' · ' + ads.length + ' pubs actives)</b>'
+      + '<table class="ad-tab"><tr><th>nom</th><th>type</th><th>slot</th><th>statut</th><th></th></tr>'
+      + sps.map(s => '<tr><td>' + esc(s.nom) + '</td><td>' + esc(s.type) + '</td><td>'
+        + esc(s.slot) + '</td><td>' + esc(s.statut) + '</td><td>'
+        + (s.statut === 'en_attente'
+            ? '<button class="btn btn-p btn-sm" data-spok="' + s.id + '">✅</button> '
+              + '<button class="btn btn-o btn-sm" data-spko="' + s.id + '">❌</button>' : '')
+        + '</td></tr>').join('') + '</table>'
+      + '<b style="margin-top:12px">🆕 publier une pub</b>'
+      + '<input id="adTitre" placeholder="titre"><input id="adTexte" placeholder="texte">'
+      + '<input id="adUrl" placeholder="url (optionnel)">'
+      + '<select id="adSlot"><option value="accueil">accueil</option>'
+      + '<option value="unites">unités</option><option value="email">email</option></select>'
+      + '<button class="btn btn-p btn-sm" id="adCreate">publier</button></div></div>';
+    mono.querySelectorAll('[data-subok]').forEach(b => b.addEventListener('click', async () => {
+      const mois = { m1: 1, m6: 6, m12: 12 }[b.dataset.plan] || 1;
+      await window.SB.setSubStatut(+b.dataset.subok, 'actif', mois); render();
+    }));
+    mono.querySelectorAll('[data-subko]').forEach(b => b.addEventListener('click', async () => {
+      await window.SB.setSubStatut(+b.dataset.subko, 'refuse', 0); render();
+    }));
+    mono.querySelectorAll('[data-spok]').forEach(b => b.addEventListener('click', async () => {
+      await window.SB.setSponsorStatut(+b.dataset.spok, 'approuve'); render();
+    }));
+    mono.querySelectorAll('[data-spko]').forEach(b => b.addEventListener('click', async () => {
+      await window.SB.setSponsorStatut(+b.dataset.spko, 'refuse'); render();
+    }));
+    const ac = $('#adCreate', mono);
+    if(ac) ac.addEventListener('click', async () => {
+      await window.SB.createAd({ titre: $('#adTitre', mono).value, texte: $('#adTexte', mono).value,
+        url: $('#adUrl', mono).value, slot: $('#adSlot', mono).value, actif: true });
+      render();
+    });
   }
   function stat(v, l){ return '<div class="ad-s"><b>' + esc(v) + '</b><span>' + l + '</span></div>'; }
   window.renderAdmin = render;
