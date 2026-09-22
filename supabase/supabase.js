@@ -100,5 +100,68 @@ async function setRole(id, role){
   return r.error ? { ok: false, err: r.error.message } : { ok: true };
 }
 
-window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole };
+async function createSub(plan, montant){
+  const u = await me(); if(!u) return { ok: false, err: 'non connecte' };
+  const c = await sb();
+  const ref = 'DZ-' + Date.now().toString(36).toUpperCase();
+  const r = await c.from('subscriptions').insert({ user_id: u.id, plan: plan,
+    montant: montant, ref: ref, statut: 'en_attente' }).select().single();
+  return r.error ? { ok: false, err: r.error.message } : { ok: true, row: r.data };
+}
+async function mySubs(){
+  const u = await me(); if(!u) return { ok: false, err: 'non connecte' };
+  const c = await sb();
+  const r = await c.from('subscriptions').select('*').eq('user_id', u.id)
+    .order('created_at', { ascending: false });
+  return r.error ? { ok: false, err: r.error.message } : { ok: true, rows: r.data || [] };
+}
+async function setPreuve(id, preuve){
+  const c = await sb();
+  const r = await c.from('subscriptions').update({ preuve: preuve, statut: 'preuve' }).eq('id', id);
+  return r.error ? { ok: false, err: r.error.message } : { ok: true };
+}
+async function listSubs(){
+  const c = await sb();
+  const r = await c.from('subscriptions').select('*').order('created_at', { ascending: false });
+  return r.error ? { ok: false, err: r.error.message } : { ok: true, rows: r.data || [] };
+}
+async function setSubStatut(id, statut, mois){
+  const patch = { statut: statut };
+  if(statut === 'actif'){
+    patch.debut = new Date().toISOString();
+    patch.fin = new Date(Date.now() + mois * 30 * 86400000).toISOString();
+  }
+  const c = await sb();
+  const r = await c.from('subscriptions').update(patch).eq('id', id);
+  return r.error ? { ok: false, err: r.error.message } : { ok: true };
+}
+async function addSponsor(s){
+  const c = await sb();
+  const r = await c.from('sponsors').insert(s);
+  return r.error ? { ok: false, err: r.error.message } : { ok: true };
+}
+async function listSponsors(){
+  const c = await sb();
+  const r = await c.from('sponsors').select('*').order('created_at', { ascending: false });
+  return r.error ? { ok: false, err: r.error.message } : { ok: true, rows: r.data || [] };
+}
+async function setSponsorStatut(id, statut){
+  const c = await sb();
+  const r = await c.from('sponsors').update({ statut: statut }).eq('id', id);
+  return r.error ? { ok: false, err: r.error.message } : { ok: true };
+}
+async function activeAds(slot){
+  const c = await sb();
+  let q = c.from('ads').select('*').eq('actif', true);
+  if(slot) q = q.eq('slot', slot);
+  const r = await q;
+  return r.error ? { ok: false, err: r.error.message } : { ok: true, rows: r.data || [] };
+}
+async function createAd(a){
+  const c = await sb();
+  const r = await c.from('ads').insert(a);
+  return r.error ? { ok: false, err: r.error.message } : { ok: true };
+}
+
+window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
