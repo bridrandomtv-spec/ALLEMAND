@@ -1827,6 +1827,23 @@ function renderCompte(){
 }
 
 
+  /* ── Bug #71 : handlers délégués (capture) pour logout + chip compte ──
+     indépendants des re-rendus et sans window.confirm (bloqué en PWA installée) */
+  document.addEventListener('click', ev => {
+    if(ev.target.closest('#btnLogout')){
+      ev.preventDefault(); ev.stopPropagation();
+      try{ AUTH.logout(); }catch(e){}
+      try{ localStorage.removeItem('dz_de_session_v1'); }catch(e){}
+      try{ localStorage.removeItem('dz_trial_v1'); }catch(e){}
+      location.reload();
+      return;
+    }
+    if(ev.target.closest('#userChip')){
+      ev.preventDefault();
+      try{ go('compte'); }catch(e){}
+    }
+  }, true);
+
 /* ── API publique pour modules.js ── */
 window.DZ = {
   $:$, $$:$$, load:load, store:store, esc:esc, toast:toast, speak:speak, go:go,
