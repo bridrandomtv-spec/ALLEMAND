@@ -24,15 +24,15 @@
       document.addEventListener('dz:sbready', () => renderAbonne(), { once:true }); return; }
     const u = await window.SB.me();
     const c = await cfg();
-    if(!u){
-      box.innerHTML = '<div class="card bl-deny"><b>🔑 connexion requise</b>'
-        + '<p>Connecte-toi d’abord dans ☁️ Cloud pour t’abonner.</p></div>';
-      return;
-    }
+    const notice = u ? '' :
+        '<div class="card bl-wait"><b>☁️ connexion cloud requise pour ENREGISTRER ta demande</b>'
+      + '<p>Les offres et coordonnées bancaires ci-dessous sont consultables librement. '
+      + 'Pour générer ta référence DZ-… et suivre ton reçu, connecte-toi d’abord dans ☁️ Cloud.</p>'
+      + '<button class="btn btn-p btn-sm" data-go="cloud">☁️ ouvrir Cloud</button></div>';
     const subs = await window.SB.mySubs();
     const act = (subs.rows || []).filter(s => s.statut === 'actif')[0];
     const att = (subs.rows || []).filter(s => s.statut === 'en_attente' || s.statut === 'preuve')[0];
-    let h = '<div class="bl-hero"><span class="bl-crest">💳</span><div>'
+    let h = notice + '<div class="bl-hero"><span class="bl-crest">💳</span><div>'
       + '<h2>Abonnement Premium</h2><p class="bl-sub">soutiens la plateforme et débloque '
       + 'le suivi complet · paiement CCP / BaridiMob · validation par l’administrateur</p></div></div>';
     if(act){
@@ -67,6 +67,10 @@
     box.querySelectorAll('[data-plan]').forEach(b => b.addEventListener('click', async () => {
       const r = await window.SB.createSub(b.dataset.plan, +b.dataset.prix);
       if(r.ok) renderAbonne();
+      else if(String(r.err).indexOf('non connect') !== -1){
+        const g = document.querySelector('[data-go="cloud"]');
+        if(g) g.click();
+      }
     }));
     const sp = $('#blSendP');
     if(sp) sp.addEventListener('click', async () => {
