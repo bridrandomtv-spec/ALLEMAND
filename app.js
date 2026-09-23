@@ -647,7 +647,7 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'abonne', 'sponsor', 'admin', 'compte'];
+const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'abonne', 'sponsor', 'admin', 'compte'];
 const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
@@ -655,7 +655,7 @@ const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],
                ['officiels','📄 الفروض'],['examen','🎓 البكالوريا'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
                ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],
-               ['reservation','🗓️ احجز حصّة'],['projet','📋 Plan de projet'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 révision'], ['corpus','📚 Corpus'], ['rag','🔎 اسأل'], ['banque','✍️ Banque'], ['malakhiss','📑 ملخصات'], ['cloud','☁️ Cloud'], ['methode','🎯 Méthode'], ['devoirs','📝 Devoirs'], ['abonne','💳 Abonnement'], ['sponsor','📢 Sponsoring'], ['admin','🛡️ Admin'], ['compte','⚙️ حسابي']];
+               ['reservation','🗓️ احجز حصّة'],['projet','📋 Plan de projet'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 révision'], ['corpus','📚 Corpus'], ['rag','🔎 اسأل'], ['banque','✍️ Banque'], ['malakhiss','📑 ملخصات'], ['cloud','☁️ Cloud'], ['methode','🎯 Méthode'], ['devoirs','📝 Devoirs'], ['buch','📗 Livre'], ['abonne','💳 Abonnement'], ['sponsor','📢 Sponsoring'], ['admin','🛡️ Admin'], ['compte','⚙️ حسابي']];
 
 /* Onglet réservé au rôle « prof » — inséré avant « حسابي » */
 function allTabs(){
@@ -744,6 +744,7 @@ function go(view){
   if(view === 'abonne' && window.renderAbonne) window.renderAbonne();
   if(view === 'methode' && window.renderMethode) window.renderMethode();
   if(view === 'devoirs' && window.renderDevoirs) window.renderDevoirs();
+  if(view === 'buch' && window.renderBuch) window.renderBuch();
   if(view === 'sponsor' && window.renderSponsor) window.renderSponsor();
   if(view === 'projet' && window.renderProjet) window.renderProjet();
   if(view === 'profboard' && window.renderProfBoard) window.renderProfBoard();
