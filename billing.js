@@ -50,7 +50,7 @@
         + '</div>';
     }
     h += '<div class="bl-plans">' + c.plans.map(p =>
-        '<div class="card bl-p' + (p.id === 'm6' ? hot : '') + '">'
+        '<div class="card bl-p' + (p.id === 'm6' ? ' bl-hot' : '') + '">'
       + (p.eco ? '<span class="bl-eco">' + esc(p.eco) + '</span>' : '')
       + '<b>' + esc(p.label) + '</b><div class="bl-prix">' + p.prix.toLocaleString('fr-FR') + ' DA</div>'
       + '<i>' + p.par_mois.toLocaleString('fr-FR') + ' DA / mois</i>'
@@ -63,7 +63,6 @@
       + '<p class="bl-note">Mets la référence DZ-… en libellé du versement, puis envoie le reçu '
       + 'ci-dessus. Activation manuelle sous 24 h.</p></div>';
     box.innerHTML = h;
-    const hot = '';
     box.querySelectorAll('[data-plan]').forEach(b => b.addEventListener('click', async () => {
       const r = await window.SB.createSub(b.dataset.plan, +b.dataset.prix);
       if(r.ok) renderAbonne();
