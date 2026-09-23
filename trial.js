@@ -33,6 +33,7 @@
       }
     }catch(e){}
     try{ localStorage.removeItem(K); }catch(e){}
+    try{ localStorage.removeItem('dz_de_session_v1'); }catch(e){}
     try{ sessionStorage.setItem('dz_want_gate', gate ? 'signup' : 'login'); }catch(e){}
     location.reload();
   }
