@@ -5,12 +5,18 @@
   const $ = (s,c) => (c||document).querySelector(s);
   const esc = s => String(s==null?'':s).replace(/[&<>"']/g,
       c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let B = null;
+  let LS = null, CUR = 0;
   async function livre(){
-    if(B !== null) return B;
-    try{ const r = await fetch('assets/bdd/buch_2as.json', { cache:'no-store' });
-         B = r.ok ? await r.json() : null; }catch(e){ B = null; }
-    return B;
+    if(LS !== null) return LS;
+    LS = [];
+    try{
+      const r1 = await fetch('assets/bdd/buch_2as.json', { cache:'no-store' });
+      if(r1.ok){ const j = await r1.json();
+        LS.push(j.lektionen ? j.lektionen[0] : Object.assign({ n:1, titre: j._meta.titre }, j)); }
+      const r2 = await fetch('assets/bdd/buch_l2.json', { cache:'no-store' });
+      if(r2.ok) LS.push(await r2.json());
+    }catch(e){}
+    return LS;
   }
   const PERS = ['ich','du','er/sie/es','wir','ihr','sie/Sie'];
   const GRP = { vf:'Richtig oder falsch? (1 Pkt)', gap:'Ergänze das Verb (1 Pkt)',
@@ -19,9 +25,13 @@
 
   async function render(){
     const box = $('#buchBody'); if(!box) return;
-    const b = await livre();
-    if(!b){ box.innerHTML = '<div class="dn-sub">📗 contenu du livre indisponible.</div>'; return; }
-    let h = '<div class="dn-hero"><span class="dn-crest">📗</span><div><h2>'
+    const L = await livre();
+    if(!L.length){ box.innerHTML = '<div class="dn-sub">📗 contenu du livre indisponible.</div>'; return; }
+    const b = L[CUR] || L[0];
+    const sel = '<div class="dn-tabs">' + L.map((x, i) =>
+      '<button class="btn btn-' + (i === CUR ? 'p' : 'o') + ' btn-sm" data-lk="' + i + '">📗 Lektion '
+      + x.n + '</button>').join(' ') + '</div>';
+    let h = sel + '<div class="dn-hero"><span class="dn-crest">📗</span><div><h2>'
       + esc(b._meta.titre) + '</h2><p class="dn-sub">manuel officiel ' + esc(b._meta.niveau)
       + ' · ' + b.exos.length + ' exercices en allemand · textes & dialogues du livre</p></div></div>'
       + '<div class="card"><b>🎯 objectifs</b><div class="dn-check">'
@@ -44,6 +54,9 @@
       + '<button class="btn btn-p btn-block" id="bkCorr">✅ corriger ma copie</button>'
       + '<div id="bkNote"></div></div>';
     box.innerHTML = h;
+    box.querySelectorAll('[data-lk]').forEach(bl => bl.addEventListener('click', () => {
+      CUR = +bl.dataset.lk; render();
+    }));
     box.querySelectorAll('[data-t]').forEach(bt => bt.addEventListener('click', () => {
       const t = b.textes[+bt.dataset.t];
       if(window.VOIX && window.VOIX.parler) window.VOIX.parler(t.de, 'de-DE');
@@ -97,7 +110,7 @@
         errs++;
         if(window.MEMOIRE) try{ window.MEMOIRE.record({ q: x.q, bad: got || '(vide)',
           good: x.a === true ? 'richtig' : x.a === false ? 'falsch' : String(x.a),
-          comp: 'livre-L1', unite: 1, src: 'buch' }); }catch(e){}
+          comp: 'livre-L' + b.n, unite: b.n, src: 'buch' }); }catch(e){}
       }
       if(fb){ fb.hidden = false; fb.className = 'bk-fb ' + (ok ? 'ok' : 'ko');
         fb.innerHTML = (ok ? '✅ ' : '❌ ') + (ok ? '' : '→ ' + esc(
