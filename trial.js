@@ -23,6 +23,20 @@
     return r.s === 0 || r.e === 0 || r.f === 0 && false ? (r.s === 0 || r.e === 0) : false;
   }
 
+  /* quitte le trial PROPREMENT : logout session démo + retour portail
+     (gate = 'signup' ouvre directement « 📝 حساب جديد ») */
+  function quitTrial(gate){
+    try{
+      if(window.AUTH){
+        const f = AUTH.logout || AUTH.deconnecter || AUTH.sortir || AUTH.deconnexion;
+        if(typeof f === 'function') f.call(AUTH);
+      }
+    }catch(e){}
+    try{ localStorage.removeItem(K); }catch(e){}
+    try{ sessionStorage.setItem('dz_want_gate', gate ? 'signup' : 'login'); }catch(e){}
+    location.reload();
+  }
+
   /* bandeau + compteurs */
   function bandeau(){
     let b = $('#trialBar');
@@ -33,10 +47,7 @@
     b.innerHTML = '🎮 وضع تجريبي · متبقي <b>' + r.s + '</b> حصة · <b>' + r.e + '</b> تمرين · <b>'
       + r.f + '</b> فرض  <button id="trialCta" type="button">أنشئ حسابك للاستمرار ←</button>';
     const c = $('#trialCta');
-    if(c) c.addEventListener('click', () => {
-      localStorage.removeItem(K);
-      location.hash = ''; location.reload();
-    });
+    if(c) c.addEventListener('click', () => quitTrial(true));
   }
 
   /* soft-lock plein écran */
@@ -50,8 +61,8 @@
       + '<button id="tlGo" class="btn btn-p btn-block">✨ إنشاء حساب / connexion</button>'
       + '<button id="tlPay" class="btn btn-g btn-block">💳 عرض عروض الاشتراك</button></div>';
     document.body.appendChild(d);
-    $('#tlGo').addEventListener('click', () => { localStorage.removeItem(K); location.reload(); });
-    $('#tlPay').addEventListener('click', () => { localStorage.removeItem(K); location.reload(); });
+    $('#tlGo').addEventListener('click', () => quitTrial(true));
+    $('#tlPay').addEventListener('click', () => quitTrial(false));
   }
 
   function compte(type, n){
@@ -91,6 +102,17 @@
     if(r.s === 0 || r.e === 0) lock();
   });
 
-  document.addEventListener('DOMContentLoaded', () => setTimeout(bandeau, 400));
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(bandeau, 400);
+    /* après quitTrial : ouvre directement le bon onglet du portail */
+    let g = null;
+    try{ g = sessionStorage.getItem('dz_want_gate'); sessionStorage.removeItem('dz_want_gate'); }catch(e){}
+    if(g){
+      setTimeout(() => {
+        const b = document.querySelector('.gtab[data-gate="' + g + '"]');
+        if(b) b.click();
+      }, 500);
+    }
+  });
   window.TRIAL = { on: on, reste: reste, max: MAX };
 })();
