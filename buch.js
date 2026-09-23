@@ -15,6 +15,8 @@
         LS.push(j.lektionen ? j.lektionen[0] : Object.assign({ n:1, titre: j._meta.titre }, j)); }
       const r2 = await fetch('assets/bdd/buch_l2.json', { cache:'no-store' });
       if(r2.ok) LS.push(await r2.json());
+      const r3 = await fetch('assets/bdd/buch_l3.json', { cache:'no-store' });
+      if(r3.ok) LS.push(await r3.json());
     }catch(e){}
     return LS;
   }
