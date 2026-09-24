@@ -36,17 +36,17 @@
       + '<h2>Abonnement Premium</h2><p class="bl-sub">soutiens la plateforme et débloque '
       + 'le suivi complet · paiement CCP / BaridiMob · validation par l’administrateur</p></div></div>';
     if(act){
-      h += '<div class="card bl-ok">⭐ <b>abonné</b> — plan ' + esc(act.plan)
-        + ' · expire le ' + esc((act.fin || '').slice(0, 10)) + '</div>';
+      h += '<div class="card bl-ok">⭐ <b>abonniert</b> — Plan ' + esc(act.plan)
+        + ' · läuft ab am ' + esc((act.fin || '').slice(0, 10)) + '</div>';
     }
     if(att){
-      h += '<div class="card bl-wait"><b>⏳ demande en cours</b> — réf ' + esc(att.ref)
-        + ' · statut ' + esc(att.statut) + '<br>'
+      h += '<div class="card bl-wait"><b>⏳ laufende Anfrage</b> — Ref. ' + esc(att.ref)
+        + ' · Status ' + esc(att.statut) + '<br>'
         + (att.statut === 'en_attente'
-            ? 'Paie par CCP/BaridiMob (libellé = ' + esc(att.ref) + ') puis colle le n° de reçu :'
-              + '<div class="bl-row"><input id="blPreuve" placeholder="n° de reçu / capture">'
-              + '<button class="btn btn-p btn-sm" id="blSendP">envoyer</button></div>'
-            : 'Preuve reçue — validation par l’administrateur sous 24 h.')
+            ? 'Zahle per CCP/BaridiMob (Verwendungszweck = ' + esc(att.ref) + ') und füge die Belegnummer ein:'
+              + '<div class="bl-row"><input id="blPreuve" placeholder="Belegnummer / Foto">'
+              + '<button class="btn btn-p btn-sm" id="blSendP">senden</button></div>'
+            : 'Beleg erhalten — Freischaltung durch den Administrator innerhalb von 24 h.')
         + '</div>';
     }
     h += '<div class="bl-plans">' + c.plans.map(p =>
@@ -55,9 +55,9 @@
       + '<b>' + esc(p.label) + '</b><div class="bl-prix">' + p.prix.toLocaleString('fr-FR') + ' DA</div>'
       + '<i>' + p.par_mois.toLocaleString('fr-FR') + ' DA / mois</i>'
       + '<button class="btn btn-p btn-block" data-plan="' + p.id + '" data-prix="' + p.prix
-      + '">choisir</button></div>').join('') + '</div>'
-      + '<div class="card bl-pay"><b>🏦 Coordonnées de paiement</b>'
-      + '<div class="bl-row"><span>Titulaire</span><b>' + esc(c.titulaire) + '</b></div>'
+      + '">wählen</button></div>').join('') + '</div>'
+      + '<div class="card bl-pay"><b>🏦 Zahlungsdaten</b>'
+      + '<div class="bl-row"><span>Kontoinhaber</span><b>' + esc(c.titulaire) + '</b></div>'
       + '<div class="bl-row"><span>CCP</span><b>' + esc(c.ccp) + '</b></div>'
       + '<div class="bl-row"><span>BaridiMob</span><b>' + esc(c.baridimob) + '</b></div>'
       + '<p class="bl-note">Mets la référence DZ-… en libellé du versement, puis envoie le reçu '
@@ -84,27 +84,27 @@
     const box = $('#sponsorBody'); if(!box) return;
     box.innerHTML =
         '<div class="bl-hero"><span class="bl-crest">📢</span><div>'
-      + '<h2>Sponsoring & publicité</h2><p class="bl-sub">écoles · académies · sociétés : '
+      + '<h2>Sponsoring & Werbung</h2><p class="bl-sub">écoles · académies · sociétés : '
       + 'touchez des milliers d’élèves et de parents algériens</p></div></div>'
       + '<div class="bl-slots">'
-      + slot('accueil', '🏠 Bannière accueil', 'vue par chaque visiteur à l’ouverture')
-      + slot('unites', '📚 Bandeau unités', 'affiché pendant les révisions')
-      + slot('email', '✉️ Encart email hebdo', 'dans le rapport des parents')
+      + slot('accueil', '🏠 Startbanner', 'gesehen von jedem Besucher beim Start')
+      + slot('unites', '📚 Unité-Banner', 'angezeigt während der Wiederholungen')
+      + slot('email', '✉️ Wochen-E-Mail', 'im Elternbericht')
       + '</div>'
       + '<div class="card"><form id="spForm">'
-      + '<input id="spNom" placeholder="nom de l’établissement / société" required>'
-      + '<select id="spType"><option value="ecole">école</option>'
-      + '<option value="academie">académie</option><option value="societe">société</option></select>'
-      + '<select id="spSlot"><option value="accueil">bannière accueil</option>'
-      + '<option value="unites">bandeau unités</option><option value="email">encart email</option></select>'
-      + '<input id="spContact" placeholder="email / téléphone de contact" required>'
-      + '<input id="spBudget" placeholder="budget envisagé (DA)">'
-      + '<textarea id="spMsg" placeholder="message / objectif de la campagne"></textarea>'
+      + '<input id="spNom" placeholder="Name der Einrichtung / Firma" required>'
+      + '<select id="spType"><option value="ecole">Schule</option>'
+      + '<option value="academie">Akademie</option><option value="societe">Firma</option></select>'
+      + '<select id="spSlot"><option value="accueil">Startbanner</option>'
+      + '<option value="unites">Unité-Banner</option><option value="email">Wochen-E-Mail</option></select>'
+      + '<input id="spContact" placeholder="E-Mail / Telefon" required>'
+      + '<input id="spBudget" placeholder="geplantes Budget (DA)">'
+      + '<textarea id="spMsg" placeholder="Nachricht / Ziel der Kampagne"></textarea>'
       + '<a class="btn btn-o btn-block" style="display:block;margin-bottom:10px" '
       + 'target="_blank" rel="noopener" href="sponsor-kit.html">📄 kit sponsor '
       + '(document commercial imprimable)</a>'
-      + '<button class="btn btn-p btn-block" type="submit">📨 envoyer la demande</button>'
-      + '<div id="spOk" class="bl-ok" hidden>✅ demande enregistrée — nous vous contactons sous 48 h</div>'
+      + '<button class="btn btn-p btn-block" type="submit">📨 Anfrage senden</button>'
+      + '<div id="spOk" class="bl-ok" hidden>✅ Anfrage gespeichert — wir kontaktieren Sie innerhalb von 48 h</div>'
       + '</form></div>';
     $('#spForm').addEventListener('submit', async ev => {
       ev.preventDefault();
