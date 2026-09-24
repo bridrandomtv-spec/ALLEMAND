@@ -4,14 +4,15 @@
   const $ = (s,c) => (c||document).querySelector(s);
   const esc = s => String(s==null?'':s).replace(/[&<>"']/g,
       c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let DV = null, CO = null, AN = null;
+  let DV = null, CO = null, AN = null, CG = null;
   async function cj(u){ try{ const r = await fetch(u, { cache:'no-store' });
       return r.ok ? await r.json() : null; }catch(e){ return null; } }
   async function data(){
     if(DV === null){ DV = await cj('assets/bdd/devoirs.json'); }
+    if(CG === null){ CG = await cj('assets/bdd/corriges_gen.json'); }
     if(CO === null){ CO = await cj('assets/bdd/compositions.json'); }
     if(AN === null){ AN = await cj('assets/bdd/annales.json'); }
-    return { dv: (DV && DV.items) || [], co: (CO && CO.items) || [], an: (AN && AN.items) || [] };
+    return { dv: (DV && DV.items) || [], co: (CO && CO.items) || [], an: (AN && AN.items) || [], cg: CG || {} };
   }
   const FICHES = {
     I: ['Lies zuerst die FRAGEN (nicht den Text)', 'Markiere die Schlüsselwörter im Text',
@@ -40,6 +41,19 @@
     plan(d);
   }
 
+  function clean(t, x){
+    let s = String(t || '');
+    const bad = [x && x.lycee, x && x.ville, x && x.wilaya].filter(Boolean);
+    s = s.split('\n').filter(l => {
+      const L = l.toLowerCase();
+      if(/www\.|http|facebook|youtube|\.com|\.fr|\.dz/.test(L)) return false;
+      for(const b of bad){ if(b && L.indexOf(String(b).toLowerCase()) !== -1) return false; }
+      return true;
+    }).join('\n');
+    const first = (s.split('\n')[0] || '');
+    if(/lycée|lycee|site|www|http/i.test(first)) s = s.split('\n').slice(1).join('\n');
+    return s;
+  }
   function liste(u, d){
     const ex = d.dv.filter(x => x.unite === u)
       .sort((a, b) => (a.difficulte || 0) - (b.difficulte || 0));
@@ -82,9 +96,9 @@
     host.querySelectorAll('[data-corrige]').forEach(b => b.addEventListener('click', () => {
       const x = ex[+b.dataset.corrige];
       $('#mtz' + b.dataset.corrige).innerHTML = '<div class="mt-fiche"><b>✅ Schritt 3 — Lösung</b>'
-        + '<pre class="mt-sujet">' + esc(x.corrige || x.corrigé || x.corrige_text
-            || 'Corrigé type : compare ta copie partie par partie avec la fiche méthode '
-             + 'ci-dessous, puis note chaque compétence manquée.') + '</pre>'
+        + '<pre class="mt-sujet">' + esc(clean(d.cg[x.id] || x.corrige || x.corrige_text
+            || 'Musterlösung: vergleiche deine Arbeit Teil für Teil mit der Methodenkarte '
+             + 'unten und notiere jede fehlende Kompetenz.', x)) + '</pre>'
         + '<div class="mt-fiches">' + Object.keys(FICHES).map(k =>
             '<div><b>' + k + '</b><ul>' + FICHES[k].map(f => '<li>' + f + '</li>').join('')
             + '</ul></div>').join('') + '</div></div>';
