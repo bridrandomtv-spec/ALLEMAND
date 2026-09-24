@@ -1093,6 +1093,8 @@ jobs:
           node --version
           node ci/check-unites.mjs
 
+      - name: Test de régression (questions élèves réelles)
+        run: node tests/regression.mjs
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
         run: |
           python - <<'PY'
