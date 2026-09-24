@@ -28,19 +28,19 @@
   async function render(){
     const box = $('#buchBody'); if(!box) return;
     const L = await livre();
-    if(!L.length){ box.innerHTML = '<div class="dn-sub">📗 contenu du livre indisponible.</div>'; return; }
+    if(!L.length){ box.innerHTML = '<div class="dn-sub">📗 Buchinhalt nicht verfügbar.</div>'; return; }
     const b = L[CUR] || L[0];
     const sel = '<div class="dn-tabs">' + L.map((x, i) =>
       '<button class="btn btn-' + (i === CUR ? 'p' : 'o') + ' btn-sm" data-lk="' + i + '">📗 Lektion '
       + x.n + '</button>').join(' ') + '</div>';
     let h = sel + '<div class="dn-hero"><span class="dn-crest">📗</span><div><h2>'
-      + esc(b._meta.titre) + '</h2><p class="dn-sub">manuel officiel ' + esc(b._meta.niveau)
-      + ' · ' + b.exos.length + ' exercices en allemand · textes & dialogues du livre</p></div></div>'
-      + '<div class="card"><b>🎯 objectifs</b><div class="dn-check">'
+      + esc(b._meta.titre) + '</h2><p class="dn-sub">offizielles Lehrbuch ' + esc(b._meta.niveau)
+      + ' · ' + b.exos.length + ' Aufgaben auf Deutsch · Texte & Dialoge aus dem Buch</p></div></div>'
+      + '<div class="card"><b>🎯 Ziele</b><div class="dn-check">'
       + b.objectifs.map(o => '<span>' + esc(o) + '</span>').join('') + '</div>'
-      + '<b style="margin-top:9px">📘 grammaire</b><div class="dn-check">'
+      + '<b style="margin-top:9px">📘 Grammatik</b><div class="dn-check">'
       + b.grammaire_objectifs.map(o => '<span>' + esc(o) + '</span>').join('') + '</div></div>'
-      + '<div class="card"><b>📖 textes & dialogues du livre</b>'
+      + '<div class="card"><b>📖 Texte & Dialoge aus dem Buch</b>'
       + b.textes.map((t, i) => '<div class="dn-q"><span class="dn-qt"><b>' + esc(t.titre)
           + '</b><br>' + esc(t.de) + '</span>'
           + '<button class="btn btn-o btn-sm" data-t="' + i + '">🔊 hören</button></div>').join('')
@@ -51,9 +51,9 @@
       + b.tables.map(t => '<div class="dn-q"><span class="dn-qt"><b>' + esc(t.verbe)
           + '</b> · ' + t.formes.map((f, i) => PERS[i] + ' ' + esc(f)).join(' · ')
           + '</span></div>').join('') + '</div>'
-      + '<div class="card"><b>✍️ Übungen — ' + b.exos.length + ' exercices (comme un devoir)</b>'
+      + '<div class="card"><b>✍️ Übungen — ' + b.exos.length + ' Aufgaben (wie eine Klassenarbeit)</b>'
       + b.exos.map((x, i) => exoHtml(x, i)).join('')
-      + '<button class="btn btn-p btn-block" id="bkCorr">✅ corriger ma copie</button>'
+      + '<button class="btn btn-p btn-block" id="bkCorr">✅ Meine Arbeit korrigieren</button>'
       + '<div id="bkNote"></div></div>';
     box.innerHTML = h;
     box.querySelectorAll('[data-lk]').forEach(bl => bl.addEventListener('click', () => {
@@ -74,7 +74,7 @@
       + '" value="' + k + '"> ' + esc(o) + '</label>').join('');
     else if(x.g === 'prod') inner += '<textarea rows="5" placeholder="Schreibe hier…"></textarea>'
       + '<div class="dn-check">' + x.checklist.map(c => '<span>☐ ' + c + '</span>').join('') + '</div>'
-      + '<div class="dn-self">auto-note : <select id="bkp' + i + '"><option value="0">0</option>'
+      + '<div class="dn-self">Selbstnote: <select id="bkp' + i + '"><option value="0">0</option>'
       + '<option value="1">1</option><option value="2">2</option><option value="3">3</option>'
       + '<option value="4">4</option></select> / 4</div>';
     else inner += '<input class="bk-in" id="bki' + i + '" placeholder="deine Antwort">';
@@ -101,7 +101,7 @@
         const n = Math.min(4, Math.max(0, +(($('#bkp' + i) || {}).value || 0)));
         pts += n;
         if(fb){ fb.hidden = false; fb.className = 'bk-fb ' + (n >= 3 ? 'ok' : 'ko');
-          fb.textContent = 'auto-note : ' + n + ' / 4'; }
+          fb.textContent = 'Selbstnote: ' + n + ' / 4'; }
         return;
       }else{
         got = (($('#bki' + i) || {}).value || '').trim().toLowerCase();
@@ -120,9 +120,9 @@
           : (x.opts ? x.opts[x.a] : x.a)) + (x.why ? ' · ' + esc(x.why) : '')); }
     });
     const note = pts / tot * 20;
-    $('#bkNote').innerHTML = '<div class="dn-res">Note : <b>' + note.toFixed(1) + ' / 20</b> · '
-      + (pts) + '/' + tot + ' points · ' + errs + ' erreur(s)'
-      + '<br><span>chaque erreur est devenue une carte 🧠 mémoire (Lektion 1)</span></div>';
+    $('#bkNote').innerHTML = '<div class="dn-res">Note: <b>' + note.toFixed(1) + ' / 20</b> · '
+      + (pts) + '/' + tot + ' points · ' + errs + ' Fehler'
+      + '<br><span>jeder Fehler ist eine 🧠 Lernkarte geworden (Lektion 1)</span></div>';
     $('#bkNote').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
