@@ -672,11 +672,31 @@ function isProf(){
 }
 let currentView = 'accueil';
 
+const GROUPS = [
+  ['🧭 البداية', ['masar','accueil']],
+  ['📚 تعلّم', ['seances','live','classe','grammaire','biblio','matieres','guide','malakhiss','revision']],
+  ['✍️ تدرّب', ['quiz','officiels','devoir','examen','simulation','methode','devoirs','buch','banque','corpus','rag']],
+  ['👥 متابعة', ['stats','prof','parents','reservation','projet','profboard']],
+  ['⚙️ المنصة', ['cloud','abonne','sponsor','admin','legal','compte']]
+];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
-  c.innerHTML = allTabs().map(t =>
-    '<button class="tab' + (t[0] === currentView ? ' on' : '') + '" data-go="' + t[0] + '">' + t[1] + '</button>'
-  ).join('');
+  const tabs = allTabs();
+  const used = {};
+  let h = '';
+  const btn = t => '<button class="tab' + (t[0] === currentView ? ' on' : '') + '" data-go="'
+    + t[0] + '">' + t[1] + '</button>';
+  for(const g of GROUPS){
+    const items = tabs.filter(t => g[1].indexOf(t[0]) !== -1);
+    if(!items.length) continue;
+    h += '<div class="tabgrp-h">' + g[0] + '</div>';
+    h += items.map(t => { used[t[0]] = 1; return btn(t); }).join('');
+  }
+  const rest = tabs.filter(t => !used[t[0]]);
+  if(rest.length){
+    h += '<div class="tabgrp-h">➕</div>' + rest.map(btn).join('');
+  }
+  c.innerHTML = h;
 }
 
 /* 🧭 prochaine séance non faite du niveau actif (pour masar.js). */
