@@ -175,7 +175,7 @@
   function vueLecons(){
     let h = '<div class="card"><h2>📖 الدروس — Lektionen</h2>'
       + '<div class="ch-sub" style="margin:-6px 0 14px">كل درس مُعدّ بعناية من '
-      + 'الأستاذ خريف أحمد · السنة الثانية ثانوي — منهاج ٢٠٢٦/٢٠٢٧</div>';
+      + 'الأستاذ خريف أحمد · السنة الثانية ثانوي — منهاج 2026/2027</div>';
     h += (D.lecons || []).map(l => {
       const st = l.statut;
       const prog = Number(l.progression) || 0;
