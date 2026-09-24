@@ -175,6 +175,19 @@
       + '<option value="4">4</option></select> / ' + x.pts + '</div></div>';
   }
 
+  function clean(t, x){
+    let s = String(t || '');
+    const bad = [x && x.lycee, x && x.ville, x && x.wilaya].filter(Boolean);
+    s = s.split('\n').filter(l => {
+      const L = l.toLowerCase();
+      if(/www\.|http|facebook|youtube|\.com|\.fr|\.dz/.test(L)) return false;
+      for(const b of bad){ if(b && L.indexOf(String(b).toLowerCase()) !== -1) return false; }
+      return true;
+    }).join('\n');
+    const first = (s.split('\n')[0] || '');
+    if(/lycée|lycee|site|www|http/i.test(first)) s = s.split('\n').slice(1).join('\n');
+    return s;
+  }
   function zoneB(d){
     const z = $('#dnZone');
     const nivs = [...new Set(d.dv.map(x => x.niveau))];
@@ -201,7 +214,7 @@
       $('#fList').querySelectorAll('[data-i]').forEach(b => b.addEventListener('click', () => {
         const x = rows[+b.dataset.i];
         $('#dz' + b.dataset.i).innerHTML = '<div class="dn-suj"><b>Aufgabe</b>'
-          + '<pre class="dn-pre">' + esc(x.sujet || '') + '</pre>'
+          + '<pre class="dn-pre">' + esc(clean(x.sujet, x)) + '</pre>'
           + '<b>Lösung</b><pre class="dn-pre">' + esc(x.corrige || '(Lösung enthalten: '
           + (x.corrige_inclus ? 'oui' : 'non') + ')') + '</pre></div>';
       }));
