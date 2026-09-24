@@ -304,9 +304,9 @@
           info('📅 السنة الدراسية', f.annee_scolaire) +
           info('🎓 المستوى', f.niveau + ' · ' + f.filiere) +
           info('📆 الفصل', f.trimestre ? 'الفصل ' + f.trimestre : '—') +
-          info('📍 الولاية', f.code_wilaya + ' — ' + f.wilaya) +
+          info('📍 الجهة', 'الجزائر') +
           info('🏛️ المدينة', f.ville) +
-          info('🏫 المؤسسة', f.lycee) +
+          info('🏫 المصدر', 'وثيقة تربوية') +
           info('📖 الوحدة', f.unite + ' — ' + f.unite_de) +
           info('⏱️ المدة', f.duree_minutes + ' دقيقة') +
           info('🧮 السلّم', f.bareme + ' نقطة') +
