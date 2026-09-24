@@ -6,7 +6,7 @@
 'use strict';
 (function(){
   const LANGS = [
-    ['ar','🇩 العربية','ar-DZ'], ['de','🇩🇪 Deutsch','de-DE'],
+    ['ar','🇩 العربية','ar-SA'], ['de','🇩🇪 Deutsch','de-DE'],
     ['en','🇬🇧 English','en-US'], ['fr','🇫🇷 Français','fr-FR'],
     ['es','🇪🇸 Español','es-ES'], ['it','🇮🇹 Italiano','it-IT'],
     ['ru','🇷🇺 Русский','ru-RU'], ['zh','🇨🇳 中文','zh-CN'],
@@ -55,21 +55,25 @@
   }
 
   function ttsLang(texte){
-    return /[\u0600-\u06FF]/.test(texte) ? (lang === 'ar' ? 'ar-DZ' : 'ar-SA') : 'de-DE';
+    return /[\u0600-\u06FF]/.test(texte) ? (lang === 'ar' ? 'ar-SA' : 'ar-SA') : 'de-DE';
   }
   function speak(texte, lc){
     speaking = true;
     try{
-      if(lc && (lc === 'de-DE') && window.VOIX && VOIX.parler){ VOIX.parler(texte, 'de-DE'); }
       const u = new SpeechSynthesisUtterance(texte);
       u.lang = lc || ttsLang(texte); u.rate = 0.95;
+      try{ const vs = speechSynthesis.getVoices().filter(x => x.lang.indexOf(u.lang.slice(0, 2)) === 0);
+        if(vs.length) u.voice = vs[0]; }catch(e){}
       u.onend = () => { speaking = false; if(ON) setTimeout(listen, 300); };
       u.onerror = () => { speaking = false; if(ON) setTimeout(listen, 300); };
       speechSynthesis.speak(u);
+      setTimeout(() => { if(ON){ speaking = false; listen(); } }, 9000);
     }catch(e){ speaking = false; if(ON) setTimeout(listen, 300); }
   }
+  let listeningGuard = false;
   function listen(){
-    if(!ON) return;
+    if(!ON || listeningGuard) return;
+    listeningGuard = true;
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if(!SR){ setStatus('⚠️ navigateur sans écoute'); return; }
     try{ if(rec) rec.stop(); }catch(e){}
@@ -90,8 +94,10 @@
       setStatus('🗣️ …');
       speak(rep.slice(0, 700));
     };
-    rec.onerror = () => { if(ON) setTimeout(listen, 1200); };
-    rec.onend = () => { if(ON && !speaking) setTimeout(listen, 800); };
+    rec.onerror = e => { listeningGuard = false;
+      setStatus('⚠️ micro : ' + (e && e.error ? e.error : 'erreur'));
+      if(ON) setTimeout(listen, 1500); };
+    rec.onend = () => { listeningGuard = false; if(ON && !speaking) setTimeout(listen, 800); };
     rec.start();
   }
   function setStatus(t){ const s = document.getElementById('parleSt'); if(s) s.textContent = t; }
