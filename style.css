@@ -2861,3 +2861,8 @@ body.trial [data-tab="cloud"],body.trial [data-tab="admin"]{display:none}
 .lg-c p{color:var(--t);font-size:12.8px;line-height:1.85;margin:0 0 9px}
 .lg-c p b{color:var(--or2)}
 .lg-note{color:var(--m);font-size:11.5px;text-align:center;margin-top:6px}
+
+/* ── v3.50 · i18n : directions explicites ── */
+.de-display{direction:ltr;unicode-bidi:isolate}
+[dir="ltr"]{direction:ltr}
+.welco b[dir="ltr"],.bl-row b[dir="ltr"]{font-family:var(--ff-de)}
