@@ -655,7 +655,7 @@ const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],
                ['officiels','📄 الفروض'],['examen','🎓 البكالوريا'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
                ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],
-               ['reservation','🗓️ احجز حصّة'],['projet','📋 Plan de projet'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 révision'], ['corpus','📚 Corpus'], ['rag','🔎 اسأل'], ['banque','✍️ Banque'], ['malakhiss','📑 ملخصات'], ['cloud','☁️ Cloud'], ['methode','🎯 Methode'], ['devoirs','📝 Klausuren'], ['buch','📗 Buch'], ['abonne','💳 Abonnement'], ['sponsor','📢 Sponsoring'], ['admin','🛡️ Admin'], ['legal','⚖️ Recht'], ['compte','⚙️ حسابي']];
+               ['reservation','🗓️ احجز حصّة'],['projet','📋 Plan de projet'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 révision'], ['corpus','📚 Corpus'], ['rag','🔎 اسأل'], ['banque','✍️ Banque'], ['malakhiss','📑 ملخصات'], ['cloud','☁️ Cloud'], ['methode','🎯 Methode'], ['devoirs','📝 Klausuren'], ['buch','📗 Buch'], ['abonne','💳 Abonnement'], ['sponsor','📢 Sponsoring'], ['admin','🛡️ Admin'], ['legal','⚖️ قانوني'], ['compte','⚙️ حسابي']];
 
 /* Onglet réservé au rôle « prof » — inséré avant « حسابي » */
 function allTabs(){
