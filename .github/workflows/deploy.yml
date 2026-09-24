@@ -2252,26 +2252,14 @@ jobs:
           PY
 
   deploy:
-    name: Déploiement GitHub Pages
-    needs: validate
+    name: Déploiement public = Cloudflare Workers (dépôt privé, pas de Pages)
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    needs: validate
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: '.'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Information
+        run: |
+          echo "Le dépôt est PRIVÉ : GitHub Pages (gratuit) ne peut pas publier un dépôt privé."
+          echo "La production publique est assurée par Cloudflare Workers :"
+          echo "   https://allemand.brid-randomtv.workers.dev"
+          echo "(build automatique à chaque push via la connexion OAuth Cloudflare)"
+          echo "Les fichiers privés (scans, sujets, données élèves) ne sortent JAMAIS du dépôt."
