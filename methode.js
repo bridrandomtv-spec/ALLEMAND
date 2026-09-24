@@ -48,8 +48,7 @@
       + ' Klausuren (vom leichtesten zum schwersten)</b>'
       + ex.slice(0, 6).map((x, i) =>
           '<div class="mt-d"><div class="mt-dh"><b>' + esc(x.titre) + '</b>'
-        + '<span class="mt-bad">' + esc(x.niveau) + ' · ' + esc(x.wilaya) + ' · '
-        + (x.annee_scolaire || '') + '</span></div>'
+        + '<span class="mt-bad">' + esc(x.niveau) + ' · ' +  (x.annee_scolaire || '') + '</span></div>'
         + '<div class="mt-meta">⏱ ' + x.duree_minutes + ' min · /' + x.bareme
         + ' · Schwierigkeit ' + (x.difficulte || '?') + ' · Klassenschnitt '
         + (x.note_moyenne || '—') + '</div>'
