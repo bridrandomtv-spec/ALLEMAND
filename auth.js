@@ -12,13 +12,13 @@ const AUTH = (function(){
 
   /* ── Sections de la classe virtuelle (comme sur la photo) ── */
   const SECTIONS = [
-    { id:'1AS-1', ar:'١AS-١', niveau:'1AS', eleves:30, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
-    { id:'1AS-2', ar:'١AS-٢', niveau:'1AS', eleves:28, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
-    { id:'2AS-1', ar:'٢AS-١', niveau:'2AS', eleves:32, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
-    { id:'2AS-2', ar:'٢AS-٢', niveau:'2AS', eleves:28, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
-    { id:'2AS-3', ar:'٢AS-٣', niveau:'2AS', eleves:32, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
-    { id:'3AS-1', ar:'٣AS-١', niveau:'3AS', eleves:26, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
-    { id:'3AS-2', ar:'٣AS-٢', niveau:'3AS', eleves:24, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' }
+    { id:'1AS-1', ar:'1AS-1', niveau:'1AS', eleves:30, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
+    { id:'1AS-2', ar:'1AS-2', niveau:'1AS', eleves:28, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
+    { id:'2AS-1', ar:'2AS-1', niveau:'2AS', eleves:32, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
+    { id:'2AS-2', ar:'2AS-2', niveau:'2AS', eleves:28, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
+    { id:'2AS-3', ar:'2AS-3', niveau:'2AS', eleves:32, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
+    { id:'3AS-1', ar:'3AS-1', niveau:'3AS', eleves:26, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' },
+    { id:'3AS-2', ar:'3AS-2', niveau:'3AS', eleves:24, prof:'الأستاذ خريف أحمد', matiere:'اللغة الألمانية' }
   ];
 
   /* ── Niveaux et filières RÉELS 2026-2027, libellés en arabe ──
