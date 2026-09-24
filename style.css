@@ -2866,3 +2866,14 @@ body.trial [data-tab="cloud"],body.trial [data-tab="admin"]{display:none}
 .de-display{direction:ltr;unicode-bidi:isolate}
 [dir="ltr"]{direction:ltr}
 .welco b[dir="ltr"],.bl-row b[dir="ltr"]{font-family:var(--ff-de)}
+
+/* ── v3.51 · tiroir groupé 2 colonnes (mobile) ── */
+.tabgrp-h{display:none}
+@media (max-width:900px){
+  #tabs,#tabs.open{display:grid !important;grid-template-columns:1fr 1fr;gap:6px;
+    align-content:start}
+  #tabs .tabgrp-h{display:block;grid-column:1/-1;font-family:var(--ff-ar-display);
+    font-size:11.5px;color:var(--or2);padding:7px 4px 3px;
+    border-bottom:1px dashed var(--b);margin-top:4px}
+  #tabs .tab{font-size:12px;padding:9px 6px;text-align:center}
+}
