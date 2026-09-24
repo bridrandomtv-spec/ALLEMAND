@@ -110,10 +110,10 @@
     box.innerHTML =
         '<div class="dn-hero"><span class="dn-crest">📝</span><div>'
       + '<h2>Devoirs notés — auf Deutsch</h2><p class="dn-sub">48 devoirs générés corrigés '
-      + 'automatiquement + ' + d.dv.length + ' devoirs réels de wilayas · barème officiel '
+      + 'automatiquement + ' + d.dv.length + ' echte Klausuren aus den Wilayas · offizieller Schlüssel '
       + 'I/8 · II/8 · III/4</p></div></div>'
-      + '<div class="dn-tabs"><button class="btn btn-p btn-sm" id="dnA">📝 générés</button> '
-      + '<button class="btn btn-o btn-sm" id="dnB">📄 réels (' + d.dv.length + ')</button></div>'
+      + '<div class="dn-tabs"><button class="btn btn-p btn-sm" id="dnA">📝 generiert</button> '
+      + '<button class="btn btn-o btn-sm" id="dnB">📄 echt (' + d.dv.length + ')</button></div>'
       + '<div id="dnZone"></div>';
     $('#dnA').addEventListener('click', () => zoneA(d));
     $('#dnB').addEventListener('click', () => zoneB(d));
@@ -122,7 +122,7 @@
 
   function zoneA(d){
     const z = $('#dnZone');
-    let h = '<div class="card"><b>choisis unité + variante :</b><div class="dn-pick">';
+    let h = '<div class="card"><b>Wähle Unité + Variante:</b><div class="dn-pick">';
     for(let u = 1; u <= 16; u++){
       h += '<span class="dn-g">U' + u + ' ' + [1,2,3].map(v =>
         '<button class="dn-v" data-u="' + u + '" data-v="' + v + '">' + v + '</button>').join('')
@@ -179,11 +179,11 @@
     const z = $('#dnZone');
     const nivs = [...new Set(d.dv.map(x => x.niveau))];
     z.innerHTML = '<div class="card"><div class="dn-filt">'
-      + '<select id="fNiv"><option value="">tous niveaux</option>'
+      + '<select id="fNiv"><option value="">alle Niveaus</option>'
       + nivs.map(n => '<option>' + esc(n) + '</option>').join('') + '</select>'
-      + '<select id="fTri"><option value="1">trimestre 1</option><option value="2">T2</option>'
-      + '<option value="3">T3</option><option value="">tous</option></select>'
-      + '<input id="fQ" placeholder="rechercher (wilaya, titre, unité…)">'
+      + '<select id="fTri"><option value="1">Trimester 1</option><option value="2">T2</option>'
+      + '<option value="3">T3</option><option value="">alle</option></select>'
+      + '<input id="fQ" placeholder="suchen (Wilaya, Titel, Unité…)">'
       + '</div><div id="fList"></div></div>';
     const maj = () => {
       const q = ($('#fQ').value || '').toLowerCase();
@@ -192,17 +192,17 @@
         && (!$('#fTri').value || String(x.trimestre) === $('#fTri').value)
         && (!q || (x.titre + x.wilaya + x.unite_de + x.lycee).toLowerCase().indexOf(q) !== -1))
         .slice(0, 40);
-      $('#fList').innerHTML = '<p class="dn-sub">' + rows.length + ' affichés / ' + d.dv.length
+      $('#fList').innerHTML = '<p class="dn-sub">' + rows.length + ' angezeigt / ' + d.dv.length
         + '</p>' + rows.map((x, i) => '<div class="dn-r"><b>' + esc(x.titre_de || x.titre)
         + '</b><span>' + esc(x.niveau) + ' · ' + esc(x.wilaya) + ' · ' + (x.annee_scolaire || '')
         + ' · /' + x.bareme + ' · ' + x.duree_minutes + ' min</span>'
-        + '<button class="btn btn-o btn-sm" data-i="' + i + '">voir sujet + corrigé</button>'
+        + '<button class="btn btn-o btn-sm" data-i="' + i + '">Aufgabe + Lösung</button>'
         + '<div class="dn-zone" id="dz' + i + '"></div></div>').join('');
       $('#fList').querySelectorAll('[data-i]').forEach(b => b.addEventListener('click', () => {
         const x = rows[+b.dataset.i];
-        $('#dz' + b.dataset.i).innerHTML = '<div class="dn-suj"><b>Sujet</b>'
+        $('#dz' + b.dataset.i).innerHTML = '<div class="dn-suj"><b>Aufgabe</b>'
           + '<pre class="dn-pre">' + esc(x.sujet || '') + '</pre>'
-          + '<b>Corrigé</b><pre class="dn-pre">' + esc(x.corrige || '(corrigé inclus : '
+          + '<b>Lösung</b><pre class="dn-pre">' + esc(x.corrige || '(Lösung enthalten: '
           + (x.corrige_inclus ? 'oui' : 'non') + ')') + '</pre></div>';
       }));
     };
