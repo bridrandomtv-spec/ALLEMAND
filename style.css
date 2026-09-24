@@ -2877,3 +2877,13 @@ body.trial [data-tab="cloud"],body.trial [data-tab="admin"]{display:none}
     border-bottom:1px dashed var(--b);margin-top:4px}
   #tabs .tab{font-size:12px;padding:9px 6px;text-align:center}
 }
+
+/* ── v3.52 · 🎙️ mode voix ── */
+.ec-btn{position:fixed;bottom:18px;inset-inline-start:18px;z-index:70;width:54px;height:54px;
+  border-radius:50%;border:1px solid rgba(232,182,76,.5);background:linear-gradient(135deg,var(--or),#c99a2e);
+  color:#1a1206;font-size:24px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.ec-btn:active{transform:scale(.94)}
+.ec-panel{position:fixed;bottom:82px;inset-inline-start:18px;z-index:70;max-width:min(340px,86vw);
+  background:var(--nuit2);border:1px solid var(--b);border-radius:14px;padding:12px 14px;
+  font-size:12.5px;line-height:1.7;direction:ltr;text-align:left;color:var(--t);
+  box-shadow:0 10px 30px rgba(0,0,0,.5)}
