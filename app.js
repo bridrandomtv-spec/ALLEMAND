@@ -1731,9 +1731,9 @@ function renderWelcome(){
 
   el.innerHTML =
     '<h1>' + salut + '، ' + esc(s.nom) + ' 👋</h1>' +
-    '<p>مرحباً بك في قسمك الافتراضي <b>' + esc(s.classe_ar) + '</b> — ' +
+    '<p>مرحباً بك في قسمك الافتراضي <b dir="ltr">' + esc(s.classe_ar) + '</b> — ' +
       'الثانوية الافتراضية الجزائرية · شعبة <b>' + esc(s.filiere) + '</b>.<br>' +
-      '<span class="de-display">' + esc(de) + '! Willkommen in deiner virtuellen Klasse.</span></p>' +
+      '<span class="de-display" dir="ltr">' + esc(de) + '! Willkommen in deiner virtuellen Klasse.</span></p>' +
     '<div class="welcome-cta">' +
       (next ? '<button class="btn btn-p" data-go="seances">📚 الحصة ' + next.n + ' — ' +
                esc(next.ar) + '</button>'
