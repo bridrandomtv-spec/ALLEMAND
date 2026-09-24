@@ -300,8 +300,26 @@
     const c = CONJ[v];
     return PERS.map((p, i) => p + ' ' + c.p[i]).join('. ') + '. Perfekt: ' + c.p2 + '.';
   }
+  /* ── normalisation DARIJA → arabe standard / mots-clés routables ── */
+  const DAR = [
+    [/كيفاش/g, 'كيف'], [/شنو|اش(?=\s)/g, 'ما'], [/واش/g, 'ما'], [/وين|فين/g, 'أين'],
+    [/باش(?=\s)/g, 'كيف'], [/علاش/g, 'لماذا'], [/بزاف|بيزاف/g, 'كثير'], [/شوية/g, 'قليل'],
+    [/ما\s*فهمت|mafhemt|n'?fhem/g, 'اشرح'], [/عطيني|اعطيني/g, 'أعطني'],
+    [/هاد/g, 'هذا'], [/هادي/g, 'هذه'], [/ديال|نتاع|تاع/g, 'ل'], [/صعف/g, 'صعب'],
+    [/نصرف/g, 'صرف'], [/يصرفو|يصرف/g, 'صرف'], [/الالماني/g, 'الألماني'],
+    [/فرض|الفرض/g, 'الفرض'], [/تمارين/g, 'تمارين'], [/درس|الدرس/g, 'الدرس'],
+    [/قواعد|القواعد/g, 'القواعد'], [/ملخص|الملخص/g, 'الملخص'], [/باكالوريا|الباك/g, 'البكالوريا'],
+    [/examen|exo/gi, 'تمارين'], [/comment|comment on/gi, 'كيف'], [/pourquoi/gi, 'لماذا']
+  ];
+  function darja(q){
+    let s = String(q || '');
+    for(const p of DAR) s = s.replace(p[0], p[1]);
+    return s;
+  }
+
 
   async function reponsePedagogique(q){
+    q = darja(q);
     /* conjugaison prioritaire : « كيف اتصرف sein » / « صرف haben » / « sein » seul */
     const vb = trouveVerbe(q);
     if(vb && (CONJ_INTENT.test(String(q)) || String(q).trim().toLowerCase() === vb)){
