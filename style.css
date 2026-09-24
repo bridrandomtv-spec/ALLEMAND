@@ -2887,3 +2887,13 @@ body.trial [data-tab="cloud"],body.trial [data-tab="admin"]{display:none}
   background:var(--nuit2);border:1px solid var(--b);border-radius:14px;padding:12px 14px;
   font-size:12.5px;line-height:1.7;direction:ltr;text-align:left;color:var(--t);
   box-shadow:0 10px 30px rgba(0,0,0,.5)}
+
+/* ── v3.53 · 🗣️ parle bar ── */
+#parleBar{position:sticky;top:0;z-index:90;display:flex;gap:9px;align-items:center;
+  padding:8px 12px;background:var(--nuit1);border-bottom:1px solid var(--b);flex-wrap:wrap}
+.pl-btn{background:var(--nuit3);border:1px solid var(--b);border-radius:999px;
+  padding:7px 15px;color:var(--t);font-family:var(--ff-ar);font-size:12.5px;cursor:pointer}
+.pl-btn.on{background:linear-gradient(135deg,#d21034,#8f0b23);border-color:#d21034;color:#fff}
+.pl-sel{background:var(--nuit3);border:1px solid var(--b);border-radius:10px;
+  padding:6px 9px;color:var(--t);font-size:12px}
+.pl-st{color:var(--m);font-size:11.5px}
