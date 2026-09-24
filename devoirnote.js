@@ -183,14 +183,14 @@
       + nivs.map(n => '<option>' + esc(n) + '</option>').join('') + '</select>'
       + '<select id="fTri"><option value="1">Trimester 1</option><option value="2">T2</option>'
       + '<option value="3">T3</option><option value="">alle</option></select>'
-      + '<input id="fQ" placeholder="suchen (Wilaya, Titel, Unité…)">'
+      + '<input id="fQ" placeholder="suchen (Titel, Unité…)">'
       + '</div><div id="fList"></div></div>';
     const maj = () => {
       const q = ($('#fQ').value || '').toLowerCase();
       const rows = d.dv.filter(x =>
         (!$('#fNiv').value || x.niveau === $('#fNiv').value)
         && (!$('#fTri').value || String(x.trimestre) === $('#fTri').value)
-        && (!q || (x.titre + x.wilaya + x.unite_de + x.lycee).toLowerCase().indexOf(q) !== -1))
+        && (!q || (x.titre + x.unite_de).toLowerCase().indexOf(q) !== -1))
         .slice(0, 40);
       $('#fList').innerHTML = '<p class="dn-sub">' + rows.length + ' angezeigt / ' + d.dv.length
         + '</p>' + rows.map((x, i) => '<div class="dn-r"><b>' + esc(x.titre_de || x.titre)
