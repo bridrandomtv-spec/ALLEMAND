@@ -76,8 +76,8 @@
       '<div class="ch-sub">' + esc(D._meta.titre_de) + ' · تجميع الأستاذ خريف أحمد</div>' +
       '<div class="chips" style="margin-top:10px">' +
         '<span class="sec-pill">📄 ' + ds.length + ' فرض</span>' +
-        '<span class="sec-pill or">🏫 ' + (D.lycees||[]).length + ' ثانوية</span>' +
-        '<span class="sec-pill rg">📍 ' + new Set(ds.map(d => d.code_wilaya)).size + ' ولاية</span>' +
+        '<span class="sec-pill or">🏫 مصادر رسمية</span>' +
+        '<span class="sec-pill rg">📍 وطني</span>' +
         '<span class="sec-pill">🧮 السلّم /' + D._meta.bareme_officiel.total + '</span>' +
         '<span class="sec-pill">📊 نسبة النجاح ' + moy.toFixed(1) + '%</span>' +
       '</div></div>' +
