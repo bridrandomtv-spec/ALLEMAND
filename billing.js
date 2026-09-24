@@ -100,6 +100,9 @@
       + '<input id="spContact" placeholder="email / téléphone de contact" required>'
       + '<input id="spBudget" placeholder="budget envisagé (DA)">'
       + '<textarea id="spMsg" placeholder="message / objectif de la campagne"></textarea>'
+      + '<a class="btn btn-o btn-block" style="display:block;margin-bottom:10px" '
+      + 'target="_blank" rel="noopener" href="sponsor-kit.html">📄 kit sponsor '
+      + '(document commercial imprimable)</a>'
       + '<button class="btn btn-p btn-block" type="submit">📨 envoyer la demande</button>'
       + '<div id="spOk" class="bl-ok" hidden>✅ demande enregistrée — nous vous contactons sous 48 h</div>'
       + '</form></div>';
