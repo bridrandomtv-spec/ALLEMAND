@@ -45,7 +45,7 @@
       + stat(profs.filter(x => x.role === 'prof').length, 'profs')
       + stat(notes.length, 'notes') + stat(moy, 'moyenne /20') + '</div>'
       + '<div class="ad-grid">'
-      + '<div class="card"><b>👥 Comptes (' + profs.length + ')</b>'
+      + '<div class="card"><b>👥 Konten (' + profs.length + ')</b>'
       + '<button class="btn btn-o btn-sm" id="adCsvP">⬇️ CSV</button>'
       + '<table class="ad-tab"><tr><th>pseudo</th><th>rôle</th><th>niveau</th><th>wilaya</th><th></th></tr>'
       + profs.map(x => '<tr><td>' + esc(x.pseudo || x.id.slice(0, 8)) + '</td>'
@@ -55,7 +55,7 @@
           + '</select></td><td>' + esc(x.niveau || '') + '</td><td>' + esc(x.wilaya || '')
           + '</td><td>' + esc((x.created_at || '').slice(0, 10)) + '</td></tr>').join('')
       + '</table></div>'
-      + '<div class="card"><b>📝 Notes (' + notes.length + ')</b>'
+      + '<div class="card"><b>📝 Noten (' + notes.length + ')</b>'
       + '<button class="btn btn-o btn-sm" id="adCsvN">⬇️ CSV</button>'
       + '<table class="ad-tab"><tr><th>élève</th><th>trim.</th><th>/20</th><th>appréciation</th></tr>'
       + notes.map(n => {
@@ -82,16 +82,16 @@
     mono.innerHTML =
       '<div class="ad-grid" style="margin-top:12px">'
       + '<div class="card"><b>💳 Abonnements (' + subs.length + ' · '
-      + CA.toLocaleString('fr-FR') + ' DA actifs)</b>'
+      + CA.toLocaleString('fr-FR') + ' DA aktiv)</b>'
       + '<table class="ad-tab"><tr><th>user</th><th>plan</th><th>DA</th><th>statut</th><th></th></tr>'
       + subs.map(s => '<tr><td>' + esc(s.user_id.slice(0, 8)) + '</td><td>' + esc(s.plan)
         + '</td><td>' + s.montant + '</td><td>' + esc(s.statut) + '</td><td>'
         + ((s.statut === 'preuve' || s.statut === 'en_attente')
             ? '<button class="btn btn-p btn-sm" data-subok="' + s.id + '" data-plan="' + s.plan
               + '">✅</button> <button class="btn btn-o btn-sm" data-subko="' + s.id + '">❌</button>'
-              + (s.preuve ? '<div class="ad-prev">reçu : ' + esc(s.preuve) + '</div>' : '')
+              + (s.preuve ? '<div class="ad-prev">Beleg: ' + esc(s.preuve) + '</div>' : '')
             : '') + '</td></tr>').join('') + '</table></div>'
-      + '<div class="card"><b>📢 Sponsors (' + sps.length + ' · ' + ads.length + ' pubs actives)</b>'
+      + '<div class="card"><b>📢 Sponsoren (' + sps.length + ' · ' + ads.length + ' aktive Werbungen)</b>'
       + '<table class="ad-tab"><tr><th>nom</th><th>type</th><th>slot</th><th>statut</th><th></th></tr>'
       + sps.map(s => '<tr><td>' + esc(s.nom) + '</td><td>' + esc(s.type) + '</td><td>'
         + esc(s.slot) + '</td><td>' + esc(s.statut) + '</td><td>'
@@ -99,12 +99,12 @@
             ? '<button class="btn btn-p btn-sm" data-spok="' + s.id + '">✅</button> '
               + '<button class="btn btn-o btn-sm" data-spko="' + s.id + '">❌</button>' : '')
         + '</td></tr>').join('') + '</table>'
-      + '<b style="margin-top:12px">🆕 publier une pub</b>'
-      + '<input id="adTitre" placeholder="titre"><input id="adTexte" placeholder="texte">'
-      + '<input id="adUrl" placeholder="url (optionnel)">'
+      + '<b style="margin-top:12px">🆕 Werbung veröffentlichen</b>'
+      + '<input id="adTitre" placeholder="Titel"><input id="adTexte" placeholder="Text">'
+      + '<input id="adUrl" placeholder="URL (optional)">'
       + '<select id="adSlot"><option value="accueil">accueil</option>'
       + '<option value="unites">unités</option><option value="email">email</option></select>'
-      + '<button class="btn btn-p btn-sm" id="adCreate">publier</button></div></div>';
+      + '<button class="btn btn-p btn-sm" id="adCreate">veröffentlichen</button></div></div>';
     mono.querySelectorAll('[data-subok]').forEach(b => b.addEventListener('click', async () => {
       const mois = { m1: 1, m6: 6, m12: 12 }[b.dataset.plan] || 1;
       await window.SB.setSubStatut(+b.dataset.subok, 'actif', mois); render();
