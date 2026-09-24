@@ -490,6 +490,7 @@
     });
   }
 
+  window.reponsePedagogique = reponsePedagogique;
   window.RAG = { cherche: cherche, formule: formule, SEUIL: SEUIL, render: render };
   window.renderRag = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'rag') render(); });
