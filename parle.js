@@ -11,7 +11,7 @@
     ['tr','🇹🇷 Türkçe','tr-TR']
   ];
   const ROLE = {
-    ar: { eleve:'طالب(ة)', parent:'وليّ أمر', prof:'أستاذ', admin:'مدير', inconnu:'صديقنا' },
+    ar: { eleve:'من طلابنا', parent:'من أولياء الأمور', prof:'من أساتذتنا', admin:'من إدارة المنصة', inconnu:'من أسرة المنصة' },
     de: { eleve:'Schüler(in)', parent:'Elternteil', prof:'Lehrkraft', admin:'Admin', inconnu:'Freund' },
     en: { eleve:'student', parent:'parent', prof:'teacher', admin:'admin', inconnu:'friend' },
     fr: { eleve:'élève', parent:'parent', prof:'professeur', admin:'admin', inconnu:'ami' },
@@ -75,8 +75,18 @@
           + (MALE_AR.test(v.name) ? '👨 ' : '👤 ') + v.name + ' (' + v.lang + ')</option>').join('');
     try{ const p = localStorage.getItem('dz_voix_ar') || ''; if(p) sel.value = p; }catch(e){}
   }
+  function spoken(t){
+    return String(t)
+      .replace(/\(ة\)/g, '')
+      .replace(/[()]/g, ' ')
+      .replace(/\s*\/\s*/g, ' أو ')
+      .replace(/[·•]/g, '،')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
   /* ══════════ parole ══════════ */
   function speak(texte, lc){
+    texte = spoken(texte);
     speaking = true;
     const done = () => { speaking = false; if(ON) setTimeout(listen, 300); };
     const isAr = /[؀-]/.test(texte);
