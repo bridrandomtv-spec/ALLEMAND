@@ -32,7 +32,7 @@
     zh: n => '欢迎你，' + n.n + '！你是' + n.r + '。请用德语、阿拉伯语或达尔贾语提问——我会用语音回答。',
     tr: n => 'Hoş geldin, ' + n.n + ' ! Sen bir ' + n.r + '. Almanca, Arapça veya Darica sor — sesimle cevaplarım.'
   };
-  let ON = false, rec = null, lang = 'ar', speaking = false, listeningGuard = false, NS = 0;
+  let ON = false, rec = null, lang = 'ar', speaking = false, listeningGuard = false, NS = 0, CONT = false, UT = 0;
 
   /* ══════════ MOTEUR DE VOIX ARABE ══════════ */
   const MALE_AR = /ismael|hamed|shakir|naayf|tarik|maged|abdul|farid|omar|male|homme|man/i;
@@ -134,9 +134,12 @@
   /* ══════════ parole ══════════ */
   async function speak(texte, lc){
     texte = spoken(texte);
+    try{ speechSynthesis.cancel(); }catch(e){}
+    const my = ++UT;
     speaking = true;
     const ALLV = await voicesReady();
-    const done = () => { speaking = false; if(ON) setTimeout(listen, 300); };
+    const done = () => { if(my !== UT) return; speaking = false;
+      if(ON && CONT) setTimeout(listen, 400); else if(ON) setStatus('🎙 appuie pour parler'); };
     const isAr = /[\u0600-\u06FF]/.test(texte);
     const target = lc || (isAr ? 'ar-SA' : ((LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2]));
     if(isAr){
@@ -149,7 +152,8 @@
         u.onend = done; u.onerror = () => cloudAr(texte, done);
         speechSynthesis.speak(u);
       }else cloudAr(texte, done);
-      setTimeout(() => { if(ON){ speaking = false; listen(); } }, 45000);
+      setTimeout(() => { if(ON && my === UT){ speaking = false;
+      if(CONT) listen(); else setStatus('🎙 appuie pour parler'); } }, 45000);
       return;
     }
     const u = new SpeechSynthesisUtterance(texte.slice(0, 400));
@@ -162,7 +166,8 @@
     }catch(e){}
     u.onend = done; u.onerror = done;
     speechSynthesis.speak(u);
-    setTimeout(() => { if(ON){ speaking = false; listen(); } }, 45000);
+    setTimeout(() => { if(ON && my === UT){ speaking = false;
+      if(CONT) listen(); else setStatus('🎙 appuie pour parler'); } }, 45000);
   }
   /* ══════════ intentions multilingues ══════════ */
   function canon(q){
@@ -261,6 +266,7 @@
       + '<button id="parleCfg" class="pl-cfg" title="إعدادات الصوت">⚙️</button>'
       + '</div><div id="parleSt" class="pl-st">⚪ في وضع الانتظار</div>';
     document.body.prepend(d);
+    try{ CONT = localStorage.getItem('dz_voix_cont') === '1'; }catch(e){}
     const eb = document.getElementById('ecouteBtn');
     if(eb) eb.remove();
     d.querySelector('#parleBtn').addEventListener('click', () => ON ? off() : on());
@@ -279,6 +285,8 @@
         + (localStorage.getItem('dz_voix_rate') || 0.95) + '"></label>'
         + '<label>طبقة الصوت <input type="range" id="plPitch" min="0.7" max="1.3" step="0.05" value="'
         + (localStorage.getItem('dz_voix_pitch') || 1) + '"></label>'
+        + '<label><input type="checkbox" id="plCont"' + (CONT ? ' checked' : '')
+          + '> 🔁 conversation continue (réécoute auto)</label>'
         + '<button class="btn btn-o btn-sm" id="plTest">🔊 اختبار</button>';
       document.body.appendChild(p);
       fillVoixSel();
@@ -286,6 +294,11 @@
         try{ localStorage.setItem('dz_voix_ar', e.target.value); }catch(err){}
         try{ speechSynthesis.cancel(); }catch(err){}
         speak('مرحبًا ! هذه هي الصوت التي اخترتها.', null);
+      });
+      p.querySelector('#plCont').addEventListener('change', e => {
+        CONT = e.target.checked;
+        try{ localStorage.setItem('dz_voix_cont', CONT ? '1' : '0'); }catch(err){}
+        if(CONT && ON && !speaking) listen();
       });
       p.querySelector('#plRate').addEventListener('input', e =>
         localStorage.setItem('dz_voix_rate', e.target.value));
