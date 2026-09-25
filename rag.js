@@ -364,7 +364,7 @@
           .replace(/\s*→\s*/g, ' '))
           .filter(x => x.trim());
         const tit = String(e.titre || '').replace(/\((?:page|p\.)\s*\d+\)/gi, '').trim();
-        return ('Seite ' + pg[1] + '. ' + tit + '. ' + clean.join('. ')).slice(0, 900);
+        return ('Seite ' + pg[1] + '. ' + tit + '. ' + clean.join('. ')).slice(0, 2200);
       }
       return 'Je n’ai pas encore la page ' + pg[1] + ' du manuel en mémoire indexée. '
         + 'Essaie : « lis le texte de la Lektion 1 », « lies den Dialog Lektion 2 », '
