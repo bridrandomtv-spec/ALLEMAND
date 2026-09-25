@@ -32,10 +32,12 @@ export default {
     if(req.method === 'OPTIONS') return cors(new Response(null), org);
     const url = new URL(req.url);
     if(url.pathname !== '/ask' || req.method !== 'POST') return json({ ok:false, err:'not-found' }, 404, org);
-    let b; try{ b = await req.json(); }catch(e){ return json({ ok:false, err:'body' }, 400, org); }
-    const q = String(b.q || '').slice(0, 600);
+    let b = {};
+    const raw = await req.text();
+    try{ b = raw ? JSON.parse(raw) : {}; }catch(e){ b = {}; }
+    const q = String(b.q || b.text || raw || '').slice(0, 600);
     const ctx = String(b.ctx || '').slice(0, 3000);
-    if(!q) return json({ ok:false, err:'q' }, 400, org);
+    if(!q) return json({ ok:false, err:'q-vide' }, 400, org);
     const now = Date.now();
     HITS = HITS.filter(t => now - t < 60000);
     if(HITS.length >= 20) return json({ ok:false, err:'quota-min' }, 429, org);
