@@ -23,9 +23,24 @@
     }catch(e){}
     if(!proxy) return local;
     try{
+      const ctx = (local && local.indexOf('لا أعرف') === -1) ? local.slice(0, 2500) : '';
       const r = await fetch(proxy + '/ask', { method:'POST',
         headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ q: q, ctx: (local && local !== 'لا أعرف') ? local : '' }) });
+        body: JSON.stringify({ q: q, text: q, ctx: ctx }) });
+      if(!r.ok){
+        let e = {};
+        try{ e = await r.json(); }catch(_){}
+        try{ console.warn('🧠 ia-ask HTTP ' + r.status + ' : ' + (e.err || '?')); }catch(_){}
+        if(r.status === 400 || r.status === 415){
+          const r2 = await fetch(proxy + '/ask', { method:'POST',
+            headers:{ 'Content-Type':'text/plain' }, body: q });
+          if(r2.ok){
+            const j2 = await r2.json();
+            if(j2 && j2.ok && j2.rep && j2.rep.length > 10) return j2.rep;
+          }
+        }
+        return local;
+      }
       const j = await r.json();
       if(j.ok && j.rep && j.rep.length > 10) return j.rep;
     }catch(e){}
