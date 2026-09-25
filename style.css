@@ -2909,3 +2909,11 @@ body.trial [data-tab="cloud"],body.trial [data-tab="admin"]{display:none}
 .inst-pop b{color:var(--or2)}
 .inst-x{position:absolute;top:6px;inset-inline-end:8px;background:none;border:none;
   color:var(--m);cursor:pointer;font-size:14px}
+
+.pl-cfg{background:var(--nuit3);border:1px solid var(--b);border-radius:10px;padding:6px 10px;
+  color:var(--t);cursor:pointer;font-size:14px}
+.pl-cfgpanel{position:fixed;top:56px;inset-inline-end:12px;z-index:95;background:var(--nuit2);
+  border:1px solid var(--b);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;
+  gap:8px;font-size:12px;color:var(--t);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.pl-cfgpanel label{display:flex;gap:8px;align-items:center}
+.pl-cfgpanel input[type=range]{flex:1}
