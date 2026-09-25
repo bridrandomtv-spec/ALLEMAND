@@ -34,7 +34,7 @@
       const q = ev.results[0][0].transcript;
       p.innerHTML = '🗣️ « ' + q + ' »<br>⏳ …';
       let rep = '';
-      const fn = window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
+      const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
       if(typeof fn === 'function'){ try{ rep = await fn(q); }catch(e){} }
       if(rep && typeof rep === 'object') rep = rep.texte || rep.reponse || '';
       rep = String(rep || 'Das weiss ich leider nicht. Frag es anders.');
