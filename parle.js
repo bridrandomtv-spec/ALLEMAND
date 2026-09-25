@@ -57,10 +57,10 @@
     if(x.lang === 'de-DE') s += 1;
     return s;
   }
-  function chosenArVoice(){
+  function chosenArVoice(list){
     let pref = '';
     try{ pref = localStorage.getItem('dz_voix_ar') || ''; }catch(e){}
-    const vs = arVoices();
+    const vs = list || arVoices();
     if(pref){ const f = vs.filter(v => v.name === pref)[0]; if(f) return f; }
     vs.sort((a, b) => scoreAr(b) - scoreAr(a));
     return vs[0] || null;
@@ -92,14 +92,54 @@
       .replace(/\s+/g, ' ')
       .trim();
   }
+  /* ── translittération du nom arabe pour les salutations non-arabes ── */
+  const TR = { 'ا':'a','أ':'a','إ':'i','آ':'a','ب':'b','ت':'t','ث':'th','ج':'j','ح':'h','خ':'kh',
+    'د':'d','ذ':'dh','ر':'r','ز':'z','س':'s','ش':'sh','ص':'s','ض':'d','ط':'t','ظ':'z','ع':'a',
+    'غ':'gh','ف':'f','ق':'q','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','و':'w','ي':'y','ى':'a',
+    'ة':'a','ء':'','َ':'','ِ':'','ُ':'','ً':'','ٍ':'','ٌ':'','ّ':'','ـ':'' };
+  function translit(s){
+    return String(s || '').split(/\s+/).map(w => {
+      let out = '';
+      for(const ch of w) out += (ch in TR) ? TR[ch] : (/[a-zA-Z0-9]/.test(ch) ? ch : '');
+      return out.charAt(0).toUpperCase() + out.slice(1);
+    }).filter(Boolean).join(' ') || 'Freund';
+  }
+  /* ── attendre que les voix du système soient chargées (sinon voix par défaut = arabe !) ── */
+  function voicesReady(){
+    return new Promise(res => {
+      let v = [];
+      try{ v = speechSynthesis.getVoices(); }catch(e){}
+      if(v && v.length) return res(v);
+      let done = false;
+      const fin = () => { if(done) return; done = true;
+        let w = []; try{ w = speechSynthesis.getVoices(); }catch(e){}
+        res(w || []); };
+      try{ speechSynthesis.onvoiceschanged = fin; }catch(e){}
+      setTimeout(fin, 1500);
+    });
+  }
+  function pickVoice(all, code){
+    const pref = String(code || 'de').slice(0, 2).toLowerCase();
+    if(pref === 'ar'){ const p = chosenArVoice(all); if(p) return p; }
+    let vs = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf(pref) === 0)
+      .sort((a, b) => scoreDe(b) - scoreDe(a));
+    if(vs.length) return vs[0];
+    const d = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf('de') === 0);
+    if(d.length) return d[0];
+    const e2 = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf('en') === 0);
+    if(e2.length) return e2[0];
+    return null;
+  }
   /* ══════════ parole ══════════ */
-  function speak(texte, lc){
+  async function speak(texte, lc){
     texte = spoken(texte);
     speaking = true;
+    const ALLV = await voicesReady();
     const done = () => { speaking = false; if(ON) setTimeout(listen, 300); };
     const isAr = /[\u0600-\u06FF]/.test(texte);
+    const target = lc || (isAr ? 'ar-SA' : ((LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2]));
     if(isAr){
-      const v = chosenArVoice();
+      const v = chosenArVoice(ALLV);
       if(v){
         const u = new SpeechSynthesisUtterance(texte);
         u.voice = v; u.lang = v.lang;
@@ -112,14 +152,12 @@
       return;
     }
     const u = new SpeechSynthesisUtterance(texte.slice(0, 400));
-    u.lang = lc || 'de-DE';
+    u.lang = target;
     u.rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
     u.pitch = +(localStorage.getItem('dz_voix_pitch') || 1);
     try{
-      const prefAr = u.lang.slice(0, 2) === 'ar' ? chosenArVoice() : null;
-      const vs = speechSynthesis.getVoices().filter(x => x.lang.indexOf(u.lang.slice(0, 2)) === 0)
-        .sort((a, b) => scoreDe(b) - scoreDe(a));
-      if(prefAr) u.voice = prefAr; else if(vs.length) u.voice = vs[0];
+      const pv = pickVoice(ALLV, target);
+      if(pv) u.voice = pv;
     }catch(e){}
     u.onend = done; u.onerror = done;
     speechSynthesis.speak(u);
@@ -185,7 +223,7 @@
     const b = document.getElementById('parleBtn');
     b.classList.add('on'); b.textContent = '🔴 إيقاف الحديث';
     const id = identite();
-    const hello = id ? HELLO[lang]({ n: id.n, r: id.r })
+    const hello = id ? HELLO[lang]({ n: (lang === 'ar' ? id.n : translit(id.n)), r: id.r })
       : HELLO[lang]({ n: (ROLE[lang] || ROLE.ar).inconnu, r: (ROLE[lang] || ROLE.ar).inconnu });
     const v = chosenArVoice();
     setStatus(v && /natural|neural|online/i.test(v.name) ? '🟢 voix naturelle : ' + v.name
