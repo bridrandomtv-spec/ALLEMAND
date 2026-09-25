@@ -2978,3 +2978,17 @@ body.trial{padding-top:0 !important}
   #parleBar .pl-sel{grid-column:1/-1;grid-row:2;max-width:100%;width:100%}
   #parleBar .pl-st{grid-column:1/-1;grid-row:3;text-align:center;max-width:100%;white-space:normal}
 }
+
+/* ── v3.58 · correctif DÉFINITIF barre 🗣️ mobile : chaque commande dans SA case ──
+   (un résidu v3.54 donnait grid-column:1/-1 à .pl-cfg → ⚙️ et 🎙 pleine largeur
+    s'empilaient SUR le bouton 🗣️ et le cachaient) */
+@media (max-width:600px){
+  #parleBar{display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:6px 8px}
+  #parleBar .pl-btn{grid-column:1;grid-row:1;width:100%;white-space:normal;text-align:center}
+  #parleBar .pl-cfg{grid-column:auto;grid-row:1;width:auto;min-width:46px}
+  #parleBar #parleMic{grid-column:2;grid-row:1}
+  #parleBar #parleCfg{grid-column:3;grid-row:1}
+  #parleBar .pl-sel{grid-column:1/-1;grid-row:2;width:100%;max-width:100%}
+  #parleBar .pl-st{grid-column:1/-1;grid-row:3;width:100%;max-width:100%;
+    white-space:normal;text-align:center}
+}
