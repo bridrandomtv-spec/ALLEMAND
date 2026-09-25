@@ -97,7 +97,7 @@
     texte = spoken(texte);
     speaking = true;
     const done = () => { speaking = false; if(ON) setTimeout(listen, 300); };
-    const isAr = /[؀-]/.test(texte);
+    const isAr = /[\u0600-\u06FF]/.test(texte);
     if(isAr){
       const v = chosenArVoice();
       if(v){
@@ -116,9 +116,10 @@
     u.rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
     u.pitch = +(localStorage.getItem('dz_voix_pitch') || 1);
     try{
+      const prefAr = u.lang.slice(0, 2) === 'ar' ? chosenArVoice() : null;
       const vs = speechSynthesis.getVoices().filter(x => x.lang.indexOf(u.lang.slice(0, 2)) === 0)
         .sort((a, b) => scoreDe(b) - scoreDe(a));
-      if(vs.length) u.voice = vs[0];
+      if(prefAr) u.voice = prefAr; else if(vs.length) u.voice = vs[0];
     }catch(e){}
     u.onend = done; u.onerror = done;
     speechSynthesis.speak(u);
@@ -218,7 +219,9 @@
     });
     d.querySelector('#parleVoix').addEventListener('change', e => {
       try{ localStorage.setItem('dz_voix_ar', e.target.value); }catch(err){}
-      if(ON){ off(); setTimeout(on, 200); }
+      try{ speechSynthesis.cancel(); }catch(err){}
+      speak('مرحبًا ! هذه هي الصوت التي اخترتها.', null);
+      if(ON){ setTimeout(() => { speaking = false; listen(); }, 2500); }
     });
     d.querySelector('#parleCfg').addEventListener('click', () => {
       let p = document.getElementById('plCfgPanel');
