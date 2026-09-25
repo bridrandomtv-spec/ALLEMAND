@@ -2917,3 +2917,37 @@ body.trial [data-tab="cloud"],body.trial [data-tab="admin"]{display:none}
   gap:8px;font-size:12px;color:var(--t);box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .pl-cfgpanel label{display:flex;gap:8px;align-items:center}
 .pl-cfgpanel input[type=range]{flex:1}
+
+/* ── v3.54 · compatibilité TOTALE : Android · iOS · tablettes · Mac · PC ── */
+html,body{overflow-x:hidden}
+select,button,input{max-width:100%}
+#parleBar *{max-width:100%;min-width:0}
+#parleBar .pl-btn,#parleBar .pl-sel,#parleBar .pl-cfg{white-space:normal;
+  overflow:hidden;text-overflow:ellipsis}
+#parleBar{padding-top:calc(8px + env(safe-area-inset-top))}
+/* téléphone : barre en GRILLE — plus aucun mot superposé, tout visible */
+@media (max-width:600px){
+  #parleBar{position:static;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px}
+  #parleBar .pl-btn{grid-column:1/-1;width:100%;padding:11px;font-size:13.5px;text-align:center}
+  #parleBar .pl-sel{width:100%;font-size:12px;padding:9px 8px}
+  #parleBar .pl-cfg{grid-column:1/-1;width:100%;padding:9px;font-size:13px}
+  #parleBar .pl-st{grid-column:1/-1;text-align:center;font-size:10.5px;line-height:1.5}
+  .ec-btn{bottom:86px;inset-inline-start:12px;width:48px;height:48px;font-size:20px}
+  .ec-panel{bottom:142px;inset-inline-start:12px;max-width:calc(100vw - 24px)}
+  .inst-btn{bottom:86px;inset-inline-end:12px;padding:8px 12px;font-size:11.5px}
+  .inst-pop{bottom:140px;inset-inline-end:12px}
+  .pl-cfgpanel{top:auto;bottom:140px;inset-inline-end:12px;inset-inline-start:12px}
+}
+/* tablette : 2 lignes souples */
+@media (min-width:601px) and (max-width:900px){
+  #parleBar{flex-wrap:wrap;gap:8px}
+  #parleBar .pl-btn{flex:1 1 100%;text-align:center}
+  #parleBar .pl-sel{flex:1 1 40%}
+  #parleBar .pl-cfg{flex:0 0 auto}
+  #parleBar .pl-st{flex:1 1 100%;text-align:center}
+}
+/* ordinateur : ligne unique sticky */
+@media (min-width:901px){
+  #parleBar{flex-wrap:nowrap}
+  #parleBar .pl-st{margin-inline-start:auto}
+}
