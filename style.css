@@ -2962,3 +2962,19 @@ body.trial{padding-top:0 !important}
   .inst-btn{right:12px;left:auto;bottom:96px}
   .ec-panel{left:12px;right:auto}
 }
+
+/* ── v3.57 · console voix PRO : 1 ligne desktop / 3 rangées propres mobile, réglages dans ⚙️ ── */
+#parleBar{position:static;display:flex;flex-wrap:nowrap;gap:8px;align-items:center;padding:8px 12px}
+#parleBar .pl-btn{flex:1 1 auto;min-width:0;padding:9px 12px;font-size:12.5px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#parleBar .pl-sel{flex:0 1 auto;max-width:34vw;font-size:12px;padding:8px 6px}
+#parleBar .pl-cfg{flex:0 0 auto;padding:8px 10px;font-size:15px}
+#parleBar .pl-st{flex:0 1 auto;max-width:30vw;font-size:10.5px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:600px){
+  #parleBar{display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:6px 8px}
+  #parleBar .pl-btn{grid-column:1;grid-row:1;width:100%;white-space:normal}
+  #parleBar .pl-cfg{grid-row:1;width:auto;padding:9px 12px}
+  #parleBar .pl-sel{grid-column:1/-1;grid-row:2;max-width:100%;width:100%}
+  #parleBar .pl-st{grid-column:1/-1;grid-row:3;text-align:center;max-width:100%;white-space:normal}
+}
