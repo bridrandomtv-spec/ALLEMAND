@@ -43,7 +43,9 @@
     let b = $('#trialBar');
     if(!on()){ if(b) b.remove(); document.body.classList.remove('trial'); return; }
     document.body.classList.add('trial');
-    if(!b){ b = document.createElement('div'); b.id = 'trialBar'; document.body.appendChild(b); }
+    if(!b){ b = document.createElement('div'); b.id = 'trialBar';
+      const pb = document.getElementById('parleBar');
+      if(pb) pb.insertAdjacentElement('afterend', b); else document.body.prepend(b); }
     const r = reste();
     b.innerHTML = '🎮 وضع تجريبي · متبقي <b>' + r.s + '</b> حصة · <b>' + r.e + '</b> تمرين · <b>'
       + r.f + '</b> فرض  <button id="trialCta" type="button">أنشئ حسابك للاستمرار ←</button>';
