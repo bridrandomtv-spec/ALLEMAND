@@ -31,7 +31,8 @@
     rec = new SR();
     rec.lang = 'de-DE'; rec.interimResults = false; rec.maxAlternatives = 1;
     rec.onresult = async ev => {
-      const q = ev.results[0][0].transcript;
+      const q = String(ev.results[0][0].transcript || '').trim();
+      if(!q){ p.innerHTML = '🎧 …'; on = false; return; }
       p.innerHTML = '🗣️ « ' + q + ' »<br>⏳ …';
       let rep = '';
       const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
