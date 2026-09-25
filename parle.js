@@ -32,7 +32,7 @@
     zh: n => '欢迎你，' + n.n + '！你是' + n.r + '。请用德语、阿拉伯语或达尔贾语提问——我会用语音回答。',
     tr: n => 'Hoş geldin, ' + n.n + ' ! Sen bir ' + n.r + '. Almanca, Arapça veya Darica sor — sesimle cevaplarım.'
   };
-  let ON = false, rec = null, lang = 'ar', speaking = false, listeningGuard = false, NS = 0, CONT = false, UT = 0, LASTSP = { t: 0, txt: '' }, LASTQ = { q: '', t: 0 };
+  let ON = false, rec = null, lang = 'ar', speaking = false, listeningGuard = false, NS = 0, CONT = false, UT = 0, LASTSP = { t: 0, txt: '' }, LASTQ = { q: '', t: 0 }, LASTLANG = '';
 
   /* ══════════ MOTEUR DE VOIX ARABE ══════════ */
   const MALE_AR = /ismael|hamed|shakir|naayf|tarik|maged|abdul|farid|omar|male|homme|man/i;
@@ -143,6 +143,46 @@
     if(cur.trim()) out.push(cur.trim());
     return out.length ? out : [String(t)];
   }
+  /* ══════════ AGENT 4 (VOIX) : détection de langue + voix native par segment ══════════ */
+  const DE_WORDS = /\b(der|die|das|und|nicht|ich|du|ist|ein|eine|mein|deine|hei\u00dfe|wohnt|kommt|schule|deutsch)\b/i;
+  const FR_WORDS = /\b(le|la|les|je|tu|il|elle|ne|pas|est|suis|mon|ma|bonjour|merci|pourquoi)\b/i;
+  const ES_WORDS = /\b(el|la|los|las|yo|usted|es|son|mi|su|gracias|hola|buenos|porque)\b/i;
+  const IT_WORDS = /\b(il|lo|gli|che|di|io|tu|lei|sono|grazie|ciao|perch\u00e9|questa|quello)\b/i;
+  const LCODE = { ar:'ar-SA', de:'de-DE', fr:'fr-FR', es:'es-ES', it:'it-IT', en:'en-US' };
+  function detectLang(t){
+    if(/[\u0600-\u06FF]/.test(t)) return 'ar';
+    if(/[\u00e4\u00f6\u00fc\u00df]/i.test(t) || DE_WORDS.test(t)) return 'de';
+    if(/[\u00e0\u00e2\u00e7\u00e8\u00ea\u00eb\u00ee\u00ef\u00f4\u00fb\u00f9]/i.test(t) || FR_WORDS.test(t)) return 'fr';
+    if(/[\u00bf\u00a1]/.test(t) || /[\u00e1\u00e9\u00ed\u00f3\u00f1]/i.test(t) || ES_WORDS.test(t)) return 'es';
+    if(/[\u00e0\u00e8\u00ec\u00f2\u00f9]/i.test(t) || IT_WORDS.test(t)) return 'it';
+    return '';
+  }
+  function langOfBar(){ try{ return (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2]; }catch(e){ return 'de-DE'; } }
+  function splitByScript(t){
+    const toks = String(t).match(/[\u0600-\u06FF][\u0600-\u06FF\s.,!؟؛:-]*|[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff\u00bf\u00a1'][A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff\u00bf\u00a1'.,!?:;-]*|\s+|[^\sA-Za-z\u0600-\u06FF]+/g) || [String(t)];
+    const segs = [];
+    let cur = null;
+    for(const tk of toks){
+      let lg = null;
+      if(/[\u0600-\u06FF]/.test(tk)) lg = 'ar';
+      else if(/[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff]/.test(tk))
+        lg = detectLang(tk) || (cur && cur.lang !== 'ar' ? cur.lang : (langOfBar().slice(0, 2) || 'de'));
+      if(!lg) lg = cur ? cur.lang : 'de';
+      if(cur && cur.lang === lg) cur.text += tk;
+      else { cur = { lang: lg, text: tk }; segs.push(cur); }
+    }
+    return segs.filter(s => s.text.trim());
+  }
+  function pickVoiceFor(all, lg){
+    if(lg === 'ar') return chosenArVoice(all);
+    const code = LCODE[lg] || (lg + '-' + lg.toUpperCase());
+    const pref = code.slice(0, 2);
+    const vs = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf(pref) === 0)
+      .sort((a, b) => scoreDe(b) - scoreDe(a));
+    if(vs.length) return vs[0];
+    const en = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf('en') === 0);
+    return en[0] || null;
+  }
   async function speak(texte, lc){
     texte = spoken(texte);
     const nowMs = Date.now();
@@ -154,26 +194,31 @@
     const done = () => { if(my !== UT) return; speaking = false;
       if(ON && CONT) setTimeout(listen, 400); else if(ON) setStatus('🎙 appuie pour parler'); };
     const ALLV = await voicesReady();
-    const isAr = /[\u0600-\u06FF]/.test(texte);
-    const target = isAr ? 'ar-SA' : (lc && lc.indexOf('ar') !== 0 ? lc : 'de-DE');
-    const voc = isAr ? chosenArVoice(ALLV) : pickVoice(ALLV, target);
     const rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
     const pitch = +(localStorage.getItem('dz_voix_pitch') || 1);
-    const parts = chunk(String(texte).slice(0, 2200));
+    let segs = splitByScript(String(texte).slice(0, 2200));
+    if(lc && segs.length === 1 && !detectLang(segs[0].text)) segs[0].lang = lc.slice(0, 2);
+    const queue = [];
+    for(const s of segs){
+      const voc = pickVoiceFor(ALLV, s.lang);
+      const code = LCODE[s.lang] || s.lang;
+      for(const c of chunk(s.text)) queue.push({ c: c, voc: voc, code: code });
+    }
     let i = 0;
     const next = () => {
       if(my !== UT) return;
-      if(i >= parts.length){ done(); return; }
-      const u = new SpeechSynthesisUtterance(parts[i++]);
-      u.lang = target;
-      if(voc) u.voice = voc;
+      if(i >= queue.length){ done(); return; }
+      const it = queue[i++];
+      const u = new SpeechSynthesisUtterance(it.c);
+      u.lang = it.code;
+      if(it.voc) u.voice = it.voc;
       u.rate = rate; u.pitch = pitch;
       u.onend = next; u.onerror = next;
       speechSynthesis.speak(u);
     };
     next();
     setTimeout(() => { if(ON && my === UT){ speaking = false;
-      if(CONT) listen(); else setStatus('🎙 appuie pour parler'); } }, 60000);
+      if(CONT) listen(); else setStatus('🎙 appuie pour parler'); } }, 90000);
   }
   /* ══════════ intentions multilingues ══════════ */
   function canon(q){
@@ -201,7 +246,7 @@
     if(!SR){ setStatus('⚠️ navigateur sans écoute (utilise Chrome/Edge)'); listeningGuard = false; return; }
     try{ if(rec) rec.stop(); }catch(e){}
     rec = new SR();
-    rec.lang = (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2];
+    rec.lang = (LCODE[LASTLANG] || (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2]);
     rec.interimResults = false;
     rec.onresult = async ev => {
       const q = String(ev.results[0][0].transcript || '').trim();
@@ -209,6 +254,7 @@
       NS = 0;
       if(q === LASTQ.q && Date.now() - LASTQ.t < 3000) return;
       LASTQ = { q: q, t: Date.now() };
+      LASTLANG = detectLang(q) || LASTLANG;
       setStatus('⏳ ' + q.slice(0, 40));
       const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
       let rep = '';
