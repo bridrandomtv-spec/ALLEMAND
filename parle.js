@@ -159,7 +159,7 @@
     const voc = isAr ? chosenArVoice(ALLV) : pickVoice(ALLV, target);
     const rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
     const pitch = +(localStorage.getItem('dz_voix_pitch') || 1);
-    const parts = chunk(String(texte).slice(0, 700));
+    const parts = chunk(String(texte).slice(0, 2200));
     let i = 0;
     const next = () => {
       if(my !== UT) return;
