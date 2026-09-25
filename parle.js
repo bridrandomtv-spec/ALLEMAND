@@ -231,7 +231,7 @@
   function on(){
     ON = true;
     const b = document.getElementById('parleBtn');
-    b.classList.add('on'); b.textContent = '🔴 إيقاف الحديث';
+    b.classList.add('on'); b.textContent = '🔴 إيقاف';
     const id = identite();
     const hello = id ? HELLO[lang]({ n: (lang === 'ar' ? id.n : translit(id.n)), r: id.r })
       : HELLO[lang]({ n: (ROLE[lang] || ROLE.ar).inconnu, r: (ROLE[lang] || ROLE.ar).inconnu });
@@ -246,19 +246,20 @@
     try{ speechSynthesis.cancel(); }catch(e){}
     speaking = false; listeningGuard = false;
     const b = document.getElementById('parleBtn');
-    b.classList.remove('on'); b.textContent = '🗣️ تحدث مع المنصة الذكية';
+    b.classList.remove('on'); b.textContent = '🗣️ تحدث';
     setStatus('⚪ في وضع الانتظار');
   }
   function bar(){
     if(document.getElementById('parleBar')) return;
     const d = document.createElement('div');
     d.id = 'parleBar';
-    d.innerHTML = '<button id="parleBtn" class="pl-btn">🗣️ تحدث مع المنصة الذكية</button>'
-      + '<button id="parleMic" class="pl-cfg" title="تحدث الآن">🎙</button>'
-      + '<button id="parleCfg" class="pl-cfg" title="إعدادات الصوت">⚙️</button>'
+    d.innerHTML = '<div class="pl-row">'
+      + '<button id="parleBtn" class="pl-btn" title="تحدث مع المنصة الذكية">🗣️ تحدث</button>'
       + '<select id="parleLang" class="pl-sel" title="اللغة">' + LANGS.map(l =>
           '<option value="' + l[0] + '">' + l[1] + '</option>').join('') + '</select>'
-      + '<span id="parleSt" class="pl-st">⚪ في وضع الانتظار</span>';
+      + '<button id="parleMic" class="pl-cfg" title="تحدث الآن">🎙</button>'
+      + '<button id="parleCfg" class="pl-cfg" title="إعدادات الصوت">⚙️</button>'
+      + '</div><div id="parleSt" class="pl-st">⚪ في وضع الانتظار</div>';
     document.body.prepend(d);
     const eb = document.getElementById('ecouteBtn');
     if(eb) eb.remove();
