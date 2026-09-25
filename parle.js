@@ -141,7 +141,7 @@
     rec.onresult = async ev => {
       const q = ev.results[0][0].transcript;
       setStatus('⏳ ' + q.slice(0, 40));
-      const fn = window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
+      const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
       let rep = '';
       if(typeof fn === 'function'){ try{ rep = await fn(canon(q)); }catch(e){} }
       if(rep && typeof rep === 'object') rep = rep.texte || rep.reponse || '';
