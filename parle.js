@@ -32,7 +32,7 @@
     zh: n => '欢迎你，' + n.n + '！你是' + n.r + '。请用德语、阿拉伯语或达尔贾语提问——我会用语音回答。',
     tr: n => 'Hoş geldin, ' + n.n + ' ! Sen bir ' + n.r + '. Almanca, Arapça veya Darica sor — sesimle cevaplarım.'
   };
-  let ON = false, rec = null, lang = 'ar', speaking = false, listeningGuard = false, NS = 0, CONT = false, UT = 0;
+  let ON = false, rec = null, lang = 'ar', speaking = false, listeningGuard = false, NS = 0, CONT = false, UT = 0, LASTSP = { t: 0, txt: '' }, LASTQ = { q: '', t: 0 };
 
   /* ══════════ MOTEUR DE VOIX ARABE ══════════ */
   const MALE_AR = /ismael|hamed|shakir|naayf|tarik|maged|abdul|farid|omar|male|homme|man/i;
@@ -132,42 +132,48 @@
     return null;
   }
   /* ══════════ parole ══════════ */
+  function chunk(t){
+    const out = [];
+    let cur = '';
+    const parts = String(t).match(/[^.!?\n]+[.!?\n]*|./g) || [String(t)];
+    for(const p of parts){
+      if((cur + p).length > 180 && cur){ out.push(cur.trim()); cur = p; }
+      else cur += p;
+    }
+    if(cur.trim()) out.push(cur.trim());
+    return out.length ? out : [String(t)];
+  }
   async function speak(texte, lc){
     texte = spoken(texte);
+    const nowMs = Date.now();
+    if(texte && texte === LASTSP.txt && nowMs - LASTSP.t < 2500) return;
+    LASTSP = { t: nowMs, txt: texte };
     try{ speechSynthesis.cancel(); }catch(e){}
     const my = ++UT;
     speaking = true;
-    const ALLV = await voicesReady();
     const done = () => { if(my !== UT) return; speaking = false;
       if(ON && CONT) setTimeout(listen, 400); else if(ON) setStatus('🎙 appuie pour parler'); };
+    const ALLV = await voicesReady();
     const isAr = /[\u0600-\u06FF]/.test(texte);
-    const target = lc || (isAr ? 'ar-SA' : ((LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2]));
-    if(isAr){
-      const v = chosenArVoice(ALLV);
-      if(v){
-        const u = new SpeechSynthesisUtterance(texte);
-        u.voice = v; u.lang = v.lang;
-        u.rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
-        u.pitch = +(localStorage.getItem('dz_voix_pitch') || 1);
-        u.onend = done; u.onerror = () => cloudAr(texte, done);
-        speechSynthesis.speak(u);
-      }else cloudAr(texte, done);
-      setTimeout(() => { if(ON && my === UT){ speaking = false;
-      if(CONT) listen(); else setStatus('🎙 appuie pour parler'); } }, 45000);
-      return;
-    }
-    const u = new SpeechSynthesisUtterance(texte.slice(0, 400));
-    u.lang = target;
-    u.rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
-    u.pitch = +(localStorage.getItem('dz_voix_pitch') || 1);
-    try{
-      const pv = pickVoice(ALLV, target);
-      if(pv) u.voice = pv;
-    }catch(e){}
-    u.onend = done; u.onerror = done;
-    speechSynthesis.speak(u);
+    const target = isAr ? 'ar-SA' : (lc && lc.indexOf('ar') !== 0 ? lc : 'de-DE');
+    const voc = isAr ? chosenArVoice(ALLV) : pickVoice(ALLV, target);
+    const rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
+    const pitch = +(localStorage.getItem('dz_voix_pitch') || 1);
+    const parts = chunk(String(texte).slice(0, 700));
+    let i = 0;
+    const next = () => {
+      if(my !== UT) return;
+      if(i >= parts.length){ done(); return; }
+      const u = new SpeechSynthesisUtterance(parts[i++]);
+      u.lang = target;
+      if(voc) u.voice = voc;
+      u.rate = rate; u.pitch = pitch;
+      u.onend = next; u.onerror = next;
+      speechSynthesis.speak(u);
+    };
+    next();
     setTimeout(() => { if(ON && my === UT){ speaking = false;
-      if(CONT) listen(); else setStatus('🎙 appuie pour parler'); } }, 45000);
+      if(CONT) listen(); else setStatus('🎙 appuie pour parler'); } }, 60000);
   }
   /* ══════════ intentions multilingues ══════════ */
   function canon(q){
