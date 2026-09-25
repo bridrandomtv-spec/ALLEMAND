@@ -49,6 +49,14 @@
     if(v.lang.toLowerCase() === 'ar-sa') s += 1;
     return s;
   }
+  function scoreDe(x){
+    let s = 0;
+    if(/natural|neural|online|premium|enhanced/i.test(x.name)) s += 4;
+    if(/conrad|stefan|markus|klaus|male|mann/i.test(x.name)) s += 3;
+    if(/google/i.test(x.name)) s += 2;
+    if(x.lang === 'de-DE') s += 1;
+    return s;
+  }
   function chosenArVoice(){
     let pref = '';
     try{ pref = localStorage.getItem('dz_voix_ar') || ''; }catch(e){}
@@ -94,17 +102,22 @@
       const v = chosenArVoice();
       if(v){
         const u = new SpeechSynthesisUtterance(texte);
-        u.voice = v; u.lang = v.lang; u.rate = 0.92;
+        u.voice = v; u.lang = v.lang;
+        u.rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
+        u.pitch = +(localStorage.getItem('dz_voix_pitch') || 1);
         u.onend = done; u.onerror = () => cloudAr(texte, done);
         speechSynthesis.speak(u);
       }else cloudAr(texte, done);
       setTimeout(() => { if(ON){ speaking = false; listen(); } }, 12000);
       return;
     }
-    const u = new SpeechSynthesisUtterance(texte);
-    u.lang = lc || 'de-DE'; u.rate = 0.95;
+    const u = new SpeechSynthesisUtterance(texte.slice(0, 400));
+    u.lang = lc || 'de-DE';
+    u.rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
+    u.pitch = +(localStorage.getItem('dz_voix_pitch') || 1);
     try{
-      const vs = speechSynthesis.getVoices().filter(x => x.lang.indexOf(u.lang.slice(0, 2)) === 0);
+      const vs = speechSynthesis.getVoices().filter(x => x.lang.indexOf(u.lang.slice(0, 2)) === 0)
+        .sort((a, b) => scoreDe(b) - scoreDe(a));
       if(vs.length) u.voice = vs[0];
     }catch(e){}
     u.onend = done; u.onerror = done;
@@ -195,6 +208,7 @@
       + '<select id="parleLang" class="pl-sel">' + LANGS.map(l =>
           '<option value="' + l[0] + '">' + l[1] + '</option>').join('') + '</select>'
       + '<select id="parleVoix" class="pl-sel"></select>'
+      + '<button id="parleCfg" class="pl-cfg" title="réglages de la voix">⚙️</button>'
       + '<span id="parleSt" class="pl-st">⚪ في وضع الانتظار</span>';
     document.body.prepend(d);
     d.querySelector('#parleBtn').addEventListener('click', () => ON ? off() : on());
@@ -205,6 +219,25 @@
     d.querySelector('#parleVoix').addEventListener('change', e => {
       try{ localStorage.setItem('dz_voix_ar', e.target.value); }catch(err){}
       if(ON){ off(); setTimeout(on, 200); }
+    });
+    d.querySelector('#parleCfg').addEventListener('click', () => {
+      let p = document.getElementById('plCfgPanel');
+      if(p){ p.remove(); return; }
+      p = document.createElement('div');
+      p.id = 'plCfgPanel'; p.className = 'pl-cfgpanel';
+      p.innerHTML = '<b>🔊 réglages de la voix</b>'
+        + '<label>vitesse <input type="range" id="plRate" min="0.7" max="1.2" step="0.05" value="'
+        + (localStorage.getItem('dz_voix_rate') || 0.95) + '"></label>'
+        + '<label>tonalité <input type="range" id="plPitch" min="0.7" max="1.3" step="0.05" value="'
+        + (localStorage.getItem('dz_voix_pitch') || 1) + '"></label>'
+        + '<button class="btn btn-o btn-sm" id="plTest">🔊 tester</button>';
+      document.body.appendChild(p);
+      p.querySelector('#plRate').addEventListener('input', e =>
+        localStorage.setItem('dz_voix_rate', e.target.value));
+      p.querySelector('#plPitch').addEventListener('input', e =>
+        localStorage.setItem('dz_voix_pitch', e.target.value));
+      p.querySelector('#plTest').addEventListener('click', () =>
+        speak('Guten Tag ! Ich bin die Stimme deiner Plattform. Wie klingt es jetzt ?', 'de-DE'));
     });
     fillVoixSel();
     try{
