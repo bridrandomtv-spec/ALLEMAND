@@ -193,8 +193,9 @@
     rec.lang = (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2];
     rec.interimResults = false;
     rec.onresult = async ev => {
+      const q = String(ev.results[0][0].transcript || '').trim();
+      if(!q){ setStatus('🎧 …'); return; }
       NS = 0;
-      const q = ev.results[0][0].transcript;
       setStatus('⏳ ' + q.slice(0, 40));
       const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
       let rep = '';
