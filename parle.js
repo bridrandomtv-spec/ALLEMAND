@@ -76,10 +76,10 @@
     }catch(e){ done(); }
   }
   function fillVoixSel(){
-    const sel = document.getElementById('parleVoix');
+    const sel = document.getElementById('plVoix');
     if(!sel) return;
     const vs = arVoices().sort((a, b) => scoreAr(b) - scoreAr(a));
-    sel.innerHTML = '<option value="">🔊 auto (meilleure voix arabe)</option>'
+    sel.innerHTML = '<option value="">🔊 تلقائي (أفضل صوت عربي)</option>'
       + vs.map(v => '<option value="' + v.name.replace(/"/g, '') + '">'
           + (MALE_AR.test(v.name) ? '👨 ' : '👤 ') + v.name + ' (' + v.lang + ')</option>').join('');
     try{ const p = localStorage.getItem('dz_voix_ar') || ''; if(p) sel.value = p; }catch(e){}
@@ -254,11 +254,10 @@
     const d = document.createElement('div');
     d.id = 'parleBar';
     d.innerHTML = '<button id="parleBtn" class="pl-btn">🗣️ تحدث مع المنصة الذكية</button>'
-      + '<select id="parleLang" class="pl-sel">' + LANGS.map(l =>
+      + '<button id="parleMic" class="pl-cfg" title="تحدث الآن">🎙</button>'
+      + '<button id="parleCfg" class="pl-cfg" title="إعدادات الصوت">⚙️</button>'
+      + '<select id="parleLang" class="pl-sel" title="اللغة">' + LANGS.map(l =>
           '<option value="' + l[0] + '">' + l[1] + '</option>').join('') + '</select>'
-      + '<select id="parleVoix" class="pl-sel"></select>'
-      + '<button id="parleCfg" class="pl-cfg" title="réglages de la voix">⚙️</button>'
-      + '<button id="parleMic" class="pl-cfg" title="parler maintenant">🎙</button>'
       + '<span id="parleSt" class="pl-st">⚪ في وضع الانتظار</span>';
     document.body.prepend(d);
     d.querySelector('#parleBtn').addEventListener('click', () => ON ? off() : on());
@@ -266,24 +265,25 @@
       lang = e.target.value;
       if(ON){ off(); setTimeout(on, 200); }
     });
-    d.querySelector('#parleVoix').addEventListener('change', e => {
-      try{ localStorage.setItem('dz_voix_ar', e.target.value); }catch(err){}
-      try{ speechSynthesis.cancel(); }catch(err){}
-      speak('مرحبًا ! هذه هي الصوت التي اخترتها.', null);
-      if(ON){ setTimeout(() => { speaking = false; listen(); }, 2500); }
-    });
     d.querySelector('#parleCfg').addEventListener('click', () => {
       let p = document.getElementById('plCfgPanel');
       if(p){ p.remove(); return; }
       p = document.createElement('div');
       p.id = 'plCfgPanel'; p.className = 'pl-cfgpanel';
-      p.innerHTML = '<b>🔊 réglages de la voix</b>'
-        + '<label>vitesse <input type="range" id="plRate" min="0.7" max="1.2" step="0.05" value="'
+      p.innerHTML = '<b>🔊 إعدادات الصوت</b>'
+        + '<label>الصوت <select id="plVoix" class="pl-sel"></select></label>'
+        + '<label>السرعة <input type="range" id="plRate" min="0.7" max="1.2" step="0.05" value="'
         + (localStorage.getItem('dz_voix_rate') || 0.95) + '"></label>'
-        + '<label>tonalité <input type="range" id="plPitch" min="0.7" max="1.3" step="0.05" value="'
+        + '<label>طبقة الصوت <input type="range" id="plPitch" min="0.7" max="1.3" step="0.05" value="'
         + (localStorage.getItem('dz_voix_pitch') || 1) + '"></label>'
-        + '<button class="btn btn-o btn-sm" id="plTest">🔊 tester</button>';
+        + '<button class="btn btn-o btn-sm" id="plTest">🔊 اختبار</button>';
       document.body.appendChild(p);
+      fillVoixSel();
+      p.querySelector('#plVoix').addEventListener('change', e => {
+        try{ localStorage.setItem('dz_voix_ar', e.target.value); }catch(err){}
+        try{ speechSynthesis.cancel(); }catch(err){}
+        speak('مرحبًا ! هذه هي الصوت التي اخترتها.', null);
+      });
       p.querySelector('#plRate').addEventListener('input', e =>
         localStorage.setItem('dz_voix_rate', e.target.value));
       p.querySelector('#plPitch').addEventListener('input', e =>
