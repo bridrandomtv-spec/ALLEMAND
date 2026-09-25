@@ -160,6 +160,7 @@ const QUIZ_BANK = [
   }
   function nouvelleSerie(){
     let p = pool();
+    if(!p.length){ toast('⚠️ لا أسئلة متوفرة لهذه الوحدة — اختر « الكل »', ''); return false; }
     if(melange) p = melanger(p);
     serie = p.slice(0, PAR_SERIE);
     /* mélange aussi l'ordre des options, en suivant la bonne réponse */
@@ -174,8 +175,38 @@ const QUIZ_BANK = [
     idx = 0; score = 0; repondu = false;
   }
 
+  /* ── liaison DIRECTE des boutons après chaque render (immune à toute
+     interception/exception silencieuse) + erreur visible si ça casse ── */
+  function brancher(box){
+    const st = box.querySelector('#qzStart');
+    if(st) st.addEventListener('click', () => {
+      try{
+        if(nouvelleSerie() === false) return;
+        vue = 'jeu'; render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }catch(e){ toast('⚠️ ' + ((e && e.message) || e), ''); }
+    });
+    box.querySelectorAll('[data-unite]').forEach(b =>
+      b.addEventListener('click', () => { filtre = +b.dataset.unite; render(); }));
+    const qt = box.querySelector('#qzQuit');
+    if(qt) qt.addEventListener('click', () => { vue = 'accueil'; render(); });
+    box.querySelectorAll('.qz-o').forEach(o =>
+      o.addEventListener('click', () => { if(!o.disabled) repondre(+o.dataset.i); }));
+    const nx = box.querySelector('#qzNext');
+    if(nx) nx.addEventListener('click', () => suivant());
+    const ag = box.querySelector('#qzAgain');
+    if(ag) ag.addEventListener('click', () => {
+      try{
+        if(nouvelleSerie() === false) return;
+        vue = 'jeu'; render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }catch(e){ toast('⚠️ ' + ((e && e.message) || e), ''); }
+    });
+    const hm = box.querySelector('#qzHome');
+    if(hm) hm.addEventListener('click', () => { vue = 'accueil'; render(); });
+  }
   /* ── Rendu ── */
-  function render(){
+  var render = function(){
     const box = $('#quizBody'); if(!box) return;
     if(vue === 'accueil')  box.innerHTML = vueAccueil();
     if(vue === 'jeu')      box.innerHTML = vueJeu();
@@ -363,6 +394,7 @@ const QUIZ_BANK = [
 
   /* ── Événements ── */
   document.addEventListener('click', ev => {
+    if(ev.target.closest && ev.target.closest('#quizBody')) return;
     const u = ev.target.closest('[data-unite]');
     if(u){ filtre = +u.dataset.unite; render(); return; }
 
@@ -397,6 +429,8 @@ const QUIZ_BANK = [
   });
 
   document.addEventListener('dz:view', e => { if(e.detail === 'quiz') render(); });
+  const _render0 = render;
+  render = function(){ _render0(); const bx = document.getElementById('quizBody'); if(bx) brancher(bx); };
   window.renderQuiz = render;
   window.DZ_QUIZ = { render:render, bank:QUIZ_BANK, nouvelleSerie:nouvelleSerie,
                      PAR_SERIE:PAR_SERIE, best:best, hist:hist };
