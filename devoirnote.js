@@ -214,8 +214,8 @@
       $('#fList').querySelectorAll('[data-i]').forEach(b => b.addEventListener('click', () => {
         const x = rows[+b.dataset.i];
         $('#dz' + b.dataset.i).innerHTML = '<div class="dn-suj"><b>Aufgabe</b>'
-          + '<pre class="dn-pre">' + esc(clean(x.sujet, x)) + '</pre>'
-          + '<b>Lösung</b><pre class="dn-pre">' + esc(x.corrige || '(Lösung enthalten: '
+          + '<pre class="dn-pre" dir="auto">' + esc(clean(x.sujet, x)) + '</pre>'
+          + '<b>Lösung</b><pre class="dn-pre" dir="auto">' + esc(x.corrige || '(Lösung enthalten: '
           + (x.corrige_inclus ? 'oui' : 'non') + ')') + '</pre></div>';
       }));
     };
