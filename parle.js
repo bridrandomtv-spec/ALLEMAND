@@ -260,6 +260,8 @@
           '<option value="' + l[0] + '">' + l[1] + '</option>').join('') + '</select>'
       + '<span id="parleSt" class="pl-st">⚪ في وضع الانتظار</span>';
     document.body.prepend(d);
+    const eb = document.getElementById('ecouteBtn');
+    if(eb) eb.remove();
     d.querySelector('#parleBtn').addEventListener('click', () => ON ? off() : on());
     d.querySelector('#parleLang').addEventListener('change', e => {
       lang = e.target.value;
