@@ -355,8 +355,17 @@
     if(pg){
       const P = await loadPages();
       const e = P[pg[1]];
-      if(e && (e.lignes || e.texte))
-        return (e.titre ? e.titre + ' :\n' : '') + linesOf(e.lignes || e.texte);
+      if(e && (e.lignes || e.texte)){
+        let ls = Array.isArray(e.lignes) ? e.lignes : [e.texte || ''];
+        const clean = ls.map(l => String(l)
+          .replace(/\((?:page|p\.)\s*\d+\)/gi, '')
+          .replace(/([A-ZÄÖÜa-zäöü])\s*=\s*/g, '$1 wie ')
+          .replace(/\s*·\s*/g, '. ')
+          .replace(/\s*→\s*/g, ' '))
+          .filter(x => x.trim());
+        const tit = String(e.titre || '').replace(/\((?:page|p\.)\s*\d+\)/gi, '').trim();
+        return ('Seite ' + pg[1] + '. ' + tit + '. ' + clean.join('. ')).slice(0, 900);
+      }
       return 'Je n’ai pas encore la page ' + pg[1] + ' du manuel en mémoire indexée. '
         + 'Essaie : « lis le texte de la Lektion 1 », « lies den Dialog Lektion 2 », '
         + '« vocabulaire Lektion 3 » — ou demande au professeur d’indexer cette page.';
