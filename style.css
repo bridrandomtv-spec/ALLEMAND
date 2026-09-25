@@ -2951,3 +2951,14 @@ select,button,input{max-width:100%}
   #parleBar{flex-wrap:nowrap}
   #parleBar .pl-st{margin-inline-start:auto}
 }
+
+/* ── v3.56 · plus AUCUN chevauchement en haut : barre 🗣️ + bandeau essai + header empilés ── */
+#parleBar{position:static !important}
+#trialBar{position:static !important;width:100%;top:auto !important;transform:none !important}
+body.trial{padding-top:0 !important}
+.topbar{top:0}
+@media (max-width:600px){
+  .ec-btn{left:12px;right:auto;bottom:96px}
+  .inst-btn{right:12px;left:auto;bottom:96px}
+  .ec-panel{left:12px;right:auto}
+}
