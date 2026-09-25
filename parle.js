@@ -207,6 +207,8 @@
       const q = String(ev.results[0][0].transcript || '').trim();
       if(!q){ setStatus('🎧 …'); return; }
       NS = 0;
+      if(q === LASTQ.q && Date.now() - LASTQ.t < 3000) return;
+      LASTQ = { q: q, t: Date.now() };
       setStatus('⏳ ' + q.slice(0, 40));
       const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
       let rep = '';
