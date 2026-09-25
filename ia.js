@@ -3,6 +3,8 @@
 'use strict';
 (function(){
   window.reponseIA = async function(q){
+    q = String(q == null ? '' : q).trim();
+    if(!q) return '';
     const fn = window.reponsePedagogique;
     let local = '';
     if(typeof fn === 'function'){ try{ local = await fn(q); }catch(e){} }
