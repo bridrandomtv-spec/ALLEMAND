@@ -137,7 +137,7 @@
     let cur = '';
     const parts = String(t).match(/[^.!?\n]+[.!?\n]*|./g) || [String(t)];
     for(const p of parts){
-      if((cur + p).length > 180 && cur){ out.push(cur.trim()); cur = p; }
+      if((cur + p).length > 260 && cur){ out.push(cur.trim()); cur = p; }
       else cur += p;
     }
     if(cur.trim()) out.push(cur.trim());
@@ -171,7 +171,12 @@
       if(cur && cur.lang === lg) cur.text += tk;
       else { cur = { lang: lg, text: tk }; segs.push(cur); }
     }
-    return segs.filter(s => s.text.trim());
+    const out2 = [];
+    for(const s of segs.filter(x => x.text.trim())){
+      if(out2.length && s.text.trim().length <= 2) out2[out2.length - 1].text += s.text;
+      else out2.push(s);
+    }
+    return out2;
   }
   function pickVoiceFor(all, lg){
     if(lg === 'ar') return chosenArVoice(all);
@@ -204,19 +209,18 @@
       const code = LCODE[s.lang] || s.lang;
       for(const c of chunk(s.text)) queue.push({ c: c, voc: voc, code: code });
     }
-    let i = 0;
-    const next = () => {
-      if(my !== UT) return;
-      if(i >= queue.length){ done(); return; }
-      const it = queue[i++];
+    const us = queue.map(it => {
       const u = new SpeechSynthesisUtterance(it.c);
       u.lang = it.code;
       if(it.voc) u.voice = it.voc;
       u.rate = rate; u.pitch = pitch;
-      u.onend = next; u.onerror = next;
+      return u;
+    });
+    if(!us.length){ done(); return; }
+    us.forEach((u, k) => {
+      if(k === us.length - 1){ u.onend = done; u.onerror = done; }
       speechSynthesis.speak(u);
-    };
-    next();
+    });
     setTimeout(() => { if(ON && my === UT){ speaking = false;
       if(CONT) listen(); else setStatus('🎙 appuie pour parler'); } }, 90000);
   }
@@ -267,7 +271,7 @@
         rep = lang === 'ar' ? 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم، أو معنى كلمة.'
             : 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung.'; }
       setStatus('🗣️ …');
-      speak(rep.slice(0, 700));
+      speak(rep.slice(0, 2200));
     };
     rec.onerror = e => { listeningGuard = false;
       const er = (e && e.error) || 'erreur';
