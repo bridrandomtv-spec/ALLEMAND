@@ -148,7 +148,7 @@
         u.onend = done; u.onerror = () => cloudAr(texte, done);
         speechSynthesis.speak(u);
       }else cloudAr(texte, done);
-      setTimeout(() => { if(ON){ speaking = false; listen(); } }, 12000);
+      setTimeout(() => { if(ON){ speaking = false; listen(); } }, 45000);
       return;
     }
     const u = new SpeechSynthesisUtterance(texte.slice(0, 400));
@@ -161,7 +161,7 @@
     }catch(e){}
     u.onend = done; u.onerror = done;
     speechSynthesis.speak(u);
-    setTimeout(() => { if(ON){ speaking = false; listen(); } }, 9000);
+    setTimeout(() => { if(ON){ speaking = false; listen(); } }, 45000);
   }
   /* ══════════ intentions multilingues ══════════ */
   function canon(q){
@@ -183,6 +183,7 @@
   /* ══════════ écoute ══════════ */
   function listen(){
     if(!ON || listeningGuard) return;
+    if(speaking){ setTimeout(listen, 600); return; }
     listeningGuard = true;
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if(!SR){ setStatus('⚠️ navigateur sans écoute (utilise Chrome/Edge)'); listeningGuard = false; return; }
@@ -191,6 +192,7 @@
     rec.lang = (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2];
     rec.interimResults = false;
     rec.onresult = async ev => {
+      NS = 0;
       const q = ev.results[0][0].transcript;
       setStatus('⏳ ' + q.slice(0, 40));
       const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
@@ -205,8 +207,12 @@
       speak(rep.slice(0, 700));
     };
     rec.onerror = e => { listeningGuard = false;
-      setStatus('⚠️ micro : ' + (e && e.error ? e.error : 'erreur'));
-      if(ON) setTimeout(listen, 1500); };
+      const er = (e && e.error) || 'erreur';
+      if(er === 'no-speech'){
+        NS++;
+        setStatus(NS >= 3 ? '🎤 appuie sur 🎙 quand tu es prêt à parler' : '🎧 …');
+      }else setStatus('⚠️ micro : ' + er);
+      if(ON) setTimeout(listen, er === 'no-speech' ? 900 : 1500); };
     rec.onend = () => { listeningGuard = false; if(ON && !speaking) setTimeout(listen, 800); };
     rec.start();
   }
@@ -248,6 +254,7 @@
           '<option value="' + l[0] + '">' + l[1] + '</option>').join('') + '</select>'
       + '<select id="parleVoix" class="pl-sel"></select>'
       + '<button id="parleCfg" class="pl-cfg" title="réglages de la voix">⚙️</button>'
+      + '<button id="parleMic" class="pl-cfg" title="parler maintenant">🎙</button>'
       + '<span id="parleSt" class="pl-st">⚪ في وضع الانتظار</span>';
     document.body.prepend(d);
     d.querySelector('#parleBtn').addEventListener('click', () => ON ? off() : on());
@@ -279,6 +286,13 @@
         localStorage.setItem('dz_voix_pitch', e.target.value));
       p.querySelector('#plTest').addEventListener('click', () =>
         speak('Guten Tag ! Ich bin die Stimme deiner Plattform. Wie klingt es jetzt ?', 'de-DE'));
+    });
+    d.querySelector('#parleMic').addEventListener('click', () => {
+      if(!ON) on();
+      try{ speechSynthesis.cancel(); }catch(e){}
+      speaking = false; listeningGuard = false; NS = 0;
+      setStatus('🎧 je t’écoute… parle maintenant');
+      listen();
     });
     fillVoixSel();
     try{
