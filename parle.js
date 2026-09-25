@@ -202,9 +202,11 @@
       if(typeof fn === 'function'){ try{ rep = await fn(canon(q)); }catch(e){} }
       if(rep && typeof rep === 'object') rep = rep.texte || rep.reponse || '';
       rep = String(rep || '');
-      if(!rep || rep.indexOf('لا أعرف') !== -1)
+      if(!rep || rep.indexOf('لا أعرف') !== -1){
+        const er = window.__IA_ERR || '';
+        if(er) setStatus('🧠 ' + String(er).slice(0, 40));
         rep = lang === 'ar' ? 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم، أو معنى كلمة.'
-            : 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung.';
+            : 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung.'; }
       setStatus('🗣️ …');
       speak(rep.slice(0, 700));
     };
