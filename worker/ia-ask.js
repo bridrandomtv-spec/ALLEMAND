@@ -8,6 +8,10 @@
 const ORIGINS = ['https://allemand.brid-randomtv.workers.dev',
                  'https://bridrandomtv-spec.github.io'];
 let HITS = [];
+const MODELS = ['@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+  '@cf/meta/llama-4-scout-17b-16e-instruct',
+  '@cf/meta/llama-3.1-8b-instruct',
+  '@cf/mistral/mistral-small-3.1-24b-instruct'];
 const SYSTEM =
   'Tu es l\'assistant pédagogique d\'allemand de la plateforme du Professeur Kharif '
   + '(الثانوية الافتراضية الجزائرية). Règles strictes : '
@@ -31,6 +35,7 @@ export default {
     const org = ORIGINS.filter(o => (req.headers.get('Origin') || '') === o)[0] || ORIGINS[0];
     if(req.method === 'OPTIONS') return cors(new Response(null), org);
     const url = new URL(req.url);
+    if(url.pathname === '/health') return json({ ok:true, ai: !!env.AI }, 200, org);
     if(url.pathname !== '/ask' || req.method !== 'POST') return json({ ok:false, err:'not-found' }, 404, org);
     let b = {};
     const raw = await req.text();
@@ -47,8 +52,15 @@ export default {
     try{
       let rep = '';
       if(env.AI){
-        const r = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', { messages: msgs, max_tokens: 320 });
-        rep = (r && (r.response || r.result)) || '';
+        let lastErr = '';
+        for(const m of MODELS){
+          try{
+            const r = await env.AI.run(m, { messages: msgs, max_tokens: 320 });
+            rep = (r && (r.response || r.result)) || '';
+            if(rep) break;
+          }catch(e){ lastErr = String((e && e.message) || e); }
+        }
+        if(!rep) return json({ ok:false, err:'ai:' + lastErr.slice(0, 120) }, 500, org);
       }else if(env.CF_AI_TOKEN && env.CF_ACCOUNT_ID){
         const r = await fetch('https://api.cloudflare.com/client/v4/accounts/' + env.CF_ACCOUNT_ID
           + '/ai/run/@cf/meta/llama-3.1-8b-instruct', { method:'POST',
