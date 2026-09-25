@@ -15,7 +15,7 @@
     try{
       const k = 'dz_ia_' + new Date().toDateString();
       const n = +(localStorage.getItem(k) || 0);
-      if(n >= 40) return local;
+      if(n >= 150){ try{ console.warn('🧠 quota journalier atteint (150)'); }catch(_){} return local; }
       localStorage.setItem(k, String(n + 1));
     }catch(e){}
     let proxy = '';
@@ -44,7 +44,11 @@
         return local;
       }
       const j = await r.json();
-      if(j.ok && j.rep && j.rep.length > 10) return j.rep;
+      if(!j.ok){ window.__IA_ERR = j.err || 'http';
+        try{ console.warn('🧠 ia-ask :', j.err); }catch(_){}
+        return local; }
+      window.__IA_ERR = '';
+      if(j.rep && j.rep.length > 10) return j.rep;
     }catch(e){}
     return local;
   };
