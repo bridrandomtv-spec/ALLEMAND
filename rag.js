@@ -318,8 +318,71 @@
   }
 
 
+  /* ── lecture par PAGE du manuel ou par SECTION de Lektion ── */
+  let _PAGES = null; const _BUCH = {};
+  async function loadPages(){
+    if(_PAGES) return _PAGES;
+    try{
+      const r = await fetch('assets/bdd/buch_pages.json', { cache:'no-store' });
+      _PAGES = r.ok ? await r.json() : {};
+    }catch(e){ _PAGES = {}; }
+    return _PAGES;
+  }
+  function linesOf(b){
+    if(!b) return '';
+    if(typeof b === 'string') return b;
+    const a = Array.isArray(b) ? b : (b.lignes || b.lines || b.text || []);
+    if(typeof a === 'string') return a;
+    return (Array.isArray(a) ? a : []).map(x =>
+      typeof x === 'string' ? x : (x.de || x.texte || x.text || '')).filter(Boolean).join('\n');
+  }
+  async function loadBuch(n){
+    if(_BUCH[n]) return _BUCH[n];
+    const f = n === 1 ? 'assets/bdd/buch_2as.json' : ('assets/bdd/buch_l' + n + '.json');
+    try{
+      const r = await fetch(f, { cache:'no-store' });
+      if(r.ok){ const j = await r.json(); _BUCH[n] = (j.lektionen && j.lektionen[0]) || j; }
+    }catch(e){}
+    return _BUCH[n] || null;
+  }
+  function pickBlock(L, want){
+    if(!L) return null;
+    const k = Object.keys(L).filter(x => new RegExp(want, 'i').test(x))[0];
+    return k ? L[k] : null;
+  }
+  async function intentLecture(q){
+    const pg = q.match(/(?:seite|page|صفحة|ص)\s*(\d{1,3})/i);
+    if(pg){
+      const P = await loadPages();
+      const e = P[pg[1]];
+      if(e && (e.lignes || e.texte))
+        return (e.titre ? e.titre + ' :\n' : '') + linesOf(e.lignes || e.texte);
+      return 'Je n’ai pas encore la page ' + pg[1] + ' du manuel en mémoire indexée. '
+        + 'Essaie : « lis le texte de la Lektion 1 », « lies den Dialog Lektion 2 », '
+        + '« vocabulaire Lektion 3 » — ou demande au professeur d’indexer cette page.';
+    }
+    const lec = q.match(/(?:lis|lire|lies|lese|read|vorlesen|قرأ|اقرأ)\s+(?:le\s+|den\s+|das\s+|the\s+)?(texte|text|dialog|dialogue|vocabulaire|wortschatz|النص|الحوار|المفردات)[^\d]*(\d)?/i);
+    if(lec){
+      const nn = +(lec[2] || 1);
+      const L = await loadBuch(nn);
+      const wantD = /dialog|الحوار/i.test(lec[1]);
+      const wantV = /vocab|wortschatz|المفردات/i.test(lec[1]);
+      const blk = wantV ? pickBlock(L, 'wortschatz|vocab')
+                : wantD ? pickBlock(L, 'dialog')
+                : pickBlock(L, 'text');
+      const txt = linesOf(blk);
+      if(txt) return ('Lektion ' + nn + ' — ' + (wantV ? 'Wortschatz' : wantD ? 'Dialog' : 'Text')
+        + ' :\n' + txt).slice(0, 900);
+      return 'Je n’ai pas de ' + (wantV ? 'vocabulaire' : wantD ? 'dialogue' : 'texte')
+        + ' pour la Lektion ' + nn + ' en mémoire.';
+    }
+    return null;
+  }
+
   async function reponsePedagogique(q){
     q = darja(q);
+    const _lec = await intentLecture(q);
+    if(_lec) return _lec;
     /* conjugaison prioritaire : « كيف اتصرف sein » / « صرف haben » / « sein » seul */
     const vb = trouveVerbe(q);
     if(vb && (CONJ_INTENT.test(String(q)) || String(q).trim().toLowerCase() === vb)){
