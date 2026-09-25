@@ -137,7 +137,7 @@
     let cur = '';
     const parts = String(t).match(/[^.!?\n]+[.!?\n]*|./g) || [String(t)];
     for(const p of parts){
-      if((cur + p).length > 260 && cur){ out.push(cur.trim()); cur = p; }
+      if((cur + p).length > 150 && cur){ out.push(cur.trim()); cur = p; }
       else cur += p;
     }
     if(cur.trim()) out.push(cur.trim());
@@ -195,8 +195,10 @@
     LASTSP = { t: nowMs, txt: texte };
     try{ speechSynthesis.cancel(); }catch(e){}
     const my = ++UT;
+    let ping = 0;
     speaking = true;
-    const done = () => { if(my !== UT) return; speaking = false;
+    const done = () => { if(my !== UT) return;
+      try{ clearInterval(ping); }catch(e){} speaking = false;
       if(ON && CONT) setTimeout(listen, 400); else if(ON) setStatus('🎙 appuie pour parler'); };
     const ALLV = await voicesReady();
     const rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
@@ -221,6 +223,12 @@
       if(k === us.length - 1){ u.onend = done; u.onerror = done; }
       speechSynthesis.speak(u);
     });
+    ping = setInterval(() => {
+      try{
+        if(my !== UT || !speaking){ clearInterval(ping); return; }
+        speechSynthesis.resume();
+      }catch(e){ clearInterval(ping); }
+    }, 8000);
     setTimeout(() => { if(ON && my === UT){ speaking = false;
       if(CONT) listen(); else setStatus('🎙 appuie pour parler'); } }, 90000);
   }
