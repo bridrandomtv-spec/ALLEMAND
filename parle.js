@@ -66,12 +66,13 @@
     return vs[0] || null;
   }
   function cloudAr(texte, done){
+    /* repli 100 % local (voix système par défaut) — AUCUN service tiers :
+       zéro requête externe, zéro stockage tiers, zéro alerte Tracking Prevention */
     try{
-      const g = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ar-SA&q='
-        + encodeURIComponent(texte.slice(0, 180));
-      const a = new Audio('https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(g));
-      a.onended = done; a.onerror = () => done();
-      a.play().catch(() => done());
+      const u = new SpeechSynthesisUtterance(texte);
+      u.lang = 'ar-SA'; u.rate = 0.95;
+      u.onend = done; u.onerror = () => done();
+      speechSynthesis.speak(u);
     }catch(e){ done(); }
   }
   function fillVoixSel(){
