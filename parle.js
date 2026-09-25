@@ -32,7 +32,7 @@
     zh: n => '欢迎你，' + n.n + '！你是' + n.r + '。请用德语、阿拉伯语或达尔贾语提问——我会用语音回答。',
     tr: n => 'Hoş geldin, ' + n.n + ' ! Sen bir ' + n.r + '. Almanca, Arapça veya Darica sor — sesimle cevaplarım.'
   };
-  let ON = false, rec = null, lang = 'ar', speaking = false, listeningGuard = false;
+  let ON = false, rec = null, lang = 'ar', speaking = false, listeningGuard = false, NS = 0;
 
   /* ══════════ MOTEUR DE VOIX ARABE ══════════ */
   const MALE_AR = /ismael|hamed|shakir|naayf|tarik|maged|abdul|farid|omar|male|homme|man/i;
