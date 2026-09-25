@@ -10,7 +10,7 @@
     if(document.getElementById('instBtn') || isStandalone()) return;
     const b = document.createElement('button');
     b.id = 'instBtn'; b.className = 'inst-btn';
-    b.innerHTML = '📲 Installer l’application';
+    b.innerHTML = '📲'; b.title = 'Installer l’application';
     b.addEventListener('click', async () => {
       if(deferred){
         deferred.prompt();
