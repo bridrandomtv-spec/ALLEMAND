@@ -49,7 +49,15 @@
     }catch(e){}
     if(!proxy) return fixLang(local);
     try{
-      const ctx = (local && local.indexOf('لا أعرف') === -1) ? local.slice(0, 2500) : '';
+      let ctx = '';
+      try{
+        if(window.BIBLIO && BIBLIO.context){
+          const bc = await BIBLIO.context(q, 2000);
+          if(bc) ctx = 'BIBLIOTHÈQUE OFFICIELLE (extraits vérifiés, cite la source) :\n' + bc + '\n\n';
+        }
+      }catch(e){}
+      if(local && local.indexOf('لا أعرف') === -1) ctx += 'MOTEUR LOCAL (déjà vérifié) :\n' + local.slice(0, 900);
+      ctx = ctx.slice(0, 3000);
       const r = await fetch(proxy + '/ask', { method:'POST',
         headers:{ 'Content-Type':'application/json' },
         body: JSON.stringify({ q: q, text: q, ctx: ctx }) });
