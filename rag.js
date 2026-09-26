@@ -409,8 +409,24 @@
     return null;
   }
 
+  /* ── AGENT CONVERSATION ARABE : question arabe → réponse arabe garantie ── */
+  function intentConversationAr(q){
+    if(!/[\u0600-\u06FF]/.test(q)) return null;
+    if(/\u0645\u0646\s*\u0627\u0646\u062a|\u0645\u0646\s*\u0623\u0646\u062a/i.test(q))
+      return 'أنا منصتك الذكية لتعلم الألمانية — أقرأ معك الكتاب صفحة صفحة، وأشرح القواعد، وأتمرن معك!';
+    if(/\u0643\u064a\u0641\s*\u062d\u0627\u0644\u0643|\u0643\u064a\u0641\u0627\u0634/i.test(q))
+      return 'الحمد لله، بخير! وأنت كيف حالك؟ هل أنت مستعد للتمرن اليوم؟';
+    if(/\u0645\u0631\u062d\u0628\u0627|\u0633\u0644\u0627\u0645|\u0627\u0647\u0644\u0627|\u0623\u0647\u0644\u0627/i.test(q))
+      return 'مرحبًا بك! اسألني بالعربية أو بالألمانية أو بالدارجة — وأنا أجيبك وأقرأ لك صفحات الكتاب بصوت واضح.';
+    if(/\u0648\u064a\u0646|\u0627\u064a\u0646|\u0623\u064a\u0646/i.test(q))
+      return 'أنا هنا دائمًا في منصتك، جاهزة للقراءة والشرح والتمرين!';
+    return null;
+  }
+
   async function reponsePedagogique(q){
     q = darja(q);
+    const _cva = intentConversationAr(q);
+    if(_cva) return _cva;
     const _cv = intentConversation(q);
     if(_cv) return _cv;
     const _lec = await intentLecture(q);
