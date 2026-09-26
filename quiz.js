@@ -166,7 +166,7 @@ const QUIZ_BANK = [
     /* mélange aussi l'ordre des options, en suivant la bonne réponse */
     if(melange){
       serie = serie.map(q => {
-        const idxs = melange([0,1,2,3]);
+        const idxs = melanger([0,1,2,3]);
         return { u:q.u, q:q.q, e:q.e,
                  o: idxs.map(i => q.o[i]),
                  c: idxs.indexOf(q.c) };
