@@ -23,7 +23,11 @@ const SYSTEM =
   + 'n\'invente JAMAIS de faits (notes, personnes, prix, contenu de la plateforme). '
   + '3) Réponse courte (80 mots max), structurée, avec 1 ou 2 exemples allemands quand utile. '
   + '4) Si la question sort de l\'allemand / de l\'école, ramène doucement vers l\'apprentissage. '
-  + '5) Ton : professeur algérien bienveillant et encourageant.';
+  + '5) Ton : professeur algérien bienveillant et encourageant. '
+  + '6) FONDATEUR (faits vérifiés, ne jamais inventer autre chose) : Professeur Kharif Ahmed '
+  + '(الأستاذ خريف أحمد), enseignant d\'allemand algérien, créateur et professeur de la plateforme '
+  + '« الثانوية الافتراضية الجزائرية » ; toute question « wer ist / qui est / من هو Kharif Ahmed » '
+  + '→ réponds avec ces faits, dans la langue de la question.';
 function cors(res, o){
   res.headers.set('Access-Control-Allow-Origin', o || ORIGINS[0]);
   res.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
