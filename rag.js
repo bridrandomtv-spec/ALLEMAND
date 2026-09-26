@@ -433,7 +433,7 @@
     const isAr = /[\u0600-\u06FF]/.test(q);
     if(isAr) return 'الأستاذ خريف أحمد هو مؤسس منصتي ومعلّمها — «الثانوية الافتراضية الجزائرية». هو أستاذ اللغة الألمانية من الجزائر، بناني لكي يتعلّم كل التلاميذ الألمانية: قراءة الدروس، شرح القواعد، والتدرّب على الفروض والاختبارات — بالعربية والألمانية والفرنسية والإسبانية والإيطالية.';
     const isDe = /wer\s+ist|deutsch/i.test(q);
-    if(isDe) return 'Prof. Kharif Ahmed ist der Gründer und Lehrer meiner Plattform — der «الثانوية الافتراضية الجزائرية» (Virtuelle Algerische Oberschule). Er ist Deutschlehrer aus Algerien und hat mich gebaut, damit alle Schülerinnen und Schüler Deutsch lernen können: Lektionen lesen, Grammatik üben und Prüfungen trainieren — auf Arabisch, Deutsch, Französisch, Spanisch und Italienisch.';
+    if(isDe) return 'Prof. Kharif Ahmed ist der Gründer und Lehrer meiner Plattform — der «Virtuellen Algerischen Oberschule» (Lycée Virtuel Algérien). Er ist Deutschlehrer aus Algerien und hat mich gebaut, damit alle Schülerinnen und Schüler Deutsch lernen können: Lektionen lesen, Grammatik üben und Prüfungen trainieren — auf Arabisch, Deutsch, Französisch, Spanisch und Italienisch.';
     const isFr = /qui\s+est/i.test(q);
     if(isFr) return 'Le Professeur Kharif Ahmed est le fondateur et l\u2019enseignant de ma plateforme — le « Lycée Virtuel Algérien ». Professeur d\u2019allemand algérien, il m\u2019a créée pour que tous les élèves apprennent l\u2019allemand : lire les leçons, expliquer la grammaire, s\u2019entraîner aux devoirs — en arabe, allemand, français, espagnol et italien.';
     const isEs = /qui\u00e9n\s+es/i.test(q);
