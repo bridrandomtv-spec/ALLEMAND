@@ -423,8 +423,28 @@
     return null;
   }
 
+  /* ── AGENT FONDATEUR : « wer ist / qui est / من هو Kharif Ahmed ? » → réponse vérifiée
+     dans la langue de la question (5 langues) ── */
+  function intentKharif(q){
+    if(!/kharif|karif|kharef|kherif|\u062e\u0631\u064a\u0641/i.test(q)) return null;
+    const ask = /wer\s+ist|who\s+is|qui\s+est|chi\s+\u00e8|qui\u00e9n\s+es|\u0645\u0646\s+\u0647\u0648|\u0645\u064a\u0646|\u0634\u0646\u0648|\u0648\u0627\u0634/i.test(q)
+      || /kharif\s+ahmed|ahmed\s+kharif|\u0627\u0644\u0623\u0633\u062a\u0627\u0630/i.test(q);
+    if(!ask) return null;
+    const isAr = /[\u0600-\u06FF]/.test(q);
+    if(isAr) return 'الأستاذ خريف أحمد هو مؤسس منصتي ومعلّمها — «الثانوية الافتراضية الجزائرية». هو أستاذ اللغة الألمانية من الجزائر، بناني لكي يتعلّم كل التلاميذ الألمانية: قراءة الدروس، شرح القواعد، والتدرّب على الفروض والاختبارات — بالعربية والألمانية والفرنسية والإسبانية والإيطالية.';
+    const isDe = /wer\s+ist|deutsch/i.test(q);
+    if(isDe) return 'Prof. Kharif Ahmed ist der Gründer und Lehrer meiner Plattform — der «الثانوية الافتراضية الجزائرية» (Virtuelle Algerische Oberschule). Er ist Deutschlehrer aus Algerien und hat mich gebaut, damit alle Schülerinnen und Schüler Deutsch lernen können: Lektionen lesen, Grammatik üben und Prüfungen trainieren — auf Arabisch, Deutsch, Französisch, Spanisch und Italienisch.';
+    const isFr = /qui\s+est/i.test(q);
+    if(isFr) return 'Le Professeur Kharif Ahmed est le fondateur et l\u2019enseignant de ma plateforme — le « Lycée Virtuel Algérien ». Professeur d\u2019allemand algérien, il m\u2019a créée pour que tous les élèves apprennent l\u2019allemand : lire les leçons, expliquer la grammaire, s\u2019entraîner aux devoirs — en arabe, allemand, français, espagnol et italien.';
+    const isEs = /qui\u00e9n\s+es/i.test(q);
+    if(isEs) return 'El profesor Kharif Ahmed es el fundador y maestro de mi plataforma — el « Bachillerato Virtual Argelino ». Profesor de alemán argelino, me creó para que todos los alumnos aprendan alemán: leer lecciones, explicar gramática y practicar exámenes — en árabe, alemán, francés, español e italiano.';
+    return 'Il professor Kharif Ahmed è il fondatore e insegnante della mia piattaforma — il « Liceo Virtuale Algerino ». Insegnante di tedesco algerino, mi ha creata perché tutti gli studenti imparino il tedesco: leggere le lezioni, spiegare la grammatica e allenarsi ai compiti — in arabo, tedesco, francese, spagnolo e italiano.';
+  }
+
   async function reponsePedagogique(q){
     q = darja(q);
+    const _kh = intentKharif(q);
+    if(_kh) return _kh;
     const _cva = intentConversationAr(q);
     if(_cva) return _cva;
     const _cv = intentConversation(q);
