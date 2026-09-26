@@ -67,7 +67,15 @@
         try{ console.warn('🧠 ia-ask :', j.err); }catch(_){}
         return fixLang(local); }
       window.__IA_ERR = '';
-      if(j.rep && j.rep.length > 10) return j.rep;
+      if(j.rep && j.rep.length > 10){
+        /* garde inverse : question arabe → jamais de réponse sans caractères arabes */
+        if(QL === 'ar' && !/[\u0600-\u06FF]/.test(j.rep)){
+          const loc = String(local || '');
+          return (loc && loc.indexOf('لا أعرف') === -1) ? loc :
+            'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم أو معنى كلمة — أو قل « الصفحة 11 » لأقرأها لك.';
+        }
+        return j.rep;
+      }
     }catch(e){}
     return fixLang(local);
   };
