@@ -441,8 +441,40 @@
     return 'Il professor Kharif Ahmed è il fondatore e insegnante della mia piattaforma — il « Liceo Virtuale Algerino ». Insegnante di tedesco algerino, mi ha creata perché tutti gli studenti imparino il tedesco: leggere le lezioni, spiegare la grammatica e allenarsi ai compiti — in arabo, tedesco, francese, spagnolo e italiano.';
   }
 
+  /* ── AGENT BIBLIOTHÈQUE : « donne-moi un devoir/exercice sur X » + « combien de documents ? » ── */
+  async function intentBiblio(q){
+    const wantDevoir = /(donne|donnez|apporte|zeige|gib|give|dame|voglio|\u0627\u0639\u0637\u0646\u064a|\u0647\u0627\u062a|\u062c\u064a\u0628|\u0648\u0631\u064a|\u062d\u0637)/i.test(q)
+      && /(devoir|exercice|fiche|sujet|corrige|corrigé|aufgabe|übung|examen|\u062a\u0645\u0627\u0631\u064a\u0646|\u0641\u0631\u0636|\u062a\u0645\u0631\u064a\u0646|\u0627\u062e\u062a\u0628\u0627\u0631)/i.test(q);
+    const wantStats = /(combien|how many|wie viele|cuántos|quanti|\u0643\u0645|\u0639\u062f\u062f)/i.test(q)
+      && /(document|page|devoir|exercice|fiche|leçon|lecon|\u0645\u0633\u062a\u0646\u062f|\u0635\u0641\u062d\u0629|\u0641\u0631\u0636|\u062f\u0631\u0633)/i.test(q);
+    if(!wantDevoir && !wantStats) return null;
+    if(!window.BIBLIO) return null;
+    const isAr = /[\u0600-\u06FF]/.test(q);
+    const isDe = !isAr && /\b(der|die|das|und|gib|zeige|wie viele)\b/i.test(q);
+    const isFr = !isAr && !isDe && /\b(combien|donne|le|la|les)\b/i.test(q);
+    if(wantStats){
+      let s = {};
+      try{ s = await BIBLIO.stats(); }catch(e){}
+      const lv = s.livre || 0, dv = s.devoirs || 0, gr = s.grammaire || 0, cp = s.corpus || 0;
+      const tot = lv + dv + gr + cp;
+      if(isAr) return '📚 مكتبة المنصة التعليمية : ' + lv + ' صفحة كتاب مفهرسة، ' + dv + ' فرضًا مصححًا، ' + gr + ' قاعدة قواعد، ' + cp + ' بطاقة مفردات — المجموع ' + tot + ' وثيقة. كل إجاباتي مبنية على هذه المكتبة.';
+      if(isDe) return '📚 Die Bibliothek der Plattform : ' + lv + ' Buchseiten, ' + dv + ' Arbeiten mit Lösungen, ' + gr + ' Grammatik-Einträge, ' + cp + ' Vokabelkarten — insgesamt ' + tot + ' Dokumente. Meine ganze Intelligenz kommt aus dieser Bibliothek.';
+      if(isFr) return '📚 La bibliothèque de la plateforme : ' + lv + ' pages de livre, ' + dv + ' devoirs corrigés, ' + gr + ' entrées de grammaire, ' + cp + ' fiches de vocabulaire — ' + tot + ' documents indexés. Toute mon intelligence vient de cette base.';
+      return '📚 La biblioteca de la plataforma : ' + lv + ' páginas, ' + dv + ' deberes corregidos, ' + gr + ' reglas, ' + cp + ' fichas — ' + tot + ' documentos.';
+    }
+    let hits = [];
+    try{ hits = await BIBLIO.search(q, 2); }catch(e){}
+    if(!hits.length) return null;
+    const h = hits[0];
+    const head = (isAr ? '📚 من مكتبة المنصة — ' : isDe ? '📚 Aus der Bibliothek — ' : isFr ? '📚 Depuis la bibliothèque — ' : '📚 De la biblioteca — ')
+      + '[' + h.src + ' ' + h.id + '] ' + (h.titre || '') + '\n';
+    return head + String(h.texte || '').slice(0, 1100);
+  }
+
   async function reponsePedagogique(q){
     q = darja(q);
+    const _bib = await intentBiblio(q);
+    if(_bib) return _bib;
     const _kh = intentKharif(q);
     if(_kh) return _kh;
     const _cva = intentConversationAr(q);
