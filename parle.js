@@ -258,7 +258,7 @@
     if(!SR){ setStatus('⚠️ navigateur sans écoute (utilise Chrome/Edge)'); listeningGuard = false; return; }
     try{ if(rec) rec.stop(); }catch(e){}
     rec = new SR();
-    rec.lang = (LCODE[LASTLANG] || (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2]);
+    rec.lang = (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2];
     rec.interimResults = false;
     rec.onresult = async ev => {
       const q = String(ev.results[0][0].transcript || '').trim();
