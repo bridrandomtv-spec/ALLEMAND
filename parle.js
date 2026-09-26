@@ -34,29 +34,31 @@
   };
   let ON = false, rec = null, lang = 'ar', speaking = false, listeningGuard = false, NS = 0, CONT = false, UT = 0, LASTSP = { t: 0, txt: '' }, LASTQ = { q: '', t: 0 }, LASTLANG = '';
 
-  /* ══════════ MOTEUR DE VOIX ARABE ══════════ */
+  /* ══════════ MOTEUR DE VOIX : FÉMININE NATURELLE prioritaire (mobile + laptop) ══════════ */
+  const FEM = /female|femme|woman|frau|weiblich|dame|sara|anna|lena|hedda|katja|vicky|marlene|amelie|clara|zira|hazel|susan|hortense|julie|paulina|monica|lucia|valentina|elsa|petra|gitta|vicki|josephine|amira|nora/i;
   const MALE_AR = /ismael|hamed|shakir|naayf|tarik|maged|abdul|farid|omar|male|homme|man/i;
+  const FEM_AR = /salma|layla|leila|maryam|zeina|amina|female|femme|woman|سلمى|ليلى|مريم|أمينة/i;
   function arVoices(){
     try{ return speechSynthesis.getVoices().filter(v => v.lang.toLowerCase().indexOf('ar') === 0); }
     catch(e){ return []; }
   }
-  function scoreAr(v){
+  function scoreVoice(v, pref){
     let s = 0;
-    if(/natural|neural|online|premium|enhanced/i.test(v.name)) s += 4;
-    if(MALE_AR.test(v.name)) s += 3;
-    if(/google/i.test(v.name)) s += 2;
-    if(v.lang.toLowerCase() === 'ar-dz') s += 1;
-    if(v.lang.toLowerCase() === 'ar-sa') s += 1;
+    const nm = String(v.name || '');
+    const lg = String(v.lang || '').toLowerCase();
+    /* 1) voix naturelles/neurales/en ligne = les plus belles (surtout mobile) */
+    if(/natural|neural|online|premium|enhanced|expressive/i.test(nm)) s += 6;
+    if(/google/i.test(nm)) s += 3;
+    if(/microsoft/i.test(nm)) s += 2;
+    /* 2) priorité FÉMININE pour de/fr/es/it/en ; féminine naturelle pour ar */
+    if(pref !== 'ar' && FEM.test(nm)) s += 5;
+    if(pref === 'ar' && FEM_AR.test(nm)) s += 4;
+    if(pref === 'ar' && MALE_AR.test(nm)) s += 2;
+    /* 3) correspondance exacte de la langue cible */
+    if(lg.indexOf(pref) === 0) s += 2;
     return s;
   }
-  function scoreDe(x){
-    let s = 0;
-    if(/natural|neural|online|premium|enhanced/i.test(x.name)) s += 4;
-    if(/conrad|stefan|markus|klaus|male|mann/i.test(x.name)) s += 3;
-    if(/google/i.test(x.name)) s += 2;
-    if(x.lang === 'de-DE') s += 1;
-    return s;
-  }
+  function scoreAr(v){ return scoreVoice(v, 'ar'); }
   function chosenArVoice(list){
     let pref = '';
     try{ pref = localStorage.getItem('dz_voix_ar') || ''; }catch(e){}
@@ -66,8 +68,6 @@
     return vs[0] || null;
   }
   function cloudAr(texte, done){
-    /* repli 100 % local (voix système par défaut) — AUCUN service tiers :
-       zéro requête externe, zéro stockage tiers, zéro alerte Tracking Prevention */
     try{
       const u = new SpeechSynthesisUtterance(texte);
       u.lang = 'ar-SA'; u.rate = 0.95;
@@ -79,7 +79,7 @@
     const sel = document.getElementById('plVoix');
     if(!sel) return;
     const vs = arVoices().sort((a, b) => scoreAr(b) - scoreAr(a));
-    sel.innerHTML = '<option value="">🔊 تلقائي (أفضل صوت عربي)</option>'
+    sel.innerHTML = '<option value="">🔊 تلقائي (أفضل صوت — أنثوي طبيعي)</option>'
       + vs.map(v => '<option value="' + v.name.replace(/"/g, '') + '">'
           + (MALE_AR.test(v.name) ? '👨 ' : '👤 ') + v.name + ' (' + v.lang + ')</option>').join('');
     try{ const p = localStorage.getItem('dz_voix_ar') || ''; if(p) sel.value = p; }catch(e){}
@@ -123,7 +123,7 @@
     const pref = String(code || 'de').slice(0, 2).toLowerCase();
     if(pref === 'ar'){ const p = chosenArVoice(all); if(p) return p; }
     let vs = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf(pref) === 0)
-      .sort((a, b) => scoreDe(b) - scoreDe(a));
+      .sort((a, b) => scoreVoice(b, pref));
     if(vs.length) return vs[0];
     const d = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf('de') === 0);
     if(d.length) return d[0];
@@ -183,7 +183,7 @@
     const code = LCODE[lg] || (lg + '-' + lg.toUpperCase());
     const pref = code.slice(0, 2);
     const vs = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf(pref) === 0)
-      .sort((a, b) => scoreDe(b) - scoreDe(a));
+      .sort((a, b) => scoreVoice(b, pref));
     if(vs.length) return vs[0];
     const en = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf('en') === 0);
     return en[0] || null;
