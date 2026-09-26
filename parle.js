@@ -278,7 +278,8 @@
         if(er) setStatus('🧠 ' + String(er).slice(0, 40));
         rep = lang === 'ar' ? 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم، أو معنى كلمة.'
             : 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung.'; }
-      setStatus('🗣️ …');
+      const RL = /[\u0600-\u06FF]/.test(rep) ? 'ar' : (/[\u00e4\u00f6\u00fc\u00df]/i.test(rep) ? 'de' : '');
+      setStatus('🌐 ' + (RL === 'ar' ? 'رد بالعربية' : RL === 'de' ? 'Antwort auf Deutsch' : 'réponse'));
       speak(rep.slice(0, 2200));
     };
     rec.onerror = e => { listeningGuard = false;
