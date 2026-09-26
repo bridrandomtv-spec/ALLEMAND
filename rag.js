@@ -388,8 +388,31 @@
     return null;
   }
 
+  /* ── AGENT CONVERSATION : petites questions en allemand → réponse en allemand ── */
+  function intentConversation(q){
+    const isAr = /[\u0600-\u06FF]/.test(q);
+    const isDe = !isAr && (/[\u00e4\u00f6\u00fc\u00df]/i.test(q) ||
+      /\b(der|die|das|und|nicht|ich|du|ist|ein|eine|wo|wie|was|wer|bist|geht|hallo|guten)\b/i.test(q));
+    if(!isDe) return null;
+    if(/wo\s+bist\s+du/i.test(q))
+      return 'Ich bin immer hier — auf deiner Plattform, bereit zum Üben! Und wo bist du? In Algier? In Oran? In Constantine?';
+    if(/wie\s+geht\s+(es\s+)?(dir|ihnen|s)/i.test(q))
+      return 'Danke, gut! Und dir? Wie geht es dir heute?';
+    if(/(wer|was)\s+bist\s+du/i.test(q))
+      return 'Ich bin deine intelligente Deutsch-Plattform aus Algerien — ich lese, erkläre und übe mit dir!';
+    if(/wie\s+alt\s+bist\s+du/i.test(q))
+      return 'Ich bin noch ganz jung — aber ich lerne jeden Tag dazu, genau wie du!';
+    if(/^(hallo|hi|hey)\b/i.test(q) || /guten\s+(tag|morgen|abend)/i.test(q))
+      return 'Hallo! Schön, dass du da bist! Frag mich etwas auf Deutsch oder Arabisch — oder sag « Seite 11 », ich lese sie dir vor.';
+    if(/woher\s+kommst\s+du/i.test(q))
+      return 'Ich komme aus deiner Plattform — aus Algerien, für alle Deutschlernenden! Und woher kommst du?';
+    return null;
+  }
+
   async function reponsePedagogique(q){
     q = darja(q);
+    const _cv = intentConversation(q);
+    if(_cv) return _cv;
     const _lec = await intentLecture(q);
     if(_lec) return _lec;
     /* conjugaison prioritaire : « كيف اتصرف sein » / « صرف haben » / « sein » seul */
