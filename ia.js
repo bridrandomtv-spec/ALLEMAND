@@ -27,9 +27,14 @@
       es: 'No lo he entendido. Pregúntame por conjugación, artículo, plural, número o significado — o di « página 11 ».',
       it: 'Non ho capito. Chiedimi coniugazione, articolo, plurale, numero o significato — o di « pagina 11 ».'
     };
-    const fixLang = s => (QL && QL !== 'ar' && /[\u0600-\u06FF]/.test(String(s || ''))) ? (FB[QL] || s) : s;
+    /* ratio de caractères arabes : une réponse n'est « dans la mauvaise langue »
+       que si elle est MAJORITAIREMENT arabe — quelques mots arabes (noms propres,
+       citations du manuel) ne doivent plus faire jeter une bonne réponse */
+    const arR = s => { const c = String(s || '').replace(/\s/g, ''); if(!c.length) return 0;
+      return ((c.match(/[\u0600-\u06FF]/g) || []).length) / c.length; };
+    const fixLang = s => (QL && QL !== 'ar' && arR(s) > 0.5) ? (FB[QL] || s) : s;
     const weak = !local || local.indexOf('لا أعرف') !== -1 || local.length < 25 ||
-      (QL && QL !== 'ar' && /[\u0600-\u06FF]/.test(local));
+      (QL && QL !== 'ar' && arR(local) > 0.5);
     if(!weak) return fixLang(local);
     try{
       const k = 'dz_ia_' + new Date().toDateString();
