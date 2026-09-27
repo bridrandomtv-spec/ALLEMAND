@@ -18,6 +18,15 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css"><link rel="stylesheet" href="style.css">
+<script>
+/* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
+window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
+window.LIEN_SEANCE_PAGE = function(unite, seance){
+  const r = window.UNITE_PAGES[String(unite)]; if(!r) return null;
+  const span = r[1]-r[0]+1, step = Math.max(1, Math.floor(span/6));
+  let p = r[0] + (seance-1)*step; if(seance>=6) p = r[1]; return Math.min(p, r[1]);
+};
+</script>
 </head>
 <body>
 
@@ -231,7 +240,7 @@
               <div class="po-p">سبتمبر - ديسمبر</div>
               <div class="po-bar"><i style="width:50%"></i></div>
               <div class="po-s ok">٣ / ٦ مكتمل</div>
-              <div class="po-u">الوحدة 1 · Sich vorstellen<br>الوحدة 2 · Familie und Freunde</div>
+              <div class="po-u">الوحدة 1 · التعريف بالنفس<br>الوحدة 2 · المنزل والعائلة<br>الوحدة 3 · المدرسة والدرس<br>الوحدة 4 · الوقت والطقس<br>الوحدة 5 · أوقات الفراغ<br>الوحدة 6 · الإنسان والصحة<br>الوحدة 7 · الأكل والشرب<br>الوحدة 8 · المظهر والشخصية<br>الوحدة 9 · حياة المدينة والريف<br><span style="opacity:.7;font-size:.85em">(L1: p5–29, L2: p31–55, L3: p57–76, L4: p77–101, L5: p103–127, L6: p129–149, L7: p151–180, L8: p181–205, L9: p207–223)</span></div>
               <button class="btn btn-o btn-sm po-b" data-go="classe">📖 الدروس الرسمية</button>
             </div>
             <div class="po-t">
