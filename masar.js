@@ -21,8 +21,8 @@
     const faibles = (window.MEMOIRE && MEMOIRE.carteErreurs) ? MEMOIRE.carteErreurs() : [];
 
     let h = '<div class="ms-hero"><span class="ms-crest">🧭</span><div>'
-      + '<h2>مسارك</h2><p class="ms-sub">une seule chose à faire maintenant — '
-      + 'le reste attend</p></div></div>';
+      + '<h2>مسارك</h2><p class="ms-sub">شيء واحد فقط الآن — '
+      + 'والباقي ينتظر</p></div></div>';
 
     /* 1) priorité : révision due */
     if(dues.length){
@@ -41,14 +41,14 @@
     /* 2) sinon : prochaine séance */
     else if(next){
       h += '<div class="card ms-next">'
-        + '<div class="ms-tag">▶ prochaine étape</div>'
+        + '<div class="ms-tag">▶ الخطوة التالية</div>'
         + '<h3>الحصة ' + (next.prochaine ? next.prochaine.n : '?') + ' · '
         + esc(next.prochaine ? next.prochaine.ar : '') + '</h3>'
         + '<p class="ms-why">unité ' + next.unite + ' — ' + esc(next.titre) + ' · '
-        + next.faites + '/' + next.total + ' séances faites</p>'
+        + next.faites + '/' + next.total + ' حصّة منجزة</p>'
         + '<div class="ms-bar"><i style="width:' +
           Math.round(next.faites / next.total * 100) + '%"></i></div>'
-        + '<button class="btn btn-p btn-block" data-go="seances">📚 commencer la séance</button>'
+        + '<button class="btn btn-p btn-block" data-go="seances">📚 ابدأ الحصّة</button>'
         + '</div>';
     }
     /* 3) sinon : tout est fait */
@@ -71,11 +71,11 @@
         + '<p class="ms-why">ces compétences reviendront plus souvent dans tes révisions.</p></div>';
     }
     if(next){
-      h += '<div class="card ms-prog"><h3>📈 progression de l’unité ' + next.unite + '</h3>'
+      h += '<div class="card ms-prog"><h3>📈 تقدّم الوحدة ' + next.unite + '</h3>'
         + '<div class="ms-bar big"><i style="width:' +
           Math.round(next.faites / next.total * 100) + '%"></i></div>'
-        + '<p class="ms-why">' + next.faites + ' / ' + next.total + ' séances · '
-        + (next.total - next.faites) + ' restante(s)</p></div>';
+        + '<p class="ms-why">' + next.faites + ' / ' + next.total + ' séaحصص · '
+        + (next.total - next.faites) + ' متبقية</p></div>';
     }
     box.innerHTML = h;
   }
