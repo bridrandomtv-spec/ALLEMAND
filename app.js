@@ -48,7 +48,7 @@ const LS = {
   parent  : 'dz_de_parent_v1'
 };
 
-/* ─────────────── UNITÉ 1 : Sich vorstellen (8 séances) ─────────────── */
+/* ─────────────── UNITÉ 1 : Sich vorstellen (8 حصص) ─────────────── */
 const SEANCES_U1 = [
   { n:1, de:'Begrüßung und sich vorstellen', ar:'التحية والتعارف', dur:60,
     obj:['التحية بالألمانية','التعريف بالاسم','الوداع'],
@@ -184,7 +184,7 @@ const SEANCES_U1 = [
            opts:['Wie heißt du?','Wo wohnst du?','Wie alt bist du?','Woher kommst du?'],a:0,
            why:'<span class="de-in"><b>Wie heißt du?</b></span> appelle <b>Ich heiße …</b>'}]},
 
-{ n:8, de:'Évaluation de l’unité 📝', ar:'فرض الوحدة', dur:45,
+{ n:8, de:'Évaluation de l’وحدة 📝', ar:'فرض الوحدة', dur:45,
     obj:['اختبار كتابي /20','45 دقيقة','تصحيح نموذجي'], ex:'devoir'}
 ];
 
@@ -381,7 +381,7 @@ function paintUniteHead(){
   }
 }
 
-/* ── Stockage isolé par unité ── */
+/* ── Stockage isolé par وحدة ── */
 function uniteKey(n){ return LS.seances + ':u' + (n || currentUnite); }
 function loadSeancesFor(n){ return load(uniteKey(n), {done:[], exo:{}}); }
 function loadSeances(){ return load(uniteKey(), {done:[], exo:{}}); }
@@ -518,7 +518,7 @@ const PROF = {
     'جرّب أن تكتب جملتك بالألمانية وسأصحّحها فوراً. مثال: '
     + '<span class="de-in">Ich bin 16 Jahre alt.</span>'
   ],
-  /* Correction automatique d'une phrase allemande (règles de l'unité 1) */
+  /* Correction automatique d'une phrase allemande (règles de l'وحدة 1) */
   corriger(txt){
     const s = String(txt || '').trim();
     if(!s || !/[a-zA-ZäöüßÄÖÜ]/.test(s)) return null;
@@ -699,7 +699,7 @@ function renderTabs(){
   c.innerHTML = h;
 }
 
-/* 🧭 prochaine séance non faite du niveau actif (pour masar.js). */
+/* 🧭 prochaine حصة non faite du niveau actif (pour masar.js). */
 function prochaineSeance(){
   const st = loadSeances();
   const done = st.done || [];
@@ -823,10 +823,10 @@ function renderSeances(){
    ══════════════════════════════════════════════════════════════════════ */
 /* ══════════════════════════════════════════════════════════════════════
    RYTHMES OFFICIELS DES SÉANCES — test T5 de la maquette du professeur
-     sum([5, 15, 15, 15, 10])     == 60   · 5 étapes · séance type
+     sum([5, 15, 15, 15, 10])     == 60   · 5 étapes · حصة type
      sum([5, 5, 10, 15, 10, 10, 5]) == 60 · 7 étapes · compréhension de texte
      sum([5, 10, 20, 10, 10, 5])  == 60   · 6 étapes · production écrite
-   Le rythme est choisi par TYPE de séance, puis mis à l'échelle si la
+   Le rythme est choisi par TYPE de حصة, puis mis à l'échelle si la
    durée réelle diffère de 60 minutes (45 min, 90 min…).
    ══════════════════════════════════════════════════════════════════════ */
 const ETAPES_PAR_TYPE = {
@@ -863,7 +863,7 @@ const ETAPES_PAR_TYPE = {
 const ETAPES_SEANCE = ETAPES_PAR_TYPE.defaut;
 const ETAPES_TOTAL = ETAPES_SEANCE.reduce(function(a, e){ return a + e.m; }, 0);   /* 60 */
 
-/* Détermine le rythme d'après le type de la séance (surchargeable via s.rythme). */
+/* Détermine le rythme d'après le type de la حصة (surchargeable via s.rythme). */
 function typeSeance(s){
   if(!s) return 'defaut';
   if(s.rythme && ETAPES_PAR_TYPE[s.rythme]) return s.rythme;
@@ -873,8 +873,8 @@ function typeSeance(s){
   return 'defaut';
 }
 
-/* Barème proportionnel pour les séances qui ne durent pas 60 minutes.
-   Accepte soit l'objet séance, soit une durée brute (rétro-compatibilité). */
+/* Barème proportionnel pour les حصص qui ne durent pas 60 minutes.
+   Accepte soit l'objet حصة, soit une durée brute (rétro-compatibilité). */
 function etapesPour(s){
   const seance = (s && typeof s === 'object') ? s : { dur: s };
   const cle = typeSeance(seance);
@@ -889,7 +889,7 @@ function etapesPour(s){
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   GRILLE DE CRITÈRES — production écrite de séance, notée sur 5
+   GRILLE DE CRITÈRES — production écrite de حصة, notée sur 5
    Maquette : {"5 informations": 2, "conjugaison + alt": 1,
                "place du verbe": 1, "lisibilité": 1}  →  total 5
    ══════════════════════════════════════════════════════════════════════ */
@@ -901,7 +901,7 @@ const GRILLE_S5 = [
 ];
 const GRILLE_S5_TOTAL = GRILLE_S5.reduce(function(a, g){ return a + g[1]; }, 0);   /* 5 */
 
-/* Une séance de production écrite se note sur 5, sauf grille explicite. */
+/* Une حصة de production écrite se note sur 5, sauf grille explicite. */
 function estTextproduktion(s){
   if(!s) return false;
   const t = String(s.de || '') + ' ' + String(s.ar || '');
@@ -913,7 +913,7 @@ function grillePour(s){
   return estTextproduktion(s) ? GRILLE_S5 : null;
 }
 
-/* Ligne de temps des 5 étapes, insérée en tête de chaque séance. */
+/* Ligne de temps des 5 étapes, insérée en tête de chaque حصة. */
 function renderEtapes(s){
   const et = etapesPour(s);
   const tyc = typeSeance(s);
@@ -922,7 +922,7 @@ function renderEtapes(s){
   const tot = et.reduce(function(a, e){ return a + e.m; }, 0);
   let cum = 0;
   return '<div class="etapes">'
-    + '<div class="et-h"><b>⏱️ déroulé de la séance</b>'
+    + '<div class="et-h"><b>⏱️ déroulé de la حصة</b>'
     + '<span>' + et.length + ' étapes · ' + tot + ' min · '
       + esc(LIB[tyc] || tyc) + '</span></div>'
     + '<div class="et-bar">' + et.map(function(e){
@@ -1872,7 +1872,7 @@ function renderCompte(){
 window.DZ = {
   $:$, $$:$$, load:load, store:store, esc:esc, toast:toast, speak:speak, go:go,
   PROF:PROF, LS:LS, WA_NUMBER:WA_NUMBER,
-  /* SEANCES et DEVOIR sont commutables (multi-unités) → exposés en getters */
+  /* SEANCES et DEVOIR sont commutables (multi-وحدةs) → exposés en getters */
   get SEANCES(){ return SEANCES; },
   get DEVOIR(){ return DEVOIR; },
   renderStats:renderStats, addMsg:addMsg, currentView:() => currentView,
