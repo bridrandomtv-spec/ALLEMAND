@@ -8,7 +8,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-/* ═══ Banque de questions — 6 unités × 5 questions ═══
+/* ═══ Banque de questions — 9 unités (= 9 Lektionen du livre) · 46 questions ═══
    Format : q = énoncé · o = 4 options · c = index de la bonne réponse
             e = explication (affichée après la réponse) · u = unité   */
 const QUIZ_BANK = [
@@ -56,7 +56,7 @@ const QUIZ_BANK = [
   { u:3, q:'«___ Montag habe ich Deutsch.»',
     o:['In','Am','Um','An'], c:1,
     e:'أيام الأسبوع → <b>am</b> (= an dem). الساعات → <b>um</b>. الشهور/الفصول → <b>im</b>.' },
-  { u:3, q:'«halb neun» تعني :',
+  { u:4, q:'«halb neun» تعني :',
     o:['9:30','8:30','9:00','8:00'], c:1,
     e:'⚠️ <span class="de-in">halb neun</span> = <b>8:30</b> («نصف الطريق إلى التاسعة»). الخطأ رقم 1 عند الجزائريين!' },
   { u:3, q:'«In der Bibliothek ___ man nicht laut sprechen.» (يُمنع)',
@@ -67,16 +67,16 @@ const QUIZ_BANK = [
   { u:4, q:'«Ich ___ um 6 Uhr ___ .» (أستيقظ)',
     o:['stehe … auf','auf … stehe','stehe auf …','aufstehe …'], c:0,
     e:'فعل انفصالي : الجذر في المركز 2 و<b>البادئة في الآخر</b> → stehe … <b>auf</b>.' },
-  { u:4, q:'«Gestern ___ ich früh aufgestanden.»',
+  { u:6, q:'«Gestern ___ ich früh aufgestanden.»',
     o:['habe','bin','war','werde'], c:1,
     e:'<span class="de-in">aufstehen</span> = تغيّر حالة → المساعد <b>sein</b>.' },
-  { u:4, q:'صيغة الأمر (du) من «nehmen» :',
+  { u:6, q:'صيغة الأمر (du) von «nehmen» :',
     o:['Nehme!','Nimm!','Nehmt!','Nehmen Sie!'], c:1,
     e:'فعل قوي : <span class="de-in">du n<b>i</b>mmst</span> → <b>Nimm!</b> (بدون -st وبدون ضمير).' },
-  { u:4, q:'«Ich fahre ___ dem Bus ___ Schule.»',
+  { u:9, q:'«Ich fahre ___ dem Bus ___ Schule.»',
     o:['mit … zur','nach … zur','zu … nach','mit … nach'], c:0,
     e:'الوسيلة → <b>mit</b> + Dativ · المدرسة → <b>zu + der = zur</b> Schule.' },
-  { u:4, q:'أفضل صيغة للاقتراح على صديق :',
+  { u:5, q:'أفضل صيغة للاقتراح على صديق :',
     o:['Wir gehen ins Kino!','Geh ins Kino!','Wollen wir ins Kino gehen?','Ich gehe ins Kino.'], c:2,
     e:'<span class="de-in"><b>Wollen wir</b> … ?</span> أو <span class="de-in"><b>Lass uns</b> … !</span> = اقتراح مهذّب.' },
 
@@ -113,6 +113,41 @@ const QUIZ_BANK = [
   { u:6, q:'«Berlin ist ___ (groß) als Oran.»',
     o:['größer','größter','mehr groß','am größten'], c:0,
     e:'المقارنة : <b>größer als</b> (مع umlaut). التفضيل : <b>am größten</b>.' }
+,
+
+  /* ── أسئلة جديدة موزعة على الوحدات 9 (مبنية على محتوى الكتاب المفهرس) ── */
+  { u:3, q:'«Wir haben heute vier ___ .» (حصص)', o:['Stunden','Uhren','Zeiten','Minuten'], c:0,
+    e:'<span class="de-in">die Stunde</span> = الحصة الدراسية.' },
+  { u:4, q:'«Es ist 8:15» بالألمانية؟', o:['Viertel nach acht','Viertel vor acht','halb neun','acht Uhr fünfzehn'], c:0,
+    e:'8:15 = <span class="de-in">Viertel nach acht</span>.' },
+  { u:4, q:'في أي فصل يسقط الثلج؟', o:['Im Winter','Im Sommer','Im Frühling','Im Herbst'], c:0,
+    e:'<span class="de-in">Im Winter schneit es</span> — الشتاء = der Winter.' },
+  { u:4, q:'«Die Sonne ___ .» (تسطع)', o:['scheint','regnet','schneit','weht'], c:0,
+    e:'<span class="de-in">die Sonne scheint</span> = الشمس تسطع.' },
+  { u:5, q:'«Am Wochenende gehe ich ins ___ .» (لأشاهد فيلماً)', o:['Kino','Schule','Büro','Krankenhaus'], c:0,
+    e:'<span class="de-in">ins Kino gehen</span> = الذهاب إلى السينما (Freizeit).' },
+  { u:5, q:'«Was ist dein Hobby?» — الإجابة الصحيحة:', o:['Ich spiele gern Fußball.','Ich heiße Peter.','Ich bin 16.','Ich wohne in Alger.'], c:0,
+    e:'الهواية: <span class="de-in">Ich spiele gern Fußball</span>.' },
+  { u:5, q:'«Ich mag gern ___ .» (قراءة الكتب)', o:['Bücher lesen','schlafen','arbeiten','warten'], c:0,
+    e:'<span class="de-in">Bücher lesen</span> = قراءة الكتب.' },
+  { u:5, q:'«Hast du Lust, ins Kino zu ___ ?»', o:['gehen','geht','ging','gegangen'], c:0,
+    e:'بعد «zu» يأتي المصدر: <span class="de-in">zu gehen</span>.' },
+  { u:6, q:'«Mein Kopf tut mir weh» = ماذا عندي؟', o:['Kopfschmerzen','Halsschmerzen','Bauchschmerzen','Fieber'], c:0,
+    e:'<span class="de-in">Kopfschmerzen</span> = ألم الرأس (Kompositum).' },
+  { u:6, q:'«Mit den ___ sehen wir.»', o:['Augen','Ohren','Zähnen','Händen'], c:0,
+    e:'<span class="de-in">die Augen</span> = العينان — بهما نرى.' },
+  { u:6, q:'«Der Kopf tut ___ weh.» (الرجل — Dativ)', o:['dem Mann','der Mann','den Mann','des Mannes'], c:0,
+    e:'weh tun + <b>Dativ</b>: <span class="de-in">dem Mann</span>.' },
+  { u:8, q:'«Sie hat lange blonde ___ .»', o:['Haare','Augen','Nasen','Ohren'], c:0,
+    e:'<span class="de-in">die Haare</span> = الشعر (Aussehen).' },
+  { u:8, q:'«Wie ___ sie aus?» (كيف تبدو؟)', o:['sieht','ist','hat','geht'], c:0,
+    e:'<span class="de-in">aus|sehen</span>: Wie sieht sie aus?' },
+  { u:8, q:'«Herr Schulz ist 70, Uwe ist 30 : Herr Schulz ist ___ als Uwe.»', o:['älter','jünger','größer','kleiner'], c:0,
+    e:'<span class="de-in">älter als</span> = أكبر من (Komparativ).' },
+  { u:8, q:'«ein netter ___» (رجل لطيف — Nominativ Maskulin)', o:['Mann','Frau','Kind','Leute'], c:0,
+    e:'Adjektivdeklination: <span class="de-in">ein netter Mann</span>.' },
+  { u:8, q:'ضد «dick» (رفيع)؟', o:['dünn','groß','alt','blond'], c:0,
+    e:'<span class="de-in">dünn</span> = رفيع ≠ dick = سمين.' },
 ];
 
 (function(){
@@ -238,11 +273,12 @@ const QUIZ_BANK = [
       '<div class="qz-unites">' +
         '<button class="qz-u' + (filtre===0?' on':'') + '" data-unite="0">' +
           '<b>🎲 الكل</b><i>' + totalQ + ' سؤالاً · سحب عشوائي</i></button>' +
-        [1,2,3,4,5,6].map(u => {
+        [1,2,3,4,5,6,7,8,9].map(u => {
           const n = parU[u] || 0;
           const bt = b['u' + u];
-          const nm = ({1:'التعريف بالنفس',2:'العائلة والأصدقاء',3:'المدرسة والتكوين',
-                       4:'الحياة اليومية',5:'المأكل والمشرب',6:'السفر والنقل'})[u];
+          const nm = ({1:'التعريف بالنفس',2:'البيت والعائلة',3:'المدرسة والدرس',4:'الوقت والطقس',
+                       5:'أوقات الفراغ',6:'الإنسان والصحة',7:'المأكل والمشرب',
+                       8:'المظهر والشخصية',9:'المدينة والريف'})[u];
           return '<button class="qz-u' + (filtre===u?' on':'') + '" data-unite="' + u + '">' +
             '<b>الوحدة ' + u + '</b><i>' + nm + ' · ' + n + ' أسئلة</i>' +
             (bt ? '<span class="qz-b">🏆 ' + bt.score + '/' + PAR_SERIE + '</span>' : '') +
