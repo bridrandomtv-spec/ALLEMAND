@@ -48,145 +48,6 @@ const LS = {
   parent  : 'dz_de_parent_v1'
 };
 
-/* ─────────────── UNITÉ 1 : Sich vorstellen (8 حصص) ─────────────── */
-const SEANCES_U1 = [
-  { n:1, de:'Begrüßung und sich vorstellen', ar:'التحية والتعارف', dur:60,
-    obj:['التحية بالألمانية','التعريف بالاسم','الوداع'],
-    lex:[['Guten Morgen','صباح الخير'],['Guten Tag','نهارك سعيد'],['Guten Abend','مساء الخير'],
-         ['Gute Nacht','تصبح على خير'],['Hallo','مرحبا'],['Tschüs','مع السلامة (غير رسمي)'],
-         ['Auf Wiedersehen','إلى اللقاء (رسمي)'],['Wie heißt du?','ما اسمك؟'],['Ich heiße…','أنا اسمي…']],
-    gram:{t:'W-Fragen : Wie heißt du?',
-      b:['<b>Wie</b> = كيف','<b>Woher</b> = من أين','<b>Wo</b> = أين','<b>Wer</b> = من'],
-      ex:'<b class="de-in">Wie heißt du?</b> — <span class="de-in">Ich heiße Amine.</span>'},
-    exos:[{q:'Comment dit-on «صباح الخير» ?',opts:['Guten Abend','Guten Morgen','Gute Nacht','Tschüs'],a:1,
-           why:'<span class="de-in">Guten Morgen</span> = صباح الخير. <span class="de-in">Guten Abend</span> = مساء الخير.'},
-          {q:'Quelle formule est OFFICIELLE pour dire au revoir ?',
-           opts:['Tschüs','Hallo','Auf Wiedersehen','Gute Nacht'],a:2,
-           why:'<span class="de-in">Auf Wiedersehen</span> est formel ; <span class="de-in">Tschüs</span> est familier.'}]},
-
-  { n:2, de:'Persönliche Informationen', ar:'المعلومات الشخصية', dur:60,
-    obj:['العمر','البلد والمدينة','العائلة'],
-    lex:[['Ich bin … Jahre alt','عمري … سنة'],['Ich komme aus Algerien','أنا من الجزائر'],
-         ['Ich wohne in Bouira','أسكن في البويرة'],['die Familie','العائلة'],
-         ['der Vater','الأب'],['die Mutter','الأم'],['die Schwester','الأخت'],['der Bruder','الأخ'],
-         ['Ich habe zwei Schwestern','لديّ أختان']],
-    gram:{t:'Les nombres de 1 à 20',
-      b:['eins · zwei · drei · vier · fünf','sechs · sieben · acht · neun · zehn',
-         'elf · zwölf · dreizehn · vierzehn · fünfzehn','sechzehn · siebzehn · achtzehn · neunzehn · zwanzig'],
-      ex:'<span class="de-in">Ich bin <b>sechzehn</b> Jahre alt.</span> = عمري 16 سنة.'},
-    exos:[{q:'Complète : «Ich ___ 16 Jahre alt.»',opts:['habe','bin','komme','heiße'],a:1,
-           why:'On utilise <b>sein</b> pour l’âge : <span class="de-in">ich <b>bin</b> 16 Jahre alt</span>.'},
-          {q:'«Woher kommst du?» — Réponse correcte :',
-           opts:['Ich wohne in Bouira.','Ich komme aus Algerien.','Ich bin 16.','Ich heiße Amine.'],a:1,
-           why:'<b>Woher</b> (من أين) appelle une origine : <span class="de-in">Ich komme aus …</span>'}]},
-
-  { n:3, de:'Das Verb «sein»', ar:'الفعل sein', dur:60,
-    obj:['تصريف sein في الحاضر','الاستعمال مع الصفة','الجنسية'],
-    lex:[['sein','يكون'],['ich bin','أنا أكون'],['du bist','أنت تكون'],['er/sie/es ist','هو/هي يكون'],
-         ['wir sind','نحن نكون'],['ihr seid','أنتم تكونون'],['sie/Sie sind','هم يكونون / حضرتكم'],
-         ['algerisch','جزائري'],['deutsch','ألماني']],
-    gram:{t:'Conjugaison — sein (Präsens)',
-      tbl:[['ich','bin'],['du','bist'],['er / sie / es','ist'],['wir','sind'],['ihr','seid'],['sie / Sie','sind']],
-      ex:'<span class="de-in">Ich <b>bin</b> algerisch.</span> · <span class="de-in">Sie <b>ist</b> deutsch.</span>'},
-    exos:[{q:'«Du ___ mein Freund.»',opts:['bin','ist','bist','sind'],a:2,why:'<span class="de-in">du</span> → <b>bist</b>.'},
-          {q:'«Wir ___ aus Algerien.»',opts:['sind','seid','ist','bin'],a:0,why:'<span class="de-in">wir</span> → <b>sind</b>.'},
-          {q:'«___ Sie Herr Kharif?»',opts:['Bist','Sind','Ist','Seid'],a:1,
-           why:'<span class="de-in">Sie</span> (vouvoiement) → <b>sind</b>.'}]},
-
-  { n:4, de:'Das Verb «haben»', ar:'الفعل haben', dur:60,
-    obj:['تصريف haben','التعبير عن الملكية','الأرقام مع haben'],
-    lex:[['haben','يملك / لديه'],['ich habe','أنا أملك'],['du hast','أنت تملك'],['er/sie/es hat','هو/هي يملك'],
-         ['wir haben','نحن نملك'],['ihr habt','أنتم تملكون'],['sie/Sie haben','هم يملكون'],
-         ['ein Buch','كتاب'],['eine Schwester','أخت']],
-    gram:{t:'Conjugaison — haben (Präsens)',
-      tbl:[['ich','habe'],['du','hast'],['er / sie / es','hat'],['wir','haben'],['ihr','habt'],['sie / Sie','haben']],
-      ex:'<span class="de-in">Ich <b>habe</b> zwei Schwestern.</span> = لديّ أختان.'},
-    exos:[{q:'«___ du Geschwister?»',opts:['Haben','Hast','Hat','Bist'],a:1,why:'<span class="de-in">du</span> → <b>hast</b>.'},
-          {q:'«Lena ___ zwei Schwestern.»',opts:['habe','hast','hat','haben'],a:2,
-           why:'Lena = <span class="de-in">sie</span> (3e pers. sg.) → <b>hat</b>.'}]},
-
-  { n:5, de:'Textverständnis : Lena Fischer', ar:'فهم نص تقديمي', dur:60,
-    obj:['قراءة نص ألماني','استخراج المعلومات','الإجابة بجمل كاملة'],
-    texte:'<div class="reading"><p><b>Lena Fischer</b></p>'
-        + '<p>Hallo! Ich heiße Lena Fischer. Ich bin 17 Jahre alt und komme aus Deutschland. '
-        + 'Ich wohne in München. Ich habe eine große Familie: einen Bruder und zwei Schwestern. '
-        + 'Mein Bruder ist 20 und heißt Tim. Meine Schwester Anna ist 15. '
-        + 'Am Morgen sage ich immer: «Guten Morgen, Mama!» Und am Abend: «Gute Nacht!»</p></div>',
-    exos:[{q:'Richtig oder Falsch : Lena kommt aus Algerien.',
-           opts:['Richtig (صحيح)','Falsch (خطأ)'],a:1,
-           why:'<span class="de-in">Ich komme aus <b>Deutschland</b>.</span>'},
-          {q:'Richtig oder Falsch : Lena ist 17 Jahre alt.',
-           opts:['Richtig (صحيح)','Falsch (خطأ)'],a:0,
-           why:'<span class="de-in">Ich bin <b>17</b> Jahre alt.</span>'},
-          {q:'Richtig oder Falsch : Tim ist 20 Jahre alt.',
-           opts:['Richtig (صحيح)','Falsch (خطأ)'],a:0,
-           why:'<span class="de-in">Mein Bruder ist <b>20</b> und heißt Tim.</span>'},
-          {q:'Richtig oder Falsch : Lena wohnt in Berlin.',
-           opts:['Richtig (صحيح)','Falsch (خطأ)'],a:1,
-           why:'<span class="de-in">Ich wohne in <b>München</b>.</span>'},
-          {q:'Wie viele Schwestern hat Lena?',opts:['eine','zwei','drei','keine'],a:1,
-           why:'<span class="de-in">Ich habe … <b>zwei</b> Schwestern</span> (Anna, 15) '
-             + '+ einen Bruder (Tim, 20).'},
-          {q:'Was sagt Lena am Abend?',
-           opts:['Guten Morgen, Mama!','Gute Nacht!','Auf Wiedersehen!','Tschüs!'],a:1,
-           why:'<span class="de-in">Und am Abend: <b>Gute Nacht!</b></span>'}]},
-
-  { n:6, de:'Textproduktion (Aufgabe)', ar:'إنتاج كتابي ✍️ — المهمة النهائية', dur:60,
-    obj:['كتابة فقرة تقديمية','ترتيب الأفكار','استعمال sein/haben'],
-    consigne:'<div class="exo"><div class="q-t"><b>📌 المهمة :</b> اكتب فقرة من <b>5 à 8 أسطر</b> '
-           + 'تعرّف فيها بنفسك مستعملاً :<ul style="margin:8px 20px 0;color:var(--m);font-size:13px">'
-           + '<li>التحية + الاسم</li><li>العمر + البلد + المدينة</li><li>العائلة (haben)</li>'
-           + '<li>الهوايات</li><li>الوداع</li></ul></div></div>',
-    modele:'<div class="corrige"><h3>✅ نموذج الإجابة — Modellösung</h3><div class="reading">'
-         + '<p>Hallo! Ich heiße Amine Benali. Ich bin 16 Jahre alt. Ich komme aus Algerien '
-         + 'und ich wohne in Bouira.</p>'
-         + '<p>Meine Familie ist klein. Ich habe einen Bruder und eine Schwester. Mein Vater '
-         + 'heißt Karim und meine Mutter heißt Fatima.</p>'
-         + '<p>In der Schule lerne ich Deutsch und Englisch. Meine Hobbys sind Fußball und Musik. '
-         + 'Am Abend sage ich: «Gute Nacht!»</p><p>Tschüs!</p></div></div>',
-    exos:[{type:'texte',q:'✍️ اكتب فقرتك هنا (سيصححها الأستاذ الافتراضي):',ph:'Hallo! Ich heiße …'}]},
-
-    { n:7, de:'Hôpital des erreurs', ar:'مستشفى الأخطاء 🏥 — شخّص وصحّح', dur:60,
-    obj:['تشخيص الأخطاء الشائعة في الوحدة 1','تصحيحها مع التعليل بالقاعدة',
-         'التقويم الذاتي قبل فرض الوحدة'],
-    consigne:'<div class="exo"><div class="q-t"><b>🏥 مستشفى الأخطاء :</b> كل جملة下面 مريضة. '
-           + 'شخّص المرض ثم اكتب الجملة الصحيحة. <b>10 مرضى</b> — النجاح من 8 فما فوق.</div></div>',
-    exos:[{q:'🏥 «Ich bist 16 Jahre alt.» — quel est le mal ?',
-           opts:['bist → bin','Ich → ich','16 → sechzehn','alt → alte'],a:0,
-           why:'<span class="de-in">ich <b>bin</b></span> — sein est irrégulier à la 1ʳᵉ personne.'},
-          {q:'🏥 «Ich habe 16 Jahre alt.» — quel est le mal ?',
-           opts:['habe → bin','16 → sechzehn','Jahre → Jahr','alt → alten'],a:0,
-           why:'L’âge se dit avec <b>sein</b>, jamais avec haben : '
-             + '<span class="de-in">Ich <b>bin</b> 16 Jahre alt.</span>'},
-          {q:'🏥 «Ich komme Algerien.» — que manque-t-il ?',
-           opts:['aus','in','von','zu'],a:0,
-           why:'<span class="de-in">kommen <b>aus</b> + pays</span> — la préposition est obligatoire.'},
-          {q:'🏥 «Wo wohnst du?» → «Ich wohne München.» — quel est le mal ?',
-           opts:['il manque « in »','München → Munchen','wohne → wohnst','du → Sie'],a:0,
-           why:'Avec une ville : <span class="de-in">Ich wohne <b>in</b> München.</span>'},
-          {q:'🏥 «Wie alt bist du?» → «Ich bin sechzehn Jahre.» — que manque-t-il ?',
-           opts:['alt','alt sein','Jahre alt','sehr'],a:2,
-           why:'L’expression complète est <span class="de-in">Jahre <b>alt</b></span>.'},
-          {q:'🏥 «du hast» conjugué à «ihr» :',opts:['habt','hast','hat','habe'],a:0,
-           why:'<span class="de-in">ihr <b>habt</b></span> — le b disparaît à la 2ᵉ du singulier '
-             + '(<b>hast</b>) et à la 3ᵉ (<b>hat</b>), pas au pluriel.'},
-          {q:'🏥 «Guten Morgen!» s’emploie :',
-           opts:['le matin, jusqu’à 10 h','l’après-midi','le soir','avant de dormir'],a:0,
-           why:'<span class="de-in">Guten Morgen</span> le matin · <b>Guten Tag</b> la journée · '
-             + '<b>Guten Abend</b> le soir · <b>Gute Nacht</b> avant de dormir.'},
-          {q:'🏥 «Auf Wiedersehen!» est :',
-           opts:['formel','familier','une salutation du matin','une question'],a:0,
-           why:'<span class="de-in">Auf Wiedersehen</span> = formel · <b>Tschüs</b> = familier.'},
-          {q:'🏥 «Woher kommst du?» demande :',
-           opts:['l’origine','la ville actuelle','l’âge','le nom'],a:0,
-           why:'<b>Woher</b> = d’où (origine). <b>Wo</b> = où (position). <b>Wohin</b> = vers où.'},
-          {q:'🏥 «Ich heiße Sara.» — la question correspondante est :',
-           opts:['Wie heißt du?','Wo wohnst du?','Wie alt bist du?','Woher kommst du?'],a:0,
-           why:'<span class="de-in"><b>Wie heißt du?</b></span> appelle <b>Ich heiße …</b>'}]},
-
-{ n:8, de:'Évaluation de l’وحدة 📝', ar:'فرض الوحدة', dur:45,
-    obj:['اختبار كتابي /20','45 دقيقة','تصحيح نموذجي'], ex:'devoir'}
-];
 
 /* ─────────────── DEVOIR OFFICIEL — الوحدة 1 (/20) ─────────────── */
 const DEVOIR_U1 = {
@@ -248,8 +109,54 @@ const DEVOIR_U1 = {
 let currentUnite = 1;
 let niveauActif = load('dz_de_niveau_v1', 'tous');
 
+
+/* ─────────────── UNITÉ 1 : Sich vorstellen (التعريف بالنفس) — pages 5→29 ─────────────── */
+const SEANCES_U1 = [{"n": 1, "de": "Lektion 1 — Seite 5", "ar": "الدرس 1 · التحيّة والتعارف (الصفحة 5)", "intro": "افتح الصفحة 5 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 5, "duree": 45}, {"n": 2, "de": "Lektion 1 — Seite 9", "ar": "الدرس 1 · القراءة والفهم (الصفحة 9)", "intro": "افتح الصفحة 9 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 9, "duree": 45}, {"n": 3, "de": "Lektion 1 — Seite 13", "ar": "الدرس 1 · القواعد (الصفحة 13)", "intro": "افتح الصفحة 13 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 13, "duree": 45}, {"n": 4, "de": "Lektion 1 — Seite 17", "ar": "الدرس 1 · المحادثة (الصفحة 17)", "intro": "افتح الصفحة 17 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 17, "duree": 45}, {"n": 5, "de": "Lektion 1 — Seite 21", "ar": "الدرس 1 · القراءة المتقدمة (الصفحة 21)", "intro": "افتح الصفحة 21 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 21, "duree": 45}, {"n": 6, "de": "Lektion 1 — Seite 29", "ar": "الدرس 1 · التطبيق (الصفحة 29)", "intro": "افتح الصفحة 29 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 29, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 1", "ar": "مراجعة الدرس 1", "intro": "مراجعة شاملة للدرس 1 (Sich vorstellen) : المفردات، القواعد، والنصوص من الصفحات 5 إلى 29.", "page": 5, "duree": 45}, {"n": 8, "de": "Test Lektion 1", "ar": "تقييم الدرس 1", "intro": "اختبار قصير في الدرس 1 (Sich vorstellen) — يُحفظ محلياً على جهازك فقط.", "page": 5, "duree": 45}];
+
+/* ─────────────── UNITÉ 2 : Haus und Familie (المنزل والعائلة) — pages 31→55 ─────────────── */
+const SEANCES_U2 = [{"n": 1, "de": "Lektion 2 — Seite 31", "ar": "الدرس 2 · التحيّة والتعارف (الصفحة 31)", "intro": "افتح الصفحة 31 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 31, "duree": 45}, {"n": 2, "de": "Lektion 2 — Seite 35", "ar": "الدرس 2 · القراءة والفهم (الصفحة 35)", "intro": "افتح الصفحة 35 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 35, "duree": 45}, {"n": 3, "de": "Lektion 2 — Seite 39", "ar": "الدرس 2 · القواعد (الصفحة 39)", "intro": "افتح الصفحة 39 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 39, "duree": 45}, {"n": 4, "de": "Lektion 2 — Seite 43", "ar": "الدرس 2 · المحادثة (الصفحة 43)", "intro": "افتح الصفحة 43 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 43, "duree": 45}, {"n": 5, "de": "Lektion 2 — Seite 47", "ar": "الدرس 2 · القراءة المتقدمة (الصفحة 47)", "intro": "افتح الصفحة 47 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 47, "duree": 45}, {"n": 6, "de": "Lektion 2 — Seite 55", "ar": "الدرس 2 · التطبيق (الصفحة 55)", "intro": "افتح الصفحة 55 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 55, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 2", "ar": "مراجعة الدرس 2", "intro": "مراجعة شاملة للدرس 2 (Haus und Familie) : المفردات، القواعد، والنصوص من الصفحات 31 إلى 55.", "page": 31, "duree": 45}, {"n": 8, "de": "Test Lektion 2", "ar": "تقييم الدرس 2", "intro": "اختبار قصير في الدرس 2 (Haus und Familie) — يُحفظ محلياً على جهازك فقط.", "page": 31, "duree": 45}];
+
+/* ─────────────── UNITÉ 3 : Schule und Unterricht (المدرسة والدرس) — pages 57→76 ─────────────── */
+const SEANCES_U3 = [{"n": 1, "de": "Lektion 3 — Seite 57", "ar": "الدرس 3 · التحيّة والتعارف (الصفحة 57)", "intro": "افتح الصفحة 57 من الدرس 3 (Schule und Unterricht) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 57, "duree": 45}, {"n": 2, "de": "Lektion 3 — Seite 60", "ar": "الدرس 3 · القراءة والفهم (الصفحة 60)", "intro": "افتح الصفحة 60 من الدرس 3 (Schule und Unterricht) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 60, "duree": 45}, {"n": 3, "de": "Lektion 3 — Seite 63", "ar": "الدرس 3 · القواعد (الصفحة 63)", "intro": "افتح الصفحة 63 من الدرس 3 (Schule und Unterricht) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 63, "duree": 45}, {"n": 4, "de": "Lektion 3 — Seite 66", "ar": "الدرس 3 · المحادثة (الصفحة 66)", "intro": "افتح الصفحة 66 من الدرس 3 (Schule und Unterricht) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 66, "duree": 45}, {"n": 5, "de": "Lektion 3 — Seite 69", "ar": "الدرس 3 · القراءة المتقدمة (الصفحة 69)", "intro": "افتح الصفحة 69 من الدرس 3 (Schule und Unterricht) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 69, "duree": 45}, {"n": 6, "de": "Lektion 3 — Seite 76", "ar": "الدرس 3 · التطبيق (الصفحة 76)", "intro": "افتح الصفحة 76 من الدرس 3 (Schule und Unterricht) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 76, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 3", "ar": "مراجعة الدرس 3", "intro": "مراجعة شاملة للدرس 3 (Schule und Unterricht) : المفردات، القواعد، والنصوص من الصفحات 57 إلى 76.", "page": 57, "duree": 45}, {"n": 8, "de": "Test Lektion 3", "ar": "تقييم الدرس 3", "intro": "اختبار قصير في الدرس 3 (Schule und Unterricht) — يُحفظ محلياً على جهازك فقط.", "page": 57, "duree": 45}];
+
+/* ─────────────── UNITÉ 4 : Zeit und Wetter (الوقت والطقس) — pages 77→101 ─────────────── */
+const SEANCES_U4 = [{"n": 1, "de": "Lektion 4 — Seite 77", "ar": "الدرس 4 · التحيّة والتعارف (الصفحة 77)", "intro": "افتح الصفحة 77 من الدرس 4 (Zeit und Wetter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 77, "duree": 45}, {"n": 2, "de": "Lektion 4 — Seite 81", "ar": "الدرس 4 · القراءة والفهم (الصفحة 81)", "intro": "افتح الصفحة 81 من الدرس 4 (Zeit und Wetter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 81, "duree": 45}, {"n": 3, "de": "Lektion 4 — Seite 85", "ar": "الدرس 4 · القواعد (الصفحة 85)", "intro": "افتح الصفحة 85 من الدرس 4 (Zeit und Wetter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 85, "duree": 45}, {"n": 4, "de": "Lektion 4 — Seite 89", "ar": "الدرس 4 · المحادثة (الصفحة 89)", "intro": "افتح الصفحة 89 من الدرس 4 (Zeit und Wetter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 89, "duree": 45}, {"n": 5, "de": "Lektion 4 — Seite 93", "ar": "الدرس 4 · القراءة المتقدمة (الصفحة 93)", "intro": "افتح الصفحة 93 من الدرس 4 (Zeit und Wetter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 93, "duree": 45}, {"n": 6, "de": "Lektion 4 — Seite 101", "ar": "الدرس 4 · التطبيق (الصفحة 101)", "intro": "افتح الصفحة 101 من الدرس 4 (Zeit und Wetter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 101, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 4", "ar": "مراجعة الدرس 4", "intro": "مراجعة شاملة للدرس 4 (Zeit und Wetter) : المفردات، القواعد، والنصوص من الصفحات 77 إلى 101.", "page": 77, "duree": 45}, {"n": 8, "de": "Test Lektion 4", "ar": "تقييم الدرس 4", "intro": "اختبار قصير في الدرس 4 (Zeit und Wetter) — يُحفظ محلياً على جهازك فقط.", "page": 77, "duree": 45}];
+
+/* ─────────────── UNITÉ 5 : Freizeit (أوقات الفراغ) — pages 103→127 ─────────────── */
+const SEANCES_U5 = [{"n": 1, "de": "Lektion 5 — Seite 103", "ar": "الدرس 5 · التحيّة والتعارف (الصفحة 103)", "intro": "افتح الصفحة 103 من الدرس 5 (Freizeit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 103, "duree": 45}, {"n": 2, "de": "Lektion 5 — Seite 107", "ar": "الدرس 5 · القراءة والفهم (الصفحة 107)", "intro": "افتح الصفحة 107 من الدرس 5 (Freizeit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 107, "duree": 45}, {"n": 3, "de": "Lektion 5 — Seite 111", "ar": "الدرس 5 · القواعد (الصفحة 111)", "intro": "افتح الصفحة 111 من الدرس 5 (Freizeit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 111, "duree": 45}, {"n": 4, "de": "Lektion 5 — Seite 115", "ar": "الدرس 5 · المحادثة (الصفحة 115)", "intro": "افتح الصفحة 115 من الدرس 5 (Freizeit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 115, "duree": 45}, {"n": 5, "de": "Lektion 5 — Seite 119", "ar": "الدرس 5 · القراءة المتقدمة (الصفحة 119)", "intro": "افتح الصفحة 119 من الدرس 5 (Freizeit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 119, "duree": 45}, {"n": 6, "de": "Lektion 5 — Seite 127", "ar": "الدرس 5 · التطبيق (الصفحة 127)", "intro": "افتح الصفحة 127 من الدرس 5 (Freizeit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 127, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 5", "ar": "مراجعة الدرس 5", "intro": "مراجعة شاملة للدرس 5 (Freizeit) : المفردات، القواعد، والنصوص من الصفحات 103 إلى 127.", "page": 103, "duree": 45}, {"n": 8, "de": "Test Lektion 5", "ar": "تقييم الدرس 5", "intro": "اختبار قصير في الدرس 5 (Freizeit) — يُحفظ محلياً على جهازك فقط.", "page": 103, "duree": 45}];
+
+/* ─────────────── UNITÉ 6 : Mensch und Gesundheit (الإنسان والصحة) — pages 129→149 ─────────────── */
+const SEANCES_U6 = [{"n": 1, "de": "Lektion 6 — Seite 129", "ar": "الدرس 6 · التحيّة والتعارف (الصفحة 129)", "intro": "افتح الصفحة 129 من الدرس 6 (Mensch und Gesundheit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 129, "duree": 45}, {"n": 2, "de": "Lektion 6 — Seite 132", "ar": "الدرس 6 · القراءة والفهم (الصفحة 132)", "intro": "افتح الصفحة 132 من الدرس 6 (Mensch und Gesundheit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 132, "duree": 45}, {"n": 3, "de": "Lektion 6 — Seite 135", "ar": "الدرس 6 · القواعد (الصفحة 135)", "intro": "افتح الصفحة 135 من الدرس 6 (Mensch und Gesundheit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 135, "duree": 45}, {"n": 4, "de": "Lektion 6 — Seite 138", "ar": "الدرس 6 · المحادثة (الصفحة 138)", "intro": "افتح الصفحة 138 من الدرس 6 (Mensch und Gesundheit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 138, "duree": 45}, {"n": 5, "de": "Lektion 6 — Seite 141", "ar": "الدرس 6 · القراءة المتقدمة (الصفحة 141)", "intro": "افتح الصفحة 141 من الدرس 6 (Mensch und Gesundheit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 141, "duree": 45}, {"n": 6, "de": "Lektion 6 — Seite 149", "ar": "الدرس 6 · التطبيق (الصفحة 149)", "intro": "افتح الصفحة 149 من الدرس 6 (Mensch und Gesundheit) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 149, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 6", "ar": "مراجعة الدرس 6", "intro": "مراجعة شاملة للدرس 6 (Mensch und Gesundheit) : المفردات، القواعد، والنصوص من الصفحات 129 إلى 149.", "page": 129, "duree": 45}, {"n": 8, "de": "Test Lektion 6", "ar": "تقييم الدرس 6", "intro": "اختبار قصير في الدرس 6 (Mensch und Gesundheit) — يُحفظ محلياً على جهازك فقط.", "page": 129, "duree": 45}];
+
+/* ─────────────── UNITÉ 7 : Essen und Trinken (الأكل والشرب) — pages 151→180 ─────────────── */
+const SEANCES_U7 = [{"n": 1, "de": "Lektion 7 — Seite 151", "ar": "الدرس 7 · التحيّة والتعارف (الصفحة 151)", "intro": "افتح الصفحة 151 من الدرس 7 (Essen und Trinken) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 151, "duree": 45}, {"n": 2, "de": "Lektion 7 — Seite 156", "ar": "الدرس 7 · القراءة والفهم (الصفحة 156)", "intro": "افتح الصفحة 156 من الدرس 7 (Essen und Trinken) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 156, "duree": 45}, {"n": 3, "de": "Lektion 7 — Seite 161", "ar": "الدرس 7 · القواعد (الصفحة 161)", "intro": "افتح الصفحة 161 من الدرس 7 (Essen und Trinken) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 161, "duree": 45}, {"n": 4, "de": "Lektion 7 — Seite 166", "ar": "الدرس 7 · المحادثة (الصفحة 166)", "intro": "افتح الصفحة 166 من الدرس 7 (Essen und Trinken) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 166, "duree": 45}, {"n": 5, "de": "Lektion 7 — Seite 171", "ar": "الدرس 7 · القراءة المتقدمة (الصفحة 171)", "intro": "افتح الصفحة 171 من الدرس 7 (Essen und Trinken) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 171, "duree": 45}, {"n": 6, "de": "Lektion 7 — Seite 180", "ar": "الدرس 7 · التطبيق (الصفحة 180)", "intro": "افتح الصفحة 180 من الدرس 7 (Essen und Trinken) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 180, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 7", "ar": "مراجعة الدرس 7", "intro": "مراجعة شاملة للدرس 7 (Essen und Trinken) : المفردات، القواعد، والنصوص من الصفحات 151 إلى 180.", "page": 151, "duree": 45}, {"n": 8, "de": "Test Lektion 7", "ar": "تقييم الدرس 7", "intro": "اختبار قصير في الدرس 7 (Essen und Trinken) — يُحفظ محلياً على جهازك فقط.", "page": 151, "duree": 45}];
+
+/* ─────────────── UNITÉ 8 : Aussehen und Charakter (المظهر والشخصية) — pages 181→205 ─────────────── */
+const SEANCES_U8 = [{"n": 1, "de": "Lektion 8 — Seite 181", "ar": "الدرس 8 · التحيّة والتعارف (الصفحة 181)", "intro": "افتح الصفحة 181 من الدرس 8 (Aussehen und Charakter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 181, "duree": 45}, {"n": 2, "de": "Lektion 8 — Seite 185", "ar": "الدرس 8 · القراءة والفهم (الصفحة 185)", "intro": "افتح الصفحة 185 من الدرس 8 (Aussehen und Charakter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 185, "duree": 45}, {"n": 3, "de": "Lektion 8 — Seite 189", "ar": "الدرس 8 · القواعد (الصفحة 189)", "intro": "افتح الصفحة 189 من الدرس 8 (Aussehen und Charakter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 189, "duree": 45}, {"n": 4, "de": "Lektion 8 — Seite 193", "ar": "الدرس 8 · المحادثة (الصفحة 193)", "intro": "افتح الصفحة 193 من الدرس 8 (Aussehen und Charakter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 193, "duree": 45}, {"n": 5, "de": "Lektion 8 — Seite 197", "ar": "الدرس 8 · القراءة المتقدمة (الصفحة 197)", "intro": "افتح الصفحة 197 من الدرس 8 (Aussehen und Charakter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 197, "duree": 45}, {"n": 6, "de": "Lektion 8 — Seite 205", "ar": "الدرس 8 · التطبيق (الصفحة 205)", "intro": "افتح الصفحة 205 من الدرس 8 (Aussehen und Charakter) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 205, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 8", "ar": "مراجعة الدرس 8", "intro": "مراجعة شاملة للدرس 8 (Aussehen und Charakter) : المفردات، القواعد، والنصوص من الصفحات 181 إلى 205.", "page": 181, "duree": 45}, {"n": 8, "de": "Test Lektion 8", "ar": "تقييم الدرس 8", "intro": "اختبار قصير في الدرس 8 (Aussehen und Charakter) — يُحفظ محلياً على جهازك فقط.", "page": 181, "duree": 45}];
+
+/* ─────────────── UNITÉ 9 : Stadtleben – Landleben (حياة المدينة والريف) — pages 207→223 ─────────────── */
+const SEANCES_U9 = [{"n": 1, "de": "Lektion 9 — Seite 207", "ar": "الدرس 9 · التحيّة والتعارف (الصفحة 207)", "intro": "افتح الصفحة 207 من الدرس 9 (Stadtleben – Landleben) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 207, "duree": 45}, {"n": 2, "de": "Lektion 9 — Seite 209", "ar": "الدرس 9 · القراءة والفهم (الصفحة 209)", "intro": "افتح الصفحة 209 من الدرس 9 (Stadtleben – Landleben) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 209, "duree": 45}, {"n": 3, "de": "Lektion 9 — Seite 211", "ar": "الدرس 9 · القواعد (الصفحة 211)", "intro": "افتح الصفحة 211 من الدرس 9 (Stadtleben – Landleben) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 211, "duree": 45}, {"n": 4, "de": "Lektion 9 — Seite 213", "ar": "الدرس 9 · المحادثة (الصفحة 213)", "intro": "افتح الصفحة 213 من الدرس 9 (Stadtleben – Landleben) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 213, "duree": 45}, {"n": 5, "de": "Lektion 9 — Seite 215", "ar": "الدرس 9 · القراءة المتقدمة (الصفحة 215)", "intro": "افتح الصفحة 215 من الدرس 9 (Stadtleben – Landleben) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 215, "duree": 45}, {"n": 6, "de": "Lektion 9 — Seite 223", "ar": "الدرس 9 · التطبيق (الصفحة 223)", "intro": "افتح الصفحة 223 من الدرس 9 (Stadtleben – Landleben) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 223, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 9", "ar": "مراجعة الدرس 9", "intro": "مراجعة شاملة للدرس 9 (Stadtleben – Landleben) : المفردات، القواعد، والنصوص من الصفحات 207 إلى 223.", "page": 207, "duree": 45}, {"n": 8, "de": "Test Lektion 9", "ar": "تقييم الدرس 9", "intro": "اختبار قصير في الدرس 9 (Stadtleben – Landleben) — يُحفظ محلياً على جهازك فقط.", "page": 207, "duree": 45}];
+
 const UNITES = [
-  { n:1, de:'Sich vorstellen',        ar:'التعريف بالنفس',    icon:'👋', cecrl:'A1', niveau:'2AS',
+  { n:1, de:"Sich vorstellen", ar:"التعريف بالنفس", icon:"👋", cecrl:"A1", niveau:'2AS', pages:[5,29],
+    seances:SEANCES_U1, devoir:(window.DEVOIR_U1||null), duree:360 },
+  { n:2, de:"Haus und Familie", ar:"المنزل والعائلة", icon:"🏠", cecrl:"A1→A2", niveau:'2AS', pages:[31,55],
+    seances:SEANCES_U2, devoir:(window.DEVOIR_U2||null), duree:360 },
+  { n:3, de:"Schule und Unterricht", ar:"المدرسة والدرس", icon:"🏫", cecrl:"A2", niveau:'2AS', pages:[57,76],
+    seances:SEANCES_U3, devoir:(window.DEVOIR_U3||null), duree:360 },
+  { n:4, de:"Zeit und Wetter", ar:"الوقت والطقس", icon:"⏰", cecrl:"A2", niveau:'2AS', pages:[77,101],
+    seances:SEANCES_U4, devoir:(window.DEVOIR_U4||null), duree:360 },
+  { n:5, de:"Freizeit", ar:"أوقات الفراغ", icon:"⚽", cecrl:"A2", niveau:'2AS', pages:[103,127],
+    seances:SEANCES_U5, devoir:(window.DEVOIR_U5||null), duree:360 },
+  { n:6, de:"Mensch und Gesundheit", ar:"الإنسان والصحة", icon:"🏥", cecrl:"A2", niveau:'2AS', pages:[129,149],
+    seances:SEANCES_U6, devoir:(window.DEVOIR_U6||null), duree:360 },
+  { n:7, de:"Essen und Trinken", ar:"الأكل والشرب", icon:"🍽️", cecrl:"A2", niveau:'2AS', pages:[151,180],
+    seances:SEANCES_U7, devoir:(window.DEVOIR_U7||null), duree:360 },
+  { n:8, de:"Aussehen und Charakter", ar:"المظهر والشخصية", icon:"🪞", cecrl:"A2", niveau:'2AS', pages:[181,205],
+    seances:SEANCES_U8, devoir:(window.DEVOIR_U8||null), duree:360 },
+  { n:9, de:"Stadtleben – Landleben", ar:"حياة المدينة والريف", icon:"🏙️", cecrl:"A2→B1", niveau:'2AS', pages:[207,223],
+    seances:SEANCES_U9, devoir:(window.DEVOIR_U9||null), duree:360 },
+  { n:10, de:'Sich vorstellen',        ar:'التعريف بالنفس',    icon:'👋', cecrl:'A1', niveau:'2AS',
     seances:SEANCES_U1, devoir:DEVOIR_U1, duree:465 },
   { n:2, de:'Familie und Freunde',    ar:'العائلة والأصدقاء', icon:'👨‍👩‍👧', cecrl:'A1→A2', niveau:'2AS',
     seances:(window.UNITE2 ? UNITE2.seances : []),
@@ -275,39 +182,39 @@ const UNITES = [
     niveau:'3AS', seances:(window.UNITES_3AS_A ? UNITES_3AS_A[0].seances : []),
     devoir: (window.UNITES_3AS_A ? UNITES_3AS_A[0].devoir  : null),
     duree:  (window.UNITES_3AS_A ? UNITES_3AS_A[0].duree_totale : 360) },
-  { n:8, de:'Staatsbürgerschaft',           ar:'المواطنة',       icon:'🏛️', cecrl:'B1',
+  { n:11, de:'Staatsbürgerschaft',           ar:'المواطنة',       icon:'🏛️', cecrl:'B1',
     niveau:'3AS', seances:(window.UNITES_3AS_A ? UNITES_3AS_A[1].seances : []),
     devoir: (window.UNITES_3AS_A ? UNITES_3AS_A[1].devoir  : null),
     duree:  (window.UNITES_3AS_A ? UNITES_3AS_A[1].duree_totale : 360) },
-  { n:9, de:'Leben in der Gesellschaft',    ar:'الحياة في المجتمع', icon:'🤝', cecrl:'B2',
+  { n:12, de:'Leben in der Gesellschaft',    ar:'الحياة في المجتمع', icon:'🤝', cecrl:'B2',
     niveau:'3AS', seances:(window.UNITES_3AS_A ? UNITES_3AS_A[2].seances : []),
     devoir: (window.UNITES_3AS_A ? UNITES_3AS_A[2].devoir  : null),
     duree:  (window.UNITES_3AS_A ? UNITES_3AS_A[2].duree_totale : 360) },
-  { n:10, de:'Wissenschaft und Technologie', ar:'العلوم والتكنولوجيا', icon:'🔬', cecrl:'B2',
+  { n:13, de:'Wissenschaft und Technologie', ar:'العلوم والتكنولوجيا', icon:'🔬', cecrl:'B2',
     niveau:'3AS', seances:(window.UNITE10 ? UNITE10.seances : []),
     devoir: (window.UNITE10 ? UNITE10.devoir  : null),
     duree:  (window.UNITE10 && UNITE10.meta ? UNITE10.meta.duree_totale : 360) },
-  { n:11, de:'Wirtschaft und Arbeit',        ar:'الاقتصاد والعمل', icon:'💼', cecrl:'B2',
+  { n:14, de:'Wirtschaft und Arbeit',        ar:'الاقتصاد والعمل', icon:'💼', cecrl:'B2',
     niveau:'3AS', seances:(window.UNITE11 ? UNITE11.seances : []),
     devoir: (window.UNITE11 ? UNITE11.devoir  : null),
     duree:  (window.UNITE11 && UNITE11.meta ? UNITE11.meta.duree_totale : 360) },
-  { n:12, de:'Umweltprobleme',               ar:'مشاكل البيئة', icon:'🌍', cecrl:'B2',
+  { n:15, de:'Umweltprobleme',               ar:'مشاكل البيئة', icon:'🌍', cecrl:'B2',
     niveau:'3AS', seances:(window.UNITE12 ? UNITE12.seances : []),
     devoir: (window.UNITE12 ? UNITE12.devoir  : null),
     duree:  (window.UNITE12 && UNITE12.meta ? UNITE12.meta.duree_totale : 360) },
-  { n:13, de:'Gesundheit und Lebensweise',    ar:'الصحة ونمط الحياة',     icon:'🏥', cecrl:'B2',
+  { n:16, de:'Gesundheit und Lebensweise',    ar:'الصحة ونمط الحياة',     icon:'🏥', cecrl:'B2',
     niveau:'3AS', seances:(window.UNITE13 ? UNITE13.seances : []),
     devoir: (window.UNITE13 ? UNITE13.devoir  : null),
     duree:  (window.UNITE13 && UNITE13.meta ? UNITE13.meta.duree_totale : 360) },
-  { n:14, de:'Globalisierung',                ar:'العولمة',               icon:'🌐', cecrl:'B2',
+  { n:17, de:'Globalisierung',                ar:'العولمة',               icon:'🌐', cecrl:'B2',
     niveau:'3AS', seances:(window.UNITE14 ? UNITE14.seances : []),
     devoir: (window.UNITE14 ? UNITE14.devoir  : null),
     duree:  (window.UNITE14 && UNITE14.meta ? UNITE14.meta.duree_totale : 360) },
-  { n:15, de:'Medienwelt',                    ar:'عالم الإعلام',          icon:'📰', cecrl:'B2',
+  { n:18, de:'Medienwelt',                    ar:'عالم الإعلام',          icon:'📰', cecrl:'B2',
     niveau:'3AS', seances:(window.UNITE15 ? UNITE15.seances : []),
     devoir: (window.UNITE15 ? UNITE15.devoir  : null),
     duree:  (window.UNITE15 && UNITE15.meta ? UNITE15.meta.duree_totale : 360) },
-  { n:16, de:'Kultureller Dialog',            ar:'الحوار الثقافي',        icon:'🤝', cecrl:'B2',
+  { n:19, de:'Kultureller Dialog',            ar:'الحوار الثقافي',        icon:'🤝', cecrl:'B2',
     niveau:'3AS', seances:(window.UNITE16 ? UNITE16.seances : []),
     devoir: (window.UNITE16 ? UNITE16.devoir  : null),
     duree:  (window.UNITE16 && UNITE16.meta ? UNITE16.meta.duree_totale : 360) }
