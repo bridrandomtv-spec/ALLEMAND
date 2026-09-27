@@ -87,7 +87,7 @@ const QUIZ_BANK = [
   { u:7, q:'الصيغة الأكثر تهذيباً للطلب في مطعم :',
     o:['Ich will einen Kaffee.','Gib mir einen Kaffee.','Ich hätte gern einen Kaffee.','Ich brauche Kaffee.'], c:2,
     e:'<span class="de-in">Ich <b>hätte gern</b>…</span> = Konjunktiv II من haben → الأكثر أدباً.' },
-  { u:5, q:'صيغة الأمر (Sie) من «schneiden» :',
+  { u:7, q:'صيغة الأمر (Sie) من «schneiden» :',
     o:['Schneide!','Schneidet!','Schneiden Sie!','Schnitt!'], c:2,
     e:'أمر Sie = <b>المصدر + Sie</b> → <span class="de-in">Schneiden Sie!</span>' },
   { u:7, q:'أي كلمة ليس لها جمع؟',
