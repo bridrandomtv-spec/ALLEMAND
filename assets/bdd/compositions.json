@@ -2,10 +2,20 @@
   "_meta": {
     "type": "compositions trimestrielles",
     "nombre": 168,
-    "version": "9.0.0",
+    "version": "9.0.1",
     "source": "تجميع الأستاذ خريف أحمد — ثانويات الوطن",
     "unites_2as": 9,
-    "note": "Redistribution complète selon les 9 Lektionen du manuel officiel"
+    "note": "Redistribution v2 : mots-clés spécifiques + titre pondéré + hash équilibré",
+    "redistribution_v2": {
+      "date": "2026-09-28",
+      "methodes": {
+        "fort": 105,
+        "ancien": 0,
+        "hash": 0
+      },
+      "total_2as": 105,
+      "total_3as": 63
+    }
   },
   "items": [
     {
