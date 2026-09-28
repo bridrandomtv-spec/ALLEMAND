@@ -111,7 +111,7 @@ let niveauActif = load('dz_de_niveau_v1', 'tous');
 
 
 /* ─────────────── UNITÉ 1 : Sich vorstellen (التعريف بالنفس) — pages 5→29 ─────────────── */
-const SEANCES_U1 = [{"n": 1, "de": "Lektion 1 — Seite 5", "ar": "الدرس 1 · التحيّة والتعارف (الصفحة 5)", "intro": "افتح الصفحة 5 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 5, "duree": 45}, {"n": 2, "de": "Lektion 1 — Seite 9", "ar": "الدرس 1 · القراءة والفهم (الصفحة 9)", "intro": "افتح الصفحة 9 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 9, "duree": 45}, {"n": 3, "de": "Lektion 1 — Seite 13", "ar": "الدرس 1 · القواعد (الصفحة 13)", "intro": "افتح الصفحة 13 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 13, "duree": 45}, {"n": 4, "de": "Lektion 1 — Seite 17", "ar": "الدرس 1 · المحادثة (الصفحة 17)", "intro": "افتح الصفحة 17 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 17, "duree": 45}, {"n": 5, "de": "Lektion 1 — Seite 21", "ar": "الدرس 1 · القراءة المتقدمة (الصفحة 21)", "intro": "افتح الصفحة 21 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 21, "duree": 45}, {"n": 6, "de": "Lektion 1 — Seite 29", "ar": "الدرس 1 · التطبيق (الصفحة 29)", "intro": "افتح الصفحة 29 من الدرس 1 (Sich vorstellen) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 29, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 1", "ar": "مراجعة الدرس 1", "intro": "مراجعة شاملة للدرس 1 (Sich vorstellen) : المفردات، القواعد، والنصوص من الصفحات 5 إلى 29.", "page": 5, "duree": 45}, {"n": 8, "de": "Test Lektion 1", "ar": "تقييم الدرس 1", "intro": "اختبار قصير في الدرس 1 (Sich vorstellen) — يُحفظ محلياً على جهازك فقط.", "page": 5, "duree": 45}];
+const SEANCES_U1 = [{"n": 1, "page": 5, "type": "ouv", "de": "Lektion 1 — Seite 5", "ar": "الصفحة 5 — الانطلاق: اكتشاف المحور", "intro": "دورة كاملة على الصفحة 5 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 2, "page": 6, "type": "alph", "de": "Lektion 1 — Seite 6", "ar": "الصفحة 6 — الأبجدية والتهجئة", "intro": "دورة كاملة على الصفحة 6 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 3, "page": 7, "type": "dial", "de": "Lektion 1 — Seite 7", "ar": "الصفحة 7 — حوار: استماع وقراءة وفهم", "intro": "دورة كاملة على الصفحة 7 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 4, "page": 8, "type": "exo", "de": "Lektion 1 — Seite 8", "ar": "الصفحة 8 — تمارين الكتاب", "intro": "دورة كاملة على الصفحة 8 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 5, "page": 9, "type": "exo", "de": "Lektion 1 — Seite 9", "ar": "الصفحة 9 — تمارين الكتاب", "intro": "دورة كاملة على الصفحة 9 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 6, "page": 10, "type": "dial", "de": "Lektion 1 — Seite 10", "ar": "الصفحة 10 — حوار: استماع وقراءة وفهم", "intro": "دورة كاملة على الصفحة 10 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 7, "page": 11, "type": "gram", "de": "Lektion 1 — Seite 11", "ar": "الصفحة 11 — قاعدة اليوم", "intro": "دورة كاملة على الصفحة 11 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 8, "page": 12, "type": "exo", "de": "Lektion 1 — Seite 12", "ar": "الصفحة 12 — تمارين الكتاب", "intro": "دورة كاملة على الصفحة 12 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 9, "page": 13, "type": "gram", "de": "Lektion 1 — Seite 13", "ar": "الصفحة 13 — قاعدة اليوم", "intro": "دورة كاملة على الصفحة 13 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 10, "page": 14, "type": "gram", "de": "Lektion 1 — Seite 14", "ar": "الصفحة 14 — قاعدة اليوم", "intro": "دورة كاملة على الصفحة 14 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 11, "page": 15, "type": "gram", "de": "Lektion 1 — Seite 15", "ar": "الصفحة 15 — قاعدة اليوم", "intro": "دورة كاملة على الصفحة 15 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 12, "page": 16, "type": "exo", "de": "Lektion 1 — Seite 16", "ar": "الصفحة 16 — تمارين الكتاب", "intro": "دورة كاملة على الصفحة 16 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 13, "page": 17, "type": "lect", "de": "Lektion 1 — Seite 17", "ar": "الصفحة 17 — قراءة وفهم", "intro": "دورة كاملة على الصفحة 17 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 14, "page": 18, "type": "exo", "de": "Lektion 1 — Seite 18", "ar": "الصفحة 18 — تمارين الكتاب", "intro": "دورة كاملة على الصفحة 18 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 15, "page": 19, "type": "dial", "de": "Lektion 1 — Seite 19", "ar": "الصفحة 19 — حوار: استماع وقراءة وفهم", "intro": "دورة كاملة على الصفحة 19 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 16, "page": 20, "type": "exo", "de": "Lektion 1 — Seite 20", "ar": "الصفحة 20 — تمارين الكتاب", "intro": "دورة كاملة على الصفحة 20 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 17, "page": 21, "type": "exo", "de": "Lektion 1 — Seite 21", "ar": "الصفحة 21 — تمارين الكتاب", "intro": "دورة كاملة على الصفحة 21 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 18, "page": 22, "type": "phon", "de": "Lektion 1 — Seite 22", "ar": "الصفحة 22 — نطق وظلال (Shadowing)", "intro": "دورة كاملة على الصفحة 22 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 19, "page": 23, "type": "oral", "de": "Lektion 1 — Seite 23", "ar": "الصفحة 23 — إنتاج شفوي ومراجعة", "intro": "دورة كاملة على الصفحة 23 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 20, "page": 24, "type": "gram", "de": "Lektion 1 — Seite 24", "ar": "الصفحة 24 — قاعدة اليوم", "intro": "دورة كاملة على الصفحة 24 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 21, "page": 25, "type": "lect", "de": "Lektion 1 — Seite 25", "ar": "الصفحة 25 — قراءة وفهم", "intro": "دورة كاملة على الصفحة 25 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 22, "page": 26, "type": "ecoute", "de": "Lektion 1 — Seite 26", "ar": "الصفحة 26 — استماع موجّه", "intro": "دورة كاملة على الصفحة 26 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 23, "page": 27, "type": "ecr", "de": "Lektion 1 — Seite 27", "ar": "الصفحة 27 — إنتاج كتابي", "intro": "دورة كاملة على الصفحة 27 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 24, "page": 28, "type": "cult", "de": "Lektion 1 — Seite 28", "ar": "الصفحة 28 — ثقافة ومعرفة", "intro": "دورة كاملة على الصفحة 28 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}, {"n": 25, "page": 29, "type": "dial", "de": "Lektion 1 — Seite 29", "ar": "الصفحة 29 — حوار: استماع وقراءة وفهم", "intro": "دورة كاملة على الصفحة 29 : استماع → قراءة وفهم → تلخيص → تمرين → ظلال → استعداد للفرض.", "duree": 60}];
 
 /* ─────────────── UNITÉ 2 : Haus und Familie (المنزل والعائلة) — pages 31→55 ─────────────── */
 window.SEANCES_U2 = [{"n": 1, "de": "Lektion 2 — Seite 31", "ar": "الدرس 2 · التحيّة والتعارف (الصفحة 31)", "intro": "افتح الصفحة 31 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 31, "duree": 45}, {"n": 2, "de": "Lektion 2 — Seite 35", "ar": "الدرس 2 · القراءة والفهم (الصفحة 35)", "intro": "افتح الصفحة 35 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 35, "duree": 45}, {"n": 3, "de": "Lektion 2 — Seite 39", "ar": "الدرس 2 · القواعد (الصفحة 39)", "intro": "افتح الصفحة 39 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 39, "duree": 45}, {"n": 4, "de": "Lektion 2 — Seite 43", "ar": "الدرس 2 · المحادثة (الصفحة 43)", "intro": "افتح الصفحة 43 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 43, "duree": 45}, {"n": 5, "de": "Lektion 2 — Seite 47", "ar": "الدرس 2 · القراءة المتقدمة (الصفحة 47)", "intro": "افتح الصفحة 47 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 47, "duree": 45}, {"n": 6, "de": "Lektion 2 — Seite 55", "ar": "الدرس 2 · التطبيق (الصفحة 55)", "intro": "افتح الصفحة 55 من الدرس 2 (Haus und Familie) واقرأها — النص مأخوذ حرفياً من الكتاب.", "page": 55, "duree": 45}, {"n": 7, "de": "Wiederholung Lektion 2", "ar": "مراجعة الدرس 2", "intro": "مراجعة شاملة للدرس 2 (Haus und Familie) : المفردات، القواعد، والنصوص من الصفحات 31 إلى 55.", "page": 31, "duree": 45}, {"n": 8, "de": "Test Lektion 2", "ar": "تقييم الدرس 2", "intro": "اختبار قصير في الدرس 2 (Haus und Familie) — يُحفظ محلياً على جهازك فقط.", "page": 31, "duree": 45}];
@@ -835,7 +835,7 @@ function grillePour(s){
 
 /* Ligne de temps des 5 étapes, insérée en tête de chaque حصة. */
 function renderEtapes(s){
-  const et = etapesPour(s);
+  const et = (window.__CYCLE || etapesPour)(s);
   const tyc = typeSeance(s);
   const LIB = { defaut:'rythme standard', lecture:'rythme lecture guidée',
                 ecriture:'rythme production écrite' };
@@ -923,7 +923,7 @@ function openSeance(n){
   }
 
   h += renderEtapes(s);
-  h += leconLivre(s);
+  h += leconLivre(s) + blocsPedago(s);
 
   if(s.obj) h += '<div class="gram"><h4>🎯 أهداف الحصة</h4><ul style="margin:0 20px;font-size:13px;color:var(--m)">'
     + s.obj.map(o => '<li>' + esc(o) + '</li>').join('') + '</ul></div>';
@@ -1855,3 +1855,51 @@ document.addEventListener('click', function(e){
     speechSynthesis.cancel(); speechSynthesis.speak(u);
   }
 });
+
+/* ── Cycle pédagogique fondé sur les preuves (TBLT + input compréhensible + shadowing + spaced retrieval) ── */
+window.__CYCLE = function(s){
+  var t = s && s.type;
+  var ec = (t === 'ecoute' || t === 'phon') ? 15 : 5;
+  var ex = (t === 'exo') ? 25 : 15;
+  var sh = (t === 'phon') ? 20 : 10;
+  return [
+    { ar:'🎧 استماع أولاً', de:'Zuhören', m:ec },
+    { ar:'📖 قراءة وفهم', de:'Lesen + Verstehen', m:10 },
+    { ar:'🧠 تلخيص', de:'Zusammenfassen', m:5 },
+    { ar:'✍️ تمرين وتدريب', de:'Üben + Trainieren', m:ex },
+    { ar:'🎤 نطق وظلال', de:'Shadowing', m:sh },
+    { ar:'🎯 استعداد للفرض', de:'Klassenarbeit-Training', m:10 }
+  ];
+};
+window.__lireSat = function(t){ if(typeof speak === 'function'){ speak(t); } };
+function blocsPedago(s){
+  var p = s.page || (s.pages && s.pages[0]); if(!p) return '';
+  var e = (window.__BOOK__ || {})[String(p)] || {};
+  var lignes = e.lignes || [];
+  var tout = lignes.join(' ');
+  var sats = (tout.match(/[^.!?]+[.!?]*/g) || []).map(function(x){ return x.trim(); })
+             .filter(function(x){ return x.length > 3 && x.length < 140; }).slice(0, 10);
+  var sh = sats.map(function(t){
+    var at = t.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    return '<div style="display:flex;gap:8px;align-items:center;margin:6px 0">'
+      + '<button class="btn btn-s" onclick="window.__lireSat(\'' + at + '\')">🔊</button>'
+      + '<span style="flex:1">' + esc(t) + '</span>'
+      + '<label style="font-size:12px;white-space:nowrap"><input type="checkbox"> ردّدتُها جيدًا</label></div>';
+  }).join('');
+  var nouns = {}; var m; var re = /\b(?:der|die|das)\s+([A-ZÄÖÜß][a-zA-Zäöüß]+)/g;
+  while((m = re.exec(tout)) !== null && Object.keys(nouns).length < 12){ nouns[m[1]] = 1; }
+  var structures = lignes.filter(function(l){
+    return /\+|→|Akkusativ|Dativ|Präteritum|Perfekt|Passiv|Modal|Konjunktion|Relativ|Nebensatz|wenn|bevor|obwohl|dass/.test(l);
+  }).slice(0, 4);
+  return '<div class="card" style="margin-top:12px"><h3 style="margin:0 0 8px">🎤 الظلال (Shadowing) : اسمع وردّد</h3>'
+    + (sh || '<p>—</p>') + '</div>'
+    + '<div class="card" style="margin-top:12px"><h3 style="margin:0 0 8px">🧠 بطافة التلخيص</h3>'
+    + '<p style="margin:0 0 6px"><b>أسماء الصفحة :</b> ' + (Object.keys(nouns).join(' · ') || '—') + '</p>'
+    + (structures.length ? '<p style="margin:0 0 6px"><b>بنى وقواعد :</b> ' + structures.map(esc).join(' · ') + '</p>' : '')
+    + '<p style="margin:0;font-size:12.5px">اكتب تلخيصك في سطرين بدفترك ثم قارنه بـ 📑 ملخصات الوحدات.</p></div>'
+    + '<div class="card" style="margin-top:12px"><h3 style="margin:0 0 8px">🎯 استعداد للفرض (نموذج رسمي /20)</h3>'
+    + '<p style="margin:0 0 6px">I. فهم (7 ن) : أجب عن Wer ? Was ? Warum ? حول الصفحة ' + p + '.</p>'
+    + '<p style="margin:0 0 6px">II. لغة (8 ن) : ترجم 5 كلمات من الصفحة و كوّن جملتين باسمين منها.</p>'
+    + '<p style="margin:0">III. كتابة (5 ن) : في 4 أسطر استعمل 3 بنى من الصفحة عن حياتك.</p>'
+    + '<p style="margin:8px 0 0;font-size:12.5px">ثم : 📝 فرض الوحدة · ⏱️ المحاكاة · 🧠 ذاكرة الأخطاء (J+1/J+3/J+7/J+21).</p></div>';
+}
