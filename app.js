@@ -220,6 +220,33 @@ function selectUnite(n){
   DEVOIR   = u.devoir || DEVOIR_U1;
   const d = $('#seanceDetail'); if(d) d.innerHTML = '';
   renderSeances(); paintUniteHead(); renderStats();
+  /* ── Événement dz:unite : notifie les modules (DEVOIRS_UNITE, etc.) ── */
+  try{
+    document.dispatchEvent(new CustomEvent('dz:unite', { detail: { n: n, unite: u } }));
+  }catch(e){}
+  /* ── Rendu automatique : si l'unité n'a pas de devoir codé en dur,
+         afficher les documents de la bibliothèque filtrés par unité ── */
+  if(!u.devoir && window.DEVOIRS_UNITE){
+    try{
+      const body = $('#devoirBody');
+      if(body){
+        DEVOIRS_UNITE.charger().then(function(){
+          DEVOIRS_UNITE.rendre(n, body);
+          const meta = DEVOIRS_UNITE.meta[n];
+          const docs = DEVOIRS_UNITE.parUnite(n);
+          const dt = $('#devoirTitle');
+          if(dt && meta){
+            dt.innerHTML = '📝 وثائق الوحدة ' + n + ' <span class="pill">' + meta.ar + '</span>';
+          }
+          const ds = $('#devoirSub');
+          if(ds && meta){
+            ds.textContent = '📚 ' + docs.length + ' وثيقة (فروض + اختبارات + حوليات) · ' +
+              (meta.pages ? 'الكتاب ص ' + meta.pages[0] + '-' + meta.pages[1] : 'مستوى 3AS');
+          }
+        });
+      }
+    }catch(e){ console.warn('[selectUnite] DEVOIRS_UNITE', e); }
+  }
   toast('📚 الوحدة ' + n + ' : ' + u.de + ' — ' + u.ar, 'ok');
 }
 
