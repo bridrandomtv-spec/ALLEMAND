@@ -2,15 +2,25 @@
   "_meta": {
     "type": "devoirs surveillés",
     "nombre": 350,
-    "version": "9.0.0",
+    "version": "9.0.1",
     "source": "تجميع الأستاذ خريف أحمد — ثانويات الوطن",
     "unites_2as": 9,
     "unites_3as": 10,
-    "note": "Redistribution complète selon les 9 Lektionen du manuel officiel 2AS (p5-p223) + 10 unités 3AS",
+    "note": "Redistribution v2 : mots-clés spécifiques + titre pondéré + hash équilibré",
     "redistribution": {
       "date": "2026-09-28",
       "methode": "Score de mots-clés thématiques + repli ancien schéma",
       "pages_livre": true
+    },
+    "redistribution_v2": {
+      "date": "2026-09-28",
+      "methodes": {
+        "fort": 111,
+        "ancien": 0,
+        "hash": 0
+      },
+      "total_2as": 111,
+      "total_3as": 239
     }
   },
   "items": [
@@ -71,9 +81,9 @@
       "code_wilaya": "00",
       "ville": "—",
       "lycee": "Texte modèle",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 0,
       "bareme": 0,
       "parties": [],
@@ -93,8 +103,8 @@
       "sujet": "Am Abend lese ich gerne ein Buch. Ich habe viele Bücher zu Hause, aber heute lese ich einen spannenden Roman. Zuerst suche ich mir einen gemütlichen Platz, dann mache ich es mir bequem. Beim Lesen tauche ich in eine andere Welt ein und vergesse den Alltag. Manchmal lese ich laut, weil es mir hilft, die Geschichte besser zu verstehen. Nach einer Stunde bin ich müde und lege das Buch zur Seite. Lesen macht Spaß!",
       "corrige": "Points clés : lesen en contexte · verbes réfléchifs (sich einen Platz suchen, es sich bequem machen) · beim + infinitif nominalisé (Beim Lesen tauche ich ein) · weil-Satz · verbes séparables (ein|tauchen, zur Seite legen) · vocabulaire : der spannende Roman, gemütlich, bequem, der Alltag, laut lesen, müde. Modèle pour « Was machst du am Abend ? ».",
       "pages_livre": [
-        31,
-        55
+        103,
+        127
       ]
     },
     {
@@ -113,9 +123,9 @@
       "code_wilaya": "00",
       "ville": "—",
       "lycee": "Texte modèle",
-      "unite": 4,
-      "unite_de": "Zeit und Wetter",
-      "unite_ar": "الوقت والطقس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 0,
       "bareme": 0,
       "parties": [],
@@ -135,8 +145,8 @@
       "sujet": "Letzte Woche habe ich mit meinen Freunden einen Ausflug gemacht. Wir sind in den Wald gegangen und haben dort gegrillt. Das Wetter war schön, und wir hatten viel Spaß.",
       "corrige": "Points clés : Perfekt avec sein/haben (habe gemacht, sind gegangen, haben gegrillt) · Präteritum de sein/haben (war schön, hatten viel Spaß) · vocabulaire : der Ausflug, der Wald, grillen, der Spaß. Modèle court (A2) pour « Erzähle von einem Ausflug ».",
       "pages_livre": [
-        77,
-        101
+        103,
+        127
       ]
     },
     {
@@ -575,9 +585,9 @@
       "code_wilaya": "00",
       "ville": "—",
       "lycee": "Texte modèle",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 4,
+      "unite_de": "Zeit und Wetter",
+      "unite_ar": "الوقت والطقس",
       "duree_minutes": 0,
       "bareme": 0,
       "parties": [],
@@ -596,8 +606,8 @@
       "sujet": "Am Wochenende mache ich viele verschiedene Dinge. Am Samstag mache ich oft den Haushalt : Ich mache das Bett, mache sauber und mache die Wäsche. Danach mache ich einen Spaziergang oder treffe Freunde. Am Sonntag mache ich nichts Schweres – ich mache es mir gemütlich, lese ein Buch oder mache einen Filmabend. Es ist schön, Zeit für sich selbst zu haben und das zu machen, was man gern mag.",
       "corrige": "Expressions avec MACHEN : den Haushalt machen · das Bett machen · sauber machen · die Wäsche machen · einen Spaziergang machen · es sich gemütlich machen · einen Filmabend machen · nichts Schweres machen. Structure temporelle : Am Samstag / Danach / Am Sonntag. Modèle idéal pour « Was machst du am Wochenende ? » (A1/A2).",
       "pages_livre": [
-        31,
-        55
+        77,
+        101
       ]
     },
     {
@@ -657,9 +667,9 @@
       "code_wilaya": "00",
       "ville": "—",
       "lycee": "Texte modèle",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 9,
+      "unite_de": "Stadtleben – Landleben",
+      "unite_ar": "حياة المدينة والريف",
       "duree_minutes": 0,
       "bareme": 0,
       "parties": [],
@@ -678,8 +688,8 @@
       "sujet": "Das Meer ist meine Auszeit für die Seele.",
       "corrige": "Citation poétique pour introduire ou conclure un texte sur la mer, les vacances ou la détente (Thema : Reisen, Urlaub, Natur). Sens : la mer est ma pause / mon évasion pour l'âme. Vocabulaire : das Meer, die Auszeit, die Seele. Structure réutilisable : « … ist meine Auszeit für … ».",
       "pages_livre": [
-        5,
-        29
+        207,
+        223
       ]
     },
     {
@@ -991,9 +1001,9 @@
       "code_wilaya": "00",
       "ville": "—",
       "lycee": "Modèle d'écriture",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 4,
+      "unite_de": "Zeit und Wetter",
+      "unite_ar": "الوقت والطقس",
       "duree_minutes": 0,
       "bareme": 0,
       "parties": [],
@@ -1014,8 +1024,8 @@
       "sujet": "Liebe Anna,\nich habe eine Idee für den Sommer: Lass uns mit ein paar Freunden ans Meer fahren! Vielleicht Italien oder Kroatien – Sonne, Strand und gute Laune!\nIch habe im Juli Urlaub. Hast du auch Zeit? Tom und Sarah haben schon Interesse gezeigt.\nWir könnten am Wochenende alle zusammensitzen und die Reise planen. Ich freue mich schon riesig!\nLiebe Grüße\nLisa\n\nSTRUCTURE : Anrede (Liebe Anna,) → Idee + Vorschlag (Lass uns … fahren !) → Ziel (Italien/Kroatien) + Stimmung → Zeitpunkt (Ich habe im Juli Urlaub) + Frage (Hast du auch Zeit ?) → Freunde (Tom und Sarah haben Interesse gezeigt) → Treffen zum Planen (Wir könnten … zusammensitzen) + Freude (Ich freue mich riesig) → Gruß (Liebe Grüße, Lisa).",
       "corrige": "Phrases utiles : Ich habe eine Idee für den Sommer : Lass uns mit ein paar Freunden ans Meer fahren ! Vielleicht Italien oder Kroatien – Sonne, Strand und gute Laune ! Ich habe im Juli Urlaub. Hast du auch Zeit ? Tom und Sarah haben schon Interesse gezeigt. Wir könnten am Wochenende alle zusammensitzen und die Reise planen. Ich freue mich schon riesig ! Liebe Grüße, Lisa.",
       "pages_livre": [
-        5,
-        29
+        77,
+        101
       ]
     },
     {
@@ -1225,9 +1235,9 @@
       "code_wilaya": "00",
       "ville": "—",
       "lycee": "Banque dzexams",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 3,
+      "unite_de": "Schule und Unterricht",
+      "unite_ar": "المدرسة والدرس",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -1268,8 +1278,8 @@
       "sujet": "TEXT — Ich bin Amel. Ich bin 16 Jahre alt. Ich wohne in Algier. Ich lerne drei Fremdsprachen: Französisch, Englisch und Deutsch. Wir wohnen in einem schönen Haus. Es hat vier Zimmer, eine Küche, ein Bad und eine Garage. Wir haben auch einen Garten. Ich habe drei Geschwister: zwei Brüder und eine Schwester.\n\nI. Textverständnis : 1. Fragen zum Text : Wer ist Amel? Woher kommt sie? Wie ist das Haus von Amel? Ist Amel das Einzelkind? 2. Gib das Gegenteil (≠) : Die Fremdsprache ≠ … ; Der Garten ist groß → Der Park ist … 3. Schreibe die Komposita richtig : Der Blei + der Stift = … ; Die Wörter + das Buch = … ; Die Philosophie + der Lehrer = … ; Der Lehrer + das Zimmer = … ; Die Kinder + das Bett = … 4. Grammatik — Für wen ist das Buch? Das Buch ist für d… Lehrer / d… Kind / d… Schülerin / mein… Onkel. 5. Gib den Artikel (Singular) : d… Klassenzimmer, d… Heft, d… Lineal, d… Schere, d… Schule, d… Bürste. 6. Gib den Plural : der Mann, die Schülerin, das Kinderzimmer, der Stuhl, das Sofa, die Kommode … 7. Ergänze : Ich kauf d… Bleistift – Wir suchen ein… Freundin – Wir haben d… Heft, d… Bleistift, d… Radiergummi – Er schreibt ein… Text, ein… Übung und ein… Frage.",
       "corrige": "I. Textverständnis : 1. Sie ist Schülerin. / Sie kommt aus Algier. / Es ist schön. / Nein, sie hat zwei Brüder und eine Schwester. 2. Die Fremdsprache ≠ die Muttersprache ; groß ≠ klein. 3. Der Bleistift · das Wörterbuch · der Philosophielehrer · das Lehrerzimmer · das Kinderbett. 4. Das Buch ist für den Lehrer / für das Kind / für die Schülerin / für meinen Onkel. 5. das Klassenzimmer, das Heft, das Lineal, die Schere, die Schule, die Bürste. 6. die Männer, die Schülerinnen, die Kinderzimmer, die Stühle, die Sofas, die Kommoden … 7. Ich kaufe den Bleistift – Wir suchen eine Freundin – Wir haben das Heft, den Bleistift, den Radiergummi – Er schreibt einen Text, eine Übung und eine Frage.",
       "pages_livre": [
-        31,
-        55
+        57,
+        76
       ]
     },
     {
@@ -1595,9 +1605,9 @@
       "code_wilaya": "00",
       "ville": "—",
       "lycee": "Banque dzexams",
-      "unite": 5,
-      "unite_de": "Freizeit",
-      "unite_ar": "أوقات الفراغ",
+      "unite": 3,
+      "unite_de": "Schule und Unterricht",
+      "unite_ar": "المدرسة والدرس",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -1637,8 +1647,8 @@
       "sujet": "TEXT — Zwei Studenten in München. Robert studiert seit einem Monat in München. Er wohnt mit seinem Freund Hans beim Schuhmacher. Morgens, um 8 Uhr geht Robert aus dem Haus und fährt mit dem Bus zur Universität. Hans geht immer zu Fuß, weil er kein Auto hat. Am Mittag geht Robert mit seinem Freund zum Essen. Sie gehen zu einem Gasthaus (=Restaurant), denn es ist gut, das Essen schmeckt gut und es ist billig. Nach dem Essen lesen die zwei Freunde Illustrierte und trinken Kaffee oder Bier. Nach dem Unterricht geht Hans nach Hause. Er sieht fern, danach geht er früh ins Bett.\n\nA. Fragen zum Text : 1) Seit wann studiert Robert in München? 2) Wohin gehen die beiden Freunde mittags? 3) Schmeckt das Essen? 4) Was macht Hans nach dem Unterricht?\nB. Stimmt oder stimmt nicht? 1) Robert und Hans studieren an der Universität. 2) Hans hat ein Auto. 3) Am Nachmittag gehen die Freunde zum Zoo. 4) Nach dem Unterricht spielen sie Fußball.\nC. Singular (Setze in den Singular) : 1) Die Lehrer fragen ihre Schüler. 2) Ihr macht eure Übungen. 3) Sie korrigieren Sätze. 4) Wir kaufen Bücher. 5) Die Schülerinnen schreiben ihre Aufgaben.\nD. Antworte mit nein! 1) Ist das ein Mann? 2) Ist dein Haus klein? 3) Gehen die Kinder in die Schule? 4) Hast du ein Heft? 5) Haben Sie Kinder, Herr Lehrer?\nE. Präteritum dann Perfekt : 1) Wir sind zu Hause. 2) Du gehst zum Fußballplatz. 3) Er besucht seine Mutter. 4) Ihr habt keine Zeit. 5) Die Schüler fahren ins Gymnasium.",
       "corrige": "A. 1) Seit einem Monat. 2) Zu einem Gasthaus (Restaurant). 3) Ja, es schmeckt gut. 4) Er geht nach Hause, sieht fern und geht früh ins Bett.\nB. 1) Stimmt. 2) Stimmt nicht — Hans hat kein Auto. 3) Stimmt nicht. 4) Stimmt nicht.\nC. Singular : 1) Der Lehrer fragt seinen Schüler. 2) Du machst deine Übung. 3) Er/Sie korrigiert einen Satz. 4) Ich kaufe ein Buch. 5) Die Schülerin schreibt ihre Aufgabe.\nD. Nein-Antworten : 1) Nein, das ist eine Frau. 2) Nein, mein Haus ist groß. 3) Nein, die Kinder gehen nicht in die Schule. 4) Nein, ich habe kein Heft. 5) Nein, ich habe keine Kinder.\nE. Präteritum → Perfekt : 1) Wir waren zu Hause → Wir sind zu Hause gewesen. 2) Du gingst zum Fußballplatz → Du bist zum Fußballplatz gegangen. 3) Er besuchte seine Mutter → Er hat seine Mutter besucht. 4) Ihr hattet keine Zeit → Ihr habt keine Zeit gehabt. 5) Die Schüler fuhren ins Gymnasium → Die Schüler sind ins Gymnasium gefahren.",
       "pages_livre": [
-        103,
-        127
+        57,
+        76
       ]
     },
     {
@@ -3603,9 +3613,9 @@
       "code_wilaya": "54",
       "ville": "In Guezzam",
       "lycee": "CEM Ibn Rochd",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -3653,8 +3663,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -5820,9 +5830,9 @@
       "code_wilaya": "12",
       "ville": "Tébessa",
       "lycee": "CEM Ahmed Zabana",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -5870,8 +5880,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -6158,9 +6168,9 @@
       "code_wilaya": "54",
       "ville": "In Guezzam",
       "lycee": "CEM Mohamed Boudiaf",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -6208,8 +6218,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -6699,9 +6709,9 @@
       "code_wilaya": "14",
       "ville": "Tiaret",
       "lycee": "Lycée Mohamed Boudiaf",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 60,
       "bareme": 20,
       "parties": [
@@ -6749,8 +6759,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -7239,9 +7249,9 @@
       "code_wilaya": "01",
       "ville": "Adrar",
       "lycee": "Lycée Nouvelle Ville (Adrar)",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 60,
       "bareme": 20,
       "parties": [
@@ -7289,8 +7299,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -7309,9 +7319,9 @@
       "code_wilaya": "43",
       "ville": "Mila-Centre",
       "lycee": "Lycée Abdelhamid Ibn Badis",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -7359,8 +7369,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -7720,9 +7730,9 @@
       "code_wilaya": "44",
       "ville": "Aïn Defla",
       "lycee": "Lycée Nouvelle Ville (Aïn Defla)",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 60,
       "bareme": 20,
       "parties": [
@@ -7770,8 +7780,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -11702,9 +11712,9 @@
       "code_wilaya": "14",
       "ville": "Tiaret",
       "lycee": "CEM El Mokrani",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -11752,8 +11762,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -12384,9 +12394,9 @@
       "code_wilaya": "35",
       "ville": "Daïra de Boumerdès",
       "lycee": "Lycée Cheikh El Hasnaoui",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 60,
       "bareme": 20,
       "parties": [
@@ -12434,8 +12444,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -13812,9 +13822,9 @@
       "code_wilaya": "08",
       "ville": "Béchar-Centre",
       "lycee": "Lycée Nouvelle Ville (Béchar-Centre)",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 60,
       "bareme": 20,
       "parties": [
@@ -13862,8 +13872,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -15166,9 +15176,9 @@
       "code_wilaya": "28",
       "ville": "M'Sila-Centre",
       "lycee": "Lycée Nouvelle Ville (M'Sila-Centre)",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 60,
       "bareme": 20,
       "parties": [
@@ -15216,8 +15226,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -15774,9 +15784,9 @@
       "code_wilaya": "42",
       "ville": "Tipaza-Centre",
       "lycee": "Lycée Nouvelle Ville (Tipaza-Centre)",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 60,
       "bareme": 20,
       "parties": [
@@ -15824,8 +15834,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -16330,9 +16340,9 @@
       "code_wilaya": "50",
       "ville": "Bordj Badji Mokhtar",
       "lycee": "Lycée Nouvelle Ville (Bordj Badji Mokhtar)",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -16380,8 +16390,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -16800,9 +16810,9 @@
       "code_wilaya": "52",
       "ville": "Béni Abbès",
       "lycee": "CEM Abou El Kacem Saadallah",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -16850,8 +16860,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -17348,9 +17358,9 @@
       "code_wilaya": "27",
       "ville": "Mostaganem-Centre",
       "lycee": "CEM Frères Amirouche",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 60,
       "bareme": 20,
       "parties": [
@@ -17398,8 +17408,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -17957,9 +17967,9 @@
       "code_wilaya": "25",
       "ville": "Didouche Mourad",
       "lycee": "Lycée Ibn Khaldoun",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -18007,8 +18017,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
@@ -18094,9 +18104,9 @@
       "code_wilaya": "13",
       "ville": "Sebdou",
       "lycee": "CEM Noureddine Nait Mazi",
-      "unite": 2,
-      "unite_de": "Haus und Familie",
-      "unite_ar": "البيت والعائلة",
+      "unite": 1,
+      "unite_de": "Sich vorstellen",
+      "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -18144,8 +18154,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        31,
-        55
+        5,
+        29
       ]
     },
     {
