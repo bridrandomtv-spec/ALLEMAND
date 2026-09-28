@@ -722,7 +722,7 @@ function renderSeances(){
     const locked = s.n > 1 && done.indexOf(s.n - 1) === -1 && !isDone;
     const meta = s.ex === 'devoir'
       ? '<span class="chip ex">📝 اختبار /20</span>'
-      : '<span class="chip">' + ((s.exos || []).length) + ' تمرين</span>';
+      : '<span class="chip">' + (((s.exos||[]).length) ? ((s.exos||[]).length + ' تمرين') : '📖 درس من الكتاب') + '</span>';
     return '<div class="seance' + (isDone ? ' done' : '') + (locked ? ' lock' : '') + '" data-seance="' + s.n + '">'
       + '<div class="s-num">' + (isDone ? '✓' : s.n) + '</div><div class="s-body">'
       + '<div class="s-t">' + (locked ? '🔒 ' : '') + 'الحصة ' + s.n + '/8 — ' + esc(s.ar) + '</div>'
