@@ -1836,3 +1836,22 @@ window.DZ = {
   get niveauActif(){ return niveauActif; },
   setNiveau:(n) => { niveauActif = n; store('dz_de_niveau_v1', n); }
 };
+
+/* ── Bouton « 🔊 écouter cette page » : lit la page du livre avec la voix allemande ── */
+document.addEventListener('click', function(e){
+  var b = (e.target && e.target.closest) ? e.target.closest('[data-lire]') : null;
+  if(!b) return;
+  var p = b.getAttribute('data-lire');
+  var en = (window.__BOOK__ || {})[String(p)];
+  if(!en || !(en.lignes || []).length){
+    if(window.toast) toast('⏳ الكتاب يُحمَّل… réessaie dans une seconde', 'ko');
+    return;
+  }
+  var txt = (en.lignes || []).join(' ');
+  if(typeof speak === 'function'){ speak(txt); }
+  else if('speechSynthesis' in window){
+    var u = new SpeechSynthesisUtterance(txt);
+    u.lang = 'de-DE'; u.rate = 0.86;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }
+});
