@@ -727,7 +727,7 @@ function renderSeances(){
       + '<div class="s-num">' + (isDone ? '✓' : s.n) + '</div><div class="s-body">'
       + '<div class="s-t">' + (locked ? '🔒 ' : '') + 'الحصة ' + s.n + '/8 — ' + esc(s.ar) + '</div>'
       + '<div class="s-d">' + esc(s.de) + '</div>'
-      + '<div class="s-meta"><span class="chip">⏱️ ' + s.dur + ' د</span>' + meta
+      + '<div class="s-meta"><span class="chip">⏱️ ' + (s.dur||s.duree||45) + ' د</span>' + meta
       + (isDone ? '<span class="chip ok">✅ مكتملة</span>' : '') + '</div></div></div>';
   }).join('');
 
@@ -800,7 +800,7 @@ function etapesPour(s){
   const cle = typeSeance(seance);
   const base = ETAPES_PAR_TYPE[cle] || ETAPES_PAR_TYPE.defaut;
   const total = base.reduce(function(a, e){ return a + e.m; }, 0);
-  const d = Number(seance.dur) || total;
+  const d = Number((seance.dur||seance.duree||45)) || total;
   if(d === total) return base;
   return base.map(function(e){
     return { m: Math.max(3, Math.round(e.m * d / total)),
@@ -875,6 +875,36 @@ function renderGrille(g){
     + '</table></div>';
 }
 
+/* ── Livre officiel chargé une fois : window.__BOOK__[page] = {titre, lignes} ── */
+window.__BOOK__ = window.__BOOK__ || {};
+try {
+  fetch('assets/bdd/buch_pages.json', {cache:'force-cache'}).then(function(r){return r.ok?r.json():null;}).then(function(B){
+    if(B){ window.__BOOK__ = B; window.dispatchEvent(new Event('book-ready')); }
+  }).catch(function(){});
+} catch(e) {}
+function leconLivre(s){
+  var p = s.page || (s.pages && s.pages[0]);
+  if(!p) return '';
+  var B = window.__BOOK__ || {};
+  var e = B[String(p)];
+  var lignes = (e && e.lignes) ? e.lignes : [];
+  if(!lignes.length){
+    window.addEventListener('book-ready', function(){
+      var cur = document.querySelector('#seanceDetail .card.detail');
+      if(cur && cur.getAttribute('data-n') == s.n) openSeance(s.n);
+    }, {once:true});
+  }
+  var corps = lignes.length
+    ? lignes.map(function(l){ return '<p style="margin:0 0 10px;line-height:1.75">' + esc(l) + '</p>'; }).join('')
+    : '<p style="margin:0">… chargement du livre …</p>';
+  return '<div class="card" style="margin-top:12px">'
+       + '<h3 style="margin:0 0 8px">📖 نص الدرس — الكتاب الرسمي، الصفحة ' + p + '</h3>'
+       + '<div class="s-d" style="margin-bottom:10px">' + esc(e && e.titre ? e.titre : ('Lektion — Seite ' + p)) + '</div>'
+       + corps
+       + '<button class="btn btn-g" data-lire="' + p + '">🔊 écouter cette page</button>'
+       + '</div>';
+}
+
 function openSeance(n){
   const s = SEANCES.filter(x => x.n === n)[0]; if(!s) return;
   const st = loadSeances();
@@ -883,7 +913,7 @@ function openSeance(n){
 
   let h = '<div class="card detail" data-n="' + s.n + '">'
     + '<div class="detail-h"><div><h2 style="margin:0">الحصة ' + s.n + '/8 — ' + esc(s.ar) + '</h2>'
-    + '<div class="s-d" style="margin-top:3px">' + esc(s.de) + ' · ⏱️ ' + s.dur + ' د</div></div>'
+    + '<div class="s-d" style="margin-top:3px">' + esc(s.de) + ' · ⏱️ ' + (s.dur||s.duree||45) + ' د</div></div>'
     + '<button class="close-x" id="closeDetail">✕</button></div>';
 
   if(s.ex === 'devoir'){
@@ -893,6 +923,7 @@ function openSeance(n){
   }
 
   h += renderEtapes(s);
+  h += leconLivre(s);
 
   if(s.obj) h += '<div class="gram"><h4>🎯 أهداف الحصة</h4><ul style="margin:0 20px;font-size:13px;color:var(--m)">'
     + s.obj.map(o => '<li>' + esc(o) + '</li>').join('') + '</ul></div>';
