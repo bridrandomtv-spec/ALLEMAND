@@ -2,10 +2,10 @@
   "_meta": {
     "type": "compositions trimestrielles",
     "nombre": 168,
-    "version": "9.0.1",
+    "version": "9.1.0",
     "source": "تجميع الأستاذ خريف أحمد — ثانويات الوطن",
     "unites_2as": 9,
-    "note": "Redistribution v2 : mots-clés spécifiques + titre pondéré + hash équilibré",
+    "note": "Redistribution v3 : classification par TITRE (thème réel) — ignorer le sujet générique",
     "redistribution_v2": {
       "date": "2026-09-28",
       "methodes": {
@@ -15,6 +15,17 @@
       },
       "total_2as": 105,
       "total_3as": 63
+    },
+    "redistribution_v3": {
+      "date": "2026-09-28",
+      "methodes": {
+        "titre": 54,
+        "3AS": 114,
+        "tags": 0,
+        "hash": 0
+      },
+      "total_2as": 54,
+      "total_3as": 114
     }
   },
   "items": [
@@ -34,7 +45,7 @@
       "code_wilaya": "55",
       "ville": "Touggourt-Centre",
       "lycee": "Lycée Noureddine Nait Mazi",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -170,7 +181,7 @@
       "code_wilaya": "44",
       "ville": "Aïn Defla",
       "lycee": "Lycée Benyoucef Benkhedda",
-      "unite": 1,
+      "unite": 12,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -240,7 +251,7 @@
       "code_wilaya": "28",
       "ville": "M'Sila-Centre",
       "lycee": "Lycée Nouvelle Ville (M'Sila-Centre)",
-      "unite": 1,
+      "unite": 13,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -376,7 +387,7 @@
       "code_wilaya": "02",
       "ville": "Daïra de Chlef",
       "lycee": "Lycée Mouloud Feraoun",
-      "unite": 1,
+      "unite": 12,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -512,9 +523,9 @@
       "code_wilaya": "54",
       "ville": "Daïra de In Guezzam",
       "lycee": "Lycée Nouvelle Ville (Daïra de In Guezzam)",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 9,
+      "unite_de": "Stadtleben – Landleben",
+      "unite_ar": "حياة المدينة والريف",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -562,8 +573,8 @@
       "sujet": "« Reisen und Verkehr » (السفر والنقل) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Reisen und Verkehr ».\nالكفاءات المستهدفة : Präpositionen, Richtungen, Verkehrsmittel.",
       "corrige": "التصحيح النموذجي — الوحدة 6 « Reisen und Verkehr » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        207,
+        223
       ]
     },
     {
@@ -653,7 +664,7 @@
       "code_wilaya": "10",
       "ville": "Bouira",
       "lycee": "Lycée Lalla Khadidja",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -859,7 +870,7 @@
       "code_wilaya": "32",
       "ville": "El Bayadh",
       "lycee": "Lycée Nouvelle Ville (El Bayadh)",
-      "unite": 1,
+      "unite": 14,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -994,7 +1005,7 @@
       "code_wilaya": "12",
       "ville": "Tébessa-Centre",
       "lycee": "Lycée El Habib",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -1064,7 +1075,7 @@
       "code_wilaya": "14",
       "ville": "Tiaret",
       "lycee": "Lycée Nouvelle Ville (Tiaret)",
-      "unite": 1,
+      "unite": 18,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -1134,7 +1145,7 @@
       "code_wilaya": "10",
       "ville": "M'Chedallah",
       "lycee": "Lycée Mohamed Boudiaf",
-      "unite": 1,
+      "unite": 13,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -1269,7 +1280,7 @@
       "code_wilaya": "10",
       "ville": "Lakhdaria",
       "lycee": "CEM El Habib",
-      "unite": 1,
+      "unite": 13,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -1746,7 +1757,7 @@
       "code_wilaya": "13",
       "ville": "Maghnia",
       "lycee": "CEM Cheikh Bouamama",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -2016,7 +2027,7 @@
       "code_wilaya": "57",
       "ville": "El M'Ghair-Centre",
       "lycee": "CEM Malek Bennabi",
-      "unite": 1,
+      "unite": 12,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -2349,9 +2360,9 @@
       "code_wilaya": "33",
       "ville": "Daïra de Illizi",
       "lycee": "CEM Frères Amirouche",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 3,
+      "unite_de": "Schule und Unterricht",
+      "unite_ar": "المدرسة والدرس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -2399,8 +2410,8 @@
       "sujet": "« Schule und Ausbildung » (المدرسة والتكوين) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Schule und Ausbildung ».\nالكفاءات المستهدفة : Schulfächer, Uhrzeit, Modalverben.",
       "corrige": "التصحيح النموذجي — الوحدة 3 « Schule und Ausbildung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        57,
+        76
       ]
     },
     {
@@ -2419,9 +2430,9 @@
       "code_wilaya": "35",
       "ville": "Boumerdès",
       "lycee": "CEM Al Khawarizmi",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -2469,8 +2480,8 @@
       "sujet": "« Alltag und Freizeit » (الحياة اليومية وأوقات الفراغ) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Alltag und Freizeit ».\nالكفاءات المستهدفة : trennbare Verben, Hobbys, Tagesablauf.",
       "corrige": "التصحيح النموذجي — الوحدة 4 « Alltag und Freizeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        103,
+        127
       ]
     },
     {
@@ -2489,9 +2500,9 @@
       "code_wilaya": "16",
       "ville": "Bir Mourad Raïs",
       "lycee": "CEM Abou El Kacem Saadallah",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 9,
+      "unite_de": "Stadtleben – Landleben",
+      "unite_ar": "حياة المدينة والريف",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -2539,8 +2550,8 @@
       "sujet": "« Reisen und Verkehr » (السفر والنقل) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Reisen und Verkehr ».\nالكفاءات المستهدفة : Präpositionen, Richtungen, Verkehrsmittel.",
       "corrige": "التصحيح النموذجي — الوحدة 6 « Reisen und Verkehr » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        207,
+        223
       ]
     },
     {
@@ -2759,7 +2770,7 @@
       "code_wilaya": "31",
       "ville": "Oran",
       "lycee": "Lycée Frères Amirouche",
-      "unite": 1,
+      "unite": 12,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -2895,9 +2906,9 @@
       "code_wilaya": "14",
       "ville": "Tiaret-Centre",
       "lycee": "Lycée Nouvelle Ville (Tiaret-Centre)",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -2945,8 +2956,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -2965,7 +2976,7 @@
       "code_wilaya": "14",
       "ville": "Daïra de Tiaret",
       "lycee": "CEM Abdelhamid Ibn Badis",
-      "unite": 1,
+      "unite": 12,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -3166,7 +3177,7 @@
       "code_wilaya": "09",
       "ville": "Bougara",
       "lycee": "CEM Al Khawarizmi",
-      "unite": 1,
+      "unite": 14,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -3307,9 +3318,9 @@
       "code_wilaya": "55",
       "ville": "Daïra de Touggourt",
       "lycee": "Lycée Ibn Khaldoun",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -3357,8 +3368,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -3377,9 +3388,9 @@
       "code_wilaya": "44",
       "ville": "Aïn Defla-Centre",
       "lycee": "Lycée Abdelhamid Ibn Badis",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -3427,8 +3438,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -3447,9 +3458,9 @@
       "code_wilaya": "42",
       "ville": "Daïra de Tipaza",
       "lycee": "Lycée Nouvelle Ville (Daïra de Tipaza)",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -3497,8 +3508,8 @@
       "sujet": "« Alltag und Freizeit » (الحياة اليومية وأوقات الفراغ) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Alltag und Freizeit ».\nالكفاءات المستهدفة : trennbare Verben, Hobbys, Tagesablauf.",
       "corrige": "التصحيح النموذجي — الوحدة 4 « Alltag und Freizeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        103,
+        127
       ]
     },
     {
@@ -3916,7 +3927,7 @@
       "code_wilaya": "23",
       "ville": "Berrahal",
       "lycee": "Lycée Ibn Rochd",
-      "unite": 1,
+      "unite": 12,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -4052,9 +4063,9 @@
       "code_wilaya": "57",
       "ville": "El M'Ghair-Centre",
       "lycee": "CEM Ibn Khaldoun",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 9,
+      "unite_de": "Stadtleben – Landleben",
+      "unite_ar": "حياة المدينة والريف",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -4102,8 +4113,8 @@
       "sujet": "« Reisen und Verkehr » (السفر والنقل) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Reisen und Verkehr ».\nالكفاءات المستهدفة : Präpositionen, Richtungen, Verkehrsmittel.",
       "corrige": "التصحيح النموذجي — الوحدة 6 « Reisen und Verkehr » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        207,
+        223
       ]
     },
     {
@@ -4122,7 +4133,7 @@
       "code_wilaya": "40",
       "ville": "Daïra de Khenchela",
       "lycee": "CEM Didouche Mourad",
-      "unite": 1,
+      "unite": 13,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -4328,7 +4339,7 @@
       "code_wilaya": "34",
       "ville": "Bordj Bou Arreridj",
       "lycee": "Lycée Mouloud Feraoun",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -4534,7 +4545,7 @@
       "code_wilaya": "48",
       "ville": "Daïra de Relizane",
       "lycee": "CEM Didouche Mourad",
-      "unite": 1,
+      "unite": 13,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -4670,9 +4681,9 @@
       "code_wilaya": "19",
       "ville": "Sétif",
       "lycee": "Lycée Nouvelle Ville (Sétif)",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 9,
+      "unite_de": "Stadtleben – Landleben",
+      "unite_ar": "حياة المدينة والريف",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -4720,8 +4731,8 @@
       "sujet": "« Reisen und Verkehr » (السفر والنقل) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Reisen und Verkehr ».\nالكفاءات المستهدفة : Präpositionen, Richtungen, Verkehrsmittel.",
       "corrige": "التصحيح النموذجي — الوحدة 6 « Reisen und Verkehr » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        207,
+        223
       ]
     },
     {
@@ -4740,7 +4751,7 @@
       "code_wilaya": "12",
       "ville": "Tébessa",
       "lycee": "Lycée Benyoucef Benkhedda",
-      "unite": 1,
+      "unite": 18,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -5012,7 +5023,7 @@
       "code_wilaya": "43",
       "ville": "Mila",
       "lycee": "Lycée Nouvelle Ville (Mila)",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -5082,9 +5093,9 @@
       "code_wilaya": "27",
       "ville": "Daïra de Mostaganem",
       "lycee": "Lycée Mohamed Boudiaf",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 9,
+      "unite_de": "Stadtleben – Landleben",
+      "unite_ar": "حياة المدينة والريف",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -5132,8 +5143,8 @@
       "sujet": "« Reisen und Verkehr » (السفر والنقل) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Reisen und Verkehr ».\nالكفاءات المستهدفة : Präpositionen, Richtungen, Verkehrsmittel.",
       "corrige": "التصحيح النموذجي — الوحدة 6 « Reisen und Verkehr » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        207,
+        223
       ]
     },
     {
@@ -5152,9 +5163,9 @@
       "code_wilaya": "44",
       "ville": "Aïn Defla",
       "lycee": "CEM Omar Ben El Khattab",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -5202,8 +5213,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -5552,9 +5563,9 @@
       "code_wilaya": "55",
       "ville": "Daïra de Touggourt",
       "lycee": "CEM Cheikh Bouamama",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -5602,8 +5613,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -5693,7 +5704,7 @@
       "code_wilaya": "30",
       "ville": "Ouargla",
       "lycee": "Lycée Mohamed Boudiaf",
-      "unite": 1,
+      "unite": 18,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -5763,9 +5774,9 @@
       "code_wilaya": "15",
       "ville": "Tizi Ouzou",
       "lycee": "CEM Frères Amirouche",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -5813,8 +5824,8 @@
       "sujet": "« Alltag und Freizeit » (الحياة اليومية وأوقات الفراغ) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Alltag und Freizeit ».\nالكفاءات المستهدفة : trennbare Verben, Hobbys, Tagesablauf.",
       "corrige": "التصحيح النموذجي — الوحدة 4 « Alltag und Freizeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        103,
+        127
       ]
     },
     {
@@ -5833,9 +5844,9 @@
       "code_wilaya": "42",
       "ville": "Tipaza",
       "lycee": "Lycée Al Khawarizmi",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -5883,8 +5894,8 @@
       "sujet": "« Alltag und Freizeit » (الحياة اليومية وأوقات الفراغ) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Alltag und Freizeit ».\nالكفاءات المستهدفة : trennbare Verben, Hobbys, Tagesablauf.",
       "corrige": "التصحيح النموذجي — الوحدة 4 « Alltag und Freizeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        103,
+        127
       ]
     },
     {
@@ -5969,7 +5980,7 @@
       "code_wilaya": "38",
       "ville": "Tissemsilt",
       "lycee": "CEM Mohamed Boudiaf",
-      "unite": 1,
+      "unite": 14,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -6236,7 +6247,7 @@
       "code_wilaya": "03",
       "ville": "Laghouat",
       "lycee": "Lycée Nouvelle Ville (Laghouat)",
-      "unite": 1,
+      "unite": 13,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -6306,9 +6317,9 @@
       "code_wilaya": "31",
       "ville": "Oran",
       "lycee": "Lycée Abdelhamid Ibn Badis",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -6356,8 +6367,8 @@
       "sujet": "« Alltag und Freizeit » (الحياة اليومية وأوقات الفراغ) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Alltag und Freizeit ».\nالكفاءات المستهدفة : trennbare Verben, Hobbys, Tagesablauf.",
       "corrige": "التصحيح النموذجي — الوحدة 4 « Alltag und Freizeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        103,
+        127
       ]
     },
     {
@@ -6441,7 +6452,7 @@
       "code_wilaya": "24",
       "ville": "Guelma-Centre",
       "lycee": "Lycée Hocine Aït Ahmed",
-      "unite": 1,
+      "unite": 14,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -6576,7 +6587,7 @@
       "code_wilaya": "32",
       "ville": "Daïra de El Bayadh",
       "lycee": "Lycée Abou El Kacem Saadallah",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -6646,9 +6657,9 @@
       "code_wilaya": "56",
       "ville": "Djanet-Centre",
       "lycee": "CEM Mouloud Feraoun",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -6696,8 +6707,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -6716,9 +6727,9 @@
       "code_wilaya": "22",
       "ville": "Daïra de Sidi Bel Abbès",
       "lycee": "CEM Abdelhamid Ibn Badis",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -6766,8 +6777,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -6856,7 +6867,7 @@
       "code_wilaya": "12",
       "ville": "Daïra de Tébessa",
       "lycee": "CEM Benyoucef Benkhedda",
-      "unite": 6,
+      "unite": 16,
       "unite_de": "Mensch und Gesundheit",
       "unite_ar": "الإنسان والصحة",
       "duree_minutes": 120,
@@ -6992,9 +7003,9 @@
       "code_wilaya": "57",
       "ville": "El M'Ghair-Centre",
       "lycee": "CEM Abou El Kacem Saadallah",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -7042,8 +7053,8 @@
       "sujet": "« Alltag und Freizeit » (الحياة اليومية وأوقات الفراغ) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Alltag und Freizeit ».\nالكفاءات المستهدفة : trennbare Verben, Hobbys, Tagesablauf.",
       "corrige": "التصحيح النموذجي — الوحدة 4 « Alltag und Freizeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        103,
+        127
       ]
     },
     {
@@ -7264,9 +7275,9 @@
       "code_wilaya": "16",
       "ville": "El Harrach",
       "lycee": "Lycée Al Khawarizmi",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -7314,8 +7325,8 @@
       "sujet": "« Alltag und Freizeit » (الحياة اليومية وأوقات الفراغ) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Alltag und Freizeit ».\nالكفاءات المستهدفة : trennbare Verben, Hobbys, Tagesablauf.",
       "corrige": "التصحيح النموذجي — الوحدة 4 « Alltag und Freizeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        103,
+        127
       ]
     },
     {
@@ -7334,7 +7345,7 @@
       "code_wilaya": "33",
       "ville": "Illizi-Centre",
       "lycee": "Lycée Nouvelle Ville (Illizi-Centre)",
-      "unite": 1,
+      "unite": 14,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -7404,9 +7415,9 @@
       "code_wilaya": "47",
       "ville": "Ghardaïa-Centre",
       "lycee": "CEM Aïssa Messaoudi",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -7454,8 +7465,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -7474,7 +7485,7 @@
       "code_wilaya": "38",
       "ville": "Tissemsilt-Centre",
       "lycee": "Lycée Nouvelle Ville (Tissemsilt-Centre)",
-      "unite": 7,
+      "unite": 14,
       "unite_de": "Essen und Trinken",
       "unite_ar": "المأكل والمشرب",
       "duree_minutes": 120,
@@ -7544,7 +7555,7 @@
       "code_wilaya": "57",
       "ville": "Daïra de El M'Ghair",
       "lycee": "CEM Omar Ben El Khattab",
-      "unite": 7,
+      "unite": 14,
       "unite_de": "Essen und Trinken",
       "unite_ar": "المأكل والمشرب",
       "duree_minutes": 90,
@@ -7684,7 +7695,7 @@
       "code_wilaya": "43",
       "ville": "Mila-Centre",
       "lycee": "CEM Ibn Khaldoun",
-      "unite": 1,
+      "unite": 18,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -7754,7 +7765,7 @@
       "code_wilaya": "53",
       "ville": "In Salah",
       "lycee": "Lycée Lalla Khadidja",
-      "unite": 6,
+      "unite": 16,
       "unite_de": "Mensch und Gesundheit",
       "unite_ar": "الإنسان والصحة",
       "duree_minutes": 90,
@@ -7890,9 +7901,9 @@
       "code_wilaya": "29",
       "ville": "Daïra de Mascara",
       "lycee": "Lycée Nouvelle Ville (Daïra de Mascara)",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -7940,8 +7951,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -7960,9 +7971,9 @@
       "code_wilaya": "11",
       "ville": "Daïra de Tamanrasset",
       "lycee": "Lycée Ibn Rochd",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 3,
+      "unite_de": "Schule und Unterricht",
+      "unite_ar": "المدرسة والدرس",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -8010,8 +8021,8 @@
       "sujet": "« Schule und Ausbildung » (المدرسة والتكوين) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Schule und Ausbildung ».\nالكفاءات المستهدفة : Schulfächer, Uhrzeit, Modalverben.",
       "corrige": "التصحيح النموذجي — الوحدة 3 « Schule und Ausbildung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        57,
+        76
       ]
     },
     {
@@ -8161,7 +8172,7 @@
       "code_wilaya": "54",
       "ville": "In Guezzam-Centre",
       "lycee": "Lycée Emir Abdelkader",
-      "unite": 1,
+      "unite": 13,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -8231,7 +8242,7 @@
       "code_wilaya": "05",
       "ville": "Aïn Touta",
       "lycee": "Lycée Nouvelle Ville (Aïn Touta)",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -8366,9 +8377,9 @@
       "code_wilaya": "08",
       "ville": "Daïra de Béchar",
       "lycee": "Lycée Mouloud Feraoun",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 9,
+      "unite_de": "Stadtleben – Landleben",
+      "unite_ar": "حياة المدينة والريف",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -8416,8 +8427,8 @@
       "sujet": "« Reisen und Verkehr » (السفر والنقل) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Reisen und Verkehr ».\nالكفاءات المستهدفة : Präpositionen, Richtungen, Verkehrsmittel.",
       "corrige": "التصحيح النموذجي — الوحدة 6 « Reisen und Verkehr » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        207,
+        223
       ]
     },
     {
@@ -8436,7 +8447,7 @@
       "code_wilaya": "42",
       "ville": "Tipaza",
       "lycee": "CEM Lalla Khadidja",
-      "unite": 1,
+      "unite": 18,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -8572,9 +8583,9 @@
       "code_wilaya": "51",
       "ville": "Ouled Djellal",
       "lycee": "Lycée Benyoucef Benkhedda",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -8622,8 +8633,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -8642,9 +8653,9 @@
       "code_wilaya": "51",
       "ville": "Ouled Djellal",
       "lycee": "Lycée Malek Bennabi",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 9,
+      "unite_de": "Stadtleben – Landleben",
+      "unite_ar": "حياة المدينة والريف",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -8692,8 +8703,8 @@
       "sujet": "« Reisen und Verkehr » (السفر والنقل) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Reisen und Verkehr ».\nالكفاءات المستهدفة : Präpositionen, Richtungen, Verkehrsmittel.",
       "corrige": "التصحيح النموذجي — الوحدة 6 « Reisen und Verkehr » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        207,
+        223
       ]
     },
     {
@@ -8844,7 +8855,7 @@
       "code_wilaya": "32",
       "ville": "El Bayadh-Centre",
       "lycee": "Lycée Al Khawarizmi",
-      "unite": 6,
+      "unite": 16,
       "unite_de": "Mensch und Gesundheit",
       "unite_ar": "الإنسان والصحة",
       "duree_minutes": 90,
@@ -8914,7 +8925,7 @@
       "code_wilaya": "52",
       "ville": "Daïra de Béni Abbès",
       "lycee": "Lycée Nouvelle Ville (Daïra de Béni Abbès)",
-      "unite": 1,
+      "unite": 18,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -8984,9 +8995,9 @@
       "code_wilaya": "37",
       "ville": "Daïra de Tindouf",
       "lycee": "Lycée Colonel Lotfi",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -9034,8 +9045,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -9120,7 +9131,7 @@
       "code_wilaya": "16",
       "ville": "Hussein Dey",
       "lycee": "Lycée Cheikh El Hasnaoui",
-      "unite": 6,
+      "unite": 16,
       "unite_de": "Mensch und Gesundheit",
       "unite_ar": "الإنسان والصحة",
       "duree_minutes": 90,
@@ -9190,7 +9201,7 @@
       "code_wilaya": "42",
       "ville": "Tipaza-Centre",
       "lycee": "Lycée Taleb Abderrahmane",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -9326,7 +9337,7 @@
       "code_wilaya": "44",
       "ville": "Aïn Defla",
       "lycee": "Lycée Mohamed Boudiaf",
-      "unite": 6,
+      "unite": 16,
       "unite_de": "Mensch und Gesundheit",
       "unite_ar": "الإنسان والصحة",
       "duree_minutes": 90,
@@ -9533,7 +9544,7 @@
       "code_wilaya": "02",
       "ville": "Chlef",
       "lycee": "Lycée Messaoudi Zeggar",
-      "unite": 1,
+      "unite": 12,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -9668,9 +9679,9 @@
       "code_wilaya": "53",
       "ville": "In Salah-Centre",
       "lycee": "Lycée Mouloud Feraoun",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 9,
+      "unite_de": "Stadtleben – Landleben",
+      "unite_ar": "حياة المدينة والريف",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -9718,8 +9729,8 @@
       "sujet": "« Reisen und Verkehr » (السفر والنقل) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Reisen und Verkehr ».\nالكفاءات المستهدفة : Präpositionen, Richtungen, Verkehrsmittel.",
       "corrige": "التصحيح النموذجي — الوحدة 6 « Reisen und Verkehr » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        207,
+        223
       ]
     },
     {
@@ -9738,9 +9749,9 @@
       "code_wilaya": "30",
       "ville": "Daïra de Ouargla",
       "lycee": "Lycée Ibn Khaldoun",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -9788,8 +9799,8 @@
       "sujet": "« Alltag und Freizeit » (الحياة اليومية وأوقات الفراغ) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Alltag und Freizeit ».\nالكفاءات المستهدفة : trennbare Verben, Hobbys, Tagesablauf.",
       "corrige": "التصحيح النموذجي — الوحدة 4 « Alltag und Freizeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        103,
+        127
       ]
     },
     {
@@ -9944,7 +9955,7 @@
       "code_wilaya": "55",
       "ville": "Daïra de Touggourt",
       "lycee": "Lycée Larbi Ben M'hidi",
-      "unite": 1,
+      "unite": 12,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -10014,7 +10025,7 @@
       "code_wilaya": "17",
       "ville": "Djelfa-Centre",
       "lycee": "Lycée Nouvelle Ville (Djelfa-Centre)",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -10149,7 +10160,7 @@
       "code_wilaya": "18",
       "ville": "Jijel-Centre",
       "lycee": "Lycée Ahmed Zabana",
-      "unite": 1,
+      "unite": 12,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -10219,9 +10230,9 @@
       "code_wilaya": "41",
       "ville": "Daïra de Souk Ahras",
       "lycee": "Lycée Nouvelle Ville (Daïra de Souk Ahras)",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -10269,8 +10280,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -10289,9 +10300,9 @@
       "code_wilaya": "22",
       "ville": "Sidi Bel Abbès-Centre",
       "lycee": "Lycée Abou El Kacem Saadallah",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 3,
+      "unite_de": "Schule und Unterricht",
+      "unite_ar": "المدرسة والدرس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -10339,8 +10350,8 @@
       "sujet": "« Schule und Ausbildung » (المدرسة والتكوين) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Schule und Ausbildung ».\nالكفاءات المستهدفة : Schulfächer, Uhrzeit, Modalverben.",
       "corrige": "التصحيح النموذجي — الوحدة 3 « Schule und Ausbildung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        57,
+        76
       ]
     },
     {
@@ -10425,9 +10436,9 @@
       "code_wilaya": "23",
       "ville": "Annaba",
       "lycee": "Lycée Nouvelle Ville (Annaba)",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -10475,8 +10486,8 @@
       "sujet": "« Alltag und Freizeit » (الحياة اليومية وأوقات الفراغ) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Alltag und Freizeit ».\nالكفاءات المستهدفة : trennbare Verben, Hobbys, Tagesablauf.",
       "corrige": "التصحيح النموذجي — الوحدة 4 « Alltag und Freizeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        103,
+        127
       ]
     },
     {
@@ -10561,7 +10572,7 @@
       "code_wilaya": "48",
       "ville": "Relizane",
       "lycee": "CEM Mohamed Boudiaf",
-      "unite": 1,
+      "unite": 14,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -10696,7 +10707,7 @@
       "code_wilaya": "25",
       "ville": "Hamma Bouziane",
       "lycee": "CEM Ibn Khaldoun",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -10766,7 +10777,7 @@
       "code_wilaya": "36",
       "ville": "Daïra de El Tarf",
       "lycee": "CEM Hocine Aït Ahmed",
-      "unite": 1,
+      "unite": 15,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -10836,9 +10847,9 @@
       "code_wilaya": "37",
       "ville": "Tindouf",
       "lycee": "Lycée Nouvelle Ville (Tindouf)",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -10886,8 +10897,8 @@
       "sujet": "« Alltag und Freizeit » (الحياة اليومية وأوقات الفراغ) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Alltag und Freizeit ».\nالكفاءات المستهدفة : trennbare Verben, Hobbys, Tagesablauf.",
       "corrige": "التصحيح النموذجي — الوحدة 4 « Alltag und Freizeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        103,
+        127
       ]
     },
     {
@@ -11109,7 +11120,7 @@
       "code_wilaya": "12",
       "ville": "Tébessa-Centre",
       "lycee": "Lycée Larbi Ben M'hidi",
-      "unite": 1,
+      "unite": 18,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 90,
@@ -11179,9 +11190,9 @@
       "code_wilaya": "48",
       "ville": "Relizane",
       "lycee": "CEM Ahmed Zabana",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 2,
+      "unite_de": "Haus und Familie",
+      "unite_ar": "البيت والعائلة",
       "duree_minutes": 120,
       "bareme": 20,
       "parties": [
@@ -11229,8 +11240,8 @@
       "sujet": "« Familie und Freunde » (العائلة والأصدقاء) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Familie und Freunde ».\nالكفاءات المستهدفة : Possessivartikel, Familie, Beschreibung.",
       "corrige": "التصحيح النموذجي — الوحدة 2 « Familie und Freunde » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        31,
+        55
       ]
     },
     {
@@ -11249,7 +11260,7 @@
       "code_wilaya": "49",
       "ville": "Daïra de Timimoun",
       "lycee": "Lycée Nouvelle Ville (Daïra de Timimoun)",
-      "unite": 1,
+      "unite": 18,
       "unite_de": "Sich vorstellen",
       "unite_ar": "التعريف بالنفس",
       "duree_minutes": 120,
@@ -11319,7 +11330,7 @@
       "code_wilaya": "11",
       "ville": "Daïra de Tamanrasset",
       "lycee": "Lycée Didouche Mourad",
-      "unite": 6,
+      "unite": 16,
       "unite_de": "Mensch und Gesundheit",
       "unite_ar": "الإنسان والصحة",
       "duree_minutes": 90,
@@ -11389,9 +11400,9 @@
       "code_wilaya": "12",
       "ville": "Daïra de Tébessa",
       "lycee": "Lycée Nouvelle Ville (Daïra de Tébessa)",
-      "unite": 1,
-      "unite_de": "Sich vorstellen",
-      "unite_ar": "التعريف بالنفس",
+      "unite": 3,
+      "unite_de": "Schule und Unterricht",
+      "unite_ar": "المدرسة والدرس",
       "duree_minutes": 90,
       "bareme": 20,
       "parties": [
@@ -11439,8 +11450,8 @@
       "sujet": "« Schule und Ausbildung » (المدرسة والتكوين) — مستوى 2AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Schule und Ausbildung ».\nالكفاءات المستهدفة : Schulfächer, Uhrzeit, Modalverben.",
       "corrige": "التصحيح النموذجي — الوحدة 3 « Schule und Ausbildung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
       "pages_livre": [
-        5,
-        29
+        57,
+        76
       ]
     },
     {
@@ -11459,7 +11470,7 @@
       "code_wilaya": "14",
       "ville": "Tiaret",
       "lycee": "CEM Ibn Rochd",
-      "unite": 6,
+      "unite": 16,
       "unite_de": "Mensch und Gesundheit",
       "unite_ar": "الإنسان والصحة",
       "duree_minutes": 120,
