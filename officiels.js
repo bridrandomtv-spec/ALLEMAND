@@ -100,7 +100,7 @@
       '<button class="btn btn-o btn-sm" id="offReset">↺ إعادة الضبط</button></div>' +
       '<div class="frow"><div class="fld2 search-bar"><span>🔍 بحث</span>' +
         '<input id="offQ" type="search" value="' + esc(fq) + '" ' +
-        'placeholder="وهران · ثانوية الأمير · الوحدة 3 · ف2…"><span class="s-ico">🔍</span></div>' +
+        'placeholder="ابحث : الوحدة · الفصل · السنة…"><span class="s-ico">🔍</span></div>' +
       '<div class="fld2"><span>📅 الفصل</span><select data-filtre="trim">' +
         opt('tous','كل الفصول',fTrim) + (D.trimestres||[]).map(t =>
           opt(String(t.valeur), t.num + ' — ' + t.label, fTrim)).join('') + '</select></div>' +
