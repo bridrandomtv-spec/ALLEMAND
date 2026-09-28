@@ -247,7 +247,7 @@ function uniteSelector(){
       '<div class="ucard-m"><span class="chip' + (dispo ? ' ok' : '') + '">' +
         (dispo ? done + '/' + tot + ' حصص · ' + pct + '%' : '🔒 قريباً') + '</span>' +
         '<span class="chip">' + esc(u.cecrl) + '</span>' +
-        '<span class="chip">⏱️ ' + Math.round(u.duree / 60) + ' س</span></div></button>';
+        '<span class="chip">⏱️ ' + Math.round((u.duree||60) / 60) + ' س</span></div></button>';
   }).join('') + '</div>';
 }
 
@@ -255,14 +255,14 @@ function paintUniteHead(){
   const u = uniteActive();
   const hd = $('#seancesHead');
   if(hd) hd.innerHTML = '<h1>📚 الوحدة ' + u.n + ' : <span class="de-display">' + esc(u.de) + '</span></h1>' +
-    '<p>' + esc(u.ar) + ' — ' + u.seances.length + ' حصص · ' + Math.round(u.duree / 60) +
+    '<p>' + esc(u.ar) + ' — ' + u.seances.length + ' حصص · ' + Math.round((u.duree||60) / 60) +
     ' ساعة · المستوى ' + esc(u.cecrl) + ' · البرنامج الرسمي MEN</p>' +
     '<div class="progress-wrap"><div class="progress" id="progSeances"></div></div>' +
     '<div class="progress-lbl" id="progLbl"></div>';
   const dt = $('#devoirTitle');
   if(dt) dt.innerHTML = '📝 فرض الوحدة ' + u.n + ' <span class="pill">/20</span>';
   const ds = $('#devoirSub');
-  if(ds) ds.textContent = 'Évaluation — ' + u.de + ' · المدة : ' + u.duree +
+  if(ds) ds.textContent = 'Évaluation — ' + u.de + ' · المدة : ' + (u.duree||60) +
                           ' دقيقة · التصحيح النموذجي + سلّم التنقيط';
   const p = $('#progSeances');
   if(p){
@@ -975,7 +975,7 @@ function renderDevoir(){
   const box = $('#devoirBody'); if(!box) return;
   const st = load(LS.devoir, {showCorr:false, ans:{}});
 
-  let h = '<div class="privacy">📋 <b>' + DEVOIR.titre + '</b> — المدة ' + DEVOIR.duree
+  let h = '<div class="privacy">📋 <b>' + DEVOIR.titre + '</b> — المدة ' + (DEVOIR.duree||60)
         + ' دقيقة · المجموع <b>' + DEVOIR.total + '/20</b> · الوحدة 1 : Sich vorstellen</div>';
 
   DEVOIR.parties.forEach(p => {
