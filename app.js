@@ -919,7 +919,7 @@ function leconLivre(s){
     if(!lignes.length) manque = true;
     out += '<div class="card" style="margin-top:12px">'
         + '<h3 style="margin:0 0 8px">📖 الصفحة ' + p + ' — ' + esc(e && e.titre ? e.titre : 'Lektion') + '</h3>'
-        + (lignes.length ? lignes.map(function(l){ return '<p style="margin:0 0 10px;line-height:1.75">' + esc(l) + '</p>'; }).join('')
+        + (lignes.length ? lignes.map(function(l){ return '<p dir="ltr" lang="de" style="margin:0 0 10px;line-height:1.75;text-align:left">' + esc(l) + '</p>'; }).join('')
                          : '<p style="margin:0">… chargement du livre …</p>')
         + '<button class="btn btn-g" data-lire="' + p + '">🔊 écouter cette page</button></div>';
   });
@@ -1930,3 +1930,5 @@ function blocsPedago(s){
     + '<p style="margin:0">III. كتابة (5 ن) : في 4 أسطر استعمل 3 بنى من الصفحة عن حياتك.</p>'
     + '<p style="margin:8px 0 0;font-size:12.5px">ثم : 📝 فرض الوحدة · ⏱️ المحاكاة · 🧠 ذاكرة الأخطاء (J+1/J+3/J+7/J+21).</p></div>';
 }
+
+try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.createElement('style'); s.textContent='p[dir="ltr"],.de-ltr{direction:ltr;text-align:left;unicode-bidi:plaintext}'; document.head.appendChild(s); }); }catch(e){}
