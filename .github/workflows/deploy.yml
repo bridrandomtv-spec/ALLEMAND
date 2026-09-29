@@ -1110,6 +1110,7 @@ jobs:
           node tests/regression.mjs
       - name: Contrôle pédagogique restructuré (9+10 unités, mesuré sur le livré)
         run: |
+          python - <<'PY'
           import json, re, sys
           fails = []
           rd = lambda p: open(p, encoding='utf-8').read()
@@ -1170,6 +1171,7 @@ jobs:
                 + (mv.group(1) + '.' + mv.group(2) + '.' + mv.group(3) if mv else '?'))
           if fails:
               print('::error::' + ' | '.join(fails[:10])); sys.exit(1)
+          PY
       - name: Information
         run: |
           echo "Le dépôt est PRIVÉ : GitHub Pages (gratuit) ne peut pas publier un dépôt privé."
