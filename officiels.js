@@ -107,13 +107,7 @@
       '<div class="fld2"><span>📖 الوحدة</span><select data-filtre="unite">' +
         opt('tous','كل الوحدات',fUnite) + (D.unites||[]).map(u =>
           opt(String(u.n), 'الوحدة ' + u.n + ' — ' + u.ar, fUnite)).join('') + '</select></div></div>' +
-      '<div class="frow">' +
-      '<div class="fld2"><span>📍 الولاية</span><select data-filtre="wilaya">' +
-        opt('tous','كل الولايات',fWilaya) + (D.lycees||[]).map(l =>
-          opt(l.code_wilaya, l.code_wilaya + ' — ' + l.wilaya, fWilaya)).join('') + '</select></div>' +
-      '<div class="fld2"><span>🏫 الثانوية</span><select data-filtre="lycee">' +
-        opt('tous','كل الثانويات',fLycee) + (D.lycees||[]).map(l =>
-          opt(l.nom, l.nom + ' — ' + l.wilaya, fLycee)).join('') + '</select></div></div></div>';
+      '';
   }
 
   function filtrer(){
