@@ -15,7 +15,7 @@
   async function charge(){
     if(!D){
       try{
-        const r = await fetch('assets/bdd/contenu_original.json', { cache:'force-cache' });
+        const r = await fetch('assets/bdd/contenu_original.json', { cache:'no-store' });
         D = r.ok ? await r.json() : { B_exercices: [], C_fiches: [], D_sujets: [] };
       }catch(e){ D = { B_exercices: [], C_fiches: [], D_sujets: [] }; }
     }
