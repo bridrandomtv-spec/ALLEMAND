@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.47.3';
+const VERSION = 'dz-de-v3.47.4';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -30,6 +30,7 @@ const PRECACHE = [
   './unite15.js',
   './unite16.js',
   './app.js',
+  './prof_core.js',
   './access.js', './assets/bdd/access_config.json',
   './devoirs_unite.js',
   './modules.js',
