@@ -281,14 +281,36 @@
       setStatus('⏳ ' + q.slice(0, 40));
       const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
       let rep = '';
-      if(typeof fn === 'function'){ try{ rep = await fn(canon(q)); }catch(e){} }
+      /* compteur vivant : l'utilisateur VOIT que la plateforme réfléchit
+         (le cerveau cloud peut mettre 5-25 s au démarrage à froid) */
+      const t0 = Date.now();
+      const compteur = setInterval(function(){
+        const s = Math.round((Date.now() - t0) / 1000);
+        const st = window.__IA_STATUT || '';
+        if(s >= 2) setStatus((st || '🧠 réflexion') + ' · ' + s + 's');
+      }, 1000);
+      if(typeof fn === 'function'){
+        try{ rep = await fn(canon(q)); }
+        catch(e){ try{ console.warn('[parle] reponseIA :', e); }catch(_){}} 
+      }
+      clearInterval(compteur);
       if(rep && typeof rep === 'object') rep = rep.texte || rep.reponse || '';
       rep = String(rep || '');
       if(!rep || rep.indexOf('لا أعرف') !== -1){
         const er = window.__IA_ERR || '';
         if(er) setStatus('🧠 ' + String(er).slice(0, 40));
-        rep = lang === 'ar' ? 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم، أو معنى كلمة.'
-            : 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung.'; }
+        /* distinguer : cerveau cloud injoignable vs question hors couverture */
+        const cloudMort = (er === 'timeout-25s' || er.indexOf('timeout') !== -1 || er === 'Failed to fetch');
+        if(lang === 'ar'){
+          rep = cloudMort
+            ? '🧠 الدماغ السحابي لا يستجيب (انتهت المهلة ٢٥ ثانية). تحقّق من العامل ia-ask على Cloudflare — أو أعد المحاولة. محرك الطوارئ المحلي جاهز للتصريف والصفحات.'
+            : 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم، أو معنى كلمة — أو قل « الصفحة ١١ » لأقرأها لك.';
+        }else{
+          rep = cloudMort
+            ? '🧠 Die Cloud-KI antwortet nicht (Timeout 25 s). Prüfe den Worker ia-ask auf Cloudflare — oder versuche es erneut. Der lokale Motor kann Konjugation und Seiten lesen.'
+            : 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung — oder sag « Seite 11 ».';
+        }
+      }
       /* ── nettoyage HTML obligatoire : rag.js renvoie { html: … } ── */
       rep = spoken(rep);
       /* ── intent 🔊/🔤 : un mot allemand précis était demandé → on le prononce ── */
