@@ -78,11 +78,34 @@
         + ' · Status ' + esc(att.statut) + '<br>'
         + (att.statut === 'en_attente'
             ? 'Zahle per CCP/BaridiMob (Verwendungszweck = ' + esc(att.ref) + ') und füge die Belegnummer ein:'
-              + '<div class="bl-row"><input id="blPreuve" placeholder="Belegnummer / Foto">'
+              + '<div class="bl-row"><select id="blMeth" style="max-width:150px">'
+              + '<option value="ccp">CCP</option><option value="baridimob">BaridiMob</option></select>'
+              + '<input id="blPreuve" placeholder="Belegnummer / Foto">'
               + '<button class="btn btn-p btn-sm" id="blSendP">senden</button></div>'
             : 'Beleg erhalten — Freischaltung durch den Administrator innerhalb von 24 h.')
         + '</div>';
     }
+    /* phase 6 : historique des payments + message arabe d'échec (jamais actif sans admin) */
+    try{
+      const pays = await window.SB.myPayments();
+      const rowsP = (pays && pays.rows) || [];
+      if(rowsP.length){
+        const lastP = rowsP[0];
+        if(lastP.statut === 'refuse'){
+          h += '<div class="card bl-wait" style="border-color:rgba(210,16,52,.5)">'
+            + '<b>❌ لم تكتمل عملية الدفع.</b> يمكنك المحاولة مرة أخرى.'
+            + (lastP.note_admin ? '<br><span style="opacity:.85">' + esc(lastP.note_admin) + '</span>' : '')
+            + '<br><span style="opacity:.7;font-size:12px">مرجع المنصة : ' + esc(lastP.ref_plateforme || '') + '</span></div>';
+        }
+        h += '<div class="card"><b>🧾 سجل العمليات (منفصل عن الاشتراك)</b><div style="margin-top:8px">'
+          + rowsP.slice(0, 6).map(p =>
+              '<div class="bl-row" style="justify-content:space-between"><span>'
+              + esc(String(p.created_at || '').slice(0, 10)) + ' · ' + esc(p.methode) + ' · '
+              + Number(p.montant || 0).toLocaleString('fr-FR') + ' DA · ' + esc(p.ref_plateforme || '')
+              + '</span><b>' + (p.statut === 'valide' ? '✅ مؤكد' : (p.statut === 'refuse' ? '❌ مرفوض' : '⏳ قيد التحقق')) + '</b></div>'
+            ).join('') + '</div></div>';
+      }
+    }catch(e){}
     h += '<div class="bl-plans">' + (pls.length ? '' : '<div class="bl-wait">⚠️ aucun plan actif pour ton rôle — prix en cours de définition (décision B)</div>') + pls.map(p =>
         '<div class="card bl-p' + (p.id === PREPLAN || (!PREPLAN && (p.id === 'm6' || p.id === 'eleve-m6')) ? ' bl-hot' : '') + '">'
       + (p.eco ? '<span class="bl-eco">' + esc(p.eco) + '</span>' : '')
@@ -109,7 +132,14 @@
     if(sp) sp.addEventListener('click', async () => {
       const v = ($('#blPreuve').value || '').trim();
       if(!v || !att) return;
+      const meth = ($('#blMeth') || {}).value || 'ccp';
       await window.SB.setPreuve(att.id, v);
+      /* phase 6 : trace PAYMENT séparée de la SUBSCRIPTION (échec = repli ancien, jamais bloquant) */
+      try{
+        const pr = await window.SB.createPayment({ sub_id: att.id, montant: att.montant || 0,
+          methode: meth, ref: att.ref || '', ref_banque: v });
+        if(pr && pr.ok === false && pr.err) console.warn('🧾 payment :', pr.err);
+      }catch(e){ console.warn('🧾 payment :', e); }
       renderAbonne();
     });
   }
