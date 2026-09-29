@@ -22,12 +22,12 @@ const QUIZ_BANK = [
   { u:1, q:'أداة الاستفهام بمعنى «من أين» ؟',
     o:['Wie', 'Woher', 'Wo', 'Was'], c:1,
     e:'<span class=\'de-in\'><b>Woher</b></span> = من أين (Wo + her) · <span class=\'de-in\'>Wohin</span> = إلى أين.' },
-  { u:1, q:'Wie heißt die formelle Begrüßung am Morgen؟',
-    o:['Guten Morgen', 'Guten Tag', 'Guten Abend', 'Gute Nacht'], c:0,
-    e:'<span class=\'de-in\'>Guten Morgen</span> = صباح الخير · <span class=\'de-in\'>Guten Tag</span> = bonjour (journée).' },
-  { u:1, q:'« Ich komme ... Algerien » — welche Präposition؟',
-    o:['aus', 'in', 'nach', 'zu'], c:0,
-    e:'<span class=\'de-in\'>kommen <b>AUS</b> + pays</span> = venir de · <span class=\'de-in\'>Ich komme aus Algerien</span>.' },
+  { u:1, q:'كيف تقول «مساء الخير» بالألمانية؟',
+    o:['Guten Morgen', 'Guten Tag', 'Guten Abend', 'Gute Nacht'], c:2,
+    e:'<span class=\'de-in\'>Guten Abend</span> = مساء الخير · <span class=\'de-in\'>Gute Nacht</span> = تصبح على خير (avant de dormir).' },
+  { u:1, q:'رتّب : alt / ich / 16 / Jahre / bin',
+    o:['Ich alt bin 16 Jahre.', 'Ich bin 16 Jahre alt.', '16 Jahre ich bin alt.', 'Bin ich 16 Jahre alt ?'], c:1,
+    e:'الفعل في <b>المركز الثاني</b> : <span class=\'de-in\'>Ich <b>bin</b> 16 Jahre alt.</span>' },
 
   /* ── الوحدة 2 · البيت والعائلة — Haus und Familie ── */
   { u:2, q:'« Ma mère » se dit en allemand :',
