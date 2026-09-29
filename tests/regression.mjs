@@ -35,6 +35,8 @@ defg('fetch', async u => {
     json:async()=>JSON.parse(fs.readFileSync(p,'utf8')),
     text:async()=>fs.readFileSync(p,'utf8') };
 });
+console.log('[stubs] node ' + process.version + ' · navigator/CustomEvent/fetch = defineProperty');
+try {
 vm.runInThisContext(read('rag.js'), { filename:'rag.js' });
 const fn = globalThis.reponsePedagogique
   || (globalThis.RAG && (globalThis.RAG.reponsePedagogique || globalThis.RAG.repondre))
@@ -54,8 +56,12 @@ for(const item of qs){
     fails.push(item.q + '  →  ' + rep.slice(0, 70));
 }
 if(fails.length){
-  console.error('❌ RÉGRESSION : ' + fails.length + ' question(s) élève sans réponse valide :');
-  fails.forEach(f => console.error('   · ' + f));
+  console.log('::error::RÉGRESSION : ' + fails.length + ' question(s) élève sans réponse valide');
+  fails.forEach(f => console.log('::error::REG · ' + f));
   process.exit(1);
 }
 console.log('✅ Régression OK : ' + qs.length + ' questions élèves (ar/fr/darja/de) → toutes ont une réponse');
+} catch (eCrash) {
+  console.log('::error::CRASH regression.mjs : ' + String(eCrash && eCrash.stack ? eCrash.stack.split('\n').slice(0, 4).join(' | ') : eCrash));
+  process.exit(1);
+}
