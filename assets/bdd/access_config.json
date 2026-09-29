@@ -1,0 +1,73 @@
+{
+  "_meta": {
+    "version": 1,
+    "note": "Configuration du parcours d'essai gratuit — modifiable sans toucher au code. Règle absolue : le hors-ligne ne donne JAMAIS accès au contenu payant ; la décision payante vient uniquement du Backend (RLS Supabase).",
+    "offline_policy": {
+      "free_works_offline": true,
+      "paid_requires_backend": true,
+      "cache_ui_only": true
+    }
+  },
+  "FREE_LESSONS_LIMIT": 2,
+  "trial_days": 14,
+  "free": {
+    "units": {
+      "1": [
+        1,
+        2
+      ]
+    },
+    "quizzes": [
+      "u1"
+    ],
+    "devoirs": [],
+    "features": [
+      "banque",
+      "memoire",
+      "masar",
+      "malakhiss",
+      "resume"
+    ],
+    "note": "Unité 1 : séances 1 et 2 gratuites (le reste visible mais verrouillé). La banque d'exercices originaux et la mémoire restent libres (vitrine pédagogique)."
+  },
+  "roles": {
+    "prof": {
+      "free_features": [
+        "demo_lecon",
+        "demo_exercice",
+        "demo_test",
+        "demo_classe",
+        "demo_dashboard",
+        "demo_gestion_eleves"
+      ]
+    },
+    "parent": {
+      "free_features": [
+        "demo_dashboard",
+        "demo_progression",
+        "demo_resultats",
+        "demo_stats",
+        "guide_suivi"
+      ]
+    }
+  },
+  "parent_child": {
+    "basic_with_child_active": true,
+    "advanced_requires_parent_sub": true,
+    "rpc": "child_active_entitlement",
+    "phase": 5,
+    "note": "Décision C : abonnements : un enfant ACTIF suffit au rapport de base ; les outils avancés exigent l'abonnement du parent. Vérification serveur en phase 5."
+  },
+  "subjects": {
+    "allemand": {
+      "levels": {
+        "2AS": {
+          "units": 9
+        },
+        "3AS": {
+          "units": 10
+        }
+      }
+    }
+  }
+}
