@@ -6,10 +6,38 @@
     q = String(q == null ? '' : q).trim();
     if(!q) return '';
     const fn = window.reponsePedagogique;
-    let local = '';
-    if(typeof fn === 'function'){ try{ local = await fn(q); }catch(e){} }
-    if(local && typeof local === 'object') local = local.texte || local.reponse || '';
-    local = String(local || '');
+    /* ── HTML → texte parlable ─────────────────────────────────────────
+       rag.js retourne { html: '<b>📘 قاعدة …</b><ul><li>…' } (10 chemins).
+       L'ancien code ne lisait que .texte / .reponse → clés INEXISTANTES
+       → local = '' → TOUT le savoir local était jeté → « لم أفهم تمامًا ».
+       On lit donc .html en priorité, puis on le convertit en texte propre. */
+    function html2txt(h){
+      return String(h == null ? '' : h)
+        .replace(/<\s*br\s*\/?\s*>/gi, '\n')
+        .replace(/<\s*\/(?:p|div|ul|ol|h[1-6]|tr)\s*>/gi, '\n')
+        .replace(/<\s*li[^>]*>/gi, ' • ')
+        .replace(/<\s*button[^>]*>[\s\S]*?<\s*\/button\s*>/gi, ' ')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
+        .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, ' ')
+        .replace(/[ \t]+/g, ' ')
+        .replace(/\s*\n\s*/g, '\n')
+        .replace(/\n{2,}/g, '\n')
+        .replace(/•/g, '،')
+        .trim();
+    }
+    let localObj = null, local = '', speakWord = '';
+    if(typeof fn === 'function'){ try{ localObj = await fn(q); }catch(e){} }
+    if(localObj && typeof localObj === 'object'){
+      local     = html2txt(localObj.html || localObj.texte || localObj.reponse || '');
+      speakWord = String(localObj.speakWord || '');
+      /* un mot à prononcer (intent 🔊 النطق / 🔤 المفردة) est une réponse valable */
+      if((!local || local.length < 25) && speakWord) local = speakWord;
+    }else{
+      local = String(localObj || '');
+    }
     /* ── langue de la question : une question allemande/fr/es/it ne doit JAMAIS
        recevoir une réponse arabe du moteur local ── */
     const QL = (function(s){
@@ -33,13 +61,16 @@
     const arR = s => { const c = String(s || '').replace(/\s/g, ''); if(!c.length) return 0;
       return ((c.match(/[\u0600-\u06FF]/g) || []).length) / c.length; };
     const fixLang = s => (QL && QL !== 'ar' && arR(s) > 0.5) ? (FB[QL] || s) : s;
-    const weak = !local || local.indexOf('لا أعرف') !== -1 || local.length < 25 ||
+    /* Une réponse locale est valable dès qu'elle dépasse 25 caractères UTILES,
+       ou qu'elle porte un mot à prononcer. On ne la jette plus systématiquement. */
+    const weak = !local || local.indexOf('لا أعرف') !== -1 ||
+      (local.length < 25 && !speakWord) ||
       (QL && QL !== 'ar' && arR(local) > 0.5);
-    if(!weak) return fixLang(local);
+    if(!weak){ window.__IA_WORD = speakWord; window.__IA_WORD = speakWord; return fixLang(local); }
     try{
       const k = 'dz_ia_' + new Date().toDateString();
       const n = +(localStorage.getItem(k) || 0);
-      if(n >= 150){ try{ console.warn('🧠 quota journalier atteint (150)'); }catch(_){} return fixLang(local); }
+      if(n >= 150){ try{ console.warn('🧠 quota journalier atteint (150)'); }catch(_){} window.__IA_WORD = speakWord; return fixLang(local); }
       localStorage.setItem(k, String(n + 1));
     }catch(e){}
     let proxy = '';
@@ -78,7 +109,7 @@
       const j = await r.json();
       if(!j.ok){ window.__IA_ERR = j.err || 'http';
         try{ console.warn('🧠 ia-ask :', j.err); }catch(_){}
-        return fixLang(local); }
+        window.__IA_WORD = speakWord; return fixLang(local); }
       window.__IA_ERR = '';
       if(j.rep && j.rep.length > 10){
         /* garde inverse : question arabe → jamais de réponse sans caractères arabes */
