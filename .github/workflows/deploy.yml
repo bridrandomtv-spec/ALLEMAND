@@ -654,7 +654,7 @@ jobs:
           python - <<'PY'
           import re, sys
           fails = []
-          src = open('prof_core.js' if __import__('os').path.exists('prof_core.js') else 'app.js', encoding='utf-8').read()
+          src = open('prof_core.js', encoding='utf-8').read() + "\n" + open('app.js', encoding='utf-8').read()
           i = src.find('  base:[')
           j = src.find('  fallback:[', i)
           if i < 0 or j < 0:
