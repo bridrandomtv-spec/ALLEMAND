@@ -15,7 +15,7 @@
   async function charge(){
     if(!D){
       try{
-        const r = await fetch('assets/bdd/malakhiss.json', { cache:'force-cache' });
+        const r = await fetch('assets/bdd/malakhiss.json?v=' + Date.now(), { cache:'no-store' });
         D = r.ok ? await r.json() : { malakhiss: [] };
       }catch(e){ D = { malakhiss: [] }; }
     }
