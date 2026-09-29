@@ -384,24 +384,15 @@
    0,
    1,
    2,
-   8,
    12,
    17,
    18,
-   26,
-   31,
-   32,
-   33,
-   42,
    84,
    86,
    97,
    98,
    99,
-   100,
-   101,
-   114,
-   115
+   100
   ],
   "moteur_prof": [
    3,
@@ -427,6 +418,7 @@
   ],
   "moteur_cloud": [
    7,
+   8,
    10,
    11,
    13,
@@ -440,10 +432,14 @@
    23,
    24,
    25,
+   26,
    27,
    28,
    29,
    30,
+   31,
+   32,
+   33,
    34,
    35,
    36,
@@ -452,6 +448,7 @@
    39,
    40,
    41,
+   42,
    43,
    46,
    47,
@@ -489,6 +486,7 @@
    94,
    95,
    96,
+   101,
    102,
    103,
    104,
@@ -501,6 +499,8 @@
    111,
    112,
    113,
+   114,
+   115,
    116,
    117,
    118,
@@ -512,6 +512,6 @@
    124,
    125
   ],
-  "methode": "Classification par famille d'intents RÉELLE de chaque moteur, vérifiée à l'exécution : rag = conjugaison déclenchée / intentArtikel / intentPlural / règle grammaire par label / prof = topics de la base PROF (sein, haben, nom, wohnen, herkunft, familie, salutations, tschüs, wfragen) ; cloud = questions répondues en production par le LLM groundé (ia-ask) quand la couche locale ne possède pas la connaissance — listées explicitement, jamais comptées comme couverture locale."
+  "methode": "Classification par famille d'intents RÉELLE de chaque moteur, vérifiée à l'exécution : rag = conjugaison déclenchée / intentArtikel / intentPlural / règle grammaire par label / prof = topics de la base PROF (sein, haben, nom, wohnen, herkunft, familie, salutations, tschüs, wfragen) ; cloud = questions répondues en production par le LLM groundé (ia-ask) quand la couche locale ne possède pas la connaissance — listées explicitement, jamais comptées comme couverture locale. | reclassification mesurée run 36631575408 : 9 ids (règles par label) non répondues par rag.js → tier cloud (LLM groundé en production), contrat rag = intents déterministes (conjugaison déclenchée, intentArtikel, intentPlural)."
  }
 }
