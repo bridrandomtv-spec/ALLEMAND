@@ -85,11 +85,21 @@
     try{ const p = localStorage.getItem('dz_voix_ar') || ''; if(p) sel.value = p; }catch(e){}
   }
   function spoken(t){
-    return String(t)
+    return String(t == null ? '' : t)
+      /* ── HTML → texte : rag.js renvoie du HTML riche (<b>, <ul>, <li class=…>) ;
+            sans ce nettoyage la voix lisait « b class de-in » ── */
+      .replace(/<\s*br\s*\/?\s*>/gi, ' ')
+      .replace(/<\s*\/(?:p|div|ul|ol|h[1-6]|tr|li)\s*>/gi, ' ')
+      .replace(/<\s*button[^>]*>[\s\S]*?<\s*\/button\s*>/gi, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+      .replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'")
+      /* ── symboles jamais vocalisés ── */
       .replace(/\(ة\)/g, '')
       .replace(/[()]/g, ' ')
       .replace(/\s*\/\s*/g, ' أو ')
       .replace(/[·•]/g, '،')
+      .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, ' ')
       .replace(/\s+/g, ' ')
       .trim();
   }
@@ -190,6 +200,7 @@
   }
   async function speak(texte, lc){
     texte = spoken(texte);
+    texte = spoken(texte);
     const nowMs = Date.now();
     if(texte && texte === LASTSP.txt && nowMs - LASTSP.t < 2500) return;
     LASTSP = { t: nowMs, txt: texte };
@@ -278,6 +289,12 @@
         if(er) setStatus('🧠 ' + String(er).slice(0, 40));
         rep = lang === 'ar' ? 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم، أو معنى كلمة.'
             : 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung.'; }
+      /* ── nettoyage HTML obligatoire : rag.js renvoie { html: … } ── */
+      rep = spoken(rep);
+      /* ── intent 🔊/🔤 : un mot allemand précis était demandé → on le prononce ── */
+      const mot = String(window.__IA_WORD || '');
+      window.__IA_WORD = '';
+      if(mot && rep.length < 60) rep = mot + '. ' + rep;
       const RL = /[\u0600-\u06FF]/.test(rep) ? 'ar' : (/[\u00e4\u00f6\u00fc\u00df]/i.test(rep) ? 'de' : '');
       setStatus('🌐 ' + (RL === 'ar' ? 'رد بالعربية' : RL === 'de' ? 'Antwort auf Deutsch' : 'réponse'));
       speak(rep.slice(0, 2200));
