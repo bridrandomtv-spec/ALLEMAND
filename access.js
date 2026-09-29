@@ -87,6 +87,44 @@
     }catch(e){ return false; }
   }
 
+  /* ── 3.2 : vues paywallisées (config.paid_views) — liste VIDE par défaut ── */
+  function canAccessView(view){
+    var pv = (cfg && cfg.paid_views) || [];
+    if(pv.indexOf(view) === -1) return true;
+    return entActive();
+  }
+  /* ── 3.2 : chemin de retour (sessionStorage) — après abonnement, retour au même cours ── */
+  var RET_KEY = 'dz_paywall_return';
+  function setReturn(target){
+    try{ sessionStorage.setItem(RET_KEY, JSON.stringify(target || {})); }catch(e){}
+  }
+  function getReturn(){
+    try{ return JSON.parse(sessionStorage.getItem(RET_KEY) || 'null'); }catch(e){ return null; }
+  }
+  function clearReturn(){ try{ sessionStorage.removeItem(RET_KEY); }catch(e){} }
+  /* ── 3.2 : leçons faites par unité (progression existante, jamais modifiée) ── */
+  function doneList(u){
+    try{
+      var st = JSON.parse(localStorage.getItem('dz_de_seances_v1:u' + u) || '{}');
+      return (st && st.done) ? st.done : [];
+    }catch(e){ return []; }
+  }
+  /* ── 3.2 : essai terminé = TOUTES les leçons gratuites de config.free.units faites ── */
+  function trialFinished(){
+    var units = freeCfg().units || {};
+    var any = false;
+    for(var u in units){
+      if(!Object.prototype.hasOwnProperty.call(units, u)) continue;
+      var lessons = units[u] || [];
+      if(!lessons.length) continue;
+      any = true;
+      var done = doneList(u);
+      for(var i = 0; i < lessons.length; i++){
+        if(done.indexOf(lessons[i]) === -1) return false;
+      }
+    }
+    return any;
+  }
   var ACCESS = {
     refresh: refresh,
     entitlement: function(){ return { ok: ENT.ok, src: ENT.src, until: ENT.until }; },
@@ -110,6 +148,9 @@
         return done >= lim;
       }catch(e){ return false; }
     },
+    canAccessView: canAccessView,
+    setReturn: setReturn, getReturn: getReturn, clearReturn: clearReturn,
+    trialFinished: trialFinished, isFreeLesson: isFreeLesson,
     paywall: function(target){
       try{ document.dispatchEvent(new CustomEvent('dz:paywall', { detail: target || {} })); }catch(e){}
     }
