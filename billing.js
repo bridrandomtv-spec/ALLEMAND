@@ -17,6 +17,10 @@
     return CFG;
   }
   const MOIS = { m1:1, m6:6, m12:12 };
+  /* phase 4 : le plan cliqué dans le paywall est pré-sélectionné ici (une seule fois) */
+  let PREPLAN = null;
+  try{ PREPLAN = sessionStorage.getItem('dz_paywall_plan');
+       if(PREPLAN) sessionStorage.removeItem('dz_paywall_plan'); }catch(e){}
 
   async function renderAbonne(){
     const box = $('#abonneBody'); if(!box) return;
@@ -50,7 +54,7 @@
         + '</div>';
     }
     h += '<div class="bl-plans">' + c.plans.map(p =>
-        '<div class="card bl-p' + (p.id === 'm6' ? ' bl-hot' : '') + '">'
+        '<div class="card bl-p' + (p.id === (PREPLAN || 'm6') ? ' bl-hot' : '') + '">'
       + (p.eco ? '<span class="bl-eco">' + esc(p.eco) + '</span>' : '')
       + '<b>' + esc(p.label) + '</b><div class="bl-prix">' + p.prix.toLocaleString('fr-FR') + ' DA</div>'
       + '<i>' + p.par_mois.toLocaleString('fr-FR') + ' DA / mois</i>'
