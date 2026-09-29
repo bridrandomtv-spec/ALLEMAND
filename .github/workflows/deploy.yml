@@ -572,21 +572,21 @@ jobs:
               for k in ('vues', 'telechargements', 'reussite_pct'):
                   if k not in dv['stats']:
                       fails.append(dv['id'] + ' : stats.' + k + ' absent')
-          if len(set(x['code_wilaya'] for x in ds)) < 8:
+          if len(set(x['code_wilaya'] for x in off if x.get('code_wilaya'))) < 8:
               fails.append('officiels : moins de 8 wilayas')
-          if len(set(x['unite'] for x in ds)) < 6:
+          if len(set(x['unite'] for x in ds if x.get('unite'))) < 6:
               fails.append('officiels : moins de 6 unites')
-          d1 = ds[0]
+          d1 = off[0]
           if d1['lycee'] != 'ثانوية الأمير' or d1['wilaya'] != 'وهران':
               fails.append('officiels : devoir 1 != ثانوية الأمير / وهران (maquette)')
-          if ds[1]['lycee'] != 'ثانوية منصور' or ds[1]['wilaya'] != 'قسنطينة':
+          if off[1]['lycee'] != 'ثانوية منصور' or off[1]['wilaya'] != 'قسنطينة':
               fails.append('officiels : devoir 2 != ثانوية منصور / قسنطينة (maquette)')
           print('✅ Devoirs officiels : ' + str(len(ds)) + ' devoirs · '
-                + str(len(do['lycees'])) + ' lycees · '
-                + str(len(set(x['code_wilaya'] for x in ds))) + ' wilayas · '
+                + str(len(off)) + ' officiels v1 · '
+                + str(len(set(x['code_wilaya'] for x in off if x.get('code_wilaya')))) + ' wilayas · '
                 + str(len(set(x['unite'] for x in ds))) + ' unites · 3 trimestres')
           print('   maquette : ' + d1['lycee'] + ' (' + d1['wilaya'] + ') ' + d1['numero']
-                + ' · ' + ds[1]['lycee'] + ' (' + ds[1]['wilaya'] + ') ' + ds[1]['numero'])
+                + ' · ' + off[1]['lycee'] + ' (' + off[1]['wilaya'] + ') ' + off[1]['numero'])
           print('   bareme : I/8 + II/8 (4 exercices 2+2+2+2) + III/4'
                 + ' · grille مضمون 2 + لغة 2')
           if fails:
