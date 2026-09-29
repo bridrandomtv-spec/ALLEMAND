@@ -985,7 +985,7 @@ jobs:
           res.append(('T3 Quiz aligne sur les corriges (5/5)', t3))
           # ── T4 : moteur IA v2, 9 cas de référence ──
           pj = open('assets/matching_v2.patch.js', encoding='utf-8').read()
-          ap = open('app.js', encoding='utf-8').read()
+          ap = open('prof_core.js', encoding='utf-8').read() + "\n" + open('app.js', encoding='utf-8').read()
           i = ap.find('  base:[')
           j = ap.find('  fallback:[', i)
           base = []
