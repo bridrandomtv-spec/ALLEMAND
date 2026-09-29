@@ -174,8 +174,8 @@
      (arabe) → la voix arabe lisait l'allemand = prononciation catastrophique.
      APRÈS : le span latin entier est classé par vote (umlauts ×3 + mots-outils ×2)
      et sans indice → 'de' (langue cible de la plateforme). */
-  const DE_VOTE = /\b(ich|du|er|sie|es|wir|ihr|der|die|das|den|dem|des|ein|eine|einen|einem|einer|und|oder|aber|nicht|kein|keine|ist|sind|bin|bist|war|waren|wird|werden|wurde|wurden|habe|hast|hat|haben|hatte|kann|kannst|konnte|muss|musst|musste|soll|sollte|will|wollte|darf|mag|mochte|mit|ohne|fuer|von|zu|zum|zur|aus|bei|nach|seit|um|am|im|an|auf|unter|ueber|vor|hinter|neben|zwischen|mein|meine|dein|deine|sein|seine|ihre|unser|bitte|danke|gut|gute|guten|sehr|auch|schon|noch|nur|hier|dort|heute|morgen|gestern|zeit|tag|jahr|jahre|alt|woche|stunde|mann|frau|kind|haus|schule|buch|freund|familie|deutsch|deutschland|wie|was|wer|wo|woher|wohin|wann|warum|ja|nein|doch|tschues|heisse|wohne|wohnt|komme|kommt|lerne|lernt|spreche|spricht|mache|macht|gehe|geht|spiele|spielt|esse|trinke|akkusativ|akusativ|dativ|nominativ|genitiv|artikel|plural|singular|verb|adjektiv|praeposition|nebensatz|hauptsatz|perfekt|praeteritum|konjunktiv|imperativ|komparativ|superlativ|beispiel|beispiele|regel|regeln|uebung|aufgabe|antwort|frage|fragen|richtig|falsch|genau|zuerst|dann|danach|vormittag|nachmittag|abend|nacht)\b/gi;
-  const FR_VOTE = /\b(je|tu|nous|vous|ils|elles|le|la|les|un|une|des|ne|pas|est|suis|sont|mon|ma|mes|ton|ta|son|sa|bonjour|merci|pourquoi|comment|avec|sans|pour|dans|chez|etre|avoir|faire|aller|tres|aussi|comme|mais|donc|parce|cette|ces|mot|mots|phrase|verbe|verbes|exemple|exemples)\b/gi;
+  const DE_VOTE = /\b(ich|du|er|sie|es|wir|ihr|der|die|das|den|dem|des|ein|eine|einen|einem|einer|und|oder|aber|nicht|kein|keine|ist|sind|bin|bist|war|waren|wird|werden|wurde|wurden|habe|hast|hat|haben|hatte|kann|kannst|konnte|muss|musst|musste|soll|sollte|will|wollte|darf|mag|mochte|mit|ohne|fuer|von|zu|zum|zur|aus|bei|nach|seit|um|am|im|an|auf|unter|ueber|vor|hinter|neben|zwischen|mein|meine|dein|deine|sein|seine|ihre|unser|bitte|danke|gut|gute|guten|sehr|auch|schon|noch|nur|hier|dort|heute|morgen|gestern|zeit|tag|jahr|jahre|alt|woche|stunde|uhr|mann|frau|kind|haus|schule|buch|freund|familie|deutsch|deutschland|wie|was|wer|wo|woher|wohin|wann|warum|ja|nein|doch|tschues|heisse|wohne|wohnt|komme|kommt|lerne|lernt|spreche|spricht|mache|macht|gehe|geht|spiele|spielt|esse|trinke|akkusativ|akusativ|dativ|nominativ|genitiv|artikel|plural|singular|verb|adjektiv|praeposition|nebensatz|hauptsatz|perfekt|praeteritum|konjunktiv|imperativ|komparativ|superlativ|beispiel|beispiele|regel|regeln|uebung|aufgabe|antwort|frage|fragen|richtig|falsch|genau|zuerst|dann|danach|vormittag|nachmittag|abend|nacht)\b/gi;
+  const FR_VOTE = /\b(je|tu|nous|vous|ils|elles|le|la|les|un|une|des|ne|pas|est|suis|sont|mon|ma|mes|ton|ta|son|sa|bonjour|merci|pourquoi|comment|avec|sans|pour|dans|chez|etre|avoir|faire|aller|tres|aussi|comme|mais|donc|parce|cette|ces|mot|mots|phrase|verbe|verbes|exemple|exemples|signifie)\b/gi;
   const ES_VOTE = /\b(yo|usted|ustedes|el|los|las|uno|una|unos|unas|somos|son|mi|su|gracias|hola|buenos|buenas|porque|como|esta|este|estos|tengo|quiero|puedo|muy|tambien|pero|para|con|sin|palabra|frase|verbo|ejemplo)\b/gi;
   const IT_VOTE = /\b(io|lui|lei|noi|voi|loro|il|lo|gli|un|uno|una|che|di|sono|grazie|ciao|questa|questo|quello|molto|anche|per|con|senza|essere|avere|fare|parola|frase|verbo|esempio)\b/gi;
   function voteLang(span){
@@ -206,20 +206,39 @@
       if(cs && cs.kind === kind) cs.text += tk;
       else { cs = { kind: kind, text: tk }; spans.push(cs); }
     }
-    /* 2) classification : 'ar' seulement si caractères arabes ; latin → vote du span ENTIER */
+    /* 2) classification :
+       · arabe → 'ar' (toujours)
+       · latin → vote PHRASE par phrase (frontières . ! ? ; : saut de ligne),
+         les phrases de même langue sont refusionnées → « 14:30 Uhr » reste
+         UN segment allemand, mais « Le verbe haben se conjugue : ich habe… »
+         donne [fr] puis [de] — chaque langue dans SA voix. */
+    const LETTRE = /[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff\u0600-\u06FF]/;
     const segs = [];
+    const push = (lg, txt) => {
+      if(segs.length && segs[segs.length - 1].lang === lg) segs[segs.length - 1].text += txt;
+      else segs.push({ lang: lg, text: txt });
+    };
     for(const sp of spans){
       if(!sp.text.trim()){ if(segs.length) segs[segs.length - 1].text += sp.text; continue; }
-      const hasL = /[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff\u0600-\u06FF]/.test(sp.text);
-      if(!hasL && segs.length){ segs[segs.length - 1].text += sp.text; continue; }
-      const lg = sp.kind === 'ar' ? 'ar' : voteLang(sp.text);
-      if(segs.length && segs[segs.length - 1].lang === lg) segs[segs.length - 1].text += sp.text;
-      else segs.push({ lang: lg, text: sp.text });
+      if(sp.kind === 'ar'){ push('ar', sp.text); continue; }
+      if(!LETTRE.test(sp.text)){ if(segs.length) segs[segs.length - 1].text += sp.text; continue; }
+      const phrases = sp.text.match(/[^.!?;:\n]+[.!?;:\n]*|./g) || [sp.text];
+      for(const ph of phrases){
+        if(!ph.trim() || !/[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff]/.test(ph)){
+          if(segs.length) segs[segs.length - 1].text += ph;
+          continue;
+        }
+        push(voteLang(ph), ph);
+      }
     }
-    /* 3) micro-segments (≤ 2 car.) absorbés par le précédent */
+    /* 3) micro-fusion SÛRE : un micro-segment (≤ 2 car.) n'est absorbé par le
+       précédent que s'il est de la MÊME langue ou sans lettre — plus jamais
+       un « و » arabe avalé par un segment allemand (ni l'inverse). */
     const out = [];
     for(const s of segs.filter(x => x.text.trim())){
-      if(out.length && s.text.trim().length <= 2) out[out.length - 1].text += s.text;
+      const prev = out.length ? out[out.length - 1] : null;
+      const sansLettre = !LETTRE.test(s.text);
+      if(prev && s.text.trim().length <= 2 && (s.lang === prev.lang || sansLettre)) prev.text += s.text;
       else out.push({ lang: s.lang, text: s.text });
     }
     return out.length ? out : [{ lang: 'de', text: String(t || '') }];
