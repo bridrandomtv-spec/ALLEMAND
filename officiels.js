@@ -31,7 +31,7 @@
     if(!D){
       box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل الفروض الرسمية…</div>';
       try{
-        const r = await fetch(SRC, { cache:'force-cache' });
+        const r = await fetch(SRC, { cache:'no-store' });
         if(!r.ok) throw new Error('HTTP ' + r.status);
         D = await r.json();
       }catch(e){
@@ -150,7 +150,7 @@
     return '<article class="off-card" data-devoir="' + esc(d.id) + '">' +
       '<div class="oc-h"><span class="oc-badge">' + esc(d.numero) + '</span>' +
         '<div class="oc-t"><b>' + esc(d.titre) + '</b>' +
-        '<i>' + esc(d.lycee) + ' - ' + esc(d.wilaya) + ' • ' + esc(d.niveau) + '</i></div></div>' +
+        '<i>' + '' + ' - ' + '' + ' • ' + esc(d.niveau) + '</i></div></div>' +
       '<div class="oc-m">' +
         '<span class="mchip">📖 الوحدة ' + d.unite + ' · ' + esc(d.unite_ar) + '</span>' +
         '<span class="mchip">⏱️ ' + d.duree_minutes + ' د</span>' +
@@ -178,7 +178,7 @@
       '<button class="btn btn-o btn-sm" id="offBack">↩️ كل الفروض</button>' +
       '<div class="oh-t"><span class="oc-badge">' + esc(d.numero) + '</span>' +
         '<div><h2>' + esc(d.titre) + '</h2>' +
-        '<div class="ch-sub">' + esc(d.lycee) + ' - ' + esc(d.wilaya) + ' • ' + esc(d.niveau) +
+        '<div class="ch-sub">' + '' + ' - ' + '' + ' • ' + esc(d.niveau) +
         ' • ' + esc(d.annee_scolaire) + ' • ⏱️ ' + d.duree_minutes + ' دقيقة</div></div></div>' +
       '<div class="oh-note"><div class="ohn-n ' + (n.total >= PRET ? 'ok' : n.total >= CONS ? 'mid' : 'ko') + '">' +
         n.total.toFixed(1) + '</div><div class="ohn-l">/20 · تصحيح آلي</div></div>' +
