@@ -47,6 +47,30 @@
       + '<div class="card"><b>📂 Documents privés</b>'
       + '<input type="file" id="cdFile" multiple>'
       + '<div id="cdList" class="cd-list"></div></div></div>';
+  (async () => {
+    try{
+      const p = await window.SB.myProfile();
+      if(!p || p.role !== 'parent') return;
+      box.insertAdjacentHTML('beforeend',
+        '<div class="card cd-box"><h3>👨‍👩‍ Compte enfant lié (décision C)</h3>'
+        + '<p class="cd-sub">lie le compte de ton enfant : tant que SON abonnement est ACTIF, tu vois '
+        + 'son rapport de base depuis 👨‍‍ ; tes outils avancés restent liés à TON propre abonnement.</p>'
+        + '<div style="display:flex;gap:8px"><input id="lienEnfantMail" type="email" placeholder="email du compte enfant" style="flex:1">'
+        + '<button class="btn btn-g btn-sm" id="lienEnfantBtn">🔗 lier</button></div>'
+        + '<div id="liensEnfantsBody" style="margin-top:8px"><div class="cd-load">⏳</div></div></div>');
+      $('#lienEnfantBtn').addEventListener('click', async () => {
+        const mail = ($('#lienEnfantMail').value || '').trim();
+        if(!mail) return;
+        try{
+          const sb = await window.SB.sb();
+          const r = await sb.rpc('link_child', { p_email: mail });
+          if(r && r.error) throw r.error;
+          toast('✅ compte enfant lié', 'ok'); chargerLiensEnfants();
+        }catch(e){ toast('⚠️ ' + String((e && e.message) || e), 'ko'); }
+      });
+      chargerLiensEnfants();
+    }catch(e){}
+  })();
     $('#cdOut').addEventListener('click', async () => { await window.SB.logout(); render(); });
     $('#cdPush').addEventListener('click', async () => {
       const r = await window.SB.pushMemoire();
@@ -78,3 +102,29 @@
   window.renderCloud = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'cloud') render(); });
 })();
+
+/* ── phase 5 : liens parent-enfant (décision C) ── */
+async function chargerLiensEnfants(){
+  const box = document.getElementById('liensEnfantsBody'); if(!box) return;
+  try{
+    const sb = await window.SB.sb();
+    const r = await sb.rpc('my_linked_children');
+    const rows = (r && r.data) || [];
+    box.innerHTML = rows.length ? rows.map(c =>
+      '<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><span style="flex:1">👧 '
+      + (c.pseudo || String(c.child_id).slice(0, 8)) + '</span>'
+      + '<button class="btn btn-o btn-sm" data-unlink="' + c.child_id + '">❌</button></div>').join('')
+      : '<div class="cd-sub">aucun compte enfant lié</div>';
+  }catch(e){ box.innerHTML = '<div class="cd-sub">⚠️ ' + String((e && e.message) || e) + ' (plans.sql non exécuté ?)</div>'; }
+}
+document.addEventListener('click', ev => {
+  const b = ev.target.closest ? ev.target.closest('[data-unlink]') : null; if(!b) return;
+  (async () => {
+    try{
+      const u = await window.SB.me(); const sb = await window.SB.sb();
+      const r = await sb.from('child_links').delete().eq('parent_id', u.id).eq('child_id', b.getAttribute('data-unlink'));
+      if(r && r.error) throw r.error;
+      toast('✅ lien retiré', 'ok'); chargerLiensEnfants();
+    }catch(e){ toast('⚠️ ' + String((e && e.message) || e), 'ko'); }
+  })();
+});
