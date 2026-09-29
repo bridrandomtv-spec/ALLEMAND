@@ -31,23 +31,27 @@
     const vs = toutesVoix();
     if(!vs.length) return null;
     const code = String(lang || '').slice(0, 2).toLowerCase();
+    /* candidats = voix de CETTE langue uniquement.
+       Une voix d'une AUTRE langue ne doit jamais lire ce texte :
+       c'était la cause de l'allemand lu par une voix arabe (repli vs[0] global). */
     const cand = vs.filter(v => (v.lang || '').toLowerCase().indexOf(code) === 0);
+    if(!cand.length) return null;   /* → u.lang pilotera le moteur natif du navigateur */
     if(CHOSEN){
-      const c = cand.find(v => v.name === CHOSEN) || vs.find(v => v.name === CHOSEN);
+      const c = cand.find(v => v.name === CHOSEN);
       if(c) return c;
     }
+    const male = v => !FEM.test(v.name || '');
+    const nat  = v => /natural|neural|online|premium|enhanced|google/i.test(v.name || '');
+    const nm = cand.find(v => nat(v) && male(v));
+    if(nm) return nm;
     const pref = MALE[code] || [];
     for(const p of pref){
       const f = cand.find(v => (v.name || '').toLowerCase().indexOf(p) !== -1);
       if(f) return f;
     }
-    const nf = cand.find(v => !FEM.test(v.name || ''));
+    const nf = cand.find(male);
     if(nf) return nf;
-    for(const p of pref){
-      const f = vs.find(v => (v.name || '').toLowerCase().indexOf(p) !== -1);
-      if(f) return f;
-    }
-    return cand[0] || vs[0] || null;
+    return cand[0];
   }
 
   /* retire emojis & symboles : sinon le TTS les LIT (« 💡 » → « ampoule électrique » !) */
@@ -78,6 +82,20 @@
     return out;
   }
 
+  /* Vote de langue pour un passage LATIN : allemand par défaut (langue cible),
+     français si les mots-outils français dominent. */
+  function langLatine(txt){
+    const t = String(txt || '');
+    let de = 0, fr = 0;
+    const um = t.match(/[äöüßÄÖÜ]/g);
+    if(um) de += um.length * 3;
+    const d = t.match(/\b(ich|du|der|die|das|den|und|nicht|ist|sind|bin|bist|ein|eine|habe|hat|haben|wird|wurde|kann|muss|soll|will|darf|mag|mit|ohne|für|von|zu|aus|bei|nach|mein|dein|sein|bitte|danke|gut|sehr|wie|was|wer|wo|ja|nein|doch|heiße|wohne|komme|mache|gehe|akkusativ|dativ|perfekt|artikel|plural)\b/gi);
+    if(d) de += d.length;
+    const f = t.match(/\b(je|tu|nous|vous|le|la|les|un|une|des|est|suis|sont|ne|pas|mon|ma|mes|ton|ta|bonjour|merci|pourquoi|comment|avec|sans|pour|dans|très|tres|aussi|comme|mais|cette|être|etre|avoir|faire|aller)\b/gi);
+    if(f) fr += f.length;
+    return fr > de ? 'fr-FR' : 'de-DE';
+  }
+
   /* lecture segmentée, voix masculine, enchaînée */
   function parler(texte, lang){
     if(!('speechSynthesis' in window)) return false;
@@ -91,7 +109,7 @@
         const txt = nettoie(s.txt);
         if(!txt){ next(); return; }
         const u = new SpeechSynthesisUtterance(txt);
-        u.lang = (lang && segs.length === 1) ? lang : (s.type === 'ar' ? 'ar-DZ' : 'de-DE');
+        u.lang = (lang && segs.length === 1) ? lang : (s.type === 'ar' ? 'ar-DZ' : langLatine(s.txt));
         const v = voixPour(u.lang);
         if(v) u.voice = v;
         u.rate = 0.92; u.pitch = 0.85;
