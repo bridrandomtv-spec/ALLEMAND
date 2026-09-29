@@ -1060,9 +1060,9 @@ jobs:
           if p5 != {'I': 8, 'II': 8, 'III': 4} or sum(p5.values()) != 20:
               t5 = False
               fails.append('T5 : devoir /20 = ' + str(p5))
-          if "{ n:7, de:'Hôpital des erreurs'" not in ap:
+          if "Hôpital des erreurs" not in ap or "مستشفى الأخطاء" not in ap or ap.count("🏥 «") < 10:
               t5 = False
-              fails.append('T5 : seance 7 « Hopital des erreurs » absente')
+              fails.append('T5 : seance « Hopital des erreurs » absente ou < 10 patients')
           res.append(('T5 3 rythmes (5/7/6 etapes) + grille /5 + devoir /20 + S7', t5))
           # ── T6 : patch matching v2 (racine « تحي ») ──
           t6 = ('تحي' in pj) and ('findBestResponse' in pj)
