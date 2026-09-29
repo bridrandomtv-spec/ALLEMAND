@@ -455,6 +455,13 @@ window.prochaineSeance = prochaineSeance;
 
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
+  /* ── Porte 3.2 : vues entièrement payantes (config.paid_views, vide par défaut) ── */
+  if(window.ACCESS && !ACCESS.canAccessView(view)){
+    ACCESS.setReturn({ view: view });
+    ACCESS.paywall({ type:'view', view: view });
+    toast('🔒 هذا الفضاء ضمن الاشتراك', 'ko');
+    return;
+  }
   currentView = view;
   /* Une seule vue visible, garantie : hidden + display inline (aucune règle CSS
      ne peut forcer l'affichage d'une vue inactive, cf bug [hidden] écrasé). */
@@ -471,6 +478,22 @@ function go(view){
   /* Remonte en haut IMMÉDIATEMENT : sur mobile un scroll 'smooth' donne l'impression
      que rien n'a changé et que le contenu s'est ajouté sous la page d'accueil. */
   window.scrollTo(0, 0);
+  /* ── 3.2 : rafraîchit l'entitlement (Backend) + rejoue le chemin de retour
+     sauvegardé dès que l'abonnement devient actif ── */
+  if(window.ACCESS && ACCESS.refresh){
+    ACCESS.refresh().then(function(){
+      if(view === 'seances'){ try{ renderSeances(); }catch(e){} }
+      var ent = ACCESS.entitlement();
+      if(ent && ent.ok){
+        var r = ACCESS.getReturn();
+        if(r){
+          ACCESS.clearReturn();
+          if(r.seance && view === 'seances'){ try{ openSeance(r.seance); }catch(e){} }
+          else if(r.view && r.view !== view){ try{ go(r.view); }catch(e){} }
+        }
+      }
+    }).catch(function(){});
+  }
   document.dispatchEvent(new CustomEvent('dz:view', { detail: view }));
   if(view === 'seances'){ renderSeances(); paintUniteHead(); }
   if(view === 'biblio' && window.renderBiblio) window.renderBiblio();
@@ -535,14 +558,15 @@ function renderSeances(){
     SEANCES.map(s => {
     const isDone = done.indexOf(s.n) !== -1;
     const locked = s.n > 1 && done.indexOf(s.n - 1) === -1 && !isDone;
+    const paid = window.ACCESS ? !ACCESS.canAccessLesson(uniteActive().n, s.n) : false;
     const meta = s.ex === 'devoir'
       ? '<span class="chip ex">📝 اختبار /20</span>'
       : '<span class="chip">' + (((s.exos||[]).length) ? ((s.exos||[]).length + ' تمرين') : '📖 درس من الكتاب') + '</span>';
     return '<div class="seance' + (isDone ? ' done' : '') + (locked ? ' lock' : '') + '" data-seance="' + s.n + '">'
       + '<div class="s-num">' + (isDone ? '✓' : s.n) + '</div><div class="s-body">'
-      + '<div class="s-t">' + (locked ? '🔒 ' : '') + 'الحصة ' + s.n + '/8 — ' + esc(s.ar) + '</div>'
+      + '<div class="s-t">' + ((locked || paid) ? '🔒 ' : '') + 'الحصة ' + s.n + '/8 — ' + esc(s.ar) + '</div>'
       + '<div class="s-d">' + esc(s.de) + '</div>'
-      + '<div class="s-meta"><span class="chip">⏱️ ' + (s.dur||s.duree||45) + ' د</span>' + meta
+      + '<div class="s-meta"><span class="chip">⏱️ ' + (s.dur||s.duree||45) + ' د</span>' + meta + (paid ? '<span class="chip lk">🔒 مشتركون</span>' : '')
       + (isDone ? '<span class="chip ok">✅ مكتملة</span>' : '') + '</div></div></div>';
   }).join('');
 
@@ -723,6 +747,15 @@ function leconLivre(s){
 
 function openSeance(n){
   const s = SEANCES.filter(x => x.n === n)[0]; if(!s) return;
+  /* ── Porte 3.2 : le contenu payant passe par window.ACCESS (source unique de
+     décision, config access_config.json). Aucun corps de leçon payante n'est
+     construit ni affiché ci-dessous quand l'accès est refusé. ── */
+  if(window.ACCESS && !ACCESS.canAccessLesson(uniteActive().n, n)){
+    ACCESS.setReturn({ view:'seances', unite: uniteActive().n, seance: n });
+    ACCESS.paywall({ type:'seance', unite: uniteActive().n, seance: n });
+    toast('🔒 هذه الحصة ضمن الاشتراك — أكمل المسار المجاني أو اشترك', 'ko');
+    return;
+  }
   const st = loadSeances();
   st.done = st.done || []; st.exo = st.exo || {};
   const box = $('#seanceDetail'); if(!box) return;
@@ -834,14 +867,47 @@ function handleTextCheck(key){
 function markSeanceDone(){
   const n = currentSeanceNum(); if(!n) return;
   const st = loadSeances(); st.done = st.done || [];
+  var wasTrial = window.ACCESS ? ACCESS.trialFinished() : false;
   if(st.done.indexOf(n) === -1){
     st.done.push(n); saveSeances(st);
     toast('🎉 أحسنت! تم إنهاء الحصة ' + n + '/8', 'ok');
   }
+  var nowTrial = window.ACCESS ? ACCESS.trialFinished() : false;
+  if(!wasTrial && nowTrial) showTrialDone();
   renderSeances(); renderStats(); openSeance(n);
   const nxt = SEANCES.filter(x => x.n === n + 1)[0];
   if(nxt) setTimeout(() => toast('👈 التالي : الحصة ' + nxt.n + ' — ' + nxt.ar), 1500);
   else setTimeout(() => toast('🏆 أكملت الوحدة 1 بالكامل!'), 1500);
+}
+
+/* ── 3.2 : écran de fin du parcours gratuit — affiché UNIQUEMENT quand le
+   dernier élément gratuit défini par access_config.json vient d'être complété.
+   Aucun numéro de leçon codé en dur : tout vient de ACCESS.trialFinished(). ── */
+function showTrialDone(){
+  if(document.getElementById('trialDoneOv')) return;
+  var ov = document.createElement('div');
+  ov.id = 'trialDoneOv'; ov.className = 'trialdone';
+  ov.innerHTML =
+    '<div class="td-card">'
+    + '<div class="td-emo">🎉</div>'
+    + '<h2>أحسنت! لقد أكملت المسار التجريبي المجاني.</h2>'
+    + '<p>يمكنك الآن متابعة تعلم اللغة الألمانية والوصول إلى جميع الوحدات والدروس والتمارين والاختبارات.</p>'
+    + '<p class="td-lock">🔒 هذا المحتوى متاح للمشتركين فقط.</p>'
+    + '<button class="btn btn-g btn-block" id="tdGo">متابعة التعلم وفتح المحتوى الكامل</button>'
+    + '<button class="btn btn-o btn-block" id="tdClose">لاحقًا</button>'
+    + '</div>';
+  document.body.appendChild(ov);
+  var b1 = document.getElementById('tdGo'), b2 = document.getElementById('tdClose');
+  if(b2) b2.addEventListener('click', function(){ try{ ov.remove(); }catch(e){} });
+  if(b1) b1.addEventListener('click', function(){
+    try{ ov.remove(); }catch(e){}
+    try{
+      var num = currentSeanceNum();
+      ACCESS.setReturn({ view:'seances', unite: uniteActive().n, seance: num || null });
+      ACCESS.paywall({ type:'trial_complete', unite: uniteActive().n });
+      toast('🔒 اختر خطة الاشتراك المناسبة لك', 'ko');
+    }catch(e){}
+  });
 }
 
 /* ─────────────── DEVOIR /20 ─────────────── */
