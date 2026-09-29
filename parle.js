@@ -154,7 +154,7 @@
     return out.length ? out : [String(t)];
   }
   /* ══════════ AGENT 4 (VOIX) : détection de langue + voix native par segment ══════════ */
-  const DE_WORDS = /\b(der|die|das|und|nicht|ich|du|ist|ein|eine|mein|deine|hei\u00dfe|wohnt|kommt|schule|deutsch)\b/i;
+  const DE_WORDS = /\b(der|die|das|den|dem|und|oder|nicht|kein|ich|du|er|sie|es|wir|ihr|ist|sind|bin|bist|war|habe|hast|hat|haben|wird|werden|wurde|kann|muss|soll|will|darf|mag|ein|eine|einen|mein|dein|deine|sein|mit|ohne|für|von|zu|aus|bei|nach|um|am|im|auf|über|vor|heiße|wohne|wohnt|komme|kommt|mache|macht|gehe|geht|lerne|lernt|schule|deutsch|bitte|danke|gut|sehr|wie|was|wer|wo|woher|wohin|wann|warum|ja|nein|doch|akkusativ|dativ|perfekt|artikel|plural)\b/i;
   const FR_WORDS = /\b(le|la|les|je|tu|il|elle|ne|pas|est|suis|mon|ma|bonjour|merci|pourquoi)\b/i;
   const ES_WORDS = /\b(el|la|los|las|yo|usted|es|son|mi|su|gracias|hola|buenos|porque)\b/i;
   const IT_WORDS = /\b(il|lo|gli|che|di|io|tu|lei|sono|grazie|ciao|perch\u00e9|questa|quello)\b/i;
@@ -168,35 +168,72 @@
     return '';
   }
   function langOfBar(){ try{ return (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2]; }catch(e){ return 'de-DE'; } }
+  /* ═══ AGENT VOIX v4 — classification de langue PAR SPAN ═══
+     Règle absolue : un span latin n'est JAMAIS classé 'ar'.
+     AVANT : chaque mot allemand non reconnu héritait de la langue de la barre
+     (arabe) → la voix arabe lisait l'allemand = prononciation catastrophique.
+     APRÈS : le span latin entier est classé par vote (umlauts ×3 + mots-outils ×2)
+     et sans indice → 'de' (langue cible de la plateforme). */
+  const DE_VOTE = /\b(ich|du|er|sie|es|wir|ihr|der|die|das|den|dem|des|ein|eine|einen|einem|einer|und|oder|aber|nicht|kein|keine|ist|sind|bin|bist|war|waren|wird|werden|wurde|wurden|habe|hast|hat|haben|hatte|kann|kannst|konnte|muss|musst|musste|soll|sollte|will|wollte|darf|mag|mochte|mit|ohne|fuer|von|zu|zum|zur|aus|bei|nach|seit|um|am|im|an|auf|unter|ueber|vor|hinter|neben|zwischen|mein|meine|dein|deine|sein|seine|ihre|unser|bitte|danke|gut|gute|guten|sehr|auch|schon|noch|nur|hier|dort|heute|morgen|gestern|zeit|tag|jahr|jahre|alt|woche|stunde|mann|frau|kind|haus|schule|buch|freund|familie|deutsch|deutschland|wie|was|wer|wo|woher|wohin|wann|warum|ja|nein|doch|tschues|heisse|wohne|wohnt|komme|kommt|lerne|lernt|spreche|spricht|mache|macht|gehe|geht|spiele|spielt|esse|trinke|akkusativ|akusativ|dativ|nominativ|genitiv|artikel|plural|singular|verb|adjektiv|praeposition|nebensatz|hauptsatz|perfekt|praeteritum|konjunktiv|imperativ|komparativ|superlativ|beispiel|beispiele|regel|regeln|uebung|aufgabe|antwort|frage|fragen|richtig|falsch|genau|zuerst|dann|danach|vormittag|nachmittag|abend|nacht)\b/gi;
+  const FR_VOTE = /\b(je|tu|nous|vous|ils|elles|le|la|les|un|une|des|ne|pas|est|suis|sont|mon|ma|mes|ton|ta|son|sa|bonjour|merci|pourquoi|comment|avec|sans|pour|dans|chez|etre|avoir|faire|aller|tres|aussi|comme|mais|donc|parce|cette|ces|mot|mots|phrase|verbe|verbes|exemple|exemples)\b/gi;
+  const ES_VOTE = /\b(yo|usted|ustedes|el|los|las|uno|una|unos|unas|somos|son|mi|su|gracias|hola|buenos|buenas|porque|como|esta|este|estos|tengo|quiero|puedo|muy|tambien|pero|para|con|sin|palabra|frase|verbo|ejemplo)\b/gi;
+  const IT_VOTE = /\b(io|lui|lei|noi|voi|loro|il|lo|gli|un|uno|una|che|di|sono|grazie|ciao|questa|questo|quello|molto|anche|per|con|senza|essere|avere|fare|parola|frase|verbo|esempio)\b/gi;
+  function voteLang(span){
+    const t = String(span || '');
+    let de = 0, fr = 0, es = 0, it = 0;
+    const um = t.match(/[äöüßÄÖÜ]/g);
+    if(um) de += um.length * 3;
+    const dM = t.match(DE_VOTE); if(dM) de += dM.length * 2;
+    const fM = t.match(FR_VOTE); if(fM) fr += fM.length * 2;
+    const eM = t.match(ES_VOTE); if(eM) es += eM.length * 2;
+    const iM = t.match(IT_VOTE); if(iM) it += iM.length * 2;
+    const best = Math.max(de, fr, es, it);
+    if(best === 0 || de >= best) return 'de';
+    if(fr >= best) return 'fr';
+    if(es >= best) return 'es';
+    return 'it';
+  }
   function splitByScript(t){
-    const toks = String(t).match(/[\u0600-\u06FF][\u0600-\u06FF\s.,!؟؛:-]*|[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff\u00bf\u00a1'][A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff\u00bf\u00a1'.,!?:;-]*|\s+|[^\sA-Za-z\u0600-\u06FF]+/g) || [String(t)];
-    const segs = [];
-    let cur = null;
+    /* 1) tokens : arabe | latin | autre (espace/ponctuation suivent le span courant) */
+    const toks = String(t).match(/[\u0600-\u06FF][\u0600-\u06FF'’\-]*|[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff\u00bf\u00a1'’]+|[^\sA-Za-z\u0600-\u06FF]+|\s+/g) || [String(t)];
+    const spans = [];
+    let cs = null;
     for(const tk of toks){
-      let lg = null;
-      if(/[\u0600-\u06FF]/.test(tk)) lg = 'ar';
-      else if(/[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff]/.test(tk))
-        lg = detectLang(tk) || (cur && cur.lang !== 'ar' ? cur.lang : (langOfBar().slice(0, 2) || 'de'));
-      if(!lg) lg = cur ? cur.lang : 'de';
-      if(cur && cur.lang === lg) cur.text += tk;
-      else { cur = { lang: lg, text: tk }; segs.push(cur); }
+      let kind;
+      if(/^[\u0600-\u06FF]/.test(tk)) kind = 'ar';
+      else if(/[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff]/.test(tk)) kind = 'lat';
+      else kind = cs ? cs.kind : 'lat';
+      if(cs && cs.kind === kind) cs.text += tk;
+      else { cs = { kind: kind, text: tk }; spans.push(cs); }
     }
-    const out2 = [];
+    /* 2) classification : 'ar' seulement si caractères arabes ; latin → vote du span ENTIER */
+    const segs = [];
+    for(const sp of spans){
+      if(!sp.text.trim()){ if(segs.length) segs[segs.length - 1].text += sp.text; continue; }
+      const hasL = /[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff\u0600-\u06FF]/.test(sp.text);
+      if(!hasL && segs.length){ segs[segs.length - 1].text += sp.text; continue; }
+      const lg = sp.kind === 'ar' ? 'ar' : voteLang(sp.text);
+      if(segs.length && segs[segs.length - 1].lang === lg) segs[segs.length - 1].text += sp.text;
+      else segs.push({ lang: lg, text: sp.text });
+    }
+    /* 3) micro-segments (≤ 2 car.) absorbés par le précédent */
+    const out = [];
     for(const s of segs.filter(x => x.text.trim())){
-      if(out2.length && s.text.trim().length <= 2) out2[out2.length - 1].text += s.text;
-      else out2.push(s);
+      if(out.length && s.text.trim().length <= 2) out[out.length - 1].text += s.text;
+      else out.push({ lang: s.lang, text: s.text });
     }
-    return out2;
+    return out.length ? out : [{ lang: 'de', text: String(t || '') }];
   }
   function pickVoiceFor(all, lg){
     if(lg === 'ar') return chosenArVoice(all);
-    const code = LCODE[lg] || (lg + '-' + lg.toUpperCase());
+    const code = LCODE[lg] || (lg + '-' + String(lg).toUpperCase());
     const pref = code.slice(0, 2);
     const vs = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf(pref) === 0)
-      .sort((a, b) => scoreVoice(b, pref));
-    if(vs.length) return vs[0];
-    const en = (all || []).filter(x => (x.lang || '').toLowerCase().indexOf('en') === 0);
-    return en[0] || null;
+      .sort((a, b) => scoreVoice(b, pref) - scoreVoice(a, pref));
+    /* Aucune voix de CETTE langue sur l'appareil → null : u.lang (de-DE) pilotera
+       le moteur natif du navigateur. JAMAIS de voix anglaise/arabe sur de
+       l'allemand : une voix d'une autre langue écorche la prononciation. */
+    return vs.length ? vs[0] : null;
   }
   async function speak(texte, lc){
     texte = spoken(texte);
