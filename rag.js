@@ -410,6 +410,228 @@
   }
 
   /* ── AGENT CONVERSATION ARABE : question arabe → réponse arabe garantie ── */
+  /* ══════════════════════════════════════════════════════════════
+     AGENT ARTIKEL/PLURAL LOCAL — filet de sécurité hors-cloud.
+     Base extraite du manuel officiel 2AS « Vorwärts mit Deutsch »
+     (L1-L9) + vocabulaire élève. Format : mot → [art, pluriel, ar, page]
+     ══════════════════════════════════════════════════════════════ */
+  const ARTIKEL_BASE = {
+    /* ── L1 Sich vorstellen (p5-29) ── */
+    'name':['der','die Namen','اسم',7],'alphabet':['das','die Alphabete','أبجدية',11],
+    'buchstabiertafel':['die','—','جدول التهجئة',11],'sprache':['die','die Sprachen','لغة',11],
+    'land':['das','die Länder','بلد',10],'stadt':['die','die Städte','مدينة',10],
+    'freund':['der','die Freunde','صديق',15],'freundin':['die','die Freundinnen','صديقة',15],
+    'brief':['der','die Briefe','رسالة',15],'briefmarke':['die','die Briefmarken','طابع بريدي',112],
+    'deutschland':['—','—','ألمانيا',28],'europa':['—','—','أوروبا',28],
+    'bundesland':['das','die Bundesländer','ولاية ألمانية',28],'hauptstadt':['die','die Hauptstädte','عاصمة',29],
+    /* ── L2 Haus und Familie (p31-55) ── */
+    'haus':['das','die Häuser','بيت',42],'familie':['die','die Familien','عائلة',31],
+    'vater':['der','die Väter','أب',32],'mutter':['die','die Mütter','أم',32],
+    'bruder':['der','die Brüder','أخ',32],'schwester':['die','die Schwestern','أخت',32],
+    'kind':['das','die Kinder','طفل',32],'sohn':['der','die Söhne','ابن',35],
+    'tochter':['die','die Töchter','ابنة',35],'eltern':['die','—','والدان',32],
+    'großeltern':['die','—','أجداد',54],'onkel':['der','die Onkel','عم/خال',36],
+    'tante':['die','die Tanten','عمة/خالة',36],'geschwister':['die','—','إخوة',32],
+    'zimmer':['das','die Zimmer','غرفة',42],'wohnung':['die','die Wohnungen','شقة',42],
+    'küche':['die','die Küchen','مطبخ',43],'badezimmer':['das','die Badezimmer','حمّام',43],
+    'wohnzimmer':['das','die Wohnzimmer','غرفة المعيشة',43],'schlafzimmer':['das','die Schlafzimmer','غرفة النوم',44],
+    'kinderzimmer':['das','die Kinderzimmer','غرفة الأطفال',44],'arbeitszimmer':['das','die Arbeitszimmer','غرفة العمل',44],
+    'garten':['der','die Gärten','حديقة',43],'garage':['die','die Garagen','مرآب',45],
+    'stuhl':['der','die Stühle','كرسي',43],'sessel':['der','die Sessel','كرسي وثيب',43],
+    'sofa':['das','die Sofas','أريكة',43],'tisch':['der','die Tische','طاولة',43],
+    'bett':['das','die Betten','سرير',43],'schrank':['der','die Schränke','خزانة',44],
+    'kleiderschrank':['der','die Kleiderschränke','خزانة ملابس',44],
+    'bücherschrank':['der','die Bücherschränke','خزانة كتب',43],
+    'bücherregal':['das','die Bücherregale','رف كتب',43],'regal':['das','die Regale','رف',44],
+    'kommode':['die','die Kommoden','خزانة أدراج',43],'lampe':['die','die Lampen','مصباح',44],
+    'schreibtisch':['der','die Schreibtische','مكتب',44],'computer':['der','die Computer','حاسوب',44],
+    'fernseher':['der','die Fernseher','تلفاز',44],'kühlschrank':['der','die Kühlschränke','ثلاجة',44],
+    'waschmaschine':['die','die Waschmaschinen','غسالة',44],'gasherd':['der','die Gasherde','موقد غاز',44],
+    'telefon':['das','die Telefone','هاتف',40],'handy':['das','die Handys','جوال',40],
+    'fotoalbum':['das','die Fotoalben','ألبوم صور',48],'foto':['das','die Fotos','صورة',48],
+    'mann':['der','die Männer','رجل',45],'frau':['die','die Frauen','امرأة',45],
+    'junge':['der','die Jungen','صبي',46],'mädchen':['das','die Mädchen','بنت',46],
+    'baum':['der','die Bäume','شجرة',44],'einzelkind':['das','die Einzelkinder','طفل وحيد',37],
+    'beruf':['der','die Berufe','مهنة',33],'journalist':['der','die Journalisten','صحفي',34],
+    'lehrer':['der','die Lehrer','أستاذ',34],'lehrerin':['die','die Lehrerinnen','أستاذة',34],
+    /* ── L3 Schule (p57-76) ── */
+    'schule':['die','die Schulen','مدرسة',57],'gymnasium':['das','die Gymnasien','ثانوية',58],
+    'klasse':['die','die Klassen','قسم',58],'klassenzimmer':['das','die Klassenzimmer','قاعة درس',60],
+    'schulhof':['der','die Schulhöfe','ساحة المدرسة',59],'schultasche':['die','die Schultaschen','محفظة',59],
+    'bleistift':['der','die Bleistifte','قلم رصاص',59],'kugelschreiber':['der','die Kugelschreiber','قلم حبر',59],
+    'füller':['der','die Füller','قلم حبر سائل',59],'spitzer':['der','die Spitzer','مبراة',59],
+    'radiergummi':['der','die Radiergummis','ممحاة',59],'schere':['die','die Scheren','مقص',59],
+    'lineal':['das','die Lineale','مسطرة',59],'heft':['das','die Hefte','كرّاس',59],
+    'buch':['das','die Bücher','كتاب',59],'mappe':['die','die Mappen','ملف',59],
+    'mäppchen':['das','die Mäppchen','مقلمة',59],'kreide':['die','—','طباشير',59],
+    'tafel':['die','die Tafeln','سبورة',59],'stundenplan':['der','die Stundenpläne','جدول الحصص',66],
+    'fach':['das','die Fächer','مادة',63],'fächer':['die','—','مواد',63],
+    'mathe':['—','—','رياضيات',63],'mathematik':['die','—','رياضيات',63],
+    'deutsch':['—','—','ألمانية',63],'englisch':['—','—','إنجليزية',63],
+    'französisch':['—','—','فرنسية',63],'sport':['der','—','رياضة بدنية',63],
+    'geschichte':['die','—','تاريخ',63],'geografie':['die','—','جغرافيا',63],
+    'erdkunde':['die','—','جغرافيا',63],'biologie':['die','—','علوم طبيعية',63],
+    'chemie':['die','—','كيمياء',63],'physik':['die','—','فيزياء',63],
+    'musik':['die','—','موسيقى',63],'kunst':['die','—','فن',63],
+    'informatik':['die','—','إعلام آلي',63],'religion':['die','—','تربية دينية',63],
+    'philosophie':['die','—','فلسفة',63],'lehrerzimmer':['das','die Lehrerzimmer','قاعة الأساتذة',60],
+    'wörterbuch':['das','die Wörterbücher','قاموس',60],'landkarte':['die','die Landkarten','خريطة',60],
+    'note':['die','die Noten','نقطة/علامة',66],'zeugnis':['das','die Zeugnisse','شهادة',76],
+    'schüler':['der','die Schüler','تلميذ',59],'schülerin':['die','die Schülerinnen','تلميذة',59],
+    'hausaufgabe':['die','die Hausaufgaben','واجب منزلي',60],
+    'pause':['die','die Pausen','استراحة',59],'unterricht':['der','—','درس',57],
+    /* ── L4 Zeit und Wetter (p77-101) ── */
+    'uhr':['die','die Uhren','ساعة',89],'zeit':['die','die Zeiten','وقت',77],
+    'tag':['der','die Tage','يوم',78],'nacht':['die','die Nächte','ليل',78],
+    'woche':['die','die Wochen','أسبوع',78],'monat':['der','die Monate','شهر',78],
+    'jahr':['das','die Jahre','سنة',78],'morgen':['der','—','صباح',82],
+    'vormittag':['der','die Vormittage','قبل الظهر',82],'mittag':['der','—','ظهر',82],
+    'nachmittag':['der','die Nachmittage','بعد الظهر',82],'abend':['der','die Abende','مساء',82],
+    'wetter':['das','—','طقس',77],'klima':['das','die Klimate','مناخ',98],
+    'frühling':['der','—','ربيع',77],'sommer':['der','—','صيف',77],
+    'herbst':['der','—','خريف',77],'winter':['der','—','شتاء',77],
+    'jahreszeit':['die','die Jahreszeiten','فصل',77],'temperatur':['die','die Temperaturen','حرارة',100],
+    'sonne':['die','—','شمس',77],'regen':['der','—','مطر',77],'schnee':['der','—','ثلج',77],
+    'wind':['der','—','رياح',77],'wolke':['die','die Wolken','سحابة',86],
+    'wetterbericht':['der','die Wetterberichte','نشرة الطقس',87],'geburtstag':['der','die Geburtstage','عيد ميلاد',84],
+    'zug':['der','die Züge','قطار',94],'bahnhof':['der','die Bahnhöfe','محطة قطار',94],
+    'gleis':['das','die Gleise','رصيف',94],'flugzeug':['das','die Flugzeuge','طائرة',95],
+    'flug':['der','die Flüge','رحلة جوية',95],'gate':['das','die Gates','بوابة',95],
+    'abfahrt':['die','die Abfahrten','انطلاق',94],'ankunft':['die','die Ankünfte','وصول',94],
+    /* ── L5 Freizeit (p103-127) ── */
+    'freizeit':['die','—','وقت فراغ',103],'hobby':['das','die Hobbys','هواية',104],
+    'sport':['der','—','رياضة',103],'fußball':['der','—','كرة قدم',103],
+    'handball':['der','—','كرة يد',105],'volleyball':['der','—','كرة طائرة',105],
+    'basketball':['der','—','كرة سلة',105],'schwimmbad':['das','die Schwimmbäder','مسبح',104],
+    'kino':['das','die Kinos','سينما',116],'theater':['das','die Theater','مسرح',106],
+    'museum':['das','die Museen','متحف',119],'stadion':['das','die Stadien','ملعب',106],
+    'eintrittskarte':['die','die Eintrittskarten','تذكرة دخول',106],'bühne':['die','die Bühnen','خشبة المسرح',107],
+    'stück':['das','die Stücke','مسرحية',106],'film':['der','die Filme','فيلم',106],
+    'musik hören':['—','—','استماع للموسيقى',105],'computer spiel':['das','die Computerspiele','لعبة حاسوب',103],
+    'internet':['das','—','إنترنت',104],'ausflug':['der','die Ausflüge','نزهة',105],
+    'reise':['die','die Reisen','رحلة',105],'verein':['der','die Vereine','نادي',124],
+    /* ── L6 Mensch und Gesundheit (p129-149) ── */
+    'körper':['der','die Körper','جسم',130],'kopf':['der','die Köpfe','رأس',131],
+    'auge':['das','die Augen','عين',131],'ohr':['das','die Ohren','أذن',131],
+    'nase':['die','die Nasen','أنف',131],'mund':['der','—','فم',131],
+    'zahn':['der','die Zähne','سن',131],'hals':['der','—','حلق/عنق',131],
+    'hand':['die','die Hände','يد',131],'finger':['der','die Finger','إصبع',131],
+    'arm':['der','die Arme','ذراع',131],'bein':['das','die Beine','ساق',131],
+    'fuß':['der','die Füße','قدم',131],'herz':['das','die Herzen','قلب',131],
+    'arzt':['der','die Ärzte','طبيب',133],'ärztin':['die','die Ärztinnen','طبيبة',133],
+    'zahnarzt':['der','die Zahnärzte','طبيب أسنان',129],'krankenhaus':['das','die Krankenhäuser','مستشفى',138],
+    'apotheke':['die','die Apotheken','صيدلية',137],'medikament':['das','die Medikamente','دواء',136],
+    'tablette':['die','die Tabletten','حبّة دواء',136],'fieber':['das','—','حمّى',135],
+    'husten':['der','—','سعال',135],'grippe':['die','—','إنفلونزا',148],
+    'erkältung':['die','die Erkältungen','زكام',135],'schmerzen':['die','—','آلام',131],
+    'kopfschmerzen':['die','—','صداع',132],'bauchschmerzen':['die','—','ألم بطن',132],
+    'halsschmerzen':['die','—','ألم حلق',132],'rückenschmerzen':['die','—','ألم ظهر',132],
+    'ohrenschmerzen':['die','—','ألم أذن',132],'unfall':['der','die Unfälle','حادث',138],
+    'krankenwagen':['der','die Krankenwagen','سيارة إسعاف',138],'krankenschwester':['die','die Krankenschwestern','ممرضة',138],
+    'patient':['der','die Patienten','مريض',136],'operation':['die','die Operationen','عملية جراحية',141],
+    'versicherung':['die','die Versicherungen','تأمين',149],'krankenversicherung':['die','die Krankenversicherungen','تأمين صحي',149],
+    /* ── L7 Essen und Trinken (p151-180) ── */
+    'essen':['das','—','أكل',151],'trinken':['das','—','شرب',151],
+    'brot':['das','die Brote','خبز',152],'brötchen':['das','die Brötchen','خبز صغير',152],
+    'wasser':['das','—','ماء',153],'milch':['die','—','حليب',153],
+    'tee':['der','die Tees','شاي',153],'kaffee':['der','—','قهوة',153],
+    'saft':['der','die Säfte','عصير',153],'cola':['die','die Colas','كولا',153],
+    'limonade':['die','die Limonaden','ليمونادا',152],'apfel':['der','die Äpfel','تفاحة',152],
+    'banane':['die','die Bananen','موزة',152],'birne':['die','die Birnen','إجاصة',153],
+    'traube':['die','die Trauben','عنبة',153],'zitrone':['die','die Zitronen','ليمونة',153],
+    'tomate':['die','die Tomaten','طماطم',153],'gurke':['die','die Gurken','خيار',153],
+    'kartoffel':['die','die Kartoffeln','بطاطا',153],'gemüse':['das','—','خضروات',153],
+    'obst':['das','—','فواكه',153],'fleisch':['das','—','لحم',153],
+    'wurst':['die','die Würste','نقانق',153],'käse':['der','—','جبن',153],
+    'butter':['die','—','زبدة',153],'ei':['das','die Eier','بيضة',152],
+    'kuchen':['der','die Kuchen','كعكة',153],'keks':['der','die Kekse','بسكويت',153],
+    'eis':['das','—','مثلجات',153],'pizza':['die','die Pizzas','بيتزا',153],
+    'hähnchen':['das','die Hähnchen','دجاج',153],'fisch':['der','die Fische','سمك',153],
+    'suppe':['die','die Suppen','شوربة',160],'salz':['das','—','ملح',163],
+    'zucker':['der','—','سكر',163],'öl':['das','die Öle','زيت',153],
+    'restaurant':['das','die Restaurants','مطعم',160],'speisekarte':['die','die Speisekarten','قائمة الطعام',160],
+    'kellner':['der','die Kellner','نادل',160],'kellnerin':['die','die Kellnerinnen','نادلة',160],
+    'teller':['der','die Teller','طبق',152],'gabel':['die','die Gabeln','شوكة',152],
+    'messer':['das','die Messer','سكين',152],'löffel':['der','die Löffel','ملعقة',152],
+    'tasse':['die','die Tassen','فنجان',153],'flasche':['die','die Flaschen','زجاجة',153],
+    'rezept':['das','die Rezepte','وصفة',169],'supermarkt':['der','die Supermärkte','سوبرماركت',164],
+    'bäckerei':['die','die Bäckereien','مخبزة',158],'metzgerei':['die','die Metzgereien','ملحمة',158],
+    'markt':['der','die Märkte','سوق',158],'preis':['der','die Preise','سعر',168],
+    'trinkgeld':['das','—','بقشيش',161],'rechnung':['die','die Rechnungen','فاتورة',161],
+    /* ── L8 Aussehen und Charakter (p181-205) ── */
+    'gesicht':['das','die Gesichter','وجه',182],'haar':['das','die Haare','شعر',182],
+    'haare':['die','—','شعر',182],'auge':['das','die Augen','عين',182],
+    'pullover':['der','die Pullover','سترة صوفية',192],'hemd':['das','die Hemden','قميص',192],
+    'hose':['die','die Hosen','بنطلون',192],'rock':['der','die Röcke','تنورة',192],
+    'kleid':['das','die Kleider','فستان',192],'jacke':['die','die Jacken','جاكيت',192],
+    'schuh':['der','die Schuhe','حذاء',192],'mütze':['die','die Mützen','قبعة',192],
+    'schal':['der','die Schals','وشاح',192],'handschuh':['der','die Handschuhe','قفاز',192],
+    'anzug':['der','die Anzüge','بذلة',192],'gürtel':['der','die Gürtel','حزام',192],
+    'farbe':['die','die Farben','لون',192],'charakter':['der','—','شخصية',181],
+    /* ── L9 Stadt und Land (p207-223) ── */
+    'stadt':['die','die Städte','مدينة',207],'dorf':['das','die Dörfer','قرية',207],
+    'straße':['die','die Straßen','شارع',209],'platz':['der','die Plätze','ساحة',208],
+    'mauer':['die','die Mauern','جدار',208],'tor':['das','die Tore','بوابة',209],
+    'brücke':['die','die Brücken','جسر',208],'turm':['der','die Türme','برج',208],
+    'kirche':['die','die Kirchen','كنيسة',208],'moschee':['die','die Moscheen','مسجد',208],
+    'schloss':['das','die Schlösser','قصر',208],'park':['der','die Parks','حديقة عامة',208],
+    'bus':['der','die Busse','حافلة',114],'taxi':['das','die Taxis','سيارة أجرة',114],
+    'auto':['das','die Autos','سيارة',114],'fahrrad':['das','die Fahrräder','دراجة',114],
+    'u-bahn':['die','die U-Bahnen','مترو',113],'s-bahn':['die','die S-Bahnen','قطار ضواحٍ',113],
+    'straße bahn':['die','die Straßenbahnen','ترامواي',114],'fußgängerzone':['die','die Fußgängerzonen','منطقة مشاة',220],
+    'hauptstadt':['die','die Hauptstädte','عاصمة',208],'einwohner':['der','die Einwohner','ساكن',223],
+    'land':['das','die Länder','ريف/بلد',207],'natur':['die','—','طبيعة',219],
+    'wald':['der','die Wälder','غابة',219],'berg':['der','die Berge','جبل',219],
+    'fluss':['der','die Flüsse','نهر',219],'meer':['das','die Meere','بحر',219],
+    'strand':['der','die Strände','شاطئ',219],'insel':['die','die Inseln','جزيرة',219]
+  };
+
+  /* ── intent ARTIKEL : « ما هي أداة Mädchen » / « article de Mädchen » /
+     « Artikel von Mädchen » / « der die das Mädchen » ── */
+  function intentArtikel(q){
+    const s = String(q || '').toLowerCase();
+    const isAsk = /artikel|article|articulo|articolo|الأداة|اداة|أداة|冠词|артикль/i.test(s)
+      || /\b(der|die|das)\s+oder\s+(der|die|das)\b/.test(s)
+      || /welcher\s+artikel|quel\s+article/i.test(s);
+    if(!isAsk) return null;
+    /* extraire le mot allemand (≥3 lettres latines) */
+    const mots = s.match(/[a-zäöüß]{3,}/g) || [];
+    const stop = ['artikel','article','articulo','articolo','der','die','das','und','oder','quel','quelle','welcher','welche','welches','von','de','the','what','ist','sind','was','que','qui','pour','avec','mit','pourquoi','الاداة','冠词','артикль'];
+    let cible = '';
+    for(const m of mots){ if(stop.indexOf(m) === -1){ cible = m; break; } }
+    if(!cible) return null;
+    const e = ARTIKEL_BASE[cible];
+    if(!e) return null;
+    const isAr = /[\u0600-\u06FF]/.test(q);
+    if(isAr){
+      return { html: '<b>📘 الأداة : <span class="de-in">' + e[0] + ' ' + cible + '</span></b><br>'
+        + '<span class="rag-src">الجمع : <span class="de-in">' + e[1] + '</span> · بالعربية : ' + esc(e[2]) + ' · 📖 الكتاب ص' + e[3] + '</span>' };
+    }
+    return { html: '<b>📘 Artikel: <span class="de-in">' + e[0] + ' ' + cible + '</span></b><br>'
+      + '<span class="rag-src">Plural: <span class="de-in">' + e[1] + '</span> · Buch Seite ' + e[3] + '</span>' };
+  }
+
+  /* ── intent PLURAL : « جمع Kind » / « plural von Kind » ── */
+  function intentPlural(q){
+    const s = String(q || '').toLowerCase();
+    const isAsk = /plural|pluriel|جمع|الجمع|复数|множествен/i.test(s);
+    if(!isAsk) return null;
+    const mots = s.match(/[a-zäöüß]{3,}/g) || [];
+    const stop = ['plural','pluriel','von','the','der','die','das','what','ist','quel','quelle','de','du','复数','множествен'];
+    let cible = '';
+    for(const m of mots){ if(stop.indexOf(m) === -1){ cible = m; break; } }
+    if(!cible) return null;
+    const e = ARTIKEL_BASE[cible];
+    if(!e) return null;
+    const isAr = /[\u0600-\u06FF]/.test(q);
+    if(isAr){
+      return { html: '<b>📘 الجمع : <span class="de-in">' + cible + ' → ' + e[1] + '</span></b><br>'
+        + '<span class="rag-src">المفرد : <span class="de-in">' + e[0] + ' ' + cible + '</span> · بالعربية : ' + esc(e[2]) + ' · 📖 ص' + e[3] + '</span>' };
+    }
+    return { html: '<b>📘 Plural: <span class="de-in">' + cible + ' → ' + e[1] + '</span></b><br>'
+      + '<span class="rag-src">Singular: <span class="de-in">' + e[0] + ' ' + cible + '</span> · Buch S.' + e[3] + '</span>' };
+  }
+
   function intentConversationAr(q){
     if(!/[\u0600-\u06FF]/.test(q)) return null;
     if(/\u0645\u0646\s*\u0627\u0646\u062a|\u0645\u0646\s*\u0623\u0646\u062a/i.test(q))
@@ -477,6 +699,11 @@
     if(_bib) return _bib;
     const _kh = intentKharif(q);
     if(_kh) return _kh;
+    /* ARTIKEL + PLURAL locaux : questions de base toujours répondues, même sans cloud */
+    const _art = intentArtikel(q);
+    if(_art) return _art;
+    const _plu = intentPlural(q);
+    if(_plu) return _plu;
     const _cva = intentConversationAr(q);
     if(_cva) return _cva;
     const _cv = intentConversation(q);
