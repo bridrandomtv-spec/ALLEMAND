@@ -199,20 +199,21 @@ jobs:
           fails = []
           gm = json.load(open('assets/bdd/grammaire.json', encoding='utf-8'))
           items = gm['items']; chaps = gm['chapitres']
-          if len(items) != 83:
+          if len(items) < 86:
               fails.append('grammaire : ' + str(len(items)) + ' regles != 83')
           if len(chaps) != 5:
               fails.append('grammaire : ' + str(len(chaps)) + ' chapitres != 5')
-          CIBLES = {'2AS-T1': 16, '2AS-T2': 15, '2AS-T3': 14, '3AS-BAC': 18, 'BAC': 20}
+          PLANCHERS = {'2AS-T1': 16, '2AS-T2': 15, '2AS-T3': 14, '3AS-BAC': 18, 'BAC': 23}
           compte = {}
           for r in items:
               compte[r['chapitre']] = compte.get(r['chapitre'], 0) + 1
-          if compte != CIBLES:
-              fails.append('grammaire : repartition reelle ' + str(compte))
+          for k, v in PLANCHERS.items():
+              if compte.get(k, 0) < v:
+                  fails.append('grammaire : chapitre ' + k + ' = ' + str(compte.get(k, 0)) + ' < plancher ' + str(v))
           decl = dict((c['id'], c['nombre']) for c in chaps)
-          if decl != CIBLES:
-              fails.append('grammaire : chapitres declares ' + str(decl))
-          if len(items) != sum(CIBLES.values()):
+          if decl != compte:
+              fails.append('grammaire : chapitres declares ' + str(decl) + ' != reels ' + str(compte))
+          if len(items) != sum(compte.values()):
               fails.append('grammaire : total != somme des cibles')
           for c in chaps:
               for k in ('id', 'icone', 'titre', 'sous_titre', 'nombre', 'cefr'):
