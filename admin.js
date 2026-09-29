@@ -64,6 +64,12 @@
             + '</td><td>' + esc(n.trimestre || '') + '</td><td><b>' + esc(n.valeur)
             + '</b></td><td>' + esc(n.appreciation || '') + '</td></tr>';
         }).join('') + '</table></div></div>';
+  box.insertAdjacentHTML('beforeend',
+    '<div class="card ad-box"><h3>💳 Plans abonnement — administrables (phase 5)</h3>'
+    + '<p class="ad-sub">prix en DA · champ vide = « sera fixé plus tard » (décision B) · '
+    + 'source : table public.plans (supabase/plans.sql)</p>'
+    + '<div id="plansAdminBody"><div class="ad-load">⏳</div></div></div>');
+  chargerPlansAdmin();
     $('#adCsvP').addEventListener('click', () => telecharger('comptes.csv', csv(profs)));
     $('#adCsvN').addEventListener('click', () => telecharger('notes.csv', csv(notes)));
     box.querySelectorAll('.ad-role').forEach(s => s.addEventListener('change', async () => {
@@ -129,3 +135,36 @@
   window.renderAdmin = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'admin') render(); });
 })();
+
+/* ── phase 5 : éditeur de plans (admin) — prix NULL autorisés (décision B) ── */
+async function chargerPlansAdmin(){
+  const box = document.getElementById('plansAdminBody'); if(!box) return;
+  if(!window.SB || !window.SB.sb){ box.innerHTML = '<div class="ad-load">☁️ client absent</div>'; return; }
+  try{
+    const sb = await window.SB.sb();
+    const r = await sb.from('plans').select('id,role,duree_jours,prix_da,label_ar,actif').order('role').order('duree_jours');
+    const rows = (r && r.data) || [];
+    if(!rows.length){ box.innerHTML = '<div class="ad-deny">⚠️ table plans vide — exécute supabase/plans.sql (SQL Editor)</div>'; return; }
+    box.innerHTML = rows.map(p =>
+      '<div class="pl-row" data-plan="' + p.id + '" style="display:flex;gap:8px;align-items:center;margin:6px 0">'
+      + '<span style="flex:1">' + p.role + ' · ' + p.duree_jours + ' j · ' + (p.label_ar || '') + '</span>'
+      + '<input data-f="prix" type="number" min="0" step="50" style="width:110px" value="' + (p.prix_da == null ? '' : p.prix_da) + '" placeholder="NULL">'
+      + '<label style="display:flex;gap:4px;align-items:center"><input data-f="actif" type="checkbox"' + (p.actif ? ' checked' : '') + '> actif</label>'
+      + '<button class="btn btn-o btn-sm" data-plsave="' + p.id + '">💾</button></div>').join('');
+  }catch(e){ box.innerHTML = '<div class="ad-deny">⚠️ ' + String((e && e.message) || e) + '</div>'; }
+}
+document.addEventListener('click', ev => {
+  const b = ev.target.closest ? ev.target.closest('[data-plsave]') : null; if(!b) return;
+  const row = b.closest('.pl-row'); if(!row) return;
+  const prix = row.querySelector('[data-f="prix"]').value;
+  const actif = row.querySelector('[data-f="actif"]').checked;
+  (async () => {
+    try{
+      const sb = await window.SB.sb();
+      const r = await sb.from('plans').update({ prix_da: prix === '' ? null : parseInt(prix, 10), actif: actif })
+        .eq('id', b.getAttribute('data-plsave'));
+      if(r && r.error) throw r.error;
+      toast('✅ plan enregistré', 'ok');
+    }catch(e){ toast('⚠️ ' + String((e && e.message) || e), 'ko'); }
+  })();
+});
