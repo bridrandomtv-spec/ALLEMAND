@@ -19,13 +19,13 @@
   async function charge(){
     if(!D){
       try{
-        const r = await fetch('assets/bdd/corpus.json', { cache:'force-cache' });
+        const r = await fetch('assets/bdd/corpus.json', { cache:'no-store' });
         D = r.ok ? await r.json() : { documents: [] };
       }catch(e){ D = { documents: [] }; }
     }
     if(!IDX){
       try{
-        const r = await fetch('assets/bdd/corpus_index.json', { cache:'force-cache' });
+        const r = await fetch('assets/bdd/corpus_index.json', { cache:'no-store' });
         IDX = r.ok ? await r.json() : null;
       }catch(e){ IDX = null; }
     }
