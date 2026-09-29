@@ -904,7 +904,7 @@ function renderGrille(g){
 /* ── Livre officiel chargé une fois : window.__BOOK__[page] = {titre, lignes} ── */
 window.__BOOK__ = window.__BOOK__ || {};
 try {
-  fetch('assets/bdd/buch_pages.json', {cache:'force-cache'}).then(function(r){return r.ok?r.json():null;}).then(function(B){
+  fetch('assets/bdd/buch_pages.json', {cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(B){
     if(B){ window.__BOOK__ = B; window.dispatchEvent(new Event('book-ready')); }
   }).catch(function(){});
 } catch(e) {}
