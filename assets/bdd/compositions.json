@@ -1,7 +1,7 @@
 {
   "_meta": {
     "type": "compositions trimestrielles",
-    "nombre": 168,
+    "nombre": 171,
     "version": "9.1.0",
     "source": "تجميع الأستاذ خريف أحمد — ثانويات الوطن",
     "unites_2as": 9,
@@ -11522,6 +11522,231 @@
       "pages_livre": [
         129,
         149
+      ]
+    },
+    {
+      "id": "CP-GEN-U4-01",
+      "type": "composition",
+      "hash": "fa5d5dccacae",
+      "titre": "اختبار مولَّد — الوحدة 4 : Zeit und Wetter (Frühling)",
+      "titre_de": "Zeit und Wetter — ein verrückter Frühlingstag",
+      "annee_scolaire": "2026/2027",
+      "annee": 2026,
+      "trimestre": 2,
+      "session": null,
+      "niveau": "2AS",
+      "filiere": "Lettres et Langues",
+      "wilaya": "—",
+      "code_wilaya": "00",
+      "ville": "—",
+      "lycee": "Production propre (généré)",
+      "unite": 4,
+      "unite_de": "Zeit und Wetter",
+      "unite_ar": "الوقت والطقس",
+      "duree_minutes": 90,
+      "bareme": 20,
+      "parties": [
+        {
+          "id": "I",
+          "titre": "Leseverstehen — فهم المكتوب",
+          "points": 8,
+          "competences": [
+            "repérer une information explicite",
+            "Vrai/Faux avec justification",
+            "répondre en phrases complètes"
+          ]
+        },
+        {
+          "id": "II",
+          "titre": "Sprachbausteine — اللغة",
+          "points": 8,
+          "competences": [
+            "conjugaison",
+            "W-Fragen",
+            "cas et déclinaisons",
+            "ordre des mots"
+          ]
+        },
+        {
+          "id": "III",
+          "titre": "Textproduktion — إنتاج كتابي",
+          "points": 4,
+          "competences": [
+            "rédiger 5 phrases",
+            "respecter la grille de critères"
+          ]
+        }
+      ],
+      "difficulte": 3,
+      "note_moyenne": null,
+      "vues": 0,
+      "telechargements": 0,
+      "corrige_inclus": true,
+      "source": "production propre — généré par la plateforme (Prof. Kharif Ahmed)",
+      "tags": [
+        "Zeit",
+        "Wetter",
+        "Uhrzeit",
+        "Monate",
+        "Jahreszeiten",
+        "am/im/um",
+        "généré"
+      ],
+      "sujet": "Zeit und Wetter — ein verrückter Frühlingstag\n\nHeute ist der 14. März. Es ist Frühling, aber das Wetter spielt verrückt: Am Morgen war es kalt und windig, am Mittag schien die Sonne, und am Abend hat es plötzlich geregnet. Ich sehe jeden Abend den Wetterbericht. Morgen soll es schön werden: 22 Grad und kein Regen! Deshalb mache ich morgen einen Ausflug mit meiner Klasse. Wir treffen uns um acht Uhr am Bahnhof, und der Zug fährt um halb neun ab. Ich hoffe, das Wetter hält sein Versprechen!\n\nI. Leseverstehen (8 pts)\n1. Richtig oder falsch? (4×1)\na) Heute ist Sommer.\nb) Am Abend hat es geregnet.\nc) Morgen soll es 22 Grad werden.\nd) Der Zug fährt um neun Uhr ab.\n2. Antworte vollständig (2×2): e) Was sieht der Schreiber jeden Abend? f) Mit wem macht er morgen einen Ausflug?\n\nII. Sprachbausteine (8 pts)\n1. Uhrzeit (4×0,5): halb neun → · Viertel nach sieben → · zwanzig vor zwölf → · 15:30 →\n2. Monate/Jahreszeiten (4×0,5): der 3. Monat → · der Monat vor Dezember → · die Monate des Frühlings → · der erste Monat des Jahres →\n3. Wetter (4×0,5): es (regnen) · es (schneien) · es (sein) kalt · die Sonne (scheinen)\n4. am/im/um (4×0,5): ___ Montag · ___ Mai · ___ acht Uhr · ___ Sommer\n\nIII. Textproduktion (4 pts)\nSchreibe 5 Sätze: Wie ist das Wetter heute? Was machst du morgen? (um/am/im)",
+      "corrige": "I. 1) a Falsch (Frühling) · b Richtig · c Richtig · d Falsch (halb neun = 8:30)\n2) e) Er sieht jeden Abend den Wetterbericht. f) Mit seiner Klasse.\nII. 1) 8:30 · 7:15 · 11:40 · halb vier\n2) März · November · März, April, Mai · Januar\n3) Es regnet. · Es schneit. · Es ist kalt. · Die Sonne scheint.\n4) am · im · um · im\nIII. Grille مضمون 2 + لغة 2. Modèle : « Heute ist es windig und kalt. Am Morgen hat es geregnet. Um halb acht gehe ich zur Schule. Im Mai mache ich mit meiner Familie einen Ausflug. »",
+      "pages_livre": [
+        77,
+        101
+      ]
+    },
+    {
+      "id": "CP-GEN-U6-01",
+      "type": "composition",
+      "hash": "0ede36fb8eec",
+      "titre": "اختبار مولَّد — الوحدة 6 : Krank sein (Brief an Anna)",
+      "titre_de": "Krank sein — ein Brief",
+      "annee_scolaire": "2026/2027",
+      "annee": 2026,
+      "trimestre": 2,
+      "session": null,
+      "niveau": "2AS",
+      "filiere": "Lettres et Langues",
+      "wilaya": "—",
+      "code_wilaya": "00",
+      "ville": "—",
+      "lycee": "Production propre (généré)",
+      "unite": 6,
+      "unite_de": "Mensch und Gesundheit",
+      "unite_ar": "الإنسان والصحة",
+      "duree_minutes": 90,
+      "bareme": 20,
+      "parties": [
+        {
+          "id": "I",
+          "titre": "Leseverstehen — فهم المكتوب",
+          "points": 8,
+          "competences": [
+            "repérer une information explicite",
+            "Vrai/Faux avec justification",
+            "répondre en phrases complètes"
+          ]
+        },
+        {
+          "id": "II",
+          "titre": "Sprachbausteine — اللغة",
+          "points": 8,
+          "competences": [
+            "conjugaison",
+            "W-Fragen",
+            "cas et déclinaisons",
+            "ordre des mots"
+          ]
+        },
+        {
+          "id": "III",
+          "titre": "Textproduktion — إنتاج كتابي",
+          "points": 4,
+          "competences": [
+            "rédiger 5 phrases",
+            "respecter la grille de critères"
+          ]
+        }
+      ],
+      "difficulte": 3,
+      "note_moyenne": null,
+      "vues": 0,
+      "telechargements": 0,
+      "corrige_inclus": true,
+      "source": "production propre — généré par la plateforme (Prof. Kharif Ahmed)",
+      "tags": [
+        "Gesundheit",
+        "Erkältung",
+        "sein/werden",
+        "Dativ",
+        "Perfekt",
+        "weil",
+        "généré"
+      ],
+      "sujet": "Krank sein — ein Brief\n\nLiebe Anna, leider kann ich heute nicht zu deiner Party kommen, denn ich bin krank. Seit zwei Tagen habe ich Halsschmerzen und Husten, und gestern Abend ist auch Fieber dazugekommen. Meine Mutter war mit mir bei der Ärztin: Sie hat gesagt, ich habe eine starke Erkältung und muss eine Woche zu Hause bleiben. Ich soll viel trinken und schlafen. Ich nehme jetzt Medikamente und trinke Kamillentee. Wenn ich wieder gesund bin, lade ich dich zu mir ein. Bis bald! Deine Sara\n\nI. Leseverstehen (8 pts)\n1. Richtig oder falsch? (4×1)\na) Sara kann zur Party kommen.\nb) Sara hat seit zwei Tagen Halsschmerzen.\nc) Die Ärztin sagt, Sara muss eine Woche zu Hause bleiben.\nd) Sara trinkt Kaffee.\n2. Antworte vollständig (2×2): e) Mit wem war Sara bei der Ärztin? f) Was soll Sara tun?\n\nII. Sprachbausteine (8 pts)\n1. sein/werden (4×0,5): ich (sein) krank · es (werden) kalt · wir (sein) zu Hause · du (werden) gesund\n2. Dativ (4×0,5): bei ___ (die Ärztin) · mit ___ (meine Mutter) · bei ___ (meine Großmutter) · Danke ___ (der Arzt)\n3. Perfekt (4×0,5): kommen · sagen · nehmen · bleiben\n4. weil (2×1): Ich bleibe zu Hause, ___ ich krank bin. · ___ ich Fieber habe, schlafe ich viel.\n\nIII. Textproduktion (4 pts)\nSchreibe 5 Sätze: Du bist krank und erklärst einem Freund, warum du nicht kommen kannst.",
+      "corrige": "I. 1) a Falsch · b Richtig · c Richtig · d Falsch (Kamillentee)\n2) e) Mit ihrer Mutter. f) Sie soll viel trinken und schlafen.\nII. 1) bin · wird · sind · wirst\n2) der Ärztin · meiner Mutter · meiner Großmutter · dem Arzt\n3) ist gekommen · hat gesagt · hat genommen · ist geblieben\n4) weil · Weil\nIII. Grille مضمون 2 + لغة 2. Modèle : « Leider bin ich krank und habe Fieber. Der Arzt sagt, ich muss zwei Tage im Bett bleiben. Deshalb kann ich nicht zu dir kommen. Wenn ich gesund bin, besuchen wir zusammen das Kino. »",
+      "pages_livre": [
+        129,
+        149
+      ]
+    },
+    {
+      "id": "CP-GEN-U8-01",
+      "type": "composition",
+      "hash": "66ee9757f110",
+      "titre": "اختبار مولَّد — الوحدة 8 : Personen beschreiben (Herr Weber)",
+      "titre_de": "Unser neuer Nachbar",
+      "annee_scolaire": "2026/2027",
+      "annee": 2026,
+      "trimestre": 3,
+      "session": null,
+      "niveau": "2AS",
+      "filiere": "Lettres et Langues",
+      "wilaya": "—",
+      "code_wilaya": "00",
+      "ville": "—",
+      "lycee": "Production propre (généré)",
+      "unite": 8,
+      "unite_de": "Aussehen und Charakter",
+      "unite_ar": "المظهر والشخصية",
+      "duree_minutes": 90,
+      "bareme": 20,
+      "parties": [
+        {
+          "id": "I",
+          "titre": "Leseverstehen — فهم المكتوب",
+          "points": 8,
+          "competences": [
+            "repérer une information explicite",
+            "Vrai/Faux avec justification",
+            "répondre en phrases complètes"
+          ]
+        },
+        {
+          "id": "II",
+          "titre": "Sprachbausteine — اللغة",
+          "points": 8,
+          "competences": [
+            "conjugaison",
+            "W-Fragen",
+            "cas et déclinaisons",
+            "ordre des mots"
+          ]
+        },
+        {
+          "id": "III",
+          "titre": "Textproduktion — إنتاج كتابي",
+          "points": 4,
+          "competences": [
+            "rédiger 5 phrases",
+            "respecter la grille de critères"
+          ]
+        }
+      ],
+      "difficulte": 3,
+      "note_moyenne": null,
+      "vues": 0,
+      "telechargements": 0,
+      "corrige_inclus": true,
+      "source": "production propre — généré par la plateforme (Prof. Kharif Ahmed)",
+      "tags": [
+        "Aussehen",
+        "Charakter",
+        "Kleidung",
+        "Adjektivdeklination",
+        "Dativ Plural",
+        "Gegenteile",
+        "généré"
+      ],
+      "sujet": "Unser neuer Nachbar\n\nUnser neuer Nachbar heißt Herr Weber und ist etwa fünfzig Jahre alt. Er ist klein und etwas dick, hat eine Glatze und einen grauen Bart. Seine Augen sind blau und immer ein bisschen müde. Aber sein Charakter ist wunderbar: Er ist höflich, geduldig und sehr großzügig. Jeden Morgen grüßt er alle Leute im Haus und hilft den alten Nachbarn beim Einkaufen. Seine Kleidung ist einfach: eine braune Hose, ein grüner Pullover und alte, aber saubere Schuhe. Wir alle mögen ihn sehr.\n\nI. Leseverstehen (8 pts)\n1. Richtig oder falsch? (4×1)\na) Herr Weber ist jung.\nb) Er hat eine Glatze und einen grauen Bart.\nc) Er ist unhöflich.\nd) Er hilft den alten Nachbarn.\n2. Antworte vollständig (2×2): e) Wie sind seine Augen? f) Wie ist seine Kleidung?\n\nII. Sprachbausteine (8 pts)\n1. Adjektivdeklination Nominativ (4×0,5): ein___ alt___ Mann · eine___ braun___ Hose · ein___ grün___ Pullover · die___ sauber___ Schuhe\n2. Dativ Plural (4×0,5): Er hilft den alt___ Nachbarn · mit sein___ Freunden · bei d___ Kindern · von d___ Lehrern\n3. Gegenteile (4×0,5): groß ↔ · dick ↔ · höflich ↔ · geduldig ↔\n4. haben/sein (4×0,5): Er ___ eine Glatze · Seine Augen ___ blau · Er ___ etwa fünfzig Jahre alt · Wir ___ ihn gern\n\nIII. Textproduktion (4 pts)\nBeschreibe eine Person aus deiner Familie in 5 Sätzen (Alter, Aussehen, Charakter, Kleidung, warum du sie magst).",
+      "corrige": "I. 1) a Falsch (etwa fünfzig) · b Richtig · c Falsch (höflich) · d Richtig\n2) e) Seine Augen sind blau und ein bisschen müde. f) Sie ist einfach: eine braune Hose, ein grüner Pullover, alte saubere Schuhe.\nII. 1) ein alter Mann · eine braune Hose · ein grüner Pullover · die sauberen Schuhe\n2) alten · seinen · den · den\n3) klein · dünn/schlank · unhöflich · ungeduldig\n4) hat · sind · ist · haben\nIII. Grille مضمون 2 + لغة 2. Modèle : « Mein Onkel ist vierzig Jahre alt. Er ist groß und hat kurze schwarze Haare. Er ist lustig und großzügig. Er trägt immer eine blaue Jacke. Ich mag ihn, weil er mir oft hilft. »",
+      "pages_livre": [
+        181,
+        205
       ]
     }
   ]
