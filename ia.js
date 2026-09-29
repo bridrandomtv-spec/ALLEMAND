@@ -2,6 +2,26 @@
    (Workers AI gratuit) si la réponse locale est faible. Quota client : 40 appels/jour. */
 'use strict';
 (function(){
+  /* ── fetch avec TIMEOUT (AbortController) : le worker LLM peut mettre 30 s
+     au démarrage à froid — sans timeout l'utilisateur reste bloqué sur ⏳
+     et croit que la plateforme « ne comprend pas ». ── */
+  function fetchTimeout(url, opts, ms){
+    if(typeof AbortController === 'function'){
+      const ctrl = new AbortController();
+      const o = Object.assign({}, opts, { signal: ctrl.signal });
+      const t = setTimeout(function(){ try{ ctrl.abort(); }catch(e){} }, ms || 18000);
+      return fetch(url, o).finally(function(){ clearTimeout(t); });
+    }
+    return fetch(url, opts);
+  }
+  /* statut visible pendant la réflexion (barre 🗣️ + console) */
+  function statutIA(txt){
+    try{
+      window.__IA_STATUT = txt;
+      const el = document.getElementById('parleSt');
+      if(el && txt) el.textContent = txt;
+    }catch(e){}
+  }
   window.reponseIA = async function(q){
     q = String(q == null ? '' : q).trim();
     if(!q) return '';
@@ -80,7 +100,7 @@
     }catch(e){}
     let proxy = '';
     try{
-      const r = await fetch('assets/bdd/config.json', { cache:'no-store' });
+      const r = await fetchTimeout('assets/bdd/config.json', { cache:'no-store' }, 8000);
       if(r.ok){ const c = await r.json(); proxy = String(c.ia_proxy || '').replace(/\/+$/, ''); }
     }catch(e){}
     if(!proxy) return fixLang(local);
@@ -94,16 +114,17 @@
       }catch(e){}
       if(local && local.indexOf('لا أعرف') === -1) ctx += 'MOTEUR LOCAL (déjà vérifié) :\n' + local.slice(0, 900);
       ctx = ctx.slice(0, 3000);
-      const r = await fetch(proxy + '/ask', { method:'POST',
+      statutIA('🧠 réflexion… (cerveau cloud)');
+      const r = await fetchTimeout(proxy + '/ask', { method:'POST',
         headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ q: q, text: q, ctx: ctx }) });
+        body: JSON.stringify({ q: q, text: q, ctx: ctx }) }, 25000);
       if(!r.ok){
         let e = {};
         try{ e = await r.json(); }catch(_){}
         try{ console.warn('🧠 ia-ask HTTP ' + r.status + ' : ' + (e.err || '?')); }catch(_){}
         if(r.status === 400 || r.status === 415){
-          const r2 = await fetch(proxy + '/ask', { method:'POST',
-            headers:{ 'Content-Type':'text/plain' }, body: q });
+          const r2 = await fetchTimeout(proxy + '/ask', { method:'POST',
+            headers:{ 'Content-Type':'text/plain' }, body: q }, 15000);
           if(r2.ok){
             const j2 = await r2.json();
             if(j2 && j2.ok && j2.rep && j2.rep.length > 10) return j2.rep;
@@ -115,17 +136,21 @@
       if(!j.ok){ window.__IA_ERR = j.err || 'http';
         try{ console.warn('🧠 ia-ask :', j.err); }catch(_){}
         window.__IA_WORD = speakWord; return fixLang(local); }
-      window.__IA_ERR = '';
+      window.__IA_ERR = ''; statutIA('');
       if(j.rep && j.rep.length > 10){
         /* garde inverse : question arabe → jamais de réponse sans caractères arabes */
         if(QL === 'ar' && !/[\u0600-\u06FF]/.test(j.rep)){
           const loc = String(local || '');
           return (loc && loc.indexOf('لا أعرف') === -1) ? loc :
-            'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم أو معنى كلمة — أو قل « الصفحة 11 » لأقرأها لك.';
+            (window.__IA_ERR ? '🧠 تعذّر الوصول إلى الدماغ السحابي (' + String(window.__IA_ERR).slice(0,30) + ') — ' : '') + 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم أو معنى كلمة — أو قل « الصفحة 11 » لأقرأها لك.';
         }
         return j.rep;
       }
-    }catch(e){}
-    return fixLang(local);
+    }catch(e){
+        window.__IA_ERR = (e && e.name === 'AbortError') ? 'timeout-25s' : String((e && e.message) || e);
+        try{ console.warn('🧠 ia-ask réseau :', window.__IA_ERR); }catch(_){}
+      }
+      statutIA('');
+      return fixLang(local);
   };
 })();
