@@ -195,5 +195,23 @@ if (!fs.readFileSync('style.css', 'utf8').includes('.paywall{')) fails.push('3.4
   }
 }
 
+
+/* ── Phase 5 : plans administrables + lien parent-enfant (décisions B & C) ── */
+const sql5 = fs.existsSync('supabase/plans.sql') ? fs.readFileSync('supabase/plans.sql', 'utf8') : '';
+for (const k of ['create table if not exists public.plans', 'child_links', 'child_active_entitlement',
+                 'link_child', 'my_linked_children', 'on conflict (id) do nothing'])
+  if (!sql5.includes(k)) fails.push('3.5 : plans.sql sans ' + k);
+if ((sql5.match(/null,/g) || []).length < 6) fails.push('3.5 : prix prof/parent doivent rester NULL (décision B)');
+if (sql5.includes('drop table')) fails.push('3.5 : plans.sql ne doit supprimer aucune table');
+const adm5 = fs.readFileSync('admin.js', 'utf8');
+const clo5 = fs.readFileSync('cloud.js', 'utf8');
+const bil5 = fs.readFileSync('billing.js', 'utf8');
+const pw5  = fs.readFileSync('paywall.js', 'utf8');
+if (!adm5.includes('chargerPlansAdmin')) fails.push('3.5 : admin.js sans éditeur de plans');
+if (!clo5.includes('link_child')) fails.push('3.5 : cloud.js sans lien parent-enfant');
+if (!bil5.includes('window.BILLING_PLANS')) fails.push('3.5 : billing.js n expose pas BILLING_PLANS');
+if (!pw5.includes('BILLING_PLANS')) fails.push('3.5 : paywall.js ne lit pas les plans de la table');
+if (/prix_da:\s*(1800|9000|15000)/.test(adm5 + bil5 + pw5)) fails.push('3.5 : prix codés en dur côté client (interdit)');
+
 if (fails.length) { console.log('❌ check-access : ' + fails.length + ' fuite(s)/défaut(s)'); fails.forEach(f => console.log('   - ' + f)); process.exit(1); }
 console.log('✅ Accès : gratuit U1S1-S2 + quiz u1 · payant verrouillé sans Backend · cache ui_only inopérant · hors-ligne = gratuit seulement · démos rôles OK');
