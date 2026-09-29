@@ -30,7 +30,7 @@
     if(!D){
       box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل أرشيف البكالوريا (68 موضوعاً)…</div>';
       try{
-        const r = await fetch(SRC, { cache:'force-cache' });
+        const r = await fetch(SRC, { cache:'no-store' });
         if(!r.ok) throw new Error('HTTP ' + r.status);
         D = await r.json();
         (D.sujets || []).forEach(s => { s._n = norm(s.titre + ' ' + s.theme_de + ' ' +
