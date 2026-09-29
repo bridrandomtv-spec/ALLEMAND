@@ -15,6 +15,8 @@
       return String(h == null ? '' : h)
         .replace(/<\s*br\s*\/?\s*>/gi, '\n')
         .replace(/<\s*\/(?:p|div|ul|ol|h[1-6]|tr)\s*>/gi, '\n')
+        .replace(/<\s*\/(?:td|th)\s*>/gi, ' | ')
+        .replace(/<\s*(?:td|th)[^>]*>/gi, '')
         .replace(/<\s*li[^>]*>/gi, ' • ')
         .replace(/<\s*button[^>]*>[\s\S]*?<\s*\/button\s*>/gi, ' ')
         .replace(/<[^>]+>/g, ' ')
@@ -28,13 +30,16 @@
         .replace(/•/g, '،')
         .trim();
     }
-    let localObj = null, local = '', speakWord = '';
+    let localObj = null, local = '', speakWord = '', reponseCourteValide = false;
     if(typeof fn === 'function'){ try{ localObj = await fn(q); }catch(e){} }
     if(localObj && typeof localObj === 'object'){
       local     = html2txt(localObj.html || localObj.texte || localObj.reponse || '');
       speakWord = String(localObj.speakWord || '');
-      /* un mot à prononcer (intent 🔊 النطق / 🔤 المفردة) est une réponse valable */
+      /* intents à réponse intentionnellement courte : conjugaison (tableau),
+         mot à prononcer (🔊/🔤). Elles sont VALABLES quelle que soit leur longueur. */
+      reponseCourteValide = Boolean(localObj.conj) || Boolean(speakWord);
       if((!local || local.length < 25) && speakWord) local = speakWord;
+      if(localObj.conj && local.length < 25) local = 'تصريف ' + localObj.conj + '. ' + local;
     }else{
       local = String(localObj || '');
     }
@@ -64,8 +69,8 @@
     /* Une réponse locale est valable dès qu'elle dépasse 25 caractères UTILES,
        ou qu'elle porte un mot à prononcer. On ne la jette plus systématiquement. */
     const weak = !local || local.indexOf('لا أعرف') !== -1 ||
-      (local.length < 25 && !speakWord) ||
-      (QL && QL !== 'ar' && arR(local) > 0.5);
+      (local.length < 25 && !reponseCourteValide) ||
+      (QL && QL !== 'ar' && arR(local) > 0.5 && !reponseCourteValide);
     if(!weak){ window.__IA_WORD = speakWord; window.__IA_WORD = speakWord; return fixLang(local); }
     try{
       const k = 'dz_ia_' + new Date().toDateString();
