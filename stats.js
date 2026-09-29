@@ -36,7 +36,7 @@
     box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل الإحصائيات الوطنية…</div>';
     try{
       if(!GEO_D){
-        const r = await fetch(GEO, { cache:'force-cache' });
+        const r = await fetch(GEO, { cache:'no-store' });
         if(!r.ok) throw new Error('geo HTTP ' + r.status);
         GEO_D = await r.json();
       }
@@ -60,7 +60,7 @@
     const out = [];
     await Promise.all(FILES.map(async f => {
       try{
-        const r = await fetch('assets/bdd/' + f + '.json', { cache:'force-cache' });
+        const r = await fetch('assets/bdd/' + f + '.json', { cache:'no-store' });
         if(!r.ok) return;
         const d = await r.json();
         (d.items || []).forEach(it => out.push(it));
@@ -433,7 +433,7 @@
 
   async function chargerBac(){
     try{
-      const r = await fetch('assets/bdd/bac_archive.json', { cache:'force-cache' });
+      const r = await fetch('assets/bdd/bac_archive.json', { cache:'no-store' });
       if(r.ok) BAC = await r.json();
     }catch(e){}
     if(onglet === 'bac') paint();
