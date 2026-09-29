@@ -183,5 +183,59 @@ async function createAd(a){
   return r.error ? { ok: false, err: r.error.message } : { ok: true };
 }
 
-window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd };
+
+  /* ── PHASE 6 : payments — le PAYMENT est séparé de la SUBSCRIPTION ── */
+  async function createPayment(o){
+    try{
+      const c = await sb(); if(!c) return { ok:false, err:'non connecté' };
+      const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+      const r = await c.from('payments').insert({
+        sub_id: o.sub_id, user_id: u.id, montant: o.montant || 0, devise: 'DZD',
+        methode: o.methode || 'ccp', ref_plateforme: o.ref || '',
+        ref_banque: o.ref_banque || '', statut: 'en_attente'
+      }).select().single();
+      if(r.error) return { ok:false, err:r.error.message };
+      return { ok:true, row:r.data };
+    }catch(e){ return { ok:false, err:String((e && e.message) || e) }; }
+  }
+  async function myPayments(){
+    try{
+      const c = await sb(); if(!c) return { ok:false, err:'non connecté' };
+      const r = await c.from('payments').select('*').order('created_at', { ascending:false });
+      if(r.error) return { ok:false, err:r.error.message };
+      return { ok:true, rows:r.data };
+    }catch(e){ return { ok:false, err:String((e && e.message) || e) }; }
+  }
+  async function adminPayments(){
+    try{
+      const c = await sb(); if(!c) return { ok:false, err:'non connecté' };
+      const r = await c.from('payments').select('*').order('created_at', { ascending:false }).limit(200);
+      if(r.error) return { ok:false, err:r.error.message };
+      return { ok:true, rows:r.data };
+    }catch(e){ return { ok:false, err:String((e && e.message) || e) }; }
+  }
+  /* décision admin : subscription + payment tranchés ensemble.
+     refus → subscription retourne 'en_attente' (l'élève PEUT retenter) + payment 'refuse'
+     avec note_admin en arabe ; jamais 'actif' sans décision admin (RLS le garantit). */
+  async function deciderSub(sub_id, ok, mois, note){
+    try{
+      const c = await sb(); if(!c) return { ok:false, err:'non connecté' };
+      if(ok){
+        const r1 = await setSubStatut(sub_id, 'actif', mois || 1);
+        if(!r1.ok) return r1;
+      }else{
+        const r1 = await c.from('subscriptions').update({ statut:'en_attente', preuve:'' }).eq('id', sub_id);
+        if(r1.error) return { ok:false, err:r1.error.message };
+      }
+      const r2 = await c.from('payments').update({
+        statut: ok ? 'valide' : 'refuse',
+        note_admin: note || '',
+        decided_at: new Date().toISOString()
+      }).eq('sub_id', sub_id).eq('statut', 'en_attente');
+      if(r2.error) return { ok:true, payments:0, warn:r2.error.message };
+      return { ok:true, payments:(r2.data || []).length };
+    }catch(e){ return { ok:false, err:String((e && e.message) || e) }; }
+  }
+
+  window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
