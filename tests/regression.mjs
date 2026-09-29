@@ -3,6 +3,15 @@
 import fs from 'fs';
 import vm from 'vm';
 import path from 'path';
+
+/* Node ≥21 : navigator / CustomEvent / fetch sont des globaux EN LECTURE SEULE.
+   Une affectation directe lève TypeError en mode strict (module .mjs).
+   defineProperty(configurable+writable) = seule écriture sûre, strictement
+   limitée à l'outil de test : AUCUNE logique de la plateforme n'est touchée. */
+function defg(k, v){
+  try { Object.defineProperty(globalThis, k, { value: v, configurable: true, writable: true }); }
+  catch (e) { globalThis[k] = v; }
+}
 const root = process.cwd();
 const read = p => fs.readFileSync(path.join(root, p), 'utf8');
 const store = {};
@@ -16,16 +25,16 @@ globalThis.document = {
 globalThis.localStorage = { getItem:k => (k in store ? store[k] : null),
   setItem:(k,v)=>{ store[k]=String(v); }, removeItem:k=>{ delete store[k]; } };
 globalThis.sessionStorage = globalThis.localStorage;
-globalThis.navigator = { language:'ar', onLine:true, userAgent:'node-ci' };
-globalThis.CustomEvent = class { constructor(t,o){ this.type=t; this.detail=o&&o.detail; } };
-globalThis.fetch = async u => {
+defg('navigator', { language:'ar', onLine:true, userAgent:'node-ci' });
+defg('CustomEvent', class { constructor(t,o){ this.type=t; this.detail=o&&o.detail; } });
+defg('fetch', async u => {
   const rel = String(u).replace(/^https?:\/\/[^/]+\//,'').replace(/^\//,'').split('?')[0];
   const p = path.join(root, rel);
   if(!fs.existsSync(p)) return { ok:false, status:404, json:async()=>({}), text:async()=>'' };
   return { ok:true, status:200,
     json:async()=>JSON.parse(fs.readFileSync(p,'utf8')),
     text:async()=>fs.readFileSync(p,'utf8') };
-};
+});
 vm.runInThisContext(read('rag.js'), { filename:'rag.js' });
 const fn = globalThis.reponsePedagogique
   || (globalThis.RAG && (globalThis.RAG.reponsePedagogique || globalThis.RAG.repondre))
