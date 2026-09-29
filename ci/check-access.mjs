@@ -132,5 +132,68 @@ for (const [tag, units, attente] of [['lim1', { '1': [1] }, false], ['lim3', { '
 if (typeof A.canAccessView !== 'function') fails.push('3.2 : ACCESS.canAccessView absent');
 else if (A.canAccessView('accueil') !== true) fails.push('3.2 : vue non payante bloquée à tort');
 
+
+/* ── Phase 4 : paywall (statique + comportemental) ── */
+const pwSrc = fs.existsSync('paywall.js') ? fs.readFileSync('paywall.js', 'utf8') : '';
+const bilSrc = fs.readFileSync('billing.js', 'utf8');
+if (!pwSrc) fails.push('3.4 : paywall.js absent');
+else {
+  if (!pwSrc.includes("dz:paywall")) fails.push('3.4 : paywall n\'écoute pas dz:paywall');
+  if (!pwSrc.includes('فتح البرنامج الكامل')) fails.push('3.4 : CTA « فتح البرنامج الكامل » absent');
+  if (!pwSrc.includes('paiement')) fails.push('3.4 : plans non lus depuis config.paiement');
+  if (/(1\s?800|9\s?000|15\s?000)/.test(pwSrc)) fails.push('3.4 : prix codés en dur dans paywall.js (interdit)');
+  if (!pwSrc.includes('dz_paywall_plan')) fails.push('3.4 : plan choisi non transmis à billing');
+  if (!pwSrc.includes('🔐')) fails.push('3.4 : mention sécurité absente');
+  if (!pwSrc.includes('pw-ret')) fails.push('3.4 : annonce du chemin de retour absente');
+}
+if (!/paywall\.js/.test(idx)) fails.push('3.4 : index.html ne charge pas paywall.js');
+if (idx.indexOf('paywall.js') < idx.indexOf('billing.js')) fails.push('3.4 : paywall.js chargé avant billing.js');
+if (!bilSrc.includes('PREPLAN')) fails.push('3.4 : billing.js ne pré-sélectionne pas le plan du paywall');
+if (!sw.includes('paywall.js')) fails.push('3.4 : paywall.js absent du precache sw');
+if (!fs.readFileSync('style.css', 'utf8').includes('.paywall{')) fails.push('3.4 : styles .paywall absents');
+/* comportemental : ouverture sur événement + rendu depuis la config (prix stub) */
+{
+  const g3 = { console, setTimeout, clearTimeout };
+  g3.window = g3; g3.navigator = { onLine: true };
+  const st3 = {};
+  g3.localStorage = { getItem: k => (k in st3 ? st3[k] : null), setItem: (k, v) => { st3[k] = String(v); }, removeItem: k => { delete st3[k]; } };
+  g3.sessionStorage = { getItem: k => (k in st3 ? st3[k] : null), setItem: (k, v) => { st3[k] = String(v); }, removeItem: k => { delete st3[k]; } };
+  const body3 = { children: [] , appendChild(o){ this.children.push(o); } };
+  g3.document = {
+    _h: {},
+    addEventListener(t, f){ (this._h[t] = this._h[t] || []).push(f); },
+    dispatchEvent(e){ (this._h[e.type] || []).forEach(f => f(e)); return true; },
+    createElement(){ return { style: {}, classList: { add(){}, remove(){} }, _html: '',
+      set innerHTML(v){ this._html = v; }, get innerHTML(){ return this._html; },
+      appendChild(){}, remove(){}, addEventListener(){}, querySelectorAll(){ return []; },
+      getAttribute(){ return null; }, setAttribute(){} }; },
+    body: body3,
+    getElementById(){ return null; }
+  };
+  g3.CustomEvent = class { constructor(t, o){ this.type = t; this.detail = (o || {}).detail; } };
+  g3.fetch = () => Promise.resolve({ ok: true, json: async () => ({ paiement: { titulaire: 'T', ccp: 'C', baridimob: 'B',
+    plans: [ { id: 'm1', label: '1 mois', prix: 1800, par_mois: 1800 },
+             { id: 'm6', label: '6 mois', prix: 9000, par_mois: 1500, eco: '-17%' } ] } }) });
+  g3.ACCESS = { entitlement: () => ({ ok: false, src: 'test', until: null }),
+                trialFinished: () => true,
+                getReturn: () => ({ view: 'seances', unite: 2, seance: 3 }) };
+  g3.AUTH = { session: () => ({ role: 'eleve' }) };
+  g3.go = () => {};
+  const ctx3 = vm.createContext(g3);
+  vm.runInContext(pwSrc || '// absent', ctx3);
+  g3.document.dispatchEvent({ type: 'dz:paywall', detail: { type: 'seance', unite: 2, seance: 3 } });
+  await new Promise(r => setTimeout(r, 120));
+  const ov = body3.children[0];
+  if (!ov) fails.push('3.4 : dz:paywall n\'ouvre aucun overlay');
+  else {
+    const h3 = ov.innerHTML || '';
+    if (!h3.includes('فتح البرنامج الكامل')) fails.push('3.4 : overlay sans CTA');
+    if (!h3.includes('9000')) fails.push('3.4 : overlay sans les prix de la config (rendu non config-driven)');
+    if (!h3.includes('الوحدة 2 · الحصة 3')) fails.push('3.4 : overlay ne nomme pas la cible verrouillée');
+    if (!h3.includes('الحصة 3')) fails.push('3.4 : chemin de retour non annoncé');
+    if (!h3.includes('🔐')) fails.push('3.4 : overlay sans mention sécurité');
+  }
+}
+
 if (fails.length) { console.log('❌ check-access : ' + fails.length + ' fuite(s)/défaut(s)'); fails.forEach(f => console.log('   - ' + f)); process.exit(1); }
 console.log('✅ Accès : gratuit U1S1-S2 + quiz u1 · payant verrouillé sans Backend · cache ui_only inopérant · hors-ligne = gratuit seulement · démos rôles OK');
