@@ -35,7 +35,7 @@
   function closePaywall(){ if(OV){ try{ OV.remove(); }catch(e){} OV = null; } }
   function openPaywall(target){
     closePaywall();
-    cfgPaiement().then(function(pai){
+    cfgPaiement().then(async function(pai){
       var r = role();
       var ent = (window.ACCESS && ACCESS.entitlement) ? ACCESS.entitlement() : null;
       var ret = (window.ACCESS && ACCESS.getReturn) ? ACCESS.getReturn() : null;
@@ -50,10 +50,13 @@
             : 'لقد استفدت من الدروس المجانية (الوحدة 1 · الحصتان 1 و 2). اشترك الآن للوصول إلى البرنامج الكامل.') + '</p>'
         + (cibles ? '<p class="pw-cible">كنت تحاول فتح : <b>' + cibles + '</b></p>' : '')
         + '<ul class="pw-feats">' + features().map(function(f){ return '<li>✓ ' + f + '</li>'; }).join('') + '</ul>';
-      if(r === 'eleve' && pai && pai.plans && pai.plans.length){
-        h += '<div class="pw-plans">' + pai.plans.map(function(p){
+      var pls = [];
+      try{ if(window.BILLING_PLANS) pls = await window.BILLING_PLANS(r, pai); }catch(e){ pls = []; }
+      if(!pls.length && r === 'eleve' && pai && pai.plans) pls = pai.plans;
+      if(pls.length){
+        h += '<div class="pw-plans">' + pls.map(function(p){
           return '<button type="button" class="pw-plan" data-plan="' + p.id + '">'
-            + '<span class="pw-lb">' + p.label + '</span>'
+            + '<span class="pw-lb">' + p.label + (p.label_ar ? ' — ' + p.label_ar : '') + '</span>'
             + '<span class="pw-pr">' + p.prix + ' دج</span>'
             + '<span class="pw-pm">' + p.par_mois + ' دج/شهريا' + (p.eco ? ' · ' + p.eco : '') + '</span>'
             + '</button>';
