@@ -21,6 +21,34 @@
   let PREPLAN = null;
   try{ PREPLAN = sessionStorage.getItem('dz_paywall_plan');
        if(PREPLAN) sessionStorage.removeItem('dz_paywall_plan'); }catch(e){}
+  /* phase 5 : les plans viennent de la TABLE public.plans (administrable) ;
+     repli config.json uniquement pour le rôle élève si la table est vide/absente.
+     par_mois et eco sont CALCULÉS depuis prix_da — aucun prix codé ici. */
+  async function plansPour(role, cfgFallback){
+    try{
+      if(window.SB && window.SB.sb){
+        const sb = await window.SB.sb();
+        if(sb){
+          const r = await sb.from('plans').select('id,duree_jours,prix_da,label_ar')
+            .eq('role', role).eq('actif', true).order('duree_jours');
+          const rows = ((r && r.data) || []).filter(x => x.prix_da != null);
+          if(rows.length){
+            const base = rows[0].prix_da / (rows[0].duree_jours / 30);
+            return rows.map(x => {
+              const mois = x.duree_jours / 30;
+              const pm = Math.round(x.prix_da / mois);
+              const lb = x.duree_jours === 30 ? '1 mois' : (x.duree_jours === 180 ? '6 mois' : '1 an');
+              return { id: x.id, label: lb, label_ar: x.label_ar || '', prix: x.prix_da, par_mois: pm,
+                       eco: mois > 1 ? '-' + Math.round((1 - pm / base) * 100) + '%' : null };
+            });
+          }
+        }
+      }
+    }catch(e){}
+    return (role === 'eleve' && cfgFallback && cfgFallback.plans) ? cfgFallback.plans : [];
+  }
+  window.BILLING_PLANS = plansPour;
+
 
   async function renderAbonne(){
     const box = $('#abonneBody'); if(!box) return;
@@ -28,6 +56,8 @@
       document.addEventListener('dz:sbready', () => renderAbonne(), { once:true }); return; }
     const u = await window.SB.me();
     const c = await cfg();
+    const role0 = (window.AUTH && AUTH.session && AUTH.session()) ? (AUTH.session().role || 'eleve') : 'eleve';
+    const pls = await plansPour(role0, c);
     const notice = u ? '' :
         '<div class="card bl-wait"><b>☁️ connexion cloud requise pour ENREGISTRER ta demande</b>'
       + '<p>Les offres et coordonnées bancaires ci-dessous sont consultables librement. '
@@ -53,8 +83,8 @@
             : 'Beleg erhalten — Freischaltung durch den Administrator innerhalb von 24 h.')
         + '</div>';
     }
-    h += '<div class="bl-plans">' + c.plans.map(p =>
-        '<div class="card bl-p' + (p.id === (PREPLAN || 'm6') ? ' bl-hot' : '') + '">'
+    h += '<div class="bl-plans">' + (pls.length ? '' : '<div class="bl-wait">⚠️ aucun plan actif pour ton rôle — prix en cours de définition (décision B)</div>') + pls.map(p =>
+        '<div class="card bl-p' + (p.id === PREPLAN || (!PREPLAN && (p.id === 'm6' || p.id === 'eleve-m6')) ? ' bl-hot' : '') + '">'
       + (p.eco ? '<span class="bl-eco">' + esc(p.eco) + '</span>' : '')
       + '<b>' + esc(p.label) + '</b><div class="bl-prix">' + p.prix.toLocaleString('fr-FR') + ' DA</div>'
       + '<i>' + p.par_mois.toLocaleString('fr-FR') + ' DA / mois</i>'
