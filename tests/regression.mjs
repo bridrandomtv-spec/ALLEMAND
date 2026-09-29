@@ -16,9 +16,13 @@ const root = process.cwd();
 const read = p => fs.readFileSync(path.join(root, p), 'utf8');
 const store = {};
 globalThis.window = globalThis;
+globalThis.speechSynthesis = { speak(){}, cancel(){}, pause(){}, resume(){}, getVoices: () => [] };
+globalThis.MutationObserver = class { constructor(){} observe(){} disconnect(){} };
+if (typeof globalThis.location === 'undefined') globalThis.location = { hash: '', href: 'https://ci.local/' };
 globalThis.document = {
   addEventListener(){}, removeEventListener(){}, dispatchEvent(){},
   querySelector(){ return null; }, querySelectorAll(){ return []; },
+  getElementById(){ return null; },
   createElement(){ return { style:{}, classList:{ add(){}, remove(){} }, setAttribute(){}, appendChild(){} }; },
   body:{ appendChild(){} }
 };
@@ -46,14 +50,16 @@ if(typeof fn !== 'function'){
   process.exit(1);
 }
 const qs = JSON.parse(read('tests/questions_regression.json'));
-const fails = [];
+const fails = []; let crashes = 0;
 for(const item of qs){
-  let rep = '';
-  try{ rep = await fn(item.q); }catch(e){ rep = ''; }
+  let rep = ''; let err = null;
+  try{ rep = await fn(item.q); }catch(e){ rep = ''; err = e; }
   if(rep && typeof rep === 'object') rep = rep.texte || rep.reponse || rep.rep || JSON.stringify(rep);
   rep = String(rep || '');
-  if(!rep || rep.indexOf('لا أعرف') !== -1 || rep.indexOf('لا اعرف') !== -1)
-    fails.push(item.q + '  →  ' + rep.slice(0, 70));
+  if(!rep || rep.indexOf('لا أعرف') !== -1 || rep.indexOf('لا اعرف') !== -1){
+    if(err && crashes < 10){ crashes++; fails.push('[CRASH] ' + item.q + ' → ' + String(err && err.message || err)); }
+    else fails.push(item.q + '  →  ' + rep.slice(0, 70));
+  }
 }
 if(fails.length){
   console.log('::error::RÉGRESSION : ' + fails.length + ' question(s) élève sans réponse valide');
