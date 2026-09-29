@@ -6,7 +6,8 @@
       "free_works_offline": true,
       "paid_requires_backend": true,
       "cache_ui_only": true
-    }
+    },
+    "note_3_2": "paid_views : vues entières paywallisées (liste vide = aucune vue entière payante en 3.2 ; le gating se fait par leçon/unité via free.units)."
   },
   "FREE_LESSONS_LIMIT": 2,
   "trial_days": 14,
@@ -69,5 +70,6 @@
         }
       }
     }
-  }
+  },
+  "paid_views": []
 }
