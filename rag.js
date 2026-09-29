@@ -29,7 +29,7 @@
   async function chargeLegacy(){
     if(LEGACY !== null) return LEGACY;
     try{
-      const r = await fetch('assets/bdd/corpus_index.json', { cache:'force-cache' });
+      const r = await fetch('assets/bdd/corpus_index.json', { cache:'no-store' });
       LEGACY = r.ok ? await r.json() : null;
     }catch(e){ LEGACY = null; }
     return LEGACY;
@@ -49,7 +49,7 @@
       for(const sh of man.shards){
         let data = null;
         try{
-          const r = await fetch('assets/bdd/shards/' + sh.file, { cache:'force-cache' });
+          const r = await fetch('assets/bdd/shards/' + sh.file, { cache:'no-store' });
           if(r.ok) data = await r.json();
         }catch(e){}
         if(!data) continue;
@@ -90,7 +90,7 @@
      توجيه / تصحيح  · 134 صيغة (عر + جزائرية + فر + ألم)
      ══════════════════════════════════════════════════════════════════════ */
   let MAL = null, BAN = null, VOC = null, QUEST = null, CORP = null;
-  async function cj(url){ try{ const r = await fetch(url, { cache:'force-cache' });
+  async function cj(url){ try{ const r = await fetch(url, { cache:'no-store' });
       return r.ok ? await r.json() : null; }catch(e){ return null; } }
   async function chargeMalakhiss(){ if(MAL === null) MAL = await cj('assets/bdd/malakhiss.json'); return MAL; }
   async function chargeBanque(){ if(BAN === null) BAN = await cj('assets/bdd/contenu_original.json'); return BAN; }
