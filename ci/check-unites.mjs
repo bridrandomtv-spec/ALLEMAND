@@ -57,8 +57,8 @@ if (!blk) {
 /* Découpe en entrées : chaque entrée commence par « { n:<numéro>, » */
 const morceaux = blk[1].split(/\{\s*n:/).slice(1);
 console.log(`  entrées du registre : ${morceaux.length}`);
-if (morceaux.length !== 16) {
-  fails.push(`app.js : registre UNITES = ${morceaux.length} entrées, attendu 16`);
+if (morceaux.length !== 19) {
+  fails.push(`app.js : registre UNITES = ${morceaux.length} entrées, attendu 19`);
 }
 
 /* ── 3) Résolution de chaque unité, comme le ferait le navigateur ────── */
@@ -181,7 +181,7 @@ for (const u of resolues) {
 }
 
 const vides = resolues.filter(u => u.seances === 0 || !u.devoir);
-const manquantes = 16 - resolues.length;
+const manquantes = 19 - resolues.length;
 if (manquantes > 0) {
   fails.push(`${manquantes} unité(s) du registre non résolue(s) — voir les erreurs ci-dessus`);
 }
