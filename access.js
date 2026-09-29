@@ -7,7 +7,13 @@
 'use strict';
 (function(){
   var CFG_URL = 'assets/bdd/access_config.json';
-  var DEF_FREE = { units: { '1': [1, 2] }, quizzes: ['u1'], devoirs: [], features: [] };
+  var DEF_FREE = { units: { '1': [1, 2] }, quizzes: ['u1'], devoirs: [],
+    features: ['banque', 'memoire', 'masar', 'malakhiss', 'resume'] };
+  var DEF_ROLES = {
+    prof:   { free_features: ['demo_lecon', 'demo_exercice', 'demo_test', 'demo_classe',
+                              'demo_dashboard', 'demo_gestion_eleves'] },
+    parent: { free_features: ['demo_dashboard', 'demo_progression', 'demo_resultats',
+                              'demo_stats', 'guide_suivi'] } };
   var cfg = null, cfgP = null;
   var ENT = { ok: false, until: null, ts: 0, src: 'none' };   /* mémoire vive UNIQUEMENT */
   var TTL = 60000;
@@ -30,7 +36,7 @@
   function isFreeQuiz(u){ return freeCfg().quizzes.indexOf('u' + u) !== -1; }
   function isFreeDevoir(id){ return freeCfg().devoirs.indexOf(id) !== -1; }
   function isFreeFeature(role, feat){
-    var r = (cfg && cfg.roles && cfg.roles[role]) || {};
+    var r = (cfg && cfg.roles && cfg.roles[role]) || (DEF_ROLES[role] || {});
     return (r.free_features || []).indexOf(feat) !== -1;
   }
 
