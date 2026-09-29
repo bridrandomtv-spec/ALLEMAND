@@ -23332,13 +23332,13 @@
       ]
     },
     {
-      "id": "DV-ORIG-U6-01",
+      "id": "DV-GEN-U5-01",
       "type": "devoir",
-      "hash": "7f91ced64796",
-      "titre": "Devoir original U6 — Beim Arzt (Körperteile · Modalverben · Perfekt)",
-      "titre_de": "Devoir original U6 — Beim Arzt (Körperteile · Modalverben · Perfekt)",
+      "hash": "2d42f3f00b83",
+      "titre": "فرض مولَّد — الوحدة 5 : Ein Wochenende voller Hobbys (Freizeit)",
+      "titre_de": "Ein Wochenende voller Hobbys",
       "annee_scolaire": "2026/2027",
-      "annee": 2027,
+      "annee": 2026,
       "trimestre": 2,
       "session": null,
       "niveau": "2AS",
@@ -23346,10 +23346,10 @@
       "wilaya": "—",
       "code_wilaya": "00",
       "ville": "—",
-      "lycee": "Production originale — plateforme",
-      "unite": 6,
-      "unite_de": "Mensch und Gesundheit",
-      "unite_ar": "الإنسان والصحة",
+      "lycee": "Production propre (généré)",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 45,
       "bareme": 20,
       "parties": [
@@ -23359,6 +23359,7 @@
           "points": 8,
           "competences": [
             "repérer une information explicite",
+            "Vrai/Faux avec justification",
             "répondre en phrases complètes"
           ]
         },
@@ -23367,10 +23368,10 @@
           "titre": "Sprachbausteine — اللغة",
           "points": 8,
           "competences": [
-            "conjuguer",
-            "accorder",
-            "transformer",
-            "traduire"
+            "conjugaison",
+            "W-Fragen",
+            "cas et déclinaisons",
+            "ordre des mots"
           ]
         },
         {
@@ -23384,35 +23385,36 @@
         }
       ],
       "difficulte": 2,
-      "note_moyenne": 0,
+      "note_moyenne": null,
       "vues": 0,
       "telechargements": 0,
       "corrige_inclus": true,
-      "source": "production propre (Prof. Kharif Ahmed) — contenu original, aucun manuel reproduit",
+      "source": "production propre — généré par la plateforme (Prof. Kharif Ahmed)",
       "tags": [
-        "original",
-        "généré",
-        "Mensch und Gesundheit",
-        "Arzt",
-        "Körperteile",
-        "Modalverben",
-        "Perfekt"
+        "Freizeit",
+        "Hobby",
+        "Fußball",
+        "Musik",
+        "Wochenende",
+        "Präsens",
+        "Akkusativ",
+        "généré"
       ],
-      "sujet": "Letzte Woche war ich beim Arzt. Ich hatte starke Kopfschmerzen und Fieber. Der Arzt hat mich untersucht und gesagt: «Du hast eine Grippe. Du musst im Bett bleiben und viel Wasser trinken. Du darfst nicht in die Schule gehen.» Er hat mir auch ein Medikament gegen die Schmerzen verschrieben. Nach drei Tagen ging es mir wieder besser. Meine Mutter hat eine Suppe gekocht und ich habe viel geschlafen. Jetzt bin ich wieder gesund.\n\nI. Leseverstehen (8 pts)\n1) Richtig oder falsch ? (4×1)\n   a) Der Schüler war letzte Woche beim Arzt.\n   b) Er hatte starke Bauchschmerzen.\n   c) Er durfte in die Schule gehen.\n   d) Seine Mutter hat eine Suppe gekocht.\n2) Beantworte in einem vollständigen Satz (4×1)\n   a) Was hatte der Schüler ?\n   b) Was muss er zu Hause tun ?\n   c) Was hat der Arzt verschrieben ?\n   d) Wer hat eine Suppe gekocht ?\n\nII. Sprachbausteine (8 pts)\n1) Konjugiere die Modalverben (4×0,5) : ich ___ (müssen) · du ___ (dürfen) · er ___ (sollen) · wir ___ (können)\n2) Bilde die Komposita (4×0,5) : der Kopf + die Schmerzen · der Zahn + die Schmerzen · der Magen + die Schmerzen · der Rücken + die Schmerzen\n3) Perfekt (2×1) : ich habe gut ___ (schlafen) · er ist zu Hause ___ (bleiben)\n4) Relativpronomen (2×1) : Das Medikament, ___ mir geholfen hat · Der Arzt, ___ mich untersucht hat\n\nIII. Textproduktion (4 pts)\nDein Freund ist krank. Schreibe 5 Sätze : Was tut ihm weh ? Was soll/muss er tun ? Was darf er nicht tun ?",
-      "corrige": "CORRIGÉ\nI.1) a Richtig · b Falsch (Kopfschmerzen und Fieber) · c Falsch (er durfte NICHT) · d Richtig\nI.2) a) Er hatte starke Kopfschmerzen und Fieber. b) Er muss im Bett bleiben und viel Wasser trinken. c) Der Arzt hat ein Medikament gegen die Schmerzen verschrieben. d) Seine Mutter hat eine Suppe gekocht.\nII.1) ich muss · du darfst · er soll · wir können\nII.2) die Kopfschmerzen · die Zahnschmerzen · die Magenschmerzen · die Rückenschmerzen\nII.3) geschlafen · geblieben\nII.4) das · der\nIII. Grille : مضمون 2 (5 infos × 0,4) + لغة 2 (conjugaison d'un verbe modal + majuscules)\nModèle : «Mein Freund Karim ist krank. Sein Kopf tut ihm weh und er hat Fieber. Er muss im Bett bleiben und viel trinken. Er darf nicht draußen spielen. Ich wünsche ihm gute Besserung!»",
+      "sujet": "Ein Wochenende voller Hobbys\n\nAm Wochenende habe ich viel Freizeit. Am Samstagmorgen spiele ich mit meinen Freunden Fußball im Park. Am Nachmittag sehe ich fern oder höre Musik. Am Sonntag besuche ich meine Großeltern, und wir spielen zusammen Gesellschaftsspiele. Abends lese ich ein Buch oder chatte im Internet mit meiner Brieffreundin Anna. Meine Lieblingshobbys sind Fußball und Musik. Und was machst du gern in deiner Freizeit?\n\nI. Leseverstehen (8 pts)\n1. Richtig oder falsch? (4×1)\na) Der Text spielt an einem Schultag.\nb) Am Samstag spielt er Fußball im Park.\nc) Am Sonntag besucht er seine Tante.\nd) Abends liest er oder chattet im Internet.\n2. Antworte in einem vollständigen Satz (2×2)\ne) Was sind seine Lieblingshobbys?\nf) Mit wem spielt er Gesellschaftsspiele?\n\nII. Sprachbausteine (8 pts)\n1. Konjugiere im Präsens (4×0,5): ich (spielen) · du (sehen) · er (besuchen) · wir (lesen)\n2. W-Fragen (4×0,5): ___ sind deine Lieblingshobbys? · ___ besuchst du am Sonntag? · ___ spielst du mit deinen Freunden? · ___ hörst du Musik?\n3. Bilde Sätze (2×1): Freizeit / ich / am Wochenende / habe · Fußball / spielen / wir / im Park\n4. Akkusativ (4×0,5): Ich höre ___ (die) Musik · Ich lese ___ (das) Buch · Ich besuche ___ (der) Großvater · Ich sehe ___ (der) Film\n\nIII. Textproduktion (4 pts)\nSchreibe 5 Sätze über deine Freizeit. Benutze: ein Satz mit «gern», ein Satz mit «am Wochenende», ein Satz mit «weil».",
+      "corrige": "I. 1) a Falsch (am Wochenende) · b Richtig · c Falsch (seine Großeltern) · d Richtig\n2) e) Seine Lieblingshobbys sind Fußball und Musik. f) Er spielt mit seinen Großeltern Gesellschaftsspiele.\nII. 1) ich spiele · du siehst · er besucht · wir lesen\n2) Was · Wen · Wo · Wann\n3) Ich habe am Wochenende Freizeit. · Wir spielen Fußball im Park.\n4) die Musik · das Buch · den Großvater · den Film\nIII. Grille : مضمون 2 (5 infos × 0,4) + لغة 2 (conjugaison + majuscules). Modèle : « Ich habe am Wochenende viel Freizeit. Ich spiele gern Fußball, weil es Spaß macht. Am Samstag gehe ich mit meinen Freunden ins Schwimmbad. Am Abend lese ich ein Buch oder sehe fern. Das macht mich glücklich. »",
       "pages_livre": [
-        129,
-        149
+        103,
+        127
       ]
     },
     {
-      "id": "DV-ORIG-U6-02",
+      "id": "DV-GEN-U5-02",
       "type": "devoir",
-      "hash": "eeb212aafc8d",
-      "titre": "Devoir original U6 — Gesund leben (sollen/müssen/dürfen · W-Fragen)",
-      "titre_de": "Devoir original U6 — Gesund leben (sollen/müssen/dürfen · W-Fragen)",
+      "hash": "9679ed0fd059",
+      "titre": "فرض مولَّد — الوحدة 5 : Hobbys in meiner Klasse",
+      "titre_de": "Hobbys in meiner Klasse",
       "annee_scolaire": "2026/2027",
-      "annee": 2027,
+      "annee": 2026,
       "trimestre": 2,
       "session": null,
       "niveau": "2AS",
@@ -23420,10 +23422,10 @@
       "wilaya": "—",
       "code_wilaya": "00",
       "ville": "—",
-      "lycee": "Production originale — plateforme",
-      "unite": 6,
-      "unite_de": "Mensch und Gesundheit",
-      "unite_ar": "الإنسان والصحة",
+      "lycee": "Production propre (généré)",
+      "unite": 5,
+      "unite_de": "Freizeit",
+      "unite_ar": "أوقات الفراغ",
       "duree_minutes": 45,
       "bareme": 20,
       "parties": [
@@ -23433,6 +23435,7 @@
           "points": 8,
           "competences": [
             "repérer une information explicite",
+            "Vrai/Faux avec justification",
             "répondre en phrases complètes"
           ]
         },
@@ -23441,10 +23444,10 @@
           "titre": "Sprachbausteine — اللغة",
           "points": 8,
           "competences": [
-            "conjuguer",
-            "accorder",
-            "transformer",
-            "traduire"
+            "conjugaison",
+            "W-Fragen",
+            "cas et déclinaisons",
+            "ordre des mots"
           ]
         },
         {
@@ -23458,35 +23461,186 @@
         }
       ],
       "difficulte": 2,
-      "note_moyenne": 0,
+      "note_moyenne": null,
       "vues": 0,
       "telechargements": 0,
       "corrige_inclus": true,
-      "source": "production propre (Prof. Kharif Ahmed) — contenu original, aucun manuel reproduit",
+      "source": "production propre — généré par la plateforme (Prof. Kharif Ahmed)",
       "tags": [
-        "original",
-        "généré",
-        "Mensch und Gesundheit",
+        "Freizeit",
+        "Hobbys",
+        "sich interessieren für",
+        "Possessivartikel",
+        "weil",
+        "Dativ",
+        "généré"
+      ],
+      "sujet": "Hobbys in meiner Klasse\n\nIn meiner Klasse haben alle ein Hobby. Karim sammelt Briefmarken, und seine Sammlung ist schon sehr groß. Amel malt gern Bilder, und ihre Bilder hängen im Klassenzimmer. Ich selbst interessiere mich für Musik: Ich spiele Gitarre und singe in einem Verein. Unsere Lehrerin findet Hobbys wichtig, denn sie machen das Leben schöner. Nach der Schule treffen wir uns oft und sprechen über unsere Hobbys.\n\nI. Leseverstehen (8 pts)\n1. Richtig oder falsch? (4×1)\na) Karim sammelt Münzen.\nb) Amels Bilder hängen im Klassenzimmer.\nc) Der Schreiber spielt Klavier.\nd) Die Lehrerin findet Hobbys wichtig.\n2. Antworte vollständig (2×2): e) Wo singt der Schreiber? f) Wann treffen sich die Schüler?\n\nII. Sprachbausteine (8 pts)\n1. Konjugiere (4×0,5): ich (sich interessieren) · du (sammeln) · er (hängen) · wir (sich treffen)\n2. Possessivartikel (4×0,5): ___ (sein) Sammlung ist groß · ___ (ihr) Bilder hängen · ___ (mein) Hobby ist Musik · ___ (unser) Lehrerin lacht\n3. Verbinde mit «weil» (2×1): Hobbys sind wichtig / sie machen das Leben schöner · Ich spiele Gitarre / ich liebe Musik\n4. Dativ nach mit/nach/zu/von (4×0,5): Ich spreche mit ___ (mein Freund) · Wir treffen uns nach ___ (die Schule) · Ich gehe zu ___ (der Verein) · Das Bild von ___ (die Lehrerin)\n\nIII. Textproduktion (4 pts)\nSchreibe 5 Sätze: Was machst du gern? Warum? Mit wem? Wann? Wo?",
+      "corrige": "I. 1) a Falsch (Briefmarken) · b Richtig · c Falsch (Gitarre) · d Richtig\n2) e) Er singt in einem Verein. f) Sie treffen sich nach der Schule.\nII. 1) ich interessiere mich · du sammelst · er hängt · wir treffen uns\n2) Seine · Ihre · Mein · Unsere\n3) Hobbys sind wichtig, weil sie das Leben schöner machen. · Ich spiele Gitarre, weil ich Musik liebe.\n4) meinem Freund · der Schule · dem Verein · der Lehrerin\nIII. Grille مضمون 2 + لغة 2. Modèle : « Ich male gern Bilder, weil es mich entspannt. Am Nachmittag male ich mit meinen Freunden im Park. Am Wochenende zeichne ich meine Familie zu Hause. »",
+      "pages_livre": [
+        103,
+        127
+      ]
+    },
+    {
+      "id": "DV-GEN-U6-01",
+      "type": "devoir",
+      "hash": "8f90f303debc",
+      "titre": "فرض مولَّد — الوحدة 6 : Beim Arzt (Grippe)",
+      "titre_de": "Beim Arzt",
+      "annee_scolaire": "2026/2027",
+      "annee": 2026,
+      "trimestre": 2,
+      "session": null,
+      "niveau": "2AS",
+      "filiere": "Lettres et Langues",
+      "wilaya": "—",
+      "code_wilaya": "00",
+      "ville": "—",
+      "lycee": "Production propre (généré)",
+      "unite": 6,
+      "unite_de": "Mensch und Gesundheit",
+      "unite_ar": "الإنسان والصحة",
+      "duree_minutes": 45,
+      "bareme": 20,
+      "parties": [
+        {
+          "id": "I",
+          "titre": "Leseverstehen — فهم المكتوب",
+          "points": 8,
+          "competences": [
+            "repérer une information explicite",
+            "Vrai/Faux avec justification",
+            "répondre en phrases complètes"
+          ]
+        },
+        {
+          "id": "II",
+          "titre": "Sprachbausteine — اللغة",
+          "points": 8,
+          "competences": [
+            "conjugaison",
+            "W-Fragen",
+            "cas et déclinaisons",
+            "ordre des mots"
+          ]
+        },
+        {
+          "id": "III",
+          "titre": "Textproduktion — إنتاج كتابي",
+          "points": 4,
+          "competences": [
+            "rédiger 5 phrases",
+            "respecter la grille de critères"
+          ]
+        }
+      ],
+      "difficulte": 2,
+      "note_moyenne": null,
+      "vues": 0,
+      "telechargements": 0,
+      "corrige_inclus": true,
+      "source": "production propre — généré par la plateforme (Prof. Kharif Ahmed)",
+      "tags": [
         "Gesundheit",
+        "Arzt",
+        "Kopfschmerzen",
+        "Fieber",
+        "Perfekt",
         "Modalverben",
-        "W-Fragen",
-        "Perfekt"
+        "Dativ",
+        "généré"
       ],
-      "sujet": "Viele Menschen leben heute ungesund. Sie essen zu viel Fastfood und trinken zu viel Cola. Sie sitzen lange vor dem Computer und bewegen sich wenig. Deshalb haben sie oft Rückenschmerzen und sind müde. Ärzte sagen: Wer gesund bleiben will, muss sich bewegen und gut essen. Man soll jeden Tag Obst und Gemüse essen und mindestens eine Stunde spazieren gehen. Man darf auch fernsehen, aber nicht zu lange. Ein gesunder Körper braucht auch Schlaf: acht Stunden pro Nacht sind ideal.\n\nI. Leseverstehen (8 pts)\n1) Richtig oder falsch ? (4×1)\n   a) Fastfood ist gesund für den Körper.\n   b) Viele Menschen bewegen sich heute wenig.\n   c) Die Ärzte empfehlen Obst und Gemüse.\n   d) Sechs Stunden Schlaf sind ideal.\n2) Beantworte in einem vollständigen Satz (4×1)\n   a) Warum sind die Menschen oft müde ?\n   b) Was muss man tun, um gesund zu bleiben ?\n   c) Was soll man jeden Tag essen ?\n   d) Wie viele Stunden Schlaf sind ideal ?\n\nII. Sprachbausteine (8 pts)\n1) Ergänze sollen/müssen/dürfen (4×0,5) : «___ ich heute fernsehen?» — «Nein, du ___ nicht. Du ___ zuerst deine Hausaufgaben machen.» · «Man ___ jeden Tag Obst essen.»\n2) Bilde die Komposita (4×0,5) : der Zahn + die Schmerzen · der Kopf + die Schmerzen · der Magen + die Schmerzen · das Ohr + die Schmerzen\n3) Perfekt (2×1) : er hat zu viel ___ (essen) · sie ist früh ___ (aufstehen)\n4) W-Fragen (2×1) : ___ tut dir weh ? · ___ lange schläfst du ?\n\nIII. Textproduktion (4 pts)\nSchreibe 5 Sätze : Wie lebst du gesund ? (Essen · Sport · Schlaf · Fernsehen)",
-      "corrige": "CORRIGÉ\nI.1) a Falsch · b Richtig · c Richtig · d Falsch (acht Stunden)\nI.2) a) Weil sie lange sitzen und sich wenig bewegen. b) Man muss sich bewegen und gut essen. c) Man soll jeden Tag Obst und Gemüse essen. d) Acht Stunden pro Nacht sind ideal.\nII.1) Darf · darfst · musst · soll\nII.2) die Zahnschmerzen · die Kopfschmerzen · die Magenschmerzen · die Ohrenschmerzen\nII.3) gegessen · aufgestanden\nII.4) Was · Wie\nIII. Grille : مضمون 2 (5 infos × 0,4) + لغة 2 (verbe conjugué + majuscules)\nModèle : «Ich lebe gesund. Ich esse jeden Tag Obst und trinke viel Wasser. Am Nachmittag spiele ich Fußball mit meinen Freunden. Ich schlafe acht Stunden pro Nacht. Ich darf nur eine Stunde fernsehen.»",
+      "sujet": "Beim Arzt\n\nGestern war ich beim Arzt, weil ich starke Kopfschmerzen und Fieber hatte. Der Arzt hat meine Temperatur gemessen: 39 Grad! Er hat mir gesagt: « Du hast eine Grippe. Du musst im Bett bleiben und viel Tee trinken. » Dann hat er mir ein Rezept gegeben: Ich soll dreimal täglich eine Tablette nehmen und meine Ohren warm halten. Heute geht es mir besser, aber ich bin noch müde. Gesundheit ist das Wichtigste im Leben.\n\nI. Leseverstehen (8 pts)\n1. Richtig oder falsch? (4×1)\na) Der Schüler war gestern in der Schule.\nb) Er hatte 39 Grad Fieber.\nc) Der Arzt sagt, er muss viel arbeiten.\nd) Er soll dreimal täglich eine Tablette nehmen.\n2. Antworte vollständig (2×2): e) Warum war er beim Arzt? f) Was hat der Arzt gemessen?\n\nII. Sprachbausteine (8 pts)\n1. Perfekt (4×0,5): messen · sagen · geben · bleiben\n2. Modalverben (4×0,5): Du ___ (müssen) im Bett bleiben · Ich ___ (sollen) eine Tablette nehmen · Er ___ (dürfen) nicht zur Schule gehen · Wir ___ (wollen) gesund werden\n3. Dativ (4×0,5): Es geht ___ (ich) besser · Der Arzt hilft ___ (der Patient) · Mein Kopf tut ___ (ich) weh · Die Tablette hilft ___ (das Kind)\n4. W-Fragen (4×0,5): ___ hattest du Fieber? · ___ hat der Arzt gemessen? · ___ musst du bleiben? · ___ geht es dir?\n\nIII. Textproduktion (4 pts)\nSchreibe 5 Sätze: Was tut weh? Was sagt der Arzt? Was musst/sollst du tun?",
+      "corrige": "I. 1) a Falsch (beim Arzt) · b Richtig · c Falsch (im Bett bleiben) · d Richtig\n2) e) Weil er starke Kopfschmerzen und Fieber hatte. f) Er hat seine Temperatur gemessen.\nII. 1) hat gemessen · hat gesagt · hat gegeben · ist geblieben\n2) musst · soll · darf · wollen\n3) mir · dem Patienten · mir · dem Kind\n4) Warum/Wann · Was · Wo · Wie\nIII. Grille مضمون 2 + لغة 2. Modèle : « Mein Hals tut weh und ich habe Fieber. Der Arzt sagt, ich soll im Bett bleiben. Ich muss viel Tee trinken und eine Tablette nehmen. Morgen geht es mir sicher besser. »",
       "pages_livre": [
         129,
         149
       ]
     },
     {
-      "id": "DV-ORIG-U8-01",
+      "id": "DV-GEN-U6-02",
       "type": "devoir",
-      "hash": "f6f632f92122",
-      "titre": "Devoir original U8 — Meine beste Freundin (Adjektivdeklination · Komparativ)",
-      "titre_de": "Devoir original U8 — Meine beste Freundin (Adjektivdeklination · Komparativ)",
+      "hash": "13e5ed52ec58",
+      "titre": "فرض مولَّد — الوحدة 6 : Gesund leben",
+      "titre_de": "Gesund leben",
       "annee_scolaire": "2026/2027",
-      "annee": 2027,
+      "annee": 2026,
+      "trimestre": 2,
+      "session": null,
+      "niveau": "2AS",
+      "filiere": "Lettres et Langues",
+      "wilaya": "—",
+      "code_wilaya": "00",
+      "ville": "—",
+      "lycee": "Production propre (généré)",
+      "unite": 6,
+      "unite_de": "Mensch und Gesundheit",
+      "unite_ar": "الإنسان والصحة",
+      "duree_minutes": 45,
+      "bareme": 20,
+      "parties": [
+        {
+          "id": "I",
+          "titre": "Leseverstehen — فهم المكتوب",
+          "points": 8,
+          "competences": [
+            "repérer une information explicite",
+            "Vrai/Faux avec justification",
+            "répondre en phrases complètes"
+          ]
+        },
+        {
+          "id": "II",
+          "titre": "Sprachbausteine — اللغة",
+          "points": 8,
+          "competences": [
+            "conjugaison",
+            "W-Fragen",
+            "cas et déclinaisons",
+            "ordre des mots"
+          ]
+        },
+        {
+          "id": "III",
+          "titre": "Textproduktion — إنتاج كتابي",
+          "points": 4,
+          "competences": [
+            "rédiger 5 phrases",
+            "respecter la grille de critères"
+          ]
+        }
+      ],
+      "difficulte": 2,
+      "note_moyenne": null,
+      "vues": 0,
+      "telechargements": 0,
+      "corrige_inclus": true,
+      "source": "production propre — généré par la plateforme (Prof. Kharif Ahmed)",
+      "tags": [
+        "Gesundheit",
+        "Ernährung",
+        "Sport",
+        "Imperativ",
+        "Komposita",
+        "man/sollte",
+        "généré"
+      ],
+      "sujet": "Gesund leben\n\nViele Menschen leben heute ungesund: Sie essen zu viel Fastfood, trinken zu wenig Wasser und sitzen stundenlang vor dem Computer. Dabei ist es ganz einfach, gesund zu bleiben: Man sollte jeden Tag Obst und Gemüse essen, genug Wasser trinken und sich viel bewegen. Sport macht nicht nur den Körper stark, sondern auch den Kopf frei. Wer früh schlafen geht, ist am Morgen frischer. Mein Opa sagt immer: « Besser vorbeugen als heilen! »\n\nI. Leseverstehen (8 pts)\n1. Richtig oder falsch? (4×1)\na) Fastfood ist gesund.\nb) Sport macht den Kopf frei.\nc) Wer früh schläft, ist morgens frischer.\nd) Der Opa sagt: « Besser heilen als vorbeugen. »\n2. Antworte vollständig (2×2): e) Was sollte man jeden Tag essen? f) Was trinken viele Menschen zu wenig?\n\nII. Sprachbausteine (8 pts)\n1. Konjugiere (4×0,5): man (sollen) · ihr (sollen) · wir (müssen) · du (können)\n2. Imperativ du (4×0,5): (essen) mehr Gemüse! · (trinken) genug Wasser! · (gehen) früh schlafen! · (machen) Sport!\n3. Komposita (4×0,5): der Kopf + die Schmerzen · das Obst + der Salat · der Sport + der Verein · das Wasser + die Flasche\n4. Verbinde mit «nicht nur … sondern auch» (2×1): Sport macht den Körper stark / den Kopf frei · Obst ist gesund / lecker\n\nIII. Textproduktion (4 pts)\nSchreibe 5 Sätze: Wie bleibst du gesund? (Essen, Trinken, Sport, Schlaf, warum)",
+      "corrige": "I. 1) a Falsch · b Richtig · c Richtig · d Falsch (vorbeugen, nicht heilen)\n2) e) Man sollte jeden Tag Obst und Gemüse essen. f) Sie trinken zu wenig Wasser.\nII. 1) man sollte · ihr sollt · wir müssen · du kannst\n2) Iss mehr Gemüse! · Trink genug Wasser! · Geh früh schlafen! · Mach Sport!\n3) die Kopfschmerzen · der Obstsalat · der Sportverein · die Wasserflasche\n4) Sport macht nicht nur den Körper stark, sondern auch den Kopf frei. · Obst ist nicht nur gesund, sondern auch lecker.\nIII. Grille مضمون 2 + لغة 2. Modèle : « Ich esse jeden Tag Obst, weil es gesund ist. Ich trinke viel Wasser und schlafe früh. Am Wochenende mache ich Sport mit meinen Freunden. So bleibe ich stark und fröhlich. »",
+      "pages_livre": [
+        129,
+        149
+      ]
+    },
+    {
+      "id": "DV-GEN-U8-01",
+      "type": "devoir",
+      "hash": "ca9382039703",
+      "titre": "فرض مولَّد — الوحدة 8 : Meine beste Freundin (Aussehen & Charakter)",
+      "titre_de": "Meine beste Freundin",
+      "annee_scolaire": "2026/2027",
+      "annee": 2026,
       "trimestre": 3,
       "session": null,
       "niveau": "2AS",
@@ -23494,7 +23648,7 @@
       "wilaya": "—",
       "code_wilaya": "00",
       "ville": "—",
-      "lycee": "Production originale — plateforme",
+      "lycee": "Production propre (généré)",
       "unite": 8,
       "unite_de": "Aussehen und Charakter",
       "unite_ar": "المظهر والشخصية",
@@ -23507,6 +23661,7 @@
           "points": 8,
           "competences": [
             "repérer une information explicite",
+            "Vrai/Faux avec justification",
             "répondre en phrases complètes"
           ]
         },
@@ -23515,10 +23670,10 @@
           "titre": "Sprachbausteine — اللغة",
           "points": 8,
           "competences": [
-            "conjuguer",
-            "accorder",
-            "transformer",
-            "traduire"
+            "conjugaison",
+            "W-Fragen",
+            "cas et déclinaisons",
+            "ordre des mots"
           ]
         },
         {
@@ -23532,35 +23687,34 @@
         }
       ],
       "difficulte": 2,
-      "note_moyenne": 0,
+      "note_moyenne": null,
       "vues": 0,
       "telechargements": 0,
       "corrige_inclus": true,
-      "source": "production propre (Prof. Kharif Ahmed) — contenu original, aucun manuel reproduit",
+      "source": "production propre — généré par la plateforme (Prof. Kharif Ahmed)",
       "tags": [
-        "original",
-        "généré",
-        "Aussehen und Charakter",
         "Aussehen",
         "Charakter",
         "Adjektivdeklination",
-        "Komparativ"
+        "Komparativ",
+        "Superlativ",
+        "généré"
       ],
-      "sujet": "Meine beste Freundin heißt Salma. Sie ist sechzehn Jahre alt und ziemlich groß. Sie hat lange schwarze Haare und braune Augen. Ihr Gesicht ist rund und ihr Mund ist klein. Salma ist sehr freundlich und hilfsbereit. Sie ist auch lustiger als ich und lacht viel. Aber manchmal ist sie ein wenig ungeduldig. Wir tragen gern moderne Kleidung: Sie hat einen roten Pullover und eine blaue Hose. Ich finde, sie ist die netteste Freundin der Welt.\n\nI. Leseverstehen (8 pts)\n1) Richtig oder falsch ? (4×1)\n   a) Salma ist sechzehn Jahre alt.\n   b) Sie hat kurze blonde Haare.\n   c) Sie ist ernster als die Erzählerin.\n   d) Sie trägt gern moderne Kleidung.\n2) Beantworte in einem vollständigen Satz (4×1)\n   a) Wie sieht Salma aus ? (zwei Merkmale)\n   b) Wie ist ihr Charakter ?\n   c) Was für einen Pullover hat sie ?\n   d) Wie findet die Erzählerin Salma ?\n\nII. Sprachbausteine (8 pts)\n1) Adjektivdeklination Nominativ (4×0,5) : ein lang__ Haar · ein braun__ Auge · ein rund__ Gesicht · schwarz__ Haare\n2) Komparativ und Superlativ (4×0,5) : groß → ___ → am größten · freundlich → freundlicher → ___ · gut → ___ → am besten · gern → ___ → am liebsten\n3) Personalpronomen Akkusativ (2×1) : Ich sehe ___ (der Mann) · Ich kenne ___ (die Frau)\n4) Infinitiv mit zu (2×1) : Es macht Spaß, ___ (lachen) · Sie versucht, ___ (helfen)\n\nIII. Textproduktion (4 pts)\nBeschreibe deinen besten Freund / deine beste Freundin in 5 Sätzen (Aussehen + Charakter + Kleidung).",
-      "corrige": "CORRIGÉ\nI.1) a Richtig · b Falsch (lange schwarze Haare) · c Falsch (lustiger) · d Richtig\nI.2) a) Sie hat lange schwarze Haare und braune Augen. b) Sie ist freundlich, hilfsbereit und lustig. c) Sie hat einen roten Pullover. d) Sie ist die netteste Freundin der Welt.\nII.1) langes · braunes · rundes · schwarze\nII.2) größer · am freundlichsten · besser · lieber\nII.3) ihn · sie\nII.4) zu lachen · zu helfen\nIII. Grille : مضمون 2 (5 infos × 0,4) + لغة 2 (adjectifs accordés + majuscules)\nModèle : «Mein bester Freund heißt Amine. Er ist groß und schlank. Er hat kurze schwarze Haare und grüne Augen. Er ist sehr lustig und hilfsbereit. Er trägt immer eine blaue Jeans und ein weißes T-Shirt.»",
+      "sujet": "Meine beste Freundin\n\nMeine beste Freundin heißt Yasmin. Sie ist sechzehn Jahre alt und ziemlich groß. Sie hat lange, schwarze Haare und braune, lachende Augen. Ihr Gesicht ist rund und sympathisch. Yasmin ist nicht nur schön, sondern auch klug und hilfsbereit: Sie erklärt mir oft die schwierigen Mathaufgaben. Manchmal ist sie ein bisschen schüchtern, aber immer ehrlich und lustig. Ich finde, eine gute Freundin ist wie ein warmer Mantel im Winter.\n\nI. Leseverstehen (8 pts)\n1. Richtig oder falsch? (4×1)\na) Yasmin ist klein.\nb) Sie hat blonde Haare.\nc) Sie ist hilfsbereit und klug.\nd) Sie ist immer ernst.\n2. Antworte vollständig (2×2): e) Wie sehen Yasmins Augen aus? f) Was erklärt Yasmin der Schreiberin?\n\nII. Sprachbausteine (8 pts)\n1. Adjektivdeklination Nominativ (4×0,5): ein___ schön___ Mädchen · ein___ klug___ Freund · eine___ ehrlich___ Frau · ein___ rund___ Gesicht\n2. Adjektivdeklination Akkusativ (4×0,5): einen___ groß___ Bruder · eine___ klein___ Nase · ein___ neu___ Kleid · die___ schwarz___ Haare\n3. Komparativ/Superlativ (4×0,5): Yasmin ist ___ (groß) als ich · Sie ist die ___ (klug) Schülerin · Ich bin so ___ (alt) wie sie · Mein Haar ist ___ (lang) als ihres\n4. Gegenteile (4×0,5): groß ↔ · fleißig ↔ · freundlich ↔ · ruhig ↔\n\nIII. Textproduktion (4 pts)\nBeschreibe deinen besten Freund / deine beste Freundin in 5 Sätzen (Aussehen + Charakter + warum).",
+      "corrige": "I. 1) a Falsch (ziemlich groß) · b Falsch (schwarze) · c Richtig · d Falsch (lustig)\n2) e) Ihre Augen sind braun und lachend. f) Sie erklärt ihr die schwierigen Mathaufgaben.\nII. 1) ein schönes Mädchen · ein kluger Freund · eine ehrliche Frau · ein rundes Gesicht\n2) einen großen Bruder · eine kleine Nase · ein neues Kleid · die schwarzen Haare\n3) größer · klügste · alt · länger\n4) klein · faul · unfreundlich · nervös\nIII. Grille مضمون 2 + لغة 2. Modèle : « Meine beste Freundin heißt Amel. Sie hat lange blonde Haare und grüne Augen. Sie ist fröhlich und sehr geduldig. Ich mag sie, weil sie immer für mich da ist. »",
       "pages_livre": [
         181,
         205
       ]
     },
     {
-      "id": "DV-ORIG-U8-02",
+      "id": "DV-GEN-U8-02",
       "type": "devoir",
-      "hash": "26d3181a52c2",
-      "titre": "Devoir original U8 — Das Schulfest (Akkusativ-Deklination · als/wie · Präteritum)",
-      "titre_de": "Devoir original U8 — Das Schulfest (Akkusativ-Deklination · als/wie · Präteritum)",
+      "hash": "a0cd51199454",
+      "titre": "فرض مولَّد — الوحدة 8 : Kleidung für ein Fest",
+      "titre_de": "Kleidung für ein Fest",
       "annee_scolaire": "2026/2027",
-      "annee": 2027,
+      "annee": 2026,
       "trimestre": 3,
       "session": null,
       "niveau": "2AS",
@@ -23568,7 +23722,7 @@
       "wilaya": "—",
       "code_wilaya": "00",
       "ville": "—",
-      "lycee": "Production originale — plateforme",
+      "lycee": "Production propre (généré)",
       "unite": 8,
       "unite_de": "Aussehen und Charakter",
       "unite_ar": "المظهر والشخصية",
@@ -23581,6 +23735,7 @@
           "points": 8,
           "competences": [
             "repérer une information explicite",
+            "Vrai/Faux avec justification",
             "répondre en phrases complètes"
           ]
         },
@@ -23589,10 +23744,10 @@
           "titre": "Sprachbausteine — اللغة",
           "points": 8,
           "competences": [
-            "conjuguer",
-            "accorder",
-            "transformer",
-            "traduire"
+            "conjugaison",
+            "W-Fragen",
+            "cas et déclinaisons",
+            "ordre des mots"
           ]
         },
         {
@@ -23606,173 +23761,24 @@
         }
       ],
       "difficulte": 2,
-      "note_moyenne": 0,
+      "note_moyenne": null,
       "vues": 0,
       "telechargements": 0,
       "corrige_inclus": true,
-      "source": "production propre (Prof. Kharif Ahmed) — contenu original, aucun manuel reproduit",
+      "source": "production propre — généré par la plateforme (Prof. Kharif Ahmed)",
       "tags": [
-        "original",
-        "généré",
-        "Aussehen und Charakter",
         "Kleidung",
-        "Akkusativ",
-        "als/wie",
-        "Präteritum"
+        "Farben",
+        "Adjektivdeklination",
+        "trennbare Verben",
+        "Perfekt",
+        "généré"
       ],
-      "sujet": "Letzten Freitag hatten wir ein Schulfest. Alle Schüler haben ihre schönste Kleidung getragen. Lina hatte ein gelbes Kleid und eine weiße Bluse an. Ihr Bruder Karim trug einen schwarzen Anzug mit einer roten Krawatte. Die Lehrerin Frau Berger war elegant: Sie hatte einen langen Rock und eine graue Jacke an. Am schönsten fand ich die Schuhe von Nadia: Sie waren silbern und glänzten wie Sterne. Wir haben viel getanzt und gelacht. Das Fest war ein großer Erfolg.\n\nI. Leseverstehen (8 pts)\n1) Richtig oder falsch ? (4×1)\n   a) Das Schulfest war letzten Freitag.\n   b) Lina hatte ein rotes Kleid an.\n   c) Karim trug eine blaue Krawatte.\n   d) Nadia hatte silberne Schuhe.\n2) Beantworte in einem vollständigen Satz (4×1)\n   a) Wann war das Schulfest ?\n   b) Was hat Lina getragen ?\n   c) Wie war die Lehrerin angezogen ?\n   d) Wie waren die Schuhe von Nadia ?\n\nII. Sprachbausteine (8 pts)\n1) Adjektivdeklination Akkusativ (4×0,5) : einen schwarz__ Anzug · eine rot__ Krawatte · ein gelb__ Kleid · die silbern__ Schuhe\n2) als oder wie ? (4×0,5) : Sie glänzten ___ Sterne · Karim ist größer ___ sein Bruder · Er ist so groß ___ ich · Sie ist jünger ___ Lina\n3) Präteritum (2×1) : er ___ (tragen) einen Anzug · wir ___ (haben) ein Fest\n4) Superlativ (2×1) : schön → am ___ · elegant → am ___\n\nIII. Textproduktion (4 pts)\nErzähle von einem Fest in 5 Sätzen (Wann ? Wer ? Welche Kleidung ? Was gemacht ? Meinung).",
-      "corrige": "CORRIGÉ\nI.1) a Richtig · b Falsch (gelbes Kleid) · c Falsch (rote Krawatte) · d Richtig\nI.2) a) Es war letzten Freitag. b) Sie hat ein gelbes Kleid und eine weiße Bluse getragen. c) Sie hatte einen langen Rock und eine graue Jacke an. d) Sie waren silbern und glänzten wie Sterne.\nII.1) schwarzen · rote · gelbes · silbernen\nII.2) wie · als · wie · als\nII.3) trug · hatten\nII.4) schönsten · elegantesten\nIII. Grille : مضمون 2 (5 infos × 0,4) + لغة 2 (Präteritum correct + majuscules)\nModèle : «Letzten Monat hatte ich Geburtstag. Meine Freunde haben schöne Kleidung getragen. Meine Freundin Sara hatte ein rosa Kleid an. Wir haben zusammen Kuchen gegessen und Musik gehört. Es war der schönste Tag des Jahres.»",
+      "sujet": "Kleidung für ein Fest\n\nAm Samstag war eine Hochzeit in unserer Familie. Ich habe mein neues weißes Hemd und den dunklen Anzug angezogen. Meine Schwester trug ein langes rotes Kleid und eine goldene Kette. Meine Mutter hatte einen grauen Rock und eine blaue Jacke an. Mein Vater wollte zuerst seine alte Hose tragen, aber meine Mutter hat gelacht und gesagt: « Nein! Heute ziehen wir alle etwas Schönes an! » Am Ende sah die ganze Familie elegant aus, und die Fotos sind wunderbar geworden.\n\nI. Leseverstehen (8 pts)\n1. Richtig oder falsch? (4×1)\na) Die Familie war am Samstag auf einer Hochzeit.\nb) Die Schwester trug ein kurzes grünes Kleid.\nc) Der Vater wollte seine alte Hose tragen.\nd) Die Fotos sind schlecht geworden.\n2. Antworte vollständig (2×2): e) Was hat der Schreiber angezogen? f) Was hat die Mutter getragen?\n\nII. Sprachbausteine (8 pts)\n1. Adjektivdeklination Akkusativ (4×0,5): den___ schwarz___ Anzug · die___ rot___ Bluse · das___ weiß___ Hemd · die___ grau___ Röcke\n2. Trennbare Verben (4×0,5): an|ziehen (ich, der Anzug) · auf|setzen (sie, die Mütze) · aus|sehen (er, elegant) · an|haben (wir, schöne Kleider)\n3. Perfekt (4×0,5): tragen · an|ziehen · aus|sehen · lachen\n4. W-Fragen (4×0,5): ___ hast du angezogen? · ___ trug deine Schwester? · ___ war die Hochzeit? · ___ sah elegant aus?\n\nIII. Textproduktion (4 pts)\nSchreibe 5 Sätze: Was trägst du zu einem Fest? (Kleidungsstücke + Farben + warum)",
+      "corrige": "I. 1) a Richtig · b Falsch (langes rotes Kleid) · c Richtig · d Falsch (wunderbar)\n2) e) Er hat ein weißes Hemd und einen dunklen Anzug angezogen. f) Sie hat einen grauen Rock und eine blaue Jacke getragen.\nII. 1) den schwarzen Anzug · die rote Bluse · das weiße Hemd · die grauen Röcke\n2) Ich ziehe den Anzug an. · Sie setzt die Mütze auf. · Er sieht elegant aus. · Wir haben schöne Kleider an.\n3) hat getragen · hat angezogen · hat ausgesehen · hat gelacht\n4) Was · Was · Wann · Wer\nIII. Grille مضمون 2 + لغة 2. Modèle : « Zu einem Fest trage ich ein blaues Kleid und schwarze Schuhe. Die Farbe Blau mag ich, weil sie elegant aussieht. Dazu passt eine goldene Kette perfekt. »",
       "pages_livre": [
         181,
         205
-      ]
-    },
-    {
-      "id": "DV-ORIG-U5-01",
-      "type": "devoir",
-      "hash": "1ccd76944a98",
-      "titre": "Devoir original U5 — Freizeit und Hobbys (Perfekt · reflexive Verben · weil)",
-      "titre_de": "Devoir original U5 — Freizeit und Hobbys (Perfekt · reflexive Verben · weil)",
-      "annee_scolaire": "2026/2027",
-      "annee": 2027,
-      "trimestre": 2,
-      "session": null,
-      "niveau": "2AS",
-      "filiere": "Lettres et Langues",
-      "wilaya": "—",
-      "code_wilaya": "00",
-      "ville": "—",
-      "lycee": "Production originale — plateforme",
-      "unite": 5,
-      "unite_de": "Freizeit",
-      "unite_ar": "أوقات الفراغ",
-      "duree_minutes": 45,
-      "bareme": 20,
-      "parties": [
-        {
-          "id": "I",
-          "titre": "Leseverstehen — فهم المكتوب",
-          "points": 8,
-          "competences": [
-            "repérer une information explicite",
-            "répondre en phrases complètes"
-          ]
-        },
-        {
-          "id": "II",
-          "titre": "Sprachbausteine — اللغة",
-          "points": 8,
-          "competences": [
-            "conjuguer",
-            "accorder",
-            "transformer",
-            "traduire"
-          ]
-        },
-        {
-          "id": "III",
-          "titre": "Textproduktion — إنتاج كتابي",
-          "points": 4,
-          "competences": [
-            "rédiger 5 phrases",
-            "respecter la grille de critères"
-          ]
-        }
-      ],
-      "difficulte": 2,
-      "note_moyenne": 0,
-      "vues": 0,
-      "telechargements": 0,
-      "corrige_inclus": true,
-      "source": "production propre (Prof. Kharif Ahmed) — contenu original, aucun manuel reproduit",
-      "tags": [
-        "original",
-        "généré",
-        "Freizeit",
-        "Freizeit",
-        "Perfekt",
-        "reflexive Verben",
-        "weil"
-      ],
-      "sujet": "Am Wochenende habe ich viel Freizeit. Samstags gehe ich oft mit meinen Freunden ins Schwimmbad, weil wir gern schwimmen. Sonntags bleibe ich manchmal zu Hause und lese ein interessantes Buch. Mein Bruder spielt lieber Fußball im Stadion, aber ich finde Fußball ein wenig langweilig. Am liebsten höre ich Musik und chatte im Internet mit meiner Cousine in Deutschland. Letzte Woche sind wir zusammen in den Park gegangen und haben ein Picknick gemacht. Das hat viel Spaß gemacht.\n\nI. Leseverstehen (8 pts)\n1) Richtig oder falsch ? (4×1)\n   a) Der Schüler geht samstags ins Schwimmbad.\n   b) Er findet Fußball sehr interessant.\n   c) Er chattet mit seiner Cousine in Deutschland.\n   d) Letzte Woche sind sie ins Kino gegangen.\n2) Beantworte in einem vollständigen Satz (4×1)\n   a) Wohin geht er samstags oft ?\n   b) Was macht er sonntags manchmal ?\n   c) Was macht er am liebsten ?\n   d) Wohin sind sie letzte Woche gegangen ?\n\nII. Sprachbausteine (8 pts)\n1) Perfekt (4×0,5) : wir sind ___ (gehen) · ich habe ___ (lesen) · sie haben ___ (machen) · er ist ___ (bleiben)\n2) Reflexivpronomen (4×0,5) : ich interessiere ___ für Musik · du begeisterst ___ für Sport · wir treffen ___ im Park · sie freut ___ auf das Wochenende\n3) weil-Satz (2×1) : Ich gehe ins Schwimmbad, ___ ich gern schwimme. · Stelle das Verb : «weil wir gern schwimmen» → le verbe est ___\n4) Präteritum (2×1) : ich ___ (gehen) in den Park · wir ___ (machen) ein Picknick\n\nIII. Textproduktion (4 pts)\nSchreibe 5 Sätze über dein Wochenende (2 Aktivitäten + ein weil-Satz + am liebsten).",
-      "corrige": "CORRIGÉ\nI.1) a Richtig · b Falsch (langweilig) · c Richtig · d Falsch (in den Park)\nI.2) a) Er geht oft ins Schwimmbad. b) Er bleibt zu Hause und liest ein Buch. c) Er hört Musik und chattet im Internet. d) Sie sind in den Park gegangen.\nII.1) gegangen · gelesen · gemacht · geblieben\nII.2) mich · dich · uns · sich\nII.3) weil · am Ende (schwimmen)\nII.4) ging · machten\nIII. Grille : مضمون 2 (5 infos × 0,4) + لغة 2 (Perfekt correct + majuscules)\nModèle : «Am Wochenende habe ich viel Freizeit. Samstags spiele ich Handball mit meinen Freunden, weil ich Sport liebe. Sonntags sehe ich einen Film mit meiner Familie. Am liebsten fahre ich mit dem Fahrrad in die Stadt. Das macht mir immer Spaß.»",
-      "pages_livre": [
-        103,
-        127
-      ]
-    },
-    {
-      "id": "DV-ORIG-U5-02",
-      "type": "devoir",
-      "hash": "5e2e4b1e4c4e",
-      "titre": "Devoir original U5 — Ein Ausflug (Perfekt sein/haben · Komparativ · hier/dort)",
-      "titre_de": "Devoir original U5 — Ein Ausflug (Perfekt sein/haben · Komparativ · hier/dort)",
-      "annee_scolaire": "2026/2027",
-      "annee": 2027,
-      "trimestre": 2,
-      "session": null,
-      "niveau": "2AS",
-      "filiere": "Lettres et Langues",
-      "wilaya": "—",
-      "code_wilaya": "00",
-      "ville": "—",
-      "lycee": "Production originale — plateforme",
-      "unite": 5,
-      "unite_de": "Freizeit",
-      "unite_ar": "أوقات الفراغ",
-      "duree_minutes": 45,
-      "bareme": 20,
-      "parties": [
-        {
-          "id": "I",
-          "titre": "Leseverstehen — فهم المكتوب",
-          "points": 8,
-          "competences": [
-            "repérer une information explicite",
-            "répondre en phrases complètes"
-          ]
-        },
-        {
-          "id": "II",
-          "titre": "Sprachbausteine — اللغة",
-          "points": 8,
-          "competences": [
-            "conjuguer",
-            "accorder",
-            "transformer",
-            "traduire"
-          ]
-        },
-        {
-          "id": "III",
-          "titre": "Textproduktion — إنتاج كتابي",
-          "points": 4,
-          "competences": [
-            "rédiger 5 phrases",
-            "respecter la grille de critères"
-          ]
-        }
-      ],
-      "difficulte": 2,
-      "note_moyenne": 0,
-      "vues": 0,
-      "telechargements": 0,
-      "corrige_inclus": true,
-      "source": "production propre (Prof. Kharif Ahmed) — contenu original, aucun manuel reproduit",
-      "tags": [
-        "original",
-        "généré",
-        "Freizeit",
-        "Ausflug",
-        "Perfekt",
-        "Komparativ",
-        "hier/dort"
-      ],
-      "sujet": "Letzten Monat hat unsere Klasse einen Ausflug nach Tipaza gemacht. Wir sind früh mit dem Bus gefahren und haben zuerst die römischen Ruinen besichtigt. Dann sind wir zum Strand gelaufen und haben im Meer geschwommen. Das Wasser war warm und die Sonne hat den ganzen Tag geschienen. Am Nachmittag haben wir zusammen gegessen und Spiele gespielt. Einige Schüler haben Fotos gemacht und andere haben Musik gehört. Abends sind wir müde, aber glücklich nach Hause gefahren. Dieser Ausflug war das Beste des Jahres.\n\nI. Leseverstehen (8 pts)\n1) Richtig oder falsch ? (4×1)\n   a) Die Klasse ist mit dem Zug gefahren.\n   b) Sie haben die römischen Ruinen besichtigt.\n   c) Das Wasser war kalt.\n   d) Abends waren sie müde, aber glücklich.\n2) Beantworte in einem vollständigen Satz (4×1)\n   a) Wohin hat die Klasse einen Ausflug gemacht ?\n   b) Womit sind sie gefahren ?\n   c) Was haben sie zuerst besichtigt ?\n   d) Was war das Beste des Jahres ?\n\nII. Sprachbausteine (8 pts)\n1) sein oder haben ? (4×0,5) : wir ___ gefahren · ich ___ geschwommen · sie ___ gegessen · er ___ Fotos gemacht\n2) Komparativ (4×0,5) : warm → ___ · glücklich → ___ · gut → ___ · viel → ___\n3) hier oder dort ? (2×1) : «___ in Algier ist das Wetter heiß.» · «___ in Tipaza war das Wasser warm.»\n4) W-Fragen (2×1) : ___ seid ihr nach Tipaza gefahren ? (moyen) · ___ hat den Ausflug organisiert ?\n\nIII. Textproduktion (4 pts)\nErzähle von einem Ausflug in 5 Sätzen (Wohin ? Womit ? Was gesehen ? Was gemacht ? Meinung).",
-      "corrige": "CORRIGÉ\nI.1) a Falsch (mit dem Bus) · b Richtig · c Falsch (warm) · d Richtig\nI.2) a) Nach Tipaza. b) Mit dem Bus. c) Die römischen Ruinen. d) Dieser Ausflug.\nII.1) sind · bin · haben · hat\nII.2) wärmer · glücklicher · besser · mehr\nII.3) Hier · Dort\nII.4) Womit · Wer\nIII. Grille : مضمون 2 (5 infos × 0,4) + لغة 2 (Perfekt + majuscules)\nModèle : «Letzte Woche sind wir mit der Klasse nach Cherchell gefahren. Wir haben das Museum und den Hafen besichtigt. Dann haben wir am Strand Pizza gegessen. Einige Freunde haben im Meer geschwommen. Dieser Ausflug war wunderbar.»",
-      "pages_livre": [
-        103,
-        127
       ]
     }
   ],
