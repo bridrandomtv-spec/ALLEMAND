@@ -5166,21 +5166,66 @@
       "cefr": "B1",
       "explication": "خمسة عشر فعلًا ألمانيًا يأخذ مفعوله بالـ Dativ (قائمة خامسة مكمّلة للقوائم الأربع السابقة). القاعدة : الفاعل يبدو غالبًا « شيئًا » أو « شخصًا » يقع عليه الفعل، بينما الشخص المتأثر يأتي في حالة Dativ (dem / der / den + n). أمثلة النموذج : Ihm glückt alles · Die Rolle liegt ihm sehr · Ihm missfällt das Benehmen. لاحظ الأفعال الانفصالية المركبة : klarwerden · leichtfallen · guttun. هذه القائمة ضرورية للمستوى B1/B2 وللكتابة الموجّهة (رأي، تعليق، سرد تجربة).",
       "exemples": [
-        "Aufgrund der Personenbeschreibung gelang der Polizei die Festnahme des Täters. — بسبب الوصف الشخصي أفلحت الشرطة باعتقال الفاعل.",
-        "Der festgenommene junge Mann gilt der Polizei als verdächtig. — الشاب المعتقل تعتبره الشرطة مشبوهًا.",
-        "Genügt dir eine Stunde zum Einkaufen? — أيكفيك ساعة للتسوق؟",
-        "Ihm glückt alles, was er anfängt. — كل شيء يبدأ به ينجح ويسعده.",
-        "Zu viel Süßigkeiten tun deinen Zähnen nicht gut. — كثير من الحلوى لا يفعل خيرًا لأسنانك.",
-        "Wenn er weiterhin so unvorsichtig ist, wird ihm noch ein Unglück geschehen. — إذا بقي غير منتبه هكذا، سوف تحدث له مصيبة أيضًا.",
-        "Diese Vorführung hat mir sehr imponiert. — هذا العرض أبهرني كثيرًا.",
-        "15 Dinge, die dir mit 30 Jahren schlagartig klarwerden. — 15 أمرًا تصبح واضحة لك مع عمر الثلاثين دفعة واحدة.",
-        "Es fällt ihm nicht leicht, von zu Hause auszuziehen. — ليس سهلًا عليه أن ينتقل من المنزل.",
-        "Die Rolle des Clowns liegt ihm sehr. — دور المهرج يليق به كثيرًا.",
-        "Ihm missfällt das Benehmen seiner Tochter. — يسوؤه تصرف ابنته.",
-        "Den Machenschaften des Präsidenten sollte man einmal nachgehen. — ينبغي على المرء أن يتقصى مكائد الرئيس.",
-        "Diese Ratschläge nützen mir nicht. — هذه النصائح لا تفيدني بشيء.",
-        "Stelle dir vor, was mir gestern passiert ist: ich bin im Lift stecken geblieben. — تخيّل ماذا حدث معي البارح: علقت في المصعد. (steckenbleiben = يعلق)",
-        "Passt es dir, wenn ich dich morgen besuche? — هل يناسبك أن أزورك غدًا؟"
+        [
+          "Aufgrund der Personenbeschreibung gelang der Polizei die Festnahme des Täters.",
+          "بسبب الوصف الشخصي أفلحت الشرطة باعتقال الفاعل."
+        ],
+        [
+          "Der festgenommene junge Mann gilt der Polizei als verdächtig.",
+          "الشاب المعتقل تعتبره الشرطة مشبوهًا."
+        ],
+        [
+          "Genügt dir eine Stunde zum Einkaufen?",
+          "أيكفيك ساعة للتسوق؟"
+        ],
+        [
+          "Ihm glückt alles, was er anfängt.",
+          "كل شيء يبدأ به ينجح ويسعده."
+        ],
+        [
+          "Zu viel Süßigkeiten tun deinen Zähnen nicht gut.",
+          "كثير من الحلوى لا يفعل خيرًا لأسنانك."
+        ],
+        [
+          "Wenn er weiterhin so unvorsichtig ist, wird ihm noch ein Unglück geschehen.",
+          "إذا بقي غير منتبه هكذا، سوف تحدث له مصيبة أيضًا."
+        ],
+        [
+          "Diese Vorführung hat mir sehr imponiert.",
+          "هذا العرض أبهرني كثيرًا."
+        ],
+        [
+          "15 Dinge, die dir mit 30 Jahren schlagartig klarwerden.",
+          "15 أمرًا تصبح واضحة لك مع عمر الثلاثين دفعة واحدة."
+        ],
+        [
+          "Es fällt ihm nicht leicht, von zu Hause auszuziehen.",
+          "ليس سهلًا عليه أن ينتقل من المنزل."
+        ],
+        [
+          "Die Rolle des Clowns liegt ihm sehr.",
+          "دور المهرج يليق به كثيرًا."
+        ],
+        [
+          "Ihm missfällt das Benehmen seiner Tochter.",
+          "يسوؤه تصرف ابنته."
+        ],
+        [
+          "Den Machenschaften des Präsidenten sollte man einmal nachgehen.",
+          "ينبغي على المرء أن يتقصى مكائد الرئيس."
+        ],
+        [
+          "Diese Ratschläge nützen mir nicht.",
+          "هذه النصائح لا تفيدني بشيء."
+        ],
+        [
+          "Stelle dir vor, was mir gestern passiert ist: ich bin im Lift stecken geblieben.",
+          "تخيّل ماذا حدث معي البارح: علقت في المصعد."
+        ],
+        [
+          "Passt es dir, wenn ich dich morgen besuche?",
+          "هل يناسبك أن أزورك غدًا؟"
+        ]
       ],
       "erreur_courante": "Commencer directement par la rédaction fait perdre 10 à 15 minutes de réflexion en cours d'écriture.",
       "astuce": "احفظ الأزواج المتقابلة : glücken/missfallen (يسوء/يسرّ) · liegen/passen (يليق/يناسب) · nützen/guttun (ينفع/يفعل خيرًا) — كلها تبني المعنى حول الشخص في Dativ.",
