@@ -496,10 +496,16 @@ jobs:
               fails.append('officiels : bareme officiel != 8+8+4=20')
           if len(ds) < 10:
               fails.append('officiels : ' + str(len(ds)) + ' devoirs < 10')
-          if len(do.get('lycees') or []) < 10:
-              fails.append('officiels : moins de 10 lycees')
-          ids = set()
+          off = [d for d in ds if d.get('schema') == 'officiel_v1']
+          if len(off) < 10:
+              fails.append('officiels : ' + str(len(off)) + ' devoirs schema officiel v1 < 10')
           for dv in ds:
+              if dv.get('bareme') != 20:
+                  fails.append(dv['id'] + ' : bareme != 20')
+              if sum(p.get('points', 0) for p in dv.get('parties') or []) != 20:
+                  fails.append(dv['id'] + ' : parties != 20 pts')
+          ids = set()
+          for dv in off:
               for k in ('id', 'numero', 'titre', 'lycee', 'wilaya', 'code_wilaya',
                         'niveau', 'unite', 'trimestre', 'duree_minutes', 'bareme',
                         'parties', 'stats', 'source'):
