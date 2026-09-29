@@ -654,11 +654,11 @@ jobs:
           python - <<'PY'
           import re, sys
           fails = []
-          src = open('app.js', encoding='utf-8').read()
+          src = open('prof_core.js' if __import__('os').path.exists('prof_core.js') else 'app.js', encoding='utf-8').read()
           i = src.find('  base:[')
           j = src.find('  fallback:[', i)
           if i < 0 or j < 0:
-              print('::error::app.js : PROF.base introuvable'); sys.exit(1)
+              print('::error::PROF.base introuvable (prof_core.js)'); sys.exit(1)
           bloc = src[i:j]
           base = []
           for m in re.finditer(r"\{t:'([^']*)',\s*k:\[(.*?)\],", bloc, re.S):
@@ -1103,8 +1103,11 @@ jobs:
       - name: Garde d'accès + TEST DE FUITE (access.js / config)
         run: |
           node ci/check-access.mjs
-      - name: Test de régression (questions élèves réelles)
-        run: node tests/regression.mjs
+      - name: Test de régression 3 niveaux (rag · prof · union)
+        run: |
+          node tests/regression_rag.mjs
+          node tests/regression_prof.mjs
+          node tests/regression.mjs
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
         run: |
           python - <<'PY'
