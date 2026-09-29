@@ -1093,6 +1093,9 @@ jobs:
           node --version
           node ci/check-unites.mjs
 
+      - name: Garde d'accès + TEST DE FUITE (access.js / config)
+        run: |
+          node ci/check-access.mjs
       - name: Test de régression (questions élèves réelles)
         run: node tests/regression.mjs
       - name: Contrôle pédagogique, multi-unités, rôles & PWA
