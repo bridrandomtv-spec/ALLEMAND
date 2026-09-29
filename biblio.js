@@ -65,7 +65,7 @@
     LOADING = (async () => {
       const data = {};
       for(const pr of SRC){
-        try{ const r = await fetch(pr[1], { cache:'force-cache' }); if(r.ok) data[pr[0]] = await r.json(); }catch(e){}
+        try{ const r = await fetch(pr[1], { cache:'no-store' }); if(r.ok) data[pr[0]] = await r.json(); }catch(e){}
       }
       ENTRIES = build(data);
       return ENTRIES;
