@@ -2,7 +2,7 @@
   "_meta": {
     "titre": "مكتبة القواعد الألمانية — Grammatik",
     "version": "2.0.0",
-    "nombre": 84,
+    "nombre": 86,
     "chapitres": 5,
     "auteur": "Prof. Kharif Ahmed",
     "niveaux": [
@@ -5250,6 +5250,332 @@
         "Dativ"
       ],
       "titre": "Verben mit Dativ — Liste 5 (gelingen → passen)"
+    },
+    {
+      "id": "GRAM-PRAEP-ALPHA-A",
+      "hash": "b9af93d965",
+      "chapitre": "BAC",
+      "chapitre_titre": "BAC",
+      "chapitre_sous_titre": "البكالوريا — كل ما يجب معرفته",
+      "icone": "🎯",
+      "ordre": 20,
+      "num_global": 85,
+      "titre_de": "Verben mit Präpositionen — Liste A",
+      "titre_ar": "التدرّب على الامتحان : إدارة الوقت",
+      "cefr": "B1",
+      "explication": "قائمة أبجدية (حرف A، معظمها أفعال ببادئة aus-) للأفعال الألمانية مرتبطة بحروف جرّ مع حالة كل حرف (Dativ أو Akkusativ) وأمثلة كاملة من مستوى B1-B2. كل فعل يفرض حرف جرّ وحالة محددة لا يجوز تغييرهما، وهي أساس الكتابة والتحدث الدقيقين.",
+      "exemples": [
+        [
+          "sich auseinandersetzen mit + Dativ — Er setzte sich intensiv mit dem Thema auseinander.",
+          "يتناول الموضوع بعمق ويناقشه"
+        ],
+        [
+          "ausersehen zu + Dativ — Er wurde zum Kapitän der Mannschaft ausersehen.",
+          "يُختار لـ(منصب)"
+        ],
+        [
+          "ausfüllen mit + Dativ — Sie füllte ihre Freistunden mit der Lektüre von Zeitungen aus.",
+          "يملأ (وقته) بـ"
+        ],
+        [
+          "ausfüttern mit + Dativ — Die Stiefel sind mit Fell ausgefüttert.",
+          "يُبطَّن بـ"
+        ],
+        [
+          "ausgeben an + Akkusativ — Die Zeugnisse wurden an die Eltern ausgegeben.",
+          "يُوزَّع على"
+        ],
+        [
+          "ausgeben für + Akkusativ — Sie gibt viel Geld für ihr Hobby aus.",
+          "ينفق على"
+        ],
+        [
+          "ausgehen von + Dativ — Sie ging von anderen Voraussetzungen aus.",
+          "ينطلق من"
+        ],
+        [
+          "ausgießen mit + Dativ — Er goss das Wasser mit einer Kanne aus.",
+          "يسكب باستخدام"
+        ],
+        [
+          "ausgleiten auf + Dativ — Sie glitt auf einer Bananenschale aus.",
+          "ينزلق على"
+        ],
+        [
+          "aushalten bei + Dativ — Sie hielt es bei ihren Verwandten nicht mehr aus.",
+          "لا يتحمّل البقاء عند"
+        ],
+        [
+          "aushalten mit + Dativ — Sie hielt es mit den Kindern nicht mehr aus.",
+          "لا تتحمّل (التعامل مع)"
+        ],
+        [
+          "aushelfen mit + Dativ — Sie half ihm mit einem Stift aus.",
+          "يساعد بـ(على سبيل التدبير)"
+        ],
+        [
+          "ausholen zu + Dativ — Er holte zu einem großen Wurf aus.",
+          "يتهيأ ويأخذ وضعًا لـ"
+        ],
+        [
+          "sich auskennen in + Dativ — Sie kennt sich in der Linguistik aus.",
+          "يتمكّن في (مجال)"
+        ],
+        [
+          "sich auskennen mit + Dativ — Sie kennt sich mit Computern aus.",
+          "يعرف جيدًا بـ"
+        ],
+        [
+          "auskommen mit + Dativ — Er kam mit seinem Gehalt gut aus.",
+          "يتدبّر أموره بـ"
+        ],
+        [
+          "auslassen an + Dativ — Er ließ seine schlechte Laune an seinen Mitschülern aus.",
+          "يفرّغ (سوء مزاجه) على"
+        ],
+        [
+          "sich ausruhen auf + Dativ — Er ruhte sich auf der Couch aus.",
+          "يرتاح على"
+        ],
+        [
+          "sich ausruhen von + Dativ — Er ruhte sich von der Arbeit aus.",
+          "يرتاح من"
+        ],
+        [
+          "(sich) ausrüsten mit + Dativ — Der Radfahrer rüstet sich mit Getränken aus.",
+          "يتزوّد بـ"
+        ],
+        [
+          "ausscheiden aus + Dativ — Er ist aus dem Wettbewerb ausgeschieden.",
+          "يخرج من"
+        ],
+        [
+          "ausscheiden in + Dativ — Er ist schon in der Vorrunde ausgeschieden.",
+          "يُقصى في"
+        ],
+        [
+          "ausschließen aus + Dativ — Er wurde aus dem Verein ausgeschlossen.",
+          "يُستبعد من"
+        ],
+        [
+          "ausschließen von + Dativ — Er war vom Unterricht ausgeschlossen.",
+          "يُستبعد من"
+        ],
+        [
+          "ausschmücken mit + Dativ — Der Klassenraum war mit Bildern ausgeschmückt.",
+          "يُزيَّن بـ"
+        ],
+        [
+          "sich ausschweigen über + Akkusativ — Er schwieg sich über seine familiäre Situation aus.",
+          "يلزم الصمت ولا يتحدث عن"
+        ],
+        [
+          "aussehen nach + Dativ — Das sah ganz nach seiner Handschrift aus.",
+          "يبدو وكأنه"
+        ],
+        [
+          "sich äußern über + Akkusativ — Er äußerte sich nie über hochschulpolitische Themen.",
+          "يدلي برأي حول"
+        ],
+        [
+          "sich äußern zu + Dativ — Er äußerte sich zu den gemachten Themenvorschlägen.",
+          "يبدي موقفًا من"
+        ],
+        [
+          "sich aussöhnen mit + Dativ — Sie hatte sich mit ihrer Tischnachbarin ausgesöhnt.",
+          "يتصالح مع"
+        ],
+        [
+          "sich aussprechen für + Akkusativ — Er sprach sich für eine Berufsausbildung aus.",
+          "يعلن تأييده لـ"
+        ],
+        [
+          "sich aussprechen gegen + Akkusativ — Er sprach sich gegen eine Berufsausbildung aus.",
+          "يعلن معارضته لـ"
+        ],
+        [
+          "sich aussprechen über + Akkusativ — Er sprach sich über seine Probleme aus.",
+          "يتحدث بصراحة ويفضي عن"
+        ]
+      ],
+      "erreur_courante": "Commencer directement par la rédaction fait perdre 10 à 15 minutes de réflexion en cours d'écriture.",
+      "astuce": "Famille aus- : ausgeben = dépenser (für) / distribuer (an) · sich ausruhen = se reposer (von) · sich auskennen = s'y connaître (in/mit) · ausschließen = exclure (aus/von).",
+      "niveau": "BAC",
+      "trimestre": "BAC",
+      "mots_cles": [
+        "Präpositionen",
+        "Dativ",
+        "Akkusativ",
+        "B1",
+        "B2"
+      ],
+      "titre": "Verben mit Präpositionen — Liste alphabetique A (auseinandersetzen → aussprechen)",
+      "erreur": "~~Sie kennt sich in Computer aus~~ → mit + Dativ : Sie kennt sich mit Computern aus (in pour un domaine : in der Linguistik)."
+    },
+    {
+      "id": "GRAM-PRAEP-ALPHA-B",
+      "hash": "b9af93d965",
+      "chapitre": "BAC",
+      "chapitre_titre": "BAC",
+      "chapitre_sous_titre": "البكالوريا — كل ما يجب معرفته",
+      "icone": "🎯",
+      "ordre": 20,
+      "num_global": 86,
+      "titre_de": "Verben mit Präpositionen — Liste B-D",
+      "titre_ar": "التدرّب على الامتحان : إدارة الوقت",
+      "cefr": "B1",
+      "explication": "قائمة أبجدية (من bewaffnen إلى denken) للأفعال الألمانية مع حروف الجرّ وحالاتها (Dativ/Akkusativ) وأمثلة كاملة من مستوى B1-B2. تُستعمل كثيرًا في مواضيع البكالوريا (Brief، Erörterung) وفي التحويل بين الجمل، لذا يُنصح بحفظ الفعل مع حرفه وحالته معًا.",
+      "exemples": [
+        [
+          "(sich) bewaffnen mit + Dativ — Einige Schüler waren mit Messern bewaffnet.",
+          "يتسلّح بـ"
+        ],
+        [
+          "bewahren vor + Dativ — Sie bewahrten ihn vor dem Bankrott.",
+          "يحمي من"
+        ],
+        [
+          "sich bewegen lassen zu + Dativ — Er wollte sich zu keinem Kompromiss bewegen lassen.",
+          "لا يُدفع إلى"
+        ],
+        [
+          "sich bewerben bei + Dativ — Er bewarb sich bei mehreren großen Firmen.",
+          "يتقدم بطلب عمل لدى"
+        ],
+        [
+          "sich bewerben um + Akkusativ — Er bewarb sich um einen Ausbildungsplatz.",
+          "يترشح لـ"
+        ],
+        [
+          "bewerfen mit + Dativ — Die Polizisten wurden mit Steinen beworfen.",
+          "يُرمى بـ"
+        ],
+        [
+          "bezahlen für + Akkusativ — Die Eltern müssen für die Förderkurse bezahlen.",
+          "يدفع مقابل"
+        ],
+        [
+          "bezahlen mit + Dativ — Sie bezahlte mit ihrer Kreditkarte.",
+          "يدفع بواسطة"
+        ],
+        [
+          "beziehen aus + Dativ — Er bezieht seine Bücher aus einem Antiquariat.",
+          "يحصل على من"
+        ],
+        [
+          "beziehen mit + Dativ — Er bezieht das Sofa mit neuem Stoff.",
+          "يكسو بـ"
+        ],
+        [
+          "sich beziehen auf + Akkusativ — Die Antwort bezieht sich nicht auf die Frage.",
+          "يشير إلى / يتعلق بـ"
+        ],
+        [
+          "biegen um + Akkusativ — Der Bus bog um die Ecke.",
+          "ينعطف حول"
+        ],
+        [
+          "bieten für + Akkusativ — Er bot für ein Fußballbild seine Modelleisenbahn.",
+          "يعرض (شيئًا) مقابل"
+        ],
+        [
+          "(sich) binden an + Akkusativ — Sie hatte das Fahrrad nicht an den Baum gebunden.",
+          "يربط بـ"
+        ],
+        [
+          "bitten um + Akkusativ — Er bat um eine Verlängerung der Abgabefrist.",
+          "يطلب"
+        ],
+        [
+          "blättern in + Dativ — Die Schüler blätterten in ihren Heften.",
+          "يقلّب صفحات"
+        ],
+        [
+          "bleiben bei + Dativ — Sie blieb bei ihrem Vorhaben.",
+          "يبقى مصممًا على"
+        ],
+        [
+          "brauchen für + Akkusativ — Er braucht für die Examensarbeit einen Computer.",
+          "يحتاج لـ"
+        ],
+        [
+          "brauchen zu + Dativ — Sie braucht die Brille nur zum Lesen.",
+          "يحتاج (شيئًا) لـ(غرض)"
+        ],
+        [
+          "bringen auf + Akkusativ — Das brachte ihn auf eine gute Idee.",
+          "يقوده إلى"
+        ],
+        [
+          "bringen in + Akkusativ — Er hatte die Kinder in große Gefahr gebracht.",
+          "يوقع في"
+        ],
+        [
+          "bringen um + Akkusativ — Sie brachte ihn um sein Geld.",
+          "يسلبه"
+        ],
+        [
+          "sich brüsten mit + Dativ — Er brüstete sich mit seiner guten Note.",
+          "يتباهى بـ"
+        ],
+        [
+          "buchen für + Akkusativ — Er buchte die Reise für zwei Personen.",
+          "يحجز لـ"
+        ],
+        [
+          "buchen bei + Dativ — Er bucht die Reise direkt bei dem Veranstalter.",
+          "يحجز لدى"
+        ],
+        [
+          "bürgen für + Akkusativ — Der Vater bürgte für seinen Sohn.",
+          "يكفل"
+        ],
+        [
+          "büßen für + Akkusativ — Er musste für seine Tat büßen.",
+          "يكفّر عن"
+        ],
+        [
+          "danebentreffen mit + Dativ — Er traf mit dem Ball daneben.",
+          "يخطئ الهدف بـ"
+        ],
+        [
+          "danken für + Akkusativ — Die Eltern dankten der Lehrerin für ihr Engagement.",
+          "يشكر على"
+        ],
+        [
+          "davonkommen mit + Dativ — Er kam mit einer geringen Geldbuße davon.",
+          "ينجو بـ"
+        ],
+        [
+          "debattieren über + Akkusativ — Sie debattierte über das weitere Vorgehen.",
+          "تناقش في"
+        ],
+        [
+          "sich decken mit + Dativ — Die Beobachtung der Lehrerin deckte sich mit der der Eltern.",
+          "يتطابق مع"
+        ],
+        [
+          "degradieren zu + Dativ — Er wurde zum Klassenclown degradiert.",
+          "يُحوَّل إلى (مرتبة أدنى)"
+        ],
+        [
+          "denken an + Akkusativ — Er dachte sehr oft an seine Kindheit.",
+          "يفكر في"
+        ]
+      ],
+      "erreur_courante": "Commencer directement par la rédaction fait perdre 10 à 15 minutes de réflexion en cours d'écriture.",
+      "astuce": "Paires utiles : sich bewerben bei (entreprise) / um (poste) · bezahlen für (chose) / mit (moyen) · bitten um = demander poliment · denken an + Akkusativ = penser à.",
+      "niveau": "BAC",
+      "trimestre": "BAC",
+      "mots_cles": [
+        "Präpositionen",
+        "Dativ",
+        "Akkusativ",
+        "B1",
+        "B2"
+      ],
+      "titre": "Verben mit Präpositionen — Liste alphabetique B–D (bewaffnen → denken)",
+      "erreur": "~~Die Eltern dankten der Lehrerin für ihrem Engagement~~ → für + Akkusativ : für ihr Engagement. ~~sich bewerben für einen Platz~~ عند الشركة : bei + Dativ, وللمنصب : um + Akkusativ."
     }
   ],
   "index_niveaux": {
