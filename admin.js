@@ -111,13 +111,32 @@
       + '<select id="adSlot"><option value="accueil">accueil</option>'
       + '<option value="unites">unités</option><option value="email">email</option></select>'
       + '<button class="btn btn-p btn-sm" id="adCreate">veröffentlichen</button></div></div>';
+    /* phase 6 : la décision tranche subscription ET payment ensemble ;
+       le refus remet la subscription en 'en_attente' (l'élève peut retenter)
+       et marque le payment 'refuse' avec la note arabe. */
     mono.querySelectorAll('[data-subok]').forEach(b => b.addEventListener('click', async () => {
       const mois = { m1: 1, m6: 6, m12: 12 }[b.dataset.plan] || 1;
-      await window.SB.setSubStatut(+b.dataset.subok, 'actif', mois); render();
+      await window.SB.deciderSub(+b.dataset.subok, true, mois, ''); render();
     }));
     mono.querySelectorAll('[data-subko]').forEach(b => b.addEventListener('click', async () => {
-      await window.SB.setSubStatut(+b.dataset.subko, 'refuse', 0); render();
+      await window.SB.deciderSub(+b.dataset.subko, false, 0,
+        'لم تكتمل عملية الدفع. يمكنك المحاولة مرة أخرى.'); render();
     }));
+    /* phase 6 : tableau des payments (lié aux subscriptions par sub_id) */
+    try{
+      const pa = await window.SB.adminPayments();
+      const rowsP = (pa && pa.rows) || [];
+      const wrap = document.createElement('div');
+      wrap.className = 'card';
+      wrap.innerHTML = '<b>🧾 Payments (Phase 6 — séparés des abonnements)</b>' + (rowsP.length
+        ? '<table style="width:100%;font-size:12px;margin-top:8px"><tr><th>sub</th><th>méthode</th>'
+          + '<th>DA</th><th>réf banque</th><th>statut</th><th>note</th></tr>'
+          + rowsP.slice(0, 30).map(p => '<tr><td>' + p.sub_id + '</td><td>' + esc(p.methode) + '</td><td>'
+            + Number(p.montant || 0) + '</td><td>' + esc(p.ref_banque || '') + '</td><td>' + esc(p.statut)
+            + '</td><td>' + esc(p.note_admin || '') + '</td></tr>').join('') + '</table>'
+        : '<p style="opacity:.7">aucun payment enregistré</p>');
+      mono.appendChild(wrap);
+    }catch(e){}
     mono.querySelectorAll('[data-spok]').forEach(b => b.addEventListener('click', async () => {
       await window.SB.setSponsorStatut(+b.dataset.spok, 'approuve'); render();
     }));
