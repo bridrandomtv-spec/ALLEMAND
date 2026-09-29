@@ -213,5 +213,25 @@ if (!bil5.includes('window.BILLING_PLANS')) fails.push('3.5 : billing.js n expos
 if (!pw5.includes('BILLING_PLANS')) fails.push('3.5 : paywall.js ne lit pas les plans de la table');
 if (/prix_da:\s*(1800|9000|15000)/.test(adm5 + bil5 + pw5)) fails.push('3.5 : prix codés en dur côté client (interdit)');
 
+
+/* ── Phase 6 : payment séparé de subscription + message arabe d'échec ── */
+const pay6 = fs.existsSync('supabase/payments.sql') ? fs.readFileSync('supabase/payments.sql', 'utf8') : '';
+for (const k of ['create table if not exists public.payments', 'enable row level security',
+                 'own payments', 'create own payment', 'admin payments'])
+  if (!pay6.includes(k)) fails.push('3.6 : payments.sql sans ' + k);
+if (pay6.includes('drop table')) fails.push('3.6 : payments.sql ne doit supprimer aucune table');
+const sb6 = fs.readFileSync('supabase/supabase.js', 'utf8');
+for (const k of ['createPayment', 'myPayments', 'adminPayments', 'deciderSub'])
+  if (!sb6.includes('function ' + k)) fails.push('3.6 : supabase.js sans ' + k);
+const bil6 = fs.readFileSync('billing.js', 'utf8');
+if (!bil6.includes('createPayment')) fails.push('3.6 : billing.js ne trace pas le payment à l\'envoi du reçu');
+if (!bil6.includes('لم تكتمل عملية الدفع')) fails.push('3.6 : message arabe d\'échec absent de billing.js');
+if (!bil6.includes('blMeth')) fails.push('3.6 : sélecteur CCP/BaridiMob absent de billing.js');
+const adm6 = fs.readFileSync('admin.js', 'utf8');
+if (!adm6.includes('deciderSub')) fails.push('3.6 : admin.js ne décide pas via deciderSub');
+if (!adm6.includes('adminPayments')) fails.push('3.6 : admin.js n\'affiche pas les payments');
+/* sécurité : un élève ne peut PAS se rendre actif lui-même (RLS + statut refus→en_attente) */
+if (!sb6.includes("statut:'en_attente', preuve:''")) fails.push('3.6 : refus ne remet pas la sub en en_attente (retry impossible)');
+
 if (fails.length) { console.log('❌ check-access : ' + fails.length + ' fuite(s)/défaut(s)'); fails.forEach(f => console.log('   - ' + f)); process.exit(1); }
 console.log('✅ Accès : gratuit U1S1-S2 + quiz u1 · payant verrouillé sans Backend · cache ui_only inopérant · hors-ligne = gratuit seulement · démos rôles OK');
