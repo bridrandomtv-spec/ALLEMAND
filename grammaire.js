@@ -24,7 +24,7 @@
     if(!D){
       box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل مكتبة القواعد…</div>';
       try{
-        const r = await fetch('assets/bdd/grammaire.json', { cache:'force-cache' });
+        const r = await fetch('assets/bdd/grammaire.json', { cache:'no-store' });
         if(!r.ok) throw new Error('HTTP ' + r.status);
         D = await r.json();
         CH = D.chapitres || [];
