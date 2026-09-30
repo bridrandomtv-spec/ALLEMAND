@@ -74,5 +74,40 @@
   "locked": true,
   "level": "3AS",
   "unite": 10
+ },
+ "15": {
+  "titre": "L1 3AS p15 — Passiv Präsens/Präteritum/Perfekt + Passiv Futur (werden + PII + werden)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "16": {
+  "titre": "L1 3AS p16 — Text : Algerien heute (Lage · 48 Wilayas · Klima · Wirtschaft)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "17": {
+  "titre": "L1 3AS p17 — Übungen zu « Algerien heute » (Tabelle · Gegenteile · fehlende Wörter · Fragen)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "18": {
+  "titre": "L1 3AS p18 — Passiv mit Modalverben (Präsens · Präteritum · Perfekt)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "19": {
+  "titre": "L1 3AS p19 — Passiv Perfekt + Umformungen Passiv/Aktiv (Zeitformen)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
  }
 }
