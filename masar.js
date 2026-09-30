@@ -71,7 +71,7 @@
         + '<p class="ms-why">ces compétences reviendront plus souvent dans tes révisions.</p></div>';
     }
     if(next){
-      h += '<div class="card ms-prog"><h3>📈 تقدّم الوحدة ' + next.unite + '</h3>'
+      h += '<div class="card ms-prog"><h3>📈 تقدّم الوحدة ' + numNiveau(next.unite) + '</h3>'
         + '<div class="ms-bar big"><i style="width:' +
           Math.round(next.faites / next.total * 100) + '%"></i></div>'
         + '<p class="ms-why">' + next.faites + ' / ' + next.total + ' séaحصص · '
