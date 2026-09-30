@@ -278,7 +278,7 @@
         '<div class="privacy" style="margin-top:13px">🧮 ' + g.corriges + ' / ' + g.total +
         ' وثيقة تتضمّن تصحيحاً نموذجياً (' + Math.round(g.corriges/tot*100) +
         '%) · ' + g.wilayas + ' ولاية مغطاة</div>' +
-        '<h3 style="margin:15px 0 9px">📖 حسب الوحدة</h3>' + barres(g.unites, 'الوحدة') +
+        '<h3 style="margin:15px 0 9px">📖 حسب الوحدة</h3>' + barres(g.unites, 'الوحدة', true) +
       '</div></div>' +
       '<div class="card"><h2>🏛️ التوزيع حسب المنطقة</h2>' + vueRegions(agreger()) + '</div>';
   }
@@ -292,12 +292,12 @@
       (100 - pct).toFixed(3) + '" stroke-dashoffset="' + offset.toFixed(3) + '"></circle>';
   }
 
-  function barres(obj, label){
+  function barres(obj, label, useNiv){
     const ks = Object.keys(obj).sort((a,b) => (+a) - (+b));
     if(!ks.length) return '<p style="color:var(--m);font-size:13px">لا توجد بيانات.</p>';
     const max = Math.max.apply(null, ks.map(k => obj[k]));
     return '<div class="wlist">' + ks.map(k =>
-      '<div class="wrow"><span class="wn">' + esc(label) + ' ' + esc(k) + '</span>' +
+      '<div class="wrow"><span class="wn">' + esc(label) + ' ' + esc(String(useNiv && window.numNiveau ? numNiveau(+k) : k)) + '</span>' +
       '<span class="wbar"><i style="width:' + Math.round(obj[k]/max*100) + '%"></i></span>' +
       '<span class="wv ok">' + obj[k] + '</span></div>').join('') + '</div>';
   }
