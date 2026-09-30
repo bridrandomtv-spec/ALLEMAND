@@ -407,29 +407,53 @@ function isProf(){
 }
 let currentView = 'accueil';
 
-const GROUPS = [
-  ['🧭 البداية', ['masar','accueil']],
-  ['📚 تعلّم', ['seances','live','classe','grammaire','biblio','matieres','guide','malakhiss','revision']],
-  ['✍️ تدرّب', ['quiz','officiels','devoir','examen','simulation','methode','devoirs','buch','banque','corpus','rag']],
-  ['👥 متابعة', ['stats','prof','parents','reservation','projet','profboard']],
-  ['⚙️ المنصة', ['cloud','abonne','sponsor','admin','legal','compte']]
+const NAVCATS = [
+  ['etudes', '🎓', 'الدراسة', ['seances', 'classe', 'grammaire', 'matieres', 'guide']],
+  ['entrain', '📝', 'التدريب والاختبارات', ['revision', 'malakhiss', 'quiz', 'officiels', 'devoir', 'simulation', 'examen']],
+  ['ress', '📚', 'الموارد', ['biblio', 'corpus', 'banque', 'methode', 'devoirs', 'buch']],
+  ['inter', '💬', 'التفاعل', ['live', 'rag']],
+  ['profcat', '👨', 'الأستاذ', ['prof', 'profboard']],
+  ['parentscat', '👨‍👩‍👧', 'الأولياء', ['parents']],
+  ['suivi', '📊', 'المتابعة', ['stats']],
+  ['services', '🗓️', 'الخدمات', ['reservation']]
 ];
+const NAVSOLO_TOP = ['accueil', 'masar'];
+const NAVSOLO_BOT = ['cloud', 'abonne', 'sponsor', 'projet', 'admin', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
+  const byId = {};
+  for(const t of tabs) byId[t[0]] = t;
   const used = {};
+  const btn = (id, cls) => {
+    const t = byId[id]; if(!t) return '';
+    used[id] = 1;
+    return '<button class="tab ' + (cls || '') + (id === currentView ? ' on' : '')
+      + '" data-go="' + id + '">' + t[1] + '</button>';
+  };
+  /* Navigation compacte : catégories accordéon (fermées par défaut,
+     une seule ouverte à la fois ; celle de la vue courante s'ouvre seule). */
   let h = '';
-  const btn = t => '<button class="tab' + (t[0] === currentView ? ' on' : '') + '" data-go="'
-    + t[0] + '">' + t[1] + '</button>';
-  for(const g of GROUPS){
-    const items = tabs.filter(t => g[1].indexOf(t[0]) !== -1);
+  for(const id of NAVSOLO_TOP) h += btn(id, 'solo');
+  for(const g of NAVCATS){
+    const items = g[3].filter(v => byId[v]);
     if(!items.length) continue;
-    h += '<div class="tabgrp-h">' + g[0] + '</div>';
-    h += items.map(t => { used[t[0]] = 1; return btn(t); }).join('');
+    const open = items.indexOf(currentView) !== -1;
+    h += '<button class="cat-head' + (open ? ' open' : '') + '" data-cat="' + g[0]
+      + '" aria-expanded="' + (open ? 'true' : 'false') + '"><span>' + g[1] + ' ' + g[2]
+      + '</span><span class="cat-arrow">▾</span></button>';
+    h += '<div class="cat-body"' + (open ? '' : ' hidden') + '>'
+      + items.map(v => btn(v, 'sub')).join('') + '</div>';
   }
+  for(const id of NAVSOLO_BOT) h += btn(id, 'solo');
+  /* filet de sécurité : aucun onglet autorisé à disparaître */
   const rest = tabs.filter(t => !used[t[0]]);
   if(rest.length){
-    h += '<div class="tabgrp-h">➕</div>' + rest.map(btn).join('');
+    const open = rest.some(t => t[0] === currentView);
+    h += '<button class="cat-head' + (open ? ' open' : '') + '" data-cat="autres" aria-expanded="'
+      + (open ? 'true' : 'false') + '"><span>➕ أخرى</span><span class="cat-arrow">▾</span></button>'
+      + '<div class="cat-body"' + (open ? '' : ' hidden') + '>'
+      + rest.map(t => { used[t[0]] = 1; return btn(t[0], 'sub'); }).join('') + '</div>';
   }
   c.innerHTML = h;
 }
@@ -1356,6 +1380,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const b = $('#btnBurger');
   if(b) b.addEventListener('click', () => { const t = $('#tabs'); if(t) t.classList.toggle('open'); });
+  /* Accordéon : une seule catégorie ouverte à la fois (navigation compacte). */
+  if(!window.__catwired){
+    window.__catwired = true;
+    document.addEventListener('click', ev => {
+      const hd = ev.target && ev.target.closest ? ev.target.closest('.cat-head') : null;
+      if(!hd || !$('#tabs') || !$('#tabs').contains(hd)) return;
+      const body = hd.nextElementSibling;
+      const wasOpen = hd.classList.contains('open');
+      $$('#tabs .cat-head.open').forEach(x => {
+        x.classList.remove('open');
+        x.setAttribute('aria-expanded', 'false');
+        if(x.nextElementSibling) x.nextElementSibling.hidden = true;
+      });
+      if(!wasOpen && body){
+        hd.classList.add('open');
+        hd.setAttribute('aria-expanded', 'true');
+        body.hidden = false;
+      }
+    });
+  }
 
   const bs = $('#btnSound');
   if(bs){
