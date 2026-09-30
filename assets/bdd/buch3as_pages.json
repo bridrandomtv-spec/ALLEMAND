@@ -3,7 +3,45 @@
   "titre": "Manuel 3AS — index public (métadonnées seulement)",
   "note": "Les corps de texte vivent dans public.lesson_content (level=3AS, free=false) : RLS = abonné actif uniquement.",
   "level": "3AS",
-  "unite": 10
+  "unite": 10,
+  "lektionen_3as": {
+   "L1": {
+    "page": 5,
+    "unite": 10
+   },
+   "L2": {
+    "page": 31,
+    "unite": 11
+   },
+   "L3": {
+    "page": 49,
+    "unite": 12
+   },
+   "L4": {
+    "page": 71,
+    "unite": 13
+   },
+   "L5": {
+    "page": 93,
+    "unite": 14
+   },
+   "L6": {
+    "page": 111,
+    "unite": 15
+   },
+   "L7": {
+    "page": 129,
+    "unite": 16
+   },
+   "L8": {
+    "page": 153,
+    "unite": 17
+   },
+   "anhang": {
+    "page": 173,
+    "note": "Unregelmäßige Verben p173 · Quellenverzeichnis p175"
+   }
+  }
  },
  "5": {
   "titre": "L1 3AS p5 — Deutschland, ein geografischer Überblick (ouverture)",
@@ -445,5 +483,19 @@
   "locked": true,
   "level": "3AS",
   "unite": 12
+ },
+ "3": {
+  "titre": "Inhalt 3AS (1/2) — Lektionen 1-4 : thèmes + grammaire par leçon",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "4": {
+  "titre": "Inhalt 3AS (2/2) — Lektionen 5-8 + Anhang : thèmes + grammaire par leçon",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
  }
 }
