@@ -1103,6 +1103,9 @@ jobs:
       - name: Garde d'accès + TEST DE FUITE (access.js / config)
         run: |
           node ci/check-access.mjs
+      - name: Matrice des parcours (élève · prof · parent · expiration · renouvellement · contournements)
+        run: |
+          node ci/check-parcours.mjs
       - name: Test de régression 3 niveaux (rag · prof · union)
         run: |
           node tests/regression_rag.mjs
