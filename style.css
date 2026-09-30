@@ -3036,3 +3036,34 @@ body.trial{padding-top:0 !important}
 .paywall .pw-ret{font-size:12.5px;color:var(--or,#e8b64c);margin:6px 0}
 .paywall .pw-card .btn{margin-top:8px}
 .paywall .pw-card .close-x{position:absolute;top:10px;left:10px}
+
+/* ── v3.62 · navigation compacte : tiroir + accordéon sur TOUTES les tailles ── */
+.burger{display:flex}
+.tabs{position:fixed;top:0;right:-100%;width:300px;max-width:86vw;height:100vh;
+  flex-direction:column;align-items:stretch;background:var(--nuit2);
+  padding:74px 12px 26px;transition:right .32s;z-index:700;
+  border-right:1px solid var(--b);overflow-y:auto;overflow-x:hidden;
+  display:flex;gap:4px;max-width:86vw}
+.tabs.open{right:0}
+@media (max-width:900px){
+  #tabs,#tabs.open{display:flex !important;flex-direction:column !important;
+    grid-template-columns:1fr !important;gap:4px !important}
+}
+.tabs .cat-head{width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:8px;padding:11px 12px;border-radius:12px;background:transparent;
+  border:1px solid transparent;color:var(--tx,#eaf5ee);font-weight:700;font-size:14px;
+  cursor:pointer;font-family:inherit;text-align:start}
+.tabs .cat-head:hover{background:rgba(255,255,255,.05)}
+.tabs .cat-head .cat-arrow{transition:transform .2s;opacity:.75;font-size:13px}
+.tabs .cat-head.open{border-color:var(--b);background:rgba(232,182,76,.07);
+  color:var(--or2,#e8b64c)}
+.tabs .cat-head.open .cat-arrow{transform:rotate(180deg)}
+.tabs .cat-body{display:flex;flex-direction:column;gap:2px;padding:3px 0 7px;
+  margin-inline-start:12px;border-inline-start:2px solid var(--b)}
+.tabs .cat-body .tab.sub{width:100%;text-align:start;justify-content:flex-start;
+  border-radius:10px;padding:10px 12px;margin-inline-start:8px;white-space:normal;
+  font-size:13.5px;flex:0 0 auto}
+.tabs .tab.solo{width:100%;text-align:start;border-radius:12px;padding:11px 12px;
+  white-space:normal;flex:0 0 auto;font-size:14px}
+.tabs .tab.sub.on,.tabs .tab.solo.on{border-color:var(--or,#e8b64c);
+  background:rgba(232,182,76,.12);color:var(--or,#e8b64c)}
