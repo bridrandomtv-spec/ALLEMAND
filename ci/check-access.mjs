@@ -275,7 +275,7 @@ if (!adm8.includes('خطط الاشتراك')) fails.push('3.8 : admin sans titr
 const b3 = fs.existsSync('assets/bdd/buch3as_pages.json') ? JSON.parse(fs.readFileSync('assets/bdd/buch3as_pages.json', 'utf8')) : null;
 if (!b3) fails.push('3.7b : buch3as_pages.json absent');
 else {
-  const nums3 = Object.keys(b3).filter(k => /^d+$/.test(k));
+  const nums3 = Object.keys(b3).filter(k => /^\d+$/.test(k));
   if (nums3.length < 5) fails.push('3.7b : moins de 5 pages 3AS indexées');
   for (const k of nums3) {
     const e3 = b3[k];
