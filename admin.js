@@ -134,7 +134,7 @@
           + rowsP.slice(0, 30).map(p => '<tr><td>' + p.sub_id + '</td><td>' + esc(p.methode) + '</td><td>'
             + Number(p.montant || 0) + '</td><td>' + esc(p.ref_banque || '') + '</td><td>' + esc(p.statut)
             + '</td><td>' + esc(p.note_admin || '') + '</td></tr>').join('') + '</table>'
-        : '<p style="opacity:.7">aucun payment enregistré</p>');
+        : '<p style="opacity:.7">لا توجد عمليات مسجلة</p>');
       mono.appendChild(wrap);
     }catch(e){}
     mono.querySelectorAll('[data-spok]').forEach(b => b.addEventListener('click', async () => {
