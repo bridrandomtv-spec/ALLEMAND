@@ -56,9 +56,9 @@
       if(pls.length){
         h += '<div class="pw-plans">' + pls.map(function(p){
           return '<button type="button" class="pw-plan" data-plan="' + p.id + '">'
-            + '<span class="pw-lb">' + p.label + (p.label_ar ? ' — ' + p.label_ar : '') + '</span>'
+            + '<span class="pw-lb">' + (p.label_ar ? p.label_ar + ' — ' : '') + p.label + '</span>'
             + '<span class="pw-pr">' + p.prix + ' دج</span>'
-            + '<span class="pw-pm">' + p.par_mois + ' دج/شهريا' + (p.eco ? ' · ' + p.eco : '') + '</span>'
+            + '<span class="pw-pm">' + p.par_mois + ' دج/شهريا' + (p.eco ? ' · <span dir="ltr">' + p.eco + '</span>' : '') + '</span>'
             + '</button>';
         }).join('') + '</div>'
         + '<button class="btn btn-g btn-block" id="pwGo">فتح البرنامج الكامل</button>'
