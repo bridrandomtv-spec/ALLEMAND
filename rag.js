@@ -366,6 +366,31 @@
         const tit = String(e.titre || '').replace(/\((?:page|p\.)\s*\d+\)/gi, '').trim();
         return ('Seite ' + pg[1] + '. ' + tit + '. ' + clean.join('. ')).slice(0, 2200);
       }
+      /* ── Phase 7 : page payante → corps depuis public.lesson_content.
+         Le RLS SERVEUR décide (free OR active_entitlement) : sans abonnement
+         actif la requête ne renvoie RIEN → paywall ; aucun corps ne fuite. ── */
+      if(e && e.locked){
+        try{
+          if(window.SB && window.SB.sb){
+            const sb = await window.SB.sb();
+            if(sb){
+              const r = await sb.from('lesson_content').select('body,titre').eq('page', +pg[1]).maybeSingle();
+              const row = r && r.data;
+              if(row && row.body){
+                const clean = String(row.body).split('\n').map(l => String(l)
+                  .replace(/\((?:page|p\.)\s*\d+\)/gi, '')
+                  .replace(/([A-ZÄÖÜa-zäöü])\s*=\s*/g, '$1 wie ')
+                  .replace(/\s*·\s*/g, '. ')
+                  .replace(/\s*→\s*/g, ' '))
+                  .filter(x => x.trim());
+                return ('Seite ' + pg[1] + '. ' + (row.titre || e.titre || '') + '. ' + clean.join('. ')).slice(0, 2200);
+              }
+            }
+          }
+        }catch(err){}
+        try{ if(window.ACCESS && ACCESS.paywall) ACCESS.paywall({ type:'page', page:+pg[1] }); }catch(err){}
+        return '🔒 الصفحة ' + pg[1] + ' من الكتاب ضمن محتوى المشتركين — أكمل المسار المجاني أو اشترك لفتح كل الصفحات.';
+      }
       return 'Je n’ai pas encore la page ' + pg[1] + ' du manuel en mémoire indexée. '
         + 'Essaie : « lis le texte de la Lektion 1 », « lies den Dialog Lektion 2 », '
         + '« vocabulaire Lektion 3 » — ou demande au professeur d’indexer cette page.';
