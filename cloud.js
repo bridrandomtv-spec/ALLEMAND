@@ -114,7 +114,7 @@ async function chargerLiensEnfants(){
       '<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><span style="flex:1">👧 '
       + (c.pseudo || String(c.child_id).slice(0, 8)) + '</span>'
       + '<button class="btn btn-o btn-sm" data-unlink="' + c.child_id + '">❌</button></div>').join('')
-      : '<div class="cd-sub">aucun compte enfant lié</div>';
+      : '<div class="cd-sub">لا يوجد حساب طفل مرتبط</div>';
   }catch(e){ box.innerHTML = '<div class="cd-sub">⚠️ ' + String((e && e.message) || e) + ' (هل نفّذت plans.sql؟)</div>'; }
 }
 document.addEventListener('click', ev => {
