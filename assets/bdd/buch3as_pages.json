@@ -1,0 +1,43 @@
+{
+ "_meta": {
+  "titre": "Manuel 3AS — index public (métadonnées seulement)",
+  "note": "Les corps de texte vivent dans public.lesson_content (level=3AS, free=false) : RLS = abonné actif uniquement.",
+  "level": "3AS",
+  "unite": 10
+ },
+ "5": {
+  "titre": "L1 3AS p5 — Deutschland, ein geografischer Überblick (ouverture)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "6": {
+  "titre": "L1 3AS p6 — Deutschland und seine Nachbarländer (Landkarte)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "7": {
+  "titre": "L1 3AS p7 — Deutschland, ein geografischer Überblick (Text)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "8": {
+  "titre": "L1 3AS p8 — Übungen 1-4 (R/F · MCQ · Gegenteil · Ergänzen)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "9": {
+  "titre": "L1 3AS p9 — Übungen 5-7 (Antworten · Übersetzen · grenzen an / gehören zu)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ }
+}
