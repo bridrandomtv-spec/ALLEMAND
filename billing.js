@@ -37,7 +37,7 @@
             return rows.map(x => {
               const mois = x.duree_jours / 30;
               const pm = Math.round(x.prix_da / mois);
-              const lb = x.duree_jours === 30 ? '1 mois' : (x.duree_jours === 180 ? '6 mois' : '1 an');
+              const lb = x.duree_jours === 30 ? 'شهر واحد' : (x.duree_jours === 180 ? 'ستة أشهر' : 'سنة كاملة');
               return { id: x.id, label: lb, label_ar: x.label_ar || '', prix: x.prix_da, par_mois: pm,
                        eco: mois > 1 ? '-' + Math.round((1 - pm / base) * 100) + '%' : null };
             });
@@ -45,7 +45,11 @@
         }
       }
     }catch(e){}
-    return (role === 'eleve' && cfgFallback && cfgFallback.plans) ? cfgFallback.plans : [];
+    if(role === 'eleve' && cfgFallback && cfgFallback.plans){
+        const AR = { m1:'شهر واحد', m6:'ستة أشهر', m12:'سنة كاملة' };
+        return cfgFallback.plans.map(p => Object.assign({}, p, { label: AR[p.id] || p.label, label_ar: AR[p.id] || p.label_ar || '' }));
+      }
+      return [];
   }
   window.BILLING_PLANS = plansPour;
 
@@ -59,30 +63,30 @@
     const role0 = (window.AUTH && AUTH.session && AUTH.session()) ? (AUTH.session().role || 'eleve') : 'eleve';
     const pls = await plansPour(role0, c);
     const notice = u ? '' :
-        '<div class="card bl-wait"><b>☁️ connexion cloud requise pour ENREGISTRER ta demande</b>'
-      + '<p>Les offres et coordonnées bancaires ci-dessous sont consultables librement. '
+        '<div class="card bl-wait"><b>☁️ يلزم الاتصال السحابي لتسجيل طلبك</b>'
+      + '<p>العروض وأرقام الحسابات أدناه متاحة للاطلاع الحر. '
       + 'Pour générer ta référence DZ-… et suivre ton reçu, connecte-toi d’abord dans ☁️ Cloud.</p>'
       + '<button class="btn btn-p btn-sm" data-go="cloud">☁️ ouvrir Cloud</button></div>';
     const subs = await window.SB.mySubs();
     const act = (subs.rows || []).filter(s => s.statut === 'actif')[0];
     const att = (subs.rows || []).filter(s => s.statut === 'en_attente' || s.statut === 'preuve')[0];
     let h = notice + '<div class="bl-hero"><span class="bl-crest">💳</span><div>'
-      + '<h2>Abonnement Premium</h2><p class="bl-sub">soutiens la plateforme et débloque '
+      + '<h2>الاشتراك المميز</h2><p class="bl-sub">ادعم المنصة وافتح '
       + 'le suivi complet · paiement CCP / BaridiMob · validation par l’administrateur</p></div></div>';
     if(act){
-      h += '<div class="card bl-ok">⭐ <b>abonniert</b> — Plan ' + esc(act.plan)
-        + ' · läuft ab am ' + esc((act.fin || '').slice(0, 10)) + '</div>';
+      h += '<div class="card bl-ok">⭐ <b>مشترك</b> — خطة ' + esc(act.plan)
+        + ' · تنتهي في ' + esc((act.fin || '').slice(0, 10)) + '</div>';
     }
     if(att){
-      h += '<div class="card bl-wait"><b>⏳ laufende Anfrage</b> — Ref. ' + esc(att.ref)
-        + ' · Status ' + esc(att.statut) + '<br>'
+      h += '<div class="card bl-wait"><b>⏳ طلب جارٍ</b> — المرجع ' + esc(att.ref)
+        + ' · الحالة ' + esc(att.statut) + '<br>'
         + (att.statut === 'en_attente'
-            ? 'Zahle per CCP/BaridiMob (Verwendungszweck = ' + esc(att.ref) + ') und füge die Belegnummer ein:'
+            ? 'ادفع عبر CCP أو BaridiMob (المرجع = ' + esc(att.ref) + ') ثم أدخل رقم الوصل :'
               + '<div class="bl-row"><select id="blMeth" style="max-width:150px">'
               + '<option value="ccp">CCP</option><option value="baridimob">BaridiMob</option></select>'
-              + '<input id="blPreuve" placeholder="Belegnummer / Foto">'
-              + '<button class="btn btn-p btn-sm" id="blSendP">senden</button></div>'
-            : 'Beleg erhalten — Freischaltung durch den Administrator innerhalb von 24 h.')
+              + '<input id="blPreuve" placeholder="رقم الوصل / صورة">'
+              + '<button class="btn btn-p btn-sm" id="blSendP">إرسال</button></div>'
+            : 'تم استلام الوصل — التفعيل من المدير خلال 24 ساعة.')
         + '</div>';
     }
     /* phase 6 : historique des payments + message arabe d'échec (jamais actif sans admin) */
@@ -106,11 +110,11 @@
             ).join('') + '</div></div>';
       }
     }catch(e){}
-    h += '<div class="bl-plans">' + (pls.length ? '' : '<div class="bl-wait">⚠️ aucun plan actif pour ton rôle — prix en cours de définition (décision B)</div>') + pls.map(p =>
+    h += '<div class="bl-plans">' + (pls.length ? '' : '<div class="bl-wait">⚠️ لا توجد خطة نشطة لدورك — الأسعار قيد التحديد لاحقًا (القرار B)</div>') + pls.map(p =>
         '<div class="card bl-p' + (p.id === PREPLAN || (!PREPLAN && (p.id === 'm6' || p.id === 'eleve-m6')) ? ' bl-hot' : '') + '">'
       + (p.eco ? '<span class="bl-eco">' + esc(p.eco) + '</span>' : '')
-      + '<b>' + esc(p.label) + '</b><div class="bl-prix">' + p.prix.toLocaleString('fr-FR') + ' DA</div>'
-      + '<i>' + p.par_mois.toLocaleString('fr-FR') + ' DA / mois</i>'
+      + '<b>' + esc(p.label) + '</b><div class="bl-prix">' + p.prix.toLocaleString('fr-FR') + ' دج</div>'
+      + '<i>' + p.par_mois.toLocaleString('fr-FR') + ' دج / شهر</i>'
       + '<button class="btn btn-p btn-block" data-plan="' + p.id + '" data-prix="' + p.prix
       + '">wählen</button></div>').join('') + '</div>'
       + '<div class="card bl-pay"><b>🏦 Zahlungsdaten</b>'
