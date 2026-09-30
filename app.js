@@ -476,6 +476,7 @@ function prochaineSeance(){
   return null;
 }
 window.prochaineSeance = prochaineSeance;
+window.getNiveauActif = function(){ return niveauActif; };
 
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
