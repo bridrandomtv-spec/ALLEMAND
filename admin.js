@@ -65,9 +65,9 @@
             + '</b></td><td>' + esc(n.appreciation || '') + '</td></tr>';
         }).join('') + '</table></div></div>';
   box.insertAdjacentHTML('beforeend',
-    '<div class="card ad-box"><h3>💳 Plans abonnement — administrables (phase 5)</h3>'
-    + '<p class="ad-sub">prix en DA · champ vide = « sera fixé plus tard » (décision B) · '
-    + 'source : table public.plans (supabase/plans.sql)</p>'
+    '<div class="card ad-box"><h3>💳 خطط الاشتراك — قابلة للإدارة (المرحلة 5)</h3>'
+    + '<p class="ad-sub">الأسعار بالدج · حقل فارغ = « يُحدد لاحقًا » (القرار B) · '
+    + 'المصدر : جدول public.plans (supabase/plans.sql)</p>'
     + '<div id="plansAdminBody"><div class="ad-load">⏳</div></div></div>');
   chargerPlansAdmin();
     $('#adCsvP').addEventListener('click', () => telecharger('comptes.csv', csv(profs)));
@@ -128,9 +128,9 @@
       const rowsP = (pa && pa.rows) || [];
       const wrap = document.createElement('div');
       wrap.className = 'card';
-      wrap.innerHTML = '<b>🧾 Payments (Phase 6 — séparés des abonnements)</b>' + (rowsP.length
-        ? '<table style="width:100%;font-size:12px;margin-top:8px"><tr><th>sub</th><th>méthode</th>'
-          + '<th>DA</th><th>réf banque</th><th>statut</th><th>note</th></tr>'
+      wrap.innerHTML = '<b>🧾 سجل العمليات (المرحلة 6 — منفصل عن الاشتراكات)</b>' + (rowsP.length
+        ? '<table style="width:100%;font-size:12px;margin-top:8px"><tr><th>الاشتراك</th><th>الطريقة</th>'
+          + '<th>دج</th><th>مرجع البنك</th><th>الحالة</th><th>ملاحظة</th></tr>'
           + rowsP.slice(0, 30).map(p => '<tr><td>' + p.sub_id + '</td><td>' + esc(p.methode) + '</td><td>'
             + Number(p.montant || 0) + '</td><td>' + esc(p.ref_banque || '') + '</td><td>' + esc(p.statut)
             + '</td><td>' + esc(p.note_admin || '') + '</td></tr>').join('') + '</table>'
@@ -158,12 +158,12 @@
 /* ── phase 5 : éditeur de plans (admin) — prix NULL autorisés (décision B) ── */
 async function chargerPlansAdmin(){
   const box = document.getElementById('plansAdminBody'); if(!box) return;
-  if(!window.SB || !window.SB.sb){ box.innerHTML = '<div class="ad-load">☁️ client absent</div>'; return; }
+  if(!window.SB || !window.SB.sb){ box.innerHTML = '<div class="ad-load">☁️ لا يوجد اتصال سحابي</div>'; return; }
   try{
     const sb = await window.SB.sb();
     const r = await sb.from('plans').select('id,role,duree_jours,prix_da,label_ar,actif').order('role').order('duree_jours');
     const rows = (r && r.data) || [];
-    if(!rows.length){ box.innerHTML = '<div class="ad-deny">⚠️ table plans vide — exécute supabase/plans.sql (SQL Editor)</div>'; return; }
+    if(!rows.length){ box.innerHTML = '<div class="ad-deny">⚠️ جدول الخطط فارغ — نفّذ supabase/plans.sql (محرر SQL)</div>'; return; }
     box.innerHTML = rows.map(p =>
       '<div class="pl-row" data-plan="' + p.id + '" style="display:flex;gap:8px;align-items:center;margin:6px 0">'
       + '<span style="flex:1">' + p.role + ' · ' + p.duree_jours + ' j · ' + (p.label_ar || '') + '</span>'
@@ -183,7 +183,7 @@ document.addEventListener('click', ev => {
       const r = await sb.from('plans').update({ prix_da: prix === '' ? null : parseInt(prix, 10), actif: actif })
         .eq('id', b.getAttribute('data-plsave'));
       if(r && r.error) throw r.error;
-      toast('✅ plan enregistré', 'ok');
+      toast('✅ تم حفظ الخطة', 'ok');
     }catch(e){ toast('⚠️ ' + String((e && e.message) || e), 'ko'); }
   })();
 });
