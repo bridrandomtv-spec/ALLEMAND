@@ -328,6 +328,15 @@
     }catch(e){ _PAGES = {}; }
     return _PAGES;
   }
+  let _PAGES3 = null;
+  async function loadPages3as(){
+    if(_PAGES3) return _PAGES3;
+    try{
+      const r3 = await fetch('assets/bdd/buch3as_pages.json', { cache:'no-store' });
+      _PAGES3 = r3.ok ? await r3.json() : {};
+    }catch(e){ _PAGES3 = {}; }
+    return _PAGES3;
+  }
   function linesOf(b){
     if(!b) return '';
     if(typeof b === 'string') return b;
@@ -353,7 +362,11 @@
   async function intentLecture(q){
     const pg = q.match(/(?:seite|page|صفحة|ص)\s*(\d{1,3})/i);
     if(pg){
-      const P = await loadPages();
+      const lvl3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(q);
+      const lvl2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(q);
+      const niv0 = (window.getNiveauActif && window.getNiveauActif()) || '';
+      const is3 = lvl3 || (!lvl2 && niv0 === '3AS');
+      const P = is3 ? await loadPages3as() : await loadPages();
       const e = P[pg[1]];
       if(e && (e.lignes || e.texte)){
         let ls = Array.isArray(e.lignes) ? e.lignes : [e.texte || ''];
@@ -374,7 +387,7 @@
           if(window.SB && window.SB.sb){
             const sb = await window.SB.sb();
             if(sb){
-              const r = await sb.from('lesson_content').select('body,titre').eq('page', +pg[1]).maybeSingle();
+              const r = await sb.from('lesson_content').select('body,titre').eq('page', +pg[1]).eq('level', is3 ? '3AS' : '2AS').maybeSingle();
               const row = r && r.data;
               if(row && row.body){
                 const clean = String(row.body).split('\n').map(l => String(l)
