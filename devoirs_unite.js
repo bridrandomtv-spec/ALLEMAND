@@ -112,7 +112,7 @@ const DEVOIRS_UNITE = (function(){
         '  <div style="font-size:48px;margin-bottom:12px;">📭</div>' +
         '  <h3 style="margin-bottom:8px;">لا توجد وثائق لهذه الوحدة بعد</h3>' +
         '  <p style="opacity:.75;font-size:14px;">' +
-        '    الوحدة ' + unite + ' · ' + meta.ar + ' — ' + meta.de +
+        '    الوحدة ' + numNiveau(unite) + ' · ' + meta.ar + ' — ' + meta.de +
         '  </p>' +
         (meta.pages ? '  <p style="opacity:.6;font-size:13px;margin-top:8px;">📖 Livre : p' + meta.pages[0] + '-p' + meta.pages[1] + '</p>' : '') +
         '  <p style="margin-top:14px;font-size:13px;opacity:.7;">' +
@@ -144,7 +144,7 @@ const DEVOIRS_UNITE = (function(){
     html += '  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">';
     html += '    <div style="font-size:32px;">' + meta.icon + '</div>';
     html += '    <div style="flex:1;min-width:200px;">';
-    html += '      <h2 style="margin:0;font-size:18px;">الوحدة ' + unite + ' · ' + meta.ar + '</h2>';
+    html += '      <h2 style="margin:0;font-size:18px;">الوحدة ' + numNiveau(unite) + ' · ' + meta.ar + '</h2>';
     html += '      <p style="margin:4px 0 0;opacity:.75;font-size:13px;" dir="ltr">' + meta.de + '</p>';
     html += '    </div>';
     html += '    <div style="text-align:center;background:rgba(0,98,51,.15);padding:8px 14px;border-radius:10px;">';
@@ -165,7 +165,7 @@ const DEVOIRS_UNITE = (function(){
       html += '<div class="du-groupe" style="margin-bottom:18px;">';
       html += '  <h3 style="display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:15px;">';
       html += '    <span>' + icon + '</span>';
-      html += '    <span>' + t + 'ات الوحدة ' + unite + '</span>';
+      html += '    <span>' + t + 'ات الوحدة ' + numNiveau(unite) + '</span>';
       html += '    <span class="pill" style="font-size:11px;opacity:.7;">' + parType[t].length + '</span>';
       html += '  </h3>';
       html += '  <div class="du-liste" style="display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">';
@@ -257,7 +257,7 @@ const DEVOIRS_UNITE = (function(){
           const meta = UNITES_META[unite];
           const dt = document.querySelector('#devoirTitle');
           if(dt && meta){
-            dt.innerHTML = '📝 وثائق الوحدة ' + unite + ' <span class="pill">' + meta.ar + '</span>';
+            dt.innerHTML = '📝 وثائق الوحدة ' + numNiveau(unite) + ' <span class="pill">' + meta.ar + '</span>';
           }
           const ds = document.querySelector('#devoirSub');
           if(ds && meta){
