@@ -270,5 +270,30 @@ if (!bil8.includes('شهر واحد')) fails.push('3.8 : billing sans libellés 
 if (!clo8.includes('ربط حساب الطفل')) fails.push('3.8 : cloud sans carte enfant arabe');
 if (!adm8.includes('خطط الاشتراك')) fails.push('3.8 : admin sans titre plans arabe');
 
+
+/* ── Phase 7bis : 3AS séparé du 2AS et verrouillé ── */
+const b3 = fs.existsSync('assets/bdd/buch3as_pages.json') ? JSON.parse(fs.readFileSync('assets/bdd/buch3as_pages.json', 'utf8')) : null;
+if (!b3) fails.push('3.7b : buch3as_pages.json absent');
+else {
+  const nums3 = Object.keys(b3).filter(k => /^d+$/.test(k));
+  if (nums3.length < 5) fails.push('3.7b : moins de 5 pages 3AS indexées');
+  for (const k of nums3) {
+    const e3 = b3[k];
+    if (!e3.locked) fails.push('3.7b : page 3AS ' + k + ' non verrouillée');
+    if ((e3.lignes || []).length || e3.texte) fails.push('3.7b : corps 3AS ' + k + ' dans le domaine public (interdit)');
+  }
+}
+const sql3 = fs.existsSync('tools/seed_lesson_content_3as.sql') ? fs.readFileSync('tools/seed_lesson_content_3as.sql', 'utf8') : '';
+if ((sql3.match(/insert into public.lesson_content/g) || []).length < 5) fails.push('3.7b : seed 3AS < 5 inserts');
+if (sql3 && !sql3.includes("'3AS'")) fails.push('3.7b : seed 3AS sans level 3AS');
+const rag7b = fs.readFileSync('rag.js', 'utf8');
+if (!rag7b.includes('loadPages3as')) fails.push('3.7b : rag.js ne lit pas l index 3AS');
+if (!rag7b.includes("eq('level'")) fails.push('3.7b : rag.js ne filtre pas lesson_content par level');
+const app7b = fs.readFileSync('app.js', 'utf8');
+if (!app7b.includes('window.getNiveauActif')) fails.push('3.7b : app.js n expose pas le niveau actif');
+/* l'essai gratuit reste intact : U1 S1-S2 */
+const cfg7b = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
+if (JSON.stringify(cfg7b.free.units) !== JSON.stringify({ '1': [1, 2] })) fails.push('3.7b : essai gratuit modifié (doit rester U1 S1-S2)');
+
 if (fails.length) { console.log('❌ check-access : ' + fails.length + ' fuite(s)/défaut(s)'); fails.forEach(f => console.log('   - ' + f)); process.exit(1); }
 console.log('✅ Accès : gratuit U1S1-S2 + quiz u1 · payant verrouillé sans Backend · cache ui_only inopérant · hors-ligne = gratuit seulement · démos rôles OK');
