@@ -144,5 +144,40 @@
   "locked": true,
   "level": "3AS",
   "unite": 10
+ },
+ "20": {
+  "titre": "L1 3AS p20 — Text : Österreich (Mitteleuropa · 9 Bundesländer · Wien) + R/F + Tabelle",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "21": {
+  "titre": "L1 3AS p21 — Text : Die Schweiz (Bern · Zürich · 20 Kantone · 4 Sprachen) + Richtig/Falsch",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "22": {
+  "titre": "L1 3AS p22 — Wiederholung Zum Sprechen : Geschichte Deutschlands (BRD/DDR · Mauer · Wiedervereinigung) + Fragen + Daten Algeriens",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "23": {
+  "titre": "L1 3AS p23 — Zum Lesen : Wien + Hamburg, Tor zur Welt (Hafen · Elbe · Nordostseekanal)",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
+ },
+ "24": {
+  "titre": "L1 3AS p24 — Fragen zu Hamburg + Foto « Der Hafen von Hamburg »",
+  "lignes": [],
+  "locked": true,
+  "level": "3AS",
+  "unite": 10
  }
 }
