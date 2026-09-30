@@ -6,9 +6,9 @@
       c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const FALLBACK = { titulaire:'KHARIF AHMED', ccp:'0000000000 CLE 00',
     baridimob:'0000000000000000',
-    plans:[{id:'m1',label:'1 mois',prix:1800,par_mois:1800},
-           {id:'m6',label:'6 mois',prix:9000,par_mois:1500,eco:'-17%'},
-           {id:'m12',label:'1 an',prix:15000,par_mois:1250,eco:'-30%'}] };
+    plans:[{id:'m1',label:'شهر واحد',prix:1800,par_mois:1800},
+           {id:'m6',label:'ستة أشهر',prix:9000,par_mois:1500,eco:'-17%'},
+           {id:'m12',label:'سنة كاملة',prix:15000,par_mois:1250,eco:'-30%'}] };
   let CFG = null;
   async function cfg(){
     if(CFG) return CFG;
