@@ -233,5 +233,21 @@ if (!adm6.includes('adminPayments')) fails.push('3.6 : admin.js n\'affiche pas l
 /* sécurité : un élève ne peut PAS se rendre actif lui-même (RLS + statut refus→en_attente) */
 if (!sb6.includes("statut:'en_attente', preuve:''")) fails.push('3.6 : refus ne remet pas la sub en en_attente (retry impossible)');
 
+
+/* ── Phase 7 : le contenu payant ne vit PLUS dans le domaine public ── */
+const bp7 = JSON.parse(fs.readFileSync('assets/bdd/buch_pages.json', 'utf8'));
+const pg7 = bp7.pages || bp7;
+const corps7 = Object.keys(pg7).filter(k => /^\d+$/.test(k) && ((pg7[k].lignes || []).length || pg7[k].texte));
+const lock7  = Object.keys(pg7).filter(k => /^\d+$/.test(k) && pg7[k].locked);
+if (corps7.map(Number).sort((a, b) => a - b).join(',') !== '5,6,7,10,25')
+  fails.push('3.7 : corps publics != [5,6,7,10,25] → ' + corps7.join(','));
+if (lock7.length < 200) fails.push('3.7 : pages locked < 200 (' + lock7.length + ')');
+if (!fs.existsSync('docs/private/buch_pages_full.json')) fails.push('3.7 : BACKUP docs/private/buch_pages_full.json absent');
+const rag7 = fs.readFileSync('rag.js', 'utf8');
+if (!rag7.includes('lesson_content')) fails.push('3.7 : rag.js ne lit pas lesson_content');
+if (!rag7.includes('ACCESS.paywall')) fails.push('3.7 : rag.js ne déclenche pas le paywall sur page payante');
+const app7 = fs.readFileSync('app.js', 'utf8');
+if (!app7.includes('data-paypage') || !app7.includes('e.locked')) fails.push('3.7 : app.js sans carte 🔒 / bouton paypage');
+
 if (fails.length) { console.log('❌ check-access : ' + fails.length + ' fuite(s)/défaut(s)'); fails.forEach(f => console.log('   - ' + f)); process.exit(1); }
 console.log('✅ Accès : gratuit U1S1-S2 + quiz u1 · payant verrouillé sans Backend · cache ui_only inopérant · hors-ligne = gratuit seulement · démos rôles OK');
