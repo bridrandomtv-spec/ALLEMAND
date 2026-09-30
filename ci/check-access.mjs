@@ -249,5 +249,26 @@ if (!rag7.includes('ACCESS.paywall')) fails.push('3.7 : rag.js ne déclenche pas
 const app7 = fs.readFileSync('app.js', 'utf8');
 if (!app7.includes('data-paypage') || !app7.includes('e.locked')) fails.push('3.7 : app.js sans carte 🔒 / bouton paypage');
 
+
+/* ── Phase 8 : AR/RTL des écrans ajoutés (phases 3-7) ── */
+const pw8  = fs.readFileSync('paywall.js', 'utf8');
+const bil8 = fs.readFileSync('billing.js', 'utf8');
+const clo8 = fs.readFileSync('cloud.js', 'utf8');
+const adm8 = fs.readFileSync('admin.js', 'utf8');
+if (!pw8.includes("p.label_ar ? p.label_ar + ' — '")) fails.push('3.8 : paywall n affiche pas le libellé arabe en premier');
+if (!pw8.includes('dir="ltr"')) fails.push('3.8 : paywall sans isolation LTR (éco)');
+const FR_INTERDITS = [
+  ['billing.js', bil8, 'laufende Anfrage'], ['billing.js', bil8, "'1 mois'"],
+  ['billing.js', bil8, 'Abonnement Premium'], ['billing.js', bil8, ' DA</div>'],
+  ['cloud.js', clo8, 'Compte enfant lié'], ['cloud.js', clo8, 'aucun compte enfant'],
+  ['admin.js', adm8, 'Plans abonnement'], ['admin.js', adm8, 'aucun payment'],
+  ['admin.js', adm8, '<th>sub</th>'],
+];
+for (const [f, src8, fr] of FR_INTERDITS)
+  if (src8.includes(fr)) fails.push('3.8 : ' + f + ' contient encore « ' + fr + ' »');
+if (!bil8.includes('شهر واحد')) fails.push('3.8 : billing sans libellés de plans arabes');
+if (!clo8.includes('ربط حساب الطفل')) fails.push('3.8 : cloud sans carte enfant arabe');
+if (!adm8.includes('خطط الاشتراك')) fails.push('3.8 : admin sans titre plans arabe');
+
 if (fails.length) { console.log('❌ check-access : ' + fails.length + ' fuite(s)/défaut(s)'); fails.forEach(f => console.log('   - ' + f)); process.exit(1); }
 console.log('✅ Accès : gratuit U1S1-S2 + quiz u1 · payant verrouillé sans Backend · cache ui_only inopérant · hors-ligne = gratuit seulement · démos rôles OK');
