@@ -728,6 +728,14 @@ function leconLivre(s){
   var manque = false;
   ps.forEach(function(p){
     var e = (window.__BOOK__ || {})[String(p)];
+    /* phase 7 : page payante = métadonnées SEULES (le corps vit dans lesson_content) */
+    if(e && e.locked){
+      out += '<div class="card" style="margin-top:12px">'
+          + '<h3 style="margin:0 0 8px">📖 الصفحة ' + p + ' — ' + esc(e.titre ? e.titre : 'Lektion') + '</h3>'
+          + '<p style="margin:0 0 10px">🔒 هذه الصفحة ضمن محتوى المشتركين — جسم الصفحة لا يُحمَّل قبل الاشتراك.</p>'
+          + '<button class="btn btn-g" data-paypage="' + p + '">فتح البرنامج الكامل</button></div>';
+      return;
+    }
     var lignes = (e && e.lignes) ? e.lignes : [];
     if(!lignes.length) manque = true;
     out += '<div class="card" style="margin-top:12px">'
@@ -1334,6 +1342,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const ck = ev.target.closest('[data-check]');
     if(ck){ handleTextCheck(ck.dataset.check); return; }
+    const pp = ev.target.closest('[data-paypage]');
+    if(pp){
+      if(window.ACCESS && ACCESS.paywall){
+        ACCESS.paywall({ type:'page', page:+pp.getAttribute('data-paypage') });
+      }
+      return;
+    }
     if(ev.target.closest('#markDone')){ markSeanceDone(); return; }
     if(ev.target.closest('#btnCorrDevoir')){ showCorrigeDevoir(); return; }
     if(ev.target.closest('#btnSimFromDevoir')){ go('simulation'); return; }
