@@ -65,14 +65,14 @@
     const notice = u ? '' :
         '<div class="card bl-wait"><b>☁️ يلزم الاتصال السحابي لتسجيل طلبك</b>'
       + '<p>العروض وأرقام الحسابات أدناه متاحة للاطلاع الحر. '
-      + 'Pour générer ta référence DZ-… et suivre ton reçu, connecte-toi d’abord dans ☁️ Cloud.</p>'
+      + 'لإنشاء مرجعك DZ-… ومتابعة وصلك، سجّل الدخول أولًا في ☁️ Cloud.</p>'
       + '<button class="btn btn-p btn-sm" data-go="cloud">☁️ ouvrir Cloud</button></div>';
     const subs = await window.SB.mySubs();
     const act = (subs.rows || []).filter(s => s.statut === 'actif')[0];
     const att = (subs.rows || []).filter(s => s.statut === 'en_attente' || s.statut === 'preuve')[0];
     let h = notice + '<div class="bl-hero"><span class="bl-crest">💳</span><div>'
       + '<h2>الاشتراك المميز</h2><p class="bl-sub">ادعم المنصة وافتح '
-      + 'le suivi complet · paiement CCP / BaridiMob · validation par l’administrateur</p></div></div>';
+      + 'المتابعة الكاملة · الدفع عبر CCP / BaridiMob · التفعيل من المدير</p></div></div>';
     if(act){
       h += '<div class="card bl-ok">⭐ <b>مشترك</b> — خطة ' + esc(act.plan)
         + ' · تنتهي في ' + esc((act.fin || '').slice(0, 10)) + '</div>';
