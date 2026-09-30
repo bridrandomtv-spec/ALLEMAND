@@ -236,6 +236,12 @@ let SEANCES = UNITES[0].seances;
 let DEVOIR   = UNITES[0].devoir;
 
 function uniteActive(){ return UNITES.filter(u => u.n === currentUnite)[0] || UNITES[0]; }
+/* Numéro d'unité AFFICHÉ par niveau : 3AS U10 → « الوحدة 1 » (ids internes inchangés) */
+function numNiveau(n){
+  var u = UNITES.filter(x => x.n === n)[0];
+  return (u && u.niveau === '3AS') ? (n - 9) : n;
+}
+window.numNiveau = numNiveau;
 
 function selectUnite(n){
   const u = UNITES.filter(x => x.n === n)[0];
@@ -291,7 +297,7 @@ function uniteSelector(){
     const pct = Math.round(done / tot * 100);
     return '<button class="ucard' + (u.n === currentUnite ? ' on' : '') + (dispo ? '' : ' off') + '"' +
       (dispo ? ' data-unite="' + u.n + '"' : ' disabled') + '>' +
-      '<div class="ucard-top"><span class="ucard-n">الوحدة ' + u.n + '</span>' +
+      '<div class="ucard-top"><span class="ucard-n">الوحدة ' + numNiveau(u.n) + '</span>' +
         '<span class="ucard-lv' + (u.niveau === '3AS' ? ' bac' : '') + '">' +
         esc(u.niveau || '2AS') + '</span></div>' +
       '<div class="ucard-de de-display">' + u.icon + ' ' + esc(u.de) + '</div>' +
@@ -578,7 +584,7 @@ function renderSeances(){
   const g = $('#seancesGrid'); if(!g) return;
 
   g.innerHTML = uniteSelector() +
-    '<h2>📖 الوحدة ' + uniteActive().n + ' : <span class="de-display">' +
+    '<h2>📖 الوحدة ' + numNiveau(uniteActive().n) + ' : <span class="de-display">' +
     esc(uniteActive().de) + '</span> — ' + esc(uniteActive().ar) + '</h2>' +
     SEANCES.map(s => {
     const isDone = done.indexOf(s.n) !== -1;
