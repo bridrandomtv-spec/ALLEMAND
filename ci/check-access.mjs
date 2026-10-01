@@ -295,5 +295,16 @@ if (!app7b.includes('window.getNiveauActif')) fails.push('3.7b : app.js n expose
 const cfg7b = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
 if (JSON.stringify(cfg7b.free.units) !== JSON.stringify({ '1': [1, 2] })) fails.push('3.7b : essai gratuit modifié (doit rester U1 S1-S2)');
 
+
+/* ── Phase 7bis : aucun corps 3AS dans le domaine public ── */
+const bp38 = fs.existsSync('assets/bdd/buch3as_pages.json') ? JSON.parse(fs.readFileSync('assets/bdd/buch3as_pages.json', 'utf8')) : null;
+if (!bp38) fails.push('3.7b : buch3as_pages.json absent');
+else {
+  const pg8 = bp38.pages || bp38;
+  const corps8 = Object.keys(pg8).filter(k => /^\d+$/.test(k) && ((pg8[k].lignes || []).length || pg8[k].texte));
+  if (corps8.length) fails.push('3.7b : corps 3AS payants dans le domaine public : ' + corps8.join(','));
+}
+if (!fs.existsSync('tools/seed_lesson_content_3as_L4_p71_75.sql')) fails.push('3.7b : seed 3AS L4 p71-75 absent');
+
 if (fails.length) { console.log('❌ check-access : ' + fails.length + ' fuite(s)/défaut(s)'); fails.forEach(f => console.log('   - ' + f)); process.exit(1); }
 console.log('✅ Accès : gratuit U1S1-S2 + quiz u1 · payant verrouillé sans Backend · cache ui_only inopérant · hors-ligne = gratuit seulement · démos rôles OK');
