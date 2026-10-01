@@ -86,6 +86,21 @@
     const arR = s => { const c = String(s || '').replace(/\s/g, ''); if(!c.length) return 0;
       return ((c.match(/[\u0600-\u06FF]/g) || []).length) / c.length; };
     const fixLang = s => (QL && QL !== 'ar' && arR(s) > 0.5) ? (FB[QL] || s) : s;
+    /* Quand le local est faible ET que le cloud échoue, on ne rend plus un
+       « لا أعرف » muet : la cause exacte est nommée, dans la langue de la
+       question, avec le geste qui débloque (bouton 🧠). */
+    function sortieFaible(local, cause){
+      const loc = String(local || '');
+      const utile = (loc && loc.indexOf('لا أعرف') === -1 && loc.length > 3) ? loc : '';
+      const c = String(cause || '?');
+      let msg;
+      if(QL === 'de') msg = '🤔 Ich habe die Frage nicht ganz verstanden. Grund: ' + c + '. Tipp: Konjugation, Artikel, Plural, Zahl, Bedeutung oder « Seite 11 ». Der 🧠-Knopf unten rechts testet das Cloud-Gehirn.';
+      else if(QL === 'fr') msg = '🤔 Je n’ai pas pleinement compris la question. Cause : ' + c + '. Essaie : conjugaison, article, pluriel, nombre, sens d’un mot, ou « page 11 ». Le bouton 🧠 en bas à droite teste le cerveau cloud.';
+      else if(QL === 'es') msg = '🤔 No entendí del todo la pregunta. Causa: ' + c + '. Prueba: conjugación, artículo, plural, número, significado o « página 11 ». El botón 🧠 prueba el cerebro cloud.';
+      else if(QL === 'it') msg = '🤔 Non ho capito bene la domanda. Causa: ' + c + '. Prova: coniugazione, articolo, plurale, numero, significato o « pagina 11 ». Il pulsante 🧠 testa il cervello cloud.';
+      else msg = '🤔 لم أفهم سؤالك تمامًا. السبب : ' + c + '. جرّب : تصريف فعل، أداة، جمع، رقم، معنى كلمة، أو « الصفحة 11 ». الزر 🧠 أسفل اليمين يفحص الدماغ السحابي.';
+      return utile ? msg + '\n\n📌 ' + utile : msg;
+    }
     /* Une réponse locale est valable dès qu'elle dépasse 25 caractères UTILES,
        ou qu'elle porte un mot à prononcer. On ne la jette plus systématiquement. */
     const weak = !local || local.indexOf('لا أعرف') !== -1 ||
@@ -95,7 +110,7 @@
     try{
       const k = 'dz_ia_' + new Date().toDateString();
       const n = +(localStorage.getItem(k) || 0);
-      if(n >= 150){ try{ console.warn('🧠 quota journalier atteint (150)'); }catch(_){} window.__IA_WORD = speakWord; return fixLang(local); }
+      if(n >= 150){ try{ console.warn('🧠 quota journalier atteint (150)'); }catch(_){} window.__IA_WORD = speakWord; return sortieFaible(local, 'quota-journalier-150'); }
       localStorage.setItem(k, String(n + 1));
     }catch(e){}
     let proxy = '';
@@ -103,7 +118,8 @@
       const r = await fetchTimeout('assets/bdd/config.json', { cache:'no-store' }, 8000);
       if(r.ok){ const c = await r.json(); proxy = String(c.ia_proxy || '').replace(/\/+$/, ''); }
     }catch(e){}
-    if(!proxy) return fixLang(local);
+    window.__IA_PROXY = proxy;
+    if(!proxy) return sortieFaible(local, 'proxy-absent (config.json)');
     try{
       let ctx = '';
       try{
@@ -130,12 +146,12 @@
             if(j2 && j2.ok && j2.rep && j2.rep.length > 10) return j2.rep;
           }
         }
-        return fixLang(local);
+        return sortieFaible(local, 'http-' + r.status);
       }
       const j = await r.json();
       if(!j.ok){ window.__IA_ERR = j.err || 'http';
         try{ console.warn('🧠 ia-ask :', j.err); }catch(_){}
-        window.__IA_WORD = speakWord; return fixLang(local); }
+        window.__IA_WORD = speakWord; return sortieFaible(local, j.err || 'ko'); }
       window.__IA_ERR = ''; statutIA('');
       if(j.rep && j.rep.length > 10){
         /* garde inverse : question arabe → jamais de réponse sans caractères arabes */
@@ -151,6 +167,60 @@
         try{ console.warn('🧠 ia-ask réseau :', window.__IA_ERR); }catch(_){}
       }
       statutIA('');
-      return fixLang(local);
+      return sortieFaible(local, window.__IA_ERR || 'reseau');
   };
+
+  /* ── Phase diagnostic : bouton 🧠 = test du cerveau cloud, visible par tous ── */
+  function panneauTest(lignes){
+    try{
+      let p = document.getElementById('iaTestPan');
+      if(!p){
+        p = document.createElement('div'); p.id = 'iaTestPan';
+        p.style.cssText = 'position:fixed;bottom:70px;right:14px;z-index:9998;max-width:340px;'
+          + 'background:#0b241a;color:#cfe3d8;border:1px solid rgba(232,182,76,.5);border-radius:12px;'
+          + 'padding:12px;font:12px/1.6 monospace;white-space:pre-wrap;direction:ltr;text-align:left;'
+          + 'box-shadow:0 10px 30px rgba(0,0,0,.5)';
+        document.body.appendChild(p);
+      }
+      p.textContent = lignes.join('\n');
+      p.onclick = function(){ p.style.display = 'none'; };
+    }catch(e){}
+  }
+  window.testCerveau = async function(){
+    const out = [];
+    const proxy = String(window.__IA_PROXY || '').replace(/\/+$/, '');
+    out.push('proxy : ' + (proxy || '(pas encore chargé — pose d’abord une question)'));
+    if(!proxy){ panneauTest(out); return out.join('\n'); }
+    try{
+      const h = await fetchTimeout(proxy + '/health', {}, 12000);
+      const hb = await h.text();
+      out.push('/health : HTTP ' + h.status + ' · ' + hb.slice(0, 90));
+      if(h.status === 404) out.push('=> worker ANCIEN : dans Cloudflare → ia-ask → Edit code → colle worker/ia-ask.js du dépôt → Save and Deploy');
+      else { try{ const j = JSON.parse(hb); if(j.ai === false) out.push('=> liaison AI absente : ia-ask → Settings → Bindings → Workers AI → nom AI'); }catch(e){} }
+    }catch(e){ out.push('/health : ERREUR ' + ((e && e.name === 'AbortError') ? 'timeout-12s' : ((e && e.message) || e))); }
+    try{
+      const a = await fetchTimeout(proxy + '/ask', { method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ q:'Erkläre den Akkusativ in einem Satz.' }) }, 30000);
+      const ab = await a.text();
+      out.push('/ask : HTTP ' + a.status + ' · ' + ab.slice(0, 150));
+    }catch(e){ out.push('/ask : ERREUR ' + ((e && e.name === 'AbortError') ? 'timeout-30s' : ((e && e.message) || e))); }
+    out.push('dernière erreur ia.js : ' + (window.__IA_ERR || 'aucune'));
+    panneauTest(out);
+    return out.join('\n');
+  };
+  try{
+    const pose = function(){
+      if(document.getElementById('iaTestBtn')) return;
+      const b = document.createElement('button');
+      b.id = 'iaTestBtn'; b.type = 'button'; b.textContent = '🧠';
+      b.title = 'فحص الدماغ السحابي / test du cerveau cloud';
+      b.style.cssText = 'position:fixed;bottom:14px;right:14px;z-index:9997;width:46px;height:46px;'
+        + 'border-radius:50%;border:1px solid rgba(232,182,76,.5);background:#0b241a;color:#e8b64c;'
+        + 'font-size:20px;cursor:pointer';
+      b.addEventListener('click', function(){ window.testCerveau(); });
+      document.body.appendChild(b);
+    };
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pose); else pose();
+  }catch(e){}
 })();
