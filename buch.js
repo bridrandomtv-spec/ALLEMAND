@@ -27,6 +27,10 @@
 
   async function render(){
     const box = $('#buchBody'); if(!box) return;
+    /* niveau actif 3AS → navigateur du manuel 3AS (8 Lektionen) ;
+       tout autre niveau → parcours 2AS existant, inchangé */
+    const niv0 = (window.getNiveauActif && window.getNiveauActif()) || '';
+    if(niv0 === '3AS'){ return render3as(box); }
     const L = await livre();
     if(!L.length){ box.innerHTML = '<div class="dn-sub">📗 Buchinhalt nicht verfügbar.</div>'; return; }
     const b = L[CUR] || L[0];
@@ -126,6 +130,115 @@
     $('#bkNote').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
+  /* ── Navigateur MANUEL 3AS — source de vérité : assets/bdd/buch3as_pages.json
+     (fichier NON modifié, non dupliqué). Accès pages = mécanisme EXISTANT :
+     window.reponseIA (intentLecture → lesson_content → RLS serveur) +
+     ACCESS.paywall + VOIX.parler. Aucune nouvelle logique de permission.
+     Validation stricte : exactement 8 Lektionen, plages figées ; sinon STOP affiché. */
+  const L3_PLAGES = [[1,3,29],[2,31,48],[3,49,70],[4,71,92],[5,93,110],[6,111,127],[7,129,151],[8,153,175]];
+  let B3 = null, B3_ERR = '', L3_CUR = -1, L3_PAGE = 0;
+  async function load3(){
+    if(B3 || B3_ERR) return B3;
+    try{
+      const r = await fetch('assets/bdd/buch3as_pages.json', { cache:'no-store' });
+      const j = r.ok ? await r.json() : null;
+      const pg = (j && j.pages) || j || {};
+      const groups = {};
+      for(const k of Object.keys(pg)){
+        if(!/^\d+$/.test(k)) continue;
+        const u = pg[k].unite, p = +k;
+        if(!Number.isInteger(u) || u < 10 || u > 17){ B3_ERR = 'page ' + k + ' sans unite 10-17'; return null; }
+        (groups[u] = groups[u] || []).push(p);
+      }
+      const us = Object.keys(groups).map(Number).sort((a,b)=>a-b);
+      if(us.length !== 8){ B3_ERR = 'nombre de Lektionen != 8 (' + us.length + ')'; return null; }
+      for(let i=0;i<8;i++){
+        const g = groups[us[i]].sort((a,b)=>a-b), att = L3_PLAGES[i];
+        if(us[i] !== att[0]+9 || g[0] !== att[1] || g[g.length-1] !== att[2]){
+          B3_ERR = 'Lektion ' + att[0] + ' : plage reelle ' + g[0] + '-' + g[g.length-1]
+                 + ' != plage attendue ' + att[1] + '-' + att[2];
+          return null;
+        }
+      }
+      B3 = { pg: pg, groups: groups };
+      return B3;
+    }catch(e){ B3_ERR = 'lecture index : ' + e; return null; }
+  }
+  function l3Titre(p){
+    const e = (B3 && B3.pg[String(p)]) || {};
+    return String(e.titre || ('Seite ' + p)).replace(/^L\d+ 3AS p\d+ — /, '');
+  }
+  function l3Badge(p){
+    const e = (B3 && B3.pg[String(p)]) || {};
+    return (e.lignes && e.lignes.length) || e.texte ? '🆓' : '🔒';
+  }
+  async function render3as(box){
+    const B = await load3();
+    if(!B){
+      box.innerHTML = '<div class="dn-hero"><span class="dn-crest">📗</span><div><h2>Buch — 3AS</h2>'
+        + '<p class="dn-sub">⚠️ structure du manuel 3AS non conforme au contrat : ' + esc(B3_ERR)
+        + ' — navigation désactivée, contenu inchangé.</p></div></div>';
+      return;
+    }
+    const nPages = Object.keys(B.pg).filter(k => /^\d+$/.test(k)).length;
+    let h = '<div class="dn-hero"><span class="dn-crest">📗</span><div><h2>Buch — 3AS</h2>'
+      + '<p class="dn-sub">manuel officiel · 8 Lektionen · ' + nPages + ' pages · 🔒 = abonnés</p></div></div>';
+    if(L3_PAGE){
+      const p = L3_PAGE;
+      h += '<button class="btn btn-o btn-sm" id="b3back2">← Lektion ' + (L3_CUR+1) + '</button>'
+        + '<div class="card" style="margin-top:10px"><b>📄 Page ' + p + '</b>'
+        + '<div class="dn-sub">' + esc(l3Titre(p)) + '</div>'
+        + '<div id="b3txt" style="white-space:pre-wrap;margin-top:8px;line-height:1.7" dir="ltr" lang="de">⏳ …</div>'
+        + '<button class="btn btn-p btn-sm" id="b3voix" style="margin-top:8px">🔊 hören</button></div>';
+      box.innerHTML = h;
+      $('#b3back2').addEventListener('click', () => { L3_PAGE = 0; render3as(box); });
+      $('#b3voix').addEventListener('click', () => {
+        const t = ($('#b3txt') || {}).textContent || '';
+        if(window.VOIX && VOIX.parler && t && t.indexOf('⏳') !== 0) VOIX.parler(t, 'de-DE');
+      });
+      let txt = '';
+      try{ if(window.reponseIA) txt = await reponseIA('lis la page ' + p + ' (3AS)'); }catch(e){ txt = ''; }
+      const el = $('#b3txt');
+      if(el) el.textContent = txt || '🔒';
+      return;
+    }
+    if(L3_CUR >= 0){
+      const pages = B.groups[L3_CUR+10].sort((a,b)=>a-b);
+      h += '<button class="btn btn-o btn-sm" id="b3back1">← Lektionen</button>'
+        + '<h3 style="margin:10px 0 6px">📗 Lektion ' + (L3_CUR+1) + ' · pages '
+        + pages[0] + '-' + pages[pages.length-1] + '</h3>'
+        + '<div style="display:flex;flex-direction:column;gap:6px">'
+        + pages.map(p => '<button class="btn btn-o btn-sm" data-p3="' + p
+            + '" style="text-align:right;white-space:normal;height:auto;line-height:1.5">'
+            + l3Badge(p) + ' 📄 Page ' + p + ' · ' + esc(l3Titre(p).slice(0,70)) + '</button>').join('')
+        + '</div>';
+      box.innerHTML = h;
+      $('#b3back1').addEventListener('click', () => { L3_CUR = -1; render3as(box); });
+      box.querySelectorAll('[data-p3]').forEach(bt => bt.addEventListener('click', () => {
+        L3_PAGE = +bt.getAttribute('data-p3'); render3as(box);
+      }));
+      return;
+    }
+    h += '<div style="display:flex;flex-direction:column;gap:6px">'
+      + L3_PLAGES.map((pl, i) => {
+          const g = B.groups[i+10];
+          return '<button class="btn btn-o btn-sm" data-l3="' + i
+            + '" style="text-align:right">📗 Lektion ' + (i+1) + ' · ' + g.length
+            + ' pages (' + pl[1] + '-' + pl[2] + ')</button>';
+        }).join('') + '</div>';
+    box.innerHTML = h;
+    box.querySelectorAll('[data-l3]').forEach(bt => bt.addEventListener('click', () => {
+      L3_CUR = +bt.getAttribute('data-l3'); L3_PAGE = 0; render3as(box);
+    }));
+  }
+  /* re-rendre le 📗 quand l'utilisateur change de niveau depuis la vue */
+  document.addEventListener('click', e => {
+    try{
+      if(e.target && e.target.closest && e.target.closest('[data-niveau]')){
+        setTimeout(() => { const bx = $('#buchBody'); if(bx && bx.offsetParent !== null) render(); }, 0);
+      }
+    }catch(err){}
+  });
   window.renderBuch = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'buch') render(); });
 })();
