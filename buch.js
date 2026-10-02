@@ -16,9 +16,11 @@
                  : (j && j._meta ? Object.assign({ n:1 }, j) : null);
         if(l1 && l1._meta) LS.push(l1); }
       const r2 = await fetch('assets/bdd/buch_l2.json', { cache:'no-store' });
-      if(r2.ok){ const o2 = await r2.json(); if(o2 && o2._meta) LS.push(o2); }
+      if(r2.ok){ const o2 = await r2.json();
+        if(o2){ if(!o2._meta) o2._meta = { titre: o2.titre || ('Lektion ' + (o2.n || 2)), niveau: '2AS' }; LS.push(o2); } }
       const r3 = await fetch('assets/bdd/buch_l3.json', { cache:'no-store' });
-      if(r3.ok){ const o3 = await r3.json(); if(o3 && o3._meta) LS.push(o3); }
+      if(r3.ok){ const o3 = await r3.json();
+        if(o3){ if(!o3._meta) o3._meta = { titre: o3.titre || ('Lektion ' + (o3.n || 3)), niveau: '2AS' }; LS.push(o3); } }
     }catch(e){}
     return LS;
   }
@@ -37,6 +39,7 @@
     if(!L.length){ box.innerHTML = '<div class="dn-sub">📗 Buchinhalt nicht verfügbar.</div>'; return; }
     if(CUR >= L.length) CUR = 0;
     const b = L[CUR] || L[0];
+    if(b && !b._meta) b._meta = { titre: b.titre || ('Lektion ' + (b.n || '?')), niveau: '2AS' };
     const sel = '<div class="dn-tabs">' + L.map((x, i) =>
       '<button class="btn btn-' + (i === CUR ? 'p' : 'o') + ' btn-sm" data-lk="' + i + '">📗 Lektion '
       + x.n + '</button>').join(' ') + '</div>';
