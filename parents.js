@@ -75,7 +75,7 @@
       enTete() +
       selecteurEnfants() +
       '<div class="onglets" id="paOng">' +
-        ong('synthese','📊 نظرة عامة') + ong('examens','📊 الامتحانات') +
+        ong('synthese','📊 نظرة عامة') + ong('reel','📈 التقرير الفعلي') + ong('examens','📊 الامتحانات') +
         ong('presence','✅ الحضور') + ong('exercices','🎯 التمارين') +
         ong('programme','📜 البرنامج') + ong('seances','🗓️ الحصص القادمة') +
         ong('messages','💬 الأساتذة') + ong('cours','👨‍🏫 دروس خصوصية') +
@@ -116,6 +116,7 @@
   function paint(){
     const c = $('#paContenu'); if(!c) return;
     if(onglet === 'synthese')  c.innerHTML = vueSynthese();
+    if(onglet === 'reel'){ c.innerHTML = '<div class="bdd-status">⏳ تحميل التقرير الفعلي…</div>'; vueReel(c); }
     if(onglet === 'examens')   c.innerHTML = vueExamens();
     if(onglet === 'presence')  c.innerHTML = vuePresence();
     if(onglet === 'exercices') c.innerHTML = vueExercices();
@@ -639,4 +640,96 @@
   window.DZ_PARENTS = { boot:boot, render:render, texteRapport:texteRapport,
                         moyennePonderee:moyennePonderee, readiness:readiness,
                         PRET:PRET, CONS:CONS };
+
+  /* ══════ TABLEAU DE BORD RÉEL (lecture seule, structures existantes) ══════
+     Sources : dz_de_seances_v1:uN (séances faites) · dz_de_memorie_v1 (Leitner,
+     horodatage last) · dz_de_quiz_best_v1 / _hist_v1 (scores + horodatages) ·
+     SB.my_linked_children (identité enfant, RPC existant) · ACCESS.canAccessParent
+     / canAccessParentChild (portes existantes, décision C). Aucune collecte
+     nouvelle, aucune écriture, aucun temps réel. */
+  function lsReel(k){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; }catch(e){ return null; } }
+  async function vueReel(c){
+    const A = window.ACCESS || null;
+    let lie = null, nom = '';
+    try{
+      if(window.SB && SB.my_linked_children){
+        const L = await SB.my_linked_children();
+        const arr = Array.isArray(L) ? L : ((L && L.data) || []);
+        lie = arr[0] || null;
+        if(lie) nom = String(lie.pseudo || lie.nom || lie.email || '');
+      }
+    }catch(e){}
+    if(!nom){ try{ const s = (window.AUTH && AUTH.session) ? AUTH.session() : null; if(s && s.pseudo) nom = s.pseudo + ' (appareil local)'; }catch(e){} }
+    let ok = false;
+    try{ ok = !!(A && A.canAccessParent && A.canAccessParent('full_reports')); }catch(e){}
+    if(!ok && lie){ try{ ok = !!(A && A.canAccessParentChild && (await A.canAccessParentChild(lie.id))); }catch(e){} }
+    if(!ok){
+      c.innerHTML = '<div class="card"><h2>📈 التقرير الفعلي</h2>'
+        + '<p class="ch-sub">🔒 هذا التقرير ضمن محتوى المشتركين — القرار C : التقرير الأساسي '
+        + 'متاح أيضًا عندما يكون اشتراك الابن المرتبط نشطًا.</p>'
+        + '<button class="btn btn-p btn-sm" id="prPay">فتح البرنامج الكامل</button></div>';
+      const b = $('#prPay');
+      if(b) b.addEventListener('click', function(){ try{ if(A && A.paywall) A.paywall({ type:'view', view:'parents' }); }catch(e){} });
+      return;
+    }
+    const now = Date.now(), SEM = 7 * 86400000;
+    /* séances faites (2AS u1-9 · 3AS u10-19) */
+    let faites = 0, u2 = 0, u3 = 0; const parU = [];
+    for(let u = 1; u <= 19; u++){
+      const d = lsReel('dz_de_seances_v1:u' + u);
+      const n = (d && Array.isArray(d.done)) ? d.done.length : 0;
+      faites += n; if(n){ parU.push([u, n]); if(u <= 9) u2 += n; else u3 += n; }
+    }
+    /* mémoire Leitner : révisions de la semaine + faiblesses */
+    const M = lsReel('dz_de_memorie_v1'); const cartes = (M && M.cartes) || [];
+    const rev7 = cartes.filter(x => x && (x.last || 0) >= now - SEM);
+    const faib = {};
+    cartes.forEach(x => {
+      if(x && ((x.box || 0) <= 2 || (x.misses || 0) >= 2)){
+        const k = (x.unite ? ('U' + x.unite + ' · ') : '') + (x.comp || 'général');
+        faib[k] = (faib[k] || 0) + 1;
+      }
+    });
+    const faibTop = Object.keys(faib).sort((a, b) => faib[b] - faib[a]).slice(0, 3);
+    /* quiz : moyenne des meilleurs scores + activité 7 j */
+    const B = lsReel('dz_de_quiz_best_v1') || {};
+    const H = lsReel('dz_de_quiz_hist_v1'); const hist = Array.isArray(H) ? H : [];
+    const bvals = Object.keys(B).map(k => Number(B[k])).filter(v => !isNaN(v) && v >= 0);
+    const moy = bvals.length ? bvals.reduce((a, v) => a + v, 0) / bvals.length : null;
+    const moy20 = moy === null ? null : (moy <= 5 ? moy / 5 * 20 : (moy <= 10 ? moy / 10 * 20 : moy));
+    const tsOf = x => (x && (x.ts || x.t || x.date)) || 0;
+    const q7 = hist.filter(h => tsOf(h) >= now - SEM);
+    const min7 = rev7.length * 1 + q7.length * 5;   /* estimation étiquetée */
+    const jours = {};
+    rev7.forEach(x => { jours[new Date(x.last).toDateString()] = 1; });
+    q7.forEach(x => { jours[new Date(tsOf(x)).toDateString()] = 1; });
+    /* forces : unités travaillées (≥3 séances) avec meilleur score ≥ 80 % */
+    const forts = parU.filter(function(p){
+      const b = Number(B[p[0]] != null ? B[p[0]] : (B['u' + p[0]] != null ? B['u' + p[0]] : NaN));
+      if(isNaN(b)) return false;
+      return p[1] >= 3 && (b <= 5 ? b >= 4 : (b <= 10 ? b >= 8 : b >= 16));
+    }).map(p => 'U' + p[0]);
+    c.innerHTML =
+      '<div class="bdd-status">🛡️ تقرير أسبوعي تجميعي يُقرأ من البيانات الموجودة فعلًا على هذا الجهاز '
+      + '(حصص · ذاكرة Leitner · اختبارات) + هوية الابن من السحابة — <b>بدون تتبع لحظي وبدون أي جمع جديد</b>.</div>'
+      + '<div class="bdd-kpis">'
+      + kpi('🧒', nom || '—', 'الابن المتابَع', lie ? 'Enfant lié (cloud)' : 'Appareil local')
+      + kpi('⏱️', min7 + ' min', 'وقت الأسبوع (تقدير)', 'Temps hebdo (est.)')
+      + kpi('📅', Object.keys(jours).length + '/7', 'أيام نشطة', 'Jours actifs')
+      + kpi('✅', faites, 'حصص منجزة', 'Séances faites')
+      + kpi('📊', moy20 === null ? '—' : moy20.toFixed(1), 'المعدل /20', 'Moyenne quiz')
+      + kpi('🔁', rev7.length, 'مراجعات الأسبوع', 'Révisions 7 j')
+      + '</div>'
+      + '<div class="card"><h2>💪 نقاط القوة / 🎯 نقاط التحسّن</h2><div class="info-grid">'
+      + info('💪 وحدات متقنة (≥3 حصص و ≥80 %)', forts.length ? forts.join(' · ') : '—')
+      + info('🎯 مكونات متعثرة (ذاكرة)', faibTop.length ? faibTop.join(' · ') : '—')
+      + info('✅ حصص 2AS / 3AS', u2 + ' / ' + u3)
+      + info('🧠 بطاقات الذاكرة', cartes.length + ' (صندوق ≤2 : '
+          + cartes.filter(x => x && (x.box || 0) <= 2).length + ')')
+      + '</div></div>'
+      + (parU.length ? '<div class="card"><h2>📚 التفصيل حسب الوحدة</h2><div class="info-grid">'
+          + parU.map(p => info('الوحدة ' + p[0], p[1] + ' حصة')).join('') + '</div></div>' : '')
+      + '<div class="bdd-status">⏳ التقدير : مراجعة ذاكرة ≈ 1 دقيقة · سلسلة اختبار ≈ 5 دقائق — '
+      + 'لا توجد ساعة مدمجة، لا شيء يُرسل إلى أي خادم.</div>';
+  }
 })();
