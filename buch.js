@@ -154,9 +154,10 @@
       if(us.length !== 8){ B3_ERR = 'nombre de Lektionen != 8 (' + us.length + ')'; return null; }
       for(let i=0;i<8;i++){
         const g = groups[us[i]].sort((a,b)=>a-b), att = L3_PLAGES[i];
-        if(us[i] !== att[0]+9 || g[0] !== att[1] || g[g.length-1] !== att[2]){
-          B3_ERR = 'Lektion ' + att[0] + ' : plage reelle ' + g[0] + '-' + g[g.length-1]
-                 + ' != plage attendue ' + att[1] + '-' + att[2];
+        if(us[i] !== att[0]+9 || g[0] !== att[1] || g[g.length-1] > att[2]
+           || !g.every(p => p >= att[1] && p <= att[2])){
+          B3_ERR = 'Lektion ' + att[0] + ' : pages reelles ' + g[0] + '-' + g[g.length-1]
+                 + ' hors plage attendue ' + att[1] + '-' + att[2];
           return null;
         }
       }
@@ -206,7 +207,7 @@
       const pages = B.groups[L3_CUR+10].sort((a,b)=>a-b);
       h += '<button class="btn btn-o btn-sm" id="b3back1">← Lektionen</button>'
         + '<h3 style="margin:10px 0 6px">📗 Lektion ' + (L3_CUR+1) + ' · pages '
-        + pages[0] + '-' + pages[pages.length-1] + '</h3>'
+        + L3_PLAGES[L3_CUR][1] + '-' + L3_PLAGES[L3_CUR][2] + ' · ' + pages.length + ' indexées</h3>'
         + '<div style="display:flex;flex-direction:column;gap:6px">'
         + pages.map(p => '<button class="btn btn-o btn-sm" data-p3="' + p
             + '" style="text-align:right;white-space:normal;height:auto;line-height:1.5">'
