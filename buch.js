@@ -12,11 +12,13 @@
     try{
       const r1 = await fetch('assets/bdd/buch_2as.json', { cache:'no-store' });
       if(r1.ok){ const j = await r1.json();
-        LS.push(j.lektionen ? j.lektionen[0] : Object.assign({ n:1, titre: j._meta.titre }, j)); }
+        const l1 = (j && j.lektionen && j.lektionen[0]) ? j.lektionen[0]
+                 : (j && j._meta ? Object.assign({ n:1 }, j) : null);
+        if(l1 && l1._meta) LS.push(l1); }
       const r2 = await fetch('assets/bdd/buch_l2.json', { cache:'no-store' });
-      if(r2.ok) LS.push(await r2.json());
+      if(r2.ok){ const o2 = await r2.json(); if(o2 && o2._meta) LS.push(o2); }
       const r3 = await fetch('assets/bdd/buch_l3.json', { cache:'no-store' });
-      if(r3.ok) LS.push(await r3.json());
+      if(r3.ok){ const o3 = await r3.json(); if(o3 && o3._meta) LS.push(o3); }
     }catch(e){}
     return LS;
   }
@@ -31,8 +33,9 @@
        tout autre niveau → parcours 2AS existant, inchangé */
     const niv0 = (window.getNiveauActif && window.getNiveauActif()) || '';
     if(niv0 === '3AS'){ return render3as(box); }
-    const L = await livre();
+    const L = (await livre()).filter(x => x && x._meta);
     if(!L.length){ box.innerHTML = '<div class="dn-sub">📗 Buchinhalt nicht verfügbar.</div>'; return; }
+    if(CUR >= L.length) CUR = 0;
     const b = L[CUR] || L[0];
     const sel = '<div class="dn-tabs">' + L.map((x, i) =>
       '<button class="btn btn-' + (i === CUR ? 'p' : 'o') + ' btn-sm" data-lk="' + i + '">📗 Lektion '
