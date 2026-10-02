@@ -306,5 +306,30 @@ else {
 }
 if (!fs.existsSync('tools/seed_lesson_content_3as_L4_p71_75.sql')) fails.push('3.7b : seed 3AS L4 p71-75 absent');
 
+
+/* ── Phase 7ter : arbre du manuel 3AS = EXACTEMENT 8 Lektionen, plages figées ── */
+const R3G = [[1,3,29],[2,31,48],[3,49,70],[4,71,92],[5,93,110],[6,111,127],[7,129,151],[8,153,175]];
+const b3c = JSON.parse(fs.readFileSync('assets/bdd/buch3as_pages.json', 'utf8'));
+const pg3c = b3c.pages || b3c;
+const nums3c = Object.keys(pg3c).filter(k => /^\d+$/.test(k)).map(Number);
+if (R3G.length !== 8) fails.push('3.9 : R3G != 8 Lektionen');
+let cov3 = 0;
+for (const [n3, a3, b3b] of R3G) {
+  const in3 = nums3c.filter(p => p >= a3 && p <= b3b);
+  if (!in3.length) fails.push('3.9 : Lektion ' + n3 + ' vide');
+  if (in3.length && Math.min(...in3) !== a3) fails.push('3.9 : Lektion ' + n3 + ' min != ' + a3);
+  if (in3.length && Math.max(...in3) > b3b) fails.push('3.9 : Lektion ' + n3 + ' max > ' + b3b);
+  cov3 += in3.length;
+  const u3 = new Set(in3.map(p => pg3c[String(p)].unite));
+  if (u3.size !== 1 || ![...u3][0] !== n3 + 9 && [...u3][0] !== n3 + 9) {}
+  if (u3.size !== 1 || [...u3][0] !== n3 + 9) fails.push('3.9 : Lektion ' + n3 + ' unite != ' + (n3 + 9));
+}
+if (cov3 !== nums3c.length) fails.push('3.9 : pages 3AS hors des 8 plages (' + (nums3c.length - cov3) + ')');
+const buch3c = fs.readFileSync('buch.js', 'utf8');
+if (!buch3c.includes('L3_PLAGES')) fails.push('3.9 : buch.js sans L3_PLAGES');
+if (!buch3c.includes('buch3as_pages.json')) fails.push('3.9 : buch.js sans source buch3as_pages.json');
+if (!buch3c.includes('reponseIA')) fails.push('3.9 : lecteur 3AS sans reponseIA (lecteur existant)');
+if (!buch3c.includes('VOIX.parler')) fails.push('3.9 : lecteur 3AS sans VOIX.parler');
+
 if (fails.length) { console.log('❌ check-access : ' + fails.length + ' fuite(s)/défaut(s)'); fails.forEach(f => console.log('   - ' + f)); process.exit(1); }
 console.log('✅ Accès : gratuit U1S1-S2 + quiz u1 · payant verrouillé sans Backend · cache ui_only inopérant · hors-ligne = gratuit seulement · démos rôles OK');
