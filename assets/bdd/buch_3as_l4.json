@@ -1,0 +1,502 @@
+{
+ "n": 4,
+ "titre": "Lektion 4 — Umweltprobleme (3AS)",
+ "_meta": {
+  "titre": "Lektion 4 — Umweltprobleme (3AS)",
+  "niveau": "3AS"
+ },
+ "objectifs": [
+  "Umweltprobleme nennen und beschreiben (Luft, Wasser, Müll, Klima)",
+  "die Texte «Um uns die Umwelt», «Der Umweltschutz», «Begräbt uns der Müll?» verstehen",
+  "Synonyme und Gegenteile aus dem Text verwenden",
+  "Meinung zum Umweltschutz sagen und begründen",
+  "über private Umweltschutz-Maßnahmen sprechen",
+  "einen kurzen Text zum Umweltschutz schreiben"
+ ],
+ "grammaire_objectifs": [
+  "Relativpronomen im Nominativ/Akkusativ (der/den/die/das/die)",
+  "Relativpronomen im Dativ (dem/der/dem/denen)",
+  "Substantive mit -ung (die Zerstörung, die Verschmutzung…)",
+  "Imperativ : du / ihr / Sie",
+  "zweiteilige Konnektoren : entweder…oder · weder…noch · sowohl…als auch · obwohl",
+  "Modalverben müssen / wollen : Bedeutungen (Zwang, Absicht)"
+ ],
+ "textes": [
+  {
+   "titre": "Um uns die Umwelt (Auszug, S. 72)",
+   "de": "Wenn wir auf die Welt kommen, kommen wir gleichzeitig in eine «Umwelt», die Welt, die uns umgibt. Diese Umwelt formt unseren Charakter, beeinflusst unsere Lebenschancen. Die Menschen brauchen sauberes Wasser, saubere Luft, Wälder und Felder, um leben zu können. Fabriken verschmutzen Luft und Wasser. Autobahnen verdrängen die Wälder und Felder."
+  },
+  {
+   "titre": "Der Umweltschutz (Auszug, S. 75)",
+   "de": "Luftverschmutzung, Tierarten, die aussterben, verschmutzte Meere und Flüsse, Klimaerwärmung und Atommüll sind die neuen Umweltprobleme, die unsere Existenz bedrohen. Deshalb müssen sich die Menschen für den Schutz von Natur und Umwelt einsetzen. So kann man unseren schönen blauen Planeten retten."
+  },
+  {
+   "titre": "Begräbt uns der Müll ? (Auszug, S. 78)",
+   "de": "Abfälle locken gefährliche Insekten an und können zu Seuchenherden werden. Abfälle verseuchen Grund- und Oberflächenwasser. Abfall kann sinnvoll wieder verwendet werden. Es gibt heute schon Recyclingpapier. Abfall ist kostbar und verwertbar."
+  }
+ ],
+ "vocab": [
+  "die Umwelt",
+  "der Umweltschutz",
+  "die Verschmutzung",
+  "giftig",
+  "der Müll",
+  "der Abfall",
+  "vermeiden",
+  "verursachen",
+  "bedrohen",
+  "schützen",
+  "die Maßnahme",
+  "das Ökosystem",
+  "der Smog",
+  "die Klimaerwärmung",
+  "aussterben",
+  "der Lebensraum"
+ ],
+ "tables": [
+  {
+   "verbe": "schützen",
+   "formes": [
+    "schütze",
+    "schützt",
+    "schützt",
+    "schützen",
+    "schützt",
+    "schützen"
+   ]
+  },
+  {
+   "verbe": "verschmutzen",
+   "formes": [
+    "verschmutze",
+    "verschmutzt",
+    "verschmutzt",
+    "verschmutzen",
+    "verschmutzt",
+    "verschmutzen"
+   ]
+  },
+  {
+   "verbe": "vermeiden",
+   "formes": [
+    "vermeide",
+    "vermeidest",
+    "vermeidet",
+    "vermeiden",
+    "vermeidet",
+    "vermeiden"
+   ]
+  },
+  {
+   "verbe": "müssen",
+   "formes": [
+    "muss",
+    "musst",
+    "muss",
+    "müssen",
+    "müsst",
+    "müssen"
+   ]
+  },
+  {
+   "verbe": "wollen",
+   "formes": [
+    "will",
+    "willst",
+    "will",
+    "wollen",
+    "wollt",
+    "wollen"
+   ]
+  }
+ ],
+ "exos": [
+  {
+   "id": 1,
+   "g": "vf",
+   "q": "Die Menschen brauchen sauberes Wasser und saubere Luft.",
+   "a": true
+  },
+  {
+   "id": 2,
+   "g": "vf",
+   "q": "Fabriken verschmutzen Luft und Wasser.",
+   "a": true
+  },
+  {
+   "id": 3,
+   "g": "vf",
+   "q": "Autobahnen schützen die Wälder und Felder.",
+   "a": false
+  },
+  {
+   "id": 4,
+   "g": "vf",
+   "q": "Niemand kann und will die Autobahnen abschaffen.",
+   "a": true
+  },
+  {
+   "id": 5,
+   "g": "vf",
+   "q": "Der Umweltschutz betrifft nur die kleine Umwelt jedes Einzelnen.",
+   "a": false
+  },
+  {
+   "id": 6,
+   "g": "vf",
+   "q": "Abfälle können zu Seuchenherden werden.",
+   "a": true
+  },
+  {
+   "id": 7,
+   "g": "vf",
+   "q": "Abfall ist kostbar und verwertbar.",
+   "a": true
+  },
+  {
+   "id": 8,
+   "g": "vf",
+   "q": "Der Einzelne löst sein Müll-Problem, indem er seine Abfälle irgendwo wegwirft.",
+   "a": false
+  },
+  {
+   "id": 9,
+   "g": "vf",
+   "q": "Recyclingpapier gibt es heute schon.",
+   "a": true
+  },
+  {
+   "id": 10,
+   "g": "vf",
+   "q": "Die Fabriken haben nur eine negative Rolle.",
+   "a": false
+  },
+  {
+   "id": 11,
+   "g": "vf",
+   "q": "Die Umwelt beeinflusst unser Denken und Verhalten.",
+   "a": true
+  },
+  {
+   "id": 12,
+   "g": "vf",
+   "q": "Reines Wasser und reine Luft sind notwendig für das Leben.",
+   "a": true
+  },
+  {
+   "id": 13,
+   "g": "mcq",
+   "q": "Die Luft, … wir atmen, ist unrein.",
+   "opts": [
+    "die",
+    "den",
+    "dem"
+   ],
+   "a": 0
+  },
+  {
+   "id": 14,
+   "g": "mcq",
+   "q": "Der Wald, … wir zur Erholung brauchen, ist gefährdet.",
+   "opts": [
+    "den",
+    "der",
+    "dem"
+   ],
+   "a": 0
+  },
+  {
+   "id": 15,
+   "g": "mcq",
+   "q": "Der Baum, … auf der Wiese steht, ist krank.",
+   "opts": [
+    "der",
+    "den",
+    "dem"
+   ],
+   "a": 0
+  },
+  {
+   "id": 16,
+   "g": "mcq",
+   "q": "Das Windrad, … die Firma montiert, ist nicht schädlich für die Umwelt.",
+   "opts": [
+    "das",
+    "den",
+    "dem"
+   ],
+   "a": 0
+  },
+  {
+   "id": 17,
+   "g": "mcq",
+   "q": "Die Wälder, … der Mensch nicht schützt, sind in Gefahr.",
+   "opts": [
+    "die",
+    "den",
+    "der"
+   ],
+   "a": 0
+  },
+  {
+   "id": 18,
+   "g": "mcq",
+   "q": "Der Wald, … der saure Regen schadet, wird krank.",
+   "opts": [
+    "dem",
+    "den",
+    "der"
+   ],
+   "a": 0
+  },
+  {
+   "id": 19,
+   "g": "mcq",
+   "q": "Die Erde, … die Klimakatastrophe droht, muss gerettet werden.",
+   "opts": [
+    "der",
+    "die",
+    "dem"
+   ],
+   "a": 0
+  },
+  {
+   "id": 20,
+   "g": "mcq",
+   "q": "Fische, … es an Sauerstoff fehlt, sterben.",
+   "opts": [
+    "denen",
+    "die",
+    "dem"
+   ],
+   "a": 0
+  },
+  {
+   "id": 21,
+   "g": "gap",
+   "q": "zerstören + ung → die …",
+   "a": "Zerstörung"
+  },
+  {
+   "id": 22,
+   "g": "gap",
+   "q": "verschmutzen + ung → die …",
+   "a": "Verschmutzung"
+  },
+  {
+   "id": 23,
+   "g": "gap",
+   "q": "verdrängen + ung → die …",
+   "a": "Verdrängung"
+  },
+  {
+   "id": 24,
+   "g": "gap",
+   "q": "erfinden + ung → die …",
+   "a": "Erfindung"
+  },
+  {
+   "id": 25,
+   "g": "gap",
+   "q": "retten + ung → die …",
+   "a": "Rettung"
+  },
+  {
+   "id": 26,
+   "g": "gap",
+   "q": "entwickeln + ung → die …",
+   "a": "Entwicklung"
+  },
+  {
+   "id": 27,
+   "g": "gap",
+   "q": "… Sie den Müll ! (beseitigen, Sie-Form)",
+   "a": "Beseitigen Sie"
+  },
+  {
+   "id": 28,
+   "g": "gap",
+   "q": "… beim Einkaufen auf die Verpackung ! (achten, du-Form)",
+   "a": "Achte"
+  },
+  {
+   "id": 29,
+   "g": "gap",
+   "q": "… die Coladosen durch Glasflaschen ! (ersetzen, ihr-Form)",
+   "a": "Ersetzt"
+  },
+  {
+   "id": 30,
+   "g": "gap",
+   "q": "… Pappe und alte Batterien zur Sammelstelle ! (bringen, Sie-Form)",
+   "a": "Bringen Sie"
+  },
+  {
+   "id": 31,
+   "g": "gap",
+   "q": "… den Müll nicht irgendwo hin ! (werfen, du-Form)",
+   "a": "Wirf"
+  },
+  {
+   "id": 32,
+   "g": "gap",
+   "q": "… keine Plastiktüten ! (benutzen, ihr-Form)",
+   "a": "Benutzt"
+  },
+  {
+   "id": 33,
+   "g": "mcq",
+   "q": "… Papiertüte … Plastiktüte : ich nehme eine mit.",
+   "opts": [
+    "Entweder … oder",
+    "Weder … noch",
+    "Sowohl … als auch"
+   ],
+   "a": 0
+  },
+  {
+   "id": 34,
+   "g": "mcq",
+   "q": "Ich sehe … fern … höre ich das Radio.",
+   "opts": [
+    "entweder … oder",
+    "weder … noch",
+    "sowohl … als auch"
+   ],
+   "a": 1
+  },
+  {
+   "id": 35,
+   "g": "mcq",
+   "q": "Er spricht … Englisch … Spanisch fließend.",
+   "opts": [
+    "entweder … oder",
+    "weder … noch",
+    "sowohl … als auch"
+   ],
+   "a": 2
+  },
+  {
+   "id": 36,
+   "g": "mcq",
+   "q": "… die Handykosten hoch sind, nimmt ihr Gebrauch ständig zu.",
+   "opts": [
+    "Obwohl",
+    "Weil",
+    "Wenn"
+   ],
+   "a": 0
+  },
+  {
+   "id": 37,
+   "g": "mcq",
+   "q": "Die Umwelt formt unseren Charakter, … sie unsere Lebenschancen beeinflusst.",
+   "opts": [
+    "denn",
+    "oder",
+    "aber"
+   ],
+   "a": 0
+  },
+  {
+   "id": 38,
+   "g": "mcq",
+   "q": "Viele Tierarten verschwinden wegen der Umweltverschmutzung. = Sie …",
+   "opts": [
+    "sterben aus",
+    "nehmen zu",
+    "wachsen"
+   ],
+   "a": 0
+  },
+  {
+   "id": 39,
+   "g": "mcq",
+   "q": "Die Industriewerke verunreinigen unsere Luft. = Sie … sie.",
+   "opts": [
+    "verschmutzen",
+    "schützen",
+    "retten"
+   ],
+   "a": 0
+  },
+  {
+   "id": 40,
+   "g": "mcq",
+   "q": "Die Autoabgase gefährden die Gesundheit der Menschen. = Sie … sie.",
+   "opts": [
+    "bedrohen",
+    "bewahren",
+    "fördern"
+   ],
+   "a": 0
+  },
+  {
+   "id": 41,
+   "g": "mcq",
+   "q": "Die Fabrikbesitzer müssen unsere Umwelt bewahren. = Sie müssen sie …",
+   "opts": [
+    "schützen",
+    "zerstören",
+    "verschwenden"
+   ],
+   "a": 0
+  },
+  {
+   "id": 42,
+   "g": "mcq",
+   "q": "Die Reklame ist gefährlich, weil sie den Verbraucher verführt. = Sie … ihn.",
+   "opts": [
+    "verlockt",
+    "warnt",
+    "schützt"
+   ],
+   "a": 0
+  },
+  {
+   "id": 43,
+   "g": "mcq",
+   "q": "«müssen» bedeutet hier : …",
+   "opts": [
+    "Zwang / Notwendigkeit",
+    "Absicht / Wunsch",
+    "Erlaubnis / Verbot"
+   ],
+   "a": 0
+  },
+  {
+   "id": 44,
+   "g": "mcq",
+   "q": "«wollen» bedeutet hier : …",
+   "opts": [
+    "die Absicht haben / ein starker Wunsch",
+    "gezwungen sein",
+    "fähig sein"
+   ],
+   "a": 0
+  },
+  {
+   "id": 45,
+   "g": "mcq",
+   "q": "«Papiertüte statt Plastiktüte» — «statt» bedeutet : …",
+   "opts": [
+    "anstelle von",
+    "neben",
+    "wegen"
+   ],
+   "a": 0
+  },
+  {
+   "id": 46,
+   "g": "prod",
+   "q": "Schreibe mindestens 5 Sätze : Was kannst du selbst für die Umwelt tun ? (Begründe mit weil/obwohl.)",
+   "checklist": [
+    "5 Sätze oder mehr",
+    "Verb an 2. Position",
+    "1 × Modalverb (muss/kann/will)",
+    "1 Relativsatz (der/die/das)",
+    "Nomen groß"
+   ]
+  }
+ ]
+}
