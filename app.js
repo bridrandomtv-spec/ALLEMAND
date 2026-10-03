@@ -555,6 +555,7 @@ function go(view){
   if(view === 'simulation') renderSim();
   if(view === 'parents')    renderParents();
   if(view === 'compte')     renderCompte();
+  if(view === 'compte')     renderLienCloud();
   if(view === 'reservation' && window.renderReservation) window.renderReservation();
   if(view === 'matieres' && window.renderMatieres) window.renderMatieres();
   if(view === 'guide' && window.renderGuide) window.renderGuide();
@@ -1631,7 +1632,7 @@ const lf = $('#loginForm');
   });
 
   const bd = $('#btnDemo');
-  if(bd) bd.addEventListener('click', () => {
+  if(bd) bd.addEventListener('click', () => { try{ history.replaceState(null, '', location.pathname + '?demo=1' + location.hash); }catch(e){}
     const u = $('#loginUser'), p = $('#loginPass');
     if(u) u.value = 'ahmed'; if(p) p.value = '1234';
     if(lf) lf.dispatchEvent(new Event('submit', { cancelable:true }));
@@ -1741,6 +1742,31 @@ function renderUserChip(){
                  '<span class="uc-n">' + esc(s.nom) + '</span>';
 }
 
+/* ── P0.4 : liaison compte local ↔ cloud (vue Compte) ── */
+function renderLienCloud(){
+  const host = $('#compteBody'); if(!host) return;
+  const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+  if(!s || s.src === 'cloud' || !window.SB) return;
+  if($('#lcCard')) return;
+  const box = document.createElement('div'); box.id = 'lcCard';
+  box.innerHTML = '<div class="card" style="margin-top:12px"><b>☁️ ربط الحساب بالسحابة</b>'
+    + '<p class="dn-sub">احتفظ بحسابك ومستواك على كل أجهزتك — الحساب السحابي هو المصدر الرسمي.</p>'
+    + '<input id="lcMail" type="email" placeholder="البريد الإلكتروني" style="width:100%;margin:6px 0;padding:10px;border-radius:10px;border:1px solid #ccc">'
+    + '<input id="lcPass" type="password" placeholder="كلمة السر السحابية" style="width:100%;margin:6px 0;padding:10px;border-radius:10px;border:1px solid #ccc">'
+    + '<button class="btn btn-p" id="lcBtn">🔗 اربط حسابي</button> <span id="lcMsg" style="font-size:13px"></span></div>';
+  host.appendChild(box);
+  $('#lcBtn').addEventListener('click', async () => {
+    const msg = $('#lcMsg'); const mail = $('#lcMail').value, pass = $('#lcPass').value;
+    if(!mail || !pass){ msg.textContent = 'أدخل البريد وكلمة السر.'; return; }
+    let p = null;
+    try{ await window.SB.login(mail, pass); p = await cloudAuthority(); }
+    catch(e){
+      try{ await window.SB.signup(mail, pass, { pseudo:s.nom, niveau:s.niveau, filiere:s.filiere, wilaya:s.wilaya }); p = await cloudAuthority(); }
+      catch(e2){ msg.textContent = 'تعذر الربط : ' + ((e2 && (e2.message || e2.msg)) || 'تحقق من البيانات'); return; }
+    }
+    if(p){ msg.textContent = '✅ تم الربط — المستوى المعتمد : ' + p.niveau; setTimeout(function(){ location.reload(); }, 900); }
+  });
+}
 /* ══════════ VUE COMPTE ══════════ */
 function renderCompte(){
   const el = $('#compteBody'); if(!el) return;
