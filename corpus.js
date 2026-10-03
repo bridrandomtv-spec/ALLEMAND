@@ -13,7 +13,18 @@
   const esc = s => String(s==null?'':s).replace(/[&<>"']/g,
       c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  let D = null, IDX = null;
+  /* ── Les PDF de docs/archive et dzexams-* sont EXCLUS du bundle Workers
+     (.assetsignore) : sur le site en ligne ils seraient 404. On les sert
+     donc depuis GitHub raw (toujours à jour, même dépôt). ── */
+function urlDoc(u){
+  u = String(u || '');
+  if(!u) return '#';
+  if(u.indexOf('docs/archive') === 0 || u.indexOf('dzexams-') === 0 || /\.pdf$/i.test(u)){
+    return 'https://raw.githubusercontent.com/bridrandomtv-spec/ALLEMAND/main/' + encodeURI(u);
+  }
+  return u;
+}
+let D = null, IDX = null;
   let filtres = { matiere:'', niveau:'', type:'', annee:'', q:'' };
 
   async function charge(){
