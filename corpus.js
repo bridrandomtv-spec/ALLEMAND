@@ -104,7 +104,7 @@ let D = null, IDX = null;
           + '<div class="cp-meta">' + esc(d.matiere) + ' · ' + esc(String(d.annee))
           + ' · ' + esc(d.format) + '</div>'
           + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
-          + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(urlDoc(d.url)) + '" '
+          + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(ouvreUrl(d)) + '" '
           + 'target="_blank" rel="noopener">📂 ouvrir</a>'
           + ('<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>')
           + '</div>').join('') + '</div>';
@@ -150,7 +150,7 @@ let D = null, IDX = null;
       + '<div class="cp-meta">' + esc(d.matiere) + ' · ' + esc(String(d.annee))
       + ' · ' + esc(d.format) + '</div>'
       + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
-      + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(urlDoc(d.url)) + '" '
+      + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(ouvreUrl(d)) + '" '
       + 'target="_blank" rel="noopener">📂 ouvrir</a>'
       + ('<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>')
       + '</div>').join('');
@@ -161,6 +161,14 @@ let D = null, IDX = null;
     }
   }
 
-  window.renderCorpus = render;
+  /* ── Les PDF s'ouvrent DANS un lecteur (pdf.js) au lieu du téléchargement auto ── */
+function ouvreUrl(d){
+  var u = urlDoc(String((d && d.url) || ''));
+  if(String((d && d.format) || '').toLowerCase() === 'pdf' && u.indexOf('https://raw.githubusercontent') === 0){
+    return 'https://mozilla.github.io/pdf.js/web/viewer.html?file=' + encodeURIComponent(u);
+  }
+  return u;
+}
+window.renderCorpus = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'corpus') render(); });
 })();
