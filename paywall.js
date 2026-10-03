@@ -69,6 +69,7 @@
         h += '<div class="pw-pay">خطط الأساتذة والأولياء تُحدد لاحقًا من الإدارة.<br>💬 تواصل واتساب : 0555 57 79 31</div>'
           + '<button class="btn btn-g btn-block" id="pwGo">متابعة إلى صفحة الاشتراك</button>';
       }
+      h += '<div class="pw-sec" style="margin-top:8px">⭐ <b>اشتراك واحد يفتح السنتين 2AS و3AS</b> — يشمل الإخوة عند الطلب.</div>'
       h += '<div class="pw-sec">🔐 لا تُخزَّن أي بطاقة مصرفية · تفعيل يدوي خلال 24 ساعة بعد التحقق · بدون تجديد تلقائي</div>'
         + '<div class="pw-st">حالتك الحالية : ' + (ent && ent.ok ? ('مشترك' + (ent.until ? ' حتى ' + String(ent.until).slice(0, 10) : '')) : 'مجاني (المسار التجريبي)') + '</div>'
         + (ret && ret.seance ? '<div class="pw-ret">↩ بعد التفعيل ستعود تلقائيًا إلى : الوحدة ' + (ret.unite || '') + ' · الحصة ' + ret.seance + '</div>' : '')
