@@ -354,22 +354,22 @@ if (!buch4.includes('buch_pages.json')) fails.push('3.10 : source pages 2AS abse
 if (!buch4.includes('reponseIA')) fails.push('3.10 : lecteur 2AS sans reponseIA');
 
 
-/* ── Phase 7quinquies : pilote interactif 3AS L4 — corrigés obligatoires ── */
-const p34 = 'assets/bdd/buch_3as_l4.json';
-if (!fs.existsSync(p34)) fails.push('3.11 : buch_3as_l4.json absent (pilote interactif 3AS)');
-else {
-  const j34 = JSON.parse(fs.readFileSync(p34, 'utf8'));
-  const ex34 = j34.exos || [];
-  if (ex34.length < 40) fails.push('3.11 : pilote L4 < 40 Aufgaben (' + ex34.length + ')');
-  for (const x of ex34) {
+/* ── Phase 7quinquies : interactif 3AS L4-L8 — corrigés obligatoires ── */
+for (const f3 of ['buch_3as_l4.json','buch_3as_l5.json','buch_3as_l6.json','buch_3as_l7.json','buch_3as_l8.json']) {
+  const p3 = 'assets/bdd/' + f3;
+  if (!fs.existsSync(p3)) { fails.push('3.11 : ' + f3 + ' absent'); continue; }
+  const j3 = JSON.parse(fs.readFileSync(p3, 'utf8'));
+  const ex3 = j3.exos || [];
+  if (ex3.length < 40) fails.push('3.11 : ' + f3 + ' < 40 Aufgaben (' + ex3.length + ')');
+  for (const x of ex3) {
     const okA = (x.g === 'prod') ? Array.isArray(x.checklist) && x.checklist.length >= 3
               : (x.a !== undefined && x.a !== null && x.a !== '');
-    if (!x.g || !x.q || !okA) fails.push('3.11 : exo ' + (x.id || '?') + ' sans corrigé/checklist');
-    if (x.g === 'mcq' && (!Array.isArray(x.opts) || x.opts.length < 2 || x.a >= x.opts.length)) fails.push('3.11 : mcq ' + x.id + ' opts/a incohérents');
-    if (x.g === 'vf' && typeof x.a !== 'boolean') fails.push('3.11 : vf ' + x.id + ' non booléen');
+    if (!x.g || !x.q || !okA) fails.push('3.11 : ' + f3 + ' exo ' + (x.id || '?') + ' sans corrigé/checklist');
+    if (x.g === 'mcq' && (!Array.isArray(x.opts) || x.opts.length < 2 || x.a >= x.opts.length)) fails.push('3.11 : ' + f3 + ' mcq ' + x.id + ' opts/a incohérents');
+    if (x.g === 'vf' && typeof x.a !== 'boolean') fails.push('3.11 : ' + f3 + ' vf ' + x.id + ' non booléen');
   }
-  const ids34 = ex34.map(x => x.id);
-  if (new Set(ids34).size !== ids34.length) fails.push('3.11 : ids exos L4 dupliqués');
+  const ids3 = ex3.map(x => x.id);
+  if (new Set(ids3).size !== ids3.length) fails.push('3.11 : ' + f3 + ' ids dupliqués');
 }
 const buch5 = fs.readFileSync('buch.js', 'utf8');
 if (!buch5.includes('buch_3as_l4.json')) fails.push('3.11 : buch.js ne charge pas buch_3as_l4.json');
