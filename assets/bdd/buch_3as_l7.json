@@ -1,0 +1,478 @@
+{
+ "n": 7,
+ "titre": "Lektion 7 — Jugendprobleme (3AS)",
+ "_meta": {
+  "titre": "Lektion 7 — Jugendprobleme (3AS)",
+  "niveau": "3AS"
+ },
+ "objectifs": [
+  "Jugendprobleme nennen und erklären (Schule, Identität, Drogen)",
+  "den Text «Jugend und Drogen» und die Meinungen S.134 verstehen",
+  "Konjunktiv II Präsens und Vergangenheit bilden",
+  "Konditionalsätze mit wenn bilden",
+  "Temporalsätze mit bis / solange bilden",
+  "Meinung zu Eltern und Jugend äußern und schreiben"
+ ],
+ "grammaire_objectifs": [
+  "Konjunktiv II Vergangenheit : wäre/hätte + Partizip II",
+  "Konditionalsätze Präsens + Vergangenheit",
+  "bis / solange : Temporalsätze",
+  "Perfekt der Modalverben (hat … können/wollen/müssen)",
+  "Komposita mit «Jugend»"
+ ],
+ "textes": [
+  {
+   "titre": "Jugend und Drogen (Auszug, S. 130)",
+   "de": "Die Jugend ist die Lebensphase zwischen Kindheit und Erwachsenenalter. Für viele Jugendliche ist sie eine Periode von Schulproblemen : Lernstoff nicht schaffen, schlechte Leistungen. Sie ist auch die Zeit der Unsicherheit über ihre Rolle und Identität. Wenn die Jugendlichen Drogen nähmen, würden sie sich sicherer fühlen. Als Drogen sind bezeichnet alle Stoffe, die eine negative Wirkung auf den Menschen haben und die zur Süchtigkeit bringen : Alkohol, Tabak, Schlafmittel, Kokain. Sogar Kaffee gehört dazu, denn man kann kaffeesüchtig sein."
+  },
+  {
+   "titre": "Meinungen : Peter (Auszug, S. 134)",
+   "de": "Man muss zwischen Güte und Schwäche unterscheiden. Meine Eltern wollten immer wissen, was ich in meiner Freizeit machte. Manchmal verboten sie mir etwas. Ich hatte dann immer großen Zorn. Aber das war trotzdem gut, denn so haben wir nie den Kontakt verloren. Man muss ein gewisses Alter erreichen, bis man sieht, dass es die «Alten» gar nicht so schlecht meinen."
+  }
+ ],
+ "vocab": [
+  "die Jugend",
+  "die Droge",
+  "die Sucht",
+  "süchtig",
+  "die Unsicherheit",
+  "die Identität",
+  "der Konsum",
+  "die Wirkung",
+  "das Bewusstsein",
+  "die Neugier",
+  "der Zorn",
+  "das Vorbild"
+ ],
+ "tables": [
+  {
+   "verbe": "nehmen",
+   "formes": [
+    "nehme",
+    "nimmst",
+    "nimmt",
+    "nehmen",
+    "nehmt",
+    "nehmen"
+   ]
+  },
+  {
+   "verbe": "wissen",
+   "formes": [
+    "weiß",
+    "weißt",
+    "weiß",
+    "wissen",
+    "wisst",
+    "wissen"
+   ]
+  },
+  {
+   "verbe": "wollen",
+   "formes": [
+    "will",
+    "willst",
+    "will",
+    "wollen",
+    "wollt",
+    "wollen"
+   ]
+  },
+  {
+   "verbe": "dürfen",
+   "formes": [
+    "darf",
+    "darfst",
+    "darf",
+    "dürfen",
+    "dürft",
+    "dürfen"
+   ]
+  }
+ ],
+ "exos": [
+  {
+   "g": "vf",
+   "q": "Die Jugend ist die Lebensphase zwischen Kindheit und Erwachsenenalter.",
+   "a": true,
+   "id": 1
+  },
+  {
+   "g": "vf",
+   "q": "Drogen sind nur Alkohol und Tabak.",
+   "a": false,
+   "id": 2
+  },
+  {
+   "g": "vf",
+   "q": "Sogar Kaffee kann süchtig machen.",
+   "a": true,
+   "id": 3
+  },
+  {
+   "g": "vf",
+   "q": "Projektwochen in den Schulen sollen das Bewusstsein der Kinder stärken.",
+   "a": true,
+   "id": 4
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn du auf mich gehört …, wärst du nicht unvernünftig gewesen.",
+   "opts": [
+    "hättest",
+    "wärst",
+    "würdest"
+   ],
+   "a": 0,
+   "id": 5
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn unser Lehrer uns unterstützt …, hätten wir es geschafft.",
+   "opts": [
+    "hätte",
+    "wäre",
+    "würde"
+   ],
+   "a": 0,
+   "id": 6
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn dieser Mann berufstätig gewesen …, hätte sein Vater ihm lange geholfen.",
+   "opts": [
+    "wäre",
+    "hätte",
+    "würde"
+   ],
+   "a": 0,
+   "id": 7
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn Peter nicht berufstätig gewesen …, hätte sein Vater ihn unterstützen müssen.",
+   "opts": [
+    "wäre",
+    "hätte",
+    "würde"
+   ],
+   "a": 0,
+   "id": 8
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn Nicole Medizin studiert …, hätten ihre Eltern ihr Studium finanziert.",
+   "opts": [
+    "hätte",
+    "wäre",
+    "würde"
+   ],
+   "a": 0,
+   "id": 9
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn ich seine Nummer gewusst …, hätte ich ihn anrufen können.",
+   "opts": [
+    "hätte",
+    "wäre",
+    "würde"
+   ],
+   "a": 0,
+   "id": 10
+  },
+  {
+   "g": "gap",
+   "q": "Wenn ich zu Hause geblieben wäre, … der Unfall nicht passiert.",
+   "a": "wäre",
+   "id": 11
+  },
+  {
+   "g": "gap",
+   "q": "Wenn ich das gewusst …, hätte ich dich angerufen.",
+   "a": "hätte",
+   "id": 12
+  },
+  {
+   "g": "gap",
+   "q": "Wir … es geschafft, wenn der Lehrer uns unterstützt hätte.",
+   "a": "hätten",
+   "id": 13
+  },
+  {
+   "g": "gap",
+   "q": "Er … unvernünftig gewesen, wenn du nicht auf ihn gehört hättest.",
+   "a": "wäre",
+   "id": 14
+  },
+  {
+   "g": "mcq",
+   "q": "Er bleibt hier, … es seiner Mutter besser geht.",
+   "opts": [
+    "bis",
+    "solange",
+    "nachdem"
+   ],
+   "a": 0,
+   "id": 15
+  },
+  {
+   "g": "mcq",
+   "q": "Er muss im Bett bleiben, … er Fieber hat.",
+   "opts": [
+    "solange",
+    "bis",
+    "als"
+   ],
+   "a": 0,
+   "id": 16
+  },
+  {
+   "g": "mcq",
+   "q": "Ich arbeite, … ich müde bin.",
+   "opts": [
+    "bis",
+    "solange",
+    "wenn"
+   ],
+   "a": 0,
+   "id": 17
+  },
+  {
+   "g": "mcq",
+   "q": "… der Vater mit seinem Sohn spricht, hört er aufmerksam zu.",
+   "opts": [
+    "Solange",
+    "Bis",
+    "Nachdem"
+   ],
+   "a": 0,
+   "id": 18
+  },
+  {
+   "g": "mcq",
+   "q": "Sie bleiben bei uns, … sie ein Zimmer gefunden haben.",
+   "opts": [
+    "bis",
+    "solange",
+    "während"
+   ],
+   "a": 0,
+   "id": 19
+  },
+  {
+   "g": "mcq",
+   "q": "Er hat nicht anrufen … (können).",
+   "opts": [
+    "können",
+    "gekonnt",
+    "kann"
+   ],
+   "a": 0,
+   "id": 20
+  },
+  {
+   "g": "mcq",
+   "q": "Thomas hat nicht mitkommen … (wollen).",
+   "opts": [
+    "wollen",
+    "gewollt",
+    "will"
+   ],
+   "a": 0,
+   "id": 21
+  },
+  {
+   "g": "mcq",
+   "q": "Sabine hat nicht ins Kino gehen … (dürfen).",
+   "opts": [
+    "dürfen",
+    "gedurft",
+    "darf"
+   ],
+   "a": 0,
+   "id": 22
+  },
+  {
+   "g": "mcq",
+   "q": "Wir haben nicht rauchen … (müssen).",
+   "opts": [
+    "müssen",
+    "gemusst",
+    "muss"
+   ],
+   "a": 0,
+   "id": 23
+  },
+  {
+   "g": "mcq",
+   "q": "Ich habe gar nicht daran denken … (mögen).",
+   "opts": [
+    "mögen",
+    "gemocht",
+    "mag"
+   ],
+   "a": 0,
+   "id": 24
+  },
+  {
+   "g": "mcq",
+   "q": "Jugend + Buch = …",
+   "opts": [
+    "das Jugendbuch",
+    "das Buchjugend",
+    "die Jugendbuch"
+   ],
+   "a": 0,
+   "id": 25
+  },
+  {
+   "g": "mcq",
+   "q": "Jugend + Film = …",
+   "opts": [
+    "der Jugendfilm",
+    "der Filmjugend",
+    "das Jugendfilm"
+   ],
+   "a": 0,
+   "id": 26
+  },
+  {
+   "g": "mcq",
+   "q": "Jugend + Kriminalität = …",
+   "opts": [
+    "die Jugendkriminalität",
+    "die Kriminalitätjugend",
+    "das Jugendkriminal"
+   ],
+   "a": 0,
+   "id": 27
+  },
+  {
+   "g": "mcq",
+   "q": "Jugend + Arbeitslosigkeit = …",
+   "opts": [
+    "die Jugendarbeitslosigkeit",
+    "die Arbeitslosigkeitsjugend",
+    "das Jugendarbeitslos"
+   ],
+   "a": 0,
+   "id": 28
+  },
+  {
+   "g": "mcq",
+   "q": "Jugend + Zeitschrift = …",
+   "opts": [
+    "die Jugendzeitschrift",
+    "die Zeitschriftjugend",
+    "das Jugendzeitschrift"
+   ],
+   "a": 0,
+   "id": 29
+  },
+  {
+   "g": "vf",
+   "q": "Monika sagt, ihre Eltern leben gleichgültig nebeneinander her.",
+   "a": true,
+   "id": 30
+  },
+  {
+   "g": "vf",
+   "q": "Peter hat den Kontakt zu seinen Eltern verloren.",
+   "a": false,
+   "id": 31
+  },
+  {
+   "g": "vf",
+   "q": "Inge meint, Kinder sollten sich einmal in die Lage der Eltern versetzen.",
+   "a": true,
+   "id": 32
+  },
+  {
+   "g": "vf",
+   "q": "Hans sieht in seinen Eltern ein Vorbild.",
+   "a": false,
+   "id": 33
+  },
+  {
+   "g": "gap",
+   "q": "Meine Eltern sind für mich ein gutes Beispiel. = Meine Eltern sind mein …",
+   "a": "Vorbild",
+   "id": 34
+  },
+  {
+   "g": "gap",
+   "q": "Als Kind bin ich für mein Leben nicht verantwortlich. = für mein …",
+   "a": "Dasein",
+   "id": 35
+  },
+  {
+   "g": "gap",
+   "q": "Nach der Arbeit ruhe ich mich beim Sport aus. = ich … mich beim Sport",
+   "a": "entspanne",
+   "id": 36
+  },
+  {
+   "g": "gap",
+   "q": "Sie taten das aus Bequemlichkeit. = weil sie sich Mühe und Arbeit … wollten",
+   "a": "ersparen",
+   "id": 37
+  },
+  {
+   "g": "mcq",
+   "q": "Ich … gerne Pilot werden, weil man neue Länder besucht.",
+   "opts": [
+    "würde",
+    "wäre",
+    "hätte"
+   ],
+   "a": 0,
+   "id": 38
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn ich soweit …, würde ich gern in der 1. Liga spielen.",
+   "opts": [
+    "wäre",
+    "würde",
+    "hätte"
+   ],
+   "a": 0,
+   "id": 39
+  },
+  {
+   "g": "mcq",
+   "q": "Am liebsten … ich gar nicht alt werden.",
+   "opts": [
+    "würde",
+    "wäre",
+    "hätte"
+   ],
+   "a": 0,
+   "id": 40
+  },
+  {
+   "g": "mcq",
+   "q": "Meine Eltern … gern in einem kleinen Dorf gelebt.",
+   "opts": [
+    "hätten",
+    "wären",
+    "würden"
+   ],
+   "a": 0,
+   "id": 41
+  },
+  {
+   "g": "prod",
+   "q": "Schreibe 5 Sätze : Welche Probleme haben Jugendliche heute, und was würdest du tun ?",
+   "checklist": [
+    "5 Sätze oder mehr",
+    "1 × Konjunktiv II (würde/wäre/hätte)",
+    "1 × wenn-Satz",
+    "Verb an 2. Position",
+    "Nomen groß"
+   ],
+   "id": 42
+  }
+ ]
+}
