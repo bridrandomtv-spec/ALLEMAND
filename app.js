@@ -498,7 +498,7 @@ function prochaineSeance(){
   return null;
 }
 window.prochaineSeance = prochaineSeance;
-window.getNiveauActif = function(){ return niveauActif; }; syncNiveauCompte(); setTimeout(syncNiveauCompte, 2500); document.addEventListener('dz:auth', function(){ syncNiveauCompte(); });
+window.getNiveauActif = function(){ return niveauActif; }; try{ cloudAuthority().then(function(s){ if(s){ document.dispatchEvent(new CustomEvent('dz:auth', { detail:s })); } }); }catch(e){} syncNiveauCompte(); setTimeout(syncNiveauCompte, 2500); document.addEventListener('dz:auth', function(){ syncNiveauCompte(); });
 
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
@@ -1600,10 +1600,30 @@ function bindGateEvents(){
     });
   });
 
-  const lf = $('#loginForm');
-  if(lf) lf.addEventListener('submit', ev => {
+  /* ── P0.3 : Supabase Auth = autorité PRINCIPALE quand disponible ;
+     localStorage = cache hors-ligne / compatibilité comptes locaux ── */
+async function cloudAuthority(){
+  try{
+    if(!window.SB || !window.SB.myProfile) return null;
+    const p = await window.SB.myProfile();
+    if(!p) return null;
+    const s = { user:(p.pseudo || 'cloud'), nom:(p.pseudo || 'Élève'), role:(p.role || 'eleve'),
+                niveau:(p.niveau || '2AS'), filiere:(p.filiere || ''), wilaya:(p.wilaya || ''),
+                code_wilaya:(p.code_wilaya || ''), points:0, src:'cloud', uid:p.id };
+    try{ localStorage.setItem('dz_de_session_v1', JSON.stringify(s)); }catch(e){}
+    return s;
+  }catch(e){ return null; }
+}
+window.cloudAuthority = cloudAuthority;
+const lf = $('#loginForm');
+  if(lf) lf.addEventListener('submit', async ev => {
     ev.preventDefault();
     const err = $('#loginErr'); if(err) err.hidden = true;
+    let __cs = null;
+    if(navigator.onLine && window.SB && window.SB.login){
+      try{ const __ok = await window.SB.login($('#loginUser').value, $('#loginPass').value); if(__ok){ __cs = await cloudAuthority(); } }catch(e){ __cs = null; }
+    }
+    if(__cs){ toast('🎉 أهلاً بك ' + __cs.nom + ' — حساب سحابي (' + __cs.niveau + ')', 'ok'); enterApp(__cs); return; }
     const r = AUTH.login($('#loginUser').value, $('#loginPass').value, $('#loginClasse').value);
     if(r.ok){ toast('🎉 أهلاً بك ' + r.session.nom + ' — القسم ' + r.session.classe_ar, 'ok');
               enterApp(r.session); }
@@ -1618,11 +1638,16 @@ function bindGateEvents(){
   });
 
   const sf = $('#signupForm');
-  if(sf) sf.addEventListener('submit', ev => {
+  if(sf) sf.addEventListener('submit', async ev => {
     ev.preventDefault();
     const err = $('#suErr'); if(err) err.hidden = true;
     const w = String($('#suWilaya').value || '').split('|');
     const niv = $('#suNiveau').value;
+    let __sc = null;
+    if(navigator.onLine && window.SB && window.SB.signup){
+      try{ await window.SB.signup($('#suMail').value, $('#suPass').value, { pseudo:$('#suName').value, niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0] }); __sc = await cloudAuthority(); }catch(e){ __sc = null; }
+    }
+    if(__sc){ toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + __sc.niveau, 'ok'); enterApp(__sc); return; }
     const r = AUTH.signup({
       nom:$('#suName').value, mail:$('#suMail').value, pass:$('#suPass').value,
       niveau:niv, filiere:$('#suFiliere').value,
@@ -1756,7 +1781,7 @@ function renderCompte(){
 
   const lo = $('#btnLogout');
   if(lo) lo.addEventListener('click', () => {
-    if(confirm('تسجيل الخروج من القسم؟')){ AUTH.logout(); toast('👋 إلى اللقاء',''); }
+    if(confirm('تسجيل الخروج من القسم؟')){ try{ if(window.SB && window.SB.logout) window.SB.logout(); }catch(e){} AUTH.logout(); toast('👋 إلى اللقاء',''); }
   });
   const bs2 = $('#btnSound2');
   if(bs2) bs2.addEventListener('click', () => {
@@ -1772,6 +1797,7 @@ function renderCompte(){
   document.addEventListener('click', ev => {
     if(ev.target.closest('#btnLogout')){
       ev.preventDefault(); ev.stopPropagation();
+      try{ if(window.SB && window.SB.logout) window.SB.logout(); }catch(e){}
       try{ AUTH.logout(); }catch(e){}
       try{ localStorage.removeItem('dz_de_session_v1'); }catch(e){}
       try{ localStorage.removeItem('dz_trial_v1'); }catch(e){}
