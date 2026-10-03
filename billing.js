@@ -72,7 +72,7 @@
     const att = (subs.rows || []).filter(s => s.statut === 'en_attente' || s.statut === 'preuve')[0];
     let h = notice + '<div class="bl-hero"><span class="bl-crest">💳</span><div>'
       + '<h2>الاشتراك المميز</h2><p class="bl-sub">ادعم المنصة وافتح '
-      + 'المتابعة الكاملة · الدفع عبر CCP / BaridiMob · التفعيل من المدير</p></div></div>';
+      + 'المتابعة الكاملة · الدفع عبر CCP / BaridiMob · التفعيل من المدير</p><p class="bl-sub" style="margin-top:6px"><b>⭐ اشتراك واحد = 2AS + 3AS معًا</b> · يشمل الإخوة عند الطلب — عائلة واحدة، حساب واحد.</p></div></div>';
     if(act){
       h += '<div class="card bl-ok">⭐ <b>مشترك</b> — خطة ' + esc(act.plan)
         + ' · تنتهي في ' + esc((act.fin || '').slice(0, 10)) + '</div>';
