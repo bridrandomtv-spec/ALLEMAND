@@ -1,0 +1,409 @@
+{
+ "n": 5,
+ "titre": "Lektion 5 — Die Massenmedien (3AS)",
+ "_meta": {
+  "titre": "Lektion 5 — Die Massenmedien (3AS)",
+  "niveau": "3AS"
+ },
+ "objectifs": [
+  "die Massenmedien und ihre Rolle nennen",
+  "den Text «Die Massenmedien» und «Das Internet» verstehen",
+  "Synonyme und Gegenteile aus den Texten verwenden",
+  "Meinungen zu Medien vergleichen (Interviews p97/p140)",
+  "Konjunktiv II und Konditionalsätze bilden",
+  "über Mediennutzung sprechen und schreiben"
+ ],
+ "grammaire_objectifs": [
+  "Konjunktiv II Präsens : wäre/hätte/würde/gäbe/würde + Inf",
+  "Konditionalsätze mit wenn + Konjunktiv II",
+  "zweiteilige Konnektoren : entweder…oder · weder…noch · sowohl…als auch",
+  "Modalverben dürfen und mögen : Bedeutungen und Formen",
+  "Synonyme aus dem Text (Lexikon, Printmedien, geschehen…)"
+ ],
+ "textes": [
+  {
+   "titre": "Die Massenmedien (Auszug, S. 94)",
+   "de": "Medien sind laut Lexikon «Mittel zur Verbreitung von Nachrichten und Informationen». Dazu zählen die Printmedien und die elektronischen Medien. Printmedien sind alle Druckerzeugnisse, also Zeitungen, Zeitschriften und Bücher. Zu den elektronischen Medien gehören Rundfunk und Fernsehen. Neuerdings spielen auch Computer und Internet eine immer größere Rolle. Im Grundgesetz ist festgelegt, dass von der Seite des Staates kein Druck auf die Medien ausgeübt werden darf."
+  },
+  {
+   "titre": "Das Internet (Auszug, S. 118 — fin de Lektion)",
+   "de": "Das Internet wird in Schule und Beruf immer wichtiger. Über Internet bekommt man zahlreiche Informationen, über Internet kann man lernen, einkaufen oder Reisen buchen. Immer mehr junge Leute chatten. Mindestens surft ein Drittel der Kinder regelmäßig online. Im Internet finden sich leider auch Angebote, die den Nachwuchssurfern schaden können."
+  }
+ ],
+ "vocab": [
+  "die Massenmedien",
+  "die Printmedien",
+  "das Lexikon",
+  "das Grundgesetz",
+  "die Wahrheit",
+  "verdrehen",
+  "verschweigen",
+  "die Behinderung",
+  "der Druck",
+  "berichten",
+  "die Meinung",
+  "die Nachricht"
+ ],
+ "tables": [
+  {
+   "verbe": "dürfen",
+   "formes": [
+    "darf",
+    "darfst",
+    "darf",
+    "dürfen",
+    "dürft",
+    "dürfen"
+   ]
+  },
+  {
+   "verbe": "mögen",
+   "formes": [
+    "mag",
+    "magst",
+    "mag",
+    "mögen",
+    "mögt",
+    "mögen"
+   ]
+  },
+  {
+   "verbe": "wissen",
+   "formes": [
+    "weiß",
+    "weißt",
+    "weiß",
+    "wissen",
+    "wisst",
+    "wissen"
+   ]
+  },
+  {
+   "verbe": "werden",
+   "formes": [
+    "werde",
+    "wirst",
+    "wird",
+    "werden",
+    "werdet",
+    "werden"
+   ]
+  }
+ ],
+ "exos": [
+  {
+   "g": "vf",
+   "q": "Printmedien sind alle Druckerzeugnisse : Zeitungen, Zeitschriften und Bücher.",
+   "a": true,
+   "id": 1
+  },
+  {
+   "g": "vf",
+   "q": "Zu den elektronischen Medien gehören Rundfunk und Fernsehen.",
+   "a": true,
+   "id": 2
+  },
+  {
+   "g": "vf",
+   "q": "Das Grundgesetz erlaubt, dass der Staat die Medien unter Druck setzt.",
+   "a": false,
+   "id": 3
+  },
+  {
+   "g": "vf",
+   "q": "Die Medien dürfen über bestimmte Ereignisse nicht berichten.",
+   "a": false,
+   "id": 4
+  },
+  {
+   "g": "vf",
+   "q": "Computer und Internet spielen eine immer größere Rolle.",
+   "a": true,
+   "id": 5
+  },
+  {
+   "g": "vf",
+   "q": "Wer informiert sein will, muss sich aus verschiedenen Medien informieren können.",
+   "a": true,
+   "id": 6
+  },
+  {
+   "g": "mcq",
+   "q": "Ich … keine Prüfungen, würde ich dich sofort besuchen.",
+   "opts": [
+    "hätte",
+    "habe",
+    "hatte"
+   ],
+   "a": 0,
+   "id": 7
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn die Jugend sicherer wäre, … sie keine Droge.",
+   "opts": [
+    "bräuchte",
+    "braucht",
+    "brauchte"
+   ],
+   "a": 0,
+   "id": 8
+  },
+  {
+   "g": "mcq",
+   "q": "Was … Sie tun, wenn Sie Politiker … ?",
+   "opts": [
+    "würden / wären",
+    "werden / sind",
+    "würden / wären nicht"
+   ],
+   "a": 0,
+   "id": 9
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn ich reich …, würde ich eine Weltreise machen.",
+   "opts": [
+    "wäre",
+    "bin",
+    "war"
+   ],
+   "a": 0,
+   "id": 10
+  },
+  {
+   "g": "mcq",
+   "q": "Er … sein Auto nicht reparieren müssen, wenn er es nicht benutzt.",
+   "opts": [
+    "würde",
+    "wird",
+    "will"
+   ],
+   "a": 0,
+   "id": 11
+  },
+  {
+   "g": "mcq",
+   "q": "ich / sein → Konjunktiv II : …",
+   "opts": [
+    "ich wäre",
+    "ich hätte",
+    "ich würde"
+   ],
+   "a": 0,
+   "id": 12
+  },
+  {
+   "g": "mcq",
+   "q": "du / haben → Konjunktiv II : …",
+   "opts": [
+    "du hättest",
+    "du wärst",
+    "du würdest"
+   ],
+   "a": 0,
+   "id": 13
+  },
+  {
+   "g": "mcq",
+   "q": "wir / können → Konjunktiv II : …",
+   "opts": [
+    "wir könnten",
+    "wir hätten",
+    "wir würden"
+   ],
+   "a": 0,
+   "id": 14
+  },
+  {
+   "g": "mcq",
+   "q": "ihr / sollen → Konjunktiv II : …",
+   "opts": [
+    "ihr solltet",
+    "ihr wärt",
+    "ihr hättet"
+   ],
+   "a": 0,
+   "id": 15
+  },
+  {
+   "g": "mcq",
+   "q": "sie / geben → Konjunktiv II : …",
+   "opts": [
+    "sie gäben",
+    "sie geben",
+    "sie gaben"
+   ],
+   "a": 0,
+   "id": 16
+  },
+  {
+   "g": "mcq",
+   "q": "du / gehen → Konjunktiv II : …",
+   "opts": [
+    "du würdest gehen",
+    "du gingst",
+    "du gehst"
+   ],
+   "a": 0,
+   "id": 17
+  },
+  {
+   "g": "mcq",
+   "q": "ich / schreiben → Konjunktiv II : …",
+   "opts": [
+    "ich würde schreiben",
+    "ich schriebe",
+    "ich schreibe"
+   ],
+   "a": 0,
+   "id": 18
+  },
+  {
+   "g": "mcq",
+   "q": "… kaufst du eine Tageszeitung … eine Zeitschrift ?",
+   "opts": [
+    "Entweder … oder",
+    "Weder … noch",
+    "Sowohl … als auch"
+   ],
+   "a": 0,
+   "id": 19
+  },
+  {
+   "g": "mcq",
+   "q": "Wir gehen … ins Theater … ins Kino.",
+   "opts": [
+    "entweder … oder",
+    "weder … noch",
+    "sowohl … als auch"
+   ],
+   "a": 1,
+   "id": 20
+  },
+  {
+   "g": "mcq",
+   "q": "Er nutzt … das Telefon … das Handy.",
+   "opts": [
+    "sowohl … als auch",
+    "entweder … oder",
+    "weder … noch"
+   ],
+   "a": 0,
+   "id": 21
+  },
+  {
+   "g": "mcq",
+   "q": "Die Eltern schenken mir … ein Handy … einen Computer.",
+   "opts": [
+    "weder … noch",
+    "sowohl … als auch",
+    "entweder … oder"
+   ],
+   "a": 0,
+   "id": 22
+  },
+  {
+   "g": "mcq",
+   "q": "«dürfen» bedeutet : …",
+   "opts": [
+    "Erlaubnis / Verbot / höfliche Frage",
+    "Zwang",
+    "Absicht"
+   ],
+   "a": 0,
+   "id": 23
+  },
+  {
+   "g": "mcq",
+   "q": "«mögen» bedeutet : …",
+   "opts": [
+    "gern haben / Lust haben",
+    "müssen",
+    "nicht dürfen"
+   ],
+   "a": 0,
+   "id": 24
+  },
+  {
+   "g": "mcq",
+   "q": "Lexikon = …",
+   "opts": [
+    "Buch zum Suchen von Informationen",
+    "Verfassung",
+    "Zeitung"
+   ],
+   "a": 0,
+   "id": 25
+  },
+  {
+   "g": "mcq",
+   "q": "geschehen = …",
+   "opts": [
+    "passieren",
+    "zwingen",
+    "verdrehen"
+   ],
+   "a": 0,
+   "id": 26
+  },
+  {
+   "g": "mcq",
+   "q": "Druck ausüben = …",
+   "opts": [
+    "jemanden zwingen, etwas zu tun",
+    "informieren",
+    "berichten"
+   ],
+   "a": 0,
+   "id": 27
+  },
+  {
+   "g": "mcq",
+   "q": "die Wahrheit verdrehen = …",
+   "opts": [
+    "persönlich bestimmen, was wahr ist",
+    "alles sagen",
+    "schweigen"
+   ],
+   "a": 0,
+   "id": 28
+  },
+  {
+   "g": "vf",
+   "q": "Kabelfernsehen liefert den Menschen neue Programme ins Haus.",
+   "a": true,
+   "id": 29
+  },
+  {
+   "g": "vf",
+   "q": "Die Firmen achten vor allem auf die Qualität der Programme.",
+   "a": false,
+   "id": 30
+  },
+  {
+   "g": "vf",
+   "q": "Das Internet könnte Daten über uns sammeln und weitergeben.",
+   "a": true,
+   "id": 31
+  },
+  {
+   "g": "vf",
+   "q": "Werbung verführt oft besonders Kinder und Jugendliche zum Kauf.",
+   "a": true,
+   "id": 32
+  },
+  {
+   "g": "prod",
+   "q": "Schreibe 5 Sätze : Welche Medien benutzt du jeden Tag, und warum ? (mit weil/obwohl)",
+   "checklist": [
+    "5 Sätze oder mehr",
+    "Verb an 2. Position",
+    "1 × weil oder obwohl",
+    "1 × Konjunktiv II (würde/wäre)",
+    "Nomen groß"
+   ],
+   "id": 33
+  }
+ ]
+}
