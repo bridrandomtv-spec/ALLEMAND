@@ -1,0 +1,473 @@
+{
+ "n": 6,
+ "titre": "Lektion 6 — Die Kommunikationsmittel (3AS)",
+ "_meta": {
+  "titre": "Lektion 6 — Die Kommunikationsmittel (3AS)",
+  "niveau": "3AS"
+ },
+ "objectifs": [
+  "Kommunikationsmittel früher und heute vergleichen",
+  "den Text «Das Internet» und «Wie man ein Paket verschickt» verstehen",
+  "Adjektive mit -bar bilden",
+  "Sätze mit bevor/nachdem/wenn/als/während bilden",
+  "Konzessivsätze mit obwohl bilden",
+  "Relativpronomen im Genitiv (dessen/deren) verwenden"
+ ],
+ "grammaire_objectifs": [
+  "bevor / nachdem / wenn / als / während : Temporalsätze",
+  "obwohl + trotzdem : Konzessivsätze",
+  "Relativpronomen im Genitiv : dessen (Mask/Neut) · deren (Fem/Plur)",
+  "Adjektive mit -bar (trinkbar, lesbar…)",
+  "Perfekt im Dialog (Paket verschicken)"
+ ],
+ "textes": [
+  {
+   "titre": "Die Kommunikationsmittel (Auszug, S. 112)",
+   "de": "Ein Leben ohne Fernsprechapparat scheint heute kaum denkbar. Doch es ging auch ohne. Bis zum neunzehnten Jahrhundert waren die Menschen findig genug, sich mit Hilfe von Briefen, Jodeln, Pfeifsprachen und Rauchzeichen auch über große Distanzen zu verständigen. Das Telefon, das von Graham Bell im Jahr 1876 erfunden war, ist das am meisten genutzte Kommunikationsmittel. Die Fernmeldetechnik hat das Leben mindestens genauso revolutioniert wie die Erfindung des Computers."
+  },
+  {
+   "titre": "Erst eine SMS, dann Zähneputzen (Auszug, S. 114)",
+   "de": "Noch bevor die Zahnbürste morgens im Mund ist, wird schnell eine Kurznachricht, SMS, geschickt. Boris ist 21 Jahre alt und verschickt gerne SMS. Er tippt im Monat so 120 Kurznachrichten. Das macht 1440 im Jahr. 74 Prozent der 12- bis 19-Jährigen haben ein Mobiltelefon."
+  }
+ ],
+ "vocab": [
+  "das Kommunikationsmittel",
+  "der Fernsprechapparat",
+  "die Postleitzahl",
+  "das Paket",
+  "die Gebühr",
+  "der Absender",
+  "der Empfänger",
+  "das Handy",
+  "die SMS",
+  "chatten",
+  "surfen",
+  "verschicken"
+ ],
+ "tables": [
+  {
+   "verbe": "telefonieren",
+   "formes": [
+    "telefoniere",
+    "telefonierst",
+    "telefoniert",
+    "telefonieren",
+    "telefoniert",
+    "telefonieren"
+   ]
+  },
+  {
+   "verbe": "verschicken",
+   "formes": [
+    "verschicke",
+    "verschickst",
+    "verschickt",
+    "verschicken",
+    "verschickt",
+    "verschicken"
+   ]
+  },
+  {
+   "verbe": "wissen",
+   "formes": [
+    "weiß",
+    "weißt",
+    "weiß",
+    "wissen",
+    "wisst",
+    "wissen"
+   ]
+  },
+  {
+   "verbe": "sprechen",
+   "formes": [
+    "spreche",
+    "sprichst",
+    "spricht",
+    "sprechen",
+    "sprecht",
+    "sprechen"
+   ]
+  }
+ ],
+ "exos": [
+  {
+   "g": "vf",
+   "q": "Bis zum 19. Jahrhundert verständigten sich die Menschen u.a. mit Briefen, Jodeln und Rauchzeichen.",
+   "a": true,
+   "id": 1
+  },
+  {
+   "g": "vf",
+   "q": "Das Telefon wurde 1876 von Graham Bell erfunden.",
+   "a": true,
+   "id": 2
+  },
+  {
+   "g": "vf",
+   "q": "Die Fernmeldetechnik hat das Leben nicht verändert.",
+   "a": false,
+   "id": 3
+  },
+  {
+   "g": "vf",
+   "q": "Fotos, Videos und Musik treten per Handy ihre Reise um die Welt an.",
+   "a": true,
+   "id": 4
+  },
+  {
+   "g": "vf",
+   "q": "Boris tippt etwa 120 Kurznachrichten im Monat.",
+   "a": true,
+   "id": 5
+  },
+  {
+   "g": "vf",
+   "q": "74 Prozent der 12- bis 19-Jährigen haben ein Mobiltelefon.",
+   "a": true,
+   "id": 6
+  },
+  {
+   "g": "vf",
+   "q": "Boris findet leicht einen Freund, der noch kein Handy hat.",
+   "a": false,
+   "id": 7
+  },
+  {
+   "g": "vf",
+   "q": "Für ein «S» drückt man viermal die Taste 7.",
+   "a": true,
+   "id": 8
+  },
+  {
+   "g": "gap",
+   "q": "trinken + bar → …",
+   "a": "trinkbar",
+   "id": 9
+  },
+  {
+   "g": "gap",
+   "q": "essen + bar → …",
+   "a": "essbar",
+   "id": 10
+  },
+  {
+   "g": "gap",
+   "q": "lesen + bar → …",
+   "a": "lesbar",
+   "id": 11
+  },
+  {
+   "g": "gap",
+   "q": "lösen + bar → …",
+   "a": "lösbar",
+   "id": 12
+  },
+  {
+   "g": "gap",
+   "q": "denken + bar → …",
+   "a": "denkbar",
+   "id": 13
+  },
+  {
+   "g": "gap",
+   "q": "genießen + bar → …",
+   "a": "genießbar",
+   "id": 14
+  },
+  {
+   "g": "mcq",
+   "q": "… ich eine SMS schicke, frühstücke ich.",
+   "opts": [
+    "Bevor",
+    "Nachdem",
+    "Während"
+   ],
+   "a": 0,
+   "id": 15
+  },
+  {
+   "g": "mcq",
+   "q": "Ich putze meine Zähne, … ich eine SMS geschickt habe.",
+   "opts": [
+    "nachdem",
+    "bevor",
+    "wenn"
+   ],
+   "a": 0,
+   "id": 16
+  },
+  {
+   "g": "mcq",
+   "q": "… er ins Cybercafe ging, rief er seine Eltern an.",
+   "opts": [
+    "Bevor",
+    "Nachdem",
+    "Sobald"
+   ],
+   "a": 0,
+   "id": 17
+  },
+  {
+   "g": "mcq",
+   "q": "… er auf den Zug wartete, las er die Zeitung.",
+   "opts": [
+    "Während",
+    "Bevor",
+    "Nachdem"
+   ],
+   "a": 0,
+   "id": 18
+  },
+  {
+   "g": "mcq",
+   "q": "… die letzten Gäste sich verabschiedet hatten, war es Zeit zum Frühstück.",
+   "opts": [
+    "Nachdem",
+    "Bevor",
+    "Wenn"
+   ],
+   "a": 0,
+   "id": 19
+  },
+  {
+   "g": "mcq",
+   "q": "… der alte Mann spazieren geht, begleitet ihn meist sein Hund.",
+   "opts": [
+    "Wenn",
+    "Als",
+    "Nachdem"
+   ],
+   "a": 0,
+   "id": 20
+  },
+  {
+   "g": "mcq",
+   "q": "Die Kosten des Handys sind hoch, … nimmt sein Gebrauch ständig zu.",
+   "opts": [
+    "trotzdem",
+    "obwohl",
+    "weil"
+   ],
+   "a": 0,
+   "id": 21
+  },
+  {
+   "g": "mcq",
+   "q": "… die Kosten hoch sind, nimmt sein Gebrauch ständig zu.",
+   "opts": [
+    "Obwohl",
+    "Trotzdem",
+    "Weil"
+   ],
+   "a": 0,
+   "id": 22
+  },
+  {
+   "g": "mcq",
+   "q": "Peter hat nur ein Prepaid-Handy, … schickt er SMS tagsüber.",
+   "opts": [
+    "trotzdem",
+    "obwohl",
+    "denn"
+   ],
+   "a": 0,
+   "id": 23
+  },
+  {
+   "g": "mcq",
+   "q": "Das Internet bietet zahlreiche Dienste, … müssen wir vorsichtig sein.",
+   "opts": [
+    "trotzdem",
+    "obwohl",
+    "weil"
+   ],
+   "a": 0,
+   "id": 24
+  },
+  {
+   "g": "mcq",
+   "q": "Der Computer, … Taste kaputt ist, wird nicht gekauft.",
+   "opts": [
+    "dessen",
+    "deren",
+    "dem"
+   ],
+   "a": 0,
+   "id": 25
+  },
+  {
+   "g": "mcq",
+   "q": "Die Digitalkamera, … Objektiv fehlt, ist billig.",
+   "opts": [
+    "deren",
+    "dessen",
+    "die"
+   ],
+   "a": 0,
+   "id": 26
+  },
+  {
+   "g": "mcq",
+   "q": "Heute Abend läuft ein Film, … Geschichte authentisch ist.",
+   "opts": [
+    "dessen",
+    "deren",
+    "den"
+   ],
+   "a": 0,
+   "id": 27
+  },
+  {
+   "g": "mcq",
+   "q": "In dieser Abteilung arbeiten drei Techniker, … Namen ich nicht kenne.",
+   "opts": [
+    "deren",
+    "dessen",
+    "denen"
+   ],
+   "a": 0,
+   "id": 28
+  },
+  {
+   "g": "mcq",
+   "q": "Ich habe einen DVD-Player gekauft, … Preis interessant war.",
+   "opts": [
+    "dessen",
+    "deren",
+    "der"
+   ],
+   "a": 0,
+   "id": 29
+  },
+  {
+   "g": "mcq",
+   "q": "Das Mobiltelefon, … Display groß ist, gefällt mir.",
+   "opts": [
+    "dessen",
+    "deren",
+    "das"
+   ],
+   "a": 0,
+   "id": 30
+  },
+  {
+   "g": "mcq",
+   "q": "Relativpronomen-Tabelle : Nominativ Maskulinum = …",
+   "opts": [
+    "der",
+    "den",
+    "dem"
+   ],
+   "a": 0,
+   "id": 31
+  },
+  {
+   "g": "mcq",
+   "q": "Relativpronomen-Tabelle : Akkusativ Neutrum = …",
+   "opts": [
+    "das",
+    "der",
+    "die"
+   ],
+   "a": 0,
+   "id": 32
+  },
+  {
+   "g": "mcq",
+   "q": "Relativpronomen-Tabelle : Dativ Femininum = …",
+   "opts": [
+    "der",
+    "die",
+    "den"
+   ],
+   "a": 0,
+   "id": 33
+  },
+  {
+   "g": "mcq",
+   "q": "Relativpronomen-Tabelle : Genitiv Plural = …",
+   "opts": [
+    "deren",
+    "dessen",
+    "denen"
+   ],
+   "a": 0,
+   "id": 34
+  },
+  {
+   "g": "mcq",
+   "q": "über Internet kann man Informationen zu Hause erhalten = …",
+   "opts": [
+    "bekommen",
+    "verlieren",
+    "schicken"
+   ],
+   "a": 0,
+   "id": 35
+  },
+  {
+   "g": "mcq",
+   "q": "die Kinder verfügen über viele Computerspiele = …",
+   "opts": [
+    "zahlreiche",
+    "wenige",
+    "keine"
+   ],
+   "a": 0,
+   "id": 36
+  },
+  {
+   "g": "mcq",
+   "q": "die Jugendlichen treffen ihre Mitschüler im Cybercafé = sie … ihnen",
+   "opts": [
+    "begegnen",
+    "vermeiden",
+    "vergessen"
+   ],
+   "a": 0,
+   "id": 37
+  },
+  {
+   "g": "mcq",
+   "q": "«Aber, natürlich !» = …",
+   "opts": [
+    "selbstverständlich",
+    "unmöglich",
+    "selten"
+   ],
+   "a": 0,
+   "id": 38
+  },
+  {
+   "g": "vf",
+   "q": "Das Postwesen in Deutschland wurde im 15. Jahrhundert begründet.",
+   "a": true,
+   "id": 39
+  },
+  {
+   "g": "vf",
+   "q": "Die Post gibt es nur auf dem Land.",
+   "a": false,
+   "id": 40
+  },
+  {
+   "g": "vf",
+   "q": "Trotz Handys und anderen Medien bleibt der Brief eine wertvolle Form der Kommunikation.",
+   "a": true,
+   "id": 41
+  },
+  {
+   "g": "prod",
+   "q": "Schreibe 4-5 Sätze : Telefon, Handy oder Brief — was benutzt du wann, und warum ?",
+   "checklist": [
+    "4 Sätze oder mehr",
+    "1 × bevor oder nachdem",
+    "1 × obwohl oder trotzdem",
+    "Verb an 2. Position",
+    "Nomen groß"
+   ],
+   "id": 42
+  }
+ ]
+}
