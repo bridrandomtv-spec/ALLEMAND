@@ -2,13 +2,6 @@
 --  p0_locks.sql — VERROUS P0 : role & niveau ne peuvent plus être
 --  auto-modifiés par un étudiant (escalade de privilèges neutralisée).
 --  À exécuter UNE fois dans Supabase → SQL Editor → Run. Idempotent.
---
---  Effet :
---   · un compte authentifié peut toujours modifier pseudo/filiere/wilaya
---     (sa propre ligne) mais PLUS son role ni son niveau ;
---   · l'INSERT initial est limité aux rôles 'eleve' / 'parent'
---     (prof/admin uniquement par promotion administrative) ;
---   · l'admin conserve la main via la policy « admin update roles ».
 -- ══════════════════════════════════════════════════════════════════
 
 -- ── P0.1 + P0.2 : UPDATE verrouillé (role & niveau immuables pour l'owner) ──
@@ -31,13 +24,15 @@ create policy "insert own" on public.profiles
     and role in ('eleve','parent')
   );
 
--- ── Garde-fou supplémentaire : trigger bloquant tout changement de role/niveau
---    par un non-admin (double défense, indépendant des policies) ──
+-- ── Garde-fou : trigger bloquant tout changement de role/niveau par un
+--    non-admin. EXCEPTION : postgres / service_role (SQL Editor, scripts
+--    serveur) pour conserver la promotion administrative manuelle. ──
 create or replace function public.protect_role_niveau()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
   if (new.role is distinct from old.role or new.niveau is distinct from old.niveau)
-     and not public.is_admin() then
+     and not public.is_admin()
+     and current_user not in ('postgres','service_role') then
     raise exception 'P0: role/niveau modifiables uniquement par un administrateur';
   end if;
   return new;
@@ -47,7 +42,3 @@ drop trigger if exists trg_protect_role_niveau on public.profiles;
 create trigger trg_protect_role_niveau
   before update on public.profiles
   for each row execute function public.protect_role_niveau();
-
--- ── Promotion prof/admin réservée à l'admin (rappel, déjà possible via
---    « admin update roles » ; exemple :) ──
--- update public.profiles set role = 'prof'  where id = '<UID>' ;  -- par un admin
