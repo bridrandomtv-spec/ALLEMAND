@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EduDZ Pro — Deck Investisseur</title>
+<style>
+body{margin:0;font-family:system-ui,Segoe UI,Tahoma,sans-serif;background:#0b2b1d;color:#eafff2;display:flex;flex-direction:column;height:100vh}
+header{display:flex;gap:8px;align-items:center;padding:10px 16px;background:#082015}
+header b{margin-right:auto;color:#ffd76a}
+button{background:#12482f;color:#eafff2;border:1px solid #2c7a4f;border-radius:10px;padding:8px 14px;cursor:pointer;font-size:14px}
+button.on{background:#ffd76a;color:#082015;border-color:#ffd76a}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.slide{max-width:900px;width:100%;background:#0f3a26;border:1px solid #2c7a4f;border-radius:18px;padding:34px 40px;box-shadow:0 12px 40px #0008}
+.slide h1{color:#ffd76a;margin:0 0 18px;font-size:34px}
+.slide ul{font-size:21px;line-height:1.65;margin:0;padding-inline-start:22px}
+.slide .k{color:#ffd76a;font-weight:700}
+footer{display:flex;gap:10px;justify-content:center;padding:12px;background:#082015}
+.rtl{direction:rtl;text-align:right}
+small{color:#9fd8b4}
+</style></head><body>
+<header><b>EduDZ Pro · Deck Investisseur · 5 000 000 DA</b>
+<button id="bfr" class="on">FR</button><button id="bar">AR</button><button id="ben">EN</button></header>
+<main><div class="slide" id="sl"></div></main>
+<footer><button id="prev">←</button><small id="num"></small><button id="next">→</button></footer>
+<script>
+const S=[
+{fr:["Couverture","<span class='k'>EduDZ Pro</span> — الثانوية الافتراضية · Deutsche Sprache|Plateforme EdTech PWA — allemand 2AS/3AS, Algérie|Pré-amorçage demandé : <span class='k'>5 000 000 DA</span>|Produit fonctionnel · sécurité verrouillée · contenu propriétaire"],
+ ar:"الغلاف|<span class='k'>EduDZ Pro</span> — الثانوية الافتراضية · اللغة الألمانية|منصة PWA تعليمية — ألمانية 2AS/3AS، الجزائر|طلب ما قبل البذرة: <span class='k'>5 000 000 دج</span>|منتج يشتغل · أمان مقفول · محتوى ملكي",
+ en:"Cover|<span class='k'>EduDZ Pro</span> — Virtual High School · German|PWA EdTech platform — German 2AS/3AS, Algeria|Pre-seed ask: <span class='k'>DA 5,000,000</span>|Working product · locked security · proprietary content"},
+{fr:["Problème","Soutien en allemand concentré dans les grandes villes|Peu de sujets corrigés alignés sur le programme officiel|Aucun suivi individuel structuré|Solutions existantes chères ou non conformes"],
+ ar:"المشكلة|دعم الألمانية متمركز في المدن الكبرى|قلّة مواضيع مصححة مطابقة للمنهج الرسمي|غياب متابعة فردية منظمة|حلول موجودة مكلفة أو غير مطابقة",
+ en:"Problem|German tutoring concentrated in big cities|Few corrected papers aligned with the official curriculum|No structured individual follow-up|Existing solutions expensive or misaligned"},
+{fr:["Solution","Livre officiel interactif + examens corrigés|IA documentaire (réponses verbatim, jamais inventées)|Suivi élève + espace parent|PWA installable, hors-ligne, arabe→allemand"],
+ ar:"الحل|كتاب رسمي تفاعلي + فروض واختبارات مصححة|ذكاء اصطناعي وثائقي (أجوبة حرفية، لا اختراع)|متابعة التلميذ + فضاء الولي|PWA تُثبَّت، دون إنترنت، عربي→ألماني",
+ en:"Solution|Interactive official textbook + corrected exams|Documentary AI (verbatim answers, never invented)|Student follow-up + parent space|Installable PWA, offline, Arabic→German"},
+{fr:["Produit — chiffres vérifiés","Livre 2AS : <span class='k'>212 pages</span> + <span class='k'>234 exercices</span> /20|Livre 3AS : <span class='k'>163 pages · 8 Lektionen</span> + <span class='k'>213 exercices</span>|<span class='k'>55</span> épreuves officielles · <span class='k'>79</span> BAC · <span class='k'>29</span> PDF|Bibliothèque <span class='k'>723 docs</span> · 83 règles · 490 mots"],
+ ar:"المنتج — أرقام مُتحقَّقة|كتاب 2AS: <span class='k'>212 صفحة</span> + <span class='k'>234 تمريناً</span> /20|كتاب 3AS: <span class='k'>163 صفحة · 8 دروس</span> + <span class='k'>213 تمريناً</span>|<span class='k'>55</span> فرضاً رسمياً · <span class='k'>79</span> باك · <span class='k'>29</span> PDF|مكتبة <span class='k'>723 وثيقة</span> · 83 قاعدة · 490 كلمة",
+ en:"Product — verified figures|2AS book: <span class='k'>212 pages</span> + <span class='k'>234 exercises</span> /20|3AS book: <span class='k'>163 pages · 8 Lektionen</span> + <span class='k'>213 exercises</span>|<span class='k'>55</span> official exams · <span class='k'>79</span> BAC · <span class='k'>29</span> PDFs|Library <span class='k'>723 docs</span> · 83 rules · 490 words"},
+{fr:["Démonstration en direct","PWA installée + mode hors-ligne|Page lue à voix haute (voix allemande) + exo corrigé /20|Livre 3AS verrouillé abonnés 🔒|Correction instantanée avec barème|IA : réponse verbatim + source|Parcours abonnement complet · niveau verrouillé"],
+ ar:"عرض مباشر|تثبيت PWA + عمل دون إنترنت|قراءة الصفحة صوتياً (ألماني) + تمرين مصحح /20|كتاب 3AS مقفل للمشتركين 🔒|تصحيح فوري مع السلّم|ذكاء اصطناعي: جواب حرفي + مصدر|مسار اشتراك كامل · مستوى مقفول",
+ en:"Live demo|PWA install + offline mode|Page read aloud (German voice) + /20 corrected exercise|3AS book subscriber-locked 🔒|Instant scored correction|AI: verbatim answer + source|Full subscription journey · locked level"},
+{fr:["IA / RAG — valeur technologique","Réponse = extrait verbatim du corpus (450 docs) + source|Anti-hallucination par construction|Routeur 10 intents / 134 motifs (AR·DZ·FR·DE)|Fallback LLM avec quotas (20/min, 40/j)|Mémoire d'erreurs J+1/3/7/21"],
+ ar:"الذكاء الاصطناعي / RAG — قيمة تقنية|الجواب = مقتطف حرفي من المتن (450 وثيقة) + مصدر|مضاد هلوسة بالتصميم|موجّه 10 نوايا / 134 صيغة (عر·جز·فر·ألم)|احتياط LLM بحصص (20/د، 40/ي)|ذاكرة أخطاء يوم+1/3/7/21",
+ en:"AI / RAG — tech value|Answer = verbatim corpus extract (450 docs) + source|Hallucination-proof by design|Router: 10 intents / 134 patterns (AR·DZ·FR·DE)|LLM fallback with quotas (20/min, 40/day)|Error memory D+1/3/7/21"},
+{fr:["Technologie & coûts","Vanilla JS (~60 modules) + PWA (offline)|Cloudflare Pages/Workers · Supabase (Auth+RLS)|CI : 3 workflows GitHub Actions|Coûts d'exploitation quasi nuls à ce stade"],
+ ar:"التقنية والتكاليف|جافاسكريبت خالص (~60 وحدة) + PWA (دون إنترنت)|Cloudflare Pages/Workers · Supabase (Auth+RLS)|CI: ثلاثة مسارات GitHub|تكاليف تشغيل شبه معدومة حالياً",
+ en:"Technology & costs|Vanilla JS (~60 modules) + PWA (offline)|Cloudflare Pages/Workers · Supabase (Auth+RLS)|CI: 3 GitHub Actions workflows|Near-zero running costs today"},
+{fr:["Modèle économique","1 800 DA/mois · 9 000 DA/6 mois · 15 000 DA/an|<span class='k'>1 abonnement = 2AS + 3AS + fratrie</span> (affiché)|Paiement CCP/BaridiMob + validation admin|Sponsoring & publicité prêts (tables RLS)|Futur : B2B écoles · bundles opérateurs"],
+ ar:"النموذج الاقتصادي|1800 دج/شهر · 9000 دج/6 أشهر · 15000 دج/سنة|<span class='k'>اشتراك واحد = 2AS + 3AS + الإخوة</span> (معروض)|دفع CCP/بريدي موب + تفعيل إداري|رعاية وإشهار جاهزان (جداول RLS)|مستقبلاً: B2B مدارس · باقات متعاملين",
+ en:"Business model|DA 1,800/mo · 9,000/6 mo · 15,000/yr|<span class='k'>1 subscription = 2AS + 3AS + siblings</span> (displayed)|CCP/BaridiMob payment + admin validation|Sponsorship & ads ready (RLS tables)|Future: B2B schools · telco bundles"},
+{fr:["Sécurité — verrouillée et testée","Rôle & niveau immuables côté serveur (policies + trigger)|Auth serveur principale · démo hors production|Anonyme = 0 ligne lisible (test live)|Batterie <span class='k'>13/13</span> scénarios OK|Restes transparents : preuve uploadée, expiration auto"],
+ ar:"الأمان — مقفول ومُختبَر|الدور والمستوى غير قابلين للتغيير خادمياً|مصادقة خادمية رئيسية · التجربة خارج الإنتاج|الزائر = صفر سطر (اختبار حي)|بطارية <span class='k'>13/13</span> سيناريو ناجحة|متبقٍ بشفافية: رفع الوصل، انتهاء تلقائي",
+ en:"Security — locked & tested|Role & level server-immutable (policies + trigger)|Server auth primary · demo out of production|Anonymous = zero rows (live test)|<span class='k'>13/13</span> scenarios pass|Transparent leftovers: uploaded proof, auto-expiry"},
+{fr:["Marché & expansion","58 wilayas cartographiées|Lycéens allemand 2AS/3AS + parents + écoles|Taille marché : à mesurer à l'ouverture des ventes|Distribution PWA sans magasins d'apps"],
+ ar:"السوق والتوسع|58 ولاية مخرطة|تلاميذ ألمانية 2AS/3AS + أولياء + مدارس|حجم السوق: يُقاس عند فتح البيع|توزيع PWA بلا متاجر تطبيقات",
+ en:"Market & expansion|58 wilayas mapped|German 2AS/3AS students + parents + schools|Market size: to measure at sales launch|PWA distribution without app stores"},
+{fr:["Roadmap 12 mois","T1 : corps 3AS L1-L3 + expiration auto + preuve uploadée|T2 : espace parent serveur + analytics conversion|T3 : passerelle CIB/Edahabia + offres écoles|T4 : 2ᵉ matière pilote → EduDZ Pro"],
+ ar:"خارطة 12 شهراً|ف1: جسم 3AS د1-د3 + انتهاء تلقائي + رفع الوصل|ف2: فضاء أولياء خادمي + تحليلات تحويل|ف3: جسر CIB/الذهبية + عروض مدارس|ف4: مادة ثانية تجريبية → EduDZ Pro",
+ en:"12-month roadmap|Q1: 3AS L1-L3 bodies + auto-expiry + uploaded proof|Q2: server parent space + conversion analytics|Q3: CIB/Edahabia gateway + school offers|Q4: 2nd subject pilot → EduDZ Pro"},
+{fr:["Demande : 5 000 000 DA","Usage : 40% contenu · 30% dev · 15% conformité · 15% acquisition|Forme : billet simple / convertible|Horizon : 12 mois|Pourquoi 5M : besoin 3M + marge de sécurité ×1,6"],
+ ar:"الطلب: 5 000 000 دج|الاستخدام: 40% محتوى · 30% تطوير · 15% امتثال · 15% اكتساب|الصيغة: سند بسيط / قابل للتحويل|الأفق: 12 شهراً|لماذا 5م: حاجة 3م + هامش أمان ×1,6",
+ en:"Ask: DA 5,000,000","Use: 40% content · 30% dev · 15% compliance · 15% acquisition|Form: simple/convertible note|Horizon: 12 months|Why 5M: 3M need + ×1.6 safety margin"},
+{fr:["Risques & mitigations","Fondateur unique → corpus structuré + CI|Paiement manuel → passerelle prévue (T3)|Quotas gratuits → plan payant au volume|Données mineurs → conformité documentée (T1)"],
+ ar:"المخاطر والمعالجات|مؤسس واحد → متن مهيكل + CI|دفع يدوي → جسر مبرمج (ف3)|حصص مجانية → خطة دفع عند الحجم|بيانات قُصَّر → امتثال موثق (ف1)",
+ en:"Risks & mitigations|Single founder → structured corpus + CI|Manual payment → gateway planned (Q3)|Free quotas → paid plan at volume|Minor data → compliance documented (Q1)"},
+{fr:["Équipe","Fondateur-enseignant : pédagogie, contenu, relation familles|À financer : dev backend senior · support · commercial B2B|Outillage automatisé déjà en place (CI, indexation, sharding)"],
+ ar:"الفريق|مؤسس-أستاذ: بيداغوجيا، محتوى، علاقة العائلات|يُموَّل: تطوير خلفي · دعم · تجاري B2B|أدوات آلية جاهزة (CI، فهرسة، تقطيع)",
+ en:"Team|Founder-teacher: pedagogy, content, family relations|To fund: senior backend dev · support · B2B sales|Automation already in place (CI, indexing, sharding)"},
+{fr:["Conclusion","Produit fonctionnel + actif rare (corpus aligné programme)|Sécurité critique verrouillée 13/13|Traction : à mesurer à l'ouverture des ventes|Contact : 0555 57 79 31 · WhatsApp"],
+ ar:"الخاتمة|منتج يشتغل + أصل نادر (متن مطابق للمنهج)|أمان حرج مقفول 13/13|التراكس: يُقاس عند فتح البيع|اتصال: 0555 57 79 31 · واتساب",
+ en:"Conclusion|Working product + rare asset (curriculum-aligned corpus)|Critical security locked 13/13|Traction: to measure at sales launch|Contact: 0555 57 79 31 · WhatsApp"}
+];
+let i=0,L='fr';
+function render(){
+ const d=S[i],raw=(L==='fr')?d.fr:(L==='ar'?d.ar:d.en);
+ const parts=(typeof raw==='string'?raw:raw.join('|')).split('|');
+ document.getElementById('sl').innerHTML='<h1>'+parts[0]+'</h1><ul><li>'+parts.slice(1).join('</li><li>')+'</li></ul>';
+ document.getElementById('sl').className='slide'+(L==='ar'?' rtl':'');
+ document.body.dir=(L==='ar')?'rtl':'ltr';
+ document.getElementById('num').textContent=(i+1)+' / '+S.length;
+}
+function go(d){i=Math.max(0,Math.min(S.length-1,i+d));render();}
+document.getElementById('next').onclick=()=>go(1);
+document.getElementById('prev').onclick=()=>go(-1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);});
+[['bfr','fr'],['bar','ar'],['ben','en']].forEach(([id,l])=>{document.getElementById(id).onclick=()=>{L=l;
+ document.querySelectorAll('header button').forEach(b=>b.classList.remove('on'));document.getElementById(id).classList.add('on');render();};});
+render();
+</script></body></html>
