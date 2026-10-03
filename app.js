@@ -108,6 +108,22 @@ const DEVOIR_U1 = {
 /* ─────────────── REGISTRE DES UNITÉS ─────────────── */
 let currentUnite = 1;
 let niveauActif = load('dz_de_niveau_v1', 'tous');
+/* ── P0.5 : le niveau d'un ÉLÈVE connecté cloud est imposé par son compte
+     (profiles.niveau) ; localStorage ne reste qu'un cache. Prof/admin/visiteur
+     et comptes locaux conservent le sélecteur. ── */
+let niveauVerrou = null;
+async function syncNiveauCompte(){
+  try{
+    if(!window.SB || !window.SB.myProfile) return;
+    const p = await window.SB.myProfile();
+    if(!p){ niveauVerrou = null; return; }
+    if(p.role === 'eleve' && (p.niveau === '2AS' || p.niveau === '3AS')){
+      niveauVerrou = p.niveau;
+      if(niveauActif !== p.niveau){ niveauActif = p.niveau; store('dz_de_niveau_v1', niveauActif); }
+    } else { niveauVerrou = null; }
+  }catch(e){}
+}
+window.syncNiveauCompte = syncNiveauCompte;
 
 
 
@@ -482,7 +498,7 @@ function prochaineSeance(){
   return null;
 }
 window.prochaineSeance = prochaineSeance;
-window.getNiveauActif = function(){ return niveauActif; };
+window.getNiveauActif = function(){ return niveauActif; }; syncNiveauCompte(); setTimeout(syncNiveauCompte, 2500); document.addEventListener('dz:auth', function(){ syncNiveauCompte(); });
 
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
@@ -1314,6 +1330,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', ev => {
     const nv = ev.target.closest('[data-niveau]');
     if(nv){
+      if(niveauVerrou && nv.dataset.niveau !== niveauVerrou){ toast('🔒 مستواك مرتبط بحسابك : ' + niveauVerrou + ' — لا يمكن التبديل.', 'ko'); return; }
       niveauActif = nv.dataset.niveau;
       store('dz_de_niveau_v1', niveauActif);
       const host = $('.niv-sel');
