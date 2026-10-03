@@ -198,7 +198,69 @@
     const e = (B3 && B3.pg[String(p)]) || {};
     return (e.lignes && e.lignes.length) || e.texte ? '🆓' : '🔒';
   }
+  /* ── Interactif 3AS : Lektionen digitalisées (buch_3as_lN.json) — même moteur
+     que la 2AS (exoHtml + corriger /20 + cartes 🧠 Leitner sur chaque erreur) ── */
+  const F3AS = ['buch_3as_l4.json','buch_3as_l5.json','buch_3as_l6.json','buch_3as_l7.json','buch_3as_l8.json'];
+  let LS3 = null, CUR3 = 0, B3V = 'inter';
+  async function livre3as(){
+    if(LS3 !== null) return LS3;
+    LS3 = [];
+    for(const f of F3AS){
+      try{
+        const r = await fetch('assets/bdd/' + f, { cache:'no-store' });
+        if(r.ok){ const j = await r.json(); const nn = normL(j, 4); if(nn) LS3.push(nn); }
+      }catch(e){}
+    }
+    return LS3;
+  }
+  async function render3inter(box, L){
+    if(CUR3 >= L.length) CUR3 = 0;
+    const b = L[CUR3] || L[0];
+    const sel = '<button class="btn btn-g btn-sm" id="bk3pages" style="margin-bottom:8px">'
+      + '📖 صفحات الكتاب 3AS (L1→L8)</button>'
+      + '<div class="dn-tabs">' + L.map((x, i) =>
+        '<button class="btn btn-' + (i === CUR3 ? 'p' : 'o') + ' btn-sm" data-lk3i="' + i + '">📗 Lektion '
+        + x.n + '</button>').join(' ') + '</div>';
+    let h = sel + '<div class="dn-hero"><span class="dn-crest">📗</span><div><h2>'
+      + esc(b._meta.titre) + '</h2><p class="dn-sub">offizielles Lehrbuch ' + esc(b._meta.niveau)
+      + ' · ' + b.exos.length + ' Aufgaben auf Deutsch · Texte & Dialoge aus dem Buch</p></div></div>'
+      + '<div class="card"><b>🎯 Ziele</b><div class="dn-check">'
+      + b.objectifs.map(o => '<span>' + esc(o) + '</span>').join('') + '</div>'
+      + '<b style="margin-top:9px">📘 Grammatik</b><div class="dn-check">'
+      + b.grammaire_objectifs.map(o => '<span>' + esc(o) + '</span>').join('') + '</div></div>'
+      + '<div class="card"><b>📖 Texte & Dialoge aus dem Buch</b>'
+      + b.textes.map((t, i) => '<div class="dn-q"><span class="dn-qt"><b>' + esc(t.titre)
+          + '</b><br>' + esc(t.de) + '</span>'
+          + '<button class="btn btn-o btn-sm" data-t3="' + i + '">🔊 hören</button></div>').join('')
+      + '</div>'
+      + '<div class="card"><b>🔑 Wortschatz</b><div class="dn-check">'
+      + b.vocab.map(v => '<span>' + esc(v) + '</span>').join('') + '</div>'
+      + '<b style="margin-top:9px">📐 Konjugation</b>'
+      + b.tables.map(t => '<div class="dn-q"><span class="dn-qt"><b>' + esc(t.verbe)
+          + '</b> · ' + t.formes.map((f, i) => PERS[i] + ' ' + esc(f)).join(' · ')
+          + '</span></div>').join('') + '</div>'
+      + '<div class="card"><b>✍️ Übungen — ' + b.exos.length + ' Aufgaben (wie eine Klassenarbeit)</b>'
+      + b.exos.map((x, i) => exoHtml(x, i)).join('')
+      + '<button class="btn btn-p btn-block" id="bkCorr">✅ Meine Arbeit korrigieren</button>'
+      + '<div id="bkNote"></div></div>';
+    box.innerHTML = h;
+    box.querySelectorAll('[data-lk3i]').forEach(bl => bl.addEventListener('click', () => {
+      CUR3 = +bl.getAttribute('data-lk3i'); render();
+    }));
+    box.querySelectorAll('[data-t3]').forEach(bt => bt.addEventListener('click', () => {
+      const t = b.textes[+bt.getAttribute('data-t3')];
+      if(window.VOIX && window.VOIX.parler) window.VOIX.parler(t.de, 'de-DE');
+    }));
+    const bp3 = $('#bk3pages');
+    if(bp3) bp3.addEventListener('click', () => { B3V = 'list'; LK3 = 0; PG3 = 0; render(); });
+    $('#bkCorr').addEventListener('click', () => corriger(b, box));
+  }
   async function render3as(box){
+    if(B3V === 'inter'){
+      const LI = await livre3as();
+      if(LI.length) return render3inter(box, LI);
+      B3V = 'list';
+    }
     const B = await load3();
     if(!B){
       box.innerHTML = '<div class="dn-hero"><span class="dn-crest">📗</span><div><h2>Buch — 3AS</h2>'
@@ -207,7 +269,8 @@
       return;
     }
     const nPages = Object.keys(B.pg).filter(k => /^\d+$/.test(k)).length;
-    let h = '<div class="dn-hero"><span class="dn-crest">📗</span><div><h2>Buch — 3AS</h2>'
+    let h = '<button class="btn btn-o btn-sm" data-b3inter="1">← Lektion interactives</button>'
+      + '<div class="dn-hero" style="margin-top:8px"><span class="dn-crest">📗</span><div><h2>Buch — 3AS</h2>'
       + '<p class="dn-sub">manuel officiel · 8 Lektionen · ' + nPages + ' pages · 🔒 = abonnés</p></div></div>';
     if(L3_PAGE){
       const p = L3_PAGE;
@@ -256,6 +319,8 @@
     box.querySelectorAll('[data-l3]').forEach(bt => bt.addEventListener('click', () => {
       L3_CUR = +bt.getAttribute('data-l3'); L3_PAGE = 0; render3as(box);
     }));
+    const bi3 = box.querySelector('[data-b3inter]');
+    if(bi3) bi3.addEventListener('click', () => { B3V = 'inter'; CUR3 = 0; render(); });
   }
   /* re-rendre le 📗 quand l'utilisateur change de niveau depuis la vue */
   document.addEventListener('click', e => {
