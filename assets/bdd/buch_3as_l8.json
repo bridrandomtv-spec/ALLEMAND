@@ -1,0 +1,438 @@
+{
+ "n": 8,
+ "titre": "Lektion 8 — Arbeitswelt (3AS)",
+ "_meta": {
+  "titre": "Lektion 8 — Arbeitswelt (3AS)",
+  "niveau": "3AS"
+ },
+ "objectifs": [
+  "die Veränderung der Arbeitswelt durch die Informatik erklären",
+  "Stellenangebote lesen und vergleichen (Dolmetscherin / Verkaufsinnendienst)",
+  "Berufe beschreiben und bewerten (Landwirt, Pilot, Ärztin…)",
+  "Komparativ und Superlativ sicher bilden",
+  "das Perfekt mit haben / sein unterscheiden",
+  "über den eigenen Traumberuf schreiben"
+ ],
+ "grammaire_objectifs": [
+  "Komparativ / Superlativ (besser, am besten, nächster…)",
+  "Perfekt mit haben und sein",
+  "Substantive mit -heit/-keit/-schaft/-ung/-bar/-los",
+  "Konjunktiv II : Ich würde gerne … werden",
+  "Synonyme aus dem Text (Nachfrage, Angestellte…)"
+ ],
+ "textes": [
+  {
+   "titre": "Die Arbeitswelt (Auszug, S. 154)",
+   "de": "Die Arbeit ist nicht wie früher. Die Informatik greift die Arbeitswelt an, ändert die Arbeitsorganisation und führt zu Netzwerken. Die Angestellten werden selbstständiger und hängen nicht mehr von den Arbeitgebern ab. Die Arbeitnehmer werden selten nach Arbeitszeit, nach Fleiß oder nach Loyalität bezahlt, sondern nach dem Ergebnis entlohnt. Informationsvermittler, Informatiker, Werbefachmann und Mediengestalter sind die Jobs der Zukunft."
+  },
+  {
+   "titre": "Steffi, die Streetworkerin (Auszug, S. 157)",
+   "de": "Steffi arbeitet bei Gangway e.V. - einer Organisation für Straßensozialarbeit in Berlin. 45 Streetworkerinnen und Streetworker arbeiten in 14 Teams, verteilt auf 9 Bezirke. Kernarbeitszeit für Steffi ist ab 14 Uhr. Zwei Tage in der Woche geht sie auf offenen Rundgang, d.h. durch die Straßen schlendern und sehen, wo sich neue Gruppen treffen."
+  }
+ ],
+ "vocab": [
+  "die Arbeitswelt",
+  "die Arbeitslosigkeit",
+  "der Arbeitnehmer",
+  "der Arbeitgeber",
+  "das Gehalt",
+  "die Bewerbung",
+  "die Voraussetzung",
+  "die Kenntnis",
+  "der Beruf",
+  "die Lehre",
+  "selbstständig",
+  "stressresistent"
+ ],
+ "tables": [
+  {
+   "verbe": "arbeiten",
+   "formes": [
+    "arbeite",
+    "arbeitest",
+    "arbeitet",
+    "arbeiten",
+    "arbeitet",
+    "arbeiten"
+   ]
+  },
+  {
+   "verbe": "werden",
+   "formes": [
+    "werde",
+    "wirst",
+    "wird",
+    "werden",
+    "werdet",
+    "werden"
+   ]
+  },
+  {
+   "verbe": "wissen",
+   "formes": [
+    "weiß",
+    "weißt",
+    "weiß",
+    "wissen",
+    "wisst",
+    "wissen"
+   ]
+  },
+  {
+   "verbe": "mögen",
+   "formes": [
+    "mag",
+    "magst",
+    "mag",
+    "mögen",
+    "mögt",
+    "mögen"
+   ]
+  }
+ ],
+ "exos": [
+  {
+   "g": "vf",
+   "q": "Die Informatik greift die Arbeitswelt an und führt zu Netzwerken.",
+   "a": true,
+   "id": 1
+  },
+  {
+   "g": "vf",
+   "q": "Die Arbeitnehmer werden immer nach Arbeitszeit und Fleiß bezahlt.",
+   "a": false,
+   "id": 2
+  },
+  {
+   "g": "vf",
+   "q": "Informationsvermittler, Informatiker und Mediengestalter sind Jobs der Zukunft.",
+   "a": true,
+   "id": 3
+  },
+  {
+   "g": "vf",
+   "q": "Die Erstausbildung reicht heute meist für ein ganzes Berufsleben.",
+   "a": false,
+   "id": 4
+  },
+  {
+   "g": "gap",
+   "q": "gut → Komparativ : …",
+   "a": "besser",
+   "id": 5
+  },
+  {
+   "g": "gap",
+   "q": "gut → Superlativ : am …",
+   "a": "besten",
+   "id": 6
+  },
+  {
+   "g": "gap",
+   "q": "fleißig → Komparativ : …",
+   "a": "fleißiger",
+   "id": 7
+  },
+  {
+   "g": "gap",
+   "q": "groß → Komparativ : …",
+   "a": "größer",
+   "id": 8
+  },
+  {
+   "g": "gap",
+   "q": "nah → Komparativ : …",
+   "a": "näher",
+   "id": 9
+  },
+  {
+   "g": "gap",
+   "q": "teuer → Komparativ : …",
+   "a": "teurer",
+   "id": 10
+  },
+  {
+   "g": "gap",
+   "q": "viel → Komparativ : …",
+   "a": "mehr",
+   "id": 11
+  },
+  {
+   "g": "gap",
+   "q": "hoch → Komparativ : …",
+   "a": "höher",
+   "id": 12
+  },
+  {
+   "g": "mcq",
+   "q": "nah → Superlativ : am …",
+   "opts": [
+    "nächsten",
+    "nahsten",
+    "nähsten"
+   ],
+   "a": 0,
+   "id": 13
+  },
+  {
+   "g": "mcq",
+   "q": "groß → Superlativ : am …",
+   "opts": [
+    "größten",
+    "großsten",
+    "grössten"
+   ],
+   "a": 0,
+   "id": 14
+  },
+  {
+   "g": "mcq",
+   "q": "teuer → Superlativ : am …",
+   "opts": [
+    "teuersten",
+    "teursten",
+    "teurensten"
+   ],
+   "a": 0,
+   "id": 15
+  },
+  {
+   "g": "mcq",
+   "q": "viel → Superlativ : am …",
+   "opts": [
+    "meisten",
+    "vielsten",
+    "mehrsten"
+   ],
+   "a": 0,
+   "id": 16
+  },
+  {
+   "g": "gap",
+   "q": "Kind + heit → …",
+   "a": "Kindheit",
+   "id": 17
+  },
+  {
+   "g": "gap",
+   "q": "Tätig + keit → …",
+   "a": "Tätigkeit",
+   "id": 18
+  },
+  {
+   "g": "gap",
+   "q": "Verantwort + ung → …",
+   "a": "Verantwortung",
+   "id": 19
+  },
+  {
+   "g": "gap",
+   "q": "Gesund + heit → …",
+   "a": "Gesundheit",
+   "id": 20
+  },
+  {
+   "g": "gap",
+   "q": "kinder + los → …",
+   "a": "kinderlos",
+   "id": 21
+  },
+  {
+   "g": "gap",
+   "q": "Gelegen + heit → …",
+   "a": "Gelegenheit",
+   "id": 22
+  },
+  {
+   "g": "gap",
+   "q": "Hoffn + ung → …",
+   "a": "Hoffnung",
+   "id": 23
+  },
+  {
+   "g": "gap",
+   "q": "Heil + ung → …",
+   "a": "Heilung",
+   "id": 24
+  },
+  {
+   "g": "mcq",
+   "q": "Steffi hat viel … (arbeiten)",
+   "opts": [
+    "gearbeitet",
+    "gehabt",
+    "gearbeit"
+   ],
+   "a": 0,
+   "id": 25
+  },
+  {
+   "g": "mcq",
+   "q": "Sie hat mit den Jugendlichen … (sprechen)",
+   "opts": [
+    "gesprochen",
+    "gesprecht",
+    "sprechen"
+   ],
+   "a": 0,
+   "id": 26
+  },
+  {
+   "g": "mcq",
+   "q": "Lina ist Filmstar … (sein)",
+   "opts": [
+    "gewesen",
+    "gehabt",
+    "geworden"
+   ],
+   "a": 0,
+   "id": 27
+  },
+  {
+   "g": "mcq",
+   "q": "Sie ist lange in Hollywood … (bleiben)",
+   "opts": [
+    "geblieben",
+    "gehabt",
+    "gebleibt"
+   ],
+   "a": 0,
+   "id": 28
+  },
+  {
+   "g": "mcq",
+   "q": "Sie ist dann nach Berlin … (fahren)",
+   "opts": [
+    "gefahren",
+    "gefahrt",
+    "gefliegt"
+   ],
+   "a": 0,
+   "id": 29
+  },
+  {
+   "g": "mcq",
+   "q": "Ich habe eine Lehre … (machen)",
+   "opts": [
+    "gemacht",
+    "gehabt",
+    "gemackt"
+   ],
+   "a": 0,
+   "id": 30
+  },
+  {
+   "g": "mcq",
+   "q": "Ich … gerne Ärztin werden, weil es mir Spaß macht.",
+   "opts": [
+    "würde",
+    "wäre",
+    "hätte"
+   ],
+   "a": 0,
+   "id": 31
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn ich soweit …, würde ich gern in der 1. Liga spielen.",
+   "opts": [
+    "wäre",
+    "würde",
+    "hätte"
+   ],
+   "a": 0,
+   "id": 32
+  },
+  {
+   "g": "mcq",
+   "q": "Am liebsten … ich in der Notaufnahme arbeiten.",
+   "opts": [
+    "würde",
+    "wäre",
+    "hätte"
+   ],
+   "a": 0,
+   "id": 33
+  },
+  {
+   "g": "mcq",
+   "q": "Wenn ich das Abi …, möchte ich Kommunikationswissenschaften studieren.",
+   "opts": [
+    "habe",
+    "hätte",
+    "würde"
+   ],
+   "a": 0,
+   "id": 34
+  },
+  {
+   "g": "vf",
+   "q": "Steffi arbeitet bei Gangway e.V., einer Organisation für Straßensozialarbeit in Berlin.",
+   "a": true,
+   "id": 35
+  },
+  {
+   "g": "vf",
+   "q": "Steffi arbeitet nur im Büro.",
+   "a": false,
+   "id": 36
+  },
+  {
+   "g": "vf",
+   "q": "Beim Straßenfest haben die Jungen selbst gekocht.",
+   "a": true,
+   "id": 37
+  },
+  {
+   "g": "vf",
+   "q": "Die Kernarbeitszeit für Steffi ist ab 14 Uhr.",
+   "a": true,
+   "id": 38
+  },
+  {
+   "g": "mcq",
+   "q": "Die … nach qualifizierten Arbeitnehmern ist heute sehr groß.",
+   "opts": [
+    "Nachfrage",
+    "Frage",
+    "Suche"
+   ],
+   "a": 0,
+   "id": 39
+  },
+  {
+   "g": "mcq",
+   "q": "Die … werden nach dem Ergebnis bewertet.",
+   "opts": [
+    "Angestellten",
+    "Arbeitgeber",
+    "Schulen"
+   ],
+   "a": 0,
+   "id": 40
+  },
+  {
+   "g": "mcq",
+   "q": "Die Zahl der Arbeitslosen … ständig …",
+   "opts": [
+    "nimmt / zu",
+    "geht / aus",
+    "macht / mit"
+   ],
+   "a": 0,
+   "id": 41
+  },
+  {
+   "g": "prod",
+   "q": "Schreibe 5 Sätze über deinen Traumberuf : Was würdest du machen, und warum ? (mit würde/wäre)",
+   "checklist": [
+    "5 Sätze oder mehr",
+    "1 × würde + Infinitiv",
+    "1 × weil-Satz",
+    "Verb an 2. Position",
+    "Nomen groß"
+   ],
+   "id": 42
+  }
+ ]
+}
