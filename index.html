@@ -27,7 +27,11 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
   let p = r[0] + (seance-1)*step; if(seance>=6) p = r[1]; return Math.min(p, r[1]);
 };
 </script>
-<style id="bidi-fix">p[dir="ltr"],span[dir="ltr"],.de-ltr{direction:ltr;text-align:left;unicode-bidi:plaintext} .s-d[dir="ltr"]{direction:ltr;text-align:left}</style></head>
+<style id="bidi-fix">p[dir="ltr"],span[dir="ltr"],.de-ltr{direction:ltr;text-align:left;unicode-bidi:plaintext} .s-d[dir="ltr"]{direction:ltr;text-align:left}</style>  <meta property="og:title" content="الثانوية الافتراضية الجزائرية — Deutsche Sprache">
+  <meta property="og:description" content="منصة تعليمية للغة الألمانية — كتاب تفاعلي، فروض، بكالوريا، ذكاء اصطناعي">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+</head>
 <body>
 
 <!-- ═══════════════ ÉCRAN DE DÉMARRAGE ═══════════════ -->
@@ -59,14 +63,14 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       </div>
 
       <!-- Connexion -->
-      <form id="loginForm" class="gform">
+      <form id="loginForm" class="gform" aria-label="نموذج تسجيل الدخول">
         <label class="fld"><span>👤 اسم المستخدم أو البريد</span>
           <input type="text" id="loginUser" required autocomplete="username"
                  placeholder="ahmed  ·  ahmed@lycee.dz"></label>
         <label class="fld"><span>🔒 كلمة السر</span>
           <div class="fld-row">
             <input type="password" id="loginPass" required autocomplete="current-password" placeholder="••••••••">
-            <button type="button" class="eye" id="eye1" aria-label="إظهار">👁️</button>
+            <button type="button" class="eye" id="eye1" aria-label="إظهار كلمة السر أو إخفاؤها">👁️</button>
           </div></label>
         <label class="fld"><span>🏫 القسم</span>
           <select id="loginClasse"></select></label>
@@ -86,7 +90,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
         <label class="fld"><span>🔒 كلمة السر</span>
           <div class="fld-row">
             <input type="password" id="suPass" required minlength="4" placeholder="4 أحرف على الأقل">
-            <button type="button" class="eye" id="eye2" aria-label="إظهار">👁️</button>
+            <button type="button" class="eye" id="eye2" aria-label="إظهار كلمة السر أو إخفاؤها">👁️</button>
           </div></label>
         <div class="gfields2">
           <label class="fld"><span>🎓 المستوى</span>
@@ -201,7 +205,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       <div class="card prof-card" hidden>
         <h2>👨‍🏫 الأستاذ خريف أحمد <span class="pill de-in">Der Lehrer Kharif Ahmed</span></h2>
         <div class="prof">
-          <img src="assets/prof.jpg" alt="الأستاذ خريف أحمد" onerror="this.outerHTML='<div class=prof-ph>👨‍🏫</div>'">
+          <img src="assets/prof.jpg" alt="الأستاذ خريف أحمد" loading="lazy" width="100" height="100" onerror="this.outerHTML='<div class=prof-ph>👨‍🏫</div>'">
           <ul class="prof-list">
             <li>👨‍🏫 أستاذ اللغة الألمانية — التعليم الثانوي</li>
             <li>🤝 مرافقة فردية خطوة بخطوة، شرح بالعربية أولاً</li>
@@ -271,7 +275,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       <div class="card offer">
         <h2>🎁 العرض الافتتاحي</h2>
         <p>حصّة أولى <b>مجانية</b> — ⏰ ساري حتى <b>30 سبتمبر 2026</b> — ⚡ الأماكن محدودة، الأولوية للتسجيل</p>
-        <a class="btn btn-w btn-block" href="https://wa.me/213555577931?text=%D8%AD%D8%B5%D8%A9%20%D8%A3%D9%84%D9%85%D8%A7%D9%86%D9%8A%20%D9%85%D8%AC%D8%A7%D9%86%D9%8A%D8%A9" target="_blank" rel="noopener">💬 واتساب : 0555 57 79 31</a>
+        <a class="btn btn-w btn-block" href="https://wa.me/213555577931?text=%D8%AD%D8%B5%D8%A9%20%D8%A3%D9%84%D9%85%D8%A7%D9%86%D9%8A%20%D9%85%D8%AC%D8%A7%D9%86%D9%8A%D8%A9" target="_blank" rel="noopener noreferrer">💬 واتساب : 0555 57 79 31</a>
       </div>
     
       <!-- 📋 السيرة الذاتية 4 blocs + 🧠 IA + 💡 méthodologie + 👋 CTA + 2 citations (rendu par journee.js) -->
@@ -388,7 +392,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
         <p>🇩🇿 يتحدث العربية · 🇩🇪 يتحدث الألمانية · مدرَّب على محتوى الوحدة 1</p>
       </div>
       <div class="chat card">
-        <div class="chat-log" id="chatLog"></div>
+        <div class="chat-log" id="chatLog" aria-live="polite" role="log"></div>
         <div class="chat-sug" id="chatSug"></div>
         <form class="chat-in" id="chatForm">
           <input type="text" id="chatInput" placeholder="اكتب سؤالك بالألمانية أو بالعربية…" autocomplete="off">
