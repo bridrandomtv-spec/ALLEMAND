@@ -114,9 +114,10 @@ const AUTH = (function(){
   }
 
   /* ── Compte de démonstration ── */
-  function seedDemo(){
+  function demoAllowed(){ try{ return location.hostname === 'localhost' || location.hostname === '127.0.0.1' || new URLSearchParams(location.search).has('demo'); }catch(e){ return false; } }
+function seedDemo(){
     const users = rd(K_USERS, {});
-    if(!users['ahmed']){
+    if(demoAllowed() && !users['ahmed']){
       users['ahmed'] = {
         user:'ahmed', pass:hash('1234'), nom:'أحمد محمد', mail:'ahmed@lycee.dz',
         role:'eleve', niveau:'2AS', filiere:'Lettres et Langues',
@@ -124,7 +125,7 @@ const AUTH = (function(){
         points:850, created:now(), lastLogin:null
       };
     }
-    if(!users['prof']){
+    if(demoAllowed() && !users['prof']){
       users['prof'] = {
         user:'prof', pass:hash('1234'), nom:'الأستاذ خريف أحمد', mail:'kharif@deutsch-dz.edu',
         role:'prof', niveau:'2AS', filiere:'Lettres et Langues',
