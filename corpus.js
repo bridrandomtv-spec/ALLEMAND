@@ -106,7 +106,7 @@ let D = null, IDX = null;
           + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
           + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(urlDoc(d.url)) + '" '
           + 'target="_blank" rel="noopener">📂 ouvrir</a>'
-          + (String(d.format || '').toLowerCase() === 'pdf' ? '<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>' : '<a class="btn btn-o btn-sm" href="' + esc(urlDoc(d.url)) + '">⬇️</a></div>')
+          + ('<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>')
           + '</div>').join('') + '</div>';
       }
       box.innerHTML = h;
@@ -152,7 +152,7 @@ let D = null, IDX = null;
       + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
       + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(urlDoc(d.url)) + '" '
       + 'target="_blank" rel="noopener">📂 ouvrir</a>'
-      + (String(d.format || '').toLowerCase() === 'pdf' ? '<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>' : '<a class="btn btn-o btn-sm" href="' + esc(urlDoc(d.url)) + '">⬇️</a></div>')
+      + ('<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>')
       + '</div>').join('');
     if(grid.classList.contains('cp-vide')){
       grid.outerHTML = '<div class="cp-grid">' + html + '</div>';
