@@ -404,6 +404,69 @@
     "Nomen groß"
    ],
    "id": 33
+  },
+  {
+   "g": "vf",
+   "q": "Paul informiert sich sowohl durch das Fernsehen als auch durch das Radio.",
+   "a": true,
+   "id": 34
+  },
+  {
+   "g": "vf",
+   "q": "Hans liest jeden Tag die Zeitung.",
+   "a": false,
+   "id": 35
+  },
+  {
+   "g": "vf",
+   "q": "Anna schaut meistens im Internet nach, das ist für sie praktischer.",
+   "a": true,
+   "id": 36
+  },
+  {
+   "g": "vf",
+   "q": "Steffi findet, dass das Zeitungslesen wenig Zeit braucht.",
+   "a": false,
+   "id": 37
+  },
+  {
+   "g": "vf",
+   "q": "Die Medien haben heutzutage eine besondere Bedeutung.",
+   "a": true,
+   "id": 38
+  },
+  {
+   "g": "mcq",
+   "q": "Die Unternehmen wollen nicht zur Verbesserung beitragen. = Die …",
+   "opts": [
+    "Firmen",
+    "Zeitungen",
+    "Schulen"
+   ],
+   "a": 0,
+   "id": 39
+  },
+  {
+   "g": "mcq",
+   "q": "Die Reklame ist gefährlich, weil sie den Verbraucher verführt. = Die …",
+   "opts": [
+    "Werbung",
+    "Nachricht",
+    "Sendung"
+   ],
+   "a": 0,
+   "id": 40
+  },
+  {
+   "g": "mcq",
+   "q": "Die kurzen Werbefilme locken die Zuschauer an. = Die …",
+   "opts": [
+    "Spots",
+    "Artikel",
+    "Kommentare"
+   ],
+   "a": 0,
+   "id": 41
   }
  ]
 }
