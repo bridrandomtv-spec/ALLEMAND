@@ -331,5 +331,27 @@ if (!buch3c.includes('buch3as_pages.json')) fails.push('3.9 : buch.js sans sourc
 if (!buch3c.includes('reponseIA')) fails.push('3.9 : lecteur 3AS sans reponseIA (lecteur existant)');
 if (!buch3c.includes('VOIX.parler')) fails.push('3.9 : lecteur 3AS sans VOIX.parler');
 
+
+/* ── Phase 7quater : navigateur pages 2AS (9 Lektionen) + gate interactif L2/L3 ── */
+const R2G = [[1,5,29],[2,31,55],[3,57,76],[4,77,101],[5,103,127],[6,129,149],[7,151,180],[8,181,205],[9,207,223]];
+const bp2 = JSON.parse(fs.readFileSync('assets/bdd/buch_pages.json', 'utf8'));
+const pg2 = bp2.pages || bp2;
+const nums2 = Object.keys(pg2).filter(k => /^\d+$/.test(k)).map(Number);
+if (R2G.length !== 9) fails.push('3.10 : RANGES2 != 9 Lektionen');
+let cov2 = 0;
+for (const [n2, a2, b2b] of R2G) {
+  const in2 = nums2.filter(p => p >= a2 && p <= b2b);
+  if (!in2.length) fails.push('3.10 : Lektion 2AS ' + n2 + ' vide');
+  if (in2.length && Math.min(...in2) !== a2) fails.push('3.10 : Lektion 2AS ' + n2 + ' min != ' + a2);
+  if (in2.length && Math.max(...in2) > b2b) fails.push('3.10 : Lektion 2AS ' + n2 + ' max > ' + b2b);
+  cov2 += in2.length;
+}
+if (cov2 !== nums2.length) fails.push('3.10 : pages 2AS hors des 9 plages (' + (nums2.length - cov2) + ')');
+const buch4 = fs.readFileSync('buch.js', 'utf8');
+if (!buch4.includes('RANGES2')) fails.push('3.10 : buch.js sans navigateur pages 2AS (RANGES2)');
+if (!buch4.includes('canAccessUnit')) fails.push('3.10 : gate interactif L2/L3 absent (canAccessUnit)');
+if (!buch4.includes('buch_pages.json')) fails.push('3.10 : source pages 2AS absente (buch_pages.json)');
+if (!buch4.includes('reponseIA')) fails.push('3.10 : lecteur 2AS sans reponseIA');
+
 if (fails.length) { console.log('❌ check-access : ' + fails.length + ' fuite(s)/défaut(s)'); fails.forEach(f => console.log('   - ' + f)); process.exit(1); }
 console.log('✅ Accès : gratuit U1S1-S2 + quiz u1 · payant verrouillé sans Backend · cache ui_only inopérant · hors-ligne = gratuit seulement · démos rôles OK');
