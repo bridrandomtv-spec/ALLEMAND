@@ -571,7 +571,7 @@ function renderStats(){
   const sim  = load(LS.sim, {});
   const best = (sim.best !== undefined && sim.best !== null) ? sim.best + '/20' : '—';
   const el = $('#statsHome'); if(!el) return;
-  el.innerHTML = [[done + '/8','حصص مكتملة'],[DEVOIR.total,'نقطة في الفرض'],
+  el.innerHTML = [[done + '/' + (SEANCES.length||8),'حصص مكتملة'],[DEVOIR.total,'نقطة في الفرض'],
                   [best,'أفضل نتيجة'],['0555…7931','واتساب']]
     .map(s => '<div class="stat"><div class="stat-n">' + s[0] + '</div><div class="stat-l">' + s[1] + '</div></div>')
     .join('');
@@ -909,7 +909,7 @@ function markSeanceDone(){
   var wasTrial = window.ACCESS ? ACCESS.trialFinished() : false;
   if(st.done.indexOf(n) === -1){
     st.done.push(n); saveSeances(st);
-    toast('🎉 أحسنت! تم إنهاء الحصة ' + n + '/8', 'ok');
+    toast('🎉 أحسنت! تم إنهاء الحصة ' + n + '/' + (SEANCES.length||8), 'ok');
   }
   var nowTrial = window.ACCESS ? ACCESS.trialFinished() : false;
   if(!wasTrial && nowTrial) showTrialDone();
