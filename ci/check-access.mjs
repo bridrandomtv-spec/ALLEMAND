@@ -353,5 +353,27 @@ if (!buch4.includes('canAccessUnit')) fails.push('3.10 : gate interactif L2/L3 a
 if (!buch4.includes('buch_pages.json')) fails.push('3.10 : source pages 2AS absente (buch_pages.json)');
 if (!buch4.includes('reponseIA')) fails.push('3.10 : lecteur 2AS sans reponseIA');
 
+
+/* ── Phase 7quinquies : pilote interactif 3AS L4 — corrigés obligatoires ── */
+const p34 = 'assets/bdd/buch_3as_l4.json';
+if (!fs.existsSync(p34)) fails.push('3.11 : buch_3as_l4.json absent (pilote interactif 3AS)');
+else {
+  const j34 = JSON.parse(fs.readFileSync(p34, 'utf8'));
+  const ex34 = j34.exos || [];
+  if (ex34.length < 40) fails.push('3.11 : pilote L4 < 40 Aufgaben (' + ex34.length + ')');
+  for (const x of ex34) {
+    const okA = (x.g === 'prod') ? Array.isArray(x.checklist) && x.checklist.length >= 3
+              : (x.a !== undefined && x.a !== null && x.a !== '');
+    if (!x.g || !x.q || !okA) fails.push('3.11 : exo ' + (x.id || '?') + ' sans corrigé/checklist');
+    if (x.g === 'mcq' && (!Array.isArray(x.opts) || x.opts.length < 2 || x.a >= x.opts.length)) fails.push('3.11 : mcq ' + x.id + ' opts/a incohérents');
+    if (x.g === 'vf' && typeof x.a !== 'boolean') fails.push('3.11 : vf ' + x.id + ' non booléen');
+  }
+  const ids34 = ex34.map(x => x.id);
+  if (new Set(ids34).size !== ids34.length) fails.push('3.11 : ids exos L4 dupliqués');
+}
+const buch5 = fs.readFileSync('buch.js', 'utf8');
+if (!buch5.includes('buch_3as_l4.json')) fails.push('3.11 : buch.js ne charge pas buch_3as_l4.json');
+if (!buch5.includes('render3inter')) fails.push('3.11 : rendu interactif 3AS absent');
+
 if (fails.length) { console.log('❌ check-access : ' + fails.length + ' fuite(s)/défaut(s)'); fails.forEach(f => console.log('   - ' + f)); process.exit(1); }
 console.log('✅ Accès : gratuit U1S1-S2 + quiz u1 · payant verrouillé sans Backend · cache ui_only inopérant · hors-ligne = gratuit seulement · démos rôles OK');
