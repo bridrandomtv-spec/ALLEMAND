@@ -104,9 +104,9 @@ let D = null, IDX = null;
           + '<div class="cp-meta">' + esc(d.matiere) + ' · ' + esc(String(d.annee))
           + ' · ' + esc(d.format) + '</div>'
           + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
-          + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(d.url) + '" '
+          + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(urlDoc(d.url)) + '" '
           + 'target="_blank" rel="noopener">📂 ouvrir</a>'
-          + '<a class="btn btn-o btn-sm" href="' + esc(d.url) + '" download>⬇️</a></div>'
+          + '<a class="btn btn-o btn-sm" href="' + esc(urlDoc(d.url)) + '" download>⬇️</a></div>'
           + '</div>').join('') + '</div>';
       }
       box.innerHTML = h;
@@ -150,9 +150,9 @@ let D = null, IDX = null;
       + '<div class="cp-meta">' + esc(d.matiere) + ' · ' + esc(String(d.annee))
       + ' · ' + esc(d.format) + '</div>'
       + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
-      + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(d.url) + '" '
+      + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(urlDoc(d.url)) + '" '
       + 'target="_blank" rel="noopener">📂 ouvrir</a>'
-      + '<a class="btn btn-o btn-sm" href="' + esc(d.url) + '" download>⬇️</a></div>'
+      + '<a class="btn btn-o btn-sm" href="' + esc(urlDoc(d.url)) + '" download>⬇️</a></div>'
       + '</div>').join('');
     if(grid.classList.contains('cp-vide')){
       grid.outerHTML = '<div class="cp-grid">' + html + '</div>';
