@@ -35,14 +35,31 @@
        tout autre niveau → parcours 2AS existant, inchangé */
     const niv0 = (window.getNiveauActif && window.getNiveauActif()) || '';
     if(niv0 === '3AS'){ return render3as(box); }
+    if(B2V !== 'inter'){ return render2browser(box); }
     const L = (await livre()).filter(x => x && x._meta);
     if(!L.length){ box.innerHTML = '<div class="dn-sub">📗 Buchinhalt nicht verfügbar.</div>'; return; }
     if(CUR >= L.length) CUR = 0;
     const b = L[CUR] || L[0];
     if(b && !b._meta) b._meta = { titre: b.titre || ('Lektion ' + (b.n || '?')), niveau: '2AS' };
-    const sel = '<div class="dn-tabs">' + L.map((x, i) =>
+    const sel = '<button class="btn btn-g btn-sm" id="bk2pages" style="margin-bottom:8px">' +
+      '📖 صفحات الكتاب 2AS (L1→L9)</button>' +
+      '<div class="dn-tabs">' + L.map((x, i) =>
       '<button class="btn btn-' + (i === CUR ? 'p' : 'o') + ' btn-sm" data-lk="' + i + '">📗 Lektion '
-      + x.n + '</button>').join(' ') + '</div>';
+      + x.n + (window.ACCESS && !ACCESS.canAccessUnit(i + 1) ? ' 🔒' : '') + '</button>').join(' ') + '</div>';
+    /* Porte existante (access.js) : L1 gratuite (essai), L2/L3 = abonnés */
+    if(window.ACCESS && !ACCESS.canAccessUnit(CUR + 1)){
+      box.innerHTML = sel + '<div class="card"><b>🔒 Lektion ' + (CUR + 1) + ' — interactif</b>'
+        + '<p class="dn-sub">هذا الدرس التفاعلي ضمن محتوى المشتركين · المجاني : Lektion 1 فقط.</p>'
+        + '<button class="btn btn-p btn-sm" id="bkLock">فتح البرنامج الكامل</button></div>';
+      const bl2 = $('#bkLock');
+      if(bl2) bl2.addEventListener('click', function(){
+        try{ ACCESS.setReturn({ view:'buch' }); ACCESS.paywall({ type:'view', view:'buch' }); }catch(e){}
+      });
+      const bp0 = $('#bk2pages');
+      if(bp0) bp0.addEventListener('click', function(){ B2V = 'list'; B2_CUR = 0; B2_PAGE = 0; render(); });
+      box.querySelectorAll('[data-lk]').forEach(bl => bl.addEventListener('click', () => { CUR = +bl.dataset.lk; render(); }));
+      return;
+    }
     let h = sel + '<div class="dn-hero"><span class="dn-crest">📗</span><div><h2>'
       + esc(b._meta.titre) + '</h2><p class="dn-sub">offizielles Lehrbuch ' + esc(b._meta.niveau)
       + ' · ' + b.exos.length + ' Aufgaben auf Deutsch · Texte & Dialoge aus dem Buch</p></div></div>'
@@ -69,6 +86,8 @@
     box.querySelectorAll('[data-lk]').forEach(bl => bl.addEventListener('click', () => {
       CUR = +bl.dataset.lk; render();
     }));
+    const bp = $('#bk2pages');
+    if(bp) bp.addEventListener('click', () => { B2V = 'list'; B2_CUR = 0; B2_PAGE = 0; render(); });
     box.querySelectorAll('[data-t]').forEach(bt => bt.addEventListener('click', () => {
       const t = b.textes[+bt.dataset.t];
       if(window.VOIX && window.VOIX.parler) window.VOIX.parler(t.de, 'de-DE');
@@ -248,4 +267,98 @@
   });
   window.renderBuch = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'buch') render(); });
+
+  /* ── Navigateur PAGES 2AS (9 Lektionen) — source de vérité : buch_pages.json ;
+     lecteur = window.reponseIA (intentLecture → lesson_content → RLS) + VOIX ;
+     badges 🔒/🆓 = état locked de l'index ; aucune nouvelle permission. ── */
+  const RANGES2 = [[1,5,29],[2,31,55],[3,57,76],[4,77,101],[5,103,127],[6,129,149],[7,151,180],[8,181,205],[9,207,223]];
+  let B2 = null, B2V = 'inter', B2_CUR = 0, B2_PAGE = 0;
+  async function load2idx(){
+    if(B2) return B2;
+    try{
+      const r = await fetch('assets/bdd/buch_pages.json', { cache:'no-store' });
+      const j = r.ok ? await r.json() : null;
+      B2 = (j && (j.pages || j)) || {};
+    }catch(e){ B2 = {}; }
+    return B2;
+  }
+  function valide2(pgs){
+    const ns = Object.keys(pgs).filter(k => /^\d+$/.test(k)).map(Number);
+    if(!ns.length || RANGES2.length !== 9) return false;
+    let couvert = 0;
+    for(const rg of RANGES2){
+      const c = ns.filter(p => p >= rg[1] && p <= rg[2]).length;
+      if(!c) return false;
+      couvert += c;
+    }
+    return couvert === ns.length;
+  }
+  function b2Titre(p){
+    const e = (B2 && B2[String(p)]) || {};
+    return String(e.titre || ('Seite ' + p)).replace(/\((?:page|p\.)\s*\d+\)/gi, '').trim();
+  }
+  function b2Badge(p){
+    const e = (B2 && B2[String(p)]) || {};
+    return ((e.lignes && e.lignes.length) || e.texte) ? '🆓' : '🔒';
+  }
+  function wire2(box){
+    const bi = box.querySelector('[data-b2inter]'); if(bi) bi.addEventListener('click', () => { B2V = 'inter'; render(); });
+    const bl = box.querySelector('[data-b2list]');  if(bl) bl.addEventListener('click', () => { B2_CUR = 0; B2_PAGE = 0; render(); });
+    const bb = box.querySelector('[data-b2back]');  if(bb) bb.addEventListener('click', () => { B2_PAGE = 0; render(); });
+    box.querySelectorAll('[data-b2lk]').forEach(bt => bt.addEventListener('click', () => { B2_CUR = +bt.getAttribute('data-b2lk'); B2_PAGE = 0; render(); }));
+    box.querySelectorAll('[data-b2pg]').forEach(bt => bt.addEventListener('click', () => { B2_PAGE = +bt.getAttribute('data-b2pg'); render(); }));
+  }
+  async function render2browser(box){
+    const pgs = await load2idx();
+    if(!valide2(pgs)){
+      box.innerHTML = '<div class="card"><b>📖 صفحات الكتاب 2AS</b><p class="dn-sub">Structure invalide : '
+        + '9 Lektionen attendues (5-29 · 31-55 · 57-76 · 77-101 · 103-127 · 129-149 · 151-180 · 181-205 · 207-223).</p></div>';
+      return;
+    }
+    const backInter = '<button class="btn btn-o btn-sm" data-b2inter="1">← Lektionen interactives</button>';
+    if(B2_PAGE){
+      box.innerHTML = backInter + ' <button class="btn btn-o btn-sm" data-b2back="1">← Lektion ' + B2_CUR + '</button>'
+        + '<div class="card" style="margin-top:8px"><b>📄 Page ' + B2_PAGE + ' — ' + esc(b2Titre(B2_PAGE)) + '</b>'
+        + '<p class="dn-sub" id="b2st">⏳ ouverture via le lecteur existant…</p>'
+        + '<div id="b2txt" dir="ltr" lang="de" style="white-space:pre-wrap;line-height:1.75;text-align:left"></div>'
+        + '<button class="btn btn-g btn-sm" id="b2voix" style="display:none;margin-top:8px">🔊 écouter</button></div>';
+      wire2(box);
+      let txt = '';
+      try{
+        const r = await window.reponseIA('lis la page ' + B2_PAGE + ' (2AS)');
+        txt = (r && typeof r === 'object') ? strip3(r.html || r.texte || r.reponse || '') : String(r || '');
+      }catch(err){ txt = ''; }
+      const st = $('#b2st'), tv = $('#b2txt'), bv = $('#b2voix');
+      if(tv) tv.textContent = txt || '(page verrouillée)';
+      if(st) st.textContent = txt ? '' : '🔒 contenu abonnés — paywall ouvert automatiquement si non abonné';
+      if(txt && bv && window.VOIX && VOIX.parler){ bv.style.display = ''; bv.addEventListener('click', () => VOIX.parler(txt, 'de-DE')); }
+      return;
+    }
+    if(B2_CUR){
+      const rg = RANGES2[B2_CUR - 1];
+      const ns = Object.keys(pgs).map(Number).filter(p => p >= rg[1] && p <= rg[2]).sort((x, y) => x - y);
+      box.innerHTML = backInter + ' <button class="btn btn-o btn-sm" data-b2list="1">← Lektionen</button>'
+        + '<h3 style="margin:10px 0 6px">📗 Lektion ' + B2_CUR + ' · pages ' + rg[1] + '-' + rg[2]
+        + ' · ' + ns.length + ' indexées</h3>'
+        + '<div style="display:flex;flex-direction:column;gap:6px">'
+        + ns.map(p => '<button class="btn btn-o btn-sm" data-b2pg="' + p
+            + '" style="text-align:right;white-space:normal;height:auto;line-height:1.5">'
+            + b2Badge(p) + ' 📄 Page ' + p + ' · ' + esc(b2Titre(p).slice(0, 70)) + '</button>').join('')
+        + '</div>';
+      wire2(box);
+      return;
+    }
+    box.innerHTML = backInter
+      + '<div class="dn-hero" style="margin-top:8px"><span class="dn-crest">📖</span><div>'
+      + '<h2>Manuel 2AS — 9 Lektionen (pages)</h2>'
+      + '<p class="dn-sub">livre officiel · Lektion → pages → lecteur · 🔒 = abonnés · 🆓 = essai gratuit</p></div></div>'
+      + '<div style="display:flex;flex-direction:column;gap:6px">'
+      + RANGES2.map((rg, i) => {
+          const c = Object.keys(pgs).filter(k => { const p = +k; return p >= rg[1] && p <= rg[2]; }).length;
+          return '<button class="btn btn-o btn-sm" data-b2lk="' + (i + 1) + '" style="text-align:right">📗 Lektion '
+            + (i + 1) + ' · ' + c + ' pages (' + rg[1] + '-' + rg[2] + ')</button>';
+        }).join('')
+      + '</div>';
+    wire2(box);
+  }
 })();
