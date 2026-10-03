@@ -258,7 +258,21 @@
   async function render3as(box){
     if(B3V === 'inter'){
       const LI = await livre3as();
-      if(LI.length) return render3inter(box, LI);
+      if(LI.length){
+        /* 3AS = année BAC : interactif réservé aux abonnés (porte existante) */
+        if(window.ACCESS && !ACCESS.canAccessBac()){
+          box.innerHTML = '<div class="card"><b>🔒 Lektionen interactives 3AS</b>'
+            + '<p class="dn-sub">التصحيح التلقائي /20 للسنة الثالثة ضمن محتوى المشتركين · '
+            + 'المسار المجاني : 2AS Lektion 1 + 5 صفحات.</p>'
+            + '<button class="btn btn-p btn-sm" id="bkLock3">فتح البرنامج الكامل</button></div>';
+          const bl3 = $('#bkLock3');
+          if(bl3) bl3.addEventListener('click', function(){
+            try{ ACCESS.setReturn({ view:'buch' }); ACCESS.paywall({ type:'view', view:'buch' }); }catch(e){}
+          });
+          return;
+        }
+        return render3inter(box, LI);
+      }
       B3V = 'list';
     }
     const B = await load3();
