@@ -166,9 +166,6 @@ let D = null, IDX = null;
   /* ── Les PDF s'ouvrent DANS un lecteur (pdf.js) au lieu du téléchargement auto ── */
 function ouvreUrl(d){
   var u = urlDoc(String((d && d.url) || ''));
-  if(String((d && d.format) || '').toLowerCase() === 'pdf' && u.indexOf('https://raw.githubusercontent') === 0){
-    return 'https://mozilla.github.io/pdf.js/web/viewer.html?file=' + encodeURIComponent(u);
-  }
   return u;
 }
 /* ── Les documents au format json ne s'ouvrent PAS en .json brut :
