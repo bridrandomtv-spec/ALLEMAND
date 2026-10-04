@@ -9,7 +9,27 @@
       return la>ar && la>3;
     }).join(' ');
   }
-  function ecouterDE(t, lang){
+    /* lecture bilingue du corrigé : chaque segment lu avec la voix de sa langue
+     (arabe → ar-DZ, allemand → de-DE) au lieu d'une seule voix */
+  function ecouterMixte(t){
+    try{
+      if(!('speechSynthesis' in window)) return;
+      speechSynthesis.cancel();
+      const txt = String(t || '').replace(/«/g, '\n«').replace(/»/g, '»\n');
+      txt.split(/[\n·;]+/).forEach(s => {
+        const ch = s.trim();
+        if(!ch) return;
+        const ar = (ch.match(/[\u0600-\u06FF]/g) || []).length;
+        const la = (ch.match(/[A-Za-zÄÖÜäöüß]/g) || []).length;
+        if(!ar && !la) return;
+        const u = new SpeechSynthesisUtterance(ch);
+        u.lang = ar >= la ? 'ar-DZ' : 'de-DE';
+        u.rate = 0.95;
+        speechSynthesis.speak(u);
+      });
+    }catch(e){}
+  }
+function ecouterDE(t, lang){
     try{
       const txt = (lang && lang!=='de-DE') ? String(t||'') : lignesDE(t);
       if(!txt) return;
