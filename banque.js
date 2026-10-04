@@ -71,7 +71,7 @@
   }
   function listeExos(){
     const list = (D.B_exercices || []).filter(x =>
-      (!fil.comp || x.comp === fil.comp) && (!fil.niveau || x.niveau === x.niveau && (!fil.niveau || x.niveau === fil.niveau)));
+      (!fil.comp || x.comp === fil.comp) && (!fil.niveau || x.niveau === fil.niveau));
     return list.map((x, i) =>
         '<div class="bq-c" data-i="' + i + '">'
       + '<div class="bq-top"><span class="bq-comp">' + esc(x.comp) + '</span>'
