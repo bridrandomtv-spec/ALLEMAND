@@ -150,6 +150,18 @@ function genere(u, variante, d){
     z.innerHTML = h;
     z.querySelectorAll('.dn-v').forEach(b => b.addEventListener('click', () => {
       const u = +b.dataset.u, v = +b.dataset.v;
+      const reels = (d.dv || []).filter(x => +x.unite === u && x.type === 'devoir' && x.sujet);
+      if(reels.length){
+        const x = reels[(v - 1) % reels.length];
+        const s = $('#dnSujet');
+        s.innerHTML = '<div class="dn-suj"><div class="dn-head"><b>📄 ' + esc(x.titre_de || x.titre) + '</b>'
+          + '<span>' + esc(x.annee_scolaire || '') + ' · /' + (x.bareme || 20) + ' · ' + (x.duree_minutes || 45) + ' min · فرض حقيقي</span></div>'
+          + '<pre class="dn-pre" dir="auto">' + esc(clean(x.sujet, x)) + '</pre>'
+          + '<button class="btn btn-g btn-sm" id="dnSol">✅ عرض الحل النموذجي</button>'
+          + '<pre class="dn-pre" dir="auto" id="dnSolPre" style="display:none">' + esc(x.corrige || '—') + '</pre></div>';
+        $('#dnSol').addEventListener('click', () => { const p = $('#dnSolPre'); p.style.display = (p.style.display === 'none') ? '' : 'none'; });
+        return;
+      }
       const g = genere(u, v, d);
       const s = $('#dnSujet');
       s.innerHTML = '<div class="dn-suj"><div class="dn-head"><b>Kontrollarbeit — '
