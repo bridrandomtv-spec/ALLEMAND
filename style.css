@@ -3067,3 +3067,10 @@ body.trial{padding-top:0 !important}
   white-space:normal;flex:0 0 auto;font-size:14px}
 .tabs .tab.sub.on,.tabs .tab.solo.on{border-color:var(--or,#e8b64c);
   background:rgba(232,182,76,.12);color:var(--or,#e8b64c)}
+
+/* ── fix BAC (lisibilité) : la règle .q du mini-drapeau (13×9px) écrasait les
+   blocs de questions de l'épreuve BAC → questions illisibles superposées.
+   On redonne aux questions leur mise en forme, sans toucher au drapeau. ── */
+.part .q{width:auto;height:auto;display:block;border-radius:0;background:none;opacity:1;
+  margin-bottom:15px;padding-bottom:14px;border-bottom:1px dashed var(--b)}
+.part .q .q-n{display:inline-flex;width:24px;height:24px}
