@@ -177,7 +177,7 @@
 
   function clean(t, x){
     let s = String(t || '');
-    const bad = [x && x.lycee, x && x.ville, x && x.wilaya].filter(Boolean);
+    const bad = [x && x.lycee, x && x.ville, x && x.wilaya].filter(v => v && String(v).trim() !== '—' && String(v).trim() !== '-');
     s = s.split('\n').filter(l => {
       const L = l.toLowerCase();
       if(/www\.|http|facebook|youtube|\.com|\.fr|\.dz/.test(L)) return false;
