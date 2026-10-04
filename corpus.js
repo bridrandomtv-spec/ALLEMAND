@@ -207,7 +207,9 @@ function vuePour(d){
     const ov = lecteur();
     ov.querySelector('#cpTitre').textContent = titre || '';
     ov.querySelector('#cpExt').href = url;
-    ov.querySelector('#cpFrame').src = url;
+    ov.querySelector('#cpFrame').src = /\.pdf(\?|$)/i.test(url)
+      ? 'https://mozilla.github.io/pdf.js/web/viewer.html?file=' + encodeURIComponent(url)
+      : url;
     ov.style.display = 'flex';
   }
   document.addEventListener('click', e => {
