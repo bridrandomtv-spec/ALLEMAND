@@ -185,6 +185,38 @@ function vuePour(d){
   if(u.indexOf('sujet14') !== -1) return 'officiels';
   return 'banque';
 }
+  /* ── Lecteur interne avec bouton « ← العودة » (PWA : pas de flèche navigateur) ── */
+  function lecteur(){
+    let ov = document.getElementById('cpReader');
+    if(!ov){
+      ov = document.createElement('div');
+      ov.id = 'cpReader';
+      ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#0b1020;display:none;flex-direction:column';
+      ov.innerHTML = '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#082015;color:#eafff2">'
+        + '<button id="cpBack" class="btn btn-p btn-sm">← العودة</button>'
+        + '<b id="cpTitre" style="flex:1;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b>'
+        + '<a id="cpExt" class="btn btn-o btn-sm" target="_blank" rel="noopener">↗</a></div>'
+        + '<iframe id="cpFrame" style="flex:1;border:0;background:#fff"></iframe>';
+      document.body.appendChild(ov);
+      ov.querySelector('#cpBack').addEventListener('click', () => {
+        ov.style.display = 'none';
+        ov.querySelector('#cpFrame').src = 'about:blank';
+      });
+    }
+    return ov;
+  }
+  function ouvrirLecteur(url, titre){
+    const ov = lecteur();
+    ov.querySelector('#cpTitre').textContent = titre || '';
+    ov.querySelector('#cpExt').href = url;
+    ov.querySelector('#cpFrame').src =
+      'https://mozilla.github.io/pdf.js/web/viewer.html?file=' + encodeURIComponent(url);
+    ov.style.display = 'flex';
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-open]');
+    if(b){ e.preventDefault(); ouvrirLecteur(b.getAttribute('data-open'), b.getAttribute('data-titre')); }
+  });
 window.renderCorpus = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'corpus') render(); });
 })();
