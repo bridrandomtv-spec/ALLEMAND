@@ -88,7 +88,7 @@ function genere(u, variante, d){
     const niv = u <= 9 ? '2AS' : '3AS';
     const pool = ((d.ban.B_exercices || []).filter(x => comps.indexOf(x.comp) !== -1 && x.niveau === niv));
     const pick = [];
-    while(pick.length < 3 && pool.length){ const cc = pool[Math.floor(r()*pool.length)]; if(pick.indexOf(cc)===-1) pick.push(cc); }
+    const __sh = pool.slice(); while(pick.length < 3 && __sh.length){ pick.push(__sh.splice(Math.floor(r()*__sh.length),1)[0]); }
     pick.forEach(x => Q.push({ type:'mcq', partie:'II', pts:2, q:x.q, opts:x.opts, a:x.a, why:x.why }));
     Q.push({ type:'prod', partie:'III', pts:4, q:'Schreibe mindestens 5 Sätze zum Thema « ' + (un.titre_de || B.t) + ' ». Benutze: 1 W-Frage, 1 × weil.', checklist:['5 Sätze oder mehr','Verb an 2. Position','1 × weil','1 W-Frage','Nomen großgeschrieben'] });
     return { un: un, Q: Q, texte: B.text };
