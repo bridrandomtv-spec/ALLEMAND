@@ -109,11 +109,11 @@
     const d = await data();
     box.innerHTML =
         '<div class="dn-hero"><span class="dn-crest">📝</span><div>'
-      + '<h2>Devoirs notés — auf Deutsch</h2><p class="dn-sub">48 devoirs générés corrigés '
+      + '<h2>📝 فروض مُنقّطة — Devoirs notés auf Deutsch</h2><p class="dn-sub">48 devoirs générés corrigés '
       + 'automatiquement + ' + d.dv.length + ' echte Klausuren aus den Wilayas · offizieller Schlüssel '
       + 'I/8 · II/8 · III/4</p></div></div>'
       + '<div class="dn-tabs"><button class="btn btn-p btn-sm" id="dnA">📝 generiert</button> '
-      + '<button class="btn btn-o btn-sm" id="dnB">📄 echt (' + d.dv.length + ')</button></div>'
+      + '<button class="btn btn-o btn-sm" id="dnB">📄 حقيقية من الثانويات (' + d.dv.length + ')</button></div>'+ '<div class="card" style="margin-top:10px"><b>🆘 دليل المبتدئ — كيف أعمل هنا ؟</b><p style="margin:6px 0 0;line-height:1.9">هذه صفحة <b>فروض مُنقّطة بالألمانية</b> مثل فروض القسم تمامًا :<br>· <b>I. فهم النص (8ن)</b> : اقرأ السؤال وأجب — richtig = صحيح · falsch = خطأ.<br>· <b>II. اللغة (8ن)</b> : اختر الإجابة الصحيحة من القائمة.<br>· <b>III. التعبير الكتابي (4ن)</b> : اكتب 5 جمل بالألمانية ثم قيّم نفسك بصدق.<br>لا تقلق إن أخطأت : كل خطأ يتحوّل تلقائيًا إلى بطاقة 🧠 للمراجعة، والكلمات الصعبة تجدها في 📑 الملخصات. ولا يوجد وقت محدد — الأهم أن تفهم !</p></div>'
       + '<div id="dnZone"></div>';
     $('#dnA').addEventListener('click', () => zoneA(d));
     $('#dnB').addEventListener('click', () => zoneB(d));
@@ -122,9 +122,9 @@
 
   function zoneA(d){
     const z = $('#dnZone');
-    let h = '<div class="card"><b>Wähle Unité + Variante:</b><div class="dn-pick">';
+    let h = '<div class="card"><b>اختر الوحدة ثم رقم الفرض — Wähle Unité + Variante :</b><div class="dn-pick">';
     for(let u = 1; u <= 16; u++){
-      h += '<span class="dn-g">U' + u + ' ' + [1,2,3].map(v =>
+      h += '<span class="dn-g">U' + u + ' ' + esc((((d.mal.malakhiss||[]).filter(m=>m.unite===u)[0])||{}).titre_ar || '') + ' ' + [1,2,3].map(v =>
         '<button class="dn-v" data-u="' + u + '" data-v="' + v + '">' + v + '</button>').join('')
         + '</span>';
     }
@@ -136,11 +136,11 @@
       const s = $('#dnSujet');
       s.innerHTML = '<div class="dn-suj"><div class="dn-head"><b>Kontrollarbeit — '
         + esc(g.un.titre_de || ('Unité ' + u)) + '</b><span>Variant ' + v + ' · /20 · 45 Min</span></div>'
-        + '<div class="dn-p"><b>I. Leseverstehen (8 Pkt.)</b>'
+        + '<div class="dn-p"><b>I. Leseverstehen — فهم النص (8 Pkt.)</b>'
         + g.Q.filter(x => x.partie === 'I').map((x, i) => qHtml(x, g.Q.indexOf(x))).join('')
-        + '</div><div class="dn-p"><b>II. Sprachbausteine (8 Pkt.)</b>'
+        + '</div><div class="dn-p"><b>II. Sprachbausteine — اللغة (8 Pkt.)</b>'
         + g.Q.filter(x => x.partie === 'II').map(x => qHtml(x, g.Q.indexOf(x))).join('')
-        + '</div><div class="dn-p"><b>III. Textproduktion (4 Pkt.)</b>'
+        + '</div><div class="dn-p"><b>III. Textproduktion — التعبير الكتابي (4 Pkt.)</b>'
         + g.Q.filter(x => x.partie === 'III').map(x => qHtml(x, g.Q.indexOf(x))).join('')
         + '</div><button class="btn btn-p btn-block" id="dnCorr">✅ corriger ma copie</button>'
         + '<div id="dnNote"></div></div>';
@@ -148,7 +148,7 @@
         const res = corrige(g.Q, s, { unite: u });
         $('#dnNote').innerHTML = '<div class="dn-res">Note : <b>' + res.note.toFixed(1)
           + ' / 20</b>  ·  mention ' + mention(res.note)
-          + '<br><span>chaque erreur est devenue une carte 🧠 mémoire</span></div>';
+          + '<br><span>كل خطأ أصبح بطاقة 🧠 للمراجعة تلقائيًا — واصل بلا قلق، فالوقت ليس مهمًا !</span></div>';
       });
     }));
   }
@@ -158,17 +158,17 @@
   }
   function qHtml(x, i){
     if(x.type === 'vf') return '<div class="dn-q"><span class="dn-qt">' + esc(x.q)
-      + '</span><label><input type="radio" name="vf' + i + '" value="true"> richtig</label>'
+      + '</span><div class="dn-help" style="font-size:12px;color:var(--m);margin:4px 0">❓ صح أم خطأ ؟ richtig = صحيح · falsch = خطأ</div><label><input type="radio" name="vf' + i + '" value="true"> richtig</label>'
       + '<label><input type="radio" name="vf' + i + '" value="false"> falsch</label></div>';
     if(x.type === 'mcq') return '<div class="dn-q"><span class="dn-qt">' + esc(x.q) + '</span>'
-      + (x.opts || []).map((o, k) => '<label><input type="radio" name="mcq' + i + '" value="' + k
+      + '<div class="dn-help" style="font-size:12px;color:var(--m);margin:4px 0">❓ اختر الإجابة الصحيحة</div>' + (x.opts || []).map((o, k) => '<label><input type="radio" name="mcq' + i + '" value="' + k
           + '"> ' + esc(o) + '</label>').join('') + '</div>';
     if(x.type === 'phrase') return '<div class="dn-q"><span class="dn-qt">' + esc(x.q)
-      + '</span><textarea rows="2" placeholder="deine Antwort (ganzer Satz)"></textarea>'
+      + '</span><div class="dn-help" style="font-size:12px;color:var(--m);margin:4px 0">✍️ أجب بجملة كاملة بالألمانية ثم قيّم نفسك بصدق</div><textarea rows="2" placeholder="deine Antwort (ganzer Satz)"></textarea>'
       + '<div class="dn-self">auto-note : <select id="ph' + i + '"><option value="0">0</option>'
       + '<option value="1">1</option><option value="2">2</option></select> / ' + x.pts + '</div></div>';
     return '<div class="dn-q"><span class="dn-qt">' + esc(x.q) + '</span>'
-      + '<textarea rows="5" placeholder="Schreibe hier deine 5 Sätze…"></textarea>'
+      + '<div class="dn-help" style="font-size:12px;color:var(--m);margin:4px 0">✍️ اكتب 5 جمل بالألمانية (بداية جميلة + weil + سؤال) ثم قيّم نفسك بصدق</div><textarea rows="5" placeholder="Schreibe hier deine 5 Sätze…"></textarea>'
       + '<div class="dn-check">' + x.checklist.map(c => '<span>☐ ' + c + '</span>').join('')
       + '</div><div class="dn-self">auto-note : <select id="prod' + i + '"><option value="0">0</option>'
       + '<option value="1">1</option><option value="2">2</option><option value="3">3</option>'
@@ -192,11 +192,11 @@
     const z = $('#dnZone');
     const nivs = [...new Set(d.dv.map(x => x.niveau))];
     z.innerHTML = '<div class="card"><div class="dn-filt">'
-      + '<select id="fNiv"><option value="">alle Niveaus</option>'
+      + '<select id="fNiv"><option value="">كل المستويات — alle Niveaus</option>'
       + nivs.map(n => '<option>' + esc(n) + '</option>').join('') + '</select>'
       + '<select id="fTri"><option value="1">Trimester 1</option><option value="2">T2</option>'
       + '<option value="3">T3</option><option value="">alle</option></select>'
-      + '<input id="fQ" placeholder="suchen (Titel, Unité…)">'
+      + '<input id="fQ" placeholder="ابحث : العنوان، الوحدة…">'
       + '</div><div id="fList"></div></div>';
     const maj = () => {
       const q = ($('#fQ').value || '').toLowerCase();
@@ -209,13 +209,13 @@
         + '</p>' + rows.map((x, i) => '<div class="dn-r"><b>' + esc(x.titre_de || x.titre)
         + '</b><span>' + esc(x.niveau) + ' · ' + esc(x.wilaya) + ' · ' + (x.annee_scolaire || '')
         + ' · /' + x.bareme + ' · ' + x.duree_minutes + ' min</span>'
-        + '<button class="btn btn-o btn-sm" data-i="' + i + '">Aufgabe + Lösung</button>'
+        + '<button class="btn btn-o btn-sm" data-i="' + i + '">📄 الموضوع + ✅ الحل</button>'
         + '<div class="dn-zone" id="dz' + i + '"></div></div>').join('');
       $('#fList').querySelectorAll('[data-i]').forEach(b => b.addEventListener('click', () => {
         const x = rows[+b.dataset.i];
-        $('#dz' + b.dataset.i).innerHTML = '<div class="dn-suj"><b>Aufgabe</b>'
+        $('#dz' + b.dataset.i).innerHTML = '<div class="dn-suj"><b>📄 الموضوع — Aufgabe</b>'
           + '<pre class="dn-pre" dir="auto">' + esc(clean(x.sujet, x)) + '</pre>'
-          + '<b>Lösung</b><pre class="dn-pre" dir="auto">' + esc(x.corrige || '(Lösung enthalten: '
+          + '<b>✅ الحل — Lösung</b><pre class="dn-pre" dir="auto">' + esc(x.corrige || '(Lösung enthalten: '
           + (x.corrige_inclus ? 'oui' : 'non') + ')') + '</pre></div>';
       }));
     };
