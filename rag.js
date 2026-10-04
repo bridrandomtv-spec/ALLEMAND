@@ -366,7 +366,8 @@
       const lvl2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(q);
       const niv0 = (window.getNiveauActif && window.getNiveauActif()) || '';
       const is3 = lvl3 || (!lvl2 && niv0 === '3AS');
-      const P = is3 ? await loadPages3as() : await loadPages();
+      const P0 = is3 ? await loadPages3as() : await loadPages();
+      const P = (P0 && P0.pages) ? P0.pages : (P0 || {});
       const e = P[pg[1]];
       if(e && (e.lignes || e.texte)){
         let ls = Array.isArray(e.lignes) ? e.lignes : [e.texte || ''];
