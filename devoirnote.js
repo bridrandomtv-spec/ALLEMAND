@@ -152,8 +152,8 @@ function genere(u, variante, d){
       const u = +b.dataset.u, v = +b.dataset.v;
       const g = genere(u, v, d);
       const s = $('#dnSujet');
-      s.innerHTML = '<div class="dn-suj"><div class="dn-head"><b>Kontrollarbeit — '
-        + esc(g.un.titre_de || ('Unité ' + u)) + '</b><span>Variant ' + v + ' · /20 · 45 Min</span></div>' + (g.texte ? '<div class="sujet-box" dir="ltr" style="text-align:left;margin:10px 0">' + esc(g.texte) + '</div>' : '') + '<div style="margin:6px 0"><button class="btn btn-o btn-sm" id="dnEc">🔊 écouter</button> <button class="btn btn-o btn-sm" id="dnSt">⏹ stop</button></div>' 
+      s.innerHTML = '<div class="dn-suj"><div class="dn-head"><b>📝 Kontrollarbeit Nr.' + v + ' — '
+        + esc(g.un.titre_de || ('Unité ' + u)) + '</b><span>/20 · 45 min · تصحيح فوري</span></div>' + (g.texte ? '<div class="sujet-box" dir="ltr" style="text-align:left;margin:10px 0">' + esc(g.texte) + '</div>' : '') + '<div style="margin:6px 0"><button class="btn btn-o btn-sm" id="dnEc">🔊 écouter</button> <button class="btn btn-o btn-sm" id="dnSt">⏹ stop</button></div>' 
         + '<div class="dn-p"><b>I. Leseverstehen — فهم النص (8 Pkt.)</b>'
         + g.Q.filter(x => x.partie === 'I').map((x, i) => qHtml(x, g.Q.indexOf(x))).join('')
         + '</div><div class="dn-p"><b>II. Sprachbausteine — اللغة (8 Pkt.)</b>'
