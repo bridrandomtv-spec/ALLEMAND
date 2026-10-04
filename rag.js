@@ -359,8 +359,20 @@
     const k = Object.keys(L).filter(x => new RegExp(want, 'i').test(x))[0];
     return k ? L[k] : null;
   }
+  function deNombre(q){
+    const m = String(q).match(/\d{1,3}/); if(m) return +m[0];
+    let s = String(q).toLowerCase().replace(/ü/g,'ue').replace(/ö/g,'oe').replace(/ä/g,'ae').replace(/ß/g,'ss');
+    const tens = [['zwanzig',20],['dreissig',30],['vierzig',40],['fuenfzig',50],['sechzig',60],['siebzig',70],['achtzig',80],['neunzig',90]];
+    const units = [['zwoelf',12],['elf',11],['zehn',10],['eins',1],['ein',1],['zwei',2],['drei',3],['vier',4],['fuenf',5],['sechs',6],['sieben',7],['acht',8],['neun',9]];
+    const cent = /hundert|hudert|hondert/.test(s);
+    let n = 0;
+    if(cent){ n = 100; s = s.replace(/.*?(hundert|hudert|hondert)/, ''); }
+    for(const t of tens){ if(s.indexOf(t[0]) !== -1){ n += t[1]; s = s.replace(t[0], ''); break; } }
+    for(const u of units){ if(s.indexOf(u[0]) !== -1){ n += u[1]; break; } }
+    return n || null;
+  }
   async function intentLecture(q){
-    const pg = q.match(/(?:seite|page|صفحة|ص)\s*(\d{1,3})/i);
+    const __kw = /(?:seite|page|صفحة|ص)/i.test(q); const __num = deNombre(q); const pg = (__kw && __num) ? [null, String(__num)] : null;
     if(pg){
       const lvl3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(q);
       const lvl2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(q);
@@ -405,9 +417,18 @@
         try{ if(window.ACCESS && ACCESS.paywall) ACCESS.paywall({ type:'page', page:+pg[1] }); }catch(err){}
         return '🔒 الصفحة ' + pg[1] + ' من الكتاب ضمن محتوى المشتركين — أكمل المسار المجاني أو اشترك لفتح كل الصفحات.';
       }
-      return 'Je n’ai pas encore la page ' + pg[1] + ' du manuel en mémoire indexée. '
-        + 'Essaie : « lis le texte de la Lektion 1 », « lies den Dialog Lektion 2 », '
-        + '« vocabulaire Lektion 3 » — ou demande au professeur d’indexer cette page.';
+      try{
+          const O0 = is3 ? await loadPages() : await loadPages3as();
+          const O = (O0 && O0.pages) ? O0.pages : (O0 || {});
+          const e2 = O[pg[1]];
+          if(e2 && (e2.lignes || e2.texte)){
+            let ls2 = Array.isArray(e2.lignes) ? e2.lignes : [e2.texte || ''];
+            const cl2 = ls2.map(l => String(l).replace(/\((?:page|p\.)\s*\d+\)/gi,'').replace(/\s*·\s*/g,'. ').replace(/\s*→\s*/g,' ')).filter(x => x.trim());
+            const ti2 = String(e2.titre || '').replace(/\((?:page|p\.)\s*\d+\)/gi,'').trim();
+            return '📚 هذه الصفحة من كتاب ' + (is3 ? '2AS' : '3AS') + ' — Seite ' + pg[1] + '. ' + ti2 + '. ' + cl2.join('. ').slice(0, 2200);
+          }
+        }catch(err){}
+        return '📖 الصفحة ' + pg[1] + ' غير موجودة بعد في فهرس هذا المستوى — Seite ' + pg[1] + ' ist für dieses Niveau noch nicht indexiert. ' + 'Essaie : « lis le texte de la Lektion 1 », « lies den Dialog Lektion 2 », « vocabulaire Lektion 3 ».';
     }
     const lec = q.match(/(?:lis|lire|lies|lese|read|vorlesen|قرأ|اقرأ)\s+(?:le\s+|den\s+|das\s+|the\s+)?(texte|text|dialog|dialogue|vocabulaire|wortschatz|النص|الحوار|المفردات)[^\d]*(\d)?/i);
     if(lec){
