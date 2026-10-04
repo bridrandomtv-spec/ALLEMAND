@@ -28,26 +28,13 @@
   function genere(u, variante, d){
     const un = ((d.mal.malakhiss || []).filter(m => m.unite === u)[0]) || {};
     const r = rng(u * 97 + variante * 13 + 5);
-    const structures = un.structures || [];
     const vocab = un.vocabulaire || [];
+    const B = BANK[u] || BANK[1];
     const Q = [];
-    /* ── I. Leseverstehen : 4 Vrai/Faux (1 pt) + 2 phrases (2 pts) ── */
-    const vf = [];
-    const v = Math.floor(r() * 6), verbe = r() < 0.5 ? 'sein' : 'haben';
-    vf.push({ q: 'Richtig oder falsch?  « ' + PERS[v] + ' » + ' + verbe + ' → « '
-        + KONJ[verbe][v] + ' ».', a: true });
-    const v2 = Math.floor(r() * 6);
-    vf.push({ q: 'Richtig oder falsch?  « ' + PERS[v2] + ' » + ' + verbe + ' → « '
-        + KONJ[verbe][(v2 + 1) % 6] + ' ».', a: false });
-    const w = WFR[Math.floor(r() * WFR.length)];
-    vf.push({ q: 'Richtig oder falsch?  « ' + w + ' » ist ein W-Fragewort.', a: true });
-    vf.push({ q: 'Richtig oder falsch?  Im Aussagesatz steht das Verb an letzter Stelle.', a: false });
-    vf.forEach((x, i) => Q.push({ type: 'vf', partie: 'I', pts: 1, q: x.q, a: x.a }));
-    const ph = structures.slice(variante, variante + 2);
-    ph.forEach(s => Q.push({ type: 'phrase', partie: 'I', pts: 2,
-      q: 'Beantworte in einem vollständigen Satz:  Was passt zu « ' + esc(un.titre_de || ('Unité ' + u))
-        + ' » ?  (Inspiration : ' + esc(s) + ')', a: s }));
-    /* ── II. Sprachbausteine : 4 MCQ (2 pts) en allemand ── */
+    /* I. Leseverstehen : texte réel + compréhension */
+    B.rf.forEach(x => Q.push({ type:'vf', partie:'I', pts:1, q:x.q, a:x.a }));
+    B.open.forEach(x => Q.push({ type:'phrase', partie:'I', pts:2, q:x.q, a:x.a }));
+    /* II. Sprachbausteine : MCQ */
     const comps = [];
     const g = (un.grammaire || []).join(' ').toLowerCase();
     if(/w-fragen|frage/.test(g)) comps.push('w-fragen');
@@ -55,26 +42,15 @@
     if(/dativ/.test(g)) comps.push('dativ');
     if(/perfekt/.test(g)) comps.push('perfekt');
     if(/sein|haben|präsens|konjug/.test(g)) comps.push('conjugaison');
-    if(!comps.length) comps.push('vocabulaire');
-    const niv = u <= 6 ? '2AS' : '3AS';
-    const pool = ((d.ban.B_exercices || []).filter(x =>
-        comps.indexOf(x.comp) !== -1 && x.niveau === niv));
+    if(!comps.length) comps.push('conjugaison');
+    const niv = u <= 9 ? '2AS' : '3AS';
+    const pool = ((d.ban.B_exercices || []).filter(x => comps.indexOf(x.comp) !== -1 && x.niveau === niv));
     const pick = [];
-    while(pick.length < 4 && pool.length){
-      const c = pool[Math.floor(r() * pool.length)];
-      if(pick.indexOf(c) === -1) pick.push(c);
-    }
-    pick.forEach(x => Q.push({ type: 'mcq', partie: 'II', pts: 2, q: x.q,
-        opts: x.opts, a: x.a, why: x.why }));
-    /* ── III. Textproduktion (4 pts, auto-évaluation) ── */
-    Q.push({ type: 'prod', partie: 'III', pts: 4,
-      q: 'Schreibe mindestens 5 Sätze zum Thema « ' + esc(un.titre_de || ('Unité ' + u))
-        + ' ».  Benutze: 1 W-Frage, 1 × weil, 1 × ' + esc(vocab[0] || 'ein Verb') + '.',
-      checklist: ['5 Sätze oder mehr', 'Verb an 2. Position', '1 × weil', '1 W-Frage',
-                  'Nomen großgeschrieben'] });
-    return { un: un, Q: Q };
+    while(pick.length < 3 && pool.length){ const cc = pool[Math.floor(r()*pool.length)]; if(pick.indexOf(cc)===-1) pick.push(cc); }
+    pick.forEach(x => Q.push({ type:'mcq', partie:'II', pts:2, q:x.q, opts:x.opts, a:x.a, why:x.why }));
+    Q.push({ type:'prod', partie:'III', pts:4, q:'Schreibe mindestens 5 Sätze zum Thema « ' + (un.titre_de || B.t) + ' ». Benutze: 1 W-Frage, 1 × weil.', checklist:['5 Sätze oder mehr','Verb an 2. Position','1 × weil','1 W-Frage','Nomen großgeschrieben'] });
+    return { un: un, Q: Q, texte: B.text };
   }
-
   function corrige(Q, host, meta){
     let note = 0, total = 0;
     Q.forEach((x, i) => {
@@ -135,7 +111,7 @@
       const g = genere(u, v, d);
       const s = $('#dnSujet');
       s.innerHTML = '<div class="dn-suj"><div class="dn-head"><b>Kontrollarbeit — '
-        + esc(g.un.titre_de || ('Unité ' + u)) + '</b><span>Variant ' + v + ' · /20 · 45 Min</span></div>'
+        + esc(g.un.titre_de || ('Unité ' + u)) + '</b><span>Variant ' + v + ' · /20 · 45 Min</span></div>' + (g.texte ? '<div class="sujet-box" dir="ltr" style="text-align:left;margin:10px 0">' + esc(g.texte) + '</div>' : '')
         + '<div class="dn-p"><b>I. Leseverstehen — فهم النص (8 Pkt.)</b>'
         + g.Q.filter(x => x.partie === 'I').map((x, i) => qHtml(x, g.Q.indexOf(x))).join('')
         + '</div><div class="dn-p"><b>II. Sprachbausteine — اللغة (8 Pkt.)</b>'
