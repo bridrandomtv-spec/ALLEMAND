@@ -112,7 +112,7 @@
       + '<h2>📝 فروض مُنقّطة — Devoirs notés auf Deutsch</h2><p class="dn-sub">48 devoirs générés corrigés '
       + 'automatiquement + ' + d.dv.length + ' echte Klausuren aus den Wilayas · offizieller Schlüssel '
       + 'I/8 · II/8 · III/4</p></div></div>'
-      + '<div class="dn-tabs"><button class="btn btn-p btn-sm" id="dnA">📝 generiert</button> '
+      + '<div class="dn-tabs"><button class="btn btn-p btn-sm" id="dnA">📝 مولَّدة (تصحيح فوري)</button> '
       + '<button class="btn btn-o btn-sm" id="dnB">📄 حقيقية من الثانويات (' + d.dv.length + ')</button></div>'+ '<div class="card" style="margin-top:10px"><b>🆘 دليل المبتدئ — كيف أعمل هنا ؟</b><p style="margin:6px 0 0;line-height:1.9">هذه صفحة <b>فروض مُنقّطة بالألمانية</b> مثل فروض القسم تمامًا :<br>· <b>I. فهم النص (8ن)</b> : اقرأ السؤال وأجب — richtig = صحيح · falsch = خطأ.<br>· <b>II. اللغة (8ن)</b> : اختر الإجابة الصحيحة من القائمة.<br>· <b>III. التعبير الكتابي (4ن)</b> : اكتب 5 جمل بالألمانية ثم قيّم نفسك بصدق.<br>لا تقلق إن أخطأت : كل خطأ يتحوّل تلقائيًا إلى بطاقة 🧠 للمراجعة، والكلمات الصعبة تجدها في 📑 الملخصات. ولا يوجد وقت محدد — الأهم أن تفهم !</p></div>'
       + '<div id="dnZone"></div>';
     $('#dnA').addEventListener('click', () => zoneA(d));
