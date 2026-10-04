@@ -156,7 +156,7 @@ function genere(u, variante, d){
         const s = $('#dnSujet');
         s.innerHTML = '<div class="dn-suj"><div class="dn-head"><b>📄 ' + esc(x.titre_de || x.titre) + '</b>'
           + '<span>' + esc(x.annee_scolaire || '') + ' · /' + (x.bareme || 20) + ' · ' + (x.duree_minutes || 45) + ' min · فرض حقيقي</span></div>'
-          + '<pre class="dn-pre" dir="auto">' + esc(clean(x.sujet, x)) + '</pre>'
+          + '<pre class="dn-pre" dir="auto">' + esc(reel(x).body) + '</pre>'
           + '<button class="btn btn-g btn-sm" id="dnSol">✅ عرض الحل النموذجي</button>'
           + '<pre class="dn-pre" dir="auto" id="dnSolPre" style="display:none">' + esc(x.corrige || '—') + '</pre></div>';
         $('#dnSol').addEventListener('click', () => { const p = $('#dnSolPre'); p.style.display = (p.style.display === 'none') ? '' : 'none'; });
@@ -220,7 +220,27 @@ function genere(u, variante, d){
     if(/lycée|lycee|site|www|http/i.test(first)) s = s.split('\n').slice(1).join('\n');
     return s;
   }
-  function zoneB(d){
+    /* ── Si le sujet réel est générique, on affiche un VRAI examen (texte+questions+solution)
+     depuis la BANK par unité, et la voix lit le TEXTE. ── */
+  const reelCache = {};
+  function reel(x){
+    if(reelCache[x.id]) return reelCache[x.id];
+    const gen = /نص حول الموضوع/.test(x.sujet || '');
+    const B = BANK[x.unite] || BANK[((+x.unite - 1) % 16) + 1];
+    let o;
+    if(gen && B){
+      const body = 'TEXT — ' + B.text +
+        '\n\nI. Richtig oder falsch ?\n' + B.rf.map((r,i)=>String.fromCharCode(97+i)+') '+r.q).join('\n') +
+        '\n\nII. Antworte in ganzen Sätzen :\n' + B.open.map((r,i)=>String.fromCharCode(101+i)+') '+r.q).join('\n');
+      const sol = 'I. ' + B.rf.map(r=> r.a ? 'Richtig' : 'Falsch').join(' · ') +
+        '\nII. ' + B.open.map(r=> r.a).join(' · ');
+      o = { body: body, sol: sol, audio: B.text };
+    } else {
+      o = { body: clean(x.sujet, x), sol: (x.corrige || '(Lösung enthalten: ' + (x.corrige_inclus?'oui':'non') + ')'), audio: lignesDE(x.sujet) };
+    }
+    reelCache[x.id] = o; return o;
+  }
+function zoneB(d){
     const z = $('#dnZone');
     const nivs = [...new Set(d.dv.map(x => x.niveau))];
     z.innerHTML = '<div class="card"><div class="dn-filt">'
@@ -246,12 +266,12 @@ function genere(u, variante, d){
       $('#fList').querySelectorAll('[data-i]').forEach(b => b.addEventListener('click', () => {
         const x = rows[+b.dataset.i];
         $('#dz' + b.dataset.i).innerHTML = '<div class="dn-suj"><b>📄 الموضوع — Aufgabe</b>'
-          + '<pre class="dn-pre" dir="auto">' + esc(clean(x.sujet, x)) + '</pre>'
+          + '<pre class="dn-pre" dir="auto">' + esc(reel(x).body) + '</pre>'
           + '<b>✅ الحل — Lösung</b><pre class="dn-pre" dir="auto">' + esc(x.corrige || '(Lösung enthalten: '
           + (x.corrige_inclus ? 'oui' : 'non') + ')') + '</pre>' + '<div style="margin:6px 0"><button class="btn btn-o btn-sm" data-ec="s">🔊 écouter le sujet</button> ' + '<button class="btn btn-o btn-sm" data-ec="c">🔊 solution</button> ' + '<button class="btn btn-o btn-sm" data-ec="x">⏹</button></div></div>';
         const __zb=$('#dz'+b.dataset.i);
-        const __e1=__zb && __zb.querySelector('[data-ec="s"]'); if(__e1)__e1.addEventListener('click',()=>ecouterDE(lignesDE(x.sujet)));
-        const __e2=__zb && __zb.querySelector('[data-ec="c"]'); if(__e2)__e2.addEventListener('click',()=>ecouterDE(x.corrige||'','ar-DZ'));
+        const __e1=__zb && __zb.querySelector('[data-ec="s"]'); if(__e1)__e1.addEventListener('click',()=>ecouterDE(reel(x).audio));
+        const __e2=__zb && __zb.querySelector('[data-ec="c"]'); if(__e2)__e2.addEventListener('click',()=>ecouterDE(reel(x).sol,'ar-DZ'));
         const __e3=__zb && __zb.querySelector('[data-ec="x"]'); if(__e3)__e3.addEventListener('click',stopEc);
       }));
     };
