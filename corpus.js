@@ -206,11 +206,11 @@ function vuePour(d){
     return ov;
   }
   function ouvrirLecteur(url, titre){
+    if(!url || url === 'undefined'){ try{ if(window.toast) toast('Cette carte ne possède pas de fichier.', 'ko'); }catch(e){} return; }
     const ov = lecteur();
     ov.querySelector('#cpTitre').textContent = titre || '';
     ov.querySelector('#cpExt').href = url;
-    ov.querySelector('#cpFrame').src =
-      'https://mozilla.github.io/pdf.js/web/viewer.html?file=' + encodeURIComponent(url);
+    ov.querySelector('#cpFrame').src = url;
     ov.style.display = 'flex';
   }
   document.addEventListener('click', e => {
