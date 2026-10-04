@@ -104,8 +104,9 @@ let D = null, IDX = null;
           + '<div class="cp-meta">' + esc(d.matiere) + ' · ' + esc(String(d.annee))
           + ' · ' + esc(d.format) + '</div>'
           + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
-          + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(ouvreUrl(d)) + '" '
-          + 'target="_blank" rel="noopener">📂 ouvrir</a>'
+          + '<div class="cp-btns">' + (String(d.format || '').toLowerCase() === 'json'
+            ? '<button class="btn btn-p btn-sm" data-go="' + vuePour(d) + '">📂 ouvrir dans l’application</button>'
+            : '<a class="btn btn-p btn-sm" href="' + esc(ouvreUrl(d)) + '" target="_blank" rel="noopener">📂 ouvrir</a>')
           + ('<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>')
           + '</div>').join('') + '</div>';
       }
@@ -168,6 +169,20 @@ function ouvreUrl(d){
     return 'https://mozilla.github.io/pdf.js/web/viewer.html?file=' + encodeURIComponent(u);
   }
   return u;
+}
+/* ── Les documents au format json ne s'ouvrent PAS en .json brut :
+     ils renvoient vers la vue interne qui les affiche proprement. ── */
+function vuePour(d){
+  var u = String((d && d.url) || '');
+  if(u.indexOf('grammaire') !== -1) return 'grammaire';
+  if(u.indexOf('bac.json') !== -1) return 'examen';
+  if(u.indexOf('annales') !== -1) return 'examen';
+  if(u.indexOf('devoirs') !== -1) return 'devoirs';
+  if(u.indexOf('corriges') !== -1) return 'devoirs';
+  if(u.indexOf('compositions') !== -1) return 'devoirs';
+  if(u.indexOf('vocabulaire') !== -1) return 'banque';
+  if(u.indexOf('sujet14') !== -1) return 'officiels';
+  return 'banque';
 }
 window.renderCorpus = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'corpus') render(); });
