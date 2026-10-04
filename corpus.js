@@ -151,8 +151,9 @@ let D = null, IDX = null;
       + '<div class="cp-meta">' + esc(d.matiere) + ' · ' + esc(String(d.annee))
       + ' · ' + esc(d.format) + '</div>'
       + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
-      + '<div class="cp-btns"><a class="btn btn-p btn-sm" href="' + esc(ouvreUrl(d)) + '" '
-      + 'target="_blank" rel="noopener">📂 ouvrir</a>'
+      + '<div class="cp-btns">' + (String(d.format || '').toLowerCase() === 'json'
+      ? '<button class="btn btn-p btn-sm" data-go="' + vuePour(d) + '">📂 ouvrir dans l’application</button>'
+      : '<a class="btn btn-p btn-sm" href="' + esc(ouvreUrl(d)) + '" target="_blank" rel="noopener">📂 ouvrir</a>')
       + ('<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>')
       + '</div>').join('');
     if(grid.classList.contains('cp-vide')){
