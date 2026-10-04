@@ -106,7 +106,7 @@ let D = null, IDX = null;
           + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
           + '<div class="cp-btns">' + (String(d.format || '').toLowerCase() === 'json'
             ? '<button class="btn btn-p btn-sm" data-go="' + vuePour(d) + '">📂 ouvrir dans l’application</button>'
-            : '<a class="btn btn-p btn-sm" href="' + esc(ouvreUrl(d)) + '" target="_blank" rel="noopener">📂 ouvrir</a>')
+            : '<button class="btn btn-p btn-sm" data-open="' + esc(ouvreUrl(d)) + '" data-titre="' + esc(d.titre) + '">📂 ouvrir</button>')
           + ('<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>')
           + '</div>').join('') + '</div>';
       }
@@ -153,7 +153,7 @@ let D = null, IDX = null;
       + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
       + '<div class="cp-btns">' + (String(d.format || '').toLowerCase() === 'json'
       ? '<button class="btn btn-p btn-sm" data-go="' + vuePour(d) + '">📂 ouvrir dans l’application</button>'
-      : '<a class="btn btn-p btn-sm" href="' + esc(ouvreUrl(d)) + '" target="_blank" rel="noopener">📂 ouvrir</a>')
+      : '<button class="btn btn-p btn-sm" data-open="' + esc(ouvreUrl(d)) + '" data-titre="' + esc(d.titre) + '">📂 ouvrir</button>')
       + ('<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>')
       + '</div>').join('');
     if(grid.classList.contains('cp-vide')){
