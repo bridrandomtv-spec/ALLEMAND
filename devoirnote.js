@@ -1,3 +1,25 @@
+
+  /* ──  écoute : lecture allemande (de-DE) des textes de devoirs ── */
+  function stopEc(){ try{ if('speechSynthesis' in window) speechSynthesis.cancel(); }catch(e){} }
+  function lignesDE(t){
+    return String(t||'').split('\n').map(s=>s.trim()).filter(l=>{
+      if(!l) return false;
+      const ar=(l.match(/[\u0600-\u06FF]/g)||[]).length;
+      const la=(l.match(/[A-Za-zÄÖÜäöüß]/g)||[]).length;
+      return la>ar && la>3;
+    }).join(' ');
+  }
+  function ecouterDE(t, lang){
+    try{
+      const txt = (lang && lang!=='de-DE') ? String(t||'') : lignesDE(t);
+      if(!txt) return;
+      if(window.VOIX && VOIX.parler){ VOIX.parler(txt, lang||'de-DE'); return; }
+      if('speechSynthesis' in window){
+        speechSynthesis.cancel();
+        const u=new SpeechSynthesisUtterance(txt); u.lang=lang||'de-DE'; speechSynthesis.speak(u);
+      }
+    }catch(e){}
+  }
 /* devoirnote.js — 📝 Devoirs notés : questions EN ALLEMAND, barème officiel I/8 II/8 III/4
    · onglet A : devoirs générés & corrigés auto (16 unités × 3 variantes = 48)
    · onglet B : les 312 devoirs RÉELS envoyés (filtres + mode composition + corrigé)   */
@@ -131,7 +153,7 @@ function genere(u, variante, d){
       const g = genere(u, v, d);
       const s = $('#dnSujet');
       s.innerHTML = '<div class="dn-suj"><div class="dn-head"><b>Kontrollarbeit — '
-        + esc(g.un.titre_de || ('Unité ' + u)) + '</b><span>Variant ' + v + ' · /20 · 45 Min</span></div>' + (g.texte ? '<div class="sujet-box" dir="ltr" style="text-align:left;margin:10px 0">' + esc(g.texte) + '</div>' : '')
+        + esc(g.un.titre_de || ('Unité ' + u)) + '</b><span>Variant ' + v + ' · /20 · 45 Min</span></div>' + (g.texte ? '<div class="sujet-box" dir="ltr" style="text-align:left;margin:10px 0">' + esc(g.texte) + '</div>' : '') + '<div style="margin:6px 0"><button class="btn btn-o btn-sm" id="dnEc">🔊 écouter</button> <button class="btn btn-o btn-sm" id="dnSt">⏹ stop</button></div>' 
         + '<div class="dn-p"><b>I. Leseverstehen — فهم النص (8 Pkt.)</b>'
         + g.Q.filter(x => x.partie === 'I').map((x, i) => qHtml(x, g.Q.indexOf(x))).join('')
         + '</div><div class="dn-p"><b>II. Sprachbausteine — اللغة (8 Pkt.)</b>'
@@ -140,6 +162,8 @@ function genere(u, variante, d){
         + g.Q.filter(x => x.partie === 'III').map(x => qHtml(x, g.Q.indexOf(x))).join('')
         + '</div><button class="btn btn-p btn-block" id="dnCorr">✅ corriger ma copie</button>'
         + '<div id="dnNote"></div></div>';
+      const __ec=$('#dnEc'); if(__ec) __ec.addEventListener('click',()=>ecouterDE(g.texte||''));
+      const __st=$('#dnSt'); if(__st) __st.addEventListener('click',stopEc);
       $('#dnCorr').addEventListener('click', () => {
         const res = corrige(g.Q, s, { unite: u });
         $('#dnNote').innerHTML = '<div class="dn-res">Note : <b>' + res.note.toFixed(1)
@@ -212,7 +236,7 @@ function genere(u, variante, d){
         $('#dz' + b.dataset.i).innerHTML = '<div class="dn-suj"><b>📄 الموضوع — Aufgabe</b>'
           + '<pre class="dn-pre" dir="auto">' + esc(clean(x.sujet, x)) + '</pre>'
           + '<b>✅ الحل — Lösung</b><pre class="dn-pre" dir="auto">' + esc(x.corrige || '(Lösung enthalten: '
-          + (x.corrige_inclus ? 'oui' : 'non') + ')') + '</pre></div>';
+          + (x.corrige_inclus ? 'oui' : 'non') + ')') + '</pre>' + '<div style="margin:6px 0"><button class="btn btn-o btn-sm" data-ec="s">🔊 écouter le sujet</button> ' + '<button class="btn btn-o btn-sm" data-ec="c">🔊 solution</button> ' + '<button class="btn btn-o btn-sm" data-ec="x">⏹</button></div></div>';
       }));
     };
     $('#fNiv').addEventListener('change', maj);
