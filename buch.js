@@ -196,7 +196,7 @@
   }
   function l3Badge(p){
     const e = (B3 && B3.pg[String(p)]) || {};
-    return (e.lignes && e.lignes.length) || e.texte ? '🆓' : '🔒';
+    return e.locked ? '🔒' : '🆓';
   }
   /* ── Interactif 3AS : Lektionen digitalisées (buch_3as_lN.json) — même moteur
      que la 2AS (exoHtml + corriger /20 + cartes 🧠 Leitner sur chaque erreur) ── */
