@@ -279,7 +279,7 @@ function zoneB(d){
           + (x.corrige_inclus ? 'oui' : 'non') + ')') + '</pre>' + '<div style="margin:6px 0"><button class="btn btn-o btn-sm" data-ec="s">🔊 écouter le sujet</button> ' + '<button class="btn btn-o btn-sm" data-ec="c">🔊 solution</button> ' + '<button class="btn btn-o btn-sm" data-ec="x">⏹</button></div></div>';
         const __zb=$('#dz'+b.dataset.i);
         const __e1=__zb && __zb.querySelector('[data-ec="s"]'); if(__e1)__e1.addEventListener('click',()=>ecouterDE(reel(x).audio));
-        const __e2=__zb && __zb.querySelector('[data-ec="c"]'); if(__e2)__e2.addEventListener('click',()=>ecouterDE(reel(x).sol,'ar-DZ'));
+        const __e2=__zb && __zb.querySelector('[data-ec="c"]'); if(__e2)__e2.addEventListener('click',()=>ecouterMixte(reel(x).sol));
         const __e3=__zb && __zb.querySelector('[data-ec="x"]'); if(__e3)__e3.addEventListener('click',stopEc);
       }));
     };
