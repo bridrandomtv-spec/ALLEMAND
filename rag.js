@@ -381,7 +381,17 @@
       const P0 = is3 ? await loadPages3as() : await loadPages();
       const P = (P0 && P0.pages) ? P0.pages : (P0 || {});
       const e = P[pg[1]];
-      if(e && (e.lignes || e.texte)){
+      if(e && e.locked && (e.lignes || e.texte)){
+        let okEnt = false;
+        try{ okEnt = !!(window.ACCESS && ACCESS.entitlement && ACCESS.entitlement().ok); }catch(err){}
+        if(okEnt){
+          let ls = Array.isArray(e.lignes) ? e.lignes : [e.texte || ''];
+          const clean = ls.map(l => String(l).replace(/\((?:page|p\.)\s*\d+\)/gi,'').replace(/\s*·\s*/g,'. ').replace(/\s*→\s*/g,' ')).filter(x => x.trim());
+          const tit = String(e.titre || '').replace(/\((?:page|p\.)\s*\d+\)/gi,'').trim();
+          return ('Seite ' + pg[1] + '. ' + tit + '. ' + clean.join('. ')).slice(0, 2200);
+        }
+      }
+      if(e && (e.lignes || e.texte) && !e.locked){
         let ls = Array.isArray(e.lignes) ? e.lignes : [e.texte || ''];
         const clean = ls.map(l => String(l)
           .replace(/\((?:page|p\.)\s*\d+\)/gi, '')
