@@ -216,6 +216,35 @@ function vuePour(d){
     const b = e.target.closest('[data-open]');
     if(b){ e.preventDefault(); ouvrirLecteur(b.getAttribute('data-open'), b.getAttribute('data-titre')); }
   });
+
+  /* ── 📚 العودة إلى المتن : زر رجوع يظهر في كل وجهة فُتحت من المتن (dossier par dossier) ── */
+  function goCorpus(){
+    var t = document.createElement('button');
+    t.setAttribute('data-go', 'corpus');
+    t.style.display = 'none';
+    document.body.appendChild(t);
+    t.click();
+    t.remove();
+  }
+  document.addEventListener('click', function(e){
+    var b = (e.target && e.target.closest) ? e.target.closest('#corpusBody [data-go]') : null;
+    if(!b) return;
+    setTimeout(function(){
+      if(document.getElementById('backToCorpus')) return;
+      var btn = document.createElement('button');
+      btn.id = 'backToCorpus';
+      btn.textContent = '📚 العودة إلى المتن';
+      btn.style.cssText = 'position:fixed;bottom:16px;inset-inline-start:16px;z-index:9998;' +
+        'background:#0f2b1d;color:#3ddc84;border:1px solid #2c7a4f;border-radius:999px;' +
+        'padding:9px 16px;font-size:13px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4);';
+      btn.addEventListener('click', function(){ btn.remove(); goCorpus(); });
+      document.body.appendChild(btn);
+    }, 90);
+  });
+  document.addEventListener('dz:view', function(e){
+    var x = document.getElementById('backToCorpus');
+    if(x) x.remove();
+  });
 window.renderCorpus = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'corpus') render(); });
 })();
