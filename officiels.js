@@ -63,6 +63,7 @@
   /* ── Rendu principal ── */
   function render(){
     const box = $('#officielsBody'); if(!box) return;
+    if(!D) return; /* données pas encore chargées : ne pas planter */
     if(ouvert){ box.innerHTML = vueDevoir(); return; }
     box.innerHTML = entete() + filtres() + liste();
   }
@@ -541,8 +542,9 @@
     saveRep(i.dataset.devoir, i.dataset.rep, i.value);
   });
   document.addEventListener('change', ev => {
-    const s = ev.target.closest('[data-filtre]');
+    const s = ev.target.closest('#officielsBody [data-filtre]');
     if(!s) return;
+    if(!D) return;
     const k = s.dataset.filtre, v = s.value;
     if(k === 'trim') fTrim = v;
     if(k === 'unite') fUnite = v;
@@ -551,8 +553,9 @@
     render();
   });
   document.addEventListener('input', ev => {
-    const q = ev.target.closest('#offQ');
+    const q = ev.target.closest('#officielsBody #offQ');
     if(!q) return;
+    if(!D) return;
     fq = q.value;
     clearTimeout(window._offT);
     window._offT = setTimeout(() => {
