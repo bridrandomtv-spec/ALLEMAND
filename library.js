@@ -95,8 +95,15 @@
       paintResults(); paintChips();
     });
     document.addEventListener('change', ev => {
-      const s = ev.target.closest('[data-filtre]');
-      if(s){ BDD.setFiltre(s.dataset.filtre, s.value); paintResults(); paintChips(); }
+      try{
+        const s = ev.target.closest('[data-filtre]');
+        if(s){ BDD.setFiltre(s.dataset.filtre, s.value); paintResults(); paintChips(); }
+      }catch(err){
+        try{ console.error('filtre', err); }catch(e){}
+        const el = $('#rList');
+        if(el) el.innerHTML = '<div class="card empty"><div class="empty-i">⚠️</div>' +
+          '<h3>خطأ في التصفية</h3><p>' + (err && err.message ? err.message : String(err)) + '</p></div>';
+      }
     });
     document.addEventListener('click', ev => {
       const t2 = ev.target.closest('[data-type]');
