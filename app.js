@@ -2018,3 +2018,14 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', mount);
   else setTimeout(mount, 800);
 })();
+
+/* ──  Gestion du choix de matière (3 tirets) ── */
+(function(){
+  document.addEventListener('click', function(e){
+    var m = e.target.closest ? e.target.closest('[data-matiere]') : null; if(!m) return;
+    var code = m.getAttribute('data-matiere');
+    if(code === 'de'){ if(window.setLangueCible) setLangueCible('de'); if(window.toast) toast('🇩🇪 Allemand activé',''); }
+    else if(code === 'en'){ if(window.setLangueCible) setLangueCible('en'); if(window.toast) toast('🇬 Anglais activé · English on',''); }
+    else { if(window.toast) toast('🔒 ' + code.toUpperCase() + ' — bientôt · قريبًا',''); }
+  });
+})();
