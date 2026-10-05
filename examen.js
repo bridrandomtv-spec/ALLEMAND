@@ -33,6 +33,22 @@
         const r = await fetch(SRC, { cache:'no-store' });
         if(!r.ok) throw new Error('HTTP ' + r.status);
         D = await r.json();
+        try{
+          const rb = await fetch('assets/bdd/bac.json', { cache:'no-store' });
+          if(rb.ok){ const B = await rb.json();
+            (B.items || []).forEach(b => { D.sujets.push({
+              id: b.id, hash: b.hash, annee: b.annee, session: b.session, session_label: (b.session || 'juin'),
+              type: (b.type || 'bac'), titre: b.titre, titre_de: b.titre_de,
+              theme_de: b.unite_de, theme_ar: b.unite_ar, filiere: b.filiere, filiere_note: '',
+              code_wilaya: b.code_wilaya, wilaya: b.wilaya, centre: b.ville,
+              duree_minutes: (b.duree_minutes || 180), bareme: (b.bareme || 20),
+              coefficient: (b.niveau === '3AS' ? 3 : 2), grammaire: (b.tags || []).join(', '),
+              niveau_cefr: 'B1', parties: [], corrige: b.corrige, corrige_inclus: true,
+              stats: null, source: b.source, officiel: true, tags: b.tags,
+              _lecture: true, _full: b.sujet }); });
+            if(D._meta) D._meta.nombre_sujets = D.sujets.length;
+          }
+        }catch(e){}
         (D.sujets || []).forEach(s => { s._n = norm(s.titre + ' ' + s.theme_de + ' ' +
           s.theme_ar + ' ' + s.wilaya + ' ' + s.filiere + ' ' + (s.tags||[]).join(' ')); });
       }catch(e){
