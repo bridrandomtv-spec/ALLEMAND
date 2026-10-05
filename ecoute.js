@@ -2,7 +2,7 @@
    comprend (RAG), répond à l'écran ET à voix haute (voix allemande de-DE) */
 'use strict';
 (function(){
-  let rec = null, on = false, LANG = 'de-DE';
+  let rec = null, on = false, LANG = 'ar-DZ';
   function panel(){
     let p = document.getElementById('ecPanel');
     if(!p){
