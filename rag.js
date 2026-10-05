@@ -763,7 +763,135 @@
     return head + String(h.texte || '').slice(0, 1100);
   }
 
-  async function reponsePedagogique(q){
+  
+/* ── خطوة 2 : Intent Ontology (darija/ar/fr/arabizi) → routing RAG ── */
+let ONTO = null;
+async function chargeOnto(){
+  if(ONTO) return ONTO;
+  try{ const r = await fetch('assets/bdd/intent_ontology.json', { cache:'no-store' });
+    ONTO = r.ok ? await r.json() : { intents: [] };
+  }catch(e){ ONTO = { intents: [] }; }
+  return ONTO;
+}
+function normOnto(s){
+  s = String(s||'').toLowerCase();
+  s = s.replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[\u064B-\u065F\u0670]/g,'');
+  if(!/[a-zäöüß]/.test(s))
+    s = s.replace(/3/g,'ع').replace(/7/g,'ح').replace(/5/g,'خ').replace(/9/g,'ق').replace(/2/g,'ء');
+  s = s.replace(/\s+/g,' ').trim();
+  return s;
+}
+function tokOnto(s){ return s.split(/[^\w\u0600-\u06FF]+/).filter(w => w.length > 1); }
+async function matchOnto(q){
+  const O = await chargeOnto();
+  const nq = normOnto(q);
+  let best = null, bestScore = 0;
+  for(const it of (O.intents || [])){
+    let score = 0;
+    for(const key of Object.keys(it.patterns || {})){
+      const arr = it.patterns[key];
+      for(const p of arr){
+        const np = normOnto(p);
+        if(nq === np) score = Math.max(score, 100);
+        else if(np && (nq.indexOf(np) !== -1 || np.indexOf(nq) !== -1)) score = Math.max(score, 75);
+        else {
+          const tq = tokOnto(nq), tp = tokOnto(np);
+          if(tp.length){ const inter = tp.filter(w => tq.indexOf(w) !== -1).length;
+            if(inter / tp.length >= 0.6) score = Math.max(score, 55 + inter); }
+        }
+      }
+    }
+    const kw = (it.keywords || []).filter(k => nq.indexOf(normOnto(k)) !== -1).length;
+    if(kw) score = Math.max(score, 30 + kw * 10);
+    if(score > bestScore){ bestScore = score; best = it; }
+  }
+  return (best && bestScore >= 65) ? { it: best, score: bestScore } : null;
+}
+async function ontoRoute(q){
+  try{
+    const m = await matchOnto(q);
+    if(!m) return null;
+    const id = m.it.intent;
+    const n = numeroUnite(q);
+    if(id === 'explain_word' || id === 'translate'){
+      const voc = await chargeVoc(); const mots = (voc && voc.mots) || [];
+      const mq = String(q).match(/([A-Za-zÄÖÜäöüß]{3,})|([\u0600-\u06FF]{3,})/);
+      const mot = mq ? (mq[1] || mq[2] || '') : '';
+      const nm = normOnto(mot);
+      const f = mots.filter(x => (x.de||'').toLowerCase() === mot.toLowerCase()
+        || normOnto(x.ar||'').indexOf(nm) !== -1 || nm.indexOf(normOnto(x.ar||'')) !== -1)[0];
+      if(f) return { html: '<b>🔤 المفردة</b><div class="rag-x de-in">' + esc(f.de) + '</div>'
+        + '<div class="rg-sec"><b>بالعربية</b> ' + esc(f.ar) + '</div>', speakWord: f.de };
+      return null;
+    }
+    if(id === 'pronounce_word'){
+      const mm = String(q).match(/([A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß\- ]{2,})/);
+      const w = mm ? mm[1].trim() : '';
+      if(w) return { html: '<b>🔊 النطق</b><div class="rag-x de-in">' + esc(w) + '</div>', speakWord: w };
+      return null;
+    }
+    if(id === 'summarize_lesson' || id === 'important_points' || id === 'explain_lesson'
+       || id === 'explain_rule' || id === 'stuck_student' || id === 'usage_question'
+       || id === 'explain_with_examples'){
+      const mal = await chargeMalakhiss();
+      const un = (mal && mal.malakhiss || []).filter(x => x.unite === n)[0];
+      if(un){
+        const ex = (un.structures || []).slice(0, 3);
+        return { html: '<b>📗 الوحدة ' + n + ' — ' + esc(un.titre_de || '') + '</b>'
+          + '<div class="rag-x">' + esc(un.titre_ar || '') + '</div>'
+          + '<div class="rg-sec"><b>الملخص</b> ' + esc((un.resume_ar || un.resume || '').slice(0, 400)) + '</div>'
+          + (ex.length ? '<div class="rg-sec"><b>أمثلة</b><ul>' + ex.map(e2 => '<li class="de-in">' + esc(e2) + '</li>').join('') + '</ul></div>' : '')
+          + '<div class="rag-src">للتفاصيل افتح 📑 الملخصات — الوحدة ' + n + '</div>' };
+      }
+      return null;
+    }
+    if(id === 'compare_explain'){
+      const pairs = [['sein','haben'],['der','das'],['weil','dass'],['akkusativ','dativ'],
+        ['müssen','sollen'],['können','dürfen'],['mussen','sollen'],['konnen','durfen']];
+      for(const pr of pairs){
+        if(String(q).toLowerCase().indexOf(pr[0]) !== -1 && String(q).toLowerCase().indexOf(pr[1]) !== -1){
+          if(pr[0]==='sein'||pr[1]==='haben') return { html: '<b>⚖️ sein مقابل haben</b><ul>'
+            + '<li class="de-in">sein = يكون (حالة/هوية) : ich bin, du bist, er ist</li>'
+            + '<li class="de-in">haben = يملك : ich habe, du hast, er hat</li>'
+            + '<li>Perfekt : أفعال الحركة والحالة مع sein، والبقية مع haben</li></ul>' };
+          return { html: '<b>⚖️ ' + esc(pr[0]) + ' مقابل ' + esc(pr[1]) + '</b>'
+            + '<div class="rg-sec">افتح 📘 القواعد للمقارنة الكاملة مع الأمثلة.</div>' };
+        }
+      }
+      return null;
+    }
+    if(id === 'quiz_generate' || id === 'generate_exam' || id === 'adaptive_exercise'){
+      return { html: '<b>📝 تدريب</b><div class="rg-sec">افتح ✍️ Banque أو 📝 الفروض — الوحدة ' + (n || '')
+        + ' : فرض مولَّد بتصحيح فوري + كل خطأ يعود في 🧠 مسارك.</div>' };
+    }
+    if(id === 'bac_preparation'){
+      const corp = await chargeCorp();
+      const suj = (corp && corp.documents || []).filter(x => x.type==='sujet'||x.type==='annale').slice(0,8);
+      return { html: '<b>🎓 تحضير الباك</b><ul>' + suj.map(s2 => '<li>' + esc(s2.titre) + '</li>').join('')
+        + '</ul><div class="rg-sec">افتح 🎓 البكالوريا للتدريب بتوقيت رسمي 180 د.</div>' };
+    }
+    if(id === 'search_library' || id === 'find_lesson' || id === 'find_page' || id === 'find_exercise'
+       || id === 'find_exam' || id === 'find_document' || id === 'source_lookup'){
+      const corp = await chargeCorp();
+      const kw2 = tokOnto(normOnto(q)).filter(w => w.length > 2).slice(0, 4);
+      const res = (corp && corp.documents || []).filter(x => {
+        const hay = normOnto((x.titre||'') + ' ' + (x.extrait||''));
+        return kw2.some(w => hay.indexOf(w) !== -1);
+      }).slice(0, 8);
+      if(res.length) return { html: '<b>🔎 نتائج المكتبة</b><ul>' + res.map(x => '<li>' + esc(x.titre)
+        + ' <span class="rag-src">[' + esc(x.type) + ']</span></li>').join('') + '</ul>'
+        + '<div class="rag-src">المصادر : official_book → lesson_content → official_exam → pedagogical_document</div>' };
+      return null;
+    }
+    if(id === 'conversation_practice') return null; /* يُترك للمعالج الموجود */
+    if(id === 'progress_report') return { html: '<b>📈 مستواك</b><div class="rg-sec">افتح 🧭 مسارك : نقاط القوة/الضعف والبطاقات المستحقة.</div>' };
+    if(id === 'parent_report') return { html: '<b>👨👩‍👦 تقرير الولي</b><div class="rg-sec">افتح 👨‍👩‍👦 الأولياء لمتابعة النتائج.</div>' };
+    if(id === 'teacher_tools') return { html: '<b>👨🏫 فضاء الأستاذ</b><div class="rg-sec">افتح 🧑‍ لوحة الأستاذ : تمارين، فروض، تصحيح.</div>' };
+    return null;
+  }catch(e){ return null; }
+}
+
+async function reponsePedagogique(q){
     q = darja(q);
     const _bib = await intentBiblio(q);
     if(_bib) return _bib;
