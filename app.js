@@ -766,7 +766,7 @@ function renderGrille(g){
 window.__BOOK__ = window.__BOOK__ || {};
 try {
   fetch('assets/bdd/buch_pages.json', {cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(B){
-    if(B){ window.__BOOK__ = B; window.dispatchEvent(new Event('book-ready')); }
+    if(B){ window.__BOOK__ = (B && B.pages) ? B.pages : B; window.dispatchEvent(new Event('book-ready')); }
   }).catch(function(){});
 } catch(e) {}
 function leconLivre(s){
