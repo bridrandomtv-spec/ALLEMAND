@@ -1991,3 +1991,30 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   }
   setTimeout(show, 4000);
 })();
+
+/* ── 🌐 Sélecteur de langue (DE ↔ EN) : 2ème langue du lycée virtuel ── */
+(function(){
+  function getLang(){ try{ return localStorage.getItem('dz_lang') || 'de'; }catch(e){ return 'de'; } }
+  function apply(l){
+    window.__TARGET_LANG__ = l;
+    if(window.setLangueCible) setLangueCible(l);
+    try{ localStorage.setItem('dz_lang', l); }catch(e){}
+    var b = document.getElementById('langSel');
+    if(b) b.textContent = (l==='en' ? '🇬 EN' : '🇩🇪 DE');
+  }
+  function mount(){
+    if(document.getElementById('langSel')) return;
+    var b = document.createElement('button');
+    b.id = 'langSel';
+    b.style.cssText = 'position:fixed;top:10px;inset-inline-end:10px;z-index:9996;background:#0f2b1d;border:1px solid #2c7a4f;color:#eafff2;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)';
+    document.body.appendChild(b);
+    b.addEventListener('click', function(){
+      var l = getLang()==='de' ? 'en' : 'de';
+      apply(l);
+      if(window.toast) toast(l==='en' ? '🇬 Anglais activé' : '🇩🇪 Allemand activé', '');
+    });
+    apply(getLang());
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', mount);
+  else setTimeout(mount, 800);
+})();
