@@ -456,6 +456,15 @@ function renderTabs(){
   /* Navigation compacte : catégories accordéon (fermées par défaut,
      une seule ouverte à la fois ; celle de la vue courante s'ouvre seule). */
   let h = '';
+  /* ── 📚 Bloc MATIÈRES (3 tirets) : l'élève choisit sa matière ── */
+  h += '<div class="cat-head open" style="cursor:default"><span>📚 Matières · المواد</span></div>'
+    + '<div class="cat-body">'
+    + '<button class="tab sub" data-matiere="de">🇩🇪 Allemand · ألمانية ✅</button>'
+    + '<button class="tab sub" data-matiere="en">🇬 English · إنجليزية 🆕</button>'
+    + '<button class="tab sub" data-matiere="fr">🇫🇷 Français · فرنسية 🔒</button>'
+    + '<button class="tab sub" data-matiere="es">🇪🇸 Español · إسبانية 🔒</button>'
+    + '<button class="tab sub" data-matiere="it">🇮 Italiano · إيطالية 🔒</button>'
+    + '</div>';
   for(const id of NAVSOLO_TOP) h += btn(id, 'solo');
   for(const g of NAVCATS){
     const items = g[3].filter(v => byId[v]);
