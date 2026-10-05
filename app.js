@@ -1932,8 +1932,8 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     { ar:"استمع ثم ردّد بصوت عالٍ (Shadowing) لتتقن النطق.", de:"Höre zu und sprich laut nach (Shadowing)." },
     { ar:"اقرأ صفحة من الكتاب بصوت عالٍ كل يوم.", de:"Lies jeden Tag eine Buchseite laut vor." },
     { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole zuerst die fälligen 🧠-Karten." },
-    { ar":"كل أسبوع، حلّ فرضًا تجريبيًا بتوقيت حقيقي.", de:"Mache jede Woche einen Test unter Echtzeit." },
-    { ar":"دوّن أخطاءك في دفتر الأخطاء وراجعها أسبوعيًا.", de:"Notiere Fehler im Fehlerheft und wiederhole sie wöchentlich." },
+    { ar:"كل أسبوع، حلّ فرضًا تجريبيًا بتوقيت حقيقي.", de:"Mache jede Woche einen Test unter Echtzeit." },
+    { ar:"دوّن أخطاءك في دفتر الأخطاء وراجعها أسبوعيًا.", de:"Notiere Fehler im Fehlerheft und wiederhole sie wöchentlich." },
     { ar:"نم مبكرًا — الدماغ يثبّت ما تعلمت أثناء النوم.", de:"Schlafe früh — das Gehirn festigt im Schlaf." }
   ];
   function show(){
