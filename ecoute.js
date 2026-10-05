@@ -2,7 +2,7 @@
    comprend (RAG), répond à l'écran ET à voix haute (voix allemande de-DE) */
 'use strict';
 (function(){
-  let rec = null, on = false;
+  let rec = null, on = false, LANG = 'de-DE';
   function panel(){
     let p = document.getElementById('ecPanel');
     if(!p){
@@ -13,10 +13,10 @@
     return p;
   }
   function speak(txt){
-    if(window.VOIX && VOIX.parler){ try{ VOIX.parler(txt, 'de-DE'); return; }catch(e){} }
+    if(window.VOIX && VOIX.parler){ try{ VOIX.parler(txt); return; }catch(e){} }
     try{
       const u = new SpeechSynthesisUtterance(txt);
-      u.lang = 'de-DE'; u.rate = 0.95;
+      u.lang = /[؀-]/.test(txt) ? 'ar-DZ' : 'de-DE'; u.rate = 0.95;
       speechSynthesis.speak(u);
     }catch(e){}
   }
@@ -27,9 +27,9 @@
       p.innerHTML = '⚠️ Ton navigateur ne supporte pas l’écoute. Utilise Chrome.'; return; }
     if(on){ on = false; try{ rec.stop(); }catch(e){} p.hidden = true; return; }
     on = true; p.hidden = false;
-    p.innerHTML = '🎧 Ich höre zu… sprich Deutsch !';
+    p.innerHTML = (LANG==='de-DE' ? '🎧 Ich höre zu… sprich Deutsch !' : '🎧 نسمعك… تكلّم بالدارجة !') + '  <button class="btn btn-o btn-sm" id="ecLang">🌐 ' + (LANG==='de-DE'?'DE':'AR') + '</button>';
     rec = new SR();
-    rec.lang = 'de-DE'; rec.interimResults = false; rec.maxAlternatives = 1;
+    rec.lang = LANG; rec.interimResults = false; rec.maxAlternatives = 1;
     rec.onresult = async ev => {
       const q = String(ev.results[0][0].transcript || '').trim();
       if(!q){ p.innerHTML = '🎧 …'; on = false; return; }
