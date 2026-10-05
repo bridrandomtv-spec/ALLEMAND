@@ -1923,19 +1923,28 @@ function blocsPedago(s){
 
 try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.createElement('style'); s.textContent='p[dir="ltr"],.de-ltr{direction:ltr;text-align:left;unicode-bidi:plaintext}'; document.head.appendChild(s); }); }catch(e){}
 
-/* ── 🧭 Coach de réussite : petites notifications bilingues AR/DE, étape par étape ── */
+/* ── 🧭 Coach de réussite : parcours guidé bilingue AR/DE, étape par étape ──
+   Chaque étape = bonne méthode/habitude + bouton « aller » vers la vue réelle
+   + bouton « التالي / Weiter » pour passer à l'étape suivante. Progression
+   mémorisée. Guide l'élève du diagnostic → leçon → écoute → dialogue → exercices
+   → cartes → devoir → test → (bac), 1 à 3×/semaine. ── */
 (function(){
   var STEPS = [
-    { ar:"ابدأ بتشخيص مستواك ثم افتح « مسارك » ل ترى خطتك.", de:"Starte mit dem Diagnosetest und öffne « مسارك » für deinen Plan." },
-    { ar:"شاهد حصة واحدة فقط يوميًا — الاستمرارية أهم من الكمية.", de:"Nur eine Lektion pro Tag — Regelmäßigkeit schlägt Menge." },
-    { ar:"بعد كل حصة، حلّ 3 تمارين فورًا لتثبيت ما تعلمت.", de:"Löse nach jeder Lektion sofort 3 Übungen." },
-    { ar:"استمع ثم ردّد بصوت عالٍ (Shadowing) لتتقن النطق.", de:"Höre zu und sprich laut nach (Shadowing)." },
-    { ar:"اقرأ صفحة من الكتاب بصوت عالٍ كل يوم.", de:"Lies jeden Tag eine Buchseite laut vor." },
-    { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole zuerst die fälligen 🧠-Karten." },
-    { ar:"كل أسبوع، حلّ فرضًا تجريبيًا بتوقيت حقيقي.", de:"Mache jede Woche einen Test unter Echtzeit." },
-    { ar:"دوّن أخطاءك في دفتر الأخطاء وراجعها أسبوعيًا.", de:"Notiere Fehler im Fehlerheft und wiederhole sie wöchentlich." },
-    { ar:"نم مبكرًا — الدماغ يثبّت ما تعلمت أثناء النوم.", de:"Schlafe früh — das Gehirn festigt im Schlaf." }
+    { ar:"ابدأ بتشخيص مستواك ثم افتح خطتك في « مسارك ».", de:"Starte mit dem Diagnosetest und öffne deinen Plan in « مسارك ».", view:"masar", ic:"🎯" },
+    { ar:"شاهد حصة واحدة فقط اليوم (Lektion) — الاستمرارية أهم من الكمية.", de:"Schaue heute nur eine Lektion — Regelmäßigkeit schlägt Menge.", view:"seances", ic:"📖" },
+    { ar:"افتح الكتاب واستمع لصفحة Lektion ثم اقرأها بصوت عالٍ.", de:"Öffne das Buch, höre die Lektion-Seite und lies sie laut.", view:"buch", ic:"👂" },
+    { ar:"حاور المنصة: اضغط 🎙️ وتكلم بالألمانية أو الدارجة وهي تجيبك.", de:"Sprich mit der Plattform über 🎙️ — sie antwortet dir.", view:null, ic:"🗣️" },
+    { ar:"حلّ 3 تمارين على ما تعلمت اليوم لتثبيته.", de:"Löse 3 Übungen zum Gelernten, um es zu festigen.", view:"banque", ic:"✍️" },
+    { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole zuerst die fälligen 🧠-Karten.", view:"memoire", ic:"🧠" },
+    { ar:"أنهِ الوحدة بفرض مُنقّط (تصحيح فوري).", de:"Schließe die Einheit mit einer benoteten Aufgabe ab (Sofortkorrektur).", view:"devoirs", ic:"📝" },
+    { ar:"كل أسبوع: اختبار تجريبي بتوقيت حقيقي (1-3 مرات).", de:"Jede Woche: ein Test unter Echtzeit (1-3×).", view:"examen", ic:"🧪" },
+    { ar:"للبكالوريا: حضّر باك بمواضيع رسمية مصححة.", de:"Fürs Abi: übe mit offiziellen, korrigierten Prüfungen.", view:"examen", ic:"🎓" }
   ];
+  function goView(v){
+    var t = document.createElement('button');
+    t.setAttribute('data-go', v); t.style.display='none';
+    document.body.appendChild(t); t.click(); t.remove();
+  }
   function show(){
     if(document.getElementById('coachCard')) return;
     var i = 0; try{ i = parseInt(localStorage.getItem('dz_coach_step')||'0',10)||0; }catch(e){}
@@ -1943,18 +1952,21 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     var s = STEPS[i];
     var card = document.createElement('div');
     card.id = 'coachCard';
-    card.style.cssText = 'position:fixed;bottom:70px;inset-inline-start:14px;z-index:9997;max-width:320px;background:#0f2b1d;border:1px solid #2c7a4f;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:13px;color:#eafff2';
-    card.innerHTML = '<b>🧭 ' + (i+1) + '/' + STEPS.length + '</b>'
-      + '<div dir="rtl" style="margin:6px 0">' + s.ar + '</div>'
-      + '<div dir="ltr" lang="de" style="color:#9fd8b4;text-align:left">' + s.de + '</div>'
-      + '<div style="display:flex;gap:8px;margin-top:8px">'
-      + '<button id="coachNext" style="flex:1;background:#d9a520;border:0;border-radius:8px;padding:6px;font-weight:700;cursor:pointer">✔ فهمت — التالي</button>'
+    card.style.cssText = 'position:fixed;bottom:70px;inset-inline-start:14px;z-index:9997;max-width:330px;background:#0f2b1d;border:1px solid #2c7a4f;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:13px;color:#eafff2';
+    card.innerHTML = '<b>'+s.ic+' 🧭 '+(i+1)+'/'+STEPS.length+'</b>'
+      + '<div dir="rtl" style="margin:6px 0">'+s.ar+'</div>'
+      + '<div dir="ltr" lang="de" style="color:#9fd8b4;text-align:left">'+s.de+'</div>'
+      + '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'
+      + (s.view ? '<button id="coachGo" style="background:#2c7a4f;border:0;color:#eafff2;border-radius:8px;padding:6px 10px;cursor:pointer">▶ ابدأ · Start</button>' : '')
+      + '<button id="coachNext" style="flex:1;background:#d9a520;border:0;border-radius:8px;padding:6px;font-weight:700;cursor:pointer">التالي ▸ · Weiter </button>'
       + '<button id="coachX" style="background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px;cursor:pointer">✕</button>'
       + '</div>';
     document.body.appendChild(card);
+    var g = document.getElementById('coachGo');
+    if(g) g.addEventListener('click', function(){ goView(s.view); });
     document.getElementById('coachNext').addEventListener('click', function(){
       try{ localStorage.setItem('dz_coach_step', String((i+1) % STEPS.length)); }catch(e){}
-      card.remove();
+      card.remove(); setTimeout(show, 400);
     });
     document.getElementById('coachX').addEventListener('click', function(){ card.remove(); });
   }
