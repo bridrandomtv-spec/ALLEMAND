@@ -788,8 +788,7 @@ async function matchOnto(q){
   let best = null, bestScore = 0;
   for(const it of (O.intents || [])){
     let score = 0;
-    for(const key of Object.keys(it.patterns || {})){
-      const arr = it.patterns[key];
+    const srcs = Object.values(it.patterns || {}).concat(Object.values(it.expansion || {})); for(const arr of srcs){
       for(const p of arr){
         const np = normOnto(p);
         if(nq === np) score = Math.max(score, 100);
