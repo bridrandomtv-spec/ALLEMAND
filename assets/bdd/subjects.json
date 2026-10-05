@@ -1,0 +1,14 @@
+[
+  {
+    "id": "allemand",
+    "name": "Allemand",
+    "slug": "allemand",
+    "status": "implemented"
+  },
+  {
+    "id": "anglais",
+    "name": "Anglais",
+    "slug": "anglais",
+    "status": "partial"
+  }
+]
