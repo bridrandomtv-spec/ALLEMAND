@@ -230,3 +230,6 @@
   document.addEventListener('dz:view', () => setTimeout(branche, 120));
   document.addEventListener('DOMContentLoaded', () => setTimeout(branche, 300));
 })();
+
+window.setLangueCible = function(l){ window.__TARGET_LANG__ = l; };
+window.__TARGET_LANG__ = window.__TARGET_LANG__ || 'de';
