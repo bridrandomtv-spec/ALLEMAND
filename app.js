@@ -1923,51 +1923,75 @@ function blocsPedago(s){
 
 try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.createElement('style'); s.textContent='p[dir="ltr"],.de-ltr{direction:ltr;text-align:left;unicode-bidi:plaintext}'; document.head.appendChild(s); }); }catch(e){}
 
-/* ── 🧭 Coach de réussite : parcours guidé bilingue AR/DE, étape par étape ──
-   Chaque étape = bonne méthode/habitude + bouton « aller » vers la vue réelle
-   + bouton « التالي / Weiter » pour passer à l'étape suivante. Progression
-   mémorisée. Guide l'élève du diagnostic → leçon → écoute → dialogue → exercices
-   → cartes → devoir → test → (bac), 1 à 3×/semaine. ── */
+/* ── 🧭 Coach v3 : parcours guidé bilingue + entraînement INLINE (3 questions
+   inventées selon l'unité) — n'expose PAS la banque payante aux non-abonnés. ── */
 (function(){
+  var QB = {"1": [["Ich heiße Sami. → « heiße » vient de heißen.", "t"], ["Du bist 16 Jahre alt. → « bist » vient de sein.", "t"], ["Ich habe einen Bruder. → « habe » vient de haben.", "t"]], "2": [["Das Haus hat vier Zimmer. → « das » est l'article de Haus.", "t"], ["Ich wohne in einem Haus. → « in » + Datif ici.", "t"], ["Die Küche est masculin.", "f"]], "3": [["Die Schule beginnt um 8 Uhr. → « beginnt » conjugué de beginnen.", "t"], ["Wir lernen Deutsch. → « lernen » pour wir.", "t"], ["Das Lieblingsfach est féminin.", "f"]], "4": [["Es ist warm. → « es » sujet impersonnel météo.", "t"], ["Die Sonne scheint. → « scheint » de scheinen.", "t"], ["Morgen regnet es. → verbe en 2e position.", "t"]], "5": [["Ich spiele gern Fußball. → « spiele » pour ich.", "t"], ["Er mag Deutsch. → « mag » de mögen.", "t"], ["Wir gern schwimmen. → ordre correct.", "f"]], "6": [["Ich habe Kopfschmerzen. → « habe » de haben.", "t"], ["Er ist krank. → « ist » de sein.", "t"], ["Du sollst zum Arzt gehen. → « sollst » conseil.", "t"]], "7": [["Ich bestelle einen Tee. → Akkusativ « einen ».", "t"], ["Sie trinkt ein Wasser. → « ein » neutre Akk.", "t"], ["Der Kuchen est féminin.", "f"]], "8": [["Sie ist freundlich. → adjectif attribut sans terminaison.", "t"], ["Er hat kurze Haare. → « kurze » accord.", "t"], ["Ich trage einen Hut. → « einen » masc Akk.", "f"]], "9": [["Die Stadt ist laut. → « laut » adjectif.", "t"], ["Auf dem Land ist es ruhig. → « auf » + Datif.", "t"], ["Ich wohne lieber im Stadt. → correct.", "f"]], "10": [["Ich interessiere mich für Musik. → « für » + Akk.", "t"], ["Er ist selbstbewusst. → adjectif de personnalité.", "t"], ["Sie freut sich über das Geschenk. → « über ».", "t"]], "11": [["Der Bürger respektiert die Gesetze. → « die » pluriel Akk.", "t"], ["Wir müssen Verantwortung tragen. → « müssen » obligation.", "t"], ["Die Freiheit est masculin.", "f"]], "12": [["Man hilft einander. → « man » sujet impersonnel.", "t"], ["Die Nachbarn besuchen sich. → verbe pronominal.", "t"], ["Er lebt in einer reichen Gesellschaft. → « einer » Datif.", "f"]], "13": [["Die Technik verändert sich. → verbe pronominal.", "t"], ["Wir haben das Internet benutzt. → Perfekt avec haben.", "t"], ["Der Computer ist ein Mensch.", "f"]], "14": [["Die Wirtschaft wächst. → « wächst » de wachsen.", "t"], ["Viele arbeiten im Ausland. → « im » = in dem.", "t"], ["Der Export est féminin.", "f"]], "15": [["Wir müssen die Umwelt schützen. → modal + infinitif final.", "t"], ["Der Müll wird getrennt. → Passiv.", "t"], ["Die Luft est masculin.", "f"]], "16": [["Man sollte gesund essen. → « sollte » conseil.", "t"], ["Sport macht den Körper stark. → Akk « den ».", "t"], ["Rauchen ist gesund.", "f"]], "17": [["Die Welt ist ein Dorf geworden. → Perfekt avec sein.", "t"], ["Waren werden schneller bewegt. → Passiv.", "t"], ["Globalisierung hat keine Nachteile.", "f"]], "18": [["Die Medien informieren schnell. → verbe 2e position.", "t"], ["Wir müssen Quellen prüfen. → modal.", "t"], ["Fake News sind immer wahr.", "f"]], "19": [["Der Dialog verbindet Menschen. → verbe 2e position.", "t"], ["Sprachen sind Brücken. → « sind » pluriel.", "t"], ["Der Dialog macht uns ärmer.", "f"]]};
   var STEPS = [
-    { ar:"ابدأ بتشخيص مستواك ثم افتح خطتك في « مسارك ».", de:"Starte mit dem Diagnosetest und öffne deinen Plan in « مسارك ».", view:"masar", ic:"🎯" },
-    { ar:"شاهد حصة واحدة فقط اليوم (Lektion) — الاستمرارية أهم من الكمية.", de:"Schaue heute nur eine Lektion — Regelmäßigkeit schlägt Menge.", view:"seances", ic:"📖" },
-    { ar:"افتح الكتاب واستمع لصفحة Lektion ثم اقرأها بصوت عالٍ.", de:"Öffne das Buch, höre die Lektion-Seite und lies sie laut.", view:"buch", ic:"👂" },
-    { ar:"حاور المنصة: اضغط 🎙️ وتكلم بالألمانية أو الدارجة وهي تجيبك.", de:"Sprich mit der Plattform über 🎙️ — sie antwortet dir.", view:null, ic:"🗣️" },
-    { ar:"حلّ 3 تمارين على ما تعلمت اليوم لتثبيته.", de:"Löse 3 Übungen zum Gelernten, um es zu festigen.", view:"banque", ic:"✍️" },
-    { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole zuerst die fälligen 🧠-Karten.", view:"memoire", ic:"🧠" },
-    { ar:"أنهِ الوحدة بفرض مُنقّط (تصحيح فوري).", de:"Schließe die Einheit mit einer benoteten Aufgabe ab (Sofortkorrektur).", view:"devoirs", ic:"📝" },
-    { ar:"كل أسبوع: اختبار تجريبي بتوقيت حقيقي (1-3 مرات).", de:"Jede Woche: ein Test unter Echtzeit (1-3×).", view:"examen", ic:"🧪" },
-    { ar:"للبكالوريا: حضّر باك بمواضيع رسمية مصححة.", de:"Fürs Abi: übe mit offiziellen, korrigierten Prüfungen.", view:"examen", ic:"🎓" }
+    { ar:"ابدأ بتشخيص مستواك ثم افتح خطتك في « مسارك ».", de:"Starte mit dem Diagnosetest und öffne deinen Plan.", view:"masar", ic:"🎯" },
+    { ar:"شاهد حصة واحدة فقط اليوم (Lektion).", de:"Schaue heute nur eine Lektion.", view:"seances", ic:"📖" },
+    { ar:"افتح الكتاب واستمع لصفحة Lektion ثم اقرأها بصوت عالٍ.", de:"Höre die Buchseite und lies sie laut.", view:"buch", ic:"👂" },
+    { ar:"حاور المنصة: اضغط 🎙️ وتكلم بالألمانية أو الدارجة.", de:"Sprich mit der Plattform über 🎙️.", view:null, ic:"🗣️" },
+    { ar:"ثبّت ما تعلمت: 3 أسئلة مخترعة الآن حسب وحدتك (بدون فتح البنك).", de:"Festige: 3 erfundene Fragen zu deiner Einheit.", quiz:true, ic:"✍️" },
+    { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole die fälligen 🧠-Karten.", view:"memoire", ic:"🧠" },
+    { ar:"أنهِ الوحدة بفرض مُنقّط (تصحيح فوري).", de:"Schließe mit einer benoteten Aufgabe ab.", view:"devoirs", ic:"📝" },
+    { ar:"كل أسبوع: اختبار بتوقيت حقيقي (1-3 مرات).", de:"Wöchentlich ein Test unter Echtzeit.", view:"examen", ic:"🧪" },
+    { ar:"للبكالوريا: حضّر باك بمواضيع رسمية مصححة.", de:"Fürs Abi: offizielle Prüfungen üben.", view:"examen", ic:"🎓" }
   ];
-  function goView(v){
-    var t = document.createElement('button');
-    t.setAttribute('data-go', v); t.style.display='none';
-    document.body.appendChild(t); t.click(); t.remove();
+  function goView(v){ var t=document.createElement('button'); t.setAttribute('data-go',v); t.style.display='none'; document.body.appendChild(t); t.click(); t.remove(); }
+  function openQuiz(){
+    var niv = (window.getNiveauActif && window.getNiveauActif()==='3AS') ? 3 : 2;
+    var def = niv===3 ? 10 : 1;
+    var ov = document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;display:flex;align-items:center;justify-content:center';
+    var box = document.createElement('div');
+    box.style.cssText='background:#0f2b1d;border:1px solid #2c7a4f;border-radius:14px;padding:16px;max-width:380px;width:92%;color:#eafff2;font-size:14px';
+    box.innerHTML = '<b>✍️ تدريب سريع — 3 أسئلة</b> <select id="qzU" style="float:left"></select><div id="qzB" style="margin-top:10px"></div><div id="qzS" style="margin-top:8px"></div><button id="qzX" style="margin-top:10px;background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px">✕ إغلاق</button>';
+    ov.appendChild(box); document.body.appendChild(ov);
+    var sel = box.querySelector('#qzU');
+    var units = niv===3 ? [10,11,12,13,14,15,16,17,18,19] : [1,2,3,4,5,6,7,8,9];
+    units.forEach(function(u){ var o=document.createElement('option'); o.value=u; o.textContent='الوحدة '+u; if(u===def)o.selected=true; sel.appendChild(o); });
+    function render(u){
+      var qs = QB[u] || QB[def]; var html=''; var score=0; var done=0;
+      qs.forEach(function(qq, idx){
+        html += '<div style="margin:8px 0"><div dir="ltr" lang="de" style="text-align:left">'+qq[0]+'</div>'
+          + '<button data-i="'+idx+'" data-v="t" style="margin:4px 4px 0 0;background:#2c7a4f;border:0;color:#fff;border-radius:6px;padding:4px 10px">Richtig ✔</button>'
+          + '<button data-i="'+idx+'" data-v="f" style="background:#7a2c2c;border:0;color:#fff;border-radius:6px;padding:4px 10px">Falsch ✘</button>'
+          + '<span id="fb'+idx+'"></span></div>';
+      });
+      box.querySelector('#qzB').innerHTML = html;
+      box.querySelector('#qzS').textContent='';
+      box.querySelectorAll('#qzB button').forEach(function(b){
+        b.addEventListener('click', function(){
+          var idx=+b.dataset.i, v=b.dataset.v; var fb=box.querySelector('#fb'+idx);
+          if(fb.dataset.done) return; fb.dataset.done='1'; done++;
+          if(v===qs[idx][1]){ score++; fb.textContent=' ✅'; } else { fb.textContent=' ❌ ('+(qs[idx][1]==='t'?'Richtig':'Falsch')+')'; }
+          if(done===qs.length) box.querySelector('#qzS').textContent='نتيجتك: '+score+'/'+qs.length+(score===qs.length?' — ممتاز! 🎉':' — راجع ثم أعد 💪');
+        });
+      });
+    }
+    sel.addEventListener('change', function(){ render(+sel.value); });
+    render(def);
+    box.querySelector('#qzX').addEventListener('click', function(){ ov.remove(); });
   }
   function show(){
     if(document.getElementById('coachCard')) return;
-    var i = 0; try{ i = parseInt(localStorage.getItem('dz_coach_step')||'0',10)||0; }catch(e){}
-    if(i >= STEPS.length) i = 0;
-    var s = STEPS[i];
-    var card = document.createElement('div');
-    card.id = 'coachCard';
-    card.style.cssText = 'position:fixed;bottom:70px;inset-inline-start:14px;z-index:9997;max-width:330px;background:#0f2b1d;border:1px solid #2c7a4f;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:13px;color:#eafff2';
-    card.innerHTML = '<b>'+s.ic+' 🧭 '+(i+1)+'/'+STEPS.length+'</b>'
-      + '<div dir="rtl" style="margin:6px 0">'+s.ar+'</div>'
-      + '<div dir="ltr" lang="de" style="color:#9fd8b4;text-align:left">'+s.de+'</div>'
-      + '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'
-      + (s.view ? '<button id="coachGo" style="background:#2c7a4f;border:0;color:#eafff2;border-radius:8px;padding:6px 10px;cursor:pointer">▶ ابدأ · Start</button>' : '')
-      + '<button id="coachNext" style="flex:1;background:#d9a520;border:0;border-radius:8px;padding:6px;font-weight:700;cursor:pointer">التالي ▸ · Weiter </button>'
-      + '<button id="coachX" style="background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px;cursor:pointer">✕</button>'
-      + '</div>';
+    var i=0; try{ i=parseInt(localStorage.getItem('dz_coach_step')||'0',10)||0; }catch(e){}
+    if(i>=STEPS.length) i=0;
+    var s=STEPS[i];
+    var card=document.createElement('div'); card.id='coachCard';
+    card.style.cssText='position:fixed;bottom:70px;inset-inline-start:14px;z-index:9997;max-width:330px;background:#0f2b1d;border:1px solid #2c7a4f;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:13px;color:#eafff2';
+    card.innerHTML='<b>'+s.ic+' 🧭 '+(i+1)+'/'+STEPS.length+'</b>'
+      +'<div dir="rtl" style="margin:6px 0">'+s.ar+'</div>'
+      +'<div dir="ltr" lang="de" style="color:#9fd8b4;text-align:left">'+s.de+'</div>'
+      +'<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'
+      +((s.quiz||s.view) ? '<button id="coachGo" style="background:#2c7a4f;border:0;color:#fff;border-radius:8px;padding:6px 10px;cursor:pointer">▶ ابدأ · Start</button>' : '')
+      +'<button id="coachNext" style="flex:1;background:#d9a520;border:0;border-radius:8px;padding:6px;font-weight:700;cursor:pointer">التالي ▸ · Weiter</button>'
+      +'<button id="coachX" style="background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px">✕</button></div>';
     document.body.appendChild(card);
-    var g = document.getElementById('coachGo');
-    if(g) g.addEventListener('click', function(){ goView(s.view); });
-    document.getElementById('coachNext').addEventListener('click', function(){
-      try{ localStorage.setItem('dz_coach_step', String((i+1) % STEPS.length)); }catch(e){}
-      card.remove(); setTimeout(show, 400);
-    });
+    var g=document.getElementById('coachGo');
+    if(g) g.addEventListener('click', function(){ if(s.quiz) openQuiz(); else goView(s.view); });
+    document.getElementById('coachNext').addEventListener('click', function(){ try{ localStorage.setItem('dz_coach_step', String((i+1)%STEPS.length)); }catch(e){} card.remove(); setTimeout(show,400); });
     document.getElementById('coachX').addEventListener('click', function(){ card.remove(); });
   }
   setTimeout(show, 4000);
