@@ -284,6 +284,9 @@
         '« ⏱️ ابدأ بظروف حقيقية » لتشغيل المؤقّت الرسمي (180 دقيقة) والتصحيح الآلي.</div>';
     }
 
+    if(s._lecture){ h += '<div class="part"><div class="part-h"><b>📖 الموضوع الكامل</b>' +
+        '<span class="note">lecture + corrigé</span></div><div class="part-b">' +
+        '<div class="sujet-box">' + esc(s._full || '') + '</div></div></div>'; }
     s.parties.forEach(p => {
       h += '<div class="part"><div class="part-h"><b>' + p.id + '. ' + esc(p.titre) + '</b>' +
         '<span class="note">' + p.points + ' pts</span></div><div class="part-b">';
