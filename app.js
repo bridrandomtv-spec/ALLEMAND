@@ -1922,3 +1922,41 @@ function blocsPedago(s){
 }
 
 try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.createElement('style'); s.textContent='p[dir="ltr"],.de-ltr{direction:ltr;text-align:left;unicode-bidi:plaintext}'; document.head.appendChild(s); }); }catch(e){}
+
+/* ── 🧭 Coach de réussite : petites notifications bilingues AR/DE, étape par étape ── */
+(function(){
+  var STEPS = [
+    { ar:"ابدأ بتشخيص مستواك ثم افتح « مسارك » ل ترى خطتك.", de:"Starte mit dem Diagnosetest und öffne « مسارك » für deinen Plan." },
+    { ar:"شاهد حصة واحدة فقط يوميًا — الاستمرارية أهم من الكمية.", de:"Nur eine Lektion pro Tag — Regelmäßigkeit schlägt Menge." },
+    { ar:"بعد كل حصة، حلّ 3 تمارين فورًا لتثبيت ما تعلمت.", de:"Löse nach jeder Lektion sofort 3 Übungen." },
+    { ar:"استمع ثم ردّد بصوت عالٍ (Shadowing) لتتقن النطق.", de:"Höre zu und sprich laut nach (Shadowing)." },
+    { ar:"اقرأ صفحة من الكتاب بصوت عالٍ كل يوم.", de:"Lies jeden Tag eine Buchseite laut vor." },
+    { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole zuerst die fälligen 🧠-Karten." },
+    { ar":"كل أسبوع، حلّ فرضًا تجريبيًا بتوقيت حقيقي.", de:"Mache jede Woche einen Test unter Echtzeit." },
+    { ar":"دوّن أخطاءك في دفتر الأخطاء وراجعها أسبوعيًا.", de:"Notiere Fehler im Fehlerheft und wiederhole sie wöchentlich." },
+    { ar:"نم مبكرًا — الدماغ يثبّت ما تعلمت أثناء النوم.", de:"Schlafe früh — das Gehirn festigt im Schlaf." }
+  ];
+  function show(){
+    if(document.getElementById('coachCard')) return;
+    var i = 0; try{ i = parseInt(localStorage.getItem('dz_coach_step')||'0',10)||0; }catch(e){}
+    if(i >= STEPS.length) i = 0;
+    var s = STEPS[i];
+    var card = document.createElement('div');
+    card.id = 'coachCard';
+    card.style.cssText = 'position:fixed;bottom:70px;inset-inline-start:14px;z-index:9997;max-width:320px;background:#0f2b1d;border:1px solid #2c7a4f;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:13px;color:#eafff2';
+    card.innerHTML = '<b>🧭 ' + (i+1) + '/' + STEPS.length + '</b>'
+      + '<div dir="rtl" style="margin:6px 0">' + s.ar + '</div>'
+      + '<div dir="ltr" lang="de" style="color:#9fd8b4;text-align:left">' + s.de + '</div>'
+      + '<div style="display:flex;gap:8px;margin-top:8px">'
+      + '<button id="coachNext" style="flex:1;background:#d9a520;border:0;border-radius:8px;padding:6px;font-weight:700;cursor:pointer">✔ فهمت — التالي</button>'
+      + '<button id="coachX" style="background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px;cursor:pointer">✕</button>'
+      + '</div>';
+    document.body.appendChild(card);
+    document.getElementById('coachNext').addEventListener('click', function(){
+      try{ localStorage.setItem('dz_coach_step', String((i+1) % STEPS.length)); }catch(e){}
+      card.remove();
+    });
+    document.getElementById('coachX').addEventListener('click', function(){ card.remove(); });
+  }
+  setTimeout(show, 4000);
+})();
