@@ -44,6 +44,8 @@
       speak(rep);
       const rb = document.getElementById('ecRe');
       if(rb) rb.addEventListener('click', () => speak(rep));
+      const lb = document.getElementById('ecLang');
+      if(lb) lb.addEventListener('click', () => { LANG = (LANG==='de-DE'?'ar-DZ':'de-DE'); on=false; toggle(); });
       on = false;
     };
     rec.onerror = () => { on = false;
