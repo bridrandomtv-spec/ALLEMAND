@@ -2238,3 +2238,39 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   }
   window.CTX = { get: read, set: set };
 })();
+
+/* ── Anglais : exercices interactifs (MCQ + correction immédiate) ajoutés à la vue english ── */
+(function(){
+  var DATA=null, score=0, done=0;
+  function load(){ if(DATA) return Promise.resolve(DATA);
+    return fetch('assets/bdd/english_exercises.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():{exos:[]};})
+      .then(function(j){ DATA=j.exos||[]; return DATA; }).catch(function(){ DATA=[]; return DATA; }); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function build(box){
+    var wrap=document.createElement('div'); wrap.className='card'; wrap.style.padding='12px';
+    var h='<b>🎯 Exercices interactifs · تمارين تفاعلية</b> <span id="exoScore" style="color:#9fd8b4"></span>';
+    DATA.forEach(function(e,i){
+      h+='<div style="margin:10px 0" data-exo="'+i+'"><div dir="ltr" style="text-align:left"><b>'+(i+1)+'. '+esc(e.q)+'</b></div>'
+        +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">'
+        + e.o.map(function(o,k){ return '<button class="btn" data-opt="'+k+'" dir="ltr">'+esc(o)+'</button>'; }).join('')
+        +'</div><div class="exoFb" dir="ltr" style="text-align:left;font-size:12px;margin-top:4px"></div></div>';
+    });
+    wrap.innerHTML=h; box.appendChild(wrap);
+    wrap.querySelectorAll('[data-exo]').forEach(function(bl){
+      var i=+bl.getAttribute('data-exo'); var e=DATA[i]; var fb=bl.querySelector('.exoFb');
+      bl.querySelectorAll('[data-opt]').forEach(function(b){
+        b.addEventListener('click', function(){
+          if(bl.dataset.done) return; bl.dataset.done='1'; done++;
+          var k=+b.getAttribute('data-opt');
+          if(k===e.a){ score++; b.style.background='#2c7a4f'; fb.textContent='✅ Correct — '+e.x; }
+          else { b.style.background='#8a2b2b'; fb.textContent='❌ '+e.x+' (réponse: '+e.o[e.a]+')'; }
+          var s=wrap.querySelector('#exoScore'); if(s) s.textContent=' · '+score+'/'+done;
+        });
+      });
+    });
+  }
+  var t=setInterval(function(){
+    var body=document.getElementById('enBody');
+    if(body && body.innerHTML.length>50 && !body.dataset.exo){ body.dataset.exo='1'; load().then(function(){ if(DATA.length) build(body); }); }
+  }, 1000);
+})();
