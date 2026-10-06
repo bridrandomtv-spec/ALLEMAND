@@ -2274,3 +2274,19 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     if(body && body.innerHTML.length>50 && !body.dataset.exo){ body.dataset.exo='1'; load().then(function(){ if(DATA.length) build(body); }); }
   }, 1000);
 })();
+
+/* ── Anglais : carte « Manuel officiel (PDF) » — lien vers le livre 1AS sans copie ── */
+(function(){
+  var URL="https://drive.google.com/file/d/1zLXs51iND5H_VspdEAo55vD4t9V51vEq/view?usp=drive_link";
+  var t=setInterval(function(){
+    var body=document.getElementById('enBody');
+    if(body && body.innerHTML.length>50 && !body.dataset.pdf){
+      body.dataset.pdf='1';
+      var c=document.createElement('div'); c.className='card'; c.style.padding='12px';
+      c.innerHTML='<b>📕 Manuel officiel — AT THE CROSSROADS (1AS)</b>'
+        +'<div dir="rtl" style="color:#9fd8b4;font-size:12px;margin:6px 0">الكتاب المدرسي الرسمي كامل (PDF) — يُفتح في تبويب خارجي</div>'
+        +'<a class="btn" style="display:inline-block;text-decoration:none" target="_blank" rel="noopener" href="'+URL+'">📕 Ouvrir le manuel (PDF)</a>';
+      body.insertBefore(c, body.firstChild);
+    }
+  }, 1000);
+})();
