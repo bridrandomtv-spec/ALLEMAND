@@ -2161,3 +2161,26 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   }
   var t=setInterval(function(){ if(chosen()){ clearInterval(t); return; } show(); }, 1200);
 })();
+
+/* ── Routage par hash : l'URL reflète la vue + liens profonds (#vue) ──
+   Additif : n'touche pas à go(). Met à jour location.hash à chaque changement
+   de vue (replaceState) et ouvre la vue demandée par #… / bouton précédent. */
+(function(){
+  function currentView(){
+    var vs=document.querySelectorAll('.view');
+    for(var i=0;i<vs.length;i++){ var s=vs[i]; if(!s.hidden && s.style.display!=='none') return s.getAttribute('data-view'); }
+    return null;
+  }
+  var last=null;
+  function sync(){
+    var v=currentView();
+    if(v && v!==last){ last=v; try{ history.replaceState(null,'','#'+v); }catch(e){} }
+  }
+  setInterval(sync,800);
+  function goHash(){
+    var h=location.hash.replace('#','');
+    if(h && h!==currentView()){ var t=document.createElement('button'); t.setAttribute('data-go',h); t.style.display='none'; document.body.appendChild(t); t.click(); t.remove(); }
+  }
+  window.addEventListener('hashchange', goHash);
+  setTimeout(goHash, 1500);
+})();
