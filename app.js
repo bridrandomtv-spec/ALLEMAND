@@ -467,11 +467,7 @@ function renderTabs(){
   }
   h += '<button class="cat-head open" style="cursor:default"><span>📚 Matières · المواد</span></button>'
     + '<div class="cat-body">'
-    + '<button class="tab sub" data-subj="de">🇩 Allemand · ألمانية ✅</button>'
-    + '<button class="tab sub" data-subj="en">🇬 English · إنجليزية 🆕</button>'
-    + '<button class="tab sub" data-subj="fr">🇫🇷 Français · فرنسية 🔒</button>'
-    + '<button class="tab sub" data-subj="es">🇪 Español · إسبانية 🔒</button>'
-    + '<button class="tab sub" data-subj="it">🇮🇹 Italiano · إيطالية 🔒</button>'
+    + '<button class="tab sub" data-go="matieres">📚 المواد · اختيار المادة</button>'
     + '</div>';
   for(const id of NAVSOLO_TOP) h += btn(id, 'solo');
   for(const g of NAVCATS){
@@ -2183,4 +2179,34 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   }
   window.addEventListener('hashchange', goHash);
   setTimeout(goHash, 1500);
+})();
+
+/* ── Phase α : HUB « 📚 المواد » — cartes générées depuis subjects.json (SOURCE),
+   statuts honnêtes (implemented/partial), sélecteur unique via data-subj. ── */
+(function(){
+  var META = { allemand:{ar:'الألمانية',flag:'🇩🇪',code:'de'}, anglais:{ar:'الإنجليزية',flag:'🇬🇧',code:'en'} };
+  function badge(st){ return st==='implemented' ? 'متوفرة · disponible' : st==='partial' ? 'قيد التطوير · partiel' : 'قريباً · bientôt'; }
+  function card(s){
+    var m = META[s.slug] || {ar:s.name,flag:'📚',code:s.slug};
+    var btn = s.status==='implemented' ? '<button class="btn" data-subj="'+m.code+'">دخول المادة</button>'
+      : s.status==='partial' ? '<button class="btn" data-subj="'+m.code+'">استكشاف</button>'
+      : '<button class="btn" disabled>قريباً</button>';
+    return '<div class="card" style="padding:14px;margin:10px 0;text-align:center">'+m.flag+' <b>'+m.ar+' · '+s.name+'</b>'
+      + '<div style="color:#9fd8b4;font-size:12px;margin:6px 0">'+badge(s.status)+'</div>'+btn+'</div>';
+  }
+  function render(){
+    var box = document.getElementById('matieresBody'); if(!box) return;
+    if(!window.SUBJECT || !SUBJECT.ready){ box.innerHTML='<p>…</p>'; return; }
+    SUBJECT.ready().then(function(list){
+      box.innerHTML = (list||[]).map(card).join('') || '<p>Aucune matière.</p>';
+    });
+  }
+  document.addEventListener('click', function(e){
+    var g = e.target.closest ? e.target.closest('[data-go="matieres"]') : null;
+    if(g) setTimeout(render, 60);
+  });
+  var t=setInterval(function(){
+    var v=document.querySelector('[data-view="matieres"]');
+    if(v && !v.hidden && v.style.display!=='none'){ var b=document.getElementById('matieresBody'); if(b && !b.dataset.done){ b.dataset.done='1'; render(); } }
+  }, 900);
 })();
