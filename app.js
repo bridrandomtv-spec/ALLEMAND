@@ -456,6 +456,23 @@ function renderTabs(){
   /* Navigation compacte : catégories accordéon (fermées par défaut,
      une seule ouverte à la fois ; celle de la vue courante s'ouvre seule). */
   let h = '';
+  /* P7 : menu 2 niveaux — Matières puis sous-navigation de la matière active */
+  if(window.__SUBJECT__ === 'en'){
+    h += '<button class="cat-head open" style="cursor:default"><span>📚 Matières ▸ 🇬 English</span></button>'
+      + '<div class="cat-body">'
+      + '<button class="tab sub" data-go="english">🇬 English · الصفحة الرئيسية</button>'
+      + '<button class="tab sub" data-subj="de">🇩🇪 الرجوع إلى الألمانية</button>'
+      + '</div>';
+    c.innerHTML = h; return;
+  }
+  h += '<button class="cat-head open" style="cursor:default"><span>📚 Matières · المواد</span></button>'
+    + '<div class="cat-body">'
+    + '<button class="tab sub" data-subj="de">🇩 Allemand · ألمانية ✅</button>'
+    + '<button class="tab sub" data-subj="en">🇬 English · إنجليزية 🆕</button>'
+    + '<button class="tab sub" data-subj="fr">🇫🇷 Français · فرنسية 🔒</button>'
+    + '<button class="tab sub" data-subj="es">🇪 Español · إسبانية 🔒</button>'
+    + '<button class="tab sub" data-subj="it">🇮🇹 Italiano · إيطالية 🔒</button>'
+    + '</div>';
   for(const id of NAVSOLO_TOP) h += btn(id, 'solo');
   for(const g of NAVCATS){
     const items = g[3].filter(v => byId[v]);
@@ -2015,7 +2032,8 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     b.addEventListener('click', function(){
       var l = get()==='de' ? 'en' : 'de';
       apply(l);
-      if(window.toast) toast(l==='en' ? '🇬 Matière active : Anglais (aperçu)' : '🇩🇪 Matière active : Allemand', '');
+      var g=document.createElement('button'); g.setAttribute('data-go', l==='en'?'english':'accueil'); g.style.display='none'; document.body.appendChild(g); g.click(); g.remove();
+      if(window.toast) toast(l==='en' ? '🇬 Matière active : Anglais' : '🇩 Matière active : Allemand', '');
     });
     apply(get());
   }
@@ -2082,4 +2100,22 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', ensureView);
   else setTimeout(ensureView, 900);
+})();
+
+/* ── P7 : choix de matière depuis les 3 tirets (2 niveaux) ── */
+(function(){
+  function setSubj(l){
+    window.__SUBJECT__ = l; window.__TARGET_LANG__ = (l==='en')?'en':'de';
+    if(window.setLangueCible) setLangueCible(window.__TARGET_LANG__);
+    try{ localStorage.setItem('dz_subject', l); }catch(e){}
+    var b=document.getElementById('subjSel'); if(b) b.textContent = (l==='en'?'🇬 Anglais':'🇩🇪 Allemand');
+  }
+  document.addEventListener('click', function(e){
+    var s = e.target.closest ? e.target.closest('[data-subj]') : null; if(!s) return;
+    var code = s.getAttribute('data-subj');
+    if(code==='de'){ setSubj('de'); go2('accueil'); }
+    else if(code==='en'){ setSubj('en'); go2('english'); }
+    else if(window.toast){ toast('🔒 '+code.toUpperCase()+' — bientôt · قريبًا',''); }
+  });
+  function go2(v){ var t=document.createElement('button'); t.setAttribute('data-go',v); t.style.display='none'; document.body.appendChild(t); t.click(); t.remove(); }
 })();
