@@ -5,7 +5,7 @@
    Le subject est fourni par le contexte (ou SUBJECT.active() en repli). */
 (function(){
   'use strict';
-  var AR = /[؀-]/;
+  var AR = /[؀-ۿ]/;
   var DZ = ["wach","chno","kifach","klach","had","hadi","ma3na","fehmt","fhemt","tini","tamrin","wash","shno","3lach"];
   var DZ_AR = ["واش","شنو","كيفاش","علاش","هاد","ما فهمتش","عطيني","فهمتش","معناها"];
   var FR = ["explique","donne","pourquoi","comment","traduis","rsume","resume","exercice","leon","lecon","page","quest","difference","franc"];
@@ -47,9 +47,9 @@
       : null;
     var m;
     if((m = nq.match(/\b(2as|3as|1as)\b/))) e.level = m[1].toUpperCase();
-    if((m = nq.match(/\bl\s*([1-8])\b/))) e.lektion = "L"+m[1];
-    if((m = nq.match(/\bu\s*(1[0-9]|[1-9])\b/))) e.unit = "U"+m[1];
-    if((m = nq.match(/(page|seite|صفحة)\s*(\d+)/))) e.page = +m[2];
+    if((m = nq.match(/(?:\bl\s*([1-8])\b|(?:lektion|lecon|leçon|درس)\s*([1-8]))/))) e.lektion = "L"+(m[1]||m[2]);
+    if((m = nq.match(/(?:\bu\s*(1[0-9]|[1-9])\b|(?:unite|unité|وحده|وحدة)\s*(1[0-9]|[1-9]))/))) e.unit = "U"+(m[1]||m[2]);
+    if((m = nq.match(/(?:page|seite|صفحه|صفحة)\s*(\d{1,3})/))) e.page = +m[1];
     var g = ["akkusativ","dativ","nominativ","genitiv"].filter(function(x){return nq.indexOf(x)!==-1;});
     if(g.length) e.grammar = g;
     var art = ["der","die","das","den","dem"].filter(function(x){return toks(nq).indexOf(x)!==-1;});
