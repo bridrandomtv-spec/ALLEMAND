@@ -2129,3 +2129,35 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', sync); else sync();
   setInterval(sync, 800);
 })();
+
+/* ── Onboarding niveau : à la 1ère connexion, redirige l'élève vers son niveau ──
+   1AS → Anglais · 2AS/3AS → Allemand. Mémorisé (dz_level). Ne touche pas à auth. */
+(function(){
+  function chosen(){ try{ return localStorage.getItem('dz_level'); }catch(e){ return null; } }
+  function setSubj(l){ window.__SUBJECT__=l; window.__TARGET_LANG__=(l==='en')?'en':'de'; if(window.setLangueCible) setLangueCible(window.__TARGET_LANG__); try{ localStorage.setItem('dz_subject',l);}catch(e){} var b=document.getElementById('subjSel'); if(b) b.textContent=(l==='en'?'🇬 Anglais':'🇪 Allemand'); }
+  function go2(v){ var t=document.createElement('button'); t.setAttribute('data-go',v); t.style.display='none'; document.body.appendChild(t); t.click(); t.remove(); }
+  function show(){
+    if(chosen() || document.getElementById('lvlOv')) return;
+    var gate=document.querySelector('.gate-wrap'); var splash=document.getElementById('splash');
+    if((gate && gate.offsetParent!==null) || (splash && splash.offsetParent!==null)) return;
+    var ov=document.createElement('div'); ov.id='lvlOv';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center';
+    ov.innerHTML='<div style="background:#0f2b1d;border:1px solid #2c7a4f;border-radius:16px;padding:20px;max-width:340px;width:92%;color:#eafff2;text-align:center">'
+      +'<b style="font-size:17px">🎓 Choisis ton niveau · اختر مستواك</b>'
+      +'<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">'
+      +'<button data-lvl="1AS" style="background:#2c7a4f;border:0;color:#fff;border-radius:10px;padding:12px;font-weight:700;cursor:pointer">1AS · Anglais 🇬</button>'
+      +'<button data-lvl="2AS" style="background:#2c7a4f;border:0;color:#fff;border-radius:10px;padding:12px;font-weight:700;cursor:pointer">2AS · Allemand 🇩🇪</button>'
+      +'<button data-lvl="3AS" style="background:#2c7a4f;border:0;color:#fff;border-radius:10px;padding:12px;font-weight:700;cursor:pointer">3AS · Allemand 🇩🇪 (BAC)</button>'
+      +'</div></div>';
+    document.body.appendChild(ov);
+    ov.querySelectorAll('[data-lvl]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var L=b.getAttribute('data-lvl');
+        try{ localStorage.setItem('dz_level', L); }catch(e){}
+        if(L==='1AS'){ setSubj('en'); go2('english'); } else { setSubj('de'); go2('accueil'); }
+        ov.remove();
+      });
+    });
+  }
+  var t=setInterval(function(){ if(chosen()){ clearInterval(t); return; } show(); }, 1200);
+})();
