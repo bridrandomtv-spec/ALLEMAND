@@ -2118,3 +2118,15 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   });
   function go2(v){ var t=document.createElement('button'); t.setAttribute('data-go',v); t.style.display='none'; document.body.appendChild(t); t.click(); t.remove(); }
 })();
+
+/* ── P8 : l'en-tête s'adapte à la matière active (DE / EN) ── */
+(function(){
+  function sync(){
+    var en = (window.__SUBJECT__ === 'en');
+    var el = document.querySelector('.de-in');
+    if(el) el.textContent = en ? 'English Language' : 'Deutsche Sprache';
+    document.title = '🇩🇿 الثانوية الافتراضية — برنامج الأصل · ' + (en ? 'English Language' : 'Deutsche Sprache');
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', sync); else sync();
+  setInterval(sync, 800);
+})();
