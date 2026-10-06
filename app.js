@@ -2210,3 +2210,25 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     if(v && !v.hidden && v.style.display!=='none'){ var b=document.getElementById('matieresBody'); if(b && !b.dataset.done){ b.dataset.done='1'; render(); } }
   }, 900);
 })();
+
+/* ── Phase β : contexte global {niveau, matière} — source de vérité unique ──
+   Lit/écrit dz_level + dz_subject ; expose window.CTX pour les phases futures.
+   Ne touche NI niveauActif NI RAG/corpus/QUST. filière = ABSENT (non inventée). */
+(function(){
+  function read(){
+    var niv=null, mat='de';
+    try{ niv = localStorage.getItem('dz_level'); }catch(e){}
+    try{ mat = localStorage.getItem('dz_subject') || 'de'; }catch(e){}
+    return { niveau: niv, matiere: mat, filiere: null };
+  }
+  function apply(mat){
+    window.__SUBJECT__ = mat; window.__TARGET_LANG__ = (mat==='en')?'en':'de';
+    if(window.setLangueCible) setLangueCible(window.__TARGET_LANG__);
+    var b=document.getElementById('subjSel'); if(b) b.textContent=(mat==='en'?'🇬 Anglais':'🇩 Allemand');
+  }
+  function set(niveau, matiere){
+    try{ if(niveau) localStorage.setItem('dz_level', niveau); if(matiere) localStorage.setItem('dz_subject', matiere); }catch(e){}
+    if(matiere) apply(matiere);
+  }
+  window.CTX = { get: read, set: set };
+})();
