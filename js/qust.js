@@ -14,7 +14,6 @@
     s = String(s==null?'':s).toLowerCase();
     s = s.replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');
     s = s.replace(/[ً-ٰٟ]/g,'');
-    if(!AR.test(s)) s = s.replace(/3/g,'ع').replace(/7/g,'ح').replace(/5/g,'خ').replace(/9/g,'ق').replace(/2/g,'ء');
     return s.replace(/\s+/g,' ').trim();
   }
   function toks(s){ return s.split(/[^0-9A-Za-z_؀-ۿ]+/).filter(function(w){return w.length>1;}); }
