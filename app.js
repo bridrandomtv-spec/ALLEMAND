@@ -2274,3 +2274,36 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     if(body && body.innerHTML.length>50 && !body.dataset.exo){ body.dataset.exo='1'; load().then(function(){ if(DATA.length) build(body); }); }
   }, 1000);
 })();
+
+/* ── Anglais : cartes détaillées « Book map » (skills/functions/phonology/pages) ── */
+(function(){
+  var DATA=null;
+  function load(){ if(DATA) return Promise.resolve(DATA);
+    return fetch('assets/bdd/english_malakhiss.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():{malakhiss:[]};})
+      .then(function(j){ DATA=j.malakhiss||[]; return DATA; }).catch(function(){ DATA=[]; return DATA; }); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function li(a){ return (a||[]).map(function(x){return '<li dir="ltr" style="text-align:left">'+esc(x)+'</li>';}).join(''); }
+  function build(box){
+    var w=document.createElement('div'); w.className='card'; w.style.padding='12px';
+    var h='<b>📖 Book map détaillé · الخريطة الرسمية</b>';
+    DATA.forEach(function(m){
+      h+='<details style="margin:8px 0"><summary style="cursor:pointer"><b>Unit '+m.unite+' : '+esc(m.titre_en)+'</b> <span dir="rtl">· '+esc(m.titre_ar)+'</span></summary>';
+      if(m.project) h+='<div dir="ltr" style="text-align:left;color:#9fd8b4;font-size:12px">🎓 Project: '+esc(m.project)+'</div>';
+      (m.sequences||[]).forEach(function(s){
+        h+='<div style="margin:8px 0;border-inline-start:2px solid #2c7a4f;padding-inline-start:8px" dir="ltr">'
+          +'<b style="text-align:left;display:block">'+esc(s.name)+(s.page?' · p.'+s.page:'')+'</b>'
+          +(s.skills&&s.skills.length?'<div style="text-align:left;font-size:12px">🎯 Skills</div><ul style="margin:2px 0">'+li(s.skills)+'</ul>':'')
+          +(s.functions&&s.functions.length?'<div style="text-align:left;font-size:12px">💬 Functions</div><ul style="margin:2px 0">'+li(s.functions)+'</ul>':'')
+          +'</div>';
+      });
+      if((m.grammaire||[]).length) h+='<div dir="ltr" style="text-align:left;font-size:12px">📘 Language</div><ul style="margin:2px 0">'+li(m.grammaire)+'</ul>';
+      if((m.phonologie||[]).length) h+='<div dir="ltr" style="text-align:left;font-size:12px">🔊 Phonology</div><ul style="margin:2px 0">'+li(m.phonologie)+'</ul>';
+      h+='</details>';
+    });
+    w.innerHTML=h; box.appendChild(w);
+  }
+  var t=setInterval(function(){
+    var body=document.getElementById('enBody');
+    if(body && body.innerHTML.length>50 && !body.dataset.bm){ body.dataset.bm='1'; load().then(function(){ if(DATA.length) build(body); }); }
+  }, 1000);
+})();
