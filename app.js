@@ -1992,3 +1992,33 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   setTimeout(show, 4000);
 })();
 
+
+/* ── P6-a : Sélecteur de MATIÈRE (🇩 allemand / 🇬 anglais) ──
+   Persiste dz_subject, règle __TARGET_LANG__ (voix) et __SUBJECT__ (contexte).
+   Aucun changement de la logique allemande ; l'anglais sera branché en P6-b. */
+(function(){
+  function get(){ try{ return localStorage.getItem('dz_subject') || 'de'; }catch(e){ return 'de'; } }
+  function apply(l){
+    window.__SUBJECT__ = l;
+    window.__TARGET_LANG__ = (l==='en') ? 'en' : 'de';
+    if(window.setLangueCible) setLangueCible(window.__TARGET_LANG__);
+    try{ localStorage.setItem('dz_subject', l); }catch(e){}
+    var b = document.getElementById('subjSel');
+    if(b) b.textContent = (l==='en' ? '🇬 Anglais' : '🇩🇪 Allemand');
+  }
+  function mount(){
+    if(document.getElementById('subjSel')) return;
+    var b = document.createElement('button');
+    b.id = 'subjSel';
+    b.style.cssText = 'position:fixed;top:10px;inset-inline-end:10px;z-index:9996;background:#0f2b1d;border:1px solid #2c7a4f;color:#eafff2;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)';
+    document.body.appendChild(b);
+    b.addEventListener('click', function(){
+      var l = get()==='de' ? 'en' : 'de';
+      apply(l);
+      if(window.toast) toast(l==='en' ? '🇬 Matière active : Anglais (aperçu)' : '🇩🇪 Matière active : Allemand', '');
+    });
+    apply(get());
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', mount);
+  else setTimeout(mount, 800);
+})();
