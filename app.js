@@ -2307,3 +2307,26 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     if(body && body.innerHTML.length>50 && !body.dataset.bm){ body.dataset.bm='1'; load().then(function(){ if(DATA.length) build(body); }); }
   }, 1000);
 })();
+
+/* ── Anglais : référence « Phonetic symbols » (voyelles/consonnes/diphtongues + règles -ed/-s) ── */
+(function(){
+  var V=[["sheep","/ʃiːp/"],["bird","/bɜːd/"],["car","/kɑː/"],["horse","/hɔːs/"],["shoe","/ʃuː/"],["head","/hed/"],["hat","/hæt/"],["ship","/ʃp/"],["cup","/kʌp/"],["water","/wɔtə/"],["foot","/fʊt/"],["sock","/sɒk/"]];
+  var C=[["pen","/pen/"],["tree","/triː/"],["cat","/kæt/"],["fish","/fɪʃ/"],["three","/θriː/"],["six","/sɪks/"],["chair","/tʃeə/"],["book","/bʊk/"],["dog","/dɒg/"],["go","/gəʊ/"],["van","/væn/"],["the","/ðə/"],["zoo","/zuː/"],["television","/telɪvɪʒn/"],["jam","/dʒæm/"],["moon","/muːn/"],["no","/nəʊ/"],["sing","/sɪŋ/"],["yes","/jes/"],["hand","/hænd/"],["look","/lʊk/"],["run","/rʌn/"],["window","/wɪndə/"]];
+  var D=[["ear","/ɪə/"],["pure","/pjʊə/"],["plane","/pleɪn/"],["hair","/heə/"],["nose","/nəʊz/"],["boy","/bɔɪ/"],["eye","/aɪ/"],["mouth","/maʊθ/"]];
+  function tbl(a){ return '<table dir="ltr" style="width:100%;font-size:12px;border-collapse:collapse">'+a.map(function(r){return '<tr><td style="border:1px solid #2c7a4f;padding:3px">'+r[0]+'</td><td style="border:1px solid #2c7a4f;padding:3px;color:#9fd8b4">'+r[1]+'</td></tr>';}).join('')+'</table>'; }
+  function build(box){
+    var w=document.createElement('div'); w.className='card'; w.style.padding='12px';
+    w.innerHTML='<b>🔤 Phonetic symbols · الرموز الصوتية</b>'
+      +'<details style="margin:6px 0"><summary style="cursor:pointer">Vowels · voyelles</summary>'+tbl(V)+'</details>'
+      +'<details style="margin:6px 0"><summary style="cursor:pointer">Consonants · consonnes</summary>'+tbl(C)+'</details>'
+      +'<details style="margin:6px 0"><summary style="cursor:pointer">Diphthongs · diphtongues</summary>'+tbl(D)+'</details>'
+      +'<details style="margin:6px 0"><summary style="cursor:pointer">Règles -ed / -s</summary><ul dir="ltr" style="text-align:left;font-size:12px">'
+      +'<li>final -ed after -d/-t → /ɪd/</li><li>final -ed after voiceless → /t/</li><li>final -ed after voiced/vowel → /d/</li>'
+      +'<li>final -s after sibilants → /ɪz/</li><li>final -s after voiceless → /s/</li><li>final -s after voiced/vowel → /z/</li></ul></details>';
+    box.appendChild(w);
+  }
+  var t=setInterval(function(){
+    var body=document.getElementById('enBody');
+    if(body && body.innerHTML.length>50 && !body.dataset.ph){ body.dataset.ph='1'; build(body); }
+  }, 1000);
+})();
