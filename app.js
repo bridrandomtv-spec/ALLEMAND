@@ -2120,6 +2120,12 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     var en = (window.__SUBJECT__ === 'en');
     var el = document.querySelector('.de-in');
     if(el) el.textContent = en ? 'English Language' : 'Deutsche Sprache';
+    var sp = document.querySelector('.splash-de');
+    if(sp) sp.textContent = en ? 'English Language · Program 2026' : 'Deutsche Sprache · Programm 2026';
+    var gt = document.querySelector('.gate-sub');
+    if(gt) gt.textContent = en ? 'برنامج الأصل · English Language — 1AS' : 'برنامج الأصل · Deutsche Sprache — السنة الثانية والثالثة ثانوي';
+    var ft = document.querySelector('.foot-de');
+    if(ft) ft.textContent = en ? 'Virtual Algerian High School · English Language · Program MEN 2026' : 'Virtuelle Algerische Schule · Deutsche Sprache · Programm MEN 2026';
     document.title = '🇩🇿 الثانوية الافتراضية — برنامج الأصل · ' + (en ? 'English Language' : 'Deutsche Sprache');
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', sync); else sync();
