@@ -2022,3 +2022,64 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', mount);
   else setTimeout(mount, 800);
 })();
+
+/* ── P6-b : vue additive « 🇬 English » — lit english_*.json UNIQUEMENT quand
+   __SUBJECT__='en'. Ne touche NI les vues allemandes NI le RAG. ── */
+(function(){
+  var DATA = null;
+  function load(){
+    if(DATA) return Promise.resolve(DATA);
+    return Promise.all([
+      fetch('assets/bdd/english_devoirs.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():{items:[]};}),
+      fetch('assets/bdd/english_pages.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():{pages:{}};}),
+      fetch('assets/bdd/english_malakhiss.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():{malakhiss:[]};})
+    ]).then(function(a){ DATA = { dev:a[0].items||[], pages:a[1].pages||{}, mal:a[2].malakhiss||[] }; return DATA; })
+      .catch(function(){ DATA = { dev:[], pages:{}, mal:[] }; return DATA; });
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function speakEn(t){ try{ var u=new SpeechSynthesisUtterance(t); u.lang='en-US'; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch(e){} }
+  function render(box){
+    var h = '<h2 style="margin:0 0 10px">🇬 English — 1AS (aperçu)</h2>';
+    h += '<h3>📝 Devoirs générés</h3>';
+    DATA.dev.forEach(function(d){
+      h += '<details style="margin:0 0 8px"><summary style="cursor:pointer"><b>Unité '+d.unite+' · '+esc(d.unite_en)+'</b></summary>'
+        + '<pre dir="ltr" lang="en" style="white-space:pre-wrap;text-align:left">'+esc(d.sujet)+'</pre>'
+        + '<details><summary>✅ Corrigé</summary><pre dir="ltr" lang="en" style="white-space:pre-wrap;text-align:left">'+esc(d.corrige)+'</pre></details></details>';
+    });
+    h += '<h3>📖 Pages du livre</h3><select id="enPage"></select> <button id="enListen">🔊</button><div id="enPageBody" dir="ltr" lang="en" style="text-align:left;margin-top:8px"></div>';
+    h += '<h3>🧠 الملخصات</h3>';
+    DATA.mal.forEach(function(m){
+      h += '<details style="margin:0 0 6px"><summary style="cursor:pointer">Unité '+m.unite+' · '+esc(m.titre_en)+'</summary>'
+        + '<ul>'+ (m.grammaire||[]).map(function(g){return '<li dir="ltr" style="text-align:left">'+esc(g)+'</li>';}).join('') + '</ul></details>';
+    });
+    box.innerHTML = h;
+    var sel = box.querySelector('#enPage'); var body = box.querySelector('#enPageBody');
+    var ks = Object.keys(DATA.pages).sort(function(a,b){return +a-+b;});
+    ks.forEach(function(k){ var o=document.createElement('option'); o.value=k; o.textContent=DATA.pages[k].titre||('p'+k); sel.appendChild(o); });
+    function show(){ var p = DATA.pages[sel.value]||{}; body.innerHTML=(p.lignes||[]).map(function(l){return '<p>'+esc(l)+'</p>';}).join(''); }
+    if(ks.length) show();
+    sel.addEventListener('change', show);
+    box.querySelector('#enListen').addEventListener('click', function(){ var p=DATA.pages[sel.value]||{}; speakEn((p.lignes||[]).join(' ')); });
+  }
+  function ensureView(){
+    if(document.querySelector('[data-view="english"]')) return;
+    var s = document.createElement('section');
+    s.className = 'view'; s.setAttribute('data-view','english');
+    s.innerHTML = '<div class="card" id="enBody" style="padding:14px">Chargement…</div>';
+    (document.querySelector('main') || document.body).appendChild(s);
+    var open = document.createElement('button');
+    open.id = 'enOpen';
+    open.style.cssText = 'position:fixed;bottom:110px;inset-inline-end:14px;z-index:9996;background:#2c7a4f;border:0;color:#fff;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer;display:none';
+    open.textContent = '🇬 English';
+    document.body.appendChild(open);
+    open.addEventListener('click', function(){
+      var t=document.createElement('button'); t.setAttribute('data-go','english'); t.style.display='none';
+      document.body.appendChild(t); t.click(); t.remove();
+      load().then(function(){ render(document.getElementById('enBody')); });
+    });
+    var sync = function(){ open.style.display = (window.__SUBJECT__==='en') ? 'block' : 'none'; };
+    setInterval(sync, 800); sync();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', ensureView);
+  else setTimeout(ensureView, 900);
+})();
