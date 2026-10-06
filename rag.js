@@ -890,8 +890,19 @@ async function ontoRoute(q){
   }catch(e){ return null; }
 }
 
+/* P5-A : repli QUST — n'agit QUE si le pipeline actuel rend null (fallback strict). */
+async function qustFallback(qu){
+  if(!qu || !qu.intent || !((qu.confidence||0) >= 0.6)) return null;
+  var e = qu.entities || {};
+  try{
+    if(e.page != null){ var r = await intentLecture('lis la page ' + e.page); if(r) return r; }
+  }catch(err){}
+  return null;
+}
 async function reponsePedagogique(q){
     q = darja(q);
+    var _qust = null;
+    try{ if(window.QUST && window.QUST.understand){ _qust = window.QUST.understand(q, { subject: (window.SUBJECT && window.SUBJECT.active) ? ((window.SUBJECT.active()||{}).id || 'allemand') : 'allemand' }); } }catch(e){ _qust = null; }
     const _bib = await intentBiblio(q);
     if(_bib) return _bib;
     const _kh = intentKharif(q);
@@ -913,7 +924,7 @@ async function reponsePedagogique(q){
       return { html: tableauConj(vb), speakWord: null, conj: vb };
     }
     const t = await matchType(q);
-    if(!t) return null;
+    if(!t){ var _qf = await qustFallback(_qust); if(_qf) return _qf; return null; }
     const n = numeroUnite(q);
     const mal = await chargeMalakhiss();
 
