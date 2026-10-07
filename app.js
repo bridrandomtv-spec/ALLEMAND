@@ -2330,3 +2330,18 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     if(body && body.innerHTML.length>50 && !body.dataset.ph){ body.dataset.ph='1'; build(body); }
   }, 1000);
 })();
+
+/* ── Anglais : référence « Irregular verbs » (infinitive/past/participle) ── */
+(function(){
+  var V=[["be","was/were","been"],["bear","bore","born"],["beat","beat","beaten"],["begin","began","begun"],["bend","bent","bent"],["bite","bit","bitten"],["blow","blew","blown"],["break","broke","broken"],["build","built","built"],["burn","burnt","burnt"],["buy","bought","bought"],["catch","caught","caught"],["choose","chose","chosen"],["come","came","come"],["deal","dealt","dealt"],["dig","dug","dug"],["do","did","done"],["draw","drew","drawn"],["drink","drank","drunk"],["drive","drove","driven"],["eat","ate","eaten"],["fall","fell","fallen"],["feed","fed","fed"],["feel","felt","felt"],["fight","fought","fought"],["find","found","found"],["fly","flew","flown"],["get","got","got"],["give","gave","given"],["go","went","gone"],["grow","grew","grown"],["have","had","had"],["hear","heard","heard"],["keep","kept","kept"],["know","knew","known"],["leave","left","left"],["lose","lost","lost"],["make","made","made"],["meet","met","met"],["pay","paid","paid"],["put","put","put"],["read","read","read"],["run","ran","run"],["say","said","said"],["see","saw","seen"],["sell","sold","sold"],["send","sent","sent"],["sing","sang","sung"],["sit","sat","sat"],["sleep","slept","slept"],["speak","spoke","spoken"],["spend","spent","spent"],["stand","stood","stood"],["swim","swam","swum"],["take","took","taken"],["teach","taught","taught"],["tell","told","told"],["think","thought","thought"],["throw","threw","thrown"],["understand","understood","understood"],["wear","wore","worn"],["win","won","won"],["write","wrote","written"]];
+  function build(box){
+    var w=document.createElement('div'); w.className='card'; w.style.padding='12px';
+    var h='<b>🔀 Irregular verbs · الأفعال الشاذة</b><table dir="ltr" style="width:100%;font-size:11px;border-collapse:collapse;margin-top:6px"><tr><th style="border:1px solid #2c7a4f">Inf</th><th style="border:1px solid #2c7a4f">Past</th><th style="border:1px solid #2c7a4f">Participle</th></tr>';
+    V.forEach(function(r){ h+='<tr><td style="border:1px solid #2c7a4f;padding:2px">'+r[0]+'</td><td style="border:1px solid #2c7a4f;padding:2px;color:#9fd8b4">'+r[1]+'</td><td style="border:1px solid #2c7a4f;padding:2px;color:#e8c46a">'+r[2]+'</td></tr>'; });
+    h+='</table>'; w.innerHTML=h; box.appendChild(w);
+  }
+  var t=setInterval(function(){
+    var body=document.getElementById('enBody');
+    if(body && body.innerHTML.length>50 && !body.dataset.iv){ body.dataset.iv='1'; build(body); }
+  }, 1000);
+})();
