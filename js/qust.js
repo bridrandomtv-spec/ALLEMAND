@@ -1,8 +1,9 @@
-/* ══ qust.js — Question Understanding (Phase P3-A, Shadow Mode) ══
+/* ══ qust.js — Question Understanding (Phase P3-A, Shadow Mode · P2-D) ══
    Couche MINIMALE, indépendante, déterministe : normalisation + langues +
    intention + entités + confiance. NE répond PAS à l'élève, NE touche PAS au
    RAG, NE fait AUCUN réseau, AUCUNE dépendance. language ≠ subject.
-   Le subject est fourni par le contexte (ou SUBJECT.active() en repli). */
+   Le subject est fourni par le contexte appelant ; à défaut, par la façade
+   window.CONTEXT.ctx() (P2-D) ; en dernier repli, par SUBJECT.active() (P1). */
 (function(){
   'use strict';
   var AR = /[؀-ۿ]/;
@@ -63,7 +64,23 @@
     var raw = String(question==null?'':question);
     var nq = norm(raw);
     var it = intent(nq);
-    return { norm: nq, langs: langs(raw, nq), intent: it[0], entities: entities(raw, nq, context||{}), confidence: it[1] };
+    /* ── P2-D : résolution du contexte effectif ──────────────────────────
+       Priorité stricte (conforme au contrat P2-D) :
+         1. contexte EXPLICITEMENT fourni par l'appelant → jamais écrasé ;
+         2. sinon la façade window.CONTEXT.ctx() (P2-C) ;
+         3. sinon objet vide → entities() retombe sur SUBJECT.active() (P1).
+       La résolution du contexte appartient exclusivement à P2-C : QUST ne
+       lit directement AUCUNE source de stockage, AUCUN verrou de compte,
+       AUCUN backend. Aucun réseau, aucun effet de bord. */
+    var effCtx = context;
+    if(effCtx == null){
+      try{
+        if(typeof window !== 'undefined' && window.CONTEXT && typeof window.CONTEXT.ctx === 'function'){
+          effCtx = window.CONTEXT.ctx();
+        }
+      }catch(e){ effCtx = null; }
+    }
+    return { norm: nq, langs: langs(raw, nq), intent: it[0], entities: entities(raw, nq, effCtx || {}), confidence: it[1] };
   }
   if(typeof window!=='undefined') window.QUST = { understand: understand };
   if(typeof module!=='undefined' && module.exports) module.exports = { understand: understand };
