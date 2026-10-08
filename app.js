@@ -2018,6 +2018,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     try{ localStorage.setItem('dz_subject', l); }catch(e){}
     var b = document.getElementById('subjSel');
     if(b) b.textContent = (l==='en' ? '🇬 Anglais' : '🇩🇪 Allemand');
+    try{ if(window.VT && typeof window.VT.setSubject === 'function'){ window.VT.setSubject((l==='en') ? 'anglais' : 'allemand'); } }catch(e){}
   }
   function mount(){
     if(document.getElementById('subjSel')) return;
@@ -2103,6 +2104,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     if(window.setLangueCible) setLangueCible(window.__TARGET_LANG__);
     try{ localStorage.setItem('dz_subject', l); }catch(e){}
     var b=document.getElementById('subjSel'); if(b) b.textContent = (l==='en'?'🇬 Anglais':'🇩🇪 Allemand');
+    try{ if(window.VT && typeof window.VT.setSubject === 'function'){ window.VT.setSubject((l==='en') ? 'anglais' : 'allemand'); } }catch(e){}
   }
   document.addEventListener('click', function(e){
     var s = e.target.closest ? e.target.closest('[data-subj]') : null; if(!s) return;
@@ -2136,7 +2138,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
    1AS → Anglais · 2AS/3AS → Allemand. Mémorisé (dz_level). Ne touche pas à auth. */
 (function(){
   function chosen(){ try{ return localStorage.getItem('dz_level'); }catch(e){ return null; } }
-  function setSubj(l){ window.__SUBJECT__=l; window.__TARGET_LANG__=(l==='en')?'en':'de'; if(window.setLangueCible) setLangueCible(window.__TARGET_LANG__); try{ localStorage.setItem('dz_subject',l);}catch(e){} var b=document.getElementById('subjSel'); if(b) b.textContent=(l==='en'?'🇬 Anglais':'🇪 Allemand'); }
+  function setSubj(l){ window.__SUBJECT__=l; window.__TARGET_LANG__=(l==='en')?'en':'de'; if(window.setLangueCible) setLangueCible(window.__TARGET_LANG__); try{ localStorage.setItem('dz_subject',l);}catch(e){} var b=document.getElementById('subjSel'); if(b) b.textContent=(l==='en'?'🇬 Anglais':'🇪 Allemand'); try{ if(window.VT && typeof window.VT.setSubject === 'function'){ window.VT.setSubject((l==='en') ? 'anglais' : 'allemand'); } }catch(e){} }
   function go2(v){ var t=document.createElement('button'); t.setAttribute('data-go',v); t.style.display='none'; document.body.appendChild(t); t.click(); t.remove(); }
   function show(){
     if(chosen() || document.getElementById('lvlOv')) return;
