@@ -2380,3 +2380,100 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   window.addEventListener("hashchange",function(){ var s=(location.hash.indexOf("english")>=0)?"anglais":"allemand"; if(s!==state.subject){ window.VT.setSubject(s); } });
   try{ console.info("[VT-CTX] mode="+MODE, window.VT.ctx()); }catch(e){}
 })();
+
+
+/* ── P2-A.2 : pont VT ↔ legacy dz_de_niveau_v1 ──────────────────────────
+   Objectif : éviter que plusieurs parties de l'application voient des
+   niveaux différents après l'introduction de window.VT (P2 / P2-A.1).
+
+   Priorité de résolution (strictement respectée) :
+     1. niveau de compte/session CLOUD valide  (niveauVerrou P0.5, puis
+        dz_de_session_v1 écrit par cloudAuthority())
+     2. niveau VT valide                        (VT.ctx().level, uniquement
+                                                 si subject = 'allemand' et
+                                                 level ∈ {2AS, 3AS})
+     3. niveau legacy dz_de_niveau_v1           (inchangé, jamais écrasé
+                                                 sans raison)
+     4. défaut visiteur / comportement historique ('tous' conservé)
+
+   Garanties :
+     · additif (aucune fonction existante modifiée)
+     · rétrocompatible (getNiveauActif / setNiveau / dz_de_niveau_v1 intacts)
+     · déterministe · silencieux · sans UI · sans réseau supplémentaire
+     · sans nouveau localStorage · sans VT_USER
+     · anti-boucle : n'écrit que si la valeur résolue diffère réellement
+     · anti-contamination : VT.level = '1AS' (anglais) n'est JAMAIS injecté
+       dans le système legacy allemand
+     · un verrou cloud actif n'est jamais écrasé par VT
+   ────────────────────────────────────────────────────────────────────── */
+(function(){
+  if(window.__VT_NIVEAU_PONT) return; window.__VT_NIVEAU_PONT = 1;
+  var LEGACY_VALIDES = ['tous','2AS','3AS'];
+
+  /* 1) Niveau CLOUD — autorité suprême */
+  function niveauCloud(){
+    /* 1a. Verrou P0.5 (élève cloud connecté, niveau imposé par profiles.niveau) */
+    try{
+      if(typeof niveauVerrou !== 'undefined' && niveauVerrou &&
+         LEGACY_VALIDES.indexOf(niveauVerrou) !== -1) return niveauVerrou;
+    }catch(e){}
+    /* 1b. Session cloud persistée par cloudAuthority() */
+    try{
+      var raw = localStorage.getItem('dz_de_session_v1');
+      if(raw){
+        var s = JSON.parse(raw);
+        if(s && s.uid && s.niveau && LEGACY_VALIDES.indexOf(s.niveau) !== -1)
+          return s.niveau;
+      }
+    }catch(e){}
+    return null;
+  }
+
+  /* 2) Niveau VT — uniquement s'il est pertinent pour le legacy allemand */
+  function niveauVT(){
+    try{
+      if(!window.VT || typeof window.VT.ctx !== 'function') return null;
+      var ctx = window.VT.ctx();
+      if(!ctx || typeof ctx.level !== 'string') return null;
+      /* Anti-contamination : le pont ne concerne QUE le système legacy
+         allemand. VT en contexte anglais (level '1AS') ne doit JAMAIS
+         être injecté dans dz_de_niveau_v1. */
+      if(ctx.subject && ctx.subject !== 'allemand') return null;
+      if(ctx.level !== '2AS' && ctx.level !== '3AS') return null;
+      return ctx.level;
+    }catch(e){ return null; }
+  }
+
+  /* Résolution selon la priorité cloud > VT > (legacy/default implicite) */
+  function resoudre(){
+    var c = niveauCloud(); if(c) return c;
+    var v = niveauVT();    if(v) return v;
+    return null; /* → legacy / défaut visiteur conservé tel quel */
+  }
+
+  /* Application minimale : n'écrit que si nécessaire, via l'API existante */
+  function appliquer(){
+    try{
+      var cible = resoudre();
+      if(!cible) return;                          /* visiteur : historique inchangé */
+      var actuel = (typeof getNiveauActif === 'function') ? getNiveauActif() : null;
+      if(actuel === cible) return;                /* anti-boucle / anti-écriture inutile */
+      /* Ne jamais écraser un verrou cloud contradictoire */
+      try{
+        if(typeof niveauVerrou !== 'undefined' && niveauVerrou && niveauVerrou !== cible) return;
+      }catch(e){}
+      if(typeof window.DZ !== 'undefined' && typeof window.DZ.setNiveau === 'function'){
+        window.DZ.setNiveau(cible);               /* réutilise l'API legacy existante */
+      }
+    }catch(e){ /* silencieux : le pont ne doit jamais casser l'application */ }
+  }
+
+  /* Déclenchement : au chargement + à chaque changement de contexte VT
+     + à chaque événement d'authentification cloud. */
+  try{
+    if(document.readyState === 'complete') setTimeout(appliquer, 0);
+    else window.addEventListener('load', function(){ setTimeout(appliquer, 0); });
+  }catch(e){}
+  try{ window.addEventListener('vt:ctx', function(){ setTimeout(appliquer, 0); }); }catch(e){}
+  try{ document.addEventListener('dz:auth', function(){ setTimeout(appliquer, 50); }); }catch(e){}
+})();
