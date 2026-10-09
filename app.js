@@ -404,7 +404,7 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte'];
+const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
 const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
@@ -463,12 +463,12 @@ function renderTabs(){
       + '<button class="tab sub" data-go="english">🇬 English · الصفحة الرئيسية</button>'
       + '<button class="tab sub" data-subj="de">🇩🇪 الرجوع إلى الألمانية</button>'
       + '</div>';
-    c.innerHTML = h; return;
+  } else {
+    h += '<button class="cat-head open" style="cursor:default"><span>📚 Matières · المواد</span></button>'
+      + '<div class="cat-body">'
+      + '<button class="tab sub" data-go="matieres">📚 المواد · اختيار المادة</button>'
+      + '</div>';
   }
-  h += '<button class="cat-head open" style="cursor:default"><span>📚 Matières · المواد</span></button>'
-    + '<div class="cat-body">'
-    + '<button class="tab sub" data-go="matieres">📚 المواد · اختيار المادة</button>'
-    + '</div>';
   for(const id of NAVSOLO_TOP) h += btn(id, 'solo');
   for(const g of NAVCATS){
     const items = g[3].filter(v => byId[v]);
