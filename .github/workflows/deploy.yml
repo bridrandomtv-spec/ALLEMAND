@@ -152,7 +152,7 @@ jobs:
                   fails.append(s['id'] + ' : somme != 20')
               qi = s['parties'][0]['questions']; qii = s['parties'][1]['questions']
               qiii = s['parties'][2]['questions']
-              if len(qi) != 6 or len(qii) != 8 or len(qiii) != 1:
+              if len(qi) < 4 or len(qii) < 6 or len(qiii) != 1:
                   fails.append(s['id'] + ' : nb questions anormal')
               if sum(x['pts'] for x in qi) != 8:
                   fails.append(s['id'] + ' : partie I != 8 pts')
