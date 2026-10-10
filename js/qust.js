@@ -47,7 +47,15 @@
       : (typeof window!=='undefined' && window.SUBJECT && window.SUBJECT.active && window.SUBJECT.active()) ? window.SUBJECT.active().id
       : null;
     var m;
-    if((m = nq.match(/\b(2as|3as|1as)\b/))) e.level = m[1].toUpperCase();
+        /* ── P2-G.1 : niveau — priorité à la QUESTION, repli additif sur le contexte ──
+       1. Le niveau EXPLICITEMENT détecté dans la question reste PRIORITAIRE.
+       2. SINON seulement, repli sur ctx.level s'il appartient à la liste
+          blanche 1AS · 2AS · 3AS · tous (chaîne non vide uniquement).
+       Aucune écriture, aucune résolution de sujet modifiée. */
+if((m = nq.match(/\b(2as|3as|1as)\b/))) e.level = m[1].toUpperCase();
+    else if(ctx && typeof ctx.level === 'string' && ctx.level.length > 0
+            && ['1AS','2AS','3AS','tous'].indexOf(ctx.level) !== -1) e.level = ctx.level;
+
     if((m = nq.match(/(?:\bl\s*([1-8])\b|(?:lektion|lecon|leçon|درس)\s*([1-8]))/))) e.lektion = "L"+(m[1]||m[2]);
     if((m = nq.match(/(?:\bu\s*(1[0-9]|[1-9])\b|(?:unite|unité|وحده|وحدة)\s*(1[0-9]|[1-9]))/))) e.unit = "U"+(m[1]||m[2]);
     if((m = nq.match(/(?:page|seite|صفحه|صفحة)\s*(\d{1,3})/))) e.page = +m[1];
@@ -58,6 +66,10 @@
     var conj = ["weil","dass"].filter(function(x){return toks(nq).indexOf(x)!==-1;});
     if(conj.length) e.conjunctions = conj;
     if((m = raw.match(/\b([A-ZÄÖÜ][a-zäöüß]+)\b/)) && DE.indexOf(m[1].toLowerCase())===-1) e.germanWord = m[1];
+    /* ── P2-G.1 : transport PASSIF de la filière ─────────────────────────
+       ctx.track recopié UNIQUEMENT si c'est une chaîne non vide.
+       Aucune valeur inventée, aucun mapping niveau→filière, aucun filtrage. */
+    if(ctx && typeof ctx.track === 'string' && ctx.track.length > 0) e.track = ctx.track;
     return e;
   }
   function understand(question, context){

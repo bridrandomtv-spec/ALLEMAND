@@ -902,7 +902,39 @@ async function qustFallback(qu){
 async function reponsePedagogique(q){
     q = darja(q);
     var _qust = null;
-    try{ if(window.QUST && window.QUST.understand){ _qust = window.QUST.understand(q, { subject: (window.SUBJECT && window.SUBJECT.active) ? ((window.SUBJECT.active()||{}).id || 'allemand') : 'allemand' }); } }catch(e){ _qust = null; }
+    /* ── P2-G.1 : contexte unifié transmis à QUST ─────────────────────────
+       Variable de contexte UNIQUE : _qctx. Variable de résultat UNIQUE : _qust
+       (déclarée ci-dessus, consommée par qustFallback()).
+       1. window.CONTEXT.ctx() (P2-C) s'il est présent ET retourne un objet
+          dont .subject est une chaîne non vide → _qctx = ctxObj ;
+       2. sinon REPLI HISTORIQUE inchangé, caractère pour caractère :
+          { subject: SUBJECT.active().id || 'allemand' }.
+       Les deux résolutions sont ISOLÉES dans leurs propres try/catch :
+       une exception de CONTEXT ne peut pas affecter _qust ; une exception de
+       QUST remet _qust à null (valeur de sa déclaration) →
+       qustFallback(null) retourne null via sa garde « if(!qu …) ».
+       La ligne historique est REMPLACÉE une seule fois : il ne reste
+       qu'un seul appel effectif à QUST.understand().
+       intentLecture / is3 / niv0 / getNiveauActif / loadPages / loadPages3as /
+       qustFallback / paywall / sélection des pages : intacts. */
+    var _qctx = null;
+    try{
+      if(window.CONTEXT && typeof window.CONTEXT.ctx === 'function'){
+        var ctxObj = window.CONTEXT.ctx();
+        if(ctxObj && typeof ctxObj === 'object'
+           && typeof ctxObj.subject === 'string' && ctxObj.subject.length > 0){
+          _qctx = ctxObj;
+        }
+      }
+    }catch(errCtx){ _qctx = null; }
+    if(!_qctx){
+      _qctx = { subject: (window.SUBJECT && window.SUBJECT.active) ? ((window.SUBJECT.active()||{}).id || 'allemand') : 'allemand' };
+    }
+    try{
+      if(window.QUST && window.QUST.understand){
+        _qust = window.QUST.understand(q, _qctx);
+      }
+    }catch(e){ _qust = null; }
     const _bib = await intentBiblio(q);
     if(_bib) return _bib;
     const _kh = intentKharif(q);
