@@ -2522,17 +2522,18 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
         return '<span class="chip'+(lock?' lock':'')+'"'+(lock?'':' data-subj="'+m.code+'"')+'>'+m.flag+' '+esc(m.ar)+' · '+badge(s.status)[1]+'</span>'; }).join('');
       hh+='</div><div class="subj-grid">';
       hh+=list.map(function(s){ var m=META[s.id]||{ar:s.name,flag:'📚',code:s.id}; var b=badge(s.status); var ok=(s.status==='implemented'||s.status==='partial');
-        return '<div class="subj-card'+(ok?'':' soon')+(s.id===act?' on':'')+'"'+(ok?' data-subj="'+m.code+'"':' aria-disabled="true"')+'>'
+        return '<div class="subj-card'+(ok?'':' soon')+(s.id===act?' on':'')+' sc-'+(s.id==='allemand'?'de':(s.id==='anglais'?'en':'c0'))+'"'+(ok?' data-subj="'+m.code+'"':' aria-disabled="true"')+'>'
           +'<span class="subj-i">'+m.flag+'</span><span class="subj-n">'+esc(m.ar)+'</span><span class="subj-l">'+esc(s.name)+'</span>'
           +'<span class="subj-s '+b[0]+'">'+b[1]+'</span></div>'; }).join('');
       hh+='</div>';
       fetch('assets/bdd/matieres.json',{cache:'no-store'}).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }).then(function(mj){
         var ids={}; list.forEach(function(s){ ids[s.id]=1; });
         var prog=((mj&&mj.matieres)||[]).filter(function(m){ return !ids[m.id]; });
+        hh+='<button class="explore-all" data-go="matieres">🎓 استكشف جميع المواد</button>';
         if(prog.length){
           hh+='<div class="subj-lang"><span class="panel-h">📚 مواد مبرمجة — قريباً</span></div><div class="subj-grid">';
-          hh+=prog.map(function(m){ var b=badge(m.statut==='actif'?'implemented':(m.statut==='partial'?'partial':'planned'));
-            return '<div class="subj-card soon" aria-disabled="true"><span class="subj-i">'+(m.icon||'📚')+'</span>'
+          hh+=prog.map(function(m,mi){ var b=badge(m.statut==='actif'?'implemented':(m.statut==='partial'?'partial':'planned'));
+            return '<div class="subj-card soon sc-c'+(mi%6)+'" aria-disabled="true"><span class="subj-i">'+(m.icon||'📚')+'</span>'
               +'<span class="subj-n">'+esc(m.ar||m.nom_ar||m.id)+'</span><span class="subj-s '+b[0]+'">'+b[1]+'</span></div>'; }).join('');
           hh+='</div>';
         }
@@ -2753,4 +2754,20 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(renderD3,450); });
   else setTimeout(renderD3,450);
   document.addEventListener('dz:view', function(e){ var v=(e&&e.detail&&(e.detail.view||e.detail))||''; if(String(v).indexOf('accueil')>=0) setTimeout(renderD3,60); });
+})();
+
+/* ── PHASE D6 — #subjSel : chip dans la topbar (plus de pill flottante) ──
+   Déplacement DOM idempotent : le bouton P6-a conserve id, handler et libellé ;
+   seul son emplacement change (CSS #subjSel.tb-sel neutralise le cssText fixed).
+   #enOpen est masqué dans la vue english par CSS (body:has(...)), pas ici. */
+(function(){
+  function place(){
+    var s=document.getElementById('subjSel');
+    var t=document.querySelector('.topbar-act');
+    if(s && t && s.parentNode!==t){ s.classList.add('tb-sel'); t.insertBefore(s, t.firstChild); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(place,350); });
+  else setTimeout(place,350);
+  document.addEventListener('dz:view', function(){ setTimeout(place,120); });
+  document.addEventListener('dz:auth', function(){ setTimeout(place,120); });
 })();
