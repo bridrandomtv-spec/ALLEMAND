@@ -2147,7 +2147,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
    1AS → Anglais · 2AS/3AS → Allemand. Mémorisé (dz_level). Ne touche pas à auth. */
 (function(){
   function chosen(){ try{ return localStorage.getItem('dz_level'); }catch(e){ return null; } }
-  function setSubj(l){ window.__SUBJECT__=l; window.__TARGET_LANG__=(l==='en')?'en':'de'; if(window.setLangueCible) setLangueCible(window.__TARGET_LANG__); try{ localStorage.setItem('dz_subject',l);}catch(e){} var b=document.getElementById('subjSel'); if(b) b.textContent=(l==='en'?'🇬 Anglais':'🇪 Allemand'); try{ if(window.VT && typeof window.VT.setSubject === 'function'){ window.VT.setSubject((l==='en') ? 'anglais' : 'allemand'); } }catch(e){} }
+  function setSubj(l){ window.__SUBJECT__=l; window.__TARGET_LANG__=(l==='en')?'en':'de'; if(window.setLangueCible) setLangueCible(window.__TARGET_LANG__); try{ localStorage.setItem('dz_subject',l);}catch(e){} var b=document.getElementById('subjSel'); if(b) b.textContent=(l==='en'?'🇬 Anglais':'🇩🇪 Allemand'); try{ if(window.VT && typeof window.VT.setSubject === 'function'){ window.VT.setSubject((l==='en') ? 'anglais' : 'allemand'); } }catch(e){} }
   function go2(v){ var t=document.createElement('button'); t.setAttribute('data-go',v); t.style.display='none'; document.body.appendChild(t); t.click(); t.remove(); }
   function show(){
     if(chosen() || document.getElementById('lvlOv')) return;
@@ -2381,7 +2381,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   var SUBJECTS={ allemand:{levels:["2AS","3AS"],def:"3AS"}, anglais:{levels:["1AS"],def:"1AS"} };
   var TRACKS=["COMMON","TCLETTRES","TCSCIENCES"];
   function normS(s){ return SUBJECTS[s]?s:((s==="en")?"anglais":((s==="de")?"allemand":null)); }
-  function curS(){ var s=normS(get("subject",null)); if(!s){ s=(location.hash&&location.hash.indexOf("english")>=0)?"anglais":"allemand"; } return s; }
+  function curS(){ var h=(location.hash&&location.hash.indexOf("english")>=0)?"anglais":null; var s=h||normS(get("subject",null)); if(!s){ s="allemand"; } return s; }
   function curL(s){ var l=get("level",null); return (l&&SUBJECTS[s].levels.indexOf(l)>=0)?l:SUBJECTS[s].def; }
   function curT(){ var t=get("track","COMMON"); return TRACKS.indexOf(t)>=0?t:"COMMON"; }
   var state={subject:curS(),level:curL(curS()),track:curT()};
@@ -2477,7 +2477,8 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   function appliquer(){
     try{
       var cible = resoudre();
-      if(!cible) return;                          /* visiteur : historique inchangé */
+      if(!cible) return;
+      if(!niveauCloud() && String(window.getNiveauActif())==='tous') return;  /* D2 : le visiteur 'tous' n'est jamais écrasé par le défaut VT */                          /* visiteur : historique inchangé */
       var actuel = (typeof getNiveauActif === 'function') ? getNiveauActif() : null;
       if(actuel === cible) return;                /* anti-boucle / anti-écriture inutile */
       /* Ne jamais écraser un verrou cloud contradictoire */
@@ -2725,6 +2726,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   }
   function renderToday(){
     var box=el('panelToday'); if(!box) return;
+    if(curSubject()!=='allemand'){ hide('panelToday'); return; }  /* D3-r : pas de séance allemande affichée en mode anglais */
     var nx=nextSeance();
     if(!nx || !nx.t){ hide('panelToday'); return; }
     box.innerHTML='<div class="panel-h">🏆 كل جديدك اليوم</div>'
