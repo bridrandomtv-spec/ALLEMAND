@@ -2807,7 +2807,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
         if(ch.classList && (ch.classList.contains('cat-head') || ch.classList.contains('cat-body') || ch.classList.contains('tabgrp-h'))){
           mb.appendChild(ch);
         } else if(ch.classList && ch.classList.contains('tab')){
-          mb.appendChild(ch);
+          if(PRIM.indexOf(ch.getAttribute('data-go'))===-1) mb.appendChild(ch);
         }
       });
       ['compte','guide'].forEach(function(v){
