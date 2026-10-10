@@ -3223,3 +3223,44 @@ html[data-theme="light"] svg text,html[data-theme="light"] svg tspan{fill:#33415
 @media (min-width:1440px){
   .topbar-in,main{max-width:1240px}
 }
+
+/* ══ PHASE D6 — fidélité maquette + durcissement thème clair (bloc additif) ══
+   Aucune règle existante modifiée. 6 volets :
+   1) fond clair durci (html+body ; radiaux sombres neutralisés, scopé light) ;
+   2) titre dupliqué de masar.js masqué (la page-head statique reste seule) ;
+   3) cartes matières colorées façon maquette (dégradés sombres AA ≥4.5,
+      badges de statut et données inchangés) ;
+   4) أقسام سريعة en lignes à chevrons + carte large استكشف جميع المواد ;
+   5) sidebar desktop : groupes dépliés (liste visible, plus de carte vide) ;
+   6) flottants : #subjSel chip topbar, #enOpen masqué dans la vue english,
+      #dzDiagBtn discret. */
+html[data-theme="light"]{background:#f4f6fb}
+html[data-theme="light"] body{background-color:#f4f6fb;background-image:radial-gradient(1100px 560px at 88% -12%,rgba(30,95,217,.10) 0%,transparent 62%),radial-gradient(820px 440px at -8% 106%,rgba(15,157,88,.07) 0%,transparent 60%)!important}
+html[data-theme="light"] .subj-card.on{border-color:var(--vert2)}
+.section-bar:empty{display:none}
+[data-view="masar"] #masarBody>h2:first-of-type,[data-view="masar"] #masarBody>.ms-sub:first-of-type{display:none}
+.subj-card.sc-de{background:linear-gradient(135deg,#086b3b,#0c8a4a)}
+.subj-card.sc-en{background:linear-gradient(135deg,#4a2a8a,#6d4bd8)}
+.subj-card.sc-c0{background:linear-gradient(135deg,#8a5507,#a3650a)}
+.subj-card.sc-c1{background:linear-gradient(135deg,#9d134d,#be185d)}
+.subj-card.sc-c2{background:linear-gradient(135deg,#0f766e,#128a80)}
+.subj-card.sc-c3{background:linear-gradient(135deg,#123f96,#1e5fd9)}
+.subj-card.sc-c4{background:linear-gradient(135deg,#7c2a0e,#b34a1a)}
+.subj-card.sc-c5{background:linear-gradient(135deg,#352da0,#5b54e0)}
+.subj-card[class*="sc-"]{border:0;color:#fff}
+.subj-card[class*="sc-"] .subj-n{color:#fff}
+.subj-card[class*="sc-"] .subj-l{color:rgba(255,255,255,.9)}
+.subj-card[class*="sc-"] .subj-s{background:rgba(255,255,255,.20);color:#fff}
+.subj-card[class*="sc-"].soon{opacity:.92}
+.subj-card[class*="sc-"].soon:hover{transform:none;box-shadow:none}
+.subj-card[class*="sc-"].on{outline:3px solid rgba(255,255,255,.65);outline-offset:-3px}
+.explore-all{display:flex;align-items:center;gap:10px;width:100%;margin:2px 0 12px;padding:12px 14px;border-radius:14px;border:1px solid var(--b);background:var(--p);color:var(--t);font-family:var(--ff-ar);font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--sh);text-align:start}
+.explore-all:hover{background:var(--p2)}
+#panelQuick .grid3{grid-template-columns:1fr}
+#panelQuick .card.mini{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;text-align:start}
+#panelQuick .card.mini::after{content:'‹';margin-inline-start:auto;color:var(--m);font-size:14px}
+@media (min-width:1081px){ .tabs .cat-body{display:block} }
+#subjSel.tb-sel{position:static!important;inset:auto!important;z-index:1!important;background:var(--p2)!important;color:var(--t)!important;border:1px solid var(--b);border-radius:999px;padding:6px 12px!important;font-size:11.5px;font-weight:700;margin-inline-end:8px;white-space:nowrap}
+body:has(section[data-view="english"]:not([hidden])) #enOpen{display:none!important}
+#dzDiagBtn{opacity:.35}
+#dzDiagBtn:hover{opacity:1}
