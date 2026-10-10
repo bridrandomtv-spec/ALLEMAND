@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.48.0';
+const VERSION = 'dz-de-v3.49.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -178,9 +178,12 @@ self.addEventListener('fetch', event => {
       const cache = await caches.open(CACHE_ASSETS);
       const hit = await cache.match(req);
       const bg = fetch(req).then(res => {
-        if (res && (res.ok || res.type === 'opaque')) { cache.put(req, res.clone()).catch(() => {}); }
-        return res;
-      }).catch(() => hit);
+        if (res && (res.ok || res.type === 'opaque')) { cache.put(req, res.clone()).catch(() => {}); return res; }
+        throw new Error('http ' + (res && res.status));
+      }).catch(async () => {
+        const old = await caches.match(req);
+        return old || hit || new Response('', { status: 504 });
+      });
       return hit || bg;
     })());
     return;
