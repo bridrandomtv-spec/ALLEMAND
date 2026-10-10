@@ -3074,3 +3074,54 @@ body.trial{padding-top:0 !important}
 .part .q{width:auto;height:auto;display:block;border-radius:0;background:none;opacity:1;
   margin-bottom:15px;padding-bottom:14px;border-bottom:1px dashed var(--b)}
 .part .q .q-n{display:inline-flex;width:24px;height:24px}
+
+/* ══ PHASE C1 — structure accueil + sidebar bureau (bloc additif en fin de fichier) ══ */
+.home-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
+.home-side .panel{background:var(--p);border:1px solid var(--b);border-radius:16px;padding:14px;margin-bottom:14px;box-shadow:var(--sh)}
+.panel-h{display:flex;align-items:center;gap:8px;font-family:var(--ff-ar-display);font-size:15px;font-weight:700;color:var(--t);margin-bottom:10px}
+.prog-bar{height:8px;border-radius:99px;background:var(--b);overflow:hidden;margin:8px 0}
+.prog-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--vert),var(--vert2))}
+.qa-row,.act-row{display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--b);color:var(--m);font-size:12.5px}
+.act-row:last-child,.qa-row:last-child{border-bottom:0}
+.subj-home{margin-bottom:16px}
+.subj-lang{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--p);border:1px solid var(--b);border-radius:16px;padding:12px 14px;margin-bottom:12px}
+.subj-lang .panel-h{margin:0;margin-inline-end:6px}
+.subj-lang .chip{border-radius:99px;padding:4px 10px;font-size:11.5px;font-weight:700;background:var(--p2);border:1px solid var(--b);color:var(--t);cursor:pointer}
+.subj-lang .chip.lock{opacity:.6;cursor:not-allowed}
+.subj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+.subj-card{position:relative;border-radius:16px;padding:14px;border:1px solid var(--b);background:var(--p2);text-align:center;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}
+.subj-card:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.subj-card.on{border-color:var(--vert2);background:rgba(10,138,74,.10)}
+.subj-card.soon{opacity:.72;cursor:not-allowed}
+.subj-card.soon:hover{transform:none;box-shadow:none}
+.subj-i{display:block;font-size:28px;line-height:1;margin-bottom:8px}
+.subj-n{display:block;font-family:var(--ff-ar-display);font-size:15px;font-weight:700;color:var(--t)}
+.subj-l{display:block;font-size:11.5px;color:var(--m);margin-top:3px;direction:ltr}
+.subj-s{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:99px;font-size:10.5px;font-weight:700}
+.subj-s.ok{background:rgba(10,138,74,.16);color:var(--a2)}
+.subj-s.part{background:rgba(232,182,76,.16);color:var(--or2)}
+.subj-s.soon{background:rgba(157,192,171,.14);color:var(--m)}
+.home-main .welcome{background:linear-gradient(120deg,#1e5fd9,#2f7ff0 60%,#4b95f5);border:0;color:#fff;box-shadow:0 10px 28px rgba(30,95,217,.22)}
+.home-main .welcome *{color:#fff}
+@media (max-width:900px){
+  .home-grid{grid-template-columns:1fr}
+  .home-side{order:2}
+  .subj-grid{grid-template-columns:1fr 1fr;gap:9px}
+}
+@media (max-width:480px){ .subj-grid{grid-template-columns:1fr} }
+@media (min-width:901px) and (max-width:1200px){
+  .home-grid{grid-template-columns:260px minmax(0,1fr)}
+  .subj-grid{grid-template-columns:1fr 1fr}
+}
+@media (min-width:1081px){
+  #tabs,.tabs{position:fixed;top:0;right:0;bottom:0;left:auto;width:252px;max-width:none;height:auto;margin:0;flex-direction:column;align-items:stretch;overflow-x:hidden;overflow-y:auto;padding:76px 12px 24px;border-radius:0;border-inline-start:1px solid var(--b);z-index:490;display:flex}
+  .tabs .tab{width:100%;flex:none;text-align:start;white-space:normal;border-radius:12px;padding:10px 12px;font-size:13.5px}
+  .tabgrp-h{display:block;width:100%;grid-column:auto;font-family:var(--ff-ar-display);font-size:11.5px;color:var(--or2);padding:7px 4px 3px;border-bottom:1px dashed var(--b)}
+  .topbar-in{max-width:1080px;margin:0 268px 0 auto}
+  main{max-width:1080px;margin:0 268px 0 auto}
+  #btnBurger{display:none}
+  .card:has(table.tble),.card:has(table.ad-tab){overflow-x:auto}
+  .ad-grid{min-width:0}
+  .wrow{min-width:0}
+  main .card{min-width:0}
+}

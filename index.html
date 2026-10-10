@@ -167,6 +167,11 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
     <!-- ACCUEIL -->
     <section data-view="accueil" class="view">
             <div id="accueilMemo"></div>
+  <div class="home-grid"><aside class="home-side" id="homeSide">
+    <div class="panel" id="panelProgress" hidden></div>
+    <div class="panel" id="panelActivity" hidden></div>
+  </aside><div class="home-main">
+  <div id="subjHome" class="subj-home"></div>
 <div class="welcome" id="welcomeBox"></div>
       <div class="stats" id="statsHome"></div>
 
@@ -289,7 +294,8 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
     
       <!-- 📋 السيرة الذاتية 4 blocs + 🧠 IA + 💡 méthodologie + 👋 CTA + 2 citations (rendu par journee.js) -->
       <div id="cvBody"></div>
-    </section>
+      </div></div><!-- /home-main /home-grid -->
+</section>
 
     <!-- SÉANCES -->
     <section data-view="seances" class="view" hidden>

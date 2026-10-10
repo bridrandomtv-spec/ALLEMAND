@@ -2499,3 +2499,102 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   try{ window.addEventListener('vt:ctx', function(){ setTimeout(appliquer, 0); }); }catch(e){}
   try{ document.addEventListener('dz:auth', function(){ setTimeout(appliquer, 50); }); }catch(e){}
 })();
+
+/* ── PHASE C1 — accueil : cartes matières + panneaux latéraux (additif, données réelles) ── */
+(function(){
+  function el(id){ return document.getElementById(id); }
+  function hide(n){ var x=el(n); if(x) x.hidden=true; }
+  function show(n){ var x=el(n); if(x) x.hidden=false; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  var META={ allemand:{ar:'الألمانية',flag:'🇩🇪',code:'de'}, anglais:{ar:'الإنجليزية',flag:'🇬🇧',code:'en'} };
+  function badge(st){ if(st==='implemented') return ['ok','متوفرة · disponible']; if(st==='partial') return ['part','قيد التطوير · partiel']; return ['soon','قريباً · bientôt']; }
+  function curSubject(){ try{ if(window.VT && VT.ctx){ var c=VT.ctx(); if(c&&c.subject) return c.subject; } }catch(e){}
+    try{ if(window.SUBJECT && SUBJECT.active){ var a=SUBJECT.active(); if(a&&a.id) return a.id; } }catch(e){}
+    return 'allemand'; }
+  function renderSubj(){
+    var box=el('subjHome'); if(!box||!window.SUBJECT||!SUBJECT.ready) return;
+    SUBJECT.ready().then(function(list){
+      list=list||[]; if(!list.length) return;
+      var act=curSubject(), hh='';
+      hh+='<div class="subj-lang"><span class="panel-h">🌍 اللغات الأجنبية</span>';
+      hh+=list.map(function(s){ var m=META[s.id]||{ar:s.name,flag:'📚',code:s.id}; var lock=(s.status!=='implemented'&&s.status!=='partial');
+        return '<span class="chip'+(lock?' lock':'')+'"'+(lock?'':' data-subj="'+m.code+'"')+'>'+m.flag+' '+esc(m.ar)+' · '+badge(s.status)[1]+'</span>'; }).join('');
+      hh+='</div><div class="subj-grid">';
+      hh+=list.map(function(s){ var m=META[s.id]||{ar:s.name,flag:'📚',code:s.id}; var b=badge(s.status); var ok=(s.status==='implemented'||s.status==='partial');
+        return '<div class="subj-card'+(ok?'':' soon')+(s.id===act?' on':'')+'"'+(ok?' data-subj="'+m.code+'"':' aria-disabled="true"')+'>'
+          +'<span class="subj-i">'+m.flag+'</span><span class="subj-n">'+esc(m.ar)+'</span><span class="subj-l">'+esc(s.name)+'</span>'
+          +'<span class="subj-s '+b[0]+'">'+b[1]+'</span></div>'; }).join('');
+      hh+='</div>';
+      fetch('assets/bdd/matieres.json',{cache:'no-store'}).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }).then(function(mj){
+        var ids={}; list.forEach(function(s){ ids[s.id]=1; });
+        var prog=((mj&&mj.matieres)||[]).filter(function(m){ return !ids[m.id]; });
+        if(prog.length){
+          hh+='<div class="subj-lang"><span class="panel-h">📚 مواد مبرمجة — قريباً</span></div><div class="subj-grid">';
+          hh+=prog.map(function(m){ var b=badge(m.statut==='actif'?'implemented':(m.statut==='partial'?'partial':'planned'));
+            return '<div class="subj-card soon" aria-disabled="true"><span class="subj-i">'+(m.icon||'📚')+'</span>'
+              +'<span class="subj-n">'+esc(m.ar||m.nom_ar||m.id)+'</span><span class="subj-s '+b[0]+'">'+b[1]+'</span></div>'; }).join('');
+          hh+='</div>';
+        }
+        box.innerHTML=hh;
+      });
+    }).catch(function(){ hide('subjHome'); });
+  }
+  function renderSide(){
+    try{
+      var lvl=(window.getNiveauActif)?String(window.getNiveauActif()):'';
+      if(curSubject()==='allemand' && (lvl==='2AS'||lvl==='3AS')
+         && window.UNITES && Array.isArray(UNITES) && typeof loadSeancesFor==='function'){
+        var us=UNITES.filter(function(u){ return u && u.niveau===lvl; });
+        var done=0, tot=0;
+        for(var i=0;i<us.length;i++){
+          var ses=us[i].seances; if(!Array.isArray(ses)) throw new Error('seances non tableau');
+          var ids={}; var nIds=0;
+          for(var j=0;j<ses.length;j++){ if(ses[j] && typeof ses[j].n==='number'){ ids[ses[j].n]=1; nIds++; } }
+          if(nIds===0) throw new Error('aucun id de séance');
+          var st=loadSeancesFor(us[i].n);
+          var d=(st && Object(st)===st && Array.isArray(st.done)) ? st.done : null;
+          if(d===null) throw new Error('done non tableau');
+          for(var k=0;k<d.length;k++){ if(ids[d[k]]===1) done++; }
+          tot+=nIds;
+        }
+        if(us.length===0 || tot===0) throw new Error('ensemble vide');
+        if(done>tot) done=tot;
+        var pct=Math.min(100, Math.round(done*100/tot));
+        el('panelProgress').innerHTML='<div class="panel-h">📈 متابعة التعلم — '+esc(lvl)+'</div>'
+          +'<div class="qa-row">الحصص المكتملة : '+done+' / '+tot+'</div>'
+          +'<div class="prog-bar"><i style="width:'+pct+'%"></i></div>';
+        show('panelProgress');
+      } else { hide('panelProgress'); }
+    }catch(e){ hide('panelProgress'); }
+    try{
+      var rows=[];
+      if(window.MEMOIRE && typeof MEMOIRE.dues==='function'){
+        var dd=MEMOIRE.dues();
+        if(!Array.isArray(dd)) throw new Error('dues non tableau');
+        if(dd.length>0) rows.push(['🧠', dd.length+' بطاقة مراجعة مستحقة']);
+      }
+      if(window.prochaineSeance){
+        var ps=prochaineSeance();
+        if(ps!==null && ps!==undefined){
+          if(Object(ps)!==ps || typeof ps.unite!=='number') throw new Error('prochaineSeance invalide');
+          var nx=ps.prochaine;
+          if(nx!==null && nx!==undefined){
+            if(Object(nx)!==nx) throw new Error('prochaine invalide');
+            var t=String(nx.ar||nx.de||'');
+            if(t) rows.push(['📚','الحصة القادمة : U'+ps.unite+' — '+esc(t)]);
+          }
+        }
+      }
+      if(rows.length){
+        el('panelActivity').innerHTML='<div class="panel-h">🕘 نشاطك</div>'
+          +rows.map(function(r){ return '<div class="act-row"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>'; }).join('');
+        show('panelActivity');
+      } else { hide('panelActivity'); }
+    }catch(e){ hide('panelActivity'); }
+  }
+  function renderHome(){ renderSubj(); renderSide(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(renderHome,400); });
+  else setTimeout(renderHome,400);
+  document.addEventListener('dz:view', function(e){ var v=(e&&e.detail&&(e.detail.view||e.detail))||''; if(String(v).indexOf('accueil')>=0) renderHome(); });
+  document.addEventListener('click', function(e){ if(e.target&&e.target.closest&&e.target.closest('[data-subj]')) setTimeout(renderSubj,120); });
+})();
