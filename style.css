@@ -3264,3 +3264,30 @@ html[data-theme="light"] .subj-card.on{border-color:var(--vert2)}
 body:has(section[data-view="english"]:not([hidden])) #enOpen{display:none!important}
 #dzDiagBtn{opacity:.35}
 #dzDiagBtn:hover{opacity:1}
+
+/* ══ PHASE D7 — fidélité maquette : sidebar 8+المزيد+bas, cartes horizontales,
+   groupe langues en carte, héro riche, activité en cartes icônes (additif) ══ */
+.d7-more .cat-body{display:none}
+.d7-more.open .cat-body{display:block}
+.d7-more>.cat-head{margin-top:10px}
+.d7-bot{margin-top:14px;padding-top:12px;border-top:1px dashed var(--b);display:flex;flex-direction:column;gap:6px}
+.d7-bot .tab{width:100%}
+.d7-bot #subjSel{position:static!important;inset:auto!important;z-index:1!important;width:100%;border-radius:10px;background:var(--p2);border:1px solid var(--b);color:var(--t);padding:8px 12px!important;font-family:var(--ff-ar);font-size:12px;font-weight:700;text-align:start;white-space:normal}
+.subj-card{display:flex;align-items:center;gap:11px;text-align:start;padding:13px 14px}
+.subj-card .subj-i{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-size:21px;margin:0;flex:none;line-height:1}
+.subj-card .subj-n{font-size:14.5px}
+.subj-card .subj-l{margin-top:1px;font-size:11px}
+.subj-card .subj-s{position:absolute;top:10px;inset-inline-start:10px;margin:0}
+.subj-card.sc-lang{background:linear-gradient(135deg,#0f766e,#14b8a6)}
+.subj-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.subj-chips .chip{border-radius:99px;padding:3px 9px;font-size:10.5px;font-weight:700;background:rgba(255,255,255,.20);color:#fff;cursor:pointer;border:0}
+.subj-chips .chip.lock{opacity:.6;cursor:not-allowed}
+html[data-theme="light"] .explore-all{background:#f1eeff;border-color:#ddd6fe;color:#4c1d95}
+.today-art{margin-inline-start:auto;flex:none;opacity:.9}
+#actStrip #panelActivity .act-row{flex-direction:column;align-items:flex-start;gap:6px}
+#actStrip #panelActivity .act-row>span:first-child{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+#actStrip #panelActivity .act-row:nth-child(2)>span:first-child{background:var(--pri-bg)}
+#actStrip #panelActivity .act-row:nth-child(3)>span:first-child{background:var(--ok-bg)}
+#actStrip #panelActivity .act-row:nth-child(4)>span:first-child{background:var(--warn-bg)}
+.welcome-art svg{width:190px;height:130px}
+@media (max-width:700px){ .welcome-art svg{width:120px;height:82px} }

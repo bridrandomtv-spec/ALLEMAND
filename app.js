@@ -2517,10 +2517,11 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     SUBJECT.ready().then(function(list){
       list=list||[]; if(!list.length) return;
       var act=curSubject(), hh='';
-      hh+='<div class="subj-lang"><span class="panel-h">🌍 اللغات الأجنبية</span>';
-      hh+=list.map(function(s){ var m=META[s.id]||{ar:s.name,flag:'📚',code:s.id}; var lock=(s.status!=='implemented'&&s.status!=='partial');
-        return '<span class="chip'+(lock?' lock':'')+'"'+(lock?'':' data-subj="'+m.code+'"')+'>'+m.flag+' '+esc(m.ar)+' · '+badge(s.status)[1]+'</span>'; }).join('');
-      hh+='</div><div class="subj-grid">';
+      hh+='<div class="subj-grid">';
+      hh+='<div class="subj-card sc-lang"><span class="subj-i">🌍</span><span class="subj-n">اللغات الأجنبية</span>'
+        +'<span class="subj-chips">'+list.map(function(s){ var m=META[s.id]||{ar:s.name,flag:'📚',code:s.id}; var lock=(s.status!=='implemented'&&s.status!=='partial');
+          return '<span class="chip'+(lock?' lock':'')+'"'+(lock?'':' data-subj="'+m.code+'"')+'>'+m.flag+' '+esc(m.ar)+'</span>'; }).join('')+'</span></div>';
+      hh+='';
       hh+=list.map(function(s){ var m=META[s.id]||{ar:s.name,flag:'📚',code:s.id}; var b=badge(s.status); var ok=(s.status==='implemented'||s.status==='partial');
         return '<div class="subj-card'+(ok?'':' soon')+(s.id===act?' on':'')+' sc-'+(s.id==='allemand'?'de':(s.id==='anglais'?'en':'c0'))+'"'+(ok?' data-subj="'+m.code+'"':' aria-disabled="true"')+'>'
           +'<span class="subj-i">'+m.flag+'</span><span class="subj-n">'+esc(m.ar)+'</span><span class="subj-l">'+esc(s.name)+'</span>'
@@ -2732,6 +2733,10 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     if(!nx || !nx.t){ hide('panelToday'); return; }
     box.innerHTML='<div class="panel-h">🏆 كل جديدك اليوم</div>'
       +'<div class="today-flag"><span class="tf-i">🚩</span><span class="tf-t"><b>الحصة القادمة : U'+nx.u+' — '+esc(nx.t)+'</b>خطوة واحدة الآن — والباقي ينتظر</span></div>'
+      +'<svg class="today-art" viewBox="0 0 90 60" width="90" height="60" aria-hidden="true">'
+      +'<path d="M6 54 L30 22 L44 40 L58 14 L84 54 Z" fill="rgba(30,95,217,.18)"/>'
+      +'<path d="M58 14 L58 2 L74 6 L58 10 Z" fill="#1e5fd9"/>'
+      +'<circle cx="20" cy="12" r="4" fill="rgba(232,182,76,.55)"/></svg>'
       +'<button class="today-go" data-go="masar">🧭 ابدأ الآن</button>';
     show('panelToday');
   }
@@ -2770,4 +2775,56 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   else setTimeout(place,350);
   document.addEventListener('dz:view', function(){ setTimeout(place,120); });
   document.addEventListener('dz:auth', function(){ setTimeout(place,120); });
+})();
+
+/* ── PHASE D7 — sidebar maquette en desktop : 8 primaires visibles + accordéon
+   « المزيد » (26 entrées DÉPLACÉES, aucune supprimée) + bloc bas (الإعدادات /
+   المساعدة / اللغة + son + install). Additif, idempotent par rendu, scopé ≥1081 px.
+   Le tiroir mobile ≤900 px reste strictement inchangé (reorg non exécutée). */
+(function(){
+  var PRIM=['accueil','matieres','seances','quiz','examen','biblio','rag'];
+  function reorg(){
+    try{
+      if(!(window.matchMedia && matchMedia('(min-width:1081px)').matches)) return;
+      var root=document.getElementById('tabs'); if(!root || root.dataset.d7==='1') return;
+      var more=document.getElementById('d7more');
+      if(!more){
+        more=document.createElement('div'); more.id='d7more'; more.className='d7-more';
+        more.innerHTML='<button class="cat-head" type="button" id="d7moreH"><span>➕ المزيد</span></button><div class="cat-body" id="d7moreB"></div>';
+        root.appendChild(more);
+      }
+      var mb=document.getElementById('d7moreB');
+      var bot=document.getElementById('d7bot');
+      if(!bot){ bot=document.createElement('div'); bot.id='d7bot'; bot.className='d7-bot'; root.appendChild(bot); }
+      if(more.parentNode!==root) root.appendChild(more);
+      if(bot.parentNode!==root) root.appendChild(bot);
+      PRIM.forEach(function(v){
+        var t=root.querySelector('.tab[data-go="'+v+'"]');
+        if(t) root.insertBefore(t, more);
+      });
+      [].slice.call(root.children).forEach(function(ch){
+        if(ch===more || ch===bot) return;
+        if(ch.classList && (ch.classList.contains('cat-head') || ch.classList.contains('cat-body') || ch.classList.contains('tabgrp-h'))){
+          mb.appendChild(ch);
+        } else if(ch.classList && ch.classList.contains('tab')){
+          mb.appendChild(ch);
+        }
+      });
+      ['compte','guide'].forEach(function(v){
+        var t=mb.querySelector('.tab[data-go="'+v+'"]') || root.querySelector('.tab[data-go="'+v+'"]');
+        if(t) bot.appendChild(t);
+      });
+      ['btnSound','btnInstall','subjSel'].forEach(function(id){
+        var n=document.getElementById(id); if(n) bot.appendChild(n);
+      });
+      root.dataset.d7='1';
+    }catch(e){}
+  }
+  document.addEventListener('click', function(e){
+    var h=e.target && e.target.closest ? e.target.closest('#d7moreH') : null;
+    if(h){ var m=document.getElementById('d7more'); if(m) m.classList.toggle('open'); }
+  });
+  document.addEventListener('dz:view', function(){ setTimeout(reorg,80); });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(reorg,420); });
+  else setTimeout(reorg,420);
 })();
