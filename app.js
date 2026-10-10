@@ -2668,3 +2668,87 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   document.addEventListener('dz:auth', function(){ setTimeout(renderAva,80); });
   setInterval(renderBell, 60000);
 })();
+
+/* ── PHASE D3 — composition fine accueil : أقسام سريعة (grid3 déplacée), carte اليوم,
+   rangée activité (additif, données réelles, zéro duplication).
+   Aucune fonction existante modifiée : C1 continue de rendre #panelActivity ;
+   D3 déplace le nœud UNE fois dans #actStrip et ajoute un 3e signal réel. */
+(function(){
+  function el(id){ return document.getElementById(id); }
+  function hide(n){ var x=el(n); if(x) x.hidden=true; }
+  function show(n){ var x=el(n); if(x) x.hidden=false; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function curSubject(){ try{ if(window.VT && VT.ctx){ var c=VT.ctx(); if(c&&c.subject) return c.subject; } }catch(e){}
+    try{ if(window.SUBJECT && SUBJECT.active){ var a=SUBJECT.active(); if(a&&a.id) return a.id; } }catch(e){}
+    return 'allemand'; }
+  function renderQuick(){
+    var body=el('quickBody'); if(!body) return;
+    if(body.dataset.done) return;
+    var g=document.querySelector('[data-view="accueil"] .grid3');
+    if(!g){ hide('panelQuick'); return; }
+    body.appendChild(g);
+    body.dataset.done='1';
+    show('panelQuick');
+  }
+  function nextSeance(){
+    try{
+      if(window.prochaineSeance){
+        var ps=prochaineSeance();
+        if(ps!==null && ps!==undefined && Object(ps)===ps && typeof ps.unite==='number'){
+          var nx=ps.prochaine;
+          if(nx && Object(nx)===nx){ return {u:ps.unite, t:String(nx.ar||nx.de||'')}; }
+        }
+      }
+    }catch(e){}
+    return null;
+  }
+  function doneCount(){
+    try{
+      if(curSubject()!=='allemand') return null;
+      var lvl=(window.getNiveauActif)?String(window.getNiveauActif()):'';
+      if(!(lvl==='2AS'||lvl==='3AS')) return null;
+      if(!window.UNITES || !Array.isArray(UNITES) || typeof loadSeancesFor!=='function') return null;
+      var us=UNITES.filter(function(u){ return u && u.niveau===lvl; });
+      var done=0;
+      for(var i=0;i<us.length;i++){
+        var ses=us[i].seances; if(!Array.isArray(ses)) return null;
+        var ids={}; var nIds=0;
+        for(var j=0;j<ses.length;j++){ if(ses[j] && typeof ses[j].n==='number'){ ids[ses[j].n]=1; nIds++; } }
+        if(nIds===0) return null;
+        var st=loadSeancesFor(us[i].n);
+        var d=(st && Object(st)===st && Array.isArray(st.done)) ? st.done : null;
+        if(d===null) return null;
+        for(var k=0;k<d.length;k++){ if(ids[d[k]]===1) done++; }
+      }
+      return done;
+    }catch(e){ return null; }
+  }
+  function renderToday(){
+    var box=el('panelToday'); if(!box) return;
+    var nx=nextSeance();
+    if(!nx || !nx.t){ hide('panelToday'); return; }
+    box.innerHTML='<div class="panel-h">🏆 كل جديدك اليوم</div>'
+      +'<div class="today-flag"><span class="tf-i">🚩</span><span class="tf-t"><b>الحصة القادمة : U'+nx.u+' — '+esc(nx.t)+'</b>خطوة واحدة الآن — والباقي ينتظر</span></div>'
+      +'<button class="today-go" data-go="masar">🧭 ابدأ الآن</button>';
+    show('panelToday');
+  }
+  function renderStrip(){
+    var strip=el('actStrip'), pa=el('panelActivity');
+    if(strip && pa && pa.parentNode!==strip){ strip.appendChild(pa); }
+    if(!pa) return;
+    var done=doneCount();
+    var has=pa.querySelector('[data-d3-done]');
+    if(done!==null && done>0){
+      if(!has){
+        var row=document.createElement('div');
+        row.className='act-row'; row.setAttribute('data-d3-done','1');
+        row.innerHTML='<span>✅</span><span>'+done+' حصة مكتملة</span>';
+        pa.appendChild(row);
+      }
+    } else if(has){ has.parentNode.removeChild(has); }
+  }
+  function renderD3(){ renderQuick(); renderToday(); renderStrip(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(renderD3,450); });
+  else setTimeout(renderD3,450);
+  document.addEventListener('dz:view', function(e){ var v=(e&&e.detail&&(e.detail.view||e.detail))||''; if(String(v).indexOf('accueil')>=0) setTimeout(renderD3,60); });
+})();

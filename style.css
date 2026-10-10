@@ -3168,3 +3168,26 @@ html[data-theme="light"] code{background:rgba(17,28,46,.06)}
 .tb-badge{position:absolute;top:-5px;inset-inline-start:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--rouge,#d21034);color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--nuit2)}
 #userChip.tb-ava{width:38px;height:38px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--vert),var(--vert2));color:#fff;font-family:var(--ff-de);font-size:13px;font-weight:800;cursor:pointer;overflow:hidden;flex:none}
 @media (max-width:900px){ .tb-search{display:none} }
+
+/* ══ PHASE D3 — composition fine de l'accueil (bloc additif en fin de fichier) ══
+   Aucune règle existante modifiée. Couleurs via variables → thèmes D1/sombre OK.
+   .grid3 (16 accès rapides existants) est DÉPLACÉE dans #panelQuick par D3 :
+   zéro duplication, zéro accès masqué, tous les data-go conservés. */
+.home-main .welcome{display:flex;align-items:center;gap:14px;min-height:132px}
+.welcome-art{position:absolute;inset-inline-end:16px;bottom:12px;pointer-events:none}
+@media (max-width:700px){.welcome-art{display:none}.home-main .welcome{min-height:0}}
+#panelQuick .grid3{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#panelQuick .card{margin-bottom:0}
+#panelQuick .card.mini{padding:10px 8px;border-radius:12px}
+.today-card .panel-h{color:var(--or2)}
+.today-flag{display:flex;align-items:center;gap:10px}
+.tf-i{font-size:26px}
+.tf-t{font-size:12.2px;color:var(--m);line-height:1.5}
+.tf-t b{color:var(--t);display:block;font-size:13px}
+.today-go{margin-top:10px;padding:7px 14px;border-radius:99px;background:var(--vert);color:#fff;font-size:11.5px;font-weight:700;border:0;cursor:pointer;font-family:var(--ff-ar)}
+.act-strip{margin-top:16px}
+.act-strip .panel{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:0}
+#actStrip #panelActivity{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+#actStrip #panelActivity .panel-h{grid-column:1/-1;margin-bottom:2px}
+#actStrip #panelActivity .act-row{background:var(--p);border:1px solid var(--b);border-radius:12px;padding:10px 12px;box-shadow:var(--sh)}
+@media (max-width:900px){#actStrip #panelActivity{grid-template-columns:1fr}}
