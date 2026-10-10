@@ -3191,3 +3191,35 @@ html[data-theme="light"] code{background:rgba(17,28,46,.06)}
 #actStrip #panelActivity .panel-h{grid-column:1/-1;margin-bottom:2px}
 #actStrip #panelActivity .act-row{background:var(--p);border:1px solid var(--b);border-radius:12px;padding:10px 12px;box-shadow:var(--sh)}
 @media (max-width:900px){#actStrip #panelActivity{grid-template-columns:1fr}}
+
+/* ══ PHASE D4 — responsive 320→1440 + accessibilité (bloc additif en fin de fichier) ══
+   Aucune règle existante modifiée. 4 volets :
+   1) focus-visible global (33 entrées de nav + widgets + champs) ;
+   2) media reduced-motion global (animations et transitions coupées) ;
+   3) contrastes WCAG AA en thème clair (pill active, badge cloche, bouton du jour)
+      + remappage des hex SVG de stats.js (fonds sombres → clairs, accents → foncés,
+      textes → #334155) ; ratios vérifiés : texte ≥ 4.5:1, graphique ≥ 3:1 ;
+   4) bornes responsive ajoutées : ≤400 px compact · ≥1440 px contenu élargi. */
+:focus-visible{outline:2px solid var(--vert2);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+html[data-theme="light"] .tab.on{background:linear-gradient(135deg,#123f96,#1e5fd9);box-shadow:0 4px 14px rgba(30,95,217,.28)}
+html[data-theme="light"] .tb-badge{background:#b3243a}
+html[data-theme="light"] .today-go{background:#123f96}
+html[data-theme="light"] svg [fill="#071d12"],html[data-theme="light"] svg [fill="#0d3d24"]{fill:#eef2f8}
+html[data-theme="light"] svg [fill="#3ddc84"]{fill:#0f9d58}
+html[data-theme="light"] svg [fill="#4f8cff"]{fill:#1e5fd9}
+html[data-theme="light"] svg [fill="#b39aff"]{fill:#6d4bd8}
+html[data-theme="light"] svg [fill="#e8b64c"]{fill:#c47a08}
+html[data-theme="light"] svg text,html[data-theme="light"] svg tspan{fill:#334155}
+@media (max-width:400px){
+  .topbar-in{padding-inline:8px;gap:6px}
+  .tb-bell,#userChip.tb-ava{width:34px;height:34px;font-size:13px}
+  .home-main .welcome{padding:18px 14px}
+  .home-side .panel{padding:12px}
+  #actStrip #panelActivity .act-row{padding:9px 10px}
+}
+@media (min-width:1440px){
+  .topbar-in,main{max-width:1240px}
+}
