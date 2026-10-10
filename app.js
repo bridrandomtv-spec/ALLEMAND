@@ -775,12 +775,21 @@ function renderGrille(g){
     + '</table></div>';
 }
 
-/* ── Livre officiel chargé une fois : window.__BOOK__[page] = {titre, lignes} ── */
+/* ── Livre officiel chargé une fois : window.__BOOK__[page] = {titre, lignes} ──
+   D0 : fetch différé après le premier rendu (idle) — ne concurrence plus le boot.
+   Déclencheurs : idle (≤2,5 s) OU première navigation (dz:view), au premier des deux. */
 window.__BOOK__ = window.__BOOK__ || {};
-try {
-  fetch('assets/bdd/buch_pages.json', {cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(B){
+function ensureBook(){
+  if(window.__BOOKP) return window.__BOOKP;
+  window.__BOOKP = fetch('assets/bdd/buch_pages.json', {cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(B){
     if(B){ window.__BOOK__ = (B && B.pages) ? B.pages : B; window.dispatchEvent(new Event('book-ready')); }
   }).catch(function(){});
+  return window.__BOOKP;
+}
+try {
+  if(window.requestIdleCallback) requestIdleCallback(ensureBook, {timeout:2500});
+  else setTimeout(ensureBook, 1200);
+  document.addEventListener('dz:view', function(){ ensureBook(); }, {once:true});
 } catch(e) {}
 function leconLivre(s){
   var ps = (s.pages && s.pages.length) ? s.pages : (s.page ? [s.page] : []);

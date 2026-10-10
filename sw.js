@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.47.23';
+const VERSION = 'dz-de-v3.48.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -166,6 +166,22 @@ self.addEventListener('fetch', event => {
           { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
         );
       }
+    })());
+    return;
+  }
+
+  /* 1bis) D0 — assets statiques same-origin -> stale-while-revalidate
+     (cache immediat + rafraichissement en arriere-plan).
+     La navigation HTML reste network-first : branche 1) inchangee. */
+  if (url.origin === self.location.origin && /\.(js|css|json|woff2?|png|svg|webp)$/i.test(url.pathname)) {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE_ASSETS);
+      const hit = await cache.match(req);
+      const bg = fetch(req).then(res => {
+        if (res && (res.ok || res.type === 'opaque')) { cache.put(req, res.clone()).catch(() => {}); }
+        return res;
+      }).catch(() => hit);
+      return hit || bg;
     })());
     return;
   }
