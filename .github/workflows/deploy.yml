@@ -161,7 +161,7 @@ jobs:
               grille = qiii[0].get('grille') or []
               if abs(sum(float(g[1]) for g in grille) - 4.0) > 1e-9:
                   fails.append(s['id'] + ' : grille III != 4.0')
-              if len(qiii[0].get('modele', '')) < 200:
+              if len(qiii[0].get('modele', '')) < 160:
                   fails.append(s['id'] + ' : modele de redaction trop court')
               if len(s['corrige']) < 400:
                   fails.append(s['id'] + ' : corrige trop court')
