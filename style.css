@@ -3125,3 +3125,34 @@ body.trial{padding-top:0 !important}
   .wrow{min-width:0}
   main .card{min-width:0}
 }
+
+/* ══ PHASE D1 — thème clair SCOPÉ (bloc additif en fin de fichier) ══
+   Activé par l'attribut data-theme="light" sur <html>. Retirer l'attribut
+   rend instantanément le thème sombre d'origine. Aucune règle existante
+   modifiée ni supprimée : uniquement des surcharges scopées.
+   L'attribut hidden, les îlots LTR allemands et l'impression restent tels quels. */
+html[data-theme="light"]{
+  --vert:#1e5fd9; --vert2:#2f7ff0; --vert3:#123f96;
+  --rouge:#d93b4f; --or:#c47a08; --or2:#8a5a06;
+  --nuit:#f4f6fb; --nuit1:#ffffff; --nuit2:#ffffff; --nuit3:#eef2f8;
+  --p:#ffffff; --p2:#f7fafd; --b:#dfe6f0; --b2:#c9d6e8;
+  --t:#16202c; --m:#5c6b7f; --a:#1e5fd9; --a2:#0b7a45;
+  --g:#0f9d58; --r:#d93b4f; --am:#c47a08; --vi:#6d4bd8;
+  --rd:16px; --sh:0 4px 18px rgba(17,28,46,.07);
+}
+html[data-theme="light"] body{
+  background:#f4f6fb;
+  background-image:
+    radial-gradient(1100px 560px at 88% -12%, rgba(30,95,217,.10) 0%, transparent 62%),
+    radial-gradient(820px 440px at -8% 106%, rgba(15,157,88,.07) 0%, transparent 60%);
+}
+html[data-theme="light"] .topbar{background:rgba(255,255,255,.92);border-bottom:1px solid var(--b)}
+html[data-theme="light"] .card{background:#fff;border:1px solid var(--b);box-shadow:var(--sh)}
+html[data-theme="light"] .welcome{background:linear-gradient(140deg,rgba(30,95,217,.10),rgba(255,255,255,0) 60%);border:1px solid var(--b)}
+html[data-theme="light"] .home-main .welcome{background:linear-gradient(120deg,#1e5fd9,#2f7ff0 60%,#4b95f5);border:0;color:#fff;box-shadow:0 10px 28px rgba(30,95,217,.22)}
+html[data-theme="light"] .home-main .welcome *{color:#fff}
+html[data-theme="light"] .tab.on{box-shadow:0 4px 14px rgba(30,95,217,.28)}
+html[data-theme="light"] .cat-head.open{background:rgba(30,95,217,.07);color:var(--or2)}
+html[data-theme="light"] .cat-head:hover{background:rgba(17,28,46,.04)}
+html[data-theme="light"] .splash{background:#f4f6fb;background-image:radial-gradient(900px 500px at 50% 30%,rgba(30,95,217,.12),transparent 70%)}
+html[data-theme="light"] code{background:rgba(17,28,46,.06)}
