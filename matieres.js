@@ -22,7 +22,7 @@
     if(!D){
       box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل سجل المواد…</div>';
       try{
-        const r = await fetch('assets/bdd/matieres.json', { cache:'force-cache' });
+        const r = await fetch('assets/bdd/matieres.json', { cache:'no-store' });
         if(!r.ok) throw new Error('HTTP ' + r.status);
         D = await r.json();
       }catch(e){
