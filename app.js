@@ -2202,8 +2202,19 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     return '<div class="card" style="padding:14px;margin:10px 0;text-align:center">'+m.flag+' <b>'+m.ar+' · '+s.name+'</b>'
       + '<div style="color:#9fd8b4;font-size:12px;margin:6px 0">'+badge(s.status)+'</div>'+btn+'</div>';
   }
+  function hub(){
+    var b = document.getElementById('matieresBody');
+    if(!b || !b.parentNode) return null;
+    var h = document.getElementById('subjectsHub');
+    if(!h){
+      h = document.createElement('div');
+      h.id = 'subjectsHub';
+      b.parentNode.insertBefore(h, b);
+    }
+    return h;
+  }
   function render(){
-    var box = document.getElementById('matieresBody'); if(!box) return;
+    var box = hub(); if(!box) return;
     if(!window.SUBJECT || !SUBJECT.ready){ box.innerHTML='<p>…</p>'; return; }
     SUBJECT.ready().then(function(list){
       box.innerHTML = (list||[]).map(card).join('') || '<p>Aucune matière.</p>';
@@ -2215,7 +2226,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   });
   var t=setInterval(function(){
     var v=document.querySelector('[data-view="matieres"]');
-    if(v && !v.hidden && v.style.display!=='none'){ var b=document.getElementById('matieresBody'); if(b && !b.dataset.done){ b.dataset.done='1'; render(); } }
+    if(v && !v.hidden && v.style.display!=='none'){ var b=hub(); if(b && !b.dataset.done){ b.dataset.done='1'; render(); } }
   }, 900);
 })();
 
