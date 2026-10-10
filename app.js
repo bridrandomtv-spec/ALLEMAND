@@ -2598,3 +2598,73 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   document.addEventListener('dz:view', function(e){ var v=(e&&e.detail&&(e.detail.view||e.detail))||''; if(String(v).indexOf('accueil')>=0) renderHome(); });
   document.addEventListener('click', function(e){ if(e.target&&e.target.closest&&e.target.closest('[data-subj]')) setTimeout(renderSubj,120); });
 })();
+
+/* ── PHASE D2 — widgets topbar : recherche (corpus), cloche (mémoire), avatar (session) ──
+   ADDITIF : aucun handler existant modifié. La navigation passe par le handler
+   délégué data-go existant (bouton synthétique, même mécanisme que go2) →
+   go() + ACCESS.canAccessView() intacts. Aucune écriture de stockage. */
+(function(){
+  function el(id){ return document.getElementById(id); }
+  function nav(v){
+    try{
+      var t=document.createElement('button');
+      t.setAttribute('data-go',v); t.style.display='none';
+      document.body.appendChild(t); t.click(); t.remove();
+    }catch(e){}
+  }
+  /* ── recherche : réutilise le moteur existant de la vue corpus (#cpQ + filtres) ── */
+  function submitSearch(){
+    var inp=el('tbSearch'); if(!inp) return;
+    var q=String(inp.value||'').trim(); if(!q) return;
+    nav('corpus');
+    setTimeout(function(){
+      var t=el('cpQ');
+      if(t){ t.value=q; try{ t.dispatchEvent(new Event('input',{bubbles:true})); }catch(e){} }
+    },160);
+  }
+  /* ── cloche : données réelles uniquement (cartes mémoire dues) ── */
+  function bellCount(){
+    try{
+      if(window.MEMOIRE && typeof MEMOIRE.dues==='function'){
+        var d=MEMOIRE.dues();
+        if(Array.isArray(d)) return d.length;
+      }
+    }catch(e){}
+    return 0;
+  }
+  function renderBell(){
+    var b=el('tbBell'); if(!b) return;
+    var n=bellCount();
+    if(n<=0){ b.hidden=true; return; }
+    b.hidden=false;
+    var g=el('tbBadge'); if(g) g.textContent=(n>9?'9+':String(n));
+  }
+  /* ── avatar : initiale de session sur le #userChip existant (handler conservé) ── */
+  function renderAva(){
+    var uc=el('userChip'); if(!uc) return;
+    var full=String(uc.textContent||'').trim();
+    try{
+      if(window.AUTH && typeof AUTH.session==='function'){
+        var s=AUTH.session();
+        if(s && s.nom) full=String(s.nom);
+      }
+    }catch(e){}
+    var ini=full?full.charAt(0).toUpperCase():'👤';
+    uc.textContent=ini;
+    uc.title=full||'الحساب';
+    uc.classList.add('tb-ava');
+  }
+  function renderAll(){ renderBell(); renderAva(); }
+  function bind(){
+    var inp=el('tbSearch');
+    if(inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); submitSearch(); } });
+    var b=el('tbBell');
+    if(b) b.addEventListener('click', function(){ nav('masar'); });
+    renderAll();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(bind,300); });
+  else setTimeout(bind,300);
+  document.addEventListener('dz:view', function(){ setTimeout(renderAll,150); });
+  document.addEventListener('dz:auth', function(){ setTimeout(renderAva,80); });
+  setInterval(renderBell, 60000);
+})();

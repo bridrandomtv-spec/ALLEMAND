@@ -3156,3 +3156,15 @@ html[data-theme="light"] .cat-head.open{background:rgba(30,95,217,.07);color:var
 html[data-theme="light"] .cat-head:hover{background:rgba(17,28,46,.04)}
 html[data-theme="light"] .splash{background:#f4f6fb;background-image:radial-gradient(900px 500px at 50% 30%,rgba(30,95,217,.12),transparent 70%)}
 html[data-theme="light"] code{background:rgba(17,28,46,.06)}
+
+/* ══ PHASE D2 — widgets topbar : recherche · cloche · avatar (bloc additif) ══
+   Aucune règle existante modifiée. Couleurs via variables → thèmes sombre
+   et clair (D1) appliqués automatiquement. */
+.tb-search{flex:0 1 240px;min-width:0;margin-inline-start:auto}
+.tb-search input{width:100%;height:38px;border-radius:99px;border:1px solid var(--b);background:var(--p2);color:var(--t);padding:0 14px;font-family:var(--ff-ar);font-size:12.5px}
+.tb-search input:focus{outline:2px solid var(--vert2);border-color:var(--vert2)}
+.tb-bell{position:relative;width:38px;height:38px;flex:none;border-radius:50%;border:1px solid var(--b);background:var(--p2);color:var(--t);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.tb-bell:hover{background:var(--b)}
+.tb-badge{position:absolute;top:-5px;inset-inline-start:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--rouge,#d21034);color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--nuit2)}
+#userChip.tb-ava{width:38px;height:38px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--vert),var(--vert2));color:#fff;font-family:var(--ff-de);font-size:13px;font-weight:800;cursor:pointer;overflow:hidden;flex:none}
+@media (max-width:900px){ .tb-search{display:none} }
