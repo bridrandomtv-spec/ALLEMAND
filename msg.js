@@ -74,7 +74,17 @@
     if(!u){ box.innerHTML = '<div class="msg-empty">💬 <b>Messagerie nationale</b> — connecte-toi pour retrouver tes groupes officiels (wilaya · niveau · filière).</div>'; return; }
     var g = await window.SB.msgGroups();
     var c = await window.SB.msgConvs();
+    var vf = await window.SB.msgMyVerification();
     var h = '<div class="msg-head"><h3>💬 Ressources</h3>'.replace('Ressources','Messages')+'<button class="msg-refresh" data-act="refresh" type="button">⟳ rafraîchir</button></div>';
+    var isMod0 = u && (u.role==='prof' || u.role==='admin');
+    if(!isMod0 && vf.ok && vf.statut!=='verifie'){
+      h += '<div class="msg-verif">' + (vf.statut==='en_attente'
+        ? '⏳ <b>Vérification d\'identité en cours</b> — un professeur ou un admin contrôle ton matricule et ta section. Les groupes officiels restent ouverts ; les messages privés s\'ouvriront après validation.'
+        : (vf.statut==='rejete' ? '⛔ <b>Demande rejetée</b> — corrige ton matricule / ta section puis renvoie. ' : '🪪 <b>Vérification d\'identité scolaire</b> — requise avant d\'ouvrir un message privé. ') +
+          '<div class="msg-vform"><input id="vfMat" placeholder="matricule scolaire" maxlength="40" value="'+esc(vf.matricule||'')+'"><input id="vfSec" placeholder="section / classe (ex. 2AS-1)" maxlength="40" value="'+esc(vf.section||'')+'"><button class="msg-send" data-act="verif-req" type="button">Envoyer la demande</button></div>')
+        + '</div>';
+    }
+    if(!isMod0 && vf.ok && vf.statut==='verifie'){ h += '<div class="msg-verif ok">✔ Identité scolaire vérifiée — messages privés autorisés (groupe scolaire commun).</div>'; }
     h += '<div class="msg-sec">🕌 Groupes officiels (wilaya · niveau · filière)</div><div class="msg-grid">';
     if(g.ok && g.groups.length){
       h += g.groups.map(function(x){
@@ -110,6 +120,16 @@
             '<button class="msg-modbtn" data-mod="delmsg" data-rid="' + r.id + '" type="button">🚫 retirer le message</button>' +
             '<button class="msg-modbtn" data-mod="retireatt" data-rid="' + r.id + '" type="button">📎 retirer la PJ</button>' +
             '</div></div>';
+        }).join('');
+      }
+      var vq = await window.SB.msgVerificationQueue();
+      h += '<div class="msg-modrow"><b>Vérifications d\'identité en attente :</b> ' + (vq.ok ? vq.queue.length : '⛔') + '</div>';
+      if(vq.ok && vq.queue.length){
+        h += vq.queue.map(function(q){
+          return '<div class="msg-modcard"><div class="msg-meta"><b>🪪 ' + esc(q.pseudo||'?') + '</b><span>' + esc((q.wilaya||'?')+' · '+(q.niveau||'?')+' · '+(q.filiere||'?')) + '</span></div>' +
+            '<div class="msg-body">matricule : ' + esc(q.matricule||'—') + ' · section : ' + esc(q.section||'—') + '</div>' +
+            '<div class="msg-modbtns"><button class="msg-modbtn" data-mod="verif-ok" data-uid="' + q.id + '" type="button">✔ vérifier</button>' +
+            '<button class="msg-modbtn" data-mod="verif-no" data-uid="' + q.id + '" type="button">⛔ rejeter</button></div></div>';
         }).join('');
       }
       h += '<div class="msg-modrow"><b>Créer un groupe officiel</b> (wilaya · niveau · filière) :</div>' +
@@ -159,11 +179,21 @@
     if(act==='refresh'){ if(state.conv) renderThread(state.conv); else renderList(); return; }
     if(act==='back'){ closeChannel(); state.conv=null; renderList(); return; }
     if(act==='send'){ send(); return; }
+    if(act==='verif-req'){
+      var mv = (el('vfMat')||{}).value || '', sv = (el('vfSec')||{}).value || '';
+      window.SB.msgRequestVerification(mv, sv).then(function(r4){ if(r4.ok){ renderList(); } else { window.alert('⛔ '+r4.err); } });
+      return;
+    }
     var mod = t.getAttribute('data-mod');
     if(mod){
       if(mod==='creategroup'){
         var w = (el('mgWil')||{}).value || '', n = (el('mgNiv')||{}).value || '', f = (el('mgFil')||{}).value || '';
         window.SB.msgCreateGroup(w, n, f, '').then(function(r2){ if(r2.ok){ renderList(); } else { window.alert('⛔ ' + r2.err); } });
+        return;
+      }
+      if(mod==='verif-ok' || mod==='verif-no'){
+        var uidv = t.getAttribute('data-uid');
+        window.SB.msgSetVerification(uidv, mod==='verif-ok'?'verifie':'rejete').then(function(r3){ if(r3.ok){ renderList(); } else { window.alert('⛔ '+r3.err); } });
         return;
       }
       var rid = +t.getAttribute('data-rid');

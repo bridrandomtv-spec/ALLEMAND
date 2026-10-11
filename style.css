@@ -3420,3 +3420,9 @@ html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px soli
 .msg-modform{display:flex;gap:6px;flex-wrap:wrap}
 .msg-modform input,.msg-modform select{border:1px solid var(--b);border-radius:10px;background:var(--p);color:var(--t);padding:7px 9px;font-size:12px;font-family:var(--ff-ar)}
 .msg-log{font-family:var(--ff-de);font-size:10.8px;color:var(--m);display:flex;flex-direction:column;gap:3px;max-height:160px;overflow:auto}
+
+/* ══ MSG-6 — vérification d'identité scolaire (additif ; variables = thèmes auto) ══ */
+.msg-verif{background:var(--warn-bg);border:1px solid #f0dcb4;border-radius:12px;padding:11px 13px;font-size:12.3px;color:#6d4c14;margin-bottom:12px}
+.msg-verif.ok{background:var(--ok-bg);border-color:#bfe6cf;color:#0b5c33}
+.msg-vform{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.msg-vform input{flex:1 1 140px;border:1px solid var(--b);border-radius:10px;background:var(--p);color:var(--t);padding:8px 10px;font-size:12px;font-family:var(--ff-ar)}

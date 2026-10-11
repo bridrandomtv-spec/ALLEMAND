@@ -311,3 +311,63 @@ do $$ begin alter publication supabase_realtime add table public.msg_messages;
 exception when duplicate_object then null; when undefined_object then null; end $$;
 do $$ begin alter publication supabase_realtime add table public.msg_conversations;
 exception when duplicate_object then null; when undefined_object then null; end $$;
+
+-- ══ LOT 6 — vérification d'identité scolaire avant ouverture de nouveaux DM ══
+alter table public.profiles add column if not exists verif_statut text not null default 'non_verifie';
+alter table public.profiles add column if not exists verif_by uuid;
+alter table public.profiles add column if not exists verif_at timestamptz;
+alter table public.profiles add column if not exists matricule text not null default '';
+alter table public.profiles add column if not exists section text not null default '';
+do $$ begin
+  alter table public.profiles add constraint profiles_verif_chk
+    check (verif_statut in ('non_verifie','en_attente','verifie','rejete'));
+exception when duplicate_object then null; end $$;
+
+-- Garde : seul un modérateur valide/refuse ; l'élève ne peut QUE passer
+-- de non_verifie/rejete → en_attente (avec matricule+section déclarés).
+create or replace function public.profiles_verif_guard() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare ismod boolean;
+begin
+  if new.verif_statut is not distinct from old.verif_statut
+     and new.verif_by is not distinct from old.verif_by
+     and new.matricule is not distinct from old.matricule
+     and new.section is not distinct from old.section then
+    return new;
+  end if;
+  select exists (select 1 from public.profiles p
+                  where p.id = auth.uid() and p.role in ('admin','prof')) into ismod;
+  if ismod then return new; end if;
+  if auth.uid() = old.id
+     and old.verif_statut in ('non_verifie','rejete')
+     and new.verif_statut = 'en_attente'
+     and new.verif_by is not distinct from old.verif_by then
+    return new;
+  end if;
+  raise exception 'verif_reservee_moderation';
+end $$;
+drop trigger if exists profiles_tr_verif on public.profiles;
+create trigger profiles_tr_verif before update on public.profiles
+  for each row execute function public.profiles_verif_guard();
+
+-- File d'attente lisible par les modérateurs + action de validation
+drop policy if exists "profils en attente visibles modérateurs" on public.profiles;
+create policy "profils en attente visibles modérateurs" on public.profiles for select to authenticated
+  using (public.msg_is_moderator(auth.uid()) and verif_statut = 'en_attente');
+drop policy if exists "verif update par modérateurs" on public.profiles;
+create policy "verif update par modérateurs" on public.profiles for update to authenticated
+  using (public.msg_is_moderator(auth.uid()) and verif_statut = 'en_attente')
+  with check (public.msg_is_moderator(auth.uid()));
+
+-- DM : exige désormais deux profils vérifiés (remplace la version Lot 1)
+create or replace function public.msg_can_dm(a uuid, b uuid) returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from public.profiles pa
+    join public.profiles pb
+      on pb.wilaya = pa.wilaya and pb.niveau = pa.niveau and pb.filiere = pa.filiere
+     where pa.id = a and pb.id = b and a <> b
+       and pa.wilaya is not null and pa.niveau is not null and pa.filiere is not null
+       and pa.verif_statut = 'verifie' and pb.verif_statut = 'verifie'
+  );
+$$;

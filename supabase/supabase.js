@@ -416,3 +416,40 @@ async function msgCreateGroup(wilaya, niveau, filiere, titre){
 
 window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
+
+/* ── MSG-6 · vérification d'identité scolaire (client fin — le RLS et le trigger décident) ── */
+async function msgMyVerification(){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('profiles').select('verif_statut,matricule,section').eq('id', u.id).maybeSingle();
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, statut:(r.data && r.data.verif_statut) || 'non_verifie', matricule:(r.data && r.data.matricule) || '', section:(r.data && r.data.section) || '' };
+}
+async function msgRequestVerification(matricule, section){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('profiles')
+    .update({ verif_statut:'en_attente', matricule:String(matricule||'').slice(0,40), section:String(section||'').slice(0,40) })
+    .eq('id', u.id).or('verif_statut.eq.non_verifie,verif_statut.eq.rejete');
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+async function msgVerificationQueue(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('profiles')
+    .select('id,pseudo,role,niveau,filiere,wilaya,matricule,section,created_at')
+    .eq('verif_statut','en_attente').order('created_at',{ascending:true}).limit(50);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, queue:r.data||[] };
+}
+async function msgSetVerification(uid, statut){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  if(statut!=='verifie' && statut!=='rejete') return { ok:false, err:'statut invalide' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('profiles')
+    .update({ verif_statut:statut, verif_by:u.id, verif_at:new Date().toISOString() })
+    .eq('id', uid).eq('verif_statut','en_attente');
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+Object.assign(window.SB, { msgMyVerification, msgRequestVerification, msgVerificationQueue, msgSetVerification });
