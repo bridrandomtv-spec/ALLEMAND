@@ -237,5 +237,136 @@ async function createAd(a){
     }catch(e){ return { ok:false, err:String((e && e.message) || e) }; }
   }
 
-  window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd };
+  
+/* ── MSG-2 · messagerie EduDZ — côté client FIN : toute autorisation vit en RLS/SQL ──
+   Aucune logique de permission ici : chaque appel passe par les politiques du Lot 1.
+   Erreurs serveur (msg_dm_interdit, msg_rate_limit…) remontent dans { ok:false, err }. */
+async function msgConvs(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.from('msg_conversations').select('id,type,wilaya,niveau,filiere,titre,last_activity')
+    .order('last_activity',{ascending:false}).limit(50);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, convs:r.data || [] };
+}
+async function msgMessages(convId, before, limit){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  let q = c.from('msg_messages').select('id,conversation_id,sender_id,body,attachment_id,flagged,created_at,edited_at')
+    .eq('conversation_id', convId).is('deleted_at', null)
+    .order('created_at',{ascending:false}).limit(limit || 50);
+  if(before) q = q.lt('created_at', before);
+  const r = await q;
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, msgs:(r.data || []).reverse() };
+}
+async function msgSend(convId, body){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const t = String(body || '').slice(0, 2000);
+  if(!t.trim()) return { ok:false, err:'message vide' };
+  const r = await c.from('msg_messages').insert({ conversation_id:convId, sender_id:u.id, body:t })
+    .select('id,created_at').single();
+  if(r.error) return { ok:false, err:r.error.message };
+  await c.from('msg_conversations').update({ last_activity:new Date().toISOString() }).eq('id', convId);
+  return { ok:true, msg:r.data };
+}
+async function msgCanDm(otherId){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.rpc('msg_can_dm', { a:u.id, b:otherId });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, allowed:!!r.data };
+}
+async function msgOpenDirect(otherId){
+  const can = await msgCanDm(otherId); if(!can.ok) return can;
+  if(!can.allowed) return { ok:false, err:'msg_dm_interdit' };
+  const u = await me(); const c = await sb();
+  const ex = await c.from('msg_members').select('conversation_id').in('user_id',[u.id, otherId]);
+  const ids = (ex.data || []).map(function(x){ return x.conversation_id; });
+  if(ids.length){
+    const m = await c.from('msg_members').select('conversation_id').in('conversation_id', ids).in('user_id',[u.id, otherId]);
+    const cnt = {}; (m.data || []).forEach(function(x){ cnt[x.conversation_id] = (cnt[x.conversation_id]||0)+1; });
+    for(const id of ids){
+      if(cnt[id] === 2){
+        const t = await c.from('msg_conversations').select('id').eq('id', id).eq('type','direct').maybeSingle();
+        if(t.data) return { ok:true, convId:id, existing:true };
+      }
+    }
+  }
+  const r = await c.from('msg_conversations').insert({ type:'direct', created_by:u.id, titre:'' }).select('id').single();
+  if(r.error) return { ok:false, err:r.error.message };
+  const m1 = await c.from('msg_members').insert([{conversation_id:r.data.id,user_id:u.id},{conversation_id:r.data.id,user_id:otherId}]);
+  if(m1.error) return { ok:false, err:m1.error.message };
+  return { ok:true, convId:r.data.id, existing:false };
+}
+async function msgGroups(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.from('msg_conversations').select('id,titre,wilaya,niveau,filiere,last_activity')
+    .eq('type','groupe').order('last_activity',{ascending:false}).limit(50);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, groups:r.data || [] };
+}
+async function msgReport(messageId, motif){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.from('msg_reports').insert({ message_id:messageId, reporter_id:u.id, motif:String(motif||'').slice(0,300) });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+async function msgBlock(otherId){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.from('msg_blocks').insert({ blocker_id:u.id, blocked_id:otherId });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+async function msgUnblock(otherId){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.from('msg_blocks').delete().eq('blocker_id', u.id).eq('blocked_id', otherId);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+async function msgEdit(msgId, body){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.from('msg_messages').update({ body:String(body||'').slice(0,2000), edited_at:new Date().toISOString() })
+    .eq('id', msgId).eq('sender_id', u.id).is('deleted_at', null);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+async function msgDelete(msgId){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.from('msg_messages').update({ deleted_at:new Date().toISOString() })
+    .eq('id', msgId).eq('sender_id', u.id);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+async function msgUpload(convId, msgId, file){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const okMime = ['image/png','image/jpeg','image/webp','application/pdf'].indexOf(file.type) !== -1;
+  if(!okMime) return { ok:false, err:'type de fichier interdit (png/jpeg/webp/pdf seulement)' };
+  if(!file.size || file.size > 5242880) return { ok:false, err:'fichier trop lourd (5 Mo max)' };
+  const safe = String(file.name).replace(/[^a-zA-Z0-9._-]/g,'_').slice(-60);
+  const path = 'msg/' + convId + '/' + u.id + '-' + Date.now() + '-' + safe;
+  const up = await c.storage.from('prive').upload(path, file, { upsert:false });
+  if(up.error) return { ok:false, err:up.error.message };
+  const r = await c.from('msg_attachments').insert({ message_id:msgId, uploader:u.id, storage_path:path, mime:file.type, octets:file.size, statut:'pending' });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, path:path };
+}
+function msgSubscribe(convId, cb){
+  let ch = null;
+  (async function(){
+    const c = await sb(); if(!c) return;
+    ch = c.channel('msg-' + convId)
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'msg_messages', filter:'conversation_id=eq.' + convId },
+          function(p){ if(cb) cb(p.new); })
+      .subscribe();
+  })();
+  return function(){ try{ if(ch && ch.unsubscribe) ch.unsubscribe(); }catch(e){} };
+}
+
+window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe };
 document.dispatchEvent(new CustomEvent('dz:sbready'));

@@ -130,6 +130,21 @@ language sql stable security definer set search_path = public as $$
   );
 $$;
 
+-- Lot 1b : un groupe officiel ne peut être rejoint que par un profil correspondant
+-- (wilaya+niveau+filière) — ferme l'auto-inscription abusive côté RLS.
+create or replace function public.msg_member_ok(cid bigint, uid uuid) returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from public.msg_conversations c
+     where c.id = cid
+       and ( c.type = 'direct'
+             or exists (select 1 from public.profiles p
+                         where p.id = uid and p.wilaya is not null and p.niveau is not null
+                           and p.wilaya = c.wilaya and p.niveau = c.niveau
+                           and (c.filiere is null or p.filiere = c.filiere)) )
+  );
+$$;
+
 -- ── triggers : rate-limit + longueur + auto-flag liens ──
 create or replace function public.msg_rate_limit() returns trigger
 language plpgsql security definer set search_path = public as $$
@@ -205,7 +220,8 @@ create policy "msg members lecture" on public.msg_members for select to authenti
   using (public.msg_is_member(auth.uid(), conversation_id) or public.msg_is_moderator(auth.uid()));
 drop policy if exists "msg members ajout" on public.msg_members;
 create policy "msg members ajout" on public.msg_members for insert to authenticated
-  with check (auth.uid() = user_id or public.msg_is_moderator(auth.uid()));
+  with check (auth.uid() = user_id
+              and public.msg_member_ok(conversation_id, auth.uid()));
 drop policy if exists "msg members retrait" on public.msg_members;
 create policy "msg members retrait" on public.msg_members for delete to authenticated
   using (auth.uid() = user_id or public.msg_is_moderator(auth.uid()));
