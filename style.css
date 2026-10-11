@@ -3380,3 +3380,27 @@ html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px soli
   #tabs,.tabs{padding-top:200px;padding-bottom:90px;overflow-y:auto;overscroll-behavior:contain}
   .d7-more .cat-body{display:block}
 }
+
+/* ══ MSG-3 — vue messagerie (additif ; variables = thèmes sombre/clair auto) ══ */
+.msg-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.msg-head h3{font-size:16px;font-weight:800}
+.msg-refresh,.msg-back,.msg-send,.msg-open{border:1px solid var(--b);background:var(--p2);color:var(--t);border-radius:999px;padding:6px 13px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:var(--ff-ar)}
+.msg-refresh{margin-inline-start:auto}
+.msg-sec{font-size:12.5px;font-weight:700;color:var(--m);margin:12px 0 7px}
+.msg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.msg-card{background:var(--p);border:1px solid var(--b);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--sh)}
+.msg-ct b{display:block;font-size:13px}
+.msg-ct span{font-size:11px;color:var(--m)}
+.msg-empty{background:var(--p2);border:1px dashed var(--b);border-radius:12px;padding:12px;font-size:12px;color:var(--m);grid-column:1/-1}
+.msg-thread{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.msg-row{background:var(--p);border:1px solid var(--b);border-radius:12px;padding:9px 11px;max-width:85%}
+.msg-row.me{align-self:flex-end;background:var(--pri-bg);border-color:var(--pri)}
+.msg-meta{display:flex;gap:8px;align-items:center;font-size:10.5px;color:var(--m);margin-bottom:4px}
+.msg-meta b{color:var(--t);font-size:11px}
+.msg-report{border:0;background:none;cursor:pointer;font-size:12px;margin-inline-start:auto}
+.msg-body{font-size:12.8px;color:var(--t);white-space:pre-wrap;word-break:break-word}
+.msg-flag{color:var(--warn);font-style:normal;font-size:10px}
+.msg-input{display:flex;gap:8px;align-items:flex-end}
+.msg-input textarea{flex:1;resize:vertical;border:1px solid var(--b);border-radius:12px;background:var(--p);color:var(--t);padding:9px 11px;font-family:var(--ff-ar);font-size:12.5px}
+.msg-pj{border:1px solid var(--b);border-radius:10px;padding:7px 10px;cursor:pointer;background:var(--p2);font-size:14px}
+.msg-err{margin-top:8px;background:var(--bad-bg);border:1px solid #f2ccd2;color:#7d2230;border-radius:10px;padding:8px 11px;font-size:12px}
