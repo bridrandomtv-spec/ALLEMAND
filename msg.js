@@ -205,6 +205,21 @@
     var rep = t.getAttribute('data-report');
     if(rep){ window.SB.msgReport(+rep,'signalé depuis la vue messages').then(function(){ t.disabled=true; t.textContent='🚩✓'; }); }
   });
+
+  /* ── MSG-7 : l'entrée « 💬 الرسائل » doit apparaître même si la sidebar a été
+     rendue AVANT l'auto-enregistrement du module (ordre de boot / login).
+     On re-rend les onglets puis on rejoue le pipeline de navigation une fois,
+     et à chaque changement de session. Idempotent, sans effet de bord visible
+     (le render de la vue courante est simplement rejoué). ── */
+  function refreshNav(){
+    try{
+      if(typeof renderTabs === 'function') renderTabs();
+      var cur = (location.hash || '').replace('#','') || 'accueil';
+      document.dispatchEvent(new CustomEvent('dz:view', { detail: cur }));
+    }catch(e){}
+  }
+  setTimeout(refreshNav, 400);
+  document.addEventListener('dz:auth', function(){ setTimeout(refreshNav, 200); });
   document.addEventListener('change', function(e){
     if(!e.target || e.target.id!=='msgFile' || !state.conv) return;
     var f = e.target.files && e.target.files[0]; if(!f) return;

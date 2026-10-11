@@ -405,7 +405,7 @@ function speak(text){
 
 /* ─────────────── NAVIGATION ─────────────── */
 const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
-const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['seances','📚 الحصص'],
+const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['msg','💬 الرسائل'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
                ['stats','🗺️ الإحصائيات'],['quiz','🎯 تمارين'],
@@ -2782,7 +2782,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
    المساعدة / اللغة + son + install). Additif, idempotent par rendu, scopé ≥1081 px.
    Le tiroir mobile ≤900 px reste strictement inchangé (reorg non exécutée). */
 (function(){
-  var PRIM=['accueil','matieres','seances','quiz','examen','biblio','rag'];
+  var PRIM=['accueil','matieres','seances','quiz','examen','biblio','rag','msg'];
   function reorg(){
     try{
       if(!(window.matchMedia && matchMedia('(min-width:1081px)').matches)) return;
