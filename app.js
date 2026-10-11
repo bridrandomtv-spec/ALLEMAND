@@ -2882,3 +2882,36 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(guard,600); });
   else setTimeout(guard,600);
 })();
+
+/* ── PHASE D14 — bouton 🌙/☀️ : bascule clair/sombre RÉELLE (additif) ──
+   Aucun filter/invert : on bascule l'attribut data-theme de <html>
+   (« light » = thème clair scopé D1 · « dark » = thème sombre d'origine).
+   Persistance : clé localStorage déclarée (valeur 'light'|'dark').
+   Le bouton rejoint .topbar-act (topbar sticky) et réutilise .icon-btn.
+   Images/vidéos/SVG jamais altérés (contrairement à un invert global). */
+(function(){
+  function set(t){
+    try{ localStorage.setItem('dz_theme_v1', t); }catch(e){}
+    document.documentElement.setAttribute('data-theme', t);
+    var b=document.getElementById('dzThemeBtn');
+    if(b) b.textContent = (t==='dark') ? '☀️' : '🌙';
+  }
+  function mount(){
+    if(document.getElementById('dzThemeBtn')) return;
+    var host=document.querySelector('.topbar-act'); if(!host) return;
+    var b=document.createElement('button');
+    b.id='dzThemeBtn'; b.type='button'; b.className='icon-btn';
+    b.style.borderRadius='50%';
+    b.title='Mode sombre / clair — التبديل بين الوضعين';
+    b.setAttribute('aria-label','Basculer le thème sombre ou clair');
+    b.addEventListener('click', function(){
+      var cur=document.documentElement.getAttribute('data-theme');
+      set(cur==='dark' ? 'light' : 'dark');
+    });
+    host.appendChild(b);
+    b.textContent = (document.documentElement.getAttribute('data-theme')==='dark') ? '☀️' : '🌙';
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(mount,250); });
+  else setTimeout(mount,250);
+  document.addEventListener('dz:auth', function(){ setTimeout(mount,120); });
+})();
