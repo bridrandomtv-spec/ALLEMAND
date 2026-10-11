@@ -27,7 +27,7 @@
                     '<button class="msg-open" data-conv="'+x.id+'" type="button">Ouvrir</button>');
       }).join('');
     } else {
-      h += '<div class="msg-empty">Aucun groupe officiel ouvert pour ton profil pour l'instant — création par l'équipe pédagogique (modération, Lot 5).</div>';
+      h += '<div class="msg-empty">Aucun groupe officiel ouvert pour ton profil pour l\'instant — création par l\'équipe pédagogique (modération, Lot 5).</div>';
     }
     h += '</div><div class="msg-sec">✉️ Conversations directes (groupe scolaire commun)</div><div class="msg-grid">';
     var directs = (c.ok ? c.convs : []).filter(function(x){ return x.type==='direct'; });
@@ -37,7 +37,7 @@
                     '<button class="msg-open" data-conv="'+x.id+'" type="button">Ouvrir</button>');
       }).join('');
     } else {
-      h += '<div class="msg-empty">Aucune conversation directe — l'ouverture de nouveaux DMs arrivera avec la vérification d'identité (Lot 6).</div>';
+      h += '<div class="msg-empty">Aucune conversation directe — l\'ouverture de nouveaux DMs arrivera avec la vérification d\'identité (Lot 6).</div>';
     }
     h += '</div>';
     box.innerHTML = h; state.conv = null;
@@ -53,7 +53,7 @@
       return '<div class="msg-row '+(mine?'me':'')+'"><div class="msg-meta"><b>'+esc(mine?'moi':('membre '+String(m.sender_id).slice(0,4)))+'</b><span>'+String(m.created_at||'').slice(11,16)+' UTC</span>'+
         (mine?'':'<button class="msg-report" data-report="'+m.id+'" type="button" title="signaler">🚩</button>')+'</div>'+
         '<div class="msg-body">'+esc(m.body)+(m.flagged?' <em class="msg-flag">· signalé</em>':'')+'</div></div>';
-    }).join('') || '<div class="msg-empty">Aucun message pour l'instant.</div>';
+    }).join('') || '<div class="msg-empty">Aucun message pour l\'instant.</div>';
     h += '</div><div class="msg-input"><textarea id="msgText" rows="2" maxlength="2000" placeholder="اكتب رسالتك… / ton message…"></textarea>'+
          '<label class="msg-pj" title="joindre un fichier (png/jpeg/webp/pdf, 5 Mo max)">📎<input type="file" id="msgFile" accept="image/png,image/jpeg,image/webp,application/pdf" hidden></label>'+
          '<button class="msg-send" data-act="send" type="button">Envoyer ➤</button></div><div class="msg-err" id="msgErr" hidden></div>';
