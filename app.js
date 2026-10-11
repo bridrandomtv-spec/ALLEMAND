@@ -2828,3 +2828,20 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(reorg,420); });
   else setTimeout(reorg,420);
 })();
+
+/* ── SW : bascule automatique sur la nouvelle version (controllerchange) ──
+   Quand un nouveau Service Worker prend le contrôle (skipWaiting + claim,
+   v3.49+), la page se recharge UNE fois pour purger les anciens caches.
+   Garde anti-boucle : un seul reload par changement de contrôleur.
+   Additif : aucun autre comportement modifié ; silencieux si SW absent. */
+(function(){
+  try{
+    if(!('serviceWorker' in navigator)) return;
+    var __swReloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function(){
+      if(__swReloading) return;
+      __swReloading = true;
+      window.location.reload();
+    });
+  }catch(e){}
+})();
