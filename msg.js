@@ -71,7 +71,28 @@
     closeChannel();
     var box = el('msgBody'); if(!box) return;
     var u = await session(); state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'moi';
-    if(!u){ box.innerHTML = '<div class="msg-empty">💬 <b>Messagerie nationale</b> — connecte-toi pour retrouver tes groupes officiels (wilaya · niveau · filière).</div>'; return; }
+    if(!u){
+      var L = '<div class="msg-land"><h2>💬 الرسائل — la messagerie nationale des élèves 🇩🇿</h2>'
+        + '<p>Un espace d\'échange scolaire organisé par wilaya, niveau et filière : cours, devoirs, compositions, annales du BAC et résumés — dans un cadre protégé, modéré par tes professeurs.</p>'
+        + '<div class="msg-cta"><button class="in" data-act="msg-login" type="button">🔐 تسجيل الدخول — Se connecter</button>'
+        + '<button class="up" data-act="msg-signup" type="button">📝 حساب جديد — Créer un compte</button></div></div>'
+        + '<div class="msg-bene">'
+        + '<div class="b"><span class="i">🕌</span><b>Groupes officiels</b><span>Ton groupe par wilaya · niveau · filière, sans inscription manuelle : ton profil scolaire t\'y place automatiquement.</span></div>'
+        + '<div class="b"><span class="i">📝</span><b>Devoirs & compos</b><span>Partage et reçois devoirs, compositions, annales BAC et résumés en pièces jointes (pdf · png · jpeg · webp, 5 Mo max).</span></div>'
+        + '<div class="b"><span class="i">⚡</span><b>Temps réel</b><span>Les messages arrivent instantanément, avec présence « en ligne » et pseudos des camarades de ta conversation.</span></div>'
+        + '<div class="b"><span class="i">🛡</span><b>Cadre protégé</b><span>Signalement 🚩, blocage, modération prof/admin et journal immuable : chaque action laisse une trace.</span></div>'
+        + '<div class="b"><span class="i">🪪</span><b>Identité vérifiée</b><span>Les messages privés n\'existent qu\'entre élèves vérifiés par un professeur du même groupe scolaire.</span></div>'
+        + '<div class="b"><span class="i">📚</span><b>Qualité des cours</b><span>Enrichis tes cours par les échanges nationaux : méthodes, corrections commentées, expériences de chaque wilaya.</span></div>'
+        + '</div>'
+        + '<div class="msg-sec">🧭 Comment ça marche</div><div class="msg-steps4">'
+        + '<div class="s"><span class="n">1</span><b>Crée ton compte</b>niveau · filière · wilaya à l\'inscription : ce sont eux qui ouvrent tes groupes.</div>'
+        + '<div class="s"><span class="n">2</span><b>Ouvre « 💬 الرسائل »</b>tes groupes officiels t\'attendent, déjà rejoints par ton profil.</div>'
+        + '<div class="s"><span class="n">3</span><b>Vérifie ton identité</b>matricule + section → validation prof/admin → messages privés autorisés.</div>'
+        + '<div class="s"><span class="n">4</span><b>Échange et progresse</b>messages, pièces jointes, signalement si besoin — tout reste dans ton groupe scolaire.</div>'
+        + '</div>'
+        + '<div class="msg-empty" style="margin-top:12px">🧑🏫 <b>Professeurs & admins</b> : la section 🛡 Modération (signalements, vérifications d\'identité, création de groupes officiels, journal) apparaît automatiquement dans cette vue après connexion.</div>';
+      box.innerHTML = L; return;
+    }
     var g = await window.SB.msgGroups();
     var c = await window.SB.msgConvs();
     var vf = await window.SB.msgMyVerification();
@@ -179,6 +200,16 @@
     if(act==='refresh'){ if(state.conv) renderThread(state.conv); else renderList(); return; }
     if(act==='back'){ closeChannel(); state.conv=null; renderList(); return; }
     if(act==='send'){ send(); return; }
+    if(act==='msg-login' || act==='msg-signup'){
+      try{ sessionStorage.setItem('dz_want_gate', act==='msg-login' ? 'login' : 'signup'); }catch(e){}
+      try{
+        var u2 = new URL(location.href);
+        u2.searchParams.delete('demo'); u2.searchParams.delete('demo');
+        u2.hash = '#accueil';
+        location.href = u2.toString();
+      }catch(e){ location.hash='#accueil'; location.reload(); }
+      return;
+    }
     if(act==='verif-req'){
       var mv = (el('vfMat')||{}).value || '', sv = (el('vfSec')||{}).value || '';
       window.SB.msgRequestVerification(mv, sv).then(function(r4){ if(r4.ok){ renderList(); } else { window.alert('⛔ '+r4.err); } });
