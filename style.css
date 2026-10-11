@@ -3410,3 +3410,13 @@ html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px soli
 .msg-row.live{animation:msgin .3s ease}
 @keyframes msgin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .msg-name{font-weight:700}
+
+/* ══ MSG-5 — modération prof/admin (additif ; variables = thèmes auto) ══ */
+.msg-mod{background:var(--p2);border:1px solid var(--b);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.msg-modrow{font-size:12.5px;color:var(--t)}
+.msg-modcard{background:var(--p);border:1px solid var(--b);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:7px}
+.msg-modbtns{display:flex;gap:6px;flex-wrap:wrap}
+.msg-modbtn{border:1px solid var(--b);background:var(--p2);color:var(--t);border-radius:999px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--ff-ar)}
+.msg-modform{display:flex;gap:6px;flex-wrap:wrap}
+.msg-modform input,.msg-modform select{border:1px solid var(--b);border-radius:10px;background:var(--p);color:var(--t);padding:7px 9px;font-size:12px;font-family:var(--ff-ar)}
+.msg-log{font-family:var(--ff-de);font-size:10.8px;color:var(--m);display:flex;flex-direction:column;gap:3px;max-height:160px;overflow:auto}

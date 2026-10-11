@@ -93,6 +93,31 @@
       h += '<div class="msg-empty">Aucune conversation directe — l\'ouverture de nouveaux DMs arrivera avec la vérification d\'identité (Lot 6).</div>';
     }
     h += '</div>';
+    var isMod = u && (u.role==='prof' || u.role==='admin');
+    if(isMod){
+      var rep0 = await window.SB.msgReportsOpen();
+      var lg0 = await window.SB.msgLogLast();
+      h += '<div class="msg-sec">🛡 Modération (prof / admin)</div><div class="msg-mod">';
+      h += '<div class="msg-modrow"><b>Signalements ouverts :</b> ' + (rep0.ok ? rep0.reports.length : '⛔ ' + esc(rep0.err)) + '</div>';
+      if(rep0.ok && rep0.reports.length){
+        h += rep0.reports.map(function(r){
+          var m = r.msg_messages || {};
+          return '<div class="msg-modcard"><div class="msg-meta"><b>🚩 ' + esc(r.motif || 'signalement') + '</b><span>' + stamp(r.created_at) + '</span></div>' +
+            '<div class="msg-body">' + esc(m.deleted_at ? '(message déjà supprimé)' : (m.body || '')) + '</div>' +
+            '<div class="msg-modbtns">' +
+            '<button class="msg-modbtn" data-mod="traite" data-rid="' + r.id + '" type="button">✅ traiter</button>' +
+            '<button class="msg-modbtn" data-mod="rejete" data-rid="' + r.id + '" type="button">❌ rejeter</button>' +
+            '<button class="msg-modbtn" data-mod="delmsg" data-rid="' + r.id + '" type="button">🚫 retirer le message</button>' +
+            '<button class="msg-modbtn" data-mod="retireatt" data-rid="' + r.id + '" type="button">📎 retirer la PJ</button>' +
+            '</div></div>';
+        }).join('');
+      }
+      h += '<div class="msg-modrow"><b>Créer un groupe officiel</b> (wilaya · niveau · filière) :</div>' +
+           '<div class="msg-modform"><input id="mgWil" placeholder="wilaya (ex. 16)" maxlength="2"><select id="mgNiv"><option value="1AS">1AS</option><option value="2AS">2AS</option><option value="3AS">3AS</option></select><input id="mgFil" placeholder="filière (ex. sciences)"><button class="msg-modbtn" data-mod="creategroup" type="button">➕ créer</button></div>';
+      h += '<div class="msg-modrow"><b>Journal (20 dernières actions) :</b></div><div class="msg-log">';
+      h += (lg0.ok ? (lg0.log.slice(0,20).map(function(l){ return '<div>' + stamp(l.at) + ' · ' + esc(l.action) + ' · ' + esc(l.cible_type) + ' #' + esc(l.cible_id) + '</div>'; }).join('') || '<div>journal vide</div>') : '<div>⛔ ' + esc(lg0.err) + '</div>');
+      h += '</div></div>';
+    }
     box.innerHTML = h; state.conv = null;
   }
   async function renderThread(id){
@@ -134,6 +159,19 @@
     if(act==='refresh'){ if(state.conv) renderThread(state.conv); else renderList(); return; }
     if(act==='back'){ closeChannel(); state.conv=null; renderList(); return; }
     if(act==='send'){ send(); return; }
+    var mod = t.getAttribute('data-mod');
+    if(mod){
+      if(mod==='creategroup'){
+        var w = (el('mgWil')||{}).value || '', n = (el('mgNiv')||{}).value || '', f = (el('mgFil')||{}).value || '';
+        window.SB.msgCreateGroup(w, n, f, '').then(function(r2){ if(r2.ok){ renderList(); } else { window.alert('⛔ ' + r2.err); } });
+        return;
+      }
+      var rid = +t.getAttribute('data-rid');
+      var opts = { retireAtt: mod==='retireatt', deleteMsg: mod==='delmsg' };
+      var dec = (mod==='rejete') ? 'rejete' : 'traite';
+      window.SB.msgHandle(rid, dec, opts).then(function(r2){ if(r2.ok){ renderList(); } else { window.alert('⛔ ' + r2.err); } });
+      return;
+    }
     var rep = t.getAttribute('data-report');
     if(rep){ window.SB.msgReport(+rep,'signalé depuis la vue messages').then(function(){ t.disabled=true; t.textContent='🚩✓'; }); }
   });

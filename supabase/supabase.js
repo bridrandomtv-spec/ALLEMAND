@@ -368,5 +368,51 @@ function msgSubscribe(convId, cb){
   return function(){ try{ if(ch && ch.unsubscribe) ch.unsubscribe(); }catch(e){} };
 }
 
-window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe };
+
+/* ── MSG-5 · modération prof/admin : signalements, retraits, journal, groupes officiels ──
+   Toute autorisation vient du RLS Lot 1 (update reports/attachments/messages = modérateur).
+   Chaque action modération est journalisée par les triggers msg_logfn (immuable). */
+async function msgReportsOpen(){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('msg_reports').select('id,message_id,reporter_id,motif,statut,created_at,msg_messages(body,sender_id,conversation_id,deleted_at)')
+    .eq('statut','ouvert').order('created_at',{ascending:false}).limit(50);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, reports:r.data || [] };
+}
+async function msgHandle(reportId, decision, opts){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  opts = opts || {};
+  const rr = await c.from('msg_reports').select('id,message_id').eq('id', reportId).maybeSingle();
+  if(rr.error || !rr.data) return { ok:false, err:(rr.error && rr.error.message) || 'signalement introuvable' };
+  const mid = rr.data.message_id;
+  if(opts.retireAtt){
+    const a = await c.from('msg_attachments').update({ statut:'retire' }).eq('message_id', mid);
+    if(a.error) return { ok:false, err:a.error.message };
+  }
+  if(opts.deleteMsg){
+    const d = await c.from('msg_messages').update({ deleted_at:new Date().toISOString() }).eq('id', mid);
+    if(d.error) return { ok:false, err:d.error.message };
+  }
+  const up = await c.from('msg_reports').update({ statut:decision, handled_by:u.id, handled_at:new Date().toISOString() }).eq('id', reportId);
+  if(up.error) return { ok:false, err:up.error.message };
+  return { ok:true };
+}
+async function msgLogLast(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('msg_log').select('id,actor_id,action,cible_type,cible_id,at').order('at',{ascending:false}).limit(50);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, log:r.data || [] };
+}
+async function msgCreateGroup(wilaya, niveau, filiere, titre){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const t = String(titre || ('Groupe officiel ' + (wilaya||'?') + ' · ' + (niveau||'?') + ' ' + (filiere||'')));
+  const r = await c.from('msg_conversations').insert({ type:'groupe', wilaya:String(wilaya||''), niveau:String(niveau||''), filiere:String(filiere||''), titre:t, created_by:u.id }).select('id').single();
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, convId:r.data.id };
+}
+
+window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
