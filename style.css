@@ -3301,3 +3301,13 @@ html[data-theme="light"] #trialBar b{color:var(--pri-d)}
 html[data-theme="light"] #trialBar button{background:#fff;border:1px solid var(--b);color:var(--pri-d)}
 html[data-theme="light"] .sec-pill{background:#fff;border:1px solid var(--b);color:var(--m)}
 html[data-theme="light"] .sec-pill.or{background:var(--warn-bg);border-color:rgba(232,182,76,.35);color:var(--warn)}
+
+/* ══ PHASE D9 — lisibilité thème clair + sidebar mode anglais (additif) ══
+   1) .cat-head lisait var(--tx,#eaf5ee) : --tx n'est défini NULLE PART →
+      repli blanc cassé illisible sur fond clair. Surcharge scopée light.
+   2) onglets sous-catégorie/solos en encre lisible en clair.
+   3) en-tête « المزيد » contrasté sur fond clair. */
+html[data-theme="light"] .tabs .cat-head{color:var(--t)}
+html[data-theme="light"] .tabs .cat-head.open{color:var(--vert3)}
+html[data-theme="light"] .tabs .tab.sub,html[data-theme="light"] .tabs .tab.solo{color:var(--t)}
+html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px solid var(--b);color:var(--t)}

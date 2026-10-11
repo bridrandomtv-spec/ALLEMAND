@@ -2804,9 +2804,19 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
       });
       [].slice.call(root.children).forEach(function(ch){
         if(ch===more || ch===bot) return;
-        if(ch.classList && (ch.classList.contains('cat-head') || ch.classList.contains('cat-body') || ch.classList.contains('tabgrp-h'))){
-          mb.appendChild(ch);
-        } else if(ch.classList && ch.classList.contains('tab')){
+        if(ch.classList && ch.classList.contains('cat-head')){
+          var nb=ch.nextElementSibling;
+          var isEn = nb && nb.classList && nb.classList.contains('cat-body')
+            && (nb.querySelector('[data-go="english"]') || nb.querySelector('[data-subj="de"]'));
+          if(isEn){ nb.dataset.d7keep='1'; root.insertBefore(nb, more); root.insertBefore(ch, more); return; }
+          mb.appendChild(ch); return;
+        }
+        if(ch.classList && ch.classList.contains('cat-body')){
+          if(ch.dataset && ch.dataset.d7keep==='1') return;
+          mb.appendChild(ch); return;
+        }
+        if(ch.classList && ch.classList.contains('tabgrp-h')){ mb.appendChild(ch); return; }
+        if(ch.classList && ch.classList.contains('tab')){
           if(PRIM.indexOf(ch.getAttribute('data-go'))===-1) mb.appendChild(ch);
         }
       });
