@@ -3311,3 +3311,13 @@ html[data-theme="light"] .tabs .cat-head{color:var(--t)}
 html[data-theme="light"] .tabs .cat-head.open{color:var(--vert3)}
 html[data-theme="light"] .tabs .tab.sub,html[data-theme="light"] .tabs .tab.solo{color:var(--t)}
 html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px solid var(--b);color:var(--t)}
+
+/* ══ PHASE D10 — burger conservé à toutes les largeurs + sidebar repliable (additif) ══
+   ≥1081 px : le ☰ ne disparaît plus ; il replie/déplie la sidebar fixe.
+   Garde anti-sidebar vide : si aucune entrée primaire n'est visible,
+   l'accordéon « المزيد » s'ouvre tout seul. Aucun comportement ≤1080 px modifié. */
+@media (min-width:1081px){
+  #btnBurger{display:flex}
+  body.sb-closed #tabs{display:none}
+  body.sb-closed .topbar-in,body.sb-closed main{margin-right:auto;margin-left:auto;max-width:1080px}
+}

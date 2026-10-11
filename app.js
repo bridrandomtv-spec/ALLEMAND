@@ -2855,3 +2855,30 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     });
   }catch(e){}
 })();
+
+/* ── PHASE D10 — bouton ☰ toujours utile : replie/déplie la sidebar en desktop ──
+   Capture + arrêt de propagation UNIQUEMENT ≥1081 px (le tiroir mobile ≤900 px
+   et la barre 901-1080 gardent leur handler historique intact).
+   Garde : si la sidebar desktop n'expose aucune entrée primaire visible,
+   l'accordéon #d7more s'ouvre automatiquement (jamais de colonne vide). */
+(function(){
+  function wide(){ return !!(window.matchMedia && matchMedia('(min-width:1081px)').matches); }
+  document.addEventListener('click', function(e){
+    var b = (e.target && e.target.closest) ? e.target.closest('#btnBurger') : null;
+    if(!b || !wide()) return;
+    e.stopPropagation();
+    document.body.classList.toggle('sb-closed');
+  }, true);
+  function guard(){
+    try{
+      if(!wide()) return;
+      var root=document.getElementById('tabs'); if(!root) return;
+      var prim=root.querySelectorAll(':scope > .tab');
+      var more=document.getElementById('d7more');
+      if(prim.length===0 && more && !more.classList.contains('open')) more.classList.add('open');
+    }catch(e){}
+  }
+  document.addEventListener('dz:view', function(){ setTimeout(guard,140); });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(guard,600); });
+  else setTimeout(guard,600);
+})();
