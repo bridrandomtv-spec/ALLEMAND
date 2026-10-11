@@ -213,7 +213,8 @@ create policy "msg conv lecture" on public.msg_conversations for select to authe
   using (public.msg_is_member(auth.uid(), id) or public.msg_is_moderator(auth.uid()));
 drop policy if exists "msg conv creation" on public.msg_conversations;
 create policy "msg conv creation" on public.msg_conversations for insert to authenticated
-  with check (auth.uid() = created_by);
+  with check (auth.uid() = created_by
+              and (type = 'direct' or public.msg_is_moderator(auth.uid())));
 
 drop policy if exists "msg members lecture" on public.msg_members;
 create policy "msg members lecture" on public.msg_members for select to authenticated
