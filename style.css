@@ -3349,3 +3349,21 @@ html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px soli
   .stats{grid-template-columns:1fr 1fr}
   .welcome-cta .btn,.welcome-cta button{flex:1 1 100%}
 }
+
+/* ══ PHASE D13 — téléphone : carte programme et blocs de texte inoxydables (additif) ══
+   Correctif des colonnes « 1 caractère par ligne » et du rognage à gauche :
+   1) annule le break-anywhere posé par D11 sur .card (il transformait toute
+      colonne étroite en file de caractères) ; le retour à la ligne normal
+      revient, avec break-word ciblé sur les vrais textes longs ;
+   2) grille du programme officiel → colonne simple en ≤900 px (flex :
+      aucune contraction possible, quel que soit le contenu) ;
+   3) bornes max-width:100% pour stopper le débordement horizontal RTL. */
+.card{overflow-wrap:normal}
+.card p,.card li,.quote,.po-t,.bk-fb,.ms-why{overflow-wrap:break-word}
+@media (max-width:900px){
+  .po-grid{display:flex;flex-direction:column;gap:10px}
+  .po-t{width:100%;min-width:0}
+  .home-grid,.home-main,.home-side,.card,.view,main{max-width:100%}
+  .prog-off{min-width:0}
+}
+@media (max-width:480px){ .po-grid{gap:8px} }
