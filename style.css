@@ -3367,3 +3367,16 @@ html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px soli
   .prog-off{min-width:0}
 }
 @media (max-width:480px){ .po-grid{gap:8px} }
+
+/* ══ PHASE D16 — sidebar bureau : plus rien de caché (bloc additif) ══
+   1) padding-top 200 px : la liste démarre SOUS le bloc d'en-tête empilé
+      (barre voix + bandeau essai + topbar + barre de section), pas derrière ;
+   2) padding-bottom 90 px : les dernières entrées dégagent les boutons
+      flottants (cerveau RAG, diagnostic) qui recouvraient le bas ;
+   3) accordéon « المزيد » ouvert par défaut en bureau : la liste complète
+      est visible d'emblée ; l'accordéon reste actif dans le tiroir ≤1080 px.
+   Aucune règle existante modifiée ; scopé ≥1081 px. */
+@media (min-width:1081px){
+  #tabs,.tabs{padding-top:200px;padding-bottom:90px;overflow-y:auto;overscroll-behavior:contain}
+  .d7-more .cat-body{display:block}
+}
