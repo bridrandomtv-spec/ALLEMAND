@@ -119,6 +119,17 @@ language sql stable security definer set search_path = public as $$
   );
 $$;
 
+-- « new » n'existe QUE dans les triggers : le test de blocage est donc
+-- encapsulé dans une fonction security definer, appelée par la politique.
+create or replace function public.msg_not_blocked(cid bigint, snd uuid) returns boolean
+language sql stable security definer set search_path = public as $$
+  select not exists (
+    select 1 from public.msg_members m
+    join public.msg_blocks b on b.blocker_id = m.user_id and b.blocked_id = snd
+     where m.conversation_id = cid
+  );
+$$;
+
 -- ── triggers : rate-limit + longueur + auto-flag liens ──
 create or replace function public.msg_rate_limit() returns trigger
 language plpgsql security definer set search_path = public as $$
@@ -206,9 +217,7 @@ drop policy if exists "msg messages envoi" on public.msg_messages;
 create policy "msg messages envoi" on public.msg_messages for insert to authenticated
   with check (auth.uid() = sender_id
               and public.msg_is_member(auth.uid(), conversation_id)
-              and not exists (select 1 from public.msg_members m
-                               join public.msg_blocks b on b.blocker_id = m.user_id and b.blocked_id = new.sender_id
-                                where m.conversation_id = new.conversation_id));
+              and public.msg_not_blocked(conversation_id, sender_id));
 drop policy if exists "msg messages edition" on public.msg_messages;
 create policy "msg messages edition" on public.msg_messages for update to authenticated
   using (auth.uid() = sender_id or public.msg_is_moderator(auth.uid()));
