@@ -37,7 +37,7 @@
     if(!D){
       box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل سجلّ القسم…</div>';
       try{
-        const r = await fetch('assets/bdd/eleves.json', { cache:'force-cache' });
+        const r = await fetch('assets/bdd/eleves.json', { cache:'no-store' });
         if(!r.ok) throw new Error('HTTP ' + r.status);
         D = await r.json();
         meta = D._meta; evals = D.evaluations || [];
