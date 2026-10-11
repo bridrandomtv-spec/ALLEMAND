@@ -3321,3 +3321,31 @@ html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px soli
   body.sb-closed #tabs{display:none}
   body.sb-closed .topbar-in,body.sb-closed main{margin-right:auto;margin-left:auto;max-width:1080px}
 }
+
+/* ══ PHASE D11 — mobile Android : plus aucun débordement ni carte géante (additif) ══
+   1) rangées qui reviennent à la ligne (héro, boutons) ; 2) programme officiel
+   en 1 colonne ; 3) badge de statut statique (fin de la superposition icône) ;
+   4) min-width:0 + césure sur enfants flex/grid ; 5) paddings resserrés ≤480.
+   Desktop ≥901 px : strictement inchangé. */
+@media (max-width:900px){
+  .card,.home-grid,.home-main,.home-side,.view,.welcome{min-width:0}
+  .card :is(.grid3,.po-grid,.subj-grid,.stats,.qa-grid,.act-strip){min-width:0}
+  .card{overflow-wrap:anywhere}
+  .welcome-cta{flex-wrap:wrap;gap:8px}
+  .po-grid{grid-template-columns:1fr}
+  .home-main .welcome{padding:18px 14px}
+  .subj-card{padding:11px 12px;gap:9px}
+  .subj-card .subj-i{width:38px;height:38px;font-size:18px}
+  .subj-card .subj-s{position:static;margin-inline-start:auto;align-self:center}
+  .grid3{grid-template-columns:1fr 1fr;gap:8px}
+  #panelQuick .card.mini{padding:8px;font-size:11px}
+  .topbar-in{gap:6px;padding-inline:8px}
+  .tb-search{flex:1 1 120px;min-width:0}
+  main{padding-inline:10px}
+}
+@media (max-width:480px){
+  .subj-grid{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .welcome-cta .btn,.welcome-cta button{flex:1 1 100%}
+}
