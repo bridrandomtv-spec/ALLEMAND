@@ -1,0 +1,11 @@
+name = "allemand"
+main = "src/site-worker.js"
+compatibility_date = "2024-09-01"
+
+# Actifs statiques = racine du dépôt (comportement identique au déploiement
+# dashboard actuel : tout ce qui est servi aujourd'hui continue de l'être).
+# Le handler src/site-worker.js ajoute uniquement les en-têtes Cache-Control
+# no-store sur /sw.js, /, /index.html et /assets/bdd/* (anti-figeage edge).
+[assets]
+directory = "./"
+binding = "ASSETS"
