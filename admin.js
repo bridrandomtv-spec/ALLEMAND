@@ -340,3 +340,116 @@ document.addEventListener('click', ev => {
   });
   if((location.hash||'').replace('#','') === 'admin') renderAccordsAdmin();
 })();
+
+/* ── phase 9 (ADM-4) : barre d'onglets #admin + tableau de bord scopé + fiches élèves + paramètres ── */
+(function(){
+  function esq5(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  var TABS = [
+    { id:'dash', label:'📊 Tableau de bord', cards:['admDashCard'], perm:'reports.read' },
+    { id:'students', label:'👥 Élèves & parents', cards:['admStudentsCard'], perm:'students.read' },
+    { id:'ops', label:'🧰 Opérations', cards:['admAgentsCard','admQueueCard','admAccordsCard','__legacy__'], perm:null },
+    { id:'settings', label:'⚙️ Paramètres', cards:['admSettingsCard'], perm:'settings.manage' }
+  ];
+  var KNOWN = ['admDashCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
+  var state4 = { perms:[], tab:'ops' };
+  function section(){ return document.querySelector('section[data-view="admin"]'); }
+  function cardsOf(tab){
+    var h = section(); if(!h) return [];
+    return Array.prototype.slice.call(h.querySelectorAll('.card')).filter(function(c){
+      var inList = tab.cards.indexOf(c.id) !== -1;
+      var legacy = tab.cards.indexOf('__legacy__') !== -1 && KNOWN.indexOf(c.id) === -1 && c.id !== 'admTabs';
+      return inList || legacy;
+    });
+  }
+  function applyTab(id){
+    state4.tab = id;
+    TABS.forEach(function(t){
+      cardsOf(t).forEach(function(c){ c.hidden = (t.id !== id); });
+      var b = document.querySelector('[data-adm-tab="' + t.id + '"]');
+      if(b) b.classList.toggle('on', t.id === id);
+    });
+  }
+  async function renderTabs(){
+    var h = section(); if(!h) return;
+    var meP = (window.SB && SB.admMyPerms) ? await SB.admMyPerms() : { ok:false, perms:[] };
+    state4.perms = meP.ok ? (meP.perms||[]) : [];
+    var bar = document.getElementById('admTabs');
+    if(!bar){ bar = document.createElement('div'); bar.id = 'admTabs'; bar.className = 'tabs'; bar.style.position = 'static'; bar.style.height = 'auto'; bar.style.width = 'auto'; h.insertBefore(bar, h.firstChild); }
+    bar.innerHTML = TABS.filter(function(t){ return !t.perm || state4.perms.indexOf(t.perm) !== -1; })
+      .map(function(t){ return '<button class="tab" data-adm-tab="' + t.id + '" type="button">' + t.label + '</button>'; }).join('');
+    applyTab(state4.tab);
+  }
+  async function renderDash(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admDashCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admDashCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    var r = await SB.admDashboard();
+    if(!r.ok){ box.innerHTML = '<h2>📊 Tableau de bord</h2><p>⛔ ' + esq5(r.err) + '</p>'; return; }
+    var d = r.dash || {};
+    box.innerHTML = '<h2>📊 Tableau de bord (périmètre : ' + esq5(d.perimetre) + ')</h2>'
+      + '<div class="grid3" style="margin-top:10px">'
+      + '<div class="card mini"><div class="mini-i">🎓</div><b>' + (d.eleves||0) + '</b><p>élèves du périmètre</p></div>'
+      + '<div class="card mini"><div class="mini-i">⏳</div><b>' + (d.paiements_attente||0) + '</b><p>paiements à traiter</p></div>'
+      + '<div class="card mini"><div class="mini-i">💰</div><b>' + (d.recettes_confirmees_da||0) + ' DA</b><p>recettes confirmées</p></div>'
+      + '<div class="card mini"><div class="mini-i">↩️</div><b>' + (d.remboursements||0) + '</b><p>remboursements tracés</p></div>'
+      + '<div class="card mini"><div class="mini-i">🪪</div><b>' + (d.verifications_attente||0) + '</b><p>vérifications d’identité</p></div>'
+      + '<div class="card mini"><div class="mini-i">🚩</div><b>' + (d.signalements_ouverts||0) + '</b><p>signalements ouverts</p></div>'
+      + '</div><p style="font-size:11.5px;color:var(--m);margin-top:8px">Chiffres calculés côté base, filtrés par wilaya : un agent régional ne voit jamais le national.</p>';
+  }
+  async function renderStudents(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admStudentsCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admStudentsCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('students.read') === -1){ box.hidden = true; return; }
+    box.innerHTML = '<h2>👥 Élèves & parents</h2>'
+      + '<div class="fld"><span>Rechercher un élève (pseudo)</span><input id="admStuQ" placeholder="ex : amin">'
+      + '<button class="btn btn-p btn-sm" data-adm4-search="1" type="button">chercher</button></div>'
+      + '<div id="admStuList" style="margin-top:10px"></div><div id="admStuFiche" style="margin-top:10px"></div>';
+  }
+  async function renderSettings(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admSettingsCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admSettingsCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('settings.manage') === -1){ box.hidden = true; return; }
+    var r = await SB.admSettings();
+    box.innerHTML = '<h2>⚙️ Paramètres plateforme</h2>'
+      + (r.ok ? r.rows.map(function(s){ return '<div class="fld" style="margin-top:8px"><span>' + esq5(s.cle) + ' (maj ' + String(s.maj_at||'').slice(0,10) + ')</span>'
+          + '<textarea id="admSet_' + esq5(s.cle) + '" rows="3">' + esq5(JSON.stringify(s.valeur)) + '</textarea>'
+          + '<button class="btn btn-p btn-sm" data-adm4-save="' + esq5(s.cle) + '" type="button">enregistrer</button></div>'; }).join('') : '<p>⛔ ' + esq5(r.err) + '</p>')
+      + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">Valeurs JSON ; chaque enregistrement passe par setting_set (permission settings.manage) et laisse une ligne au journal d’audit.</p>';
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu]') : null;
+    if(!t) return;
+    var tab = t.getAttribute('data-adm-tab');
+    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='students') renderStudents(); if(tab==='settings') renderSettings(); return; }
+    if(t.getAttribute('data-adm4-search')){
+      var q = ((document.getElementById('admStuQ')||{}).value || '');
+      SB.admSearchStudents(q).then(function(r){
+        var list = document.getElementById('admStuList'); if(!list) return;
+        list.innerHTML = r.ok ? (r.rows.map(function(p){ return '<div class="rep-row"><span>' + esq5(p.pseudo) + ' · ' + esq5(p.niveau||'?') + ' · ' + esq5(p.wilaya||'?') + ' · ' + esq5(p.verif_statut||'') + '</span><button class="btn btn-sm btn-o" data-adm4-stu="' + p.id + '" type="button">fiche</button></div>'; }).join('') || '<p>aucun résultat</p>') : '<p>⛔ ' + esq5(r.err) + '</p>';
+      });
+      return;
+    }
+    var stu = t.getAttribute('data-adm4-stu');
+    if(stu){
+      SB.admStudent(stu).then(function(r){
+        var f = document.getElementById('admStuFiche'); if(!f) return;
+        f.innerHTML = r.ok ? '<pre style="background:var(--p2);border:1px solid var(--b);border-radius:10px;padding:10px;font-size:11px;overflow:auto">' + esq5(JSON.stringify(r.fiche, null, 1)) + '</pre>' : '<p>⛔ ' + esq5(r.err) + '</p>';
+      });
+      return;
+    }
+    var save = t.getAttribute('data-adm4-save');
+    if(save){
+      var ta = document.getElementById('admSet_' + save); if(!ta) return;
+      var val = null; try{ val = JSON.parse(ta.value); }catch(err){ window.alert('⛔ JSON invalide'); return; }
+      SB.admSetSetting(save, val).then(function(r){ if(r.ok) renderSettings(); else window.alert('⛔ ' + r.err); });
+    }
+  });
+  document.addEventListener('dz:view', function(e){
+    var v = (e && e.detail && (e.detail.view||e.detail)) || '';
+    if(String(v).indexOf('admin')>=0){ renderTabs().then(function(){ if(state4.tab==='dash') renderDash(); if(state4.tab==='students') renderStudents(); if(state4.tab==='settings') renderSettings(); }); }
+  });
+  if((location.hash||'').replace('#','') === 'admin') renderTabs();
+})();

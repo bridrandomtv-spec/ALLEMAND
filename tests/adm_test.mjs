@@ -4,6 +4,7 @@ const sbjs = readFileSync('supabase/supabase.js', 'utf8');
 const adjs = readFileSync('admin.js', 'utf8');
 const sql2 = readFileSync('supabase/adm2_schema.sql', 'utf8');
 const sql3 = readFileSync('supabase/adm3_schema.sql', 'utf8');
+const sql4 = readFileSync('supabase/adm4_schema.sql', 'utf8');
 const appjs = readFileSync('app.js', 'utf8');
 let fails = 0;
 const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
@@ -46,5 +47,14 @@ t(/insert into public\.agreements \(cle, version, titre, corps\) values/.test(sq
 t(['myAgreements','acceptAgreement','acceptAgreementFor','withdrawAgreement','agreementText','myChildren','admAgreements','admPublishAgreement'].every(m => sbjs.includes('function ' + m)), '8 méthodes SB accords');
 t(appjs.includes('phase 8 (ADM-3)'), 'carte accords dans #compte');
 t(adjs.includes('phase 8b (ADM-3)'), 'publication accords dans #admin');
+t(sql4.includes('create table if not exists public.platform_settings'), 'table platform_settings (ADM-4)');
+t(sql4.includes('alter table public.platform_settings enable row level security'), 'RLS platform_settings');
+t(sql4.includes('create policy "profils lecture agents scopés"'), 'politique profils scopés pour agents students.read');
+t(['setting_set','admin_dashboard','admin_student'].every(f => sql4.includes('function public.' + f)), '3 fonctions ADM-4');
+t(/admin_dashboard[\s\S]{0,200}?reports\.read/.test(sql4), 'dashboard gated par reports.read');
+t(/admin_student[\s\S]{0,400}?wilaya_hors_perimetre/.test(sql4), 'fiche élève scopée par wilaya');
+t(sql4.includes("('admin_general','settings.manage')"), 'seed permission settings.manage');
+t(['admDashboard','admSearchStudents','admStudent','admSettings','admSetSetting'].every(m => sbjs.includes('function ' + m)), '5 méthodes SB.adm* (ADM-4)');
+t(adjs.includes('phase 9 (ADM-4)') && adjs.includes('admTabs'), 'barre d onglets #admin + cartes ADM-4');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');

@@ -585,3 +585,38 @@ async function admPublishAgreement(cle, titre, corps){
   return r.data || { ok:true };
 }
 Object.assign(window.SB, { myAgreements, acceptAgreement, acceptAgreementFor, withdrawAgreement, agreementText, myChildren, admAgreements, admPublishAgreement });
+
+/* ── ADM-4 · tableau de bord, fiches élèves, paramètres (client fin — fonctions serveur décident) ── */
+async function admDashboard(){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('admin_dashboard', { uid: u.id });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, dash:r.data };
+}
+async function admSearchStudents(q){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('profiles').select('id,pseudo,role,niveau,filiere,wilaya,verif_statut')
+    .eq('role','eleve').ilike('pseudo', '%' + (q||'') + '%').order('pseudo').limit(20);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, rows:r.data||[] };
+}
+async function admStudent(uidCible){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('admin_student', { cible: uidCible });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, fiche:r.data };
+}
+async function admSettings(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('platform_settings').select('cle,valeur,maj_at').order('cle');
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, rows:r.data||[] };
+}
+async function admSetSetting(cle, valeur){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('setting_set', { cle: cle, valeur: valeur });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+Object.assign(window.SB, { admDashboard, admSearchStudents, admStudent, admSettings, admSetSetting });
