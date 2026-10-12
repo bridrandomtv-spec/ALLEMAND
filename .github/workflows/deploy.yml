@@ -1162,7 +1162,7 @@ jobs:
               if old in idx: fails.append('index.html : ancien nom présent : ' + old)
           if 'prof_core.js' not in idx: fails.append('index.html : prof_core.js non chargé')
           i_app = idx.find('src="app.js'); i_pc = idx.find('prof_core.js')
-if i_pc == -1 or i_app == -1 or i_pc > i_app: fails.append('index.html : prof_core.js doit être chargé AVANT app.js')
+          if i_pc == -1 or i_app == -1 or i_pc > i_app: fails.append('index.html : prof_core.js doit être chargé AVANT app.js')
           uq = re.findall(r'\{\s*u:\s*(\d+)', qz)
           if len(uq) < 45 or min(map(int, uq)) < 1 or max(map(int, uq)) > 9: fails.append('quiz.js : banque hors 9 unités')
           # ── parents : multi-enfants conservé ──
