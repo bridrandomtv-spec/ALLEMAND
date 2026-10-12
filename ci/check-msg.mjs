@@ -9,7 +9,7 @@ const idx = readFileSync('index.html', 'utf8');
 const TABLES = ['msg_conversations','msg_members','msg_messages','msg_attachments','msg_reports','msg_blocks','msg_log'];
 for (const t of TABLES) {
   ok(sql.includes('create table if not exists public.' + t), 'table ' + t);
-  ok(sql.includes('alter table public.' + t + ' enable row level security'), 'RLS activé ' + t);
+  ok(new RegExp('alter table public\\.' + t + '\\s+enable row level security').test(sql), 'RLS activé ' + t);
 }
 ok(!/grant[^;\n]*\sto\s+anon/.test(sql), 'aucun GRANT au rôle anon');
 ok((sql.match(/to authenticated/g) || []).length >= 7, 'grants authenticated présents');
