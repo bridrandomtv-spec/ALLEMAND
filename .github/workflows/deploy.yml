@@ -1098,6 +1098,9 @@ jobs:
         run: |
           node ci/check-msg.mjs
           node tests/msg_test.mjs
+      - name: Valider l'administration EduDZ (schéma ADM + permissions)
+        run: |
+          node tests/adm_test.mjs
       - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
         run: |
           set -e

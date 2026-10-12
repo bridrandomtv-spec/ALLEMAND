@@ -453,3 +453,48 @@ async function msgSetVerification(uid, statut){
   return { ok:true };
 }
 Object.assign(window.SB, { msgMyVerification, msgRequestVerification, msgVerificationQueue, msgSetVerification });
+
+/* ── ADM-1 · sous-admins & wilayas (client fin — le RLS décide) ── */
+async function admMyPerms(){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('wilaya_assignments').select('role_cle, code_wilaya, admin_permissions(permission)').eq('user_id', u.id);
+  if(r.error) return { ok:false, err:r.error.message };
+  const perms = []; const wilayas = []; let role = '';
+  const prio = ['admin_general','responsable_regional','agent_paiement','responsable_pedagogique','agent_support'];
+  (r.data||[]).forEach(function(row){
+    wilayas.push(row.code_wilaya);
+    (row.admin_permissions||[]).forEach(function(p){ if(perms.indexOf(p.permission)===-1) perms.push(p.permission); });
+    if(!role || prio.indexOf(row.role_cle) < prio.indexOf(role)) role = row.role_cle;
+  });
+  return { ok:true, role:role, wilayas:wilayas, perms:perms };
+}
+async function admListAgents(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('wilaya_assignments').select('user_id, role_cle, code_wilaya, profiles(pseudo, wilaya, code_wilaya)').order('user_id');
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, agents:r.data||[] };
+}
+async function admAssign(uid, roleCle, codes){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const d = await c.from('wilaya_assignments').delete().eq('user_id', uid);
+  if(d.error) return { ok:false, err:d.error.message };
+  const rows = (codes||[]).map(function(w){ return { user_id: uid, role_cle: roleCle, code_wilaya: String(w) }; });
+  if(!rows.length) return { ok:true };
+  const r = await c.from('wilaya_assignments').insert(rows);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+async function admRevoke(uid){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('wilaya_assignments').delete().eq('user_id', uid);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+async function admListProfiles(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('profiles').select('id,pseudo,role,niveau,wilaya,code_wilaya').order('pseudo').limit(200);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, profiles:r.data||[] };
+}
+Object.assign(window.SB, { admMyPerms, admListAgents, admAssign, admRevoke, admListProfiles });

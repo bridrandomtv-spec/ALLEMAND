@@ -187,3 +187,58 @@ document.addEventListener('click', ev => {
     }catch(e){ toast('⚠️ ' + String((e && e.message) || e), 'ko'); }
   })();
 });
+
+/* ── phase 6 (ADM-1) : onglet « Agents & wilayas » (admin_general) ── */
+(function(){
+  function esq(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function host(){ return document.querySelector('section[data-view="admin"]'); }
+  async function renderAgents(){
+    var h = host(); if(!h) return;
+    var box = document.getElementById('admAgentsCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admAgentsCard'; box.className = 'card'; h.appendChild(box); }
+    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>🧑‍ Agents & wilayas</h2><p>☁️ client cloud indisponible</p>'; return; }
+    var meP = await SB.admMyPerms();
+    if(!meP.ok || (meP.perms||[]).indexOf('agents.manage') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    var ag = await SB.admListAgents();
+    var pf = await SB.admListProfiles();
+    var html = '<h2>🧑‍ Agents & wilayas (ADM-1)</h2>'
+      + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Périmètres appliqués par la base (RLS) : un agent ne lit que ses wilayas ; révocation = effet immédiat.</p>';
+    html += (ag.ok && ag.agents.length) ? ag.agents.map(function(a){
+      var pr = a.profiles || {};
+      return '<div class="rep-row"><span>' + esq(pr.pseudo || a.user_id.slice(0,8)) + ' · ' + esq(a.role_cle) + ' · wilaya ' + esq(a.code_wilaya) + '</span>'
+        + '<button class="btn btn-sm btn-r" data-adm-rev="' + a.user_id + '" type="button">révoquer</button></div>';
+    }).join('') : '<p>Aucun agent affecté pour l\'instant.</p>';
+    html += '<div class="fld" style="margin-top:12px"><span>Affecter un agent</span>'
+      + '<select id="admSelProf">' + (pf.ok ? pf.profiles.map(function(p){ return '<option value="' + p.id + '">' + esq(p.pseudo || p.id.slice(0,8)) + ' (' + esq(p.wilaya || '?') + ')</option>'; }).join('') : '<option value="">profils indisponibles</option>') + '</select>'
+      + '<select id="admSelRole"><option value="responsable_regional">responsable_regional</option><option value="agent_paiement">agent_paiement</option><option value="responsable_pedagogique">responsable_pedagogique</option><option value="agent_support">agent_support</option></select>'
+      + '<input id="admWil" placeholder="codes wilaya, ex : 16,31 (vide = wilaya du profil)">'
+      + '<button class="btn btn-p btn-sm" data-adm-assign="1" type="button">affecter</button></div>';
+    box.innerHTML = html;
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm-rev],[data-adm-assign]') : null;
+    if(!t) return;
+    var rev = t.getAttribute('data-adm-rev');
+    if(rev){ SB.admRevoke(rev).then(function(r){ if(r.ok) renderAgents(); else window.alert('⛔ ' + r.err); }); return; }
+    if(t.getAttribute('data-adm-assign')){
+      var uid = (document.getElementById('admSelProf')||{}).value;
+      var role = (document.getElementById('admSelRole')||{}).value;
+      var wraw = ((document.getElementById('admWil')||{}).value || '').split(',').map(function(x){ return x.trim(); }).filter(function(x){ return x; });
+      if(!uid){ window.alert('⛔ profil manquant'); return; }
+      if(!wraw.length){
+        SB.admListProfiles().then(function(pf){
+          var p = (pf.ok ? pf.profiles : []).filter(function(x){ return x.id === uid; })[0];
+          SB.admAssign(uid, role, (p && p.code_wilaya) ? [p.code_wilaya] : []).then(function(r){ if(r.ok) renderAgents(); else window.alert('⛔ ' + r.err); });
+        });
+        return;
+      }
+      SB.admAssign(uid, role, wraw).then(function(r){ if(r.ok) renderAgents(); else window.alert('⛔ ' + r.err); });
+    }
+  });
+  document.addEventListener('dz:view', function(e){
+    var v = (e && e.detail && (e.detail.view||e.detail)) || '';
+    if(String(v).indexOf('admin')>=0) renderAgents();
+  });
+  if((location.hash||'').replace('#','') === 'admin') renderAgents();
+})();

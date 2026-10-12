@@ -1,0 +1,22 @@
+import { readFileSync } from 'node:fs';
+const sql = readFileSync('supabase/adm_schema.sql', 'utf8');
+const sbjs = readFileSync('supabase/supabase.js', 'utf8');
+const adjs = readFileSync('admin.js', 'utf8');
+let fails = 0;
+const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
+console.log('== adm_test · invariants administration ADM-1 ==');
+t(sql.includes('create table if not exists public.admin_roles'), 'table admin_roles');
+t(sql.includes('create table if not exists public.admin_permissions'), 'table admin_permissions');
+t(sql.includes('create table if not exists public.wilaya_assignments'), 'table wilaya_assignments');
+t(['admin_roles','admin_permissions','wilaya_assignments'].every(x => sql.includes('alter table public.' + x + ' enable row level security')), 'RLS activé sur les 3 tables');
+t(!/grant[^;\n]*\sto\s+anon/.test(sql), 'aucun grant anon');
+t(['admin_role_of','admin_wilayas','admin_can','admin_sees_wilaya'].every(f => sql.includes('function public.' + f)), '4 fonctions de contrôle serveur');
+t(/create policy "assignments gestion"[\s\S]{0,300}?agents\.manage/.test(sql), 'gestion des affectations = permission agents.manage');
+t(/create policy "payments lecture agent scopé"[\s\S]{0,400}?admin_sees_wilaya/.test(sql), 'lecture payments scopée par wilaya');
+t(/create policy "payments validation agent scopé"[\s\S]{0,500}?with check/.test(sql), 'validation payments scopée + with check');
+t(sql.includes("('admin_general','agents.manage')"), 'seed : admin_general gère les agents');
+t(sql.includes('on conflict (cle) do nothing'), 'seed rôles idempotent');
+t(['admMyPerms','admListAgents','admAssign','admRevoke','admListProfiles'].every(m => sbjs.includes('function ' + m)), '5 méthodes SB.adm*');
+t(adjs.includes('phase 6 (ADM-1)'), 'onglet #admin phase 6 présent');
+if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
+console.log('== adm_test : TOUT PASSE ==');
