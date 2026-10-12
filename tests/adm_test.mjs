@@ -14,6 +14,7 @@ t(['admin_role_of','admin_wilayas','admin_can','admin_sees_wilaya'].every(f => s
 t(/create policy "assignments gestion"[\s\S]{0,300}?agents\.manage/.test(sql), 'gestion des affectations = permission agents.manage');
 t(/create policy "payments lecture agent scopé"[\s\S]{0,400}?admin_sees_wilaya/.test(sql), 'lecture payments scopée par wilaya');
 t(/create policy "payments validation agent scopé"[\s\S]{0,500}?with check/.test(sql), 'validation payments scopée + with check');
+t(!/st\.code_wilaya/.test(sql), 'scopage wilaya via profiles.wilaya (colonne code_wilaya inexistante)');
 t(sql.includes("('admin_general','agents.manage')"), 'seed : admin_general gère les agents');
 t(sql.includes('on conflict (cle) do nothing'), 'seed rôles idempotent');
 t(['admMyPerms','admListAgents','admAssign','admRevoke','admListProfiles'].every(m => sbjs.includes('function ' + m)), '5 méthodes SB.adm*');

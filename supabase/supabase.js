@@ -471,7 +471,7 @@ async function admMyPerms(){
 }
 async function admListAgents(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
-  const r = await c.from('wilaya_assignments').select('user_id, role_cle, code_wilaya, profiles(pseudo, wilaya, code_wilaya)').order('user_id');
+  const r = await c.from('wilaya_assignments').select('user_id, role_cle, code_wilaya, profiles(pseudo, wilaya)').order('user_id');
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, agents:r.data||[] };
 }
@@ -493,7 +493,7 @@ async function admRevoke(uid){
 }
 async function admListProfiles(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
-  const r = await c.from('profiles').select('id,pseudo,role,niveau,wilaya,code_wilaya').order('pseudo').limit(200);
+  const r = await c.from('profiles').select('id,pseudo,role,niveau,wilaya').order('pseudo').limit(200);
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, profiles:r.data||[] };
 }

@@ -64,13 +64,13 @@ create policy "payments lecture agent scopé" on public.payments for select to a
   using (public.admin_can(auth.uid(), 'payments.validate')
          and exists (select 1 from public.profiles st
                       where st.id = payments.user_id
-                        and public.admin_sees_wilaya(auth.uid(), st.code_wilaya)));
+                        and public.admin_sees_wilaya(auth.uid(), st.wilaya)));
 drop policy if exists "payments validation agent scopé" on public.payments;
 create policy "payments validation agent scopé" on public.payments for update to authenticated
   using (public.admin_can(auth.uid(), 'payments.validate')
          and exists (select 1 from public.profiles st
                       where st.id = payments.user_id
-                        and public.admin_sees_wilaya(auth.uid(), st.code_wilaya)))
+                        and public.admin_sees_wilaya(auth.uid(), st.wilaya)))
   with check (public.admin_can(auth.uid(), 'payments.validate'));
 
 insert into public.admin_roles (cle, libelle, priorite) values

@@ -229,7 +229,7 @@ document.addEventListener('click', ev => {
       if(!wraw.length){
         SB.admListProfiles().then(function(pf){
           var p = (pf.ok ? pf.profiles : []).filter(function(x){ return x.id === uid; })[0];
-          SB.admAssign(uid, role, (p && p.code_wilaya) ? [p.code_wilaya] : []).then(function(r){ if(r.ok) renderAgents(); else window.alert('⛔ ' + r.err); });
+          SB.admAssign(uid, role, (p && p.wilaya) ? [p.wilaya] : []).then(function(r){ if(r.ok) renderAgents(); else window.alert('⛔ ' + r.err); });
         });
         return;
       }
