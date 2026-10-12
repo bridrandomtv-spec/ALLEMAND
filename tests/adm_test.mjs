@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 const sql = readFileSync('supabase/adm_schema.sql', 'utf8');
 const sbjs = readFileSync('supabase/supabase.js', 'utf8');
 const adjs = readFileSync('admin.js', 'utf8');
+const sql2 = readFileSync('supabase/adm2_schema.sql', 'utf8');
 let fails = 0;
 const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
 console.log('== adm_test · invariants administration ADM-1 ==');
@@ -19,5 +20,16 @@ t(sql.includes("('admin_general','agents.manage')"), 'seed : admin_general gère
 t(sql.includes('on conflict (cle) do nothing'), 'seed rôles idempotent');
 t(['admMyPerms','admListAgents','admAssign','admRevoke','admListProfiles'].every(m => sbjs.includes('function ' + m)), '5 méthodes SB.adm*');
 t(adjs.includes('phase 6 (ADM-1)'), 'onglet #admin phase 6 présent');
+t(sql2.includes('create table if not exists public.receipts'), 'table receipts (ADM-2)');
+t(sql2.includes('create table if not exists public.audit_logs'), 'table audit_logs (ADM-2)');
+t(sql2.includes('alter table public.receipts enable row level security') && sql2.includes('alter table public.audit_logs enable row level security'), 'RLS receipts + audit_logs');
+t(sql2.includes('create trigger receipts_tr_immuable') && sql2.includes('create trigger audit_logs_tr_immuable'), 'immuabilité receipts + audit_logs');
+t(sql2.includes('create trigger receipts_tr_numero') && sql2.includes('create sequence if not exists public.receipts_seq'), 'numérotation automatique des reçus');
+t(['audit_log','payment_set_statut','issue_receipt','immutable_row'].every(f => sql2.includes('function public.' + f)), 'fonctions métier ADM-2');
+t(sql2.includes('create trigger payments_tr_statut'), 'transitions de statut paiement forcées');
+t(!/on public\.audit_logs for (insert|update|delete)/.test(sql2), 'audit_logs : aucune politique d écriture client');
+t(!/on public\.receipts for (insert|update|delete)/.test(sql2), 'receipts : écriture uniquement via issue_receipt');
+t(['admQueue','admSetPaymentStatut','admIssueReceipt','admAuditLast'].every(m => sbjs.includes('function ' + m)), '4 méthodes SB.adm* (ADM-2)');
+t(adjs.includes('phase 7 (ADM-2)'), 'file de validation + journal dans #admin');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');

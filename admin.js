@@ -242,3 +242,59 @@ document.addEventListener('click', ev => {
   });
   if((location.hash||'').replace('#','') === 'admin') renderAgents();
 })();
+
+/* ── phase 7 (ADM-2) : file de validation par wilaya + reçus + journal d'audit ── */
+(function(){
+  function esq2(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function host2(){ return document.querySelector('section[data-view="admin"]'); }
+  async function renderQueue(){
+    var h = host2(); if(!h) return;
+    var box = document.getElementById('admQueueCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admQueueCard'; box.className = 'card'; h.appendChild(box); }
+    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>💳 Validations & reçus</h2><p>☁️ client cloud indisponible</p>'; return; }
+    var meP = await SB.admMyPerms();
+    if(!meP.ok || (meP.perms||[]).indexOf('payments.validate') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    var q = await SB.admQueue();
+    var html = '<h2>💳 File de validation & reçus (ADM-2)</h2>'
+      + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Seuls les dossiers de ton périmètre (wilaya) apparaissent : le filtre vit dans la base. Confirmer → reçu possible ; rejeter = motif obligatoire ; tout laisse une trace au journal.</p>';
+    html += q.ok && q.rows.length ? q.rows.map(function(r){
+      var pr = r.profiles || {};
+      return '<div class="rep-row"><span>#' + r.id + ' · ' + esq2(pr.pseudo || '?') + ' · ' + esq2(pr.wilaya || '?') + ' · ' + r.montant + ' ' + esq2(r.devise) + ' · ' + esq2(r.statut) + '</span>'
+        + '<span style="display:flex;gap:6px;flex-wrap:wrap">'
+        + '<button class="btn btn-sm btn-p" data-adm2-conf="' + r.id + '" type="button">confirmer</button>'
+        + '<button class="btn btn-sm btn-r" data-adm2-rej="' + r.id + '" type="button">rejeter</button>'
+        + '</span></div>';
+    }).join('') : '<p>Aucun dossier en attente dans ton périmètre.</p>';
+    html += '<div style="margin-top:12px"><b style="font-size:12.5px">🧾 Émettre un reçu (paiement confirmé)</b> '
+      + '<input id="admRecPid" placeholder="id du paiement" style="width:110px;border:1px solid var(--b);border-radius:10px;padding:6px 9px;background:var(--p2);color:var(--t)">'
+      + '<button class="btn btn-sm btn-g" data-adm2-rec="1" type="button">émettre</button> <span id="admRecOut" style="font-size:12px"></span></div>';
+    if((meP.perms||[]).indexOf('reports.read') !== -1){
+      var au = await SB.admAuditLast(12);
+      html += '<div style="margin-top:14px"><b style="font-size:12.5px">📜 Journal d’audit (12 dernières)</b></div>'
+        + (au.ok ? au.rows.map(function(l){ return '<div class="rep-row"><span>' + String(l.at||'').slice(0,16).replace('T',' ') + ' · ' + esq2(l.action) + ' · ' + esq2(l.cible_type) + ' #' + esq2(l.cible_id) + (l.wilaya ? ' · w' + esq2(l.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">' + esq2(JSON.stringify(l.apres||{}).slice(0,60)) + '</span></div>'; }).join('') || '<p>journal vide</p>' : '<p>⛔ ' + esq2(au.err) + '</p>');
+    }
+    box.innerHTML = html;
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm2-conf],[data-adm2-rej],[data-adm2-rec]') : null;
+    if(!t) return;
+    var conf = t.getAttribute('data-adm2-conf'), rej = t.getAttribute('data-adm2-rej');
+    if(conf){ SB.admSetPaymentStatut(+conf, 'confirme', '').then(function(r){ if(r.ok) renderQueue(); else window.alert('⛔ ' + r.err); }); return; }
+    if(rej){ var motif = window.prompt('Motif du rejet :'); if(motif === null) return; SB.admSetPaymentStatut(+rej, 'rejete', motif).then(function(r){ if(r.ok) renderQueue(); else window.alert('⛔ ' + r.err); }); return; }
+    if(t.getAttribute('data-adm2-rec')){
+      var pid = +((document.getElementById('admRecPid')||{}).value || 0);
+      if(!pid){ window.alert('⛔ id manquant'); return; }
+      SB.admIssueReceipt(pid).then(function(r){
+        var out = document.getElementById('admRecOut');
+        if(out) out.textContent = r.ok ? ('✅ ' + r.numero) : ('⛔ ' + r.err);
+        if(r.ok) renderQueue();
+      });
+    }
+  });
+  document.addEventListener('dz:view', function(e){
+    var v = (e && e.detail && (e.detail.view||e.detail)) || '';
+    if(String(v).indexOf('admin')>=0) renderQueue();
+  });
+  if((location.hash||'').replace('#','') === 'admin') renderQueue();
+})();

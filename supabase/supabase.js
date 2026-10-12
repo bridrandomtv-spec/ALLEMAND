@@ -498,3 +498,32 @@ async function admListProfiles(){
   return { ok:true, profiles:r.data||[] };
 }
 Object.assign(window.SB, { admMyPerms, admListAgents, admAssign, admRevoke, admListProfiles });
+
+/* ── ADM-2 · file de validation, reçus, journal (client fin — le RLS + fonctions décident) ── */
+async function admQueue(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('payments').select('id,montant,devise,statut,methode,ref_plateforme,user_id,profiles(pseudo,wilaya)')
+    .in('statut', ['declare','en_attente']).order('id', { ascending:false }).limit(60);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, rows:r.data||[] };
+}
+async function admSetPaymentStatut(pid, statut, motif){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('payment_set_statut', { pid: pid, statut: statut, motif: motif || '' });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+async function admIssueReceipt(pid){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('issue_receipt', { pid: pid });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+async function admAuditLast(n){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('audit_logs').select('id,at,acteur,action,cible_type,cible_id,apres,wilaya')
+    .order('at', { ascending:false }).limit(n || 15);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, rows:r.data||[] };
+}
+Object.assign(window.SB, { admQueue, admSetPaymentStatut, admIssueReceipt, admAuditLast });
