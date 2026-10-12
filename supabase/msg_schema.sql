@@ -371,3 +371,23 @@ language sql stable security definer set search_path = public as $$
        and pa.verif_statut = 'verifie' and pb.verif_statut = 'verifie'
   );
 $$;
+
+-- ══ LOT 6b — changement de rôle réservé à un admin (ou au SQL console) ══
+-- La politique « update own » ne restreint pas les colonnes : sans cette garde,
+-- un compte connecté pourrait s'auto-promouvoir admin par API. Le trigger
+-- autorise : (a) absence de changement de rôle, (b) auth.uid() NULL = éditeur
+-- SQL / console (ton collage de promotion), (c) un admin existant.
+create or replace function public.profiles_role_guard() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare ismod boolean;
+begin
+  if new.role is not distinct from old.role then return new; end if;
+  if auth.uid() is null then return new; end if;
+  select exists (select 1 from public.profiles p
+                  where p.id = auth.uid() and p.role = 'admin') into ismod;
+  if ismod then return new; end if;
+  raise exception 'role_reservee_admin';
+end $$;
+drop trigger if exists profiles_tr_role on public.profiles;
+create trigger profiles_tr_role before update on public.profiles
+  for each row execute function public.profiles_role_guard();
