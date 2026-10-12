@@ -19,5 +19,9 @@ t(sql.includes("'image/png','image/jpeg','image/webp','application/pdf'") && sql
 t(sql.includes("old.verif_statut in ('non_verifie','rejete')") && sql.includes("new.verif_statut = 'en_attente'"),
   'garde vérif : un élève ne peut que DEMANDER (en_attente)');
 t(sql.includes("raise exception 'verif_reservee_moderation'"), 'auto-validation élève = exception SQL');
+t(sql.includes('function public.profiles_role_guard'), 'garde de rôle profiles_role_guard présente (Lot 6b)');
+t(sql.includes('create trigger profiles_tr_role'), 'trigger profiles_tr_role présent');
+t(sql.includes("raise exception 'role_reservee_admin'"), 'auto-promotion client = exception SQL');
+t(sql.includes('if auth.uid() is null then return new; end if;'), 'promotions réservées console (auth.uid NULL) ou admin');
 if (fails) { console.error('::error:: msg_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== msg_test : TOUT PASSE ==');
