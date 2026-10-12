@@ -1094,6 +1094,10 @@ jobs:
           print('✅ ' + str(len(FICHIERS)) + '/41 fichiers JS valides')
           PY
 
+      - name: Valider la messagerie EduDZ (schéma RLS + client + vue)
+        run: |
+          node ci/check-msg.mjs
+          node tests/msg_test.mjs
       - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
         run: |
           set -e
