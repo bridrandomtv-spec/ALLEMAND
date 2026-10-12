@@ -24,7 +24,7 @@
     if(!D){
       box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل بيانات القسم…</div>';
       try{
-        const r = await fetch('assets/bdd/classe.json', { cache:'force-cache' });
+        const r = await fetch('assets/bdd/classe.json?v=3510', { cache:'force-cache' });
         if(!r.ok) throw new Error('HTTP ' + r.status);
         D = await r.json();
       }catch(e){

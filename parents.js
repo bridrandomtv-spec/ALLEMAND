@@ -15,7 +15,7 @@
       c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const toast = (m,t) => { if(window.DZ && DZ.toast) DZ.toast(m, t); };
 
-  const SRC   = 'assets/bdd/parents.json';
+  const SRC   = 'assets/bdd/parents.json?v=3510';
   const K_SEL = 'dz_de_parent_enfant_v1';
   const K_MSG = 'dz_de_parent_msg_v1';
   const K_NOT = 'dz_de_parent_notif_v1';
