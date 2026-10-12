@@ -51,8 +51,8 @@ t(sql4.includes('create table if not exists public.platform_settings'), 'table p
 t(sql4.includes('alter table public.platform_settings enable row level security'), 'RLS platform_settings');
 t(sql4.includes('create policy "profils lecture agents scopés"'), 'politique profils scopés pour agents students.read');
 t(['setting_set','admin_dashboard','admin_student'].every(f => sql4.includes('function public.' + f)), '3 fonctions ADM-4');
-t(/admin_dashboard[\s\S]{0,200}?reports\.read/.test(sql4), 'dashboard gated par reports.read');
-t(/admin_student[\s\S]{0,400}?wilaya_hors_perimetre/.test(sql4), 'fiche élève scopée par wilaya');
+t(sql4.includes("public.admin_can(uid, 'reports.read')"), 'dashboard gated par reports.read');
+t(sql4.includes("public.admin_sees_wilaya(auth.uid(), pr.wilaya)"), 'fiche élève scopée par wilaya');
 t(sql4.includes("('admin_general','settings.manage')"), 'seed permission settings.manage');
 t(['admDashboard','admSearchStudents','admStudent','admSettings','admSetSetting'].every(m => sbjs.includes('function ' + m)), '5 méthodes SB.adm* (ADM-4)');
 t(adjs.includes('phase 9 (ADM-4)') && adjs.includes('admTabs'), 'barre d onglets #admin + cartes ADM-4');
