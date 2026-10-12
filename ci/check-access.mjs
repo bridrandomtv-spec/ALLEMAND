@@ -8,7 +8,7 @@ const idx = fs.readFileSync('index.html', 'utf8');
 const sw  = fs.readFileSync('sw.js', 'utf8');
 
 /* câblage */
-if (!/<script src="access\.js"><\/script>/.test(idx)) fails.push('index.html : access.js non chargé');
+if (!/<script src="access\.js(\?[^"]*)?"><\/script>/.test(idx)) fails.push('index.html : access.js non chargé');
 if (!src.includes('./access.js') && !sw.includes('access.js')) fails.push('sw.js : access.js absent du precache');
 if (!sw.includes('access_config.json')) fails.push('sw.js : access_config.json absent du precache (le gratuit doit marcher hors-ligne)');
 
