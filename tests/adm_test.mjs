@@ -42,6 +42,7 @@ t(sql3.includes('representant_requis_pour_mineur'), 'mineur : représentant lég
 t(sql3.includes('lien_parent_enfant_absent'), 'parent : lien child_links vérifié');
 t(!/on public\.agreement_acceptances for (insert|update|delete)/.test(sql3), 'acceptations : écriture uniquement via fonctions');
 t(sql3.includes("('conditions_utilisation', 1,"), 'seed conditions v1');
+t(/insert into public\.agreements \(cle, version, titre, corps\) values/.test(sql3), 'seed accords : colonnes et valeurs alignées (42601 impossible)');
 t(['myAgreements','acceptAgreement','acceptAgreementFor','withdrawAgreement','agreementText','myChildren','admAgreements','admPublishAgreement'].every(m => sbjs.includes('function ' + m)), '8 méthodes SB accords');
 t(appjs.includes('phase 8 (ADM-3)'), 'carte accords dans #compte');
 t(adjs.includes('phase 8b (ADM-3)'), 'publication accords dans #admin');

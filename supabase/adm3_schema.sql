@@ -117,7 +117,7 @@ drop policy if exists "acceptances lecture propre+rapports" on public.agreement_
 create policy "acceptances lecture propre+rapports" on public.agreement_acceptances for select to authenticated
   using (user_id = auth.uid() or accepte_par = auth.uid() or public.admin_can(auth.uid(), 'reports.read'));
 
-insert into public.agreements (cle, version, titre, corps, cree_par) values
+insert into public.agreements (cle, version, titre, corps) values
  ('conditions_utilisation', 1, 'Conditions d utilisation — v1',
   'Article 1 — Objet : espace pedagogique et messagerie scolaire pour eleves, parents et enseignants. Article 2 — Compte personnel ; l eleve mineur declare un representant legal lors des acceptations. Article 3 — Donnees traitees pour les seuls besoins du service ; pieces jointes de la messagerie dans le bucket prive. Article 4 — Tout signalement confirme peut entrainer la suspension. Article 5 — Un recu numerote est emis apres confirmation ; aucune correction ne supprime la trace ecrite.')
 on conflict (cle, version) do nothing;
