@@ -527,3 +527,61 @@ async function admAuditLast(n){
   return { ok:true, rows:r.data||[] };
 }
 Object.assign(window.SB, { admQueue, admSetPaymentStatut, admIssueReceipt, admAuditLast });
+
+/* ── ADM-3 · accords d'utilisation (client fin — fonctions serveur décident) ── */
+async function myAgreements(){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const g = await c.from('agreements').select('id,cle,version,titre').eq('actif', true).order('cle');
+  if(g.error) return { ok:false, err:g.error.message };
+  const rows = [];
+  for(const a of (g.data||[])){
+    const s = await c.rpc('agreement_status_for', { uid: u.id, cle: a.cle });
+    rows.push({ id:a.id, cle:a.cle, version:a.version, titre:a.titre, statut:(s.error ? 'inconnu' : s.data) });
+  }
+  return { ok:true, rows:rows };
+}
+async function acceptAgreement(aid, nomRep, lienRep){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('agreement_accept', { aid: aid, nom_representant: nomRep || '', lien_representant: lienRep || '' });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+async function acceptAgreementFor(aid, childUid, nomRep, lienRep){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('agreement_accept_for', { aid: aid, child_uid: childUid, nom_representant: nomRep || '', lien_representant: lienRep || '' });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+async function withdrawAgreement(aid){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('agreement_withdraw', { aid: aid });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+async function agreementText(aid){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('agreements').select('*').eq('id', aid).maybeSingle();
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, accord:r.data };
+}
+async function myChildren(){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('child_links').select('child_id, profiles(pseudo, niveau, wilaya)').eq('parent_id', u.id);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, children:r.data||[] };
+}
+async function admAgreements(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('agreements').select('id,cle,version,titre,actif,cree_at').order('cle').order('version', { ascending:false });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, rows:r.data||[] };
+}
+async function admPublishAgreement(cle, titre, corps){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('agreement_publish', { cle: cle, titre: titre, corps: corps });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+Object.assign(window.SB, { myAgreements, acceptAgreement, acceptAgreementFor, withdrawAgreement, agreementText, myChildren, admAgreements, admPublishAgreement });

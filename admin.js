@@ -298,3 +298,45 @@ document.addEventListener('click', ev => {
   });
   if((location.hash||'').replace('#','') === 'admin') renderQueue();
 })();
+
+/* ── phase 8b (ADM-3) : publication des accords (admin_general) ── */
+(function(){
+  function esq4(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  async function renderAccordsAdmin(){
+    var h = document.querySelector('section[data-view="admin"]'); if(!h) return;
+    var box = document.getElementById('admAccordsCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admAccordsCard'; box.className = 'card'; h.appendChild(box); }
+    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>📜 Accords & versions</h2><p>☁️ indisponible</p>'; return; }
+    var meP = await SB.admMyPerms();
+    if(!meP.ok || (meP.perms||[]).indexOf('agreements.manage') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    var r = await SB.admAgreements();
+    var html = '<h2>📜 Accords & versions (ADM-3)</h2>'
+      + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Publier une nouvelle version désactive l\'ancienne : les acceptations passées restent immuables et passent en « version à ré-accepter ».</p>'
+      + (r.ok ? r.rows.map(function(a){ return '<div class="rep-row"><span>' + esq4(a.cle) + ' · v' + a.version + (a.actif ? ' · <b>active</b>' : ' · archivée') + ' · ' + esq4(a.titre) + '</span><span style="font-size:11px;color:var(--m)">' + String(a.cree_at||'').slice(0,10) + '</span></div>'; }).join('') || '<p>Aucun accord.</p>' : '<p>⛔ ' + esq4(r.err) + '</p>')
+      + '<div class="fld" style="margin-top:12px"><span>Publier une nouvelle version</span>'
+      + '<input id="adm3Cle" placeholder="cle (ex : conditions_utilisation)" value="conditions_utilisation">'
+      + '<input id="adm3Titre" placeholder="titre de la version">'
+      + '<textarea id="adm3Corps" rows="4" placeholder="corps complet de la nouvelle version"></textarea>'
+      + '<button class="btn btn-p btn-sm" data-adm3-pub="1" type="button">publier la version</button> <span id="adm3Out" style="font-size:12px"></span></div>';
+    box.innerHTML = html;
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm3-pub]') : null;
+    if(!t) return;
+    var cle = (document.getElementById('adm3Cle')||{}).value || '';
+    var titre = (document.getElementById('adm3Titre')||{}).value || '';
+    var corps = (document.getElementById('adm3Corps')||{}).value || '';
+    if(!cle || !titre || !corps){ window.alert('⛔ cle, titre et corps requis'); return; }
+    SB.admPublishAgreement(cle, titre, corps).then(function(r){
+      var out = document.getElementById('adm3Out');
+      if(out) out.textContent = r.ok ? ('✅ v' + r.version) : ('⛔ ' + r.err);
+      if(r.ok) renderAccordsAdmin();
+    });
+  });
+  document.addEventListener('dz:view', function(e){
+    var v = (e && e.detail && (e.detail.view||e.detail)) || '';
+    if(String(v).indexOf('admin')>=0) renderAccordsAdmin();
+  });
+  if((location.hash||'').replace('#','') === 'admin') renderAccordsAdmin();
+})();

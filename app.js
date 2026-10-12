@@ -2915,3 +2915,81 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   else setTimeout(mount,250);
   document.addEventListener('dz:auth', function(){ setTimeout(mount,120); });
 })();
+
+/* ── phase 8 (ADM-3) : carte « Accords d'utilisation » dans #compte ── */
+(function(){
+  function esq3(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  var state3 = { me:null };
+  async function renderAccords(){
+    var host = document.getElementById('compteBody'); if(!host) return;
+    var box = document.getElementById('accordsCard');
+    if(!box){ box = document.createElement('div'); box.id = 'accordsCard'; box.className = 'card'; host.appendChild(box); }
+    if(!window.SB || !SB.myAgreements){ box.innerHTML = '<h2>📜 Accords d\'utilisation</h2><p>☁️ indisponible</p>'; return; }
+    state3.me = await SB.me();
+    var r = await SB.myAgreements();
+    if(!r.ok){ box.innerHTML = '<h2>📜 Accords d\'utilisation</h2><p>⛔ ' + esq3(r.err) + '</p>'; return; }
+    var html = '<h2>📜 Accords d\'utilisation (ADM-3)</h2>'
+      + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Chaque acceptation est horodatée et immuable ; un élève mineur doit déclarer son représentant légal ; un parent peut accepter pour ses enfants rattachés.</p>';
+    html += r.rows.map(function(a){
+      var badge = a.statut === 'accepte' ? '✅ accepté (v' + a.version + ')' : (a.statut === 'retire' ? '⛔ retiré' : (a.statut === 'version_a_reevaluer' ? '⚠️ nouvelle version à ré-accepter' : '— jamais accepté'));
+      return '<div class="rep-row"><span><b>' + esq3(a.cle) + '</b> · v' + a.version + ' · ' + badge + '</span>'
+        + '<span style="display:flex;gap:6px;flex-wrap:wrap">'
+        + '<button class="btn btn-sm btn-o" data-acc-text="' + a.id + '" type="button">lire / imprimer</button>'
+        + (a.statut === 'accepte' ? '<button class="btn btn-sm btn-r" data-acc-no="' + a.id + '" type="button">retirer</button>'
+                                  : '<button class="btn btn-sm btn-p" data-acc-ok="' + a.id + '" type="button">accepter</button>')
+        + '</span></div>';
+    }).join('') || '<p>Aucun accord actif publié.</p>';
+    if(state3.me && state3.me.role === 'parent'){
+      var ch = await SB.myChildren();
+      var cond = r.rows.filter(function(a){ return a.cle === 'conditions_utilisation'; })[0];
+      if(ch.ok && ch.children.length && cond){
+        html += '<div style="margin-top:12px"><b style="font-size:12.5px">👨‍👩‍ Accepter pour un enfant rattaché</b></div>'
+          + ch.children.map(function(k){ var p = k.profiles || {};
+              return '<div class="rep-row"><span>' + esq3(p.pseudo || k.child_id.slice(0,8)) + '</span>'
+                + '<button class="btn btn-sm btn-p" data-acc-for="' + cond.id + '|' + k.child_id + '" type="button">accepter les conditions</button></div>';
+            }).join('');
+      }
+    }
+    box.innerHTML = html;
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target && e.target.closest ? e.target.closest('[data-acc-text],[data-acc-ok],[data-acc-no],[data-acc-for]') : null;
+    if(!t) return;
+    var txt = t.getAttribute('data-acc-text');
+    if(txt){
+      SB.agreementText(+txt).then(function(r){
+        if(!r.ok){ window.alert('⛔ ' + r.err); return; }
+        var w = window.open('', '_blank');
+        if(!w){ window.alert('⛔ popup bloquée'); return; }
+        w.document.write('<html dir="ltr"><head><meta charset="utf-8"><title>' + r.accord.cle + ' v' + r.accord.version + '</title></head><body style="font-family:Georgia,serif;max-width:70ch;margin:40px auto;line-height:1.7">'
+          + '<h1>' + r.accord.titre + '</h1><pre style="white-space:pre-wrap;font-family:Georgia,serif">' + r.accord.corps + '</pre>'
+          + '<button onclick="window.print()">🖨 imprimer / PDF</button></body></html>');
+        w.document.close();
+      });
+      return;
+    }
+    var ok = t.getAttribute('data-acc-ok');
+    if(ok){
+      var nom = '', lien = '';
+      if(state3.me && state3.me.role === 'eleve'){
+        nom = window.prompt('Nom du représentant légal (obligatoire pour un mineur) :');
+        if(nom === null || !nom.trim()){ window.alert('⛔ representant_requis_pour_mineur'); return; }
+        lien = window.prompt('Lien (parent, tuteur…) :', 'representant_legal') || 'representant_legal';
+      }
+      SB.acceptAgreement(+ok, nom, lien).then(function(r){ if(r.ok) renderAccords(); else window.alert('⛔ ' + r.err); });
+      return;
+    }
+    var no = t.getAttribute('data-acc-no');
+    if(no){ if(window.confirm('Retirer mon consentement ? (trace conservée au journal)')) SB.withdrawAgreement(+no).then(function(r){ if(r.ok) renderAccords(); else window.alert('⛔ ' + r.err); }); return; }
+    var forr = t.getAttribute('data-acc-for');
+    if(forr){
+      var parts = forr.split('|');
+      SB.acceptAgreementFor(+parts[0], parts[1], '', 'parent').then(function(r){ if(r.ok) renderAccords(); else window.alert('⛔ ' + r.err); });
+    }
+  });
+  document.addEventListener('dz:view', function(e){
+    var v = (e && e.detail && (e.detail.view||e.detail)) || '';
+    if(String(v).indexOf('compte')>=0) renderAccords();
+  });
+  if((location.hash||'').replace('#','') === 'compte') renderAccords();
+})();

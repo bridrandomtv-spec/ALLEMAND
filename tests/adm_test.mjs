@@ -3,6 +3,8 @@ const sql = readFileSync('supabase/adm_schema.sql', 'utf8');
 const sbjs = readFileSync('supabase/supabase.js', 'utf8');
 const adjs = readFileSync('admin.js', 'utf8');
 const sql2 = readFileSync('supabase/adm2_schema.sql', 'utf8');
+const sql3 = readFileSync('supabase/adm3_schema.sql', 'utf8');
+const appjs = readFileSync('app.js', 'utf8');
 let fails = 0;
 const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
 console.log('== adm_test · invariants administration ADM-1 ==');
@@ -31,5 +33,17 @@ t(!/on public\.audit_logs for (insert|update|delete)/.test(sql2), 'audit_logs : 
 t(!/on public\.receipts for (insert|update|delete)/.test(sql2), 'receipts : écriture uniquement via issue_receipt');
 t(['admQueue','admSetPaymentStatut','admIssueReceipt','admAuditLast'].every(m => sbjs.includes('function ' + m)), '4 méthodes SB.adm* (ADM-2)');
 t(adjs.includes('phase 7 (ADM-2)'), 'file de validation + journal dans #admin');
+t(sql3.includes('create table if not exists public.agreements'), 'table agreements (ADM-3)');
+t(sql3.includes('create table if not exists public.agreement_acceptances'), 'table agreement_acceptances');
+t(sql3.includes('alter table public.agreements enable row level security') && sql3.includes('alter table public.agreement_acceptances enable row level security'), 'RLS accords + acceptations');
+t(sql3.includes('create trigger agreement_acceptances_tr_immuable'), 'acceptations immuables');
+t(['agreement_current','agreement_accept','agreement_accept_for','agreement_withdraw','agreement_status_for','agreement_publish'].every(f => sql3.includes('function public.' + f)), '6 fonctions accords');
+t(sql3.includes('representant_requis_pour_mineur'), 'mineur : représentant légal obligatoire');
+t(sql3.includes('lien_parent_enfant_absent'), 'parent : lien child_links vérifié');
+t(!/on public\.agreement_acceptances for (insert|update|delete)/.test(sql3), 'acceptations : écriture uniquement via fonctions');
+t(sql3.includes("('conditions_utilisation', 1,"), 'seed conditions v1');
+t(['myAgreements','acceptAgreement','acceptAgreementFor','withdrawAgreement','agreementText','myChildren','admAgreements','admPublishAgreement'].every(m => sbjs.includes('function ' + m)), '8 méthodes SB accords');
+t(appjs.includes('phase 8 (ADM-3)'), 'carte accords dans #compte');
+t(adjs.includes('phase 8b (ADM-3)'), 'publication accords dans #admin');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
