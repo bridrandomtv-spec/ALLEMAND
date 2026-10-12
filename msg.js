@@ -72,6 +72,18 @@
     var box = el('msgBody'); if(!box) return;
     var u = await session(); state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'moi';
     if(!u){
+      var localSess = false;
+      try{ localSess = !!localStorage.getItem('dz_de_session_v1'); }catch(e){}
+      var ucN = document.querySelector('#userChip .uc-n');
+      var appSess = localSess || !!(ucN && ucN.textContent && ucN.textContent.trim());
+      var cloudUp = !!(window.SB && window.SB.sb);
+      if(appSess){
+        box.innerHTML = '<div class="msg-land"><h2>💬 Messages — compte cloud requis</h2>'
+          + '<p>Tu es connecté à la plateforme, mais ta session actuelle est ' + (cloudUp ? 'locale/hors-ligne' : 'locale, et le client cloud n\'a pas pu se charger (réseau/CDN)') + '. La messagerie nationale (groupes officiels, temps réel, modération, vérification d\'identité) repose sur ton compte cloud protégé par RLS : connecte-toi ou crée un compte cloud pour l\'activer ici.</p>'
+          + '<div class="msg-cta"><button class="in" data-act="msg-login" type="button">🔐 Connecter mon compte cloud</button>'
+          + '<button class="up" data-act="msg-signup" type="button">📝 Créer un compte cloud</button></div></div>';
+        return;
+      }
       var L = '<div class="msg-land"><h2>💬 الرسائل — la messagerie nationale des élèves 🇩🇿</h2>'
         + '<p>Un espace d\'échange scolaire organisé par wilaya, niveau et filière : cours, devoirs, compositions, annales du BAC et résumés — dans un cadre protégé, modéré par tes professeurs.</p>'
         + '<div class="msg-cta"><button class="in" data-act="msg-login" type="button">🔐 تسجيل الدخول — Se connecter</button>'
