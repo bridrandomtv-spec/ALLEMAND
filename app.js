@@ -511,7 +511,7 @@ function prochaineSeance(){
   return null;
 }
 window.prochaineSeance = prochaineSeance;
-window.getNiveauActif = function(){ return niveauActif; }; try{ cloudAuthority().then(function(s){ if(s){ document.dispatchEvent(new CustomEvent('dz:auth', { detail:s })); } }); }catch(e){} syncNiveauCompte(); setTimeout(syncNiveauCompte, 2500); document.addEventListener('dz:auth', function(){ syncNiveauCompte(); });
+window.getNiveauActif = function(){ return niveauActif; }; try{ (window.cloudAuthority || function(){ return Promise.resolve(null); })().then(function(s){ if(s){ document.dispatchEvent(new CustomEvent('dz:auth', { detail:s })); } }); }catch(e){} syncNiveauCompte(); setTimeout(syncNiveauCompte, 2500); document.addEventListener('dz:auth', function(){ syncNiveauCompte(); });
 
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
@@ -1781,9 +1781,9 @@ function renderLienCloud(){
     const msg = $('#lcMsg'); const mail = $('#lcMail').value, pass = $('#lcPass').value;
     if(!mail || !pass){ msg.textContent = 'أدخل البريد وكلمة السر.'; return; }
     let p = null;
-    try{ await window.SB.login(mail, pass); p = await cloudAuthority(); }
+    try{ await window.SB.login(mail, pass); p = await window.cloudAuthority(); }
     catch(e){
-      try{ await window.SB.signup(mail, pass, { pseudo:s.nom, niveau:s.niveau, filiere:s.filiere, wilaya:s.wilaya }); p = await cloudAuthority(); }
+      try{ await window.SB.signup(mail, pass, { pseudo:s.nom, niveau:s.niveau, filiere:s.filiere, wilaya:s.wilaya }); p = await window.cloudAuthority(); }
       catch(e2){ msg.textContent = 'تعذر الربط : ' + ((e2 && (e2.message || e2.msg)) || 'تحقق من البيانات'); return; }
     }
     if(p){ msg.textContent = '✅ تم الربط — المستوى المعتمد : ' + p.niveau; setTimeout(function(){ location.reload(); }, 900); }
