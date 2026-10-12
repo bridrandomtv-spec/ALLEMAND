@@ -2993,3 +2993,41 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   });
   if((location.hash||'').replace('#','') === 'compte') renderAccords();
 })();
+
+/* ── phase 11 (ADM-5) : carte 🔔 notifications dans #compte + création de ticket ── */
+(function(){
+  function esq7(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  async function renderNotifs(){
+    var host = document.getElementById('compteBody'); if(!host) return;
+    var box = document.getElementById('notifsCard');
+    if(!box){ box = document.createElement('div'); box.id = 'notifsCard'; box.className = 'card'; host.appendChild(box); }
+    if(!window.SB || !SB.myNotifications){ box.innerHTML = '<h2>🔔 Notifications</h2><p>☁️ indisponible</p>'; return; }
+    var r = await SB.myNotifications();
+    box.innerHTML = '<h2>🔔 Notifications</h2>'
+      + (r.ok ? (r.rows.length ? r.rows.map(function(n){
+          return '<div class="rep-row"><span>' + (n.lue ? '' : '🔵 ') + esq7(n.cle) + ' · ' + esq7(JSON.stringify(n.payload||{}).slice(0,60)) + '</span>'
+            + (n.lue ? '<span style="font-size:11px;color:var(--m)">' + String(n.created_at||'').slice(0,10) + '</span>'
+                     : '<button class="btn btn-sm btn-o" data-notif-read="' + n.id + '" type="button">marquer lue</button>') + '</div>';
+        }).join('') : '<p>aucune notification</p>') : '<p>⛔ ' + esq7(r.err) + '</p>')
+      + '<div class="fld" style="margin-top:10px"><span>Ouvrir un ticket support</span>'
+      + '<input id="tickSujet" placeholder="sujet"> <input id="tickCorps" placeholder="détail (optionnel)">'
+      + '<button class="btn btn-sm btn-p" data-tick-new="1" type="button">envoyer</button></div>';
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target && e.target.closest ? e.target.closest('[data-notif-read],[data-tick-new]') : null;
+    if(!t) return;
+    var rd = t.getAttribute('data-notif-read');
+    if(rd){ SB.notifMarkRead(+rd).then(function(r){ if(r.ok) renderNotifs(); }); return; }
+    if(t.getAttribute('data-tick-new')){
+      var s = (document.getElementById('tickSujet')||{}).value || '';
+      var c = (document.getElementById('tickCorps')||{}).value || '';
+      if(!s){ window.alert('⛔ sujet requis'); return; }
+      SB.ticketCreate(s, c).then(function(r){ if(r.ok){ window.alert('✅ ticket ouvert'); renderNotifs(); } else window.alert('⛔ ' + r.err); });
+    }
+  });
+  document.addEventListener('dz:view', function(e){
+    var v = (e && e.detail && (e.detail.view||e.detail)) || '';
+    if(String(v).indexOf('compte')>=0) renderNotifs();
+  });
+  if((location.hash||'').replace('#','') === 'compte') renderNotifs();
+})();

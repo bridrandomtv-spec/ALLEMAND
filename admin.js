@@ -453,3 +453,117 @@ document.addEventListener('click', ev => {
   });
   if((location.hash||'').replace('#','') === 'admin') renderTabs();
 })();
+
+/* ── phase 10 (ADM-5) : onglets 💰 Comptabilité & rapports + 🎫 Support ─ */
+(function(){
+  function esq6(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function section5(){ return document.querySelector('section[data-view="admin"]'); }
+  var perms5 = [];
+  function dlCSV(nom, lignes){
+    var csv = lignes.map(function(l){ return l.map(function(v){ return '"' + String(v==null?'':v).replace(/"/g,'""') + '"'; }).join(';'); }).join('\n');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8' }));
+    a.download = nom; a.click();
+  }
+  async function renderCompta(){
+    var h = section5(); if(!h) return;
+    var box = document.getElementById('admComptaCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admComptaCard'; box.className = 'card'; h.appendChild(box); }
+    if(perms5.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    var e = await SB.admEntries();
+    var rp = await SB.admReport(null, null);
+    var r = rp.ok ? rp.report : {};
+    var html = '<h2>💰 Comptabilité & rapports (ADM-5)</h2>'
+      + '<p style="font-size:12px;color:var(--m);margin-bottom:8px">Périmètre : ' + esq6(r.perimetre || '?') + ' · recettes ' + (r.recettes_da||0) + ' DA · remboursements ' + (r.remboursements_da||0) + ' · dépenses ' + (r.depenses_da||0) + ' · solde ' + ((r.recettes_da||0)-(r.remboursements_da||0)-(r.depenses_da||0)) + ' DA</p>';
+    html += e.ok && e.rows.length ? e.rows.slice(0,40).map(function(x){
+      return '<div class="rep-row"><span>' + String(x.at||'').slice(0,10) + ' · ' + esq6(x.sens) + ' · ' + esq6(x.categorie) + ' · ' + x.montant + ' ' + esq6(x.devise) + (x.wilaya ? ' · w' + esq6(x.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">' + esq6(x.ref_type) + ' #' + esq6(x.ref_id) + '</span></div>';
+    }).join('') : '<p>aucune écriture pour l’instant</p>';
+    html += '<div class="fld" style="margin-top:10px"><span>Rapport par période</span>'
+      + '<input id="adm5Debut" type="date"> <input id="adm5Fin" type="date">'
+      + '<button class="btn btn-sm btn-o" data-adm5-report="1" type="button">calculer</button>'
+      + '<button class="btn btn-sm btn-g" data-adm5-csv="1" type="button">export CSV</button></div>'
+      + '<pre id="adm5RepOut" style="background:var(--p2);border:1px solid var(--b);border-radius:10px;padding:8px;font-size:11px;max-height:160px;overflow:auto"></pre>';
+    if(perms5.indexOf('accounting.manage') !== -1){
+      html += '<div class="fld" style="margin-top:8px"><span>Dépense manuelle</span>'
+        + '<input id="adm5Mont" type="number" placeholder="montant DA"> <input id="adm5Cat" placeholder="catégorie">'
+        + '<button class="btn btn-sm btn-p" data-adm5-dep="1" type="button">enregistrer</button></div>';
+    }
+    box.innerHTML = html;
+  }
+  async function renderSupport(){
+    var h = section5(); if(!h) return;
+    var box = document.getElementById('admSupportCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admSupportCard'; box.className = 'card'; h.appendChild(box); }
+    if(perms5.indexOf('tickets.handle') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    var t = await SB.admTickets();
+    box.innerHTML = '<h2>🎫 Support (dossiers de ton périmètre)</h2>'
+      + (t.ok && t.rows.length ? t.rows.map(function(x){ var p = x.profiles || {};
+          return '<div class="rep-row"><span>#' + x.id + ' · ' + esq6(p.pseudo||'?') + ' · ' + esq6(p.wilaya||'?') + ' · ' + esq6(x.sujet) + ' · ' + esq6(x.statut) + '</span>'
+            + '<span style="display:flex;gap:6px">'
+            + '<button class="btn btn-sm btn-o" data-adm5-tk="' + x.id + '|en_cours" type="button">prendre</button>'
+            + '<button class="btn btn-sm btn-p" data-adm5-tk="' + x.id + '|resolu" type="button">résoudre</button></span></div>';
+        }).join('') : '<p>aucun ticket ouvert dans ton périmètre</p>');
+  }
+  function showOnly(ids){
+    var h = section5(); if(!h) return;
+    Array.prototype.slice.call(h.querySelectorAll('.card')).forEach(function(c){ c.hidden = ids.indexOf(c.id) === -1; });
+    Array.prototype.slice.call(h.querySelectorAll('[data-adm-tab],[data-adm5-tab]')).forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-adm5-tab') && ids.indexOf(b.getAttribute('data-adm5-tab') === -1 ? '' : b.getAttribute('data-adm5-tab')) !== -1); });
+  }
+  async function mountTabs(){
+    var h = section5(); if(!h) return;
+    var bar = document.getElementById('admTabs'); if(!bar) return;
+    var meP = await SB.admMyPerms(); perms5 = meP.ok ? (meP.perms||[]) : [];
+    if(!bar.querySelector('[data-adm5-tab="compta"]') && perms5.indexOf('reports.read') !== -1){
+      bar.insertAdjacentHTML('beforeend', '<button class="tab" data-adm5-tab="compta" type="button">💰 Compta & rapports</button>');
+    }
+    if(!bar.querySelector('[data-adm5-tab="support"]') && perms5.indexOf('tickets.handle') !== -1){
+      bar.insertAdjacentHTML('beforeend', '<button class="tab" data-adm5-tab="support" type="button">🎫 Support</button>');
+    }
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm5-tab],[data-adm5-report],[data-adm5-csv],[data-adm5-dep],[data-adm5-tk],[data-adm-tab]') : null;
+    if(!t) return;
+    var tab5 = t.getAttribute('data-adm5-tab');
+    if(tab5){
+      var h = section5();
+      Array.prototype.slice.call(h.querySelectorAll('[data-adm-tab],[data-adm5-tab]')).forEach(function(b){ b.classList.toggle('on', b === t); });
+      if(tab5 === 'compta'){ showOnly(['admComptaCard']); renderCompta(); }
+      if(tab5 === 'support'){ showOnly(['admSupportCard']); renderSupport(); }
+      return;
+    }
+    if(t.getAttribute('data-adm-tab')){ showOnly([]); setTimeout(function(){ var h = section5(); Array.prototype.slice.call(h.querySelectorAll('.card')).forEach(function(c){ if(c.id === 'admComptaCard' || c.id === 'admSupportCard') c.hidden = true; }); }, 0); return; }
+    if(t.getAttribute('data-adm5-report')){
+      var d = (document.getElementById('adm5Debut')||{}).value || null;
+      var f = (document.getElementById('adm5Fin')||{}).value || null;
+      SB.admReport(d, f).then(function(r){ var o = document.getElementById('adm5RepOut'); if(o) o.textContent = r.ok ? JSON.stringify(r.report, null, 1) : ('⛔ ' + r.err); });
+      return;
+    }
+    if(t.getAttribute('data-adm5-csv')){
+      SB.admReport(null, null).then(function(r){
+        if(!r.ok){ window.alert('⛔ ' + r.err); return; }
+        var lignes = [['wilaya','recettes_da']];
+        Object.keys(r.report.par_wilaya || {}).forEach(function(k){ lignes.push([k, r.report.par_wilaya[k]]); });
+        lignes.push(['mois','recettes_da']);
+        Object.keys(r.report.par_mois || {}).forEach(function(k){ lignes.push([k, r.report.par_mois[k]]); });
+        dlCSV('rapport_recettes.csv', lignes);
+      });
+      return;
+    }
+    if(t.getAttribute('data-adm5-dep')){
+      var m = +((document.getElementById('adm5Mont')||{}).value || 0);
+      var cat = (document.getElementById('adm5Cat')||{}).value || '';
+      if(!m || !cat){ window.alert('⛔ montant et catégorie requis'); return; }
+      SB.admDepense(m, cat, {}).then(function(r){ if(r.ok) renderCompta(); else window.alert('⛔ ' + r.err); });
+      return;
+    }
+    var tk = t.getAttribute('data-adm5-tk');
+    if(tk){ var pp = tk.split('|'); SB.admTicketSet(+pp[0], pp[1]).then(function(r){ if(r.ok) renderSupport(); else window.alert('⛔ ' + r.err); }); }
+  });
+  document.addEventListener('dz:view', function(e){
+    var v = (e && e.detail && (e.detail.view||e.detail)) || '';
+    if(String(v).indexOf('admin')>=0) mountTabs();
+  });
+  if((location.hash||'').replace('#','') === 'admin') mountTabs();
+})();

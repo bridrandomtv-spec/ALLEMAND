@@ -5,6 +5,7 @@ const adjs = readFileSync('admin.js', 'utf8');
 const sql2 = readFileSync('supabase/adm2_schema.sql', 'utf8');
 const sql3 = readFileSync('supabase/adm3_schema.sql', 'utf8');
 const sql4 = readFileSync('supabase/adm4_schema.sql', 'utf8');
+const sql5 = readFileSync('supabase/adm5_schema.sql', 'utf8');
 const appjs = readFileSync('app.js', 'utf8');
 let fails = 0;
 const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
@@ -56,5 +57,19 @@ t(sql4.includes("public.admin_sees_wilaya(auth.uid(), pr.wilaya)"), 'fiche élè
 t(sql4.includes("('admin_general','settings.manage')"), 'seed permission settings.manage');
 t(['admDashboard','admSearchStudents','admStudent','admSettings','admSetSetting'].every(m => sbjs.includes('function ' + m)), '5 méthodes SB.adm* (ADM-4)');
 t(adjs.includes('phase 9 (ADM-4)') && adjs.includes('admTabs'), 'barre d onglets #admin + cartes ADM-4');
+t(sql5.includes('create table if not exists public.accounting_entries'), 'table accounting_entries (ADM-5)');
+t(sql5.includes('create table if not exists public.support_tickets'), 'table support_tickets');
+t(sql5.includes('create table if not exists public.notifications'), 'table notifications');
+t(['accounting_entries','support_tickets','notifications'].every(x => sql5.includes('alter table public.' + x + ' enable row level security')), 'RLS sur les 3 tables ADM-5');
+t(sql5.includes('create trigger accounting_entries_tr_immuable'), 'écritures comptables immuables');
+t(sql5.includes('create trigger accounting_tr_payment'), 'écriture recette/remboursement auto sur statut paiement');
+t(sql5.includes('create trigger notify_tr_payment') && sql5.includes('create trigger notify_tr_receipt'), 'notifications déclenchées par événements financiers');
+t(['accounting_depense','admin_report','notify','ticket_set_statut'].every(f => sql5.includes('function public.' + f)), '4 fonctions ADM-5');
+t(!/on public\.accounting_entries for (insert|update|delete)/.test(sql5), 'comptabilité : écriture uniquement via triggers/fonctions');
+t(!/on public\.notifications for insert/.test(sql5), 'notifications : écriture uniquement via notify()');
+t(sql5.includes("('admin_general','accounting.manage')"), 'seed permission accounting.manage');
+t(['admEntries','admDepense','admReport','admTickets','admTicketSet','ticketCreate','myNotifications','notifMarkRead'].every(m => sbjs.includes('function ' + m)), '8 méthodes SB.adm* (ADM-5)');
+t(adjs.includes('phase 10 (ADM-5)'), 'onglets 💰 et 🎫 dans #admin');
+t(appjs.includes('phase 11 (ADM-5)'), 'carte 🔔 + ticket dans #compte');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');

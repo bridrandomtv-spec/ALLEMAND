@@ -620,3 +620,58 @@ async function admSetSetting(cle, valeur){
   return r.data || { ok:true };
 }
 Object.assign(window.SB, { admDashboard, admSearchStudents, admStudent, admSettings, admSetSetting });
+
+/* ── ADM-5 · comptabilité, rapports, support, notifications (client fin) ── */
+async function admEntries(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('accounting_entries').select('*').order('at', { ascending:false }).limit(120);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, rows:r.data||[] };
+}
+async function admDepense(montant, categorie, meta){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('accounting_depense', { montant: montant, categorie: categorie || '', meta: meta || {} });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+async function admReport(debut, fin){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('admin_report', { uid: u.id, debut: debut || null, fin: fin || null });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, report:r.data };
+}
+async function admTickets(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('support_tickets').select('id,user_id,sujet,statut,assigne_to,created_at,profiles(pseudo,wilaya)')
+    .in('statut', ['ouvert','en_cours']).order('id', { ascending:false }).limit(60);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, rows:r.data||[] };
+}
+async function admTicketSet(tid, statut){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const u = await me();
+  const r = await c.rpc('ticket_set_statut', { tid: tid, statut: statut, assigne: u ? u.id : null });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+async function ticketCreate(sujet, corps){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('support_tickets').insert({ user_id: u.id, sujet: sujet, corps: corps || '' });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+async function myNotifications(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('notifications').select('*').order('created_at', { ascending:false }).limit(30);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, rows:r.data||[] };
+}
+async function notifMarkRead(id){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('notifications').update({ lue:true }).eq('id', id);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true };
+}
+Object.assign(window.SB, { admEntries, admDepense, admReport, admTickets, admTicketSet, ticketCreate, myNotifications, notifMarkRead });
