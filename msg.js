@@ -201,13 +201,26 @@
     if(act==='back'){ closeChannel(); state.conv=null; renderList(); return; }
     if(act==='send'){ send(); return; }
     if(act==='msg-login' || act==='msg-signup'){
-      try{ sessionStorage.setItem('dz_want_gate', act==='msg-login' ? 'login' : 'signup'); }catch(e){}
+      /* Le mode essai vit en localStorage : une navigation ne suffit pas.
+         On ouvre le portail existant (#gate) en overlay, comme le fait le
+         bandeau d'essai, et on présélectionne l'onglet voulu. */
       try{
-        var u2 = new URL(location.href);
-        u2.searchParams.delete('demo'); u2.searchParams.delete('demo');
-        u2.hash = '#accueil';
-        location.href = u2.toString();
-      }catch(e){ location.hash='#accueil'; location.reload(); }
+        var g = document.getElementById('gate');
+        if(g){
+          g.hidden = false;
+          var tabs = g.querySelectorAll('.gtab');
+          var pick = tabs[0];
+          for(var i=0;i<tabs.length;i++){
+            var tx = tabs[i].textContent || '';
+            if(act==='msg-signup' && /\u062c\u062f\u064a\u062f|compte|inscription|signup/i.test(tx)){ pick = tabs[i]; break; }
+            if(act==='msg-login' && /\u0627\u0644\u062f\u062e\u0648\u0644|connect|login/i.test(tx)){ pick = tabs[i]; break; }
+          }
+          if(pick) pick.click();
+          setTimeout(function(){ try{ var f = g.querySelector('input'); if(f) f.focus(); }catch(e){} }, 150);
+        } else {
+          location.hash = '#accueil'; location.reload();
+        }
+      }catch(e){}
       return;
     }
     if(act==='verif-req'){
