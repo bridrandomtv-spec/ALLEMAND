@@ -161,9 +161,11 @@ create policy "ecritures lecture rapports scopés" on public.accounting_entries 
 drop policy if exists "tickets propres" on public.support_tickets;
 create policy "tickets propres" on public.support_tickets for select to authenticated
   using (user_id = auth.uid());
-drop policy if exists "tickets creation propre" on public.support_tickets for insert to authenticated
+drop policy if exists "tickets creation propre" on public.support_tickets;
+create policy "tickets creation propre" on public.support_tickets for insert to authenticated
   with check (user_id = auth.uid());
-drop policy if exists "tickets agents scopés" on public.support_tickets for update to authenticated
+drop policy if exists "tickets agents scopés" on public.support_tickets;
+create policy "tickets agents scopés" on public.support_tickets for update to authenticated
   using (public.admin_can(auth.uid(), 'tickets.handle')
          and exists (select 1 from public.profiles st where st.id = support_tickets.user_id
                        and public.admin_sees_wilaya(auth.uid(), st.wilaya)))
@@ -173,7 +175,8 @@ drop policy if exists "tickets agents scopés" on public.support_tickets for upd
 drop policy if exists "notifications propres" on public.notifications;
 create policy "notifications propres" on public.notifications for select to authenticated
   using (user_id = auth.uid());
-drop policy if exists "notifications marquage propre" on public.notifications for update to authenticated
+drop policy if exists "notifications marquage propre" on public.notifications;
+create policy "notifications marquage propre" on public.notifications for update to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 insert into public.admin_permissions (role_cle, permission) values ('admin_general','accounting.manage')

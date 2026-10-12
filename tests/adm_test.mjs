@@ -68,6 +68,8 @@ t(['accounting_depense','admin_report','notify','ticket_set_statut'].every(f => 
 t(!/on public\.accounting_entries for (insert|update|delete)/.test(sql5), 'comptabilité : écriture uniquement via triggers/fonctions');
 t(!/on public\.notifications for insert/.test(sql5), 'notifications : écriture uniquement via notify()');
 t(sql5.includes("('admin_general','accounting.manage')"), 'seed permission accounting.manage');
+t(!/drop policy[^;]*\bfor\b/.test(sql5), 'aucun DROP POLICY ne porte de clause FOR (42601 impossible)');
+t((sql5.match(/create policy /g) || []).length === 6, 'six CREATE POLICY présents (ADM-5)');
 t(['admEntries','admDepense','admReport','admTickets','admTicketSet','ticketCreate','myNotifications','notifMarkRead'].every(m => sbjs.includes('function ' + m)), '8 méthodes SB.adm* (ADM-5)');
 t(adjs.includes('phase 10 (ADM-5)'), 'onglets 💰 et 🎫 dans #admin');
 t(appjs.includes('phase 11 (ADM-5)'), 'carte 🔔 + ticket dans #compte');
