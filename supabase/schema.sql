@@ -79,7 +79,7 @@ begin
   insert into public.profiles (id, pseudo, role, niveau, filiere, wilaya)
   values (new.id,
           coalesce(new.raw_user_meta_data->>'pseudo',''),
-          coalesce(new.raw_user_meta_data->>'role','eleve'),
+          'eleve',  /* rôle imposé à l'inscription : jamais lu depuis les métadonnées client (ADM-0) */
           new.raw_user_meta_data->>'niveau',
           new.raw_user_meta_data->>'filiere',
           new.raw_user_meta_data->>'wilaya')

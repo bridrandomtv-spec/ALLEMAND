@@ -6,6 +6,11 @@ const cfg = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'))
 const src = fs.readFileSync('access.js', 'utf8');
 const idx = fs.readFileSync('index.html', 'utf8');
 const sw  = fs.readFileSync('sw.js', 'utf8');
+const sch  = fs.readFileSync('supabase/schema.sql', 'utf8');
+
+/* ADM-0 : le trigger d'inscription ne doit JAMAIS lire un rôle depuis les métadonnées client */
+if (/raw_user_meta_data\s*->>\s*'role'/.test(sch)) fails.push('schema.sql : handle_new_user lit le rôle depuis les métadonnées client (auto-promotion possible)');
+if (!/create or replace function public\.handle_new_user/.test(sch)) fails.push('schema.sql : fonction handle_new_user introuvable');
 
 /* câblage */
 if (!/<script src="access\.js(\?[^"]*)?"><\/script>/.test(idx)) fails.push('index.html : access.js non chargé');
