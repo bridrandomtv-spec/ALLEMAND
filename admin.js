@@ -514,6 +514,7 @@ document.addEventListener('click', ev => {
   async function mountTabs(){
     var h = section5(); if(!h) return;
     var bar = document.getElementById('admTabs'); if(!bar) return;
+    if(!window.SB || !SB.admMyPerms){ return; }
     var meP = await SB.admMyPerms(); perms5 = meP.ok ? (meP.perms||[]) : [];
     if(!bar.querySelector('[data-adm5-tab="compta"]') && perms5.indexOf('reports.read') !== -1){
       bar.insertAdjacentHTML('beforeend', '<button class="tab" data-adm5-tab="compta" type="button">💰 Compta & rapports</button>');
@@ -566,4 +567,6 @@ document.addEventListener('click', ev => {
     if(String(v).indexOf('admin')>=0) mountTabs();
   });
   if((location.hash||'').replace('#','') === 'admin') mountTabs();
+  document.addEventListener('dz:sbready', function(){ if((location.hash||'').replace('#','') === 'admin') mountTabs(); });
+  document.addEventListener('dz:auth', function(){ if((location.hash||'').replace('#','') === 'admin') mountTabs(); });
 })();
