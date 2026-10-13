@@ -109,5 +109,6 @@ t(sql3.includes('public.agreements.cle = agreement_publish.cle'), 'ADM-3d : colo
 t(sql3.includes('agreement_accept.nom_representant'), 'ADM-3d : paramètres qualifiés dans accept (42702 latent)');
 t(sql3.includes('agreement_accept_for.nom_representant'), 'ADM-3d : paramètres qualifiés dans accept_for (42702 latent)');
 t(sbjs.includes('MAX_OCTETS_PJ'), 'MSG-LIM : plafond client 5 Mo dans upload()');
+t(appjs.includes('phase 13 (OPS-1)'), 'OPS-1 : bouton signaler un bug + ticket pré-rempli');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');

@@ -3091,3 +3091,34 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   });
   if((location.hash||'').replace('#','') === 'compte') renderRecus();
 })();
+
+/* ── phase 13 (OPS-1) : bouton « signaler un bug » → ticket support pré-rempli ── */
+(function(){
+  function meta(){
+    return 'page: ' + (location.hash || '(accueil)') + '\n'
+         + 'date: ' + new Date().toISOString() + '\n'
+         + 'ecran: ' + window.innerWidth + 'x' + window.innerHeight + '\n'
+         + 'agent: ' + String(navigator.userAgent || '').slice(0,120);
+  }
+  function build(){
+    if(document.getElementById('opsBugBtn')) return;
+    var b = document.createElement('button');
+    b.id = 'opsBugBtn'; b.type = 'button';
+    b.textContent = '🐞 Signaler un bug';
+    b.style.cssText = 'position:fixed;bottom:14px;inset-inline-start:14px;z-index:9997;background:#7a4a06;color:#fff;border:0;border-radius:999px;padding:9px 14px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)';
+    document.body.appendChild(b);
+    b.addEventListener('click', function(){
+      var txt = window.prompt('Décris le bug : page, geste fait, résultat vu (une phrase ou plus)');
+      if(txt === null) return;
+      txt = String(txt).trim();
+      if(!txt){ window.alert('⛔ Description vide — ticket non créé.'); return; }
+      if(!window.SB || !SB.ticketCreate){ window.alert('⛔ Cloud indisponible : note ton texte et réessaie plus tard.'); return; }
+      SB.ticketCreate('[BUG] ' + txt.slice(0,80), txt + '\n\n--- meta ---\n' + meta()).then(function(r){
+        if(r.ok) window.alert('✅ Ticket créé, merci ! Il arrive dans 🎫 Support (ton wilaya + admin général).');
+        else window.alert('⛔ ' + r.err);
+      });
+    });
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+  else setTimeout(build, 600);
+})();
