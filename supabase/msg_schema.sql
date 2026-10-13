@@ -400,3 +400,24 @@ end $$;
 drop trigger if exists profiles_tr_role on public.profiles;
 create trigger profiles_tr_role before update on public.profiles
   for each row execute function public.profiles_role_guard();
+
+-- ══ MSG-LIM — plafond de taille des pièces jointes et documents (garde serveur) ══
+create or replace function public.msg_tr_taille_fn() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if new.octets > 5242880 then raise exception 'piece_jointe_trop_lourde'; end if;
+  return new;
+end $$;
+drop trigger if exists msg_tr_taille on public.msg_attachments;
+create trigger msg_tr_taille before insert on public.msg_attachments
+  for each row execute function public.msg_tr_taille_fn();
+
+create or replace function public.docs_tr_taille_fn() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if new.taille > 5242880 then raise exception 'document_trop_lourd'; end if;
+  return new;
+end $$;
+drop trigger if exists docs_tr_taille on public.documents_meta;
+create trigger docs_tr_taille before insert or update on public.documents_meta
+  for each row execute function public.docs_tr_taille_fn();

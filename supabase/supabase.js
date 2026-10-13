@@ -76,9 +76,13 @@ async function pullMemoire(){
   return { ok: true, n: (r.data || []).length };
 }
 /* storage privé */
+const MAX_OCTETS_PJ = 5 * 1024 * 1024; /* MSG-LIM : 5 Mo par fichier */
 async function upload(file){
   const u = await me(); if(!u) return { ok: false, err: 'non connecté' };
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
+  /* MSG-LIM : plafond client des pièces jointes et documents (5 Mo) */
+  if(!file || !file.size) return { ok: false, err: 'fichier invalide' };
+  if(file.size > MAX_OCTETS_PJ) return { ok: false, err: 'fichier trop lourd (5 Mo max)' };
   const path = u.id + '/' + file.name;
   const r = await c.storage.from('prive').upload(path, file, { upsert: true });
   if(r.error) return { ok: false, err: r.error.message };

@@ -20,6 +20,7 @@ t(sql.includes("old.verif_statut in ('non_verifie','rejete')") && sql.includes("
   'garde vérif : un élève ne peut que DEMANDER (en_attente)');
 t(sql.includes("raise exception 'verif_reservee_moderation'"), 'auto-validation élève = exception SQL');
 t(sql.includes('create policy "profils visibles entre membres"'), 'visibilité profils entre membres du même groupe (parité base/dépôt)');
+t(sql.includes('piece_jointe_trop_lourde') && sql.includes('document_trop_lourd'), 'MSG-LIM : gardes serveur de taille (5 Mo) sur pièces jointes et documents');
 t(sql.includes('function public.profiles_role_guard'), 'garde de rôle profiles_role_guard présente (Lot 6b)');
 t(sql.includes('create trigger profiles_tr_role'), 'trigger profiles_tr_role présent');
 t(sql.includes("raise exception 'role_reservee_admin'"), 'auto-promotion client = exception SQL');
