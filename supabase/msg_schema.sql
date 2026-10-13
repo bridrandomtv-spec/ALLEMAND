@@ -350,6 +350,15 @@ drop trigger if exists profiles_tr_verif on public.profiles;
 create trigger profiles_tr_verif before update on public.profiles
   for each row execute function public.profiles_verif_guard();
 
+-- VISIBILITÉ : les membres d'un même groupe officiel lisent leurs profils
+-- (pseudo/niveau pour la messagerie). Politique présente en base vivante
+-- (drift constaté par audit pg_policies) mais absente du dépôt : parité restaurée.
+drop policy if exists "profils visibles entre membres" on public.profiles;
+create policy "profils visibles entre membres" on public.profiles for select to authenticated
+  using (exists (select 1 from public.msg_members m1
+                 join public.msg_members m2 on m2.conversation_id = m1.conversation_id
+                 where m1.user_id = auth.uid() and m2.user_id = profiles.id));
+
 -- File d'attente lisible par les modérateurs + action de validation
 drop policy if exists "profils en attente visibles modérateurs" on public.profiles;
 create policy "profils en attente visibles modérateurs" on public.profiles for select to authenticated
