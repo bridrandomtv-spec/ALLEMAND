@@ -71,7 +71,8 @@ t(!/on public\.accounting_entries for (insert|update|delete)/.test(sql5), 'compt
 t(!/on public\.notifications for insert/.test(sql5), 'notifications : écriture uniquement via notify()');
 t(sql5.includes("('admin_general','accounting.manage')"), 'seed permission accounting.manage');
 t(!/drop policy[^;]*\bfor\b/.test(sql5), 'aucun DROP POLICY ne porte de clause FOR (42601 impossible)');
-t((sql5.match(/create policy /g) || []).length === 6, 'six CREATE POLICY présents (ADM-5)');
+t((sql5.match(/create policy "[^"]+" on public\.(accounting_entries|support_tickets|notifications)/g) || []).length === 6, 'six CREATE POLICY sur les trois tables ADM-5');
+t(!/create policy "[^"]+" on public\.accounting_closures for (insert|update|delete)/.test(sql5), 'F6 : clôtures sans politique d écriture client');
 t(['admEntries','admDepense','admReport','admTickets','admTicketSet','ticketCreate','myNotifications','notifMarkRead'].every(m => sbjs.includes('function ' + m)), '8 méthodes SB.adm* (ADM-5)');
 t(adjs.includes('phase 10 (ADM-5)'), 'onglets 💰 et 🎫 dans #admin');
 t(appjs.includes('phase 11 (ADM-5)'), 'carte 🔔 + ticket dans #compte');
