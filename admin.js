@@ -546,7 +546,8 @@ document.addEventListener('click', ev => {
       if(tab5 === 'support'){ showOnly(['admSupportCard']); renderSupport(); }
       return;
     }
-    if(t.getAttribute('data-adm-tab')){ showOnly([]); setTimeout(function(){ var h = section5(); Array.prototype.slice.call(h.querySelectorAll('.card')).forEach(function(c){ if(c.id === 'admComptaCard' || c.id === 'admSupportCard') c.hidden = true; }); }, 0); return; }
+    /* UI-2 : un clic sur un onglet de la phase 9 ne masque QUE les cartes de la phase 10, pas toute la section */
+    if(t.getAttribute('data-adm-tab')){ ['admComptaCard','admSupportCard'].forEach(function(id){ var c = document.getElementById(id); if(c) c.hidden = true; }); return; }
     if(t.getAttribute('data-adm5-report')){
       var d = (document.getElementById('adm5Debut')||{}).value || null;
       var f = (document.getElementById('adm5Fin')||{}).value || null;

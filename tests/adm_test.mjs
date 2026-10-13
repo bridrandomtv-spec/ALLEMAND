@@ -99,5 +99,6 @@ t(['admCloseMonth','admMarkRapproche','admClosures'].every(m => sbjs.includes('f
 t(adjs.includes('data-adm5-rap') && adjs.includes('data-adm5-close'), 'F6 : UI pointer + clôturer');
 t(sbjs.includes('pont dz:view post-sbready'), 'UI-1 : re-rendu des cartes ADM quand le client cloud devient prêt');
 t(appjs.includes('ENG-1 : la vue english se peint aussi à la navigation'), 'ENG-1 : rendu de #english à la navigation, plus de Chargement permanent');
+t(adjs.includes('UI-2 : un clic sur un onglet de la phase 9 ne masque QUE les cartes'), 'UI-2 : onglets phase 9 ne vident plus la section Opérations');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
