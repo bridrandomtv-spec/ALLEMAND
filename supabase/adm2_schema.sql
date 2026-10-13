@@ -155,3 +155,40 @@ create policy "receipts lecture propre+agents" on public.receipts for select to 
 drop policy if exists "audit lecture acteurs+rapports" on public.audit_logs;
 create policy "audit lecture acteurs+rapports" on public.audit_logs for select to authenticated
   using (acteur = auth.uid() or public.admin_can(auth.uid(), 'reports.read'));
+
+-- ══ F3 — anti double reçu (index unique) + traçabilité des corrections de paiement ══
+create unique index if not exists receipts_payment_uni on public.receipts (payment_id);
+
+create or replace function public.payments_tr_blocage_montant_fn() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then return new; end if;
+  if new.montant is distinct from old.montant and old.statut in ('confirme','valide') then
+    raise exception 'montant_confirme_non_modifiable';
+  end if;
+  return new;
+end $$;
+drop trigger if exists payments_tr_blocage_montant on public.payments;
+create trigger payments_tr_blocage_montant before update on public.payments
+  for each row execute function public.payments_tr_blocage_montant_fn();
+
+create or replace function public.payments_tr_audit_cols_fn() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare w text := '';
+begin
+  select coalesce(p.wilaya,'') into w from public.profiles p where p.id = new.user_id;
+  if new.montant is distinct from old.montant or new.devise is distinct from old.devise
+     or new.methode is distinct from old.methode
+     or new.ref_plateforme is distinct from old.ref_plateforme
+     or new.ref_banque is distinct from old.ref_banque then
+    perform public.audit_log('payment.modification','payment', new.id::text,
+      jsonb_build_object('montant', old.montant, 'devise', old.devise, 'methode', old.methode,
+                         'ref_plateforme', old.ref_plateforme, 'ref_banque', old.ref_banque),
+      jsonb_build_object('montant', new.montant, 'devise', new.devise, 'methode', new.methode,
+                         'ref_plateforme', new.ref_plateforme, 'ref_banque', new.ref_banque), w);
+  end if;
+  return new;
+end $$;
+drop trigger if exists payments_tr_audit_cols on public.payments;
+create trigger payments_tr_audit_cols after update on public.payments
+  for each row execute function public.payments_tr_audit_cols_fn();

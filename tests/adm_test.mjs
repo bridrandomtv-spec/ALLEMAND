@@ -74,5 +74,8 @@ t((sql5.match(/create policy /g) || []).length === 6, 'six CREATE POLICY présen
 t(['admEntries','admDepense','admReport','admTickets','admTicketSet','ticketCreate','myNotifications','notifMarkRead'].every(m => sbjs.includes('function ' + m)), '8 méthodes SB.adm* (ADM-5)');
 t(adjs.includes('phase 10 (ADM-5)'), 'onglets 💰 et 🎫 dans #admin');
 t(appjs.includes('phase 11 (ADM-5)'), 'carte 🔔 + ticket dans #compte');
+t(sql2.includes('create unique index if not exists receipts_payment_uni'), 'F3 : index unique receipts.payment_id (anti double reçu)');
+t(sql2.includes('create trigger payments_tr_blocage_montant'), 'F3 : montant confirmé non modifiable côté client');
+t(sql2.includes('create trigger payments_tr_audit_cols'), 'F3 : toute correction de paiement tracée au journal');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
