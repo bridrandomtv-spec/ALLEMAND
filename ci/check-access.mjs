@@ -10,6 +10,7 @@ const sch  = fs.readFileSync('supabase/schema.sql', 'utf8');
 const fsg  = fs.readFileSync('supabase/fix_scope_guard.sql', 'utf8');
 const msgsql = fs.readFileSync('supabase/msg_schema.sql', 'utf8');
 const qa  = fs.existsSync('docs/qa/reference.html') ? fs.readFileSync('docs/qa/reference.html', 'utf8') : '';
+const leg = fs.readFileSync('legal.js', 'utf8');
 const mfst = fs.existsSync('manifest.json') ? fs.readFileSync('manifest.json', 'utf8') : '';
 
 
@@ -24,6 +25,10 @@ if (!/profiles_role_guard/.test(msgsql) || !/profiles_verif_guard/.test(msgsql))
 if (!idx.includes('brand/favicon.svg')) fails.push('index.html : favicon de marque absent (BRAND-1)');
 if (!sw.includes('brand/favicon.svg')) fails.push('sw.js : favicon de marque absent du precache (BRAND-1)');
 if (!qa.includes('matrice-qa-v8')) fails.push('docs/qa/reference.html : checklist QA absente ou invalide (QA-1)');
+/* LEGAL-1 */
+if (!leg.includes('donnees-mineurs-legal1')) fails.push('legal.js : section données mineurs absente (LEGAL-1)');
+if (!idx.includes('سياسة الخصوصية (بيانات القاصرين)')) fails.push('index.html : lien consentement absent du formulaire (LEGAL-1)');
+
 if (!idx.includes('بانتظار اعتماد الإدارة')) fails.push('SIGNUP-1 : formulaire d inscription sans la mention d approbation administrative');
 if (idx.includes('Deutsche Sprache')) fails.push('BRAND-2 : mention « Deutsche Sprache » résiduelle dans index.html');
 if (!idx.includes('Lycée virtuel')) fails.push('BRAND-2 : nouvelle marque absente de index.html');
