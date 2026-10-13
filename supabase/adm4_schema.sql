@@ -24,13 +24,13 @@ begin
   return jsonb_build_object('ok', true);
 end $$;
 
-create or replace function public.admin_dashboard(uid uuid) returns jsonb
+create or replace function public.admin_dashboard() returns jsonb
 language plpgsql stable security definer set search_path = public as $$
 declare general boolean; wils text[]; out jsonb;
 begin
-  if not public.admin_can(uid, 'reports.read') then raise exception 'permission_refusee'; end if;
-  general := (public.admin_role_of(uid) = 'admin_general');
-  wils := public.admin_wilayas(uid);
+  if not public.admin_can(auth.uid(), 'reports.read') then raise exception 'permission_refusee'; end if;
+  general := (public.admin_role_of(auth.uid()) = 'admin_general');
+  wils := public.admin_wilayas(auth.uid());
   select jsonb_build_object(
     'eleves', (select count(*) from public.profiles p where p.role='eleve' and (general or p.wilaya = any(wils))),
     'paiements_attente', (select count(*) from public.payments pay join public.profiles p on p.id = pay.user_id

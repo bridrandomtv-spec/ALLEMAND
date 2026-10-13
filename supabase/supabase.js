@@ -590,7 +590,7 @@ Object.assign(window.SB, { myAgreements, acceptAgreement, acceptAgreementFor, wi
 async function admDashboard(){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
-  const r = await c.rpc('admin_dashboard', { uid: u.id });
+  const r = await c.rpc('admin_dashboard', {});
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, dash:r.data };
 }
@@ -637,7 +637,7 @@ async function admDepense(montant, categorie, meta){
 async function admReport(debut, fin){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
-  const r = await c.rpc('admin_report', { uid: u.id, debut: debut || null, fin: fin || null });
+  const r = await c.rpc('admin_report', { debut: debut || null, fin: fin || null });
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, report:r.data };
 }

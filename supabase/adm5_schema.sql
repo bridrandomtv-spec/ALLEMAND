@@ -119,13 +119,13 @@ begin
   return jsonb_build_object('ok', true);
 end $$;
 
-create or replace function public.admin_report(uid uuid, debut date default null, fin date default null) returns jsonb
+create or replace function public.admin_report(debut date default null, fin date default null) returns jsonb
 language plpgsql stable security definer set search_path = public as $$
 declare general boolean; wils text[]; out jsonb;
 begin
-  if not public.admin_can(uid, 'reports.read') then raise exception 'permission_refusee'; end if;
-  general := (public.admin_role_of(uid) = 'admin_general');
-  wils := public.admin_wilayas(uid);
+  if not public.admin_can(auth.uid(), 'reports.read') then raise exception 'permission_refusee'; end if;
+  general := (public.admin_role_of(auth.uid()) = 'admin_general');
+  wils := public.admin_wilayas(auth.uid());
   select jsonb_build_object(
     'perimetre', case when general then 'national' else array_to_string(wils, ',') end,
     'recettes_da', (select coalesce(sum(e.montant),0) from public.accounting_entries e

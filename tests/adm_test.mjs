@@ -52,7 +52,7 @@ t(sql4.includes('create table if not exists public.platform_settings'), 'table p
 t(sql4.includes('alter table public.platform_settings enable row level security'), 'RLS platform_settings');
 t(sql4.includes('create policy "profils lecture agents scopés"'), 'politique profils scopés pour agents students.read');
 t(['setting_set','admin_dashboard','admin_student'].every(f => sql4.includes('function public.' + f)), '3 fonctions ADM-4');
-t(sql4.includes("public.admin_can(uid, 'reports.read')"), 'dashboard gated par reports.read');
+t(sql4.includes("public.admin_can(auth.uid(), 'reports.read')") && !/function public\.admin_dashboard\(uid/.test(sql4), 'F2 : dashboard scopé sur auth.uid(), sans paramètre spoofable');
 t(sql4.includes("public.admin_sees_wilaya(auth.uid(), pr.wilaya)"), 'fiche élève scopée par wilaya');
 t(sql4.includes("('admin_general','settings.manage')"), 'seed permission settings.manage');
 t(['admDashboard','admSearchStudents','admStudent','admSettings','admSetSetting'].every(m => sbjs.includes('function ' + m)), '5 méthodes SB.adm* (ADM-4)');
@@ -65,6 +65,7 @@ t(sql5.includes('create trigger accounting_entries_tr_immuable'), 'écritures co
 t(sql5.includes('create trigger accounting_tr_payment'), 'écriture recette/remboursement auto sur statut paiement');
 t(sql5.includes('create trigger notify_tr_payment') && sql5.includes('create trigger notify_tr_receipt'), 'notifications déclenchées par événements financiers');
 t(['accounting_depense','admin_report','notify','ticket_set_statut'].every(f => sql5.includes('function public.' + f)), '4 fonctions ADM-5');
+t(!/function public\.admin_report\(uid/.test(sql5), 'F2 : admin_report sans paramètre uid spoofable');
 t(!/on public\.accounting_entries for (insert|update|delete)/.test(sql5), 'comptabilité : écriture uniquement via triggers/fonctions');
 t(!/on public\.notifications for insert/.test(sql5), 'notifications : écriture uniquement via notify()');
 t(sql5.includes("('admin_general','accounting.manage')"), 'seed permission accounting.manage');
