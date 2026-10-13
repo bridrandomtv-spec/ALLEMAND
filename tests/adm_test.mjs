@@ -87,5 +87,14 @@ t(sql.includes('function public.assignment_set_active'), 'F5 : fonction suspendr
 t(bill.includes('create policy "subscriptions lecture agents scopés"'), 'F5 : subscriptions scopées par wilaya');
 t(sbjs.includes('function admSetAgentActive'), 'F5 : méthode SB suspension');
 t(adjs.includes('data-adm-susp'), 'F5 : boutons suspendre/réactiver dans #admin');
+t(sql5.includes('wilaya, methode)'), 'F6 : méthode copiée dans les écritures auto');
+t(sql5.includes('add column if not exists rapproche boolean'), 'F6 : colonne rapproche');
+t(sql5.includes('create table if not exists public.accounting_closures'), 'F6 : table des clôtures');
+t(sql5.includes('create trigger accounting_tr_periode_close'), 'F6 : écriture interdite sur période close');
+t(sql5.includes('create trigger notifications_tr_lue_only'), 'F6/D-5 : notifications en lecture seule côté client');
+t(sql5.includes('par_methode') && sql5.includes('paiements_sans_ecriture'), 'F6 : rapport méthode + écarts');
+t(!sql3.includes('agreement_status_for(uid uuid'), 'F6/D-6 : agreement_status_for sans uid paramétrable');
+t(['admCloseMonth','admMarkRapproche','admClosures'].every(m => sbjs.includes('function ' + m)), 'F6 : méthodes SB clôtures/rapprochement');
+t(adjs.includes('data-adm5-rap') && adjs.includes('data-adm5-close'), 'F6 : UI pointer + clôturer');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');

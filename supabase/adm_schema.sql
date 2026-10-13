@@ -99,6 +99,7 @@ begin
   if not public.admin_can(auth.uid(), 'agents.manage') then raise exception 'permission_refusee'; end if;
   select code_wilaya into w from public.wilaya_assignments where user_id = uid limit 1;
   update public.wilaya_assignments set active = active where user_id = uid;
+  perform public.notify(uid, case when active then 'agent_reactive' else 'agent_suspendu' end, jsonb_build_object('wilaya', coalesce(w,'')));
   perform public.audit_log(case when active then 'agent.reactivate' else 'agent.suspend' end,
     'wilaya_assignment', uid::text, null, jsonb_build_object('active', active, 'wilaya', coalesce(w,'')), coalesce(w,''));
   return jsonb_build_object('ok', true);

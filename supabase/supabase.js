@@ -536,7 +536,7 @@ async function myAgreements(){
   if(g.error) return { ok:false, err:g.error.message };
   const rows = [];
   for(const a of (g.data||[])){
-    const s = await c.rpc('agreement_status_for', { uid: u.id, cle: a.cle });
+    const s = await c.rpc('agreement_status_for', { cle: a.cle });
     rows.push({ id:a.id, cle:a.cle, version:a.version, titre:a.titre, statut:(s.error ? 'inconnu' : s.data) });
   }
   return { ok:true, rows:rows };
@@ -700,3 +700,24 @@ async function admSetAgentActive(uid, active){
   return r.data || { ok:true };
 }
 Object.assign(window.SB, { admSetAgentActive });
+
+/* ── F6 · clôtures, rapprochement (client fin) ── */
+async function admCloseMonth(periode){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('accounting_close_month', { periode: periode });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+async function admMarkRapproche(eid, rapproche){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('accounting_mark_rapproche', { eid: eid, rapproche: rapproche });
+  if(r.error) return { ok:false, err:r.error.message };
+  return r.data || { ok:true };
+}
+async function admClosures(){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('accounting_closures').select('*').order('periode', { ascending:false });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, rows:r.data||[] };
+}
+Object.assign(window.SB, { admCloseMonth, admMarkRapproche, admClosures });

@@ -45,11 +45,11 @@ begin
   select coalesce(p.wilaya,'') into w from public.profiles p where p.id = new.user_id;
   if new.statut is distinct from old.statut then
     if new.statut in ('confirme','valide') and old.statut not in ('confirme','valide') then
-      insert into public.accounting_entries (sens, categorie, montant, devise, ref_type, ref_id, acteur, wilaya)
-      values ('recette', 'abonnement', new.montant, new.devise, 'payment', new.id::text, auth.uid(), w);
+      insert into public.accounting_entries (sens, categorie, montant, devise, ref_type, ref_id, acteur, wilaya, methode)
+      values ('recette', 'abonnement', new.montant, new.devise, 'payment', new.id::text, auth.uid(), w, new.methode);
     elsif new.statut = 'rembourse' and old.statut <> 'rembourse' then
-      insert into public.accounting_entries (sens, categorie, montant, devise, ref_type, ref_id, acteur, wilaya)
-      values ('remboursement', 'abonnement', -new.montant, new.devise, 'payment', new.id::text, auth.uid(), w);
+      insert into public.accounting_entries (sens, categorie, montant, devise, ref_type, ref_id, acteur, wilaya, methode)
+      values ('remboursement', 'abonnement', -new.montant, new.devise, 'payment', new.id::text, auth.uid(), w, new.methode);
     end if;
   end if;
   return new;
@@ -114,6 +114,7 @@ begin
          assigne_to = coalesce(assigne, assigne_to),
          closed_at = case when statut = 'resolu' then now() else closed_at end
    where id = tid;
+  perform public.notify(t.user_id, 'ticket_statut', jsonb_build_object('ticket', tid, 'statut', statut));
   perform public.audit_log('ticket.statut','support_ticket', tid::text,
     jsonb_build_object('statut', t.statut), jsonb_build_object('statut', statut), w);
   return jsonb_build_object('ok', true);
@@ -147,6 +148,21 @@ begin
                      where e.sens = 'recette' and (general or e.wilaya = any(wils))
                        and (debut is null or e.at::date >= debut) and (fin is null or e.at::date <= fin)
                      group by mo order by mo) s),
+    'par_methode', (select coalesce(jsonb_object_agg(me, mt), '{}') from (
+                     select e.methode as me, sum(e.montant) as mt from public.accounting_entries e
+                     where e.sens = 'recette' and (general or e.wilaya = any(wils))
+                       and (debut is null or e.at::date >= debut) and (fin is null or e.at::date <= fin)
+                     group by e.methode) s),
+    'paiements_sans_ecriture', (select count(*) from public.payments pay
+                     join public.profiles p on p.id = pay.user_id
+                     where pay.statut in ('confirme','valide') and (general or p.wilaya = any(wils))
+                       and not exists (select 1 from public.accounting_entries e
+                                        where e.ref_type = 'payment' and e.ref_id = pay.id::text)),
+    'ecritures_orphelines', (select count(*) from public.accounting_entries e
+                     where e.ref_type = 'payment' and e.ref_id <> ''
+                       and not exists (select 1 from public.payments pay where pay.id::text = e.ref_id)),
+    'ecritures_rapproches', (select count(*) from public.accounting_entries e
+                     where e.rapproche and (general or e.wilaya = any(wils))),
     'tickets_ouverts', (select count(*) from public.support_tickets t
                      join public.profiles p on p.id = t.user_id
                      where t.statut in ('ouvert','en_cours') and (general or p.wilaya = any(wils)))
@@ -181,3 +197,69 @@ create policy "notifications marquage propre" on public.notifications for update
 
 insert into public.admin_permissions (role_cle, permission) values ('admin_general','accounting.manage')
 on conflict (role_cle, permission) do nothing;
+
+-- ══ F6 — rapprochement, clôtures mensuelles, méthode, notifications agents, D-5/D-6 ══
+alter table public.accounting_entries add column if not exists methode text not null default '';
+alter table public.accounting_entries add column if not exists rapproche boolean not null default false;
+create table if not exists public.accounting_closures (
+  periode text primary key,
+  closed_by uuid,
+  closed_at timestamptz not null default now(),
+  snapshot jsonb not null default '{}'
+);
+alter table public.accounting_closures enable row level security;
+drop policy if exists "closures lecture rapports" on public.accounting_closures;
+create policy "closures lecture rapports" on public.accounting_closures for select to authenticated
+  using (public.admin_can(auth.uid(), 'reports.read'));
+drop trigger if exists accounting_closures_tr_immuable on public.accounting_closures;
+create trigger accounting_closures_tr_immuable before update or delete on public.accounting_closures
+  for each row execute function public.immutable_row();
+create or replace function public.accounting_tr_periode_close_fn() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if exists (select 1 from public.accounting_closures c where c.periode = to_char(new.at,'YYYY-MM')) then
+    raise exception 'periode_closee';
+  end if;
+  return new;
+end $$;
+drop trigger if exists accounting_tr_periode_close on public.accounting_entries;
+create trigger accounting_tr_periode_close before insert on public.accounting_entries
+  for each row execute function public.accounting_tr_periode_close_fn();
+create or replace function public.accounting_close_month(periode text) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare snap jsonb;
+begin
+  if not public.admin_can(auth.uid(), 'accounting.manage') then raise exception 'permission_refusee'; end if;
+  if exists (select 1 from public.accounting_closures c where c.periode = periode) then
+    raise exception 'periode_deja_close';
+  end if;
+  snap := public.admin_report((periode || '-01')::date,
+          (date_trunc('month', (periode || '-01')::date) + interval '1 month - 1 day')::date);
+  insert into public.accounting_closures (periode, closed_by, snapshot) values (periode, auth.uid(), snap);
+  perform public.audit_log('accounting.closure','accounting_closure', periode, null, snap, '');
+  return jsonb_build_object('ok', true, 'periode', periode);
+end $$;
+create or replace function public.accounting_mark_rapproche(eid bigint, rapproche boolean) returns jsonb
+language plpgsql security definer set search_path = public as $$
+begin
+  if not public.admin_can(auth.uid(), 'accounting.manage') then raise exception 'permission_refusee'; end if;
+  update public.accounting_entries set rapproche = rapproche where id = eid;
+  perform public.audit_log('accounting.rapprochement','accounting_entry', eid::text, null,
+    jsonb_build_object('rapproche', rapproche), '');
+  return jsonb_build_object('ok', true);
+end $$;
+create or replace function public.notifications_tr_lue_only_fn() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then return new; end if;
+  if new.user_id is distinct from old.user_id
+     or new.cle is distinct from old.cle
+     or new.payload is distinct from old.payload
+     or (old.lue and not new.lue) then
+    raise exception 'notification_modification_interdite';
+  end if;
+  return new;
+end $$;
+drop trigger if exists notifications_tr_lue_only on public.notifications;
+create trigger notifications_tr_lue_only before update on public.notifications
+  for each row execute function public.notifications_tr_lue_only_fn();

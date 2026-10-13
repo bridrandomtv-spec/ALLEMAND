@@ -481,7 +481,8 @@ document.addEventListener('click', ev => {
     var html = '<h2>💰 Comptabilité & rapports (ADM-5)</h2>'
       + '<p style="font-size:12px;color:var(--m);margin-bottom:8px">Périmètre : ' + esq6(r.perimetre || '?') + ' · recettes ' + (r.recettes_da||0) + ' DA · remboursements ' + (r.remboursements_da||0) + ' · dépenses ' + (r.depenses_da||0) + ' · solde ' + ((r.recettes_da||0)-(r.remboursements_da||0)-(r.depenses_da||0)) + ' DA</p>';
     html += e.ok && e.rows.length ? e.rows.slice(0,40).map(function(x){
-      return '<div class="rep-row"><span>' + String(x.at||'').slice(0,10) + ' · ' + esq6(x.sens) + ' · ' + esq6(x.categorie) + ' · ' + x.montant + ' ' + esq6(x.devise) + (x.wilaya ? ' · w' + esq6(x.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">' + esq6(x.ref_type) + ' #' + esq6(x.ref_id) + '</span></div>';
+      return '<div class="rep-row"><span>' + String(x.at||'').slice(0,10) + ' · ' + esq6(x.sens) + ' · ' + esq6(x.categorie) + ' · ' + x.montant + ' ' + esq6(x.devise) + (x.wilaya ? ' · w' + esq6(x.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">' + esq6(x.ref_type) + ' #' + esq6(x.ref_id) + (x.rapproche ? ' · ✅ rapproché' : '') + '</span>'
+        + (x.rapproche ? '' : '<button class="btn btn-sm btn-o" data-adm5-rap="' + x.id + '" type="button">pointer</button>') + '</div>';
     }).join('') : '<p>aucune écriture pour l’instant</p>';
     html += '<div class="fld" style="margin-top:10px"><span>Rapport par période</span>'
       + '<input id="adm5Debut" type="date"> <input id="adm5Fin" type="date">'
@@ -491,7 +492,14 @@ document.addEventListener('click', ev => {
     if(perms5.indexOf('accounting.manage') !== -1){
       html += '<div class="fld" style="margin-top:8px"><span>Dépense manuelle</span>'
         + '<input id="adm5Mont" type="number" placeholder="montant DA"> <input id="adm5Cat" placeholder="catégorie">'
-        + '<button class="btn btn-sm btn-p" data-adm5-dep="1" type="button">enregistrer</button></div>';
+        + '<button class="btn btn-sm btn-p" data-adm5-dep="1" type="button">enregistrer</button></div>'
+      + '<div class="fld" style="margin-top:8px"><span>Clôture mensuelle (période YYYY-MM)</span>'
+      + '<input id="adm5Per" placeholder="ex : 2026-09"> '
+      + '<button class="btn btn-sm btn-g" data-adm5-close="1" type="button">clôturer</button> <span id="adm5CloseOut" style="font-size:12px"></span></div>';
+    SB.admClosures().then(function(cl){
+      var list = cl.ok && cl.rows.length ? cl.rows.map(function(c){ return '<div class="rep-row"><span>clôture ' + esq6(c.periode) + ' · ' + String(c.closed_at||'').slice(0,10) + '</span><span style="font-size:11px;color:var(--m)">solde ' + (((c.snapshot||{}).recettes_da||0) - ((c.snapshot||{}).remboursements_da||0) - ((c.snapshot||{}).depenses_da||0)) + ' DA</span></div>'; }).join('') : '';
+      setTimeout(function(){ var b = document.getElementById('admComptaCard'); if(b && list) b.insertAdjacentHTML('beforeend', '<div style="margin-top:8px"><b style="font-size:12.5px">🔒 Clôtures</b>' + list + '</div>'); }, 0);
+    });
     }
     box.innerHTML = html;
   }
@@ -528,7 +536,7 @@ document.addEventListener('click', ev => {
     }
   }
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-adm5-tab],[data-adm5-report],[data-adm5-csv],[data-adm5-dep],[data-adm5-tk],[data-adm-tab]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm5-tab],[data-adm5-report],[data-adm5-csv],[data-adm5-dep],[data-adm5-tk],[data-adm5-rap],[data-adm5-close],[data-adm-tab]') : null;
     if(!t) return;
     var tab5 = t.getAttribute('data-adm5-tab');
     if(tab5){
@@ -561,6 +569,17 @@ document.addEventListener('click', ev => {
       var cat = (document.getElementById('adm5Cat')||{}).value || '';
       if(!m || !cat){ window.alert('⛔ montant et catégorie requis'); return; }
       SB.admDepense(m, cat, {}).then(function(r){ if(r.ok) renderCompta(); else window.alert('⛔ ' + r.err); });
+      return;
+    }
+    var rap = t.getAttribute('data-adm5-rap');
+    if(rap){ SB.admMarkRapproche(+rap, true).then(function(r){ if(r.ok) renderCompta(); else window.alert('⛔ ' + r.err); }); return; }
+    if(t.getAttribute('data-adm5-close')){
+      var per = (document.getElementById('adm5Per')||{}).value || '';
+      if(!/^[0-9]{4}-[0-9]{2}$/.test(per)){ window.alert('⛔ période YYYY-MM attendue'); return; }
+      SB.admCloseMonth(per).then(function(r){
+        var o = document.getElementById('adm5CloseOut'); if(o) o.textContent = r.ok ? ('✅ ' + r.periode) : ('⛔ ' + r.err);
+        if(r.ok) renderCompta();
+      });
       return;
     }
     var tk = t.getAttribute('data-adm5-tk');

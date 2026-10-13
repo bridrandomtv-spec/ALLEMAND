@@ -67,32 +67,19 @@ begin
   return jsonb_build_object('ok', true);
 end $$;
 
-create or replace function public.agreement_status_for(uid uuid, cle text) returns text
+create or replace function public.agreement_status_for(cle text) returns text
 language sql stable security definer set search_path = public as $$
   select coalesce((
     select case
       when (last.meta->>'retrait') = 'true' then 'retire'
-      when last.agreement_id <> (select c.id from public.agreements c where c.cle = $2 and c.actif order by c.version desc limit 1) then 'version_a_reevaluer'
+      when last.agreement_id <> (select c.id from public.agreements c where c.cle = $1 and c.actif order by c.version desc limit 1) then 'version_a_reevaluer'
       else 'accepte' end
     from (select a.* from public.agreement_acceptances a
            join public.agreements g on g.id = a.agreement_id
-          where a.user_id = $1 and g.cle = $2
+          where a.user_id = auth.uid() and g.cle = $1
           order by a.accepte_at desc, a.id desc limit 1) last
   ), 'jamais');
 $$;
-
-create or replace function public.agreement_publish(cle text, titre text, corps text) returns jsonb
-language plpgsql security definer set search_path = public as $$
-declare v int; nid bigint;
-begin
-  if not public.admin_can(auth.uid(), 'agreements.manage') then raise exception 'permission_refusee'; end if;
-  select coalesce(max(version),0)+1 into v from public.agreements where cle = agreement_publish.cle;
-  update public.agreements set actif = false where cle = agreement_publish.cle and actif;
-  insert into public.agreements (cle, version, titre, corps, cree_par)
-  values (cle, v, titre, corps, auth.uid()) returning id into nid;
-  perform public.audit_log('agreement.publish','agreement', nid::text, null, jsonb_build_object('cle', cle, 'version', v), '');
-  return jsonb_build_object('ok', true, 'id', nid, 'version', v);
-end $$;
 
 drop trigger if exists agreement_acceptances_tr_immuable on public.agreement_acceptances;
 create trigger agreement_acceptances_tr_immuable before update or delete on public.agreement_acceptances
