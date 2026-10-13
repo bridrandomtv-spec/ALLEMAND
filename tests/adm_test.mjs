@@ -105,5 +105,8 @@ t(sbjs.includes('PERMS-1'), 'PERMS-1 : jointure permissions en deux requêtes cl
 t(!/from\('payments'\)\.select\('[^']*profiles\(/.test(sbjs), 'PERMS-2 : aucun embed profiles depuis payments (FK auth.users)');
 t(sbjs.includes('PERMS-2'), 'PERMS-2 : file de validation en deux requêtes + jointure client');
 t(sql3.includes('values (agreement_publish.cle,'), 'ADM-3c : paramètres qualifiés dans agreement_publish (column reference cle ambiguous corrigé)');
+t(sql3.includes('public.agreements.cle = agreement_publish.cle'), 'ADM-3d : colonne cle qualifiée dans publish (42702)');
+t(sql3.includes('agreement_accept.nom_representant'), 'ADM-3d : paramètres qualifiés dans accept (42702 latent)');
+t(sql3.includes('agreement_accept_for.nom_representant'), 'ADM-3d : paramètres qualifiés dans accept_for (42702 latent)');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');

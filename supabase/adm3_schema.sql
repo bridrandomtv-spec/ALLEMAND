@@ -38,8 +38,8 @@ begin
   end if;
   insert into public.agreement_acceptances (agreement_id, user_id, accepte_par, nom_representant, lien_representant)
   values (aid, auth.uid(), auth.uid(),
-          case when pr.role = 'eleve' then nom_representant else coalesce(nullif(nom_representant,''), pr.pseudo) end,
-          coalesce(nullif(lien_representant,''), case when pr.role = 'eleve' then 'representant_legal' else 'self' end));
+          case when pr.role = 'eleve' then agreement_accept.nom_representant else coalesce(nullif(agreement_accept.nom_representant,''), pr.pseudo) end,
+          coalesce(nullif(agreement_accept.lien_representant,''), case when pr.role = 'eleve' then 'representant_legal' else 'self' end));
   return jsonb_build_object('ok', true);
 end $$;
 
@@ -53,8 +53,8 @@ begin
   select * into pr from public.profiles where id = auth.uid();
   insert into public.agreement_acceptances (agreement_id, user_id, accepte_par, nom_representant, lien_representant, meta)
   values (aid, child_uid, auth.uid(),
-          coalesce(nullif(nom_representant,''), pr.pseudo),
-          coalesce(nullif(lien_representant,''), 'parent'),
+          coalesce(nullif(agreement_accept_for.nom_representant,''), pr.pseudo),
+          coalesce(nullif(agreement_accept_for.lien_representant,''), 'parent'),
           '{"par_representant":true}');
   return jsonb_build_object('ok', true);
 end $$;
@@ -86,8 +86,8 @@ language plpgsql security definer set search_path = public as $$
 declare v int; nid bigint;
 begin
   if not public.admin_can(auth.uid(), 'agreements.manage') then raise exception 'permission_refusee'; end if;
-  select coalesce(max(version),0)+1 into v from public.agreements where cle = agreement_publish.cle;
-  update public.agreements set actif = false where cle = agreement_publish.cle and actif;
+  select coalesce(max(version),0)+1 into v from public.agreements where public.agreements.cle = agreement_publish.cle;
+  update public.agreements set actif = false where public.agreements.cle = agreement_publish.cle and actif;
   insert into public.agreements (cle, version, titre, corps, cree_par)
   values (agreement_publish.cle, v, agreement_publish.titre, agreement_publish.corps, auth.uid()) returning id into nid;
   perform public.audit_log('agreement.publish','agreement', nid::text, null, jsonb_build_object('cle', cle, 'version', v), '');
