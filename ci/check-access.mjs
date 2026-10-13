@@ -23,6 +23,7 @@ if (!/profiles_role_guard/.test(msgsql) || !/profiles_verif_guard/.test(msgsql))
 if (!idx.includes('brand/favicon.svg')) fails.push('index.html : favicon de marque absent (BRAND-1)');
 if (!sw.includes('brand/favicon.svg')) fails.push('sw.js : favicon de marque absent du precache (BRAND-1)');
 if (!qa.includes('matrice-qa-v8')) fails.push('docs/qa/reference.html : checklist QA absente ou invalide (QA-1)');
+if (!idx.includes('بانتظار اعتماد الإدارة')) fails.push('SIGNUP-1 : formulaire d inscription sans la mention d approbation administrative');
 
 
 
