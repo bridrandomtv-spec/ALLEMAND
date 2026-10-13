@@ -98,5 +98,6 @@ t(!sql3.includes('agreement_status_for(uid uuid'), 'F6/D-6 : agreement_status_fo
 t(['admCloseMonth','admMarkRapproche','admClosures'].every(m => sbjs.includes('function ' + m)), 'F6 : méthodes SB clôtures/rapprochement');
 t(adjs.includes('data-adm5-rap') && adjs.includes('data-adm5-close'), 'F6 : UI pointer + clôturer');
 t(sbjs.includes('pont dz:view post-sbready'), 'UI-1 : re-rendu des cartes ADM quand le client cloud devient prêt');
+t(appjs.includes('ENG-1 : la vue english se peint aussi à la navigation'), 'ENG-1 : rendu de #english à la navigation, plus de Chargement permanent');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');

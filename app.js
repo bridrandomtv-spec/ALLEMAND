@@ -2100,6 +2100,10 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     open.style.cssText='position:fixed;bottom:110px;inset-inline-end:14px;z-index:9996;background:#2c7a4f;border:0;color:#fff;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer;display:none';
     open.textContent='🇬 English'; document.body.appendChild(open);
     open.addEventListener('click',function(){ var t=document.createElement('button'); t.setAttribute('data-go','english'); t.style.display='none'; document.body.appendChild(t); t.click(); t.remove(); load().then(function(){ render(document.getElementById('enBody')); }); });
+  /* ENG-1 : la vue english se peint aussi à la navigation (dz:view / hash), pas seulement via le bouton flottant */
+  var paintEn=function(){ var b=document.getElementById('enBody'); if(b && b.textContent.indexOf('Chargement')===0) load().then(function(){ render(b); }); };
+  document.addEventListener('dz:view', function(e){ var v=(e && e.detail && (e.detail.view||e.detail)) || ''; if(String(v).indexOf('english')>=0) paintEn(); });
+  if((location.hash||'').replace('#','')==='english') setTimeout(paintEn, 0);
     var sync=function(){ open.style.display=(window.__SUBJECT__==='en')?'block':'none'; };
     setInterval(sync,800); sync();
   }
