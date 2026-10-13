@@ -33,6 +33,7 @@ const PRECACHE = [
   './prof_core.js?v=3510',
   './access.js?v=3510',
   './paywall.js?v=3510', './assets/bdd/access_config.json',
+  './brand/favicon.svg?v=3510',
   './devoirs_unite.js?v=3510',
   './modules.js?v=3510',
   './live.js?v=3510',
