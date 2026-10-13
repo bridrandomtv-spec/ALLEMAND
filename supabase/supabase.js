@@ -416,6 +416,8 @@ async function msgCreateGroup(wilaya, niveau, filiere, titre){
 
 window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
+/* pont dz:view post-sbready (UI-1) : les cartes ADM se re-rendent quand le client devient prêt */
+document.dispatchEvent(new CustomEvent('dz:view', { detail:{ view:(location.hash||'').replace('#','') } }));
 
 /* ── MSG-6 · vérification d'identité scolaire (client fin — le RLS et le trigger décident) ── */
 async function msgMyVerification(){
