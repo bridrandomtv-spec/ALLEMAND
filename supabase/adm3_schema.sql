@@ -89,7 +89,7 @@ begin
   select coalesce(max(version),0)+1 into v from public.agreements where cle = agreement_publish.cle;
   update public.agreements set actif = false where cle = agreement_publish.cle and actif;
   insert into public.agreements (cle, version, titre, corps, cree_par)
-  values (cle, v, titre, corps, auth.uid()) returning id into nid;
+  values (agreement_publish.cle, v, agreement_publish.titre, agreement_publish.corps, auth.uid()) returning id into nid;
   perform public.audit_log('agreement.publish','agreement', nid::text, null, jsonb_build_object('cle', cle, 'version', v), '');
   return jsonb_build_object('ok', true, 'id', nid, 'version', v);
 end $$;

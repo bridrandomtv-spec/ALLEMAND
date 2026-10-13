@@ -104,5 +104,6 @@ t(!sbjs.includes('admin_permissions(permission)'), 'PERMS-1 : plus d embed impos
 t(sbjs.includes('PERMS-1'), 'PERMS-1 : jointure permissions en deux requêtes client');
 t(!/from\('payments'\)\.select\('[^']*profiles\(/.test(sbjs), 'PERMS-2 : aucun embed profiles depuis payments (FK auth.users)');
 t(sbjs.includes('PERMS-2'), 'PERMS-2 : file de validation en deux requêtes + jointure client');
+t(sql3.includes('values (agreement_publish.cle,'), 'ADM-3c : paramètres qualifiés dans agreement_publish (column reference cle ambiguous corrigé)');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
