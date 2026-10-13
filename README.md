@@ -1,186 +1,28 @@
-# 🇩🇿 الثانوية الافتراضية الجزائرية — برنامج الأصل
-## 🇩🇪 Deutsche Sprache · Professeur Kharif Ahmed · اللغة الألمانية 2AS / 3AS
+# ALLEMAND — الثانوية الافتراضية / Lycée virtuel
 
-> ✨ **الرجوع إلى الأصل فضيلة** ✨ — نرافق أبناءكم نحو النجاح... خطوة بخطوة
+Plateforme éducative algérienne (multi-matières à terme, allemand aujourd'hui) : site statique vanilla JS sur **Cloudflare Workers**, backend **Supabase** (auth, Postgres RLS, bucket privé `prive`, Realtime). Messagerie scolaire et centre de gestion complets, toute la logique sensible côté base.
 
-[![CI + Deploy](https://github.com/bridrandomtv-spec/ALLEMAND/actions/workflows/deploy.yml/badge.svg)](https://github.com/bridrandomtv-spec/ALLEMAND/actions)
+## État (v8 — 13/10/2026)
+- CI : 29/29 steps (structurel, pédagogique, messagerie, administration, gardes d'accès).
+- Base = dépôt : parité vérifiée par 19 compteurs catalogue (recette : `docs/qa/reference.html`).
+- Audit indépendant 8 phases : vulnérabilités D-1 → D-6 toutes closes (correctifs F1 → F6).
 
-### 🌐 **https://bridrandomtv-spec.github.io/ALLEMAND/**
+## Cartographie
+- Front : `index.html`, `app.js`, `admin.js`, `auth.js`, `msg.js`, `paywall.js`, `live.js`, `prof_core.js`, `unite*.js`, `brand/favicon.svg`.
+- `supabase/supabase.js` — client cloud fin : aucune décision côté client, tout passe par RLS/fonctions serveur.
+- Couches base (`supabase/*.sql`) : `schema.sql` (profiles, unités, documents) · `billing.sql` + `payments.sql` (abonnements, paiements) · `plans.sql` · `msg_schema.sql` (messagerie + gardes role/verif) · `fix_scope_guard.sql` (périmètre scolaire) · `adm_schema.sql` → `adm5_schema.sql` (centre de gestion : agents wilayas, reçus, audit, accords, paramètres, comptabilité, support, notifications, rapprochement, clôtures).
+- Gardes CI : `ci/check-access.mjs`, `ci/check-msg.mjs`, `tests/msg_test.mjs`, `tests/adm_test.mjs` (vérifications structurelles, aucune exécution SQL).
+- `src/site-worker.js` + `wrangler.toml` — worker versionné : `Cache-Control: no-store` sur `/sw.js`, `/`, `/index.html`, `/assets/bdd/*`.
+- `docs/qa/reference.html` — checklists de recette interactives (promotions, admin, agent, utilisateurs, messagerie 0→7, collages).
 
----
+## Sécurité (règles d'or)
+1. Le client ne décide jamais : permissions via `admin_can()` + RLS ; rôle imposé `eleve` à l'inscription ; changement de rôle = console ou admin (trigger).
+2. Périmètre wilaya appliqué en base (`admin_sees_wilaya`) : paiements, subscriptions, fiches élèves, tickets, rapports, dashboard.
+3. Écritures financières et preuves immuables : reçus numérotés (`REC-AAAA-NNNNNN`, index unique par paiement), `audit_logs`, `accounting_entries`, acceptations d'accords — corrections tracées, jamais de suppression ; clôtures mensuelles bloquantes.
+4. Collages base : transactionnels, idempotents, vérifications chiffrées en fin de bloc.
 
-## 🎯 نظرة عامة
+## Méthode de travail
+Lecture seule sans ordre explicite · un lot = un commit réversible · ancres vérifiées avant écriture · esprima/yaml rejoués avant commit · jamais de SQL exécuté par l'assistant · jamais de déploiement manuel · toute erreur divulguée.
 
-منصّة تعليمية جزائرية 100% لتعلّم اللغة الألمانية وفق **البرنامج الرسمي لوزارة التربية الوطنية**،
-مع **بوابة تسجيل دخول**، و**مكتبة وطنية** تضمّ مئات الفروض والاختبارات ومواضيع البكالوريا والحواليات.
-
-| | |
-|---|---|
-| 🗂️ **المكتبة** | **684 وثيقة** — فروض · اختبارات فصلية · بكالوريا · حوليات |
-| 📍 **التغطية** | **58 ولاية** · 12 سنة دراسية (2015→2026) · 22 وحدة |
-| 📚 **الحصص** | 8 حصص تفاعلية — الوحدة 1 : *Sich vorstellen* |
-| 📝 **الفرض** | /20 مع التصحيح النموذجي وسلّم التنقيط الرسمي |
-| ⏱️ **المحاكاة** | وضع حقيقي 45 د / وضع مصغّر 10 د · تصحيح آلي فوري |
-| 🤖 **الأستاذ الافتراضي** | 🇩🇿 عربي + 🇩🇪 ألماني · تصحيح الجمل · نطق صوتي |
-| 👨‍👩‍👧 **فضاء الأولياء** | تقرير أسبوعي + تواصل واتساب |
-| 🔐 **الحسابات** | تلميذ · ولي · أستاذ — 5 أقسام افتراضية |
-
----
-
-## 🔐 تسجيل الدخول
-
-    حساب تجريبي :  ahmed  /  1234
-    القسم       :  ٢AS-٣  ·  ٣٢ تلميذ  ·  الأستاذ خريف أحمد
-
-أو أنشئ حساباً جديداً (الاسم، البريد، كلمة السر، المستوى، الشعبة، الولاية، الدور).
-
-> 🔒 **لا يوجد خادم** — الحسابات والنتائج محفوظة في `localStorage` على جهازك فقط،
-> وكلمات السر مُجزَّأة (hash) ولا تُخزَّن كنص صريح.
-
----
-
-## 🗂️ المكتبة — 684 وثيقة
-
-| النوع | العدد | الوصف |
-|---|---|---|
-| 📄 **فروض** | 312 | فروض محروسة — الفصل 1/2/3 |
-| 📘 **اختبارات فصلية** | 168 | اختبارات الثلاثيات |
-| 🎓 **بكالوريا** | 78 | مواضيع دورة جوان 2015→2026 |
-| 📚 **حوليات** | 126 | حوليات البكالوريا |
-
-**كل وثيقة تحتوي :** المعرّف · العنوان (🇩🇿 + 🇩🇪) · السنة الدراسية · الفصل · المستوى · الشعبة ·
-الولاية والمدينة والمؤسسة · الوحدة · المدة · السلّم /20 · سلّم التنقيط التفصيلي · الصعوبة ·
-المعدل المحصّل · المشاهدات · المصدر · الوسوم · **نص الموضوع** · **التصحيح النموذجي**
-
-### 🔎 محرّك البحث
-
-- بحث حرّ (عربي/ألماني/فرنسي) — تطبيع الحروف : أإآ→ا · ة→ه · ä→ae · ö→oe · ü→ue · ß→ss
-- **9 مرشّحات** : النوع · المستوى · الوحدة · الولاية · السنة · الفصل · الشعبة · الصعوبة · التصحيح
-- **5 أنواع ترتيب** : الأحدث · الأكثر مشاهدة · الأعلى معدلاً · الأصعب · الأقدم
-- ترقيم صفحات (12/صفحة) · بطاقة تفصيلية · طباعة · طلب شرح الأستاذ عبر واتساب
-
----
-
-## 📚 الوحدة 1 : Sich vorstellen — 8 حصص
-
-| # | الحصة | المدة |
-|---|---|---|
-| 1 | التحية والتعارف — *Begrüßung und sich vorstellen* | 60 د |
-| 2 | المعلومات الشخصية — *Persönliche Informationen* | 60 د |
-| 3 | الفعل sein — *Das Verb «sein»* | 60 د |
-| 4 | الفعل haben — *Das Verb «haben»* | 60 د |
-| 5 | فهم نص تقديمي — *Textverständnis : Lena Fischer* | 60 د |
-| 6 | إنتاج كتابي ✍️ — *Textproduktion* (المهمة النهائية) | 60 د |
-| 7 | تثبيت وتقويم ذاتي — *Konsolidierung + Selbstevaluation* | 60 د |
-| 8 | فرض الوحدة 📝 — *Évaluation de l'unité* (/20) | 45 د |
-
-### 📝 الفرض (/20)
-
-📖 فهم المكتوب **8 نقاط** · 🔤 اللغة **8 نقاط** · ✍️ إنتاج كتابي **4 نقاط**
-
----
-
-## 🎨 التصميم والطباعة
-
-| اللغة | خط العناوين | خط الواجهة |
-|---|---|---|
-| 🇩🇿 العربية | **Amiri** (نسخي) + **Reem Kufi** | **Tajawal** |
-| 🇩🇪 الألمانية | **Cormorant Garamond** | **Inter** |
-
-الهوية البصرية : ألوان العلم الوطني (أخضر `#006233` · أبيض · أحمر `#d21034`) + ذهبي `#e8b64c`
-على خلفية ليلية `#04140c` · شريط علم في الترويسة والتذييل · RTL كامل.
-
----
-
-## 🛠️ البنية التقنية
-
-| الطبقة | الملف |
-|---|---|
-| البوابة والحسابات | `auth.js` |
-| محرّك قاعدة البيانات | `bdd.js` |
-| المحرّك التربوي | `app.js` (998 سطر) |
-| المحاكاة + الأولياء | `modules.js` |
-| واجهة المكتبة | `library.js` |
-| التصميم | `style.css` (540 سطر) |
-| الهيكل | `index.html` (8 شاشات) |
-| PWA | `manifest.json` + `sw.js` (v2.0.0) |
-| البيانات | `assets/bdd/*.json` (684 fiche · 1,7 Mo) |
-
-**CI/CD :** job `validate` (YAML · JSON · BDD · esprima · مراقبة تربوية) → job `deploy` (GitHub Pages)
-
----
-
-## 📁 هيكل المشروع
-
-    ALLEMAND/
-    ├── index.html              ← البوابة + 8 شاشات (PWA, RTL)
-    ├── style.css               ← نظام التصميم
-    ├── auth.js                 ← تسجيل الدخول · الحسابات · الأقسام
-    ├── bdd.js                  ← محرّك قاعدة البيانات (684 fiche)
-    ├── app.js                  ← الحصص · الفرض · الأستاذ الافتراضي · الحساب
-    ├── modules.js              ← المحاكاة المُوقَّتة · فضاء الأولياء
-    ├── library.js              ← واجهة المكتبة (KPI · مرشّحات · بطاقات)
-    ├── sw.js                   ← Service Worker v2 (offline + BDD)
-    ├── manifest.json           ← PWA · 4 اختصارات
-    ├── 404.html · robots.txt · sitemap.xml · .nojekyll · .gitignore
-    ├── .github/workflows/deploy.yml    ← CI + déploiement
-    ├── docs/archive/plateforme-v3.html ← أرشيف
-    └── assets/
-        ├── corriges.json       ← التصحيحات النموذجية الرسمية
-        ├── logo.png            ← الشعار 512×512
-        ├── prof.jpg            ← الأستاذ خريف أحمد
-        └── bdd/
-            ├── referentiel.json    ← 58 ولاية · 22 وحدة · 6 شعب
-            ├── devoirs.json        ← 312 فرض
-            ├── compositions.json   ← 168 اختبار
-            ├── bac.json            ← 78 بكالوريا
-            └── annales.json        ← 126 حوليات
-
----
-
-## 🚀 التشغيل محلياً
-
-    git clone https://github.com/bridrandomtv-spec/ALLEMAND.git
-    cd ALLEMAND
-    python3 -m http.server 8000      #  →  http://localhost:8000
-
-لا حاجة إلى `npm` ولا `build` ولا خادم ولا ngrok — المشروع ثابت 100%.
-
----
-
-## 📱 التثبيت على الهاتف
-
-1. افتح **https://bridrandomtv-spec.github.io/ALLEMAND/**
-2. قائمة المتصفّح → **« إضافة إلى الشاشة الرئيسية »**
-3. تعمل المنصّة كتطبيق مستقل، ثم **بدون أنترنت** بعد أول زيارة
-
----
-
-## 📲 التسجيل والحجز
-
-**واتساب : 0555 57 79 31** — ابعث : الاسم + «حصّة ألماني مجانية»
-
-🎁 **عرض افتتاحي** — حصّة أولى مجانية · ⏰ حتى **30 سبتمبر 2026** · ⚡ الأماكن محدودة
-
----
-
-## 👨‍🏫 الأستاذ خريف أحمد
-
-🎓 15 سنة خبرة · 🇩🇪 Goethe-Zertifikat C2 · ✍️ مؤلف «الألمانية بسهولة» · 📊 98% نجاح في البكالوريا
-
----
-
-## 🔒 الخصوصية
-
-- الحسابات والنتائج محفوظة **على جهاز التلميذ فقط** (`localStorage`)
-- كلمات السر مُجزَّأة (hash) — لا تُخزَّن أبداً كنص صريح
-- لا خادم خارجي · لا تتبّع · لا إعلانات
-- نتائج المحاكاة **سرّية** (منهج الحصة 7)
-
----
-
-## 📄 الترخيص
-
-جميع الحقوق محفوظة © 2026 — الأستاذ خريف أحمد 🇩🇿
-
-> **الرجوع إلى الأصل فضيلة** — نرافق أبناءكم نحو النجاح... خطوة بخطوة
+## Recette
+Ouvrir `docs/qa/reference.html` et suivre les checklists dans l'ordre : promotions → admin → agent régional → utilisateurs → messagerie → re-vérification base.
