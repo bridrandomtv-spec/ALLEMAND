@@ -509,10 +509,20 @@ Object.assign(window.SB, { admMyPerms, admListAgents, admAssign, admRevoke, admL
 /* ── ADM-2 · file de validation, reçus, journal (client fin — le RLS + fonctions décident) ── */
 async function admQueue(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
-  const r = await c.from('payments').select('id,montant,devise,statut,methode,ref_plateforme,user_id,profiles(pseudo,wilaya)')
+  /* PERMS-2 : payments.user_id pointe vers auth.users, pas profiles : l embed profiles(pseudo,wilaya)
+     est impossible (400 PostgREST). Deux requêtes + jointure client ; forme des lignes identique. */
+  const r = await c.from('payments').select('id,montant,devise,statut,methode,ref_plateforme,user_id')
     .in('statut', ['declare','en_attente']).order('id', { ascending:false }).limit(60);
   if(r.error) return { ok:false, err:r.error.message };
-  return { ok:true, rows:r.data||[] };
+  const rows = r.data||[];
+  const ids = []; rows.forEach(function(x){ if(x.user_id && ids.indexOf(x.user_id)===-1) ids.push(x.user_id); });
+  const prof = {};
+  if(ids.length){
+    const p = await c.from('profiles').select('id, pseudo, wilaya').in('id', ids);
+    if(!p.error) (p.data||[]).forEach(function(pp){ prof[pp.id] = { pseudo: pp.pseudo, wilaya: pp.wilaya }; });
+  }
+  rows.forEach(function(x){ x.profiles = prof[x.user_id] || null; });
+  return { ok:true, rows:rows };
 }
 async function admSetPaymentStatut(pid, statut, motif){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
