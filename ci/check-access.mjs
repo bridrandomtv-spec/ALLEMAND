@@ -9,6 +9,7 @@ const sw  = fs.readFileSync('sw.js', 'utf8');
 const sch  = fs.readFileSync('supabase/schema.sql', 'utf8');
 const fsg  = fs.readFileSync('supabase/fix_scope_guard.sql', 'utf8');
 const msgsql = fs.readFileSync('supabase/msg_schema.sql', 'utf8');
+const qa  = fs.existsSync('docs/qa/reference.html') ? fs.readFileSync('docs/qa/reference.html', 'utf8') : '';
 
 
 /* ADM-0 : le trigger d'inscription ne doit JAMAIS lire un rôle depuis les métadonnées client */
@@ -18,6 +19,11 @@ if (!/create or replace function public\.profiles_scope_guard/.test(fsg)) fails.
 if (!/create trigger profiles_tr_scope before update on public\.profiles/.test(fsg)) fails.push('fix_scope_guard.sql : trigger profiles_tr_scope introuvable (F1)');
 if (!/perimetre_propre_reserve_console/.test(fsg)) fails.push('F1 : exception auto-périmètre absente');
 if (!/profiles_role_guard/.test(msgsql) || !/profiles_verif_guard/.test(msgsql)) fails.push('régression F1 : gardes role/verif profiles absentes de msg_schema.sql');
+/* BRAND-1 + QA-1 */
+if (!idx.includes('brand/favicon.svg')) fails.push('index.html : favicon de marque absent (BRAND-1)');
+if (!sw.includes('brand/favicon.svg')) fails.push('sw.js : favicon de marque absent du precache (BRAND-1)');
+if (!qa.includes('matrice-qa-v8')) fails.push('docs/qa/reference.html : checklist QA absente ou invalide (QA-1)');
+
 
 
 /* câblage */
