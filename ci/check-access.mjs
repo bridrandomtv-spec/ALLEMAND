@@ -11,6 +11,7 @@ const fsg  = fs.readFileSync('supabase/fix_scope_guard.sql', 'utf8');
 const msgsql = fs.readFileSync('supabase/msg_schema.sql', 'utf8');
 const qa  = fs.existsSync('docs/qa/reference.html') ? fs.readFileSync('docs/qa/reference.html', 'utf8') : '';
 const leg = fs.readFileSync('legal.js', 'utf8');
+const man = fs.existsSync('docs/ops/manuel.md') ? fs.readFileSync('docs/ops/manuel.md', 'utf8') : '';
 const mfst = fs.existsSync('manifest.json') ? fs.readFileSync('manifest.json', 'utf8') : '';
 
 
@@ -28,6 +29,9 @@ if (!qa.includes('matrice-qa-v8')) fails.push('docs/qa/reference.html : checklis
 /* LEGAL-1 */
 if (!leg.includes('donnees-mineurs-legal1')) fails.push('legal.js : section données mineurs absente (LEGAL-1)');
 if (!idx.includes('سياسة الخصوصية (بيانات القاصرين)')) fails.push('index.html : lien consentement absent du formulaire (LEGAL-1)');
+/* MANUEL-1 */
+if (!man.includes('manuel-ops-v1')) fails.push('docs/ops/manuel.md : manuel d exploitation absent ou sans marqueur v1 (MANUEL-1)');
+
 /* PERF-1 */
 if ((idx.match(/ defer>/g) || []).length < 45) fails.push('index.html : moins de 45 scripts différés (PERF-1)');
 if (!idx.includes('<script src="auth.js?v=3510"></script>')) fails.push('index.html : auth.js doit rester eager (PERF-1)');
