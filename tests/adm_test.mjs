@@ -100,5 +100,7 @@ t(adjs.includes('data-adm5-rap') && adjs.includes('data-adm5-close'), 'F6 : UI p
 t(sbjs.includes('pont dz:view post-sbready'), 'UI-1 : re-rendu des cartes ADM quand le client cloud devient prêt');
 t(appjs.includes('ENG-1 : la vue english se peint aussi à la navigation'), 'ENG-1 : rendu de #english à la navigation, plus de Chargement permanent');
 t(adjs.includes('UI-2 : un clic sur un onglet de la phase 9 ne masque QUE les cartes'), 'UI-2 : onglets phase 9 ne vident plus la section Opérations');
+t(!sbjs.includes('admin_permissions(permission)'), 'PERMS-1 : plus d embed impossible wilaya_assignments→admin_permissions (400 PostgREST)');
+t(sbjs.includes('PERMS-1'), 'PERMS-1 : jointure permissions en deux requêtes client');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');

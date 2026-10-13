@@ -460,14 +460,19 @@ Object.assign(window.SB, { msgMyVerification, msgRequestVerification, msgVerific
 async function admMyPerms(){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
-  const r = await c.from('wilaya_assignments').select('role_cle, code_wilaya, admin_permissions(permission)').eq('user_id', u.id);
+  /* PERMS-1 : aucun embed admin_permissions depuis wilaya_assignments (pas de FK directe -> 400 PostgREST).
+     Deux requêtes simples + jointure côté client, et filtre active (suspension). */
+  const r = await c.from('wilaya_assignments').select('role_cle, code_wilaya, active').eq('user_id', u.id);
   if(r.error) return { ok:false, err:r.error.message };
+  const rows = (r.data||[]).filter(function(x){ return x.active !== false; });
+  const p = await c.from('admin_permissions').select('role_cle, permission');
+  if(p.error) return { ok:false, err:p.error.message };
   const perms = []; const wilayas = []; let role = '';
   const prio = ['admin_general','responsable_regional','agent_paiement','responsable_pedagogique','agent_support'];
-  (r.data||[]).forEach(function(row){
+  rows.forEach(function(row){
     wilayas.push(row.code_wilaya);
-    (row.admin_permissions||[]).forEach(function(p){ if(perms.indexOf(p.permission)===-1) perms.push(p.permission); });
-    if(!role || prio.indexOf(row.role_cle) < prio.indexOf(role)) role = row.role_cle;
+    (p.data||[]).forEach(function(pp){ if(pp.role_cle === row.role_cle && perms.indexOf(pp.permission) === -1) perms.push(pp.permission); });
+    if(prio.indexOf(row.role_cle) !== -1 && (role === '' || prio.indexOf(row.role_cle) < prio.indexOf(role))) role = row.role_cle;
   });
   return { ok:true, role:role, wilayas:wilayas, perms:perms };
 }
