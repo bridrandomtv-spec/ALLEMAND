@@ -28,6 +28,9 @@ if (!qa.includes('matrice-qa-v8')) fails.push('docs/qa/reference.html : checklis
 /* LEGAL-1 */
 if (!leg.includes('donnees-mineurs-legal1')) fails.push('legal.js : section données mineurs absente (LEGAL-1)');
 if (!idx.includes('سياسة الخصوصية (بيانات القاصرين)')) fails.push('index.html : lien consentement absent du formulaire (LEGAL-1)');
+/* PERF-1 */
+if ((idx.match(/ defer>/g) || []).length < 45) fails.push('index.html : moins de 45 scripts différés (PERF-1)');
+if (!idx.includes('<script src="auth.js?v=3510"></script>')) fails.push('index.html : auth.js doit rester eager (PERF-1)');
 
 if (!idx.includes('بانتظار اعتماد الإدارة')) fails.push('SIGNUP-1 : formulaire d inscription sans la mention d approbation administrative');
 if (idx.includes('Deutsche Sprache')) fails.push('BRAND-2 : mention « Deutsche Sprache » résiduelle dans index.html');
