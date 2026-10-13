@@ -7,10 +7,18 @@ const src = fs.readFileSync('access.js', 'utf8');
 const idx = fs.readFileSync('index.html', 'utf8');
 const sw  = fs.readFileSync('sw.js', 'utf8');
 const sch  = fs.readFileSync('supabase/schema.sql', 'utf8');
+const fsg  = fs.readFileSync('supabase/fix_scope_guard.sql', 'utf8');
+const msgsql = fs.readFileSync('supabase/msg_schema.sql', 'utf8');
+
 
 /* ADM-0 : le trigger d'inscription ne doit JAMAIS lire un rôle depuis les métadonnées client */
 if (/raw_user_meta_data\s*->>\s*'role'/.test(sch)) fails.push('schema.sql : handle_new_user lit le rôle depuis les métadonnées client (auto-promotion possible)');
 if (!/create or replace function public\.handle_new_user/.test(sch)) fails.push('schema.sql : fonction handle_new_user introuvable');
+if (!/create or replace function public\.profiles_scope_guard/.test(fsg)) fails.push('fix_scope_guard.sql : fonction profiles_scope_guard introuvable (F1)');
+if (!/create trigger profiles_tr_scope before update on public\.profiles/.test(fsg)) fails.push('fix_scope_guard.sql : trigger profiles_tr_scope introuvable (F1)');
+if (!/perimetre_propre_reserve_console/.test(fsg)) fails.push('F1 : exception auto-périmètre absente');
+if (!/profiles_role_guard/.test(msgsql) || !/profiles_verif_guard/.test(msgsql)) fails.push('régression F1 : gardes role/verif profiles absentes de msg_schema.sql');
+
 
 /* câblage */
 if (!/<script src="access\.js(\?[^"]*)?"><\/script>/.test(idx)) fails.push('index.html : access.js non chargé');
