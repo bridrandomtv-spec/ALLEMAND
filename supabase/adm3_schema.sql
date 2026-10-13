@@ -81,6 +81,19 @@ language sql stable security definer set search_path = public as $$
   ), 'jamais');
 $$;
 
+create or replace function public.agreement_publish(cle text, titre text, corps text) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare v int; nid bigint;
+begin
+  if not public.admin_can(auth.uid(), 'agreements.manage') then raise exception 'permission_refusee'; end if;
+  select coalesce(max(version),0)+1 into v from public.agreements where cle = agreement_publish.cle;
+  update public.agreements set actif = false where cle = agreement_publish.cle and actif;
+  insert into public.agreements (cle, version, titre, corps, cree_par)
+  values (cle, v, titre, corps, auth.uid()) returning id into nid;
+  perform public.audit_log('agreement.publish','agreement', nid::text, null, jsonb_build_object('cle', cle, 'version', v), '');
+  return jsonb_build_object('ok', true, 'id', nid, 'version', v);
+end $$;
+
 drop trigger if exists agreement_acceptances_tr_immuable on public.agreement_acceptances;
 create trigger agreement_acceptances_tr_immuable before update or delete on public.agreement_acceptances
   for each row execute function public.immutable_row();
