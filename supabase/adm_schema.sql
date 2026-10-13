@@ -19,23 +19,25 @@ alter table public.admin_roles enable row level security;
 alter table public.admin_permissions enable row level security;
 alter table public.wilaya_assignments enable row level security;
 
+alter table public.wilaya_assignments add column if not exists active boolean not null default true;
+
 create or replace function public.admin_role_of(uid uuid) returns text
 language sql stable security definer set search_path = public as $$
   select wa.role_cle from public.wilaya_assignments wa
     join public.admin_roles r on r.cle = wa.role_cle
-   where wa.user_id = uid
+   where wa.user_id = uid and wa.active
    order by r.priorite asc limit 1;
 $$;
 create or replace function public.admin_wilayas(uid uuid) returns text[]
 language sql stable security definer set search_path = public as $$
-  select coalesce(array_agg(wa.code_wilaya), '{}') from public.wilaya_assignments wa where wa.user_id = uid;
+  select coalesce(array_agg(wa.code_wilaya), '{}') from public.wilaya_assignments wa where wa.user_id = uid and wa.active;
 $$;
 create or replace function public.admin_can(uid uuid, perm text) returns boolean
 language sql stable security definer set search_path = public as $$
   select exists (
     select 1 from public.wilaya_assignments wa
     join public.admin_permissions p on p.role_cle = wa.role_cle
-    where wa.user_id = uid and p.permission = perm
+    where wa.user_id = uid and wa.active and p.permission = perm
   );
 $$;
 create or replace function public.admin_sees_wilaya(uid uuid, w text) returns boolean
@@ -89,3 +91,15 @@ insert into public.admin_permissions (role_cle, permission) values
   ('responsable_pedagogique','students.read'), ('responsable_pedagogique','plans.edit'),
   ('agent_support','tickets.handle')
 on conflict (role_cle, permission) do nothing;
+
+create or replace function public.assignment_set_active(uid uuid, active boolean) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare w text;
+begin
+  if not public.admin_can(auth.uid(), 'agents.manage') then raise exception 'permission_refusee'; end if;
+  select code_wilaya into w from public.wilaya_assignments where user_id = uid limit 1;
+  update public.wilaya_assignments set active = active where user_id = uid;
+  perform public.audit_log(case when active then 'agent.reactivate' else 'agent.suspend' end,
+    'wilaya_assignment', uid::text, null, jsonb_build_object('active', active, 'wilaya', coalesce(w,'')), coalesce(w,''));
+  return jsonb_build_object('ok', true);
+end $$;

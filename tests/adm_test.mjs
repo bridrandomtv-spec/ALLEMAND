@@ -6,6 +6,7 @@ const sql2 = readFileSync('supabase/adm2_schema.sql', 'utf8');
 const sql3 = readFileSync('supabase/adm3_schema.sql', 'utf8');
 const sql4 = readFileSync('supabase/adm4_schema.sql', 'utf8');
 const sql5 = readFileSync('supabase/adm5_schema.sql', 'utf8');
+const bill = readFileSync('supabase/billing.sql', 'utf8');
 const appjs = readFileSync('app.js', 'utf8');
 let fails = 0;
 const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
@@ -79,5 +80,12 @@ t(sql2.includes('create trigger payments_tr_blocage_montant'), 'F3 : montant con
 t(sql2.includes('create trigger payments_tr_audit_cols'), 'F3 : toute correction de paiement tracée au journal');
 t(['myReceipts','platformIdentity'].every(m => sbjs.includes('function ' + m)), 'F4 : méthodes reçus abonné + identité plateforme');
 t(appjs.includes('phase 12 (F4)'), 'F4 : carte Mes reçus + vue d impression dans #compte');
+t(sql.includes('add column if not exists active boolean'), 'F5 : colonne active sur wilaya_assignments');
+t(sql.includes('where wa.user_id = uid and wa.active'), 'F5 : suspension coupe admin_role_of/admin_wilayas');
+t(sql.includes('wa.user_id = uid and wa.active and p.permission'), 'F5 : suspension coupe admin_can');
+t(sql.includes('function public.assignment_set_active'), 'F5 : fonction suspendre/réactiver auditée');
+t(bill.includes('create policy "subscriptions lecture agents scopés"'), 'F5 : subscriptions scopées par wilaya');
+t(sbjs.includes('function admSetAgentActive'), 'F5 : méthode SB suspension');
+t(adjs.includes('data-adm-susp'), 'F5 : boutons suspendre/réactiver dans #admin');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');

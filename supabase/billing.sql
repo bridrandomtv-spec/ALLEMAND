@@ -13,6 +13,12 @@ create policy "own subs" on public.subscriptions for select using (auth.uid() = 
 create policy "create own sub" on public.subscriptions for insert with check (auth.uid() = user_id);
 create policy "update own preuve" on public.subscriptions for update
   using (auth.uid() = user_id and statut in ('en_attente','preuve'));
+drop policy if exists "subscriptions lecture agents scopés" on public.subscriptions;
+create policy "subscriptions lecture agents scopés" on public.subscriptions for select to authenticated
+  using (public.admin_can(auth.uid(), 'payments.validate')
+         and exists (select 1 from public.profiles st where st.id = subscriptions.user_id
+                       and public.admin_sees_wilaya(auth.uid(), st.wilaya)));
+
 create policy "admin subs" on public.subscriptions for all
   using (public.is_admin()) with check (public.is_admin());
 

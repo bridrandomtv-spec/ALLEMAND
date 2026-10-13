@@ -207,6 +207,8 @@ document.addEventListener('click', ev => {
     html += (ag.ok && ag.agents.length) ? ag.agents.map(function(a){
       var pr = a.profiles || {};
       return '<div class="rep-row"><span>' + esq(pr.pseudo || a.user_id.slice(0,8)) + ' · ' + esq(a.role_cle) + ' · wilaya ' + esq(a.code_wilaya) + '</span>'
+        + '<span style="font-size:11px;color:var(--m);margin-left:6px">' + (a.active === false ? ' suspendu' : '✅ actif') + '</span>'
+        + '<button class="btn btn-sm btn-o" data-adm-susp="' + a.user_id + '|' + (a.active === false ? '1' : '0') + '" type="button">' + (a.active === false ? 'réactiver' : 'suspendre') + '</button>'
         + '<button class="btn btn-sm btn-r" data-adm-rev="' + a.user_id + '" type="button">révoquer</button></div>';
     }).join('') : '<p>Aucun agent affecté pour l\'instant.</p>';
     html += '<div class="fld" style="margin-top:12px"><span>Affecter un agent</span>'
@@ -217,8 +219,10 @@ document.addEventListener('click', ev => {
     box.innerHTML = html;
   }
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-adm-rev],[data-adm-assign]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm-rev],[data-adm-assign],[data-adm-susp]') : null;
     if(!t) return;
+    var susp = t.getAttribute('data-adm-susp');
+    if(susp){ var sp = susp.split('|'); SB.admSetAgentActive(sp[0], sp[1] === '1').then(function(r){ if(r.ok) renderAgents(); else window.alert('⛔ ' + r.err); }); return; }
     var rev = t.getAttribute('data-adm-rev');
     if(rev){ SB.admRevoke(rev).then(function(r){ if(r.ok) renderAgents(); else window.alert('⛔ ' + r.err); }); return; }
     if(t.getAttribute('data-adm-assign')){
