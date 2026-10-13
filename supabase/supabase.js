@@ -675,3 +675,19 @@ async function notifMarkRead(id){
   return { ok:true };
 }
 Object.assign(window.SB, { admEntries, admDepense, admReport, admTickets, admTicketSet, ticketCreate, myNotifications, notifMarkRead });
+
+/* ── F4 · reçus de l'abonné (client fin — policy own déjà en place) ── */
+async function myReceipts(){
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.from('receipts').select('*').eq('user_id', u.id).order('emis_at', { ascending:false });
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, rows:r.data||[] };
+}
+async function platformIdentity(){
+  const c = await sb(); if(!c) return { ok:false, identite:null };
+  const r = await c.from('platform_settings').select('valeur').eq('cle', 'identite').maybeSingle();
+  if(r.error) return { ok:false, identite:null };
+  return { ok:true, identite:(r.data && r.data.valeur) || null };
+}
+Object.assign(window.SB, { myReceipts, platformIdentity });

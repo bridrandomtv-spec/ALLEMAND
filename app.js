@@ -3031,3 +3031,59 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   });
   if((location.hash||'').replace('#','') === 'compte') renderNotifs();
 })();
+
+/* ── phase 12 (F4) : carte « Mes reçus » dans #compte + vue d'impression ── */
+(function(){
+  function esq8(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  var cacheRec = [];
+  async function renderRecus(){
+    var host = document.getElementById('compteBody'); if(!host) return;
+    var box = document.getElementById('recusCard');
+    if(!box){ box = document.createElement('div'); box.id = 'recusCard'; box.className = 'card'; host.appendChild(box); }
+    if(!window.SB || !SB.myReceipts){ box.innerHTML = '<h2>🧾 Mes reçus</h2><p>☁️ indisponible</p>'; return; }
+    var r = await SB.myReceipts();
+    cacheRec = r.ok ? (r.rows||[]) : [];
+    box.innerHTML = '<h2>🧾 Mes reçus</h2>'
+      + '<p style="font-size:12px;color:var(--m);margin-bottom:8px">Chaque reçu est numéroté, émis après confirmation du paiement, et immuable : ce que tu imprimes est exactement ce que la base conserve.</p>'
+      + (r.ok ? (cacheRec.length ? cacheRec.map(function(x){
+          return '<div class="rep-row"><span><b>' + esq8(x.numero) + '</b> · ' + x.montant + ' ' + esq8(x.devise) + ' · ' + String(x.emis_at||'').slice(0,10) + ' · ' + esq8(x.methode) + '</span>'
+            + '<button class="btn btn-sm btn-o" data-rec-print="' + x.id + '" type="button">voir / imprimer</button></div>';
+        }).join('') : '<p>aucun reçu pour l’instant — il apparaîtra dès la confirmation d’un paiement.</p>')
+        : '<p>⛔ ' + esq8(r.err) + '</p>');
+  }
+  function printRec(id){
+    var x = null;
+    for(var i=0;i<cacheRec.length;i++){ if(String(cacheRec[i].id) === String(id)) x = cacheRec[i]; }
+    if(!x){ window.alert('⛔ reçu introuvable'); return; }
+    SB.platformIdentity().then(function(idn){
+      var nom = (idn && idn.identite && idn.identite.nom) ? idn.identite.nom : 'الثانوية الافتراضية — Lycée virtuel';
+      var w = window.open('', '_blank');
+      if(!w){ window.alert('⛔ popup bloquée'); return; }
+      w.document.write('<html dir="ltr"><head><meta charset="utf-8"><title>Reçu ' + x.numero + '</title></head>'
+        + '<body style="font-family:Georgia,serif;max-width:60ch;margin:40px auto;line-height:1.7;color:#111">'
+        + '<h2 style="margin-bottom:2px">' + nom + '</h2><div style="font-size:12px;color:#555;margin-bottom:22px">Reçu de paiement — document généré depuis l’espace abonné</div>'
+        + '<table style="width:100%;border-collapse:collapse;font-size:14px">'
+        + '<tr><td style="padding:6px 8px;border:1px solid #ccc"><b>Numéro de reçu</b></td><td style="padding:6px 8px;border:1px solid #ccc">' + x.numero + '</td></tr>'
+        + '<tr><td style="padding:6px 8px;border:1px solid #ccc"><b>Montant</b></td><td style="padding:6px 8px;border:1px solid #ccc">' + x.montant + ' ' + x.devise + '</td></tr>'
+        + '<tr><td style="padding:6px 8px;border:1px solid #ccc"><b>Méthode</b></td><td style="padding:6px 8px;border:1px solid #ccc">' + x.methode + '</td></tr>'
+        + '<tr><td style="padding:6px 8px;border:1px solid #ccc"><b>Référence plateforme</b></td><td style="padding:6px 8px;border:1px solid #ccc">' + (x.ref_plateforme || '—') + '</td></tr>'
+        + '<tr><td style="padding:6px 8px;border:1px solid #ccc"><b>Paiement</b></td><td style="padding:6px 8px;border:1px solid #ccc">#' + x.payment_id + '</td></tr>'
+        + '<tr><td style="padding:6px 8px;border:1px solid #ccc"><b>Date d’émission</b></td><td style="padding:6px 8px;border:1px solid #ccc">' + String(x.emis_at||'').slice(0,19).replace('T',' ') + '</td></tr>'
+        + '</table>'
+        + '<p style="font-size:11.5px;color:#555;margin-top:18px">Reçu émis après confirmation du paiement. Toute correction ultérieure laisse une trace au journal d’audit ; ce document reflète l’écriture immuable conservée en base.</p>'
+        + '<button onclick="window.print()" style="margin-top:14px;padding:8px 14px">🖨 imprimer / PDF</button>'
+        + '</body></html>');
+      w.document.close();
+    });
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target && e.target.closest ? e.target.closest('[data-rec-print]') : null;
+    if(!t) return;
+    printRec(t.getAttribute('data-rec-print'));
+  });
+  document.addEventListener('dz:view', function(e){
+    var v = (e && e.detail && (e.detail.view||e.detail)) || '';
+    if(String(v).indexOf('compte')>=0) renderRecus();
+  });
+  if((location.hash||'').replace('#','') === 'compte') renderRecus();
+})();
