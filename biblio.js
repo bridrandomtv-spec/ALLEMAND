@@ -12,7 +12,8 @@
     ['devoirs', 'assets/bdd/devoirs.json'],
     ['grammaire', 'assets/bdd/grammaire.json'],
     ['corpus', 'assets/bdd/corpus_index.json'],
-    ['darja', 'assets/bdd/darja.json']
+    ['darja', 'assets/bdd/darja.json'],
+    ['sharh', 'assets/bdd/sharh.json']
   ];
   let ENTRIES = null, LOADING = null;
   const STOP = new Set(['der','die','das','und','ist','ein','eine','ich','du','le','la','les','de','du','des','un','une','et','en','dans','pour','sur','avec','que','qui','what','the','a','an','is','are','von','mit','auf','من','في','على','عن','ما','هل','كيف','شنو','واش','pourquoi','dans']);
@@ -56,6 +57,17 @@
         if(c && typeof c === 'object') E.push({ src:'corpus', id:'c' + i,
           titre:String(c.mot || c.titre || c.de || ''),
           texte:String(JSON.stringify(c).slice(0, 500)), tags:['vocabulaire'] });
+      });
+    }
+    /* SHARH-1 : explications approfondies par unité, indexées pour le cerveau local ET cloud */
+    const SH = data.sharh;
+    if(SH && SH.unites){
+      Object.keys(SH.unites).forEach(function(k){
+        const un = SH.unites[k];
+        (un.sections || []).forEach(function(s, i){
+          E.push({ src:'sharh', id:'u' + k + 's' + i, titre:'الوحدة ' + k + ' — ' + String(s.t || ''),
+            texte:String(s.x || '').slice(0, 1600), tags:['sharh', 'unite' + k, 'explication'] });
+        });
       });
     }
     /* DARJA-1 : base derja originale — explications et lexique en darija algérienne */

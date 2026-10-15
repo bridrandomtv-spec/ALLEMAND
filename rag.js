@@ -149,13 +149,20 @@
     }
     return h + '</div>';
   }
+  /* SHARH-1 : base d'explications approfondies, préchargée silencieusement */
+  let SHARH = null;
+  fetch('assets/bdd/sharh.json', { cache:'no-store' }).then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(j){ SHARH = j; }).catch(function(){});
+  function sharhUnite(n){ try{ return (SHARH && SHARH.unites) ? SHARH.unites[n] || null : null; }catch(e){ return null; } }
   function resumeUnite(u, n, enDe){
     const lecons = (MAL.dourous || []).filter(d => d.unite === n);
     let h = '<b>📘 الوحدة ' + n + ' — ' + esc(enDe ? u.titre_de : u.titre_ar)
       + (enDe ? '' : ' · ' + esc(u.titre_de)) + '</b>'
-      + '<br><span class="rag-src">' + (enDe ? 'Erklärung auf Deutsch' : 'شرح من ملخصاتك — لا اختلاق')
+      + '<br><span class="rag-src">' + (enDe ? 'Erklärung auf Deutsch' : (sharhUnite(n) ? 'شرح معمّق من قاعدة المنصة (كتاب + قواعد + درجة) — لا اختلاق' : 'شرح من ملخصاتك — لا اختلاق'))
       + '</span>'
       + '<div class="rag-x">' + (enDe ? '📘 ' : '💡 ') + esc(enDe ? u.titre_de : u.idee) + '</div>'
+      + (function(){ var sh = enDe ? null : sharhUnite(n); if(!sh) return '';
+          return (sh.sections || []).map(function(s){ return '<div class="rg-sec"><b>🧠 ' + esc(s.t) + '</b><div class="rag-x">' + esc(s.x) + '</div></div>'; }).join(''); })()
       + '<div class="rg-sec"><b>🔑 ' + (enDe ? 'Wortschatz' : 'مفردات') + '</b><div class="mk-chips">'
       + (u.vocabulaire || []).slice(0, 6).map(v => '<span class="mk-ch de-in">' + esc(v) + '</span>').join('')
       + '</div></div>'

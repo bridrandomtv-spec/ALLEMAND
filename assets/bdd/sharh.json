@@ -1,0 +1,129 @@
+{
+  "_meta": {
+    "version": 1,
+    "note": "SHARH-1 : explications APPROFONDIES par unité (objectif, pas-à-pas, exemples résolus, erreurs fréquentes, auto-exercice, synthèse derja). Complète les malakhiss (trop courts) ; rédigé originalement, indexé par biblio (src=sharh) et rendu par rag.js.",
+    "validation": "relecture propriétaire + prof référent"
+  },
+  "unites": {
+    "1": {
+      "titre": "Sich vorstellen — التعريف بالنفس",
+      "sections": [
+        {
+          "t": "الهدف من الوحدة",
+          "x": "بعد هذه الوحدة تقدر : تحيي بالألماني حسب الموقف، تقدّم روحك (اسم، عمر، بلد، سكن)، وتفرق بين du الرسمية وغير الرسمية — وهذا باب كل التواصل بعدها."
+        },
+        {
+          "t": "الشرح خطوة بخطوة",
+          "x": "1) التحية : Hallo للأصحاب، Guten Tag للمعلم والغريب، Guten Morgen صباحًا، Gute Nacht ليلًا. 2) الاسم : Ich heiße Karim = سميتي كريم (heißen = يُسمّى)؛ وتقدر تقول Ich bin Karim = أنا كريم (sein). الفرق : heißen أدق للسؤال عن الاسم. 3) العمر : Ich bin 16 Jahre alt = عمري 16 سنة — لاحظ : Jahre alt ولا تقول Ich habe 16 (غلطة دارجية شائعة لأن الدارجة تستعمل «عندي»). 4) الأصل والسكن : Ich komme aus Algerien = أنا من الجزائر · Ich wohne in Bouira = نسكن في البويرة (kommen aus + بلد، wohnen in + مدينة). 5) السؤال المقابل : Wie heißt du? = شسميتك؟ · Wie alt bist du? · Woher kommst du? · Wo wohnst du?"
+        },
+        {
+          "t": "رسمي ولا صاحبي ؟",
+          "x": "du = نتَ/نتِ (أصحاب، زملاء القسم) · Sie = حضرتكم (المعلم، المدير، الغرباء). مع Sie الفعل ياخذ شكل الجمع : Wie heißen Sie? = كيفاش سميت حضرتكم؟ خلط du/Sie مع الأستاذ = غلطة تواصل قبل ما تكون غلطة قواعد."
+        },
+        {
+          "t": "أمثلة محلولة",
+          "x": "حوار كامل : — Guten Tag! Wie heißt du? — Guten Tag! Ich heiße Sara. — Wie alt bist du, Sara? — Ich bin 15 Jahre alt. — Woher kommst du? — Ich komme aus Algerien, aus Bordj Bou Arreridj. — Schön! Wo wohnst du? — Ich wohne in der Stadt. التحليل : كل جواب أعاد نفس بنية السؤال (اسم استفهام + فعل + فاعل) لأن الألمانية سؤال/جواب مرآة."
+        },
+        {
+          "t": "أخطاء شائعة",
+          "x": "1) Ich habe 16 Jahre → صح : Ich BIN 16 Jahre alt (العمر بـ sein ماشي بـ haben). 2) Ich heiße aus Algerien → خلط بين heißen و kommen aus. 3) نسيان كبير الحروف : الأسماء والأنا دايما kapital : Ich, Algerien, Sara. 4) جواب بلا فعل : في الألمانية الجملة بلا فعل = ماشي جملة."
+        },
+        {
+          "t": "تمرين ذاتي (جاوب ثم قارن)",
+          "x": "ترجم : 1) سميتي أحمد وعمري 17 سنة. 2) أنا من الجزائر ونسكن في سطيف. 3) ما اسم حضرتكم؟ — الحلول : 1) Ich heiße Ahmed und ich bin 17 Jahre alt. 2) Ich komme aus Algerien und ich wohne in Sétif. 3) Wie heißen Sie?"
+        },
+        {
+          "t": "بالدارجة، خلاصة الخلاصة",
+          "x": "الوحدة 1 هي بطاقة هويتك بالألماني : تحية على حساب الموقف، ثم vier Fragen : شسميتك؟ شحال عمرك؟ من وين؟ وين ساكن؟ جاوبهم بـ ich heiße / ich bin / ich komme aus / ich wohne in — ومع الأستاذ دير Sie وما تخافش : الألمان نفسهم يغلطو، المهم الفعل في المرتبة 2."
+        }
+      ]
+    },
+    "2": {
+      "titre": "Haus und Familie — البيت والعائلة",
+      "sections": [
+        {
+          "t": "الهدف",
+          "x": "توصف عائلتك وبيتك : مفردات العائلة، أدوات الملكية mein/dein، والجمع — مع قاعدة اتفاق الأداة التي تفتح باب كل الصفات بعدها."
+        },
+        {
+          "t": "الشرح خطوة بخطوة",
+          "x": "1) العائلة : die Eltern = الوالدين (جمع دائمًا)، der Vater = الأب، die Mutter = الأم، die Geschwister = الخاوة والخواتات (جمع!)، der Bruder = الخو، die Schwester = الخت، der Großvater = الجد. 2) الملكية : mein = تاعي، dein = تاعك : mein Vater (der)، meine Mutter (die)، meine Eltern (جمع) — القاعدة : أداة الملكية تأخذ ذيل die للمؤنث والجمع، وما تأخذ والو للمذكر والمحايد. 3) السؤال : Hast du Geschwister? = عندك خواتات؟ · Ja, ich habe einen Bruder = عندي خو (einen! لأن Bruder مفعول بيه = أكوزاتيف). 4) البيت : das Haus = الدار، die Wohnung = الشقة، das Zimmer = الغرفة."
+        },
+        {
+          "t": "أمثلة محلولة",
+          "x": "Das ist meine Familie : Mein Vater heißt Ali und meine Mutter heißt Fatima. Ich habe zwei Geschwister : einen Bruder und eine Schwester. Wir wohnen in einem Haus. — التحليل : einen Bruder لأن haben يطلب أكوزاتيف (der→einen)؛ eine Schwester مؤنث أكوزاتيف = eine (ما يتبدلش)."
+        },
+        {
+          "t": "أخطاء شائعة",
+          "x": "1) Ich habe ein Bruder → صح : einen Bruder (أكوزاتيف بعد haben). 2) mein Mutter → صح : meine Mutter (مؤنث = ذيل -e). 3) Geschwister مفرد → غير موجود : الواحد يقول Bruder أو Schwester. 4) نفي «ما عنديش خواتات» : ich habe keine Geschwister (kein ماشي nicht)."
+        },
+        {
+          "t": "تمرين ذاتي",
+          "x": "صف عائلتك في 3 جمل باستعمال mein/meine + haben + أكوزاتيف. مثال نموذجي : Meine Mutter ist Lehrerin. Ich habe eine Schwester und keinen Bruder. Unser Haus ist klein, aber schön."
+        },
+        {
+          "t": "بالدارجة",
+          "x": "فكر فيها كيما شجرة : الجدر = die Eltern، والفروع = die Geschwister. الملكية سهلة : mein/ـe على حساب الأداة، والوحيد اللي يخلط هو الأكوزاتيف بعد haben — ديرها عادة : كل ما تقول «عندي خو» قولها einen Bruder حتى تولي تلقائية."
+        }
+      ]
+    },
+    "3": {
+      "titre": "Schule und Unterricht — المدرسة والحصة",
+      "sections": [
+        {
+          "t": "الهدف",
+          "x": "تحكي على يومك المدرسي : المواد، أدوات القسم، فعل haben وتصريفه، والتعبير عن التفضيل (Lieblings-)."
+        },
+        {
+          "t": "الشرح خطوة بخطوة",
+          "x": "1) المواد : das Fach / die Fächer = المادة/المواد : Deutsch, Mathematik, Geschichte, Naturwissenschaften. 2) التفضيل : Mein Lieblingsfach ist Deutsch = مادتي المفضلة الألماني (Lieblings- تلصق قدام أي اسم). 3) haben التصريف : ich habe, du hast, er/sie/es hat, wir haben, ihr habt, sie haben — لاحظ du hast و er hat (الحرف يتبدل!). 4) أدوات القسم : der Stift, das Heft, das Buch, die Tafel, der Ranzen. 5) السؤال : Was hast du heute? = شنو عندك اليوم؟ · Um wie viel Uhr beginnt der Unterricht? = وقتاش تبدا الحصة؟"
+        },
+        {
+          "t": "أمثلة محلولة",
+          "x": "Ich habe heute sechs Stunden. Mein Lieblingsfach ist Deutsch, weil es interessant ist. In der Pause spiele ich mit meinen Freunden. — ملاحظة : mit meinen Freunden = مع أصحابي (mit + داتيف جمع → meinen + n)."
+        },
+        {
+          "t": "أخطاء شائعة",
+          "x": "1) du habst → صح : du hast. 2) er habt → صح : er hat. 3) «أحب الألماني» : الطبيعية مدرسيًا Ich mag Deutsch أو Deutsch ist mein Lieblingsfach. 4) نسيان الجمع في Fächer كي تحكي على أكثر من مادة."
+        },
+        {
+          "t": "تمرين ذاتي",
+          "x": "جاوب بالألماني : 1) شحال من حصة عندك اليوم؟ 2) شنو مادتك المفضلة وعلاش؟ 3) شنو كاين في صاكك؟ — نموذج : Ich habe heute fünf Stunden. Mein Lieblingsfach ist Deutsch, weil der Lehrer nett ist. In meinem Ranzen sind ein Heft und zwei Stifte."
+        },
+        {
+          "t": "بالدارجة",
+          "x": "هذه الوحدة هي حياتك اليومية بالألماني : المدرسة. احفظ 6 مواد + 5 أدوات قسم، وفعل haben بتصريفه الكامل (habe/hast/hat/haben/habt/haben) — لأنه ثاني أكثر فعل تستعمله بعد sein. والتفضيل سهل : Lieblings + الحاجة = أحب حاجة."
+        }
+      ]
+    },
+    "4": {
+      "titre": "Zeit und Wetter — الوقت والجو",
+      "sections": [
+        {
+          "t": "الهدف",
+          "x": "تعبر عن الوقت والأيام والجو : um/am/im، أيام الأسبوع، أفعال الجو بـ es، وأول دخول حقيقي للأكوزاتيف مع الوقت."
+        },
+        {
+          "t": "الشرح خطوة بخطوة",
+          "x": "1) الساعة : Wie spät ist es? / Wie viel Uhr ist es? = شحال الساعة؟ · Es ist acht Uhr = الساعة 8 · Es ist halb neun = 8 ونص (نص ساعة قبل 9 — مقلوبة على الدارجة!) · Es ist Viertel nach acht = 8 وربع. 2) الأيام : am Montag = نهار الاثنين (am = an + dem) · الأسبوع يبدا الاثنين عند الألمان. 3) الفصول والشهور : im Winter, im Mai (im = in + dem). 4) الجو : es regnet = كاين شتا · es schneit = كاين ثلج · die Sonne scheint = الشمس ظاهرة · es ist warm/kalt = دافي/بارد · Wie ist das Wetter heute? 5) الوقت كمفعول : jeden Tag = كل نهار (أكوزاتيف!) · letzte Woche = الأسبوع اللي فات."
+        },
+        {
+          "t": "أمثلة محلولة",
+          "x": "Am Freitag beginnt der Unterricht um acht Uhr. Im Winter ist es kalt und es regnet oft. Jeden Morgen trinke ich Tee. — التحليل : am للنهار، im للفصل/الشهر، um للساعة — وكل وحدة ما تبدلش بصاحبتها."
+        },
+        {
+          "t": "أخطاء شائعة",
+          "x": "1) in Montag → صح : am Montag. 2) um Winter → صح : im Winter. 3) halb acht معناها 7 ونص (ماشي 8 ونص!) — halb X = نص ساعة قبل X. 4) حذف es من es regnet → الجملة تنهار : es واجبة حتى ولو «ما تعني والو»."
+        },
+        {
+          "t": "تمرين ذاتي",
+          "x": "قول بالألماني : 1) الحصة تبدا على 8 ونص نهار الثلاثاء. 2) فالشتاء كاين ثلج بزاف في البويرة. 3) كل صباح نشرب أتاي ونقرا شوية. — نموذج : Der Unterricht beginnt am Dienstag um halb neun. Im Winter schneit es oft in Bouira. Jeden Morgen trinke ich Tee und lerne ein bisschen."
+        },
+        {
+          "t": "بالدارجة",
+          "x": "الوقت بالألماني منطقو عسكري : um للساعة، am للنهار، im للشهر والفصل — حفظهم كثلث ثابت. وhalb مقلوبة : halb neun = 8 ونص. الجو ديما بـ es : السما هي اللي تمطر، والألمانية تقول «es»."
+        }
+      ]
+    }
+  }
+}

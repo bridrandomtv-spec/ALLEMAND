@@ -37,6 +37,10 @@ const adjs2 = fs.readFileSync('admin.js', 'utf8');
 /* DARJA-1 */
 const dj = JSON.parse(fs.readFileSync('assets/bdd/darja.json', 'utf8'));
 const bibl = fs.readFileSync('biblio.js', 'utf8');
+/* SHARH-1 */
+const shr = JSON.parse(fs.readFileSync('assets/bdd/sharh.json', 'utf8'));
+if (Object.keys(shr.unites || {}).length < 4) fails.push('sharh.json : moins de 4 unités approfondies (SHARH-1)');
+if (!fs.readFileSync('rag.js', 'utf8').includes('sharh.json')) fails.push('rag.js : explications approfondies non branchées (SHARH-1)');
 if (!(dj.entrees || []).length || (dj.entrees || []).length < 30) fails.push('darja.json : moins de 30 entrées derja (DARJA-1)');
 if (!bibl.includes("['darja', 'assets/bdd/darja.json']")) fails.push('biblio.js : source darja non indexée (DARJA-1)');
 /* PAY-1 */
