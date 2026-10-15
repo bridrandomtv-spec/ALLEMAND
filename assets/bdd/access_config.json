@@ -7,7 +7,8 @@
       "paid_requires_backend": true,
       "cache_ui_only": true
     },
-    "note_3_2": "paid_views : vues entières paywallisées. Depuis PAY-1/PAY-2 : ['corpus','biblio'] = Corpus pédagogique + 🗂️ المكتبة (وثائق الوحدات : فروض واختبارات رسمية) réservées aux abonnements actifs. Pour verrouiller une autre vue : ajouter son id ici, sans toucher au code. Hors-ligne : jamais d'accès payant (paid_requires_backend)."
+    "note_3_2": "paid_views : vues entières paywallisées. Depuis PAY-1/PAY-2 : ['corpus','biblio'] = Corpus pédagogique + 🗂️ المكتبة (وثائق الوحدات : فروض واختبارات رسمية) réservées aux abonnements actifs. Pour verrouiller une autre vue : ajouter son id ici, sans toucher au code. Hors-ligne : jamais d'accès payant (paid_requires_backend).",
+    "note_content1": "CONTENT-1 : vitrine d'essai élargie — 2AS unité 1 séances 1-2 ET 3AS unité 1 séances 1-2 ; tout le reste des livres est servi uniquement via le chargeur authentifié (garde worker + RLS lesson_content)."
   },
   "FREE_LESSONS_LIMIT": 2,
   "trial_days": 14,
@@ -29,7 +30,13 @@
       "malakhiss",
       "resume"
     ],
-    "note": "Unité 1 : séances 1 et 2 gratuites (le reste visible mais verrouillé). La banque d'exercices originaux et la mémoire restent libres (vitrine pédagogique)."
+    "note": "Unité 1 : séances 1 et 2 gratuites (le reste visible mais verrouillé). La banque d'exercices originaux et la mémoire restent libres (vitrine pédagogique).",
+    "units_3as": {
+      "1": [
+        1,
+        2
+      ]
+    }
   },
   "roles": {
     "prof": {

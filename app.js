@@ -3128,3 +3128,47 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
   else setTimeout(build, 600);
 })();
+
+/* ══ CONTENT-1 : chargeur authentifié des contenus payants ══
+   Les fichiers d'unités ne sont plus des <script> publics : le worker ne les
+   sert qu'avec un jeton Supabase valable (RLS lesson_content = abonné actif).
+   Ce chargeur prend le jeton de la session courante, fetch chaque fichier,
+   et l'exécute en portée globale (les fichiers exposent window.UNITE*). */
+(function(){
+  var FILES = ['unite2.js','unite3.js','unite4.js','unite5.js','unite6.js',
+    'unite10.js','unite11.js','unite12.js','unite13.js','unite14.js','unite15.js','unite16.js',
+    'unites3as_a.js','devoirs_unite.js'];
+  var loaded = false, loading = null;
+  function token(){
+    return new Promise(function(res){
+      try{
+        window.SB.sb().then(function(c){ return c.auth.getSession(); })
+          .then(function(s){ res(s && s.data && s.data.session ? s.data.session.access_token : null); })
+          .catch(function(){ res(null); });
+      }catch(e){ res(null); }
+    });
+  }
+  function load(){
+    if(loaded) return Promise.resolve(true);
+    if(loading) return loading;
+    loading = (async function(){
+      var tk = await token();
+      if(!tk){ loading = null; return false; }
+      for(var i = 0; i < FILES.length; i++){
+        try{
+          var r = await fetch(FILES[i] + '?v=3510', { headers: { 'Authorization': 'Bearer ' + tk } });
+          if(r.ok){ var t = await r.text(); (0, eval)(t); }
+        }catch(e){}
+      }
+      loaded = true; loading = null;
+      try{ window.dispatchEvent(new CustomEvent('content1:loaded')); }catch(e){}
+      try{ if(window.dispatchEvent) window.dispatchEvent(new Event('resize')); }catch(e){}
+      return true;
+    })();
+    return loading;
+  }
+  window.CONTENT1 = { load: load, isLoaded: function(){ return loaded; } };
+  function boot(){ setTimeout(load, 400); try{ window.SB.sb().then(function(c){ c.auth.onAuthStateChange(function(){ loaded = false; loading = null; load(); }); }); }catch(e){} }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();

@@ -46,6 +46,17 @@ const voixjs = fs.readFileSync('voix.js', 'utf8');
 const djs = fs.readFileSync('assets/bdd/darja.json', 'utf8');
 if (['سميتي','شحال','بزاف','خواتات','عندي'].some(m => djs.includes(m))) fails.push('darja.json : sorties encore en derja au lieu de fusha (FUS-1)');
 const shs = fs.readFileSync('assets/bdd/sharh.json', 'utf8');
+/* CONTENT-1 */
+const swc = fs.readFileSync('sw.js', 'utf8');
+const idxc = fs.readFileSync('index.html', 'utf8');
+const wkc = fs.readFileSync('src/site-worker.js', 'utf8');
+const appc = fs.readFileSync('app.js', 'utf8');
+if (swc.includes('./unite2.js')) fails.push('sw.js : contenu payant encore précaché (CONTENT-1)');
+if (idxc.includes('src="unite2.js')) fails.push('index.html : script unité payant encore public (CONTENT-1)');
+if (!wkc.includes('abonnement_requis')) fails.push('site-worker.js : garde CONTENT-1 absente');
+if (!appc.includes('CONTENT-1 : chargeur authentifié')) fails.push('app.js : chargeur CONTENT-1 absent');
+const cfgc = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
+if (!cfgc.free.units_3as || !cfgc.free.units_3as['1']) fails.push('access_config.json : vitrine 3AS absente (CONTENT-1)');
 /* BIBLIO-1 */
 if (!fs.existsSync('assets/bdd/biblio_multimatieres.json')) fails.push('biblio_multimatieres.json : fichier déposé absent (BIBLIO-1)');
 else { const mmj = JSON.parse(fs.readFileSync('assets/bdd/biblio_multimatieres.json', 'utf8')); const mme = mmj['entrees '] || mmj.entrees || []; if (mme.length < 1000) fails.push('biblio_multimatieres.json : moins de 1000 entrées (BIBLIO-1)'); }
