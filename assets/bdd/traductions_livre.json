@@ -8,7 +8,8 @@
     "note_tradfull1": "TRAD-FULL-1 : lot 2AS unités 2-6 — phrases complètes des séances extraites, nettoyées (fragments de code et libellés français exclus) et traduites en fusha ; suite : unités 10-16 puis 3AS.",
     "note_tradfull2": "TRAD-FULL-2 : unités 10-12 (Wissenschaft, Wirtschaft, Umwelt) — 70 phrases complètes traduites en fusha ; une entrée écartée (fragment avec symbole ≠ et libellé français). Registre total : 297.",
     "note_tradfull3": "TRAD-FULL-3 : unités 13-14 (Gesundheit & Lebensweise, Globalisierung) — 62 phrases traduites en fusha ; une entrée française écartée à l'extraction. Registre total : 359.",
-    "note_tradfull4": "TRAD-FULL-4 : unités 15-16 (Medienwelt, Kultureller Dialog) — 83 phrases traduites en fusha ; lot final du livre 2AS ; mesure d'écart complète ci-dessous."
+    "note_tradfull4": "TRAD-FULL-4 : unités 15-16 (Medienwelt, Kultureller Dialog) — 83 phrases traduites en fusha ; lot final du livre 2AS ; mesure d'écart complète ci-dessous.",
+    "note_tradfull5": "TRAD-FULL-5a : répliques courtes des dialogues unités 2-6 (littéraux simples révélés par la méthode linéaire) — 58 entrées fusha ; méta françaises et fragments écartés ; reste TRAD-FULL-5b (unités 10-16)."
   },
   "entrees": [
     {
@@ -3012,6 +3013,405 @@
       "page": null,
       "livre": "2AS",
       "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Sie ist Ärztin.",
+      "ar": "هي طبيبة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Julia wohnt in München.",
+      "ar": "يوليا تسكن في ميونيخ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Julias Vater ist Lehrer.",
+      "ar": "أبو يوليا معلم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Julia hat zwei Brüder.",
+      "ar": "ليوليا أخوان.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Tim ist lustig, aber manchmal laut.",
+      "ar": "تيم مرح لكنه أحيانًا صاخب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Sie heißt Sabine.",
+      "ar": "اسمها زابينه.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Sie gehen ins Kino und spielen Musik.",
+      "ar": "يذهبون إلى السينما ويعزفون الموسيقى.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Meine Schwester ist klein und nett.",
+      "ar": "أختي صغيرة ولطيفة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Ich habe keine Geschwister.",
+      "ar": "ليس لديّ إخوة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Meine Mutter heißt Sabine.",
+      "ar": "اسم أمي زابينه.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Wir gehen zusammen ins Kino und spielen Musik.",
+      "ar": "نذهب معًا إلى السينما ونعزف الموسيقى.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Am Montag haben wir Deutsch, Mathematik und Sport.",
+      "ar": "يوم الاثنين لدينا ألمانية ورياضيات ورياضة بدنية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Nadia wohnt in Algerien.",
+      "ar": "ناديا تسكن في الجزائر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Nadia steht um sechs Uhr auf.",
+      "ar": "ناديا تستيقظ في السادسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Nadia fährt mit dem Auto zur Schule.",
+      "ar": "ناديا تذهب بالسيارة إلى المدرسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Warum ist Deutsch ihr Lieblingsfach?",
+      "ar": "لماذا الألمانية مادتها المفضلة؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Weil ihre Lehrerin sehr nett ist.",
+      "ar": "لأن أستاذتها لطيفة جدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Sie möchte Ärztin werden.",
+      "ar": "تريد أن تصبح طبيبة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Ich muss meine Hausaufgaben machen.",
+      "ar": "يجب أن أنجز واجباتي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Ich möchte Deutsch lernen.",
+      "ar": "أريد تعلم الألمانية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Sie fährt mit dem Bus, nicht mit dem Auto.",
+      "ar": "تركب الحافلة لا السيارة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Sofiane wohnt in Algerien.",
+      "ar": "سفيان يسكن في الجزائر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Er steht um sechs Uhr auf.",
+      "ar": "يستيقظ في السادسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Er fährt mit dem Bus zur Schule.",
+      "ar": "يذهب بالحافلة إلى المدرسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Am Nachmittag macht er seine Hausaufgaben.",
+      "ar": "بعد الظهر ينجز واجباته.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Warum ist Deutsch sein Lieblingsfach?",
+      "ar": "لماذا الألمانية مادته المفضلة؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Weil er später in Deutschland studieren möchte.",
+      "ar": "لأنه يريد الدراسة في ألمانيا لاحقًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Er geht mit seinen Freunden ins Kino.",
+      "ar": "يذهب مع أصدقائه إلى السينما.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Wollen wir ins Kino gehen?",
+      "ar": "هل نذهب إلى السينما؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Leider nicht, ich muss lernen.",
+      "ar": "للأسف لا، يجب أن أدرس.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Am Samstagabend gehe ich mit meinen Freunden ins Kino.",
+      "ar": "مساء السبت أذهب مع أصدقائي إلى السينما.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Leider essen viele Jugendliche heute zu viel Fast Food.",
+      "ar": "للأسف يأكل كثير من الشباب اليوم وجبات سريعة أكثر من اللازم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Ein gutes Frühstück besteht aus Brot mit Käse oder Ei, einem Glas Milch und einer Frucht.",
+      "ar": "الفطور الجيد يتكون من خبز بالجبن أو البيض، وكوب حليب، وفاكهة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Couscous ist das algerische Nationalgericht.",
+      "ar": "الكسكس هو الطبق الوطني الجزائري.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Ärzte empfehlen drei Portionen Obst pro Tag.",
+      "ar": "يوصي الأطباء بثلاث حصص من الفاكهة يوميًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Das Problem ist die traditionelle algerische Küche.",
+      "ar": "المشكلة هي المطبخ الجزائري التقليدي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Warum ist ein Frühstück wichtig?",
+      "ar": "لماذا الفطور مهم؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Weil man sich ohne Frühstück schlecht konzentrieren kann.",
+      "ar": "لأن المرء بدون فطور لا يستطيع التركيز جيدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Mindestens anderthalb Liter.",
+      "ar": "لتر ونصف على الأقل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Ich hätte gern einen Salat, bitte.",
+      "ar": "أودّ سلطة من فضلك.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Schneiden Sie das Gemüse!",
+      "ar": "قطّعوا الخضر!",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Ich koche es jeden Freitag mit meiner Mutter.",
+      "ar": "أطبخه كل جمعة مع أمي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Couscous ist das Nationalgericht.",
+      "ar": "الكسكس هو الطبق الوطني.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Ärzte empfehlen mindestens fünf Portionen, nicht drei.",
+      "ar": "يوصي الأطباء بخمس حصص على الأقل، لا ثلاث.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Das Problem ist die neue Lebensweise, nicht die traditionelle Küche.",
+      "ar": "المشكلة في نمط الحياة الجديد، لا في المطبخ التقليدي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Guten Appetit!",
+      "ar": "بالصحة والهناء!",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Wir sind am 15. Juli mit dem Flugzeug von Algier über Istanbul geflogen.",
+      "ar": "سافرنا في الخامس عشر من جويلية بالطائرة من الجزائر عبر إسطنبول.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Nach fünf Tagen sind wir wieder nach Hause geflogen.",
+      "ar": "بعد خمسة أيام عدنا بالطائرة إلى البيت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Die Familie ist mit dem Zug nach Berlin gereist.",
+      "ar": "سافرت العائلة بالقطار إلى برلين.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Der Flug hat etwa sechs Stunden gedauert.",
+      "ar": "استغرقت الرحلة نحو ست ساعات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Das Hotel lag in der Nähe des Alexanderplatzes.",
+      "ar": "كان الفندق قرب ساحة ألكسندر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Am Museum Pergamon gab es keine Wartezeit.",
+      "ar": "عند متحف بيرغامون لم يكن هناك انتظار.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Sie sind mit dem Zug zum Hotel gefahren.",
+      "ar": "ذهبوا بالقطار إلى الفندق.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Er möchte nach München fahren.",
+      "ar": "يريد أن يسافر إلى ميونيخ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Der Zug fährt um acht Uhr ab.",
+      "ar": "ينطلق القطار في الساعة الثامنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Dort musste man eine Stunde warten.",
+      "ar": "هناك كان على المرء انتظار ساعة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Von dort sind wir mit dem Zug zum Hotel gefahren.",
+      "ar": "من هناك ذهبنا بالقطار إلى الفندق.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
     }
   ]
 }
