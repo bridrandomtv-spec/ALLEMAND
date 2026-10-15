@@ -9,7 +9,8 @@
     "note_tradfull2": "TRAD-FULL-2 : unités 10-12 (Wissenschaft, Wirtschaft, Umwelt) — 70 phrases complètes traduites en fusha ; une entrée écartée (fragment avec symbole ≠ et libellé français). Registre total : 297.",
     "note_tradfull3": "TRAD-FULL-3 : unités 13-14 (Gesundheit & Lebensweise, Globalisierung) — 62 phrases traduites en fusha ; une entrée française écartée à l'extraction. Registre total : 359.",
     "note_tradfull4": "TRAD-FULL-4 : unités 15-16 (Medienwelt, Kultureller Dialog) — 83 phrases traduites en fusha ; lot final du livre 2AS ; mesure d'écart complète ci-dessous.",
-    "note_tradfull5": "TRAD-FULL-5a : répliques courtes des dialogues unités 2-6 (littéraux simples révélés par la méthode linéaire) — 58 entrées fusha ; méta françaises et fragments écartés ; reste TRAD-FULL-5b (unités 10-16)."
+    "note_tradfull5": "TRAD-FULL-5a : répliques courtes des dialogues unités 2-6 (littéraux simples révélés par la méthode linéaire) — 58 entrées fusha ; méta françaises et fragments écartés ; reste TRAD-FULL-5b (unités 10-16).",
+    "note_tradfull5b": "TRAD-FULL-5b : répliques et phrases d'exercices des unités 10-16 — 118 entrées fusha ; exclus : méta-notes françaises, variantes volontairement fautives (exercices de correction) et fragments ; registre total 617 ; livre 2AS couvert : textes, séances, dialogues, exercices."
   },
   "entrees": [
     {
@@ -3412,6 +3413,825 @@
       "page": null,
       "livre": "2AS",
       "source": "seances-2AS (dialogues unités 2-6, TRAD-FULL-5a)"
+    },
+    {
+      "de": "Es muss geforscht werden.",
+      "ar": "لا بد من إجراء البحث.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das kann gelöst werden.",
+      "ar": "يمكن حلّ ذلك.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Hier darf nicht geraucht werden.",
+      "ar": "هنا يُمنع التدخين.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die Daten sollen geschützt werden.",
+      "ar": "ينبغي حماية البيانات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das Problem ist gelöst.",
+      "ar": "المشكلة محلولة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das Experiment wird durchgeführt.",
+      "ar": "تُجرى التجربة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das muss gemacht werden.",
+      "ar": "لا بد من فعل ذلك.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das musste gemacht werden.",
+      "ar": "كان لا بد من فعل ذلك.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das hat gemacht werden müssen.",
+      "ar": "كان يجب أن يُفعَل ذلك.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das ist gemacht.",
+      "ar": "ذلك منفَّذ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Neue Software wird entwickelt.",
+      "ar": "يُطوَّر برنامج جديد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich bin krank, deshalb bleibe ich zu Hause.",
+      "ar": "أنا مريض، لذلك أبقى في البيت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich lerne, damit du mich verstehst.",
+      "ar": "أتعلم لكي تفهمني.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die KI hat fast alle Bereiche unseres Lebens verändert.",
+      "ar": "غيّر الذكاء الاصطناعي تقريبًا كل مجالات حياتنا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Laut Befürwortern können Lehrer entlastet werden.",
+      "ar": "حسب المؤيدين، يمكن تخفيف الأعباء عن المعلمين.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Eine Maschine versteht, warum ein Schüler Schwierigkeiten hat.",
+      "ar": "تفهم الآلة لماذا يواجه التلميذ صعوبات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Für den Autor ist die KI ein Ersatz für den Lehrer.",
+      "ar": "بالنسبة للكاتب، الذكاء الاصطناعي بديل عن المعلم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die Tests werden automatisch korrigiert.",
+      "ar": "تُصحَّح الاختبارات آليًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die Daten müssen geschützt werden.",
+      "ar": "يجب حماية البيانات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Könnten Sie mir bitte helfen?",
+      "ar": "هل يمكنكم مساعدتي من فضلكم؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich hätte gern weitere Informationen.",
+      "ar": "أودّ معلومات إضافية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Würden Sie das bitte wiederholen?",
+      "ar": "هل يمكنكم تكرار ذلك من فضلكم؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Wäre es möglich, einen Termin zu bekommen?",
+      "ar": "هل يمكن الحصول على موعد؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich wäre Ihnen sehr dankbar.",
+      "ar": "سأكون شاكرًا لكم كثيرًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Könnten Sie mir helfen?",
+      "ar": "هل يمكنكم مساعدتي؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich hätte gern einen Termin.",
+      "ar": "أودّ موعدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "An deiner Stelle würde ich fragen.",
+      "ar": "لو كنت مكانك لسألت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich will einen Termin.",
+      "ar": "أريد موعدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Gib mir einen Termin.",
+      "ar": "أعطني موعدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich brauche einen Termin.",
+      "ar": "أحتاج موعدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ja klar, kein Problem.",
+      "ar": "نعم بالطبع، لا مشكلة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Muss ich nicht.",
+      "ar": "لست مضطرًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ohne dich wäre ich verloren.",
+      "ar": "لولاك لكنت ضائعًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Sonst hätte ich es geschafft.",
+      "ar": "وإلا لكنت نجحت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich wünschte, ich hätte mehr gelernt.",
+      "ar": "ليتني درست أكثر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Wenn ich Zeit hätte, würde ich reisen.",
+      "ar": "لو كان لدي وقت لسافرت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Wenn ich Zeit gehabt hätte, wäre ich gereist.",
+      "ar": "لو كان لدي وقت لكنت سافرت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Hätte ich Zeit, würde ich reisen.",
+      "ar": "لو كان لدي وقت لسافرت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich hatte keine Zeit, sonst wäre ich gekommen.",
+      "ar": "لم يكن لدي وقت، وإلا لكنت جئت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Etwa 30 Prozent der Arbeitslosen sind zwischen 16 und 29 Jahre alt.",
+      "ar": "نحو 30 بالمئة من العاطلين أعمارهم بين 16 و29 سنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die algerische Wirtschaft hängt nur wenig vom Erdöl ab.",
+      "ar": "يعتمد الاقتصاد الجزائري قليلًا فقط على البترول.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Viele Start-ups wurden in Algier, Oran und Constantine gegründet.",
+      "ar": "أُنشئت شركات ناشئة كثيرة في الجزائر ووهران وقسنطينة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Deutsche Firmen suchen in Algerien keine Mitarbeiter.",
+      "ar": "لا تبحث الشركات الألمانية عن موظفين في الجزائر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die Wirtschaft hängt zu stark vom Erdöl ab.",
+      "ar": "يعتمد الاقتصاد اعتمادًا مفرطًا على البترول.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Deutsche Firmen suchen ständig qualifizierte Mitarbeiter.",
+      "ar": "تبحث الشركات الألمانية باستمرار عن موظفين مؤهلين.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Obwohl es regnet, gehen wir raus.",
+      "ar": "رغم أن المطر ينزل، نخرج.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Trotz des Regens gehen wir raus.",
+      "ar": "رغم المطر نخرج.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Es regnet, trotzdem gehen wir raus.",
+      "ar": "ينزل المطر، ومع ذلك نخرج.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Es regnet zwar, aber wir gehen raus.",
+      "ar": "ينزل المطر فعلًا، لكننا نخرج.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das Problem lässt sich lösen.",
+      "ar": "يمكن حل المشكلة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das Wasser ist trinkbar.",
+      "ar": "الماء صالح للشرب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Man kann das recyceln.",
+      "ar": "يمكن إعادة تدوير ذلك.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Mehr als 80 Prozent der Landesfläche bestehen aus Wüste.",
+      "ar": "أكثر من 80 بالمئة من مساحة البلاد صحراء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die Landwirtschaft verbraucht etwa 60 Prozent des Wassers.",
+      "ar": "تستهلك الفلاحة نحو 60 بالمئة من الماء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "In allen Regionen wird Wasser rund um die Uhr geliefert.",
+      "ar": "في كل المناطق يُوزَّع الماء على مدار الساعة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die Verantwortung liegt laut Text nur beim Staat.",
+      "ar": "المسؤولية حسب النص على الدولة وحدها.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Sie sind oft undicht, sodass große Mengen Wasser verloren gehen.",
+      "ar": "كثيرًا ما تكون غير محكمة، فتضيع كميات كبيرة من الماء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Der Staat muss Maßnahmen ergreifen.",
+      "ar": "يجب على الدولة اتخاذ إجراءات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich habe Kopfschmerzen.",
+      "ar": "يؤلمني رأسي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Mein Bauch tut weh.",
+      "ar": "تؤلمني بطني.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich habe Halsschmerzen.",
+      "ar": "يؤلمني حلقي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Mein Ohr tut weh.",
+      "ar": "تؤلمني أذني.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich habe 39 Grad Fieber.",
+      "ar": "عندي حمى تسع وثلاثين درجة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich fühle mich schwach.",
+      "ar": "أشعر بالضعف.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Es begann vor drei Tagen.",
+      "ar": "بدأ ذلك قبل ثلاثة أيام.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Ich habe Durchfall.",
+      "ar": "عندي إسهال.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Mir ist schwindlig.",
+      "ar": "أشعر بدوار.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Seit wann sind Sie krank?",
+      "ar": "منذ متى وأنتم مرضى؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Seit drei Tagen habe ich Fieber.",
+      "ar": "منذ ثلاثة أيام وعندي حمى.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Iss mehr Gemüse!",
+      "ar": "كُلْ خضرًا أكثر!",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Esst mehr Gemüse!",
+      "ar": "كُلوا خضرًا أكثر!",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Essen Sie mehr Gemüse!",
+      "ar": "كُلوا خضرًا أكثر (صيغة الاحترام).",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Du hättest zum Arzt gehen sollen.",
+      "ar": "كان ينبغي لك أن تذهب إلى الطبيب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Du könntest mehr schlafen.",
+      "ar": "يمكنك أن تنام أكثر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Er müsste sich ausruhen.",
+      "ar": "ينبغي له أن يستريح.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Du solltest weniger Zucker essen.",
+      "ar": "ينبغي لك أن تأكل سكرًا أقل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "An deiner Stelle würde ich Sport treiben.",
+      "ar": "لو كنت مكانك لمارست الرياضة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Du musst Sport machen!",
+      "ar": "يجب أن تمارس الرياضة!",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Du solltest Sport machen.",
+      "ar": "ينبغي لك أن تمارس الرياضة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Sport ist nötig.",
+      "ar": "الرياضة ضرورية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Immer mehr Jugendliche leiden unter Übergewicht.",
+      "ar": "يعاني شباب أكثر فأكثر من الوزن الزائد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die algerische Küche ist von Natur aus ungesund.",
+      "ar": "المطبخ الجزائري غير صحي بطبيعته.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Übergewicht nimmt bei Jugendlichen zu.",
+      "ar": "يزداد الوزن الزائد بين الشباب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Jugendliche schlafen durchschnittlich mehr als acht Stunden.",
+      "ar": "ينام الشباب في المتوسط أكثر من ثماني ساعات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Man muss die traditionelle Küche aufgeben.",
+      "ar": "يجب التخلي عن المطبخ التقليدي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Anderthalb Liter.",
+      "ar": "لتر ونصف.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Du solltest dich ausruhen.",
+      "ar": "ينبغي لك أن تستريح.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Trinken Sie viel Wasser!",
+      "ar": "اشربوا ماءً كثيرًا (صيغة الاحترام).",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die algerische Küche ist von Natur aus gesund.",
+      "ar": "المطبخ الجزائري صحي بطبيعته.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Übergewicht und Diabetes nehmen deutlich zu.",
+      "ar": "يزداد الوزن الزائد والسكري بشكل ملحوظ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Im Durchschnitt weniger als sieben Stunden.",
+      "ar": "في المتوسط أقل من سبع ساعات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Man muss die traditionelle Küche gar nicht aufgeben.",
+      "ar": "ليس من الضروري التخلي عن المطبخ التقليدي إطلاقًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Zwar wächst der Handel, aber die Kluft bleibt.",
+      "ar": "ينمو التداول التجاري فعلًا، لكن الهوة تبقى.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Entweder wir öffnen uns, oder wir bleiben zurück.",
+      "ar": "إما أن ننفتح، أو نتخلف.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Waren werden exportiert.",
+      "ar": "تُصدَّر السلع.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Arbeitsplätze werden geschaffen.",
+      "ar": "تُستحدَث مناصب الشغل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das Gesetz wurde verabschiedet.",
+      "ar": "صودق على القانون.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Es wird viel diskutiert.",
+      "ar": "يُناقَش كثيرًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das Problem kann gelöst werden.",
+      "ar": "يمكن حل المشكلة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das Problem ist lösbar.",
+      "ar": "المشكلة قابلة للحل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Das Problem ist zu lösen.",
+      "ar": "المشكلة مما يمكن حلّه.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Man kann das Problem lösen.",
+      "ar": "يمكن للمرء حل المشكلة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Man diskutiert viel.",
+      "ar": "يناقش الناس كثيرًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Nur so lässt sich die Kluft verkleinern.",
+      "ar": "بهذه الطريقة فقط يمكن تقليص الهوة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die Regierung hat keine Lösung.",
+      "ar": "ليس للحكومة أي حل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Algerische Unternehmen exportieren.",
+      "ar": "تصدر الشركات الجزائرية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Der Autor hält die Globalisierung für nur positiv.",
+      "ar": "يرى الكاتب أن العولمة إيجابية فقط.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Algerien exportiert in mehr als hundert Länder.",
+      "ar": "تصدر الجزائر إلى أكثر من مئة بلد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Kleine Betriebe können dem Wettbewerb standhalten.",
+      "ar": "تستطيع المؤسسات الصغيرة الصمود أمام المنافسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die Regierung hat schon eine vollständige Lösung.",
+      "ar": "للحكومة بالفعل حل كامل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die zunehmende Vernetzung von Wirtschaft, Kultur und Kommunikation über die Grenzen hinweg.",
+      "ar": "الترابط المتزايد بين الاقتصاد والثقافة والتواصل عبر الحدود.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die Kluft lässt sich verkleinern.",
+      "ar": "يمكن تقليص الهوة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Die Globalisierung ist weder gut noch schlecht an sich.",
+      "ar": "العولمة ليست خيرًا ولا شرًا في ذاتها.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Kleine Betriebe können dem Wettbewerb nicht standhalten.",
+      "ar": "لا تستطيع المؤسسات الصغيرة الصمود أمام المنافسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Weder Regierung noch Unternehmen haben bisher eine Lösung.",
+      "ar": "لا الحكومة ولا الشركات لديها حل حتى الآن.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Zwischen Algerien und Deutschland gibt es diesen Austausch seit Jahrzehnten — durch Studenten, Künstler und heute vor allem durch das Internet.",
+      "ar": "بين الجزائر وألمانيا يجري هذا التبادل منذ عقود — عبر الطلبة والفنانين، واليوم خصوصًا عبر الإنترنت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Selbst wenn es Hindernisse gäbe, ließen sie sich durch Begegnung abbauen.",
+      "ar": "حتى لو وجدت عقبات، لأمكن تذليلها بالتلاقي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
     }
   ]
 }
