@@ -40,8 +40,10 @@ const bibl = fs.readFileSync('biblio.js', 'utf8');
 /* SHARH-1 */
 const shr = JSON.parse(fs.readFileSync('assets/bdd/sharh.json', 'utf8'));
 /* UI-7 */
-if (!appjs.includes("var host = document.querySelector('.topbar-act')")) fails.push('app.js : sélecteur de langue hors header (UI-7)');
-if (!css.includes('UI-7 — le header reste')) fails.push('style.css : bloc header sticky/wrap absent (UI-7)');
+const appjs7 = fs.readFileSync('app.js', 'utf8');
+const css7 = fs.readFileSync('style.css', 'utf8');
+if (!appjs7.includes("var host = document.querySelector('.topbar-act')")) fails.push('app.js : sélecteur de langue hors header (UI-7)');
+if (!css7.includes('UI-7 — le header reste')) fails.push('style.css : bloc header sticky/wrap absent (UI-7)');
 if (Object.keys(shr.unites || {}).length < 4) fails.push('sharh.json : moins de 4 unités approfondies (SHARH-1)');
 if (!fs.readFileSync('rag.js', 'utf8').includes('sharh.json')) fails.push('rag.js : explications approfondies non branchées (SHARH-1)');
 if (!(dj.entrees || []).length || (dj.entrees || []).length < 30) fails.push('darja.json : moins de 30 entrées derja (DARJA-1)');
