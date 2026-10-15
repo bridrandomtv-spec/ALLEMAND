@@ -1,10 +1,11 @@
 {
   "_meta": {
-    "version": 1,
+    "version": 2,
     "langue": "darja-dz (algérien dialectal, script arabe)",
     "validation": "relecture propriétaire + prof référent avant pilote",
     "principe": "contenu ORIGINAL rédigé pour la plateforme ; aucune copie de contenus tiers ; chaque entrée future porte source+licence",
-    "usage": "indexée par biblio.js (src=darja) ; contexte vérifié pour 🔎 اسأل et 🤖 ; réponses en derja quand l'élève écrit en derja"
+    "usage": "indexée par biblio.js (src=darja) ; contexte vérifié pour 🔎 اسأل et 🤖 ; réponses en derja quand l'élève écrit en derja",
+    "note_darja1b": "DARJA-1b : +70 entrées thématiques (nombres, couleurs, adjectifs, comparatif/superlatif, temps, corps, nourriture, maison, ville, loisirs, métiers, école, connecteurs, questions, politesse, consignes d examen, opinion). Total 106 entrées originales."
   },
   "entrees": [
     {
@@ -364,6 +365,626 @@
       "de": "Begrüßung : Hallo / Guten Tag",
       "darja": "التحية : Hallo = سلام (أصحاب)، Guten Tag = نهارك سعيد (رسمية)، Guten Morgen = صباح الخير. فالقسم مع الأستاذ استعمل Guten Tag.",
       "ar": "التحية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "num-01",
+      "unite": 0,
+      "type": "nombres",
+      "de": "Zahlen 0–12",
+      "darja": "الأرقام : null=زيرو، eins=واحد، zwei=جوج، drei=ثلاثة، vier=ربعة، fünf=خمسة، sechs=ستة، sieben=سبعة، acht=ثمانية، neun=تسعة، zehn=عشرة، elf=حداش، zwölf=طناش.",
+      "ar": "الأعداد من 0 إلى 12",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "num-02",
+      "unite": 0,
+      "type": "nombres",
+      "de": "Zahlen 13–19",
+      "darja": "من 13 لـ19 قلبّ النظام : dreizehn = طناش (3+10)، vierzehn = ربعطاش، fünfzehn=خمسطاش، sechzehn=سطاش، siebzehn=سبطاش، achtzehn=تمنطاش، neunzehn=تسعطاش. شفت؟ الرقم جا قبل العشرة.",
+      "ar": "الأعداد من 13 إلى 19",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "num-03",
+      "unite": 0,
+      "type": "nombres",
+      "de": "Zehnerzahlen 20–90",
+      "darja": "العشرات : zwanzig=عشرين، dreißig=ثلاثين (انتبه : dreiSSIG ماشي dreizig!)، vierzig=ربعين، fünfzig=خمسين، sechzig=ستين، siebzig=سبعين، achtzig=ثمانين، neunzig=تسعين.",
+      "ar": "العشرات",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "num-04",
+      "unite": 0,
+      "type": "nombres",
+      "de": "zusammengesetzte Zahlen",
+      "darja": "الأرقام المركبة بالألماني مقلوبة بالدارجة : 25 = fünfundzwanzig = خمسة-و-عشرين (الآحاد قبل العشرات!). 2026 = zweitausendsechsundzwanzig. تمرّن بيها فالساعات والتواريخ.",
+      "ar": "الأعداد المركبة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "num-05",
+      "unite": 0,
+      "type": "nombres",
+      "de": "Ordnungszahlen",
+      "darja": "الترتيبية : der erste = الأول، der zweite = الثاني، der dritte = الثالث، der vierte = الرابع… القاعدة : من 20 فصاعد زيد -ste : der zwanzigste. تستعمل فالتواريخ : am 5. Mai = فالخامس ماي.",
+      "ar": "الأعداد الترتيبية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "num-06",
+      "unite": 0,
+      "type": "nombres",
+      "de": "Jahreszahlen lesen",
+      "darja": "قراية السنوات : 1998 = neunzehnhundertachtundneunzig (19-مئة-8و90) ولا tausendneunhundert…؛ 2026 = zweitausendsechsundzwanzig. فالامتحان تسمعها فالمسموع — درّب ودنك.",
+      "ar": "قراءة السنوات",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "col-01",
+      "unite": 0,
+      "type": "couleurs",
+      "de": "Grundfarben",
+      "darja": "الألوان الأساسية : rot=حمر، blau=زرق، grün=خضر، gelb=صفر، schwarz=كحل، weiß=بيض، braun=بني، grau=رمادي، orange=برتقالي، rosa=وردي.",
+      "ar": "الألوان الأساسية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "col-02",
+      "unite": 0,
+      "type": "couleurs",
+      "de": "Farben + Artikel",
+      "darja": "الصفة اللونية تتصرف مع الأداة : ein roter Pullover (der)، eine rote Jacke (die)، ein rotes Kleid (das)، die roten Schuhe (جمع). بالدارجة : زيد -er/-e/-es/-en حسب الأداة، ماشي اللون وحده.",
+      "ar": "اتفاق لون مع الأداة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "col-03",
+      "unite": 0,
+      "type": "couleurs",
+      "de": "Welche Farbe gefällt dir?",
+      "darja": "سؤال الذوق : Welche Farbe gefällt dir? = آشمن لون عجبك؟ · جواب : Mir gefällt Grün = الخضر يعجبني. Mir gefällt + Dativ — ماشي Ich mag فقط.",
+      "ar": "السؤال عن اللون المفضل",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "col-04",
+      "unite": 0,
+      "type": "couleurs",
+      "de": "Farben im Kontext",
+      "darja": "فالطبيعة والثقافة : der blaue Himmel = السما الزرقا، das grüne Feld = الحقل الأخضر، die weiße Flagge = الراية البيضا. كي توصف صورة فالامتحان، اللون أول كلمة تخطر : Ein rotes Auto steht vor dem Haus.",
+      "ar": "الألوان في الوصف",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "adj-01",
+      "unite": 0,
+      "type": "adjectifs",
+      "de": "Gegensätze 1",
+      "darja": "الأضداد 1 : groß=كبير / klein=صغير · alt=قديم-كبير / jung=شاب · dick=غليظ-سمين / dünn=رقيق-نيفو · lang=طويل / kurz=قصر.",
+      "ar": "أضداد أساسية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "adj-02",
+      "unite": 0,
+      "type": "adjectifs",
+      "de": "Gegensätze 2",
+      "darja": "الأضداد 2 : gut=مزيان / schlecht=خايب · schön=زين / hässlich=شينو · sauber=نظيف / schmutzlich? لا : schmutzig=وسخ · richtig=صحيح / falsch=غالط.",
+      "ar": "أضداد التقييم",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "adj-03",
+      "unite": 0,
+      "type": "adjectifs",
+      "de": "Gegensätze 3",
+      "darja": "الأضداد 3 : teuer=غالي / billig=رخيص · warm=سخون / kalt=بارد · schnell= سريع / langsam=بطيء · leicht=ساهل / schwer=صعيب.",
+      "ar": "أضداد الحياة اليومية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "adj-04",
+      "unite": 0,
+      "type": "grammaire",
+      "de": "Adjektiv prädikativ vs attributiv",
+      "darja": "فرق مهم : prädikativ ما يتصرفش (Das Auto ist rot = الطوموبيل حمرا)، attributiv يتصرف (das rote Auto = الطوموبيل الحمراء). بالدارجة : كي يكون بعد ist يبقى ساكت، كي يجي قبل الاسم يزيد ذيل.",
+      "ar": "الصفة المحمولة والمنسوبة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "adj-05",
+      "unite": 0,
+      "type": "adjectifs",
+      "de": "Gefühle & Zustand",
+      "darja": "الأحاسيس : müde=عيان، froh=فرحان، traurig=حزين، böse=مقلق-غاضب، krank=مريض، gesund=صاحي. «Ich bin müde» = أنا عيان — الجملة أبسط ما يمكن : sein + صفة.",
+      "ar": "صفات الأحاسيس",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "adj-06",
+      "unite": 0,
+      "type": "adjectifs",
+      "de": "Intensität : sehr, ziemlich, ein bisschen",
+      "darja": "التقوية والتضعيف : sehr = بزاف، ziemlich = شوية مزيانة، ein bisschen = شوية برك، gar nicht = والو. «Der Test war sehr schwer» = الفرض كان صعيب بزاف.",
+      "ar": "درجات الشدة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "cmp-01",
+      "unite": 0,
+      "type": "comparatif",
+      "de": "Komparativ : -er + als",
+      "darja": "المقارنة : زيد -er وبعدها als (= من) : größer als = أكبر من، schneller als = أسرع من. «Deutsch ist leichter als Mathematik» = الألماني سهل من الرياضيات (رأيك، صح؟).",
+      "ar": "صيغة المقارنة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "cmp-02",
+      "unite": 0,
+      "type": "superlatif",
+      "de": "Superlativ : am …-sten",
+      "darja": "التفضيل المطلق : am + صفة + sten : am schnellsten = الأسرع، am schönsten = الأزهى. «Im Sommer ist es am heißesten» = فالصيف سخون على قبل.",
+      "ar": "صيغة التفضيل",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "cmp-03",
+      "unite": 0,
+      "type": "comparatif",
+      "de": "unregelmäßig : gut–besser–am besten",
+      "darja": "الشواذ : gut = مزيان → besser = خير منه → am besten = الأحسن · gern = يحب → lieber = يفضل → am liebsten = أحب شيء ليه. «Am liebsten esse ich Couscous» = أحب ما ناكل الكسكس.",
+      "ar": "المقارنة الشاذة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "cmp-04",
+      "unite": 0,
+      "type": "comparatif",
+      "de": "so … wie (égalité)",
+      "darja": "المساواة : so + صفة + wie = كيما : so groß wie = كبير كيما. والنفي : nicht so … wie = ماشي كيما. «Bouira ist nicht so groß wie Algier» = البويرة ماشي كبيرة كيما الجزائر.",
+      "ar": "صيغة المساواة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "tmp-01",
+      "unite": 0,
+      "type": "temps",
+      "de": "Wochentage",
+      "darja": "أيام الأسبوع : Montag=الاثنين، Dienstag=الثلاثاء، Mittwoch=الأربعاء (نص الأسبوع!)، Donnerstag=الخميس، Freitag=الجمعة، Samstag=السبت، Sonntag=الأحد. كلها der ومع am : am Freitag = فالجمعة.",
+      "ar": "أيام الأسبوع",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "tmp-02",
+      "unite": 0,
+      "type": "temps",
+      "de": "Monate & Jahreszeiten",
+      "darja": "الشهور : Januar…Dezember (der) · الفصول : der Winter=الشتاء، der Frühling=الربيع، der Sommer=الصيف، der Herbst=الخريف. مع im : im Winter = فالشتاء.",
+      "ar": "الشهور والفصول",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "tmp-03",
+      "unite": 0,
+      "type": "temps",
+      "de": "gestern – heute – morgen",
+      "darja": "بارح-اليوم-غدوة : gestern = بارح (ماضي!)، heute = اليوم، morgen = غدوة (مستقبل). انتبه : morgen = صباحًا أيضًا : morgen früh = غدوة بالصباح. السياق هو اللي يفرق.",
+      "ar": "ظروف الزمان الأساسية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "tmp-04",
+      "unite": 0,
+      "type": "temps",
+      "de": "am / im / um",
+      "darja": "حروف الوقت : um + ساعة (um 8 Uhr = على 8)، am + يوم/جزء يوم (am Morgen = بالصباح)، im + شهر/فصل (im Ramadan? لا — im Mai = فماي). ثلاث حروف، ثلاث قواعد، نقط سهلة.",
+      "ar": "حروف الجر الزمنية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "tmp-05",
+      "unite": 0,
+      "type": "temps",
+      "de": "Häufigkeit : immer, oft, manchmal, nie",
+      "darja": "التكرار : immer = ديما، oft = غالبًا، manchmal = مرات، selten = نادرًا، nie = عمره ما. «Ich lerne immer Deutsch» = نقرا الألماني ديما. رتّبها فالرأس من 100% لـ 0%.",
+      "ar": "ظروف التكرار",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "kor-01",
+      "unite": 0,
+      "type": "corps",
+      "de": "Körperteile",
+      "darja": "الجسم : der Kopf = الراس، das Auge = العين، die Nase = الانف، der Mund = الفم، das Ohr = الودن، die Hand = اليد، der Fuß = الرجل، das Herz = القلب.",
+      "ar": "أعضاء الجسم",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "kor-02",
+      "unite": 0,
+      "type": "corps",
+      "de": "Ich habe …schmerzen",
+      "darja": "الوجع : Ich habe Kopfschmerzen = راه يوجعني راسي · Bauchschmerzen = الكرش · Zahnschmerzen = السنان. الصيغة ديما : haben + Wort + schmerzen (جمع!).",
+      "ar": "التعبير عن الألم",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "kor-03",
+      "unite": 0,
+      "type": "corps",
+      "de": "beim Arzt",
+      "darja": "عند الطبيب : der Arzt = الطبيب · «Was fehlt Ihnen?» = شنو بيك؟ · «Ich bin krank» = أنا مريض · das Rezept = الأوردونانس · die Apotheke = الفرماسة.",
+      "ar": "حوار الطبيب",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "nou-01",
+      "unite": 0,
+      "type": "nourriture",
+      "de": "Mahlzeiten",
+      "darja": "الوجبات : das Frühstück = الفطور، das Mittagessen = الغدا، das Abendessen = العشا. الأفعال : frühstücken = يفطر، zu Mittag essen = يتغدا.",
+      "ar": "الوجبات اليومية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "nou-02",
+      "unite": 0,
+      "type": "nourriture",
+      "de": "Lebensmittel",
+      "darja": "المأكولات : das Brot = الخبز، der Käse = الجبن، die Milch = الحليب، das Obst = الفاكهة، das Gemüse = الخضر، das Fleisch = اللحم، der Reis = الرز، die Nudeln = الماكرونة.",
+      "ar": "المفردات الغذائية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "nou-03",
+      "unite": 0,
+      "type": "nourriture",
+      "de": "Getränke",
+      "darja": "المشروبات : das Wasser = الما، der Tee = أتاي، der Kaffee = القهوة، der Saft = الجوس. «Ich trinke Wasser» = نشرب الما — trinken = يشرب، essen = ياكل.",
+      "ar": "المشروبات",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "nou-04",
+      "unite": 0,
+      "type": "nourriture",
+      "de": "Ich hätte gern…",
+      "darja": "فالماكلة/الحنوت : Ich hätte gern … = بغيت … (مهذب). «Ich hätte gern ein Brot, bitte» = بغيت خبزة، عفاك. صيغة الشرط المهذبة — نقط أدب فالامتحان.",
+      "ar": "الطلب المهذب",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "hai-01",
+      "unite": 0,
+      "type": "maison",
+      "de": "Räume im Haus",
+      "darja": "بيوت الدار : das Wohnzimmer = بيت القعود، das Schlafzimmer = بيت النعسة، die Küche = الكوزينة، das Bad = البيت تاع الحمام، der Hof = الحوش.",
+      "ar": "غرف المنزل",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "hai-02",
+      "unite": 0,
+      "type": "maison",
+      "de": "Möbel",
+      "darja": "الأثاث : der Tisch = الطاولة، der Stuhl = الكرسي، das Bett = الفراش، der Schrank = الدولاب، das Fenster = الشباك، die Tür = الباب.",
+      "ar": "الأثاث",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "hai-03",
+      "unite": 0,
+      "type": "maison",
+      "de": "Ort : in/auf + Dativ",
+      "darja": "وين الحاجة؟ in + داتيف = داخل (Das Buch ist in der Tasche = الكتاب فالصاك)، auf + داتيف = فوق (Die Tasse ist auf dem Tisch = الكاس على الطاولة). ساكن = داتيف.",
+      "ar": "التعبير عن المكان",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "std-01",
+      "unite": 0,
+      "type": "ville",
+      "de": "Orte in der Stadt",
+      "darja": "فالمدنية : der Bahnhof = القارّة، der Markt = السوق، die Schule = الماكسة، die Moschee = الجامع, das Krankenhaus = السبيطار، die Bank = البنك، der Park = البارك.",
+      "ar": "أماكن المدينة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "std-02",
+      "unite": 0,
+      "type": "ville",
+      "de": "nach dem Weg fragen",
+      "darja": "سؤال الطريق : Wo ist …? = وين …؟ · Wie komme ich zum Bahnhof? = كيفاش نروح للقارّة؟ · Antworten : links = ليسر، rechts = ليمنان، geradeaus = نيشان.",
+      "ar": "السؤال عن الطريق",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "std-03",
+      "unite": 0,
+      "type": "ville",
+      "de": "Verkehrsmittel",
+      "darja": "وسائل النقل : mit dem Bus = بالبوص، mit dem Zug = بالطرون، mit dem Auto = بالطوموبيل، zu Fuß = على الرجلين. ديما mit + داتيف، إلا zu Fuß بلا شيء.",
+      "ar": "وسائل النقل",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "std-04",
+      "unite": 0,
+      "type": "ville",
+      "de": "Richtungen & Lage",
+      "darja": "الاتجاه والموقع : neben = حد، zwischen = بين، hinter = وراء، vor = قدّام، über = فوق، unter = تحت. فالوصف : Die Schule ist neben der Moschee = الماكسة حد الجامع.",
+      "ar": "ظروف المكان",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "loi-01",
+      "unite": 0,
+      "type": "loisirs",
+      "de": "Hobbys",
+      "darja": "الهوايات : Fußball spielen = يلعب الكورة، Musik hören = يسمع الموسيقى، lesen = يقرا، schwimmen = يسبح، fernsehen = يتفرج فال تلفزة. «Mein Hobby ist Lesen» = هوايتي القراية.",
+      "ar": "الهوايات",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "loi-02",
+      "unite": 0,
+      "type": "loisirs",
+      "de": "Sport treiben vs spielen",
+      "darja": "فرق الأفعال : spielen + لعبة/كرة (Ich spiele Volleyball)، treiben + رياضة عامة (Ich treibe Sport)، gehen + نشاط (Ich gehe schwimmen = رايح نسبح). كل فعل وله مجاله.",
+      "ar": "أفعال الرياضة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "loi-03",
+      "unite": 0,
+      "type": "loisirs",
+      "de": "Ich interessiere mich für…",
+      "darja": "الاهتمام : Ich interessiere mich für … = مهتم بـ…. «Ich interessiere mich für Deutsch» = مهتم بالألماني. für + أكوزاتيف ديما.",
+      "ar": "التعبير عن الاهتمام",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "met-01",
+      "unite": 0,
+      "type": "metiers",
+      "de": "Berufe",
+      "darja": "المهن : der Lehrer = الأستاذ، die Lehrerin = الأستاذة، der Arzt = الطبيب، der Ingenieur = المهندر، die Verkäuferin = البياعة، der Bauer = الفلاح، der Fahrer = السواق.",
+      "ar": "المهن",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "met-02",
+      "unite": 0,
+      "type": "metiers",
+      "de": "Was willst du werden?",
+      "darja": "شنو بغيتي ولّي؟ : Ich will Arzt werden = بغيت نولي طبيب · «Was willst du werden?» = شنو بغيتي تولي؟ · werden = يولي (فعل المستقبل/المهنة).",
+      "ar": "السؤال عن المهنة المستقبلية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "sch-01",
+      "unite": 0,
+      "type": "ecole",
+      "de": "Schulsachen",
+      "darja": "أدوات الماكسة : der Ranzen = الصاك، das Buch = الكتاب، das Heft = الكراس، der Stift = القلم، der Radiergummi = القوم، die Schere = المقراض، der Lineal? لا : das Lineal = المسطرة.",
+      "ar": "الأدوات المدرسية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "sch-02",
+      "unite": 0,
+      "type": "ecole",
+      "de": "im Unterricht",
+      "darja": "فالقسم : die Aufgabe = التمرين، die Frage = السؤال، die Antwort = الجواب، das Beispiel = المثال، die Regel = القاعدة، die Ausnahme = الاستثناء.",
+      "ar": "مفردات الحصة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "kon-01",
+      "unite": 0,
+      "type": "connecteurs",
+      "de": "weil (parce que)",
+      "darja": "weil = خاطر : الجملة بعدها الفعل فالآخر ! «Ich lerne Deutsch, weil ich es liebe» = نقرا الألماني خاطر نحبو. هذي أكثر غلطة : ما تحطش الفعل بعد weil.",
+      "ar": "رابطة السبب",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "kon-02",
+      "unite": 0,
+      "type": "connecteurs",
+      "de": "dass (que)",
+      "darja": "dass = أنّ : هي الأخرى الفعل فالآخر. «Ich weiß, dass der Test schwer ist» = نعرف بلي الفرض صعيب. بعد dass ديما جملة كاملة بترتيبها الخاص.",
+      "ar": "رابطة التبعية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "kon-03",
+      "unite": 0,
+      "type": "connecteurs",
+      "de": "wenn (si / quand)",
+      "darja": "wenn = إلا/كي : شرط وزمن متكرر. «Wenn ich Zeit habe, lerne ich» = إلا عندي الوقت، نقرا. فالشرط، الجملة تبدا بـ wenn والفعل فالآخر، وبعدها الفعل الأول.",
+      "ar": "رابطة الشرط",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "kon-04",
+      "unite": 0,
+      "type": "connecteurs",
+      "de": "und, aber, oder, denn",
+      "darja": "الروابط البسيطة : und = و، aber = بصح، oder = ولا، denn = خاطر (بدون تغيير الترتيب!). aber بعد فاصلة : «Ich lerne, aber ich spiele auch» = نقرا بصح نلعب حتى.",
+      "ar": "روابط التنسيق",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "qst-01",
+      "unite": 0,
+      "type": "questions",
+      "de": "welcher / welche / welches",
+      "darja": "وين؟ أي؟ : welcher Stift? = أي قلم؟ (der)، welche Farbe? (die)، welches Buch? (das). تتصرف كيما der/die/das — دور على الأداة تاع الاسم.",
+      "ar": "أداة الاستفهام أي",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "qst-02",
+      "unite": 0,
+      "type": "questions",
+      "de": "warum, wann, wem, wessen",
+      "darja": "لماذا/متى/لمن/لمن الملكية : warum? = علاش؟ wann? = وقتاش؟ wem? = لمين (داتيف)؟ wessen? = تاع مين؟ «Wessen Heft ist das?» = تاع مين هاد الكراس؟",
+      "ar": "أسئلة متقدمة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "pol-01",
+      "unite": 0,
+      "type": "politesse",
+      "de": "bitte, danke, Entschuldigung",
+      "darja": "الأدب : bitte = عفاك/تفضل، danke = شكرًا، Entschuldigung! = سماحلي! · «Entschuldigen Sie, bitte» = سماحني عفاك (رسمية). فالقسم وفي الامتحان الشفوي، الأدب نقط.",
+      "ar": "كلمات الأدب",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "pol-02",
+      "unite": 0,
+      "type": "politesse",
+      "de": "Darf ich …?",
+      "darja": "الاستئذان : Darf ich auf die Toilette? = نقدر نخرج للبيت؟ · Darf ich fragen? = نقدر نسؤال؟ darf = يسمح (modal) — سؤال مهذب أكثر من kann.",
+      "ar": "الاستئذان المهذب",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "pol-03",
+      "unite": 0,
+      "type": "politesse",
+      "de": "Grüße & Abschied",
+      "darja": "التحية والفراق : Tschüss! = باي (أصحاب)، Auf Wiedersehen! = مع السلامة (رسمية)، Gute Nacht! = تصبح على خير، Bis morgen! = نتشافو غدوة.",
+      "ar": "التحيات والوداع",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "exm-01",
+      "unite": 0,
+      "type": "examen",
+      "de": "Ordne zu !",
+      "darja": "فالامتحان : Ordne zu! = وصّل/طابق ! · Verbinde! = اربط ! · deux consignes بنفس المعنى : خط من عمود لعمود.",
+      "ar": "تعليمات المطابقة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "exm-02",
+      "unite": 0,
+      "type": "examen",
+      "de": "Ergänze / Fülle aus",
+      "darja": "Ergänze die Lücken! = عمّر الفجوات ! · Fülle das Formular aus! = عمّر الاستمارة ! · ausfüllen = فعل منفصل : fülle … aus.",
+      "ar": "تعليمات التعبئة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "exm-03",
+      "unite": 0,
+      "type": "examen",
+      "de": "Kreuze an / Richtig oder falsch?",
+      "darja": "Kreuze an! = علّم بصلبة ! · Richtig oder falsch? = صح ولا غالط؟ · Wähle die richtige Antwort! = اختر الجواب الصحيح.",
+      "ar": "تعليمات الاختيار",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "exm-04",
+      "unite": 0,
+      "type": "examen",
+      "de": "Beantworte / Beschreibe",
+      "darja": "Beantworte die Fragen! = جاوب على الأسئلة ! · Beschreibe das Bild! = وصف الصورة ! · Erzähle! = احكِ ! · ثلاث أوامر فالكتابي : جواب، وصف، حكي.",
+      "ar": "تعليمات الإنتاج",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "opi-01",
+      "unite": 0,
+      "type": "opinion",
+      "de": "Ich finde, dass…",
+      "darja": "رأيك : Ich finde, dass Deutsch schön ist = نلقى الألماني زين · Meiner Meinung nach = حسب رأيي · Ich glaube, dass = نظن بلي. فالكتابي، الرأي المنظم = نقط إضافية.",
+      "ar": "التعبير عن الرأي",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "opi-02",
+      "unite": 0,
+      "type": "opinion",
+      "de": "Ich mag / Ich mag nicht",
+      "darja": "الذوق البسيط : Ich mag Deutsch = نحب الألماني · Ich mag keine Klausuren = ما نحبش الفروض (kein بعد mag للنفي!). مغربي? لا — جزائري : ما نحب والو = Ich mag nichts.",
+      "ar": "الإعجاب وعدمه",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "opi-03",
+      "unite": 0,
+      "type": "opinion",
+      "de": "Mir gefällt …",
+      "darja": "الذوق بالداتيف : Mir gefällt das Lied = الأغنية تعجبني · Gefällt dir die Plattform? = المنصة تعجبك؟ · das gefällt mir nicht = هاذ ما يعجبنيش.",
+      "ar": "الإعجاب بصيغة gefallen",
       "source": "rédaction originale plateforme (validation propriétaire)",
       "licence": "interne"
     }
