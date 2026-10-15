@@ -32,6 +32,11 @@ if (!idx.includes('سياسة الخصوصية (بيانات القاصرين)')
 /* MANUEL-1 */
 if (!man.includes('manuel-ops-v1')) fails.push('docs/ops/manuel.md : manuel d exploitation absent ou sans marqueur v1 (MANUEL-1)');
 const css5 = fs.readFileSync('style.css', 'utf8');
+const kit = fs.existsSync('sponsor-kit.html') ? fs.readFileSync('sponsor-kit.html', 'utf8') : '';
+/* LANG-1 */
+if (!kit.includes('Sponsor Kit') || !kit.includes('Who does your advertising reach?')) fails.push('sponsor-kit.html : kit non bilingue AR/EN (LANG-1)');
+if (/Qui touche votre publicit|Emplacements & tarifs/.test(kit)) fails.push('sponsor-kit.html : français encore présent (LANG-1)');
+if (!bil.includes('Sponsorship & Ads')) fails.push('billing.js : vue sponsor non bilingue (LANG-1)');
 if (!css5.includes('UI-5 — la colonne de navigation doit rester')) fails.push('style.css : bloc colonne déroulante absent (UI-5)');
 /* UI-6 */
 const appjs6 = fs.readFileSync('app.js', 'utf8');

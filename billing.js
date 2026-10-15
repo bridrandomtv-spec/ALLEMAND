@@ -152,27 +152,26 @@
     const box = $('#sponsorBody'); if(!box) return;
     box.innerHTML =
         '<div class="bl-hero"><span class="bl-crest">📢</span><div>'
-      + '<h2>Sponsoring & Werbung</h2><p class="bl-sub">écoles · académies · sociétés : '
-      + 'touchez des milliers d’élèves et de parents algériens</p></div></div>'
+      + '<h2>الرعاية والإشهار · Sponsorship & Ads</h2><p class="bl-sub">مدارس · أكاديميات · شركات : '
+      + 'صلوا إلى آلاف التلاميذ وأولياء الأمور بالجزائر — schools & companies: reach thousands of Algerian students and parents</p></div></div>'
       + '<div class="bl-slots">'
-      + slot('accueil', '🏠 Startbanner', 'gesehen von jedem Besucher beim Start')
-      + slot('unites', '📚 Unité-Banner', 'angezeigt während der Wiederholungen')
-      + slot('email', '✉️ Wochen-E-Mail', 'im Elternbericht')
+      + slot('accueil', '🏠 لافتة الرئيسية · Home banner', 'يراها كل زائر عند البدء · seen by every visitor at start')
+      + slot('unites', '📚 شريط الوحدات · Units banner', 'يظهر أثناء المراجعات · shown during revision')
+      + slot('email', '✉️ بريد الأسبوع · Weekly email', 'داخل تقرير الأولياء · inside the parents report')
       + '</div>'
       + '<div class="card"><form id="spForm">'
-      + '<input id="spNom" placeholder="Name der Einrichtung / Firma" required>'
-      + '<select id="spType"><option value="ecole">Schule</option>'
-      + '<option value="academie">Akademie</option><option value="societe">Firma</option></select>'
-      + '<select id="spSlot"><option value="accueil">Startbanner</option>'
-      + '<option value="unites">Unité-Banner</option><option value="email">Wochen-E-Mail</option></select>'
-      + '<input id="spContact" placeholder="E-Mail / Telefon" required>'
-      + '<input id="spBudget" placeholder="geplantes Budget (DA)">'
-      + '<textarea id="spMsg" placeholder="Nachricht / Ziel der Kampagne"></textarea>'
+      + '<input id="spNom" placeholder="اسم المؤسسة / الشركة · Name of institution or company" required>'
+      + '<select id="spType"><option value="ecole">مدرسة · School</option>'
+      + '<option value="academie">أكاديمية · Academy</option><option value="societe">شركة · Company</option></select>'
+      + '<select id="spSlot"><option value="accueil">لافتة الرئيسية · Home banner</option>'
+      + '<option value="unites">شريط الوحدات · Units banner</option><option value="email">بريد الأسبوع · Weekly email</option></select>'
+      + '<input id="spContact" placeholder="بريد / هاتف · Email / phone" required>'
+      + '<input id="spBudget" placeholder="الميزانية المتوقعة (دج) · Planned budget (DA)">'
+      + '<textarea id="spMsg" placeholder="رسالة / هدف الحملة · Message / campaign goal"></textarea>'
       + '<a class="btn btn-o btn-block" style="display:block;margin-bottom:10px" '
-      + 'target="_blank" rel="noopener" href="sponsor-kit.html">📄 kit sponsor '
-      + '(document commercial imprimable)</a>'
-      + '<button class="btn btn-p btn-block" type="submit">📨 Anfrage senden</button>'
-      + '<div id="spOk" class="bl-ok" hidden>✅ Anfrage gespeichert — wir kontaktieren Sie innerhalb von 48 h</div>'
+      + 'target="_blank" rel="noopener" href="sponsor-kit.html">📄 ملف الراعي (قابل للطباعة) · Sponsor kit (printable)</a>'
+      + '<button class="btn btn-p btn-block" type="submit">📨 إرسال الطلب · Send request</button>'
+      + '<div id="spOk" class="bl-ok" hidden>✅ تم حفظ الطلب — نتواصل معكم خلال 48 سا · Request saved — we reply within 48 h</div>'
       + '</form></div>';
     $('#spForm').addEventListener('submit', async ev => {
       ev.preventDefault();
