@@ -3459,3 +3459,11 @@ html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px soli
 }
 #tabs::-webkit-scrollbar,.tabs::-webkit-scrollbar{width:8px}
 #tabs::-webkit-scrollbar-thumb,.tabs::-webkit-scrollbar-thumb{background:rgba(232,182,76,.35);border-radius:8px}
+
+/* ══ UI-7 — le header reste à l'horizon et garde ses commandes (bloc additif) ══
+   1) sticky : le header ne quitte plus le haut de l'écran au scroll ;
+   2) wrap : aucun débordement qui rogne 🔊 ou le sélecteur de langue ;
+   3) btnSound toujours visible. */
+.topbar{position:sticky;top:0;z-index:480}
+.topbar-in{flex-wrap:wrap;row-gap:6px}
+#btnSound{display:inline-flex !important}

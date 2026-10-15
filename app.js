@@ -2036,8 +2036,10 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     if(document.getElementById('subjSel')) return;
     var b = document.createElement('button');
     b.id = 'subjSel';
-    b.style.cssText = 'position:fixed;top:10px;inset-inline-end:10px;z-index:9996;background:#0f2b1d;border:1px solid #2c7a4f;color:#eafff2;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)';
-    document.body.appendChild(b);
+    b.style.cssText = 'background:#0f2b1d;border:1px solid #2c7a4f;color:#eafff2;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer;margin-inline-start:6px';
+    /* UI-7 : le sélecteur de langue vit DANS le header (toujours à l'horizon), plus en fixed flottant */
+    var host = document.querySelector('.topbar-act') || document.body;
+    host.appendChild(b);
     b.addEventListener('click', function(){
       var l = get()==='de' ? 'en' : 'de';
       apply(l);
