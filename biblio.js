@@ -134,7 +134,7 @@
     LOADING = (async () => {
       const data = {};
       for(const pr of SRC){
-        try{ const r = await fetch(pr[1], { cache:'no-store' }); if(r.ok) data[pr[0]] = await r.json(); }catch(e){}
+        try{ const hd = (window.CONTENT1 && CONTENT1.authHeaders) ? await CONTENT1.authHeaders() : {}; const r = await fetch(pr[1], { cache:'no-store', headers: hd }); if(r.ok) data[pr[0]] = await r.json(); }catch(e){}
       }
       ENTRIES = build(data);
       return ENTRIES;

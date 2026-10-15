@@ -3167,7 +3167,8 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     })();
     return loading;
   }
-  window.CONTENT1 = { load: load, isLoaded: function(){ return loaded; } };
+  window.CONTENT1 = { load: load, isLoaded: function(){ return loaded; },
+    authHeaders: function(){ return token().then(function(tk){ return tk ? { 'Authorization': 'Bearer ' + tk } : {}; }); } };
   function boot(){ setTimeout(load, 400); try{ window.SB.sb().then(function(c){ c.auth.onAuthStateChange(function(){ loaded = false; loading = null; load(); }); }); }catch(e){} }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

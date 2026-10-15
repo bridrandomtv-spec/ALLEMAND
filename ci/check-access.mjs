@@ -58,6 +58,7 @@ if (!appc.includes('CONTENT-1 : chargeur authentifié')) fails.push('app.js : ch
 if (swc.includes('./unite2.js')) fails.push('sw.js : precache payant encore présent (CONTENT-1b)');
 if (!idxc.includes('unites3as_vitrine.js')) fails.push('index.html : script vitrine 3AS absent (CONTENT-1b)');
 if (!fs.readFileSync('access.js', 'utf8').includes('freeUnitsFor')) fails.push('access.js : vitrine 3AS non câblée (CONTENT-1b)');
+if (!fs.readFileSync('biblio.js', 'utf8').includes('CONTENT1.authHeaders')) fails.push('biblio.js : fetch sans en-tête d abonnement (CONTENT-1c)');
 const cfgc = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
 if (!cfgc.free.units_3as || !cfgc.free.units_3as['1']) fails.push('access_config.json : vitrine 3AS absente (CONTENT-1)');
 /* BIBLIO-1 */
