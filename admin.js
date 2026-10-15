@@ -389,9 +389,9 @@ document.addEventListener('click', ev => {
     if(!box){ box = document.createElement('div'); box.id = 'admDashCard'; box.className = 'card'; h.appendChild(box); }
     if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
     var r = await SB.admDashboard();
-    if(!r.ok){ box.innerHTML = '<h2>📊 Tableau de bord</h2><p>⛔ ' + esq5(r.err) + '</p>'; return; }
+    if(!r.ok){ box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard</h2><p>⛔ ' + esq5(r.err) + '</p>'; return; }
     var d = r.dash || {};
-    box.innerHTML = '<h2>📊 Tableau de bord (périmètre : ' + esq5(d.perimetre) + ')</h2>'
+    box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard (périmètre : ' + esq5(d.perimetre) + ')</h2>'
       + '<div class="grid3" style="margin-top:10px">'
       + '<div class="card mini"><div class="mini-i">🎓</div><b>' + (d.eleves||0) + '</b><p>élèves du périmètre</p></div>'
       + '<div class="card mini"><div class="mini-i">⏳</div><b>' + (d.paiements_attente||0) + '</b><p>paiements à traiter</p></div>'
