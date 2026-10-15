@@ -36,6 +36,8 @@ if (!man.includes('manuel-ops-v1')) fails.push('docs/ops/manuel.md : manuel d ex
 if ((idx.match(/ defer>/g) || []).length < 45) fails.push('index.html : moins de 45 scripts différés (PERF-1)');
 if (!idx.includes('<script src="auth.js?v=3510"></script>')) fails.push('index.html : auth.js doit rester eager (PERF-1)');
 if (!idx.includes('<script src="prof_core.js?v=3510"></script>')) fails.push('index.html : prof_core.js doit rester eager (PROF exporté au top-level de window.DZ, PERF-1b)');
+/* UI-4 */
+if (!(idx.indexOf('</header>') < idx.indexOf('id="tabs"'))) fails.push('index.html : nav#tabs doit être hors du header (containing block backdrop-filter, UI-4)');
 
 if (!idx.includes('بانتظار اعتماد الإدارة')) fails.push('SIGNUP-1 : formulaire d inscription sans la mention d approbation administrative');
 if (idx.includes('Deutsche Sprache')) fails.push('BRAND-2 : mention « Deutsche Sprache » résiduelle dans index.html');
