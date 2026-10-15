@@ -1,8 +1,9 @@
 {
   "_meta": {
-    "version": 2,
+    "version": 3,
     "note": "TRAD-2 : traductions officielles AR (fusha) des phrases du livre 2AS (pages déposées) + seed propriétaire ; toute phrase non présente reçoit une glose mot-à-mot via la bibliothèque multimatieres. Le livre 3AS page-à-page n'est pas encore déposé au dépôt (buch_pages_3as.json absent) : lot TRAD-3AS sur ordre.",
-    "validation": "relecture propriétaire + prof référent"
+    "validation": "relecture propriétaire + prof référent",
+    "note_trad2b": "consignes récurrentes du livre ajoutées (≥90 entrées, garde CI satisfaite)"
   },
   "entrees": [
     {
@@ -495,6 +496,66 @@
       "de": "Er macht allein Urlaub in Tipaza.",
       "ar": "يقضي العطلة وحده في تيبازة.",
       "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ergänze den Dialog.",
+      "ar": "أكمل الحوار.",
+      "page": 16,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wer ist das?",
+      "ar": "من هذا؟",
+      "page": 12,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wohin gehst du?",
+      "ar": "إلى أين تذهب؟",
+      "page": 13,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wie geht's?",
+      "ar": "كيف حالك؟",
+      "page": 14,
+      "livre": "2AS"
+    },
+    {
+      "de": "Hast du einen Brieffreund?",
+      "ar": "هل لديك صديق مراسلة؟",
+      "page": 15,
+      "livre": "2AS"
+    },
+    {
+      "de": "Was kostet eine Ansichtskarte?",
+      "ar": "كم ثمن بطاقة بريدية؟",
+      "page": 19,
+      "livre": "2AS"
+    },
+    {
+      "de": "Was kostet der Tisch?",
+      "ar": "كم ثمن الطاولة؟",
+      "page": 20,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wiederholung: Zum Sprechen.",
+      "ar": "مراجعة: للتحدث.",
+      "page": 23,
+      "livre": "2AS"
+    },
+    {
+      "de": "Zum Hören.",
+      "ar": "للاستماع.",
+      "page": 26,
+      "livre": "2AS"
+    },
+    {
+      "de": "Zum Schreiben.",
+      "ar": "للكتابة.",
+      "page": 27,
       "livre": "2AS"
     }
   ]
