@@ -42,6 +42,9 @@ const shr = JSON.parse(fs.readFileSync('assets/bdd/sharh.json', 'utf8'));
 /* UI-7 */
 const appjs7 = fs.readFileSync('app.js', 'utf8');
 const voixjs = fs.readFileSync('voix.js', 'utf8');
+/* FUS-1 */
+const djs = fs.readFileSync('assets/bdd/darja.json', 'utf8');
+if (['سميتي','شحال','بزاف','خواتات','عندي'].some(m => djs.includes(m))) fails.push('darja.json : sorties encore en derja au lieu de fusha (FUS-1)');
 /* VOIX-1 */
 if (!voixjs.includes('VOIX-1 : le TTS allemand lit')) fails.push('voix.js : nettoyage TTS « = » absent (VOIX-1)');
 if (!voixjs.includes("if(s.type === 'ar' && !v)")) fails.push('voix.js : segments arabes non sautés sans voix arabe (VOIX-1)');
