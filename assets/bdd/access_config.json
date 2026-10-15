@@ -7,7 +7,7 @@
       "paid_requires_backend": true,
       "cache_ui_only": true
     },
-    "note_3_2": "paid_views : vues entières paywallisées. Depuis PAY-1 : ['corpus'] = مكتبة الفروض والامتحانات réservée aux abonnements actifs (décision propriétaire). Pour verrouiller une autre vue : ajouter son id ici, sans toucher au code. Hors-ligne : jamais d'accès payant (paid_requires_backend)."
+    "note_3_2": "paid_views : vues entières paywallisées. Depuis PAY-1/PAY-2 : ['corpus','biblio'] = Corpus pédagogique + 🗂️ المكتبة (وثائق الوحدات : فروض واختبارات رسمية) réservées aux abonnements actifs. Pour verrouiller une autre vue : ajouter son id ici, sans toucher au code. Hors-ligne : jamais d'accès payant (paid_requires_backend)."
   },
   "FREE_LESSONS_LIMIT": 2,
   "trial_days": 14,
@@ -72,6 +72,7 @@
     }
   },
   "paid_views": [
-    "corpus"
+    "corpus",
+    "biblio"
   ]
 }

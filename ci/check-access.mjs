@@ -36,7 +36,8 @@ const kit = fs.existsSync('sponsor-kit.html') ? fs.readFileSync('sponsor-kit.htm
 const adjs2 = fs.readFileSync('admin.js', 'utf8');
 /* PAY-1 */
 const acccfg = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
-if (!(acccfg.paid_views || []).includes('corpus')) fails.push('access_config.json : مكتبة الفروض والامتحانات non paywallisée (PAY-1)');
+if (!(acccfg.paid_views || []).includes('corpus')) fails.push('access_config.json : corpus non paywallisé (PAY-1)');
+if (!(acccfg.paid_views || []).includes('biblio')) fails.push('access_config.json : المكتبة (biblio) non paywallisée (PAY-2)');
 /* LANG-4 */
 const appjs4 = fs.readFileSync('app.js', 'utf8');
 if (!/const NAVSOLO_BOT = \['cloud', 'abonne', 'projet', 'compte', 'legal'\]/.test(appjs4)) fails.push('app.js : admin encore dans la colonne (LANG-4)');
