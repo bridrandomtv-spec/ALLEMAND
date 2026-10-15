@@ -31,6 +31,8 @@ if (!leg.includes('donnees-mineurs-legal1')) fails.push('legal.js : section donn
 if (!idx.includes('سياسة الخصوصية (بيانات القاصرين)')) fails.push('index.html : lien consentement absent du formulaire (LEGAL-1)');
 /* MANUEL-1 */
 if (!man.includes('manuel-ops-v1')) fails.push('docs/ops/manuel.md : manuel d exploitation absent ou sans marqueur v1 (MANUEL-1)');
+const css5 = fs.readFileSync('style.css', 'utf8');
+if (!css5.includes('UI-5 — la colonne de navigation doit rester')) fails.push('style.css : bloc colonne déroulante absent (UI-5)');
 /* UI-6 */
 if (!/const NAVSOLO_BOT = \['cloud', 'abonne', 'projet'/.test(appjs)) fails.push('app.js : sponsoring encore présent dans la colonne de navigation (UI-6)');
 

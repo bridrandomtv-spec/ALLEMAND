@@ -3445,3 +3445,17 @@ html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px soli
 .msg-steps4 .s{background:var(--p2);border:1px dashed var(--b);border-radius:14px;padding:12px;font-size:12px;color:var(--m);line-height:1.6}
 .msg-steps4 .s b{color:var(--t);display:block;margin-bottom:3px;font-size:12.5px}
 .msg-steps4 .s .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;background:var(--vert);color:#fff;font-size:11px;font-weight:800;margin-bottom:6px}
+
+/* ══ UI-5 — la colonne de navigation doit rester DÉROULANTE (bloc additif) ══
+   Une colonne fixed ne défile que si sa hauteur est bornée ET overflow-y:auto.
+   Réimposition des deux, bureau et tiroir, + overscroll-behavior (la molette ne
+   fuit pas vers la page) + scrollbar fine dorée pour voir qu'on peut dérouler. */
+@media (min-width:1081px){
+  #tabs,.tabs{top:0 !important;bottom:0 !important;height:auto !important;max-height:100vh !important;
+    overflow-y:auto !important;overscroll-behavior:contain}
+}
+@media (max-width:1080px){
+  #tabs,.tabs{overflow-y:auto !important;overscroll-behavior:contain}
+}
+#tabs::-webkit-scrollbar,.tabs::-webkit-scrollbar{width:8px}
+#tabs::-webkit-scrollbar-thumb,.tabs::-webkit-scrollbar-thumb{background:rgba(232,182,76,.35);border-radius:8px}
