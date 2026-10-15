@@ -440,7 +440,9 @@ const NAVCATS = [
   ['services', '🗓️', 'الخدمات', ['reservation']]
 ];
 const NAVSOLO_TOP = ['accueil', 'masar'];
-const NAVSOLO_BOT = ['cloud', 'abonne', 'sponsor', 'projet', 'admin', 'compte', 'legal'];
+/* UI-6 : le sponsoring se gère depuis #admin uniquement — retiré de la colonne de navigation ;
+   la page reste atteignable par URL directe pour les annonceurs qui ont le lien. */
+const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'admin', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
