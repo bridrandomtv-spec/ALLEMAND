@@ -7,7 +7,8 @@
     "note_trad3as": "TRAD-3AS-A : textes de lecture des unités 3AS (lot A : unités 1-5 de #seances) traduits en fusha, phrase par phrase, depuis unites3as_a.js ; batches suivants : lot B 3AS puis textes 2AS.",
     "note_tradfull1": "TRAD-FULL-1 : lot 2AS unités 2-6 — phrases complètes des séances extraites, nettoyées (fragments de code et libellés français exclus) et traduites en fusha ; suite : unités 10-16 puis 3AS.",
     "note_tradfull2": "TRAD-FULL-2 : unités 10-12 (Wissenschaft, Wirtschaft, Umwelt) — 70 phrases complètes traduites en fusha ; une entrée écartée (fragment avec symbole ≠ et libellé français). Registre total : 297.",
-    "note_tradfull3": "TRAD-FULL-3 : unités 13-14 (Gesundheit & Lebensweise, Globalisierung) — 62 phrases traduites en fusha ; une entrée française écartée à l'extraction. Registre total : 359."
+    "note_tradfull3": "TRAD-FULL-3 : unités 13-14 (Gesundheit & Lebensweise, Globalisierung) — 62 phrases traduites en fusha ; une entrée française écartée à l'extraction. Registre total : 359.",
+    "note_tradfull4": "TRAD-FULL-4 : unités 15-16 (Medienwelt, Kultureller Dialog) — 83 phrases traduites en fusha ; lot final du livre 2AS ; mesure d'écart complète ci-dessous."
   },
   "entrees": [
     {
@@ -2430,6 +2431,587 @@
       "page": null,
       "livre": "2AS",
       "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Er sagte, er sei müde.",
+      "ar": "قال إنه متعب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Sie behauptet, sie habe Beweise.",
+      "ar": "تدّعي أن لديها أدلة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die Forscher betonen, dass diese Zahl in den letzten fünf Jahren um sechzig Prozent gestiegen sei.",
+      "ar": "يؤكد الباحثون أن هذه النسبة ارتفعت في السنوات الخمس الأخيرة بستين بالمئة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Dabei ist das Bild ambivalent.",
+      "ar": "ومع ذلك تبقى الصورة مزدوجة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Laut der Studie glaubt jeder dritte Jugendliche eine Nachricht, ohne ihre Herkunft zu kontrollieren.",
+      "ar": "حسب الدراسة، يصدّق شاب من كل ثلاثة أي خبر دون التحقق من مصدره.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Experten fordern deshalb mehr Medienkompetenz in der Schule.",
+      "ar": "لذا يطالب الخبراء بمزيد من التربية الإعلامية في المدرسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die wachsende Zahl der Fake News mache diese Fähigkeit überlebenswichtig, erklärte der Leiter der Studie in einem Interview.",
+      "ar": "إن تزايد الأخبار الزائفة يجعل هذه القدرة مسألة بقاء، كما شرح رئيس الدراسة في حوار.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass die sozialen Netzwerke weder gut noch schlecht sind — entscheidend ist, wie man sie nutzt.",
+      "ar": "وخلاصة القول إن الشبكات الاجتماعية ليست خيرة ولا شريرة — الحاسم هو كيفية استعمالها.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Eine gestern veröffentlichte Studie zeigt, dass algerische Jugendliche vier Stunden täglich in sozialen Netzwerken verbringen.",
+      "ar": "تظهر دراسة نُشرت أمس أن الشباب الجزائري يقضون أربع ساعات يوميًا في الشبكات الاجتماعية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Der Leiter der Studie erklärte, dass diese Zahl in fünf Jahren um sechzig Prozent gestiegen sei.",
+      "ar": "أوضح رئيس الدراسة أن هذه النسبة ارتفعت في خمس سنوات بستين بالمئة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Dafür spricht, dass die Informationen heute schneller fließen als je zuvor.",
+      "ar": "ومما يؤيد ذلك أن المعلومات تتدفق اليوم أسرع من أي وقت مضى.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die Nachrichten, über die früher nur die Zeitung berichtete, erreichen uns in Sekunden.",
+      "ar": "الأخبار التي كانت الصحيفة وحدها تنقلها سابقًا تصلنا في ثوانٍ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die wachsende Zahl der Nutzer beweist, wie wichtig diese Kanäle geworden sind.",
+      "ar": "يثبت تزايد عدد المستخدمين مدى أهمية هذه القنوات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass die Medien weder gut noch schlecht sind.",
+      "ar": "وخلاصة القول إن وسائل الإعلام ليست خيرة ولا شريرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Jugendliche verbringen durchschnittlich vier Stunden täglich in sozialen Netzwerken.",
+      "ar": "يقضي الشباب متوسطًا أربع ساعات يوميًا في الشبكات الاجتماعية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Diese Zahl ist in fünf Jahren gesunken.",
+      "ar": "انخفضت هذه النسبة في خمس سنوات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die sozialen Netzwerke sind laut Autor grundsätzlich schlecht.",
+      "ar": "الشبكات الاجتماعية سيئة أساسًا حسب الكاتب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Was fordern die Experten?",
+      "ar": "ماذا يطالب الخبراء؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Sie fordern mehr Medienkompetenz in der Schule.",
+      "ar": "يطالبون بمزيد من التربية الإعلامية في المدرسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Laut der Zeitung ist die Lage ernst.",
+      "ar": "حسب الصحيفة، الوضع خطير.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die Zahl ist um 60 % gestiegen, nicht gesunken.",
+      "ar": "ارتفعت النسبة بـ60 بالمئة ولم تنخفض.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Jeder dritte glaubt eine Nachricht ohne Kontrolle.",
+      "ar": "واحد من كل ثلاثة يصدّق الخبر دون تحقق.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die Netzwerke sind weder gut noch schlecht.",
+      "ar": "الشبكات ليست خيرة ولا شريرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Mehr Medienkompetenz in der Schule.",
+      "ar": "مزيد من التربية الإعلامية في المدرسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Medien — Fluch oder Segen?",
+      "ar": "وسائل الإعلام — نقمة أم نعمة؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Eine gestern veröffentlichte Studie zeigt, dass Jugendliche vier Stunden täglich online sind.",
+      "ar": "تظهر دراسة نُشرت أمس أن الشباب متصلون أربع ساعات يوميًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Der Leiter erklärte, die Zahl sei um 60 % gestiegen.",
+      "ar": "أوضح الرئيس أن النسبة ارتفعت بـ60 بالمئة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Meiner Meinung nach entscheidet die Medienkompetenz.",
+      "ar": "في رأيي، التربية الإعلامية هي الفاصل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Damit ist gemeint, dass Kultur mehr ist als Kunst.",
+      "ar": "المقصود بذلك أن الثقافة أوسع من الفن.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Man bezeichnet Casbah als Kulturerbe.",
+      "ar": "تُوصف القصبة بأنها تراث ثقافي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die Gastfreundschaft gilt als algerische Tugend.",
+      "ar": "يُعدّ كرم الضيافة فضيلة جزائرية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Algier ist größer als Oran.",
+      "ar": "الجزائر العاصمة أكبر من وهران.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Mein Deutsch ist so gut wie deins.",
+      "ar": "ألمانيّتي جيدة مثل ألمانيّتك.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Er ist nicht so groß wie sein Bruder.",
+      "ar": "ليس طويلًا مثل أخيه.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Das Buch ist doppelt so dick wie jenes.",
+      "ar": "هذا الكتاب أسمك بمرتين من ذاك.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Dies ist am schwierigsten.",
+      "ar": "هذا هو الأصعب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Er hat auf das Herzlichste gedankt.",
+      "ar": "قدّم شكرًا حارًا جدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Obwohl wir verschiedene Kulturen haben, verstehen wir uns.",
+      "ar": "رغم اختلاف ثقافاتنا، نحن متفاهمون.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Wir sind verschieden, trotzdem verstehen wir uns.",
+      "ar": "نحن مختلفون، ومع ذلك نتفاهم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Trotz der Unterschiede verstehen wir uns.",
+      "ar": "رغم الاختلافات نتفاهم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Selbst wenn wir uns streiten, bleiben wir Freunde.",
+      "ar": "حتى لو تشاجرنا نبقى أصدقاء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Das muss stimmen.",
+      "ar": "هذا صحيح حتمًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Das dürfte stimmen.",
+      "ar": "هذا صحيح على الأرجح.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Das kann stimmen.",
+      "ar": "يمكن أن يكون صحيحًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Das könnte stimmen.",
+      "ar": "قد يكون صحيحًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Das mag stimmen.",
+      "ar": "قد يكون صحيحًا على سبيل التسليم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Er soll reich sein.",
+      "ar": "يُقال إنه غني.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Er will es nicht gewusst haben.",
+      "ar": "يزعم أنه لم يكن يعلم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Das muss ein Missverständnis sein.",
+      "ar": "لا بد أنه سوء فهم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Er dürfte bald ankommen.",
+      "ar": "من المرجح أنه سيصل قريبًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Sie soll drei Sprachen sprechen.",
+      "ar": "يُقال إنها تتحدث ثلاث لغات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Er will nichts gesehen haben.",
+      "ar": "يزعم أنه لم ير شيئًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Zwischen Algerien und Deutschland gibt es diesen Austausch seit Jahrzehnten — durch Studenten, Gastarbeiter, Künstler und heute vor allem durch das Internet.",
+      "ar": "بين الجزائر وألمانيا يجري هذا التبادل منذ عقود — عبر الطلبة والعمال الضيوف والفنانين، واليوم خصوصًا عبر الإنترنت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Auf den ersten Blick scheinen die beiden Kulturen sehr verschieden zu sein.",
+      "ar": "للوهلة الأولى تبدو الثقافتان مختلفتين تمامًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die algerische Gastfreundschaft ist genauso berühmt wie die deutsche Pünktlichkeit.",
+      "ar": "كرم الضيافة الجزائري مشهور مثل دقة الألمان تمامًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Während man in Algier einen Gast spontan zum Essen einlädt, vereinbart man in Berlin einen Termin drei Wochen im Voraus.",
+      "ar": "بينما يُدعى الضيف في الجزائر العاصمة إلى الطعام تلقائيًا، يُحدَّد في برلين موعد قبل ثلاثة أسابيع.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Der Germanist Karim Benzid erklärte in einem Interview, die Zahl der Deutschlernenden in Algerien habe sich in zehn Jahren verdoppelt.",
+      "ar": "أوضح المختص في الألمانية كريم بن زيد في حوار أن عدد متعلمي الألمانية في الجزائر تضاعف في عشر سنوات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Selbst wenn es Vorurteile auf beiden Seiten gäbe, ließen sie sich durch Begegnung abbauen.",
+      "ar": "حتى لو وجدت أحكام مسبقة لدى الطرفين، لأمكن تذليلها بالتلاقي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass kultureller Dialog kein Verzicht auf die eigene Identität ist, sondern eine Bereicherung.",
+      "ar": "وخلاصة القول إن الحوار الثقافي ليس تنازلًا عن الهوية الخاصة، بل إثراء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Je mehr junge Menschen einander kennenlernen, desto weniger Raum bleibt für Vorurteile.",
+      "ar": "كلما تعرف الشباب بعضهم على بعض أكثر، قلّ الفضاء المتبقي للأحكام المسبقة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "In einer Welt, die immer stärker vernetzt ist, dürfte dieser Austausch wichtiger sein als je zuvor.",
+      "ar": "في عالم يزداد ترابطًا، يرجّح أن هذا التبادل أهم من أي وقت مضى.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die algerische Gastfreundschaft ist genauso berühmt wie die deutsche Pünktlichkeit, und beide Kulturen legen großen Wert auf Familie und Respekt.",
+      "ar": "كرم الضيافة الجزائري مشهور مثل الدقة الألمانية، والثقافتان توليان أهمية كبرى للعائلة والاحترام.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Obwohl es auf den ersten Blick große Unterschiede gibt, sind die Gemeinsamkeiten zahlreicher, als viele glauben.",
+      "ar": "رغم وجود فروق كبيرة للوهلة الأولى، فإن أوجه التشابه أكثر عددًا مما يظن كثيرون.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Trotz aller Vorurteile lässt sich ein echter Dialog führen, wenn beide Seiten zuhören wollen.",
+      "ar": "رغم كل الأحكام المسبقة يمكن إجراء حوار حقيقي إذا أراد الطرفان الإصغاء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Der Germanist Karim Benzid erklärte, die Zahl der Deutschlernenden habe sich in zehn Jahren verdoppelt.",
+      "ar": "أوضح كريم بن زيد أن عدد متعلمي الألمانية تضاعف في عشر سنوات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Das muss eine große Chance für algerische Absolventen sein.",
+      "ar": "لا بد أنها فرصة كبيرة للخريجين الجزائريين.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Selbst wenn es Hindernisse gäbe, ließen sie sich durch Begegnung und Austausch abbauen.",
+      "ar": "حتى لو وجدت عقبات، لأمكن تذليلها بالتلاقي والتبادل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass kultureller Dialog kein Verzicht, sondern eine Bereicherung ist.",
+      "ar": "وخلاصة القول إن الحوار الثقافي ليس تنازلًا بل إثراء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Das dürfte vor allem an den beruflichen Perspektiven liegen.",
+      "ar": "يرجّح أن السبب يعود خصوصًا إلى الآفاق المهنية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Kultureller Dialog verlangt, die eigene Identität aufzugeben.",
+      "ar": "الحوار الثقافي يتطلب التخلي عن الهوية الخاصة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die Zahl der Deutschlernenden hat sich in zehn Jahren verdoppelt.",
+      "ar": "تضاعف عدد متعلمي الألمانية في عشر سنوات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Beide Gesellschaften legen wenig Wert auf Familie.",
+      "ar": "كلا المجتمعين يولي أهمية قليلة للعائلة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Der Dialog ist laut Autor eine Bereicherung.",
+      "ar": "الحوار حسب الكاتب إثراء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Nennen Sie zwei Gemeinsamkeiten der beiden Kulturen.",
+      "ar": "اذكر وجهي تشابه بين الثقافتين.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Unter kulturellem Dialog versteht man den Austausch zwischen Menschen verschiedener Herkunft.",
+      "ar": "يُقصد بالحوار الثقافي التبادل بين أشخاص من أصول مختلفة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Beide Gesellschaften legen großen Wert auf Familie.",
+      "ar": "كلا المجتمعين يولي أهمية كبرى للعائلة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Unter kulturellem Dialog versteht man den Austausch zwischen Menschen verschiedener Herkunft, ohne dass einer seine Identität aufgeben muss.",
+      "ar": "يُقصد بالحوار الثقافي التبادل بين أشخاص من أصول مختلفة دون أن يتخلى أي منهم عن هويته.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Obwohl es Unterschiede gibt, sind die Gemeinsamkeiten zahlreicher.",
+      "ar": "رغم وجود اختلافات، فإن أوجه التشابه أكثر عددًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Trotz aller Vorurteile lässt sich ein Dialog führen.",
+      "ar": "رغم كل الأحكام المسبقة يمكن إجراء حوار.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Die Zahl der Deutschlernenden dürfte sich verdoppelt haben.",
+      "ar": "يرجّح أن عدد متعلمي الألمانية قد تضاعف.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Selbst wenn es Hindernisse gäbe, ließen sie sich abbauen.",
+      "ar": "حتى لو وجدت عقبات لأمكن تذليلها.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass der Dialog eine Bereicherung ist.",
+      "ar": "وخلاصة القول إن الحوار إثراء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
+    },
+    {
+      "de": "Meiner Meinung nach öffnet jeder, der eine Sprache lernt, eine Tür.",
+      "ar": "في رأيي، كل من يتعلم لغة يفتح بابًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 15-16)"
     }
   ]
 }
