@@ -317,7 +317,7 @@ document.addEventListener('click', ev => {
     var r = await SB.admAgreements();
     var html = '<h2>📜 الاتفاقيات والإصدارات · Accords (ADM-3)</h2>'
       + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">نشر نسخة جديدة يعطّل السابقة : القبولات الماضية تبقى غير قابلة للتعديل وتصبح « نسخة يلزم إعادة قبولها » · Publishing a new version disables the previous one : past acceptations stay immutable and become « to re-accept ».</p>'
-      + (r.ok ? r.rows.map(function(a){ return '<div class="rep-row"><span>' + esq4(a.cle) + ' · v' + a.version + (a.actif ? ' · <b>active</b>' : ' · archivée') + ' · ' + esq4(a.titre) + '</span><span style="font-size:11px;color:var(--m)">' + String(a.cree_at||'').slice(0,10) + '</span></div>'; }).join('') || '<p>Aucun accord.</p>' : '<p>⛔ ' + esq4(r.err) + '</p>')
+      + (r.ok ? r.rows.map(function(a){ return '<div class="rep-row"><span>' + esq4(a.cle) + ' · v' + a.version + (a.actif ? ' · <b>active</b>' : ' · مؤرشفة · archived') + ' · ' + esq4(a.titre) + '</span><span style="font-size:11px;color:var(--m)">' + String(a.cree_at||'').slice(0,10) + '</span></div>'; }).join('') || '<p>Aucun accord.</p>' : '<p>⛔ ' + esq4(r.err) + '</p>')
       + '<div class="fld" style="margin-top:12px"><span>Publier une nouvelle version</span>'
       + '<input id="adm3Cle" placeholder="cle (ex : conditions_utilisation)" value="conditions_utilisation">'
       + '<input id="adm3Titre" placeholder="titre de la version">'
@@ -391,9 +391,9 @@ document.addEventListener('click', ev => {
     var r = await SB.admDashboard();
     if(!r.ok){ box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard</h2><p>⛔ ' + esq5(r.err) + '</p>'; return; }
     var d = r.dash || {};
-    box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard (périmètre : ' + esq5(d.perimetre) + ')</h2>'
+    box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard (النطاق · scope : ' + esq5(d.perimetre) + ')</h2>'
       + '<div class="grid3" style="margin-top:10px">'
-      + '<div class="card mini"><div class="mini-i">🎓</div><b>' + (d.eleves||0) + '</b><p>élèves du périmètre</p></div>'
+      + '<div class="card mini"><div class="mini-i">🎓</div><b>' + (d.eleves||0) + '</b><p>تلاميذ النطاق · students in scope</p></div>'
       + '<div class="card mini"><div class="mini-i">⏳</div><b>' + (d.paiements_attente||0) + '</b><p>paiements à traiter</p></div>'
       + '<div class="card mini"><div class="mini-i">💰</div><b>' + (d.recettes_confirmees_da||0) + ' DA</b><p>recettes confirmées</p></div>'
       + '<div class="card mini"><div class="mini-i">↩️</div><b>' + (d.remboursements||0) + '</b><p>remboursements tracés</p></div>'
@@ -417,7 +417,7 @@ document.addEventListener('click', ev => {
     if(!box){ box = document.createElement('div'); box.id = 'admSettingsCard'; box.className = 'card'; h.appendChild(box); }
     if(state4.perms.indexOf('settings.manage') === -1){ box.hidden = true; return; }
     var r = await SB.admSettings();
-    box.innerHTML = '<h2>⚙️ Paramètres plateforme</h2>'
+    box.innerHTML = '<h2>⚙️ إعدادات المنصة · Platform settings</h2>'
       + (r.ok ? r.rows.map(function(s){ return '<div class="fld" style="margin-top:8px"><span>' + esq5(s.cle) + ' (maj ' + String(s.maj_at||'').slice(0,10) + ')</span>'
           + '<textarea id="admSet_' + esq5(s.cle) + '" rows="3">' + esq5(JSON.stringify(s.valeur)) + '</textarea>'
           + '<button class="btn btn-p btn-sm" data-adm4-save="' + esq5(s.cle) + '" type="button">enregistrer</button></div>'; }).join('') : '<p>⛔ ' + esq5(r.err) + '</p>')
@@ -478,10 +478,10 @@ document.addEventListener('click', ev => {
     var e = await SB.admEntries();
     var rp = await SB.admReport(null, null);
     var r = rp.ok ? rp.report : {};
-    var html = '<h2>💰 Comptabilité & rapports (ADM-5)</h2>'
+    var html = '<h2>💰 المحاسبة والتقارير · Accounting & Reports (ADM-5)</h2>'
       + '<p style="font-size:12px;color:var(--m);margin-bottom:8px">Périmètre : ' + esq6(r.perimetre || '?') + ' · recettes ' + (r.recettes_da||0) + ' DA · remboursements ' + (r.remboursements_da||0) + ' · dépenses ' + (r.depenses_da||0) + ' · solde ' + ((r.recettes_da||0)-(r.remboursements_da||0)-(r.depenses_da||0)) + ' DA</p>';
     html += e.ok && e.rows.length ? e.rows.slice(0,40).map(function(x){
-      return '<div class="rep-row"><span>' + String(x.at||'').slice(0,10) + ' · ' + esq6(x.sens) + ' · ' + esq6(x.categorie) + ' · ' + x.montant + ' ' + esq6(x.devise) + (x.wilaya ? ' · w' + esq6(x.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">' + esq6(x.ref_type) + ' #' + esq6(x.ref_id) + (x.rapproche ? ' · ✅ rapproché' : '') + '</span>'
+      return '<div class="rep-row"><span>' + String(x.at||'').slice(0,10) + ' · ' + esq6(x.sens) + ' · ' + esq6(x.categorie) + ' · ' + x.montant + ' ' + esq6(x.devise) + (x.wilaya ? ' · w' + esq6(x.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">' + esq6(x.ref_type) + ' #' + esq6(x.ref_id) + (x.rapproche ? ' · ✅ مُطابق · matched' : '') + '</span>'
         + (x.rapproche ? '' : '<button class="btn btn-sm btn-o" data-adm5-rap="' + x.id + '" type="button">pointer</button>') + '</div>';
     }).join('') : '<p>aucune écriture pour l’instant</p>';
     html += '<div class="fld" style="margin-top:10px"><span>Rapport par période</span>'

@@ -34,6 +34,10 @@ if (!man.includes('manuel-ops-v1')) fails.push('docs/ops/manuel.md : manuel d ex
 const css5 = fs.readFileSync('style.css', 'utf8');
 const kit = fs.existsSync('sponsor-kit.html') ? fs.readFileSync('sponsor-kit.html', 'utf8') : '';
 const adjs2 = fs.readFileSync('admin.js', 'utf8');
+/* LANG-4 */
+if (!/const NAVSOLO_BOT = \['cloud', 'abonne', 'projet', 'compte', 'legal'\]/.test(appjs6)) fails.push('app.js : admin encore dans la colonne (LANG-4)');
+if (!adjs2.includes('Platform settings')) fails.push('admin.js : paramètres plateforme non bilingues (LANG-4)');
+if (!idx.includes('Real administration')) fails.push('index.html : section administration non bilingue (LANG-4)');
 /* LANG-2 */
 if (!adjs2.includes('لوحة القيادة · Dashboard')) fails.push('admin.js : onglets non bilingues AR/EN (LANG-2)');
 if (adjs2.includes('Tableau de bord')) fails.push('admin.js : français restant dans les onglets (LANG-2)');

@@ -442,7 +442,8 @@ const NAVCATS = [
 const NAVSOLO_TOP = ['accueil', 'masar'];
 /* UI-6 : le sponsoring se gère depuis #admin uniquement — retiré de la colonne de navigation ;
    la page reste atteignable par URL directe pour les annonceurs qui ont le lien. */
-const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'admin', 'compte', 'legal'];
+/* LANG-4 : #admin ne s affiche plus dans la colonne — accès par hash, lien de la section الإدارة et chip utilisateur */
+const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
