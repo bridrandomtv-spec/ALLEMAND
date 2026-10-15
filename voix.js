@@ -106,11 +106,16 @@
       const next = () => {
         if(i >= segs.length) return;
         const s = segs[i++];
-        const txt = nettoie(s.txt);
+        /* VOIX-1 : le TTS allemand lit « = » comme « gleich » — on coupe la traduction avant lecture,
+           et on retire les symboles qui deviennent du bruit sonore. */
+        const txt = nettoie(String(s.txt).split('=')[0].replace(/[→✓·⚠️🔑🗣️📘🧠✨📝]/g, ' '));
         if(!txt){ next(); return; }
         const u = new SpeechSynthesisUtterance(txt);
         u.lang = (lang && segs.length === 1) ? lang : (s.type === 'ar' ? 'ar-DZ' : langLatine(s.txt));
         const v = voixPour(u.lang);
+        /* VOIX-1 : segment arabe sans voix arabe disponible ? on le saute au lieu de le laisser
+           à la voix française par défaut (les « mots français » entendus). */
+        if(s.type === 'ar' && !v){ next(); return; }
         if(v) u.voice = v;
         u.rate = 0.92; u.pitch = 0.85;
         u.onend = next; u.onerror = next;

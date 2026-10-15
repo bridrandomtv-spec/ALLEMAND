@@ -396,7 +396,8 @@ function speak(text){
   if(!soundOn){ toast('🔇 النطق الصوتي مُعطَّل','ko'); return; }
   try{
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(String(text).replace(/<[^>]+>/g,''));
+    /* VOIX-1 : nettoyage TTS — symboles et traduction après « = » ne passent jamais au vocodeur */
+    const u = new SpeechSynthesisUtterance(String(text).replace(/<[^>]+>/g,'').replace(/[→✓·]/g,' ').replace(/\s*=\s*(?=[^A-Za-z]*$)/,' '));
     u.lang = 'de-DE'; u.rate = 0.86; u.pitch = 1;
     if(voicesDE.length) u.voice = voicesDE[0];
     speechSynthesis.speak(u);

@@ -41,6 +41,10 @@ const bibl = fs.readFileSync('biblio.js', 'utf8');
 const shr = JSON.parse(fs.readFileSync('assets/bdd/sharh.json', 'utf8'));
 /* UI-7 */
 const appjs7 = fs.readFileSync('app.js', 'utf8');
+const voixjs = fs.readFileSync('voix.js', 'utf8');
+/* VOIX-1 */
+if (!voixjs.includes('VOIX-1 : le TTS allemand lit')) fails.push('voix.js : nettoyage TTS « = » absent (VOIX-1)');
+if (!voixjs.includes("if(s.type === 'ar' && !v)")) fails.push('voix.js : segments arabes non sautés sans voix arabe (VOIX-1)');
 const css7 = fs.readFileSync('style.css', 'utf8');
 if (!appjs7.includes("var host = document.querySelector('.topbar-act')")) fails.push('app.js : sélecteur de langue hors header (UI-7)');
 if (!css7.includes('UI-7 — le header reste')) fails.push('style.css : bloc header sticky/wrap absent (UI-7)');
