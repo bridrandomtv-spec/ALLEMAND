@@ -3,7 +3,8 @@
     "version": 3,
     "note": "TRAD-2 : traductions officielles AR (fusha) des phrases du livre 2AS (pages déposées) + seed propriétaire ; toute phrase non présente reçoit une glose mot-à-mot via la bibliothèque multimatieres. Le livre 3AS page-à-page n'est pas encore déposé au dépôt (buch_pages_3as.json absent) : lot TRAD-3AS sur ordre.",
     "validation": "relecture propriétaire + prof référent",
-    "note_trad2b": "consignes récurrentes du livre ajoutées (≥90 entrées, garde CI satisfaite)"
+    "note_trad2b": "consignes récurrentes du livre ajoutées (≥90 entrées, garde CI satisfaite)",
+    "note_trad3as": "TRAD-3AS-A : textes de lecture des unités 3AS (lot A : unités 1-5 de #seances) traduits en fusha, phrase par phrase, depuis unites3as_a.js ; batches suivants : lot B 3AS puis textes 2AS."
   },
   "entrees": [
     {
@@ -557,6 +558,237 @@
       "ar": "للكتابة.",
       "page": 27,
       "livre": "2AS"
+    },
+    {
+      "de": "Identität in zwei Kulturen",
+      "ar": "الهوية في ثقافتين",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Yacine ist 18 Jahre alt und lebt seit sechs Jahren in Köln.",
+      "ar": "ياسين في الثامنة عشرة من عمره ويعيش منذ ست سنوات في كولونيا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Geboren wurde er in Béjaïa, wo seine Großeltern noch heute wohnen.",
+      "ar": "وُلد في بجاية حيث ما يزال جدّاه يقيمان إلى اليوم.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Zu Hause spricht die Familie Kabylisch und Arabisch, in der Schule und mit seinen Freunden ausschließlich Deutsch.",
+      "ar": "في البيت تتحدث العائلة الأمازيغية والعربية، وفي المدرسة ومع أصدقائه يتحدث الألمانية فقط.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "«Am Anfang war es schwer», erzählt er.",
+      "ar": "يقول: «في البداية كان الأمر صعبًا».",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "«Ich habe mich weder ganz deutsch noch ganz algerisch gefühlt.»",
+      "ar": "«لم أشعر أنني ألماني تمامًا ولا جزائري تمامًا».",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Inzwischen sieht er das anders: Für ihn ist die doppelte Zugehörigkeit kein Problem, sondern ein Vorteil.",
+      "ar": "أما اليوم فيرى الأمر بشكل مختلف: فالانتماء المزدوج ليس في نظره مشكلة، بل ميزة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "«Ich kann zwischen zwei Welten vermitteln», sagt er stolz.",
+      "ar": "«أستطيع أن أكون وسيطًا بين عالمين»، يقول بفخر.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Seine Lehrerin bestätigt, dass zweisprachige Schüler oft flexibler denken.",
+      "ar": "تؤكد معلمته أن التلاميذ ثنائيي اللغة يفكرون غالبًا بمرونة أكبر.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Studien zeigen außerdem, dass Menschen mit Migrationshintergrund im Berufsleben zunehmend gefragt sind — gerade im Handel mit Nordafrika und im Gesundheitswesen.",
+      "ar": "وتظهر دراسات أيضًا أن ذوي خلفية الهجرة صاروا مطلوبين أكثر فأكثر في الحياة المهنية — لا سيما في التجارة مع شمال إفريقيا وفي القطاع الصحي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Trotzdem räumt Yacine ein, dass er manchmal Vorurteile erlebt.",
+      "ar": "مع ذلك يعترف ياسين بأنه يواجه أحيانًا أحكامًا مسبقة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "«Wenn jemand hört, woher ich komme, ändert sich oft sein Ton.»",
+      "ar": "«حين يسمع أحدهم من أين أتى، تتغير نبرته غالبًا».",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Er wünscht sich, dass man ihn zuerst als Person wahrnimmt und nicht als Herkunft.",
+      "ar": "وهو يتمنى أن يُنظر إليه أولًا كشخص، لا كأصل أو خلفية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Was heißt Bürger sein?",
+      "ar": "ماذا يعني أن تكون مواطنًا؟",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Wer an Staatsbürgerschaft denkt, denkt zuerst an einen Ausweis.",
+      "ar": "من يفكر في المواطنة يفكر أولًا في بطاقة الهوية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Doch die Staatsangehörigkeit ist mehr als ein Dokument: Sie ist ein Bündel von Rechten und Pflichten, das den Einzelnen mit der Gemeinschaft verbindet.",
+      "ar": "لكن الجنسية أكثر من مجرد وثيقة: إنها حزمة من الحقوق والواجبات تربط الفرد بالجماعة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Zu den Rechten gehören die Meinungsfreiheit, das Wahlrecht und der Schutz durch die Gesetze.",
+      "ar": "فمن الحقوق حرية الرأي وحق الانتخاب والحماية بالقوانين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Diesen Rechten stehen jedoch Pflichten gegenüber: Wer in einem Land lebt, muss sich an seine Gesetze halten, Steuern zahlen und — in vielen Ländern — zur Wahl gehen.",
+      "ar": "وتقابل هذه الحقوق واجبات: من يعيش في بلد عليه الالتزام بقوانينه ودفع الضرائب — وفي بلدان كثيرة — المشاركة في الانتخابات.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Kritiker wenden ein, dass formale Rechte allein nicht genügen.",
+      "ar": "ويرى منتقدون أن الحقوق الشكلية وحدها لا تكفي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Wer zwar wählen darf, aber keine Schule besucht hat, kann seine Stimme kaum informiert abgeben.",
+      "ar": "فمن يُسمح له بالانتخاب لكنه لم يلتحق بمدرسة لا يستطيع الإدلاء بصوته عن وعي كافٍ.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Deshalb fordern Soziologen eine «aktive Bürgerschaft»: Engagement im Verein, Teilnahme an Debatten, Hilfe für Nachbarn.",
+      "ar": "لذا يدعو علماء الاجتماع إلى «مواطنة فاعلة»: انخراط في الجمعيات، ومشاركة في النقاشات، ومساعدة للجيران.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass Staatsbürgerschaft kein Zustand, sondern eine Praxis ist.",
+      "ar": "وخلاصة القول إن المواطنة ليست حالة، بل ممارسة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Sie wird nicht nur verliehen — sie muss täglich gelebt werden.",
+      "ar": "إنها لا تُمنح فحسب — بل ينبغي أن تُعاش يوميًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Generationen unter einem Dach",
+      "ar": "أجيال تحت سقف واحد",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Früher lebten in Algerien oft drei Generationen zusammen: Großeltern, Eltern und Kinder teilten sich ein Haus.",
+      "ar": "سابقًا كانت ثلاثة أجيال تعيش معًا في الجزائر غالبًا: الأجداد والآباء والأطفال يتقاسمون بيتًا واحدًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Heute ist die Großfamilie vor allem in den Städten seltener geworden — die Kleinfamilie dominiert.",
+      "ar": "أما اليوم فقد أصبحت الأسرة الممتدة أقل انتشارًا، لا سيما في المدن — حيث تسود الأسرة النووية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Soziologen bedauern diese Entwicklung.",
+      "ar": "ويأسف علماء الاجتماع لهذا التحول.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Ihrer Meinung nach geht mit der Großfamilie auch ein soziales Netz verloren: Die Großeltern betreuen die Kinder, die Erwachsenen pflegen die Alten, und niemand bleibt allein.",
+      "ar": "ففي رأيهم يضيع مع الأسرة الممتدة شبكة اجتماعية: الأجداد يرعون الأطفال، والبالغون يعتنون بكبار السن، ولا يبقى أحد وحيدًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Wäre dieses Netz nicht vorhanden, müsste der Staat deutlich mehr ausgeben.",
+      "ar": "ولو لم توجد هذه الشبكة لاضطرت الدولة إلى إنفاق أكثر بكثير.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Befürworter der Kleinfamilie halten dagegen, dass junge Paare mehr Freiheit bräuchten, um ihr eigenes Leben zu gestalten.",
+      "ar": "في المقابل يرى أنصار الأسرة النووية أن الأزواج الشباب يحتاجون إلى حرية أكبر ليصنعوا حياتهم الخاصة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Außerdem seien Konflikte zwischen Schwiegermutter und Schwiegertochter nicht selten.",
+      "ar": "كما أن الخلافات بين الحماة والكنة ليست نادرة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Interessanterweise zeigen Umfragen, dass sich die meisten Jugendlichen beide Modelle vorstellen können: Sie möchten unabhängig wohnen, aber in der Nähe ihrer Eltern bleiben.",
+      "ar": "ومن المثير للاهتمام أن معظم الشباب يتصورون النموذجين معًا، حسب الاستطلاعات: يريدون السكن باستقلال، لكن قريبًا من والديهم.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Vielleicht ist das die Lösung der Zukunft — getrennte Wohnungen, aber gemeinsame Sonntage.",
+      "ar": "وربما كان هذا حل المستقبل: شقق منفصلة، لكن أيام أحد مشتركة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (textes de lecture, lot A)"
     }
   ]
 }
