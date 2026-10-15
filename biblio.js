@@ -13,7 +13,8 @@
     ['grammaire', 'assets/bdd/grammaire.json'],
     ['corpus', 'assets/bdd/corpus_index.json'],
     ['darja', 'assets/bdd/darja.json'],
-    ['sharh', 'assets/bdd/sharh.json']
+    ['sharh', 'assets/bdd/sharh.json'],
+    ['mm', 'assets/bdd/biblio_multimatieres.json']
   ];
   let ENTRIES = null, LOADING = null;
   const STOP = new Set(['der','die','das','und','ist','ein','eine','ich','du','le','la','les','de','du','des','un','une','et','en','dans','pour','sur','avec','que','qui','what','the','a','an','is','are','von','mit','auf','من','في','على','عن','ما','هل','كيف','شنو','واش','pourquoi','dans']);
@@ -79,6 +80,49 @@
           titre:String((x.de || '') + ' — ' + (x.type || 'darja')),
           texte:String((x.darja || '') + ' ' + (x.ar || '') + ' ' + (x.de || '')).slice(0, 1400),
           tags:['darja', 'unite' + (x.unite || 0), String(x.type || '')] });
+      });
+    }
+    /* BIBLIO-1 : bibliothèque multimatieres du propriétaire (1213 entrées déposées) —
+       indexation assainie : clés normalisées (espaces finals du fichier), conjugaisons
+       regroupées par verbe, exemples template corrigés (Die Freunde au pluriel, adverbes
+       doublonnés, comparatifs naturels), français EXCLU du texte indexé (règle FUS). */
+    const MM0 = data.mm;
+    if(MM0){
+      const MM = {}; Object.keys(MM0).forEach(function(k){ MM[String(k).trim()] = MM0[k]; });
+      const ENT = Array.isArray(MM.entrees) ? MM.entrees : [];
+      const VERB_FIX = { ist:'sind', wird:'werden', braucht:'brauchen', spielt:'spielen', muss:'müssen',
+        kann:'können', hat:'haben', verändert:'verändern', sollte:'sollten', hilft:'helfen' };
+      const EX_FIX = {
+        'Dieses Buch ist mehr als das andere.': 'Ich habe mehr Zeit als du.',
+        'Dieses Buch ist lieber als das andere.': 'Ich lese lieber, als ich schreibe.',
+        'Dieses Buch ist höher als das andere.': 'Dieses Haus ist höher als das andere.',
+        'Dieses Buch ist näher als das andere.': 'Die Schule ist näher als der Markt.' };
+      const fixFriends = function(s){ return String(s).replace(/Die Freunde (ist|wird|braucht|spielt|muss|kann|hat|verändert|sollte|hilft)/g, function(s2, v){ return 'Die Freunde ' + VERB_FIX[v]; }); };
+      const conj = {};
+      ENT.forEach(function(x0){
+        if(!x0 || typeof x0 !== 'object') return;
+        const x = {}; Object.keys(x0).forEach(function(k){ x[String(k).trim()] = x0[k]; });
+        const cat = String(x.categorie || '').trim();
+        let de = String(x.allemand || '').trim();
+        const ar = String(x.arabe || '').trim();
+        const regle = String(x.regle_grammaticale || '').trim();
+        let ex = String(x.exemple_allemand || '').trim();
+        if(!de) return;
+        if(cat === 'conjugaison'){
+          const m = de.match(/^(\w+)\s*\|\s*(.+)$/);
+          if(m){ (conj[m[1]] = conj[m[1]] || []).push(m[2].trim()); }
+          return;
+        }
+        de = fixFriends(de); ex = fixFriends(ex);
+        ex = ex.replace(/\b(hier|dort|oben|unten|links|rechts|überall|nirgendwo) hier\./g, '$1.');
+        if(EX_FIX[ex]) ex = EX_FIX[ex];
+        E.push({ src:'mm', id:String(x.id || '').trim(), titre:de,
+          texte:(de + ' ' + ar + ' ' + regle + ' ' + ex).slice(0, 1200),
+          tags:['mm', cat, String(x.niveau || '').trim()] });
+      });
+      Object.keys(conj).forEach(function(v){
+        E.push({ src:'mm', id:'conj-' + v, titre:v, texte:v + ' : ' + conj[v].join(', '),
+          tags:['mm', 'conjugaison'] });
       });
     }
     return E;

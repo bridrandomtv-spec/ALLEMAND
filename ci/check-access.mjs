@@ -46,6 +46,11 @@ const voixjs = fs.readFileSync('voix.js', 'utf8');
 const djs = fs.readFileSync('assets/bdd/darja.json', 'utf8');
 if (['سميتي','شحال','بزاف','خواتات','عندي'].some(m => djs.includes(m))) fails.push('darja.json : sorties encore en derja au lieu de fusha (FUS-1)');
 const shs = fs.readFileSync('assets/bdd/sharh.json', 'utf8');
+/* BIBLIO-1 */
+if (!fs.existsSync('assets/bdd/biblio_multimatieres.json')) fails.push('biblio_multimatieres.json : fichier déposé absent (BIBLIO-1)');
+else { const mmj = JSON.parse(fs.readFileSync('assets/bdd/biblio_multimatieres.json', 'utf8')); const mme = mmj['entrees '] || mmj.entrees || []; if (mme.length < 1000) fails.push('biblio_multimatieres.json : moins de 1000 entrées (BIBLIO-1)'); }
+if (!bibl.includes('biblio_multimatieres.json')) fails.push('biblio.js : bibliothèque multimatieres non indexée (BIBLIO-1)');
+if (!bibl.includes('Die Freunde')) fails.push('biblio.js : assainissement Die Freunde absent (BIBLIO-1)');
 if (['سميتي','شحال','بزاف','خواتات','عندي','بالدارجة'].some(m => shs.includes(m))) fails.push('sharh.json : explications encore en derja au lieu de fusha (FUS-2)');
 /* VOIX-1 */
 if (!voixjs.includes('VOIX-1 : le TTS allemand lit')) fails.push('voix.js : nettoyage TTS « = » absent (VOIX-1)');
