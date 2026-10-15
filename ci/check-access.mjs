@@ -34,6 +34,11 @@ if (!man.includes('manuel-ops-v1')) fails.push('docs/ops/manuel.md : manuel d ex
 const css5 = fs.readFileSync('style.css', 'utf8');
 const kit = fs.existsSync('sponsor-kit.html') ? fs.readFileSync('sponsor-kit.html', 'utf8') : '';
 const adjs2 = fs.readFileSync('admin.js', 'utf8');
+/* DARJA-1 */
+const dj = JSON.parse(fs.readFileSync('assets/bdd/darja.json', 'utf8'));
+const bibl = fs.readFileSync('biblio.js', 'utf8');
+if (!(dj.entrees || []).length || (dj.entrees || []).length < 30) fails.push('darja.json : moins de 30 entrées derja (DARJA-1)');
+if (!bibl.includes("['darja', 'assets/bdd/darja.json']")) fails.push('biblio.js : source darja non indexée (DARJA-1)');
 /* PAY-1 */
 const acccfg = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
 if (!(acccfg.paid_views || []).includes('corpus')) fails.push('access_config.json : corpus non paywallisé (PAY-1)');

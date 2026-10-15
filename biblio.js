@@ -11,7 +11,8 @@
     ['livre', 'assets/bdd/buch_pages.json'],
     ['devoirs', 'assets/bdd/devoirs.json'],
     ['grammaire', 'assets/bdd/grammaire.json'],
-    ['corpus', 'assets/bdd/corpus_index.json']
+    ['corpus', 'assets/bdd/corpus_index.json'],
+    ['darja', 'assets/bdd/darja.json']
   ];
   let ENTRIES = null, LOADING = null;
   const STOP = new Set(['der','die','das','und','ist','ein','eine','ich','du','le','la','les','de','du','des','un','une','et','en','dans','pour','sur','avec','que','qui','what','the','a','an','is','are','von','mit','auf','من','في','على','عن','ما','هل','كيف','شنو','واش','pourquoi','dans']);
@@ -55,6 +56,17 @@
         if(c && typeof c === 'object') E.push({ src:'corpus', id:'c' + i,
           titre:String(c.mot || c.titre || c.de || ''),
           texte:String(JSON.stringify(c).slice(0, 500)), tags:['vocabulaire'] });
+      });
+    }
+    /* DARJA-1 : base derja originale — explications et lexique en darija algérienne */
+    const DJ = data.darja;
+    if(DJ && Array.isArray(DJ.entrees)){
+      DJ.entrees.forEach(function(x){
+        if(!x || typeof x !== 'object') return;
+        E.push({ src:'darja', id:String(x.cle || ''),
+          titre:String((x.de || '') + ' — ' + (x.type || 'darja')),
+          texte:String((x.darja || '') + ' ' + (x.ar || '') + ' ' + (x.de || '')).slice(0, 1400),
+          tags:['darja', 'unite' + (x.unite || 0), String(x.type || '')] });
       });
     }
     return E;

@@ -1,0 +1,371 @@
+{
+  "_meta": {
+    "version": 1,
+    "langue": "darja-dz (algérien dialectal, script arabe)",
+    "validation": "relecture propriétaire + prof référent avant pilote",
+    "principe": "contenu ORIGINAL rédigé pour la plateforme ; aucune copie de contenus tiers ; chaque entrée future porte source+licence",
+    "usage": "indexée par biblio.js (src=darja) ; contexte vérifié pour 🔎 اسأل et 🤖 ; réponses en derja quand l'élève écrit en derja"
+  },
+  "entrees": [
+    {
+      "cle": "lex-01",
+      "unite": 0,
+      "type": "lexique",
+      "de": "die Hausaufgaben",
+      "darja": "هاوس‌أوڤغابن = الواجب تاع الدار. كي يقول الأستاذ «Macht die Hausaufgaben!» يعني ديرو الواجب تاعكم.",
+      "ar": "الواجب المنزلي",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-02",
+      "unite": 0,
+      "type": "lexique",
+      "de": "die Stunde / die Schulstunde",
+      "darja": "شتونده = الحصة. «Die Stunde beginnt um 8 Uhr» = الحصة تبدا على 8.",
+      "ar": "الحصة الدراسية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-03",
+      "unite": 0,
+      "type": "lexique",
+      "de": "die Tafel",
+      "darja": "تافل = السبورة. «an die Tafel schreiben» = يكتب على السبورة.",
+      "ar": "السبورة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-04",
+      "unite": 0,
+      "type": "lexique",
+      "de": "das Heft",
+      "darja": "هافت = الكراس. «Öffnet eure Hefte!» = حلّو كراساتكم.",
+      "ar": "الكراس",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-05",
+      "unite": 0,
+      "type": "lexique",
+      "de": "die Note",
+      "darja": "نوتة = النقطة. «eine gute Note» = نقطة مزيانة.",
+      "ar": "العلامة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-06",
+      "unite": 0,
+      "type": "lexique",
+      "de": "die Klausur / die Prüfung",
+      "darja": "كلاوزور = الفرض / الاختبار. «Wir schreiben eine Klausur» = رايحين نكتبو فرض.",
+      "ar": "الفرض أو الاختبار",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-07",
+      "unite": 0,
+      "type": "lexique",
+      "de": "der Stundenplan",
+      "darja": "شتوندن‌بلان = توقيت الحصص. «Der Stundenplan hängt an der Wand» = التوقيت معلّق على الحيط.",
+      "ar": "جدول التوقيت",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-08",
+      "unite": 0,
+      "type": "lexique",
+      "de": "die Pause",
+      "darja": "باوزه = الاستراحة. «In der Pause sprechen wir Arabisch» = في الاستراحة نهضرو بالدارجة.",
+      "ar": "الاستراحة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-09",
+      "unite": 0,
+      "type": "lexique",
+      "de": "verstehen",
+      "darja": "فرشتيّن = يفهم. «Ich verstehe nicht» = ما فهمتش — قولها بلا حشمة، الأستاذ يعاودلك.",
+      "ar": "يفهم",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-10",
+      "unite": 0,
+      "type": "lexique",
+      "de": "übersetzen",
+      "darja": "أوبرزتسن = يترجم. «Übersetze den Text!» = ترجم النص.",
+      "ar": "يترجم",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-11",
+      "unite": 0,
+      "type": "lexique",
+      "de": "wiederholen",
+      "darja": "فيدرهولن = يعاود/يراجع. «Wiederholt die Lektion!» = راجعو الدرس.",
+      "ar": "يعيد أو يراجع",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "lex-12",
+      "unite": 0,
+      "type": "lexique",
+      "de": "der Fehler",
+      "darja": "فيلر = الغلط. «Fehler sind normal» = الغلط طبيعي، بيه نتعلمو.",
+      "ar": "الخطأ",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-articles",
+      "unite": 1,
+      "type": "grammaire",
+      "de": "bestimmte Artikel der/die/das",
+      "darja": "الأدوات : der للمذكر، die للمؤنث، das للمحايد. فالدارجة ما عندناش أدوات، علك خاطر هكا : der Mann الراجل، die Frau المرا، das Kind الولد. الجمع ديما die.",
+      "ar": "أدوات التعريف",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-akkusativ",
+      "unite": 4,
+      "type": "grammaire",
+      "de": "Akkusativ",
+      "darja": "الأكوزاتيف = حالة المفعول بيه. دير السؤال wen? أو was? — اللي يتبدل غير der ولّى den : Ich sehe den Mann = نشوف الراجل. die و das ما يتبدلوش.",
+      "ar": "حالة النصب",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-pronomen",
+      "unite": 2,
+      "type": "grammaire",
+      "de": "Personalpronomen ich/du/er…",
+      "darja": "الضمائر : ich = أنا، du = نتَ/نتِ، er = هو، sie = هي، wir = حنا، ihr = نتوما، sie = هوما. فالألماني du غير للأصحاب، وللأستاذ قول Sie — كيما حضرتك بالدارجة.",
+      "ar": "الضمائر الشخصية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-verben",
+      "unite": 3,
+      "type": "grammaire",
+      "de": "Verben konjugieren (regelmäßig)",
+      "darja": "تصريف الأفعال المنتظمة : ich mache، du machst، er macht، wir machen، ihr macht، sie machen. القاعدة : زيد -st مع du و -t مع er/sie/es. شوفها كيما زيد-ت- بالدارجة.",
+      "ar": "تصريف الأفعال",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-trennbar",
+      "unite": 5,
+      "type": "grammaire",
+      "de": "trennbare Verben (aufstehen)",
+      "darja": "الأفعال المنفصلة : aufstehen = يقوم من النعسة. فالجملة تنقسم : Ich stehe um 7 Uhr auf = نقوم على 7. البادئة تروح للآخر كيما لوكان رادت تشوف شنو صار.",
+      "ar": "الأفعال المنفصلة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-perfekt",
+      "unite": 6,
+      "type": "grammaire",
+      "de": "Perfekt (haben/sein + Partizip II)",
+      "darja": "الماضي المركب : Ich habe gelernt = قريت/تعلمت. Geist = haben + ge…t : gelernt، gespielt. الأفعال تاع الحركة تستعمل sein : Ich bin gegangen = مشيت.",
+      "ar": "الماضي المركب",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-modal",
+      "unite": 7,
+      "type": "grammaire",
+      "de": "Modalverben können/müssen/wollen",
+      "darja": "مودال : können = يقدر، müssen = لازم، wollen = بغى. Beispiel : Ich muss lernen = لازم نقرا. الفعل الثاني يبقى فالآخر بلا تصريف.",
+      "ar": "الأفعال المشكلة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-wortstellung",
+      "unite": 8,
+      "type": "grammaire",
+      "de": "Satzstellung (Verb an Position 2)",
+      "darja": "ترتيب الجملة : الفعل ديما فالمرتبة 2 فالجملة العادية : Heute lerne ich Deutsch = اليوم نقرا الألماني. اليوم جا الأول، الفعل الثاني، والفاعل بعد — ماشي كيما الدارجة.",
+      "ar": "ترتيب الجملة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-praep",
+      "unite": 4,
+      "type": "grammaire",
+      "de": "Präpositionen in/an + Dativ/Akkusativ",
+      "darja": "حروف الجر : in + داتيف = مكان ثابت (Ich bin in der Schule = أنا فالماكسة)، in + أكوزاتيف = حركة (Ich gehe in die Schule = رايح للماكسة). الدارجة تقول «في» بصح واحد — الألماني يفرق.",
+      "ar": "حروف الجر",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-wetter",
+      "unite": 4,
+      "type": "explication",
+      "de": "Wetter : es regnet / es ist kalt",
+      "darja": "الطقس : es regnet = كاين شتا، es schneit = كاين ثلج، es ist kalt = بارد الحال. «Wie ist das Wetter heute?» = كيفاش الجو اليوم؟",
+      "ar": "التعبير عن الطقس",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-familie",
+      "unite": 2,
+      "type": "explication",
+      "de": "Familie : die Eltern, die Geschwister",
+      "darja": "العائلة : die Eltern = الوالدين، die Geschwister = الخاوة والخواتات، der Bruder = الخو، die Schwester = الخت. «Ich habe zwei Geschwister» = عندي جوج خواتات.",
+      "ar": "مفردات العائلة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-schule",
+      "unite": 3,
+      "type": "explication",
+      "de": "Schulfächer : Mathematik, Deutsch…",
+      "darja": "المواد : das Fach = المادة. «Mein Lieblingsfach ist Deutsch» = المادة المفضلة عندي الألماني. Lieblings- = المفضل، كيما «احب حاجة عندي».",
+      "ar": "المواد الدراسية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-zeit",
+      "unite": 4,
+      "type": "explication",
+      "de": "Uhrzeit : Wie spät ist es?",
+      "darja": "الوقت : Wie spät ist es? = شحال الساعة؟ Es ist acht Uhr = الساعة 8. halb neun = 8 ونص — بال المقلوب شوية : halb neun يعني نص ساعة قبل 9.",
+      "ar": "الساعة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-fragen",
+      "unite": 1,
+      "type": "explication",
+      "de": "W-Fragen : wie? wo? woher?",
+      "darja": "أسئلة W : wie؟ = كيفاش؟ wo؟ = وين؟ woher؟ = من وين؟ wie alt؟ = شحال عمرك؟ «Woher kommst du?» = من وين نتَ؟",
+      "ar": "أدوات الاستفهام",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-negation",
+      "unite": 5,
+      "type": "grammaire",
+      "de": "Negation : nicht / kein",
+      "darja": "النفي : nicht للفعل والصفة (Ich lerne nicht = ما نقراش)، kein للاسم (Ich habe kein Buch = ما عنديش كتاب). kein تتصرف كيما ein : keinen، keine.",
+      "ar": "النفي",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-dativ",
+      "unite": 6,
+      "type": "grammaire",
+      "de": "Dativ (dem/der/den)",
+      "darja": "الداتيف = حالة المفعول بيه غير المباشر : mit dem Lehrer = مع الأستاذ. der ولّت der→der؟ لا : der→dem، die→der، das→dem، الجمع den + n. مع mit، von، zu ديما داتيف.",
+      "ar": "حالة الجر",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-adjektiv",
+      "unite": 7,
+      "type": "grammaire",
+      "de": "Adjektivendungen (Grundstufe)",
+      "darja": "صفات الوصف : ein guter Lehrer = أستاذ مزيان، eine gute Lehrerin = أستاذة مزيانة. فالمرحلة الأولى خفّف : المفرد مع ein ياخذ -er/-e/-es حسب الأداة.",
+      "ar": "نهايات الصفات",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "g-brief",
+      "unite": 8,
+      "type": "explication",
+      "de": "E-Mail / Brief schreiben",
+      "darja": "كتابة رسالة : Anrede = التحية «Liebe Frau Müller,» ولا «Lieber Herr …,» · Schluss = الخاتمة «Viele Grüße» = تحياتي. فالامتحان دير التحية والخاتمة ديما — نقطتين سهلات.",
+      "ar": "تحرير رسالة",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "ex-01",
+      "unite": 0,
+      "type": "examen",
+      "de": "Lückentext ergänzen",
+      "darja": "فروض الفجوات : اقرا الجملة كاملة قبل ما تعمر، دور على المقال (der/die/das) والفعل فالآخر. بالدارجة : ما تعمرش على العمياء، السياق هو اللي يهضر.",
+      "ar": "تمارين الفجوات",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "ex-02",
+      "unite": 0,
+      "type": "examen",
+      "de": "Hörverstehen",
+      "darja": "فهم المسموع : أول مرة اسمع للصورة العامة، ثانية دور على الكلمات المفتاحية (أرقام، أسماء، أوقات). ما توقفش عند كلمة ما فهمتهاش — فوتها وكمّل.",
+      "ar": "فهم المسموع",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "ex-03",
+      "unite": 0,
+      "type": "examen",
+      "de": "Leseverstehen",
+      "darja": "فهم المكتوب : اقرا الأسئلة قبل النص ! دور على المرادفات ماشي على نفس الكلمة. بالدارجة : السؤال يعطيك الخريطة تاع النص.",
+      "ar": "فهم المكتوب",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "ex-04",
+      "unite": 0,
+      "type": "examen",
+      "de": "schriftlicher Ausdruck",
+      "darja": "التعبير الكتابي : خطة 4 : تحية، جملة تقديم، 2-3 جمل معلومات، خاتمة. جمل بسيطة صحيحة خير من جمل معقدة غلط.",
+      "ar": "التعبير الكتابي",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "u1-vorstellen",
+      "unite": 1,
+      "type": "explication",
+      "de": "Sich vorstellen : Ich heiße…",
+      "darja": "كي تقدّم روحك : Ich heiße … = سميتي … · Ich bin … Jahre alt = عمري … · Ich komme aus Algerien = أنا من الجزائر. ثلاث جمل هاذو هوما الباب تاع الوحدة 1.",
+      "ar": "التقديم بالنفس",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    },
+    {
+      "cle": "u1-begruessung",
+      "unite": 1,
+      "type": "explication",
+      "de": "Begrüßung : Hallo / Guten Tag",
+      "darja": "التحية : Hallo = سلام (أصحاب)، Guten Tag = نهارك سعيد (رسمية)، Guten Morgen = صباح الخير. فالقسم مع الأستاذ استعمل Guten Tag.",
+      "ar": "التحية",
+      "source": "rédaction originale plateforme (validation propriétaire)",
+      "licence": "interne"
+    }
+  ]
+}
