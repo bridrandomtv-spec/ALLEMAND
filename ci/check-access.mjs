@@ -35,7 +35,8 @@ const css5 = fs.readFileSync('style.css', 'utf8');
 const kit = fs.existsSync('sponsor-kit.html') ? fs.readFileSync('sponsor-kit.html', 'utf8') : '';
 const adjs2 = fs.readFileSync('admin.js', 'utf8');
 /* LANG-4 */
-if (!/const NAVSOLO_BOT = \['cloud', 'abonne', 'projet', 'compte', 'legal'\]/.test(appjs6)) fails.push('app.js : admin encore dans la colonne (LANG-4)');
+const appjs4 = fs.readFileSync('app.js', 'utf8');
+if (!/const NAVSOLO_BOT = \['cloud', 'abonne', 'projet', 'compte', 'legal'\]/.test(appjs4)) fails.push('app.js : admin encore dans la colonne (LANG-4)');
 if (!adjs2.includes('Platform settings')) fails.push('admin.js : paramètres plateforme non bilingues (LANG-4)');
 if (!adjs2.includes('Real administration')) fails.push('admin.js : section administration non bilingue (LANG-4)');
 /* LANG-2 */
