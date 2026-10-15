@@ -40,6 +40,7 @@ if (adjs2.includes('Tableau de bord')) fails.push('admin.js : français restant 
 /* LANG-1 */
 if (!kit.includes('Sponsor Kit') || !kit.includes('Who does your advertising reach?')) fails.push('sponsor-kit.html : kit non bilingue AR/EN (LANG-1)');
 if (/Qui touche votre publicit|Emplacements & tarifs/.test(kit)) fails.push('sponsor-kit.html : français encore présent (LANG-1)');
+const bil = fs.readFileSync('billing.js', 'utf8');
 if (!bil.includes('Sponsorship & Ads')) fails.push('billing.js : vue sponsor non bilingue (LANG-1)');
 if (!css5.includes('UI-5 — la colonne de navigation doit rester')) fails.push('style.css : bloc colonne déroulante absent (UI-5)');
 /* UI-6 */
