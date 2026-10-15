@@ -10,7 +10,8 @@
     "note_tradfull3": "TRAD-FULL-3 : unités 13-14 (Gesundheit & Lebensweise, Globalisierung) — 62 phrases traduites en fusha ; une entrée française écartée à l'extraction. Registre total : 359.",
     "note_tradfull4": "TRAD-FULL-4 : unités 15-16 (Medienwelt, Kultureller Dialog) — 83 phrases traduites en fusha ; lot final du livre 2AS ; mesure d'écart complète ci-dessous.",
     "note_tradfull5": "TRAD-FULL-5a : répliques courtes des dialogues unités 2-6 (littéraux simples révélés par la méthode linéaire) — 58 entrées fusha ; méta françaises et fragments écartés ; reste TRAD-FULL-5b (unités 10-16).",
-    "note_tradfull5b": "TRAD-FULL-5b : répliques et phrases d'exercices des unités 10-16 — 118 entrées fusha ; exclus : méta-notes françaises, variantes volontairement fautives (exercices de correction) et fragments ; registre total 617 ; livre 2AS couvert : textes, séances, dialogues, exercices."
+    "note_tradfull5b": "TRAD-FULL-5b : répliques et phrases d'exercices des unités 10-16 — 118 entrées fusha ; exclus : méta-notes françaises, variantes volontairement fautives (exercices de correction) et fragments ; registre total 617 ; livre 2AS couvert : textes, séances, dialogues, exercices.",
+    "note_trad3asb": "TRAD-3AS-B : séances et exercices du lot 3AS A (Identität, Staatsbürgerschaft, Generationen) — 96 phrases fusha ; exclus : méta françaises, fragments, variantes fautives d ordre des mots ; registre total ~712."
   },
   "entrees": [
     {
@@ -4232,6 +4233,664 @@
       "page": null,
       "livre": "2AS",
       "source": "seances-2AS (dialogues & exercices unités 10-16, TRAD-FULL-5b)"
+    },
+    {
+      "de": "Alle leben wieder zusammen.",
+      "ar": "يعيش الجميع معًا من جديد.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Befürworter der Kleinfamilie halten dagegen, dass junge Paare mehr Freiheit bräuchten.",
+      "ar": "يعترض أنصار الأسرة النووية بأن الأزواج الشباب سيحتاجون إلى حرية أكبر.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Darüber hinaus muss sich jeder Bürger aktiv engagieren.",
+      "ar": "علاوة على ذلك، يجب على كل مواطن أن ينخرط بفعالية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Das Buch, das ich gelesen habe, ist gut.",
+      "ar": "الكتاب الذي قرأته جيد.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Das Gesetz ist verabschiedet worden.",
+      "ar": "صودق على القانون.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Das Gesetz ist verabschiedet.",
+      "ar": "القانون مصادَق عليه.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Das Gesetz war verabschiedet worden.",
+      "ar": "كان قد صودق على القانون.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Das Gesetz wird unterzeichnet vom Präsidenten.",
+      "ar": "يوقَّع القانون من طرف الرئيس.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Das Gesetz wird verabschiedet.",
+      "ar": "يُصادَق على القانون.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Das Gesetz wird vom Präsidenten unterzeichnet.",
+      "ar": "يوقَّع القانون من طرف الرئيس.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Das Parlament ist von den Bürgern gewählt.",
+      "ar": "البرلمان منتخب من المواطنين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Das Parlament wird gewählt von den Bürgern.",
+      "ar": "يُنتخب البرلمان من المواطنين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Das Parlament wird von den Bürgern gewählt.",
+      "ar": "يُنتخب البرلمان من المواطنين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Der Mensch, der mich am meisten geprägt hat, ist mein Großvater, mit dem ich jeden Sommer die Oliven geerntet habe.",
+      "ar": "الشخص الذي أثّر فيّ أكثر هو جدي الذي كنت أحصد معه الزيتون كل صيف.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Der Mensch, der mich am meisten geprägt hat, ist mein Großvater.",
+      "ar": "الشخص الذي أثّر فيّ أكثر هو جدي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Der Staat müsste deutlich mehr ausgeben.",
+      "ar": "سيكون على الدولة أن تنفق أكثر بكثير.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Der Staat übernimmt die Pflege.",
+      "ar": "تتولى الدولة الرعاية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Deshalb glaube ich, dass ich später zwischen beiden Welten vermitteln kann.",
+      "ar": "لذلك أعتقد أنني أستطيع لاحقًا الوساطة بين العالمين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Deshalb sollte allen Kindern der Zugang zur Bildung garantiert werden.",
+      "ar": "لذلك ينبغي ضمان حق كل الأطفال في التعليم.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Eigenschaft, auf die ich am stolzesten bin, ist meine Geduld.",
+      "ar": "الصفة التي أفتخر بها أكثر هي صبري.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Gesetze müssen respektiert werden.",
+      "ar": "يجب احترام القوانين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Großeltern betreuen die Kinder.",
+      "ar": "الأجداد يرعون الأطفال.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Großfamilie ist in den Städten häufiger geworden.",
+      "ar": "أصبحت الأسرة الممتدة أكثر انتشارًا في المدن.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Großfamilie ist seltener geworden.",
+      "ar": "أصبحت الأسرة الممتدة أقل انتشارًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Staatsbürgerschaft ist nur ein Dokument.",
+      "ar": "الجنسية مجرد وثيقة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Tür ist geöffnet worden.",
+      "ar": "فُتح الباب.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Tür ist geöffnet.",
+      "ar": "الباب مفتوح.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Tür war geöffnet.",
+      "ar": "كان الباب مفتوحًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Tür wird geöffnet.",
+      "ar": "يُفتح الباب.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die meisten Jugendlichen lehnen beide Modelle ab.",
+      "ar": "معظم الشباب يرفضون النموذجين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Entweder wohnen die Generationen getrennt, oder sie teilen sich ein Haus — entscheidend ist der regelmäßige Kontakt.",
+      "ar": "إما أن تسكن الأجيال منفصلة، أو تتقاسم بيتًا واحدًا — والحاسم هو التواصل المنتظم.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Er lernt weiter.",
+      "ar": "يواصل التعلم.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Er müsste deutlich mehr ausgeben.",
+      "ar": "سيكون عليه أن ينفق أكثر بكثير.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Formale Rechte genügen laut den Kritikern.",
+      "ar": "حسب المنتقدين، الحقوق الشكلية تكفي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Für die Großfamilie sprechen vor allem zwei Argumente.",
+      "ar": "تؤيد الأسرة الممتدة حجتان أساسًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Für die Großfamilie spricht ein starkes soziales Netz.",
+      "ar": "يؤيد الأسرة الممتدة شبكة اجتماعية قوية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Geboren wurde er in Béjaïa.",
+      "ar": "وُلد في بجاية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Gegen die Großfamilie spricht allerdings, dass junge Paare weniger Freiheit hätten, ihr eigenes Leben zu gestalten.",
+      "ar": "يعارض الأسرة الممتدة مع ذلك أن الأزواج الشباب ستكون لهم حرية أقل في تشكيل حياتهم الخاصة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Gegen die Großfamilie spricht allerdings, dass junge Paare weniger Freiheit hätten.",
+      "ar": "يعارض الأسرة الممتدة مع ذلك أن الأزواج الشباب ستكون لهم حرية أقل.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Heutzutage wird viel über Staatsbürgerschaft diskutiert.",
+      "ar": "يُناقَش اليوم كثيرًا حول المواطنة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Hätte ich das gewusst, wäre ich geblieben.",
+      "ar": "لو علمت ذلك لبقيت.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Ich bin ein zuverlässiger und ehrgeiziger Schüler.",
+      "ar": "أنا تلميذ موثوق وطموح.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Ich heiße Yacine und bin 18 Jahre alt.",
+      "ar": "اسمي ياسين وعمري ثماني عشرة سنة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Ich wünschte, ich könnte helfen.",
+      "ar": "ليتني أستطيع المساعدة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Im Verein wird zusammen gearbeitet und Nachbarn wird geholfen.",
+      "ar": "في الجمعية يُعمَل معًا ويُساعد الجيران.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Im Verein wird zusammen gearbeitet, Nachbarn wird geholfen und an Debatten wird teilgenommen.",
+      "ar": "في الجمعية يُعمَل معًا، ويُساعد الجيران، ويُشارَك في النقاشات.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "In Algerien wird über das Zusammenleben der Generationen diskutiert.",
+      "ar": "في الجزائر يُناقَش تعايش الأجيال.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Jugendliche ziehen ins Ausland.",
+      "ar": "الشباب ينتقلون إلى الخارج.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Junge Paare bräuchten laut Befürwortern mehr Freiheit.",
+      "ar": "حسب المؤيدين، سيحتاج الأزواج الشباب إلى حرية أكبر.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Konflikte zwischen den Generationen sind weder selten noch harmlos.",
+      "ar": "الصراعات بين الأجيال ليست نادرة ولا بلا ضرر.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Laut Studien sind zweisprachige Menschen im Berufsleben gefragt.",
+      "ar": "حسب الدراسات، الأشخاص ثنائيو اللغة مطلوبون في الحياة المهنية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Manchmal bin ich allerdings auch ein bisschen stur, weil ich meine Meinung gern verteidige.",
+      "ar": "أحيانًا أكون مع ذلك عنيدًا بعض الشيء، لأنني أحب الدفاع عن رأيي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Meine Freunde halten mich für einen humorvollen Menschen, der immer eine gute Idee hat.",
+      "ar": "يعتبرني أصدقائي شخصًا مرحًا لديه دائمًا فكرة جيدة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Meiner Meinung nach ist sie kein Zustand, sondern eine Praxis.",
+      "ar": "في رأيي، ليست حالة بل ممارسة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Meiner Meinung nach ist sie kein Zustand, sondern eine tägliche Praxis.",
+      "ar": "في رأيي، ليست حالة بل ممارسة يومية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Meinungsfreiheit gehört zu den Rechten.",
+      "ar": "حرية الرأي من الحقوق.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Obwohl diese Tätigkeiten unbezahlt sind, stärken sie die Gesellschaft.",
+      "ar": "رغم أن هذه الأنشطة غير مدفوعة، فإنها تقوي المجتمع.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Obwohl er müde ist, lernt er weiter.",
+      "ar": "رغم أنه متعب، يواصل التعلم.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Obwohl ich in Béjaïa geboren wurde, spreche ich heute Deutsch fast so fließend wie Arabisch.",
+      "ar": "رغم أنني وُلدت في بجاية، أتحدث اليوم الألمانية بطلاقة تقارب طلاقتي في العربية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Obwohl ich manchmal stur bin, versuche ich, offen zu bleiben.",
+      "ar": "رغم أنني عنيد أحيانًا، أحاول أن أبقى منفتحًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Ohne deine Hilfe wäre ich verloren.",
+      "ar": "لولا مساعدتك لكنت ضائعًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Sie bestätigt, dass zweisprachige Schüler oft flexibler denken.",
+      "ar": "تؤكد أن التلاميذ ثنائيي اللغة يفكرون غالبًا بمرونة أكبر.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Sie fordern eine «aktive Bürgerschaft».",
+      "ar": "يطالبون بـ«مواطنة فاعلة».",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Sie ist mehr als ein Dokument.",
+      "ar": "إنها أكثر من وثيقة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Sie kritisiert das Gesetz.",
+      "ar": "تنتقد القانون.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Sie können sich beide Modelle vorstellen.",
+      "ar": "يستطيعون تصور النموذجين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Sie übt Kritik an dem Gesetz.",
+      "ar": "تمارس نقدًا على القانون.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Staatsbürgerschaft ist eine Praxis, kein Zustand.",
+      "ar": "المواطنة ممارسة لا حالة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Staatsbürgerschaft ist kein Zustand, sondern eine Praxis.",
+      "ar": "المواطنة ليست حالة بل ممارسة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Steuern zahlen ist eine Pflicht.",
+      "ar": "دفع الضرائب واجب.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Trotz zunehmender Urbanisierung schützt sie ältere Menschen vor der Einsamkeit.",
+      "ar": "رغم التمدن المتزايد، تحمي كبار السن من الوحدة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Trotzdem versuche ich, offen für andere zu bleiben.",
+      "ar": "مع ذلك أحاول أن أبقى منفتحًا على الآخرين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Warum müsste der Staat laut den Soziologen mehr ausgeben?",
+      "ar": "لماذا سيكون على الدولة حسب علماء الاجتماع أن تنفق أكثر؟",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Weil die Mieten steigen.",
+      "ar": "لأن الإيجارات ترتفع.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Wenn du früher gekommen wärst, hättest du ihn gesehen.",
+      "ar": "لو جئت أبكر لرأيته.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Wenn ich Zeit hätte, würde ich lesen.",
+      "ar": "لو كان لدي وقت لقرأت.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Wenn ich die Wahl hätte, würde ich gern Dolmetscher werden.",
+      "ar": "لو كان لي الاختيار لأردت أن أصبح مترجمًا فوريًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Wenn ich mich beschreiben müsste, würde ich sagen, dass ich ein zuverlässiger und ehrgeiziger Schüler bin.",
+      "ar": "لو اضطررت إلى وصف نفسي لقلت إنني تلميذ موثوق وطموح.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Wir entscheiden heute.",
+      "ar": "نقرر اليوم.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Wir treffen heute eine Entscheidung.",
+      "ar": "نتخذ اليوم قرارًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Wäre dieses Netz nicht vorhanden, müsste der Staat deutlich mehr für Pflegeheime ausgeben.",
+      "ar": "لو لم توجد هذه الشبكة لاضطرت الدولة إلى إنفاق أكثر بكثير على دور الرعاية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Wäre dieses Netz nicht vorhanden, müsste der Staat mehr ausgeben.",
+      "ar": "لو لم توجد هذه الشبكة لاضطرت الدولة إلى إنفاق أكثر.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Yacine betrachtet die doppelte Zugehörigkeit als Vorteil.",
+      "ar": "يعتبر ياسين الانتماء المزدوج ميزة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Yacine ist in Köln geboren.",
+      "ar": "وُلد ياسين في كولونيا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Zu Hause spricht die Familie nur Deutsch.",
+      "ar": "في البيت تتحدث العائلة الألمانية فقط.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Die Kleinfamilie dominiert.",
+      "ar": "تسود الأسرة النووية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Zum Beispiel wurde in Algerien die Schulpflicht 1962 eingeführt, und seitdem sind Millionen von Kindern eingeschult worden.",
+      "ar": "على سبيل المثال، أُدخل التعليم الإلزامي في الجزائر عام 1962، ومنذ ذلك الحين التحق ملايين الأطفال بالمدرسة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass Staatsbürgerschaft täglich gelebt werden muss.",
+      "ar": "وخلاصة القول إن المواطنة يجب أن تُعاش يوميًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass Staatsbürgerschaft verliehen wird, aber täglich gelebt werden muss.",
+      "ar": "وخلاصة القول إن المواطنة تُمنح، لكنها يجب أن تُعاش يوميًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass beide Modelle Vor- und Nachteile haben.",
+      "ar": "وخلاصة القول إن للنموذجين مزايا وعيوبًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Zwar besitzt jeder Bürger formale Rechte, aber diese Rechte allein genügen nicht.",
+      "ar": "صحيح أن كل مواطن يملك حقوقًا شكلية، لكن هذه الحقوق وحدها لا تكفي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Zwar besitzt jeder Bürger formale Rechte, aber diese allein genügen nicht.",
+      "ar": "صحيح أن كل مواطن يملك حقوقًا شكلية، لكن هذه وحدها لا تكفي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Zweitens schützt die Großfamilie ältere Menschen trotz zunehmender Urbanisierung vor der Einsamkeit.",
+      "ar": "ثانيًا، تحمي الأسرة الممتدة كبار السن من الوحدة رغم التمدن المتزايد.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Zweitens schützt sie ältere Menschen trotz zunehmender Urbanisierung vor der Einsamkeit.",
+      "ar": "ثانيًا، تحمي كبار السن من الوحدة رغم التمدن المتزايد.",
+      "page": null,
+      "livre": "3AS",
+      "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
     }
   ]
 }
