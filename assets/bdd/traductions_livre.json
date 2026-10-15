@@ -11,7 +11,8 @@
     "note_tradfull4": "TRAD-FULL-4 : unités 15-16 (Medienwelt, Kultureller Dialog) — 83 phrases traduites en fusha ; lot final du livre 2AS ; mesure d'écart complète ci-dessous.",
     "note_tradfull5": "TRAD-FULL-5a : répliques courtes des dialogues unités 2-6 (littéraux simples révélés par la méthode linéaire) — 58 entrées fusha ; méta françaises et fragments écartés ; reste TRAD-FULL-5b (unités 10-16).",
     "note_tradfull5b": "TRAD-FULL-5b : répliques et phrases d'exercices des unités 10-16 — 118 entrées fusha ; exclus : méta-notes françaises, variantes volontairement fautives (exercices de correction) et fragments ; registre total 617 ; livre 2AS couvert : textes, séances, dialogues, exercices.",
-    "note_trad3asb": "TRAD-3AS-B : séances et exercices du lot 3AS A (Identität, Staatsbürgerschaft, Generationen) — 96 phrases fusha ; exclus : méta françaises, fragments, variantes fautives d ordre des mots ; registre total ~712."
+    "note_trad3asb": "TRAD-3AS-B : séances et exercices du lot 3AS A (Identität, Staatsbürgerschaft, Generationen) — 96 phrases fusha ; exclus : méta françaises, fragments, variantes fautives d ordre des mots ; registre total ~712.",
+    "note_trad3asc": "TRAD-3AS-C : livre 3AS lot B unités 6-8 (Kommunikationsmittel, Jugend & Drogen, Arbeitswelt) — 51 phrases fusha ; exercices à trous et fragments exclus ; unités 9-10 = TRAD-3AS-D depuis buch3as_pages.json."
   },
   "entrees": [
     {
@@ -4891,6 +4892,363 @@
       "page": null,
       "livre": "3AS",
       "source": "seances-3AS (lot A, unités 1-5, TRAD-3AS-B)"
+    },
+    {
+      "de": "Ein Leben ohne Fernsprechapparat scheint heute kaum denkbar.",
+      "ar": "حياة بلا هاتف تبدو اليوم شبه غير قابلة للتصور.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Doch es ging auch ohne.",
+      "ar": "لكن الأمر كان ممكنًا بدونه أيضًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Das Telefon, das von Graham Bell im Jahr 1876 erfunden war, ist das am meisten genutzte Kommunikationsmittel.",
+      "ar": "الهاتف، الذي اخترعه غراهام بل عام 1876، هو أكثر وسائل الاتصال استعمالًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Fernmeldetechnik hat das Leben mindestens genauso revolutioniert wie die Erfindung des Computers.",
+      "ar": "تقنية الاتصالات عن بعد أحدثت ثورة في الحياة بقدر اختراع الحاسوب على الأقل.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Noch bevor die Zahnbürste morgens im Mund ist, wird schnell eine Kurznachricht, SMS, geschickt.",
+      "ar": "قبل أن تصل فرشاة الأسنان إلى الفم صباحًا، تُرسَل بسرعة رسالة قصيرة (SMS).",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Boris ist 21 Jahre alt und verschickt gerne SMS.",
+      "ar": "بوريس في الحادية والعشرين من عمره ويحب إرسال الرسائل القصيرة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Er tippt im Monat so 120 Kurznachrichten.",
+      "ar": "يكتب في الشهر نحو 120 رسالة قصيرة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Das macht 1440 im Jahr.",
+      "ar": "أي 1440 رسالة في السنة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Das Telefon wurde 1876 von Graham Bell erfunden.",
+      "ar": "اختُرع الهاتف عام 1876 من طرف غراهام بل.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Fernmeldetechnik hat das Leben nicht verändert.",
+      "ar": "تقنية الاتصالات لم تغيّر الحياة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Fotos, Videos und Musik treten per Handy ihre Reise um die Welt an.",
+      "ar": "الصور والفيديوهات والموسيقى تبدأ رحلتها حول العالم عبر الهاتف النقال.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Boris tippt etwa 120 Kurznachrichten im Monat.",
+      "ar": "يكتب بوريس نحو 120 رسالة قصيرة في الشهر.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Boris findet leicht einen Freund, der noch kein Handy hat.",
+      "ar": "يجد بوريس بسهولة صديقًا لا يملك هاتفًا نقالًا بعد.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Für ein «S» drückt man viermal die Taste 7.",
+      "ar": "لكتابة حرف S يضغط المرء أربع مرات على الزر 7.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Post gibt es nur auf dem Land.",
+      "ar": "البريد موجود فقط في الريف.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Jugend ist die Lebensphase zwischen Kindheit und Erwachsenenalter.",
+      "ar": "الشباب هو المرحلة الحياتية بين الطفولة والرشد.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Sie ist auch die Zeit der Unsicherheit über ihre Rolle und Identität.",
+      "ar": "وهي أيضًا زمن عدم اليقين بشأن الدور والهوية.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Wenn die Jugendlichen Drogen nähmen, würden sie sich sicherer fühlen.",
+      "ar": "لو تعاطى الشباب المخدرات لشعروا بأمان أكبر.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Sogar Kaffee gehört dazu, denn man kann kaffeesüchtig sein.",
+      "ar": "حتى القهوة تدخل ضمن ذلك، إذ يمكن الإدمان عليها.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Man muss zwischen Güte und Schwäche unterscheiden.",
+      "ar": "يجب التمييز بين الطيبة والضعف.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Meine Eltern wollten immer wissen, was ich in meiner Freizeit machte.",
+      "ar": "كان والداي يريدان دائمًا معرفة ما كنت أفعله في وقت فراغي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Manchmal verboten sie mir etwas.",
+      "ar": "أحيانًا كانا يمنعانني من شيء.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Ich hatte dann immer großen Zorn.",
+      "ar": "كنت أشعر حينها دائمًا بغضب كبير.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Aber das war trotzdem gut, denn so haben wir nie den Kontakt verloren.",
+      "ar": "لكن ذلك كان جيدًا مع ذلك، لأننا هكذا لم نفقد التواصل أبدًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Man muss ein gewisses Alter erreichen, bis man sieht, dass es die «Alten» gar nicht so schlecht meinen.",
+      "ar": "يجب بلوغ سن معينة حتى يرى المرء أن «الكبار» لا يقصدون به سوءًا كبيرًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Drogen sind nur Alkohol und Tabak.",
+      "ar": "المخدرات هي الكحول والتبغ فقط.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Sogar Kaffee kann süchtig machen.",
+      "ar": "حتى القهوة قد تسبب الإدمان.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Projektwochen in den Schulen sollen das Bewusstsein der Kinder stärken.",
+      "ar": "أسابيع المشاريع في المدارس تهدف إلى تقوية وعي الأطفال.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Monika sagt, ihre Eltern leben gleichgültig nebeneinander her.",
+      "ar": "تقول مونيكا إن والديها يعيشان بلامبالاة جنبًا إلى جنب.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Peter hat den Kontakt zu seinen Eltern verloren.",
+      "ar": "فقد بيتر التواصل مع والديه.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Inge meint, Kinder sollten sich einmal in die Lage der Eltern versetzen.",
+      "ar": "ترى إنغه أن على الأطفال أن يضعوا أنفسهم مرة في موقف الوالدين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Hans sieht in seinen Eltern ein Vorbild.",
+      "ar": "يرى هانس في والديه قدوة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Meine Eltern sind für mich ein gutes Beispiel.",
+      "ar": "والداي مثال جيد لي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Als Kind bin ich für mein Leben nicht verantwortlich.",
+      "ar": "كطفل لست مسؤولًا عن حياتي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Nach der Arbeit ruhe ich mich beim Sport aus.",
+      "ar": "بعد العمل أستريح بممارسة الرياضة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Sie taten das aus Bequemlichkeit.",
+      "ar": "فعلوا ذلك بدافع الراحة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Arbeit ist nicht wie früher.",
+      "ar": "العمل لم يعد كما كان سابقًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Informatik greift die Arbeitswelt an, ändert die Arbeitsorganisation und führt zu Netzwerken.",
+      "ar": "المعلوماتية تقتحم عالم الشغل وتغيّر تنظيم العمل وتؤدي إلى الشبكات.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Angestellten werden selbstständiger und hängen nicht mehr von den Arbeitgebern ab.",
+      "ar": "يصبح الموظفون أكثر استقلالية ولا يعودون معتمدين على أرباب العمل.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Arbeitnehmer werden selten nach Arbeitszeit, nach Fleiß oder nach Loyalität bezahlt, sondern nach dem Ergebnis entlohnt.",
+      "ar": "نادرًا ما يُدفع للعمال حسب وقت العمل أو الاجتهاد أو الولاء، بل يُكافؤون حسب النتيجة.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Informationsvermittler, Informatiker, Werbefachmann und Mediengestalter sind die Jobs der Zukunft.",
+      "ar": "وسطاء المعلومات والمختصون في المعلوماتية وأخصائيو الإشهار ومصممو الوسائط هم وظائف المستقبل.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Steffi arbeitet bei Gangway e.V.",
+      "ar": "تعمل شتيفي في جمعية غانغواي.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Kernarbeitszeit für Steffi ist ab 14 Uhr.",
+      "ar": "وقت العمل الأساسي لشتيفي يبدأ من الساعة الثانية زوالًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Informatik greift die Arbeitswelt an und führt zu Netzwerken.",
+      "ar": "المعلوماتية تقتحم عالم الشغل وتؤدي إلى الشبكات.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Arbeitnehmer werden immer nach Arbeitszeit und Fleiß bezahlt.",
+      "ar": "يُدفع للعمال دائمًا حسب وقت العمل والاجتهاد.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Informationsvermittler, Informatiker und Mediengestalter sind Jobs der Zukunft.",
+      "ar": "وسطاء المعلومات والمختصون في المعلوماتية ومصممو الوسائط وظائف المستقبل.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Erstausbildung reicht heute meist für ein ganzes Berufsleben.",
+      "ar": "التكوين الأولي يكفي اليوم غالبًا لمسار مهني كامل.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Steffi arbeitet bei Gangway e.V., einer Organisation für Straßensozialarbeit in Berlin.",
+      "ar": "تعمل شتيفي في جمعية غانغواي، وهي منظمة للعمل الاجتماعي الشارعي في برلين.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Steffi arbeitet nur im Büro.",
+      "ar": "تعمل شتيفي في المكتب فقط.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Beim Straßenfest haben die Jungen selbst gekocht.",
+      "ar": "في احتفال الشارع طبخ الشبان بأنفسهم.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
+    },
+    {
+      "de": "Die Kernarbeitszeit für Steffi ist ab 14 Uhr.",
+      "ar": "وقت العمل الأساسي لشتيفي يبدأ من الساعة الثانية زوالًا.",
+      "page": null,
+      "livre": "3AS",
+      "source": "buch 3AS lot B (unités 6-8, TRAD-3AS-C)"
     }
   ]
 }
