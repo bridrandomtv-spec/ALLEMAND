@@ -33,6 +33,10 @@ if (!idx.includes('سياسة الخصوصية (بيانات القاصرين)')
 if (!man.includes('manuel-ops-v1')) fails.push('docs/ops/manuel.md : manuel d exploitation absent ou sans marqueur v1 (MANUEL-1)');
 const css5 = fs.readFileSync('style.css', 'utf8');
 const kit = fs.existsSync('sponsor-kit.html') ? fs.readFileSync('sponsor-kit.html', 'utf8') : '';
+const adjs2 = fs.readFileSync('admin.js', 'utf8');
+/* LANG-2 */
+if (!adjs2.includes('لوحة القيادة · Dashboard')) fails.push('admin.js : onglets non bilingues AR/EN (LANG-2)');
+if (adjs2.includes('Tableau de bord')) fails.push('admin.js : français restant dans les onglets (LANG-2)');
 /* LANG-1 */
 if (!kit.includes('Sponsor Kit') || !kit.includes('Who does your advertising reach?')) fails.push('sponsor-kit.html : kit non bilingue AR/EN (LANG-1)');
 if (/Qui touche votre publicit|Emplacements & tarifs/.test(kit)) fails.push('sponsor-kit.html : français encore présent (LANG-1)');

@@ -188,7 +188,7 @@ document.addEventListener('click', ev => {
   })();
 });
 
-/* ── phase 6 (ADM-1) : onglet « Agents & wilayas » (admin_general) ── */
+/* ── phase 6 (ADM-1) : onglet « الوكلاء والولايات · Agents & Wilayas » (admin_general) ── */
 (function(){
   function esq(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function host(){ return document.querySelector('section[data-view="admin"]'); }
@@ -196,13 +196,13 @@ document.addEventListener('click', ev => {
     var h = host(); if(!h) return;
     var box = document.getElementById('admAgentsCard');
     if(!box){ box = document.createElement('div'); box.id = 'admAgentsCard'; box.className = 'card'; h.appendChild(box); }
-    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>🧑‍ Agents & wilayas</h2><p>☁️ client cloud indisponible</p>'; return; }
+    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>🧑‍ الوكلاء والولايات · Agents & Wilayas</h2><p>☁️ client cloud indisponible</p>'; return; }
     var meP = await SB.admMyPerms();
     if(!meP.ok || (meP.perms||[]).indexOf('agents.manage') === -1){ box.hidden = true; return; }
     box.hidden = false;
     var ag = await SB.admListAgents();
     var pf = await SB.admListProfiles();
-    var html = '<h2>🧑‍ Agents & wilayas (ADM-1)</h2>'
+    var html = '<h2>🧑‍ الوكلاء والولايات · Agents & Wilayas (ADM-1)</h2>'
       + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Périmètres appliqués par la base (RLS) : un agent ne lit que ses wilayas ; révocation = effet immédiat.</p>';
     html += (ag.ok && ag.agents.length) ? ag.agents.map(function(a){
       var pr = a.profiles || {};
@@ -310,19 +310,19 @@ document.addEventListener('click', ev => {
     var h = document.querySelector('section[data-view="admin"]'); if(!h) return;
     var box = document.getElementById('admAccordsCard');
     if(!box){ box = document.createElement('div'); box.id = 'admAccordsCard'; box.className = 'card'; h.appendChild(box); }
-    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>📜 Accords & versions</h2><p>☁️ indisponible</p>'; return; }
+    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>📜 الاتفاقيات والإصدارات · Accords</h2><p>☁️ indisponible</p>'; return; }
     var meP = await SB.admMyPerms();
     if(!meP.ok || (meP.perms||[]).indexOf('agreements.manage') === -1){ box.hidden = true; return; }
     box.hidden = false;
     var r = await SB.admAgreements();
-    var html = '<h2>📜 Accords & versions (ADM-3)</h2>'
-      + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Publier une nouvelle version désactive l\'ancienne : les acceptations passées restent immuables et passent en « version à ré-accepter ».</p>'
+    var html = '<h2>📜 الاتفاقيات والإصدارات · Accords (ADM-3)</h2>'
+      + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">نشر نسخة جديدة يعطّل السابقة : القبولات الماضية تبقى غير قابلة للتعديل وتصبح « نسخة يلزم إعادة قبولها » · Publishing a new version disables the previous one : past acceptations stay immutable and become « to re-accept ».</p>'
       + (r.ok ? r.rows.map(function(a){ return '<div class="rep-row"><span>' + esq4(a.cle) + ' · v' + a.version + (a.actif ? ' · <b>active</b>' : ' · archivée') + ' · ' + esq4(a.titre) + '</span><span style="font-size:11px;color:var(--m)">' + String(a.cree_at||'').slice(0,10) + '</span></div>'; }).join('') || '<p>Aucun accord.</p>' : '<p>⛔ ' + esq4(r.err) + '</p>')
       + '<div class="fld" style="margin-top:12px"><span>Publier une nouvelle version</span>'
       + '<input id="adm3Cle" placeholder="cle (ex : conditions_utilisation)" value="conditions_utilisation">'
       + '<input id="adm3Titre" placeholder="titre de la version">'
       + '<textarea id="adm3Corps" rows="4" placeholder="corps complet de la nouvelle version"></textarea>'
-      + '<button class="btn btn-p btn-sm" data-adm3-pub="1" type="button">publier la version</button> <span id="adm3Out" style="font-size:12px"></span></div>';
+      + '<button class="btn btn-p btn-sm" data-adm3-pub="1" type="button">نشر النسخة · Publish version</button> <span id="adm3Out" style="font-size:12px"></span></div>';
     box.innerHTML = html;
   }
   document.addEventListener('click', function(e){
@@ -349,10 +349,10 @@ document.addEventListener('click', ev => {
 (function(){
   function esq5(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   var TABS = [
-    { id:'dash', label:'📊 Tableau de bord', cards:['admDashCard'], perm:'reports.read' },
-    { id:'students', label:'👥 Élèves & parents', cards:['admStudentsCard'], perm:'students.read' },
-    { id:'ops', label:'🧰 Opérations', cards:['admAgentsCard','admQueueCard','admAccordsCard','__legacy__'], perm:null },
-    { id:'settings', label:'⚙️ Paramètres', cards:['admSettingsCard'], perm:'settings.manage' }
+    { id:'dash', label:'📊 لوحة القيادة · Dashboard', cards:['admDashCard'], perm:'reports.read' },
+    { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard'], perm:'students.read' },
+    { id:'ops', label:'🧰 العمليات · Operations', cards:['admAgentsCard','admQueueCard','admAccordsCard','__legacy__'], perm:null },
+    { id:'settings', label:'⚙️ الإعدادات · Settings', cards:['admSettingsCard'], perm:'settings.manage' }
   ];
   var KNOWN = ['admDashCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
   var state4 = { perms:[], tab:'ops' };
@@ -458,7 +458,7 @@ document.addEventListener('click', ev => {
   if((location.hash||'').replace('#','') === 'admin') renderTabs();
 })();
 
-/* ── phase 10 (ADM-5) : onglets 💰 Comptabilité & rapports + 🎫 Support ─ */
+/* ── phase 10 (ADM-5) : onglets 💰 Comptabilité & rapports + 🎫 الدعم · Support ─ */
 (function(){
   function esq6(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function section5(){ return document.querySelector('section[data-view="admin"]'); }
@@ -510,7 +510,7 @@ document.addEventListener('click', ev => {
     if(perms5.indexOf('tickets.handle') === -1){ box.hidden = true; return; }
     box.hidden = false;
     var t = await SB.admTickets();
-    box.innerHTML = '<h2>🎫 Support (dossiers de ton périmètre)</h2>'
+    box.innerHTML = '<h2>🎫 الدعم · Support (dossiers de ton périmètre)</h2>'
       + (t.ok && t.rows.length ? t.rows.map(function(x){ var p = x.profiles || {};
           return '<div class="rep-row"><span>#' + x.id + ' · ' + esq6(p.pseudo||'?') + ' · ' + esq6(p.wilaya||'?') + ' · ' + esq6(x.sujet) + ' · ' + esq6(x.statut) + '</span>'
             + '<span style="display:flex;gap:6px">'
@@ -529,10 +529,10 @@ document.addEventListener('click', ev => {
     if(!window.SB || !SB.admMyPerms){ return; }
     var meP = await SB.admMyPerms(); perms5 = meP.ok ? (meP.perms||[]) : [];
     if(!bar.querySelector('[data-adm5-tab="compta"]') && perms5.indexOf('reports.read') !== -1){
-      bar.insertAdjacentHTML('beforeend', '<button class="tab" data-adm5-tab="compta" type="button">💰 Compta & rapports</button>');
+      bar.insertAdjacentHTML('beforeend', '<button class="tab" data-adm5-tab="compta" type="button">💰 المحاسبة والتقارير · Accounting & Reports</button>');
     }
     if(!bar.querySelector('[data-adm5-tab="support"]') && perms5.indexOf('tickets.handle') !== -1){
-      bar.insertAdjacentHTML('beforeend', '<button class="tab" data-adm5-tab="support" type="button">🎫 Support</button>');
+      bar.insertAdjacentHTML('beforeend', '<button class="tab" data-adm5-tab="support" type="button">🎫 الدعم · Support</button>');
     }
   }
   document.addEventListener('click', function(e){

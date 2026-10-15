@@ -3116,7 +3116,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
       if(!txt){ window.alert('⛔ Description vide — ticket non créé.'); return; }
       if(!window.SB || !SB.ticketCreate){ window.alert('⛔ Cloud indisponible : note ton texte et réessaie plus tard.'); return; }
       SB.ticketCreate('[BUG] ' + txt.slice(0,80), txt + '\n\n--- meta ---\n' + meta()).then(function(r){
-        if(r.ok) window.alert('✅ Ticket créé, merci ! Il arrive dans 🎫 Support (ton wilaya + admin général).');
+        if(r.ok) window.alert('✅ Ticket créé, merci ! Il arrive dans 🎫 الدعم · Support (ton wilaya + admin général).');
         else window.alert('⛔ ' + r.err);
       });
     });
