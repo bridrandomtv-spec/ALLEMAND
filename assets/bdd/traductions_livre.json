@@ -6,7 +6,8 @@
     "note_trad2b": "consignes récurrentes du livre ajoutées (≥90 entrées, garde CI satisfaite)",
     "note_trad3as": "TRAD-3AS-A : textes de lecture des unités 3AS (lot A : unités 1-5 de #seances) traduits en fusha, phrase par phrase, depuis unites3as_a.js ; batches suivants : lot B 3AS puis textes 2AS.",
     "note_tradfull1": "TRAD-FULL-1 : lot 2AS unités 2-6 — phrases complètes des séances extraites, nettoyées (fragments de code et libellés français exclus) et traduites en fusha ; suite : unités 10-16 puis 3AS.",
-    "note_tradfull2": "TRAD-FULL-2 : unités 10-12 (Wissenschaft, Wirtschaft, Umwelt) — 70 phrases complètes traduites en fusha ; une entrée écartée (fragment avec symbole ≠ et libellé français). Registre total : 297."
+    "note_tradfull2": "TRAD-FULL-2 : unités 10-12 (Wissenschaft, Wirtschaft, Umwelt) — 70 phrases complètes traduites en fusha ; une entrée écartée (fragment avec symbole ≠ et libellé français). Registre total : 297.",
+    "note_tradfull3": "TRAD-FULL-3 : unités 13-14 (Gesundheit & Lebensweise, Globalisierung) — 62 phrases traduites en fusha ; une entrée française écartée à l'extraction. Registre total : 359."
   },
   "entrees": [
     {
@@ -1995,6 +1996,440 @@
       "page": null,
       "livre": "2AS",
       "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Couscous mit Lammfleisch und gedämpftem Gemüse liefert alles, was der Körper braucht.",
+      "ar": "الكسكس بلحم الضأن والخضر المطهوة على البخار يوفر كل ما يحتاجه الجسم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Trotzdem nehmen Übergewicht und Diabetes bei Jugendlichen seit zehn Jahren deutlich zu.",
+      "ar": "رغم ذلك يزداد الوزن الزائد والسكري بين الشباب بشكل ملحوظ منذ عشر سنوات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Ärzte nennen drei Ursachen.",
+      "ar": "يذكر الأطباء ثلاثة أسباب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Erstens essen viele Schüler Fast Food vor der Schule und trinken süße Limonade statt Wasser.",
+      "ar": "أولًا، يأكل كثير من التلاميذ وجبات سريعة قبل المدرسة ويشربون ليمونادة حلوة بدل الماء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Drittens schlafen sie zu wenig — im Durchschnitt weniger als sieben Stunden, obwohl Jugendliche acht bis zehn Stunden bräuchten.",
+      "ar": "ثالثًا، ينامون قليلًا — بمعدل أقل من سبع ساعات، رغم أن الشباب يحتاجون من ثمان إلى عشر ساعات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Dabei wäre die Lösung einfach.",
+      "ar": "ومع ذلك فإن الحل بسيط.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Man sollte fünf Portionen Obst und Gemüse pro Tag essen, anderthalb Liter Wasser trinken und sich täglich dreißig Minuten bewegen.",
+      "ar": "ينبغي أكل خمس حصص من الفاكهة والخضر يوميًا، وشرب لتر ونصف من الماء، والحركة ثلاثين دقيقة كل يوم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "An deiner Stelle würde ich auch auf zuckerhaltige Getränke verzichten.",
+      "ar": "لو كنت مكانك لتخليت أيضًا عن المشروبات المحلاة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Woran liegt das?",
+      "ar": "فيما يكمن السبب؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Erstens essen sie Fast Food vor der Schule und trinken süße Limonade statt Wasser.",
+      "ar": "أولًا، يأكلون وجبات سريعة قبل المدرسة ويشربون ليمونادة حلوة بدل الماء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zweitens bewegen sie sich kaum noch, weil sie stundenlang vor dem Bildschirm sitzen.",
+      "ar": "ثانيًا، قلّما يتحركون لأنهم يجلسون ساعات أمام الشاشة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Drittens schlafen sie weniger als sieben Stunden, obwohl sie acht bis zehn Stunden bräuchten.",
+      "ar": "ثالثًا، ينامون أقل من سبع ساعات رغم أنهم يحتاجون من ثمان إلى عشر ساعات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Was kannst du tun?",
+      "ar": "ماذا يمكنك أن تفعل؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Iss jeden Tag fünf Portionen Obst und Gemüse!",
+      "ar": "كُلْ كل يوم خمس حصص من الفاكهة والخضر!",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Du solltest anderthalb Liter Wasser trinken und auf zuckerhaltige Getränke verzichten.",
+      "ar": "ينبغي لك شرب لتر ونصف من الماء والتخلي عن المشروبات المحلاة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "An deiner Stelle würde ich auch täglich dreißig Minuten spazieren gehen.",
+      "ar": "لو كنت مكانك لمشيت أيضًا ثلاثين دقيقة كل يوم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Außerdem ist es wichtig, sich gesund zu ernähren und sich genug auszuruhen.",
+      "ar": "إضافة إلى ذلك، من المهم التغذية الصحية وأخذ قسط كاف من الراحة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass das Problem nicht unsere Küche ist, sondern unser Lebensstil.",
+      "ar": "وخلاصة القول إن المشكلة ليست في مطبخنا بل في نمط حياتنا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Die traditionelle algerische Ernährung ist bereits die beste Vorsorge — man muss nur wieder selbst kochen, zu Fuß gehen und früh schlafen gehen.",
+      "ar": "التغذية الجزائرية التقليدية هي أفضل وقاية بالفعل — يكفي أن نعود إلى الطبخ بأنفسنا والمشي مشيًا والنوم مبكرًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Drittens schlafen sie weniger als sieben Stunden.",
+      "ar": "ثالثًا، ينامون أقل من سبع ساعات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Immer mehr algerische Jugendliche leiden unter Übergewicht.",
+      "ar": "يعاني عدد متزايد من الشباب الجزائري من الوزن الزائد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Erstens essen sie Fast Food und trinken süße Limonade.",
+      "ar": "أولًا، يأكلون وجبات سريعة ويشربون ليمونادة حلوة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zweitens bewegen sie sich kaum noch.",
+      "ar": "ثانيًا، قلّما يتحركون.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Drittens schlafen sie zu wenig.",
+      "ar": "ثالثًا، ينامون قليلًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Iss fünf Portionen Obst und Gemüse!",
+      "ar": "كُلْ خمس حصص من الفاكهة والخضر!",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Du solltest anderthalb Liter Wasser trinken.",
+      "ar": "ينبغي لك شرب لتر ونصف من الماء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "An deiner Stelle würde ich täglich spazieren gehen.",
+      "ar": "لو كنت مكانك لمشيت كل يوم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Außerdem sollte man sich gesund ernähren.",
+      "ar": "إضافة إلى ذلك، ينبغي التغذي بشكل صحي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass das Problem unser Lebensstil ist, nicht unsere Küche.",
+      "ar": "وخلاصة القول إن المشكلة في نمط حياتنا لا في مطبخنا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Einerseits schafft sie Jobs, andererseits zerstört sie Traditionen.",
+      "ar": "من جهة تخلق مناصب عمل، ومن جهة أخرى تهدم التقاليد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Sie betrifft nicht nur die Wirtschaft, sondern auch die Kultur.",
+      "ar": "لا تمس الاقتصاد فحسب، بل الثقافة أيضًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Weder die Regierung noch die Firmen haben eine Lösung.",
+      "ar": "لا الحكومة ولا الشركات تملك حلًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Je mehr wir handeln, desto stärker wird der Wettbewerb.",
+      "ar": "كلما زدنا تعاملًا، ازدادت المنافسة قوة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Manche betrachten sie als Chance, andere als Gefahr für die nationale Wirtschaft.",
+      "ar": "يعتبرها بعضهم فرصة، ويعدها آخرون خطرًا على الاقتصاد الوطني.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Was bedeutet sie eigentlich?",
+      "ar": "ماذا تعني في الواقع؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Darunter versteht man die zunehmende Vernetzung von Wirtschaft, Kultur und Kommunikation über die Grenzen hinweg.",
+      "ar": "يُقصد بها الترابط المتزايد بين الاقتصاد والثقافة والتواصل عبر الحدود.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Dafür spricht, dass der Welthandel Arbeitsplätze schafft.",
+      "ar": "ومما يؤيد ذلك أن التجارة العالمية تخلق مناصب عمل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Algerische Unternehmen exportieren heute Datteln, Zement und Erdgas in mehr als hundert Länder.",
+      "ar": "تصدر الشركات الجزائرية اليوم التمور والإسمنت والغاز الطبيعي إلى أكثر من مئة بلد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Je mehr exportiert wird, desto mehr Devisen fließen ins Land.",
+      "ar": "كلما زاد التصدير، تدفقت عملات صعبة أكثر إلى البلاد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Außerdem ermöglicht das Internet algerischen Studenten, an ausländischen Universitäten zu lernen, ohne ihre Heimat zu verlassen.",
+      "ar": "إضافة إلى ذلك، يتيح الإنترنت للطلبة الجزائريين الدراسة في جامعات أجنبية دون مغادرة وطنهم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Dagegen spricht allerdings, dass kleine Betriebe dem Wettbewerb mit großen Konzernen nicht standhalten können.",
+      "ar": "ومما يعارض ذلك أن المؤسسات الصغيرة لا تستطيع الصمود أمام منافسة المجمعات الكبرى.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zwar sind ausländische Waren oft billiger, aber lokale Produkte verschwinden dadurch vom Markt.",
+      "ar": "صحيح أن السلع الأجنبية غالبًا أرخص، لكن المنتجات المحلية تختفي بذلك من السوق.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Weder die Regierung noch die Unternehmen haben bisher eine vollständige Lösung gefunden.",
+      "ar": "لا الحكومة ولا الشركات وجدت حتى الآن حلًا كاملًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Kritiker befürchten auch, dass kulturelle Vielfalt verloren geht, wenn überall dieselben Marken verkauft werden.",
+      "ar": "يخشى المنتقدون أيضًا أن تضيع التنوعية الثقافية إذا بيعت نفس الماركات في كل مكان.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass die Globalisierung weder gut noch schlecht an sich ist — es kommt darauf an, wie man sie gestaltet.",
+      "ar": "وخلاصة القول إن العولمة ليست خيرًا ولا شرًا في ذاتها — الأمر يتعلق بكيفية تشكيلها.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Meiner Meinung nach sollte Algerien sich öffnen, aber gleichzeitig die eigene Produktion fördern.",
+      "ar": "في رأيي، ينبغي للجزائر أن تنفتح وأن تشجع في الوقت نفسه إنتاجها الوطني.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Ist sie für Algerien eine Chance oder eine Gefahr?",
+      "ar": "هل هي فرصة للجزائر أم خطر؟",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Diese Frage lässt sich nicht mit einem einfachen Ja oder Nein beantworten.",
+      "ar": "لا يمكن الإجابة عن هذا السؤال بنعم أو لا ببساطة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Dafür spricht erstens, dass der Welthandel Arbeitsplätze schafft, weil algerische Unternehmen heute Datteln, Zement und Erdgas in mehr als hundert Länder exportieren.",
+      "ar": "ومما يؤيد ذلك أولًا أن التجارة العالمية تخلق مناصب عمل، لأن الشركات الجزائرية تصدر اليوم التمور والإسمنت والغاز الطبيعي إلى أكثر من مئة بلد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zweitens ermöglicht das Internet den Studenten, an ausländischen Universitäten zu lernen, ohne ihre Heimat zu verlassen.",
+      "ar": "ثانيًا، يتيح الإنترنت للطلبة الدراسة في جامعات أجنبية دون مغادرة وطنهم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Außerdem befürchten viele, dass kulturelle Vielfalt verloren geht, wenn überall dieselben Marken verkauft werden.",
+      "ar": "إضافة إلى ذلك، يخشى كثيرون أن تضيع التنوعية الثقافية إذا بيعت نفس الماركات في كل مكان.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass die Globalisierung weder gut noch schlecht an sich ist.",
+      "ar": "وخلاصة القول إن العولمة ليست خيرًا ولا شرًا في ذاتها.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Meiner Meinung nach sollte Algerien sich einerseits öffnen, andererseits aber die eigene Produktion fördern.",
+      "ar": "في رأيي، ينبغي للجزائر أن تنفتح من جهة، وأن تشجع إنتاجها الوطني من جهة أخرى.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Dafür spricht erstens, dass der Welthandel Arbeitsplätze schafft, weil algerische Unternehmen Datteln, Zement und Erdgas in mehr als hundert Länder exportieren.",
+      "ar": "ومما يؤيد ذلك أولًا أن التجارة العالمية تخلق مناصب عمل، لأن الشركات الجزائرية تصدر التمور والإسمنت والغاز الطبيعي إلى أكثر من مئة بلد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zweitens ermöglicht das Internet den Studenten, im Ausland zu lernen, ohne ihre Heimat zu verlassen.",
+      "ar": "ثانيًا، يتيح الإنترنت للطلبة الدراسة في الخارج دون مغادرة وطنهم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Außerdem befürchten viele, dass kulturelle Vielfalt verloren geht.",
+      "ar": "إضافة إلى ذلك، يخشى كثيرون أن تضيع التنوعية الثقافية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Heutzutage wird viel über die Globalisierung diskutiert.",
+      "ar": "يُناقَش اليوم كثيرًا حول العولمة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Dafür spricht, dass der Welthandel Arbeitsplätze schafft, weil Algerien Datteln und Erdgas exportiert.",
+      "ar": "ومما يؤيد ذلك أن التجارة العالمية تخلق مناصب عمل، لأن الجزائر تصدر التمور والغاز الطبيعي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Dagegen spricht, dass kleine Betriebe dem Wettbewerb nicht standhalten können.",
+      "ar": "ومما يعارض ذلك أن المؤسسات الصغيرة لا تستطيع الصمود أمام المنافسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zwar sind ausländische Waren billiger, aber lokale Produkte verschwinden.",
+      "ar": "صحيح أن السلع الأجنبية أرخص، لكن المنتجات المحلية تختفي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass die Globalisierung weder gut noch schlecht ist.",
+      "ar": "وخلاصة القول إن العولمة ليست خيرًا ولا شرًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
+    },
+    {
+      "de": "Meiner Meinung nach sollte Algerien sich öffnen, aber die eigene Produktion fördern.",
+      "ar": "في رأيي، ينبغي للجزائر أن تنفتح وأن تشجع إنتاجها الوطني.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 13-14)"
     }
   ]
 }
