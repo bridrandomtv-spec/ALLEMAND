@@ -34,6 +34,9 @@ if (!man.includes('manuel-ops-v1')) fails.push('docs/ops/manuel.md : manuel d ex
 const css5 = fs.readFileSync('style.css', 'utf8');
 const kit = fs.existsSync('sponsor-kit.html') ? fs.readFileSync('sponsor-kit.html', 'utf8') : '';
 const adjs2 = fs.readFileSync('admin.js', 'utf8');
+/* PAY-1 */
+const acccfg = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
+if (!(acccfg.paid_views || []).includes('corpus')) fails.push('access_config.json : مكتبة الفروض والامتحانات non paywallisée (PAY-1)');
 /* LANG-4 */
 const appjs4 = fs.readFileSync('app.js', 'utf8');
 if (!/const NAVSOLO_BOT = \['cloud', 'abonne', 'projet', 'compte', 'legal'\]/.test(appjs4)) fails.push('app.js : admin encore dans la colonne (LANG-4)');

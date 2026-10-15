@@ -7,7 +7,7 @@
       "paid_requires_backend": true,
       "cache_ui_only": true
     },
-    "note_3_2": "paid_views : vues entières paywallisées (liste vide = aucune vue entière payante en 3.2 ; le gating se fait par leçon/unité via free.units)."
+    "note_3_2": "paid_views : vues entières paywallisées. Depuis PAY-1 : ['corpus'] = مكتبة الفروض والامتحانات réservée aux abonnements actifs (décision propriétaire). Pour verrouiller une autre vue : ajouter son id ici, sans toucher au code. Hors-ligne : jamais d'accès payant (paid_requires_backend)."
   },
   "FREE_LESSONS_LIMIT": 2,
   "trial_days": 14,
@@ -71,5 +71,7 @@
       }
     }
   },
-  "paid_views": []
+  "paid_views": [
+    "corpus"
+  ]
 }
