@@ -14,7 +14,8 @@
     ['corpus', 'assets/bdd/corpus_index.json'],
     ['darja', 'assets/bdd/darja.json'],
     ['sharh', 'assets/bdd/sharh.json'],
-    ['mm', 'assets/bdd/biblio_multimatieres.json']
+    ['mm', 'assets/bdd/biblio_multimatieres.json'],
+    ['trad', 'assets/bdd/traductions_livre.json']
   ];
   let ENTRIES = null, LOADING = null;
   const STOP = new Set(['der','die','das','und','ist','ein','eine','ich','du','le','la','les','de','du','des','un','une','et','en','dans','pour','sur','avec','que','qui','what','the','a','an','is','are','von','mit','auf','من','في','على','عن','ما','هل','كيف','شنو','واش','pourquoi','dans']);
@@ -178,5 +179,47 @@
     E.forEach(e => { c[e.src] = (c[e.src] || 0) + 1; });
     return c;
   }
-  window.BIBLIO = { search: search, context: context, stats: stats, load: load };
+    /* TRAD-2 : traductions officielles des phrases du livre, indexées + moteur traduire() */
+    const TRD0 = data.trad;
+    if(TRD0){
+      const TRD = {}; Object.keys(TRD0).forEach(function(k){ TRD[String(k).trim()] = TRD0[k]; });
+      (Array.isArray(TRD.entrees) ? TRD.entrees : []).forEach(function(x, i){
+        if(!x || typeof x !== 'object' || !x.de) return;
+        E.push({ src:'trad', id:'t' + i, titre:String(x.de), ar:String(x.ar || ''),
+          page:(x.page === null || x.page === undefined) ? '' : String(x.page),
+          livre:String(x.livre || ''), texte:String(x.de) + ' § ' + String(x.ar || ''),
+          tags:['trad', 'livre'] });
+      });
+    }
+    function normTR(s){
+      return String(s || '').toLowerCase().replace(/ß/g, 'ss')
+        .replace(/[^a-z0-9äöü\s]/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+    function stripArt(s){ return String(s).replace(/^(der|die|das|ein|eine) /, ''); }
+    function gloseTR(de, E){
+      const toks = normTR(de).split(' ').filter(function(t){ return t.length > 2; });
+      const out = [];
+      toks.forEach(function(t){
+        const hit = E.filter(function(e){ return (e.src === 'mm' || e.src === 'trad') && e.ar; })
+          .find(function(e){ return stripArt(normTR(e.titre)) === stripArt(t) || normTR(e.titre) === stripArt(t); });
+        if(hit) out.push(t + ' = ' + hit.ar);
+      });
+      return out.join(' · ');
+    }
+    async function traduire(q){
+      const E = await load();
+      const frags = String(q).match(/[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß\s.,!?'«»-]{2,}/g) || [];
+      frags.sort(function(a, b){ return b.length - a.length; });
+      const de = (frags[0] || '').trim();
+      if(!de) return null;
+      const nd = normTR(de);
+      const cur = E.find(function(e){ return e.src === 'trad' && normTR(e.titre) === nd; });
+      if(cur) return { type:'curated', de:cur.titre, ar:cur.ar, page:cur.page, livre:cur.livre };
+      const page = E.find(function(e){ return e.src === 'livre' && normTR(e.texte).indexOf(nd) !== -1; });
+      const gl = gloseTR(de, E);
+      if(page) return { type:'page', de:de, ar:gl, page:page.id.replace('p', ''), livre:'' };
+      if(gl) return { type:'gloss', de:de, ar:gl, page:'', livre:'' };
+      return { type:'none', de:de, ar:'', page:'', livre:'' };
+    }
+  window.BIBLIO = { search: search, context: context, stats: stats, load: load, traduire: traduire };
 })();

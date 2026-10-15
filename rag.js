@@ -1092,6 +1092,25 @@ async function reponsePedagogique(q){
       ev.preventDefault();
       const q = ($('#ragQ').value || '').trim();
       const out = $('#ragOut');
+      /* TRAD-2 : intention traduction — déclencheur (ترجم/مفهمتش/…) + fragment allemand,
+         ou phrase allemande exacte déjà traduite (citation du livre sans déclencheur). */
+      if(window.BIBLIO && BIBLIO.traduire){
+        const mTr = q.match(/(ترجم|ترجمة|translate|مفهمتش|لم أفهم|ما فهمت|معنى|شنو يعني)/i);
+        const mDe = q.match(/[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß\s.,!?'«»-]{3,}/);
+        const pureDe = !/[\u0600-\u06FF]/.test(q);
+        if(mDe && (mTr || pureDe)){
+          const tr = await BIBLIO.traduire(mDe[0]);
+          if(tr && (tr.type === 'curated' || tr.type === 'page' || (mTr && tr.type === 'gloss'))){
+            out.innerHTML = '<div class="rg-ok rg-ped"><b>📖 الترجمة المعتمدة</b>'
+              + '<div class="rag-x de-in">' + esc(tr.de) + '</div>'
+              + '<div class="rag-x">' + esc(tr.ar) + '</div>'
+              + (tr.page ? '<span class="rag-src">المرجع : صفحة ' + esc(tr.page) + (tr.livre ? ' · كتاب ' + esc(tr.livre) : '') + '</span>' : '')
+              + (tr.type === 'gloss' ? '<span class="rag-src">ترجمة كلمة-بكلمة من المكتبة — الجملة ليست حرفية في الصفحات المودعة</span>' : '')
+              + '</div>';
+            return;
+          }
+        }
+      }
       if(!q){ out.innerHTML = ''; return; }
       out.innerHTML = '<div class="rg-load">⏳ analyse de ta demande…</div>';
       const ped = await reponsePedagogique(q);

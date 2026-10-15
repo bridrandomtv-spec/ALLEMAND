@@ -1,0 +1,501 @@
+{
+  "_meta": {
+    "version": 2,
+    "note": "TRAD-2 : traductions officielles AR (fusha) des phrases du livre 2AS (pages déposées) + seed propriétaire ; toute phrase non présente reçoit une glose mot-à-mot via la bibliothèque multimatieres. Le livre 3AS page-à-page n'est pas encore déposé au dépôt (buch_pages_3as.json absent) : lot TRAD-3AS sur ordre.",
+    "validation": "relecture propriétaire + prof référent"
+  },
+  "entrees": [
+    {
+      "de": "Jedes Dorf in Deutschland hat einen Fußballverein.",
+      "ar": "كل قرية في ألمانيا لديها نادٍ لكرة القدم.",
+      "page": 124,
+      "livre": "2AS"
+    },
+    {
+      "de": "Am Wochenende besuche ich meine Großeltern.",
+      "ar": "أزور أجدادي في نهاية الأسبوع.",
+      "page": null,
+      "livre": "3AS"
+    },
+    {
+      "de": "Guten Tag!",
+      "ar": "يومك سعيد! (تحية رسمية)",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich heiße Amel.",
+      "ar": "اسمي أمل.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich komme aus Algerien.",
+      "ar": "أنا من الجزائر.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich wohne in Algier.",
+      "ar": "أسكن في الجزائر العاصمة.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich bin Schülerin.",
+      "ar": "أنا تلميذة.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Hallo!",
+      "ar": "مرحبًا!",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich bin Sabine.",
+      "ar": "أنا سابينه.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich komme aus Deutschland.",
+      "ar": "أنا من ألمانيا.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich wohne in Bonn.",
+      "ar": "أسكن في بون.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Mein Name ist Nabil Skander.",
+      "ar": "اسمي نبيل سكندر.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich wohne in Tipaza.",
+      "ar": "أسكن في تيبازة.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich bin Deutschlehrer.",
+      "ar": "أنا أستاذ الألمانية.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Mein Name ist Monika Walter.",
+      "ar": "اسمي مونيكا فالتر.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich komme aus der Schweiz.",
+      "ar": "أنا من سويسرا.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich wohne in Bern.",
+      "ar": "أسكن في برن.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich bin Krankenschwester.",
+      "ar": "أنا ممرضة.",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wie heißt du?",
+      "ar": "ما اسمك؟",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Woher kommst du?",
+      "ar": "من أين أنت؟",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wo wohnst du?",
+      "ar": "أين تسكن؟",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Was bist du?",
+      "ar": "ما مهنتك؟",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wie ist Ihr Name?",
+      "ar": "ما اسم سيادتكم؟",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Woher kommen Sie?",
+      "ar": "من أين سيادتكم؟",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wo wohnen Sie?",
+      "ar": "أين تسكن سيادتكم؟",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Was sind Sie?",
+      "ar": "ما مهنة سيادتكم؟",
+      "page": 5,
+      "livre": "2AS"
+    },
+    {
+      "de": "Hör zu und sprich nach.",
+      "ar": "استمع وردد خلفي.",
+      "page": 6,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wie schreibt man das auf Deutsch?",
+      "ar": "كيف يُكتب هذا بالألمانية؟",
+      "page": 6,
+      "livre": "2AS"
+    },
+    {
+      "de": "Buchstabiere bitte.",
+      "ar": "هجِّ من فضلك.",
+      "page": 6,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich heiße Karl.",
+      "ar": "اسمي كارل.",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Und wie heißt du?",
+      "ar": "وما اسمك؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich wohne in Bonn und du?",
+      "ar": "أسكن في بون، وأنت؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich wohne in Berlin.",
+      "ar": "أسكن في برلين.",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Und wer ist das?",
+      "ar": "ومن هذا؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Das ist Alex.",
+      "ar": "هذا أليكس.",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Er wohnt auch in Berlin.",
+      "ar": "هو يسكن في برلين أيضًا.",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Und das ist Karola.",
+      "ar": "وهذه كارولا.",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Sie wohnt in München.",
+      "ar": "هي تسكن في ميونيخ.",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Auf Wiedersehen!",
+      "ar": "مع السلامة!",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wo wohnt Karl?",
+      "ar": "أين يسكن كارل؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wo wohnt Sabine?",
+      "ar": "أين تسكن سابينه؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wo wohnt Alex?",
+      "ar": "أين يسكن أليكس؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wo wohnt Karola?",
+      "ar": "أين تسكن كارولا؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wohnt Karl in Berlin?",
+      "ar": "هل يسكن كارل في برلين؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wohnt Sabine in Berlin?",
+      "ar": "هل تسكن سابينه في برلين؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wohnt Alex in Bonn?",
+      "ar": "هل يسكن أليكس في بون؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wohnt Karola in München?",
+      "ar": "هل تسكن كارولا في ميونيخ؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Heißt du Nabil?",
+      "ar": "هل اسمك نبيل؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Wohnt dein Freund in Algier?",
+      "ar": "هل يسكن صديقك في الجزائر العاصمة؟",
+      "page": 7,
+      "livre": "2AS"
+    },
+    {
+      "de": "Und wer bist du?",
+      "ar": "ومن أنت؟",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich bin Karin.",
+      "ar": "أنا كارين.",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich komme aus Hannover.",
+      "ar": "أنا من هانوفر.",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Und woher kommst du?",
+      "ar": "ومن أين أنت؟",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich komme aus Berlin.",
+      "ar": "أنا من برلين.",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Woher?",
+      "ar": "من أين؟",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich heiße Ryad.",
+      "ar": "اسمي رياض.",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Aus Algerien, aus Algier.",
+      "ar": "من الجزائر، من العاصمة.",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich komme aus Deutschland, aus Berlin.",
+      "ar": "أنا من ألمانيا، من برلين.",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Hört zu, sprecht nach und übt dann zu zweit.",
+      "ar": "استمعوا ورددوا ثم تدربوا ثنائيًا.",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Übt zu zweit.",
+      "ar": "تدربا ثنائيًا.",
+      "page": 10,
+      "livre": "2AS"
+    },
+    {
+      "de": "Lies die E-Mail von Sabine.",
+      "ar": "اقرأ البريد الإلكتروني من سابينه.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich bin 16 Jahre alt.",
+      "ar": "عمري ست عشرة سنة.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Ich lerne Englisch und Französisch.",
+      "ar": "أتعلم الإنجليزية والفرنسية.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Meine Hobbys sind: Sprachen und surfen im Internet.",
+      "ar": "هواياتي: اللغات وتصفح الإنترنت.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Und du?",
+      "ar": "وأنت؟",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Schreibe mir bitte bald!",
+      "ar": "اكتب لي قريبًا من فضلك!",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Viele Grüße, Sabine.",
+      "ar": "مع أطيب التحيات، سابينه.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Was stimmt?",
+      "ar": "ما الصحيح؟",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Sabine wohnt in Frankfurt.",
+      "ar": "سابينه تسكن في فرانكفورت.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Sie ist 16.",
+      "ar": "عمرها ست عشرة سنة.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Sie lernt nur Englisch.",
+      "ar": "تتعلم الإنجليزية فقط.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Sabines Hobbys sind: Internet und Sprachen.",
+      "ar": "هوايات سابينه: الإنترنت واللغات.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Lies den Text.",
+      "ar": "اقرأ النص.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Das ist Manfred Bauer.",
+      "ar": "هذا مانفريد باور.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Er wohnt in Deutschland, in Düsseldorf.",
+      "ar": "يسكن في ألمانيا، في دوسلدورف.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Er ist Ingenieur.",
+      "ar": "هو مهندس.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Zur Zeit ist er in Algerien.",
+      "ar": "هو حاليًا في الجزائر.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Er macht Urlaub mit seiner Familie in Tipaza.",
+      "ar": "يقضي عطلة مع عائلته في تيبازة.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Herr Bauer kommt aus der Schweiz.",
+      "ar": "السيد باور من سويسرا.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Er ist Englischlehrer.",
+      "ar": "هو أستاذ الإنجليزية.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Er arbeitet in Algerien.",
+      "ar": "يعمل في الجزائر.",
+      "page": 25,
+      "livre": "2AS"
+    },
+    {
+      "de": "Er macht allein Urlaub in Tipaza.",
+      "ar": "يقضي العطلة وحده في تيبازة.",
+      "page": 25,
+      "livre": "2AS"
+    }
+  ]
+}

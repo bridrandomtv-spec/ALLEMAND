@@ -50,6 +50,11 @@ const shs = fs.readFileSync('assets/bdd/sharh.json', 'utf8');
 if (!fs.existsSync('assets/bdd/biblio_multimatieres.json')) fails.push('biblio_multimatieres.json : fichier déposé absent (BIBLIO-1)');
 else { const mmj = JSON.parse(fs.readFileSync('assets/bdd/biblio_multimatieres.json', 'utf8')); const mme = mmj['entrees '] || mmj.entrees || []; if (mme.length < 1000) fails.push('biblio_multimatieres.json : moins de 1000 entrées (BIBLIO-1)'); }
 if (!bibl.includes('biblio_multimatieres.json')) fails.push('biblio.js : bibliothèque multimatieres non indexée (BIBLIO-1)');
+/* TRAD-2 */
+if (!fs.existsSync('assets/bdd/traductions_livre.json')) fails.push('traductions_livre.json absent (TRAD-2)');
+else { const trj = JSON.parse(fs.readFileSync('assets/bdd/traductions_livre.json', 'utf8')); if ((trj.entrees || []).length < 90) fails.push('traductions_livre.json : moins de 90 traductions officielles (TRAD-2)'); }
+if (!bibl.includes('traduire: traduire')) fails.push('biblio.js : moteur traduire absent (TRAD-2)');
+if (!fs.readFileSync('rag.js', 'utf8').includes('TRAD-2 : intention traduction')) fails.push('rag.js : hook traduction absent (TRAD-2)');
 if (!bibl.includes('Die Freunde')) fails.push('biblio.js : assainissement Die Freunde absent (BIBLIO-1)');
 if (['سميتي','شحال','بزاف','خواتات','عندي','بالدارجة'].some(m => shs.includes(m))) fails.push('sharh.json : explications encore en derja au lieu de fusha (FUS-2)');
 /* VOIX-1 */
