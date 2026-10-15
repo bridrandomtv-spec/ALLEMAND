@@ -38,8 +38,8 @@
       ? (notes.reduce((s, n) => s + Number(n.valeur || 0), 0) / notes.length).toFixed(2) : '—';
     box.innerHTML =
         '<div class="ad-hero"><span class="ad-crest">🛡️</span><div>'
-      + '<h2>Administration réelle</h2><p class="ad-sub">connecté : ' + esc(u.email)
-      + ' · rôle admin · données live Supabase</p></div></div>'
+      + '<h2>الإدارة الفعلية · Real administration</h2><p class="ad-sub">متصل · connected : ' + esc(u.email)
+      + ' · دور مدير · بيانات Supabase حية · admin role · live Supabase data</p></div></div>'
       + '<div class="ad-stats">'
       + stat(profs.length, 'comptes') + stat(eleves.length, 'élèves')
       + stat(profs.filter(x => x.role === 'prof').length, 'profs')
