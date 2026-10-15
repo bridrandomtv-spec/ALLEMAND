@@ -5,7 +5,8 @@
     "validation": "relecture propriétaire + prof référent",
     "note_trad2b": "consignes récurrentes du livre ajoutées (≥90 entrées, garde CI satisfaite)",
     "note_trad3as": "TRAD-3AS-A : textes de lecture des unités 3AS (lot A : unités 1-5 de #seances) traduits en fusha, phrase par phrase, depuis unites3as_a.js ; batches suivants : lot B 3AS puis textes 2AS.",
-    "note_tradfull1": "TRAD-FULL-1 : lot 2AS unités 2-6 — phrases complètes des séances extraites, nettoyées (fragments de code et libellés français exclus) et traduites en fusha ; suite : unités 10-16 puis 3AS."
+    "note_tradfull1": "TRAD-FULL-1 : lot 2AS unités 2-6 — phrases complètes des séances extraites, nettoyées (fragments de code et libellés français exclus) et traduites en fusha ; suite : unités 10-16 puis 3AS.",
+    "note_tradfull2": "TRAD-FULL-2 : unités 10-12 (Wissenschaft, Wirtschaft, Umwelt) — 70 phrases complètes traduites en fusha ; une entrée écartée (fragment avec symbole ≠ et libellé français). Registre total : 297."
   },
   "entrees": [
     {
@@ -1504,6 +1505,496 @@
       "page": null,
       "livre": "2AS",
       "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Befürworter argumentieren, dass jeder Schüler individuell gefördert werden könne.",
+      "ar": "يحتجّ المؤيدون بأن كل تلميذ يمكن أن يحظى بدعم فردي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Ein Programm erkennt sofort, welche Regeln ein Schüler nicht verstanden hat, und schlägt passende Übungen vor.",
+      "ar": "يتعرف البرنامج فورًا على القواعد التي لم يفهمها التلميذ، ويقترح تمارين مناسبة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Außerdem könnten Lehrer von routinehaften Aufgaben entlastet werden, weil Tests automatisch korrigiert werden können.",
+      "ar": "إضافة إلى ذلك يمكن تخفيف الأعباء الروتينية عن المعلمين، لأن الاختبارات تُصحَّح آليًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Kritiker warnen jedoch davor, dass der persönliche Kontakt zwischen Lehrer und Schüler verloren gehen könnte.",
+      "ar": "غير أن المنتقدين يحذرون من احتمال فقدان التواصل الشخصي بين المعلم والتلميذ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Eine Maschine könne zwar Fehler finden, aber sie verstehe nicht, warum ein Schüler Schwierigkeiten hat.",
+      "ar": "قد تستطيع الآلة رصد الأخطاء، لكنها لا تفهم لماذا يواجه التلميذ صعوبات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Zudem bestehe die Gefahr, dass persönliche Daten missbraucht werden.",
+      "ar": "إضافة إلى ذلك يوجد خطر إساءة استعمال البيانات الشخصية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Meiner Meinung nach ist die KI ein Werkzeug, kein Ersatz.",
+      "ar": "في رأيي، الذكاء الاصطناعي أداة وليس بديلًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Sie sollte dort eingesetzt werden, wo sie Zeit spart, aber die pädagogische Entscheidung muss beim Menschen bleiben.",
+      "ar": "ينبغي استعماله حيث يوفر الوقت، لكن القرار التربوي يجب أن يبقى بيد الإنسان.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Manche halten ihn für eine große Chance, andere sehen darin eine ernste Gefahr.",
+      "ar": "بعضهم يعده فرصة كبيرة، وآخرون يرون فيه خطرًا جديًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Einerseits bringt der Fortschritt viele Vorteile.",
+      "ar": "من جهة، يجلب التقدم فوائد كثيرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Krankheiten können heute früher erkannt werden, weil moderne Geräte genauer arbeiten.",
+      "ar": "يمكن اليوم اكتشاف الأمراض مبكرًا، لأن الأجهزة الحديثة تعمل بدقة أكبر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "In der Schule können Schüler individuell gefördert werden, damit niemand zurückbleibt.",
+      "ar": "في المدرسة يمكن دعم التلاميذ فرديًا حتى لا يتخلف أحد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Außerdem muss weniger schwere körperliche Arbeit geleistet werden.",
+      "ar": "إضافة إلى ذلك، يجب بذل عمل جسدي شاق أقل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Andererseits gibt es Risiken.",
+      "ar": "ومن جهة أخرى، توجد مخاطر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Persönliche Daten müssen unbedingt geschützt werden, sonst könnten sie missbraucht werden.",
+      "ar": "يجب حماية البيانات الشخصية حماية تامة، وإلا أمكن إساءة استعمالها.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Viele Menschen verlieren ihre Arbeit, weil Maschinen sie ersetzen.",
+      "ar": "يفقد كثير من الناس عملهم لأن الآلات تحل محلهم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "In Algerien kommt dazu, dass nicht alle Regionen über eine gute Internetverbindung verfügen.",
+      "ar": "وفي الجزائر يضاف إلى ذلك أن ليس كل المناطق تتوفر على اتصال جيد بالإنترنت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Meiner Meinung nach ist der Fortschritt weder gut noch schlecht an sich.",
+      "ar": "في رأيي، التقدم ليس خيرًا ولا شرًا في ذاته.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Kritiker warnen jedoch davor, dass der persönliche Kontakt verloren gehen könnte.",
+      "ar": "غير أن المنتقدين يحذرون من احتمال فقدان التواصل الشخصي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Einerseits können Krankheiten früher erkannt werden, weil moderne Geräte genauer arbeiten.",
+      "ar": "من جهة، يمكن اكتشاف الأمراض مبكرًا لأن الأجهزة الحديثة تعمل بدقة أكبر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Schüler können individuell gefördert werden, damit niemand zurückbleibt.",
+      "ar": "يمكن دعم التلاميذ فرديًا حتى لا يتخلف أحد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Andererseits müssen persönliche Daten geschützt werden, sonst könnten sie missbraucht werden.",
+      "ar": "ومن جهة أخرى، يجب حماية البيانات الشخصية، وإلا أمكن إساءة استعمالها.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "In den letzten Jahren wird überall über den technologischen Fortschritt diskutiert.",
+      "ar": "في السنوات الأخيرة يُناقَش التقدم التكنولوجي في كل مكان.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Die Politik muss klare Regeln aufstellen, damit die Technik dem Menschen dient.",
+      "ar": "يجب على السياسة وضع قواعد واضحة حتى تخدم التقنيةُ الإنسانَ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Nach offiziellen Angaben sind etwa 30 Prozent der Arbeitslosen zwischen 16 und 29 Jahre alt.",
+      "ar": "حسب معطيات رسمية، نحو 30 بالمئة من العاطلين أعمارهم بين 16 و29 سنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Besonders betroffen sind Absolventen ohne praktische Erfahrung.",
+      "ar": "الأكثر تضررًا هم الخريجون دون خبرة عملية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Es gibt mehrere Gründe dafür.",
+      "ar": "لذلك أسباب عدة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Erstens entspricht die Ausbildung an den Universitäten nicht immer den Bedürfnissen des Arbeitsmarktes.",
+      "ar": "أولًا، لا يستجيب التكوين الجامعي دائمًا لحاجات سوق العمل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Zweitens werden in vielen Betrieben keine neuen Stellen geschaffen, weil die Wirtschaft zu stark vom Erdöl abhängt.",
+      "ar": "ثانيًا، لا تُستحدَث مناصب جديدة في مؤسسات كثيرة، لأن الاقتصاد يعتمد اعتمادًا مفرطًا على البترول.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Drittens fehlen Informationen über freie Stellen.",
+      "ar": "ثالثًا، تنقص المعلومات حول المناصب الشاغرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Trotzdem gibt es Hoffnung.",
+      "ar": "رغم ذلك يوجد أمل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "In den letzten Jahren wurden viele Start-ups gegründet, vor allem in Algier, Oran und Constantine.",
+      "ar": "في السنوات الأخيرة أُنشئت شركات ناشئة كثيرة، خصوصًا في الجزائر ووهران وقسنطينة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Junge Leute entwickeln Apps, liefern Waren oder bieten Dienstleistungen im Internet an.",
+      "ar": "شباب يطورون تطبيقات، ويوصلون سلعًا، أو يقدمون خدمات عبر الإنترنت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Außerdem wird die Berufsausbildung gefördert, damit Jugendliche ein konkretes Handwerk lernen können.",
+      "ar": "إضافة إلى ذلك، يُدعَّم التكوين المهني حتى يستطيع الشباب تعلم حرفة ملموسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Wenn der Staat die kleinen Unternehmen stärker unterstützen würde, könnten tausende neue Arbeitsplätze geschaffen werden.",
+      "ar": "لو دعمت الدولة المؤسسات الصغيرة بقوة أكبر، لأمكن استحداث آلاف مناصب الشغل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Deshalb möchte ich mich um ein dreimonatiges Praktikum in Ihrer Firma bewerben.",
+      "ar": "لذا أودّ الترشح لتربص مدته ثلاثة أشهر في شركتكم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Zurzeit besuche ich die dritte Klasse des Lycée Emir Abdelkader in Bouira, wo ich Deutsch als zweite Fremdsprache lerne.",
+      "ar": "أدرس حاليًا في السنة الثالثة بثانوية الأمير عبد القادر بالبويرة، حيث أتعلم الألمانية كلغة أجنبية ثانية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Meine Stärken sind Zuverlässigkeit, Teamfähigkeit und gute Deutschkenntnisse (Niveau B1).",
+      "ar": "نقاط قوتي هي الالتزام والعمل ضمن الفريق وإتقان جيد للألمانية (مستوى B1).",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Wenn ich die Stelle bekäme, würde ich mich sehr freuen, praktische Erfahrung in einem internationalen Umfeld zu sammeln.",
+      "ar": "لو حصلت على المنصب لسعدت كثيرًا بجمع خبرة عملية في محيط دولي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Selbstverständlich stehe ich Ihnen auch für ein Vorstellungsgespräch jederzeit zur Verfügung.",
+      "ar": "بالطبع أبقى رهن إشارتكم في أي وقت لمقابلة توظيف.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Ich wäre Ihnen sehr dankbar, wenn Sie mir eine Rückmeldung geben würden.",
+      "ar": "سأكون شاكرًا لكم كثيرًا إن تفضلتم بإجابتي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Dass der Staat kleine Unternehmen stärker unterstützt und Fremdsprachen wie Deutsch besser unterrichtet werden.",
+      "ar": "أن تدعم الدولة المؤسسات الصغيرة بقوة أكبر، وأن تُدرَّس اللغات الأجنبية كالألمانية بشكل أفضل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Zurzeit besuche ich die dritte Klasse des Lycée in Bouira.",
+      "ar": "أدرس حاليًا في السنة الثالثة بالثانوية في البويرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Ich habe bereits Erfahrung gesammelt und stehe Ihnen jederzeit zur Verfügung.",
+      "ar": "سبقت لي تجربة عملية، وأبقى رهن إشارتكم في أي وقت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Wenn ich die Stelle bekäme, würde ich mich sehr freuen.",
+      "ar": "لو حصلت على المنصب لسعدت كثيرًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Mit freundlichen Grüßen.",
+      "ar": "مع فائق التحية والاحترام.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Mehr als 80 Prozent der Landesfläche bestehen aus Wüste, und die Niederschläge gehen seit Jahren zurück.",
+      "ar": "أكثر من 80 بالمئة من مساحة البلاد صحراء، والأمطار في تراجع منذ سنوات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Deshalb gilt die Wasserknappheit heute als eine der größten Herausforderungen des Landes.",
+      "ar": "لذا يُعَدّ نقص الماء اليوم من أكبر تحديات البلاد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Um die Versorgung zu sichern, werden große Investitionen getätigt.",
+      "ar": "لتأمين التزويد بالماء، تُضخ استثمارات كبيرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "In den letzten Jahren wurden zahlreiche Meerwasserentsalzungsanlagen gebaut, vor allem an der Küste.",
+      "ar": "في السنوات الأخيرة بُنيت محطات كثيرة لتحلية مياه البحر، خصوصًا على الساحل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Außerdem muss die Landwirtschaft modernisiert werden, denn sie verbraucht etwa 60 Prozent des verfügbaren Wassers.",
+      "ar": "إضافة إلى ذلك، يجب تحديث الفلاحة لأنها تستهلك نحو 60 بالمئة من الماء المتاح.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Trotz dieser Maßnahmen bleibt die Situation schwierig.",
+      "ar": "رغم هذه الإجراءات تبقى الوضعية صعبة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Obwohl viele Haushalte ans Netz angeschlossen sind, wird Wasser in manchen Regionen nur wenige Stunden pro Tag geliefert.",
+      "ar": "رغم أن كثيرًا من الأسر موصولة بالشبكة، لا يُوزَّع الماء في بعض المناطق سوى ساعات قليلة في اليوم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Die alten Leitungen sind zudem oft undicht, sodass große Mengen verloren gehen.",
+      "ar": "والقنوات القديمة كثيرًا ما تكون غير محكمة، فتضيع كميات كبيرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Fachleute betonen, dass Technik allein nicht ausreicht.",
+      "ar": "يؤكد المختصون أن التقنية وحدها لا تكفي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Es muss auch ein Bewusstsein geschaffen werden.",
+      "ar": "يجب أيضًا خلق وعي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Jeder Bürger kann einen Beitrag leisten, indem er Wasser spart und die Umwelt schützt.",
+      "ar": "كل مواطن يستطيع الإسهام بأن يوفر الماء ويحمي البيئة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Obwohl jeder weiß, wie wichtig die Natur ist, wird sie täglich zerstört.",
+      "ar": "رغم أن الجميع يعلم أهمية الطبيعة، تُدمَّر يوميًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Zuerst muss der Staat Maßnahmen ergreifen.",
+      "ar": "أولًا، يجب على الدولة اتخاذ إجراءات.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Die erneuerbaren Energien sollten stärker gefördert werden, besonders die Solarenergie, die in Algerien fast unbegrenzt verfügbar ist.",
+      "ar": "ينبغي دعم الطاقات المتجددة بقوة أكبر، خصوصًا الطاقة الشمسية المتوفرة في الجزائر تقريبًا بلا حدود.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Außerdem muss die Mülltrennung eingeführt werden, damit mehr Abfall recycelt werden kann.",
+      "ar": "إضافة إلى ذلك، يجب اعتماد فرز النفايات حتى يمكن إعادة تدوير كميات أكبر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Aber auch jeder Bürger kann einen Beitrag leisten.",
+      "ar": "لكن كل مواطن أيضًا يستطيع الإسهام.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Wir sollten Wasser sparen, weil die Wasserknappheit trotz der Entsalzungsanlagen groß bleibt.",
+      "ar": "ينبغي أن نوفر الماء، لأن النقص يبقى كبيرًا رغم محطات التحلية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Man sollte weniger Plastiktüten benutzen und öfter mit dem Bus fahren.",
+      "ar": "ينبغي استعمال أكياس بلاستيكية أقل وركوب الحافلة أكثر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Zusammenfassend lässt sich sagen, dass der Umweltschutz keine Option ist, sondern eine Notwendigkeit.",
+      "ar": "وخلاصة القول إن حماية البيئة ليست خيارًا بل ضرورة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Zuerst muss der Staat Maßnahmen ergreifen und die erneuerbaren Energien fördern.",
+      "ar": "أولًا، يجب على الدولة اتخاذ إجراءات ودعم الطاقات المتجددة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Die Schulen tragen eine große Verantwortung.",
+      "ar": "تتحمل المدارس مسؤولية كبيرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Die Umweltverschmutzung ist eines der ernstesten Probleme unserer Zeit.",
+      "ar": "التلوث البيئي من أخطر مشكلات عصرنا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Der Staat muss Maßnahmen ergreifen und die erneuerbaren Energien fördern.",
+      "ar": "يجب على الدولة اتخاذ إجراءات ودعم الطاقات المتجددة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
+    },
+    {
+      "de": "Der Umweltschutz ist keine Option, sondern eine Notwendigkeit.",
+      "ar": "حماية البيئة ليست خيارًا بل ضرورة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 10-12)"
     }
   ]
 }
