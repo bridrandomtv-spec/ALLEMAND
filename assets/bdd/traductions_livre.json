@@ -4,7 +4,8 @@
     "note": "TRAD-2 : traductions officielles AR (fusha) des phrases du livre 2AS (pages déposées) + seed propriétaire ; toute phrase non présente reçoit une glose mot-à-mot via la bibliothèque multimatieres. Le livre 3AS page-à-page n'est pas encore déposé au dépôt (buch_pages_3as.json absent) : lot TRAD-3AS sur ordre.",
     "validation": "relecture propriétaire + prof référent",
     "note_trad2b": "consignes récurrentes du livre ajoutées (≥90 entrées, garde CI satisfaite)",
-    "note_trad3as": "TRAD-3AS-A : textes de lecture des unités 3AS (lot A : unités 1-5 de #seances) traduits en fusha, phrase par phrase, depuis unites3as_a.js ; batches suivants : lot B 3AS puis textes 2AS."
+    "note_trad3as": "TRAD-3AS-A : textes de lecture des unités 3AS (lot A : unités 1-5 de #seances) traduits en fusha, phrase par phrase, depuis unites3as_a.js ; batches suivants : lot B 3AS puis textes 2AS.",
+    "note_tradfull1": "TRAD-FULL-1 : lot 2AS unités 2-6 — phrases complètes des séances extraites, nettoyées (fragments de code et libellés français exclus) et traduites en fusha ; suite : unités 10-16 puis 3AS."
   },
   "entrees": [
     {
@@ -789,6 +790,720 @@
       "page": null,
       "livre": "3AS",
       "source": "seances-3AS (textes de lecture, lot A)"
+    },
+    {
+      "de": "Am Abend darf ich eine Stunde fernsehen.",
+      "ar": "في المساء يُسمح لي بمشاهدة التلفاز ساعة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Am Abend haben wir in einem Restaurant zu Abend gegessen.",
+      "ar": "في المساء تعشّينا في مطعم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Am nächsten Tag haben wir den Cap Carbon besichtigt.",
+      "ar": "في اليوم التالي زرنا كاب كربون.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Am Abend sehe ich eine Stunde fern, dann gehe ich um halb elf schlafen.",
+      "ar": "في المساء أشاهد التلفاز ساعة، ثم أذهب للنوم في العاشرة والنصف.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Am Montag habe ich Deutsch, Mathematik und Sport.",
+      "ar": "يوم الاثنين لديّ ألمانية ورياضيات ورياضة بدنية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Am Nachmittag bin ich mit meinen Cousins ins Schwimmbad gegangen.",
+      "ar": "بعد الظهر ذهبت مع أبناء عمي إلى المسبح.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Am Samstag stehe ich erst um neun Uhr auf, weil ich am Freitag lange ferngesehen habe.",
+      "ar": "يوم السبت لا أستيقظ إلا في التاسعة، لأنني سهرت أمام التلفاز يوم الجمعة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Anschließend fügen Sie eine Prise Salz, Tomaten und Wasser hinzu.",
+      "ar": "بعد ذلك أضِف قليلًا من الملح وطماطم وماء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Danach geben Sie Öl in einen Topf.",
+      "ar": "ثم ضع الزيت في قدر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Danach geben Sie Öl in einen großen Topf und braten Sie das Fleisch an.",
+      "ar": "ثم ضع الزيت في قدر كبيرة وحمّر اللحم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Danach gehe ich mit meinem Bruder nach Hause und wir essen zusammen zu Mittag.",
+      "ar": "بعد ذلك أعود مع أخي إلى البيت ونتغدى معًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Danach gehe ich mit meinem Bruder nach Hause.",
+      "ar": "بعد ذلك أعود مع أخي إلى البيت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Danach sind wir zum Hafen gegangen und mein Bruder hat viele Fotos gemacht.",
+      "ar": "ثم ذهبنا إلى الميناء والتقط أخي صورًا كثيرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Danach sind wir zum Hafen gegangen.",
+      "ar": "ثم ذهبنا إلى الميناء.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Dann fahre ich mit dem Bus zur Schule.",
+      "ar": "ثم أستقل الحافلة إلى المدرسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Dann schneiden Sie alles klein.",
+      "ar": "ثم قطّع كل شيء قطعًا صغيرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Dann sind wir am Nachmittag angekommen und sind mit einem Taxi zum Hotel gefahren.",
+      "ar": "ثم وصلنا بعد الظهر وركبنا سيارة أجرة إلى الفندق.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Das Hotel lag direkt neben dem Strand, gegenüber einem kleinen Café.",
+      "ar": "كان الفندق بجانب الشاطئ مباشرة، مقابل مقهى صغير.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Der Flug hat etwa sechs Stunden gedauert und war sehr angenehm.",
+      "ar": "استغرقت الرحلة الجوية نحو ست ساعات وكانت ممتعة جدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Wir sind um 18 Uhr am Flughafen Berlin-Brandenburg angekommen.",
+      "ar": "وصلنا في الساعة السادسة مساء إلى مطار برلين-براندنبورغ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Der Unterricht beginnt um acht Uhr.",
+      "ar": "تبدأ الحصة في الساعة الثامنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Am Dienstag haben wir Deutsch, Sport und Informatik.",
+      "ar": "يوم الثلاثاء لدينا ألمانية ورياضة بدنية وإعلام آلي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Deshalb gibt es immer mehr Übergewicht bei Kindern.",
+      "ar": "لذلك يزداد الوزن الزائد لدى الأطفال باستمرار.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Deutsch ist mein Lieblingsfach, weil ich später in Deutschland studieren möchte.",
+      "ar": "الألمانية مادتي المفضلة لأنني أريد الدراسة في ألمانيا لاحقًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Deutsch ist mein Lieblingsfach, weil unsere Lehrerin sehr nett ist.",
+      "ar": "الألمانية مادتي المفضلة لأن أستاذتنا لطيفة جدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Die Fahrt hat etwa drei Stunden gedauert, aber sie war angenehmer als im letzten Jahr.",
+      "ar": "استغرقت المسافة نحو ثلاث ساعات، لكنها كانت أمتع من العام الماضي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Die Landschaft war schöner als auf den Fotos!",
+      "ar": "كان المنظر أجمل مما في الصور!",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Dort musste man eine Stunde warten, weil so viele Touristen da waren.",
+      "ar": "كان على المرء هناك أن ينتظر ساعة لكثرة السياح.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Er heißt Tim und ist 12 Jahre alt.",
+      "ar": "اسمه تيم وعمره اثنتا عشرة سنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Er ist Lehrer von Beruf.",
+      "ar": "هو معلم مهنةً.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Er ist sehr fleißig.",
+      "ar": "هو مجتهد جدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Es gibt eine Bibliothek, zwei Labore und eine Turnhalle.",
+      "ar": "توجد مكتبة ومخبرَان وقاعة رياضة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Es ist wichtig, fünf Portionen Obst und Gemüse zu essen.",
+      "ar": "من المهم أكل خمس حصص من الفاكهة والخضر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Es ist wichtig, jeden Tag fünf Portionen Obst und Gemüse zu essen.",
+      "ar": "من المهم أكل خمس حصص من الفاكهة والخضر كل يوم.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich bin 16 Jahre alt und ich komme aus Berlin.",
+      "ar": "عمري ست عشرة سنة وأنا من برلين.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich gehe in das Lycée Emir Abdelkader in Bouira.",
+      "ar": "أدرس في ثانوية الأمير عبد القادر بالبويرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich habe diese Reise sehr genossen.",
+      "ar": "استمتعت كثيرًا بهذه الرحلة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich habe einen Bruder und eine Schwester.",
+      "ar": "لديّ أخ وأخت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich habe einen Bruder.",
+      "ar": "لديّ أخ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich habe keine Schwester.",
+      "ar": "ليس لديّ أخت.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich heiße Julia Sommer.",
+      "ar": "اسمي يوليا زومر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich heiße Nadia und ich bin 16 Jahre alt.",
+      "ar": "اسمي ناديا وعمري ست عشرة سنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich heiße Yacine und ich bin 16 Jahre alt.",
+      "ar": "اسمي ياسين وعمري ست عشرة سنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich hätte gern jeden Tag Couscous!",
+      "ar": "أتمنى كسكسًا كل يوم!",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich kann schon gut Deutsch sprechen.",
+      "ar": "أستطيع بالفعل التحدث بالألمانية جيدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich mag meine Familie sehr.",
+      "ar": "أحب عائلتي كثيرًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich möchte später Ärztin werden.",
+      "ar": "أريد أن أصبح طبيبة لاحقًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich stehe um halb sechs auf und frühstücke mit meiner Familie.",
+      "ar": "أستيقظ في الخامسة والنصف وأتفطر مع عائلتي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich wohne mit meiner Familie in Sétif.",
+      "ar": "أسكن مع عائلتي في سطيف.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich wohne mit meiner Familie in einem Haus mit Garten.",
+      "ar": "أسكن مع عائلتي في بيت بحديقة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "In der Bibliothek darf man nicht laut sprechen.",
+      "ar": "في المكتبة لا يجوز التحدث بصوت مرتفع.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "In der Pause gehe ich mit meinen Freundinnen in die Bibliothek.",
+      "ar": "في الاستراحة أذهب مع صديقاتي إلى المكتبة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Nach der Schule muss ich meine Hausaufgaben machen.",
+      "ar": "بعد المدرسة يجب أن أنجز واجباتي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Jeden Sommer besuchen wir sie.",
+      "ar": "نزورهم كل صيف.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Kochen Sie alles 40 Minuten.",
+      "ar": "اطبخ الكلّ أربعين دقيقة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Letzten Sommer bin ich mit meiner Familie nach Béjaïa gereist.",
+      "ar": "الصيف الماضي سافرت مع عائلتي إلى بجاية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Man sollte nicht zu viel Fast Food essen, denn das ist ungesund.",
+      "ar": "لا ينبغي الإكثار من الأكل السريع لأنه غير صحي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Man sollte nicht zu viel Fast Food essen.",
+      "ar": "لا ينبغي الإكثار من الأكل السريع.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Mein Bruder ist lustig, aber manchmal laut.",
+      "ar": "أخي مرح لكنه أحيانًا صاخب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Mein Lieblingsgericht ist Couscous, das Nationalgericht Algeriens.",
+      "ar": "طبقي المفضل هو الكسكس، الطبق الوطني الجزائري.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Mein Schultag beginnt um acht Uhr.",
+      "ar": "يومي المدرسي يبدأ في الثامنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Mein Schultag beginnt um sieben Uhr morgens.",
+      "ar": "يومي المدرسي يبدأ في السابعة صباحًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Mein Vater hat viele Fotos gemacht, während meine Schwester eine Postkarte an ihre Freundin geschrieben hat.",
+      "ar": "التقط أبي صورًا كثيرة بينما كتبت أختي بطاقة بريدية إلى صديقتها.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Am Mittwoch sind wir mit der U-Bahn zum Museum Pergamon gefahren.",
+      "ar": "يوم الأربعاء ركبنا المترو إلى متحف بيرغامون.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Mein Vater heißt Karim und ist 48 Jahre alt.",
+      "ar": "اسم أبي كريم وعمره ثمان وأربعون سنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Mein Vater heißt Markus und ist 45 Jahre alt.",
+      "ar": "اسم أبي ماركوس وعمره خمس وأربعون سنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Mein bester Freund heißt Sofiane.",
+      "ar": "اسم صديقي المفضل سفيان.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Mein perfekter Tag beginnt spät.",
+      "ar": "يومي المثالي يبدأ متأخرًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Meine Familie ist klein.",
+      "ar": "عائلتي صغيرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Meine Familie ist nicht sehr groß.",
+      "ar": "عائلتي ليست كبيرة جدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Meine Großeltern wohnen in München.",
+      "ar": "جداي يسكنان في ميونيخ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Meine Mutter heißt Fatima.",
+      "ar": "اسم أمي فاطمة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Meine Mutter heißt Sabine und ist 43 Jahre alt.",
+      "ar": "اسم أمي زابينه وعمرها ثلاث وأربعون سنة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Meine Schule ist groß und modern.",
+      "ar": "مدرستي كبيرة وعصرية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Meine beste Freundin heißt Lena.",
+      "ar": "اسم صديقتي المقربة لينا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Nach dem Frühstück gehe ich mit meinem Bruder zur Bushaltestelle.",
+      "ar": "بعد الفطور أذهب مع أخي إلى موقف الحافلة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Nach dem Frühstück räume ich mein Zimmer auf und helfe meiner Mutter beim Einkaufen.",
+      "ar": "بعد الفطور أرتب غرفتي وأساعد أمي في التسوق.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Um elf Uhr treffe ich mich mit meinen Freunden im Jugendclub.",
+      "ar": "في الساعة الحادية عشرة ألتقي بأصدقائي في نادي الشباب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Nach dem Frühstück räume ich mein Zimmer auf.",
+      "ar": "بعد الفطور أرتب غرفتي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Schließlich dämpfen Sie den Couscous und servieren Sie ihn mit dem Gemüse.",
+      "ar": "أخيرًا بخّر الكسكس وقدّمه مع الخضر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ich hätte gern jeden Tag Couscous, aber das ist zu viel!",
+      "ar": "أودّ كسكسًا كل يوم، لكن هذا كثير جدًا!",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Schließlich servieren Sie den Couscous mit dem Gemüse.",
+      "ar": "أخيرًا قدّم الكسكس مع الخضر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Schließlich sind wir am Sonntag wieder nach Hause geflogen.",
+      "ar": "وأخيرًا عدنا بالطائرة إلى البيت يوم الأحد.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Sie ist nett und kocht gern.",
+      "ar": "هي لطيفة وتحب الطبخ.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Sie trinken süße Limonade statt Wasser und kaufen Snacks vor der Schule.",
+      "ar": "يشربون ليمونادة حلوة بدل الماء ويشترون وجبات خفيفة قبل المدرسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Tim ist sehr lustig, aber manchmal auch laut.",
+      "ar": "تيم مرح جدًا لكنه أحيانًا صاخب أيضًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Traditionell isst man viel Gemüse, Olivenöl, Hülsenfrüchte und frisches Brot.",
+      "ar": "تقليديًا يأكل الناس كثيرًا من الخضر وزيت الزيتون والقطاني والخبز الطازج.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Um halb elf gehe ich schlafen.",
+      "ar": "أذهب للنوم في العاشرة والنصف.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Um zwölf Uhr ist die Schule aus.",
+      "ar": "في الساعة الثانية عشرة تنتهي المدرسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Von acht bis zwölf Uhr bin ich in der Schule.",
+      "ar": "من الثامنة إلى الثانية عشرة أكون في المدرسة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Von dort sind wir mit dem Zug zum Hotel gefahren, denn das Hotel lag im Zentrum, in der Nähe des Alexanderplatzes.",
+      "ar": "من هناك ركبنا القطار إلى الفندق، لأن الفندق كان في المركز قرب ساحة ألكسندر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Am nächsten Tag haben wir das Brandenburger Tor besichtigt und sind den Kudamm entlanggegangen.",
+      "ar": "في اليوم التالي زرنا بوابة براندنبورغ ومشينا على طول شارع كودام.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Wer ohne Frühstück zur Schule geht, kann sich schlecht konzentrieren.",
+      "ar": "من يذهب إلى المدرسة دون فطور لا يستطيع التركيز جيدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Wir spielen Fußball oder wir hören Musik.",
+      "ar": "نلعب كرة القدم أو نستمع إلى الموسيقى.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Wir spielen von elf bis dreizehn Uhr.",
+      "ar": "نلعب من الحادية عشرة إلى الثالثة عشرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Wir spielen zusammen Fußball und wir lernen Deutsch.",
+      "ar": "نلعب كرة القدم معًا ونتعلم الألمانية.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Zu Hause esse ich mit meiner Mutter zu Mittag, dann mache ich meine Hausaufgaben.",
+      "ar": "في البيت أتغدى مع أمي ثم أنجز واجباتي.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Am Nachmittag treffe ich mich mit meinen Freunden im Jugendclub.",
+      "ar": "بعد الظهر ألتقي بأصدقائي في نادي الشباب.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Zuerst sind wir mit dem Bus von Bouira abgefahren.",
+      "ar": "أولًا انطلقنا بالحافلة من البويرة.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Zuerst waschen Sie das Gemüse.",
+      "ar": "أولًا اغسل الخضر.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ärzte empfehlen, mindestens fünf Portionen Obst und Gemüse pro Tag zu essen und mindestens anderthalb Liter Wasser zu trinken.",
+      "ar": "يوصي الأطباء بأكل خمس حصص على الأقل من الفاكهة والخضر يوميًا وشرب لتر ونصف من الماء على الأقل.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
+    },
+    {
+      "de": "Ein gesundes Frühstück ist sehr wichtig.",
+      "ar": "الفطور الصحي مهم جدًا.",
+      "page": null,
+      "livre": "2AS",
+      "source": "seances-2AS (unités 2-6, phrases complètes)"
     }
   ]
 }
