@@ -34,7 +34,8 @@ if (!man.includes('manuel-ops-v1')) fails.push('docs/ops/manuel.md : manuel d ex
 const css5 = fs.readFileSync('style.css', 'utf8');
 if (!css5.includes('UI-5 — la colonne de navigation doit rester')) fails.push('style.css : bloc colonne déroulante absent (UI-5)');
 /* UI-6 */
-if (!/const NAVSOLO_BOT = \['cloud', 'abonne', 'projet'/.test(appjs)) fails.push('app.js : sponsoring encore présent dans la colonne de navigation (UI-6)');
+const appjs6 = fs.readFileSync('app.js', 'utf8');
+if (!/const NAVSOLO_BOT = \['cloud', 'abonne', 'projet'/.test(appjs6)) fails.push('app.js : sponsoring encore présent dans la colonne de navigation (UI-6)');
 
 /* PERF-1 */
 if ((idx.match(/ defer>/g) || []).length < 45) fails.push('index.html : moins de 45 scripts différés (PERF-1)');
