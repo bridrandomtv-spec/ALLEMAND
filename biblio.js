@@ -206,6 +206,26 @@
       });
       return out.join(' · ');
     }
+  /* TRAD-SEC-2 : traductions privées (lesson_content_trad) — lues via le client Supabase
+     de la session ; le RLS de la table fait le tri (abonné actif / admin), un anonyme
+     reçoit un tableau vide. Cache de 5 minutes par session. */
+  let PTRAD = null, PTRAD_AT = 0;
+  async function privateTrad(nd){
+    try{
+      if(!window.SB || !SB.sb) return null;
+      const now = Date.now();
+      if(!PTRAD || now - PTRAD_AT > 300000){
+        const c = await SB.sb();
+        const r = await c.from('lesson_content_trad').select('de,ar');
+        PTRAD = (r && r.data) ? r.data : [];
+        PTRAD_AT = now;
+      }
+      for(let i = 0; i < PTRAD.length; i++){
+        if(normTR(PTRAD[i].de) === nd) return PTRAD[i];
+      }
+      return null;
+    }catch(e){ return null; }
+  }
     async function traduire(q){
       const E = await load();
       const frags = String(q).match(/[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß\s.,!?'«»-]{2,}/g) || [];
@@ -218,6 +238,8 @@
       const page = E.find(function(e){ return e.src === 'livre' && normTR(e.texte).indexOf(nd) !== -1; });
       const gl = gloseTR(de, E);
       if(page) return { type:'page', de:de, ar:gl, page:page.id.replace('p', ''), livre:'' };
+      const pv = await privateTrad(nd);
+      if(pv) return { type:'prive', de:pv.de, ar:pv.ar, page:'', livre:'3AS' };
       if(gl) return { type:'gloss', de:de, ar:gl, page:'', livre:'' };
       return { type:'none', de:de, ar:'', page:'', livre:'' };
     }

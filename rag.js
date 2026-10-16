@@ -1100,7 +1100,7 @@ async function reponsePedagogique(q){
         const pureDe = !/[\u0600-\u06FF]/.test(q);
         if(mDe && (mTr || pureDe)){
           const tr = await BIBLIO.traduire(mDe[0]);
-          if(tr && (tr.type === 'curated' || tr.type === 'page' || (mTr && tr.type === 'gloss'))){
+          if(tr && (tr.type === 'curated' || tr.type === 'page' || tr.type === 'prive' || (mTr && tr.type === 'gloss'))){
             out.innerHTML = '<div class="rg-ok rg-ped"><b>📖 الترجمة المعتمدة</b>'
               + '<div class="rag-x de-in">' + esc(tr.de) + '</div>'
               + '<div class="rag-x">' + esc(tr.ar) + '</div>'
