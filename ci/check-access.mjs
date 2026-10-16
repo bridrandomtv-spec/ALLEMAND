@@ -1,6 +1,7 @@
 /* ci/check-access.mjs — garde-fou d'accès + TEST DE FUITE (Node, sans réseau) */
 import fs from 'node:fs';
 import vm from 'node:vm';
+import vm from 'node:vm';
 const fails = [];
 const cfg = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
 const src = fs.readFileSync('access.js', 'utf8');
@@ -61,6 +62,13 @@ if (!fs.readFileSync('access.js', 'utf8').includes('freeUnitsFor')) fails.push('
 if (!fs.readFileSync('biblio.js', 'utf8').includes('CONTENT1.authHeaders')) fails.push('biblio.js : fetch sans en-tête d abonnement (CONTENT-1c)');
 if (!fs.readFileSync('biblio.js', 'utf8').includes('lesson_content_trad')) fails.push('biblio.js : lecture de la table privée absente (TRAD-SEC-2)');
 if (!fs.readFileSync('rag.js', 'utf8').includes("tr.type === 'prive'")) fails.push('rag.js : type prive non rendu (TRAD-SEC-2)');
+/* BIBFIX-1 : test d évaluation à froid — un ReferenceError runtime ne doit plus jamais passer */
+const biblSrc = fs.readFileSync('biblio.js', 'utf8');
+const sbx = { window: {}, fetch: async () => ({ ok: false, json: async () => null }) };
+vm.createContext(sbx);
+try { vm.runInContext(biblSrc, sbx); } catch (e) { fails.push('biblio.js : erreur à l évaluation à froid : ' + e.message); }
+if (!sbx.window.BIBLIO || typeof sbx.window.BIBLIO.traduire !== 'function') fails.push('biblio.js : BIBLIO.traduire absent après évaluation (BIBFIX-1)');
+if (!(biblSrc.indexOf('const TRD0') > biblSrc.indexOf('function build(') && biblSrc.indexOf('const TRD0') < biblSrc.indexOf('async function load()'))) fails.push('biblio.js : indexation trad hors de build() (BIBFIX-1)');
 const cfgc = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
 if (!cfgc.free.units_3as || !cfgc.free.units_3as['1']) fails.push('access_config.json : vitrine 3AS absente (CONTENT-1)');
 /* BIBLIO-1 */

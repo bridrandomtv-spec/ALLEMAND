@@ -126,6 +126,17 @@
           tags:['mm', 'conjugaison'] });
       });
     }
+    const TRD0 = data.trad;
+    if(TRD0){
+      const TRD = {}; Object.keys(TRD0).forEach(function(k){ TRD[String(k).trim()] = TRD0[k]; });
+      (Array.isArray(TRD.entrees) ? TRD.entrees : []).forEach(function(x, i){
+        if(!x || typeof x !== 'object' || !x.de) return;
+        E.push({ src:'trad', id:'t' + i, titre:String(x.de), ar:String(x.ar || ''),
+          page:(x.page === null || x.page === undefined) ? '' : String(x.page),
+          livre:String(x.livre || ''), texte:String(x.de) + ' § ' + String(x.ar || ''),
+          tags:['trad', 'livre'] });
+      });
+    }
     return E;
   }
   async function load(){
@@ -180,17 +191,6 @@
     return c;
   }
     /* TRAD-2 : traductions officielles des phrases du livre, indexées + moteur traduire() */
-    const TRD0 = data.trad;
-    if(TRD0){
-      const TRD = {}; Object.keys(TRD0).forEach(function(k){ TRD[String(k).trim()] = TRD0[k]; });
-      (Array.isArray(TRD.entrees) ? TRD.entrees : []).forEach(function(x, i){
-        if(!x || typeof x !== 'object' || !x.de) return;
-        E.push({ src:'trad', id:'t' + i, titre:String(x.de), ar:String(x.ar || ''),
-          page:(x.page === null || x.page === undefined) ? '' : String(x.page),
-          livre:String(x.livre || ''), texte:String(x.de) + ' § ' + String(x.ar || ''),
-          tags:['trad', 'livre'] });
-      });
-    }
     function normTR(s){
       return String(s || '').toLowerCase().replace(/ß/g, 'ss')
         .replace(/[^a-z0-9äöü\s]/g, ' ').replace(/\s+/g, ' ').trim();
