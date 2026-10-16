@@ -264,7 +264,9 @@ document.addEventListener('click', ev => {
       + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Seuls les dossiers de ton périmètre (wilaya) apparaissent : le filtre vit dans la base. Confirmer → reçu possible ; rejeter = motif obligatoire ; tout laisse une trace au journal.</p>';
     html += q.ok && q.rows.length ? q.rows.map(function(r){
       var pr = r.profiles || {};
-      return '<div class="rep-row"><span>#' + r.id + ' · ' + esq2(pr.pseudo || '?') + ' · ' + esq2(pr.wilaya || '?') + ' · ' + r.montant + ' ' + esq2(r.devise) + ' · ' + esq2(r.statut) + '</span>'
+      return '<div class="rep-row"><span>#' + r.id + ' · ' + esq2(pr.pseudo || '?') + ' · ' + esq2(pr.wilaya || '?') + ' · ' + r.montant + ' ' + esq2(r.devise) + ' · ' + esq2(r.statut) + (r.preuve ? (String(r.preuve).indexOf('data:') === 0
+          ? ' <a href="' + String(r.preuve) + '" target="_blank" rel="noopener" style="font-size:11.5px">📎 reçu</a>'
+          : ' · preuve : ' + esq2(String(r.preuve).slice(0, 24))) : '') + '</span>'
         + '<span style="display:flex;gap:6px;flex-wrap:wrap">'
         + '<button class="btn btn-sm btn-p" data-adm2-conf="' + r.id + '" type="button">confirmer</button>'
         + '<button class="btn btn-sm btn-r" data-adm2-rej="' + r.id + '" type="button">rejeter</button>'

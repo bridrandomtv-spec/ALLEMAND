@@ -69,6 +69,9 @@ vm.createContext(sbx);
 try { vm.runInContext(biblSrc, sbx); } catch (e) { fails.push('biblio.js : erreur à l évaluation à froid : ' + e.message); }
 if (!sbx.window.BIBLIO || typeof sbx.window.BIBLIO.traduire !== 'function') fails.push('biblio.js : BIBLIO.traduire absent après évaluation (BIBFIX-1)');
 if (!(biblSrc.indexOf('const TRD0') > biblSrc.indexOf('function build(') && biblSrc.indexOf('const TRD0') < biblSrc.indexOf('async function load()'))) fails.push('biblio.js : indexation trad hors de build() (BIBFIX-1)');
+/* PJ-PAY-1 */
+if (!fs.readFileSync('billing.js', 'utf8').includes('blPreuveFile')) fails.push('billing.js : pièce jointe du reçu absente (PJ-PAY-1)');
+if (!fs.readFileSync('admin.js', 'utf8').includes('📎 reçu')) fails.push('admin.js : lien reçu absent de la file de validation (PJ-PAY-1)');
 const cfgc = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
 if (!cfgc.free.units_3as || !cfgc.free.units_3as['1']) fails.push('access_config.json : vitrine 3AS absente (CONTENT-1)');
 /* BIBLIO-1 */

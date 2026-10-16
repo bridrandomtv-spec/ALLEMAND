@@ -16,6 +16,36 @@
          CFG = (r.ok ? await r.json() : {}).paiement || FALLBACK; }catch(e){ CFG = FALLBACK; }
     return CFG;
   }
+  /* PJ-PAY-1 : fichier de preuve → dataURL compacte (image redimensionnée, PDF ≤ 1 Mo) */
+  function fichierEnPreuve(f){
+    return new Promise(function(res){
+      var MAX = 1000000;
+      if(f.type === 'application/pdf'){
+        if(f.size > MAX){ res(null); return; }
+        var fr = new FileReader();
+        fr.onload = function(){ res(String(fr.result)); };
+        fr.onerror = function(){ res(null); };
+        fr.readAsDataURL(f);
+        return;
+      }
+      if(!f.type || f.type.indexOf('image/') !== 0){ res(null); return; }
+      var url = URL.createObjectURL(f);
+      var img = new Image();
+      img.onload = function(){
+        try{
+          var max = 1280, w = img.width, h = img.height;
+          if(w > max){ h = Math.round(h * max / w); w = max; }
+          var c = document.createElement('canvas'); c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          var du = c.toDataURL('image/jpeg', 0.82);
+          res(du.length > 1400000 ? null : du);
+        }catch(e){ res(null); }
+        finally{ URL.revokeObjectURL(url); }
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); res(null); };
+      img.src = url;
+    });
+  }
   const MOIS = { m1:1, m6:6, m12:12 };
   /* phase 4 : le plan cliqué dans le paywall est pré-sélectionné ici (une seule fois) */
   let PREPLAN = null;
@@ -84,7 +114,9 @@
             ? 'ادفع عبر CCP أو BaridiMob (المرجع = ' + esc(att.ref) + ') ثم أدخل رقم الوصل :'
               + '<div class="bl-row"><select id="blMeth" style="max-width:150px">'
               + '<option value="ccp">CCP</option><option value="baridimob">BaridiMob</option></select>'
-              + '<input id="blPreuve" placeholder="رقم الوصل / صورة">'
+              + '<input id="blPreuve" placeholder="رقم العملية / الوصول">'
+               + '<input type="file" id="blPreuveFile" accept="image/*,application/pdf" title="صورة أو PDF الوصل (1 Mo max)" style="font-size:11px">'
+               + '<span style="font-size:10.5px;opacity:.8">📎 حمّل وصل CCP/BaridiMob وأرفقه هنا</span>'
               + '<button class="btn btn-p btn-sm" id="blSendP">إرسال</button></div>'
             : 'تم استلام الوصل — التفعيل من المدير خلال 24 ساعة.')
         + '</div>';
@@ -135,13 +167,23 @@
     const sp = $('#blSendP');
     if(sp) sp.addEventListener('click', async () => {
       const v = ($('#blPreuve').value || '').trim();
-      if(!v || !att) return;
+      const fEl = $('#blPreuveFile');
+      const f = (fEl && fEl.files && fEl.files[0]) ? fEl.files[0] : null;
+      if(!v && !f) return;
+      if(!att) return;
       const meth = ($('#blMeth') || {}).value || 'ccp';
-      await window.SB.setPreuve(att.id, v);
+      /* PJ-PAY-1 : le reçu téléchargé (photo/PDF) part avec la demande — compressé côté client */
+      let proof = v || '(reçu joint sans numéro)';
+      if(f){
+        const du = await fichierEnPreuve(f);
+        if(du) proof = du;
+        else if(window.toast) toast('تعذّر إرفاق الملف — أرسل رقم العملية أو صورة أخف', 'ko');
+      }
+      await window.SB.setPreuve(att.id, proof);
       /* phase 6 : trace PAYMENT séparée de la SUBSCRIPTION (échec = repli ancien, jamais bloquant) */
       try{
         const pr = await window.SB.createPayment({ sub_id: att.id, montant: att.montant || 0,
-          methode: meth, ref: att.ref || '', ref_banque: v });
+          methode: meth, ref: att.ref || '', ref_banque: (v || 'reçu-joint') });
         if(pr && pr.ok === false && pr.err) console.warn('🧾 payment :', pr.err);
       }catch(e){ console.warn('🧾 payment :', e); }
       renderAbonne();
