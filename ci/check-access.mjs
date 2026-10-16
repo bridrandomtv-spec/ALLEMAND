@@ -1,7 +1,6 @@
 /* ci/check-access.mjs — garde-fou d'accès + TEST DE FUITE (Node, sans réseau) */
 import fs from 'node:fs';
 import vm from 'node:vm';
-import vm from 'node:vm';
 const fails = [];
 const cfg = JSON.parse(fs.readFileSync('assets/bdd/access_config.json', 'utf8'));
 const src = fs.readFileSync('access.js', 'utf8');
