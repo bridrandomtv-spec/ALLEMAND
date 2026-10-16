@@ -64,7 +64,11 @@ if (!fs.readFileSync('biblio.js', 'utf8').includes('lesson_content_trad')) fails
 if (!fs.readFileSync('rag.js', 'utf8').includes("tr.type === 'prive'")) fails.push('rag.js : type prive non rendu (TRAD-SEC-2)');
 /* BIBFIX-1 : test d évaluation à froid — un ReferenceError runtime ne doit plus jamais passer */
 const biblSrc = fs.readFileSync('biblio.js', 'utf8');
-const sbx = { window: {}, fetch: async () => ({ ok: false, json: async () => null }) };
+const sbx = { window: {}, fetch: async () => ({ ok: false, json: async () => null }),
+  console: { log: function(){}, warn: function(){}, error: function(){} },
+  setTimeout: setTimeout, clearTimeout: clearTimeout, URL: URL,
+  document: { createElement: function(){ return { getContext: function(){ return null; }, style: {} }; }, querySelector: function(){ return null; }, addEventListener: function(){} },
+  navigator: {}, CustomEvent: function CustomEvent(){}, Event: function Event(){} };
 vm.createContext(sbx);
 try { vm.runInContext(biblSrc, sbx); } catch (e) { fails.push('biblio.js : erreur à l évaluation à froid : ' + e.message); }
 if (!sbx.window.BIBLIO || typeof sbx.window.BIBLIO.traduire !== 'function') fails.push('biblio.js : BIBLIO.traduire absent après évaluation (BIBFIX-1)');
