@@ -73,6 +73,11 @@ vm.createContext(sbx);
 try { vm.runInContext(biblSrc, sbx); } catch (e) { fails.push('biblio.js : erreur à l évaluation à froid : ' + e.message); }
 if (!sbx.window.BIBLIO || typeof sbx.window.BIBLIO.traduire !== 'function') fails.push('biblio.js : BIBLIO.traduire absent après évaluation (BIBFIX-1)');
 if (!(biblSrc.indexOf('const TRD0') > biblSrc.indexOf('function build(') && biblSrc.indexOf('const TRD0') < biblSrc.indexOf('async function load()'))) fails.push('biblio.js : indexation trad hors de build() (BIBFIX-1)');
+/* ABONNE-1 */
+const bilc = fs.readFileSync('billing.js', 'utf8');
+if (bilc.includes('wählen')) fails.push('billing.js : libellé allemand wählen encore présent (ABONNE-1)');
+if (!bilc.includes('اختر هذه الخطة')) fails.push('billing.js : bouton de plan non arabisé (ABONNE-1)');
+if (!bilc.includes('كيف يجري الاشتراك')) fails.push('billing.js : explication du parcours d abonnement absente (ABONNE-1)');
 /* PJ-PAY-1 */
 if (!fs.readFileSync('billing.js', 'utf8').includes('blPreuveFile')) fails.push('billing.js : pièce jointe du reçu absente (PJ-PAY-1)');
 if (!fs.readFileSync('admin.js', 'utf8').includes('📎 reçu')) fails.push('admin.js : lien reçu absent de la file de validation (PJ-PAY-1)');

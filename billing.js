@@ -148,21 +148,36 @@
       + '<b>' + esc(p.label) + '</b><div class="bl-prix">' + p.prix.toLocaleString('fr-FR') + ' دج</div>'
       + '<i>' + p.par_mois.toLocaleString('fr-FR') + ' دج / شهر</i>'
       + '<button class="btn btn-p btn-block" data-plan="' + p.id + '" data-prix="' + p.prix
-      + '">wählen</button></div>').join('') + '</div>'
+      + '">اختر هذه الخطة</button></div>').join('') + '</div>'
       + '<div class="card bl-pay"><b>🏦 Zahlungsdaten</b>'
       + '<div class="bl-row"><span>Kontoinhaber</span><b>' + esc(c.titulaire) + '</b></div>'
       + '<div class="bl-row"><span>CCP</span><b>' + esc(c.ccp) + '</b></div>'
       + '<div class="bl-row"><span>BaridiMob</span><b>' + esc(c.baridimob) + '</b></div>'
       + '<p class="bl-note">Mets la référence DZ-… en libellé du versement, puis envoie le reçu '
       + 'ci-dessus. Activation manuelle sous 24 h.</p></div>';
-    box.innerHTML = h;
+    box.innerHTML = '<div class="card bl-steps"><b>🧭 كيف يجري الاشتراك ؟</b>'
+      + '<ol style="margin:6px 0 0 18px;font-size:12.5px;line-height:1.9">'
+      + '<li>اختر خطتك بزر « اختر هذه الخطة » أسفل البطاقة : يُنشأ طلب اشتراك بانتظار الدفع.</li>'
+      + '<li>حوّل المبلغ إلى الحساب (CCP / بريدي موب) الظاهر في بيانات الدفع بالأسفل.</li>'
+      + '<li>أرسل رقم العملية أو صورة الوصل في خانة إثبات الدفع.</li>'
+      + '<li>تعتمد الإدارة الطلب خلال 24 ساعة كحد أقصى.</li>'
+      + '<li>يُفعَّل الاشتراك بعد الاعتماد وتُفتح كل المحتويات تلقائيًا.</li>'
+      + '</ol></div>' + h;
     box.querySelectorAll('[data-plan]').forEach(b => b.addEventListener('click', async () => {
-      const r = await window.SB.createSub(b.dataset.plan, +b.dataset.prix);
-      if(r.ok) renderAbonne();
-      else if(String(r.err).indexOf('non connect') !== -1){
-        const g = document.querySelector('[data-go="cloud"]');
-        if(g) g.click();
-      }
+      /* ABONNE-1 : plus aucune branche silencieuse — chaque issue parle à l'utilisateur */
+      try{
+        if(!window.SB || typeof SB.createSub !== 'function'){ if(window.toast) toast('⚠️ خدمة الاشتراك غير جاهزة بعد', 'ko'); return; }
+        const r = await window.SB.createSub(b.dataset.plan, +b.dataset.prix);
+        if(r && r.ok){
+          if(window.toast) toast('✅ تم إنشاء طلب الاشتراك — أكمل بإرسال وصل الدفع بالأسفل', '');
+          renderAbonne();
+        } else if(r && String(r.err).indexOf('non connect') !== -1){
+          const g = document.querySelector('[data-go="cloud"]');
+          if(g) g.click();
+        } else {
+          if(window.toast) toast('⚠️ تعذّر إنشاء الطلب : ' + (r && r.err ? r.err : 'خطأ غير معروف'), 'ko');
+        }
+      }catch(e){ if(window.toast) toast('⚠️ تعذّر إنشاء الطلب : ' + e.message, 'ko'); }
     }));
     const sp = $('#blSendP');
     if(sp) sp.addEventListener('click', async () => {
