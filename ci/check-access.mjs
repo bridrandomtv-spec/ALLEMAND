@@ -105,7 +105,9 @@ const appjs6 = fs.readFileSync('app.js', 'utf8');
 if (!/const NAVSOLO_BOT = \['cloud', 'abonne', 'projet'/.test(appjs6)) fails.push('app.js : sponsoring encore présent dans la colonne de navigation (UI-6)');
 
 /* PERF-1 */
-if ((idx.match(/ defer>/g) || []).length < 45) fails.push('index.html : moins de 45 scripts différés (PERF-1)');
+/* PERF-1 post CONTENT-1 : les 14 scripts d'unités payantes ne sont plus des <script> publics
+   (chargeur authentifié) — le seuil de scripts différés publics descend donc à 30. */
+if ((idx.match(/ defer>/g) || []).length < 30) fails.push('index.html : moins de 30 scripts différés publics (PERF-1 post CONTENT-1)');
 if (!idx.includes('<script src="auth.js?v=3510"></script>')) fails.push('index.html : auth.js doit rester eager (PERF-1)');
 if (!idx.includes('<script src="prof_core.js?v=3510"></script>')) fails.push('index.html : prof_core.js doit rester eager (PROF exporté au top-level de window.DZ, PERF-1b)');
 /* UI-4 */
