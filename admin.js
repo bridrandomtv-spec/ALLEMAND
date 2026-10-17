@@ -596,3 +596,83 @@ document.addEventListener('click', ev => {
   document.addEventListener('dz:sbready', function(){ if((location.hash||'').replace('#','') === 'admin') mountTabs(); });
   document.addEventListener('dz:auth', function(){ if((location.hash||'').replace('#','') === 'admin') mountTabs(); });
 })();
+
+/* ══ PATCH-REC-1 · reçu visible dans #admin — pansement additif, réversible, marqueur __rec1 ══
+   Constat captures 17/10 : la preuve de versement (data:image/… base64) est déversée
+   brute dans une cellule du tableau Abonnements, sans 📎, et casse visiblement 2 lignes.
+   Ce bloc ne remplace AUCUNE ligne existante : après chaque rendu, toute cellule-feuille
+   contenant une data-URL image/pdf devient [📎 voir le reçu] [⬇ télécharger] ; toute
+   cellule-feuille de base64 nu devient une étiquette courte + téléchargement .b64.
+   Affichage seul : aucune donnée n'est envoyée nulle part. Sécurité : seules les
+   data-URL image/* et application/pdf sont ouvertes dans un onglet (jamais text/html). */
+(function () {
+  try {
+    if (window.__rec1) { return; }
+    window.__rec1 = true;
+    var RE_DATA = /data:(image\/[a-z0-9.+-]+|application\/pdf);base64,/i;
+    function mkBtn(label, fn) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = label;
+      b.style.cssText = 'margin:2px;cursor:pointer;';
+      b.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        try { fn(); } catch (err) { /* jamais bloquer l'admin */ }
+      });
+      return b;
+    }
+    function fix(root) {
+      var nodes = (root || document).querySelectorAll('td,div,span,p,li');
+      for (var i = 0; i < nodes.length; i++) {
+        var el = nodes[i];
+        if (el.children.length || el.getAttribute('data-rec1')) { continue; }
+        var t = (el.textContent || '').trim();
+        if (t.length < 120) { continue; }
+        var m = t.match(RE_DATA);
+        if (m) {
+          var data = t.slice(t.indexOf(m[0])).replace(/\s+/g, '');
+          el.setAttribute('data-rec1', '1');
+          el.textContent = '';
+          el.appendChild(mkBtn('📎 voir le reçu', function (d) { return function () {
+            var w = window.open('', '_blank'); if (!w) { return; }
+            if (d.indexOf('data:application/pdf') === 0) {
+              w.document.write('');
+            } else {
+              w.document.write('');
+            }
+          }; }(data)));
+          el.appendChild(mkBtn('⬇ télécharger', function (d) { return function () {
+            var a = document.createElement('a');
+            a.href = d;
+            a.download = 'recu-' + Date.now() + (d.indexOf('data:application/pdf') === 0 ? '.pdf' : '.jpg');
+            document.body.appendChild(a); a.click(); a.remove();
+          }; }(data)));
+        } else if (/^[A-Za-z0-9+\/=\s]+$/.test(t) && t.replace(/\s+/g, '').length > 300) {
+          var raw = t.replace(/\s+/g, '');
+          el.setAttribute('data-rec1', '1');
+          el.textContent = '';
+          el.appendChild(document.createTextNode('🧾 pièce jointe base64 (' + raw.length + ' car.) '));
+          el.appendChild(mkBtn('⬇ télécharger .b64', function (r) { return function () {
+            var blob = new Blob([r], { type: 'text/plain' });
+            var u = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = u; a.download = 'piece-' + Date.now() + '.b64';
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+          }; }(raw)));
+        }
+      }
+    }
+    var pending = false;
+    function sched() {
+      if (pending) { return; }
+      pending = true;
+      requestAnimationFrame(function () { pending = false; try { fix(document); } catch (e) {} });
+    }
+    sched();
+    if (window.MutationObserver) {
+      new MutationObserver(sched).observe(document.documentElement, { childList: true, subtree: true });
+    }
+    window.__rec1Fix = fix;
+  } catch (e) { /* l'admin doit rester vivant quoi qu'il arrive */ }
+})();
+
