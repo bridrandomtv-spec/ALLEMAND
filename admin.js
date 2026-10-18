@@ -365,7 +365,7 @@ function rendreCouvertureORG1(mount){
       var pr = r.profiles || {};
       return '<div class="rep-row"><span>#' + r.id + ' · ' + esq2(pr.pseudo || '?') + ' · ' + esq2(pr.wilaya || '?') + ' · ' + r.montant + ' ' + esq2(r.devise) + ' · ' + esq2(r.statut) + (r.preuve ? ' · 📎 مرفق' : '') + '</span>'
         + '<span style="display:flex;gap:6px;flex-wrap:wrap">'
-        + (r.preuve ? '<button class="btn btn-sm btn-o" data-rec-q="' + i + '" type="button">📎 recu</button>'
+        + (r.preuve ? '<button class="btn btn-sm btn-o" data-rec-q="' + i + '" type="button">📎 reçu</button>'
             + '<button class="btn btn-sm btn-g" data-rec-dl="' + i + '" type="button">⬇ télécharger</button>' : '')
         + '<button class="btn btn-sm btn-p" data-adm2-conf="' + r.id + '" type="button">confirmer</button>'
         + '<button class="btn btn-sm btn-r" data-adm2-rej="' + r.id + '" type="button">rejeter</button>'
