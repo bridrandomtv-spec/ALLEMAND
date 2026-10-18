@@ -1,5 +1,8 @@
 /* supabase.js — client cloud de la plateforme (module ES)
    Auth réelle + sync + storage privé 'prive'. Repli localStorage si hors-ligne. */
+/* MODE D'EMPLOI (2 lignes) : sélectionne TOUT ce bloc (clic dans le code → Ctrl+A → Ctrl+C),
+   remplace INTÉGRALEMENT l'ancien supabase/supabase.js (GitHub web → crayon → Ctrl+A → Suppr → Ctrl+V),
+   commit : ORG-1 local (client): méthode admCouverture (rpc admin_couverture_wilayas) */
 const URL = 'https://azjwcybivirvpxbfhyzk.supabase.co';
 const KEY = 'sb_publishable_eLv27yLjmxuiE9xP_h50qw_4ID6dDHz';
 let client = null;
@@ -741,4 +744,14 @@ async function admClosures(){
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, rows:r.data||[] };
 }
-Object.assign(window.SB, { admCloseMonth, admMarkRapproche, admClosures });
+
+/* ── ORG-1 · couverture wilayas (client fin — rpc base) ──
+   Déviation divulguée : throw au lieu de {ok,err}, parce que la carte de admin.js
+   lit .then/.catch et attend un TABLEAU ; une erreur doit remonter, pas s'afficher « 0 wilayas ». */
+async function admCouverture(){
+  const c = await sb(); if(!c) throw new Error('cloud indisponible');
+  const r = await c.rpc('admin_couverture_wilayas');
+  if(r.error) throw new Error(r.error.message);
+  return r.data || [];
+}
+Object.assign(window.SB, { admCloseMonth, admMarkRapproche, admClosures, admCouverture });
