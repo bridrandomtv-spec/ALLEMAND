@@ -1,7 +1,7 @@
 /* admin.js — tableau de bord ADMIN réel (profils + notes via Supabase, RLS admin) */
 /* MODE D'EMPLOI (2 lignes) : sélectionne TOUT ce bloc (clic dans le code → Ctrl+A → Ctrl+C),
    remplace INTÉGRALEMENT l'ancien admin.js (GitHub web → crayon → Ctrl+A → Suppr → Ctrl+V),
-   commit : fix(ORG-1b): admin.js complet ré-encodé + carte ORG-1 + garde UI-2 restaurée */
+   commit : RECUFIX-1: reçu signé + blob typé + libellés sponsors en arabe */
 'use strict';
 (function(){
   const $ = (s,c) => (c||document).querySelector(s);
@@ -98,9 +98,9 @@
         + ((s.statut === 'preuve' || s.statut === 'en_attente')
             ? '<button class="btn btn-p btn-sm" data-subok="' + s.id + '" data-plan="' + s.plan
               + '">✅</button> <button class="btn btn-o btn-sm" data-subko="' + s.id + '">❌</button>'
-              + (s.preuve ? '<div class="ad-prev">Beleg: ' + esc(s.preuve) + '</div>' : '')
+              + (s.preuve ? '<div class="ad-prev">المرفق: ' + esc(s.preuve) + '</div>' : '')
             : '') + '</td></tr>').join('') + '</table></div>'
-      + '<div class="card"><b>📢 Sponsoren (' + sps.length + ' · ' + ads.length + ' aktive Werbungen)</b>'
+      + '<div class="card"><b>📢 الرعاة (' + sps.length + ' · ' + ads.length + ' إعلانات نشطة)</b>'
       + '<table class="ad-tab"><tr><th>nom</th><th>type</th><th>slot</th><th>statut</th><th></th></tr>'
       + sps.map(s => '<tr><td>' + esc(s.nom) + '</td><td>' + esc(s.type) + '</td><td>'
         + esc(s.slot) + '</td><td>' + esc(s.statut) + '</td><td>'
@@ -108,12 +108,12 @@
             ? '<button class="btn btn-p btn-sm" data-spok="' + s.id + '">✅</button> '
               + '<button class="btn btn-o btn-sm" data-spko="' + s.id + '">❌</button>' : '')
         + '</td></tr>').join('') + '</table>'
-      + '<b style="margin-top:12px">🆕 Werbung veröffentlichen</b>'
-      + '<input id="adTitre" placeholder="Titel"><input id="adTexte" placeholder="Text">'
-      + '<input id="adUrl" placeholder="URL (optional)">'
+      + '<b style="margin-top:12px">🆕 نشر إعلان</b>'
+      + '<input id="adTitre" placeholder="العنوان"><input id="adTexte" placeholder="النص">'
+      + '<input id="adUrl" placeholder="رابط (اختياري)">'
       + '<select id="adSlot"><option value="accueil">accueil</option>'
       + '<option value="unites">unités</option><option value="email">email</option></select>'
-      + '<button class="btn btn-p btn-sm" id="adCreate">veröffentlichen</button></div></div>';
+      + '<button class="btn btn-p btn-sm" id="adCreate">نشر</button></div></div>';
     mono.querySelectorAll('[data-subok]').forEach(b => b.addEventListener('click', async () => {
       const mois = { m1: 1, m6: 6, m12: 12 }[b.dataset.plan] || 1;
       await window.SB.deciderSub(+b.dataset.subok, true, mois, ''); render();
@@ -232,7 +232,7 @@ function rendreCouvertureORG1(mount){
     var h = host(); if(!h) return;
     var box = document.getElementById('admAgentsCard');
     if(!box){ box = document.createElement('div'); box.id = 'admAgentsCard'; box.className = 'card'; h.appendChild(box); }
-    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>🧑‍ الوكلاء والولايات · Agents & Wilayas</h2><p>☁️ client cloud indisponible</p>'; return; }
+    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>🧑 الوكلاء والولايات · Agents & Wilayas</h2><p>☁️ client cloud indisponible</p>'; return; }
     var meP = await SB.admMyPerms();
     if(!meP.ok || (meP.perms||[]).indexOf('agents.manage') === -1){ box.hidden = true; return; }
     box.hidden = false;
@@ -287,10 +287,68 @@ function rendreCouvertureORG1(mount){
   if((location.hash||'').replace('#','') === 'admin') renderAgents();
 })();
 
-/* ── phase 7 (ADM-2) : file de validation par wilaya + reçus + journal d'audit ── */
+/* ── phase 7 (ADM-2) : file de validation par wilaya + reçus + journal d'audit ──
+   RECUFIX-1 : le reçu ne passe plus JAMAIS en navigation data: (page blanche) ni en
+   URL publique /object/public/ (403 sur bucket prive). Trois formes reconnues :
+   data: → blob objet URL · chemin nu (uid/fichier) → URL signée 1 h · http → chemin
+   extrait puis signé. Téléchargement = fetch + contrôle res.ok + blob typé. */
 (function(){
   function esq2(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function host2(){ return document.querySelector('section[data-view="admin"]'); }
+  var lastQueueRows = [];
+  function dataUrlToBlob(d){
+    var i = d.indexOf(',');
+    var mime = (String(d).match(/^data:([^;,]+)[;,]/) || [null,'application/octet-stream'])[1];
+    var bin = atob(d.slice(i + 1).replace(/\s+/g,''));
+    var arr = new Uint8Array(bin.length);
+    for(var k = 0; k < bin.length; k++) arr[k] = bin.charCodeAt(k);
+    return new Blob([arr], { type: mime });
+  }
+  function cheminDepuisUrl(u){
+    var i = u.indexOf('/object/');
+    if(i < 0) return null;
+    var rest = u.slice(i + 8).replace(/^(public|sign|authenticated)\//,'').split('?')[0];
+    try{ rest = decodeURIComponent(rest); }catch(e){}
+    return rest.replace(/^prive\//,'');
+  }
+  function ouvrirRecu(pv, mode){
+    pv = String(pv || '');
+    if(!pv){ window.alert('⛔ لا يوجد مرفق لهذا الدفع'); return; }
+    if(pv.indexOf('data:') === 0){
+      var b = dataUrlToBlob(pv);
+      var u = URL.createObjectURL(b);
+      if(mode === 'dl'){
+        var a = document.createElement('a');
+        a.href = u; a.download = 'recu-' + Date.now() + (b.type.indexOf('pdf') !== -1 ? '.pdf' : '.jpg');
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function(){ URL.revokeObjectURL(u); }, 4000);
+      }else{
+        window.open(u, '_blank');
+        setTimeout(function(){ URL.revokeObjectURL(u); }, 60000);
+      }
+      return;
+    }
+    var path = pv;
+    if(path.indexOf('http') === 0){ var p2 = cheminDepuisUrl(path); if(p2) path = p2; }
+    path = path.replace(/^prive\//,'');
+    SB.fileUrl(path).then(function(url){
+      if(!url){ window.alert('⛔ تعذّر إنشاء رابط مؤقت للمرفق'); return; }
+      if(mode === 'dl'){
+        fetch(url).then(function(res){
+          if(!res.ok) throw new Error('http ' + res.status);
+          return res.blob();
+        }).then(function(bl){
+          var u2 = URL.createObjectURL(bl);
+          var a = document.createElement('a');
+          a.href = u2; a.download = path.split('/').pop() || 'recu';
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function(){ URL.revokeObjectURL(u2); }, 4000);
+        }).catch(function(e){ window.alert('⛔ ' + String((e && e.message) || e)); });
+      }else{
+        window.open(url, '_blank');
+      }
+    });
+  }
   async function renderQueue(){
     var h = host2(); if(!h) return;
     var box = document.getElementById('admQueueCard');
@@ -300,14 +358,15 @@ function rendreCouvertureORG1(mount){
     if(!meP.ok || (meP.perms||[]).indexOf('payments.validate') === -1){ box.hidden = true; return; }
     box.hidden = false;
     var q = await SB.admQueue();
+    lastQueueRows = q.ok ? (q.rows || []) : [];
     var html = '<h2>💳 File de validation & reçus (ADM-2)</h2>'
       + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Seuls les dossiers de ton périmètre (wilaya) apparaissent : le filtre vit dans la base. Confirmer → reçu possible ; rejeter = motif obligatoire ; tout laisse une trace au journal.</p>';
-    html += q.ok && q.rows.length ? q.rows.map(function(r){
+    html += q.ok && lastQueueRows.length ? lastQueueRows.map(function(r, i){
       var pr = r.profiles || {};
-      return '<div class="rep-row"><span>#' + r.id + ' · ' + esq2(pr.pseudo || '?') + ' · ' + esq2(pr.wilaya || '?') + ' · ' + r.montant + ' ' + esq2(r.devise) + ' · ' + esq2(r.statut) + (r.preuve ? (String(r.preuve).indexOf('data:') === 0
-          ? ' <a href="' + String(r.preuve) + '" target="_blank" rel="noopener" style="font-size:11.5px">📎 reçu</a>'
-          : ' · preuve : ' + esq2(String(r.preuve).slice(0, 24))) : '') + '</span>'
+      return '<div class="rep-row"><span>#' + r.id + ' · ' + esq2(pr.pseudo || '?') + ' · ' + esq2(pr.wilaya || '?') + ' · ' + r.montant + ' ' + esq2(r.devise) + ' · ' + esq2(r.statut) + (r.preuve ? ' · 📎 مرفق' : '') + '</span>'
         + '<span style="display:flex;gap:6px;flex-wrap:wrap">'
+        + (r.preuve ? '<button class="btn btn-sm btn-o" data-rec-q="' + i + '" type="button">📎 ouvrir</button>'
+            + '<button class="btn btn-sm btn-g" data-rec-dl="' + i + '" type="button">⬇ télécharger</button>' : '')
         + '<button class="btn btn-sm btn-p" data-adm2-conf="' + r.id + '" type="button">confirmer</button>'
         + '<button class="btn btn-sm btn-r" data-adm2-rej="' + r.id + '" type="button">rejeter</button>'
         + '</span></div>';
@@ -323,8 +382,11 @@ function rendreCouvertureORG1(mount){
     box.innerHTML = html;
   }
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-adm2-conf],[data-adm2-rej],[data-adm2-rec]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm2-conf],[data-adm2-rej],[data-adm2-rec],[data-rec-q],[data-rec-dl]') : null;
     if(!t) return;
+    var rq = t.getAttribute('data-rec-q'), rd = t.getAttribute('data-rec-dl');
+    if(rq !== null){ ouvrirRecu(lastQueueRows[+rq] && lastQueueRows[+rq].preuve, 'open'); return; }
+    if(rd !== null){ ouvrirRecu(lastQueueRows[+rd] && lastQueueRows[+rd].preuve, 'dl'); return; }
     var conf = t.getAttribute('data-adm2-conf'), rej = t.getAttribute('data-adm2-rej');
     if(conf){ SB.admSetPaymentStatut(+conf, 'confirme', '').then(function(r){ if(r.ok) renderQueue(); else window.alert('⛔ ' + r.err); }); return; }
     if(rej){ var motif = window.prompt('Motif du rejet :'); if(motif === null) return; SB.admSetPaymentStatut(+rej, 'rejete', motif).then(function(r){ if(r.ok) renderQueue(); else window.alert('⛔ ' + r.err); }); return; }
