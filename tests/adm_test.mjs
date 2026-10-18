@@ -1,3 +1,7 @@
+/* tests/adm_test.mjs — invariants administration ADM-1→ADM-5 + gardes ORG-1 */
+/* MODE D'EMPLOI (2 lignes) : sélectionne TOUT ce bloc (clic dans le code → Ctrl+A → Ctrl+C),
+   remplace INTÉGRALEMENT tests/adm_test.mjs (GitHub web → tests/ → crayon → Ctrl+A → Suppr → Ctrl+V),
+   commit : GARDES-ORG1: 3 assertions CI (facade admCouverture · admin.js JS seul · style.css badges) */
 import { readFileSync } from 'node:fs';
 const sql = readFileSync('supabase/adm_schema.sql', 'utf8');
 const sbjs = readFileSync('supabase/supabase.js', 'utf8');
@@ -8,6 +12,7 @@ const sql4 = readFileSync('supabase/adm4_schema.sql', 'utf8');
 const sql5 = readFileSync('supabase/adm5_schema.sql', 'utf8');
 const bill = readFileSync('supabase/billing.sql', 'utf8');
 const appjs = readFileSync('app.js', 'utf8');
+const css = readFileSync('style.css', 'utf8');
 let fails = 0;
 const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
 console.log('== adm_test · invariants administration ADM-1 ==');
@@ -110,5 +115,8 @@ t(sql3.includes('agreement_accept.nom_representant'), 'ADM-3d : paramètres qual
 t(sql3.includes('agreement_accept_for.nom_representant'), 'ADM-3d : paramètres qualifiés dans accept_for (42702 latent)');
 t(sbjs.includes('MAX_OCTETS_PJ'), 'MSG-LIM : plafond client 5 Mo dans upload()');
 t(appjs.includes('phase 13 (OPS-1)'), 'OPS-1 : bouton signaler un bug + ticket pré-rempli');
+t(sbjs.includes('function admCouverture'), 'GARDES-ORG1 : facade expose admCouverture (rpc admin_couverture_wilayas)');
+t(adjs.includes('rendreCouvertureORG1') && !adjs.includes('.org1{'), 'GARDES-ORG1 : carte ORG-1 en JS seul dans admin.js (aucun CSS collé)');
+t(css.includes('.org1-badge'), 'GARDES-ORG1 : styles .org1-badge présents dans style.css');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
