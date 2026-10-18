@@ -1,7 +1,7 @@
 /* admin.js — tableau de bord ADMIN réel (profils + notes via Supabase, RLS admin) */
 /* MODE D'EMPLOI (2 lignes) : sélectionne TOUT ce bloc (clic dans le code → Ctrl+A → Ctrl+C),
    remplace INTÉGRALEMENT l'ancien admin.js (GitHub web → crayon → Ctrl+A → Suppr → Ctrl+V),
-   commit : RECUFIX-1: reçu signé + blob typé + libellés sponsors en arabe */
+   commit : fix(CI): commentaire phase 7 purgé du littéral interdit (garde RECUFIX-1) */
 'use strict';
 (function(){
   const $ = (s,c) => (c||document).querySelector(s);
@@ -289,7 +289,7 @@ function rendreCouvertureORG1(mount){
 
 /* ── phase 7 (ADM-2) : file de validation par wilaya + reçus + journal d'audit ──
    RECUFIX-1 : le reçu ne passe plus JAMAIS en navigation data: (page blanche) ni en
-   URL publique /object/public/ (403 sur bucket prive). Trois formes reconnues :
+   URL publique d'objet (403 sur bucket prive). Trois formes reconnues :
    data: → blob objet URL · chemin nu (uid/fichier) → URL signée 1 h · http → chemin
    extrait puis signé. Téléchargement = fetch + contrôle res.ok + blob typé. */
 (function(){
