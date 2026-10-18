@@ -5,6 +5,19 @@
    grammaire, corpus de vocabulaire. Recherche unifiée + contexte vérifié
    fourni au cerveau (local ET cloud). Aucune connaissance hors bibliothèque.
    ══════════════════════════════════════════════════════════════ */
+/* DIAG-LECTURE de tes 3 résultats (SQL Editor), sans rien deviner :
+   A1 = level 2AS pour p20→p29 → les ids nus sont des pages 2AS LÉGITIMES : aucun correctif 1.
+   A2 = 3as-p20→3as-p29 présents → les parents 3AS existent : l'INSERT n°3 pourra s'y accrocher (FK ok).
+   B  = 3as-p10 n=32 → la ligne « 48 Wilayas » est SAINE (longueur attendue exacte) ;
+        3as-p16 n=86 = UNE AUTRE phrase, plus longue, contenant le même substring → légitime, pas un défaut.
+   CAUSE RACINE du « none », lue dans ce fichier même : le regex de traduire() excluait les CHIFFRES.
+   « Algerien besteht aus 48 Wilayas. » était donc coupé à « Algerien besteht aus » → aucune correspondance.
+   Correctif TRAD-DIG-1 = UNE ligne : les chiffres entrent dans les fragments (et une phrase peut commencer par un chiffre).
+   MODE D'EMPLOI : remplace INTÉGRALEMENT biblio.js par ce bloc (GitHub web → crayon → Ctrl+A → Suppr → Ctrl+V),
+   commit : TRAD-DIG-1: chiffres admis dans les fragments de traduire() (phrase coupée au premier nombre).
+   Après run vert : Ctrl+Maj+R (cache 5 min de privateTrad) puis console abonné :
+   BIBLIO.traduire('Algerien besteht aus 48 Wilayas.') → attendu : type prive + ar de la ligne 3as-p10.
+   Ensuite INSERT n°3 : colle-moi l'export des corps p20-29 (requête déjà fournie), je rends les blocs ≤ 60 lignes. */
 'use strict';
 (function(){
   const SRC = [
@@ -228,7 +241,10 @@
   }
     async function traduire(q){
       const E = await load();
-      const frags = String(q).match(/[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß\s.,!?'«»-]{2,}/g) || [];
+      /* TRAD-DIG-1 : les chiffres font partie des phrases du livre (« 48 Wilayas »,
+         « Seite 20 », « 17 Jahre »…). Sans 0-9 dans les deux classes, la phrase était
+         tronquée au premier nombre et ne correspondait plus à aucune ligne trad. */
+      const frags = String(q).match(/[A-Za-zÄÖÜäöüß0-9][A-Za-zÄÖÜäöüß0-9\s.,!?'«»-]{2,}/g) || [];
       frags.sort(function(a, b){ return b.length - a.length; });
       const de = (frags[0] || '').trim();
       if(!de) return null;
