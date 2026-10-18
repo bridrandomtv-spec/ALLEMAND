@@ -3467,3 +3467,19 @@ html[data-theme="light"] .d7-more>.cat-head{background:var(--p2);border:1px soli
 .topbar{position:sticky;top:0;z-index:480}
 .topbar-in{flex-wrap:wrap;row-gap:6px}
 #btnSound{display:inline-flex !important}
+/* ══ ORG-1 · carte de couverture triable des wilayas — CSS SEUL, jamais dans un .js ══ */
+.org1-mount{margin-top:14px;padding-top:14px;border-top:1px dashed var(--b)}
+.org1-sum{font-size:12.5px;color:var(--m);margin-bottom:10px;line-height:1.7}
+.org1-sum b{color:var(--t);font-weight:800}
+table.org1{width:100%;border-collapse:collapse;font-size:12.4px}
+table.org1 th,table.org1 td{padding:7px 9px;border-bottom:1px solid var(--b);text-align:left}
+table.org1 th{background:var(--nuit3);color:var(--m);font-size:11px;font-weight:700;cursor:pointer;user-select:none}
+table.org1 th:hover{color:var(--or2)}
+table.org1 tr:hover td{background:rgba(232,182,76,.05)}
+.org1-badge{font-size:10.4px;font-weight:800;padding:3px 9px;border-radius:99px;white-space:nowrap;display:inline-block}
+.org1-badge.couvert{background:rgba(61,220,132,.15);color:var(--g);border:1px solid rgba(61,220,132,.4)}
+.org1-badge.orphelin{background:rgba(255,107,125,.13);color:var(--r);border:1px solid rgba(255,107,125,.4)}
+.org1-badge.partiel{background:rgba(232,182,76,.15);color:var(--or2);border:1px solid rgba(232,182,76,.4)}
+.org1-missing,.org1-err{font-size:12.5px;color:var(--m);padding:10px;background:var(--nuit3);border:1px dashed var(--b);border-radius:10px;text-align:center}
+.org1-err{color:var(--r);border-color:rgba(255,107,125,.32)}
+@media(max-width:640px){table.org1{font-size:11.5px}table.org1 th,table.org1 td{padding:5px 6px}}
