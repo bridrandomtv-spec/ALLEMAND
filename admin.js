@@ -1,7 +1,7 @@
 /* admin.js — tableau de bord ADMIN réel (profils + notes via Supabase, RLS admin) */
-/* MODE D'EMPLOI (2 lignes, puis plus rien) : sélectionne TOUT ce bloc de code dans le chat
-   (clic dans le code → Ctrl+A → Ctrl+C), remplace INTÉGRALEMENT l'ancien admin.js par ce contenu,
-   commit : fix(ORG-1b): admin.js ré-encodé + carte ORG-1 (remplace le commit cassé) */
+/* MODE D'EMPLOI (2 lignes) : sélectionne TOUT ce bloc (clic dans le code → Ctrl+A → Ctrl+C),
+   remplace INTÉGRALEMENT l'ancien admin.js (GitHub web → crayon → Ctrl+A → Suppr → Ctrl+V),
+   commit : fix(ORG-1b): admin.js complet ré-encodé + carte ORG-1 + garde UI-2 restaurée */
 'use strict';
 (function(){
   const $ = (s,c) => (c||document).querySelector(s);
@@ -238,7 +238,7 @@ function rendreCouvertureORG1(mount){
     box.hidden = false;
     var ag = await SB.admListAgents();
     var pf = await SB.admListProfiles();
-    var html = '<h2>🧑‍ الوكلاء والولايات · Agents & Wilayas (ADM-1)</h2>'
+    var html = '<h2>🧑 الوكلاء والولايات · Agents & Wilayas (ADM-1)</h2>'
       + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Périmètres appliqués par la base (RLS) : un agent ne lit que ses wilayas ; révocation = effet immédiat.</p>';
     html += (ag.ok && ag.agents.length) ? ag.agents.map(function(a){
       var pr = a.profiles || {};
@@ -588,6 +588,7 @@ function rendreCouvertureORG1(mount){
       if(tab5 === 'support'){ showOnly(['admSupportCard']); renderSupport(); }
       return;
     }
+    /* UI-2 : un clic sur un onglet de la phase 9 ne masque QUE les cartes de la phase 10, pas toute la section */
     if(t.getAttribute('data-adm-tab')){ ['admComptaCard','admSupportCard'].forEach(function(id){ var c = document.getElementById(id); if(c) c.hidden = true; }); return; }
     if(t.getAttribute('data-adm5-report')){
       var d = (document.getElementById('adm5Debut')||{}).value || null;
