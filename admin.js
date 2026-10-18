@@ -3,7 +3,7 @@
 (function(){
   const $ = (s,c) => (c||document).querySelector(s);
   const esc = s => String(s==null?'':s).replace(/[&<>"']/g,
-      c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      c => ({'&':'&','<':'<','>':'>','"':'"',"'":'''}[c]));
 
   function csv(rows){
     if(!rows || !rows.length) return '';
@@ -19,16 +19,24 @@
 
   async function render(){
     const box = $('#adminBody'); if(!box) return;
-    if(!window.SB){ box.innerHTML = '<div class="ad-load">⏳ client cloud…</div>';
+    if(!window.SB){ box.innerHTML = '
+⏳ client cloud…
+';
       document.addEventListener('dz:sbready', () => render(), { once:true }); return; }
     const u = await window.SB.me();
     const p = u ? await window.SB.myProfile() : null;
     if(!u || !p || p.role !== 'admin'){
-      box.innerHTML = '<div class="card ad-deny"><b>🔒 accès réservé au rôle admin</b>'
-        + '<p>Connecte-toi d’abord dans ☁️ Cloud, puis exécute une fois dans SQL Editor :</p>'
-        + '<pre>update public.profiles set role = \'admin\'\n'
+      box.innerHTML = '
+🔒 accès réservé au rôle admin'
+        + '
+Connecte-toi d’abord dans ☁️ Cloud, puis exécute une fois dans SQL Editor :
+
+'
+        + '
+update public.profiles set role = \'admin\'\n'
         + '  where id = (select id from auth.users\n'
-        + '              where email = \'TON_EMAIL\');</pre></div>';
+        + '              where email = \'TON_EMAIL\');
+';
       return;
     }
     const [pr, nt] = await Promise.all([window.SB.listProfiles(), window.SB.listNotes()]);
@@ -37,38 +45,60 @@
     const moy = notes.length
       ? (notes.reduce((s, n) => s + Number(n.valeur || 0), 0) / notes.length).toFixed(2) : '—';
     box.innerHTML =
-        '<div class="ad-hero"><span class="ad-crest">🛡️</span><div>'
-      + '<h2>الإدارة الفعلية · Real administration</h2><p class="ad-sub">متصل · connected : ' + esc(u.email)
-      + ' · دور مدير · بيانات Supabase حية · admin role · live Supabase data</p></div></div>'
-      + '<div class="ad-stats">'
+        '
+🛡️
+'
+      + '
+الإدارة الفعلية · Real administration
+متصل · connected : ' + esc(u.email)
+      + ' · دور مدير · بيانات Supabase حية · admin role · live Supabase data
+
+'
+      + '
+'
       + stat(profs.length, 'comptes') + stat(eleves.length, 'élèves')
       + stat(profs.filter(x => x.role === 'prof').length, 'profs')
-      + stat(notes.length, 'notes') + stat(moy, 'moyenne /20') + '</div>'
-      + '<div class="ad-grid">'
-      + '<div class="card"><b>👥 Konten (' + profs.length + ')</b>'
-      + '<button class="btn btn-o btn-sm" id="adCsvP">⬇️ CSV</button>'
-      + '<table class="ad-tab"><tr><th>pseudo</th><th>rôle</th><th>niveau</th><th>wilaya</th><th></th></tr>'
-      + profs.map(x => '<tr><td>' + esc(x.pseudo || x.id.slice(0, 8)) + '</td>'
-          + '<td><select class="ad-role" data-id="' + x.id + '">'
-          + ['eleve','prof','parent','admin'].map(r =>
-              '<option' + (r === x.role ? ' selected' : '') + '>' + r + '</option>').join('')
-          + '</select></td><td>' + esc(x.niveau || '') + '</td><td>' + esc(x.wilaya || '')
-          + '</td><td>' + esc((x.created_at || '').slice(0, 10)) + '</td></tr>').join('')
-      + '</table></div>'
-      + '<div class="card"><b>📝 Noten (' + notes.length + ')</b>'
-      + '<button class="btn btn-o btn-sm" id="adCsvN">⬇️ CSV</button>'
-      + '<table class="ad-tab"><tr><th>élève</th><th>trim.</th><th>/20</th><th>appréciation</th></tr>'
+      + stat(notes.length, 'notes') + stat(moy, 'moyenne /20') + '
+'
+      + '
+'
+      + '
+👥 Konten (' + profs.length + ')'
+      + '⬇️ CSV'
+      + ''
+      + profs.map(x => ''
+          + '').join('')
+      + '
+pseudo	rôle	niveau	wilaya	
+' + esc(x.pseudo || x.id.slice(0, 8)) + '	
+' + esc(x.niveau || '') + '	' + esc(x.wilaya || '')
+          + '	' + esc((x.created_at || '').slice(0, 10)) + '
+'
+      + '
+📝 Noten (' + notes.length + ')'
+      + '⬇️ CSV'
+      + ''
       + notes.map(n => {
           const el = profs.filter(x => x.id === n.eleve_id)[0];
-          return '<tr><td>' + esc(el ? (el.pseudo || el.id.slice(0, 8)) : n.eleve_id.slice(0, 8))
-            + '</td><td>' + esc(n.trimestre || '') + '</td><td><b>' + esc(n.valeur)
-            + '</b></td><td>' + esc(n.appreciation || '') + '</td></tr>';
-        }).join('') + '</table></div></div>';
+          return '';
+        }).join('') + '
+élève	trim.	/20	appréciation
+' + esc(el ? (el.pseudo || el.id.slice(0, 8)) : n.eleve_id.slice(0, 8))
+            + '	' + esc(n.trimestre || '') + '	' + esc(n.valeur)
+            + '	' + esc(n.appreciation || '') + '
+';
   box.insertAdjacentHTML('beforeend',
-    '<div class="card ad-box"><h3>💳 خطط الاشتراك — قابلة للإدارة (المرحلة 5)</h3>'
-    + '<p class="ad-sub">الأسعار بالدج · حقل فارغ = « يُحدد لاحقًا » (القرار B) · '
-    + 'المصدر : جدول public.plans (supabase/plans.sql)</p>'
-    + '<div id="plansAdminBody"><div class="ad-load">⏳</div></div></div>');
+    '
+💳 خطط الاشتراك — قابلة للإدارة (المرحلة 5)
+'
+    + '
+الأسعار بالدج · حقل فارغ = « يُحدد لاحقًا » (القرار B) · '
+    + 'المصدر : جدول public.plans (supabase/plans.sql)
+
+'
+    + '
+⏳
+');
   chargerPlansAdmin();
     $('#adCsvP').addEventListener('click', () => telecharger('comptes.csv', csv(profs)));
     $('#adCsvN').addEventListener('click', () => telecharger('notes.csv', csv(notes)));
@@ -86,34 +116,48 @@
     const subs = rb.ok ? rb.rows : [], sps = rb2.ok ? rb2.rows : [], ads = rb3.ok ? rb3.rows : [];
     const CA = subs.filter(s => s.statut === 'actif').reduce((t, s) => t + s.montant, 0);
     mono.innerHTML =
-      '<div class="ad-grid" style="margin-top:12px">'
-      + '<div class="card"><b>💳 Abonnements (' + subs.length + ' · '
-      + CA.toLocaleString('fr-FR') + ' DA aktiv)</b>'
-      + '<table class="ad-tab"><tr><th>user</th><th>plan</th><th>DA</th><th>statut</th><th></th></tr>'
-      + subs.map(s => '<tr><td>' + esc(s.user_id.slice(0, 8)) + '</td><td>' + esc(s.plan)
-        + '</td><td>' + s.montant + '</td><td>' + esc(s.statut) + '</td><td>'
+      '
+'
+      + '
+💳 Abonnements (' + subs.length + ' · '
+      + CA.toLocaleString('fr-FR') + ' DA aktiv)'
+      + ''
+      + subs.map(s => '').join('') + '
+user	plan	DA	statut	
+' + esc(s.user_id.slice(0, 8)) + '	' + esc(s.plan)
+        + '	' + s.montant + '	' + esc(s.statut) + '	'
         + ((s.statut === 'preuve' || s.statut === 'en_attente')
-            ? '<button class="btn btn-p btn-sm" data-subok="' + s.id + '" data-plan="' + s.plan
-              + '">✅</button> <button class="btn btn-o btn-sm" data-subko="' + s.id + '">❌</button>'
-              + (s.preuve ? '<div class="ad-prev">Beleg: ' + esc(s.preuve) + '</div>' : '')
-            : '') + '</td></tr>').join('') + '</table></div>'
-      + '<div class="card"><b>📢 Sponsoren (' + sps.length + ' · ' + ads.length + ' aktive Werbungen)</b>'
-      + '<table class="ad-tab"><tr><th>nom</th><th>type</th><th>slot</th><th>statut</th><th></th></tr>'
-      + sps.map(s => '<tr><td>' + esc(s.nom) + '</td><td>' + esc(s.type) + '</td><td>'
-        + esc(s.slot) + '</td><td>' + esc(s.statut) + '</td><td>'
+            ? '✅ ❌'
+              + (s.preuve ? '
+Beleg: ' + esc(s.preuve) + '
+' : '')
+            : '') + '
+'
+      + '
+📢 Sponsoren (' + sps.length + ' · ' + ads.length + ' aktive Werbungen)'
+      + ''
+      + sps.map(s => '').join('') + '
+nom	type	slot	statut	
+' + esc(s.nom) + '	' + esc(s.type) + '	'
+        + esc(s.slot) + '	' + esc(s.statut) + '	'
         + (s.statut === 'en_attente'
-            ? '<button class="btn btn-p btn-sm" data-spok="' + s.id + '">✅</button> '
-              + '<button class="btn btn-o btn-sm" data-spko="' + s.id + '">❌</button>' : '')
-        + '</td></tr>').join('') + '</table>'
-      + '<b style="margin-top:12px">🆕 Werbung veröffentlichen</b>'
-      + '<input id="adTitre" placeholder="Titel"><input id="adTexte" placeholder="Text">'
-      + '<input id="adUrl" placeholder="URL (optional)">'
-      + '<select id="adSlot"><option value="accueil">accueil</option>'
-      + '<option value="unites">unités</option><option value="email">email</option></select>'
-      + '<button class="btn btn-p btn-sm" id="adCreate">veröffentlichen</button></div></div>';
-    /* phase 6 : la décision tranche subscription ET payment ensemble ;
-       le refus remet la subscription en 'en_attente' (l'élève peut retenter)
-       et marque le payment 'refuse' avec la note arabe. */
+            ? '✅ '
+              + '❌' : '')
+        + '
+'
+      + '🆕 Werbung veröffentlichen'
+      + '
+Titel
+Text
+'
+      + '
+URL (optional)
+'
+      + '
+accueil
+'
+      + 'veröffentlichen
+';
     mono.querySelectorAll('[data-subok]').forEach(b => b.addEventListener('click', async () => {
       const mois = { m1: 1, m6: 6, m12: 12 }[b.dataset.plan] || 1;
       await window.SB.deciderSub(+b.dataset.subok, true, mois, ''); render();
@@ -122,19 +166,24 @@
       await window.SB.deciderSub(+b.dataset.subko, false, 0,
         'لم تكتمل عملية الدفع. يمكنك المحاولة مرة أخرى.'); render();
     }));
-    /* phase 6 : tableau des payments (lié aux subscriptions par sub_id) */
     try{
       const pa = await window.SB.adminPayments();
       const rowsP = (pa && pa.rows) || [];
       const wrap = document.createElement('div');
       wrap.className = 'card';
-      wrap.innerHTML = '<b>🧾 سجل العمليات (المرحلة 6 — منفصل عن الاشتراكات)</b>' + (rowsP.length
-        ? '<table style="width:100%;font-size:12px;margin-top:8px"><tr><th>الاشتراك</th><th>الطريقة</th>'
-          + '<th>دج</th><th>مرجع البنك</th><th>الحالة</th><th>ملاحظة</th></tr>'
-          + rowsP.slice(0, 30).map(p => '<tr><td>' + p.sub_id + '</td><td>' + esc(p.methode) + '</td><td>'
-            + Number(p.montant || 0) + '</td><td>' + esc(p.ref_banque || '') + '</td><td>' + esc(p.statut)
-            + '</td><td>' + esc(p.note_admin || '') + '</td></tr>').join('') + '</table>'
-        : '<p style="opacity:.7">لا توجد عمليات مسجلة</p>');
+      wrap.innerHTML = '🧾 سجل العمليات (المرحلة 6 — منفصل عن الاشتراكات)' + (rowsP.length
+        ? ''
+          + ''
+          + rowsP.slice(0, 30).map(p => '').join('') + '
+الاشتراك	الطريقة	دج	مرجع البنك	الحالة	ملاحظة
+' + p.sub_id + '	' + esc(p.methode) + '	'
+            + Number(p.montant || 0) + '	' + esc(p.ref_banque || '') + '	' + esc(p.statut)
+            + '	' + esc(p.note_admin || '') + '
+'
+        : '
+لا توجد عمليات مسجلة
+
+');
       mono.appendChild(wrap);
     }catch(e){}
     mono.querySelectorAll('[data-spok]').forEach(b => b.addEventListener('click', async () => {
@@ -150,7 +199,9 @@
       render();
     });
   }
-  function stat(v, l){ return '<div class="ad-s"><b>' + esc(v) + '</b><span>' + l + '</span></div>'; }
+  function stat(v, l){ return '
+' + esc(v) + '' + l + '
+'; }
   window.renderAdmin = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'admin') render(); });
 })();
@@ -158,19 +209,33 @@
 /* ── phase 5 : éditeur de plans (admin) — prix NULL autorisés (décision B) ── */
 async function chargerPlansAdmin(){
   const box = document.getElementById('plansAdminBody'); if(!box) return;
-  if(!window.SB || !window.SB.sb){ box.innerHTML = '<div class="ad-load">☁️ لا يوجد اتصال سحابي</div>'; return; }
+  if(!window.SB || !window.SB.sb){ box.innerHTML = '
+☁️ لا يوجد اتصال سحابي
+'; return; }
   try{
     const sb = await window.SB.sb();
     const r = await sb.from('plans').select('id,role,duree_jours,prix_da,label_ar,actif').order('role').order('duree_jours');
     const rows = (r && r.data) || [];
-    if(!rows.length){ box.innerHTML = '<div class="ad-deny">⚠️ جدول الخطط فارغ — نفّذ supabase/plans.sql (محرر SQL)</div>'; return; }
+    if(!rows.length){ box.innerHTML = '
+⚠️ جدول الخطط فارغ — نفّذ supabase/plans.sql (محرر SQL)
+'; return; }
     box.innerHTML = rows.map(p =>
-      '<div class="pl-row" data-plan="' + p.id + '" style="display:flex;gap:8px;align-items:center;margin:6px 0">'
-      + '<span style="flex:1">' + p.role + ' · ' + p.duree_jours + ' j · ' + (p.label_ar || '') + '</span>'
-      + '<input data-f="prix" type="number" min="0" step="50" style="width:110px" value="' + (p.prix_da == null ? '' : p.prix_da) + '" placeholder="NULL">'
-      + '<label style="display:flex;gap:4px;align-items:center"><input data-f="actif" type="checkbox"' + (p.actif ? ' checked' : '') + '> actif</label>'
-      + '<button class="btn btn-o btn-sm" data-plsave="' + p.id + '">💾</button></div>').join('');
-  }catch(e){ box.innerHTML = '<div class="ad-deny">⚠️ ' + String((e && e.message) || e) + '</div>'; }
+      '
+'
+      + '
+' + p.role + ' · ' + p.duree_jours + ' j · ' + (p.label_ar || '') + '
+'
+      + '
+NULL
+'
+      + '
+ actif
+'
+      + '💾
+').join('');
+  }catch(e){ box.innerHTML = '
+⚠️ ' + String((e && e.message) || e) + '
+'; }
 }
 document.addEventListener('click', ev => {
   const b = ev.target.closest ? ev.target.closest('[data-plsave]') : null; if(!b) return;
@@ -188,35 +253,112 @@ document.addEventListener('click', ev => {
   })();
 });
 
+/* ══ ORG-1 · carte de couverture triable — JS SEUL, sans une ligne de CSS ══ */
+function rendreCouvertureORG1(mount){
+  if(!mount || mount.dataset.org1 === '1') return;
+  mount.dataset.org1 = '1';
+  if(typeof SB === 'undefined' || typeof SB.admCouverture !== 'function'){
+    mount.innerHTML = '
+🗺 Carte indisponible : méthode SB.admCouverture absente (règle B non collée).
+
+';
+    return;
+  }
+  mount.innerHTML = '
+Chargement de la carte…
+
+';
+  SB.admCouverture().then(function(r){
+    var rows = Array.isArray(r) ? r : (r && Array.isArray(r.data) ? r.data : []);
+    var orph = rows.filter(function(x){ return x.statut === 'orphelin'; });
+    var sans = orph.reduce(function(s,x){ return s + Number(x.nb_eleves||0); }, 0);
+    function tbody(){
+      return rows.map(function(x){
+        return '' + x.wilaya + '' + x.nb_eleves + '' + x.nb_agents_actifs + ''
+          + '' + x.statut + '';
+      }).join('');
+    }
+    mount.innerHTML = '
+' + rows.length + ' wilayas · ' + orph.length + ' orphelines · ' + sans + ' élèves sans agent
+
+'
+      + ''
+      + ''
+      + ''
+      + '' + tbody() + '
+Wilaya ⇅	Élèves ⇅	Agents ⇅	Statut
+';
+    mount.querySelectorAll('th[data-k]').forEach(function(th){
+      th.style.cursor = 'pointer';
+      th.addEventListener('click', function(){
+        var k = th.getAttribute('data-k');
+        rows.sort(function(a,b){ return (Number(a[k])||0) - (Number(b[k])||0); });
+        mount.querySelector('tbody').innerHTML = tbody();
+      });
+    });
+  }).catch(function(err){
+    mount.innerHTML = '
+⛔ ' + String((err && err.message) || err) + '
+
+';
+  });
+}
+
 /* ── phase 6 (ADM-1) : onglet « الوكلاء والولايات · Agents & Wilayas » (admin_general) ── */
 (function(){
-  function esq(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function esq(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&','<':'<','>':'>','"':'"',"'":'''}[c];}); }
   function host(){ return document.querySelector('section[data-view="admin"]'); }
   async function renderAgents(){
     var h = host(); if(!h) return;
     var box = document.getElementById('admAgentsCard');
     if(!box){ box = document.createElement('div'); box.id = 'admAgentsCard'; box.className = 'card'; h.appendChild(box); }
-    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>🧑‍ الوكلاء والولايات · Agents & Wilayas</h2><p>☁️ client cloud indisponible</p>'; return; }
+    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '
+🧑‍ الوكلاء والولايات · Agents & Wilayas
+☁️ client cloud indisponible
+
+'; return; }
     var meP = await SB.admMyPerms();
     if(!meP.ok || (meP.perms||[]).indexOf('agents.manage') === -1){ box.hidden = true; return; }
     box.hidden = false;
     var ag = await SB.admListAgents();
     var pf = await SB.admListProfiles();
-    var html = '<h2>🧑‍ الوكلاء والولايات · Agents & Wilayas (ADM-1)</h2>'
-      + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Périmètres appliqués par la base (RLS) : un agent ne lit que ses wilayas ; révocation = effet immédiat.</p>';
+    var html = '
+🧑‍ الوكلاء والولايات · Agents & Wilayas (ADM-1)
+'
+      + '
+Périmètres appliqués par la base (RLS) : un agent ne lit que ses wilayas ; révocation = effet immédiat.
+
+';
     html += (ag.ok && ag.agents.length) ? ag.agents.map(function(a){
       var pr = a.profiles || {};
-      return '<div class="rep-row"><span>' + esq(pr.pseudo || a.user_id.slice(0,8)) + ' · ' + esq(a.role_cle) + ' · wilaya ' + esq(a.code_wilaya) + '</span>'
-        + '<span style="font-size:11px;color:var(--m);margin-left:6px">' + (a.active === false ? ' suspendu' : '✅ actif') + '</span>'
-        + '<button class="btn btn-sm btn-o" data-adm-susp="' + a.user_id + '|' + (a.active === false ? '1' : '0') + '" type="button">' + (a.active === false ? 'réactiver' : 'suspendre') + '</button>'
-        + '<button class="btn btn-sm btn-r" data-adm-rev="' + a.user_id + '" type="button">révoquer</button></div>';
-    }).join('') : '<p>Aucun agent affecté pour l\'instant.</p>';
-    html += '<div class="fld" style="margin-top:12px"><span>Affecter un agent</span>'
-      + '<select id="admSelProf">' + (pf.ok ? pf.profiles.map(function(p){ return '<option value="' + p.id + '">' + esq(p.pseudo || p.id.slice(0,8)) + ' (' + esq(p.wilaya || '?') + ')</option>'; }).join('') : '<option value="">profils indisponibles</option>') + '</select>'
-      + '<select id="admSelRole"><option value="responsable_regional">responsable_regional</option><option value="agent_paiement">agent_paiement</option><option value="responsable_pedagogique">responsable_pedagogique</option><option value="agent_support">agent_support</option></select>'
-      + '<input id="admWil" placeholder="codes wilaya, ex : 16,31 (vide = wilaya du profil)">'
-      + '<button class="btn btn-p btn-sm" data-adm-assign="1" type="button">affecter</button></div>';
+      return '
+' + esq(pr.pseudo || a.user_id.slice(0,8)) + ' · ' + esq(a.role_cle) + ' · wilaya ' + esq(a.code_wilaya) + ''
+        + '' + (a.active === false ? ' suspendu' : '✅ actif') + ''
+        + '' + (a.active === false ? 'réactiver' : 'suspendre') + ''
+        + 'révoquer
+';
+    }).join('') : '
+Aucun agent affecté pour l\'instant.
+
+';
+    html += '
+Affecter un agent'
+      + '
+' + esq(p.pseudo || p.id.slice(0,8)) + ' (' + esq(p.wilaya || '?') + ')
+'
+      + '
+responsable_regional
+'
+      + '
+codes wilaya, ex : 16,31 (vide = wilaya du profil)
+'
+      + 'affecter
+';
     box.innerHTML = html;
+    /* ORG-1 : montage de la carte de couverture (idempotent) */
+    var mount = box.querySelector('.org1-mount');
+    if(!mount){ mount = document.createElement('div'); mount.className = 'org1-mount'; box.appendChild(mount); }
+    rendreCouvertureORG1(mount);
   }
   document.addEventListener('click', function(e){
     var t = e.target && e.target.closest ? e.target.closest('[data-adm-rev],[data-adm-assign],[data-adm-susp]') : null;
@@ -249,36 +391,65 @@ document.addEventListener('click', ev => {
 
 /* ── phase 7 (ADM-2) : file de validation par wilaya + reçus + journal d'audit ── */
 (function(){
-  function esq2(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function esq2(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&','<':'<','>':'>','"':'"',"'":'''}[c];}); }
   function host2(){ return document.querySelector('section[data-view="admin"]'); }
   async function renderQueue(){
     var h = host2(); if(!h) return;
     var box = document.getElementById('admQueueCard');
     if(!box){ box = document.createElement('div'); box.id = 'admQueueCard'; box.className = 'card'; h.appendChild(box); }
-    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>💳 Validations & reçus</h2><p>☁️ client cloud indisponible</p>'; return; }
+    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '
+💳 Validations & reçus
+☁️ client cloud indisponible
+
+'; return; }
     var meP = await SB.admMyPerms();
     if(!meP.ok || (meP.perms||[]).indexOf('payments.validate') === -1){ box.hidden = true; return; }
     box.hidden = false;
     var q = await SB.admQueue();
-    var html = '<h2>💳 File de validation & reçus (ADM-2)</h2>'
-      + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">Seuls les dossiers de ton périmètre (wilaya) apparaissent : le filtre vit dans la base. Confirmer → reçu possible ; rejeter = motif obligatoire ; tout laisse une trace au journal.</p>';
+    var html = '
+💳 File de validation & reçus (ADM-2)
+'
+      + '
+Seuls les dossiers de ton périmètre (wilaya) apparaissent : le filtre vit dans la base. Confirmer → reçu possible ; rejeter = motif obligatoire ; tout laisse une trace au journal.
+
+';
     html += q.ok && q.rows.length ? q.rows.map(function(r){
       var pr = r.profiles || {};
-      return '<div class="rep-row"><span>#' + r.id + ' · ' + esq2(pr.pseudo || '?') + ' · ' + esq2(pr.wilaya || '?') + ' · ' + r.montant + ' ' + esq2(r.devise) + ' · ' + esq2(r.statut) + (r.preuve ? (String(r.preuve).indexOf('data:') === 0
-          ? ' <a href="' + String(r.preuve) + '" target="_blank" rel="noopener" style="font-size:11.5px">📎 reçu</a>'
-          : ' · preuve : ' + esq2(String(r.preuve).slice(0, 24))) : '') + '</span>'
-        + '<span style="display:flex;gap:6px;flex-wrap:wrap">'
-        + '<button class="btn btn-sm btn-p" data-adm2-conf="' + r.id + '" type="button">confirmer</button>'
-        + '<button class="btn btn-sm btn-r" data-adm2-rej="' + r.id + '" type="button">rejeter</button>'
-        + '</span></div>';
-    }).join('') : '<p>Aucun dossier en attente dans ton périmètre.</p>';
-    html += '<div style="margin-top:12px"><b style="font-size:12.5px">🧾 Émettre un reçu (paiement confirmé)</b> '
-      + '<input id="admRecPid" placeholder="id du paiement" style="width:110px;border:1px solid var(--b);border-radius:10px;padding:6px 9px;background:var(--p2);color:var(--t)">'
-      + '<button class="btn btn-sm btn-g" data-adm2-rec="1" type="button">émettre</button> <span id="admRecOut" style="font-size:12px"></span></div>';
+      return '
+#' + r.id + ' · ' + esq2(pr.pseudo || '?') + ' · ' + esq2(pr.wilaya || '?') + ' · ' + r.montant + ' ' + esq2(r.devise) + ' · ' + esq2(r.statut) + (r.preuve ? (String(r.preuve).indexOf('data:') === 0
+          ? ' 📎 reçu'
+          : ' · preuve : ' + esq2(String(r.preuve).slice(0, 24))) : '') + ''
+        + '
+'
+        + 'confirmer'
+        + 'rejeter'
+        + '
+';
+    }).join('') : '
+Aucun dossier en attente dans ton périmètre.
+
+';
+    html += '
+🧾 Émettre un reçu (paiement confirmé) '
+      + '
+id du paiement
+'
+      + 'émettre 
+';
     if((meP.perms||[]).indexOf('reports.read') !== -1){
       var au = await SB.admAuditLast(12);
-      html += '<div style="margin-top:14px"><b style="font-size:12.5px">📜 Journal d’audit (12 dernières)</b></div>'
-        + (au.ok ? au.rows.map(function(l){ return '<div class="rep-row"><span>' + String(l.at||'').slice(0,16).replace('T',' ') + ' · ' + esq2(l.action) + ' · ' + esq2(l.cible_type) + ' #' + esq2(l.cible_id) + (l.wilaya ? ' · w' + esq2(l.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">' + esq2(JSON.stringify(l.apres||{}).slice(0,60)) + '</span></div>'; }).join('') || '<p>journal vide</p>' : '<p>⛔ ' + esq2(au.err) + '</p>');
+      html += '
+📜 Journal d’audit (12 dernières)
+'
+        + (au.ok ? au.rows.map(function(l){ return '
+' + String(l.at||'').slice(0,16).replace('T',' ') + ' · ' + esq2(l.action) + ' · ' + esq2(l.cible_type) + ' #' + esq2(l.cible_id) + (l.wilaya ? ' · w' + esq2(l.wilaya) : '') + '' + esq2(JSON.stringify(l.apres||{}).slice(0,60)) + '
+'; }).join('') || '
+journal vide
+
+' : '
+⛔ ' + esq2(au.err) + '
+
+');
     }
     box.innerHTML = html;
   }
@@ -307,24 +478,50 @@ document.addEventListener('click', ev => {
 
 /* ── phase 8b (ADM-3) : publication des accords (admin_general) ── */
 (function(){
-  function esq4(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function esq4(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&','<':'<','>':'>','"':'"',"'":'''}[c];}); }
   async function renderAccordsAdmin(){
     var h = document.querySelector('section[data-view="admin"]'); if(!h) return;
     var box = document.getElementById('admAccordsCard');
     if(!box){ box = document.createElement('div'); box.id = 'admAccordsCard'; box.className = 'card'; h.appendChild(box); }
-    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '<h2>📜 الاتفاقيات والإصدارات · Accords</h2><p>☁️ indisponible</p>'; return; }
+    if(!window.SB || !SB.admMyPerms){ box.innerHTML = '
+📜 الاتفاقيات والإصدارات · Accords
+☁️ indisponible
+
+'; return; }
     var meP = await SB.admMyPerms();
     if(!meP.ok || (meP.perms||[]).indexOf('agreements.manage') === -1){ box.hidden = true; return; }
     box.hidden = false;
     var r = await SB.admAgreements();
-    var html = '<h2>📜 الاتفاقيات والإصدارات · Accords (ADM-3)</h2>'
-      + '<p style="font-size:12px;color:var(--m);margin-bottom:10px">نشر نسخة جديدة يعطّل السابقة : القبولات الماضية تبقى غير قابلة للتعديل وتصبح « نسخة يلزم إعادة قبولها » · Publishing a new version disables the previous one : past acceptations stay immutable and become « to re-accept ».</p>'
-      + (r.ok ? r.rows.map(function(a){ return '<div class="rep-row"><span>' + esq4(a.cle) + ' · v' + a.version + (a.actif ? ' · <b>active</b>' : ' · مؤرشفة · archived') + ' · ' + esq4(a.titre) + '</span><span style="font-size:11px;color:var(--m)">' + String(a.cree_at||'').slice(0,10) + '</span></div>'; }).join('') || '<p>Aucun accord.</p>' : '<p>⛔ ' + esq4(r.err) + '</p>')
-      + '<div class="fld" style="margin-top:12px"><span>Publier une nouvelle version</span>'
-      + '<input id="adm3Cle" placeholder="cle (ex : conditions_utilisation)" value="conditions_utilisation">'
-      + '<input id="adm3Titre" placeholder="titre de la version">'
-      + '<textarea id="adm3Corps" rows="4" placeholder="corps complet de la nouvelle version"></textarea>'
-      + '<button class="btn btn-p btn-sm" data-adm3-pub="1" type="button">نشر النسخة · Publish version</button> <span id="adm3Out" style="font-size:12px"></span></div>';
+    var html = '
+📜 الاتفاقيات والإصدارات · Accords (ADM-3)
+'
+      + '
+نشر نسخة جديدة يعطّل السابقة : القبولات الماضية تبقى غير قابلة للتعديل وتصبح « نسخة يلزم إعادة قبولها » · Publishing a new version disables the previous one : past acceptations stay immutable and become « to re-accept ».
+
+'
+      + (r.ok ? r.rows.map(function(a){ return '
+' + esq4(a.cle) + ' · v' + a.version + (a.actif ? ' · active' : ' · مؤرشفة · archived') + ' · ' + esq4(a.titre) + '' + String(a.cree_at||'').slice(0,10) + '
+'; }).join('') || '
+Aucun accord.
+
+' : '
+⛔ ' + esq4(r.err) + '
+
+')
+      + '
+Publier une nouvelle version'
+      + '
+conditions_utilisation
+'
+      + '
+titre de la version
+'
+      + '
+corps complet de la nouvelle version
+
+'
+      + 'نشر النسخة · Publish version 
+';
     box.innerHTML = html;
   }
   document.addEventListener('click', function(e){
@@ -349,7 +546,7 @@ document.addEventListener('click', ev => {
 
 /* ── phase 9 (ADM-4) : barre d'onglets #admin + tableau de bord scopé + fiches élèves + paramètres ── */
 (function(){
-  function esq5(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function esq5(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&','<':'<','>':'>','"':'"',"'":'''}[c];}); }
   var TABS = [
     { id:'dash', label:'📊 لوحة القيادة · Dashboard', cards:['admDashCard'], perm:'reports.read' },
     { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard'], perm:'students.read' },
@@ -382,7 +579,7 @@ document.addEventListener('click', ev => {
     var bar = document.getElementById('admTabs');
     if(!bar){ bar = document.createElement('div'); bar.id = 'admTabs'; bar.className = 'tabs'; bar.style.position = 'static'; bar.style.height = 'auto'; bar.style.width = 'auto'; h.insertBefore(bar, h.firstChild); }
     bar.innerHTML = TABS.filter(function(t){ return !t.perm || state4.perms.indexOf(t.perm) !== -1; })
-      .map(function(t){ return '<button class="tab" data-adm-tab="' + t.id + '" type="button">' + t.label + '</button>'; }).join('');
+      .map(function(t){ return '' + t.label + ''; }).join('');
     applyTab(state4.tab);
   }
   async function renderDash(){
@@ -391,27 +588,74 @@ document.addEventListener('click', ev => {
     if(!box){ box = document.createElement('div'); box.id = 'admDashCard'; box.className = 'card'; h.appendChild(box); }
     if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
     var r = await SB.admDashboard();
-    if(!r.ok){ box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard</h2><p>⛔ ' + esq5(r.err) + '</p>'; return; }
+    if(!r.ok){ box.innerHTML = '
+📊 لوحة القيادة · Dashboard
+⛔ ' + esq5(r.err) + '
+
+'; return; }
     var d = r.dash || {};
-    box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard (النطاق · scope : ' + esq5(d.perimetre) + ')</h2>'
-      + '<div class="grid3" style="margin-top:10px">'
-      + '<div class="card mini"><div class="mini-i">🎓</div><b>' + (d.eleves||0) + '</b><p>تلاميذ النطاق · students in scope</p></div>'
-      + '<div class="card mini"><div class="mini-i">⏳</div><b>' + (d.paiements_attente||0) + '</b><p>paiements à traiter</p></div>'
-      + '<div class="card mini"><div class="mini-i">💰</div><b>' + (d.recettes_confirmees_da||0) + ' DA</b><p>recettes confirmées</p></div>'
-      + '<div class="card mini"><div class="mini-i">↩️</div><b>' + (d.remboursements||0) + '</b><p>remboursements tracés</p></div>'
-      + '<div class="card mini"><div class="mini-i">🪪</div><b>' + (d.verifications_attente||0) + '</b><p>vérifications d’identité</p></div>'
-      + '<div class="card mini"><div class="mini-i">🚩</div><b>' + (d.signalements_ouverts||0) + '</b><p>signalements ouverts</p></div>'
-      + '</div><p style="font-size:11.5px;color:var(--m);margin-top:8px">Chiffres calculés côté base, filtrés par wilaya : un agent régional ne voit jamais le national.</p>';
+    box.innerHTML = '
+📊 لوحة القيادة · Dashboard (النطاق · scope : ' + esq5(d.perimetre) + ')
+'
+      + '
+'
+      + '
+🎓
+' + (d.eleves||0) + '
+تلاميذ النطاق · students in scope
+
+'
+      + '
+⏳
+' + (d.paiements_attente||0) + '
+paiements à traiter
+
+'
+      + '
+💰
+' + (d.recettes_confirmees_da||0) + ' DA
+recettes confirmées
+
+'
+      + '
+↩️
+' + (d.remboursements||0) + '
+remboursements tracés
+
+'
+      + '
+🪪
+' + (d.verifications_attente||0) + '
+vérifications d’identité
+
+'
+      + '
+🚩
+' + (d.signalements_ouverts||0) + '
+signalements ouverts
+
+'
+      + '
+Chiffres calculés côté base, filtrés par wilaya : un agent régional ne voit jamais le national.
+
+';
   }
   async function renderStudents(){
     var h = section(); if(!h) return;
     var box = document.getElementById('admStudentsCard');
     if(!box){ box = document.createElement('div'); box.id = 'admStudentsCard'; box.className = 'card'; h.appendChild(box); }
     if(state4.perms.indexOf('students.read') === -1){ box.hidden = true; return; }
-    box.innerHTML = '<h2>👥 Élèves & parents</h2>'
-      + '<div class="fld"><span>Rechercher un élève (pseudo)</span><input id="admStuQ" placeholder="ex : amin">'
-      + '<button class="btn btn-p btn-sm" data-adm4-search="1" type="button">chercher</button></div>'
-      + '<div id="admStuList" style="margin-top:10px"></div><div id="admStuFiche" style="margin-top:10px"></div>';
+    box.innerHTML = '
+👥 Élèves & parents
+'
+      + '
+Rechercher un élève (pseudo)
+ex : amin
+'
+      + 'chercher
+'
+      + '
+';
   }
   async function renderSettings(){
     var h = section(); if(!h) return;
@@ -419,11 +663,23 @@ document.addEventListener('click', ev => {
     if(!box){ box = document.createElement('div'); box.id = 'admSettingsCard'; box.className = 'card'; h.appendChild(box); }
     if(state4.perms.indexOf('settings.manage') === -1){ box.hidden = true; return; }
     var r = await SB.admSettings();
-    box.innerHTML = '<h2>⚙️ إعدادات المنصة · Platform settings</h2>'
-      + (r.ok ? r.rows.map(function(s){ return '<div class="fld" style="margin-top:8px"><span>' + esq5(s.cle) + ' (maj ' + String(s.maj_at||'').slice(0,10) + ')</span>'
-          + '<textarea id="admSet_' + esq5(s.cle) + '" rows="3">' + esq5(JSON.stringify(s.valeur)) + '</textarea>'
-          + '<button class="btn btn-p btn-sm" data-adm4-save="' + esq5(s.cle) + '" type="button">enregistrer</button></div>'; }).join('') : '<p>⛔ ' + esq5(r.err) + '</p>')
-      + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">Valeurs JSON ; chaque enregistrement passe par setting_set (permission settings.manage) et laisse une ligne au journal d’audit.</p>';
+    box.innerHTML = '
+⚙️ إعدادات المنصة · Platform settings
+'
+      + (r.ok ? r.rows.map(function(s){ return '
+' + esq5(s.cle) + ' (maj ' + String(s.maj_at||'').slice(0,10) + ')'
+          + '
+' + esq5(JSON.stringify(s.valeur)) + '
+'
+          + 'enregistrer
+'; }).join('') : '
+⛔ ' + esq5(r.err) + '
+
+')
+      + '
+Valeurs JSON ; chaque enregistrement passe par setting_set (permission settings.manage) et laisse une ligne au journal d’audit.
+
+';
   }
   document.addEventListener('click', function(e){
     var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu]') : null;
@@ -434,7 +690,15 @@ document.addEventListener('click', ev => {
       var q = ((document.getElementById('admStuQ')||{}).value || '');
       SB.admSearchStudents(q).then(function(r){
         var list = document.getElementById('admStuList'); if(!list) return;
-        list.innerHTML = r.ok ? (r.rows.map(function(p){ return '<div class="rep-row"><span>' + esq5(p.pseudo) + ' · ' + esq5(p.niveau||'?') + ' · ' + esq5(p.wilaya||'?') + ' · ' + esq5(p.verif_statut||'') + '</span><button class="btn btn-sm btn-o" data-adm4-stu="' + p.id + '" type="button">fiche</button></div>'; }).join('') || '<p>aucun résultat</p>') : '<p>⛔ ' + esq5(r.err) + '</p>';
+        list.innerHTML = r.ok ? (r.rows.map(function(p){ return '
+' + esq5(p.pseudo) + ' · ' + esq5(p.niveau||'?') + ' · ' + esq5(p.wilaya||'?') + ' · ' + esq5(p.verif_statut||'') + 'fiche
+'; }).join('') || '
+aucun résultat
+
+') : '
+⛔ ' + esq5(r.err) + '
+
+';
       });
       return;
     }
@@ -442,7 +706,12 @@ document.addEventListener('click', ev => {
     if(stu){
       SB.admStudent(stu).then(function(r){
         var f = document.getElementById('admStuFiche'); if(!f) return;
-        f.innerHTML = r.ok ? '<pre style="background:var(--p2);border:1px solid var(--b);border-radius:10px;padding:10px;font-size:11px;overflow:auto">' + esq5(JSON.stringify(r.fiche, null, 1)) + '</pre>' : '<p>⛔ ' + esq5(r.err) + '</p>';
+        f.innerHTML = r.ok ? '
+' + esq5(JSON.stringify(r.fiche, null, 1)) + '
+' : '
+⛔ ' + esq5(r.err) + '
+
+';
       });
       return;
     }
@@ -462,7 +731,7 @@ document.addEventListener('click', ev => {
 
 /* ── phase 10 (ADM-5) : onglets 💰 Comptabilité & rapports + 🎫 الدعم · Support ─ */
 (function(){
-  function esq6(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function esq6(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&','<':'<','>':'>','"':'"',"'":'''}[c];}); }
   function section5(){ return document.querySelector('section[data-view="admin"]'); }
   var perms5 = [];
   function dlCSV(nom, lignes){
@@ -480,27 +749,58 @@ document.addEventListener('click', ev => {
     var e = await SB.admEntries();
     var rp = await SB.admReport(null, null);
     var r = rp.ok ? rp.report : {};
-    var html = '<h2>💰 المحاسبة والتقارير · Accounting & Reports (ADM-5)</h2>'
-      + '<p style="font-size:12px;color:var(--m);margin-bottom:8px">Périmètre : ' + esq6(r.perimetre || '?') + ' · recettes ' + (r.recettes_da||0) + ' DA · remboursements ' + (r.remboursements_da||0) + ' · dépenses ' + (r.depenses_da||0) + ' · solde ' + ((r.recettes_da||0)-(r.remboursements_da||0)-(r.depenses_da||0)) + ' DA</p>';
+    var html = '
+💰 المحاسبة والتقارير · Accounting & Reports (ADM-5)
+'
+      + '
+Périmètre : ' + esq6(r.perimetre || '?') + ' · recettes ' + (r.recettes_da||0) + ' DA · remboursements ' + (r.remboursements_da||0) + ' · dépenses ' + (r.depenses_da||0) + ' · solde ' + ((r.recettes_da||0)-(r.remboursements_da||0)-(r.depenses_da||0)) + ' DA
+
+';
     html += e.ok && e.rows.length ? e.rows.slice(0,40).map(function(x){
-      return '<div class="rep-row"><span>' + String(x.at||'').slice(0,10) + ' · ' + esq6(x.sens) + ' · ' + esq6(x.categorie) + ' · ' + x.montant + ' ' + esq6(x.devise) + (x.wilaya ? ' · w' + esq6(x.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">' + esq6(x.ref_type) + ' #' + esq6(x.ref_id) + (x.rapproche ? ' · ✅ مُطابق · matched' : '') + '</span>'
-        + (x.rapproche ? '' : '<button class="btn btn-sm btn-o" data-adm5-rap="' + x.id + '" type="button">pointer</button>') + '</div>';
-    }).join('') : '<p>aucune écriture pour l’instant</p>';
-    html += '<div class="fld" style="margin-top:10px"><span>Rapport par période</span>'
-      + '<input id="adm5Debut" type="date"> <input id="adm5Fin" type="date">'
-      + '<button class="btn btn-sm btn-o" data-adm5-report="1" type="button">calculer</button>'
-      + '<button class="btn btn-sm btn-g" data-adm5-csv="1" type="button">export CSV</button></div>'
-      + '<pre id="adm5RepOut" style="background:var(--p2);border:1px solid var(--b);border-radius:10px;padding:8px;font-size:11px;max-height:160px;overflow:auto"></pre>';
+      return '
+' + String(x.at||'').slice(0,10) + ' · ' + esq6(x.sens) + ' · ' + esq6(x.categorie) + ' · ' + x.montant + ' ' + esq6(x.devise) + (x.wilaya ? ' · w' + esq6(x.wilaya) : '') + '' + esq6(x.ref_type) + ' #' + esq6(x.ref_id) + (x.rapproche ? ' · ✅ مُطابق · matched' : '') + ''
+        + (x.rapproche ? '' : 'pointer') + '
+';
+    }).join('') : '
+aucune écriture pour l’instant
+
+';
+    html += '
+Rapport par période'
+      + '
+jj/mm/aaaa
+ 
+jj/mm/aaaa
+'
+      + 'calculer'
+      + 'export CSV
+'
+      + '
+';
     if(perms5.indexOf('accounting.manage') !== -1){
-      html += '<div class="fld" style="margin-top:8px"><span>Dépense manuelle</span>'
-        + '<input id="adm5Mont" type="number" placeholder="montant DA"> <input id="adm5Cat" placeholder="catégorie">'
-        + '<button class="btn btn-sm btn-p" data-adm5-dep="1" type="button">enregistrer</button></div>'
-      + '<div class="fld" style="margin-top:8px"><span>Clôture mensuelle (période YYYY-MM)</span>'
-      + '<input id="adm5Per" placeholder="ex : 2026-09"> '
-      + '<button class="btn btn-sm btn-g" data-adm5-close="1" type="button">clôturer</button> <span id="adm5CloseOut" style="font-size:12px"></span></div>';
+      html += '
+Dépense manuelle'
+        + '
+montant DA
+ 
+catégorie
+'
+        + 'enregistrer
+'
+      + '
+Clôture mensuelle (période YYYY-MM)'
+      + '
+ex : 2026-09
+ '
+      + 'clôturer 
+';
     SB.admClosures().then(function(cl){
-      var list = cl.ok && cl.rows.length ? cl.rows.map(function(c){ return '<div class="rep-row"><span>clôture ' + esq6(c.periode) + ' · ' + String(c.closed_at||'').slice(0,10) + '</span><span style="font-size:11px;color:var(--m)">solde ' + (((c.snapshot||{}).recettes_da||0) - ((c.snapshot||{}).remboursements_da||0) - ((c.snapshot||{}).depenses_da||0)) + ' DA</span></div>'; }).join('') : '';
-      setTimeout(function(){ var b = document.getElementById('admComptaCard'); if(b && list) b.insertAdjacentHTML('beforeend', '<div style="margin-top:8px"><b style="font-size:12.5px">🔒 Clôtures</b>' + list + '</div>'); }, 0);
+      var list = cl.ok && cl.rows.length ? cl.rows.map(function(c){ return '
+clôture ' + esq6(c.periode) + ' · ' + String(c.closed_at||'').slice(0,10) + 'solde ' + (((c.snapshot||{}).recettes_da||0) - ((c.snapshot||{}).remboursements_da||0) - ((c.snapshot||{}).depenses_da||0)) + ' DA
+'; }).join('') : '';
+      setTimeout(function(){ var b = document.getElementById('admComptaCard'); if(b && list) b.insertAdjacentHTML('beforeend', '
+🔒 Clôtures' + list + '
+'); }, 0);
     });
     }
     box.innerHTML = html;
@@ -512,13 +812,21 @@ document.addEventListener('click', ev => {
     if(perms5.indexOf('tickets.handle') === -1){ box.hidden = true; return; }
     box.hidden = false;
     var t = await SB.admTickets();
-    box.innerHTML = '<h2>🎫 الدعم · Support (dossiers de ton périmètre)</h2>'
+    box.innerHTML = '
+🎫 الدعم · Support (dossiers de ton périmètre)
+'
       + (t.ok && t.rows.length ? t.rows.map(function(x){ var p = x.profiles || {};
-          return '<div class="rep-row"><span>#' + x.id + ' · ' + esq6(p.pseudo||'?') + ' · ' + esq6(p.wilaya||'?') + ' · ' + esq6(x.sujet) + ' · ' + esq6(x.statut) + '</span>'
-            + '<span style="display:flex;gap:6px">'
-            + '<button class="btn btn-sm btn-o" data-adm5-tk="' + x.id + '|en_cours" type="button">prendre</button>'
-            + '<button class="btn btn-sm btn-p" data-adm5-tk="' + x.id + '|resolu" type="button">résoudre</button></span></div>';
-        }).join('') : '<p>aucun ticket ouvert dans ton périmètre</p>');
+          return '
+#' + x.id + ' · ' + esq6(p.pseudo||'?') + ' · ' + esq6(p.wilaya||'?') + ' · ' + esq6(x.sujet) + ' · ' + esq6(x.statut) + ''
+            + '
+'
+            + 'prendre'
+            + 'résoudre
+';
+        }).join('') : '
+aucun ticket ouvert dans ton périmètre
+
+');
   }
   function showOnly(ids){
     var h = section5(); if(!h) return;
@@ -531,10 +839,10 @@ document.addEventListener('click', ev => {
     if(!window.SB || !SB.admMyPerms){ return; }
     var meP = await SB.admMyPerms(); perms5 = meP.ok ? (meP.perms||[]) : [];
     if(!bar.querySelector('[data-adm5-tab="compta"]') && perms5.indexOf('reports.read') !== -1){
-      bar.insertAdjacentHTML('beforeend', '<button class="tab" data-adm5-tab="compta" type="button">💰 المحاسبة والتقارير · Accounting & Reports</button>');
+      bar.insertAdjacentHTML('beforeend', '💰 المحاسبة والتقارير · Accounting & Reports');
     }
     if(!bar.querySelector('[data-adm5-tab="support"]') && perms5.indexOf('tickets.handle') !== -1){
-      bar.insertAdjacentHTML('beforeend', '<button class="tab" data-adm5-tab="support" type="button">🎫 الدعم · Support</button>');
+      bar.insertAdjacentHTML('beforeend', '🎫 الدعم · Support');
     }
   }
   document.addEventListener('click', function(e){
@@ -548,7 +856,6 @@ document.addEventListener('click', ev => {
       if(tab5 === 'support'){ showOnly(['admSupportCard']); renderSupport(); }
       return;
     }
-    /* UI-2 : un clic sur un onglet de la phase 9 ne masque QUE les cartes de la phase 10, pas toute la section */
     if(t.getAttribute('data-adm-tab')){ ['admComptaCard','admSupportCard'].forEach(function(id){ var c = document.getElementById(id); if(c) c.hidden = true; }); return; }
     if(t.getAttribute('data-adm5-report')){
       var d = (document.getElementById('adm5Debut')||{}).value || null;
@@ -597,14 +904,7 @@ document.addEventListener('click', ev => {
   document.addEventListener('dz:auth', function(){ if((location.hash||'').replace('#','') === 'admin') mountTabs(); });
 })();
 
-/* ══ PATCH-REC-1 · reçu visible dans #admin — pansement additif, réversible, marqueur __rec1 ══
-   Constat captures 17/10 : la preuve de versement (data:image/… base64) est déversée
-   brute dans une cellule du tableau Abonnements, sans 📎, et casse visiblement 2 lignes.
-   Ce bloc ne remplace AUCUNE ligne existante : après chaque rendu, toute cellule-feuille
-   contenant une data-URL image/pdf devient [📎 voir le reçu] [⬇ télécharger] ; toute
-   cellule-feuille de base64 nu devient une étiquette courte + téléchargement .b64.
-   Affichage seul : aucune donnée n'est envoyée nulle part. Sécurité : seules les
-   data-URL image/* et application/pdf sont ouvertes dans un onglet (jamais text/html). */
+/* ══ PATCH-REC-1 · reçu visible dans #admin — pansement additif, réversible, marqueur __rec1 ══ */
 (function () {
   try {
     if (window.__rec1) { return; }
@@ -675,4 +975,3 @@ document.addEventListener('click', ev => {
     window.__rec1Fix = fix;
   } catch (e) { /* l'admin doit rester vivant quoi qu'il arrive */ }
 })();
-
