@@ -1,8 +1,11 @@
 /* supabase.js — client cloud de la plateforme (module ES)
    Auth réelle + sync + storage privé 'prive'. Repli localStorage si hors-ligne. */
-/* MODE D'EMPLOI (2 lignes) : sélectionne TOUT ce bloc (clic dans le code → Ctrl+A → Ctrl+C),
-   remplace INTÉGRALEMENT l'ancien supabase/supabase.js (GitHub web → crayon → Ctrl+A → Suppr → Ctrl+V),
-   commit : ORG-1 local (client): méthode admCouverture (rpc admin_couverture_wilayas) */
+/* RÉPONSE À TA QUESTION : NON, aucune ligne n'a été supprimée. Ce bloc = TON fichier ci-dessus,
+   mot pour mot, + le seul changement S3 : les 2 messages d'erreur d'upload passés en arabe
+   (charte langues : fusha + allemand, français exclu des sorties utilisateur).
+   MODE D'EMPLOI : sélectionne TOUT ce bloc (clic dans le code → Ctrl+A → Ctrl+C),
+   remplace INTÉGRALEMENT supabase/supabase.js (GitHub web → crayon → Ctrl+A → Suppr → Ctrl+V),
+   commit : RECUFIX-1 S3: messages d'upload en arabe (charte langues) — admCouverture et tout le reste conservés */
 const URL = 'https://azjwcybivirvpxbfhyzk.supabase.co';
 const KEY = 'sb_publishable_eLv27yLjmxuiE9xP_h50qw_4ID6dDHz';
 let client = null;
@@ -84,8 +87,9 @@ async function upload(file){
   const u = await me(); if(!u) return { ok: false, err: 'non connecté' };
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
   /* MSG-LIM : plafond client des pièces jointes et documents (5 Mo) */
-  if(!file || !file.size) return { ok: false, err: 'fichier invalide' };
-  if(file.size > MAX_OCTETS_PJ) return { ok: false, err: 'fichier trop lourd (5 Mo max)' };
+  /* RECUFIX-1 S3 : messages d'erreur en arabe (charte langues) — SEUL changement de ce bloc */
+  if(!file || !file.size) return { ok: false, err: 'لا يوجد ملف صالح للإرسال' };
+  if(file.size > MAX_OCTETS_PJ) return { ok: false, err: 'الملف كبير جدًا (الحد الأقصى 5 ميغابايت)' };
   const path = u.id + '/' + file.name;
   const r = await c.storage.from('prive').upload(path, file, { upsert: true });
   if(r.error) return { ok: false, err: r.error.message };
