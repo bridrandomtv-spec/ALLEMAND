@@ -1,7 +1,8 @@
-/* tests/adm_test.mjs — invariants administration ADM-1→ADM-5 + gardes ORG-1 */
-/* MODE D'EMPLOI (2 lignes) : sélectionne TOUT ce bloc (clic dans le code → Ctrl+A → Ctrl+C),
+/* tests/adm_test.mjs — invariants administration ADM-1→ADM-5 + gardes ORG-1 + gardes RECUFIX-1 */
+/* MODE D'EMPLOI (3 lignes) : sélectionne TOUT ce bloc (clic dans le code → Ctrl+A → Ctrl+C),
    remplace INTÉGRALEMENT tests/adm_test.mjs (GitHub web → tests/ → crayon → Ctrl+A → Suppr → Ctrl+V),
-   commit : GARDES-ORG1: 3 assertions CI (facade admCouverture · admin.js JS seul · style.css badges) */
+   commit : RECUFIX-1 gardes: 3 assertions CI (aucune URL publique · lectures signées · zéro libellé allemand)
+   Après run vert : 2 tests vivants RECUFIX-1 (élève upload png → message arabe · admin 📎 reçu → image, ⬇ → fichier ouvrable), puis « continue » pour INSERT n°3. */
 import { readFileSync } from 'node:fs';
 const sql = readFileSync('supabase/adm_schema.sql', 'utf8');
 const sbjs = readFileSync('supabase/supabase.js', 'utf8');
@@ -79,7 +80,7 @@ t(!/drop policy[^;]*\bfor\b/.test(sql5), 'aucun DROP POLICY ne porte de clause F
 t((sql5.match(/create policy "[^"]+" on public\.(accounting_entries|support_tickets|notifications)/g) || []).length === 6, 'six CREATE POLICY sur les trois tables ADM-5');
 t(!/create policy "[^"]+" on public\.accounting_closures for (insert|update|delete)/.test(sql5), 'F6 : clôtures sans politique d écriture client');
 t(['admEntries','admDepense','admReport','admTickets','admTicketSet','ticketCreate','myNotifications','notifMarkRead'].every(m => sbjs.includes('function ' + m)), '8 méthodes SB.adm* (ADM-5)');
-t(adjs.includes('phase 10 (ADM-5)'), 'onglets 💰 et 🎫 dans #admin');
+t(adjs.includes('phase 10 (ADM-5)'), 'onglets 💰 et  dans #admin');
 t(appjs.includes('phase 11 (ADM-5)'), 'carte 🔔 + ticket dans #compte');
 t(sql2.includes('create unique index if not exists receipts_payment_uni'), 'F3 : index unique receipts.payment_id (anti double reçu)');
 t(sql2.includes('create trigger payments_tr_blocage_montant'), 'F3 : montant confirmé non modifiable côté client');
@@ -118,5 +119,9 @@ t(appjs.includes('phase 13 (OPS-1)'), 'OPS-1 : bouton signaler un bug + ticket p
 t(sbjs.includes('function admCouverture'), 'GARDES-ORG1 : facade expose admCouverture (rpc admin_couverture_wilayas)');
 t(adjs.includes('rendreCouvertureORG1') && !adjs.includes('.org1{'), 'GARDES-ORG1 : carte ORG-1 en JS seul dans admin.js (aucun CSS collé)');
 t(css.includes('.org1-badge'), 'GARDES-ORG1 : styles .org1-badge présents dans style.css');
+t(adjs.includes('📎 reçu'), 'PJ-PAY-1 : accès reçu présent dans la file de validation (libellé gardé)');
+t(!adjs.includes('/object/public/'), 'RECUFIX-1 : admin.js ne construit jamais d URL publique /object/public/');
+t(!sbjs.includes('getPublicUrl') && !adjs.includes('getPublicUrl'), 'RECUFIX-1 : lectures signées seulement (aucun getPublicUrl)');
+t(!adjs.includes('Sponsoren') && !adjs.includes('veröffentlichen') && !adjs.includes('Beleg:'), 'RECUFIX-1 : aucun libellé allemand d interface dans admin.js');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
