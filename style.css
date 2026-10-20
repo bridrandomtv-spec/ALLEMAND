@@ -3614,3 +3614,55 @@ html[data-theme="light"] .home-main .welcome{
   .welcome-art{display:none}
   .home-main .welcome{border-radius:20px;padding:20px 16px}
 }
+
+/* ══ PHASE D19 — مسارك : un seul titre (répare le sélecteur D6) ══ */
+[data-view="masar"] #masarBody > h2:first-of-type,
+[data-view="masar"] #masarBody > .ms-sub:first-of-type,
+[data-view="masar"] #masarBody > :first-child:has(> h2):not(.card),
+[data-view="masar"] #masarBody > :first-child:has(> .ms-sub):not(.card){display:none}
+
+/* ══ PHASE D20 — fidélité prototypes : cartes, panneaux, stats, boutons ══ */
+.card{border-radius:20px;padding:20px 22px;box-shadow:0 10px 30px -12px rgba(17,28,46,.10)}
+html[data-theme="light"] .card{box-shadow:0 14px 34px -14px rgba(17,28,46,.14)}
+.mini,.stat,.kpi,.panel{border-radius:16px}
+.mini:hover,.kpi:hover,.fiche:hover{transform:translateY(-4px);box-shadow:0 16px 36px -14px rgba(0,98,51,.28)}
+.panel-h{font-size:13px;font-weight:800}
+.progress-wrap{height:10px;border-radius:99px}
+.progress{border-radius:99px}
+.btn{border-radius:12px}
+.btn-p{box-shadow:0 8px 22px -8px rgba(0,98,51,.55)}
+.btn-g{box-shadow:0 8px 22px -8px rgba(232,182,76,.45)}
+.seance{border-radius:16px}
+.fiche{border-radius:18px}
+
+/* ══ PHASE D21 — héro façon prototype : bandeau drapeau, liseré, illustration alignée ══ */
+.home-main .welcome{
+  background:
+    radial-gradient(520px 220px at 92% -30%, rgba(210,16,52,.16), transparent 60%),
+    linear-gradient(120deg, var(--vert3) 0%, var(--vert) 55%, var(--vert2) 100%);
+  border:0; border-radius:24px; color:#fff;
+  box-shadow:0 18px 40px -18px rgba(0,98,51,.45);
+}
+.home-main .welcome h1{color:#fff}
+.home-main .welcome p{color:#fff;opacity:.92}
+.home-main .welcome::after{opacity:.07}
+.home-main .welcome::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--vert) 0 33%,#fff 33% 66%,var(--rouge) 66% 100%);
+}
+html[data-theme="light"] .home-main .welcome{
+  background:
+    radial-gradient(520px 220px at 92% -30%, rgba(210,16,52,.18), transparent 60%),
+    linear-gradient(120deg,#006233 0%,#00843D 55%,#0a9a52 100%);
+  box-shadow:0 18px 44px -18px rgba(0,98,51,.38);
+}
+.home-main .welcome .pill{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.home-main .welcome .btn-p{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);
+  color:#fff;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.home-main .welcome .btn-p:hover{background:rgba(255,255,255,.24)}
+.welcome-art{position:absolute;inset-inline-end:18px;bottom:14px;pointer-events:none;opacity:.95}
+.welcome-art svg{width:200px;height:140px;filter:drop-shadow(0 6px 18px rgba(0,0,0,.25))}
+@media (max-width:700px){
+  .welcome-art{display:none}
+  .home-main .welcome{border-radius:20px;padding:20px 16px}
+}
