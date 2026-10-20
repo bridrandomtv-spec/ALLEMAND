@@ -3554,3 +3554,10 @@ button.primary:active,
 /* ═══════════════════════════════════════════════════════
    FIN PHASE D17 · ~50 lignes · 100% additif · 0 conflit
    ═══════════════════════════════════════════════════════ */
+/* ══ PHASE D19 — مسارك : titre unique (correctif sélecteur D6) ══
+   D6 masquait #masarBody>h2 (enfant direct). masar.js enveloppe désormais
+   son en-tête dans un bloc : on masque ce premier bloc d'en-tête, sans
+   toucher aux cartes de contenu (.card) ni aux titres suivants. */
+[data-view="masar"] #masarBody > h2:first-of-type,
+[data-view="masar"] #masarBody > .ms-sub:first-of-type,
+[data-view="masar"] #masarBody > :first-child:has(> h2):not(.card){display:none}
