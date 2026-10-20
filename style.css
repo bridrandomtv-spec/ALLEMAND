@@ -3483,3 +3483,74 @@ table.org1 tr:hover td{background:rgba(232,182,76,.05)}
 .org1-missing,.org1-err{font-size:12.5px;color:var(--m);padding:10px;background:var(--nuit3);border:1px dashed var(--b);border-radius:10px;text-align:center}
 .org1-err{color:var(--r);border-color:rgba(255,107,125,.32)}
 @media(max-width:640px){table.org1{font-size:11.5px}table.org1 th,table.org1 td{padding:5px 6px}}
+/* ═══════════════════════════════════════════════════════
+   PHASE D17 — REDESIGN v2 (additif · 0 règle modifiée)
+   Inspiration : prototypes Qwen (dz-green #006233 / dz-red #D21034)
+   Rollback : supprimer ce bloc · aucun autre fichier touché
+   ═══════════════════════════════════════════════════════ */
+
+/* 1) Variables étendues — s'ajoutent aux tiennes, ne les écrasent pas */
+:root{
+  --dz-green:#006233;
+  --dz-green-light:#00843D;
+  --dz-green-dark:#004D28;
+  --dz-red:#D21034;
+  --dz-red-dark:#A60D2A;
+  --dz-radius-lg:20px;
+  --dz-radius-md:14px;
+  --dz-shadow-lg:0 20px 50px -12px rgba(0,98,51,.25);
+  --dz-shadow-md:0 8px 24px -8px rgba(0,98,51,.18);
+}
+
+/* 2) Topbar — verre dépoli + bordure verte (si .topbar existe déjà) */
+.topbar{
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:2px solid var(--dz-green);
+  transition:box-shadow .25s ease;
+}
+.topbar:hover{ box-shadow:var(--dz-shadow-md); }
+
+/* 3) Cartes matières — élévation douce au survol */
+.subj-card{
+  transition:transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s ease;
+}
+.subj-card:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--dz-shadow-lg);
+}
+
+/* 4) Boutons primaires — dégradé drapeau */
+button.primary,
+.btn-primary,
+[data-go].primary{
+  background:linear-gradient(135deg,var(--dz-green) 0%,var(--dz-green-light) 100%);
+  border:none;
+  box-shadow:var(--dz-shadow-md);
+  transition:filter .2s ease, transform .15s ease;
+}
+button.primary:hover,
+.btn-primary:hover,
+[data-go].primary:hover{
+  filter:brightness(1.08);
+  transform:translateY(-1px);
+}
+button.primary:active,
+.btn-primary:active{ transform:translateY(0); }
+
+/* 5) Panels latéraux (D2) — bordure accentuée */
+.panel{
+  border:1px solid color-mix(in srgb, var(--dz-green) 18%, transparent);
+  border-radius:var(--dz-radius-md);
+}
+
+/* 6) Focus visible — accessibilité */
+:focus-visible{
+  outline:2px solid var(--dz-green-light);
+  outline-offset:3px;
+  border-radius:6px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   FIN PHASE D17 · ~50 lignes · 100% additif · 0 conflit
+   ═══════════════════════════════════════════════════════ */
