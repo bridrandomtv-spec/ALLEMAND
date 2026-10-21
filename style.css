@@ -3636,3 +3636,33 @@ html[data-theme="light"] .home-main .welcome{
 html[data-theme="light"] #homeSide .panel{background:#fff}
 html[data-theme="light"] #homeSide .card.mini{background:#fff}
 html[data-theme="light"] .tabs .tab.on{background:linear-gradient(135deg,#006233,#00843D);box-shadow:0 8px 20px -10px rgba(0,98,51,.35)}
+
+/* ══ PHASE D27 — parcours en fil : nœuds d'état + cartes leçons (vert + doré) ══
+   Sélecteurs prouvés par le CSS maison certifié D20 : .seance, .fiche,
+   .progress-wrap, .progress. Additif pur · chaque règle est no-op si
+   l'élément n'existe pas (mode démo inclus) · rollback = supprimer ce bloc. */
+/* A) cartes leçon : matière douce, hover qui soulève */
+.seance{border:1px solid var(--b);background:var(--p);box-shadow:var(--sh);
+  padding:12px 14px;padding-inline-start:42px;position:relative;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.seance:hover{transform:translateY(-2px);border-color:var(--vert2)}
+.fiche{border:1px solid var(--b);background:var(--p);box-shadow:var(--sh);padding:14px 16px}
+/* B) nœud d'état sur chaque séance (neutre par défaut) */
+.seance::after{content:'';position:absolute;inset-inline-start:14px;top:18px;
+  width:14px;height:14px;border-radius:50%;background:var(--b2);
+  border:3px solid var(--p);box-shadow:0 0 0 2px var(--b2)}
+/* C) fil vertical reliant les séances sœurs */
+.seance + .seance{margin-top:26px}
+.seance + .seance::before{content:'';position:absolute;inset-inline-start:20px;
+  top:-26px;height:26px;width:2px;background:var(--b2);border-radius:2px}
+/* D) états : acquis = vert drapeau · en cours = doré · le reste neutre */
+.seance:has(.progress[style*="width: 100%"])::after{background:var(--vert);box-shadow:0 0 0 2px var(--vert)}
+.seance:has(.progress[style*="width: 100%"]){border-color:rgba(0,98,51,.35)}
+.seance:has(.progress:not([style*="width: 100%"]):not([style*="width: 0%"]))::after{background:#f59e0b;box-shadow:0 0 0 2px #f59e0b}
+.seance:has(.progress:not([style*="width: 100%"]):not([style*="width: 0%"])){border-color:rgba(245,158,11,.45)}
+/* E) barres de progression en pilules vivantes */
+.seance .progress-wrap,.fiche .progress-wrap{height:10px;background:var(--b);border-radius:99px}
+.seance .progress,.fiche .progress{border-radius:99px;background:linear-gradient(90deg,var(--vert),var(--vert2))}
+/* F) thème clair */
+html[data-theme="light"] .seance,html[data-theme="light"] .fiche{background:#fff}
+html[data-theme="light"] .seance::after{border-color:#fff}
