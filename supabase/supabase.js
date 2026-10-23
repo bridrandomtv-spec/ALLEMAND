@@ -139,12 +139,19 @@ async function createSub(plan, montant){
     montant: montant, ref: ref, statut: 'en_attente' }).select().single();
   return r.error ? { ok: false, err: r.error.message } : { ok: true, row: r.data };
 }
-async function mySubs(){
-  const u = await me(); if(!u) return { ok: false, err: 'non connecte' };
-  const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
-  const r = await c.from('subscriptions').select('*').eq('user_id', u.id)
-    .order('created_at', { ascending: false });
-  return r.error ? { ok: false, err: r.error.message } : { ok: true, rows: r.data || [] };
+async function setPreuve(id, preuve){
+  const c = await sb();
+  if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
+
+  const r = await c.rpc('subscription_set_preuve', {
+    p_subscription_id: id,
+    p_preuve: preuve
+  });
+
+  return r.error
+    ? { ok: false, err: r.error.message }
+    : { ok: true };
+}
 }
 async function setPreuve(id, preuve){
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
