@@ -177,8 +177,6 @@ async function setSubStatut(id, statut, mois){
     ? { ok: false, err: r.error.message }
     : { ok: true, data: r.data };
 }
-
-}
 async function addSponsor(s){
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
   const r = await c.from('sponsors').insert(s);
