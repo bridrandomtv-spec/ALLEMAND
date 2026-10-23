@@ -157,15 +157,27 @@ async function listSubs(){
   const r = await c.from('subscriptions').select('*').order('created_at', { ascending: false });
   return r.error ? { ok: false, err: r.error.message } : { ok: true, rows: r.data || [] };
 }
+
 async function setSubStatut(id, statut, mois){
-  const patch = { statut: statut };
-  if(statut === 'actif'){
-    patch.debut = new Date().toISOString();
-    patch.fin = new Date(Date.now() + mois * 30 * 86400000).toISOString();
+  const c = await sb();
+  if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
+
+  if(statut !== 'actif'){
+    return { ok: false, err: 'utiliser subscription_decide pour une décision administrative' };
   }
-  const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
-  const r = await c.from('subscriptions').update(patch).eq('id', id);
-  return r.error ? { ok: false, err: r.error.message } : { ok: true };
+
+  const r = await c.rpc('subscription_decide', {
+    p_subscription_id: id,
+    p_approved: true,
+    p_mois: mois || 1,
+    p_note: ''
+  });
+
+  return r.error
+    ? { ok: false, err: r.error.message }
+    : { ok: true, data: r.data };
+}
+
 }
 async function addSponsor(s){
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
