@@ -241,25 +241,36 @@ async function createAd(a){
   /* décision admin : subscription + payment tranchés ensemble.
      refus → subscription retourne 'en_attente' (l'élève PEUT retenter) + payment 'refuse'
      avec note_admin en arabe ; jamais 'actif' sans décision admin (RLS le garantit). */
-  async function deciderSub(sub_id, ok, mois, note){
-    try{
-      const c = await sb(); if(!c) return { ok:false, err:'non connecté' };
-      if(ok){
-        const r1 = await setSubStatut(sub_id, 'actif', mois || 1);
-        if(!r1.ok) return r1;
-      }else{
-        const r1 = await c.from('subscriptions').update({ statut:'en_attente', preuve:'' }).eq('id', sub_id);
-        if(r1.error) return { ok:false, err:r1.error.message };
-      }
-      const r2 = await c.from('payments').update({
-        statut: ok ? 'valide' : 'refuse',
-        note_admin: note || '',
-        decided_at: new Date().toISOString()
-      }).eq('sub_id', sub_id).eq('statut', 'en_attente');
-      if(r2.error) return { ok:true, payments:0, warn:r2.error.message };
-      return { ok:true, payments:(r2.data || []).length };
-    }catch(e){ return { ok:false, err:String((e && e.message) || e) }; }
+
+async function deciderSub(sub_id, ok, mois, note){
+  try{
+    const c = await sb();
+    if(!c) return { ok: false, err: 'non connecté' };
+
+    const r = await c.rpc('subscription_decide', {
+      p_subscription_id: sub_id,
+      p_approved: !!ok,
+      p_mois: ok ? (mois || 1) : null,
+      p_note: note || ''
+    });
+
+    if(r.error){
+      return { ok: false, err: r.error.message };
+    }
+
+    return {
+      ok: true,
+      payments: r.data?.payments ?? 0,
+      data: r.data
+    };
+  }catch(e){
+    return {
+      ok: false,
+      err: String((e && e.message) || e)
+    };
   }
+}
+
 
   
 /* ── MSG-2 · messagerie EduDZ — côté client FIN : toute autorisation vit en RLS/SQL ──
