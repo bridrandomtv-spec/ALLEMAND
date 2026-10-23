@@ -152,12 +152,6 @@ async function setPreuve(id, preuve){
     ? { ok: false, err: r.error.message }
     : { ok: true };
 }
-}
-async function setPreuve(id, preuve){
-  const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
-  const r = await c.from('subscriptions').update({ preuve: preuve, statut: 'preuve' }).eq('id', id);
-  return r.error ? { ok: false, err: r.error.message } : { ok: true };
-}
 async function listSubs(){
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
   const r = await c.from('subscriptions').select('*').order('created_at', { ascending: false });
