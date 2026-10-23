@@ -26,12 +26,13 @@
         const r = await window.SB.login($('#cdMail').value, $('#cdPass').value);
         if(r.ok) render(); else { const e = $('#cdErr'); e.hidden = false; e.textContent = r.err; }
       });
-      $('#cdUp').addEventListener('click', async () => {
-        const r = await window.SB.signup($('#cdMail').value, $('#cdPass').value,
-          { pseudo: $('#cdMail').value.split('@')[0], role: 'eleve' });
-        const e = $('#cdErr'); e.hidden = false;
-        e.textContent = r.ok ? '✅ compte créé — vérifie ton email puis connecte-toi' : r.err;
-      });
+      $('#cdUp').addEventListener('click', () => {
+  const e = $('#cdErr');
+
+  e.hidden = false;
+  e.textContent =
+    'أنشئ حسابك من استمارة التسجيل الرئيسية لإدخال الولاية والمستوى والشعبة.';
+});
       return;
     }
     box.innerHTML =
