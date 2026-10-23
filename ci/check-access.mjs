@@ -365,9 +365,11 @@ const adm6 = fs.readFileSync('admin.js', 'utf8');
 if (!adm6.includes('deciderSub')) fails.push('3.6 : admin.js ne décide pas via deciderSub');
 if (!adm6.includes('adminPayments')) fails.push('3.6 : admin.js n\'affiche pas les payments');
 /* sécurité : un élève ne peut PAS se rendre actif lui-même (RLS + statut refus→en_attente) */
-if (!sb6.includes("statut:'en_attente', preuve:''")) fails.push('3.6 : refus ne remet pas la sub en en_attente (retry impossible)');
-
-
+/* 3.6 : la décision est déléguée au RPC sécurisé */
+if (!sb6.includes("c.rpc('subscription_decide'") ||
+    !sb6.includes('p_approved: !!ok')) {
+  fails.push('3.6 : deciderSub ne délègue pas la décision au RPC sécurisé');
+}
 /* ── Phase 7 : le contenu payant ne vit PLUS dans le domaine public ── */
 const bp7 = JSON.parse(fs.readFileSync('assets/bdd/buch_pages.json', 'utf8'));
 const pg7 = bp7.pages || bp7;
