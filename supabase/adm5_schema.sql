@@ -34,9 +34,23 @@ create table if not exists public.notifications (
 );
 alter table public.notifications enable row level security;
 
+create or replace function public.accounting_entry_immutable_fn() returns trigger
+language plpgsql security definer set search_path = public as $
+begin
+  -- Le service backend conserve le comportement historique de contournement contrôlé.
+  if auth.uid() is null then
+    if tg_op = 'DELETE' then return old; else return new; end if;
+  end if;
+  -- Seul le drapeau de rapprochement peut changer; les montants et références restent immuables.
+  if tg_op = 'UPDATE'
+     and (to_jsonb(new) - 'rapproche') = (to_jsonb(old) - 'rapproche') then
+    return new;
+  end if;
+  raise exception 'ligne_immuable_%', tg_relname;
+end $;
 drop trigger if exists accounting_entries_tr_immuable on public.accounting_entries;
 create trigger accounting_entries_tr_immuable before update or delete on public.accounting_entries
-  for each row execute function public.immutable_row();
+  for each row execute function public.accounting_entry_immutable_fn();
 
 create or replace function public.accounting_tr_payment_fn() returns trigger
 language plpgsql security definer set search_path = public as $$
@@ -110,13 +124,13 @@ begin
   if not found then raise exception 'ticket_introuvable'; end if;
   select coalesce(p.wilaya,'') into w from public.profiles p where p.id = t.user_id;
   if not public.admin_sees_wilaya(auth.uid(), w) then raise exception 'wilaya_hors_perimetre'; end if;
-  update public.support_tickets set statut = statut,
-         assigne_to = coalesce(assigne, assigne_to),
-         closed_at = case when statut = 'resolu' then now() else closed_at end
-   where id = tid;
-  perform public.notify(t.user_id, 'ticket_statut', jsonb_build_object('ticket', tid, 'statut', statut));
-  perform public.audit_log('ticket.statut','support_ticket', tid::text,
-    jsonb_build_object('statut', t.statut), jsonb_build_object('statut', statut), w);
+  update public.support_tickets set statut = $2,
+         assigne_to = coalesce($3, assigne_to),
+         closed_at = case when $2 = 'resolu' then now() else closed_at end
+   where id = $1;
+  perform public.notify(t.user_id, 'ticket_statut', jsonb_build_object('ticket', $1, 'statut', $2));
+  perform public.audit_log('ticket.statut','support_ticket', $1::text,
+    jsonb_build_object('statut', t.statut), jsonb_build_object('statut', $2), w);
   return jsonb_build_object('ok', true);
 end $$;
 
@@ -137,6 +151,7 @@ begin
                        and (debut is null or e.at::date >= debut) and (fin is null or e.at::date <= fin)),
     'depenses_da', (select coalesce(sum(e.montant),0) from public.accounting_entries e
                      where e.sens = 'depense'
+                       and (general or e.wilaya = any(wils))
                        and (debut is null or e.at::date >= debut) and (fin is null or e.at::date <= fin)),
     'par_wilaya', (select coalesce(jsonb_object_agg(wl, mt), '{}') from (
                      select e.wilaya as wl, sum(e.montant) as mt from public.accounting_entries e
@@ -230,22 +245,22 @@ language plpgsql security definer set search_path = public as $$
 declare snap jsonb;
 begin
   if not public.admin_can(auth.uid(), 'accounting.manage') then raise exception 'permission_refusee'; end if;
-  if exists (select 1 from public.accounting_closures c where c.periode = periode) then
+  if exists (select 1 from public.accounting_closures c where c.periode = $1) then
     raise exception 'periode_deja_close';
   end if;
-  snap := public.admin_report((periode || '-01')::date,
-          (date_trunc('month', (periode || '-01')::date) + interval '1 month - 1 day')::date);
-  insert into public.accounting_closures (periode, closed_by, snapshot) values (periode, auth.uid(), snap);
-  perform public.audit_log('accounting.closure','accounting_closure', periode, null, snap, '');
+  snap := public.admin_report(($1 || '-01')::date,
+          (date_trunc('month', ($1 || '-01')::date) + interval '1 month - 1 day')::date);
+  insert into public.accounting_closures (periode, closed_by, snapshot) values ($1, auth.uid(), snap);
+  perform public.audit_log('accounting.closure','accounting_closure', $1, null, snap, '');
   return jsonb_build_object('ok', true, 'periode', periode);
 end $$;
 create or replace function public.accounting_mark_rapproche(eid bigint, rapproche boolean) returns jsonb
 language plpgsql security definer set search_path = public as $$
 begin
   if not public.admin_can(auth.uid(), 'accounting.manage') then raise exception 'permission_refusee'; end if;
-  update public.accounting_entries set rapproche = rapproche where id = eid;
-  perform public.audit_log('accounting.rapprochement','accounting_entry', eid::text, null,
-    jsonb_build_object('rapproche', rapproche), '');
+  update public.accounting_entries set rapproche = $2 where id = $1;
+  perform public.audit_log('accounting.rapprochement','accounting_entry', $1::text, null,
+    jsonb_build_object('rapproche', $2), '');
   return jsonb_build_object('ok', true);
 end $$;
 create or replace function public.notifications_tr_lue_only_fn() returns trigger
