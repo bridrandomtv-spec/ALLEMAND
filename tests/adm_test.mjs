@@ -69,6 +69,11 @@ t(sql5.includes('create table if not exists public.support_tickets'), 'table sup
 t(sql5.includes('create table if not exists public.notifications'), 'table notifications');
 t(['accounting_entries','support_tickets','notifications'].every(x => sql5.includes('alter table public.' + x + ' enable row level security')), 'RLS sur les 3 tables ADM-5');
 t(sql5.includes('create trigger accounting_entries_tr_immuable'), 'écritures comptables immuables');
+t(sql5.includes('execute function public.accounting_entry_immutable_fn()'), 'ADM-5 : rapprochement autorisé sans altérer les autres champs comptables');
+t(sql5.includes("and (general or e.wilaya = any(wils))"), 'ADM-5 : dépenses filtrées par périmètre de wilaya');
+t(sql5.includes('set statut = $2') && sql5.includes('where id = $1'), 'ADM-5 : paramètres ticket_set_statut non ambigus');
+t(sql5.includes('set rapproche = $2 where id = $1'), 'ADM-5 : paramètres accounting_mark_rapproche non ambigus');
+
 t(sql5.includes('create trigger accounting_tr_payment'), 'écriture recette/remboursement auto sur statut paiement');
 t(sql5.includes('create trigger notify_tr_payment') && sql5.includes('create trigger notify_tr_receipt'), 'notifications déclenchées par événements financiers');
 t(['accounting_depense','admin_report','notify','ticket_set_statut'].every(f => sql5.includes('function public.' + f)), '4 fonctions ADM-5');
