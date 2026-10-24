@@ -35,7 +35,7 @@ create table if not exists public.notifications (
 alter table public.notifications enable row level security;
 
 create or replace function public.accounting_entry_immutable_fn() returns trigger
-language plpgsql security definer set search_path = public as $
+language plpgsql security definer set search_path = public as $fn$
 begin
   -- Les appels sans utilisateur authentifié conservent le comportement historique.
   if auth.uid() is null then return old; end if;
@@ -45,7 +45,7 @@ begin
     return new;
   end if;
   raise exception 'ligne_immuable_%', tg_relname;
-end $;
+end $fn$;
 drop trigger if exists accounting_entries_tr_immuable on public.accounting_entries;
 create trigger accounting_entries_tr_immuable before update or delete on public.accounting_entries
   for each row execute function public.accounting_entry_immutable_fn();
