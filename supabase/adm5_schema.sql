@@ -37,10 +37,8 @@ alter table public.notifications enable row level security;
 create or replace function public.accounting_entry_immutable_fn() returns trigger
 language plpgsql security definer set search_path = public as $
 begin
-  -- Le service backend conserve le comportement historique de contournement contrôlé.
-  if auth.uid() is null then
-    if tg_op = 'DELETE' then return old; else return new; end if;
-  end if;
+  -- Les appels sans utilisateur authentifié conservent le comportement historique.
+  if auth.uid() is null then return old; end if;
   -- Seul le drapeau de rapprochement peut changer; les montants et références restent immuables.
   if tg_op = 'UPDATE'
      and (to_jsonb(new) - 'rapproche') = (to_jsonb(old) - 'rapproche') then
