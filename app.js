@@ -527,6 +527,20 @@ function go(view){
     return;
   }
   currentView = view;
+  /* Synchronise la matière quand une vue anglaise est ouverte directement
+     depuis la navigation (sans passer par le sélecteur data-subj). */
+  if(view === 'english'){
+    window.__SUBJECT__ = 'en';
+    window.__TARGET_LANG__ = 'en';
+    try{ localStorage.setItem('dz_subject', 'en'); }catch(e){}
+    try{ if(window.setLangueCible) setLangueCible('en'); }catch(e){}
+    var subjButton = document.getElementById('subjSel');
+    if(subjButton) subjButton.textContent = '🇬 Anglais';
+    try{
+      if(window.VT && typeof window.VT.setSubject === 'function')
+        window.VT.setSubject('anglais');
+    }catch(e){}
+  }
   /* Une seule vue visible, garantie : hidden + display inline (aucune règle CSS
      ne peut forcer l'affichage d'une vue inactive, cf bug [hidden] écrasé). */
   $$('.view').forEach(s => {
