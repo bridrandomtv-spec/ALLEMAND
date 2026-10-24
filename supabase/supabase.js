@@ -152,6 +152,21 @@ async function setPreuve(id, preuve){
     ? { ok: false, err: r.error.message }
     : { ok: true };
 }
+/* Abonnements du compte connecté — utilisé par billing.js et access.js.
+   Retourne rows pour l'interface et data pour le contrôle d'accès historique. */
+async function mySubs(){
+  const u = await me();
+  if(!u) return { ok:false, rows:[], data:[], err:'non connecté' };
+  const c = await sb();
+  if(!c) return { ok:false, rows:[], data:[], err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.from('subscriptions')
+    .select('*')
+    .eq('user_id', u.id)
+    .order('created_at', { ascending:false });
+  if(r.error) return { ok:false, rows:[], data:[], err:r.error.message };
+  const rows = r.data || [];
+  return { ok:true, rows:rows, data:rows };
+}
 async function listSubs(){
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
   const r = await c.from('subscriptions').select('*').order('created_at', { ascending: false });
