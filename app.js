@@ -2410,12 +2410,13 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     setTrack:function(t){ if(TRACKS.indexOf(t)>=0){ state.track=t; save(); emit(); } return this.ctx(); }
   };
   window.addEventListener("hashchange",function(){
-  var isEnglish=(location.hash||"").indexOf("english")>=0;
-  if(isEnglish && state.subject!=="anglais"){
-    window.VT.setSubject("anglais");
-  }
-});
-
+    var isEnglish=(location.hash||"").indexOf("english")>=0;
+    if(isEnglish && state.subject!=="anglais"){
+      window.VT.setSubject("anglais");
+    }
+  });
+  try{ console.info("[VT-CTX] mode="+MODE, window.VT.ctx()); }catch(e){}
+})();
 
 /* ── P2-A.2 : pont VT ↔ legacy dz_de_niveau_v1 ──────────────────────────
    Objectif : éviter que plusieurs parties de l'application voient des
