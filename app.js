@@ -2409,9 +2409,12 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     setLevel:function(l){ if(SUBJECTS[state.subject].levels.indexOf(l)>=0){ state.level=l; save(); emit(); } return this.ctx(); },
     setTrack:function(t){ if(TRACKS.indexOf(t)>=0){ state.track=t; save(); emit(); } return this.ctx(); }
   };
-  window.addEventListener("hashchange",function(){ var s=(location.hash.indexOf("english")>=0)?"anglais":"allemand"; if(s!==state.subject){ window.VT.setSubject(s); } });
-  try{ console.info("[VT-CTX] mode="+MODE, window.VT.ctx()); }catch(e){}
-})();
+  window.addEventListener("hashchange",function(){
+  var isEnglish=(location.hash||"").indexOf("english")>=0;
+  if(isEnglish && state.subject!=="anglais"){
+    window.VT.setSubject("anglais");
+  }
+});
 
 
 /* ── P2-A.2 : pont VT ↔ legacy dz_de_niveau_v1 ──────────────────────────
