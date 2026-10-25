@@ -80,7 +80,8 @@
       if(existing){existing.click();return;}
       const root=document.documentElement, next=root.getAttribute('data-theme')==='dark'?'light':'dark';
       root.setAttribute('data-theme',next);
-      try{localStorage.setItem('dz_theme_v1',next);}catch(_){}
+      /* D14 anti-flash inverse la valeur stockée au démarrage. */
+      try{localStorage.setItem('dz_theme_v1',next==='dark'?'light':'dark');}catch(_){}
       const st=read();st.theme=next;save(st);
       toast(next==='dark'?'تم تفعيل المظهر الداكن':'تم تفعيل المظهر الفاتح');
     });
