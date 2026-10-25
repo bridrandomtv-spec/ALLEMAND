@@ -454,3 +454,20 @@ html[data-theme="dark"] .btn-p {
     border-inline-start: 1px solid #243b59;
   }
 }
+
+
+/* V1.5 — contraste renforcé des textes secondaires du tableau de bord */
+html[data-theme="light"] .home-main .card p,
+html[data-theme="light"] .home-side .card p,
+html[data-theme="light"] .home-side .panel p,
+html[data-theme="light"] .page-head p,
+html[data-theme="light"] .stat-l,
+html[data-theme="light"] .mini p,
+html[data-theme="light"] .subj-card .subj-l {
+  color: #4b5c72;
+}
+
+/* Conserver le contraste clair sur le bandeau bleu */
+html[data-theme="light"] .home-main .welcome p {
+  color: #f1f4f8;
+}
