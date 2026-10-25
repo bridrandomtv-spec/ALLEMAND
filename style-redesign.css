@@ -200,3 +200,44 @@ html[lang="ar"] :is(button, a, input, select, textarea):focus-visible {
     max-width: 100%;
   }
 }
+
+/* Finition interface : lisibilité, navigation et états interactifs. */
+html[lang="ar"] :is(.topbar, .tabs, .card, .panel, .subj-card, .stat, .gate-card) {
+  color-scheme: light;
+}
+html[lang="ar"] :is(button, .btn-p, .btn-o, .gtab, .tab, .cat-head, .subj-card, a) {
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease,
+              box-shadow .18s ease, transform .18s ease;
+}
+html[lang="ar"] :is(button, .btn-p, .btn-o, .gtab, .tab, .cat-head, .subj-card, a):focus-visible {
+  outline: 2px solid var(--or);
+  outline-offset: 3px;
+}
+html[lang="ar"] :is(.btn-p, .btn-o, .gtab, .tab, .cat-head, .subj-card):active {
+  transform: translateY(1px);
+}
+html[lang="ar"] ::selection {
+  background: rgba(199,164,90,.32);
+  color: inherit;
+}
+html[lang="ar"] :is(input, select, textarea)::placeholder {
+  color: var(--m);
+  opacity: .9;
+}
+html[lang="ar"] img, html[lang="ar"] svg {
+  max-width: 100%;
+}
+@media (hover: hover) and (pointer: fine) {
+  html[lang="ar"] :is(.card.mini, .subj-card):hover {
+    transform: translateY(-2px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[lang="ar"] *,
+  html[lang="ar"] *::before,
+  html[lang="ar"] *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
