@@ -1094,6 +1094,9 @@ jobs:
           print('✅ ' + str(len(FICHIERS)) + '/41 fichiers JS valides')
           PY
 
+      - name: Vérifier la syntaxe des nouveautés du tableau de bord
+        run: node --check enhancements.js
+
       - name: Valider la messagerie EduDZ (schéma RLS + client + vue)
         run: |
           node ci/check-msg.mjs
