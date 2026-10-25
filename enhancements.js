@@ -74,7 +74,7 @@
       const current=read(); current.notifications=Array.isArray(current.notifications)?current.notifications:[];
       const p=$('#lvNoticePanel'); p.hidden=!p.hidden;
       if(!p.hidden){p.innerHTML='<div class="lv-notice-head"><b>🔔 الإشعارات</b><button type="button" id="lvMarkRead">تحديد الكل كمقروء</button></div>'+
-        (current.notifications.length?current.notifications.slice(0,20).map(n=>'<div class="lv-notice '+(n.read?'':'unread')+'"><b>'+esc(n.title||'إشعار')+'</b><small>'+esc(n.date||'')+'</small></div>').join(''):'<p class="lv-empty">لا توجد إشعارات محفوظة بعد.</p>'); 
+        (current.notifications.length?current.notifications.slice(0,20).map(n=>'<div class="lv-notice '+(n.read?'':'unread')+'"><b>'+esc(n.title||'إشعار')+'</b><small>'+esc(n.date||'')+'</small></div>').join(''):'<p class="lv-empty">لا توجد إشعارات محفوظة بعد.</p>');
         const m=$('#lvMarkRead');if(m)m.onclick=()=>{current.notifications=current.notifications.map(n=>Object.assign({},n,{read:true}));save(current);card.remove();mountDashboard();$('#lvNotifications').click();};
       }
     });
@@ -85,8 +85,8 @@
       if(existing){existing.click();return;}
       const root=document.documentElement, next=root.getAttribute('data-theme')==='dark'?'light':'dark';
       root.setAttribute('data-theme',next);
-      /* D14 anti-flash inverse la valeur stockée au démarrage. */
-      try{localStorage.setItem('dz_theme_v1',next==='dark'?'light':'dark');}catch(_){}
+      /* D14 anti-flash applique directement la valeur mémorisée. */
+      try{localStorage.setItem('dz_theme_v1',next);}catch(_){}
       const st=read();st.theme=next;save(st);
       toast(next==='dark'?'تم تفعيل المظهر الداكن':'تم تفعيل المظهر الفاتح');
     });
