@@ -86,7 +86,7 @@
       if(e.key==='Tab'){
         const focusables=Array.from(dialog.querySelectorAll('button:not([disabled]),input:not([disabled]),[href],select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el=>el.getClientRects().length>0);
         if(!focusables.length){e.preventDefault();dialog.querySelector('.lv-search').focus();return;}
-        const first=focusables[0],last=focusables[focusables.length-1,active=document.activeElement;
+        const first=focusables[0],last=focusables[focusables.length-1],active=document.activeElement;
         if(e.shiftKey&&(active===first||!dialog.contains(active))){e.preventDefault();last.focus();}
         else if(!e.shiftKey&&(active===last||!dialog.contains(active))){e.preventDefault();first.focus();}
       }
