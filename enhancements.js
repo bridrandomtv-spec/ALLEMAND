@@ -14,6 +14,7 @@
     if($('#lv-enhancements-style')||$('link[href*="enhancements.css"]')) return;
     const l=document.createElement('link'); l.id='lv-enhancements-style'; l.rel='stylesheet'; l.href='enhancements.css?v=1'; document.head.appendChild(l);
   }
+  let searchReturnFocus=null;
   function ensureSearch(){
     if($('#lvSearchDialog')) return;
     const d=document.createElement('div'); d.id='lvSearchDialog'; d.className='lv-search-backdrop'; d.hidden=true;
@@ -21,7 +22,7 @@
     document.body.appendChild(d);
     d.addEventListener('click',e=>{if(e.target===d||e.target.closest('[data-lv-close]')) closeSearch();});
     $('#lvSearchInput').addEventListener('input',renderResults);
-    $('#lvSearchResults').addEventListener('click',e=>{const b=e.target.closest('[data-go]'); if(!b)return; const v=b.dataset.go; closeSearch(); if(typeof window.showPage==='function'){window.showPage(v);return;} const nav=Array.from(document.querySelectorAll('[data-go]')).find(el=>!el.closest('#lvSearchDialog')&&!el.closest('[hidden]')&&el.getAttribute('aria-hidden')!=='true'&&el.style.display!=='none'&&el.getAttribute('data-go')===v&&el.getClientRects().length>0); if(nav) nav.click(); });
+    $('#lvSearchResults').addEventListener('click',e=>{const b=e.target.closest('[data-go]'); if(!b)return; const v=b.dataset.go; closeSearch(false); if(typeof window.showPage==='function'){window.showPage(v);return;} const nav=Array.from(document.querySelectorAll('[data-go]')).find(el=>!el.closest('#lvSearchDialog')&&!el.closest('[hidden]')&&el.getAttribute('aria-hidden')!=='true'&&el.style.display!=='none'&&el.getAttribute('data-go')===v&&el.getClientRects().length>0); if(nav) nav.click(); });
   }
   function searchItems(q){
     const items=[];
@@ -40,8 +41,8 @@
     const arr=searchItems(q);
     box.innerHTML=arr.length?arr.map(x=>'<button type="button" data-go="'+esc(x.view)+'"><span>📘</span><span>'+esc(x.label)+'</span><small>فتح القسم</small></button>').join(''):'<p class="lv-empty">لا توجد نتائج مطابقة في الأقسام المعروضة.</p>';
   }
-  function openSearch(){ensureSearch();const d=$('#lvSearchDialog');d.hidden=false;$('#lvSearchInput').value='';renderResults();setTimeout(()=>$('#lvSearchInput').focus(),0);}
-  function closeSearch(){const d=$('#lvSearchDialog');if(d)d.hidden=true;}
+  function openSearch(){ensureSearch();const d=$('#lvSearchDialog');if(d.hidden)searchReturnFocus=document.activeElement;d.hidden=false;$('#lvSearchInput').value='';renderResults();setTimeout(()=>$('#lvSearchInput').focus(),0);}
+  function closeSearch(restoreFocus=true){const d=$('#lvSearchDialog');if(d&&!d.hidden)d.hidden=true;if(restoreFocus&&searchReturnFocus&&searchReturnFocus.isConnected&&typeof searchReturnFocus.focus==='function'){try{searchReturnFocus.focus({preventScroll:true});}catch(_){searchReturnFocus.focus();}}searchReturnFocus=null;}
   function mountDashboard(){
     const host=$('#accueilMemo')||$('.home-main'); if(!host||$('#lvStudentHub'))return;
     const s=read(), xp=Math.max(0,Number(s.xp)||0), lv=level(xp), pct=xp%100;
