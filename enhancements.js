@@ -10,7 +10,7 @@
   function toast(msg){ if(window.DZ&&typeof DZ.toast==='function') DZ.toast(msg); else {const t=$('#toast'); if(t){t.textContent=msg;t.hidden=false;setTimeout(()=>t.hidden=true,2600);} } }
   function level(xp){return Math.floor(Math.max(0,xp)/100)+1;}
   function ensureStyles(){
-    if($('#lv-enhancements-style')) return;
+    if($('#lv-enhancements-style')||$('link[href*="enhancements.css"]')) return;
     const l=document.createElement('link'); l.id='lv-enhancements-style'; l.rel='stylesheet'; l.href='enhancements.css?v=1'; document.head.appendChild(l);
   }
   function ensureSearch(){
@@ -82,7 +82,6 @@
     if(e.key==='Escape')closeSearch();
   });
   document.addEventListener('dz:view',e=>{if(e.detail==='accueil')setTimeout(mountDashboard,0);});
-  document.addEventListener('click',e=>{const b=e.target.closest('#tbSearch');if(b){openSearch();}});
   function boot(){ensureStyles();ensureSearch();mountDashboard();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   window.LVEnhancements={openSearch,refresh:mountDashboard,version:1};
