@@ -202,8 +202,11 @@ html[lang="ar"] :is(button, a, input, select, textarea):focus-visible {
 }
 
 /* Finition interface : lisibilité, navigation et états interactifs. */
-html[lang="ar"] :is(.topbar, .tabs, .card, .panel, .subj-card, .stat, .gate-card) {
+html[data-theme="light"][lang="ar"] :is(.topbar, .tabs, .card, .panel, .subj-card, .stat, .gate-card) {
   color-scheme: light;
+}
+html[data-theme="dark"][lang="ar"] :is(.topbar, .tabs, .card, .panel, .subj-card, .stat, .gate-card) {
+  color-scheme: dark;
 }
 html[lang="ar"] :is(button, .btn-p, .btn-o, .gtab, .tab, .cat-head, .subj-card, a) {
   transition: background-color .18s ease, border-color .18s ease, color .18s ease,
