@@ -241,3 +241,82 @@ html[lang="ar"] img, html[lang="ar"] svg {
     scroll-behavior: auto !important;
   }
 }
+
+/* V1.3 — hiérarchie visuelle du tableau de bord arabe */
+html[lang="ar"] .home-main .welcome {
+  padding: clamp(22px, 3vw, 36px);
+  border-radius: 22px;
+  isolation: isolate;
+}
+html[lang="ar"] .home-main .welcome h1 {
+  font-size: clamp(1.45rem, 2.5vw, 2.15rem);
+  line-height: 1.55;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+html[lang="ar"] .home-main .welcome p {
+  max-width: 62ch;
+  line-height: 1.9;
+}
+html[lang="ar"] .page-head {
+  gap: 10px;
+  margin-block-end: 18px;
+}
+html[lang="ar"] .page-head h1 {
+  font-size: clamp(1.25rem, 2vw, 1.8rem);
+  line-height: 1.55;
+  text-wrap: balance;
+}
+html[lang="ar"] .page-head p {
+  line-height: 1.85;
+}
+html[lang="ar"] .home-grid {
+  align-items: start;
+  gap: clamp(12px, 1.7vw, 20px);
+}
+html[lang="ar"] :is(.card, .panel, .home-side .panel) {
+  padding: clamp(15px, 2vw, 22px);
+  border-radius: var(--rd);
+}
+html[lang="ar"] :is(.card h2, .card h3, .panel h2, .panel h3) {
+  line-height: 1.6;
+  text-wrap: balance;
+}
+html[lang="ar"] .subj-card {
+  min-width: 0;
+  min-height: 112px;
+  padding: 16px;
+  border-radius: 16px;
+}
+html[lang="ar"] .subj-card .subj-n {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+html[lang="ar"] .subj-card .subj-l {
+  line-height: 1.7;
+}
+html[lang="ar"] .stat {
+  min-width: 0;
+  border-radius: 16px;
+  padding: 14px;
+}
+html[lang="ar"] .stat-n {
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+html[lang="ar"] .tabs {
+  scrollbar-width: thin;
+  scrollbar-color: var(--or) transparent;
+}
+@media (max-width: 700px) {
+  html[lang="ar"] .home-main .welcome {
+    padding: 20px 17px;
+  }
+  html[lang="ar"] .subj-card {
+    min-height: 100px;
+    padding: 13px;
+  }
+  html[lang="ar"] :is(.card, .panel, .home-side .panel) {
+    padding: 15px;
+  }
+}
