@@ -323,3 +323,134 @@ html[lang="ar"] .tabs {
     padding: 15px;
   }
 }
+
+
+/* V1.4 — harmonisation ciblée du thème sombre ; surcharge CSS uniquement. */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  background: #071426;
+  color: #edf2f8;
+}
+html[data-theme="dark"] body {
+  background-color: #071426 !important;
+  color: #edf2f8;
+  background-image:
+    radial-gradient(950px 480px at 88% -12%, rgba(199,164,90,.08), transparent 65%),
+    radial-gradient(800px 420px at -8% 100%, rgba(32,59,98,.18), transparent 62%) !important;
+}
+html[data-theme="dark"] .topbar {
+  background: rgba(7,20,38,.96) !important;
+  border-bottom: 1px solid #243b59 !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,.22);
+}
+html[data-theme="dark"] .burger,
+html[data-theme="dark"] .icon-btn,
+html[data-theme="dark"] .userchip,
+html[data-theme="dark"] .tb-search input {
+  background: #10223a;
+  border-color: #395273;
+  color: #edf2f8;
+}
+html[data-theme="dark"] .burger:hover,
+html[data-theme="dark"] .icon-btn:hover {
+  background: #243b59;
+  border-color: #c7a45a;
+}
+html[data-theme="dark"] .tabs {
+  background: #0c1b31;
+  border-color: #243b59;
+  color: #edf2f8;
+}
+html[data-theme="dark"] .tabs .tab,
+html[data-theme="dark"] .tabs .cat-head,
+html[data-theme="dark"] .tabs .tab.sub,
+html[data-theme="dark"] .tabs .tab.solo {
+  color: #c5d0df;
+}
+html[data-theme="dark"] .tabs .tab:hover,
+html[data-theme="dark"] .tabs .cat-head:hover {
+  background: rgba(255,255,255,.055);
+  color: #fff;
+}
+html[data-theme="dark"] .tabs .tab.on {
+  background: linear-gradient(135deg,#203b62,#29456d) !important;
+  border-color: rgba(199,164,90,.65);
+  color: #fff;
+  box-shadow: 0 5px 16px rgba(0,0,0,.22);
+}
+html[data-theme="dark"] .tabs .cat-head.open {
+  color: #e3cc91;
+  background: rgba(199,164,90,.1);
+}
+html[data-theme="dark"] :is(.card, .panel, .home-side .panel, .stat, .subj-card:not([class*="sc-"])) {
+  background: #0c1b31;
+  border-color: #243b59;
+  color: #edf2f8;
+  box-shadow: 0 8px 24px rgba(0,0,0,.16);
+}
+html[data-theme="dark"] :is(.card h2, .card h3, .panel h2, .panel h3, .page-head h1) {
+  color: #edf2f8;
+}
+html[data-theme="dark"] :is(.card p, .page-head p, .stat-l, .subj-card .subj-l) {
+  color: #a9b8cc;
+}
+html[data-theme="dark"] .home-main .welcome {
+  background: linear-gradient(118deg,#10213b 0%,#1b3558 62%,#2d486a 100%) !important;
+  border: 1px solid rgba(199,164,90,.55) !important;
+  color: #fff;
+  box-shadow: 0 16px 34px rgba(0,0,0,.24);
+}
+html[data-theme="dark"] .home-main .welcome h1,
+html[data-theme="dark"] .home-main .welcome p,
+html[data-theme="dark"] .home-main .welcome * {
+  color: #fff;
+}
+html[data-theme="dark"] :is(.fld input, .fld select, .fld-row input, .tb-search input, textarea, input, select) {
+  color: #edf2f8;
+  border-color: #395273;
+}
+html[data-theme="dark"] :is(.fld input, .fld select, .fld-row input, textarea, input, select) {
+  background-color: #12233c;
+}
+html[data-theme="dark"] .fld > span {
+  color: #c5d0df;
+}
+html[data-theme="dark"] :is(input, select, textarea, button, a, .card.mini, .subj-card):focus-visible {
+  outline: 3px solid rgba(227,204,145,.75);
+  outline-offset: 2px;
+}
+html[data-theme="dark"] .gate-bg {
+  background:
+    radial-gradient(900px 520px at 85% -10%,rgba(199,164,90,.09),transparent 65%),
+    linear-gradient(180deg,#0c1b31,#071426) !important;
+}
+html[data-theme="dark"] .gate-card {
+  background: linear-gradient(165deg,rgba(16,34,58,.98),rgba(11,26,45,.99)) !important;
+  border: 1px solid #395273;
+  box-shadow: 0 18px 48px rgba(0,0,0,.3);
+}
+html[data-theme="dark"] .gate-tabs {
+  background: #071426;
+  border-color: #243b59;
+}
+html[data-theme="dark"] .gtab { color: #a9b8cc; }
+html[data-theme="dark"] .gtab.on {
+  background: linear-gradient(135deg,#203b62,#29456d);
+  color: #fff;
+}
+html[data-theme="dark"] :is(.fld input, .fld select, .fld-row input, .eye) {
+  background-color: #12233c;
+  border-color: #395273;
+  color: #edf2f8;
+}
+html[data-theme="dark"] ::placeholder { color: #a9b8cc; opacity: 1; }
+html[data-theme="dark"] .btn-p {
+  background: linear-gradient(135deg,#c7a45a,#e3cc91);
+  color: #10213b;
+}
+@media (max-width: 700px) {
+  html[data-theme="dark"] .tabs {
+    background: #0c1b31;
+    border-inline-start: 1px solid #243b59;
+  }
+}
