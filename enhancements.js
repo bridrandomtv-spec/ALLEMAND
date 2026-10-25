@@ -26,6 +26,7 @@
   function searchItems(q){
     const items=[];
     document.querySelectorAll('[data-go]').forEach(el=>{
+      if(el.closest('#lvSearchDialog')) return;
       const label=(el.innerText||el.getAttribute('aria-label')||el.title||'').replace(/\s+/g,' ').trim();
       const view=el.getAttribute('data-go');
       if(label&&view&&label.length<180) items.push({label:label.slice(0,110),view,el});
@@ -79,7 +80,7 @@
   }
   document.addEventListener('keydown',e=>{
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openSearch();}
-    if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){e.preventDefault();openSearch();}
+    if(e.key==='/'&&document.activeElement&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&!document.activeElement.isContentEditable){e.preventDefault();openSearch();}
     if(e.key==='Escape')closeSearch();
   });
   document.addEventListener('dz:view',e=>{if(e.detail==='accueil')setTimeout(mountDashboard,0);});
