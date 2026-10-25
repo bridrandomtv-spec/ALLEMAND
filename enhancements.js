@@ -27,7 +27,7 @@
   function searchItems(q){
     const items=[];
     document.querySelectorAll('[data-go]').forEach(el=>{
-      if(el.closest('#lvSearchDialog') || el.closest('[hidden]') || el.getAttribute('aria-hidden')==='true' || el.style.display==='none') return;
+      if(el.closest('#lvSearchDialog') || el.closest('[hidden]') || el.getAttribute('aria-hidden')==='true' || el.style.display==='none' || el.getClientRects().length===0) return;
       const label=(el.innerText||el.getAttribute('aria-label')||el.title||'').replace(/\s+/g,' ').trim();
       const view=el.getAttribute('data-go');
       if(label&&view&&label.length<180) items.push({label:label.slice(0,110),view,el});
