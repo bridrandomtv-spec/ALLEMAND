@@ -161,3 +161,42 @@ html[data-theme="light"] .card.mini:focus-visible,html[data-theme="light"] butto
     animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important
   }
 }
+
+/* Raffinement arabe/RTL — prototype V1.1, sans toucher au JavaScript métier. */
+html[lang="ar"], html[lang="ar"] body {
+  font-family: "Tajawal", "Noto Naskh Arabic", Tahoma, Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+html[lang="ar"] :is(button, input, select, textarea) {
+  font: inherit;
+}
+html[lang="ar"] :is(input, select, textarea) {
+  text-align: start;
+}
+html[lang="ar"] :is(input[type="email"], input[type="url"], input[type="tel"], input[inputmode="email"], .de-ltr, [dir="ltr"]) {
+  unicode-bidi: plaintext;
+}
+html[lang="ar"] :is(h1, h2, h3, h4, .brand-t, .gate-title, .page-head h1) {
+  font-family: "Reem Kufi", "Tajawal", Tahoma, sans-serif;
+  line-height: 1.5;
+}
+html[lang="ar"] :is(.card, .panel, .subj-card, .stat, .gate-card) {
+  text-align: start;
+}
+html[lang="ar"] :is(.topbar-in, .page-head, .home-grid, .home-main, .home-side) {
+  min-width: 0;
+}
+html[lang="ar"] :is(button, a, [role="button"]) {
+  -webkit-tap-highlight-color: transparent;
+}
+html[lang="ar"] :is(button, a, input, select, textarea):focus-visible {
+  outline-offset: 3px;
+}
+@media (max-width: 700px) {
+  html[lang="ar"] :is(.card, .panel, .subj-card, .gate-card) {
+    overflow-wrap: anywhere;
+  }
+  html[lang="ar"] :is(input, select, textarea) {
+    max-width: 100%;
+  }
+}
