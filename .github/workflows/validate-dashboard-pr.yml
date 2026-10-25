@@ -1,0 +1,35 @@
+name: Validate dashboard enhancements (PR only)
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "enhancements.js"
+      - "enhancements.css"
+      - "index.html"
+      - ".github/workflows/validate-dashboard-pr.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    name: JavaScript syntax checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check dashboard enhancements
+        run: node --check enhancements.js
+      - name: Check main application script
+        run: node --check app.js
+      - name: Verify enhancement assets are linked
+        run: |
+          test -f enhancements.js
+          test -f enhancements.css
+          grep -F 'enhancements.css' index.html
+          grep -F 'enhancements.js' index.html
