@@ -26,8 +26,13 @@
   }
   function searchItems(q){
     const items=[];
-    document.querySelectorAll('[data-go]').forEach(el=>{
-      if(el.closest('#lvSearchDialog') || el.closest('[hidden]') || el.getAttribute('aria-hidden')==='true' || el.style.display==='none' || el.getClientRects().length===0) return;
+    document.querySelectorAll('.tabs [data-go], .home-main [data-go]').forEach(el=>{
+      const inNavigation=!!el.closest('.tabs');
+      /* Les rubriques du menu restent indexables même si le tiroir ou
+         l'accordéon est fermé. Pour le contenu du tableau de bord, garder
+         seulement les actions réellement visibles. */
+      if(el.closest('#lvSearchDialog') || el.getAttribute('aria-hidden')==='true') return;
+      if(!inNavigation && (el.closest('[hidden]') || el.style.display==='none' || el.getClientRects().length===0)) return;
       const label=(el.innerText||el.getAttribute('aria-label')||el.title||'').replace(/\s+/g,' ').trim();
       const view=el.getAttribute('data-go');
       if(label&&view&&label.length<180) items.push({label:label.slice(0,110),view,el});
