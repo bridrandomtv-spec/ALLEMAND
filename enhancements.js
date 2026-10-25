@@ -18,7 +18,7 @@
   function ensureSearch(){
     if($('#lvSearchDialog')) return;
     const d=document.createElement('div'); d.id='lvSearchDialog'; d.className='lv-search-backdrop'; d.hidden=true;
-    d.innerHTML='<section class="lv-search" role="dialog" aria-modal="true" aria-label="البحث الشامل" tabindex="-1"><header><b>🔎 البحث في المنصة</b><button type="button" data-lv-close aria-label="إغلاق">✕</button></header><input id="lvSearchInput" type="search" aria-controls="lvSearchResults" aria-label="البحث في أقسام المنصة" placeholder="ابحث عن درس أو قسم أو مادة…" autocomplete="off"><small>اختصار لوحة المفاتيح: Ctrl + K أو /</small><div id="lvSearchResults" role="listbox"></div></section>';
+    d.innerHTML='<section class="lv-search" role="dialog" aria-modal="true" aria-label="البحث الشامل" tabindex="-1"><header><b>🔎 البحث في المنصة</b><button type="button" data-lv-close aria-label="إغلاق">✕</button></header><input id="lvSearchInput" type="search" aria-controls="lvSearchResults" aria-label="البحث في أقسام المنصة" placeholder="ابحث عن درس أو قسم أو مادة…" autocomplete="off"><small>اختصار لوحة المفاتيح: Ctrl + K أو /</small><div id="lvSearchResults" aria-live="polite" aria-relevant="additions text"></div></section>';
     document.body.appendChild(d);
     d.addEventListener('click',e=>{if(e.target===d||e.target.closest('[data-lv-close]')) closeSearch();});
     $('#lvSearchInput').addEventListener('input',renderResults);
