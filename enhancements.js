@@ -9,6 +9,7 @@
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function toast(msg){ if(window.DZ&&typeof DZ.toast==='function') DZ.toast(msg); else {const t=$('#toast'); if(t){t.textContent=msg;t.hidden=false;setTimeout(()=>t.hidden=true,2600);} } }
   function level(xp){return Math.floor(Math.max(0,xp)/100)+1;}
+  function localDate(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}
   function ensureStyles(){
     if($('#lv-enhancements-style')||$('link[href*="enhancements.css"]')) return;
     const l=document.createElement('link'); l.id='lv-enhancements-style'; l.rel='stylesheet'; l.href='enhancements.css?v=1'; document.head.appendChild(l);
@@ -54,7 +55,7 @@
     host.prepend(card);
     $('#lvOpenSearch').addEventListener('click',openSearch);
     $('#lvMarkStudy').addEventListener('click',()=>{
-      const current=read(), today=new Date().toISOString().slice(0,10);
+      const current=read(), today=localDate();
       if(current.lastStudy===today){toast('تم تسجيل نشاط اليوم بالفعل؛ لا تُمنح نقاط إضافية.');return;}
       current.lastStudy=today;current.xp=(Number(current.xp)||0)+10;
       current.completed=Array.isArray(current.completed)?current.completed:[];current.completed.push({date:today,at:new Date().toISOString(),type:'manual-study'});
