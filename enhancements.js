@@ -74,9 +74,15 @@
       }
     });
     $('#lvThemeToggle').addEventListener('click',()=>{
-      const root=document.documentElement, next=root.getAttribute('data-theme')==='light'?'dark':'light';
-      root.setAttribute('data-theme',next);try{localStorage.setItem('dz_theme_v1',next==='dark'?'light':'dark');}catch(_){}
-      const st=read();st.theme=next;save(st);toast(next==='dark'?'تم تفعيل المظهر الداكن':'تم تفعيل المظهر الفاتح');
+      /* Réutiliser le contrôleur de thème déjà installé par app.js :
+         une seule source de vérité pour l'attribut et la persistance. */
+      const existing=$('#dzThemeBtn');
+      if(existing){existing.click();return;}
+      const root=document.documentElement, next=root.getAttribute('data-theme')==='dark'?'light':'dark';
+      root.setAttribute('data-theme',next);
+      try{localStorage.setItem('dz_theme_v1',next);}catch(_){}
+      const st=read();st.theme=next;save(st);
+      toast(next==='dark'?'تم تفعيل المظهر الداكن':'تم تفعيل المظهر الفاتح');
     });
   }
   document.addEventListener('keydown',e=>{
