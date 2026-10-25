@@ -80,9 +80,21 @@
     });
   }
   document.addEventListener('keydown',e=>{
+    const dialog=$('#lvSearchDialog');
+    if(dialog&&!dialog.hidden){
+      if(e.key==='Escape'){e.preventDefault();closeSearch();return;}
+      if(e.key==='Tab'){
+        const focusables=Array.from(dialog.querySelectorAll('button:not([disabled]),input:not([disabled]),[href],select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el=>el.getClientRects().length>0);
+        if(!focusables.length){e.preventDefault();dialog.querySelector('.lv-search').focus();return;}
+        const first=focusables[0],last=focusables[focusables.length-1,active=document.activeElement;
+        if(e.shiftKey&&(active===first||!dialog.contains(active))){e.preventDefault();last.focus();}
+        else if(!e.shiftKey&&(active===last||!dialog.contains(active))){e.preventDefault();first.focus();}
+      }
+      if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#lvSearchInput').focus();}
+      return;
+    }
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openSearch();}
     if(e.key==='/'&&document.activeElement&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&!document.activeElement.isContentEditable){e.preventDefault();openSearch();}
-    if(e.key==='Escape')closeSearch();
   });
   document.addEventListener('dz:view',e=>{if(e.detail==='accueil')setTimeout(mountDashboard,0);});
   function boot(){ensureStyles();ensureSearch();mountDashboard();}
