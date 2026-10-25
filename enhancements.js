@@ -44,7 +44,7 @@
   function openSearch(){ensureSearch();const d=$('#lvSearchDialog');if(d.hidden)searchReturnFocus=document.activeElement;d.hidden=false;$('#lvSearchInput').value='';renderResults();setTimeout(()=>$('#lvSearchInput').focus(),0);}
   function closeSearch(restoreFocus=true){const d=$('#lvSearchDialog');if(d&&!d.hidden)d.hidden=true;if(restoreFocus&&searchReturnFocus&&searchReturnFocus.isConnected&&typeof searchReturnFocus.focus==='function'){try{searchReturnFocus.focus({preventScroll:true});}catch(_){searchReturnFocus.focus();}}searchReturnFocus=null;}
   function mountDashboard(){
-    const host=$('#accueilMemo')||$('.home-main'); if(!host||$('#lvStudentHub'))return;
+    const host=$('.home-main')||$('#accueilMemo'); if(!host||$('#lvStudentHub'))return;
     const s=read(), xp=Math.max(0,Number(s.xp)||0), lv=level(xp), pct=xp%100;
     const completed=Array.isArray(s.completed)?s.completed.length:0;
     const unread=(Array.isArray(s.notifications)?s.notifications:[]).filter(n=>!n.read).length;
