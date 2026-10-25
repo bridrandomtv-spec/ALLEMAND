@@ -33,7 +33,7 @@
          seulement les actions réellement visibles. */
       if(el.closest('#lvSearchDialog') || el.getAttribute('aria-hidden')==='true') return;
       if(!inNavigation && (el.closest('[hidden]') || el.style.display==='none' || el.getClientRects().length===0)) return;
-      const label=(el.innerText||el.getAttribute('aria-label')||el.title||'').replace(/\s+/g,' ').trim();
+      const label=(el.innerText||'').trim() || (el.textContent||el.getAttribute('aria-label')||el.title||'').replace(/\s+/g,' ').trim();
       const view=el.getAttribute('data-go');
       if(label&&view&&label.length<180) items.push({label:label.slice(0,110),view,el});
     });
