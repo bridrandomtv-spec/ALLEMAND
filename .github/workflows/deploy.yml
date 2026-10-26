@@ -37,7 +37,7 @@ jobs:
                    unite5.js unite6.js unites3as_a.js unite10.js unite11.js unite12.js \
                    unite13.js unite14.js unite15.js unite16.js app.js modules.js live.js \
                    classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
-                   reservation.js journee.js prof.js parents.js library.js manifest.json \
+                   reservation.js journee.js prof.js parents.js library.js enhancements.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
                    ci/check-unites.mjs matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js voix.js tour.js; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
@@ -1093,6 +1093,9 @@ jobs:
               print('✅', f)
           print('✅ ' + str(len(FICHIERS)) + '/41 fichiers JS valides')
           PY
+
+      - name: Vérifier la syntaxe des nouveautés du tableau de bord
+        run: node --check enhancements.js
 
       - name: Valider la messagerie EduDZ (schéma RLS + client + vue)
         run: |

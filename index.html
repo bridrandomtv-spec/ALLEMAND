@@ -16,7 +16,7 @@
 
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-<script>/* D14 anti-flash : thème mémorisé appliqué avant le 1er paint */try{document.documentElement.setAttribute("data-theme", localStorage.getItem("dz_theme_v1")==="light"?"dark":"light");}catch(e){}</script>
+<script>/* D14 anti-flash : appliquer directement le thème mémorisé avant le 1er paint */try{var savedTheme=localStorage.getItem("dz_theme_v1");if(savedTheme==="light"||savedTheme==="dark")document.documentElement.setAttribute("data-theme",savedTheme);}catch(e){}</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/amiri/index.css" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/tajawal/index.css" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css" media="print" onload="this.media='all'">
@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
 </noscript><link rel="stylesheet" href="style.css?v=3512">
+<link rel="stylesheet" href="enhancements.css?v=1">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -668,5 +669,6 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 <script src="malakhiss.js?v=3510" defer></script>
 <script src="guide.js?v=3510" defer></script>
 <script src="library.js?v=3510" defer></script>
+<script src="enhancements.js?v=12" defer></script>
 </body>
 </html>
