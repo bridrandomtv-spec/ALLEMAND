@@ -12,11 +12,22 @@ create table if not exists public.profiles (
   created_at timestamptz default now()
 );
 alter table public.profiles enable row level security;
+
+-- Fonction SECURITY DEFINER : vérifie le rôle administrateur sans relire
+-- profiles sous sa propre policy RLS (évite l'erreur de récursion 42P17).
+create or replace function public.is_admin() returns boolean
+language sql stable security definer set search_path = public as $is_admin$
+  select exists (
+    select 1 from public.profiles
+    where id = auth.uid() and role = 'admin'
+  );
+$is_admin$;
+
 create policy "own profile" on public.profiles for select using (auth.uid() = id);
 create policy "insert own"  on public.profiles for insert with check (auth.uid() = id);
 create policy "update own"  on public.profiles for update using (auth.uid() = id);
 create policy "admin voit tout" on public.profiles for select using (
-  exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin'));
+  auth.uid() = id or public.is_admin());
 
 -- ── séances faites ──
 create table if not exists public.seances_done (
