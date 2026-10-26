@@ -24,10 +24,31 @@ language sql stable security definer set search_path = public as $is_admin$
 $is_admin$;
 
 create policy "own profile" on public.profiles for select using (auth.uid() = id);
-create policy "insert own"  on public.profiles for insert with check (auth.uid() = id);
-create policy "update own"  on public.profiles for update using (auth.uid() = id);
+create policy "insert own" on public.profiles for insert
+  with check (auth.uid() = id and role in ('eleve','parent'));
+create policy "update own" on public.profiles for update
+  using (auth.uid() = id)
+  with check (auth.uid() = id);
 create policy "admin voit tout" on public.profiles for select using (
   auth.uid() = id or public.is_admin());
+
+-- Défense en profondeur : empêcher un utilisateur de s'attribuer un rôle
+-- privilégié ou de changer lui-même de niveau via UPDATE.
+create or replace function public.protect_role_niveau()
+returns trigger language plpgsql set search_path = public as $protect_role_niveau$
+begin
+  if (new.role is distinct from old.role or new.niveau is distinct from old.niveau)
+     and not public.is_admin()
+     and current_user not in ('postgres','service_role') then
+    raise exception 'P0: role/niveau modifiables uniquement par un administrateur';
+  end if;
+  return new;
+end $protect_role_niveau$;
+
+drop trigger if exists trg_protect_role_niveau on public.profiles;
+create trigger trg_protect_role_niveau
+  before update on public.profiles
+  for each row execute function public.protect_role_niveau();
 
 -- ── séances faites ──
 create table if not exists public.seances_done (
