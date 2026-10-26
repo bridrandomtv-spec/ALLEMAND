@@ -1550,7 +1550,18 @@ function bootGate(){
     }catch(e){ AUTH.initSelects(null); }
   }
 
-  if(s){ enterApp(s); return; }
+  if(s){
+    let localAllowed = false;
+    try{
+      localAllowed = location.hostname === 'localhost' ||
+                     location.hostname === '127.0.0.1' ||
+                     new URLSearchParams(location.search).has('demo');
+    }catch(e){}
+    /* Une session locale persistante ne doit pas survivre à la sortie du mode démo.
+       Les sessions cloud doivent porter src:'cloud' et provenir de cloudAuthority(). */
+    if(s.src === 'cloud' || localAllowed){ enterApp(s); return; }
+    AUTH.logout();
+  }
 
   if(shell) shell.hidden = true;
   if(!gate) return;
