@@ -1629,6 +1629,21 @@ function bindGateEvents(){
 
   /* Auth stricte : un échec cloud ne doit jamais être transformé en session locale.
      Le local est réservé au développement local ou au mode démo explicitement demandé. */
+  async function cloudAuthority(){
+    try{
+      if(!window.SB || typeof window.SB.myProfile !== 'function') return null;
+      const p = await window.SB.myProfile();
+      /* myProfile peut retourner {ok:false}; un objet d'erreur n'est pas un profil. */
+      if(!p || p.ok === false || !p.id) return null;
+      const s = { user:(p.pseudo || 'cloud'), nom:(p.pseudo || 'Élève'), role:(p.role || 'eleve'),
+                  niveau:(p.niveau || '2AS'), filiere:(p.filiere || ''), wilaya:(p.wilaya || ''),
+                  code_wilaya:(p.code_wilaya || ''), points:0, src:'cloud', uid:p.id };
+      try{ localStorage.setItem('dz_de_session_v1', JSON.stringify(s)); }catch(e){}
+      return s;
+    }catch(e){ return null; }
+  }
+  window.cloudAuthority = cloudAuthority;
+
   function localModeExplicit(){
     try{
       return location.hostname === 'localhost' ||
