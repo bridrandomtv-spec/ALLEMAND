@@ -1337,7 +1337,7 @@ function boutonDiagnostic(){
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => { const sp = $('#splash'); if(sp) sp.classList.add('off'); }, 900);
   try{
-    bootGate();
+    bootGate().catch(errBoot => panneauPanne(errBoot, 'bootGate'));
   }catch(errBoot){
     panneauPanne(errBoot, 'bootGate');
   }
