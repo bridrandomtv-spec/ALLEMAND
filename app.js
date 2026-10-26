@@ -1539,7 +1539,7 @@ function answerQCM(btn){
 }
 
 /* ══════════ PORTAIL DE CONNEXION ══════════ */
-function bootGate(){
+async function bootGate(){
   const gate = $('#gate'), shell = $('#shell');
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
 
@@ -1555,12 +1555,34 @@ function bootGate(){
     try{
       localAllowed = location.hostname === 'localhost' ||
                      location.hostname === '127.0.0.1' ||
-                     new URLSearchParams(location.search).has('demo');
+                     new URLSearchParams(location.search).get('demo') === '1';
     }catch(e){}
-    /* Une session locale persistante ne doit pas survivre à la sortie du mode démo.
-       Les sessions cloud doivent porter src:'cloud' et provenir de cloudAuthority(). */
-    if(s.src === 'cloud' || localAllowed){ enterApp(s); return; }
-    AUTH.logout();
+    /* Le cache local ne fait jamais autorité pour une session cloud :
+       vérifier le jeton Supabase et reconstruire le rôle depuis le profil serveur. */
+    if(s.src === 'cloud'){
+      try{
+        if(window.SB && typeof window.SB.me === 'function' &&
+           typeof window.SB.myProfile === 'function'){
+          const user = await window.SB.me();
+          const profile = user && user.id ? await window.SB.myProfile() : null;
+          if(user && user.id && profile && profile.id === user.id && s.uid === user.id){
+            const verified = {
+              user:(profile.pseudo || 'cloud'), nom:(profile.pseudo || 'Élève'),
+              role:(profile.role || 'eleve'), niveau:(profile.niveau || '2AS'),
+              filiere:(profile.filiere || ''), wilaya:(profile.wilaya || ''),
+              code_wilaya:(profile.code_wilaya || ''), points:0, src:'cloud', uid:profile.id
+            };
+            try{ localStorage.setItem('dz_de_session_v1', JSON.stringify(verified)); }catch(e){}
+            enterApp(verified); return;
+          }
+        }
+      }catch(e){}
+      AUTH.logout();
+    }else if(localAllowed){
+      enterApp(s); return;
+    }else{
+      AUTH.logout();
+    }
   }
 
   if(shell) shell.hidden = true;
