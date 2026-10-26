@@ -36,7 +36,7 @@ $is_admin$;
 --    non-admin. EXCEPTION : postgres / service_role (SQL Editor, scripts
 --    serveur) pour conserver la promotion administrative manuelle. ──
 create or replace function public.protect_role_niveau()
-returns trigger language plpgsql security definer set search_path = public as $$
+returns trigger language plpgsql set search_path = public as $
 begin
   if (new.role is distinct from old.role or new.niveau is distinct from old.niveau)
      and not public.is_admin()
