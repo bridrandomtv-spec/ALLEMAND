@@ -35,7 +35,10 @@
       if(!inNavigation && (el.closest('[hidden]') || el.style.display==='none' || el.getClientRects().length===0)) return;
       const label=(el.innerText||'').trim() || (el.textContent||el.getAttribute('aria-label')||el.title||'').replace(/\s+/g,' ').trim();
       const view=el.getAttribute('data-go');
-      if(label&&view&&label.length<180) items.push({label:label.slice(0,110),view,el});
+      /* Ne proposer que les destinations réellement montées comme vues :
+         DZ.go() renvoie à l'accueil si aucun identifiant de vue ne correspond. */
+      const hasView = view && Array.from(document.querySelectorAll('.view[data-view]')).some(v => v.dataset.view === view);
+      if(label&&view&&hasView&&label.length<180) items.push({label:label.slice(0,110),view,el});
     });
     const unique=new Map(); items.forEach(x=>{const k=x.view+'|'+x.label;if(!unique.has(k))unique.set(k,x);});
     const query=q.trim().toLocaleLowerCase();
