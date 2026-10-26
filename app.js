@@ -1561,6 +1561,21 @@ async function bootGate(){
        vérifier le jeton Supabase et reconstruire le rôle depuis le profil serveur. */
     if(s.src === 'cloud'){
       try{
+        /* index.html charge supabase.js en module : attendre son événement de disponibilité
+           plutôt que de rejeter une session valide avant l'initialisation du client. */
+        if(!window.SB){
+          await new Promise(resolve => {
+            let settled = false;
+            const done = () => {
+              if(settled) return;
+              settled = true;
+              document.removeEventListener('dz:sbready', done);
+              resolve();
+            };
+            document.addEventListener('dz:sbready', done, { once:true });
+            setTimeout(done, 4000);
+          });
+        }
         if(window.SB && typeof window.SB.me === 'function' &&
            typeof window.SB.myProfile === 'function'){
           const user = await window.SB.me();
