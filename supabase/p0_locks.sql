@@ -27,12 +27,12 @@ create policy "insert own" on public.profiles
 -- ── Dépendance explicite : le script P0 peut être exécuté seul ──
 -- Même définition que dans fix_rls.sql ; CREATE OR REPLACE reste idempotent.
 create or replace function public.is_admin() returns boolean
-language sql stable security definer set search_path = public as $
+language sql stable security definer set search_path = public as $is_admin$
   select exists (
     select 1 from public.profiles
     where id = auth.uid() and role = 'admin'
   );
-$;
+$is_admin$;
 
 -- ── Garde-fou : trigger bloquant tout changement de role/niveau par un
 --    non-admin. EXCEPTION : postgres / service_role (SQL Editor, scripts
