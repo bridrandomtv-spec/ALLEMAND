@@ -1627,38 +1627,59 @@ function bindGateEvents(){
     });
   });
 
-  /* ── P0.3 : Supabase Auth = autorité PRINCIPALE quand disponible ;
-     localStorage = cache hors-ligne / compatibilité comptes locaux ── */
-async function cloudAuthority(){
-  try{
-    if(!window.SB || !window.SB.myProfile) return null;
-    const p = await window.SB.myProfile();
-    if(!p) return null;
-    const s = { user:(p.pseudo || 'cloud'), nom:(p.pseudo || 'Élève'), role:(p.role || 'eleve'),
-                niveau:(p.niveau || '2AS'), filiere:(p.filiere || ''), wilaya:(p.wilaya || ''),
-                code_wilaya:(p.code_wilaya || ''), points:0, src:'cloud', uid:p.id };
-    try{ localStorage.setItem('dz_de_session_v1', JSON.stringify(s)); }catch(e){}
-    return s;
-  }catch(e){ return null; }
-}
-window.cloudAuthority = cloudAuthority;
-const lf = $('#loginForm');
+  /* Auth stricte : un échec cloud ne doit jamais être transformé en session locale.
+     Le local est réservé au développement local ou au mode démo explicitement demandé. */
+  function localModeExplicit(){
+    try{
+      return location.hostname === 'localhost' ||
+             location.hostname === '127.0.0.1' ||
+             new URLSearchParams(location.search).has('demo');
+    }catch(e){ return false; }
+  }
+  function showAuthError(selector, message){
+    const el = $(selector);
+    if(el){ el.hidden = false; el.textContent = message; }
+    else toast(message, 'err');
+  }
+  const lf = $('#loginForm');
   if(lf) lf.addEventListener('submit', async ev => {
     ev.preventDefault();
     const err = $('#loginErr'); if(err) err.hidden = true;
-    let __cs = null;
-    if(navigator.onLine && window.SB && window.SB.login){
-      try{ const __ok = await window.SB.login($('#loginUser').value, $('#loginPass').value); if(__ok){ __cs = await cloudAuthority(); } }catch(e){ __cs = null; }
+    const email = $('#loginUser').value.trim();
+    const pass = $('#loginPass').value;
+    const demo = localModeExplicit();
+    if(navigator.onLine && window.SB && typeof window.SB.login === 'function'){
+      let result;
+      try{ result = await window.SB.login(email, pass); }
+      catch(e){ result = {ok:false, err:'تعذر الاتصال بخدمة تسجيل الدخول'}; }
+      if(result && result.ok === true){
+        const cloud = await cloudAuthority();
+        if(cloud){
+          toast('🎉 أهلاً بك ' + cloud.nom + ' — حساب سحابي (' + cloud.niveau + ')', 'ok');
+          enterApp(cloud); return;
+        }
+        showAuthError('#loginErr','تم تسجيل الدخول، لكن تعذر تحميل الملف الشخصي. أعد المحاولة أو تواصل مع الإدارة.');
+        return;
+      }
+      if(!demo){
+        showAuthError('#loginErr',(result && result.err) || 'فشل تسجيل الدخول السحابي. تحقق من بياناتك وحاول مجدداً.');
+        return;
+      }
+    }else if(!demo){
+      showAuthError('#loginErr','خدمة تسجيل الدخول غير متاحة حالياً. تحقق من اتصال الإنترنت ثم أعد المحاولة.');
+      return;
     }
-    if(__cs){ toast('🎉 أهلاً بك ' + __cs.nom + ' — حساب سحابي (' + __cs.niveau + ')', 'ok'); enterApp(__cs); return; }
-    const r = AUTH.login($('#loginUser').value, $('#loginPass').value, $('#loginClasse').value);
-    if(r.ok){ toast('🎉 أهلاً بك ' + r.session.nom + ' — القسم ' + r.session.classe_ar, 'ok');
-              enterApp(r.session); }
-    else if(err){ err.hidden = false; err.textContent = r.err; }
+    /* Démo/hors ligne locale uniquement en localhost ou avec ?demo=1 explicite. */
+    const local = AUTH.login(email, pass, $('#loginClasse').value);
+    if(local.ok){
+      toast('🎉 أهلاً بك ' + local.session.nom + ' — وضع محلي تجريبي (' + local.session.classe_ar + ')', 'ok');
+      enterApp(local.session);
+    }else if(err){ err.hidden = false; err.textContent = local.err; }
   });
 
   const bd = $('#btnDemo');
-  if(bd) bd.addEventListener('click', () => { try{ history.replaceState(null, '', location.pathname + '?demo=1' + location.hash); }catch(e){}
+  if(bd) bd.addEventListener('click', () => {
+    try{ history.replaceState(null, '', location.pathname + '?demo=1' + location.hash); }catch(e){}
     const u = $('#loginUser'), p = $('#loginPass');
     if(u) u.value = 'ahmed'; if(p) p.value = '1234';
     if(lf) lf.dispatchEvent(new Event('submit', { cancelable:true }));
@@ -1670,21 +1691,44 @@ const lf = $('#loginForm');
     const err = $('#suErr'); if(err) err.hidden = true;
     const w = String($('#suWilaya').value || '').split('|');
     const niv = $('#suNiveau').value;
-    let __sc = null;
-    if(navigator.onLine && window.SB && window.SB.signup){
-      try{ await window.SB.signup($('#suMail').value, $('#suPass').value, { pseudo:$('#suName').value, niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0] }); __sc = await cloudAuthority(); }catch(e){ __sc = null; }
+    const email = $('#suMail').value.trim();
+    const pass = $('#suPass').value;
+    const meta = { pseudo:$('#suName').value, niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0] };
+    const demo = localModeExplicit();
+    if(navigator.onLine && window.SB && typeof window.SB.signup === 'function'){
+      let result;
+      try{ result = await window.SB.signup(email, pass, meta); }
+      catch(e){ result = {ok:false, err:'تعذر الاتصال بخدمة التسجيل'}; }
+      if(result && result.ok === true){
+        const cloud = await cloudAuthority();
+        if(cloud){
+          toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + cloud.niveau, 'ok');
+          enterApp(cloud); return;
+        }
+        showAuthError('#suErr','تم إرسال طلب التسجيل. تحقق من بريدك الإلكتروني لتأكيد الحساب، ثم سجّل الدخول. إذا أكدت البريد وما زالت المشكلة قائمة، تواصل مع الإدارة.');
+        return;
+      }
+      if(!demo){
+        showAuthError('#suErr',(result && result.err) || 'فشل إنشاء الحساب السحابي. تحقق من البيانات وحاول مجدداً.');
+        return;
+      }
+    }else if(!demo){
+      showAuthError('#suErr','التسجيل يتطلب اتصالاً بالإنترنت حالياً. أعد المحاولة عند توفر الاتصال.');
+      return;
     }
-    if(__sc){ toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + __sc.niveau, 'ok'); enterApp(__sc); return; }
-    const r = AUTH.signup({
-      nom:$('#suName').value, mail:$('#suMail').value, pass:$('#suPass').value,
+    /* Création locale uniquement en environnement local / démo explicite. */
+    const local = AUTH.signup({
+      nom:$('#suName').value, mail:email, pass:pass,
       niveau:niv, filiere:$('#suFiliere').value,
-        filiere_ar: ($('#suFiliere') && $('#suFiliere').selectedOptions[0]) ? $('#suFiliere').selectedOptions[0].textContent : '',
-        specialite: ($('#suSpecialite') && !$('#suSpecialite').hidden && $('#suSpecialite').selectedOptions[0]) ? $('#suSpecialite').selectedOptions[0].textContent : '',
+      filiere_ar: ($('#suFiliere') && $('#suFiliere').selectedOptions[0]) ? $('#suFiliere').selectedOptions[0].textContent : '',
+      specialite: ($('#suSpecialite') && !$('#suSpecialite').hidden && $('#suSpecialite').selectedOptions[0]) ? $('#suSpecialite').selectedOptions[0].textContent : '',
       wilaya:w[1] || 'Bouira', code_wilaya:w[0] || '10',
       role:$('#suRole').value, classe:niv + '-1'
     });
-    if(r.ok){ toast('✅ تم إنشاء حسابك — أهلاً ' + r.session.nom, 'ok'); enterApp(r.session); }
-    else if(err){ err.hidden = false; err.textContent = r.err; }
+    if(local.ok){
+      toast('✅ تم إنشاء حساب محلي تجريبي — أهلاً ' + local.session.nom, 'ok');
+      enterApp(local.session);
+    }else if(err){ err.hidden = false; err.textContent = local.err; }
   });
 
   const uc = $('#userChip');
