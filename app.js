@@ -1592,6 +1592,10 @@ async function bootGate(){
           }
         }
       }catch(e){}
+      /* Invalider aussi la session Supabase, pas seulement son cache local. */
+      try{
+        if(window.SB && typeof window.SB.logout === 'function') await window.SB.logout();
+      }catch(e){}
       AUTH.logout();
     }else if(localAllowed){
       enterApp(s); return;
