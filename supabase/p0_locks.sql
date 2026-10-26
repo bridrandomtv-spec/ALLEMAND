@@ -9,11 +9,9 @@ drop policy if exists "update own" on public.profiles;
 create policy "update own" on public.profiles
   for update
   using (auth.uid() = id)
-  with check (
-    auth.uid() = id
-    and role   = (select p.role   from public.profiles p where p.id = auth.uid())
-    and niveau = (select p.niveau from public.profiles p where p.id = auth.uid())
-  );
+  with check (auth.uid() = id);
+-- Important : ne pas relire public.profiles dans cette policy (récursion RLS).
+-- Le trigger protect_role_niveau ci-dessous bloque les changements de rôle/niveau.
 
 -- ── P0.1 (suite) : INSERT limité — on ne naît pas admin/prof par auto-inscription ──
 drop policy if exists "insert own" on public.profiles;
