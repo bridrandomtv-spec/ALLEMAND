@@ -54,21 +54,21 @@
     const completed=Array.isArray(s.completed)?s.completed.length:0;
     const unread=(Array.isArray(s.notifications)?s.notifications:[]).filter(n=>!n.read).length;
     const card=document.createElement('section'); card.id='lvStudentHub';card.className='lv-hub card';
-    card.innerHTML='<div class="lv-hub-head"><div><small>مساحة التلميذ · تقدم محفوظ محلياً</small><h2>🎯 تقدّمك الدراسي</h2></div><button type="button" id="lvOpenSearch" class="btn btn-o btn-sm">🔎 بحث شامل <kbd>Ctrl K</kbd></button></div>'+
+    card.innerHTML='<div class="lv-hub-head"><div><small>نموذج تجريبي · بيانات محفوظة على هذا الجهاز فقط</small><h2>🎯 لوحة التقدّم التجريبية</h2></div><button type="button" id="lvOpenSearch" class="btn btn-o btn-sm">🔎 بحث شامل <kbd>Ctrl K</kbd></button></div>'+
       '<div class="lv-kpis"><div><span>⭐</span><b>'+xp+'</b><small>نقاط XP</small></div><div><span>🏅</span><b>'+lv+'</b><small>المستوى</small></div><div><span>📚</span><b>'+completed+'</b><small>أنشطة معلّمة كمكتملة</small></div><div><span>🔔</span><b>'+unread+'</b><small>إشعارات محلية</small></div></div>'+
-      '<div class="lv-level"><div><b>المستوى '+lv+'</b><span>'+pct+' / 100 XP</span></div><div class="lv-track"><i style="width:'+pct+'%"></i></div><small>تُحتسب النقاط هنا فقط pour les activités explicitement marquées comme terminées; elles ne remplacent pas les notes officielles.</small></div>'+
-      '<div class="lv-actions"><button type="button" class="btn btn-p btn-sm" id="lvMarkStudy">✅ Marquer une séance comme étudiée</button><button type="button" class="btn btn-o btn-sm" id="lvNotifications">🔔 Notifications</button><button type="button" class="btn btn-o btn-sm" id="lvThemeToggle">🌓 Thème clair / sombre</button></div>'+
+      '<div class="lv-level"><div><b>المستوى '+lv+'</b><span>'+pct+' / 100 XP</span></div><div class="lv-track"><i style="width:'+pct+'%"></i></div><small>هذه نقاط تجريبية تُضاف يدويًا، ولا تثبت متابعة درس أو إنجاز نشاط فعلي، وليست تقييمًا رسميًا.</small></div>'+
+      '<div class="lv-actions"><button type="button" class="btn btn-p btn-sm" id="lvMarkStudy">➕ تسجيل نشاط تجريبي يدويًا (+10 XP)</button><button type="button" class="btn btn-o btn-sm" id="lvNotifications">🔔 Notifications</button><button type="button" class="btn btn-o btn-sm" id="lvThemeToggle">🌓 Thème clair / sombre</button></div>'+
       '<div id="lvNoticePanel" hidden></div>';
     host.prepend(card);
     $('#lvOpenSearch').addEventListener('click',openSearch);
     $('#lvMarkStudy').addEventListener('click',()=>{
       const current=read(), today=localDate();
-      if(current.lastStudy===today){toast('تم تسجيل نشاط اليوم بالفعل؛ لا تُمنح نقاط إضافية.');return;}
+      if(current.lastStudy===today){toast('تم تسجيل النشاط التجريبي اليوم بالفعل؛ لا تُمنح نقاط إضافية.');return;}
       current.lastStudy=today;current.xp=(Number(current.xp)||0)+10;
       current.completed=Array.isArray(current.completed)?current.completed:[];current.completed.push({date:today,at:new Date().toISOString(),type:'manual-study'});
       current.notifications=Array.isArray(current.notifications)?current.notifications:[];
-      current.notifications.unshift({id:'study-'+today,title:'تم تسجيل نشاط تعلّم اليوم',date:today,read:false});
-      save(current);card.remove();mountDashboard();toast('تم حفظ نشاط اليوم محلياً (+10 XP).');
+      current.notifications.unshift({id:'study-'+today,title:'تم تسجيل نشاط تجريبي يدويًا',date:today,read:false});
+      save(current);card.remove();mountDashboard();toast('تم حفظ نشاط تجريبي محلياً (+10 XP). هذا لا يثبت متابعة درس.');
     });
     $('#lvNotifications').addEventListener('click',()=>{
       const current=read(); current.notifications=Array.isArray(current.notifications)?current.notifications:[];
