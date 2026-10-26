@@ -1696,7 +1696,7 @@ function bindGateEvents(){
     try{
       return location.hostname === 'localhost' ||
              location.hostname === '127.0.0.1' ||
-             new URLSearchParams(location.search).has('demo');
+             new URLSearchParams(location.search).get('demo') === '1';
     }catch(e){ return false; }
   }
   function showAuthError(selector, message){
