@@ -314,7 +314,7 @@ async function msgSend(convId, body){
   const r = await c.from('msg_messages').insert({ conversation_id:convId, sender_id:u.id, body:t })
     .select('id,created_at').single();
   if(r.error) return { ok:false, err:r.error.message };
-  await c.from('msg_conversations').update({ last_activity:new Date().toISOString() }).eq('id', convId);
+  // last_activity est actualisé côté PostgreSQL par msg_touch_conversation.
   return { ok:true, msg:r.data };
 }
 async function msgCanDm(otherId){
