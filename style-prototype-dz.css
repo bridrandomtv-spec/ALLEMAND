@@ -1337,3 +1337,14 @@ html[data-theme="dark"] #biblioBody .corrige-box,html[data-theme="dark"] #ragBod
 #sponsorBody #spForm a,#sponsorBody #spForm button,#sponsorBody #spOk {grid-column:1/-1}
 html[data-theme="dark"] #sponsorBody .bl-s {background:var(--nuit2,#17251e);border-color:var(--bordure,#34463b);color:var(--texte,#edf5ef)}
 @media(max-width:700px){#sponsorBody #spForm{grid-template-columns:1fr}}
+
+
+/* Compléments de paiement et bannière sponsor réellement injectée */
+#abonneBody .bl-pay {padding:16px;border:1px solid var(--bordure,#dce9e0);border-radius:15px;background:var(--surface2,#f3f7f4);line-height:1.9;margin-block:12px}
+#abonneBody .bl-pay .bl-row {justify-content:space-between;align-items:center;padding-block:5px;border-bottom:1px solid var(--bordure,#dce9e0)}
+#masarBody .bl-ad {display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:13px 16px;margin:12px 0;border:1px solid #b9dcc5;border-inline-start:4px solid #16864c;border-radius:13px;background:#edf7f0;color:#17472c}
+#masarBody .bl-ad-l {font-size:.7rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:6px;background:#d7ebdd;color:#006233}
+#masarBody .bl-ad a {font-weight:850;color:#006233;text-decoration:underline}
+html[data-theme="dark"] #abonneBody .bl-pay {background:var(--nuit2,#17251e);border-color:var(--bordure,#34463b)}
+html[data-theme="dark"] #masarBody .bl-ad {background:#183b29;border-color:#326b49;color:#d9f1e1}
+html[data-theme="dark"] #masarBody .bl-ad-l {background:#24543a;color:#d9f1e1}
