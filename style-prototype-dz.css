@@ -1523,3 +1523,7 @@ html[data-theme="dark"] #projetBody .pj-sol,html[data-theme="dark"] #reservation
  #projetBody .pj-chart{grid-template-columns:repeat(6,minmax(28px,1fr))}
  #projetBody .pj-nav{top:56px}
 }
+
+
+#projetBody .pj-cv {font-size:1.45rem;font-weight:950;color:#006233;line-height:1.2}
+#projetBody .pj-cl {font-size:.82rem;color:var(--muted,#68766d);line-height:1.5}
