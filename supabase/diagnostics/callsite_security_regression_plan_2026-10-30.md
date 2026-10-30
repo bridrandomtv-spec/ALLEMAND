@@ -69,3 +69,22 @@ Run only in a disposable database or isolated local PostgreSQL fixture. These ar
 - No migration or SQL DDL/DML executed.
 - No production code deployed.
 - No PR opened and no changes merged.
+
+
+## G. Further live catalog verification (2026-10-30)
+
+The following facts were confirmed directly from the live catalog:
+
+- `msg_attachments.message_id` is nullable.
+- `msg_attachments.statut` is NOT NULL with default `pending`, but a default alone does not prevent a client from explicitly supplying another value.
+- Live `msg_attachments` has a BEFORE INSERT trigger `msg_tr_taille` (`msg_tr_taille_fn`) and an AFTER UPDATE audit trigger. The trigger body still needs review; do not assume it enforces conversation membership or status transitions.
+- Live `msg_messages` has a BEFORE INSERT rate-limit trigger and an AFTER UPDATE logging trigger, but no catalogued BEFORE UPDATE guard trigger was found in the trigger inventory for that table.
+- Live `profiles` has multiple BEFORE UPDATE guards (`profiles_role_guard`, `profiles_scope_guard`, `profiles_verif_guard`, and legacy `protect_role_niveau`). Their interactions and execution order must be tested; duplicate guards can create unexpected denial or bypass behavior depending on definitions.
+- Live `sponsors.statut` is NOT NULL with default `en_attente`; the default does not constrain a caller from explicitly setting a different value. No sponsor trigger appeared in the inspected trigger inventory.
+- Live `wilaya_assignments` has audit triggers on INSERT and DELETE; no UPDATE trigger appeared in the inspected trigger inventory.
+
+### Updated priority
+P0: Inspect `msg_tr_taille_fn`, add attachment-to-message membership enforcement, and ensure sponsor status is server-forced.
+P0: Inspect the four profile guard function definitions and test combined behavior before touching signup.
+P1: Add a BEFORE UPDATE immutable-column guard to messages, with a deliberate moderation path.
+P1: Separate teacher scope from global moderator privileges.
