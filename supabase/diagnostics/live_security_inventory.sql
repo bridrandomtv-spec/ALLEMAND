@@ -41,7 +41,11 @@ select n.nspname as schema_name,
        p.provolatile as volatility,
        p.proconfig as function_settings,
        coalesce(array_to_string(p.proacl, ', '), '(default ACL)') as acl,
-       has_function_privilege('public', p.oid, 'EXECUTE') as public_can_execute,
+       exists (
+         select 1
+         from aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a
+         where a.grantee = 0 and a.privilege_type = 'EXECUTE'
+       ) as public_can_execute,
        has_function_privilege('anon', p.oid, 'EXECUTE') as anon_can_execute,
        has_function_privilege('authenticated', p.oid, 'EXECUTE') as authenticated_can_execute
 from pg_proc p
