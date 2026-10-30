@@ -48,29 +48,40 @@
       + '<div class="card"><b>📂 Documents privés</b>'
       + '<input type="file" id="cdFile" multiple>'
       + '<div id="cdList" class="cd-list"></div></div></div>';
+
   (async () => {
     try{
       const p = await window.SB.myProfile();
-      if(!p || p.role !== 'parent') return;
-      box.insertAdjacentHTML('beforeend',
-        '<div class="card cd-box"><h3>👨‍👩‍ ربط حساب الطفل (القرار C)</h3>'
-        + '<p class="cd-sub">اربط حساب طفلك : ما دام اشتراكه هو نشطًا، ترى '
-        + 'تقريره الأساسي من 👨‍👩‍👧 ؛ أما أدواتك المتقدمة فتبقى مرتبطة باشتراكك أنت.</p>'
-        + '<div style="display:flex;gap:8px"><input id="lienEnfantMail" type="email" placeholder="البريد الإلكتروني لحساب الطفل" style="flex:1">'
-        + '<button class="btn btn-g btn-sm" id="lienEnfantBtn">🔗 ربط</button></div>'
-        + '<div id="liensEnfantsBody" style="margin-top:8px"><div class="cd-load">⏳</div></div></div>');
-      $('#lienEnfantBtn').addEventListener('click', async () => {
-        const mail = ($('#lienEnfantMail').value || '').trim();
-        if(!mail) return;
-        try{
-          const sb = await window.SB.sb();
-          const r = await sb.rpc('link_child', { p_email: mail });
-          if(r && r.error) throw r.error;
-          toast('✅ تم ربط حساب الطفل', 'ok'); chargerLiensEnfants();
-        }catch(e){ toast('⚠️ ' + String((e && e.message) || e), 'ko'); }
-      });
-      chargerLiensEnfants();
-    }catch(e){}
+      if(!p) return;
+      if(p.role === 'parent'){
+        box.insertAdjacentHTML('beforeend',
+          '<div class="card cd-box"><h3>👨‍👩‍👧 ربط حساب الطفل</h3>'
+          + '<p class="cd-sub">أرسل طلب الربط إلى حساب التلميذ. لن يُفعّل الرابط إلا بعد موافقة التلميذ.</p>'
+          + '<div style="display:flex;gap:8px"><input id="lienEnfantMail" type="email" placeholder="البريد الإلكتروني لحساب الطفل" style="flex:1">'
+          + '<button class="btn btn-g btn-sm" id="lienEnfantBtn">إرسال الطلب</button></div>'
+          + '<div id="liensEnfantsBody" style="margin-top:8px"><div class="cd-load">⏳</div></div></div>');
+        $('#lienEnfantBtn').addEventListener('click', async () => {
+          const mail = ($('#lienEnfantMail').value || '').trim();
+          if(!mail) return;
+          const btn=$('#lienEnfantBtn'); btn.disabled=true;
+          try{
+            const r=await window.SB.requestChildLink(mail);
+            if(!r.ok) throw new Error(r.err || 'تعذر إرسال الطلب');
+            toast('📨 تم تسجيل الطلب. ينتظر موافقة التلميذ.', 'ok');
+            $('#lienEnfantMail').value='';
+            await chargerLiensEnfants();
+          }catch(e){ toast('⚠️ '+String(e.message||e), 'ko'); }
+          finally{ btn.disabled=false; }
+        });
+        await chargerLiensEnfants();
+      } else if(p.role === 'eleve'){
+        box.insertAdjacentHTML('beforeend',
+          '<div class="card cd-box"><h3>👨‍👩‍👧 طلبات ربط وليّ الأمر</h3>'
+          + '<p class="cd-sub">راجع هوية وليّ الأمر قبل قبول الطلب. قبولك هو الذي يفعّل الربط.</p>'
+          + '<div id="demandesParentsBody"><div class="cd-load">⏳</div></div></div>');
+        await chargerDemandesParents();
+      }
+    }catch(e){ console.warn('[parent-link-ui]',e); }
   })();
     $('#cdOut').addEventListener('click', async () => { await window.SB.logout(); render(); });
     $('#cdPush').addEventListener('click', async () => {
@@ -104,28 +115,69 @@
   document.addEventListener('dz:view', e => { if(e.detail === 'cloud') render(); });
 })();
 
-/* ── phase 5 : liens parent-enfant (décision C) ── */
+
+/* ── PARENT-1 : affichage des liens confirmés et des demandes ── */
 async function chargerLiensEnfants(){
-  const box = document.getElementById('liensEnfantsBody'); if(!box) return;
+  const box=document.getElementById('liensEnfantsBody'); if(!box) return;
   try{
-    const sb = await window.SB.sb();
-    const r = await sb.rpc('my_linked_children');
-    const rows = (r && r.data) || [];
-    box.innerHTML = rows.length ? rows.map(c =>
+    const [links,requests]=await Promise.all([
+      window.SB.my_linked_children(),
+      window.SB.myChildLinkRequests()
+    ]);
+    const rows=(links && links.data)||[];
+    const req=(requests && requests.rows)||[];
+    const linked=rows.length ? rows.map(c =>
       '<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><span style="flex:1">👧 '
-      + (c.pseudo || String(c.child_id).slice(0, 8)) + '</span>'
-      + '<button class="btn btn-o btn-sm" data-unlink="' + c.child_id + '">❌</button></div>').join('')
-      : '<div class="cd-sub">لا يوجد حساب طفل مرتبط</div>';
-  }catch(e){ box.innerHTML = '<div class="cd-sub">⚠️ ' + String((e && e.message) || e) + ' (هل نفّذت plans.sql؟)</div>'; }
+      + (esc(c.pseudo||String(c.child_id).slice(0,8))) + '</span>'
+      + '<button class="btn btn-o btn-sm" data-unlink="' + esc(c.child_id) + '">فك الربط</button></div>'
+    ).join('') : '<div class="cd-sub">لا توجد روابط مؤكدة بعد.</div>';
+    const pending=req.filter(x=>x.status==='pending').map(x =>
+      '<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><span style="flex:1">⏳ '
+      + esc(x.child_pseudo||String(x.child_id).slice(0,8)) + ' — في انتظار الموافقة</span>'
+      + '<button class="btn btn-o btn-sm" data-cancel-request="' + esc(x.request_id) + '">إلغاء</button></div>'
+    ).join('');
+    box.innerHTML='<b>الحسابات المرتبطة</b>'+linked
+      +'<div style="margin-top:10px"><b>طلبات الربط</b></div>'
+      +(pending||'<div class="cd-sub">لا توجد طلبات معلّقة.</div>');
+  }catch(e){ box.textContent='⚠️ '+String(e.message||e); }
 }
-document.addEventListener('click', ev => {
-  const b = ev.target.closest ? ev.target.closest('[data-unlink]') : null; if(!b) return;
-  (async () => {
+async function chargerDemandesParents(){
+  const box=document.getElementById('demandesParentsBody'); if(!box) return;
+  try{
+    const r=await window.SB.myParentLinkRequests();
+    if(!r.ok) throw new Error(r.err||'تعذر تحميل الطلبات');
+    box.innerHTML=(r.rows||[]).map(x =>
+      '<div class="cd-f" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
+      +'<span style="flex:1">👤 '+esc(x.parent_pseudo||String(x.parent_id).slice(0,8))
+      +' — <small>'+new Date(x.created_at).toLocaleDateString()+'</small></span>'
+      +'<button class="btn btn-g btn-sm" data-parent-request="'+esc(x.request_id)+'" data-accept="1">قبول</button>'
+      +'<button class="btn btn-o btn-sm" data-parent-request="'+esc(x.request_id)+'" data-accept="0">رفض</button>'
+      +'</div>'
+    ).join('')||'<div class="cd-sub">لا توجد طلبات معلّقة.</div>';
+  }catch(e){ box.textContent='⚠️ '+String(e.message||e); }
+}
+document.addEventListener('click',ev=>{
+  const unlink=ev.target.closest&&ev.target.closest('[data-unlink]');
+  const cancel=ev.target.closest&&ev.target.closest('[data-cancel-request]');
+  const respond=ev.target.closest&&ev.target.closest('[data-parent-request]');
+  if(!unlink&&!cancel&&!respond) return;
+  (async()=>{
     try{
-      const u = await window.SB.me(); const sb = await window.SB.sb();
-      const r = await sb.from('child_links').delete().eq('parent_id', u.id).eq('child_id', b.getAttribute('data-unlink'));
-      if(r && r.error) throw r.error;
-      toast('✅ تم فك الرابط', 'ok'); chargerLiensEnfants();
-    }catch(e){ toast('⚠️ ' + String((e && e.message) || e), 'ko'); }
+      if(unlink){
+        const r=await window.SB.unlinkChild(unlink.getAttribute('data-unlink'));
+        if(!r.ok) throw new Error(r.err);
+        toast('تم فك الرابط','ok'); await chargerLiensEnfants();
+      } else if(cancel){
+        const r=await window.SB.cancelParentLinkRequest(Number(cancel.getAttribute('data-cancel-request')));
+        if(!r.ok) throw new Error(r.err);
+        toast('تم إلغاء الطلب','ok'); await chargerLiensEnfants();
+      } else if(respond){
+        const id=Number(respond.getAttribute('data-parent-request'));
+        const accept=respond.getAttribute('data-accept')==='1';
+        const r=await window.SB.respondParentLinkRequest(id,accept);
+        if(!r.ok) throw new Error(r.err);
+        toast(accept?'تم تأكيد الربط':'تم رفض الطلب','ok'); await chargerDemandesParents();
+      }
+    }catch(e){ toast('⚠️ '+String(e.message||e),'ko'); }
   })();
 });
