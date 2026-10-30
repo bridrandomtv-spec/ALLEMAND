@@ -678,6 +678,24 @@ async function unlinkChild(childId){
 Object.assign(window.SB,{requestChildLink,myParentLinkRequests,myChildLinkRequests,
   respondParentLinkRequest,cancelParentLinkRequest,unlinkChild});
 
+
+/* ── ADMIN · validation des demandes de rôle parent ── */
+async function admParentRoleRequests(){
+  const c=await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r=await c.rpc('admin_parent_role_requests');
+  if(r.error) return {ok:false,err:r.error.message};
+  return {ok:true,rows:r.data||[]};
+}
+async function admDecideParentRoleRequest(requestId,approve){
+  const c=await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r=await c.rpc('admin_decide_parent_role_request',{
+    p_request_id:requestId,p_approve:!!approve
+  });
+  if(r.error) return {ok:false,err:r.error.message};
+  return r.data||{ok:true};
+}
+Object.assign(window.SB,{admParentRoleRequests,admDecideParentRoleRequest});
+
 async function admAgreements(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
   const r = await c.from('agreements').select('id,cle,version,titre,actif,cree_at').order('cle').order('version', { ascending:false });
