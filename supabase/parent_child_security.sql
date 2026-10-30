@@ -40,6 +40,10 @@ CREATE UNIQUE INDEX IF NOT EXISTS parent_role_requests_one_pending
   ON public.parent_role_requests(user_id) WHERE status='pending';
 ALTER TABLE public.parent_role_requests ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON TABLE public.parent_role_requests FROM PUBLIC,anon,authenticated;
+DROP POLICY IF EXISTS parent_role_requests_admin_read ON public.parent_role_requests;
+CREATE POLICY parent_role_requests_admin_read
+ON public.parent_role_requests FOR SELECT TO authenticated
+USING(public.is_admin());
 
 CREATE OR REPLACE FUNCTION public.admin_parent_role_requests()
 RETURNS TABLE(request_id bigint,user_id uuid,pseudo text,created_at timestamptz)
