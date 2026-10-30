@@ -4,7 +4,9 @@
    identifiant, hook JS, route, flux Supabase ou contrôle d'accès.
    ═══════════════════════════════════════════════════════════════ */
 
-:root{
+/* Variables de la nouvelle identité visuelle limitées au thème clair.
+   Le thème sombre conserve intégralement les variables de style.css. */
+html[data-theme="light"]{
   --vert:#006233;
   --vert2:#00843d;
   --vert3:#004d28;
