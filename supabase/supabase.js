@@ -325,26 +325,11 @@ async function msgCanDm(otherId){
   return { ok:true, allowed:!!r.data };
 }
 async function msgOpenDirect(otherId){
-  const can = await msgCanDm(otherId); if(!can.ok) return can;
-  if(!can.allowed) return { ok:false, err:'msg_dm_interdit' };
-  const u = await me(); const c = await sb();
-  const ex = await c.from('msg_members').select('conversation_id').in('user_id',[u.id, otherId]);
-  const ids = (ex.data || []).map(function(x){ return x.conversation_id; });
-  if(ids.length){
-    const m = await c.from('msg_members').select('conversation_id').in('conversation_id', ids).in('user_id',[u.id, otherId]);
-    const cnt = {}; (m.data || []).forEach(function(x){ cnt[x.conversation_id] = (cnt[x.conversation_id]||0)+1; });
-    for(const id of ids){
-      if(cnt[id] === 2){
-        const t = await c.from('msg_conversations').select('id').eq('id', id).eq('type','direct').maybeSingle();
-        if(t.data) return { ok:true, convId:id, existing:true };
-      }
-    }
-  }
-  const r = await c.from('msg_conversations').insert({ type:'direct', created_by:u.id, titre:'' }).select('id').single();
+  const c = await sb();
+  if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.rpc('msg_open_direct',{p_other:otherId});
   if(r.error) return { ok:false, err:r.error.message };
-  const m1 = await c.from('msg_members').insert([{conversation_id:r.data.id,user_id:u.id},{conversation_id:r.data.id,user_id:otherId}]);
-  if(m1.error) return { ok:false, err:m1.error.message };
-  return { ok:true, convId:r.data.id, existing:false };
+  return { ok:true, convId:r.data, existing:true };
 }
 async function msgGroups(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
