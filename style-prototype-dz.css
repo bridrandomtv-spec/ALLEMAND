@@ -493,3 +493,91 @@ html[data-theme="light"] .ap-grid{
 @media(max-width:700px){
   html[data-theme="light"] .ap-grid{grid-template-columns:1fr}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PROTOTYPE ADMIN — sidebar persistante sur grand écran
+   Reprend le comportement du prototype : navigation à droite,
+   toujours visible sur desktop, tiroir conservé sur mobile.
+   Les vues, routes et gestionnaires JS restent inchangés.
+   ═══════════════════════════════════════════════════════════════ */
+@media (min-width:1024px){
+  #shell{padding-right:288px}
+  #tabs.tabs{
+    position:fixed;top:0;right:0;bottom:0;left:auto;
+    width:288px;max-width:288px;height:100vh;height:100dvh;
+    display:flex;flex-direction:column;align-items:stretch;
+    gap:5px;padding:18px 14px 24px;
+    overflow-x:hidden;overflow-y:auto;
+    transform:none;right:0;
+    background:#fff;border-left:1px solid #dce8df;
+    border-right:0;box-shadow:-8px 0 28px rgba(0,55,28,.07);
+    z-index:700;
+  }
+  #tabs.tabs::before{
+    content:"🇩🇿  الثانوية الافتراضية الجزائرية\\A Lycée virtuel · منصة تعليمية";
+    display:block;white-space:pre-line;
+    padding:15px 13px 17px;margin-bottom:10px;
+    border-bottom:1px solid #dce8df;
+    color:#17472c;font-family:var(--ff-ar,'Cairo',sans-serif);
+    font-size:14px;font-weight:800;line-height:1.9;
+    background:linear-gradient(135deg,rgba(0,98,51,.07),rgba(210,16,52,.035));
+    border-radius:14px;
+  }
+  #tabs .cat-head{
+    color:#315a40;border-color:transparent;
+    background:transparent;text-align:right;
+  }
+  #tabs .cat-head:hover{background:#f0f6f2;color:#004d28}
+  #tabs .cat-head.open{
+    color:#006233;background:rgba(0,132,61,.08);
+    border-color:#dce8df;
+  }
+  #tabs .cat-body{
+    border-inline-start:2px solid #cfe0d3;
+    margin-inline-start:12px;
+  }
+  #tabs .cat-body .tab.sub,
+  #tabs .tab.solo{
+    color:#496453;text-align:right;justify-content:flex-start;
+    border-color:transparent;
+  }
+  #tabs .cat-body .tab.sub:hover,
+  #tabs .tab.solo:hover{background:#f0f6f2;color:#004d28}
+  #tabs .tab.sub.on,
+  #tabs .tab.solo.on{
+    color:#fff;background:linear-gradient(135deg,#006233,#00843d);
+    border-color:#006233;box-shadow:0 4px 12px rgba(0,98,51,.16);
+  }
+  #tabs .cat-body .tab.sub.on{margin-inline-start:8px}
+  #shell .topbar{width:100%}
+  #shell .topbar-in{max-width:none}
+  html[data-theme="dark"] #tabs.tabs{
+    background:var(--nuit2);border-left-color:var(--b);
+    box-shadow:-8px 0 28px rgba(0,0,0,.25);
+  }
+  html[data-theme="dark"] #tabs.tabs::before{
+    color:var(--t);border-bottom-color:var(--b);
+    background:linear-gradient(135deg,rgba(0,98,51,.2),rgba(210,16,52,.08));
+  }
+  html[data-theme="dark"] #tabs .cat-head{color:var(--m)}
+  html[data-theme="dark"] #tabs .cat-head:hover,
+  html[data-theme="dark"] #tabs .cat-body .tab.sub:hover,
+  html[data-theme="dark"] #tabs .tab.solo:hover{
+    background:rgba(255,255,255,.05);color:var(--a2);
+  }
+  html[data-theme="dark"] #tabs .cat-head.open{
+    color:var(--a2);background:rgba(61,220,132,.08);border-color:var(--b);
+  }
+  html[data-theme="dark"] #tabs .cat-body{border-inline-start-color:var(--b)}
+  html[data-theme="dark"] #tabs .cat-body .tab.sub,
+  html[data-theme="dark"] #tabs .tab.solo{color:var(--m)}
+  html[data-theme="dark"] #tabs .tab.sub.on,
+  html[data-theme="dark"] #tabs .tab.solo.on{
+    color:#fff;background:linear-gradient(135deg,#006233,#0a8a4a);
+    border-color:#0a8a4a;
+  }
+}
+@media (max-width:1023px){
+  #shell{padding-right:0}
+}
