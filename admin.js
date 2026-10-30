@@ -455,10 +455,10 @@ function rendreCouvertureORG1(mount){
   var TABS = [
     { id:'dash', label:'📊 لوحة القيادة · Dashboard', cards:['admDashCard'], perm:'reports.read' },
     { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard'], perm:'students.read' },
-    { id:'ops', label:'🧰 العمليات · Operations', cards:['admAgentsCard','admQueueCard','admAccordsCard','__legacy__'], perm:null },
+    { id:'ops', label:'🧰 العمليات · Operations', cards:['admAgentsCard','admQueueCard','admAccordsCard','admParentRolesCard','__legacy__'], perm:null },
     { id:'settings', label:'⚙️ الإعدادات · Settings', cards:['admSettingsCard'], perm:'settings.manage' }
   ];
-  var KNOWN = ['admDashCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
+  var KNOWN = ['admDashCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard','admParentRolesCard'];
   var state4 = { perms:[], tab:'ops' };
   function section(){ return document.querySelector('section[data-view="admin"]'); }
   function cardsOf(tab){
@@ -769,4 +769,46 @@ function rendreCouvertureORG1(mount){
     }
     window.__rec1Fix = fix;
   } catch (e) { /* l'admin doit rester vivant quoi qu'il arrive */ }
+})();
+
+
+/* ── PARENT-ROLE-1 · validation des demandes de rôle parent ── */
+(function(){
+  function escRole(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function host(){return document.querySelector('section[data-view="admin"]');}
+  async function renderParentRoleRequests(){
+    var h=host(); if(!h || !window.SB || !SB.admParentRoleRequests) return;
+    var box=document.getElementById('admParentRolesCard');
+    if(!box){box=document.createElement('div');box.id='admParentRolesCard';box.className='card';h.appendChild(box);}
+    var p=await SB.myProfile();
+    if(!p || p.role!=='admin'){box.hidden=true;return;}
+    box.hidden=false;
+    var r=await SB.admParentRoleRequests();
+    if(!r.ok){box.innerHTML='<h2>👨‍👩‍👧 Demandes de rôle parent</h2><p>⛔ '+escRole(r.err)+'</p>';return;}
+    var rows=r.rows||[];
+    box.innerHTML='<h2>👨‍👩‍👧 Demandes de rôle parent</h2>'
+      +'<p style="font-size:12px;color:var(--m)">Un compte reste élève jusqu’à validation explicite par un administrateur.</p>'
+      +(rows.length?rows.map(function(x){
+        return '<div class="rep-row"><span>'+escRole(x.pseudo||x.user_id.slice(0,8))
+          +' · '+escRole(x.created_at||'')+'</span><span style="display:flex;gap:6px">'
+          +'<button class="btn btn-sm btn-g" data-parent-role="'+x.request_id+'" data-approve="1" type="button">Approuver</button>'
+          +'<button class="btn btn-sm btn-o" data-parent-role="'+x.request_id+'" data-approve="0" type="button">Refuser</button></span></div>';
+      }).join(''):'<p>Aucune demande en attente.</p>');
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target&&e.target.closest?e.target.closest('[data-parent-role]'):null;
+    if(!b)return;
+    var id=Number(b.getAttribute('data-parent-role'));
+    var approve=b.getAttribute('data-approve')==='1';
+    SB.admDecideParentRoleRequest(id,approve).then(function(r){
+      if(!r.ok){window.alert('⛔ '+r.err);return;}
+      renderParentRoleRequests();
+    });
+  });
+  document.addEventListener('dz:view',function(e){
+    var v=(e&&e.detail&&(e.detail.view||e.detail))||'';
+    if(String(v).indexOf('admin')>=0)renderParentRoleRequests();
+  });
+  document.addEventListener('dz:sbready',function(){if((location.hash||'').replace('#','')==='admin')renderParentRoleRequests();});
+  if((location.hash||'').replace('#','')==='admin')renderParentRoleRequests();
 })();
