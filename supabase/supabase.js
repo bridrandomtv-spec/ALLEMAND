@@ -639,6 +639,12 @@ async function myChildren(){
 }
 
 /* ── PARENT-1 · demandes de rattachement confirmées par l'élève ── */
+async function myLinkedChildren(){
+  const c=await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r=await c.rpc('my_linked_children');
+  if(r.error) return {ok:false,err:r.error.message};
+  return {ok:true,rows:r.data||[]};
+}
 async function requestChildLink(email){
   const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
   const r = await c.rpc('request_child_link',{p_email:email});
@@ -675,7 +681,7 @@ async function unlinkChild(childId){
   if(r.error) return {ok:false,err:r.error.message};
   return r.data || {ok:true};
 }
-Object.assign(window.SB,{requestChildLink,myParentLinkRequests,myChildLinkRequests,
+Object.assign(window.SB,{myLinkedChildren,requestChildLink,myParentLinkRequests,myChildLinkRequests,
   respondParentLinkRequest,cancelParentLinkRequest,unlinkChild});
 
 
