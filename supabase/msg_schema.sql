@@ -89,9 +89,14 @@ create table if not exists public.msg_log (
 
 -- ── fonctions (security definer : lecture profiles/members sans fuite RLS) ──
 create or replace function public.msg_is_moderator(uid uuid) returns boolean
-language sql stable security definer set search_path = public as $$
-  select exists (select 1 from public.profiles p where p.id = uid and p.role in ('admin','prof'));
-$$;
+language sql stable security definer set search_path = pg_catalog, public as $
+  select auth.uid() is not null
+     and uid = auth.uid()
+     and (
+       public.is_admin()
+       or public.admin_can(auth.uid(), 'messaging.moderate')
+     );
+$;
 
 create or replace function public.msg_is_member(uid uuid, cid bigint) returns boolean
 language sql stable security definer set search_path = public as $$
@@ -326,8 +331,10 @@ exception when duplicate_object then null; end $$;
 -- Garde : seul un modérateur valide/refuse ; l'élève ne peut QUE passer
 -- de non_verifie/rejete → en_attente (avec matricule+section déclarés).
 create or replace function public.profiles_verif_guard() returns trigger
-language plpgsql security definer set search_path = public as $$
-declare ismod boolean;
+language plpgsql security definer set search_path = pg_catalog, public as $
+declare
+  v_actor uuid := auth.uid();
+  v_can_verify boolean := false;
 begin
   if new.verif_statut is not distinct from old.verif_statut
      and new.verif_by is not distinct from old.verif_by
@@ -335,17 +342,23 @@ begin
      and new.section is not distinct from old.section then
     return new;
   end if;
-  select exists (select 1 from public.profiles p
-                  where p.id = auth.uid() and p.role in ('admin','prof')) into ismod;
-  if ismod then return new; end if;
-  if auth.uid() = old.id
+
+  if v_actor is not null then
+    v_can_verify := public.is_admin()
+      or public.admin_can(v_actor, 'students.verify');
+  end if;
+  if v_can_verify then return new; end if;
+
+  -- Un élève peut uniquement soumettre / resoumettre son propre dossier.
+  if v_actor = old.id
      and old.verif_statut in ('non_verifie','rejete')
      and new.verif_statut = 'en_attente'
      and new.verif_by is not distinct from old.verif_by then
     return new;
   end if;
+
   raise exception 'verif_reservee_moderation';
-end $$;
+end $;
 drop trigger if exists profiles_tr_verif on public.profiles;
 create trigger profiles_tr_verif before update on public.profiles
   for each row execute function public.profiles_verif_guard();
@@ -362,11 +375,17 @@ create policy "profils visibles entre membres" on public.profiles for select to 
 -- File d'attente lisible par les modérateurs + action de validation
 drop policy if exists "profils en attente visibles modérateurs" on public.profiles;
 create policy "profils en attente visibles modérateurs" on public.profiles for select to authenticated
-  using (public.msg_is_moderator(auth.uid()) and verif_statut = 'en_attente');
+  using (
+    public.admin_can(auth.uid(), 'students.verify')
+    and verif_statut = 'en_attente'
+  );
 drop policy if exists "verif update par modérateurs" on public.profiles;
 create policy "verif update par modérateurs" on public.profiles for update to authenticated
-  using (public.msg_is_moderator(auth.uid()) and verif_statut = 'en_attente')
-  with check (public.msg_is_moderator(auth.uid()));
+  using (
+    public.admin_can(auth.uid(), 'students.verify')
+    and verif_statut = 'en_attente'
+  )
+  with check (public.admin_can(auth.uid(), 'students.verify'));
 
 -- DM : exige désormais deux profils vérifiés (remplace la version Lot 1)
 create or replace function public.msg_can_dm(a uuid, b uuid) returns boolean
