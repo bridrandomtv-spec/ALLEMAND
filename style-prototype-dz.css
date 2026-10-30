@@ -430,3 +430,51 @@ html[data-theme="light"] .recu-dup{color:#a60d2a}
   html[data-theme="light"] .jd-c{grid-template-columns:1fr}
   html[data-theme="light"] .jd-jr{grid-template-columns:58px 24px minmax(0,1fr)}
 }
+
+
+/* Remaining details in the daily schedule and teacher profile */
+html[data-theme="light"] .jd-st{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;
+  color:#53685a;background:#edf3ee;border:1px solid #dce8df;font-size:10.5px;font-weight:700;
+}
+html[data-theme="light"] .jd-st.live{color:#a60d2a;background:#fff0f2;border-color:#f0c5ce}
+html[data-theme="light"] .jd-st.done{color:#006233;background:#e8f4eb;border-color:#c9e3d0}
+html[data-theme="light"] .jd-st.soon{color:#81500b;background:#fff7e8;border-color:#f0dfbb}
+html[data-theme="light"] .jd-p{display:flex;align-items:center;gap:7px;margin-top:7px;color:#53685a;font-size:11px}
+html[data-theme="light"] .jd-av{
+  display:inline-grid;place-items:center;width:25px;height:25px;border-radius:50%;
+  color:#fff;background:#006233;font-size:10px;font-weight:800;
+}
+html[data-theme="light"] .jd-cd{color:#a60d2a;font-size:11px;font-weight:700}
+html[data-theme="light"] .jd-qi{font-size:18px}
+html[data-theme="light"] .jd-jn{margin-inline-start:auto;color:#53685a;font-size:11px}
+html[data-theme="light"] .jd-ji{font-size:18px}
+html[data-theme="light"] .jd-jm{color:#687a6e}
+html[data-theme="light"] .ia-card{margin-top:14px}
+html[data-theme="light"] .ia-h{display:flex;align-items:center;gap:10px;color:#006233}
+html[data-theme="light"] .ia-i{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#e8f4eb;font-size:20px}
+html[data-theme="light"] .ia-h i{display:block;color:#53685a;font-style:normal;font-size:11px}
+html[data-theme="light"] .ia-d{margin:12px 0;color:#53685a;line-height:1.8}
+html[data-theme="light"] .ia-or{
+  padding:10px 12px;border-inline-start:3px solid #d21034;border-radius:8px;
+  color:#6c2937;background:#fff3f4;font-weight:700;
+}
+html[data-theme="light"] .pret-b{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+html[data-theme="light"] .cit-card{margin-top:14px;line-height:1.9}
+html[data-theme="light"] .cit-ar{color:#173d28;font-size:16px;font-weight:800}
+html[data-theme="light"] .cit-de{color:#006233;font-size:17px}
+html[data-theme="light"] .cit-tr{color:#53685a}
+html[data-theme="light"] .cit-ctx{color:#687a6e;font-size:11px}
+html[data-theme="light"] .ap-card{padding:18px}
+html[data-theme="light"] .ap-h{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+html[data-theme="light"] .ap-prog{color:#006233;font-size:11px;font-weight:800}
+html[data-theme="light"] .ap-n{color:#53685a;font-size:12px}
+html[data-theme="light"] .ap-stats{display:flex;flex-wrap:wrap;gap:8px}
+html[data-theme="light"] .ap-s{
+  display:grid;grid-template-columns:auto auto;gap:3px 7px;padding:8px 10px;
+  background:#f0f5f1;border:1px solid #dce8df;border-radius:10px;
+}
+html[data-theme="light"] .ap-s i{grid-column:1/-1;color:#53685a;font-style:normal;font-size:10px}
+html[data-theme="light"] .ap-b{padding:12px;border:1px solid #dce8df;border-radius:12px;background:#f9fcfa}
+html[data-theme="light"] .ap-b h3{color:#006233}
+html[data-theme="light"] .ap-ul{padding-inline-start:20px;color:#53685a;line-height:1.8}
