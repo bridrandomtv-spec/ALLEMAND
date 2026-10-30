@@ -119,7 +119,7 @@ html[data-theme="light"] .topbar{
   box-shadow:0 3px 14px rgba(0,55,28,.045);
 }
 html[data-theme="light"] .topbar-in{color:#17251c}
-html[data-theme="light"] .sidebar,
+html[data-theme="light"] .tabs,
 html[data-theme="light"] #tabs{
   background:#fff;border-color:#dce8df;
 }
@@ -139,7 +139,7 @@ html[data-theme="light"] .tb-bell{
 }
 html[data-theme="light"] .icon-btn:hover,
 html[data-theme="light"] .tb-bell:hover{background:#e9f3ec}
-html[data-theme="light"] #userChip.tb-ava{
+html[data-theme="light"] #userChip.userchip{
   background:linear-gradient(135deg,#006233,#00843d);color:#fff;
 }
 html[data-theme="light"] .tb-badge{background:#d21034}
@@ -183,10 +183,22 @@ html[data-theme="light"] .panel p{color:inherit}
 
 /* Learning components, tags, tables and form controls */
 html[data-theme="light"] .gtab.on,
-html[data-theme="light"] .btn-primary,
-html[data-theme="light"] .btn-main,
-html[data-theme="light"] .btn-success,
-html[data-theme="light"] .today-go{background-color:#006233}
+html[data-theme="light"] .btn-p,
+html[data-theme="light"] .btn-g,
+html[data-theme="light"] .today-go{
+  color:#fff;background:linear-gradient(135deg,#006233,#00843d);
+  border-color:#006233;box-shadow:0 4px 12px rgba(0,98,51,.16);
+}
+html[data-theme="light"] .btn-w{color:#fff;background:linear-gradient(135deg,#006233,#00843d)}
+html[data-theme="light"] .btn-r{
+  color:#b51230;background:rgba(210,16,52,.07);border-color:rgba(210,16,52,.25);
+}
+html[data-theme="light"] .gstat{
+  color:#17251c;background:#f0f5f1;border-color:#dce8df;
+}
+html[data-theme="light"] .gstat-n{color:#006233}
+html[data-theme="light"] .gstat-l{color:#5e7164}
+html[data-theme="light"] .gate-foot{color:#5e7164}
 html[data-theme="light"] .gram,
 html[data-theme="light"] .reading,
 html[data-theme="light"] .bq-txt{border-right-color:#00843d}
@@ -211,13 +223,9 @@ html[data-theme="light"] .tab.on,
 html[data-theme="light"] .tab.on *{color:#fff}
 html[data-theme="light"] a{color:#006233}
 html[data-theme="light"] a:hover{color:#d21034}
-html[data-theme="light"] .badge,
 html[data-theme="light"] .pill{border-color:#dce8df}
-html[data-theme="light"] .status-error,
-html[data-theme="light"] .danger,
-html[data-theme="light"] .text-danger{color:#b51230}
-html[data-theme="light"] .btn-danger,
-html[data-theme="light"] .danger-btn{background:#d21034;color:#fff}
+html[data-theme="light"] .btn-r,
+html[data-theme="light"] .btn-r:hover{color:#b51230}
 
 /* Keep the dark mode coherent with the same national palette */
 html[data-theme="dark"]{
