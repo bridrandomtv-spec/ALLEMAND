@@ -122,14 +122,14 @@ async function chargerLiensEnfants(){
   const box=document.getElementById('liensEnfantsBody'); if(!box) return;
   try{
     const [links,requests]=await Promise.all([
-      window.SB.my_linked_children(),
+      window.SB.myChildren(),
       window.SB.myChildLinkRequests()
     ]);
-    const rows=(links && links.data)||[];
+    const rows=(links && links.children)||[];
     const req=(requests && requests.rows)||[];
     const linked=rows.length ? rows.map(c =>
       '<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><span style="flex:1">👧 '
-      + (escParentLink(c.pseudo||String(c.child_id).slice(0,8))) + '</span>'
+      + (escParentLink((c.profiles && c.profiles.pseudo)||String(c.child_id).slice(0,8))) + '</span>'
       + '<button class="btn btn-o btn-sm" data-unlink="' + escParentLink(c.child_id) + '">فك الربط</button></div>'
     ).join('') : '<div class="cd-sub">لا توجد روابط مؤكدة بعد.</div>';
     const pending=req.filter(x=>x.status==='pending').map(x =>
