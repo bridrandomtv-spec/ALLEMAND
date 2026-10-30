@@ -117,6 +117,7 @@
 
 
 /* ── PARENT-1 : affichage des liens confirmés et des demandes ── */
+const escParentLink = s => String(s==null?'':s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 async function chargerLiensEnfants(){
   const box=document.getElementById('liensEnfantsBody'); if(!box) return;
   try{
@@ -128,13 +129,13 @@ async function chargerLiensEnfants(){
     const req=(requests && requests.rows)||[];
     const linked=rows.length ? rows.map(c =>
       '<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><span style="flex:1">👧 '
-      + (esc(c.pseudo||String(c.child_id).slice(0,8))) + '</span>'
-      + '<button class="btn btn-o btn-sm" data-unlink="' + esc(c.child_id) + '">فك الربط</button></div>'
+      + (escParentLink(c.pseudo||String(c.child_id).slice(0,8))) + '</span>'
+      + '<button class="btn btn-o btn-sm" data-unlink="' + escParentLink(c.child_id) + '">فك الربط</button></div>'
     ).join('') : '<div class="cd-sub">لا توجد روابط مؤكدة بعد.</div>';
     const pending=req.filter(x=>x.status==='pending').map(x =>
       '<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><span style="flex:1">⏳ '
-      + esc(x.child_pseudo||String(x.child_id).slice(0,8)) + ' — في انتظار الموافقة</span>'
-      + '<button class="btn btn-o btn-sm" data-cancel-request="' + esc(x.request_id) + '">إلغاء</button></div>'
+      + escParentLink(x.child_pseudo||String(x.child_id).slice(0,8)) + ' — في انتظار الموافقة</span>'
+      + '<button class="btn btn-o btn-sm" data-cancel-request="' + escParentLink(x.request_id) + '">إلغاء</button></div>'
     ).join('');
     box.innerHTML='<b>الحسابات المرتبطة</b>'+linked
       +'<div style="margin-top:10px"><b>طلبات الربط</b></div>'
@@ -148,10 +149,10 @@ async function chargerDemandesParents(){
     if(!r.ok) throw new Error(r.err||'تعذر تحميل الطلبات');
     box.innerHTML=(r.rows||[]).map(x =>
       '<div class="cd-f" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
-      +'<span style="flex:1">👤 '+esc(x.parent_pseudo||String(x.parent_id).slice(0,8))
+      +'<span style="flex:1">👤 '+escParentLink(x.parent_pseudo||String(x.parent_id).slice(0,8))
       +' — <small>'+new Date(x.created_at).toLocaleDateString()+'</small></span>'
-      +'<button class="btn btn-g btn-sm" data-parent-request="'+esc(x.request_id)+'" data-accept="1">قبول</button>'
-      +'<button class="btn btn-o btn-sm" data-parent-request="'+esc(x.request_id)+'" data-accept="0">رفض</button>'
+      +'<button class="btn btn-g btn-sm" data-parent-request="'+escParentLink(x.request_id)+'" data-accept="1">قبول</button>'
+      +'<button class="btn btn-o btn-sm" data-parent-request="'+escParentLink(x.request_id)+'" data-accept="0">رفض</button>'
       +'</div>'
     ).join('')||'<div class="cd-sub">لا توجد طلبات معلّقة.</div>';
   }catch(e){ box.textContent='⚠️ '+String(e.message||e); }
