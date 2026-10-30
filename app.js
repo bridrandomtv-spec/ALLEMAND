@@ -1674,7 +1674,7 @@ const lf = $('#loginForm');
     if(navigator.onLine && window.SB && window.SB.signup){
       try{ await window.SB.signup($('#suMail').value, $('#suPass').value, { pseudo:$('#suName').value, niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0], requested_role:($('#suRole') && $('#suRole').value === 'parent') ? 'parent' : 'eleve' }); __sc = await cloudAuthority(); }catch(e){ __sc = null; }
     }
-    if(__sc){ toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + __sc.niveau, 'ok'); enterApp(__sc); return; }
+    if(__sc){ toast($('#suRole') && $('#suRole').value === 'parent' ? 'تم إنشاء الحساب كمتعلم. طلب صفة وليّ الأمر ينتظر موافقة الإدارة.' : '🎉 تم إنشاء الحساب السحابي — المستوى ' + __sc.niveau, 'ok'); enterApp(__sc); return; }
     const r = AUTH.signup({
       nom:$('#suName').value, mail:$('#suMail').value, pass:$('#suPass').value,
       niveau:niv, filiere:$('#suFiliere').value,
