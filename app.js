@@ -1672,7 +1672,7 @@ const lf = $('#loginForm');
     const niv = $('#suNiveau').value;
     let __sc = null;
     if(navigator.onLine && window.SB && window.SB.signup){
-      try{ await window.SB.signup($('#suMail').value, $('#suPass').value, { pseudo:$('#suName').value, niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0] }); __sc = await cloudAuthority(); }catch(e){ __sc = null; }
+      try{ await window.SB.signup($('#suMail').value, $('#suPass').value, { pseudo:$('#suName').value, niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0], requested_role:($('#suRole') && $('#suRole').value === 'parent') ? 'parent' : 'eleve' }); __sc = await cloudAuthority(); }catch(e){ __sc = null; }
     }
     if(__sc){ toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + __sc.niveau, 'ok'); enterApp(__sc); return; }
     const r = AUTH.signup({
