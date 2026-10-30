@@ -637,6 +637,47 @@ async function myChildren(){
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, children:r.data||[] };
 }
+
+/* ── PARENT-1 · demandes de rattachement confirmées par l'élève ── */
+async function requestChildLink(email){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('request_child_link',{p_email:email});
+  if(r.error) return {ok:false,err:r.error.message};
+  return r.data || {ok:true};
+}
+async function myParentLinkRequests(){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('my_parent_link_requests');
+  if(r.error) return {ok:false,err:r.error.message};
+  return {ok:true,rows:r.data||[]};
+}
+async function myChildLinkRequests(){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('my_child_link_requests');
+  if(r.error) return {ok:false,err:r.error.message};
+  return {ok:true,rows:r.data||[]};
+}
+async function respondParentLinkRequest(requestId,accept){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('respond_parent_link_request',{p_request_id:requestId,p_accept:!!accept});
+  if(r.error) return {ok:false,err:r.error.message};
+  return r.data || {ok:true};
+}
+async function cancelParentLinkRequest(requestId){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('cancel_parent_link_request',{p_request_id:requestId});
+  if(r.error) return {ok:false,err:r.error.message};
+  return r.data || {ok:true};
+}
+async function unlinkChild(childId){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('unlink_child',{p_child_id:childId});
+  if(r.error) return {ok:false,err:r.error.message};
+  return r.data || {ok:true};
+}
+Object.assign(window.SB,{requestChildLink,myParentLinkRequests,myChildLinkRequests,
+  respondParentLinkRequest,cancelParentLinkRequest,unlinkChild});
+
 async function admAgreements(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
   const r = await c.from('agreements').select('id,cle,version,titre,actif,cree_at').order('cle').order('version', { ascending:false });
