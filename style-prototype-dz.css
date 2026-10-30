@@ -251,3 +251,182 @@ html[data-theme="dark"] .gate-card::before{
     scroll-behavior:auto;transition-duration:.01ms;animation-duration:.01ms;animation-iteration-count:1;
   }
 }
+
+
+/* Dynamic views: teacher, parents, administration, billing and statistics */
+html[data-theme="light"] .grid2{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start;
+}
+html[data-theme="light"] .ad-box,
+html[data-theme="light"] .hero-offer,
+html[data-theme="light"] .bl-steps{
+  color:#17251c;background:#fff;border:1px solid #dce8df;border-radius:16px;
+  box-shadow:0 4px 16px rgba(0,55,28,.045);
+}
+html[data-theme="light"] .pl-row{
+  padding:9px 10px;border:1px solid #dce8df;border-radius:10px;background:#f7faf8;
+}
+html[data-theme="light"] .onglets{
+  display:flex;flex-wrap:wrap;gap:7px;padding:5px 0 12px;
+  border-bottom:1px solid #dce8df;margin-bottom:14px;
+}
+html[data-theme="light"] .ong{
+  color:#53685a;background:#f0f5f1;border:1px solid #dce8df;
+  border-radius:999px;padding:7px 13px;font:inherit;font-size:12px;cursor:pointer;
+}
+html[data-theme="light"] .ong.on{
+  color:#fff;background:#006233;border-color:#006233;
+}
+html[data-theme="light"] .privacy{
+  color:#53685a;background:#f0f5f1;border:1px solid #dce8df;
+  border-radius:12px;padding:10px 12px;
+}
+html[data-theme="light"] .filters,
+html[data-theme="light"] .filters-h{
+  color:#17251c;background:#f7faf8;border-color:#dce8df;
+}
+html[data-theme="light"] .empty,
+html[data-theme="light"] .bdd-status{
+  color:#53685a;background:#f7faf8;border-color:#dce8df;
+}
+html[data-theme="light"] .bdd-status.err{
+  color:#a60d2a;background:#fff3f4;border-color:#f0c5ce;
+}
+html[data-theme="light"] .kpi,
+html[data-theme="light"] .stk,
+html[data-theme="light"] .ad-s{
+  color:#17251c;background:#fff;border:1px solid #dce8df;border-radius:14px;
+  box-shadow:0 3px 12px rgba(0,55,28,.04);
+}
+html[data-theme="light"] .kpi-n,
+html[data-theme="light"] .stk-n{color:#006233}
+html[data-theme="light"] .kpi-l,
+html[data-theme="light"] .stk-l{color:#53685a}
+html[data-theme="light"] .rep-row,
+html[data-theme="light"] .wrow,
+html[data-theme="light"] .alert-i{
+  color:#17251c;border-color:#e2ece5;
+}
+html[data-theme="light"] .wbar,
+html[data-theme="light"] .progress{background:#e5eee8}
+html[data-theme="light"] .wbar i,
+html[data-theme="light"] .progress i{background:linear-gradient(90deg,#006233,#00843d)}
+html[data-theme="light"] .exam-next,
+html[data-theme="light"] .enf,
+html[data-theme="light"] .enf-sel,
+html[data-theme="light"] .bl-p{
+  color:#17251c;background:#fff;border-color:#dce8df;
+}
+html[data-theme="light"] .enf.on,
+html[data-theme="light"] .bl-p.bl-hot{
+  border-color:#00843d;background:#f0f7f2;box-shadow:0 0 0 1px rgba(0,132,61,.12);
+}
+html[data-theme="light"] .bl-hero,
+html[data-theme="light"] .ad-hero,
+html[data-theme="light"] .prof-hero,
+html[data-theme="light"] .par-hero,
+html[data-theme="light"] .st-hero,
+html[data-theme="light"] .classe-hero,
+html[data-theme="light"] .mat-hero,
+html[data-theme="light"] .exam-hero{
+  color:#fff;background:linear-gradient(115deg,#004d28,#006233 65%,#00843d);
+  border:0;border-radius:16px;padding:18px;box-shadow:0 10px 26px rgba(0,98,51,.14);
+}
+html[data-theme="light"] .bl-hero *,
+html[data-theme="light"] .ad-hero *,
+html[data-theme="light"] .prof-hero *,
+html[data-theme="light"] .par-hero *,
+html[data-theme="light"] .st-hero *,
+html[data-theme="light"] .classe-hero *,
+html[data-theme="light"] .mat-hero *,
+html[data-theme="light"] .exam-hero *{color:inherit}
+html[data-theme="light"] .ch-badge,
+html[data-theme="light"] .ad-sub,
+html[data-theme="light"] .bl-sub,
+html[data-theme="light"] .ch-sub{color:rgba(255,255,255,.86)}
+html[data-theme="light"] .jd-hero{
+  color:#17251c;background:#fff;border:1px solid #dce8df;border-radius:16px;padding:18px;
+  box-shadow:0 4px 16px rgba(0,55,28,.045);
+}
+html[data-theme="light"] .jd-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+html[data-theme="light"] .jd-d,
+html[data-theme="light"] .jd-meta,
+html[data-theme="light"] .jd-l,
+html[data-theme="light"] .jd-m{color:#53685a}
+html[data-theme="light"] .jd-list{display:grid;gap:10px;margin-top:14px}
+html[data-theme="light"] .jd-c{
+  display:grid;grid-template-columns:minmax(88px,auto) minmax(0,1fr);
+  gap:10px;padding:12px;border:1px solid #dce8df;border-inline-start:4px solid #00843d;
+  border-radius:13px;background:#f9fcfa;
+}
+html[data-theme="light"] .jd-c.principal{background:#f0f7f2;border-inline-start-color:#006233}
+html[data-theme="light"] .jd-hr{display:flex;align-items:center;gap:8px}
+html[data-theme="light"] .jd-hh{color:#006233;font-weight:800}
+html[data-theme="light"] .jd-ic{font-size:21px}
+html[data-theme="light"] .jd-b{min-width:0}
+html[data-theme="light"] .jd-m{font-weight:800;color:#173d28}
+html[data-theme="light"] .jd-tag{
+  display:inline-block;color:#006233;background:#e4f2e8;border-radius:999px;padding:2px 8px;font-size:10px;
+}
+html[data-theme="light"] .jd-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+html[data-theme="light"] .jd-foot{margin-top:12px;color:#53685a}
+html[data-theme="light"] .jd-quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+html[data-theme="light"] .jd-q{
+  display:flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid #dce8df;
+  border-radius:11px;background:#f0f5f1;color:#315a40;
+}
+html[data-theme="light"] .jd-jour{padding:12px 0;border-bottom:1px solid #e2ece5}
+html[data-theme="light"] .jd-jh{display:flex;gap:10px;align-items:center;color:#006233}
+html[data-theme="light"] .jd-jc{display:grid;gap:6px;margin-top:8px}
+html[data-theme="light"] .jd-jr{
+  display:grid;grid-template-columns:70px 28px minmax(0,1fr) auto;align-items:center;gap:8px;
+  padding:8px;border:1px solid #e2ece5;border-radius:9px;background:#f9fcfa;
+}
+html[data-theme="light"] .jd-jr.examen{border-inline-start:3px solid #d21034}
+html[data-theme="light"] .jd-jt{color:#006233;font-weight:700}
+html[data-theme="light"] .jd-jb{display:grid;gap:2px}
+html[data-theme="light"] .jd-jb i{font-style:normal;color:#53685a;font-size:11px}
+html[data-theme="light"] .cv-card{
+  color:#17251c;background:#fff;border:1px solid #dce8df;border-radius:16px;overflow:hidden;
+}
+html[data-theme="light"] .cv-head{
+  display:flex;align-items:center;gap:14px;padding:18px;
+  background:linear-gradient(120deg,#edf6ef,#fff);
+}
+html[data-theme="light"] .cv-av{
+  display:grid;place-items:center;width:54px;height:54px;border-radius:50%;
+  background:#006233;color:#fff;font-size:25px;flex:0 0 auto;
+}
+html[data-theme="light"] .cv-id{min-width:0}
+html[data-theme="light"] .cv-role{color:#006233;font-weight:800}
+html[data-theme="light"] .cv-de{color:#53685a}
+html[data-theme="light"] .cv-t{color:#17251c;font-weight:700}
+html[data-theme="light"] .cv-quote{color:#53685a;font-style:italic}
+html[data-theme="light"] .cv-blocs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:14px}
+html[data-theme="light"] .cv-bl{
+  padding:12px;border:1px solid #dce8df;border-radius:12px;background:#f9fcfa;
+}
+html[data-theme="light"] .cv-bi{color:#006233;font-weight:800}
+html[data-theme="light"] .cv-tags{display:flex;flex-wrap:wrap;gap:6px}
+html[data-theme="light"] .ap-card,
+html[data-theme="light"] .ia-card,
+html[data-theme="light"] .cit-card{
+  color:#17251c;background:#fff;border:1px solid #dce8df;border-radius:14px;padding:14px;
+}
+html[data-theme="light"] .ap-h,
+html[data-theme="light"] .ia-h{color:#006233;font-weight:800}
+html[data-theme="light"] .ap-cta{color:#006233;font-weight:700}
+html[data-theme="light"] .recu-wrap{
+  color:#17251c;background:#fff;border:1px solid #dce8df;border-radius:12px;
+}
+html[data-theme="light"] .recu-btn{
+  color:#006233;background:#f0f5f1;border:1px solid #cbdccf;
+}
+html[data-theme="light"] .recu-btn:hover{background:#e4f2e8}
+html[data-theme="light"] .recu-dup{color:#a60d2a}
+@media(max-width:700px){
+  html[data-theme="light"] .grid2,
+  html[data-theme="light"] .cv-blocs{grid-template-columns:1fr}
+  html[data-theme="light"] .jd-c{grid-template-columns:1fr}
+  html[data-theme="light"] .jd-jr{grid-template-columns:58px 24px minmax(0,1fr)}
+}
