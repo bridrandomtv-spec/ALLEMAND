@@ -2,7 +2,7 @@ name: CI + Deploy — ALLEMAND
 
 on:
   push:
-    branches: [ "main", "design-prototype-dz-green-red" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
