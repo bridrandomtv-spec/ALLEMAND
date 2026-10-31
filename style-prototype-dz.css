@@ -2546,3 +2546,60 @@ html:not([data-theme="light"]) #tabs .tab.on{
   background:linear-gradient(135deg,#006233,#0a8a4a)!important;
   border-color:#3b9a64!important;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE DZ-06 — finition responsive du parcours élève et du
+   tableau de bord enseignant. Sélecteurs confirmés dans masar.js
+   et prof.js ; aucune modification du rendu ou des interactions JS.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Parcours : rythme vertical régulier et largeur sans débordement. */
+#masarBody{min-width:0}
+#masarBody>.ms-hero{margin-bottom:16px}
+#masarBody>.ms-next,
+#masarBody>.ms-weak,
+#masarBody>.ms-prog{margin-bottom:13px;min-width:0}
+#masarBody .ms-w{display:grid;grid-template-columns:minmax(95px,1fr) minmax(70px,2fr) auto;gap:10px;align-items:center}
+#masarBody .ms-w .ms-bar{margin:0;min-width:0}
+#masarBody .ms-w>span:first-child{overflow-wrap:anywhere}
+
+/* Prof : grille KPI et zones de données robustes en largeur réduite. */
+[data-view="profboard"] #profBody{min-width:0}
+[data-view="profboard"] .prof-hero{min-width:0}
+[data-view="profboard"] .ph-act{align-items:center}
+[data-view="profboard"] .bdd-kpis{grid-template-columns:repeat(auto-fit,minmax(125px,1fr))}
+[data-view="profboard"] .bareme{width:100%;border-collapse:collapse}
+[data-view="profboard"] .filters .frow{min-width:0}
+[data-view="profboard"] .filters input,
+[data-view="profboard"] .filters select{max-width:100%;min-width:0}
+[data-view="profboard"] .wrow{
+  grid-template-columns:minmax(95px,1fr) minmax(70px,2fr) auto auto;
+}
+[data-view="profboard"] .alert-i{min-width:0}
+[data-view="profboard"] .alert-i>div{min-width:0;overflow-wrap:anywhere}
+
+@media(max-width:760px){
+  #masarBody>.ms-hero{align-items:flex-start;padding:16px}
+  #masarBody .ms-w{grid-template-columns:minmax(0,1fr) auto}
+  #masarBody .ms-w .ms-bar{grid-column:1/-1;grid-row:2}
+  [data-view="profboard"] .prof-hero{gap:12px;padding:15px}
+  [data-view="profboard"] .prof-hero .ph-act{width:100%}
+  [data-view="profboard"] .prof-hero .ph-act .btn{flex:1 1 auto}
+  [data-view="profboard"] .onglets{gap:5px;overflow-x:auto;flex-wrap:nowrap;scroll-snap-type:x proximity}
+  [data-view="profboard"] .ong{scroll-snap-align:start}
+  [data-view="profboard"] .bareme{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+  [data-view="profboard"] .wrow{grid-template-columns:minmax(0,1fr) auto auto;gap:7px}
+  [data-view="profboard"] .wrow .wbar{grid-column:1/-1;grid-row:2}
+}
+@media(max-width:480px){
+  #masarBody>.ms-next{padding:13px}
+  #masarBody .ms-hero .ms-crest{font-size:32px}
+  [data-view="profboard"] .bdd-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  [data-view="profboard"] .kpi{padding:11px 8px}
+  [data-view="profboard"] .filters{padding:12px}
+  [data-view="profboard"] .alert-i{align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){
+  [data-view="profboard"] .ong{scroll-behavior:auto}
+}
