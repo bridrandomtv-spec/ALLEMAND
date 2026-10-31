@@ -6,7 +6,8 @@
    → la coller dans assets/bdd/config.json → "ia_proxy"
    Sécurité : aucune clé dans le code ; CORS limité à tes origines ; quota 20 req/min. */
 const ORIGINS = ['https://allemand.brid-randomtv.workers.dev',
-                 'https://bridrandomtv-spec.github.io'];
+                 'https://bridrandomtv-spec.github.io',
+                 'https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev'];
 let HITS = [];
 const MODELS = ['@cf/meta/llama-3.3-70b-instruct-fp8-fast',
   '@cf/meta/llama-4-scout-17b-16e-instruct',
