@@ -2834,3 +2834,52 @@ html:not([data-theme="light"]) #tabs .tab.on{
  #quizBody .qz-unites,#examBody .annees-grid{grid-template-columns:1fr}
  #examBody .eh-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* PHASE DZ-11 — bibliothèque de grammaire, classe, devoirs officiels,
+   méthode de travail et résumés de cours (sélecteurs vérifiés dans les modules). */
+#gramBody,#classeBody,#officielsBody,#methodeBody,#malakhissBody{min-width:0}
+#gramBody .filters,#officielsBody .filters{min-width:0}
+#gramBody .frow,#officielsBody .frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,185px),1fr));gap:9px}
+#gramBody .fiche,#officielsBody .off-card{min-width:0;overflow-wrap:anywhere}
+#gramBody .fiche-h,#officielsBody .oc-h{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:9px}
+#gramBody .fiche-de,#officielsBody .off-head{min-width:0;overflow-wrap:anywhere;line-height:1.8}
+#gramBody .exemples{display:grid;gap:9px}
+#gramBody .ex-i{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:start}
+#gramBody .ex-de,#gramBody .ex-ar{min-width:0;overflow-wrap:anywhere;line-height:1.8}
+#classeBody .classe-hero>div{min-width:0}
+#classeBody .cren,#classeBody .lecon,#classeBody .profc{min-width:0;overflow-wrap:anywhere}
+#classeBody .cren-b,#classeBody .l-b{min-width:0}
+#classeBody .exos-list{display:grid;gap:9px}
+#classeBody .exo-i{min-width:0;overflow-wrap:anywhere}
+#officielsBody .off-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:10px}
+#officielsBody .oc-m,#officielsBody .oc-f{display:flex;flex-wrap:wrap;gap:7px}
+#officielsBody .part{min-width:0;overflow:hidden}
+#officielsBody .part-h{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+#officielsBody .q-t,#officielsBody .vf-q,#officielsBody .qr-q,#officielsBody .ord-q{line-height:1.8;overflow-wrap:anywhere}
+#officielsBody .vf-row,#officielsBody .qrow,#officielsBody .ord-row{min-width:0}
+#officielsBody .vf-b,#officielsBody .vfb{display:flex;flex-wrap:wrap;gap:7px}
+#officielsBody .txt-in{width:100%;max-width:100%;min-width:0}
+#methodeBody .mt-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,175px),1fr));gap:9px}
+#methodeBody .mt-u,#methodeBody .mt-d,#methodeBody .mt-fiche,#methodeBody .mt-sujet{min-width:0;overflow-wrap:anywhere}
+#methodeBody .mt-dh{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+#methodeBody .mt-fiches{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+#malakhissBody .mk-hero{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+#malakhissBody .mk-hero>div{min-width:0;flex:1 1 210px}
+#malakhissBody .mk-count{flex:0 0 auto}
+#malakhissBody .mk-filtre{display:flex;flex-wrap:wrap;gap:9px}
+#malakhissBody .mk-filtre select{min-width:min(100%,210px);max-width:100%}
+#malakhissBody .mk-list{display:grid;gap:10px}
+#malakhissBody .mk-c{min-width:0;overflow-wrap:anywhere}
+#malakhissBody .mk-body{line-height:1.85;overflow-wrap:anywhere}
+#malakhissBody .mk-chips{display:flex;flex-wrap:wrap;gap:7px}
+@media(max-width:760px){
+ #gramBody .ex-i{grid-template-columns:1fr}
+ #officielsBody .off-grid{grid-template-columns:1fr}
+ #methodeBody .mt-fiches{grid-template-columns:1fr}
+ #classeBody .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:420px){
+ #classeBody .info-grid{grid-template-columns:1fr}
+ #malakhissBody .mk-filtre select{width:100%}
+}
