@@ -3063,3 +3063,693 @@ html:not([data-theme="light"]) #tabs .tab.on{
   #guideBody .onb-steps,#guideBody .onb-steps2,#guideBody .gd-roles{grid-template-columns:1fr}
   #buchBody .dn-tabs{display:grid;grid-template-columns:1fr 1fr}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CORRECTIF NAVIGATION MULTIMATIÈRES — barre de liens horizontale
+   Remplace définitivement l'ancien rail latéral et la barre basse.
+   Navigation existante (#tabs/.tab) conservée pour préserver les hooks.
+   ═══════════════════════════════════════════════════════════════ */
+#shell{padding-right:0!important;padding-left:0!important}
+#tabs.tabs,
+.tabs#tabs,
+#tabs.tabs.open,
+#tabs#tabs.open{
+  position:relative!important;
+  inset:auto!important;
+  z-index:800!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:9px clamp(12px,2.5vw,32px)!important;
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  overflow-x:auto!important;
+  overflow-y:visible!important;
+  border:0!important;
+  border-bottom:1px solid var(--b,#dce8df)!important;
+  border-radius:0!important;
+  box-shadow:0 4px 16px rgba(0,0,0,.08)!important;
+  scrollbar-width:thin;
+  scroll-behavior:smooth;
+  background:var(--surface,#fff)!important;
+}
+#tabs.tabs::before{display:none!important;content:none!important}
+#tabs .tabgrp-h{display:none!important}
+#tabs .cat-head,
+#tabs .tab,
+#tabs .tab.solo,
+#tabs .tab.sub{
+  position:relative!important;
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:max-content!important;
+  min-height:42px!important;
+  margin:0!important;
+  padding:9px 14px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  border:1px solid transparent!important;
+  border-radius:10px!important;
+  background:transparent!important;
+  color:var(--texte,#24352a)!important;
+  font-size:13px!important;
+  font-weight:750!important;
+  line-height:1.35!important;
+  white-space:nowrap!important;
+  text-decoration:none!important;
+  box-shadow:none!important;
+}
+#tabs .cat-head:hover,
+#tabs .tab:hover{background:rgba(0,98,51,.08)!important;color:#006233!important}
+#tabs .cat-head.open,
+#tabs .tab.on{
+  color:#fff!important;
+  background:linear-gradient(135deg,#006233,#00843d)!important;
+  border-color:#006233!important;
+  box-shadow:0 3px 10px rgba(0,98,51,.16)!important;
+}
+#tabs .cat-body{
+  display:none!important;
+  position:absolute!important;
+  top:calc(100% + 5px)!important;
+  right:0!important;
+  left:auto!important;
+  z-index:1000!important;
+  min-width:210px!important;
+  max-width:min(340px,90vw)!important;
+  max-height:min(70vh,520px)!important;
+  overflow:auto!important;
+  padding:8px!important;
+  margin:0!important;
+  border:1px solid var(--b,#dce8df)!important;
+  border-radius:13px!important;
+  background:var(--surface,#fff)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.18)!important;
+}
+#tabs .cat-head.open + .cat-body,
+#tabs .cat-body.open{display:grid!important;gap:4px!important}
+#tabs .cat-body .tab.sub{
+  width:100%!important;
+  justify-content:flex-start!important;
+  text-align:right!important;
+  white-space:normal!important;
+}
+#tabs .cat-body .tab.sub.on{background:#006233!important;color:#fff!important}
+#tabs .cat-head{flex:0 0 auto!important}
+#tabs .cat-head.open{border-radius:10px 10px 0 0!important}
+#btnBurger{display:none!important}
+main#app{
+  max-width:1440px!important;
+  margin-inline:auto!important;
+  padding:clamp(14px,2.2vw,28px)!important;
+  padding-bottom:clamp(24px,3vw,40px)!important;
+}
+#shell .topbar{position:sticky;top:0;z-index:850}
+#shell .topbar-in{max-width:1440px!important;margin-inline:auto!important}
+html[data-theme="light"] #tabs.tabs{background:#fff!important;border-bottom-color:#dce8df!important}
+html:not([data-theme="light"]) #tabs.tabs{background:rgba(7,29,18,.98)!important;border-bottom-color:#24563a!important}
+html:not([data-theme="light"]) #tabs .cat-head,
+html:not([data-theme="light"]) #tabs .tab{color:#e4f1e8!important}
+html:not([data-theme="light"]) #tabs .cat-head:hover,
+html:not([data-theme="light"]) #tabs .tab:hover{background:#123d27!important;color:#fff!important}
+html:not([data-theme="light"]) #tabs .cat-head.open,
+html:not([data-theme="light"]) #tabs .tab.on{color:#fff!important}
+html:not([data-theme="light"]) #tabs .cat-body{background:#0b2116!important;border-color:#24563a!important}
+html:not([data-theme="light"]) #tabs .cat-body .tab.sub{color:#e4f1e8!important}
+@media(max-width:900px){
+  #tabs.tabs,#tabs.tabs.open{
+    justify-content:flex-start!important;
+    padding-inline:10px!important;
+    gap:4px!important;
+  }
+  #tabs .cat-head,#tabs .tab{min-height:40px!important;padding:8px 11px!important;font-size:12px!important}
+  main#app{padding:14px!important;padding-bottom:24px!important}
+}
+@media(max-width:600px){
+  #tabs.tabs{scroll-snap-type:x proximity!important}
+  #tabs .cat-head,#tabs .tab{scroll-snap-align:start}
+  #tabs .cat-body{position:fixed!important;top:auto!important;right:10px!important;left:10px!important;bottom:12px!important;max-width:none!important;max-height:65vh!important}
+  .topbar-in{gap:8px!important}
+}
+
+
+/* Correctif D7 : la navigation desktop est réorganisée par app.js.
+   On conserve les liens et le sélecteur de matière sans rétablir une sidebar. */
+@media(min-width:1081px){
+  #tabs.tabs{flex-wrap:wrap!important;justify-content:flex-start!important;overflow:visible!important}
+  #tabs>#d7more{position:relative!important;display:inline-flex!important;flex:0 0 auto!important;align-items:center!important}
+  #tabs>#d7more>.cat-head{margin:0!important}
+  #tabs>#d7more>#d7moreB{
+    display:none!important;position:absolute!important;top:calc(100% + 8px)!important;
+    inset-inline-end:0!important;inset-inline-start:auto!important;width:min(360px,90vw)!important;
+    max-width:90vw!important;max-height:min(70vh,560px)!important;overflow:auto!important;
+    padding:10px!important;border:1px solid var(--b,#dce8df)!important;border-radius:14px!important;
+    background:var(--surface,#fff)!important;box-shadow:0 16px 38px rgba(0,0,0,.2)!important;
+    z-index:1200!important;align-content:start!important;gap:5px!important
+  }
+  #tabs>#d7more.open>#d7moreB{display:grid!important}
+  #tabs>#d7more>#d7moreB>.cat-head{width:100%!important;justify-content:space-between!important}
+  #tabs>#d7more>#d7moreB>.cat-body{display:none!important;position:static!important;width:100%!important;max-width:none!important;max-height:none!important;box-shadow:none!important;border:0!important;padding:4px!important;background:transparent!important}
+  #tabs>#d7more>#d7moreB>.cat-head.open+.cat-body{display:grid!important}
+  #tabs>#d7more>#d7moreB .tab.sub{width:100%!important;justify-content:flex-start!important}
+  #tabs>#d7bot{display:contents!important}
+  #tabs>#d7bot .tab{width:auto!important;min-width:max-content!important}
+  #tabs>#d7bot #subjSel{
+    position:static!important;width:auto!important;max-width:180px!important;min-height:40px!important;
+    margin:0!important;padding:8px 12px!important;border-radius:10px!important;white-space:nowrap!important
+  }
+  #tabs>#d7bot #btnSound,#tabs>#d7bot #btnInstall{position:static!important;flex:0 0 auto!important}
+}
+@media(max-width:1080px){
+  #tabs .cat-body[hidden]{display:none!important}
+  #tabs .cat-head.open+.cat-body{display:grid!important;position:absolute!important;top:calc(100% + 5px)!important;z-index:1200!important}
+}
+html[data-theme="light"] #tabs>#d7more>#d7moreB{background:#fff!important}
+html:not([data-theme="light"]) #tabs>#d7more>#d7moreB{background:#0b2116!important;border-color:#24563a!important}
+html:not([data-theme="light"]) #tabs>#d7more>#d7moreB .cat-head,
+html:not([data-theme="light"]) #tabs>#d7more>#d7moreB .tab{color:#e4f1e8!important}
+
+
+/* NAV V2 — navigation intégrée au header, sans sidebar ni barre basse */
+#shell .topbar{position:sticky!important;top:0!important;z-index:1500!important;display:flex!important;flex-direction:column!important;width:100%!important;height:auto!important;margin:0!important;padding:0!important;overflow:visible!important;background:var(--surface,#fff)!important;border-bottom:1px solid var(--b)!important;box-shadow:0 5px 22px rgba(0,45,24,.08)!important}
+#shell .topbar-in{width:min(100%,1500px)!important;max-width:1500px!important;min-height:72px!important;margin:0 auto!important;padding:10px 22px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;flex-wrap:wrap!important}
+#shell #btnBurger{display:none!important}
+#shell #tabs.tabs{position:relative!important;inset:auto!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-wrap:wrap!important;gap:5px!important;width:100%!important;height:auto!important;max-height:none!important;min-height:52px!important;margin:0!important;padding:7px 18px!important;overflow:visible!important;border:0!important;border-top:1px solid rgba(0,98,51,.1)!important;border-bottom:1px solid var(--b)!important;border-radius:0!important;background:var(--surface,#fff)!important;box-shadow:none!important;z-index:1501!important}
+#shell #tabs.tabs:before{display:none!important}
+#shell #tabs>.tab,#shell #tabs>.cat-head{position:relative!important;inset:auto!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;min-height:40px!important;margin:0!important;padding:8px 13px!important;border:1px solid transparent!important;border-radius:9px!important;background:transparent!important;color:var(--t)!important;font-size:13px!important;font-weight:800!important;white-space:nowrap!important;box-shadow:none!important}
+#shell #tabs>.tab:hover,#shell #tabs>.cat-head:hover{background:rgba(0,98,51,.08)!important;color:#006233!important}
+#shell #tabs>.tab.on,#shell #tabs>.cat-head.open{background:#006233!important;color:#fff!important;border-color:#006233!important}
+#shell #tabs>.cat-body{display:none!important;position:absolute!important;top:calc(100% - 2px)!important;right:10px!important;left:auto!important;z-index:1600!important;min-width:230px!important;width:max-content!important;max-width:min(360px,92vw)!important;max-height:65vh!important;overflow:auto!important;padding:9px!important;margin:0!important;border:1px solid var(--b)!important;border-radius:0 0 13px 13px!important;background:var(--surface,#fff)!important;box-shadow:0 14px 32px rgba(0,0,0,.16)!important}
+#shell #tabs>.cat-head.open+.cat-body,#shell #tabs>.cat-body.open{display:grid!important;gap:4px!important}
+#shell #tabs>.cat-body .tab.sub{display:flex!important;justify-content:flex-start!important;width:100%!important;min-width:0!important;min-height:39px!important;padding:8px 11px!important;white-space:normal!important;text-align:right!important;border-radius:8px!important;color:var(--t)!important}
+#shell #tabs>.cat-body .tab.sub.on{background:#006233!important;color:#fff!important}
+#shell .section-bar{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;flex-wrap:wrap!important;width:min(100%,1500px)!important;max-width:1500px!important;margin:0 auto!important;padding:7px 16px 9px!important}
+#shell main#app{position:relative!important;inset:auto!important;width:100%!important;max-width:1500px!important;margin:0 auto!important;padding:clamp(16px,2.4vw,34px)!important;padding-bottom:40px!important}
+html:not([data-theme="light"]) #shell .topbar,html:not([data-theme="light"]) #shell #tabs.tabs{background:#071d12!important}
+html:not([data-theme="light"]) #shell #tabs>.tab,html:not([data-theme="light"]) #shell #tabs>.cat-head{color:#eaf5ee!important}
+html:not([data-theme="light"]) #shell #tabs>.cat-body{background:#0b2116!important;border-color:#24563a!important}
+html:not([data-theme="light"]) #shell #tabs>.cat-body .tab.sub{color:#eaf5ee!important}
+@media(max-width:900px){#shell .topbar-in{min-height:62px!important;gap:8px!important}#shell .tb-search{order:5;flex:1 1 100%!important;max-width:none!important}#shell #tabs.tabs{justify-content:flex-start!important;flex-wrap:nowrap!important;min-height:48px!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;scrollbar-width:thin!important}#shell #tabs>.cat-body{position:fixed!important;top:auto!important;right:10px!important;left:10px!important;bottom:12px!important;width:auto!important;max-width:none!important;max-height:65vh!important;border-radius:14px!important}#shell main#app{padding:14px!important;padding-bottom:26px!important}#shell .section-bar{justify-content:flex-start!important;overflow-x:auto!important;flex-wrap:nowrap!important}}
+@media(max-width:480px){#shell .brand-s{display:none!important}#shell .topbar-in{padding:8px 10px!important}#shell #tabs>.tab,#shell #tabs>.cat-head{font-size:12px!important;padding:7px 10px!important}}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM V5 — LYCEE VIRTUEL ALGERIEN
+   Couche de finition visuelle additive, sans changement du DOM ou du JS.
+   Scope: application authentifiée (#shell). Retrait possible en supprimant
+   ce bloc. Palette institutionnelle DZ, surfaces sobres, hiérarchie nette.
+   ═══════════════════════════════════════════════════════════════════════ */
+#shell{
+  --dz-ink:#17251d;
+  --dz-muted:#65766b;
+  --dz-line:#dce8df;
+  --dz-surface:#fff;
+  --dz-soft:#f4f8f5;
+  --dz-green:#006233;
+  --dz-green-2:#078548;
+  --dz-red:#d21034;
+  --dz-shadow:0 12px 34px rgba(15,55,31,.065);
+  --dz-shadow-hover:0 18px 38px rgba(15,55,31,.11);
+}
+html[data-theme="light"] #shell{background:#f5f8f6;color:var(--dz-ink)}
+html[data-theme="light"] #shell .topbar{
+  background:rgba(255,255,255,.97)!important;
+  border-bottom:1px solid rgba(0,98,51,.12)!important;
+  box-shadow:0 5px 22px rgba(18,55,32,.055)!important;
+}
+#shell .flagline,#shell .foot-flag{background:linear-gradient(90deg,#006233 0 33.333%,#fff 33.333% 66.666%,#d21034 66.666%)!important}
+#shell .brand{gap:11px}
+#shell .brand-crest{
+  display:grid;place-items:center;width:44px;height:44px;border-radius:14px;
+  background:linear-gradient(145deg,#e8f4ec,#fff);border:1px solid #d7e8dc;
+  box-shadow:0 4px 12px rgba(0,98,51,.08);font-size:25px
+}
+#shell .brand-t{font-weight:950;letter-spacing:-.035em}
+#shell .brand-s{color:#718176}
+#shell .topbar-in{min-height:70px;gap:13px}
+#shell .tb-search input{
+  min-height:42px;border-radius:13px!important;border:1px solid #dce8df!important;
+  background:#f7faf8!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.025)
+}
+#shell .tb-search input:focus{background:#fff!important;border-color:#078548!important;box-shadow:0 0 0 4px rgba(7,133,72,.10)!important}
+#shell .icon-btn,#shell .tb-bell{
+  width:39px;height:39px;border-radius:12px!important;border:1px solid #dce8df!important;
+  background:#f7faf8!important;transition:transform .18s ease,background .18s ease,box-shadow .18s ease
+}
+#shell .icon-btn:hover,#shell .tb-bell:hover{transform:translateY(-1px);background:#eaf4ed!important;box-shadow:0 5px 13px rgba(0,98,51,.09)}
+#shell .userchip{border-radius:12px!important;font-weight:800}
+#shell #tabs.tabs{
+  gap:6px!important;padding:9px clamp(12px,2.5vw,30px)!important;
+  border:0!important;background:#fff!important;box-shadow:inset 0 1px #f0f4f1;
+}
+#shell #tabs>.tab,#shell #tabs>.cat-head{
+  min-height:38px;padding:8px 13px!important;border-radius:11px!important;
+  font-size:12.5px!important;font-weight:800!important;transition:background .16s ease,color .16s ease,transform .16s ease
+}
+#shell #tabs>.tab:hover,#shell #tabs>.cat-head:hover{transform:translateY(-1px)}
+#shell #tabs>.tab.on{box-shadow:0 5px 13px rgba(0,98,51,.16)!important}
+#shell .section-bar{border-top:1px solid #f0f4f1;background:#fbfdfb}
+#shell main#app{max-width:1440px;margin-inline:auto;padding:clamp(16px,2.3vw,30px)!important}
+#shell .view{min-width:0}
+#shell .page-head{margin-bottom:18px}
+#shell .page-head h1{font-weight:950;letter-spacing:-.035em;line-height:1.5}
+#shell .page-head p{color:#68796e;line-height:1.8}
+#shell .card,#shell .panel,#shell .profc,#shell .sujet-box{
+  border-radius:17px!important;box-shadow:var(--dz-shadow)!important;
+  transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease
+}
+#shell .card:hover{border-color:#c8ddce}
+#shell .panel{overflow:hidden}
+#shell .panel-h{font-weight:900;letter-spacing:-.015em}
+#shell button,#shell .btn{font-weight:800}
+#shell .btn{border-radius:12px!important;min-height:39px;transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}
+#shell .btn:hover{transform:translateY(-1px);filter:saturate(1.05)}
+#shell input,#shell select,#shell textarea{border-radius:11px}
+#shell :focus-visible{outline:3px solid rgba(7,133,72,.30)!important;outline-offset:2px!important}
+
+/* Accueil: un tableau de bord éditorial, sans supprimer aucun widget */
+html[data-theme="light"] #shell [data-view="accueil"] .home-grid{
+  gap:18px;align-items:start
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main,
+html[data-theme="light"] #shell [data-view="accueil"] .home-side{min-width:0;gap:15px}
+html[data-theme="light"] #shell [data-view="accueil"] .welcome{
+  position:relative;isolation:isolate;overflow:hidden;
+  min-height:178px;padding:clamp(22px,3vw,34px)!important;
+  border:0!important;border-radius:22px!important;
+  background:linear-gradient(118deg,#064b2c 0%,#006233 57%,#0b8b4a 100%)!important;
+  box-shadow:0 16px 34px rgba(0,98,51,.18)!important;color:#fff!important
+}
+html[data-theme="light"] #shell [data-view="accueil"] .welcome:after{
+  content:"";position:absolute;z-index:-1;inset:auto -45px -115px auto;width:310px;height:310px;
+  border:1px solid rgba(255,255,255,.14);border-radius:50%;
+  box-shadow:0 0 0 26px rgba(255,255,255,.045),0 0 0 54px rgba(255,255,255,.035)
+}
+html[data-theme="light"] #shell [data-view="accueil"] .welcome *{color:#fff}
+html[data-theme="light"] #shell [data-view="accueil"] .welcome-art{opacity:.72;filter:saturate(.75)}
+html[data-theme="light"] #shell [data-view="accueil"] #statsHome{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px
+}
+html[data-theme="light"] #shell [data-view="accueil"] #statsHome .stat{
+  min-width:0;padding:15px 12px;border:1px solid #e1ebe4;border-radius:16px;
+  background:linear-gradient(155deg,#fff,#f8fbf9);box-shadow:0 5px 16px rgba(20,60,36,.045)
+}
+html[data-theme="light"] #shell [data-view="accueil"] #statsHome .stat-n{
+  font-size:clamp(21px,2.4vw,29px);font-weight:950;color:#006233;letter-spacing:-.04em
+}
+html[data-theme="light"] #shell [data-view="accueil"] #statsHome .stat-l{font-size:11px;color:#6b7b70}
+html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .grid3{
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:9px
+}
+html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .mini{
+  min-height:76px;padding:11px;border:1px solid #e1ebe4;border-radius:14px;
+  background:#fbfdfb;box-shadow:none
+}
+html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .mini:hover{
+  border-color:#8fbea0;box-shadow:0 8px 18px rgba(0,98,51,.08);transform:translateY(-2px)
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-side .panel{
+  border:1px solid #e1ebe4;background:#fff;box-shadow:0 5px 18px rgba(20,60,36,.045)!important
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-side .panel-h{
+  padding:14px 16px 10px;border-bottom:1px solid #eef3ef;color:#315d41
+}
+
+/* Tables, listes et zones de travail */
+html[data-theme="light"] #shell table{border-color:#e0e9e3}
+html[data-theme="light"] #shell th{background:#edf5ef;color:#245a39}
+html[data-theme="light"] #shell td{border-color:#e7eee9}
+html[data-theme="light"] #shell .empty,
+html[data-theme="light"] #shell .privacy{border-radius:13px}
+html[data-theme="light"] #shell .ong{border-radius:10px;font-weight:800}
+html[data-theme="light"] #shell .ong.on{box-shadow:0 4px 12px rgba(0,98,51,.12)}
+
+/* Sombre: contraste conservé, même rythme visuel */
+html[data-theme="dark"] #shell .topbar{background:rgba(8,25,16,.97)!important;border-bottom-color:#244332!important}
+html[data-theme="dark"] #shell #tabs.tabs{background:#0a1c12!important}
+html[data-theme="dark"] #shell #tabs>.tab,html[data-theme="dark"] #shell #tabs>.cat-head{border-radius:11px!important}
+html[data-theme="dark"] #shell [data-view="accueil"] .welcome{
+  border-radius:22px!important;box-shadow:0 16px 34px rgba(0,0,0,.22)!important
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat{border-radius:16px!important}
+
+/* Responsive */
+@media(max-width:900px){
+  #shell .topbar-in{min-height:62px;gap:8px}
+  #shell main#app{padding:14px!important}
+  html[data-theme="light"] #shell [data-view="accueil"] .home-grid{gap:12px}
+}
+@media(max-width:760px){
+  html[data-theme="light"] #shell [data-view="accueil"] #statsHome{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  html[data-theme="light"] #shell [data-view="accueil"] .welcome{min-height:0;padding:21px 17px!important;border-radius:18px!important}
+  #shell .brand-crest{width:38px;height:38px}
+  #shell #tabs>.tab,#shell #tabs>.cat-head{min-height:36px;padding:7px 10px!important}
+}
+@media(max-width:420px){
+  #shell .topbar-in{padding:8px 10px}
+  #shell .brand-s{display:none}
+  html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .grid3{gap:7px}
+  html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .mini{padding:9px;min-height:68px}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell *,#shell *:before,#shell *:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM V5.1 — FINITION DES ESPACES PEDAGOGIQUES
+   Sélecteurs repris des feuilles existantes (matières, parcours, examens,
+   professeur, parents, administration, RAG, bibliothèque et quiz).
+   Aucun contenu, identifiant, événement ou flux métier n'est modifié.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Catalogue des matières */
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-hero{
+  border:1px solid #d8e8dc;border-radius:22px;
+  background:radial-gradient(360px 190px at 100% 0,rgba(210,16,52,.075),transparent 70%),linear-gradient(135deg,#edf7ef,#fff 72%);
+  box-shadow:0 14px 34px rgba(0,55,28,.065)
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-crest{
+  border-radius:17px;background:linear-gradient(145deg,#dff0e4,#f5faf6);
+  box-shadow:inset 0 0 0 1px rgba(0,98,51,.06)
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-card,
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-c{
+  border:1px solid #e0ebe3;border-radius:17px;background:#fff;
+  box-shadow:0 7px 20px rgba(20,60,36,.045);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-card:hover,
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-c:hover{
+  transform:translateY(-3px);border-color:#a9cdb4;box-shadow:0 14px 28px rgba(0,98,51,.09)
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-st{
+  border:1px solid #e0ebe3;border-radius:14px;background:linear-gradient(150deg,#fff,#f5faf6)
+}
+
+/* Parcours et suivi de progression */
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-hero{
+  border:1px solid #d8e8dc;border-radius:21px;
+  background:linear-gradient(120deg,#edf7ef,#fff 70%);
+  box-shadow:0 12px 28px rgba(0,55,28,.055)
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-next,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-weak,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-prog{
+  border:1px solid #e0ebe3;border-radius:17px;background:#fff;box-shadow:0 6px 18px rgba(20,60,36,.04)
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-bar,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .wbar{
+  overflow:hidden;border-radius:99px;background:#eaf1ec
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-bar>*,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .wbar>*{border-radius:99px}
+
+/* Espace professeur */
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .kpi{
+  border:1px solid #dfebe2;border-radius:16px;background:linear-gradient(150deg,#fff,#f7faf8);
+  box-shadow:0 6px 18px rgba(20,60,36,.045)
+}
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .kpi b,
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .kpi strong{color:#006233}
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .filters{
+  border:1px solid #e0ebe3;border-radius:16px;background:#f8fbf9
+}
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .ong{
+  border:1px solid transparent;border-radius:11px;background:#f0f6f2;font-weight:850
+}
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .ong.on{
+  background:#006233;color:#fff;box-shadow:0 5px 14px rgba(0,98,51,.17)
+}
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .alert-i{
+  border:1px solid #e3ebe5;border-radius:13px;background:#fff
+}
+
+/* Espace parents */
+html[data-theme="light"] #shell [data-view="parents"] #parentsBody .par-hero{
+  border:1px solid #dce9df;border-radius:19px;
+  background:linear-gradient(120deg,#eff7f1,#fff 72%);box-shadow:0 10px 25px rgba(0,55,28,.05)
+}
+html[data-theme="light"] #shell [data-view="parents"] #parentsBody .enf{
+  border:1px solid #e0ebe3;border-radius:14px;background:#fff;
+  transition:border-color .18s ease,box-shadow .18s ease
+}
+html[data-theme="light"] #shell [data-view="parents"] #parentsBody .enf.on{
+  border-color:#078548;box-shadow:0 0 0 3px rgba(7,133,72,.09)
+}
+html[data-theme="light"] #shell [data-view="parents"] #parentsBody .rep-row{
+  border-bottom:1px solid #edf2ee
+}
+
+/* Administration : densité maîtrisée et repères de contrôle */
+html[data-theme="light"] #shell [data-view="admin"] #adminBody .ad-hero{
+  border:1px solid #dce9df;border-radius:20px;
+  background:radial-gradient(300px 160px at 100% 0,rgba(210,16,52,.06),transparent 70%),linear-gradient(120deg,#edf7ef,#fff 75%);
+  box-shadow:0 12px 28px rgba(0,55,28,.055)
+}
+html[data-theme="light"] #shell [data-view="admin"] #adminBody .ad-s{
+  border:1px solid #e0ebe3;border-radius:14px;background:#fff
+}
+html[data-theme="light"] #shell [data-view="admin"] #adminBody .ad-grid>.card,
+html[data-theme="light"] #shell [data-view="admin"] #adminBody .card.ad-box{
+  border:1px solid #e0ebe3;border-radius:16px;background:#fff;box-shadow:0 6px 18px rgba(20,60,36,.04)
+}
+html[data-theme="light"] #shell [data-view="admin"] #adminBody .ad-tab{
+  border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid #e0ebe3;border-radius:12px
+}
+
+/* Assistant IA / RAG */
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rg-hero{
+  padding:17px;border:1px solid #dce9df;border-radius:18px;
+  background:linear-gradient(120deg,#eff7f1,#fff)
+}
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rg-box,
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rg-out,
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rg-ped,
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rg-non{
+  border:1px solid #e0ebe3;border-radius:16px;background:#fff;box-shadow:0 6px 18px rgba(20,60,36,.04)
+}
+html[data-theme="light"] #shell [data-view="rag"] #ragBody textarea{
+  min-height:112px;line-height:1.8;background:#fbfdfb;border-color:#dce8df
+}
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rq-c{
+  border:1px solid #e1ebe4;border-radius:13px;background:#fff
+}
+
+/* Examens, quiz et banque d'exercices */
+html[data-theme="light"] #shell #examBody .exam-hero{
+  border:1px solid #dce9df;border-radius:20px;
+  background:linear-gradient(120deg,#edf7ef,#fff 72%);box-shadow:0 10px 26px rgba(0,55,28,.05)
+}
+html[data-theme="light"] #shell #examBody .eh-st{
+  border:1px solid #e0ebe3;border-radius:13px;background:#fff
+}
+html[data-theme="light"] #shell #examBody .annee,
+html[data-theme="light"] #shell #examBody .theme,
+html[data-theme="light"] #shell #examBody .sujet-box{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff;
+  box-shadow:0 5px 16px rgba(20,60,36,.035);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease
+}
+html[data-theme="light"] #shell #examBody .annee:hover,
+html[data-theme="light"] #shell #examBody .theme:hover,
+html[data-theme="light"] #shell #examBody .sujet-box:hover{
+  transform:translateY(-2px);border-color:#a9cdb4;box-shadow:0 10px 22px rgba(0,98,51,.07)
+}
+html[data-theme="light"] #shell #quizBody .qz-q,
+html[data-theme="light"] #shell #quizBody .qz-u{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff
+}
+html[data-theme="light"] #shell #quizBody .qz-o{
+  border:1px solid #e0ebe3;border-radius:12px;background:#fbfdfb;transition:border-color .15s ease,background .15s ease
+}
+html[data-theme="light"] #shell #quizBody .qz-o:hover{border-color:#8fbea0;background:#f1f8f3}
+
+/* Bibliothèque, corpus et ressources */
+html[data-theme="light"] #shell #biblioBody .bl-c,
+html[data-theme="light"] #shell #libraryBody .lib-c,
+html[data-theme="light"] #shell #corpusBody .cp-c{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff;box-shadow:0 5px 16px rgba(20,60,36,.035)
+}
+html[data-theme="light"] #shell #corpusBody .cp-hero{
+  padding:16px;border:1px solid #dce9df;border-radius:18px;background:linear-gradient(120deg,#eff7f1,#fff)
+}
+
+/* Sombre : mêmes composants, surfaces et séparateurs adaptés */
+html[data-theme="dark"] #shell [data-view="matieres"] .mat-hero,
+html[data-theme="dark"] #shell [data-view="masar"] .ms-hero,
+html[data-theme="dark"] #shell [data-view="profboard"] .par-hero,
+html[data-theme="dark"] #shell [data-view="admin"] .ad-hero,
+html[data-theme="dark"] #shell #examBody .exam-hero,
+html[data-theme="dark"] #shell #corpusBody .cp-hero,
+html[data-theme="dark"] #shell #ragBody .rg-hero{
+  border:1px solid #294b36;border-radius:19px;background:linear-gradient(120deg,#102b1b,#102319)
+}
+html[data-theme="dark"] #shell #quizBody .qz-o{border-color:#294b36;border-radius:11px}
+html[data-theme="dark"] #shell #quizBody .qz-o:hover{border-color:#4b9164;background:#123522}
+
+/* Petits écrans : les blocs de travail ne doivent pas déborder */
+@media(max-width:760px){
+  #shell [data-view="matieres"] #matieresBody .mat-hero,
+  #shell [data-view="masar"] #masarBody .ms-hero,
+  #shell [data-view="admin"] #adminBody .ad-hero,
+  #shell #examBody .exam-hero{border-radius:16px}
+  #shell [data-view="profboard"] #profBody .filters{gap:8px}
+  #shell [data-view="profboard"] #profBody .filters>*{max-width:100%;min-width:0}
+  #shell [data-view="parents"] #parentsBody .par-hero{border-radius:16px}
+  #shell #ragBody .rq-opts{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell [data-view="matieres"] #matieresBody *,
+  #shell [data-view="parents"] #parentsBody *,
+  #shell [data-view="profboard"] #profBody *,
+  #shell #examBody *,#shell #quizBody *{transition:none!important}
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM V5.2 — AUTHENTIFICATION + VUES REELLES
+   Sélecteurs contrôlés dans index.html et les modules JS du dépôt.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Portail d'accès : cohérence avec l'identité de la plateforme */
+html[data-theme="light"] body #gate{
+  background:
+    radial-gradient(ellipse at 12% 12%,rgba(0,98,51,.10),transparent 38%),
+    radial-gradient(ellipse at 88% 85%,rgba(210,16,52,.075),transparent 34%),
+    #f3f7f4
+}
+html[data-theme="light"] body #gate .gate-wrap{max-width:1040px}
+html[data-theme="light"] body #gate .gate-brand{margin-bottom:20px}
+html[data-theme="light"] body #gate .gate-crest{
+  border-radius:22px;border:1px solid rgba(0,98,51,.12);
+  box-shadow:0 12px 28px rgba(0,98,51,.12)
+}
+html[data-theme="light"] body #gate .gate-card{
+  border:1px solid #e0eae3;border-radius:22px;
+  box-shadow:0 22px 60px rgba(18,55,32,.10);overflow:hidden
+}
+html[data-theme="light"] body #gate .gate-tabs{
+  background:#f5f9f6;border-bottom:1px solid #e6eee8
+}
+html[data-theme="light"] body #gate .gtab{font-weight:850;transition:background .18s ease,color .18s ease}
+html[data-theme="light"] body #gate .gtab.on{
+  color:#006233;background:#fff;box-shadow:0 4px 14px rgba(0,98,51,.08)
+}
+html[data-theme="light"] body #gate .fld input,
+html[data-theme="light"] body #gate .fld select{
+  min-height:44px;border:1px solid #dce8df;background:#fbfdfb;border-radius:12px
+}
+html[data-theme="light"] body #gate .fld input:focus,
+html[data-theme="light"] body #gate .fld select:focus{
+  border-color:#078548;box-shadow:0 0 0 4px rgba(7,133,72,.10);outline:0
+}
+html[data-theme="light"] body #gate .gate-foot{color:#718176}
+html[data-theme="dark"] body #gate{background:radial-gradient(ellipse at 15% 10%,rgba(0,98,51,.19),transparent 40%),#09170f}
+html[data-theme="dark"] body #gate .gate-card{border:1px solid #294b36;box-shadow:0 22px 60px rgba(0,0,0,.28)}
+
+/* Sélecteurs et vues réellement utilisés par les modules */
+html[data-theme="light"] #shell #profBody .prof-hero{
+  padding:clamp(17px,2.5vw,25px);border:1px solid #dce9df;border-radius:19px;
+  background:radial-gradient(320px 160px at 100% 0,rgba(210,16,52,.06),transparent 70%),linear-gradient(120deg,#edf7ef,#fff 72%);
+  box-shadow:0 10px 26px rgba(0,55,28,.05)
+}
+html[data-theme="light"] #shell #profBody .bdd-kpis,
+html[data-theme="light"] #shell #parentsBody .bdd-kpis{
+  gap:10px
+}
+html[data-theme="light"] #shell #profBody .kpi,
+html[data-theme="light"] #shell #parentsBody .kpi{
+  border:1px solid #e0ebe3;border-radius:15px;background:linear-gradient(150deg,#fff,#f7faf8);
+  box-shadow:0 5px 16px rgba(20,60,36,.04)
+}
+html[data-theme="light"] #shell #profBody .ong,
+html[data-theme="light"] #shell #parentsBody .ong{
+  border:1px solid #e2ebe4;border-radius:10px;background:#f4f8f5;font-weight:850
+}
+html[data-theme="light"] #shell #profBody .ong.on,
+html[data-theme="light"] #shell #parentsBody .ong.on{
+  background:#006233;color:#fff;border-color:#006233;box-shadow:0 4px 12px rgba(0,98,51,.15)
+}
+html[data-theme="light"] #shell #profBody .tble,
+html[data-theme="light"] #shell #libraryBody .fiche{
+  border:1px solid #e0ebe3;border-radius:14px;background:#fff;overflow:hidden
+}
+html[data-theme="light"] #shell #parentsBody .par-hero{
+  display:flex;align-items:center;flex-wrap:wrap;gap:14px;padding:clamp(16px,2.5vw,24px);
+  border:1px solid #dce9df;border-radius:19px;background:linear-gradient(120deg,#edf7ef,#fff 72%);
+  box-shadow:0 10px 25px rgba(0,55,28,.05)
+}
+html[data-theme="light"] #shell #parentsBody .enf{
+  border:1px solid #e0ebe3;border-radius:14px;background:#fff;
+  box-shadow:0 4px 14px rgba(20,60,36,.035)
+}
+html[data-theme="light"] #shell #parentsBody .enf.on{
+  border-color:#078548;box-shadow:0 0 0 3px rgba(7,133,72,.09)
+}
+html[data-theme="light"] #shell #adminBody .ad-hero{
+  display:flex;align-items:center;flex-wrap:wrap;gap:14px
+}
+html[data-theme="light"] #shell #adminBody .ad-role,
+html[data-theme="light"] #shell #adminBody .ad-box{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff
+}
+html[data-theme="light"] #shell #examBody .ong,
+html[data-theme="light"] #shell #quizBody .qz-u,
+html[data-theme="light"] #shell #quizBody .qz-q{
+  border-radius:14px
+}
+html[data-theme="light"] #shell #examBody .annee,
+html[data-theme="light"] #shell #examBody .theme,
+html[data-theme="light"] #shell #examBody .sujet{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff;
+  box-shadow:0 5px 16px rgba(20,60,36,.035)
+}
+html[data-theme="light"] #shell #biblioBody .bdd-kpis{gap:10px}
+html[data-theme="light"] #shell #biblioBody .kpi{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff
+}
+html[data-theme="light"] #shell #biblioBody .fiche{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff;overflow:hidden;
+  box-shadow:0 5px 16px rgba(20,60,36,.035)
+}
+html[data-theme="light"] #shell #biblioBody .fiche-h{
+  background:linear-gradient(110deg,#f0f7f2,#fff);border-bottom:1px solid #e9f0eb
+}
+
+/* Contraste et lisibilité des zones de travail */
+html[data-theme="light"] #shell #profBody .privacy,
+html[data-theme="light"] #shell #parentsBody .privacy,
+html[data-theme="light"] #shell #adminBody .privacy{
+  border-radius:13px;border-color:#dce9df;background:#f7faf8
+}
+html[data-theme="light"] #shell #profBody .filters,
+html[data-theme="light"] #shell #libraryBody .filters{
+  border:1px solid #e0ebe3;border-radius:15px;background:#f8fbf9
+}
+html[data-theme="light"] #shell #profBody .alert-i{
+  border:1px solid #e0ebe3;border-radius:13px;background:#fff
+}
+html[data-theme="light"] #shell #ragBody .rg-hero{padding:17px}
+html[data-theme="light"] #shell #ragBody .rg-box,
+html[data-theme="light"] #shell #ragBody .rg-out,
+html[data-theme="light"] #shell #ragBody .rg-ped,
+html[data-theme="light"] #shell #ragBody .rg-non{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff
+}
+
+/* Réduction des effets sur mobile et largeur de lecture */
+@media(max-width:760px){
+  html[data-theme="light"] body #gate .gate-wrap{width:min(100% - 24px,620px)}
+  html[data-theme="light"] body #gate .gate-card{border-radius:17px}
+  #shell #profBody .tble,#shell #adminBody .ad-tab{max-width:100%;overflow-x:auto}
+  #shell #parentsBody .info-v,#shell #profBody .tc-c{overflow-wrap:anywhere}
+}
