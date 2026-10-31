@@ -6350,3 +6350,50 @@ html[data-theme="dark"] #shell > .topbar{
   #gate .public-mini-card{transition:none!important}
   #gate .public-ai-wave i{animation:none!important;height:18px!important}
 }
+
+
+/* V6.16 — hiérarchie de la carte d'accès publique, portée #gate uniquement */
+#gate .gate-card{
+  padding:0!important;
+  border:1px solid #dce9df!important;
+  border-radius:22px!important;
+  background:#fff!important;
+  box-shadow:0 18px 48px rgba(17,65,37,.10)!important;
+}
+#gate .gate-card-intro{
+  padding:22px 24px 14px!important;
+  text-align:right!important;
+  background:linear-gradient(135deg,#f0f8f2 0%,#fff 76%)!important;
+  border-bottom:1px solid #e5eee7!important;
+}
+#gate .gate-card-intro>span{
+  display:inline-flex!important;
+  padding:5px 10px!important;
+  border-radius:999px!important;
+  background:#e1f2e6!important;
+  color:#087342!important;
+  font-size:11px!important;
+  font-weight:900!important;
+}
+#gate .gate-card-intro h2{
+  margin:9px 0 4px!important;
+  color:#123c27!important;
+  font-size:22px!important;
+  line-height:1.5!important;
+  font-weight:900!important;
+}
+#gate .gate-card-intro p{
+  margin:0!important;
+  color:#65786b!important;
+  font-size:12px!important;
+  line-height:1.9!important;
+}
+#gate .gate-card .gate-tabs{margin:0 18px 14px!important}
+#gate .gate-card .gform{padding:0 22px 22px!important}
+#gate .gate-card .ghint{line-height:1.9!important;overflow-wrap:anywhere!important}
+@media(max-width:700px){
+  #gate .gate-card-intro{padding:17px 16px 12px!important}
+  #gate .gate-card-intro h2{font-size:19px!important}
+  #gate .gate-card .gate-tabs{margin-inline:12px!important}
+  #gate .gate-card .gform{padding:0 14px 17px!important}
+}
