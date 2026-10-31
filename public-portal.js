@@ -40,6 +40,7 @@
   function statusFor(id, item){
     if(id === 'allemand') return 'implemented';
     if(state.catalog && state.catalog.subjectStatus[id]) return state.catalog.subjectStatus[id];
+    if(item && item.statut === 'partiel') return 'partial';
     return item && item.statut === 'actif' ? 'implemented' : 'planned';
   }
   function statusLabel(status){
