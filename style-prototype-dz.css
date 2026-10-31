@@ -5889,3 +5889,124 @@ html[data-theme="dark"] #shell > .topbar{
   #gate .public-header .public-nav button{min-height:36px;padding:7px 9px;font-size:12.5px}
   #gate .public-copy p{font-size:15.5px;line-height:1.9}
 }
+
+/* V6.13 — en-tête public réellement fixe (hors flux de défilement)
+   Le portail #gate est lui-même un conteneur fixed avec overflow-y:auto.
+   Un sticky imbriqué dans .gate-wrap restait contraint par ce parent animé.
+   On fixe donc la barre au viewport et on réserve son espace dans le contenu. */
+#gate .public-header{
+  position:fixed!important;
+  top:12px!important;
+  left:50%!important;
+  right:auto!important;
+  transform:translateX(-50%)!important;
+  width:min(1080px,calc(100% - 32px))!important;
+  max-width:none!important;
+  margin:0!important;
+  z-index:5000!important;
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:18px!important;
+  min-height:78px;
+  padding:10px 18px!important;
+  background:rgba(255,255,255,.985)!important;
+  border:1px solid #dce9df!important;
+  border-radius:16px!important;
+  box-shadow:0 8px 26px rgba(12,48,27,.13)!important;
+}
+#gate .gate-wrap{
+  padding-top:112px!important;
+}
+#gate .public-header .gate-brand{
+  flex:0 1 360px!important;
+  min-width:250px!important;
+  margin:0!important;
+}
+#gate .public-header .public-nav{
+  flex:1 1 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  margin:0!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#gate .public-header .public-nav button{
+  min-height:42px!important;
+  padding:9px 13px!important;
+  font-size:14px!important;
+  white-space:nowrap!important;
+}
+@media(min-width:901px){
+  #gate .public-copy > p{
+    font-size:19px!important;
+    line-height:2.05!important;
+    max-width:60ch;
+  }
+  #gate .public-ai-card,
+  #gate .public-ai-demo,
+  #gate .public-ai-question,
+  #gate .public-ai-answer,
+  #gate .public-feature{
+    font-size:16px!important;
+  }
+  #gate .public-ai-head b{font-size:17px!important}
+  #gate .public-ai-head small{font-size:14px!important}
+  #gate .public-ai-question small,
+  #gate .public-ai-answer small{font-size:14px!important}
+  #gate .public-ai-question b{font-size:15.5px!important;line-height:1.9!important}
+  #gate .public-ai-answer p,
+  #gate .public-ai-note{font-size:15.5px!important;line-height:1.95!important}
+  #gate .public-feature p,
+  #gate .public-feature small{font-size:14.5px!important;line-height:1.9!important}
+  #gate .public-kicker{font-size:14px!important}
+  #gate .public-trust{font-size:14.5px!important}
+  #gate .public-stat span{font-size:14px!important}
+}
+@media(max-width:900px){
+  #gate .public-header{
+    top:8px!important;
+    flex-wrap:wrap!important;
+    flex-direction:column!important;
+    gap:7px!important;
+    min-height:0;
+    padding:8px 10px!important;
+  }
+  #gate .gate-wrap{padding-top:150px!important}
+  #gate .public-header .gate-brand{
+    flex:0 0 auto!important;
+    min-width:0!important;
+    justify-content:center!important;
+  }
+  #gate .public-header .public-nav{
+    flex:0 0 auto!important;
+    width:100%!important;
+    flex-wrap:wrap!important;
+  }
+}
+@media(max-width:600px){
+  #gate .public-header{
+    width:calc(100% - 20px)!important;
+    top:6px!important;
+    border-radius:12px!important;
+  }
+  #gate .gate-wrap{padding-top:148px!important}
+  #gate .public-header .gate-title{font-size:19px!important}
+  #gate .public-header .gate-sub{font-size:11px!important}
+  #gate .public-header .gate-motto{font-size:10px!important}
+  #gate .public-header .public-nav button{
+    min-height:35px!important;
+    padding:6px 9px!important;
+    font-size:12px!important;
+  }
+  #gate .public-copy > p{font-size:15.5px!important;line-height:1.9!important}
+}
