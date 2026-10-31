@@ -2603,3 +2603,31 @@ html:not([data-theme="light"]) #tabs .tab.on{
 @media(prefers-reduced-motion:reduce){
   [data-view="profboard"] .ong{scroll-behavior:auto}
 }
+
+
+/* PHASE DZ-07 — espace parents : finition mobile, DOM confirmé dans parents.js. */
+[data-view="parents"] #parentsBody{min-width:0}
+[data-view="parents"] #parentsBody .info-i{min-width:0}
+[data-view="parents"] #parentsBody .info-v{overflow-wrap:anywhere}
+[data-view="parents"] #parentsBody .rep-row>div{min-width:0;overflow-wrap:anywhere}
+[data-view="parents"] #parentsBody .grid2,[data-view="parents"] #parentsBody .grid2>.card{min-width:0}
+[data-view="parents"] #parentsBody .ong:focus-visible,[data-view="parents"] #parentsBody .enf:focus-visible{outline:3px solid rgba(8,122,67,.35);outline-offset:2px}
+@media(max-width:760px){
+ [data-view="parents"] #parentsBody .par-hero{gap:13px;padding:16px}
+ [data-view="parents"] #parentsBody .par-hero .ph-act{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ [data-view="parents"] #parentsBody .par-hero .ph-act .btn{width:100%;min-width:0}
+ [data-view="parents"] #parentsBody .enf-sel{grid-template-columns:1fr;gap:8px}
+ [data-view="parents"] #parentsBody .onglets{flex-wrap:nowrap;gap:5px;padding:6px}
+ [data-view="parents"] #parentsBody .ong{padding:8px 11px;font-size:12px}
+ [data-view="parents"] #parentsBody .info-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ [data-view="parents"] #parentsBody .grid2{grid-template-columns:1fr;gap:10px}
+}
+@media(max-width:420px){
+ [data-view="parents"] #parentsBody .info-i{padding:9px}
+ [data-view="parents"] #parentsBody .info-k{font-size:10px}
+ [data-view="parents"] #parentsBody .info-v{font-size:12px}
+ [data-view="parents"] #parentsBody .kpi{padding:10px 7px}
+ [data-view="parents"] #parentsBody .kpi-n{font-size:21px}
+ [data-view="parents"] #parentsBody .rep-row{align-items:flex-start;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){[data-view="parents"] #parentsBody .onglets{scroll-behavior:auto}}
