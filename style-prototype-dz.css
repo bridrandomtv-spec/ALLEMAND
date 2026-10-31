@@ -3924,7 +3924,7 @@ html[data-theme="light"] #shell .panel{border-radius:16px}
    restent inchangés. Les CTA ne font qu'activer les onglets login/signup existants. */
 .public-landing{
   display:grid;grid-template-columns:minmax(0,1.12fr) minmax(280px,.88fr);
-  grid-template-areas:"copy visual" "features features";
+  grid-template-areas:"copy ai" "features features";
   gap:22px 28px;align-items:center;margin:0 auto 24px;max-width:1080px;
   padding:26px 28px 22px;border:1px solid rgba(0,98,51,.13);border-radius:26px;
   background:linear-gradient(120deg,#fff 0%,#f7fbf8 66%,#edf7f0 100%);
@@ -4435,3 +4435,74 @@ html[data-theme="dark"] .subj-card{background:linear-gradient(150deg,#0c2a1a,#09
  .chat-in .chat-mic{flex-basis:42px;min-width:42px}
 }
 @media(prefers-reduced-motion:reduce){.chat-in .chat-mic.is-listening{animation:none}}
+
+
+/* ══ V6.3 — finition responsive du portail public 67–74 ══
+   Corrige l'aire de grille du panneau IA et stabilise les cartes sur tablette/mobile.
+   Couche additive : aucun hook, identifiant, parcours ou flux métier modifié. */
+.public-landing{grid-template-areas:"copy ai" "features features"}
+.public-ai-card{grid-area:ai;min-width:0}
+.public-landing-sections{grid-column:1/-1;min-width:0}
+.public-mini-catalog{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.public-mini-card{min-width:0;min-height:92px;padding:11px 9px;border:1px solid #e0ebe3;border-radius:13px;background:rgba(255,255,255,.86);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px}
+.public-mini-card>span{font-size:20px}
+.public-mini-card>b{color:#204b32;font-size:11px;line-height:1.5}
+.public-mini-card>small{color:#718176;font-size:9px;line-height:1.4}
+.public-section-heading{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:22px 0 12px}
+.public-section-heading>div>span{color:#087d43;font-size:10px;font-weight:900}
+.public-section-heading h3{margin:3px 0 0;color:#173d28;font-size:18px;font-weight:900}
+.public-section-heading>button{border:0;background:transparent;color:#087342;font:800 11px var(--ff-ar);cursor:pointer}
+.public-year-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.public-year-cards>button{min-width:0;display:flex;align-items:center;gap:11px;padding:13px;border:1px solid #e0ebe3;border-radius:14px;background:#fff;text-align:right;cursor:pointer}
+.public-year-cards>button>strong{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:11px;background:#006233;color:#fff;font-size:19px}
+.public-year-cards>button>span{min-width:0;display:flex;flex:1;flex-direction:column;gap:3px}
+.public-year-cards b{color:#204b32;font-size:11px}
+.public-year-cards small{color:#718176;font-size:9px;line-height:1.5}
+.public-year-cards i{color:#087342;font-style:normal}
+.public-ai-card{border-color:#dce9df;background:linear-gradient(145deg,#fff 0%,#f2f8f4 100%);box-shadow:0 18px 40px -28px rgba(0,75,35,.25);color:#173b29}
+.public-ai-icon{background:linear-gradient(135deg,#006233,#078b49);box-shadow:0 8px 18px rgba(0,98,51,.18)}
+.public-ai-head>div b{color:#173d28}
+.public-ai-head>div small{color:#718176}
+.public-ai-live{background:#e5f5eb;color:#087342}
+.public-ai-demo{border-color:#dce9df;background:linear-gradient(145deg,#edf7f0,#fff)}
+.public-ai-wave i{background:linear-gradient(180deg,#078b49,#d21034)}
+.public-ai-question{border-color:#e0ebe3}
+.public-ai-answer{background:#fff;border:1px solid #e0ebe3}
+.public-ai-cta{background:linear-gradient(135deg,#006233,#078b49)}
+@media(max-width:900px){
+ .public-landing{gap:18px;padding:22px}
+ .public-mini-catalog{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .public-ai-card{padding:18px}
+ .public-ai-head>div b{font-size:14px}
+}
+@media(max-width:700px){
+ .public-landing{grid-template-columns:minmax(0,1fr);grid-template-areas:"copy" "ai" "features";padding:19px 15px;gap:15px}
+ .public-ai-card{width:100%;padding:16px;border-radius:19px}
+ .public-landing-sections{grid-column:1}
+ .public-mini-catalog{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .public-mini-card{min-height:82px}
+ .public-year-cards{grid-template-columns:minmax(0,1fr)}
+ .public-section-heading{align-items:flex-start}
+ .public-section-heading h3{font-size:16px}
+ .public-section-heading>button{white-space:nowrap;padding-top:10px}
+ .public-nav{position:sticky;top:6px;z-index:30;backdrop-filter:blur(12px)}
+ .public-nav button{min-height:40px}
+ .public-explorer{padding:18px 14px;border-radius:18px}
+ .pub-catalog-grid,.pub-catalog-grid.languages{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .pub-branch-grid{grid-template-columns:minmax(0,1fr)}
+ .pub-detail-grid{grid-template-columns:minmax(0,1fr)}
+ .pub-explorer-top{align-items:flex-start}
+ .pub-explorer-top h2{font-size:23px}
+}
+@media(max-width:390px){
+ .public-copy h2{font-size:29px}
+ .public-kicker{font-size:10px}
+ .public-actions{display:grid;grid-template-columns:minmax(0,1fr)}
+ .public-btn{width:100%}
+ .public-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .public-nav{width:calc(100% - 16px);gap:3px;padding:5px}
+ .public-nav button{padding:7px 4px;font-size:10px}
+ .pub-catalog-grid,.pub-catalog-grid.languages{grid-template-columns:minmax(0,1fr)}
+ .pub-subject-card{min-height:130px}
+ .pub-explorer{width:calc(100% - 16px)}
+}
