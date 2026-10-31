@@ -4014,6 +4014,9 @@ html[data-theme="light"] #shell .panel{border-radius:16px}
 }
 
 
+/* Respecter l'attribut hidden malgré display:grid sur la vitrine publique. */
+.public-landing[hidden]{display:none!important}
+
 /* ══ V6.2 — catalogue public, niveaux et filières (prototypes 69–71) ══ */
 .public-nav{
   width:min(1080px,calc(100% - 32px));margin:0 auto 18px;padding:8px;
