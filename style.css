@@ -3666,3 +3666,57 @@ html[data-theme="light"] .tabs .tab.on{background:linear-gradient(135deg,#006233
 /* F) thème clair */
 html[data-theme="light"] .seance,html[data-theme="light"] .fiche{background:#fff}
 html[data-theme="light"] .seance::after{border-color:#fff}
+
+/* V6.11 — correctif structurel : sticky + vraie lisibilité sur PC
+   Le overflow-x:hidden sur html/body créait un conteneur de défilement
+   qui empêchait le header sticky de suivre le défilement de la page.
+   overflow-x:clip conserve le masquage horizontal sans casser sticky. */
+html,body{
+  overflow-x:clip!important;
+}
+#shell > header.topbar{
+  position:sticky!important;
+  top:0!important;
+  inset-block-start:0!important;
+  z-index:1200!important;
+  align-self:start;
+}
+@media(min-width:901px){
+  #shell > header.topbar{
+    background:rgba(255,255,255,.98);
+    box-shadow:0 5px 18px rgba(10,40,24,.10);
+  }
+  #shell main#app > .view{
+    font-size:17px!important;
+    line-height:1.8!important;
+  }
+  #shell main#app > .view p,
+  #shell main#app > .view li,
+  #shell main#app > .view label,
+  #shell main#app > .view td,
+  #shell main#app > .view th{
+    font-size:16.5px!important;
+    line-height:1.85!important;
+  }
+  #shell main#app .reading,
+  #shell main#app .reading p,
+  #shell main#app .reading li{
+    font-size:20px!important;
+    line-height:2.05!important;
+  }
+  #shell main#app .sujet-box,
+  #shell main#app .corrige-box{
+    font-size:17px!important;
+    line-height:2!important;
+  }
+  #shell main#app .page-head h1{
+    font-size:clamp(26px,2.4vw,34px)!important;
+  }
+}
+@media(max-width:900px){
+  #shell > header.topbar{
+    position:sticky!important;
+    top:0!important;
+    inset-block-start:0!important;
+  }
+}
