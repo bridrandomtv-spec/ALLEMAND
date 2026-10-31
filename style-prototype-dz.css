@@ -4235,3 +4235,163 @@ html[data-theme="light"] #shell .panel{border-radius:16px}
  .public-year-cards>button{padding:12px}
 }
 @media(prefers-reduced-motion:reduce){.public-ai-wave i{animation:none;height:18px}}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   REFONTE VISUELLE 2026 — structure, rythme et ergonomie
+   Couche strictement CSS : aucun hook, identifiant ou flux JS modifié.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Cadre général et rythme */
+html{scroll-padding-top:90px}
+body{letter-spacing:0}
+main{max-width:1240px;padding:28px 24px 56px}
+.view{min-width:0}
+.page-head{padding-bottom:14px;border-bottom:1px solid var(--b);margin-bottom:24px}
+.page-head h1{letter-spacing:-.025em}
+.page-head p{max-width:760px;line-height:1.9}
+
+/* En-tête : identité claire, plus lisible */
+.topbar{backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.topbar-in{max-width:1240px;min-height:76px;padding:13px 22px}
+.brand{gap:13px}
+.brand-crest{width:48px;height:48px;border-radius:15px;font-size:25px}
+.brand-t{font-size:17px;letter-spacing:-.02em}
+.brand-s{font-size:11px}
+.icon-btn,.tb-bell,.burger{width:42px;height:42px;border-radius:13px;transition:transform .18s ease,background .18s ease}
+.icon-btn:hover,.tb-bell:hover{transform:translateY(-2px)}
+
+/* Navigation desktop : véritable rail latéral */
+@media(min-width:1081px){
+  #tabs,.tabs{
+    width:272px;padding:96px 16px 30px;gap:7px;
+    box-shadow:inset 1px 0 0 rgba(255,255,255,.035);
+  }
+  .tabs .tab{position:relative;padding:12px 14px;border-radius:13px;font-size:13.5px;line-height:1.5}
+  .tabs .tab.on{box-shadow:0 7px 18px rgba(0,98,51,.20)}
+  .tabs .tab.on::before{content:"";position:absolute;inset-block:9px;inset-inline-start:0;width:3px;border-radius:8px;background:#d21034}
+  .tabgrp-h{margin-top:9px;padding:10px 7px 5px;font-size:11px;letter-spacing:.04em}
+  .topbar-in{max-width:1240px;margin-inline-end:292px}
+  main{max-width:1240px;margin-inline-end:292px}
+}
+
+/* Accueil : bandeau éditorial et panneaux */
+.home-grid{grid-template-columns:minmax(270px,320px) minmax(0,1fr);gap:22px}
+.welcome{
+  min-height:218px;padding:32px 30px;border-radius:24px;
+  display:flex;flex-direction:column;justify-content:center;
+  box-shadow:0 14px 34px rgba(0,55,28,.10)
+}
+.welcome::after{font-size:210px;opacity:.075;left:-18px;bottom:-85px}
+.welcome h1{max-width:760px;font-size:clamp(25px,3vw,36px);line-height:1.55}
+.welcome p{font-size:14px;line-height:1.95;max-width:700px}
+.welcome-cta{gap:11px}
+.welcome-meta{gap:9px;margin-top:19px}
+.home-side .panel,.card,.panel,.profc,.sujet-box,.info-i{
+  border-radius:18px;box-shadow:0 7px 22px rgba(0,55,28,.055)
+}
+.home-side .panel{padding:18px;margin-bottom:16px}
+.panel-h{font-size:16px;margin-bottom:13px}
+.subj-home{margin-bottom:20px}
+.subj-lang{padding:15px 17px;border-radius:16px;gap:10px}
+.subj-grid{gap:14px}
+.subj-card{min-height:132px;padding:18px 15px;border-radius:18px}
+.subj-card:hover{transform:translateY(-4px)}
+.stats{gap:13px;margin-bottom:22px}
+.stat{padding:19px 12px;border-radius:17px;min-height:104px;display:flex;flex-direction:column;justify-content:center;gap:4px}
+.stat-n{font-size:26px}
+.stat-l{font-size:11px;line-height:1.5}
+
+/* Composants réutilisés dans les différentes rubriques */
+.card,.panel,.profc,.sujet-box,.info-i,.kpi,.stk,.ad-s,.ap-card,.ia-card,.cit-card{
+  border-radius:17px
+}
+.card,.panel{padding:clamp(15px,2vw,22px)}
+button,.btn,.tab,.chip,.ong{touch-action:manipulation}
+.btn{min-height:43px;padding:11px 19px;border-radius:12px}
+input,textarea,select{min-height:42px}
+:focus-visible{outline-offset:3px}
+table{border-collapse:separate;border-spacing:0}
+
+/* Palette claire : surfaces hiérarchisées, contrastes et profondeur */
+html[data-theme="light"] body{background-color:#f4f8f5}
+html[data-theme="light"] .topbar{background:rgba(255,255,255,.96);box-shadow:0 5px 22px rgba(0,55,28,.055)}
+html[data-theme="light"] .topbar-in{min-height:76px}
+html[data-theme="light"] #tabs,html[data-theme="light"] .tabs{
+  background:#fff;border-color:#dce8df;box-shadow:5px 0 25px rgba(0,55,28,.035)
+}
+html[data-theme="light"] .tab{font-weight:650}
+html[data-theme="light"] .welcome{
+  background:linear-gradient(112deg,#e8f4ec 0%,#fff 72%);
+  border:1px solid #d5e7da;box-shadow:0 12px 30px rgba(0,70,35,.075)
+}
+html[data-theme="light"] .home-main .welcome{
+  background:linear-gradient(112deg,#004d28 0%,#006233 64%,#078548 100%);
+  box-shadow:0 15px 32px rgba(0,98,51,.20)
+}
+html[data-theme="light"] .home-side .panel,
+html[data-theme="light"] .card,html[data-theme="light"] .panel,
+html[data-theme="light"] .profc,html[data-theme="light"] .sujet-box{
+  border-color:#dce8df;box-shadow:0 6px 20px rgba(0,55,28,.045)
+}
+html[data-theme="light"] .subj-card{background:linear-gradient(155deg,#fff,#f5faf6);border-color:#d6e6da}
+html[data-theme="light"] .subj-card.on{background:linear-gradient(145deg,#eaf5ed,#fff);border-color:#00843d}
+html[data-theme="light"] .stat{background:linear-gradient(155deg,#fff,#f5faf6);border-color:#dce8df;box-shadow:0 5px 16px rgba(0,55,28,.04)}
+html[data-theme="light"] .stat-n{color:#006233}
+html[data-theme="light"] .page-head{border-color:#dce8df}
+
+/* Mode sombre : même système de surfaces, sans dénaturer le thème */
+html[data-theme="dark"] .topbar{background:rgba(4,20,12,.96)}
+html[data-theme="dark"] .home-side .panel,
+html[data-theme="dark"] .card,html[data-theme="dark"] .panel,
+html[data-theme="dark"] .profc,html[data-theme="dark"] .sujet-box{
+  box-shadow:0 9px 26px rgba(0,0,0,.16)
+}
+html[data-theme="dark"] .welcome{box-shadow:0 14px 34px rgba(0,0,0,.18)}
+html[data-theme="dark"] .subj-card{background:linear-gradient(150deg,#0c2a1a,#091f14)}
+
+/* Tablettes et mobiles : navigation et grilles sans débordement */
+@media(max-width:1080px){
+  main{padding:23px 18px 42px}
+  .topbar-in{max-width:none}
+  #tabs,.tabs{
+    position:relative;inset:auto;width:auto;height:auto;max-width:none;
+    padding:8px 14px 12px;border-radius:0;box-shadow:none;
+  }
+  .tabs .tab{padding:9px 13px}
+}
+@media(max-width:760px){
+  main{padding:18px 13px 34px}
+  .topbar-in{min-height:66px;padding:9px 13px;gap:9px}
+  .brand-crest{width:42px;height:42px}
+  .brand-t{font-size:14px}
+  .brand-s{font-size:9.5px}
+  .topbar-act{gap:5px}
+  .icon-btn,.tb-bell{width:37px;height:37px}
+  .tabs{gap:6px;padding:7px 12px 10px}
+  .tabs .tab{font-size:12px;padding:8px 11px}
+  .page-head{margin-bottom:18px;padding-bottom:11px}
+  .home-grid{grid-template-columns:minmax(0,1fr);gap:15px}
+  .home-side{order:2}
+  .home-main{order:1;min-width:0}
+  .welcome{min-height:0;padding:23px 19px;border-radius:19px;margin-bottom:15px}
+  .welcome h1{font-size:24px}
+  .welcome p{font-size:13px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .stat{min-height:88px;padding:13px 8px}
+  .stat-n{font-size:23px}
+  .subj-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .subj-card{min-height:116px;padding:13px 10px}
+  .card,.panel{padding:15px;border-radius:15px}
+  .grid2{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:390px){
+  .brand-s{display:none}
+  .brand-t{font-size:12.5px}
+  .subj-grid{grid-template-columns:minmax(0,1fr)}
+  .welcome h1{font-size:21px}
+  .stats{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
