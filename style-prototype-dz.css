@@ -3201,3 +3201,40 @@ html:not([data-theme="light"]) #tabs .cat-body .tab.sub{color:#e4f1e8!important}
   #tabs .cat-body{position:fixed!important;top:auto!important;right:10px!important;left:10px!important;bottom:12px!important;max-width:none!important;max-height:65vh!important}
   .topbar-in{gap:8px!important}
 }
+
+
+/* Correctif D7 : la navigation desktop est réorganisée par app.js.
+   On conserve les liens et le sélecteur de matière sans rétablir une sidebar. */
+@media(min-width:1081px){
+  #tabs.tabs{flex-wrap:wrap!important;justify-content:flex-start!important;overflow:visible!important}
+  #tabs>#d7more{position:relative!important;display:inline-flex!important;flex:0 0 auto!important;align-items:center!important}
+  #tabs>#d7more>.cat-head{margin:0!important}
+  #tabs>#d7more>#d7moreB{
+    display:none!important;position:absolute!important;top:calc(100% + 8px)!important;
+    inset-inline-end:0!important;inset-inline-start:auto!important;width:min(360px,90vw)!important;
+    max-width:90vw!important;max-height:min(70vh,560px)!important;overflow:auto!important;
+    padding:10px!important;border:1px solid var(--b,#dce8df)!important;border-radius:14px!important;
+    background:var(--surface,#fff)!important;box-shadow:0 16px 38px rgba(0,0,0,.2)!important;
+    z-index:1200!important;align-content:start!important;gap:5px!important
+  }
+  #tabs>#d7more.open>#d7moreB{display:grid!important}
+  #tabs>#d7more>#d7moreB>.cat-head{width:100%!important;justify-content:space-between!important}
+  #tabs>#d7more>#d7moreB>.cat-body{display:none!important;position:static!important;width:100%!important;max-width:none!important;max-height:none!important;box-shadow:none!important;border:0!important;padding:4px!important;background:transparent!important}
+  #tabs>#d7more>#d7moreB>.cat-head.open+.cat-body{display:grid!important}
+  #tabs>#d7more>#d7moreB .tab.sub{width:100%!important;justify-content:flex-start!important}
+  #tabs>#d7bot{display:contents!important}
+  #tabs>#d7bot .tab{width:auto!important;min-width:max-content!important}
+  #tabs>#d7bot #subjSel{
+    position:static!important;width:auto!important;max-width:180px!important;min-height:40px!important;
+    margin:0!important;padding:8px 12px!important;border-radius:10px!important;white-space:nowrap!important
+  }
+  #tabs>#d7bot #btnSound,#tabs>#d7bot #btnInstall{position:static!important;flex:0 0 auto!important}
+}
+@media(max-width:1080px){
+  #tabs .cat-body[hidden]{display:none!important}
+  #tabs .cat-head.open+.cat-body{display:grid!important;position:absolute!important;top:calc(100% + 5px)!important;z-index:1200!important}
+}
+html[data-theme="light"] #tabs>#d7more>#d7moreB{background:#fff!important}
+html:not([data-theme="light"]) #tabs>#d7more>#d7moreB{background:#0b2116!important;border-color:#24563a!important}
+html:not([data-theme="light"]) #tabs>#d7more>#d7moreB .cat-head,
+html:not([data-theme="light"]) #tabs>#d7more>#d7moreB .tab{color:#e4f1e8!important}
