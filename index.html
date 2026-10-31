@@ -96,17 +96,17 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       </div>
       <div class="public-ai-card">
         <div class="public-ai-head">
-          <span class="public-ai-icon">🎙️</span>
-          <div><b>الأستاذ الذكي</b><small>مرافقة تعليمية بالصوت والنص</small></div>
-          <span class="public-ai-live">مساعد IA</span>
+          <span class="public-ai-icon">🎓</span>
+          <div><b>فضاء تعلّم متعدد المواد</b><small>منهج دراسي منظم حسب السنة والشعبة</small></div>
+          <span class="public-ai-live">2026/2027</span>
         </div>
         <div class="public-ai-demo">
           <div class="public-ai-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="public-ai-question"><small>مثال على سؤال تلميذ</small><b dir="auto">كيف أفرق بين Nominativ و Akkusativ؟</b></div>
-          <div class="public-ai-answer"><small>💡 شرح توضيحي</small><p>الـ Nominativ هو الفاعل، أما الـ Akkusativ فهو المفعول به. مثال: <span dir="ltr">Der Mann sieht den Hund.</span></p></div>
+          <div class="public-ai-question"><small>مسارك الدراسي</small><b>السنة · الشعبة · المادة · الوحدة · الدرس</b></div>
+          <div class="public-ai-answer"><small>📚 موارد تعليمية مترابطة</small><p>دروس وكتب وتمارين ومواضيع وفروض، مع توضيح مستوى توفر المحتوى في كل مادة.</p></div>
         </div>
-        <button type="button" class="public-ai-cta" data-gate-open="login">الدخول إلى فضاء الأستاذ الذكي <span>←</span></button>
-        <p class="public-ai-note">عرض توضيحي للواجهة؛ توفر المحادثة الفعلية مرتبط بخدمة الذكاء الاصطناعي.</p>
+        <button type="button" class="public-ai-cta" data-public-view="subjects">استكشف فهرس المواد <span>←</span></button>
+        <p class="public-ai-note">تُعرض المواد المنشورة والمواد قيد الإعداد بوضوح، دون الإيحاء بأن جميعها مكتملة.</p>
       </div>
       <div class="public-features" aria-label="خدمات المنصة">
         <article class="public-feature"><span class="pf-icon">📚</span><div><b>موارد تعليمية</b><small>دروس، كتب، تمارين ومواضيع</small></div></article>
@@ -116,12 +116,21 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       <div class="public-landing-sections">
         <div class="public-section-heading"><div><span>استكشف فضاءك الدراسي</span><h3>كل المواد في مكان واحد</h3></div><button type="button" data-public-view="subjects">عرض فهرس المواد ←</button></div>
         <div class="public-mini-catalog">
-          <div class="public-mini-card language"><span>🇩🇪</span><b>الألمانية</b><small>Deutsch</small></div>
-          <div class="public-mini-card language"><span>🇬🇧</span><b>الإنجليزية</b><small>English</small></div>
-          <div class="public-mini-card language"><span>🇫🇷</span><b>الفرنسية</b><small>Français</small></div>
-          <div class="public-mini-card"><span>📐</span><b>الرياضيات</b><small>Matématiques</small></div>
-          <div class="public-mini-card"><span>⚛️</span><b>الفيزياء</b><small>Physique</small></div>
-          <div class="public-mini-card"><span>🧬</span><b>العلوم الطبيعية</b><small>Sciences</small></div>
+          <div class="public-mini-card language"><span>🇩🇿</span><b>اللغة العربية</b><small>اللغة والأدب</small></div>
+          <div class="public-mini-card language"><span>🇫🇷</span><b>اللغة الفرنسية</b><small>Français</small></div>
+          <div class="public-mini-card language"><span>🇬🇧</span><b>اللغة الإنجليزية</b><small>English</small></div>
+          <div class="public-mini-card language"><span>🇩🇪</span><b>اللغة الألمانية</b><small>Deutsch</small></div>
+          <div class="public-mini-card language"><span>🇪🇸</span><b>اللغة الإسبانية</b><small>Español</small></div>
+          <div class="public-mini-card language"><span>🇮🇹</span><b>اللغة الإيطالية</b><small>Italiano</small></div>
+          <div class="public-mini-card"><span>📐</span><b>الرياضيات</b><small>جبر · تحليل · هندسة</small></div>
+          <div class="public-mini-card"><span>⚛️</span><b>العلوم الفيزيائية</b><small>فيزياء · كيمياء</small></div>
+          <div class="public-mini-card"><span>🧬</span><b>علوم الطبيعة والحياة</b><small>علوم الحياة والأرض</small></div>
+          <div class="public-mini-card"><span>🗺️</span><b>التاريخ والجغرافيا</b><small>تاريخ · جغرافيا</small></div>
+          <div class="public-mini-card"><span>📖</span><b>الفلسفة</b><small>تفكير · منهجية</small></div>
+          <div class="public-mini-card"><span>📊</span><b>التسيير والاقتصاد</b><small>اقتصاد · محاسبة</small></div>
+          <div class="public-mini-card"><span>💻</span><b>الإعلام الآلي</b><small>خوارزميات · برمجة</small></div>
+          <div class="public-mini-card"><span>🕌</span><b>التربية الإسلامية</b><small>قيم · معارف</small></div>
+          <div class="public-mini-card"><span>🏃</span><b>التربية البدنية</b><small>نشاط رياضي</small></div>
         </div>
         <div class="public-section-heading public-years-heading"><div><span>المسار الدراسي</span><h3>كل السنوات وكل الشعب</h3></div><button type="button" data-public-view="levels">استكشف السنوات ←</button></div>
         <div class="public-year-cards">
