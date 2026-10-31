@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.69.0';
+const VERSION = 'dz-de-v3.70.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -162,12 +162,26 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  /* 1bis) D0 — assets statiques same-origin -> stale-while-revalidate
-     (cache immediat + rafraichissement en arriere-plan).
-     La navigation HTML reste network-first : branche 1) inchangee. */
+  /* 1bis) Assets same-origin.
+     JavaScript et CSS : réseau d'abord pour ne jamais servir une ancienne interface ;
+     cache uniquement en secours hors ligne. JSON, polices et images : cache rapide
+     avec actualisation réseau en arrière-plan. */
   if (url.origin === self.location.origin && /\.(js|css|json|woff2?|png|svg|webp)$/i.test(url.pathname)) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_ASSETS);
+      const estCode = /\.(js|css)$/i.test(url.pathname);
+      if (estCode) {
+        try {
+          const fresh = await fetch(req, { cache: 'no-store' });
+          if (fresh && (fresh.ok || fresh.type === 'opaque')) {
+            cache.put(req, fresh.clone()).catch(() => {});
+          }
+          return fresh;
+        } catch (e) {
+          const hit = await cache.match(req) || await caches.match(req);
+          return hit || new Response('', { status: 504 });
+        }
+      }
       const hit = await cache.match(req);
       const bg = fetch(req).then(res => {
         if (res && (res.ok || res.type === 'opaque')) { cache.put(req, res.clone()).catch(() => {}); return res; }
