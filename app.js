@@ -1618,9 +1618,8 @@ function bootGate(){
 
 function paintGateStats(){
   const el = $('#gateStats'); if(!el) return;
-  const a = window.AUTH ? AUTH.stats() : { comptes:0, sections:5, eleves:142, wilayas:58 };
-  const bdd = (window.BDD && BDD.state.ready) ? BDD.kpis().total : 684;
-  el.innerHTML = [[bdd,'وثيقة'],[a.eleves,'تلميذ'],[a.sections,'أقسام'],[a.wilayas,'ولاية']]
+  /* مؤشرات تعريفية من سجل المنصة، وليست أعداد مستخدمين أو وثائق غير متحققة. */
+  el.innerHTML = [[3,'سنوات ثانوي'],[15,'مادة في الفهرس'],[6,'لغات مدرجة'],[1,'مادة متاحة حاليًا']]
     .map(x => '<div class="gstat"><div class="gstat-n">' + x[0] + '</div>' +
               '<div class="gstat-l">' + x[1] + '</div></div>').join('');
 }
