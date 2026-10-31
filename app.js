@@ -1140,21 +1140,48 @@ function addMsg(who, txt, noSave){
 }
 
 async function sendChat(v){
-  /* 🔎 RAG gardé : si le corpus répond avec confiance, on sert l'extrait verbatim
-     AVANT le tuteur à règles ; jamais de texte inventé. */
-  if(window.RAG && window.RAG.cherche){
-    try{
-      const rr = await window.RAG.cherche(v);
-      const ff = window.RAG.formule(rr);
-      if(ff){ addMsg('bot', ff); return; }
-    }catch(e){}
-  }
   addMsg('me', esc(v));
   const log = $('#chatLog');
+  if(!log) return;
   const tp = document.createElement('div');
   tp.className = 'msg bot typing'; tp.innerHTML = '<i></i><i></i><i></i>';
   log.appendChild(tp); log.scrollTop = log.scrollHeight;
-  setTimeout(() => {
+  let answered = false;
+  try{
+    /* 1) Corpus local : réponse exacte prioritaire, sans invention. */
+    if(window.RAG && window.RAG.cherche){
+      try{
+        const rr = await window.RAG.cherche(v);
+        const ff = window.RAG.formule(rr);
+        if(ff){ tp.remove(); addMsg('bot', ff); answered = true; return; }
+      }catch(e){}
+    }
+    /* 2) Tuteur IA distant : URL issue de la configuration publique, jamais de secret côté client. */
+    try{
+      const cfg = await fetch('./assets/bdd/config.json', {cache:'no-cache'}).then(r=>r.ok?r.json():null);
+      const proxy = cfg && typeof cfg.ia_proxy === 'string' ? cfg.ia_proxy.replace(/\/$/,'') : '';
+      if(proxy){
+        const response = await fetch(proxy + '/ask', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({q:String(v).slice(0,600),ctx:'منصة الثانوية الافتراضية الجزائرية. المساعدة التعليمية في اللغة الألمانية، مع شرح مبسط بالعربية والألمانية.'})
+        });
+        const data = await response.json().catch(()=>null);
+        if(response.ok && data && data.ok && typeof data.rep === 'string' && data.rep.trim()){
+          tp.remove();
+          const safe = esc(data.rep.trim()).replace(/\n/g,'<br>');
+          addMsg('bot', safe);
+          answered = true;
+          if(soundOn && 'speechSynthesis' in window){
+            const utterance = new SpeechSynthesisUtterance(data.rep.trim());
+            utterance.lang = /[\u0600-\u06FF]/.test(data.rep) ? 'ar' : (/[äöüß]/i.test(data.rep) ? 'de-DE' : 'fr-FR');
+            speechSynthesis.cancel(); speechSynthesis.speak(utterance);
+          }
+          return;
+        }
+      }
+    }catch(e){}
+    /* 3) Secours local si le réseau ou le Worker IA est indisponible. */
     tp.remove();
     const rep = PROF.repondre(v);
     addMsg('bot', rep);
@@ -1162,7 +1189,10 @@ async function sendChat(v){
       const m = rep.match(/<span class="de-in">([^<]+)<\/span>/);
       if(m) speak(m[1].replace(/<[^>]+>/g,''));
     }
-  }, 480 + Math.random() * 420);
+    answered = true;
+  }finally{
+    if(!answered && tp.isConnected) tp.remove();
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
