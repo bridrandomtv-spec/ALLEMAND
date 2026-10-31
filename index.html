@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
-</noscript><link rel="stylesheet" href="style.css?v=3513"><link rel="stylesheet" href="style-prototype-dz.css?v=34">
+</noscript><link rel="stylesheet" href="style.css?v=3513"><link rel="stylesheet" href="style-prototype-dz.css?v=35">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -60,22 +60,24 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
   <div class="gate-bg" aria-hidden="true"></div>
   <div class="gate-wrap">
 
-    <div class="gate-brand">
-      <div class="gate-crest">🇩🇿</div>
-      <div class="gate-titles">
-        <h1 class="gate-title">الثانوية الافتراضية الجزائرية</h1>
-        <p class="gate-sub">برنامج الأصل · Lycée virtuel — متعدد المواد والمستويات</p>
-        <p class="gate-motto">✨ الرجوع إلى الأصل فضيلة — نرافق أبناءكم نحو النجاح... خطوة بخطوة ✨</p>
+    <div class="public-header">
+      <div class="gate-brand">
+        <div class="gate-crest">🇩🇿</div>
+        <div class="gate-titles">
+          <h1 class="gate-title">الثانوية الافتراضية الجزائرية</h1>
+          <p class="gate-sub">برنامج الأصل · Lycée virtuel — متعدد المواد والمستويات</p>
+          <p class="gate-motto">✨ الرجوع إلى الأصل فضيلة — نرافق أبناءكم نحو النجاح... خطوة بخطوة ✨</p>
+        </div>
       </div>
-    </div>
 
-    <nav class="public-nav" aria-label="التنقل العام">
-      <button type="button" class="active" data-public-view="home">الرئيسية</button>
-      <button type="button" data-public-view="subjects">المواد</button>
-      <button type="button" data-public-view="levels">السنوات</button>
-      <button type="button" data-gate-open="login">تسجيل الدخول</button>
-      <button type="button" class="public-nav-cta" data-gate-open="signup">إنشاء حساب</button>
-    </nav>
+      <nav class="public-nav" aria-label="التنقل العام">
+        <button type="button" class="active" data-public-view="home">الرئيسية</button>
+        <button type="button" data-public-view="subjects">المواد</button>
+        <button type="button" data-public-view="levels">السنوات</button>
+        <button type="button" data-gate-open="login">تسجيل الدخول</button>
+        <button type="button" class="public-nav-cta" data-gate-open="signup">إنشاء حساب</button>
+      </nav>
+    </div>
 
     <section class="public-landing" aria-labelledby="publicTitle">
       <div class="public-copy">
