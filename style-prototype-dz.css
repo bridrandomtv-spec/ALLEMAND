@@ -2883,3 +2883,92 @@ html:not([data-theme="light"]) #tabs .tab.on{
  #classeBody .info-grid{grid-template-columns:1fr}
  #malakhissBody .mk-filtre select{width:100%}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE DZ-12 — cohérence transversale, accessibilité et contrôles
+   Couche additive : états clavier/formulaires/cartes/tableaux.
+   Ne modifie ni les événements ni les dimensions fonctionnelles.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Typographie bilingue : éviter les débordements RTL/LTR et garder
+   les fragments allemands isolés dans les paragraphes arabes. */
+#app :is(h1,h2,h3,h4,p,li,label,small,strong,em,.card,.stat,.kpi){
+  overflow-wrap:anywhere;
+}
+#app :lang(de),#app .de,#app .de-in,#app .de-display{
+  direction:ltr;
+  text-align:left;
+  unicode-bidi:isolate;
+  font-family:var(--ff-de,Inter,'Segoe UI',sans-serif);
+}
+#app .de-display{font-family:var(--ff-de-display,Cormorant Garamond,Georgia,serif)}
+#app :is(button,input,textarea,select){font:inherit}
+#app :is(input,textarea,select){max-width:100%;min-width:0}
+
+/* Cible tactile et états cohérents pour les boutons réellement utilisés. */
+#app :is(.btn,.btn-p,.btn-g,.btn-o,.btn-w,.btn-sm,.tab,.ong,.chip,.qz-o,.opt,.vf-b button,.vfb button){
+  transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+#app :is(.btn,.btn-p,.btn-g,.btn-o,.btn-w,.btn-sm){min-height:38px}
+#app :is(.btn,.btn-p,.btn-g,.btn-o,.btn-w,.btn-sm):not(:disabled):active{
+  transform:translateY(1px);
+}
+#app :is(button,[role="button"],a,input,textarea,select,[tabindex]):focus-visible{
+  outline:3px solid color-mix(in srgb,var(--vert2,#00843d) 65%,transparent);
+  outline-offset:2px;
+}
+#app :is(button,.btn,.btn-p,.btn-g,.btn-o,.btn-w,.btn-sm):disabled,
+#app [aria-disabled="true"]{
+  cursor:not-allowed;
+  opacity:.56;
+  filter:saturate(.65);
+  transform:none;
+  box-shadow:none;
+}
+
+/* Champs : états de validation visibles sans imposer de nouveau style
+   aux champs spécialisés de connexion ou de paiement. */
+#app :is(.fld,.fld2,.frow,.search-bar,.filters){min-width:0}
+#app :is(.fld input,.fld select,.fld-row input,.fld2 input,.fld2 select,.search-bar input,.filters input,.filters select,.filters textarea){
+  min-height:42px;
+  max-width:100%;
+  border-radius:10px;
+}
+#app :is(input,textarea,select):disabled{
+  cursor:not-allowed;
+  opacity:.62;
+}
+#app :is(input,textarea,select)[aria-invalid="true"],
+#app :is(input,textarea,select):user-invalid{
+  border-color:var(--rouge,#d21034)!important;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--rouge,#d21034) 13%,transparent);
+}
+#app textarea{line-height:1.75;resize:vertical}
+#app input[type="checkbox"],#app input[type="radio"]{accent-color:var(--vert2,#00843d)}
+
+/* Surfaces et tableaux : cohérence de bordure, contraste et défilement.
+   Les tableaux restent dans leur conteneur et ne forcent pas la page. */
+#app :is(.card,.stat,.kpi,.fiche,.off-card,.mt-fiche,.mk-c,.bl-p,.rs-card,.cd-box){
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+#app :is(.bareme,.tble,.table-wrap,.table-responsive){max-width:100%;overflow-x:auto}
+#app table{max-width:100%;border-collapse:collapse}
+#app :is(th,td){overflow-wrap:anywhere}
+#app :is(th,td){padding-block:9px}
+#app :is(tbody tr):hover{background:color-mix(in srgb,var(--vert2,#00843d) 5%,transparent)}
+
+/* Respect du choix système de réduction des animations. */
+@media(prefers-reduced-motion:reduce){
+  #app *,#tabs *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+/* Petits écrans : éviter les contrôles comprimés et les tableaux illisibles. */
+@media(max-width:420px){
+  #app :is(.btn,.btn-p,.btn-g,.btn-o,.btn-w,.btn-sm){max-width:100%;white-space:normal}
+  #app :is(input,textarea,select){font-size:16px}
+  #app :is(.filters,.filters-h,.result-bar){min-width:0}
+  #app :is(.bareme,.tble,.table-wrap,.table-responsive){overscroll-behavior-inline:contain}
+}
