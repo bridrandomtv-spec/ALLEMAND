@@ -2395,3 +2395,135 @@ html[data-theme="light"] [data-view="matieres"] #matieresBody{min-width:0}
   html[data-theme="light"] #tbSearch,
   html[data-theme="light"] .topbar-act .icon-btn{transition:none}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE DZ-04 — catalogue des matières (matieres.js)
+   Classes vérifiées dans le rendu réel de matieres.js.
+   ═══════════════════════════════════════════════════════════════ */
+html[data-theme="light"] [data-view="matieres"] .mat-hero{
+  padding:clamp(18px,3vw,28px);border:1px solid #d8e8dc;
+  border-radius:22px;background:
+    radial-gradient(420px 180px at 100% 0,rgba(210,16,52,.07),transparent 65%),
+    linear-gradient(135deg,#f0f8f1,#fff 72%);
+  box-shadow:0 12px 30px rgba(0,55,28,.06);
+}
+html[data-theme="light"] [data-view="matieres"] .mat-t{
+  display:flex;align-items:center;gap:14px;margin-bottom:20px;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-crest{
+  display:grid;place-items:center;flex:none;width:56px;height:56px;
+  border-radius:17px;background:#e2f1e5;border:1px solid #cce3d1;font-size:29px;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-t h2{
+  margin:0;color:#064b2a;font-size:clamp(19px,2.4vw,25px);font-weight:900;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-sub{
+  margin:4px 0 0;color:#617568;font-size:12.5px;line-height:1.7;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-sel{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
+  max-width:720px;margin-block:16px 20px;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-f{margin:0;min-width:0}
+html[data-theme="light"] [data-view="matieres"] .mat-f span{
+  display:block;margin-bottom:6px;color:#385c45;font-weight:800;font-size:12px;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-f select{
+  width:100%;min-height:44px;border:1px solid #d5e4d8;border-radius:12px;
+  padding:9px 12px;background:#fff;color:#183b29;font:inherit;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-f select:focus{
+  outline:none;border-color:#16834b;box-shadow:0 0 0 3px rgba(0,98,51,.1);
+}
+html[data-theme="light"] [data-view="matieres"] .mat-stats{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-st{
+  display:flex;flex-direction:column;gap:4px;min-width:0;
+  padding:13px 14px;border:1px solid #dce9df;border-radius:14px;background:#fff;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-st b{
+  color:#006233;font-size:24px;line-height:1.2;font-weight:900;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-st span{
+  color:#687b70;font-size:11.5px;line-height:1.5;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-block:17px;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-c{
+  display:flex;flex-direction:column;align-items:flex-start;min-width:0;
+  padding:17px;border:1px solid #dce8df;border-radius:17px;background:#fff;
+  box-shadow:0 5px 17px rgba(0,55,28,.04);
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-c.on{
+  border-color:#c4dfcb;background:linear-gradient(155deg,#fff,#f8fcf8);
+}
+html[data-theme="light"] [data-view="matieres"] .mat-c:hover{
+  transform:translateY(-3px);border-color:#9fc8ad;
+  box-shadow:0 12px 25px rgba(0,75,38,.09);
+}
+html[data-theme="light"] [data-view="matieres"] .mat-ch{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;
+  margin-bottom:13px;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-i{
+  display:grid;place-items:center;width:43px;height:43px;border-radius:13px;
+  background:#edf6ef;font-size:22px;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-stt{
+  padding:5px 9px;border-radius:999px;background:#f2f4f2;color:#66736a;
+  font-size:10.5px;font-weight:800;white-space:nowrap;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-stt.ok{
+  color:#075b31;background:#e7f5eb;border:1px solid #c8e6d0;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-n{
+  color:#173d29;font-size:16px;font-weight:900;line-height:1.5;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-de{
+  margin-top:3px;color:#75877b;font-size:12px;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-d{
+  flex:1;margin:9px 0 14px;color:#65776b;font-size:12px;line-height:1.8;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-kv{
+  display:flex;flex-wrap:wrap;gap:8px 14px;width:100%;margin-bottom:14px;
+  padding-top:10px;border-top:1px solid #edf2ee;color:#65776b;font-size:11.5px;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-kv b{color:#006233;font-size:14px}
+html[data-theme="light"] [data-view="matieres"] .mat-c .btn{margin-top:auto}
+html[data-theme="light"] [data-view="matieres"] .mat-vision{
+  padding:20px;border:1px solid #dce8df;border-radius:18px;background:#fff;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-vision h3{
+  margin:0 0 12px;color:#064b2a;font-size:16px;font-weight:900;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-how{
+  margin:0;padding-inline-start:22px;color:#5f7266;font-size:12px;line-height:2;
+}
+html[data-theme="light"] [data-view="matieres"] .mat-how li{padding-inline-start:4px;margin-block:4px}
+html[data-theme="light"] [data-view="matieres"] .bdd-status{
+  padding:18px;border:1px dashed #cbded0;border-radius:14px;
+  background:#f7fbf7;color:#45644f;text-align:center;
+}
+html[data-theme="light"] [data-view="matieres"] .bdd-status.err{
+  border-color:#edc4cb;background:#fff7f8;color:#a60d2a;
+}
+@media(max-width:900px){
+  html[data-theme="light"] [data-view="matieres"] .mat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-theme="light"] [data-view="matieres"] .mat-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  html[data-theme="light"] [data-view="matieres"] .mat-sel{grid-template-columns:1fr}
+  html[data-theme="light"] [data-view="matieres"] .mat-grid{grid-template-columns:1fr;gap:10px}
+  html[data-theme="light"] [data-view="matieres"] .mat-t{align-items:flex-start}
+  html[data-theme="light"] [data-view="matieres"] .mat-crest{width:46px;height:46px;font-size:24px}
+  html[data-theme="light"] [data-view="matieres"] .mat-c{padding:15px}
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-theme="light"] [data-view="matieres"] .mat-c{transition:none}
+  html[data-theme="light"] [data-view="matieres"] .mat-c:hover{transform:none}
+}
