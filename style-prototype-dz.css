@@ -5124,3 +5124,362 @@ html[data-theme="dark"] #shell [data-view="prof"] .chat-voice-status{
     transition:none;
   }
 }
+
+
+/* ══ V6.7 — accueil : identité algérienne, hero, indicateurs et accès rapides ══
+   Ciblage des composants réellement présents dans index.html.
+   Couche additive : aucune modification des rendus ou événements JavaScript.
+*/
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome{
+  position:relative;
+  isolation:isolate;
+  display:block;
+  min-height:238px;
+  padding:30px clamp(20px,3vw,38px);
+  margin:0 0 18px;
+  overflow:hidden;
+  border:1px solid rgba(0,98,51,.16);
+  border-radius:24px;
+  color:#fff;
+  background:
+    radial-gradient(ellipse at 8% 100%,rgba(255,255,255,.16),transparent 34%),
+    radial-gradient(ellipse at 92% 0%,rgba(210,16,52,.17),transparent 31%),
+    linear-gradient(118deg,#004b2b 0%,#006b3a 48%,#07884b 100%);
+  box-shadow:0 18px 42px rgba(0,82,43,.17);
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome::before{
+  content:"";
+  position:absolute;
+  inset-inline-end:0;
+  top:0;
+  width:7px;
+  height:100%;
+  background:linear-gradient(180deg,#d21034 0 33.33%,#fff 33.33% 66.66%,#006233 66.66%);
+  opacity:.95;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome::after{
+  content:"🇩🇿";
+  position:absolute;
+  inset-inline-start:20px;
+  inset-block-end:-52px;
+  z-index:-1;
+  font-size:190px;
+  opacity:.075;
+  pointer-events:none;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome h1{
+  position:relative;
+  z-index:1;
+  max-width:780px;
+  margin:0 0 10px;
+  color:#fff;
+  font-size:clamp(25px,3vw,36px);
+  font-weight:900;
+  line-height:1.45;
+  letter-spacing:-.02em;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome p{
+  position:relative;
+  z-index:1;
+  max-width:700px;
+  margin:0 0 18px;
+  color:rgba(255,255,255,.88);
+  font-size:13.5px;
+  line-height:1.9;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome p b,
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome .de-display{
+  color:#fff;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-cta{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-cta .btn{
+  min-height:42px;
+  padding:10px 16px;
+  border:1px solid rgba(255,255,255,.26);
+  border-radius:12px;
+  font-weight:800;
+  box-shadow:0 5px 14px rgba(0,0,0,.10);
+  transition:transform .18s ease,filter .18s ease,box-shadow .18s ease;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-cta .btn:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.06);
+  box-shadow:0 8px 18px rgba(0,0,0,.15);
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-cta .btn-p{
+  color:#07502e;
+  background:#fff;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-cta .btn-g{
+  color:#fff;
+  background:rgba(255,255,255,.13);
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-cta .btn-o{
+  color:#fff;
+  background:rgba(210,16,52,.88);
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-prog{
+  position:relative;
+  z-index:1;
+  max-width:620px;
+  margin-top:19px;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-prog .progress-wrap{
+  height:8px;
+  overflow:hidden;
+  border-radius:99px;
+  background:rgba(255,255,255,.22);
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-prog .progress{
+  border-radius:99px;
+  background:linear-gradient(90deg,#fff,#c9f2d6);
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-prog .progress-lbl{
+  margin-top:7px;
+  color:rgba(255,255,255,.86);
+  font-size:11px;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-meta{
+  position:relative;
+  z-index:1;
+  gap:7px;
+  margin-top:15px;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-meta .sec-pill{
+  padding:6px 10px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;
+  color:#fff;
+  background:rgba(255,255,255,.11);
+  font-size:10.5px;
+  backdrop-filter:blur(5px);
+}
+html[data-theme="light"] #shell [data-view="accueil"] .welcome-art{
+  inset-inline-end:24px;
+  inset-block-end:18px;
+  z-index:0;
+  opacity:.82;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .welcome-art svg{
+  width:190px;
+  height:auto;
+  filter:drop-shadow(0 12px 16px rgba(0,0,0,.13));
+}
+
+/* Statistiques personnelles : quatre cartes lisibles et régulières */
+html[data-theme="light"] #shell [data-view="accueil"] #statsHome.stats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin:0 0 22px;
+}
+html[data-theme="light"] #shell [data-view="accueil"] #statsHome .stat{
+  position:relative;
+  min-width:0;
+  min-height:104px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:17px 12px;
+  border:1px solid #e0ebe3;
+  border-radius:17px;
+  background:linear-gradient(150deg,#fff 0%,#f5faf6 100%);
+  box-shadow:0 7px 20px rgba(20,70,39,.055);
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+html[data-theme="light"] #shell [data-view="accueil"] #statsHome .stat::before{
+  content:"";
+  position:absolute;
+  inset-inline:14px;
+  inset-block-start:0;
+  height:3px;
+  border-radius:0 0 5px 5px;
+  background:linear-gradient(90deg,#006233,#d21034);
+  opacity:.78;
+}
+html[data-theme="light"] #shell [data-view="accueil"] #statsHome .stat:hover{
+  transform:translateY(-3px);
+  border-color:#b9d8c2;
+  box-shadow:0 12px 24px rgba(20,70,39,.09);
+}
+html[data-theme="light"] #shell [data-view="accueil"] #statsHome .stat-n{
+  color:#006233;
+  font-size:clamp(22px,2.2vw,29px);
+  font-weight:950;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+}
+html[data-theme="light"] #shell [data-view="accueil"] #statsHome .stat-l{
+  color:#647568;
+  font-size:11px;
+  font-weight:750;
+  line-height:1.5;
+}
+
+/* Matière active et accès rapides dans la colonne latérale */
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-lang{
+  border-color:#dce9df;
+  border-radius:16px;
+  background:linear-gradient(110deg,#f1f8f3,#fff);
+  box-shadow:0 5px 16px rgba(20,70,39,.035);
+}
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-s{
+  min-height:34px;
+  padding:7px 11px;
+  border:1px solid #dce9df;
+  border-radius:999px;
+  background:#fff;
+  color:#486451;
+  font-weight:800;
+  transition:background .16s ease,border-color .16s ease,transform .16s ease;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-s:hover{
+  transform:translateY(-1px);
+  border-color:#9bc9a8;
+  background:#eaf6ed;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-s.on,
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-s.active{
+  border-color:#006233;
+  color:#fff;
+  background:#006233;
+  box-shadow:0 5px 12px rgba(0,98,51,.16);
+}
+html[data-theme="light"] #shell [data-view="accueil"] #homeSide .panel{
+  border:1px solid #e0ebe3;
+  border-radius:17px;
+  background:#fff;
+  box-shadow:0 7px 20px rgba(20,70,39,.045);
+}
+html[data-theme="light"] #shell [data-view="accueil"] #homeSide .panel-h{
+  color:#17472c;
+  font-weight:900;
+}
+html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .grid3{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .card.mini{
+  min-width:0;
+  min-height:112px;
+  padding:12px 10px;
+  border:1px solid #e1ebe4;
+  border-radius:14px;
+  background:linear-gradient(145deg,#fff,#f7faf8);
+  box-shadow:0 4px 12px rgba(20,70,39,.035);
+  transition:transform .17s ease,border-color .17s ease,box-shadow .17s ease;
+}
+html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .card.mini:hover{
+  transform:translateY(-2px);
+  border-color:#a9ceb4;
+  box-shadow:0 9px 18px rgba(20,70,39,.075);
+}
+html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .card.mini h3{
+  color:#214b31;
+  font-size:12px;
+  line-height:1.45;
+}
+html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .card.mini p{
+  color:#718176;
+  font-size:10px;
+  line-height:1.55;
+}
+html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .card.mini .mini-n{
+  color:#006233;
+  font-weight:900;
+}
+
+/* Mode sombre : conserver les contrastes et les états */
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome{
+  background:
+    radial-gradient(ellipse at 8% 100%,rgba(255,255,255,.08),transparent 34%),
+    linear-gradient(118deg,#073b27 0%,#075b35 55%,#104b32 100%);
+  border-color:#286344;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat,
+html[data-theme="dark"] #shell [data-view="accueil"] #homeSide .panel,
+html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini{
+  border-color:var(--b);
+  background:var(--nuit2);
+  color:var(--t);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat-n,
+html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini .mini-n{
+  color:#8bd6a4;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat-l,
+html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini p{
+  color:var(--m);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini h3{
+  color:var(--t);
+}
+
+@media(max-width:900px){
+  html[data-theme="light"] #shell [data-view="accueil"] #statsHome.stats{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+@media(max-width:700px){
+  html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome{
+    min-height:0;
+    padding:22px 18px 20px;
+    border-radius:19px;
+  }
+  html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome h1{
+    max-width:none;
+    font-size:clamp(22px,6vw,29px);
+  }
+  html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome p{
+    font-size:12.5px;
+  }
+  html[data-theme="light"] #shell [data-view="accueil"] .welcome-art{
+    display:none;
+  }
+  html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-cta .btn{
+    flex:1 1 145px;
+    min-width:0;
+    padding:10px 11px;
+    font-size:11.5px;
+  }
+  html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-meta{
+    gap:6px;
+  }
+  html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome-meta .sec-pill{
+    font-size:9.5px;
+  }
+}
+@media(max-width:420px){
+  html[data-theme="light"] #shell [data-view="accueil"] #statsHome.stats{
+    gap:8px;
+  }
+  html[data-theme="light"] #shell [data-view="accueil"] #statsHome .stat{
+    min-height:88px;
+    padding:13px 7px;
+  }
+  html[data-theme="light"] #shell [data-view="accueil"] #statsHome .stat-n{
+    font-size:21px;
+  }
+  html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .grid3{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+  html[data-theme="light"] #shell [data-view="accueil"] #panelQuick .card.mini{
+    min-height:104px;
+    padding:10px 8px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #shell [data-view="accueil"] .welcome-cta .btn,
+  #shell [data-view="accueil"] #statsHome .stat,
+  #shell [data-view="accueil"] #panelQuick .card.mini,
+  #shell [data-view="accueil"] .subj-home .subj-s{transition:none!important}
+}
