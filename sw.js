@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.66.0';
+const VERSION = 'dz-de-v3.67.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -14,7 +14,7 @@ const PRECACHE = [
   './',
   './index.html',
   './style.css?v=3512',
-  './style-prototype-dz.css?v=13',
+  './style-prototype-dz.css?v=19',
   './auth.js?v=3510',
   './bdd.js?v=3510',
   './app.js?v=3510',
@@ -37,6 +37,7 @@ const PRECACHE = [
   './memoire.js?v=3510',
   './masar.js?v=3511',
   './matieres.js?v=3510',
+  './public-portal.js?v=2',
   './library.js?v=3510',
   './examen.js?v=3510',
   './officiels.js?v=3510',
@@ -66,6 +67,7 @@ const BDD_FILES = [
   './assets/bdd/plan_projet.json',
   './assets/bdd/reservation.json',
   './assets/bdd/matieres.json',
+  './assets/bdd/subjects.json',
   './assets/bdd/wilaya.json',
   './assets/bdd/onboarding.json',
   './assets/bdd/corpus.json',
