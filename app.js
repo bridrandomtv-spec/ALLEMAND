@@ -1525,7 +1525,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if('serviceWorker' in navigator){
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js?v=3522').then(reg => {
+      navigator.serviceWorker.register('sw.js?v=3523').then(reg => {
         reg.addEventListener('updatefound', () => toast('🔄 تحديث جديد قيد التنزيل…'));
       }).catch(() => {});
     });
