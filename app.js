@@ -494,6 +494,23 @@ function renderTabs(){
       + '<div class="cat-body"' + (open ? '' : ' hidden') + '>'
       + rest.map(t => { used[t[0]] = 1; return btn(t[0], 'sub'); }).join('') + '</div>';
   }
+  /* D7: renderTabs() reconstruit #tabs à chaque navigation.
+     Réinsérer les commandes déplacées avant de remplacer le DOM, puis
+     libérer le verrou pour que le réagencement soit rejoué sur la nouvelle vue. */
+  const d7bot = document.getElementById('d7bot');
+  if(d7bot){
+    const host = document.querySelector('.topbar-act');
+    if(host){
+      ['subjSel','btnSound','btnInstall'].forEach(id => {
+        const node = document.getElementById(id);
+        if(node && node.parentNode === d7bot){
+          if(id === 'subjSel') host.insertBefore(node, host.firstChild);
+          else host.appendChild(node);
+        }
+      });
+    }
+  }
+  if(c.dataset.d7 === '1') delete c.dataset.d7;
   c.innerHTML = h;
 }
 
