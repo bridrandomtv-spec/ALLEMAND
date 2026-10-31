@@ -2972,3 +2972,97 @@ html:not([data-theme="light"]) #tabs .tab.on{
   #app :is(.filters,.filters-h,.result-bar){min-width:0}
   #app :is(.bareme,.tble,.table-wrap,.table-responsive){overscroll-behavior-inline:contain}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE DZ-13 — finition des écrans transversaux encore peu couverts
+   Modules vérifiés : journee, stats, banque, rag, corpus, guide et buch.
+   Mise en page uniquement ; aucun changement des données ou interactions.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Journée et espace de suivi : planning lisible, sans colonnes écrasées. */
+#todayBody,#cvBody,#semaineBody,#statsBody,#banqueBody,#ragBody,#corpusBody,#guideBody,#buchBody{min-width:0}
+#todayBody .jd-hero,#cvBody .cv-card,#semaineBody .jd-hero{min-width:0;overflow-wrap:anywhere}
+#todayBody .jd-h,#todayBody .jd-d{min-width:0;line-height:1.8}
+#todayBody .jd-list{display:grid;gap:10px}
+#todayBody .jd-c{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
+#todayBody .jd-b,#todayBody .jd-m,#todayBody .jd-meta{min-width:0;overflow-wrap:anywhere}
+#todayBody .jd-quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,125px),1fr));gap:9px}
+#cvBody .cv-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+#cvBody .cv-id,#cvBody .cv-de,#cvBody .cv-quote{min-width:0;overflow-wrap:anywhere}
+#cvBody .cv-blocs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px}
+#semaineBody .jd-jour{min-width:0;overflow-wrap:anywhere}
+#semaineBody .jd-jh{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* Statistiques : graphiques et tableaux gardent leur largeur utile. */
+#statsBody .st-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,135px),1fr));gap:9px}
+#statsBody .stk,#statsBody .st-map-wrap,#statsBody .st-map{min-width:0;max-width:100%}
+#statsBody .st-map-wrap{overflow-x:auto;overscroll-behavior-inline:contain}
+#statsBody .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+#statsBody .wlist{display:grid;gap:9px}
+#statsBody .wrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(70px,1.2fr) auto;align-items:center;gap:9px}
+#statsBody .wn,#statsBody .wv{min-width:0;overflow-wrap:anywhere}
+#statsBody .tble{display:block;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}
+#statsBody .tble table{min-width:520px}
+
+/* Banque de questions : cartes et réponses faciles à parcourir au tactile. */
+#banqueBody .bq-hero{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+#banqueBody .bq-hero>div{min-width:0;flex:1 1 220px}
+#banqueBody .bq-tabs,#banqueBody .bq-filtres{display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+#banqueBody .bq-c{min-width:0;overflow-wrap:anywhere}
+#banqueBody .bq-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#banqueBody .bq-o{min-width:0;white-space:normal;overflow-wrap:anywhere}
+#banqueBody .bq-fb,#banqueBody .bq-rev,#banqueBody .bq-rev2{min-width:0;overflow-wrap:anywhere}
+
+/* Assistant RAG : sources, résultats et questions restent contenus. */
+#ragBody .rg-hero{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+#ragBody .rg-hero>div{min-width:0;flex:1 1 220px}
+#ragBody .rg-box,#ragBody .rg-out,#ragBody .rg-ped,#ragBody .rg-non{min-width:0;max-width:100%;overflow-wrap:anywhere}
+#ragBody .rq-list{display:grid;gap:9px}
+#ragBody .rq-c{min-width:0;overflow-wrap:anywhere}
+#ragBody .rq-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#ragBody .rq-o{min-width:0;white-space:normal;overflow-wrap:anywhere}
+#ragBody .rq-fb{line-height:1.8;overflow-wrap:anywhere}
+#ragBody .rq-chips,#ragBody .mk-chips{display:flex;flex-wrap:wrap;gap:7px}
+
+/* Corpus : catalogue responsive et actions sans débordement. */
+#corpusBody .cp-hero{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+#corpusBody .cp-hero>div{min-width:0;flex:1 1 220px}
+#corpusBody .cp-filtres{display:flex;align-items:center;flex-wrap:wrap;gap:9px}
+#corpusBody .cp-sel{min-width:min(100%,190px);max-width:100%}
+#corpusBody .cp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:10px}
+#corpusBody .cp-c{min-width:0;overflow-wrap:anywhere}
+#corpusBody .cp-top,#corpusBody .cp-meta,#corpusBody .cp-btns{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+#corpusBody .cp-t,#corpusBody .cp-x{min-width:0;overflow-wrap:anywhere}
+
+/* Guide et livre interactif : étapes et contrôles adaptatifs. */
+#guideBody .gd-hero{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+#guideBody .gd-hero>div{min-width:0;flex:1 1 220px}
+#guideBody .gd-roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:10px}
+#guideBody .gd-r,#guideBody .gd-pas{min-width:0;overflow-wrap:anywhere}
+#guideBody .onb-card,#guideBody .onb-body{min-width:0;max-width:100%;overflow-wrap:anywhere}
+#guideBody .onb-tabs{display:flex;flex-wrap:wrap;gap:7px}
+#guideBody .onb-steps,#guideBody .onb-steps2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:9px}
+#buchBody .dn-tabs{display:flex;flex-wrap:wrap;gap:8px}
+#buchBody .dn-hero{min-width:0;overflow-wrap:anywhere}
+#buchBody .dn-q{min-width:0;overflow-wrap:anywhere}
+#buchBody .dn-qt{line-height:1.8;overflow-wrap:anywhere}
+#buchBody .dn-self{min-width:0;overflow-wrap:anywhere}
+#buchBody .bk-in{width:100%;max-width:100%;min-width:0}
+#buchBody .dn-res{min-width:0;overflow-wrap:anywhere}
+
+@media(max-width:760px){
+  #statsBody .grid2{grid-template-columns:1fr}
+  #statsBody .st-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #todayBody .jd-quick{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #banqueBody .bq-opts,#ragBody .rq-opts{grid-template-columns:1fr}
+  #corpusBody .cp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:420px){
+  #statsBody .st-kpis,#todayBody .jd-quick,#corpusBody .cp-grid{grid-template-columns:1fr}
+  #statsBody .wrow{grid-template-columns:minmax(0,1fr) auto}
+  #statsBody .wbar{grid-column:1/-1;grid-row:2}
+  #todayBody .jd-c{grid-template-columns:1fr}
+  #guideBody .onb-steps,#guideBody .onb-steps2,#guideBody .gd-roles{grid-template-columns:1fr}
+  #buchBody .dn-tabs{display:grid;grid-template-columns:1fr 1fr}
+}
