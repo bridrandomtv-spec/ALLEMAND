@@ -2707,3 +2707,77 @@ html:not([data-theme="light"]) #tabs .tab.on{
 @media(prefers-reduced-motion:reduce){
   #cloudBody *,#adminBody *,#reservationBody *{scroll-behavior:auto}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE DZ-09 — messagerie, abonnement et bibliothèque pédagogique
+   Affinage responsive fondé sur les classes réellement émises par
+   msg.js, billing.js et library.js. Présentation uniquement.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Messagerie nationale : cartes, fils et zones d'action. */
+#msgBody{min-width:0}
+#msgBody .msg-land{min-width:0;padding:clamp(15px,3vw,24px);border-radius:18px}
+#msgBody .msg-land h2{line-height:1.5;overflow-wrap:anywhere}
+#msgBody .msg-land p{line-height:1.85;overflow-wrap:anywhere}
+#msgBody .msg-cta{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+#msgBody .msg-cta button{min-width:0;max-width:100%;white-space:normal}
+#msgBody .msg-bene{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:11px;margin-block:14px}
+#msgBody .msg-bene>.b{min-width:0;padding:14px;border:1px solid var(--bordure,#dce9e0);border-radius:14px;background:var(--surface,#fff)}
+#msgBody .msg-bene .b>span:last-child{display:block;line-height:1.75;overflow-wrap:anywhere}
+#msgBody .msg-steps4{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px}
+#msgBody .msg-steps4>.s{min-width:0;padding:13px;border:1px solid var(--bordure,#dce9e0);border-radius:13px;background:var(--surface,#fff);line-height:1.75}
+#msgBody .msg-thread{min-width:0;overflow-wrap:anywhere}
+#msgBody .msg-row{min-width:0;max-width:100%;overflow-wrap:anywhere}
+#msgBody .msg-meta{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+#msgBody .msg-body{line-height:1.8;overflow-wrap:anywhere;word-break:break-word}
+#msgBody .msg-report{flex:0 0 auto}
+
+/* Abonnements : cartes de plans et preuve de paiement. */
+#abonneBody{min-width:0}
+#abonneBody .bl-hero>div{min-width:0;flex:1 1 230px}
+#abonneBody .bl-hero .bl-sub{line-height:1.75;overflow-wrap:anywhere}
+#abonneBody .bl-plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;margin-block:14px}
+#abonneBody .bl-p{position:relative;min-width:0;padding:16px;border:1px solid var(--bordure,#dce9e0);border-radius:16px;background:var(--surface,#fff)}
+#abonneBody .bl-p.bl-hot{border-color:#16864c;box-shadow:0 0 0 2px rgba(22,134,76,.10)}
+#abonneBody .bl-prix{font-size:clamp(23px,3vw,31px);font-weight:900;line-height:1.3;overflow-wrap:anywhere}
+#abonneBody .bl-row{display:flex;align-items:center;flex-wrap:wrap;gap:9px;min-width:0}
+#abonneBody .bl-row>*{min-width:0;max-width:100%}
+#abonneBody .bl-row input{flex:1 1 160px}
+#abonneBody .bl-pay,#abonneBody .bl-steps,#abonneBody .bl-ok,#abonneBody .bl-wait{min-width:0;overflow-wrap:anywhere}
+#abonneBody .bl-note{line-height:1.8;overflow-wrap:anywhere}
+
+/* Bibliothèque : filtres, KPI et résultats sans écrasement. */
+#biblioBody{min-width:0}
+#biblioBody .bdd-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,135px),1fr));gap:9px}
+#biblioBody .kpi{min-width:0;overflow-wrap:anywhere}
+#biblioBody .filters{min-width:0;padding:clamp(12px,2.5vw,18px);border:1px solid var(--bordure,#dce9e0);border-radius:16px;background:var(--surface,#fff)}
+#biblioBody .filters-h{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px}
+#biblioBody .frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px;margin-block:10px}
+#biblioBody .fld2{min-width:0}
+#biblioBody .fld2 input,#biblioBody .fld2 select{width:100%;min-width:0;max-width:100%}
+#biblioBody .chips{display:flex;flex-wrap:wrap;gap:7px}
+#biblioBody .result-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-block:13px}
+#biblioBody #rList{min-width:0}
+#biblioBody .pager{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:18px 0}
+
+@media(max-width:760px){
+  #msgBody .msg-bene{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #msgBody .msg-steps4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #msgBody .msg-land{padding:15px}
+  #abonneBody .bl-plans{grid-template-columns:1fr}
+  #abonneBody .bl-p{padding:14px}
+  #abonneBody .bl-row{align-items:stretch}
+  #abonneBody .bl-row input{flex-basis:100%}
+  #biblioBody .bdd-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #biblioBody .frow{grid-template-columns:1fr}
+}
+@media(max-width:420px){
+  #msgBody .msg-bene,#msgBody .msg-steps4{grid-template-columns:1fr}
+  #msgBody .msg-cta{display:grid;grid-template-columns:1fr}
+  #msgBody .msg-cta button{width:100%}
+  #abonneBody .bl-row>*{width:100%;flex-basis:100%}
+  #biblioBody .bdd-kpis{gap:7px}
+  #biblioBody .filters{padding:11px}
+  #biblioBody .filters-h .btn{width:100%}
+}
