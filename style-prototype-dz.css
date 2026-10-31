@@ -2527,3 +2527,22 @@ html[data-theme="light"] [data-view="matieres"] .bdd-status.err{
   html[data-theme="light"] [data-view="matieres"] .mat-c{transition:none}
   html[data-theme="light"] [data-view="matieres"] .mat-c:hover{transform:none}
 }
+
+
+/* PHASE DZ-05 — cohérence de la navigation basse avec le thème sombre.
+   Le thème sombre est le thème natif (absence de data-theme="light"). */
+html:not([data-theme="light"]) #tabs.tabs{
+  background:rgba(7,29,18,.97)!important;
+  border-top:1px solid #24563a!important;
+  box-shadow:0 -8px 28px rgba(0,0,0,.38)!important;
+}
+html:not([data-theme="light"]) #tabs .tab:not(.on){
+  color:#d8eadf!important;
+}
+html:not([data-theme="light"]) #tabs .tab:not(.on):hover{
+  background:#123d27!important;color:#fff!important;
+}
+html:not([data-theme="light"]) #tabs .tab.on{
+  background:linear-gradient(135deg,#006233,#0a8a4a)!important;
+  border-color:#3b9a64!important;
+}
