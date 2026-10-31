@@ -5706,3 +5706,65 @@ html[data-theme="dark"] #shell main > .view > .page-head p{
 @media(prefers-reduced-motion:reduce){
   #shell main > .view{animation:none!important}
 }
+
+/* V6.9 — barre supérieure persistante + lisibilité desktop */
+#shell > .topbar{
+  position:sticky!important;
+  inset-block-start:0!important;
+  z-index:1000!important;
+  width:100%;
+  isolation:isolate;
+  border-bottom:1px solid #dce8df;
+  box-shadow:0 4px 18px rgba(12,48,27,.075);
+}
+html[data-theme="light"] #shell > .topbar{
+  background:rgba(255,255,255,.97);
+  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(16px);
+}
+html[data-theme="dark"] #shell > .topbar{
+  background:rgba(8,25,16,.97);
+  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(16px);
+}
+#shell > .topbar .tabs{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,98,51,.25) transparent;
+}
+@media(min-width:901px){
+  #shell #app .view{
+    font-size:15px;
+    line-height:1.7;
+  }
+  #shell #app .view p:not(.page-head p),
+  #shell #app .view li,
+  #shell #app .view label,
+  #shell #app .view th,
+  #shell #app .view td{
+    font-size:15px;
+    line-height:1.75;
+  }
+  #shell #app .view .page-head p{
+    font-size:14.5px;
+    line-height:1.8;
+  }
+  #shell #app .view input,
+  #shell #app .view select,
+  #shell #app .view textarea{
+    font-size:14.5px;
+  }
+  #shell #app .view button,
+  #shell #app .view .btn{
+    font-size:13.5px;
+  }
+  #shell #app .view small,
+  #shell #app .view .small,
+  #shell #app .view .muted{
+    font-size:12.5px;
+  }
+}
+@media(max-width:900px){
+  #shell > .topbar{
+    inset-block-start:0!important;
+  }
+}
