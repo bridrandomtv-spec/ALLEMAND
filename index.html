@@ -496,9 +496,21 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       <div class="chat card">
         <div class="chat-log" id="chatLog" aria-live="polite" role="log"></div>
         <div class="chat-sug" id="chatSug"></div>
+        <div class="chat-voice-tools">
+          <label for="chatVoiceLang">لغة الإملاء</label>
+          <select id="chatVoiceLang" aria-label="لغة التعرف على الكلام">
+            <option value="de-DE">🇩🇪 Deutsch</option>
+            <option value="ar-DZ">🇩🇿 العربية الجزائرية</option>
+            <option value="ar-SA">العربية الفصحى</option>
+            <option value="fr-FR">🇫🇷 Français</option>
+            <option value="en-US">🇬🇧 English</option>
+          </select>
+          <span id="chatVoiceStatus" class="chat-voice-status" role="status" aria-live="polite">الإملاء الصوتي جاهز عند توفره في المتصفح</span>
+        </div>
         <form class="chat-in" id="chatForm">
           <input type="text" id="chatInput" placeholder="اكتب سؤالك بالألمانية أو بالعربية…" autocomplete="off">
-          <button type="submit" class="btn btn-p">➤</button>
+          <button type="button" id="chatMicBtn" class="btn btn-o chat-mic" aria-label="بدء الإملاء الصوتي" title="إملاء صوتي">🎙️</button>
+          <button type="submit" class="btn btn-p" aria-label="إرسال السؤال">➤</button>
         </form>
       </div>
     </section>
@@ -700,6 +712,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 <script src="prof_core.js?v=3510"></script>
   <script src="js/subject.js?v=3510"></script>
 <script src="app.js?v=3515"></script>
+<script src="js/voice-chat.js?v=1" defer></script>
   <script defer src="unites3as_vitrine.js?v=3510"></script>
 <script src="js/context.js?v=3510"></script>
 <script src="modules.js?v=3510" defer></script>
