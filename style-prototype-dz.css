@@ -2277,3 +2277,121 @@ html[data-theme="light"] [data-view="accueil"] #apercuBody{
   html[data-theme="light"] [data-view="accueil"] .card.mini{transition:none}
   html[data-theme="light"] [data-view="accueil"] .card.mini:hover{transform:none}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE DZ-03 — en-tête institutionnel, titres de pages et assistant
+   Sélecteurs confirmés dans index.html ; CSS additif uniquement.
+   ═══════════════════════════════════════════════════════════════ */
+html[data-theme="light"] .topbar{
+  background:rgba(255,255,255,.96);
+  border-bottom:1px solid #dce8df;
+  box-shadow:0 5px 20px rgba(0,55,28,.055);
+}
+html[data-theme="light"] .topbar .flagline{
+  height:4px;
+  background:linear-gradient(90deg,#006233 0 33.333%,#fff 33.333% 66.666%,#d21034 66.666% 100%);
+}
+html[data-theme="light"] .topbar-in{
+  min-height:70px;
+  gap:12px;
+  padding:10px clamp(12px,2.5vw,28px);
+}
+html[data-theme="light"] .brand{gap:11px;min-width:max-content}
+html[data-theme="light"] .brand-crest{
+  display:grid;place-items:center;width:43px;height:43px;
+  border-radius:14px;background:#edf6ef;border:1px solid #d7e9dc;
+  font-size:24px;
+}
+html[data-theme="light"] .brand-t{
+  color:#064b2a;font-weight:900;letter-spacing:-.25px;
+}
+html[data-theme="light"] .brand-s{color:#687b70;font-size:11px}
+html[data-theme="light"] .tb-search{flex:1 1 220px;max-width:520px}
+html[data-theme="light"] #tbSearch{
+  width:100%;min-height:42px;padding:10px 15px;
+  border:1px solid #dce8df;border-radius:13px;
+  background:#f7faf7;color:#183b29;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+html[data-theme="light"] #tbSearch:focus{
+  outline:none;border-color:#16834b;background:#fff;
+  box-shadow:0 0 0 3px rgba(0,98,51,.10);
+}
+html[data-theme="light"] .topbar-act{gap:8px}
+html[data-theme="light"] .topbar-act .icon-btn,
+html[data-theme="light"] .topbar-act .tb-bell{
+  border:1px solid #dce8df;border-radius:12px;background:#fff;
+  color:#07532e;min-width:39px;min-height:39px;
+}
+html[data-theme="light"] .topbar-act .icon-btn:hover,
+html[data-theme="light"] .topbar-act .tb-bell:hover{
+  background:#edf6ef;border-color:#a9cdb4;
+}
+html[data-theme="light"] .userchip{
+  border:1px solid #dce8df;border-radius:999px;background:#f7faf7;
+  padding:6px 11px;
+}
+html[data-theme="light"] .section-bar{
+  border-top:1px solid #edf2ee;
+  color:#53695b;background:#fbfdfb;
+}
+html[data-theme="light"] .page-head{
+  position:relative;margin:8px 0 20px;padding:19px 22px;
+  border:1px solid #dce8df;border-radius:17px;
+  background:linear-gradient(110deg,#f1f8f2 0%,#fff 72%);
+  box-shadow:0 5px 18px rgba(0,55,28,.035);
+  overflow:hidden;
+}
+html[data-theme="light"] .page-head::before{
+  content:"";position:absolute;inset-block:0;inset-inline-start:0;
+  width:4px;background:linear-gradient(180deg,#006233 0 55%,#d21034 55% 100%);
+}
+html[data-theme="light"] .page-head h1{
+  margin:0 0 5px;color:#064b2a;font-size:clamp(19px,2.2vw,25px);
+  line-height:1.5;font-weight:900;
+}
+html[data-theme="light"] .page-head p{
+  margin:0;color:#607267;font-size:13px;line-height:1.8;
+}
+html[data-theme="light"] [data-view="prof"] .chat{
+  padding:0;overflow:hidden;border:1px solid #dce8df;border-radius:20px;
+  background:#fff;box-shadow:0 12px 32px rgba(0,55,28,.07);
+}
+html[data-theme="light"] [data-view="prof"] .chat-log{
+  min-height:300px;max-height:min(58vh,620px);overflow-y:auto;
+  padding:clamp(15px,3vw,26px);background:#fbfdfb;
+}
+html[data-theme="light"] [data-view="prof"] .chat-sug{
+  padding:10px 16px;border-top:1px solid #edf2ee;background:#fff;
+}
+html[data-theme="light"] [data-view="prof"] .chat-in{
+  display:flex;gap:9px;align-items:center;padding:13px 15px;
+  border-top:1px solid #e3ece5;background:#fff;
+}
+html[data-theme="light"] [data-view="prof"] #chatInput{
+  flex:1;min-width:0;min-height:46px;padding:11px 15px;
+  border:1px solid #d7e5da;border-radius:14px;background:#f7faf7;
+  color:#173d29;font:inherit;
+}
+html[data-theme="light"] [data-view="prof"] #chatInput:focus{
+  outline:none;border-color:#16834b;box-shadow:0 0 0 3px rgba(0,98,51,.10);
+}
+html[data-theme="light"] [data-view="prof"] #chatForm button{
+  min-width:48px;min-height:46px;border-radius:14px;
+}
+html[data-theme="light"] [data-view="matieres"] #matieresBody{min-width:0}
+@media(max-width:760px){
+  html[data-theme="light"] .topbar-in{gap:8px;padding:9px 12px}
+  html[data-theme="light"] .brand{min-width:0}
+  html[data-theme="light"] .brand-crest{width:38px;height:38px}
+  html[data-theme="light"] .tb-search{order:5;flex:1 0 100%;max-width:none}
+  html[data-theme="light"] .topbar-act{margin-inline-start:auto}
+  html[data-theme="light"] .page-head{padding:15px 17px;margin-bottom:15px}
+  html[data-theme="light"] [data-view="prof"] .chat-log{min-height:260px;max-height:52vh}
+  html[data-theme="light"] [data-view="prof"] .chat-in{padding:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-theme="light"] #tbSearch,
+  html[data-theme="light"] .topbar-act .icon-btn{transition:none}
+}
