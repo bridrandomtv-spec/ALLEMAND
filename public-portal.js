@@ -55,13 +55,13 @@
     state.screen = screen;
     const r = root(), l = landing();
     if(!r || !l) return;
+    const nav = document.querySelectorAll('[data-public-view]');
+    nav.forEach(b => b.classList.toggle('active', b.dataset.publicView === screen || (screen === 'branches' || screen === 'branch' ? b.dataset.publicView === 'levels' : false)));
     if(screen === 'home'){
       r.hidden = true; l.hidden = false;
       return;
     }
     l.hidden = true; r.hidden = false;
-    const nav = document.querySelectorAll('[data-public-view]');
-    nav.forEach(b => b.classList.toggle('active', b.dataset.publicView === screen || (screen === 'branches' || screen === 'branch' ? b.dataset.publicView === 'levels' : false)));
     window.scrollTo({top:0, behavior:'auto'});
   }
   function shell(title, subtitle, body, back){
@@ -87,7 +87,7 @@
              '<button type="button" class="pub-card-link" data-public-action="subject" data-subject="'+x.id+'">'+(st === 'implemented' ? 'استكشف المادة ←' : 'تفاصيل التوفر ←')+'</button>')
           + '</article>';
       }).join('');
-      const academic = (state.catalog.data.matieres || []).filter(x => x.id !== 'allemand').map(x => {
+      const academic = (state.catalog.data.matieres || []).filter(x => !['allemand','francais','anglais','arabe'].includes(x.id)).map(x => {
         const st = statusFor(x.id, x);
         return '<article class="pub-subject-card">'
           + '<div class="pub-card-icon">'+esc(x.icon || '📘')+'</div><div class="pub-card-copy"><b>'+esc(x.ar)+'</b><small>'+esc(x.desc || '')+'</small></div>'
