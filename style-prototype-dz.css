@@ -3792,7 +3792,7 @@ html[data-theme="light"] #shell .topbar-in{
   min-height:66px;padding:9px 0;display:flex;align-items:center;gap:14px;
 }
 html[data-theme="light"] #shell .burger{display:none!important}
-html[data-theme="light"] #shell .brand{flex:0 0 auto;order:3;min-width:220px;gap:10px}
+html[data-theme="light"] #shell .brand{flex:0 0 auto;order:1;min-width:220px;gap:10px}
 html[data-theme="light"] #shell .brand-crest{
   width:42px;height:42px;border:0;border-radius:13px;
   background:linear-gradient(145deg,#087c49,#064b31);color:#fff;
@@ -3807,7 +3807,7 @@ html[data-theme="light"] #shell .tb-search input{
   width:100%;min-height:38px;border:1px solid #e1eae4;border-radius:11px;
   background:#f7faf8;color:#263a2e;padding:8px 12px;
 }
-html[data-theme="light"] #shell .topbar-act{order:1;gap:7px}
+html[data-theme="light"] #shell .topbar-act{order:3;gap:7px}
 html[data-theme="light"] #shell .icon-btn,
 html[data-theme="light"] #shell .tb-bell{
   color:#315b43;background:#f5f9f6;border:1px solid #e1eae4;border-radius:11px;
