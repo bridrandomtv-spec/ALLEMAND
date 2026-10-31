@@ -3613,3 +3613,143 @@ html[data-theme="dark"] #shell #quizBody .qz-o:hover{border-color:#4b9164;backgr
   #shell [data-view="profboard"] #profBody *,
   #shell #examBody *,#shell #quizBody *{transition:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM V5.2 — AUTHENTIFICATION + VUES REELLES
+   Sélecteurs contrôlés dans index.html et les modules JS du dépôt.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Portail d'accès : cohérence avec l'identité de la plateforme */
+html[data-theme="light"] body #gate{
+  background:
+    radial-gradient(ellipse at 12% 12%,rgba(0,98,51,.10),transparent 38%),
+    radial-gradient(ellipse at 88% 85%,rgba(210,16,52,.075),transparent 34%),
+    #f3f7f4
+}
+html[data-theme="light"] body #gate .gate-wrap{max-width:1040px}
+html[data-theme="light"] body #gate .gate-brand{margin-bottom:20px}
+html[data-theme="light"] body #gate .gate-crest{
+  border-radius:22px;border:1px solid rgba(0,98,51,.12);
+  box-shadow:0 12px 28px rgba(0,98,51,.12)
+}
+html[data-theme="light"] body #gate .gate-card{
+  border:1px solid #e0eae3;border-radius:22px;
+  box-shadow:0 22px 60px rgba(18,55,32,.10);overflow:hidden
+}
+html[data-theme="light"] body #gate .gate-tabs{
+  background:#f5f9f6;border-bottom:1px solid #e6eee8
+}
+html[data-theme="light"] body #gate .gtab{font-weight:850;transition:background .18s ease,color .18s ease}
+html[data-theme="light"] body #gate .gtab.on{
+  color:#006233;background:#fff;box-shadow:0 4px 14px rgba(0,98,51,.08)
+}
+html[data-theme="light"] body #gate .fld input,
+html[data-theme="light"] body #gate .fld select{
+  min-height:44px;border:1px solid #dce8df;background:#fbfdfb;border-radius:12px
+}
+html[data-theme="light"] body #gate .fld input:focus,
+html[data-theme="light"] body #gate .fld select:focus{
+  border-color:#078548;box-shadow:0 0 0 4px rgba(7,133,72,.10);outline:0
+}
+html[data-theme="light"] body #gate .gate-foot{color:#718176}
+html[data-theme="dark"] body #gate{background:radial-gradient(ellipse at 15% 10%,rgba(0,98,51,.19),transparent 40%),#09170f}
+html[data-theme="dark"] body #gate .gate-card{border:1px solid #294b36;box-shadow:0 22px 60px rgba(0,0,0,.28)}
+
+/* Sélecteurs et vues réellement utilisés par les modules */
+html[data-theme="light"] #shell #profBody .prof-hero{
+  padding:clamp(17px,2.5vw,25px);border:1px solid #dce9df;border-radius:19px;
+  background:radial-gradient(320px 160px at 100% 0,rgba(210,16,52,.06),transparent 70%),linear-gradient(120deg,#edf7ef,#fff 72%);
+  box-shadow:0 10px 26px rgba(0,55,28,.05)
+}
+html[data-theme="light"] #shell #profBody .bdd-kpis,
+html[data-theme="light"] #shell #parentsBody .bdd-kpis{
+  gap:10px
+}
+html[data-theme="light"] #shell #profBody .kpi,
+html[data-theme="light"] #shell #parentsBody .kpi{
+  border:1px solid #e0ebe3;border-radius:15px;background:linear-gradient(150deg,#fff,#f7faf8);
+  box-shadow:0 5px 16px rgba(20,60,36,.04)
+}
+html[data-theme="light"] #shell #profBody .ong,
+html[data-theme="light"] #shell #parentsBody .ong{
+  border:1px solid #e2ebe4;border-radius:10px;background:#f4f8f5;font-weight:850
+}
+html[data-theme="light"] #shell #profBody .ong.on,
+html[data-theme="light"] #shell #parentsBody .ong.on{
+  background:#006233;color:#fff;border-color:#006233;box-shadow:0 4px 12px rgba(0,98,51,.15)
+}
+html[data-theme="light"] #shell #profBody .tble,
+html[data-theme="light"] #shell #libraryBody .fiche{
+  border:1px solid #e0ebe3;border-radius:14px;background:#fff;overflow:hidden
+}
+html[data-theme="light"] #shell #parentsBody .par-hero{
+  display:flex;align-items:center;flex-wrap:wrap;gap:14px;padding:clamp(16px,2.5vw,24px);
+  border:1px solid #dce9df;border-radius:19px;background:linear-gradient(120deg,#edf7ef,#fff 72%);
+  box-shadow:0 10px 25px rgba(0,55,28,.05)
+}
+html[data-theme="light"] #shell #parentsBody .enf{
+  border:1px solid #e0ebe3;border-radius:14px;background:#fff;
+  box-shadow:0 4px 14px rgba(20,60,36,.035)
+}
+html[data-theme="light"] #shell #parentsBody .enf.on{
+  border-color:#078548;box-shadow:0 0 0 3px rgba(7,133,72,.09)
+}
+html[data-theme="light"] #shell #adminBody .ad-hero{
+  display:flex;align-items:center;flex-wrap:wrap;gap:14px
+}
+html[data-theme="light"] #shell #adminBody .ad-role,
+html[data-theme="light"] #shell #adminBody .ad-box{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff
+}
+html[data-theme="light"] #shell #examBody .ong,
+html[data-theme="light"] #shell #quizBody .qz-u,
+html[data-theme="light"] #shell #quizBody .qz-q{
+  border-radius:14px
+}
+html[data-theme="light"] #shell #examBody .annee,
+html[data-theme="light"] #shell #examBody .theme,
+html[data-theme="light"] #shell #examBody .sujet{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff;
+  box-shadow:0 5px 16px rgba(20,60,36,.035)
+}
+html[data-theme="light"] #shell #biblioBody .bdd-kpis{gap:10px}
+html[data-theme="light"] #shell #biblioBody .kpi{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff
+}
+html[data-theme="light"] #shell #biblioBody .fiche{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff;overflow:hidden;
+  box-shadow:0 5px 16px rgba(20,60,36,.035)
+}
+html[data-theme="light"] #shell #biblioBody .fiche-h{
+  background:linear-gradient(110deg,#f0f7f2,#fff);border-bottom:1px solid #e9f0eb
+}
+
+/* Contraste et lisibilité des zones de travail */
+html[data-theme="light"] #shell #profBody .privacy,
+html[data-theme="light"] #shell #parentsBody .privacy,
+html[data-theme="light"] #shell #adminBody .privacy{
+  border-radius:13px;border-color:#dce9df;background:#f7faf8
+}
+html[data-theme="light"] #shell #profBody .filters,
+html[data-theme="light"] #shell #libraryBody .filters{
+  border:1px solid #e0ebe3;border-radius:15px;background:#f8fbf9
+}
+html[data-theme="light"] #shell #profBody .alert-i{
+  border:1px solid #e0ebe3;border-radius:13px;background:#fff
+}
+html[data-theme="light"] #shell #ragBody .rg-hero{padding:17px}
+html[data-theme="light"] #shell #ragBody .rg-box,
+html[data-theme="light"] #shell #ragBody .rg-out,
+html[data-theme="light"] #shell #ragBody .rg-ped,
+html[data-theme="light"] #shell #ragBody .rg-non{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff
+}
+
+/* Réduction des effets sur mobile et largeur de lecture */
+@media(max-width:760px){
+  html[data-theme="light"] body #gate .gate-wrap{width:min(100% - 24px,620px)}
+  html[data-theme="light"] body #gate .gate-card{border-radius:17px}
+  #shell #profBody .tble,#shell #adminBody .ad-tab{max-width:100%;overflow-x:auto}
+  #shell #parentsBody .info-v,#shell #profBody .tc-c{overflow-wrap:anywhere}
+}
