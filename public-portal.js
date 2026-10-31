@@ -53,8 +53,9 @@
   }
   function show(screen){
     state.screen = screen;
-    const r = root(), l = landing();
+    const r = root(), l = landing(), card = gateCard();
     if(!r || !l) return;
+    if(card) card.hidden = true;
     const nav = document.querySelectorAll('[data-public-view]');
     nav.forEach(b => b.classList.toggle('active', b.dataset.publicView === screen || (screen === 'branches' || screen === 'branch' ? b.dataset.publicView === 'levels' : false)));
     if(screen === 'home'){
@@ -192,6 +193,14 @@
     if(card) card.scrollIntoView({behavior:'smooth', block:'center'});
   }
   document.addEventListener('click', ev => {
+    const gateTrigger = ev.target.closest('[data-gate-open]');
+    if(gateTrigger){
+      const card = gateCard();
+      if(card){
+        card.hidden = false;
+        window.setTimeout(() => card.scrollIntoView({behavior:'smooth', block:'center'}), 0);
+      }
+    }
     const nav = ev.target.closest('[data-public-view]');
     if(nav){
       const v = nav.dataset.publicView;
@@ -211,7 +220,8 @@
     }
   });
   document.addEventListener('DOMContentLoaded', () => {
-    const r = root();
+    const r = root(), card = gateCard();
     if(r) r.hidden = true;
+    if(card) card.hidden = true;
   });
 })();
