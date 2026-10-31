@@ -4591,3 +4591,335 @@ html[data-theme="dark"] .home-main .subj-card{border-color:rgba(160,195,170,.2)}
 @media(prefers-reduced-motion:reduce){
  html[data-theme="light"] .home-main .subj-card,html[data-theme="light"] .home-main .card.mini{transition:none}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   V6.5 — FINITION DES ESPACES ÉLÈVE
+   Matières · parcours personnel · bibliothèque pédagogique
+   Couche CSS additive : aucun changement de logique ou d'événement.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Matières : hiérarchie du bandeau, filtres et catalogue */
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-hero{
+  display:grid;gap:15px;padding:clamp(16px,2.2vw,24px);
+  border:1px solid #d8e8dc;border-radius:20px;
+  background:linear-gradient(145deg,#f4faf5 0%,#fff 58%,#fff8f8 100%);
+  box-shadow:0 10px 28px rgba(0,70,34,.055);
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-t{
+  display:flex;align-items:center;gap:14px;min-width:0;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-crest{
+  width:58px;height:58px;min-width:58px;margin:0;padding:0;
+  border-radius:17px;background:linear-gradient(145deg,#006233,#00843d);
+  box-shadow:0 8px 18px rgba(0,98,51,.16);font-size:27px;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-t h2{
+  margin:0;color:#17472c;font-size:clamp(18px,2vw,23px);line-height:1.45;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-sub{
+  margin:4px 0 0;color:#587062;font-size:12px;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-sel{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
+  padding:13px;border:1px solid #e0ebe3;border-radius:15px;background:#fff;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-f{
+  display:grid;gap:6px;min-width:0;margin:0;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-f>span{
+  color:#496453;font-size:12px;font-weight:800;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-stats{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;
+  padding:0;border:0;background:transparent;box-shadow:none;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-st{
+  display:grid;gap:4px;min-width:0;padding:12px 9px;text-align:center;
+  border:1px solid #e0ebe3;border-radius:13px;background:#fff;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-st b{
+  color:#006233;font-size:clamp(19px,2vw,25px);font-weight:900;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-st span{
+  color:#607365;font-size:11px;line-height:1.5;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-grid{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,245px),1fr));gap:13px;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-c{
+  display:flex;flex-direction:column;align-items:stretch;gap:9px;min-width:0;padding:16px;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-c.on{
+  border-color:#9bc9a8;background:linear-gradient(160deg,#f2faf4,#fff 70%);
+  box-shadow:0 8px 22px rgba(0,98,51,.075);
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-ch{
+  display:flex;align-items:center;justify-content:space-between;gap:9px;
+  margin:0;padding:0;border:0;background:transparent;box-shadow:none;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-ch:hover{transform:none}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-i{
+  display:grid;place-items:center;width:45px;height:45px;flex:0 0 45px;
+  border-radius:13px;background:#eaf5ed;font-size:23px;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-stt{
+  max-width:65%;padding:5px 9px;border:1px solid #e6e9e6;border-radius:999px;
+  background:#f5f7f5;color:#58685d;font-size:10px;font-weight:800;text-align:center;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-stt.ok{
+  border-color:#c8e4cf;background:#eaf6ed;color:#006233;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-n{
+  margin-top:2px;color:#17472c;font-size:16px;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-de{
+  color:#006233;font-size:13px;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-d{
+  flex:1;color:#607365;font-size:12px;line-height:1.75;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-kv{
+  display:flex;flex-wrap:wrap;gap:7px;margin-top:auto;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-kv span{
+  padding:5px 9px;border:1px solid #e0ebe3;border-radius:9px;
+  background:#f7faf8;color:#496453;font-size:11px;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-vision{
+  border:1px solid #e0ebe3;border-radius:16px;background:#fff;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-vision h3{
+  color:#006233;margin-top:0;
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-how{
+  display:grid;gap:8px;padding-inline-start:22px;color:#53685a;line-height:1.8;
+}
+
+/* Parcours personnel : une action prioritaire, progression immédiatement lisible */
+html[data-theme="light"] #shell [data-view="masar"] #masarBody{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start;
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-hero{
+  grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:clamp(17px,2.5vw,25px);border:0;border-radius:19px;
+  background:linear-gradient(120deg,#004d28,#006b37 68%,#00843d);
+  box-shadow:0 12px 27px rgba(0,98,51,.14);
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-crest{
+  display:grid;place-items:center;width:52px;height:52px;flex:0 0 52px;
+  border:1px solid rgba(255,255,255,.2);border-radius:15px;
+  background:rgba(255,255,255,.12);font-size:24px;
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-hero h2,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-hero h3{
+  margin:0;color:#fff;
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-sub{
+  color:rgba(255,255,255,.84);font-size:12px;
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-next{
+  grid-column:1/-1;padding:clamp(17px,2.4vw,24px);
+  border:1px solid #cfe3d4;border-inline-start:5px solid #00843d;
+  border-radius:17px;background:linear-gradient(145deg,#f0f8f2,#fff 72%);
+  box-shadow:0 9px 22px rgba(0,70,34,.055);
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-next h3{
+  color:#17472c;font-size:18px;line-height:1.6;
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-tag{
+  display:inline-flex;align-items:center;width:max-content;margin-bottom:8px;
+  padding:5px 10px;border-radius:999px;background:#e4f2e8;color:#006233;
+  font-size:11px;font-weight:900;
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-why{
+  color:#607365;font-size:12px;line-height:1.8;
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-weak,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-prog{
+  min-width:0;padding:16px;border:1px solid #e0ebe3;border-radius:15px;
+  background:#fff;box-shadow:0 5px 16px rgba(20,60,36,.035);
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-weak h3,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-prog h3{color:#17472c}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-bar{
+  height:9px;border-radius:99px;background:#e8f0ea;overflow:hidden;
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-bar i{
+  display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#006233,#21a35d);
+}
+
+/* Bibliothèque : filtres structurés, résultats et fiches sans débordement */
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .bdd-kpis{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .kpi{
+  display:grid;grid-template-columns:auto 1fr;align-items:center;gap:3px 10px;
+  min-width:0;padding:13px;border:1px solid #e0ebe3;border-radius:15px;
+  background:linear-gradient(150deg,#fff,#f7faf8);box-shadow:0 5px 15px rgba(20,60,36,.035);
+  cursor:pointer;transition:transform .16s,border-color .16s,box-shadow .16s;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .kpi:hover{
+  transform:translateY(-2px);border-color:#a9cdb4;box-shadow:0 9px 20px rgba(0,98,51,.07);
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .kpi.on{
+  border-color:#00843d;background:#edf7f0;box-shadow:0 0 0 2px rgba(0,132,61,.09);
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .kpi-i{grid-row:span 2;font-size:23px}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .kpi-n{
+  color:#006233;font-size:22px;font-weight:900;line-height:1.15;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .kpi-l{
+  color:#315a40;font-size:12px;font-weight:800;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .kpi-d{
+  grid-column:2;color:#728176;font-size:10px;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .filters{
+  display:grid;gap:12px;padding:15px;border:1px solid #dce8df;border-radius:16px;
+  background:#f8fbf9;box-shadow:0 4px 15px rgba(0,55,28,.035);
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .filters-h{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  color:#17472c;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .frow{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .fld2{
+  display:grid;gap:5px;min-width:0;color:#496453;font-size:11px;font-weight:800;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .search-bar{
+  position:relative;grid-column:span 2;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .search-bar input{
+  width:100%;padding-inline-start:38px;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .s-ico{
+  position:absolute;inset-inline-start:12px;bottom:11px;color:#718277;pointer-events:none;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .chips{
+  display:flex;flex-wrap:wrap;gap:7px;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .fchip{
+  padding:6px 10px;border:1px solid #dce8df;border-radius:999px;
+  background:#fff;color:#496453;font-size:11px;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .fchip.on{
+  border-color:#9bc9a8;background:#eaf6ed;color:#006233;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .result-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  margin:15px 0 10px;color:#53685a;font-size:12px;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .result-n{
+  color:#006233;font-size:18px;font-weight:900;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody #rList{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:11px;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .fiche{
+  min-width:0;border:1px solid #e0ebe3;border-radius:15px;background:#fff;
+  box-shadow:0 5px 16px rgba(20,60,36,.035);overflow:hidden;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .fiche-h{
+  display:grid;gap:5px;padding:14px 15px;background:linear-gradient(110deg,#eff7f1,#fff);
+  border-bottom:1px solid #e5eee7;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .fiche-t{
+  color:#17472c;font-weight:900;line-height:1.6;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .fiche-de,
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .fiche-meta,
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .fiche-foot{
+  color:#607365;font-size:11px;line-height:1.7;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .pager{
+  display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:16px 0;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .pager .pg{
+  min-width:37px;min-height:37px;border:1px solid #dce8df;border-radius:10px;
+  background:#fff;color:#315a40;
+}
+html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .pager .pg.on{
+  color:#fff;background:#006233;border-color:#006233;
+}
+
+/* Mode sombre : garder les mêmes niveaux de contraste */
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-hero,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-next,
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .filters,
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .fiche,
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .kpi{
+  color:var(--t);background:var(--nuit2);border-color:var(--b);
+}
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-t h2,
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-n,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-next h3,
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .fiche-t,
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .filters-h{
+  color:var(--t);
+}
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-sub,
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-d,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-why,
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .fiche-meta,
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .fiche-de{
+  color:var(--m);
+}
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-st,
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-sel,
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-c,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-weak,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-prog{
+  color:var(--t);background:var(--nuit2);border-color:var(--b);
+}
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-st b,
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-vision h3,
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .kpi-n,
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .kpi-l{
+  color:var(--a2);
+}
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .frow input,
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .frow select{
+  color:var(--t);background:var(--nuit);border-color:var(--b);
+}
+
+@media(max-width:760px){
+  html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-stats,
+  html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .bdd-kpis{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  html[data-theme="light"] #shell [data-view="masar"] #masarBody{
+    grid-template-columns:minmax(0,1fr);
+  }
+  html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .frow{
+    grid-template-columns:minmax(0,1fr);
+  }
+  html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .search-bar{
+    grid-column:auto;
+  }
+  html[data-theme="light"] #shell [data-view="biblio"] #biblioBody #rList{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
+@media(max-width:390px){
+  html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-sel{
+    grid-template-columns:minmax(0,1fr);
+  }
+  html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-stats,
+  html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .bdd-kpis{
+    gap:7px;
+  }
+  html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-st{
+    padding:10px 6px;
+  }
+  html[data-theme="light"] #shell [data-view="biblio"] #biblioBody .kpi{
+    padding:10px 8px;gap:3px 7px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #shell [data-view="matieres"] #matieresBody *,
+  #shell [data-view="masar"] #masarBody *,
+  #shell [data-view="biblio"] #biblioBody *{transition:none!important}
+}
