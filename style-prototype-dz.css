@@ -5483,3 +5483,74 @@ html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini h3{
   #shell [data-view="accueil"] #panelQuick .card.mini,
   #shell [data-view="accueil"] .subj-home .subj-s{transition:none!important}
 }
+
+
+/* V6.7.1 — correction ciblée : classes réellement produites par renderSubj() */
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-card{
+  min-width:0;
+  border:1px solid #dce9df;
+  border-radius:15px;
+  background:linear-gradient(145deg,#fff,#f6faf7);
+  box-shadow:0 4px 13px rgba(20,70,39,.035);
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-card[data-subj]:hover{
+  transform:translateY(-2px);
+  border-color:#9bc9a8;
+  box-shadow:0 8px 18px rgba(20,70,39,.075);
+}
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-card.on{
+  border-color:#006233;
+  background:linear-gradient(145deg,#edf8f0,#fff);
+  box-shadow:inset 0 0 0 1px rgba(0,98,51,.10),0 7px 16px rgba(0,98,51,.07);
+}
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-card.on .subj-n{
+  color:#00552d;
+  font-weight:950;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-card .subj-s{
+  border-radius:999px;
+  font-weight:800;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-chips .chip{
+  display:inline-flex;
+  align-items:center;
+  min-height:29px;
+  padding:5px 10px;
+  border:1px solid #dce9df;
+  border-radius:999px;
+  background:#fff;
+  color:#42634d;
+  font-size:10.5px;
+  font-weight:800;
+  transition:background .16s ease,border-color .16s ease,transform .16s ease;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-chips .chip[data-subj]:hover{
+  transform:translateY(-1px);
+  border-color:#9bc9a8;
+  background:#eaf6ed;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .subj-home .subj-chips .chip.lock{
+  opacity:.58;
+  cursor:not-allowed;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .subj-home .subj-card{
+  border-color:var(--b);
+  background:var(--nuit2);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .subj-home .subj-card.on{
+  border-color:#55a976;
+  background:#153b29;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .subj-home .subj-card.on .subj-n{
+  color:#a2e0b4;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .subj-home .subj-chips .chip{
+  border-color:var(--b);
+  background:var(--nuit2);
+  color:var(--t);
+}
+@media(prefers-reduced-motion:reduce){
+  #shell [data-view="accueil"] .subj-home .subj-card,
+  #shell [data-view="accueil"] .subj-home .subj-chips .chip{transition:none!important}
+}
