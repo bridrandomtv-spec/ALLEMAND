@@ -80,24 +80,55 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
     <section class="public-landing" aria-labelledby="publicTitle">
       <div class="public-copy">
         <span class="public-kicker"><i></i> منصة تعليمية جزائرية · 2026/2027</span>
-        <h2 id="publicTitle">مستقبلك الدراسي<br><em>يبدأ من هنا</em></h2>
-        <p>فضاء تعليمي رقمي يرافق تلاميذ الثانوي في مسارهم الدراسي، بالدروس والتمارين والمتابعة والموارد التعليمية.</p>
+        <h2 id="publicTitle">المنصة التعليمية<br><em>الشاملة في الجزائر</em></h2>
+        <p>فضاء رقمي لمرافقة تلاميذ الثانوي في مسارهم الدراسي، يجمع الدروس والتمارين والموارد التعليمية والمساعدة الذكية، مع عرض واضح للمواد المتاحة وما يزال قيد التطوير.</p>
         <div class="public-actions">
-          <button type="button" class="public-btn primary" data-gate-open="login">الدخول إلى فضائي <span aria-hidden="true">←</span></button>
-          <button type="button" class="public-btn secondary" data-gate-open="signup">إنشاء حساب جديد</button>
+          <button type="button" class="public-btn primary" data-gate-open="signup">ابدأ التعلم الآن <span aria-hidden="true">←</span></button>
+          <button type="button" class="public-btn secondary" data-public-view="subjects">اكتشف المواد</button>
         </div>
-        <div class="public-trust"><span>🇩🇿</span> موجه للتعليم الثانوي الجزائري · واجهة عربية</div>
+        <div class="public-trust"><span>🇩🇿</span> تعليم ثانوي جزائري · واجهة عربية من اليمين إلى اليسار</div>
+        <div class="public-stats" aria-label="خصائص المنصة">
+          <div class="public-stat"><b>3</b><span>سنوات ثانوي</span></div>
+          <div class="public-stat"><b>6</b><span>لغات في الفهرس</span></div>
+          <div class="public-stat"><b>∞</b><span>مسارات للتعلم</span></div>
+          <div class="public-stat"><b>AI</b><span>مرافقة ذكية</span></div>
+        </div>
       </div>
-      <div class="public-visual" aria-hidden="true">
-        <div class="public-orbit orbit-one"></div><div class="public-orbit orbit-two"></div>
-        <div class="public-book"><span>📘</span><b>تعلّم</b><small>Lycée virtuel</small></div>
-        <span class="public-float f-one">✦</span><span class="public-float f-two">✎</span>
-        <span class="public-float f-three">✓</span>
+      <div class="public-ai-card">
+        <div class="public-ai-head">
+          <span class="public-ai-icon">🎙️</span>
+          <div><b>الأستاذ الذكي</b><small>مرافقة تعليمية بالصوت والنص</small></div>
+          <span class="public-ai-live">مساعد IA</span>
+        </div>
+        <div class="public-ai-demo">
+          <div class="public-ai-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="public-ai-question"><small>مثال على سؤال تلميذ</small><b dir="auto">كيف أفرق بين Nominativ و Akkusativ؟</b></div>
+          <div class="public-ai-answer"><small>💡 شرح توضيحي</small><p>الـ Nominativ هو الفاعل، أما الـ Akkusativ فهو المفعول به. مثال: <span dir="ltr">Der Mann sieht den Hund.</span></p></div>
+        </div>
+        <button type="button" class="public-ai-cta" data-gate-open="login">الدخول إلى فضاء الأستاذ الذكي <span>←</span></button>
+        <p class="public-ai-note">عرض توضيحي للواجهة؛ توفر المحادثة الفعلية مرتبط بخدمة الذكاء الاصطناعي.</p>
       </div>
       <div class="public-features" aria-label="خدمات المنصة">
         <article class="public-feature"><span class="pf-icon">📚</span><div><b>موارد تعليمية</b><small>دروس، كتب، تمارين ومواضيع</small></div></article>
-        <article class="public-feature"><span class="pf-icon">🎯</span><div><b>تدرّج حسب المستوى</b><small>مسارات ومحتوى بحسب السنة</small></div></article>
-        <article class="public-feature"><span class="pf-icon">🤖</span><div><b>مرافقة ذكية</b><small>مساعدة تعليمية وتوجيه</small></div></article>
+        <article class="public-feature"><span class="pf-icon">🎯</span><div><b>مسار حسب المستوى</b><small>اختيار السنة والشعبة والمواد</small></div></article>
+        <article class="public-feature"><span class="pf-icon">🤖</span><div><b>مرافقة ذكية</b><small>مساعدة تعليمية بالصوت والنص</small></div></article>
+      </div>
+      <div class="public-landing-sections">
+        <div class="public-section-heading"><div><span>استكشف فضاءك الدراسي</span><h3>كل المواد في مكان واحد</h3></div><button type="button" data-public-view="subjects">عرض فهرس المواد ←</button></div>
+        <div class="public-mini-catalog">
+          <div class="public-mini-card language"><span>🇩🇪</span><b>الألمانية</b><small>Deutsch</small></div>
+          <div class="public-mini-card language"><span>🇬🇧</span><b>الإنجليزية</b><small>English</small></div>
+          <div class="public-mini-card language"><span>🇫🇷</span><b>الفرنسية</b><small>Français</small></div>
+          <div class="public-mini-card"><span>📐</span><b>الرياضيات</b><small>Matématiques</small></div>
+          <div class="public-mini-card"><span>⚛️</span><b>الفيزياء</b><small>Physique</small></div>
+          <div class="public-mini-card"><span>🧬</span><b>العلوم الطبيعية</b><small>Sciences</small></div>
+        </div>
+        <div class="public-section-heading public-years-heading"><div><span>المسار الدراسي</span><h3>كل السنوات وكل الشعب</h3></div><button type="button" data-public-view="levels">استكشف السنوات ←</button></div>
+        <div class="public-year-cards">
+          <button type="button" data-public-view="levels"><strong>1</strong><span><b>السنة الأولى ثانوي</b><small>جذع مشترك علوم وتكنولوجيا · آداب</small></span><i>←</i></button>
+          <button type="button" data-public-view="levels"><strong>2</strong><span><b>السنة الثانية ثانوي</b><small>الشعب والتخصصات</small></span><i>←</i></button>
+          <button type="button" data-public-view="levels"><strong>3</strong><span><b>السنة الثالثة ثانوي</b><small>التحضير لشهادة البكالوريا</small></span><i>←</i></button>
+        </div>
       </div>
     </section>
 
