@@ -134,14 +134,19 @@
     const cards = Object.keys(branches).map(id => {
       const ids = branches[id] || [];
       const subjects = ids.map(subjectById).filter(Boolean);
-      const ready = subjects.filter(x => statusFor(x.id,x) === 'implemented').length;
+      const full = subjects.filter(x => statusFor(x.id,x) === 'implemented').length;
+      const partial = subjects.filter(x => statusFor(x.id,x) === 'partial').length;
       const chips = subjects.slice(0,5).map(x => '<span>'+esc(x.ar)+'</span>').join('');
+      const availability = full || partial
+        ? '<span class="pub-branch-availability"><b>'+full+'</b> مكتملة'
+          + (partial ? ' · <b>'+partial+'</b> جزئيًا' : '')+'</span>'
+        : '<span class="pub-branch-availability">المحتوى قيد الإعداد</span>';
       return '<article class="pub-branch-card">'
         + '<div class="pub-branch-meta"><span class="pub-branch-number">'+esc(state.level)+'</span>'
         + '<span class="pub-branch-count">'+ids.length+' مواد مسجلة</span></div>'
         + '<h3>'+esc(branchNames[id] || id)+'</h3>'
         + '<div class="pub-branch-subjects">'+chips+'</div>'
-        + '<div class="pub-branch-foot"><span>'+ready+' مادة متاحة الآن</span>'
+        + '<div class="pub-branch-foot">'+availability
         + '<button type="button" data-public-action="branch" data-branch="'+esc(id)+'">عرض الشعبة ←</button></div>'
         + '</article>';
     }).join('');
