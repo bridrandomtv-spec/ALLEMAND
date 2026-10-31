@@ -56,7 +56,7 @@ jobs:
                    assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json assets/bdd/onboarding.json assets/bdd/config.json assets/bdd/corpus.json assets/bdd/corpus_index.json assets/bdd/malakhiss.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 36 fichiers racine + 22 assets présents"
+          echo "✅ 51 fichiers racine + assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
