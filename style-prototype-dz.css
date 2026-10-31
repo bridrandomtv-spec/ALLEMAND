@@ -2092,3 +2092,84 @@ html[data-theme="dark"] [data-view="admin"] #adminBody .ad-tab th{background:#12
   [data-view="parents"] #parentsBody *,
   [data-view="admin"] #adminBody *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVIGATION DZ — barre latérale déplacée en bas de l'écran
+   Surcharge additive : conserve #tabs, .tab et les hooks JS existants.
+   La navigation devient une barre horizontale fixe sur ordinateur
+   comme sur mobile ; aucune route ni logique de navigation modifiée.
+   ═══════════════════════════════════════════════════════════════ */
+#tabs.tabs,
+.tabs#tabs,
+#tabs.tabs.open,
+#tabs#tabs.open{
+  position:fixed!important;
+  inset-inline:0!important;
+  inset-block:auto 0!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:72px;
+  margin:0!important;
+  padding:8px max(12px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:stretch!important;
+  justify-content:flex-start;
+  gap:7px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  overscroll-behavior-x:contain;
+  scrollbar-width:none;
+  background:rgba(255,255,255,.96)!important;
+  border:0!important;
+  border-top:1px solid #dce8df!important;
+  border-radius:18px 18px 0 0!important;
+  box-shadow:0 -8px 28px rgba(0,55,28,.10)!important;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  z-index:900!important;
+}
+#tabs::-webkit-scrollbar{display:none}
+#tabs .tabgrp-h{display:none!important}
+#tabs .tab{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:76px;
+  max-width:150px;
+  min-height:54px;
+  padding:8px 13px!important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center!important;
+  white-space:nowrap!important;
+  border:1px solid transparent!important;
+  border-radius:13px!important;
+  font-size:12px!important;
+  line-height:1.35;
+  scroll-snap-align:center;
+}
+#tabs .tab.on{
+  color:#fff!important;
+  background:linear-gradient(135deg,#006233,#00843d)!important;
+  border-color:#006233!important;
+  box-shadow:0 4px 12px rgba(0,98,51,.18)!important;
+}
+#tabs .tab:not(.on):hover{background:#edf6ef!important;color:#004d28!important}
+#tabs .tab:focus-visible{outline:3px solid #d21034!important;outline-offset:2px}
+.topbar-in{max-width:1200px!important;margin-inline:auto!important}
+main#app{max-width:1200px!important;margin-inline:auto!important;padding-bottom:calc(112px + env(safe-area-inset-bottom))!important}
+@media(max-width:900px){
+  #tabs,#tabs.open{grid-template-columns:none!important}
+  #tabs .tab{font-size:11.5px!important;padding:8px 11px!important}
+  main#app{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+}
+@media(max-width:480px){
+  #tabs{min-height:66px;padding-top:6px!important}
+  #tabs .tab{min-width:68px;min-height:50px;padding:7px 9px!important;font-size:10.5px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #tabs,#tabs .tab{scroll-behavior:auto!important;transition:none!important}
+}
