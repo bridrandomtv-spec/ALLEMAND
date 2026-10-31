@@ -1641,7 +1641,7 @@ function bindGateEvents(){
   if(bindGateEvents._done) return;
   bindGateEvents._done = true;
 
-  $$('[data-gate-open]').forEach(b => b.addEventListener('click', () => {
+  Array.from(document.querySelectorAll('[data-gate-open]')).forEach(b => b.addEventListener('click', () => {
     const target = b.dataset.gateOpen === 'signup' ? 'signup' : 'login';
     const tab = $('.gtab[data-gate="' + target + '"]');
     if(tab) tab.click();
@@ -1651,8 +1651,8 @@ function bindGateEvents(){
     if(focus) setTimeout(() => focus.focus({preventScroll:true}), 180);
   }));
 
-  $$('.gtab').forEach(b => b.addEventListener('click', () => {
-    $$('.gtab').forEach(x => x.classList.remove('on'));
+  Array.from(document.querySelectorAll('.gtab')).forEach(b => b.addEventListener('click', () => {
+    Array.from(document.querySelectorAll('.gtab')).forEach(x => x.classList.remove('on'));
     b.classList.add('on');
     const isLogin = b.dataset.gate === 'login';
     const lf = $('#loginForm'), sf = $('#signupForm');
