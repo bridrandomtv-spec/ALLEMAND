@@ -4417,3 +4417,21 @@ html[data-theme="dark"] .subj-card{background:linear-gradient(150deg,#0c2a1a,#09
   #gate.gate{padding-inline:12px}
   #gate.gate>.gate-wrap{margin-block:0}
 }
+
+
+/* Assistant vocal — commandes compactes, accessibles et adaptées au mobile. */
+.chat-voice-tools{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:10px 12px 0;color:var(--muted,#718078);font-size:12px}
+.chat-voice-tools label{font-weight:800}
+.chat-voice-tools select{min-height:34px;max-width:190px;padding:5px 10px;border:1px solid var(--b,#dce8df);border-radius:10px;background:var(--card,#fff);color:inherit;font:inherit}
+.chat-voice-status{flex:1;min-width:180px;font-size:11px;line-height:1.6}
+.chat-in .chat-mic{flex:0 0 44px;min-width:44px;padding-inline:8px}
+.chat-in .chat-mic.is-listening{background:#d21034!important;border-color:#d21034!important;color:#fff!important;animation:voicePulse 1.1s ease-in-out infinite}
+.chat-in .chat-mic:disabled{opacity:.45;cursor:not-allowed}
+@keyframes voicePulse{50%{box-shadow:0 0 0 6px rgba(210,16,52,.13)}}
+@media(max-width:520px){
+ .chat-voice-tools{align-items:flex-start;gap:7px;padding-inline:9px}
+ .chat-voice-tools select{max-width:150px}
+ .chat-voice-status{flex-basis:100%;min-width:0}
+ .chat-in .chat-mic{flex-basis:42px;min-width:42px}
+}
+@media(prefers-reduced-motion:reduce){.chat-in .chat-mic.is-listening{animation:none}}
