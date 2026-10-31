@@ -3000,8 +3000,7 @@ html:not([data-theme="light"]) #tabs .tab.on{
 #statsBody .wlist{display:grid;gap:9px}
 #statsBody .wrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(70px,1.2fr) auto;align-items:center;gap:9px}
 #statsBody .wn,#statsBody .wv{min-width:0;overflow-wrap:anywhere}
-#statsBody .tble{display:block;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}
-#statsBody .tble table{min-width:520px}
+#statsBody .tble{display:table;width:100%;min-width:520px;max-width:none;overscroll-behavior-inline:contain}
 
 /* Banque de questions : cartes et réponses faciles à parcourir au tactile. */
 #banqueBody .bq-hero{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
