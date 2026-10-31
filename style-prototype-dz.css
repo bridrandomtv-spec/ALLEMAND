@@ -2981,8 +2981,8 @@ html:not([data-theme="light"]) #tabs .tab.on{
    ═══════════════════════════════════════════════════════════════ */
 
 /* Journée et espace de suivi : planning lisible, sans colonnes écrasées. */
-#todayBody,#cvBody,#semaineBody,#statsBody,#banqueBody,#ragBody,#corpusBody,#guideBody,#buchBody{min-width:0}
-#todayBody .jd-hero,#cvBody .cv-card,#semaineBody .jd-hero{min-width:0;overflow-wrap:anywhere}
+#todayBody,#cvBody,#statsBody,#banqueBody,#ragBody,#corpusBody,#guideBody,#buchBody{min-width:0}
+#todayBody .jd-hero,#cvBody .cv-card{min-width:0;overflow-wrap:anywhere}
 #todayBody .jd-h,#todayBody .jd-d{min-width:0;line-height:1.8}
 #todayBody .jd-list{display:grid;gap:10px}
 #todayBody .jd-c{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
@@ -2991,8 +2991,6 @@ html:not([data-theme="light"]) #tabs .tab.on{
 #cvBody .cv-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
 #cvBody .cv-id,#cvBody .cv-de,#cvBody .cv-quote{min-width:0;overflow-wrap:anywhere}
 #cvBody .cv-blocs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px}
-#semaineBody .jd-jour{min-width:0;overflow-wrap:anywhere}
-#semaineBody .jd-jh{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
 /* Statistiques : graphiques et tableaux gardent leur largeur utile. */
 #statsBody .st-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,135px),1fr));gap:9px}
