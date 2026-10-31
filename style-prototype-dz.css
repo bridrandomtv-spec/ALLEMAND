@@ -3424,3 +3424,192 @@ html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat{border-rad
 @media(prefers-reduced-motion:reduce){
   #shell *,#shell *:before,#shell *:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM V5.1 — FINITION DES ESPACES PEDAGOGIQUES
+   Sélecteurs repris des feuilles existantes (matières, parcours, examens,
+   professeur, parents, administration, RAG, bibliothèque et quiz).
+   Aucun contenu, identifiant, événement ou flux métier n'est modifié.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Catalogue des matières */
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-hero{
+  border:1px solid #d8e8dc;border-radius:22px;
+  background:radial-gradient(360px 190px at 100% 0,rgba(210,16,52,.075),transparent 70%),linear-gradient(135deg,#edf7ef,#fff 72%);
+  box-shadow:0 14px 34px rgba(0,55,28,.065)
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-crest{
+  border-radius:17px;background:linear-gradient(145deg,#dff0e4,#f5faf6);
+  box-shadow:inset 0 0 0 1px rgba(0,98,51,.06)
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-card,
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-c{
+  border:1px solid #e0ebe3;border-radius:17px;background:#fff;
+  box-shadow:0 7px 20px rgba(20,60,36,.045);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-card:hover,
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-c:hover{
+  transform:translateY(-3px);border-color:#a9cdb4;box-shadow:0 14px 28px rgba(0,98,51,.09)
+}
+html[data-theme="light"] #shell [data-view="matieres"] #matieresBody .mat-st{
+  border:1px solid #e0ebe3;border-radius:14px;background:linear-gradient(150deg,#fff,#f5faf6)
+}
+
+/* Parcours et suivi de progression */
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-hero{
+  border:1px solid #d8e8dc;border-radius:21px;
+  background:linear-gradient(120deg,#edf7ef,#fff 70%);
+  box-shadow:0 12px 28px rgba(0,55,28,.055)
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-next,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-weak,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-prog{
+  border:1px solid #e0ebe3;border-radius:17px;background:#fff;box-shadow:0 6px 18px rgba(20,60,36,.04)
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-bar,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .wbar{
+  overflow:hidden;border-radius:99px;background:#eaf1ec
+}
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .ms-bar>*,
+html[data-theme="light"] #shell [data-view="masar"] #masarBody .wbar>*{border-radius:99px}
+
+/* Espace professeur */
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .kpi{
+  border:1px solid #dfebe2;border-radius:16px;background:linear-gradient(150deg,#fff,#f7faf8);
+  box-shadow:0 6px 18px rgba(20,60,36,.045)
+}
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .kpi b,
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .kpi strong{color:#006233}
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .filters{
+  border:1px solid #e0ebe3;border-radius:16px;background:#f8fbf9
+}
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .ong{
+  border:1px solid transparent;border-radius:11px;background:#f0f6f2;font-weight:850
+}
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .ong.on{
+  background:#006233;color:#fff;box-shadow:0 5px 14px rgba(0,98,51,.17)
+}
+html[data-theme="light"] #shell [data-view="profboard"] #profBody .alert-i{
+  border:1px solid #e3ebe5;border-radius:13px;background:#fff
+}
+
+/* Espace parents */
+html[data-theme="light"] #shell [data-view="parents"] #parentsBody .par-hero{
+  border:1px solid #dce9df;border-radius:19px;
+  background:linear-gradient(120deg,#eff7f1,#fff 72%);box-shadow:0 10px 25px rgba(0,55,28,.05)
+}
+html[data-theme="light"] #shell [data-view="parents"] #parentsBody .enf{
+  border:1px solid #e0ebe3;border-radius:14px;background:#fff;
+  transition:border-color .18s ease,box-shadow .18s ease
+}
+html[data-theme="light"] #shell [data-view="parents"] #parentsBody .enf.on{
+  border-color:#078548;box-shadow:0 0 0 3px rgba(7,133,72,.09)
+}
+html[data-theme="light"] #shell [data-view="parents"] #parentsBody .rep-row{
+  border-bottom:1px solid #edf2ee
+}
+
+/* Administration : densité maîtrisée et repères de contrôle */
+html[data-theme="light"] #shell [data-view="admin"] #adminBody .ad-hero{
+  border:1px solid #dce9df;border-radius:20px;
+  background:radial-gradient(300px 160px at 100% 0,rgba(210,16,52,.06),transparent 70%),linear-gradient(120deg,#edf7ef,#fff 75%);
+  box-shadow:0 12px 28px rgba(0,55,28,.055)
+}
+html[data-theme="light"] #shell [data-view="admin"] #adminBody .ad-s{
+  border:1px solid #e0ebe3;border-radius:14px;background:#fff
+}
+html[data-theme="light"] #shell [data-view="admin"] #adminBody .ad-grid>.card,
+html[data-theme="light"] #shell [data-view="admin"] #adminBody .card.ad-box{
+  border:1px solid #e0ebe3;border-radius:16px;background:#fff;box-shadow:0 6px 18px rgba(20,60,36,.04)
+}
+html[data-theme="light"] #shell [data-view="admin"] #adminBody .ad-tab{
+  border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid #e0ebe3;border-radius:12px
+}
+
+/* Assistant IA / RAG */
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rg-hero{
+  padding:17px;border:1px solid #dce9df;border-radius:18px;
+  background:linear-gradient(120deg,#eff7f1,#fff)
+}
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rg-box,
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rg-out,
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rg-ped,
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rg-non{
+  border:1px solid #e0ebe3;border-radius:16px;background:#fff;box-shadow:0 6px 18px rgba(20,60,36,.04)
+}
+html[data-theme="light"] #shell [data-view="rag"] #ragBody textarea{
+  min-height:112px;line-height:1.8;background:#fbfdfb;border-color:#dce8df
+}
+html[data-theme="light"] #shell [data-view="rag"] #ragBody .rq-c{
+  border:1px solid #e1ebe4;border-radius:13px;background:#fff
+}
+
+/* Examens, quiz et banque d'exercices */
+html[data-theme="light"] #shell #examBody .exam-hero{
+  border:1px solid #dce9df;border-radius:20px;
+  background:linear-gradient(120deg,#edf7ef,#fff 72%);box-shadow:0 10px 26px rgba(0,55,28,.05)
+}
+html[data-theme="light"] #shell #examBody .eh-st{
+  border:1px solid #e0ebe3;border-radius:13px;background:#fff
+}
+html[data-theme="light"] #shell #examBody .annee,
+html[data-theme="light"] #shell #examBody .theme,
+html[data-theme="light"] #shell #examBody .sujet-box{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff;
+  box-shadow:0 5px 16px rgba(20,60,36,.035);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease
+}
+html[data-theme="light"] #shell #examBody .annee:hover,
+html[data-theme="light"] #shell #examBody .theme:hover,
+html[data-theme="light"] #shell #examBody .sujet-box:hover{
+  transform:translateY(-2px);border-color:#a9cdb4;box-shadow:0 10px 22px rgba(0,98,51,.07)
+}
+html[data-theme="light"] #shell #quizBody .qz-q,
+html[data-theme="light"] #shell #quizBody .qz-u{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff
+}
+html[data-theme="light"] #shell #quizBody .qz-o{
+  border:1px solid #e0ebe3;border-radius:12px;background:#fbfdfb;transition:border-color .15s ease,background .15s ease
+}
+html[data-theme="light"] #shell #quizBody .qz-o:hover{border-color:#8fbea0;background:#f1f8f3}
+
+/* Bibliothèque, corpus et ressources */
+html[data-theme="light"] #shell #biblioBody .bl-c,
+html[data-theme="light"] #shell #libraryBody .lib-c,
+html[data-theme="light"] #shell #corpusBody .cp-c{
+  border:1px solid #e0ebe3;border-radius:15px;background:#fff;box-shadow:0 5px 16px rgba(20,60,36,.035)
+}
+html[data-theme="light"] #shell #corpusBody .cp-hero{
+  padding:16px;border:1px solid #dce9df;border-radius:18px;background:linear-gradient(120deg,#eff7f1,#fff)
+}
+
+/* Sombre : mêmes composants, surfaces et séparateurs adaptés */
+html[data-theme="dark"] #shell [data-view="matieres"] .mat-hero,
+html[data-theme="dark"] #shell [data-view="masar"] .ms-hero,
+html[data-theme="dark"] #shell [data-view="profboard"] .par-hero,
+html[data-theme="dark"] #shell [data-view="admin"] .ad-hero,
+html[data-theme="dark"] #shell #examBody .exam-hero,
+html[data-theme="dark"] #shell #corpusBody .cp-hero,
+html[data-theme="dark"] #shell #ragBody .rg-hero{
+  border:1px solid #294b36;border-radius:19px;background:linear-gradient(120deg,#102b1b,#102319)
+}
+html[data-theme="dark"] #shell #quizBody .qz-o{border-color:#294b36;border-radius:11px}
+html[data-theme="dark"] #shell #quizBody .qz-o:hover{border-color:#4b9164;background:#123522}
+
+/* Petits écrans : les blocs de travail ne doivent pas déborder */
+@media(max-width:760px){
+  #shell [data-view="matieres"] #matieresBody .mat-hero,
+  #shell [data-view="masar"] #masarBody .ms-hero,
+  #shell [data-view="admin"] #adminBody .ad-hero,
+  #shell #examBody .exam-hero{border-radius:16px}
+  #shell [data-view="profboard"] #profBody .filters{gap:8px}
+  #shell [data-view="profboard"] #profBody .filters>*{max-width:100%;min-width:0}
+  #shell [data-view="parents"] #parentsBody .par-hero{border-radius:16px}
+  #shell #ragBody .rq-opts{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell [data-view="matieres"] #matieresBody *,
+  #shell [data-view="parents"] #parentsBody *,
+  #shell [data-view="profboard"] #profBody *,
+  #shell #examBody *,#shell #quizBody *{transition:none!important}
+}
