@@ -5768,3 +5768,34 @@ html[data-theme="dark"] #shell > .topbar{
     inset-block-start:0!important;
   }
 }
+
+/* V6.10 — confort de lecture des contenus affichés */
+@media(min-width:901px){
+  #shell #app .reading{
+    font-size:19px!important;
+    line-height:2.05!important;
+    padding:22px 25px!important;
+  }
+  #shell #app .reading p{
+    font-size:19px!important;
+    line-height:2.05!important;
+    margin-bottom:14px;
+  }
+  #shell #app .sujet-box,
+  #shell #app .corrige-box{
+    font-size:16.5px!important;
+    line-height:2!important;
+    padding:20px 22px!important;
+  }
+  #shell #app .fiche-t{
+    font-size:18px!important;
+    line-height:1.7!important;
+  }
+  #shell #app .fiche-de{
+    font-size:15.5px!important;
+    line-height:1.8!important;
+  }
+  #shell #app .page-head h1{
+    font-size:clamp(25px,2.3vw,32px);
+  }
+}
