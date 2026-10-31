@@ -4395,3 +4395,25 @@ html[data-theme="dark"] .subj-card{background:linear-gradient(150deg,#0c2a1a,#09
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+
+/* Correctif portail : le contenu long ne doit jamais être centré hors de l'écran.
+   En flex, align-items:center pouvait couper le haut du portail lorsque sa hauteur
+   dépassait celle du viewport ; le défilement ne permettait alors pas de retrouver
+   le début. L'alignement en haut conserve le scroll et l'auto-margin ne centre que
+   lorsque l'espace vertical est réellement disponible. */
+#gate.gate{
+  align-items:flex-start!important;
+  overflow-x:hidden;
+  overflow-y:auto;
+  padding-top:max(22px,env(safe-area-inset-top));
+  padding-bottom:max(22px,env(safe-area-inset-bottom));
+}
+#gate.gate>.gate-wrap{
+  flex:0 0 auto;
+  margin-block:auto;
+}
+@media(max-width:760px){
+  #gate.gate{padding-inline:12px}
+  #gate.gate>.gate-wrap{margin-block:0}
+}
