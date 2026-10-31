@@ -406,7 +406,7 @@ function speak(text){
 
 /* ─────────────── NAVIGATION ─────────────── */
 const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
-const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['msg','💬 الرسائل'],['seances','📚 الحصص'],
+const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 فضائي الدراسي'],['msg','💬 الرسائل'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
                ['stats','🗺️ الإحصائيات'],['quiz','🎯 تمارين'],
