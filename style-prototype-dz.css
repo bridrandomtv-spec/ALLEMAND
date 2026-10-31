@@ -2781,3 +2781,56 @@ html:not([data-theme="light"]) #tabs .tab.on{
   #biblioBody .filters{padding:11px}
   #biblioBody .filters-h .btn{width:100%}
 }
+
+
+/* PHASE DZ-10 — parcours, entraînement, quiz et examens */
+#masarBody{min-width:0}
+#masarBody .ms-next,#masarBody .ms-weak,#masarBody .ms-prog{min-width:0;overflow-wrap:anywhere}
+#masarBody .ms-next{padding:clamp(15px,3vw,22px)}
+#masarBody .ms-next h3,#masarBody .ms-why{line-height:1.8;overflow-wrap:anywhere}
+#masarBody .ms-w{display:grid;grid-template-columns:minmax(80px,1fr) minmax(65px,2fr) auto;align-items:center;gap:8px}
+#masarBody .ms-w>span{min-width:0;overflow-wrap:anywhere}
+#simBody,#quizBody,#examBody{min-width:0}
+#simBody .sim-modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px}
+#simBody .mode{min-width:0;padding:14px}
+#simBody .mode-t,#simBody .mode-d{line-height:1.7;overflow-wrap:anywhere}
+#simBody .timer,#examBody .timer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:60px;z-index:5}
+#simBody .timer-t,#examBody .timer-t{font-variant-numeric:tabular-nums;white-space:nowrap}
+#simBody .part,#examBody .part{min-width:0;overflow:hidden}
+#simBody .part-h,#examBody .part-h{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+#simBody .q,#examBody .q{min-width:0;padding-block:12px}
+#simBody .q-t,#examBody .q-t{line-height:1.8;overflow-wrap:anywhere}
+#simBody .opts,#examBody .opts{display:flex;flex-wrap:wrap;gap:8px}
+#simBody .opt,#examBody .opt{min-width:0;max-width:100%;white-space:normal;line-height:1.6}
+#simBody .txt-in,#examBody .txt-in{width:100%;max-width:100%;min-width:0}
+#simBody .bareme,#examBody .bareme{display:block;max-width:100%;overflow-x:auto;white-space:nowrap}
+#quizBody .qz-unites{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,155px),1fr));gap:9px}
+#quizBody .qz-u,#quizBody .qz-q{min-width:0;overflow-wrap:anywhere}
+#quizBody .qz-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px}
+#quizBody .qz-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#quizBody .qz-o{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.7}
+#quizBody .qz-nav{display:flex;flex-wrap:wrap;gap:8px}
+#examBody .exam-hero>div{min-width:0}
+#examBody .eh-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,105px),1fr));gap:8px}
+#examBody .eh-st,#examBody .annee,#examBody .theme,#examBody .sujet{min-width:0;overflow-wrap:anywhere}
+#examBody .annees-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px}
+#examBody .sujets{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}
+#examBody .sujet-box{min-width:0;overflow-wrap:anywhere}
+#examBody .fiche-meta{display:flex;flex-wrap:wrap;gap:7px}
+@media(max-width:760px){
+ #masarBody .ms-w{grid-template-columns:minmax(75px,1fr) minmax(60px,1.5fr) auto}
+ #simBody .sim-modes{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #quizBody .qz-opts{grid-template-columns:1fr}
+ #quizBody .qz-unites{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #examBody .eh-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #examBody .annees-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #examBody .sujets{grid-template-columns:1fr}
+}
+@media(max-width:420px){
+ #masarBody .ms-w{grid-template-columns:1fr auto}
+ #masarBody .ms-w .ms-bar{grid-column:1/-1;grid-row:2}
+ #simBody .sim-modes,#simBody .opts,#examBody .opts{grid-template-columns:1fr}
+ #simBody .timer .btn,#examBody .timer .btn{width:100%}
+ #quizBody .qz-unites,#examBody .annees-grid{grid-template-columns:1fr}
+ #examBody .eh-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
