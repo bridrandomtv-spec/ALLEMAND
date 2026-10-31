@@ -3255,9 +3255,6 @@ html:not([data-theme="light"]) #tabs>#d7more>#d7moreB .tab{color:#e4f1e8!importa
 #shell #tabs>.cat-body .tab.sub.on{background:#006233!important;color:#fff!important}
 #shell .section-bar{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;flex-wrap:wrap!important;width:min(100%,1500px)!important;max-width:1500px!important;margin:0 auto!important;padding:7px 16px 9px!important}
 #shell main#app{position:relative!important;inset:auto!important;width:100%!important;max-width:1500px!important;margin:0 auto!important;padding:clamp(16px,2.4vw,34px)!important;padding-bottom:40px!important}
-#shell .home-grid{grid-template-columns:minmax(0,1fr)!important}
-#shell .home-side{display:none!important}
-#shell .home-main{width:100%!important;min-width:0!important}
 html:not([data-theme="light"]) #shell .topbar,html:not([data-theme="light"]) #shell #tabs.tabs{background:#071d12!important}
 html:not([data-theme="light"]) #shell #tabs>.tab,html:not([data-theme="light"]) #shell #tabs>.cat-head{color:#eaf5ee!important}
 html:not([data-theme="light"]) #shell #tabs>.cat-body{background:#0b2116!important;border-color:#24563a!important}
