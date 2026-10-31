@@ -2631,3 +2631,79 @@ html:not([data-theme="light"]) #tabs .tab.on{
  [data-view="parents"] #parentsBody .rep-row{align-items:flex-start;font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){[data-view="parents"] #parentsBody .onglets{scroll-behavior:auto}}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE DZ-08 — cloud privé, administration et réservation :
+   finition responsive additive, sélecteurs confirmés dans les
+   modules cloud.js, admin.js et reservation.js.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Cloud : champs, listes de documents et commandes de synchronisation. */
+#cloudBody{min-width:0}
+#cloudBody .cd-hero{min-width:0}
+#cloudBody .cd-hero>div{min-width:0;flex:1 1 220px}
+#cloudBody .cd-hero .cd-sub{overflow-wrap:anywhere}
+#cloudBody .cd-grid>.card{min-width:0}
+#cloudBody .cd-f{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:9px}
+#cloudBody .cd-f>span{min-width:0;overflow-wrap:anywhere}
+#cloudBody .cd-box form{min-width:0}
+#cloudBody .cd-box form .btn{width:100%}
+
+/* Administration : tableaux horizontaux au lieu de colonnes écrasées. */
+#adminBody{min-width:0}
+#adminBody .ad-grid>.card{min-width:0;overflow:hidden}
+#adminBody .ad-tab{display:block;width:100%;max-width:100%;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+#adminBody .ad-mono{min-width:0}
+#adminBody .ad-mono>.ad-grid>.card{min-width:0;overflow:hidden}
+#adminBody .pl-row{min-width:0}
+#adminBody .pl-row>span{min-width:0;overflow-wrap:anywhere}
+
+/* Réservation : champs et récapitulatif de prix sans débordement RTL. */
+#reservationBody{min-width:0}
+#reservationBody .rs-hero>div{min-width:0;flex:1 1 220px}
+#reservationBody .rs-card{min-width:0}
+#reservationBody .rs-h{min-width:0;flex-wrap:wrap}
+#reservationBody .rs-h>div{min-width:0}
+#reservationBody .rs-form{grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr))}
+#reservationBody .rs-pr span{min-width:0;overflow-wrap:anywhere}
+#reservationBody .rs-pr b{flex:0 0 auto;white-space:nowrap}
+#reservationBody .rs-total{gap:10px}
+#reservationBody .rs-total b{white-space:nowrap}
+#reservationBody .rs-item{min-width:0}
+#reservationBody .rs-ih{min-width:0;flex-wrap:wrap}
+#reservationBody .rs-it{overflow-wrap:anywhere}
+
+@media(max-width:760px){
+  #cloudBody .cd-hero{align-items:flex-start}
+  #cloudBody .cd-hero>.btn{margin-inline-start:auto}
+  #cloudBody .cd-grid{grid-template-columns:1fr}
+  #cloudBody .cd-box,#cloudBody .cd-list{padding:13px}
+  #cloudBody .cd-f{padding:10px}
+  #adminBody>.ad-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  #adminBody .ad-grid{grid-template-columns:minmax(0,1fr)}
+  #adminBody .ad-grid>.card,#adminBody>.card{padding:13px}
+  #adminBody .pl-row{gap:8px}
+  #adminBody .pl-row>span{flex:1 1 100%}
+  #reservationBody .rs-grid{grid-template-columns:1fr}
+  #reservationBody .rs-form{grid-template-columns:1fr;padding:13px}
+  #reservationBody .rs-opts{gap:6px}
+  #reservationBody .rs-o{flex:1 1 auto;min-width:calc(50% - 6px)}
+  #reservationBody .rs-opts.heures .rs-o{min-width:calc(33.333% - 6px)}
+  #reservationBody .rs-prix{padding:11px}
+  #reservationBody .rs-ib{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:420px){
+  #cloudBody .cd-hero .cd-crest{width:44px;height:44px;flex-basis:44px;font-size:23px}
+  #cloudBody .cd-hero .btn{width:100%}
+  #cloudBody .cd-f{grid-template-columns:minmax(0,1fr) auto}
+  #adminBody .ad-s{padding:10px 7px}
+  #adminBody .ad-tab{font-size:11px}
+  #reservationBody .rs-o{padding:8px 9px;font-size:12px}
+  #reservationBody .rs-pr{align-items:flex-start;font-size:12px}
+  #reservationBody .rs-total{padding:10px;font-size:1rem}
+  #reservationBody .rs-ib{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  #cloudBody *,#adminBody *,#reservationBody *{scroll-behavior:auto}
+}
