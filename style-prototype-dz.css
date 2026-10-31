@@ -5554,3 +5554,19 @@ html[data-theme="dark"] #shell [data-view="accueil"] .subj-home .subj-chips .chi
   #shell [data-view="accueil"] .subj-home .subj-card,
   #shell [data-view="accueil"] .subj-home .subj-chips .chip{transition:none!important}
 }
+
+
+/* V6.7.2 — réserve d'espace pour l'illustration du bandeau sur grand écran */
+@media(min-width:701px){
+  html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome{
+    padding-inline-end:220px;
+  }
+  html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome{
+    padding-inline-end:220px;
+  }
+}
+@media(max-width:700px){
+  #shell [data-view="accueil"] .home-main .welcome{
+    padding-inline-end:18px;
+  }
+}
