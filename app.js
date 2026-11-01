@@ -1359,40 +1359,7 @@ function journalDemarrage(origine){
   return txt;
 }
 
-/* Bloc visible et copiable — utile quand la console n'est pas accessible (mobile). */
-function boutonDiagnostic(){
-  if(document.getElementById('dzDiagBtn')) return;
-  const b = document.createElement('button');
-  b.id = 'dzDiagBtn';
-  b.textContent = '🩺 diagnostic';
-  b.setAttribute('title', 'Afficher l’état réel du démarrage (copiable)');
-  b.style.cssText = 'position:fixed;z-index:9998;left:10px;bottom:10px;background:#12351f;'
-    + 'color:#9fe8bd;border:1px solid #2f6b45;border-radius:999px;padding:8px 13px;'
-    + 'font:600 11.5px system-ui,sans-serif;cursor:pointer;opacity:.72';
-  b.addEventListener('mouseenter', () => { b.style.opacity = '1'; });
-  b.addEventListener('mouseleave', () => { b.style.opacity = '.72'; });
-  b.addEventListener('click', () => {
-    const txt = journalDemarrage('manuel');
-    if(document.getElementById('dzDiagOut')){
-      document.getElementById('dzDiagOut').remove();
-      return;
-    }
-    const pre = document.createElement('pre');
-    pre.id = 'dzDiagOut';
-    pre.setAttribute('dir', 'ltr');
-    pre.style.cssText = 'position:fixed;z-index:9998;left:10px;right:10px;bottom:52px;'
-      + 'max-height:52vh;overflow:auto;margin:0;background:#08130c;color:#9fe8bd;'
-      + 'border:1px solid #2f6b45;border-radius:13px;padding:12px 14px;'
-      + 'font:11px/1.6 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;'
-      + 'word-break:break-word;text-align:left;direction:ltr';
-    pre.textContent = txt;
-    document.body.appendChild(pre);
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(txt).catch(() => {});
-    }
-  });
-  document.body.appendChild(b);
-}
+/* Bouton diagnostic flottant désactivé : le diagnostic reste disponible dans la console. */
 
 /* ─────────────── INITIALISATION ─────────────── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -1403,7 +1370,7 @@ document.addEventListener('DOMContentLoaded', () => {
     panneauPanne(errBoot, 'bootGate');
   }
   /* État réel du DOM, dans la console ET via le bouton 🩺 en bas à gauche. */
-  setTimeout(() => { journalDemarrage('après bootGate'); boutonDiagnostic(); }, 1600);
+  setTimeout(() => { journalDemarrage('après bootGate'); }, 1600);
   /* Filet : si après 3,5 s ni #gate ni #shell n'est visible, on force le portail. */
   setTimeout(() => {
     const g = $('#gate'), sh = $('#shell');
@@ -3094,36 +3061,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   if((location.hash||'').replace('#','') === 'compte') renderRecus();
 })();
 
-/* ── phase 13 (OPS-1) : bouton « signaler un bug » → ticket support pré-rempli ── */
-(function(){
-  function meta(){
-    return 'page: ' + (location.hash || '(accueil)') + '\n'
-         + 'date: ' + new Date().toISOString() + '\n'
-         + 'ecran: ' + window.innerWidth + 'x' + window.innerHeight + '\n'
-         + 'agent: ' + String(navigator.userAgent || '').slice(0,120);
-  }
-  function build(){
-    if(document.getElementById('opsBugBtn')) return;
-    var b = document.createElement('button');
-    b.id = 'opsBugBtn'; b.type = 'button';
-    b.textContent = '🐞 Signaler un bug';
-    b.style.cssText = 'position:fixed;bottom:14px;inset-inline-start:14px;z-index:9997;background:#7a4a06;color:#fff;border:0;border-radius:999px;padding:9px 14px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)';
-    document.body.appendChild(b);
-    b.addEventListener('click', function(){
-      var txt = window.prompt('Décris le bug : page, geste fait, résultat vu (une phrase ou plus)');
-      if(txt === null) return;
-      txt = String(txt).trim();
-      if(!txt){ window.alert('⛔ Description vide — ticket non créé.'); return; }
-      if(!window.SB || !SB.ticketCreate){ window.alert('⛔ Cloud indisponible : note ton texte et réessaie plus tard.'); return; }
-      SB.ticketCreate('[BUG] ' + txt.slice(0,80), txt + '\n\n--- meta ---\n' + meta()).then(function(r){
-        if(r.ok) window.alert('✅ Ticket créé, merci ! Il arrive dans 🎫 الدعم · Support (ton wilaya + admin général).');
-        else window.alert('⛔ ' + r.err);
-      });
-    });
-  }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
-  else setTimeout(build, 600);
-})();
+/* Bouton flottant « Signaler un bug » désactivé : il recouvrait le contenu à lire. */
 
 /* ══ CONTENT-1 : chargeur authentifié des contenus payants ══
    Les fichiers d'unités ne sont plus des <script> publics : le worker ne les
