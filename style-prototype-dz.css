@@ -6629,3 +6629,163 @@ html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini .min
     transition:none!important;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   V6.18 — finition sombre des espaces pédagogiques et de gestion
+   Portée CSS uniquement : aucun contenu ni comportement modifié.
+   ═══════════════════════════════════════════════════════════════ */
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-hero,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-hero,
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .prof-hero,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .par-hero,
+html[data-theme="dark"] #shell [data-view="admin"] #adminBody .ad-hero,
+html[data-theme="dark"] #shell [data-view="rag"] #ragBody .rg-hero,
+html[data-theme="dark"] #shell #examBody .exam-hero,
+html[data-theme="dark"] #shell #corpusBody .cp-hero{
+  border:1px solid #315c40;
+  border-radius:18px;
+  background:
+    radial-gradient(280px 150px at 100% 0,rgba(210,16,52,.10),transparent 72%),
+    linear-gradient(125deg,#142f20,#102319 78%);
+  color:var(--t);
+  box-shadow:0 10px 26px rgba(0,0,0,.17);
+}
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-crest{
+  border:1px solid #315c40;
+  border-radius:15px;
+  background:linear-gradient(145deg,#1b422b,#142b1e);
+}
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-card,
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-c,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-next,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-weak,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-prog,
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .kpi,
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .filters,
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .alert-i,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .kpi,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .enf,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .rep-row,
+html[data-theme="dark"] #shell [data-view="admin"] #adminBody .ad-s,
+html[data-theme="dark"] #shell [data-view="admin"] #adminBody .ad-grid>.card,
+html[data-theme="dark"] #shell [data-view="admin"] #adminBody .card.ad-box,
+html[data-theme="dark"] #shell [data-view="rag"] #ragBody .rg-box,
+html[data-theme="dark"] #shell [data-view="rag"] #ragBody .rg-out,
+html[data-theme="dark"] #shell [data-view="rag"] #ragBody .rg-ped,
+html[data-theme="dark"] #shell [data-view="rag"] #ragBody .rg-non,
+html[data-theme="dark"] #shell [data-view="rag"] #ragBody .rq-c,
+html[data-theme="dark"] #shell #examBody .eh-st,
+html[data-theme="dark"] #shell #examBody .annee,
+html[data-theme="dark"] #shell #examBody .theme,
+html[data-theme="dark"] #shell #examBody .sujet-box,
+html[data-theme="dark"] #shell #quizBody .qz-q,
+html[data-theme="dark"] #shell #quizBody .qz-u,
+html[data-theme="dark"] #shell #biblioBody .bl-c,
+html[data-theme="dark"] #shell #libraryBody .lib-c,
+html[data-theme="dark"] #shell #corpusBody .cp-c{
+  border:1px solid #294b37;
+  border-radius:14px;
+  background:linear-gradient(150deg,#172f21,#11251a);
+  color:var(--t);
+  box-shadow:0 5px 16px rgba(0,0,0,.13);
+}
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-st{
+  border:1px solid #31543d;
+  border-radius:13px;
+  background:#172e21;
+  color:var(--t);
+}
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-card:hover,
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-c:hover,
+html[data-theme="dark"] #shell #examBody .annee:hover,
+html[data-theme="dark"] #shell #examBody .theme:hover,
+html[data-theme="dark"] #shell #examBody .sujet-box:hover{
+  border-color:#62a879;
+  box-shadow:0 10px 22px rgba(0,0,0,.22);
+}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .kpi b,
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .kpi strong,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .kpi b,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .kpi strong{
+  color:#8bd6a4;
+}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .filters{
+  background:#142b1e;
+}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .ong,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .ong{
+  border:1px solid #31543d;
+  border-radius:10px;
+  background:#1a3425;
+  color:#c8d9ce;
+}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .ong.on,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .ong.on{
+  border-color:#087d43;
+  background:#006233;
+  color:#fff;
+}
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .enf.on{
+  border-color:#62b47d;
+  box-shadow:0 0 0 3px rgba(98,180,125,.12);
+}
+html[data-theme="dark"] #shell [data-view="admin"] #adminBody .ad-tab,
+html[data-theme="dark"] #shell #profBody .tble,
+html[data-theme="dark"] #shell #libraryBody .fiche{
+  border:1px solid #294b37;
+  border-radius:12px;
+  background:#12271b;
+  color:var(--t);
+}
+html[data-theme="dark"] #shell table{border-color:#294b37}
+html[data-theme="dark"] #shell th{
+  border-color:#294b37;
+  background:#1b3b28;
+  color:#c4e4ce;
+}
+html[data-theme="dark"] #shell td{border-color:#294b37;color:var(--t)}
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-bar,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .wbar{
+  overflow:hidden;
+  border-radius:99px;
+  background:#294234;
+}
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-bar>*,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .wbar>*{
+  border-radius:99px;
+}
+html[data-theme="dark"] #shell [data-view="rag"] #ragBody textarea{
+  min-height:112px;
+  border-color:#31543d;
+  background:#0f2117;
+  color:#e5f0e8;
+}
+html[data-theme="dark"] #shell #quizBody .qz-o{
+  border:1px solid #31543d;
+  border-radius:12px;
+  background:#142b1e;
+  color:var(--t);
+}
+html[data-theme="dark"] #shell #quizBody .qz-o:hover{
+  border-color:#62a879;
+  background:#1b3b28;
+}
+html[data-theme="dark"] #shell #quizBody .qz-o:focus-visible,
+html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody button:focus-visible,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody button:focus-visible{
+  outline:2px solid #8bd6a4;
+  outline-offset:2px;
+}
+@media(max-width:760px){
+  html[data-theme="dark"] #shell [data-view="matieres"] #matieresBody .mat-hero,
+  html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-hero,
+  html[data-theme="dark"] #shell [data-view="profboard"] #profBody .prof-hero,
+  html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .par-hero,
+  html[data-theme="dark"] #shell [data-view="admin"] #adminBody .ad-hero,
+  html[data-theme="dark"] #shell [data-view="rag"] #ragBody .rg-hero,
+  html[data-theme="dark"] #shell #examBody .exam-hero,
+  html[data-theme="dark"] #shell #corpusBody .cp-hero{
+    border-radius:15px;
+  }
+}
