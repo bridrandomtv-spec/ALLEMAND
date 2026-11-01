@@ -669,6 +669,14 @@ async function unlinkChild(childId){
 Object.assign(window.SB,{myLinkedChildren,requestChildLink,myParentLinkRequests,myChildLinkRequests,
   respondParentLinkRequest,cancelParentLinkRequest,unlinkChild});
 
+async function parentChildProgressSummary(childId){
+  const c=await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r=await c.rpc('parent_child_progress_summary',{p_child_id:childId});
+  if(r.error) return {ok:false,err:r.error.message};
+  return {ok:true,summary:r.data||{}};
+}
+Object.assign(window.SB,{parentChildProgressSummary});
+
 
 /* ── ADMIN · validation des demandes de rôle parent ── */
 async function admParentRoleRequests(){
