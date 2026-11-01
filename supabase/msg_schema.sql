@@ -100,7 +100,7 @@ $$;
 
 create or replace function public.msg_is_member(uid uuid, cid bigint) returns boolean
 language sql stable security definer set search_path = public as $$
-  select exists (
+  select auth.uid() is not null and uid = auth.uid() and exists (
     select 1 from public.msg_members m where m.conversation_id = cid and m.user_id = uid
     union all
     select 1 from public.msg_conversations c
@@ -119,7 +119,8 @@ language sql stable security definer set search_path = public as $$
     select 1 from public.profiles pa
     join public.profiles pb
       on pb.wilaya = pa.wilaya and pb.niveau = pa.niveau and pb.filiere = pa.filiere
-     where pa.id = a and pb.id = b and a <> b
+     where pa.id = a and a = auth.uid() and auth.uid() is not null
+       and pb.id = b and a <> b
        and pa.wilaya is not null and pa.niveau is not null and pa.filiere is not null
   );
 $$;
@@ -128,7 +129,7 @@ $$;
 -- encapsulé dans une fonction security definer, appelée par la politique.
 create or replace function public.msg_not_blocked(cid bigint, snd uuid) returns boolean
 language sql stable security definer set search_path = public as $$
-  select not exists (
+  select auth.uid() is not null and snd = auth.uid() and not exists (
     select 1 from public.msg_members m
     join public.msg_blocks b on b.blocker_id = m.user_id and b.blocked_id = snd
      where m.conversation_id = cid
@@ -139,7 +140,7 @@ $$;
 -- (wilaya+niveau+filière) — ferme l'auto-inscription abusive côté RLS.
 create or replace function public.msg_member_ok(cid bigint, uid uuid) returns boolean
 language sql stable security definer set search_path = public as $$
-  select exists (
+  select auth.uid() is not null and uid = auth.uid() and exists (
     select 1 from public.msg_conversations c
      where c.id = cid
        and ( c.type = 'direct'
@@ -394,7 +395,8 @@ language sql stable security definer set search_path = public as $$
     select 1 from public.profiles pa
     join public.profiles pb
       on pb.wilaya = pa.wilaya and pb.niveau = pa.niveau and pb.filiere = pa.filiere
-     where pa.id = a and pb.id = b and a <> b
+     where pa.id = a and a = auth.uid() and auth.uid() is not null
+       and pb.id = b and a <> b
        and pa.wilaya is not null and pa.niveau is not null and pa.filiere is not null
        and pa.verif_statut = 'verifie' and pb.verif_statut = 'verifie'
   );
@@ -440,3 +442,27 @@ end $$;
 drop trigger if exists docs_tr_taille on public.documents_meta;
 create trigger docs_tr_taille before insert or update on public.documents_meta
   for each row execute function public.docs_tr_taille_fn();
+
+
+-- ── ACL des fonctions SECURITY DEFINER ──
+-- Les helpers RLS sont exécutables uniquement par les utilisateurs authentifiés ;
+-- leurs paramètres sont liés à auth.uid() pour éviter les sondages inter-comptes.
+REVOKE ALL ON FUNCTION public.msg_is_moderator(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.msg_is_member(uuid,bigint) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.msg_can_dm(uuid,uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.msg_not_blocked(bigint,uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.msg_member_ok(bigint,uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.msg_is_moderator(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.msg_is_member(uuid,bigint) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.msg_can_dm(uuid,uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.msg_not_blocked(bigint,uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.msg_member_ok(bigint,uuid) TO authenticated;
+
+-- Fonctions de déclencheur : aucun appel direct via l'API.
+REVOKE ALL ON FUNCTION public.msg_rate_limit() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.msg_guard_direct() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.msg_logfn() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.profiles_verif_guard() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.profiles_role_guard() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.msg_tr_taille_fn() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.docs_tr_taille_fn() FROM PUBLIC, anon, authenticated;
