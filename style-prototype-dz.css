@@ -7588,3 +7588,121 @@ html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .enf.on{
     grid-template-columns:minmax(0,1fr);
   }
 }
+
+/* V7.6 — bibliothèque pédagogique et professeur IA
+   Amélioration de présentation uniquement — bibliothèque et assistant IA.
+   Les moteurs de recherche, appels réseau, conversations et événements restent inchangés.
+   ═══════════════════════════════════════════════════════════════ */
+#shell [data-view="biblio"] #biblioBody{
+  display:grid;gap:14px;min-width:0;
+}
+#shell [data-view="biblio"] #biblioBody :is(.bl-c,.fiche,.card,.bdd-kpis,.filters){
+  min-width:0;
+}
+#shell [data-view="biblio"] #biblioBody .bl-c{
+  border:1px solid #dce9df;border-radius:17px;
+  background:linear-gradient(145deg,#fff,#f9fcfa);
+  box-shadow:0 7px 20px rgba(0,67,34,.045);
+  transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+#shell [data-view="biblio"] #biblioBody .bl-c:hover{
+  border-color:#9bc9a8;box-shadow:0 12px 26px rgba(0,98,51,.075);
+  transform:translateY(-2px);
+}
+#shell [data-view="biblio"] #biblioBody :is(input,select,textarea){
+  max-width:100%;min-width:0;min-height:42px;
+  border-radius:11px;
+}
+#shell [data-view="biblio"] #biblioBody :is(button,.btn):focus-visible,
+#shell [data-view="biblio"] #biblioBody :is(input,select,textarea):focus-visible{
+  outline:3px solid rgba(0,132,61,.28);outline-offset:2px;
+}
+#shell [data-view="biblio"] #biblioBody :is(.bdd-kpis,.grid2,.frow){
+  min-width:0;
+}
+#shell [data-view="biblio"] #bddStatus{
+  border:1px solid #dce9df;border-inline-start:4px solid #00843d;
+  border-radius:12px;background:#f3f9f4;color:#28583a;
+  padding:11px 14px;line-height:1.7;
+}
+#shell [data-view="prof"] .page-head{
+  margin-bottom:15px;
+}
+#shell [data-view="prof"] .chat{
+  overflow:hidden;min-width:0;border:1px solid #d7e7dc;
+  border-radius:22px;box-shadow:0 14px 34px rgba(0,67,34,.07);
+}
+#shell [data-view="prof"] .chat-log{
+  min-height:320px;max-height:min(62vh,680px);
+  padding:clamp(14px,2.4vw,24px);
+  overscroll-behavior:contain;
+}
+#shell [data-view="prof"] .chat-sug{
+  flex-wrap:wrap;overflow-x:visible;
+}
+#shell [data-view="prof"] .chat-sug .sug{
+  flex:0 0 auto;max-width:100%;white-space:normal;
+}
+#shell [data-view="prof"] .chat-voice-tools{
+  flex-wrap:wrap;min-width:0;
+}
+#shell [data-view="prof"] .chat-voice-tools :is(select,label,#chatVoiceStatus){
+  max-width:100%;min-width:0;
+}
+#shell [data-view="prof"] .chat-in{
+  display:flex;align-items:center;min-width:0;
+}
+#shell [data-view="prof"] #chatInput{
+  min-width:0;min-height:46px;border-radius:13px;
+}
+#shell [data-view="prof"] #chatForm :is(button,.chat-mic){
+  flex:0 0 auto;min-width:42px;min-height:42px;border-radius:12px;
+}
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody .bl-c{
+  border-color:#294b36;background:linear-gradient(145deg,#142b1d,#102319);
+  box-shadow:0 8px 22px rgba(0,0,0,.16);
+}
+html[data-theme="dark"] #shell [data-view="biblio"] #biblioBody :is(input,select,textarea){
+  border-color:#355a41;background:#14291d;color:#e4f1e8;
+}
+html[data-theme="dark"] #shell [data-view="biblio"] #bddStatus{
+  border-color:#31553e;background:#142b1d;color:#ccebd5;
+}
+@media(max-width:760px){
+  #shell [data-view="biblio"] #biblioBody{
+    gap:10px;
+  }
+  #shell [data-view="biblio"] #biblioBody .bl-c{
+    border-radius:14px;padding:13px;
+  }
+  #shell [data-view="prof"] .chat{
+    border-radius:16px;
+  }
+  #shell [data-view="prof"] .chat-log{
+    min-height:260px;max-height:55vh;padding:12px;
+  }
+  #shell [data-view="prof"] .chat-sug{
+    gap:6px;padding:9px;
+  }
+  #shell [data-view="prof"] .chat-voice-tools{
+    gap:7px;padding:9px;
+  }
+  #shell [data-view="prof"] .chat-in{
+    gap:7px;padding:9px;
+  }
+}
+@media(max-width:390px){
+  #shell [data-view="prof"] .chat-in{
+    flex-wrap:wrap;
+  }
+  #shell [data-view="prof"] #chatInput{
+    flex:1 1 100%;width:100%;
+  }
+  #shell [data-view="prof"] #chatForm :is(button,.chat-mic){
+    min-width:40px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #shell [data-view="biblio"] #biblioBody *,
+  #shell [data-view="prof"] .chat *{transition:none!important}
+}
