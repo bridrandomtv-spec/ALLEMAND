@@ -28,10 +28,10 @@
     if(dues.length){
       const top = faibles[0];
       h += '<div class="card ms-next prio">'
-        + '<div class="ms-tag">🔄 priorité : ta mémoire</div>'
-        + '<h3>Révise ' + dues.length + ' carte(s) d’erreur</h3>'
-        + '<p class="ms-why">parce que tu les as ratées et qu’elles sont revenues aujourd’hui'
-        + (top ? ' · point faible : <b>' + esc(top.comp) + ' (' + top.taux + '%)</b>' : '')
+        + '<div class="ms-tag">🔄 أولوية اليوم: تثبيت التعلّم</div>'
+        + '<h3>راجع ' + dues.length + ' بطاقة من بطاقات الأخطاء</h3>'
+        + '<p class="ms-why">لأنك أخطأت فيها وحان موعد مراجعتها اليوم'
+        + (top ? ' · نقطة تحتاج إلى تقوية: <b>' + esc(top.comp) + ' (' + top.taux + '%)</b>' : '')
         + '</p>'
         + '<div class="ms-bar"><i style="width:' +
           Math.round(100 - (top ? top.taux : 50)) + '%"></i></div>'
@@ -44,7 +44,7 @@
         + '<div class="ms-tag">▶ الخطوة التالية</div>'
         + '<h3>الحصة ' + (next.prochaine ? next.prochaine.n : '?') + ' · '
         + esc(next.prochaine ? next.prochaine.ar : '') + '</h3>'
-        + '<p class="ms-why">unité ' + next.unite + ' — ' + esc(next.titre) + ' · '
+        + '<p class="ms-why">الوحدة ' + next.unite + ' — ' + esc(next.titre) + ' · '
         + next.faites + '/' + next.total + ' حصّة منجزة</p>'
         + '<div class="ms-bar"><i style="width:' +
           Math.round(next.faites / next.total * 100) + '%"></i></div>'
@@ -53,28 +53,28 @@
     }
     /* 3) sinon : tout est fait */
     else {
-      h += '<div class="card ms-next ok"><div class="ms-tag"> tout est à jour</div>'
-        + '<h3>Bravo, rien de neuf ni à réviser</h3>'
-        + '<p class="ms-why">tes séances sont faites et tes cartes d’erreur sont à jour. '
-        + 'Reviens demain pour la révision espacée.</p>'
+      h += '<div class="card ms-next ok"><div class="ms-tag">✓ أنت على المسار الصحيح</div>'
+        + '<h3>أحسنت! لا توجد مراجعات مستحقة الآن</h3>'
+        + '<p class="ms-why">أنجزت حصصك وأتممت مراجعة بطاقات الأخطاء. '
+        + 'عد غدًا لمواصلة المراجعة المتباعدة.</p>'
         + '<button class="btn btn-o btn-block" data-go="examen">🎓 entraîne-toi au BAC</button>'
         + '</div>';
     }
 
     /* bloc secondaire : point faible + progression */
     if(faibles.length){
-      h += '<div class="card ms-weak"><h3>🗺️ tes deux points faibles</h3>'
+      h += '<div class="card ms-weak"><h3>🗺️ المهارتان الأكثر حاجة إلى التحسين</h3>'
         + faibles.slice(0, 2).map(f =>
             '<div class="ms-w"><span>' + esc(f.comp) + '</span>'
             + '<span class="ms-bar"><i style="width:' + f.taux + '%"></i></span>'
             + '<b>' + f.taux + '%</b></div>').join('')
-        + '<p class="ms-why">ces compétences reviendront plus souvent dans tes révisions.</p></div>';
+        + '<p class="ms-why">ستحظى هاتان المهارتان بأولوية أكبر في مراجعاتك القادمة.</p></div>';
     }
     if(next){
       h += '<div class="card ms-prog"><h3>📈 تقدّم الوحدة ' + numNiveau(next.unite) + '</h3>'
         + '<div class="ms-bar big"><i style="width:' +
           Math.round(next.faites / next.total * 100) + '%"></i></div>'
-        + '<p class="ms-why">' + next.faites + ' / ' + next.total + ' séaحصص · '
+        + '<p class="ms-why">' + next.faites + ' / ' + next.total + ' حصة منجزة · '
         + (next.total - next.faites) + ' متبقية</p></div>';
     }
     box.innerHTML = h;
