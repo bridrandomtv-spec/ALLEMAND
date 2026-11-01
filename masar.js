@@ -35,7 +35,7 @@
         + '</p>'
         + '<div class="ms-bar"><i style="width:' +
           Math.round(100 - (top ? top.taux : 50)) + '%"></i></div>'
-        + '<button class="btn btn-p btn-block" data-go="revision">🧠 réviser maintenant '
+        + '<button class="btn btn-p btn-block" data-go="revision">🧠 راجع الآن '
         + '(' + dues.length + ')</button></div>';
     }
     /* 2) sinon : prochaine séance */
@@ -57,7 +57,7 @@
         + '<h3>أحسنت! لا توجد مراجعات مستحقة الآن</h3>'
         + '<p class="ms-why">أنجزت حصصك وأتممت مراجعة بطاقات الأخطاء. '
         + 'عد غدًا لمواصلة المراجعة المتباعدة.</p>'
-        + '<button class="btn btn-o btn-block" data-go="examen">🎓 entraîne-toi au BAC</button>'
+        + '<button class="btn btn-o btn-block" data-go="examen">🎓 تدرّب على امتحان البكالوريا</button>'
         + '</div>';
     }
 
