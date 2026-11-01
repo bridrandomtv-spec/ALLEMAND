@@ -1,4 +1,7 @@
 /* cloud.js — vue ☁️ Cloud : auth Supabase, sync mémoire, documents privés */
+/* PARENT-1 : le rattachement parent-enfant est géré ici via requestChildLink,
+   myLinkedChildren, myChildLinkRequests et respondParentLinkRequest.
+   Contrairement à l'ancien RPC link_child, le nouveau flux exige l'accord de l'élève. */
 'use strict';
 (function(){
   const $ = (s,c) => (c||document).querySelector(s);
