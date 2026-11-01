@@ -6863,3 +6863,83 @@ html[data-theme="dark"] #shell [data-view="masar"] #masarBody button:focus-visib
 @media(prefers-reduced-motion:reduce){
   .public-mini-card,.public-year-cards button,.public-nav button,.pub-level-card{transition:none!important}
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVIGATION V7 — barre horizontale, sans sidebar latérale
+   Conserve les boutons data-go/data-cat et les accordéons existants.
+   Aucun changement des routes, vues ou gestionnaires JavaScript.
+   ═══════════════════════════════════════════════════════════════ */
+#shell{padding-right:0!important}
+#btnBurger{display:none!important}
+#tabs.tabs,
+body.sb-closed #tabs.tabs{
+  position:relative!important;inset:auto!important;
+  width:100%!important;max-width:1240px!important;
+  height:auto!important;max-height:none!important;
+  margin:0 auto!important;padding:9px 16px 12px!important;
+  display:flex!important;flex-direction:row!important;
+  align-items:center!important;align-content:center!important;
+  flex-wrap:wrap!important;gap:6px!important;
+  overflow-x:auto!important;overflow-y:visible!important;
+  transform:none!important;
+  background:transparent!important;
+  border:0!important;border-top:1px solid rgba(0,98,51,.12)!important;
+  box-shadow:none!important;border-radius:0!important;
+  z-index:2!important;
+}
+#tabs.tabs::before{content:none!important;display:none!important}
+#tabs .cat-head,
+#tabs .tab.solo{
+  flex:0 0 auto!important;width:auto!important;min-height:38px;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:8px 12px!important;margin:0!important;
+  border:1px solid #dce8df!important;border-radius:999px!important;
+  background:#fff!important;color:#315a40!important;
+  font-size:12.5px!important;font-weight:750;white-space:nowrap!important;
+}
+#tabs .cat-head.open{
+  color:#fff!important;background:#006233!important;
+  border-color:#006233!important;
+}
+#tabs .cat-head .cat-arrow{margin-inline-start:5px}
+#tabs .cat-body{
+  display:flex!important;flex:0 0 auto!important;
+  flex-direction:row!important;align-items:center!important;
+  flex-wrap:nowrap!important;gap:4px!important;
+  width:auto!important;margin:0!important;padding:0!important;
+  border:0!important;overflow:visible!important;
+}
+#tabs .cat-body[hidden]{display:none!important}
+#tabs .cat-body .tab.sub{
+  flex:0 0 auto!important;width:auto!important;
+  min-height:36px;margin:0!important;padding:7px 10px!important;
+  border:1px solid #e2ece5!important;border-radius:999px!important;
+  background:#f7faf8!important;color:#496453!important;
+  font-size:12px!important;white-space:nowrap!important;
+}
+#tabs .tab.on,
+#tabs .tab.sub.on,
+#tabs .tab.solo.on{
+  color:#fff!important;background:linear-gradient(135deg,#006233,#00843d)!important;
+  border-color:#006233!important;box-shadow:0 3px 10px rgba(0,98,51,.15)!important;
+}
+html[data-theme="dark"] #tabs .cat-head,
+html[data-theme="dark"] #tabs .tab.solo{
+  color:var(--t)!important;background:var(--nuit2)!important;border-color:var(--b)!important;
+}
+html[data-theme="dark"] #tabs .cat-head.open{
+  color:#fff!important;background:linear-gradient(135deg,#006233,#0a8a4a)!important;
+}
+html[data-theme="dark"] #tabs .cat-body .tab.sub{
+  color:var(--m)!important;background:var(--nuit2)!important;border-color:var(--b)!important;
+}
+@media(max-width:760px){
+  #tabs.tabs,body.sb-closed #tabs.tabs{
+    flex-wrap:nowrap!important;justify-content:flex-start!important;
+    padding:7px 10px 10px!important;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  #tabs.tabs::-webkit-scrollbar{display:none}
+  #tabs .cat-head,#tabs .tab.solo{min-height:36px;padding:7px 10px!important;font-size:12px!important}
+  #tabs .cat-body .tab.sub{min-height:34px;padding:6px 9px!important}
+}
