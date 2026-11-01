@@ -8684,3 +8684,77 @@ html[data-theme="dark"] #shell #app [data-view="seances"] #seanceDetail .lex-de{
     margin-inline:auto!important;padding:clamp(16px,2.3vw,30px)!important;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   V8.2 — correction structurelle après validation visuelle utilisateur
+   - portail public : défilement vertical fiable dans son propre viewport
+   - application : une seule barre de navigation horizontale, sans rail
+   - typographie : chiffres latins/tabulaires et séparation RTL/LTR
+   - masquage de la seconde barre redondante de métadonnées
+   ═══════════════════════════════════════════════════════════════════════ */
+#gate.gate:not([hidden]){
+  position:fixed!important;inset:0!important;
+  display:block!important;width:100%!important;height:100vh!important;height:100dvh!important;
+  min-height:0!important;max-height:none!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior-y:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-y!important;
+}
+#gate .gate-wrap{
+  min-height:100%!important;height:auto!important;max-height:none!important;
+  overflow:visible!important;
+  padding-bottom:max(36px,env(safe-area-inset-bottom))!important;
+}
+#gate .public-landing,#gate .public-sections,#gate .gate-content{
+  overflow:visible!important;max-height:none!important;
+}
+html,body{overflow-x:clip!important}
+html{font-variant-numeric:lining-nums tabular-nums}
+#shell,#shell *{font-variant-numeric:lining-nums}
+#shell [dir="ltr"],#shell [lang="de"],#shell [lang="en"]{
+  direction:ltr;unicode-bidi:isolate;text-align:left;
+}
+#shell [dir="rtl"],#shell [lang="ar"]{
+  direction:rtl;unicode-bidi:isolate;
+}
+#shell .section-bar{display:none!important}
+@media(min-width:901px){
+  #shell .topbar{position:sticky!important;top:0!important;z-index:1200!important}
+  #shell #tabs.tabs{
+    display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+    justify-content:flex-start!important;align-items:center!important;
+    width:100%!important;max-width:100%!important;min-height:54px!important;height:auto!important;
+    padding:7px clamp(14px,2.4vw,32px)!important;gap:5px!important;
+    overflow-x:auto!important;overflow-y:hidden!important;
+    overscroll-behavior-x:contain!important;-webkit-overflow-scrolling:touch!important;
+    scrollbar-width:thin!important;
+  }
+  #shell #tabs>.tab,#shell #tabs>.cat-head,
+  #shell #tabs>.cat-body{flex:0 0 auto!important;width:max-content!important;max-width:none!important}
+  #shell #tabs>.cat-body{
+    display:flex!important;flex-direction:row!important;align-items:center!important;
+    gap:4px!important;margin:0!important;padding:0!important;border:0!important;
+  }
+  #shell #tabs>.cat-body[hidden]{display:none!important}
+  #shell #tabs .tab{white-space:nowrap!important;min-height:36px!important;padding:8px 11px!important}
+  #shell #tabs .cat-head{white-space:nowrap!important;min-height:36px!important;padding:8px 10px!important}
+  #shell main#app{max-width:1440px!important;margin-inline:auto!important}
+}
+@media(max-width:900px){
+  #shell #tabs.tabs{
+    position:relative!important;inset:auto!important;
+    display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+    align-items:center!important;justify-content:flex-start!important;
+    width:100%!important;height:auto!important;max-height:none!important;
+    overflow-x:auto!important;overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch!important;scrollbar-width:thin!important;
+    padding:8px 12px!important;gap:5px!important;
+  }
+  #shell #tabs>.tab,#shell #tabs>.cat-head,
+  #shell #tabs>.cat-body{flex:0 0 auto!important;width:max-content!important;max-width:none!important}
+  #shell #tabs>.cat-body{display:flex!important;flex-direction:row!important;gap:4px!important;margin:0!important;padding:0!important;border:0!important}
+  #shell #tabs>.cat-body[hidden]{display:none!important}
+  #shell #tabs .tab,#shell #tabs .cat-head{white-space:nowrap!important;min-height:36px!important;padding:8px 10px!important}
+}
