@@ -39,7 +39,7 @@ language sql stable security definer set search_path = pg_catalog, public as $$
      and exists (
        select 1 from public.wilaya_assignments wa
        join public.admin_permissions p on p.role_cle = wa.role_cle
-       where wa.user_id = auth.uid() and wa.active and p.permission = perm
+       where wa.user_id = uid and wa.active and p.permission = perm
      );
 $$;
 create or replace function public.admin_sees_wilaya(uid uuid, w text) returns boolean
