@@ -7319,3 +7319,101 @@ html[data-theme="dark"] #tabs .cat-body .tab.sub{
   #gate .public-btn,#gate .public-mini-card,#gate .public-year-cards>button{transition:none!important}
   #gate .public-ai-wave i{animation:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   V7.3 — harmonisation des espaces internes
+   Couvre les vues pédagogiques, enseignants, parents et administration.
+   Présentation uniquement : aucun changement de contenu, route ou permission.
+   ═══════════════════════════════════════════════════════════════ */
+#shell #app .view:not([data-view="accueil"]){min-width:0}
+#shell #app .view:not([data-view="accueil"]) .page-head{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;gap:4px;
+  padding:19px 22px 18px!important;
+  border:1px solid #d8e8dd!important;
+  border-inline-start:4px solid #006233!important;
+  border-radius:18px!important;
+  background:linear-gradient(115deg,#fff 0%,#f5faf6 72%,#edf7f0 100%)!important;
+  box-shadow:0 7px 22px rgba(0,65,31,.045)!important;
+}
+#shell #app .view:not([data-view="accueil"]) .page-head:after{
+  content:"";position:absolute;inset-inline-end:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,#006233 0 48%,#fff 48% 72%,#d21034 72%);
+}
+#shell #app .view:not([data-view="accueil"]) .page-head h1{
+  color:#123c27!important;font-weight:950!important;
+  font-size:clamp(21px,2.4vw,29px)!important;line-height:1.5;
+}
+#shell #app .view:not([data-view="accueil"]) .page-head p{
+  max-width:78ch;color:#63796b!important;font-size:12px;line-height:1.9;
+}
+#shell #app .view:not([data-view="accueil"]) .panel{
+  min-width:0;border:1px solid #dce9df!important;border-radius:16px!important;
+  background:#fff!important;box-shadow:0 5px 18px rgba(0,65,31,.04)!important;
+}
+#shell #app .view:not([data-view="accueil"]) .panel-h{
+  color:#17452d!important;font-weight:900!important;
+  border-bottom:1px solid #e7efe9;
+}
+#shell #app .view:not([data-view="accueil"]) .card{
+  min-width:0;border-radius:15px;
+}
+#shell #app .view:not([data-view="accueil"]) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){
+  max-width:100%;min-width:0;
+  border-color:#d5e4d9;
+  border-radius:10px;
+  background-color:#fff;
+  color:#203d2c;
+  outline-color:#078b49;
+}
+#shell #app .view:not([data-view="accueil"]) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea):focus{
+  border-color:#078b49!important;
+  box-shadow:0 0 0 3px rgba(0,132,61,.11)!important;
+}
+#shell #app .view:not([data-view="accueil"]) :is(button,.btn):focus-visible{
+  outline:3px solid rgba(0,132,61,.28);outline-offset:2px;
+}
+#shell #app .view:not([data-view="accueil"]) table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  border:1px solid #e0ebe3;border-radius:12px;overflow:hidden;
+}
+#shell #app .view:not([data-view="accueil"]) table thead th{
+  color:#17452d;background:#edf7f0;font-weight:850;
+}
+#shell #app .view:not([data-view="accueil"]) table :is(th,td){
+  padding:10px 12px;border-bottom:1px solid #e9f0eb;
+  text-align:start;vertical-align:middle;
+}
+#shell #app .view:not([data-view="accueil"]) table tbody tr:last-child td{border-bottom:0}
+#shell #app .view:not([data-view="accueil"]) table tbody tr:nth-child(even){background:#f9fcfa}
+#shell #app .view:not([data-view="accueil"]) :is(.grid2,.grid3,.grid4,.prof-list){
+  min-width:0;gap:12px;
+}
+#shell #app .view:not([data-view="accueil"]) :is(.grid2,.grid3,.grid4) > *{min-width:0}
+html[data-theme="dark"] #shell #app .view:not([data-view="accueil"]) .page-head{
+  background:linear-gradient(115deg,var(--nuit2),#173526)!important;
+  border-color:var(--b)!important;
+}
+html[data-theme="dark"] #shell #app .view:not([data-view="accueil"]) .page-head :is(h1,p){color:var(--t)!important}
+html[data-theme="dark"] #shell #app .view:not([data-view="accueil"]) .panel,
+html[data-theme="dark"] #shell #app .view:not([data-view="accueil"]) .card{
+  background:var(--nuit2)!important;border-color:var(--b)!important;color:var(--t);
+}
+html[data-theme="dark"] #shell #app .view:not([data-view="accueil"]) .panel-h{color:var(--t)!important;border-color:var(--b)}
+html[data-theme="dark"] #shell #app .view:not([data-view="accueil"]) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){
+  background:var(--nuit)!important;color:var(--t)!important;border-color:var(--b)!important;
+}
+html[data-theme="dark"] #shell #app .view:not([data-view="accueil"]) table{border-color:var(--b)}
+html[data-theme="dark"] #shell #app .view:not([data-view="accueil"]) table thead th{background:#173d2a;color:#e7f5eb}
+html[data-theme="dark"] #shell #app .view:not([data-view="accueil"]) table tbody tr:nth-child(even){background:#17251d}
+@media(max-width:700px){
+  #shell #app .view:not([data-view="accueil"]) .page-head{padding:14px 15px!important;border-radius:14px!important}
+  #shell #app .view:not([data-view="accueil"]) .panel{border-radius:13px!important}
+  #shell #app .view:not([data-view="accueil"]) :is(.grid2,.grid3,.grid4,.prof-list){gap:9px}
+  #shell #app .view:not([data-view="accueil"]) table{display:block;max-width:100%;overflow-x:auto;white-space:nowrap}
+  #shell #app .view:not([data-view="accueil"]) table :is(th,td){padding:8px 9px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app .view:not([data-view="accueil"]) *{scroll-behavior:auto!important}
+}
