@@ -58,7 +58,12 @@
     if(!r || !l) return;
     if(card) card.hidden = true;
     const nav = document.querySelectorAll('[data-public-view]');
-    nav.forEach(b => b.classList.toggle('active', b.dataset.publicView === screen || (screen === 'branches' || screen === 'branch' ? b.dataset.publicView === 'levels' : false)));
+    nav.forEach(b => {
+      const active = b.dataset.publicView === screen || ((screen === 'branches' || screen === 'branch') && b.dataset.publicView === 'levels');
+      b.classList.toggle('active', active);
+      if(active) b.setAttribute('aria-current','page');
+      else b.removeAttribute('aria-current');
+    });
     if(screen === 'home'){
       r.hidden = true; l.hidden = false;
       return;
