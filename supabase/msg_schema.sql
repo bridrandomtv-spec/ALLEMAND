@@ -89,14 +89,14 @@ create table if not exists public.msg_log (
 
 -- ── fonctions (security definer : lecture profiles/members sans fuite RLS) ──
 create or replace function public.msg_is_moderator(uid uuid) returns boolean
-language sql stable security definer set search_path = pg_catalog, public as $
+language sql stable security definer set search_path = pg_catalog, public as $$
   select auth.uid() is not null
      and uid = auth.uid()
      and (
        public.is_admin()
        or public.admin_can(auth.uid(), 'messaging.moderate')
      );
-$;
+$$;
 
 create or replace function public.msg_is_member(uid uuid, cid bigint) returns boolean
 language sql stable security definer set search_path = public as $$
@@ -331,7 +331,7 @@ exception when duplicate_object then null; end $$;
 -- Garde : seul un modérateur valide/refuse ; l'élève ne peut QUE passer
 -- de non_verifie/rejete → en_attente (avec matricule+section déclarés).
 create or replace function public.profiles_verif_guard() returns trigger
-language plpgsql security definer set search_path = pg_catalog, public as $
+language plpgsql security definer set search_path = pg_catalog, public as $$
 declare
   v_actor uuid := auth.uid();
   v_can_verify boolean := false;
