@@ -14,14 +14,6 @@
 
 BEGIN;
 
---   * les tables profiles, child_links, subscriptions, seances_done,
---     notes et memoire_cards possèdent les colonnes référencées ci-dessous.
---
--- La fonction vérifie l'identité, le rôle parent, le rôle enfant, le lien
--- confirmé et l'abonnement actif du parent OU de l'enfant côté serveur.
-
-BEGIN;
-
 CREATE OR REPLACE FUNCTION public.parent_child_progress_summary(p_child_id uuid)
 RETURNS jsonb
 LANGUAGE plpgsql
