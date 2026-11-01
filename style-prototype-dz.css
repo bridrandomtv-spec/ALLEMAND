@@ -6397,3 +6397,235 @@ html[data-theme="dark"] #shell > .topbar{
   #gate .gate-card .gate-tabs{margin-inline:12px!important}
   #gate .gate-card .gform{padding:0 14px 17px!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   V6.17 — parité visuelle de l'accueil connecté en thème sombre
+   Complément ciblé des composants V6.7 ; aucun changement JS.
+   ═══════════════════════════════════════════════════════════════ */
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid #286344;
+  border-inline-start:5px solid #d21034;
+  border-radius:22px;
+  box-shadow:0 16px 38px rgba(0,0,0,.22);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome::before{
+  content:"";
+  position:absolute;
+  inset-inline-end:0;
+  inset-block:0;
+  width:5px;
+  background:linear-gradient(180deg,#d21034 0 33.33%,#fff 33.33% 66.66%,#006233 66.66%);
+  opacity:.9;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome h1{
+  position:relative;
+  z-index:1;
+  color:#fff;
+  font-weight:900;
+  line-height:1.45;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome p{
+  position:relative;
+  z-index:1;
+  color:rgba(255,255,255,.86);
+  line-height:1.9;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome-cta{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome-cta .btn{
+  min-height:41px;
+  border-radius:11px;
+  font-weight:800;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome-cta .btn-p{
+  color:#073b27;
+  background:#fff;
+  border-color:#fff;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome-cta .btn-g{
+  color:#fff;
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.25);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome-cta .btn-o{
+  color:#fff;
+  background:#b91f3b;
+  border-color:#d21034;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome-prog .progress-wrap{
+  overflow:hidden;
+  border-radius:99px;
+  background:rgba(255,255,255,.16);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome-prog .progress{
+  background:linear-gradient(90deg,#75d99b,#fff);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome-prog .progress-lbl{
+  color:rgba(255,255,255,.78);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome-meta .sec-pill{
+  color:#fff;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.2);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .welcome-art{
+  opacity:.55;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat{
+  position:relative;
+  min-width:0;
+  min-height:104px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:16px 12px;
+  border:1px solid #28543b;
+  border-radius:16px;
+  background:linear-gradient(145deg,#142c20,#10251a);
+  box-shadow:0 7px 20px rgba(0,0,0,.16);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat::before{
+  content:"";
+  position:absolute;
+  inset-inline:14px;
+  inset-block-start:0;
+  height:3px;
+  border-radius:0 0 5px 5px;
+  background:linear-gradient(90deg,#0a8a4a,#d21034);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat-n{
+  color:#8bd6a4;
+  font-size:clamp(22px,2.2vw,29px);
+  font-weight:950;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat-l{
+  color:#b3c7b9;
+  font-size:11px;
+  font-weight:750;
+  line-height:1.5;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .subj-home .subj-lang{
+  border:1px solid #28543b;
+  border-radius:15px;
+  background:linear-gradient(110deg,#142f20,#10251a);
+  box-shadow:0 5px 16px rgba(0,0,0,.13);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .subj-home .subj-s{
+  min-height:34px;
+  padding:7px 11px;
+  border:1px solid #315b40;
+  border-radius:999px;
+  background:#172e21;
+  color:#c4d8ca;
+  font-weight:800;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .subj-home .subj-s:hover{
+  border-color:#65b982;
+  background:#1c3d2a;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] .subj-home .subj-s.on,
+html[data-theme="dark"] #shell [data-view="accueil"] .subj-home .subj-s.active{
+  border-color:#087d43;
+  color:#fff;
+  background:linear-gradient(135deg,#006233,#0a8a4a);
+  box-shadow:0 5px 12px rgba(0,98,51,.25);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #homeSide .panel{
+  border:1px solid #294b37;
+  border-radius:16px;
+  background:#12271b;
+  box-shadow:0 7px 20px rgba(0,0,0,.14);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #homeSide .panel-h{
+  color:#a9dfba;
+  font-weight:900;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .grid3{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini{
+  min-width:0;
+  min-height:108px;
+  padding:12px 10px;
+  border:1px solid #294b37;
+  border-radius:13px;
+  background:linear-gradient(145deg,#172f21,#10251a);
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini h3{
+  color:#d9e9de;
+  font-size:12px;
+  line-height:1.45;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini p{
+  color:#9eb5a5;
+  font-size:10px;
+  line-height:1.55;
+}
+html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini .mini-n{
+  color:#8bd6a4;
+  font-weight:900;
+}
+@media(max-width:900px){
+  html[data-theme="dark"] #shell [data-view="accueil"] #statsHome.stats{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+@media(max-width:700px){
+  html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome{
+    min-height:0;
+    padding:22px 18px 20px;
+    border-radius:18px;
+  }
+  html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome h1{
+    max-width:none;
+    font-size:clamp(22px,6vw,29px);
+  }
+  html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome p{
+    font-size:12.5px;
+  }
+  html[data-theme="dark"] #shell [data-view="accueil"] .welcome-art{
+    display:none;
+  }
+  html[data-theme="dark"] #shell [data-view="accueil"] .home-main .welcome-cta .btn{
+    flex:1 1 145px;
+    min-width:0;
+    padding:10px 11px;
+    font-size:11.5px;
+  }
+}
+@media(max-width:420px){
+  html[data-theme="dark"] #shell [data-view="accueil"] #statsHome.stats{gap:8px}
+  html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat{
+    min-height:88px;
+    padding:13px 7px;
+  }
+  html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat-n{font-size:21px}
+  html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .grid3{gap:7px}
+  html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini{
+    min-height:100px;
+    padding:10px 8px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-theme="dark"] #shell [data-view="accueil"] .welcome-cta .btn,
+  html[data-theme="dark"] #shell [data-view="accueil"] #statsHome .stat,
+  html[data-theme="dark"] #shell [data-view="accueil"] #panelQuick .card.mini{
+    transition:none!important;
+  }
+}
