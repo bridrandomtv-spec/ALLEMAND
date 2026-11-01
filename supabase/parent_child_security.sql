@@ -297,4 +297,9 @@ GRANT EXECUTE ON FUNCTION public.agreement_accept_for(bigint,uuid,text,text) TO 
 GRANT EXECUTE ON FUNCTION public.admin_parent_role_requests() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_decide_parent_role_request(bigint,boolean) TO authenticated;
 
+-- La lecture publique du texte d'accord passe par l'API authentifiée.
+-- Ne pas exposer cree_par (UUID interne) via une RPC SECURITY DEFINER anonyme.
+REVOKE ALL ON FUNCTION public.agreement_current(text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.agreement_current(text) TO authenticated;
+
 COMMIT;
