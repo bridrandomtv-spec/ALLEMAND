@@ -358,7 +358,9 @@ const sbparent = fs.readFileSync('supabase/supabase.js', 'utf8');
 const reportParent = parjs.slice(parjs.indexOf('async function vueReel(c){'), parjs.indexOf('})();', parjs.indexOf('async function vueReel(c){')));
 const rpcParent = parsql.slice(parsql.indexOf('CREATE OR REPLACE FUNCTION public.parent_child_progress_summary'), parsql.indexOf('COMMIT;', parsql.indexOf('CREATE OR REPLACE FUNCTION public.parent_child_progress_summary')));
 for (const k of ['auth.uid()', "role='parent'", "role='eleve'", 'public.child_links',
-                 'public.seances_done', 'public.notes', 'public.memoire_cards'])
+                 'public.seances_done', 'public.notes', 'public.memoire_cards',
+                 'public.subscriptions', "s.statut='actif'", 'public.child_active_entitlement(auth.uid(),p_child_id)',
+                 "RAISE EXCEPTION 'abonnement_requis'"])
   if (!rpcParent.includes(k)) fails.push('PARENT-2 : RPC résumé enfant sans contrôle/source ' + k);
 if (!/REVOKE ALL ON FUNCTION public\.parent_child_progress_summary\(uuid\) FROM PUBLIC,anon,authenticated/i.test(parsql)
     || !/GRANT EXECUTE ON FUNCTION public\.parent_child_progress_summary\(uuid\) TO authenticated/i.test(parsql))
