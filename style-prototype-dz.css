@@ -8856,3 +8856,30 @@ body{font-family:"Inter","Noto Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif!i
   #shell #app .page-head h1{font-size:22px!important}
   #gate .public-header{min-height:68px!important;padding-inline:14px!important}
 }
+
+
+/* V8.4 — barre de navigation compacte sur une seule ligne */
+#shell #tabs.tabs{
+  display:flex!important;flex-flow:row nowrap!important;align-items:center!important;
+  justify-content:flex-start!important;gap:6px!important;width:100%!important;
+  overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;
+  overscroll-behavior-x:contain!important;scroll-snap-type:x proximity!important;
+}
+#shell #tabs>.tab,#shell #tabs>.cat-head{flex:0 0 auto!important;white-space:nowrap!important;scroll-snap-align:start}
+#shell #tabs>.cat-body{
+  display:inline-flex!important;flex:0 0 auto!important;flex-flow:row nowrap!important;
+  align-items:center!important;gap:5px!important;white-space:nowrap!important;
+  padding:0 3px!important;margin:0!important;border:0!important;background:transparent!important;
+}
+#shell #tabs>.cat-body[hidden]{display:none!important}
+#shell #tabs .tab.sub{display:inline-flex!important;align-items:center!important}
+#shell #tabs .cat-arrow{font-size:10px!important;opacity:.65}
+#shell #tabs .cat-head{min-height:38px!important;padding:8px 11px!important}
+#shell #tabs .tab{min-height:38px!important;padding:8px 11px!important}
+@media(min-width:901px){
+  #shell #tabs.tabs{padding-block:9px!important}
+}
+@media(max-width:900px){
+  #shell #tabs.tabs{flex-wrap:nowrap!important;justify-content:flex-start!important}
+  #shell #tabs>.cat-body{max-width:none!important}
+}
