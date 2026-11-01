@@ -462,13 +462,13 @@ function renderTabs(){
   let h = '';
   /* P7 : menu 2 niveaux — Matières puis sous-navigation de la matière active */
   if(window.__SUBJECT__ === 'en'){
-    h += '<button class="cat-head open" style="cursor:default"><span>📚 Matières ▸ 🇬 English</span></button>'
+    h += '<button class="cat-head open" style="cursor:default"><span>📚 \u0627\u0644\u0645\u0648\u0627\u062f · English</span></button>'
       + '<div class="cat-body">'
       + '<button class="tab sub" data-go="english">🇬 English · الصفحة الرئيسية</button>'
       + '<button class="tab sub" data-subj="de">🇩🇪 الرجوع إلى الألمانية</button>'
       + '</div>';
   } else {
-    h += '<button class="cat-head open" style="cursor:default"><span>📚 Matières · المواد</span></button>'
+    h += '<button class="cat-head open" style="cursor:default"><span>📚 \u0627\u0644\u0645\u0648\u0627\u062f \u0627\u0644\u062f\u0631\u0627\u0633\u064a\u0629</span></button>'
       + '<div class="cat-body">'
       + '<button class="tab sub" data-go="matieres">📚 المواد · اختيار المادة</button>'
       + '</div>';
