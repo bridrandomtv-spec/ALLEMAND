@@ -7706,3 +7706,163 @@ html[data-theme="dark"] #shell [data-view="biblio"] #bddStatus{
   #shell [data-view="biblio"] #biblioBody *,
   #shell [data-view="prof"] .chat *{transition:none!important}
 }
+
+
+/* V7.7 — parcours, mémoire de révision et entraînement BAC
+   Présentation responsive uniquement : les parcours, scores, minuteries,
+   réponses et historiques conservent leurs moteurs existants.
+   ═══════════════════════════════════════════════════════════════ */
+#shell [data-view="examen"] #examBody,
+#shell [data-view="masar"] #masarBody,
+#shell [data-view="revision"] #memoBody{
+  display:grid;gap:14px;min-width:0;
+}
+#shell [data-view="examen"] #examBody .exam-hero{
+  display:grid;grid-template-columns:minmax(0,1.2fr) minmax(240px,.8fr);
+  align-items:center;gap:18px;padding:clamp(16px,2.4vw,25px);
+  border:1px solid #d6e8db;border-radius:22px;
+  background:linear-gradient(125deg,#f1f8f2 0%,#fff 58%,#fff7f4 100%);
+  box-shadow:0 12px 30px rgba(0,67,34,.055);
+}
+#shell [data-view="examen"] #examBody .exam-hero h2{
+  margin:10px 0 6px;color:#173d29;font-weight:900;line-height:1.5;
+}
+#shell [data-view="examen"] #examBody .ch-badge{
+  display:inline-flex;align-items:center;gap:7px;padding:6px 11px;
+  border-radius:999px;background:#e1f1e5;color:#176238;font-weight:800;
+}
+#shell [data-view="examen"] #examBody .eh-stats{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;
+}
+#shell [data-view="examen"] #examBody .eh-st{
+  min-width:0;padding:10px 7px;text-align:center;border:1px solid #e0ebe3;
+  border-radius:13px;background:rgba(255,255,255,.8);
+}
+#shell [data-view="examen"] #examBody .eh-n{
+  color:#08743b;font-size:clamp(17px,2vw,23px);font-weight:900;
+  overflow-wrap:anywhere;
+}
+#shell [data-view="examen"] #examBody .onglets{
+  display:flex;flex-wrap:wrap;gap:8px;padding:5px;
+  border:1px solid #e0ebe3;border-radius:15px;background:#f5f9f6;
+}
+#shell [data-view="examen"] #examBody .ong{
+  min-height:42px;padding:8px 14px;border:1px solid transparent;
+  border-radius:11px;color:#315d40;font-weight:800;background:transparent;
+}
+#shell [data-view="examen"] #examBody .ong.on{
+  color:#fff;background:#08743b;box-shadow:0 4px 12px rgba(0,98,51,.18);
+}
+#shell [data-view="examen"] #examBody .privacy{
+  padding:12px 15px;border-inline-start:4px solid #08743b;
+  border-radius:12px;background:#f1f8f3;line-height:1.8;
+}
+#shell [data-view="examen"] #examBody .annees-grid,
+#shell [data-view="examen"] #examBody .sujets{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
+}
+#shell [data-view="examen"] #examBody .annee,
+#shell [data-view="examen"] #examBody .sujet{
+  min-width:0;border:1px solid #dce9df;border-radius:16px;
+  background:#fff;box-shadow:0 6px 18px rgba(0,67,34,.045);
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+#shell [data-view="examen"] #examBody .annee{
+  padding:15px;text-align:start;
+}
+#shell [data-view="examen"] #examBody .annee:hover,
+#shell [data-view="examen"] #examBody .sujet:hover{
+  transform:translateY(-2px);border-color:#8dbd9b;
+  box-shadow:0 11px 24px rgba(0,98,51,.09);
+}
+#shell [data-view="masar"] #masarBody .ms-hero{
+  display:flex;align-items:center;gap:15px;padding:18px 20px;
+  border:1px solid #d7e8dc;border-radius:20px;
+  background:linear-gradient(115deg,#edf7ef,#fff 72%);
+}
+#shell [data-view="masar"] #masarBody .ms-crest{
+  display:grid;place-items:center;flex:0 0 54px;height:54px;
+  border-radius:16px;background:#08743b;color:#fff;font-size:27px;
+}
+#shell [data-view="masar"] #masarBody .ms-next{
+  padding:clamp(16px,2.2vw,23px);border:1px solid #dce9df;
+  border-inline-start:5px solid #08743b;border-radius:18px;
+  box-shadow:0 9px 24px rgba(0,67,34,.055);
+}
+#shell [data-view="masar"] #masarBody .ms-next.prio{
+  border-inline-start-color:#d29a25;background:linear-gradient(120deg,#fffaf0,#fff);
+}
+#shell [data-view="masar"] #masarBody .ms-next h3{
+  color:#173d29;font-size:clamp(18px,2vw,23px);font-weight:900;line-height:1.6;
+}
+#shell [data-view="masar"] #masarBody .ms-bar{
+  display:block;overflow:hidden;height:9px;border-radius:999px;background:#e5eee7;
+}
+#shell [data-view="masar"] #masarBody .ms-bar i{
+  display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#00843d,#8bbd43);
+}
+#shell [data-view="masar"] #masarBody .ms-weak,
+#shell [data-view="masar"] #masarBody .ms-prog{
+  padding:16px;border:1px solid #e0ebe3;border-radius:16px;background:#fff;
+}
+#shell [data-view="revision"] #memoBody .mm-hero{
+  padding:18px;border:1px solid #d7e8dc;border-radius:19px;
+  background:linear-gradient(120deg,#eff8f1,#fff);
+}
+#shell [data-view="revision"] #memoBody .mm-carte{
+  min-width:0;border:1px solid #dce9df;border-radius:16px;
+  background:#fff;box-shadow:0 6px 18px rgba(0,67,34,.045);
+}
+#shell [data-view="revision"] #memoBody :is(.mm-btns,button){
+  max-width:100%;
+}
+#shell [data-view="examen"] #examBody :is(button,input,select):focus-visible,
+#shell [data-view="masar"] #masarBody button:focus-visible,
+#shell [data-view="revision"] #memoBody button:focus-visible{
+  outline:3px solid rgba(0,132,61,.28);outline-offset:2px;
+}
+html[data-theme="dark"] #shell [data-view="examen"] #examBody .exam-hero,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-hero,
+html[data-theme="dark"] #shell [data-view="revision"] #memoBody .mm-hero{
+  border-color:#294b36;background:linear-gradient(125deg,#183b29,#14291d);
+}
+html[data-theme="dark"] #shell [data-view="examen"] #examBody .exam-hero h2,
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody .ms-next h3{
+  color:#e3f1e7;
+}
+html[data-theme="dark"] #shell [data-view="examen"] #examBody :is(.eh-st,.annee,.sujet),
+html[data-theme="dark"] #shell [data-view="masar"] #masarBody :is(.ms-next,.ms-weak,.ms-prog),
+html[data-theme="dark"] #shell [data-view="revision"] #memoBody .mm-carte{
+  color:#e2eee5;border-color:#294b36;background:#14291d;
+}
+html[data-theme="dark"] #shell [data-view="examen"] #examBody .privacy{
+  color:#d5e9da;border-color:#31553e;background:#183525;
+}
+@media(max-width:760px){
+  #shell [data-view="examen"] #examBody .exam-hero{
+    grid-template-columns:minmax(0,1fr);gap:13px;border-radius:16px;
+  }
+  #shell [data-view="examen"] #examBody .eh-stats{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  #shell [data-view="examen"] #examBody .annees-grid,
+  #shell [data-view="examen"] #examBody .sujets{
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
+  }
+  #shell [data-view="examen"] #examBody .annee{padding:12px;}
+  #shell [data-view="masar"] #masarBody .ms-hero{padding:14px;border-radius:15px;}
+  #shell [data-view="masar"] #masarBody .ms-next{padding:15px;border-radius:15px;}
+}
+@media(max-width:390px){
+  #shell [data-view="examen"] #examBody .eh-stats,
+  #shell [data-view="examen"] #examBody .annees-grid,
+  #shell [data-view="examen"] #examBody .sujets{
+    grid-template-columns:minmax(0,1fr);
+  }
+  #shell [data-view="examen"] #examBody .ong{flex:1 1 auto;}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell [data-view="examen"] #examBody *,
+  #shell [data-view="masar"] #masarBody *,
+  #shell [data-view="revision"] #memoBody *{transition:none!important}
+}
