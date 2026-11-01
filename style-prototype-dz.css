@@ -6789,3 +6789,77 @@ html[data-theme="dark"] #shell [data-view="masar"] #masarBody button:focus-visib
     border-radius:15px;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   V6.19 — finitions du portail public avant connexion
+   Identité DZ, lisibilité, navigation clavier et responsive.
+   Portée limitée au portail public : aucun flux métier modifié.
+   ═══════════════════════════════════════════════════════════════ */
+.public-nav{direction:rtl;isolation:isolate;gap:8px;padding:9px}
+.public-nav button{min-width:104px;min-height:42px;font-size:12px}
+.public-nav button:focus-visible,
+.public-btn:focus-visible,
+.public-year-cards button:focus-visible,
+.pub-back:focus-visible,
+.pub-card-link:focus-visible,
+.pub-level-card:focus-visible,
+.pub-branch-foot button:focus-visible,
+.pub-cta:focus-visible{
+  outline:3px solid rgba(210,16,52,.72);outline-offset:3px;
+}
+.public-nav button.public-nav-cta{background:linear-gradient(135deg,#b90f30,#d21034);box-shadow:0 5px 14px rgba(210,16,52,.15)}
+.public-nav button.active:not(.public-nav-cta){background:linear-gradient(135deg,#006233,#078b49)}
+.public-landing-sections{min-width:0}
+.public-mini-card,.public-year-cards button{min-width:0;transition:transform .18s,border-color .18s,box-shadow .18s}
+.public-mini-card:hover,.public-year-cards button:hover{transform:translateY(-2px);border-color:#a9cfb5;box-shadow:0 9px 22px rgba(0,70,35,.07)}
+.public-year-cards button{width:100%;text-align:right}
+.public-year-cards button:focus-visible{border-color:#006233}
+.public-explorer{scroll-margin-top:18px}
+.pub-subject-card,.pub-branch-card,.pub-detail-subject,.pub-level-card{min-width:0}
+.pub-subject-card{height:100%}
+.pub-card-copy b,.pub-detail-main b,.pub-branch-card h3{overflow-wrap:anywhere}
+.pub-status{line-height:1.5}
+.pub-level-card{width:100%;font-family:var(--ff-ar);}
+.pub-level-card:focus-visible{border-color:#006233}
+.pub-ready-callout{border-inline-start:4px solid #006233}
+.pub-error{overflow-wrap:anywhere}
+@media(max-width:760px){
+  .public-landing{width:calc(100% - 20px);padding:23px 16px 18px;gap:17px}
+  .public-copy h2{font-size:clamp(27px,7vw,36px);line-height:1.42}
+  .public-copy p{font-size:13px;line-height:1.9}
+  .public-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .public-nav{width:calc(100% - 20px);margin-bottom:13px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .public-nav button{min-width:0;width:100%;padding:9px 5px;font-size:11px}
+  .public-nav button[data-gate-open]{grid-column:span 1}
+  .public-explorer{width:calc(100% - 20px);padding:17px 12px}
+  .pub-explorer-top{flex-wrap:wrap}
+  .pub-explorer-top>div{min-width:0;flex:1 1 100%}
+  .pub-back{align-self:flex-start}
+  .pub-catalog-grid,.pub-catalog-grid.languages{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pub-subject-card{min-height:155px;padding:12px}
+  .pub-level-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .pub-level-card{min-height:190px;padding:14px;gap:9px}
+  .pub-level-card b{font-size:16px;line-height:1.5}
+  .pub-level-tag{top:14px;left:12px;font-size:9px}
+  .pub-level-number{width:46px;height:46px}
+  .pub-branch-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .pub-branch-card{padding:12px}
+  .pub-branch-card h3{font-size:14px;line-height:1.6}
+  .pub-branch-foot{align-items:flex-start;flex-direction:column}
+  .pub-detail-grid{grid-template-columns:1fr}
+}
+@media(max-width:420px){
+  .public-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .public-nav button{min-height:40px}
+  .pub-level-grid,.pub-branch-grid{grid-template-columns:1fr}
+  .pub-level-card{min-height:170px}
+  .pub-catalog-grid,.pub-catalog-grid.languages{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .pub-subject-card{padding:10px;min-height:150px}
+  .pub-status{font-size:9px;white-space:normal}
+  .public-actions{display:grid;grid-template-columns:1fr}
+  .public-btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  .public-mini-card,.public-year-cards button,.public-nav button,.pub-level-card{transition:none!important}
+}
