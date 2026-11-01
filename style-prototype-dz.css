@@ -8939,3 +8939,39 @@ html[data-theme="dark"] #shell #tabs .cat-head:hover{background:#203b2a!importan
   #shell #tabs.tabs{z-index:110!important;scrollbar-width:thin!important}
   #shell #tabs>.cat-body{max-width:none!important}
 }
+
+
+/* V8.6 — navigation directe, sans accordéons ni panneaux qui se chevauchent */
+#shell #tabs.tabs{
+  direction:ltr!important;display:flex!important;flex-flow:row nowrap!important;
+  align-items:center!important;justify-content:flex-start!important;
+  gap:7px!important;min-width:0!important;width:100%!important;
+  height:auto!important;max-height:none!important;overflow-x:auto!important;
+  overflow-y:hidden!important;white-space:nowrap!important;
+  padding:9px clamp(12px,2.4vw,30px)!important;
+  scrollbar-width:thin!important;overscroll-behavior-x:contain!important;
+}
+#shell #tabs>.tab{
+  direction:rtl!important;unicode-bidi:plaintext!important;
+  display:inline-flex!important;flex:0 0 auto!important;
+  align-items:center!important;justify-content:center!important;
+  position:relative!important;visibility:visible!important;opacity:1!important;
+  min-height:40px!important;padding:9px 13px!important;
+  border:1px solid transparent!important;border-radius:12px!important;
+  background:transparent!important;color:var(--dz-ink,#40584a)!important;
+  font-family:inherit!important;font-size:12px!important;font-weight:700!important;
+  line-height:1.5!important;white-space:nowrap!important;cursor:pointer!important;
+  transform:none!important;
+}
+#shell #tabs>.tab:hover{background:rgba(0,98,51,.07)!important;border-color:rgba(0,98,51,.13)!important}
+#shell #tabs>.tab.on{
+  color:#fff!important;background:linear-gradient(135deg,#006233,#00843d)!important;
+  border-color:#006233!important;box-shadow:0 4px 12px rgba(0,98,51,.16)!important;
+}
+#shell #tabs>.cat-head,#shell #tabs>.cat-body{display:none!important}
+html[data-theme="dark"] #shell #tabs>.tab{color:#e1eee5!important}
+html[data-theme="dark"] #shell #tabs>.tab.on{color:#fff!important;background:linear-gradient(135deg,#006233,#0a8a4a)!important}
+@media(max-width:700px){
+  #shell #tabs.tabs{padding:7px 10px!important;gap:5px!important}
+  #shell #tabs>.tab{min-height:38px!important;padding:8px 11px!important;font-size:11px!important}
+}
