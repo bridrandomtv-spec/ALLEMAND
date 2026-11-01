@@ -8758,3 +8758,101 @@ html{font-variant-numeric:lining-nums tabular-nums}
   #shell #tabs>.cat-body[hidden]{display:none!important}
   #shell #tabs .tab,#shell #tabs .cat-head{white-space:nowrap!important;min-height:36px!important;padding:8px 10px!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   V8.3 — identité visuelle premium : lycée virtuel multi-matières
+   Couche de présentation uniquement : aucun changement aux vues/actions.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root{
+  --dz-ink:#142b22;--dz-muted:#687a70;--dz-green:#087443;--dz-green-deep:#064b32;
+  --dz-red:#d6283d;--dz-line:#e3ece6;--dz-paper:#f5f8f6;--dz-card:#fff;
+  --dz-shadow:0 12px 34px rgba(19,54,36,.065);
+}
+html,body{background:var(--dz-paper)!important;color:var(--dz-ink)!important}
+body{font-family:"Inter","Noto Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif!important}
+#gate.gate:not([hidden]){background:linear-gradient(135deg,#f7faf8 0%,#edf5f0 55%,#f8f7f4 100%)!important}
+#gate .gate-wrap{max-width:1320px!important;padding-inline:clamp(16px,4vw,52px)!important}
+#gate .public-header{
+  border-radius:0 0 22px 22px!important;box-shadow:0 5px 24px rgba(17,55,32,.055)!important;
+  border:1px solid rgba(215,231,220,.8)!important;
+}
+#gate .gate-wrap>*:not(.public-header){max-width:100%!important}
+#gate .gate-content,#gate .public-landing{padding-block:clamp(24px,5vw,64px)!important}
+#gate h1,#gate h2{letter-spacing:-.035em!important;line-height:1.35!important}
+#gate .gate-card,#gate .public-card,#gate .feature-card{
+  border:1px solid var(--dz-line)!important;border-radius:22px!important;
+  box-shadow:var(--dz-shadow)!important;background:rgba(255,255,255,.92)!important;
+}
+#gate .gate-hero,#gate .hero{border-radius:28px!important;overflow:hidden!important}
+#shell{background:var(--dz-paper)!important;min-height:100vh}
+#shell .topbar{
+  background:rgba(255,255,255,.96)!important;border-bottom:1px solid var(--dz-line)!important;
+  box-shadow:0 5px 22px rgba(20,55,36,.045)!important;backdrop-filter:blur(16px)!important;
+}
+#shell .flagline{height:3px!important}
+#shell .topbar-in{min-height:76px!important;max-width:1440px!important;margin:auto!important;padding:10px clamp(16px,3vw,36px)!important;gap:18px!important}
+#shell .brand{gap:12px!important}
+#shell .brand-crest{width:46px!important;height:46px!important;border-radius:15px!important;background:var(--dz-green-deep)!important;box-shadow:0 5px 14px rgba(6,75,50,.18)!important}
+#shell .brand-t{font-size:17px!important;font-weight:900!important;color:var(--dz-ink)!important;letter-spacing:-.03em!important}
+#shell .brand-s{font-size:11px!important;color:var(--dz-muted)!important;font-weight:600!important}
+#shell .tb-search{max-width:360px!important}
+#shell .tb-search input{height:42px!important;border:1px solid var(--dz-line)!important;border-radius:14px!important;background:#f7faf8!important}
+#shell .topbar-act{gap:8px!important}
+#shell .icon-btn,#shell .tb-bell,#shell .burger{border:1px solid var(--dz-line)!important;background:#f8faf8!important;border-radius:12px!important}
+#shell #tabs.tabs{
+  max-width:1440px!important;margin:0 auto!important;padding:8px clamp(16px,3vw,36px)!important;
+  background:#fff!important;border-top:1px solid #f0f4f1!important;
+  border-bottom:1px solid var(--dz-line)!important;min-height:58px!important;
+  gap:7px!important;scrollbar-width:none!important;
+}
+#shell #tabs.tabs::-webkit-scrollbar{display:none!important}
+#shell #tabs .cat-head,#shell #tabs .tab{
+  border:1px solid transparent!important;border-radius:12px!important;
+  color:#40584a!important;font-size:12px!important;font-weight:750!important;
+  letter-spacing:0!important;transition:background .16s ease,border-color .16s ease,color .16s ease!important;
+}
+#shell #tabs .cat-head{background:#f5f8f6!important;padding:9px 12px!important}
+#shell #tabs .cat-head.open,#shell #tabs .tab.on{
+  color:var(--dz-green-deep)!important;background:#eaf5ee!important;
+  border-color:#cfe5d6!important;box-shadow:none!important;
+}
+#shell #tabs .tab:hover,#shell #tabs .cat-head:hover{background:#f0f6f2!important;border-color:#dcebe1!important}
+#shell #tabs .cat-body{gap:5px!important;padding:4px!important}
+#shell #tabs .cat-body[hidden]{display:none!important}
+#shell #tabs .tab.sub{background:transparent!important;padding:8px 10px!important}
+#shell main#app{max-width:1440px!important;margin:0 auto!important;padding:clamp(18px,2.5vw,36px)!important}
+#shell #app .view{min-width:0!important}
+#shell #app .page-head{margin-bottom:24px!important;border-bottom:1px solid var(--dz-line)!important}
+#shell #app .page-head h1,#shell #app .page-head h2{color:var(--dz-ink)!important;letter-spacing:-.035em!important}
+#shell #app .panel,#shell #app .card,#shell #app .home-side>*,#shell #app .home-main>*{
+  border-radius:20px!important;border-color:var(--dz-line)!important;box-shadow:var(--dz-shadow)!important;
+}
+#shell #app .panel{background:#fff!important}
+#shell #app .home-grid{grid-template-columns:minmax(250px,300px) minmax(0,1fr)!important;gap:22px!important}
+#shell #app .welcome{border-radius:24px!important;box-shadow:0 14px 34px rgba(6,75,50,.12)!important}
+#shell #app button{font-family:inherit}
+#shell #app :is(input,select,textarea){font-family:inherit!important;border-radius:12px!important}
+#shell #app :is(.mat-c,.subj-card,.ucard,.seance,.ms-next,.ms-prog){
+  border-radius:18px!important;border:1px solid var(--dz-line)!important;
+  box-shadow:0 7px 22px rgba(19,54,36,.045)!important;
+}
+#shell #app :is(.mat-c,.subj-card,.ucard,.seance):hover{
+  transform:translateY(-2px);box-shadow:0 13px 28px rgba(19,54,36,.085)!important;
+}
+#shell #app [dir="rtl"],#shell [lang="ar"]{font-family:"Noto Sans Arabic","Segoe UI",Tahoma,sans-serif!important}
+#shell #app [dir="ltr"],#shell [lang="de"],#shell [lang="en"]{font-family:Inter,"Segoe UI",Arial,sans-serif!important}
+@media(max-width:900px){
+  #shell .topbar-in{min-height:66px!important;flex-wrap:nowrap!important}
+  #shell #tabs.tabs{justify-content:flex-start!important}
+  #shell main#app{padding:18px 14px 30px!important}
+  #shell #app .home-grid{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:600px){
+  #shell .brand-s{display:none!important}
+  #shell .brand-crest{width:40px!important;height:40px!important}
+  #shell .tb-search{max-width:42vw!important}
+  #shell #tabs.tabs{min-height:50px!important}
+  #shell #app .page-head h1{font-size:22px!important}
+  #gate .public-header{min-height:68px!important;padding-inline:14px!important}
+}
