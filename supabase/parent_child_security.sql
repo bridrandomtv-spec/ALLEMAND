@@ -327,6 +327,16 @@ BEGIN
     SELECT 1 FROM public.child_links
     WHERE parent_id=auth.uid() AND child_id=p_child_id
   ) THEN RAISE EXCEPTION 'lien_parent_enfant_non_confirme'; END IF;
+  -- Même règle que ACCESS.canAccessParentChild : abonnement actif du parent OU de l'enfant.
+  -- Le contrôle est serveur et ne dépend jamais du paywall JavaScript.
+  IF NOT (
+    EXISTS (
+      SELECT 1 FROM public.subscriptions s
+      WHERE s.user_id=auth.uid() AND s.statut='actif'
+        AND (s.fin IS NULL OR s.fin>now())
+    )
+    OR public.child_active_entitlement(auth.uid(),p_child_id)
+  ) THEN RAISE EXCEPTION 'abonnement_requis'; END IF;
 
   SELECT jsonb_build_object(
     'seances_total', (
