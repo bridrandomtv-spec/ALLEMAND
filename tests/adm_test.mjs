@@ -120,7 +120,7 @@ t(sql3.includes('public.agreements.cle = agreement_publish.cle'), 'ADM-3d : colo
 t(sql3.includes('agreement_accept.nom_representant'), 'ADM-3d : paramètres qualifiés dans accept (42702 latent)');
 t(sql3.includes('agreement_accept_for.nom_representant'), 'ADM-3d : paramètres qualifiés dans accept_for (42702 latent)');
 t(sbjs.includes('MAX_OCTETS_PJ'), 'MSG-LIM : plafond client 5 Mo dans upload()');
-t(appjs.includes('phase 13 (OPS-1)'), 'OPS-1 : bouton signaler un bug + ticket pré-rempli');
+t(!appjs.includes('opsBugBtn') && !appjs.includes('phase 13 (OPS-1)'), 'OPS-1 : bouton flottant de signalement désactivé pour ne plus masquer le contenu');
 t(sbjs.includes('function admCouverture'), 'GARDES-ORG1 : facade expose admCouverture (rpc admin_couverture_wilayas)');
 t(adjs.includes('rendreCouvertureORG1') && !adjs.includes('.org1{'), 'GARDES-ORG1 : carte ORG-1 en JS seul dans admin.js (aucun CSS collé)');
 t(css.includes('.org1-badge'), 'GARDES-ORG1 : styles .org1-badge présents dans style.css');
