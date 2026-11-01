@@ -8098,3 +8098,259 @@ html[data-theme="dark"] #shell #app .view .panel{
   #gate .public-feature:hover,#gate .public-mini-card:hover,
   #gate .public-year-cards>button:hover{transform:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   V7.9 — tableaux de bord : élève, professeur et parents
+   Harmonisation visuelle des composants réellement rendus par les modules.
+   CSS uniquement : aucun changement aux données, événements ou permissions.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Espaces parents et professeur : bandeau d'identité plus éditorial */
+#shell #app [data-view="parents"] #parentsBody .par-hero,
+#shell #app [data-view="profboard"] #profBody .prof-hero{
+  position:relative;isolation:isolate;overflow:hidden;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:22px;
+  padding:clamp(21px,3vw,32px)!important;
+  border:1px solid rgba(0,98,51,.15)!important;border-radius:22px!important;
+  background:
+    radial-gradient(ellipse at 94% 8%,rgba(255,255,255,.2),transparent 34%),
+    radial-gradient(ellipse at 5% 100%,rgba(210,16,52,.12),transparent 30%),
+    linear-gradient(125deg,#064b2e 0%,#087342 60%,#0b8050 100%)!important;
+  color:#fff!important;
+  box-shadow:0 18px 38px rgba(0,78,42,.18),inset 0 1px rgba(255,255,255,.16)!important;
+}
+#shell #app [data-view="parents"] #parentsBody .par-hero:after,
+#shell #app [data-view="profboard"] #profBody .prof-hero:after{
+  content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 1px,transparent 1px 17px);
+  mask-image:linear-gradient(120deg,#000,transparent 78%);
+}
+#shell #app [data-view="parents"] #parentsBody .par-hero h2,
+#shell #app [data-view="profboard"] #profBody .prof-hero h2{
+  margin:12px 0 7px!important;color:#fff!important;
+  font-size:clamp(21px,2.6vw,30px)!important;line-height:1.55!important;
+  letter-spacing:-.35px;
+}
+#shell #app [data-view="parents"] #parentsBody .par-hero .ch-badge,
+#shell #app [data-view="profboard"] #profBody .prof-hero .ch-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 11px!important;border:1px solid rgba(255,255,255,.22)!important;
+  border-radius:999px!important;background:rgba(255,255,255,.12)!important;
+  color:#eaffef!important;font-size:11px!important;font-weight:800;
+}
+#shell #app [data-view="parents"] #parentsBody .par-hero .ch-sub,
+#shell #app [data-view="profboard"] #profBody .prof-hero .ch-sub{
+  color:rgba(255,255,255,.78)!important;font-size:13px!important;line-height:1.9;
+}
+#shell #app [data-view="parents"] #parentsBody .par-hero .pill{
+  display:inline-flex;vertical-align:middle;padding:5px 10px;border-radius:999px;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);
+}
+#shell #app [data-view="parents"] #parentsBody .par-hero .ph-act,
+#shell #app [data-view="profboard"] #profBody .prof-hero .ph-act{
+  display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;
+}
+#shell #app [data-view="parents"] #parentsBody .par-hero .ph-act .btn,
+#shell #app [data-view="profboard"] #profBody .prof-hero .ph-act .btn{
+  min-height:39px;padding:8px 12px!important;border-radius:11px!important;
+  border:1px solid rgba(255,255,255,.22)!important;
+  background:rgba(255,255,255,.12)!important;color:#fff!important;
+  box-shadow:none!important;font-weight:750;
+}
+#shell #app [data-view="parents"] #parentsBody .par-hero .ph-act .btn-g,
+#shell #app [data-view="profboard"] #profBody .prof-hero .ph-act .btn-g{
+  background:#fff!important;color:#075b35!important;border-color:#fff!important;
+}
+#shell #app [data-view="parents"] #parentsBody .par-hero .ph-act .btn:hover,
+#shell #app [data-view="profboard"] #profBody .prof-hero .ph-act .btn:hover{
+  transform:translateY(-2px);background:rgba(255,255,255,.22)!important;
+}
+
+/* KPI : grille équilibrée, chiffres dominants, accent tricolore discret */
+#shell #app [data-view="parents"] #parentsBody .bdd-kpis,
+#shell #app [data-view="profboard"] #profBody .bdd-kpis{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px!important;margin:16px 0 19px!important;
+}
+#shell #app [data-view="parents"] #parentsBody .bdd-kpis .kpi,
+#shell #app [data-view="profboard"] #profBody .bdd-kpis .kpi{
+  position:relative;overflow:hidden;min-width:0;
+  padding:17px 16px!important;border:1px solid #e0ebe3!important;
+  border-radius:17px!important;background:linear-gradient(155deg,#fff,#f8fbf8)!important;
+  box-shadow:0 7px 20px rgba(13,66,36,.055)!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+#shell #app [data-view="parents"] #parentsBody .bdd-kpis .kpi:before,
+#shell #app [data-view="profboard"] #profBody .bdd-kpis .kpi:before{
+  content:"";position:absolute;inset:0 0 auto;height:3px;
+  background:linear-gradient(90deg,#087b43 0 68%,#d21034 68%);
+}
+#shell #app [data-view="parents"] #parentsBody .bdd-kpis .kpi:hover,
+#shell #app [data-view="profboard"] #profBody .bdd-kpis .kpi:hover{
+  transform:translateY(-3px);border-color:#b7d7c1!important;
+  box-shadow:0 13px 25px rgba(13,66,36,.09)!important;
+}
+#shell #app [data-view="parents"] #parentsBody .kpi .kpi-i,
+#shell #app [data-view="profboard"] #profBody .kpi .kpi-i{
+  display:grid;place-items:center;width:37px;height:37px;margin-bottom:10px;
+  border-radius:12px;background:#eaf5ed;font-size:18px;
+}
+#shell #app [data-view="parents"] #parentsBody .kpi .kpi-n,
+#shell #app [data-view="profboard"] #profBody .kpi .kpi-n{
+  color:#075b35!important;font-size:clamp(22px,2.5vw,29px)!important;
+  font-weight:900!important;line-height:1.2;font-variant-numeric:tabular-nums;
+}
+#shell #app [data-view="parents"] #parentsBody .kpi .kpi-l,
+#shell #app [data-view="profboard"] #profBody .kpi .kpi-l{
+  margin-top:6px;color:#294b36!important;font-size:12px!important;font-weight:800;
+}
+#shell #app [data-view="parents"] #parentsBody .kpi .kpi-d,
+#shell #app [data-view="profboard"] #profBody .kpi .kpi-d{
+  margin-top:3px;color:#829187!important;font-size:10px!important;
+}
+
+/* Onglets et cartes internes */
+#shell #app [data-view="parents"] #parentsBody .onglets,
+#shell #app [data-view="profboard"] #profBody .onglets{
+  display:flex;gap:7px!important;flex-wrap:wrap;
+  padding:8px!important;margin:16px 0!important;
+  border:1px solid #e1ebe4!important;border-radius:16px!important;
+  background:#f5f9f6!important;
+}
+#shell #app [data-view="parents"] #parentsBody .ong,
+#shell #app [data-view="profboard"] #profBody .ong{
+  min-height:39px;padding:8px 13px!important;border:1px solid transparent!important;
+  border-radius:11px!important;background:transparent!important;
+  color:#52665a!important;font-weight:750!important;transition:all .16s ease;
+}
+#shell #app [data-view="parents"] #parentsBody .ong.on,
+#shell #app [data-view="profboard"] #profBody .ong.on{
+  border-color:#cce2d2!important;background:#fff!important;color:#075b35!important;
+  box-shadow:0 4px 12px rgba(0,98,51,.08)!important;
+}
+#shell #app [data-view="parents"] #parentsBody #paContenu>.card,
+#shell #app [data-view="profboard"] #profBody #prContenu>.card{
+  border:1px solid #e2ebe4!important;border-radius:17px!important;
+  box-shadow:0 8px 22px rgba(13,66,36,.045)!important;
+}
+#shell #app [data-view="parents"] #parentsBody .card>h2,
+#shell #app [data-view="profboard"] #profBody .card>h2{
+  color:#174a2d;font-size:16px!important;font-weight:850;
+}
+#shell #app [data-view="parents"] #parentsBody .info-grid>div,
+#shell #app [data-view="parents"] #parentsBody .info-grid .info-i{
+  border-radius:12px;
+}
+#shell #app [data-view="profboard"] #profBody .filters{
+  padding:16px!important;border:1px solid #e0ebe3!important;border-radius:16px!important;
+  background:linear-gradient(145deg,#fff,#f7faf8)!important;
+}
+#shell #app [data-view="profboard"] #profBody .filters-h{
+  margin-bottom:12px;color:#174a2d;font-weight:850;
+}
+#shell #app [data-view="profboard"] #profBody .tble{
+  border-collapse:separate;border-spacing:0;min-width:680px;
+}
+#shell #app [data-view="profboard"] #profBody .tble thead th{
+  position:sticky;top:0;z-index:1;background:#edf6ef!important;
+  color:#174a2d!important;font-size:11px;font-weight:850;
+  border-bottom:1px solid #d7e7db!important;
+}
+#shell #app [data-view="profboard"] #profBody .tble tbody tr:nth-child(even){background:#f8fbf9}
+#shell #app [data-view="profboard"] #profBody .tble tbody tr:hover{background:#edf7ef}
+#shell #app [data-view="profboard"] #profBody .tble td{border-bottom:1px solid #edf2ee}
+#shell #app [data-view="parents"] #parentsBody .privacy,
+#shell #app [data-view="profboard"] #profBody .privacy{
+  border:1px solid #dcebe0!important;border-radius:13px!important;
+  background:#f3f9f4!important;color:#42604c!important;
+}
+
+/* Accueil élève : mise en page plus lisible et mieux hiérarchisée */
+html[data-theme="light"] #shell [data-view="accueil"] .home-grid{
+  gap:20px!important;align-items:start;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-side .panel,
+html[data-theme="light"] #shell [data-view="accueil"] .home-main>.card,
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .subj-home{
+  border-radius:17px!important;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .welcome{
+  border-radius:22px!important;box-shadow:0 17px 36px rgba(0,78,42,.14)!important;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .grid3{
+  gap:13px!important;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .grid3>.card{
+  border:1px solid #e0ebe3!important;border-radius:16px!important;
+  box-shadow:0 8px 20px rgba(13,66,36,.05)!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+html[data-theme="light"] #shell [data-view="accueil"] .home-main .grid3>.card:hover{
+  transform:translateY(-3px);border-color:#b5d5be!important;
+  box-shadow:0 13px 24px rgba(13,66,36,.085)!important;
+}
+
+/* Thème sombre : conserver les contrastes et les surfaces */
+html[data-theme="dark"] #shell #app [data-view="parents"] #parentsBody .bdd-kpis .kpi,
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .bdd-kpis .kpi{
+  background:linear-gradient(145deg,#14291d,#172f21)!important;border-color:#315640!important;
+}
+html[data-theme="dark"] #shell #app [data-view="parents"] #parentsBody .kpi .kpi-n,
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .kpi .kpi-n,
+html[data-theme="dark"] #shell #app [data-view="parents"] #parentsBody .card>h2,
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .card>h2{
+  color:#d8f0df!important;
+}
+html[data-theme="dark"] #shell #app [data-view="parents"] #parentsBody .onglets,
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .onglets,
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .filters{
+  background:#14291d!important;border-color:#315640!important;
+}
+html[data-theme="dark"] #shell #app [data-view="parents"] #parentsBody .ong,
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .ong{color:#c4d9ca!important}
+html[data-theme="dark"] #shell #app [data-view="parents"] #parentsBody .ong.on,
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .ong.on{
+  background:#20452e!important;border-color:#477b55!important;color:#e5f7e9!important;
+}
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .tble thead th{background:#1b3825!important;color:#dff0e3!important}
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .tble tbody tr:nth-child(even){background:#14291d}
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .tble tbody tr:hover{background:#1b3825}
+html[data-theme="dark"] #shell #app [data-view="parents"] #parentsBody .privacy,
+html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .privacy{
+  background:#183525!important;border-color:#315640!important;color:#d5e9da!important;
+}
+
+/* Adaptation mobile : bandeaux empilés et indicateurs compacts */
+@media(max-width:760px){
+  #shell #app [data-view="parents"] #parentsBody .par-hero,
+  #shell #app [data-view="profboard"] #profBody .prof-hero{
+    grid-template-columns:minmax(0,1fr);gap:15px;padding:18px!important;border-radius:17px!important;
+  }
+  #shell #app [data-view="parents"] #parentsBody .par-hero .ph-act,
+  #shell #app [data-view="profboard"] #profBody .prof-hero .ph-act{justify-content:flex-start}
+  #shell #app [data-view="parents"] #parentsBody .bdd-kpis,
+  #shell #app [data-view="profboard"] #profBody .bdd-kpis{
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:9px!important;
+  }
+  #shell #app [data-view="parents"] #parentsBody .bdd-kpis .kpi,
+  #shell #app [data-view="profboard"] #profBody .bdd-kpis .kpi{padding:13px!important}
+  #shell #app [data-view="parents"] #parentsBody .onglets,
+  #shell #app [data-view="profboard"] #profBody .onglets{
+    flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;
+  }
+  #shell #app [data-view="parents"] #parentsBody .ong,
+  #shell #app [data-view="profboard"] #profBody .ong{flex:0 0 auto}
+  #shell #app [data-view="parents"] #parentsBody .grid2{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:390px){
+  #shell #app [data-view="parents"] #parentsBody .bdd-kpis,
+  #shell #app [data-view="profboard"] #profBody .bdd-kpis{gap:7px!important}
+  #shell #app [data-view="parents"] #parentsBody .bdd-kpis .kpi,
+  #shell #app [data-view="profboard"] #profBody .bdd-kpis .kpi{padding:11px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="parents"] #parentsBody *,
+  #shell #app [data-view="profboard"] #profBody *,
+  #shell [data-view="accueil"] .home-main .grid3>.card{transition:none!important}
+}
