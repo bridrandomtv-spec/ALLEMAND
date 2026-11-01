@@ -360,8 +360,8 @@ const rpcParent = parsql.slice(parsql.indexOf('CREATE OR REPLACE FUNCTION public
 for (const k of ['auth.uid()', "role='parent'", "role='eleve'", 'public.child_links',
                  'public.seances_done', 'public.notes', 'public.memoire_cards'])
   if (!rpcParent.includes(k)) fails.push('PARENT-2 : RPC résumé enfant sans contrôle/source ' + k);
-if (!/REVOKE ALL ON FUNCTION public\\.parent_child_progress_summary\\(uuid\\) FROM PUBLIC,anon,authenticated/i.test(parsql)
-    || !/GRANT EXECUTE ON FUNCTION public\\.parent_child_progress_summary\\(uuid\\) TO authenticated/i.test(parsql))
+if (!/REVOKE ALL ON FUNCTION public\.parent_child_progress_summary\(uuid\) FROM PUBLIC,anon,authenticated/i.test(parsql)
+    || !/GRANT EXECUTE ON FUNCTION public\.parent_child_progress_summary\(uuid\) TO authenticated/i.test(parsql))
   fails.push('PARENT-2 : permissions RPC résumé enfant incorrectes');
 if (!sbparent.includes("rpc('parent_child_progress_summary',{p_child_id:childId})")
     || !sbparent.includes('Object.assign(window.SB,{parentChildProgressSummary})'))
