@@ -413,7 +413,7 @@ const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 فضائي الدر
                ['officiels','📄 الفروض'],['examen','🎓 البكالوريا'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
                ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],
-               ['reservation','🗓️ احجز حصّة'],['projet','📋 Plan de projet'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 révision'], ['corpus','📚 Corpus'], ['rag','🔎 اسأل'], ['banque','✍️ Banque'], ['malakhiss','📑 ملخصات'], ['cloud','☁️ Cloud'], ['methode','🎯 Methode'], ['devoirs','📝 Klausuren'], ['buch','📗 Buch'], ['abonne','💳 الاشتراك'], ['sponsor','📢 Sponsoring'], ['admin','🛡️ Admin'], ['legal','⚖️ قانوني'], ['compte','⚙️ حسابي']];
+               ['reservation','🗓️ احجز حصّة'],['projet','📋 \u0645\u0634\u0631\u0648\u0639\u064a \u0627\u0644\u062f\u0631\u0627\u0633\u064a'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 \u0627\u0644\u0645\u0631\u0627\u062c\u0639\u0629'], ['corpus','📚 \u0628\u0646\u0643 \u0627\u0644\u0645\u0639\u0631\u0641\u0629'], ['rag','🔎 اسأل'], ['banque','✍️ \u0628\u0646\u0643 \u0627\u0644\u062a\u0645\u0627\u0631\u064a\u0646'], ['malakhiss','📑 ملخصات'], ['cloud','☁️ \u0645\u0644\u0641\u0627\u062a\u064a'], ['methode','🎯 \u0645\u0646\u0647\u062c\u064a\u0629 \u0627\u0644\u062a\u0639\u0644\u0645'], ['devoirs','📝 \u0627\u0644\u0648\u0627\u062c\u0628\u0627\u062a'], ['buch','📗 \u0627\u0644\u0643\u062a\u0627\u0628 \u0627\u0644\u0645\u062f\u0631\u0633\u064a'], ['abonne','💳 الاشتراك'], ['sponsor','📢 \u0627\u0644\u0634\u0631\u0627\u0643\u0627\u062a'], ['admin','🛡️ \u0627\u0644\u0625\u062f\u0627\u0631\u0629'], ['legal','⚖️ قانوني'], ['compte','⚙️ حسابي']];
 
 /* Onglet réservé au rôle « prof » — inséré avant « حسابي » */
 function allTabs(){
