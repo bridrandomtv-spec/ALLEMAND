@@ -448,55 +448,20 @@ const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
-  const byId = {};
-  for(const t of tabs) byId[t[0]] = t;
-  const used = {};
-  const btn = (id, cls) => {
-    const t = byId[id]; if(!t) return '';
-    used[id] = 1;
-    return '<button class="tab ' + (cls || '') + (id === currentView ? ' on' : '')
-      + '" data-go="' + id + '">' + t[1] + '</button>';
-  };
-  /* Navigation compacte : catégories accordéon (fermées par défaut,
-     une seule ouverte à la fois ; celle de la vue courante s'ouvre seule). */
+  const visible = tabs.filter(t => t[0] !== 'msg');
   let h = '';
-  /* P7 : menu 2 niveaux — Matières puis sous-navigation de la matière active */
+  /* Navigation directe : chaque élément mène à une vue réelle.
+     Aucun accordéon ni sous-menu masqué dans la barre principale. */
   if(window.__SUBJECT__ === 'en'){
-    h += '<button class="cat-head open" style="cursor:default"><span>📚 \u0627\u0644\u0645\u0648\u0627\u062f · English</span></button>'
-      + '<div class="cat-body">'
-      + '<button class="tab sub" data-go="english">🇬 English · الصفحة الرئيسية</button>'
-      + '<button class="tab sub" data-subj="de">🇩🇪 الرجوع إلى الألمانية</button>'
-      + '</div>';
+    h += '<button class="tab subject-home' + (currentView === 'english' ? ' on' : '') + '" data-go="english">🇬🇧 English</button>';
+    h += '<button class="tab subject-switch" data-subj="de">🇩🇪 الألمانية</button>';
   } else {
-    h += '<button class="cat-head open" style="cursor:default"><span>📚 \u0627\u0644\u0645\u0648\u0627\u062f \u0627\u0644\u062f\u0631\u0627\u0633\u064a\u0629</span></button>'
-      + '<div class="cat-body">'
-      + '<button class="tab sub" data-go="matieres">📚 المواد · اختيار المادة</button>'
-      + '</div>';
+    h += '<button class="tab subject-home' + (currentView === 'matieres' ? ' on' : '') + '" data-go="matieres">📚 المواد</button>';
   }
-  for(const id of NAVSOLO_TOP) h += btn(id, 'solo');
-  for(const g of NAVCATS){
-    const items = g[3].filter(v => byId[v]);
-    if(!items.length) continue;
-    const open = items.indexOf(currentView) !== -1;
-    h += '<button class="cat-head' + (open ? ' open' : '') + '" data-cat="' + g[0]
-      + '" aria-expanded="' + (open ? 'true' : 'false') + '"><span>' + g[1] + ' ' + g[2]
-      + '</span><span class="cat-arrow">▾</span></button>';
-    h += '<div class="cat-body"' + (open ? '' : ' hidden') + '>'
-      + items.map(v => btn(v, 'sub')).join('') + '</div>';
+  for(const t of visible){
+    if(t[0] === 'matieres' || t[0] === 'english') continue;
+    h += '<button class="tab' + (t[0] === currentView ? ' on' : '') + '" data-go="' + t[0] + '">' + t[1] + '</button>';
   }
-  for(const id of NAVSOLO_BOT) h += btn(id, 'solo');
-  /* filet de sécurité : aucun onglet autorisé à disparaître */
-  const rest = tabs.filter(t => !used[t[0]]);
-  if(rest.length){
-    const open = rest.some(t => t[0] === currentView);
-    h += '<button class="cat-head' + (open ? ' open' : '') + '" data-cat="autres" aria-expanded="'
-      + (open ? 'true' : 'false') + '"><span>➕ أخرى</span><span class="cat-arrow">▾</span></button>'
-      + '<div class="cat-body"' + (open ? '' : ' hidden') + '>'
-      + rest.map(t => { used[t[0]] = 1; return btn(t[0], 'sub'); }).join('') + '</div>';
-  }
-  /* D7: renderTabs() reconstruit #tabs à chaque navigation.
-     Réinsérer les commandes déplacées avant de remplacer le DOM, puis
-     libérer le verrou pour que le réagencement soit rejoué sur la nouvelle vue. */
   const d7bot = document.getElementById('d7bot');
   if(d7bot){
     const host = document.querySelector('.topbar-act');
