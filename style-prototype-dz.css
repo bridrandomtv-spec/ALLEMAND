@@ -8354,3 +8354,293 @@ html[data-theme="dark"] #shell #app [data-view="profboard"] #profBody .privacy{
   #shell #app [data-view="profboard"] #profBody *,
   #shell [data-view="accueil"] .home-main .grid3>.card{transition:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   V8.0 — expérience d'apprentissage : matières, parcours et leçons
+   Refonte des surfaces pédagogiques existantes, sans toucher au moteur.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Catalogue des matières : vitrine académique tricolore */
+#shell #app [data-view="matieres"] #matieresBody .mat-hero{
+  position:relative;overflow:hidden;isolation:isolate;
+  padding:clamp(20px,3vw,30px)!important;border:1px solid #d7e8dc!important;
+  border-radius:22px!important;
+  background:
+    radial-gradient(ellipse at 94% 0,rgba(255,255,255,.22),transparent 34%),
+    radial-gradient(ellipse at 5% 100%,rgba(210,16,52,.11),transparent 28%),
+    linear-gradient(125deg,#064b2e,#087342 62%,#0b8050)!important;
+  color:#fff!important;box-shadow:0 18px 38px rgba(0,78,42,.15)!important;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-t h2{color:#fff!important;font-size:clamp(21px,2.5vw,29px)!important}
+#shell #app [data-view="matieres"] #matieresBody .mat-crest{
+  display:grid;place-items:center;width:54px;height:54px;border-radius:17px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.23);
+  box-shadow:inset 0 1px rgba(255,255,255,.18);
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-sub{color:rgba(255,255,255,.77)!important}
+#shell #app [data-view="matieres"] #matieresBody .mat-sel{
+  display:flex;gap:12px;flex-wrap:wrap;margin:20px 0 15px;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-f{
+  min-width:min(220px,100%);padding:10px 12px;border:1px solid rgba(255,255,255,.2);
+  border-radius:13px;background:rgba(255,255,255,.11);color:#fff;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-f span{color:rgba(255,255,255,.82)}
+#shell #app [data-view="matieres"] #matieresBody .mat-f select{
+  min-height:39px;border:1px solid rgba(255,255,255,.3);
+  border-radius:9px;background:#fff;color:#174a2d;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-stats{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-st{
+  padding:12px;border:1px solid rgba(255,255,255,.16);border-radius:13px;
+  background:rgba(255,255,255,.1);text-align:center;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-st b{
+  display:block;color:#fff;font-size:25px;font-weight:900;font-variant-numeric:tabular-nums;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-st span{color:rgba(255,255,255,.75);font-size:11px}
+#shell #app [data-view="matieres"] #matieresBody .mat-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:17px;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-c{
+  position:relative;overflow:hidden;min-width:0;padding:18px!important;
+  border:1px solid #e0ebe3!important;border-radius:17px!important;
+  background:linear-gradient(155deg,#fff,#f8fbf8)!important;
+  box-shadow:0 8px 22px rgba(13,66,36,.05)!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-c:before{
+  content:"";position:absolute;inset:0 0 auto;height:3px;
+  background:linear-gradient(90deg,#087b43 0 68%,#d21034 68%);
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-c:hover{
+  transform:translateY(-3px);border-color:#b5d5be!important;
+  box-shadow:0 15px 27px rgba(13,66,36,.09)!important;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-i{
+  display:grid;place-items:center;width:46px;height:46px;border-radius:14px;
+  background:#eaf5ed;font-size:23px;
+}
+#shell #app [data-view="matieres"] #matieresBody .mat-n{color:#174a2d;font-weight:850}
+#shell #app [data-view="matieres"] #matieresBody .mat-de{color:#087342}
+#shell #app [data-view="matieres"] #matieresBody .mat-vision{
+  margin-top:18px;border:1px solid #dfeae2!important;border-radius:17px!important;
+}
+
+/* Parcours : une priorité visuelle claire et une progression lisible */
+#shell #app [data-view="masar"] #masarBody .ms-hero{
+  position:relative;overflow:hidden;display:flex;align-items:center;gap:15px;
+  padding:22px!important;border:1px solid #d7e8dc!important;border-radius:20px!important;
+  background:linear-gradient(125deg,#064b2e,#087342 65%,#0b8050)!important;
+  box-shadow:0 16px 34px rgba(0,78,42,.14)!important;
+}
+#shell #app [data-view="masar"] #masarBody .ms-hero h2{color:#fff!important;font-size:25px}
+#shell #app [data-view="masar"] #masarBody .ms-sub{color:rgba(255,255,255,.77)!important}
+#shell #app [data-view="masar"] #masarBody .ms-crest{
+  display:grid;place-items:center;width:52px;height:52px;flex:0 0 52px;
+  border:1px solid rgba(255,255,255,.2);border-radius:16px;
+  background:rgba(255,255,255,.13);font-size:24px;
+}
+#shell #app [data-view="masar"] #masarBody .ms-next,
+#shell #app [data-view="masar"] #masarBody .ms-weak,
+#shell #app [data-view="masar"] #masarBody .ms-prog{
+  margin-top:15px;padding:20px!important;border:1px solid #e0ebe3!important;
+  border-radius:17px!important;background:linear-gradient(155deg,#fff,#f8fbf8)!important;
+  box-shadow:0 8px 22px rgba(13,66,36,.05)!important;
+}
+#shell #app [data-view="masar"] #masarBody .ms-next.prio{
+  border-color:#e8d8b5!important;background:linear-gradient(145deg,#fffdf7,#fff9e9)!important;
+}
+#shell #app [data-view="masar"] #masarBody .ms-tag{
+  display:inline-flex;padding:6px 10px;border-radius:999px;
+  background:#eaf5ed;color:#075b35;font-size:11px;font-weight:850;
+}
+#shell #app [data-view="masar"] #masarBody .ms-next h3,
+#shell #app [data-view="masar"] #masarBody .ms-prog h3{color:#174a2d;font-size:18px}
+#shell #app [data-view="masar"] #masarBody .ms-why{color:#66776c;line-height:1.9}
+#shell #app [data-view="masar"] #masarBody .ms-bar{
+  overflow:hidden;height:10px;border-radius:999px;background:#e8efe9;
+}
+#shell #app [data-view="masar"] #masarBody .ms-bar i{
+  display:block;height:100%;border-radius:inherit;
+  background:linear-gradient(90deg,#087b43,#42a66c);
+}
+
+/* Séances : parcours des unités et liste de cours */
+#shell #app [data-view="seances"] #seancesHead{
+  position:relative;overflow:hidden;border:1px solid #d8e8dc!important;
+  border-radius:20px!important;
+  background:
+    radial-gradient(ellipse at 95% 5%,rgba(255,255,255,.2),transparent 34%),
+    linear-gradient(125deg,#064b2e,#087342 70%,#0b8050)!important;
+  color:#fff!important;box-shadow:0 16px 34px rgba(0,78,42,.14)!important;
+}
+#shell #app [data-view="seances"] #seancesHead h1,
+#shell #app [data-view="seances"] #seancesHead p{color:#fff!important}
+#shell #app [data-view="seances"] #seancesHead p{opacity:.8}
+#shell #app [data-view="seances"] #seancesHead .progress-wrap{background:rgba(255,255,255,.2)!important}
+#shell #app [data-view="seances"] #seancesHead .progress{background:linear-gradient(90deg,#b8edc8,#fff)!important}
+#shell #app [data-view="seances"] #seancesHead .progress-lbl{color:rgba(255,255,255,.8)!important}
+#shell #app [data-view="seances"] .unite-sel{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:17px 0;
+}
+#shell #app [data-view="seances"] .ucard{
+  position:relative;display:flex;flex-direction:column;align-items:stretch;gap:9px;
+  min-width:0;padding:16px!important;text-align:right;
+  border:1px solid #e0ebe3!important;border-radius:16px!important;
+  background:linear-gradient(155deg,#fff,#f8fbf8)!important;
+  box-shadow:0 7px 20px rgba(13,66,36,.045)!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+#shell #app [data-view="seances"] .ucard:not(:disabled):hover{
+  transform:translateY(-3px);border-color:#a9cfb4!important;
+  box-shadow:0 13px 24px rgba(13,66,36,.08)!important;
+}
+#shell #app [data-view="seances"] .ucard.on{
+  border-color:#16834c!important;background:linear-gradient(150deg,#f0f8f2,#fff)!important;
+  box-shadow:inset 0 0 0 1px rgba(8,123,67,.15),0 9px 22px rgba(0,98,51,.08)!important;
+}
+#shell #app [data-view="seances"] .ucard.off{opacity:.64;filter:saturate(.65)}
+#shell #app [data-view="seances"] .ucard-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#shell #app [data-view="seances"] .ucard-n{
+  color:#52665a;font-size:11px;font-weight:850;
+}
+#shell #app [data-view="seances"] .ucard-lv{
+  padding:4px 8px;border-radius:999px;background:#eaf5ed;color:#075b35;font-size:10px;font-weight:850;
+}
+#shell #app [data-view="seances"] .ucard-lv.bac{background:#fff0f1;color:#b51e35}
+#shell #app [data-view="seances"] .ucard-de{
+  color:#075b35;font-size:17px;font-weight:850;line-height:1.55;
+}
+#shell #app [data-view="seances"] .ucard-ar{color:#687a6d;font-size:12px;line-height:1.7}
+#shell #app [data-view="seances"] .ucard-bar{height:7px;overflow:hidden;border-radius:999px;background:#e9f0eb}
+#shell #app [data-view="seances"] .ucard-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#087b43,#55b477)}
+#shell #app [data-view="seances"] .ucard-m{display:flex;flex-wrap:wrap;gap:5px}
+#shell #app [data-view="seances"] .seance{
+  display:flex;align-items:flex-start;gap:13px;margin:9px 0;padding:14px!important;
+  border:1px solid #e1ebe4!important;border-radius:14px!important;
+  background:linear-gradient(120deg,#fff,#f9fbf9)!important;
+  transition:border-color .16s ease,transform .16s ease,box-shadow .16s ease;
+}
+#shell #app [data-view="seances"] .seance:not(.lock):hover{
+  transform:translateX(-2px);border-color:#b4d4bd!important;
+  box-shadow:0 7px 17px rgba(13,66,36,.055);
+}
+#shell #app [data-view="seances"] .seance.done{border-color:#cde4d3!important;background:#f4faf5!important}
+#shell #app [data-view="seances"] .seance.lock{opacity:.7}
+#shell #app [data-view="seances"] .s-num{
+  display:grid;place-items:center;width:37px;height:37px;flex:0 0 37px;
+  border-radius:12px;background:#eaf5ed;color:#075b35;font-weight:900;
+}
+#shell #app [data-view="seances"] .seance.done .s-num{background:#087b43;color:#fff}
+#shell #app [data-view="seances"] .s-t{color:#174a2d;font-weight:850;line-height:1.65}
+#shell #app [data-view="seances"] .s-d{margin-top:3px;color:#7a8b7f;font-size:12px}
+#shell #app [data-view="seances"] .s-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+/* Détail de leçon : sections didactiques bien séparées */
+#shell #app [data-view="seances"] #seanceDetail .etapes,
+#shell #app [data-view="seances"] #seanceDetail .gram,
+#shell #app [data-view="seances"] #seanceDetail .grille5,
+#shell #app [data-view="seances"] #seanceDetail .corrige{
+  margin:14px 0;padding:17px!important;border:1px solid #e0ebe3!important;
+  border-radius:16px!important;background:linear-gradient(155deg,#fff,#f9fbf9)!important;
+  box-shadow:0 7px 19px rgba(13,66,36,.04)!important;
+}
+#shell #app [data-view="seances"] #seanceDetail :is(.et-h,.g5-h){
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-bottom:13px;padding-bottom:10px;border-bottom:1px solid #e8efe9;
+}
+#shell #app [data-view="seances"] #seanceDetail :is(.et-h b,.g5-h b,.gram h4){
+  color:#075b35;font-size:15px;font-weight:850;
+}
+#shell #app [data-view="seances"] #seanceDetail .et-bar{
+  display:flex;overflow:hidden;height:9px;margin:12px 0 16px;
+  border-radius:999px;background:#e9f0eb;gap:2px;
+}
+#shell #app [data-view="seances"] #seanceDetail .et-bar i{background:linear-gradient(90deg,#087b43,#64b77c)}
+#shell #app [data-view="seances"] #seanceDetail .et-l{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
+}
+#shell #app [data-view="seances"] #seanceDetail .et-i{
+  display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:4px 9px;
+  align-items:center;padding:10px;border:1px solid #e6eee8;border-radius:12px;background:#fff;
+}
+#shell #app [data-view="seances"] #seanceDetail .et-n{
+  display:grid;place-items:center;width:28px;height:28px;border-radius:9px;
+  background:#eaf5ed;color:#075b35;font-weight:900;
+}
+#shell #app [data-view="seances"] #seanceDetail .et-i>b{color:#234d33;font-size:12px}
+#shell #app [data-view="seances"] #seanceDetail .et-i>.de-display{
+  grid-column:2;color:#78887d;font-size:11px;
+}
+#shell #app [data-view="seances"] #seanceDetail .et-m,
+#shell #app [data-view="seances"] #seanceDetail .et-t{color:#748579;font-size:10px}
+#shell #app [data-view="seances"] #seanceDetail .lex{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+}
+#shell #app [data-view="seances"] #seanceDetail .lex-i{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:11px 12px;border:1px solid #e3ece5;border-radius:12px;background:#fff;
+}
+#shell #app [data-view="seances"] #seanceDetail .lex-de{color:#075b35;font-weight:850}
+#shell #app [data-view="seances"] #seanceDetail .lex-ar{margin-top:3px;color:#748579;font-size:12px}
+#shell #app [data-view="seances"] #seanceDetail .speak{
+  width:34px;height:34px;flex:0 0 34px;border:1px solid #d8e8dc;border-radius:10px;
+  background:#eff7f1;color:#075b35;
+}
+#shell #app [data-view="seances"] #seanceDetail .conj{
+  width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:11px;
+}
+#shell #app [data-view="seances"] #seanceDetail .conj th{
+  background:#edf6ef;color:#174a2d;font-weight:850;
+}
+#shell #app [data-view="seances"] #seanceDetail .conj td,
+#shell #app [data-view="seances"] #seanceDetail .conj th{padding:10px;border-bottom:1px solid #e5eee7}
+
+/* Mode sombre */
+html[data-theme="dark"] #shell #app [data-view="matieres"] #matieresBody .mat-c,
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody :is(.ms-next,.ms-weak,.ms-prog),
+html[data-theme="dark"] #shell #app [data-view="seances"] :is(.ucard,.seance),
+html[data-theme="dark"] #shell #app [data-view="seances"] #seanceDetail :is(.etapes,.gram,.grille5,.corrige){
+  background:linear-gradient(145deg,#14291d,#172f21)!important;border-color:#315640!important;
+}
+html[data-theme="dark"] #shell #app [data-view="matieres"] #matieresBody .mat-n,
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-next h3,
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-prog h3,
+html[data-theme="dark"] #shell #app [data-view="seances"] .ucard-de,
+html[data-theme="dark"] #shell #app [data-view="seances"] .s-t,
+html[data-theme="dark"] #shell #app [data-view="seances"] #seanceDetail :is(.et-h b,.g5-h b,.gram h4){
+  color:#d8f0df!important;
+}
+html[data-theme="dark"] #shell #app [data-view="matieres"] #matieresBody .mat-vision,
+html[data-theme="dark"] #shell #app [data-view="seances"] #seanceDetail .et-i,
+html[data-theme="dark"] #shell #app [data-view="seances"] #seanceDetail .lex-i{
+  background:#14291d!important;border-color:#315640!important;
+}
+html[data-theme="dark"] #shell #app [data-view="seances"] #seanceDetail .et-i>b,
+html[data-theme="dark"] #shell #app [data-view="seances"] #seanceDetail .lex-de{color:#d8f0df!important}
+
+/* Mobile */
+@media(max-width:760px){
+  #shell #app [data-view="matieres"] #matieresBody .mat-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #shell #app [data-view="matieres"] #matieresBody .mat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  #shell #app [data-view="matieres"] #matieresBody .mat-c{padding:13px!important}
+  #shell #app [data-view="seances"] .unite-sel{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  #shell #app [data-view="seances"] .ucard{padding:12px!important}
+  #shell #app [data-view="seances"] #seanceDetail .et-l,
+  #shell #app [data-view="seances"] #seanceDetail .lex{grid-template-columns:minmax(0,1fr)}
+  #shell #app [data-view="seances"] #seanceDetail .et-i{grid-template-columns:28px minmax(0,1fr) auto}
+}
+@media(max-width:390px){
+  #shell #app [data-view="matieres"] #matieresBody .mat-grid,
+  #shell #app [data-view="seances"] .unite-sel{grid-template-columns:minmax(0,1fr)}
+  #shell #app [data-view="matieres"] #matieresBody .mat-f{min-width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="matieres"] #matieresBody *,
+  #shell #app [data-view="seances"] .ucard,
+  #shell #app [data-view="seances"] .seance{transition:none!important}
+}
