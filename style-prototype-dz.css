@@ -7417,3 +7417,61 @@ html[data-theme="dark"] #shell #app .view:not([data-view="accueil"]) table tbody
 @media(prefers-reduced-motion:reduce){
   #shell #app .view:not([data-view="accueil"]) *{scroll-behavior:auto!important}
 }
+
+/* V7.4 — finition responsive des espaces parents et professeurs */
+#shell [data-view="profboard"] #profBody .prof-hero,
+#shell [data-view="parents"] #parentsBody .par-hero{
+ display:flex;align-items:center;justify-content:space-between;gap:16px;
+ padding:20px!important;border:1px solid #d6e7db!important;border-radius:18px!important;
+ background:linear-gradient(120deg,#fff,#f1f8f3)!important;
+ box-shadow:0 8px 22px rgba(0,65,31,.05)!important;
+}
+#shell [data-view="profboard"] #profBody .prof-hero h2,
+#shell [data-view="parents"] #parentsBody .par-hero h2{color:#123c27!important;font-weight:950!important}
+#shell [data-view="profboard"] #profBody .ph-act,
+#shell [data-view="parents"] #parentsBody .ph-act{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+#shell [data-view="profboard"] #profBody .onglets,
+#shell [data-view="parents"] #parentsBody .onglets{
+ display:flex;flex-wrap:wrap;gap:7px;padding:7px;margin:14px 0 16px;
+ border:1px solid #e0ebe3;border-radius:14px;background:#f5f9f6;
+}
+#shell [data-view="profboard"] #profBody .ong,
+#shell [data-view="parents"] #parentsBody .ong{
+ min-height:39px;padding:8px 13px;border:1px solid transparent;border-radius:10px;
+ background:transparent;color:#496553;font-size:12px;font-weight:850;
+}
+#shell [data-view="profboard"] #profBody .ong.on,
+#shell [data-view="parents"] #parentsBody .ong.on{background:#006233;color:#fff;border-color:#006233}
+#shell [data-view="profboard"] #profBody .kpi,
+#shell [data-view="parents"] #parentsBody .kpi{
+ border:1px solid #dce9df;border-radius:14px;background:linear-gradient(145deg,#fff,#f7fbf8);
+ box-shadow:0 4px 14px rgba(0,65,31,.035);
+}
+#shell [data-view="profboard"] #profBody .kpi-n,
+#shell [data-view="parents"] #parentsBody .kpi-n{color:#006233;font-weight:950;font-variant-numeric:tabular-nums}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .prof-hero,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .par-hero{
+ border-color:#315c40!important;background:linear-gradient(120deg,#142f20,#102319)!important;
+}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .prof-hero h2,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .par-hero h2{color:#e5f2e9!important}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .onglets,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .onglets{border-color:#294b37;background:#142b1e}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .ong,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .ong{background:#1a3425;color:#c8d9ce;border-color:#31543d}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .ong.on,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .ong.on{background:#006233;color:#fff}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .kpi,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .kpi{border-color:#294b37;background:#172f21}
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .kpi-n,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .kpi-n{color:#8bd6a4}
+@media(max-width:760px){
+ #shell [data-view="profboard"] #profBody .prof-hero,
+ #shell [data-view="parents"] #parentsBody .par-hero{align-items:stretch;flex-direction:column;gap:12px}
+ #shell [data-view="profboard"] #profBody .ph-act,
+ #shell [data-view="parents"] #parentsBody .ph-act{justify-content:flex-start}
+ #shell [data-view="profboard"] #profBody .onglets,
+ #shell [data-view="parents"] #parentsBody .onglets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ #shell [data-view="profboard"] #profBody .ong,
+ #shell [data-view="parents"] #parentsBody .ong{width:100%;min-width:0}
+}
