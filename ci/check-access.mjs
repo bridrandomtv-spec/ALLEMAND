@@ -342,7 +342,10 @@ const clo5 = fs.readFileSync('cloud.js', 'utf8');
 const bil5 = fs.readFileSync('billing.js', 'utf8');
 const pw5  = fs.readFileSync('paywall.js', 'utf8');
 if (!adm5.includes('chargerPlansAdmin')) fails.push('3.5 : admin.js sans éditeur de plans');
-if (!clo5.includes('link_child')) fails.push('3.5 : cloud.js sans lien parent-enfant');
+const sb5 = fs.readFileSync('supabase/supabase.js', 'utf8');
+if (!clo5.includes('requestChildLink') || !clo5.includes('respondParentLinkRequest')
+    || !sb5.includes("rpc('request_child_link'") || !sb5.includes("rpc('respond_parent_link_request'"))
+  fails.push('3.5 : flux parent-enfant avec demande et confirmation de l’élève incomplet');
 if (!bil5.includes('window.BILLING_PLANS')) fails.push('3.5 : billing.js n expose pas BILLING_PLANS');
 if (!pw5.includes('BILLING_PLANS')) fails.push('3.5 : paywall.js ne lit pas les plans de la table');
 if (/prix_da:\s*(1800|9000|15000)/.test(adm5 + bil5 + pw5)) fails.push('3.5 : prix codés en dur côté client (interdit)');
