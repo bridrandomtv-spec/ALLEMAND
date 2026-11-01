@@ -363,7 +363,7 @@ for (const k of ['auth.uid()', "role='parent'", "role='eleve'", 'public.child_li
                  "RAISE EXCEPTION 'abonnement_requis'"])
   if (!rpcParent.includes(k)) fails.push('PARENT-2 : RPC résumé enfant sans contrôle/source ' + k);
 /* PARENT-2b : les deux sources d'abonnement doivent réellement être reliées par OR dans le garde IF NOT. */
-const entitlementGate = /IF\\s+NOT\\s*\\(\\s*EXISTS\\s*\\([\\s\\S]*?s\\.user_id\\s*=\\s*auth\\.uid\\(\\)[\\s\\S]*?s\\.statut\\s*=\\s*'actif'[\\s\\S]*?s\\.fin\\s+IS\\s+NULL\\s+OR\\s+s\\.fin\\s*>\\s*now\\(\\)[\\s\\S]*?\\)\\s+OR\\s+public\\.child_active_entitlement\\s*\\(\\s*auth\\.uid\\(\\)\\s*,\\s*p_child_id\\s*\\)\\s*\\)\\s+THEN\\s+RAISE\\s+EXCEPTION\\s+'abonnement_requis'/i;
+const entitlementGate = /IF\s+NOT\s*\(\s*EXISTS\s*\([\s\S]*?s\.user_id\s*=\s*auth\.uid\(\)[\s\S]*?s\.statut\s*=\s*'actif'[\s\S]*?s\.fin\s+IS\s+NULL\s+OR\s+s\.fin\s*>\s*now\(\)[\s\S]*?\)\s+OR\s+public\.child_active_entitlement\s*\(\s*auth\.uid\(\)\s*,\s*p_child_id\s*\)\s*\)\s+THEN\s+RAISE\s+EXCEPTION\s+'abonnement_requis'/i;
 if (!entitlementGate.test(rpcParent)) fails.push('PARENT-2b : règle parent actif OU enfant actif absente du garde SQL effectif');
 if (!/REVOKE ALL ON FUNCTION public\.parent_child_progress_summary\(uuid\) FROM PUBLIC,anon,authenticated/i.test(parsql)
     || !/GRANT EXECUTE ON FUNCTION public\.parent_child_progress_summary\(uuid\) TO authenticated/i.test(parsql))
