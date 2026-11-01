@@ -6,6 +6,7 @@
 BEGIN;
 
 -- Un rôle transmis par user_metadata n'est jamais une autorité.
+REVOKE ALL ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
 SET search_path TO 'pg_catalog','public'
