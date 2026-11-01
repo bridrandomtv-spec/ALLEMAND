@@ -302,4 +302,66 @@ GRANT EXECUTE ON FUNCTION public.admin_decide_parent_role_request(bigint,boolean
 REVOKE ALL ON FUNCTION public.agreement_current(text) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.agreement_current(text) TO authenticated;
 
+-- Rapport parent : seules les données agrégées de l'enfant effectivement lié.
+-- L'identité du parent vient toujours de auth.uid(), jamais d'un paramètre client.
+CREATE OR REPLACE FUNCTION public.parent_child_progress_summary(p_child_id uuid)
+RETURNS jsonb
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path TO 'pg_catalog','public'
+AS $$
+DECLARE
+  v_result jsonb;
+BEGIN
+  IF auth.uid() IS NULL THEN RAISE EXCEPTION 'auth_required'; END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id=auth.uid() AND role='parent'
+  ) THEN RAISE EXCEPTION 'parent_role_required'; END IF;
+  IF p_child_id IS NULL OR NOT EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id=p_child_id AND role='eleve'
+  ) THEN RAISE EXCEPTION 'compte_eleve_introuvable'; END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.child_links
+    WHERE parent_id=auth.uid() AND child_id=p_child_id
+  ) THEN RAISE EXCEPTION 'lien_parent_enfant_non_confirme'; END IF;
+
+  SELECT jsonb_build_object(
+    'seances_total', (
+      SELECT count(*) FROM public.seances_done WHERE user_id=p_child_id
+    ),
+    'seances_7j', (
+      SELECT count(*) FROM public.seances_done
+      WHERE user_id=p_child_id AND at >= now()-interval '7 days'
+    ),
+    'par_unite', COALESCE((
+      SELECT jsonb_agg(jsonb_build_object('unite',q.unite,'total',q.total) ORDER BY q.unite)
+      FROM (
+        SELECT unite,count(*) AS total FROM public.seances_done
+        WHERE user_id=p_child_id GROUP BY unite
+      ) q
+    ), '[]'::jsonb),
+    'notes_total', (
+      SELECT count(*) FROM public.notes WHERE eleve_id=p_child_id
+    ),
+    'notes_moyenne', (
+      SELECT round(avg(valeur),2) FROM public.notes WHERE eleve_id=p_child_id
+    ),
+    'cartes_total', (
+      SELECT count(*) FROM public.memoire_cards WHERE user_id=p_child_id
+    ),
+    'cartes_fragiles', (
+      SELECT count(*) FROM public.memoire_cards
+      WHERE user_id=p_child_id AND (COALESCE(box,0)<=2 OR COALESCE(misses,0)>=2)
+    )
+  ) INTO v_result;
+  RETURN v_result;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.parent_child_progress_summary(uuid) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.parent_child_progress_summary(uuid) TO authenticated;
+
 COMMIT;
