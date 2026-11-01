@@ -7866,3 +7866,235 @@ html[data-theme="dark"] #shell [data-view="examen"] #examBody .privacy{
   #shell [data-view="masar"] #masarBody *,
   #shell [data-view="revision"] #memoBody *{transition:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   V7.8 — direction artistique unifiée : portail + espace connecté
+   Travail esthétique CSS uniquement ; structure, données et actions conservées.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Portail public : composition éditoriale et panneau IA à fort contraste */
+#gate .public-landing{
+  position:relative!important;isolation:isolate;
+  background:
+    radial-gradient(ellipse at 7% 8%,rgba(0,98,51,.075),transparent 34%),
+    radial-gradient(ellipse at 95% 88%,rgba(210,16,52,.055),transparent 30%),
+    linear-gradient(135deg,#fff 0%,#f7fbf8 62%,#eef7f1 100%)!important;
+  border-color:#d5e6da!important;
+  box-shadow:0 24px 58px rgba(13,66,36,.085),0 2px 7px rgba(13,66,36,.035)!important;
+}
+#gate .public-copy{max-width:690px}
+#gate .public-kicker{
+  padding:8px 13px!important;border-radius:999px!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.85),0 4px 12px rgba(0,98,51,.055);
+  letter-spacing:.01em;
+}
+#gate .public-copy h2{
+  max-width:17ch!important;margin-block:19px 13px!important;
+  font-size:clamp(34px,4.25vw,54px)!important;
+  line-height:1.43!important;letter-spacing:-.65px!important;
+}
+#gate .public-copy h2 em{
+  display:inline-block;position:relative;
+  color:#087b43!important;
+  text-decoration:none;
+}
+#gate .public-copy h2 em:after{
+  content:"";display:block;width:54%;height:4px;margin-top:5px;
+  border-radius:9px;background:linear-gradient(90deg,#087b43 0 68%,#d21034 68%);
+  opacity:.9;
+}
+#gate .public-copy p{max-width:54ch!important;font-size:14px!important;line-height:2.05!important}
+#gate .public-actions{gap:11px!important;margin-top:23px!important}
+#gate .public-btn{min-height:49px!important;padding-inline:21px!important;border-radius:13px!important}
+#gate .public-btn.primary{box-shadow:0 10px 22px rgba(0,98,51,.2)!important}
+#gate .public-btn.secondary{background:rgba(255,255,255,.82)!important}
+#gate .public-trust{
+  margin-top:19px!important;padding-top:13px;border-top:1px solid #e3ede6;
+}
+
+/* Panneau enseignant IA : carte sombre, profondeur et surfaces superposées */
+#gate .public-ai-card{
+  position:relative!important;overflow:hidden!important;isolation:isolate;
+  padding:22px!important;border:1px solid rgba(255,255,255,.22)!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(circle at 90% 8%,rgba(115,205,147,.28),transparent 34%),
+    radial-gradient(circle at 0% 100%,rgba(210,16,52,.16),transparent 35%),
+    linear-gradient(145deg,#073c27 0%,#075b35 54%,#087744 100%)!important;
+  color:#fff!important;
+  box-shadow:0 22px 42px rgba(0,68,35,.22),inset 0 1px rgba(255,255,255,.16)!important;
+}
+#gate .public-ai-card:before{
+  content:"";position:absolute;z-index:-1;inset:0;
+  background:repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 1px,transparent 1px 16px);
+  mask-image:linear-gradient(135deg,#000,transparent 72%);
+}
+#gate .public-ai-head{align-items:center!important;padding-bottom:15px!important;border-bottom:1px solid rgba(255,255,255,.16)!important}
+#gate .public-ai-icon{
+  width:49px!important;height:49px!important;border:1px solid rgba(255,255,255,.22)!important;
+  background:rgba(255,255,255,.13)!important;color:#fff!important;
+  box-shadow:0 8px 18px rgba(0,0,0,.12)!important;
+}
+#gate .public-ai-head>div b{color:#fff!important;font-size:14px!important}
+#gate .public-ai-head>div small{color:rgba(255,255,255,.7)!important}
+#gate .public-ai-live{
+  border:1px solid rgba(255,255,255,.2)!important;
+  background:rgba(255,255,255,.12)!important;color:#e8fff0!important;
+}
+#gate .public-ai-demo{
+  margin-block:17px!important;padding:15px!important;
+  border:1px solid rgba(255,255,255,.16)!important;border-radius:17px!important;
+  background:rgba(255,255,255,.085)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
+}
+#gate .public-ai-question,#gate .public-ai-answer{
+  border:1px solid rgba(255,255,255,.13)!important;
+  background:rgba(4,39,25,.34)!important;color:#fff!important;
+  box-shadow:none!important;
+}
+#gate .public-ai-question small,#gate .public-ai-answer small{color:#aee2bf!important}
+#gate .public-ai-question b{color:#fff!important}
+#gate .public-ai-answer p{color:rgba(255,255,255,.78)!important}
+#gate .public-ai-wave i{background:linear-gradient(180deg,#b5f0c8,#fff)!important}
+#gate .public-ai-cta{
+  min-height:44px!important;border:1px solid rgba(255,255,255,.2)!important;
+  background:#fff!important;color:#075b35!important;
+  box-shadow:0 8px 18px rgba(0,0,0,.12)!important;
+}
+#gate .public-ai-cta:hover{background:#effaf2!important;transform:translateY(-1px)}
+#gate .public-ai-note{color:rgba(255,255,255,.68)!important}
+
+/* Services : trois cartes alignées comme une barre de bénéfices */
+#gate .public-features{gap:13px!important}
+#gate .public-feature{
+  min-height:88px!important;padding:15px!important;border-radius:17px!important;
+  background:rgba(255,255,255,.9)!important;border-color:#dce9df!important;
+  box-shadow:0 7px 19px rgba(0,65,31,.045)!important;
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+#gate .public-feature:hover{
+  transform:translateY(-3px);border-color:#a8ceb3!important;
+  box-shadow:0 13px 24px rgba(0,65,31,.075)!important;
+}
+#gate .pf-icon{width:44px!important;height:44px!important;border-radius:14px!important}
+#gate .public-mini-card{
+  position:relative;overflow:hidden;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease!important;
+}
+#gate .public-mini-card:hover{
+  transform:translateY(-3px)!important;border-color:#9bc9aa!important;
+  box-shadow:0 12px 22px rgba(0,65,31,.075)!important;
+}
+#gate .public-year-cards>button{
+  min-height:94px!important;padding:15px 17px!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease!important;
+}
+#gate .public-year-cards>button:hover{transform:translateY(-2px)!important}
+
+/* Navigation du portail : barre compacte et lisible */
+#gate .public-header{
+  min-height:82px!important;
+  background:rgba(255,255,255,.94)!important;
+  box-shadow:0 8px 30px rgba(15,57,33,.075)!important;
+}
+#gate .public-header .public-nav button{transition:background .16s ease,color .16s ease,transform .16s ease!important}
+#gate .public-header .public-nav button:hover{transform:translateY(-1px)!important}
+#gate .gate-card{
+  overflow:hidden!important;
+  box-shadow:0 18px 44px rgba(13,66,36,.08)!important;
+}
+#gate .gate-card-intro{padding:22px!important}
+#gate .gate-card .gtab{min-height:42px!important;border-radius:11px!important}
+
+/* Espace connecté : une seule grammaire visuelle sur toutes les vues */
+html[data-theme="light"] #shell .topbar{
+  background:rgba(255,255,255,.94)!important;
+  border-bottom:1px solid #dce9df!important;
+  box-shadow:0 8px 24px rgba(15,57,33,.055)!important;
+}
+html[data-theme="light"] #shell .topbar-in{min-height:74px!important}
+html[data-theme="light"] #shell .brand-crest{
+  border-radius:15px!important;
+  box-shadow:0 7px 17px rgba(0,98,51,.2)!important;
+}
+html[data-theme="light"] #shell .brand-t{letter-spacing:-.3px}
+html[data-theme="light"] #shell #tabs.tabs{
+  padding-block:5px 11px!important;
+  scrollbar-width:none;
+}
+html[data-theme="light"] #shell #tabs>.tab,
+html[data-theme="light"] #shell #tabs>.cat-head{
+  border:1px solid transparent!important;
+  border-radius:12px!important;
+}
+html[data-theme="light"] #shell #tabs>.tab.on,
+html[data-theme="light"] #shell #tabs>.cat-head.open{
+  border-color:#cfe3d5!important;
+  background:linear-gradient(135deg,#eaf5ed,#f5faf6)!important;
+  color:#075b35!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.9),0 4px 12px rgba(0,98,51,.07)!important;
+}
+html[data-theme="light"] #shell .section-bar{
+  background:linear-gradient(180deg,#fbfdfb,#f6faf7)!important;
+  border-top-color:#edf3ee!important;
+}
+html[data-theme="light"] #shell main#app{
+  padding-block:clamp(19px,2.6vw,34px)!important;
+}
+html[data-theme="light"] #shell #app .view .page-head{
+  box-shadow:0 10px 26px rgba(13,66,36,.055)!important;
+}
+html[data-theme="light"] #shell #app .view .card,
+html[data-theme="light"] #shell #app .view .panel{
+  box-shadow:0 7px 21px rgba(13,66,36,.045)!important;
+}
+html[data-theme="light"] #shell #app .view .card:hover{
+  border-color:#b9d6c2!important;
+}
+html[data-theme="light"] #shell .btn.btn-p,
+html[data-theme="light"] #shell button.btn-p{
+  box-shadow:0 6px 15px rgba(0,98,51,.14);
+}
+html[data-theme="dark"] #shell .topbar{
+  background:rgba(13,31,21,.96)!important;border-color:#294b36!important;
+}
+html[data-theme="dark"] #shell #tabs.tabs{background:transparent!important}
+html[data-theme="dark"] #shell .section-bar{
+  background:#102319!important;border-color:#294b36!important;
+}
+html[data-theme="dark"] #shell #app .view .page-head{
+  background:linear-gradient(120deg,#142d1e,#183725)!important;
+  border-color:#315640!important;
+}
+html[data-theme="dark"] #shell #app .view .card,
+html[data-theme="dark"] #shell #app .view .panel{
+  border-color:#294b36!important;
+}
+
+/* Responsive : garder une hiérarchie nette sans écraser le contenu */
+@media(max-width:900px){
+  #gate .public-copy h2{max-width:unset!important}
+  #gate .public-ai-card{min-width:0}
+}
+@media(max-width:700px){
+  #gate .public-header{gap:12px!important}
+  #gate .public-header .gate-brand{width:100%!important}
+  #gate .public-header .public-nav{padding:0!important}
+  #gate .public-landing{padding:18px 14px!important}
+  #gate .public-copy h2{font-size:clamp(27px,7.4vw,36px)!important;margin-block:13px 9px!important}
+  #gate .public-copy p{font-size:12px!important}
+  #gate .public-ai-card{padding:16px!important;border-radius:18px!important}
+  #gate .public-ai-demo{padding:11px!important}
+  #gate .public-feature{min-height:72px!important}
+  #gate .public-section-heading h3{font-size:18px!important}
+  html[data-theme="light"] #shell .topbar-in{min-height:64px!important}
+  html[data-theme="light"] #shell .brand-crest{width:38px;height:38px}
+  html[data-theme="light"] #shell #tabs.tabs{padding:4px 8px 9px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #gate .public-feature,#gate .public-mini-card,#gate .public-year-cards>button,
+  #shell #tabs>.tab,#shell #tabs>.cat-head{transition:none!important}
+  #gate .public-feature:hover,#gate .public-mini-card:hover,
+  #gate .public-year-cards>button:hover{transform:none!important}
+}
