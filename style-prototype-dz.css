@@ -7475,3 +7475,116 @@ html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .kpi-n{color:#
  #shell [data-view="profboard"] #profBody .ong,
  #shell [data-view="parents"] #parentsBody .ong{width:100%;min-width:0}
 }
+
+/* V7.5 — finitions de lisibilité et d’accessibilité
+   Parents et professeurs — amélioration CSS uniquement.
+   Les identifiants, événements, données et modules métier restent inchangés.
+   ═══════════════════════════════════════════════════════════════ */
+#shell [data-view="parents"] #parentsBody .bdd-kpis,
+#shell [data-view="profboard"] #profBody .bdd-kpis{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));
+  gap:10px;
+  align-items:stretch;
+}
+#shell [data-view="parents"] #parentsBody .kpi,
+#shell [data-view="profboard"] #profBody .kpi{
+  min-width:0;
+  min-height:112px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:5px;
+  padding:14px;
+}
+#shell [data-view="parents"] #parentsBody .kpi-i,
+#shell [data-view="profboard"] #profBody .kpi-i{
+  width:34px;height:34px;display:grid;place-items:center;
+  border-radius:11px;background:#eaf5ed;font-size:17px;
+}
+#shell [data-view="parents"] #parentsBody .kpi-l,
+#shell [data-view="profboard"] #profBody .kpi-l{
+  color:#355744;font-weight:850;line-height:1.55;
+}
+#shell [data-view="parents"] #parentsBody .kpi-d,
+#shell [data-view="profboard"] #profBody .kpi-d{
+  color:#718278;font-size:11px;line-height:1.5;
+}
+#shell [data-view="parents"] #parentsBody .enf:focus-visible,
+#shell [data-view="parents"] #parentsBody .ong:focus-visible,
+#shell [data-view="profboard"] #profBody .ong:focus-visible{
+  outline:3px solid rgba(0,132,61,.32);
+  outline-offset:3px;
+}
+#shell [data-view="parents"] #parentsBody .enf.on{
+  background:linear-gradient(110deg,#fff,#f0f8f2);
+  border-color:#69a981;
+}
+#shell [data-view="parents"] #parentsBody #paContenu,
+#shell [data-view="profboard"] #profBody #prContenu{
+  display:grid;gap:13px;min-width:0;
+}
+#shell [data-view="parents"] #parentsBody #paContenu .grid2,
+#shell [data-view="profboard"] #profBody #prContenu .grid2{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;
+}
+#shell [data-view="parents"] #parentsBody #paContenu .card,
+#shell [data-view="profboard"] #profBody #prContenu .card{
+  min-width:0;padding:clamp(13px,1.8vw,18px);
+}
+#shell [data-view="parents"] #parentsBody #paContenu h2,
+#shell [data-view="profboard"] #profBody #prContenu h2{
+  color:#173d29;font-weight:900;line-height:1.6;
+}
+#shell [data-view="profboard"] #profBody .filters{
+  display:grid;gap:11px;
+}
+#shell [data-view="profboard"] #profBody .filters :is(input,select){
+  min-height:42px;
+}
+#shell [data-view="profboard"] #profBody .bareme{
+  min-width:680px;
+}
+#shell [data-view="parents"] #parentsBody .rep-row,
+#shell [data-view="parents"] #parentsBody .info-i,
+#shell [data-view="profboard"] #profBody .wrow,
+#shell [data-view="profboard"] #profBody .alert-i{
+  min-width:0;overflow-wrap:anywhere;
+}
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .kpi-i,
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .kpi-i{
+  background:#183b29;
+}
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .kpi-l,
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .kpi-l,
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody #paContenu h2,
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody #prContenu h2{
+  color:#e3f1e7;
+}
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .kpi-d,
+html[data-theme="dark"] #shell [data-view="profboard"] #profBody .kpi-d{
+  color:#a6b9ac;
+}
+html[data-theme="dark"] #shell [data-view="parents"] #parentsBody .enf.on{
+  background:linear-gradient(110deg,#183b29,#142f20);
+}
+@media(max-width:760px){
+  #shell [data-view="parents"] #parentsBody .bdd-kpis,
+  #shell [data-view="profboard"] #profBody .bdd-kpis{
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+  }
+  #shell [data-view="parents"] #parentsBody .kpi,
+  #shell [data-view="profboard"] #profBody .kpi{
+    min-height:100px;padding:11px;
+  }
+  #shell [data-view="parents"] #parentsBody #paContenu .grid2,
+  #shell [data-view="profboard"] #profBody #prContenu .grid2{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
+@media(max-width:360px){
+  #shell [data-view="parents"] #parentsBody .bdd-kpis,
+  #shell [data-view="profboard"] #profBody .bdd-kpis{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
