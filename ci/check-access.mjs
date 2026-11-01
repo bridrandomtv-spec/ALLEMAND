@@ -361,8 +361,8 @@ for (const k of ['auth.uid()', "role = 'parent'", "role = 'eleve'", 'public.chil
                  'public.subscriptions', "s.statut = 'actif'", 'public.child_active_entitlement(auth.uid(), p_child_id)',
                  'public.seances_done', 'public.notes', 'public.memoire_cards', "RAISE EXCEPTION 'abonnement_requis'"])
   if (!migrationRpc.includes(k)) fails.push('PARENT-2-MIG : migration sans contrôle/source ' + k);
-if (!/REVOKE ALL ON FUNCTION public\.parent_child_progress_summary\\(uuid\\)\\s+FROM PUBLIC, anon, authenticated/i.test(parmig)
-    || !/GRANT EXECUTE ON FUNCTION public\.parent_child_progress_summary\\(uuid\\)\\s+TO authenticated/i.test(parmig))
+if (!/REVOKE ALL ON FUNCTION public\.parent_child_progress_summary\(uuid\)\s+FROM PUBLIC, anon, authenticated/i.test(parmig)
+    || !/GRANT EXECUTE ON FUNCTION public\.parent_child_progress_summary\(uuid\)\s+TO authenticated/i.test(parmig))
   fails.push('PARENT-2-MIG : permissions migration incorrectes');
 
 const parjs = fs.readFileSync('parents.js', 'utf8');
