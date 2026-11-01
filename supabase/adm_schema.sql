@@ -22,18 +22,18 @@ alter table public.wilaya_assignments enable row level security;
 alter table public.wilaya_assignments add column if not exists active boolean not null default true;
 
 create or replace function public.admin_role_of(uid uuid) returns text
-language sql stable security definer set search_path = pg_catalog, public as $
+language sql stable security definer set search_path = pg_catalog, public as $$
   select wa.role_cle from public.wilaya_assignments wa
     join public.admin_roles r on r.cle = wa.role_cle
    where wa.user_id = uid and wa.active
    order by r.priorite asc limit 1;
 $$;
 create or replace function public.admin_wilayas(uid uuid) returns text[]
-language sql stable security definer set search_path = pg_catalog, public as $
+language sql stable security definer set search_path = pg_catalog, public as $$
   select coalesce(array_agg(wa.code_wilaya), '{}') from public.wilaya_assignments wa where wa.user_id = uid and wa.active;
 $$;
 create or replace function public.admin_can(uid uuid, perm text) returns boolean
-language sql stable security definer set search_path = pg_catalog, public as $
+language sql stable security definer set search_path = pg_catalog, public as $$
   select auth.uid() is not null
      and uid = auth.uid()
      and exists (
@@ -41,9 +41,9 @@ language sql stable security definer set search_path = pg_catalog, public as $
        join public.admin_permissions p on p.role_cle = wa.role_cle
        where wa.user_id = auth.uid() and wa.active and p.permission = perm
      );
-$;
+$$;
 create or replace function public.admin_sees_wilaya(uid uuid, w text) returns boolean
-language sql stable security definer set search_path = pg_catalog, public as $
+language sql stable security definer set search_path = pg_catalog, public as $$
   select case when public.admin_role_of(uid) = 'admin_general' then true
               else w = any(public.admin_wilayas(uid)) end;
 $$;
@@ -99,7 +99,7 @@ insert into public.admin_permissions (role_cle, permission) values
 on conflict (role_cle, permission) do nothing;
 
 create or replace function public.assignment_set_active(uid uuid, active boolean) returns jsonb
-language plpgsql security definer set search_path = pg_catalog, public as $
+language plpgsql security definer set search_path = pg_catalog, public as $$
 declare w text;
 begin
   if not public.admin_can(auth.uid(), 'agents.manage') then raise exception 'permission_refusee'; end if;
