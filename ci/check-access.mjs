@@ -353,6 +353,18 @@ if (/prix_da:\s*(1800|9000|15000)/.test(adm5 + bil5 + pw5)) fails.push('3.5 : pr
 
 /* ── PARENT-2 : rapport parent alimenté par les données cloud du compte enfant ── */
 const parsql = fs.readFileSync('supabase/parent_child_security.sql', 'utf8');
+const parmig = fs.readFileSync('supabase/migrations/20261101130000_parent_child_progress_summary.sql', 'utf8');
+const migrationRpc = parmig.slice(parmig.indexOf('CREATE OR REPLACE FUNCTION public.parent_child_progress_summary'), parmig.indexOf('REVOKE ALL ON FUNCTION public.parent_child_progress_summary'));
+if (!migrationRpc.includes('SECURITY DEFINER') || !migrationRpc.includes("SET search_path TO 'pg_catalog','public'"))
+  fails.push('PARENT-2-MIG : migration sans SECURITY DEFINER/search_path verrouillé');
+for (const k of ['auth.uid()', "role = 'parent'", "role = 'eleve'", 'public.child_links',
+                 'public.subscriptions', "s.statut = 'actif'", 'public.child_active_entitlement(auth.uid(), p_child_id)',
+                 'public.seances_done', 'public.notes', 'public.memoire_cards', "RAISE EXCEPTION 'abonnement_requis'"])
+  if (!migrationRpc.includes(k)) fails.push('PARENT-2-MIG : migration sans contrôle/source ' + k);
+if (!/REVOKE ALL ON FUNCTION public\\.parent_child_progress_summary\\(uuid\\)\\s+FROM PUBLIC, anon, authenticated/i.test(parmig)
+    || !/GRANT EXECUTE ON FUNCTION public\\.parent_child_progress_summary\\(uuid\\)\\s+TO authenticated/i.test(parmig))
+  fails.push('PARENT-2-MIG : permissions migration incorrectes');
+
 const parjs = fs.readFileSync('parents.js', 'utf8');
 const sbparent = fs.readFileSync('supabase/supabase.js', 'utf8');
 const reportParent = parjs.slice(parjs.indexOf('async function vueReel(c){'), parjs.indexOf('})();', parjs.indexOf('async function vueReel(c){')));
