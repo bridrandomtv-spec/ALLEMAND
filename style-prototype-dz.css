@@ -9024,3 +9024,51 @@ html[data-theme="dark"] #shell #app .subject-card.soon .subject-state{background
   #shell #app .subjects-grid{grid-template-columns:minmax(0,1fr);gap:12px}
   #shell #app .subject-card{min-height:190px;padding:18px}
 }
+
+
+/* V8.8 — RTL structure authority: Arabic brand and navigation start on the right.
+   This final block supersedes earlier LTR layout overrides without changing routes. */
+html[dir="rtl"] #shell .topbar-in{
+  direction:rtl!important;
+  flex-direction:row!important;
+  justify-content:space-between!important;
+}
+html[dir="rtl"] #shell .topbar-in>.brand{
+  order:0!important;
+  direction:rtl!important;
+  margin-inline-start:auto!important;
+  margin-inline-end:0!important;
+  text-align:right!important;
+}
+html[dir="rtl"] #shell .topbar-in>.tb-search{order:1!important}
+html[dir="rtl"] #shell .topbar-in>.topbar-act{
+  order:2!important;
+  direction:rtl!important;
+  margin-inline-start:0!important;
+}
+html[dir="rtl"] #shell .topbar-in>.burger{
+  order:3!important;
+  margin-inline-start:0!important;
+}
+html[dir="rtl"] #shell #tabs.tabs{
+  direction:rtl!important;
+  flex-direction:row!important;
+  justify-content:flex-start!important;
+  text-align:right!important;
+  unicode-bidi:isolate!important;
+}
+html[dir="rtl"] #shell #tabs>.tab{
+  direction:rtl!important;
+  text-align:center!important;
+  unicode-bidi:isolate!important;
+}
+html[dir="rtl"] #shell .topbar,
+html[dir="rtl"] #shell .topbar-in,
+html[dir="rtl"] #shell #tabs{ text-align:right!important; }
+@media(max-width:700px){
+  html[dir="rtl"] #shell .topbar-in>.brand{order:0!important}
+  html[dir="rtl"] #shell .topbar-in>.topbar-act{order:1!important}
+  html[dir="rtl"] #shell .topbar-in>.tb-search{display:none!important}
+  html[dir="rtl"] #shell .topbar-in>.burger{order:2!important}
+  html[dir="rtl"] #shell #tabs.tabs{direction:rtl!important;justify-content:flex-start!important}
+}
