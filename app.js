@@ -2217,11 +2217,14 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   function badge(st){ return st==='implemented' ? 'متوفرة · disponible' : st==='partial' ? 'قيد التطوير · partiel' : 'قريباً · bientôt'; }
   function card(s){
     var m = META[s.slug] || {ar:s.name,flag:'📚',code:s.slug};
-    var btn = s.status==='implemented' ? '<button class="btn" data-subj="'+m.code+'">دخول المادة</button>'
-      : s.status==='partial' ? '<button class="btn" data-subj="'+m.code+'">استكشاف</button>'
-      : '<button class="btn" disabled>قريباً</button>';
-    return '<div class="card" style="padding:14px;margin:10px 0;text-align:center">'+m.flag+' <b>'+m.ar+' · '+s.name+'</b>'
-      + '<div style="color:#9fd8b4;font-size:12px;margin:6px 0">'+badge(s.status)+'</div>'+btn+'</div>';
+    var state = s.status==='implemented' ? 'ready' : (s.status==='partial' ? 'partial' : 'soon');
+    var btn = s.status==='implemented' ? '<button class="subject-action" data-subj="'+m.code+'">دخول المادة <span aria-hidden="true">←</span></button>'
+      : s.status==='partial' ? '<button class="subject-action" data-subj="'+m.code+'">استكشاف <span aria-hidden="true">←</span></button>'
+      : '<button class="subject-action" disabled>قريباً</button>';
+    return '<article class="subject-card '+state+'">'
+      + '<div class="subject-card-top"><span class="subject-flag" aria-hidden="true">'+m.flag+'</span><span class="subject-state">'+badge(s.status)+'</span></div>'
+      + '<h3>'+m.ar+'</h3><p class="subject-native" dir="auto">'+s.name+'</p>'
+      + '<div class="subject-card-foot">'+btn+'</div></article>';
   }
   function hub(){
     var b = document.getElementById('matieresBody');
@@ -2238,7 +2241,11 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     var box = hub(); if(!box) return;
     if(!window.SUBJECT || !SUBJECT.ready){ box.innerHTML='<p>…</p>'; return; }
     SUBJECT.ready().then(function(list){
-      box.innerHTML = (list||[]).map(card).join('') || '<p>Aucune matière.</p>';
+      var items = Array.isArray(list) ? list : [];
+      var ready = items.filter(function(x){ return x.status==='implemented'; }).length;
+      box.innerHTML = '<section class="subjects-intro"><div><span class="subjects-kicker">الثانوية الافتراضية الجزائرية</span><h2>اختر مادّتك الدراسية</h2><p>مساحة منظّمة للتعلّم، المراجعة والتقدّم حسب برنامجك الدراسي.</p></div><span class="subjects-count"><b>'+items.length+'</b><small>مواد مدرجة</small></span></section>'
+        + '<div class="subjects-grid">' + (items.map(card).join('') || '<p>لا توجد مواد متاحة حالياً.</p>') + '</div>'
+        + '<p class="subjects-footnote">تُعرض حالة كل مادة بوضوح؛ لا يعني ظهورها أن جميع وحداتها أصبحت متاحة.</p>';
     });
   }
   document.addEventListener('click', function(e){
