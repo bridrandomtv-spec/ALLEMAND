@@ -9126,7 +9126,7 @@ html[dir="rtl"] #shell>.topbar .topbar-in{
  display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;
 }
 html[dir="rtl"] #shell>.topbar .topbar-in>.brand{
- order:0!important;flex:0 1 auto!important;margin:0 auto 0 0!important;direction:rtl!important;text-align:right!important;justify-content:flex-start!important;
+ order:0!important;flex:0 1 auto!important;margin:0!important;direction:rtl!important;text-align:right!important;justify-content:flex-start!important;
 }
 html[dir="rtl"] #shell>.topbar .topbar-in>.topbar-act{order:1!important;flex:0 0 auto!important;direction:rtl!important}
 html[dir="rtl"] #shell>.topbar .topbar-in>.tb-search{order:2!important}
