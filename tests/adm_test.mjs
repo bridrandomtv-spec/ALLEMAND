@@ -125,6 +125,7 @@ t(sbjs.includes('MAX_OCTETS_PJ'), 'MSG-LIM : plafond client 5 Mo dans upload()')
 t(!appjs.includes('opsBugBtn') && !appjs.includes('phase 13 (OPS-1)'), 'OPS-1 : bouton flottant de signalement désactivé pour ne plus masquer le contenu');
 t(sbjs.includes('function admCouverture'), 'GARDES-ORG1 : facade expose admCouverture (rpc admin_couverture_wilayas)');
 t(adjs.includes('rendreCouvertureORG1') && !adjs.includes('.org1{'), 'GARDES-ORG1 : carte ORG-1 en JS seul dans admin.js (aucun CSS collé)');
+t(adjs.includes("if(!u || !p || p.role !== 'admin')") && adjs.indexOf("if(!u || !p || p.role !== 'admin')") < adjs.indexOf('window.SB.listProfiles()'), 'NAV-ADM-3 : le tableau admin principal refuse un profil non-admin avant toute lecture des listes');
 t(css.includes('.org1-badge'), 'GARDES-ORG1 : styles .org1-badge présents dans style.css');
 t(adjs.includes('📎 reçu'), 'PJ-PAY-1 : accès reçu présent dans la file de validation (libellé gardé)');
 t(!adjs.includes('/object/public/'), 'RECUFIX-1 : admin.js ne construit jamais d URL publique /object/public/');
