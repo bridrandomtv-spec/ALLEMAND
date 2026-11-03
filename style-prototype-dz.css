@@ -9164,3 +9164,52 @@ html[dir="rtl"] #shell #tabs.tabs>.tab{direction:rtl!important;unicode-bidi:plai
 #shell [data-view="accueil"] .home-grid > .home-main > .prog-off{
   display:none!important;
 }
+
+
+/* HOME QUICK FIX — cartes lisibles en colonne dans la colonne latérale RTL */
+#shell [data-view="accueil"] #homeSide,
+#shell [data-view="accueil"] #homeSide .panel{min-width:0;direction:rtl;text-align:right}
+#shell [data-view="accueil"] #homeSide .panel-h{
+  display:flex;align-items:center;justify-content:flex-start;gap:9px;
+  width:100%;text-align:right;direction:rtl;line-height:1.7;
+  white-space:normal;overflow-wrap:anywhere;
+}
+#shell [data-view="accueil"] #panelQuick #quickBody,
+#shell [data-view="accueil"] #panelQuick .grid3{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  width:100%;min-width:0;gap:9px!important;
+}
+#shell [data-view="accueil"] #panelQuick .card.mini{
+  display:grid!important;
+  grid-template-columns:42px minmax(0,1fr) auto!important;
+  grid-template-areas:"ico title number" "ico desc number";
+  align-items:center;column-gap:10px;row-gap:3px;
+  width:100%;min-width:0;min-height:76px!important;
+  padding:12px 13px!important;text-align:right;direction:rtl;
+}
+#shell [data-view="accueil"] #panelQuick .card.mini .mini-i{
+  grid-area:ico;display:flex;align-items:center;justify-content:center;
+  width:40px;height:40px;margin:0!important;font-size:23px;line-height:1;
+}
+#shell [data-view="accueil"] #panelQuick .card.mini h3{
+  grid-area:title;min-width:0;margin:0!important;text-align:right;
+  font-size:13px!important;line-height:1.65!important;white-space:normal;
+  overflow-wrap:anywhere;word-break:normal;
+}
+#shell [data-view="accueil"] #panelQuick .card.mini p{
+  grid-area:desc;min-width:0;margin:0!important;text-align:right;
+  font-size:11px!important;line-height:1.65!important;white-space:normal;
+  overflow-wrap:anywhere;word-break:normal;
+}
+#shell [data-view="accueil"] #panelQuick .card.mini .mini-n{
+  grid-area:number;align-self:center;justify-self:end;white-space:nowrap;
+  min-width:0;margin:0!important;font-size:13px!important;
+}
+@media(max-width:900px){
+  #shell [data-view="accueil"] #homeSide{width:100%}
+  #shell [data-view="accueil"] #panelQuick .grid3{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:420px){
+  #shell [data-view="accueil"] #panelQuick .card.mini{grid-template-columns:36px minmax(0,1fr) auto!important;column-gap:8px;padding:10px!important}
+  #shell [data-view="accueil"] #panelQuick .card.mini .mini-i{width:34px;height:34px;font-size:20px}
+}
