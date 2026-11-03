@@ -45,14 +45,14 @@ create table if not exists public.child_links (
 alter table public.child_links add column if not exists confirmed_at timestamptz;
 alter table public.child_links enable row level security;
 drop policy if exists "liens visibles par les deux bouts + admin" on public.child_links;
+drop policy if exists "parent crée ses liens" on public.child_links;
+drop policy if exists "parent défait ses liens" on public.child_links;
 create policy "liens visibles par les deux bouts + admin" on public.child_links for select
   using (auth.uid() = parent_id or auth.uid() = child_id or public.is_admin());
-drop policy if exists "parent crée ses liens" on public.child_links;
-create policy "parent crée ses liens" on public.child_links for insert
-  with check (auth.uid() = parent_id);
-drop policy if exists "parent défait ses liens" on public.child_links;
-create policy "parent défait ses liens" on public.child_links for delete
-  using (auth.uid() = parent_id or public.is_admin());
+-- Le rattachement ne peut jamais être créé/supprimé par un accès direct à la table.
+-- Seules les RPC de demande, consentement et déliaison contrôlent les rôles.
+revoke all on table public.child_links from public, anon, authenticated;
+grant select on table public.child_links to authenticated;
 
 -- ── 3) Décision C : rapport de BASE d'un enfant = enfant ACTIF **ou** parent ACTIF ──
 create or replace function public.child_active_entitlement(parent_id uuid, child_id uuid)
