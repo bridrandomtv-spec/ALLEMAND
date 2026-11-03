@@ -102,5 +102,7 @@ set search_path = pg_catalog, public as $function$
     );
 $function$;
 
+revoke all on function public.child_active_entitlement(uuid, uuid) from public, anon, authenticated;
+revoke all on function public.my_linked_children() from public, anon, authenticated;
 grant execute on function public.child_active_entitlement(uuid, uuid) to authenticated;
 grant execute on function public.my_linked_children() to authenticated;
