@@ -240,3 +240,17 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Preview correspondant au HEAD : https://cb0c9363-allemand.brid-randomtv.workers.dev/#accueil ; accès direct à la vue admin : https://cb0c9363-allemand.brid-randomtv.workers.dev/#admin.
 - PR #17 demeure ouverte, en brouillon, non fusionnée ; base `main`. Aucun changement sur `main`, aucune nouvelle branche et aucune modification Auth/Supabase/RLS/schéma/paiements dans le cadre de cette validation.
 - Prochaine étape : terminer la revue des conditions de fusion et des vérifications de la PR. Ne pas sortir du brouillon ni fusionner sans autorisation explicite de l'utilisateur.
+
+
+## 2026-11-03 — refonte esthétique globale V9.0 (nouveau prototype)
+
+- Demande utilisateur : faire évoluer visuellement la plateforme réelle pour qu'elle se rapproche de la direction artistique du prototype complet (vert algérien #006233, blanc, rouge #D21034), avec une présentation professionnelle et contrastée ; priorité explicite donnée à l'esthétique visuelle.
+- Audit préalable : le projet possède déjà des couches de style substantielles, un portail public séparé, des composants partagés (.topbar, #tabs, .page-head, .card, .panel, .btn, .seance) et une gestion distincte des thèmes clair/sombre. Le prototype HTML autonome utilise Tailwind/Chart.js/Lucide et des données de démonstration ; ces dépendances et données fictives ne sont pas copiées dans l'application.
+- Réalisation V9.0 : ajout d'une couche CSS additive dans style-prototype-dz.css pour l'application connectée : en-tête vert national à contraste élevé, navigation plus lisible, hiérarchie des titres, cartes et panneaux, boutons, formulaires, tableaux, parcours de cours, bannière d'accueil, états de focus et adaptation mobile. Déclinaisons explicites en thème clair et sombre.
+- Cache : version de feuille de style portée à style-prototype-dz.css?v=79 dans index.html et sw.js ; version du service worker portée à dz-de-v3.139.0.
+- Fichiers modifiés uniquement : style-prototype-dz.css, index.html, sw.js. Aucun JS métier, identifiant, route, données, rôle, auth, politique RLS, schéma, migration ou paiement modifié.
+- Commit V9.0 : 922fa6025a4fc3630146ad632d8a24de58e99493, branche design/prototypes-67-74-alignment, PR #17 vers main. main inchangée, PR ouverte, Ready for review, non fusionnée.
+- Contrôles : la cohérence des références CSS/version dans index.html et sw.js a été vérifiée par lecture du commit. GitHub Actions #41734602778 a été lancée et était in_progress au dernier contrôle. Aucune validation visuelle navigateur n'est revendiquée.
+- Prévisualisation à utiliser après publication réussie : consulter le commentaire Cloudflare du commit 922fa60 ou la preview de branche. Ne pas réutiliser les anciennes URLs de commits précédents.
+- Validation utilisateur encore nécessaire : comparer le rendu réel en clair et sombre, ordinateur et mobile, particulièrement l'accueil connecté, les matières, le parcours, le tableau de bord professeur et لوحة التحكم. Corriger à partir des observations concrètes avant d'envisager la fusion.
+- État du PR au 3 novembre : ouverte, Ready for review (draft=false), non fusionnée ; dernier HEAD 922fa6025a4fc3630146ad632d8a24de58e99493. Aucun changement sur main, aucune nouvelle branche et aucun déploiement manuel.
