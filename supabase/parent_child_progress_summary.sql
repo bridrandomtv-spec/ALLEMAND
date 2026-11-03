@@ -48,6 +48,7 @@ BEGIN
     SELECT 1
     FROM public.child_links
     WHERE parent_id = auth.uid() AND child_id = p_child_id
+      AND confirmed_at IS NOT NULL
   ) THEN
     RAISE EXCEPTION 'lien_parent_enfant_non_confirme';
   END IF;

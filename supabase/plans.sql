@@ -39,54 +39,70 @@ create table if not exists public.child_links (
   parent_id uuid not null references auth.users on delete cascade,
   child_id  uuid not null references auth.users on delete cascade,
   created_at timestamptz default now(),
+  confirmed_at timestamptz,
   primary key (parent_id, child_id)
 );
+alter table public.child_links add column if not exists confirmed_at timestamptz;
 alter table public.child_links enable row level security;
 drop policy if exists "liens visibles par les deux bouts + admin" on public.child_links;
+drop policy if exists "parent crée ses liens" on public.child_links;
+drop policy if exists "parent défait ses liens" on public.child_links;
 create policy "liens visibles par les deux bouts + admin" on public.child_links for select
   using (auth.uid() = parent_id or auth.uid() = child_id or public.is_admin());
-drop policy if exists "parent crée ses liens" on public.child_links;
-create policy "parent crée ses liens" on public.child_links for insert
-  with check (auth.uid() = parent_id);
-drop policy if exists "parent défait ses liens" on public.child_links;
-create policy "parent défait ses liens" on public.child_links for delete
-  using (auth.uid() = parent_id or public.is_admin());
+-- Le rattachement ne peut jamais être créé/supprimé par un accès direct à la table.
+-- Seules les RPC de demande, consentement et déliaison contrôlent les rôles.
+revoke all on table public.child_links from public, anon, authenticated;
+grant select on table public.child_links to authenticated;
 
 -- ── 3) Décision C : rapport de BASE d'un enfant = enfant ACTIF **ou** parent ACTIF ──
 create or replace function public.child_active_entitlement(parent_id uuid, child_id uuid)
-returns boolean language sql stable security definer set search_path = public as $$
-  select exists (
-    select 1 from public.child_links l
-    where l.parent_id = parent_id and l.child_id = child_id
-  ) and exists (
-    select 1 from public.subscriptions s
-    where s.user_id = child_id and s.statut = 'actif'
-      and (s.fin is null or s.fin > now())
-  );
-$$;
+returns boolean language sql stable security definer
+set search_path = pg_catalog, public as $function$
+  select auth.uid() is not null
+    and $1 = auth.uid()
+    and exists (
+      select 1 from public.profiles me
+      where me.id = auth.uid() and me.role = 'parent'
+    )
+    and exists (
+      select 1 from public.child_links l
+      where l.parent_id = $1 and l.child_id = $2
+        and l.confirmed_at is not null
+    )
+    and exists (
+      select 1 from public.subscriptions s
+      where s.user_id = $2 and s.statut = 'actif'
+        and (s.fin is null or s.fin > now())
+    );
+$function$;
 
 -- ── 4) Self-service parent : lier par email, lister, délier ──
+-- Compatibilité de schéma uniquement : l'ancien lien direct ne peut plus
+-- créer de relation. Le seul parcours autorisé est demande parent + accord élève.
 create or replace function public.link_child(p_email text)
-returns uuid language plpgsql security definer set search_path = public as $$
-declare cid uuid;
+returns uuid language plpgsql security definer
+set search_path = pg_catalog, public as $function$
 begin
-  select id into cid from auth.users where lower(email) = lower(trim(p_email));
-  if cid is null then raise exception 'compte introuvable'; end if;
-  if cid = auth.uid() then raise exception 'lien impossible vers soi-meme'; end if;
-  insert into public.child_links (parent_id, child_id) values (auth.uid(), cid)
-  on conflict do nothing;
-  return cid;
-end; $$;
+  raise exception 'use_parent_link_request_flow';
+end; $function$;
+revoke all on function public.link_child(text) from public, anon, authenticated;
 
 create or replace function public.my_linked_children()
 returns table (child_id uuid, pseudo text) language sql stable security definer
-set search_path = public as $$
+set search_path = pg_catalog, public as $function$
   select l.child_id, coalesce(p.pseudo, '')
   from public.child_links l
   left join public.profiles p on p.id = l.child_id
-  where l.parent_id = auth.uid();
-$$;
+  where l.parent_id = auth.uid()
+    and auth.uid() is not null
+    and l.confirmed_at is not null
+    and exists (
+      select 1 from public.profiles me
+      where me.id = auth.uid() and me.role = 'parent'
+    );
+$function$;
 
+revoke all on function public.child_active_entitlement(uuid, uuid) from public, anon, authenticated;
+revoke all on function public.my_linked_children() from public, anon, authenticated;
 grant execute on function public.child_active_entitlement(uuid, uuid) to authenticated;
-grant execute on function public.link_child(text) to authenticated;
 grant execute on function public.my_linked_children() to authenticated;

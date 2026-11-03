@@ -616,11 +616,13 @@ async function agreementText(aid){
   return { ok:true, accord:r.data };
 }
 async function myChildren(){
-  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
-  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
-  const r = await c.from('child_links').select('child_id, profiles(pseudo, niveau, wilaya)').eq('parent_id', u.id);
-  if(r.error) return { ok:false, err:r.error.message };
-  return { ok:true, children:r.data||[] };
+  // Même source sécurisée que le tableau de bord parent : seuls les liens
+  // explicitement acceptés par l'élève sont retournés.
+  const r = await myLinkedChildren();
+  if(!r.ok) return { ok:false, err:r.err };
+  return { ok:true, children:(r.rows||[]).map(function(row){
+    return { child_id:row.child_id, profiles:{ pseudo:row.pseudo || '' } };
+  }) };
 }
 
 /* ── PARENT-1 · demandes de rattachement confirmées par l'élève ── */
