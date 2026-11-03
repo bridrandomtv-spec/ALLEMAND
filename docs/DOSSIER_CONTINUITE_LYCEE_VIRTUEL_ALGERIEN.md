@@ -228,3 +228,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Seul `style-prototype-dz.css` est modifié pour cette correction. Aucun changement HTML/JS, identifiant, navigation, authentification, Supabase, RLS, schéma ou paiement.
 - Commit : `0c8e36e076876fdb0eb7a5a73446d546f09d9adb`, sur `design/prototypes-67-74-alignment` (PR #17 vers `main`).
 - Validation restante : CI et publication Cloudflare à contrôler, puis vérification visuelle réelle par l'utilisateur en clair/sombre et sur ordinateur/mobile. Aucune validation visuelle navigateur n'est revendiquée par cette modification CSS seule.
+
+
+## 2026-11-03 — validation utilisateur des accès administrateur et du portail public
+
+- L'utilisateur confirme avoir testé la preview Cloudflare du commit `4053334eae3b075d9e5c12afa83beaa5867bd4f0` avec un compte élève : ce compte ne peut pas accéder à `لوحة التحكم` ni consulter les données administratives.
+- Cette confirmation est un test manuel effectué par l'utilisateur sur la preview ; elle complète les contrôles statiques `NAV-ADM-1` à `NAV-ADM-3` et la revue des modules ADM-1 à ADM-5. Ne pas la présenter comme un test automatisé ni comme un audit indépendant des politiques RLS distantes.
+- L'utilisateur confirme également que le rendu visuel du portail public est corrigé sur cette preview : correction V8.21 acceptée visuellement.
+- Commit applicatif : `0c8e36e` ; dernier HEAD PR au moment de la validation : `4053334eae3b075d9e5c12afa83beaa5867bd4f0`.
+- Contrôles de ce HEAD : validation structurelle et pédagogique réussie ; build Cloudflare réussi. Le contrôle Supabase Preview est `skipped` (aucune branche Supabase associée), il n'est donc pas compté comme réussi.
+- Preview correspondant au HEAD : https://cb0c9363-allemand.brid-randomtv.workers.dev/#accueil ; accès direct à la vue admin : https://cb0c9363-allemand.brid-randomtv.workers.dev/#admin.
+- PR #17 demeure ouverte, en brouillon, non fusionnée ; base `main`. Aucun changement sur `main`, aucune nouvelle branche et aucune modification Auth/Supabase/RLS/schéma/paiements dans le cadre de cette validation.
+- Prochaine étape : terminer la revue des conditions de fusion et des vérifications de la PR. Ne pas sortir du brouillon ni fusionner sans autorisation explicite de l'utilisateur.
