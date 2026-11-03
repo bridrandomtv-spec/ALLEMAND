@@ -203,3 +203,14 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - La CI #1827 (commit `b4472a7`) est réussie. La CI #1828 (mise à jour documentaire précédente) était encore en cours au dernier contrôle.
 - Le dernier déploiement Cloudflare recensé dans les commentaires de PR reste le commit `533921d`; il ne contient pas les derniers correctifs. Aucun déploiement manuel n'a été lancé.
 - PR #17 reste ouverte, en brouillon, non fusionnée. `main` reste inchangée ; aucune nouvelle branche créée.
+
+
+## 15. Revue des permissions des modules administratifs ADM-1 à ADM-5 — 3 novembre 2026
+
+- Revue statique des modules indépendants de `admin.js` : agents/wilayas, validation des paiements et reçus, publication des accords, tableau de bord/fiches élèves/paramètres, comptabilité et support.
+- Point vérifié : les modules ADM-1/2/3/4/5 ne reposent pas uniquement sur le masquage des boutons. Les fonctions sensibles côté SQL contrôlent `auth.uid()` et la permission requise via `admin_can(...)`, et plusieurs opérations vérifient également le périmètre wilaya via `admin_sees_wilaya(...)`. Les lectures directes sont encadrées par des politiques RLS dans les scripts audités.
+- Fausse alerte écartée après lecture complète : `accounting.manage` semblait absent de la liste initiale ADM-1, mais est bien attribué à `admin_general` dans `supabase/adm5_schema.sql` (ligne 211), et le test existant de `tests/adm_test.mjs` vérifie déjà cette attribution (assertion ADM-5). Aucun correctif SQL n'est nécessaire ; aucun script Supabase n'a été modifié.
+- Le test `NAV-ADM-3` de refus du profil non-admin est inclus dans le commit `ba19413`. CI #1829 : succès. CI #1830, correspondant au dossier mis à jour après ce test : succès.
+- Limite : il s'agit d'un audit statique des scripts du dépôt. Il ne prouve pas que les migrations correspondantes ont toutes été exécutées sur le projet Supabase distant, ni ne remplace des essais avec de vrais comptes et des wilayas différentes.
+- La prévisualisation Cloudflare recensée est toujours au commit `533921d`, donc en retard sur les derniers commits. Les tests de navigateur et le contrôle visuel clair/sombre restent à faire après publication automatique d'une prévisualisation à jour.
+- PR #17 toujours ouverte et en brouillon, non fusionnée ; `main` inchangée ; aucune nouvelle branche, aucun déploiement manuel.
