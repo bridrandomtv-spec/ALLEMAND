@@ -209,7 +209,9 @@
       const card = gateCard();
       if(card){
         card.hidden = false;
-        window.setTimeout(() => card.scrollIntoView({behavior:'smooth', block:'center'}), 0);
+        window.requestAnimationFrame(() => {
+          card.scrollIntoView({behavior:'smooth', block:'center'});
+        });
       }
     }
     const nav = ev.target.closest('[data-public-view]');
