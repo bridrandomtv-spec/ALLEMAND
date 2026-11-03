@@ -9342,3 +9342,38 @@ html[data-theme="dark"] #shell .prog-off .po-note{
   #shell #subjHome .subj-card .subj-n{font-size:15px!important;line-height:1.7!important}
   #shell #subjHome .subj-card .subj-s{max-width:48%;text-align:center}
 }
+
+/* V8.12 — typographie arabe éditoriale + contraste des langues.
+   Tajawal est déjà chargé dans index.html : aucun paquet ni téléchargement ajouté. */
+html[dir="rtl"] #shell{
+  font-family:'Tajawal','Cairo',Tahoma,sans-serif;
+  font-synthesis:none;
+}
+html[dir="rtl"] #shell :is(h1,h2,h3,h4,.panel-h,.subjects-kicker,.subject-state){
+  font-family:'Tajawal','Cairo',Tahoma,sans-serif;
+  letter-spacing:normal!important;
+  font-synthesis:none;
+}
+html[dir="rtl"] #shell :is(.welcome h1,.page-head h1,.subjects-intro h2,.subject-card h3){
+  font-weight:700!important;
+  line-height:1.65!important;
+}
+html[dir="rtl"] #shell #app .subjects-kicker{font-weight:600!important}
+html[dir="rtl"] #shell #subjHome .subj-card.sc-lang .subj-n{
+  color:#fff!important;
+  font-weight:700!important;
+  text-shadow:none!important;
+}
+html[dir="rtl"] #shell #subjHome .subj-card.sc-lang .subj-chips .chip{
+  color:#145333!important;
+  background:#fff!important;
+  border:1px solid rgba(255,255,255,.72)!important;
+  font-weight:600!important;
+  text-shadow:none!important;
+  opacity:1!important;
+}
+html[dir="rtl"] #shell #subjHome .subj-card.sc-lang .subj-chips .chip.lock{
+  color:#58685e!important;
+  background:#edf2ee!important;
+  border-color:#d9e3dc!important;
+}
