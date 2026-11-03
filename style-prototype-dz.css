@@ -9437,3 +9437,29 @@ html[dir="rtl"] #shell #app :is(.home-side .panel-h,.view .panel-h){
 html[dir="rtl"] #shell #subjHome .subj-card :is(.subj-n,.subj-l){
   font-weight:600!important;
 }
+
+
+/* V8.15 — neutraliser les anciennes graisses fortes sur les titres éditoriaux
+   des vues connectées, y compris les sélecteurs historiques plus spécifiques. */
+#shell #app [data-view="accueil"] .home-main .welcome h1,
+#shell #app [data-view="accueil"] .home-main .grid3 .mini h3,
+#shell #app .view:not([data-view="accueil"]) .page-head h1,
+#shell #app .view:not([data-view="accueil"]) .panel-h,
+#shell [data-view="profboard"] #profBody .prof-hero h2,
+#shell [data-view="parents"] #parentsBody .par-hero h2,
+#shell [data-view="parents"] #parentsBody #paContenu h2,
+#shell [data-view="profboard"] #profBody #prContenu h2,
+#shell [data-view="examen"] #examBody .exam-hero h2,
+#shell [data-view="masar"] #masarBody .ms-next h3,
+#shell [data-view="masar"] #masarBody .ms-prog h3,
+#shell #app [data-view="matieres"] #matieresBody .mat-t h2,
+#shell #app .subjects-intro h2,
+#shell #app .subject-card h3{
+  font-family:'Tajawal','Cairo',Tahoma,sans-serif!important;
+  font-weight:600!important;
+  letter-spacing:normal!important;
+}
+#shell #app [data-view="accueil"] .home-main .welcome h1,
+#shell #app .view:not([data-view="accueil"]) .page-head h1{
+  font-weight:650!important;
+}
