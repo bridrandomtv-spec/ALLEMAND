@@ -9605,3 +9605,36 @@ html[dir="rtl"] #shell #subjHome .subj-card :is(.subj-n,.subj-l){
   #shell #app :is(.q-t,.exo-b b,.exo-title),
   #shell #app .exo-i .exo-b b{font-size:15px!important;line-height:1.85!important}
 }
+
+
+/* V8.19 — contraste des titres en mode sombre.
+   Corrige les titres qui conservaient les couleurs vert foncé du thème clair.
+   Les bandeaux à texte blanc et les couleurs d'état sont volontairement exclus. */
+html[data-theme="dark"] #gate :is(.public-copy h2,.public-section-heading h3,
+  .pub-explorer-top h2,.pub-section-title,.gate-card-intro h2,
+  .public-ai-head>div b,.public-feature b,.public-mini-card b,
+  .public-year-cards>button b,.pub-card-copy b,.pub-level-card b,
+  .pub-branch-card h3,.pub-status-panel h3){
+  color:#eaf5ee!important;
+}
+html[data-theme="dark"] #gate .public-copy h2 em{color:#7ef0ae!important}
+html[data-theme="dark"] #gate :is(.public-copy p,.public-feature small,
+  .public-mini-card small,.public-year-cards small,.pub-card-copy small,
+  .pub-explorer-top p,.gate-card-intro p){color:#b8cbbd!important}
+html[data-theme="dark"] #shell #app :is(.page-head h1,.panel-h,
+  [data-view="matieres"] #matieresBody .mat-t h2,
+  [data-view="matieres"] #matieresBody .mat-n,
+  [data-view="masar"] #masarBody .ms-next h3,
+  [data-view="masar"] #masarBody .ms-prog h3,
+  [data-view="profboard"] #profBody .prof-hero h2,
+  [data-view="parents"] #parentsBody .par-hero h2,
+  [data-view="parents"] #parentsBody #paContenu h2,
+  [data-view="profboard"] #profBody #prContenu h2,
+  [data-view="examen"] #examBody .exam-hero h2){
+  color:#eaf5ee!important;
+}
+html[data-theme="dark"] #shell #app :is(.mat-de,.mat-d,.ms-why,
+  .fiche-meta,.fiche-de){color:#b8cbbd!important}
+html[data-theme="dark"] #shell #app .exo-b b,
+html[data-theme="dark"] #shell #app .q-t,
+html[data-theme="dark"] #shell #app .exo-title{color:#eaf5ee!important}
