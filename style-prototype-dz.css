@@ -9403,3 +9403,37 @@ html[dir="rtl"] #shell #app :is(.welcome h1,.page-head h1,.subjects-intro h2){
 html[dir="rtl"] #shell #subjHome .subj-card .subj-s{
   font-weight:600!important;
 }
+
+
+/* V8.14 — typographie éditoriale arabe : hiérarchie par taille et espacement,
+   pas par graisse excessive. Couvre le portail public et l'espace connecté. */
+#gate :is(.public-copy h2,.public-section-heading h3,.pub-explorer-top h2,
+          .pub-section-title,.gate-card-intro h2){
+  font-family:'Tajawal','Cairo',Tahoma,sans-serif!important;
+  font-weight:600!important;
+  letter-spacing:normal!important;
+  line-height:1.65!important;
+}
+#gate .public-copy h2{font-weight:650!important}
+#gate :is(.public-mini-card b,.public-year-cards>button b,
+          .pub-subject-card h3,.pub-level-card b,.pub-branch-card h3,
+          .pub-detail-subject h3){
+  font-family:'Tajawal','Cairo',Tahoma,sans-serif!important;
+  font-weight:600!important;
+  letter-spacing:normal!important;
+  line-height:1.7!important;
+}
+html[dir="rtl"] #shell #app :is(h1,h2,h3,h4,.panel-h,
+  .subjects-intro h2,.subject-card h3,.page-head h1){
+  font-weight:600!important;
+  letter-spacing:normal!important;
+}
+html[dir="rtl"] #shell #app :is(.welcome h1,.page-head h1,.subjects-intro h2){
+  font-weight:650!important;
+}
+html[dir="rtl"] #shell #app :is(.home-side .panel-h,.view .panel-h){
+  font-weight:600!important;
+}
+html[dir="rtl"] #shell #subjHome .subj-card :is(.subj-n,.subj-l){
+  font-weight:600!important;
+}
