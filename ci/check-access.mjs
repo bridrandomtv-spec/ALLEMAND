@@ -342,30 +342,31 @@ const parentSql1c = fs.readFileSync('supabase/parent_child_security.sql', 'utf8'
 function parentFunctionSql(src, name) {
   const start = src.indexOf('CREATE OR REPLACE FUNCTION public.' + name);
   if (start < 0) return '';
-  const end = src.indexOf('$;', start);
+  const end = src.indexOf(String.fromCharCode(36, 36) + ';', start);
   return src.slice(start, end < 0 ? src.length : end + 3);
 }
 for (const [label, src] of [['plans.sql', sql5], ['parent_child_security.sql', parentSql1c]]) {
-  if (!/confirmed_at\\s+timestamptz/i.test(src)) fails.push('PARENT-1c : ' + label + ' sans colonne confirmed_at');
+  if (!/confirmed_at\s+timestamptz/i.test(src)) fails.push('PARENT-1c : ' + label + ' sans colonne confirmed_at');
 }
 for (const fn of ['my_linked_children', 'child_active_entitlement', 'agreement_accept_for', 'parent_child_progress_summary']) {
-  if (!/confirmed_at\\s+IS\\s+NOT\\s+NULL/i.test(parentFunctionSql(parentSql1c, fn)))
+  if (!/confirmed_at\s+IS\s+NOT\s+NULL/i.test(parentFunctionSql(parentSql1c, fn)))
     fails.push('PARENT-1c : ' + fn + ' ne filtre pas les liens non confirmés');
 }
-if (!/confirmed_at\\s+IS\\s+NOT\\s+NULL/i.test(parentFunctionSql(parentSql1c, 'request_child_link')))
+if (!/confirmed_at\s+IS\s+NOT\s+NULL/i.test(parentFunctionSql(parentSql1c, 'request_child_link')))
   fails.push('PARENT-1c : une ancienne ligne empêche encore de demander le rattachement');
 const acceptLinkSql = parentFunctionSql(parentSql1c, 'respond_parent_link_request');
-if (!/INSERT INTO public\\.child_links\\s*\\(parent_id,child_id,confirmed_at\\)/i.test(acceptLinkSql)
-    || !/DO UPDATE SET confirmed_at\\s*=\\s*EXCLUDED\\.confirmed_at/i.test(acceptLinkSql))
+if (!/INSERT INTO public\.child_links\s*\(parent_id,child_id,confirmed_at\)/i.test(acceptLinkSql)
+    || !/DO UPDATE SET confirmed_at\s*=\s*EXCLUDED\.confirmed_at/i.test(acceptLinkSql))
   fails.push('PARENT-1c : acceptation élève ne confirme pas aussi les anciennes lignes');
-if (!/confirmed_at\\s+IS\\s+NOT\\s+NULL/i.test(fs.readFileSync('supabase/parent_child_progress_summary.sql', 'utf8')))
+if (!/confirmed_at\s+IS\s+NOT\s+NULL/i.test(fs.readFileSync('supabase/parent_child_progress_summary.sql', 'utf8')))
   fails.push('PARENT-1c : script autonome du rapport parent accepte un lien non confirmé');
-if (!/REVOKE ALL ON FUNCTION public\\.link_child\\(text\\) FROM PUBLIC,\\s*anon,\\s*authenticated/i.test(sql5)
+if (!/REVOKE ALL ON FUNCTION public\.link_child\(text\) FROM PUBLIC,\s*anon,\s*authenticated/i.test(sql5)
     || !/use_parent_link_request_flow/i.test(sql5)
-    || /grant execute on function public\\.link_child\\(text\\) to authenticated/i.test(sql5))
+    || /grant execute on function public\.link_child\(text\) to authenticated/i.test(sql5))
   fails.push('PARENT-1c : ancien RPC link_child encore utilisable');
-const myChildrenFn = sb5.slice(sb5.indexOf('async function myChildren'), sb5.indexOf('async function myLinkedChildren'));
-if (!/myLinkedChildren\\(\\)/.test(myChildrenFn) || /from\\('child_links'\\)/.test(myChildrenFn))
+const sbConsent1c = fs.readFileSync('supabase/supabase.js', 'utf8');
+const myChildrenFn = sbConsent1c.slice(sbConsent1c.indexOf('async function myChildren'), sbConsent1c.indexOf('async function myLinkedChildren'));
+if (!/myLinkedChildren\(\)/.test(myChildrenFn) || /from\('child_links'\)/.test(myChildrenFn))
   fails.push('PARENT-1c : myChildren doit utiliser la RPC filtrée et non lire child_links directement');
 
 const adm5 = fs.readFileSync('admin.js', 'utf8');
