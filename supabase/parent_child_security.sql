@@ -5,6 +5,11 @@
 
 BEGIN;
 
+-- Un lien historique ne vaut jamais consentement : seule l'acceptation de l'élève
+-- renseigne confirmed_at. Aucun backfill automatique des anciennes lignes.
+ALTER TABLE public.child_links
+  ADD COLUMN IF NOT EXISTS confirmed_at timestamptz;
+
 -- Un rôle transmis par user_metadata n'est jamais une autorité.
 REVOKE ALL ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -130,7 +135,8 @@ BEGIN
   WHERE lower(u.email)=lower(btrim(p_email)) AND p.role='eleve' AND u.id<>auth.uid()
   LIMIT 1;
   IF v_child IS NOT NULL AND NOT EXISTS(
-    SELECT 1 FROM public.child_links WHERE parent_id=auth.uid() AND child_id=v_child
+    SELECT 1 FROM public.child_links
+    WHERE parent_id=auth.uid() AND child_id=v_child AND confirmed_at IS NOT NULL
   ) THEN
     INSERT INTO public.parent_link_requests(parent_id,child_id,status)
     VALUES(auth.uid(),v_child,'pending')
@@ -176,8 +182,10 @@ BEGIN
   IF v_parent_role IS DISTINCT FROM 'parent' OR v_child_role IS DISTINCT FROM 'eleve'
     THEN RAISE EXCEPTION 'roles_incompatibles'; END IF;
   IF p_accept THEN
-    INSERT INTO public.child_links(parent_id,child_id)
-    VALUES(v_req.parent_id,v_req.child_id) ON CONFLICT(parent_id,child_id) DO NOTHING;
+    INSERT INTO public.child_links(parent_id,child_id,confirmed_at)
+    VALUES(v_req.parent_id,v_req.child_id,now())
+    ON CONFLICT(parent_id,child_id)
+    DO UPDATE SET confirmed_at=EXCLUDED.confirmed_at;
   END IF;
   UPDATE public.parent_link_requests
   SET status=CASE WHEN p_accept THEN 'accepted' ELSE 'rejected' END,
@@ -226,6 +234,7 @@ AS $$
   SELECT l.child_id,COALESCE(p.pseudo,'') FROM public.child_links l
   LEFT JOIN public.profiles p ON p.id=l.child_id
   WHERE l.parent_id=auth.uid() AND auth.uid() IS NOT NULL
+    AND l.confirmed_at IS NOT NULL
     AND EXISTS(SELECT 1 FROM public.profiles me WHERE me.id=auth.uid() AND me.role='parent');
 $$;
 
@@ -234,7 +243,7 @@ RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path TO 'pg_cata
 AS $$
   SELECT auth.uid() IS NOT NULL AND $1=auth.uid()
     AND EXISTS(SELECT 1 FROM public.profiles me WHERE me.id=auth.uid() AND me.role='parent')
-    AND EXISTS(SELECT 1 FROM public.child_links l WHERE l.parent_id=$1 AND l.child_id=$2)
+    AND EXISTS(SELECT 1 FROM public.child_links l WHERE l.parent_id=$1 AND l.child_id=$2 AND l.confirmed_at IS NOT NULL)
     AND EXISTS(SELECT 1 FROM public.subscriptions s WHERE s.user_id=$2
       AND s.statut='actif' AND (s.fin IS NULL OR s.fin>now()));
 $$;
@@ -252,7 +261,7 @@ BEGIN
   IF NOT FOUND OR v_parent.role IS DISTINCT FROM 'parent' THEN RAISE EXCEPTION 'parent_role_required'; END IF;
   SELECT * INTO v_child FROM public.profiles WHERE id=child_uid;
   IF NOT FOUND OR v_child.role IS DISTINCT FROM 'eleve' THEN RAISE EXCEPTION 'compte_eleve_introuvable'; END IF;
-  IF NOT EXISTS(SELECT 1 FROM public.child_links WHERE parent_id=auth.uid() AND child_id=child_uid)
+  IF NOT EXISTS(SELECT 1 FROM public.child_links WHERE parent_id=auth.uid() AND child_id=child_uid AND confirmed_at IS NOT NULL)
     THEN RAISE EXCEPTION 'lien_parent_enfant_non_confirme'; END IF;
   IF NOT EXISTS(SELECT 1 FROM public.agreements WHERE id=aid AND actif)
     THEN RAISE EXCEPTION 'agreement_indisponible'; END IF;
@@ -325,7 +334,7 @@ BEGIN
   ) THEN RAISE EXCEPTION 'compte_eleve_introuvable'; END IF;
   IF NOT EXISTS (
     SELECT 1 FROM public.child_links
-    WHERE parent_id=auth.uid() AND child_id=p_child_id
+    WHERE parent_id=auth.uid() AND child_id=p_child_id AND confirmed_at IS NOT NULL
   ) THEN RAISE EXCEPTION 'lien_parent_enfant_non_confirme'; END IF;
   -- Même règle que ACCESS.canAccessParentChild : abonnement actif du parent OU de l'enfant.
   -- Le contrôle est serveur et ne dépend jamais du paywall JavaScript.
