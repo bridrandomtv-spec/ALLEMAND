@@ -254,3 +254,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Prévisualisation à utiliser après publication réussie : consulter le commentaire Cloudflare du commit 922fa60 ou la preview de branche. Ne pas réutiliser les anciennes URLs de commits précédents.
 - Validation utilisateur encore nécessaire : comparer le rendu réel en clair et sombre, ordinateur et mobile, particulièrement l'accueil connecté, les matières, le parcours, le tableau de bord professeur et لوحة التحكم. Corriger à partir des observations concrètes avant d'envisager la fusion.
 - État du PR au 3 novembre : ouverte, Ready for review (draft=false), non fusionnée ; dernier HEAD 922fa6025a4fc3630146ad632d8a24de58e99493. Aucun changement sur main, aucune nouvelle branche et aucun déploiement manuel.
+
+## 16. Refonte structurelle du bandeau d'accueil élève — 4 novembre 2026
+
+- Demande : rapprocher réellement l'application du prototype de référence, au-delà d'une harmonisation générale des couleurs.
+- Audit ciblé : le tableau de bord connecté utilisait encore un bandeau d'accueil bleu générique. Le rendu était produit par `renderWelcome()` dans `app.js`, avec des données de session, les séances accomplies et la prochaine séance.
+- Modification : reconstruction du bandeau en composition « hero » DZ (vert profond, accent rouge, emblème algérien, hiérarchie de titres, progression visuelle et actions pédagogiques).
+- Les actions existantes `data-go="seances"`, `data-go="biblio"` et `data-go="devoir"` sont conservées ; la progression est calculée à partir des séances réelles déjà chargées par l'application. Aucun indicateur fictif nouveau n'a été ajouté.
+- CSS dédié et responsive ajouté dans `style-prototype-dz.css`, sans bibliothèque externe. Référence CSS portée à `v=80` dans `index.html` et le précache du service worker ; version du cache portée à `dz-de-v3.140.0`.
+- Commits applicatifs : `2e91410` (app.js), `d651078` (CSS), `d8d46e3` (index), `de0afe7` (service worker).
+- Aucun changement aux routes, aux contrôles de rôle, à Auth, Supabase, RLS, schémas, migrations ou paiements.
+- Validation effectuée à ce stade : contrôle statique de l'équilibre des accolades CSS (0 différence). La CI GitHub doit encore confirmer la syntaxe et les tests du dépôt ; aucun test navigateur ni rendu visuel n'est revendiqué.
+- PR #17 reste ouverte et non fusionnée ; aucune modification de `main`.
