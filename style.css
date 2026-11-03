@@ -3684,8 +3684,9 @@ html,body{
 }
 @media(min-width:901px){
   #shell > header.topbar{
-    background:rgba(255,255,255,.98);
-    box-shadow:0 5px 18px rgba(10,40,24,.10);
+    /* Suit le thème actif : blanc en clair, vert profond en sombre. */
+    background:var(--p);
+    box-shadow:var(--sh);
   }
   #shell main#app > .view{
     font-size:17px!important;
