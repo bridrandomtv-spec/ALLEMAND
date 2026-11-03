@@ -364,6 +364,12 @@ if (!/REVOKE ALL ON FUNCTION public\.link_child\(text\) FROM PUBLIC,\s*anon,\s*a
     || !/use_parent_link_request_flow/i.test(sql5)
     || /grant execute on function public\.link_child\(text\) to authenticated/i.test(sql5))
   fails.push('PARENT-1c : ancien RPC link_child encore utilisable');
+if (/CREATE POLICY\s+"parent crée ses liens"|CREATE POLICY\s+"parent défait ses liens"/i.test(sql5)
+    || !/REVOKE ALL ON TABLE public\.child_links FROM PUBLIC,\s*anon,\s*authenticated/i.test(sql5)
+    || !/GRANT SELECT ON TABLE public\.child_links TO authenticated/i.test(sql5))
+  fails.push('PARENT-1c : plans.sql réactive un accès direct en écriture sur child_links');
+if (!/REVOKE ALL ON TABLE public\.child_links FROM PUBLIC,\s*anon,\s*authenticated/i.test(parentSql1c))
+  fails.push('PARENT-1c : script de sécurité ne révoque pas tous les droits directs sur child_links');
 const sbConsent1c = fs.readFileSync('supabase/supabase.js', 'utf8');
 const myChildrenFn = sbConsent1c.slice(sbConsent1c.indexOf('async function myChildren'), sbConsent1c.indexOf('async function myLinkedChildren'));
 if (!/myLinkedChildren\(\)/.test(myChildrenFn) || /from\('child_links'\)/.test(myChildrenFn))
