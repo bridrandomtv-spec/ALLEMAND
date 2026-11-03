@@ -110,13 +110,6 @@
       "icon": "🕌",
       "statut": "programme",
       "desc": "عقيدة، سيرة، فقه"
-    },
-    {
-      "id": "sport",
-      "ar": "التربية البدنية",
-      "icon": "🏃",
-      "statut": "programme",
-      "desc": "تربية بدنية ورياضية"
     }
   ],
   "par_niveau": {
@@ -130,8 +123,7 @@
         "svt",
         "histgeo",
         "islam",
-        "info",
-        "sport"
+        "info"
       ],
       "tc-sciences": [
         "arabe",
@@ -142,8 +134,7 @@
         "svt",
         "histgeo",
         "islam",
-        "info",
-        "sport"
+        "info"
       ]
     },
     "2AS": {
@@ -158,8 +149,7 @@
         "philo",
         "allemand",
         "islam",
-        "info",
-        "sport"
+        "info"
       ],
       "math": [
         "arabe",
@@ -171,8 +161,7 @@
         "philo",
         "allemand",
         "islam",
-        "info",
-        "sport"
+        "info"
       ],
       "tech": [
         "arabe",
@@ -184,8 +173,7 @@
         "philo",
         "allemand",
         "islam",
-        "info",
-        "sport"
+        "info"
       ],
       "gestion": [
         "arabe",
@@ -197,8 +185,7 @@
         "philo",
         "allemand",
         "islam",
-        "info",
-        "sport"
+        "info"
       ],
       "philo": [
         "arabe",
@@ -208,8 +195,7 @@
         "philo",
         "allemand",
         "islam",
-        "info",
-        "sport"
+        "info"
       ],
       "langues": [
         "arabe",
@@ -219,8 +205,7 @@
         "philo",
         "allemand",
         "islam",
-        "info",
-        "sport"
+        "info"
       ]
     },
     "3AS": {
@@ -234,8 +219,7 @@
         "histgeo",
         "philo",
         "allemand",
-        "islam",
-        "sport"
+        "islam"
       ],
       "math": [
         "arabe",
@@ -246,8 +230,7 @@
         "histgeo",
         "philo",
         "allemand",
-        "islam",
-        "sport"
+        "islam"
       ],
       "tech": [
         "arabe",
@@ -258,8 +241,7 @@
         "histgeo",
         "philo",
         "allemand",
-        "islam",
-        "sport"
+        "islam"
       ],
       "gestion": [
         "arabe",
@@ -270,8 +252,7 @@
         "histgeo",
         "philo",
         "allemand",
-        "islam",
-        "sport"
+        "islam"
       ],
       "philo": [
         "arabe",
@@ -280,8 +261,7 @@
         "histgeo",
         "philo",
         "allemand",
-        "islam",
-        "sport"
+        "islam"
       ],
       "langues": [
         "arabe",
@@ -290,8 +270,7 @@
         "histgeo",
         "philo",
         "allemand",
-        "islam",
-        "sport"
+        "islam"
       ]
     }
   },
