@@ -370,6 +370,9 @@ if (/CREATE POLICY\s+"parent crée ses liens"|CREATE POLICY\s+"parent défait se
   fails.push('PARENT-1c : plans.sql réactive un accès direct en écriture sur child_links');
 if (!/REVOKE ALL ON TABLE public\.child_links FROM PUBLIC,\s*anon,\s*authenticated/i.test(parentSql1c))
   fails.push('PARENT-1c : script de sécurité ne révoque pas tous les droits directs sur child_links');
+if (!/REVOKE ALL ON FUNCTION public\\.child_active_entitlement\\(uuid, uuid\\) FROM PUBLIC, anon, authenticated/i.test(sql5)
+    || !/REVOKE ALL ON FUNCTION public\\.my_linked_children\\(\\) FROM PUBLIC, anon, authenticated/i.test(sql5))
+  fails.push('PARENT-1c : plans.sql laisse les RPC de liaison exécutables par PUBLIC/anon');
 const sbConsent1c = fs.readFileSync('supabase/supabase.js', 'utf8');
 const myChildrenFn = sbConsent1c.slice(sbConsent1c.indexOf('async function myChildren'), sbConsent1c.indexOf('async function myLinkedChildren'));
 if (!/myLinkedChildren\(\)/.test(myChildrenFn) || /from\('child_links'\)/.test(myChildrenFn))
