@@ -89,7 +89,7 @@ revoke all on function public.link_child(text) from public, anon, authenticated;
 
 create or replace function public.my_linked_children()
 returns table (child_id uuid, pseudo text) language sql stable security definer
-set search_path = public as $$
+set search_path = pg_catalog, public as $function$
   select l.child_id, coalesce(p.pseudo, '')
   from public.child_links l
   left join public.profiles p on p.id = l.child_id
@@ -100,7 +100,7 @@ set search_path = public as $$
       select 1 from public.profiles me
       where me.id = auth.uid() and me.role = 'parent'
     );
-$;
+$function$;
 
 grant execute on function public.child_active_entitlement(uuid, uuid) to authenticated;
 grant execute on function public.my_linked_children() to authenticated;
