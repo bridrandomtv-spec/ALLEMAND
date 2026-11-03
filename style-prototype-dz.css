@@ -9730,3 +9730,90 @@ html[data-theme="dark"] #gate :is(p,small,.public-kicker,.gate-sub,
   .public-mini-card small,.public-year-cards small,.gate-card-intro p){
   color:#c3d5c9!important;
 }
+
+
+/* V8.19 — palette publique plus soutenue, sans modifier la structure
+   Portée limitée au portail visiteurs (#gate) : verts plus francs,
+   surfaces moins délavées et accents nationaux mieux visibles. */
+#gate .public-header{
+  background:rgba(232,242,235,.98)!important;
+  border-color:#a9cbb3!important;
+  box-shadow:0 8px 24px rgba(0,55,28,.14)!important;
+}
+#gate .public-header .public-nav button{
+  color:#17472c!important;
+}
+#gate .public-header .public-nav button:hover{
+  background:#cfe5d5!important;color:#004d28!important;
+}
+#gate .public-header .public-nav button.active,
+#gate .public-header .public-nav button.public-nav-cta{
+  color:#fff!important;
+  background:linear-gradient(135deg,#00582f,#00843d)!important;
+  box-shadow:0 5px 15px rgba(0,82,43,.24)!important;
+}
+#gate .public-landing{
+  background:
+    radial-gradient(ellipse at 7% 8%,rgba(0,98,51,.13),transparent 34%),
+    radial-gradient(ellipse at 95% 88%,rgba(210,16,52,.09),transparent 30%),
+    linear-gradient(125deg,#e4f0e7 0%,#edf5ef 58%,#f4edef 100%)!important;
+  border-color:#a9cbb3!important;
+  box-shadow:0 22px 52px rgba(0,65,31,.13),0 2px 8px rgba(0,55,28,.06)!important;
+}
+#gate .public-landing:before{
+  height:6px!important;
+  background:linear-gradient(90deg,#006233 0 33.33%,#fff 33.33% 66.66%,#d21034 66.66% 100%)!important;
+}
+#gate .public-kicker{
+  color:#00582f!important;
+  background:#cfe6d5!important;
+  border-color:#9fc9aa!important;
+}
+#gate .public-kicker i{
+  background:#006b38!important;
+  box-shadow:0 0 0 4px #b7d9c0!important;
+}
+#gate .public-copy h2{color:#073d25!important}
+#gate .public-copy h2 em{color:#006b38!important}
+#gate .public-copy p{color:#294b37!important}
+#gate .public-trust{color:#385b45!important}
+#gate .public-btn.primary{
+  background:linear-gradient(135deg,#00582f,#00843d)!important;
+  box-shadow:0 9px 21px rgba(0,82,43,.27)!important;
+}
+#gate .public-btn.secondary{
+  color:#00582f!important;border-color:#8fbd9d!important;background:#fff!important;
+}
+#gate .public-stat{
+  background:#dcebe0!important;border-color:#a5c9af!important;
+  box-shadow:0 5px 15px rgba(0,65,31,.07)!important;
+}
+#gate .public-stat b{color:#00582f!important}
+#gate .public-stat span{color:#315640!important}
+#gate .public-feature{
+  background:#e7f1e9!important;border-color:#a9cbb3!important;
+  box-shadow:0 6px 17px rgba(0,65,31,.07)!important;
+}
+#gate .public-feature b{color:#123f28!important}
+#gate .public-feature small{color:#3f604b!important}
+#gate .pf-icon{background:#cfe5d5!important;color:#00582f!important}
+#gate .public-mini-card{
+  background:linear-gradient(145deg,#e3efe6,#f3f7f4)!important;
+  border-color:#a9cbb3!important;
+}
+#gate .public-mini-card>span{background:#cfe5d5!important;color:#00582f!important}
+#gate .public-mini-card b{color:#123f28!important}
+#gate .public-mini-card small{color:#45634f!important}
+#gate .public-section-heading h3{color:#073d25!important}
+#gate .public-section-heading>div>span,
+#gate .public-section-heading>button{color:#006b38!important}
+#gate .public-explorer{
+  background:#eaf2ec!important;border-color:#a9cbb3!important;
+  box-shadow:0 14px 36px rgba(0,60,30,.12)!important;
+}
+#gate .pub-subject-card,
+#gate .pub-level-card,
+#gate .pub-branch-card{
+  border-color:#b0cdb8!important;
+}
+#gate .pub-subject-card.ready{background:linear-gradient(145deg,#dcefe1,#f7fbf8)!important}
