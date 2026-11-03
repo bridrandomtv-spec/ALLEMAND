@@ -9951,3 +9951,395 @@ html[data-theme="dark"] #gate .pub-subject-card.ready{
 html[data-theme="dark"] #gate .public-btn.secondary{
   color:#baf2cc!important;background:#193324!important;border-color:#4b805e!important;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   V9.0 — REFONTE ESTHÉTIQUE GLOBALE · IDENTITÉ DZ PREMIUM
+   Direction artistique : vert national profond, blanc net, rouge précis.
+   Couche CSS additive : structure, routes, composants JS et données inchangés.
+   Couvre l'application connectée (portail public conservé séparément).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root{
+  --dz-forest:#004d28;
+  --dz-green:#006233;
+  --dz-green-bright:#00843d;
+  --dz-green-soft:#e8f3eb;
+  --dz-red:#d21034;
+  --dz-red-soft:#fff0f2;
+  --dz-surface:#ffffff;
+  --dz-canvas:#f3f7f4;
+  --dz-ink:#17271d;
+  --dz-muted:#637568;
+  --dz-border:#dce7df;
+  --dz-shadow:0 10px 30px rgba(13,55,31,.075);
+  --dz-shadow-hover:0 18px 38px rgba(0,75,38,.14);
+  --dz-radius:20px;
+  --dz-radius-sm:13px;
+}
+
+/* Fond applicatif : espace clair, calme, plus éditorial */
+html[data-theme="light"] body{
+  background-color:var(--dz-canvas);
+  background-image:
+    radial-gradient(900px 520px at 100% -18%,rgba(0,98,51,.085),transparent 62%),
+    radial-gradient(680px 380px at -8% 100%,rgba(210,16,52,.045),transparent 65%);
+  color:var(--dz-ink);
+}
+html[data-theme="light"] #shell{
+  background:transparent;
+  color:var(--dz-ink);
+}
+html[data-theme="light"] #shell main#app{
+  background:transparent;
+}
+html[data-theme="light"] #shell main#app > .view{
+  width:min(100% - 28px,1500px);
+  margin-inline:auto;
+  padding-block:24px 48px;
+}
+
+/* Barre de marque : vert national soutenu, texte blanc bien contrasté */
+#shell > header.topbar,
+html[data-theme="light"] #shell > header.topbar{
+  background:linear-gradient(112deg,#003f22 0%,#006233 58%,#087b40 100%)!important;
+  color:#fff!important;
+  border:0!important;
+  border-bottom:3px solid #d21034!important;
+  box-shadow:0 8px 24px rgba(0,52,27,.22)!important;
+}
+#shell .topbar-in,
+#shell .topbar-in :is(a,button,span,b,strong,p,small),
+#shell .brand,
+#shell .brand-t,
+#shell .brand-s{
+  color:#fff;
+}
+#shell .brand-crest{
+  filter:drop-shadow(0 3px 7px rgba(0,0,0,.24));
+}
+#shell .topbar .icon-btn,
+#shell .topbar .tb-bell,
+#shell .topbar .burger{
+  color:#fff!important;
+  background:rgba(255,255,255,.12)!important;
+  border:1px solid rgba(255,255,255,.24)!important;
+  border-radius:12px!important;
+}
+#shell .topbar .icon-btn:hover,
+#shell .topbar .tb-bell:hover,
+#shell .topbar .burger:hover{
+  background:rgba(255,255,255,.22)!important;
+}
+#shell .topbar .userchip,
+#shell #userChip.userchip{
+  color:#004d28!important;
+  background:#fff!important;
+  border:1px solid rgba(255,255,255,.7)!important;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+#shell .topbar .tb-badge{background:#d21034!important;color:#fff!important}
+
+/* Navigation existante : repères nets et état actif très visible */
+#shell #tabs.tabs,
+#shell #tabs,
+html[data-theme="light"] #shell #tabs.tabs{
+  background:#fff!important;
+  border:1px solid #dce7df!important;
+  border-radius:18px!important;
+  box-shadow:0 5px 18px rgba(0,55,28,.065)!important;
+}
+#shell #tabs .tab,
+#shell #tabs .cat-head{
+  border-radius:12px!important;
+  color:#52685a;
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+#shell #tabs .tab:hover,
+#shell #tabs .cat-head:hover{
+  color:#004d28!important;
+  background:#eaf4ed!important;
+}
+#shell #tabs .tab.on,
+#shell #tabs .tab.solo.on,
+#shell #tabs .cat-head.open{
+  color:#fff!important;
+  background:linear-gradient(115deg,#00582f,#00843d)!important;
+  border-color:transparent!important;
+  box-shadow:0 6px 15px rgba(0,98,51,.2)!important;
+}
+#shell #tabs .tab.on *,
+#shell #tabs .cat-head.open *{color:#fff!important}
+#shell #tabs .tab.sub{border-radius:10px!important}
+
+/* Titres de page : hiérarchie typographique claire, repère tricolore */
+#shell main#app > .view > .page-head,
+#shell #app .view .page-head{
+  position:relative;
+  padding:5px 18px 15px;
+  margin:0 0 20px;
+  border-bottom:1px solid #dce7df;
+}
+#shell #app .view .page-head:before{
+  content:"";
+  position:absolute;
+  inset-inline-start:0;
+  top:5px;
+  bottom:15px;
+  width:4px;
+  border-radius:8px;
+  background:linear-gradient(180deg,#006233 0 48%,#d21034 48% 100%);
+}
+html[data-theme="light"] #shell #app .view .page-head h1{
+  color:#123d27!important;
+  font-family:'Cairo','Tajawal',sans-serif;
+  font-weight:900;
+  letter-spacing:-.025em;
+  line-height:1.45;
+}
+html[data-theme="light"] #shell #app .view .page-head p{
+  color:#637568!important;
+  font-size:14px!important;
+}
+
+/* Cartes et panneaux : surfaces blanches, bordures fines, relief maîtrisé */
+html[data-theme="light"] #shell #app :is(.card,.panel,.profc,.fiche,.mini,.stat,.kpi,.off-card,.mt-fiche,.mk-c,.bl-p,.rs-card,.cd-box,.sujet-box,.info-i){
+  color:#17271d;
+  background:#fff;
+  border:1px solid #dce7df;
+  border-radius:var(--dz-radius);
+  box-shadow:var(--dz-shadow);
+}
+html[data-theme="light"] #shell #app :is(.card,.panel,.profc,.fiche,.mini,.stat,.kpi):hover{
+  border-color:#b8d3c0;
+}
+html[data-theme="light"] #shell #app :is(.card h1,.card h2,.card h3,.panel h1,.panel h2,.panel h3,.panel-h,.fiche-t){
+  color:#123d27;
+  font-weight:850;
+}
+html[data-theme="light"] #shell #app :is(.card p,.panel p,.card li,.panel li,.muted,.description,.desc,.meta,.sub){
+  color:#5c7062;
+}
+#shell #app .panel-h{
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(0,98,51,.10);
+  margin-bottom:12px;
+}
+
+/* Accueil : bannière principale avec présence visuelle affirmée */
+#shell #app .home-main .welcome{
+  position:relative;
+  overflow:hidden;
+  border:0!important;
+  border-radius:26px!important;
+  background:
+    radial-gradient(440px 240px at 8% 110%,rgba(255,255,255,.12),transparent 68%),
+    radial-gradient(360px 220px at 92% -20%,rgba(210,16,52,.28),transparent 70%),
+    linear-gradient(118deg,#003f22 0%,#006233 55%,#00843d 100%)!important;
+  color:#fff!important;
+  box-shadow:0 20px 42px rgba(0,77,40,.24)!important;
+}
+#shell #app .home-main .welcome:before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:5px;
+  background:linear-gradient(90deg,#006233 0 33.33%,#fff 33.33% 66.66%,#d21034 66.66% 100%);
+}
+#shell #app .home-main .welcome :is(h1,h2,h3,p,span,strong,b,small){
+  color:#fff!important;
+}
+#shell #app .home-main .welcome .btn-p{
+  color:#004d28!important;
+  background:#fff!important;
+  border:1px solid #fff!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.14);
+}
+#shell #app .home-main .welcome .btn-o,
+#shell #app .home-main .welcome .btn-g{
+  color:#fff!important;
+  background:rgba(255,255,255,.12)!important;
+  border:1px solid rgba(255,255,255,.4)!important;
+}
+
+/* Boutons : formes cohérentes, vert primaire et rouge réservé aux actions fortes */
+#shell #app :is(.btn,.btn-p,.btn-g,.btn-o,.btn-w,.btn-r,.btn-sm,button.primary,.btn-primary){
+  min-height:38px;
+  border-radius:12px;
+  font-weight:800;
+  transition:transform .16s ease,box-shadow .18s ease,filter .18s ease;
+}
+#shell #app :is(.btn-p,.btn-w,button.primary,.btn-primary){
+  color:#fff!important;
+  background:linear-gradient(125deg,#00582f,#00843d)!important;
+  border:1px solid #006233!important;
+  box-shadow:0 7px 17px rgba(0,98,51,.18);
+}
+#shell #app :is(.btn-r,.btn-danger){
+  color:#fff!important;
+  background:linear-gradient(125deg,#a60d2a,#d21034)!important;
+  border:1px solid #a60d2a!important;
+}
+#shell #app :is(.btn-o,.btn-g){
+  color:#00582f!important;
+  background:#edf6ef!important;
+  border:1px solid #c8dfce!important;
+}
+#shell #app :is(.btn,.btn-p,.btn-g,.btn-o,.btn-w,.btn-r,.btn-sm,button.primary,.btn-primary):not(:disabled):hover{
+  transform:translateY(-2px);
+  filter:saturate(1.08);
+  box-shadow:0 11px 22px rgba(0,70,35,.16);
+}
+#shell #app button:disabled{opacity:.55;cursor:not-allowed}
+
+/* Formulaires : champs confortables et focus accessible */
+html[data-theme="light"] #shell #app :is(input,select,textarea){
+  color:#17271d;
+  background:#fbfdfb;
+  border:1px solid #cbdccf;
+  border-radius:11px;
+}
+html[data-theme="light"] #shell #app :is(input,select,textarea):focus{
+  border-color:#00843d;
+  box-shadow:0 0 0 3px rgba(0,132,61,.13);
+  outline:none;
+}
+html[data-theme="light"] #shell #app :is(input,select,textarea)::placeholder{color:#829187}
+
+/* Tableaux : en-têtes verts et lignes aérées */
+html[data-theme="light"] #shell #app table :is(th,td){
+  border-color:#e2ebe4;
+}
+html[data-theme="light"] #shell #app table thead th{
+  color:#fff!important;
+  background:#006233!important;
+  font-weight:800;
+}
+html[data-theme="light"] #shell #app table tbody tr:nth-child(even){background:#f6faf7}
+html[data-theme="light"] #shell #app table tbody tr:hover{background:#eaf4ed}
+
+/* Cartes de cours et parcours */
+html[data-theme="light"] #shell #app :is(.seance,.fiche,.exo-i,.ex-i,.gram,.reading,.corrige-box){
+  border-radius:16px;
+}
+html[data-theme="light"] #shell #app .seance{
+  background:#fff;
+  border:1px solid #dce7df;
+  box-shadow:0 6px 18px rgba(13,55,31,.055);
+}
+html[data-theme="light"] #shell #app .seance:hover{
+  border-color:#7db391;
+  box-shadow:0 12px 25px rgba(0,98,51,.11);
+}
+html[data-theme="light"] #shell #app :is(.gram,.reading,.corrige-box){
+  background:#f5faf6;
+}
+
+/* Dashboard professeur : hero plus fort, indicateurs et listes mieux structurés */
+#shell #app [data-view="profboard"] #profBody .prof-hero{
+  border-radius:24px!important;
+  box-shadow:0 18px 38px rgba(0,77,40,.2);
+  overflow:hidden;
+}
+#shell #app [data-view="profboard"] #profBody .prof-hero h2{
+  font-weight:900;
+  letter-spacing:-.02em;
+}
+html[data-theme="light"] #shell #app [data-view="profboard"] #profBody :is(.prof-hero,.prof-kpi,.prof-stat){
+  border-radius:18px;
+}
+
+/* Focus clavier : contour visible sans déformer les contrôles */
+#shell #app :is(button,a,input,select,textarea,[tabindex]):focus-visible,
+#shell #tabs :is(button,a,[tabindex]):focus-visible{
+  outline:3px solid rgba(210,16,52,.62);
+  outline-offset:2px;
+}
+
+/* Transitions sobres : respecter la préférence système */
+@media(prefers-reduced-motion:reduce){
+  #shell #app *,#shell #tabs *{
+    scroll-behavior:auto!important;
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+
+/* Mode sombre : même identité, surfaces profondes, contrastes sûrs */
+html[data-theme="dark"]{
+  --dz-canvas:#08170f;
+  --dz-surface:#14271b;
+  --dz-ink:#eaf5ee;
+  --dz-muted:#b8cbbd;
+  --dz-border:#294b37;
+}
+html[data-theme="dark"] body,
+html[data-theme="dark"] #shell,
+html[data-theme="dark"] #shell main#app{
+  background-color:#08170f!important;
+  color:#eaf5ee!important;
+}
+html[data-theme="dark"] #shell > header.topbar{
+  background:linear-gradient(112deg,#002b18 0%,#004d28 58%,#006b38 100%)!important;
+  border-bottom-color:#d21034!important;
+}
+html[data-theme="dark"] #shell #tabs.tabs,
+html[data-theme="dark"] #shell #tabs{
+  background:#102319!important;
+  border-color:#294b37!important;
+}
+html[data-theme="dark"] #shell #tabs .tab,
+html[data-theme="dark"] #shell #tabs .cat-head{color:#c3d9ca!important}
+html[data-theme="dark"] #shell #tabs .tab.on,
+html[data-theme="dark"] #shell #tabs .cat-head.open{
+  color:#fff!important;
+  background:linear-gradient(115deg,#006233,#00843d)!important;
+}
+html[data-theme="dark"] #shell #app :is(.card,.panel,.profc,.fiche,.mini,.stat,.kpi,.off-card,.mt-fiche,.mk-c,.bl-p,.rs-card,.cd-box,.sujet-box,.info-i){
+  color:#eaf5ee!important;
+  background:#14271b!important;
+  border-color:#294b37!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.2)!important;
+}
+html[data-theme="dark"] #shell #app :is(.card h1,.card h2,.card h3,.panel h1,.panel h2,.panel h3,.panel-h,.fiche-t,.page-head h1){
+  color:#eaf5ee!important;
+}
+html[data-theme="dark"] #shell #app :is(.card p,.panel p,.card li,.panel li,.muted,.description,.desc,.meta,.sub,.page-head p){
+  color:#c3d9ca!important;
+}
+html[data-theme="dark"] #shell #app :is(input,select,textarea){
+  color:#eaf5ee!important;
+  background:#0d2015!important;
+  border-color:#315640!important;
+}
+html[data-theme="dark"] #shell #app table thead th{
+  color:#fff!important;
+  background:#00582f!important;
+}
+html[data-theme="dark"] #shell #app table tbody tr:nth-child(even){background:#102319}
+html[data-theme="dark"] #shell #app table tbody tr:hover{background:#1a3826}
+html[data-theme="dark"] #shell #app :is(.gram,.reading,.corrige-box,.seance){
+  color:#eaf5ee!important;
+  background:#102319!important;
+  border-color:#294b37!important;
+}
+html[data-theme="dark"] #shell #app .home-main .welcome{
+  background:
+    radial-gradient(440px 240px at 8% 110%,rgba(255,255,255,.09),transparent 68%),
+    radial-gradient(360px 220px at 92% -20%,rgba(210,16,52,.22),transparent 70%),
+    linear-gradient(118deg,#002b18 0%,#004d28 55%,#006b38 100%)!important;
+}
+html[data-theme="dark"] #shell #app .home-main .welcome *{color:#fff!important}
+
+@media(max-width:760px){
+  html[data-theme="light"] #shell main#app > .view{
+    width:min(100% - 20px,100%);
+    padding-block:16px 32px;
+  }
+  #shell #app .view .page-head{padding-inline:14px}
+  html[data-theme="light"] #shell #app :is(.card,.panel,.profc,.fiche){
+    border-radius:16px;
+  }
+  #shell #app .home-main .welcome{border-radius:20px!important}
+}
