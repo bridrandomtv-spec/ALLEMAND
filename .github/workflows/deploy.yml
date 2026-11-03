@@ -41,7 +41,7 @@ jobs:
                    classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
                    reservation.js journee.js prof.js parents.js library.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
-                   ci/check-unites.mjs matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js voix.js tour.js public-portal.js; do
+                   ci/check-unites.mjs ci/check-public-portal.mjs matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js voix.js tour.js public-portal.js; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -1109,6 +1109,9 @@ jobs:
           node --version
           node ci/check-unites.mjs
 
+      - name: Vérifier le portail public (catalogue et inscription)
+        run: |
+          node ci/check-public-portal.mjs
       - name: Garde d'accès + TEST DE FUITE (access.js / config)
         run: |
           node ci/check-access.mjs
