@@ -138,3 +138,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Le commit `68e4990` ne contient qu'une mise à jour documentaire ; la preview Cloudflare confirmée pointe sur `533921d`, qui contient les derniers changements applicatifs et les tests CI, pas le commit documentaire.
 - Aucun test interactif dans un navigateur n'a été exécuté par l'assistant. L'essai de bout en bout inscription → connexion → espace utilisateur reste donc à valider manuellement.
 - PR #17 toujours ouverte, brouillon, non fusionnée ; `main` inchangée.
+
+
+### État confirmé après le contrôle CI — 3 novembre 2026, 22 h (heure d'Algérie)
+
+- HEAD actuel de la branche : `84f259b4cb1b45b010495598bc0d2113d3367159`.
+- GitHub Actions #1819 (run `41667815989`) : **success** sur ce HEAD.
+- Détail du job « Validation structurelle & pédagogique » : toutes les étapes sont en succès, notamment « Vérifier le portail public (catalogue et inscription) », la garde d'accès, la matrice des parcours et les tests de régression.
+- Métadonnées GitHub de la PR #17 relues : `state=open`, `draft=true`, `merged=false`, `mergeable=true`. Le signal de fusion est donc actuellement favorable, mais la PR reste volontairement en brouillon.
+- La preview Cloudflare de branche confirmée par le bot correspond toujours au commit applicatif `533921d` : https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev ; build et déploiement annoncés réussis. Le HEAD `84f259b` est documentaire et ne change pas l'application.
+- Aucune navigation interactive complète n'a pu être exécutée depuis cet environnement. Le test réel inscription → création du compte → connexion → espace utilisateur et le contrôle visuel mobile/ordinateur ne sont donc pas revendiqués.
+- Aucun fichier applicatif modifié pendant ce contrôle ; aucune fusion, aucun changement sur `main`, aucun déploiement de production.
+- Prochaine décision : validation manuelle du parcours par l'utilisateur sur la preview. Après confirmation, demander séparément l'autorisation de sortir la PR du brouillon, puis l'autorisation de fusionner.
