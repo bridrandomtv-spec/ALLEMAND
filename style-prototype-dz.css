@@ -9494,3 +9494,81 @@ html[dir="rtl"] #shell #subjHome .subj-card :is(.subj-n,.subj-l){
   font-weight:500!important;
   letter-spacing:normal!important;
 }
+
+
+/* V8.17 — nouvelle direction typographique du portail public.
+   Titres Reem Kufi Regular ; lecture et interface Tajawal Regular.
+   Portée strictement limitée à #gate. */
+#gate .public-header,
+#gate .public-landing,
+#gate .public-explorer,
+#gate .gate-card{
+  font-family:'Tajawal','Cairo',Tahoma,sans-serif!important;
+  font-synthesis:none;
+  text-rendering:optimizeLegibility;
+}
+#gate .public-header .gate-title,
+#gate .public-copy h2,
+#gate .public-section-heading h3,
+#gate .pub-explorer-top h2,
+#gate .pub-section-title,
+#gate .gate-card-intro h2{
+  font-family:'Reem Kufi','Tajawal','Cairo',Tahoma,sans-serif!important;
+  font-weight:400!important;
+  letter-spacing:normal!important;
+  line-height:1.7!important;
+  font-synthesis:none;
+}
+#gate .public-copy h2{
+  max-width:18ch!important;
+  font-size:clamp(31px,3.9vw,49px)!important;
+  margin-block:17px 14px!important;
+}
+#gate .public-copy h2 em{
+  font-family:'Reem Kufi','Tajawal','Cairo',Tahoma,sans-serif!important;
+  font-style:normal!important;
+  font-weight:400!important;
+}
+#gate .public-copy p,
+#gate .public-ai-note,
+#gate .public-ai-answer p,
+#gate .public-feature small,
+#gate .public-mini-card small,
+#gate .public-year-cards small,
+#gate .gate-card-intro p{
+  font-family:'Tajawal','Cairo',Tahoma,sans-serif!important;
+  font-weight:400!important;
+  line-height:2!important;
+}
+#gate .public-header .gate-sub,
+#gate .public-header .public-nav button,
+#gate .public-kicker,
+#gate .public-btn,
+#gate .public-ai-head>div b,
+#gate .public-ai-question b,
+#gate .public-ai-cta,
+#gate .public-feature b,
+#gate .public-mini-card b,
+#gate .public-year-cards b,
+#gate .public-section-heading>div>span,
+#gate .public-section-heading>button,
+#gate .gate-card-intro>span,
+#gate .pub-subject-card h3,
+#gate .pub-level-card b,
+#gate .pub-branch-card h3,
+#gate .pub-detail-subject h3{
+  font-family:'Tajawal','Cairo',Tahoma,sans-serif!important;
+  font-weight:500!important;
+  letter-spacing:normal!important;
+}
+#gate .public-section-heading h3{
+  font-size:clamp(20px,2.2vw,25px)!important;
+}
+#gate .public-copy h2 em:after{height:2px!important;opacity:.72!important}
+@media(max-width:700px){
+  #gate .public-copy h2{
+    font-size:clamp(28px,7vw,36px)!important;
+    line-height:1.7!important;
+  }
+  #gate .public-section-heading h3{font-size:20px!important}
+}
