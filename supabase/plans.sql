@@ -57,7 +57,7 @@ grant select on table public.child_links to authenticated;
 -- ── 3) Décision C : rapport de BASE d'un enfant = enfant ACTIF **ou** parent ACTIF ──
 create or replace function public.child_active_entitlement(parent_id uuid, child_id uuid)
 returns boolean language sql stable security definer
-set search_path = pg_catalog, public as $
+set search_path = pg_catalog, public as $function$
   select auth.uid() is not null
     and $1 = auth.uid()
     and exists (
@@ -74,17 +74,17 @@ set search_path = pg_catalog, public as $
       where s.user_id = $2 and s.statut = 'actif'
         and (s.fin is null or s.fin > now())
     );
-$;
+$function$;
 
 -- ── 4) Self-service parent : lier par email, lister, délier ──
 -- Compatibilité de schéma uniquement : l'ancien lien direct ne peut plus
 -- créer de relation. Le seul parcours autorisé est demande parent + accord élève.
 create or replace function public.link_child(p_email text)
 returns uuid language plpgsql security definer
-set search_path = pg_catalog, public as $
+set search_path = pg_catalog, public as $function$
 begin
   raise exception 'use_parent_link_request_flow';
-end; $;
+end; $function$;
 revoke all on function public.link_child(text) from public, anon, authenticated;
 
 create or replace function public.my_linked_children()
