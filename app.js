@@ -247,6 +247,47 @@ const UNITES = [
 
 ];
 
+/* CONTENT-1 : réconcilie le registre avec les modules chargés après le démarrage.
+   Les identifiants visibles 10→19 restent stables ; les noms de fichiers protégés
+   (UNITE10→UNITE16) sont volontairement mappés sur les entrées 13→19. */
+function hydrateUnitRegistry(){
+  var a = window.UNITES_3AS_A;
+  if(a && Array.isArray(a)){
+    [10,11,12].forEach(function(n,i){
+      var u = UNITES.find(function(x){ return x.n === n; });
+      var src = a[i];
+      if(u && src){
+        u.seances = Array.isArray(src.seances) ? src.seances : [];
+        u.devoir = src.devoir || null;
+        u.duree = src.duree_totale || (src.meta && src.meta.duree_totale) || 360;
+      }
+    });
+  }
+  [[13,10],[14,11],[15,12],[16,13],[17,14],[18,15],[19,16]].forEach(function(pair){
+    var u = UNITES.find(function(x){ return x.n === pair[0]; });
+    var src = window['UNITE' + pair[1]];
+    if(u && src){
+      u.seances = Array.isArray(src.seances) ? src.seances : [];
+      u.devoir = src.devoir || null;
+      u.duree = (src.meta && src.meta.duree_totale) || 360;
+    }
+  });
+  var active = UNITES.find(function(x){ return x.n === currentUnite; });
+  if(active && active.seances && active.seances.length){
+    SEANCES = active.seances;
+    DEVOIR = active.devoir || DEVOIR_U1;
+  }
+  var host = $('.unite-sel');
+  if(host){
+    var tmp = document.createElement('div');
+    tmp.innerHTML = uniteSelector();
+    var replacement = tmp.querySelector('.unite-sel');
+    if(replacement) host.replaceWith(replacement);
+  }
+  try{ renderSeances(); paintUniteHead(); renderStats(); }catch(e){}
+}
+document.addEventListener('DOMContentLoaded', hydrateUnitRegistry);
+window.addEventListener('content1:loaded', hydrateUnitRegistry);
 
 let SEANCES = UNITES[0].seances;
 let DEVOIR   = UNITES[0].devoir;
