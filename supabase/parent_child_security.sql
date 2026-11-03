@@ -278,8 +278,7 @@ DROP POLICY IF EXISTS "parent défait ses liens" ON public.child_links;
 DROP POLICY IF EXISTS child_links_read_participants ON public.child_links;
 CREATE POLICY child_links_read_participants ON public.child_links FOR SELECT TO authenticated
 USING(auth.uid()=parent_id OR auth.uid()=child_id OR public.is_admin());
-REVOKE ALL ON TABLE public.child_links FROM anon;
-REVOKE INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER ON TABLE public.child_links FROM authenticated;
+REVOKE ALL ON TABLE public.child_links FROM PUBLIC,anon,authenticated;
 GRANT SELECT ON TABLE public.child_links TO authenticated;
 
 REVOKE ALL ON FUNCTION public.request_child_link(text) FROM PUBLIC,anon,authenticated;
