@@ -10343,3 +10343,136 @@ html[data-theme="dark"] #shell #app .home-main .welcome *{color:#fff!important}
   }
   #shell #app .home-main .welcome{border-radius:20px!important}
 }
+
+/* ══ PROTOTYPE TRANSFER — tableau de bord élève : composition du hero ══
+   Structure dédiée alimentée par les données de session et de progression réelles. */
+#shell #app .home-main .welcome{
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible;
+}
+#shell #app .dz-student-hero{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 190px;
+  gap:24px;
+  align-items:center;
+  min-height:290px;
+  padding:clamp(24px,4vw,42px);
+  margin-bottom:16px;
+  overflow:hidden;
+  isolation:isolate;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.14);
+  border-inline-start:6px solid #d21034;
+  border-radius:26px;
+  background:
+    radial-gradient(430px 280px at 4% 110%,rgba(255,255,255,.13),transparent 70%),
+    radial-gradient(300px 230px at 92% -20%,rgba(210,16,52,.34),transparent 72%),
+    linear-gradient(118deg,#003b21 0%,#006233 54%,#00843d 100%);
+  box-shadow:0 20px 44px rgba(0,68,34,.22);
+}
+#shell #app .dz-student-hero::before,
+#shell #app .dz-student-hero::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;
+  pointer-events:none;
+}
+#shell #app .dz-student-hero::before{width:310px;height:310px;inset-inline-end:-130px;top:-175px}
+#shell #app .dz-student-hero::after{width:190px;height:190px;inset-inline-start:-95px;bottom:-125px}
+#shell #app .dz-hero-copy{min-width:0}
+#shell #app .dz-hero-kicker{
+  display:inline-flex;align-items:center;gap:9px;
+  margin-bottom:14px;color:#e4f4e9;font-size:12px;font-weight:800;letter-spacing:.02em
+}
+#shell #app .dz-hero-kicker i{
+  width:8px;height:8px;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 5px rgba(255,255,255,.13)
+}
+#shell #app .dz-student-hero h1{
+  margin:0 0 9px;color:#fff!important;
+  font-family:var(--ff-ar-display,'Cairo',sans-serif);
+  font-size:clamp(25px,3.5vw,38px);font-weight:900;line-height:1.45
+}
+#shell #app .dz-student-hero p{
+  max-width:690px;margin:0 0 20px;color:#e5f2e9!important;
+  font-size:14px;line-height:1.95
+}
+#shell #app .dz-student-hero p b{color:#fff!important}
+#shell #app .dz-hero-de{display:block;margin-top:5px;color:#c4e3ce!important;font-size:12px}
+#shell #app .dz-hero-actions{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:21px}
+#shell #app .dz-student-hero .dz-hero-actions .btn{min-height:43px;padding-inline:17px}
+#shell #app .dz-student-hero .dz-hero-actions .btn-p{
+  color:#004d28!important;background:#fff!important;border:1px solid #fff!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.14)
+}
+#shell #app .dz-student-hero .dz-hero-actions .btn-o{
+  color:#fff!important;background:rgba(255,255,255,.10)!important;
+  border:1px solid rgba(255,255,255,.38)!important
+}
+#shell #app .dz-student-hero .dz-hero-actions .btn-outline-light{
+  color:#fff!important;background:rgba(210,16,52,.18)!important;
+  border:1px solid rgba(255,255,255,.34)!important
+}
+#shell #app .dz-hero-progress{max-width:620px}
+#shell #app .dz-hero-progress-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  margin-bottom:8px;color:#fff;font-size:12px;font-weight:800
+}
+#shell #app .dz-hero-progress-head b{
+  min-width:44px;padding:3px 9px;border-radius:99px;
+  color:#004d28;background:#fff;text-align:center;font:800 12px var(--ff-de,Arial)
+}
+#shell #app .dz-hero-track{
+  height:9px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.2)
+}
+#shell #app .dz-hero-track i{
+  display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#fff,#d9f0df);
+  box-shadow:0 0 12px rgba(255,255,255,.28)
+}
+#shell #app .dz-hero-progress small{display:block;margin-top:7px;color:#d6eadc;font-size:11px}
+#shell #app .dz-hero-emblem{
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  justify-self:center;width:158px;height:158px;border:1px solid rgba(255,255,255,.38);
+  border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),rgba(255,255,255,.045) 68%);
+  box-shadow:0 0 0 13px rgba(255,255,255,.045),0 0 0 27px rgba(255,255,255,.025)
+}
+#shell #app .dz-hero-emblem span{font-size:48px;line-height:1.2}
+#shell #app .dz-hero-emblem b{margin-top:6px;color:#fff;font-size:14px;line-height:1.5;text-align:center}
+#shell #app .dz-hero-emblem i{
+  position:absolute;width:10px;height:10px;inset-inline-end:12px;top:19px;
+  border-radius:50%;background:#d21034;box-shadow:0 0 0 5px rgba(210,16,52,.17)
+}
+#shell #app .home-main .welcome-meta{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+#shell #app .home-main .welcome-meta .sec-pill{
+  padding:7px 11px;border:1px solid var(--b);border-radius:12px;
+  background:var(--p);box-shadow:0 4px 12px rgba(0,55,28,.045)
+}
+@media(max-width:760px){
+  #shell #app .dz-student-hero{
+    grid-template-columns:1fr;gap:18px;min-height:0;
+    padding:24px 19px;border-radius:21px
+  }
+  #shell #app .dz-hero-emblem{
+    grid-row:1;width:104px;height:104px;justify-self:start;
+    margin-inline-start:6px;box-shadow:0 0 0 8px rgba(255,255,255,.045)
+  }
+  #shell #app .dz-hero-emblem span{font-size:34px}
+  #shell #app .dz-hero-emblem b{font-size:11px;margin-top:2px}
+  #shell #app .dz-hero-emblem i{width:8px;height:8px;inset-inline-end:7px;top:12px}
+  #shell #app .dz-student-hero h1{font-size:25px}
+  #shell #app .dz-student-hero p{font-size:13px}
+  #shell #app .dz-hero-actions{display:grid;grid-template-columns:1fr 1fr}
+  #shell #app .dz-hero-actions .btn:first-child{grid-column:1/-1}
+  #shell #app .dz-student-hero .dz-hero-actions .btn{padding-inline:9px;font-size:12px}
+}
+@media(prefers-reduced-motion:no-preference){
+  #shell #app .dz-hero-emblem{animation:dz-emblem-float 5s ease-in-out infinite}
+  @keyframes dz-emblem-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+}
