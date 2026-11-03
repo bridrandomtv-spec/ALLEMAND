@@ -9377,3 +9377,29 @@ html[dir="rtl"] #shell #subjHome .subj-card.sc-lang .subj-chips .chip.lock{
   background:#edf2ee!important;
   border-color:#d9e3dc!important;
 }
+
+/* V8.13 — hiérarchie éditoriale : titres arabes moins lourds, sans perdre le contraste. */
+html[dir="rtl"] #shell #app .panel-h,
+html[dir="rtl"] #shell #app .home-side .panel-h,
+html[dir="rtl"] #shell #app .view .panel-h{
+  font-weight:650!important;
+  line-height:1.7!important;
+}
+html[dir="rtl"] #shell #subjHome .subj-card:not(.sc-lang) .subj-n{
+  font-weight:650!important;
+  line-height:1.65!important;
+}
+html[dir="rtl"] #shell #subjHome .subj-card:not(.sc-lang) .subj-l{
+  font-weight:500!important;
+  line-height:1.65!important;
+}
+html[dir="rtl"] #shell #subjHome .subj-card.sc-lang .subj-n{
+  font-weight:650!important;
+}
+html[dir="rtl"] #shell #app :is(.welcome h1,.page-head h1,.subjects-intro h2){
+  font-weight:650!important;
+  line-height:1.7!important;
+}
+html[dir="rtl"] #shell #subjHome .subj-card .subj-s{
+  font-weight:600!important;
+}
