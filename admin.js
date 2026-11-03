@@ -48,7 +48,7 @@
       + stat(profs.filter(x => x.role === 'prof').length, 'profs')
       + stat(notes.length, 'notes') + stat(moy, 'moyenne /20') + '</div>'
       + '<div class="ad-grid">'
-      + '<div class="card"><b>👥 Konten (' + profs.length + ')</b>'
+      + '<div class="card"><b>👥 الحسابات (' + profs.length + ')</b>'
       + '<button class="btn btn-o btn-sm" id="adCsvP">⬇️ CSV</button>'
       + '<table class="ad-tab"><tr><th>pseudo</th><th>rôle</th><th>niveau</th><th>wilaya</th><th></th></tr>'
       + profs.map(x => '<tr><td>' + esc(x.pseudo || x.id.slice(0, 8)) + '</td>'
@@ -58,7 +58,7 @@
           + '</select></td><td>' + esc(x.niveau || '') + '</td><td>' + esc(x.wilaya || '')
           + '</td><td>' + esc((x.created_at || '').slice(0, 10)) + '</td></tr>').join('')
       + '</table></div>'
-      + '<div class="card"><b>📝 Noten (' + notes.length + ')</b>'
+      + '<div class="card"><b>📝 النقاط (' + notes.length + ')</b>'
       + '<button class="btn btn-o btn-sm" id="adCsvN">⬇️ CSV</button>'
       + '<table class="ad-tab"><tr><th>élève</th><th>trim.</th><th>/20</th><th>appréciation</th></tr>'
       + notes.map(n => {
@@ -91,7 +91,7 @@
     mono.innerHTML =
       '<div class="ad-grid" style="margin-top:12px">'
       + '<div class="card"><b>💳 Abonnements (' + subs.length + ' · '
-      + CA.toLocaleString('fr-FR') + ' DA aktiv)</b>'
+      + CA.toLocaleString('fr-FR') + ' دج نشطة)</b>'
       + '<table class="ad-tab"><tr><th>user</th><th>plan</th><th>DA</th><th>statut</th><th></th></tr>'
       + subs.map(s => '<tr><td>' + esc(s.user_id.slice(0, 8)) + '</td><td>' + esc(s.plan)
         + '</td><td>' + s.montant + '</td><td>' + esc(s.statut) + '</td><td>'
