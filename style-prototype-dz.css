@@ -9238,3 +9238,50 @@ html[dir="rtl"] #shell #tabs.tabs>.tab{direction:rtl!important;unicode-bidi:plai
   #shell .prog-off .po-grid{grid-template-columns:minmax(0,1fr)}
   #shell .prog-off .po-level{font-size:14px}
 }
+
+/* CURRICULUM READABILITY — Arabic page counts, unit counts and dark theme */
+#shell .prog-off .po-t{
+  background:var(--dz-card,#fff);
+  color:var(--dz-ink,#17251c);
+  border-color:var(--dz-line,#dce8df);
+}
+#shell .prog-off .po-h b{
+  min-width:0;line-height:1.75;overflow-wrap:anywhere;
+}
+#shell .prog-off .po-n{
+  display:inline-flex;align-items:center;justify-content:center;
+  flex:0 0 auto;min-height:28px;padding:3px 9px;
+  border:1px solid rgba(0,98,51,.16);border-radius:999px;
+  background:rgba(0,98,51,.08);color:#075c34;
+  font-size:12px;font-weight:800;line-height:1.5;
+  white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+#shell .prog-off .po-p{
+  margin-top:7px;color:var(--dz-muted,#687a70);
+  font-size:12px;font-weight:700;line-height:1.7;
+}
+#shell .prog-off .po-u{font-size:13px}
+#shell .prog-off .pg{
+  color:var(--dz-muted,#687a70);opacity:1;
+  overflow-wrap:anywhere;
+}
+html[data-theme="dark"] #shell .prog-off .po-t{
+  background:#17251d;border-color:#315340;color:#e6f1e9;
+}
+html[data-theme="dark"] #shell .prog-off .po-n{
+  color:#b8f0cb;background:rgba(28,150,83,.18);
+  border-color:rgba(112,205,145,.3);
+}
+html[data-theme="dark"] #shell .prog-off .po-p,
+html[data-theme="dark"] #shell .prog-off .pg{
+  color:#b4c8ba;
+}
+html[data-theme="dark"] #shell .prog-off .po-note{
+  color:#dcebe0;background:#17251d;border:1px solid #315340;
+}
+@media(max-width:760px){
+  #shell .prog-off .po-t{padding:13px}
+  #shell .prog-off .po-h{align-items:flex-start}
+  #shell .prog-off .po-n{font-size:12px;min-height:27px}
+}
+
