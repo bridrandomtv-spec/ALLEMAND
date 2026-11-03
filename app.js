@@ -2995,9 +2995,9 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
             + (n.lue ? '<span style="font-size:11px;color:var(--m)">' + String(n.created_at||'').slice(0,10) + '</span>'
                      : '<button class="btn btn-sm btn-o" data-notif-read="' + n.id + '" type="button">marquer lue</button>') + '</div>';
         }).join('') : '<p>aucune notification</p>') : '<p>⛔ ' + esq7(r.err) + '</p>')
-      + '<div class="fld" style="margin-top:10px"><span>Ouvrir un ticket support</span>'
-      + '<input id="tickSujet" placeholder="sujet"> <input id="tickCorps" placeholder="détail (optionnel)">'
-      + '<button class="btn btn-sm btn-p" data-tick-new="1" type="button">envoyer</button></div>';
+      + '<div class="fld" style="margin-top:10px"><strong>🛠️ الإبلاغ عن مشكلة أو طلب المساعدة</strong><p class="muted">أرسل وصفًا مختصرًا للمشكلة إلى فريق الدعم.</p>'
+      + '<input id="tickSujet" placeholder="موضوع المشكلة" aria-label="موضوع المشكلة"> <input id="tickCorps" placeholder="اشرح المشكلة (اختياري)" aria-label="تفاصيل المشكلة">'
+      + '<button class="btn btn-sm btn-p" data-tick-new="1" type="button">إرسال البلاغ</button></div>';
   }
   document.addEventListener('click', function(e){
     var t = e.target && e.target.closest ? e.target.closest('[data-notif-read],[data-tick-new]') : null;
