@@ -1766,25 +1766,32 @@ function renderWelcome(){
     totDone  += (loadSeancesFor(u.n).done || []).length;
   });
   const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
-
+  const pct = totSeanc ? Math.round(totDone / totSeanc * 100) : 0;
   el.innerHTML =
-    '<h1>' + salut + '، ' + esc(s.nom) + ' 👋</h1>' +
-    '<p>مرحباً بك في قسمك الافتراضي <b dir="ltr">' + esc(s.classe_ar) + '</b> — ' +
-      'الثانوية الافتراضية الجزائرية · شعبة <b>' + esc(s.filiere) + '</b>.<br>' +
-      '<span class="de-display" dir="ltr">' + esc(de) + '! Willkommen in deiner virtuellen Klasse.</span></p>' +
-    '<div class="welcome-cta">' +
-      (next ? '<button class="btn btn-p" data-go="seances">📚 الحصة ' + next.n + ' — ' +
-               esc(next.ar) + '</button>'
-            : '<button class="btn btn-p" data-go="seances">📚 مراجعة الحصص</button>') +
-      '<button class="btn btn-g" data-go="biblio">🗂️ المكتبة' +
-        (k ? ' (' + k.total + ')' : '') + '</button>' +
-      '<button class="btn btn-o" data-go="devoir">📝 الفرض /20</button>' +
+    '<div class="dz-student-hero">' +
+      '<div class="dz-hero-copy">' +
+        '<span class="dz-hero-kicker"><i aria-hidden="true"></i> الثانوية الافتراضية الجزائرية · فضاؤك الدراسي</span>' +
+        '<h1>' + salut + '، ' + esc(s.nom) + ' 👋</h1>' +
+        '<p>مرحباً بك في قسمك الافتراضي <b dir="ltr">' + esc(s.classe_ar) + '</b> — ' +
+          'شعبة <b>' + esc(s.filiere) + '</b>.' +
+          '<span class="de-display dz-hero-de" dir="ltr">' + esc(de) + '! Willkommen in deiner virtuellen Klasse.</span></p>' +
+        '<div class="welcome-cta dz-hero-actions">' +
+          (next ? '<button class="btn btn-p" data-go="seances">📚 الحصة ' + next.n + ' — ' +
+                   esc(next.ar) + '</button>'
+                : '<button class="btn btn-p" data-go="seances">📚 مراجعة الحصص</button>') +
+          '<button class="btn btn-o" data-go="biblio">🗂️ المكتبة' +
+            (k ? ' (' + k.total + ')' : '') + '</button>' +
+          '<button class="btn btn-outline-light" data-go="devoir">📝 الفرض /20</button>' +
+        '</div>' +
+        '<div class="dz-hero-progress">' +
+          '<div class="dz-hero-progress-head"><span>تقدمك الدراسي</span><b>' + pct + '%</b></div>' +
+          '<div class="dz-hero-track"><i style="width:' + pct + '%"></i></div>' +
+          '<small>' + totDone + ' / ' + totSeanc + ' حصص مكتملة · ' +
+            UNITES.filter(u => u.seances && u.seances.length).length + ' وحدات تعليمية</small>' +
+        '</div>' +
+      '</div>' +
+      '<div class="dz-hero-emblem" aria-hidden="true"><span>🇩🇿</span><b>تعلم<br>وتقدّم</b><i></i></div>' +
     '</div>' +
-    '<div class="welcome-prog"><div class="progress-wrap"><div class="progress" style="width:' +
-      (totSeanc ? Math.round(totDone / totSeanc * 100) : 0) + '%"></div></div>' +
-      '<div class="progress-lbl">📈 تقدّمك الإجمالي : ' + totDone + ' / ' + totSeanc +
-      ' حصص عبر ' + UNITES.filter(u => u.seances && u.seances.length).length +
-      ' وحدات — الوحدة الحالية : <b>' + uniteActive().n + '</b></div></div>' +
     '<div class="welcome-meta">' +
       '<span class="sec-pill">🏫 ' + esc(s.classe_ar) + ' · ' + s.eleves + ' تلميذ</span>' +
       '<span class="sec-pill or">📖 المادة : ' + esc(s.matiere || 'اللغة الألمانية') + '</span>' +
