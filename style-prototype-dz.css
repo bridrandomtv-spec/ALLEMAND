@@ -9213,3 +9213,28 @@ html[dir="rtl"] #shell #tabs.tabs>.tab{direction:rtl!important;unicode-bidi:plai
   #shell [data-view="accueil"] #panelQuick .card.mini{grid-template-columns:36px minmax(0,1fr) auto!important;column-gap:8px;padding:10px!important}
   #shell [data-view="accueil"] #panelQuick .card.mini .mini-i{width:34px;height:34px;font-size:20px}
 }
+
+
+/* OFFICIAL CURRICULUM — clear hierarchy and responsive trimester cards */
+#shell .prog-off{min-width:0;direction:rtl;text-align:right}
+#shell .prog-off .po-level{
+  margin:18px 0 10px;padding:10px 12px;border-inline-start:4px solid #006233;
+  border-radius:9px;background:rgba(0,98,51,.07);font-size:16px;
+  line-height:1.7;font-weight:800;text-align:right;direction:rtl;
+}
+#shell .prog-off .po-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;width:100%;min-width:0;margin:0 0 14px;
+}
+#shell .prog-off .po-t{
+  min-width:0;padding:14px;border:1px solid var(--line,rgba(128,150,135,.25));
+  border-radius:13px;text-align:right;direction:rtl;
+}
+#shell .prog-off .po-h{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;line-height:1.7}
+#shell .prog-off .po-u{display:block;margin-top:10px;line-height:1.9;overflow-wrap:anywhere}
+#shell .prog-off .pg{display:block;margin-top:9px;font-size:11px;line-height:1.7;opacity:.78}
+#shell .prog-off .po-note{margin-top:8px;padding:11px 13px;border-radius:10px;line-height:1.8;text-align:right;direction:rtl}
+@media(max-width:760px){
+  #shell .prog-off .po-grid{grid-template-columns:minmax(0,1fr)}
+  #shell .prog-off .po-level{font-size:14px}
+}
