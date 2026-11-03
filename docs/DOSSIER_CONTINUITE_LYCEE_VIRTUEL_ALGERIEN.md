@@ -96,3 +96,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 ---
 
 **Règle de reprise :** ce document est la référence de continuité. Ne pas demander à l'utilisateur de répéter les décisions déjà consignées. Mettre à jour ce document lorsqu'un changement réel intervient.
+
+
+## 8. Avancement du 3 novembre 2026 — garde du portail public
+
+- Comparaison de la PR #13 avec la PR #17 : aucun élément de navigation latérale de la PR #13 n'a été repris, car il contredit la navigation horizontale validée.
+- Contrôle des données du portail : 1AS (2 troncs communs), 2AS et 3AS (6 filières chacun) ; allemand uniquement en 2AS/3AS ; anglais marqué partiel ; « التربية البدنية » absent.
+- Ajout de `ci/check-public-portal.mjs` pour contrôler automatiquement la cohérence des filières, les matières référencées, les statuts de disponibilité et la transmission du niveau/de la filière vers le formulaire d'inscription existant.
+- Ajout de cette vérification au workflow `.github/workflows/deploy.yml`.
+- Commit de la garde : `1aa3f0adff71a6ff42a3afd86598bbf703c690ab`.
+- Commit d'intégration CI : `7bf6bf0e8d1392f0c14a8412a88b365e1586163d`.
+- Exécution GitHub Actions #1815 créée pour `7bf6bf0` ; son état au moment de cette mise à jour est **pending**. Ne pas annoncer le test comme réussi avant la fin du workflow.
+- Aucun changement dans `auth.js`, Supabase, Auth côté serveur, RLS, paiements ou production.
