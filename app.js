@@ -469,6 +469,13 @@ function isProf(){
   try{ const s = window.AUTH && AUTH.session ? AUTH.session() : null; return !!(s && s.role === 'prof'); }
   catch(e){ return false; }
 }
+
+/* Onglet administration : visible uniquement pour une session portant le rôle admin.
+   Le contrôle d'accès réel reste effectué côté Supabase dans admin.js. */
+function isAdmin(){
+  try{ const s = window.AUTH && AUTH.session ? AUTH.session() : null; return !!(s && s.role === 'admin'); }
+  catch(e){ return false; }
+}
 let currentView = 'accueil';
 
 const NAVCATS = [
@@ -489,7 +496,7 @@ const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
-  const visible = tabs.filter(t => t[0] !== 'msg');
+  const visible = tabs.filter(t => t[0] !== 'msg' && (t[0] !== 'admin' || isAdmin()));
   let h = '';
   /* Navigation directe : chaque élément mène à une vue réelle.
      Aucun accordéon ni sous-menu masqué dans la barre principale. */
