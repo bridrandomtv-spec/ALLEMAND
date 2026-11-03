@@ -9157,3 +9157,10 @@ html[dir="rtl"] #shell #tabs.tabs>.tab{direction:rtl!important;unicode-bidi:plai
  html[dir="rtl"] #shell #tabs.tabs>.tab{width:auto!important;flex:0 0 auto!important;text-align:center!important;white-space:nowrap!important}
  html[dir="rtl"] #shell #tabs.tabs.open{right:auto!important}
 }
+
+
+/* HOME V2 — masquer les blocs allemands statiques hérités ; les matières actives sont rendues dans #subjHome. */
+#shell [data-view="accueil"] .home-grid > .home-main > .grid3,
+#shell [data-view="accueil"] .home-grid > .home-main > .prog-off{
+  display:none!important;
+}
