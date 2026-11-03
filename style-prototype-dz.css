@@ -9638,3 +9638,95 @@ html[data-theme="dark"] #shell #app :is(.mat-de,.mat-d,.ms-why,
 html[data-theme="dark"] #shell #app .exo-b b,
 html[data-theme="dark"] #shell #app .q-t,
 html[data-theme="dark"] #shell #app .exo-title{color:#eaf5ee!important}
+
+
+/* V8.20 — correction transversale du contraste en thème sombre.
+   V8.3 imposait --dz-ink (#142b22) au body et à plusieurs composants
+   sans condition de thème : les textes hérités devenaient presque noirs.
+   Réinitialisation limitée au thème sombre ; aucun contenu ni comportement modifié. */
+html[data-theme="dark"]{
+  --dz-ink:#eaf5ee;
+  --dz-muted:#b8cbbd;
+  --dz-paper:#09170f;
+  --dz-card:#14251b;
+  --dz-line:#294b37;
+}
+html[data-theme="dark"],
+html[data-theme="dark"] body{
+  color:#eaf5ee!important;
+  background-color:#09170f!important;
+}
+html[data-theme="dark"] #shell{
+  color:#eaf5ee!important;
+  background:#09170f!important;
+}
+html[data-theme="dark"] #shell .topbar,
+html[data-theme="dark"] #shell .topbar-in{
+  color:#eaf5ee!important;
+}
+html[data-theme="dark"] #shell .brand-t,
+html[data-theme="dark"] #shell .brand-s{
+  color:#eaf5ee!important;
+  text-shadow:none!important;
+}
+html[data-theme="dark"] #shell .topbar .tb-search input,
+html[data-theme="dark"] #shell .topbar .icon-btn,
+html[data-theme="dark"] #shell .topbar .tb-bell,
+html[data-theme="dark"] #shell .topbar .burger{
+  color:#eaf5ee!important;
+  background:#14251b!important;
+  border-color:#315640!important;
+}
+html[data-theme="dark"] #shell #tabs.tabs{
+  color:#eaf5ee!important;
+  background:#0a1c12!important;
+  border-color:#294b37!important;
+}
+html[data-theme="dark"] #shell #tabs .cat-head,
+html[data-theme="dark"] #shell #tabs .tab,
+html[data-theme="dark"] #shell #tabs .cat-body .tab.sub{
+  color:#dcebe1!important;
+}
+html[data-theme="dark"] #shell #tabs .cat-head.open,
+html[data-theme="dark"] #shell #tabs .tab.on,
+html[data-theme="dark"] #shell #tabs .tab.sub.on{
+  color:#ffffff!important;
+}
+html[data-theme="dark"] #shell #app{
+  color:#eaf5ee!important;
+}
+html[data-theme="dark"] #shell #app :is(h1,h2,h3,h4,h5,h6,
+  .page-head h1,.panel-h,.card h2,.card h3,.brand-t,
+  .subjects-intro h2,.subject-card h3,.mat-t h2,.mat-n,
+  .ms-next h3,.ms-prog h3,.prof-hero h2,.par-hero h2,
+  #paContenu h2,#prContenu h2,.exam-hero h2,
+  .welcome h1,.q-t,.exo-title,.exo-b b){
+  color:#eaf5ee!important;
+  text-shadow:none!important;
+}
+html[data-theme="dark"] #shell #app :is(p,li,label,small,
+  .mat-de,.mat-d,.mat-sub,.ms-why,.fiche-meta,.fiche-de,
+  .kpi-l,.kpi-d,.description,.desc,.muted,.sub,.meta,
+  .page-head p,.welcome p){
+  color:#c3d5c9!important;
+}
+html[data-theme="dark"] #shell #app :is(input,select,textarea){
+  color:#eaf5ee!important;
+  background:#102319!important;
+  border-color:#315640!important;
+}
+html[data-theme="dark"] #gate{
+  color:#eaf5ee!important;
+}
+html[data-theme="dark"] #gate :is(.gate-title,.gate-sub,.public-nav button,
+  .public-copy h2,.public-section-heading h3,.pub-explorer-top h2,
+  .pub-section-title,.gate-card-intro h2,.pub-subject-card h3,
+  .pub-level-card b,.pub-branch-card h3,.pub-detail-subject h3){
+  color:#eaf5ee!important;
+  text-shadow:none!important;
+}
+html[data-theme="dark"] #gate :is(p,small,.public-kicker,.gate-sub,
+  .public-copy p,.public-ai-note,.public-feature small,
+  .public-mini-card small,.public-year-cards small,.gate-card-intro p){
+  color:#c3d5c9!important;
+}
