@@ -9285,3 +9285,60 @@ html[data-theme="dark"] #shell .prog-off .po-note{
   #shell .prog-off .po-n{font-size:12px;min-height:27px}
 }
 
+/* V8.11 — cartes de matières lisibles + en-tête mobile sans chevauchement.
+   Les cartes générées portent sc-<identifiant> (ex. sc-allemand), pas sc-c0..c5.
+   Ne pas leur imposer du texte blanc sur un fond clair. */
+#shell #subjHome .subj-card[class*="sc-"]:not(.sc-lang){
+  color:var(--dz-ink,#173326)!important;
+  background:linear-gradient(135deg,#ffffff 0%,#eef7f1 100%)!important;
+  border:1px solid var(--dz-line,#d7e7dc)!important;
+  box-shadow:0 8px 22px rgba(16,60,38,.07);
+  opacity:1!important;
+}
+#shell #subjHome .subj-card[class*="sc-"]:not(.sc-lang) .subj-n,
+#shell #subjHome .subj-card[class*="sc-"]:not(.sc-lang) .subj-l{
+  color:#124b32!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+#shell #subjHome .subj-card[class*="sc-"]:not(.sc-lang) .subj-s{
+  color:#174b34!important;
+  background:#ffffff!important;
+  border:1px solid #cfe2d5!important;
+  opacity:1!important;
+  white-space:normal!important;
+  line-height:1.5!important;
+}
+#shell #subjHome .subj-card.sc-lang{
+  color:#fff!important;
+  background:linear-gradient(135deg,#075b38,#0c8b58)!important;
+}
+#shell #subjHome .subj-card.sc-lang .subj-n,
+#shell #subjHome .subj-card.sc-lang .subj-chips,
+#shell #subjHome .subj-card.sc-lang .subj-chips .chip{color:#fff!important}
+@media(max-width:700px){
+  html[dir="rtl"] #shell>.topbar .topbar-in{
+    display:flex!important;flex-wrap:wrap!important;align-items:center!important;
+    justify-content:space-between!important;gap:8px!important;padding:8px 12px!important;
+  }
+  html[dir="rtl"] #shell>.topbar .topbar-in>.brand{
+    order:0!important;flex:1 1 100%!important;min-width:0!important;
+    justify-content:flex-start!important;text-align:right!important;
+  }
+  html[dir="rtl"] #shell>.topbar .topbar-in>.topbar-act{
+    order:1!important;flex:1 1 100%!important;min-width:0!important;
+    display:flex!important;flex-wrap:wrap!important;align-items:center!important;
+    justify-content:flex-start!important;gap:7px!important;
+  }
+  html[dir="rtl"] #shell>.topbar .topbar-in>.tb-search{display:none!important}
+  html[dir="rtl"] #shell #tabs.tabs{
+    max-width:100%!important;min-width:0!important;
+    gap:7px!important;padding-inline:10px!important;
+    overscroll-behavior-inline:contain!important;
+  }
+  html[dir="rtl"] #shell #tabs.tabs>.tab{flex:0 0 auto!important;max-width:none!important}
+  #shell #subjHome .subj-grid{grid-template-columns:minmax(0,1fr)!important}
+  #shell #subjHome .subj-card{min-width:0!important;gap:10px!important;padding:14px!important}
+  #shell #subjHome .subj-card .subj-n{font-size:15px!important;line-height:1.7!important}
+  #shell #subjHome .subj-card .subj-s{max-width:48%;text-align:center}
+}
