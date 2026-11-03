@@ -108,3 +108,12 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Commit d'intégration CI : `7bf6bf0e8d1392f0c14a8412a88b365e1586163d`.
 - Exécution GitHub Actions #1815 créée pour `7bf6bf0` ; son état au moment de cette mise à jour est **pending**. Ne pas annoncer le test comme réussi avant la fin du workflow.
 - Aucun changement dans `auth.js`, Supabase, Auth côté serveur, RLS, paiements ou production.
+
+
+### Résultat CI confirmé — 3 novembre 2026
+
+- GitHub Actions #1815 : **success**, terminé à 15:20:54 UTC.
+- La nouvelle étape « Vérifier le portail public (catalogue et inscription) » s'est exécutée avec succès.
+- Le contrôle de syntaxe JavaScript et les étapes précédentes du workflow ont également terminé sans échec.
+- Le test est automatisé dans la CI ; aucun test manuel du navigateur ni validation visuelle nouvelle n'est revendiqué.
+- PR #17 reste ouverte, en brouillon et non fusionnée. `main` et la production restent inchangées.
