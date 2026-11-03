@@ -4,7 +4,8 @@
 **Dépôt :** `bridrandomtv-spec/ALLEMAND`  
 **PR de travail :** [#17](https://github.com/bridrandomtv-spec/ALLEMAND/pull/17)  
 **Branche :** `design/prototypes-67-74-alignment`  
-**Preview validée par l'utilisateur :** https://ec6160ef-allemand.brid-randomtv.workers.dev  
+**Preview Cloudflare actuelle (commit `a224879`, déployée avec succès le 3 novembre à 16:21 UTC ; validation visuelle utilisateur encore attendue) :** https://097931a2-allemand.brid-randomtv.workers.dev/#accueil
+**Dernière preview visuellement acceptée auparavant :** https://ec6160ef-allemand.brid-randomtv.workers.dev (commit `29aafce`, historique)  
 **Production :** https://allemand.brid-randomtv.workers.dev/#accueil
 
 ---
@@ -146,7 +147,7 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - GitHub Actions #1819 (run `41667815989`) : **success** sur ce HEAD.
 - Détail du job « Validation structurelle & pédagogique » : toutes les étapes sont en succès, notamment « Vérifier le portail public (catalogue et inscription) », la garde d'accès, la matrice des parcours et les tests de régression.
 - Métadonnées GitHub de la PR #17 relues : `state=open`, `draft=true`, `merged=false`, `mergeable=true`. Le signal de fusion est donc actuellement favorable, mais la PR reste volontairement en brouillon.
-- La preview Cloudflare de branche confirmée par le bot correspond toujours au commit applicatif `533921d` : https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev ; build et déploiement annoncés réussis. Le HEAD `84f259b` est documentaire et ne change pas l'application.
+- **Information historique obsolète à ne plus utiliser :** la preview `533921d` / `4a490678-allemand.brid-randomtv.workers.dev` a été remplacée. La preview actuelle est celle du commit `a224879` (voir l'en-tête et la section 15 mise à jour).
 - Aucune navigation interactive complète n'a pu être exécutée depuis cet environnement. Le test réel inscription → création du compte → connexion → espace utilisateur et le contrôle visuel mobile/ordinateur ne sont donc pas revendiqués.
 - Aucun fichier applicatif modifié pendant ce contrôle ; aucune fusion, aucun changement sur `main`, aucun déploiement de production.
 - Prochaine décision : validation manuelle du parcours par l'utilisateur sur la preview. Après confirmation, demander séparément l'autorisation de sortir la PR du brouillon, puis l'autorisation de fusionner.
@@ -201,7 +202,7 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Commit du test : `ba19413`. CI à attendre.
 - Attention : ce contrôle statique couvre le rendu principal de `admin.js`, pas tous les modules secondaires montés sur la vue `#admin`. Les permissions effectives des données restent à vérifier côté Supabase/RLS ; aucun changement de politique ou de schéma n'a été fait.
 - La CI #1827 (commit `b4472a7`) est réussie. La CI #1828 (mise à jour documentaire précédente) était encore en cours au dernier contrôle.
-- Le dernier déploiement Cloudflare recensé dans les commentaires de PR reste le commit `533921d`; il ne contient pas les derniers correctifs. Aucun déploiement manuel n'a été lancé.
+- Cette indication a été dépassée par le déploiement Cloudflare réussi du commit `a224879` le 3 novembre à 16:21 UTC. Ne plus utiliser la preview `533921d`.
 - PR #17 reste ouverte, en brouillon, non fusionnée. `main` reste inchangée ; aucune nouvelle branche créée.
 
 
@@ -209,8 +210,13 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 
 - Revue statique des modules indépendants de `admin.js` : agents/wilayas, validation des paiements et reçus, publication des accords, tableau de bord/fiches élèves/paramètres, comptabilité et support.
 - Point vérifié : les modules ADM-1/2/3/4/5 ne reposent pas uniquement sur le masquage des boutons. Les fonctions sensibles côté SQL contrôlent `auth.uid()` et la permission requise via `admin_can(...)`, et plusieurs opérations vérifient également le périmètre wilaya via `admin_sees_wilaya(...)`. Les lectures directes sont encadrées par des politiques RLS dans les scripts audités.
-- Fausse alerte écartée après lecture complète : `accounting.manage` semblait absent de la liste initiale ADM-1, mais est bien attribué à `admin_general` dans `supabase/adm5_schema.sql` (ligne 211), et le test existant de `tests/adm_test.mjs` vérifie déjà cette attribution (assertion ADM-5). Aucun correctif SQL n'est nécessaire ; aucun script Supabase n'a été modifié.
-- Le test `NAV-ADM-3` de refus du profil non-admin est inclus dans le commit `ba19413`. CI #1829 : succès. CI #1830, correspondant au dossier mis à jour après ce test : succès.
-- Limite : il s'agit d'un audit statique des scripts du dépôt. Il ne prouve pas que les migrations correspondantes ont toutes été exécutées sur le projet Supabase distant, ni ne remplace des essais avec de vrais comptes et des wilayas différentes.
-- La prévisualisation Cloudflare recensée est toujours au commit `533921d`, donc en retard sur les derniers commits. Les tests de navigateur et le contrôle visuel clair/sombre restent à faire après publication automatique d'une prévisualisation à jour.
-- PR #17 toujours ouverte et en brouillon, non fusionnée ; `main` inchangée ; aucune nouvelle branche, aucun déploiement manuel.
+- Fausse alerte écartée après lecture complète : `accounting.manage` est attribué à `admin_general` dans `supabase/adm5_schema.sql` (ligne 211), et le test existant vérifie cette attribution. Aucun correctif SQL n'est nécessaire ; aucun script Supabase n'a été modifié.
+- Tests `NAV-ADM-3` : CI #1829 réussie ; CI #1830 (mise à jour documentaire) réussie.
+- Limite : audit statique du dépôt uniquement. Il ne prouve pas que toutes les migrations sont appliquées sur Supabase distant et ne remplace pas les essais avec de vrais comptes.
+- **Preview Cloudflare actuelle :** commit `a22487933e4927cf46e35df575d49b672c386f1f`, build et déploiement réussis le 3 novembre 2026 à 16:21:04 UTC.
+  - Accueil : https://097931a2-allemand.brid-randomtv.workers.dev/#accueil
+  - Administration : https://097931a2-allemand.brid-randomtv.workers.dev/#admin
+  - Preview de branche : https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev
+- **Anciennes previews à ne plus utiliser :** `533921d` (`4a490678-allemand.brid-randomtv.workers.dev`), `29aafce` (`ec6160ef-allemand.brid-randomtv.workers.dev`) et les autres URLs de commits antérieurs. Elles restent des déploiements historiques dans Cloudflare ; leur suppression effective nécessite l'accès de gestion Cloudflare, qui n'est pas disponible dans les outils de cette session.
+- PR #17 : ouverte, en brouillon, non fusionnée ; `main` inchangée. Aucun déploiement manuel n'a été lancé.
+- **Validation encore attendue :** essai utilisateur sur la preview actuelle, notamment `لوحة التحكم`, les rôles admin/non-admin, le mode sombre et l'affichage ordinateur/mobile. Aucun test navigateur réel n'est revendiqué ici.
