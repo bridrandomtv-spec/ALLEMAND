@@ -9817,3 +9817,137 @@ html[data-theme="dark"] #gate :is(p,small,.public-kicker,.gate-sub,
   border-color:#b0cdb8!important;
 }
 #gate .pub-subject-card.ready{background:linear-gradient(145deg,#dcefe1,#f7fbf8)!important}
+
+
+/* V8.21 — portail public : contraste explicite dans les deux thèmes.
+   Les règles V8.19 ci-dessus étaient non conditionnelles : elles imposaient
+   des surfaces claires même en thème sombre. On isole donc chaque palette
+   par thème et on couvre aussi le logo, l'en-tête, la navigation et les textes. */
+html[data-theme="light"] #gate .public-header{
+  color:#123d27!important;
+  background:linear-gradient(110deg,#e4f0e7,#f7faf8 72%)!important;
+  border-color:#9fc3aa!important;
+}
+html[data-theme="light"] #gate .gate-title{
+  background:linear-gradient(100deg,#004d28 0%,#006b38 58%,#c51d3a 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+}
+html[data-theme="light"] #gate .gate-sub{color:#294b37!important}
+html[data-theme="light"] #gate .gate-crest{filter:drop-shadow(0 3px 8px rgba(0,70,35,.28))!important}
+html[data-theme="light"] #gate .public-nav button{
+  color:#123d27!important;background:transparent!important;
+}
+html[data-theme="light"] #gate .public-nav button:hover{
+  color:#004d28!important;background:#cfe5d5!important;
+}
+html[data-theme="light"] #gate .public-nav button.active,
+html[data-theme="light"] #gate .public-nav button.public-nav-cta{
+  color:#fff!important;background:linear-gradient(135deg,#00582f,#00843d)!important;
+}
+html[data-theme="light"] #gate .public-landing{
+  color:#173d28!important;
+  background:linear-gradient(125deg,#e4f0e7 0%,#f2f7f3 58%,#f8eff1 100%)!important;
+}
+html[data-theme="light"] #gate .public-copy h2{color:#073d25!important}
+html[data-theme="light"] #gate .public-copy h2 em{color:#006b38!important}
+html[data-theme="light"] #gate .public-copy p,
+html[data-theme="light"] #gate .public-trust,
+html[data-theme="light"] #gate .public-ai-note{color:#294b37!important}
+html[data-theme="light"] #gate .public-kicker{
+  color:#004d28!important;background:#cfe6d5!important;border-color:#8fbd9d!important;
+}
+html[data-theme="light"] #gate .public-section-heading h3,
+html[data-theme="light"] #gate .public-feature b,
+html[data-theme="light"] #gate .public-mini-card b,
+html[data-theme="light"] #gate .public-year-cards b,
+html[data-theme="light"] #gate .pub-subject-card h3,
+html[data-theme="light"] #gate .pub-level-card b,
+html[data-theme="light"] #gate .pub-branch-card h3{color:#123d27!important}
+html[data-theme="light"] #gate .public-feature small,
+html[data-theme="light"] #gate .public-mini-card small,
+html[data-theme="light"] #gate .public-year-cards small,
+html[data-theme="light"] #gate .pub-card-copy small{color:#385b45!important}
+html[data-theme="light"] #gate .public-stat,
+html[data-theme="light"] #gate .public-feature,
+html[data-theme="light"] #gate .public-mini-card,
+html[data-theme="light"] #gate .public-explorer{
+  color:#173d28!important;border-color:#a9cbb3!important;
+}
+html[data-theme="light"] #gate .public-stat b,
+html[data-theme="light"] #gate .public-section-heading>div>span,
+html[data-theme="light"] #gate .public-section-heading>button{color:#00582f!important}
+
+/* Thème sombre : surfaces sombres cohérentes, textes clairs et accents visibles. */
+html[data-theme="dark"] #gate .public-header{
+  color:#edf7f0!important;
+  background:linear-gradient(110deg,#10291b,#172f21 72%)!important;
+  border-color:#315c42!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.32)!important;
+}
+html[data-theme="dark"] #gate .gate-title{
+  background:linear-gradient(100deg,#d8f5e2 0%,#70e6a1 58%,#ff8296 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+}
+html[data-theme="dark"] #gate .gate-sub{color:#c3d9ca!important}
+html[data-theme="dark"] #gate .gate-crest{filter:drop-shadow(0 3px 9px rgba(0,0,0,.5))!important}
+html[data-theme="dark"] #gate .public-nav button{
+  color:#e1f0e6!important;background:transparent!important;
+}
+html[data-theme="dark"] #gate .public-nav button:hover{
+  color:#fff!important;background:#254b35!important;
+}
+html[data-theme="dark"] #gate .public-nav button.active,
+html[data-theme="dark"] #gate .public-nav button.public-nav-cta{
+  color:#fff!important;background:linear-gradient(135deg,#006233,#0a8a4a)!important;
+  box-shadow:0 5px 15px rgba(0,0,0,.25)!important;
+}
+html[data-theme="dark"] #gate .public-landing{
+  color:#edf7f0!important;
+  background:
+    radial-gradient(ellipse at 7% 8%,rgba(0,132,61,.19),transparent 34%),
+    radial-gradient(ellipse at 95% 88%,rgba(210,16,52,.14),transparent 30%),
+    linear-gradient(125deg,#10251a 0%,#142b1e 58%,#2a1b22 100%)!important;
+  border-color:#315c42!important;
+  box-shadow:0 22px 52px rgba(0,0,0,.3)!important;
+}
+html[data-theme="dark"] #gate .public-copy h2,
+html[data-theme="dark"] #gate .public-section-heading h3,
+html[data-theme="dark"] #gate .pub-explorer-top h2,
+html[data-theme="dark"] #gate .pub-section-title,
+html[data-theme="dark"] #gate .public-feature b,
+html[data-theme="dark"] #gate .public-mini-card b,
+html[data-theme="dark"] #gate .public-year-cards b,
+html[data-theme="dark"] #gate .pub-subject-card h3,
+html[data-theme="dark"] #gate .pub-level-card b,
+html[data-theme="dark"] #gate .pub-branch-card h3{color:#edf7f0!important}
+html[data-theme="dark"] #gate .public-copy h2 em,
+html[data-theme="dark"] #gate .public-section-heading>div>span,
+html[data-theme="dark"] #gate .public-section-heading>button{color:#7ef0ae!important}
+html[data-theme="dark"] #gate .public-copy p,
+html[data-theme="dark"] #gate .public-trust,
+html[data-theme="dark"] #gate .public-ai-note,
+html[data-theme="dark"] #gate .public-feature small,
+html[data-theme="dark"] #gate .public-mini-card small,
+html[data-theme="dark"] #gate .public-year-cards small,
+html[data-theme="dark"] #gate .pub-card-copy small{color:#c3d9ca!important}
+html[data-theme="dark"] #gate .public-kicker{
+  color:#baf2cc!important;background:#1b4930!important;border-color:#39754e!important;
+}
+html[data-theme="dark"] #gate .public-stat,
+html[data-theme="dark"] #gate .public-feature,
+html[data-theme="dark"] #gate .public-mini-card,
+html[data-theme="dark"] #gate .public-explorer{
+  color:#edf7f0!important;background:#193324!important;border-color:#315c42!important;
+}
+html[data-theme="dark"] #gate .public-mini-card>span,
+html[data-theme="dark"] #gate .pf-icon{color:#baf2cc!important;background:#254b35!important}
+html[data-theme="dark"] #gate .public-stat b{color:#7ef0ae!important}
+html[data-theme="dark"] #gate .public-stat span{color:#c3d9ca!important}
+html[data-theme="dark"] #gate .pub-subject-card.ready{
+  background:linear-gradient(145deg,#193b29,#1c3025)!important;
+}
+html[data-theme="dark"] #gate .public-btn.secondary{
+  color:#baf2cc!important;background:#193324!important;border-color:#4b805e!important;
+}
