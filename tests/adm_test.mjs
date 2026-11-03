@@ -128,6 +128,7 @@ t(adjs.includes('📎 reçu'), 'PJ-PAY-1 : accès reçu présent dans la file de
 t(!adjs.includes('/object/public/'), 'RECUFIX-1 : admin.js ne construit jamais d URL publique /object/public/');
 t(!sbjs.includes('getPublicUrl') && !adjs.includes('getPublicUrl'), 'RECUFIX-1 : lectures signées seulement (aucun getPublicUrl)');
 t(!adjs.includes('Sponsoren') && !adjs.includes('veröffentlichen') && !adjs.includes('Beleg:'), 'RECUFIX-1 : aucun libellé allemand d interface dans admin.js');
+t(!adjs.includes('Konten') && !adjs.includes('Noten') && !adjs.includes(' aktiv)'), 'TRAD-ADM-1 : aucun reliquat allemand dans les libellés du tableau de bord');
 t(bibjs.includes('[A-Za-zÄÖÜäöüß0-9]'), 'TRAD-DIG-1 : chiffres admis dans les fragments de traduire()');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
