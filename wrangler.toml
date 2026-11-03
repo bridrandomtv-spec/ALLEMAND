@@ -9,3 +9,7 @@ compatibility_date = "2024-09-01"
 [assets]
 directory = "./"
 binding = "ASSETS"
+
+# Requis par `wrangler preview` pour créer une prévisualisation Cloudflare.
+# Les paramètres assets/compatibility restent définis au niveau racine.
+[previews]

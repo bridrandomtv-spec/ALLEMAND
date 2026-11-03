@@ -89,13 +89,18 @@ create table if not exists public.msg_log (
 
 -- ── fonctions (security definer : lecture profiles/members sans fuite RLS) ──
 create or replace function public.msg_is_moderator(uid uuid) returns boolean
-language sql stable security definer set search_path = public as $$
-  select exists (select 1 from public.profiles p where p.id = uid and p.role in ('admin','prof'));
+language sql stable security definer set search_path = pg_catalog, public as $$
+  select auth.uid() is not null
+     and uid = auth.uid()
+     and (
+       public.is_admin()
+       or public.admin_can(auth.uid(), 'messaging.moderate')
+     );
 $$;
 
 create or replace function public.msg_is_member(uid uuid, cid bigint) returns boolean
 language sql stable security definer set search_path = public as $$
-  select exists (
+  select auth.uid() is not null and uid = auth.uid() and exists (
     select 1 from public.msg_members m where m.conversation_id = cid and m.user_id = uid
     union all
     select 1 from public.msg_conversations c
@@ -114,7 +119,8 @@ language sql stable security definer set search_path = public as $$
     select 1 from public.profiles pa
     join public.profiles pb
       on pb.wilaya = pa.wilaya and pb.niveau = pa.niveau and pb.filiere = pa.filiere
-     where pa.id = a and pb.id = b and a <> b
+     where pa.id = a and a = auth.uid() and auth.uid() is not null
+       and pb.id = b and a <> b
        and pa.wilaya is not null and pa.niveau is not null and pa.filiere is not null
   );
 $$;
@@ -123,7 +129,7 @@ $$;
 -- encapsulé dans une fonction security definer, appelée par la politique.
 create or replace function public.msg_not_blocked(cid bigint, snd uuid) returns boolean
 language sql stable security definer set search_path = public as $$
-  select not exists (
+  select auth.uid() is not null and snd = auth.uid() and not exists (
     select 1 from public.msg_members m
     join public.msg_blocks b on b.blocker_id = m.user_id and b.blocked_id = snd
      where m.conversation_id = cid
@@ -134,7 +140,7 @@ $$;
 -- (wilaya+niveau+filière) — ferme l'auto-inscription abusive côté RLS.
 create or replace function public.msg_member_ok(cid bigint, uid uuid) returns boolean
 language sql stable security definer set search_path = public as $$
-  select exists (
+  select auth.uid() is not null and uid = auth.uid() and exists (
     select 1 from public.msg_conversations c
      where c.id = cid
        and ( c.type = 'direct'
@@ -326,8 +332,10 @@ exception when duplicate_object then null; end $$;
 -- Garde : seul un modérateur valide/refuse ; l'élève ne peut QUE passer
 -- de non_verifie/rejete → en_attente (avec matricule+section déclarés).
 create or replace function public.profiles_verif_guard() returns trigger
-language plpgsql security definer set search_path = public as $$
-declare ismod boolean;
+language plpgsql security definer set search_path = pg_catalog, public as $$
+declare
+  v_actor uuid := auth.uid();
+  v_can_verify boolean := false;
 begin
   if new.verif_statut is not distinct from old.verif_statut
      and new.verif_by is not distinct from old.verif_by
@@ -335,17 +343,23 @@ begin
      and new.section is not distinct from old.section then
     return new;
   end if;
-  select exists (select 1 from public.profiles p
-                  where p.id = auth.uid() and p.role in ('admin','prof')) into ismod;
-  if ismod then return new; end if;
-  if auth.uid() = old.id
+
+  if v_actor is not null then
+    v_can_verify := public.is_admin()
+      or public.admin_can(v_actor, 'students.verify');
+  end if;
+  if v_can_verify then return new; end if;
+
+  -- Un élève peut uniquement soumettre / resoumettre son propre dossier.
+  if v_actor = old.id
      and old.verif_statut in ('non_verifie','rejete')
      and new.verif_statut = 'en_attente'
      and new.verif_by is not distinct from old.verif_by then
     return new;
   end if;
+
   raise exception 'verif_reservee_moderation';
-end $$;
+end $;
 drop trigger if exists profiles_tr_verif on public.profiles;
 create trigger profiles_tr_verif before update on public.profiles
   for each row execute function public.profiles_verif_guard();
@@ -362,11 +376,17 @@ create policy "profils visibles entre membres" on public.profiles for select to 
 -- File d'attente lisible par les modérateurs + action de validation
 drop policy if exists "profils en attente visibles modérateurs" on public.profiles;
 create policy "profils en attente visibles modérateurs" on public.profiles for select to authenticated
-  using (public.msg_is_moderator(auth.uid()) and verif_statut = 'en_attente');
+  using (
+    public.admin_can(auth.uid(), 'students.verify')
+    and verif_statut = 'en_attente'
+  );
 drop policy if exists "verif update par modérateurs" on public.profiles;
 create policy "verif update par modérateurs" on public.profiles for update to authenticated
-  using (public.msg_is_moderator(auth.uid()) and verif_statut = 'en_attente')
-  with check (public.msg_is_moderator(auth.uid()));
+  using (
+    public.admin_can(auth.uid(), 'students.verify')
+    and verif_statut = 'en_attente'
+  )
+  with check (public.admin_can(auth.uid(), 'students.verify'));
 
 -- DM : exige désormais deux profils vérifiés (remplace la version Lot 1)
 create or replace function public.msg_can_dm(a uuid, b uuid) returns boolean
@@ -375,7 +395,8 @@ language sql stable security definer set search_path = public as $$
     select 1 from public.profiles pa
     join public.profiles pb
       on pb.wilaya = pa.wilaya and pb.niveau = pa.niveau and pb.filiere = pa.filiere
-     where pa.id = a and pb.id = b and a <> b
+     where pa.id = a and a = auth.uid() and auth.uid() is not null
+       and pb.id = b and a <> b
        and pa.wilaya is not null and pa.niveau is not null and pa.filiere is not null
        and pa.verif_statut = 'verifie' and pb.verif_statut = 'verifie'
   );
@@ -421,3 +442,27 @@ end $$;
 drop trigger if exists docs_tr_taille on public.documents_meta;
 create trigger docs_tr_taille before insert or update on public.documents_meta
   for each row execute function public.docs_tr_taille_fn();
+
+
+-- ── ACL des fonctions SECURITY DEFINER ──
+-- Les helpers RLS sont exécutables uniquement par les utilisateurs authentifiés ;
+-- leurs paramètres sont liés à auth.uid() pour éviter les sondages inter-comptes.
+REVOKE ALL ON FUNCTION public.msg_is_moderator(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.msg_is_member(uuid,bigint) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.msg_can_dm(uuid,uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.msg_not_blocked(bigint,uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.msg_member_ok(bigint,uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.msg_is_moderator(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.msg_is_member(uuid,bigint) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.msg_can_dm(uuid,uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.msg_not_blocked(bigint,uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.msg_member_ok(bigint,uuid) TO authenticated;
+
+-- Fonctions de déclencheur : aucun appel direct via l'API.
+REVOKE ALL ON FUNCTION public.msg_rate_limit() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.msg_guard_direct() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.msg_logfn() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.profiles_verif_guard() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.profiles_role_guard() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.msg_tr_taille_fn() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.docs_tr_taille_fn() FROM PUBLIC, anon, authenticated;

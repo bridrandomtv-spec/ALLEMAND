@@ -314,7 +314,7 @@ async function msgSend(convId, body){
   const r = await c.from('msg_messages').insert({ conversation_id:convId, sender_id:u.id, body:t })
     .select('id,created_at').single();
   if(r.error) return { ok:false, err:r.error.message };
-  await c.from('msg_conversations').update({ last_activity:new Date().toISOString() }).eq('id', convId);
+  // last_activity est actualisé côté PostgreSQL par msg_touch_conversation.
   return { ok:true, msg:r.data };
 }
 async function msgCanDm(otherId){
@@ -325,26 +325,11 @@ async function msgCanDm(otherId){
   return { ok:true, allowed:!!r.data };
 }
 async function msgOpenDirect(otherId){
-  const can = await msgCanDm(otherId); if(!can.ok) return can;
-  if(!can.allowed) return { ok:false, err:'msg_dm_interdit' };
-  const u = await me(); const c = await sb();
-  const ex = await c.from('msg_members').select('conversation_id').in('user_id',[u.id, otherId]);
-  const ids = (ex.data || []).map(function(x){ return x.conversation_id; });
-  if(ids.length){
-    const m = await c.from('msg_members').select('conversation_id').in('conversation_id', ids).in('user_id',[u.id, otherId]);
-    const cnt = {}; (m.data || []).forEach(function(x){ cnt[x.conversation_id] = (cnt[x.conversation_id]||0)+1; });
-    for(const id of ids){
-      if(cnt[id] === 2){
-        const t = await c.from('msg_conversations').select('id').eq('id', id).eq('type','direct').maybeSingle();
-        if(t.data) return { ok:true, convId:id, existing:true };
-      }
-    }
-  }
-  const r = await c.from('msg_conversations').insert({ type:'direct', created_by:u.id, titre:'' }).select('id').single();
+  const c = await sb();
+  if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.rpc('msg_open_direct',{p_other:otherId});
   if(r.error) return { ok:false, err:r.error.message };
-  const m1 = await c.from('msg_members').insert([{conversation_id:r.data.id,user_id:u.id},{conversation_id:r.data.id,user_id:otherId}]);
-  if(m1.error) return { ok:false, err:m1.error.message };
-  return { ok:true, convId:r.data.id, existing:false };
+  return { ok:true, convId:r.data, existing:true };
 }
 async function msgGroups(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
@@ -637,6 +622,79 @@ async function myChildren(){
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, children:r.data||[] };
 }
+
+/* ── PARENT-1 · demandes de rattachement confirmées par l'élève ── */
+async function myLinkedChildren(){
+  const c=await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r=await c.rpc('my_linked_children');
+  if(r.error) return {ok:false,err:r.error.message};
+  return {ok:true,rows:r.data||[]};
+}
+async function requestChildLink(email){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('request_child_link',{p_email:email});
+  if(r.error) return {ok:false,err:r.error.message};
+  return r.data || {ok:true};
+}
+async function myParentLinkRequests(){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('my_parent_link_requests');
+  if(r.error) return {ok:false,err:r.error.message};
+  return {ok:true,rows:r.data||[]};
+}
+async function myChildLinkRequests(){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('my_child_link_requests');
+  if(r.error) return {ok:false,err:r.error.message};
+  return {ok:true,rows:r.data||[]};
+}
+async function respondParentLinkRequest(requestId,accept){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('respond_parent_link_request',{p_request_id:requestId,p_accept:!!accept});
+  if(r.error) return {ok:false,err:r.error.message};
+  return r.data || {ok:true};
+}
+async function cancelParentLinkRequest(requestId){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('cancel_parent_link_request',{p_request_id:requestId});
+  if(r.error) return {ok:false,err:r.error.message};
+  return r.data || {ok:true};
+}
+async function unlinkChild(childId){
+  const c = await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r = await c.rpc('unlink_child',{p_child_id:childId});
+  if(r.error) return {ok:false,err:r.error.message};
+  return r.data || {ok:true};
+}
+Object.assign(window.SB,{myLinkedChildren,requestChildLink,myParentLinkRequests,myChildLinkRequests,
+  respondParentLinkRequest,cancelParentLinkRequest,unlinkChild});
+
+async function parentChildProgressSummary(childId){
+  const c=await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r=await c.rpc('parent_child_progress_summary',{p_child_id:childId});
+  if(r.error) return {ok:false,err:r.error.message};
+  return {ok:true,summary:r.data||{}};
+}
+Object.assign(window.SB,{parentChildProgressSummary});
+
+
+/* ── ADMIN · validation des demandes de rôle parent ── */
+async function admParentRoleRequests(){
+  const c=await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r=await c.rpc('admin_parent_role_requests');
+  if(r.error) return {ok:false,err:r.error.message};
+  return {ok:true,rows:r.data||[]};
+}
+async function admDecideParentRoleRequest(requestId,approve){
+  const c=await sb(); if(!c) return {ok:false,err:'cloud indisponible'};
+  const r=await c.rpc('admin_decide_parent_role_request',{
+    p_request_id:requestId,p_approve:!!approve
+  });
+  if(r.error) return {ok:false,err:r.error.message};
+  return r.data||{ok:true};
+}
+Object.assign(window.SB,{admParentRoleRequests,admDecideParentRoleRequest});
+
 async function admAgreements(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
   const r = await c.from('agreements').select('id,cle,version,titre,actif,cree_at').order('cle').order('version', { ascending:false });

@@ -342,11 +342,42 @@ const clo5 = fs.readFileSync('cloud.js', 'utf8');
 const bil5 = fs.readFileSync('billing.js', 'utf8');
 const pw5  = fs.readFileSync('paywall.js', 'utf8');
 if (!adm5.includes('chargerPlansAdmin')) fails.push('3.5 : admin.js sans éditeur de plans');
-if (!clo5.includes('link_child')) fails.push('3.5 : cloud.js sans lien parent-enfant');
+const sb5 = fs.readFileSync('supabase/supabase.js', 'utf8');
+if (!clo5.includes('requestChildLink') || !clo5.includes('respondParentLinkRequest')
+    || !sb5.includes("rpc('request_child_link'") || !sb5.includes("rpc('respond_parent_link_request'"))
+  fails.push('3.5 : flux parent-enfant avec demande et confirmation de l’élève incomplet');
 if (!bil5.includes('window.BILLING_PLANS')) fails.push('3.5 : billing.js n expose pas BILLING_PLANS');
 if (!pw5.includes('BILLING_PLANS')) fails.push('3.5 : paywall.js ne lit pas les plans de la table');
 if (/prix_da:\s*(1800|9000|15000)/.test(adm5 + bil5 + pw5)) fails.push('3.5 : prix codés en dur côté client (interdit)');
 
+
+/* ── PARENT-2 : rapport parent alimenté par les données cloud du compte enfant ── */
+const parsql = fs.readFileSync('supabase/parent_child_security.sql', 'utf8');
+
+const parjs = fs.readFileSync('parents.js', 'utf8');
+const sbparent = fs.readFileSync('supabase/supabase.js', 'utf8');
+const reportParent = parjs.slice(parjs.indexOf('async function vueReel(c){'), parjs.indexOf('})();', parjs.indexOf('async function vueReel(c){')));
+const rpcParent = parsql.slice(parsql.indexOf('CREATE OR REPLACE FUNCTION public.parent_child_progress_summary'), parsql.indexOf('COMMIT;', parsql.indexOf('CREATE OR REPLACE FUNCTION public.parent_child_progress_summary')));
+for (const k of ['auth.uid()', "role='parent'", "role='eleve'", 'public.child_links',
+                 'public.seances_done', 'public.notes', 'public.memoire_cards',
+                 'public.subscriptions', "s.statut='actif'", 'public.child_active_entitlement(auth.uid(),p_child_id)',
+                 "RAISE EXCEPTION 'abonnement_requis'"])
+  if (!rpcParent.includes(k)) fails.push('PARENT-2 : RPC résumé enfant sans contrôle/source ' + k);
+/* PARENT-2b : les deux sources d'abonnement doivent réellement être reliées par OR dans le garde IF NOT. */
+const entitlementGate = /IF\s+NOT\s*\(\s*EXISTS\s*\([\s\S]*?s\.user_id\s*=\s*auth\.uid\(\)[\s\S]*?s\.statut\s*=\s*'actif'[\s\S]*?s\.fin\s+IS\s+NULL\s+OR\s+s\.fin\s*>\s*now\(\)[\s\S]*?\)\s+OR\s+public\.child_active_entitlement\s*\(\s*auth\.uid\(\)\s*,\s*p_child_id\s*\)\s*\)\s+THEN\s+RAISE\s+EXCEPTION\s+'abonnement_requis'/i;
+if (!entitlementGate.test(rpcParent)) fails.push('PARENT-2b : règle parent actif OU enfant actif absente du garde SQL effectif');
+if (!/REVOKE ALL ON FUNCTION public\.parent_child_progress_summary\(uuid\) FROM PUBLIC,anon,authenticated/i.test(parsql)
+    || !/GRANT EXECUTE ON FUNCTION public\.parent_child_progress_summary\(uuid\) TO authenticated/i.test(parsql))
+  fails.push('PARENT-2 : permissions RPC résumé enfant incorrectes');
+if (!sbparent.includes("rpc('parent_child_progress_summary',{p_child_id:childId})")
+    || !sbparent.includes('Object.assign(window.SB,{parentChildProgressSummary})'))
+  fails.push('PARENT-2 : client Supabase sans wrapper/export du rapport enfant');
+if (!reportParent.includes('SB.myLinkedChildren()') || !reportParent.includes('SB.parentChildProgressSummary(childId)'))
+  fails.push('PARENT-2 : rapport parent sans lecture cloud des enfants liés');
+if (reportParent.includes('lsReel(') || reportParent.includes('dz_de_parent_enfant_v1'))
+  fails.push('PARENT-2 : rapport parent dépend encore du stockage local');
+if (!reportParent.includes('A.canAccessParentChild(childId)'))
+  fails.push('PARENT-2 : contrôle entitlement parent/enfant absent du rapport');
 
 /* ── Phase 6 : payment séparé de subscription + message arabe d'échec ── */
 const pay6 = fs.existsSync('supabase/payments.sql') ? fs.readFileSync('supabase/payments.sql', 'utf8') : '';
