@@ -111,6 +111,7 @@ t(adjs.includes('data-adm5-rap') && adjs.includes('data-adm5-close'), 'F6 : UI p
 t(sbjs.includes('pont dz:view post-sbready'), 'UI-1 : re-rendu des cartes ADM quand le client cloud devient prêt');
 t(appjs.includes('ENG-1 : la vue english se peint aussi à la navigation'), 'ENG-1 : rendu de #english à la navigation, plus de Chargement permanent');
 t(appjs.includes("t[0] !== 'admin' || isAdmin()"), 'NAV-ADM-1 : lien administration réservé au rôle admin dans la navigation');
+t(appjs.includes("s && s.role === 'admin'") && appjs.includes("localStorage.setItem('dz_de_session_v1'") && readFileSync('auth.js', 'utf8').includes("const K_SESSION = 'dz_de_session_v1'"), 'NAV-ADM-2 : le rôle cloud admin est persisté dans la session lue par AUTH.session()');
 t(adjs.includes('UI-2 : un clic sur un onglet de la phase 9 ne masque QUE les cartes'), 'UI-2 : onglets phase 9 ne vident plus la section Opérations');
 t(!sbjs.includes('admin_permissions(permission)'), 'PERMS-1 : plus d embed impossible wilaya_assignments→admin_permissions (400 PostgREST)');
 t(sbjs.includes('PERMS-1'), 'PERMS-1 : jointure permissions en deux requêtes client');
