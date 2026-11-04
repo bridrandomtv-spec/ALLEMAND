@@ -14733,3 +14733,137 @@ html[data-theme="dark"] #gate .public-btn.secondary:hover{background:#284a34!imp
   #gate .public-btn,#gate .public-stat{transition:none!important}
   #gate .public-btn:hover,#gate .public-stat:hover{transform:none!important}
 }
+
+
+/* LOT 60 — Catalogue public : cartes différenciées et niveaux plus lisibles */
+#gate .public-mini-catalog{
+  gap:12px!important;
+  align-items:stretch!important;
+}
+#gate .public-mini-card{
+  position:relative!important;
+  min-height:132px!important;
+  justify-content:flex-start!important;
+  gap:8px!important;
+  padding:16px 14px 14px!important;
+  overflow:hidden!important;
+  border:1px solid #d8e7dc!important;
+  border-radius:17px!important;
+  background:linear-gradient(155deg,#fff 0%,#f8fbf9 100%)!important;
+  box-shadow:0 7px 19px rgba(12,65,35,.045)!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease!important;
+}
+#gate .public-mini-card:before{
+  content:""!important;
+  position:absolute!important;
+  inset:0 0 auto 0!important;
+  height:3px!important;
+  background:linear-gradient(90deg,#006233,#078b49)!important;
+}
+#gate .public-mini-card.language:before{
+  background:linear-gradient(90deg,#d21034 0 25%,#fff 25% 50%,#006233 50% 100%)!important;
+}
+#gate .public-mini-card:hover{
+  transform:translateY(-4px)!important;
+  border-color:#9dc9aa!important;
+  box-shadow:0 14px 26px rgba(12,65,35,.09)!important;
+}
+#gate .public-mini-card>span{
+  display:grid!important;
+  place-items:center!important;
+  width:43px!important;
+  height:43px!important;
+  flex:0 0 43px!important;
+  border:1px solid #e0ece3!important;
+  border-radius:13px!important;
+  background:#edf7f0!important;
+  font-size:23px!important;
+  line-height:1!important;
+}
+#gate .public-mini-card.language>span{
+  background:#f2f7f3!important;
+  border-color:#dce9df!important;
+}
+#gate .public-mini-card>b{
+  display:block!important;
+  color:#173f2a!important;
+  font-size:14px!important;
+  font-weight:950!important;
+  line-height:1.55!important;
+}
+#gate .public-mini-card>small{
+  display:block!important;
+  margin-top:auto!important;
+  color:#687d6e!important;
+  font-size:11px!important;
+  line-height:1.6!important;
+}
+#gate .public-years-heading{margin-top:34px!important}
+#gate .public-year-cards{gap:13px!important}
+#gate .public-year-cards>button{
+  position:relative!important;
+  min-height:112px!important;
+  padding:17px!important;
+  overflow:hidden!important;
+  border:1px solid #d7e7dc!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,#fff 0%,#f5faf6 100%)!important;
+  box-shadow:0 8px 21px rgba(12,65,35,.045)!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease!important;
+}
+#gate .public-year-cards>button:after{
+  content:""!important;
+  position:absolute!important;
+  inset:auto 0 0!important;
+  height:3px!important;
+  background:#006233!important;
+}
+#gate .public-year-cards>button:nth-child(2):after{background:#d21034!important}
+#gate .public-year-cards>button:nth-child(3):after{background:#006233!important}
+#gate .public-year-cards>button:hover{
+  transform:translateY(-3px)!important;
+  border-color:#9dc9aa!important;
+  box-shadow:0 14px 25px rgba(12,65,35,.085)!important;
+}
+#gate .public-year-cards>button>strong{
+  width:48px!important;height:48px!important;flex-basis:48px!important;
+  border-radius:14px!important;font-size:23px!important;
+  box-shadow:0 6px 14px rgba(0,98,51,.17)!important;
+}
+#gate .public-year-cards>button>span{gap:6px!important}
+#gate .public-year-cards b{font-size:15px!important;font-weight:950!important}
+#gate .public-year-cards small{font-size:12px!important;line-height:1.7!important}
+#gate .public-year-cards i{font-size:19px!important;font-weight:900!important}
+html[data-theme="dark"] #gate .public-mini-card,
+html[data-theme="dark"] #gate .public-year-cards>button{
+  border-color:#315640!important;
+  background:linear-gradient(145deg,#1b3525,#14291d)!important;
+  box-shadow:0 9px 22px rgba(0,0,0,.2)!important;
+}
+html[data-theme="dark"] #gate .public-mini-card>b,
+html[data-theme="dark"] #gate .public-year-cards b{color:#e3f1e7!important}
+html[data-theme="dark"] #gate .public-mini-card>small,
+html[data-theme="dark"] #gate .public-year-cards small{color:#b7cdbd!important}
+html[data-theme="dark"] #gate .public-mini-card>span{background:#25432f!important;border-color:#3b6247!important}
+@media(max-width:900px){
+  #gate .public-mini-catalog{gap:10px!important}
+  #gate .public-mini-card{min-height:124px!important;padding:14px 12px!important}
+  #gate .public-year-cards>button{min-height:100px!important}
+}
+@media(max-width:620px){
+  #gate .public-mini-catalog{gap:9px!important}
+  #gate .public-mini-card{min-height:120px!important;padding:13px 11px!important;border-radius:15px!important}
+  #gate .public-mini-card>span{width:39px!important;height:39px!important;flex-basis:39px!important;font-size:21px!important}
+  #gate .public-mini-card>b{font-size:13px!important}
+  #gate .public-mini-card>small{font-size:10px!important}
+  #gate .public-years-heading{margin-top:27px!important}
+  #gate .public-year-cards{gap:9px!important}
+  #gate .public-year-cards>button{min-height:88px!important;padding:13px!important}
+  #gate .public-year-cards>button>strong{width:42px!important;height:42px!important;flex-basis:42px!important;font-size:20px!important}
+  #gate .public-year-cards b{font-size:14px!important}
+  #gate .public-year-cards small{font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #gate .public-mini-card,#gate .public-year-cards>button{transition:none!important}
+  #gate .public-mini-card:hover,#gate .public-year-cards>button:hover{transform:none!important}
+}
