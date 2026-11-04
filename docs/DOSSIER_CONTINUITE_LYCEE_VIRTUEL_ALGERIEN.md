@@ -416,3 +416,16 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, classes réellement émises par les modules, vues et cache cohérents, CI sur le nouveau HEAD.
 - Aucun test visuel navigateur, aucun test de réservation réelle et aucun déploiement Cloudflare ne sont revendiqués.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+## 29. Recomposition de l'espace personnel / mon compte — 4 novembre 2026
+
+- Audit du rendu réel `renderCompte()` dans `app.js` et de la liaison locale/cloud `renderLienCloud()`. La vue présente les informations du profil, le rôle, le niveau, la filière, la wilaya, les points, la progression locale, les paramètres de prononciation, la confidentialité et la déconnexion.
+- Présentation ciblée : en-tête DZ, panneaux profil et progression en grille, lignes de données hiérarchisées, bloc confidentialité, formulaire de liaison cloud et actions de compte.
+- Responsive : deux colonnes sur grand écran, une colonne sur tablette/mobile ; variantes clair/sombre et prise en compte de `prefers-reduced-motion`.
+- Préservation stricte : aucun changement à `app.js`, `renderCompte()`, `renderLienCloud()`, `#compteBody`, `#lcCard`, `#lcMail`, `#lcPass`, `#lcBtn`, `#btnSound2`, `#btnLogout`, aux calculs de progression, à la session, au stockage local, au parcours de liaison ou à la déconnexion.
+- Point de transparence conservé : les données de progression et la confidentialité affichées par le compte décrivent toujours le fonctionnement local existant ; le style ne les transforme pas en données cloud synchronisées.
+- La messagerie nationale était déjà stylée dans le bloc de la vue `msg` et documentée en section 25 ; aucun doublon ni changement à `msg.js` n'a été introduit.
+- Cache : `style-prototype-dz.css?v=93` dans `index.html`, précache actualisé et service worker `dz-de-v3.153.0`.
+- Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, présence des sélecteurs du compte, cohérence des références de cache, CI sur le nouveau HEAD.
+- Aucun test navigateur, aucune validation réelle de liaison cloud ou de déconnexion et aucun déploiement Cloudflare ne sont revendiqués.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
