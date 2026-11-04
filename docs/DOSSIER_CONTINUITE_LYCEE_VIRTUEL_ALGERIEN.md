@@ -457,3 +457,16 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, présence des sélecteurs et IDs ciblés, cohérence des références de cache, CI sur le nouveau HEAD.
 - Aucun test de paiement réel, aucune validation réelle d'upload/synchronisation, aucun test visuel navigateur et aucun déploiement Cloudflare ne sont revendiqués.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+## 32. Correction des styles réels du corpus documentaire et de la banque d'exercices — 4 novembre 2026
+
+- Audit croisé de `corpus.js`, `banque.js` et du CSS historique.
+- Défaut identifié : plusieurs sélecteurs existants visaient `.cp-card`, `.bq-card` ou `.bq-item`, alors que les modules émettent effectivement `.cp-c`, `.cp-ti`, `.cp-x`, `.bq-c`, `.bq-f` et `.bq-s`. Ces règles ne pouvaient donc pas habiller les cartes dynamiques concernées.
+- Corpus : correction des cartes documentaires, titre/extrait, type/niveau, métadonnées/licence, actions d'ouverture, filtres et état vide.
+- Banque : correction des cartes d'exercices, fiches de règles et sujets, onglets, filtres, choix de réponse, retours de correction et affichage des réponses.
+- Modes clair/sombre, responsive mobile et réduction des animations.
+- Préservation stricte : aucun changement à `corpus.js`, `banque.js`, aux fichiers documentaires, au contenu des exercices, aux réponses, aux corrections, aux filtres ou aux événements.
+- Cache : `style-prototype-dz.css?v=96` dans `index.html`, précache actualisé et service worker `dz-de-v3.156.0`.
+- Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, classes émises présentes dans les sélecteurs, cohérence des références de cache, CI sur le nouveau HEAD.
+- Aucun test navigateur, aucune correction pédagogique de contenu et aucun déploiement Cloudflare ne sont revendiqués.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
