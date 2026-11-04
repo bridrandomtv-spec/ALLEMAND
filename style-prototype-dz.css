@@ -14215,3 +14215,28 @@ html[data-theme="dark"] #gate .public-quality-note{background:#203529!important;
 @media(max-width:980px){#gate .public-quality-section{grid-template-columns:1fr!important}#gate .public-quality-intro p{max-width:70ch!important}}
 @media(max-width:620px){#gate .public-quality-section{gap:15px!important;padding:16px!important;border-radius:20px!important}#gate .public-quality-proof{grid-template-columns:1fr!important}#gate .public-proof-card{min-height:0!important;display:grid!important;grid-template-columns:38px auto!important;grid-template-rows:auto auto!important;align-items:center!important;column-gap:10px!important;padding:11px!important}#gate .public-proof-icon{grid-row:1/3!important}#gate .public-proof-card strong{font-size:25px!important}#gate .public-proof-card b,#gate .public-proof-card small{grid-column:2!important}#gate .public-quality-dashboard{padding:13px!important}#gate .public-quality-dashboard-head{align-items:flex-start!important;flex-direction:column!important}#gate .public-quality-dashboard-head h4{font-size:16px!important}#gate .public-quality-rings{gap:7px!important}#gate .public-quality-ring-card{padding:11px 5px!important}#gate .public-quality-ring{width:70px!important;height:70px!important}#gate .public-quality-ring:before{inset:6px!important}#gate .public-quality-ring>span{font-size:20px!important}#gate .public-quality-ring-card>b{font-size:10px!important}#gate .public-quality-ring-card>small{font-size:9px!important}}
 @media(prefers-reduced-motion:reduce){#gate .public-quality-section *{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* Public landing — transparent FAQ for students and parents */
+#gate .public-faq{grid-column:1/-1!important;display:grid!important;grid-template-columns:minmax(230px,.72fr) minmax(0,1.28fr)!important;gap:clamp(18px,3vw,34px)!important;align-items:start!important;margin:8px 0 28px!important;padding:clamp(20px,3vw,34px)!important;border:1px solid #d5e7da!important;border-radius:24px!important;background:linear-gradient(135deg,#f1f8f3 0%,#fff 55%,#fff7f8 100%)!important;box-shadow:0 16px 42px rgba(12,65,35,.065)!important}
+#gate .public-faq-heading>span{display:inline-flex!important;padding:7px 11px!important;border-radius:999px!important;background:#e3f1e7!important;color:#006233!important;font-size:11px!important;font-weight:950!important}
+#gate .public-faq-heading h3{margin:13px 0 8px!important;color:#123d27!important;font-size:clamp(21px,2.3vw,29px)!important;font-weight:950!important;line-height:1.55!important}
+#gate .public-faq-heading p{color:#63766a!important;font-size:13px!important;line-height:1.9!important}
+#gate .public-faq-list{display:grid!important;gap:9px!important}
+#gate .public-faq-item{overflow:hidden!important;border:1px solid #dce9df!important;border-radius:14px!important;background:#fff!important;transition:border-color .18s ease,box-shadow .18s ease!important}
+#gate .public-faq-item[open]{border-color:#8bb99a!important;box-shadow:0 8px 22px rgba(0,98,51,.07)!important}
+#gate .public-faq-item summary{position:relative!important;display:flex!important;align-items:center!important;min-height:54px!important;padding:13px 44px 13px 16px!important;color:#173f2a!important;font-size:13px!important;font-weight:900!important;line-height:1.7!important;cursor:pointer!important;list-style:none!important}
+#gate .public-faq-item summary::-webkit-details-marker{display:none!important}
+#gate .public-faq-item summary:before{content:"＋"!important;position:absolute!important;right:15px!important;top:50%!important;display:grid!important;place-items:center!important;width:22px!important;height:22px!important;transform:translateY(-50%)!important;border-radius:50%!important;background:#e8f4eb!important;color:#006233!important;font-size:15px!important;font-weight:800!important}
+#gate .public-faq-item[open] summary:before{content:"−"!important;background:#006233!important;color:#fff!important}
+#gate .public-faq-item p{margin:0!important;padding:0 16px 16px 44px!important;color:#617267!important;font-size:12px!important;line-height:1.95!important}
+html[data-theme="dark"] #gate .public-faq{border-color:#315640!important;background:linear-gradient(135deg,#172d20,#14271b 58%,#211b20)!important;box-shadow:0 16px 42px rgba(0,0,0,.18)!important}
+html[data-theme="dark"] #gate .public-faq-heading h3,html[data-theme="dark"] #gate .public-faq-item summary{color:#e3f1e7!important}
+html[data-theme="dark"] #gate .public-faq-heading p,html[data-theme="dark"] #gate .public-faq-item p{color:#b7cdbd!important}
+html[data-theme="dark"] #gate .public-faq-heading>span{background:#1d422b!important;color:#c9efd5!important}
+html[data-theme="dark"] #gate .public-faq-item{border-color:#315640!important;background:#172d20!important}
+html[data-theme="dark"] #gate .public-faq-item[open]{border-color:#4c8c62!important}
+html[data-theme="dark"] #gate .public-faq-item summary:before{background:#284a34!important;color:#c9efd5!important}
+html[data-theme="dark"] #gate .public-faq-item[open] summary:before{background:#27844b!important;color:#fff!important}
+@media(max-width:760px){#gate .public-faq{grid-template-columns:1fr!important;gap:14px!important;padding:17px!important;border-radius:19px!important}#gate .public-faq-heading h3{font-size:22px!important}#gate .public-faq-item summary{min-height:50px!important;padding-block:11px!important;font-size:12px!important}#gate .public-faq-item p{padding:0 14px 14px 36px!important;font-size:11px!important}}
+@media(prefers-reduced-motion:reduce){#gate .public-faq-item{transition:none!important}}
