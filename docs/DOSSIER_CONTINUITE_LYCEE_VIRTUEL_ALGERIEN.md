@@ -302,3 +302,17 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Aucun changement d'authentification, rôle, route, RLS, schéma, paiement ou backend. Aucune donnée de démonstration n'est injectée.
 - Contrôles statiques et CI à vérifier après commits ; aucun rendu navigateur ni déploiement Cloudflare n'est déclaré validé ici.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : non fusionnée ; aucun nouveau branch ni changement direct sur `main`.
+
+
+## 20. Recomposition esthétique de l'espace professeur — 4 novembre 2026
+
+- Périmètre : vue réelle `data-view="profboard"` et module `prof.js`.
+- Audit préalable : l'espace est réservé au rôle `prof` via `accesAutorise()`. Les données proviennent du registre local `assets/bdd/eleves.json`; les corrections locales sont stockées dans `dz_de_prof_notes_v1`, le journal dans `dz_de_prof_audit_v1`. Les indicateurs, histogrammes et répartitions existaient déjà et sont calculés depuis ces données.
+- Modification structurelle limitée : ajout d'un conteneur de présentation `dz-prof-dashboard` autour du rendu existant, sans modifier les fonctions de chargement, calcul, filtrage, saisie, export, impression, audit ou événements.
+- Design : hero vert DZ profond avec accent rouge, badge d'accès, actions CSV/impression/réinitialisation mieux contrastées ; navigation par onglets plus nette ; cartes KPI mieux hiérarchisées ; histogramme des moyennes et barre de préparation visuellement renforcés ; tableaux, filtres et alertes affinés.
+- Responsive et accessibilité : grille KPI 4 colonnes desktop, 2 colonnes tablette/mobile ; adaptations de l'en-tête, des onglets et du graphique ; règles de contraste sombre et respect de `prefers-reduced-motion`.
+- Préservation : aucun ID, rôle, permission, dataset, calcul de note, seuil de préparation, événement ou fonctionnalité modifié. Aucune modification Auth, Supabase, RLS, schéma, migration ou paiement.
+- Cache : `style-prototype-dz.css?v=84` dans `index.html` et le précache du service worker ; version du cache `dz-de-v3.144.0`.
+- Contrôles statiques : conservation des points d'ancrage `profBody`, `prOng`, `prContenu`, `pCsv`, `pPrint`, `pReset` ; structure du wrapper vérifiée ; CSS ajouté avec accolades équilibrées à contrôler dans la validation finale. Aucun rendu navigateur ou déploiement Cloudflare n'est déclaré visuellement confirmé.
+- CI antérieure : l'exécution #1850 du commit `73c64baa7d8182cec73d41f4f4c73877837e95f9` est terminée avec succès ; elle précède les changements de cette section.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : aucun nouveau branch, aucune modification directe de `main`, aucune fusion ni déploiement manuel.
