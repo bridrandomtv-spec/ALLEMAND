@@ -722,3 +722,14 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Vérification statique à effectuer sur le HEAD final : sélecteurs ciblés, références CSS identiques, version SW, équilibre des accolades et CI/Workers Build.
 - Limite : aucun navigateur réel n'est disponible pour cette opération ; la validation visuelle sur ordinateur et mobile reste à effectuer et n'est pas revendiquée.
 - Travail limité à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
+
+
+## Lot 54 — Libellés pédagogiques de la navigation publique (4 novembre 2026)
+
+- Dans la navigation du portail public, « بوابة الزوار » devient « استكشف المنصة » et « المواد » devient « المواد التعليمية ». Le libellé « السنوات » est remplacé par « المستويات الدراسية », plus précis pour les classes 1AS, 2AS et 3AS.
+- Dans l'en-tête de la section correspondante, « المسار الدراسي / كل السنوات وكل الشعب » devient « المستويات الدراسية / اختر مستواك وشعبتك » ; le bouton devient « استكشف المستويات ».
+- Les libellés d'authentification (« تسجيل الدخول », « إنشاء حساب ») sont conservés : ils sont standards et non ambigus. Aucun titre supplémentaire n'est ajouté à la barre de navigation afin d'éviter sa surcharge ; le titre et le sous-titre de la page d'accueil remplissent déjà le rôle d'introduction.
+- Modification limitée aux textes HTML et à l'incrément de version du service worker (dz-de-v3.168.0.0.10). Les attributs data-public-view, data-gate-open, identifiants, routes, gestionnaires et données restent inchangés.
+- À vérifier sur le HEAD final : absence des anciens libellés dans la navigation ciblée, présence des nouveaux textes, conservation des attributs fonctionnels, cohérence de la version SW et réussite de la CI/Workers Build.
+- Limite : aucune validation visuelle réelle sur navigateur ordinateur/mobile n'est revendiquée.
+- Travail limité à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
