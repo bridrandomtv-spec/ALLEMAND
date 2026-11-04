@@ -585,3 +585,14 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Cache CSS : style-prototype-dz.css?v=104 ; service worker dz-de-v3.165.0 avec précache aligné.
 - CI et déploiement Preview Cloudflare à contrôler sur le HEAD final. Aucun test visuel réel navigateur ni validation esthétique finale n'est revendiqué à ce stade.
 - Périmètre inchangé : branche design/prototypes-67-74-alignment, PR #17 vers main ; aucun changement direct sur main, aucune fusion et aucun déploiement manuel.
+
+
+## 42. Fiabilisation du catalogue d'accueil en cas d'échec réseau — 4 novembre 2026
+
+- Le catalogue dynamique conserve son chargement depuis les fichiers de données existants et continue d'afficher les états « disponible », « partiellement disponible » ou « en préparation » lorsqu'ils sont récupérés.
+- Correction du cas d'échec réseau : les cartes HTML de secours ne donnent plus l'impression que l'état de disponibilité a été vérifié. Elles affichent désormais « حالة التوفر غير متاحة » jusqu'au prochain chargement réussi.
+- Ajout des attributs aria-live et aria-busy pour signaler l'actualisation du catalogue aux technologies d'assistance.
+- Ajout du style de cet état neutre, y compris en mode sombre.
+- Versions alignées : public-portal.js?v=7, style-prototype-dz.css?v=105, service worker dz-de-v3.166.0.
+- Aucun changement d'authentification, de droits, de données, de routes ni de navigation.
+- À vérifier sur le Preview Cloudflare du HEAD : CI, déploiement, affichage réel desktop/mobile. Aucun résultat visuel navigateur n'est revendiqué ici.
