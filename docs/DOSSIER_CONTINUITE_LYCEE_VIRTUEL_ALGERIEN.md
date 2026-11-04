@@ -534,3 +534,18 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Validation statique à faire sur le HEAD final : accolades CSS, présence des sélecteurs et variantes sombres, cohérence index/SW et CI.
 - Aucun test visuel navigateur mobile/ordinateur, aucune validation de déploiement Cloudflare et aucune confirmation utilisateur du rendu ne sont revendiqués.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+
+## 38. Refonte ciblée de l'accueil public — composition visuelle inspirée du prototype — 4 novembre 2026
+
+- Décision de recentrer les travaux sur l'accueil public uniquement, avant toute reprise de l'accueil élève ou des autres vues.
+- Comparaison directe du prototype HTML de référence avec la structure réellement servie dans `index.html`. Le prototype apporte une hiérarchie éditoriale plus affirmée : navigation institutionnelle, grand hero en deux colonnes, panneau de démonstration pédagogique, cartes de services, catalogue de matières et choix des années.
+- Recomposition CSS dédiée et strictement isolée sous `#gate` : en-tête/navigation, hero, typographie, appels à l'action, indicateurs, panneau IA de présentation, cartes de services, catalogue, cartes des trois années et espace d'inscription.
+- Renforcement de la palette DZ (vert profond `#006233`, vert `#00843d`, rouge `#d21034`) et de la profondeur visuelle : fonds superposés, bordures fines, ombres mesurées, rayons cohérents, états hover/focus.
+- Déclinaisons mobile/tablette et mode sombre explicite ; respect de `prefers-reduced-motion`. La règle `[hidden]` et les classes de navigation/actions existantes restent prioritaires.
+- Aucun changement à `public-portal.js`, aux gestionnaires `data-public-view` / `data-public-action`, au flux d'inscription/connexion, aux routes, aux données, à Supabase/Auth/RLS ou aux permissions. Aucun framework ni dépendance frontend ajouté.
+- Les contenus fictifs du prototype (nombres d'élèves, progrès, notes, messages, statistiques de démonstration) ne sont pas importés dans la plateforme.
+- Cache CSS : `style-prototype-dz.css?v=101` ; service worker `dz-de-v3.162.0`, précache aligné.
+- Validation statique effectuée : équilibre des accolades CSS et cohérence des références CSS/index/service worker. Les tests CI et le déploiement Cloudflare doivent encore être vérifiés.
+- Limite : aucun navigateur réel n'a été utilisé dans cette opération ; le rendu visuel mobile/ordinateur n'est donc pas déclaré validé. Le résultat doit être contrôlé sur l'URL Preview de la branche puis ajusté à partir des observations.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
