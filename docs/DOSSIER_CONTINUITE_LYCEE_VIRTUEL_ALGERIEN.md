@@ -1046,3 +1046,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - `sw.js` : version `dz-de-v3.168.0.0.35` et précache CSS `v129`.
 - `masar.js` reste inchangé : calculs, données de mémoire, progression et actions sont préservés. Aucun changement Auth, Supabase, RLS, schéma, paiement ou permission.
 - Vérification visuelle du nouveau preview et CI encore à effectuer. PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`.
+
+
+## Lot 80 — correction du texte réellement rendu dans « مساري » (4 novembre 2026)
+
+- Retour utilisateur sur le preview `5570bd56` : les textes visibles restaient « كل خطوة تقرّبك من النجاح » et « تقدّمك الحقيقي، مهاراتك، وخطوتك القادمة في مكان واحد ».
+- Cause : ces textes sont générés dynamiquement dans `masar.js` (fonction `render()`), et non dans `index.html`. La modification précédente de `index.html` ne pouvait donc pas les changer.
+- Correction dans `masar.js` : titre « مسارك الدراسي، خطوة بخطوة نحو التميّز » et sous-titre « خطة تعلّم واضحة، حصصك المنجزة، ومهاراتك التي تتطور مع كل تدريب — كل ذلك في لوحة واحدة. ».
+- Cache du script actualisé à `masar.js?v=3515` dans `index.html` et `sw.js`; version Service Worker `dz-de-v3.168.0.0.36`.
+- Les calculs, les chiffres de progression, les données réelles et les actions de navigation restent inchangés. Aucun changement Auth, Supabase, RLS, schéma, paiement ou permissions.
+- Attendre le nouveau preview Cloudflare puis contrôler que le titre/sous-titre ont changé ; ne pas considérer le lot terminé avant vérification visuelle.
