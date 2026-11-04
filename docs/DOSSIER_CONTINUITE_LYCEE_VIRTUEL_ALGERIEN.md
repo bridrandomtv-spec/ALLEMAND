@@ -328,3 +328,16 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Validation statique : les sélecteurs sont limités à la vue admin ; les classes ciblées existent dans le rendu actuel de `admin.js`. Aucun test d'accès réel, rendu navigateur ou déploiement Cloudflare n'est revendiqué par ce seul changement.
 - La CI du travail professeur (HEAD précédent `a523431`) était en file d'attente au moment de ce contrôle ; elle ne valide pas encore cette modification administrative.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : aucune nouvelle branche, aucune modification directe de `main`, aucune fusion et aucun déploiement manuel.
+
+
+## 22. Recomposition du catalogue des matières — 4 novembre 2026
+
+- Périmètre : vue `data-view="matieres"`, module `matieres.js`, styles limités à la vue.
+- Données : le catalogue reste alimenté par `assets/bdd/matieres.json`, filtré selon le niveau et la filière de session. Les statuts du registre sont conservés ; la vue n'annonce pas une matière planifiée comme déjà opérationnelle.
+- Présentation : hero DZ vert profond, sélecteurs de niveau/filière plus lisibles, statistiques du registre, cartes matières avec statut, volumes d'unités/séances existants, accès aux séances pour les matières actives, bloc explicatif.
+- Structure : ajout du wrapper de présentation `dz-subjects`. Correction d'une fermeture HTML erronée d'une balise `code` dans le bloc explicatif. Les IDs `matNiveau` et `matFiliere`, événements de changement, filtre de niveau/filière et action `data-go="seances"` restent inchangés.
+- Aucun ajout de fausses matières, d'unités, de séances, de statistiques ou de capacités. Aucun nouveau moteur ni dépendance.
+- Cache : `style-prototype-dz.css?v=86` dans `index.html` et précache du service worker ; version `dz-de-v3.146.0`.
+- Contrôles statiques à effectuer après commit : balance CSS, présence des sélecteurs et IDs, références cache cohérentes, syntaxe JavaScript. Aucun rendu navigateur ou déploiement Cloudflare n'est déclaré visuellement validé.
+- CI #1854 et #1855 du HEAD précédent `f27ecbc` : toutes deux terminées avec succès. Cette validation précède les modifications de cette section.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion, aucun déploiement manuel.
