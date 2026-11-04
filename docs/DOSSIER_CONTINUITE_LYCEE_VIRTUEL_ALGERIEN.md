@@ -443,3 +443,17 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, présence des sélecteurs ciblés, cohérence des références de cache, CI sur le nouveau HEAD.
 - Aucun test navigateur, aucune correction de cours réelle et aucun déploiement Cloudflare ne sont revendiqués.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+## 31. Recomposition du cloud privé, des abonnements et de l'espace partenaires — 4 novembre 2026
+
+- Audit des modules réels `cloud.js` et `billing.js`, des vues `cloud`, `abonne` et `sponsor`.
+- Cloud privé : présentation différenciée de la connexion, de la mémoire à synchroniser, des documents privés, de l'état de synchronisation et de la liaison parent-enfant.
+- Abonnements : parcours d'explication, cartes de plans, prix issus du système existant, données CCP/BaridiMob, état des demandes, historique de paiement et formulaire de preuve. Aucun tarif ni statut n'a été ajouté ou modifié par le CSS.
+- Partenaires : présentation des trois emplacements publicitaires existants, formulaire de demande, champs de contact et kit sponsor imprimable.
+- Modes clair/sombre, responsive tablette/mobile, réduction des animations.
+- Préservation stricte : aucun changement à `cloud.js`, `billing.js`, `paywall.js`, `trial.js`, aux identifiants des formulaires, aux appels Supabase, aux RPC, au bucket privé, aux règles RLS, aux liaisons enfant-parent, aux calculs de prix, à la création/validation des abonnements, au dépôt de preuve, aux paiements ou aux demandes sponsor.
+- Les abonnements restent activés manuellement par l'administration ; aucun traitement de carte bancaire ni renouvellement automatique n'a été ajouté. Le CSS ne modifie ni les autorisations ni les règles de stockage cloud.
+- Cache : `style-prototype-dz.css?v=95` dans `index.html`, précache actualisé et service worker `dz-de-v3.155.0`.
+- Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, présence des sélecteurs et IDs ciblés, cohérence des références de cache, CI sur le nouveau HEAD.
+- Aucun test de paiement réel, aucune validation réelle d'upload/synchronisation, aucun test visuel navigateur et aucun déploiement Cloudflare ne sont revendiqués.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
