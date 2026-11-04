@@ -11184,3 +11184,123 @@ html[data-theme="dark"] #shell #app [data-view="admin"] #adminBody .ad-tab td{bo
 @media(prefers-reduced-motion:reduce){
   #shell #app [data-view="admin"] #adminBody *{transition:none!important;animation:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SUBJECT CATALOGUE — المواد
+   Identité DZ, statut honnête de chaque matière, navigation existante.
+   ═══════════════════════════════════════════════════════════════ */
+#shell #app [data-view="matieres"] .dz-subjects{max-width:1240px;margin-inline:auto}
+#shell #app [data-view="matieres"] .mat-hero{
+  position:relative;isolation:isolate;overflow:hidden;padding:28px!important;
+  border:1px solid rgba(255,255,255,.14)!important;border-radius:24px!important;color:#fff;
+  background:radial-gradient(circle at 90% 8%,rgba(255,255,255,.13),transparent 25%),
+    radial-gradient(circle at 7% 100%,rgba(210,16,52,.28),transparent 30%),
+    linear-gradient(118deg,#003b21,#006233 58%,#087b43)!important;
+  box-shadow:0 18px 42px rgba(0,65,34,.18)!important
+}
+#shell #app [data-view="matieres"] .mat-t{align-items:center;gap:17px}
+#shell #app [data-view="matieres"] .mat-crest{
+  display:grid;place-items:center;width:64px;height:64px;flex:0 0 64px;
+  border:1px solid rgba(255,255,255,.23);border-radius:19px;background:rgba(255,255,255,.12);
+  font-size:32px;box-shadow:inset 0 1px rgba(255,255,255,.14)
+}
+#shell #app [data-view="matieres"] .mat-hero h2{
+  color:#fff!important;font-size:clamp(22px,2.7vw,32px);font-weight:950;line-height:1.5
+}
+#shell #app [data-view="matieres"] .mat-sub{color:#e2f2e7!important;font-weight:650;line-height:1.9}
+#shell #app [data-view="matieres"] .mat-sel{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:23px
+}
+#shell #app [data-view="matieres"] .mat-f{min-width:0;padding:12px 14px;border:1px solid rgba(255,255,255,.19);
+  border-radius:14px;background:rgba(255,255,255,.09);color:#fff}
+#shell #app [data-view="matieres"] .mat-f>span{display:block;margin-bottom:6px;color:#e7f5eb;font-weight:850}
+#shell #app [data-view="matieres"] .mat-f select{
+  width:100%;min-height:42px;border:1px solid rgba(255,255,255,.3);border-radius:10px;
+  padding:8px 12px;background:#fff;color:#12452a;font-weight:850
+}
+#shell #app [data-view="matieres"] .mat-stats{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:16px
+}
+#shell #app [data-view="matieres"] .mat-st{
+  display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;
+  padding:13px 9px;border:1px solid rgba(255,255,255,.18);border-radius:14px;
+  background:rgba(255,255,255,.10);text-align:center
+}
+#shell #app [data-view="matieres"] .mat-st b{font-size:clamp(22px,2.5vw,30px);font-weight:950;color:#fff}
+#shell #app [data-view="matieres"] .mat-st span{font-size:11px;font-weight:800;color:#e7f5eb}
+#shell #app [data-view="matieres"] .mat-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-top:18px
+}
+#shell #app [data-view="matieres"] .mat-c{
+  position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;
+  padding:19px;border:1px solid var(--b);border-radius:19px;background:var(--p);
+  box-shadow:0 9px 25px rgba(0,55,28,.055);transition:transform .2s,border-color .2s,box-shadow .2s
+}
+#shell #app [data-view="matieres"] .mat-c.on{
+  border-color:rgba(0,98,51,.38);
+  background:linear-gradient(155deg,var(--p),rgba(0,98,51,.045))
+}
+#shell #app [data-view="matieres"] .mat-c.on:before{
+  content:"";position:absolute;inset:0 0 auto;height:4px;border-radius:19px 19px 0 0;
+  background:linear-gradient(90deg,#006233,#d21034)
+}
+#shell #app [data-view="matieres"] .mat-ch{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px}
+#shell #app [data-view="matieres"] .mat-i{
+  display:grid;place-items:center;width:49px;height:49px;border-radius:15px;
+  background:rgba(0,98,51,.09);font-size:25px
+}
+#shell #app [data-view="matieres"] .mat-stt{
+  max-width:65%;padding:6px 9px;border:1px solid var(--b);border-radius:99px;
+  color:var(--t);font-size:10px;font-weight:900;background:var(--p2)
+}
+#shell #app [data-view="matieres"] .mat-stt.ok{
+  color:#075b35;border-color:rgba(0,98,51,.2);background:rgba(0,98,51,.09)
+}
+#shell #app [data-view="matieres"] .mat-n{display:block;margin-top:15px;color:var(--t);font-size:19px;font-weight:950}
+#shell #app [data-view="matieres"] .mat-de{display:block;margin-top:3px;color:var(--g);font-size:12px;font-weight:800}
+#shell #app [data-view="matieres"] .mat-d{min-height:48px;margin:10px 0;color:var(--t2);font-size:12px;line-height:1.9}
+#shell #app [data-view="matieres"] .mat-kv{
+  display:flex;flex-wrap:wrap;gap:9px;width:100%;margin:4px 0 13px
+}
+#shell #app [data-view="matieres"] .mat-kv span{
+  padding:7px 10px;border-radius:10px;background:rgba(0,98,51,.075);color:var(--t2);font-size:11px
+}
+#shell #app [data-view="matieres"] .mat-kv b{color:var(--g);font-weight:950}
+#shell #app [data-view="matieres"] .mat-c .btn{margin-top:auto;min-height:39px;border-radius:11px;font-weight:850}
+#shell #app [data-view="matieres"] .mat-vision{
+  margin-top:18px;padding:21px;border:1px solid var(--b);border-radius:19px;
+  box-shadow:0 8px 24px rgba(0,55,28,.045)
+}
+#shell #app [data-view="matieres"] .mat-vision h3{font-size:17px;font-weight:950;color:var(--g)}
+#shell #app [data-view="matieres"] .mat-how{padding-inline-start:22px;color:var(--t2);line-height:2}
+#shell #app [data-view="matieres"] .mat-how li{padding-inline-start:5px;margin:5px 0}
+#shell #app [data-view="matieres"] .mat-how code{padding:2px 5px;border-radius:5px;background:var(--p2);color:var(--g)}
+html[data-theme="dark"] #shell #app [data-view="matieres"] .mat-hero{
+  background:radial-gradient(circle at 90% 8%,rgba(255,255,255,.08),transparent 25%),
+    linear-gradient(118deg,#002d19,#00532d 60%,#08653a)!important
+}
+html[data-theme="dark"] #shell #app [data-view="matieres"] .mat-c{
+  background:linear-gradient(155deg,#1b3022,#14251b);border-color:#34543e
+}
+html[data-theme="dark"] #shell #app [data-view="matieres"] .mat-c.on{
+  background:linear-gradient(155deg,#1d3826,#172c1e);border-color:#43865a
+}
+html[data-theme="dark"] #shell #app [data-view="matieres"] .mat-stt.ok{color:#d6efde;background:#244832}
+html[data-theme="dark"] #shell #app [data-view="matieres"] .mat-vision{background:#17281d;border-color:#34543e}
+@media(max-width:900px){
+  #shell #app [data-view="matieres"] .mat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  #shell #app [data-view="matieres"] .mat-hero{padding:19px!important}
+  #shell #app [data-view="matieres"] .mat-crest{width:51px;height:51px;flex-basis:51px;font-size:25px}
+  #shell #app [data-view="matieres"] .mat-sel{grid-template-columns:1fr;gap:8px;margin-top:17px}
+  #shell #app [data-view="matieres"] .mat-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  #shell #app [data-view="matieres"] .mat-st{padding:10px 6px}
+  #shell #app [data-view="matieres"] .mat-grid{grid-template-columns:1fr;gap:11px}
+  #shell #app [data-view="matieres"] .mat-c{padding:16px}
+  #shell #app [data-view="matieres"] .mat-d{min-height:0}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="matieres"] .mat-c{transition:none}
+}
