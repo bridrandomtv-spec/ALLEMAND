@@ -752,3 +752,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Cache CSS synchronisé en v116 dans index.html et sw.js ; service worker incrémenté en dz-de-v3.168.0.0.12.
 - Validation statique et CI/Workers Build à effectuer sur le dernier HEAD. Pas de validation visuelle navigateur revendiquée.
 - Travail limité à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
+
+
+## Lot 57 — Accueil public : rendre les indicateurs pédagogiques compréhensibles sans faux graphiques (4 novembre 2026)
+
+- Constat : les trois anneaux de progression affichaient uniquement « — % ». Même si l'absence de taux fictifs était correcte, cette représentation ressemblait à des graphiques vides et n'expliquait pas concrètement ce que chaque indicateur mesurera.
+- Remplacement des anneaux vides par trois cartes éditoriales : **معدل النجاح**, **إتقان الدروس** et **إنجاز التمارين**. Chaque carte décrit la base de calcul attendue et indique explicitement que la valeur n'est pas encore disponible faute de données agrégées fiables.
+- Les cartes distinguent les trois dimensions de suivi sans afficher de pourcentage, de barre de progression ou de résultat simulé. La note de transparence existante sur le stockage local des résultats et l'absence de données centralisées est conservée.
+- Styles dédiés desktop, mobile et thème sombre ; grille de trois cartes sur grand écran et empilement sur petit écran. Aucun JavaScript, identifiant fonctionnel, route, événement, donnée, Auth, Supabase, RLS, schéma ou paiement modifié. Aucun framework ni dépendance ajoutés.
+- Cache CSS synchronisé en v117 dans index.html et sw.js ; version du service worker dz-de-v3.168.0.0.13.
+- Contrôles statiques à effectuer sur le HEAD final : absence des anneaux/valeurs fictives, présence des trois cartes et de leurs descriptions, références CSS synchronisées, équilibre des accolades CSS, dossier mis à jour et CI/Workers Build.
+- Limite : aucun navigateur réel n'est disponible dans cette opération ; aucune validation visuelle desktop/mobile n'est revendiquée.
+- Travail limité à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
