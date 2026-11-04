@@ -1630,6 +1630,7 @@ function bootGate(){
         AUTH.initSelects(r ? r.wilayas : null);
       }catch(e){}
       const c = $('#cBdd'); if(c && BDD.state.ready) c.textContent = BDD.kpis().total;
+      if(typeof renderStats === 'function') renderStats();
     });
   }
 }
