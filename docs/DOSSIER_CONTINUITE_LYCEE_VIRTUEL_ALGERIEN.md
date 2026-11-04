@@ -316,3 +316,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques : conservation des points d'ancrage `profBody`, `prOng`, `prContenu`, `pCsv`, `pPrint`, `pReset` ; structure du wrapper vérifiée ; CSS ajouté avec accolades équilibrées à contrôler dans la validation finale. Aucun rendu navigateur ou déploiement Cloudflare n'est déclaré visuellement confirmé.
 - CI antérieure : l'exécution #1850 du commit `73c64baa7d8182cec73d41f4f4c73877837e95f9` est terminée avec succès ; elle précède les changements de cette section.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : aucun nouveau branch, aucune modification directe de `main`, aucune fusion ni déploiement manuel.
+
+
+## 21. Recomposition visuelle de l'administration — 4 novembre 2026
+
+- Périmètre : vue réelle `data-view="admin"`, styles ciblés sur `#adminBody`.
+- Audit : `admin.js` vérifie la présence du client Supabase, récupère l'utilisateur et son profil, puis exige explicitement `p.role === 'admin'` avant les lectures des profils et des notes. Les autres données administratives sont chargées via les fonctions Supabase existantes.
+- Modification : couche CSS additive uniquement. Hero DZ vert profond avec accent rouge, cartes KPI, grilles de comptes/notes, tableaux, gestion des plans, abonnements, sponsors et paiements, états de chargement et refus d'accès. Déclinaisons mobile, sombre et mouvement réduit.
+- Préservation stricte : aucun changement de `admin.js`, aucun changement des appels Supabase, des contrôles de rôle, des permissions, des actions de modification de rôle, d'abonnement, de sponsor ou d'annonce. Aucun changement Auth, RLS, schéma, migration ou paiement.
+- Cache : CSS `v=85` dans `index.html` et le précache du service worker ; cache `dz-de-v3.145.0`.
+- Validation statique : les sélecteurs sont limités à la vue admin ; les classes ciblées existent dans le rendu actuel de `admin.js`. Aucun test d'accès réel, rendu navigateur ou déploiement Cloudflare n'est revendiqué par ce seul changement.
+- La CI du travail professeur (HEAD précédent `a523431`) était en file d'attente au moment de ce contrôle ; elle ne valide pas encore cette modification administrative.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : aucune nouvelle branche, aucune modification directe de `main`, aucune fusion et aucun déploiement manuel.
