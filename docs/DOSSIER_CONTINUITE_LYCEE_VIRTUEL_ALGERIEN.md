@@ -1111,3 +1111,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache : référence `app.js?v=3525` synchronisée dans `index.html` et le précache de `sw.js` ; version du cache statique du service worker portée à `dz-de-v3.168.0.0.41`.
 - Périmètre : branche `design/prototypes-67-74-alignment` uniquement ; aucun changement sur `main`, aucune fusion de PR, aucune modification Supabase/Auth/RLS/base de données.
 - Validation : vérification statique du retrait du gestionnaire en double, de la conservation du gestionnaire délégué et de la cohérence des références de cache. Le clic réel dans un navigateur et le déploiement Cloudflare restent à confirmer ; cette correction n’est pas déclarée validée visuellement.
+
+
+## Lot 86 — ouverture autonome de la page de connexion depuis la navigation
+
+- Retour utilisateur après le lot 85 : « تسجيل الدخول » ne fonctionnait toujours pas.
+- Nouvelle analyse : le gestionnaire historique d'`app.js` ne rendait pas la carte visible ; il cliquait sur l'onglet puis appelait seulement `scrollIntoView()`. La correction précédente avait supprimé ce gestionnaire en supposant que le gestionnaire délégué de `public-portal.js` suffisait. Le retour utilisateur montre que ce chemin ne fonctionne pas dans son environnement publié.
+- Correction : `app.js` reprend un gestionnaire direct autonome pour les boutons `[data-gate-open]`. Il démasque explicitement `#gate` et `.gate-card`, active le bon onglet, met à jour `#connexion` ou `#inscription`, place le focus dans le champ correspondant et revient en haut de page. Le formulaire `#loginForm` et sa logique d'authentification ne sont pas modifiés.
+- Cache : `app.js?v=3526` synchronisé dans `index.html` et le précache ; service worker `dz-de-v3.168.0.0.42`.
+- Périmètre : branche `design/prototypes-67-74-alignment` uniquement ; PR #17 reste ouverte et non fusionnée ; aucune modification de `main`, Supabase, Auth, RLS ou base de données.
+- Validation : vérification statique de la visibilité explicite du formulaire, du gestionnaire direct, des versions de cache et des ancres conservées. Test navigateur réel et publication Cloudflare restent à confirmer.
