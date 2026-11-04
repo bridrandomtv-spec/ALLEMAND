@@ -11494,3 +11494,174 @@ html[data-theme="dark"] #shell #app [data-view="devoir"] #devoirBody .part-h{bac
   #shell #app [data-view="examen"] .sujet,
   #shell #app [data-view="officiels"] .off-card{transition:none}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   BIBLIOTHÈQUE · FICHES DE RÉVISION · MÉTHODOLOGIE
+   Composition responsive RTL, données et interactions inchangées.
+   ═══════════════════════════════════════════════════════════════ */
+#shell #app [data-view="biblio"] .page-head,
+#shell #app [data-view="malakhiss"] .page-head,
+#shell #app [data-view="methode"] .page-head,
+#shell #app [data-view="revision"] .page-head{
+  position:relative;isolation:isolate;overflow:hidden;margin-bottom:18px;padding:23px 27px;
+  border:1px solid rgba(255,255,255,.14);border-radius:21px;color:#fff;
+  background:radial-gradient(circle at 92% 0,rgba(255,255,255,.13),transparent 25%),
+    radial-gradient(circle at 3% 100%,rgba(210,16,52,.24),transparent 30%),
+    linear-gradient(118deg,#003b21,#006233 60%,#087b43);
+  box-shadow:0 14px 34px rgba(0,65,34,.14)
+}
+#shell #app [data-view="biblio"] .page-head h1,
+#shell #app [data-view="malakhiss"] .page-head h1,
+#shell #app [data-view="methode"] .page-head h1,
+#shell #app [data-view="revision"] .page-head h1{color:#fff!important;font-size:clamp(21px,2.5vw,29px);font-weight:950;line-height:1.55}
+#shell #app [data-view="biblio"] .page-head p,
+#shell #app [data-view="malakhiss"] .page-head p,
+#shell #app [data-view="methode"] .page-head p,
+#shell #app [data-view="revision"] .page-head p{color:#e2f2e7!important;font-size:12px;line-height:1.9}
+#shell #app [data-view="biblio"] #biblioBody,
+#shell #app [data-view="malakhiss"] #malakhissBody,
+#shell #app [data-view="methode"] #methodeBody,
+#shell #app [data-view="revision"] #memoBody{max-width:1240px;margin-inline:auto}
+#shell #app [data-view="biblio"] .bdd-status{padding:12px 16px;border:1px solid var(--b);border-radius:13px;background:var(--p);font-size:12px;line-height:1.8}
+#shell #app [data-view="biblio"] .bdd-status.ok{border-color:rgba(0,98,51,.25);background:rgba(0,98,51,.055);color:var(--g)}
+#shell #app [data-view="biblio"] .bdd-status.err{border-color:rgba(210,16,52,.28);background:rgba(210,16,52,.06);color:#c21e3a}
+#shell #app [data-view="biblio"] .bdd-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:15px 0}
+#shell #app [data-view="biblio"] .kpi{min-width:0;padding:16px;border:1px solid var(--b);border-radius:16px;background:var(--p);box-shadow:0 7px 20px rgba(0,55,28,.05)}
+#shell #app [data-view="biblio"] .kpi-i{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:rgba(0,98,51,.10);font-size:18px}
+#shell #app [data-view="biblio"] .kpi-n{display:block;margin-top:9px;color:var(--g);font-size:25px;font-weight:950}
+#shell #app [data-view="biblio"] .kpi-l{color:var(--t2);font-size:11px;font-weight:850}
+#shell #app [data-view="biblio"] .filters{margin:14px 0;padding:17px;border:1px solid var(--b);border-radius:18px;background:var(--p);box-shadow:0 8px 22px rgba(0,55,28,.045)}
+#shell #app [data-view="biblio"] .filters-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}
+#shell #app [data-view="biblio"] .filters-h b{font-size:15px;font-weight:950}
+#shell #app [data-view="biblio"] .frow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:9px 0}
+#shell #app [data-view="biblio"] .fld2{min-width:0;display:grid;gap:6px;color:var(--t2);font-size:11px;font-weight:850}
+#shell #app [data-view="biblio"] .fld2 input,
+#shell #app [data-view="biblio"] .fld2 select,
+#shell #app [data-view="biblio"] .fld2 .de-in{width:100%;min-height:42px;padding:9px 12px;border:1px solid var(--b);border-radius:11px;background:var(--p2);color:var(--t)}
+#shell #app [data-view="biblio"] .search-bar{position:relative}
+#shell #app [data-view="biblio"] .search-bar .s-ico{position:absolute;inset-inline-end:12px;bottom:11px}
+#shell #app [data-view="biblio"] .search-bar input{padding-inline-end:38px}
+#shell #app [data-view="biblio"] .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+#shell #app [data-view="biblio"] .fchip{padding:6px 10px;border:1px solid var(--b);border-radius:99px;background:var(--p2);color:var(--t2);font-size:11px;font-weight:800}
+#shell #app [data-view="biblio"] .fchip.on{border-color:#006233;background:rgba(0,98,51,.10);color:var(--g)}
+#shell #app [data-view="biblio"] .result-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:15px 0;padding:12px 15px;border:1px solid var(--b);border-radius:13px;background:var(--p);font-size:12px;font-weight:850}
+#shell #app [data-view="biblio"] .result-n{color:var(--g);font-size:19px;font-weight:950}
+#shell #app [data-view="biblio"] #rList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#shell #app [data-view="biblio"] .fiche{min-width:0;padding:16px;border:1px solid var(--b);border-radius:17px;background:var(--p);box-shadow:0 7px 20px rgba(0,55,28,.045);transition:transform .18s,border-color .18s,box-shadow .18s}
+#shell #app [data-view="biblio"] .fiche:hover{transform:translateY(-2px);border-color:rgba(0,98,51,.4);box-shadow:0 13px 27px rgba(0,70,35,.09)}
+#shell #app [data-view="biblio"] .fiche-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+#shell #app [data-view="biblio"] .fiche-t{font-weight:950;line-height:1.75;color:var(--t)}
+#shell #app [data-view="biblio"] .fiche-de{color:var(--t2);font-size:12px;line-height:1.8}
+#shell #app [data-view="biblio"] .fiche-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+#shell #app [data-view="biblio"] .badge,
+#shell #app [data-view="biblio"] .mchip{padding:5px 8px;border-radius:8px;background:rgba(0,98,51,.09);color:var(--g);font-size:10px;font-weight:900}
+#shell #app [data-view="biblio"] .fiche-foot{display:flex;justify-content:space-between;align-items:center;gap:9px;margin-top:13px;padding-top:11px;border-top:1px solid var(--b)}
+#shell #app [data-view="biblio"] .pager{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin:18px 0}
+#shell #app [data-view="biblio"] .pg{min-width:36px;min-height:36px;border:1px solid var(--b);border-radius:10px;background:var(--p);color:var(--t);font-weight:850}
+#shell #app [data-view="biblio"] .pg.on{background:#006233;border-color:#006233;color:#fff}
+#shell #app [data-view="biblio"] .empty{padding:35px 18px;border:1px dashed var(--b);border-radius:17px;background:var(--p);text-align:center;color:var(--t2)}
+#shell #app [data-view="biblio"] .modal-h{padding:17px 20px;border-radius:17px 17px 0 0;background:linear-gradient(110deg,#004326,#006b39);color:#fff}
+#shell #app [data-view="biblio"] .modal-b{padding:20px;background:var(--p);color:var(--t);line-height:1.9}
+#shell #app [data-view="biblio"] .info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:13px 0}
+#shell #app [data-view="biblio"] .info-i{padding:11px;border:1px solid var(--b);border-radius:12px;background:var(--p2)}
+#shell #app [data-view="biblio"] .info-k{color:var(--t2);font-size:10px;font-weight:850}
+#shell #app [data-view="biblio"] .info-v{margin-top:4px;font-weight:900}
+#shell #app [data-view="biblio"] .corrige-box{padding:15px;border:1px solid rgba(0,98,51,.22);border-radius:13px;background:rgba(0,98,51,.06);white-space:pre-wrap}
+#shell #app [data-view="malakhiss"] .mk-hero,
+#shell #app [data-view="methode"] .mt-hero{
+  display:flex;align-items:center;gap:16px;position:relative;isolation:isolate;overflow:hidden;
+  padding:23px;border:1px solid rgba(255,255,255,.13);border-radius:20px;color:#fff;
+  background:radial-gradient(circle at 94% 0,rgba(255,255,255,.13),transparent 25%),linear-gradient(118deg,#003b21,#006233 65%,#087b43);
+  box-shadow:0 13px 30px rgba(0,65,34,.13)
+}
+#shell #app [data-view="malakhiss"] .mk-crest,
+#shell #app [data-view="methode"] .mt-crest{display:grid;place-items:center;flex:0 0 52px;width:52px;height:52px;border:1px solid rgba(255,255,255,.22);border-radius:16px;background:rgba(255,255,255,.12);font-size:25px}
+#shell #app [data-view="malakhiss"] .mk-hero h2,
+#shell #app [data-view="methode"] .mt-hero h2{color:#fff;font-size:clamp(19px,2.3vw,27px);font-weight:950}
+#shell #app [data-view="malakhiss"] .mk-sub,
+#shell #app [data-view="methode"] .mt-sub{margin-top:5px;color:#e2f2e7;font-size:12px;line-height:1.9}
+#shell #app [data-view="malakhiss"] .mk-count{display:flex;flex-direction:column;align-items:center;margin-inline-start:auto;padding:10px 15px;border:1px solid rgba(255,255,255,.18);border-radius:14px;background:rgba(255,255,255,.10)}
+#shell #app [data-view="malakhiss"] .mk-count b{color:#fff;font-size:25px;font-weight:950}
+#shell #app [data-view="malakhiss"] .mk-count span{color:#e2f2e7;font-size:10px;font-weight:850}
+#shell #app [data-view="malakhiss"] .mk-filtre{display:flex;gap:10px;margin:14px 0;padding:13px;border:1px solid var(--b);border-radius:14px;background:var(--p)}
+#shell #app [data-view="malakhiss"] .mk-filtre select{min-width:180px;min-height:42px;padding:9px 12px;border:1px solid var(--b);border-radius:10px;background:var(--p2);color:var(--t);font-weight:800}
+#shell #app [data-view="malakhiss"] .bq-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
+#shell #app [data-view="malakhiss"] .bq-tab{padding:10px 15px;border:1px solid var(--b);border-radius:11px;background:var(--p);color:var(--t);font-weight:850}
+#shell #app [data-view="malakhiss"] .bq-tab.on{background:#006233;border-color:#006233;color:#fff}
+#shell #app [data-view="malakhiss"] .mk-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+#shell #app [data-view="malakhiss"] .mk-c{min-width:0;overflow:hidden;border:1px solid var(--b);border-radius:16px;background:var(--p);box-shadow:0 7px 18px rgba(0,55,28,.045)}
+#shell #app [data-view="malakhiss"] .mk-c[open]{grid-column:1/-1;border-color:rgba(0,98,51,.35);box-shadow:0 12px 25px rgba(0,65,34,.08)}
+#shell #app [data-view="malakhiss"] .mk-c summary{display:flex;align-items:center;gap:9px;min-height:65px;padding:13px;cursor:pointer;list-style:none}
+#shell #app [data-view="malakhiss"] .mk-c summary::-webkit-details-marker{display:none}
+#shell #app [data-view="malakhiss"] .mk-u{display:grid;place-items:center;flex:0 0 39px;height:39px;border-radius:11px;background:rgba(0,98,51,.10);color:var(--g);font-size:11px;font-weight:950}
+#shell #app [data-view="malakhiss"] .mk-n{color:var(--t2);font-size:10px;font-weight:850}
+#shell #app [data-view="malakhiss"] .mk-t{min-width:0;color:var(--t);font-size:13px;font-weight:950;line-height:1.8}
+#shell #app [data-view="malakhiss"] .mk-body{padding:0 16px 17px;border-top:1px solid var(--b);color:var(--t);line-height:1.9}
+#shell #app [data-view="malakhiss"] .mk-idee{margin:13px 0;padding:13px;border-inline-start:4px solid #006233;border-radius:11px;background:rgba(0,98,51,.07);font-weight:850}
+#shell #app [data-view="malakhiss"] .mk-sec{margin-top:12px;padding:14px;border:1px solid var(--b);border-radius:13px;background:var(--p2)}
+#shell #app [data-view="malakhiss"] .mk-sec>b{display:block;margin-bottom:8px;color:var(--g);font-weight:950}
+#shell #app [data-view="malakhiss"] .mk-chips{display:flex;flex-wrap:wrap;gap:7px}
+#shell #app [data-view="malakhiss"] .mk-ch{padding:6px 9px;border:1px solid rgba(0,98,51,.15);border-radius:9px;background:rgba(0,98,51,.08);font-weight:800}
+#shell #app [data-view="malakhiss"] .mk-tip{border-color:rgba(210,16,52,.2);background:rgba(210,16,52,.045)}
+#shell #app [data-view="malakhiss"] .mk-tip>b{color:#c21e3a}
+#shell #app [data-view="methode"] .mt-pick{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:14px 0;padding:14px;border:1px solid var(--b);border-radius:15px;background:var(--p)}
+#shell #app [data-view="methode"] .mt-u{min-width:43px;min-height:39px;border:1px solid var(--b);border-radius:10px;background:var(--p2);color:var(--t);font-weight:900}
+#shell #app [data-view="methode"] .mt-u:hover{border-color:#006233;color:var(--g)}
+#shell #app [data-view="methode"] .mt-d{margin-top:11px;padding:15px;border:1px solid var(--b);border-radius:15px;background:var(--p)}
+#shell #app [data-view="methode"] .mt-dh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+#shell #app [data-view="methode"] .mt-dh>b{font-weight:950;line-height:1.8}
+#shell #app [data-view="methode"] .mt-bad{flex:0 0 auto;padding:5px 8px;border-radius:8px;background:rgba(0,98,51,.09);color:var(--g);font-size:10px;font-weight:900}
+#shell #app [data-view="methode"] .mt-meta{margin:8px 0;color:var(--t2);font-size:11px;line-height:1.8}
+#shell #app [data-view="methode"] .mt-comp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}
+#shell #app [data-view="methode"] .mt-p{padding:12px;border:1px solid var(--b);border-radius:12px;background:var(--p2);line-height:1.85}
+#shell #app [data-view="methode"] .mt-p> b{color:var(--g)}
+#shell #app [data-view="methode"] .mt-plan{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:13px}
+#shell #app [data-view="methode"] .mt-j{display:grid;gap:7px;padding:13px;border:1px solid var(--b);border-radius:13px;background:var(--p2)}
+#shell #app [data-view="methode"] .mt-j>b{color:var(--g);font-weight:950}
+#shell #app [data-view="methode"] .mt-j>i{color:var(--t2);font-size:11px}
+#shell #app [data-view="methode"] .mt-note{margin-top:12px;padding:13px;border-inline-start:4px solid #d21034;border-radius:11px;background:rgba(210,16,52,.06);line-height:1.9}
+#shell #app [data-view="methode"] .mt-ev{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:9px 0;padding:12px;border:1px solid var(--b);border-radius:12px;background:var(--p2)}
+#shell #app [data-view="methode"] .mt-ok{padding:15px;border:1px solid rgba(0,98,51,.25);border-radius:13px;background:rgba(0,98,51,.07);color:var(--g);font-weight:900}
+html[data-theme="dark"] #shell #app [data-view="biblio"] .kpi,
+html[data-theme="dark"] #shell #app [data-view="biblio"] .filters,
+html[data-theme="dark"] #shell #app [data-view="biblio"] .fiche,
+html[data-theme="dark"] #shell #app [data-view="biblio"] .modal-b,
+html[data-theme="dark"] #shell #app [data-view="malakhiss"] .mk-c,
+html[data-theme="dark"] #shell #app [data-view="methode"] .mt-pick,
+html[data-theme="dark"] #shell #app [data-view="methode"] .mt-d{background:linear-gradient(155deg,#1b3022,#14251b);border-color:#34543e;color:#edf6ef}
+html[data-theme="dark"] #shell #app [data-view="biblio"] .fld2 input,
+html[data-theme="dark"] #shell #app [data-view="biblio"] .fld2 select,
+html[data-theme="dark"] #shell #app [data-view="biblio"] .info-i,
+html[data-theme="dark"] #shell #app [data-view="malakhiss"] .mk-sec,
+html[data-theme="dark"] #shell #app [data-view="methode"] .mt-p,
+html[data-theme="dark"] #shell #app [data-view="methode"] .mt-j{background:#203a29;border-color:#34543e;color:#edf6ef}
+html[data-theme="dark"] #shell #app [data-view="biblio"] .fiche-t,
+html[data-theme="dark"] #shell #app [data-view="malakhiss"] .mk-t{color:#edf6ef}
+@media(max-width:1000px){
+  #shell #app [data-view="biblio"] .bdd-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #shell #app [data-view="malakhiss"] .mk-list{grid-template-columns:1fr}
+  #shell #app [data-view="methode"] .mt-comp{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+  #shell #app [data-view="biblio"] .page-head,
+  #shell #app [data-view="malakhiss"] .page-head,
+  #shell #app [data-view="methode"] .page-head,
+  #shell #app [data-view="revision"] .page-head{padding:18px;border-radius:17px}
+  #shell #app [data-view="biblio"] .frow,
+  #shell #app [data-view="biblio"] #rList,
+  #shell #app [data-view="biblio"] .info-grid,
+  #shell #app [data-view="methode"] .mt-comp,
+  #shell #app [data-view="methode"] .mt-plan{grid-template-columns:1fr}
+  #shell #app [data-view="biblio"] .fiche-foot{align-items:flex-start;flex-direction:column}
+  #shell #app [data-view="malakhiss"] .mk-hero,
+  #shell #app [data-view="methode"] .mt-hero{align-items:flex-start;padding:17px;gap:11px}
+  #shell #app [data-view="malakhiss"] .mk-count{margin-inline-start:auto;padding:7px 10px}
+  #shell #app [data-view="malakhiss"] .mk-count b{font-size:20px}
+  #shell #app [data-view="malakhiss"] .mk-c[open]{grid-column:auto}
+  #shell #app [data-view="malakhiss"] .mk-c summary{align-items:flex-start;flex-wrap:wrap}
+  #shell #app [data-view="methode"] .mt-dh{flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="biblio"] .fiche{transition:none}
+}
