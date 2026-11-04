@@ -801,3 +801,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Vérifications statiques à effectuer sur le HEAD final : 14 cartes et 6 langues conservées, trois liens de niveaux conservés, CSS v120 synchronisé, règles desktop/tablette/mobile et sombre présentes, accolades CSS équilibrées, dossier et CI/Workers Build.
 - Limite : pas de navigateur visuel disponible pour valider le rendu final sur appareils réels ; aucune validation visuelle n'est revendiquée.
 - Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main`; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
+
+
+## Lot 61 — Mise en valeur de la preuve pédagogique et des indicateurs (4 novembre 2026)
+
+- Renforcement de la section « الجودة التعليمية والمتابعة » comme bloc éditorial autonome : fond nuancé vert/blanc avec accent tricolore, titre plus fort et meilleure respiration.
+- Cartes de ressources du parcours allemand (234 exercices corrigés, 55 sujets officiels corrigés, 19 unités) retravaillées : nombre plus visible, icône structurée, descriptions lisibles et accent coloré inférieur. Les nombres restent explicitement rattachés au seul parcours allemand.
+- Tableau des trois dimensions de suivi réorganisé visuellement : cartes plus lisibles, états « en attente de données fiables » conservés, aucune jauge ni aucun taux inventé. La note sur l'absence d'agrégation centrale reste visible.
+- Adaptations du thème sombre, du mobile/tablette et de `prefers-reduced-motion`. Aucun contenu métier ni donnée modifié ; aucun identifiant, lien, gestionnaire, script, Auth, Supabase, RLS, schéma ou paiement modifié. Aucune dépendance ajoutée.
+- Référence CSS synchronisée en v121 dans `index.html` et `sw.js`; service worker `dz-de-v3.168.0.0.17`.
+- Vérifications statiques à effectuer sur le HEAD final : trois cartes de ressources, trois cartes d'indicateurs, libellés de disponibilité conservés, cache CSS et SW synchronisés, styles sombre/mobile présents, accolades équilibrées, dossier et CI/Workers Build.
+- Limite : aucune validation visuelle réelle sur navigateur n'est revendiquée.
+- Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main`; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
