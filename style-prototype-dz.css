@@ -12707,3 +12707,119 @@ html[data-theme="dark"] section[data-view="projet"] .pj-tarp{color:#b5e8c4}
     animation-duration:.01ms!important;transition-duration:.01ms!important
   }
 }
+
+
+
+/* 29. Espace personnel — profil, progression, confidentialité et liaison cloud */
+html[data-theme="light"] section[data-view="compte"] .page-head{
+  position:relative;overflow:hidden;padding:22px 24px;color:#fff;
+  background:linear-gradient(118deg,#003f22,#006233 60%,#00843d);
+  border:0;border-radius:19px;box-shadow:0 12px 28px rgba(0,75,37,.16)
+}
+html[data-theme="light"] section[data-view="compte"] .page-head::after{
+  content:"🇩🇿";position:absolute;inset-inline-end:24px;top:50%;transform:translateY(-50%);
+  font-size:48px;opacity:.15;pointer-events:none
+}
+html[data-theme="light"] section[data-view="compte"] .page-head h1,
+html[data-theme="light"] section[data-view="compte"] .page-head p{position:relative;z-index:1;color:#fff}
+html[data-theme="light"] section[data-view="compte"] .page-head p{opacity:.86}
+html[data-theme="light"] section[data-view="compte"] #compteBody{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;align-items:start
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody>.card{
+  min-width:0;padding:clamp(16px,2vw,22px);background:#fff;
+  border:1px solid #dce8df;border-radius:17px;
+  box-shadow:0 6px 20px rgba(0,55,28,.045)
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody>.card:first-child{
+  border-top:3px solid #006233
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody>.card:nth-child(2){
+  border-top:3px solid #00843d
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody>.card:nth-child(3){
+  grid-column:1/-1;border-top:3px solid #d21034
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody>.card h2{
+  display:flex;align-items:center;gap:9px;margin:0 0 13px;padding-bottom:12px;
+  color:#004d28;font-size:17px;font-weight:900;border-bottom:1px solid #e3ece5
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody .rep-row{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+  padding:11px 2px;border-bottom:1px solid #e8efe9;color:#506456;font-size:13px
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody .rep-row:last-child{border-bottom:0}
+html[data-theme="light"] section[data-view="compte"] #compteBody .rep-v{
+  max-width:62%;color:#17452c;text-align:end;font-weight:850;overflow-wrap:anywhere
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody .privacy{
+  padding:15px;color:#405e49;background:linear-gradient(135deg,#f0f7f2,#fbfdfb);
+  border:1px solid #dce8df;border-inline-start:4px solid #d21034;border-radius:13px;line-height:1.9
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody .privacy b{color:#006233}
+html[data-theme="light"] section[data-view="compte"] #compteBody #lcCard{
+  grid-column:1/-1;min-width:0;padding:0;background:transparent;border:0;box-shadow:none
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody #lcCard>.card{
+  padding:18px;background:#f4f9f5;border:1px solid #cfe2d4;border-radius:16px
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody #lcCard b{color:#004d28}
+html[data-theme="light"] section[data-view="compte"] #compteBody #lcCard input{
+  min-height:44px;padding:10px 12px;color:#173d28;background:#fff;border:1px solid #cbdccf;border-radius:11px
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody #btnLogout,
+html[data-theme="light"] section[data-view="compte"] #compteBody #btnSound2{
+  min-height:44px;padding:10px 16px;border-radius:12px;font-weight:800
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody #btnLogout{
+  color:#fff;background:#d21034;border:1px solid #d21034
+}
+html[data-theme="light"] section[data-view="compte"] #compteBody #btnSound2{
+  color:#006233;background:#edf6ef;border:1px solid #cfe2d4
+}
+html[data-theme="dark"] section[data-view="compte"] .page-head{
+  color:#fff;background:linear-gradient(118deg,#092c1b,#064a2a 62%,#08663a);border-color:#276747
+}
+html[data-theme="dark"] section[data-view="compte"] .page-head h1,
+html[data-theme="dark"] section[data-view="compte"] .page-head p{color:#f4fff7}
+html[data-theme="dark"] section[data-view="compte"] #compteBody>.card{
+  color:#e8f5eb;background:#142c1e;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="compte"] #compteBody>.card h2{
+  color:#b5e8c4;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="compte"] #compteBody .rep-row{
+  color:#c2d8c8;border-color:#294b36
+}
+html[data-theme="dark"] section[data-view="compte"] #compteBody .rep-v{color:#e4f7e9}
+html[data-theme="dark"] section[data-view="compte"] #compteBody .privacy{
+  color:#d2e6d7;background:#193524;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="compte"] #compteBody .privacy b{color:#b5e8c4}
+html[data-theme="dark"] section[data-view="compte"] #compteBody #lcCard>.card{
+  color:#e4f7e9;background:#193524;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="compte"] #compteBody #lcCard b{color:#b5e8c4}
+html[data-theme="dark"] section[data-view="compte"] #compteBody #lcCard input{
+  color:#f2fff5;background:#10271b;border-color:#42664e
+}
+html[data-theme="dark"] section[data-view="compte"] #compteBody #btnSound2{
+  color:#b5e8c4;background:#193524;border-color:#31543e
+}
+@media(max-width:760px){
+  html[data-theme="light"] section[data-view="compte"] #compteBody{grid-template-columns:1fr}
+  html[data-theme="light"] section[data-view="compte"] #compteBody>.card:nth-child(3),
+  html[data-theme="light"] section[data-view="compte"] #compteBody #lcCard{grid-column:auto}
+}
+@media(max-width:520px){
+  html[data-theme="light"] section[data-view="compte"] .page-head{padding:18px 15px}
+  html[data-theme="light"] section[data-view="compte"] #compteBody>.card{padding:15px}
+  html[data-theme="light"] section[data-view="compte"] #compteBody .rep-row{gap:8px;font-size:12px}
+  html[data-theme="light"] section[data-view="compte"] #compteBody .rep-v{max-width:58%}
+  html[data-theme="light"] section[data-view="compte"] #compteBody #lcCard>.card{padding:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  section[data-view="compte"] *,section[data-view="compte"] *::before,section[data-view="compte"] *::after{
+    animation-duration:.01ms!important;transition-duration:.01ms!important
+  }
+}
