@@ -14389,3 +14389,26 @@ html[data-theme="dark"] #gate .public-catalog-note button{
   #gate .public-quality-track{font-size:12px!important;line-height:1.5!important}
   #gate .public-quality-live{font-size:12px!important;line-height:1.5!important}
 }
+
+
+/* LOT 56 — Navigation publique mobile : donner de l'espace aux libellés longs */
+@media(max-width:700px){
+  #gate .public-header .public-nav{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+  #gate .public-header .public-nav button{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    min-height:42px!important;
+    padding:9px 8px!important;
+    font-size:12px!important;
+    line-height:1.45!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+  #gate .public-header .public-nav button.public-nav-cta{
+    grid-column:1/-1!important;
+  }
+}
