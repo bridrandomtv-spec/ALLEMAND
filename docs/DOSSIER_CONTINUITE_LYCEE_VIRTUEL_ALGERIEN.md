@@ -377,3 +377,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles CI antérieurs : #1860 (commit index v88) et #1861 (commit documentaire v88) terminées avec succès. Les workflows déclenchés par le présent lot doivent encore être vérifiés sur les nouveaux commits.
 - Contrôles statiques après écriture : cohérence des versions de cache, équilibre des accolades CSS, présence des sélecteurs de la vue message et conservation des points d'ancrage du module. Aucun test navigateur, aucune validation visuelle mobile/desktop et aucun déploiement Cloudflare ne sont revendiqués à ce stade.
 - Branche inchangée `design/prototypes-67-74-alignment`, PR #17 vers `main`. Aucun changement direct sur `main`, aucune nouvelle branche, aucune fusion et aucun déploiement manuel.
+
+## 26. Recomposition esthétique du guide d'utilisation — 4 novembre 2026
+
+- Périmètre : vue réelle `data-view="guide"`, module `guide.js` et données `assets/bdd/onboarding.json`.
+- Audit préalable : le guide est personnalisé par rôle (élève, professeur, parent) et construit depuis les données d'onboarding ; le changement ne remplace ni les textes, ni les rôles, ni le comportement de sélection.
+- Présentation : hero DZ vert profond, sélecteur de rôle, cartes de l'objectif, étapes d'utilisation et premiers pas ; hiérarchie RTL et contrastes renforcés.
+- Responsive : sélecteur vertical sur mobile, cartes adaptatives, variantes clair/sombre et mouvement réduit.
+- Préservation : aucun changement à `guide.js`, au chargement des données, aux clés de session, au parcours d'onboarding, aux événements ou aux permissions. Aucune modification Auth, Supabase, RLS, schéma, migration ou paiement.
+- Cache : `style-prototype-dz.css?v=90` dans `index.html` et le précache du service worker ; version `dz-de-v3.150.0`.
+- Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, présence des classes réellement produites par `guide.js`, cohérence des références cache et CI. Aucun test navigateur ni validation visuelle utilisateur n'est revendiqué.
+- Lot précédent messagerie : CI #1862, #1863 et #1864 terminées avec succès. Le nouveau lot guide déclenche ses propres workflows.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
