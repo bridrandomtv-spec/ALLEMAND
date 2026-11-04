@@ -352,3 +352,16 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Cache : `style-prototype-dz.css?v=87` dans `index.html` et précache du service worker ; version `dz-de-v3.147.0`.
 - Contrôles préalables : CI #1856 et #1857 du HEAD `2c25400` ont réussi. Les contrôles de CSS, de cohérence des références et les tests CI du nouveau HEAD doivent être exécutés après ces commits. Pas de validation navigateur ni de déploiement Cloudflare revendiqué.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : pas de branche supplémentaire, aucun changement direct sur `main`, aucune fusion, aucun déploiement manuel.
+
+
+## 24. Refonte bibliothèque, résumés et méthodologie — 4 novembre 2026
+
+- Vues concernées : `biblio`, `malakhiss`, `methode` et en-tête `revision`.
+- Bibliothèque : statut de la base, KPI, filtres, recherche, résultats, fiches, pagination et détail de fiche/corrigé.
+- Résumés : cartes d'unités, détails dépliables, vocabulaire, grammaire, structures, conseils, filtres de niveau/unité et onglets.
+- Méthodologie : choix d'unité, fiches de devoirs réels, métadonnées, protocole en étapes, auto-évaluation et plan hebdomadaire.
+- Préservation : aucune donnée de bibliothèque, fiche, résumé, question, règle de révision, stockage ou logique de rendu n'a été remplacée. Les identifiants `bddStatus`, `biblioBody`, `malakhissBody`, `methodeBody`, `memoBody`, les contrôles de filtre et les événements existants sont conservés. Pas de dépendance ajoutée.
+- Présentation : compositions RTL, palette DZ profonde, cartes et hiérarchie, grilles desktop/tablette/mobile, contraste sombre.
+- Cache : `style-prototype-dz.css?v=88` ; service worker `dz-de-v3.148.0`.
+- CI avant ce lot : #1858 et #1859 réussies sur les commits précédents. Les tests du nouveau HEAD restent à confirmer. Aucune vérification visuelle navigateur ni déploiement Cloudflare revendiqué.
+- Même branche `design/prototypes-67-74-alignment`, PR #17 vers `main`. Aucun changement direct de `main`, aucune fusion et aucun déploiement manuel.
