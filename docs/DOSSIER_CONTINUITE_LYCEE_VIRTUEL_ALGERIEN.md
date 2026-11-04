@@ -764,3 +764,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer sur le HEAD final : absence des anneaux/valeurs fictives, présence des trois cartes et de leurs descriptions, références CSS synchronisées, équilibre des accolades CSS, dossier mis à jour et CI/Workers Build.
 - Limite : aucun navigateur réel n'est disponible dans cette opération ; aucune validation visuelle desktop/mobile n'est revendiquée.
 - Travail limité à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
+
+
+## Lot 58 — Authentification sur une page dédiée (4 novembre 2026)
+
+- Retour utilisateur : les onglets « 🔐 تسجيل الدخول » et « 📝 حساب جديد » étaient affichés dans la page d'accueil publique, sous les sections de présentation. L'authentification doit constituer un écran séparé.
+- Les accès de connexion et d'inscription ouvrent désormais un écran d'authentification dédié dans le portail, avec les URL `#connexion` et `#inscription`. La page d'accueil, ses sections pédagogiques et son catalogue ne sont pas affichés sur cet écran.
+- Ajout d'un bouton de retour explicite vers l'accueil. Les liens de connexion/inscription existants, les deux formulaires, leurs identifiants, la validation, le choix du niveau et de la filière, le bouton de démonstration et les gestionnaires d'authentification sont conservés.
+- Les liens depuis le catalogue qui préparent un niveau/une filière puis ouvrent l'inscription continuent d'utiliser le formulaire existant. Les URL de connexion et d'inscription peuvent être ouvertes directement et sont synchronisées avec le hash.
+- Styles dédiés pour l'écran d'authentification, desktop/mobile et thème sombre. Aucun changement de compte, de session, d'Auth, Supabase, RLS, schéma, paiement ou rôle ; aucune dépendance ajoutée.
+- Cache CSS porté à v118 et script portail à v8 dans le précache de `sw.js`; service worker `dz-de-v3.168.0.0.14`.
+- Vérifications statiques à effectuer : gestionnaire d'écran et hash, bouton retour, conservation des IDs de formulaires et actions existantes, références de cache, équilibre CSS, CI/Workers Build. Validation visuelle réelle non revendiquée sans navigateur.
+- Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main` ; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
