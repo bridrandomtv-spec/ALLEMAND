@@ -13561,3 +13561,109 @@ html[data-theme="light"] section[data-view="stats"] .st-tip{
 @media(prefers-reduced-motion:reduce){
   section[data-view="stats"] .wrow,section[data-view="stats"] .wbar i{transition:none}
 }
+
+
+/* 35. Recomposition du tableau de bord élève selon la hiérarchie du prototype
+   Le contenu réel reste prioritaire : aucune statistique ni matière fictive. */
+#shell #app section[data-view="accueil"] .home-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.8fr) minmax(250px,.9fr);
+  gap:20px;
+  align-items:start;
+}
+#shell #app section[data-view="accueil"] .home-grid > .home-main{
+  grid-column:1;grid-row:1;min-width:0
+}
+#shell #app section[data-view="accueil"] .home-grid > .home-side{
+  grid-column:2;grid-row:1;min-width:0
+}
+#shell #app section[data-view="accueil"] .home-main > .welcome-art{display:none}
+#shell #app section[data-view="accueil"] .home-main > .grid3{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:13px;
+  margin:18px 0 24px
+}
+#shell #app section[data-view="accueil"] .home-main > .grid3 > .mini{
+  min-height:158px;
+  padding:18px 16px 16px;
+  border:1px solid var(--b);
+  border-radius:19px;
+  background:linear-gradient(155deg,var(--p),var(--p2));
+  box-shadow:0 7px 22px rgba(0,55,28,.055);
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease
+}
+#shell #app section[data-view="accueil"] .home-main > .grid3 > .mini:hover{
+  transform:translateY(-4px);
+  border-color:rgba(0,132,61,.45);
+  box-shadow:0 15px 30px rgba(0,75,35,.11)
+}
+#shell #app section[data-view="accueil"] .home-main > .grid3 .mini-i{
+  display:grid;place-items:center;
+  width:46px;height:46px;margin-bottom:13px;
+  border:1px solid rgba(0,98,51,.10);border-radius:14px;
+  background:linear-gradient(145deg,#e9f5ed,#f7fbf8);
+  font-size:23px
+}
+#shell #app section[data-view="accueil"] .home-main > .grid3 .mini h3{
+  margin:0 0 5px;font-size:14px;font-weight:900
+}
+#shell #app section[data-view="accueil"] .home-main > .grid3 .mini p{
+  margin:0;color:var(--m);font-size:11px;line-height:1.7
+}
+#shell #app section[data-view="accueil"] .home-main > .grid3 .mini-n{
+  top:13px;left:13px;min-width:28px;padding:3px 7px;
+  border:1px solid var(--b);border-radius:999px;
+  background:var(--p);font-size:12px;text-align:center
+}
+#shell #app section[data-view="accueil"] .home-side .panel{
+  border-radius:19px;padding:17px;
+  box-shadow:0 8px 24px rgba(0,55,28,.055)
+}
+#shell #app section[data-view="accueil"] .home-side .panel-h{
+  padding-bottom:10px;border-bottom:1px solid var(--b)
+}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] .home-main > .grid3 > .mini{
+  background:linear-gradient(155deg,#142b1e,#102319);
+  border-color:#31543e;box-shadow:0 8px 22px rgba(0,0,0,.18)
+}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] .home-main > .grid3 .mini-i{
+  background:linear-gradient(145deg,#1b4930,#173724);border-color:#31543e
+}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] .home-main > .grid3 .mini-n{
+  color:#b9edc9;background:#173724;border-color:#31543e
+}
+@media(max-width:1100px){
+  #shell #app section[data-view="accueil"] .home-grid{
+    grid-template-columns:minmax(0,1.55fr) minmax(230px,.85fr);gap:15px
+  }
+  #shell #app section[data-view="accueil"] .home-main > .grid3{
+    grid-template-columns:repeat(3,minmax(0,1fr));gap:11px
+  }
+}
+@media(max-width:900px){
+  #shell #app section[data-view="accueil"] .home-grid{grid-template-columns:minmax(0,1fr);gap:15px}
+  #shell #app section[data-view="accueil"] .home-grid > .home-main{
+    grid-column:1;grid-row:1
+  }
+  #shell #app section[data-view="accueil"] .home-grid > .home-side{
+    grid-column:1;grid-row:2
+  }
+  #shell #app section[data-view="accueil"] .home-main > .grid3{
+    grid-template-columns:repeat(2,minmax(0,1fr))
+  }
+}
+@media(max-width:520px){
+  #shell #app section[data-view="accueil"] .home-main > .grid3{gap:9px}
+  #shell #app section[data-view="accueil"] .home-main > .grid3 > .mini{
+    min-height:142px;padding:14px 12px;border-radius:16px
+  }
+  #shell #app section[data-view="accueil"] .home-main > .grid3 .mini-i{
+    width:40px;height:40px;margin-bottom:10px;font-size:21px
+  }
+  #shell #app section[data-view="accueil"] .home-main > .grid3 .mini h3{font-size:12px}
+  #shell #app section[data-view="accueil"] .home-main > .grid3 .mini p{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app section[data-view="accueil"] .home-main > .grid3 > .mini{transition:none}
+  #shell #app section[data-view="accueil"] .home-main > .grid3 > .mini:hover{transform:none}
+}
