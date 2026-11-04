@@ -13667,3 +13667,73 @@ html[data-theme="dark"] #shell #app section[data-view="accueil"] .home-main > .g
   #shell #app section[data-view="accueil"] .home-main > .grid3 > .mini{transition:none}
   #shell #app section[data-view="accueil"] .home-main > .grid3 > .mini:hover{transform:none}
 }
+
+
+/* 37. Portail public : harmoniser le panneau IA avec l'identité DZ
+   Remplace l'accent violet isolé par le vert national et un rappel rouge discret. */
+#gate .public-ai-card{
+  border-color:#cfe3d5;
+  background:
+    radial-gradient(circle at 100% 0,rgba(210,16,52,.075),transparent 31%),
+    linear-gradient(145deg,#fff 0%,#f4faf6 58%,#edf7f0 100%);
+  box-shadow:0 20px 44px -28px rgba(0,75,35,.28);
+  color:#173b29
+}
+#gate .public-ai-icon{
+  background:linear-gradient(135deg,#004d28,#00843d);
+  box-shadow:0 8px 18px rgba(0,98,51,.22)
+}
+#gate .public-ai-head>div b{color:#173d28}
+#gate .public-ai-head>div small{color:#60796a}
+#gate .public-ai-live{
+  background:#e7f4eb;color:#006233;border:1px solid #c9e4d1
+}
+#gate .public-ai-demo{
+  border-color:#d5e8da;
+  background:linear-gradient(145deg,#edf7f0,#fff 76%)
+}
+#gate .public-ai-wave i{
+  background:linear-gradient(180deg,#00843d 0 68%,#d21034 100%)
+}
+#gate .public-ai-question{border-color:#dcebe0;background:#fff}
+#gate .public-ai-question small,
+#gate .public-ai-answer small{color:#66806e}
+#gate .public-ai-question b{color:#173d28}
+#gate .public-ai-answer{
+  background:linear-gradient(125deg,#004d28 0%,#006233 72%,#087b43 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)
+}
+#gate .public-ai-answer small{color:#d6f0df}
+#gate .public-ai-cta{
+  background:linear-gradient(105deg,#004d28,#00843d 78%,#d21034);
+  box-shadow:0 8px 18px rgba(0,98,51,.2)
+}
+#gate .public-ai-note{color:#64796b}
+html[data-theme="dark"] #gate .public-ai-card{
+  border-color:#315740;
+  background:
+    radial-gradient(circle at 100% 0,rgba(210,16,52,.16),transparent 32%),
+    linear-gradient(145deg,#172d20,#102319 72%,#173523);
+  box-shadow:0 18px 42px rgba(0,0,0,.24);color:#e2f1e6
+}
+html[data-theme="dark"] #gate .public-ai-head>div b,
+html[data-theme="dark"] #gate .public-ai-question b{color:#e2f1e6}
+html[data-theme="dark"] #gate .public-ai-head>div small,
+html[data-theme="dark"] #gate .public-ai-note{color:#b6cdbd}
+html[data-theme="dark"] #gate .public-ai-live{
+  color:#d7f3df;background:#1b422b;border-color:#315740
+}
+html[data-theme="dark"] #gate .public-ai-demo{
+  border-color:#315740;background:linear-gradient(145deg,#1b3826,#14291d)
+}
+html[data-theme="dark"] #gate .public-ai-question{
+  border-color:#365b40;background:#1b3424
+}
+html[data-theme="dark"] #gate .public-ai-question small{color:#b6cdbd}
+html[data-theme="dark"] #gate .public-ai-answer{
+  background:linear-gradient(125deg,#003b21,#006233 78%,#087b43)
+}
+@media(prefers-reduced-motion:reduce){
+  #gate .public-ai-wave i{animation:none;height:18px}
+  #gate .public-ai-cta{transition:none}
+}
