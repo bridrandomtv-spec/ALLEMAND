@@ -53,8 +53,8 @@
 
     let h = '<div class="ms-hero">'
       + '<div class="ms-hero-copy"><span class="ms-kicker">🇩🇿 رحلتك التعليمية</span>'
-      + '<h2>كل خطوة تقرّبك من النجاح</h2>'
-      + '<p class="ms-sub">تقدّمك الحقيقي، مهاراتك، وخطوتك القادمة في مكان واحد</p>'
+      + '<h2>مسارك الدراسي، خطوة بخطوة نحو التميّز</h2>'
+      + '<p class="ms-sub">خطة تعلّم واضحة، حصصك المنجزة، ومهاراتك التي تتطور مع كل تدريب — كل ذلك في لوحة واحدة.</p>'
       + '<div class="ms-hero-meta"><span>🎓 ' + (progress.niveau === 'tous' ? 'كل المستويات' : 'المستوى ' + progress.niveau) + '</span>'
       + '<span>📚 ' + progress.units + ' وحدات ضمن المسار</span>'
       + '<span>✓ ' + progress.done + ' حصة مكتملة</span>'
