@@ -959,3 +959,14 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Version du service worker incrémentée à `dz-de-v3.168.0.0.25` pour renouveler le cache de la page.
 - Aucune règle de défilement modifiée ; cette demande a été abandonnée par l’utilisateur.
 - Modifications limitées à `index.html`, `sw.js` et au présent dossier, sur `design/prototypes-67-74-alignment` / PR #17. Aucun changement sur `main`, aucune fusion.
+
+
+## Lot 73 — Fiabilisation du premier écran de l’accueil élève (4 novembre 2026)
+
+- Recomposition des accès rapides dans `index.html` : les cartes mettent désormais en avant les parcours d’apprentissage (cours, matières, bibliothèque, professeur IA, entraînement, évaluations, préparation au bac et suivi du parcours). Les chiffres statiques non vérifiés et les promesses de présence en direct ont été retirés de ces cartes.
+- `app.js` : les indicateurs de l’accueil distinguent maintenant les séances réalisées, les séances restantes, le meilleur résultat de simulation et le nombre de documents de la bibliothèque lorsque le catalogue est chargé. Le total de points maximal du devoir n’est plus présenté comme une note personnelle ; le numéro WhatsApp a été retiré des statistiques.
+- Le bandeau de bienvenue n’affiche plus l’effectif théorique de la section comme un nombre de camarades réellement présents, ni la mention « professeur connecté maintenant ». Le nom du professeur est présenté comme information de classe, sans statut de présence.
+- Identifiants de navigation conservés ; aucune modification de l’authentification, des données, de Supabase, des RLS, du schéma ou des droits d’accès.
+- Cache : référence `app.js?v=3521` et Service Worker `dz-de-v3.168.0.0.26`.
+- Commits : `983fd98` (index), `6e3b225` (app.js), `f42b068` (Service Worker), sur `design/prototypes-67-74-alignment` / PR #17.
+- CI déclenchée sur le dernier commit : en attente au moment de cette note. Contrôle navigateur et validation visuelle ordinateur/mobile non effectués ; ne pas considérer l’accueil connecté comme validé avant ces vérifications et le retour de l’utilisateur.
