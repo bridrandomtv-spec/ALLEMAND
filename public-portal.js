@@ -37,6 +37,33 @@
     state.catalog = {data:m, subjectStatus};
     return state.catalog;
   }
+  function renderHomeCatalog(){
+    const target = $('.public-mini-catalog');
+    if(!target) return;
+    loadCatalog().then(({data}) => {
+      const items = Array.isArray(data.matieres) ? data.matieres : [];
+      const languageIds = new Set(['allemand','francais','anglais','arabe','espanol','italien']);
+      const iconFallback = {physique:'⚛️', math:'📐', svt:'🧬', histgeo:'🗺️', philo:'📖', eco:'📊', info:'💻', islam:'🕌'};
+      const labelFor = status => status === 'implemented' ? 'متاحة الآن'
+        : status === 'partial' ? 'متاحة جزئيًا' : 'قيد البرمجة';
+      const card = item => {
+        const status = statusFor(item.id, item);
+        const statusClass = status === 'implemented' ? 'active'
+          : status === 'partial' ? 'partial' : 'planned';
+        const secondary = item.de || item.es || item.it || item.desc || '';
+        return '<article class="public-mini-card '+(languageIds.has(item.id) ? 'language' : 'academic')+'" data-subject-status="'+statusClass+'">'
+          + '<span aria-hidden="true">'+esc(item.icon || iconFallback[item.id] || '📘')+'</span>'
+          + '<b>'+esc(item.ar || item.name || item.id)+'</b>'
+          + '<small>'+esc(secondary)+'</small>'
+          + '<span class="pub-home-status '+statusClass+'">'+labelFor(status)+'</span>'
+          + '</article>';
+      };
+      const ordered = items.filter(x => languageIds.has(x.id)).concat(items.filter(x => !languageIds.has(x.id)));
+      if(ordered.length) target.innerHTML = ordered.map(card).join('');
+    }).catch(() => {
+      /* Keep the server-rendered fallback cards if the catalogue cannot be loaded. */
+    });
+  }
   function statusFor(id, item){
     if(id === 'allemand') return 'implemented';
     if(state.catalog && state.catalog.subjectStatus[id]) return state.catalog.subjectStatus[id];
@@ -233,6 +260,7 @@
     }
   });
   document.addEventListener('DOMContentLoaded', () => {
+    renderHomeCatalog();
     const r = root(), card = gateCard();
     if(r) r.hidden = true;
     if(card) card.hidden = true;
