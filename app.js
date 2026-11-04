@@ -1659,8 +1659,21 @@ function bindGateEvents(){
   if(bindGateEvents._done) return;
   bindGateEvents._done = true;
 
-  /* Les déclencheurs data-gate-open sont gérés par public-portal.js.
-     Un seul propriétaire évite les doubles clics/scrolls avant l'ouverture de la carte. */
+  /* Repli autonome : l'ouverture de la connexion ne dépend pas du module
+     public-portal.js. Le formulaire est explicitement rendu visible ici. */
+  Array.from(document.querySelectorAll('[data-gate-open]')).forEach(b => b.addEventListener('click', () => {
+    const mode = b.dataset.gateOpen === 'signup' ? 'signup' : 'login';
+    const gate = $('#gate'), card = $('.gate-card');
+    if(gate){ gate.hidden = false; gate.classList.add('public-auth-page'); }
+    if(card) card.hidden = false;
+    const tab = $('.gtab[data-gate="' + mode + '"]');
+    if(tab && !tab.classList.contains('on')) tab.click();
+    const hash = mode === 'signup' ? '#inscription' : '#connexion';
+    if(location.hash !== hash) location.hash = hash;
+    const focus = mode === 'signup' ? $('#suName') : $('#loginUser');
+    if(focus) setTimeout(() => focus.focus({preventScroll:true}), 180);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }));
 
   Array.from(document.querySelectorAll('.gtab')).forEach(b => b.addEventListener('click', () => {
     Array.from(document.querySelectorAll('.gtab')).forEach(x => x.classList.remove('on'));
