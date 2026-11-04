@@ -402,3 +402,17 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer après écriture : accolades CSS équilibrées, présence des sélecteurs de vues et composants audités, cohérence des références cache, CI sur le nouveau HEAD.
 - Aucun test visuel navigateur, aucune vérification réelle de caméra/micro/flux live et aucun déploiement Cloudflare ne sont revendiqués à ce stade.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+## 28. Recomposition de l'espace parents, des réservations et du dossier projet — 4 novembre 2026
+
+- Audit préalable des vues `data-view="parents"`, `data-view="reservation"`, `data-view="projet"` et des modules réels `parents.js`, `reservation.js`, `projet.js`.
+- Espace parents : hero, actions de rapport, sélection multi-enfants, navigation par onglets, KPI, synthèse, informations scolaires, examens, présence et messages ; les données affichées continuent de provenir de `parents.json`.
+- Réservations : hero, catalogue des professeurs, cartes de profils, onglets, formulaire de choix, créneaux, récapitulatif de prix et règles ; le calcul des frais, l'offre de première séance et la persistance locale restent ceux de `reservation.js`.
+- Dossier projet : hero de présentation, badges, navigation des 13 sections, cartes de contenu, ressources, tarifs et roadmap ; les données continuent de provenir de `plan_projet.json`.
+- Responsive mobile/tablette, thèmes clair/sombre et réduction des animations.
+- Préservation stricte : aucun changement aux trois modules JavaScript, aux JSON, aux clés localStorage, aux exports PDF/TXT, aux interactions WhatsApp, aux calculs ou aux événements. Aucun changement Auth, Supabase, RLS, schéma, migration ou paiement.
+- Point de vigilance documenté : les modules parents et réservation déclarent leurs données et réservations comme locales (localStorage/fichiers JSON) ; leur habillage visuel ne transforme pas ces données en synchronisation serveur ni en réservation centralisée.
+- Cache : `style-prototype-dz.css?v=92` dans `index.html`, précache du service worker actualisé et version `dz-de-v3.152.0`.
+- Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, classes réellement émises par les modules, vues et cache cohérents, CI sur le nouveau HEAD.
+- Aucun test visuel navigateur, aucun test de réservation réelle et aucun déploiement Cloudflare ne sont revendiqués.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
