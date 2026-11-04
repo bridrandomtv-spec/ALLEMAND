@@ -12261,3 +12261,449 @@ html[data-theme="dark"] section[data-view="stats"] .st-legend .lg-n{color:#244a3
     animation-duration:.01ms!important;transition-duration:.01ms!important
   }
 }
+
+
+
+/* 28. Espace parents, réservation et dossier projet — identité DZ */
+/* Espace parents : suivi multi-enfants, synthèse et onglets */
+html[data-theme="light"] section[data-view="parents"] .page-head{
+  padding:20px 24px;color:#fff;background:linear-gradient(118deg,#003f22,#006233 60%,#00843d);
+  border:0;border-radius:18px;box-shadow:0 12px 28px rgba(0,75,37,.16)
+}
+html[data-theme="light"] section[data-view="parents"] .page-head h1,
+html[data-theme="light"] section[data-view="parents"] .page-head p{color:#fff}
+html[data-theme="light"] section[data-view="parents"] .par-hero{
+  position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;
+  gap:18px;padding:clamp(18px,2.6vw,26px);color:#fff;
+  background:linear-gradient(122deg,#003f22,#006233 62%,#00843d);
+  border:0;border-radius:19px;box-shadow:0 13px 30px rgba(0,75,37,.16)
+}
+html[data-theme="light"] section[data-view="parents"] .par-hero::after{
+  content:"🇩🇿";position:absolute;inset-inline-end:22px;top:-20px;font-size:76px;opacity:.11;pointer-events:none
+}
+html[data-theme="light"] section[data-view="parents"] .par-hero h2,
+html[data-theme="light"] section[data-view="parents"] .par-hero .ch-sub{position:relative;z-index:1;color:#fff}
+html[data-theme="light"] section[data-view="parents"] .par-hero .ch-sub{opacity:.85}
+html[data-theme="light"] section[data-view="parents"] .par-hero .ch-badge{
+  color:#fff;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:6px 12px
+}
+html[data-theme="light"] section[data-view="parents"] .ph-act{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:8px}
+html[data-theme="light"] section[data-view="parents"] .ph-act .btn-g{
+  color:#004d28;background:#fff;border-color:#fff
+}
+html[data-theme="light"] section[data-view="parents"] .ph-act .btn-o{
+  color:#fff;background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.48)
+}
+html[data-theme="light"] section[data-view="parents"] .ph-act .btn-w{
+  color:#fff;background:#d21034;border-color:#d21034
+}
+html[data-theme="light"] section[data-view="parents"] .enf-sel{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,245px),1fr));gap:10px;margin:14px 0
+}
+html[data-theme="light"] section[data-view="parents"] .enf{
+  display:flex;align-items:center;gap:11px;min-width:0;padding:12px;background:#fff;
+  border:1px solid #dce8df;border-radius:15px;text-align:start
+}
+html[data-theme="light"] section[data-view="parents"] .enf.on{
+  border:2px solid #006233;background:#f1f8f3;box-shadow:0 5px 15px rgba(0,98,51,.10)
+}
+html[data-theme="light"] section[data-view="parents"] .enf-av{
+  display:grid;place-items:center;width:43px;height:43px;flex:0 0 auto;
+  color:#fff;background:linear-gradient(135deg,#006233,#00843d);border-radius:13px;font-weight:850
+}
+html[data-theme="light"] section[data-view="parents"] .enf-b{display:grid;gap:3px;min-width:0}
+html[data-theme="light"] section[data-view="parents"] .enf-b b{color:#17452c}
+html[data-theme="light"] section[data-view="parents"] .enf-b i{color:#65786a;font-size:11px;font-style:normal}
+html[data-theme="light"] section[data-view="parents"] .enf-n{margin-inline-start:auto;color:#006233;font-size:19px;font-weight:900}
+html[data-theme="light"] section[data-view="parents"] .onglets{
+  display:flex;flex-wrap:wrap;gap:7px;padding:7px;background:#edf4ef;
+  border:1px solid #dce8df;border-radius:15px
+}
+html[data-theme="light"] section[data-view="parents"] .ong{
+  color:#315a40;background:transparent;border:1px solid transparent;border-radius:10px;font-weight:700
+}
+html[data-theme="light"] section[data-view="parents"] .ong.on{
+  color:#fff;background:linear-gradient(135deg,#006233,#00843d);border-color:#006233;
+  box-shadow:0 4px 12px rgba(0,98,51,.15)
+}
+html[data-theme="light"] section[data-view="parents"] #paContenu .bdd-kpis{
+  grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:15px 0
+}
+html[data-theme="light"] section[data-view="parents"] #paContenu .kpi{
+  position:relative;overflow:hidden;padding:15px;background:#fff;border:1px solid #dce8df;
+  border-radius:15px;box-shadow:0 5px 16px rgba(0,55,28,.045)
+}
+html[data-theme="light"] section[data-view="parents"] #paContenu .kpi::after{
+  content:"";position:absolute;inset-inline-start:0;bottom:0;width:100%;height:3px;
+  background:linear-gradient(90deg,#006233,#d21034)
+}
+html[data-theme="light"] section[data-view="parents"] #paContenu .kpi-n{
+  color:#004d28;font-size:24px;font-weight:900
+}
+html[data-theme="light"] section[data-view="parents"] #paContenu .kpi-i{
+  display:grid;place-items:center;width:35px;height:35px;background:#edf6ef;border-radius:10px
+}
+html[data-theme="light"] section[data-view="parents"] #paContenu .kpi-l{color:#315a40;font-weight:750}
+html[data-theme="light"] section[data-view="parents"] #paContenu .card{
+  padding:17px;background:#fff;border:1px solid #dce8df;border-radius:16px;
+  box-shadow:0 5px 18px rgba(0,55,28,.04)
+}
+html[data-theme="light"] section[data-view="parents"] #paContenu .card h2{
+  color:#004d28;font-size:17px;font-weight:850;padding-bottom:10px;border-bottom:1px solid #e5eee7
+}
+html[data-theme="light"] section[data-view="parents"] #paContenu .info-i{
+  padding:11px;background:#f5f9f6;border:1px solid #e1ebe3;border-radius:12px
+}
+html[data-theme="light"] section[data-view="parents"] #paContenu .info-k{color:#637568}
+html[data-theme="light"] section[data-view="parents"] #paContenu .info-v{color:#17452c;font-weight:750}
+html[data-theme="light"] section[data-view="parents"] #paContenu .rep-row,
+html[data-theme="light"] section[data-view="parents"] #paContenu .msgrow{
+  padding:11px 4px;border-bottom:1px solid #e3ece5
+}
+html[data-theme="light"] section[data-view="parents"] #paContenu .rep-v{font-weight:900}
+html[data-theme="light"] section[data-view="parents"] #paContenu .privacy{
+  padding:12px;background:#f0f6f1;border:1px solid #dce8df;border-radius:12px;color:#42604b
+}
+html[data-theme="dark"] section[data-view="parents"] .page-head{
+  color:#fff;background:linear-gradient(118deg,#092c1b,#064a2a 62%,#08663a);border-color:#276747
+}
+html[data-theme="dark"] section[data-view="parents"] .page-head h1,
+html[data-theme="dark"] section[data-view="parents"] .page-head p{color:#fff}
+html[data-theme="dark"] section[data-view="parents"] .par-hero{
+  color:#f4fff7;background:linear-gradient(122deg,#092c1b,#064a2a 62%,#08663a);border-color:#276747
+}
+html[data-theme="dark"] section[data-view="parents"] .par-hero h2,
+html[data-theme="dark"] section[data-view="parents"] .par-hero .ch-sub{color:#f4fff7}
+html[data-theme="dark"] section[data-view="parents"] .enf,
+html[data-theme="dark"] section[data-view="parents"] #paContenu .kpi,
+html[data-theme="dark"] section[data-view="parents"] #paContenu .card{
+  color:#e8f5eb;background:#142c1e;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="parents"] .enf.on{background:#1b3827;border-color:#0a8a4a}
+html[data-theme="dark"] section[data-view="parents"] .enf-b b,
+html[data-theme="dark"] section[data-view="parents"] #paContenu .info-v,
+html[data-theme="dark"] section[data-view="parents"] #paContenu .kpi-n{color:#b5e8c4}
+html[data-theme="dark"] section[data-view="parents"] .onglets{background:#10271b;border-color:#31543e}
+html[data-theme="dark"] section[data-view="parents"] .ong{color:#d7ebdc}
+html[data-theme="dark"] section[data-view="parents"] .ong.on{color:#fff;background:#006233}
+html[data-theme="dark"] section[data-view="parents"] #paContenu .info-i,
+html[data-theme="dark"] section[data-view="parents"] #paContenu .privacy{background:#1a3525;border-color:#31543e;color:#c2d8c8}
+html[data-theme="dark"] section[data-view="parents"] #paContenu .card h2{color:#b5e8c4}
+
+/* Réservation : catalogue professeurs, choix et récapitulatif de prix */
+html[data-theme="light"] section[data-view="reservation"] .page-head{
+  padding:20px 24px;color:#fff;background:linear-gradient(118deg,#003f22,#006233 60%,#00843d);
+  border:0;border-radius:18px;box-shadow:0 12px 28px rgba(0,75,37,.16)
+}
+html[data-theme="light"] section[data-view="reservation"] .page-head h1,
+html[data-theme="light"] section[data-view="reservation"] .page-head p{color:#fff}
+html[data-theme="light"] section[data-view="reservation"] .rs-hero{
+  position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;
+  gap:18px;padding:clamp(18px,2.5vw,25px);color:#fff;
+  background:linear-gradient(122deg,#003f22,#006233 62%,#00843d);
+  border:0;border-radius:19px;box-shadow:0 13px 30px rgba(0,75,37,.16)
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-hero::after{
+  content:"🇩🇿";position:absolute;inset-inline-end:22px;top:-22px;font-size:76px;opacity:.11;pointer-events:none
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-hero h2,
+html[data-theme="light"] section[data-view="reservation"] .rs-hero .ch-sub{position:relative;z-index:1;color:#fff}
+html[data-theme="light"] section[data-view="reservation"] .rs-hero .ch-sub{opacity:.85}
+html[data-theme="light"] section[data-view="reservation"] .rs-hero .ch-badge{
+  color:#fff;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:6px 12px
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-act{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:8px}
+html[data-theme="light"] section[data-view="reservation"] .rs-hero .btn-p{
+  color:#004d28;background:#fff;border-color:#fff
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-hero .btn-o{
+  color:#fff;background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.48)
+}
+html[data-theme="light"] section[data-view="reservation"] .onglets{
+  display:flex;gap:8px;padding:7px;background:#edf4ef;border:1px solid #dce8df;border-radius:15px
+}
+html[data-theme="light"] section[data-view="reservation"] .ong{
+  color:#315a40;background:transparent;border:1px solid transparent;border-radius:10px;font-weight:750
+}
+html[data-theme="light"] section[data-view="reservation"] .ong.on{
+  color:#fff;background:linear-gradient(135deg,#006233,#00843d);border-color:#006233
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,285px),1fr));gap:14px
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-card{
+  padding:17px;background:#fff;border:1px solid #dce8df;border-radius:17px;
+  box-shadow:0 6px 20px rgba(0,55,28,.05);transition:transform .18s ease,box-shadow .18s ease
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-card:hover{
+  transform:translateY(-2px);box-shadow:0 12px 26px rgba(0,55,28,.10)
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-card.fondateur{border-top:3px solid #d21034}
+html[data-theme="light"] section[data-view="reservation"] .rs-av{
+  display:grid;place-items:center;width:48px;height:48px;flex:0 0 auto;
+  color:#fff;background:linear-gradient(135deg,#006233,#00843d);border-radius:14px;font-weight:900
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-t b{color:#17452c;font-size:15px}
+html[data-theme="light"] section[data-view="reservation"] .rs-t i{color:#687a6d;font-style:normal;font-size:11px}
+html[data-theme="light"] section[data-view="reservation"] .rs-note{color:#b57b12}
+html[data-theme="light"] section[data-view="reservation"] .rs-note b{color:#17452c}
+html[data-theme="light"] section[data-view="reservation"] .rs-desc{color:#52685a;line-height:1.8}
+html[data-theme="light"] section[data-view="reservation"] .rs-ty,
+html[data-theme="light"] section[data-view="reservation"] .fchip{
+  color:#245b39;background:#edf6ef;border:1px solid #dce8df;border-radius:999px
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-f{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:13px;border-top:1px solid #e3ece5
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-p{color:#006233;font-size:17px;font-weight:900}
+html[data-theme="light"] section[data-view="reservation"] .rs-form,
+html[data-theme="light"] section[data-view="reservation"] #rsvContenu>.card{
+  padding:clamp(16px,2.2vw,23px);background:#fff;border:1px solid #dce8df;border-radius:17px;
+  box-shadow:0 6px 20px rgba(0,55,28,.045)
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-form h2{color:#004d28;font-size:18px;font-weight:850}
+html[data-theme="light"] section[data-view="reservation"] .rs-fld{
+  display:grid;gap:8px;margin:15px 0
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-fld label{color:#245b39;font-weight:800}
+html[data-theme="light"] section[data-view="reservation"] .rs-fld select,
+html[data-theme="light"] section[data-view="reservation"] .rs-fld input{
+  width:100%;min-height:44px;padding:10px 12px;color:#183f29;background:#f8fbf8;
+  border:1px solid #d4e3d8;border-radius:11px
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-opts{
+  display:flex;flex-wrap:wrap;gap:8px
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-o{
+  display:grid;gap:3px;padding:10px 13px;color:#315a40;background:#f4f8f5;
+  border:1px solid #dce8df;border-radius:12px;font-weight:750
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-o.on{
+  color:#fff;background:#006233;border-color:#006233;box-shadow:0 4px 12px rgba(0,98,51,.15)
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-o i{font-size:11px;font-style:normal;opacity:.8}
+html[data-theme="light"] section[data-view="reservation"] .rs-total,
+html[data-theme="light"] section[data-view="reservation"] .rs-stats{
+  padding:15px;background:linear-gradient(135deg,#edf6ef,#fff);border:1px solid #dce8df;border-radius:14px
+}
+html[data-theme="light"] section[data-view="reservation"] .rs-total b,
+html[data-theme="light"] section[data-view="reservation"] .rs-prix{color:#006233;font-size:22px;font-weight:900}
+html[data-theme="light"] section[data-view="reservation"] .rs-regles{color:#4e6656;line-height:2}
+html[data-theme="light"] section[data-view="reservation"] .privacy{
+  padding:12px;background:#f0f6f1;border:1px solid #dce8df;border-radius:12px;color:#42604b
+}
+html[data-theme="dark"] section[data-view="reservation"] .page-head{
+  color:#fff;background:linear-gradient(118deg,#092c1b,#064a2a 62%,#08663a);border-color:#276747
+}
+html[data-theme="dark"] section[data-view="reservation"] .page-head h1,
+html[data-theme="dark"] section[data-view="reservation"] .page-head p{color:#fff}
+html[data-theme="dark"] section[data-view="reservation"] .rs-hero{
+  color:#f4fff7;background:linear-gradient(122deg,#092c1b,#064a2a 62%,#08663a);border-color:#276747
+}
+html[data-theme="dark"] section[data-view="reservation"] .rs-hero h2,
+html[data-theme="dark"] section[data-view="reservation"] .rs-hero .ch-sub{color:#f4fff7}
+html[data-theme="dark"] section[data-view="reservation"] .rs-card,
+html[data-theme="dark"] section[data-view="reservation"] .rs-form,
+html[data-theme="dark"] section[data-view="reservation"] #rsvContenu>.card{
+  color:#e8f5eb;background:#142c1e;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="reservation"] .rs-t b,
+html[data-theme="dark"] section[data-view="reservation"] .rs-note b,
+html[data-theme="dark"] section[data-view="reservation"] .rs-form h2{color:#b5e8c4}
+html[data-theme="dark"] section[data-view="reservation"] .rs-desc,
+html[data-theme="dark"] section[data-view="reservation"] .rs-regles{color:#c2d8c8}
+html[data-theme="dark"] section[data-view="reservation"] .onglets{background:#10271b;border-color:#31543e}
+html[data-theme="dark"] section[data-view="reservation"] .ong{color:#d7ebdc}
+html[data-theme="dark"] section[data-view="reservation"] .ong.on{color:#fff;background:#006233}
+html[data-theme="dark"] section[data-view="reservation"] .rs-o,
+html[data-theme="dark"] section[data-view="reservation"] .rs-fld select,
+html[data-theme="dark"] section[data-view="reservation"] .rs-fld input{
+  color:#e2f2e6;background:#1a3525;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="reservation"] .rs-o.on{color:#fff;background:#006233}
+html[data-theme="dark"] section[data-view="reservation"] .rs-total,
+html[data-theme="dark"] section[data-view="reservation"] .rs-stats,
+html[data-theme="dark"] section[data-view="reservation"] .privacy{
+  color:#d4e8d9;background:#193524;border-color:#31543e
+}
+
+/* Dossier de présentation : navigation des 13 sections et contenu */
+html[data-theme="light"] section[data-view="projet"] .page-head{
+  padding:20px 24px;color:#fff;background:linear-gradient(118deg,#003f22,#006233 60%,#00843d);
+  border:0;border-radius:18px;box-shadow:0 12px 28px rgba(0,75,37,.16)
+}
+html[data-theme="light"] section[data-view="projet"] .page-head h1,
+html[data-theme="light"] section[data-view="projet"] .page-head p{color:#fff}
+html[data-theme="light"] section[data-view="projet"] .pj-hero{
+  position:relative;overflow:hidden;padding:clamp(22px,3vw,34px);color:#fff;text-align:center;
+  background:radial-gradient(circle at 85% 12%,rgba(210,16,52,.25),transparent 28%),
+    linear-gradient(125deg,#003f22,#006233 60%,#00843d);
+  border:0;border-radius:21px;box-shadow:0 15px 34px rgba(0,75,37,.18)
+}
+html[data-theme="light"] section[data-view="projet"] .pj-hero h1,
+html[data-theme="light"] section[data-view="projet"] .pj-hero .pj-st,
+html[data-theme="light"] section[data-view="projet"] .pj-hero .pj-sub,
+html[data-theme="light"] section[data-view="projet"] .pj-hero .pj-conf{color:#fff}
+html[data-theme="light"] section[data-view="projet"] .pj-logo{
+  display:grid;place-items:center;width:65px;height:65px;margin:8px auto 14px;
+  color:#006233;background:#fff;border:3px solid rgba(255,255,255,.35);border-radius:19px;
+  font-size:31px;font-weight:950;box-shadow:0 8px 22px rgba(0,0,0,.16)
+}
+html[data-theme="light"] section[data-view="projet"] .pj-badge{
+  display:inline-flex;margin:4px;padding:6px 11px;color:#fff;
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.23);border-radius:999px
+}
+html[data-theme="light"] section[data-view="projet"] .pj-cta{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin-top:17px
+}
+html[data-theme="light"] section[data-view="projet"] .pj-hero .btn-p{
+  color:#004d28;background:#fff;border-color:#fff
+}
+html[data-theme="light"] section[data-view="projet"] .pj-hero .btn-o{
+  color:#fff;background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.48)
+}
+html[data-theme="light"] section[data-view="projet"] .pj-hero .btn-w{color:#fff;background:#d21034;border-color:#d21034}
+html[data-theme="light"] section[data-view="projet"] .pj-nav{
+  position:sticky;top:8px;z-index:8;display:flex;gap:7px;overflow-x:auto;
+  padding:8px;margin:14px 0;background:rgba(237,244,239,.96);
+  border:1px solid #dce8df;border-radius:15px;backdrop-filter:blur(12px)
+}
+html[data-theme="light"] section[data-view="projet"] .pj-n{
+  flex:0 0 auto;padding:9px 12px;color:#315a40;background:#fff;
+  border:1px solid #dce8df;border-radius:10px;font-size:12px;font-weight:750;text-decoration:none
+}
+html[data-theme="light"] section[data-view="projet"] .pj-n.on,
+html[data-theme="light"] section[data-view="projet"] .pj-n:hover{
+  color:#fff;background:#006233;border-color:#006233
+}
+html[data-theme="light"] section[data-view="projet"] .pj-doc{display:grid;gap:14px}
+html[data-theme="light"] section[data-view="projet"] .pj-sec{
+  padding:clamp(17px,2.3vw,24px);background:#fff;border:1px solid #dce8df;
+  border-radius:17px;box-shadow:0 5px 18px rgba(0,55,28,.04);scroll-margin-top:85px
+}
+html[data-theme="light"] section[data-view="projet"] .pj-h{
+  display:flex;align-items:center;gap:13px;padding-bottom:13px;margin-bottom:13px;border-bottom:1px solid #e3ece5
+}
+html[data-theme="light"] section[data-view="projet"] .pj-num{
+  display:grid;place-items:center;width:43px;height:43px;flex:0 0 auto;
+  color:#fff;background:linear-gradient(135deg,#006233,#00843d);border-radius:13px;font-weight:900
+}
+html[data-theme="light"] section[data-view="projet"] .pj-h h2{color:#004d28;font-size:18px;font-weight:900}
+html[data-theme="light"] section[data-view="projet"] .pj-p,
+html[data-theme="light"] section[data-view="projet"] .pj-hs{color:#52685a;line-height:1.9}
+html[data-theme="light"] section[data-view="projet"] .pj-c,
+html[data-theme="light"] section[data-view="projet"] .pj-pil,
+html[data-theme="light"] section[data-view="projet"] .pj-sg,
+html[data-theme="light"] section[data-view="projet"] .pj-an,
+html[data-theme="light"] section[data-view="projet"] .pj-ob,
+html[data-theme="light"] section[data-view="projet"] .pj-op,
+html[data-theme="light"] section[data-view="projet"] .pj-im,
+html[data-theme="light"] section[data-view="projet"] .pj-tar{
+  padding:14px;background:#f7faf8;border:1px solid #dce8df;border-radius:14px
+}
+html[data-theme="light"] section[data-view="projet"] .pj-cv,
+html[data-theme="light"] section[data-view="projet"] .pj-anh b,
+html[data-theme="light"] section[data-view="projet"] .pj-sgb b,
+html[data-theme="light"] section[data-view="projet"] .pj-tart{color:#17452c;font-weight:850}
+html[data-theme="light"] section[data-view="projet"] .pj-cv{font-size:23px}
+html[data-theme="light"] section[data-view="projet"] .pj-list{color:#4e6656;line-height:2}
+html[data-theme="light"] section[data-view="projet"] .pj-cta,
+html[data-theme="light"] section[data-view="projet"] .pj-piliers,
+html[data-theme="light"] section[data-view="projet"] .pj-seg,
+html[data-theme="light"] section[data-view="projet"] .pj-annees,
+html[data-theme="light"] section[data-view="projet"] .pj-obs,
+html[data-theme="light"] section[data-view="projet"] .pj-opp,
+html[data-theme="light"] section[data-view="projet"] .pj-imp,
+html[data-theme="light"] section[data-view="projet"] .pj-tarifs{gap:11px}
+html[data-theme="light"] section[data-view="projet"] .pj-res,
+html[data-theme="light"] section[data-view="projet"] .pj-vues,
+html[data-theme="light"] section[data-view="projet"] .pj-cmp,
+html[data-theme="light"] section[data-view="projet"] .pj-chiffres{gap:9px}
+html[data-theme="light"] section[data-view="projet"] .pj-pi,
+html[data-theme="light"] section[data-view="projet"] .pj-ri,
+html[data-theme="light"] section[data-view="projet"] .pj-sgi,
+html[data-theme="light"] section[data-view="projet"] .pj-oi{
+  display:grid;place-items:center;width:38px;height:38px;flex:0 0 auto;
+  color:#006233;background:#e8f4eb;border-radius:11px
+}
+html[data-theme="light"] section[data-view="projet"] .pj-tar.pop{
+  background:linear-gradient(145deg,#eff8f1,#fff);border:2px solid #00843d
+}
+html[data-theme="light"] section[data-view="projet"] .pj-tarp{color:#006233;font-size:24px;font-weight:950}
+html[data-theme="light"] section[data-view="projet"] .pj-taru{color:#52685a;line-height:2}
+html[data-theme="light"] section[data-view="projet"] .pj-cmpi{
+  padding:13px;background:#f2f7f3;border:1px solid #dce8df;border-radius:12px
+}
+html[data-theme="light"] section[data-view="projet"] .pj-cmpi.ok{border-inline-start:3px solid #00843d}
+html[data-theme="light"] section[data-view="projet"] .pj-cmpi.hi{border-inline-start:3px solid #d21034}
+html[data-theme="dark"] section[data-view="projet"] .page-head{
+  color:#fff;background:linear-gradient(118deg,#092c1b,#064a2a 62%,#08663a);border-color:#276747
+}
+html[data-theme="dark"] section[data-view="projet"] .page-head h1,
+html[data-theme="dark"] section[data-view="projet"] .page-head p{color:#fff}
+html[data-theme="dark"] section[data-view="projet"] .pj-hero{
+  color:#f4fff7;background:linear-gradient(125deg,#092c1b,#064a2a 60%,#08663a);border-color:#276747
+}
+html[data-theme="dark"] section[data-view="projet"] .pj-hero h1,
+html[data-theme="dark"] section[data-view="projet"] .pj-hero .pj-st,
+html[data-theme="dark"] section[data-view="projet"] .pj-hero .pj-sub,
+html[data-theme="dark"] section[data-view="projet"] .pj-hero .pj-conf{color:#f4fff7}
+html[data-theme="dark"] section[data-view="projet"] .pj-nav{background:rgba(16,39,27,.96);border-color:#31543e}
+html[data-theme="dark"] section[data-view="projet"] .pj-n{color:#d7ebdc;background:#173323;border-color:#31543e}
+html[data-theme="dark"] section[data-view="projet"] .pj-n.on{color:#fff;background:#006233}
+html[data-theme="dark"] section[data-view="projet"] .pj-sec{
+  color:#e8f5eb;background:#142c1e;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="projet"] .pj-h h2,
+html[data-theme="dark"] section[data-view="projet"] .pj-cv,
+html[data-theme="dark"] section[data-view="projet"] .pj-anh b,
+html[data-theme="dark"] section[data-view="projet"] .pj-sgb b{color:#b5e8c4}
+html[data-theme="dark"] section[data-view="projet"] .pj-p,
+html[data-theme="dark"] section[data-view="projet"] .pj-hs,
+html[data-theme="dark"] section[data-view="projet"] .pj-list,
+html[data-theme="dark"] section[data-view="projet"] .pj-taru{color:#c2d8c8}
+html[data-theme="dark"] section[data-view="projet"] .pj-c,
+html[data-theme="dark"] section[data-view="projet"] .pj-pil,
+html[data-theme="dark"] section[data-view="projet"] .pj-sg,
+html[data-theme="dark"] section[data-view="projet"] .pj-an,
+html[data-theme="dark"] section[data-view="projet"] .pj-ob,
+html[data-theme="dark"] section[data-view="projet"] .pj-op,
+html[data-theme="dark"] section[data-view="projet"] .pj-im,
+html[data-theme="dark"] section[data-view="projet"] .pj-tar,
+html[data-theme="dark"] section[data-view="projet"] .pj-cmpi{
+  color:#e0f0e4;background:#193524;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="projet"] .pj-tar.pop{border-color:#0a8a4a}
+html[data-theme="dark"] section[data-view="projet"] .pj-tarp{color:#b5e8c4}
+@media(max-width:760px){
+  html[data-theme="light"] section[data-view="parents"] #paContenu .bdd-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-theme="light"] section[data-view="parents"] .par-hero,
+  html[data-theme="light"] section[data-view="reservation"] .rs-hero{align-items:flex-start;flex-direction:column}
+  html[data-theme="light"] section[data-view="parents"] .ph-act,
+  html[data-theme="light"] section[data-view="reservation"] .rs-act{width:100%}
+  html[data-theme="light"] section[data-view="parents"] .ph-act .btn,
+  html[data-theme="light"] section[data-view="reservation"] .rs-act .btn{flex:1}
+}
+@media(max-width:520px){
+  html[data-theme="light"] section[data-view="parents"] .par-hero,
+  html[data-theme="light"] section[data-view="reservation"] .rs-hero{padding:17px 14px}
+  html[data-theme="light"] section[data-view="parents"] .ph-act{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-theme="light"] section[data-view="parents"] .onglets,
+  html[data-theme="light"] section[data-view="reservation"] .onglets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-theme="light"] section[data-view="parents"] .ong,
+  html[data-theme="light"] section[data-view="reservation"] .ong{width:100%;min-height:40px}
+  html[data-theme="light"] section[data-view="parents"] #paContenu .bdd-kpis{gap:8px}
+  html[data-theme="light"] section[data-view="parents"] #paContenu .kpi{padding:11px}
+  html[data-theme="light"] section[data-view="parents"] #paContenu .kpi-n{font-size:20px}
+  html[data-theme="light"] section[data-view="reservation"] .rs-grid{grid-template-columns:minmax(0,1fr)}
+  html[data-theme="light"] section[data-view="reservation"] .rs-form{padding:14px}
+  html[data-theme="light"] section[data-view="projet"] .pj-hero{padding:20px 14px}
+  html[data-theme="light"] section[data-view="projet"] .pj-nav{top:4px}
+  html[data-theme="light"] section[data-view="projet"] .pj-sec{padding:15px}
+}
+@media(prefers-reduced-motion:reduce){
+  section[data-view="parents"] *,section[data-view="reservation"] *,section[data-view="projet"] *,
+  section[data-view="parents"] *::before,section[data-view="reservation"] *::before,section[data-view="projet"] *::before{
+    animation-duration:.01ms!important;transition-duration:.01ms!important
+  }
+}
