@@ -733,3 +733,12 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - À vérifier sur le HEAD final : absence des anciens libellés dans la navigation ciblée, présence des nouveaux textes, conservation des attributs fonctionnels, cohérence de la version SW et réussite de la CI/Workers Build.
 - Limite : aucune validation visuelle réelle sur navigateur ordinateur/mobile n'est revendiquée.
 - Travail limité à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
+
+
+## Lot 55 — Cohérence du vocabulaire destiné aux parents (4 novembre 2026)
+
+- Harmonisation de la réponse FAQ destinée aux parents : « تصفح السنوات الدراسية » devient « استكشاف المستويات الدراسية », cohérent avec le nouveau libellé de navigation « المستويات الدراسية ».
+- Aucune modification de parcours, de logique, de données ou de droits ; seul le texte de la FAQ est ajusté.
+- Version du service worker incrémentée en dz-de-v3.168.0.0.11 pour actualiser le contenu mis en cache.
+- Validation visuelle réelle non effectuée ; CI/Workers Build à contrôler sur le dernier commit.
+- Travail limité à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
