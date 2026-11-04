@@ -1035,3 +1035,14 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 
 ## Lot 78 — مساري
 Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec anneau de progression, carte d'action prioritaire, analyse des compétences et progression d'unité. Déclinaisons mobile et thème sombre. `masar.js` reste inchangé : données et actions pédagogiques conservées. Cache CSS `v128`, Service Worker `dz-de-v3.168.0.0.34` avec précache CSS `v128`. Aucune modification Auth, Supabase, RLS, schéma ou paiement. CI et vérification visuelle à confirmer. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 79 — correction de la composition réelle de « مساري » (4 novembre 2026)
+
+- Analyse des captures du preview `444bef02` : le panneau vert du parcours était bien stylé, mais les cartes de prochaine action, d'analyse et de progression ne formaient pas la grille annoncée.
+- Cause identifiée dans Lot 78 : `grid-template-areas` était déclaré sans activer `display:grid` sur `#masarBody` et sans affecter les cartes à leurs zones (`grid-area`). Le navigateur conservait donc le flux normal.
+- `style-prototype-dz.css` : activation de la grille, affectation explicite de `hero / next / chart / progress`, disposition deux colonnes sur grand écran et une colonne sous 980 px.
+- `index.html` : cache CSS `v129` et remplacement du sous-titre statique « شيء واحد فقط الآن — والباقي ينتظر » par « تابع إنجازك، واكتشف خطوتك التعليمية التالية ».
+- `sw.js` : version `dz-de-v3.168.0.0.35` et précache CSS `v129`.
+- `masar.js` reste inchangé : calculs, données de mémoire, progression et actions sont préservés. Aucun changement Auth, Supabase, RLS, schéma, paiement ou permission.
+- Vérification visuelle du nouveau preview et CI encore à effectuer. PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`.
