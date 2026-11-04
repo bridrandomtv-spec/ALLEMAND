@@ -1090,3 +1090,14 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - CSS porté à `v133`, Service Worker à `dz-de-v3.168.0.0.40` avec précache aligné.
 - Validation de la règle source après commit et CI à relancer ; aucun test visuel navigateur n'est revendiqué.
 - PR #17 reste ouverte, non fusionnée, cible `main` ; aucun changement de données, Auth, Supabase, RLS, schéma, paiements ou permissions.
+
+
+## Lot 84 — distinguer validation CI et publication Cloudflare (5 novembre 2026)
+
+- Le run GitHub Actions `41929906445` associé au commit `a8aad86cc4e7a1cfd2919c2c3076fdc3403eca3d` est terminé avec succès : le job « Validation structurelle & pédagogique » et ses 27 étapes sont verts.
+- Inspection complète de `.github/workflows/deploy.yml` sur la branche : un seul job existe, `validate`. Aucun job `deploy`, aucune commande `wrangler deploy`, aucune action Cloudflare n'y publie le Worker. Le nom « CI + Deploy » et le message final parlant d'un build automatique via OAuth ne constituent donc pas une preuve de déploiement.
+- `wrangler.toml` définit bien le Worker `allemand`, son entrée `src/site-worker.js` et les actifs statiques, mais ne prouve pas à lui seul qu'un déploiement de la branche PR a été exécuté.
+- Conclusion : CI verte = validation structurelle/pédagogique réussie ; publication du preview Cloudflare et rendu navigateur = non vérifiés. Ne pas confondre les deux états et ne pas annoncer la page corrigée comme visible avant vérification réelle.
+- Aucun workflow de déploiement n'a été ajouté : les identifiants/secrets Cloudflare et la configuration Git Integration du compte ne sont pas inspectables depuis les outils disponibles. Ne pas inventer de secret, ne pas modifier la production ni `main`.
+- Suite : vérifier le déploiement de la branche `design/prototypes-67-74-alignment` dans Cloudflare Workers Builds / Deployments, puis comparer les vues « مسارك » sur ordinateur et mobile. Si aucun preview n'existe, demander l'accès ou une capture d'écran avant tout nouveau patch CSS.
+- PR #17 reste ouverte et non fusionnée ; aucun changement Auth, Supabase, RLS, schéma, paiements ou permissions.
