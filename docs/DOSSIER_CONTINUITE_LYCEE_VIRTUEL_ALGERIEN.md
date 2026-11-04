@@ -789,3 +789,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer sur le HEAD final : versions synchronisées, règles desktop/tablette/mobile et thème sombre présentes, accolades CSS équilibrées, actions de navigation conservées, dossier complété et CI/Workers Build.
 - Limite : aucune validation visuelle réelle sur navigateur/écrans n'est revendiquée dans cette opération.
 - Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main` ; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
+
+
+## Lot 60 — Catalogue public et cartes des niveaux (4 novembre 2026)
+
+- Refonte visuelle ciblée des 14 cartes de catalogue : cartes plus aérées, icônes dans des pastilles, titres et descriptions mieux hiérarchisés, relief discret et survol. Les six langues portent un liseré tricolore distinct ; les autres cartes gardent un repère vert.
+- Les trois cartes des années scolaires sont agrandies et structurées : repère numérique, libellé du niveau, description et accent inférieur. Le lien `data-public-view="levels"` de chaque carte est conservé.
+- Adaptations spécifiques tablette/mobile et thème sombre ; animations neutralisées si `prefers-reduced-motion` est demandé.
+- Aucun statut de disponibilité n'est inventé, aucun contenu/catalogue modifié, aucun chiffre ajouté. Aucun identifiant, lien, gestionnaire, route, script, Auth, Supabase, RLS, schéma ou paiement modifié. Aucun framework ou dépendance ajoutés.
+- Référence CSS synchronisée en v120 dans `index.html` et `sw.js`; service worker `dz-de-v3.168.0.0.16`.
+- Vérifications statiques à effectuer sur le HEAD final : 14 cartes et 6 langues conservées, trois liens de niveaux conservés, CSS v120 synchronisé, règles desktop/tablette/mobile et sombre présentes, accolades CSS équilibrées, dossier et CI/Workers Build.
+- Limite : pas de navigateur visuel disponible pour valider le rendu final sur appareils réels ; aucune validation visuelle n'est revendiquée.
+- Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main`; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
