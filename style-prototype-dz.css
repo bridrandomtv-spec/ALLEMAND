@@ -13525,3 +13525,39 @@ html[data-theme="dark"] .public-explorer .pub-branch-foot .pub-branch-availabili
     max-width:100%;font-size:9px;padding:5px 7px
   }
 }
+
+
+/* 34. Finition de la carte et des classements des statistiques nationales */
+section[data-view="stats"] .st-tip{
+  padding:12px 14px;border:1px solid #d21034;border-radius:13px;
+  background:linear-gradient(145deg,#073b24,#041b11);color:#fff;
+  box-shadow:0 12px 30px rgba(0,25,12,.32);backdrop-filter:blur(12px)
+}
+section[data-view="stats"] .st-tip b{color:#fff;font-weight:900}
+section[data-view="stats"] .st-tip span{color:#e0eee5}
+section[data-view="stats"] .wrow{
+  transition:background .18s ease,border-color .18s ease,transform .18s ease
+}
+section[data-view="stats"] .wrow:hover{
+  background:rgba(0,98,51,.07);border-radius:10px;transform:translateX(-2px)
+}
+section[data-view="stats"] .wbar i{transition:width .65s cubic-bezier(.22,1,.36,1)}
+section[data-view="stats"] .st-legend .lg-d{box-shadow:0 0 0 3px rgba(255,255,255,.08)}
+html[data-theme="dark"] section[data-view="stats"] .st-tip{
+  border-color:#d21034;background:linear-gradient(145deg,#06351f,#03150c);
+  color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.42)
+}
+html[data-theme="dark"] section[data-view="stats"] .wrow:hover{
+  background:rgba(61,220,132,.09)
+}
+html[data-theme="light"] section[data-view="stats"] .st-tip{
+  border-color:#d21034;background:linear-gradient(145deg,#075b36,#032718);
+  color:#fff
+}
+@media(max-width:600px){
+  section[data-view="stats"] .st-tip{min-width:150px;max-width:min(220px,calc(100vw - 38px));padding:9px 11px}
+  section[data-view="stats"] .wrow:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+  section[data-view="stats"] .wrow,section[data-view="stats"] .wbar i{transition:none}
+}
