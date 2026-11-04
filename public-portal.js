@@ -242,16 +242,38 @@
     const card = gateCard();
     if(card) card.scrollIntoView({behavior:'smooth', block:'center'});
   }
+  function setAuthPage(target, syncHash){
+    const gate = $('#gate'), card = gateCard();
+    if(!gate || !card) return;
+    const mode = target === 'signup' ? 'signup' : 'login';
+    gate.classList.add('public-auth-page');
+    card.hidden = false;
+    const tab = $('.gtab[data-gate="' + mode + '"]');
+    if(tab && !tab.classList.contains('on')) tab.click();
+    if(syncHash !== false){
+      const hash = mode === 'signup' ? '#inscription' : '#connexion';
+      if(location.hash !== hash) location.hash = hash;
+    }
+    const focus = mode === 'signup' ? $('#suName') : $('#loginUser');
+    if(focus) window.requestAnimationFrame(() => focus.focus({preventScroll:true}));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function closeAuthPage(syncHash){
+    const gate = $('#gate'), card = gateCard();
+    if(gate) gate.classList.remove('public-auth-page');
+    if(card) card.hidden = true;
+    if(syncHash !== false && (location.hash === '#connexion' || location.hash === '#inscription')){
+      history.replaceState(null,'',location.pathname + location.search);
+    }
+    show('home');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
   document.addEventListener('click', ev => {
+    const back = ev.target.closest('[data-public-auth-back]');
+    if(back){ closeAuthPage(true); return; }
     const gateTrigger = ev.target.closest('[data-gate-open]');
     if(gateTrigger){
-      const card = gateCard();
-      if(card){
-        card.hidden = false;
-        window.requestAnimationFrame(() => {
-          card.scrollIntoView({behavior:'smooth', block:'center'});
-        });
-      }
+      setAuthPage(gateTrigger.dataset.gateOpen === 'signup' ? 'signup' : 'login', true);
     }
     const nav = ev.target.closest('[data-public-view]');
     if(nav){
@@ -271,10 +293,17 @@
       case 'signup': chooseSignup(); break;
     }
   });
+  window.addEventListener('hashchange', () => {
+    if(location.hash === '#connexion') setAuthPage('login', false);
+    else if(location.hash === '#inscription') setAuthPage('signup', false);
+    else if($('#gate') && $('#gate').classList.contains('public-auth-page')) closeAuthPage(false);
+  });
   document.addEventListener('DOMContentLoaded', () => {
     renderHomeCatalog();
     const r = root(), card = gateCard();
     if(r) r.hidden = true;
     if(card) card.hidden = true;
+    if(location.hash === '#connexion') setAuthPage('login', false);
+    else if(location.hash === '#inscription') setAuthPage('signup', false);
   });
 })();
