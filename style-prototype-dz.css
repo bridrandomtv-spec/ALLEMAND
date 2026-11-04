@@ -10476,3 +10476,142 @@ html[data-theme="dark"] #shell #app .home-main .welcome *{color:#fff!important}
   #shell #app .dz-hero-emblem{animation:dz-emblem-float 5s ease-in-out infinite}
   @keyframes dz-emblem-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 }
+
+
+/* ══ TRANSFERT DU PROTOTYPE — espace du professeur IA ══ */
+#shell #app [data-view="prof"] .dz-ai-intro{
+  position:relative;display:flex;align-items:center;justify-content:space-between;gap:25px;
+  min-height:220px;padding:clamp(24px,4vw,38px);margin-bottom:16px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.14);border-inline-start:6px solid #d21034;
+  border-radius:24px;color:#fff;
+  background:
+    radial-gradient(ellipse at 8% 110%,rgba(255,255,255,.13),transparent 52%),
+    radial-gradient(ellipse at 95% 0%,rgba(210,16,52,.28),transparent 42%),
+    linear-gradient(118deg,#003d23 0%,#006233 58%,#087c43 100%);
+  box-shadow:0 18px 38px rgba(0,67,34,.17)
+}
+#shell #app [data-view="prof"] .dz-ai-intro-copy{position:relative;z-index:1;max-width:760px}
+#shell #app [data-view="prof"] .dz-ai-eyebrow{
+  display:inline-flex;align-items:center;gap:9px;margin-bottom:10px;
+  color:#d9eee0;font-size:11px;font-weight:900;letter-spacing:.08em
+}
+#shell #app [data-view="prof"] .dz-ai-eyebrow i{
+  width:8px;height:8px;border-radius:50%;background:#e9fff0;
+  box-shadow:0 0 0 5px rgba(255,255,255,.13)
+}
+#shell #app [data-view="prof"] .dz-ai-intro h1{
+  margin:0 0 8px;color:#fff!important;font-size:clamp(25px,3.2vw,36px);
+  font-weight:950;line-height:1.45
+}
+#shell #app [data-view="prof"] .dz-ai-intro p{
+  max-width:670px;margin:0 0 17px;color:#e1f0e6!important;font-size:14px;line-height:1.9
+}
+#shell #app [data-view="prof"] .dz-ai-capabilities{display:flex;flex-wrap:wrap;gap:7px}
+#shell #app [data-view="prof"] .dz-ai-capabilities span{
+  padding:6px 10px;border:1px solid rgba(255,255,255,.24);border-radius:99px;
+  background:rgba(255,255,255,.09);color:#fff;font-size:11px;font-weight:750
+}
+#shell #app [data-view="prof"] .dz-ai-orb{
+  position:relative;flex:0 0 150px;width:150px;height:150px;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.3);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.18),rgba(255,255,255,.035) 68%);
+  box-shadow:0 0 0 12px rgba(255,255,255,.045),0 0 0 25px rgba(255,255,255,.025)
+}
+#shell #app [data-view="prof"] .dz-ai-orb-core{
+  display:grid;place-items:center;width:72px;height:72px;border-radius:24px;
+  color:#07532f;background:linear-gradient(145deg,#fff,#d9f0df);
+  box-shadow:0 10px 25px rgba(0,0,0,.18);font-size:37px
+}
+#shell #app [data-view="prof"] .dz-ai-orb>span{
+  position:absolute;bottom:16px;color:#e6f5eb;font-size:9px;font-weight:900;letter-spacing:.16em
+}
+#shell #app [data-view="prof"] .dz-ai-orb .wave{
+  position:absolute;inset:10px;border:1px solid rgba(255,255,255,.22);border-radius:50%;
+  animation:dz-ai-wave 4s ease-out infinite
+}
+#shell #app [data-view="prof"] .dz-ai-orb .w2{animation-delay:1.3s}
+#shell #app [data-view="prof"] .dz-ai-orb .w3{animation-delay:2.6s}
+@keyframes dz-ai-wave{0%{transform:scale(.76);opacity:.65}100%{transform:scale(1.28);opacity:0}}
+#shell #app [data-view="prof"] .dz-ai-workspace{
+  display:grid;grid-template-columns:minmax(0,1fr) 275px;gap:15px;align-items:start
+}
+#shell #app [data-view="prof"] .dz-ai-chat-column{min-width:0;overflow:hidden;border:1px solid var(--dz-work-line,#dce8df);border-radius:20px;background:var(--dz-work-surface,#fff);box-shadow:var(--dz-work-shadow,0 10px 28px rgba(0,55,28,.06))}
+#shell #app [data-view="prof"] .dz-ai-chat-heading{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:15px 18px;border-bottom:1px solid var(--dz-work-line,#e0eae3);
+  background:linear-gradient(100deg,rgba(0,98,51,.055),transparent 72%)
+}
+#shell #app [data-view="prof"] .dz-ai-chat-heading>div{display:grid;grid-template-columns:9px 1fr;column-gap:9px;align-items:center}
+#shell #app [data-view="prof"] .dz-ai-chat-heading b{color:var(--dz-work-ink,#173d29);font-size:14px}
+#shell #app [data-view="prof"] .dz-ai-chat-heading small{grid-column:2;color:var(--dz-work-muted,#687b6e);font-size:11px;margin-top:3px}
+#shell #app [data-view="prof"] .dz-ai-online{width:8px;height:8px;border-radius:50%;background:#16a05a;box-shadow:0 0 0 4px rgba(22,160,90,.12)}
+#shell #app [data-view="prof"] .dz-ai-lockup{display:flex;align-items:center;gap:5px;color:var(--dz-work-muted,#617568);font-size:11px}
+#shell #app [data-view="prof"] .dz-ai-lockup b{color:#006233;font-size:11px;letter-spacing:.06em}
+#shell #app [data-view="prof"] .dz-ai-chat-column .chat{
+  margin:0;border:0;border-radius:0;box-shadow:none;background:transparent
+}
+#shell #app [data-view="prof"] .dz-ai-chat-column .chat-log{min-height:330px;max-height:min(56vh,620px)}
+#shell #app [data-view="prof"] .dz-ai-side{
+  padding:20px;border:1px solid var(--dz-work-line,#dce8df);border-radius:20px;
+  background:linear-gradient(155deg,var(--dz-work-surface,#fff),var(--dz-work-surface-2,#f4f8f5));
+  box-shadow:var(--dz-work-shadow,0 10px 28px rgba(0,55,28,.05))
+}
+#shell #app [data-view="prof"] .dz-ai-side-icon{
+  display:grid;place-items:center;width:48px;height:48px;margin-bottom:12px;
+  border-radius:15px;background:linear-gradient(145deg,#087b43,#004b29);font-size:24px
+}
+#shell #app [data-view="prof"] .dz-ai-side h2{margin:0 0 15px;color:var(--dz-work-ink,#173d29);font-size:16px;font-weight:900}
+#shell #app [data-view="prof"] .dz-ai-side ol{display:grid;gap:13px;margin:0;padding:0;list-style:none;counter-reset:ai-step}
+#shell #app [data-view="prof"] .dz-ai-side li{
+  position:relative;display:grid;gap:3px;padding-inline-start:34px;counter-increment:ai-step
+}
+#shell #app [data-view="prof"] .dz-ai-side li::before{
+  content:counter(ai-step);position:absolute;inset-inline-start:0;top:0;
+  display:grid;place-items:center;width:23px;height:23px;border-radius:8px;
+  background:var(--dz-work-green-soft,#e4f2e8);color:#006233;font-size:11px;font-weight:900
+}
+#shell #app [data-view="prof"] .dz-ai-side li b{color:var(--dz-work-ink,#183d29);font-size:12px}
+#shell #app [data-view="prof"] .dz-ai-side li span{color:var(--dz-work-muted,#687b6e);font-size:11px;line-height:1.7}
+#shell #app [data-view="prof"] .dz-ai-note{
+  padding:12px;margin-top:17px;border:1px solid rgba(0,98,51,.14);
+  border-radius:13px;background:rgba(0,98,51,.055)
+}
+#shell #app [data-view="prof"] .dz-ai-note b{color:#006233;font-size:12px}
+#shell #app [data-view="prof"] .dz-ai-note p{margin:5px 0 0;color:var(--dz-work-muted,#687b6e);font-size:11px;line-height:1.8}
+#shell #app [data-view="prof"] .dz-ai-go{
+  display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:14px;
+  padding:11px 13px;border:0;border-radius:12px;background:#006233;color:#fff;
+  font:inherit;font-size:12px;font-weight:850;cursor:pointer
+}
+html[data-theme="dark"] #shell #app [data-view="prof"] .dz-ai-chat-column,
+html[data-theme="dark"] #shell #app [data-view="prof"] .dz-ai-side{
+  border-color:#294b36;background:linear-gradient(150deg,#142b1d,#102319)
+}
+html[data-theme="dark"] #shell #app [data-view="prof"] .dz-ai-chat-heading{border-color:#294b36;background:rgba(255,255,255,.025)}
+html[data-theme="dark"] #shell #app [data-view="prof"] .dz-ai-chat-heading b,
+html[data-theme="dark"] #shell #app [data-view="prof"] .dz-ai-side h2,
+html[data-theme="dark"] #shell #app [data-view="prof"] .dz-ai-side li b{color:#e4f1e8}
+html[data-theme="dark"] #shell #app [data-view="prof"] .dz-ai-note{border-color:#315b40;background:#183b29}
+html[data-theme="dark"] #shell #app [data-view="prof"] .dz-ai-note b{color:#bde8ca}
+html[data-theme="dark"] #shell #app [data-view="prof"] .dz-ai-side li::before{background:#204b32;color:#c7eed5}
+@media(max-width:850px){
+  #shell #app [data-view="prof"] .dz-ai-workspace{grid-template-columns:1fr}
+  #shell #app [data-view="prof"] .dz-ai-side{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  #shell #app [data-view="prof"] .dz-ai-side-icon{grid-column:1}
+  #shell #app [data-view="prof"] .dz-ai-side h2{grid-column:1/-1}
+  #shell #app [data-view="prof"] .dz-ai-side ol{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr))}
+  #shell #app [data-view="prof"] .dz-ai-note{grid-column:1}
+  #shell #app [data-view="prof"] .dz-ai-go{grid-column:2;align-self:end}
+}
+@media(max-width:560px){
+  #shell #app [data-view="prof"] .dz-ai-intro{min-height:0;padding:22px 18px;border-radius:20px}
+  #shell #app [data-view="prof"] .dz-ai-orb{display:none}
+  #shell #app [data-view="prof"] .dz-ai-intro h1{font-size:25px}
+  #shell #app [data-view="prof"] .dz-ai-intro p{font-size:12px}
+  #shell #app [data-view="prof"] .dz-ai-side{display:block;padding:16px}
+  #shell #app [data-view="prof"] .dz-ai-side ol{grid-template-columns:1fr}
+  #shell #app [data-view="prof"] .dz-ai-note{margin-top:13px}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="prof"] .dz-ai-orb .wave{animation:none}
+}
