@@ -266,3 +266,14 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Aucun changement aux routes, aux contrôles de rôle, à Auth, Supabase, RLS, schémas, migrations ou paiements.
 - Validation effectuée à ce stade : contrôle statique de l'équilibre des accolades CSS (0 différence). La CI GitHub doit encore confirmer la syntaxe et les tests du dépôt ; aucun test navigateur ni rendu visuel n'est revendiqué.
 - PR #17 reste ouverte et non fusionnée ; aucune modification de `main`.
+
+## 17. Recomposition de l'espace professeur IA — 4 novembre 2026
+
+- Objectif : rapprocher la page « الأستاذ الافتراضي » du prototype en lui donnant une composition éditoriale et pédagogique dédiée, et non une simple carte de chat isolée.
+- Structure HTML : bandeau d'introduction DZ, capacités décrites sans promettre de fonctions non vérifiées, zone de dialogue et panneau de conseils d'utilisation.
+- Tous les identifiants et contrôles du dialogue existant sont conservés : `chatLog`, `chatSug`, `chatVoiceLang`, `chatVoiceStatus`, `chatForm`, `chatInput`, `chatMicBtn`. Le moteur IA et les scripts vocaux ne sont pas remplacés.
+- CSS dédié : hiérarchie visuelle, orbe décorative animée, colonnes desktop, adaptation mobile et règles de contraste sombre.
+- Cache CSS : `v=81`; cache service worker : `dz-de-v3.141.0`.
+- Aucun changement de route, de rôle, d'authentification, de base Supabase, RLS, paiement ou API.
+- Validation statique : équilibre des accolades CSS à zéro ; conservation vérifiée des six identifiants de dialogue dans le HTML. Tests CI GitHub en attente au moment de la consignation. Aucun rendu navigateur revendiqué.
+- PR #17 reste ouverte, non fusionnée ; aucun changement sur `main`.
