@@ -633,3 +633,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Fichiers modifiés : `index.html` et `sw.js` uniquement ; service worker porté de `dz-de-v3.168.0.0.0` à `dz-de-v3.168.0.0.1`. Aucun changement CSS, Auth, Supabase, RLS, schéma, migration, notes individuelles, accès ou paiement.
 - Contrôles à effectuer sur le HEAD final : présence du nouveau libellé et de la note, absence des anciennes formulations, version SW mise à jour, CI et build Cloudflare. Aucun rendu navigateur réel n'est revendiqué.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+
+## 46. Accueil public — FAQ de confiance pour les élèves et les parents — 4 novembre 2026
+
+- Ajout, après les cartes des trois années scolaires et avant la fin du bloc d'accueil, d'une FAQ accessible en accordéon natif `details/summary`, sans JavaScript ni dépendance supplémentaire.
+- Quatre réponses concrètes : disponibilité variable des matières ; périmètre exact des ressources 234/55/19 limité à l'allemand ; absence actuelle de taux globaux de réussite faute d'agrégation centrale ; possibilité pour les parents d'examiner les années, le catalogue et les statuts de disponibilité avant inscription.
+- L'objectif est de répondre aux objections essentielles des familles sans promettre une couverture complète des matières ni inventer un service ou une statistique.
+- Style dédié ajouté à `style-prototype-dz.css` : palette algérienne verte/blanche/rouge cohérente, cartes et accordéons, état ouvert, adaptation mobile (≤760 px), thème sombre et respect de `prefers-reduced-motion`.
+- Cache : référence CSS portée de `v107` à `v108` dans `index.html` et le précache du service worker ; version portée à `dz-de-v3.168.0.0.2`.
+- Aucun identifiant, route, gestionnaire d'événement, logique métier, catalogue, authentification, Supabase, RLS, schéma, migration, paiement ou tableau de bord connecté modifié.
+- Contrôles attendus sur le HEAD final : structure HTML/accordéons, présence des quatre réponses, références CSS alignées, version SW, CI et build Cloudflare. Aucune validation visuelle réelle ne sera revendiquée sans navigateur.
+- Travail effectué exclusivement sur `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune fusion et aucun déploiement manuel.
