@@ -14045,3 +14045,38 @@ html[data-theme="dark"] #gate .gate-card .fld-row input{background:#0e1d14;borde
   #gate .public-feature:hover,#gate .public-mini-card:hover,#gate .public-year-cards>button:hover{transform:none}
   #gate .public-ai-wave i{animation:none;height:18px}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   ACCUEIL PUBLIC — disponibilité réelle des matières sur les cartes
+   Les statuts sont fournis par assets/bdd/matieres.json / subjects.json.
+   ═══════════════════════════════════════════════════════════════════ */
+#gate .public-mini-card{min-height:126px}
+#gate .public-mini-card .pub-home-status{
+  display:inline-flex;align-items:center;align-self:flex-start;
+  max-width:100%;margin-top:auto;padding:5px 8px;border:1px solid transparent;
+  border-radius:999px;font-size:9px;font-weight:850;line-height:1.35;
+  white-space:nowrap
+}
+#gate .public-mini-card .pub-home-status.active{
+  color:#006233;background:#e7f5eb;border-color:#c8e5d0
+}
+#gate .public-mini-card .pub-home-status.partial{
+  color:#87520a;background:#fff5df;border-color:#f0dfb8
+}
+#gate .public-mini-card .pub-home-status.planned{
+  color:#5f6e64;background:#edf1ee;border-color:#dce5de
+}
+html[data-theme="dark"] #gate .public-mini-card .pub-home-status.active{
+  color:#c9f0d4;background:#17442a;border-color:#28613c
+}
+html[data-theme="dark"] #gate .public-mini-card .pub-home-status.partial{
+  color:#ffe1a8;background:#493719;border-color:#735525
+}
+html[data-theme="dark"] #gate .public-mini-card .pub-home-status.planned{
+  color:#c3d0c7;background:#26362c;border-color:#405448
+}
+@media(max-width:720px){
+  #gate .public-mini-card{min-height:118px}
+  #gate .public-mini-card .pub-home-status{font-size:8px;padding:4px 7px}
+}
