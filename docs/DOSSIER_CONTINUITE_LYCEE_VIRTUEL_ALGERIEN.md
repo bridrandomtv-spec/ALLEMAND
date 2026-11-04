@@ -645,3 +645,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Aucun identifiant, route, gestionnaire d'événement, logique métier, catalogue, authentification, Supabase, RLS, schéma, migration, paiement ou tableau de bord connecté modifié.
 - Contrôles attendus sur le HEAD final : structure HTML/accordéons, présence des quatre réponses, références CSS alignées, version SW, CI et build Cloudflare. Aucune validation visuelle réelle ne sera revendiquée sans navigateur.
 - Travail effectué exclusivement sur `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune fusion et aucun déploiement manuel.
+
+
+## 47. Lisibilité typographique renforcée sur ordinateur — 4 novembre 2026
+
+- Demande : les textes apparaissaient trop petits sur ordinateur ; l'objectif est de retrouver une taille de lecture comparable aux sites web actuels.
+- Ajout d'une couche typographique dédiée aux écrans larges (à partir de 1024 px) : taille de base portée à 17 px, corps de texte, listes, formulaires, cellules de tableaux, descriptions et métadonnées avec un plancher de 15 px et une hauteur de ligne confortable ; hiérarchie des titres renforcée.
+- La règle est limitée aux espaces #gate et #shell #app : elle ne modifie ni les dimensions des composants ni les fonctions. Les écrans mobiles conservent leur échelle actuelle.
+- Le thème clair/sombre et les polices Cairo/Tajawal/Inter existantes sont conservés. Aucun framework ni aucune dépendance ajoutés.
+- Références alignées : style-prototype-dz.css?v=109 dans index.html et le précache de sw.js ; service worker dz-de-v3.168.0.0.3.
+- Vérifications statiques : média desktop, seuil 15 px, base 17 px, cohérence des références et version du service worker. La validation visuelle réelle sur écran d'ordinateur reste nécessaire ; aucun rendu navigateur n'est revendiqué ici.
+- Aucun changement d'ID, route, événement, logique métier, données, Auth, Supabase, RLS, schéma, migration, paiement ou tableau de bord métier.
+- Opération exclusivement sur design/prototypes-67-74-alignment, PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
