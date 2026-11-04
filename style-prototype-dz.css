@@ -14270,10 +14270,16 @@ html[data-theme="dark"] #gate .public-faq-item[open] summary:before{background:#
 }
 
 
-/* Lisibilité des libellés, liens et textes secondaires sur desktop */
+/* Lisibilité des libellés textuels sur desktop.
+   Les pictogrammes, badges et éléments décoratifs gardent leur taille propre. */
 @media (min-width:1024px){
-  #gate :where(a,span,summary,dt,dd,figcaption,legend,output),
-  #shell #app :where(a,span,summary,dt,dd,figcaption,legend,output){
+  #gate :where(a,summary,dt,dd,figcaption,legend,output),
+  #shell #app :where(a,summary,dt,dd,figcaption,legend,output){
+    font-size:max(15px,.88em)!important;
+    line-height:1.6;
+  }
+  #gate span:not([aria-hidden="true"]):not([class*="icon"]):not([class*="crest"]):not([class*="badge"]):not([class*="num"]):not(.emoji),
+  #shell #app span:not([aria-hidden="true"]):not([class*="icon"]):not([class*="crest"]):not([class*="badge"]):not([class*="num"]):not(.emoji){
     font-size:max(15px,.88em)!important;
     line-height:1.6;
   }
