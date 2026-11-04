@@ -14364,3 +14364,17 @@ html[data-theme="dark"] #gate .public-catalog-note button{
   #gate .public-catalog-note p{flex:1 1 calc(100% - 42px)!important;font-size:12px!important}
   #gate .public-catalog-note button{margin-inline-start:38px!important}
 }
+
+
+/* LOT 52 — Accueil public : lisibilité des textes secondaires sur mobile.
+   Les libellés courts restent compacts, mais ne descendent plus à 9 px. */
+@media(max-width:620px){
+  #gate .public-visual-step small{font-size:11px!important;line-height:1.55!important}
+  #gate .public-proof-card small{font-size:11px!important;line-height:1.6!important}
+  #gate .public-quality-ring-card>b{font-size:11px!important;line-height:1.45!important}
+  #gate .public-quality-ring-card>small{font-size:10.5px!important;line-height:1.5!important}
+  #gate .public-quality-note{font-size:12px!important;line-height:1.85!important}
+  #gate .public-faq-item p{font-size:12px!important;line-height:1.85!important}
+  #gate .public-faq-heading p{font-size:13px!important;line-height:1.8!important}
+  #gate .public-catalog-note p{font-size:13px!important;line-height:1.75!important}
+}
