@@ -14296,3 +14296,71 @@ html[data-theme="dark"] #gate .public-faq-item[open] summary:before{background:#
     line-height:1.7;
   }
 }
+
+
+/* LOT 51 — Accueil public : clarifier le statut du catalogue matières */
+#gate .public-catalog-note{
+  display:flex!important;
+  align-items:center!important;
+  gap:12px!important;
+  margin:0 0 14px!important;
+  padding:12px 15px!important;
+  border:1px solid #cfe2d5!important;
+  border-inline-start:4px solid #d21034!important;
+  border-radius:13px!important;
+  background:linear-gradient(100deg,#edf7f0,#fff 72%)!important;
+  color:#355b43!important;
+}
+#gate .public-catalog-note>span{
+  display:grid!important;
+  flex:0 0 30px!important;
+  width:30px!important;
+  height:30px!important;
+  place-items:center!important;
+  border-radius:50%!important;
+  background:#dcefe2!important;
+  color:#006233!important;
+  font-size:18px!important;
+  font-weight:900!important;
+}
+#gate .public-catalog-note p{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  margin:0!important;
+  color:#476653!important;
+  font-size:13px!important;
+  line-height:1.8!important;
+}
+#gate .public-catalog-note button{
+  flex:0 0 auto!important;
+  min-height:36px!important;
+  padding:7px 12px!important;
+  border:1px solid #b8d5c1!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  color:#006233!important;
+  font:850 12px var(--ff-ar)!important;
+  cursor:pointer!important;
+}
+#gate .public-catalog-note button:hover{
+  background:#006233!important;
+  border-color:#006233!important;
+  color:#fff!important;
+}
+html[data-theme="dark"] #gate .public-catalog-note{
+  border-color:#315640!important;
+  background:linear-gradient(100deg,#172f21,#14271b)!important;
+  color:#c6ddcd!important;
+}
+html[data-theme="dark"] #gate .public-catalog-note p{color:#c0d5c6!important}
+html[data-theme="dark"] #gate .public-catalog-note>span{
+  background:#284a34!important;color:#c9efd5!important
+}
+html[data-theme="dark"] #gate .public-catalog-note button{
+  background:#1b3826!important;border-color:#41664c!important;color:#d8eee0!important
+}
+@media(max-width:620px){
+  #gate .public-catalog-note{align-items:flex-start!important;flex-wrap:wrap!important;padding:11px!important;gap:8px!important}
+  #gate .public-catalog-note p{flex:1 1 calc(100% - 42px)!important;font-size:12px!important}
+  #gate .public-catalog-note button{margin-inline-start:38px!important}
+}
