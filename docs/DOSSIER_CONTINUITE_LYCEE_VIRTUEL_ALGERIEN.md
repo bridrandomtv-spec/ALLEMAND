@@ -429,3 +429,17 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, présence des sélecteurs du compte, cohérence des références de cache, CI sur le nouveau HEAD.
 - Aucun test navigateur, aucune validation réelle de liaison cloud ou de déconnexion et aucun déploiement Cloudflare ne sont revendiqués.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+## 30. Recomposition de la grammaire, du cadre légal et du manuel officiel — 4 novembre 2026
+
+- Audit des vues réelles `grammaire`, `legal`, `buch` et de leurs modules `grammaire.js`, `legal.js`, `buch.js`.
+- Bibliothèque grammaticale : filtres de recherche, niveau, CEFR, chapitres, puces actives, grille de fiches, explications, métadonnées, exemples, avertissements et astuces ; la fiche modale reste lisible.
+- Cadre légal : en-tête distinctif, emblème, sections juridiques et note finale structurés sans réécrire ni raccourcir le contenu juridique.
+- Manuel officiel : hero, navigation des leçons, objectifs, grammaire, textes/dialogues, vocabulaire, tableaux, exercices, champs de réponse et résultat de correction.
+- Variantes clair/sombre, adaptation mobile et prise en compte de `prefers-reduced-motion`.
+- Préservation stricte : aucun changement à `grammaire.js`, `legal.js`, `buch.js`, aux contenus de cours, aux filtres, à la recherche, à la correction, aux notes /20, aux contrôles d'accès, à la lecture vocale, aux pages du manuel ou aux boutons `data-go`.
+- Aucune donnée d'exemple ni statistique artificielle ajoutée ; les contenus continuent de provenir des fichiers JSON et du moteur existants.
+- Cache : `style-prototype-dz.css?v=94` dans `index.html`, précache actualisé et service worker `dz-de-v3.154.0`.
+- Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, présence des sélecteurs ciblés, cohérence des références de cache, CI sur le nouveau HEAD.
+- Aucun test navigateur, aucune correction de cours réelle et aucun déploiement Cloudflare ne sont revendiqués.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
