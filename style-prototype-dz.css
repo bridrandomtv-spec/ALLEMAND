@@ -14594,25 +14594,17 @@ html[data-theme="dark"] #gate.public-auth-page .public-auth-back:hover{
 
 
 /* LOT 59 — Accueil public : renforcer la composition du premier écran */
+/* Le panneau principal porte déjà le fond et le cadre : le texte reste éditorial,
+   sans seconde carte imbriquée, comme dans le prototype de référence. */
 #gate .public-copy{
   position:relative!important;
   isolation:isolate!important;
-  overflow:hidden!important;
-  padding:clamp(21px,2.6vw,32px)!important;
-  border:1px solid #d7e8dc!important;
-  border-radius:24px!important;
-  background:
-    radial-gradient(circle at 100% 0,rgba(0,98,51,.10),transparent 38%),
-    linear-gradient(145deg,#fff 0%,#f7fbf8 72%,#f1f8f3 100%)!important;
-  box-shadow:0 14px 34px rgba(10,65,34,.055)!important;
-}
-#gate .public-copy:after{
-  content:""!important;
-  position:absolute!important;
-  z-index:-1!important;
-  inset:0 0 auto 0!important;
-  height:4px!important;
-  background:linear-gradient(90deg,#d21034 0 18%,#fff 18% 35%,#006233 35% 100%)!important;
+  overflow:visible!important;
+  padding:clamp(20px,3vw,42px) 0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
 }
 #gate .public-copy h2{
   max-width:17ch!important;
@@ -14696,9 +14688,9 @@ html[data-theme="dark"] #gate.public-auth-page .public-auth-back:hover{
   box-shadow:0 7px 18px rgba(17,65,37,.045)!important;
 }
 html[data-theme="dark"] #gate .public-copy{
-  border-color:#315640!important;
-  background:radial-gradient(circle at 100% 0,rgba(39,132,75,.18),transparent 38%),linear-gradient(145deg,#172d20,#12251a)!important;
-  box-shadow:0 14px 34px rgba(0,0,0,.2)!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
 }
 html[data-theme="dark"] #gate .public-copy>p,
 html[data-theme="dark"] #gate .public-trust{color:#c0d5c6!important}
@@ -14718,7 +14710,7 @@ html[data-theme="dark"] #gate .public-btn.secondary:hover{background:#284a34!imp
   #gate .public-copy h2{max-width:20ch!important;font-size:clamp(32px,5vw,45px)!important}
 }
 @media(max-width:620px){
-  #gate .public-copy{padding:19px 15px!important;border-radius:19px!important}
+  #gate .public-copy{padding:18px 0 8px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
   #gate .public-copy h2{font-size:clamp(29px,7.5vw,37px)!important;line-height:1.52!important}
   #gate .public-copy>p{font-size:14px!important;line-height:1.95!important}
   #gate .public-actions{grid-template-columns:1fr!important}
