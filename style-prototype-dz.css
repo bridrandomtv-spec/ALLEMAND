@@ -14177,6 +14177,8 @@ html[data-theme="dark"] #gate .public-mini-catalog .pub-home-status.unavailable{
 #gate .public-quality-section{grid-column:1/-1!important;display:grid!important;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr)!important;gap:22px!important;margin:8px 0 18px!important;padding:clamp(20px,3vw,34px)!important;border:1px solid #d5e7da!important;border-radius:26px!important;background:radial-gradient(circle at 100% 0,rgba(0,98,51,.09),transparent 35%),linear-gradient(145deg,#f7fbf8,#fff 60%,#fff8f8)!important;box-shadow:0 18px 48px rgba(12,65,35,.075)!important}
 #gate .public-quality-intro{align-self:center!important}
 #gate .public-quality-kicker{display:inline-flex!important;padding:7px 12px!important;border-radius:999px!important;background:#e5f3e9!important;color:#006233!important;font-size:11px!important;font-weight:950!important}
+#gate .public-quality-track{display:inline-flex!important;align-items:center!important;margin-inline-start:8px!important;padding:7px 12px!important;border:1px solid #c9dfd0!important;border-radius:999px!important;background:#f3faf5!important;color:#174d30!important;font-size:11px!important;font-weight:900!important;letter-spacing:.01em!important}
+#gate .public-quality-intro p strong{color:#006233!important;font-weight:950!important}
 #gate .public-quality-intro h3{margin:13px 0 10px!important;color:#123d27!important;font-size:clamp(23px,2.5vw,32px)!important;font-weight:950!important;line-height:1.55!important}
 #gate .public-quality-intro p{max-width:52ch!important;color:#5c7062!important;font-size:14px!important;line-height:2!important}
 #gate .public-quality-proof{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;align-content:center!important}
