@@ -1076,7 +1076,7 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 
 - Audit du DOM : `#shell`, `#app`, `section[data-view="masar"].dz-masar-page`, `#masarBody` et l’appel à `renderMasar()` sont présents. L’hypothèse d’un conteneur absent est écartée.
 - Défaut CSS confirmé dans le lot 81 : `display:block!important` sur la section `masar` avait une spécificité supérieure à la règle globale `[hidden]{display:none!important}`. Cette déclaration pouvait afficher la vue même lorsque l’application lui appliquait `hidden`.
-- Correction : suppression du forçage `display:block!important`; le navigateur respecte à nouveau l’état `hidden`. Aucun changement à `masar.js`, aux données, aux actions ou aux calculs.
-- Référence CSS portée à `v131`; Service Worker porté à `dz-de-v3.168.0.0.38` et précache CSS aligné.
-- Validation locale du texte source : la déclaration fautive a été retirée et les références CSS/SW mises à jour. La CI structurelle et le test navigateur restent à vérifier ; aucune validation visuelle revendiquée.
+- Correction ciblée dans le sélecteur du lot 81 : retrait de `display:block!important` de la section ; le navigateur peut donc respecter l’état `hidden`. Aucun changement à `masar.js`, aux données, aux actions ou aux calculs.
+- Référence CSS portée à `v132`; Service Worker porté à `dz-de-v3.168.0.0.39` et précache CSS aligné.
+- Un premier remplacement trop large avait modifié une autre déclaration sans retirer celle du lot 81 ; ce second commit corrige explicitement le bon bloc. Contrôle source après commit requis ; CI et test navigateur restent à vérifier. Aucune validation visuelle revendiquée.
 - PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`, Auth, Supabase, RLS, schéma, paiements ou permissions.
