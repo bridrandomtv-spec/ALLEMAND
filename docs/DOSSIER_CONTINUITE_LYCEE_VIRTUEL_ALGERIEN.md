@@ -949,3 +949,13 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Service Worker : version portée à `dz-de-v3.168.0.0.24` pour renouveler le cache.
 - La demande concernant la barre de défilement de l'accueil public et des écrans de connexion/inscription reste à préciser : conserver une barre verticale visible avec un style plus soigné, ou la masquer ? La navigation verticale ne doit pas être rendue inaccessible.
 - PR #17 / branche `design/prototypes-67-74-alignment` ; aucune fusion et aucune modification de `main`.
+
+
+## Lot 72 — Harmonisation de la signature de l’écran de connexion
+
+- Cause identifiée après retour utilisateur : une seconde signature subsistait dans `index.html`, dans le bloc `.gate-foot` de l’écran de connexion. Le script de langue lui appliquait ensuite « Deutsche Sprache », reconstituant l’ancienne signature observée.
+- Remplacement de cette seconde occurrence par : `الثانوية الافتراضية الجزائرية · منصة تعليمية شاملة © 2026`.
+- Le pied de page principal conserve la même signature institutionnelle.
+- Version du service worker incrémentée à `dz-de-v3.168.0.0.25` pour renouveler le cache de la page.
+- Aucune règle de défilement modifiée ; cette demande a été abandonnée par l’utilisateur.
+- Modifications limitées à `index.html`, `sw.js` et au présent dossier, sur `design/prototypes-67-74-alignment` / PR #17. Aucun changement sur `main`, aucune fusion.
