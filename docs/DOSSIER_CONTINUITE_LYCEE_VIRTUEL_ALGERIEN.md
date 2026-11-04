@@ -992,3 +992,20 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Cache : `app.js?v=3524` et Service Worker `dz-de-v3.168.0.0.30` ; pré-cache synchronisé.
 - Aucun changement de structure de base, Supabase, Auth, RLS, paiements, droits ou données personnelles. Travail limité à la branche `design/prototypes-67-74-alignment` / PR #17, sans fusion ni modification de `main`.
 - Contrôles statiques et CI à exécuter sur le commit final. Validation visuelle réelle sur ordinateur et mobile toujours nécessaire ; elle n'est pas revendiquée dans ce lot.
+
+
+## Lot 76 — Recomposition visuelle de l’accueil connecté élève (4 novembre 2026)
+
+- Constat après audit : l’accueil connecté conservait une composition héritée malgré plusieurs couches CSS successives. Plusieurs règles redéfinissaient les mêmes zones (grille principale, héros, matières et cartes), ce qui entretenait l’impression de retouches ponctuelles et rendait le résultat difficile à maîtriser.
+- Ajout d’une couche de style dédiée et strictement limitée à `#shell #app [data-view="accueil"]` dans `style-prototype-dz.css` :
+  - nouvelle composition desktop avec zone pédagogique principale et panneaux latéraux réorganisés ;
+  - héros élève plus ample, hiérarchie typographique renforcée, actions et progression intégrées dans un panneau visuel unique ;
+  - catalogue des matières et indicateurs de progression traités comme des sections distinctes, avec titres éditoriaux, cartes et espaces cohérents ;
+  - raccourcis pédagogiques réorganisés en grille, sans réintroduire les anciens blocs allemands statiques ;
+  - déclinaisons tablette/mobile et mode sombre.
+- Aucun identifiant, route, fonction métier, événement, donnée, Auth, Supabase, RLS, schéma, paiement ou permission modifié. Les contenus et indicateurs restent alimentés par les modules et données existants.
+- Cache : `style-prototype-dz.css?v=125`, Service Worker `dz-de-v3.168.0.0.31`.
+- Fichiers modifiés : `style-prototype-dz.css`, `index.html`, `sw.js`, présent dossier de continuité.
+- Commits : CSS `b8666d6`, index `13d5567` ; commits du Service Worker et du dossier à relever après écriture.
+- Validation statique, CI et publication preview à vérifier. Aucune validation visuelle navigateur ordinateur/mobile n'est revendiquée tant que les deux rendus n'ont pas été inspectés.
+- PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`. Aucune modification directe de `main`.
