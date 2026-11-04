@@ -563,3 +563,13 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Vérifications statiques à réaliser sur le HEAD final : syntaxe JavaScript, cohérence des références index/service worker, présence des statuts et équilibre des accolades CSS ; CI à suivre.
 - Aucun rendu navigateur mobile/ordinateur ni déploiement Cloudflare du HEAD final n'est revendiqué à ce stade.
 - Branche design/prototypes-67-74-alignment, PR #17 vers main ; aucune branche créée, aucun changement direct sur main, aucune fusion et aucun déploiement manuel.
+
+
+## 40. Accueil public — exactitude de la promesse éditoriale — 4 novembre 2026
+
+- Audit de cohérence entre le bandeau de marque et le registre des matières : le slogan antérieur « tous les matières et langues » pouvait laisser croire que les 14 matières étaient toutes déjà opérationnelles.
+- Remplacement par « منصة متعددة المواد • التوفر حسب كل مادة », cohérent avec les statuts disponibles, partiels et en préparation présentés sur les cartes.
+- Aucun changement de catalogue, de contenu pédagogique, de logique d'accès, d'authentification, de navigation ou de données.
+- Cache CSS de l'accueil public passé à style-prototype-dz.css?v=103 ; service worker dz-de-v3.164.0.
+- Vérification navigateur et publication Cloudflare du HEAD final non revendiquées tant qu'elles ne sont pas confirmées.
+- Travail limité à la branche design/prototypes-67-74-alignment et à la PR #17 ; main reste intacte et aucune fusion n'est effectuée.
