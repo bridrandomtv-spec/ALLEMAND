@@ -277,3 +277,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Aucun changement de route, de rôle, d'authentification, de base Supabase, RLS, paiement ou API.
 - Validation statique : équilibre des accolades CSS à zéro ; conservation vérifiée des six identifiants de dialogue dans le HTML. Tests CI GitHub en attente au moment de la consignation. Aucun rendu navigateur revendiqué.
 - PR #17 reste ouverte, non fusionnée ; aucun changement sur `main`.
+
+
+## 18. Recomposition visuelle de l'espace cours et séances — 4 novembre 2026
+
+- Périmètre : vue réelle `data-view="seances"`, catalogue des unités, cartes de séances et panneau de détail.
+- Audit du moteur : le rendu des unités et séances est produit par `renderSeances()`, `uniteSelector()` et `openSeance()` dans `app.js`. Les états terminés/verrouillés, la progression, le contrôle d'accès payant et les contenus pédagogiques restent calculés par ces fonctions.
+- Recomposition : ajout de classes de présentation ciblées (`dz-course-page`, `dz-course-hero`, `dz-course-catalog`) autour des éléments existants. Le bandeau devient un hero vert profond avec accents rouge/blanc et barre de progression ; le catalogue présente les filtres de niveau, unités et séances sous forme de cartes hiérarchisées ; le détail de séance reçoit un panneau dédié.
+- Responsive : grille d'unités en 3 colonnes sur grand écran, 2 sur tablette et 1 sur mobile. Adaptations explicites du thème sombre, des états actifs/terminés et du mouvement réduit.
+- Préservation : IDs `seancesHead`, `progSeances`, `progLbl`, `seancesGrid`, `seanceDetail` inchangés ; attributs `data-niveau`, `data-unite`, `data-seance` inchangés. Aucune logique métier, progression, verrouillage, abonnement, route, authentification, Supabase, RLS, schéma ou paiement modifié.
+- Cache : feuille CSS portée à `v=82` dans `index.html` et `sw.js` ; service worker porté à `dz-de-v3.142.0`.
+- Validation statique à effectuer après commits : syntaxe/équilibre CSS, présence des IDs et attributs interactifs, cohérence des versions de cache, CI GitHub. Aucun rendu navigateur réel n'est revendiqué par cette modification.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
