@@ -389,3 +389,16 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, présence des classes réellement produites par `guide.js`, cohérence des références cache et CI. Aucun test navigateur ni validation visuelle utilisateur n'est revendiqué.
 - Lot précédent messagerie : CI #1862, #1863 et #1864 terminées avec succès. Le nouveau lot guide déclenche ses propres workflows.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+## 27. Recomposition des espaces classe, salle live et statistiques nationales — 4 novembre 2026
+
+- Audit préalable des modules réels `classe.js`, `live.js`, `stats.js`, des vues `data-view="classe"`, `data-view="live"`, `data-view="stats"` et des styles existants.
+- Classe virtuelle : hero de section, encart de prochaine séance, navigation par onglets, six indicateurs, emploi du temps, leçons, présence et notes ; présentation responsive en cartes, sans modifier les données de classe.
+- Salle live : hero de séance, identité du professeur, compteur, zone vidéo, contrôles micro/caméra/main levée, onglets chat/tableau blanc/présence/programme ; seuls les styles sont ciblés.
+- Statistiques nationales : hero et KPI calculés par le module, navigation des six vues, conteneur cartographique, légende et classement des wilayas ; la carte SVG et les agrégats réels sont conservés.
+- Thèmes clair/sombre, adaptation mobile et prise en compte de `prefers-reduced-motion`.
+- Préservation stricte : aucun changement à `classe.js`, `live.js`, `stats.js`, aux données JSON, aux IDs `classeBody`, `liveBody`, `statsBody`, `clContenu`, `stContenu`, `panChat`, `panTableau`, `panPresence`, aux événements, aux contrôles ou aux sources des statistiques. Aucune modification Auth, Supabase, RLS, schéma, migration ou paiement.
+- Cache : `style-prototype-dz.css?v=91` dans `index.html`, précache actualisé et service worker `dz-de-v3.151.0`.
+- Contrôles statiques à effectuer après écriture : accolades CSS équilibrées, présence des sélecteurs de vues et composants audités, cohérence des références cache, CI sur le nouveau HEAD.
+- Aucun test visuel navigateur, aucune vérification réelle de caméra/micro/flux live et aucun déploiement Cloudflare ne sont revendiqués à ce stade.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
