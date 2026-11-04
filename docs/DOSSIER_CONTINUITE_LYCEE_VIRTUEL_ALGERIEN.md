@@ -1070,3 +1070,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Commit CSS : `af8c8099e6fa976b6b424580430b3325ed458963`; commit index : `150848e9712d7d3cf15d1ecfbffca61817cd4196`; commit SW : `2fa4c12b4bedf2b2d16b4557172efa578aa814cc`.
 - État : correction de code poussée sur `design/prototypes-67-74-alignment). Attendre le preview Cloudflare, tester ordinateur et mobile, puis comparer les captures au modèle. Aucune validation visuelle ni publication production revendiquée à ce stade.
 - PR #17 reste ouverte et non fusionnée ; aucune modification de `main`, Auth, Supabase, RLS, schéma, paiements ou permissions.
+
+
+## Lot 82 — respecter l’attribut hidden de la vue مسارك (4 novembre 2026)
+
+- Audit du DOM : `#shell`, `#app`, `section[data-view="masar"].dz-masar-page`, `#masarBody` et l’appel à `renderMasar()` sont présents. L’hypothèse d’un conteneur absent est écartée.
+- Défaut CSS confirmé dans le lot 81 : `display:block!important` sur la section `masar` avait une spécificité supérieure à la règle globale `[hidden]{display:none!important}`. Cette déclaration pouvait afficher la vue même lorsque l’application lui appliquait `hidden`.
+- Correction : suppression du forçage `display:block!important`; le navigateur respecte à nouveau l’état `hidden`. Aucun changement à `masar.js`, aux données, aux actions ou aux calculs.
+- Référence CSS portée à `v131`; Service Worker porté à `dz-de-v3.168.0.0.38` et précache CSS aligné.
+- Validation locale du texte source : la déclaration fautive a été retirée et les références CSS/SW mises à jour. La CI structurelle et le test navigateur restent à vérifier ; aucune validation visuelle revendiquée.
+- PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`, Auth, Supabase, RLS, schéma, paiements ou permissions.
