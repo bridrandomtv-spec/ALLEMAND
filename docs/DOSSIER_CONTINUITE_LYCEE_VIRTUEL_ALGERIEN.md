@@ -940,3 +940,12 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Aucun changement aux boutons, IDs, attributs `data-*`, navigation, contenu, Auth, Supabase, RLS ou vues connectées.
 - Service Worker : `dz-de-v3.168.0.0.23`.
 - Contrôles attendus : cohérence des règles desktop/mobile/dark et CI. Validation esthétique réelle encore requise via preview sur ordinateur et mobile.
+
+
+## Lot 71 — Signature institutionnelle du pied de page public (4 novembre 2026)
+
+- Remplacement de la mention nominative « © 2026 — الأستاذ خريف أحمد 🇩🇿 » par « الثانوية الافتراضية الجزائرية · منصة تعليمية شاملة © 2026 ».
+- Le slogan secondaire et la mention du programme restent inchangés ; aucun autre contenu du portail ni comportement n'est modifié.
+- Service Worker : version portée à `dz-de-v3.168.0.0.24` pour renouveler le cache.
+- La demande concernant la barre de défilement de l'accueil public et des écrans de connexion/inscription reste à préciser : conserver une barre verticale visible avec un style plus soigné, ou la masquer ? La navigation verticale ne doit pas être rendue inaccessible.
+- PR #17 / branche `design/prototypes-67-74-alignment` ; aucune fusion et aucune modification de `main`.
