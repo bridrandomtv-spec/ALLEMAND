@@ -509,3 +509,17 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à exécuter sur le HEAD final : équilibre des accolades CSS, présence des sélecteurs et breakpoints, cohérence index/SW/cache et CI GitHub.
 - Limite de validation : aucun test visuel réel sur navigateur mobile/ordinateur, aucune vérification de déploiement Cloudflare et aucune confirmation utilisateur du rendu de ce lot ne sont revendiqués.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+## 36. Finition de la zone centrale de l'accueil élève — matières, indicateurs et accès rapides — 4 novembre 2026
+
+- Audit du DOM réel dans `index.html` et du rendu dynamique dans `app.js` : `#subjHome` reçoit le catalogue de matières depuis `SUBJECT.ready()` et `assets/bdd/matieres.json` ; `#statsHome` affiche les indicateurs existants ; la grille `.grid3` est déplacée par la phase D3 de `app.js` dans `#quickBody` au sein de `#panelQuick`.
+- Constat important : la règle du lot 35 visant `.home-main > .grid3` ne ciblait plus les cartes rapides après leur déplacement DOM par D3. Le lot 36 corrige ce décalage en stylisant le vrai emplacement `#homeSide #panelQuick #quickBody > .grid3` ; les cartes deviennent des raccourcis compacts, sans supposer qu'elles restent dans la colonne principale.
+- Catalogue : cartes matières hiérarchisées, distinction visuelle de la matière active, badges de disponibilité (complète/partielle/en préparation), rangée des langues et lien d'exploration. Les statuts restent issus du registre réel ; l'anglais demeure partiel.
+- Indicateurs : cartes `#statsHome` mises en forme sans recalculer ni remplacer leurs valeurs.
+- Raccourcis : présentation compacte adaptée à la colonne de soutien ; les attributs `data-go`, `data-subj` et les gestionnaires existants ne sont pas modifiés.
+- Variantes clair/sombre, responsive mobile/tablette et respect de `prefers-reduced-motion`.
+- Préservation stricte : aucun changement à `app.js`, `masar.js`, `matieres.js`, `subjects.json`, `matieres.json`, aux données, calculs, routes, identifiants, événements, authentification ou permissions.
+- Cache : `style.css?v=3515` ; service worker `dz-de-v3.160.0` avec précache mis à jour.
+- Contrôles statiques : équilibre des accolades CSS, présence des sélecteurs du vrai DOM, références cache index/SW et CI à vérifier sur le HEAD final.
+- Aucun test visuel navigateur mobile/ordinateur, aucune validation Cloudflare et aucune confirmation utilisateur du rendu ne sont revendiqués.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
