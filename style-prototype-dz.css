@@ -15604,3 +15604,54 @@ html[data-theme="dark"] #shell #app [data-view="accueil"] .home-main .welcome-me
   #shell #app [data-view="accueil"] .dz-hero-emblem,
   #shell #app [data-view="accueil"] #statsHome .stat{animation:none!important;transition:none!important}
 }
+
+
+/* LOT 76 — correction de l’ordre réel du DOM et du premier écran
+   Le DOM conserve aside.home-side avant .home-main : expliciter les zones
+   de grille évite de réduire la colonne pédagogique à la largeur latérale.
+   Le héros doit être le premier bloc visible après connexion.
+   ═══════════════════════════════════════════════════════════════ */
+#shell #app [data-view="accueil"] .home-grid{
+  grid-template-areas:"main side"!important;
+  grid-template-columns:minmax(0,1fr) minmax(270px,310px)!important;
+}
+#shell #app [data-view="accueil"] .home-main{
+  grid-area:main!important;
+  grid-column:1!important;
+  grid-row:1!important;
+}
+#shell #app [data-view="accueil"] .home-side{
+  grid-area:side!important;
+  grid-column:2!important;
+  grid-row:1!important;
+}
+#shell #app [data-view="accueil"] .home-main>.welcome{
+  order:0!important;
+}
+#shell #app [data-view="accueil"] .home-main>#subjHome{
+  order:1!important;
+}
+#shell #app [data-view="accueil"] .home-main>#statsHome{
+  order:2!important;
+}
+#shell #app [data-view="accueil"] .home-main>#todayBody{
+  order:3!important;
+}
+#shell #app [data-view="accueil"] .home-main>#apercuBody{
+  order:4!important;
+}
+#shell #app [data-view="accueil"] .home-main>.welcome-art{
+  display:none!important;
+}
+@media(max-width:900px){
+  #shell #app [data-view="accueil"] .home-grid{
+    grid-template-areas:"main" "side"!important;
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  #shell #app [data-view="accueil"] .home-main{
+    grid-area:main!important;grid-column:1!important;grid-row:1!important;
+  }
+  #shell #app [data-view="accueil"] .home-side{
+    grid-area:side!important;grid-column:1!important;grid-row:2!important;
+  }
+}
