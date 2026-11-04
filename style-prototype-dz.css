@@ -14529,7 +14529,7 @@ html[data-theme="dark"] #gate .public-quality-metric>small{border-color:#315640!
   justify-content:center!important;
 }
 #gate.public-auth-page .gate-card:not([hidden]){
-  /* Ne pas forcer display : [hidden] doit rester prioritaire. */
+  display:block!important;
   width:100%!important;
   max-width:620px!important;
   margin:0 auto!important;
