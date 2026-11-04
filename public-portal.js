@@ -40,6 +40,8 @@
   function renderHomeCatalog(){
     const target = $('.public-mini-catalog');
     if(!target) return;
+    target.setAttribute('aria-live', 'polite');
+    target.setAttribute('aria-busy', 'true');
     loadCatalog().then(({data}) => {
       const items = Array.isArray(data.matieres) ? data.matieres : [];
       const languageIds = new Set(['allemand','francais','anglais','arabe','espanol','italien']);
@@ -60,8 +62,18 @@
       };
       const ordered = items.filter(x => languageIds.has(x.id)).concat(items.filter(x => !languageIds.has(x.id)));
       if(ordered.length) target.innerHTML = ordered.map(card).join('');
+      target.setAttribute('aria-busy', 'false');
     }).catch(() => {
-      /* Keep the server-rendered fallback cards if the catalogue cannot be loaded. */
+      /* Keep fallback cards, but never imply that their availability was verified. */
+      target.setAttribute('aria-busy', 'false');
+      target.querySelectorAll('.public-mini-card').forEach(item => {
+        if(item.querySelector('.pub-home-status')) return;
+        const status = document.createElement('span');
+        status.className = 'pub-home-status unavailable';
+        status.setAttribute('role', 'status');
+        status.textContent = 'حالة التوفر غير متاحة';
+        item.appendChild(status);
+      });
     });
   }
   function statusFor(id, item){
