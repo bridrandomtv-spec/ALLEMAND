@@ -15082,3 +15082,109 @@ html[data-theme="dark"] #gate .public-faq-actions button{
   #gate .public-faq-actions button{transition:none!important}
   #gate .public-faq-actions button:hover{transform:none!important}
 }
+
+
+/* LOT 63 — Cohérence éditoriale des sections de l'accueil public */
+#gate .public-landing-sections{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:0!important;
+  padding-top:clamp(22px,3vw,36px)!important;
+  margin-top:clamp(18px,2.5vw,30px)!important;
+  border-top:1px solid #dce9df!important;
+}
+#gate .public-section-heading{
+  position:relative!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:16px!important;
+  margin:0 0 18px!important;
+  padding:0 15px 12px 0!important;
+  border-bottom:1px solid #e4eee7!important;
+}
+#gate .public-section-heading:before{
+  content:""!important;
+  position:absolute!important;
+  right:0!important;
+  bottom:12px!important;
+  width:4px!important;
+  height:34px!important;
+  border-radius:4px!important;
+  background:linear-gradient(180deg,#006233 0 68%,#d21034 68% 100%)!important;
+}
+#gate .public-section-heading>div{min-width:0!important}
+#gate .public-section-heading>div>span{
+  display:block!important;
+  margin-bottom:4px!important;
+  color:#a51c35!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  letter-spacing:0!important;
+  line-height:1.6!important;
+}
+#gate .public-section-heading h3{
+  margin:0!important;
+  color:#123d27!important;
+  font-size:clamp(22px,2.35vw,29px)!important;
+  font-weight:950!important;
+  line-height:1.45!important;
+}
+#gate .public-section-heading>button{
+  flex:0 0 auto!important;
+  min-height:40px!important;
+  padding:8px 12px!important;
+  border:1px solid #cfe2d5!important;
+  border-radius:11px!important;
+  background:#f3f8f4!important;
+  color:#006233!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  line-height:1.5!important;
+}
+#gate .public-catalog-note{
+  margin:0 0 15px!important;
+}
+#gate .public-mini-catalog{
+  margin-bottom:clamp(25px,3vw,38px)!important;
+}
+#gate .public-years-heading{
+  margin-top:0!important;
+}
+#gate .public-year-cards{margin-bottom:5px!important}
+html[data-theme="dark"] #gate .public-landing-sections{
+  border-color:#315640!important;
+}
+html[data-theme="dark"] #gate .public-section-heading{
+  border-color:#315640!important;
+}
+html[data-theme="dark"] #gate .public-section-heading h3{color:#e3f1e7!important}
+html[data-theme="dark"] #gate .public-section-heading>div>span{color:#ff9baa!important}
+html[data-theme="dark"] #gate .public-section-heading>button{
+  border-color:#3b6247!important;
+  background:#1a3825!important;
+  color:#d8f0df!important;
+}
+@media(max-width:760px){
+  #gate .public-landing-sections{
+    padding-top:20px!important;
+    margin-top:17px!important;
+  }
+  #gate .public-section-heading{
+    align-items:flex-start!important;
+    flex-direction:column!important;
+    gap:8px!important;
+    margin-bottom:14px!important;
+    padding-right:12px!important;
+  }
+  #gate .public-section-heading:before{height:30px!important}
+  #gate .public-section-heading h3{font-size:22px!important}
+  #gate .public-section-heading>button{
+    min-height:38px!important;
+    padding:7px 10px!important;
+  }
+  #gate .public-mini-catalog{margin-bottom:25px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #gate .public-section-heading>button{transition:none!important}
+}
