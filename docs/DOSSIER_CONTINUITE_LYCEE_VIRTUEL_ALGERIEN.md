@@ -838,3 +838,17 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Aucun changement aux tableaux de bord, Auth, Supabase, RLS, schéma, migrations, paiements ou données. Aucun framework ni dépendance ajoutés.
 - Limite : aucune validation visuelle réelle sur navigateur ordinateur/mobile n'est revendiquée ; la revue visuelle sur les deux formats reste nécessaire.
 - Travail limité à design/prototypes-67-74-alignment / PR #17 vers main; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
+
+
+## Lot 64 — Premier écran : démonstration de l'enseignant intelligent (4 novembre 2026)
+
+- Recomposition du panneau de droite du hero public via le module existant `public-portal.js` : le visuel générique du parcours est transformé en exemple pédagogique de l'enseignant intelligent, avec microphone illustratif, représentation des ondes vocales, question d'élève sur `Nominativ/Akkusativ`, explication et phrase d'exemple.
+- Le panneau est explicitement étiqueté « مثال توضيحي ». La note précise qu'il ne s'agit ni d'une conversation directe ni d'une session vocale active. Aucun micro fonctionnel, appel réseau, moteur vocal ou nouvelle interaction n'est simulé.
+- Le titre du panneau devient « الأستاذ الذكي ». Le CTA conserve l'action de navigation existante vers le catalogue des matières ; le CTA d'inscription reste inchangé.
+- Dans le bloc éditorial, les repères du catalogue sont replacés avant la ligne de confiance et les actions, pour retrouver l'ordre du prototype : titre, explication, repères, puis boutons.
+- Styles ciblés injectés par le module du portail : variantes ordinateur/mobile, thème sombre et prise en compte de `prefers-reduced-motion`. Aucun framework ni dépendance ajoutés.
+- Le service worker est incrémenté en `dz-de-v3.168.0.0.20`. Le script `public-portal.js?v=8` reste référencé dans la page et le précache ; l'installation du nouveau service worker recharge explicitement les ressources avec `cache: reload`.
+- Aucun changement à Auth, Supabase, RLS, schéma, données, paiements, tableaux de bord, routes ou contrôle d'accès. Les formulaires de connexion et d'inscription restent sur l'écran dédié.
+- Contrôles statiques à effectuer sur le HEAD final : syntaxe JavaScript, présence des éléments du panneau, ordre des repères/actions, préservation des attributs de navigation, version du service worker et CI/Workers Build.
+- Limite : le rendu n'a pas été ouvert dans un navigateur ; aucune validation visuelle desktop/mobile ni publication Cloudflare n'est revendiquée.
+- Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main` ; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
