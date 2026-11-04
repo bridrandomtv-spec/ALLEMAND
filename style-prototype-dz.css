@@ -11304,3 +11304,193 @@ html[data-theme="dark"] #shell #app [data-view="matieres"] .mat-vision{backgroun
 @media(prefers-reduced-motion:reduce){
   #shell #app [data-view="matieres"] .mat-c{transition:none}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   LEARNING & ASSESSMENT — فروض، اختبارات، امتحانات وبكالوريا
+   Design layer only: preserve all existing assessment logic.
+   ═══════════════════════════════════════════════════════════════ */
+#shell #app [data-view="devoir"] .page-head,
+#shell #app [data-view="examen"] .page-head,
+#shell #app [data-view="quiz"] .page-head,
+#shell #app [data-view="simulation"] .page-head,
+#shell #app [data-view="officiels"] .page-head,
+#shell #app [data-view="devoirs"] .page-head{
+  position:relative;isolation:isolate;overflow:hidden;margin-bottom:19px;padding:23px 27px;
+  border:1px solid rgba(255,255,255,.14);border-radius:21px;color:#fff;
+  background:radial-gradient(circle at 90% 0,rgba(255,255,255,.13),transparent 25%),
+    radial-gradient(circle at 4% 100%,rgba(210,16,52,.25),transparent 30%),
+    linear-gradient(118deg,#003b21,#006233 60%,#087b43);
+  box-shadow:0 14px 35px rgba(0,65,34,.15)
+}
+#shell #app [data-view="devoir"] .page-head h1,
+#shell #app [data-view="examen"] .page-head h1,
+#shell #app [data-view="quiz"] .page-head h1,
+#shell #app [data-view="simulation"] .page-head h1,
+#shell #app [data-view="officiels"] .page-head h1,
+#shell #app [data-view="devoirs"] .page-head h1{color:#fff!important;font-size:clamp(21px,2.6vw,30px);font-weight:950;line-height:1.55}
+#shell #app [data-view="devoir"] .page-head p,
+#shell #app [data-view="examen"] .page-head p,
+#shell #app [data-view="quiz"] .page-head p,
+#shell #app [data-view="simulation"] .page-head p,
+#shell #app [data-view="officiels"] .page-head p,
+#shell #app [data-view="devoirs"] .page-head p{color:#e3f2e8!important;font-size:12px;line-height:1.9}
+#shell #app [data-view="examen"] #examBody,
+#shell #app [data-view="quiz"] #quizBody,
+#shell #app [data-view="officiels"] #officielsBody,
+#shell #app [data-view="devoirs"] #devoirsBody,
+#shell #app [data-view="devoir"] #devoirBody{max-width:1240px;margin-inline:auto}
+#shell #app [data-view="examen"] .exam-hero,
+#shell #app [data-view="officiels"] .off-hero,
+#shell #app [data-view="quiz"] .qz-hero,
+#shell #app [data-view="devoirs"] .dn-hero{
+  position:relative;isolation:isolate;overflow:hidden;padding:23px!important;
+  border:1px solid rgba(255,255,255,.14)!important;border-radius:21px!important;color:#fff;
+  background:radial-gradient(circle at 94% 0,rgba(255,255,255,.12),transparent 25%),
+    linear-gradient(120deg,#004326,#006b39 62%,#087b43)!important;
+  box-shadow:0 13px 30px rgba(0,65,34,.13)!important
+}
+#shell #app [data-view="examen"] .exam-hero h2,
+#shell #app [data-view="officiels"] .off-hero h2,
+#shell #app [data-view="quiz"] .qz-hero h2,
+#shell #app [data-view="devoirs"] .dn-hero h2{color:#fff!important;font-size:clamp(20px,2.4vw,28px);font-weight:950}
+#shell #app [data-view="examen"] .ch-sub,
+#shell #app [data-view="officiels"] .ch-sub,
+#shell #app [data-view="quiz"] .ch-sub,
+#shell #app [data-view="devoirs"] .dn-sub{color:#e2f2e7!important;line-height:1.9}
+#shell #app [data-view="examen"] .eh-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:16px}
+#shell #app [data-view="examen"] .eh-st,
+#shell #app [data-view="quiz"] .qz-start,
+#shell #app [data-view="quiz"] .qz-regles,
+#shell #app [data-view="devoirs"] .dn-pick{
+  border:1px solid var(--b);border-radius:17px;background:var(--p);box-shadow:0 8px 22px rgba(0,55,28,.05)
+}
+#shell #app [data-view="examen"] .eh-st{padding:12px;background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.17);text-align:center}
+#shell #app [data-view="examen"] .eh-n{display:block;color:#fff;font-size:25px;font-weight:950}
+#shell #app [data-view="examen"] .eh-l{color:#e6f4ea;font-size:11px;font-weight:800}
+#shell #app [data-view="examen"] .annees-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-top:16px}
+#shell #app [data-view="examen"] .annee,
+#shell #app [data-view="examen"] .sujet,
+#shell #app [data-view="officiels"] .off-card{
+  min-width:0;overflow:hidden;border:1px solid var(--b);border-radius:17px;background:var(--p);
+  box-shadow:0 8px 22px rgba(0,55,28,.05);transition:transform .18s,border-color .18s,box-shadow .18s
+}
+#shell #app [data-view="examen"] .annee{padding:16px}
+#shell #app [data-view="examen"] .annee:hover,
+#shell #app [data-view="examen"] .sujet:hover,
+#shell #app [data-view="officiels"] .off-card:hover{
+  transform:translateY(-2px);border-color:rgba(0,98,51,.4);box-shadow:0 14px 28px rgba(0,70,35,.10)
+}
+#shell #app [data-view="examen"] .an-y{color:var(--g);font-size:25px;font-weight:950}
+#shell #app [data-view="examen"] .an-b{height:7px;border-radius:9px;background:var(--p2);overflow:hidden}
+#shell #app [data-view="examen"] .an-b>*{border-radius:inherit}
+#shell #app [data-view="examen"] .sujets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+#shell #app [data-view="examen"] .sujet{padding:16px}
+#shell #app [data-view="examen"] .sj-y{color:var(--g);font-weight:950}
+#shell #app [data-view="examen"] .sj-t{font-weight:900;color:var(--t);line-height:1.7}
+#shell #app [data-view="examen"] .filters,
+#shell #app [data-view="officiels"] .filters{padding:15px;border:1px solid var(--b);border-radius:16px;background:var(--p);margin:14px 0}
+#shell #app [data-view="examen"] .onglets,
+#shell #app [data-view="officiels"] .onglets,
+#shell #app [data-view="devoirs"] .dn-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+#shell #app [data-view="examen"] .ong,
+#shell #app [data-view="officiels"] .ong,
+#shell #app [data-view="devoirs"] .dn-tabs button{
+  min-height:39px;padding:8px 13px;border:1px solid var(--b);border-radius:11px;
+  background:var(--p);color:var(--t);font-weight:850
+}
+#shell #app [data-view="examen"] .ong.on,
+#shell #app [data-view="officiels"] .ong.on,
+#shell #app [data-view="devoirs"] .dn-tabs button.on{
+  color:#fff;background:#006233;border-color:#006233
+}
+#shell #app [data-view="quiz"] .qz-unites{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:15px 0}
+#shell #app [data-view="quiz"] .qz-u{min-width:0;padding:15px;border:1px solid var(--b);border-radius:16px;background:var(--p);box-shadow:0 7px 20px rgba(0,55,28,.045)}
+#shell #app [data-view="quiz"] .qz-u:hover{border-color:rgba(0,98,51,.4)}
+#shell #app [data-view="quiz"] .qz-b{color:var(--g);font-weight:950}
+#shell #app [data-view="quiz"] .qz-play,
+#shell #app [data-view="quiz"] .qz-start{padding:20px;border-radius:19px;border:1px solid var(--b);background:var(--p)}
+#shell #app [data-view="quiz"] .qz-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;border-radius:14px;background:linear-gradient(110deg,#004326,#006b39);color:#fff}
+#shell #app [data-view="quiz"] .qz-q{margin:17px 0;padding:20px;border:1px solid var(--b);border-radius:17px;background:var(--p2);font-size:18px;font-weight:900;line-height:1.9}
+#shell #app [data-view="quiz"] .qz-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#shell #app [data-view="quiz"] .qz-o{min-width:0;padding:13px;border:1px solid var(--b);border-radius:13px;background:var(--p);color:var(--t);text-align:start;font-weight:800;line-height:1.8}
+#shell #app [data-view="quiz"] .qz-o:hover{border-color:#006233;background:rgba(0,98,51,.055)}
+#shell #app [data-view="quiz"] .qz-fb{margin-top:12px;padding:14px;border-inline-start:4px solid #006233;border-radius:12px;background:rgba(0,98,51,.08);line-height:1.9}
+#shell #app [data-view="quiz"] .qz-rev{display:grid;gap:10px;margin-top:15px}
+#shell #app [data-view="quiz"] .qr-b{padding:14px;border:1px solid var(--b);border-radius:14px;background:var(--p)}
+#shell #app [data-view="officiels"] .off-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+#shell #app [data-view="officiels"] .off-card{padding:16px}
+#shell #app [data-view="officiels"] .oc-t{font-size:16px;font-weight:950;line-height:1.7;color:var(--t)}
+#shell #app [data-view="officiels"] .oc-badge{display:inline-flex;padding:5px 9px;border-radius:99px;background:rgba(0,98,51,.09);color:var(--g);font-size:11px;font-weight:900}
+#shell #app [data-view="officiels"] .off-head{padding:17px;border:1px solid var(--b);border-radius:17px;background:var(--p);margin:13px 0}
+#shell #app [data-view="officiels"] .part{margin:13px 0;padding:17px;border:1px solid var(--b);border-radius:16px;background:var(--p)}
+#shell #app [data-view="officiels"] .part-h{padding:10px 13px;border-radius:11px;background:rgba(0,98,51,.09);color:var(--g);font-weight:950}
+#shell #app [data-view="officiels"] .corrige{margin-top:13px;padding:17px;border:1px solid rgba(0,98,51,.2);border-radius:15px;background:rgba(0,98,51,.045)}
+#shell #app [data-view="devoirs"] .dn-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#shell #app [data-view="devoirs"] .dn-v{padding:15px;border:1px solid var(--b);border-radius:15px;background:var(--p)}
+#shell #app [data-view="devoirs"] .dn-suj{margin-top:12px;padding:16px;border:1px solid var(--b);border-radius:16px;background:var(--p)}
+#shell #app [data-view="devoirs"] .dn-head{padding:15px;border-radius:13px;background:rgba(0,98,51,.08);color:var(--g);font-weight:950}
+#shell #app [data-view="devoirs"] .dn-q{padding:13px;border:1px solid var(--b);border-radius:12px;background:var(--p2);margin:10px 0}
+#shell #app [data-view="devoirs"] .dn-res{padding:16px;border:1px solid rgba(0,98,51,.22);border-radius:15px;background:rgba(0,98,51,.055)}
+#shell #app [data-view="devoir"] #devoirBody .card,
+#shell #app [data-view="devoir"] #devoirBody .sujet-box{padding:18px;border:1px solid var(--b);border-radius:17px;background:var(--p)}
+#shell #app [data-view="devoir"] #devoirBody .part{margin:13px 0;padding:16px;border:1px solid var(--b);border-radius:15px;background:var(--p)}
+#shell #app [data-view="devoir"] #devoirBody .part-h{padding:10px 12px;border-radius:10px;background:rgba(0,98,51,.09);color:var(--g);font-weight:950}
+html[data-theme="dark"] #shell #app [data-view="devoir"] .page-head,
+html[data-theme="dark"] #shell #app [data-view="examen"] .page-head,
+html[data-theme="dark"] #shell #app [data-view="quiz"] .page-head,
+html[data-theme="dark"] #shell #app [data-view="simulation"] .page-head,
+html[data-theme="dark"] #shell #app [data-view="officiels"] .page-head,
+html[data-theme="dark"] #shell #app [data-view="devoirs"] .page-head{background:linear-gradient(118deg,#002d19,#00532d 65%,#08653a)}
+html[data-theme="dark"] #shell #app [data-view="examen"] .annee,
+html[data-theme="dark"] #shell #app [data-view="examen"] .sujet,
+html[data-theme="dark"] #shell #app [data-view="quiz"] .qz-u,
+html[data-theme="dark"] #shell #app [data-view="quiz"] .qz-play,
+html[data-theme="dark"] #shell #app [data-view="quiz"] .qz-start,
+html[data-theme="dark"] #shell #app [data-view="quiz"] .qz-regles,
+html[data-theme="dark"] #shell #app [data-view="officiels"] .off-card,
+html[data-theme="dark"] #shell #app [data-view="officiels"] .off-head,
+html[data-theme="dark"] #shell #app [data-view="officiels"] .part,
+html[data-theme="dark"] #shell #app [data-view="devoirs"] .dn-v,
+html[data-theme="dark"] #shell #app [data-view="devoirs"] .dn-suj,
+html[data-theme="dark"] #shell #app [data-view="devoir"] #devoirBody .card,
+html[data-theme="dark"] #shell #app [data-view="devoir"] #devoirBody .sujet-box,
+html[data-theme="dark"] #shell #app [data-view="devoir"] #devoirBody .part{
+  background:linear-gradient(155deg,#1b3022,#14251b);border-color:#34543e;color:#edf6ef
+}
+html[data-theme="dark"] #shell #app [data-view="quiz"] .qz-o{background:#1b3022;color:#edf6ef;border-color:#34543e}
+html[data-theme="dark"] #shell #app [data-view="quiz"] .qz-q{background:#203a29;border-color:#34543e}
+html[data-theme="dark"] #shell #app [data-view="officiels"] .part-h,
+html[data-theme="dark"] #shell #app [data-view="devoir"] #devoirBody .part-h{background:#244832;color:#d6efde}
+@media(max-width:1000px){
+  #shell #app [data-view="examen"] .annees-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #shell #app [data-view="officiels"] .off-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #shell #app [data-view="quiz"] .qz-unites{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+  #shell #app [data-view="devoir"] .page-head,
+  #shell #app [data-view="examen"] .page-head,
+  #shell #app [data-view="quiz"] .page-head,
+  #shell #app [data-view="simulation"] .page-head,
+  #shell #app [data-view="officiels"] .page-head,
+  #shell #app [data-view="devoirs"] .page-head{padding:18px;border-radius:17px}
+  #shell #app [data-view="examen"] .eh-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #shell #app [data-view="examen"] .annees-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  #shell #app [data-view="examen"] .sujets,
+  #shell #app [data-view="officiels"] .off-grid,
+  #shell #app [data-view="quiz"] .qz-opts,
+  #shell #app [data-view="devoirs"] .dn-g{grid-template-columns:1fr}
+  #shell #app [data-view="quiz"] .qz-unites{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  #shell #app [data-view="quiz"] .qz-q{padding:14px;font-size:16px}
+  #shell #app [data-view="devoirs"] .dn-hero,
+  #shell #app [data-view="quiz"] .qz-hero,
+  #shell #app [data-view="officiels"] .off-hero,
+  #shell #app [data-view="examen"] .exam-hero{padding:17px!important}
+  #shell #app [data-view="devoirs"] .dn-tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:5px}
+  #shell #app [data-view="devoirs"] .dn-tabs button{flex:0 0 auto}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="examen"] .annee,
+  #shell #app [data-view="examen"] .sujet,
+  #shell #app [data-view="officiels"] .off-card{transition:none}
+}
