@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.168.0.0.28';
+const VERSION = 'dz-de-v3.168.0.0.29';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -14,7 +14,7 @@ const PRECACHE = [
   './',
   './index.html',
   './style.css?v=3515',
-  './style-prototype-dz.css?v=123',
+  './style-prototype-dz.css?v=124',
   './auth.js?v=3510',
   './bdd.js?v=3510',
   './app.js?v=3523',
@@ -33,7 +33,7 @@ const PRECACHE = [
   './projet.js?v=3510',
   './assets/matching_v2.patch.js?v=3510',
   './reservation.js?v=3510',
-  './journee.js?v=3510',
+  './journee.js?v=3511',
   './guide.js?v=3510',
   './memoire.js?v=3510',
   './masar.js?v=3514',
