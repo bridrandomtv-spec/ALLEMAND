@@ -776,3 +776,16 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Cache CSS porté à v118 et script portail à v8 dans le précache de `sw.js`; service worker `dz-de-v3.168.0.0.14`.
 - Vérifications statiques à effectuer : gestionnaire d'écran et hash, bouton retour, conservation des IDs de formulaires et actions existantes, références de cache, équilibre CSS, CI/Workers Build. Validation visuelle réelle non revendiquée sans navigateur.
 - Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main` ; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
+
+
+## Lot 59 — Accueil public : hiérarchie visuelle du premier écran (4 novembre 2026)
+
+- Renforcement ciblé du bloc d'introduction de l'accueil public : panneau éditorial distinct, liseré tricolore discret, titre mieux hiérarchisé et paragraphe plus lisible. La composition conserve le visuel de parcours existant à côté du texte sur grand écran.
+- Hiérarchie des appels à l'action clarifiée : action principale verte avec profondeur visuelle, action secondaire blanche et bordure verte. États de survol sobres ; respect de `prefers-reduced-motion`.
+- Les quatre tuiles de repères (3 années, 6 langues au catalogue, 14 matières au catalogue, accompagnement IA) sont alignées, plus lisibles et visuellement différenciées. Elles restent des données de catalogue/présentation et ne prétendent pas mesurer l'activité ou la réussite.
+- La rangée des trois services est harmonisée avec les cartes du premier écran. Adaptation tablette/mobile : actions empilées et repères en grille 2 × 2. Adaptation du thème sombre.
+- Aucun texte métier, lien, identifiant, événement, script, parcours d'authentification, donnée, Auth, Supabase, RLS, schéma ou paiement modifié. Aucun framework ni dépendance ajoutés.
+- Cache CSS synchronisé en v119 dans `index.html` et `sw.js`; version du service worker `dz-de-v3.168.0.0.15`.
+- Contrôles statiques à effectuer sur le HEAD final : versions synchronisées, règles desktop/tablette/mobile et thème sombre présentes, accolades CSS équilibrées, actions de navigation conservées, dossier complété et CI/Workers Build.
+- Limite : aucune validation visuelle réelle sur navigateur/écrans n'est revendiquée dans cette opération.
+- Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main` ; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
