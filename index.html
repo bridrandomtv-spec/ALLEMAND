@@ -350,39 +350,31 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       <!-- 📘 Aperçu de l'وحدة 1 (rendu par journee.js) -->
       <div id="apercuBody"></div>
 
-      <div class="grid3">
-        <div class="card mini" data-go="seances"><div class="mini-i">📚</div><h3>الحصص</h3>
-          <p>الوحدة 1 — 8 حصص تفاعلية</p><span class="mini-n" id="cSeances">8</span></div>
-        <div class="card mini" data-go="biblio"><div class="mini-i">🗂️</div><h3>المكتبة</h3>
-          <p>فروض · اختبارات · بكالوريا · حوليات</p><span class="mini-n" id="cBdd">—</span></div>
-        <div class="card mini live-mini" data-go="live"><div class="mini-i">📹</div><h3>القاعة المباشرة</h3>
-          <p><span class="live-dot"><i></i></span> بثّ حيّ الآن · 32 تلميذ</p><span class="mini-n">🔴</span></div>
-        <div class="card mini" data-go="classe"><div class="mini-i">🏫</div><h3>القسم</h3>
-          <p>الرزنامة · الدروس · الحضور · النقاط</p><span class="mini-n">5</span></div>
-        <div class="card mini" data-go="grammaire"><div class="mini-i">📘</div><h3>القواعد</h3>
-          <p>83 قاعدة — A1 → B2</p><span class="mini-n">83</span></div>
+      <div class="grid3 home-actions" aria-label="الوصول السريع إلى أدوات التعلّم">
+        <div class="card mini" data-go="seances"><div class="mini-i">📚</div><h3>دروسي وحصصي</h3>
+          <p>تابع الدروس، أنجز الحصص، وراجع ما تعلمته</p><span class="mini-n">ابدأ التعلّم ←</span></div>
+        <div class="card mini" data-go="matieres"><div class="mini-i">🎓</div><h3>المواد التعليمية</h3>
+          <p>اكتشف المواد المتاحة ومستوى التقدّم في كل مادة</p><span class="mini-n">استكشف المواد ←</span></div>
+        <div class="card mini" data-go="biblio"><div class="mini-i">🗂️</div><h3>المكتبة التعليمية</h3>
+          <p>موارد، وثائق، فروض وحلول بحسب المتاح</p><span class="mini-n">افتح المكتبة ←</span></div>
+        <div class="card mini" data-go="prof"><div class="mini-i">🤖</div><h3>الأستاذ الذكي</h3>
+          <p>اطرح سؤالك واحصل على المساعدة في التعلّم</p><span class="mini-n">اسأل الأستاذ ←</span></div>
+        <div class="card mini" data-go="quiz"><div class="mini-i">🎯</div><h3>التدريب والتمارين</h3>
+          <p>اختبر فهمك وتدرّب مع التصحيح</p><span class="mini-n">تدرّب الآن ←</span></div>
+        <div class="card mini" data-go="officiels"><div class="mini-i">📝</div><h3>الفروض والاختبارات</h3>
+          <p>راجع المواضيع المتاحة واستعد للتقييم</p><span class="mini-n">راجع المواضيع ←</span></div>
+        <div class="card mini" data-go="examen"><div class="mini-i">🎓</div><h3>التحضير للبكالوريا</h3>
+          <p>تصفّح أرشيف المواضيع والموارد المتاحة</p><span class="mini-n">ابدأ المراجعة ←</span></div>
+        <div class="card mini" data-go="masar"><div class="mini-i">📈</div><h3>مساري الدراسي</h3>
+          <p>تابع إنجازاتك وتقدّمك وخطة المراجعة</p><span class="mini-n">عرض مساري ←</span></div>
+        <div class="card mini" data-go="devoir"><div class="mini-i">✍️</div><h3>الواجب الحالي</h3>
+          <p>انتقل إلى الواجبات والتصحيح عند توفرها</p><span class="mini-n">افتح الواجب ←</span></div>
+        <div class="card mini" data-go="classe"><div class="mini-i">🏫</div><h3>فضاء القسم</h3>
+          <p>اطّلع على محتوى القسم والأنشطة المنشورة</p><span class="mini-n">ادخل القسم ←</span></div>
+        <div class="card mini" data-go="live"><div class="mini-i">📹</div><h3>القاعة المباشرة</h3>
+          <p>تحقّق من الدروس المباشرة والمواعيد المتاحة</p><span class="mini-n">افتح القاعة ←</span></div>
         <div class="card mini" id="miniProf" data-go="profboard" hidden><div class="mini-i">🧑‍🏫</div><h3>لوحة الأستاذ</h3>
-          <p>32 تلميذ · إدخال النقاط · CSV</p><span class="mini-n">32</span></div>
-        <div class="card mini" data-go="devoir"><div class="mini-i">📝</div><h3>الفرض</h3>
-          <p>الوحدة 1 · /20 مع التصحيح</p><span class="mini-n">20</span></div>
-        <div class="card mini" data-go="simulation"><div class="mini-i">⏱️</div><h3>المحاكاة</h3>
-          <p>45 دقيقة أو 10 دقائق</p><span class="mini-n">2</span></div>
-        <div class="card mini" data-go="examen"><div class="mini-i">🎓</div><h3>البكالوريا</h3>
-          <p>أرشيف 2010→2026 · 79 موضوعاً</p><span class="mini-n">79</span></div>
-        <div class="card mini" data-go="officiels"><div class="mini-i">📄</div><h3>الفروض الرسمية</h3>
-          <p>ثانويات الوطن · 📄 الموضوع / ✅ الحل</p><span class="mini-n">10</span></div>
-        <div class="card mini" data-go="quiz"><div class="mini-i">🎯</div><h3>تمارين</h3>
-          <p>30 سؤالاً · تصحيح فوري + شرح</p><span class="mini-n">30</span></div>
-        <div class="card mini rs-mini" data-go="reservation"><div class="mini-i">🗓️</div><h3>احجز حصّة</h3>
-          <p>٦ أساتذة · حساب فوري · واتساب</p><span class="mini-n">6</span></div>
-        <div class="card mini pj-mini" data-go="projet"><div class="mini-i">📋</div><h3>Plan de projet</h3>
-          <p>LinguaConnect · dossier de présentation</p><span class="mini-n">13</span></div>
-        <div class="card mini" data-go="stats"><div class="mini-i">🗺️</div><h3>الإحصائيات</h3>
-          <p>خريطة 58 ولاية · توزيع وطني</p><span class="mini-n">58</span></div>
-        <div class="card mini" data-go="prof"><div class="mini-i">🤖</div><h3>الأستاذ</h3>
-          <p>محادثة ذكية 🇩🇿 + 🇩🇪</p><span class="mini-n">24/7</span></div>
-        <div class="card mini" data-go="parents"><div class="mini-i">👨‍👩‍👧</div><h3>الأولياء</h3>
-          <p>تقرير أسبوعي + واتساب</p><span class="mini-n">📊</span></div>
+          <p>أدوات متابعة القسم وإدارة التقييمات</p><span class="mini-n">لوحة الأستاذ ←</span></div>
       </div>
 
       <div class="card prof-card" hidden>
@@ -864,7 +856,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
   <script src="access.js?v=3510"></script>
 <script src="prof_core.js?v=3510"></script>
   <script src="js/subject.js?v=3510"></script>
-<script src="app.js?v=3520"></script>
+<script src="app.js?v=3521"></script>
 <script src="js/voice-chat.js?v=1" defer></script>
   <script defer src="unites3as_vitrine.js?v=3510"></script>
 <script src="js/context.js?v=3510"></script>
