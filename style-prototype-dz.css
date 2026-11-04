@@ -14268,3 +14268,13 @@ html[data-theme="dark"] #gate .public-faq-item[open] summary:before{background:#
     font-size:max(15px,1em);
   }
 }
+
+
+/* Lisibilité des libellés, liens et textes secondaires sur desktop */
+@media (min-width:1024px){
+  #gate :where(a,span,summary,dt,dd,figcaption,legend,output),
+  #shell #app :where(a,span,summary,dt,dd,figcaption,legend,output){
+    font-size:max(15px,.88em)!important;
+    line-height:1.6;
+  }
+}
