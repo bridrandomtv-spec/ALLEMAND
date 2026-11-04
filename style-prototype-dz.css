@@ -15655,3 +15655,53 @@ html[data-theme="dark"] #shell #app [data-view="accueil"] .home-main .welcome-me
     grid-area:side!important;grid-column:1!important;grid-row:2!important;
   }
 }
+
+
+/* LOT 77 — tableau de bord « مساري » : composition éditoriale en deux zones
+   Les cartes restent alimentées par masar.js et ses données locales réelles.
+   Aucun chiffre, graphique ou état n'est créé par cette couche visuelle. */
+#shell #app [data-view="masar"] #masarBody{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr)!important;
+  grid-template-areas:"hero hero" "next chart" "progress progress"!important;
+  align-items:stretch!important;
+  gap:18px!important;
+}
+#shell #app [data-view="masar"] #masarBody>.ms-hero{grid-area:hero!important;margin:0!important;min-width:0!important}
+#shell #app [data-view="masar"] #masarBody>.ms-next{grid-area:next!important;margin:0!important;min-width:0!important;align-self:stretch!important}
+#shell #app [data-view="masar"] #masarBody>.ms-chart{grid-area:chart!important;margin:0!important;min-width:0!important;align-self:stretch!important}
+#shell #app [data-view="masar"] #masarBody>.ms-prog{grid-area:progress!important;margin:0!important;min-width:0!important}
+#shell #app [data-view="masar"] #masarBody .ms-chart-label{
+  flex-wrap:wrap;row-gap:3px;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-label b{
+  flex:1 1 calc(100% - 24px);white-space:normal;overflow-wrap:anywhere;line-height:1.55;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-label small{
+  display:block!important;flex:1 1 100%;padding-inline-start:17px;
+  color:#718176;font-size:10px;line-height:1.5;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-row{
+  grid-template-columns:minmax(0,1fr) 44px;gap:8px 12px;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-track{
+  grid-column:1/-1;grid-row:2;height:11px;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-row strong{
+  grid-column:2;grid-row:1;align-self:start;
+}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-chart-label small{
+  color:#b9cdbf!important;
+}
+@media(max-width:980px){
+  #shell #app [data-view="masar"] #masarBody{
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-areas:"hero" "next" "chart" "progress"!important;
+    gap:14px!important;
+  }
+}
+@media(max-width:540px){
+  #shell #app [data-view="masar"] #masarBody{gap:12px!important}
+  #shell #app [data-view="masar"] #masarBody>.ms-hero{margin:0!important}
+  #shell #app [data-view="masar"] #masarBody :is(.ms-next,.ms-chart,.ms-prog){min-width:0!important}
+}
