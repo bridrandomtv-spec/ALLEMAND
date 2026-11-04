@@ -1056,3 +1056,17 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache du script actualisé à `masar.js?v=3515` dans `index.html` et `sw.js`; version Service Worker `dz-de-v3.168.0.0.36`.
 - Les calculs, les chiffres de progression, les données réelles et les actions de navigation restent inchangés. Aucun changement Auth, Supabase, RLS, schéma, paiement ou permissions.
 - Attendre le nouveau preview Cloudflare puis contrôler que le titre/sous-titre ont changé ; ne pas considérer le lot terminé avant vérification visuelle.
+
+
+## Lot 81 — renforcement du rendu visuel de « مساري » (4 novembre 2026)
+
+- Retour utilisateur : la page paraît vide, sans cartes visuellement marquées et sans ressemblance avec le tableau de bord de référence.
+- Audit du CSS : les règles de grille et les styles de cartes existaient, mais la page ne présentait pas une hiérarchie visuelle suffisamment forte et le rendu navigateur n'avait pas été validé.
+- Ajout d'une couche CSS de finition fortement ciblée sur `section[data-view="masar"]` : fond de page doux, en-tête éditorial encadré, grand panneau héro, cartes distinctes avec bordures/ombres/rayons, prochaine action mise en avant, zone d'analyse et panneau de progression.
+- Grille desktop explicite : héro pleine largeur, prochaine action et analyse côte à côte, progression pleine largeur. Passage à une colonne sur tablette/mobile.
+- Aucun chiffre, graphique, résultat, séance ou contenu de démonstration ajouté. Les valeurs continuent de provenir des fonctions et données existantes.
+- Cache CSS porté à `v130`; Service Worker porté à `dz-de-v3.168.0.0.37` avec précache CSS v130.
+- Fichiers modifiés : `style-prototype-dz.css`, `index.html`, `sw.js`, présent dossier.
+- Commit CSS : `af8c8099e6fa976b6b424580430b3325ed458963`; commit index : `150848e9712d7d3cf15d1ecfbffca61817cd4196`; commit SW : `2fa4c12b4bedf2b2d16b4557172efa578aa814cc`.
+- État : correction de code poussée sur `design/prototypes-67-74-alignment). Attendre le preview Cloudflare, tester ordinateur et mobile, puis comparer les captures au modèle. Aucune validation visuelle ni publication production revendiquée à ce stade.
+- PR #17 reste ouverte et non fusionnée ; aucune modification de `main`, Auth, Supabase, RLS, schéma, paiements ou permissions.
