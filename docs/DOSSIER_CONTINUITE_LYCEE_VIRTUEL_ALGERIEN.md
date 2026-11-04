@@ -1101,3 +1101,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Aucun workflow de déploiement n'a été ajouté : les identifiants/secrets Cloudflare et la configuration Git Integration du compte ne sont pas inspectables depuis les outils disponibles. Ne pas inventer de secret, ne pas modifier la production ni `main`.
 - Suite : vérifier le déploiement de la branche `design/prototypes-67-74-alignment` dans Cloudflare Workers Builds / Deployments, puis comparer les vues « مسارك » sur ordinateur et mobile. Si aucun preview n'existe, demander l'accès ou une capture d'écran avant tout nouveau patch CSS.
 - PR #17 reste ouverte et non fusionnée ; aucun changement Auth, Supabase, RLS, schéma, paiements ou permissions.
+
+
+## Lot 85 — un seul gestionnaire pour les boutons d’authentification publics
+
+- Retour utilisateur : le bouton de navigation « تسجيل الدخول » ne déclenche pas l’ouverture de la page de connexion, alors que « 🚀 الدخول إلى القسم » (soumission du formulaire) fonctionne.
+- Diagnostic statique : le bouton de navigation porte bien `data-gate-open="login"`. Deux gestionnaires distincts traitaient les éléments `[data-gate-open]` : un gestionnaire direct dans `app.js` et un gestionnaire délégué dans `public-portal.js`. Le second contrôle l’état de page publique (`public-auth-page`), la visibilité de la carte et le hash `#connexion`; le premier ne faisait que cliquer l’onglet et déplacer le focus/la page. Cette double prise en charge créait un chemin d’interaction redondant et un défilement déclenché alors que la carte pouvait encore être masquée.
+- Correction ciblée : retrait du gestionnaire direct redondant de `app.js`. `public-portal.js` reste l’unique propriétaire des boutons `data-gate-open`, pour la connexion comme pour l’inscription. Le gestionnaire de soumission `#loginForm`, l’authentification Supabase/locale et le bouton « 🚀 الدخول إلى القسم » ne sont pas modifiés.
+- Cache : version de `app.js` portée à `v=3525` et version du cache statique du service worker à `dz-de-v3.168.0.0.41`.
+- Périmètre : branche `design/prototypes-67-74-alignment` uniquement ; aucun changement sur `main`, aucune fusion de PR, aucune modification Supabase/Auth/RLS/base de données.
+- Validation : vérification statique du retrait du gestionnaire en double, de la conservation du gestionnaire délégué et de la cohérence des références de cache. Le clic réel dans un navigateur et le déploiement Cloudflare restent à confirmer ; cette correction n’est pas déclarée validée visuellement.
