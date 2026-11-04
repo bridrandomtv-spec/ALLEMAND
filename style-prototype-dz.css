@@ -14278,9 +14278,21 @@ html[data-theme="dark"] #gate .public-faq-item[open] summary:before{background:#
     font-size:max(15px,.88em)!important;
     line-height:1.6;
   }
-  #gate span:not([aria-hidden="true"]):not([class*="icon"]):not([class*="crest"]):not([class*="badge"]):not([class*="num"]):not(.emoji),
-  #shell #app span:not([aria-hidden="true"]):not([class*="icon"]):not([class*="crest"]):not([class*="badge"]):not([class*="num"]):not(.emoji){
+  /* Textes courts réellement éditoriaux : ne pas redimensionner tous les span.
+     Les badges d'état, compteurs, icônes et repères conservent leur échelle dédiée. */
+  #gate :where(
+    .public-stat span,
+    .public-feature b,.public-feature small,
+    .public-ai-head small,.public-ai-question small,.public-ai-question b,
+    .public-ai-answer small,.public-ai-answer p,.public-ai-note,
+    .public-visual-top>span:first-child,.public-visual-title b,.public-visual-title small,
+    .public-visual-step b,.public-visual-step small,.public-visual-foot>span,
+    .public-proof-card b,.public-proof-card small,
+    .public-quality-dashboard-head h4,
+    .public-quality-ring-card b,.public-quality-ring-card small,
+    .public-quality-note,.public-faq-heading p,.public-faq-item p
+  ){
     font-size:max(15px,.88em)!important;
-    line-height:1.6;
+    line-height:1.7;
   }
 }
