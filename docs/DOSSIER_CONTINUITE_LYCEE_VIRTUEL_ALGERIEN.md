@@ -621,3 +621,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Aucun changement de catalogue, de disponibilité des autres matières, de logique métier, d'authentification, de Supabase, RLS, paiement, routes ou navigation. Aucune nouvelle dépendance.
 - Contrôles statiques et CI à effectuer sur le HEAD final ; aucune validation visuelle navigateur ni publication Cloudflare n'est revendiquée avant confirmation.
 - Opération limitée à la branche design/prototypes-67-74-alignment et à la PR #17 ; main reste intacte, PR non fusionnée, aucun déploiement manuel.
+
+
+## 45. Accueil public — transparence sur la disponibilité des statistiques de réussite — 4 novembre 2026
+
+- Audit des sources de résultats avant toute publication de pourcentages : `quiz.js` conserve les meilleurs scores et l'historique dans le `localStorage` du navigateur ; `examen.js` indique explicitement que les résultats de simulation du bac restent locaux et ne sont pas transmis.
+- Le fichier `assets/bdd/eleves.json` contient des profils de démonstration et des données personnelles structurées ; il ne constitue pas une source valide pour calculer ni publier des statistiques publiques. Il n'est pas utilisé pour alimenter les graphiques.
+- Conclusion : aucun agrégat central fiable, anonymisé et représentatif n'est actuellement disponible pour justifier un taux global de réussite. Les anneaux restent sans pourcentage ; aucun résultat local d'un élève n'est exposé à l'accueil.
+- Clarification éditoriale du badge : « بيانات غير مجمّعة » au lieu de laisser entendre qu'une collecte statistique est déjà en cours.
+- Note de transparence ajoutée : les résultats des quiz et simulations sont conservés sur l'appareil de l'élève et ne sont pas envoyés à un serveur central ; les taux ne seront publiés qu'après mise en place d'un agrégat sûr et anonyme, avec période, effectif et méthode de calcul.
+- Fichiers modifiés : `index.html` et `sw.js` uniquement ; service worker porté de `dz-de-v3.168.0.0.0` à `dz-de-v3.168.0.0.1`. Aucun changement CSS, Auth, Supabase, RLS, schéma, migration, notes individuelles, accès ou paiement.
+- Contrôles à effectuer sur le HEAD final : présence du nouveau libellé et de la note, absence des anciennes formulations, version SW mise à jour, CI et build Cloudflare. Aucun rendu navigateur réel n'est revendiqué.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main) ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
