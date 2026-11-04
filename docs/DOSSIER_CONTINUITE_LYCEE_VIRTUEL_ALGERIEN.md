@@ -1080,3 +1080,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Référence CSS portée à `v132`; Service Worker porté à `dz-de-v3.168.0.0.39` et précache CSS aligné.
 - Un premier remplacement trop large avait modifié une autre déclaration sans retirer celle du lot 81 ; ce second commit corrige explicitement le bon bloc. Contrôle source après commit requis ; CI et test navigateur restent à vérifier. Aucune validation visuelle revendiquée.
 - PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`, Auth, Supabase, RLS, schéma, paiements ou permissions.
+
+
+## Lot 83 — préserver la carte de connexion publique (4 novembre 2026)
+
+- Audit de régression du correctif précédent : la suppression trop large de `display:block!important` avait également touché `#gate.public-auth-page .gate-card:not([hidden])`.
+- Restauration de `display:block!important` sur cette carte, dont le sélecteur `:not([hidden])` garantit que les cartes masquées ne sont pas ciblées.
+- La section `[data-view="masar"].dz-masar-page` reste sans forçage `display:block` ; son attribut `hidden` reste respecté.
+- CSS porté à `v133`, Service Worker à `dz-de-v3.168.0.0.40` avec précache aligné.
+- Validation de la règle source après commit et CI à relancer ; aucun test visuel navigateur n'est revendiqué.
+- PR #17 reste ouverte, non fusionnée, cible `main` ; aucun changement de données, Auth, Supabase, RLS, schéma, paiements ou permissions.
