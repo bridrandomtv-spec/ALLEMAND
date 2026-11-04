@@ -15204,3 +15204,22 @@ html[data-theme="light"] .public-ai-card .public-ai-note{
     animation:none;height:18px;
   }
 }
+
+
+/* Lot 74 — avertissement explicite pour les horaires de démonstration */
+html[data-theme="light"] .jd-demo-note,
+html[data-theme="dark"] .jd-demo-note{
+  display:flex;flex-direction:column;gap:5px;
+  margin:0 0 16px;padding:13px 16px;
+  border:1px solid #d9b66c;border-inline-start:4px solid #c18a24;
+  border-radius:13px;background:#fff8e8;color:#624719;
+  line-height:1.65;
+}
+.jd-demo-note b{font-size:13px;font-weight:900}
+.jd-demo-note span{font-size:12px}
+.jd-st.demo{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:6px 9px;border:1px solid #e8d4a6;border-radius:999px;
+  background:#fff7e5;color:#805a16;font-size:11px;font-weight:800;
+}
+.jd-demo-label{display:block;max-width:120px;color:var(--muted,#68766d);font-size:11px;line-height:1.5;text-align:center}
