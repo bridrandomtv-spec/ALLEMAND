@@ -702,3 +702,12 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucun merge ni déploiement manuel.
 
 - Correction de synchronisation du cache : après contrôle du HEAD, le lien CSS de `index.html` était resté en `v112` ; il est maintenant aligné sur `v113`, comme le précache de `sw.js`.
+
+
+## Lot 52 — Lisibilité des textes secondaires sur mobile (4 novembre 2026)
+
+- Audit du CSS public mobile : plusieurs libellés informatifs restaient définis à 9–10 px dans les étapes visuelles, les indicateurs circulaires et les réponses FAQ, malgré l'amélioration typographique desktop du lot 50.
+- Ajout de règles ciblées sous 620 px : étapes visuelles et notes de ressources à 11 px ; libellés des indicateurs à 10,5–11 px ; note pédagogique, FAQ et information catalogue à 12–13 px.
+- Aucun redimensionnement global des icônes, badges, chiffres ou boutons ; aucun HTML, identifiant, gestionnaire, route ou flux de données modifié.
+- Cache CSS aligné sur `v114` dans `index.html` et le précache du service worker ; version du service worker `dz-de-v3.168.0.0.8`.
+- Vérification statique : règles ciblées présentes, références CSS synchronisées, accolades CSS équilibrées. Aucun test de rendu navigateur/mobile effectué ; ne pas présenter cette vérification comme une validation visuelle.
