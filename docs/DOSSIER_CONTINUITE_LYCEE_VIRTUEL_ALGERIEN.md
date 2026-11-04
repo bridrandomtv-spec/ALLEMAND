@@ -365,3 +365,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Cache : `style-prototype-dz.css?v=88` ; service worker `dz-de-v3.148.0`.
 - CI avant ce lot : #1858 et #1859 réussies sur les commits précédents. Les tests du nouveau HEAD restent à confirmer. Aucune vérification visuelle navigateur ni déploiement Cloudflare revendiqué.
 - Même branche `design/prototypes-67-74-alignment`, PR #17 vers `main`. Aucun changement direct de `main`, aucune fusion et aucun déploiement manuel.
+
+## 25. Recomposition esthétique de la messagerie nationale — 4 novembre 2026
+
+- Périmètre : vue réelle `data-view="msg"`, section `#msgBody` et composants produits par `msg.js`.
+- Audit préalable : la messagerie possède déjà son moteur (groupes officiels, conversations, fil de messages, pièces jointes, présence Realtime, vérification scolaire et modération prof/admin). Les styles fonctionnels existants étaient dans `style.css`; la nouvelle couche est limitée à la présentation de cette vue.
+- Composition ajoutée : bandeau de page DZ, accueil explicatif vert profond, cartes de services, étapes, titres de sections, cartes de groupes, bulles de messages, zone de rédaction, états de vérification et panneau de modération.
+- Responsive : cartes en une colonne sur petit écran, fil et composer adaptés au mobile ; déclinaisons explicites clair/sombre et respect de `prefers-reduced-motion`.
+- Préservation stricte : aucun changement à `msg.js`, aux IDs `msgBody`, `msgPres`, `msgText`, `msgFile`, aux attributs `data-act`, `data-conv`, `data-mod`, aux appels Supabase, à Realtime, aux vérifications, aux rôles ou aux permissions. Aucune modification Auth, RLS, schéma, migration ou paiement.
+- Cache : `style-prototype-dz.css?v=89` dans `index.html` et le précache du service worker ; version `dz-de-v3.149.0`.
+- Contrôles CI antérieurs : #1860 (commit index v88) et #1861 (commit documentaire v88) terminées avec succès. Les workflows déclenchés par le présent lot doivent encore être vérifiés sur les nouveaux commits.
+- Contrôles statiques après écriture : cohérence des versions de cache, équilibre des accolades CSS, présence des sélecteurs de la vue message et conservation des points d'ancrage du module. Aucun test navigateur, aucune validation visuelle mobile/desktop et aucun déploiement Cloudflare ne sont revendiqués à ce stade.
+- Branche inchangée `design/prototypes-67-74-alignment`, PR #17 vers `main`. Aucun changement direct sur `main`, aucune nouvelle branche, aucune fusion et aucun déploiement manuel.
