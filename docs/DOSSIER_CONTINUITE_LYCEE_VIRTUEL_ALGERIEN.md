@@ -289,3 +289,16 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Cache : feuille CSS portée à `v=82` dans `index.html` et `sw.js` ; service worker porté à `dz-de-v3.142.0`.
 - Validation statique à effectuer après commits : syntaxe/équilibre CSS, présence des IDs et attributs interactifs, cohérence des versions de cache, CI GitHub. Aucun rendu navigateur réel n'est revendiqué par cette modification.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+
+## 19. Refonte de « مسارك » avec graphiques de progression — 4 novembre 2026
+
+- Périmètre : vue `data-view="masar"`, module réel `masar.js` et présentation CSS ciblée.
+- Nouvelle composition : hero de parcours avec anneau SVG de progression générale, indicateurs de séances terminées/restantes et unités disponibles ; carte d'action prioritaire conservée ; graphique horizontal des taux de réussite par compétence ; progression détaillée de l'unité en cours.
+- Source des données : progression calculée à partir de `UNITES` et `loadSeancesFor()` (stockage local des séances réellement terminées). Graphique de compétences calculé depuis `MEMOIRE.carteErreurs()`, dont le taux correspond au rapport réponses correctes / tentatives. Si aucune donnée de compétence n'existe, affichage d'un état vide explicatif plutôt que de valeurs fictives.
+- La règle métier « révision due avant nouvelle séance » reste inchangée ; les destinations `data-go="revision"`, `data-go="seances"` et `data-go="examen"` sont conservées.
+- Présentation : thème DZ vert profond/blanc/rouge, anneau SVG, barres de données, surfaces hiérarchisées, adaptations mobile et mode sombre. Aucun Chart.js, Tailwind ou autre dépendance ajoutée.
+- Cache : `masar.js?v=3514`, CSS `v=83`, service worker `dz-de-v3.143.0`.
+- Aucun changement d'authentification, rôle, route, RLS, schéma, paiement ou backend. Aucune donnée de démonstration n'est injectée.
+- Contrôles statiques et CI à vérifier après commits ; aucun rendu navigateur ni déploiement Cloudflare n'est déclaré validé ici.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : non fusionnée ; aucun nouveau branch ni changement direct sur `main`.
