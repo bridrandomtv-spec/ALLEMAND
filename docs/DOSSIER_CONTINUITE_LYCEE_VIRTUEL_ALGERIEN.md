@@ -676,3 +676,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Cache invalidé : style-prototype-dz.css?v=111 dans index.html et sw.js ; service worker dz-de-v3.168.0.0.5.
 - Contrôles CI et Workers Build à effectuer sur le nouveau HEAD. Le rendu visuel navigateur sur ordinateur reste à confirmer ; aucune validation visuelle n'est revendiquée.
 - Opération limitée à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion et aucun changement direct sur main.
+
+
+## 50. Accueil public — typographie desktop sans agrandissement des badges — 4 novembre 2026
+
+- Revue du correctif typographique du lot 49 : malgré les exclusions par noms de classes, le sélecteur générique ciblant presque tous les `span` pouvait encore agrandir des étiquettes d'état, compteurs ou éléments décoratifs dépourvus de classes explicites.
+- Suppression de ce ciblage générique. La lisibilité desktop est désormais appliquée à une liste explicite de textes éditoriaux de l'accueil public (libellés des indicateurs, descriptions de services, textes de la scène pédagogique, descriptions des ressources et notes de suivi/FAQ).
+- Les badges de disponibilité, pastilles, repères numériques, icônes et libellés compacts conservent leurs tailles définies par leurs composants. Les règles typographiques générales existantes restent en place ; aucune modification du tableau de bord connecté.
+- Référence CSS portée à `style-prototype-dz.css?v=112` dans `index.html` et le précache de `sw.js) ; version du service worker : `dz-de-v3.168.0.0.6`.
+- Aucun changement HTML structurel, JavaScript, navigation, données, Auth, Supabase, RLS, schéma, paiement ou permissions. Aucun framework ni dépendance ajoutés.
+- Vérifications statiques après écriture : ancien sélecteur générique absent, sélecteurs éditoriaux présents, références CSS synchronisées et version du service worker alignée. CI et Workers Build à suivre sur le HEAD résultant.
+- Limite explicite : aucun navigateur réel n'est disponible pour cette opération ; le rendu desktop/mobile n'est pas déclaré visuellement validé.
+- Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main) ; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
