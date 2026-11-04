@@ -90,14 +90,14 @@
       + '<li>أنشئ <code>assets/bdd/&lt;matiere&gt;.json</code> على نموذج '
       + '<code>referentiel.json</code> (وحدات → حصص → تمارين).</li>'
       + '<li>أنشئ <code>&lt;matiere&gt;.js</code> sur le modèle de <code>unite2.js</code> '
-      + '(mêmes clés <code>meta / seances / devoir / corrige</b>).</li>'
+      + '(mêmes clés <code>meta / seances / devoir / corrige</code>).</li>'
       + '<li>Déclare-la dans <code>matieres.json → par_niveau</code> : elle apparaît ici '
       + 'automatiquement.</li>'
       + '<li>Le moteur (séances, devoir /20, correction, progression) est déjà commun : '
       + 'rien d’autre à écrire.</li>'
       + '</ol></div>';
 
-    box.innerHTML = h;
+    box.innerHTML = '<div class="dz-subjects">' + h + '</div>';
     bind();
   }
 
