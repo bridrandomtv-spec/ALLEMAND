@@ -596,3 +596,16 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Versions alignées : public-portal.js?v=7, style-prototype-dz.css?v=105, service worker dz-de-v3.166.0.
 - Aucun changement d'authentification, de droits, de données, de routes ni de navigation.
 - À vérifier sur le Preview Cloudflare du HEAD : CI, déploiement, affichage réel desktop/mobile. Aucun résultat visuel navigateur n'est revendiqué ici.
+
+
+## 43. Accueil public — preuve pédagogique et tableau de qualité d'apprentissage — 4 novembre 2026
+
+- Ajout d'une section éditoriale destinée aux élèves et aux parents : ressources d'entraînement, correction et suivi des apprentissages.
+- Mise en avant de trois volumes vérifiables du parcours allemand : 234 exercices corrigés du manuel de 2AS, 55 sujets officiels corrigés de 2AS et 19 unités pédagogiques réparties entre 2AS et 3AS. Ces nombres décrivent les ressources disponibles, pas des résultats de réussite.
+- Ajout d'une composition graphique de tableau de bord avec trois anneaux : taux de réussite, maîtrise des leçons et réalisation des exercices.
+- Intégrité statistique : les valeurs restent volontairement « — % » tant qu'aucun jeu de résultats d'évaluation réels, agrégés et anonymisés n'est relié à l'accueil public. Le texte précise que la publication future devra mentionner période, effectif et méthode de calcul ; aucune donnée fictive ni taux de réussite inventé.
+- Mise en forme ciblée sous #gate : cartes de preuve, anneaux graphiques sans valeur de progression simulée, thème clair/sombre, tablette et mobile.
+- Aucun changement de logique métier, calcul d'évaluation, données d'élèves, authentification, Supabase, RLS, paiement, navigation ou accès privé. Aucun framework ni dépendance ajouté.
+- Références : style-prototype-dz.css?v=106 ; service worker dz-de-v3.167.0.0.0 et précache CSS aligné.
+- Contrôles statiques et CI à effectuer sur le nouveau HEAD. Aucun test visuel réel navigateur ni déploiement Cloudflare n'est revendiqué avant confirmation.
+- Branche design/prototypes-67-74-alignment, PR #17 vers main ; aucune nouvelle branche, aucun changement direct sur main, aucune fusion et aucun déploiement manuel.
