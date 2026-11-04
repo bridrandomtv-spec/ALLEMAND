@@ -1019,3 +1019,15 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Références actualisées : CSS `v126`, Service Worker `dz-de-v3.168.0.0.32`.
 - CI du commit précédent `d92007f` réussie. Nouvelle CI à attendre sur le commit de correction.
 - Point de publication : le workflow GitHub `.github/workflows/deploy.yml` ne déploie pas vers Cloudflare ; il contient des contrôles et un message informatif indiquant que le déploiement est géré par l'intégration OAuth Cloudflare. Aucun aperçu Cloudflare de ce nouveau HEAD n'a pu être confirmé à cette étape. La production `allemand.brid-randomtv.workers.dev` n'est donc pas déclarée mise à jour.
+
+
+## Lot 77 — recomposition du tableau de bord « مساري » (4 novembre 2026)
+
+- Audit du rendu réel : les éléments de progression étaient empilés verticalement malgré la présence d'un héros, d'une prochaine action, d'un graphique de compétences et d'une progression d'unité. Les libellés du graphique masquaient aussi le nombre de tentatives et de cartes.
+- Nouvelle composition desktop en grille éditoriale : héros pleine largeur, prochaine action et analyse des compétences côte à côte, progression de l'unité en pleine largeur. À moins de 980 px, retour à une colonne pour préserver la lisibilité.
+- Les libellés de compétences sont maintenant lisibles sur plusieurs lignes et leurs métadonnées existantes (tentatives/cartes) sont affichées. Les barres et pourcentages restent ceux calculés par `MEMOIRE.carteErreurs()`.
+- Aucun calcul JS, contenu, identifiant, route, événement, donnée, Auth, Supabase, RLS, schéma, paiement ou permission modifié. Aucun faux résultat, série temporelle ou statistique de démonstration ajouté.
+- Cache : `style-prototype-dz.css?v=127`, Service Worker `dz-de-v3.168.0.0.33`.
+- Fichiers du lot : `style-prototype-dz.css`, `index.html`, `sw.js`, présent dossier de continuité.
+- Contrôles statiques et CI à exécuter sur le commit final. Recette visuelle navigateur ordinateur/mobile toujours requise ; aucune validation visuelle n'est revendiquée sans aperçu accessible.
+- Travail limité à `design/prototypes-67-74-alignment` / PR #17. PR maintenue ouverte et non fusionnée ; aucune modification directe de `main`.
