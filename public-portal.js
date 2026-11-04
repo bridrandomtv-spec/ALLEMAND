@@ -108,7 +108,10 @@
       return;
     }
     l.hidden = true; r.hidden = false;
-    window.scrollTo({top:0, behavior:'auto'});
+    // Montrer immédiatement la zone de destination, y compris pendant le chargement asynchrone.
+    window.requestAnimationFrame(() => {
+      if(!r.hidden) r.scrollIntoView({behavior:'smooth', block:'start'});
+    });
   }
   function shell(title, subtitle, body, back){
     return '<div class="pub-explorer-top">'
@@ -145,11 +148,6 @@
     }catch(err){
       c.innerHTML = shell('تعذر تحميل سجل المواد','يمكنك العودة لاحقًا؛ لم يتم تغيير أي بيانات.', '<p class="pub-error">'+esc(err.message)+'</p>', false);
     }
-    // Ouvrir le catalogue au premier plan : ne pas laisser l'utilisateur au niveau du menu.
-    window.requestAnimationFrame(() => {
-      const explorer = document.getElementById('publicExplorer');
-      if(explorer && !explorer.hidden) explorer.scrollIntoView({behavior:'smooth', block:'start'});
-    });
   }
   async function renderLevels(){
     show('levels');
