@@ -609,3 +609,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Références : style-prototype-dz.css?v=106 ; service worker dz-de-v3.167.0.0.0 et précache CSS aligné.
 - Contrôles statiques et CI à effectuer sur le nouveau HEAD. Aucun test visuel réel navigateur ni déploiement Cloudflare n'est revendiqué avant confirmation.
 - Branche design/prototypes-67-74-alignment, PR #17 vers main ; aucune nouvelle branche, aucun changement direct sur main, aucune fusion et aucun déploiement manuel.
+
+
+## 44. Accueil public — identification explicite du parcours allemand dans les indicateurs pédagogiques — 4 novembre 2026
+
+- Clarification demandée : la section « الجودة التعليمية والمتابعة » concerne exclusivement le parcours de langue allemande, et non l'ensemble des matières ou langues de la plateforme.
+- Ajout d'un libellé visible « مسار اللغة الألمانية · Deutsch » et précision explicite dans le texte introductif.
+- Les trois ressources sont désormais qualifiées sans ambiguïté : 234 exercices corrigés du manuel d'allemand de 2AS, 55 sujets officiels corrigés d'allemand de 2AS et 19 unités pédagogiques d'allemand réparties entre 2AS et 3AS.
+- Le périmètre des anneaux statistiques reste inchangé : aucune valeur de réussite, maîtrise ou réalisation n'est inventée ; les emplacements restent « — % » jusqu'à la disponibilité de résultats réels agrégés et anonymisés.
+- Style ciblé du libellé de parcours ajouté à style-prototype-dz.css ; référence CSS portée à v107 ; service worker porté à dz-de-v3.168.0.0.0 avec précache aligné.
+- Aucun changement de catalogue, de disponibilité des autres matières, de logique métier, d'authentification, de Supabase, RLS, paiement, routes ou navigation. Aucune nouvelle dépendance.
+- Contrôles statiques et CI à effectuer sur le HEAD final ; aucune validation visuelle navigateur ni publication Cloudflare n'est revendiquée avant confirmation.
+- Opération limitée à la branche design/prototypes-67-74-alignment et à la PR #17 ; main reste intacte, PR non fusionnée, aucun déploiement manuel.
