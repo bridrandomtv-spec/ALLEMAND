@@ -1009,3 +1009,13 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Commits : CSS `b8666d6`, index `13d5567` ; commits du Service Worker et du dossier à relever après écriture.
 - Validation statique, CI et publication preview à vérifier. Aucune validation visuelle navigateur ordinateur/mobile n'est revendiquée tant que les deux rendus n'ont pas été inspectés.
 - PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`. Aucune modification directe de `main`.
+
+
+### Complément Lot 76 — correction de grille et ordre du premier écran
+
+- Audit du DOM réel : `aside.home-side` précède `.home-main` dans `index.html`. La première règle de grille ne déclarait pas explicitement les zones et pouvait attribuer la grande colonne à l'aside. Correction par `grid-template-areas`, `grid-area`, `grid-column` et `grid-row` explicites.
+- Ordre du contenu dans `.home-main` : héros de bienvenue en premier, catalogue des matières ensuite, indicateurs puis contenus du jour et aperçu. L'illustration SVG générique héritée est masquée pour éviter un doublon visuel.
+- Déclinaison tablette/mobile : grille à une colonne avec héros/contenu principal avant les panneaux latéraux.
+- Références actualisées : CSS `v126`, Service Worker `dz-de-v3.168.0.0.32`.
+- CI du commit précédent `d92007f` réussie. Nouvelle CI à attendre sur le commit de correction.
+- Point de publication : le workflow GitHub `.github/workflows/deploy.yml` ne déploie pas vers Cloudflare ; il contient des contrôles et un message informatif indiquant que le déploiement est géré par l'intégration OAuth Cloudflare. Aucun aperçu Cloudflare de ce nouveau HEAD n'a pu être confirmé à cette étape. La production `allemand.brid-randomtv.workers.dev` n'est donc pas déclarée mise à jour.
