@@ -916,6 +916,7 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Cette différence pouvait placer le début du catalogue sous l’en-tête et laisser le bouton « المواد التعليمية » visible/sélectionné, donnant l’impression qu’un second clic était nécessaire.
 - Correction ciblée dans `public-portal.js` : calcul de la position de défilement à partir de la hauteur réelle de l’en-tête mesurée par `getBoundingClientRect()`, puis défilement vers le catalogue avec un dégagement de 16 px.
 - Marge CSS de secours du catalogue portée à 112 px ; la mesure JavaScript reste prioritaire et s’adapte à la hauteur réelle sur mobile et ordinateur.
+- Service Worker : version portée de `dz-de-v3.168.0.0.20` à `dz-de-v3.168.0.0.21` pour invalider les caches statiques précédents ; le pré-cache conserve `public-portal.js?v=8`.
 - Aucun changement aux routes, événements, données, authentification, Supabase, RLS, paiements ou tableau de bord élève.
 - Vérification statique à effectuer sur le commit : présence du calcul dynamique, suppression de l’ancien `scrollIntoView()` dans `show()`, cohérence des références de cache.
 - Validation navigateur réelle ordinateur/mobile toujours requise ; aucune conformité visuelle n’est revendiquée avant ce test.
