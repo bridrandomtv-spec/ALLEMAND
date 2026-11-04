@@ -549,3 +549,17 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Validation statique effectuée : équilibre des accolades CSS et cohérence des références CSS/index/service worker. Les tests CI et le déploiement Cloudflare doivent encore être vérifiés.
 - Limite : aucun navigateur réel n'a été utilisé dans cette opération ; le rendu visuel mobile/ordinateur n'est donc pas déclaré validé. Le résultat doit être contrôlé sur l'URL Preview de la branche puis ajusté à partir des observations.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+
+## 39. Accueil public — catalogue des matières et statuts réels sur les cartes — 4 novembre 2026
+
+- Suite à l'audit du lot 38, constat que les 14 cartes visibles sur l'accueil étaient codées en dur dans index.html et ne présentaient pas les statuts issus du registre pédagogique.
+- Ajout dans public-portal.js d'un rendu du mini-catalogue à partir de assets/bdd/matieres.json et assets/bdd/subjects.json, en conservant les cartes HTML comme solution de repli si le chargement des registres échoue.
+- Les six langues du registre sont regroupées en premier, puis les autres matières. Chaque carte affiche désormais un statut réel : disponible, partiellement disponible ou en préparation. Le statut allemand et anglais suit le registre subjects.json ; les autres matières suivent matieres.json.
+- Ajout d'icônes de repli pour les entrées dont le registre ne fournit pas d'icône, notamment les sciences physiques.
+- Finition visuelle des badges de statut dans les thèmes clair et sombre, avec adaptation mobile. Les cartes restent informatives et ne prétendent pas rendre accessibles des matières non publiées.
+- Préservation : aucune modification des données pédagogiques, du moteur de navigation, des événements de connexion/inscription, des accès, d'Auth, Supabase, RLS ou des paiements. Aucun framework ni dépendance ajoutés.
+- Versions : public-portal.js?v=6, style-prototype-dz.css?v=102, service worker dz-de-v3.163.0 avec précache aligné.
+- Vérifications statiques à réaliser sur le HEAD final : syntaxe JavaScript, cohérence des références index/service worker, présence des statuts et équilibre des accolades CSS ; CI à suivre.
+- Aucun rendu navigateur mobile/ordinateur ni déploiement Cloudflare du HEAD final n'est revendiqué à ce stade.
+- Branche design/prototypes-67-74-alignment, PR #17 vers main ; aucune branche créée, aucun changement direct sur main, aucune fusion et aucun déploiement manuel.
