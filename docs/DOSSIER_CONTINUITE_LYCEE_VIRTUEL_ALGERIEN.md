@@ -688,3 +688,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Vérifications statiques après écriture : ancien sélecteur générique absent, sélecteurs éditoriaux présents, références CSS synchronisées et version du service worker alignée. CI et Workers Build à suivre sur le HEAD résultant.
 - Limite explicite : aucun navigateur réel n'est disponible pour cette opération ; le rendu desktop/mobile n'est pas déclaré visuellement validé.
 - Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main) ; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
+
+
+## 51. Accueil public — statut du catalogue matières explicite — 4 novembre 2026
+
+- L'audit du contenu a relevé une ambiguïté : les cartes statiques de la page d'accueil affichent les 14 matières et 6 langues du catalogue, alors que leur état de publication n'est pas indiqué sur ces cartes.
+- Le texte d'introduction précise maintenant que le contrôle de disponibilité se fait dans le catalogue avant de commencer.
+- Ajout d'un bandeau d'information directement au-dessus des cartes matières : il distingue explicitement la présence dans le catalogue de la publication effective du contenu et renvoie vers la vue « matières » existante via `data-public-view="subjects"`.
+- Le bandeau possède des styles dédiés desktop/mobile et thème sombre. Il réutilise la navigation existante ; aucun nouveau gestionnaire JavaScript.
+- CSS cache-bust : `style-prototype-dz.css?v=113` dans `index.html` et `sw.js`; version SW `dz-de-v3.168.0.0.7`.
+- Aucun changement de données, de registre des matières, de statut éditorial, d'authentification, Supabase, RLS, schéma ou paiement. Aucun chiffre ou taux de réussite inventé.
+- Vérifications statiques à effectuer après écriture ; rendu visuel réel non certifié sans navigateur.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucun merge ni déploiement manuel.
