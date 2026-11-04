@@ -15955,7 +15955,6 @@ html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-empty-lin
    Couche de finition explicite : surfaces, bordures, profondeur et rythme.
    Aucun chiffre ni contenu pédagogique n'est simulé. */
 #shell #app section[data-view="masar"].dz-masar-page{
-  display:block!important;
   width:100%!important;
   max-width:1480px!important;
   margin-inline:auto!important;
