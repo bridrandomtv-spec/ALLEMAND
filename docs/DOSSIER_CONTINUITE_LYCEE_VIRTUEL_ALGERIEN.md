@@ -523,3 +523,14 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques : équilibre des accolades CSS, présence des sélecteurs du vrai DOM, références cache index/SW et CI à vérifier sur le HEAD final.
 - Aucun test visuel navigateur mobile/ordinateur, aucune validation Cloudflare et aucune confirmation utilisateur du rendu ne sont revendiqués.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+## 37. Portail public — cohérence visuelle du panneau IA avec l'identité algérienne — 4 novembre 2026
+
+- Audit de la composition publique dans `index.html` et du rendu du catalogue dans `public-portal.js` : le panneau IA du hero était isolé par une palette violette/violette-rose, alors que le reste du portail s'appuie sur le vert, le blanc et le rouge nationaux.
+- Harmonisation ciblée du panneau IA : carte et démo en verts profonds/verts très clairs, icône verte, vague audio vert/rouge, réponse et CTA en dégradés DZ ; le rappel rouge reste discret pour préserver la lisibilité.
+- Mode sombre explicite pour la carte, les surfaces de dialogue, les libellés et le statut ; respect de `prefers-reduced-motion` pour la vague animée.
+- Aucun changement à `public-portal.js`, aux textes, aux liens, aux événements `data-public-view`/`data-public-action`, au catalogue, aux états de disponibilité, à l'inscription, à l'authentification ou aux données. Le panneau reste une présentation visuelle et ne prétend pas fournir une interaction vocale qui n'est pas démontrée par ce composant.
+- Cache : `style-prototype-dz.css?v=100` ; service worker `dz-de-v3.161.0` avec précache aligné.
+- Validation statique à faire sur le HEAD final : accolades CSS, présence des sélecteurs et variantes sombres, cohérence index/SW et CI.
+- Aucun test visuel navigateur mobile/ordinateur, aucune validation de déploiement Cloudflare et aucune confirmation utilisateur du rendu ne sont revendiqués.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
