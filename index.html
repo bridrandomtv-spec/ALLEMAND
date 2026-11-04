@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
-</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=116">
+</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=117">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -139,10 +139,25 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
             <div><span>لوحة مؤشرات التعلّم</span><h4>كيف نقيس التقدّم والجودة؟</h4></div>
             <span class="public-quality-live"><i></i> بيانات غير مجمّعة</span>
           </div>
-          <div class="public-quality-rings" aria-label="مؤشرات النجاح ستعرض عند توفر نتائج تقييم فعلية">
-            <article class="public-quality-ring-card"><div class="public-quality-ring"><span>—<small>%</small></span></div><b>معدل النجاح</b><small>نتائج التقييمات الفعلية</small></article>
-            <article class="public-quality-ring-card"><div class="public-quality-ring"><span>—<small>%</small></span></div><b>إتقان الدروس</b><small>نتائج الفهم والتطبيق</small></article>
-            <article class="public-quality-ring-card"><div class="public-quality-ring"><span>—<small>%</small></span></div><b>إنجاز التمارين</b><small>العمل المنجز والمصحح</small></article>
+          <div class="public-quality-metrics" aria-label="الجوانب التي ستُقاس عند توفر بيانات تقييم مجمّعة">
+            <article class="public-quality-metric">
+              <div class="public-quality-metric-top"><span class="public-quality-metric-icon" aria-hidden="true">🏅</span><span class="public-quality-metric-status">بانتظار بيانات موثوقة</span></div>
+              <h5>معدل النجاح</h5>
+              <p>يُستخرج من نتائج الاختبارات والتقييمات الفعلية خلال فترة محددة.</p>
+              <small>النسبة غير متاحة حاليًا</small>
+            </article>
+            <article class="public-quality-metric">
+              <div class="public-quality-metric-top"><span class="public-quality-metric-icon" aria-hidden="true">🧠</span><span class="public-quality-metric-status">بانتظار بيانات موثوقة</span></div>
+              <h5>إتقان الدروس</h5>
+              <p>يُقاس من أداء التلميذ في أسئلة الفهم والتطبيق المرتبطة بالدروس.</p>
+              <small>النسبة غير متاحة حاليًا</small>
+            </article>
+            <article class="public-quality-metric">
+              <div class="public-quality-metric-top"><span class="public-quality-metric-icon" aria-hidden="true">✍️</span><span class="public-quality-metric-status">بانتظار بيانات موثوقة</span></div>
+              <h5>إنجاز التمارين</h5>
+              <p>يتابع التمارين التي أُنجزت وصُححت مقارنة بالعمل المتاح للتلميذ.</p>
+              <small>النسبة غير متاحة حاليًا</small>
+            </article>
           </div>
           <p class="public-quality-note">تُحفظ نتائج الاختبارات القصيرة ومحاكاة البكالوريا حاليًا على جهاز التلميذ فقط، ولا تُرسل إلى خادم مركزي؛ لذلك لا تتوفر الآن بيانات مجمّعة تسمح بنشر معدل نجاح عام موثوق. لن تظهر النسب إلا بعد توفير تجميع إحصائي آمن ومجهول الهوية، مع توضيح الفترة وعدد المشاركين وطريقة الحساب.</p>
         </div>
