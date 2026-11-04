@@ -10781,3 +10781,177 @@ html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog .se
 @media(prefers-reduced-motion:reduce){
   #shell #app [data-view="seances"] *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   MASAR PREMIUM — tableau de bord de progression et graphiques réels
+   Aucun chiffre simulé : toutes les valeurs viennent des séances et MEMOIRE.
+   ═══════════════════════════════════════════════════════════════ */
+#shell #app [data-view="masar"].dz-masar-page{max-width:1180px;margin-inline:auto}
+#shell #app [data-view="masar"] .dz-masar-page-head{margin-bottom:12px}
+#shell #app [data-view="masar"] #masarBody .ms-hero{
+  position:relative;isolation:isolate;overflow:hidden;display:grid;
+  grid-template-columns:minmax(0,1fr) 180px;align-items:center;gap:24px;
+  min-height:230px;margin:0 0 18px;padding:30px 34px!important;
+  border:1px solid rgba(255,255,255,.13)!important;border-radius:25px!important;
+  background:radial-gradient(ellipse at 12% 0%,rgba(255,255,255,.14),transparent 34%),
+    radial-gradient(ellipse at 100% 100%,rgba(210,16,52,.25),transparent 34%),
+    linear-gradient(120deg,#003b21 0%,#006233 58%,#087c43 100%)!important;
+  box-shadow:0 20px 44px rgba(0,69,36,.2)!important;color:#fff
+}
+#shell #app [data-view="masar"] #masarBody .ms-hero:after{
+  content:"";position:absolute;z-index:-1;width:280px;height:280px;
+  inset-inline-end:12%;top:-190px;border:1px solid rgba(255,255,255,.14);
+  border-radius:50%;box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 58px rgba(255,255,255,.025)
+}
+#shell #app [data-view="masar"] #masarBody .ms-hero-copy{min-width:0}
+#shell #app [data-view="masar"] #masarBody .ms-kicker{
+  display:inline-flex;margin-bottom:12px;padding:6px 11px;border:1px solid rgba(255,255,255,.2);
+  border-radius:99px;background:rgba(255,255,255,.1);color:#e6f5eb;font-size:11px;font-weight:850
+}
+#shell #app [data-view="masar"] #masarBody .ms-hero h2{
+  margin:0 0 9px;color:#fff!important;font-size:clamp(25px,3vw,36px);
+  font-weight:950;line-height:1.35;letter-spacing:-.03em
+}
+#shell #app [data-view="masar"] #masarBody .ms-sub{margin:0;color:#e1f1e6!important;font-size:14px;line-height:1.9}
+#shell #app [data-view="masar"] #masarBody .ms-hero-meta{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:20px
+}
+#shell #app [data-view="masar"] #masarBody .ms-hero-meta span{
+  padding:7px 10px;border:1px solid rgba(255,255,255,.17);border-radius:10px;
+  background:rgba(0,0,0,.13);color:#fff;font-size:11px;font-weight:800
+}
+#shell #app [data-view="masar"] #masarBody .ms-ring-wrap{
+  position:relative;display:grid;place-items:center;width:166px;height:166px;margin:auto
+}
+#shell #app [data-view="masar"] #masarBody .ms-ring{width:100%;height:100%;overflow:visible;transform:rotate(-90deg)}
+#shell #app [data-view="masar"] #masarBody .ms-ring-track{
+  fill:none;stroke:rgba(255,255,255,.17);stroke-width:9
+}
+#shell #app [data-view="masar"] #masarBody .ms-ring-value{
+  fill:none;stroke:#fff;stroke-width:9;stroke-linecap:round;
+  filter:drop-shadow(0 0 5px rgba(255,255,255,.35));
+  transition:stroke-dashoffset .7s cubic-bezier(.2,.8,.2,1)
+}
+#shell #app [data-view="masar"] #masarBody .ms-ring-label{
+  position:absolute;display:flex;flex-direction:column;align-items:center;gap:3px;color:#fff
+}
+#shell #app [data-view="masar"] #masarBody .ms-ring-label b{font-size:34px;font-weight:950;line-height:1}
+#shell #app [data-view="masar"] #masarBody .ms-ring-label span{font-size:11px;color:#e0f2e6}
+#shell #app [data-view="masar"] #masarBody .ms-next,
+#shell #app [data-view="masar"] #masarBody .ms-weak,
+#shell #app [data-view="masar"] #masarBody .ms-prog,
+#shell #app [data-view="masar"] #masarBody .ms-chart{
+  margin-top:15px;padding:23px!important;border:1px solid #dce9df!important;
+  border-radius:20px!important;background:linear-gradient(155deg,#fff,#f7fbf8)!important;
+  box-shadow:0 10px 28px rgba(0,55,28,.06)!important
+}
+#shell #app [data-view="masar"] #masarBody .ms-next{position:relative;overflow:hidden}
+#shell #app [data-view="masar"] #masarBody .ms-next:before{
+  content:"";position:absolute;inset:0 0 0 auto;width:5px;background:linear-gradient(#006233,#d21034)
+}
+#shell #app [data-view="masar"] #masarBody .ms-next.prio{
+  border-color:#ead9b7!important;background:linear-gradient(145deg,#fffdf7,#fff8e8)!important
+}
+#shell #app [data-view="masar"] #masarBody .ms-next h3{margin:12px 0 8px;color:#174a2d;font-size:21px;font-weight:900}
+#shell #app [data-view="masar"] #masarBody .ms-tag{
+  display:inline-flex;padding:7px 12px;border-radius:99px;background:#eaf5ed;color:#075b35;font-size:11px;font-weight:900
+}
+#shell #app [data-view="masar"] #masarBody .ms-why{color:#63776a;line-height:1.9}
+#shell #app [data-view="masar"] #masarBody .ms-next .btn{max-width:360px;min-height:48px;border-radius:13px;font-weight:900}
+#shell #app [data-view="masar"] #masarBody .ms-chart-head{
+  display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:22px
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-kicker{
+  display:block;margin-bottom:5px;color:#16804b;font-size:11px;font-weight:900;letter-spacing:.04em
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-head h3{
+  margin:0;color:#174a2d;font-size:20px;font-weight:950
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-head p{margin:5px 0 0;color:#728176;font-size:12px}
+#shell #app [data-view="masar"] #masarBody .ms-chart-icon{
+  display:grid;place-items:center;width:46px;height:46px;flex:0 0 46px;
+  border-radius:14px;background:#e9f5ed;color:#087b43;font-size:24px;font-weight:900
+}
+#shell #app [data-view="masar"] #masarBody .ms-bars{display:grid;gap:17px}
+#shell #app [data-view="masar"] #masarBody .ms-chart-row{
+  display:grid;grid-template-columns:minmax(150px,220px) minmax(80px,1fr) 48px;
+  align-items:center;gap:14px
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-label{display:flex;align-items:center;gap:8px;min-width:0}
+#shell #app [data-view="masar"] #masarBody .ms-chart-label b{
+  overflow:hidden;color:#294b36;font-size:13px;text-overflow:ellipsis;white-space:nowrap
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-label small{display:none}
+#shell #app [data-view="masar"] #masarBody .ms-chart-dot{
+  width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:#006233;
+  box-shadow:0 0 0 4px rgba(0,98,51,.09)
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-dot.d1{background:#d21034;box-shadow:0 0 0 4px rgba(210,16,52,.09)}
+#shell #app [data-view="masar"] #masarBody .ms-chart-dot.d2{background:#43a66c}
+#shell #app [data-view="masar"] #masarBody .ms-chart-dot.d3{background:#b88a36}
+#shell #app [data-view="masar"] #masarBody .ms-chart-dot.d4{background:#5787b8}
+#shell #app [data-view="masar"] #masarBody .ms-chart-track{
+  height:13px;overflow:hidden;border-radius:99px;background:#e8efe9;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.04)
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-track i{
+  display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#006233,#42a66c);
+  box-shadow:0 2px 8px rgba(0,98,51,.17);transition:width .7s ease
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-row strong{
+  color:#075b35;font-size:14px;font-weight:950;text-align:end;font-variant-numeric:tabular-nums
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-note{
+  margin:19px 0 0;padding-top:13px;border-top:1px solid #e7eee8;color:#718176;font-size:11px
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-empty .ms-empty-line{
+  display:flex;align-items:center;gap:12px;padding:18px;border:1px dashed #c9ddcf;
+  border-radius:14px;background:#f5faf6;color:#54705d;font-size:13px
+}
+#shell #app [data-view="masar"] #masarBody .ms-empty-line span{font-size:23px}
+#shell #app [data-view="masar"] #masarBody .ms-prog-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px
+}
+#shell #app [data-view="masar"] #masarBody .ms-prog h3{margin:0;color:#174a2d;font-size:18px;font-weight:900}
+#shell #app [data-view="masar"] #masarBody .ms-prog-pct{color:#087b43;font-size:25px;font-weight:950}
+#shell #app [data-view="masar"] #masarBody .ms-bar{height:12px;border-radius:99px;background:#e8efe9;overflow:hidden}
+#shell #app [data-view="masar"] #masarBody .ms-bar i{
+  display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#006233,#42a66c)
+}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-hero{
+  background:radial-gradient(ellipse at 12% 0%,rgba(255,255,255,.09),transparent 34%),
+    radial-gradient(ellipse at 100% 100%,rgba(210,16,52,.19),transparent 34%),
+    linear-gradient(120deg,#002c18,#00532d 60%,#08653a)!important
+}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody :is(.ms-next,.ms-weak,.ms-prog,.ms-chart){
+  background:linear-gradient(155deg,#172b1e,#14251b)!important;border-color:#34543e!important
+}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody :is(.ms-chart-head h3,.ms-prog h3,.ms-next h3,.ms-chart-row strong,.ms-chart-label b){
+  color:#e1f1e6!important
+}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody :is(.ms-chart-head p,.ms-why,.ms-chart-note){color:#b9cdbf!important}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-chart-icon{background:#244832;color:#a9e0ba}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-chart-track{background:#2a4432}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-chart-empty .ms-empty-line{background:#1b3424;border-color:#3b6548;color:#c9dfd0}
+@media(max-width:760px){
+  #shell #app [data-view="masar"] #masarBody .ms-hero{grid-template-columns:minmax(0,1fr) 132px;gap:12px;padding:23px 20px!important;min-height:190px}
+  #shell #app [data-view="masar"] #masarBody .ms-ring-wrap{width:126px;height:126px}
+  #shell #app [data-view="masar"] #masarBody .ms-ring-label b{font-size:27px}
+  #shell #app [data-view="masar"] #masarBody .ms-hero h2{font-size:23px}
+  #shell #app [data-view="masar"] #masarBody .ms-hero-meta{gap:6px;margin-top:13px}
+  #shell #app [data-view="masar"] #masarBody .ms-hero-meta span{font-size:10px;padding:6px 8px}
+}
+@media(max-width:540px){
+  #shell #app [data-view="masar"] #masarBody .ms-hero{grid-template-columns:1fr;gap:10px;text-align:center;padding:22px 17px!important}
+  #shell #app [data-view="masar"] #masarBody .ms-ring-wrap{grid-row:1;width:116px;height:116px}
+  #shell #app [data-view="masar"] #masarBody .ms-hero-meta{justify-content:center}
+  #shell #app [data-view="masar"] #masarBody .ms-chart-row{grid-template-columns:minmax(0,1fr) 44px;gap:8px}
+  #shell #app [data-view="masar"] #masarBody .ms-chart-track{grid-column:1/-1;grid-row:2}
+  #shell #app [data-view="masar"] #masarBody .ms-chart-row strong{grid-column:2;grid-row:1}
+  #shell #app [data-view="masar"] #masarBody :is(.ms-next,.ms-chart,.ms-prog){padding:17px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="masar"] #masarBody *{transition:none!important;animation:none!important}
+}
