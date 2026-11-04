@@ -573,3 +573,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Cache CSS de l'accueil public passé à style-prototype-dz.css?v=103 ; service worker dz-de-v3.164.0.
 - Vérification navigateur et publication Cloudflare du HEAD final non revendiquées tant qu'elles ne sont pas confirmées.
 - Travail limité à la branche design/prototypes-67-74-alignment et à la PR #17 ; main reste intacte et aucune fusion n'est effectuée.
+
+
+## 41. Accueil public — reconstruction du hero et de la scène pédagogique — 4 novembre 2026
+
+- Reprise de la composition du premier écran public, au-delà des retouches de couleurs : hiérarchie du titre, texte d'introduction, appels à l'action, indicateurs et panneau pédagogique ont été réorganisés visuellement.
+- Remplacement de l'ancienne imitation de forme d'onde par une scène pédagogique illustrative explicitant trois étapes : année, filière/matières, puis cours et ressources. Cette illustration ne prétend pas être un outil interactif.
+- Renforcement de la direction artistique DZ : panneau vert profond, accent rouge, surfaces blanches structurées, profondeur et contraste, cartes de services en trois colonnes sur grand écran.
+- Réécriture des bénéfices pour éviter de promettre des fonctions vocales ou des matières non confirmées comme opérationnelles.
+- Adaptations tablette/mobile et mode sombre ; respect de prefers-reduced-motion. Les boutons et événements existants, les liens data-public-view/data-gate-open, le formulaire, les routes et le catalogue dynamique restent inchangés.
+- Cache CSS : style-prototype-dz.css?v=104 ; service worker dz-de-v3.165.0 avec précache aligné.
+- CI et déploiement Preview Cloudflare à contrôler sur le HEAD final. Aucun test visuel réel navigateur ni validation esthétique finale n'est revendiqué à ce stade.
+- Périmètre inchangé : branche design/prototypes-67-74-alignment, PR #17 vers main ; aucun changement direct sur main, aucune fusion et aucun déploiement manuel.
