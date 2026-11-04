@@ -711,3 +711,14 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Aucun redimensionnement global des icônes, badges, chiffres ou boutons ; aucun HTML, identifiant, gestionnaire, route ou flux de données modifié.
 - Cache CSS aligné sur `v114` dans `index.html` et le précache du service worker ; version du service worker `dz-de-v3.168.0.0.8`.
 - Vérification statique : règles ciblées présentes, références CSS synchronisées, accolades CSS équilibrées. Aucun test de rendu navigateur/mobile effectué ; ne pas présenter cette vérification comme une validation visuelle.
+
+
+## Lot 53 — Lisibilité des libellés de navigation et de contexte sur ordinateur (4 novembre 2026)
+
+- L'audit du portail public a relevé plusieurs libellés secondaires encore trop petits sur grand écran : boutons de navigation, badge d'introduction, repère de version du panneau pédagogique et badge de disponibilité des indicateurs.
+- Ajout de règles ciblées à partir de 1024 px : navigation à 14 px avec hauteur minimale de 44 px ; libellés de contexte à 12–13 px. Les icônes, nombres, badges de catalogue et composants hors de #gate ne sont pas redimensionnés par ce lot.
+- Les styles mobile et tablette ne sont pas modifiés. Les règles restent limitées à l'accueil public et conservent les couleurs de thème existantes.
+- Références synchronisées : style-prototype-dz.css?v=115 dans index.html et sw.js ; service worker dz-de-v3.168.0.0.9.
+- Vérification statique à effectuer sur le HEAD final : sélecteurs ciblés, références CSS identiques, version SW, équilibre des accolades et CI/Workers Build.
+- Limite : aucun navigateur réel n'est disponible pour cette opération ; la validation visuelle sur ordinateur et mobile reste à effectuer et n'est pas revendiquée.
+- Travail limité à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
