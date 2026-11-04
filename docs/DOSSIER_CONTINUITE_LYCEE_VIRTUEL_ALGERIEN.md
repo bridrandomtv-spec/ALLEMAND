@@ -742,3 +742,13 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Version du service worker incrémentée en dz-de-v3.168.0.0.11 pour actualiser le contenu mis en cache.
 - Validation visuelle réelle non effectuée ; CI/Workers Build à contrôler sur le dernier commit.
 - Travail limité à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
+
+
+## Lot 56 — Navigation publique mobile plus lisible (4 novembre 2026)
+
+- Sur les écrans jusqu'à 700 px, la navigation publique passe de trois colonnes à deux colonnes afin de donner plus de largeur aux nouveaux libellés arabes.
+- Les cinq boutons conservent leur ordre et leurs attributs ; le bouton d'inscription occupe la largeur des deux colonnes. Hauteur minimale portée à 42 px, taille de texte à 12 px et retour à la ligne autorisé.
+- Aucun changement sur la navigation desktop, les routes, les événements, les données ou l'authentification.
+- Cache CSS synchronisé en v116 dans index.html et sw.js ; service worker incrémenté en dz-de-v3.168.0.0.12.
+- Validation statique et CI/Workers Build à effectuer sur le dernier HEAD. Pas de validation visuelle navigateur revendiquée.
+- Travail limité à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
