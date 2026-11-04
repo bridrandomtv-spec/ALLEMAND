@@ -664,6 +664,6 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Après le premier contrôle, extension ciblée de la règle desktop aux liens, libellés en ligne, résumés d'accordéons, définitions, légendes et sorties de formulaire, qui pouvaient encore conserver des tailles trop petites.
 - Plancher de 15 px avec facteur relatif de 0,88 em pour préserver la hiérarchie dans les titres et composants ; règle active uniquement à partir de 1024 px.
 - Aucun changement mobile, structure, navigation, fonctionnalité ou donnée. Aucun ajout de dépendance.
-- Cache CSS et service worker : v109 / dz-de-v3.168.0.0.3 inchangés, car le fichier CSS conserve le même chemin et la même version déjà invalidée au lot 47 ; le nouveau commit actualise directement la ressource suivie par le worker.
+- Correction de cache effectuée après revue : référence CSS portée à v110 dans index.html et sw.js, et version du service worker portée à dz-de-v3.168.0.0.4. Cette invalidation garantit le rechargement de la feuille CSS modifiée au lot 48, y compris pour les clients qui disposent d'une ancienne copie en cache.
 - CI/Workers Build du HEAD précédent e68c9df : succès. Le présent complément doit encore passer les contrôles automatiques ; validation visuelle réelle sur ordinateur toujours requise.
 - Travail limité à la branche design/prototypes-67-74-alignment et à la PR #17 ; main inchangée, PR non fusionnée.
