@@ -11821,3 +11821,118 @@ html[data-theme="dark"] section[data-view="msg"] .msg-bene .b b{color:#e4f7e9}
     animation-duration:.01ms!important;transition-duration:.01ms!important
   }
 }
+
+
+
+/* 26. Guide d'utilisation — parcours par rôle, données onboarding réelles */
+html[data-theme="light"] section[data-view="guide"] .gd-hero{
+  position:relative;overflow:hidden;display:flex;align-items:center;gap:18px;
+  min-height:142px;padding:24px;margin:0 0 18px;color:#fff;
+  background:linear-gradient(118deg,#003f22 0%,#006233 58%,#00843d 100%);
+  border:0;border-radius:19px;box-shadow:0 13px 30px rgba(0,75,37,.16)
+}
+html[data-theme="light"] section[data-view="guide"] .gd-hero::after{
+  content:"🇩🇿";position:absolute;inset-inline-end:26px;top:50%;transform:translateY(-50%);
+  font-size:62px;opacity:.15;pointer-events:none
+}
+html[data-theme="light"] section[data-view="guide"] .gd-crest{
+  display:grid;place-items:center;width:66px;height:66px;flex:0 0 auto;
+  color:#006233;background:#fff;border-radius:18px;font-size:34px;
+  box-shadow:0 7px 20px rgba(0,0,0,.13)
+}
+html[data-theme="light"] section[data-view="guide"] .gd-hero h2,
+html[data-theme="light"] section[data-view="guide"] .gd-hero .gd-sub{
+  position:relative;z-index:1;color:#fff
+}
+html[data-theme="light"] section[data-view="guide"] .gd-hero h2{font-size:clamp(21px,2.5vw,29px);line-height:1.5}
+html[data-theme="light"] section[data-view="guide"] .gd-hero .gd-sub{color:rgba(255,255,255,.86);font-size:13px}
+html[data-theme="light"] section[data-view="guide"] .gd-roles{
+  gap:9px;padding:7px;margin:0 0 17px;background:#edf4ef;border:1px solid #dce8df;border-radius:15px
+}
+html[data-theme="light"] section[data-view="guide"] .gd-r{
+  min-height:42px;padding:9px 17px;color:#315a40;background:#fff;border:1px solid #dce8df;
+  border-radius:11px;font-weight:700;transition:background .18s ease,border-color .18s ease
+}
+html[data-theme="light"] section[data-view="guide"] .gd-r.on{
+  color:#fff;background:linear-gradient(135deg,#006233,#00843d);border-color:#006233;
+  box-shadow:0 4px 12px rgba(0,98,51,.16)
+}
+html[data-theme="light"] section[data-view="guide"] .gd-obj,
+html[data-theme="light"] section[data-view="guide"] .gd-pas{
+  position:relative;padding:19px;background:#fff;border:1px solid #dce8df;border-radius:17px;
+  box-shadow:0 5px 18px rgba(0,55,28,.045)
+}
+html[data-theme="light"] section[data-view="guide"] .gd-obj{border-inline-start:4px solid #006233}
+html[data-theme="light"] section[data-view="guide"] .gd-obj h3,
+html[data-theme="light"] section[data-view="guide"] .gd-pas h3{
+  color:#004d28;font-size:17px;font-weight:800
+}
+html[data-theme="light"] section[data-view="guide"] .gd-obj p{color:#53685a;line-height:1.9}
+html[data-theme="light"] section[data-view="guide"] .onb-pts{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:11px
+}
+html[data-theme="light"] section[data-view="guide"] .onb-p{
+  min-height:94px;padding:14px;background:#f6faf7;border:1px solid #dce8df;border-radius:14px
+}
+html[data-theme="light"] section[data-view="guide"] .onb-p>span{
+  display:grid;place-items:center;width:38px;height:38px;flex:0 0 auto;
+  background:#e5f2e9;border-radius:11px;font-size:21px
+}
+html[data-theme="light"] section[data-view="guide"] .onb-p b,
+html[data-theme="light"] section[data-view="guide"] .onb-g b{color:#17452c;font-size:14px}
+html[data-theme="light"] section[data-view="guide"] .onb-p i,
+html[data-theme="light"] section[data-view="guide"] .onb-g i{color:#5e7164;font-size:12px;line-height:1.85}
+html[data-theme="light"] section[data-view="guide"] #gdSteps{margin:0 0 17px}
+html[data-theme="light"] section[data-view="guide"] .onb-steps2{gap:10px}
+html[data-theme="light"] section[data-view="guide"] .onb-g{
+  align-items:flex-start;padding:15px;background:#fff;border:1px solid #dce8df;
+  border-inline-start:3px solid #00843d;border-radius:14px;
+  box-shadow:0 3px 12px rgba(0,55,28,.035)
+}
+html[data-theme="light"] section[data-view="guide"] .onb-gi{
+  display:grid;place-items:center;width:40px;height:40px;flex:0 0 auto;
+  background:#e8f4eb;border-radius:12px;font-size:22px
+}
+html[data-theme="light"] section[data-view="guide"] .gd-pas{
+  background:linear-gradient(135deg,#f4f8f5,#fff);border-top:3px solid #d21034
+}
+html[data-theme="light"] section[data-view="guide"] .gd-pas .onb-steps{
+  padding-inline-start:22px;color:#405c49;line-height:2.2
+}
+html[data-theme="dark"] section[data-view="guide"] .gd-hero{
+  color:#fff;background:linear-gradient(118deg,#092c1b,#064a2a 62%,#08663a);border-color:#276747
+}
+html[data-theme="dark"] section[data-view="guide"] .gd-hero h2,
+html[data-theme="dark"] section[data-view="guide"] .gd-hero .gd-sub{color:#f4fff7}
+html[data-theme="dark"] section[data-view="guide"] .gd-crest{color:#006233;background:#eaf6ed}
+html[data-theme="dark"] section[data-view="guide"] .gd-roles,
+html[data-theme="dark"] section[data-view="guide"] .gd-obj,
+html[data-theme="dark"] section[data-view="guide"] .gd-pas{background:#132a1d;border-color:#31543e}
+html[data-theme="dark"] section[data-view="guide"] .gd-r{color:#d8eee0;background:#1b3827;border-color:#31543e}
+html[data-theme="dark"] section[data-view="guide"] .gd-r.on{color:#fff;background:#006233;border-color:#0a8a4a}
+html[data-theme="dark"] section[data-view="guide"] .gd-obj h3,
+html[data-theme="dark"] section[data-view="guide"] .gd-pas h3{color:#a8e4bd}
+html[data-theme="dark"] section[data-view="guide"] .onb-p,
+html[data-theme="dark"] section[data-view="guide"] .onb-g{background:#172f21;border-color:#31543e}
+html[data-theme="dark"] section[data-view="guide"] .onb-p b,
+html[data-theme="dark"] section[data-view="guide"] .onb-g b{color:#e4f7e9}
+html[data-theme="dark"] section[data-view="guide"] .onb-p i,
+html[data-theme="dark"] section[data-view="guide"] .onb-g i,
+html[data-theme="dark"] section[data-view="guide"] .gd-obj p,
+html[data-theme="dark"] section[data-view="guide"] .gd-pas .onb-steps{color:#b7cbbd}
+@media(max-width:700px){
+  html[data-theme="light"] section[data-view="guide"] .gd-hero{min-height:116px;padding:18px 15px;gap:12px}
+  html[data-theme="light"] section[data-view="guide"] .gd-crest{width:50px;height:50px;font-size:27px;border-radius:14px}
+  html[data-theme="light"] section[data-view="guide"] .gd-hero::after{font-size:42px;inset-inline-end:12px}
+  html[data-theme="light"] section[data-view="guide"] .gd-roles{display:grid;grid-template-columns:1fr;gap:7px}
+  html[data-theme="light"] section[data-view="guide"] .gd-r{width:100%;text-align:center}
+  html[data-theme="light"] section[data-view="guide"] .gd-obj,
+  html[data-theme="light"] section[data-view="guide"] .gd-pas{padding:15px}
+  html[data-theme="light"] section[data-view="guide"] .onb-p{min-height:0}
+  html[data-theme="light"] section[data-view="guide"] .onb-g{padding:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  section[data-view="guide"] *,section[data-view="guide"] *::before,section[data-view="guide"] *::after{
+    animation-duration:.01ms!important;transition-duration:.01ms!important
+  }
+}
