@@ -1121,3 +1121,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache : `app.js?v=3526` synchronisé dans `index.html` et le précache ; service worker `dz-de-v3.168.0.0.42`.
 - Périmètre : branche `design/prototypes-67-74-alignment` uniquement ; PR #17 reste ouverte et non fusionnée ; aucune modification de `main`, Supabase, Auth, RLS ou base de données.
 - Validation : vérification statique de la visibilité explicite du formulaire, du gestionnaire direct, des versions de cache et des ancres conservées. Test navigateur réel et publication Cloudflare restent à confirmer.
+
+
+## Lot 87 — dévoiler explicitement le conteneur du portail de connexion (5 novembre 2026)
+
+- URL de prévisualisation communiquée et ciblée : `https://75be659c-allemand.brid-randomtv.workers.dev/#connexion`.
+- Défaut confirmé dans `public-portal.js` : `setAuthPage()` affichait `.gate-card` mais ne retirait pas l'attribut `hidden` du parent `#gate`, pourtant masqué au chargement dans `index.html`. Le chemin de navigation publique dépend de cette fonction, y compris lors de l'ouverture via le hash `#connexion`.
+- Correction : `gate.hidden = false` est maintenant exécuté dans `setAuthPage()` avant l'affichage de la carte et l'activation de l'onglet. Le repli direct de `app.js` est conservé ; aucune logique de soumission ou d'authentification n'est modifiée.
+- Cache : `public-portal.js?v=9` synchronisé dans `index.html` et le précache du Service Worker ; version du cache portée à `dz-de-v3.168.0.0.43`.
+- Périmètre : branche `design/prototypes-67-74-alignment` et PR #17 uniquement ; aucune modification de `main`, aucune fusion, aucun changement Supabase/Auth/RLS/base de données.
+- Validation : modification source et synchronisation des références vérifiables dans GitHub. L'accès au Worker de prévisualisation a échoué depuis l'outil de consultation ; aucun clic navigateur ni déploiement Cloudflare n'est revendiqué. Il reste à confirmer que ce commit est effectivement publié sur le preview puis à tester le clic réel.
