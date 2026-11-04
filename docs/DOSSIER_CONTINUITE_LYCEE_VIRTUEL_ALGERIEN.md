@@ -470,3 +470,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer après écriture : équilibre des accolades CSS, classes émises présentes dans les sélecteurs, cohérence des références de cache, CI sur le nouveau HEAD.
 - Aucun test navigateur, aucune correction pédagogique de contenu et aucun déploiement Cloudflare ne sont revendiqués.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+
+## 33. Finition ciblée du statut de disponibilité dans le portail public — 4 novembre 2026
+
+- Audit croisé de `public-portal.js` et de `style-prototype-dz.css` : le module génère la classe `.pub-branch-availability` pour présenter le nombre de matières complètes/partielles ou l'état « contenu en préparation ».
+- Le rendu héritait seulement de la règle générique `.pub-branch-foot span`, sans style propre pour distinguer le statut. Ajout d'un badge compact avec bordure, fond, contraste et typographie dédiés.
+- Ajout des variantes du thème sombre et d'un ajustement mobile ; aucune modification du catalogue, des statuts des matières, des parcours de navigation ou du code JavaScript.
+- Préservation stricte : aucun changement à `public-portal.js`, `assets/bdd/subjects.json`, `assets/bdd/matieres.json`, à l'inscription, à l'authentification, aux données ou aux permissions.
+- Cache : `style-prototype-dz.css?v=97` dans `index.html`, précache actualisé et service worker `dz-de-v3.157.0`.
+- Contrôles statiques réalisés après écriture : présence du sélecteur du statut, références de cache v97 cohérentes, conservation de la classe émise par le module, équilibre des accolades CSS à recontrôler sur le fichier final, CI à suivre sur le nouveau HEAD.
+- Le workflow #1887 associé au HEAD précédent est terminé avec succès, y compris les 27 étapes de validation structurelle et pédagogique. Le nouveau lot déclenche une nouvelle CI ; aucun test visuel navigateur ni déploiement Cloudflare du nouveau HEAD n'est revendiqué.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
