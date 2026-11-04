@@ -981,3 +981,14 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Commits : `faf5f1a` (`journee.js`), `3c961d2` (CSS), `7f2cb6c` (index), `e9f0103` (Service Worker).
 - Les raccourcis génériques vers les sections d’apprentissage restent disponibles. Aucun changement d’authentification, de données personnelles, de Supabase, de RLS, de schéma ou de permissions.
 - CI : à vérifier sur le dernier commit. Vérification navigateur/visuelle ordinateur et mobile encore nécessaire ; ce lot ne constitue pas la validation finale de l’accueil connecté.
+
+
+## Lot 75 — Progression pédagogique séparée par niveau (4 novembre 2026)
+
+- Audit du calcul de progression : le tableau « مسارك » additionnait auparavant toutes les unités 2AS et 3AS, même lorsque le compte élève était rattaché à un seul niveau. Le bandeau de bienvenue additionnait lui aussi toutes les unités et comptait les entrées de stockage sans vérifier qu'elles correspondaient à une séance existante.
+- `masar.js` : la progression utilise maintenant le niveau du compte lorsqu'il est disponible, sinon le niveau actif du sélecteur. Les séances sont agrégées uniquement dans ce périmètre ; les unités sans séances chargées sont exclues. Le cercle affiche « — » plutôt qu'un faux 0 % lorsqu'aucune séance n'est disponible pour le niveau choisi.
+- `app.js` : le bandeau de bienvenue calcule le même périmètre de niveau, ne compte que les séances réellement présentes dans le programme et indique explicitement le niveau concerné. Si aucune séance n'est disponible, il affiche un état d'attente au lieu d'un pourcentage artificiel.
+- Aucun nouveau graphique synthétique, aucune série temporelle inventée et aucune donnée de démonstration ajoutée. Les résultats par compétence déjà issus de la mémoire locale restent fondés sur les réponses réellement enregistrées.
+- Cache : `app.js?v=3524` et Service Worker `dz-de-v3.168.0.0.30` ; pré-cache synchronisé.
+- Aucun changement de structure de base, Supabase, Auth, RLS, paiements, droits ou données personnelles. Travail limité à la branche `design/prototypes-67-74-alignment` / PR #17, sans fusion ni modification de `main`.
+- Contrôles statiques et CI à exécuter sur le commit final. Validation visuelle réelle sur ordinateur et mobile toujours nécessaire ; elle n'est pas revendiquée dans ce lot.
