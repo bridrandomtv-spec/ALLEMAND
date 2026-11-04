@@ -644,15 +644,23 @@ function go(view){
 
 /* ─────────────── ACCUEIL : STATISTIQUES ─────────────── */
 function renderStats(){
-  const st   = loadSeances();
+  const st = loadSeances();
   const done = (st.done || []).length;
-  const sim  = load(LS.sim, {});
+  const total = SEANCES.length || 0;
+  const remaining = Math.max(0, total - done);
+  const sim = load(LS.sim, {});
   const best = (sim.best !== undefined && sim.best !== null) ? sim.best + '/20' : '—';
+  const k = (window.BDD && BDD.state && BDD.state.ready && typeof BDD.kpis === 'function') ? BDD.kpis() : null;
   const el = $('#statsHome'); if(!el) return;
-  el.innerHTML = [[done + '/' + (SEANCES.length||8),'حصص مكتملة'],[DEVOIR.total,'نقطة في الفرض'],
-                  [best,'أفضل نتيجة'],['0555…7931','واتساب']]
-    .map(s => '<div class="stat"><div class="stat-n">' + s[0] + '</div><div class="stat-l">' + s[1] + '</div></div>')
-    .join('');
+  const items = [
+    [done + '/' + total, 'حصص مكتملة في الوحدة'],
+    [String(remaining), 'حصص متبقية في الوحدة'],
+    [best, 'أفضل نتيجة في المحاكاة'],
+    [k ? String(k.total) : '—', 'وثائق متاحة في المكتبة']
+  ];
+  el.innerHTML = items.map(s =>
+    '<div class="stat"><div class="stat-n">' + s[0] + '</div><div class="stat-l">' + s[1] + '</div></div>'
+  ).join('');
 }
 
 /* ─────────────── SÉANCES ─────────────── */
@@ -1793,10 +1801,10 @@ function renderWelcome(){
       '<div class="dz-hero-emblem" aria-hidden="true"><span>🇩🇿</span><b>تعلم<br>وتقدّم</b><i></i></div>' +
     '</div>' +
     '<div class="welcome-meta">' +
-      '<span class="sec-pill">🏫 ' + esc(s.classe_ar) + ' · ' + s.eleves + ' تلميذ</span>' +
-      '<span class="sec-pill or">📖 المادة : ' + esc(s.matiere || 'اللغة الألمانية') + '</span>' +
-      '<span class="sec-pill rg">🎓 ' + esc(s.niveau) + '</span>' +
-      '<span class="sec-live"><i></i> ' + esc(s.prof || 'الأستاذ خريف أحمد') + ' · متصل الآن</span>' +
+      '<span class="sec-pill">🏫 قسم ' + esc(s.classe_ar || '—') + '</span>' +
+      '<span class="sec-pill or">📖 المادة : ' + esc(s.matiere || 'المادة المحددة في حسابك') + '</span>' +
+      '<span class="sec-pill rg">🎓 ' + esc(s.niveau || '—') + '</span>' +
+      (s.prof ? '<span class="sec-live">👨‍🏫 ' + esc(s.prof) + '</span>' : '') +
     '</div>';
 }
 
