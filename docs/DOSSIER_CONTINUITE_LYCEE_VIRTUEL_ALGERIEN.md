@@ -482,3 +482,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques réalisés après écriture : présence du sélecteur du statut, références de cache v97 cohérentes, conservation de la classe émise par le module, équilibre des accolades CSS à recontrôler sur le fichier final, CI à suivre sur le nouveau HEAD.
 - Le workflow #1887 associé au HEAD précédent est terminé avec succès, y compris les 27 étapes de validation structurelle et pédagogique. Le nouveau lot déclenche une nouvelle CI ; aucun test visuel navigateur ni déploiement Cloudflare du nouveau HEAD n'est revendiqué.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+
+## 34. Finition visuelle de la carte et des classements nationaux — 4 novembre 2026
+
+- Audit ciblé de `stats.js` : la vue produit une carte SVG des wilayas, des points interactifs `.wpt`, un panneau d'information `.st-tip`, une légende et des classements `.wrow` avec barres de progression.
+- Les règles de base existaient déjà dans `style.css` ; le travail a donc été limité à une couche esthétique complémentaire sur les vrais sélecteurs : infobulle à contraste élevé, accent DZ rouge/vert, survol discret des lignes de classement et transition des barres.
+- Variantes explicites clair/sombre, largeur mobile et respect de `prefers-reduced-motion`.
+- Aucun changement à `stats.js`, aux données géographiques, aux statistiques, aux calculs d'agrégation ou à la sécurité.
+- Cache CSS actualisé à `style-prototype-dz.css?v=98` ; service worker `dz-de-v3.158.0` et précache CSS aligné.
+- Validation statique après écriture : accolades CSS équilibrées, sélecteurs présents, thème sombre/mobile/réduction des animations et références de cache à vérifier sur le HEAD final.
+- CI #1890 du HEAD précédent réussie. Une nouvelle CI est attendue sur le nouveau HEAD ; aucun rendu navigateur ni déploiement Cloudflare n'est déclaré vérifié.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
