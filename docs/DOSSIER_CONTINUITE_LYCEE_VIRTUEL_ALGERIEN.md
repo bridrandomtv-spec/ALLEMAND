@@ -667,3 +667,12 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Correction de cache effectuée après revue : référence CSS portée à v110 dans index.html et sw.js, et version du service worker portée à dz-de-v3.168.0.0.4. Cette invalidation garantit le rechargement de la feuille CSS modifiée au lot 48, y compris pour les clients qui disposent d'une ancienne copie en cache.
 - CI/Workers Build du HEAD précédent e68c9df : succès. Le présent complément doit encore passer les contrôles automatiques ; validation visuelle réelle sur ordinateur toujours requise.
 - Travail limité à la branche design/prototypes-67-74-alignment et à la PR #17 ; main inchangée, PR non fusionnée.
+
+## 49. Préservation des pictogrammes dans la typographie desktop — 4 novembre 2026
+
+- Revue de la règle de lisibilité du lot 48 : son sélecteur générique sur tous les éléments span pouvait aussi agrandir des pictogrammes, emblèmes, badges et numéros décoratifs.
+- Règle affinée : liens et libellés textuels restent lisibles à partir de 1024 px ; les spans explicitement décoratifs (aria-hidden, classes d'icônes, emblèmes, badges, numéros et emoji) sont exclus de l'agrandissement.
+- Aucun changement de structure HTML, navigation, JavaScript, données, mobile, Auth, Supabase, RLS, schéma ou paiement. Aucun ajout de dépendance.
+- Cache invalidé : style-prototype-dz.css?v=111 dans index.html et sw.js ; service worker dz-de-v3.168.0.0.5.
+- Contrôles CI et Workers Build à effectuer sur le nouveau HEAD. Le rendu visuel navigateur sur ordinateur reste à confirmer ; aucune validation visuelle n'est revendiquée.
+- Opération limitée à design/prototypes-67-74-alignment / PR #17 vers main ; aucune fusion et aucun changement direct sur main.
