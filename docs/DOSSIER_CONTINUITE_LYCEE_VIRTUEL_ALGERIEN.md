@@ -1031,3 +1031,7 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Fichiers du lot : `style-prototype-dz.css`, `index.html`, `sw.js`, présent dossier de continuité.
 - Contrôles statiques et CI à exécuter sur le commit final. Recette visuelle navigateur ordinateur/mobile toujours requise ; aucune validation visuelle n'est revendiquée sans aperçu accessible.
 - Travail limité à `design/prototypes-67-74-alignment` / PR #17. PR maintenue ouverte et non fusionnée ; aucune modification directe de `main`.
+
+
+## Lot 78 — مساري
+Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec anneau de progression, carte d'action prioritaire, analyse des compétences et progression d'unité. Déclinaisons mobile et thème sombre. `masar.js` reste inchangé : données et actions pédagogiques conservées. Cache CSS `v128`, Service Worker `dz-de-v3.168.0.0.34` avec précache CSS `v128`. Aucune modification Auth, Supabase, RLS, schéma ou paiement. CI et vérification visuelle à confirmer. PR #17 reste ouverte et non fusionnée.
