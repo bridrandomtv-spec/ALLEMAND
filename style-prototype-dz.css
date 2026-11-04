@@ -14378,3 +14378,14 @@ html[data-theme="dark"] #gate .public-catalog-note button{
   #gate .public-faq-heading p{font-size:13px!important;line-height:1.8!important}
   #gate .public-catalog-note p{font-size:13px!important;line-height:1.75!important}
 }
+
+
+/* LOT 53 — Accueil public : renforcer les libellés de navigation et de contexte sur desktop */
+@media(min-width:1024px){
+  #gate .public-nav button{font-size:14px!important;min-height:44px!important;padding-inline:14px!important}
+  #gate .public-kicker{font-size:13px!important;line-height:1.5!important}
+  #gate .public-ai-live{font-size:12px!important;line-height:1.4!important}
+  #gate .public-quality-kicker,
+  #gate .public-quality-track{font-size:12px!important;line-height:1.5!important}
+  #gate .public-quality-live{font-size:12px!important;line-height:1.5!important}
+}
