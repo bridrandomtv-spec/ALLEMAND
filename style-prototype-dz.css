@@ -14412,3 +14412,91 @@ html[data-theme="dark"] #gate .public-catalog-note button{
     grid-column:1/-1!important;
   }
 }
+
+
+/* LOT 57 — Accueil public : remplacer les anneaux vides par des indicateurs explicites */
+#gate .public-quality-metrics{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:13px!important;
+}
+#gate .public-quality-metric{
+  display:flex!important;
+  min-width:0!important;
+  min-height:178px!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:10px!important;
+  padding:17px!important;
+  border:1px solid #dce9df!important;
+  border-radius:17px!important;
+  background:linear-gradient(145deg,#fff 0%,#f5faf6 100%)!important;
+  box-shadow:0 8px 22px rgba(14,70,38,.045)!important;
+}
+#gate .public-quality-metric-top{
+  display:flex!important;
+  width:100%!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+}
+#gate .public-quality-metric-icon{
+  display:grid!important;
+  flex:0 0 38px!important;
+  width:38px!important;
+  height:38px!important;
+  place-items:center!important;
+  border-radius:12px!important;
+  background:#e8f5ec!important;
+  font-size:19px!important;
+}
+#gate .public-quality-metric-status{
+  padding:6px 8px!important;
+  border:1px solid #eadfbe!important;
+  border-radius:999px!important;
+  background:#fff9e9!important;
+  color:#775c20!important;
+  font-size:10px!important;
+  font-weight:850!important;
+  line-height:1.4!important;
+  text-align:center!important;
+}
+#gate .public-quality-metric h5{
+  margin:0!important;
+  color:#183f2a!important;
+  font-size:16px!important;
+  font-weight:950!important;
+  line-height:1.5!important;
+}
+#gate .public-quality-metric p{
+  margin:0!important;
+  color:#607267!important;
+  font-size:13px!important;
+  line-height:1.8!important;
+}
+#gate .public-quality-metric>small{
+  margin-top:auto!important;
+  padding-top:8px!important;
+  border-top:1px solid #e4ece6!important;
+  color:#7b6a43!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  line-height:1.5!important;
+}
+html[data-theme="dark"] #gate .public-quality-metric{
+  border-color:#315640!important;
+  background:linear-gradient(145deg,#1b3526,#172d20)!important;
+}
+html[data-theme="dark"] #gate .public-quality-metric h5{color:#e3f1e7!important}
+html[data-theme="dark"] #gate .public-quality-metric p{color:#b7cdbd!important}
+html[data-theme="dark"] #gate .public-quality-metric-icon{background:#284a34!important}
+html[data-theme="dark"] #gate .public-quality-metric-status{
+  border-color:#665633!important;background:#342d1d!important;color:#f0d99b!important
+}
+html[data-theme="dark"] #gate .public-quality-metric>small{border-color:#315640!important;color:#dfc98e!important}
+@media(max-width:620px){
+  #gate .public-quality-metrics{grid-template-columns:1fr!important;gap:9px!important}
+  #gate .public-quality-metric{min-height:0!important;padding:13px!important;gap:7px!important}
+  #gate .public-quality-metric h5{font-size:15px!important}
+  #gate .public-quality-metric p{font-size:13px!important}
+}
