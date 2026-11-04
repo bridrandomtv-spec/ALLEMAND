@@ -528,31 +528,61 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       <div id="simBody"></div>
     </section>
 
-    <!-- PROF -->
+    <!-- PROF : espace IA pédagogique — structure visuelle, contrôles existants conservés -->
     <section data-view="prof" class="view" hidden>
-      <div class="page-head">
-        <h1>🤖 الأستاذ الافتراضي</h1>
-        <p>🇩🇿 يتحدث العربية · 🇩🇪 يتحدث الألمانية · مدرَّب على محتوى الوحدة 1</p>
-      </div>
-      <div class="chat card">
-        <div class="chat-log" id="chatLog" aria-live="polite" role="log"></div>
-        <div class="chat-sug" id="chatSug"></div>
-        <div class="chat-voice-tools">
-          <label for="chatVoiceLang">لغة الإملاء</label>
-          <select id="chatVoiceLang" aria-label="لغة التعرف على الكلام">
-            <option value="de-DE">🇩🇪 Deutsch</option>
-            <option value="ar-DZ">🇩🇿 العربية الجزائرية</option>
-            <option value="ar-SA">العربية الفصحى</option>
-            <option value="fr-FR">🇫🇷 Français</option>
-            <option value="en-US">🇬🇧 English</option>
-          </select>
-          <span id="chatVoiceStatus" class="chat-voice-status" role="status" aria-live="polite">الإملاء الصوتي جاهز عند توفره في المتصفح</span>
+      <div class="dz-ai-intro">
+        <div class="dz-ai-intro-copy">
+          <span class="dz-ai-eyebrow"><i></i> مُرافقك في التعلّم · EDUDZ AI</span>
+          <h1>أستاذك الافتراضي <span>🤖</span></h1>
+          <p>اسأل، تعلّم، وتدرّب خطوة بخطوة. اطرح سؤالك حول دروسك، قواعد اللغة الألمانية أو التمارين.</p>
+          <div class="dz-ai-capabilities">
+            <span>📘 شرح الدروس</span><span>✍️ تصحيح وفهم التمارين</span><span>🎙️ إدخال صوتي عند دعم المتصفح</span>
+          </div>
         </div>
-        <form class="chat-in" id="chatForm">
-          <input type="text" id="chatInput" placeholder="اكتب سؤالك بالألمانية أو بالعربية…" autocomplete="off">
-          <button type="button" id="chatMicBtn" class="btn btn-o chat-mic" aria-label="بدء الإملاء الصوتي" title="إملاء صوتي">🎙️</button>
-          <button type="submit" class="btn btn-p" aria-label="إرسال السؤال">➤</button>
-        </form>
+        <div class="dz-ai-orb" aria-hidden="true">
+          <div class="dz-ai-orb-core">✦</div>
+          <i class="wave w1"></i><i class="wave w2"></i><i class="wave w3"></i>
+          <span>KI · IA</span>
+        </div>
+      </div>
+      <div class="dz-ai-workspace">
+        <div class="dz-ai-chat-column">
+          <div class="dz-ai-chat-heading">
+            <div><span class="dz-ai-online"></span><b>مساحة الحوار التعليمي</b><small>اكتب سؤالك أو استخدم زر الميكروفون</small></div>
+            <span class="dz-ai-lockup">🇩🇿 <b>EDUDZ</b></span>
+          </div>
+          <div class="chat card">
+            <div class="chat-log" id="chatLog" aria-live="polite" role="log"></div>
+            <div class="chat-sug" id="chatSug"></div>
+            <div class="chat-voice-tools">
+              <label for="chatVoiceLang">لغة الإملاء</label>
+              <select id="chatVoiceLang" aria-label="لغة التعرف على الكلام">
+                <option value="de-DE">🇩🇪 Deutsch</option>
+                <option value="ar-DZ">🇩🇿 العربية الجزائرية</option>
+                <option value="ar-SA">العربية الفصحى</option>
+                <option value="fr-FR">🇫🇷 Français</option>
+                <option value="en-US">🇬🇧 English</option>
+              </select>
+              <span id="chatVoiceStatus" class="chat-voice-status" role="status" aria-live="polite">الإملاء الصوتي جاهز عند توفره في المتصفح</span>
+            </div>
+            <form class="chat-in" id="chatForm">
+              <input type="text" id="chatInput" placeholder="اكتب سؤالك بالألمانية أو بالعربية…" autocomplete="off">
+              <button type="button" id="chatMicBtn" class="btn btn-o chat-mic" aria-label="بدء الإملاء الصوتي" title="إملاء صوتي">🎙️</button>
+              <button type="submit" class="btn btn-p" aria-label="إرسال السؤال">➤</button>
+            </form>
+          </div>
+        </div>
+        <aside class="dz-ai-side">
+          <div class="dz-ai-side-icon">🧠</div>
+          <h2>كيف أستفيد من الأستاذ؟</h2>
+          <ol>
+            <li><b>اسأل بوضوح</b><span>اكتب سؤالك حول نقطة لم تفهمها.</span></li>
+            <li><b>حدّد الدرس</b><span>اذكر الوحدة أو الحصة إن أمكن.</span></li>
+            <li><b>تدرّب</b><span>اطلب مثالاً أو تمريناً إضافياً.</span></li>
+          </ol>
+          <div class="dz-ai-note"><b>💡 نصيحة</b><p>يمكنك السؤال بالعربية أو الألمانية. اختر لغة الإملاء قبل استخدام الميكروفون.</p></div>
+          <button type="button" class="dz-ai-go" data-go="seances">العودة إلى الحصص <span>←</span></button>
+        </aside>
       </div>
     </section>
 
