@@ -920,3 +920,13 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Aucun changement aux routes, événements, données, authentification, Supabase, RLS, paiements ou tableau de bord élève.
 - Vérification statique à effectuer sur le commit : présence du calcul dynamique, suppression de l’ancien `scrollIntoView()` dans `show()`, cohérence des références de cache.
 - Validation navigateur réelle ordinateur/mobile toujours requise ; aucune conformité visuelle n’est revendiquée avant ce test.
+
+
+## Lot 69 — Hiérarchie éditoriale du premier écran public (4 novembre 2026)
+
+- Comparaison du DOM de l'accueil avec le prototype pédagogique : les quatre repères synthétiques étaient placés **après** les deux appels à l'action, alors que le prototype construit la lecture dans l'ordre « promesse → explication → repères concrets → action ».
+- Réordonnancement limité dans `index.html` : indicateurs (3 années, 6 langues, 14 matières, accompagnement IA), puis repère institutionnel, puis boutons d'inscription et de découverte.
+- Aucun texte, identifiant, attribut `data-public-view`, `data-gate-open`, route ou comportement d'inscription n'a été modifié.
+- Aucun changement de CSS, dépendance, Auth, Supabase, RLS ou tableau de bord.
+- Service Worker : `dz-de-v3.168.0.0.22` pour invalider l'ancien HTML en cache.
+- Contrôle statique : ordre des blocs et conservation des deux actions à vérifier après commit ; rendu visuel réel à confirmer sur la preview Cloudflare, sur ordinateur et mobile.
