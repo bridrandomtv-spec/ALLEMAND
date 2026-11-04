@@ -826,3 +826,15 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Aucun changement aux formulaires, Auth, Supabase, RLS, schéma, paiements, données ou tableaux de bord. Travail limité à l'accueil public.
 - Limite : aucune validation visuelle réelle sur navigateur ordinateur/mobile n'est revendiquée dans cette opération.
 - Travail limité à design/prototypes-67-74-alignment / PR #17 vers main; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
+
+
+## Lot 63 — Cohérence éditoriale de l'accueil public (4 novembre 2026)
+
+- Audit de la hiérarchie de l'accueil : le premier écran, le catalogue, les niveaux et la FAQ utilisent désormais un langage visuel de section plus cohérent, avec repère vertical vert/rouge, titres hiérarchisés et séparateurs sobres.
+- Espacement vertical harmonisé entre le catalogue des 14 matières/langues et les trois cartes de niveaux. Les actions secondaires des titres sont présentées comme des liens d'exploration clairement identifiables.
+- Adaptations dédiées au mobile (titres/actions empilés), au thème sombre et au mode de réduction des animations. Aucun contenu métier, nombre, statut de disponibilité, identifiant, route, événement ou gestionnaire modifié.
+- Référence CSS synchronisée en v123 dans index.html et sw.js; service worker dz-de-v3.168.0.0.19.
+- Vérifications statiques à effectuer sur le HEAD final : cache CSS/SW synchronisé, présence des sélecteurs de cohérence, règles mobile/sombre, accolades CSS équilibrées, navigation et écran d'authentification séparé préservés, CI/Workers Build.
+- Aucun changement aux tableaux de bord, Auth, Supabase, RLS, schéma, migrations, paiements ou données. Aucun framework ni dépendance ajoutés.
+- Limite : aucune validation visuelle réelle sur navigateur ordinateur/mobile n'est revendiquée ; la revue visuelle sur les deux formats reste nécessaire.
+- Travail limité à design/prototypes-67-74-alignment / PR #17 vers main; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
