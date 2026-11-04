@@ -1768,14 +1768,21 @@ function renderWelcome(){
   const de = h < 12 ? 'Guten Morgen' : (h < 18 ? 'Guten Tag' : 'Guten Abend');
   const st = loadSeances();
   const next = SEANCES.filter(x => (st.done || []).indexOf(x.n) === -1)[0];
+  const niveauProgression = ['2AS','3AS'].includes(s.niveau) ? s.niveau : (niveauActif || 'tous');
+  const unitesProgression = UNITES.filter(u =>
+    (niveauProgression === 'tous' || u.niveau === niveauProgression) &&
+    Array.isArray(u.seances) && u.seances.length
+  );
   let totDone = 0, totSeanc = 0;
-  UNITES.forEach(u => {
-    if(!u.seances || !u.seances.length) return;
-    totSeanc += u.seances.length;
-    totDone  += (loadSeancesFor(u.n).done || []).length;
+  unitesProgression.forEach(u => {
+    const sessions = u.seances;
+    const completed = loadSeancesFor(u.n).done || [];
+    totSeanc += sessions.length;
+    totDone += sessions.filter(session => completed.indexOf(session.n) !== -1).length;
   });
   const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
   const pct = totSeanc ? Math.round(totDone / totSeanc * 100) : 0;
+  const niveauLibelle = niveauProgression === 'tous' ? 'كل المستويات' : 'المستوى ' + niveauProgression;
   el.innerHTML =
     '<div class="dz-student-hero">' +
       '<div class="dz-hero-copy">' +
@@ -1795,8 +1802,8 @@ function renderWelcome(){
         '<div class="dz-hero-progress">' +
           '<div class="dz-hero-progress-head"><span>تقدمك الدراسي</span><b>' + pct + '%</b></div>' +
           '<div class="dz-hero-track"><i style="width:' + pct + '%"></i></div>' +
-          '<small>' + totDone + ' / ' + totSeanc + ' حصص مكتملة · ' +
-            UNITES.filter(u => u.seances && u.seances.length).length + ' وحدات تعليمية</small>' +
+          '<small>' + (totSeanc ? totDone + ' / ' + totSeanc + ' حصص مكتملة · ' +
+            unitesProgression.length + ' وحدات تعليمية · ' + niveauLibelle : 'لم تُسجَّل حصص متاحة لهذا المستوى بعد') + '</small>' +
         '</div>' +
       '</div>' +
       '<div class="dz-hero-emblem" aria-hidden="true"><span>🇩🇿</span><b>تعلم<br>وتقدّم</b><i></i></div>' +
