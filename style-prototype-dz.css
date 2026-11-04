@@ -12823,3 +12823,258 @@ html[data-theme="dark"] section[data-view="compte"] #compteBody #btnSound2{
     animation-duration:.01ms!important;transition-duration:.01ms!important
   }
 }
+
+
+
+/* 30. Bibliothèque grammaticale, cadre légal et manuel officiel */
+html[data-theme="light"] section[data-view="grammaire"] .page-head,
+html[data-theme="light"] section[data-view="legal"] .page-head,
+html[data-theme="light"] section[data-view="buch"] .page-head{
+  position:relative;overflow:hidden;padding:22px 24px;color:#fff;
+  background:linear-gradient(118deg,#003f22,#006233 60%,#00843d);
+  border:0;border-radius:19px;box-shadow:0 12px 28px rgba(0,75,37,.14)
+}
+html[data-theme="light"] section[data-view="grammaire"] .page-head h1,
+html[data-theme="light"] section[data-view="grammaire"] .page-head p,
+html[data-theme="light"] section[data-view="legal"] .page-head h1,
+html[data-theme="light"] section[data-view="legal"] .page-head p,
+html[data-theme="light"] section[data-view="buch"] .page-head h1,
+html[data-theme="light"] section[data-view="buch"] .page-head p{color:#fff}
+html[data-theme="light"] section[data-view="grammaire"] .page-head p,
+html[data-theme="light"] section[data-view="legal"] .page-head p,
+html[data-theme="light"] section[data-view="buch"] .page-head p{opacity:.86}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody>.bdd-status{
+  margin:14px 0;padding:12px 15px;background:#eff7f1;color:#14512e;
+  border:1px solid #cfe3d4;border-radius:12px
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .filters{
+  margin:14px 0;padding:18px;background:#fff;border:1px solid #dce8df;
+  border-radius:17px;box-shadow:0 7px 22px rgba(0,55,28,.045)
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .filters-h{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .filters-h b{color:#004d28;font-size:16px}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .frow{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .fld2{
+  display:flex;flex-direction:column;gap:7px;min-width:0;color:#45614d;font-size:12px;font-weight:800
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody input,
+html[data-theme="light"] section[data-view="grammaire"] #gramBody select{
+  min-height:43px;width:100%;padding:9px 12px;color:#173d28;background:#fff;
+  border:1px solid #cbdccf;border-radius:11px
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .chips{
+  display:flex;flex-wrap:wrap;gap:8px;margin:14px 0
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .fchip{
+  padding:7px 12px;color:#245b38;background:#eff6f0;border:1px solid #d6e7da;
+  border-radius:999px;font-size:12px;font-weight:800;cursor:pointer
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .fchip.on{
+  color:#fff;background:#006233;border-color:#006233;box-shadow:0 4px 12px rgba(0,98,51,.18)
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody #gList{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .gram-fiche{
+  min-width:0;padding:17px;background:#fff;border:1px solid #dce8df;
+  border-radius:16px;box-shadow:0 6px 18px rgba(0,55,28,.045);transition:transform .18s,box-shadow .18s
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .gram-fiche:hover{
+  transform:translateY(-2px);box-shadow:0 12px 25px rgba(0,55,28,.09)
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .fiche-h{
+  display:flex;justify-content:space-between;gap:12px;align-items:flex-start
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .fiche-t{
+  color:#064b2a;font-weight:900;line-height:1.5
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .fiche-de{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:8px
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .g-exp{
+  margin:14px 0;padding:12px 13px;color:#365844;background:#f3f8f4;
+  border-inline-start:3px solid #00843d;border-radius:10px;line-height:1.85;font-size:13px
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .fiche-meta{
+  display:flex;flex-wrap:wrap;gap:7px;margin:10px 0
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .mchip{
+  padding:5px 8px;color:#47614e;background:#f5f8f5;border:1px solid #e2ebe4;
+  border-radius:8px;font-size:11px
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .fiche-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:11px;
+  border-top:1px solid #e7eee8
+}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .fiche-src{color:#718176;font-size:11px}
+html[data-theme="light"] section[data-view="grammaire"] #gramBody .empty{
+  grid-column:1/-1;padding:35px;text-align:center;border:1px dashed #c9ddce;border-radius:16px
+}
+html[data-theme="light"] section[data-view="grammaire"] .modal-b{
+  color:#264c34;background:#fff;line-height:1.9
+}
+html[data-theme="light"] section[data-view="grammaire"] .modal-h{
+  padding:16px 18px;background:linear-gradient(110deg,#eff7f0,#fff);
+  border-bottom:1px solid #dce8df
+}
+html[data-theme="light"] section[data-view="grammaire"] .gram,
+html[data-theme="light"] section[data-view="grammaire"] .exemples,
+html[data-theme="light"] section[data-view="grammaire"] .warn-box,
+html[data-theme="light"] section[data-view="grammaire"] .tip-box{
+  margin:12px 0;padding:14px;background:#f5f9f5;border:1px solid #dce8df;border-radius:13px
+}
+html[data-theme="light"] section[data-view="grammaire"] .warn-box{background:#fff5f5;border-color:#f0d1d6}
+html[data-theme="light"] section[data-view="grammaire"] .tip-box{background:#eff8f1;border-inline-start:4px solid #006233}
+html[data-theme="light"] section[data-view="grammaire"] .ex-i{
+  display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #e4ece5
+}
+html[data-theme="light"] section[data-view="legal"] #legalBody .lg-hero{
+  display:flex;align-items:center;gap:16px;margin:14px 0;padding:22px;color:#fff;
+  background:linear-gradient(118deg,#003f22,#006233 65%,#00843d);
+  border-radius:18px;box-shadow:0 10px 24px rgba(0,75,37,.14)
+}
+html[data-theme="light"] section[data-view="legal"] #legalBody .lg-crest{
+  display:grid;place-items:center;flex:0 0 58px;width:58px;height:58px;
+  color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
+  border-radius:16px;font-size:27px
+}
+html[data-theme="light"] section[data-view="legal"] #legalBody .lg-hero h2{margin:0;color:#fff;font-size:21px;font-weight:900}
+html[data-theme="light"] section[data-view="legal"] #legalBody .lg-sub{margin:6px 0 0;color:#e8f4eb;font-size:12px;line-height:1.8}
+html[data-theme="light"] section[data-view="legal"] #legalBody .lg-c{
+  margin:12px 0;padding:clamp(17px,2.3vw,25px);color:#354e3b;background:#fff;
+  border:1px solid #dce8df;border-radius:16px;box-shadow:0 6px 18px rgba(0,55,28,.04);
+  line-height:1.95
+}
+html[data-theme="light"] section[data-view="legal"] #legalBody .lg-c> b{
+  display:block;margin-bottom:12px;padding-bottom:11px;color:#004d28;
+  border-bottom:1px solid #e2ece4;font-size:16px
+}
+html[data-theme="light"] section[data-view="legal"] #legalBody .lg-c p{margin:10px 0;color:#465c4b;font-size:13px}
+html[data-theme="light"] section[data-view="legal"] #legalBody .lg-note{
+  margin:15px 0;padding:14px 17px;color:#8b1730;background:#fff4f5;
+  border:1px solid #f0d1d7;border-inline-start:4px solid #d21034;border-radius:12px;font-weight:800
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-hero{
+  display:flex;align-items:center;gap:16px;margin:14px 0;padding:21px;color:#fff;
+  background:linear-gradient(118deg,#003f22,#006233 62%,#00843d);
+  border:0;border-radius:18px;box-shadow:0 10px 24px rgba(0,75,37,.14)
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-crest{
+  display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:15px;font-size:25px
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-hero h2{margin:0;color:#fff;font-weight:900;font-size:20px}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-sub{color:#63776a;font-size:12px;line-height:1.8}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-hero .dn-sub{color:#e6f2e9}
+html[data-theme="light"] section[data-view="buch"] #buchBody>.card{
+  margin:12px 0;padding:clamp(16px,2.2vw,22px);background:#fff;border:1px solid #dce8df;
+  border-radius:16px;box-shadow:0 6px 18px rgba(0,55,28,.045)
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody>.card>b{
+  display:block;margin:8px 0 12px;color:#004d28;font-size:15px
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-check{
+  display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 15px
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-check>span{
+  padding:7px 10px;color:#245638;background:#eff7f0;border:1px solid #d6e8da;border-radius:10px;font-size:12px
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-tabs{
+  display:flex;flex-wrap:wrap;gap:7px;margin:12px 0
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-q{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  margin:9px 0;padding:13px;background:#f6f9f6;border:1px solid #e0eae2;border-radius:12px
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-qt{flex:1;min-width:0;line-height:1.8}
+html[data-theme="light"] section[data-view="buch"] #buchBody .bk-in{
+  width:100%;min-height:42px;padding:9px 11px;color:#173d28;background:#fff;
+  border:1px solid #cbdccf;border-radius:10px
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .bk-fb{
+  margin-top:8px;padding:10px;color:#365844;background:#edf6ef;border-radius:10px
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-res{
+  margin-top:12px;padding:16px;color:#14512e;background:#eff8f1;
+  border:1px solid #cfe3d4;border-radius:13px
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-self{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap
+}
+html[data-theme="light"] section[data-view="buch"] #buchBody .dn-self select{
+  min-height:38px;padding:7px 10px;border:1px solid #cbdccf;border-radius:9px
+}
+html[data-theme="dark"] section[data-view="grammaire"] .page-head,
+html[data-theme="dark"] section[data-view="legal"] .page-head,
+html[data-theme="dark"] section[data-view="buch"] .page-head{
+  color:#f2fff5;background:linear-gradient(118deg,#092c1b,#064a2a 62%,#08663a);border-color:#276747
+}
+html[data-theme="dark"] section[data-view="grammaire"] .page-head h1,
+html[data-theme="dark"] section[data-view="grammaire"] .page-head p,
+html[data-theme="dark"] section[data-view="legal"] .page-head h1,
+html[data-theme="dark"] section[data-view="legal"] .page-head p,
+html[data-theme="dark"] section[data-view="buch"] .page-head h1,
+html[data-theme="dark"] section[data-view="buch"] .page-head p{color:#f2fff5}
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .filters,
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .gram-fiche,
+html[data-theme="dark"] section[data-view="legal"] #legalBody .lg-c,
+html[data-theme="dark"] section[data-view="buch"] #buchBody>.card{
+  color:#e5f3e8;background:#142c1e;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .filters-h b,
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .fiche-t,
+html[data-theme="dark"] section[data-view="legal"] #legalBody .lg-c>b,
+html[data-theme="dark"] section[data-view="buch"] #buchBody>.card>b{color:#b5e8c4}
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .g-exp,
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .gram,
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .exemples,
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .tip-box,
+html[data-theme="dark"] section[data-view="buch"] #buchBody .dn-q{
+  color:#d4e8d9;background:#193524;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .warn-box{
+  color:#ffe1e5;background:#3b2027;border-color:#70414b
+}
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .fiche-meta,
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .mchip{
+  color:#c2dac8;background:#1a3826;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody .fiche-src,
+html[data-theme="dark"] section[data-view="legal"] #legalBody .lg-c p{color:#c2d8c8}
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody input,
+html[data-theme="dark"] section[data-view="grammaire"] #gramBody select,
+html[data-theme="dark"] section[data-view="buch"] #buchBody .bk-in,
+html[data-theme="dark"] section[data-view="buch"] #buchBody .dn-self select{
+  color:#f2fff5;background:#10271b;border-color:#42664e
+}
+html[data-theme="dark"] section[data-view="buch"] #buchBody .dn-check>span,
+html[data-theme="dark"] section[data-view="buch"] #buchBody .dn-res,
+html[data-theme="dark"] section[data-view="buch"] #buchBody .bk-fb{
+  color:#d4ead9;background:#193524;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="buch"] #buchBody .dn-sub{color:#bfd4c5}
+html[data-theme="dark"] section[data-view="buch"] #buchBody .dn-hero .dn-sub{color:#e6f2e9}
+@media(max-width:820px){
+  html[data-theme="light"] section[data-view="grammaire"] #gramBody #gList{grid-template-columns:1fr}
+  html[data-theme="light"] section[data-view="grammaire"] #gramBody .frow{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  html[data-theme="light"] section[data-view="grammaire"] .page-head,
+  html[data-theme="light"] section[data-view="legal"] .page-head,
+  html[data-theme="light"] section[data-view="buch"] .page-head{padding:18px 15px}
+  html[data-theme="light"] section[data-view="grammaire"] #gramBody .filters{padding:13px}
+  html[data-theme="light"] section[data-view="grammaire"] #gramBody .gram-fiche{padding:14px}
+  html[data-theme="light"] section[data-view="legal"] #legalBody .lg-hero{padding:17px;align-items:flex-start}
+  html[data-theme="light"] section[data-view="buch"] #buchBody .dn-hero{padding:17px;align-items:flex-start}
+  html[data-theme="light"] section[data-view="buch"] #buchBody .dn-q{flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){
+  section[data-view="grammaire"] *,section[data-view="legal"] *,section[data-view="buch"] *,
+  section[data-view="grammaire"] *::before,section[data-view="legal"] *::before,section[data-view="buch"] *::before{
+    animation-duration:.01ms!important;transition-duration:.01ms!important
+  }
+}
