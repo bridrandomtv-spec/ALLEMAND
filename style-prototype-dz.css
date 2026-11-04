@@ -15705,3 +15705,224 @@ html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-chart-lab
   #shell #app [data-view="masar"] #masarBody>.ms-hero{margin:0!important}
   #shell #app [data-view="masar"] #masarBody :is(.ms-next,.ms-chart,.ms-prog){min-width:0!important}
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   LOT 78 — identité visuelle dédiée au parcours « مساري »
+   Recomposition de la page, pas une simple recoloration.
+   Les contenus, valeurs, SVG et actions restent générés par masar.js.
+   ══════════════════════════════════════════════════════════════════════ */
+#shell #app [data-view="masar"].dz-masar-page{
+  --ms-ink:#14291e;--ms-muted:#68796e;--ms-green:#006233;--ms-green2:#078448;
+  --ms-line:#e2ebe4;--ms-paper:#fff;--ms-soft:#f3f8f4;
+  max-width:1440px;margin-inline:auto;padding:clamp(12px,2vw,26px);
+}
+#shell #app [data-view="masar"]>.dz-masar-page-head{
+  position:relative;display:flex;align-items:center;justify-content:space-between;
+  gap:18px;margin:0 0 18px;padding:clamp(20px,3vw,32px);
+  overflow:hidden;border:1px solid #dce9df;border-radius:24px;
+  background:linear-gradient(115deg,#f4faf5 0%,#fff 56%,#edf7f0 100%);
+  box-shadow:0 12px 34px rgba(0,66,32,.07);
+}
+#shell #app [data-view="masar"]>.dz-masar-page-head:after{
+  content:"";position:absolute;inset-inline-end:-38px;top:-82px;width:230px;height:230px;
+  border:30px solid rgba(0,98,51,.055);border-radius:50%;pointer-events:none;
+}
+#shell #app [data-view="masar"]>.dz-masar-page-head h1{
+  position:relative;margin:0;color:#075a32;font-size:clamp(27px,3vw,39px);
+  font-weight:950;letter-spacing:-.035em;line-height:1.35;
+}
+#shell #app [data-view="masar"]>.dz-masar-page-head p{
+  position:relative;margin:7px 0 0;color:#627568;font-size:clamp(14px,1.2vw,17px);
+  font-weight:650;line-height:1.8;
+}
+#shell #app [data-view="masar"] #masarBody{
+  grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr)!important;
+  grid-template-areas:"hero hero" "next chart" "progress progress"!important;
+  gap:20px!important;
+}
+#shell #app [data-view="masar"] #masarBody>.ms-hero{
+  position:relative;isolation:isolate;display:grid!important;
+  grid-template-columns:minmax(0,1fr) 190px;align-items:center;gap:24px;
+  min-height:230px;padding:clamp(24px,3.5vw,42px)!important;
+  overflow:hidden;border:0!important;border-radius:28px!important;
+  color:#fff!important;
+  background:
+    radial-gradient(circle at 12% 110%,rgba(255,255,255,.13) 0 110px,transparent 112px),
+    linear-gradient(118deg,#064326 0%,#006233 58%,#078449 100%)!important;
+  box-shadow:0 18px 42px rgba(0,76,39,.19)!important;
+}
+#shell #app [data-view="masar"] #masarBody>.ms-hero:before{
+  content:"";position:absolute;z-index:-1;inset-inline-end:105px;top:-115px;
+  width:310px;height:310px;border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 58px rgba(255,255,255,.025);
+}
+#shell #app [data-view="masar"] #masarBody .ms-hero-copy{min-width:0}
+#shell #app [data-view="masar"] #masarBody .ms-kicker{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;
+  color:#c8f1d5;font-size:13px;font-weight:850;letter-spacing:.02em;
+}
+#shell #app [data-view="masar"] #masarBody .ms-hero h2{
+  margin:0;color:#fff!important;font-size:clamp(25px,3.2vw,39px);
+  font-weight:950;line-height:1.45;letter-spacing:-.035em;
+}
+#shell #app [data-view="masar"] #masarBody .ms-sub{
+  max-width:650px;margin:8px 0 17px;color:#e1f2e6!important;
+  font-size:clamp(14px,1.35vw,17px);line-height:1.9;
+}
+#shell #app [data-view="masar"] #masarBody .ms-hero-meta{
+  display:flex;flex-wrap:wrap;gap:8px;
+}
+#shell #app [data-view="masar"] #masarBody .ms-hero-meta span{
+  display:inline-flex;align-items:center;min-height:34px;padding:6px 11px;
+  border:1px solid rgba(255,255,255,.2);border-radius:999px;
+  background:rgba(255,255,255,.105);color:#fff;font-size:12px;font-weight:800;
+}
+#shell #app [data-view="masar"] #masarBody .ms-ring-wrap{
+  position:relative;display:grid;place-items:center;width:174px;height:174px;
+  justify-self:center;border-radius:50%;background:rgba(255,255,255,.09);
+  box-shadow:0 0 0 12px rgba(255,255,255,.045),inset 0 0 0 1px rgba(255,255,255,.12);
+}
+#shell #app [data-view="masar"] #masarBody .ms-ring{width:150px;height:150px;overflow:visible}
+#shell #app [data-view="masar"] #masarBody .ms-ring-track{fill:none;stroke:rgba(255,255,255,.2);stroke-width:8}
+#shell #app [data-view="masar"] #masarBody .ms-ring-value{
+  fill:none;stroke:#b9f2cb;stroke-width:8;stroke-linecap:round;
+  transform:rotate(-90deg);transform-origin:56px 56px;
+}
+#shell #app [data-view="masar"] #masarBody .ms-ring-label b{color:#fff;font-size:30px;font-weight:950}
+#shell #app [data-view="masar"] #masarBody .ms-ring-label span{color:#e0f3e6;font-size:11px;font-weight:750}
+#shell #app [data-view="masar"] #masarBody>.ms-next,
+#shell #app [data-view="masar"] #masarBody>.ms-chart,
+#shell #app [data-view="masar"] #masarBody>.ms-prog{
+  position:relative;padding:clamp(20px,2.5vw,29px)!important;
+  border:1px solid var(--ms-line)!important;border-radius:23px!important;
+  background:var(--ms-paper)!important;box-shadow:0 9px 28px rgba(20,60,35,.065)!important;
+}
+#shell #app [data-view="masar"] #masarBody>.ms-next{
+  border-top:4px solid #d7a53d!important;
+  background:linear-gradient(145deg,#fffdf8,#fff 70%)!important;
+}
+#shell #app [data-view="masar"] #masarBody>.ms-next.ok{border-top-color:#078448!important}
+#shell #app [data-view="masar"] #masarBody .ms-tag{
+  display:inline-flex;align-items:center;min-height:30px;padding:5px 12px;
+  border-radius:999px;background:#fff3d9;color:#805512;font-size:12px;font-weight:900;
+}
+#shell #app [data-view="masar"] #masarBody .ms-next h3{
+  margin:15px 0 8px;color:var(--ms-ink)!important;
+  font-size:clamp(20px,2vw,26px)!important;font-weight:950;line-height:1.6;
+}
+#shell #app [data-view="masar"] #masarBody .ms-why{
+  color:var(--ms-muted)!important;font-size:14px!important;line-height:2;
+}
+#shell #app [data-view="masar"] #masarBody .ms-next .btn{
+  width:auto;min-width:180px;min-height:48px;margin-top:15px;padding:11px 22px;
+  border-radius:13px;font-size:15px;font-weight:900;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:15px;
+  margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid var(--ms-line);
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-kicker{
+  display:block;margin-bottom:5px;color:#078448;font-size:12px;font-weight:900;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-head h3,
+#shell #app [data-view="masar"] #masarBody .ms-prog-head h3{
+  margin:0;color:var(--ms-ink);font-size:19px;font-weight:950;line-height:1.6;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-head p{
+  margin:5px 0 0;color:var(--ms-muted);font-size:12px;line-height:1.7;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-icon{
+  display:grid;place-items:center;flex:0 0 42px;height:42px;border-radius:13px;
+  background:#eaf6ee;color:#078448;font-size:22px;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-row{
+  display:grid;grid-template-columns:minmax(0,1fr) 48px;gap:9px 12px;
+  align-items:center;padding:12px 0;border-bottom:1px solid #edf2ee;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-label{
+  display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-label b{
+  color:var(--ms-ink);font-size:13px;font-weight:850;white-space:normal;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-label small{
+  flex-basis:100%;padding-inline-start:18px;color:var(--ms-muted);font-size:11px;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-track{
+  grid-column:1/-1;grid-row:2;height:10px;overflow:hidden;border-radius:99px;
+  background:#edf3ee;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-track i{
+  display:block;height:100%;border-radius:inherit;
+  background:linear-gradient(90deg,#078448,#6bc58b);
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-row strong{
+  grid-column:2;grid-row:1;color:#087443;font-size:15px;font-weight:950;
+}
+#shell #app [data-view="masar"] #masarBody .ms-chart-note{
+  margin:14px 0 0;color:var(--ms-muted);font-size:11px;line-height:1.8;
+}
+#shell #app [data-view="masar"] #masarBody .ms-empty-line{
+  display:flex;align-items:center;gap:12px;margin-top:16px;padding:18px;
+  border:1px dashed #c9ddcf;border-radius:15px;background:#f5faf6;color:#476552;
+}
+#shell #app [data-view="masar"] #masarBody>.ms-prog{
+  border-inline-start:5px solid #078448!important;
+  background:linear-gradient(105deg,#fff,#f4faf5)!important;
+}
+#shell #app [data-view="masar"] #masarBody .ms-prog-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;
+}
+#shell #app [data-view="masar"] #masarBody .ms-prog-pct{
+  color:#087443;font-size:28px;font-weight:950;
+}
+#shell #app [data-view="masar"] #masarBody .ms-bar{
+  height:12px;overflow:hidden;border:0!important;border-radius:99px;background:#e7efe9!important;
+}
+#shell #app [data-view="masar"] #masarBody .ms-bar i{
+  display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#078448,#75c98e)!important;
+}
+html[data-theme="dark"] #shell #app [data-view="masar"].dz-masar-page{
+  --ms-ink:#edf7ef;--ms-muted:#b5c8ba;--ms-green:#6dd497;--ms-line:#344a3b;
+  --ms-paper:#17251d;--ms-soft:#1e3025;
+}
+html[data-theme="dark"] #shell #app [data-view="masar"]>.dz-masar-page-head{
+  background:linear-gradient(115deg,#1c3024,#17251d);border-color:#344a3b;
+}
+html[data-theme="dark"] #shell #app [data-view="masar"]>.dz-masar-page-head h1{color:#c5f0d1}
+html[data-theme="dark"] #shell #app [data-view="masar"]>.dz-masar-page-head p{color:#b5c8ba}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody>.ms-next,
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody>.ms-chart,
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody>.ms-prog{
+  background:#17251d!important;border-color:#344a3b!important;
+}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody>.ms-next{background:linear-gradient(145deg,#302a1c,#17251d)!important}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-next h3,
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-chart-head h3,
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-prog-head h3,
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-chart-label b{color:#edf7ef!important}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-chart-track{background:#2a4032}
+html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-empty-line{background:#1e3025;border-color:#496451;color:#c5e2ce}
+@media(max-width:980px){
+  #shell #app [data-view="masar"] #masarBody{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"hero" "next" "chart" "progress"!important}
+}
+@media(max-width:600px){
+  #shell #app [data-view="masar"].dz-masar-page{padding:10px}
+  #shell #app [data-view="masar"]>.dz-masar-page-head{align-items:flex-start;padding:18px;border-radius:18px}
+  #shell #app [data-view="masar"] #masarBody>.ms-hero{
+    grid-template-columns:minmax(0,1fr) 104px;gap:12px;min-height:0;padding:20px!important;border-radius:20px!important;
+  }
+  #shell #app [data-view="masar"] #masarBody .ms-ring-wrap{width:100px;height:100px;box-shadow:0 0 0 6px rgba(255,255,255,.045)}
+  #shell #app [data-view="masar"] #masarBody .ms-ring{width:88px;height:88px}
+  #shell #app [data-view="masar"] #masarBody .ms-ring-label b{font-size:20px}
+  #shell #app [data-view="masar"] #masarBody .ms-ring-label span{font-size:9px}
+  #shell #app [data-view="masar"] #masarBody .ms-hero-meta span{font-size:10px}
+  #shell #app [data-view="masar"] #masarBody>.ms-next,
+  #shell #app [data-view="masar"] #masarBody>.ms-chart,
+  #shell #app [data-view="masar"] #masarBody>.ms-prog{padding:17px!important;border-radius:17px!important}
+}
+@media(max-width:390px){
+  #shell #app [data-view="masar"] #masarBody>.ms-hero{grid-template-columns:1fr}
+  #shell #app [data-view="masar"] #masarBody .ms-ring-wrap{justify-self:start}
+}
