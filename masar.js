@@ -15,10 +15,16 @@
       c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   function progressData(){
-    let total = 0, done = 0, units = 0;
+    let total = 0, done = 0, units = 0, niveau = 'tous';
     try{
+      const session = window.AUTH && AUTH.session ? AUTH.session() : null;
+      const accountLevel = session && ['2AS','3AS'].includes(session.niveau) ? session.niveau : null;
+      const selectedLevel = window.DZ && ['2AS','3AS','tous'].includes(window.DZ.niveauActif)
+        ? window.DZ.niveauActif : 'tous';
+      niveau = accountLevel || selectedLevel;
       if(typeof UNITES !== 'undefined' && typeof loadSeancesFor === 'function'){
-        UNITES.forEach(u => {
+        const scope = niveau === 'tous' ? UNITES : UNITES.filter(u => u.niveau === niveau);
+        scope.forEach(u => {
           const sessions = Array.isArray(u.seances) ? u.seances : [];
           if(!sessions.length) return;
           const state = loadSeancesFor(u.n) || {};
@@ -29,11 +35,11 @@
         });
       }
     }catch(e){}
-    if(!total && typeof window.prochaineSeance === 'function'){
+    if(!total && niveau === 'tous' && typeof window.prochaineSeance === 'function'){
       const n = window.prochaineSeance();
       if(n){ total = n.total || 0; done = n.faites || 0; units = 1; }
     }
-    return {total,done,units,pct:total ? Math.round(done/total*100) : 0};
+    return {total,done,units,niveau,pct:total ? Math.round(done/total*100) : 0};
   }
 
   function render(){
@@ -49,13 +55,14 @@
       + '<div class="ms-hero-copy"><span class="ms-kicker">🇩🇿 رحلتك التعليمية</span>'
       + '<h2>كل خطوة تقرّبك من النجاح</h2>'
       + '<p class="ms-sub">تقدّمك الحقيقي، مهاراتك، وخطوتك القادمة في مكان واحد</p>'
-      + '<div class="ms-hero-meta"><span>📚 ' + progress.units + ' وحدات متاحة</span>'
+      + '<div class="ms-hero-meta"><span>🎓 ' + (progress.niveau === 'tous' ? 'كل المستويات' : 'المستوى ' + progress.niveau) + '</span>'
+      + '<span>📚 ' + progress.units + ' وحدات ضمن المسار</span>'
       + '<span>✓ ' + progress.done + ' حصة مكتملة</span>'
       + '<span>⏳ ' + Math.max(0,progress.total-progress.done) + ' متبقية</span></div></div>'
       + '<div class="ms-ring-wrap"><svg class="ms-ring" viewBox="0 0 112 112" role="img" aria-label="التقدم العام ' + progress.pct + '%">'
       + '<circle class="ms-ring-track" cx="56" cy="56" r="43"/>'
       + '<circle class="ms-ring-value" cx="56" cy="56" r="43" stroke-dasharray="' + circumference.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '"/>'
-      + '</svg><div class="ms-ring-label"><b>' + progress.pct + '%</b><span>التقدم العام</span></div></div>'
+      + '</svg><div class="ms-ring-label"><b>' + (progress.total ? progress.pct + '%' : '—') + '</b><span>' + (progress.total ? 'تقدم المستوى' : 'بانتظار بيانات الحصص') + '</span></div></div>'
       + '</div>';
 
     /* 1) priorité : révision due */
