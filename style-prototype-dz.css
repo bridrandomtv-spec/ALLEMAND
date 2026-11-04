@@ -14157,3 +14157,17 @@ html[data-theme="dark"] #gate .public-stat b,html[data-theme="dark"] #gate .publ
 html[data-theme="dark"] #gate .public-stat span,html[data-theme="dark"] #gate .public-feature small,html[data-theme="dark"] #gate .public-mini-card>small,html[data-theme="dark"] #gate .public-year-cards small{color:#b7cdbd!important}
 html[data-theme="dark"] #gate .public-btn.secondary{background:#172d20!important;color:#d8eee0!important;border-color:#41664c!important}
 @media(prefers-reduced-motion:reduce){#gate .public-feature{transition:none!important}#gate .public-feature:hover{transform:none!important}}
+
+
+/* LOT 42 — Statut explicite du catalogue de secours hors ligne */
+#gate .public-mini-catalog[aria-busy="true"]{opacity:.82}
+#gate .public-mini-catalog .pub-home-status.unavailable{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:max-content!important;max-width:100%!important;margin-top:8px!important;padding:5px 8px!important;
+  border:1px solid #d8dce0!important;border-radius:999px!important;
+  background:#f1f3f5!important;color:#56616b!important;font-size:10px!important;
+  font-weight:850!important;line-height:1.4!important
+}
+html[data-theme="dark"] #gate .public-mini-catalog .pub-home-status.unavailable{
+  background:#29333c!important;border-color:#46535e!important;color:#d2dbe2!important
+}
