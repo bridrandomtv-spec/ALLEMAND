@@ -307,3 +307,49 @@
     else if(location.hash === '#inscription') setAuthPage('signup', false);
   });
 })();
+
+
+/* Lot 64 — démonstration pédagogique du professeur IA dans le portail public.
+   Le contenu est illustratif : aucun micro ni moteur vocal n'est déclenché ici. */
+(function(){
+  'use strict';
+  function alignPublicHero(){
+    const gate=document.getElementById('gate');
+    const card=gate&&gate.querySelector('.public-ai-card');
+    const copy=gate&&gate.querySelector('.public-copy');
+    if(!card||!copy||card.dataset.tutorDemoReady==='1')return;
+    const demo=card.querySelector('.public-ai-demo');
+    const head=card.querySelector('.public-ai-head');
+    if(!demo||!head)return;
+    const icon=head.querySelector('.public-ai-icon');
+    const title=head.querySelector('b');
+    const subtitle=head.querySelector('small');
+    const status=head.querySelector('.public-ai-live');
+    if(icon){icon.textContent='🎙️';icon.setAttribute('aria-hidden','true');}
+    if(title)title.textContent='الأستاذ الذكي';
+    if(subtitle)subtitle.textContent='مرافقة تعليمية بالشرح والحوار';
+    if(status)status.textContent='مساعد تعليمي';
+    demo.className='public-ai-tutor-demo';
+    demo.setAttribute('aria-label','مثال توضيحي لحوار تعليمي في اللغة الألمانية');
+    demo.innerHTML='<div class="public-ai-tutor-top"><span class="public-ai-tutor-label"><i></i> مثال توضيحي</span><span class="public-ai-tutor-subject">Deutsch · قواعد اللغة</span></div><div class="public-ai-voice-stage" aria-hidden="true"><span class="public-ai-mic">🎙</span><div class="public-ai-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="public-ai-voice-caption">التعلّم بالحوار والشرح</span></div><article class="public-ai-dialog public-ai-question"><span class="public-ai-speaker">سؤال التلميذ</span><p>ما الفرق بين <bdi lang="de" dir="ltr">Nominativ</bdi> و <bdi lang="de" dir="ltr">Akkusativ</bdi>؟</p></article><article class="public-ai-dialog public-ai-answer"><span class="public-ai-speaker">شرح الأستاذ</span><p><bdi lang="de" dir="ltr">Nominativ</bdi> يحدد الفاعل، أمّا <bdi lang="de" dir="ltr">Akkusativ</bdi> فيحدد المفعول به المباشر.</p><div class="public-ai-example"><bdi lang="de" dir="ltr">Der Schüler liest den Text.</bdi><small>Der Schüler: الفاعل · den Text: المفعول به</small></div></article>';
+    const cta=card.querySelector('.public-ai-cta');
+    if(cta)cta.textContent='اكتشف المواد وموارد التعلّم ←';
+    const note=card.querySelector('.public-ai-note');
+    if(note)note.textContent='هذا الحوار نموذج توضيحي لطريقة الشرح، وليس محادثة مباشرة أو جلسة صوتية نشطة.';
+    const stats=copy.querySelector('.public-stats');
+    const trust=copy.querySelector('.public-trust');
+    const actions=copy.querySelector('.public-actions');
+    if(stats)copy.appendChild(stats);
+    if(trust)copy.appendChild(trust);
+    if(actions)copy.appendChild(actions);
+    card.dataset.tutorDemoReady='1';
+    if(!document.getElementById('public-ai-tutor-style')){
+      const style=document.createElement('style');
+      style.id='public-ai-tutor-style';
+      style.textContent='#gate .public-ai-tutor-demo{display:grid;gap:13px;min-width:0;overflow:hidden;padding:17px;border:1px solid #d5e7da;border-radius:19px;background:linear-gradient(150deg,#f2f8f4,#fff 62%,#fff8f7);color:#173b29;box-shadow:inset 0 1px 0 #fff}#gate .public-ai-tutor-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}#gate .public-ai-tutor-label{display:inline-flex;align-items:center;gap:7px;color:#006233;font-size:12px;font-weight:900}#gate .public-ai-tutor-label i{width:8px;height:8px;border-radius:50%;background:#d21034;box-shadow:0 0 0 4px rgba(210,16,52,.1)}#gate .public-ai-tutor-subject{color:#657a6b;font-size:11px;font-weight:800}#gate .public-ai-voice-stage{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:12px;padding:15px;border-radius:15px;background:linear-gradient(115deg,#004d28,#006f39 70%,#087b45);color:#fff}#gate .public-ai-mic{display:grid;place-items:center;width:46px;height:46px;border:1px solid rgba(255,255,255,.25);border-radius:14px;background:rgba(255,255,255,.13);font-size:23px}#gate .public-ai-wave{height:38px;display:flex;align-items:center;justify-content:center;gap:4px;direction:ltr}#gate .public-ai-wave i{display:block;width:4px;height:12px;border-radius:8px;background:#fff;opacity:.9}#gate .public-ai-wave i:nth-child(3n){height:25px}#gate .public-ai-wave i:nth-child(4n){height:32px}#gate .public-ai-wave i:nth-child(5n){height:18px}#gate .public-ai-voice-caption{grid-column:1/-1;color:#e2f3e8;font-size:11px;font-weight:800;text-align:center}#gate .public-ai-dialog{padding:12px 14px;border-radius:14px;min-width:0}#gate .public-ai-question{margin-inline-start:12%;border:1px solid #e2e9e4;background:#fff}#gate .public-ai-answer{margin-inline-end:5%;border:1px solid #cfe5d5;background:#eaf5ed}#gate .public-ai-speaker{display:block;margin-bottom:6px;color:#006233;font-size:11px;font-weight:900}#gate .public-ai-dialog p{margin:0;color:#263c2e;font-size:13px;line-height:1.85;font-weight:650}#gate .public-ai-example{display:grid;gap:4px;margin-top:9px;padding:9px 11px;border-inline-start:3px solid #d21034;border-radius:8px;background:#fff}#gate .public-ai-example bdi{color:#075b35;font-size:14px;font-weight:900}#gate .public-ai-example small{color:#68796d;font-size:10px;line-height:1.6}#gate .public-ai-card .public-ai-note{font-size:11px!important;line-height:1.75!important;color:#68796d!important}@media(min-width:1000px){#gate .public-ai-card{padding:24px!important}#gate .public-ai-tutor-demo{gap:15px;padding:20px}#gate .public-ai-dialog p{font-size:14px}}@media(max-width:700px){#gate .public-ai-tutor-demo{gap:10px;padding:12px}#gate .public-ai-voice-stage{padding:12px;grid-template-columns:42px minmax(0,1fr);gap:9px}#gate .public-ai-mic{width:41px;height:41px}#gate .public-ai-wave{gap:3px}#gate .public-ai-wave i{width:3px}#gate .public-ai-question{margin-inline-start:5%}#gate .public-ai-answer{margin-inline-end:2%}#gate .public-ai-dialog p{font-size:12px}#gate .public-ai-example small{font-size:10px}}@media(prefers-reduced-motion:reduce){#gate .public-ai-wave i{animation:none!important}}html[data-theme="dark"] #gate .public-ai-tutor-demo{border-color:#315b40;background:linear-gradient(150deg,#172b20,#1b2921 65%,#302022);color:#e7f5eb}html[data-theme="dark"] #gate .public-ai-tutor-subject,html[data-theme="dark"] #gate .public-ai-card .public-ai-note{color:#b6c9bb!important}html[data-theme="dark"] #gate .public-ai-question{border-color:#3a5142;background:#202d24}html[data-theme="dark"] #gate .public-ai-answer{border-color:#426b4d;background:#203b2a}html[data-theme="dark"] #gate .public-ai-dialog p{color:#e4f0e7}html[data-theme="dark"] #gate .public-ai-speaker{color:#a5e0b8}html[data-theme="dark"] #gate .public-ai-example{background:#17251c}html[data-theme="dark"] #gate .public-ai-example bdi{color:#b4e7c2}html[data-theme="dark"] #gate .public-ai-example small{color:#b8c8bc}';
+      document.head.appendChild(style);
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',alignPublicHero,{once:true});
+  else alignPublicHero();
+})();
