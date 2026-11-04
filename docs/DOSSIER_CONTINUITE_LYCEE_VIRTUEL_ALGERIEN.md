@@ -852,3 +852,22 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer sur le HEAD final : syntaxe JavaScript, présence des éléments du panneau, ordre des repères/actions, préservation des attributs de navigation, version du service worker et CI/Workers Build.
 - Limite : le rendu n'a pas été ouvert dans un navigateur ; aucune validation visuelle desktop/mobile ni publication Cloudflare n'est revendiquée.
 - Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main` ; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
+
+
+## Lot 65 — Correction du parcours « découvrir les matières » (4 novembre 2026)
+
+### Problème constaté
+Depuis l'accueil public, les CTA « اكتشف المواد » et « اكتشف المواد وموارد التعلّم » déclenchaient bien `renderSubjects()`, mais l'utilisateur restait visuellement sur l'accueil/menu au lieu d'arriver clairement sur le catalogue. La cause identifiée est une collision CSS : `.public-landing` possède des déclarations `display: ... !important`, qui peuvent neutraliser le comportement natif de l'attribut HTML `hidden`. La navigation activait en parallèle le lien « المواد التعليمية », donnant l'impression qu'une seconde action était nécessaire.
+
+### Correction intégrée
+- Dans `public-portal.js`, ajout de règles prioritaires et ciblées pour garantir que `[hidden]` masque réellement `.public-landing`, `.public-explorer` et `.gate-card`.
+- Après le rendu du catalogue (succès ou erreur), défilement vers `#publicExplorer` pour présenter directement le contenu, et non le menu.
+- Ajout de `scroll-margin-top` au catalogue pour éviter un alignement collé au bord supérieur.
+- Les deux CTA continuent d'utiliser le même parcours catalogue que l'entrée « المواد التعليمية » ; aucune navigation parallèle ni modification des données.
+- Aucun changement aux routes, à l'authentification, à Supabase/RLS, au tableau de bord élève ou aux paiements.
+
+### Vérifications et limites
+- Contrôle statique du code modifié : règle de masquage `[hidden]` présente et défilement après rendu présent.
+- À confirmer par un test navigateur réel : clic sur les deux CTA depuis ordinateur et mobile, vérifier que le catalogue apparaît immédiatement et que le menu ne reste pas affiché comme écran actif.
+- Aucun rendu navigateur ni capture visuelle n'a été exécuté dans cet environnement.
+- Travail effectué uniquement sur `design/prototypes-67-74-alignment`, PR #17 ; aucune fusion et aucune modification de `main`.
