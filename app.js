@@ -1816,12 +1816,12 @@ function renderSectionBar(){
   if(!s){ el.innerHTML = ''; return; }
   const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
   el.innerHTML =
-    '<span class="sec-pill">🇩🇿 جمهورية جزائرية</span>' +
-    '<span class="sec-pill or">🏫 قسم ' + esc(s.classe_ar) + ' · ' + s.eleves + ' تلميذ</span>' +
-    '<span class="sec-pill">📖 ' + esc(s.matiere || 'اللغة الألمانية') + '</span>' +
-    '<span class="sec-pill rg">🎓 ' + esc(s.niveau) + ' — البرنامج الرسمي MEN</span>' +
+    '<span class="sec-pill">🇩🇿 الثانوية الافتراضية الجزائرية</span>' +
+    '<span class="sec-pill or">🏫 قسم ' + esc(s.classe_ar || '—') + '</span>' +
+    '<span class="sec-pill">📖 ' + esc(s.matiere || 'المادة المحددة في حسابك') + '</span>' +
+    '<span class="sec-pill rg">🎓 المستوى ' + esc(s.niveau || '—') + '</span>' +
     (k ? '<span class="sec-pill">🗂️ ' + k.total + ' وثيقة</span>' : '') +
-    '<span class="sec-live"><i></i> الأستاذ 🤖 متصل · يتحدث العربية</span>';
+    '<span class="sec-live">🤖 فضاء المساعدة التعليمية</span>';
 }
 
 /* ══════════ PASTILLE UTILISATEUR ══════════ */
