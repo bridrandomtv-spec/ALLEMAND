@@ -11082,3 +11082,105 @@ html[data-theme="dark"] #shell #app [data-view="profboard"] .dz-prof-dashboard #
 @media(prefers-reduced-motion:reduce){
   #shell #app [data-view="profboard"] .dz-prof-dashboard *{transition:none!important;animation:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN CONTROL ROOM — الإدارة
+   Présentation uniquement : garde admin et actions Supabase intactes.
+   ═══════════════════════════════════════════════════════════════ */
+#shell #app [data-view="admin"] #adminBody{max-width:1280px;margin-inline:auto}
+#shell #app [data-view="admin"] #adminBody .ad-hero{
+  position:relative;isolation:isolate;overflow:hidden;min-height:164px;
+  padding:27px 30px;border:1px solid rgba(255,255,255,.14);border-radius:23px;
+  background:radial-gradient(circle at 88% 10%,rgba(255,255,255,.13),transparent 26%),
+    radial-gradient(circle at 8% 100%,rgba(210,16,52,.27),transparent 32%),
+    linear-gradient(120deg,#003b21,#006233 58%,#087b43);
+  color:#fff;box-shadow:0 18px 40px rgba(0,65,34,.18)
+}
+#shell #app [data-view="admin"] #adminBody .ad-hero:after{
+  content:"";position:absolute;z-index:-1;inset-inline-end:17%;top:-155px;width:270px;height:270px;
+  border:1px solid rgba(255,255,255,.15);border-radius:50%;
+  box-shadow:0 0 0 25px rgba(255,255,255,.035),0 0 0 53px rgba(255,255,255,.025)
+}
+#shell #app [data-view="admin"] #adminBody .ad-crest{
+  display:grid;place-items:center;width:62px;height:62px;flex:0 0 62px;
+  border:1px solid rgba(255,255,255,.23);border-radius:18px;
+  background:rgba(255,255,255,.12);font-size:31px
+}
+#shell #app [data-view="admin"] #adminBody .ad-hero h2{color:#fff!important;font-size:clamp(22px,2.8vw,31px);font-weight:950}
+#shell #app [data-view="admin"] #adminBody .ad-hero .ad-sub{color:#e4f2e8!important;line-height:1.9}
+#shell #app [data-view="admin"] #adminBody .ad-stats{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:16px 0
+}
+#shell #app [data-view="admin"] #adminBody .ad-s{
+  position:relative;overflow:hidden;min-width:0;padding:17px 12px;
+  border:1px solid var(--b);border-radius:17px;background:linear-gradient(155deg,var(--p),var(--p2));
+  box-shadow:0 8px 22px rgba(0,55,28,.055)
+}
+#shell #app [data-view="admin"] #adminBody .ad-s:before{
+  content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#006233,#d21034)
+}
+#shell #app [data-view="admin"] #adminBody .ad-s b{font-size:clamp(21px,2.2vw,29px);color:var(--g);font-weight:950}
+#shell #app [data-view="admin"] #adminBody .ad-s span{font-size:11px;font-weight:800;color:var(--t)}
+#shell #app [data-view="admin"] #adminBody .ad-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+#shell #app [data-view="admin"] #adminBody .ad-grid>.card,
+#shell #app [data-view="admin"] #adminBody .ad-box,
+#shell #app [data-view="admin"] #adminBody .ad-mono>.ad-grid>.card,
+#shell #app [data-view="admin"] #adminBody .ad-mono>.card{
+  min-width:0;padding:20px;border:1px solid var(--b);border-radius:19px;
+  box-shadow:0 9px 25px rgba(0,55,28,.055)
+}
+#shell #app [data-view="admin"] #adminBody .ad-grid>.card>b,
+#shell #app [data-view="admin"] #adminBody .ad-box h3{
+  display:block;margin-bottom:12px;color:var(--t);font-size:17px;font-weight:950;line-height:1.6
+}
+#shell #app [data-view="admin"] #adminBody .ad-tab{border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:12px}
+#shell #app [data-view="admin"] #adminBody .ad-tab th{
+  padding:11px 10px;background:#eaf4ed;color:#075b35;border-color:#d9e8dd;font-weight:900
+}
+#shell #app [data-view="admin"] #adminBody .ad-tab td{padding:10px;border-color:var(--b);line-height:1.6}
+#shell #app [data-view="admin"] #adminBody .ad-tab tr:last-child td{border-bottom:0}
+#shell #app [data-view="admin"] #adminBody .ad-role{min-height:34px;padding:5px 8px}
+#shell #app [data-view="admin"] #adminBody .ad-box{margin-top:15px}
+#shell #app [data-view="admin"] #adminBody .ad-mono{display:grid;gap:14px;margin-top:14px}
+#shell #app [data-view="admin"] #adminBody .ad-deny{
+  max-width:760px;margin:24px auto;padding:24px;border:1px solid rgba(210,16,52,.22);
+  border-inline-start:5px solid #d21034;border-radius:18px
+}
+#shell #app [data-view="admin"] #adminBody .ad-load{
+  padding:18px;border:1px dashed var(--b);border-radius:14px;text-align:center
+}
+html[data-theme="dark"] #shell #app [data-view="admin"] #adminBody .ad-hero{
+  background:radial-gradient(circle at 88% 10%,rgba(255,255,255,.08),transparent 26%),
+    linear-gradient(120deg,#002d19,#00532d 60%,#08653a)
+}
+html[data-theme="dark"] #shell #app [data-view="admin"] #adminBody .ad-s,
+html[data-theme="dark"] #shell #app [data-view="admin"] #adminBody .ad-grid>.card,
+html[data-theme="dark"] #shell #app [data-view="admin"] #adminBody .ad-box,
+html[data-theme="dark"] #shell #app [data-view="admin"] #adminBody .ad-mono>.card{
+  background:linear-gradient(155deg,#1b3022,#14251b);border-color:#34543e
+}
+html[data-theme="dark"] #shell #app [data-view="admin"] #adminBody .ad-s span{color:#e1f1e6}
+html[data-theme="dark"] #shell #app [data-view="admin"] #adminBody .ad-tab th{
+  background:#244832;color:#d6efde;border-color:#34543e
+}
+html[data-theme="dark"] #shell #app [data-view="admin"] #adminBody .ad-tab td{border-color:#34543e}
+@media(max-width:900px){
+  #shell #app [data-view="admin"] #adminBody .ad-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #shell #app [data-view="admin"] #adminBody .ad-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  #shell #app [data-view="admin"] #adminBody .ad-hero{padding:21px;align-items:flex-start}
+  #shell #app [data-view="admin"] #adminBody .ad-crest{width:49px;height:49px;flex-basis:49px;font-size:25px}
+  #shell #app [data-view="admin"] #adminBody .ad-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  #shell #app [data-view="admin"] #adminBody .ad-s{padding:14px 8px}
+  #shell #app [data-view="admin"] #adminBody .ad-grid>.card,
+  #shell #app [data-view="admin"] #adminBody .ad-box,
+  #shell #app [data-view="admin"] #adminBody .ad-mono>.card{padding:14px}
+  #shell #app [data-view="admin"] #adminBody .ad-tab{font-size:11px}
+  #shell #app [data-view="admin"] #adminBody .ad-tab th,
+  #shell #app [data-view="admin"] #adminBody .ad-tab td{padding:8px 7px}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="admin"] #adminBody *{transition:none!important;animation:none!important}
+}
