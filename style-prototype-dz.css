@@ -10615,3 +10615,169 @@ html[data-theme="dark"] #shell #app [data-view="prof"] .dz-ai-side li::before{ba
 @media(prefers-reduced-motion:reduce){
   #shell #app [data-view="prof"] .dz-ai-orb .wave{animation:none}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   DZ COURSE EXPERIENCE — composition éditoriale des séances
+   Données, états, IDs et interactions restent ceux du moteur existant.
+   ═══════════════════════════════════════════════════════════════ */
+#shell #app [data-view="seances"].dz-course-page{max-width:1180px;margin-inline:auto}
+#shell #app [data-view="seances"] .dz-course-hero{
+  position:relative;isolation:isolate;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+  min-height:188px;padding:30px 34px!important;margin:0 0 22px!important;
+  border:1px solid rgba(255,255,255,.12)!important;border-radius:24px!important;
+  border-bottom:0!important;
+  background:
+    radial-gradient(ellipse at 12% 8%,rgba(255,255,255,.13),transparent 35%),
+    radial-gradient(ellipse at 92% 100%,rgba(210,16,52,.28),transparent 36%),
+    linear-gradient(120deg,#003d22 0%,#006233 58%,#087a42 100%)!important;
+  box-shadow:0 18px 38px rgba(0,65,34,.19);
+}
+#shell #app [data-view="seances"] .dz-course-hero:before{
+  content:"";position:absolute;z-index:-1;inset:0 auto 0 0;width:7px;
+  background:linear-gradient(180deg,#fff 0 33%,#d21034 33% 66%,#fff 66%);
+  opacity:.9
+}
+#shell #app [data-view="seances"] .dz-course-hero:after{
+  content:"";position:absolute;z-index:-1;width:230px;height:230px;
+  inset-inline-end:5%;top:-92px;border:1px solid rgba(255,255,255,.15);
+  border-radius:50%;box-shadow:0 0 0 24px rgba(255,255,255,.035),0 0 0 52px rgba(255,255,255,.025)
+}
+#shell #app [data-view="seances"] .dz-course-hero h1{
+  max-width:80%;margin:0 0 10px!important;color:#fff!important;
+  font-size:clamp(24px,3vw,35px)!important;font-weight:900!important;
+  line-height:1.35;letter-spacing:-.025em
+}
+#shell #app [data-view="seances"] .dz-course-hero p{
+  max-width:78%;margin:0 0 18px!important;color:#e5f4e9!important;
+  font-size:14px;line-height:1.9;font-weight:600
+}
+#shell #app [data-view="seances"] .dz-course-hero .progress-wrap{
+  width:min(560px,78%);height:9px;margin:0!important;overflow:hidden;
+  border:1px solid rgba(255,255,255,.2);border-radius:99px;background:rgba(0,0,0,.2)
+}
+#shell #app [data-view="seances"] .dz-course-hero .progress{
+  border-radius:99px;background:linear-gradient(90deg,#fff,#c5f0d1,#d21034);
+  box-shadow:0 0 12px rgba(255,255,255,.25)
+}
+#shell #app [data-view="seances"] .dz-course-hero .progress-lbl{
+  margin-top:8px;color:#fff!important;font-size:12px;font-weight:800
+}
+#shell #app [data-view="seances"] .dz-course-catalog{
+  padding:24px!important;border:1px solid #dce9df!important;border-radius:22px!important;
+  background:linear-gradient(160deg,#fff 0%,#fbfdfb 72%,#f1f8f3 100%)!important;
+  box-shadow:0 12px 30px rgba(0,58,29,.065)!important
+}
+#shell #app [data-view="seances"] .dz-course-catalog>h2{
+  display:flex;align-items:center;gap:9px;margin:25px 0 15px!important;
+  padding:0 0 13px;border-bottom:1px solid #e1ece4;
+  color:#064c2b;font-size:clamp(18px,2vw,23px);font-weight:900;line-height:1.5
+}
+#shell #app [data-view="seances"] .dz-course-catalog .niv-sel{
+  display:flex;flex-wrap:wrap;gap:9px;margin:0 0 17px
+}
+#shell #app [data-view="seances"] .dz-course-catalog .niv{
+  min-height:42px;padding:9px 17px!important;border:1px solid #cbded0!important;
+  border-radius:13px!important;background:#f5faf6!important;color:#24563a!important;
+  font-weight:850;transition:transform .18s,background .18s,border-color .18s
+}
+#shell #app [data-view="seances"] .dz-course-catalog .niv.on{
+  border-color:#006233!important;background:#006233!important;color:#fff!important;
+  box-shadow:0 6px 16px rgba(0,98,51,.2)
+}
+#shell #app [data-view="seances"] .dz-course-catalog .unite-sel{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:0 0 25px
+}
+#shell #app [data-view="seances"] .dz-course-catalog .ucard{
+  min-height:164px;padding:17px!important;border-radius:18px!important;
+  border:1px solid #dce9df!important;
+  background:linear-gradient(145deg,#fff 0%,#f5faf6 100%)!important;
+  box-shadow:0 5px 15px rgba(0,55,28,.045)!important
+}
+#shell #app [data-view="seances"] .dz-course-catalog .ucard.on{
+  border:2px solid #087a42!important;padding:16px!important;
+  background:linear-gradient(145deg,#eaf6ee,#fff 78%)!important;
+  box-shadow:0 10px 24px rgba(0,98,51,.13)!important
+}
+#shell #app [data-view="seances"] .dz-course-catalog .ucard-de{
+  color:#064c2b;font-size:16px;font-weight:900;line-height:1.5
+}
+#shell #app [data-view="seances"] .dz-course-catalog .ucard-ar{color:#486b55;font-weight:700}
+#shell #app [data-view="seances"] .dz-course-catalog .ucard-bar{
+  height:6px;margin:5px 0 2px;border-radius:99px;background:#e4eee7;overflow:hidden
+}
+#shell #app [data-view="seances"] .dz-course-catalog .ucard-bar i{
+  display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#006233,#43a66d)
+}
+#shell #app [data-view="seances"] .dz-course-catalog .seance{
+  position:relative;min-height:82px;padding:16px!important;margin:10px 0!important;
+  border-radius:16px!important;border-color:#e0ebe3!important;
+  background:linear-gradient(110deg,#fff,#f7fbf8)!important
+}
+#shell #app [data-view="seances"] .dz-course-catalog .seance:focus-within{outline:2px solid #16834c;outline-offset:2px}
+#shell #app [data-view="seances"] .dz-course-catalog .seance.done{
+  border-color:#b8d9c1!important;background:linear-gradient(110deg,#edf8f0,#fff)!important
+}
+#shell #app [data-view="seances"] .dz-course-catalog .s-num{
+  width:43px;height:43px;flex-basis:43px;border-radius:14px;
+  background:linear-gradient(145deg,#006233,#078448);color:#fff;font-weight:900;
+  box-shadow:0 5px 12px rgba(0,98,51,.16)
+}
+#shell #app [data-view="seances"] .dz-course-catalog .seance.done .s-num{background:#167b43}
+#shell #app [data-view="seances"] .dz-course-catalog .s-t{color:#173f2a;font-size:14px;font-weight:900}
+#shell #app [data-view="seances"] .dz-course-catalog .s-d{color:#607568;font-size:13px}
+#shell #app [data-view="seances"] #seanceDetail{margin-top:20px}
+#shell #app [data-view="seances"] #seanceDetail .detail{
+  padding:clamp(17px,3vw,30px)!important;border:1px solid #d7e8dc!important;
+  border-top:4px solid #006233!important;border-radius:22px!important;
+  background:linear-gradient(155deg,#fff,#f8fcf9)!important;
+  box-shadow:0 14px 35px rgba(0,55,28,.09)!important
+}
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-hero{
+  background:radial-gradient(ellipse at 12% 8%,rgba(255,255,255,.1),transparent 35%),
+    radial-gradient(ellipse at 92% 100%,rgba(210,16,52,.2),transparent 36%),
+    linear-gradient(120deg,#002d19,#00532d 60%,#08663a)!important
+}
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog{
+  border-color:#294b36!important;background:linear-gradient(155deg,#14251b,#172d20)!important
+}
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog>h2{color:#e4f3e8;border-color:#31553d}
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog .niv{
+  background:#203b2a!important;border-color:#3b6248!important;color:#d9eee0!important
+}
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog .niv.on{
+  background:#087a42!important;border-color:#43a66d!important;color:#fff!important
+}
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog .ucard,
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog .seance,
+html[data-theme="dark"] #shell #app [data-view="seances"] #seanceDetail .detail{
+  background:linear-gradient(145deg,#1a3022,#17271d)!important;border-color:#35533e!important;color:#e6f2e9!important
+}
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog .ucard-de,
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog .s-t,
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog>h2{color:#e3f3e7!important}
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog .ucard-ar,
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog .s-d{color:#b6cdbd!important}
+html[data-theme="dark"] #shell #app [data-view="seances"] .dz-course-catalog .seance.done{
+  background:linear-gradient(110deg,#1c3927,#17271d)!important;border-color:#3c7650!important
+}
+@media(max-width:850px){
+  #shell #app [data-view="seances"] .dz-course-catalog .unite-sel{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  #shell #app [data-view="seances"] .dz-course-hero{min-height:0;padding:23px 19px!important;border-radius:19px!important}
+  #shell #app [data-view="seances"] .dz-course-hero h1,
+  #shell #app [data-view="seances"] .dz-course-hero p,
+  #shell #app [data-view="seances"] .dz-course-hero .progress-wrap{max-width:100%;width:100%}
+  #shell #app [data-view="seances"] .dz-course-hero h1{font-size:23px!important}
+  #shell #app [data-view="seances"] .dz-course-hero p{font-size:12px}
+  #shell #app [data-view="seances"] .dz-course-hero:after{inset-inline-end:-100px;opacity:.5}
+  #shell #app [data-view="seances"] .dz-course-catalog{padding:15px!important;border-radius:18px!important}
+  #shell #app [data-view="seances"] .dz-course-catalog .unite-sel{grid-template-columns:1fr;gap:9px}
+  #shell #app [data-view="seances"] .dz-course-catalog .ucard{min-height:0}
+  #shell #app [data-view="seances"] .dz-course-catalog .seance{gap:10px;padding:12px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="seances"] *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
