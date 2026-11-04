@@ -871,3 +871,22 @@ Depuis l'accueil public, les CTA « اكتشف المواد » et « اكتشف 
 - À confirmer par un test navigateur réel : clic sur les deux CTA depuis ordinateur et mobile, vérifier que le catalogue apparaît immédiatement et que le menu ne reste pas affiché comme écran actif.
 - Aucun rendu navigateur ni capture visuelle n'a été exécuté dans cet environnement.
 - Travail effectué uniquement sur `design/prototypes-67-74-alignment`, PR #17 ; aucune fusion et aucune modification de `main`.
+
+
+## Lot 66 — Afficher la destination avant le chargement (4 novembre 2026)
+
+### Analyse complémentaire du comportement
+Le premier correctif assurait le masquage de l'accueil et le défilement après génération du catalogue. L'inspection de `show(screen)` a révélé une seconde cause de l'impression « cliquer encore sur المواد التعليمية » : la fonction faisait immédiatement `window.scrollTo({top:0})`, puis `renderSubjects()` attendait le chargement asynchrone des fichiers JSON avant de faire défiler vers le catalogue. Pendant cette attente, l'utilisateur restait au niveau de la navigation, avec l'entrée « المواد التعليمية » activée.
+
+### Ajustement
+- `show(screen)` affiche maintenant la zone `#publicExplorer` et déclenche son défilement immédiatement après avoir masqué l'accueil, sans attendre le chargement du catalogue.
+- L'indicateur « جارٍ تحميل سجل المواد… » apparaît ainsi dans la zone de destination pendant la lecture des catalogues.
+- Suppression du défilement tardif redondant dans `renderSubjects()`.
+- Cette transition immédiate bénéficie aussi aux autres vues publiques qui utilisent `show(screen)` (niveaux et détails), sans toucher à leurs données ni à leurs routes.
+- Les règles de masquage `[hidden]` ajoutées au Lot 65 sont conservées.
+
+### Vérifications et limites
+- Contrôle statique : le défilement est désormais déclenché dans `show(screen)` après `r.hidden = false`; aucun défilement vers le haut ne précède le chargement.
+- Vérifier dans le navigateur : clic sur « اكتشف المواد » et « اكتشف المواد وموارد التعلّم » ; la zone du catalogue doit apparaître immédiatement avec son indicateur de chargement, puis les matières.
+- Aucun test visuel navigateur n'a été exécuté dans cet environnement.
+- Même branche `design/prototypes-67-74-alignment`, PR #17 ouverte ; aucune fusion, aucune modification de `main`, aucun déploiement manuel.
