@@ -341,3 +341,14 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Contrôles statiques à effectuer après commit : balance CSS, présence des sélecteurs et IDs, références cache cohérentes, syntaxe JavaScript. Aucun rendu navigateur ou déploiement Cloudflare n'est déclaré visuellement validé.
 - CI #1854 et #1855 du HEAD précédent `f27ecbc` : toutes deux terminées avec succès. Cette validation précède les modifications de cette section.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : aucune nouvelle branche, aucun changement direct sur `main`, aucune fusion, aucun déploiement manuel.
+
+
+## 23. Recomposition des espaces d'évaluation — 4 novembre 2026
+
+- Périmètre visuel : vues `devoir`, `devoirs`, `examen`, `quiz`, `simulation` et `officiels`.
+- Modules audités : `devoirs_unite.js`, `devoirnote.js`, `examen.js`, `quiz.js`, `officiels.js`. Les rendus existants s'appuient sur les archives de sujets, les devoirs, les banques de questions, les corrigés et l'historique local.
+- Travail : composition des en-têtes, cartes d'années et de sujets, statistiques d'archive, onglets, filtres, cartes de quiz, choix de réponses, feedback, corrigés, sections et résultats. Couleurs DZ saturées, hiérarchie typographique, grilles responsives, contrastes sombres.
+- Préservation : aucune logique de notation, minuteur, calcul de correction, contenu d'exercice, banque de questions, source de données ou stockage local n'a été changée. Les boutons, sélecteurs, filtres et gestionnaires restent dans les modules actuels. Aucune bibliothèque graphique ou dépendance ajoutée.
+- Cache : `style-prototype-dz.css?v=87` dans `index.html` et précache du service worker ; version `dz-de-v3.147.0`.
+- Contrôles préalables : CI #1856 et #1857 du HEAD `2c25400` ont réussi. Les contrôles de CSS, de cohérence des références et les tests CI du nouveau HEAD doivent être exécutés après ces commits. Pas de validation navigateur ni de déploiement Cloudflare revendiqué.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` : pas de branche supplémentaire, aucun changement direct sur `main`, aucune fusion, aucun déploiement manuel.
