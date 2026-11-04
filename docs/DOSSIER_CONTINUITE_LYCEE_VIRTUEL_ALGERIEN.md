@@ -1,6 +1,6 @@
 # Dossier de continuité — Lycée Virtuel Algérien (ALLEMAND)
 
-**Dernière mise à jour : 3 novembre 2026**  
+**Dernière mise à jour : 4 novembre 2026**  
 **Dépôt :** `bridrandomtv-spec/ALLEMAND`  
 **PR de travail :** [#17](https://github.com/bridrandomtv-spec/ALLEMAND/pull/17)  
 **Branche :** `design/prototypes-67-74-alignment`  
@@ -493,4 +493,19 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Cache CSS actualisé à `style-prototype-dz.css?v=98` ; service worker `dz-de-v3.158.0` et précache CSS aligné.
 - Validation statique après écriture : accolades CSS équilibrées, sélecteurs présents, thème sombre/mobile/réduction des animations et références de cache à vérifier sur le HEAD final.
 - CI #1890 du HEAD précédent réussie. Une nouvelle CI est attendue sur le nouveau HEAD ; aucun rendu navigateur ni déploiement Cloudflare n'est déclaré vérifié.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
+
+
+## 35. Recomposition de la grille du tableau de bord élève à partir du prototype — 4 novembre 2026
+
+- Comparaison directe du prototype HTML avec le vrai accueil connecté de `index.html`, `app.js` et les styles existants.
+- Le prototype présente une hiérarchie en deux zones : contenu pédagogique principal (matières, progression et actions) et colonne de soutien (assistant, recommandations, messages). L'accueil réel dispose déjà de données et composants distincts : `welcomeBox`, `subjHome`, `statsHome`, cartes `grid3` et panneaux `home-side`.
+- Écart constaté : l'ordre visuel de la grille réelle ne suivait pas la hiérarchie du prototype ; les cartes d'accès rapide conservaient une grille générique à trois colonnes et une illustration séparée faisait doublon avec l'emblème du bandeau élève.
+- Correction ciblée dans `style-prototype-dz.css` : colonne principale à droite en RTL, colonne de soutien à gauche, cartes d'accès rapide redessinées avec une grille adaptative, panneaux latéraux harmonisés et suppression de l'illustration décorative redondante. Empilement mobile explicite : contenu principal puis panneaux de soutien.
+- Les règles sont limitées à `section[data-view="accueil"]` dans `#shell #app`, avec variantes sombre, tablette/mobile et `prefers-reduced-motion`.
+- Préservation stricte : aucun changement à `app.js`, `masar.js`, `matieres.js`, aux données des élèves, aux calculs de progression, aux routes, aux identifiants, aux événements, à l'authentification ou à Supabase.
+- Garde-fou de fidélité des données : le prototype contient des exemples fictifs (plusieurs matières, pourcentages, points, recommandations et messages). Ces valeurs n'ont pas été recopiées. Le catalogue réel continue d'indiquer les matières effectivement disponibles ou partielles.
+- Cache : CSS `style-prototype-dz.css?v=99` ; service worker `dz-de-v3.159.0` avec précache CSS v99.
+- Contrôles statiques à exécuter sur le HEAD final : équilibre des accolades CSS, présence des sélecteurs et breakpoints, cohérence index/SW/cache et CI GitHub.
+- Limite de validation : aucun test visuel réel sur navigateur mobile/ordinateur, aucune vérification de déploiement Cloudflare et aucune confirmation utilisateur du rendu de ce lot ne sont revendiqués.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; aucune branche créée, aucun changement direct sur `main`, aucune fusion et aucun déploiement manuel.
