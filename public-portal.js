@@ -255,6 +255,9 @@
     const gate = $('#gate'), card = gateCard();
     if(!gate || !card) return;
     const mode = target === 'signup' ? 'signup' : 'login';
+    /* Le conteneur #gate démarre avec hidden : le dévoiler ici est indispensable.
+       Afficher uniquement .gate-card ne suffit pas si son parent reste masqué. */
+    gate.hidden = false;
     gate.classList.add('public-auth-page');
     card.hidden = false;
     const tab = $('.gtab[data-gate="' + mode + '"]');
