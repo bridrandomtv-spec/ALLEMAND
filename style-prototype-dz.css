@@ -10955,3 +10955,130 @@ html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-chart-emp
 @media(prefers-reduced-motion:reduce){
   #shell #app [data-view="masar"] #masarBody *{transition:none!important;animation:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PROFESSOR STUDIO — لوحة الأستاذ
+   Composition visuelle DZ, données et interactions existantes.
+   ═══════════════════════════════════════════════════════════════ */
+#shell #app [data-view="profboard"] .dz-prof-dashboard{max-width:1240px;margin-inline:auto}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .prof-hero{
+  position:relative;isolation:isolate;overflow:hidden;align-items:center;
+  min-height:190px;padding:28px 30px!important;border:1px solid rgba(255,255,255,.15)!important;
+  border-radius:24px!important;color:#fff;
+  background:radial-gradient(circle at 88% 8%,rgba(255,255,255,.13),transparent 25%),
+    radial-gradient(circle at 8% 100%,rgba(210,16,52,.28),transparent 30%),
+    linear-gradient(118deg,#003b21 0%,#006233 58%,#087b43 100%)!important;
+  box-shadow:0 18px 42px rgba(0,65,34,.18)!important
+}
+#shell #app [data-view="profboard"] .prof-hero:after{
+  content:"";position:absolute;z-index:-1;inset-inline-end:22%;top:-145px;width:280px;height:280px;
+  border:1px solid rgba(255,255,255,.16);border-radius:50%;
+  box-shadow:0 0 0 24px rgba(255,255,255,.035),0 0 0 50px rgba(255,255,255,.025)
+}
+#shell #app [data-view="profboard"] .prof-hero h2{
+  color:#fff!important;font-size:clamp(21px,2.6vw,30px);font-weight:950;line-height:1.45
+}
+#shell #app [data-view="profboard"] .prof-hero .ch-badge{
+  color:#effaf2;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22)
+}
+#shell #app [data-view="profboard"] .prof-hero .ch-sub{color:#e1f2e6!important;line-height:1.9}
+#shell #app [data-view="profboard"] .prof-hero .pill{
+  color:#075b35;background:#fff;border-color:#fff
+}
+#shell #app [data-view="profboard"] .prof-hero .ph-act{gap:8px}
+#shell #app [data-view="profboard"] .prof-hero .ph-act .btn{
+  min-height:40px;border-radius:12px;font-weight:850
+}
+#shell #app [data-view="profboard"] .onglets{
+  position:sticky;top:calc(var(--header-h,70px) + 8px);z-index:20;
+  padding:6px;border-radius:16px;background:var(--p);
+  border:1px solid var(--b);box-shadow:0 8px 22px rgba(0,45,24,.07)
+}
+#shell #app [data-view="profboard"] .ong{padding:11px 17px;font-weight:850}
+#shell #app [data-view="profboard"] .ong.on{
+  background:linear-gradient(125deg,#004d28,#00843d)!important;
+  box-shadow:0 5px 15px rgba(0,98,51,.24)
+}
+#shell #app [data-view="profboard"] .privacy{
+  border-radius:14px;border-inline-start:4px solid #00843d;
+  background:rgba(0,98,51,.07);line-height:1.9
+}
+#shell #app [data-view="profboard"] .bdd-kpis{
+  grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:0 0 17px
+}
+#shell #app [data-view="profboard"] .kpi{
+  position:relative;overflow:hidden;min-height:132px;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;border-radius:18px;padding:17px 12px;
+  background:linear-gradient(155deg,var(--p),var(--p2));box-shadow:0 8px 24px rgba(0,55,28,.055)
+}
+#shell #app [data-view="profboard"] .kpi:before{
+  content:"";position:absolute;inset:0 0 auto;height:4px;
+  background:linear-gradient(90deg,#006233,#d21034)
+}
+#shell #app [data-view="profboard"] .kpi-n{font-size:clamp(23px,2.3vw,30px);color:var(--g);font-weight:950}
+#shell #app [data-view="profboard"] .kpi-l{font-size:12px;font-weight:800;color:var(--t)}
+#shell #app [data-view="profboard"] .kpi-d{font-size:9px;opacity:.8}
+#shell #app [data-view="profboard"] .dz-prof-dashboard #prContenu>.card,
+#shell #app [data-view="profboard"] .dz-prof-dashboard #prContenu>.grid2>.card{
+  border-radius:19px;border-color:var(--b);box-shadow:0 9px 25px rgba(0,55,28,.055)
+}
+#shell #app [data-view="profboard"] .dz-prof-dashboard #prContenu h2{
+  font-size:18px;font-weight:900;line-height:1.6
+}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .histo{
+  height:190px;gap:10px;padding:14px 6px 0
+}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .hb{
+  border:1px solid rgba(0,98,51,.1);border-radius:10px;background:rgba(0,98,51,.055)
+}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .hb i{
+  background:linear-gradient(180deg,#42a66c 0%,#006233 100%);border-radius:8px 8px 0 0
+}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .hv.on{color:var(--g);font-size:13px}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .rbar{height:30px;border-radius:10px}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .wbar{height:10px;border-radius:99px;overflow:hidden}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .wbar i{border-radius:99px}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .alert-i{
+  border-radius:13px;border-inline-start:3px solid #d21034;border-inline-end:1px solid var(--b)
+}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .filters{
+  border-radius:18px;box-shadow:0 8px 22px rgba(0,55,28,.045)
+}
+#shell #app [data-view="profboard"] .dz-prof-dashboard .card:has(>.tble),
+#shell #app [data-view="profboard"] .dz-prof-dashboard .card:has(>table){
+  border-radius:17px
+}
+html[data-theme="dark"] #shell #app [data-view="profboard"] .prof-hero{
+  background:radial-gradient(circle at 88% 8%,rgba(255,255,255,.09),transparent 25%),
+    linear-gradient(118deg,#002d19,#00532d 60%,#08653a)!important
+}
+html[data-theme="dark"] #shell #app [data-view="profboard"] .privacy{
+  color:#d4e9db;background:rgba(35,115,65,.18);border-color:#3d7650
+}
+html[data-theme="dark"] #shell #app [data-view="profboard"] .kpi{
+  background:linear-gradient(155deg,#1b3022,#14251b);border-color:#34543e
+}
+html[data-theme="dark"] #shell #app [data-view="profboard"] .kpi-l{color:#e1f1e6}
+html[data-theme="dark"] #shell #app [data-view="profboard"] .dz-prof-dashboard #prContenu>.card,
+html[data-theme="dark"] #shell #app [data-view="profboard"] .dz-prof-dashboard #prContenu>.grid2>.card{
+  box-shadow:0 10px 25px rgba(0,0,0,.14)
+}
+@media(max-width:900px){
+  #shell #app [data-view="profboard"] .bdd-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #shell #app [data-view="profboard"] .prof-hero{padding:23px!important}
+}
+@media(max-width:560px){
+  #shell #app [data-view="profboard"] .prof-hero{display:block;text-align:right}
+  #shell #app [data-view="profboard"] .prof-hero .ph-act{margin-top:17px}
+  #shell #app [data-view="profboard"] .prof-hero .ph-act .btn{flex:1 1 42%}
+  #shell #app [data-view="profboard"] .bdd-kpis{gap:9px}
+  #shell #app [data-view="profboard"] .kpi{min-height:112px;padding:14px 8px}
+  #shell #app [data-view="profboard"] .kpi-i{font-size:22px}
+  #shell #app [data-view="profboard"] .kpi-l{font-size:10px}
+  #shell #app [data-view="profboard"] .ong{padding:10px 12px;font-size:11px}
+  #shell #app [data-view="profboard"] .dz-prof-dashboard .histo{height:150px;gap:5px}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="profboard"] .dz-prof-dashboard *{transition:none!important;animation:none!important}
+}
