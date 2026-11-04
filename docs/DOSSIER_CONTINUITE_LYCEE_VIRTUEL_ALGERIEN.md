@@ -890,3 +890,22 @@ Le premier correctif assurait le masquage de l'accueil et le défilement après 
 - Vérifier dans le navigateur : clic sur « اكتشف المواد » et « اكتشف المواد وموارد التعلّم » ; la zone du catalogue doit apparaître immédiatement avec son indicateur de chargement, puis les matières.
 - Aucun test visuel navigateur n'a été exécuté dans cet environnement.
 - Même branche `design/prototypes-67-74-alignment`, PR #17 ouverte ; aucune fusion, aucune modification de `main`, aucun déploiement manuel.
+
+
+## Lot 67 — Réalignement du visuel principal avec le prototype (4 novembre 2026)
+
+### Écart détecté lors de l'audit
+L'inspection du HTML réellement présent sur la branche a montré que la carte à droite du hero affichait encore une illustration générique en trois étapes (année, matières, ressources). Les styles de l'enseignant intelligent existaient déjà, mais le contenu HTML ne présentait pas le dialogue pédagogique attendu. Le hero ne correspondait donc pas encore à l'intention du prototype.
+
+### Ajustements ciblés
+- Remplacement de l'illustration générique par une carte « الأستاذ الذكي » avec question d'élève et explication d'un point grammatical allemand (Nominativ/Akkusativ), cohérente avec le parcours allemand déjà avancé.
+- Ajout d'une forme d'onde décorative et d'un exemple de réponse, sans prétendre activer le microphone, une session vocale ou un chat en direct.
+- Le bouton conserve `data-public-view="subjects"` et conduit au catalogue public existant ; aucun nouveau parcours ni API n'est ajouté.
+- Augmentation ciblée de la lisibilité des textes de la carte sur ordinateur et ajout d'une règle `prefers-reduced-motion` pour supprimer l'animation si l'utilisateur préfère réduire les mouvements.
+- Les ajustements CSS sont limités à `.public-ai-card` dans le thème clair ; aucun style de tableau de bord ni composant authentifié n'est modifié.
+
+### Vérifications et limites
+- Contrôle statique : ancienne illustration de parcours retirée du hero ; carte `الأستاذ الذكي`, exemple de dialogue, mention explicite de démonstration et CTA catalogue présents.
+- À valider dans le navigateur : hiérarchie visuelle, dimensions, contraste et lisibilité sur ordinateur et mobile.
+- Aucun test visuel navigateur n'a été exécuté ici.
+- Travail sur la même branche `design/prototypes-67-74-alignment` / PR #17 ; aucune fusion, aucune modification de `main`, aucun déploiement manuel.
