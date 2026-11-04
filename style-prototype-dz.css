@@ -15188,3 +15188,27 @@ html[data-theme="dark"] #gate .public-section-heading>button{
 @media(prefers-reduced-motion:reduce){
   #gate .public-section-heading>button{transition:none!important}
 }
+
+
+/* Public homepage — readable AI-teacher example, without changing other app views. */
+html[data-theme="light"] .public-ai-card .public-ai-question b{
+  font-size:14px;line-height:1.85;
+}
+html[data-theme="light"] .public-ai-card .public-ai-question small,
+html[data-theme="light"] .public-ai-card .public-ai-answer small{
+  font-size:11px;
+}
+html[data-theme="light"] .public-ai-card .public-ai-answer p{
+  font-size:13px;line-height:1.95;
+}
+html[data-theme="light"] .public-ai-card .public-ai-cta{
+  font-size:13px;
+}
+html[data-theme="light"] .public-ai-card .public-ai-note{
+  font-size:10px;
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-theme="light"] .public-ai-card .public-ai-wave i{
+    animation:none;height:18px;
+  }
+}
