@@ -813,3 +813,16 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Vérifications statiques à effectuer sur le HEAD final : trois cartes de ressources, trois cartes d'indicateurs, libellés de disponibilité conservés, cache CSS et SW synchronisés, styles sombre/mobile présents, accolades équilibrées, dossier et CI/Workers Build.
 - Limite : aucune validation visuelle réelle sur navigateur n'est revendiquée.
 - Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main`; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
+
+
+## Lot 62 — FAQ parents et accès direct au catalogue (4 novembre 2026)
+
+- Renforcement de la FAQ publique destinée aux familles : ajout de deux actions explicites sous l'introduction, « استكشف المواد المتاحة » et « اختر المستوى الدراسي ».
+- Les deux actions réutilisent exclusivement les mécanismes de navigation déjà présents (data-public-view="subjects" et data-public-view="levels"). Aucun nouveau gestionnaire JavaScript ni aucune nouvelle route n'est introduit.
+- Les réponses de la FAQ restent prudentes sur la disponibilité des contenus, la portée des ressources allemandes (234 exercices, 55 sujets, 19 unités) et l'absence de statistiques agrégées fiables. Aucun taux de réussite ni témoignage inventé.
+- Présentation des actions travaillée pour desktop et mobile, thème sombre et prefers-reduced-motion. Pas de framework ni de dépendance ajoutés.
+- Cache CSS synchronisé en v122 dans index.html et sw.js; service worker dz-de-v3.168.0.0.18.
+- Contrôles statiques à effectuer sur le HEAD final : présence des deux actions et de leurs attributs existants, synchronisation CSS/SW, règles responsive/sombre, accolades CSS équilibrées, écran d'authentification séparé toujours présent, CI/Workers Build.
+- Aucun changement aux formulaires, Auth, Supabase, RLS, schéma, paiements, données ou tableaux de bord. Travail limité à l'accueil public.
+- Limite : aucune validation visuelle réelle sur navigateur ordinateur/mobile n'est revendiquée dans cette opération.
+- Travail limité à design/prototypes-67-74-alignment / PR #17 vers main; aucune fusion, aucun déploiement manuel et aucun changement direct sur main.
