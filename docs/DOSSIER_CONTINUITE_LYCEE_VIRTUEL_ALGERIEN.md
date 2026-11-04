@@ -970,3 +970,14 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Cache : référence `app.js?v=3523` et Service Worker `dz-de-v3.168.0.0.28`.
 - Commits : `983fd98`, `2b6f597`, `fe766bc` et `1fd0576` (index), `6e3b225`, `015be29` et `fc9605b` (app.js), `f42b068`, `7c3c21d` et `7c7b172` (Service Worker), sur `design/prototypes-67-74-alignment` / PR #17.
 - CI déclenchée sur le dernier commit : en attente au moment de cette note. Contrôle navigateur et validation visuelle ordinateur/mobile non effectués ; ne pas considérer l’accueil connecté comme validé avant ces vérifications et le retour de l’utilisateur.
+
+
+## Lot 74 — Neutraliser les horaires fictifs dans l’accueil élève (4 novembre 2026)
+
+- Constat : `assets/bdd/journee.json` indique explicitement « Données de démonstration », avec une date de référence au 16 septembre 2026. L’ancienne interface montrait pourtant « جارية الآن » et un bouton « انضم الآن » comme si la séance était réelle.
+- `journee.js` : détection du statut de démonstration via la métadonnée de confidentialité ; ajout d’un avertissement visible en arabe ; remplacement des statuts de présence par « نموذج توضيحي » ; suppression des boutons d’accès à une séance et des compteurs présentés comme programme réel dans ce cas. Le tableau hebdomadaire porte également un avertissement et n’affiche plus de statuts de présence réels.
+- `style-prototype-dz.css` : style de l’avertissement avec signalétique ambre, compatible avec les thèmes clair et sombre.
+- `index.html` : versions des ressources `journee.js?v=3511` et `style-prototype-dz.css?v=124` ; Service Worker `dz-de-v3.168.0.0.29`.
+- Commits : `faf5f1a` (`journee.js`), `3c961d2` (CSS), `7f2cb6c` (index), `e9f0103` (Service Worker).
+- Les raccourcis génériques vers les sections d’apprentissage restent disponibles. Aucun changement d’authentification, de données personnelles, de Supabase, de RLS, de schéma ou de permissions.
+- CI : à vérifier sur le dernier commit. Vérification navigateur/visuelle ordinateur et mobile encore nécessaire ; ce lot ne constitue pas la validation finale de l’accueil connecté.
