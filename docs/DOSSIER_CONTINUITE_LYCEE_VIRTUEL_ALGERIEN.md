@@ -930,3 +930,13 @@ L'inspection du HTML réellement présent sur la branche a montré que la carte 
 - Aucun changement de CSS, dépendance, Auth, Supabase, RLS ou tableau de bord.
 - Service Worker : `dz-de-v3.168.0.0.22` pour invalider l'ancien HTML en cache.
 - Contrôle statique : ordre des blocs et conservation des deux actions à vérifier après commit ; rendu visuel réel à confirmer sur la preview Cloudflare, sur ordinateur et mobile.
+
+
+## Lot 70 — Suppression de la double carte dans le héros public (4 novembre 2026)
+
+- Audit CSS : `.public-landing` est déjà le grand panneau principal de l'accueil. Le Lot 59 avait ajouté un second fond, cadre, rayon et ombre sur `.public-copy`, créant une carte imbriquée qui éloignait le rendu du prototype éditorial.
+- Correction de la règle Lot 59 à sa source : `.public-copy` redevient un bloc éditorial transparent, sans bordure ni ombre, avec son espacement propre ; le panneau principal et la carte `.public-ai-card` sont conservés.
+- Suppression de la variante de carte en mode sombre et de son padding/cadre mobile ; le texte garde les règles typographiques existantes.
+- Aucun changement aux boutons, IDs, attributs `data-*`, navigation, contenu, Auth, Supabase, RLS ou vues connectées.
+- Service Worker : `dz-de-v3.168.0.0.23`.
+- Contrôles attendus : cohérence des règles desktop/mobile/dark et CI. Validation esthétique réelle encore requise via preview sur ordinateur et mobile.
