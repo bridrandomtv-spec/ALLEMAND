@@ -15926,3 +15926,26 @@ html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-empty-lin
   #shell #app [data-view="masar"] #masarBody>.ms-hero{grid-template-columns:1fr}
   #shell #app [data-view="masar"] #masarBody .ms-ring-wrap{justify-self:start}
 }
+
+
+/* LOT 79 — activation réelle de la grille éditoriale de مساري
+   Le lot 78 déclarait les zones nommées sans activer display:grid
+   ni affecter les cartes à leurs zones : le navigateur empilait donc
+   les blocs en flux normal. */
+#shell #app [data-view="masar"] #masarBody{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr)!important;
+  grid-template-areas:"hero hero" "next chart" "progress progress"!important;
+  align-items:stretch;
+  gap:20px!important;
+}
+#shell #app [data-view="masar"] #masarBody>.ms-hero{grid-area:hero;}
+#shell #app [data-view="masar"] #masarBody>.ms-next{grid-area:next;}
+#shell #app [data-view="masar"] #masarBody>.ms-chart{grid-area:chart;}
+#shell #app [data-view="masar"] #masarBody>.ms-prog{grid-area:progress;}
+@media(max-width:980px){
+  #shell #app [data-view="masar"] #masarBody{
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-areas:"hero" "next" "chart" "progress"!important;
+  }
+}
