@@ -1684,6 +1684,74 @@ function bindGateEvents(){
     });
   });
 
+  /* Parcours de récupération : aucune donnée de mot de passe n'est stockée localement. */
+  document.addEventListener('click', ev => {
+    if(ev.target.closest('[data-password-reset-open]')){
+      ev.preventDefault();
+      location.hash='#mot-de-passe-oublie';
+    }else if(ev.target.closest('[data-password-reset-back]')){
+      ev.preventDefault();
+      location.hash='#connexion';
+    }
+  });
+
+  const resetForm=$('#passwordResetForm');
+  if(resetForm) resetForm.addEventListener('submit', async ev=>{
+    ev.preventDefault();
+    const status=$('#passwordResetStatus');
+    const button=resetForm.querySelector('button[type="submit"]');
+    if(status){status.hidden=true;status.classList.remove('is-success');}
+    if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
+    try{
+      if(!navigator.onLine || !window.SB || !window.SB.resetPassword){
+        throw new Error('تحقق من اتصال الإنترنت وحاول مرة أخرى.');
+      }
+      const result=await window.SB.resetPassword($('#resetEmail').value);
+      if(!result || !result.ok) throw new Error((result && result.err) || 'تعذر إرسال رابط الاستعادة.');
+      if(status){
+        status.textContent='إذا كان البريد مرتبطًا بحساب، فستصلك رسالة تحتوي على رابط آمن لإعادة تعيين كلمة المرور. تحقق أيضًا من البريد غير المرغوب فيه.';
+        status.hidden=false;status.classList.add('is-success');
+      }
+    }catch(error){
+      if(status){status.textContent=error.message || 'تعذر إرسال رابط الاستعادة.';status.hidden=false;}
+    }finally{
+      if(button){button.disabled=false;button.removeAttribute('aria-busy');}
+    }
+  });
+
+  const updateForm=$('#passwordUpdateForm');
+  if(updateForm) updateForm.addEventListener('submit', async ev=>{
+    ev.preventDefault();
+    const status=$('#passwordUpdateStatus');
+    const button=updateForm.querySelector('button[type="submit"]');
+    const password=$('#newPassword').value;
+    const confirmation=$('#confirmNewPassword').value;
+    if(status){status.hidden=true;status.classList.remove('is-success');}
+    if(password.length<8 || password!==confirmation){
+      if(status){
+        status.textContent=password!==confirmation?'كلمتا المرور غير متطابقتين.':'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.';
+        status.hidden=false;
+      }
+      return;
+    }
+    if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
+    try{
+      if(!window.SB || !window.SB.updatePassword) throw new Error('خدمة تحديث كلمة المرور غير متاحة.');
+      const result=await window.SB.updatePassword(password);
+      if(!result || !result.ok) throw new Error((result && result.err) || 'تعذر تحديث كلمة المرور.');
+      if(status){
+        status.textContent='تم تحديث كلمة المرور بنجاح. يمكنك الآن العودة إلى صفحة تسجيل الدخول.';
+        status.hidden=false;status.classList.add('is-success');
+      }
+      $('#newPassword').value='';
+      $('#confirmNewPassword').value='';
+    }catch(error){
+      if(status){status.textContent=error.message || 'تعذر تحديث كلمة المرور.';status.hidden=false;}
+    }finally{
+      if(button){button.disabled=false;button.removeAttribute('aria-busy');}
+    }
+  });
+
   /* ── P0.3 : Supabase Auth = autorité PRINCIPALE quand disponible ;
      localStorage = cache hors-ligne / compatibilité comptes locaux ── */
 async function cloudAuthority(){
