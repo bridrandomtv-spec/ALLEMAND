@@ -197,12 +197,12 @@ for (const id of ['passwordResetForm', 'passwordUpdateForm']) {
     fail('le formulaire #' + id + ' doit occuper la zone form');
   }
 }
-if (!html.includes('style-prototype-dz.css?v=139')) {
+if (!html.includes('style-prototype-dz.css?v=140')) {
   fail('version CSS du portail non actualisée');
 }
 const sw = read('sw.js');
-if (!sw.includes("dz-de-v3.168.0.0.51") ||
-    !sw.includes("style-prototype-dz.css?v=139")) {
+if (!sw.includes("dz-de-v3.168.0.0.52") ||
+    !sw.includes("style-prototype-dz.css?v=140")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
@@ -225,5 +225,6 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
 if (!html.includes('app.js?v=3530') || !sw.includes('app.js?v=3530')) fail('cache app.js non synchronisé');
-if (!html.includes('style-prototype-dz.css?v=139') || !sw.includes('style-prototype-dz.css?v=139')) fail('cache CSS Lot 99 non synchronisé');
-console.log('✅ Lot 99 : quatre accès directs, menu Plus, fermeture Escape et routes issues de allTabs()');
+if (!html.includes('style-prototype-dz.css?v=140') || !sw.includes('style-prototype-dz.css?v=140')) fail('cache CSS Lot 99 non synchronisé');
+if (!css.includes('.desktop-nav{\n    display:flex!important;\n    flex-direction:column!important;')) fail('navigation desktop verticale absente dans la sidebar');
+console.log('✅ Lot 99 : menu mobile compact et disposition desktop préservée');
