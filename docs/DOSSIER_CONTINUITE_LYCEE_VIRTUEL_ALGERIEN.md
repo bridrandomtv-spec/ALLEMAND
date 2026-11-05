@@ -1175,3 +1175,18 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache synchronisé : `app.js?v=3528`, Service Worker `dz-de-v3.168.0.0.46`, précache `./app.js?v=3528`.
 - Nouveau run CI du lot 91 à attendre. Aucun test navigateur réel, test lecteur d'écran ou déploiement Cloudflare n'est revendiqué.
 - Travail sur `design/prototypes-67-74-alignment` / PR #17 vers `main`, maintenue ouverte et non fusionnée. Aucun changement Auth/Supabase/RLS/schéma/paiement.
+
+
+## Lot 92 — refonte structurelle du tableau de bord « مسارك » (5 novembre 2026)
+
+- Retour utilisateur : la page « مسارك » restait très éloignée du niveau visuel et de la composition attendus des prototypes 67–74. Le problème ne se résumait pas aux couleurs : la vue ne présentait pas de véritable carte des unités et la prochaine séance pouvait provenir d'un niveau différent de celui utilisé pour le calcul global.
+- Audit du calcul : `progressData()` calculait le total par unité via `loadSeancesFor(u.n)`, tandis que la carte « prochaine séance » appelait séparément `prochaineSeance()`, qui dépend de `niveauActif` et de `loadSeances()` (unité actuellement sélectionnée). Ces deux sources pouvaient diverger.
+- Refonte de `masar.js` : une seule résolution du niveau actif ; calcul des séances faites/restantes pour chaque unité avec `loadSeancesFor(u.n)` ; sélection de la prochaine séance dans le même ensemble d'unités que le total affiché. L'action de prochaine séance sélectionne désormais l'unité correspondante avant d'ouvrir la vue des séances.
+- La composition comprend maintenant : hero avec progression réelle, action prioritaire (révisions dues ou prochaine séance), analyse des compétences à partir des tentatives enregistrées dans MEMOIRE, résumé global, et grille de progression unité par unité avec statuts « لم تبدأ / قيد الإنجاز / مكتملة ».
+- Les états vides sont explicites : aucune valeur fictive n'est créée. Les indicateurs de compétences restent basés sur les tentatives mémorisées ; les unités et séances viennent du registre `UNITES` et du stockage de progression existant.
+- CSS ajouté en fin de `style-prototype-dz.css` : grille desktop à deux colonnes pour action/analyse, résumé et unités en pleine largeur ; adaptation tablette/mobile ; surfaces, hiérarchie typographique, barres et cartes ; thème sombre pris en charge. Pas de Tailwind ni dépendance ajoutée.
+- Cache : CSS `v135`, script `masar.js?v=3516`, Service Worker `dz-de-v3.168.0.0.47`, précache aligné.
+- Nouveau contrôle `ci/check-masar.mjs` intégré à `.github/workflows/deploy.yml` ; `masar.js` ajouté au contrôle de syntaxe JavaScript.
+- Fichiers : `masar.js`, `style-prototype-dz.css`, `index.html`, `sw.js`, `ci/check-masar.mjs`, `.github/workflows/deploy.yml`, présent dossier.
+- Validation en attente : CI du lot 92, puis vérification visuelle réelle du preview sur ordinateur et mobile. Une CI verte ne prouvera ni le déploiement Cloudflare ni la fidélité visuelle finale. Aucun test navigateur n'est revendiqué à ce stade.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement ; PR ouverte et non fusionnée ; aucun changement sur `main`, Auth, Supabase, RLS, schéma, paiements ou production.
