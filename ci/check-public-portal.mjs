@@ -7,6 +7,7 @@ const catalog = JSON.parse(read('assets/bdd/matieres.json'));
 const statuses = JSON.parse(read('assets/bdd/subjects.json'));
 const auth = read('auth.js');
 const portal = read('public-portal.js');
+const app = read('app.js');
 const html = read('index.html');
 
 const fail = message => { throw new Error('Portail public : ' + message); };
@@ -66,6 +67,16 @@ for (const id of ['publicExplorer', 'publicExplorerContent', 'suNiveau', 'suFili
 }
 if (!portal.includes('متاحة جزئيًا') || !portal.includes('قيد البرمجة')) {
   fail('les libellés de disponibilité doivent distinguer partiel et programmé');
+}
+
+/* Une seule couche possède l'ouverture des écrans de connexion/inscription. */
+if (app.includes("querySelectorAll('[data-gate-open]')")) {
+  fail('app.js ne doit pas doubler le gestionnaire public-portal.js');
+}
+if (!portal.includes("document.addEventListener('click'") ||
+    !portal.includes("gate.hidden = false") ||
+    !portal.includes("gate.classList.add('public-auth-page')")) {
+  fail('le portail public doit dévoiler #gate avant d’afficher la carte de connexion');
 }
 
 console.log('✅ Portail public : 3 niveaux, 14 matières, filières cohérentes');
