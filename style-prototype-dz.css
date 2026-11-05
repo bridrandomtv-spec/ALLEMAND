@@ -16567,3 +16567,10 @@ html[data-theme="dark"] #gate .auth-recovery-status.is-success{
     width:100%!important;
   }
 }
+
+/* LOT 101 — le masquage HTML doit primer sur la grille des formulaires de récupération.
+   Sans ces sélecteurs, display:grid!important réaffiche passwordUpdateForm même avec hidden. */
+#gate.public-auth-page #passwordResetForm[hidden],
+#gate.public-auth-page #passwordUpdateForm[hidden]{
+  display:none!important;
+}
