@@ -197,6 +197,19 @@ for (const id of ['passwordResetForm', 'passwordUpdateForm']) {
     fail('le formulaire #' + id + ' doit occuper la zone form');
   }
 }
+
+/* Régression LOT 101 : display:grid!important ne doit jamais neutraliser hidden.
+   Le sélecteur [hidden] doit être plus spécifique que la règle de placement. */
+for (const id of ['passwordResetForm', 'passwordUpdateForm']) {
+  const hiddenRule = '#gate.public-auth-page #' + id + '[hidden]';
+  if (!css.includes(hiddenRule)) {
+    fail('le formulaire #' + id + ' doit rester masqué lorsque hidden est présent');
+  }
+}
+if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]/.test(css) &&
+    !css.includes('#gate.public-auth-page #passwordResetForm[hidden],\n#gate.public-auth-page #passwordUpdateForm[hidden]')) {
+  fail('règle CSS prioritaire de masquage des formulaires de récupération absente');
+}
 if (!html.includes('style-prototype-dz.css?v=140')) {
   fail('version CSS du portail non actualisée');
 }
