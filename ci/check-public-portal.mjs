@@ -217,7 +217,7 @@ if (!html.includes('style-prototype-dz.css?v=141')) {
 if (!sw.includes('style-prototype-dz.css?v=141')) {
   fail('version CSS du précache non actualisée');
 }
-if (!sw.includes("dz-de-v3.168.0.0.54") ||
+if (!sw.includes("dz-de-v3.168.0.0.55") ||
     !sw.includes("style-prototype-dz.css?v=141") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
@@ -249,7 +249,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
   if (!app.includes(marker)) fail('navigation mobile compacte absente ou incomplète : ' + marker);
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
-if (!html.includes('app.js?v=3530') || !sw.includes('app.js?v=3530')) fail('cache app.js non synchronisé');
+if (!html.includes('app.js?v=3531') || !sw.includes('app.js?v=3531')) fail('cache app.js non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=141') || !sw.includes('style-prototype-dz.css?v=141')) fail('cache CSS Lot 99 non synchronisé');
 if (!css.includes('.desktop-nav{\n    display:flex!important;\n    flex-direction:column!important;')) fail('navigation desktop verticale absente dans la sidebar');
 console.log('✅ Lot 99 : menu mobile compact et disposition desktop préservée');
