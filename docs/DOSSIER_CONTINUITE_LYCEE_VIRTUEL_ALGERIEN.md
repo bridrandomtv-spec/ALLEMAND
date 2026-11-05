@@ -1310,3 +1310,12 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Fichiers modifiés : `style-prototype-dz.css`, `ci/check-public-portal.mjs`, présent dossier.
 - Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement à `main`, au JavaScript d'authentification, à Supabase, aux comptes, mots de passe, rôles, RLS, schéma ou paiements.
 - Validation : correction et garde statique ajoutées ; CI et nouveau déploiement Cloudflare à contrôler. Aucun test visuel navigateur n'est revendiqué à ce stade.
+
+## Lot 102 — invalidation du cache CSS et robustesse d'activation du Service Worker (5 novembre 2026)
+
+- Retour utilisateur après Lot 101 : le formulaire de nouveau mot de passe restait visible dans la prévisualisation. Analyse : le correctif CSS était bien présent dans la branche, mais l'URL CSS conservait `?v=140` dans `index.html` et dans le précache du Service Worker. Un navigateur ou un worker pouvait donc continuer à servir l'ancienne ressource.
+- Correction : incrément de l'URL CSS à `style-prototype-dz.css?v=141` dans `index.html` et `sw.js`, et incrément du cache Service Worker à `.54` afin de déclencher une nouvelle installation et de nouveaux caches.
+- Erreur observée : `InvalidStateError: Only the active worker can claim clients`. La seule invocation `clients.claim()` se trouve dans le gestionnaire `activate`. Elle est désormais protégée contre cette erreur de cycle de vie précise ; les autres erreurs restent propagées.
+- CI : assertions mises à jour pour exiger la synchronisation de la version CSS entre HTML et précache, la version SW `.54` et la gestion de l'InvalidStateError.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement à `main`, à l'authentification, à Supabase, aux comptes, mots de passe, rôles, RLS, schéma ou paiements.
+- Validation : correctifs committés ; CI et prévisualisation Cloudflare à confirmer. Aucun test visuel navigateur revendiqué.
