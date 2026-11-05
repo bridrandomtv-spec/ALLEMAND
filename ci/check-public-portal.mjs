@@ -197,14 +197,25 @@ for (const id of ['passwordResetForm', 'passwordUpdateForm']) {
     fail('le formulaire #' + id + ' doit occuper la zone form');
   }
 }
-if (!html.includes('style-prototype-dz.css?v=137')) {
+if (!html.includes('style-prototype-dz.css?v=138')) {
   fail('version CSS du portail non actualisée');
 }
 const sw = read('sw.js');
-if (!sw.includes("dz-de-v3.168.0.0.49") ||
-    !sw.includes("style-prototype-dz.css?v=137")) {
+if (!sw.includes("dz-de-v3.168.0.0.50") ||
+    !sw.includes("style-prototype-dz.css?v=138")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
 console.log('✅ Cache CSS et Service Worker synchronisés (v137 / .49)');
+if (!css.includes('LOT 98 — navigation basse fixe sur mobile')) {
+  fail('navigation basse fixe mobile absente');
+}
+if (!css.includes('inset-block-end:0!important') ||
+    !css.includes('position:fixed!important')) {
+  fail('navigation mobile non fixée au bas de l’écran');
+}
+if (!css.includes('padding-bottom:calc(94px + env(safe-area-inset-bottom))')) {
+  fail('espace de sécurité sous le contenu mobile absent');
+}
+console.log('✅ Navigation mobile fixée en bas avec zone de sécurité');
 
