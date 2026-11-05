@@ -1324,3 +1324,9 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 
 - L'avertissement Node.js 20 provenait de `actions/setup-python@v5` dans `.github/workflows/deploy.yml`. Le workflow utilise désormais `actions/setup-python@v6`, compatible avec l'environnement Node.js 24 annoncé par GitHub Actions.
 - Cet avertissement était une alerte de dépréciation, pas la cause directe du formulaire de réinitialisation ni de l'exception `clients.claim()`.
+
+### Complément Lot 102 — synchronisation du contrôle مسارك
+
+- La première exécution après mise à jour du cache a atteint `ci/check-masar.mjs`, qui conservait encore les références historiques CSS `v=140` et Service Worker `.53`.
+- Les assertions ont été synchronisées avec `style-prototype-dz.css?v=141` et le Service Worker `.54`.
+- Le run précédent a donc échoué sur un contrôle CI obsolète, pas sur le code fonctionnel de مسارك. Une nouvelle validation doit confirmer ce correctif.
