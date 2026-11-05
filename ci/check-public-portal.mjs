@@ -148,7 +148,6 @@ const supabase = read('supabase/supabase.js');
 for (const marker of [
   'async function resetPassword(email)',
   'c.auth.resetPasswordForEmail(',
-  "'#reinitialiser-mot-de-passe'",
   'async function updatePassword(password)',
   'c.auth.updateUser({ password })',
   'resetPassword, updatePassword'
@@ -170,7 +169,8 @@ for (const marker of [
 for (const marker of [
   "function setRecoveryPage(mode, syncHash)",
   "location.hash === '#mot-de-passe-oublie'",
-  "location.hash === '#reinitialiser-mot-de-passe'"
+  "location.hash === '#reinitialiser-mot-de-passe'",
+  "isPasswordRecoveryCallback()"
 ]) {
   if (!portal.includes(marker)) fail('route de récupération absente : ' + marker);
 }
