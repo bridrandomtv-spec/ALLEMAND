@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
-</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=133">
+</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=134">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -228,7 +228,17 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
     </section>
 
     <div class="gate-card">
-      <div class="gate-card-intro"><button type="button" class="public-auth-back" data-public-auth-back>← العودة إلى الصفحة الرئيسية</button><span>بوابة المنصة</span><h2>مرحبًا بك في فضائك الدراسي</h2><p>سجّل الدخول للمتابعة، أو أنشئ حسابًا جديدًا لاختيار مستواك وشعبتك.</p></div>
+      <div class="gate-card-intro">
+        <button type="button" class="public-auth-back" data-public-auth-back>← العودة إلى الصفحة الرئيسية</button>
+        <span class="auth-eyebrow">🇩🇿 بوابة التعلّم · 2026/2027</span>
+        <h2>مسارك الدراسي يبدأ من هنا</h2>
+        <p>ادخل إلى فضائك التعليمي لمتابعة الدروس والموارد وإنجازاتك، أو أنشئ حسابًا للانطلاق في رحلتك.</p>
+        <div class="auth-benefits" aria-label="مزايا الفضاء التعليمي">
+          <div><i aria-hidden="true">📚</i><span><b>مواردك التعليمية</b><small>دروس وتمارين ومواد بحسب المتاح</small></span></div>
+          <div><i aria-hidden="true">🎯</i><span><b>مسارك الدراسي</b><small>تابع الحصص وما أنجزته</small></span></div>
+          <div><i aria-hidden="true">🤖</i><span><b>مرافقة تعليمية</b><small>اكتشف أدوات المساعدة داخل المنصة</small></span></div>
+        </div>
+      </div>
       <div class="gate-tabs">
         <button class="gtab on" data-gate="login">🔐 تسجيل الدخول</button>
         <button class="gtab" data-gate="signup">📝 حساب جديد</button>
@@ -236,7 +246,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 
       <!-- Connexion -->
       <form id="loginForm" class="gform" aria-label="نموذج تسجيل الدخول">
-        <label class="fld"><span>👤 اسم المستخدم أو البريد</span>
+        <label class="fld"><span>📧 البريد الإلكتروني أو اسم المستخدم</span>
           <input type="text" id="loginUser" required autocomplete="username"
                  placeholder="ahmed  ·  ahmed@lycee.dz"></label>
         <label class="fld"><span>🔒 كلمة السر</span>
@@ -247,10 +257,9 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
         <label class="fld"><span>🏫 القسم</span>
           <select id="loginClasse"></select></label>
         <div class="gerr" id="loginErr" hidden></div>
-        <button type="submit" class="btn btn-p btn-block btn-lg">🚀 الدخول إلى القسم</button>
-        <button type="button" class="btn btn-o btn-block" id="btnDemo">🎮 دخول تجريبي (تلميذ)</button>
-        <p class="ghint">💡 حسابات تجريبية : <code>ahmed</code> / <code>1234</code> (تلميذ)
-          · <code>prof</code> / <code>1234</code> (أستاذ → لوحة الأستاذ)</p>
+        <button type="submit" class="btn btn-p btn-block btn-lg">تسجيل الدخول إلى المنصة <span aria-hidden="true">←</span></button>
+        <button type="button" class="btn btn-o btn-block" id="btnDemo">استكشاف المنصة بحساب تجريبي · تلميذ</button>
+        <p class="ghint">الدخول التجريبي مخصص لاستكشاف الواجهة التعليمية، ولا يمثل حسابًا شخصيًا.</p>
       </form>
 
       <!-- Inscription -->
