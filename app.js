@@ -511,7 +511,7 @@ function renderTabs(){
   desktop += '<button class="tab' + (currentView === 'masar' ? ' on' : '') + '" data-go="masar">🧭 مسارك</button>';
   desktop += '<button class="tab' + (currentView === 'accueil' ? ' on' : '') + '" data-go="accueil">🏠 فضائي الدراسي</button>';
   for(const cat of NAVCATS){
-    const items = cat[3].map(id => byId.get(id)).filter(Boolean);
+    const items = cat[3].filter(id => id !== 'matieres' && id !== 'english').map(id => byId.get(id)).filter(Boolean);
     if(!items.length) continue;
     items.forEach(t => used.add(t[0]));
     const active = items.some(t => t[0] === currentView);
@@ -628,6 +628,7 @@ function go(view){
   renderTabs();
   /* Ferme TOUT tiroir de navigation mobile (plusieurs sélecteurs possibles). */
   Array.from(document.querySelectorAll('#tabs, .tabs, .drawer, #navDrawer')).forEach(t => t.classList.remove('open'));
+  document.querySelectorAll('#tabs .nav-group[open]').forEach(group => group.removeAttribute('open'));
   const morePanel = $('#mobileNavMore');
   const moreButton = $('#tabs [data-nav-more]');
   if(morePanel) morePanel.hidden = true;
