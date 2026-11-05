@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.168.0.0.53';
+const VERSION = 'dz-de-v3.168.0.0.54';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -14,7 +14,7 @@ const PRECACHE = [
   './',
   './index.html',
   './style.css?v=3515',
-  './style-prototype-dz.css?v=140',
+  './style-prototype-dz.css?v=141',
   './auth.js?v=3510',
   './bdd.js?v=3510',
   './app.js?v=3530',
@@ -129,7 +129,13 @@ self.addEventListener('activate', event => {
     await Promise.all(keys
       .filter(k => k.indexOf(VERSION) !== 0)
       .map(k => caches.delete(k)));
-    await self.clients.claim();
+    try {
+      await self.clients.claim();
+    } catch (error) {
+      /* Une course de cycle de vie peut rendre claim() invalide sur un worker
+         qui n'est plus active. Ne pas laisser cette exception interrompre l'activation. */
+      if (!error || error.name !== 'InvalidStateError') throw error;
+    }
   })());
 });
 
