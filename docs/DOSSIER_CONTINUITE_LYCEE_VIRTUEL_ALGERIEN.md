@@ -1339,3 +1339,12 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache : `app.js?v=3531`, Service Worker `dz-de-v3.168.0.0.55`, précache et assertions CI synchronisés.
 - Périmètre : branche `design/prototypes-67-74-alignment` / PR #17. Aucun changement à `main`, aux données, à Supabase ou à l'authentification.
 - Validation navigateur et déploiement Cloudflare : en attente des contrôles du dernier commit ; ne pas considérer le correctif comme vérifié en production avant ces étapes.
+
+
+### Lot 104 — synchronisation du contrôle automatisé مسارك (5 novembre 2026)
+
+- Échec CI observé dans `ci/check-masar.mjs:22` : l'assertion attendait encore `dz-de-v3.168.0.0.54`, alors que `sw.js` et son précache utilisent déjà `.55` depuis le Lot 103.
+- Les assertions précédentes du contrôle مسارك (progression par unité, niveau actif, prochaine séance, compétences, grilles desktop/mobile, thème sombre et versions des ressources) avaient été franchies avant cet échec.
+- Correction limitée : mise à jour de l'attente du Service Worker à `.55`. Aucun changement au code métier de `masar.js`, aux styles, aux données ou au comportement du tableau de bord.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement à `main`, à Supabase, aux rôles, aux comptes, aux paiements ou à l'authentification.
+- Validation : un nouveau run GitHub Actions doit confirmer le contrôle. Cette correction de l'assertion ne constitue pas une validation visuelle du tableau de bord dans un navigateur.
