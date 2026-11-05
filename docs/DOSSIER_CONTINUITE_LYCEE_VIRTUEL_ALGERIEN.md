@@ -1424,3 +1424,8 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - CI : contrôles du rendu hiérarchique, du survol/focus et des versions de cache actualisés dans `ci/check-public-portal.mjs` et `ci/check-masar.mjs`.
 
 **Limites et vérifications :** le menu mobile conserve son panneau « المزيد » existant ; le survol desktop n'est pas utilisé sur écran tactile. Les tests CI n'ont pas encore été exécutés pour ce lot. Le rendu réel après connexion devra être confirmé sur l'aperçu Cloudflare desktop et mobile. PR #17 reste ouverte et non fusionnée ; `main` et la production ne sont pas modifiés par ce lot.
+
+
+## Lot 112 — synchronisation du contrôle CI du Service Worker
+
+Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 233) : le contrôle vérifiait encore `dz-de-v3.169.0.0.55`, alors que `sw.js` est passé à `dz-de-v3.170.0.0.55` avec le Lot 111. Les références CSS v143 et app.js v3532 étaient déjà cohérentes. Le contrôle CI a été aligné sur la version réelle du Service Worker ; aucune logique applicative supplémentaire n'a été modifiée dans ce correctif. Le workflow suivant doit confirmer le résultat. PR #17 reste ouverte/non fusionnée ; `main` et la production restent hors périmètre.
