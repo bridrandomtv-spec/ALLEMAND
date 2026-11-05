@@ -124,6 +124,9 @@ for (const marker of [
 ]) {
   if (!app.includes(marker)) fail('comportement formulaire/onglets ou authentification absent : ' + marker);
 }
+if (!html.includes('id="loginTab"') || !html.includes('data-gate="login" data-gate-open="login"')) {
+  fail('le bouton 🔐 تسجيل الدخول doit ouvrir la route publique #connexion');
+}
 if (!html.includes('data-gate="login"') || !html.includes('data-gate="signup"')) {
   fail('onglets connexion et inscription absents');
 }
