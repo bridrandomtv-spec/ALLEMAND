@@ -1368,3 +1368,12 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Contrôle anti-régression corrigé : vérifier séparément que le menu public possède le déclencheur de route et que l’onglet interne ne le possède pas. Cela empêche de réintroduire la récursion.
 - Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement à `main`, à l’authentification, à Supabase, aux rôles, aux comptes, aux paiements ou au schéma.
 - Validation restante : exécuter CI sur le nouveau commit, obtenir le build de prévisualisation Cloudflare puis tester le clic dans le navigateur. Le correctif de code ne constitue pas à lui seul une preuve de fonctionnement en production.
+
+### Lot 107 — retrait de la barre latérale après connexion (5 novembre 2026)
+
+- Retour utilisateur sur la prévisualisation `8322ab5a` : après connexion, la route `#masar` s'ouvre, mais toutes les rubriques apparaissent dans une longue colonne latérale à droite.
+- Cause CSS identifiée : une règle ancienne du Lot 99 réimposait, à partir de 1024 px, `flex-direction: column` sur `.desktop-nav`, tandis qu'une ancienne règle de prototype réservait 288 px à une sidebar. Ces règles tardives contredisaient la direction NAV V2 (« navigation intégrée au header, sans sidebar ni barre basse »).
+- Correction limitée à `style-prototype-dz.css` : à partir de 901 px, neutraliser le padding latéral réservé à la sidebar et rétablir une navigation horizontale intégrée à l'en-tête, avec retour à la ligne si nécessaire. Les boutons, `data-go`, routes et fonctions restent inchangés.
+- Cache : feuille CSS passée de v141 à v142 ; service worker passé de `dz-de-v3.168.0.0.55` à `dz-de-v3.169.0.0.55`, avec le nouveau CSS dans le précache.
+- Aucun changement à l'authentification, Supabase, RLS, comptes, rôles, paiements ou données. Branche `design/prototypes-67-74-alignment` / PR #17 uniquement ; `main` n'est pas modifiée.
+- Validation restant à effectuer : CI sur le nouveau HEAD, déploiement de prévisualisation Cloudflare correspondant au HEAD, puis vérification visuelle réelle sur ordinateur et mobile. Le lien précédent `8322ab5a` ne doit pas être considéré comme contenant ce correctif tant qu'un nouveau build correspondant n'est pas confirmé.
