@@ -1237,3 +1237,16 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Limite importante : la CI ne prouve pas la délivrabilité du courriel ni le fonctionnement du lien envoyé. La Redirect URL de production (origine + chemin de `index.html`) doit être autorisée dans Supabase Authentication → URL Configuration → Redirect URLs ; ce réglage n'a pas été modifié ni vérifié par les outils disponibles.
 - Test manuel restant : demander une récupération avec une adresse de test autorisée, ouvrir le courriel, vérifier le retour sur `#reinitialiser-mot-de-passe`, définir un nouveau mot de passe puis se reconnecter. Effectuer ensuite le même contrôle d'affichage sur ordinateur et mobile.
 - État de PR au moment du contrôle : #17 ouverte, branche `design/prototypes-67-74-alignment`, base `main`, non fusionnée. Aucun changement de `main`, aucun changement de configuration Supabase, de données, de rôles, de RLS, de schéma ou de paiements.
+
+
+## Lot 97 — placement des formulaires de récupération sur la page de connexion (5 novembre 2026)
+
+- Audit CSS du portail : la carte d'authentification publique utilise une grille nommée `intro / tabs / form`. Les formulaires de connexion et d'inscription étaient explicitement placés dans `form`, mais les formulaires `#passwordResetForm` et `#passwordUpdateForm` ne l'étaient pas.
+- Correction ciblée sur `style-prototype-dz.css` : les deux formulaires de récupération occupent désormais la zone `form`, avec une largeur maximale cohérente, un alignement vertical en haut et des espacements adaptés. Les règles mobiles reprennent les marges et espacements de la page de connexion.
+- Aucun changement de HTML, d'identifiant, de route, de gestionnaire JavaScript, de méthode Supabase ou de logique d'authentification. Le masquage des formulaires inactifs reste assuré par la règle globale `[hidden]{display:none!important}`.
+- Cache actualisé : CSS `v137`, Service Worker `dz-de-v3.168.0.0.49`, précache synchronisé.
+- Contrôle CI étendu : vérification des deux zones `grid-area:form`, de la référence CSS chargée et de la version du précache.
+- Fichiers modifiés : `style-prototype-dz.css`, `index.html`, `sw.js`, `ci/check-public-portal.mjs`, présent dossier.
+- Commit(s) du lot 97 : CSS `e76121a`, cache HTML `f3fd04b`, Service Worker `fceec80`, contrôle CI `3c96483` ; mise à jour documentaire à suivre.
+- Validation visuelle réelle sur navigateur ordinateur/mobile et test réel du courriel de récupération toujours non effectués. La réussite CI ne sera pas assimilée à une preuve de rendu ou de fonctionnement Supabase.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. PR maintenue ouverte et non fusionnée ; aucun changement de `main`, de configuration Supabase, de comptes, rôles, RLS, schéma ou paiements.
