@@ -1393,7 +1393,7 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 
 - Analyse du workflow `42120837164`, job `127572451118` : le contrôle `ci/check-public-portal.mjs` passe, y compris ses assertions de navigation sans sidebar.
 - L'étape suivante échoue dans `ci/check-masar.mjs:20` avec `AssertionError: cache CSS non actualisé`. La cause est une référence restée à `style-prototype-dz.css?v=141` et à Service Worker `dz-de-v3.168.0.0.55`, alors que `index.html` et `sw.js` référencent CSS v142 et SW v3.169.0.0.55.
-- Vérification croisée des fichiers : HTML et précache SW concordent sur CSS v142, `masar.js?v=3516` et `app.js?v=3531). Le contrôle de مسارك a été mis à jour vers CSS v142 et SW v3.169 ; les attentes JS inchangées sont conservées.
+- Vérification croisée des fichiers : HTML et précache SW concordent sur CSS v142, `masar.js?v=3516` et `app.js?v=3531`. Le contrôle de مسارك a été mis à jour vers CSS v142 et SW v3.169 ; les attentes JS inchangées sont conservées.
 - Commit du contrôle : `84cdaa6ec93e59c21d6e7b2e3cecb385d6f414e3`.
 - Validation à suivre : nouveau workflow sur ce commit. Aucun succès CI final, déploiement Cloudflare ou test visuel navigateur n'est revendiqué à ce stade.
 - Périmètre : branche `design/prototypes-67-74-alignment` uniquement ; PR #17 non fusionnée ; `main` intacte. Aucun changement Auth, Supabase, RLS, schéma ou données.
