@@ -606,7 +606,7 @@ function go(view){
   });
   renderTabs();
   /* Ferme TOUT tiroir de navigation mobile (plusieurs sélecteurs possibles). */
-  $('#tabs, .tabs, .drawer, #navDrawer').forEach(t => t.classList.remove('open'));
+  $( '#tabs, .tabs, .drawer, #navDrawer').forEach(t => t.classList.remove('open'));
   const morePanel = $('#mobileNavMore');
   const moreButton = $('#tabs [data-nav-more]');
   if(morePanel) morePanel.hidden = true;
