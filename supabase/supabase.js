@@ -43,6 +43,19 @@ async function signup(email, pass, meta){
   const r = await c.auth.signUp({ email, password: pass, options: { data: meta || {} } });
   return r.error ? { ok: false, err: r.error.message } : { ok: true, user: r.data.user };
 }
+async function resetPassword(email){
+  const c = await sb();
+  if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة حاليًا' };
+  const redirectTo = window.location.origin + window.location.pathname + '#reinitialiser-mot-de-passe';
+  const r = await c.auth.resetPasswordForEmail(String(email || '').trim(), { redirectTo });
+  return r.error ? { ok:false, err:r.error.message } : { ok:true };
+}
+async function updatePassword(password){
+  const c = await sb();
+  if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة حاليًا' };
+  const r = await c.auth.updateUser({ password });
+  return r.error ? { ok:false, err:r.error.message } : { ok:true, user:r.data.user };
+}
 async function me(){
   try{
     const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
@@ -462,7 +475,7 @@ async function msgCreateGroup(wilaya, niveau, filiere, titre){
   return { ok:true, convId:r.data.id };
 }
 
-window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
+window.SB = { login, signup, resetPassword, updatePassword, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
 /* pont dz:view post-sbready (UI-1) : les cartes ADM se re-rendent quand le client devient prêt */
 document.dispatchEvent(new CustomEvent('dz:view', { detail:{ view:(location.hash||'').replace('#','') } }));
