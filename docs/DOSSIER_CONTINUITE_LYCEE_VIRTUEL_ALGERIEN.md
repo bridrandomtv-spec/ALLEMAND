@@ -1330,3 +1330,12 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - La première exécution après mise à jour du cache a atteint `ci/check-masar.mjs`, qui conservait encore les références historiques CSS `v=140` et Service Worker `.53`.
 - Les assertions ont été synchronisées avec `style-prototype-dz.css?v=141` et le Service Worker `.54`.
 - Le run précédent a donc échoué sur un contrôle CI obsolète, pas sur le code fonctionnel de مسارك. Une nouvelle validation doit confirmer ce correctif.
+
+### Lot 103 — correction de l'itération du tiroir de navigation
+
+- Erreur signalée dans le navigateur : `app.js?v=3530:609` — `forEach is not a function`.
+- Cause confirmée : le helper `$` utilise `document.querySelector()` et renvoie un seul élément, alors que la ligne 609 appelait `.forEach()` sur le résultat d'un sélecteur CSS multiple.
+- Correction : remplacement par `Array.from(document.querySelectorAll(...))`, afin de retirer la classe `open` de tous les tiroirs correspondants.
+- Cache : `app.js?v=3531`, Service Worker `dz-de-v3.168.0.0.55`, précache et assertions CI synchronisés.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17. Aucun changement à `main`, aux données, à Supabase ou à l'authentification.
+- Validation navigateur et déploiement Cloudflare : en attente des contrôles du dernier commit ; ne pas considérer le correctif comme vérifié en production avant ces étapes.
