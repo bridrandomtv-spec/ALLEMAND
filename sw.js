@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.168.0.0.52';
+const VERSION = 'dz-de-v3.168.0.0.53';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -73,7 +73,6 @@ const BDD_FILES = [
   './assets/bdd/onboarding.json',
   './assets/bdd/corpus.json',
   './assets/bdd/shards_manifest.json',
-  './assets/bdd/shards/shard_00.json',
   './assets/bdd/contenu_original.json',
   './assets/bdd/malakhiss.json',
   './assets/bdd/sujet14_farid.json',
@@ -102,9 +101,17 @@ self.addEventListener('install', event => {
       cache.add(new Request(url, { cache: 'reload' })).catch(() => null)
     ));
     const cdnCache = await caches.open(CACHE_ASSETS);
-    await Promise.all(CDN.map(url =>
-      cdnCache.add(new Request(url, { mode: 'no-cors' })).catch(() => null)
-    ));
+    await Promise.all(CDN.map(async url => {
+      try {
+        const request = new Request(url, { mode: 'no-cors', cache: 'reload' });
+        const response = await fetch(request);
+        if (response && (response.ok || response.type === 'opaque')) {
+          await cdnCache.put(request, response);
+        }
+      } catch (_) {
+        /* CDN indisponible ou refusé : les polices restent chargées par le navigateur en ligne. */
+      }
+    }));
     await self.skipWaiting();
     /* Pré-téléchargement différé de la base de données (684 fiches) */
     setTimeout(() => {
