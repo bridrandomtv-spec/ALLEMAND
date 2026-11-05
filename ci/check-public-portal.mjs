@@ -221,19 +221,19 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
   fail('règle CSS prioritaire de masquage des formulaires de récupération absente');
 }
 const sw = read('sw.js');
-if (!html.includes('style-prototype-dz.css?v=142')) {
+if (!html.includes('style-prototype-dz.css?v=143')) {
   fail('version CSS du portail non actualisée (v142 attendue)');
 }
-if (!sw.includes('style-prototype-dz.css?v=142')) {
+if (!sw.includes('style-prototype-dz.css?v=143')) {
   fail('version CSS du précache non actualisée (v142 attendue)');
 }
 if (!sw.includes("dz-de-v3.169.0.0.55") ||
-    !sw.includes("style-prototype-dz.css?v=142") ||
+    !sw.includes("style-prototype-dz.css?v=143") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v142 / app 3531 / .55)');
+console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v143 / app 3532 / .56)');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -259,8 +259,17 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
   if (!app.includes(marker)) fail('navigation mobile compacte absente ou incomplète : ' + marker);
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
-if (!html.includes('app.js?v=3531') || !sw.includes('app.js?v=3531')) fail('cache app.js non synchronisé');
-if (!html.includes('style-prototype-dz.css?v=142') || !sw.includes('style-prototype-dz.css?v=142')) fail('cache CSS v142 non synchronisé');
+if (!html.includes('app.js?v=3532') || !sw.includes('app.js?v=3532')) fail('cache app.js non synchronisé');
+if (!html.includes('style-prototype-dz.css?v=143') || !sw.includes('style-prototype-dz.css?v=143')) fail('cache CSS v142 non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
 console.log('✅ Lot 99 mobile + Lot 107 desktop : navigation responsive sans sidebar');
+for (const marker of ['const NAVCATS = [','nav-group-trigger','nav-submenu','nav-subitem','details class="nav-group"']) {
+  if (!app.includes(marker)) fail('menu hiérarchique desktop incomplet : ' + marker);
+}
+if (!css.includes('LOT 111 — menu hiérarchique desktop')) fail('styles du menu hiérarchique absents');
+if (!css.includes('.nav-group:hover>.nav-submenu') ||
+    !css.includes('.nav-group:focus-within>.nav-submenu')) {
+  fail('ouverture des sous-menus par survol/clavier absente');
+}
+console.log('✅ Lot 111 : catégories compactes, sous-menus au survol et navigation clavier');
