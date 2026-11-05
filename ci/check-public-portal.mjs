@@ -210,13 +210,13 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
     !css.includes('#gate.public-auth-page #passwordResetForm[hidden],\n#gate.public-auth-page #passwordUpdateForm[hidden]')) {
   fail('règle CSS prioritaire de masquage des formulaires de récupération absente');
 }
+const sw = read('sw.js');
 if (!html.includes('style-prototype-dz.css?v=141')) {
   fail('version CSS du portail non actualisée');
 }
 if (!sw.includes('style-prototype-dz.css?v=141')) {
   fail('version CSS du précache non actualisée');
 }
-const sw = read('sw.js');
 if (!sw.includes("dz-de-v3.168.0.0.54") ||
     !sw.includes("style-prototype-dz.css?v=141") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
