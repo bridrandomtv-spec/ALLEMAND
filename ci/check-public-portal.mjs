@@ -9,6 +9,7 @@ const auth = read('auth.js');
 const portal = read('public-portal.js');
 const app = read('app.js');
 const html = read('index.html');
+const css = read('style-prototype-dz.css');
 
 const fail = message => { throw new Error('Portail public : ' + message); };
 const expected = {
@@ -183,4 +184,27 @@ for (const marker of [
   if (!app.includes(marker)) fail('gestionnaire de récupération absent : ' + marker);
 }
 console.log('✅ Récupération : envoi email, lien de réinitialisation et mise à jour du mot de passe contrôlés');
+
+/* La récupération doit occuper la même zone de grille que les autres formulaires.
+   Le contrôle porte aussi sur les versions de cache réellement chargées. */
+for (const id of ['passwordResetForm', 'passwordUpdateForm']) {
+  const selector = '#gate.public-auth-page #' + id;
+  if (!css.includes(selector)) fail('placement CSS du formulaire public absent : #' + id);
+  const ruleStart = css.indexOf(selector);
+  const ruleEnd = css.indexOf('}', ruleStart);
+  const rule = ruleStart >= 0 && ruleEnd >= 0 ? css.slice(ruleStart, ruleEnd) : '';
+  if (!rule.includes('grid-area:form!important')) {
+    fail('le formulaire #' + id + ' doit occuper la zone form');
+  }
+}
+if (!html.includes('style-prototype-dz.css?v=137')) {
+  fail('version CSS du portail non actualisée');
+}
+const sw = read('sw.js');
+if (!sw.includes("dz-de-v3.168.0.0.49") ||
+    !sw.includes("style-prototype-dz.css?v=137")) {
+  fail('précache Service Worker non synchronisé avec le CSS du portail');
+}
+console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
+console.log('✅ Cache CSS et Service Worker synchronisés (v137 / .49)');
 
