@@ -1131,3 +1131,16 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache : `public-portal.js?v=9` synchronisé dans `index.html` et le précache du Service Worker ; version du cache portée à `dz-de-v3.168.0.0.43`.
 - Périmètre : branche `design/prototypes-67-74-alignment` et PR #17 uniquement ; aucune modification de `main`, aucune fusion, aucun changement Supabase/Auth/RLS/base de données.
 - Validation : modification source et synchronisation des références vérifiables dans GitHub. L'accès au Worker de prévisualisation a échoué depuis l'outil de consultation ; aucun clic navigateur ni déploiement Cloudflare n'est revendiqué. Il reste à confirmer que ce commit est effectivement publié sur le preview puis à tester le clic réel.
+
+
+## Lot 88 — page de connexion e-learning (5 novembre 2026)
+
+- Recomposition réelle de l'écran d'authentification existant : panneau de présentation pédagogique, formulaire principal hiérarchisé, onglets connexion/inscription, champs et actions mieux lisibles.
+- Le portail public et l'écran d'authentification restent deux états visuels distincts via les routes existantes #connexion et #inscription ; le retour vers l'accueil conserve son contrôle actuel.
+- Libellés clarifiés : « البريد الإلكتروني أو اسم المستخدم », « تسجيل الدخول إلى المنصة » et bouton secondaire de démonstration sans divulgation des identifiants de démonstration dans le texte public.
+- Préservation stricte des identifiants DOM (loginForm, loginUser, loginPass, loginClasse, btnDemo, signupForm, etc.), des gestionnaires app.js/public-portal.js et des appels Supabase/AUTH. Aucun changement au mécanisme d'authentification.
+- Aucun lien « mot de passe oublié » ajouté : le client Supabase de cette branche n'expose actuellement aucun parcours de récupération, et afficher un lien inopérant serait trompeur. À traiter dans un lot fonctionnel distinct si demandé.
+- CSS classique uniquement, avec variantes clair/sombre et mise en page responsive ; aucune dépendance ajoutée.
+- Cache : style-prototype-dz.css?v=134 synchronisé dans index.html et le précache ; version du service worker portée à dz-de-v3.168.0.0.44.
+- Validation : contrôles statiques de présence des ancres/formulaires, conservation des IDs et handlers, références CSS/SW cohérentes, délimiteurs CSS équilibrés. Aucun test visuel navigateur ordinateur/mobile ni déploiement Cloudflare n'est revendiqué à ce stade.
+- PR #17 reste ouverte et non fusionnée ; aucune modification de main, de Supabase, Auth, RLS ou de la base de données.
