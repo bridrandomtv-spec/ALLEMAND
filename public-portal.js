@@ -251,6 +251,7 @@
     const card = gateCard();
     if(card) card.scrollIntoView({behavior:'smooth', block:'center'});
   }
+  function isPasswordRecoveryCallback(){ return /(?:^|[&#])type=recovery(?:&|$)/.test(String(location.hash||'')); }
   function setAuthPage(target, syncHash){
     const gate = $('#gate'), card = gateCard();
     if(!gate || !card) return;
@@ -333,7 +334,7 @@
     if(location.hash === '#connexion') setAuthPage('login', false);
     else if(location.hash === '#inscription') setAuthPage('signup', false);
     else if(location.hash === '#mot-de-passe-oublie') setRecoveryPage('request', false);
-    else if(location.hash === '#reinitialiser-mot-de-passe') setRecoveryPage('update', false);
+    else if(location.hash === '#reinitialiser-mot-de-passe' || isPasswordRecoveryCallback()) setRecoveryPage('update', false);
     else if(location.hash === '#mot-de-passe-oublie') setRecoveryPage('request', false);
     else if(location.hash === '#reinitialiser-mot-de-passe') setRecoveryPage('update', false);
     else if($('#gate') && $('#gate').classList.contains('public-auth-page')) closeAuthPage(false);
