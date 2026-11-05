@@ -84,14 +84,17 @@ console.log('✅ Parcours allemand : 2AS/3AS uniquement ; anglais : disponibilit
 console.log('✅ Inscription : niveau et filière transmis au formulaire existant');
 
 /* Contrat de l'écran de connexion : routes, onglets, champs et vraie soumission. */
-const loginForm = html.match(/<form\\b[^>]*id="loginForm"[\\s\\S]*?<\\/form>/);
+const loginStart = html.indexOf('<form id="loginForm"');
+const loginEnd = html.indexOf('</form>', loginStart);
+const loginForm = loginStart >= 0 && loginEnd >= 0
+  ? html.slice(loginStart, loginEnd + '</form>'.length) : '';
 if (!loginForm) fail('formulaire #loginForm absent');
 for (const marker of [
   'id="loginUser"', 'autocomplete="username"',
   'id="loginPass"', 'autocomplete="current-password"',
   'type="submit"'
 ]) {
-  if (!loginForm[0].includes(marker)) fail('contrat de connexion absent : ' + marker);
+  if (!loginForm.includes(marker)) fail('contrat de connexion absent : ' + marker);
 }
 for (const marker of [
   "function setAuthPage(target, syncHash)",
