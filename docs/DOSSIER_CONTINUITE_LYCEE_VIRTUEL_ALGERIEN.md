@@ -1319,3 +1319,8 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - CI : assertions mises à jour pour exiger la synchronisation de la version CSS entre HTML et précache, la version SW `.54` et la gestion de l'InvalidStateError.
 - Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement à `main`, à l'authentification, à Supabase, aux comptes, mots de passe, rôles, RLS, schéma ou paiements.
 - Validation : correctifs committés ; CI et prévisualisation Cloudflare à confirmer. Aucun test visuel navigateur revendiqué.
+
+## Complément Lot 102 — maintenance GitHub Actions
+
+- L'avertissement Node.js 20 provenait de `actions/setup-python@v5` dans `.github/workflows/deploy.yml`. Le workflow utilise désormais `actions/setup-python@v6`, compatible avec l'environnement Node.js 24 annoncé par GitHub Actions.
+- Cet avertissement était une alerte de dépréciation, pas la cause directe du formulaire de réinitialisation ni de l'exception `clients.claim()`.
