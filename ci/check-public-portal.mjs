@@ -82,4 +82,47 @@ if (!portal.includes("document.addEventListener('click'") ||
 console.log('✅ Portail public : 3 niveaux, 14 matières, filières cohérentes');
 console.log('✅ Parcours allemand : 2AS/3AS uniquement ; anglais : disponibilité partielle');
 console.log('✅ Inscription : niveau et filière transmis au formulaire existant');
+
+/* Contrat de l'écran de connexion : routes, onglets, champs et vraie soumission. */
+const loginForm = html.match(/<form\\b[^>]*id="loginForm"[\\s\\S]*?<\\/form>/);
+if (!loginForm) fail('formulaire #loginForm absent');
+for (const marker of [
+  'id="loginUser"', 'autocomplete="username"',
+  'id="loginPass"', 'autocomplete="current-password"',
+  'type="submit"'
+]) {
+  if (!loginForm[0].includes(marker)) fail('contrat de connexion absent : ' + marker);
+}
+for (const marker of [
+  "function setAuthPage(target, syncHash)",
+  "gate.hidden = false",
+  "card.hidden = false",
+  "tab.click()",
+  "focus = mode === 'signup' ? $('#suName') : $('#loginUser')",
+  "location.hash === '#connexion'",
+  "location.hash === '#inscription'"
+]) {
+  if (!portal.includes(marker)) fail('route/affichage connexion-inscription absent : ' + marker);
+}
+for (const marker of [
+  "document.addEventListener('click'",
+  "ev.target.closest('[data-gate-open]')",
+  "setAuthPage(gateTrigger.dataset.gateOpen === 'signup' ? 'signup' : 'login', true)"
+]) {
+  if (!portal.includes(marker)) fail('déclencheur public de connexion absent : ' + marker);
+}
+for (const marker of [
+  "Array.from(document.querySelectorAll('.gtab'))",
+  "const isLogin = b.dataset.gate === 'login'",
+  "if(lf) lf.addEventListener('submit'",
+  "window.SB.login(",
+  "AUTH.login("
+]) {
+  if (!app.includes(marker)) fail('comportement formulaire/onglets ou authentification absent : ' + marker);
+}
+if (!html.includes('data-gate="login"') || !html.includes('data-gate="signup"')) {
+  fail('onglets connexion et inscription absents');
+}
+
+console.log('✅ Connexion : routes #connexion/#inscription, onglets, champs et submit contrôlés');
 console.log('✅ التربية البدنية absente ; aucune modification du système Auth');
