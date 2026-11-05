@@ -1663,9 +1663,14 @@ function bindGateEvents(){
      seul propriétaire de l'ouverture des routes #connexion/#inscription. */
 
   Array.from(document.querySelectorAll('.gtab')).forEach(b => b.addEventListener('click', () => {
-    Array.from(document.querySelectorAll('.gtab')).forEach(x => x.classList.remove('on'));
-    b.classList.add('on');
+    const tabs = Array.from(document.querySelectorAll('.gtab'));
     const isLogin = b.dataset.gate === 'login';
+    tabs.forEach(x => {
+      const selected = x === b;
+      x.classList.toggle('on', selected);
+      x.setAttribute('aria-selected', selected ? 'true' : 'false');
+      x.tabIndex = selected ? 0 : -1;
+    });
     const lf = $('#loginForm'), sf = $('#signupForm');
     if(lf) lf.hidden = !isLogin;
     if(sf) sf.hidden = isLogin;
