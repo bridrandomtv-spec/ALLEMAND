@@ -1291,3 +1291,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache CSS porté à `v140`, Service Worker à `.52`. Le JavaScript reste à `app.js?v=3530`.
 - La première CI du lot 99 a échoué sur les assertions de cache dans `ci/check-masar.mjs`. Le diagnostic des journaux a montré des expressions régulières incorrectement échappées ; elles ont été corrigées, puis les versions CSS/SW actualisées à nouveau.
 - Toujours aucune validation visuelle navigateur : la CI à venir doit confirmer les contrôles automatisés uniquement.
+
+## Lot 100 — correction du précache Service Worker (5 novembre 2026)
+
+- Diagnostic du build Cloudflare de l'aperçu `ef441862` : les six feuilles de polices Fontsource étaient demandées en mode `no-cors`, puis ajoutées via `Cache.add()`. Les réponses opaques sont refusées par `Cache.add()`, ce qui produisait les avertissements `An opaque response cannot be added`.
+- Correction : téléchargement des ressources CDN avec `fetch()`, puis mise en cache par `Cache.put()`, qui accepte les réponses opaques. L'échec éventuel du CDN reste toléré ; le chargement normal des polices par le navigateur n'est pas bloqué.
+- Deuxième constat : `assets/bdd/shards_manifest.json` déclare `nb_shards: 0` et `shards: []`. Le fichier `assets/bdd/shards/shard_00.json` n'existe pas dans la branche ; sa présence dans `BDD_FILES` provoquait le 404 observé dans le build. Retrait de cette seule entrée de précache ; le manifeste et le corpus documentaire existants restent inchangés.
+- Version Service Worker portée à `dz-de-v3.168.0.0.53`. Assertions de cache synchronisées dans `ci/check-public-portal.mjs` et `ci/check-masar.mjs`. Le contrôle public vérifie aussi l'absence de l'ancien shard et l'utilisation de `Cache.put()` pour les polices.
+- Fichiers modifiés : `sw.js`, `ci/check-public-portal.mjs`, `ci/check-masar.mjs`, présent dossier.
+- Périmètre strict : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement à `main`, aux données documentaires, à l'authentification, à Supabase, aux RLS, au schéma, aux rôles, aux comptes ou aux paiements.
+- Validation en attente : le nouveau run GitHub Actions doit confirmer les contrôles statiques. Le prochain build Cloudflare devra confirmer la disparition des avertissements et du 404. Aucun rendu visuel navigateur n'est revendiqué.
