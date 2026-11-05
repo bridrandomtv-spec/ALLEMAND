@@ -264,7 +264,7 @@ if (!html.includes('style-prototype-dz.css?v=143') || !sw.includes('style-protot
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
 console.log('✅ Lot 99 mobile + Lot 107 desktop : navigation responsive sans sidebar');
-for (const marker of ['const NAVCATS = [','nav-group-trigger','nav-submenu','nav-subitem','details class="nav-group"']) {
+for (const marker of ['const NAVCATS = [','nav-group-trigger','nav-submenu','nav-subitem','<details class="nav-group']) {
   if (!app.includes(marker)) fail('menu hiérarchique desktop incomplet : ' + marker);
 }
 if (!css.includes('LOT 111 — menu hiérarchique desktop')) fail('styles du menu hiérarchique absents');
