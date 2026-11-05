@@ -1283,3 +1283,11 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache actualisé : `app.js?v=3530`, CSS `v139`, Service Worker `dz-de-v3.168.0.0.51`. Précache synchronisé.
 - Contrôles statiques ajoutés dans `ci/check-public-portal.mjs` et synchronisation des assertions de cache dans `ci/check-masar.mjs`.
 - Limite : CI statique ne remplace pas un essai visuel/tactile réel sur navigateur mobile et desktop. PR #17 ouverte et non fusionnée ; aucun changement sur `main` ou Supabase.
+
+
+### Complément Lot 99 — disposition ordinateur et corrections CI
+
+- Audit CSS après encapsulation : sur les écrans ≥1024 px, la navigation existante est une barre latérale verticale. Le nouveau conteneur `.desktop-nav` reçoit explicitement cette disposition afin de ne pas transformer les liens en une rangée horizontale dans la sidebar. Entre 901 et 1023 px, les liens restent sur une rangée qui peut revenir à la ligne.
+- Cache CSS porté à `v140`, Service Worker à `.52`. Le JavaScript reste à `app.js?v=3530`.
+- La première CI du lot 99 a échoué sur les assertions de cache dans `ci/check-masar.mjs`. Le diagnostic des journaux a montré des expressions régulières incorrectement échappées ; elles ont été corrigées, puis les versions CSS/SW actualisées à nouveau.
+- Toujours aucune validation visuelle navigateur : la CI à venir doit confirmer les contrôles automatisés uniquement.
