@@ -1377,3 +1377,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache : feuille CSS passée de v141 à v142 ; service worker passé de `dz-de-v3.168.0.0.55` à `dz-de-v3.169.0.0.55`, avec le nouveau CSS dans le précache.
 - Aucun changement à l'authentification, Supabase, RLS, comptes, rôles, paiements ou données. Branche `design/prototypes-67-74-alignment` / PR #17 uniquement ; `main` n'est pas modifiée.
 - Validation restant à effectuer : CI sur le nouveau HEAD, déploiement de prévisualisation Cloudflare correspondant au HEAD, puis vérification visuelle réelle sur ordinateur et mobile. Le lien précédent `8322ab5a` ne doit pas être considéré comme contenant ce correctif tant qu'un nouveau build correspondant n'est pas confirmé.
+
+
+### Lot 108 — réalignement du contrôle CI sur la navigation v142 (5 novembre 2026)
+
+- Audit du HEAD de la branche après le Lot 107 : la règle CSS de fin de fichier rétablit bien, à partir de 901 px, `.desktop-nav` en ligne et retire le padding réservé à l'ancienne sidebar. Le HTML et le Service Worker référencent bien `style-prototype-dz.css?v=142` et `dz-de-v3.169.0.0.55`.
+- L'audit a révélé que `ci/check-public-portal.mjs` conservait des attentes du Lot 99 : cache CSS v141 / Service Worker v3.168 et disposition desktop verticale. Ces assertions contredisaient le Lot 107 et pouvaient faire échouer CI même lorsque la nouvelle règle CSS était présente.
+- Correction du contrôle CI : références attendues mises à jour vers CSS v142 / SW v3.169 ; le test desktop vérifie désormais NAV V2 et la navigation horizontale, tandis que les contrôles de navigation mobile compacte restent présents.
+- Commit du contrôle CI : `f5e908e`.
+- Validation : attendre le workflow associé à ce nouveau commit et contrôler ses logs. Aucun build Cloudflare ni test navigateur ordinateur/mobile n'est encore revendiqué.
+- Périmètre inchangé : PR #17 / branche `design/prototypes-67-74-alignment) uniquement ; aucun changement sur `main), Auth, Supabase, RLS, schéma, rôles, paiements ou données.
