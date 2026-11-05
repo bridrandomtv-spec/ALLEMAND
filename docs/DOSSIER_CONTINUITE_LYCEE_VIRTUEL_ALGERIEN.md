@@ -1199,3 +1199,16 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - URL de prévisualisation de branche : `https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev`. URL immuable du déploiement : `https://ccb248dd-allemand.brid-randomtv.workers.dev`.
 - La consultation automatique de la page via l'outil web a été refusée par l'environnement (DisabledError). Le déploiement est confirmé par Cloudflare, mais le rendu après authentification et les interactions de la page n'ont pas été vérifiés par navigateur. Une validation manuelle par l'utilisateur sur ordinateur et mobile reste nécessaire.
 - PR #17 toujours ouverte, non fusionnée, base `main`. Aucun déploiement production ni changement de `main` revendiqué.
+
+
+## Lot 93 — récupération autonome du mot de passe (5 novembre 2026)
+- Ajout au formulaire de connexion d'un accès « نسيت كلمة المرور؟ » ouvrant un écran de demande de réinitialisation, sans ajouter de lien décoratif ou inopérant.
+- Ajout des formulaires de demande et de définition d'un nouveau mot de passe, avec validation de la confirmation et messages accessibles.
+- Extension minimale de `supabase/supabase.js` : `resetPassword(email)` utilise `auth.resetPasswordForEmail`, et `updatePassword(password)` utilise `auth.updateUser`. Aucun stockage local du mot de passe ni changement de schéma/RLS.
+- Routes dédiées `#mot-de-passe-oublie` et `#reinitialiser-mot-de-passe`. Le retour Supabase est également reconnu via `type=recovery` dans le fragment OAuth, sans écraser le jeton de récupération.
+- Lien de récupération envoyé avec une URL de retour sur la page actuelle. La configuration Supabase Auth doit autoriser le domaine de production et, si utilisé, le domaine de prévisualisation dans les Redirect URLs ; cette configuration n'a pas été modifiée.
+- Cache actualisé : CSS `v136`, app `v3529`, portail `v10`, Service Worker `dz-de-v3.168.0.0.48`.
+- Contrôles CI ciblés ajoutés dans `ci/check-public-portal.mjs` pour les formulaires, les méthodes Supabase, les routes et les gestionnaires.
+- Le réglage Supabase existant `persistSession: true` conserve déjà la session sur cet appareil ; aucun faux bouton « se souvenir de moi » n'a été ajouté, car une option décochable nécessiterait une stratégie distincte de persistance de session.
+- Aucun changement de rôle, de compte, de politique RLS, de base de données, de paiement ou de moteur métier. PR #17 reste ouverte et non fusionnée.
+- Validation navigateur ordinateur/mobile et essai réel du courriel de récupération non encore effectués. La CI doit encore confirmer les nouveaux contrôles ; la configuration de redirection Supabase doit être vérifiée avant d'annoncer le parcours opérationnel en production.
