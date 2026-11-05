@@ -1250,3 +1250,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Commit(s) du lot 97 : CSS `e76121a`, cache HTML `f3fd04b`, Service Worker `fceec80`, contrôle CI `3c96483` ; mise à jour documentaire à suivre.
 - Validation visuelle réelle sur navigateur ordinateur/mobile et test réel du courriel de récupération toujours non effectués. La réussite CI ne sera pas assimilée à une preuve de rendu ou de fonctionnement Supabase.
 - Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. PR maintenue ouverte et non fusionnée ; aucun changement de `main`, de configuration Supabase, de comptes, rôles, RLS, schéma ou paiements.
+
+
+### Complément au lot 97 — synchronisation CI et audit statique des vues (5 novembre 2026)
+
+- Le premier run déclenché après la correction de placement a échoué uniquement parce que `ci/check-masar.mjs` attendait encore l'ancien cache CSS `v136` et l'ancienne version Service Worker `.48`. Les contrôles du portail public, y compris les nouveaux contrôles de placement des formulaires, avaient réussi.
+- Les assertions de cache du contrôle `مسارك` ont été synchronisées sur CSS `v137` et Service Worker `.49`. Correction du contrat de test uniquement, sans changement de `masar.js` ni de ses données.
+- CI #2095 (run ID `42067231554`) sur `d47dcc9a77108303409ccfaf038625281a2f30db` : succès ; job « Validation structurelle & pédagogique » terminé avec succès. Lien : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/42067231554.
+- Audit statique des vues : les 34 valeurs `data-view` présentes dans `index.html` disposent chacune d'au moins une règle CSS ciblant la vue correspondante. Les espaces matières, مسارك, professeur IA, لوحة الأستاذ et الإدارة possèdent des styles et compositions dédiés. Les contenus dynamiques de plusieurs vues sont rendus par leurs modules JavaScript ; l'audit de présence des sélecteurs ne remplace donc pas un test de rendu navigateur.
+- Écart de navigation confirmé : sur ordinateur, `#tabs` est une barre horizontale dans l'en-tête ; sur mobile, elle reste une barre horizontale défilante, positionnée dans le flux et non fixée en bas. La suppression du tiroir latéral mobile est bien présente, mais cela ne correspond pas à une barre inférieure fixe. Ce point reste à traiter dans un lot UX distinct, sans toucher aux routes ni aux permissions.
+- Aucun rendu navigateur réel, capture desktop/mobile ou parcours interactif authentifié n'est revendiqué. Aucun changement de `main`, Auth, Supabase, RLS, schéma, rôles, comptes ou paiements.
