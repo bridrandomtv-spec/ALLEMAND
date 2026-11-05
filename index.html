@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
-</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=135">
+</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=136">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -260,6 +260,28 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
         <button type="submit" class="btn btn-p btn-block btn-lg">تسجيل الدخول إلى المنصة <span aria-hidden="true">←</span></button>
         <button type="button" class="btn btn-o btn-block" id="btnDemo">استكشاف المنصة بحساب تجريبي · تلميذ</button>
         <p class="ghint">الدخول التجريبي مخصص لاستكشاف الواجهة التعليمية، ولا يمثل حسابًا شخصيًا.</p>
+        <button type="button" class="auth-forgot-link" data-password-reset-open>نسيت كلمة المرور؟</button>
+      </form>
+
+      <!-- Récupération et réinitialisation du mot de passe — Supabase Auth -->
+      <form id="passwordResetForm" class="gform auth-recovery-form" aria-label="استعادة كلمة المرور" hidden>
+        <div class="auth-recovery-heading"><span aria-hidden="true">✉️</span><h3>استعادة كلمة المرور</h3><p>أدخل بريدك الإلكتروني وسنرسل إليك رابطًا آمنًا لإعادة تعيين كلمة المرور.</p></div>
+        <label class="fld"><span>📧 البريد الإلكتروني</span>
+          <input type="email" id="resetEmail" required autocomplete="email" placeholder="name@example.com"></label>
+        <div class="gerr auth-recovery-status" id="passwordResetStatus" role="status" aria-live="polite" hidden></div>
+        <button type="submit" class="btn btn-p btn-block btn-lg">إرسال رابط الاستعادة</button>
+        <button type="button" class="btn btn-o btn-block" data-password-reset-back>العودة إلى تسجيل الدخول</button>
+      </form>
+
+      <form id="passwordUpdateForm" class="gform auth-recovery-form" aria-label="تعيين كلمة مرور جديدة" hidden>
+        <div class="auth-recovery-heading"><span aria-hidden="true">🔐</span><h3>تعيين كلمة مرور جديدة</h3><p>اختر كلمة مرور قوية لحماية حسابك التعليمي.</p></div>
+        <label class="fld"><span>كلمة المرور الجديدة</span>
+          <input type="password" id="newPassword" required minlength="8" autocomplete="new-password" placeholder="8 أحرف على الأقل"></label>
+        <label class="fld"><span>تأكيد كلمة المرور</span>
+          <input type="password" id="confirmNewPassword" required minlength="8" autocomplete="new-password" placeholder="أعد كتابة كلمة المرور"></label>
+        <div class="gerr auth-recovery-status" id="passwordUpdateStatus" role="status" aria-live="polite" hidden></div>
+        <button type="submit" class="btn btn-p btn-block btn-lg">حفظ كلمة المرور الجديدة</button>
+        <button type="button" class="btn btn-o btn-block" data-password-reset-back>العودة إلى تسجيل الدخول</button>
       </form>
 
       <!-- Inscription -->
@@ -865,7 +887,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
   <script src="access.js?v=3510"></script>
 <script src="prof_core.js?v=3510"></script>
   <script src="js/subject.js?v=3510"></script>
-<script src="app.js?v=3528"></script>
+<script src="app.js?v=3529"></script>
 <script src="js/voice-chat.js?v=1" defer></script>
   <script defer src="unites3as_vitrine.js?v=3510"></script>
 <script src="js/context.js?v=3510"></script>
@@ -907,11 +929,11 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 <script src="trial.js?v=3510" defer></script>
 <script src="tour.js?v=3510" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script type="module" src="supabase/supabase.js?v=3510"></script>
+  <script type="module" src="supabase/supabase.js?v=3511"></script>
 <script src="banque.js?v=3510" defer></script>
 <script src="malakhiss.js?v=3510" defer></script>
 <script src="guide.js?v=3510" defer></script>
 <script src="library.js?v=3510" defer></script>
-<script src="public-portal.js?v=9" defer></script>
+<script src="public-portal.js?v=10" defer></script>
 </body>
 </html>
