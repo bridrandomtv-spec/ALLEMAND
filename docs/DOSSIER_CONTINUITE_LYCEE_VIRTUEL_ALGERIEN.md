@@ -1358,3 +1358,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Garde CI ajoutée : vérifier que `#loginTab` possède les deux attributs de routage attendus.
 - Aucun changement à `auth.js`, à Supabase, aux rôles, aux comptes, aux paiements, à `main` ou à la configuration Cloudflare. PR #17 uniquement.
 - La correction doit encore être confirmée par le nouveau run CI et par un clic réel sur la dernière prévisualisation Cloudflare ; aucune validation navigateur n'est revendiquée à ce stade.
+
+
+### Lot 106 — correction de la récursion du bouton public de connexion (5 novembre 2026)
+
+- Retour utilisateur : le bouton « تسجيل الدخول » du menu de l’accueil public ne réagissait toujours pas.
+- Cause exacte : le Lot 105 avait ajouté `data-gate-open="login"` à l’onglet interne `#loginTab`. Or `setAuthPage()` appelle déjà `tab.click()` pour sélectionner cet onglet. Le clic synthétique remontait jusqu’au gestionnaire délégué de `public-portal.js`, qui rappelait immédiatement `setAuthPage()` : récursion sans fin.
+- Correction : retrait de `data-gate-open="login"` de `#loginTab`. L’onglet conserve uniquement `data-gate="login"` et reste géré par `app.js`. Le bouton du menu public conserve son propre `data-gate-open="login"` et reste le seul déclencheur de la route publique `#connexion`.
+- Contrôle anti-régression corrigé : vérifier séparément que le menu public possède le déclencheur de route et que l’onglet interne ne le possède pas. Cela empêche de réintroduire la récursion.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement à `main`, à l’authentification, à Supabase, aux rôles, aux comptes, aux paiements ou au schéma.
+- Validation restante : exécuter CI sur le nouveau commit, obtenir le build de prévisualisation Cloudflare puis tester le clic dans le navigateur. Le correctif de code ne constitue pas à lui seul une preuve de fonctionnement en production.
