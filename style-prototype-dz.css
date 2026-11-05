@@ -16574,3 +16574,36 @@ html[data-theme="dark"] #gate .auth-recovery-status.is-success{
 #gate.public-auth-page #passwordUpdateForm[hidden]{
   display:none!important;
 }
+
+
+/* LOT 107 — supprimer définitivement la colonne latérale desktop.
+   La navigation reste intégrée à l'en-tête, conformément à NAV V2.
+   Les routes et les boutons data-go ne changent pas. */
+@media (min-width:901px){
+  #shell{padding-right:0!important;padding-left:0!important}
+  #shell #tabs.tabs{
+    position:relative!important;inset:auto!important;
+    display:flex!important;flex-direction:row!important;
+    align-items:center!important;justify-content:center!important;
+    flex-wrap:wrap!important;gap:6px!important;
+    width:100%!important;max-width:none!important;
+    height:auto!important;max-height:none!important;min-height:52px!important;
+    margin:0!important;padding:8px 18px!important;
+    overflow:visible!important;transform:none!important;
+    border:0!important;border-top:1px solid rgba(0,98,51,.1)!important;
+    border-bottom:1px solid var(--b)!important;border-radius:0!important;
+    background:var(--surface,#fff)!important;box-shadow:none!important;
+  }
+  #shell #tabs .desktop-nav{
+    display:flex!important;flex-direction:row!important;
+    align-items:center!important;justify-content:center!important;
+    flex-wrap:wrap!important;gap:6px!important;
+    width:100%!important;min-width:0!important;
+  }
+  #shell #tabs .desktop-nav>.tab{
+    flex:0 0 auto!important;width:auto!important;max-width:none!important;
+    min-width:0!important;min-height:40px!important;
+    justify-content:center!important;text-align:center!important;
+    white-space:nowrap!important;
+  }
+}
