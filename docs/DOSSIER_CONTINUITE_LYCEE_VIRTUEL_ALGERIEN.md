@@ -1221,3 +1221,11 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - L'audit confirme que `bindGateEvents()` est appelé par `bootGate()` au démarrage, avant la soumission des formulaires ; les gestionnaires de demande et de mise à jour sont donc enregistrés sur la visite initiale, sans dépendre d'une connexion préalable.
 - À vérifier encore : nouvelle CI, allowlist des Redirect URLs Supabase, réception réelle du courriel, échange du lien et changement du mot de passe, puis test navigateur sur ordinateur et mobile.
 - Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement ; PR laissée ouverte et non fusionnée. Aucun changement sur `main`, les comptes, rôles, RLS, schéma, paiements ou configuration Supabase.
+## Lot 95 — synchronisation du test de cache « مسارك » (5 novembre 2026)
+- Après la correction du contrôle de récupération, le run #2089 sur le commit `095a553` a bien passé l'étape « Vérifier le portail public (catalogue et inscription) », y compris les nouveaux contrôles de récupération.
+- Le même run a ensuite échoué dans `ci/check-masar.mjs` : le test exigeait encore `style-prototype-dz.css?v=135` et `dz-de-v3.168.0.0.47`, alors que les fichiers actifs utilisent déjà `v136` et `dz-de-v3.168.0.0.48` depuis le lot 93.
+- Correction limitée au contrat de test `ci/check-masar.mjs` : les deux références attendues sont alignées sur les versions présentes dans `index.html` et `sw.js`. Aucun CSS, JavaScript applicatif ou cache réellement servi n'a été modifié par ce lot.
+- Commit : `b5766c966c3ce881f577ab0b56f9e9a6726c6448`.
+- Nouvelle CI déclenchée par ce commit à confirmer ; aucune CI verte n'est encore revendiquée.
+- Le run #2089 prouve que le contrôle du portail et le contrôle de récupération sont désormais franchis. Le contrôle `مسارك` avait échoué uniquement sur les références de cache obsolètes ; les étapes suivantes ont été ignorées par arrêt anticipé.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement ; PR ouverte et non fusionnée. Aucun changement sur `main`, Supabase, Auth, RLS, schéma, rôles, comptes ou paiements.
