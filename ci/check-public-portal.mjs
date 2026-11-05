@@ -124,8 +124,11 @@ for (const marker of [
 ]) {
   if (!app.includes(marker)) fail('comportement formulaire/onglets ou authentification absent : ' + marker);
 }
-const loginTab = html.match(/<button\\b(?=[^>]*\\bid="loginTab")[^>]*>/);
-if (!loginTab || !loginTab[0].includes('data-gate="login"') || loginTab[0].includes('data-gate-open')) {
+const loginTabId = html.indexOf('id="loginTab"');
+const loginTabStart = html.lastIndexOf('<button', loginTabId);
+const loginTabEnd = html.indexOf('>', loginTabId);
+const loginTab = loginTabStart >= 0 && loginTabEnd >= 0 ? html.slice(loginTabStart, loginTabEnd + 1) : '';
+if (!loginTab || !loginTab.includes('data-gate="login"') || loginTab.includes('data-gate-open')) {
   fail('l’onglet interne loginTab ne doit pas relancer le déclencheur de navigation publique');
 }
 if (!html.includes('<button type="button" data-gate-open="login">تسجيل الدخول</button>')) {
