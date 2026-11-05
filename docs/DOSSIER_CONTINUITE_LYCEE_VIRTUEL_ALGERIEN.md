@@ -1164,3 +1164,14 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Aucun code d'authentification, formulaire, identifiant DOM, configuration Supabase ou règle d'accès n'a été modifié ; seul le contrôle de non-régression a été étendu.
 - Validation du nouveau test à attendre sur le commit de ce lot. Aucun test navigateur réel, aucune validation visuelle mobile/ordinateur et aucun déploiement Cloudflare ne sont revendiqués.
 - Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; PR maintenue ouverte et non fusionnée. Aucun changement direct sur `main`.
+
+
+## Lot 91 — accessibilité des onglets de connexion (5 novembre 2026)
+
+- CI du lot 90 confirmée verte : run #2064, commit `8ecfc9d`, job unique « Validation structurelle & pédagogique » et toutes ses étapes réussies.
+- Audit du formulaire : les deux boutons d'onglet n'exposaient pas leur état aux technologies d'assistance. Ajout de `role=tablist`, `role=tab`, `aria-selected`, `aria-controls`, d'un ordre de tabulation roving (`tabindex=0/-1`) et des relations `aria-labelledby` sur les panneaux formulaires.
+- Le gestionnaire existant synchronise maintenant classe CSS, état ARIA et tabulation lorsqu'on change d'onglet. Les identifiants DOM, les routes, les champs et les gestionnaires d'authentification restent inchangés.
+- Test CI étendu pour contrôler la présence des attributs ARIA et la synchronisation de l'état accessible.
+- Cache synchronisé : `app.js?v=3528`, Service Worker `dz-de-v3.168.0.0.46`, précache `./app.js?v=3528`.
+- Nouveau run CI du lot 91 à attendre. Aucun test navigateur réel, test lecteur d'écran ou déploiement Cloudflare n'est revendiqué.
+- Travail sur `design/prototypes-67-74-alignment` / PR #17 vers `main`, maintenue ouverte et non fusionnée. Aucun changement Auth/Supabase/RLS/schéma/paiement.
