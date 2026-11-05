@@ -46,7 +46,7 @@ async function signup(email, pass, meta){
 async function resetPassword(email){
   const c = await sb();
   if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة حاليًا' };
-  const redirectTo = window.location.origin + window.location.pathname + '#reinitialiser-mot-de-passe';
+  const redirectTo = window.location.origin + window.location.pathname;
   const r = await c.auth.resetPasswordForEmail(String(email || '').trim(), { redirectTo });
   return r.error ? { ok:false, err:r.error.message } : { ok:true };
 }
