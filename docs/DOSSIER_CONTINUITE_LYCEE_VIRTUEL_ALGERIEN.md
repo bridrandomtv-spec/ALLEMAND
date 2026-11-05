@@ -1272,3 +1272,14 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Fichiers modifiés : `style-prototype-dz.css`, `index.html`, `sw.js`, `ci/check-public-portal.mjs`, `ci/check-masar.mjs`, présent dossier.
 - Limite de validation : cette correction est une modification CSS statique ; aucune capture réelle sur téléphone ni test tactile dans navigateur n'a encore été effectué. Vérifier aussi que les éventuels boutons flottants du site ne recouvrent pas la barre sur les appareils réels.
 - Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. PR maintenue ouverte et non fusionnée ; aucun changement de `main`, d'Auth, Supabase, RLS, schéma, rôles, comptes ou paiements.
+
+
+## Lot 99 — Navigation mobile compacte avec menu « Plus » (5 novembre 2026)
+
+- Sur les écrans ≤ 900 px, la barre mobile présente quatre destinations directes — accueil, matières (ou English selon la matière active), مساري et الأستاذ الذكي — ainsi qu'un bouton « المزيد » ouvrant un panneau secondaire.
+- Les entrées secondaires sont générées depuis `allTabs()` et filtrées selon les règles de visibilité existantes (messages exclus, administration uniquement pour le rôle admin). Les routes conservent `data-go` et le gestionnaire de navigation actuel.
+- Le panneau se ferme après navigation, avec le bouton de fermeture, par clic extérieur ou avec Échap. Le bouton « Plus » expose `aria-expanded` et `aria-controls`. Le basculement de matière reste accessible.
+- Sur ordinateur, la navigation existante est conservée dans `.desktop-nav`. Aucun changement des vues, identifiants de sections, rôles, permissions, authentification ou données.
+- Cache actualisé : `app.js?v=3530`, CSS `v139`, Service Worker `dz-de-v3.168.0.0.51`. Précache synchronisé.
+- Contrôles statiques ajoutés dans `ci/check-public-portal.mjs` et synchronisation des assertions de cache dans `ci/check-masar.mjs`.
+- Limite : CI statique ne remplace pas un essai visuel/tactile réel sur navigateur mobile et desktop. PR #17 ouverte et non fusionnée ; aucun changement sur `main` ou Supabase.
