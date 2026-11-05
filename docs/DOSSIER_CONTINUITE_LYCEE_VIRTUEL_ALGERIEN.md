@@ -1301,3 +1301,12 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Fichiers modifiés : `sw.js`, `ci/check-public-portal.mjs`, `ci/check-masar.mjs`, présent dossier.
 - Périmètre strict : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement à `main`, aux données documentaires, à l'authentification, à Supabase, aux RLS, au schéma, aux rôles, aux comptes ou aux paiements.
 - Validation en attente : le nouveau run GitHub Actions doit confirmer les contrôles statiques. Le prochain build Cloudflare devra confirmer la disparition des avertissements et du 404. Aucun rendu visuel navigateur n'est revendiqué.
+
+## Lot 101 — masquage des formulaires de récupération sur la connexion publique (5 novembre 2026)
+
+- Cause isolée dans `style-prototype-dz.css` : la règle `#gate.public-auth-page #passwordUpdateForm` imposait `display:grid!important`, avec une spécificité supérieure au masquage HTML `[hidden]`. Ainsi, le formulaire « تعيين كلمة مرور جديدة » pouvait apparaître dès l'ouverture de l'écran de connexion, même lorsque `public-portal.js` affectait `hidden=true`.
+- Correction ciblée : ajout de sélecteurs `[hidden]` plus spécifiques pour `#passwordResetForm` et `#passwordUpdateForm`, avec `display:none!important`. Le formulaire de nouveau mot de passe reste donc masqué dans les écrans de connexion et d'inscription ; il ne s'affiche que lorsque le routage de récupération le demande explicitement.
+- Garde anti-régression ajoutée à `ci/check-public-portal.mjs` pour vérifier la présence des règles de masquage prioritaires.
+- Fichiers modifiés : `style-prototype-dz.css`, `ci/check-public-portal.mjs`, présent dossier.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement à `main`, au JavaScript d'authentification, à Supabase, aux comptes, mots de passe, rôles, RLS, schéma ou paiements.
+- Validation : correction et garde statique ajoutées ; CI et nouveau déploiement Cloudflare à contrôler. Aucun test visuel navigateur n'est revendiqué à ce stade.
