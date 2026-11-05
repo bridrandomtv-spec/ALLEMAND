@@ -1408,3 +1408,19 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Commit correctif : `26e60ca3b123e95aca4730515e6250040b30ac01`.
 - À ce stade, le correctif est commité sur la branche de la PR #17 ; le succès d'un nouveau workflow n'est pas encore établi. Ne pas déclarer la CI verte avant lecture de son résultat.
 - PR #17 reste ouverte, non fusionnée et ciblée sur `main`. Aucun changement direct sur `main`, aucune publication Cloudflare ni validation visuelle navigateur ne sont revendiqués.
+
+
+---
+
+## Lot 111 — navigation hiérarchique par catégories et sous-menus
+
+**Objectif :** éviter d'afficher toutes les rubriques de l'espace étudiant simultanément. La navigation desktop est désormais organisée comme un explorateur : quelques entrées principales et des catégories compactes ouvrant leurs sous-rubriques au survol, au focus clavier ou au clic.
+
+**Implémentation sur la branche `design/prototypes-67-74-alignment` :**
+- `app.js` : rendu desktop à partir de catégories thématiques (الدراسة، التدريب والتقييم، الموارد التعليمية، التواصل والتفاعل، فضاء الأستاذ، فضاء الأولياء، المتابعة والمشاريع، الخدمات والاشتراك، الحساب والقانون). Chaque sous-rubrique conserve son `data-go` existant ; aucune route ni vue n'est renommée.
+- `style-prototype-dz.css` : sous-menus flottants RTL, ouverture au survol et au focus clavier, état actif visible, styles clair/sombre.
+- `index.html` : références de cache portées à `app.js?v=3532` et `style-prototype-dz.css?v=143`.
+- `sw.js` : précache synchronisé, version `dz-de-v3.170.0.0.55`.
+- CI : contrôles du rendu hiérarchique, du survol/focus et des versions de cache actualisés dans `ci/check-public-portal.mjs` et `ci/check-masar.mjs`.
+
+**Limites et vérifications :** le menu mobile conserve son panneau « المزيد » existant ; le survol desktop n'est pas utilisé sur écran tactile. Les tests CI n'ont pas encore été exécutés pour ce lot. Le rendu réel après connexion devra être confirmé sur l'aperçu Cloudflare desktop et mobile. PR #17 reste ouverte et non fusionnée ; `main` et la production ne sont pas modifiés par ce lot.
