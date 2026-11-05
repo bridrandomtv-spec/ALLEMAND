@@ -16047,3 +16047,173 @@ html[data-theme="dark"] #shell #app [data-view="masar"] #masarBody .ms-empty-lin
   #shell #app section[data-view="masar"] #masarBody>.ms-chart,
   #shell #app section[data-view="masar"] #masarBody>.ms-prog{min-height:0!important;padding:20px!important}
 }
+
+/* LOT 88 — Portail d'authentification : véritable composition e-learning
+   Les formulaires et leurs identifiants restent ceux du moteur existant. */
+#gate.public-auth-page{
+  min-height:100vh!important;min-height:100svh!important;
+  padding:clamp(14px,3vw,34px)!important;
+  background:radial-gradient(ellipse at 8% 12%,rgba(0,98,51,.10),transparent 36%),radial-gradient(ellipse at 92% 88%,rgba(210,16,52,.07),transparent 32%),linear-gradient(145deg,#f5faf6 0%,#edf4ef 52%,#fbfcfa 100%)!important;
+}
+#gate.public-auth-page .gate-wrap{
+  width:min(100%,1080px)!important;max-width:1080px!important;
+  min-height:calc(100svh - 68px)!important;margin-inline:auto!important;
+  padding:clamp(12px,2vw,24px) 0!important;display:flex!important;
+  flex-direction:column!important;justify-content:center!important;
+}
+#gate.public-auth-page .public-header{width:100%!important;margin:0 auto 22px!important;justify-content:center!important}
+#gate.public-auth-page .public-header .gate-brand{justify-content:center!important;text-align:center!important}
+#gate.public-auth-page .gate-brand .gate-crest{
+  width:54px!important;height:54px!important;display:grid!important;place-items:center!important;
+  border-radius:17px!important;background:#fff!important;box-shadow:0 8px 24px rgba(0,70,35,.10)!important;font-size:30px!important;
+}
+#gate.public-auth-page .gate-title{color:#124b2d!important;font-size:clamp(20px,2.3vw,27px)!important;font-weight:950!important}
+#gate.public-auth-page .gate-sub{color:#607568!important;font-size:13px!important}
+#gate.public-auth-page .gate-card:not([hidden]){
+  width:100%!important;max-width:none!important;margin:0!important;padding:0!important;
+  display:grid!important;grid-template-columns:minmax(280px,.88fr) minmax(0,1.12fr)!important;
+  grid-template-rows:auto 1fr!important;grid-template-areas:"intro tabs" "intro form"!important;
+  align-items:stretch!important;gap:0!important;overflow:hidden!important;
+  border:1px solid #dce9df!important;border-radius:28px!important;background:#fff!important;
+  box-shadow:0 28px 80px rgba(15,65,35,.13)!important;
+}
+#gate.public-auth-page .gate-card-intro{
+  grid-area:intro!important;position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  min-height:100%!important;display:flex!important;flex-direction:column!important;justify-content:center!important;
+  align-items:flex-start!important;gap:17px!important;padding:clamp(28px,4vw,52px)!important;
+  text-align:right!important;color:#fff!important;background:linear-gradient(150deg,#004b28 0%,#006b38 55%,#07834a 100%)!important;
+}
+#gate.public-auth-page .gate-card-intro:before,#gate.public-auth-page .gate-card-intro:after{
+  content:""!important;position:absolute!important;z-index:-1!important;border:1px solid rgba(255,255,255,.14)!important;
+  border-radius:50%!important;pointer-events:none!important;
+}
+#gate.public-auth-page .gate-card-intro:before{
+  width:340px!important;height:340px!important;inset:auto -155px -160px auto!important;
+  box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 58px rgba(255,255,255,.025)!important;
+}
+#gate.public-auth-page .gate-card-intro:after{width:180px!important;height:180px!important;inset:-90px auto auto -85px!important}
+#gate.public-auth-page .gate-card-intro .public-auth-back{
+  order:0!important;margin:0 0 12px!important;border:1px solid rgba(255,255,255,.28)!important;
+  background:rgba(255,255,255,.10)!important;color:#fff!important;
+}
+#gate.public-auth-page .gate-card-intro .public-auth-back:hover{background:rgba(255,255,255,.18)!important;border-color:rgba(255,255,255,.55)!important}
+#gate.public-auth-page .gate-card-intro>.auth-eyebrow{
+  display:inline-flex!important;align-items:center!important;gap:8px!important;color:#d6f2df!important;
+  font-size:12px!important;font-weight:850!important;letter-spacing:.02em!important;
+}
+#gate.public-auth-page .gate-card-intro h2{
+  max-width:13ch!important;margin:0!important;color:#fff!important;font-size:clamp(27px,3vw,39px)!important;
+  line-height:1.55!important;font-weight:950!important;
+}
+#gate.public-auth-page .gate-card-intro p{max-width:38ch!important;margin:0!important;color:rgba(255,255,255,.82)!important;font-size:14px!important;line-height:2!important}
+#gate.public-auth-page .auth-benefits{width:100%!important;display:grid!important;gap:12px!important;margin-top:12px!important}
+#gate.public-auth-page .auth-benefits>div{
+  display:flex!important;align-items:center!important;gap:12px!important;padding:11px 12px!important;
+  border:1px solid rgba(255,255,255,.15)!important;border-radius:14px!important;background:rgba(255,255,255,.075)!important;
+}
+#gate.public-auth-page .auth-benefits>div>i{
+  flex:0 0 38px!important;width:38px!important;height:38px!important;display:grid!important;place-items:center!important;
+  border-radius:11px!important;background:rgba(255,255,255,.14)!important;font-style:normal!important;font-size:19px!important;
+}
+#gate.public-auth-page .auth-benefits>div>span{display:grid!important;gap:2px!important}
+#gate.public-auth-page .auth-benefits b{color:#fff!important;font-size:13px!important;font-weight:900!important}
+#gate.public-auth-page .auth-benefits small{color:rgba(255,255,255,.72)!important;font-size:11px!important;line-height:1.7!important}
+#gate.public-auth-page .gate-tabs{
+  grid-area:tabs!important;width:auto!important;display:grid!important;grid-template-columns:1fr 1fr!important;
+  gap:8px!important;margin:0!important;padding:clamp(22px,3vw,34px) clamp(22px,4vw,48px) 0!important;
+  border:0!important;background:#fff!important;
+}
+#gate.public-auth-page .gate-tabs .gtab{
+  min-height:48px!important;border:1px solid #e0eae3!important;border-radius:12px!important;
+  background:#f6faf7!important;color:#567061!important;font:850 14px var(--ff-ar,system-ui)!important;
+  transition:background .18s,border-color .18s,color .18s!important;
+}
+#gate.public-auth-page .gate-tabs .gtab.on{
+  border-color:#006233!important;background:#eaf5ed!important;color:#00572d!important;box-shadow:inset 0 -3px 0 #006233!important;
+}
+#gate.public-auth-page #loginForm,#gate.public-auth-page #signupForm{
+  grid-area:form!important;width:100%!important;max-width:650px!important;margin:0 auto!important;
+  padding:22px clamp(22px,4vw,48px) clamp(26px,3.5vw,42px)!important;
+  display:grid!important;align-content:start!important;gap:15px!important;
+}
+#gate.public-auth-page #loginForm[hidden],#gate.public-auth-page #signupForm[hidden]{display:none!important}
+#gate.public-auth-page .gform .fld{display:grid!important;gap:8px!important;width:100%!important;margin:0!important}
+#gate.public-auth-page .gform .fld>span{color:#263f30!important;font-size:13px!important;font-weight:850!important}
+#gate.public-auth-page .gform input,#gate.public-auth-page .gform select{
+  width:100%!important;min-height:52px!important;border:1px solid #d8e5dc!important;border-radius:12px!important;
+  background:#fbfdfb!important;color:#1b3023!important;padding:12px 15px!important;
+  font:500 15px var(--ff-ar,system-ui)!important;box-shadow:inset 0 1px 2px rgba(10,50,25,.025)!important;
+}
+#gate.public-auth-page .gform input:focus,#gate.public-auth-page .gform select:focus{
+  outline:3px solid rgba(0,98,51,.12)!important;border-color:#16814b!important;background:#fff!important;
+}
+#gate.public-auth-page .gform .fld-row{display:flex!important;align-items:center!important;gap:8px!important}
+#gate.public-auth-page .gform .fld-row input{flex:1 1 auto!important;min-width:0!important}
+#gate.public-auth-page .gform .eye{
+  flex:0 0 48px!important;width:48px!important;height:48px!important;border:1px solid #d8e5dc!important;
+  border-radius:12px!important;background:#f4f8f5!important;color:#315b40!important;cursor:pointer!important;
+}
+#gate.public-auth-page #loginForm .btn-lg,#gate.public-auth-page #signupForm .btn-lg{
+  min-height:54px!important;margin-top:3px!important;border:0!important;border-radius:13px!important;
+  background:linear-gradient(100deg,#006233,#078448)!important;color:#fff!important;font-size:15px!important;
+  font-weight:950!important;box-shadow:0 9px 22px rgba(0,98,51,.18)!important;
+}
+#gate.public-auth-page #loginForm #btnDemo{
+  min-height:46px!important;border:1px solid #d8e5dc!important;border-radius:12px!important;
+  background:#f7faf8!important;color:#42614e!important;font-size:13px!important;font-weight:800!important;
+}
+#gate.public-auth-page #loginForm .ghint{margin:0!important;color:#718277!important;font-size:11px!important;line-height:1.8!important;text-align:center!important}
+#gate.public-auth-page .gerr{
+  border:1px solid #f1c7cc!important;border-radius:11px!important;background:#fff5f6!important;color:#a51e32!important;
+  padding:11px 13px!important;font-size:13px!important;line-height:1.8!important;
+}
+#gate.public-auth-page .gate-stats{width:100%!important;display:flex!important;justify-content:center!important;flex-wrap:wrap!important;gap:10px!important;margin:17px auto 0!important}
+#gate.public-auth-page .gate-stats .gstat{
+  min-width:120px!important;border:1px solid #dce9df!important;border-radius:12px!important;
+  background:rgba(255,255,255,.78)!important;padding:9px 14px!important;text-align:center!important;
+}
+#gate.public-auth-page .gate-foot{margin-top:13px!important;color:#74877a!important;text-align:center!important;font-size:11px!important}
+html[data-theme="dark"] #gate.public-auth-page{
+  background:radial-gradient(ellipse at 8% 12%,rgba(0,130,70,.16),transparent 36%),linear-gradient(145deg,#0d1711,#111d15 55%,#0b130e)!important;
+}
+html[data-theme="dark"] #gate.public-auth-page .gate-title{color:#e2f3e7!important}
+html[data-theme="dark"] #gate.public-auth-page .gate-sub{color:#a6bcad!important}
+html[data-theme="dark"] #gate.public-auth-page .gate-card:not([hidden]){border-color:#294936!important;background:#142219!important}
+html[data-theme="dark"] #gate.public-auth-page .gate-tabs{background:#142219!important}
+html[data-theme="dark"] #gate.public-auth-page .gate-tabs .gtab{border-color:#31513a!important;background:#192c20!important;color:#b8cfbe!important}
+html[data-theme="dark"] #gate.public-auth-page .gate-tabs .gtab.on{border-color:#45a96e!important;background:#1d3b29!important;color:#e1f3e6!important}
+html[data-theme="dark"] #gate.public-auth-page .gform .fld>span{color:#d5e8da!important}
+html[data-theme="dark"] #gate.public-auth-page .gform input,html[data-theme="dark"] #gate.public-auth-page .gform select{
+  border-color:#34523d!important;background:#0f1b13!important;color:#edf7ef!important;
+}
+html[data-theme="dark"] #gate.public-auth-page .gform input:focus,html[data-theme="dark"] #gate.public-auth-page .gform select:focus{background:#14251a!important}
+html[data-theme="dark"] #gate.public-auth-page #loginForm #btnDemo{border-color:#35533e!important;background:#192d20!important;color:#d0e4d5!important}
+html[data-theme="dark"] #gate.public-auth-page #loginForm .ghint{color:#a4b9a9!important}
+html[data-theme="dark"] #gate.public-auth-page .gate-stats .gstat{border-color:#294936!important;background:#142219!important;color:#d7e9db!important}
+@media(max-width:760px){
+  #gate.public-auth-page{padding:10px!important}
+  #gate.public-auth-page .gate-wrap{width:100%!important;min-height:100svh!important;padding:10px 0!important}
+  #gate.public-auth-page .public-header{margin-bottom:12px!important}
+  #gate.public-auth-page .gate-card:not([hidden]){
+    grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto 1fr!important;
+    grid-template-areas:"intro" "tabs" "form"!important;border-radius:21px!important;
+  }
+  #gate.public-auth-page .gate-card-intro{min-height:0!important;padding:22px 20px!important;gap:10px!important}
+  #gate.public-auth-page .gate-card-intro h2{max-width:none!important;font-size:25px!important}
+  #gate.public-auth-page .gate-card-intro p{max-width:none!important;font-size:13px!important}
+  #gate.public-auth-page .auth-benefits{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin-top:5px!important}
+  #gate.public-auth-page .auth-benefits>div{min-width:0!important;flex-direction:column!important;align-items:flex-start!important;gap:6px!important;padding:9px!important}
+  #gate.public-auth-page .auth-benefits>div>i{width:32px!important;height:32px!important;flex-basis:32px!important}
+  #gate.public-auth-page .auth-benefits>div>span{gap:3px!important}
+  #gate.public-auth-page .auth-benefits b{font-size:11px!important}
+  #gate.public-auth-page .auth-benefits small{font-size:9px!important;line-height:1.5!important}
+  #gate.public-auth-page .gate-tabs{padding:16px 16px 0!important}
+  #gate.public-auth-page #loginForm,#gate.public-auth-page #signupForm{padding:17px 17px 22px!important;gap:12px!important}
+  #gate.public-auth-page .gate-stats{gap:7px!important;margin-top:12px!important}
+  #gate.public-auth-page .gate-stats .gstat{min-width:calc(50% - 7px)!important}
+}
+@media(max-width:380px){
+  #gate.public-auth-page .auth-benefits{grid-template-columns:1fr!important}
+  #gate.public-auth-page .auth-benefits>div{flex-direction:row!important;align-items:center!important}
+  #gate.public-auth-page .auth-benefits small{font-size:10px!important}
+}
