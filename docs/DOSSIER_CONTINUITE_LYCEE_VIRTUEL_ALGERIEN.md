@@ -1144,3 +1144,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache : style-prototype-dz.css?v=134 synchronisé dans index.html et le précache ; version du service worker portée à dz-de-v3.168.0.0.44.
 - Validation : contrôles statiques de présence des ancres/formulaires, conservation des IDs et handlers, références CSS/SW cohérentes, délimiteurs CSS équilibrés. Aucun test visuel navigateur ordinateur/mobile ni déploiement Cloudflare n'est revendiqué à ce stade.
 - PR #17 reste ouverte et non fusionnée ; aucune modification de main, de Supabase, Auth, RLS ou de la base de données.
+
+## Lot 89 — un seul propriétaire des routes de connexion publiques (5 novembre 2026)
+
+- Relecture du code après les lots 85 à 88 : le gestionnaire direct `[data-gate-open]` était encore présent dans `app.js`, en plus du gestionnaire délégué de `public-portal.js`. Le doublon avait été réintroduit au lot 86 pour contourner le parent masqué ; le lot 87 a depuis corrigé la cause réelle en exécutant `gate.hidden = false` dans `setAuthPage()`.
+- Correction ciblée : retrait du gestionnaire direct redondant dans `app.js`. `public-portal.js` devient l'unique propriétaire de l'ouverture de `#connexion` et `#inscription`, du dévoilement de `#gate`, du changement d'onglet et du focus initial.
+- Le gestionnaire de soumission `#loginForm`, les appels Supabase/AUTH, `btnDemo`, les formulaires et les identifiants DOM sont conservés sans modification.
+- Cache synchronisé : `app.js?v=3527`, Service Worker `dz-de-v3.168.0.0.45`, précache `./app.js?v=3527`.
+- Test de non-régression ajouté à `ci/check-public-portal.mjs` : interdit le double gestionnaire dans `app.js` et vérifie que le portail dévoile `#gate` avant l'écran d'authentification.
+- Contrôles navigateur réel mobile/ordinateur et publication Cloudflare non revendiqués ; à confirmer après la CI et une prévisualisation accessible.
+- Travail limité à `design/prototypes-67-74-alignment` / PR #17. PR maintenue ouverte et non fusionnée ; aucun changement sur `main`, Supabase, Auth, RLS, schéma, données ou paiements.
