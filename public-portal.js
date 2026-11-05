@@ -260,6 +260,9 @@
     gate.hidden = false;
     gate.classList.add('public-auth-page');
     card.hidden = false;
+    const tabs = $('.gate-tabs');
+    if(tabs) tabs.hidden = false;
+    ['#passwordResetForm','#passwordUpdateForm'].forEach(id => { const form=$(id); if(form) form.hidden=true; });
     const tab = $('.gtab[data-gate="' + mode + '"]');
     if(tab && !tab.classList.contains('on')) tab.click();
     if(syncHash !== false){
@@ -270,11 +273,32 @@
     if(focus) window.requestAnimationFrame(() => focus.focus({preventScroll:true}));
     window.scrollTo({top:0,behavior:'smooth'});
   }
+  function setRecoveryPage(mode, syncHash){
+    const gate=$('#gate'), card=gateCard();
+    if(!gate || !card) return;
+    gate.hidden=false;
+    gate.classList.add('public-auth-page');
+    card.hidden=false;
+    const tabs=$('.gate-tabs');
+    if(tabs) tabs.hidden=true;
+    ['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(id=>{
+      const form=$(id); if(form) form.hidden=true;
+    });
+    const target=mode==='update' ? $('#passwordUpdateForm') : $('#passwordResetForm');
+    if(target) target.hidden=false;
+    if(syncHash!==false){
+      const hash=mode==='update' ? '#reinitialiser-mot-de-passe' : '#mot-de-passe-oublie';
+      if(location.hash!==hash) location.hash=hash;
+    }
+    const focus=mode==='update' ? $('#newPassword') : $('#resetEmail');
+    if(focus) window.requestAnimationFrame(()=>focus.focus({preventScroll:true}));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
   function closeAuthPage(syncHash){
     const gate = $('#gate'), card = gateCard();
     if(gate) gate.classList.remove('public-auth-page');
     if(card) card.hidden = true;
-    if(syncHash !== false && (location.hash === '#connexion' || location.hash === '#inscription')){
+    if(syncHash !== false && ['#connexion','#inscription','#mot-de-passe-oublie','#reinitialiser-mot-de-passe'].includes(location.hash)){
       history.replaceState(null,'',location.pathname + location.search);
     }
     show('home');
@@ -308,6 +332,10 @@
   window.addEventListener('hashchange', () => {
     if(location.hash === '#connexion') setAuthPage('login', false);
     else if(location.hash === '#inscription') setAuthPage('signup', false);
+    else if(location.hash === '#mot-de-passe-oublie') setRecoveryPage('request', false);
+    else if(location.hash === '#reinitialiser-mot-de-passe') setRecoveryPage('update', false);
+    else if(location.hash === '#mot-de-passe-oublie') setRecoveryPage('request', false);
+    else if(location.hash === '#reinitialiser-mot-de-passe') setRecoveryPage('update', false);
     else if($('#gate') && $('#gate').classList.contains('public-auth-page')) closeAuthPage(false);
   });
   document.addEventListener('DOMContentLoaded', () => {
