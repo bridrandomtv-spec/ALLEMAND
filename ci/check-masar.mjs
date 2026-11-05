@@ -20,7 +20,7 @@ assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des
 assert.match(html, /style-prototype-dz\.css\?v=142/, 'cache CSS v142 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
 assert.match(sw, /dz-de-v3\.169\.0\.0\.55/, 'version service worker v3.169 non actualisée');
-assert.match(sw, /style-prototype-dz\.css\?v=141/, 'précache CSS v142 non actualisé');
+assert.match(sw, /style-prototype-dz\.css\?v=142/, 'précache CSS v142 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
 assert.match(html, /app\.js\?v=3531/, 'cache app.js non actualisé');
