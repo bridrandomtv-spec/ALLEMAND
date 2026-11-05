@@ -478,15 +478,17 @@ function isAdmin(){
 }
 let currentView = 'accueil';
 
+/* Navigation hiérarchique : catégories courtes, sous-rubriques regroupées. */
 const NAVCATS = [
-  ['etudes', '🎓', 'الدراسة', ['seances', 'classe', 'grammaire', 'matieres', 'guide']],
-  ['entrain', '📝', 'التدريب والاختبارات', ['revision', 'malakhiss', 'quiz', 'officiels', 'devoir', 'simulation', 'examen']],
-  ['ress', '📚', 'الموارد', ['biblio', 'corpus', 'banque', 'methode', 'devoirs', 'buch']],
-  ['inter', '💬', 'التفاعل', ['live', 'rag']],
-  ['profcat', '👨', 'الأستاذ', ['prof', 'profboard']],
-  ['parentscat', '👨‍👩‍👧', 'الأولياء', ['parents']],
-  ['suivi', '📊', 'المتابعة', ['stats']],
-  ['services', '🗓️', 'الخدمات', ['reservation']]
+  ['study', '🎓', 'الدراسة', ['matieres', 'seances', 'classe', 'grammaire', 'guide']],
+  ['practice', '📝', 'التدريب والتقييم', ['revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen']],
+  ['resources', '📚', 'الموارد التعليمية', ['biblio', 'corpus', 'banque', 'malakhiss', 'methode', 'buch', 'cloud']],
+  ['interaction', '💬', 'التواصل والتفاعل', ['live', 'rag']],
+  ['teacher', '🤖', 'فضاء الأستاذ', ['prof', 'profboard']],
+  ['family', '👨‍👩‍👧', 'فضاء الأولياء', ['parents']],
+  ['tracking', '📊', 'المتابعة والمشاريع', ['stats', 'projet']],
+  ['services', '🗓️', 'الخدمات والاشتراك', ['reservation', 'abonne', 'sponsor']],
+  ['account', '⚙️', 'الحساب والقانون', ['compte', 'legal', 'admin']]
 ];
 const NAVSOLO_TOP = ['accueil', 'masar'];
 /* UI-6 : le sponsoring se gère depuis #admin uniquement — retiré de la colonne de navigation ;
@@ -497,6 +499,8 @@ function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
   const visible = tabs.filter(t => t[0] !== 'msg' && (t[0] !== 'admin' || isAdmin()));
+  const byId = new Map(visible.map(t => [t[0], t]));
+  const used = new Set(['accueil', 'masar', 'matieres', 'english']);
   let desktop = '';
   if(window.__SUBJECT__ === 'en'){
     desktop += '<button class="tab subject-home' + (currentView === 'english' ? ' on' : '') + '" data-go="english">🇬🇧 English</button>';
@@ -504,9 +508,26 @@ function renderTabs(){
   } else {
     desktop += '<button class="tab subject-home' + (currentView === 'matieres' ? ' on' : '') + '" data-go="matieres">📚 المواد</button>';
   }
+  desktop += '<button class="tab' + (currentView === 'masar' ? ' on' : '') + '" data-go="masar">🧭 مسارك</button>';
+  desktop += '<button class="tab' + (currentView === 'accueil' ? ' on' : '') + '" data-go="accueil">🏠 فضائي الدراسي</button>';
+  for(const cat of NAVCATS){
+    const items = cat[3].map(id => byId.get(id)).filter(Boolean);
+    if(!items.length) continue;
+    items.forEach(t => used.add(t[0]));
+    const active = items.some(t => t[0] === currentView);
+    desktop += '<details class="nav-group' + (active ? ' has-active' : '') + '"><summary class="nav-group-trigger" aria-label="' + cat[2] + '">' +
+      '<span class="nav-group-icon">' + cat[1] + '</span><span>' + cat[2] + '</span><span class="nav-group-chevron" aria-hidden="true">⌄</span></summary>' +
+      '<div class="nav-submenu" role="group" aria-label="' + cat[2] + '">';
+    for(const t of items){
+      desktop += '<button type="button" class="nav-subitem' + (t[0] === currentView ? ' on' : '') +
+        '" data-go="' + t[0] + '"' + (t[0] === currentView ? ' aria-current="page"' : '') + '>' + t[1] + '</button>';
+    }
+    desktop += '</div></details>';
+  }
+  /* Conserve les éventuelles rubriques futures non encore classées. */
   for(const t of visible){
-    if(t[0] === 'matieres' || t[0] === 'english') continue;
-    desktop += '<button class="tab' + (t[0] === currentView ? ' on' : '') + '" data-go="' + t[0] + '">' + t[1] + '</button>';
+    if(used.has(t[0]) || t[0] === 'msg') continue;
+    desktop += '<button class="tab" data-go="' + t[0] + '">' + t[1] + '</button>';
   }
   const primary = [
     ['accueil', '🏠 الرئيسية'],
