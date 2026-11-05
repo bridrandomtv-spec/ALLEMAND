@@ -1348,3 +1348,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Correction limitée : mise à jour de l'attente du Service Worker à `.55`. Aucun changement au code métier de `masar.js`, aux styles, aux données ou au comportement du tableau de bord.
 - Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement à `main`, à Supabase, aux rôles, aux comptes, aux paiements ou à l'authentification.
 - Validation : un nouveau run GitHub Actions doit confirmer le contrôle. Cette correction de l'assertion ne constitue pas une validation visuelle du tableau de bord dans un navigateur.
+
+
+### Lot 105 — déclencheur explicite du bouton « 🔐 تسجيل الدخول » (5 novembre 2026)
+
+- Symptôme signalé après stabilisation des autres éléments : cliquer sur le bouton/onglet `🔐 تسجيل الدخول` ne provoquait aucune navigation visible.
+- Analyse : le bouton `#loginTab` portait uniquement `data-gate="login"`, consommé par le gestionnaire local des onglets dans `app.js`. Contrairement au déclencheur public de navigation, il ne portait pas `data-gate-open="login"` et ne sollicitait donc pas la route `#connexion` gérée par `public-portal.js`.
+- Correction ciblée : ajout de `data-gate-open="login"` au bouton `#loginTab`. Le gestionnaire public existant ouvre alors explicitement la carte d'authentification, synchronise `#connexion` et focalise le champ utilisateur. Le gestionnaire d'onglets existant reste responsable de l'affichage du formulaire ; aucune logique d'authentification n'est remplacée.
+- Garde CI ajoutée : vérifier que `#loginTab` possède les deux attributs de routage attendus.
+- Aucun changement à `auth.js`, à Supabase, aux rôles, aux comptes, aux paiements, à `main` ou à la configuration Cloudflare. PR #17 uniquement.
+- La correction doit encore être confirmée par le nouveau run CI et par un clic réel sur la dernière prévisualisation Cloudflare ; aucune validation navigateur n'est revendiquée à ce stade.
