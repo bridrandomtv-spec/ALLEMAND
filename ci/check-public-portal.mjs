@@ -221,19 +221,19 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
   fail('règle CSS prioritaire de masquage des formulaires de récupération absente');
 }
 const sw = read('sw.js');
-if (!html.includes('style-prototype-dz.css?v=141')) {
-  fail('version CSS du portail non actualisée');
+if (!html.includes('style-prototype-dz.css?v=142')) {
+  fail('version CSS du portail non actualisée (v142 attendue)');
 }
-if (!sw.includes('style-prototype-dz.css?v=141')) {
-  fail('version CSS du précache non actualisée');
+if (!sw.includes('style-prototype-dz.css?v=142')) {
+  fail('version CSS du précache non actualisée (v142 attendue)');
 }
-if (!sw.includes("dz-de-v3.168.0.0.55") ||
-    !sw.includes("style-prototype-dz.css?v=141") ||
+if (!sw.includes("dz-de-v3.169.0.0.55") ||
+    !sw.includes("style-prototype-dz.css?v=142") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v141 / app 3530 / .54)');
+console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v142 / app 3531 / .55)');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -260,6 +260,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
 if (!html.includes('app.js?v=3531') || !sw.includes('app.js?v=3531')) fail('cache app.js non synchronisé');
-if (!html.includes('style-prototype-dz.css?v=141') || !sw.includes('style-prototype-dz.css?v=141')) fail('cache CSS Lot 99 non synchronisé');
-if (!css.includes('.desktop-nav{\n    display:flex!important;\n    flex-direction:column!important;')) fail('navigation desktop verticale absente dans la sidebar');
-console.log('✅ Lot 99 : menu mobile compact et disposition desktop préservée');
+if (!html.includes('style-prototype-dz.css?v=142') || !sw.includes('style-prototype-dz.css?v=142')) fail('cache CSS v142 non synchronisé');
+if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
+if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
+console.log('✅ Lot 99 mobile + Lot 107 desktop : navigation responsive sans sidebar');
