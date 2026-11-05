@@ -1154,3 +1154,13 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Test de non-régression ajouté à `ci/check-public-portal.mjs` : interdit le double gestionnaire dans `app.js` et vérifie que le portail dévoile `#gate` avant l'écran d'authentification.
 - Contrôles navigateur réel mobile/ordinateur et publication Cloudflare non revendiqués ; à confirmer après la CI et une prévisualisation accessible.
 - Travail limité à `design/prototypes-67-74-alignment` / PR #17. PR maintenue ouverte et non fusionnée ; aucun changement sur `main`, Supabase, Auth, RLS, schéma, données ou paiements.
+
+
+## Lot 90 — renforcer les tests du parcours de connexion (5 novembre 2026)
+
+- La CI #2061 est terminée avec succès sur le commit `d1f2729`, qui était la tête de la PR #17 au moment du contrôle. Elle a exécuté le job « Validation structurelle & pédagogique » ; ce workflow PR ne lance pas de publication Cloudflare.
+- Relecture du workflow `.github/workflows/deploy.yml` : pour un événement `pull_request`, le seul job déclaré est `validate`. La mention « CI + Deploy » ne constitue donc pas une preuve de déploiement du preview ou de la production.
+- Renforcement de `ci/check-public-portal.mjs` : le test vérifie maintenant le formulaire `#loginForm`, les champs utilisateur/mot de passe et leurs attributs autocomplete, le bouton submit, les deux routes de hash, le gestionnaire délégué, les onglets, ainsi que la présence des deux chemins de soumission Supabase/AUTH existants.
+- Aucun code d'authentification, formulaire, identifiant DOM, configuration Supabase ou règle d'accès n'a été modifié ; seul le contrôle de non-régression a été étendu.
+- Validation du nouveau test à attendre sur le commit de ce lot. Aucun test navigateur réel, aucune validation visuelle mobile/ordinateur et aucun déploiement Cloudflare ne sont revendiqués.
+- Branche `design/prototypes-67-74-alignment`, PR #17 vers `main` ; PR maintenue ouverte et non fusionnée. Aucun changement direct sur `main`.
