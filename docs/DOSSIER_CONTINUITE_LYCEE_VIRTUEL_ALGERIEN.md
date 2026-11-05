@@ -1260,3 +1260,15 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Audit statique des vues : les 34 valeurs `data-view` présentes dans `index.html` disposent chacune d'au moins une règle CSS ciblant la vue correspondante. Les espaces matières, مسارك, professeur IA, لوحة الأستاذ et الإدارة possèdent des styles et compositions dédiés. Les contenus dynamiques de plusieurs vues sont rendus par leurs modules JavaScript ; l'audit de présence des sélecteurs ne remplace donc pas un test de rendu navigateur.
 - Écart de navigation confirmé : sur ordinateur, `#tabs` est une barre horizontale dans l'en-tête ; sur mobile, elle reste une barre horizontale défilante, positionnée dans le flux et non fixée en bas. La suppression du tiroir latéral mobile est bien présente, mais cela ne correspond pas à une barre inférieure fixe. Ce point reste à traiter dans un lot UX distinct, sans toucher aux routes ni aux permissions.
 - Aucun rendu navigateur réel, capture desktop/mobile ou parcours interactif authentifié n'est revendiqué. Aucun changement de `main`, Auth, Supabase, RLS, schéma, rôles, comptes ou paiements.
+
+
+## Lot 98 — navigation basse fixe sur mobile (5 novembre 2026)
+
+- Audit du rendu CSS et du générateur `renderTabs()` : la navigation est construite à partir des mêmes boutons `data-go` et des mêmes vues `TABS` / `allTabs()`. Sur desktop elle reste une barre horizontale dans l'en-tête. Sur mobile, elle était auparavant horizontale mais dans le flux du document.
+- Correction CSS ciblée : à largeur ≤ 900 px, `#tabs` devient une barre fixe au bas de l'écran, avec défilement horizontal tactile, zone de sécurité `env(safe-area-inset-bottom)`, boutons d'au moins 48 px et espace inférieur réservé au contenu pour éviter le masquage par la barre. Sur desktop, les règles de navigation existantes restent inchangées.
+- Aucun changement à `renderTabs()`, `TABS`, `NAVCATS`, `go()`, aux identifiants, aux routes, aux rôles ou aux événements. Aucun bouton de navigation n'a été supprimé ; les entrées existantes restent accessibles par défilement horizontal. Cette première étape ne crée pas encore un menu « Plus » regroupant les rubriques.
+- Cache actualisé : CSS `v138`, Service Worker `dz-de-v3.168.0.0.50`, précache synchronisé.
+- Contrôles CI mis à jour : assertions des versions dans `ci/check-public-portal.mjs` et `ci/check-masar.mjs`, plus vérification de la position fixe en bas, du marqueur Lot 98 et de l'espace inférieur de sécurité.
+- Fichiers modifiés : `style-prototype-dz.css`, `index.html`, `sw.js`, `ci/check-public-portal.mjs`, `ci/check-masar.mjs`, présent dossier.
+- Limite de validation : cette correction est une modification CSS statique ; aucune capture réelle sur téléphone ni test tactile dans navigateur n'a encore été effectué. Vérifier aussi que les éventuels boutons flottants du site ne recouvrent pas la barre sur les appareils réels.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. PR maintenue ouverte et non fusionnée ; aucun changement de `main`, d'Auth, Supabase, RLS, schéma, rôles, comptes ou paiements.
