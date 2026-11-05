@@ -16607,3 +16607,71 @@ html[data-theme="dark"] #gate .auth-recovery-status.is-success{
     white-space:nowrap!important;
   }
 }
+
+
+/* LOT 111 — menu hiérarchique desktop : catégories compactes + sous-menus au survol.
+   Le DOM des vues et les routes data-go restent inchangés. */
+@media (min-width:901px){
+  #shell #tabs{position:relative!important;z-index:120!important}
+  #shell #tabs .desktop-nav{
+    display:flex!important;flex-direction:row!important;align-items:center!important;
+    justify-content:center!important;flex-wrap:wrap!important;gap:7px!important;
+    overflow:visible!important;
+  }
+  #shell #tabs .desktop-nav>.nav-group{
+    position:relative!important;display:block!important;flex:0 0 auto!important;
+    min-width:0!important;
+  }
+  #shell #tabs .nav-group-trigger{
+    list-style:none;display:flex;align-items:center;justify-content:center;gap:7px;
+    min-height:40px;padding:8px 12px;border:1px solid var(--b,rgba(0,98,51,.14));
+    border-radius:12px;background:var(--surface,#fff);color:var(--t,#244332);
+    font:800 13px/1.3 var(--ff-ar,'Cairo',sans-serif);white-space:nowrap;cursor:pointer;
+    transition:background .16s ease,border-color .16s ease,transform .16s ease;
+  }
+  #shell #tabs .nav-group-trigger::-webkit-details-marker{display:none}
+  #shell #tabs .nav-group-trigger:hover,
+  #shell #tabs .nav-group:focus-within>.nav-group-trigger,
+  #shell #tabs .nav-group[open]>.nav-group-trigger,
+  #shell #tabs .nav-group.has-active>.nav-group-trigger{
+    background:rgba(0,132,61,.09);border-color:rgba(0,132,61,.32);color:#006233;
+  }
+  #shell #tabs .nav-group-chevron{font-size:15px;opacity:.65;transition:transform .16s ease}
+  #shell #tabs .nav-group[open] .nav-group-chevron{transform:rotate(180deg)}
+  #shell #tabs .nav-submenu{
+    position:absolute;top:calc(100% + 7px);right:0;z-index:500;
+    display:none;min-width:225px;max-width:min(310px,calc(100vw - 28px));
+    padding:8px;border:1px solid var(--b,rgba(0,98,51,.16));border-radius:15px;
+    background:var(--surface,#fff);box-shadow:0 16px 38px rgba(10,45,25,.18);
+    flex-direction:column;gap:3px;text-align:right;
+  }
+  #shell #tabs .nav-group:hover>.nav-submenu,
+  #shell #tabs .nav-group:focus-within>.nav-submenu,
+  #shell #tabs .nav-group[open]>.nav-submenu{display:flex}
+  #shell #tabs .nav-subitem{
+    display:flex;align-items:center;justify-content:flex-start;width:100%;
+    min-height:39px;padding:8px 11px;border:0;border-radius:9px;
+    background:transparent;color:var(--t,#244332);
+    font:700 13px/1.45 var(--ff-ar,'Cairo',sans-serif);text-align:right;
+    white-space:normal;cursor:pointer;
+  }
+  #shell #tabs .nav-subitem:hover{background:rgba(0,132,61,.09);color:#006233}
+  #shell #tabs .nav-subitem.on{
+    background:linear-gradient(135deg,#006233,#00843d);color:#fff;
+  }
+  html[data-theme="dark"] #shell #tabs .nav-group-trigger{
+    background:var(--surface,var(--nuit2));color:var(--t,var(--m));
+  }
+  html[data-theme="dark"] #shell #tabs .nav-group-trigger:hover,
+  html[data-theme="dark"] #shell #tabs .nav-group:focus-within>.nav-group-trigger,
+  html[data-theme="dark"] #shell #tabs .nav-group[open]>.nav-group-trigger,
+  html[data-theme="dark"] #shell #tabs .nav-group.has-active>.nav-group-trigger{
+    background:rgba(61,220,132,.12);color:var(--a2,#65d99a);
+  }
+  html[data-theme="dark"] #shell #tabs .nav-submenu{
+    background:var(--nuit2,#17251c);border-color:var(--b,rgba(255,255,255,.14));
+    box-shadow:0 16px 38px rgba(0,0,0,.38);
+  }
+  html[data-theme="dark"] #shell #tabs .nav-subitem{color:var(--t,var(--m))}
+  html[data-theme="dark"] #shell #tabs .nav-subitem:hover{background:rgba(61,220,132,.12);color:var(--a2,#65d99a)}
+}
