@@ -126,6 +126,19 @@ for (const marker of [
 if (!html.includes('data-gate="login"') || !html.includes('data-gate="signup"')) {
   fail('onglets connexion et inscription absents');
 }
+for (const marker of [
+  'role="tablist"', 'role="tab"', 'aria-selected="true"',
+  'aria-controls="loginForm"', 'aria-controls="signupForm"',
+  'role="tabpanel"', 'aria-labelledby="loginTab"', 'aria-labelledby="signupTab"'
+]) {
+  if (!html.includes(marker)) fail('accessibilité des onglets/formulaires absente : ' + marker);
+}
+for (const marker of [
+  "x.setAttribute('aria-selected', selected ? 'true' : 'false')",
+  "x.tabIndex = selected ? 0 : -1"
+]) {
+  if (!app.includes(marker)) fail('état accessible des onglets non synchronisé : ' + marker);
+}
 
 console.log('✅ Connexion : routes #connexion/#inscription, onglets, champs et submit contrôlés');
 console.log('✅ التربية البدنية absente ; aucune modification du système Auth');
