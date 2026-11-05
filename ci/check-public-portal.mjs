@@ -273,3 +273,12 @@ if (!css.includes('.nav-group:hover>.nav-submenu') ||
   fail('ouverture des sous-menus par survol/clavier absente');
 }
 console.log('✅ Lot 111 : catégories compactes, sous-menus au survol et navigation clavier');
+for (const marker of ['const NAVCATS = [','nav-group-trigger','nav-submenu','nav-subitem','details class="nav-group"']) {
+  if (!app.includes(marker)) fail('menu hiérarchique desktop incomplet : ' + marker);
+}
+if (!css.includes('LOT 111 — menu hiérarchique desktop')) fail('styles du menu hiérarchique absents');
+if (!css.includes('.nav-group:hover>.nav-submenu') ||
+    !css.includes('.nav-group:focus-within>.nav-submenu')) {
+  fail('ouverture des sous-menus par survol/clavier absente');
+}
+console.log('✅ Lot 111 : catégories compactes, sous-menus au survol et navigation clavier');
