@@ -142,3 +142,45 @@ for (const marker of [
 
 console.log('✅ Connexion : routes #connexion/#inscription, onglets, champs et submit contrôlés');
 console.log('✅ التربية البدنية absente ; aucune modification du système Auth');
+
+/* Contrat du parcours complet de récupération du mot de passe Supabase. */
+const supabase = read('supabase/supabase.js');
+for (const marker of [
+  'async function resetPassword(email)',
+  'c.auth.resetPasswordForEmail(',
+  "'#reinitialiser-mot-de-passe'",
+  'async function updatePassword(password)',
+  'c.auth.updateUser({ password })',
+  'resetPassword, updatePassword'
+]) {
+  if (!supabase.includes(marker)) fail('API de récupération Supabase absente : ' + marker);
+}
+for (const marker of [
+  'id="passwordResetForm"',
+  'id="resetEmail"',
+  'data-password-reset-open',
+  'id="passwordUpdateForm"',
+  'id="newPassword"',
+  'id="confirmNewPassword"',
+  'id="passwordResetStatus"',
+  'id="passwordUpdateStatus"'
+]) {
+  if (!html.includes(marker)) fail('interface de récupération absente : ' + marker);
+}
+for (const marker of [
+  "function setRecoveryPage(mode, syncHash)",
+  "location.hash === '#mot-de-passe-oublie'",
+  "location.hash === '#reinitialiser-mot-de-passe'"
+]) {
+  if (!portal.includes(marker)) fail('route de récupération absente : ' + marker);
+}
+for (const marker of [
+  "window.SB.resetPassword($('#resetEmail').value)",
+  "window.SB.updatePassword(password)",
+  "password!==confirmation",
+  "location.hash='#mot-de-passe-oublie'"
+]) {
+  if (!app.includes(marker)) fail('gestionnaire de récupération absent : ' + marker);
+}
+console.log('✅ Récupération : envoi email, lien de réinitialisation et mise à jour du mot de passe contrôlés');
+
