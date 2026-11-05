@@ -687,7 +687,7 @@ L'utilisateur a signalé à juste titre que le travail tourne en rond et qu'il m
 - Aucun changement HTML structurel, JavaScript, navigation, données, Auth, Supabase, RLS, schéma, paiement ou permissions. Aucun framework ni dépendance ajoutés.
 - Vérifications statiques après écriture : ancien sélecteur générique absent, sélecteurs éditoriaux présents, références CSS synchronisées et version du service worker alignée. CI et Workers Build à suivre sur le HEAD résultant.
 - Limite explicite : aucun navigateur réel n'est disponible pour cette opération ; le rendu desktop/mobile n'est pas déclaré visuellement validé.
-- Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main) ; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
+- Travail limité à `design/prototypes-67-74-alignment` / PR #17 vers `main` ; aucune fusion, aucun déploiement manuel et aucun changement direct sur `main`.
 
 
 ## 51. Accueil public — statut du catalogue matières explicite — 4 novembre 2026
@@ -1068,7 +1068,7 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Cache CSS porté à `v130`; Service Worker porté à `dz-de-v3.168.0.0.37` avec précache CSS v130.
 - Fichiers modifiés : `style-prototype-dz.css`, `index.html`, `sw.js`, présent dossier.
 - Commit CSS : `af8c8099e6fa976b6b424580430b3325ed458963`; commit index : `150848e9712d7d3cf15d1ecfbffca61817cd4196`; commit SW : `2fa4c12b4bedf2b2d16b4557172efa578aa814cc`.
-- État : correction de code poussée sur `design/prototypes-67-74-alignment). Attendre le preview Cloudflare, tester ordinateur et mobile, puis comparer les captures au modèle. Aucune validation visuelle ni publication production revendiquée à ce stade.
+- État : correction de code poussée sur `design/prototypes-67-74-alignment`. Attendre le preview Cloudflare, tester ordinateur et mobile, puis comparer les captures au modèle. Aucune validation visuelle ni publication production revendiquée à ce stade.
 - PR #17 reste ouverte et non fusionnée ; aucune modification de `main`, Auth, Supabase, RLS, schéma, paiements ou permissions.
 
 
@@ -1386,4 +1386,4 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Correction du contrôle CI : références attendues mises à jour vers CSS v142 / SW v3.169 ; le test desktop vérifie désormais NAV V2 et la navigation horizontale, tandis que les contrôles de navigation mobile compacte restent présents.
 - Commit du contrôle CI : `f5e908e`.
 - Validation : attendre le workflow associé à ce nouveau commit et contrôler ses logs. Aucun build Cloudflare ni test navigateur ordinateur/mobile n'est encore revendiqué.
-- Périmètre inchangé : PR #17 / branche `design/prototypes-67-74-alignment) uniquement ; aucun changement sur `main), Auth, Supabase, RLS, schéma, rôles, paiements ou données.
+- Périmètre inchangé : PR #17 / branche `design/prototypes-67-74-alignment` uniquement ; aucun changement sur `main`, Auth, Supabase, RLS, schéma, rôles, paiements ou données.
