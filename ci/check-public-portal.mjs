@@ -210,16 +210,20 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
     !css.includes('#gate.public-auth-page #passwordResetForm[hidden],\n#gate.public-auth-page #passwordUpdateForm[hidden]')) {
   fail('règle CSS prioritaire de masquage des formulaires de récupération absente');
 }
-if (!html.includes('style-prototype-dz.css?v=140')) {
+if (!html.includes('style-prototype-dz.css?v=141')) {
   fail('version CSS du portail non actualisée');
 }
+if (!sw.includes('style-prototype-dz.css?v=141')) {
+  fail('version CSS du précache non actualisée');
+}
 const sw = read('sw.js');
-if (!sw.includes("dz-de-v3.168.0.0.53") ||
-    !sw.includes("style-prototype-dz.css?v=140")) {
+if (!sw.includes("dz-de-v3.168.0.0.54") ||
+    !sw.includes("style-prototype-dz.css?v=141") ||
+    !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v140 / app 3530 / .53)');
+console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v141 / app 3530 / .54)');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -246,6 +250,6 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
 if (!html.includes('app.js?v=3530') || !sw.includes('app.js?v=3530')) fail('cache app.js non synchronisé');
-if (!html.includes('style-prototype-dz.css?v=140') || !sw.includes('style-prototype-dz.css?v=140')) fail('cache CSS Lot 99 non synchronisé');
+if (!html.includes('style-prototype-dz.css?v=141') || !sw.includes('style-prototype-dz.css?v=141')) fail('cache CSS Lot 99 non synchronisé');
 if (!css.includes('.desktop-nav{\n    display:flex!important;\n    flex-direction:column!important;')) fail('navigation desktop verticale absente dans la sidebar');
 console.log('✅ Lot 99 : menu mobile compact et disposition desktop préservée');
