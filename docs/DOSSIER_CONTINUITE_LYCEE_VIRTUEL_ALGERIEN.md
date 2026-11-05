@@ -1212,3 +1212,12 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Le réglage Supabase existant `persistSession: true` conserve déjà la session sur cet appareil ; aucun faux bouton « se souvenir de moi » n'a été ajouté, car une option décochable nécessiterait une stratégie distincte de persistance de session.
 - Aucun changement de rôle, de compte, de politique RLS, de base de données, de paiement ou de moteur métier. PR #17 reste ouverte et non fusionnée.
 - Validation navigateur ordinateur/mobile et essai réel du courriel de récupération non encore effectués. La CI doit encore confirmer les nouveaux contrôles ; la configuration de redirection Supabase doit être vérifiée avant d'annoncer le parcours opérationnel en production.
+## Lot 94 — correction du contrôle CI de récupération (5 novembre 2026)
+- Analyse du run GitHub Actions #2088 (commit `c65af542b85264d025c17130587d998709826186`) : les validations précédentes du portail et de la connexion réussissaient, puis `ci/check-public-portal.mjs` échouait sur le marqueur `'#reinitialiser-mot-de-passe'`.
+- Cause : le test cherchait ce marqueur dans `supabase/supabase.js`, alors que la route appartient à `public-portal.js`. Le code applicatif contenait bien la route ; c'était une erreur d'affectation dans le test, pas une absence de méthode Supabase.
+- Correction ciblée du seul fichier `ci/check-public-portal.mjs` : retrait du marqueur de la liste des API Supabase et contrôle des deux routes ainsi que du callback `isPasswordRecoveryCallback()` dans le fichier du portail.
+- Commit de correction : `095a55367ee4bf0b1555c07c1516494738275384`.
+- Le run #2088 reste historiquement en échec ; le nouveau commit doit encore être validé par une nouvelle exécution CI. Aucun succès CI n'est revendiqué à ce stade.
+- L'audit confirme que `bindGateEvents()` est appelé par `bootGate()` au démarrage, avant la soumission des formulaires ; les gestionnaires de demande et de mise à jour sont donc enregistrés sur la visite initiale, sans dépendre d'une connexion préalable.
+- À vérifier encore : nouvelle CI, allowlist des Redirect URLs Supabase, réception réelle du courriel, échange du lien et changement du mot de passe, puis test navigateur sur ordinateur et mobile.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement ; PR laissée ouverte et non fusionnée. Aucun changement sur `main`, les comptes, rôles, RLS, schéma, paiements ou configuration Supabase.
