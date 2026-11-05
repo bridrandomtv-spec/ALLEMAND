@@ -197,16 +197,16 @@ for (const id of ['passwordResetForm', 'passwordUpdateForm']) {
     fail('le formulaire #' + id + ' doit occuper la zone form');
   }
 }
-if (!html.includes('style-prototype-dz.css?v=138')) {
+if (!html.includes('style-prototype-dz.css?v=139')) {
   fail('version CSS du portail non actualisée');
 }
 const sw = read('sw.js');
-if (!sw.includes("dz-de-v3.168.0.0.50") ||
-    !sw.includes("style-prototype-dz.css?v=138")) {
+if (!sw.includes("dz-de-v3.168.0.0.51") ||
+    !sw.includes("style-prototype-dz.css?v=139")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS et Service Worker synchronisés (v137 / .49)');
+console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v139 / app 3530 / .51)');
 if (!css.includes('LOT 98 — navigation basse fixe sur mobile')) {
   fail('navigation basse fixe mobile absente');
 }
@@ -219,3 +219,11 @@ if (!css.includes('padding-bottom:calc(94px + env(safe-area-inset-bottom))')) {
 }
 console.log('✅ Navigation mobile fixée en bas avec zone de sécurité');
 
+
+for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']","['matieres', window.__SUBJECT__ === 'en' ? '🇬🇧 English' : '📚 المواد']","['masar', '🧭 مساري']","['prof', '🤖 الأستاذ الذكي']","data-nav-more",'id="mobileNavMore"',"mobileItems = visible.filter","morePanel.hidden = !morePanel.hidden","ev.key !== 'Escape'"]) {
+  if (!app.includes(marker)) fail('navigation mobile compacte absente ou incomplète : ' + marker);
+}
+if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
+if (!html.includes('app.js?v=3530') || !sw.includes('app.js?v=3530')) fail('cache app.js non synchronisé');
+if (!html.includes('style-prototype-dz.css?v=139') || !sw.includes('style-prototype-dz.css?v=139')) fail('cache CSS Lot 99 non synchronisé');
+console.log('✅ Lot 99 : quatre accès directs, menu Plus, fermeture Escape et routes issues de allTabs()');
