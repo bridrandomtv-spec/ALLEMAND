@@ -201,12 +201,12 @@ if (!html.includes('style-prototype-dz.css?v=140')) {
   fail('version CSS du portail non actualisée');
 }
 const sw = read('sw.js');
-if (!sw.includes("dz-de-v3.168.0.0.52") ||
+if (!sw.includes("dz-de-v3.168.0.0.53") ||
     !sw.includes("style-prototype-dz.css?v=140")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v139 / app 3530 / .51)');
+console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v140 / app 3530 / .53)');
 if (!css.includes('LOT 98 — navigation basse fixe sur mobile')) {
   fail('navigation basse fixe mobile absente');
 }
