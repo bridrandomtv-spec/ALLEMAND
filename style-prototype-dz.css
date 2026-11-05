@@ -16414,3 +16414,39 @@ html[data-theme="dark"] #shell #app section[data-view="masar"] #masarBody .ms-ch
   #shell #app section[data-view="masar"] #masarBody .ms-summary-stats b{font-size:20px}
   #shell #app section[data-view="masar"] #masarBody .ms-summary-stats span{font-size:9px}
 }
+
+/* Lot auth-93 — récupération et renouvellement du mot de passe */
+#gate .auth-forgot-link{
+  display:block;width:100%;margin:2px 0 12px;padding:7px 2px;border:0;
+  background:transparent;color:#087443;text-align:start;font:inherit;font-size:13px;
+  font-weight:850;text-decoration:underline;text-underline-offset:3px;cursor:pointer;
+}
+#gate .auth-recovery-form{
+  display:grid;gap:14px;padding-top:8px;
+}
+#gate .auth-recovery-heading{
+  padding:17px;border:1px solid #dce9df;border-radius:16px;
+  background:linear-gradient(135deg,#f1f8f3,#fff);text-align:center;
+}
+#gate .auth-recovery-heading>span{display:block;font-size:30px;margin-bottom:5px}
+#gate .auth-recovery-heading h3{margin:0;color:#145b36;font-size:20px;font-weight:950}
+#gate .auth-recovery-heading p{margin:6px 0 0;color:#617568;font-size:13px;line-height:1.8}
+#gate .auth-recovery-status{padding:12px 14px;border-radius:12px;line-height:1.8}
+#gate .auth-recovery-status.is-success{
+  border:1px solid #b9dfc5;background:#effaf2;color:#17633a;
+}
+#gate .auth-recovery-form button[aria-busy="true"]{opacity:.72;cursor:wait}
+#gate .auth-recovery-form button:disabled{opacity:.65;cursor:wait}
+html[data-theme="dark"] #gate .auth-recovery-heading{
+  border-color:#365342;background:linear-gradient(135deg,#1b3425,#17251d);
+}
+html[data-theme="dark"] #gate .auth-recovery-heading h3{color:#a9e2b8}
+html[data-theme="dark"] #gate .auth-recovery-heading p{color:#bdcfc2}
+html[data-theme="dark"] #gate .auth-recovery-status.is-success{
+  border-color:#356b48;background:#1b3826;color:#b5e8c2;
+}
+@media(max-width:600px){
+  #gate .auth-recovery-heading{padding:14px}
+  #gate .auth-recovery-heading h3{font-size:18px}
+  #gate .auth-forgot-link{min-height:40px}
+}
