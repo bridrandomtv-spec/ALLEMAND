@@ -1397,3 +1397,14 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Commit du contrôle : `84cdaa6ec93e59c21d6e7b2e3cecb385d6f414e3`.
 - Validation à suivre : nouveau workflow sur ce commit. Aucun succès CI final, déploiement Cloudflare ou test visuel navigateur n'est revendiqué à ce stade.
 - Périmètre : branche `design/prototypes-67-74-alignment` uniquement ; PR #17 non fusionnée ; `main` intacte. Aucun changement Auth, Supabase, RLS, schéma ou données.
+
+
+## Lot 110 — correction du contrôle de précache CSS de « مسارك » (5 novembre 2026)
+
+- Le workflow GitHub Actions `42121353028`, job `127574248516` (« Validation structurelle & pédagogique »), échouait à l'étape « Contrôler le tableau de bord مسارك ».
+- Le diagnostic des logs localise l'échec dans `ci/check-masar.mjs:23` : le message annonçait « précache CSS v142 », mais l'expression régulière contrôlait encore `style-prototype-dz.css?v=141`.
+- La lecture croisée des fichiers de la branche `design/prototypes-67-74-alignment` confirme que `index.html` référence `style-prototype-dz.css?v=142` et que `sw.js` précache bien `./style-prototype-dz.css?v=142`, avec le service worker `dz-de-v3.169.0.0.55`.
+- Correction ciblée : l'assertion de `ci/check-masar.mjs` attend désormais `v=142`. Aucun fichier applicatif, CSS, service worker, authentification ou donnée n'a été modifié dans ce lot.
+- Commit correctif : `26e60ca3b123e95aca4730515e6250040b30ac01`.
+- À ce stade, le correctif est commité sur la branche de la PR #17 ; le succès d'un nouveau workflow n'est pas encore établi. Ne pas déclarer la CI verte avant lecture de son résultat.
+- PR #17 reste ouverte, non fusionnée et ciblée sur `main`. Aucun changement direct sur `main`, aucune publication Cloudflare ni validation visuelle navigateur ne sont revendiqués.
