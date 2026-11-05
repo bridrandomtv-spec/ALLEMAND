@@ -16539,3 +16539,31 @@ html[data-theme="dark"] #gate .auth-recovery-status.is-success{
   #shell #tabs .mobile-nav-primary,#shell #tabs .mobile-nav-panel{display:none!important}
   #shell #tabs .desktop-nav{display:flex}
 }
+
+/* Lot 99 — préserver la disposition de la navigation desktop après encapsulation. */
+@media (min-width:1024px){
+  #shell #tabs .desktop-nav{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:5px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  #shell #tabs .desktop-nav>.tab{
+    width:100%!important;
+    max-width:none!important;
+    justify-content:flex-start!important;
+    text-align:right!important;
+  }
+}
+@media (min-width:901px) and (max-width:1023px){
+  #shell #tabs .desktop-nav{
+    display:flex!important;
+    flex-direction:row!important;
+    flex-wrap:wrap!important;
+    align-items:center!important;
+    gap:6px!important;
+    width:100%!important;
+  }
+}
