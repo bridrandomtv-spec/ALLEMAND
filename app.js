@@ -497,19 +497,45 @@ function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
   const visible = tabs.filter(t => t[0] !== 'msg' && (t[0] !== 'admin' || isAdmin()));
-  let h = '';
-  /* Navigation directe : chaque élément mène à une vue réelle.
-     Aucun accordéon ni sous-menu masqué dans la barre principale. */
+  let desktop = '';
   if(window.__SUBJECT__ === 'en'){
-    h += '<button class="tab subject-home' + (currentView === 'english' ? ' on' : '') + '" data-go="english">🇬🇧 English</button>';
-    h += '<button class="tab subject-switch" data-subj="de">🇩🇪 الألمانية</button>';
+    desktop += '<button class="tab subject-home' + (currentView === 'english' ? ' on' : '') + '" data-go="english">🇬🇧 English</button>';
+    desktop += '<button class="tab subject-switch" data-subj="de">🇩🇪 الألمانية</button>';
   } else {
-    h += '<button class="tab subject-home' + (currentView === 'matieres' ? ' on' : '') + '" data-go="matieres">📚 المواد</button>';
+    desktop += '<button class="tab subject-home' + (currentView === 'matieres' ? ' on' : '') + '" data-go="matieres">📚 المواد</button>';
   }
   for(const t of visible){
     if(t[0] === 'matieres' || t[0] === 'english') continue;
-    h += '<button class="tab' + (t[0] === currentView ? ' on' : '') + '" data-go="' + t[0] + '">' + t[1] + '</button>';
+    desktop += '<button class="tab' + (t[0] === currentView ? ' on' : '') + '" data-go="' + t[0] + '">' + t[1] + '</button>';
   }
+  const primary = [
+    ['accueil', '🏠 الرئيسية'],
+    ['matieres', window.__SUBJECT__ === 'en' ? '🇬🇧 English' : '📚 المواد'],
+    ['masar', '🧭 مساري'],
+    ['prof', '🤖 الأستاذ الذكي']
+  ];
+  const primaryIds = new Set(primary.map(x => x[0]));
+  const mobileItems = visible.filter(t =>
+    !primaryIds.has(t[0]) && t[0] !== 'matieres' && t[0] !== 'english'
+  );
+  let mobile = '<div class="mobile-nav-primary" aria-label="التنقل السريع">';
+  for(const item of primary){
+    const route = item[0] === 'matieres' && window.__SUBJECT__ === 'en' ? 'english' : item[0];
+    mobile += '<button type="button" class="mobile-nav-item' + (currentView === route ? ' on' : '') +
+      '" data-go="' + route + '"' + (currentView === route ? ' aria-current="page"' : '') + '><span>' +
+      item[1] + '</span></button>';
+  }
+  mobile += '<button type="button" class="mobile-nav-item mobile-nav-more" data-nav-more aria-expanded="false" aria-controls="mobileNavMore"><span>☰ المزيد</span></button></div>';
+  mobile += '<div class="mobile-nav-panel" id="mobileNavMore" hidden><div class="mobile-nav-panel-head"><strong>جميع أقسام المنصة</strong>' +
+    '<button type="button" class="mobile-nav-close" data-nav-more-close aria-label="إغلاق القائمة">✕</button></div><div class="mobile-nav-panel-grid">';
+  mobile += window.__SUBJECT__ === 'en'
+    ? '<button type="button" class="mobile-nav-link" data-subj="de">🇩🇪 الألمانية</button>'
+    : '<button type="button" class="mobile-nav-link" data-go="english">🇬🇧 الإنجليزية</button>';
+  for(const t of mobileItems){
+    mobile += '<button type="button" class="mobile-nav-link' + (t[0] === currentView ? ' on' : '') +
+      '" data-go="' + t[0] + '">' + t[1] + '</button>';
+  }
+  mobile += '</div></div>';
   const d7bot = document.getElementById('d7bot');
   if(d7bot){
     const host = document.querySelector('.topbar-act');
@@ -524,7 +550,7 @@ function renderTabs(){
     }
   }
   if(c.dataset.d7 === '1') delete c.dataset.d7;
-  c.innerHTML = h;
+  c.innerHTML = '<div class="desktop-nav">' + desktop + '</div>' + mobile;
 }
 
 /* 🧭 prochaine حصة non faite du niveau actif (pour masar.js). */
@@ -580,7 +606,11 @@ function go(view){
   });
   renderTabs();
   /* Ferme TOUT tiroir de navigation mobile (plusieurs sélecteurs possibles). */
-  $$('#tabs, .tabs, .drawer, #navDrawer').forEach(t => t.classList.remove('open'));
+  $('#tabs, .tabs, .drawer, #navDrawer').forEach(t => t.classList.remove('open'));
+  const morePanel = $('#mobileNavMore');
+  const moreButton = $('#tabs [data-nav-more]');
+  if(morePanel) morePanel.hidden = true;
+  if(moreButton) moreButton.setAttribute('aria-expanded', 'false');
   const bg = $('#tabsBg') || $('#drawerBg') || $('.drawer-bg');
   if(bg) bg.hidden = true;
   /* Remonte en haut IMMÉDIATEMENT : sur mobile un scroll 'smooth' donne l'impression
@@ -1404,6 +1434,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 3500);
 
   document.addEventListener('click', ev => {
+    const moreToggle = ev.target.closest('[data-nav-more]');
+    const moreClose = ev.target.closest('[data-nav-more-close]');
+    const morePanel = $('#mobileNavMore');
+    const moreButton = $('#tabs [data-nav-more]');
+    if(moreToggle){
+      ev.preventDefault();
+      if(morePanel){
+        morePanel.hidden = !morePanel.hidden;
+        moreToggle.setAttribute('aria-expanded', morePanel.hidden ? 'false' : 'true');
+      }
+      return;
+    }
+    if(moreClose || (morePanel && !morePanel.hidden &&
+        !ev.target.closest('#mobileNavMore') && !ev.target.closest('[data-nav-more]'))){
+      if(morePanel) morePanel.hidden = true;
+      if(moreButton) moreButton.setAttribute('aria-expanded', 'false');
+      if(moreClose) return;
+    }
     const nv = ev.target.closest('[data-niveau]');
     if(nv){
       if(niveauVerrou && nv.dataset.niveau !== niveauVerrou){ toast('🔒 مستواك مرتبط بحسابك : ' + niveauVerrou + ' — لا يمكن التبديل.', 'ko'); return; }
@@ -1478,6 +1526,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if(ev.target.closest('#btnSimFromDevoir')){ go('simulation'); return; }
   });
 
+  if(!window.__mobileNavEscapeWired){
+    window.__mobileNavEscapeWired = true;
+    document.addEventListener('keydown', ev => {
+      if(ev.key !== 'Escape') return;
+      const panel = $('#mobileNavMore');
+      const button = $('#tabs [data-nav-more]');
+      if(panel && !panel.hidden){
+        panel.hidden = true;
+        if(button) button.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
   const b = $('#btnBurger');
   if(b) b.addEventListener('click', () => { const t = $('#tabs'); if(t) t.classList.toggle('open'); });
   /* Accordéon : une seule catégorie ouverte à la fois (navigation compacte). */
