@@ -16465,3 +16465,57 @@ html[data-theme="dark"] #gate .auth-recovery-status.is-success{
   #gate .auth-recovery-heading h3{font-size:18px}
   #gate .auth-forgot-link{min-height:40px}
 }
+
+
+/* LOT 98 — navigation basse fixe sur mobile, sans changer les routes ni les boutons.
+   Sur desktop, la navigation horizontale existante reste dans l'en-tête. */
+@media(max-width:900px){
+  html[dir="rtl"] #shell #tabs.tabs{
+    position:fixed!important;
+    inset-inline:0!important;
+    inset-block-start:auto!important;
+    inset-block-end:0!important;
+    z-index:1200!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:66px!important;
+    height:auto!important;
+    max-height:calc(88px + env(safe-area-inset-bottom))!important;
+    margin:0!important;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom))!important;
+    display:flex!important;
+    flex-direction:row!important;
+    flex-wrap:nowrap!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:7px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    overscroll-behavior-inline:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:none!important;
+    border:1px solid var(--dz-line,#dce8df)!important;
+    border-bottom:0!important;
+    border-radius:16px 16px 0 0!important;
+    background:var(--dz-card,#fff)!important;
+    box-shadow:0 -8px 28px rgba(0,45,22,.12)!important;
+  }
+  html[dir="rtl"] #shell #tabs.tabs::-webkit-scrollbar{display:none!important}
+  html[dir="rtl"] #shell #tabs.tabs>.tab{
+    flex:0 0 auto!important;
+    min-height:48px!important;
+    max-width:none!important;
+    padding:10px 13px!important;
+    border-radius:12px!important;
+    white-space:nowrap!important;
+    font-size:13px!important;
+    line-height:1.35!important;
+  }
+  html[dir="rtl"] #shell #app{
+    padding-bottom:calc(94px + env(safe-area-inset-bottom))!important;
+  }
+  html[dir="rtl"] #shell #tabs.tabs :is(button,a,[tabindex]){
+    touch-action:pan-x!important;
+  }
+}
