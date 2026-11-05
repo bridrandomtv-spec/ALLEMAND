@@ -1190,3 +1190,12 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 - Fichiers : `masar.js`, `style-prototype-dz.css`, `index.html`, `sw.js`, `ci/check-masar.mjs`, `.github/workflows/deploy.yml`, présent dossier.
 - Validation en attente : CI du lot 92, puis vérification visuelle réelle du preview sur ordinateur et mobile. Une CI verte ne prouvera ni le déploiement Cloudflare ni la fidélité visuelle finale. Aucun test navigateur n'est revendiqué à ce stade.
 - Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement ; PR ouverte et non fusionnée ; aucun changement sur `main`, Auth, Supabase, RLS, schéma, paiements ou production.
+
+
+### Suivi de déploiement du lot 92 — 5 novembre 2026, 10:45 (heure Algérie)
+
+- CI GitHub Actions **#2076** (run ID `41998407623`) terminée avec succès sur le commit `bd2fbcd1e4883c4a1eaccf32cddd634a49e7b1cc`. Les étapes « Valider la syntaxe JavaScript (esprima) » et « Contrôler le tableau de bord مسارك » sont vertes.
+- Le commentaire de déploiement Cloudflare de la PR confirme le build et le déploiement Preview réussis pour `bd2fbcd`, déploiement `ccb248dd-e857-4c46-8e5c-facbc6b129d5`.
+- URL de prévisualisation de branche : `https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev`. URL immuable du déploiement : `https://ccb248dd-allemand.brid-randomtv.workers.dev`.
+- La consultation automatique de la page via l'outil web a été refusée par l'environnement (DisabledError). Le déploiement est confirmé par Cloudflare, mais le rendu après authentification et les interactions de la page n'ont pas été vérifiés par navigateur. Une validation manuelle par l'utilisateur sur ordinateur et mobile reste nécessaire.
+- PR #17 toujours ouverte, non fusionnée, base `main`. Aucun déploiement production ni changement de `main` revendiqué.
