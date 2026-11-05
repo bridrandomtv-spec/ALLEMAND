@@ -23,4 +23,7 @@ assert.match(sw, /dz-de-v3\.168\.0\.0\.50/, 'version service worker non actualis
 assert.match(sw, /style-prototype-dz\.css\?v=138/, 'précache CSS non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
+assert.match(html, /app\\.js\\?v=3530/, 'cache app.js non actualisé');
+assert.match(sw, /app\\.js\\?v=3530/, 'précache app.js non actualisé');
+
 console.log('✅ مسارك : calculs réels par unité, prochaine séance, compétences, cartes et caches contrôlés');
