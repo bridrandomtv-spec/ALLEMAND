@@ -207,6 +207,14 @@ if (!sw.includes("dz-de-v3.168.0.0.53") ||
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
 console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v140 / app 3530 / .53)');
+if (sw.includes("./assets/bdd/shards/shard_00.json")) {
+  fail('précache un shard documentaire absent du dépôt');
+}
+if (!sw.includes("await cdnCache.put(request, response)") ||
+    sw.includes("cdnCache.add(new Request(url, { mode: 'no-cors' }))")) {
+  fail('cache CDN des polices doit accepter les réponses opaques via Cache.put');
+}
+console.log('✅ Service Worker : aucun shard vide/absent précaché et polices CDN mises en cache via Cache.put');
 if (!css.includes('LOT 98 — navigation basse fixe sur mobile')) {
   fail('navigation basse fixe mobile absente');
 }
