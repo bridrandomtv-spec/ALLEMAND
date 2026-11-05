@@ -1112,7 +1112,9 @@ jobs:
       - name: Vérifier le portail public (catalogue et inscription)
         run: |
           node ci/check-public-portal.mjs
-      - name: Contrôler le tableau de bord مسارك\n        run: node ci/check-masar.mjs\n      - name: Garde d'accès + TEST DE FUITE (access.js / config)
+      - name: Contrôler le tableau de bord مسارك
+        run: node ci/check-masar.mjs
+      - name: Garde d'accès + TEST DE FUITE (access.js / config)
         run: |
           node ci/check-access.mjs
       - name: Matrice des parcours (élève · prof · parent · expiration · renouvellement · contournements)
