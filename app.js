@@ -2910,11 +2910,13 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   }
   function renderBell(){
     var b=el('tbBell'); if(!b) return;
-    var n=bellCount();
-    if(window.DZ_INTERACTIONS && typeof DZ_INTERACTIONS.unreadCount==='function') n+=DZ_INTERACTIONS.unreadCount();
-    if(n<=0){ b.hidden=true; return; }
-    b.hidden=false;
-    var g=el('tbBadge'); if(g) g.textContent=(n>9?'9+':String(n));
+    if(window.DZ_INTERACTIONS && typeof DZ_INTERACTIONS.renderBell==='function'){
+      DZ_INTERACTIONS.renderBell(); return;
+    }
+    var s=null; try{ s=window.AUTH&&typeof AUTH.session==='function'?AUTH.session():null; }catch(e){}
+    var n=bellCount(),g=el('tbBadge');
+    b.hidden=!s;
+    if(g){g.hidden=!n;g.textContent=n>9?'9+':String(n);}
   }
   /* ── avatar : initiale de session sur le #userChip existant (handler conservé) ── */
   function renderAva(){
