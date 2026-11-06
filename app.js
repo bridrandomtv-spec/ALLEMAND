@@ -480,15 +480,12 @@ let currentView = 'accueil';
 
 /* Navigation hiérarchique : catégories courtes, sous-rubriques regroupées. */
 const NAVCATS = [
-  ['study', '🎓', 'الدراسة', ['matieres', 'seances', 'classe', 'grammaire', 'guide']],
-  ['practice', '📝', 'التدريب والتقييم', ['revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen']],
-  ['resources', '📚', 'الموارد التعليمية', ['biblio', 'corpus', 'banque', 'malakhiss', 'methode', 'buch', 'cloud']],
-  ['interaction', '💬', 'التواصل والتفاعل', ['live', 'rag']],
-  ['teacher', '🤖', 'فضاء الأستاذ', ['prof', 'profboard']],
-  ['family', '👨‍👩‍👧', 'فضاء الأولياء', ['parents']],
-  ['tracking', '📊', 'المتابعة والمشاريع', ['stats', 'projet']],
-  ['services', '🗓️', 'الخدمات والاشتراك', ['reservation', 'abonne', 'sponsor']],
-  ['account', '⚙️', 'الحساب والقانون', ['compte', 'legal', 'admin']]
+  ['learning', '🎓', 'التعلّم', ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud']],
+  ['assessment', '📝', 'التدريب والاختبارات', ['revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen']],
+  ['classroom', '💬', 'القسم والتواصل', ['classe', 'live', 'rag']],
+  ['support', '🤝', 'فضاءات التأطير', ['prof', 'profboard', 'parents']],
+  ['progress', '📊', 'التقدم الدراسي', ['stats', 'projet']],
+  ['services', '⚙️', 'الخدمات والحساب', ['reservation', 'abonne', 'sponsor', 'compte', 'legal', 'admin']]
 ];
 const NAVSOLO_TOP = ['accueil', 'masar'];
 /* UI-6 : le sponsoring se gère depuis #admin uniquement — retiré de la colonne de navigation ;
