@@ -17,13 +17,13 @@ assert.match(js, /ms-unit-grid/, 'cartes de progression par unité absentes');
 assert.match(css, /grid-template-areas:"hero hero" "next chart" "progress progress" "units units"/, 'grille desktop مسارك absente');
 assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/, 'grille mobile مسارك absente');
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
-assert.match(html, /style-prototype-dz\.css\?v=148/, 'cache CSS v148 non actualisé');
+assert.match(html, /style-prototype-dz\.css\?v=149/, 'cache CSS v149 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.175\.0\.0\.55/, 'version service worker v3.176 non actualisée');
-assert.match(sw, /style-prototype-dz\.css\?v=148/, 'précache CSS v148 non actualisé');
+assert.match(sw, /dz-de-v3\.175\.0\.0\.55/, 'version service worker v3.177 non actualisée');
+assert.match(sw, /style-prototype-dz\.css\?v=149/, 'précache CSS v149 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
-assert.match(html, /app\.js\?v=3535/, 'cache app.js non actualisé');
-assert.match(sw, /app\.js\?v=3535/, 'précache app.js non actualisé');
+assert.match(html, /app\.js\?v=3536/, 'cache app.js non actualisé');
+assert.match(sw, /app\.js\?v=3536/, 'précache app.js non actualisé');
 
 console.log('✅ مسارك : calculs réels par unité, prochaine séance, compétences, cartes et caches contrôlés');
