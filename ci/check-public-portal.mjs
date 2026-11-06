@@ -316,6 +316,7 @@ const examen = read('examen.js');
 const officiels = read('officiels.js');
 const bacArchive = JSON.parse(read('assets/bdd/bac_archive.json'));
 const devoirsOfficiels = JSON.parse(read('assets/bdd/devoirs_officiels.json'));
+const englishDevoirs = JSON.parse(read('assets/bdd/english_devoirs.json'));
 const annales = JSON.parse(read('assets/bdd/annales.json'));
 const compositions = JSON.parse(read('assets/bdd/compositions.json'));
 const aggregateKeys = ['note_moyenne','vues','telechargements','candidats','moyenne_nationale','taux_reussite'];
@@ -348,3 +349,9 @@ for (const marker of ['public-quality-proof', '<strong>234</strong>', '<strong>5
   if (!html.includes(marker)) fail('portail public : preuve de ressource pédagogique absente : ' + marker);
 }
 console.log('✅ Lot 134 : indicateurs publics agrégés retirés ; ressources pédagogiques vérifiées et conservées.');
+
+// LOT 135 — appliquer le contrôle anti-indicateurs agrégés au corpus des devoirs d'anglais.
+const englishItems = englishDevoirs.items || [];
+if (!englishItems.length || englishItems.some(item => aggregateKeys.some(key => key in item))) fail('devoirs anglais : corpus vide ou statistiques agrégées encore présentes');
+if (englishItems.some(item => !item.sujet || !item.corrige)) fail('devoirs anglais : sujet ou corrigé manquant');
+console.log('✅ Lot 135 : devoirs anglais contrôlés ; sujets et corrigés conservés sans métriques agrégées.');
