@@ -26,6 +26,11 @@
 
   /* ── Chargement ── */
   async function boot(){
+    const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+    if(!s || s.role !== 'parent'){
+      toast('⛔ هذا الفضاء مخصّص لحسابات الأولياء فقط', 'ko');
+      return;
+    }
     const box = $('#parentsBody'); if(!box) return;
     if(!D){
       box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل فضاء الأولياء…</div>';
