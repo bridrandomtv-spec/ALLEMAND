@@ -630,8 +630,7 @@
   });
 
   document.addEventListener('dz:view', e => {
-    if(e.detail === 'parents') boot();
-    else clearInterval(tReste);
+    if(e.detail !== 'parents') clearInterval(tReste);
   });
   window.addEventListener('beforeunload', () => clearInterval(tReste));
 
