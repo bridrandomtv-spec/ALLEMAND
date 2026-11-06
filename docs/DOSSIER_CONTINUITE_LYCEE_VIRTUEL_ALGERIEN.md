@@ -1622,3 +1622,10 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Les indicateurs individuels restent en place : tentatives, note personnelle, niveau de préparation et nombre de réponses de l'élève. La progression مسارك et statsHome restent intacts.
 - Ajout de contrôles CI qui vérifient l'absence des métriques nationales dans les rendus et fichiers JSON, et la présence des indicateurs personnels.
 - Aucun changement Supabase/Auth/RLS/paiement, aucune modification de main, aucune fusion ni déploiement Cloudflare revendiqué.
+
+## Lot 130 — alignement du contrôle CI des devoirs officiels (2026-11-06)
+
+- Le premier CI du lot 129 a signalé un contrôle historique dans deploy.yml qui exigeait encore les champs stats.vues, stats.telechargements et stats.reussite_pct sur les 10 devoirs de schéma officiel_v1.
+- Le contrôle a été ajusté : il continue de vérifier les identifiants, les sources, les structures d'épreuves, les barèmes et les corrigés, mais ne réclame plus de bloc stats agrégé supprimé du jeu de données.
+- Échec du CI 2224 expliqué et corrigé à la source ; une nouvelle exécution est nécessaire pour valider l'ensemble du lot.
+- Aucun changement de main, aucune fusion et aucun déploiement Cloudflare revendiqué.
