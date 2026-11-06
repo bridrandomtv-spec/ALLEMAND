@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.182.0.0.62';
+const VERSION = 'dz-de-v3.183.0.0.63';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -29,7 +29,7 @@ const PRECACHE = [
   './live.js?v=3510',
   './classe.js?v=3510',
   './grammaire.js?v=3510',
-  './quiz.js?v=3511',
+  './quiz.js?v=3512',
   './dz-gamification.js?v=3',
   './projet.js?v=3510',
   './assets/matching_v2.patch.js?v=3510',
