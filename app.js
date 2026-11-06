@@ -446,11 +446,11 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
+const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire' ,'biblio','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
 const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 فضائي الدراسي'],['msg','💬 الرسائل'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
-               ['stats','🗺️ الإحصائيات'],['quiz','🎯 تمارين'],
+               ['quiz','🎯 تمارين'],
                ['officiels','📄 الفروض'],['examen','🎓 البكالوريا'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
                ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],
@@ -480,11 +480,11 @@ let currentView = 'accueil';
 
 /* Navigation hiérarchique : catégories courtes, sous-rubriques regroupées. */
 const NAVCATS = [
-  ['learning', '🎓', 'التعلّم', ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud']],
+  ['learning', '🎓', 'التعلّم', ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud', 'projet']],
   ['assessment', '📝', 'التدريب والاختبارات', ['revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen']],
   ['classroom', '💬', 'القسم والتواصل', ['classe', 'live', 'rag']],
   ['support', '🤝', 'فضاءات التأطير', ['prof', 'profboard', 'parents']],
-  ['progress', '📊', 'التقدم الدراسي', ['stats', 'projet']],
+  ['learning', '🎓', 'التعلّم', ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud', 'projet']],
   ['services', '⚙️', 'الخدمات والحساب', ['reservation', 'abonne', 'compte', 'legal', 'admin']]
 ];
 const NAVSOLO_TOP = ['accueil', 'masar'];
@@ -674,7 +674,6 @@ function go(view){
   document.dispatchEvent(new CustomEvent('dz:view', { detail: view }));
   if(view === 'seances'){ renderSeances(); paintUniteHead(); }
   if(view === 'biblio' && window.renderBiblio) window.renderBiblio();
-  if(view === 'stats' && window.renderStats2) window.renderStats2();
   if(view === 'quiz' && window.renderQuiz) window.renderQuiz();
   if(view === 'officiels' && window.renderOfficiels) window.renderOfficiels();
   if(view === 'examen' && window.renderExamen) window.renderExamen();
