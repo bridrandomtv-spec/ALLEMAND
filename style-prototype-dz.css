@@ -12149,7 +12149,7 @@ html[data-theme="dark"] section[data-view="live"] .live-side .ong.on{color:#fff;
   html[data-theme="light"] section[data-view="live"] .ctrl{min-width:58px;padding:8px}
 }
 @media(prefers-reduced-motion:reduce){
-  section[data-view="classe"] *,section[data-view="live"] *,,
+  section[data-view="classe"] *,section[data-view="live"] *,
   section[data-view="classe"] *::before,section[data-view="live"] *::before,::before{
     animation-duration:.01ms!important;transition-duration:.01ms!important
   }
