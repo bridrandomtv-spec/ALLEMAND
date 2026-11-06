@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read=p=>fs.readFileSync(p,'utf8');
+const js=read('dz-interactions.js'),app=read('app.js'),html=read('index.html'),css=read('style-prototype-dz.css'),sw=read('sw.js');
+assert.match(html,/dz-interactions\.js\?v=1/,'module recherche/notifications non chargé');
+assert.match(sw,/dz-interactions\.js\?v=1/,'module absent du précache');
+assert.match(js,/Ctrl \+ K|Ctrl\s*\+\s*K|e\.ctrlKey/,'raccourci clavier Ctrl+K absent');
+assert.match(js,/dz_de_notifications_v1:/,'notifications non isolées par compte');
+assert.match(js,/success:'نجاح',error:'خطأ',warning:'تنبيه',info:'معلومة'/,'catégories notification incomplètes');
+assert.match(js,/data-mark-all/,'action marquer tout comme lu absente');
+assert.match(js,/data-notif-id/,'action notification individuelle absente');
+assert.match(js,/dz:view/,'rafraîchissement du compteur à la navigation absent');
+assert.match(app,/DZ_INTERACTIONS\.search\(q\)/,'recherche existante non raccordée');
+assert.match(app,/DZ_INTERACTIONS\.openNotifications/,'cloche non raccordée au centre');
+assert.match(app,/DZ_INTERACTIONS\.recordToast/,'toasts réels non enregistrés');
+assert.match(css,/\.dz-interaction-panel/,'styles du panneau interaction absents');
+assert.match(css,/@media\(max-width:600px\).*dz-interaction-layer/s,'adaptation mobile du panneau absente');
+console.log('✅ Recherche globale, notifications par compte, catégories, actions et responsive contrôlés');
