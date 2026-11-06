@@ -1549,3 +1549,12 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Après le correctif app.js v3535, le workflow 42139982984 a échoué sur une seconde assertion obsolète : `ci/check-masar.mjs` attendait encore `dz-de-v3.174.0.0.55`, alors que `index.html` et `sw.js` sont à `dz-de-v3.175.0.0.55`.
 - Assertion et message de diagnostic actualisés vers v3.175. La vue nationale et le module `stats.js` restent exclus du chargement ; aucune logique métier ni donnée n'a été modifiée.
 - Attendre le prochain résultat CI pour conclure. PR #17 reste ouverte et non fusionnée ; `main` n'est pas modifiée.
+
+
+### Complément Lot 120 — rectification de la référence CI réellement présente (6 novembre 2026)
+
+- Le workflow 42140544658 a confirmé que le contrôle « مسارك » échouait encore : la branche contenait toujours dans `ci/check-masar.mjs` l'expression attendue `dz-de-v3.174.0.0.55`, malgré la note précédente qui indiquait sa correction.
+- Vérification croisée : `sw.js` et le précache de la branche sont bien à `dz-de-v3.175.0.0.55`; la référence erronée était uniquement dans le test CI.
+- Correction effective cette fois : assertion de `ci/check-masar.mjs` portée à `dz-de-v3.175.0.0.55`.
+- Commit : `bc380cedbe3f12d6f1498e747369a5c220fcbda9`. Le nouveau workflow doit encore confirmer le résultat.
+- Aucun fichier applicatif, aucune progression individuelle, aucune route, aucun contenu national de données et aucune configuration Auth/Supabase/RLS n'ont été modifiés dans ce correctif. PR #17 reste ouverte et non fusionnée ; `main` reste intacte.
