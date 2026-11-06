@@ -348,7 +348,10 @@ if (html.includes('public-quality-dashboard') || html.includes('public-quality-m
 for (const marker of ['public-quality-proof', '<strong>234</strong>', '<strong>55</strong>', '<strong>19</strong>']) {
   if (!html.includes(marker)) fail('portail public : preuve de ressource pédagogique absente : ' + marker);
 }
-console.log('✅ Lot 134 : indicateurs publics agrégés retirés ; ressources pédagogiques vérifiées et conservées.');
+for (const obsolete of ['public-quality-dashboard','public-quality-live','public-quality-rings','public-quality-ring','public-quality-note','public-quality-metrics','public-quality-metric']) {
+  if (css.includes(obsolete)) fail('CSS : sélecteur orphelin de l’ancien tableau public : ' + obsolete);
+}
+console.log('✅ Lot 137 : ancien tableau public supprimé du HTML et de la feuille CSS ; cartes de ressources conservées.');
 
 // LOT 135 — appliquer le contrôle anti-indicateurs agrégés au corpus des devoirs d'anglais.
 const englishItems = englishDevoirs.items || [];
