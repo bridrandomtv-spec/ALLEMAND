@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8');
-const js=read('dz-interactions.js'),app=read('app.js'),quiz=read('quiz.js'),grammar=read('grammaire.js'),html=read('index.html'),css=read('style-prototype-dz.css'),sw=read('sw.js');
+const js=read('dz-interactions.js'),app=read('app.js'),quiz=read('quiz.js'),grammar=read('grammaire.js'),html=read('index.html'),css=read('style-prototype-dz.css'),sw=read('sw.js'),voice=read('js/voice-chat.js');
 assert.match(html,/dz-interactions\.js\?v=5/,'module recherche/notifications non chargé');
 assert.match(sw,/dz-interactions\.js\?v=5/,'module absent du précache');
 assert.match(js,/typeof UNITES/,'indexation des unités de cours absente');
@@ -27,5 +27,15 @@ assert.match(app,/DZ_INTERACTIONS\.search\(q\)/,'recherche existante non raccord
 assert.match(app,/DZ_INTERACTIONS\.openNotifications/,'cloche non raccordée au centre');
 assert.match(app,/DZ_INTERACTIONS\.recordToast/,'toasts réels non enregistrés');
 assert.match(css,/\.dz-interaction-panel/,'styles du panneau interaction absents');
+assert.ok(html.includes('class="dz-ai-voice-stage"'), 'scène vocale du prototype absente');
+assert.ok(html.includes('id="chatMicBtn" class="dz-ai-mic chat-mic"'), 'grand bouton micro absent');
+assert.ok(html.includes('id="chatVoiceLang"'), 'sélecteur de langue vocale absent');
+const formStart=html.indexOf('<form class="chat-in" id="chatForm">');
+const formEnd=html.indexOf('</form>',formStart);
+assert.ok(formStart>=0 && formEnd>formStart && !html.slice(formStart,formEnd).includes('chatMicBtn'), 'le microphone doit rester hors du formulaire d’envoi');
+assert.ok(voice.includes("getElementById('chatMicBtn')"), 'contrôle du micro non raccordé au moteur vocal existant');
+assert.ok(css.includes('.dz-ai-voice-stage'), 'styles de la scène vocale absents');
+assert.ok(css.includes('@keyframes dzAiWave'), 'animation des ondes vocales absente');
+
 assert.match(css,/@media\(max-width:600px\).*dz-interaction-layer/s,'adaptation mobile du panneau absente');
 console.log('✅ Recherche globale, notifications par compte, catégories, actions et responsive contrôlés');
