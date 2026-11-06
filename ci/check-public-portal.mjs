@@ -311,3 +311,15 @@ if (!navCatsBlock.includes("'projet'") || navCatsBlock.includes('التقدم ا
 if (css.includes('section[data-view="stats"]') || css.includes('#statsBody')) fail('CSS : styles orphelins de la vue nationale encore présents');
 if (!html.includes('id="statsHome"') || !app.includes("const el = $('#statsHome')")) fail('indicateurs personnels de l’accueil supprimés par erreur');
 console.log('✅ Lot 119 : vue nationale supprimée, cinq espaces de navigation, progression individuelle conservée.');
+// LOT 129 — aucune statistique nationale dans les archives BAC / devoirs officiels.
+const examen = read('examen.js');
+const officiels = read('officiels.js');
+const bacArchive = JSON.parse(read('assets/bdd/bac_archive.json'));
+const devoirsOfficiels = JSON.parse(read('assets/bdd/devoirs_officiels.json'));
+if (examen.includes('a.candidats') || examen.includes('a.moyenne') || examen.includes('a.taux') || examen.includes('stats: null')) fail('archive BAC : métriques nationales encore rendues ou mappées');
+if (officiels.includes('reussite_pct') || officiels.includes('d.stats.vues') || officiels.includes('d.stats.telechargements')) fail('devoirs officiels : statistiques agrégées encore rendues');
+if ((bacArchive.annees || []).some(a => ['candidats','moyenne','taux'].some(k => k in a)) || (bacArchive.sujets || []).some(s => 'stats' in s)) fail('données BAC : statistiques nationales encore présentes');
+if ((devoirsOfficiels.devoirs || []).some(d => 'stats' in d)) fail('données devoirs officiels : statistiques agrégées encore présentes');
+if (!examen.includes('h.length') || !examen.includes('readiness(moy)') || !examen.includes('faits.length')) fail('archive BAC : indicateurs personnels supprimés par erreur');
+if (!officiels.includes('note.toFixed(1)') || !officiels.includes('إجابة')) fail('devoirs : résultats personnels supprimés par erreur');
+console.log('✅ Lot 129 : statistiques nationales supprimées des archives ; résultats personnels conservés.');
