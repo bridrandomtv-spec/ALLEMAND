@@ -8,6 +8,7 @@ const statuses = JSON.parse(read('assets/bdd/subjects.json'));
 const auth = read('auth.js');
 const admin = read('admin.js');
 const prof = read('prof.js');
+const parents = read('parents.js');
 const portal = read('public-portal.js');
 const app = read('app.js');
 const html = read('index.html');
