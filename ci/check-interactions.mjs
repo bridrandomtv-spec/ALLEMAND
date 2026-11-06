@@ -9,6 +9,8 @@ assert.match(js,/dz_de_notifications_v1:/,'notifications non isolées par compte
 assert.match(js,/success:'نجاح',error:'خطأ',warning:'تنبيه',info:'معلومة'/,'catégories notification incomplètes');
 assert.match(js,/data-mark-all/,'action marquer tout comme lu absente');
 assert.match(js,/data-notif-id/,'action notification individuelle absente');
+assert.match(js,/function cleanLong/,'indexation longue du contenu réel absente');
+assert.match(js,/b=cleanLong\\(s\.textContent\\)/,'indexation complète des vues absente');
 assert.match(js,/dz:view/,'rafraîchissement du compteur à la navigation absent');
 assert.match(app,/DZ_INTERACTIONS\.search\(q\)/,'recherche existante non raccordée');
 assert.match(app,/DZ_INTERACTIONS\.openNotifications/,'cloche non raccordée au centre');
