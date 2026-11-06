@@ -325,6 +325,10 @@ if (!app.includes("document.addEventListener('dz:auth', e => {") ||
     !app.includes("renderTabs();\n    if(e.detail && currentView === 'parents' && !isParent()) go('accueil');")) {
   fail('espace parents : navigation non actualisée après changement de session ou de rôle');
 }
+if (!parents.includes("if(!s || s.role !== 'parent')") ||
+    !parents.includes("فضاء الأولياء فقط")) {
+  fail('espace parents : fonction boot accessible sans contrôle de rôle indépendant');
+}
 if (!parents.includes('بيانات تجريبية توضيحية — لا تمثل نتائج تلميذ حقيقي') ||
     parents.includes('Données 100% locales — aucune transmission serveur')) {
   fail('espace parents : données de démonstration non signalées ou commentaire de confidentialité trompeur');
