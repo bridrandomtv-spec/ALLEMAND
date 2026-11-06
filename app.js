@@ -547,11 +547,31 @@ function renderTabs(){
   mobile += '<div class="mobile-nav-panel" id="mobileNavMore" hidden><div class="mobile-nav-panel-head"><strong>جميع أقسام المنصة</strong>' +
     '<button type="button" class="mobile-nav-close" data-nav-more-close aria-label="إغلاق القائمة">✕</button></div><div class="mobile-nav-panel-grid">';
   mobile += window.__SUBJECT__ === 'en'
-    ? '<button type="button" class="mobile-nav-link" data-subj="de">🇩🇪 الألمانية</button>'
-    : '<button type="button" class="mobile-nav-link" data-go="english">🇬🇧 الإنجليزية</button>';
-  for(const t of mobileItems){
-    mobile += '<button type="button" class="mobile-nav-link' + (t[0] === currentView ? ' on' : '') +
-      '" data-go="' + t[0] + '">' + t[1] + '</button>';
+    ? '<button type="button" class="mobile-nav-link mobile-nav-subject" data-subj="de">🇩🇪 الألمانية</button>'
+    : '<button type="button" class="mobile-nav-link mobile-nav-subject" data-go="english">🇬🇧 الإنجليزية</button>';
+  for(const cat of NAVCATS){
+    const items = cat[3].filter(id => !primaryIds.has(id) && id !== 'matieres' && id !== 'english')
+      .map(id => byId.get(id)).filter(Boolean);
+    if(!items.length) continue;
+    const active = items.some(t => t[0] === currentView);
+    mobile += '<details class="mobile-nav-group"' + (active ? ' open' : '') + '><summary class="mobile-nav-group-trigger">' +
+      '<span>' + cat[1] + '</span><strong>' + cat[2] + '</strong><span class="mobile-nav-group-chevron" aria-hidden="true">⌄</span></summary>' +
+      '<div class="mobile-nav-group-items">';
+    for(const t of items){
+      mobile += '<button type="button" class="mobile-nav-link' + (t[0] === currentView ? ' on' : '') +
+        '" data-go="' + t[0] + '">' + t[1] + '</button>';
+    }
+    mobile += '</div></details>';
+  }
+  const groupedMobile = new Set(NAVCATS.flatMap(cat => cat[3]));
+  const mobileOther = mobileItems.filter(t => !groupedMobile.has(t[0]));
+  if(mobileOther.length){
+    mobile += '<details class="mobile-nav-group"><summary class="mobile-nav-group-trigger"><span>➕</span><strong>أقسام أخرى</strong><span class="mobile-nav-group-chevron" aria-hidden="true">⌄</span></summary><div class="mobile-nav-group-items">';
+    for(const t of mobileOther){
+      mobile += '<button type="button" class="mobile-nav-link' + (t[0] === currentView ? ' on' : '') +
+        '" data-go="' + t[0] + '">' + t[1] + '</button>';
+    }
+    mobile += '</div></details>';
   }
   mobile += '</div></div>';
   const d7bot = document.getElementById('d7bot');
