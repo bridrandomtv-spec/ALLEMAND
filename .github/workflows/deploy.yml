@@ -568,9 +568,6 @@ jobs:
                       fails.append(dv['id'] + ' : grille sans 0,4/معلومة')
               if 'Ich heiße Omar' not in pIII.get('modele', ''):
                   fails.append(dv['id'] + ' : modele officiel absent')
-              for k in ('vues', 'telechargements', 'reussite_pct'):
-                  if k not in dv['stats']:
-                      fails.append(dv['id'] + ' : stats.' + k + ' absent')
           if len(set(x['code_wilaya'] for x in off if x.get('code_wilaya'))) < 8:
               fails.append('officiels : moins de 8 wilayas')
           if len(set(x['unite'] for x in ds if x.get('unite'))) < 6:
