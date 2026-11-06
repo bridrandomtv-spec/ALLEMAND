@@ -1516,3 +1516,14 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Cache : app.js?v=3534 ; style-prototype-dz.css?v=146 ; Service Worker dz-de-v3.174.0.0.55.
 - Garde CI ajoutée pour vérifier la présence des accordéons mobiles et de leurs styles ; contrôles de synchronisation des caches actualisés.
 - PR #17 reste ouverte et non fusionnée ; main non modifiée. Validation CI du Lot 118 et contrôle visuel mobile sur l'aperçu Cloudflare restent à confirmer.
+
+
+## Lot 119 — retrait complet des statistiques nationales et de la rubrique « التقدم الدراسي » (6 novembre 2026)
+
+- Demande utilisateur : supprimer complètement l'espace de navigation « التقدم الدراسي » et la vue « الإحصائيات الوطنية » (carte des 58 wilayas, distribution, évolution temporelle, difficulté, baccalauréat et tableau national).
+- Navigation : retrait de la destination stats de VIEWS/TABS/NAVCATS et retrait de la catégorie « التقدم الدراسي » ; le menu hiérarchique comporte désormais cinq espaces. La destination « مشروعي الدراسي » reste classée dans « التعلّم » et conserve sa vue projet.
+- Vue : suppression de la section HTML data-view=stats, de l'appel de rendu dans app.js, de la balise stats.js et de son entrée dans le précache du Service Worker. Le fichier stats.js sera supprimé après vérification de ses dépendances.
+- La progression individuelle de l'élève, « مسارك », les indicateurs personnels de l'accueil et le suivi des séances ne sont pas supprimés. Les fichiers de données documentaires/géographiques ne sont pas effacés à l'aveugle : ils peuvent être partagés avec la bibliothèque ou d'autres corpus.
+- Cache app.js : v3535 ; Service Worker : dz-de-v3.175.0.0.55. Le CSS n'a pas été modifié.
+- Garde CI ajoutée : absence de l'ancienne route, de la vue HTML et du module précaché ; cinq espaces de navigation attendus.
+- PR #17 reste ouverte et non fusionnée ; main n'est pas modifiée. Le workflow et le rendu visuel du portail restent à valider après ce lot.
