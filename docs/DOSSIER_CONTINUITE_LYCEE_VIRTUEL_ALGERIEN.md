@@ -1443,3 +1443,12 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Fichiers modifiés : `style-prototype-dz.css`, `index.html`, `sw.js`, `ci/check-public-portal.mjs`, `ci/check-masar.mjs`, présent dossier.
 - Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement sur `main`, aux routes, à l’authentification, à Supabase, RLS, schéma, paiements ou données.
 - Limite de validation : le correctif CSS et les garde-fous CI sont committés ; attendre le workflow GitHub et le build Cloudflare correspondant. Le rendu visuel réel desktop/mobile n’est pas encore revendiqué.
+
+## Lot 114 — fiabilisation de l’assertion CI Lot 113 (6 novembre 2026)
+
+- Le workflow 42135039889 a échoué à l’étape « Vérifier le portail public » : l’apostrophe droite dans `l'ancien` était incluse dans une chaîne JavaScript délimitée par apostrophes simples, provoquant une erreur de syntaxe avant l’exécution des assertions.
+- Correction : l’assertion du marqueur CSS Lot 113 utilise désormais des chaînes délimitées par guillemets doubles, compatibles avec l’apostrophe du texte attendu.
+- Le commit correctif est `0be2eb3f14b7bcee6b062a34977bba2a32dcb0cd`, sur `design/prototypes-67-74-alignment`. Le prochain workflow doit confirmer la réussite ; aucun résultat CI n’est présumé.
+- Les validations précédant l’étape du portail dans le workflow 42135039889 ont réussi ; les contrôles ultérieurs ont été ignorés après cet échec.
+- Aucun changement de code applicatif, de CSS, de routes, d’authentification ou de données dans ce lot. PR #17 maintenue ouverte, aucune fusion et aucun changement de `main`.
+- Le rendu navigateur et le déploiement Cloudflare du nouveau commit restent à vérifier séparément.
