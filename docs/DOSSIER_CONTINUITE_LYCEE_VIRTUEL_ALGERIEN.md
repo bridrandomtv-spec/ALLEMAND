@@ -1452,3 +1452,12 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Les validations précédant l’étape du portail dans le workflow 42135039889 ont réussi ; les contrôles ultérieurs ont été ignorés après cet échec.
 - Aucun changement de code applicatif, de CSS, de routes, d’authentification ou de données dans ce lot. PR #17 maintenue ouverte, aucune fusion et aucun changement de `main`.
 - Le rendu navigateur et le déploiement Cloudflare du nouveau commit restent à vérifier séparément.
+
+## Lot 115 — alignement exact du marqueur CSS dans le test (6 novembre 2026)
+
+- Le workflow 42135133777 a dépassé l’erreur de syntaxe JavaScript, mais le test du portail public a échoué sur l’assertion du marqueur Lot 113.
+- Cause : le test contenait l’apostrophe typographique `’` alors que le commentaire CSS réel utilise l’apostrophe ASCII `'`. Les niveaux z-index attendus sont présents dans le CSS ; c’était la comparaison du marqueur qui échouait.
+- Correction : l’assertion est maintenant délimitée par guillemets doubles et reprend exactement l’apostrophe ASCII du commentaire CSS.
+- Commit : `aed6d350371fa6e86ca7a945e4ac25f141b6efe0`, branche `design/prototypes-67-74-alignment`.
+- Aucun changement applicatif ni CSS dans ce lot ; test seulement. Attendre le nouveau workflow pour conclure.
+- PR #17 reste ouverte/non fusionnée ; `main` non modifiée. Déploiement Cloudflare et contrôle navigateur restent à confirmer.
