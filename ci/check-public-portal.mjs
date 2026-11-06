@@ -310,6 +310,10 @@ if (!admin.includes('const u = await window.SB.me();') ||
     !admin.includes("p.role !== 'admin'")) {
   fail('sécurité vue administration : vérification du profil Supabase absente au rendu direct');
 }
+if (parents.includes("if(e.detail === 'parents') boot()") ||
+    !app.includes("if(view === 'parents')    renderParents();")) {
+  fail('initialisation de l’espace parents doublée ou déclencheur central absent');
+}
 if (admin.slice(0, admin.indexOf('/* ── phase 5')).includes("addEventListener('dz:view'") ||
     prof.includes("addEventListener('dz:view'") ||
     !app.includes("if(view === 'admin' && window.renderAdmin) window.renderAdmin();") ||
