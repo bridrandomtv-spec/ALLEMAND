@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
-</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=152">
+</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=153">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -623,22 +623,28 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
             <span class="dz-ai-lockup">🇩🇿 <b>EDUDZ</b></span>
           </div>
           <div class="chat card">
+            <div class="dz-ai-voice-stage" aria-label="الإملاء الصوتي للأستاذ الذكي">
+              <div class="dz-ai-voice-content">
+                <div class="dz-ai-voice-heading"><b>المحادثة مع الأستاذ الذكي</b><small>تحدث بلغتك؛ راجع النص المتعرّف عليه ثم أرسله للسؤال</small></div>
+                <div class="dz-ai-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <button type="button" id="chatMicBtn" class="dz-ai-mic chat-mic" aria-label="بدء الإملاء الصوتي" title="إملاء صوتي">🎙️</button>
+              <div class="chat-voice-tools">
+                <label for="chatVoiceLang">لغة الإملاء</label>
+                <select id="chatVoiceLang" aria-label="لغة التعرف على الكلام">
+                  <option value="de-DE">🇩🇪 Deutsch</option>
+                  <option value="ar-DZ">🇩🇿 العربية الجزائرية</option>
+                  <option value="ar-SA">العربية الفصحى</option>
+                  <option value="fr-FR">🇫🇷 Français</option>
+                  <option value="en-US">🇬🇧 English</option>
+                </select>
+                <span id="chatVoiceStatus" class="chat-voice-status" role="status" aria-live="polite">الإملاء الصوتي جاهز عند توفره في المتصفح</span>
+              </div>
+            </div>
             <div class="chat-log" id="chatLog" aria-live="polite" role="log"></div>
             <div class="chat-sug" id="chatSug"></div>
-            <div class="chat-voice-tools">
-              <label for="chatVoiceLang">لغة الإملاء</label>
-              <select id="chatVoiceLang" aria-label="لغة التعرف على الكلام">
-                <option value="de-DE">🇩🇪 Deutsch</option>
-                <option value="ar-DZ">🇩🇿 العربية الجزائرية</option>
-                <option value="ar-SA">العربية الفصحى</option>
-                <option value="fr-FR">🇫🇷 Français</option>
-                <option value="en-US">🇬🇧 English</option>
-              </select>
-              <span id="chatVoiceStatus" class="chat-voice-status" role="status" aria-live="polite">الإملاء الصوتي جاهز عند توفره في المتصفح</span>
-            </div>
             <form class="chat-in" id="chatForm">
               <input type="text" id="chatInput" placeholder="اكتب سؤالك بالألمانية أو بالعربية…" autocomplete="off">
-              <button type="button" id="chatMicBtn" class="btn btn-o chat-mic" aria-label="بدء الإملاء الصوتي" title="إملاء صوتي">🎙️</button>
               <button type="submit" class="btn btn-p" aria-label="إرسال السؤال">➤</button>
             </form>
           </div>
