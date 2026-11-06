@@ -337,3 +337,13 @@ if ((devoirsOfficiels.devoirs || []).some(d => 'stats' in d)) fail('données dev
 if (!examen.includes('h.length') || !examen.includes('readiness(moy)') || !examen.includes('faits.length')) fail('archive BAC : indicateurs personnels supprimés par erreur');
 if (!officiels.includes('note.toFixed(1)') || !officiels.includes('إجابة')) fail('devoirs : résultats personnels supprimés par erreur');
 console.log('✅ Lot 129 : statistiques nationales supprimées des archives ; résultats personnels conservés.');
+
+// LOT 134 — retirer le tableau public d'indicateurs agrégés, sans supprimer les preuves pédagogiques.
+if (html.includes('public-quality-dashboard') || html.includes('public-quality-metric') ||
+    html.includes('معدل النجاح') || html.includes('لوحة مؤشرات التعلّم')) {
+  fail('portail public : tableau d’indicateurs agrégés encore présent');
+}
+for (const marker of ['public-quality-proof', '<strong>234</strong>', '<strong>55</strong>', '<strong>19</strong>']) {
+  if (!html.includes(marker)) fail('portail public : preuve de ressource pédagogique absente : ' + marker);
+}
+console.log('✅ Lot 134 : indicateurs publics agrégés retirés ; ressources pédagogiques vérifiées et conservées.');
