@@ -417,6 +417,7 @@ function esc(s){
 
 let toastTimer = null;
 function toast(msg, type){
+  try{ if(window.DZ_INTERACTIONS && DZ_INTERACTIONS.recordToast) DZ_INTERACTIONS.recordToast(msg,type); }catch(e){}
   const el = $('#toast'); if(!el) return;
   el.className = 'toast on ' + (type || ''); el.innerHTML = msg; el.hidden = false;
   clearTimeout(toastTimer);
@@ -2889,6 +2890,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   function submitSearch(){
     var inp=el('tbSearch'); if(!inp) return;
     var q=String(inp.value||'').trim(); if(!q) return;
+    if(window.DZ_INTERACTIONS && typeof DZ_INTERACTIONS.search==='function'){ DZ_INTERACTIONS.search(q); return; }
     nav('corpus');
     setTimeout(function(){
       var t=el('cpQ');
@@ -2908,6 +2910,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   function renderBell(){
     var b=el('tbBell'); if(!b) return;
     var n=bellCount();
+    if(window.DZ_INTERACTIONS && typeof DZ_INTERACTIONS.unreadCount==='function') n+=DZ_INTERACTIONS.unreadCount();
     if(n<=0){ b.hidden=true; return; }
     b.hidden=false;
     var g=el('tbBadge'); if(g) g.textContent=(n>9?'9+':String(n));
@@ -2932,7 +2935,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     var inp=el('tbSearch');
     if(inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); submitSearch(); } });
     var b=el('tbBell');
-    if(b) b.addEventListener('click', function(){ nav('masar'); });
+    if(b) b.addEventListener('click', function(){ if(window.DZ_INTERACTIONS && DZ_INTERACTIONS.openNotifications) DZ_INTERACTIONS.openNotifications(); else nav('masar'); });
     renderAll();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(bind,300); });
