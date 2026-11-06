@@ -16675,3 +16675,24 @@ html[data-theme="dark"] #gate .auth-recovery-status.is-success{
   html[data-theme="dark"] #shell #tabs .nav-subitem{color:var(--t,var(--m))}
   html[data-theme="dark"] #shell #tabs .nav-subitem:hover{background:rgba(61,220,132,.12);color:var(--a2,#65d99a)}
 }
+
+
+/* LOT 113 — menus déroulants au-dessus de l'ancien tiroir latéral.
+   V8.5 avait recréé un contexte d'empilement topbar à z-index:100 ;
+   le tiroir historique reste à z-index:700. Le header doit donc repasser au-dessus. */
+@media (min-width:901px){
+  #shell .topbar{
+    position:sticky!important;top:0!important;z-index:1800!important;
+    isolation:isolate!important;overflow:visible!important;
+  }
+  #shell #tabs.tabs{
+    position:relative!important;z-index:1801!important;overflow:visible!important;
+  }
+  #shell #tabs .desktop-nav{
+    position:relative!important;z-index:1802!important;overflow:visible!important;
+  }
+  #shell #tabs .nav-group:hover,
+  #shell #tabs .nav-group:focus-within,
+  #shell #tabs .nav-group[open]{position:relative!important;z-index:1803!important}
+  #shell #tabs .nav-submenu{z-index:1804!important}
+}
