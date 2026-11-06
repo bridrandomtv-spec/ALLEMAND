@@ -17108,29 +17108,3 @@ html[data-theme="dark"] #shell #app .sf-continue-kicker{color:#9de0b2}
 html[data-theme="dark"] #shell #app .sf-continue-mark{background:radial-gradient(circle,#284a35,#1b2c21 72%);border-color:#3d694b}
 #shell #app .sf-continue-mark span{position:absolute;inset-inline-end:0;bottom:0;font-size:23px}
 @media(max-width:620px){#shell #app .sf-continue-card{gap:10px;padding:17px 14px;border-radius:17px}#shell #app .sf-continue-mark{flex-basis:66px;width:66px;height:66px;font-size:29px;box-shadow:0 0 0 6px rgba(0,98,51,.035)}#shell #app .sf-continue-mark span{font-size:17px}#shell #app .sf-continue-button{width:100%;min-width:0}}
-
-
-/* HOME RTL — colonne de raccourcis à droite, contenu pédagogique à gauche.
-   Règle terminale : neutralise les anciennes variantes LTR héritées. */
-#shell #app [data-view="accueil"] .home-grid{
-  direction:rtl!important;
-  grid-template-columns:minmax(245px,290px) minmax(0,1fr)!important;
-  align-items:start;
-}
-#shell #app [data-view="accueil"] .home-side,
-#shell #app [data-view="accueil"] .home-main{
-  direction:rtl;min-width:0;order:0;
-}
-@media(max-width:900px){
-  #shell #app [data-view="accueil"] .home-grid{
-    grid-template-columns:minmax(0,1fr)!important;
-    direction:rtl!important;gap:14px!important;
-  }
-  #shell #app [data-view="accueil"] .home-main{order:1}
-  #shell #app [data-view="accueil"] .home-side{order:2}
-}
-@media(max-width:600px){
-  #shell #app [data-view="accueil"] .home-grid{gap:12px!important}
-  #shell #app [data-view="accueil"] #studentContinue{margin-bottom:14px}
-  #shell #app [data-view="accueil"] .sf-continue-card{align-items:flex-start}
-}
