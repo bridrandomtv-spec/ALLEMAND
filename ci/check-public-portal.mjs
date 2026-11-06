@@ -227,7 +227,7 @@ if (!html.includes('style-prototype-dz.css?v=146')) {
 if (!sw.includes('style-prototype-dz.css?v=146')) {
   fail('version CSS du précache non actualisée (v145 attendue)');
 }
-if (!sw.includes("dz-de-v3.174.0.0.55") ||
+if (!sw.includes("dz-de-v3.175.0.0.55") ||
     !sw.includes("style-prototype-dz.css?v=146") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
@@ -269,13 +269,13 @@ const navEnd = app.indexOf('\n];', navStart);
 if (navStart < 0 || navEnd < 0) fail('déclaration des espaces de navigation absente');
 const navCatsBlock = app.slice(navStart, navEnd);
 const navCategoryCount = navCatsBlock.split('\n').filter(line => line.trimStart().startsWith("['")).length;
-if (navCategoryCount !== 6) fail('la navigation doit présenter exactement six espaces principaux');
-for (const label of ['التعلّم', 'التدريب والاختبارات', 'القسم والتواصل', 'فضاءات التأطير', 'التقدم الدراسي', 'الخدمات والحساب']) {
+if (navCategoryCount !== 5) fail('la navigation doit présenter exactement cinq espaces principaux après retrait de التقدم الدراسي');
+for (const label of ['التعلّم', 'التدريب والاختبارات', 'القسم والتواصل', 'فضاءات التأطير', 'الخدمات والحساب']) {
   if (!navCatsBlock.includes(label)) fail('espace de navigation manquant : ' + label);
 }
 for (const route of ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud',
   'revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen', 'classe', 'live', 'rag',
-  'prof', 'profboard', 'parents', 'stats', 'projet', 'reservation', 'abonne', 'compte', 'legal', 'admin']) {
+  'prof', 'profboard', 'parents', 'projet', 'reservation', 'abonne', 'compte', 'legal', 'admin']) {
   if (!navCatsBlock.includes("'" + route + "'")) fail('destination non classée dans la navigation : ' + route);
 }
 if (!app.includes("t[0] !== 'sponsor'")) fail('le raccourci sponsor doit rester hors du menu général');
@@ -302,3 +302,10 @@ if (!css.includes('.nav-group:hover>.nav-submenu') ||
   fail('ouverture des sous-menus par survol/clavier absente');
 }
 console.log('✅ Lot 111 : catégories compactes, sous-menus au survol et navigation clavier');
+
+// LOT 119 — retrait complet des statistiques nationales et de leur espace de navigation.
+if (app.includes("'stats'") || app.includes('التقدم الدراسي') || app.includes('الإحصائيات الوطنية')) fail('navigation : ancienne rubrique nationale/progression encore présente');
+if (html.includes('data-view="stats"') || html.includes('stats.js')) fail('portail : vue ou module des statistiques nationales encore chargé');
+if (sw.includes('stats.js')) fail('Service Worker : module national stats encore précaché');
+if (!navCatsBlock.includes("'projet'") || navCatsBlock.includes('التقدم الدراسي')) fail('projet doit rester classé sans recréer la rubrique supprimée');
+console.log('✅ Lot 119 : vue nationale supprimée, cinq espaces de navigation, progression individuelle conservée.');
