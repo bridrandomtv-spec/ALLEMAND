@@ -151,7 +151,6 @@
   }
   function stat(v, l){ return '<div class="ad-s"><b>' + esc(v) + '</b><span>' + l + '</span></div>'; }
   window.renderAdmin = render;
-  document.addEventListener('dz:view', e => { if(e.detail === 'admin') render(); });
 })();
 
 /* ── phase 5 : éditeur de plans (admin) — prix NULL autorisés (décision B) ── */
