@@ -55,6 +55,6 @@ assert.match(css,/section\[data-view="compte"\].*@media/s,'adaptation responsive
 console.log('✅ Compte étudiant : identité, indicateurs réels, confidentialité, commandes et responsive contrôlés');
 
 
-assert.match(css,/#shell #app \\[data-view="accueil"\\] \\.home-grid\\{[\\s\\S]*?direction:rtl!important/,'composition RTL : colonne latérale à droite non garantie');
-assert.match(css,/@media\\(max-width:900px\\)[\\s\\S]*?#shell #app \\[data-view="accueil"\\] \\.home-main\\{order:1\\}[\\s\\S]*?#shell #app \\[data-view="accueil"\\] \\.home-side\\{order:2\\}/,'ordre mobile du tableau de bord absent');
+assert.match(css,/#shell #app \[data-view="accueil"\] \.home-grid\{[\s\S]*?direction:rtl!important/,'composition RTL : colonne latérale à droite non garantie');
+assert.match(css,/@media\(max-width:900px\)[\s\S]*?#shell #app \[data-view="accueil"\] \.home-main\{order:1\}[\s\S]*?#shell #app \[data-view="accueil"\] \.home-side\{order:2\}/,'ordre mobile du tableau de bord absent');
 console.log('✅ Tableau de bord : colonne latérale RTL à droite et empilement mobile contrôlés');
