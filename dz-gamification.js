@@ -53,7 +53,7 @@ var host=document.getElementById('masarBody');if(!host)return;
 var old=document.getElementById(panelId);if(old)old.remove();
 var s=read(),l=level(s.xp),badges=badgeList(s),unlocked=badges.filter(b=>b[4]).length;
 var h='<section class="dz-gamification-panel" id="'+panelId+'"><div class="dz-gamification-head"><div><span class="dz-gamification-kicker">🏅 إنجازاتك الشخصية</span><h3>مستواك ومكافآتك</h3><p>تُحتسب النقاط عند إكمال الحصص والاختبارات فعلياً.</p></div><div class="dz-level-number"><small>المستوى</small><b>'+l.n+'</b></div></div>';
-h+='<div class="dz-xp-summary"><div><span>رصيد الخبرة</span><b>'+s.xp+' <small>XP</small></b></div><div><span>'+esc(l.name)+'</span><b>'+unlocked+'<small> / 20 شارة</small></b></div></div>';
+h+='<div class="dz-xp-summary"><div><span>رصيد الخبرة</span><b>'+s.xp+' <small>XP</small></b></div><div><span>الحصص المكتملة</span><b>'+s.lessons.length+'</b></div><div><span>سلسلة المواظبة</span><b>'+streak(s)+' <small>أيام</small></b></div><div><span>الشارات المفتوحة</span><b>'+unlocked+'<small> / 20</small></b></div></div>';
 h+='<div class="dz-xp-track"><div style="width:'+l.pct+'%"></div></div><div class="dz-xp-foot"><span>'+s.xp+' XP</span><span>'+(l.n>=10?'أعلى مستوى':(l.next-s.xp)+' XP للمستوى التالي')+'</span></div>';
 h+='<div class="dz-badges-title"><b>معرض الشارات</b><span>'+unlocked+' مفتوحة · '+(20-unlocked)+' مقفلة</span></div><div class="dz-badges-grid">';
 badges.forEach(function(b){h+='<article class="dz-badge-card '+(b[4]?'is-unlocked':'is-locked')+'"><span class="dz-badge-icon">'+b[1]+'</span><b>'+esc(b[2])+'</b><small>'+esc(b[3])+'</small><em>'+(b[4]?'مفتوحة':'مقفلة')+'</em></article>';});
