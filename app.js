@@ -1997,32 +1997,42 @@ function renderWelcome(){
 
 /* ══════════ TABLEAU DE BORD ÉLÈVE — raccourcis et prochaine étape réels ══════════ */
 function renderStudentFocus(){
-  const host = $('#studentFocus'); if(!host) return;
+  const host = $('#studentFocus'), main = $('#studentContinue');
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
-  if(!s){ host.hidden = true; host.innerHTML = ''; return; }
+  if(!s){
+    if(host){host.hidden=true;host.innerHTML='';}
+    if(main){main.hidden=true;main.innerHTML='';}
+    return;
+  }
   const st = loadSeances() || {};
   const done = Array.isArray(st.done) ? st.done : [];
   const next = SEANCES.find(x => done.indexOf(x.n) === -1);
   let due = 0;
   try{ due = window.MEMOIRE && typeof MEMOIRE.dues === 'function' ? MEMOIRE.dues().length : 0; }catch(e){}
-  const completed = done.length;
-  const total = SEANCES.length || 0;
+  const completed = done.length, total = SEANCES.length || 0;
+  const pct = total ? Math.round(completed / total * 100) : 0;
+  if(main){
+    let m = '<section class="sf-continue-card"><div class="sf-continue-copy"><span class="sf-continue-kicker">📖 تابع التعلم · خطوتك التالية</span>';
+    if(next){
+      m += '<h2>الحصة '+next.n+' — '+esc(next.ar)+'</h2>'
+        + (next.de ? '<p class="sf-continue-de" dir="ltr">'+esc(next.de)+'</p>' : '')
+        + '<p>استأنف التعلّم من الحصة التالية غير المكتملة في وحدتك الحالية.</p>';
+    }else{
+      m += '<h2>أكملت حصص الوحدة الحالية</h2><p>أحسنت! راجع إنجازاتك أو انتقل إلى الخطوة التالية في مسارك.</p>';
+    }
+    m += '<div class="sf-continue-progress"><div><span>إنجاز الوحدة الحالية</span><b>'+completed+' / '+total+' · '+pct+'%</b></div><i><span style="width:'+pct+'%"></span></i></div>'
+      + '<button type="button" class="sf-continue-button" data-go="'+(next?'seances':'masar')+'">'+(next?'متابعة الدرس':'عرض مساري الدراسي')+' <span aria-hidden="true">←</span></button>'
+      + '</div><div class="sf-continue-mark" aria-hidden="true">📚<span>🇩🇿</span></div></section>';
+    main.innerHTML=m;main.hidden=false;
+  }
+  if(!host)return;
   const actions = [
     ['📚','دروسي وحصصي','seances'],
     ['🎯','التدريب والاختبارات','quiz'],
     ['🤖','الأستاذ الذكي','prof'],
     ['🧭','مساري الدراسي','masar']
   ];
-  let h = '<div class="sf-card sf-next"><div class="sf-card-head"><span class="sf-kicker">▶ خطوتك التعليمية التالية</span><span class="sf-count">'+completed+' / '+total+'</span></div>';
-  if(next){
-    h += '<h3>الحصة '+next.n+' — '+esc(next.ar)+'</h3>'
-      + '<p>'+(next.de ? '<b dir="ltr">'+esc(next.de)+'</b> · ' : '')+'تابع من حيث توقفت في وحدتك الحالية.</p>'
-      + '<button type="button" class="sf-primary" data-go="seances">متابعة التعلّم <span aria-hidden="true">←</span></button>';
-  }else{
-    h += '<h3>أكملت جميع حصص الوحدة الحالية</h3><p>يمكنك مراجعة ما تعلمته أو الانتقال إلى مسارك الدراسي.</p>'
-      + '<button type="button" class="sf-primary" data-go="masar">عرض مساري الدراسي <span aria-hidden="true">←</span></button>';
-  }
-  h += '</div><div class="sf-actions-title">⚡ وصول سريع</div><div class="sf-actions">';
+  let h = '<div class="sf-actions-title">⚡ وصول سريع</div><div class="sf-actions">';
   actions.forEach(a => { h += '<button type="button" class="sf-action" data-go="'+a[2]+'"><span>'+a[0]+'</span><b>'+a[1]+'</b><i aria-hidden="true">←</i></button>'; });
   h += '</div><div class="sf-recommendation">';
   if(due){
@@ -2033,8 +2043,7 @@ function renderStudentFocus(){
     h += '<span class="sf-rec-icon">🎓</span><div><b>واصل التقدّم</b><p>استكشف المواد أو راجع نتائجك المسجلة.</p></div><button type="button" data-go="matieres">المواد</button>';
   }
   h += '</div>';
-  host.innerHTML = h;
-  host.hidden = false;
+  host.innerHTML = h;host.hidden = false;
 }
 document.addEventListener('dz:view', function(e){
   const v = e && e.detail && (e.detail.view || e.detail);
