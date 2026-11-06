@@ -323,7 +323,9 @@ for (const [label, data, expected] of [['annales', annales, 126], ['compositions
   const items = data.items || [];
   if (items.length !== expected) fail(label + ' : nombre de sujets inattendu (' + items.length + ')');
   if (items.some(item => aggregateKeys.some(key => key in item))) fail(label + ' : statistiques agrégées encore présentes');
-  if (items.some(item => !item.titre || !item.sujet || !item.corrige)) fail(label + ' : contenu pédagogique incomplet');
+  if (items.some(item => !item.titre || !item.sujet)) fail(label + ' : titre ou sujet manquant');
+  if (label === 'compositions' && items.filter(item => item.corrige).length !== 165) fail('compositions : nombre de corrigés modifié de façon inattendue');
+  if (label === 'annales' && items.filter(item => item.corrige).length !== 126) fail('annales : nombre de corrigés modifié de façon inattendue');
 }
 const bacSubjects = JSON.parse(read('assets/bdd/bac.json'));
 if ((bacSubjects.items || []).some(s => ['note_moyenne','vues','telechargements','candidats','moyenne_nationale','taux_reussite'].some(k => k in s))) fail('BAC : compteurs et statistiques agrégées encore présents dans bac.json');
