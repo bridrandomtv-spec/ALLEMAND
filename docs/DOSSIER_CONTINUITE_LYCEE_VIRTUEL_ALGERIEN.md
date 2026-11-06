@@ -1595,3 +1595,13 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Aucun test pédagogique, fichier applicatif, contenu de cours, Auth, Supabase, RLS, schéma ou paiement n'a été modifié dans ce lot. Aucun job Cloudflare n'a été ajouté ; le texte Information n'est pas une preuve de déploiement.
 - Commit de nettoyage workflow : 1e9defc4689a0b85d508f82079b5c124151af103. Le présent dossier doit être validé par une nouvelle CI.
 - PR #17 reste ouverte et non fusionnée ; aucune publication Cloudflare ni validation visuelle ordinateur/mobile n'est revendiquée.
+## Lot 126 — purge des styles orphelins de la vue nationale (6 novembre 2026)
+
+- Audit après le retrait fonctionnel du lot 119 : la navigation NAVCATS comporte cinq espaces, VIEWS/TABS n’exposent plus stats, index.html ne contient plus de section data-view=stats et le fichier stats.js n’est plus présent dans la branche.
+- Reliquat découvert : style-prototype-dz.css contenait encore les styles de #statsBody, de la carte SVG nationale, des classements .wrow, des infobulles .st-tip et plusieurs règles ciblant section[data-view=stats].
+- Nettoyage limité à ces règles CSS orphelines et à leurs commentaires. Aucun style générique .wlist/.wrow utilisé ailleurs, aucune carte de couverture de l’administration, aucune donnée géographique et aucun contenu documentaire n’ont été supprimés.
+- Préservation vérifiée dans le code : index.html conserve #statsHome, app.js conserve renderStats() pour les indicateurs personnels de l’accueil, et masar.js reste intact pour le suivi individuel.
+- Garde CI renforcée dans ci/check-public-portal.mjs : échec si des sélecteurs section[data-view=stats] ou #statsBody subsistent dans le CSS ; échec également si #statsHome ou son rendu personnel disparaît.
+- Cache du CSS incrémenté de v146 à v147 dans index.html et sw.js, avec synchronisation des attentes dans ci/check-public-portal.mjs et ci/check-masar.mjs.
+- Commit CSS principal : 00725fa52648053153bee48672eb68d1eb283a2f. Commits suivants : commentaire CSS f290f59a0c3269d30da7d0f88cce33b5a9765947, assertions CI bbc37d8aac939cb80569a8f0264f679c84843574, cache HTML/SW/tests jusqu’au HEAD 9a9305f83a74d56fb1f6cbcef47a3876905ad16a.
+- CI de ce HEAD à attendre. PR #17 reste ouverte et non fusionnée ; aucune modification directe de main, aucun déploiement Cloudflare ni validation visuelle du site public ne sont revendiqués.
