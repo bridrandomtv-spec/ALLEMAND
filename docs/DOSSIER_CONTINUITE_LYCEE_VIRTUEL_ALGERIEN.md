@@ -1577,3 +1577,12 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Aucun job Cloudflare/Wrangler n'a été ajouté : aucun mécanisme de déploiement autorisé/configuré n'a été établi par les éléments consultés. Le message informatif du workflow sur OAuth Cloudflare ne constitue pas une preuve de publication.
 - Cette correction ne modifie ni `main`, ni Auth/Supabase/RLS, ni les données pédagogiques. PR #17 reste ouverte et non fusionnée.
 - CI du commit de correction : à vérifier après déclenchement. Aucune validation visuelle du portail public n'est revendiquée.
+
+
+## Lot 123 — correction de syntaxe du test T1 (6 novembre 2026)
+- La CI #2208 (run 42141852023, HEAD précédent 57a85047) a échoué à l'étape « Rejouer la suite de build T1-T6 du professeur ».
+- Le journal montre une erreur Python de syntaxe : la chaîne regex T1 était coupée après `r'^jobs:\\s*`, avec une nouvelle ligne littérale insérée dans la chaîne. Ce n'était pas un échec fonctionnel des contrôles pédagogiques T2-T6 : le script s'est arrêté avant leur affichage.
+- Correction sur la branche de la PR uniquement : T1 utilise désormais `splitlines()` et vérifie les lignes exactes `jobs:` et `  validate:`, les actions checkout@v5 et setup-python@v6, ainsi que l'absence d'un job `  deploy:`.
+- Aucun job de déploiement Cloudflare n'a été ajouté ni revendiqué. Aucun changement sur `main`, Auth, Supabase, RLS, schéma ou paiements.
+- Commit correctif workflow : 68af3bc7cd2be73c33969c6b1f74209d4f38c853. Nouvelle exécution CI à attendre avant de conclure.
+- La PR #17 reste ouverte et non fusionnée. Aucune validation visuelle réelle ordinateur/mobile ni publication Cloudflare n'est revendiquée.
