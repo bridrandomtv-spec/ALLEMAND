@@ -1,4 +1,4 @@
-name: CI + Deploy — ALLEMAND
+name: CI — ALLEMAND
 
 on:
   push:
@@ -9,8 +9,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: "pages"
@@ -948,12 +946,17 @@ jobs:
           # ── T1 : vérifier la CI réelle sans prétendre tester un déploiement ──
           dy = open('.github/workflows/deploy.yml', encoding='utf-8').read()
           workflow_lines = dy.splitlines()
-          t1 = ('jobs:' in workflow_lines
+          t1 = (workflow_lines[0] == 'name: CI — ALLEMAND'
+                and 'jobs:' in workflow_lines
                 and '  validate:' in workflow_lines
                 and 'actions/checkout@v5' in dy
                 and 'actions/setup-python@v6' in dy
+                and 'permissions:' in workflow_lines
+                and '  contents: read' in workflow_lines
+                and '  pages: write' not in workflow_lines
+                and '  id-token: write' not in workflow_lines
                 and '  deploy:' not in workflow_lines)
-          res.append(('T1 Workflow : job validate contrôlé ; aucun job deploy annoncé', t1))
+          res.append(('T1 Workflow : CI seulement, permissions minimales, aucun job deploy', t1))
           # ── T2 : corrigés conformes au fichier du prof ──
           co = json.load(open('assets/corriges.json', encoding='utf-8'))
           t2 = (co.get('II.1_conjugaison') == ['bin', 'hast', 'sind', 'hat']
