@@ -484,7 +484,6 @@ const NAVCATS = [
   ['assessment', '📝', 'التدريب والاختبارات', ['revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen']],
   ['classroom', '💬', 'القسم والتواصل', ['classe', 'live', 'rag']],
   ['support', '🤝', 'فضاءات التأطير', ['prof', 'profboard', 'parents']],
-  ['learning', '🎓', 'التعلّم', ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud', 'projet']],
   ['services', '⚙️', 'الخدمات والحساب', ['reservation', 'abonne', 'compte', 'legal', 'admin']]
 ];
 const NAVSOLO_TOP = ['accueil', 'masar'];
