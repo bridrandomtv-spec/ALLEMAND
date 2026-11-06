@@ -1431,3 +1431,15 @@ Refonte CSS ciblée de la page de parcours : en-tête éditorial, hero vert avec
 Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 233) : le contrôle vérifiait encore `dz-de-v3.169.0.0.55`, alors que `sw.js` est passé à `dz-de-v3.170.0.0.55` avec le Lot 111. Les références CSS v143 et app.js v3532 étaient déjà cohérentes. Le contrôle CI a été aligné sur la version réelle du Service Worker ; aucune logique applicative supplémentaire n'a été modifiée dans ce correctif. Le workflow suivant doit confirmer le résultat. PR #17 reste ouverte/non fusionnée ; `main` et la production restent hors périmètre.
 
 **Résultat du workflow 42133392051 :** terminé avec succès. Les étapes `Vérifier le portail public`, `Contrôler le tableau de bord مسارك`, `Garde d'accès + TEST DE FUITE`, `Matrice des parcours`, `Test de régression 3 niveaux` et `Contrôle pédagogique restructuré` sont toutes en succès. La correction de version du Service Worker a donc levé l'échec du workflow précédent. Cela valide les contrôles automatisés, pas encore l'affichage visuel réel dans le navigateur ni la disponibilité d'un nouveau déploiement Cloudflare.
+
+
+## Lot 113 — correction de superposition des sous-menus desktop (6 novembre 2026)
+
+- Retour utilisateur : les sous-rubriques du menu hiérarchique apparaissaient derrière l’ancienne zone latérale et restaient donc illisibles.
+- Cause identifiée dans la cascade CSS : une règle tardive V8.5 ramenait `#shell .topbar` à `z-index:100` avec `isolation:isolate`. Le tiroir latéral historique conservait `z-index:700`. Le `z-index:500` du sous-menu, même augmenté à l’intérieur de `#tabs`, ne pouvait pas dépasser le contexte d’empilement parent du header.
+- Correction desktop ciblée (≥901 px) : le header repasse à `z-index:1800`, la navigation à 1801, son conteneur à 1802, la catégorie ouverte à 1803 et le panneau déroulant à 1804. Le header garde `overflow:visible`. Le menu mobile et le tiroir mobile ne sont pas modifiés.
+- Cache : CSS v144 ; Service Worker `dz-de-v3.171.0.0.55`, précache actualisé. Le JavaScript et les routes `data-go` restent inchangés.
+- CI : assertions du portail public renforcées pour contrôler le marqueur Lot 113 et les niveaux d’empilement ; contrôle de cache de مسارك synchronisé.
+- Fichiers modifiés : `style-prototype-dz.css`, `index.html`, `sw.js`, `ci/check-public-portal.mjs`, `ci/check-masar.mjs`, présent dossier.
+- Périmètre : branche `design/prototypes-67-74-alignment` / PR #17 uniquement. Aucun changement sur `main`, aux routes, à l’authentification, à Supabase, RLS, schéma, paiements ou données.
+- Limite de validation : le correctif CSS et les garde-fous CI sont committés ; attendre le workflow GitHub et le build Cloudflare correspondant. Le rendu visuel réel desktop/mobile n’est pas encore revendiqué.
