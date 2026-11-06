@@ -1605,3 +1605,11 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Cache du CSS incrémenté de v146 à v147 dans index.html et sw.js, avec synchronisation des attentes dans ci/check-public-portal.mjs et ci/check-masar.mjs. Le contrôle de géographie dans le workflow vérifie les données de référence, sans annoncer une carte nationale ni ses onglets/heatmap.
 - Commit CSS principal : 00725fa52648053153bee48672eb68d1eb283a2f. Commits suivants : commentaire CSS f290f59a0c3269d30da7d0f88cce33b5a9765947, assertions CI bbc37d8aac939cb80569a8f0264f679c84843574, cache HTML/SW/tests jusqu’au HEAD 9a9305f83a74d56fb1f6cbcef47a3876905ad16a.
 - CI de ce HEAD à attendre. PR #17 reste ouverte et non fusionnée ; aucune modification directe de main, aucun déploiement Cloudflare ni validation visuelle du site public ne sont revendiqués.
+
+
+## Lot 128 — CI #2220 et clarification du contrôle géographique (6 novembre 2026)
+- CI #2220 (run 42188766246) réussie sur le commit `1e46241b77037eaa6cd07d40df8b5d82fa2159c5` : job de validation terminé sans échec.
+- Contrôle du code : la navigation ne contient plus `التقدم الدراسي`; `index.html` ne contient plus la vue nationale; le code applicatif ne référence plus la route `'stats'`; `statsHome` et `renderStats()` restent présents pour les indicateurs personnels; `masar.js` reste précaché.
+- `ci/check-public-portal.mjs` conserve des chaînes relatives à l'ancienne rubrique uniquement pour détecter une régression; ce ne sont pas des liens de navigation ni des fonctionnalités exposées.
+- Le référentiel `wilayas_geo.json` reste utilisé et vérifié comme donnée géographique. Renommage de l'étape CI pour ne plus la présenter comme une validation de statistiques nationales.
+- Aucun changement de `main`, aucune fusion, aucun déploiement Cloudflare ni contrôle visuel public revendiqué.
