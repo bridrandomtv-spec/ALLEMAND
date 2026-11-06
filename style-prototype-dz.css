@@ -15307,20 +15307,24 @@ html[data-theme="dark"] #shell #app [data-view="accueil"] .home-main .welcome-me
   grid-column:2!important;
   grid-row:1!important;
 }
+/* Ordre unique du tableau de bord étudiant — identique au DOM et au lot 160. */
 #shell #app [data-view="accueil"] .home-main>.welcome{
   order:0!important;
 }
-#shell #app [data-view="accueil"] .home-main>#subjHome{
+#shell #app [data-view="accueil"] .home-main>#statsHome{
   order:1!important;
 }
-#shell #app [data-view="accueil"] .home-main>#statsHome{
+#shell #app [data-view="accueil"] .home-main>#homeGamification{
   order:2!important;
 }
-#shell #app [data-view="accueil"] .home-main>#todayBody{
+#shell #app [data-view="accueil"] .home-main>#subjHome{
   order:3!important;
 }
-#shell #app [data-view="accueil"] .home-main>#apercuBody{
+#shell #app [data-view="accueil"] .home-main>#todayBody{
   order:4!important;
+}
+#shell #app [data-view="accueil"] .home-main>#apercuBody{
+  order:5!important;
 }
 #shell #app [data-view="accueil"] .home-main>.welcome-art{
   display:none!important;
