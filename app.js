@@ -1083,6 +1083,7 @@ function markSeanceDone(){
   var wasTrial = window.ACCESS ? ACCESS.trialFinished() : false;
   if(st.done.indexOf(n) === -1){
     st.done.push(n); saveSeances(st);
+    document.dispatchEvent(new CustomEvent('dz:lesson-complete',{detail:{unit:currentUnite,session:n,unitComplete:st.done.length >= (SEANCES.length||8),at:Date.now()}}));
     toast('🎉 أحسنت! تم إنهاء الحصة ' + n + '/' + (SEANCES.length||8), 'ok');
   }
   var nowTrial = window.ACCESS ? ACCESS.trialFinished() : false;
