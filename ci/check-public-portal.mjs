@@ -275,9 +275,10 @@ for (const label of ['التعلّم', 'التدريب والاختبارات', 
 }
 for (const route of ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud',
   'revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen', 'classe', 'live', 'rag',
-  'prof', 'profboard', 'parents', 'stats', 'projet', 'reservation', 'abonne', 'sponsor', 'compte', 'legal', 'admin']) {
+  'prof', 'profboard', 'parents', 'stats', 'projet', 'reservation', 'abonne', 'compte', 'legal', 'admin']) {
   if (!navCatsBlock.includes("'" + route + "'")) fail('destination non classée dans la navigation : ' + route);
 }
+if (!app.includes("t[0] !== 'sponsor'")) fail('le raccourci sponsor doit rester hors du menu général');
 for (const marker of ['const NAVCATS = [','nav-group-trigger','nav-submenu','nav-subitem','<details class="nav-group']) {
   if (!app.includes(marker)) fail('menu hiérarchique desktop incomplet : ' + marker);
 }
