@@ -39,3 +39,17 @@ assert.ok(css.includes('@keyframes dzAiWave'), 'animation des ondes vocales abse
 
 assert.match(css,/@media\(max-width:600px\).*dz-interaction-layer/s,'adaptation mobile du panneau absente');
 console.log('✅ Recherche globale, notifications par compte, catégories, actions et responsive contrôlés');
+
+
+// Compte étudiant : composition prototype 2, données réelles et actions conservées.
+assert.match(app,/dz-account-hero/,'bandeau de profil du compte absent');
+assert.match(app,/dz-account-metrics/,'indicateurs personnels du compte absents');
+assert.match(app,/dz-account-profile/,'fiche des informations personnelles absente');
+assert.match(app,/dz-account-privacy/,'bloc de confidentialité du compte absent');
+assert.match(app,/id="btnSound2"/,'commande de prononciation du compte absente');
+assert.match(app,/id="btnLogout"/,'commande de déconnexion du compte absente');
+assert.match(css,/\\.dz-account-hero/,'styles du bandeau de compte absents');
+assert.match(css,/\\.dz-account-metrics/,'styles des indicateurs du compte absents');
+assert.match(css,/html\\[data-theme="dark"\\] section\\[data-view="compte"\\] \\.dz-account-card/,'variante sombre du compte absente');
+assert.match(css,/section\\[data-view="compte"\\].*@media/s,'adaptation responsive du compte absente');
+console.log('✅ Compte étudiant : identité, indicateurs réels, confidentialité, commandes et responsive contrôlés');
