@@ -302,8 +302,9 @@ if (!app.includes("s.role === 'admin'") || !app.includes("(t[0] !== 'admin' || i
 /* Les protections doivent aussi tenir lors d'un accès direct à la vue, sans passer par le menu. */
 if (!prof.includes('if(!accesAutorise())') ||
     !prof.includes("return !!(s && s.role === 'prof')") ||
-    !prof.includes("e.detail === 'profboard'")) {
-  fail('sécurité vue professeur : contrôle de session/rôle absent au rendu direct');
+    !prof.includes('window.renderProfBoard = boot;') ||
+    !prof.includes('window.DZ_PROF = { boot:boot')) {
+  fail('sécurité vue professeur : garde de rôle ou fonction de rendu central absente');
 }
 if (!admin.includes('const u = await window.SB.me();') ||
     !admin.includes("p.role !== 'admin'")) {
