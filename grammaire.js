@@ -38,6 +38,8 @@
     render();
   }
 
+  window.DZ_GRAMMAR_SEARCH = function(value){ q = String(value || ''); chap = 'tous'; niveau = 'tous'; cefr = 'tous'; boot(); };
+
   function render(){
     const box = $('#gramBody'); if(!box) return;
     const items = filtrer();
