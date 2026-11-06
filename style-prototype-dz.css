@@ -16750,7 +16750,7 @@ html[data-theme="dark"] #shell #app .view .page-head p{color:#b5c8ba!important}
 .dz-gamification-head p{margin:0;color:var(--m,#5e7164);font-size:11px;line-height:1.7}
 .dz-level-number{width:62px;height:62px;flex:0 0 62px;display:grid;align-content:center;justify-items:center;border-radius:18px;background:linear-gradient(145deg,#006233,#00843d);color:white;box-shadow:0 8px 18px rgba(0,98,51,.2)}
 .dz-level-number small{font-size:9px;font-weight:800;opacity:.85}.dz-level-number b{font-size:25px;line-height:1.15}
-.dz-xp-summary{display:flex;justify-content:space-between;gap:14px;margin-top:19px}
+.dz-xp-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:19px}
 .dz-xp-summary>div{display:grid;gap:4px}.dz-xp-summary span{color:var(--m,#5e7164);font-size:10px;font-weight:800}.dz-xp-summary b{color:var(--t,#17251c);font-size:19px;font-weight:950}.dz-xp-summary b small{font-size:10px;color:var(--a2,#006233)}
 .dz-xp-track{height:10px;margin-top:13px;overflow:hidden;border-radius:99px;background:rgba(100,130,110,.16)}
 .dz-xp-track>div{height:100%;border-radius:inherit;background:linear-gradient(90deg,#006233,#48b878);transition:width .35s ease}
@@ -16778,4 +16778,4 @@ html[data-theme="dark"] .dz-badges-title{border-color:#344a3b}
 .dz-confetti:nth-of-type(3n){--confetti:#00843d}.dz-confetti:nth-of-type(3n + 1){--confetti:#d21034}.dz-confetti:nth-of-type(3n + 2){--confetti:#e6b94a}
 @keyframes dz-confetti-fall{0%{transform:translateY(-15px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(430px) rotate(540deg);opacity:0}}
 @media(max-width:900px){#shell #app section[data-view="masar"] #masarBody{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"hero" "gamify" "next" "chart" "progress" "units"!important}.dz-badges-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media(max-width:600px){.dz-gamification-panel{padding:15px;border-radius:17px}.dz-gamification-head h3{font-size:17px}.dz-level-number{width:54px;height:54px;flex-basis:54px}.dz-badges-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dz-badge-card{min-height:115px}.dz-xp-summary b{font-size:17px}.dz-celebrate-card{padding:30px 18px 22px}}
+@media(max-width:600px){.dz-gamification-panel{padding:15px;border-radius:17px}.dz-gamification-head h3{font-size:17px}.dz-level-number{width:54px;height:54px;flex-basis:54px}.dz-badges-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dz-badge-card{min-height:115px}.dz-xp-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.dz-xp-summary b{font-size:17px}.dz-celebrate-card{padding:30px 18px 22px}}
