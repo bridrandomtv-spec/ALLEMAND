@@ -5,7 +5,7 @@
 (function(){
 'use strict';
 var KEY='dz_de_gamification_v1',panelId='dzGamificationPanel',celebrateLayer=null;
-var thresholds=[0,100,250,450,700,1000,1400,1900,2500,3200,4000];
+var thresholds=[0,100,250,450,700,1000,1400,1900,2500,3200];
 var levelNames=['مبتدئ','متعلّم','مجتهد','مثابر','متفوّق','متميّز','خبير','متألّق','قائد التعلّم','بطل المعرفة'];
 function account(){try{var s=window.AUTH&&AUTH.session?AUTH.session():null;return s&&s.user?'local:'+String(s.user).toLowerCase():null;}catch(e){return null;}}
 function key(){var a=account();return a?KEY+':'+a:null;}
@@ -43,7 +43,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&am
 function toast(m){if(window.toast)window.toast(m,'ok');else if(window.DZ_INTERACTIONS)DZ_INTERACTIONS.recordToast(m,'ok');}
 function showCelebration(title,sub,icon){
 if(celebrateLayer)celebrateLayer.remove();celebrateLayer=document.createElement('div');celebrateLayer.className='dz-celebrate-layer';
-var particles='';for(var i=0;i<28;i++)particles+='<i class="dz-confetti" style="--i:'+i+'"></i>';
+var particles='';for(var i=0;i<28;i++)particles+='<i class="dz-confetti" style="left:'+(4+i*3.3)+'%;animation-delay:'+(i*.025)+'s"></i>';
 celebrateLayer.innerHTML='<div class="dz-celebrate-backdrop"></div><section class="dz-celebrate-card" role="dialog" aria-modal="true"><button class="dz-celebrate-close" aria-label="إغلاق">×</button><div class="dz-celebrate-icon">'+icon+'</div><p class="dz-celebrate-kicker">إنجاز جديد</p><h2>'+esc(title)+'</h2><p>'+esc(sub)+'</p><button class="dz-celebrate-ok">مواصلة التعلّم</button>'+particles+'</section>';
 document.body.appendChild(celebrateLayer);function done(){if(celebrateLayer){celebrateLayer.remove();celebrateLayer=null;}}
 celebrateLayer.addEventListener('click',function(e){if(e.target.closest('.dz-celebrate-close,.dz-celebrate-ok,.dz-celebrate-backdrop'))done();});
@@ -65,10 +65,14 @@ var s=read();if(s.events.indexOf(id)>=0)return;
 var before=level(s.xp).n;s.events.push(id);s.events=s.events.slice(-500);s.xp+=xp;activity(s,detail.at);
 if(kind==='lesson'){var lid=String(detail.unit)+':'+String(detail.session);if(s.lessons.indexOf(lid)<0)s.lessons.push(lid);if(detail.unitComplete&&s.units.indexOf(String(detail.unit))<0)s.units.push(String(detail.unit));}
 if(kind==='quiz'){s.quizzes++;var pct=detail.total?detail.score/detail.total:0;if(pct>=.6)s.score60=true;if(pct>=.8)s.score80=true;if(pct>=1)s.perfect++;}
+var after=level(s.xp).n,badges=badgeList(s),newBadges=badges.filter(function(b){return b[4]&&s.events.indexOf('badge:'+b[0])<0;});
+newBadges.forEach(function(b){s.events.push('badge:'+b[0]);});
 save(s);renderPanel();
-var after=level(s.xp).n;if(after>before){showCelebration('وصلت إلى المستوى '+after+'!','رصيدك الآن '+s.xp+' نقطة خبرة. واصل التعلّم لتحقق إنجازات جديدة.','🎉');toast('🎉 ارتقيت إلى المستوى '+after);}
-var badges=badgeList(s),newBadges=badges.filter(function(b){return b[4]&&s.events.indexOf('badge:'+b[0])<0;});
-if(newBadges.length){var b=newBadges[0];s.events.push('badge:'+b[0]);save(s);showCelebration('فتحت شارة '+b[2],b[3],b[1]);toast('🏅 شارة جديدة: '+b[2]);}
+if(after>before)toast('🎉 ارتقيت إلى المستوى '+after);
+newBadges.forEach(function(b){toast('🏅 شارة جديدة: '+b[2]);});
+if(after>before&&newBadges.length)showCelebration('المستوى '+after+' · شارة جديدة '+newBadges[0][2],'وصلت إلى '+s.xp+' نقطة خبرة وفتحت '+newBadges.length+' شارة جديدة.','🎉');
+else if(after>before)showCelebration('وصلت إلى المستوى '+after+'!','رصيدك الآن '+s.xp+' نقطة خبرة. واصل التعلّم لتحقق إنجازات جديدة.','🎉');
+else if(newBadges.length)showCelebration('فتحت شارة '+newBadges[0][2],newBadges.length>1?'فتحت '+newBadges.length+' شارات جديدة. '+newBadges[0][3]:newBadges[0][3],newBadges[0][1]);
 }
 document.addEventListener('dz:lesson-complete',function(e){var d=e.detail||{};if(!account()||!d.unit||!d.session)return;award('lesson:'+d.unit+':'+d.session,10,'lesson',d);});
 document.addEventListener('dz:quiz-complete',function(e){var d=e.detail||{};if(!account()||!d.attemptId)return;award('quiz:'+d.attemptId,Number(d.score)||0,'quiz',d);});
