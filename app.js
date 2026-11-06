@@ -1992,6 +1992,49 @@ function renderWelcome(){
       '<span class="sec-pill rg">🎓 ' + esc(s.niveau || '—') + '</span>' +
       (s.prof ? '<span class="sec-live">👨‍🏫 ' + esc(s.prof) + '</span>' : '') +
     '</div>';
+  renderStudentFocus();
+}
+
+/* ══════════ TABLEAU DE BORD ÉLÈVE — raccourcis et prochaine étape réels ══════════ */
+function renderStudentFocus(){
+  const host = $('#studentFocus'); if(!host) return;
+  const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+  if(!s){ host.hidden = true; host.innerHTML = ''; return; }
+  const st = loadSeances() || {};
+  const done = Array.isArray(st.done) ? st.done : [];
+  const next = SEANCES.find(x => done.indexOf(x.n) === -1);
+  let due = 0;
+  try{ due = window.MEMOIRE && typeof MEMOIRE.dues === 'function' ? MEMOIRE.dues().length : 0; }catch(e){}
+  const completed = done.length;
+  const total = SEANCES.length || 0;
+  const actions = [
+    ['📚','دروسي وحصصي','seances'],
+    ['🎯','التدريب والاختبارات','quiz'],
+    ['🤖','الأستاذ الذكي','prof'],
+    ['🧭','مساري الدراسي','masar']
+  ];
+  let h = '<div class="sf-card sf-next"><div class="sf-card-head"><span class="sf-kicker">▶ خطوتك التعليمية التالية</span><span class="sf-count">'+completed+' / '+total+'</span></div>';
+  if(next){
+    h += '<h3>الحصة '+next.n+' — '+esc(next.ar)+'</h3>'
+      + '<p>'+(next.de ? '<b dir="ltr">'+esc(next.de)+'</b> · ' : '')+'تابع من حيث توقفت في وحدتك الحالية.</p>'
+      + '<button type="button" class="sf-primary" data-go="seances">متابعة التعلّم <span aria-hidden="true">←</span></button>';
+  }else{
+    h += '<h3>أكملت جميع حصص الوحدة الحالية</h3><p>يمكنك مراجعة ما تعلمته أو الانتقال إلى مسارك الدراسي.</p>'
+      + '<button type="button" class="sf-primary" data-go="masar">عرض مساري الدراسي <span aria-hidden="true">←</span></button>';
+  }
+  h += '</div><div class="sf-actions-title">⚡ وصول سريع</div><div class="sf-actions">';
+  actions.forEach(a => { h += '<button type="button" class="sf-action" data-go="'+a[2]+'"><span>'+a[0]+'</span><b>'+a[1]+'</b><i aria-hidden="true">←</i></button>'; });
+  h += '</div><div class="sf-recommendation">';
+  if(due){
+    h += '<span class="sf-rec-icon">🧠</span><div><b>مراجعة موصى بها</b><p>لديك '+due+' بطاقة ذاكرة مستحقة للمراجعة.</p></div><button type="button" data-go="revision">راجع الآن</button>';
+  }else if(next){
+    h += '<span class="sf-rec-icon">✨</span><div><b>اقتراحك التالي</b><p>أكمل الحصة التالية لتحديث تقدمك وشاراتك الفعلية.</p></div><button type="button" data-go="seances">ابدأ</button>';
+  }else{
+    h += '<span class="sf-rec-icon">🎓</span><div><b>واصل التقدّم</b><p>استكشف المواد أو راجع نتائجك المسجلة.</p></div><button type="button" data-go="matieres">المواد</button>';
+  }
+  h += '</div>';
+  host.innerHTML = h;
+  host.hidden = false;
 }
 
 /* ══════════ BARRE DE SECTION ══════════ */
