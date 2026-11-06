@@ -340,7 +340,8 @@ console.log('✅ Lot 129 : statistiques nationales supprimées des archives ; r�
 
 // LOT 134 — retirer le tableau public d'indicateurs agrégés, sans supprimer les preuves pédagogiques.
 if (html.includes('public-quality-dashboard') || html.includes('public-quality-metric') ||
-    html.includes('معدل النجاح') || html.includes('لوحة مؤشرات التعلّم')) {
+    html.includes('معدل النجاح') || html.includes('لوحة مؤشرات التعلّم') ||
+    html.includes('الجودة التعليمية والمتابعة') || html.includes('تعلّم، تدرّب، وتابع تقدّمك بثقة')) {
   fail('portail public : tableau d’indicateurs agrégés encore présent');
 }
 for (const marker of ['public-quality-proof', '<strong>234</strong>', '<strong>55</strong>', '<strong>19</strong>']) {
