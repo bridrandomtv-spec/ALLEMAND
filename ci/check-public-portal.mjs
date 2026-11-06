@@ -315,6 +315,10 @@ if (parents.includes("if(e.detail === 'parents') boot()") ||
     !app.includes("if(view === 'parents')    renderParents();")) {
   fail('initialisation de l’espace parents doublée ou déclencheur central absent');
 }
+if (!parents.includes('بيانات تجريبية توضيحية — لا تمثل نتائج تلميذ حقيقي') ||
+    parents.includes('Données 100% locales — aucune transmission serveur')) {
+  fail('espace parents : données de démonstration non signalées ou commentaire de confidentialité trompeur');
+}
 if (admin.slice(0, admin.indexOf('/* ── phase 5')).includes("addEventListener('dz:view'") ||
     prof.includes("addEventListener('dz:view'") ||
     !app.includes("if(view === 'admin' && window.renderAdmin) window.renderAdmin();") ||
