@@ -2981,7 +2981,7 @@ html:not([data-theme="light"]) #tabs .tab.on{
    ═══════════════════════════════════════════════════════════════ */
 
 /* Journée et espace de suivi : planning lisible, sans colonnes écrasées. */
-#todayBody,#cvBody,#statsBody,#banqueBody,#ragBody,#corpusBody,#guideBody,#buchBody{min-width:0}
+#todayBody,#cvBody,#banqueBody,#ragBody,#corpusBody,#guideBody,#buchBody{min-width:0}
 #todayBody .jd-hero,#cvBody .cv-card{min-width:0;overflow-wrap:anywhere}
 #todayBody .jd-h,#todayBody .jd-d{min-width:0;line-height:1.8}
 #todayBody .jd-list{display:grid;gap:10px}
@@ -2991,16 +2991,6 @@ html:not([data-theme="light"]) #tabs .tab.on{
 #cvBody .cv-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
 #cvBody .cv-id,#cvBody .cv-de,#cvBody .cv-quote{min-width:0;overflow-wrap:anywhere}
 #cvBody .cv-blocs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px}
-
-/* Statistiques : graphiques et tableaux gardent leur largeur utile. */
-#statsBody .st-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,135px),1fr));gap:9px}
-#statsBody .stk,#statsBody .st-map-wrap,#statsBody .st-map{min-width:0;max-width:100%}
-#statsBody .st-map-wrap{overflow-x:auto;overscroll-behavior-inline:contain}
-#statsBody .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
-#statsBody .wlist{display:grid;gap:9px}
-#statsBody .wrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(70px,1.2fr) auto;align-items:center;gap:9px}
-#statsBody .wn,#statsBody .wv{min-width:0;overflow-wrap:anywhere}
-#statsBody .tble{display:table;width:100%;min-width:520px;max-width:none;overscroll-behavior-inline:contain}
 
 /* Banque de questions : cartes et réponses faciles à parcourir au tactile. */
 #banqueBody .bq-hero{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
@@ -3049,16 +3039,12 @@ html:not([data-theme="light"]) #tabs .tab.on{
 #buchBody .dn-res{min-width:0;overflow-wrap:anywhere}
 
 @media(max-width:760px){
-  #statsBody .grid2{grid-template-columns:1fr}
-  #statsBody .st-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
   #todayBody .jd-quick{grid-template-columns:repeat(2,minmax(0,1fr))}
   #banqueBody .bq-opts,#ragBody .rq-opts{grid-template-columns:1fr}
   #corpusBody .cp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:420px){
-  #statsBody .st-kpis,#todayBody .jd-quick,#corpusBody .cp-grid{grid-template-columns:1fr}
-  #statsBody .wrow{grid-template-columns:minmax(0,1fr) auto}
-  #statsBody .wbar{grid-column:1/-1;grid-row:2}
+  #todayBody .jd-quick,#corpusBody .cp-grid{grid-template-columns:1fr}
   #todayBody .jd-c{grid-template-columns:1fr}
   #guideBody .onb-steps,#guideBody .onb-steps2,#guideBody .gd-roles{grid-template-columns:1fr}
   #buchBody .dn-tabs{display:grid;grid-template-columns:1fr 1fr}
@@ -11939,7 +11925,7 @@ html[data-theme="dark"] section[data-view="guide"] .gd-pas .onb-steps{color:#b7c
 
 
 
-/* 27. Salle de classe, salle live et statistiques nationales — composition DZ */
+/* 27. Salle de classe et salle live — composition DZ */
 /* Classe virtuelle : vraie vue #classeBody */
 section[data-view="classe"] .page-head,
 section[data-view="classe"] .classe-hero{
@@ -12149,106 +12135,13 @@ html[data-theme="dark"] section[data-view="live"] .live-side .onglets{background
 html[data-theme="dark"] section[data-view="live"] .live-side .ong{color:#d7ebdc}
 html[data-theme="dark"] section[data-view="live"] .live-side .ong.on{color:#fff;background:#006233}
 
-/* Statistiques nationales : hero, KPI, cartographie et classements */
-html[data-theme="light"] section[data-view="stats"] .page-head{
-  padding:20px 24px;color:#fff;background:linear-gradient(118deg,#003f22,#006233 60%,#00843d);
-  border:0;border-radius:18px;box-shadow:0 12px 28px rgba(0,75,37,.16)
-}
-html[data-theme="light"] section[data-view="stats"] .page-head h1,
-html[data-theme="light"] section[data-view="stats"] .page-head p{color:#fff}
-html[data-theme="light"] section[data-view="stats"] .st-hero{
-  position:relative;overflow:hidden;padding:22px;color:#fff;
-  background:linear-gradient(122deg,#003f22,#006233 62%,#00843d);border:0;border-radius:19px;
-  box-shadow:0 13px 30px rgba(0,75,37,.17)
-}
-html[data-theme="light"] section[data-view="stats"] .st-hero::after{
-  content:"🇩🇿";position:absolute;inset-inline-end:20px;top:-22px;font-size:76px;opacity:.11;pointer-events:none
-}
-html[data-theme="light"] section[data-view="stats"] .st-hero h2,
-html[data-theme="light"] section[data-view="stats"] .st-hero .ch-sub{position:relative;color:#fff}
-html[data-theme="light"] section[data-view="stats"] .st-hero .ch-sub{opacity:.82}
-html[data-theme="light"] section[data-view="stats"] .st-hero .ch-badge{
-  color:#fff;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 12px
-}
-html[data-theme="light"] section[data-view="stats"] .st-kpis{
-  grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:17px
-}
-html[data-theme="light"] section[data-view="stats"] .stk{
-  position:relative;min-height:86px;padding:12px;background:rgba(0,35,18,.32);
-  border:1px solid rgba(255,255,255,.2);border-radius:14px
-}
-html[data-theme="light"] section[data-view="stats"] .stk-n{color:#fff;font-size:22px;font-weight:900}
-html[data-theme="light"] section[data-view="stats"] .stk-l{color:rgba(255,255,255,.84)}
-html[data-theme="light"] section[data-view="stats"] .stk-i{opacity:.9}
-html[data-theme="light"] section[data-view="stats"] .onglets{
-  padding:7px;background:#edf4ef;border:1px solid #dce8df;border-radius:15px
-}
-html[data-theme="light"] section[data-view="stats"] .onglets .ong{
-  color:#315a40;background:transparent;border:1px solid transparent;border-radius:11px
-}
-html[data-theme="light"] section[data-view="stats"] .onglets .ong.on{
-  color:#fff;background:linear-gradient(135deg,#006233,#00843d);border-color:#006233
-}
-html[data-theme="light"] section[data-view="stats"] #stContenu>.card,
-html[data-theme="light"] section[data-view="stats"] #stContenu .grid2>.card{
-  padding:18px;background:#fff;border:1px solid #dce8df;border-radius:17px;
-  box-shadow:0 6px 20px rgba(0,55,28,.045)
-}
-html[data-theme="light"] section[data-view="stats"] #stContenu .card h2{
-  color:#004d28;font-size:17px;font-weight:850;padding-bottom:10px;border-bottom:1px solid #e5eee7
-}
-html[data-theme="light"] section[data-view="stats"] .st-map-wrap{
-  padding:13px;background:linear-gradient(145deg,#062b1a,#04180e);
-  border:1px solid #31543e;border-radius:18px;box-shadow:0 10px 26px rgba(0,40,20,.14)
-}
-html[data-theme="light"] section[data-view="stats"] .st-legend{
-  padding:13px;background:rgba(255,255,255,.96);border:1px solid #dce8df;border-radius:14px
-}
-html[data-theme="light"] section[data-view="stats"] .st-legend .lg-t,
-html[data-theme="light"] section[data-view="stats"] .st-legend .lg-r,
-html[data-theme="light"] section[data-view="stats"] .st-legend .lg-n{color:#244a32}
-html[data-theme="light"] section[data-view="stats"] .wrow{
-  padding:10px 9px;border-bottom:1px solid #e3ece5;border-radius:9px
-}
-html[data-theme="light"] section[data-view="stats"] .wbar{
-  overflow:hidden;height:8px;background:#e8f0ea;border-radius:99px
-}
-html[data-theme="light"] section[data-view="stats"] .wbar i{
-  display:block;height:100%;background:linear-gradient(90deg,#006233,#d21034);border-radius:99px
-}
-html[data-theme="light"] section[data-view="stats"] .wv{color:#006233;font-weight:850}
-html[data-theme="dark"] section[data-view="stats"] .page-head{
-  color:#fff;background:linear-gradient(118deg,#092c1b,#064a2a 62%,#08663a);border-color:#276747
-}
-html[data-theme="dark"] section[data-view="stats"] .page-head h1,
-html[data-theme="dark"] section[data-view="stats"] .page-head p{color:#fff}
-html[data-theme="dark"] section[data-view="stats"] .st-hero{
-  color:#f4fff7;background:linear-gradient(122deg,#092c1b,#064a2a 62%,#08663a);border-color:#276747
-}
-html[data-theme="dark"] section[data-view="stats"] .st-hero h2,
-html[data-theme="dark"] section[data-view="stats"] .st-hero .ch-sub{color:#f4fff7}
-html[data-theme="dark"] section[data-view="stats"] .stk{background:rgba(0,0,0,.22);border-color:#31543e}
-html[data-theme="dark"] section[data-view="stats"] .stk-n,
-html[data-theme="dark"] section[data-view="stats"] .stk-l{color:#e7f5eb}
-html[data-theme="dark"] section[data-view="stats"] #stContenu>.card,
-html[data-theme="dark"] section[data-view="stats"] #stContenu .grid2>.card{
-  color:#e8f5eb;background:#142c1e;border-color:#31543e
-}
-html[data-theme="dark"] section[data-view="stats"] #stContenu .card h2{color:#b5e8c4}
-html[data-theme="dark"] section[data-view="stats"] .st-legend{background:#f2f7f3;border-color:#31543e}
-html[data-theme="dark"] section[data-view="stats"] .st-legend .lg-t,
-html[data-theme="dark"] section[data-view="stats"] .st-legend .lg-r,
-html[data-theme="dark"] section[data-view="stats"] .st-legend .lg-n{color:#244a32}
 @media(max-width:760px){
   html[data-theme="light"] section[data-view="classe"] #clContenu .grid3{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-  html[data-theme="light"] section[data-view="stats"] .st-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
   html[data-theme="light"] section[data-view="live"] .live-head{padding:17px}
 }
 @media(max-width:520px){
   html[data-theme="light"] section[data-view="classe"] .classe-hero{padding:17px 14px}
   html[data-theme="light"] section[data-view="classe"] #clContenu .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
-  html[data-theme="light"] section[data-view="stats"] .st-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
-  html[data-theme="light"] section[data-view="stats"] .st-hero{padding:17px 14px}
   html[data-theme="light"] section[data-view="live"] .live-grid{grid-template-columns:minmax(0,1fr)}
   html[data-theme="light"] section[data-view="live"] .live-side{min-width:0}
   html[data-theme="light"] section[data-view="live"] .vid.big{min-height:210px}
@@ -12256,8 +12149,8 @@ html[data-theme="dark"] section[data-view="stats"] .st-legend .lg-n{color:#244a3
   html[data-theme="light"] section[data-view="live"] .ctrl{min-width:58px;padding:8px}
 }
 @media(prefers-reduced-motion:reduce){
-  section[data-view="classe"] *,section[data-view="live"] *,section[data-view="stats"] *,
-  section[data-view="classe"] *::before,section[data-view="live"] *::before,section[data-view="stats"] *::before{
+  section[data-view="classe"] *,section[data-view="live"] *,,
+  section[data-view="classe"] *::before,section[data-view="live"] *::before,::before{
     animation-duration:.01ms!important;transition-duration:.01ms!important
   }
 }
@@ -13524,42 +13417,6 @@ html[data-theme="dark"] .public-explorer .pub-branch-foot .pub-branch-availabili
   .public-explorer .pub-branch-foot .pub-branch-availability{
     max-width:100%;font-size:9px;padding:5px 7px
   }
-}
-
-
-/* 34. Finition de la carte et des classements des statistiques nationales */
-section[data-view="stats"] .st-tip{
-  padding:12px 14px;border:1px solid #d21034;border-radius:13px;
-  background:linear-gradient(145deg,#073b24,#041b11);color:#fff;
-  box-shadow:0 12px 30px rgba(0,25,12,.32);backdrop-filter:blur(12px)
-}
-section[data-view="stats"] .st-tip b{color:#fff;font-weight:900}
-section[data-view="stats"] .st-tip span{color:#e0eee5}
-section[data-view="stats"] .wrow{
-  transition:background .18s ease,border-color .18s ease,transform .18s ease
-}
-section[data-view="stats"] .wrow:hover{
-  background:rgba(0,98,51,.07);border-radius:10px;transform:translateX(-2px)
-}
-section[data-view="stats"] .wbar i{transition:width .65s cubic-bezier(.22,1,.36,1)}
-section[data-view="stats"] .st-legend .lg-d{box-shadow:0 0 0 3px rgba(255,255,255,.08)}
-html[data-theme="dark"] section[data-view="stats"] .st-tip{
-  border-color:#d21034;background:linear-gradient(145deg,#06351f,#03150c);
-  color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.42)
-}
-html[data-theme="dark"] section[data-view="stats"] .wrow:hover{
-  background:rgba(61,220,132,.09)
-}
-html[data-theme="light"] section[data-view="stats"] .st-tip{
-  border-color:#d21034;background:linear-gradient(145deg,#075b36,#032718);
-  color:#fff
-}
-@media(max-width:600px){
-  section[data-view="stats"] .st-tip{min-width:150px;max-width:min(220px,calc(100vw - 38px));padding:9px 11px}
-  section[data-view="stats"] .wrow:hover{transform:none}
-}
-@media(prefers-reduced-motion:reduce){
-  section[data-view="stats"] .wrow,section[data-view="stats"] .wbar i{transition:none}
 }
 
 
