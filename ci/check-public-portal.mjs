@@ -315,6 +315,12 @@ if (parents.includes("if(e.detail === 'parents') boot()") ||
     !app.includes("if(view === 'parents')    renderParents();")) {
   fail('initialisation de l’espace parents doublée ou déclencheur central absent');
 }
+if (!app.includes("function isParent()") ||
+    !app.includes("s.role === 'parent'") ||
+    !app.includes("(t[0] !== 'parents' || isParent())") ||
+    !app.includes("if(view === 'parents' && !isParent())")) {
+  fail('espace parents : entrée de navigation ou accès direct non réservé au rôle parent');
+}
 if (!parents.includes('بيانات تجريبية توضيحية — لا تمثل نتائج تلميذ حقيقي') ||
     parents.includes('Données 100% locales — aucune transmission serveur')) {
   fail('espace parents : données de démonstration non signalées ou commentaire de confidentialité trompeur');
