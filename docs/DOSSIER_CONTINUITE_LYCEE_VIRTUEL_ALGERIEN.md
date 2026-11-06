@@ -1629,3 +1629,10 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Le contrôle a été ajusté : il continue de vérifier les identifiants, les sources, les structures d'épreuves, les barèmes et les corrigés, mais ne réclame plus de bloc stats agrégé supprimé du jeu de données.
 - Échec du CI 2224 expliqué et corrigé à la source ; une nouvelle exécution est nécessaire pour valider l'ensemble du lot.
 - Aucun changement de main, aucune fusion et aucun déploiement Cloudflare revendiqué.
+
+## Lot 131 — correction de la dernière assertion CI résiduelle (2026-11-06)
+
+- Le CI #2226 a échoué avec `KeyError: 'stats'` dans le contrôle Python des devoirs officiels : une seconde assertion, distincte de celle corrigée au lot 130, exigeait encore les champs vues, telechargements et reussite_pct.
+- Suppression de ce dernier bloc de validation devenu obsolète. Les contrôles des 10 devoirs officiels, des structures, barèmes 8+8+4, corrigés, wilayas et unités restent inchangés.
+- Le retrait des statistiques agrégées est conservé ; les notes et réponses individuelles ne sont pas touchées.
+- Relancer et vérifier le CI sur le nouveau commit avant de déclarer le lot validé. PR toujours non fusionnée ; aucune modification de main ni déploiement Cloudflare revendiqué.
