@@ -1461,3 +1461,12 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Commit : `aed6d350371fa6e86ca7a945e4ac25f141b6efe0`, branche `design/prototypes-67-74-alignment`.
 - Aucun changement applicatif ni CSS dans ce lot ; test seulement. Attendre le nouveau workflow pour conclure.
 - PR #17 reste ouverte/non fusionnée ; `main` non modifiée. Déploiement Cloudflare et contrôle navigateur restent à confirmer.
+
+
+## Lot 116 — correction de découpage des sous-menus desktop
+- Retour utilisateur : les sous-menus restent coupés à la limite du conteneur de navigation malgré le relèvement des z-index du lot 113.
+- Cause confirmée dans la cascade CSS : le thème clair V8.5 applique `overflow-x:auto!important` à `#shell #tabs.tabs` et `overflow-y:visible!important`. Selon les règles CSS de calcul des axes overflow, la valeur verticale visible devient auto lorsque l'axe horizontal est auto ; le sous-menu est donc découpé par son conteneur. Le relèvement des z-index ne peut pas contourner ce découpage.
+- Correction ciblée : sur desktop uniquement (≥901 px), surcharger avec une spécificité supérieure les deux axes en `overflow:visible!important` pour la barre de navigation et ses conteneurs immédiats. Le comportement mobile reste inchangé.
+- Cache : CSS `style-prototype-dz.css?v=145` dans `index.html` et le précache ; service worker `dz-de-v3.172.0.0.55`.
+- Contrôles CI : ajout d'une assertion vérifiant le marqueur du lot 116 et les deux axes overflow visibles ; synchronisation des références CSS/SW dans les contrôles du portail et de مسارك.
+- Aucun changement de JavaScript, DOM fonctionnel, identifiant, route `data-go`, gestionnaire, authentification, Supabase, RLS, schéma, migration ou paiement. PR #17 reste ouverte et non fusionnée ; `main` n'est pas modifiée.
