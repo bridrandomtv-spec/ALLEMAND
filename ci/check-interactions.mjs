@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8');
-const js=read('dz-interactions.js'),app=read('app.js'),grammar=read('grammaire.js'),html=read('index.html'),css=read('style-prototype-dz.css'),sw=read('sw.js');
+const js=read('dz-interactions.js'),app=read('app.js'),quiz=read('quiz.js'),grammar=read('grammaire.js'),html=read('index.html'),css=read('style-prototype-dz.css'),sw=read('sw.js');
 assert.match(html,/dz-interactions\.js\?v=3/,'module recherche/notifications non chargé');
 assert.match(sw,/dz-interactions\.js\?v=3/,'module absent du précache');
 assert.match(js,/typeof UNITES/,'indexation des unités de cours absente');
@@ -10,6 +10,8 @@ assert.match(js,/loadGrammarIndex/,'chargement du corpus réel de grammaire abse
 assert.match(js,/data-search-q/,'filtre direct d’une règle grammaticale absent');
 assert.ok(js.includes("replace(/[أإآٱ]/g,'ا')"), 'normalisation des variantes arabes de recherche absente');
 assert.match(js,/data-search-unit/,'navigation directe vers une unité absente');
+assert.match(js,/DZ_QUIZ\.selectUnit/,'navigation vers les exercices par unité absente');
+assert.match(quiz,/selectUnit:function\(n\)/,'sélecteur d’unité du quiz absent');
 assert.match(grammar,/DZ_GRAMMAR_SEARCH/,'raccord du moteur de recherche au filtre des règles absent');
 assert.match(js,/Ctrl \+ K|Ctrl\s*\+\s*K|e\.ctrlKey/,'raccourci clavier Ctrl+K absent');
 assert.match(js,/dz_de_notifications_v1:/,'notifications non isolées par compte');
