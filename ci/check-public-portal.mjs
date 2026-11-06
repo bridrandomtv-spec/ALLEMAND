@@ -283,10 +283,12 @@ if (!app.includes("t[0] !== 'sponsor'")) fail('le raccourci sponsor doit rester 
 const navRoutes = ['seances','grammaire','guide','biblio','corpus','malakhiss','methode','buch','banque','cloud',
   'revision','quiz','officiels','devoir','devoirs','simulation','examen','classe','live','rag',
   'prof','profboard','parents','projet','reservation','abonne','compte','legal','admin'];
-const viewsBlock = app.match(/const VIEWS = \\[([^\\]]+)\\]/);
-if (!viewsBlock) fail('navigation : liste centrale des vues introuvable');
+const viewsStart = app.indexOf('const VIEWS = [');
+const viewsEnd = app.indexOf('];', viewsStart);
+if (viewsStart < 0 || viewsEnd < 0) fail('navigation : liste centrale des vues introuvable');
+const viewsBlock = app.slice(viewsStart, viewsEnd + 2);
 for (const route of navRoutes) {
-  if (!viewsBlock[1].includes("'" + route + "'")) fail('navigation : destination absente de VIEWS : ' + route);
+  if (!viewsBlock.includes("'" + route + "'")) fail('navigation : destination absente de VIEWS : ' + route);
   if (!html.includes('data-view="' + route + '"')) fail('navigation : destination sans section HTML : ' + route);
 }
 if (!app.includes("s.role === 'prof'") || !app.includes("t.splice(t.length - 1, 0, ['profboard'")) {
