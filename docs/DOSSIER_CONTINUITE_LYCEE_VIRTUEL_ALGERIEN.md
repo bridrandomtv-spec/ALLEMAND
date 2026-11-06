@@ -1534,3 +1534,11 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Le premier run après suppression du module a échoué dès le contrôle des fichiers requis, car .github/workflows/deploy.yml listait encore stats.js comme fichier obligatoire et comme fichier à analyser par Esprima.
 - Cette référence obsolète a été retirée du workflow ; le module stats.js n'est plus livré ni attendu par la CI. Les contrôles des données documentaires/géographiques restent en place, sans charger l'ancienne interface nationale.
 - Un nouveau run sur le HEAD corrigé doit confirmer l'ensemble des contrôles.
+
+
+### Complément Lot 119 — synchronisation des assertions de cache (6 novembre 2026)
+
+- Le workflow 42139626522 a échoué dans `ci/check-public-portal.mjs`, non sur la suppression de la vue nationale : les contrôles de navigation, de retrait de `stats.js`, des unités et du portail public avaient passé jusque-là.
+- Cause exacte : après le retrait de la vue, `index.html` et `sw.js` chargent `app.js?v=3535`, mais deux contrôles CI attendaient encore `app.js?v=3534` (dans `check-public-portal.mjs` et `check-masar.mjs`). Des messages de diagnostic affichaient aussi d'anciennes versions de cache.
+- Assertions mises à jour vers app.js v3535 ; messages de version CSS corrigés vers v146. Le code applicatif, les données et les règles d'accès ne sont pas modifiés par ce correctif.
+- Un nouveau workflow doit confirmer les contrôles. Aucun merge, aucune modification de `main`, aucune publication Cloudflare revendiquée.
