@@ -16441,3 +16441,293 @@ html[data-theme="dark"] #gate .auth-recovery-status.is-success{
     background:rgba(24,132,72,.08)!important;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   LOT 154 — recomposition de l'interface réelle (architecture visuelle)
+   Les prototypes guident la structure : rythme, hiérarchie, surfaces,
+   navigation, densité et responsive. Ce lot ne se limite pas à la palette.
+   Aucun contenu, identifiant, événement, route ou droit n'est modifié.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root{
+  --dz-page-max:1480px;
+  --dz-page-gutter:clamp(14px,2.7vw,38px);
+  --dz-space-1:8px;
+  --dz-space-2:12px;
+  --dz-space-3:18px;
+  --dz-space-4:24px;
+  --dz-space-5:32px;
+  --dz-radius-sm:12px;
+  --dz-radius-md:18px;
+  --dz-radius-lg:24px;
+  --dz-focus:0 0 0 3px rgba(0,132,61,.2);
+}
+
+/* Le cadre de travail devient une vraie surface éditoriale centrée. */
+#shell .topbar{
+  border-bottom:1px solid var(--b,#dce8df)!important;
+  box-shadow:0 5px 22px rgba(20,48,31,.055)!important;
+}
+#shell .topbar-in{
+  width:min(100%,var(--dz-page-max))!important;
+  min-height:76px!important;
+  margin-inline:auto!important;
+  padding:10px var(--dz-page-gutter)!important;
+  gap:clamp(10px,1.5vw,22px)!important;
+}
+#shell .brand{gap:12px!important;min-width:max-content!important}
+#shell .brand-crest{
+  width:46px!important;height:46px!important;display:grid!important;
+  place-items:center!important;border-radius:15px!important;
+  background:linear-gradient(145deg,#006233,#00843d)!important;
+  box-shadow:0 7px 18px rgba(0,98,51,.18)!important;
+}
+#shell .brand-t{font-size:clamp(15px,1.2vw,19px)!important;font-weight:950!important;letter-spacing:-.025em!important}
+#shell .brand-s{font-size:11px!important;line-height:1.55!important;opacity:.78!important}
+#shell .tb-search{
+  flex:1 1 360px!important;max-width:560px!important;min-width:160px!important;
+  margin-inline:auto!important;
+}
+#shell .tb-search input{
+  min-height:46px!important;width:100%!important;padding:0 17px!important;
+  border:1px solid var(--b,#dce8df)!important;border-radius:14px!important;
+  background:var(--p2,#f7faf8)!important;font-size:13px!important;
+  transition:border-color .18s,box-shadow .18s,background .18s!important;
+}
+#shell .tb-search input:focus{border-color:var(--a,#00843d)!important;box-shadow:var(--dz-focus)!important;background:var(--p,#fff)!important}
+#shell .topbar-act{gap:8px!important}
+#shell .icon-btn,#shell .tb-bell{
+  width:42px!important;height:42px!important;min-width:42px!important;
+  border-radius:13px!important;transition:transform .18s,background .18s!important;
+}
+#shell .icon-btn:hover,#shell .tb-bell:hover{transform:translateY(-2px)!important}
+#shell .userchip{min-height:42px!important;border-radius:13px!important;padding:7px 12px!important}
+
+/* Navigation : rubriques lisibles, sous-menus alignés et zones tactiles nettes. */
+@media(min-width:901px){
+  #shell #tabs.tabs{
+    min-height:58px!important;padding:9px var(--dz-page-gutter)!important;
+    gap:8px!important;background:var(--surface,#fff)!important;
+  }
+  #shell #tabs .desktop-nav{gap:8px!important}
+  #shell #tabs .nav-group-trigger{
+    min-height:42px!important;padding:9px 15px!important;
+    border-radius:13px!important;font-size:13px!important;font-weight:850!important;
+  }
+  #shell #tabs .nav-submenu{
+    min-width:250px!important;padding:9px!important;border-radius:16px!important;
+  }
+  #shell #tabs .nav-subitem{min-height:43px!important;padding:10px 13px!important;border-radius:10px!important}
+  #shell .section-bar{
+    width:min(100%,var(--dz-page-max))!important;max-width:var(--dz-page-max)!important;
+    justify-content:flex-start!important;padding:9px var(--dz-page-gutter) 2px!important;
+  }
+}
+
+/* Chaque vue possède la même grille éditoriale et la même largeur de lecture. */
+#shell main#app{
+  width:min(100%,var(--dz-page-max))!important;max-width:var(--dz-page-max)!important;
+  margin-inline:auto!important;padding:clamp(18px,2.5vw,38px) var(--dz-page-gutter) 54px!important;
+}
+#shell #app .view{min-width:0!important;animation:dz-view-enter .24s ease both}
+@keyframes dz-view-enter{from{opacity:.0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){#shell #app .view{animation:none!important}}
+#shell #app .view .page-head{
+  position:relative!important;isolation:isolate!important;
+  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+  gap:8px!important;margin:0 0 clamp(18px,2.2vw,30px)!important;
+  padding:clamp(20px,2.7vw,34px)!important;
+  overflow:hidden!important;border:1px solid var(--b,#dce8df)!important;
+  border-radius:var(--dz-radius-lg)!important;
+  background:
+    radial-gradient(ellipse at 100% 0,rgba(0,132,61,.11),transparent 48%),
+    linear-gradient(125deg,var(--p,#fff),var(--p2,#f7faf8))!important;
+  box-shadow:0 8px 26px rgba(20,48,31,.045)!important;
+}
+#shell #app .view .page-head::after{
+  content:"";position:absolute;z-index:-1;inset-block:0;inset-inline-start:0;
+  width:5px;background:linear-gradient(180deg,#006233 0 48%,#fff 48% 72%,#d21034 72%);
+}
+#shell #app .view .page-head h1{
+  margin:0!important;color:var(--t,#17251c)!important;
+  font-family:var(--ff-ar,'Cairo','Tajawal',sans-serif)!important;
+  font-size:clamp(22px,2.1vw,31px)!important;font-weight:950!important;
+  line-height:1.45!important;letter-spacing:-.035em!important;
+}
+#shell #app .view .page-head p{
+  max-width:820px!important;margin:0!important;color:var(--m,#5e7164)!important;
+  font-size:clamp(12px,.95vw,14px)!important;line-height:1.9!important;
+}
+html[data-theme="dark"] #shell #app .view .page-head{
+  background:radial-gradient(ellipse at 100% 0,rgba(61,220,132,.11),transparent 48%),linear-gradient(125deg,#17251d,#1b2b21)!important;
+  border-color:#344a3b!important;box-shadow:0 8px 26px rgba(0,0,0,.15)!important;
+}
+html[data-theme="dark"] #shell #app .view .page-head h1{color:#edf7ef!important}
+html[data-theme="dark"] #shell #app .view .page-head p{color:#b5c8ba!important}
+
+/* Cartes : vraies profondeurs, espacements et états d'interaction cohérents. */
+#shell #app :is(.card,.panel,.profc,.sujet-box,.info-i){
+  min-width:0!important;border-radius:var(--dz-radius-md)!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease!important;
+}
+#shell #app :is(.card,.panel,.profc,.sujet-box,.info-i):focus-within{
+  border-color:rgba(0,132,61,.42)!important;box-shadow:var(--dz-focus)!important;
+}
+#shell #app .card{padding:clamp(15px,1.7vw,23px)!important}
+#shell #app :is(.card,.panel) :is(h2,h3,h4){
+  font-family:var(--ff-ar,'Cairo','Tajawal',sans-serif)!important;
+  line-height:1.55!important;letter-spacing:-.015em!important;
+}
+#shell #app :is(.card,.panel) p,
+#shell #app :is(.card,.panel) li{
+  line-height:1.85!important;
+}
+#shell #app :is(button,.btn,[role="button"],a):focus-visible{
+  outline:0!important;box-shadow:var(--dz-focus)!important;
+}
+#shell #app :is(input,select,textarea){
+  min-height:43px;border-radius:11px;
+}
+#shell #app :is(table,.tble,.bareme){max-width:100%}
+#shell #app .tble{border-radius:13px;overflow:hidden}
+
+/* Accueil : tableau de bord à deux colonnes, avec hiérarchie nette. */
+#shell #app [data-view="accueil"] .home-grid{
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(245px,310px)!important;
+  grid-template-areas:"main side"!important;align-items:start!important;
+  gap:clamp(16px,2vw,26px)!important;
+}
+#shell #app [data-view="accueil"] .home-main{grid-area:main!important;min-width:0!important}
+#shell #app [data-view="accueil"] .home-side{
+  grid-area:side!important;display:grid!important;align-content:start!important;
+  gap:14px!important;min-width:0!important;
+}
+#shell #app [data-view="accueil"] .home-side .panel{
+  padding:17px!important;border-radius:17px!important;
+}
+#shell #app [data-view="accueil"] .home-main .welcome{
+  min-height:190px!important;display:flex!important;align-items:center!important;
+  padding:clamp(22px,3vw,38px)!important;border-radius:24px!important;
+  box-shadow:0 16px 34px rgba(0,72,35,.16)!important;
+}
+#shell #app [data-view="accueil"] .home-main .stats{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:12px!important;margin:18px 0 22px!important;
+}
+#shell #app [data-view="accueil"] .home-main .home-actions{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:14px!important;margin-top:22px!important;
+}
+#shell #app [data-view="accueil"] .home-main .home-actions>.mini{
+  min-height:164px!important;display:flex!important;flex-direction:column!important;
+  align-items:flex-start!important;justify-content:flex-start!important;
+  gap:9px!important;padding:19px!important;border:1px solid var(--b,#dce8df)!important;
+  border-radius:18px!important;background:var(--p,#fff)!important;
+  box-shadow:0 5px 18px rgba(20,48,31,.045)!important;cursor:pointer!important;
+}
+#shell #app [data-view="accueil"] .home-main .home-actions>.mini:hover{
+  transform:translateY(-4px)!important;border-color:rgba(0,132,61,.4)!important;
+  box-shadow:0 14px 28px rgba(20,48,31,.10)!important;
+}
+#shell #app [data-view="accueil"] .home-main .home-actions .mini-i{
+  width:42px!important;height:42px!important;display:grid!important;place-items:center!important;
+  border-radius:13px!important;background:rgba(0,132,61,.09)!important;font-size:21px!important;
+}
+#shell #app [data-view="accueil"] .home-main .home-actions .mini h3{
+  margin:0!important;font-size:15px!important;font-weight:900!important;
+}
+#shell #app [data-view="accueil"] .home-main .home-actions .mini p{
+  margin:0!important;color:var(--m,#5e7164)!important;font-size:12px!important;line-height:1.8!important;
+}
+#shell #app [data-view="accueil"] .home-main .home-actions .mini-n{
+  margin-top:auto!important;font-size:12px!important;font-weight:900!important;color:var(--a2,#006233)!important;
+}
+
+/* Vues d'apprentissage : espaces de travail plus lisibles et mieux segmentés. */
+#shell #app [data-view="seances"] #seancesGrid{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:14px!important;align-items:stretch!important;
+}
+#shell #app [data-view="seances"] #seanceDetail{
+  margin-top:20px!important;padding:clamp(17px,2vw,28px)!important;
+  border:1px solid var(--b,#dce8df)!important;border-radius:20px!important;
+  background:var(--p,#fff)!important;box-shadow:0 8px 26px rgba(20,48,31,.055)!important;
+}
+#shell #app [data-view="matieres"] #matieresBody,
+#shell #app [data-view="masar"] #masarBody,
+#shell #app [data-view="prof"] #profBody,
+#shell #app [data-view="parents"] #parentsBody,
+#shell #app [data-view="msg"] #msgBody,
+#shell #app [data-view="admin"] #adminBody,
+#shell #app [data-view="profboard"] #profBody{
+  min-width:0!important;width:100%!important;
+}
+#shell #app [data-view="matieres"] #matieresBody{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:15px!important;align-items:stretch!important;
+}
+#shell #app [data-view="masar"] #masarBody{gap:18px!important}
+#shell #app [data-view="masar"] #masarBody>.ms-next,
+#shell #app [data-view="masar"] #masarBody>.ms-chart,
+#shell #app [data-view="masar"] #masarBody>.ms-prog,
+#shell #app [data-view="masar"] #masarBody>.ms-units{
+  border-radius:20px!important;box-shadow:0 7px 22px rgba(20,48,31,.045)!important;
+}
+#shell #app [data-view="prof"] #profBody,
+#shell #app [data-view="parents"] #parentsBody,
+#shell #app [data-view="admin"] #adminBody{
+  display:block;max-width:100%;overflow-wrap:anywhere;
+}
+
+/* Adaptation réelle aux largeurs intermédiaires et aux téléphones. */
+@media(max-width:1100px){
+  #shell #app [data-view="accueil"] .home-grid{
+    grid-template-columns:minmax(0,1fr) 250px!important;
+  }
+  #shell #app [data-view="accueil"] .home-main .home-actions{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  #shell #app [data-view="matieres"] #matieresBody{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:900px){
+  #shell .topbar-in{min-height:66px!important;padding:9px 14px!important;flex-wrap:wrap!important}
+  #shell .brand-crest{width:40px!important;height:40px!important}
+  #shell .brand-s{display:none!important}
+  #shell .tb-search{order:6!important;flex:1 1 100%!important;margin:0!important}
+  #shell .tb-search input{min-height:44px!important}
+  #shell main#app{padding:18px 15px calc(104px + env(safe-area-inset-bottom))!important}
+  #shell #app [data-view="accueil"] .home-grid{
+    grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"main" "side"!important;
+  }
+  #shell #app [data-view="accueil"] .home-side{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  #shell #app [data-view="accueil"] .home-main .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #shell #app [data-view="seances"] #seancesGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:600px){
+  #shell main#app{padding:14px 12px calc(100px + env(safe-area-inset-bottom))!important}
+  #shell #app .view .page-head{
+    gap:6px!important;margin-bottom:16px!important;padding:19px 17px!important;
+    border-radius:18px!important;
+  }
+  #shell #app .view .page-head h1{font-size:21px!important}
+  #shell #app .view .page-head p{font-size:12px!important;line-height:1.8!important}
+  #shell #app [data-view="accueil"] .home-side{grid-template-columns:1fr!important}
+  #shell #app [data-view="accueil"] .home-main .welcome{min-height:150px!important;padding:21px!important;border-radius:19px!important}
+  #shell #app [data-view="accueil"] .home-main .home-actions{grid-template-columns:1fr!important;gap:10px!important}
+  #shell #app [data-view="accueil"] .home-main .home-actions>.mini{
+    min-height:0!important;display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;
+    grid-template-rows:auto auto!important;column-gap:12px!important;row-gap:3px!important;
+    padding:14px!important;
+  }
+  #shell #app [data-view="accueil"] .home-main .home-actions .mini-i{grid-row:1/3!important}
+  #shell #app [data-view="accueil"] .home-main .home-actions .mini h3{align-self:end!important}
+  #shell #app [data-view="accueil"] .home-main .home-actions .mini p{grid-column:2!important}
+  #shell #app [data-view="accueil"] .home-main .home-actions .mini-n{grid-column:2!important;margin-top:5px!important}
+  #shell #app [data-view="seances"] #seancesGrid,
+  #shell #app [data-view="matieres"] #matieresBody{grid-template-columns:1fr!important}
+  #shell #app :is(.card,.panel,.profc,.sujet-box){border-radius:15px!important}
+  #shell #app .card{padding:15px!important}
+}
