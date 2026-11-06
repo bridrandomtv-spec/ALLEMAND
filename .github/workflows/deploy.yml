@@ -443,7 +443,7 @@ jobs:
           print('✅ Plan de projet LinguaConnect : 13 sections, revenus 36→540 M DA, roadmap')
           print('✅ Quiz interactif : 30 questions, 6 unites, series de 5, feedback immediat')
           print('✅ Moteur IA : 9 cas de reference du professeur + estCopie + texte Lena officiel')
-          print('✅ Statistiques nationales : carte 58 wilayas, 6 onglets, heatmap, BAC')
+          print('✅ Donnees geographiques des wilayas : fichier de reference valide (sans vue de statistiques nationales)')
           print('✅ Devoirs officiels : 10 devoirs · 10 lycees · onglets sujet/solution · notation /20')
           print('✅ Espace parents : ' + str(len(enf)) + ' enfants · '
                 + str(len(pa['prochaines_seances'])) + ' seances a venir · '
