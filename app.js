@@ -2044,42 +2044,95 @@ function renderLienCloud(){
     if(p){ msg.textContent = '✅ تم الربط — المستوى المعتمد : ' + p.niveau; setTimeout(function(){ location.reload(); }, 900); }
   });
 }
-/* ══════════ VUE COMPTE ══════════ */
+/* ══════════ VUE COMPTE — composition inspirée du prototype étudiant ══════════ */
 function renderCompte(){
   const el = $('#compteBody'); if(!el) return;
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
-  if(!s){ el.innerHTML = '<div class="card empty"><div class="empty-i">🔐</div><p>غير متصل</p></div>'; return; }
-  const st = loadSeances();
-  const sim = load(LS.sim, {best:null, tries:[]});
-  const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
+  if(!s){
+    el.innerHTML = '<div class="card empty"><div class="empty-i">🔐</div><p>غير متصل</p></div>';
+    return;
+  }
 
-  function row(a,b){ return '<div class="rep-row"><span>' + a + '</span>' +
-                            '<span class="rep-v">' + esc(b) + '</span></div>'; }
+  const st = loadSeances() || {};
+  const sim = load(LS.sim, {best:null, tries:[]}) || {best:null, tries:[]};
+  const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
+  const done = Array.isArray(st.done) ? st.done.length : 0;
+  const exercises = Object.keys(st.exo || {}).length;
+  const attempts = Array.isArray(sim.tries) ? sim.tries.length : 0;
+  const best = sim.best !== null && sim.best !== undefined ? esc(sim.best + '/20') : '—';
+  const points = Number(s.points) || 0;
+  const initials = String(s.nom || '؟').trim().charAt(0) || '؟';
+  const wilaya = [s.code_wilaya, s.wilaya].filter(Boolean).join(' — ') || '—';
+  const classe = [s.classe_ar, s.eleves ? s.eleves + ' تلميذ' : ''].filter(Boolean).join(' · ') || '—';
+  const lastLogin = s.loginAt ? new Date(s.loginAt).toLocaleString('fr-DZ') : '—';
+  const role = window.AUTH ? (AUTH.ROLES[s.role] || s.role || '—') : (s.role || '—');
+  const source = s.src === 'cloud' ? 'حساب سحابي' : 'حساب محلي';
+
+  function row(label, value){
+    return '<div class="dz-account-row"><span>' + esc(label) + '</span><strong>' + esc(value == null || value === '' ? '—' : value) + '</strong></div>';
+  }
+  function metric(icon, label, value, note){
+    return '<article class="dz-account-metric"><span class="dz-account-metric-icon" aria-hidden="true">' + icon + '</span>' +
+      '<div><small>' + esc(label) + '</small><strong>' + esc(value) + '</strong><em>' + esc(note) + '</em></div></article>';
+  }
 
   el.innerHTML =
-    '<div class="card"><h2>👤 معلوماتي</h2>' +
-      row('الاسم الكامل', s.nom) + row('المعرّف', '@' + s.user) +
-      row('الدور', (window.AUTH ? (AUTH.ROLES[s.role] || s.role) : s.role)) +
-      row('المستوى', s.niveau) + row('الشعبة', s.filiere) +
-      row('الولاية', (s.code_wilaya || '') + ' — ' + (s.wilaya || '')) +
-      row('القسم', s.classe_ar + ' · ' + s.eleves + ' تلميذ') +
-      row('الأستاذ', s.prof || 'الأستاذ خريف أحمد') +
-      row('النقاط', (s.points || 0) + ' نقطة') +
-      row('آخر دخول', new Date(s.loginAt || Date.now()).toLocaleString('fr-DZ')) +
-    '</div>' +
-    '<div class="card"><h2>📊 تقدمي</h2>' +
-      row('الحصص المكتملة', (st.done || []).length + ' / 8') +
-      row('التمارين المنجزة', Object.keys(st.exo || {}).length) +
-      row('المحاكيات', (sim.tries || []).length) +
-      row('أفضل نتيجة', sim.best !== null && sim.best !== undefined ? sim.best + '/20' : '—') +
-      (k ? row('وثائق المكتبة', k.total + ' متاحة') : '') +
-    '</div>' +
-    '<div class="card"><h2>🔒 الخصوصية</h2><div class="privacy">' +
-      'حسابك وبياناتك محفوظة <b>على جهازك فقط</b> (localStorage) — لا تُرسل لأي خادم. ' +
-      'نتائج المحاكاة سرّية ولا يطّلع عليها أحد إلا بقرارك.</div></div>' +
-    '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
-      '<button class="btn btn-o" id="btnSound2">🔊 النطق الألماني</button>' +
-      '<button class="btn btn-r" id="btnLogout">🚪 تسجيل الخروج</button>' +
+    '<div class="dz-account-layout">' +
+      '<section class="dz-account-hero">' +
+        '<div class="dz-account-person">' +
+          '<div class="dz-account-avatar" aria-hidden="true">' + esc(initials) + '</div>' +
+          '<div class="dz-account-heading"><span class="dz-account-kicker">فضاؤك الشخصي</span>' +
+            '<h2>مرحباً، ' + esc(s.nom || 'بك') + '</h2>' +
+            '<p>' + esc([s.niveau, s.filiere].filter(Boolean).join(' · ') || 'بياناتك الدراسية') + '</p>' +
+            '<div class="dz-account-tags"><span>👤 ' + esc(role) + '</span><span>☁️ ' + esc(source) + '</span></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="dz-account-hero-note"><span>🇩🇿</span><div><b>حسابك الدراسي</b><small>معلوماتك وإحصاءات نشاطك المسجّل</small></div></div>' +
+      '</section>' +
+      '<section class="dz-account-metrics" aria-label="ملخص نشاط الحساب">' +
+        metric('⭐','النقاط المسجّلة',points,'من بيانات الحساب') +
+        metric('📘','الحصص المكتملة',done,'حصص مسجّلة') +
+        metric('✍️','التمارين المنجزة',exercises,'تمارين مسجّلة') +
+        metric('🎯','المحاكيات',attempts,'محاولات مسجّلة') +
+      '</section>' +
+      '<div class="dz-account-columns">' +
+        '<section class="dz-account-card dz-account-profile">' +
+          '<div class="dz-account-card-head"><span>👤</span><div><h3>معلوماتي الشخصية</h3><p>البيانات المرتبطة بحسابك الحالي</p></div></div>' +
+          row('الاسم الكامل',s.nom) +
+          row('المعرّف','@' + (s.user || '—')) +
+          row('الدور',role) +
+          row('المستوى الدراسي',s.niveau) +
+          row('الشعبة',s.filiere) +
+          row('الولاية',wilaya) +
+          row('القسم',classe) +
+          row('الأستاذ',s.prof || 'الأستاذ خريف أحمد') +
+          row('آخر دخول',lastLogin) +
+        '</section>' +
+        '<section class="dz-account-card dz-account-activity">' +
+          '<div class="dz-account-card-head"><span>📊</span><div><h3>ملخص التقدّم</h3><p>أرقام مستخرجة من نشاطك المحفوظ</p></div></div>' +
+          '<div class="dz-account-progress-list">' +
+            '<div><span>الحصص المكتملة</span><b>' + done + '</b></div>' +
+            '<div><span>التمارين المنجزة</span><b>' + exercises + '</b></div>' +
+            '<div><span>محاولات المحاكاة</span><b>' + attempts + '</b></div>' +
+            '<div><span>أفضل نتيجة</span><b>' + best + '</b></div>' +
+            (k ? '<div><span>وثائق المكتبة المتاحة</span><b>' + esc(k.total) + '</b></div>' : '') +
+          '</div>' +
+          '<p class="dz-account-footnote">لا تُعرض نسب أو أهداف غير مسجّلة في حسابك.</p>' +
+        '</section>' +
+      '</div>' +
+      '<section class="dz-account-card dz-account-privacy">' +
+        '<div class="dz-account-card-head"><span>🔒</span><div><h3>الخصوصية وحماية البيانات</h3><p>توضيح مكان حفظ بيانات حسابك</p></div></div>' +
+        '<div class="dz-account-privacy-note">' +
+          (s.src === 'cloud'
+            ? 'حسابك مرتبط بالخدمة السحابية. تخضع البيانات المتاحة للمزامنة لصلاحيات الحساب وسياسات الوصول المعتمدة.'
+            : 'هذا الحساب محلي؛ تُحفظ بياناته على هذا الجهاز في مساحة التخزين المحلية. لن تنتقل تلقائياً إلى أجهزتك الأخرى ما لم تربطه بحساب سحابي.') +
+          ' نتائج المحاكاة تبقى ضمن بيانات حسابك ولا تُعرض هنا إلا لك.' +
+        '</div>' +
+      '</section>' +
+      '<div class="dz-account-actions">' +
+        '<button class="btn btn-o" id="btnSound2" type="button">🔊 النطق الألماني</button>' +
+        '<button class="btn btn-r" id="btnLogout" type="button">🚪 تسجيل الخروج</button>' +
+      '</div>' +
     '</div>';
 
   const lo = $('#btnLogout');
@@ -2095,7 +2148,7 @@ function renderCompte(){
 }
 
 
-  /* ── Bug #71 : handlers délégués (capture) pour logout + chip compte ──
+/* ── Bug #71 : handlers délégués (capture) pour logout + chip compte ──
      indépendants des re-rendus et sans window.confirm (bloqué en PWA installée) */
   document.addEventListener('click', ev => {
     if(ev.target.closest('#btnLogout')){
