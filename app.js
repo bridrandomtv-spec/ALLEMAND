@@ -1940,7 +1940,7 @@ const lf = $('#loginForm');
 function renderWelcome(){
   const el = $('#welcomeBox'); if(!el) return;
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
-  if(!s){ el.innerHTML = ''; return; }
+  if(!s){ el.innerHTML = ''; renderStudentFocus(); return; }
   const h = new Date().getHours();
   const salut = h < 12 ? 'صباح الخير' : 'مساء الخير';
   const de = h < 12 ? 'Guten Morgen' : (h < 18 ? 'Guten Tag' : 'Guten Abend');
@@ -2036,6 +2036,11 @@ function renderStudentFocus(){
   host.innerHTML = h;
   host.hidden = false;
 }
+document.addEventListener('dz:view', function(e){
+  const v = e && e.detail && (e.detail.view || e.detail);
+  if(v === 'accueil') setTimeout(renderStudentFocus, 80);
+});
+document.addEventListener('dz:lesson-complete', function(){ setTimeout(renderStudentFocus, 120); });
 
 /* ══════════ BARRE DE SECTION ══════════ */
 function renderSectionBar(){
