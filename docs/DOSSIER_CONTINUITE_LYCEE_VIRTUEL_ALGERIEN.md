@@ -1470,3 +1470,22 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Cache : CSS `style-prototype-dz.css?v=145` dans `index.html` et le précache ; service worker `dz-de-v3.172.0.0.55`.
 - Contrôles CI : ajout d'une assertion vérifiant le marqueur du lot 116 et les deux axes overflow visibles ; synchronisation des références CSS/SW dans les contrôles du portail et de مسارك.
 - Aucun changement de JavaScript, DOM fonctionnel, identifiant, route `data-go`, gestionnaire, authentification, Supabase, RLS, schéma, migration ou paiement. PR #17 reste ouverte et non fusionnée ; `main` n'est pas modifiée.
+
+
+## Lot 117 — simplification du menu en six espaces (6 novembre 2026)
+
+- Retour utilisateur : le menu restait trop long pour une plateforme pédagogique professionnelle ; plusieurs intitulés représentaient des fonctions voisines ou des sous-rubriques qui n'avaient pas besoin d'être des catégories principales.
+- Décision UX : réduire les catégories desktop de neuf à six, sans supprimer de destination ni de fonctionnalité :
+  1. **التعلّم** : séances, grammaire, guide, bibliothèque, corpus, résumés, méthodologie, livre scolaire, banque d'exercices et fichiers.
+  2. **التدريب والاختبارات** : révision, quiz, devoirs, sujets officiels, simulations et examens.
+  3. **القسم والتواصل** : classe, salle directe et questions à l'assistant.
+  4. **فضاءات التأطير** : professeur, tableau de bord enseignant (lorsqu'il est fourni par le rôle existant) et espace parents.
+  5. **التقدم الدراسي** : statistiques et projet scolaire.
+  6. **الخدمات والحساب** : réservation, abonnement, partenariats, compte, informations légales et administration (toujours filtrée par le contrôle de rôle existant).
+- Les trois accès rapides restent visibles : accueil, matières (ou langue active) et مسارك. Sur mobile, les quatre accès rapides et le panneau « المزيد » restent inchangés.
+- Tous les identifiants de destination data-go sont conservés. Aucun module, vue, route, libellé de page, contenu pédagogique ou fonction métier n'est supprimé ; seule l'affectation aux six catégories a été réorganisée.
+- Fichiers modifiés : app.js, index.html, sw.js, ci/check-public-portal.mjs, ci/check-masar.mjs et ce dossier.
+- Cache : app.js?v=3533 ; CSS inchangé à style-prototype-dz.css?v=145 ; Service Worker dz-de-v3.173.0.0.55. Le précache et les contrôles de cache ont été synchronisés.
+- Garde CI ajoutée : exactement six catégories, présence des six intitulés et vérification que chaque ancienne destination reste classée. La vérification existante des sous-menus, du clavier, du survol et du débordement Lot 116 est conservée.
+- Aucun changement de CSS, de DOM des vues, d'authentification, de rôles, de Supabase, RLS, schéma, migration, abonnement/paiement ou données. PR #17 reste ouverte et non fusionnée ; main n'est pas modifiée.
+- Validation restante : attendre le résultat du workflow GitHub déclenché par le dernier commit, puis vérifier le rendu sur l'aperçu Cloudflare correspondant au nouveau HEAD. La simplification du code est committée ; elle n'est pas encore déclarée visuellement validée par l'utilisateur.
