@@ -46,5 +46,5 @@ assert.match(app,/MEMOIRE\.dues\(\)/,'recommandation non fondée sur les cartes 
 assert.match(css,/\.sf-next/,'carte de reprise du cours absente');
 assert.match(css,/\.sf-actions/,'raccourcis du tableau de bord absents');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=158/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=159/,'version CSS non précachée');
 console.log('✅ XP par compte, événements vérifiés, anti-doublon, 20 badges et grilles responsive contrôlés');
