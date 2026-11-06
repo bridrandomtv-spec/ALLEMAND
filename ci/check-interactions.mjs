@@ -15,6 +15,8 @@ assert.match(quiz,/selectUnit:function\(n\)/,'sélecteur d’unité du quiz abse
 assert.match(grammar,/DZ_GRAMMAR_SEARCH/,'raccord du moteur de recherche au filtre des règles absent');
 assert.match(js,/Ctrl \+ K|Ctrl\s*\+\s*K|e\.ctrlKey/,'raccourci clavier Ctrl+K absent');
 assert.match(js,/dz_de_notifications_v1:/,'notifications non isolées par compte');
+assert.match(js,/b\.hidden=!a;if\(g\)\{g\.hidden=!a\|\|!n/,'la cloche doit rester accessible même sans notification non lue');
+assert.match(app,/DZ_INTERACTIONS\.renderBell\(\); return;/,'le rendu historique de la cloche écrase le centre de notifications');
 assert.match(js,/success:'نجاح',error:'خطأ',warning:'تنبيه',info:'معلومة'/,'catégories notification incomplètes');
 assert.match(js,/data-mark-all/,'action marquer tout comme lu absente');
 assert.match(js,/data-notif-id/,'action notification individuelle absente');
