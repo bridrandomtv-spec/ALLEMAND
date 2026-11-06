@@ -7,7 +7,7 @@ assert.match(sw,/dz-gamification\.js\?v=2/,'module XP absent du précache');
 assert.match(app,/dz:lesson-complete/,'événement de fin de séance absent');
 assert.match(quiz,/dz:quiz-complete/,'événement de fin de quiz absent');
 assert.match(js,/KEY='dz_de_gamification_v1'/,'clé XP absente');
-assert.match(js,/KEY\+':'+a/,'progression XP non isolée par compte');
+assert.ok(js.includes("return a?KEY+':'+a:null;"), 'progression XP non isolée par compte');
 assert.match(js,/var thresholds=\[0,100,250,450,700,1000,1400,1900,2500,3200\]/,'échelle de niveaux incohérente');
 assert.match(js,/function level\(xp\)/,'calcul des niveaux absent');
 assert.match(js,/function streak\(s\)/,'calcul de série d’activité absent');
