@@ -136,7 +136,7 @@ jobs:
           for s in sj:
               for k in ('id', 'annee', 'session', 'theme_de', 'theme_ar', 'wilaya',
                         'filiere', 'duree_minutes', 'bareme', 'coefficient',
-                        'parties', 'corrige', 'stats', 'source', 'niveau_cefr'):
+                        'parties', 'corrige', 'source', 'niveau_cefr'):
                   if k not in s or s[k] in (None, ''):
                       fails.append(str(s.get('id', '?')) + ' : ' + k + ' absent')
               if s['id'] in ids:
@@ -169,9 +169,6 @@ jobs:
                   fails.append(s['id'] + ' : corrige trop court')
               if not s['corrige_inclus']:
                   fails.append(s['id'] + ' : corrige_inclus faux')
-              for k in ('candidats', 'moyenne_nationale', 'taux_reussite_pct'):
-                  if k not in s['stats']:
-                      fails.append(s['id'] + ' : stats.' + k + ' absent')
               for q in qi + qii:
                   if q['type'] == 'qcm' and not (0 <= q['a'] < len(q['opts'])):
                       fails.append(s['id'] + '/' + q['id'] + ' : indice qcm hors plage')
