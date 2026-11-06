@@ -1542,3 +1542,10 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Cause exacte : après le retrait de la vue, `index.html` et `sw.js` chargent `app.js?v=3535`, mais deux contrôles CI attendaient encore `app.js?v=3534` (dans `check-public-portal.mjs` et `check-masar.mjs`). Des messages de diagnostic affichaient aussi d'anciennes versions de cache.
 - Assertions mises à jour vers app.js v3535 ; messages de version CSS corrigés vers v146. Le code applicatif, les données et les règles d'accès ne sont pas modifiés par ce correctif.
 - Un nouveau workflow doit confirmer les contrôles. Aucun merge, aucune modification de `main`, aucune publication Cloudflare revendiquée.
+
+
+### Complément Lot 120 — correction du contrôle Service Worker (6 novembre 2026)
+
+- Après le correctif app.js v3535, le workflow 42139982984 a échoué sur une seconde assertion obsolète : `ci/check-masar.mjs` attendait encore `dz-de-v3.174.0.0.55`, alors que `index.html` et `sw.js` sont à `dz-de-v3.175.0.0.55`.
+- Assertion et message de diagnostic actualisés vers v3.175. La vue nationale et le module `stats.js` restent exclus du chargement ; aucune logique métier ni donnée n'a été modifiée.
+- Attendre le prochain résultat CI pour conclure. PR #17 reste ouverte et non fusionnée ; `main` n'est pas modifiée.
