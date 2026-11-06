@@ -264,17 +264,19 @@ if (!html.includes('style-prototype-dz.css?v=145') || !sw.includes('style-protot
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
 console.log('✅ Lot 99 mobile + Lot 107 desktop : navigation responsive sans sidebar');
-const navCatsMatch = app.match(/const NAVCATS = \\[([\\s\\S]*?)\\n\\];/);
-if (!navCatsMatch) fail('déclaration des espaces de navigation absente');
-const navCategoryCount = [...navCatsMatch[1].matchAll(/^\\s*\\['/gm)].length;
+const navStart = app.indexOf('const NAVCATS = [');
+const navEnd = app.indexOf('\n];', navStart);
+if (navStart < 0 || navEnd < 0) fail('déclaration des espaces de navigation absente');
+const navCatsBlock = app.slice(navStart, navEnd);
+const navCategoryCount = navCatsBlock.split('\n').filter(line => line.trimStart().startsWith("['")).length;
 if (navCategoryCount !== 6) fail('la navigation doit présenter exactement six espaces principaux');
 for (const label of ['التعلّم', 'التدريب والاختبارات', 'القسم والتواصل', 'فضاءات التأطير', 'التقدم الدراسي', 'الخدمات والحساب']) {
-  if (!navCatsMatch[1].includes(label)) fail('espace de navigation manquant : ' + label);
+  if (!navCatsBlock.includes(label)) fail('espace de navigation manquant : ' + label);
 }
 for (const route of ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud',
   'revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen', 'classe', 'live', 'rag',
   'prof', 'profboard', 'parents', 'stats', 'projet', 'reservation', 'abonne', 'sponsor', 'compte', 'legal', 'admin']) {
-  if (!navCatsMatch[1].includes("'" + route + "'")) fail('destination non classée dans la navigation : ' + route);
+  if (!navCatsBlock.includes("'" + route + "'")) fail('destination non classée dans la navigation : ' + route);
 }
 for (const marker of ['const NAVCATS = [','nav-group-trigger','nav-submenu','nav-subitem','<details class="nav-group']) {
   if (!app.includes(marker)) fail('menu hiérarchique desktop incomplet : ' + marker);
