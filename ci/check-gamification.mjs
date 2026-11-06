@@ -37,6 +37,12 @@ assert.ok(js.includes('active.indexOf(key)>=0'), 'activité hebdomadaire non iss
 assert.ok(js.includes('دون تقدير دقائق غير مسجّلة'), 'absence de minutes fictives non documentée');
 assert.match(css,/\.dz-week-activity/,'styles du graphique hebdomadaire absents');
 assert.match(html,/home-ai-card/,'carte professeur IA absente de l’accueil');
+assert.match(html,/id="studentFocus"/,'zone de suivi personnalisé absente du tableau de bord');
+assert.match(app,/function renderStudentFocus\(\)/,'rendu du tableau de bord étudiant absent');
+assert.match(app,/data-go="revision"/,'recommandation de révision non reliée à la vue existante');
+assert.match(app,/MEMOIRE\.dues\(\)/,'recommandation non fondée sur les cartes réellement dues');
+assert.match(css,/\.sf-next/,'carte de reprise du cours absente');
+assert.match(css,/\.sf-actions/,'raccourcis du tableau de bord absents');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=155/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=157/,'version CSS non précachée');
 console.log('✅ XP par compte, événements vérifiés, anti-doublon, 20 badges et grilles responsive contrôlés');
