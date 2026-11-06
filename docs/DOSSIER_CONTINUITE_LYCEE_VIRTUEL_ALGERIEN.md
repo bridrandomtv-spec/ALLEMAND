@@ -1503,3 +1503,16 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Le workflow 42137467159 a échoué au contrôle du portail public, après réussite des validations précédentes, car une assertion de ce contrôle attendait encore Service Worker v3.172 alors que le précache était passé à v3.173.
 - Diagnostic confirmé dans les logs : le code du portail et les fichiers de cache étaient synchronisés ; c'est l'assertion de version du test qui était restée obsolète.
 - Assertion corrigée vers dz-de-v3.173.0.0.55. Le run 42137467159 porte sur un état antérieur de la branche et son échec ne valide ni n'invalide le dernier HEAD ; un nouveau workflow doit confirmer la correction.
+
+
+## Lot 118 — menu mobile organisé comme le menu desktop (6 novembre 2026)
+
+- Constat : après Lot 117, le menu desktop était organisé en six espaces, mais le panneau mobile « المزيد » conservait encore une longue grille plate de liens. L'expérience n'était donc pas cohérente entre les formats.
+- Correction : le panneau mobile réutilise désormais les six catégories NAVCATS comme accordéons repliables ; les destinations apparaissent à l'intérieur de leur espace. L'espace actif est automatiquement ouvert à l'affichage du panneau.
+- Le raccourci de changement de matière reste au-dessus des catégories ; les quatre accès rapides en bas (accueil, matières, مساري, الأستاذ الذكي) sont conservés.
+- Les routes non classées qui pourraient être ajoutées ultérieurement restent accessibles dans une section de secours « أقسام أخرى » ; elles ne sont pas perdues silencieusement.
+- CSS mobile ajouté sans modifier les règles desktop ni le correctif de débordement des sous-menus Lot 116. Aucun changement des destinations, des handlers, des vues, de l'authentification, des rôles, de Supabase, des données ou des paiements.
+- Fichiers modifiés : app.js, style-prototype-dz.css, index.html, sw.js, ci/check-public-portal.mjs, ci/check-masar.mjs et ce dossier.
+- Cache : app.js?v=3534 ; style-prototype-dz.css?v=146 ; Service Worker dz-de-v3.174.0.0.55.
+- Garde CI ajoutée pour vérifier la présence des accordéons mobiles et de leurs styles ; contrôles de synchronisation des caches actualisés.
+- PR #17 reste ouverte et non fusionnée ; main non modifiée. Validation CI du Lot 118 et contrôle visuel mobile sur l'aperçu Cloudflare restent à confirmer.
