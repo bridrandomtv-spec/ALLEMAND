@@ -1496,3 +1496,10 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Vérification du commentaire historique UI-6 : la gestion du sponsoring doit être accessible depuis l'administration, et non comme rubrique générale de navigation.
 - Le filtre de navigation exclut désormais la destination sponsor du rendu desktop et du panneau mobile « المزيد ». La vue et sa route ne sont pas supprimées ; les accès directs déjà utilisés restent possibles.
 - Le contrôle CI vérifie que cette destination ne réapparaît pas dans le menu général. Aucun changement au contrôle d'accès administratif ni au module de sponsoring.
+
+
+### Complément Lot 117 — correction du contrôle CI de version SW
+
+- Le workflow 42137467159 a échoué au contrôle du portail public, après réussite des validations précédentes, car une assertion de ce contrôle attendait encore Service Worker v3.172 alors que le précache était passé à v3.173.
+- Diagnostic confirmé dans les logs : le code du portail et les fichiers de cache étaient synchronisés ; c'est l'assertion de version du test qui était restée obsolète.
+- Assertion corrigée vers dz-de-v3.173.0.0.55. Le run 42137467159 porte sur un état antérieur de la branche et son échec ne valide ni n'invalide le dernier HEAD ; un nouveau workflow doit confirmer la correction.
