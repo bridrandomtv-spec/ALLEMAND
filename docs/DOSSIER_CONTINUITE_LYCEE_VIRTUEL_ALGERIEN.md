@@ -1613,3 +1613,12 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - `ci/check-public-portal.mjs` conserve des chaînes relatives à l'ancienne rubrique uniquement pour détecter une régression; ce ne sont pas des liens de navigation ni des fonctionnalités exposées.
 - Le référentiel `wilayas_geo.json` reste utilisé et vérifié comme donnée géographique. Renommage de l'étape CI pour ne plus la présenter comme une validation de statistiques nationales.
 - Aucun changement de `main`, aucune fusion, aucun déploiement Cloudflare ni contrôle visuel public revendiqué.
+
+## Lot 129 — retrait des statistiques nationales résiduelles dans les archives (2026-11-06)
+
+- Audit du commit précédent : la rubrique nationale avait disparu de la navigation, mais les cartes d'années de l'archive du BAC affichaient encore les candidats, la moyenne et le taux de réussite nationaux ; les devoirs officiels exposaient un taux agrégé ainsi que des compteurs globaux.
+- Suppression de ces métriques dans les rendus examen.js et officiels.js, puis retrait des champs statistiques correspondants des données assets/bdd/bac_archive.json et assets/bdd/devoirs_officiels.json.
+- Le workflow de validation ne demande plus le bloc stats national pour les sujets d'archive. Les sujets, corrigés, années, thèmes, wilayas comme métadonnées pédagogiques et filtres d'examen restent conservés.
+- Les indicateurs individuels restent en place : tentatives, note personnelle, niveau de préparation et nombre de réponses de l'élève. La progression مسارك et statsHome restent intacts.
+- Ajout de contrôles CI qui vérifient l'absence des métriques nationales dans les rendus et fichiers JSON, et la présence des indicateurs personnels.
+- Aucun changement Supabase/Auth/RLS/paiement, aucune modification de main, aucune fusion ni déploiement Cloudflare revendiqué.
