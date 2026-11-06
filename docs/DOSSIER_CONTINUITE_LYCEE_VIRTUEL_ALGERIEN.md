@@ -1481,7 +1481,7 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
   3. **القسم والتواصل** : classe, salle directe et questions à l'assistant.
   4. **فضاءات التأطير** : professeur, tableau de bord enseignant (lorsqu'il est fourni par le rôle existant) et espace parents.
   5. **التقدم الدراسي** : statistiques et projet scolaire.
-  6. **الخدمات والحساب** : réservation, abonnement, partenariats, compte, informations légales et administration (toujours filtrée par le contrôle de rôle existant).
+  6. **الخدمات والحساب** : réservation, abonnement, compte, informations légales et administration (toujours filtrée par le contrôle de rôle existant).
 - Les trois accès rapides restent visibles : accueil, matières (ou langue active) et مسارك. Sur mobile, les quatre accès rapides et le panneau « المزيد » restent inchangés.
 - Tous les identifiants de destination data-go sont conservés. Aucun module, vue, route, libellé de page, contenu pédagogique ou fonction métier n'est supprimé ; seule l'affectation aux six catégories a été réorganisée.
 - Fichiers modifiés : app.js, index.html, sw.js, ci/check-public-portal.mjs, ci/check-masar.mjs et ce dossier.
