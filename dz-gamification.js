@@ -48,11 +48,17 @@ celebrateLayer.innerHTML='<div class="dz-celebrate-backdrop"></div><section clas
 document.body.appendChild(celebrateLayer);function done(){if(celebrateLayer){celebrateLayer.remove();celebrateLayer=null;}}
 celebrateLayer.addEventListener('click',function(e){if(e.target.closest('.dz-celebrate-close,.dz-celebrate-ok,.dz-celebrate-backdrop'))done();});
 }
+function weekMarkup(s){
+var names=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],active=Array.isArray(s.activeDays)?s.activeDays:[],days=[],count=0;
+var d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-6);
+for(var i=0;i<7;i++){var key=dateKey(d.getTime()),on=active.indexOf(key)>=0;if(on)count++;days.push('<div class="dz-week-day" title="'+names[d.getDay()]+' · '+(on?'نشاط مسجّل':'لا يوجد نشاط مسجّل')+'"><div class="dz-week-bar"><i class="'+(on?'is-active':'')+'"></i></div><small>'+names[d.getDay()]+'</small></div>');d.setDate(d.getDate()+1);}
+return '<section class="dz-week-activity" aria-label="نشاط التعلّم المسجّل خلال آخر سبعة أيام"><div class="dz-week-head"><b>نشاطك خلال آخر 7 أيام</b><span>'+count+' / 7 أيام نشطة</span></div><div class="dz-week-bars">'+days.join('')+'</div><p>يعرض الأيام التي سُجّل فيها إكمال حصة أو اختبار، دون تقدير دقائق غير مسجّلة.</p></section>';
+}
 function panelMarkup(s,l,badges,unlocked,id){
 var h='<section class="dz-gamification-panel" id="'+id+'"><div class="dz-gamification-head"><div><span class="dz-gamification-kicker">🏅 إنجازاتك الشخصية</span><h3>مستواك ومكافآتك</h3><p>تُحتسب النقاط عند إكمال الحصص والاختبارات فعلياً.</p></div><div class="dz-level-number"><small>المستوى</small><b>'+l.n+'</b></div></div>';
 h+='<div class="dz-xp-summary"><div><span>رصيد الخبرة</span><b>'+s.xp+' <small>XP</small></b></div><div><span>الحصص المكتملة</span><b>'+s.lessons.length+'</b></div><div><span>سلسلة المواظبة</span><b>'+streak(s)+' <small>أيام</small></b></div><div><span>الشارات المفتوحة</span><b>'+unlocked+'<small> / 20</small></b></div></div>';
 h+='<div class="dz-xp-track"><div style="width:'+l.pct+'%"></div></div><div class="dz-xp-foot"><span>'+s.xp+' XP</span><span>'+(l.n>=10?'أعلى مستوى':(l.next-s.xp)+' XP للمستوى التالي')+'</span></div>';
-h+='<div class="dz-badges-title"><b>معرض الشارات</b><span>'+unlocked+' مفتوحة · '+(20-unlocked)+' مقفلة</span></div><div class="dz-badges-grid">';
+h+=weekMarkup(s);\nh+='<div class="dz-badges-title"><b>معرض الشارات</b><span>'+unlocked+' مفتوحة · '+(20-unlocked)+' مقفلة</span></div><div class="dz-badges-grid">';
 badges.forEach(function(b){h+='<article class="dz-badge-card '+(b[4]?'is-unlocked':'is-locked')+'"><span class="dz-badge-icon">'+b[1]+'</span><b>'+esc(b[2])+'</b><small>'+esc(b[3])+'</small><em>'+(b[4]?'مفتوحة':'مقفلة')+'</em></article>';});
 return h+'</div></section>';
 }
