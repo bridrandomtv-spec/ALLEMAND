@@ -435,9 +435,11 @@ const QUIZ_BANK = [
 
   function terminer(){
     setBest('u' + filtre, score);
+    var attemptAt = Date.now();
     pushHist({ unite: filtre, score: score, total: PAR_SERIE,
                pct: Math.round(score / PAR_SERIE * 100),
-               date: new Date().toLocaleString('fr-DZ'), at: Date.now() });
+               date: new Date().toLocaleString('fr-DZ'), at: attemptAt });
+    document.dispatchEvent(new CustomEvent('dz:quiz-complete',{detail:{attemptId:String(attemptAt)+':'+filtre+':'+score,unit:filtre,score:score,total:PAR_SERIE,at:attemptAt}}));
     vue = 'resultat'; render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if(window.DZ && DZ.speak && score === serie.length) DZ.speak('Sehr gut! Perfekt!');
