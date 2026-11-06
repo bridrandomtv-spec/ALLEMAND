@@ -70,7 +70,6 @@
 
   function entete(){
     const ds = D.devoirs || [];
-    const moy = ds.reduce((a,d) => a + (d.stats.reussite_pct || 0), 0) / (ds.length || 1);
     return '<div class="card off-hero">' +
       '<div><div class="ch-badge">📄 الفروض الرسمية — ' + esc(D._meta.annee_scolaire) + '</div>' +
       '<h2>فروض واختبارات ثانويات الوطن</h2>' +
@@ -80,7 +79,6 @@
         '<span class="sec-pill or">🏫 مصادر رسمية</span>' +
         '<span class="sec-pill rg">📍 وطني</span>' +
         '<span class="sec-pill">🧮 السلّم /' + D._meta.bareme_officiel.total + '</span>' +
-        '<span class="sec-pill">📊 نسبة النجاح ' + moy.toFixed(1) + '%</span>' +
       '</div></div>' +
       '<div class="oh-bar">' +
         '<div class="oh-b"><b>I</b><span>فهم المكتوب</span><i>/8</i></div>' +
@@ -153,8 +151,6 @@
         (d.grammaire_ar ? '<span class="mchip">📘 ' + esc(d.grammaire_ar) + '</span>' : '') +
       '</div>' +
       '<div class="oc-f">' +
-        '<span class="oc-s">👁️ ' + d.stats.vues + ' · 📥 ' + d.stats.telechargements +
-          ' · 📊 ' + d.stats.reussite_pct + '%</span>' +
         (note !== null ? '<span class="oc-n ' + (note >= PRET ? 'ok' : note >= CONS ? 'mid' : 'ko') + '">' +
           note.toFixed(1) + '/20</span>'
           : (n ? '<span class="oc-n mid">' + n + ' إجابة</span>' : '')) +
