@@ -1924,6 +1924,8 @@ const lf = $('#loginForm');
   if(uc) uc.addEventListener('click', () => go('compte'));
 
   document.addEventListener('dz:auth', e => {
+    renderTabs();
+    if(e.detail && currentView === 'parents' && !isParent()) go('accueil');
     if(!e.detail){
       const sh = $('#shell'), gt = $('#gate');
       if(sh) sh.hidden = true;
