@@ -280,6 +280,24 @@ for (const route of ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malak
 }
 if (!app.includes("t[0] !== 'sponsor'")) fail('le raccourci sponsor doit rester hors du menu général');
 
+const navRoutes = ['seances','grammaire','guide','biblio','corpus','malakhiss','methode','buch','banque','cloud',
+  'revision','quiz','officiels','devoir','devoirs','simulation','examen','classe','live','rag',
+  'prof','profboard','parents','projet','reservation','abonne','compte','legal','admin'];
+const viewsBlock = app.match(/const VIEWS = \\[([^\\]]+)\\]/);
+if (!viewsBlock) fail('navigation : liste centrale des vues introuvable');
+for (const route of navRoutes) {
+  if (!viewsBlock[1].includes("'" + route + "'")) fail('navigation : destination absente de VIEWS : ' + route);
+  if (!html.includes('data-view="' + route + '"')) fail('navigation : destination sans section HTML : ' + route);
+}
+if (!app.includes("s.role === 'prof'") || !app.includes("t.splice(t.length - 1, 0, ['profboard'")) {
+  fail('navigation : accès à la لوحة الأستاذ non limité au rôle professeur');
+}
+if (!app.includes("s.role === 'admin'") || !app.includes("(t[0] !== 'admin' || isAdmin())")) {
+  fail('navigation : accès administration non limité au rôle admin');
+}
+console.log('✅ Navigation : toutes les destinations correspondent à une vue réelle ; accès professeur/admin filtrés par rôle.');
+
+
 if (!app.includes('class="mobile-nav-group"') ||
     !app.includes('class="mobile-nav-group-trigger"') ||
     !app.includes('class="mobile-nav-group-items"')) {
