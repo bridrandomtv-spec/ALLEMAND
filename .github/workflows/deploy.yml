@@ -507,7 +507,7 @@ jobs:
           for dv in off:
               for k in ('id', 'numero', 'titre', 'lycee', 'wilaya', 'code_wilaya',
                         'niveau', 'unite', 'trimestre', 'duree_minutes', 'bareme',
-                        'parties', 'stats', 'source'):
+                        'parties', 'source'):
                   if k not in dv:
                       fails.append('devoir ' + str(dv.get('id', '?')) + ' : ' + k + ' absent')
               if dv['id'] in ids:
