@@ -222,10 +222,10 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
 }
 const sw = read('sw.js');
 if (!html.includes('style-prototype-dz.css?v=146')) {
-  fail('version CSS du portail non actualisée (v145 attendue)');
+  fail('version CSS du portail non actualisée (v146 attendue)');
 }
 if (!sw.includes('style-prototype-dz.css?v=146')) {
-  fail('version CSS du précache non actualisée (v145 attendue)');
+  fail('version CSS du précache non actualisée (v146 attendue)');
 }
 if (!sw.includes("dz-de-v3.175.0.0.55") ||
     !sw.includes("style-prototype-dz.css?v=146") ||
@@ -233,7 +233,7 @@ if (!sw.includes("dz-de-v3.175.0.0.55") ||
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v145 / app 3533 / SW 3.173)');
+console.log('✅ Cache CSS v146, app.js v3535 et Service Worker v3.175 synchronisés');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -259,7 +259,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
   if (!app.includes(marker)) fail('navigation mobile compacte absente ou incomplète : ' + marker);
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
-if (!html.includes('app.js?v=3534') || !sw.includes('app.js?v=3534')) fail('cache app.js non synchronisé');
+if (!html.includes('app.js?v=3535') || !sw.includes('app.js?v=3535')) fail('cache app.js non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=146') || !sw.includes('style-prototype-dz.css?v=146')) fail('cache CSS v146 non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
