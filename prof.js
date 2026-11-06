@@ -694,7 +694,6 @@
     });
   }
 
-  document.addEventListener('dz:view', e => { if(e.detail === 'profboard') boot(); });
   window.renderProfBoard = boot;
   window.DZ_PROF = { boot:boot, render:render, toCSV:toCSV, moyenneEleve:moyenneEleve,
                      readiness:readiness, accesAutorise:accesAutorise, PRET:PRET, CONS:CONS };
