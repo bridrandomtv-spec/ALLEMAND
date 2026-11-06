@@ -222,10 +222,10 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
 }
 const sw = read('sw.js');
 if (!html.includes('style-prototype-dz.css?v=145')) {
-  fail('version CSS du portail non actualisée (v143 attendue)');
+  fail('version CSS du portail non actualisée (v145 attendue)');
 }
 if (!sw.includes('style-prototype-dz.css?v=145')) {
-  fail('version CSS du précache non actualisée (v143 attendue)');
+  fail('version CSS du précache non actualisée (v145 attendue)');
 }
 if (!sw.includes("dz-de-v3.172.0.0.55") ||
     !sw.includes("style-prototype-dz.css?v=145") ||
@@ -233,7 +233,7 @@ if (!sw.includes("dz-de-v3.172.0.0.55") ||
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v143 / app 3532 / SW 3.170)');
+console.log('✅ Cache CSS, JavaScript et Service Worker synchronisés (v145 / app 3533 / SW 3.173)');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -259,11 +259,23 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
   if (!app.includes(marker)) fail('navigation mobile compacte absente ou incomplète : ' + marker);
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
-if (!html.includes('app.js?v=3532') || !sw.includes('app.js?v=3532')) fail('cache app.js non synchronisé');
+if (!html.includes('app.js?v=3533') || !sw.includes('app.js?v=3533')) fail('cache app.js non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=145') || !sw.includes('style-prototype-dz.css?v=145')) fail('cache CSS v144 non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
 console.log('✅ Lot 99 mobile + Lot 107 desktop : navigation responsive sans sidebar');
+const navCatsMatch = app.match(/const NAVCATS = \\[([\\s\\S]*?)\\n\\];/);
+if (!navCatsMatch) fail('déclaration des espaces de navigation absente');
+const navCategoryCount = [...navCatsMatch[1].matchAll(/^\\s*\\['/gm)].length;
+if (navCategoryCount !== 6) fail('la navigation doit présenter exactement six espaces principaux');
+for (const label of ['التعلّم', 'التدريب والاختبارات', 'القسم والتواصل', 'فضاءات التأطير', 'التقدم الدراسي', 'الخدمات والحساب']) {
+  if (!navCatsMatch[1].includes(label)) fail('espace de navigation manquant : ' + label);
+}
+for (const route of ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud',
+  'revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen', 'classe', 'live', 'rag',
+  'prof', 'profboard', 'parents', 'stats', 'projet', 'reservation', 'abonne', 'sponsor', 'compte', 'legal', 'admin']) {
+  if (!navCatsMatch[1].includes("'" + route + "'")) fail('destination non classée dans la navigation : ' + route);
+}
 for (const marker of ['const NAVCATS = [','nav-group-trigger','nav-submenu','nav-subitem','<details class="nav-group']) {
   if (!app.includes(marker)) fail('menu hiérarchique desktop incomplet : ' + marker);
 }
