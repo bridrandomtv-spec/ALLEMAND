@@ -372,6 +372,7 @@ if (sw.includes('stats.js')) fail('Service Worker : module national stats encore
 if (!navCatsBlock.includes("'projet'") || navCatsBlock.includes('التقدم الدراسي')) fail('projet doit rester classé sans recréer la rubrique supprimée');
 if (css.includes('section[data-view="stats"]') || css.includes('#statsBody')) fail('CSS : styles orphelins de la vue nationale encore présents');
 if (!html.includes('id="statsHome"') || !app.includes("const el = $('#statsHome')")) fail('indicateurs personnels de l’accueil supprimés par erreur');
+if (!html.includes('id="homeGamification"') || !read('dz-gamification.js').includes("getElementById('homeGamification')")) fail('gamification réelle absente du tableau de bord élève');
 console.log('✅ Lot 119 : vue nationale supprimée, cinq espaces de navigation, progression individuelle conservée.');
 // LOT 129 — aucune statistique nationale dans les archives BAC / devoirs officiels.
 const examen = read('examen.js');
