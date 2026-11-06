@@ -268,7 +268,7 @@ for (const marker of ['const NAVCATS = [','nav-group-trigger','nav-submenu','nav
   if (!app.includes(marker)) fail('menu hiérarchique desktop incomplet : ' + marker);
 }
 if (!css.includes('LOT 111 — menu hiérarchique desktop')) fail('styles du menu hiérarchique absents');
-if (!css.includes('LOT 113 — menus déroulants au-dessus de l’ancien tiroir latéral') || !css.includes('z-index:1800!important') || !css.includes('z-index:1804!important')) fail('priorité d’empilement des sous-menus desktop absente');
+if (!css.includes('LOT 113 — menus déroulants au-dessus de l'ancien tiroir latéral') || !css.includes('z-index:1800!important') || !css.includes('z-index:1804!important')) fail('priorité d’empilement des sous-menus desktop absente');
 if (!css.includes('.nav-group:hover>.nav-submenu') ||
     !css.includes('.nav-group:focus-within>.nav-submenu')) {
   fail('ouverture des sous-menus par survol/clavier absente');
