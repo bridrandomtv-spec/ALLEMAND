@@ -16774,7 +16774,7 @@ html[data-theme="dark"] .dz-badges-title{border-color:#344a3b}
 .dz-celebrate-close{position:absolute;top:10px;inset-inline-end:12px;width:34px;height:34px;border:0;border-radius:10px;background:var(--p2,#f7faf8);font-size:21px;cursor:pointer}
 .dz-celebrate-icon{font-size:55px;line-height:1.3}.dz-celebrate-kicker{margin:9px 0 3px;color:var(--a2,#006233);font-size:10px;font-weight:950}.dz-celebrate-card h2{margin:0;font-size:22px;font-weight:950}.dz-celebrate-card p:not(.dz-celebrate-kicker){color:var(--m,#5e7164);font-size:12px;line-height:1.8}
 .dz-celebrate-ok{position:relative;z-index:2;margin-top:9px;padding:12px 21px;border:0;border-radius:12px;background:#006233;color:#fff;font-size:12px;font-weight:900;cursor:pointer}
-.dz-confetti{position:absolute;top:-15px;left:calc(5% + (var(--i) * 3.3%));width:7px;height:12px;border-radius:2px;background:var(--confetti,#d21034);animation:dz-confetti-fall 1.7s ease-in calc(var(--i)*.025s) forwards;opacity:0}
+.dz-confetti{position:absolute;top:-15px;width:7px;height:12px;border-radius:2px;background:var(--confetti,#d21034);animation:dz-confetti-fall 1.7s ease-in forwards;opacity:0}
 .dz-confetti:nth-of-type(3n){--confetti:#00843d}.dz-confetti:nth-of-type(3n + 1){--confetti:#d21034}.dz-confetti:nth-of-type(3n + 2){--confetti:#e6b94a}
 @keyframes dz-confetti-fall{0%{transform:translateY(-15px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(430px) rotate(540deg);opacity:0}}
 @media(max-width:900px){#shell #app section[data-view="masar"] #masarBody{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"hero" "gamify" "next" "chart" "progress" "units"!important}.dz-badges-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
