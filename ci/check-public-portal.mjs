@@ -227,7 +227,7 @@ if (!html.includes('style-prototype-dz.css?v=145')) {
 if (!sw.includes('style-prototype-dz.css?v=145')) {
   fail('version CSS du précache non actualisée (v145 attendue)');
 }
-if (!sw.includes("dz-de-v3.172.0.0.55") ||
+if (!sw.includes("dz-de-v3.173.0.0.55") ||
     !sw.includes("style-prototype-dz.css?v=145") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
