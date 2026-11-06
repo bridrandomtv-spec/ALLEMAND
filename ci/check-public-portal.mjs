@@ -308,4 +308,6 @@ if (app.includes("'stats'") || app.includes('التقدم الدراسي') || ap
 if (html.includes('data-view="stats"') || html.includes('stats.js')) fail('portail : vue ou module des statistiques nationales encore chargé');
 if (sw.includes('stats.js')) fail('Service Worker : module national stats encore précaché');
 if (!navCatsBlock.includes("'projet'") || navCatsBlock.includes('التقدم الدراسي')) fail('projet doit rester classé sans recréer la rubrique supprimée');
+if (css.includes('section[data-view="stats"]') || css.includes('#statsBody')) fail('CSS : styles orphelins de la vue nationale encore présents');
+if (!html.includes('id="statsHome"') || !app.includes("const el = $('#statsHome')")) fail('indicateurs personnels de l’accueil supprimés par erreur');
 console.log('✅ Lot 119 : vue nationale supprimée, cinq espaces de navigation, progression individuelle conservée.');
