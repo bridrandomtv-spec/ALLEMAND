@@ -225,18 +225,18 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
 }
 const sw = read('sw.js');
 if (!html.includes('style-prototype-dz.css?v=150')) {
-  fail('version CSS du portail non actualisée (v149 attendue)');
+  fail('version CSS du portail non actualisée (v150 attendue)');
 }
 if (!sw.includes('style-prototype-dz.css?v=150')) {
-  fail('version CSS du précache non actualisée (v149 attendue)');
+  fail('version CSS du précache non actualisée (v150 attendue)');
 }
-if (!sw.includes("dz-de-v3.177.0.0.57") ||
+if (!sw.includes("dz-de-v3.178.0.0.58") ||
     !sw.includes("style-prototype-dz.css?v=150") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS v149, app.js v3536 et Service Worker v3.177 synchronisés');
+console.log('✅ Cache CSS v150, app.js v3537 et Service Worker v3.178 synchronisés');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -263,7 +263,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
 if (!html.includes('app.js?v=3537') || !sw.includes('app.js?v=3537')) fail('cache app.js non synchronisé');
-if (!html.includes('style-prototype-dz.css?v=150') || !sw.includes('style-prototype-dz.css?v=150')) fail('cache CSS v149 non synchronisé');
+if (!html.includes('style-prototype-dz.css?v=150') || !sw.includes('style-prototype-dz.css?v=150')) fail('cache CSS v150 non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
 console.log('✅ Lot 99 mobile + Lot 107 desktop : navigation responsive sans sidebar');
