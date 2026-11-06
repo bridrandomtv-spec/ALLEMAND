@@ -38,5 +38,5 @@ assert.ok(js.includes('دون تقدير دقائق غير مسجّلة'), 'abse
 assert.match(css,/\.dz-week-activity/,'styles du graphique hebdomadaire absents');
 assert.match(html,/home-ai-card/,'carte professeur IA absente de l’accueil');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=154/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=155/,'version CSS non précachée');
 console.log('✅ XP par compte, événements vérifiés, anti-doublon, 20 badges et grilles responsive contrôlés');
