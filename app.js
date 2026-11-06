@@ -485,7 +485,7 @@ const NAVCATS = [
   ['classroom', '💬', 'القسم والتواصل', ['classe', 'live', 'rag']],
   ['support', '🤝', 'فضاءات التأطير', ['prof', 'profboard', 'parents']],
   ['progress', '📊', 'التقدم الدراسي', ['stats', 'projet']],
-  ['services', '⚙️', 'الخدمات والحساب', ['reservation', 'abonne', 'sponsor', 'compte', 'legal', 'admin']]
+  ['services', '⚙️', 'الخدمات والحساب', ['reservation', 'abonne', 'compte', 'legal', 'admin']]
 ];
 const NAVSOLO_TOP = ['accueil', 'masar'];
 /* UI-6 : le sponsoring se gère depuis #admin uniquement — retiré de la colonne de navigation ;
