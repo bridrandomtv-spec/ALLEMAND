@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.174.0.0.55';
+const VERSION = 'dz-de-v3.175.0.0.55';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -17,7 +17,7 @@ const PRECACHE = [
   './style-prototype-dz.css?v=146',
   './auth.js?v=3510',
   './bdd.js?v=3510',
-  './app.js?v=3534',
+  './app.js?v=3535',
   './js/voice-chat.js?v=1',
   './unites3as_vitrine.js?v=3510',
   './prof_core.js?v=3510',
@@ -28,7 +28,6 @@ const PRECACHE = [
   './live.js?v=3510',
   './classe.js?v=3510',
   './grammaire.js?v=3510',
-  './stats.js?v=3510',
   './quiz.js?v=3510',
   './projet.js?v=3510',
   './assets/matching_v2.patch.js?v=3510',
