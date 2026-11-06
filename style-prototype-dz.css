@@ -17052,3 +17052,37 @@ html[data-theme="dark"] section[data-view="compte"] #compteBody>#lcCard input{
 @media(prefers-reduced-motion:reduce){
   section[data-view="compte"] .dz-account-layout *{animation:none!important;transition:none!important}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   TABLEAU DE BORD ÉLÈVE — reprise fonctionnelle du prototype 2
+   Données exclusivement issues de la session et des activités réelles.
+   ═══════════════════════════════════════════════════════════════ */
+#shell #app .student-focus{display:grid;gap:13px;margin:0 0 18px;min-width:0}
+#shell #app .sf-card{padding:17px;border:1px solid var(--b);border-radius:19px;background:var(--p);box-shadow:0 7px 22px rgba(0,55,28,.055)}
+#shell #app .sf-next{background:linear-gradient(145deg,#fff 0%,#f3faf5 100%);border-color:#d7e9dc}
+html[data-theme="dark"] #shell #app .sf-next{background:linear-gradient(145deg,#172a20,#1b3025);border-color:#31523d}
+#shell #app .sf-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+#shell #app .sf-kicker{color:#087342;font-size:11px;font-weight:900}
+html[data-theme="dark"] #shell #app .sf-kicker{color:#8bd6a6}
+#shell #app .sf-count{padding:4px 9px;border-radius:99px;background:#e7f3ea;color:#075b32;font-size:11px;font-weight:900;direction:ltr}
+html[data-theme="dark"] #shell #app .sf-count{background:#244633;color:#b6ebc8}
+#shell #app .sf-card h3{margin:4px 0 6px;color:var(--t);font-size:17px;font-weight:900;line-height:1.6}
+#shell #app .sf-card p{margin:0 0 13px;color:var(--muted);font-size:12px;line-height:1.8}
+#shell #app .sf-primary{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:11px 13px;border:0;border-radius:12px;background:linear-gradient(120deg,#006233,#078447);color:#fff;font:800 12px inherit;cursor:pointer}
+#shell #app .sf-actions-title{color:var(--t);font-size:13px;font-weight:900;padding:2px 2px 0}
+#shell #app .sf-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#shell #app .sf-action{display:grid;grid-template-columns:30px minmax(0,1fr) 12px;align-items:center;gap:7px;min-width:0;padding:11px 9px;border:1px solid var(--b);border-radius:13px;background:var(--p);color:var(--t);text-align:start;cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
+#shell #app .sf-action:hover{transform:translateY(-2px);border-color:#8fc5a0;box-shadow:0 7px 17px rgba(0,75,36,.08)}
+#shell #app .sf-action span{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;background:rgba(0,132,61,.10);font-size:16px}
+#shell #app .sf-action b{font-size:11px;line-height:1.5}
+#shell #app .sf-action i{color:#0a8144;font-style:normal;font-size:13px}
+#shell #app .sf-recommendation{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:9px;padding:12px;border:1px solid #dcebe0;border-radius:15px;background:#f5faf6}
+html[data-theme="dark"] #shell #app .sf-recommendation{border-color:#34513d;background:#1c3024}
+#shell #app .sf-rec-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#e2f1e6;font-size:17px}
+html[data-theme="dark"] #shell #app .sf-rec-icon{background:#294a34}
+#shell #app .sf-recommendation b{display:block;color:var(--t);font-size:11px}
+#shell #app .sf-recommendation p{margin:2px 0 0;color:var(--muted);font-size:10px;line-height:1.6}
+#shell #app .sf-recommendation button{padding:7px 9px;border:1px solid #c8dfcf;border-radius:9px;background:#fff;color:#006233;font:800 10px inherit;white-space:nowrap;cursor:pointer}
+html[data-theme="dark"] #shell #app .sf-recommendation button{background:#243c2c;color:#b9e7c7;border-color:#41654b}
+@media(max-width:600px){#shell #app .sf-card{padding:14px}#shell #app .sf-action{padding:9px 7px}#shell #app .sf-recommendation{grid-template-columns:30px minmax(0,1fr)}#shell #app .sf-recommendation button{grid-column:2;justify-self:start}}
