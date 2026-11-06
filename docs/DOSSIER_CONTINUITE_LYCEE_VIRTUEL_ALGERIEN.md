@@ -1558,3 +1558,14 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Correction effective cette fois : assertion de `ci/check-masar.mjs` portée à `dz-de-v3.175.0.0.55`.
 - Commit : `bc380cedbe3f12d6f1498e747369a5c220fcbda9`. Le nouveau workflow doit encore confirmer le résultat.
 - Aucun fichier applicatif, aucune progression individuelle, aucune route, aucun contenu national de données et aucune configuration Auth/Supabase/RLS n'ont été modifiés dans ce correctif. PR #17 reste ouverte et non fusionnée ; `main` reste intacte.
+
+
+### Lot 121 — CI validée et audit du retrait des statistiques nationales (6 novembre 2026)
+
+- Workflow PR #17 #2205 (`42141218371`) : job « Validation structurelle & pédagogique » terminé avec succès ; les 28 étapes exécutées sont vertes, dont le contrôle du portail public et le contrôle `مسارك`.
+- La référence de cache du Service Worker dans `ci/check-masar.mjs` est désormais cohérente avec `dz-de-v3.175.0.0.55`.
+- Audit textuel ciblé de `app.js`, `public-portal.js`, `style-prototype-dz.css` et `style.css` : aucune occurrence des libellés de statistiques nationales ni de « التقدم الدراسي ». `stats.js` est retiré du chargement et du précache. Dans `index.html`, `statsHome` reste le conteneur d'indicateurs personnels de l'accueil ; `masar.js` continue de calculer la progression individuelle à partir des séances et des cartes mémoire.
+- Les fichiers de données géographiques nationaux et leurs validations restent présents : ils ne sont pas supprimés à l'aveugle, car le dépôt les utilise encore dans des validations et contenus pédagogiques. Leur conservation ne réintroduit pas la vue nationale dans la navigation ou le portail.
+- Point important de publication : inspection de `.github/workflows/deploy.yml` sur la branche : le workflow ne déclare qu'un job `validate`. Il n'existe pas de job de déploiement Cloudflare dans ce fichier. Le texte informatif qui évoque un build automatique Cloudflare n'est pas une étape de déploiement. Par conséquent, le succès CI ne signifie pas que le site public a été publié.
+- PR #17 : ouverte, non fusionnée, mergeable ; base `main` ; dernier HEAD `f425b13b5371559a020206065f9d849f3ce831d4`. Aucune modification directe de `main`, aucune fusion et aucune publication ne sont effectuées dans ce lot.
+- Validation visuelle navigateur desktop/mobile et validation du site public restent à réaliser après publication autorisée.
