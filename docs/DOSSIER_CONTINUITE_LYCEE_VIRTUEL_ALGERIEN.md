@@ -1527,3 +1527,10 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Cache app.js : v3535 ; Service Worker : dz-de-v3.175.0.0.55. Le CSS n'a pas été modifié.
 - Garde CI ajoutée : absence de l'ancienne route, de la vue HTML et du module précaché ; cinq espaces de navigation attendus.
 - PR #17 reste ouverte et non fusionnée ; main n'est pas modifiée. Le workflow et le rendu visuel du portail restent à valider après ce lot.
+
+
+### Complément Lot 119 — retrait de l'ancienne exigence CI
+
+- Le premier run après suppression du module a échoué dès le contrôle des fichiers requis, car .github/workflows/deploy.yml listait encore stats.js comme fichier obligatoire et comme fichier à analyser par Esprima.
+- Cette référence obsolète a été retirée du workflow ; le module stats.js n'est plus livré ni attendu par la CI. Les contrôles des données documentaires/géographiques restent en place, sans charger l'ancienne interface nationale.
+- Un nouveau run sur le HEAD corrigé doit confirmer l'ensemble des contrôles.
