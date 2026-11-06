@@ -6,6 +6,8 @@ const read = p => readFileSync(p, 'utf8');
 const catalog = JSON.parse(read('assets/bdd/matieres.json'));
 const statuses = JSON.parse(read('assets/bdd/subjects.json'));
 const auth = read('auth.js');
+const admin = read('admin.js');
+const prof = read('prof.js');
 const portal = read('public-portal.js');
 const app = read('app.js');
 const html = read('index.html');
@@ -292,12 +294,23 @@ for (const route of navRoutes) {
   if (!html.includes('data-view="' + route + '"')) fail('navigation : destination sans section HTML : ' + route);
 }
 if (!app.includes("s.role === 'prof'") || !app.includes("t.splice(t.length - 1, 0, ['profboard'")) {
-  fail('navigation : accès à la لوحة الأستاذ non limité au rôle professeur');
+  fail('navigation : entrée لوحة الأستاذ non réservée au rôle professeur');
 }
 if (!app.includes("s.role === 'admin'") || !app.includes("(t[0] !== 'admin' || isAdmin())")) {
-  fail('navigation : accès administration non limité au rôle admin');
+  fail('navigation : entrée administration non filtrée par rôle admin');
 }
-console.log('✅ Navigation : toutes les destinations correspondent à une vue réelle ; accès professeur/admin filtrés par rôle.');
+/* Les protections doivent aussi tenir lors d'un accès direct à la vue, sans passer par le menu. */
+if (!prof.includes('if(!accesAutorise())') ||
+    !prof.includes("return !!(s && s.role === 'prof')") ||
+    !prof.includes("e.detail === 'profboard'")) {
+  fail('sécurité vue professeur : contrôle de session/rôle absent au rendu direct');
+}
+if (!admin.includes('const u = await window.SB.me();') ||
+    !admin.includes("p.role !== 'admin'") ||
+    !admin.includes("e.detail === 'admin'")) {
+  fail('sécurité vue administration : vérification du profil Supabase absente au rendu direct');
+}
+console.log('✅ Navigation : destinations réelles ; menu et rendu direct professeur/admin protégés par rôle.');
 
 
 if (!app.includes('class="mobile-nav-group"') ||
