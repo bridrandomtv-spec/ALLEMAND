@@ -230,7 +230,7 @@ if (!html.includes('style-prototype-dz.css?v=151')) {
 if (!sw.includes('style-prototype-dz.css?v=151')) {
   fail('version CSS du précache non actualisée (v151 attendue)');
 }
-if (!sw.includes("dz-de-v3.179.0.0.58") ||
+if (!sw.includes("dz-de-v3.179.0.0.59") ||
     !sw.includes("style-prototype-dz.css?v=151") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
