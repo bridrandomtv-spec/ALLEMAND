@@ -1569,3 +1569,11 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Point important de publication : inspection de `.github/workflows/deploy.yml` sur la branche : le workflow ne déclare qu'un job `validate`. Il n'existe pas de job de déploiement Cloudflare dans ce fichier. Le texte informatif qui évoque un build automatique Cloudflare n'est pas une étape de déploiement. Par conséquent, le succès CI ne signifie pas que le site public a été publié.
 - PR #17 : ouverte, non fusionnée, mergeable ; base `main` ; dernier HEAD `f425b13b5371559a020206065f9d849f3ce831d4`. Aucune modification directe de `main`, aucune fusion et aucune publication ne sont effectuées dans ce lot.
 - Validation visuelle navigateur desktop/mobile et validation du site public restent à réaliser après publication autorisée.
+
+## Lot 122 — fiabilisation du contrôle T1 du workflow (6 novembre 2026)
+
+- Audit du contrôle T1 dans `.github/workflows/deploy.yml` : l'ancien test cherchait les chaînes `actions/checkout@v4`, `actions/deploy-pages@v4` et `github-pages` dans le fichier workflow lui-même. Ces chaînes étaient présentes dans le script de test embarqué, ce qui rendait le contrôle auto-référentiel et ne prouvait pas l'existence d'une publication.
+- Correction sur la branche `design/prototypes-67-74-alignment`, commit `470ceb356ab9ff78470f16a5a36fd0c67132e842` : T1 contrôle maintenant la présence du job `validate`, les actions réellement utilisées `actions/checkout@v5` et `actions/setup-python@v6`, et l'absence d'un job `deploy`. Le libellé indique explicitement que ce contrôle valide la CI et ne revendique pas un déploiement.
+- Aucun job Cloudflare/Wrangler n'a été ajouté : aucun mécanisme de déploiement autorisé/configuré n'a été établi par les éléments consultés. Le message informatif du workflow sur OAuth Cloudflare ne constitue pas une preuve de publication.
+- Cette correction ne modifie ni `main`, ni Auth/Supabase/RLS, ni les données pédagogiques. PR #17 reste ouverte et non fusionnée.
+- CI du commit de correction : à vérifier après déclenchement. Aucune validation visuelle du portail public n'est revendiquée.
