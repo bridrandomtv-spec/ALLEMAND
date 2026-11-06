@@ -44,7 +44,7 @@
               duree_minutes: (b.duree_minutes || 180), bareme: (b.bareme || 20),
               coefficient: (b.niveau === '3AS' ? 3 : 2), grammaire: (b.tags || []).join(', '),
               niveau_cefr: 'B1', parties: [], corrige: b.corrige, corrige_inclus: true,
-              stats: null, source: b.source, officiel: true, tags: b.tags,
+              source: b.source, officiel: true, tags: b.tags,
               _lecture: true, _full: b.sujet }); });
             if(D._meta) D._meta.nombre_sujets = D.sujets.length;
           }
@@ -142,8 +142,7 @@
       h += '<button class="annee" data-annee="' + a.annee + '">' +
         '<div class="an-y de-display">' + a.annee + '</div>' +
         '<div class="an-l">BAC ' + a.annee + '</div>' +
-        '<div class="an-m">' + a.sujets + ' مواضيع · ' + a.candidats.toLocaleString('fr-FR') + ' مترشّح</div>' +
-        '<div class="an-s">📊 ' + a.moyenne + '/20 · ✅ ' + a.taux + '%</div>' +
+        '<div class="an-m">' + a.sujets + ' مواضيع متاحة</div>' +
         (faits.length ? '<div class="an-b ' + r.c + '">' + faits.length + '/' + sj.length +
           ' منجزة · أفضل ' + best.toFixed(1) + '</div>'
           : '<div class="an-b nn">لم تُنجز بعد</div>') +
