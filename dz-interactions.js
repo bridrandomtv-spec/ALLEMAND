@@ -11,6 +11,7 @@ function storageKey(){var a=account();return a?'dz_de_notifications_v1:'+a:null;
 function read(){var k=storageKey();if(!k)return [];try{var a=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}}
 function write(a){var k=storageKey();if(k)try{localStorage.setItem(k,JSON.stringify(a.slice(0,60)));}catch(e){}}
 function clean(v){var d=document.createElement('div');d.innerHTML=String(v||'');return String(d.textContent||'').replace(/\s+/g,' ').trim().slice(0,240);}
+function cleanLong(v){return String(v||'').replace(/\\s+/g,' ').trim().slice(0,12000);}
 function kind(t){t=String(t||'').toLowerCase();return /ko|error|danger/.test(t)?'error':/warn|attention/.test(t)?'warning':/ok|success|valid/.test(t)?'success':'info';}
 function recordToast(msg,type){var m=clean(msg),now=Date.now();if(!account()||!m||(m===lastMsg&&now-lastAt<3500))return;lastMsg=m;lastAt=now;var a=read();a.unshift({id:String(now)+'-'+Math.random().toString(36).slice(2,6),message:m,type:kind(type),at:now,read:false});write(a);renderBell();}
 function due(){try{var a=window.MEMOIRE&&MEMOIRE.dues?MEMOIRE.dues():[];return Array.isArray(a)?a.length:0;}catch(e){return 0;}}
