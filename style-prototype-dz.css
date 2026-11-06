@@ -16696,3 +16696,21 @@ html[data-theme="dark"] #gate .auth-recovery-status.is-success{
   #shell #tabs .nav-group[open]{position:relative!important;z-index:1803!important}
   #shell #tabs .nav-submenu{z-index:1804!important}
 }
+
+
+/* LOT 116 — empêcher le découpage vertical des sous-menus desktop.
+   Le thème clair V8.5 fixe overflow-x:auto sur #tabs ; avec overflow-y:visible,
+   CSS calcule aussi l'axe vertical en auto et coupe les menus positionnés.
+   Les deux axes doivent rester visibles sur desktop pour laisser sortir les sous-menus. */
+@media (min-width:901px){
+  html[data-theme="light"] #shell .topbar #tabs.tabs,
+  html[data-theme="dark"] #shell .topbar #tabs.tabs,
+  #shell .topbar #tabs.tabs{
+    overflow-x:visible!important;
+    overflow-y:visible!important;
+  }
+  #shell .topbar,
+  #shell .topbar-in{
+    overflow:visible!important;
+  }
+}
