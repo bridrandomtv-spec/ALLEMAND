@@ -487,5 +487,5 @@ const QUIZ_BANK = [
   render = function(){ _render0(); const bx = document.getElementById('quizBody'); if(bx) brancher(bx); };
   window.renderQuiz = render;
   window.DZ_QUIZ = { render:render, bank:QUIZ_BANK, nouvelleSerie:nouvelleSerie,
-                     PAR_SERIE:PAR_SERIE, best:best, hist:hist };
+                     PAR_SERIE:PAR_SERIE, best:best, hist:hist, selectUnit:function(n){ filtre=+n||0; vue='accueil'; render(); } };
 })();
