@@ -262,7 +262,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
   if (!app.includes(marker)) fail('navigation mobile compacte absente ou incomplète : ' + marker);
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
-if (!html.includes('app.js?v=3537') || !sw.includes('app.js?v=3537')) fail('cache app.js non synchronisé');
+if (!html.includes('app.js?v=3538') || !sw.includes('app.js?v=3538')) fail('cache app.js non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=152') || !sw.includes('style-prototype-dz.css?v=152')) fail('cache CSS v152 non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
