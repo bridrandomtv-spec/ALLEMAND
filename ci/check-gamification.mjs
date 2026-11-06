@@ -19,6 +19,11 @@ assert.match(js,/function award\(id,xp,kind,detail\)/,'récompense événementie
 assert.match(js,/s\.events\.indexOf\(id\)>=0/,'protection contre les doubles récompenses absente');
 assert.match(js,/showCelebration/,'modal de niveau ou badge absent');
 assert.match(html,/id="homeGamification"/,'zone XP absente de l’accueil élève');
+const homeOrder=['id="welcomeBox"','id="statsHome"','id="homeGamification"','id="subjHome"','id="todayBody"','id="apercuBody"'];
+const homeStart=html.indexOf('<div class="home-main">');
+const homePositions=homeOrder.map(token=>html.indexOf(token,homeStart));
+assert.ok(homeStart>=0 && homePositions.every((p,i)=>p>homeStart && (i===0 || p>homePositions[i-1])), 'ordre DOM de l’accueil élève différent du prototype');
+assert.ok(html.indexOf('home-ai-card')<html.indexOf('<div class="home-main">'), 'carte professeur IA absente de la colonne latérale');
 assert.match(js,/getElementById\('homeGamification'\)/,'XP non intégré à l’accueil élève');
 assert.match(js,/dzGamificationPanelMasar/,'panneau de progression historique absent');
 assert.match(js,/dzGamificationPanelHome/,'panneau XP de l’accueil absent');
