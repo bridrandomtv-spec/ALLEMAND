@@ -1586,3 +1586,12 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Aucun job de déploiement Cloudflare n'a été ajouté ni revendiqué. Aucun changement sur `main`, Auth, Supabase, RLS, schéma ou paiements.
 - Commit correctif workflow : 68af3bc7cd2be73c33969c6b1f74209d4f38c853. Nouvelle exécution CI à attendre avant de conclure.
 - La PR #17 reste ouverte et non fusionnée. Aucune validation visuelle réelle ordinateur/mobile ni publication Cloudflare n'est revendiquée.
+
+
+## Lot 124 — suppression des blocs dupliqués après Information (6 novembre 2026)
+- CI #2210 (run 42142065788) : la suite T1-T6 passe bien à 6/6 après la correction du lot 123.
+- Le job échouait ensuite dans l'étape « Information » : le workflow contenait quatre occurrences de plusieurs blocs de validation après la première étape Information. Du code Python résiduel était ainsi interprété par Bash, d'où `syntax error near unexpected token ')'`.
+- Nettoyage limité à `.github/workflows/deploy.yml` : conservation de la séquence unique des validations et du seul bloc Information, suppression du contenu dupliqué situé après celui-ci. Le workflow passe de 1931 lignes avant nettoyage à 1204 lignes après la correction T1 et le nettoyage dupliqué.
+- Aucun test pédagogique, fichier applicatif, contenu de cours, Auth, Supabase, RLS, schéma ou paiement n'a été modifié dans ce lot. Aucun job Cloudflare n'a été ajouté ; le texte Information n'est pas une preuve de déploiement.
+- Commit de nettoyage workflow : 1e9defc4689a0b85d508f82079b5c124151af103. Le présent dossier doit être validé par une nouvelle CI.
+- PR #17 reste ouverte et non fusionnée ; aucune publication Cloudflare ni validation visuelle ordinateur/mobile n'est revendiquée.
