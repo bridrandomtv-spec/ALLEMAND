@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
-</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=153">
+</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=154">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -338,7 +338,16 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
     <!-- ACCUEIL -->
     <section data-view="accueil" class="view">
             <div id="accueilMemo"></div>
-  <div class="home-grid"><aside class="home-side" id="homeSide">
+    <div class="home-grid"><aside class="home-side" id="homeSide">
+    <section class="home-ai-card" aria-labelledby="homeAiTitle">
+      <div class="home-ai-top">
+        <span class="home-ai-icon" aria-hidden="true">🎙️</span>
+        <div><h2 id="homeAiTitle">الأستاذ الذكي</h2><p>مرافقة تعليمية بالصوت والنص</p></div>
+      </div>
+      <div class="home-ai-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <p class="home-ai-copy">اطرح سؤالك حول الدرس، أو اطلب شرحاً وأمثلة إضافية.</p>
+      <button type="button" data-go="prof">ابدأ المحادثة <span aria-hidden="true">←</span></button>
+    </section>
     <div class="panel" id="panelProgress" hidden></div>
     <div class="panel" id="panelQuick" hidden><div class="panel-h">⚡ أقسام سريعة</div><div id="quickBody"></div></div>
     <div class="panel" id="panelToday" hidden></div>
