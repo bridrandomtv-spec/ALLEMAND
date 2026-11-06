@@ -19,7 +19,7 @@ assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
 assert.match(html, /style-prototype-dz\.css\?v=149/, 'cache CSS v149 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.175\.0\.0\.55/, 'version service worker v3.177 non actualisée');
+assert.match(sw, /dz-de-v3\.177\.0\.0\.57/, 'version service worker v3.177 non actualisée');
 assert.match(sw, /style-prototype-dz\.css\?v=149/, 'précache CSS v149 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
