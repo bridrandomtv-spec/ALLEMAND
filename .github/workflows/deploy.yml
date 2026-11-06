@@ -595,7 +595,7 @@ jobs:
               print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
           PY
 
-      - name: Valider la géographie nationale (wilayas_geo.json)
+      - name: Valider le référentiel géographique des wilayas
         run: |
           python - <<'PY'
           import json, sys
