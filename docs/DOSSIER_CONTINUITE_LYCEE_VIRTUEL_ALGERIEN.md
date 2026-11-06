@@ -1489,3 +1489,10 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Garde CI ajoutée : exactement six catégories, présence des six intitulés et vérification que chaque ancienne destination reste classée. La vérification existante des sous-menus, du clavier, du survol et du débordement Lot 116 est conservée.
 - Aucun changement de CSS, de DOM des vues, d'authentification, de rôles, de Supabase, RLS, schéma, migration, abonnement/paiement ou données. PR #17 reste ouverte et non fusionnée ; main n'est pas modifiée.
 - Validation restante : attendre le résultat du workflow GitHub déclenché par le dernier commit, puis vérifier le rendu sur l'aperçu Cloudflare correspondant au nouveau HEAD. La simplification du code est committée ; elle n'est pas encore déclarée visuellement validée par l'utilisateur.
+
+
+### Complément Lot 117 — raccourci de sponsoring retiré du menu général
+
+- Vérification du commentaire historique UI-6 : la gestion du sponsoring doit être accessible depuis l'administration, et non comme rubrique générale de navigation.
+- Le filtre de navigation exclut désormais la destination sponsor du rendu desktop et du panneau mobile « المزيد ». La vue et sa route ne sont pas supprimées ; les accès directs déjà utilisés restent possibles.
+- Le contrôle CI vérifie que cette destination ne réapparaît pas dans le menu général. Aucun changement au contrôle d'accès administratif ni au module de sponsoring.
