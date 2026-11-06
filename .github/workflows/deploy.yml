@@ -38,7 +38,7 @@ jobs:
           for f in index.html style.css auth.js bdd.js unite2.js unite3.js unite4.js \
                    unite5.js unite6.js unites3as_a.js unite10.js unite11.js unite12.js \
                    unite13.js unite14.js unite15.js unite16.js app.js modules.js live.js \
-                   classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
+                   classe.js grammaire.js examen.js officiels.js quiz.js projet.js \
                    reservation.js journee.js prof.js parents.js library.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
                    ci/check-unites.mjs ci/check-public-portal.mjs ci/check-masar.mjs matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js voix.js tour.js public-portal.js; do
@@ -1088,7 +1088,7 @@ jobs:
                       'unite11.js', 'unite12.js', 'unite13.js', 'unite14.js',
                       'unite15.js', 'unite16.js', 'app.js', 'public-portal.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
-                      'stats.js', 'quiz.js', 'projet.js', 'reservation.js', 'journee.js', 'masar.js',
+                      'quiz.js', 'projet.js', 'reservation.js', 'journee.js', 'masar.js',
                       'prof.js', 'parents.js', 'library.js', 'banque.js', 'malakhiss.js', 'sw.js', 'assets/matching_v2.patch.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
