@@ -16840,3 +16840,44 @@ html[data-theme="dark"] .dz-badges-title{border-color:#344a3b}
   #shell #app [data-view="prof"] .dz-ai-wave i{animation:none;transform:scaleY(.7)}
   #shell #app [data-view="prof"] .dz-ai-mic.is-listening{animation:none}
 }
+
+
+/* LOT 160 — composition du tableau de bord élève : prototype unifié
+   Accueil personnalisé → indicateurs réels → XP → matières → séances.
+   Le panneau IA ouvre le moteur vocal existant, sans faux état connecté.
+*/
+#shell #app section[data-view="accueil"] .home-main>.welcome{order:0!important}
+#shell #app section[data-view="accueil"] .home-main>#statsHome{order:1!important}
+#shell #app section[data-view="accueil"] .home-main>#homeGamification{order:2!important;margin:0!important}
+#shell #app section[data-view="accueil"] .home-main>#subjHome{order:3!important}
+#shell #app section[data-view="accueil"] .home-main>#todayBody{order:4!important}
+#shell #app section[data-view="accueil"] .home-main>#apercuBody{order:5!important}
+#shell #app section[data-view="accueil"] .home-main>.welcome-art{display:none!important}
+#shell #app section[data-view="accueil"] .home-side{gap:15px!important}
+.home-ai-card{
+  position:relative;isolation:isolate;overflow:hidden;padding:19px!important;
+  border:1px solid rgba(210,16,52,.22)!important;border-radius:20px!important;
+  background:linear-gradient(145deg,#c91e3c 0%,#a60d2a 100%)!important;
+  color:#fff!important;box-shadow:0 12px 28px rgba(166,13,42,.16)!important;
+}
+.home-ai-card:after{content:"";position:absolute;z-index:-1;width:180px;height:180px;left:-75px;top:-95px;border-radius:50%;background:rgba(255,255,255,.09)}
+.home-ai-top{display:flex;align-items:center;gap:12px}
+.home-ai-icon{width:45px;height:45px;flex:0 0 45px;display:grid;place-items:center;border-radius:14px;background:rgba(255,255,255,.17);font-size:23px}
+.home-ai-top h2{margin:0;color:#fff!important;font-size:16px;font-weight:950}
+.home-ai-top p{margin:3px 0 0;color:#ffe4e8!important;font-size:10px;line-height:1.6}
+.home-ai-wave{height:48px;display:flex;align-items:center;justify-content:center;gap:5px;margin:17px 0 10px;padding:0 15px;border:1px solid rgba(255,255,255,.18);border-radius:13px;background:rgba(255,255,255,.09)}
+.home-ai-wave i{display:block;width:4px;height:var(--home-wave,18px);border-radius:99px;background:linear-gradient(180deg,#fff,#ffc4cf);transform-origin:center;animation:homeAiWave 1.15s ease-in-out infinite}
+.home-ai-wave i:nth-child(3n){animation-delay:.18s}.home-ai-wave i:nth-child(3n + 1){animation-delay:.36s}
+@keyframes homeAiWave{0%,100%{transform:scaleY(.55);opacity:.72}50%{transform:scaleY(1);opacity:1}}
+.home-ai-wave i:nth-child(1){--home-wave:13px}.home-ai-wave i:nth-child(2){--home-wave:25px}.home-ai-wave i:nth-child(3){--home-wave:34px}.home-ai-wave i:nth-child(4){--home-wave:20px}.home-ai-wave i:nth-child(5){--home-wave:39px}.home-ai-wave i:nth-child(6){--home-wave:26px}.home-ai-wave i:nth-child(7){--home-wave:16px}.home-ai-wave i:nth-child(8){--home-wave:35px}.home-ai-wave i:nth-child(9){--home-wave:23px}.home-ai-wave i:nth-child(10){--home-wave:31px}.home-ai-wave i:nth-child(11){--home-wave:14px}
+.home-ai-copy{margin:0 0 14px!important;color:#fff!important;font-size:11px!important;line-height:1.85!important}
+.home-ai-card>button{width:100%;min-height:43px;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 14px;border:0;border-radius:12px;background:#fff;color:#a60d2a;font:inherit;font-size:12px;font-weight:950;cursor:pointer;transition:transform .16s,background .16s}
+.home-ai-card>button:hover{transform:translateY(-2px);background:#fff4f6}
+.home-ai-card>button span{font-size:16px}
+html[data-theme="dark"] .home-ai-card{border-color:rgba(255,150,170,.22)!important;background:linear-gradient(145deg,#8f1730,#681024)!important}
+@media(max-width:900px){#shell #app section[data-view="accueil"] .home-main>#homeGamification{order:2!important}}
+@media(max-width:600px){
+  .home-ai-card{padding:16px!important;border-radius:17px!important}
+  .home-ai-wave{margin:13px 0 9px}
+}
+@media(prefers-reduced-motion:reduce){.home-ai-wave i{animation:none!important}.home-ai-card>button{transition:none!important}}
