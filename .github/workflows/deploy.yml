@@ -39,7 +39,7 @@ jobs:
                    classe.js grammaire.js examen.js officiels.js quiz.js projet.js \
                    reservation.js journee.js prof.js parents.js library.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
-                   ci/check-unites.mjs ci/check-public-portal.mjs ci/check-masar.mjs ci/check-interactions.mjs dz-interactions.js matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js voix.js tour.js public-portal.js; do
+                   ci/check-unites.mjs ci/check-public-portal.mjs ci/check-masar.mjs ci/check-interactions.mjs ci/check-gamification.mjs dz-interactions.js dz-gamification.js matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js voix.js tour.js public-portal.js; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -1090,11 +1090,11 @@ jobs:
                       'unite15.js', 'unite16.js', 'app.js', 'public-portal.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
                       'quiz.js', 'projet.js', 'reservation.js', 'journee.js', 'masar.js',
-                      'prof.js', 'parents.js', 'library.js', 'banque.js', 'malakhiss.js', 'sw.js', 'dz-interactions.js', 'assets/matching_v2.patch.js')
+                      'prof.js', 'parents.js', 'library.js', 'banque.js', 'malakhiss.js', 'sw.js', 'dz-interactions.js', 'dz-gamification.js', 'assets/matching_v2.patch.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/36 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/37 fichiers JS valides')
           PY
 
       - name: Valider la messagerie EduDZ (schéma RLS + client + vue)
@@ -1117,6 +1117,9 @@ jobs:
         run: node ci/check-masar.mjs
       - name: Vérifier recherche globale et centre de notifications
         run: node ci/check-interactions.mjs
+
+      - name: Vérifier XP et badges fondés sur les activités réelles
+        run: node ci/check-gamification.mjs
 
       - name: Garde d'accès + TEST DE FUITE (access.js / config)
         run: |
