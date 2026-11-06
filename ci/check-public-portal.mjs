@@ -316,6 +316,15 @@ const examen = read('examen.js');
 const officiels = read('officiels.js');
 const bacArchive = JSON.parse(read('assets/bdd/bac_archive.json'));
 const devoirsOfficiels = JSON.parse(read('assets/bdd/devoirs_officiels.json'));
+const annales = JSON.parse(read('assets/bdd/annales.json'));
+const compositions = JSON.parse(read('assets/bdd/compositions.json'));
+const aggregateKeys = ['note_moyenne','vues','telechargements','candidats','moyenne_nationale','taux_reussite'];
+for (const [label, data, expected] of [['annales', annales, 126], ['compositions', compositions, 171]]) {
+  const items = data.items || [];
+  if (items.length !== expected) fail(label + ' : nombre de sujets inattendu (' + items.length + ')');
+  if (items.some(item => aggregateKeys.some(key => key in item))) fail(label + ' : statistiques agrégées encore présentes');
+  if (items.some(item => !item.titre || !item.sujet || !item.corrige)) fail(label + ' : contenu pédagogique incomplet');
+}
 const bacSubjects = JSON.parse(read('assets/bdd/bac.json'));
 if ((bacSubjects.items || []).some(s => ['note_moyenne','vues','telechargements','candidats','moyenne_nationale','taux_reussite'].some(k => k in s))) fail('BAC : compteurs et statistiques agrégées encore présents dans bac.json');
 if (!(bacSubjects.items || []).length || (bacSubjects.items || []).some(s => !s.sujet || !s.corrige)) fail('BAC : sujets ou corrigés manquants après retrait des statistiques');
