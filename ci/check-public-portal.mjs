@@ -326,7 +326,7 @@ if (!app.includes("document.addEventListener('dz:auth', e => {") ||
   fail('espace parents : navigation non actualisée après changement de session ou de rôle');
 }
 if (!parents.includes("if(!s || s.role !== 'parent')") ||
-    !parents.includes("فضاء الأولياء فقط")) {
+    !parents.includes("هذا الفضاء مخصّص لحسابات الأولياء فقط")) {
   fail('espace parents : fonction boot accessible sans contrôle de rôle indépendant');
 }
 if (!parents.includes('بيانات تجريبية توضيحية — لا تمثل نتائج تلميذ حقيقي') ||
