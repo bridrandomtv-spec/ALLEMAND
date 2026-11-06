@@ -3198,7 +3198,7 @@ html[data-theme="light"] code{background:rgba(17,28,46,.06)}
    1) focus-visible global (33 entrées de nav + widgets + champs) ;
    2) media reduced-motion global (animations et transitions coupées) ;
    3) contrastes WCAG AA en thème clair (pill active, badge cloche, bouton du jour)
-      + remappage des hex SVG de stats.js (fonds sombres → clairs, accents → foncés,
+      + remappage des couleurs SVG de l’interface (fonds sombres → clairs, accents → foncés,
       textes → #334155) ; ratios vérifiés : texte ≥ 4.5:1, graphique ≥ 3:1 ;
    4) bornes responsive ajoutées : ≤400 px compact · ≥1440 px contenu élargi. */
 :focus-visible{outline:2px solid var(--vert2);outline-offset:2px}
