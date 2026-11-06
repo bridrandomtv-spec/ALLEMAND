@@ -16779,3 +16779,64 @@ html[data-theme="dark"] .dz-badges-title{border-color:#344a3b}
 @keyframes dz-confetti-fall{0%{transform:translateY(-15px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(430px) rotate(540deg);opacity:0}}
 @media(max-width:900px){#shell #app section[data-view="masar"] #masarBody{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"hero" "gamify" "next" "chart" "progress" "units"!important}.dz-badges-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:600px){.dz-gamification-panel{padding:15px;border-radius:17px}.dz-gamification-head h3{font-size:17px}.dz-level-number{width:54px;height:54px;flex-basis:54px}.dz-badges-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dz-badge-card{min-height:115px}.dz-xp-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.dz-xp-summary b{font-size:17px}.dz-celebrate-card{padding:30px 18px 22px}}
+
+
+/* LOT 159 — assistant vocal : scène dédiée inspirée du prototype, moteur conservé */
+#shell #app [data-view="prof"] .dz-ai-voice-stage{
+  display:grid;grid-template-columns:minmax(0,1fr) 82px;align-items:center;gap:12px;
+  margin:0 0 15px;padding:17px 18px;border:1px solid var(--b,#dce8df);
+  border-radius:18px;background:
+    radial-gradient(circle at 8% 18%,rgba(0,132,61,.09),transparent 45%),
+    radial-gradient(circle at 92% 85%,rgba(210,16,52,.065),transparent 40%),
+    var(--p,#fff);
+}
+#shell #app [data-view="prof"] .dz-ai-voice-content{min-width:0}
+#shell #app [data-view="prof"] .dz-ai-voice-heading{display:grid;gap:3px;margin-bottom:12px}
+#shell #app [data-view="prof"] .dz-ai-voice-heading b{color:var(--t,#17251c);font-size:14px;font-weight:950}
+#shell #app [data-view="prof"] .dz-ai-voice-heading small{color:var(--m,#5e7164);font-size:11px;line-height:1.7}
+#shell #app [data-view="prof"] .dz-ai-wave{
+  height:43px;display:flex;align-items:center;justify-content:center;gap:5px;
+  padding:0 12px;border-radius:13px;background:rgba(0,132,61,.055);
+}
+#shell #app [data-view="prof"] .dz-ai-wave i{
+  display:block;width:4px;height:var(--wave-height,22px);border-radius:99px;
+  background:linear-gradient(180deg,var(--vert2,#00843d),var(--rouge,#d21034));
+  transform-origin:center;animation:dzAiWave 1.15s ease-in-out infinite;
+}
+#shell #app [data-view="prof"] .dz-ai-wave i:nth-child(3n){animation-delay:.18s}
+#shell #app [data-view="prof"] .dz-ai-wave i:nth-child(3n + 1){animation-delay:.36s}
+#shell #app [data-view="prof"] .dz-ai-mic{
+  width:76px;height:76px;min-width:76px;display:grid;place-items:center;
+  border:0;border-radius:50%;background:linear-gradient(145deg,#d21034,#a60d2a);
+  color:#fff;font-size:28px;box-shadow:0 10px 24px rgba(210,16,52,.22);
+  cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,opacity .18s ease;
+}
+#shell #app [data-view="prof"] .dz-ai-mic:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(210,16,52,.28)}
+#shell #app [data-view="prof"] .dz-ai-mic:focus-visible{outline:3px solid rgba(0,132,61,.3);outline-offset:4px}
+#shell #app [data-view="prof"] .dz-ai-mic.is-listening{
+  background:linear-gradient(145deg,#a60d2a,#d21034);
+  animation:dzAiMicPulse 1.25s ease-out infinite;
+}
+#shell #app [data-view="prof"] .dz-ai-mic:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;animation:none}
+#shell #app [data-view="prof"] .dz-ai-voice-stage .chat-voice-tools{
+  grid-column:1/-1;display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  padding:10px 0 0;border-top:1px solid var(--b,#dce8df);
+}
+#shell #app [data-view="prof"] .dz-ai-voice-stage .chat-voice-tools select{
+  min-height:38px;max-width:210px;border-radius:10px;background:var(--p2,#f7faf8);
+  color:var(--t,#17251c);border:1px solid var(--b,#dce8df);font:inherit;padding:5px 10px;
+}
+#shell #app [data-view="prof"] .dz-ai-voice-stage .chat-voice-status{flex:1;min-width:180px;color:var(--m,#5e7164);font-size:11px;line-height:1.7}
+@keyframes dzAiWave{0%,100%{transform:scaleY(.42);opacity:.68}50%{transform:scaleY(1);opacity:1}}
+@keyframes dzAiMicPulse{0%{box-shadow:0 0 0 0 rgba(210,16,52,.32)}70%{box-shadow:0 0 0 17px rgba(210,16,52,0)}100%{box-shadow:0 0 0 0 rgba(210,16,52,0)}}
+@media(max-width:600px){
+  #shell #app [data-view="prof"] .dz-ai-voice-stage{grid-template-columns:minmax(0,1fr) 62px;gap:9px;padding:13px;border-radius:15px}
+  #shell #app [data-view="prof"] .dz-ai-mic{width:60px;height:60px;min-width:60px;font-size:23px}
+  #shell #app [data-view="prof"] .dz-ai-wave{height:37px;gap:4px;padding-inline:6px}
+  #shell #app [data-view="prof"] .dz-ai-voice-stage .chat-voice-tools{align-items:flex-start}
+  #shell #app [data-view="prof"] .dz-ai-voice-stage .chat-voice-status{flex-basis:100%;min-width:0}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="prof"] .dz-ai-wave i{animation:none;transform:scaleY(.7)}
+  #shell #app [data-view="prof"] .dz-ai-mic.is-listening{animation:none}
+}
