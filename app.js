@@ -495,7 +495,7 @@ const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
-  const visible = tabs.filter(t => t[0] !== 'msg' && (t[0] !== 'admin' || isAdmin()));
+  const visible = tabs.filter(t => t[0] !== 'msg' && t[0] !== 'sponsor' && (t[0] !== 'admin' || isAdmin()));
   const byId = new Map(visible.map(t => [t[0], t]));
   const used = new Set(['accueil', 'masar', 'matieres', 'english']);
   let desktop = '';
