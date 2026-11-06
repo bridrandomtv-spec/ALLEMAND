@@ -16901,3 +16901,154 @@ html[data-theme="dark"] .home-ai-card{border-color:rgba(255,150,170,.22)!importa
 html[data-theme="dark"] .dz-week-activity{background:#122017;border-color:#344a3b}
 html[data-theme="dark"] .dz-week-head b{color:#edf7ef}
 @media(max-width:600px){.dz-week-activity{padding:13px 11px}.dz-week-bars{gap:5px}.dz-week-bar{height:52px}.dz-week-day small{font-size:8px}}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPTE ÉLÈVE — composition structurée inspirée du prototype 2
+   Données et actions conservées dans app.js ; styles strictement locaux.
+   ═══════════════════════════════════════════════════════════════ */
+section[data-view="compte"] #compteBody{display:block!important;min-width:0}
+section[data-view="compte"] .dz-account-layout{display:grid;gap:16px;min-width:0}
+section[data-view="compte"] .dz-account-hero{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  min-width:0;padding:clamp(20px,3vw,30px);
+  color:#fff;background:linear-gradient(118deg,#063d25 0%,#087342 58%,#0d8b4e 100%);
+  border:1px solid rgba(255,255,255,.16);border-radius:24px;
+  box-shadow:0 16px 38px rgba(0,70,35,.16);overflow:hidden;position:relative
+}
+section[data-view="compte"] .dz-account-hero::after{
+  content:"";position:absolute;width:250px;height:250px;border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;inset-inline-end:-90px;top:-125px;box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 58px rgba(255,255,255,.025);
+  pointer-events:none
+}
+section[data-view="compte"] .dz-account-person{display:flex;align-items:center;gap:17px;min-width:0;position:relative;z-index:1}
+section[data-view="compte"] .dz-account-avatar{
+  display:grid;place-items:center;flex:0 0 70px;width:70px;height:70px;
+  color:#07512e;background:linear-gradient(145deg,#fff,#e8f5ec);
+  border:3px solid rgba(255,255,255,.55);border-radius:22px;
+  font-size:30px;font-weight:950;box-shadow:0 8px 22px rgba(0,0,0,.14)
+}
+section[data-view="compte"] .dz-account-heading{min-width:0}
+section[data-view="compte"] .dz-account-kicker{font-size:11px;font-weight:900;letter-spacing:.04em;color:#c8f1d7}
+section[data-view="compte"] .dz-account-heading h2{margin:4px 0;color:#fff;font-size:clamp(22px,3vw,30px);font-weight:950;line-height:1.5}
+section[data-view="compte"] .dz-account-heading p{margin:0;color:#e0f4e7;font-size:14px;line-height:1.7}
+section[data-view="compte"] .dz-account-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+section[data-view="compte"] .dz-account-tags span{
+  padding:5px 10px;border:1px solid rgba(255,255,255,.22);border-radius:999px;
+  background:rgba(255,255,255,.12);color:#fff;font-size:11px;font-weight:800
+}
+section[data-view="compte"] .dz-account-hero-note{
+  display:flex;align-items:center;gap:11px;position:relative;z-index:1;
+  padding:13px 15px;border:1px solid rgba(255,255,255,.2);border-radius:16px;
+  background:rgba(255,255,255,.10);backdrop-filter:blur(8px);min-width:190px
+}
+section[data-view="compte"] .dz-account-hero-note>span{font-size:28px}
+section[data-view="compte"] .dz-account-hero-note div{display:grid;gap:3px}
+section[data-view="compte"] .dz-account-hero-note b{color:#fff;font-size:13px}
+section[data-view="compte"] .dz-account-hero-note small{color:#d9f1e2;font-size:11px;line-height:1.6}
+section[data-view="compte"] .dz-account-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+section[data-view="compte"] .dz-account-metric{
+  display:flex;align-items:center;gap:12px;min-width:0;padding:15px;
+  background:var(--dz-work-surface,#fff);border:1px solid var(--dz-work-line,#dce8df);
+  border-radius:17px;box-shadow:0 5px 18px rgba(0,55,28,.045)
+}
+section[data-view="compte"] .dz-account-metric-icon{
+  display:grid;place-items:center;flex:0 0 43px;width:43px;height:43px;
+  border-radius:14px;background:#eaf5ed;font-size:20px
+}
+section[data-view="compte"] .dz-account-metric>div{display:grid;gap:2px;min-width:0}
+section[data-view="compte"] .dz-account-metric small{color:var(--dz-work-muted,#64756a);font-size:11px;font-weight:800}
+section[data-view="compte"] .dz-account-metric strong{color:var(--dz-work-ink,#173d28);font-size:23px;font-weight:950;line-height:1.3;overflow-wrap:anywhere}
+section[data-view="compte"] .dz-account-metric em{color:var(--dz-work-muted,#64756a);font-size:10px;font-style:normal}
+section[data-view="compte"] .dz-account-columns{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:14px;align-items:start}
+section[data-view="compte"] .dz-account-card{
+  min-width:0;padding:clamp(16px,2vw,22px);background:var(--dz-work-surface,#fff);
+  border:1px solid var(--dz-work-line,#dce8df);border-radius:18px;
+  box-shadow:0 6px 20px rgba(0,55,28,.045)
+}
+section[data-view="compte"] .dz-account-card-head{display:flex;align-items:center;gap:11px;margin-bottom:13px}
+section[data-view="compte"] .dz-account-card-head>span{
+  display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;
+  border-radius:13px;background:#eaf5ed;font-size:20px
+}
+section[data-view="compte"] .dz-account-card-head h3{margin:0;color:var(--dz-work-ink,#173d28);font-size:16px;font-weight:950}
+section[data-view="compte"] .dz-account-card-head p{margin:2px 0 0;color:var(--dz-work-muted,#64756a);font-size:11px;line-height:1.6}
+section[data-view="compte"] .dz-account-row{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+  padding:10px 2px;border-bottom:1px solid var(--dz-work-line,#e4ece6);
+  color:var(--dz-work-muted,#64756a);font-size:12px;line-height:1.7
+}
+section[data-view="compte"] .dz-account-row:last-child{border-bottom:0}
+section[data-view="compte"] .dz-account-row strong{
+  max-width:62%;color:var(--dz-work-ink,#173d28);font-weight:850;text-align:end;overflow-wrap:anywhere
+}
+section[data-view="compte"] .dz-account-progress-list{display:grid;gap:0}
+section[data-view="compte"] .dz-account-progress-list>div{
+  display:flex;justify-content:space-between;gap:12px;padding:12px 2px;
+  border-bottom:1px solid var(--dz-work-line,#e4ece6);font-size:12px
+}
+section[data-view="compte"] .dz-account-progress-list>div span{color:var(--dz-work-muted,#64756a)}
+section[data-view="compte"] .dz-account-progress-list>div b{color:var(--dz-work-green,#087a43);font-weight:950}
+section[data-view="compte"] .dz-account-footnote{margin:13px 0 0;color:var(--dz-work-muted,#64756a);font-size:11px;line-height:1.8}
+section[data-view="compte"] .dz-account-privacy{border-inline-start:4px solid #d21034}
+section[data-view="compte"] .dz-account-privacy-note{
+  padding:14px 16px;color:var(--dz-work-muted,#52685a);background:var(--dz-work-surface-2,#f4f8f5);
+  border:1px solid var(--dz-work-line,#dce8df);border-radius:13px;font-size:12px;line-height:2
+}
+section[data-view="compte"] .dz-account-actions{display:flex;gap:10px;flex-wrap:wrap}
+section[data-view="compte"] .dz-account-actions .btn{min-height:44px;padding:10px 17px;border-radius:12px;font-weight:850}
+section[data-view="compte"] #compteBody>#lcCard{grid-column:1/-1;margin-top:0}
+section[data-view="compte"] #compteBody>#lcCard>.card{
+  padding:18px;background:var(--dz-work-surface);border:1px solid var(--dz-work-line);
+  border-inline-start:4px solid #087a43;border-radius:17px;box-shadow:0 5px 18px rgba(0,55,28,.04)
+}
+section[data-view="compte"] #compteBody>#lcCard input{
+  min-height:44px;padding:10px 12px;color:var(--dz-work-ink);background:var(--dz-work-surface-2);
+  border:1px solid var(--dz-work-line);border-radius:11px
+}
+html[data-theme="dark"] section[data-view="compte"] .dz-account-hero{
+  background:linear-gradient(118deg,#092c1b 0%,#075232 58%,#087044 100%);border-color:#315b40
+}
+html[data-theme="dark"] section[data-view="compte"] .dz-account-metric,
+html[data-theme="dark"] section[data-view="compte"] .dz-account-card{
+  background:#142c1e;border-color:#31543e;box-shadow:0 6px 20px rgba(0,0,0,.14)
+}
+html[data-theme="dark"] section[data-view="compte"] .dz-account-metric-icon,
+html[data-theme="dark"] section[data-view="compte"] .dz-account-card-head>span{background:#1b402b}
+html[data-theme="dark"] section[data-view="compte"] .dz-account-metric strong,
+html[data-theme="dark"] section[data-view="compte"] .dz-account-card-head h3,
+html[data-theme="dark"] section[data-view="compte"] .dz-account-row strong{color:#e4f7e9}
+html[data-theme="dark"] section[data-view="compte"] .dz-account-row,
+html[data-theme="dark"] section[data-view="compte"] .dz-account-progress-list>div,
+html[data-theme="dark"] section[data-view="compte"] .dz-account-footnote{border-color:#294b36;color:#c2d8c8}
+html[data-theme="dark"] section[data-view="compte"] .dz-account-privacy-note{
+  color:#d2e6d7;background:#193524;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="compte"] #compteBody>#lcCard>.card{
+  color:#e4f7e9;background:#193524;border-color:#31543e
+}
+html[data-theme="dark"] section[data-view="compte"] #compteBody>#lcCard input{
+  color:#f2fff5;background:#10271b;border-color:#42664e
+}
+@media(max-width:900px){
+  section[data-view="compte"] .dz-account-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  section[data-view="compte"] .dz-account-columns{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:620px){
+  section[data-view="compte"] .dz-account-hero{align-items:flex-start;flex-direction:column;padding:19px 16px;border-radius:19px}
+  section[data-view="compte"] .dz-account-hero-note{min-width:0;width:100%}
+  section[data-view="compte"] .dz-account-avatar{flex-basis:58px;width:58px;height:58px;border-radius:18px;font-size:25px}
+  section[data-view="compte"] .dz-account-metrics{gap:8px}
+  section[data-view="compte"] .dz-account-metric{align-items:flex-start;gap:9px;padding:12px 10px}
+  section[data-view="compte"] .dz-account-metric-icon{flex-basis:35px;width:35px;height:35px;border-radius:11px;font-size:17px}
+  section[data-view="compte"] .dz-account-metric strong{font-size:20px}
+  section[data-view="compte"] .dz-account-row{gap:8px;font-size:11px}
+  section[data-view="compte"] .dz-account-row strong{max-width:58%}
+}
+@media(max-width:360px){
+  section[data-view="compte"] .dz-account-metrics{grid-template-columns:minmax(0,1fr)}
+  section[data-view="compte"] .dz-account-metric{align-items:center}
+}
+@media(prefers-reduced-motion:reduce){
+  section[data-view="compte"] .dz-account-layout *{animation:none!important;transition:none!important}
+}
