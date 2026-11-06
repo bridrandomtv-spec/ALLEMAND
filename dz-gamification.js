@@ -4,7 +4,7 @@
    ═══════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
-var KEY='dz_de_gamification_v1',panelId='dzGamificationPanel',celebrateLayer=null;
+var KEY='dz_de_gamification_v1',celebrateLayer=null;
 var thresholds=[0,100,250,450,700,1000,1400,1900,2500,3200];
 var levelNames=['مبتدئ','متعلّم','مجتهد','مثابر','متفوّق','متميّز','خبير','متألّق','قائد التعلّم','بطل المعرفة'];
 function account(){try{var s=window.AUTH&&AUTH.session?AUTH.session():null;return s&&s.user?'local:'+String(s.user).toLowerCase():null;}catch(e){return null;}}
@@ -48,17 +48,25 @@ celebrateLayer.innerHTML='<div class="dz-celebrate-backdrop"></div><section clas
 document.body.appendChild(celebrateLayer);function done(){if(celebrateLayer){celebrateLayer.remove();celebrateLayer=null;}}
 celebrateLayer.addEventListener('click',function(e){if(e.target.closest('.dz-celebrate-close,.dz-celebrate-ok,.dz-celebrate-backdrop'))done();});
 }
-function renderPanel(){
-var host=document.getElementById('masarBody');if(!host)return;
-var old=document.getElementById(panelId);if(old)old.remove();
-var s=read(),l=level(s.xp),badges=badgeList(s),unlocked=badges.filter(b=>b[4]).length;
-var h='<section class="dz-gamification-panel" id="'+panelId+'"><div class="dz-gamification-head"><div><span class="dz-gamification-kicker">🏅 إنجازاتك الشخصية</span><h3>مستواك ومكافآتك</h3><p>تُحتسب النقاط عند إكمال الحصص والاختبارات فعلياً.</p></div><div class="dz-level-number"><small>المستوى</small><b>'+l.n+'</b></div></div>';
+function panelMarkup(s,l,badges,unlocked,id){
+var h='<section class="dz-gamification-panel" id="'+id+'"><div class="dz-gamification-head"><div><span class="dz-gamification-kicker">🏅 إنجازاتك الشخصية</span><h3>مستواك ومكافآتك</h3><p>تُحتسب النقاط عند إكمال الحصص والاختبارات فعلياً.</p></div><div class="dz-level-number"><small>المستوى</small><b>'+l.n+'</b></div></div>';
 h+='<div class="dz-xp-summary"><div><span>رصيد الخبرة</span><b>'+s.xp+' <small>XP</small></b></div><div><span>الحصص المكتملة</span><b>'+s.lessons.length+'</b></div><div><span>سلسلة المواظبة</span><b>'+streak(s)+' <small>أيام</small></b></div><div><span>الشارات المفتوحة</span><b>'+unlocked+'<small> / 20</small></b></div></div>';
 h+='<div class="dz-xp-track"><div style="width:'+l.pct+'%"></div></div><div class="dz-xp-foot"><span>'+s.xp+' XP</span><span>'+(l.n>=10?'أعلى مستوى':(l.next-s.xp)+' XP للمستوى التالي')+'</span></div>';
 h+='<div class="dz-badges-title"><b>معرض الشارات</b><span>'+unlocked+' مفتوحة · '+(20-unlocked)+' مقفلة</span></div><div class="dz-badges-grid">';
 badges.forEach(function(b){h+='<article class="dz-badge-card '+(b[4]?'is-unlocked':'is-locked')+'"><span class="dz-badge-icon">'+b[1]+'</span><b>'+esc(b[2])+'</b><small>'+esc(b[3])+'</small><em>'+(b[4]?'مفتوحة':'مقفلة')+'</em></article>';});
-h+='</div></section>';
-var hero=host.querySelector('.ms-hero');if(hero)hero.insertAdjacentHTML('afterend',h);else host.insertAdjacentHTML('afterbegin',h);
+return h+'</div></section>';
+}
+function renderPanel(){
+var s=read(),l=level(s.xp),badges=badgeList(s),unlocked=badges.filter(b=>b[4]).length;
+var home=document.getElementById('homeGamification');
+if(home)home.innerHTML=panelMarkup(s,l,badges,unlocked,'dzGamificationPanelHome');
+var host=document.getElementById('masarBody');
+if(host){
+var old=host.querySelector('#dzGamificationPanelMasar');if(old)old.remove();
+var node=document.createElement('div');node.innerHTML=panelMarkup(s,l,badges,unlocked,'dzGamificationPanelMasar');
+var panel=node.firstElementChild,hero=host.querySelector('.ms-hero');
+if(hero)hero.insertAdjacentElement('afterend',panel);else host.insertAdjacentElement('afterbegin',panel);
+}
 }
 function award(id,xp,kind,detail){
 var s=read();if(s.events.indexOf(id)>=0)return;
@@ -76,7 +84,7 @@ else if(newBadges.length)showCelebration('فتحت شارة '+newBadges[0][2],ne
 }
 document.addEventListener('dz:lesson-complete',function(e){var d=e.detail||{};if(!account()||!d.unit||!d.session)return;award('lesson:'+d.unit+':'+d.session,10,'lesson',d);});
 document.addEventListener('dz:quiz-complete',function(e){var d=e.detail||{};if(!account()||!d.attemptId)return;award('quiz:'+d.attemptId,Number(d.score)||0,'quiz',d);});
-document.addEventListener('dz:view',function(e){var v=e&&e.detail&&(e.detail.view||e.detail);if(v==='masar')setTimeout(renderPanel,180);});
+document.addEventListener('dz:view',function(e){var v=e&&e.detail&&(e.detail.view||e.detail);if(v==='masar'||v==='accueil')setTimeout(renderPanel,180);});
 document.addEventListener('dz:auth',function(){setTimeout(renderPanel,180);});
 window.DZ_GAMIFICATION={read:read,level:level,badges:badgeList,render:renderPanel};
 })();
