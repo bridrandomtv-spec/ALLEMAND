@@ -306,9 +306,14 @@ if (!prof.includes('if(!accesAutorise())') ||
   fail('sécurité vue professeur : contrôle de session/rôle absent au rendu direct');
 }
 if (!admin.includes('const u = await window.SB.me();') ||
-    !admin.includes("p.role !== 'admin'") ||
-    !admin.includes("e.detail === 'admin'")) {
+    !admin.includes("p.role !== 'admin'")) {
   fail('sécurité vue administration : vérification du profil Supabase absente au rendu direct');
+}
+if (admin.includes("addEventListener('dz:view'") ||
+    prof.includes("addEventListener('dz:view'") ||
+    !app.includes("if(view === 'admin' && window.renderAdmin) window.renderAdmin();") ||
+    !app.includes("if(view === 'profboard' && window.renderProfBoard) window.renderProfBoard();")) {
+  fail('initialisation des tableaux de bord doublée ou déclencheur central absent');
 }
 console.log('✅ Navigation : destinations réelles ; menu et rendu direct professeur/admin protégés par rôle.');
 
