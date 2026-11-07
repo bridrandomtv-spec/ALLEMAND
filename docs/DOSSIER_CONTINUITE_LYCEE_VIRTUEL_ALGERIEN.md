@@ -1636,3 +1636,15 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Suppression de ce dernier bloc de validation devenu obsolète. Les contrôles des 10 devoirs officiels, des structures, barèmes 8+8+4, corrigés, wilayas et unités restent inchangés.
 - Le retrait des statistiques agrégées est conservé ; les notes et réponses individuelles ne sont pas touchées.
 - Relancer et vérifier le CI sur le nouveau commit avant de déclarer le lot validé. PR toujours non fusionnée ; aucune modification de main ni déploiement Cloudflare revendiqué.
+
+## Lot 138 — création d’un tableau de bord étudiant indépendant (7 novembre 2026)
+
+- Clarification fonctionnelle : la vue existante `فضائي الدراسي` (`data-view="accueil"`) reste distincte et n'est pas remplacée. Le nouveau tableau de bord est une vue dédiée `data-view="dashboard"`, accessible par l'onglet `🎓 لوحة التلميذ`.
+- Reprise de la structure des deux prototypes HTML conservés dans la Library : bandeau personnel, raccourcis, parcours et prochaine leçon, cartes de matière, activité hebdomadaire, professeur IA, recommandation et zone de notifications.
+- Adaptation au produit réel : identité et niveau issus de la session, progression calculée sur les séances réellement enregistrées, prochaine séance issue de `prochaineSeance()`, XP/série issus de `DZ_GAMIFICATION`, révisions issues de `MEMOIRE.dues()`, notifications non lues issues de `DZ_INTERACTIONS`.
+- Les valeurs de démonstration des prototypes (nom « Ahmed », pourcentages par matière, objectifs, nombres de messages et scores) ne sont pas reprises. Le tableau affiche uniquement les données disponibles ; le graphique hebdomadaire indique les jours d'activité enregistrés, sans inventer de minutes d'étude.
+- L'accès à l'onglet et à la route est limité aux comptes élèves ; les rôles professeur, parent et administrateur ne reçoivent pas cette vue. Aucun changement de schéma, Supabase, Auth, RLS, paiement ou permission serveur.
+- Fichiers applicatifs : `index.html`, `app.js`, `style-prototype-dz.css`, `sw.js`. Cache : CSS v161, app.js v3541, Service Worker `dz-de-v3.185.0.0.75`.
+- Contrôles CI renforcés dans `ci/check-gamification.mjs` pour la présence de la vue autonome, son rendu, sa route et sa restriction de rôle ; références de cache synchronisées dans les contrôles `check-masar` et `check-public-portal`.
+- La CI #2399 (run 42401434155) est en cours au moment de la rédaction. Les exécutions précédentes ont révélé une assertion de test qui cherchait le bouton dans le HTML statique alors que l'onglet est généré par `renderTabs()` ; l'assertion a été corrigée pour contrôler le code de navigation.
+- Aucune validation visuelle ordinateur/mobile n'est revendiquée à ce stade. PR #17 reste ouverte et non fusionnée ; `main` et la production ne sont pas modifiées.
