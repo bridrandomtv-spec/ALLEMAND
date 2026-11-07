@@ -1649,4 +1649,7 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Correction de périmètre après revue : retrait de `studentFocus`, `studentContinue`, `renderStudentFocus()` et de leurs styles du DOM/CSS/JS de `فضائي الدراسي`. Les blocs de reprise et raccourcis ajoutés à l'accueil sont annulés ; la vue `dashboard` autonome conserve ses propres composants et son propre rendu.
 - Les assertions CI vérifient désormais aussi l'absence de ces anciennes injections dans `accueil`. Cache après retrait : CSS v162, app.js v3542, Service Worker `dz-de-v3.185.0.0.76`.
 - La CI #2399 (run 42401434155) a validé le tableau de bord autonome avant ce dernier nettoyage. Une nouvelle CI est requise pour valider le retrait de l'ancien rendu et la synchronisation des caches.
+
+- Extension de la vue : les cartes de matières sont maintenant alimentées par `assets/bdd/matieres.json`, filtrées par niveau et filière du compte. Les états `actif`, `partiel` et `programme` sont distingués ; seul le contenu actif affiche sa progression réelle, et aucun pourcentage fictif n'est affiché pour les matières non branchées. Le catalogue reste local, sans service externe.
+- Cache mis à jour pour cette extension : CSS v163, app.js v3543, Service Worker `dz-de-v3.185.0.0.77`. La CI contrôle le chargement du registre et le rendu des états de disponibilité.
 - Aucune validation visuelle ordinateur/mobile n'est revendiquée à ce stade. PR #17 reste ouverte et non fusionnée ; `main` et la production ne sont pas modifiées.
