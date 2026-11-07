@@ -225,18 +225,18 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
 }
 const sw = read('sw.js');
 if (!html.includes('style-prototype-dz.css?v=174')) {
-  fail('version CSS du portail non actualisée (v174 attendue)');
+  fail('version CSS du portail non actualisée (v175 attendue)');
 }
 if (!sw.includes('style-prototype-dz.css?v=174')) {
-  fail('version CSS du précache non actualisée (v174 attendue)');
+  fail('version CSS du précache non actualisée (v175 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.88") ||
+if (!sw.includes("dz-de-v3.185.0.0.89") ||
     !sw.includes("style-prototype-dz.css?v=174") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS v174, app.js v3547 et Service Worker v3.185.0.0.88 synchronisés');
+console.log('✅ Cache CSS v175, app.js v3547 et Service Worker v3.185.0.0.89 synchronisés');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
