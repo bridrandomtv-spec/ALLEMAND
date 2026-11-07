@@ -236,7 +236,7 @@ if (!sw.includes("dz-de-v3.185.0.0.75") ||
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS v161, app.js v3540 et Service Worker v3.185.0.0.75 synchronisés');
+console.log('✅ Cache CSS v161, app.js v3541 et Service Worker v3.185.0.0.75 synchronisés');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
