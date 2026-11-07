@@ -1781,3 +1781,14 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Aucun changement des routes, identifiants, gestionnaires d'événements, données pédagogiques, Supabase/Auth/RLS/schéma/paiement. PR #17 reste sur sa branche, non fusionnée ; `main` reste intacte.
 - Première CI du lot (#42408382754) : échec isolé dans `ci/check-masar.mjs`, dont l'assertion Service Worker attendait encore `.86` alors que le précache avait été correctement porté à `.87`. Correction de cette assertion et actualisation des messages de version CSS dans `check-public-portal.mjs`.
 - Nouvelle CI à contrôler sur le HEAD après correction. La validation structurelle ne remplace pas la comparaison visuelle navigateur, ordinateur et mobile avec les prototypes.
+
+
+## 19. Lot 150 — recomposition de la grille du tableau de bord étudiant (7 novembre 2026)
+
+- Relecture des deux prototypes HTML conservés dans la bibliothèque : `Qwen_html_20261021_bxmtbklup.html` (806 lignes) et `Qwen_html_20261021_juv5xelun.html` (704 lignes). Le premier place le parcours pédagogique en grand panneau, puis associe les compétences aux recommandations et les objectifs aux badges ; le second organise les matières dans une colonne principale avec l'assistant IA et les recommandations dans une colonne latérale.
+- Réorganisation du seul HTML de `data-view="dashboard"` : la carte de parcours pédagogique passe au-dessus de la grille et occupe toute la largeur ; les matières, le graphique de progression et l'activité gardent une largeur complète ; compétences et recommandation forment une paire ; objectifs et badges forment une seconde paire ; l'assistant IA et les notifications restent dans la colonne latérale.
+- Aucun contenu fictif des prototypes n'est repris. Les identifiants des zones dynamiques (`sdPath`, `sdSubjects`, `sdUnitProgress`, `sdSkills`, `sdRecommendation`, `sdGoals`, `sdAchievements`, `sdActivity`, `sdUpdates`) sont conservés pour maintenir les fonctions JavaScript existantes.
+- Responsive : deux colonnes internes sur grand écran et tablette ; une colonne sur téléphone. Les vues publiques, `فضائي الدراسي`, les routes, les modules et les événements ne sont pas modifiés.
+- Cache : CSS `v174`, Service Worker `dz-de-v3.185.0.0.88`, app.js inchangé (`v3547`). Contrôles de cache synchronisés.
+- Périmètre : branche `design/prototypes-67-74-alignment`, PR #17 ouverte et non fusionnée ; aucun changement direct sur `main`, aucun déploiement ; aucun changement Supabase/Auth/RLS/schéma/paiement.
+- Validation visuelle réelle navigateur non revendiquée à ce stade ; la CI doit confirmer le lot avant toute conclusion technique.
