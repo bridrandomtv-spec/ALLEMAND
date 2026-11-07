@@ -1666,3 +1666,11 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Fichiers concernés : index.html, app.js, style-prototype-dz.css, sw.js, ci/check-gamification.mjs, ci/check-masar.mjs, ci/check-public-portal.mjs et le présent dossier.
 - Aucun changement aux routes, à Auth, Supabase, RLS, schéma, migrations, paiement ou permissions. Aucun changement direct sur main.
 - La validation CI du nouveau commit et la vérification visuelle sur ordinateur/mobile restent à effectuer. PR #17 demeure ouverte et non fusionnée.
+
+## Lot 140 — correction de la référence de cache du contrôle مسارك (7 novembre 2026)
+
+- Analyse des logs CI #2419 : les contrôles structurels et pédagogiques antérieurs ont réussi ; le job échouait au contrôle مسارك sur l'assertion de cache CSS qui attendait encore v163 alors que le lot 139 avait correctement actualisé index.html et le précache à v164.
+- L'assertion de version Service Worker attendait elle aussi l'ancienne v3.185.0.0.77 ; synchronisation du test avec v3.185.0.0.78.
+- Aucune modification du comportement de مسارك, des routes, de l'authentification, des permissions ou des données. Le cache de masar.js reste inchangé car ce fichier n'a pas été modifié.
+- Fichier modifié : ci/check-masar.mjs. Le dossier de continuité est mis à jour.
+- La nouvelle exécution CI déclenchée par ce commit doit confirmer la correction. Aucun déploiement ni fusion de la PR #17 n'est demandé.
