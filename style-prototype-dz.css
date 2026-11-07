@@ -17173,3 +17173,29 @@ html[data-theme="dark"] #shell #app .sd-subject-copy small{color:#cbbd91}
   #shell #app .sd-week-bars{gap:5px}
   #shell #app .sd-day{font-size:8px}
 }
+
+/* Cartes de matières issues du registre pédagogique réel */
+#shell #app .sd-subject-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+#shell #app .sd-subject-card{display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:0;padding:14px;border:1px solid var(--b);border-radius:15px;background:var(--p2)}
+#shell #app .sd-subject-card.is-active{border-color:#e7d8a8;background:linear-gradient(145deg,#fff9e8,#fff)}
+#shell #app .sd-subject-card.is-partial{border-color:#ead9b4;background:linear-gradient(145deg,#fff9ed,var(--p2))}
+#shell #app .sd-subject-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#shell #app .sd-subject-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--p);font-size:20px}
+#shell #app .sd-subject-status{padding:4px 7px;border:1px solid var(--b);border-radius:999px;background:var(--p);color:var(--m);font-size:9px;font-weight:900}
+#shell #app .sd-subject-status.is-active{border-color:#b8ddc4;background:#eaf6ed;color:#075d35}
+#shell #app .sd-subject-status.is-partial{border-color:#eed7a6;background:#fff4df;color:#805300}
+#shell #app .sd-subject-name{color:var(--t);font-size:13px;font-weight:900;line-height:1.6}
+#shell #app .sd-subject-language{color:var(--m);font-size:10px;text-align:start}
+#shell #app .sd-subject-meta{min-height:28px;color:var(--m);font-size:9px;line-height:1.6}
+#shell #app .sd-subject-progress{display:grid;gap:5px;margin-top:2px}
+#shell #app .sd-subject-progress>div{display:flex;justify-content:space-between;gap:8px;color:var(--m);font-size:9px}
+#shell #app .sd-subject-progress b{color:var(--t);direction:ltr}
+#shell #app .sd-subject-progress>i{height:6px;overflow:hidden;border-radius:99px;background:#eee3c4}
+#shell #app .sd-subject-progress>i span{display:block;height:100%;border-radius:99px;background:#b68a20}
+#shell #app .sd-subject-open{align-self:flex-start;margin-top:auto;padding:7px 10px;border:1px solid var(--b);border-radius:9px;background:var(--p);color:var(--t);font:800 10px var(--ff-ar-display,'Cairo',sans-serif);cursor:pointer}
+#shell #app .sd-subject-empty{margin:0;color:var(--m);font-size:11px;line-height:1.8}
+html[data-theme="dark"] #shell #app .sd-subject-card.is-active{border-color:#64542d;background:linear-gradient(145deg,#302b1c,#27291f)}
+html[data-theme="dark"] #shell #app .sd-subject-card.is-partial{border-color:#5b4b2b;background:linear-gradient(145deg,#302b1c,#20291f)}
+html[data-theme="dark"] #shell #app .sd-subject-status.is-active{background:#1c3b27;border-color:#3c7650;color:#b9ebc9}
+html[data-theme="dark"] #shell #app .sd-subject-status.is-partial{background:#3a301d;border-color:#725d31;color:#f3dca5}
+@media(max-width:420px){#shell #app .sd-subject-grid{grid-template-columns:minmax(0,1fr)}}
