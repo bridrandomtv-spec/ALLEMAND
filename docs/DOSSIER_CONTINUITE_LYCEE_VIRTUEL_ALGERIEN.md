@@ -1768,4 +1768,5 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Ajout des variantes sombres pour préserver le contraste et la lisibilité.
 - Cache : CSS `v172`, Service Worker `dz-de-v3.185.0.0.86`. Les contrôles de cache `check-masar`, `check-public-portal` et `check-gamification` ont été synchronisés.
 - Aucun changement sur les routes, identifiants, modules pédagogiques, Supabase/Auth/RLS/schéma/paiement, ni sur `main`. PR #17 reste ouverte et non fusionnée.
-- La réussite CI et la comparaison visuelle réelle avec les prototypes restent à confirmer sur le nouveau HEAD.
+- CI GitHub Actions #42407935163 : réussie sur le HEAD `fd1fca18f5b14c80f1daf9d94d373e48000ab6a9` ; job « Validation structurelle & pédagogique » terminé avec succès. Les runs annulés sur les commits intermédiaires ne représentent pas l'état final de la branche.
+- La comparaison visuelle réelle avec les deux prototypes reste à effectuer dans le navigateur ; la réussite CI ne la remplace pas.
