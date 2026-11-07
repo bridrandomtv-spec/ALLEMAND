@@ -12,6 +12,7 @@ const parents = read('parents.js');
 const portal = read('public-portal.js');
 const app = read('app.js');
 const html = read('index.html');
+const onboarding = read('assets/bdd/onboarding.json');
 const css = read('style-prototype-dz.css');
 
 const fail = message => { throw new Error('Portail public : ' + message); };
@@ -81,6 +82,12 @@ if (!portal.includes("document.addEventListener('click'") ||
     !portal.includes("gate.hidden = false") ||
     !portal.includes("gate.classList.add('public-auth-page')")) {
   fail('le portail public doit dévoiler #gate avant d’afficher la carte de connexion');
+}
+
+
+const onboardingText = JSON.stringify(JSON.parse(onboarding));
+for (const unsupported of ['24/7', 'تقرير أسبوعي', 'تقرير أسبوعي تلقائي', 'حضورك، ترتيبك', 'كل الحصص والفروض والتصحيحات متاحة', 'تعمل بدون أنترنت', 'كل تمرين يُصحَّح فورًا']) {
+  if (onboardingText.includes(unsupported)) fail('guide onboarding : promesse non vérifiée encore présente : ' + unsupported);
 }
 
 console.log('✅ Portail public : 3 niveaux, 14 matières, filières cohérentes');
