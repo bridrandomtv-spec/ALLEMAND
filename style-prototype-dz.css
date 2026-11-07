@@ -17426,7 +17426,7 @@ html[data-theme="dark"] #shell #app .sd-subject-card{background:linear-gradient(
    Parcours pleine largeur ; matières et progression en blocs structurants ;
    compétences/recommandation puis objectifs/badges en paires équilibrées. */
 #shell #app .sd-layout{grid-template-columns:minmax(0,1.8fr) minmax(270px,.9fr);gap:18px}
-#shell #app .sd-main{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+#shell #app .sd-main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
 #shell #app .sd-path-panel{width:100%;margin:0;}
 #shell #app .sd-subjects-panel,#shell #app .sd-unit-progress-panel,#shell #app .sd-activity-panel{grid-column:1/-1}
 #shell #app .sd-skills-panel,#shell #app .sd-recommend-panel,#shell #app .sd-goals-panel,#shell #app .sd-achievements-panel{grid-column:span 1;min-width:0}
@@ -17441,3 +17441,7 @@ html[data-theme="dark"] #shell #app .sd-subject-card{background:linear-gradient(
   #shell #app .sd-subjects-panel,#shell #app .sd-unit-progress-panel,#shell #app .sd-activity-panel,#shell #app .sd-skills-panel,#shell #app .sd-recommend-panel,#shell #app .sd-goals-panel,#shell #app .sd-achievements-panel{grid-column:1}
   #shell #app .sd-goals-panel .sd-goals-grid{grid-template-columns:minmax(0,1fr)}
 }
+
+
+/* Lot 151 — activer réellement la grille interne du tableau de bord */
+#shell #app .sd-main{display:grid;min-width:0}
