@@ -1947,7 +1947,7 @@ const lf = $('#loginForm');
 function renderWelcome(){
   const el = $('#welcomeBox'); if(!el) return;
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
-  if(!s){ el.innerHTML = ''; renderStudentFocus(); return; }
+  if(!s){ el.innerHTML = '';  return; }
   const h = new Date().getHours();
   const salut = h < 12 ? 'صباح الخير' : 'مساء الخير';
   const de = h < 12 ? 'Guten Morgen' : (h < 18 ? 'Guten Tag' : 'Guten Abend');
@@ -1999,65 +1999,8 @@ function renderWelcome(){
       '<span class="sec-pill rg">🎓 ' + esc(s.niveau || '—') + '</span>' +
       (s.prof ? '<span class="sec-live">👨‍🏫 ' + esc(s.prof) + '</span>' : '') +
     '</div>';
-  renderStudentFocus();
+  
 }
-
-/* ══════════ TABLEAU DE BORD ÉLÈVE — raccourcis et prochaine étape réels ══════════ */
-function renderStudentFocus(){
-  const host = $('#studentFocus'), main = $('#studentContinue');
-  const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
-  if(!s){
-    if(host){host.hidden=true;host.innerHTML='';}
-    if(main){main.hidden=true;main.innerHTML='';}
-    return;
-  }
-  const st = loadSeances() || {};
-  const done = Array.isArray(st.done) ? st.done : [];
-  const next = SEANCES.find(x => done.indexOf(x.n) === -1);
-  let due = 0;
-  try{ due = window.MEMOIRE && typeof MEMOIRE.dues === 'function' ? MEMOIRE.dues().length : 0; }catch(e){}
-  const completed = done.length, total = SEANCES.length || 0;
-  const pct = total ? Math.round(completed / total * 100) : 0;
-  if(main){
-    let m = '<section class="sf-continue-card"><div class="sf-continue-copy"><span class="sf-continue-kicker">📖 تابع التعلم · خطوتك التالية</span>';
-    if(next){
-      m += '<h2>الحصة '+next.n+' — '+esc(next.ar)+'</h2>'
-        + (next.de ? '<p class="sf-continue-de" dir="ltr">'+esc(next.de)+'</p>' : '')
-        + '<p>استأنف التعلّم من الحصة التالية غير المكتملة في وحدتك الحالية.</p>';
-    }else{
-      m += '<h2>أكملت حصص الوحدة الحالية</h2><p>أحسنت! راجع إنجازاتك أو انتقل إلى الخطوة التالية في مسارك.</p>';
-    }
-    m += '<div class="sf-continue-progress"><div><span>إنجاز الوحدة الحالية</span><b>'+completed+' / '+total+' · '+pct+'%</b></div><i><span style="width:'+pct+'%"></span></i></div>'
-      + '<button type="button" class="sf-continue-button" data-go="'+(next?'seances':'masar')+'">'+(next?'متابعة الدرس':'عرض مساري الدراسي')+' <span aria-hidden="true">←</span></button>'
-      + '</div><div class="sf-continue-mark" aria-hidden="true">📚<span>🇩🇿</span></div></section>';
-    main.innerHTML=m;main.hidden=false;
-  }
-  if(!host)return;
-  const actions = [
-    ['📚','دروسي وحصصي','seances'],
-    ['🎯','التدريب والاختبارات','quiz'],
-    ['🤖','الأستاذ الذكي','prof'],
-    ['🧭','مساري الدراسي','masar']
-  ];
-  let h = '<div class="sf-actions-title">⚡ وصول سريع</div><div class="sf-actions">';
-  actions.forEach(a => { h += '<button type="button" class="sf-action" data-go="'+a[2]+'"><span>'+a[0]+'</span><b>'+a[1]+'</b><i aria-hidden="true">←</i></button>'; });
-  h += '</div><div class="sf-recommendation">';
-  if(due){
-    h += '<span class="sf-rec-icon">🧠</span><div><b>مراجعة موصى بها</b><p>لديك '+due+' بطاقة ذاكرة مستحقة للمراجعة.</p></div><button type="button" data-go="revision">راجع الآن</button>';
-  }else if(next){
-    h += '<span class="sf-rec-icon">✨</span><div><b>اقتراحك التالي</b><p>أكمل الحصة التالية لتحديث تقدمك وشاراتك الفعلية.</p></div><button type="button" data-go="seances">ابدأ</button>';
-  }else{
-    h += '<span class="sf-rec-icon">🎓</span><div><b>واصل التقدّم</b><p>استكشف المواد أو راجع نتائجك المسجلة.</p></div><button type="button" data-go="matieres">المواد</button>';
-  }
-  h += '</div>';
-  host.innerHTML = h;host.hidden = false;
-}
-document.addEventListener('dz:view', function(e){
-  const v = e && e.detail && (e.detail.view || e.detail);
-  if(v === 'accueil') setTimeout(renderStudentFocus, 80);
-});
-document.addEventListener('dz:lesson-complete', function(){ setTimeout(renderStudentFocus, 120); });
-
 
 /* ══════════ TABLEAU DE BORD ÉTUDIANT — composition indépendante des prototypes 1+2 ══════════ */
 function renderStudentDashboard(){
