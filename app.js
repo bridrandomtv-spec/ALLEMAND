@@ -2002,6 +2002,46 @@ function renderWelcome(){
   
 }
 
+
+let studentDashboardRegistry=null,studentDashboardRegistryPromise=null;
+function renderStudentDashboardSubjects(session,pct,unitCount){
+  const host=$('#sdSubjects');if(!host)return;
+  function paint(data){
+    if(currentView!=='dashboard')return;
+    if(!data||!Array.isArray(data.matieres)){host.innerHTML='<p class="sd-subject-empty">تعذّر تحميل فهرس المواد حالياً.</p>';return;}
+    const level=['1AS','2AS','3AS'].includes(session.niveau)?session.niveau:'2AS';
+    const branches=data.par_niveau&&data.par_niveau[level]?data.par_niveau[level]:{};
+    const branchMap={
+      'Lettres et Langues':'langues','Langues étrangères':'langues','لغات أجنبية':'langues',
+      'Sciences expérimentales':'sciences','Sciences':'sciences','علوم تجريبية':'sciences',
+      'Mathématiques':'math','Math':'math','رياضيات':'math',
+      'Technique Mathématique':'tech','تقني رياضي':'tech',
+      'Gestion et économie':'gestion','Gestion':'gestion','تسيير واقتصاد':'gestion',
+      'Lettres et Philosophie':'philo','آداب وفلسفة':'philo',
+      'Tronc commun lettres':'tc-lettres','جذع مشترك آداب':'tc-lettres',
+      'Tronc commun sciences':'tc-sciences','جذع مشترك علوم وتكنولوجيا':'tc-sciences'
+    };
+    const branch=branchMap[session.filiere_ar||session.filiere||'']||Object.keys(branches)[0];
+    const ids=branches[branch]||Object.values(branches)[0]||[];
+    const byId={};data.matieres.forEach(m=>{byId[m.id]=m;});
+    const items=ids.map(id=>byId[id]).filter(Boolean);
+    const statuses=data.statuts||{};
+    host.innerHTML='<div class="sd-subject-grid">'+items.map(m=>{
+      const status=statuses[m.statut]||{ar:m.statut||'غير محددة',icon:'•'};
+      const active=m.statut==='actif',partial=m.statut==='partiel';
+      const route=active?'seances':(m.id==='anglais'&&partial?'english':'');
+      const progress=active?'<div class="sd-subject-progress"><div><span>إنجاز المسار الألماني</span><b>'+pct+'%</b></div><i><span style="width:'+pct+'%"></span></i></div><small class="sd-subject-meta">'+unitCount+' وحدات تعليمية مسجلة</small>':'<small class="sd-subject-meta">'+esc(m.desc||'')+'</small>';
+      return '<article class="sd-subject-card '+(active?'is-active':(partial?'is-partial':'is-planned'))+'"><div class="sd-subject-top"><span class="sd-subject-icon">'+esc(m.icon||'📘')+'</span><span class="sd-subject-status '+(active?'is-active':(partial?'is-partial':''))+'">'+esc(status.icon)+' '+esc(status.ar)+'</span></div><b class="sd-subject-name">'+esc(m.ar)+'</b>'+(m.de?'<small class="sd-subject-language" dir="ltr">'+esc(m.de)+'</small>':'')+progress+(route?'<button type="button" class="sd-subject-open" data-go="'+route+'">'+(active?'فتح الحصص':'استكشاف المحتوى')+' ←</button>':'')+'</article>';
+    }).join('')+'</div>';
+  }
+  if(studentDashboardRegistry){paint(studentDashboardRegistry);return;}
+  host.innerHTML='<p class="sd-subject-empty">⏳ جارٍ تحميل فهرس المواد…</p>';
+  if(!studentDashboardRegistryPromise){
+    studentDashboardRegistryPromise=fetch('assets/bdd/matieres.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(data=>{studentDashboardRegistry=data;return data;}).catch(()=>null);
+  }
+  studentDashboardRegistryPromise.then(paint);
+}
+
 /* ══════════ TABLEAU DE BORD ÉTUDIANT — composition indépendante des prototypes 1+2 ══════════ */
 function renderStudentDashboard(){
   const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
@@ -2030,8 +2070,7 @@ function renderStudentDashboard(){
   }else{
     path.innerHTML='<div class="sd-empty"><span>🎓</span><b>لا توجد حصة تالية مسجّلة لهذا المستوى</b><p>يمكنك استكشاف المواد أو فتح مسارك الدراسي.</p><button type="button" data-go="masar">عرض مسارك الدراسي</button></div>';
   }
-  const subjectName=esc(s.matiere||'اللغة الألمانية');
-  subjects.innerHTML='<article class="sd-subject-card"><span class="sd-subject-icon">🇩🇪</span><div class="sd-subject-copy"><b>'+subjectName+'</b><small>المسار التعليمي النشط · '+units.length+' وحدات مسجلة</small><div class="sd-subject-bar"><i style="width:'+pct+'%"></i></div></div><strong>'+pct+'%</strong><button type="button" data-go="seances" aria-label="فتح الحصص">←</button></article>';
+  renderStudentDashboardSubjects(s,pct,units.length);
   const active=Array.isArray(g.activeDays)?g.activeDays:[],names=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],today=new Date();today.setHours(12,0,0,0);today.setDate(today.getDate()-6);let count=0;
   const days=[];for(let i=0;i<7;i++){const d=new Date(today),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),on=active.indexOf(key)>=0;if(on)count++;days.push('<div class="sd-day '+(on?'is-active':'')+'"><i><span></span></i><small>'+names[d.getDay()]+'</small></div>');today.setDate(today.getDate()+1);}
   activity.innerHTML='<div class="sd-activity-head"><b>'+count+' من 7 أيام نشطة</b><span>آخر سبعة أيام</span></div><div class="sd-week-bars">'+days.join('')+'</div><p>تُحتسب الأيام عند تسجيل إكمال حصة أو اختبار فقط.</p>';
