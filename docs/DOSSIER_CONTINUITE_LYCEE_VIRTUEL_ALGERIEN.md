@@ -1792,3 +1792,5 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Cache : CSS `v174`, Service Worker `dz-de-v3.185.0.0.88`, app.js inchangé (`v3547`). Contrôles de cache synchronisés.
 - Périmètre : branche `design/prototypes-67-74-alignment`, PR #17 ouverte et non fusionnée ; aucun changement direct sur `main`, aucun déploiement ; aucun changement Supabase/Auth/RLS/schéma/paiement.
 - Validation visuelle réelle navigateur non revendiquée à ce stade ; la CI doit confirmer le lot avant toute conclusion technique.
+
+- Suite CI : le premier run du Lot 150 a révélé des assertions regex échappées qui conservaient l'attente CSS `v173` et Service Worker `.87` dans `check-masar.mjs` (les contrôles littéraux avaient été actualisés, pas ces motifs regex). Les motifs de cache des scripts concernés ont été alignés sur CSS `v174` et Service Worker `.88`. Le nouveau run sur le HEAD doit confirmer la correction.
