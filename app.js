@@ -447,8 +447,8 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire' ,'biblio','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
-const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 فضائي الدراسي'],['msg','💬 الرسائل'],['seances','📚 الحصص'],
+const VIEWS = ['dashboard', 'masar', 'accueil','seances','live','classe','grammaire' ,'biblio','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
+const TABS  = [['dashboard','🎓 لوحة التلميذ'], ['masar','🧭 مسارك'], ['accueil','🏠 فضائي الدراسي'],['msg','💬 الرسائل'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
                ['quiz','🎯 تمارين'],
@@ -493,7 +493,7 @@ const NAVCATS = [
   ['support', '🤝', 'فضاءات التأطير', ['prof', 'profboard', 'parents']],
   ['services', '⚙️', 'الخدمات والحساب', ['reservation', 'abonne', 'compte', 'legal', 'admin']]
 ];
-const NAVSOLO_TOP = ['accueil', 'masar'];
+const NAVSOLO_TOP = ['dashboard', 'accueil', 'masar'];
 /* UI-6 : le sponsoring se gère depuis #admin uniquement — retiré de la colonne de navigation ;
    la page reste atteignable par URL directe pour les annonceurs qui ont le lien. */
 /* LANG-4 : #admin ne s affiche plus dans la colonne — accès par hash, lien de la section الإدارة et chip utilisateur */
@@ -503,7 +503,7 @@ function renderTabs(){
   const tabs = allTabs();
   const visible = tabs.filter(t => t[0] !== 'msg' && t[0] !== 'sponsor' && (t[0] !== 'admin' || isAdmin()) && (t[0] !== 'parents' || isParent()));
   const byId = new Map(visible.map(t => [t[0], t]));
-  const used = new Set(['accueil', 'masar', 'matieres', 'english']);
+  const used = new Set(['dashboard', 'accueil', 'masar', 'matieres', 'english']);
   let desktop = '';
   if(window.__SUBJECT__ === 'en'){
     desktop += '<button class="tab subject-home' + (currentView === 'english' ? ' on' : '') + '" data-go="english">🇬🇧 English</button>';
@@ -511,6 +511,7 @@ function renderTabs(){
   } else {
     desktop += '<button class="tab subject-home' + (currentView === 'matieres' ? ' on' : '') + '" data-go="matieres">📚 المواد</button>';
   }
+  desktop += '<button class="tab' + (currentView === 'dashboard' ? ' on' : '') + '" data-go="dashboard">🎓 لوحة التلميذ</button>';
   desktop += '<button class="tab' + (currentView === 'masar' ? ' on' : '') + '" data-go="masar">🧭 مسارك</button>';
   desktop += '<button class="tab' + (currentView === 'accueil' ? ' on' : '') + '" data-go="accueil">🏠 فضائي الدراسي</button>';
   for(const cat of NAVCATS){
@@ -717,6 +718,7 @@ function go(view){
   if(view === 'profboard' && window.renderProfBoard) window.renderProfBoard();
   const mp = $('#miniProf'); if(mp) mp.hidden = !isProf();
   if(view === 'prof'){ const l = $('#chatLog'); if(l && l.children.length === 0) initChat(); }
+  if(view === 'dashboard') renderStudentDashboard();
   if(view === 'accueil')    renderStats();
   if(window.MEMOIRE && window.MEMOIRE.carteAccueil) window.MEMOIRE.carteAccueil();
 }
@@ -2050,6 +2052,53 @@ document.addEventListener('dz:view', function(e){
   if(v === 'accueil') setTimeout(renderStudentFocus, 80);
 });
 document.addEventListener('dz:lesson-complete', function(){ setTimeout(renderStudentFocus, 120); });
+
+
+/* ══════════ TABLEAU DE BORD ÉTUDIANT — composition indépendante des prototypes 1+2 ══════════ */
+function renderStudentDashboard(){
+  const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
+  if(!hero||!path||!subjects||!activity||!recommend||!updates)return;
+  const s=(window.AUTH&&AUTH.session)?AUTH.session():null;
+  if(!s){hero.innerHTML='';path.innerHTML='';subjects.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
+  const levelCode=['1AS','2AS','3AS'].includes(s.niveau)?s.niveau:(niveauActif||'2AS');
+  const units=UNITES.filter(u=>(!u.niveau||u.niveau===levelCode)&&Array.isArray(u.seances)&&u.seances.length);
+  let completed=0,total=0;
+  units.forEach(u=>{const d=(loadSeancesFor(u.n).done||[]);u.seances.forEach(x=>{total++;if(d.indexOf(x.n)>=0)completed++;});});
+  const pct=total?Math.round(completed/total*100):0;
+  const nextInfo=prochaineSeance();
+  const unit=nextInfo?UNITES.find(u=>String(u.n)===String(nextInfo.unite)):null;
+  const unitDone=unit?(loadSeancesFor(unit.n).done||[]):[];
+  const unitTotal=unit&&unit.seances?unit.seances.length:0;
+  const unitCompleted=unit&&unit.seances?unit.seances.filter(x=>unitDone.indexOf(x.n)>=0).length:0;
+  let g={xp:0,activeDays:[],lessons:[]},lvl={n:1,name:'مبتدئ',pct:0,next:100};
+  try{if(window.DZ_GAMIFICATION){g=DZ_GAMIFICATION.read();lvl=DZ_GAMIFICATION.level(g.xp||0);}}catch(e){}
+  const streak=(function(){const a=Array.isArray(g.activeDays)?g.activeDays:[],key=d=>{const z=new Date(d);return z.getFullYear()+'-'+String(z.getMonth()+1).padStart(2,'0')+'-'+String(z.getDate()).padStart(2,'0');};let d=new Date();d.setHours(12,0,0,0);let today=key(d),y=new Date(d);y.setDate(y.getDate()-1);let base=a.indexOf(today)>=0?today:(a.indexOf(key(y))>=0?key(y):null);if(!base)return 0;let n=0;while(a.indexOf(base)>=0){n++;d.setDate(d.getDate()-1);base=key(d);}return n;})();
+  const h=new Date().getHours(),greeting=h<12?'صباح الخير':(h<18?'نهارك سعيد':'مساء الخير');
+  const name=esc(s.nom||s.pseudo||'تلميذنا'),className=esc(s.classe_ar||s.niveau||'المستوى الدراسي');
+  hero.innerHTML='<div class="sd-hero-copy"><span class="sd-hero-kicker">🇩🇿 الثانوية الافتراضية الجزائرية</span><span class="sd-class-pill">'+className+'</span><h1>'+greeting+'، '+name+' 👋</h1><p>هذا فضاؤك لمتابعة الدروس والمواد والإنجازات التعليمية.</p><div class="sd-hero-progress"><div><span>التقدم في وحدات مسارك</span><b>'+completed+' / '+total+' · '+pct+'%</b></div><i><span style="width:'+pct+'%"></span></i></div></div><div class="sd-hero-metrics"><div><small>رصيد الخبرة</small><b>⭐ '+(g.xp||0)+' XP</b></div><div><small>سلسلة المواظبة</small><b>🔥 '+streak+' أيام</b></div><div><small>المستوى</small><b>'+esc(lvl.name)+' · '+lvl.n+'</b></div></div>';
+  if(unit&&nextInfo&&nextInfo.prochaine){
+    const sessions=unit.seances||[],idx=sessions.findIndex(x=>x.n===nextInfo.prochaine.n),start=Math.max(0,idx-1),shown=sessions.slice(start,start+5);
+    path.innerHTML='<div class="sd-unit-summary"><div><span>الوحدة '+esc(unit.n)+'</span><h3>'+esc(unit.ar||unit.de||'الوحدة الحالية')+'</h3><small>'+(unit.de?'<bdi dir="ltr">'+esc(unit.de)+'</bdi> · ':'')+unitCompleted+' من '+unitTotal+' حصص مكتملة</small></div><strong>'+Math.round(unitTotal?unitCompleted/unitTotal*100:0)+'%</strong></div><div class="sd-lesson-track">'+shown.map(x=>{const done=unitDone.indexOf(x.n)>=0,current=x.n===nextInfo.prochaine.n;return '<button type="button" class="sd-lesson-step '+(done?'is-done':(current?'is-current':'is-locked'))+'" data-go="seances"><span>'+(done?'✓':(current?'▶':'·'))+'</span><b>الحصة '+esc(x.n)+'</b><small>'+esc(x.ar||x.titre||'')+'</small></button>';}).join('')+'</div><div class="sd-path-foot"><span>الحصة التالية: <b>'+esc(nextInfo.prochaine.ar||nextInfo.prochaine.titre||'')+'</b></span><button type="button" data-go="seances">متابعة الحصة ←</button></div>';
+  }else{
+    path.innerHTML='<div class="sd-empty"><span>🎓</span><b>لا توجد حصة تالية مسجّلة لهذا المستوى</b><p>يمكنك استكشاف المواد أو فتح مسارك الدراسي.</p><button type="button" data-go="masar">عرض مسارك الدراسي</button></div>';
+  }
+  const subjectName=esc(s.matiere||'اللغة الألمانية');
+  subjects.innerHTML='<article class="sd-subject-card"><span class="sd-subject-icon">🇩🇪</span><div class="sd-subject-copy"><b>'+subjectName+'</b><small>المسار التعليمي النشط · '+units.length+' وحدات مسجلة</small><div class="sd-subject-bar"><i style="width:'+pct+'%"></i></div></div><strong>'+pct+'%</strong><button type="button" data-go="seances" aria-label="فتح الحصص">←</button></article>';
+  const active=Array.isArray(g.activeDays)?g.activeDays:[],names=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],today=new Date();today.setHours(12,0,0,0);today.setDate(today.getDate()-6);let count=0;
+  const days=[];for(let i=0;i<7;i++){const d=new Date(today),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),on=active.indexOf(key)>=0;if(on)count++;days.push('<div class="sd-day '+(on?'is-active':'')+'"><i><span></span></i><small>'+names[d.getDay()]+'</small></div>');today.setDate(today.getDate()+1);}
+  activity.innerHTML='<div class="sd-activity-head"><b>'+count+' من 7 أيام نشطة</b><span>آخر سبعة أيام</span></div><div class="sd-week-bars">'+days.join('')+'</div><p>تُحتسب الأيام عند تسجيل إكمال حصة أو اختبار فقط.</p>';
+  let due=0;try{due=window.MEMOIRE&&typeof MEMOIRE.dues==='function'?MEMOIRE.dues().length:0;}catch(e){}
+  if(due)recommend.innerHTML='<div class="sd-recommend"><span>🧠</span><div><b>مراجعة مستحقة</b><p>لديك '+due+' بطاقة ذاكرة حان موعد مراجعتها.</p></div><button type="button" data-go="revision">راجع الآن</button></div>';
+  else if(nextInfo&&nextInfo.prochaine)recommend.innerHTML='<div class="sd-recommend"><span>✨</span><div><b>واصل التعلّم</b><p>الحصة التالية في مسارك جاهزة للمتابعة.</p></div><button type="button" data-go="seances">ابدأ</button></div>';
+  else recommend.innerHTML='<div class="sd-recommend"><span>📚</span><div><b>استكشف مواردك</b><p>تصفّح المواد والموارد التعليمية المتاحة.</p></div><button type="button" data-go="matieres">المواد</button></div>';
+  let unread=0;try{unread=window.DZ_INTERACTIONS&&DZ_INTERACTIONS.unreadCount?DZ_INTERACTIONS.unreadCount():0;}catch(e){}
+  updates.innerHTML='<div class="sd-update-row"><span>🔔</span><div><b>'+unread+' إشعار غير مقروء</b><small>'+(unread?'توجد تنبيهات تحتاج إلى الاطلاع.':'لا توجد إشعارات غير مقروءة حالياً.')+'</small></div><button type="button" id="sdOpenNotifications">عرض التنبيهات ←</button></div>';
+  const notice=$('#sdOpenNotifications');if(notice)notice.addEventListener('click',function(){if(window.DZ_INTERACTIONS&&DZ_INTERACTIONS.openNotifications)DZ_INTERACTIONS.openNotifications();});
+}
+window.renderStudentDashboard=renderStudentDashboard;
+document.addEventListener('dz:lesson-complete',function(){if(currentView==='dashboard')setTimeout(renderStudentDashboard,100);});
+document.addEventListener('dz:quiz-complete',function(){if(currentView==='dashboard')setTimeout(renderStudentDashboard,100);});
+document.addEventListener('dz:auth',function(){if(currentView==='dashboard')setTimeout(renderStudentDashboard,100);});
 
 /* ══════════ BARRE DE SECTION ══════════ */
 function renderSectionBar(){
