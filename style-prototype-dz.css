@@ -17209,3 +17209,19 @@ html[data-theme="dark"] #shell #app .sd-subject-status.is-partial{background:#3a
 #shell #app .sd-unit-chart-item small{max-width:100%;overflow:hidden;color:var(--m);font-size:9px;text-overflow:ellipsis;white-space:nowrap}
 #shell #app .sd-unit-chart-item em{color:var(--m);font-size:9px;font-style:normal;direction:ltr}
 #shell #app .sd-unit-chart-note{margin:12px 0 0;color:var(--m);font-size:10px;line-height:1.7}
+
+/* Tableau de bord étudiant — aperçu des badges issus du moteur de récompenses */
+#shell #app .sd-achievement-summary{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 12px;border-radius:12px;background:var(--p2);color:var(--m);font-size:11px}
+#shell #app .sd-achievement-summary b{color:var(--t);font-size:17px;font-weight:900;direction:ltr}
+#shell #app .sd-achievement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#shell #app .sd-achievement{display:grid;grid-template-columns:38px minmax(0,1fr);align-items:center;gap:9px;min-width:0;padding:11px;border:1px solid var(--b);border-radius:13px;background:var(--p)}
+#shell #app .sd-achievement>span{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:var(--p2);font-size:20px;filter:grayscale(1);opacity:.65}
+#shell #app .sd-achievement.is-unlocked>span{background:#fff2cf;filter:none;opacity:1}
+#shell #app .sd-achievement>div{display:grid;gap:3px;min-width:0}
+#shell #app .sd-achievement b{overflow:hidden;color:var(--t);font-size:11px;font-weight:900;text-overflow:ellipsis;white-space:nowrap}
+#shell #app .sd-achievement small{overflow:hidden;color:var(--m);font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+#shell #app .sd-achievement em{grid-column:2;color:var(--m);font-size:9px;font-style:normal}
+#shell #app .sd-achievement.is-unlocked em{color:#087342;font-weight:800}
+#shell #app .sd-achievement-link{margin-top:12px;padding:8px 0;border:0;background:transparent;color:#087342;font:800 10px var(--ff-ar-display,'Cairo',sans-serif);cursor:pointer}
+html[data-theme="dark"] #shell #app .sd-achievement.is-unlocked>span{background:#55431d}
+@media(max-width:560px){#shell #app .sd-achievement-grid{grid-template-columns:1fr}}
