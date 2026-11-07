@@ -439,7 +439,14 @@ const QUIZ_BANK = [
     pushHist({ unite: filtre, score: score, total: PAR_SERIE,
                pct: Math.round(score / PAR_SERIE * 100),
                date: new Date().toLocaleString('fr-DZ'), at: attemptAt });
-    document.dispatchEvent(new CustomEvent('dz:quiz-complete',{detail:{attemptId:String(attemptAt)+':'+filtre+':'+score,unit:filtre,score:score,total:PAR_SERIE,at:attemptAt}}));
+    const unitResults={};
+    serie.forEach(function(question){
+      const unit=String(question.u||filtre||0);
+      if(!unitResults[unit])unitResults[unit]={unit:Number(unit),correct:0,total:0};
+      unitResults[unit].total++;
+      if(question._rep===question.c)unitResults[unit].correct++;
+    });
+    document.dispatchEvent(new CustomEvent('dz:quiz-complete',{detail:{attemptId:String(attemptAt)+':'+filtre+':'+score,unit:filtre,unitResults:Object.keys(unitResults).map(function(k){return unitResults[k];}),score:score,total:PAR_SERIE,at:attemptAt}}));
     vue = 'resultat'; render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if(window.DZ && DZ.speak && score === serie.length) DZ.speak('Sehr gut! Perfekt!');
