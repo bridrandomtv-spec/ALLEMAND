@@ -17199,3 +17199,13 @@ html[data-theme="dark"] #shell #app .sd-subject-card.is-partial{border-color:#5b
 html[data-theme="dark"] #shell #app .sd-subject-status.is-active{background:#1c3b27;border-color:#3c7650;color:#b9ebc9}
 html[data-theme="dark"] #shell #app .sd-subject-status.is-partial{background:#3a301d;border-color:#725d31;color:#f3dca5}
 @media(max-width:420px){#shell #app .sd-subject-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Tableau de bord étudiant — graphique des unités calculé depuis les séances enregistrées */
+#shell #app .sd-unit-chart{display:grid;grid-template-columns:repeat(auto-fit,minmax(54px,1fr));align-items:end;gap:10px;min-width:0}
+#shell #app .sd-unit-chart-item{display:grid;grid-template-rows:auto 96px auto auto;justify-items:center;gap:6px;min-width:0}
+#shell #app .sd-unit-chart-item>b{color:var(--t);font-size:11px;font-weight:900;direction:ltr}
+#shell #app .sd-unit-chart-track{display:flex;align-items:flex-end;width:100%;height:96px;padding:4px;overflow:hidden;border-radius:10px;background:var(--p2)}
+#shell #app .sd-unit-chart-track span{display:block;width:100%;min-height:0;border-radius:7px 7px 4px 4px;background:linear-gradient(180deg,#45ae72,#087342);transition:height .35s ease}
+#shell #app .sd-unit-chart-item small{max-width:100%;overflow:hidden;color:var(--m);font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+#shell #app .sd-unit-chart-item em{color:var(--m);font-size:9px;font-style:normal;direction:ltr}
+#shell #app .sd-unit-chart-note{margin:12px 0 0;color:var(--m);font-size:10px;line-height:1.7}
