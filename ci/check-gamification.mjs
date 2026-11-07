@@ -46,7 +46,7 @@ assert.match(css,/\.sd-layout/,'composition principale du tableau de bord absent
 assert.match(css,/\.sd-quick/,'raccourcis du tableau de bord absents');
 assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=162/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=163/,'version CSS non précachée');
 assert.doesNotMatch(html,/id="studentFocus"|id="studentContinue"/,'ancienne retouche du tableau de bord subsiste dans فضائي الدراسي');
 assert.doesNotMatch(app,/renderStudentFocus|sf-continue-card/,'ancien rendu de tableau de bord subsiste dans فضائي الدراسي');
 console.log('✅ XP par compte, événements vérifiés, anti-doublon, 20 badges et grilles responsive contrôlés');
