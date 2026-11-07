@@ -1654,3 +1654,15 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Cache mis à jour pour cette extension : CSS v163, app.js v3543, Service Worker `dz-de-v3.185.0.0.77`. La CI contrôle le chargement du registre et le rendu des états de disponibilité.
 - Aucune validation visuelle ordinateur/mobile n'est revendiquée à ce stade. PR #17 reste ouverte et non fusionnée ; `main` et la production ne sont pas modifiées.
 - Validation finale du lot : CI #2413 (run `42402018216`) réussie sur le commit `23d4e154a22941eb9a0a730861a1cc680ffe8303` ; contrôles structurels, pédagogiques, accès par rôle, registre des matières et caches synchronisés. Références finales : CSS v163, app.js v3543, Service Worker `dz-de-v3.185.0.0.77`.
+
+## Lot 139 — graphique de progression réel des unités (7 novembre 2026)
+
+- Comparaison du tableau de bord indépendant avec les deux prototypes : la vue existante présentait déjà le bandeau personnel, les quatre accès rapides, la reprise de séance, les matières, l’activité hebdomadaire, l’accès au professeur IA, les recommandations et les notifications.
+- Élément visuel pédagogique manquant ajouté : un graphique par unité, dans une carte distincte, pour rendre la progression comparable d’une unité à l’autre.
+- Chaque barre est calculée à partir des séances réellement enregistrées pour l’unité (loadSeancesFor) ; le numérateur, le total et le pourcentage sont dérivés des séances présentes dans UNITES. Aucun score, minute, pourcentage ou matière fictive n’est ajouté.
+- Le graphique reste indépendant de فضائي الدراسي, sans Chart.js ni autre dépendance. Il utilise le CSS existant, avec adaptation en grille sur petit écran et les variables de thème déjà utilisées par la plateforme.
+- Contrôles CI ajoutés dans ci/check-gamification.mjs pour vérifier la zone HTML, le calcul depuis les séances réelles, le rendu et les styles du graphique.
+- Références de cache synchronisées : CSS v164, app.js v3544, Service Worker dz-de-v3.185.0.0.78.
+- Fichiers concernés : index.html, app.js, style-prototype-dz.css, sw.js, ci/check-gamification.mjs, ci/check-masar.mjs, ci/check-public-portal.mjs et le présent dossier.
+- Aucun changement aux routes, à Auth, Supabase, RLS, schéma, migrations, paiement ou permissions. Aucun changement direct sur main.
+- La validation CI du nouveau commit et la vérification visuelle sur ordinateur/mobile restent à effectuer. PR #17 demeure ouverte et non fusionnée.
