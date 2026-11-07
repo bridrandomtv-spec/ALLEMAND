@@ -1756,4 +1756,5 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - La présentation est limitée à la vue `data-view="dashboard"`, avec variantes responsive et sombre dans `style-prototype-dz.css`.
 - Cache : CSS `v171`, app `v3547`, Service Worker `dz-de-v3.185.0.0.85`. Le contrôle `ci/check-masar.mjs` vérifie désormais la présence de la carte, des unités, des jalons de séances et des variantes sombres.
 - Périmètre préservé : PR #17 et branche existante ; aucun changement direct sur `main`, aucune fusion, aucun déploiement manuel ; aucun changement Supabase/Auth/RLS/schéma/paiement.
-- À confirmer après les commits : résultat CI du nouveau HEAD. Aucune validation visuelle navigateur ordinateur/mobile n'est revendiquée avant essai réel de la preview.
+- CI #2464 : réussie sur le commit `15c4d87d9be8a4decd38dfbd8517395517b70ab3` ; les contrôles structurels, portail, tableau de bord مسارك, XP/badges, permissions, matrice des parcours et régression pédagogique sont verts.
+- Cette réussite CI ne constitue pas une validation visuelle navigateur. Aucun test visuel ordinateur/mobile ni build Cloudflare de prévisualisation pour ce HEAD n'est revendiqué ; un essai réel de la preview reste nécessaire.
