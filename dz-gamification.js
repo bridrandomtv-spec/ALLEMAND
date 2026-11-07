@@ -9,7 +9,7 @@ var thresholds=[0,100,250,450,700,1000,1400,1900,2500,3200];
 var levelNames=['مبتدئ','متعلّم','مجتهد','مثابر','متفوّق','متميّز','خبير','متألّق','قائد التعلّم','بطل المعرفة'];
 function account(){try{var s=window.AUTH&&AUTH.session?AUTH.session():null;return s&&s.user?'local:'+String(s.user).toLowerCase():null;}catch(e){return null;}}
 function key(){var a=account();return a?KEY+':'+a:null;}
-function fresh(){return {xp:0,events:[],lessons:[],units:[],quizzes:0,perfect:0,score60:false,score80:false,activeDays:[]};}
+function fresh(){return {xp:0,events:[],lessons:[],units:[],quizzes:0,perfect:0,score60:false,score80:false,activeDays:[],unitQuiz:{}};}
 function read(){var k=key();if(!k)return fresh();try{return Object.assign(fresh(),JSON.parse(localStorage.getItem(k)||'{}'));}catch(e){return fresh();}}
 function save(s){var k=key();if(k)try{localStorage.setItem(k,JSON.stringify(s));}catch(e){}}
 function dateKey(t){var d=new Date(t),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
@@ -79,7 +79,16 @@ function award(id,xp,kind,detail){
 var s=read();if(s.events.indexOf(id)>=0)return;
 var before=level(s.xp).n;s.events.push(id);s.events=s.events.slice(-500);s.xp+=xp;activity(s,detail.at);
 if(kind==='lesson'){var lid=String(detail.unit)+':'+String(detail.session);if(s.lessons.indexOf(lid)<0)s.lessons.push(lid);if(detail.unitComplete&&s.units.indexOf(String(detail.unit))<0)s.units.push(String(detail.unit));}
-if(kind==='quiz'){s.quizzes++;var pct=detail.total?detail.score/detail.total:0;if(pct>=.6)s.score60=true;if(pct>=.8)s.score80=true;if(pct>=1)s.perfect++;}
+if(kind==='quiz'){
+s.quizzes++;var pct=detail.total?detail.score/detail.total:0;if(pct>=.6)s.score60=true;if(pct>=.8)s.score80=true;if(pct>=1)s.perfect++;
+if(!s.unitQuiz||typeof s.unitQuiz!=='object')s.unitQuiz={};
+if(Array.isArray(detail.unitResults))detail.unitResults.forEach(function(row){
+var unit=String(Number(row&&row.unit)||0),correct=Number(row&&row.correct),total=Number(row&&row.total);
+if(unit==='0'||!Number.isFinite(correct)||!Number.isFinite(total)||total<=0||correct<0||correct>total)return;
+var current=s.unitQuiz[unit]||{correct:0,total:0,attempts:0};
+current.correct+=correct;current.total+=total;current.attempts=(Number(current.attempts)||0)+1;s.unitQuiz[unit]=current;
+});
+}
 var after=level(s.xp).n,badges=badgeList(s),newBadges=badges.filter(function(b){return b[4]&&s.events.indexOf('badge:'+b[0])<0;});
 newBadges.forEach(function(b){s.events.push('badge:'+b[0]);});
 save(s);renderPanel();
