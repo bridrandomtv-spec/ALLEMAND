@@ -1732,3 +1732,16 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Validation du commit `a31de4828477287e40ab430f4aa5b883dbcc8d10` : CI #2450 (run `42406050729`) réussie ; les contrôles `check-public-portal`, `check-masar` et `check-gamification` passent notamment avec les versions de cache synchronisées. Build Cloudflare de prévisualisation `design-prototypes-67-74-alignment` réussi (Build ID `0739f4c4-70cc-4390-9d76-61a933cc6825`). Le contrôle Supabase Preview est ignoré, sans changement de base. Aucune validation visuelle navigateur ordinateur/mobile n'est revendiquée.
 
 - Correctifs de validation du lot : CI #2446 et #2448 ont révélé des assertions de cache anciennes (app.js v3544, CSS v168) ; CI #2449 a ensuite révélé l'assertion CSS v168 restante dans le contrôle XP. Les contrôles `check-masar`, `check-public-portal` et `check-gamification` ont été alignés sur app.js v3545, CSS v169 et SW v3.185.0.0.83. Le passage final #2450 est entièrement réussi.
+
+
+## Lot 146 — rangée de quatre indicateurs visuels du tableau de bord étudiant (7 novembre 2026)
+
+- Comparaison avec les prototypes étudiants : le premier prototype prévoit une rangée dédiée de quatre cartes de synthèse sous la bannière de bienvenue. Cette hiérarchie manquait dans la vue autonome actuelle.
+- Ajout de `#sdStats` immédiatement après `#studentDashboardHero`, sans modifier la vue historique `فضائي الدراسي`.
+- Quatre indicateurs sont calculés par compte : séances achevées / séances enregistrées, nombre d'unités du niveau, réponses correctes / réponses de quiz enregistrées, nombre de tentatives de quiz par unité. Les tentatives et réponses sont agrégées depuis `DZ_GAMIFICATION.read().unitQuiz`, qui est isolé par compte.
+- Aucun temps d'étude, variation en pourcentage, classement, cible hebdomadaire ou chiffre d'exemple du prototype n'est repris. Les valeurs absentes restent à zéro, avec un sous-libellé qui explicite leur base de calcul.
+- Présentation en quatre cartes à accents visuels distincts, quatre colonnes sur grand écran, deux sur tablette et mobile, et couleurs adaptées au thème sombre. Styles confinés aux classes `sd-stat*`.
+- Contrôles CI étendus dans `ci/check-gamification.mjs` et références de cache synchronisées dans les contrôles de la branche.
+- Cache synchronisé : CSS v170, app.js v3546, Service Worker `dz-de-v3.185.0.0.84`.
+- Aucun changement des routes, handlers, données métier, Supabase, Auth, RLS, schéma, migration, paiement ou permissions. `فضائي الدراسي` reste inchangé ; `main` n'est pas modifiée ; PR #17 reste ouverte et non fusionnée.
+- CI et build de prévisualisation à contrôler après ce lot ; aucune validation visuelle navigateur n'est revendiquée.
