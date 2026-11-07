@@ -5,6 +5,9 @@ const js=read('dz-gamification.js'),app=read('app.js'),quiz=read('quiz.js'),html
 assert.match(html,/dz-gamification\.js\?v=4/,'module XP non chargé');
 assert.match(sw,/dz-gamification\.js\?v=4/,'module XP absent du précache');
 assert.match(app,/dz:lesson-complete/,'événement de fin de séance absent');
+assert.match(quiz,/unitResults:Object\.keys\(unitResults\)/,'résultats par unité absents de l’événement quiz');
+assert.match(js,/unitQuiz:\{\}/,'stockage des résultats par unité absent');
+assert.match(js,/detail\.unitResults\)\)detail\.unitResults\.forEach/,'agrégation des résultats par unité absente');
 assert.match(quiz,/dz:quiz-complete/,'événement de fin de quiz absent');
 assert.match(js,/KEY='dz_de_gamification_v1'/,'clé XP absente');
 assert.ok(js.includes("return a?KEY+':'+a:null;"), 'progression XP non isolée par compte');
@@ -50,11 +53,15 @@ assert.match(css,/\.sd-subject-grid/,'grille des matières du tableau de bord ab
 assert.match(html,/id="sdSubjects"/,'zone des matières du tableau de bord absente');
 assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=167/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=168/,'version CSS non précachée');
 assert.doesNotMatch(html,/id="studentFocus"|id="studentContinue"/,'ancienne retouche du tableau de bord subsiste dans فضائي الدراسي');
 assert.doesNotMatch(app,/renderStudentFocus|sf-continue-card/,'ancien rendu de tableau de bord subsiste dans فضائي الدراسي');
 
 assert.match(html,/id="sdUnitProgress"/,'graphique réel de progression des unités absent');
+assert.match(html,/id="sdSkills"/,'zone des résultats de quiz par unité absente');
+assert.match(app,/const skillRows=Object\.keys\(unitQuiz\)/,'résultats personnels par unité non rendus');
+assert.match(app,/ليست حكماً نهائياً على إتقان الوحدة/,'limite d’interprétation des scores non indiquée');
+assert.match(css,/\.sd-skill-track/,'styles des résultats de quiz par unité absents');
 assert.match(app,/const unitProgress=units\.map\(u=>/,'calcul individuel de progression des unités absent');
 assert.match(app,/loadSeancesFor\(u\.n\)/,'progression des unités non calculée depuis les séances enregistrées');
 assert.match(app,/unitProgress\.map\(u=>/,'rendu du graphique de progression des unités absent');
