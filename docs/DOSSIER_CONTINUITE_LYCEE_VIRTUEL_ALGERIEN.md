@@ -1821,3 +1821,41 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Validation visuelle navigateur non revendiquée ; CI à contrôler après ce lot.
 
 - Validation Lot 152 : CI GitHub Actions #2497 réussie sur le commit `b9523ae63fbfb99e8241ce1a828aa43dce3e1cf5` ; job « Validation structurelle & pédagogique » terminé avec succès. Les contrôles de proportion des panneaux, de grille mobile et de cache CSS `v176` / Service Worker `.90` sont passés.
+
+---
+
+## Lot 153 — aperçu réel des messages dans le tableau de bord étudiant
+
+Date : 7 novembre 2026
+
+### Objectif
+Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui prévoit un espace « الرسائل », sans importer les noms, messages ou compteurs fictifs du prototype.
+
+### Réalisation
+- Ajout d'un panneau « الرسائل والمجموعات » entre l'assistant intelligent et les notifications.
+- Le panneau interroge la fonction existante `window.SB.msgConvs()` et affiche uniquement les conversations réellement retournées pour le compte connecté.
+- Présentation limitée aux métadonnées disponibles : nombre de conversations, titre/type et date de dernière activité. Aucun extrait de message ni compteur de non-lus n'est inventé.
+- Le bouton renvoie vers la vue de messagerie existante (`data-go="msg"`).
+- En cas de session cloud indisponible ou d'erreur de lecture, le panneau propose simplement d'ouvrir la messagerie ; il ne simule aucune conversation.
+- Le chargement est abandonné si l'élève quitte le tableau de bord avant la réponse.
+
+### Fichiers modifiés
+- `app.js` : chargement asynchrone des conversations réelles.
+- `index.html` : ajout du panneau `sdMessages`.
+- `style-prototype-dz.css` : styles du panneau, compatibles avec le thème sombre.
+- `sw.js` : précache mis à jour.
+- `ci/check-masar.mjs` : assertions sur le panneau et sa source de données.
+- `ci/check-public-portal.mjs` : références de cache actualisées.
+
+### Versions
+- CSS : `style-prototype-dz.css?v=177`
+- JS : `app.js?v=3548`
+- Service Worker : `dz-de-v3.185.0.0.91`
+- `masar.js?v=3516` inchangé.
+
+### Garanties et limites
+- Aucun nom d'enseignant, message, nombre de messages non lus ou aperçu fictif repris du prototype.
+- La lecture utilise exclusivement l'API client déjà existante et reste soumise aux politiques RLS en place.
+- Aucun changement de schéma, SQL, Auth, RLS, paiement, routes principales ou identifiants fonctionnels existants.
+- Aucun changement sur `main`, aucune fusion et aucun déploiement de production.
+- Le contrôle CI du nouveau lot reste à confirmer après exécution du workflow.
