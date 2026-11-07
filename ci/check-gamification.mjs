@@ -45,14 +45,8 @@ assert.match(app,/if\(view === 'dashboard'\) renderStudentDashboard\(\)/,'activa
 assert.match(css,/\.sd-layout/,'composition principale du tableau de bord absente');
 assert.match(css,/\.sd-quick/,'raccourcis du tableau de bord absents');
 assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
-assert.match(html,/id="studentFocus"/,'zone de raccourcis personnalisés absente du tableau de bord');
-assert.match(html,/id="studentContinue"/,'zone de reprise du cours absente du tableau de bord');
-assert.match(app,/sf-continue-card/,'carte de reprise du cours absente');
-assert.match(app,/function renderStudentFocus\(\)/,'rendu du tableau de bord étudiant absent');
-assert.match(app,/data-go="revision"/,'recommandation de révision non reliée à la vue existante');
-assert.match(app,/MEMOIRE\.dues\(\)/,'recommandation non fondée sur les cartes réellement dues');
-assert.match(css,/\.sf-next/,'carte de reprise du cours absente');
-assert.match(css,/\.sf-actions/,'raccourcis du tableau de bord absents');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=161/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=162/,'version CSS non précachée');
+assert.doesNotMatch(html,/id="studentFocus"|id="studentContinue"/,'ancienne retouche du tableau de bord subsiste dans فضائي الدراسي');
+assert.doesNotMatch(app,/renderStudentFocus|sf-continue-card/,'ancien rendu de tableau de bord subsiste dans فضائي الدراسي');
 console.log('✅ XP par compte, événements vérifiés, anti-doublon, 20 badges et grilles responsive contrôlés');
