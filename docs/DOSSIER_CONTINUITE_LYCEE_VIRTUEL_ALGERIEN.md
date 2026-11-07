@@ -1716,4 +1716,4 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Les comptes sans résultats voient un état vide qui renvoie vers la vue de quiz existante. Aucune donnée de démonstration n'est ajoutée ; l'ancien historique local partagé n'est pas repris pour éviter les mélanges entre utilisateurs.
 - Aucun changement Supabase, Auth, RLS, schéma ou paiement. Les modifications concernent le suivi local déjà existant et la présentation du tableau de bord.
 - Cache synchronisé : CSS v168, `quiz.js` v3513, `dz-gamification.js` v5, Service Worker `dz-de-v3.185.0.0.82`. `app.js` reste v3544.
-- CI attendue sur le nouveau commit ; PR #17 reste ouverte et non fusionnée, aucun déploiement de production.
+- Validation du commit `3673bc53cebb44fedd6cf3a0c846a76b5c530ebf` : CI #2440 réussie (validation structurelle & pédagogique) et build Cloudflare de prévisualisation de la branche réussi. Le check Supabase est ignoré, sans changement de base. PR #17 reste ouverte et non fusionnée ; aucun déploiement de production.
