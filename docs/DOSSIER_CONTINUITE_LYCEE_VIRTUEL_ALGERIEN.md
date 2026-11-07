@@ -1703,3 +1703,5 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Contrôles CI ajoutés pour vérifier les repères, le lien fonctionnel vers `prof` et les styles dédiés.
 - Cache synchronisé : CSS v167 ; Service Worker `dz-de-v3.185.0.0.81`. `app.js` reste v3544 car il n'a pas été modifié.
 - La CI #2428 du lot 142 est réussie. Le lot 143 attend sa propre exécution CI. PR #17 reste ouverte et non fusionnée ; aucune publication Cloudflare n'est effectuée.
+
+- Correctif CI du lot 143 : le premier passage a signalé une assertion `ci/check-public-portal.mjs` qui attendait encore le Service Worker v3.185.0.0.80. L'assertion a été alignée sur v3.185.0.0.81 ; le nouveau passage doit encore confirmer l'ensemble.
