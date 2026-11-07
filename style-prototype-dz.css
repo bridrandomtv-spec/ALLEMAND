@@ -17130,6 +17130,8 @@ html[data-theme="dark"] section[data-view="compte"] #compteBody>#lcCard input{
 #shell #app .sd-ai-head b{display:block;color:#fff;font-size:14px;font-weight:900}
 #shell #app .sd-ai-head small{display:block;margin-top:2px;color:#eadcf8;font-size:10px}
 #shell #app .sd-ai-card p{margin:15px 0;color:#f1eafa;font-size:11px;line-height:1.9}
+#shell #app .sd-ai-capabilities{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 15px}
+#shell #app .sd-ai-capabilities span{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.11);color:#fff;font-size:10px;font-weight:800;line-height:1.5}
 #shell #app .sd-ai-card button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 13px;border:0;border-radius:11px;background:#fff;color:#58318a;font:900 11px var(--ff-ar-display,'Cairo',sans-serif);cursor:pointer}
 #shell #app .sd-recommend{display:grid;grid-template-columns:35px minmax(0,1fr);gap:9px;align-items:center}
 #shell #app .sd-recommend>span{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--p2);font-size:18px}
