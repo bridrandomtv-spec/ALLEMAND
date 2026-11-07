@@ -37,6 +37,12 @@ assert.ok(js.includes('active.indexOf(key)>=0'), 'activité hebdomadaire non iss
 assert.ok(js.includes('دون تقدير دقائق غير مسجّلة'), 'absence de minutes fictives non documentée');
 assert.match(css,/\.dz-week-activity/,'styles du graphique hebdomadaire absents');
 assert.match(html,/home-ai-card/,'carte professeur IA absente de l’accueil');
+assert.match(html,/data-view="dashboard"/,'vue autonome du tableau de bord étudiant absente');
+assert.match(app,/function renderStudentDashboard\(\)/,'rendu du tableau de bord étudiant autonome absent');
+assert.match(app,/if\(view === 'dashboard'\) renderStudentDashboard\(\)/,'activation du tableau de bord étudiant absente');
+assert.match(css,/\.sd-layout/,'composition principale du tableau de bord absente');
+assert.match(css,/\.sd-quick/,'raccourcis du tableau de bord absents');
+assert.match(html,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
 assert.match(html,/id="studentFocus"/,'zone de raccourcis personnalisés absente du tableau de bord');
 assert.match(html,/id="studentContinue"/,'zone de reprise du cours absente du tableau de bord');
 assert.match(app,/sf-continue-card/,'carte de reprise du cours absente');
@@ -46,5 +52,5 @@ assert.match(app,/MEMOIRE\.dues\(\)/,'recommandation non fondée sur les cartes 
 assert.match(css,/\.sf-next/,'carte de reprise du cours absente');
 assert.match(css,/\.sf-actions/,'raccourcis du tableau de bord absents');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=160/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=161/,'version CSS non précachée');
 console.log('✅ XP par compte, événements vérifiés, anti-doublon, 20 badges et grilles responsive contrôlés');
