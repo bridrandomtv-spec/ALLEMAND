@@ -1819,3 +1819,5 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Ajout de contrôles CI explicites pour les ratios 2/3, 1/3 et 1/2 ; cache CSS `v176`, Service Worker `dz-de-v3.185.0.0.90`, app.js `v3547` inchangé. Contrôles de cache alignés dans `check-masar`, `check-public-portal` et `check-gamification`.
 - Aucun faux résultat des prototypes n'est repris : les données restent issues du compte étudiant et des modules pédagogiques existants. Routes, identifiants dynamiques, événements, Auth/Supabase/RLS/schéma/paiement inchangés ; PR #17 reste ouverte et non fusionnée ; `main` intacte.
 - Validation visuelle navigateur non revendiquée ; CI à contrôler après ce lot.
+
+- Validation Lot 152 : CI GitHub Actions #2497 réussie sur le commit `b9523ae63fbfb99e8241ce1a828aa43dce3e1cf5` ; job « Validation structurelle & pédagogique » terminé avec succès. Les contrôles de proportion des panneaux, de grille mobile et de cache CSS `v176` / Service Worker `.90` sont passés.
