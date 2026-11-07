@@ -1809,3 +1809,13 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Validation visuelle réelle navigateur encore nécessaire ; ce lot corrige un défaut CSS objectivement identifié et ajoute un garde-fou CI, sans prétendre à la parité visuelle complète avec les prototypes.
 
 - Validation Lot 151 : CI GitHub Actions #2492 réussie sur le commit `5f6bb82fa2f67f9c078c498a577f23beecb2e0a7` ; job « Validation structurelle & pédagogique » terminé avec succès. Le run #2491, antérieur à l'alignement du contrôle gamification, n'est pas le résultat de référence. Le contrôle #2492 inclut les assertions dashboard et les caches CSS `v175` / SW `.89`.
+
+
+## 21. Lot 152 — proportions de grille fidèles au prototype pédagogique (7 novembre 2026)
+
+- Lecture ciblée des deux prototypes HTML sur les sections du tableau de bord : le prototype 1 répartit « إتقان المهارات اللغوية » et « توصيات مخصصة » sur une grille 2/3–1/3, puis les objectifs et les badges à parts égales ; le prototype 2 place les matières et le graphique dans la colonne principale (2/3) et l'assistant IA/recommandations dans la colonne latérale (1/3).
+- Ajustement de la grille interne `.sd-main` sur six fractions : compétences sur 4/6, recommandations sur 2/6, objectifs sur 3/6 et badges sur 3/6. Matières, progression par unité et activité restent pleine largeur. La colonne latérale du tableau de bord conserve l'assistant IA et les notifications.
+- Au breakpoint mobile (640 px), tous les panneaux repassent en une seule colonne ; la grille de six fractions ne s'applique plus.
+- Ajout de contrôles CI explicites pour les ratios 2/3, 1/3 et 1/2 ; cache CSS `v176`, Service Worker `dz-de-v3.185.0.0.90`, app.js `v3547` inchangé. Contrôles de cache alignés dans `check-masar`, `check-public-portal` et `check-gamification`.
+- Aucun faux résultat des prototypes n'est repris : les données restent issues du compte étudiant et des modules pédagogiques existants. Routes, identifiants dynamiques, événements, Auth/Supabase/RLS/schéma/paiement inchangés ; PR #17 reste ouverte et non fusionnée ; `main` intacte.
+- Validation visuelle navigateur non revendiquée ; CI à contrôler après ce lot.
