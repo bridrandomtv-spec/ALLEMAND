@@ -17260,3 +17260,24 @@ html[data-theme="dark"] #shell #app .sd-achievement.is-unlocked>span{background:
 #shell #app .sd-goals-note{margin:11px 0 0;color:var(--m);font-size:10px;line-height:1.8}
 html[data-theme="dark"] #shell #app .sd-goal-card>strong,html[data-theme="dark"] #shell #app .sd-goal-card>button{color:#80d9a2}
 @media(max-width:680px){#shell #app .sd-goals-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Lot 146 — quatre indicateurs réels sous la bannière du tableau de bord étudiant */
+#shell #app .sd-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;min-width:0}
+#shell #app .sd-stat-card{position:relative;display:grid;gap:5px;min-width:0;overflow:hidden;padding:16px;border:1px solid var(--b);border-radius:17px;background:var(--p);box-shadow:0 5px 18px rgba(0,55,28,.045)}
+#shell #app .sd-stat-card:after{position:absolute;inset-block:0;inset-inline-start:0;width:3px;background:var(--sd-stat-accent);content:""}
+#shell #app .sd-stat-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#shell #app .sd-stat-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--sd-stat-soft);color:var(--sd-stat-accent);font-size:19px;font-weight:900}
+#shell #app .sd-stat-tag{color:var(--m);font-size:10px;font-weight:800}
+#shell #app .sd-stat-card>strong{color:var(--t);font-size:clamp(23px,2.1vw,29px);font-weight:900;line-height:1.25;direction:ltr;text-align:start}
+#shell #app .sd-stat-card>b{color:var(--t);font-size:12px;font-weight:900}
+#shell #app .sd-stat-card>small{color:var(--m);font-size:10px;line-height:1.6}
+#shell #app .sd-stat-lessons{--sd-stat-accent:#087342;--sd-stat-soft:#e6f4ea}
+#shell #app .sd-stat-units{--sd-stat-accent:#3568b8;--sd-stat-soft:#eaf1ff}
+#shell #app .sd-stat-correct{--sd-stat-accent:#a36a0b;--sd-stat-soft:#fff2d9}
+#shell #app .sd-stat-attempts{--sd-stat-accent:#7650a8;--sd-stat-soft:#f0eaff}
+html[data-theme="dark"] #shell #app .sd-stat-lessons{--sd-stat-soft:rgba(8,115,66,.2)}
+html[data-theme="dark"] #shell #app .sd-stat-units{--sd-stat-soft:rgba(53,104,184,.22)}
+html[data-theme="dark"] #shell #app .sd-stat-correct{--sd-stat-soft:rgba(163,106,11,.22)}
+html[data-theme="dark"] #shell #app .sd-stat-attempts{--sd-stat-soft:rgba(118,80,168,.22)}
+@media(max-width:920px){#shell #app .sd-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){#shell #app .sd-stats{gap:8px}#shell #app .sd-stat-card{padding:12px;border-radius:14px}#shell #app .sd-stat-icon{width:33px;height:33px;font-size:17px}#shell #app .sd-stat-card>strong{font-size:23px}#shell #app .sd-stat-card>b{font-size:11px}#shell #app .sd-stat-card>small{font-size:9px}}
