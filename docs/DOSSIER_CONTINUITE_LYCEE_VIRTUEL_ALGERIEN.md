@@ -1684,3 +1684,12 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Assertions CI ajoutées pour vérifier le conteneur, la liaison au moteur de badges, l'état réel et l'accès au registre.
 - Cache synchronisé : CSS v165 ; Service Worker dz-de-v3.185.0.0.79. app.js reste v3544 car son contenu n'a pas changé dans ce lot.
 - Aucun changement Auth, Supabase, RLS, schéma, permissions, routes ou espace étudiant historique. Aucun déploiement ni fusion.
+
+## Lot 142 — cinquième accès rapide aux messages (7 novembre 2026)
+
+- Alignement sur le prototype du tableau de bord à cinq raccourcis : ajout d'un accès direct « الرسائل والتواصل » vers la vue existante data-view="msg".
+- Grille desktop ajustée à cinq colonnes ; la règle responsive existante conserve deux colonnes sur tablette/téléphone.
+- Aucun compteur fictif : le raccourci ne prétend pas qu'il existe des messages non lus. Le centre de notifications garde son propre compteur réel.
+- Contrôles CI ajoutés pour vérifier les cinq cartes, la route message et les grilles desktop/mobile.
+- Cache synchronisé : CSS v166 ; Service Worker dz-de-v3.185.0.0.80. Aucun changement app.js.
+- Aucune modification de la messagerie elle-même, des routes, Auth, Supabase, RLS ou permissions.
