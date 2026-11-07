@@ -23,9 +23,9 @@ assert.match(html, /class="sd-panel sd-path-panel"/, 'panneau parcours pleine la
 assert.match(html, /class="sd-panel sd-subjects-panel"/, 'panneau matières absent');
 assert.match(html, /class="sd-panel sd-skills-panel"/, 'panneau compétences absent');
 assert.match(html, /class="sd-panel sd-recommend-panel"/, 'panneau recommandation absent');
-assert.match(css, /#shell #app \.sd-main\\{[^}]*display:grid/s, 'grille interne du tableau de bord non activée');
-assert.match(css, /\\.sd-subjects-panel[^}]*grid-column:1\\/-1/s, 'panneau matières pleine largeur absent');
-assert.match(css, /@media\\(max-width:640px\\)[\\s\\S]*?\\.sd-main\\{[^}]*grid-template-columns:minmax\\(0,1fr\\)/, 'grille dashboard mobile absente');
+assert.match(css, /#shell #app \.sd-main\{[^}]*display:grid/s, 'grille interne du tableau de bord non activée');
+assert.match(css, /\.sd-subjects-panel[^}]*grid-column:1\/-1/s, 'panneau matières pleine largeur absent');
+assert.match(css, /@media\(max-width:640px\)[\s\S]*?\.sd-main\{[^}]*grid-template-columns:minmax\(0,1fr\)/, 'grille dashboard mobile absente');
 
 
 assert.match(js, /function progressData\(\)/, 'calcul de progression absent');
