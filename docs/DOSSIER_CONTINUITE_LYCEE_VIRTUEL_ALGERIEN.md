@@ -1870,3 +1870,27 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Audit source complémentaire : les graphiques de résultats du tableau de bord affichent les taux de réponses correctes agrégés par unité ; ils ne mesurent pas séparément vocabulaire, grammaire, compréhension orale ou expression. Conserver cet intitulé par unité et ne pas présenter ces agrégats comme un radar de compétences linguistiques.
 - Les deux fichiers prototypes `Qwen_html_20261021_bxmtbklup.html` et `Qwen_html_20261021_juv5xelun.html` ne sont pas présents à la racine de cette branche. Ne pas inventer leur structure exacte : la comparaison pixel/structure nécessite de disposer à nouveau de leurs sources ou d'une prévisualisation accessible.
 - PR #17 maintenue ouverte et non fusionnée ; `main` inchangée ; aucun déploiement revendiqué ; aucun changement Supabase/Auth/RLS/schéma/paiement.
+
+
+## Audit fonctionnel — recherche, notifications et gamification (8 novembre 2026)
+
+### État réellement présent dans la branche
+- Recherche globale : module dédié `dz-interactions.js?v=5`, raccourci `Ctrl+K` / `Cmd+K`, recherche instantanée dans les vues présentes, les unités et séances de `UNITES`, les groupes de `QUIZ_BANK`, ainsi que l'index documentaire `assets/bdd/grammaire.json`. Les résultats ouvrent les vues et contenus existants ; aucun moteur de recherche externe ni contenu de démonstration n'est ajouté.
+- Centre de notifications : notifications locales créées à partir des toasts applicatifs, classées en succès/erreur/avertissement/information, conservées par compte dans `localStorage` (maximum 60), avec compteur non lu, lecture individuelle et action « تحديد الكل كمقروء ». Les cartes de révision dues sont présentées séparément comme rappel.
+- Limite de portée des notifications : ce centre n'est pas un miroir des notifications distantes Supabase. Les notifications du compte affichées dans d'autres espaces via `SB.myNotifications()` restent un parcours distinct ; ne pas présenter les deux sources comme un flux unifié.
+- Gamification : module `dz-gamification.js?v=5`, état local associé au compte authentifié, XP attribués aux événements réels `dz:lesson-complete` et `dz:quiz-complete`, déduplication des événements, progression sur 10 niveaux, 20 badges calculés selon les accomplissements, activité des sept derniers jours et fenêtre de célébration avec confettis.
+- Le tableau de bord étudiant lit ces données via `DZ_GAMIFICATION` ; il ne reprend pas les 1 250 XP, les 12 badges, le niveau 5 ou les chiffres d'exemple du prototype. Le nombre de badges ouverts dépend du compte et de ses événements.
+- La conservation locale est limitée aux états explicitement gérés par ces modules. Elle ne remplace pas la persistance cloud des cours, des évaluations ou des autres données de la plateforme.
+
+### Écarts conservés volontairement par rapport au prototype de démonstration
+- Pas de classement étudiant fictif : aucune table de classement réelle, validée et autorisée n'a été identifiée dans le périmètre de cette évolution.
+- Pas d'attribution XP arbitraire à chaque clic : seuls les événements pédagogiques d'achèvement effectivement émis par les modules existants sont récompensés.
+- Pas de notification de démonstration au chargement : les entrées proviennent des actions réelles de l'application.
+- Pas de données d'activité, de durée d'étude ou de résultats inventés.
+
+### Contrôles et périmètre
+- Le HTML charge `dz-interactions.js?v=5` et `dz-gamification.js?v=5` ; le Service Worker les inclut dans le précache.
+- Le contrôle CI contient les étapes « Vérifier recherche globale et centre de notifications » et « Vérifier XP et badges fondés sur les activités réelles ».
+- Workflow de validation du HEAD `0432b6fa9a9846e535e7f55c2ffac0a032e278e3` : run `42414839758`, job « Validation structurelle & pédagogique » terminé avec succès ; les contrôles recherche/notifications, gamification, syntaxe JS, accès et parcours ont réussi.
+- Cette CI valide les assertions automatisées, pas le rendu ni les interactions dans un vrai navigateur. La recette visuelle desktop/mobile et le test manuel du raccourci clavier restent à faire.
+- PR #17 reste ouverte et non fusionnée ; `main` reste intacte. Aucun déploiement de production et aucun changement Auth, Supabase, RLS, schéma, migration ou paiement.
