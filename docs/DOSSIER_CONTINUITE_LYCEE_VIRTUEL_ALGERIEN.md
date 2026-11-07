@@ -1745,3 +1745,15 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Cache synchronisé : CSS v170, app.js v3546, Service Worker `dz-de-v3.185.0.0.84`.
 - Aucun changement des routes, handlers, données métier, Supabase, Auth, RLS, schéma, migration, paiement ou permissions. `فضائي الدراسي` reste inchangé ; `main` n'est pas modifiée ; PR #17 reste ouverte et non fusionnée.
 - CI et build de prévisualisation à contrôler après ce lot ; aucune validation visuelle navigateur n'est revendiquée.
+
+
+## 16. Lot 147 — carte pédagogique complète du tableau de bord étudiant (7 novembre 2026)
+
+- Reprise de la composition « خريطة التعلم البيداغوجية » du prototype `Qwen_html_20261021_bxmtbklup.html`, sans importer ses données de démonstration, ses pourcentages, ses objectifs hebdomadaires ni ses badges fictifs.
+- Dans `app.js`, la zone `#sdPath` n'affiche plus uniquement une fenêtre de cinq séances autour de la prochaine leçon. Elle présente désormais les unités du niveau du compte, chacune avec le nombre de séances terminées, le taux calculé, et les jalons correspondant aux séances réelles.
+- La séance suivante est mise en évidence à partir de `prochaineSeance()`. Les unités terminées, en cours, commencées et non commencées sont distinguées sans transformer les séances restantes en faux verrouillage.
+- L'action « متابعة الآن » conserve la navigation existante `data-go="seances"`. Aucun nouvel identifiant de vue, route, module ou moteur pédagogique n'a été créé.
+- La présentation est limitée à la vue `data-view="dashboard"`, avec variantes responsive et sombre dans `style-prototype-dz.css`.
+- Cache : CSS `v171`, app `v3547`, Service Worker `dz-de-v3.185.0.0.85`. Le contrôle `ci/check-masar.mjs` vérifie désormais la présence de la carte, des unités, des jalons de séances et des variantes sombres.
+- Périmètre préservé : PR #17 et branche existante ; aucun changement direct sur `main`, aucune fusion, aucun déploiement manuel ; aucun changement Supabase/Auth/RLS/schéma/paiement.
+- À confirmer après les commits : résultat CI du nouveau HEAD. Aucune validation visuelle navigateur ordinateur/mobile n'est revendiquée avant essai réel de la preview.
