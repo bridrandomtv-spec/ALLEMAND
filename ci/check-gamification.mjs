@@ -44,6 +44,10 @@ assert.match(app,/!canSeeStudentDashboard\(\)/,'protection de la route tableau d
 assert.match(app,/if\(view === 'dashboard'\) renderStudentDashboard\(\)/,'activation du tableau de bord étudiant absente');
 assert.match(css,/\.sd-layout/,'composition principale du tableau de bord absente');
 assert.match(css,/\.sd-quick/,'raccourcis du tableau de bord absents');
+assert.ok(app.includes("assets/bdd/matieres.json"),'catalogue des matières non relié au tableau de bord');
+assert.ok(app.includes("m.statut==='actif'") && app.includes("m.statut==='partiel'"),'états réels des matières non exploités');
+assert.match(css,/\.sd-subject-grid/,'grille des matières du tableau de bord absente');
+assert.match(html,/id="sdSubjects"/,'zone des matières du tableau de bord absente');
 assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
 assert.match(sw,/style-prototype-dz\.css\?v=163/,'version CSS non précachée');
