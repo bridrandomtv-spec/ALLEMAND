@@ -1674,3 +1674,13 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Aucune modification du comportement de مسارك, des routes, de l'authentification, des permissions ou des données. Le cache de masar.js reste inchangé car ce fichier n'a pas été modifié.
 - Fichier modifié : ci/check-masar.mjs. Le dossier de continuité est mis à jour.
 - La nouvelle exécution CI déclenchée par ce commit doit confirmer la correction. Aucun déploiement ni fusion de la PR #17 n'est demandé.
+
+## Lot 141 — aperçu des badges dans le tableau de bord étudiant (7 novembre 2026)
+
+- Ajout d'une carte « الشارات والمكافآت » directement dans la vue autonome data-view="dashboard", sans modifier فضائي الدراسي ni le panneau historique de مسارك.
+- Les badges affichés sont lus depuis DZ_GAMIFICATION.badges(g), donc depuis le moteur existant et ses critères réels (leçons, quiz, scores, XP, jours actifs et unités complétées). Aucun badge n'est attribué par ce nouvel aperçu.
+- Affichage du nombre de badges réellement ouverts, puis des quatre badges ouverts les plus récents dans l'ordre du moteur ; si aucun n'est ouvert, présentation des quatre prochains badges verrouillés. L'accès « عرض جميع الشارات والإنجازات » renvoie au registre existant de مسارك.
+- États visuels distincts ouvert/verrouillé, adaptation mobile en une colonne, thème sombre pris en charge.
+- Assertions CI ajoutées pour vérifier le conteneur, la liaison au moteur de badges, l'état réel et l'accès au registre.
+- Cache synchronisé : CSS v165 ; Service Worker dz-de-v3.185.0.0.79. app.js reste v3544 car son contenu n'a pas changé dans ce lot.
+- Aucun changement Auth, Supabase, RLS, schéma, permissions, routes ou espace étudiant historique. Aucun déploiement ni fusion.
