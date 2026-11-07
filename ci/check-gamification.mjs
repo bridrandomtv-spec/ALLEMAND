@@ -67,6 +67,13 @@ assert.match(app,/loadSeancesFor\(u\.n\)/,'progression des unités non calculée
 assert.match(app,/unitProgress\.map\(u=>/,'rendu du graphique de progression des unités absent');
 assert.match(css,/\.sd-unit-chart-track/,'styles du graphique de progression des unités absents');
 
+assert.match(html,/id="sdGoals"/,'zone des objectifs pédagogiques absente');
+assert.match(app,/const focusUnit=unitProgress\.find/,'objectif unité non calculé depuis les séances réelles');
+assert.match(app,/const focusAttempts=focusQuiz\?Number\(focusQuiz\.attempts\)\|\|0:0/,'tentatives de quiz de l’unité non lues');
+assert.match(app,/MEMOIRE\.dues\(\)/,'objectif de révision non relié aux cartes dues');
+assert.match(app,/محطات مقترحة تُحدّث من حصصك/,'origine réelle des objectifs non explicitée');
+assert.match(css,/\.sd-goals-grid/,'grille des objectifs pédagogiques absente');
+assert.match(css,/\.sd-goal-track/,'barre de progression des objectifs absente');
 assert.match(html,/id="sdAchievements"/,'zone des badges du tableau de bord étudiant absente');
 assert.match(app,/DZ_GAMIFICATION\.badges\(g\)/,'badges non reliés au moteur de récompenses réel');
 assert.match(app,/unlockedBadges=badgeData\.filter\(b=>b\[4\]\)/,'état réel des badges non utilisé');
