@@ -1770,3 +1770,13 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Aucun changement sur les routes, identifiants, modules pédagogiques, Supabase/Auth/RLS/schéma/paiement, ni sur `main`. PR #17 reste ouverte et non fusionnée.
 - CI GitHub Actions #42407935163 : réussie sur le HEAD `fd1fca18f5b14c80f1daf9d94d373e48000ab6a9` ; job « Validation structurelle & pédagogique » terminé avec succès. Les runs annulés sur les commits intermédiaires ne représentent pas l'état final de la branche.
 - La comparaison visuelle réelle avec les deux prototypes reste à effectuer dans le navigateur ; la réussite CI ne la remplace pas.
+
+
+## 18. Lot 149 — harmonisation chromatique de toutes les cartes matières (7 novembre 2026)
+
+- Comparaison du tableau de bord avec le prototype étudiant `الثانوية_الافتراضية_الجزائرية_design_v2.html` : les matières y sont présentées comme des cartes distinctes avec fonds pastel, icône accentuée, statut et progression. Dans la version ALLEMAND, le lot 148 colorait déjà les cartes actives et partielles, mais les matières planifiées restaient visuellement neutres.
+- Correction CSS : chaque carte matière reçoit maintenant son accent (vert, bleu, violet ou ambre) et son fond pastel, y compris lorsqu'elle est planifiée. Les statuts et la progression métier ne changent pas.
+- Ajout de l'équivalent en thème sombre, avec fonds teintés par accent et bordures adaptées.
+- Cache synchronisé : CSS `v173`, Service Worker `dz-de-v3.185.0.0.87`, app.js conservé en `v3547`. Assertions mises à jour dans `check-masar`, `check-public-portal` et `check-gamification`.
+- Aucun changement des routes, identifiants, gestionnaires d'événements, données pédagogiques, Supabase/Auth/RLS/schéma/paiement. PR #17 reste sur sa branche, non fusionnée ; `main` reste intacte.
+- CI du lot à contrôler sur le HEAD final après ces commits. La validation structurelle ne remplace pas la comparaison visuelle navigateur, ordinateur et mobile avec les prototypes.
