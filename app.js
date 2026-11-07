@@ -2043,6 +2043,29 @@ function renderStudentDashboardSubjects(session,pct,unitCount){
 }
 
 /* ══════════ TABLEAU DE BORD ÉTUDIANT — composition indépendante des prototypes 1+2 ══════════ */
+function renderStudentDashboardMessages(host){
+  if(!host)return;
+  const empty='<div class="sd-message-empty">افتح صندوق الرسائل للاطلاع على مجموعاتك ومحادثاتك.</div><button type="button" class="sd-message-open" data-go="msg">فتح الرسائل ←</button>';
+  if(!window.SB||typeof window.SB.msgConvs!=='function'){host.innerHTML=empty;return;}
+  let request;
+  try{request=window.SB.msgConvs();}catch(e){host.innerHTML=empty;return;}
+  Promise.resolve(request).then(function(result){
+    if(currentView!=='dashboard'||!host.isConnected)return;
+    if(!result||!result.ok){host.innerHTML=empty;return;}
+    const rows=Array.isArray(result.convs)?result.convs:[];
+    const recent=rows.slice(0,3);
+    const cards=recent.map(function(row){
+      const title=row.titre||(row.type==='groupe'?'مجموعة دراسية':'محادثة مباشرة');
+      const raw=String(row.last_activity||'');
+      const date=raw?raw.slice(0,10):'—';
+      return '<div class="sd-message-item"><span class="sd-message-icon">'+(row.type==='groupe'?'👥':'💬')+'</span><div><b>'+esc(title)+'</b><small>آخر نشاط: '+esc(date)+'</small></div></div>';
+    }).join('');
+    host.innerHTML='<div class="sd-message-count"><b>'+rows.length+'</b><span>محادثة ومجموعة متاحة لحسابك</span></div>'+(cards||'<div class="sd-message-empty">لا توجد محادثات متاحة حالياً.</div>')+'<button type="button" class="sd-message-open" data-go="msg">فتح صندوق الرسائل ←</button>';
+  }).catch(function(){
+    if(currentView==='dashboard'&&host.isConnected)host.innerHTML=empty;
+  });
+}
+
 function renderStudentDashboard(){
   const hero=$('#studentDashboardHero'),stats=$('#sdStats'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),skills=$('#sdSkills'),goals=$('#sdGoals'),achievements=$('#sdAchievements'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
   if(!hero||!stats||!path||!subjects||!unitProgressHost||!skills||!goals||!achievements||!activity||!recommend||!updates)return;
@@ -2135,6 +2158,7 @@ function renderStudentDashboard(){
   let unread=0;try{unread=window.DZ_INTERACTIONS&&DZ_INTERACTIONS.unreadCount?DZ_INTERACTIONS.unreadCount():0;}catch(e){}
   updates.innerHTML='<div class="sd-update-row"><span>🔔</span><div><b>'+unread+' إشعار غير مقروء</b><small>'+(unread?'توجد تنبيهات تحتاج إلى الاطلاع.':'لا توجد إشعارات غير مقروءة حالياً.')+'</small></div><button type="button" id="sdOpenNotifications">عرض التنبيهات ←</button></div>';
   const notice=$('#sdOpenNotifications');if(notice)notice.addEventListener('click',function(){if(window.DZ_INTERACTIONS&&DZ_INTERACTIONS.openNotifications)DZ_INTERACTIONS.openNotifications();});
+  renderStudentDashboardMessages($('#sdMessages'));
 }
 window.renderStudentDashboard=renderStudentDashboard;
 document.addEventListener('dz:lesson-complete',function(){if(currentView==='dashboard')setTimeout(renderStudentDashboard,100);});
