@@ -501,7 +501,7 @@ const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
-  const visible = tabs.filter(t => t[0] !== 'msg' && t[0] !== 'sponsor' && (t[0] !== 'admin' || isAdmin()) && (t[0] !== 'parents' || isParent()));
+  const visible = tabs.filter(t => t[0] !== 'msg' && t[0] !== 'sponsor' && (t[0] !== 'admin' || isAdmin()) && (t[0] !== 'parents' || isParent()) && (t[0] !== 'dashboard' || !['prof','parent','admin'].includes(((window.AUTH && AUTH.session) ? AUTH.session() : {}).role)));
   const byId = new Map(visible.map(t => [t[0], t]));
   const used = new Set(['dashboard', 'accueil', 'masar', 'matieres', 'english']);
   let desktop = '';
@@ -620,6 +620,7 @@ window.getNiveauActif = function(){ return niveauActif; }; try{ (window.cloudAut
 
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
+  if(view === 'dashboard' && ['prof','parent','admin'].includes(((window.AUTH && AUTH.session) ? AUTH.session() : {}).role)) view = 'accueil';
   /* La vue parents ne doit pas être atteignable par hash ou data-go depuis un autre rôle. */
   if(view === 'parents' && !isParent()){
     toast('⛔ هذا الفضاء مخصّص لحسابات الأولياء فقط', 'ko');
