@@ -50,7 +50,7 @@ assert.match(css,/\.sd-subject-grid/,'grille des matières du tableau de bord ab
 assert.match(html,/id="sdSubjects"/,'zone des matières du tableau de bord absente');
 assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=164/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=165/,'version CSS non précachée');
 assert.doesNotMatch(html,/id="studentFocus"|id="studentContinue"/,'ancienne retouche du tableau de bord subsiste dans فضائي الدراسي');
 assert.doesNotMatch(app,/renderStudentFocus|sf-continue-card/,'ancien rendu de tableau de bord subsiste dans فضائي الدراسي');
 
@@ -59,4 +59,11 @@ assert.match(app,/const unitProgress=units\.map\(u=>/,'calcul individuel de prog
 assert.match(app,/loadSeancesFor\(u\.n\)/,'progression des unités non calculée depuis les séances enregistrées');
 assert.match(app,/unitProgress\.map\(u=>/,'rendu du graphique de progression des unités absent');
 assert.match(css,/\.sd-unit-chart-track/,'styles du graphique de progression des unités absents');
+
+assert.match(html,/id="sdAchievements"/,'zone des badges du tableau de bord étudiant absente');
+assert.match(app,/DZ_GAMIFICATION\.badges\(g\)/,'badges non reliés au moteur de récompenses réel');
+assert.match(app,/unlockedBadges=badgeData\.filter\(b=>b\[4\]\)/,'état réel des badges non utilisé');
+assert.match(app,/shownBadges\.map\(b=>/,'aperçu des badges non rendu dans le tableau de bord');
+assert.match(app,/data-go="masar">عرض جميع الشارات/,'accès au registre complet des badges absent');
+assert.match(css,/\.sd-achievement-grid/,'styles de la grille des badges absents');
 console.log('✅ XP par compte, événements vérifiés, anti-doublon, 20 badges et grilles responsive contrôlés');
