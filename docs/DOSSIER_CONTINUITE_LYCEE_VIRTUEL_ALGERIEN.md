@@ -1705,3 +1705,15 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - La CI #2428 du lot 142 est réussie. Le lot 143 attend sa propre exécution CI. PR #17 reste ouverte et non fusionnée ; aucune publication Cloudflare n'est effectuée.
 
 - Correctif CI du lot 143 : le premier passage a signalé une assertion `ci/check-public-portal.mjs` qui attendait encore le Service Worker v3.185.0.0.80. L'assertion a été alignée sur v3.185.0.0.81 ; le nouveau passage doit encore confirmer l'ensemble.
+
+
+## Lot 144 — résultats réels des quiz par unité (7 novembre 2026)
+
+- Audit : `quiz.js` enregistrait l'historique général sous une clé `localStorage` commune au navigateur. Ce journal n'est pas utilisé pour le nouveau graphique personnel.
+- À la fin de chaque série, `quiz.js` calcule, pour les unités réellement rencontrées dans les cinq questions, le nombre de réponses correctes et le nombre de réponses données. Le détail des questions et les réponses de l'élève ne sont pas stockés par ce nouveau mécanisme.
+- `dz-gamification.js` agrège ces compteurs dans `unitQuiz`, à l'intérieur de la clé de progression déjà isolée par compte via `AUTH.session()`. Le mécanisme anti-doublon des événements reste actif.
+- La vue indépendante `data-view="dashboard"` affiche maintenant les résultats cumulés par unité, le nombre d'items évalués et le nombre de séries contributrices. Les unités avec moins de dix réponses portent la mention « عينة محدودة ». Le texte précise qu'il s'agit de taux de réponses correctes, et non d'une certification d'« maîtrise ».
+- Les comptes sans résultats voient un état vide qui renvoie vers la vue de quiz existante. Aucune donnée de démonstration n'est ajoutée ; l'ancien historique local partagé n'est pas repris pour éviter les mélanges entre utilisateurs.
+- Aucun changement Supabase, Auth, RLS, schéma ou paiement. Les modifications concernent le suivi local déjà existant et la présentation du tableau de bord.
+- Cache synchronisé : CSS v168, `quiz.js` v3513, `dz-gamification.js` v5, Service Worker `dz-de-v3.185.0.0.82`. `app.js` reste v3544.
+- CI attendue sur le nouveau commit ; PR #17 reste ouverte et non fusionnée, aucun déploiement de production.
