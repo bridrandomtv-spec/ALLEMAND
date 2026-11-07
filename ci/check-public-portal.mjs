@@ -224,14 +224,14 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
   fail('règle CSS prioritaire de masquage des formulaires de récupération absente');
 }
 const sw = read('sw.js');
-if (!html.includes('style-prototype-dz.css?v=168')) {
+if (!html.includes('style-prototype-dz.css?v=169')) {
   fail('version CSS du portail non actualisée (v154 attendue)');
 }
-if (!sw.includes('style-prototype-dz.css?v=168')) {
+if (!sw.includes('style-prototype-dz.css?v=169')) {
   fail('version CSS du précache non actualisée (v154 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.82") ||
-    !sw.includes("style-prototype-dz.css?v=168") ||
+if (!sw.includes("dz-de-v3.185.0.0.83") ||
+    !sw.includes("style-prototype-dz.css?v=169") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
@@ -263,7 +263,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
 if (!html.includes('app.js?v=3544') || !sw.includes('app.js?v=3544')) fail('cache app.js non synchronisé');
-if (!html.includes('style-prototype-dz.css?v=168') || !sw.includes('style-prototype-dz.css?v=168')) fail('cache CSS non synchronisé');
+if (!html.includes('style-prototype-dz.css?v=169') || !sw.includes('style-prototype-dz.css?v=169')) fail('cache CSS non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
 console.log('✅ Lot 99 mobile + Lot 107 desktop : navigation responsive sans sidebar');
