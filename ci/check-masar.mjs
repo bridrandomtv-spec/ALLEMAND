@@ -23,6 +23,11 @@ assert.match(html, /class="sd-panel sd-path-panel"/, 'panneau parcours pleine la
 assert.match(html, /class="sd-panel sd-subjects-panel"/, 'panneau matières absent');
 assert.match(html, /class="sd-panel sd-skills-panel"/, 'panneau compétences absent');
 assert.match(html, /class="sd-panel sd-recommend-panel"/, 'panneau recommandation absent');
+assert.match(html, /class="sd-panel sd-messages-panel"/, 'panneau messages absent');
+assert.match(html, /id="sdMessages"/, 'conteneur des messages du tableau de bord absent');
+assert.match(app, /function renderStudentDashboardMessages\(host\)/, 'chargement des conversations réelles absent');
+assert.match(app, /window\.SB\.msgConvs\(\)/, 'source Supabase des conversations absente');
+assert.match(app, /renderStudentDashboardMessages\(\$\('#sdMessages'\)\)/, 'rendu des conversations non branché au tableau de bord');
 assert.match(css, /#shell #app \.sd-main\{[^}]*display:grid/s, 'grille interne du tableau de bord non activée');
 assert.match(css, /\.sd-subjects-panel[^}]*grid-column:1\/-1/s, 'panneau matières pleine largeur absent');
 assert.match(css, /\.sd-skills-panel\{[^}]*grid-column:span 4/s, 'proportion compétences 2/3 absente');
