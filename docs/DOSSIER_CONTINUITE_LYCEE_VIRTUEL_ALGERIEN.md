@@ -1758,3 +1758,14 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Périmètre préservé : PR #17 et branche existante ; aucun changement direct sur `main`, aucune fusion, aucun déploiement manuel ; aucun changement Supabase/Auth/RLS/schéma/paiement.
 - CI #2464 : réussie sur le commit `15c4d87d9be8a4decd38dfbd8517395517b70ab3` ; les contrôles structurels, portail, tableau de bord مسارك, XP/badges, permissions, matrice des parcours et régression pédagogique sont verts.
 - Cette réussite CI ne constitue pas une validation visuelle navigateur. Aucun test visuel ordinateur/mobile ni build Cloudflare de prévisualisation pour ce HEAD n'est revendiqué ; un essai réel de la preview reste nécessaire.
+
+
+## 17. Lot 148 — palette chromatique du tableau de bord étudiant (7 novembre 2026)
+
+- Diagnostic après le lot 147 : les cartes KPI possédaient déjà quatre accents, mais la carte pédagogique utilisait essentiellement le vert, avec le rouge pour la prochaine séance ; les graphiques de progression des unités et des résultats de quiz étaient majoritairement monochromes.
+- Ajout d'une palette cohérente à cinq accents (vert, bleu, ambre, violet, corail) pour distinguer les unités, les barres de progression par unité, les résultats par unité, les cartes matières, les objectifs et les badges débloqués.
+- La palette est appliquée par CSS selon l'ordre des cartes ; elle ne modifie aucune donnée, aucun calcul de progression ni aucune logique de réussite. L'unité en cours garde un signal corail/rouge distinct et les unités terminées restent identifiables en vert.
+- Ajout des variantes sombres pour préserver le contraste et la lisibilité.
+- Cache : CSS `v172`, Service Worker `dz-de-v3.185.0.0.86`. Les contrôles de cache `check-masar`, `check-public-portal` et `check-gamification` ont été synchronisés.
+- Aucun changement sur les routes, identifiants, modules pédagogiques, Supabase/Auth/RLS/schéma/paiement, ni sur `main`. PR #17 reste ouverte et non fusionnée.
+- La réussite CI et la comparaison visuelle réelle avec les prototypes restent à confirmer sur le nouveau HEAD.
