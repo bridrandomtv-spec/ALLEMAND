@@ -1717,3 +1717,16 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Aucun changement Supabase, Auth, RLS, schéma ou paiement. Les modifications concernent le suivi local déjà existant et la présentation du tableau de bord.
 - Cache synchronisé : CSS v168, `quiz.js` v3513, `dz-gamification.js` v5, Service Worker `dz-de-v3.185.0.0.82`. `app.js` reste v3544.
 - Validation du commit `3673bc53cebb44fedd6cf3a0c846a76b5c530ebf` : CI #2440 réussie (validation structurelle & pédagogique) et build Cloudflare de prévisualisation de la branche réussi. Le check Supabase est ignoré, sans changement de base. PR #17 reste ouverte et non fusionnée ; aucun déploiement de production.
+
+
+## Lot 145 — objectifs pédagogiques dynamiques du tableau de bord étudiant (7 novembre 2026)
+
+- Ajout d'une section « أهدافك التعليمية » dans la vue autonome `data-view="dashboard"`, sans toucher à l'accueil historique `فضائي الدراسي`.
+- Les objectifs sont présentés comme des stations de travail personnalisées, alimentées par les données réellement disponibles : progression des séances de l'unité en cours, nombre de séries de quiz enregistrées pour cette unité et nombre de cartes de mémoire actuellement dues.
+- La première station calcule le ratio de séances accomplies et restantes depuis `loadSeancesFor` et `UNITES`. La deuxième affiche uniquement le nombre d'essais déjà enregistré dans `unitQuiz`. La troisième s'appuie sur `MEMOIRE.dues()`. Les actions renvoient aux vues existantes des séances, quiz et révision.
+- Aucun objectif chiffré hebdomadaire, score, durée ou résultat fictif n'est ajouté. Une note précise qu'il s'agit de stations proposées à partir de l'activité réelle, et non de résultats ou échéances supposés.
+- Présentation en grille de cartes, responsive et compatible avec le thème sombre ; styles confinés aux classes `sd-goal*` de la vue.
+- Contrôles CI renforcés dans `ci/check-gamification.mjs`, `ci/check-masar.mjs` et `ci/check-public-portal.mjs` pour la présence des objectifs et la cohérence du cache.
+- Cache synchronisé : CSS v169, app.js v3545, Service Worker `dz-de-v3.185.0.0.83`. Les versions des modules non modifiés restent inchangées.
+- Aucun changement Auth, Supabase, RLS, schéma, migration, paiement, permissions ou routes. Aucun changement direct sur `main`. PR #17 reste ouverte et non fusionnée.
+- Validation CI et build de prévisualisation à effectuer sur le commit du lot ; aucune validation visuelle navigateur n'est revendiquée.
