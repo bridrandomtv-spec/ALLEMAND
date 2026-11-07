@@ -17281,3 +17281,75 @@ html[data-theme="dark"] #shell #app .sd-stat-correct{--sd-stat-soft:rgba(163,106
 html[data-theme="dark"] #shell #app .sd-stat-attempts{--sd-stat-soft:rgba(118,80,168,.22)}
 @media(max-width:920px){#shell #app .sd-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){#shell #app .sd-stats{gap:8px}#shell #app .sd-stat-card{padding:12px;border-radius:14px}#shell #app .sd-stat-icon{width:33px;height:33px;font-size:17px}#shell #app .sd-stat-card>strong{font-size:23px}#shell #app .sd-stat-card>b{font-size:11px}#shell #app .sd-stat-card>small{font-size:9px}}
+
+
+/* Lot 147 — carte pédagogique complète, calculée depuis les séances du compte */
+#shell #app .sd-learning-map{display:grid;gap:15px}
+#shell #app .sd-map-overview{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:17px 19px;border:1px solid var(--b);border-radius:17px;background:linear-gradient(115deg,var(--p2),var(--p))}
+#shell #app .sd-map-kicker{color:#087342;font-size:10px;font-weight:900}
+#shell #app .sd-map-overview h3{margin:4px 0;color:var(--t);font-size:17px;font-weight:900}
+#shell #app .sd-map-overview p{margin:0;color:var(--m);font-size:11px}
+#shell #app .sd-map-total{display:grid;place-items:center;flex:0 0 82px;width:82px;height:82px;border:5px solid rgba(0,132,61,.16);border-inline-start-color:#078047;border-radius:50%;color:var(--t)}
+#shell #app .sd-map-total strong{font-size:17px;font-weight:900;direction:ltr}
+#shell #app .sd-map-total small{color:var(--m);font-size:8px;font-weight:800}
+#shell #app .sd-map-next{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px 16px;border-radius:15px;background:linear-gradient(110deg,#075d35,#087d46);color:#fff;box-shadow:0 8px 22px rgba(0,98,51,.13)}
+#shell #app .sd-map-next-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:rgba(255,255,255,.16);font-size:17px}
+#shell #app .sd-map-next div{display:grid;gap:3px;min-width:0}
+#shell #app .sd-map-next small,#shell #app .sd-map-next span{color:#d9f2e2;font-size:9px}
+#shell #app .sd-map-next b{overflow:hidden;color:#fff;font-size:13px;text-overflow:ellipsis;white-space:nowrap}
+#shell #app .sd-map-next button{padding:9px 12px;border:1px solid rgba(255,255,255,.35);border-radius:10px;background:#fff;color:#075d35;font:900 10px var(--ff-ar-display,'Cairo',sans-serif);cursor:pointer;white-space:nowrap}
+#shell #app .sd-map-complete-note{padding:13px 15px;border:1px solid var(--b);border-radius:13px;background:var(--p2);color:var(--m);font-size:11px;line-height:1.8}
+#shell #app .sd-map-legend{display:flex;flex-wrap:wrap;gap:13px;padding:0 3px;color:var(--m);font-size:9px}
+#shell #app .sd-map-legend span{display:inline-flex;align-items:center;gap:6px}
+#shell #app .sd-map-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;background:#cbd5ce}
+#shell #app .sd-map-legend i.is-complete{background:#078047}
+#shell #app .sd-map-legend i.is-current{background:#d21034;box-shadow:0 0 0 3px rgba(210,16,52,.12)}
+#shell #app .sd-map-units{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#shell #app .sd-map-unit{display:grid;gap:11px;min-width:0;padding:15px;border:1px solid var(--b);border-radius:16px;background:var(--p);transition:border-color .18s,box-shadow .18s}
+#shell #app .sd-map-unit.is-current{border-color:#078047;box-shadow:0 0 0 2px rgba(0,132,61,.09),0 8px 22px rgba(0,75,40,.06)}
+#shell #app .sd-map-unit.is-complete{background:linear-gradient(145deg,rgba(0,132,61,.055),var(--p))}
+#shell #app .sd-map-unit-head{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:9px}
+#shell #app .sd-map-unit-number{display:grid;place-items:center;width:37px;height:37px;border-radius:12px;background:#e8f4ec;color:#075d35;font-size:15px;font-weight:900}
+#shell #app .sd-map-unit-title{min-width:0}
+#shell #app .sd-map-unit-title>span{color:var(--m);font-size:9px;font-weight:800}
+#shell #app .sd-map-unit-title h3{overflow:hidden;margin:2px 0;color:var(--t);font-size:12px;font-weight:900;text-overflow:ellipsis;white-space:nowrap}
+#shell #app .sd-map-unit-title bdi{display:block;color:var(--m);font-size:9px;text-align:start}
+#shell #app .sd-map-unit-state{padding:5px 8px;border:1px solid var(--b);border-radius:999px;background:var(--p2);color:var(--m);font-size:8px;font-weight:900;white-space:nowrap}
+#shell #app .sd-map-unit.is-complete .sd-map-unit-state{border-color:#b8ddc4;background:#eaf6ed;color:#075d35}
+#shell #app .sd-map-unit.is-current .sd-map-unit-state{border-color:#b8ddc4;background:#edf8f0;color:#075d35}
+#shell #app .sd-map-unit-progress{display:grid;gap:6px}
+#shell #app .sd-map-unit-progress>div{display:flex;justify-content:space-between;gap:8px;color:var(--m);font-size:9px}
+#shell #app .sd-map-unit-progress strong{color:var(--t);direction:ltr}
+#shell #app .sd-map-unit-progress>i{display:block;height:6px;overflow:hidden;border-radius:99px;background:var(--b)}
+#shell #app .sd-map-unit-progress>i span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#078047,#48ae70)}
+#shell #app .sd-map-lessons{display:grid;grid-template-columns:repeat(auto-fit,minmax(48px,1fr));gap:7px;padding-top:3px}
+#shell #app .sd-map-lesson{display:grid;justify-items:center;gap:5px;min-width:0}
+#shell #app .sd-map-lesson>span{display:grid;place-items:center;width:31px;height:31px;border:2px solid #dce8df;border-radius:11px;background:var(--p2);color:var(--m);font-size:10px;font-weight:900}
+#shell #app .sd-map-lesson small{color:var(--m);font-size:8px;white-space:nowrap}
+#shell #app .sd-map-lesson.is-complete>span{border-color:#078047;background:#078047;color:#fff}
+#shell #app .sd-map-lesson.is-current>span{border-color:#d21034;background:#fff0f2;color:#b20e2d;box-shadow:0 0 0 3px rgba(210,16,52,.10)}
+#shell #app .sd-map-unit-action{display:flex;align-items:center;justify-content:space-between;gap:9px;padding-top:10px;border-top:1px solid var(--b);color:var(--m);font-size:9px}
+#shell #app .sd-map-unit-action b{color:var(--t)}
+#shell #app .sd-map-unit-action button{padding:8px 10px;border:0;border-radius:9px;background:#087342;color:#fff;font:800 9px var(--ff-ar-display,'Cairo',sans-serif);cursor:pointer;white-space:nowrap}
+html[data-theme="dark"] #shell #app .sd-map-unit-state{background:#252c27;border-color:#46564b;color:#c4d1c7}
+html[data-theme="dark"] #shell #app .sd-map-unit.is-complete .sd-map-unit-state,html[data-theme="dark"] #shell #app .sd-map-unit.is-current .sd-map-unit-state{background:#183b28;border-color:#39734d;color:#b9ebc9}
+html[data-theme="dark"] #shell #app .sd-map-unit-number{background:#1c3b27;color:#b9ebc9}
+html[data-theme="dark"] #shell #app .sd-map-lesson>span{border-color:#46564b;background:#252c27;color:#c4d1c7}
+html[data-theme="dark"] #shell #app .sd-map-lesson.is-complete>span{border-color:#16834b;background:#16834b;color:#fff}
+html[data-theme="dark"] #shell #app .sd-map-lesson.is-current>span{border-color:#d84a64;background:#48232b;color:#ffd9df}
+@media(max-width:720px){
+  #shell #app .sd-map-units{grid-template-columns:minmax(0,1fr)}
+  #shell #app .sd-map-overview{padding:14px}
+  #shell #app .sd-map-next{grid-template-columns:36px minmax(0,1fr);gap:9px;padding:12px}
+  #shell #app .sd-map-next-icon{width:35px;height:35px}
+  #shell #app .sd-map-next button{grid-column:2;justify-self:start}
+}
+@media(max-width:420px){
+  #shell #app .sd-map-unit{padding:12px}
+  #shell #app .sd-map-unit-head{grid-template-columns:34px minmax(0,1fr);gap:8px}
+  #shell #app .sd-map-unit-number{width:33px;height:33px}
+  #shell #app .sd-map-unit-state{grid-column:2;justify-self:start}
+  #shell #app .sd-map-total{flex-basis:68px;width:68px;height:68px}
+  #shell #app .sd-map-total strong{font-size:14px}
+  #shell #app .sd-map-unit-action{align-items:flex-start;flex-direction:column}
+}
