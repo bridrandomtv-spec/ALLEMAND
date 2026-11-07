@@ -17353,3 +17353,65 @@ html[data-theme="dark"] #shell #app .sd-map-lesson.is-current>span{border-color:
   #shell #app .sd-map-total strong{font-size:14px}
   #shell #app .sd-map-unit-action{align-items:flex-start;flex-direction:column}
 }
+
+
+/* Lot 148 — palette chromatique pédagogique : cartes, indicateurs et graphiques */
+#shell #app .sd-map-unit{--unit-accent:#168451;--unit-soft:#eaf6ee;--unit-line:#c8e6d1}
+#shell #app .sd-map-unit:nth-child(5n+2){--unit-accent:#3474c5;--unit-soft:#edf4ff;--unit-line:#cbdcf6}
+#shell #app .sd-map-unit:nth-child(5n+3){--unit-accent:#bd8420;--unit-soft:#fff6e3;--unit-line:#f0dfb5}
+#shell #app .sd-map-unit:nth-child(5n+4){--unit-accent:#8057b5;--unit-soft:#f4effb;--unit-line:#ded0f0}
+#shell #app .sd-map-unit:nth-child(5n){--unit-accent:#d05a65;--unit-soft:#fff0f1;--unit-line:#f1cdd1}
+#shell #app .sd-map-unit:not(.is-current){border-color:var(--unit-line);background:linear-gradient(145deg,var(--unit-soft),var(--p) 78%)}
+#shell #app .sd-map-unit-number{background:var(--unit-soft);color:var(--unit-accent)}
+#shell #app .sd-map-unit-progress>i span{background:linear-gradient(90deg,color-mix(in srgb,var(--unit-accent),white 24%),var(--unit-accent))}
+#shell #app .sd-map-unit.is-current{border-color:#d65a68;background:linear-gradient(145deg,#fff0f1,var(--p) 82%);box-shadow:0 0 0 2px rgba(210,16,52,.09),0 8px 22px rgba(120,20,40,.06)}
+#shell #app .sd-map-unit.is-current .sd-map-unit-number{background:#ffe5e9;color:#b72e43}
+#shell #app .sd-map-unit.is-complete:not(.is-current){border-color:#b8ddc4}
+#shell #app .sd-map-unit.is-complete:not(.is-current) .sd-map-unit-state{background:#e5f5e9;color:#087342}
+#shell #app .sd-map-unit.is-complete:not(.is-current) .sd-map-unit-number{background:#dff2e5;color:#087342}
+#shell #app .sd-unit-chart-item:nth-child(5n+1) .sd-unit-chart-track span{background:linear-gradient(180deg,#69c98d,#168451)}
+#shell #app .sd-unit-chart-item:nth-child(5n+2) .sd-unit-chart-track span{background:linear-gradient(180deg,#83b6f3,#3474c5)}
+#shell #app .sd-unit-chart-item:nth-child(5n+3) .sd-unit-chart-track span{background:linear-gradient(180deg,#f1ca72,#bd8420)}
+#shell #app .sd-unit-chart-item:nth-child(5n+4) .sd-unit-chart-track span{background:linear-gradient(180deg,#b99cde,#8057b5)}
+#shell #app .sd-unit-chart-item:nth-child(5n) .sd-unit-chart-track span{background:linear-gradient(180deg,#f09aa2,#d05a65)}
+#shell #app .sd-unit-chart-item:nth-child(5n+1)>b{color:#168451}
+#shell #app .sd-unit-chart-item:nth-child(5n+2)>b{color:#3474c5}
+#shell #app .sd-unit-chart-item:nth-child(5n+3)>b{color:#a87516}
+#shell #app .sd-unit-chart-item:nth-child(5n+4)>b{color:#8057b5}
+#shell #app .sd-unit-chart-item:nth-child(5n)>b{color:#c34c59}
+#shell #app .sd-skill-row:nth-child(5n+1) .sd-skill-track span{background:linear-gradient(90deg,#69c98d,#168451)}
+#shell #app .sd-skill-row:nth-child(5n+2) .sd-skill-track span{background:linear-gradient(90deg,#83b6f3,#3474c5)}
+#shell #app .sd-skill-row:nth-child(5n+3) .sd-skill-track span{background:linear-gradient(90deg,#f1ca72,#bd8420)}
+#shell #app .sd-skill-row:nth-child(5n+4) .sd-skill-track span{background:linear-gradient(90deg,#b99cde,#8057b5)}
+#shell #app .sd-skill-row:nth-child(5n) .sd-skill-track span{background:linear-gradient(90deg,#f09aa2,#d05a65)}
+#shell #app .sd-skill-row:nth-child(5n+2) .sd-skill-head strong{color:#3474c5}
+#shell #app .sd-skill-row:nth-child(5n+3) .sd-skill-head strong{color:#a87516}
+#shell #app .sd-skill-row:nth-child(5n+4) .sd-skill-head strong{color:#8057b5}
+#shell #app .sd-skill-row:nth-child(5n) .sd-skill-head strong{color:#c34c59}
+#shell #app .sd-subject-card:nth-child(4n+1){--subject-accent:#168451;--subject-soft:#eaf6ee;--subject-line:#c8e6d1}
+#shell #app .sd-subject-card:nth-child(4n+2){--subject-accent:#3474c5;--subject-soft:#edf4ff;--subject-line:#cbdcf6}
+#shell #app .sd-subject-card:nth-child(4n+3){--subject-accent:#8057b5;--subject-soft:#f4effb;--subject-line:#ded0f0}
+#shell #app .sd-subject-card:nth-child(4n){--subject-accent:#bd8420;--subject-soft:#fff6e3;--subject-line:#f0dfb5}
+#shell #app .sd-subject-card.is-active,#shell #app .sd-subject-card.is-partial{border-color:var(--subject-line);background:linear-gradient(145deg,var(--subject-soft),var(--p) 85%)}
+#shell #app .sd-subject-card .sd-subject-icon{background:var(--subject-soft)}
+#shell #app .sd-subject-card .sd-subject-name{color:var(--t)}
+#shell #app .sd-subject-card .sd-subject-progress>i span{background:linear-gradient(90deg,color-mix(in srgb,var(--subject-accent),white 22%),var(--subject-accent))}
+#shell #app .sd-subject-card .sd-subject-open{border-color:var(--subject-line);color:var(--subject-accent)}
+#shell #app .sd-goal-unit .sd-goal-icon{background:#eaf6ee;color:#168451}
+#shell #app .sd-goal-quiz .sd-goal-icon{background:#edf4ff;color:#3474c5}
+#shell #app .sd-goal-review .sd-goal-icon{background:#f4effb;color:#8057b5}
+#shell #app .sd-goal-quiz>strong{color:#3474c5}
+#shell #app .sd-goal-review>strong{color:#8057b5}
+#shell #app .sd-achievement.is-unlocked{border-color:#ead49a;background:linear-gradient(145deg,#fff8e6,var(--p) 88%)}
+#shell #app .sd-achievement.is-unlocked>span{background:#ffedbd;color:#94630a}
+#shell #app .sd-day.is-active>i{background:#e7f4eb}
+#shell #app .sd-day.is-active>i span{background:linear-gradient(180deg,#69c98d,#168451)}
+html[data-theme="dark"] #shell #app .sd-map-unit:not(.is-current){background:linear-gradient(145deg,color-mix(in srgb,var(--unit-accent),transparent 88%),var(--p) 82%);border-color:color-mix(in srgb,var(--unit-accent),#46564b 55%)}
+html[data-theme="dark"] #shell #app .sd-map-unit-number{background:color-mix(in srgb,var(--unit-accent),#202923 82%);color:color-mix(in srgb,var(--unit-accent),white 35%)}
+html[data-theme="dark"] #shell #app .sd-map-unit.is-current{background:linear-gradient(145deg,rgba(210,16,52,.13),var(--p) 82%);border-color:#c94d61}
+html[data-theme="dark"] #shell #app .sd-subject-card.is-active,html[data-theme="dark"] #shell #app .sd-subject-card.is-partial{background:linear-gradient(145deg,color-mix(in srgb,var(--subject-accent),transparent 88%),var(--p) 85%);border-color:color-mix(in srgb,var(--subject-accent),#46564b 55%)}
+html[data-theme="dark"] #shell #app .sd-subject-card .sd-subject-icon{background:color-mix(in srgb,var(--subject-accent),#202923 82%)}
+html[data-theme="dark"] #shell #app .sd-achievement.is-unlocked{background:linear-gradient(145deg,rgba(189,132,32,.14),var(--p) 88%);border-color:#735c31}
+html[data-theme="dark"] #shell #app .sd-achievement.is-unlocked>span{background:#55431d}
+html[data-theme="dark"] #shell #app .sd-goal-quiz>strong{color:#83b6f3}
+html[data-theme="dark"] #shell #app .sd-goal-review>strong{color:#b99cde}
