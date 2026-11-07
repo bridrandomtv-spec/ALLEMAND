@@ -1894,3 +1894,14 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Workflow de validation du HEAD `0432b6fa9a9846e535e7f55c2ffac0a032e278e3` : run `42414839758`, job « Validation structurelle & pédagogique » terminé avec succès ; les contrôles recherche/notifications, gamification, syntaxe JS, accès et parcours ont réussi.
 - Cette CI valide les assertions automatisées, pas le rendu ni les interactions dans un vrai navigateur. La recette visuelle desktop/mobile et le test manuel du raccourci clavier restent à faire.
 - PR #17 reste ouverte et non fusionnée ; `main` reste intacte. Aucun déploiement de production et aucun changement Auth, Supabase, RLS, schéma, migration ou paiement.
+
+
+## Validation complémentaire — Lot 154 / CI #2510 (8 novembre 2026)
+
+- HEAD contrôlé : `ee4cfb1378d3b232cb30d811f0b47f5f490cbf4b`.
+- Workflow GitHub Actions #2510 (`42425364837`) : terminé avec succès. Le job « Validation structurelle & pédagogique » a réussi l'ensemble de ses étapes.
+- Étapes pertinentes confirmées : contrôle du tableau de bord « مسارك », recherche globale et centre de notifications, XP et badges fondés sur les activités réelles, syntaxe JavaScript, accès et parcours pédagogiques.
+- Build Cloudflare Workers associé au même HEAD : terminé avec succès sur la prévisualisation de la branche `design/prototypes-67-74-alignment`. Il s'agit d'un build de prévisualisation, pas d'une publication de production.
+- Contrôle Supabase Preview : `skipped`, car aucune branche Supabase de prévisualisation n'est associée à cette PR ; aucun changement de base n'a été effectué.
+- Le succès CI/build ne remplace toujours pas la recette visuelle réelle dans un navigateur : vérifier le tableau de bord sur ordinateur et mobile, les interactions de recherche/notifications et la fidélité aux deux prototypes avant toute décision de fusion.
+- PR #17 toujours ouverte, non fusionnée et fusionnable ; branche cible `main` inchangée. Aucun déploiement de production, aucun changement Auth/Supabase/RLS/schéma/migration/paiement.
