@@ -39,6 +39,8 @@ assert.match(css,/\.dz-week-activity/,'styles du graphique hebdomadaire absents'
 assert.match(html,/home-ai-card/,'carte professeur IA absente de l’accueil');
 assert.match(html,/data-view="dashboard"/,'vue autonome du tableau de bord étudiant absente');
 assert.match(app,/function renderStudentDashboard\(\)/,'rendu du tableau de bord étudiant autonome absent');
+assert.match(app,/function canSeeStudentDashboard\(\)/,'contrôle de rôle du tableau de bord absent');
+assert.match(app,/!canSeeStudentDashboard\(\)/,'protection de la route tableau de bord absente');
 assert.match(app,/if\(view === 'dashboard'\) renderStudentDashboard\(\)/,'activation du tableau de bord étudiant absente');
 assert.match(css,/\.sd-layout/,'composition principale du tableau de bord absente');
 assert.match(css,/\.sd-quick/,'raccourcis du tableau de bord absents');
