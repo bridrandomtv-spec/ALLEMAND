@@ -65,4 +65,8 @@ assert.match(app, /view:"revision"/, 'la destination de révision doit être val
 assert.doesNotMatch(app, /view:"memoire"/, 'ancienne destination mémoire invalide encore présente');
 assert.doesNotMatch(app, /تشخيص مستواك|Diagnosetest/, 'le coach ne doit pas promettre un diagnostic inexistant');
 
+
+assert.ok(app.includes('"Ich trage einen Hut. → « einen » masc Akk.", "t"'), 'corrigé du mini-quiz : accusatif masculin de Hut incorrect');
+assert.ok(app.includes('"Er lebt in einer reichen Gesellschaft. → « einer » Datif.", "t"'), 'corrigé du mini-quiz : datif après in incorrect');
+
 console.log('✅ مسارك : calculs réels par unité, prochaine séance, compétences, cartes et caches contrôlés');
