@@ -2044,14 +2044,15 @@ function renderStudentDashboardSubjects(session,pct,unitCount){
 
 /* ══════════ TABLEAU DE BORD ÉTUDIANT — composition indépendante des prototypes 1+2 ══════════ */
 function renderStudentDashboard(){
-  const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
-  if(!hero||!path||!subjects||!activity||!recommend||!updates)return;
+  const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
+  if(!hero||!path||!subjects||!unitProgressHost||!activity||!recommend||!updates)return;
   const s=(window.AUTH&&AUTH.session)?AUTH.session():null;
-  if(!s){hero.innerHTML='';path.innerHTML='';subjects.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
+  if(!s){hero.innerHTML='';path.innerHTML='';subjects.innerHTML='';unitProgressHost.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
   const levelCode=['1AS','2AS','3AS'].includes(s.niveau)?s.niveau:(niveauActif||'2AS');
   const units=UNITES.filter(u=>(!u.niveau||u.niveau===levelCode)&&Array.isArray(u.seances)&&u.seances.length);
+  const unitProgress=units.map(u=>{const done=(loadSeancesFor(u.n).done||[]),sessions=u.seances||[],count=sessions.length,doneCount=sessions.filter(x=>done.indexOf(x.n)>=0).length;return {n:u.n,completed:doneCount,total:count,pct:count?Math.round(doneCount/count*100):0};});
   let completed=0,total=0;
-  units.forEach(u=>{const d=(loadSeancesFor(u.n).done||[]);u.seances.forEach(x=>{total++;if(d.indexOf(x.n)>=0)completed++;});});
+  unitProgress.forEach(u=>{completed+=u.completed;total+=u.total;});
   const pct=total?Math.round(completed/total*100):0;
   const nextInfo=prochaineSeance();
   const unit=nextInfo?UNITES.find(u=>String(u.n)===String(nextInfo.unite)):null;
@@ -2071,6 +2072,11 @@ function renderStudentDashboard(){
     path.innerHTML='<div class="sd-empty"><span>🎓</span><b>لا توجد حصة تالية مسجّلة لهذا المستوى</b><p>يمكنك استكشاف المواد أو فتح مسارك الدراسي.</p><button type="button" data-go="masar">عرض مسارك الدراسي</button></div>';
   }
   renderStudentDashboardSubjects(s,pct,units.length);
+  if(unitProgress.length){
+    unitProgressHost.innerHTML='<div class="sd-unit-chart">'+unitProgress.map(u=>'<div class="sd-unit-chart-item"><b>'+u.pct+'%</b><div class="sd-unit-chart-track" role="img" aria-label="الوحدة '+esc(u.n)+' : '+u.completed+' من '+u.total+' حصص مكتملة"><span style="height:'+u.pct+'%"></span></div><small>الوحدة '+esc(u.n)+'</small><em>'+u.completed+'/'+u.total+'</em></div>').join('')+'</div><p class="sd-unit-chart-note">النسب محسوبة من الحصص المسجّلة فعلياً في كل وحدة.</p>';
+  }else{
+    unitProgressHost.innerHTML='<div class="sd-empty"><span>📊</span><b>لا توجد بيانات كافية بعد</b><p>سيظهر تقدم الوحدات عند توفر حصص مسجّلة لهذا المستوى.</p></div>';
+  }
   const active=Array.isArray(g.activeDays)?g.activeDays:[],names=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],today=new Date();today.setHours(12,0,0,0);today.setDate(today.getDate()-6);let count=0;
   const days=[];for(let i=0;i<7;i++){const d=new Date(today),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),on=active.indexOf(key)>=0;if(on)count++;days.push('<div class="sd-day '+(on?'is-active':'')+'"><i><span></span></i><small>'+names[d.getDay()]+'</small></div>');today.setDate(today.getDate()+1);}
   activity.innerHTML='<div class="sd-activity-head"><b>'+count+' من 7 أيام نشطة</b><span>آخر سبعة أيام</span></div><div class="sd-week-bars">'+days.join('')+'</div><p>تُحتسب الأيام عند تسجيل إكمال حصة أو اختبار فقط.</p>';
