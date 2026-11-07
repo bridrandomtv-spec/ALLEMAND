@@ -17458,3 +17458,20 @@ html[data-theme="dark"] #shell #app .sd-subject-card{background:linear-gradient(
   #shell #app .sd-main{grid-template-columns:minmax(0,1fr)}
   #shell #app .sd-skills-panel,#shell #app .sd-recommend-panel,#shell #app .sd-goals-panel,#shell #app .sd-achievements-panel{grid-column:1}
 }
+
+
+/* Lot 153 — aperçu des conversations réelles dans le tableau de bord */
+#shell #app .sd-message-count{display:flex;align-items:baseline;gap:9px;margin-bottom:10px;padding:10px 12px;border-radius:12px;background:var(--soft,rgba(0,98,51,.06))}
+#shell #app .sd-message-count b{color:var(--g,#006233);font-size:22px;font-weight:900}
+#shell #app .sd-message-count span{color:var(--m);font-size:11px;font-weight:700}
+#shell #app .sd-message-item{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--b)}
+#shell #app .sd-message-item:last-of-type{border-bottom:0}
+#shell #app .sd-message-icon{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:11px;background:rgba(0,98,51,.09);font-size:16px}
+#shell #app .sd-message-item>div{display:grid;gap:3px;min-width:0}
+#shell #app .sd-message-item b{overflow:hidden;color:var(--t);font-size:12px;font-weight:900;text-overflow:ellipsis;white-space:nowrap}
+#shell #app .sd-message-item small{color:var(--m);font-size:10px}
+#shell #app .sd-message-empty{padding:12px 8px;color:var(--m);font-size:11px;line-height:1.8}
+#shell #app .sd-message-open{width:100%;margin-top:9px;padding:10px 12px;border:1px solid var(--b);border-radius:11px;background:transparent;color:var(--g,#006233);font:800 11px var(--ff-ar-display,'Cairo',sans-serif);cursor:pointer}
+#shell #app .sd-message-open:hover{background:rgba(0,98,51,.06)}
+html[data-theme="dark"] #shell #app .sd-message-count{background:rgba(55,190,125,.09)}
+html[data-theme="dark"] #shell #app .sd-message-icon{background:rgba(55,190,125,.12)}
