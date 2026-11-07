@@ -2435,18 +2435,18 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     var n = niv();
     var S = [
       { ar:"افتح « مسارك » وتعرّف على وحدتك التعليمية القادمة.", de:"Öffne deinen Lernpfad und wähle deine nächste Einheit.", view:"masar", ic:"🎯" },
-      { ar:"شاهد حصة واحدة فقط اليوم (Lektion).", de:"Schaue heute nur eine Lektion.", view:"seances", ic:"📖" },
-      { ar:"افتح الكتاب واستمع لصفحة Lektion ثم اقرأها بصوت عالٍ.", de:"Höre die Buchseite und lies sie laut.", view:"buch", ic:"👂" },
+      { ar:"شاهد حصة منشورة واحدة اليوم (Lektion).", de:"Schaue heute eine verfügbare Lektion.", view:"seances", ic:"📖" },
+      { ar:"افتح الكتاب واستمع إلى المورد الصوتي المتاح ثم اقرأ النص بصوت عالٍ.", de:"Öffne das Buch, höre das verfügbare Audio und lies den Text laut.", view:"buch", ic:"👂" },
       { ar:"حاور المنصة: اضغط 🎙️ وتكلم بالألمانية أو الدارجة.", de:"Sprich mit der Plattform über 🎙️.", view:null, ic:"🗣️" },
       { ar:"تدرّب بثلاثة أسئلة توضيحية؛ نتيجتها لا تُحفظ ولا تدخل في تقدمك.", de:"Übe mit drei Beispielfragen; das Ergebnis wird nicht gespeichert.", quiz:true, ic:"✍️" },
       { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole die fälligen 🧠-Karten.", view:"revision", ic:"🧠" },
-      { ar:"أنهِ الوحدة بفرض مُنقّط (تصحيح فوري).", de:"Schließe mit einer benoteten Aufgabe ab.", view:"devoirs", ic:"📝" }
+      { ar:"استكشف الفروض المتاحة لوحدتك، وراجع التصحيح إن كان مرفقًا.", de:"Sieh dir verfügbare Aufgaben an und prüfe die Lösung, falls vorhanden.", view:"devoirs", ic:"📝" }
     ];
     if(n===2){
-      S.push({ ar:"كل أسبوع: فرض أو اختبار قصير بتوقيت حقيقي.", de:"Wöchentlich eine kurze Klassenarbeit unter Echtzeit.", view:"devoirs", ic:"🧪" });
+      S.push({ ar:"جرّب فرضًا أو اختبارًا قصيرًا إذا كان متاحًا لمستواك.", de:"Nutze eine kurze Prüfung, wenn sie für deine Stufe verfügbar ist.", view:"devoirs", ic:"🧪" });
     } else {
-      S.push({ ar:"كل أسبوع: اختبار بتوقيت حقيقي (1-3 مرات).", de:"Wöchentlich ein Test unter Echtzeit.", view:"examen", ic:"🧪" });
-      S.push({ ar:"للبكالوريا: حضّر باك بمواضيع رسمية مصححة.", de:"Fürs Abi: offizielle Prüfungen üben.", view:"examen", ic:"🎓" });
+      S.push({ ar:"استعمل اختبارًا متاحًا ضمن تحضيرك للبكالوريا.", de:"Nutze einen verfügbaren Test zur Abiturvorbereitung.", view:"examen", ic:"🧪" });
+      S.push({ ar:"للبكالوريا: تدرّب على المواضيع المنشورة وراجع الحلول المتاحة.", de:"Fürs Abi: übe veröffentlichte Prüfungen und prüfe verfügbare Lösungen.", view:"examen", ic:"🎓" });
     }
     return S;
   }
