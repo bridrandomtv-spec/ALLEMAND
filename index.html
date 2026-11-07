@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
-</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=173">
+</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=174">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -808,33 +808,38 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
           <button type="button" class="sd-quick-card" data-go="examen"><span class="sd-quick-icon red">🎓</span><b>التحضير للبكالوريا</b><small>المواضيع والاختبارات</small></button>
           <button type="button" class="sd-quick-card" data-go="msg"><span class="sd-quick-icon purple">💬</span><b>الرسائل والتواصل</b><small>تواصل مع القسم</small></button>
         </div>
-        <div class="sd-layout">
-          <div class="sd-main">
-            <section class="sd-panel sd-path-panel">
+        <section class="sd-panel sd-path-panel">
               <div class="sd-panel-head"><div><span class="sd-eyebrow">مسارك التعليمي</span><h2>خريطة التعلم البيداغوجية</h2><p>الوحدات والحصص وحالتك الفعلية في كل محطة</p></div><button type="button" class="sd-text-link" data-go="seances">كل الحصص ←</button></div>
               <div id="sdPath"></div>
             </section>
-            <section class="sd-panel">
+        <div class="sd-layout">
+          <div class="sd-main">
+            
+            <section class="sd-panel sd-subjects-panel">
               <div class="sd-panel-head"><div><span class="sd-eyebrow">المواد</span><h2>مواد شعبتك</h2><p>حالة توفر المواد التعليمية في مستواك وشعبتك</p></div><button type="button" class="sd-text-link" data-go="matieres">فهرس المواد ←</button></div>
               <div id="sdSubjects"></div>
             </section>
-            <section class="sd-panel">
+            <section class="sd-panel sd-unit-progress-panel">
               <div class="sd-panel-head"><div><span class="sd-eyebrow">مؤشرات التقدم</span><h2>إنجاز الوحدات</h2><p>نسبة الحصص المكتملة في كل وحدة من مستواك</p></div></div>
               <div id="sdUnitProgress"></div>
             </section>
-            <section class="sd-panel">
+            <section class="sd-panel sd-skills-panel">
               <div class="sd-panel-head"><div><span class="sd-eyebrow">نتائج التمارين</span><h2>مؤشرات الأداء حسب الوحدة</h2><p>نتائج إجاباتك الصحيحة المسجّلة في الاختبارات المكتملة</p></div></div>
               <div id="sdSkills"></div>
+            </section>
+<section class="sd-panel sd-recommend-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">اقتراح شخصي</span><h2>خطوتك التالية</h2></div></div>
+              <div id="sdRecommendation"></div>
             </section>
             <section class="sd-panel sd-goals-panel">
               <div class="sd-panel-head"><div><span class="sd-eyebrow">خطة التعلّم</span><h2>أهدافك التعليمية</h2><p>محطات عملية مستخرجة من تقدمك ونتائجك الفعلية</p></div></div>
               <div id="sdGoals"></div>
             </section>
-            <section class="sd-panel">
+            <section class="sd-panel sd-achievements-panel">
               <div class="sd-panel-head"><div><span class="sd-eyebrow">إنجازاتك</span><h2>الشارات والمكافآت</h2><p>إنجازات تُفتح عند تحقيق شروطها الفعلية</p></div></div>
               <div id="sdAchievements"></div>
             </section>
-            <section class="sd-panel">
+            <section class="sd-panel sd-activity-panel">
               <div class="sd-panel-head"><div><span class="sd-eyebrow">المواظبة</span><h2>نشاط التعلّم</h2><p>الأيام التي سُجّل فيها إنجاز حصة أو اختبار</p></div></div>
               <div id="sdActivity"></div>
             </section>
@@ -846,10 +851,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
               <div class="sd-ai-capabilities" aria-label="أنواع المساعدة المتاحة"><span>📖 شرح الدروس</span><span>✍️ تصحيح الجمل</span><span>🎧 تفاعل صوتي</span></div>
               <button type="button" data-go="prof">فتح مساحة الأستاذ الذكي <span>←</span></button>
             </section>
-            <section class="sd-panel sd-recommend-panel">
-              <div class="sd-panel-head"><div><span class="sd-eyebrow">اقتراح شخصي</span><h2>خطوتك التالية</h2></div></div>
-              <div id="sdRecommendation"></div>
-            </section>
+            
             <section class="sd-panel">
               <div class="sd-panel-head"><div><span class="sd-eyebrow">التواصل</span><h2>التنبيهات</h2><p>الإشعارات المسجّلة لحسابك</p></div></div>
               <div id="sdUpdates"></div>
