@@ -2044,10 +2044,10 @@ function renderStudentDashboardSubjects(session,pct,unitCount){
 
 /* ══════════ TABLEAU DE BORD ÉTUDIANT — composition indépendante des prototypes 1+2 ══════════ */
 function renderStudentDashboard(){
-  const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),skills=$('#sdSkills'),goals=$('#sdGoals'),achievements=$('#sdAchievements'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
-  if(!hero||!path||!subjects||!unitProgressHost||!skills||!goals||!achievements||!activity||!recommend||!updates)return;
+  const hero=$('#studentDashboardHero'),stats=$('#sdStats'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),skills=$('#sdSkills'),goals=$('#sdGoals'),achievements=$('#sdAchievements'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
+  if(!hero||!stats||!path||!subjects||!unitProgressHost||!skills||!goals||!achievements||!activity||!recommend||!updates)return;
   const s=(window.AUTH&&AUTH.session)?AUTH.session():null;
-  if(!s){hero.innerHTML='';path.innerHTML='';subjects.innerHTML='';unitProgressHost.innerHTML='';skills.innerHTML='';goals.innerHTML='';achievements.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
+  if(!s){hero.innerHTML='';stats.innerHTML='';path.innerHTML='';subjects.innerHTML='';unitProgressHost.innerHTML='';skills.innerHTML='';goals.innerHTML='';achievements.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
   const levelCode=['1AS','2AS','3AS'].includes(s.niveau)?s.niveau:(niveauActif||'2AS');
   const units=UNITES.filter(u=>(!u.niveau||u.niveau===levelCode)&&Array.isArray(u.seances)&&u.seances.length);
   const unitProgress=units.map(u=>{const done=(loadSeancesFor(u.n).done||[]),sessions=u.seances||[],count=sessions.length,doneCount=sessions.filter(x=>done.indexOf(x.n)>=0).length;return {n:u.n,completed:doneCount,total:count,pct:count?Math.round(doneCount/count*100):0};});
@@ -2078,6 +2078,12 @@ function renderStudentDashboard(){
     unitProgressHost.innerHTML='<div class="sd-empty"><span>📊</span><b>لا توجد بيانات كافية بعد</b><p>سيظهر تقدم الوحدات عند توفر حصص مسجّلة لهذا المستوى.</p></div>';
   }
   const unitQuiz=g&&g.unitQuiz&&typeof g.unitQuiz==='object'?g.unitQuiz:{};
+  let quizCorrect=0,quizTotal=0,quizAttempts=0;
+  Object.keys(unitQuiz).forEach(function(key){const row=unitQuiz[key]||{};quizCorrect+=Number(row.correct)||0;quizTotal+=Number(row.total)||0;quizAttempts+=Number(row.attempts)||0;});
+  stats.innerHTML='<div class="sd-stat-card sd-stat-lessons"><div class="sd-stat-top"><span class="sd-stat-icon">📘</span><span class="sd-stat-tag">التعلّم</span></div><strong>'+completed+'</strong><b>الحصص المكتملة</b><small>من '+total+' حصة مسجّلة</small></div>'+
+    '<div class="sd-stat-card sd-stat-units"><div class="sd-stat-top"><span class="sd-stat-icon">🧭</span><span class="sd-stat-tag">المسار</span></div><strong>'+units.length+'</strong><b>الوحدات التعليمية</b><small>في مستواك الدراسي</small></div>'+
+    '<div class="sd-stat-card sd-stat-correct"><div class="sd-stat-top"><span class="sd-stat-icon">✓</span><span class="sd-stat-tag">الاختبارات</span></div><strong>'+quizCorrect+'</strong><b>الإجابات الصحيحة</b><small>من '+quizTotal+' إجابة مسجّلة</small></div>'+
+    '<div class="sd-stat-card sd-stat-attempts"><div class="sd-stat-top"><span class="sd-stat-icon">🎯</span><span class="sd-stat-tag">التدريب</span></div><strong>'+quizAttempts+'</strong><b>محاولات الاختبار</b><small>في جميع الوحدات</small></div>';
   const skillRows=Object.keys(unitQuiz).map(function(key){const row=unitQuiz[key]||{},correct=Number(row.correct)||0,total=Number(row.total)||0;return {unit:key,correct:correct,total:total,attempts:Number(row.attempts)||0,pct:total?Math.round(correct/total*100):0};}).filter(function(row){return row.total>0;}).sort(function(x,y){return Number(x.unit)-Number(y.unit);});
   if(skillRows.length){
     skills.innerHTML='<div class="sd-skill-list">'+skillRows.map(function(row){return '<div class="sd-skill-row"><div class="sd-skill-head"><b>الوحدة '+esc(row.unit)+'</b><strong>'+row.pct+'%</strong></div><div class="sd-skill-track" role="img" aria-label="الوحدة '+esc(row.unit)+' : '+row.correct+' إجابة صحيحة من '+row.total+'"><span style="width:'+row.pct+'%"></span></div><small>'+row.correct+' صحيحة من '+row.total+' إجابة · '+row.attempts+' محاولات</small>'+(row.total<10?'<em>عينة محدودة — واصل حل التمارين</em>':'')+'</div>';}).join('')+'</div><p class="sd-skill-note">هذه نسب إجابات صحيحة تراكمية من اختباراتك المكتملة، وليست حكماً نهائياً على إتقان الوحدة.</p>';
