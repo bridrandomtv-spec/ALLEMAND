@@ -2044,10 +2044,10 @@ function renderStudentDashboardSubjects(session,pct,unitCount){
 
 /* ══════════ TABLEAU DE BORD ÉTUDIANT — composition indépendante des prototypes 1+2 ══════════ */
 function renderStudentDashboard(){
-  const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
-  if(!hero||!path||!subjects||!unitProgressHost||!activity||!recommend||!updates)return;
+  const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),achievements=$('#sdAchievements'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
+  if(!hero||!path||!subjects||!unitProgressHost||!achievements||!activity||!recommend||!updates)return;
   const s=(window.AUTH&&AUTH.session)?AUTH.session():null;
-  if(!s){hero.innerHTML='';path.innerHTML='';subjects.innerHTML='';unitProgressHost.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
+  if(!s){hero.innerHTML='';path.innerHTML='';subjects.innerHTML='';unitProgressHost.innerHTML='';achievements.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
   const levelCode=['1AS','2AS','3AS'].includes(s.niveau)?s.niveau:(niveauActif||'2AS');
   const units=UNITES.filter(u=>(!u.niveau||u.niveau===levelCode)&&Array.isArray(u.seances)&&u.seances.length);
   const unitProgress=units.map(u=>{const done=(loadSeancesFor(u.n).done||[]),sessions=u.seances||[],count=sessions.length,doneCount=sessions.filter(x=>done.indexOf(x.n)>=0).length;return {n:u.n,completed:doneCount,total:count,pct:count?Math.round(doneCount/count*100):0};});
@@ -2077,6 +2077,12 @@ function renderStudentDashboard(){
   }else{
     unitProgressHost.innerHTML='<div class="sd-empty"><span>📊</span><b>لا توجد بيانات كافية بعد</b><p>سيظهر تقدم الوحدات عند توفر حصص مسجّلة لهذا المستوى.</p></div>';
   }
+  let badgeData=[];
+  try{badgeData=window.DZ_GAMIFICATION&&typeof DZ_GAMIFICATION.badges==='function'?DZ_GAMIFICATION.badges(g):[];}catch(e){}
+  const unlockedBadges=badgeData.filter(b=>b[4]),shownBadges=(unlockedBadges.length?unlockedBadges.slice(-4).reverse():badgeData.filter(b=>!b[4]).slice(0,4));
+  achievements.innerHTML=badgeData.length
+    ?'<div class="sd-achievement-summary"><b>'+unlockedBadges.length+' / '+badgeData.length+'</b><span>شارة مفتوحة من سجل إنجازاتك</span></div><div class="sd-achievement-grid">'+shownBadges.map(b=>'<article class="sd-achievement '+(b[4]?'is-unlocked':'is-locked')+'"><span>'+b[1]+'</span><div><b>'+esc(b[2])+'</b><small>'+esc(b[3])+'</small></div><em>'+(b[4]?'مفتوحة':'لم تُفتح بعد')+'</em></article>').join('')+'</div><button type="button" class="sd-achievement-link" data-go="masar">عرض جميع الشارات والإنجازات ←</button>'
+    :'<div class="sd-empty"><span>🏅</span><b>سجل الإنجازات غير متاح حالياً</b><p>ستظهر الشارات عند تحميل سجل المكافآت.</p></div>';
   const active=Array.isArray(g.activeDays)?g.activeDays:[],names=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],today=new Date();today.setHours(12,0,0,0);today.setDate(today.getDate()-6);let count=0;
   const days=[];for(let i=0;i<7;i++){const d=new Date(today),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),on=active.indexOf(key)>=0;if(on)count++;days.push('<div class="sd-day '+(on?'is-active':'')+'"><i><span></span></i><small>'+names[d.getDay()]+'</small></div>');today.setDate(today.getDate()+1);}
   activity.innerHTML='<div class="sd-activity-head"><b>'+count+' من 7 أيام نشطة</b><span>آخر سبعة أيام</span></div><div class="sd-week-bars">'+days.join('')+'</div><p>تُحتسب الأيام عند تسجيل إكمال حصة أو اختبار فقط.</p>';
