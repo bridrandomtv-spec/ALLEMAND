@@ -1845,7 +1845,7 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - `style-prototype-dz.css` : styles du panneau, compatibles avec le thème sombre.
 - `sw.js` : précache mis à jour.
 - `ci/check-masar.mjs` : assertions sur le panneau et sa source de données.
-- `ci/check-public-portal.mjs` : références de cache actualisées.
+- `ci/check-public-portal.mjs` et `ci/check-gamification.mjs` : références de cache actualisées.
 
 ### Versions
 - CSS : `style-prototype-dz.css?v=177`
@@ -1858,4 +1858,4 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - La lecture utilise exclusivement l'API client déjà existante et reste soumise aux politiques RLS en place.
 - Aucun changement de schéma, SQL, Auth, RLS, paiement, routes principales ou identifiants fonctionnels existants.
 - Aucun changement sur `main`, aucune fusion et aucun déploiement de production.
-- Le contrôle CI du nouveau lot reste à confirmer après exécution du workflow.
+- La CI #2507 a réussi sur le commit `ca39eee63ab64c1cf58350b424cf617eb3d544ba` (workflow #42411786815). Les contrôles du portail public, du tableau de bord, de la messagerie, de la syntaxe JavaScript, des badges et des parcours ont réussi. Deux assertions de cache héritées ont été synchronisées pendant la validation.
