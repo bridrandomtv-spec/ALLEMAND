@@ -1779,4 +1779,5 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Ajout de l'équivalent en thème sombre, avec fonds teintés par accent et bordures adaptées.
 - Cache synchronisé : CSS `v173`, Service Worker `dz-de-v3.185.0.0.87`, app.js conservé en `v3547`. Assertions mises à jour dans `check-masar`, `check-public-portal` et `check-gamification`.
 - Aucun changement des routes, identifiants, gestionnaires d'événements, données pédagogiques, Supabase/Auth/RLS/schéma/paiement. PR #17 reste sur sa branche, non fusionnée ; `main` reste intacte.
-- CI du lot à contrôler sur le HEAD final après ces commits. La validation structurelle ne remplace pas la comparaison visuelle navigateur, ordinateur et mobile avec les prototypes.
+- Première CI du lot (#42408382754) : échec isolé dans `ci/check-masar.mjs`, dont l'assertion Service Worker attendait encore `.86` alors que le précache avait été correctement porté à `.87`. Correction de cette assertion et actualisation des messages de version CSS dans `check-public-portal.mjs`.
+- Nouvelle CI à contrôler sur le HEAD après correction. La validation structurelle ne remplace pas la comparaison visuelle navigateur, ordinateur et mobile avec les prototypes.
