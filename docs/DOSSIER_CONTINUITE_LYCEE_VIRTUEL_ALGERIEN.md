@@ -1905,3 +1905,15 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Contrôle Supabase Preview : `skipped`, car aucune branche Supabase de prévisualisation n'est associée à cette PR ; aucun changement de base n'a été effectué.
 - Le succès CI/build ne remplace toujours pas la recette visuelle réelle dans un navigateur : vérifier le tableau de bord sur ordinateur et mobile, les interactions de recherche/notifications et la fidélité aux deux prototypes avant toute décision de fusion.
 - PR #17 toujours ouverte, non fusionnée et fusionnable ; branche cible `main` inchangée. Aucun déploiement de production, aucun changement Auth/Supabase/RLS/schéma/migration/paiement.
+
+
+## Lot 155 — confirmation du déploiement de prévisualisation (8 novembre 2026)
+
+- Commit documentaire HEAD : `7adb5f2b31e408aba6eb2cb21c58e59377daa006`.
+- CI GitHub Actions #2511 (`42426457378`) : succès ; le job « Validation structurelle & pédagogique » et ses 30 étapes utiles, dont les contrôles مسارك, recherche/notifications et gamification, sont terminés avec succès.
+- Cloudflare Workers Build : succès ; déploiement de prévisualisation confirmé pour le commit `7adb5f2`.
+- URL de prévisualisation du commit : https://ebb2ec63-allemand.brid-randomtv.workers.dev
+- URL de prévisualisation de branche : https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev
+- Supabase Preview : `skipped` (aucune branche Supabase liée à la PR) ; aucun changement base de données.
+- Limite : les résultats CI et le déploiement confirment que le build est disponible, pas que la qualité visuelle, le responsive ou les interactions ont été vérifiés dans un navigateur réel. La validation visuelle reste à réaliser sur les deux largeurs et à comparer aux sources prototypes.
+- PR #17 reste ouverte, non fusionnée et fusionnable ; `main` inchangée. Aucun déploiement de production ni changement Auth/Supabase/RLS/schéma/migration/paiement.
