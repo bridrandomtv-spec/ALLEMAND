@@ -1794,3 +1794,5 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Validation visuelle réelle navigateur non revendiquée à ce stade ; la CI doit confirmer le lot avant toute conclusion technique.
 
 - Suite CI : le premier run du Lot 150 a révélé des assertions regex échappées qui conservaient l'attente CSS `v173` et Service Worker `.87` dans `check-masar.mjs` (les contrôles littéraux avaient été actualisés, pas ces motifs regex). Les motifs de cache des scripts concernés ont été alignés sur CSS `v174` et Service Worker `.88`. Le nouveau run sur le HEAD doit confirmer la correction.
+
+- Deuxième constat CI du Lot 150 : après l'alignement du CSS, le motif regex de `check-masar.mjs` conservait encore l'attente Service Worker `.87` (les antislashs du motif empêchaient le remplacement littéral initial). Le motif est maintenant corrigé vers `.88` dans le commit `221c5d4`. CI #2483 est déclenchée sur le commit de correction ; son résultat sera contrôlé avant de conclure.
