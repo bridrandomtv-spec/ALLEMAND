@@ -17243,3 +17243,20 @@ html[data-theme="dark"] #shell #app .sd-achievement.is-unlocked>span{background:
 @media(max-width:560px){#shell #app .sd-achievement-grid{grid-template-columns:1fr}}
 
 /* Lot 142 — accès rapide messages ; la grille 5 colonnes passe à 2 colonnes au breakpoint mobile */
+
+/* Lot 145 — objectifs pédagogiques dynamiques du tableau de bord étudiant */
+#shell #app .sd-goals-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+#shell #app .sd-goal-card{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:start;gap:10px;min-width:0;padding:14px;border:1px solid var(--b);border-radius:15px;background:var(--p)}
+#shell #app .sd-goal-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--p2);font-size:19px}
+#shell #app .sd-goal-copy{display:grid;gap:5px;min-width:0}
+#shell #app .sd-goal-copy>span{color:var(--m);font-size:10px;font-weight:800}
+#shell #app .sd-goal-copy>b{color:var(--t);font-size:12px;font-weight:900;line-height:1.65}
+#shell #app .sd-goal-copy>small{color:var(--m);font-size:10px;line-height:1.65}
+#shell #app .sd-goal-card>strong{color:#087342;font-size:14px;font-weight:900;direction:ltr}
+#shell #app .sd-goal-track{height:7px;margin-top:4px;overflow:hidden;border-radius:99px;background:var(--p2)}
+#shell #app .sd-goal-track>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#48b477,#087342)}
+#shell #app .sd-goal-card>button{grid-column:2/-1;justify-self:start;margin-top:2px;padding:7px 0;border:0;background:transparent;color:#087342;font:800 10px var(--ff-ar-display,'Cairo',sans-serif);cursor:pointer}
+#shell #app .sd-goal-status{grid-column:2/-1;color:var(--m);font-size:10px}
+#shell #app .sd-goals-note{margin:11px 0 0;color:var(--m);font-size:10px;line-height:1.8}
+html[data-theme="dark"] #shell #app .sd-goal-card>strong,html[data-theme="dark"] #shell #app .sd-goal-card>button{color:#80d9a2}
+@media(max-width:680px){#shell #app .sd-goals-grid{grid-template-columns:minmax(0,1fr)}}
