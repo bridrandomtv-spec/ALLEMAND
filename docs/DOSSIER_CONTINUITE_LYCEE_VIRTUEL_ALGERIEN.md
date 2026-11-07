@@ -1917,3 +1917,44 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Supabase Preview : `skipped` (aucune branche Supabase liée à la PR) ; aucun changement base de données.
 - Limite : les résultats CI et le déploiement confirment que le build est disponible, pas que la qualité visuelle, le responsive ou les interactions ont été vérifiés dans un navigateur réel. La validation visuelle reste à réaliser sur les deux largeurs et à comparer aux sources prototypes.
 - PR #17 reste ouverte, non fusionnée et fusionnable ; `main` inchangée. Aucun déploiement de production ni changement Auth/Supabase/RLS/schéma/migration/paiement.
+
+## Lot 156 — audit de la page publique, du coach et du tableau de bord (8 novembre 2026)
+
+### État de la prévisualisation
+- HEAD contrôlé : `df13e0cd20376bde83cfc93063a5cc1b0bd484fc`.
+- CI GitHub Actions : run `42426655001`, conclusion `success`, job « Validation structurelle & pédagogique » réussi.
+- Cloudflare confirme le build et le déploiement de prévisualisation du commit `df13e0c`.
+- URL de prévisualisation du commit : https://dbe8984d-allemand.brid-randomtv.workers.dev
+- PR #17 toujours ouverte et non fusionnée. Aucun changement direct sur `main`.
+
+### Page publique et barre vocale
+- Le contenu textuel transmis par l'utilisateur correspond à la composition publique codée dans `index.html` et rendue par `public-portal.js` : accueil, démonstration IA explicitement signalée comme exemple, preuves pédagogiques allemandes, catalogue des matières, niveaux et FAQ.
+- Les compteurs 234 exercices, 55 sujets et 19 unités sont présentés comme ressources du parcours allemand, pas comme statistiques de toutes les matières.
+- La barre vocale `parle.js` est injectée globalement au chargement. Son état initial est « en attente » ; l'écoute n'est pas activée automatiquement et dépend d'une action explicite sur les commandes vocales.
+- Les six langues du catalogue pédagogique et les neuf langues du sélecteur vocal sont deux périmètres distincts.
+
+### Défauts fonctionnels confirmés — coach v4
+- `app.js` programme `show()` quatre secondes après le chargement du DOM, sans garde de session/authentification. La carte « 🧭 1/8 » peut donc recouvrir le portail public avant connexion.
+- Le bouton `✕` retire uniquement la carte courante ; aucun état de refus/masquage n'est conservé. Elle réapparaît au rechargement.
+- Le bouton « التالي » fait tourner l'index avec modulo `STEPS.length` : après la dernière étape, le coach recommence au lieu de se terminer.
+- L'étape 1 promet un « تشخيص » mais son action est `view:"masar"` ; elle ouvre la vue مسارك, pas un test diagnostique. Aucun parcours de diagnostic n'est branché par cette étape.
+- L'étape de révision cible `view:"memoire"`, alors que `VIEWS` contient `revision` et non `memoire`. `go()` remplace une vue inconnue par `accueil` : le bouton ne mène donc pas à la mémoire de révision attendue.
+- Le mini-quiz est composé de trois affirmations codées dans `QB`, corrige son score dans la fenêtre uniquement et ne déclenche pas l'événement réel `dz:quiz-complete`. Il ne doit pas être présenté comme un diagnostic enregistré ni comme une évaluation intégrée à la progression.
+
+### Cohérence du guide de bienvenue
+- `guide.js` charge `assets/bdd/onboarding.json` pour la modale de bienvenue et le guide persistant.
+- Ce fichier promet encore que toutes les leçons, tous les devoirs et corrigés sont disponibles, que la plateforme est entièrement gratuite, qu'un classement, une présence et un rapport hebdomadaire aux parents sont assurés, et que les contenus fonctionnent hors ligne après le premier chargement.
+- Ces formulations sont plus larges que l'état de disponibilité présenté sur le portail public. Le tableau de bord observé dans le code calcule principalement les séances, les résultats de quiz, les badges et les jours d'activité ; cela ne justifie pas à lui seul des affirmations de présence scolaire, de classement national ou de rapport hebdomadaire envoyé.
+- Revoir ces affirmations avant de les conserver dans le parcours d'accueil ; ne pas inventer de remplacement chiffré.
+
+### Tableau de bord étudiant — état source, sans recette visuelle
+- `index.html` contient une vue distincte `data-view="dashboard"`, protégée par `canSeeStudentDashboard()` dans `app.js`.
+- La composition source comprend un hero, cinq raccourcis, une carte pédagogique unités/séances, matières, graphiques de progression et de résultats, recommandations, objectifs, badges, activité, assistant, messages et notifications.
+- `style-prototype-dz.css` prévoit un hero en dégradé, des icônes colorées, une grille desktop et des adaptations mobile. Les données de progression sont calculées depuis les séances et les événements du compte ; les résultats par unité proviennent des quiz enregistrés.
+- `ci/check-masar.mjs` contrôle la présence de ces structures et des règles responsive, mais ne valide ni le rendu réel dans le navigateur ni la fidélité exacte aux deux prototypes.
+
+### Décision et suites de l'audit
+- Priorité P1 : corriger l'apparition automatique du coach sur le portail public, le comportement de fermeture/fin de parcours et les deux destinations erronées.
+- Priorité P1 : aligner le contenu de `onboarding.json` et les textes générés par `guide.js` sur les services et contenus effectivement disponibles.
+- Priorité P2 : recette visuelle du tableau de bord après connexion sur ordinateur et mobile, avec captures réelles et comparaison aux prototypes sources.
+- Aucun fichier applicatif n'a été modifié pendant cet audit ; cette mise à jour est documentaire uniquement. Aucun changement Auth, Supabase, RLS, schéma, migration ou paiement ; aucun déploiement de production.
