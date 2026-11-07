@@ -17420,3 +17420,24 @@ html[data-theme="dark"] #shell #app .sd-goal-review>strong{color:#b99cde}
 /* Lot 149 — chaque matière garde son accent chromatique, y compris lorsqu'elle est planifiée */
 #shell #app .sd-subject-card{border-color:var(--subject-line);background:linear-gradient(145deg,var(--subject-soft),var(--p) 86%)}
 html[data-theme="dark"] #shell #app .sd-subject-card{background:linear-gradient(145deg,color-mix(in srgb,var(--subject-accent),transparent 88%),var(--p) 85%);border-color:color-mix(in srgb,var(--subject-accent),#46564b 55%)}
+
+
+/* Lot 150 — composition du tableau de bord selon les deux prototypes étudiants
+   Parcours pleine largeur ; matières et progression en blocs structurants ;
+   compétences/recommandation puis objectifs/badges en paires équilibrées. */
+#shell #app .sd-layout{grid-template-columns:minmax(0,1.8fr) minmax(270px,.9fr);gap:18px}
+#shell #app .sd-main{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+#shell #app .sd-path-panel{width:100%;margin:0;}
+#shell #app .sd-subjects-panel,#shell #app .sd-unit-progress-panel,#shell #app .sd-activity-panel{grid-column:1/-1}
+#shell #app .sd-skills-panel,#shell #app .sd-recommend-panel,#shell #app .sd-goals-panel,#shell #app .sd-achievements-panel{grid-column:span 1;min-width:0}
+#shell #app .sd-goals-panel .sd-goals-grid{grid-template-columns:minmax(0,1fr)}
+#shell #app .sd-recommend-panel{align-self:stretch}
+@media(max-width:980px){
+  #shell #app .sd-layout{grid-template-columns:minmax(0,1fr)}
+  #shell #app .sd-main{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  #shell #app .sd-main{grid-template-columns:minmax(0,1fr);gap:13px}
+  #shell #app .sd-subjects-panel,#shell #app .sd-unit-progress-panel,#shell #app .sd-activity-panel,#shell #app .sd-skills-panel,#shell #app .sd-recommend-panel,#shell #app .sd-goals-panel,#shell #app .sd-achievements-panel{grid-column:1}
+  #shell #app .sd-goals-panel .sd-goals-grid{grid-template-columns:minmax(0,1fr)}
+}
