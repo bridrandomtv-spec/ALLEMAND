@@ -2044,10 +2044,10 @@ function renderStudentDashboardSubjects(session,pct,unitCount){
 
 /* ══════════ TABLEAU DE BORD ÉTUDIANT — composition indépendante des prototypes 1+2 ══════════ */
 function renderStudentDashboard(){
-  const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),skills=$('#sdSkills'),achievements=$('#sdAchievements'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
-  if(!hero||!path||!subjects||!unitProgressHost||!skills||!achievements||!activity||!recommend||!updates)return;
+  const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),skills=$('#sdSkills'),goals=$('#sdGoals'),achievements=$('#sdAchievements'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
+  if(!hero||!path||!subjects||!unitProgressHost||!skills||!goals||!achievements||!activity||!recommend||!updates)return;
   const s=(window.AUTH&&AUTH.session)?AUTH.session():null;
-  if(!s){hero.innerHTML='';path.innerHTML='';subjects.innerHTML='';unitProgressHost.innerHTML='';skills.innerHTML='';achievements.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
+  if(!s){hero.innerHTML='';path.innerHTML='';subjects.innerHTML='';unitProgressHost.innerHTML='';skills.innerHTML='';goals.innerHTML='';achievements.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
   const levelCode=['1AS','2AS','3AS'].includes(s.niveau)?s.niveau:(niveauActif||'2AS');
   const units=UNITES.filter(u=>(!u.niveau||u.niveau===levelCode)&&Array.isArray(u.seances)&&u.seances.length);
   const unitProgress=units.map(u=>{const done=(loadSeancesFor(u.n).done||[]),sessions=u.seances||[],count=sessions.length,doneCount=sessions.filter(x=>done.indexOf(x.n)>=0).length;return {n:u.n,completed:doneCount,total:count,pct:count?Math.round(doneCount/count*100):0};});
@@ -2084,6 +2084,19 @@ function renderStudentDashboard(){
   }else{
     skills.innerHTML='<div class="sd-empty"><span>🎯</span><b>لم تُسجّل نتائج تمارين بعد</b><p>أكمل اختباراً أو سلسلة تمارين لتظهر نتائجك هنا.</p><button type="button" data-go="quiz">ابدأ التمارين</button></div>';
   }
+  const focusUnit=unitProgress.find(function(u){return u.completed<u.total;})||unitProgress[0]||null;
+  let dueCount=0;try{dueCount=window.MEMOIRE&&typeof MEMOIRE.dues==='function'?MEMOIRE.dues().length:0;}catch(e){}
+  const focusQuiz=focusUnit&&unitQuiz[String(focusUnit.n)]?unitQuiz[String(focusUnit.n)]:null;
+  const focusAttempts=focusQuiz?Number(focusQuiz.attempts)||0:0;
+  const goalCards=[];
+  if(focusUnit){
+    goalCards.push('<article class="sd-goal-card sd-goal-unit"><div class="sd-goal-icon">📘</div><div class="sd-goal-copy"><span>المحطة التعليمية</span><b>'+(focusUnit.completed>=focusUnit.total?'راجع الوحدة '+esc(focusUnit.n):'أكمل الوحدة '+esc(focusUnit.n))+'</b><small>'+focusUnit.completed+' من '+focusUnit.total+' حصص مكتملة · '+(focusUnit.total-focusUnit.completed)+' متبقية</small><div class="sd-goal-track"><i style="width:'+focusUnit.pct+'%"></i></div></div><strong>'+focusUnit.pct+'%</strong><button type="button" data-go="seances">متابعة الحصص ←</button></article>');
+    goalCards.push('<article class="sd-goal-card sd-goal-quiz"><div class="sd-goal-icon">🎯</div><div class="sd-goal-copy"><span>محطة التدريب</span><b>اختبر فهمك في الوحدة '+esc(focusUnit.n)+'</b><small>'+(focusAttempts?focusAttempts+' محاولات مسجّلة في هذه الوحدة':'لم تُسجّل محاولة اختبار لهذه الوحدة بعد')+'</small></div><strong>'+(focusAttempts?'✓':'—')+'</strong><button type="button" data-go="quiz">ابدأ التمرين ←</button></article>');
+  }else{
+    goalCards.push('<article class="sd-goal-card"><div class="sd-goal-icon">📘</div><div class="sd-goal-copy"><span>المحطة التعليمية</span><b>لا توجد وحدات مسجّلة لهذا المستوى</b><small>سيظهر هدف الوحدة عند توفر بيانات المسار.</small></div></article>');
+  }
+  goalCards.push('<article class="sd-goal-card sd-goal-review"><div class="sd-goal-icon">🧠</div><div class="sd-goal-copy"><span>المراجعة الذكية</span><b>'+(dueCount?'لديك '+dueCount+' بطاقة حان موعد مراجعتها':'لا توجد بطاقات مستحقة حالياً')+'</b><small>'+(dueCount?'استعد المعلومات في الوقت المناسب.':'ستظهر البطاقات هنا عندما يحين موعد مراجعتها.')+'</small></div><strong>'+(dueCount||'✓')+'</strong>'+(dueCount?'<button type="button" data-go="revision">راجع الآن ←</button>':'<span class="sd-goal-status">لا إجراء مطلوب</span>')+'</article>');
+  goals.innerHTML='<div class="sd-goals-grid">'+goalCards.join('')+'</div><p class="sd-goals-note">هذه محطات مقترحة تُحدّث من حصصك واختباراتك وبطاقات المراجعة المسجّلة؛ لا تمثل أهدافاً زمنية أو نتائج مفترضة.</p>';
   let badgeData=[];
   try{badgeData=window.DZ_GAMIFICATION&&typeof DZ_GAMIFICATION.badges==='function'?DZ_GAMIFICATION.badges(g):[];}catch(e){}
   const unlockedBadges=badgeData.filter(b=>b[4]),shownBadges=(unlockedBadges.length?unlockedBadges.slice(-4).reverse():badgeData.filter(b=>!b[4]).slice(0,4));
@@ -2093,7 +2106,7 @@ function renderStudentDashboard(){
   const active=Array.isArray(g.activeDays)?g.activeDays:[],names=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],today=new Date();today.setHours(12,0,0,0);today.setDate(today.getDate()-6);let count=0;
   const days=[];for(let i=0;i<7;i++){const d=new Date(today),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),on=active.indexOf(key)>=0;if(on)count++;days.push('<div class="sd-day '+(on?'is-active':'')+'"><i><span></span></i><small>'+names[d.getDay()]+'</small></div>');today.setDate(today.getDate()+1);}
   activity.innerHTML='<div class="sd-activity-head"><b>'+count+' من 7 أيام نشطة</b><span>آخر سبعة أيام</span></div><div class="sd-week-bars">'+days.join('')+'</div><p>تُحتسب الأيام عند تسجيل إكمال حصة أو اختبار فقط.</p>';
-  let due=0;try{due=window.MEMOIRE&&typeof MEMOIRE.dues==='function'?MEMOIRE.dues().length:0;}catch(e){}
+  const due=dueCount;
   if(due)recommend.innerHTML='<div class="sd-recommend"><span>🧠</span><div><b>مراجعة مستحقة</b><p>لديك '+due+' بطاقة ذاكرة حان موعد مراجعتها.</p></div><button type="button" data-go="revision">راجع الآن</button></div>';
   else if(nextInfo&&nextInfo.prochaine)recommend.innerHTML='<div class="sd-recommend"><span>✨</span><div><b>واصل التعلّم</b><p>الحصة التالية في مسارك جاهزة للمتابعة.</p></div><button type="button" data-go="seances">ابدأ</button></div>';
   else recommend.innerHTML='<div class="sd-recommend"><span>📚</span><div><b>استكشف مواردك</b><p>تصفّح المواد والموارد التعليمية المتاحة.</p></div><button type="button" data-go="matieres">المواد</button></div>';
