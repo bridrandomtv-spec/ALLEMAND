@@ -2434,12 +2434,12 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   function buildSteps(){
     var n = niv();
     var S = [
-      { ar:"ابدأ بتشخيص مستواك ثم افتح خطتك في « مسارك ».", de:"Starte mit dem Diagnosetest und öffne deinen Plan.", view:"masar", ic:"🎯" },
+      { ar:"افتح « مسارك » وتعرّف على وحدتك التعليمية القادمة.", de:"Öffne deinen Lernpfad und wähle deine nächste Einheit.", view:"masar", ic:"🎯" },
       { ar:"شاهد حصة واحدة فقط اليوم (Lektion).", de:"Schaue heute nur eine Lektion.", view:"seances", ic:"📖" },
       { ar:"افتح الكتاب واستمع لصفحة Lektion ثم اقرأها بصوت عالٍ.", de:"Höre die Buchseite und lies sie laut.", view:"buch", ic:"👂" },
       { ar:"حاور المنصة: اضغط 🎙️ وتكلم بالألمانية أو الدارجة.", de:"Sprich mit der Plattform über 🎙️.", view:null, ic:"🗣️" },
-      { ar:"ثبّت ما تعلمت: 3 أسئلة مخترعة حسب وحدتك (بدون فتح البنك).", de:"Festige: 3 erfundene Fragen zu deiner Einheit.", quiz:true, ic:"✍️" },
-      { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole die fälligen 🧠-Karten.", view:"memoire", ic:"🧠" },
+      { ar:"تدرّب بثلاثة أسئلة توضيحية؛ نتيجتها لا تُحفظ ولا تدخل في تقدمك.", de:"Übe mit drei Beispielfragen; das Ergebnis wird nicht gespeichert.", quiz:true, ic:"✍️" },
+      { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole die fälligen 🧠-Karten.", view:"revision", ic:"🧠" },
       { ar:"أنهِ الوحدة بفرض مُنقّط (تصحيح فوري).", de:"Schließe mit einer benoteten Aufgabe ab.", view:"devoirs", ic:"📝" }
     ];
     if(n===2){
@@ -2455,7 +2455,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     var n = niv(); var def = n===3 ? 10 : 1;
     var ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;display:flex;align-items:center;justify-content:center';
     var box=document.createElement('div'); box.style.cssText='background:#0f2b1d;border:1px solid #2c7a4f;border-radius:14px;padding:16px;max-width:380px;width:92%;color:#eafff2;font-size:14px';
-    box.innerHTML='<b>✍️ تدريب سريع — 3 أسئلة</b> <select id="qzU" style="float:left"></select><div id="qzB" style="margin-top:10px"></div><div id="qzS" style="margin-top:8px"></div><button id="qzX" style="margin-top:10px;background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px">✕ إغلاق</button>';
+    box.innerHTML='<b>✍️ تدريب توضيحي — 3 أسئلة غير محفوظة</b> <select id="qzU" style="float:left"></select><div id="qzB" style="margin-top:10px"></div><div id="qzS" style="margin-top:8px"></div><button id="qzX" style="margin-top:10px;background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px">✕ إغلاق</button>';
     ov.appendChild(box); document.body.appendChild(ov);
     var sel=box.querySelector('#qzU');
     var units = n===3 ? [10,11,12,13,14,15,16,17,18,19] : [1,2,3,4,5,6,7,8,9];
@@ -2469,11 +2469,32 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     render(def);
     box.querySelector('#qzX').addEventListener('click', function(){ ov.remove(); });
   }
+  function studentSession(){
+    try{
+      var s=window.AUTH&&typeof AUTH.session==='function'?AUTH.session():null;
+      return s&&s.role==='eleve'?s:null;
+    }catch(e){ return null; }
+  }
+  function userStorageKey(kind, session){
+    var user=String(session&&session.user||'eleve').toLowerCase().replace(/[^a-z0-9_-]/g,'_');
+    return 'dz_coach_'+kind+'_'+user;
+  }
+  function markCoach(kind, session){
+    try{ localStorage.setItem(userStorageKey(kind,session),'1'); }catch(e){}
+  }
   function show(){
-    if(document.getElementById('coachCard')) return;
+    var session=studentSession();
+    var existing=document.getElementById('coachCard');
+    if(!session){ if(existing) existing.remove(); return; }
+    if(existing) return;
+    try{
+      if(localStorage.getItem(userStorageKey('dismissed',session))==='1' ||
+         localStorage.getItem(userStorageKey('done',session))==='1') return;
+    }catch(e){}
     var STEPS = buildSteps();
-    var i=0; try{ i=parseInt(localStorage.getItem('dz_coach_step')||'0',10)||0; }catch(e){}
-    if(i>=STEPS.length) i=0;
+    var i=0;
+    try{ i=parseInt(localStorage.getItem(userStorageKey('step',session))||'0',10)||0; }catch(e){}
+    if(i>=STEPS.length){ markCoach('done',session); return; }
     var s=STEPS[i];
     var card=document.createElement('div'); card.id='coachCard';
     card.style.cssText='position:fixed;bottom:70px;inset-inline-start:14px;z-index:9997;max-width:330px;background:#0f2b1d;border:1px solid #2c7a4f;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:13px;color:#eafff2';
@@ -2482,15 +2503,25 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
       +'<div dir="ltr" lang="de" style="color:#9fd8b4;text-align:left">'+s.de+'</div>'
       +'<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'
       +((s.quiz||s.view)?'<button id="coachGo" style="background:#2c7a4f;border:0;color:#fff;border-radius:8px;padding:6px 10px;cursor:pointer">▶ ابدأ · Start</button>':'')
-      +'<button id="coachNext" style="flex:1;background:#d9a520;border:0;border-radius:8px;padding:6px;font-weight:700;cursor:pointer">التالي ▸ · Weiter</button>'
+      +'<button id="coachNext" style="flex:1;background:#d9a520;border:0;border-radius:8px;padding:6px;font-weight:700;cursor:pointer">'+(i===STEPS.length-1?'إنهاء الجولة ✓ · Fertig':'التالي ▸ · Weiter')+'</button>'
       +'<button id="coachX" style="background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px">✕</button></div>';
     document.body.appendChild(card);
     var g=document.getElementById('coachGo');
-    if(g) g.addEventListener('click', function(){ if(s.quiz) openQuiz(); else goView(s.view); });
-    document.getElementById('coachNext').addEventListener('click', function(){ try{ localStorage.setItem('dz_coach_step', String((i+1)%STEPS.length)); }catch(e){} card.remove(); setTimeout(show,400); });
-    document.getElementById('coachX').addEventListener('click', function(){ card.remove(); });
+    if(g) g.addEventListener('click', function(){ if(s.quiz) openQuiz(); else if(s.view) goView(s.view); });
+    document.getElementById('coachNext').addEventListener('click', function(){
+      if(i+1>=STEPS.length){ markCoach('done',session); card.remove(); return; }
+      try{ localStorage.setItem(userStorageKey('step',session),String(i+1)); }catch(e){}
+      card.remove(); setTimeout(show,250);
+    });
+    document.getElementById('coachX').addEventListener('click', function(){
+      markCoach('dismissed',session); card.remove();
+    });
   }
-  setTimeout(show, 4000);
+  document.addEventListener('dz:auth', function(){
+    if(studentSession()) setTimeout(show,250);
+    else { var card=document.getElementById('coachCard'); if(card) card.remove(); }
+  });
+  setTimeout(show,4000);
 })();
 
 
