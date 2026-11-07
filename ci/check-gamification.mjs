@@ -44,7 +44,7 @@ assert.match(app,/!canSeeStudentDashboard\(\)/,'protection de la route tableau d
 assert.match(app,/if\(view === 'dashboard'\) renderStudentDashboard\(\)/,'activation du tableau de bord étudiant absente');
 assert.match(css,/\.sd-layout/,'composition principale du tableau de bord absente');
 assert.match(css,/\.sd-quick/,'raccourcis du tableau de bord absents');
-assert.match(html,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
+assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
 assert.match(html,/id="studentFocus"/,'zone de raccourcis personnalisés absente du tableau de bord');
 assert.match(html,/id="studentContinue"/,'zone de reprise du cours absente du tableau de bord');
 assert.match(app,/sf-continue-card/,'carte de reprise du cours absente');
