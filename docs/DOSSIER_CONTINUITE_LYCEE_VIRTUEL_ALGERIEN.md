@@ -1859,3 +1859,14 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucun changement de schéma, SQL, Auth, RLS, paiement, routes principales ou identifiants fonctionnels existants.
 - Aucun changement sur `main`, aucune fusion et aucun déploiement de production.
 - La CI #2507 a réussi sur le commit `ca39eee63ab64c1cf58350b424cf617eb3d544ba` (workflow #42411786815). Les contrôles du portail public, du tableau de bord, de la messagerie, de la syntaxe JavaScript, des badges et des parcours ont réussi. Deux assertions de cache héritées ont été synchronisées pendant la validation.
+
+
+## Validation complémentaire — Lot 153 / CI #2508 (7 novembre 2026)
+
+- La PR #17 pointe sur le commit `9f7136b0c475b4d15dd552972f85b9d7111d9a30`.
+- Le workflow GitHub Actions #2508 (`42411850502`) est terminé avec succès sur ce HEAD ; le job « Validation structurelle & pédagogique » est entièrement réussi.
+- Les contrôles exécutés couvrent notamment la syntaxe JavaScript, les unités pédagogiques, le portail public, le tableau de bord « مسارك », les données de gamification, la messagerie et les parcours d'accès.
+- Cette réussite confirme les contrôles automatisés, mais ne constitue pas une recette visuelle navigateur et ne prouve pas l'identité graphique avec les deux prototypes.
+- Audit source complémentaire : les graphiques de résultats du tableau de bord affichent les taux de réponses correctes agrégés par unité ; ils ne mesurent pas séparément vocabulaire, grammaire, compréhension orale ou expression. Conserver cet intitulé par unité et ne pas présenter ces agrégats comme un radar de compétences linguistiques.
+- Les deux fichiers prototypes `Qwen_html_20261021_bxmtbklup.html` et `Qwen_html_20261021_juv5xelun.html` ne sont pas présents à la racine de cette branche. Ne pas inventer leur structure exacte : la comparaison pixel/structure nécessite de disposer à nouveau de leurs sources ou d'une prévisualisation accessible.
+- PR #17 maintenue ouverte et non fusionnée ; `main` inchangée ; aucun déploiement revendiqué ; aucun changement Supabase/Auth/RLS/schéma/paiement.
