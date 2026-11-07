@@ -225,10 +225,10 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
 }
 const sw = read('sw.js');
 if (!html.includes('style-prototype-dz.css?v=173')) {
-  fail('version CSS du portail non actualisée (v171 attendue)');
+  fail('version CSS du portail non actualisée (v173 attendue)');
 }
 if (!sw.includes('style-prototype-dz.css?v=173')) {
-  fail('version CSS du précache non actualisée (v171 attendue)');
+  fail('version CSS du précache non actualisée (v173 attendue)');
 }
 if (!sw.includes("dz-de-v3.185.0.0.87") ||
     !sw.includes("style-prototype-dz.css?v=173") ||
