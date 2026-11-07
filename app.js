@@ -2044,10 +2044,10 @@ function renderStudentDashboardSubjects(session,pct,unitCount){
 
 /* ══════════ TABLEAU DE BORD ÉTUDIANT — composition indépendante des prototypes 1+2 ══════════ */
 function renderStudentDashboard(){
-  const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),achievements=$('#sdAchievements'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
-  if(!hero||!path||!subjects||!unitProgressHost||!achievements||!activity||!recommend||!updates)return;
+  const hero=$('#studentDashboardHero'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),skills=$('#sdSkills'),achievements=$('#sdAchievements'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
+  if(!hero||!path||!subjects||!unitProgressHost||!skills||!achievements||!activity||!recommend||!updates)return;
   const s=(window.AUTH&&AUTH.session)?AUTH.session():null;
-  if(!s){hero.innerHTML='';path.innerHTML='';subjects.innerHTML='';unitProgressHost.innerHTML='';achievements.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
+  if(!s){hero.innerHTML='';path.innerHTML='';subjects.innerHTML='';unitProgressHost.innerHTML='';skills.innerHTML='';achievements.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
   const levelCode=['1AS','2AS','3AS'].includes(s.niveau)?s.niveau:(niveauActif||'2AS');
   const units=UNITES.filter(u=>(!u.niveau||u.niveau===levelCode)&&Array.isArray(u.seances)&&u.seances.length);
   const unitProgress=units.map(u=>{const done=(loadSeancesFor(u.n).done||[]),sessions=u.seances||[],count=sessions.length,doneCount=sessions.filter(x=>done.indexOf(x.n)>=0).length;return {n:u.n,completed:doneCount,total:count,pct:count?Math.round(doneCount/count*100):0};});
@@ -2076,6 +2076,13 @@ function renderStudentDashboard(){
     unitProgressHost.innerHTML='<div class="sd-unit-chart">'+unitProgress.map(u=>'<div class="sd-unit-chart-item"><b>'+u.pct+'%</b><div class="sd-unit-chart-track" role="img" aria-label="الوحدة '+esc(u.n)+' : '+u.completed+' من '+u.total+' حصص مكتملة"><span style="height:'+u.pct+'%"></span></div><small>الوحدة '+esc(u.n)+'</small><em>'+u.completed+'/'+u.total+'</em></div>').join('')+'</div><p class="sd-unit-chart-note">النسب محسوبة من الحصص المسجّلة فعلياً في كل وحدة.</p>';
   }else{
     unitProgressHost.innerHTML='<div class="sd-empty"><span>📊</span><b>لا توجد بيانات كافية بعد</b><p>سيظهر تقدم الوحدات عند توفر حصص مسجّلة لهذا المستوى.</p></div>';
+  }
+  const unitQuiz=g&&g.unitQuiz&&typeof g.unitQuiz==='object'?g.unitQuiz:{};
+  const skillRows=Object.keys(unitQuiz).map(function(key){const row=unitQuiz[key]||{},correct=Number(row.correct)||0,total=Number(row.total)||0;return {unit:key,correct:correct,total:total,attempts:Number(row.attempts)||0,pct:total?Math.round(correct/total*100):0};}).filter(function(row){return row.total>0;}).sort(function(x,y){return Number(x.unit)-Number(y.unit);});
+  if(skillRows.length){
+    skills.innerHTML='<div class="sd-skill-list">'+skillRows.map(function(row){return '<div class="sd-skill-row"><div class="sd-skill-head"><b>الوحدة '+esc(row.unit)+'</b><strong>'+row.pct+'%</strong></div><div class="sd-skill-track" role="img" aria-label="الوحدة '+esc(row.unit)+' : '+row.correct+' إجابة صحيحة من '+row.total+'"><span style="width:'+row.pct+'%"></span></div><small>'+row.correct+' صحيحة من '+row.total+' إجابة · '+row.attempts+' محاولات</small>'+(row.total<10?'<em>عينة محدودة — واصل حل التمارين</em>':'')+'</div>';}).join('')+'</div><p class="sd-skill-note">هذه نسب إجابات صحيحة تراكمية من اختباراتك المكتملة، وليست حكماً نهائياً على إتقان الوحدة.</p>';
+  }else{
+    skills.innerHTML='<div class="sd-empty"><span>🎯</span><b>لم تُسجّل نتائج تمارين بعد</b><p>أكمل اختباراً أو سلسلة تمارين لتظهر نتائجك هنا.</p><button type="button" data-go="quiz">ابدأ التمارين</button></div>';
   }
   let badgeData=[];
   try{badgeData=window.DZ_GAMIFICATION&&typeof DZ_GAMIFICATION.badges==='function'?DZ_GAMIFICATION.badges(g):[];}catch(e){}
