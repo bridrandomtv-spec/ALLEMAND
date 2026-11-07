@@ -49,12 +49,12 @@ assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
 assert.match(html, /style-prototype-dz\.css\?v=177/, 'cache CSS v176 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.185\.0\.0\.93/, 'version service worker v3.185 non actualisée');
+assert.match(sw, /dz-de-v3\.185\.0\.0\.94/, 'version service worker v3.185 non actualisée');
 assert.match(sw, /style-prototype-dz\.css\?v=177/, 'précache CSS v176 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
-assert.match(html, /app\.js\?v=3550/, 'cache app.js non actualisé');
-assert.match(sw, /app\.js\?v=3550/, 'précache app.js non actualisé');
+assert.match(html, /app\.js\?v=3551/, 'cache app.js non actualisé');
+assert.match(sw, /app\.js\?v=3551/, 'précache app.js non actualisé');
 
 
 assert.match(app, /function studentSession\(\)/, 'le coach doit vérifier la session élève');
@@ -68,5 +68,7 @@ assert.doesNotMatch(app, /تشخيص مستواك|Diagnosetest/, 'le coach ne do
 
 assert.ok(app.includes('"Ich trage einen Hut. → « einen » masc Akk.", "t"'), 'corrigé du mini-quiz : accusatif masculin de Hut incorrect');
 assert.ok(app.includes('"Er lebt in einer reichen Gesellschaft. → « einer » Datif.", "t"'), 'corrigé du mini-quiz : datif après in incorrect');
+
+assert.doesNotMatch(app, /كل أسبوع:|1-3 مرات|تصحيح فوري/, 'le coach ne doit pas promettre une fréquence ou une correction non garantie');
 
 console.log('✅ مسارك : calculs réels par unité, prochaine séance, compétences, cartes et caches contrôlés');
