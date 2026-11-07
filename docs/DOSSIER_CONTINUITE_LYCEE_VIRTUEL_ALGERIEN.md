@@ -1796,3 +1796,14 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Suite CI : le premier run du Lot 150 a révélé des assertions regex échappées qui conservaient l'attente CSS `v173` et Service Worker `.87` dans `check-masar.mjs` (les contrôles littéraux avaient été actualisés, pas ces motifs regex). Les motifs de cache des scripts concernés ont été alignés sur CSS `v174` et Service Worker `.88`. Le nouveau run sur le HEAD doit confirmer la correction.
 
 - Deuxième constat CI du Lot 150 : après l'alignement du CSS, le motif regex de `check-masar.mjs` conservait encore l'attente Service Worker `.87` (les antislashs du motif empêchaient le remplacement littéral initial). Le motif est maintenant corrigé vers `.88` dans le commit `221c5d4`. CI #2483 est déclenchée sur le commit de correction ; son résultat sera contrôlé avant de conclure.
+
+
+## 20. Lot 151 — activation effective de la grille interne du tableau de bord (7 novembre 2026)
+
+- Audit structurel du HTML/CSS du Lot 150 : les règles `grid-template-columns` et `grid-column` avaient été ajoutées à `.sd-main`, mais le conteneur n'avait pas `display:grid`. Les colonnes et placements des panneaux ne pouvaient donc pas être appliqués par le navigateur.
+- Correction : activation explicite de `display:grid` sur `.sd-main`, avec `min-width:0` pour éviter les débordements ; maintien des deux colonnes internes sur grand écran/tablette et d'une colonne sur mobile.
+- Ajout d'assertions dans `ci/check-masar.mjs` pour exiger les panneaux parcours/matières/compétences/recommandation, l'activation effective de la grille et la règle responsive mobile.
+- Cache synchronisé : CSS `v175`, Service Worker `dz-de-v3.185.0.0.89`, app.js conservé en `v3547`. Contrôles `check-masar` et `check-public-portal` mis à jour.
+- Vérifications de structure déjà faites : chaque zone dynamique du dashboard apparaît une seule fois dans le HTML ; les neuf identifiants attendus sont présents et le moteur `renderStudentDashboard()` les référence toujours.
+- Périmètre inchangé : branche `design/prototypes-67-74-alignment`, PR #17 ouverte/non fusionnée, aucun changement sur `main`, aucun déploiement, aucun changement Supabase/Auth/RLS/schéma/paiement.
+- Validation visuelle réelle navigateur encore nécessaire ; ce lot corrige un défaut CSS objectivement identifié et ajoute un garde-fou CI, sans prétendre à la parité visuelle complète avec les prototypes.
