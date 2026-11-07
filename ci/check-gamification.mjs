@@ -50,7 +50,7 @@ assert.match(css,/\.sd-subject-grid/,'grille des matières du tableau de bord ab
 assert.match(html,/id="sdSubjects"/,'zone des matières du tableau de bord absente');
 assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=165/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=166/,'version CSS non précachée');
 assert.doesNotMatch(html,/id="studentFocus"|id="studentContinue"/,'ancienne retouche du tableau de bord subsiste dans فضائي الدراسي');
 assert.doesNotMatch(app,/renderStudentFocus|sf-continue-card/,'ancien rendu de tableau de bord subsiste dans فضائي الدراسي');
 
@@ -66,4 +66,9 @@ assert.match(app,/unlockedBadges=badgeData\.filter\(b=>b\[4\]\)/,'état réel de
 assert.match(app,/shownBadges\.map\(b=>/,'aperçu des badges non rendu dans le tableau de bord');
 assert.match(app,/data-go="masar">عرض جميع الشارات/,'accès au registre complet des badges absent');
 assert.match(css,/\.sd-achievement-grid/,'styles de la grille des badges absents');
+
+assert.equal((html.match(/class="sd-quick-card"/g)||[]).length,5,'les cinq accès rapides du prototype ne sont pas présents');
+assert.match(html,/class="sd-quick-card" data-go="msg"/,'accès rapide aux messages absent');
+assert.match(css,/\.sd-quick\{display:grid;grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/,'grille desktop à cinq accès rapides absente');
+assert.match(css,/\.sd-quick\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,'grille mobile des accès rapides absente');
 console.log('✅ XP par compte, événements vérifiés, anti-doublon, 20 badges et grilles responsive contrôlés');
