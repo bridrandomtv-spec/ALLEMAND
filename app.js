@@ -484,7 +484,7 @@ function isAdmin(){
   catch(e){ return false; }
 }
 function canSeeStudentDashboard(){
-  try{const s=window.AUTH&&AUTH.session?AUTH.session():null;return !!s&&!['prof','parent','admin'].includes(s.role);}
+  try{const s=window.AUTH&&AUTH.session?AUTH.session():null;return !!s&&s.role==='eleve';}
   catch(e){return false;}
 }
 let currentView = 'accueil';
