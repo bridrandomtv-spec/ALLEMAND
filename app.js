@@ -2065,12 +2065,28 @@ function renderStudentDashboard(){
   const h=new Date().getHours(),greeting=h<12?'صباح الخير':(h<18?'نهارك سعيد':'مساء الخير');
   const name=esc(s.nom||s.pseudo||'تلميذنا'),className=esc(s.classe_ar||s.niveau||'المستوى الدراسي');
   hero.innerHTML='<div class="sd-hero-copy"><span class="sd-hero-kicker">🇩🇿 الثانوية الافتراضية الجزائرية</span><span class="sd-class-pill">'+className+'</span><h1>'+greeting+'، '+name+' 👋</h1><p>هذا فضاؤك لمتابعة الدروس والمواد والإنجازات التعليمية.</p><div class="sd-hero-progress"><div><span>التقدم في وحدات مسارك</span><b>'+completed+' / '+total+' · '+pct+'%</b></div><i><span style="width:'+pct+'%"></span></i></div></div><div class="sd-hero-metrics"><div><small>رصيد الخبرة</small><b>⭐ '+(g.xp||0)+' XP</b></div><div><small>سلسلة المواظبة</small><b>🔥 '+streak+' أيام</b></div><div><small>المستوى</small><b>'+esc(lvl.name)+' · '+lvl.n+'</b></div></div>';
-  if(unit&&nextInfo&&nextInfo.prochaine){
-    const sessions=unit.seances||[],idx=sessions.findIndex(x=>x.n===nextInfo.prochaine.n),start=Math.max(0,idx-1),shown=sessions.slice(start,start+5);
-    path.innerHTML='<div class="sd-unit-summary"><div><span>الوحدة '+esc(unit.n)+'</span><h3>'+esc(unit.ar||unit.de||'الوحدة الحالية')+'</h3><small>'+(unit.de?'<bdi dir="ltr">'+esc(unit.de)+'</bdi> · ':'')+unitCompleted+' من '+unitTotal+' حصص مكتملة</small></div><strong>'+Math.round(unitTotal?unitCompleted/unitTotal*100:0)+'%</strong></div><div class="sd-lesson-track">'+shown.map(x=>{const done=unitDone.indexOf(x.n)>=0,current=x.n===nextInfo.prochaine.n;return '<button type="button" class="sd-lesson-step '+(done?'is-done':(current?'is-current':'is-locked'))+'" data-go="seances"><span>'+(done?'✓':(current?'▶':'·'))+'</span><b>الحصة '+esc(x.n)+'</b><small>'+esc(x.ar||x.titre||'')+'</small></button>';}).join('')+'</div><div class="sd-path-foot"><span>الحصة التالية: <b>'+esc(nextInfo.prochaine.ar||nextInfo.prochaine.titre||'')+'</b></span><button type="button" data-go="seances">متابعة الحصة ←</button></div>';
-  }else{
-    path.innerHTML='<div class="sd-empty"><span>🎓</span><b>لا توجد حصة تالية مسجّلة لهذا المستوى</b><p>يمكنك استكشاف المواد أو فتح مسارك الدراسي.</p><button type="button" data-go="masar">عرض مسارك الدراسي</button></div>';
-  }
+  const completedUnits=unitProgress.filter(row=>row.completed===row.total&&row.total>0).length;
+  const mapRows=unitProgress.map((row,index)=>{
+    const u=units.find(item=>String(item.n)===String(row.n));
+    if(!u)return '';
+    const done=(loadSeancesFor(u.n).done||[]);
+    const isCurrent=!!(unit&&nextInfo&&nextInfo.prochaine&&String(unit.n)===String(u.n));
+    const priorComplete=unitProgress.slice(0,index).every(item=>item.total>0&&item.completed===item.total);
+    const state=row.pct===100?'complete':(isCurrent?'current':(row.completed>0?'started':(priorComplete?'next':'pending')));
+    const stateLabel=state==='complete'?'مكتملة':(state==='current'?'قيد التعلّم':(state==='started'?'بدأت':'لم تبدأ بعد'));
+    const lessonNodes=(u.seances||[]).map(x=>{
+      const isDone=done.indexOf(x.n)>=0;
+      const isNext=isCurrent&&nextInfo.prochaine&&String(x.n)===String(nextInfo.prochaine.n);
+      const lessonState=isDone?'complete':(isNext?'current':'pending');
+      const lessonTitle=x.ar||x.titre||('الحصة '+x.n);
+      return '<div class="sd-map-lesson '+(lessonState==='complete'?'is-complete':(lessonState==='current'?'is-current':'is-pending'))+'" aria-label="'+esc(lessonTitle)+'" title="'+esc(lessonTitle)+'"><span>'+(isDone?'✓':(isNext?'▶':esc(x.n)))+'</span><small>الحصة '+esc(x.n)+'</small></div>';
+    }).join('');
+    return '<article class="sd-map-unit is-'+state+'"><div class="sd-map-unit-head"><span class="sd-map-unit-number">'+esc(row.n)+'</span><div class="sd-map-unit-title"><span>الوحدة '+esc(row.n)+'</span><h3>'+esc(u.ar||u.de||('الوحدة '+row.n))+'</h3>'+(u.de?'<bdi dir="ltr">'+esc(u.de)+'</bdi>':'')+'</div><span class="sd-map-unit-state">'+stateLabel+'</span></div><div class="sd-map-unit-progress"><div><span>'+row.completed+' من '+row.total+' حصص مكتملة</span><strong>'+row.pct+'%</strong></div><i><span style="width:'+row.pct+'%"></span></i></div><div class="sd-map-lessons">'+lessonNodes+'</div>'+(isCurrent&&nextInfo.prochaine?'<div class="sd-map-unit-action"><span>الحصة التالية: <b>'+esc(nextInfo.prochaine.ar||nextInfo.prochaine.titre||('الحصة '+nextInfo.prochaine.n))+'</b></span><button type="button" data-go="seances">متابعة الحصة ←</button></div>':'')+'</article>';
+  }).join('');
+  const currentLabel=unit&&nextInfo&&nextInfo.prochaine
+    ?'الوحدة '+esc(unit.n)+' · '+esc(unit.ar||unit.de||'') 
+    :(completedUnits===unitProgress.length&&unitProgress.length?'أكملت جميع الوحدات المسجّلة':'تابع الوحدات غير المكتملة');
+  path.innerHTML='<div class="sd-learning-map"><div class="sd-map-overview"><div><span class="sd-map-kicker">خريطة التعلّم البيداغوجية</span><h3>'+currentLabel+'</h3><p>مسار الوحدات والحصص وفق سجل إنجازك الفعلي</p></div><div class="sd-map-total"><strong>'+completedUnits+' / '+unitProgress.length+'</strong><small>وحدات مكتملة</small></div></div>'+(nextInfo&&nextInfo.prochaine?'<div class="sd-map-next"><span class="sd-map-next-icon">▶</span><div><small>خطوتك التعليمية التالية</small><b>'+esc(nextInfo.prochaine.ar||nextInfo.prochaine.titre||('الحصة '+nextInfo.prochaine.n))+'</b><span>الوحدة '+esc(nextInfo.unite)+'</span></div><button type="button" data-go="seances">متابعة الآن ←</button></div>':'<div class="sd-map-complete-note">🎓 لا توجد حصة تالية مسجّلة حالياً. يمكنك مراجعة الوحدات المكتملة أو استكشاف مواردك.</div>')+'<div class="sd-map-legend"><span><i class="is-complete"></i> حصة مكتملة</span><span><i class="is-current"></i> الحصة التالية</span><span><i class="is-pending"></i> حصة متبقية</span></div><div class="sd-map-units">'+(mapRows||'<div class="sd-empty"><b>لا توجد وحدات تعليمية مسجّلة لهذا المستوى بعد.</b></div>')+'</div></div>';
   renderStudentDashboardSubjects(s,pct,units.length);
   if(unitProgress.length){
     unitProgressHost.innerHTML='<div class="sd-unit-chart">'+unitProgress.map(u=>'<div class="sd-unit-chart-item"><b>'+u.pct+'%</b><div class="sd-unit-chart-track" role="img" aria-label="الوحدة '+esc(u.n)+' : '+u.completed+' من '+u.total+' حصص مكتملة"><span style="height:'+u.pct+'%"></span></div><small>الوحدة '+esc(u.n)+'</small><em>'+u.completed+'/'+u.total+'</em></div>').join('')+'</div><p class="sd-unit-chart-note">النسب محسوبة من الحصص المسجّلة فعلياً في كل وحدة.</p>';
