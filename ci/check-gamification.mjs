@@ -53,7 +53,7 @@ assert.match(css,/\.sd-subject-grid/,'grille des matières du tableau de bord ab
 assert.match(html,/id="sdSubjects"/,'zone des matières du tableau de bord absente');
 assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=169/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=170/,'version CSS non précachée');
 assert.doesNotMatch(html,/id="studentFocus"|id="studentContinue"/,'ancienne retouche du tableau de bord subsiste dans فضائي الدراسي');
 assert.doesNotMatch(app,/renderStudentFocus|sf-continue-card/,'ancien rendu de tableau de bord subsiste dans فضائي الدراسي');
 
@@ -67,6 +67,11 @@ assert.match(app,/loadSeancesFor\(u\.n\)/,'progression des unités non calculée
 assert.match(app,/unitProgress\.map\(u=>/,'rendu du graphique de progression des unités absent');
 assert.match(css,/\.sd-unit-chart-track/,'styles du graphique de progression des unités absents');
 
+assert.match(html,/id="sdStats"/,'rangée des quatre indicateurs du tableau de bord absente');
+assert.match(app,/let quizCorrect=0,quizTotal=0,quizAttempts=0/,'indicateurs des quiz non calculés depuis les résultats personnels');
+assert.match(app,/stats\.innerHTML=.*الحصص المكتملة/s,'cartes statistiques personnelles non rendues');
+assert.match(css,/\.sd-stats\{display:grid;grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/,'grille des quatre indicateurs absente');
+assert.match(css,/\.sd-stat-correct/,'styles de la carte des réponses correctes absents');
 assert.match(html,/id="sdGoals"/,'zone des objectifs pédagogiques absente');
 assert.match(app,/const focusUnit=unitProgress\.find/,'objectif unité non calculé depuis les séances réelles');
 assert.match(app,/const focusAttempts=focusQuiz\?Number\(focusQuiz\.attempts\)\|\|0:0/,'tentatives de quiz de l’unité non lues');
