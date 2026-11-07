@@ -25,6 +25,10 @@ assert.match(html, /class="sd-panel sd-skills-panel"/, 'panneau compétences abs
 assert.match(html, /class="sd-panel sd-recommend-panel"/, 'panneau recommandation absent');
 assert.match(css, /#shell #app \.sd-main\{[^}]*display:grid/s, 'grille interne du tableau de bord non activée');
 assert.match(css, /\.sd-subjects-panel[^}]*grid-column:1\/-1/s, 'panneau matières pleine largeur absent');
+assert.match(css, /\.sd-skills-panel\{[^}]*grid-column:span 4/s, 'proportion compétences 2/3 absente');
+assert.match(css, /\.sd-recommend-panel\{[^}]*grid-column:span 2/s, 'proportion recommandations 1/3 absente');
+assert.match(css, /\.sd-goals-panel,#shell #app \.sd-achievements-panel\{grid-column:span 3/s, 'équilibre objectifs/badges absent');
+
 assert.match(css, /@media\(max-width:640px\)[\s\S]*?\.sd-main\{[^}]*grid-template-columns:minmax\(0,1fr\)/, 'grille dashboard mobile absente');
 
 
@@ -38,10 +42,10 @@ assert.match(js, /ms-unit-grid/, 'cartes de progression par unité absentes');
 assert.match(css, /grid-template-areas:"hero hero" "next chart" "progress progress" "units units"/, 'grille desktop مسارك absente');
 assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/, 'grille mobile مسارك absente');
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
-assert.match(html, /style-prototype-dz\.css\?v=175/, 'cache CSS v174 non actualisé');
+assert.match(html, /style-prototype-dz\.css\?v=176/, 'cache CSS v176 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.185\.0\.0\.89/, 'version service worker v3.185 non actualisée');
-assert.match(sw, /style-prototype-dz\.css\?v=175/, 'précache CSS v174 non actualisé');
+assert.match(sw, /dz-de-v3\.185\.0\.0\.90/, 'version service worker v3.185 non actualisée');
+assert.match(sw, /style-prototype-dz\.css\?v=176/, 'précache CSS v176 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
 assert.match(html, /app\.js\?v=3547/, 'cache app.js non actualisé');
