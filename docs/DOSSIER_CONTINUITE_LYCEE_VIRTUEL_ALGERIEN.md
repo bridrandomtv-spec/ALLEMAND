@@ -1693,3 +1693,13 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Contrôles CI ajoutés pour vérifier les cinq cartes, la route message et les grilles desktop/mobile.
 - Cache synchronisé : CSS v166 ; Service Worker dz-de-v3.185.0.0.80. Aucun changement app.js.
 - Aucune modification de la messagerie elle-même, des routes, Auth, Supabase, RLS ou permissions.
+
+
+## Lot 143 — carte professeur IA du tableau de bord étudiant (7 novembre 2026)
+
+- Enrichissement de la carte « الأستاذ الذكي » dans la vue indépendante `data-view="dashboard"` : le texte distingue les usages pédagogiques (explication des cours, correction de phrases et interaction vocale) et renvoie vers l'espace professeur déjà existant.
+- Les trois repères sont informatifs ; aucun faux bouton de lancement vocal ni nouveau moteur n'est introduit. L'action réelle reste le bouton `data-go="prof"`, qui ouvre la vue du professeur et conserve ses commandes existantes.
+- Présentation responsive par pastilles flexibles, contraste blanc sur fond violet et libellés lisibles. Aucun changement à `prof.js`, `ia.js`, `voix.js`, `js/voice-chat.js`, à l'API IA ou aux permissions.
+- Contrôles CI ajoutés pour vérifier les repères, le lien fonctionnel vers `prof` et les styles dédiés.
+- Cache synchronisé : CSS v167 ; Service Worker `dz-de-v3.185.0.0.81`. `app.js` reste v3544 car il n'a pas été modifié.
+- La CI #2428 du lot 142 est réussie. Le lot 143 attend sa propre exécution CI. PR #17 reste ouverte et non fusionnée ; aucune publication Cloudflare n'est effectuée.
