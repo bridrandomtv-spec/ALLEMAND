@@ -1807,3 +1807,5 @@ Le workflow `42126923374` a échoué dans `ci/check-public-portal.mjs` (ligne 23
 - Vérifications de structure déjà faites : chaque zone dynamique du dashboard apparaît une seule fois dans le HTML ; les neuf identifiants attendus sont présents et le moteur `renderStudentDashboard()` les référence toujours.
 - Périmètre inchangé : branche `design/prototypes-67-74-alignment`, PR #17 ouverte/non fusionnée, aucun changement sur `main`, aucun déploiement, aucun changement Supabase/Auth/RLS/schéma/paiement.
 - Validation visuelle réelle navigateur encore nécessaire ; ce lot corrige un défaut CSS objectivement identifié et ajoute un garde-fou CI, sans prétendre à la parité visuelle complète avec les prototypes.
+
+- Validation Lot 151 : CI GitHub Actions #2492 réussie sur le commit `5f6bb82fa2f67f9c078c498a577f23beecb2e0a7` ; job « Validation structurelle & pédagogique » terminé avec succès. Le run #2491, antérieur à l'alignement du contrôle gamification, n'est pas le résultat de référence. Le contrôle #2492 inclut les assertions dashboard et les caches CSS `v175` / SW `.89`.
