@@ -1958,3 +1958,45 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Priorité P1 : aligner le contenu de `onboarding.json` et les textes générés par `guide.js` sur les services et contenus effectivement disponibles.
 - Priorité P2 : recette visuelle du tableau de bord après connexion sur ordinateur et mobile, avec captures réelles et comparaison aux prototypes sources.
 - Aucun fichier applicatif n'a été modifié pendant cet audit ; cette mise à jour est documentaire uniquement. Aucun changement Auth, Supabase, RLS, schéma, migration ou paiement ; aucun déploiement de production.
+
+## Lot 157 — correction du coach étudiant et fiabilisation du guide (8 novembre 2026)
+
+### Coach v4 — correctifs appliqués
+- Le coach n'est plus injecté pour les visiteurs : il vérifie la session `AUTH.session()` et le rôle `eleve`. Il est proposé après l'événement `dz:auth` ou après le chargement si un élève est déjà connecté.
+- La progression, la fermeture volontaire et la fin du parcours sont mémorisées séparément par compte dans `localStorage` (`userStorageKey`). Le bouton de fermeture masque le coach pour ce compte ; la dernière étape termine le parcours au lieu de revenir à la première.
+- La première étape ne promet plus un diagnostic inexistant : elle invite à ouvrir « مسارك » et choisir la prochaine unité.
+- La destination de révision est corrigée de `memoire` vers la vue existante `revision`.
+- Le mini-quiz est clairement annoncé comme entraînement illustratif non sauvegardé et non comptabilisé dans la progression.
+- Deux clés de correction ont été rectifiées : « Ich trage einen Hut. → einen masc Akk. » et « Er lebt in einer reichen Gesellschaft. → einer Datif. » sont toutes deux des affirmations vraies.
+- Les étapes du coach ne promettent plus de correction immédiate systématique, de fréquence hebdomadaire fixe, ni de disponibilité audio ou d'évaluations non garanties. Elles renvoient aux ressources effectivement publiées.
+
+### Guide de bienvenue — textes alignés sur le disponible
+- `assets/bdd/onboarding.json` ne promet plus une gratuité universelle, l'intégralité des cours/fichiers, le fonctionnement complet hors ligne, la correction immédiate de chaque exercice, un classement général, une présence automatique ou des rapports hebdomadaires.
+- Les formulations distinguent désormais les ressources publiées, les activités corrigées lorsqu'un corrigé est fourni, les fonctions nécessitant Internet et les outils activés selon le compte.
+- Les consignes élèves, professeurs et parents sont conditionnées à la disponibilité effective des matières, sessions, évaluations, messageries et réservations.
+- Les sauts de ligne des messages de bienvenue élève et parent sont conservés comme de vrais retours à la ligne.
+
+### Fichiers modifiés
+- `app.js` : logique et textes du Coach ; corrections du mini-quiz.
+- `assets/bdd/onboarding.json` : textes de bienvenue, objectif, guide et premiers pas.
+- `index.html` : cache `app.js?v=3551`.
+- `sw.js` : Service Worker `dz-de-v3.185.0.0.94`, précache `app.js?v=3551` et ressources actualisées.
+- `ci/check-masar.mjs` : assertions sur l'accès élève, la fermeture, la fin, la destination révision, les promesses du coach et les deux réponses du mini-quiz.
+- `ci/check-public-portal.mjs` : assertions interdisant le retour des promesses non vérifiées dans le guide.
+
+### Validation
+- CI #2517 — run `42427369832` : succès pour le correctif initial du coach.
+- CI #2521 — run `42427523815` : succès pour l'alignement du guide de bienvenue.
+- CI #2524 — run `42427635853` : succès pour les deux corrections de réponses du mini-quiz et les caches synchronisés.
+- CI #2527 — run `42427713696` : succès sur le HEAD `e878952bad4eafc483da6a93e407577a721ddd39`, avec les assertions finales du coach, du mini-quiz et du guide.
+- Cloudflare Workers Preview : build et déploiement réussis pour le commit `e878952`.
+- URL de prévisualisation du commit : https://6a2cee22-allemand.brid-randomtv.workers.dev
+- URL de prévisualisation de branche : https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev
+- Supabase Preview : `skipped`, aucune branche Supabase associée à la PR ; aucune migration ou modification de base.
+- Limite : la prévisualisation est déployée, mais le navigateur de contrôle ne peut pas charger cette URL. Aucune recette visuelle navigateur n'est revendiquée. La vérification manuelle du coach après connexion et la comparaison desktop/mobile restent à effectuer.
+
+### Périmètre préservé
+- PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
+- Aucun déploiement de production.
+- Aucun changement Auth, Supabase, RLS, schéma, migration ou paiement.
+- Les routes, identifiants et gestionnaires de navigation existants sont conservés.
