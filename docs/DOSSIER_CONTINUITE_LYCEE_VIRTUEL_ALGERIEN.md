@@ -3297,3 +3297,23 @@ Permettre de consulter correctement l'état du facteur e-mail tant que le domain
 - Aucun test navigateur, TOTP réel, SMS réel, e-mail Resend réel ou test multi-compte n'a été exécuté.
 - Aucun secret, schéma, migration, RLS, grant, rôle ou configuration Auth globale Supabase n'a été modifié.
 - Aucun déploiement Cloudflare ; PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
+
+
+### Lot 197 — fermeture de session si la finalisation MFA échoue (9 novembre 2026)
+
+#### Défaut traité
+Après validation positive du défi MFA, `finishLogin()` pouvait laisser la session Supabase ouverte et conserver le formulaire de défi affiché si le profil cloud était indisponible. Le même état intermédiaire était possible si le point d'entrée du tableau de bord n'était pas prêt ou si son appel levait une exception.
+
+#### Correction
+- Ajout de `returnToLoginAfterMfa()` : tentative explicite de fermeture de la session Supabase, remise à zéro du défi et des tentatives, puis retour à l'écran de connexion.
+- Si Supabase ne confirme pas la fermeture, le message l'indique explicitement et demande de recharger la page ; aucune réussite de déconnexion n'est présumée.
+- `finishLogin()` n'appelle désormais `enterApp()` qu'après chargement du profil et vérification de la disponibilité du point d'entrée. Les exceptions de finalisation passent par le même chemin de fermeture.
+- Cache du module MFA passé à `v=9), Service Worker passé à `dz-de-v3.185.0.0.125`, précache et assertions CI synchronisés.
+- Commits code/cache/CI : `546aaa6`, `f8d4913`, `5ce2f86`, `9c782b9`.
+
+#### Validation et limites
+- CI #2732 et #2733 : réussies pour le Lot 196.
+- La CI du Lot 197 doit encore être observée.
+- Les contrôles ajoutés sont statiques ; aucune simulation navigateur, aucun compte réel, aucun TOTP/SMS/Resend réel.
+- Aucun changement de schéma, migration, RLS, grant, rôle, secret ou configuration Auth globale Supabase.
+- Aucun déploiement Cloudflare ; PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
