@@ -1717,6 +1717,24 @@ function showGateError(id, message){
   if(node){ node.hidden = false; node.textContent = String(message || 'تعذر إتمام العملية.'); }
 }
 
+/* Fonctions d'interface du portail — restaurées après leur suppression accidentelle dans le Lot 178. */
+function paintGateStats(){
+  const el = $('#gateStats');
+  if(!el) return;
+  /* Indicateurs descriptifs du catalogue, pas des statistiques d'utilisateurs actifs. */
+  el.innerHTML = [[3,'سنوات ثانوي'],[14,'مادة في الفهرس'],[6,'لغات مدرجة'],[1,'مادة متاحة حاليًا']]
+    .map(x => '<div class="gstat"><div class="gstat-n">' + x[0] + '</div>' +
+              '<div class="gstat-l">' + x[1] + '</div></div>').join('');
+}
+
+function enterApp(session){
+  const gate = $('#gate'), shell = $('#shell');
+  if(gate) gate.hidden = true;
+  if(shell) shell.hidden = false;
+  const hash = String(location.hash || '').replace('#', '');
+  go(VIEWS.indexOf(hash) !== -1 ? hash : 'masar');
+}
+
 /* ══════════ PORTAIL DE CONNEXION ══════════ */
 function bootGate(){
   const gate = $('#gate'), shell = $('#shell');
