@@ -3376,3 +3376,10 @@ Le bouton d'annulation du défi MFA appelait `SB.logout()` dans un bloc qui igno
 - Validation statique CI ; aucun test navigateur ou compte réel.
 - Aucun changement de schéma, migration, RLS, grant, rôle, secret ou configuration Auth globale Supabase.
 - Aucun déploiement Cloudflare ; PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
+
+
+#### Ajustement CI du Lot 199
+- CI #2747 a échoué parce qu'une assertion historique du Lot 196 exigeait encore `SB.logout()` directement dans le gestionnaire d'annulation.
+- Le comportement applicatif plus sûr est conservé ; l'assertion historique a été adaptée pour exiger `returnToLoginAfterMfa()`.
+- Correctif CI : commit `0fa84f74209ca332865a1195de09ea260aff769c`.
+- L'exécution #2750 doit valider le lot après cette correction.
