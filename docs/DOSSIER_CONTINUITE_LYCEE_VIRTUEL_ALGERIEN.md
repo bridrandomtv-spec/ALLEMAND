@@ -3317,3 +3317,10 @@ Après validation positive du défi MFA, `finishLogin()` pouvait laisser la sess
 - Les contrôles ajoutés sont statiques ; aucune simulation navigateur, aucun compte réel, aucun TOTP/SMS/Resend réel.
 - Aucun changement de schéma, migration, RLS, grant, rôle, secret ou configuration Auth globale Supabase.
 - Aucun déploiement Cloudflare ; PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
+
+
+#### Ajustement CI après exécution
+- CI #2734 sur le commit applicatif `546aaa6` : réussie.
+- CI #2737 sur le commit documentaire `1e40f41` : échec sur le contrôle Masar, qui attendait encore la version Service Worker `dz-de-v3.185.0.0.124` alors que le Lot 197 a correctement incrémenté le cache à `...125`.
+- Le contrôle de version obsolète a été corrigé dans `ci/check-masar.mjs`, sans assouplir le test fonctionnel : commit correctif `e273efe54e515efa398fca37c86c3abd15b1ed5e`.
+- Une nouvelle exécution CI est requise pour valider ensemble la correction et le Lot 197.
