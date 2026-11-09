@@ -2655,3 +2655,21 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - La CI structurelle ne prouve pas le fonctionnement réel auprès du projet Supabase : les tests navigateur avec un compte de test restent à faire. Aucune capture navigateur ni aucun déploiement Cloudflare n'est revendiqué.
 - L'obligation AAL2 par rôle et les règles d'autorisation des ressources sensibles restent à auditer côté serveur/RLS avant de déclarer le MFA obligatoire pour enseignants, agents ou administrateurs.
 - PR #17 reste ouverte et non fusionnée ; main reste inchangée.
+
+
+### Validation Lot 181 — CI #2660
+- La CI #2652 a échoué sur une ancienne assertion CSS v192 dans check-masar ; la CI #2653 a révélé une seconde référence v192 dans check-gamification.
+- Les assertions de cache de مسارك, des badges XP et du portail public ont été alignées sur CSS v193, app.js v3561 et Service Worker v3.185.0.0.116.
+- Le contrôle CI #2660 est réussi. La syntaxe JS a également été vérifiée séparément pour app.js, mfa-security.js, supabase/supabase.js et sw.js.
+- Aucun test navigateur avec un compte Supabase n'a encore été effectué ; le fonctionnement réel MFA et l'activation serveur des codes de récupération restent à confirmer.
+
+## Lot 182 — enrôlement MFA par SMS via Supabase Auth (9 novembre 2026)
+- Ajout de l'enrôlement d'un facteur téléphone via l'API native supabase.auth.mfa.enroll({factorType:'phone'}), avec validation E.164.
+- Le code SMS est demandé via challenge() puis vérifié via verify() ; le facteur n'est marqué actif qu'après vérification réussie.
+- Les facteurs téléphone vérifiés sont affichés dans « حسابي », peuvent être utilisés lors du défi de connexion et peuvent être retirés depuis les réglages de sécurité.
+- L'envoi du SMS utilise la configuration du fournisseur de messagerie du projet Supabase Auth, partagée avec l'authentification téléphonique. Aucun SMS n'a été envoyé pendant ce lot et aucun fournisseur n'a été configuré à distance.
+- Si un fournisseur spécifique différent de ceux pris en charge nativement est nécessaire, Supabase documente un Send SMS Hook ; aucune Edge Function, clé Twilio ou passerelle locale n'est créée ici.
+- Les codes e-mail ne sont pas ajoutés comme second facteur : le MFA natif Supabase documenté prend en charge TOTP et téléphone. L'e-mail reste utilisé pour les parcours de connexion/récupération existants, pas comme facteur AAL2 dans ce lot.
+- Cache : supabase/supabase.js?v=3514, mfa-security.js?v=2, CSS v193, app.js v3561, Service Worker dz-de-v3.185.0.0.117.
+- Aucun schéma, migration, RLS, rôle, paiement, secret serveur ou déploiement n'est modifié.
+- PR #17 reste ouverte et non fusionnée ; main reste inchangée.
