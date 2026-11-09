@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
-</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=192">
+</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=193">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -235,6 +235,18 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
         <button type="button" class="btn btn-o btn-block" id="btnDemo">استكشاف المنصة بحساب تجريبي · تلميذ</button>
         <p class="ghint">الدخول التجريبي مخصص لاستكشاف الواجهة التعليمية، ولا يمثل حسابًا شخصيًا.</p>
         <button type="button" class="auth-forgot-link" data-password-reset-open>نسيت كلمة المرور؟</button>
+      </form>
+
+
+      <!-- Vérification MFA : affichée uniquement si Supabase exige AAL2. -->
+      <form id="mfaChallengeForm" class="gform auth-mfa-form" aria-label="التحقق بخطوة إضافية" hidden>
+        <div class="auth-recovery-heading"><span aria-hidden="true">🛡️</span><h3>التحقق بخطوة إضافية</h3><p id="mfaChallengeHint">أدخل الرمز من تطبيق المصادقة لإكمال تسجيل الدخول.</p></div>
+        <label class="fld"><span>طريقة التحقق</span><select id="mfaChallengeMethod" aria-label="طريقة التحقق"></select></label>
+        <label class="fld"><span id="mfaCodeLabel">رمز التحقق</span><input type="text" id="mfaChallengeCode" required inputmode="numeric" autocomplete="one-time-code" maxlength="32" placeholder="000000"></label>
+        <div class="gerr auth-recovery-status" id="mfaChallengeStatus" role="status" aria-live="polite" hidden></div>
+        <button type="submit" class="btn btn-p btn-block btn-lg">تحقق وتابع إلى فضائك الدراسي</button>
+        <button type="button" class="btn btn-o btn-block" data-mfa-cancel>إلغاء والعودة إلى تسجيل الدخول</button>
+        <p class="ghint">بعد ثلاث محاولات غير ناجحة ستُنهى جلسة الدخول الحالية لأسباب أمنية.</p>
       </form>
 
       <!-- Récupération et réinitialisation du mot de passe — Supabase Auth -->
@@ -926,6 +938,10 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
     <section data-view="compte" class="view" hidden>
       <div class="page-head"><h1>⚙️ حسابي</h1><p>معلوماتي · تقدمي · الخصوصية</p></div>
       <div id="compteBody"></div>
+      <section class="card mfa-security-card" id="mfaSecurityCard" aria-labelledby="mfaSecurityTitle">
+        <div class="mfa-security-heading"><span aria-hidden="true">🛡️</span><div><h2 id="mfaSecurityTitle">حماية الحساب والمصادقة الثنائية</h2><p>اربط تطبيق مصادقة بحسابك، ثم أنشئ رموز استرداد آمنة عند توفرها.</p></div></div>
+        <div id="mfaSecurityContent" aria-live="polite"><p>جارٍ تحميل إعدادات الحماية…</p></div>
+      </section>
     </section>
 
   </main>
@@ -945,7 +961,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
   <script src="access.js?v=3510"></script>
 <script src="prof_core.js?v=3510"></script>
   <script src="js/subject.js?v=3510"></script>
-<script src="app.js?v=3560"></script>
+<script src="app.js?v=3561"></script>
 <script src="dz-interactions.js?v=5" defer></script>
 <script src="js/voice-chat.js?v=1" defer></script>
   <script defer src="unites3as_vitrine.js?v=3510"></script>
@@ -988,7 +1004,8 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 <script src="trial.js?v=3510" defer></script>
 <script src="tour.js?v=3510" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script type="module" src="supabase/supabase.js?v=3512"></script>
+  <script type="module" src="supabase/supabase.js?v=3513"></script>
+  <script src="mfa-security.js?v=1" defer></script>
 <script src="banque.js?v=3510" defer></script>
 <script src="malakhiss.js?v=3510" defer></script>
 <script src="guide.js?v=3511" defer></script>
