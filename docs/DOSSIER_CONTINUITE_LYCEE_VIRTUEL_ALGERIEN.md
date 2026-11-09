@@ -2704,3 +2704,6 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Le code du renvoi SMS et les assertions MFA ont passé les contrôles précédents du même job ; l'échec observé était une référence de version historique dans le validateur.
 - Les deux occurrences restantes de v3.185.0.0.118 dans ci/check-public-portal.mjs ont été alignées sur v3.185.0.0.119.
 - Le nouveau HEAD doit être revalidé par une CI complète ; aucun résultat de réussite n'est présumé.
+
+- CI #2677 : le contrôle du portail public est désormais réussi, y compris les assertions Lot 183. Le job a ensuite échoué sur une assertion indépendante de مسارك qui attendait encore le Service Worker v3.185.0.0.118.
+- L'assertion de version dans ci/check-masar.mjs est alignée sur v3.185.0.0.119. Une nouvelle CI complète doit confirmer le HEAD suivant.
