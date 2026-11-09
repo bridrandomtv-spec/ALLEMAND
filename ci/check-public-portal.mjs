@@ -13,6 +13,7 @@ const portal = read('public-portal.js');
 const app = read('app.js');
 const html = read('index.html');
 const onboarding = read('assets/bdd/onboarding.json');
+const guideScript = read('guide.js');
 const css = read('style-prototype-dz.css');
 
 const fail = message => { throw new Error('Portail public : ' + message); };
@@ -428,3 +429,15 @@ const englishItems = englishDevoirs.items || [];
 if (!englishItems.length || englishItems.some(item => aggregateKeys.some(key => key in item))) fail('devoirs anglais : corpus vide ou statistiques agrégées encore présentes');
 if (englishItems.some(item => !item.sujet || !item.corrige)) fail('devoirs anglais : sujet ou corrigé manquant');
 console.log('✅ Lot 135 : devoirs anglais contrôlés ; sujets et corrigés conservés sans métriques agrégées.');
+
+// LOT 158 — le courriel de bienvenue doit refléter le guide publié, sans promesses parallèles.
+for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 24/7', 'منصّة مجانية', 'مطابقة لمنهاج وزارة التربية']) {
+  if (guideScript.includes(stale)) fail('courriel de bienvenue : promesse obsolète encore présente : ' + stale);
+}
+if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
+  fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
+}
+if (!index.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.95')) {
+  fail('guide de bienvenue : cache ou Service Worker non actualisé');
+}
+console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
