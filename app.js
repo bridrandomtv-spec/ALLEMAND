@@ -1763,6 +1763,7 @@ function bootGate(){
           showGateError('#loginErr', 'انتهت جلسة الدخول أو لم تعد صالحة. أدخل بياناتك لتسجيل الدخول مجددًا.');
           return;
         }
+        if(window.DZ_MFA && await window.DZ_MFA.requireGate()) return;
         const profile = window.cloudAuthority ? await window.cloudAuthority() : null;
         if(profile){ enterApp(profile); return; }
         AUTH.logout();
@@ -1917,6 +1918,7 @@ const lf = $('#loginForm');
           showGateError('#loginErr', (result && result.err) || 'بيانات الدخول غير صحيحة.');
           return;
         }
+        if(window.DZ_MFA && await window.DZ_MFA.requireGate()) return;
         const cloudSession = await cloudAuthority();
         if(!cloudSession){
           showGateError('#loginErr', 'تم التحقق من الحساب، لكن تعذر تحميل الملف الدراسي. حاول مجددًا أو تواصل مع الدعم.');
