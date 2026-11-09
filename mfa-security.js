@@ -5,7 +5,7 @@
   var pending=null, attempts=0, enrolling=null, enrollingPhone=null;
   function status(id,msg,ok){var n=$(id);if(!n)return;n.textContent=msg||'';n.hidden=!msg;n.classList.toggle('is-success',!!ok);}
   function showLogin(){var f=$('#mfaChallengeForm');if(f)f.hidden=true;['#loginForm','#signupForm'].forEach(function(s){var n=$(s);if(n)n.hidden=s!=='#loginForm';});}
-  function setLoginResendVisibility(type){var b=$('#mfaLoginSmsResend');if(b)b.hidden=type!=='phone';}
+  function setLoginResendVisibility(type){var sms=$('#mfaLoginSmsResend'),email=$('#mfaLoginEmailResend');if(sms)sms.hidden=type!=='phone';if(email)email.hidden=type!=='email';}
   async function requireGate(){
     if(!window.SB || !SB.mfaAssurance){status('#loginErr','خدمة التحقق الأمني غير جاهزة.');return true;}
     var nativeState=SB.mfaAssurance?await SB.mfaAssurance():{ok:true,required:false,factors:[]};
@@ -21,7 +21,7 @@
       pending={type:'email',challengeId:started.challengeId};attempts=0;
       var select=$('#mfaChallengeMethod');if(select){select.innerHTML='';var o=document.createElement('option');o.value='email';o.textContent='رمز أمني عبر البريد الإلكتروني';select.appendChild(o);select.value='email';}
       var hint=$('#mfaChallengeHint');if(hint)hint.textContent='أُرسل رمز أمني إلى '+(started.destination||emailState.emailMasked||'بريدك المسجل')+'.';
-      setLoginResendVisibility('');var code=$('#mfaChallengeCode');if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';}
+      setLoginResendVisibility('email');var code=$('#mfaChallengeCode');if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';}
       var form=$('#mfaChallengeForm');if(form)form.hidden=false;
       ['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(function(x){var n=$(x);if(n)n.hidden=true;});
       status('#mfaChallengeStatus','');if(code)code.focus();return true;
@@ -88,7 +88,7 @@
       ev.preventDefault();var started=await SB.mfaEmail({action:'start',purpose:'enroll'});
       if(!started.ok){status('#mfaEmailError',started.error||started.err||'تعذر إرسال رمز التفعيل.');return;}
       var stage=$('#mfaEmailStage');if(!stage)return;
-      stage.innerHTML='<div class="mfa-enroll-box"><h3>تأكيد البريد الإلكتروني</h3><p>أدخل الرمز المرسل إلى '+String(started.destination||'بريدك الموثق').replace(/[&<>"]/g,'')+'.</p><form id="mfaEmailVerifyForm"><label class="fld"><span>رمز التحقق</span><input id="mfaEmailCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required></label><p id="mfaEmailVerifyError" class="mfa-security-message" role="status"></p><button class="btn btn-p" type="submit">تأكيد وتفعيل البريد</button></form></div>';
+      stage.innerHTML='<div class="mfa-enroll-box"><h3>تأكيد البريد الإلكتروني</h3><p>أدخل الرمز المرسل إلى '+String(started.destination||'بريدك الموثق').replace(/[&<>"]/g,'')+'.</p><form id="mfaEmailVerifyForm"><label class="fld"><span>رمز التحقق</span><input id="mfaEmailCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required></label><p id="mfaEmailVerifyError" class="mfa-security-message" role="status"></p><button class="btn btn-o" type="button" data-mfa-email-resend>إعادة إرسال رمز البريد</button><button class="btn btn-p" type="submit">تأكيد وتفعيل البريد</button></form></div>';
       $('#mfaEmailVerifyForm').dataset.challengeId=started.challengeId;return;
     }
     if(ev.target && ev.target.id==='mfaEmailVerifyForm'){
@@ -118,6 +118,17 @@
     }
   });
   document.addEventListener('click',async function(ev){
+    var resendEmail=ev.target.closest('[data-mfa-email-resend]');
+    if(resendEmail){
+      ev.preventDefault();resendEmail.disabled=true;resendEmail.setAttribute('aria-busy','true');
+      try{
+        var enrollForm=resendEmail.closest('#mfaEmailVerifyForm');
+        if(enrollForm){var enrollSent=await SB.mfaEmail({action:'start',purpose:'enroll'});if(!enrollSent.ok){status('#mfaEmailVerifyError',enrollSent.error||enrollSent.err||'تعذر إعادة إرسال الرمز.');return;}enrollForm.dataset.challengeId=enrollSent.challengeId;var enrollCode=$('#mfaEmailCode');if(enrollCode)enrollCode.value='';status('#mfaEmailVerifyError','تم طلب إرسال رمز جديد إلى بريدك.');}
+        else if(pending&&pending.type==='email'){var loginSent=await SB.mfaEmail({action:'start',purpose:'login'});if(!loginSent.ok){status('#mfaChallengeStatus',loginSent.error||loginSent.err||'تعذر إعادة إرسال الرمز.');return;}pending.challengeId=loginSent.challengeId;var loginCode=$('#mfaChallengeCode');if(loginCode)loginCode.value='';status('#mfaChallengeStatus','تم طلب إرسال رمز جديد إلى بريدك.');}
+      }catch(error){status('#mfaChallengeStatus',error&&error.message||'تعذر إعادة إرسال الرمز.');}
+      finally{resendEmail.disabled=false;resendEmail.removeAttribute('aria-busy');}
+      return;
+    }
     var resendLogin=ev.target.closest('[data-mfa-login-resend]');
     if(resendLogin){
       ev.preventDefault();
