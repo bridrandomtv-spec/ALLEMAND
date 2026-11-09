@@ -3137,3 +3137,29 @@ Mesures de protection :
 - CI #2710 a échoué sur une assertion historique de `ci/check-masar.mjs` qui exigeait encore la version Service Worker `v3.185.0.0.120`, alors que le Lot 190 avait correctement avancé à `v3.185.0.0.123`. L'assertion a été corrigée dans le commit `8f27308dcf6f3241c3bb795d39e961cfd9cda322`.
 - La correction CI attend une nouvelle exécution. Aucune validation verte du Lot 190 n'est revendiquée à ce stade.
 - PR #17 toujours ouverte et non fusionnée ; aucun changement de `main`, aucun déploiement Cloudflare.
+
+
+---
+
+## Lot 191 — Correctif MFA e-mail et versionnement de la fonction Edge (2026-11-09)
+
+### Défaut détecté et corrigé
+- L'audit de la fonction Edge déployée `mfa-email` a révélé une expression régulière trop échappée dans le contrôle du code à six chiffres.
+- Le contrôle rejetait les codes numériques pourtant valides.
+- Correctif appliqué : validation effective avec `/^\\d{6}$/` côté TypeScript (six chiffres ASCII exactement).
+- Fonction Edge redéployée avec succès : version **2**, statut **ACTIVE**, `verify_jwt=true`.
+- Source complète ajoutée au dépôt sous `supabase/functions/mfa-email/index.ts`, commit `203cb24992acad33cd7216261de97c7491f68c97`.
+
+### État de validation
+- Le déploiement Supabase confirme la publication de la version 2.
+- La source de la fonction est désormais versionnée dans la branche PR.
+- Aucun secret Resend n'a été transmis, affiché ou ajouté au dépôt.
+- L'envoi réel d'e-mails reste conditionné à la configuration de `MFA_EMAIL_PEPPER`, `RESEND_API_KEY` et `MFA_EMAIL_FROM` dans les secrets Edge Functions.
+- Aucun test de livraison réelle ni test MFA complet avec un compte utilisateur n'a été effectué dans ce lot.
+- La version 2 corrige le contrôle de format, mais ne constitue pas à elle seule une validation complète de sécurité ou de bout en bout.
+
+### Périmètre inchangé
+- PR #17 reste ouverte et non fusionnée.
+- Aucun changement sur `main`.
+- Aucun déploiement Cloudflare.
+- Aucune modification des politiques RLS, rôles, grants ou configuration Auth globale existants.
