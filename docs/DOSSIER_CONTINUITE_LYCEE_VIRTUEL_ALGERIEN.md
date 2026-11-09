@@ -2602,3 +2602,13 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Contrôle Auth ajouté au validateur existant ; CI à relancer. Le test réel de persistance nécessite encore un navigateur et un compte cloud de test.
 
 - Addendum CI Lot 178 : les contrôles de `مسارك` doivent également suivre app.js v3559 et le Service Worker v3.185.0.0.113 ; assertions synchronisées avant la nouvelle validation.
+
+
+## Lot 179 — restauration du pont d'authentification et des formulaires (9 novembre 2026)
+- Le contrôle CI d'administration a détecté que le dernier remplacement de `bootGate()` avait englobé par erreur le bloc adjacent `bindGateEvents()`. Ce bloc contenait les gestionnaires des onglets, des formulaires login/signup, de la récupération de mot de passe et le pont `cloudAuthority()`.
+- Le bloc complet a été restauré depuis le HEAD validé précédemment, en conservant les corrections Auth du Lot 176 et les fonctions globales `authLocalMode()` / `showGateError()`.
+- Le pont `cloudAuthority()` continue de lire le profil Supabase, de préserver le rôle renvoyé par `profiles.role` dans la session et d'écrire `dz_de_session_v1`. Aucun rôle client n'est accepté comme source d'autorité.
+- `bootGate()` peut maintenant vérifier la session au rechargement sans perdre les gestionnaires des formulaires.
+- Cache application : `app.js?v=3560` ; Service Worker : `dz-de-v3.185.0.0.114`.
+- Le contrôle du portail vérifie désormais explicitement la présence de `bindGateEvents`, `cloudAuthority`, des deux formulaires et des garde-fous Auth.
+- La CI précédente a échoué sur `tests/adm_test.mjs` (NAV-ADM-2), précisément parce que le pont de persistance du rôle n'était plus présent ; relancer l'ensemble après restauration.

@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.185.0.0.113';
+const VERSION = 'dz-de-v3.185.0.0.114';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -17,7 +17,7 @@ const PRECACHE = [
   './style-prototype-dz.css?v=191',
   './auth.js?v=3510',
   './bdd.js?v=3510',
-  './app.js?v=3559',
+  './app.js?v=3560',
   './supabase/supabase.js?v=3512',
   './dz-interactions.js?v=5',
   './js/voice-chat.js?v=1',

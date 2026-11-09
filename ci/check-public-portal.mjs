@@ -238,7 +238,7 @@ if (!html.includes('style-prototype-dz.css?v=191')) {
 if (!sw.includes('style-prototype-dz.css?v=191')) {
   fail('version CSS du précache non actualisée (v176 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.113") ||
+if (!sw.includes("dz-de-v3.185.0.0.114") ||
     !sw.includes("style-prototype-dz.css?v=191") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
@@ -271,7 +271,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
 if (!html.includes('supabase/supabase.js?v=3512') || !sw.includes('supabase/supabase.js?v=3512')) fail('cache Supabase client non synchronisé');
-if (!html.includes('app.js?v=3559') || !sw.includes('app.js?v=3559')) fail('cache app.js non synchronisé');
+if (!html.includes('app.js?v=3560') || !sw.includes('app.js?v=3560')) fail('cache app.js non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=191') || !sw.includes('style-prototype-dz.css?v=191')) fail('cache CSS non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
@@ -438,7 +438,7 @@ for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 
 if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
   fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
 }
-if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.113')) {
+if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.114')) {
   fail('guide de bienvenue : cache ou Service Worker non actualisé');
 }
 console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
@@ -463,3 +463,12 @@ const bootAuthStart=app.indexOf('function bootGate()'), bootAuthEnd=app.indexOf(
 const bootAuth=app.slice(bootAuthStart,bootAuthEnd);
 if(!app.includes('function authLocalMode()')||!bootAuth.includes("s.src === 'cloud'")||!bootAuth.includes('window.SB.getSession()')||!bootAuth.includes('window.cloudAuthority()')||!bootAuth.includes('AUTH.logout()')) fail('restauration Auth : session cloud non vérifiée ou session locale en ligne non rejetée');
 console.log('✅ Lot 178 : session Supabase vérifiée au rechargement ; session locale réservée au mode hors ligne/démo.');
+
+
+// Lot 179 — le bindGateEvents et le pont cloud/session doivent rester présents.
+const gateStart=app.indexOf('function bindGateEvents()');
+const gateEnd=app.indexOf('/* ══════════ BANDEAU DE BIENVENUE',gateStart);
+const gateBlock=app.slice(gateStart,gateEnd);
+if(gateStart<0||gateEnd<=gateStart||!gateBlock.includes('async function cloudAuthority()')||!gateBlock.includes("localStorage.setItem('dz_de_session_v1'")||!gateBlock.includes("if(lf) lf.addEventListener('submit'")||!gateBlock.includes("if(sf) sf.addEventListener('submit'")) fail('bindGateEvents / cloudAuthority / formulaires Auth absents');
+if(!gateBlock.includes('if(!authLocalMode())')||!gateBlock.includes('if(!result || !result.ok)')||!gateBlock.includes('if(!result.session)')) fail('flux Auth cloud/local ou confirmation email incomplet');
+console.log('✅ Lot 179 : bindGateEvents et cloudAuthority conservés avec le garde-fou Auth.');
