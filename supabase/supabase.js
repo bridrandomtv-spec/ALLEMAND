@@ -115,7 +115,7 @@ async function mfaEnrollTotp(friendlyName){
 async function mfaEnrollPhone(phone){
   const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'خدمة المصادقة الثنائية غير متاحة'};
   const number=String(phone||'').trim();
-  if(!/^\\+[1-9]\\d{7,14}$/.test(number)) return {ok:false,err:'أدخل رقم الهاتف بالصيغة الدولية E.164، مثل +213XXXXXXXXX'};
+  if(!/^\+[1-9]\d{7,14}$/.test(number)) return {ok:false,err:'أدخل رقم الهاتف بالصيغة الدولية E.164، مثل +213XXXXXXXXX'};
   const r=await c.auth.mfa.enroll({factorType:'phone',friendlyName:'DZ Lycée Virtuel SMS',phone:number});
   return r.error?{ok:false,err:r.error.message}:{ok:true,factorId:r.data.id,phone:r.data.phone||number};
 }
