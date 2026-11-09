@@ -67,6 +67,18 @@
     finally{if(btn){btn.disabled=false;btn.removeAttribute('aria-busy');}}
   });
   document.addEventListener('submit',async function(ev){
+    if(ev.target && ev.target.id==='mfaEmailEnrollForm'){
+      ev.preventDefault();var started=await SB.mfaEmail({action:'start',purpose:'enroll'});
+      if(!started.ok){status('#mfaEmailError',started.error||started.err||'تعذر إرسال رمز التفعيل.');return;}
+      var stage=$('#mfaEmailStage');if(!stage)return;
+      stage.innerHTML='<div class="mfa-enroll-box"><h3>تأكيد البريد الإلكتروني</h3><p>أدخل الرمز المرسل إلى '+String(started.destination||'بريدك الموثق').replace(/[&<>"]/g,'')+'.</p><form id="mfaEmailVerifyForm"><label class="fld"><span>رمز التحقق</span><input id="mfaEmailCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required></label><p id="mfaEmailVerifyError" class="mfa-security-message" role="status"></p><button class="btn btn-p" type="submit">تأكيد وتفعيل البريد</button></form></div>';
+      $('#mfaEmailVerifyForm').dataset.challengeId=started.challengeId;return;
+    }
+    if(ev.target && ev.target.id==='mfaEmailVerifyForm'){
+      ev.preventDefault();var verified=await SB.mfaEmail({action:'verify',challengeId:ev.target.dataset.challengeId,code:$('#mfaEmailCode').value});
+      if(!verified.ok){status('#mfaEmailVerifyError',verified.error||verified.err||'الرمز غير صحيح.');return;}
+      await renderSecurity();status('#mfaSecurityMessage','تم تفعيل التحقق عبر البريد الإلكتروني.');return;
+    }
     if(ev.target && ev.target.id==='mfaPhoneEnrollForm'){
       ev.preventDefault();
       var number=String($('#mfaPhoneNumber').value||'').trim();
@@ -101,6 +113,7 @@
     }
     if(ev.target.closest('[data-mfa-cancel]')){ev.preventDefault();try{await SB.logout();}catch(e){}pending=null;showLogin();status('#loginErr','تم إلغاء تسجيل الدخول.');return;}
     if(ev.target.closest('[data-mfa-enroll]')){await enrollTotp();return;}
+    if(ev.target.closest('[data-mfa-email-disable]')){if(!window.confirm('هل تريد تعطيل التحقق عبر البريد الإلكتروني؟'))return;var off=await SB.mfaEmail({action:'disable'});if(!off.ok){status('#mfaSecurityMessage',off.error||off.err||'تعذر التعطيل.');return;}await renderSecurity();status('#mfaSecurityMessage','تم تعطيل التحقق عبر البريد الإلكتروني.');return;}
     if(ev.target.closest('[data-mfa-phone-resend]')){if(enrollingPhone){var again=await SB.mfaStart(enrollingPhone.factorId);if(again.ok)enrollingPhone.challengeId=again.challengeId;else status('#mfaPhoneError',again.err);}return;}
     if(ev.target.closest('[data-mfa-phone-cancel]')){if(enrollingPhone)await SB.mfaUnenroll(enrollingPhone.factorId);enrollingPhone=null;await renderSecurity();return;}
     if(ev.target.closest('[data-mfa-recovery-generate]')){await generateRecovery(false);return;}
@@ -117,12 +130,16 @@
     var verified=verifiedTotp.concat(verifiedPhone);
     var pendingFactors=(r.totp||[]).concat(r.phone||[]).filter(function(f){return f.status!=='verified';});
     var markup='';
+    var emailState=SB.mfaEmail?await SB.mfaEmail({action:'status'}):{ok:false};
+    var emailMarkup=emailState.ok&&emailState.enrolled
+      ? '<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>التحقق عبر البريد الإلكتروني مفعّل</b></div><p class="mfa-muted">'+String(emailState.emailMasked||'البريد المسجل').replace(/[&<>"]/g,'')+'</p><button type="button" class="btn btn-sm btn-o" data-mfa-email-disable>تعطيل التحقق عبر البريد</button>'
+      : '<form id="mfaEmailEnrollForm" class="mfa-phone-form"><p class="mfa-muted">رمز تفعيل يُرسل إلى البريد الإلكتروني الموثّق المرتبط بحسابك.</p><button type="submit" class="btn btn-o">✉️ تفعيل التحقق عبر البريد الإلكتروني</button><p id="mfaEmailError" class="mfa-security-message" role="status"></p></form><div id="mfaEmailStage"></div>';
     if(verifiedTotp.length){markup+='<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>تطبيق المصادقة (TOTP) مفعّل</b></div>';verifiedTotp.forEach(function(f){markup+='<div class="mfa-factor-row"><span>📱 '+String(f.friendly_name||'تطبيق المصادقة').replace(/[&<>"]/g,'')+'</span><button type="button" class="btn btn-sm btn-o" data-mfa-unenroll="'+f.id+'">إزالة العامل</button></div>';});}
     else markup+='<button type="button" class="btn btn-p" data-mfa-enroll>🔐 تفعيل تطبيق المصادقة (TOTP)</button>';
     if(verifiedPhone.length){markup+='<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>التحقق عبر الهاتف مفعّل</b></div>';verifiedPhone.forEach(function(f){markup+='<div class="mfa-factor-row"><span>📨 '+String(f.phone||'رقم هاتف موثّق').replace(/[&<>"]/g,'')+'</span><button type="button" class="btn btn-sm btn-o" data-mfa-unenroll="'+f.id+'">إزالة العامل</button></div>';});}
     else markup+='<form id="mfaPhoneEnrollForm" class="mfa-phone-form"><label class="fld"><span>رقم الهاتف بالصيغة الدولية (E.164)</span><input id="mfaPhoneNumber" type="tel" inputmode="tel" autocomplete="tel" placeholder="+213XXXXXXXXX" pattern="\\+[1-9][0-9]{7,14}" required></label><button type="submit" class="btn btn-o">📨 تفعيل التحقق عبر SMS</button><p id="mfaPhoneError" class="mfa-security-message" role="status" aria-live="polite"></p></form><div id="mfaPhoneStage"></div>';
     if(pendingFactors.length)markup+='<p class="mfa-muted">يوجد إعداد غير مكتمل؛ أكمل التحقق أو أعد المحاولة.</p>';
-    host.innerHTML=markup+'<div id="mfaEnrollStage"></div><div id="mfaRecoveryStage"></div><p id="mfaSecurityMessage" class="mfa-security-message" role="status" aria-live="polite"></p>';
+    host.innerHTML=markup+emailMarkup+'<div id="mfaEnrollStage"></div><div id="mfaRecoveryStage"></div><p id="mfaSecurityMessage" class="mfa-security-message" role="status" aria-live="polite"></p>';
     if(verified.length){var recovery=await SB.mfaRecoveryStatus(),stage=$('#mfaRecoveryStage');if(recovery.ok){var st=recovery.status||{};stage.innerHTML='<div class="mfa-recovery-row"><span>رموز الاسترداد: '+String(st.remaining||0)+' من '+String(st.total||0)+' متبقية</span><button type="button" class="btn btn-sm btn-o" data-mfa-recovery-regenerate>تجديد الرموز</button></div>';}else stage.innerHTML='<p class="mfa-muted">لا توجد رموز استرداد مفعّلة حاليًا أو أن الميزة التجريبية غير مفعّلة.</p><button type="button" class="btn btn-sm btn-o" data-mfa-recovery-generate>إنشاء رموز الاسترداد</button>';}
   }
   async function enrollTotp(){
