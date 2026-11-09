@@ -85,5 +85,6 @@ assert.match(css, /\.sd-subject-card\.tone-emerald\{--sd-subject-accent:#059669/
 assert.match(css, /html\[data-theme="dark"\].*sd-subject-card\[class\*="tone-"\]/s, 'palette des matières en thème sombre absente');
 
 assert.match(app, /role="group"[^>]*aria-label="نشاط آخر سبعة أيام"/, 'description accessible du graphique hebdomadaire absente');
+assert.ok(css.includes('@media(min-width:981px){\n  #shell #app .sd-hero-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}'), 'composition compacte des indicateurs du bandeau étudiant absente');
 assert.ok(app.includes("role=\"img\" aria-label=\"'+names[d.getDay()]+' '+key+' : '+(on?'jour actif':'aucune activité enregistrée')+'\""), 'libellés accessibles des jours actifs absents');
 console.log('✅ مسارك : progression et résultats réels, activité hebdomadaire accessible, cartes et caches contrôlés');
