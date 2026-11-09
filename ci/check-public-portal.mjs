@@ -238,7 +238,7 @@ if (!html.includes('style-prototype-dz.css?v=191')) {
 if (!sw.includes('style-prototype-dz.css?v=191')) {
   fail('version CSS du précache non actualisée (v176 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.112") ||
+if (!sw.includes("dz-de-v3.185.0.0.113") ||
     !sw.includes("style-prototype-dz.css?v=191") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
@@ -271,7 +271,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
 if (!html.includes('supabase/supabase.js?v=3512') || !sw.includes('supabase/supabase.js?v=3512')) fail('cache Supabase client non synchronisé');
-if (!html.includes('app.js?v=3558') || !sw.includes('app.js?v=3558')) fail('cache app.js non synchronisé');
+if (!html.includes('app.js?v=3559') || !sw.includes('app.js?v=3559')) fail('cache app.js non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=191') || !sw.includes('style-prototype-dz.css?v=191')) fail('cache CSS non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
@@ -438,7 +438,7 @@ for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 
 if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
   fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
 }
-if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.112')) {
+if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.113')) {
   fail('guide de bienvenue : cache ou Service Worker non actualisé');
 }
 console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
@@ -456,3 +456,10 @@ if(!authSignup.includes('if(!authLocalMode())')||!authSignup.includes('if(!resul
 const supaSignupStart=supabase.indexOf('async function signup('), supaSignupEnd=supabase.indexOf('async function resetPassword(',supaSignupStart);
 if(!supabase.includes('async function getSession()')||!supabase.slice(supaSignupStart,supaSignupEnd).includes('session: r.data.session || null')||!supabase.includes("signOut({ scope:'local' })")) fail('Supabase Auth : session signup/getSession/logout incomplet');
 console.log('✅ Lot 176 : refus Auth cloud, confirmation email et mode local contrôlés.');
+
+
+// Lot 178 — une session locale ne remplace pas une session Supabase valide en ligne.
+const bootAuthStart=app.indexOf('function bootGate()'), bootAuthEnd=app.indexOf('function paintGateStats()',bootAuthStart);
+const bootAuth=app.slice(bootAuthStart,bootAuthEnd);
+if(!app.includes('function authLocalMode()')||!bootAuth.includes("s.src === 'cloud'")||!bootAuth.includes('window.SB.getSession()')||!bootAuth.includes('window.cloudAuthority()')||!bootAuth.includes('AUTH.logout()')) fail('restauration Auth : session cloud non vérifiée ou session locale en ligne non rejetée');
+console.log('✅ Lot 178 : session Supabase vérifiée au rechargement ; session locale réservée au mode hors ligne/démo.');

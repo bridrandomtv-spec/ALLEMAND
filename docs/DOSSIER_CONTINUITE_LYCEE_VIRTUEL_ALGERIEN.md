@@ -2590,3 +2590,13 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Addendum CI Lot 177 : les assertions de cache du contrôle `مسارك` sont alignées sur CSS v191 et Service Worker v3.185.0.0.112 ; le contrôle XP/badges vérifie les noms des zones de la grille sans dépendre de l'espacement typographique du CSS.
 
 - Dernier alignement CI Lot 177 : le contrôle XP/badges conservait une seule assertion de précache CSS v190 ; elle est maintenant alignée sur v191. Les autres contrôles de cache et la vérification de `مسارك` ont passé sur le commit précédent.
+
+
+## Lot 178 — vérification de la session au rechargement (9 novembre 2026)
+- L'audit complémentaire a révélé que `bootGate()` ouvrait automatiquement toute session présente dans localStorage, sans distinguer les sessions cloud et les comptes locaux.
+- Une session locale n'est désormais acceptée qu'en mode hors ligne, sur localhost ou avec le paramètre de démonstration explicite.
+- Une session marquée `src: cloud` est vérifiée avec `SB.getSession()` avant d'ouvrir l'espace étudiant ; le profil Supabase est ensuite rechargé via `cloudAuthority()`.
+- Si le jeton ou le profil cloud n'est plus valide, le cache local est effacé et le portail de connexion reste affiché. En mode hors ligne, le cache local continue de permettre l'accès au parcours hors ligne.
+- Aucune modification de la base, du déclencheur SQL, des rôles, des politiques RLS ou des paiements.
+- Cache application : `app.js?v=3559` ; Service Worker : `dz-de-v3.185.0.0.113`.
+- Contrôle Auth ajouté au validateur existant ; CI à relancer. Le test réel de persistance nécessite encore un navigateur et un compte cloud de test.

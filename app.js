@@ -1704,10 +1704,24 @@ function answerQCM(btn){
   st.ans[id] = {v:chosen, ok:correct, pts:correct ? found.pts : 0}; store(LS.devoir, st);
 }
 
+/* Auth local uniquement hors ligne ou dans le mode démo explicitement demandé. */
+function authLocalMode(){
+  try{
+    const demo = new URLSearchParams(location.search).has('demo')
+      || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    return !navigator.onLine || demo;
+  }catch(e){ return !navigator.onLine; }
+}
+function showGateError(id, message){
+  const node = $(id);
+  if(node){ node.hidden = false; node.textContent = String(message || 'تعذر إتمام العملية.'); }
+}
+
 /* ══════════ PORTAIL DE CONNEXION ══════════ */
 function bootGate(){
   const gate = $('#gate'), shell = $('#shell');
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+  const cloudRestorePending = !!(s && s.src === 'cloud' && !authLocalMode());
 
   if(window.AUTH){
     try{
@@ -1716,26 +1730,48 @@ function bootGate(){
     }catch(e){ AUTH.initSelects(null); }
   }
 
-  if(s){ enterApp(s); return; }
+  if(s && !cloudRestorePending){
+    if(authLocalMode()){ enterApp(s); return; }
+    /* Une session locale n'est jamais une preuve d'identité lorsque le navigateur est en ligne. */
+    AUTH.logout();
+  }
 
   if(shell) shell.hidden = true;
   if(!gate) return;
   gate.hidden = false;
-  /* Le portail doit être INTERACTIF même sans session : sans cet appel, les onglets
-     login/signup, la soumission du formulaire et le bouton démo restent morts sur une
-     visite fraîche (bindGateEvents n'était posé que dans enterApp, donc qu'avec session).
-     Idempotent via bindGateEvents._done. */
   try{ bindGateEvents(); }
   catch(errBind){
     try{ console.error('[bootGate] bindGateEvents :', errBind); }catch(e2){}
     panneauPanne(errBind, 'bootGate → bindGateEvents');
   }
-  /* Le portail est démasqué AVANT tout rendu : un échec de paintGateStats ne doit plus
-     laisser l'écran vide. */
   try{ paintGateStats(); }
   catch(errStats){
     try{ console.error('[bootGate] paintGateStats :', errStats); }catch(e2){}
     panneauPanne(errStats, 'bootGate → paintGateStats');
+  }
+
+  if(cloudRestorePending){
+    const restoreCloud = async function(){
+      try{
+        if(!window.SB || typeof window.SB.getSession !== 'function'){
+          showGateError('#loginErr', 'تعذر التحقق من الجلسة السحابية. سجّل الدخول من جديد.');
+          return;
+        }
+        const state = await window.SB.getSession();
+        if(!state || !state.ok || !state.session){
+          AUTH.logout();
+          showGateError('#loginErr', 'انتهت جلسة الدخول أو لم تعد صالحة. أدخل بياناتك لتسجيل الدخول مجددًا.');
+          return;
+        }
+        const profile = window.cloudAuthority ? await window.cloudAuthority() : null;
+        if(profile){ enterApp(profile); return; }
+        AUTH.logout();
+        showGateError('#loginErr', 'تعذر تحميل ملفك الدراسي من الحساب السحابي. حاول تسجيل الدخول مجددًا.');
+      }catch(error){
+        showGateError('#loginErr', error && error.message ? error.message : 'تعذر التحقق من الجلسة السحابية.');
+      }
+    };
+    restoreCloud();
   }
 
   if(window.BDD && !BDD.state.ready && !BDD.state._loading){
@@ -1750,253 +1786,6 @@ function bootGate(){
       if(typeof renderStats === 'function') renderStats();
     });
   }
-}
-
-function paintGateStats(){
-  const el = $('#gateStats'); if(!el) return;
-  /* مؤشرات تعريفية من سجل المنصة، وليست أعداد مستخدمين أو وثائق غير متحققة. */
-  el.innerHTML = [[3,'سنوات ثانوي'],[14,'مادة في الفهرس'],[6,'لغات مدرجة'],[1,'مادة متاحة حاليًا']]
-    .map(x => '<div class="gstat"><div class="gstat-n">' + x[0] + '</div>' +
-              '<div class="gstat-l">' + x[1] + '</div></div>').join('');
-}
-
-function enterApp(s){
-  /* Version MINIMALE et robuste : aucune variable intermédiaire fragile.
-     Le rendu de chaque widget est fait par go() (déjà isolé par vue).
-     Atterrissage sur 🧭 مسارك (ou le hash si présent). */
-  const gate = $('#gate'), shell = $('#shell');
-  if(gate) gate.hidden = true;
-  if(shell) shell.hidden = false;
-  const hash = String(location.hash || '').replace('#', '');
-  go(VIEWS.indexOf(hash) !== -1 ? hash : 'masar');
-}
-
-
-function bindGateEvents(){
-  if(bindGateEvents._done) return;
-  bindGateEvents._done = true;
-
-  /* Les boutons publics data-gate-open sont gérés par public-portal.js,
-     seul propriétaire de l'ouverture des routes #connexion/#inscription. */
-
-  Array.from(document.querySelectorAll('.gtab')).forEach(b => b.addEventListener('click', () => {
-    const tabs = Array.from(document.querySelectorAll('.gtab'));
-    const isLogin = b.dataset.gate === 'login';
-    tabs.forEach(x => {
-      const selected = x === b;
-      x.classList.toggle('on', selected);
-      x.setAttribute('aria-selected', selected ? 'true' : 'false');
-      x.tabIndex = selected ? 0 : -1;
-    });
-    const lf = $('#loginForm'), sf = $('#signupForm');
-    if(lf) lf.hidden = !isLogin;
-    if(sf) sf.hidden = isLogin;
-  }));
-
-  [['#eye1','#loginPass'],['#eye2','#suPass']].forEach(p => {
-    const e = $(p[0]), i = $(p[1]);
-    if(e && i) e.addEventListener('click', () => {
-      i.type = i.type === 'password' ? 'text' : 'password';
-      e.textContent = i.type === 'password' ? '👁️' : '🙈';
-    });
-  });
-
-  /* Parcours de récupération : aucune donnée de mot de passe n'est stockée localement. */
-  document.addEventListener('click', ev => {
-    if(ev.target.closest('[data-password-reset-open]')){
-      ev.preventDefault();
-      location.hash='#mot-de-passe-oublie';
-    }else if(ev.target.closest('[data-password-reset-back]')){
-      ev.preventDefault();
-      location.hash='#connexion';
-    }
-  });
-
-  const resetForm=$('#passwordResetForm');
-  if(resetForm) resetForm.addEventListener('submit', async ev=>{
-    ev.preventDefault();
-    const status=$('#passwordResetStatus');
-    const button=resetForm.querySelector('button[type="submit"]');
-    if(status){status.hidden=true;status.classList.remove('is-success');}
-    if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
-    try{
-      if(!navigator.onLine || !window.SB || !window.SB.resetPassword){
-        throw new Error('تحقق من اتصال الإنترنت وحاول مرة أخرى.');
-      }
-      const result=await window.SB.resetPassword($('#resetEmail').value);
-      if(!result || !result.ok) throw new Error((result && result.err) || 'تعذر إرسال رابط الاستعادة.');
-      if(status){
-        status.textContent='إذا كان البريد مرتبطًا بحساب، فستصلك رسالة تحتوي على رابط آمن لإعادة تعيين كلمة المرور. تحقق أيضًا من البريد غير المرغوب فيه.';
-        status.hidden=false;status.classList.add('is-success');
-      }
-    }catch(error){
-      if(status){status.textContent=error.message || 'تعذر إرسال رابط الاستعادة.';status.hidden=false;}
-    }finally{
-      if(button){button.disabled=false;button.removeAttribute('aria-busy');}
-    }
-  });
-
-  const updateForm=$('#passwordUpdateForm');
-  if(updateForm) updateForm.addEventListener('submit', async ev=>{
-    ev.preventDefault();
-    const status=$('#passwordUpdateStatus');
-    const button=updateForm.querySelector('button[type="submit"]');
-    const password=$('#newPassword').value;
-    const confirmation=$('#confirmNewPassword').value;
-    if(status){status.hidden=true;status.classList.remove('is-success');}
-    if(password.length<8 || password!==confirmation){
-      if(status){
-        status.textContent=password!==confirmation?'كلمتا المرور غير متطابقتين.':'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.';
-        status.hidden=false;
-      }
-      return;
-    }
-    if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
-    try{
-      if(!window.SB || !window.SB.updatePassword) throw new Error('خدمة تحديث كلمة المرور غير متاحة.');
-      const result=await window.SB.updatePassword(password);
-      if(!result || !result.ok) throw new Error((result && result.err) || 'تعذر تحديث كلمة المرور.');
-      if(status){
-        status.textContent='تم تحديث كلمة المرور بنجاح. يمكنك الآن العودة إلى صفحة تسجيل الدخول.';
-        status.hidden=false;status.classList.add('is-success');
-      }
-      $('#newPassword').value='';
-      $('#confirmNewPassword').value='';
-    }catch(error){
-      if(status){status.textContent=error.message || 'تعذر تحديث كلمة المرور.';status.hidden=false;}
-    }finally{
-      if(button){button.disabled=false;button.removeAttribute('aria-busy');}
-    }
-  });
-
-  /* ── Auth : Supabase est l'autorité en ligne ; localStorage est réservé au mode hors ligne/démo.
-     Un échec cloud ne doit jamais être transformé en connexion locale réussie. ── */
-async function cloudAuthority(){
-  try{
-    if(!window.SB || !window.SB.myProfile) return null;
-    const p = await window.SB.myProfile();
-    if(!p) return null;
-    const s = { user:(p.pseudo || 'cloud'), nom:(p.pseudo || 'Élève'), role:(p.role || 'eleve'),
-                niveau:(p.niveau || '2AS'), filiere:(p.filiere || ''), wilaya:(p.wilaya || ''),
-                code_wilaya:(p.code_wilaya || ''), points:0, src:'cloud', uid:p.id };
-    try{ localStorage.setItem('dz_de_session_v1', JSON.stringify(s)); }catch(e){}
-    return s;
-  }catch(e){ return null; }
-}
-window.cloudAuthority = cloudAuthority;
-const lf = $('#loginForm');
-  function authLocalMode(){
-    try{
-      const demo = new URLSearchParams(location.search).has('demo')
-        || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-      return !navigator.onLine || demo;
-    }catch(e){ return !navigator.onLine; }
-  }
-  function showGateError(id, message){
-    const node = $(id);
-    if(node){ node.hidden = false; node.textContent = String(message || 'تعذر إتمام العملية.'); }
-  }
-  if(lf) lf.addEventListener('submit', async ev => {
-    ev.preventDefault();
-    const err = $('#loginErr'); if(err) err.hidden = true;
-    const email = $('#loginUser').value.trim();
-    const password = $('#loginPass').value;
-    if(!authLocalMode()){
-      if(!window.SB || !window.SB.login){
-        showGateError('#loginErr', 'خدمة تسجيل الدخول السحابية غير جاهزة. أعد المحاولة بعد لحظات.');
-        return;
-      }
-      try{
-        const result = await window.SB.login(email, password);
-        if(!result || !result.ok){
-          showGateError('#loginErr', (result && result.err) || 'بيانات الدخول غير صحيحة.');
-          return;
-        }
-        const cloudSession = await cloudAuthority();
-        if(!cloudSession){
-          showGateError('#loginErr', 'تم التحقق من الحساب، لكن تعذر تحميل الملف الدراسي. حاول مجددًا أو تواصل مع الدعم.');
-          return;
-        }
-        toast('🎉 أهلاً بك ' + cloudSession.nom + ' — حساب سحابي (' + cloudSession.niveau + ')', 'ok');
-        enterApp(cloudSession);
-      }catch(error){
-        showGateError('#loginErr', error && error.message ? error.message : 'تعذر الاتصال بخدمة تسجيل الدخول.');
-      }
-      return;
-    }
-    const local = AUTH.login(email, password, $('#loginClasse').value);
-    if(local.ok){
-      toast('🎉 أهلاً بك ' + local.session.nom + ' — القسم ' + local.session.classe_ar, 'ok');
-      enterApp(local.session);
-    }else showGateError('#loginErr', local.err);
-  });
-
-  const bd = $('#btnDemo');
-  if(bd) bd.addEventListener('click', () => { try{ history.replaceState(null, '', location.pathname + '?demo=1' + location.hash); }catch(e){}
-    const u = $('#loginUser'), p = $('#loginPass');
-    if(u) u.value = 'ahmed'; if(p) p.value = '1234';
-    if(lf) lf.dispatchEvent(new Event('submit', { cancelable:true }));
-  });
-
-  const sf = $('#signupForm');
-  if(sf) sf.addEventListener('submit', async ev => {
-    ev.preventDefault();
-    const err = $('#suErr'); if(err) err.hidden = true;
-    const w = String($('#suWilaya').value || '').split('|');
-    const niv = $('#suNiveau').value;
-    if(!authLocalMode()){
-      if(!window.SB || !window.SB.signup){
-        showGateError('#suErr', 'خدمة إنشاء الحساب السحابية غير جاهزة. أعد المحاولة بعد لحظات.');
-        return;
-      }
-      try{
-        const result = await window.SB.signup($('#suMail').value.trim(), $('#suPass').value, {
-          pseudo:$('#suName').value.trim(), niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0]
-        });
-        if(!result || !result.ok){
-          showGateError('#suErr', (result && result.err) || 'تعذر إنشاء الحساب.');
-          return;
-        }
-        if(!result.session){
-          showGateError('#suErr', 'تم استلام طلب التسجيل. تحقق من بريدك الإلكتروني لتفعيل الحساب، ثم عُد لتسجيل الدخول.');
-          return;
-        }
-        const cloudSession = await cloudAuthority();
-        if(!cloudSession){
-          showGateError('#suErr', 'تم إنشاء الحساب، لكن تعذر تحميل الملف الدراسي. لا تنشئ حسابًا محليًا بديلًا؛ أعد المحاولة أو تواصل مع الدعم.');
-          return;
-        }
-        toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + cloudSession.niveau, 'ok');
-        enterApp(cloudSession);
-      }catch(error){
-        showGateError('#suErr', error && error.message ? error.message : 'تعذر الاتصال بخدمة إنشاء الحساب.');
-      }
-      return;
-    }
-    const local = AUTH.signup({
-      nom:$('#suName').value, mail:$('#suMail').value, pass:$('#suPass').value,
-      niveau:niv, filiere:$('#suFiliere').value,
-      filiere_ar: ($('#suFiliere') && $('#suFiliere').selectedOptions[0]) ? $('#suFiliere').selectedOptions[0].textContent : '',
-      specialite: ($('#suSpecialite') && !$('#suSpecialite').hidden && $('#suSpecialite').selectedOptions[0]) ? $('#suSpecialite').selectedOptions[0].textContent : '',
-      wilaya:w[1] || 'Bouira', code_wilaya:w[0] || '10',
-      role:$('#suRole').value, classe:niv + '-1'
-    });
-    if(local.ok){ toast('✅ تم إنشاء حسابك — أهلاً ' + local.session.nom, 'ok'); enterApp(local.session); }
-    else showGateError('#suErr', local.err);
-  });
-
-  const uc = $('#userChip');
-  if(uc) uc.addEventListener('click', () => go('compte'));
-
-  document.addEventListener('dz:auth', e => {
-    renderTabs();
-    if(e.detail && currentView === 'parents' && !isParent()) go('accueil');
-    if(!e.detail){
-      const sh = $('#shell'), gt = $('#gate');
-      if(sh) sh.hidden = true;
-      if(gt){ gt.hidden = false; paintGateStats(); }
-    } else { renderUserChip(); renderSectionBar(); renderWelcome(); renderStats(); }
-  });
 }
 
 /* ══════════ BANDEAU DE BIENVENUE ══════════ */
