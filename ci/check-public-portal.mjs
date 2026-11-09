@@ -238,13 +238,13 @@ if (!html.includes('style-prototype-dz.css?v=180')) {
 if (!sw.includes('style-prototype-dz.css?v=180')) {
   fail('version CSS du précache non actualisée (v176 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.99") ||
+if (!sw.includes("dz-de-v3.185.0.0.100") ||
     !sw.includes("style-prototype-dz.css?v=180") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS v177, app.js v3552 et Service Worker v3.185.0.0.99 synchronisés');
+console.log('✅ Cache CSS v177, app.js v3553 et Service Worker v3.185.0.0.100 synchronisés');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -270,7 +270,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
   if (!app.includes(marker)) fail('navigation mobile compacte absente ou incomplète : ' + marker);
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
-if (!html.includes('app.js?v=3552') || !sw.includes('app.js?v=3552')) fail('cache app.js non synchronisé');
+if (!html.includes('app.js?v=3553') || !sw.includes('app.js?v=3553')) fail('cache app.js non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=180') || !sw.includes('style-prototype-dz.css?v=180')) fail('cache CSS non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
@@ -437,7 +437,7 @@ for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 
 if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
   fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
 }
-if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.99')) {
+if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.100')) {
   fail('guide de bienvenue : cache ou Service Worker non actualisé');
 }
 console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
