@@ -112,6 +112,13 @@ async function mfaEnrollTotp(friendlyName){
   if(r.error) return {ok:false,err:r.error.message};
   return {ok:true,factorId:r.data.id,qrCode:r.data.totp.qr_code,secret:r.data.totp.secret,uri:r.data.totp.uri};
 }
+async function mfaEnrollPhone(phone){
+  const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'خدمة المصادقة الثنائية غير متاحة'};
+  const number=String(phone||'').trim();
+  if(!/^\\+[1-9]\\d{7,14}$/.test(number)) return {ok:false,err:'أدخل رقم الهاتف بالصيغة الدولية E.164، مثل +213XXXXXXXXX'};
+  const r=await c.auth.mfa.enroll({factorType:'phone',friendlyName:'DZ Lycée Virtuel SMS',phone:number});
+  return r.error?{ok:false,err:r.error.message}:{ok:true,factorId:r.data.id,phone:r.data.phone||number};
+}
 async function mfaVerifyEnrollment(factorId,code){
   const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'خدمة المصادقة الثنائية غير متاحة'};
   const ch=await c.auth.mfa.challenge({factorId});
@@ -553,7 +560,7 @@ async function msgCreateGroup(wilaya, niveau, filiere, titre){
   return { ok:true, convId:r.data.id };
 }
 
-window.SB = { login, signup, resetPassword, updatePassword, getSession, me, logout, mfaAssurance, mfaStart, mfaVerify, mfaVerifyRecovery, mfaEnrollTotp, mfaVerifyEnrollment, mfaListFactors, mfaUnenroll, mfaRecoveryGenerate, mfaRecoveryRegenerate, mfaRecoveryStatus, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
+window.SB = { login, signup, resetPassword, updatePassword, getSession, me, logout, mfaAssurance, mfaStart, mfaVerify, mfaVerifyRecovery, mfaEnrollTotp, mfaEnrollPhone, mfaVerifyEnrollment, mfaListFactors, mfaUnenroll, mfaRecoveryGenerate, mfaRecoveryRegenerate, mfaRecoveryStatus, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
 /* pont dz:view post-sbready (UI-1) : les cartes ADM se re-rendent quand le client devient prêt */
 document.dispatchEvent(new CustomEvent('dz:view', { detail:{ view:(location.hash||'').replace('#','') } }));
