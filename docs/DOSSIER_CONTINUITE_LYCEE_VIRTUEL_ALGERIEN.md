@@ -2161,3 +2161,9 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Le cache de l'application passe à `app.js?v=3553` et le Service Worker à `dz-de-v3.185.0.0.100`.
 - Les contrôles du portail et du tableau de bord ont été synchronisés avec ces références.
 - Une infobulle native reprend le même libellé jour/date/activité que l'alternative accessible du graphique hebdomadaire.
+
+
+### Addendum accessibilité — Lot 163
+- Le conteneur hebdomadaire porte également une description de rôle (« مخطط نشاط ») afin d'annoncer la nature du composant aux lecteurs d'écran.
+- Cache : `app.js?v=3554` ; Service Worker : `dz-de-v3.185.0.0.101`.
+- Les assertions CI et le précache sont alignés sur ces versions.
