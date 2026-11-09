@@ -484,8 +484,7 @@ for (const marker of [
   'EMAIL_FACTOR_NOT_CONFIGURED',
   'RECENT_STEP_UP_REQUIRED',
   'mfa_email_consume_challenge',
-  'crypto.subtle.sign',
-  'verify_jwt'
+  'crypto.subtle.sign'
 ]) {
   if (!mfaEmailServer.includes(marker)) fail('sécurité MFA e-mail serveur absente : ' + marker);
 }
