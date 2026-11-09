@@ -2612,3 +2612,21 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Cache application : `app.js?v=3560` ; Service Worker : `dz-de-v3.185.0.0.114`.
 - Le contrôle du portail vérifie désormais explicitement la présence de `bindGateEvents`, `cloudAuthority`, des deux formulaires et des garde-fous Auth.
 - La CI précédente a échoué sur `tests/adm_test.mjs` (NAV-ADM-2), précisément parce que le pont de persistance du rôle n'était plus présent ; relancer l'ensemble après restauration.
+
+
+### Validation du Lot 179 — CI #2638
+- La restauration des gestionnaires Auth et du pont cloud a été validée par la CI #2638 sur le HEAD `517a56df3752f009535f164ef5ddebb1d59ba5d2`.
+- Le job « Validation structurelle & pédagogique » est terminé avec succès ; ses 33 étapes numérotées sont réussies.
+- Cette validation CI ne remplace pas les essais navigateur avec un compte Supabase de test.
+
+## Lot 180 — rééquilibrage du tableau de bord étudiant selon les prototypes (9 novembre 2026)
+- Comparaison effectuée avec les deux prototypes Qwen conservés dans la bibliothèque : `Qwen_html_20261021_bxmtbklup.html` et `Qwen_html_20261021_juv5xelun.html`.
+- Écart identifié dans la vue indépendante `data-view="dashboard"` : les accès rapides étaient relégués après les panneaux, et l'assistant intelligent occupait une bannière pleine largeur sous la grille. Le prototype 2 place les accès rapides sous le bandeau et l'assistant dans la colonne latérale, avec les recommandations et les messages.
+- Réorganisation de la structure HTML : bandeau et statistiques, carte pédagogique, accès rapides, puis grille principale/latérale. L'assistant et les recommandations sont maintenant dans la colonne latérale, avant les messages et les notifications.
+- La colonne principale conserve les matières, les graphiques de progression et de résultats, les objectifs, les badges et l'activité.
+- Les identifiants `sdPath`, `sdSubjects`, `sdUnitProgress`, `sdSkills`, `sdRecommendation`, `sdGoals`, `sdAchievements`, `sdActivity`, `sdMessages`, `sdUpdates` et les destinations `data-go` sont conservés ; aucun gestionnaire ni moteur pédagogique n'est modifié.
+- Adaptation CSS du panneau IA à la largeur de la colonne latérale et de la recommandation à la grille latérale ; thème clair/sombre conservé.
+- CSS : `style-prototype-dz.css?v=192` ; Service Worker : `dz-de-v3.185.0.0.115`.
+- Contrôles CI mis à jour pour vérifier l'ordre des blocs et leur appartenance à la colonne latérale. La validation complète du nouveau HEAD reste à obtenir.
+- Aucun changement Auth, Supabase, RLS, schéma, migration, paiement, données de progression ou logique de récompense. Aucun déploiement Cloudflare ni rendu navigateur n'est revendiqué.
+- PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
