@@ -1976,6 +1976,11 @@ const lf = $('#loginForm');
           showGateError('#suErr', 'تم استلام طلب التسجيل. تحقق من بريدك الإلكتروني لتفعيل الحساب، ثم عُد لتسجيل الدخول.');
           return;
         }
+        if(!window.DZ_MFA || typeof window.DZ_MFA.requireGate !== 'function'){
+          showGateError('#suErr', 'تعذر تحميل طبقة التحقق الأمني. أعد تحميل الصفحة.');
+          return;
+        }
+        if(await window.DZ_MFA.requireGate()) return;
         const cloudSession = await cloudAuthority();
         if(!cloudSession){
           showGateError('#suErr', 'تم إنشاء الحساب، لكن تعذر تحميل الملف الدراسي. لا تنشئ حسابًا محليًا بديلًا؛ أعد المحاولة أو تواصل مع الدعم.');
@@ -2280,13 +2285,27 @@ function renderLienCloud(){
   $('#lcBtn').addEventListener('click', async () => {
     const msg = $('#lcMsg'); const mail = $('#lcMail').value, pass = $('#lcPass').value;
     if(!mail || !pass){ msg.textContent = 'أدخل البريد وكلمة السر.'; return; }
-    let p = null;
-    try{ await window.SB.login(mail, pass); p = await window.cloudAuthority(); }
-    catch(e){
-      try{ await window.SB.signup(mail, pass, { pseudo:s.nom, niveau:s.niveau, filiere:s.filiere, wilaya:s.wilaya }); p = await window.cloudAuthority(); }
-      catch(e2){ msg.textContent = 'تعذر الربط : ' + ((e2 && (e2.message || e2.msg)) || 'تحقق من البيانات'); return; }
+    if(!window.SB || typeof window.SB.login !== 'function'){
+      msg.textContent = 'خدمة الحساب السحابي غير جاهزة. أعد تحميل الصفحة.';
+      return;
     }
-    if(p){ msg.textContent = '✅ تم الربط — المستوى المعتمد : ' + p.niveau; setTimeout(function(){ location.reload(); }, 900); }
+    try{
+      const result = await window.SB.login(mail, pass);
+      if(!result || !result.ok){
+        msg.textContent = (result && result.err) || 'تعذر تسجيل الدخول إلى الحساب السحابي. إذا لم يكن لديك حساب، أنشئه من صفحة التسجيل.';
+        return;
+      }
+      if(!window.DZ_MFA || typeof window.DZ_MFA.requireGate !== 'function'){
+        msg.textContent = 'تعذر تحميل طبقة التحقق الأمني. أعد تحميل الصفحة.';
+        return;
+      }
+      if(await window.DZ_MFA.requireGate()) return;
+      const p = await window.cloudAuthority();
+      if(p){ msg.textContent = '✅ تم الربط — المستوى المعتمد : ' + p.niveau; setTimeout(function(){ location.reload(); }, 900); }
+      else msg.textContent = 'تم تسجيل الدخول، لكن تعذر تحميل الملف السحابي. حاول مجددًا.';
+    }catch(e){
+      msg.textContent = 'تعذر الربط : ' + ((e && (e.message || e.msg)) || 'تحقق من البيانات');
+    }
   });
 }
 /* ══════════ VUE COMPTE — composition inspirée du prototype étudiant ══════════ */
