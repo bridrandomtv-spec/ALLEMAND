@@ -122,7 +122,7 @@ Deno.serve(async (req: Request) => {
     if (purpose === "login" && !factor) return json(403, { ok: false, error: "NOT_ENROLLED" });
 
     const pepper = Deno.env.get("MFA_EMAIL_PEPPER");
-    if (!pepper || pepper.length < 32) {
+    if (!pepper || pepper.length < 32 || !Deno.env.get("RESEND_API_KEY") || !Deno.env.get("MFA_EMAIL_FROM")) {
       return json(503, { ok: false, error: "EMAIL_FACTOR_NOT_CONFIGURED" });
     }
 
