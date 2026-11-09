@@ -2097,3 +2097,33 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucune recette navigateur ou capture desktop/mobile n'a été effectuée ; le correctif est confirmé par correspondance source HTML/CSS et garde CI.
 - PR #17 reste ouverte et non fusionnée ; `main` n'est pas modifiée.
 - Aucun changement Auth, Supabase, RLS, schéma, migration, paiement, route, identifiant ou gestionnaire d'événement.
+
+
+## Lot 162 — palette chromatique distincte des cartes matières (9 novembre 2026)
+
+### Comparaison avec les prototypes
+- Le prototype multi-matières présente des cartes visuellement différenciées par discipline (jaune, indigo, violet, vert, etc.).
+- Le rendu réel du tableau de bord affichait les matières actives/partielles sur des fonds presque uniformes, et les matières programmées partageaient un fond neutre.
+- Le catalogue réel `assets/bdd/matieres.json` fournit des identifiants stables pour 14 matières. Aucun pourcentage de progression fictif n'est ajouté.
+
+### Correctif
+- Attribution d'une classe de palette à partir d'une liste blanche d'identifiants : allemand ambre, mathématiques indigo, physique violet, SVT émeraude, espagnol rose, italien turquoise, français bleu, anglais rouge, arabe vert, philosophie ardoise, histoire-géographie cyan, économie orange, informatique bleu ciel, islam olive.
+- La palette distingue les disciplines sans modifier les statuts pédagogiques « active », « partielle » ou « programmée ».
+- Application aux fonds, bordures, icônes, barres de progression et liens d'action.
+- Variantes dédiées au thème sombre avec fonds assombris et contrastes conservés.
+- Cache CSS : `style-prototype-dz.css?v=180`.
+- Service Worker : `dz-de-v3.185.0.0.98`, précache synchronisé.
+- Assertions CI ajoutées pour contrôler la correspondance des identifiants, les palettes et le thème sombre.
+
+### Fichiers modifiés
+- `app.js`, `style-prototype-dz.css`, `index.html`, `sw.js`.
+- `ci/check-masar.mjs`, `ci/check-public-portal.mjs`, `ci/check-gamification.mjs`.
+- Présent dossier de continuité.
+
+### Validation et limites
+- Modifications effectuées exclusivement sur `design/prototypes-67-74-alignment` / PR #17.
+- La CI du nouveau HEAD doit confirmer les assertions ; aucune réussite n'est revendiquée avant son résultat.
+- Pas de déploiement Cloudflare revendiqué pour ce lot.
+- Aucune capture navigateur n'a été prise ; la comparaison est fondée sur le HTML des prototypes et le rendu source du dépôt.
+- PR #17 reste ouverte/non fusionnée ; `main` inchangée.
+- Aucun changement de routes, identifiants de vues, gestionnaires de navigation, Supabase, Auth, RLS, schéma, migration ou paiement.
