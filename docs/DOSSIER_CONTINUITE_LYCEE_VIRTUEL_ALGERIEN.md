@@ -2387,7 +2387,7 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Application : app.js?v=3555.
 - Service Worker : dz-de-v3.185.0.0.107, précache synchronisé.
 - Contrôles CI du tableau de bord et du portail public actualisés ; assertions ajoutées pour les trois états, la légende, la palette des résultats et le thème sombre.
-- CI #2614 réussie sur le HEAD précédent ; validation du nouveau commit à attendre.
+- CI #2617 réussie sur le commit a9e9029d154f64a3907c6708d89a78796f61a849 : contrôles مسارك, XP/badges, accès, régressions et parcours pédagogiques tous réussis.
 
 ### Périmètre et limites
 - Fichiers modifiés : app.js, style-prototype-dz.css, index.html, sw.js, ci/check-masar.mjs, ci/check-public-portal.mjs et le présent dossier.
@@ -2404,3 +2404,11 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 ### Addendum CI — alignement XP et badges
 - La CI #2616 a confirmé les contrôles du tableau de bord et de مسارك, puis a détecté une dernière assertion de précache CSS v185 dans ci/check-gamification.mjs.
 - Cette assertion a été alignée sur la version v186. Le contrôle XP/badges et la suite complète doivent être rejoués sur le nouveau HEAD.
+
+
+### Validation finale — Lot 172
+- CI #2615 : échec initial sur l'assertion de cache CSS restée en v185 dans le contrôle du tableau de bord.
+- CI #2616 : les contrôles du tableau de bord ont passé ; le contrôle XP/badges a révélé une seconde assertion de précache CSS v185.
+- Les deux assertions ont été actualisées (check-masar.mjs et check-gamification.mjs), ainsi que le contrôle du portail public.
+- CI #2617 : réussie sur a9e9029d154f64a3907c6708d89a78796f61a849. La suite complète des validations structurelles, pédagogiques, d'accès, XP/badges et de régression est passée.
+- Le résultat CI ne remplace pas la vérification visuelle du rendu réel ; aucun déploiement Cloudflare n'est déclaré.
