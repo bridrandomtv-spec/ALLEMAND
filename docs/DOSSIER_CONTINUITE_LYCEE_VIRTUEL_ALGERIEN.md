@@ -2218,3 +2218,29 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - PR #17 reste ouverte et non fusionnée ; main n’est pas modifiée.
 - La CI doit confirmer le nouveau HEAD après ces commits.
 - Aucune capture réelle de navigateur ni publication Cloudflare du nouveau HEAD n’est revendiquée. La validation visuelle desktop/tablette/mobile reste à effectuer sur le rendu déployé.
+
+
+## Lot 166 — finition responsive des cartes matières et indicateurs (9 novembre 2026)
+
+### Ajustements de composition
+- Le ratio catalogue/progression 2:1 du Lot 165 est conservé sur desktop.
+- Entre 641 et 980 px, « مواد شعبتك » et « إنجاز الوحدات » occupent chacun toute la largeur de la grille principale. Cela évite de comprimer le graphique des unités dans les largeurs tablette.
+- Sous 640 px, l'empilement pleine largeur déjà établi est conservé.
+
+### Lisibilité des contenus
+- Les statuts de matière peuvent revenir à la ligne sans dépasser la carte.
+- Les titres, langues, descriptions, libellés de progression et actions disposent de tailles et interlignes explicites ; les tailles mobiles restent plus compactes.
+- Les barres du graphique des unités conservent leurs pourcentages réels ; les libellés passent à 10 px et la hauteur des pistes est ajustée à 88 px pour densifier le panneau.
+- Les détails des résultats de quiz sont portés à 11 px, avec davantage d'espacement vertical. Les données restent les résultats enregistrés par unité, sans extrapolation en compétences linguistiques.
+
+### Cache et contrôles
+- CSS : style-prototype-dz.css?v=183.
+- Service Worker : dz-de-v3.185.0.0.104 ; précache CSS synchronisé.
+- Les contrôles CI du tableau de bord, du portail public et de la gamification sont alignés sur les nouvelles références.
+- Le contrôle du tableau de bord vérifie la pleine largeur tablette, l'adaptation des statuts et la lisibilité des libellés des graphiques et résultats.
+
+### Périmètre et état
+- Modifications limitées à CSS, références de cache, assertions CI et dossier de continuité.
+- Aucun changement JavaScript métier, donnée, route, identifiant de vue, événement, Auth, Supabase, RLS, schéma, migration ou paiement.
+- PR #17 reste ouverte et non fusionnée ; aucun changement sur main.
+- La validation CI du nouveau HEAD, les captures réelles navigateur sur desktop/tablette/mobile et le déploiement Cloudflare restent à confirmer séparément.
