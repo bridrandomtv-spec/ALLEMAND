@@ -477,6 +477,26 @@ console.log('✅ Lot 179 : bindGateEvents et cloudAuthority conservés avec le g
 /* LOT 181 — contrat structurel MFA Supabase (aucun OTP ou secret fictif). */
 const mfaClient = read('supabase/supabase.js');
 const mfaModule = read('mfa-security.js');
+const mfaEmailServer = read('supabase/functions/mfa-email/index.ts');
+for (const marker of [
+  'if (action === "status")',
+  'STATUS_LOOKUP_FAILED',
+  'EMAIL_FACTOR_NOT_CONFIGURED',
+  'RECENT_STEP_UP_REQUIRED',
+  'mfa_email_consume_challenge',
+  'crypto.subtle.sign',
+  'verify_jwt'
+]) {
+  if (!mfaEmailServer.includes(marker)) fail('sécurité MFA e-mail serveur absente : ' + marker);
+}
+if (!mfaModule.includes("if(!emailState.ok)") ||
+    !mfaModule.includes("if(emailState.enrolled&&!emailState.verified&&!nativeState.required)")) {
+  fail('garde e-mail MFA non fail-closed ou non conditionnée à l’inscription');
+}
+if (!mfaEmailServer.includes('!Deno.env.get("RESEND_API_KEY")') ||
+    !mfaEmailServer.includes('!Deno.env.get("MFA_EMAIL_FROM")')) {
+  fail('précontrôle de configuration Resend absent avant émission du défi');
+}
 for (const marker of [
   'auth.mfa.getAuthenticatorAssuranceLevel()','level.data.currentLevel===\'aal1\'','level.data.nextLevel===\'aal2\'','auth.mfa.listFactors()',
   'auth.mfa.challenge({factorId})','auth.mfa.verify({factorId,challengeId,code:',
