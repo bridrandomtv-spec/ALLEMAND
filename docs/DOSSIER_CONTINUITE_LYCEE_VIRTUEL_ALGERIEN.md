@@ -3216,3 +3216,5 @@ Permettre de consulter correctement l'état du facteur e-mail tant que le domain
 - Les premières exécutions CI du Lot 192 avaient mis en évidence deux assertions obsolètes : version SW `.123` puis module MFA `v7`. Les deux assertions ont été corrigées ; le résultat d'une nouvelle exécution complète sur le HEAD courant reste à confirmer.
 - Aucune simulation de test navigateur, aucune connexion réelle d'élève, aucun envoi e-mail Resend et aucun test réel TOTP/SMS ne sont revendiqués.
 - Aucun changement de `main`, aucune fusion de PR #17, aucun déploiement Cloudflare.
+- Complément CI : l'exécution 2723 a ensuite révélé une seconde assertion obsolète, cette fois dans `ci/check-masar.mjs`, qui attendait encore `dz-de-v3.185.0.0.123`. Elle a été alignée sur `.124`. Une nouvelle exécution après ce dernier correctif est en attente.
+- Les contrôles du portail public et du module MFA avaient passé dans l'exécution 2723 ; l'échec se produisait dans le contrôle Masar sur cette seule version de cache obsolète.
