@@ -84,6 +84,6 @@ assert.match(css, /\.sd-subject-card\.tone-indigo\{--sd-subject-accent:#4f46e5/,
 assert.match(css, /\.sd-subject-card\.tone-emerald\{--sd-subject-accent:#059669/, 'palette émeraude des matières absente');
 assert.match(css, /html\[data-theme="dark"\].*sd-subject-card\[class\*="tone-"\]/s, 'palette des matières en thème sombre absente');
 
-assert.match(app, /role="group" aria-label="نشاط آخر سبعة أيام"/, 'description accessible du graphique hebdomadaire absente');
+assert.match(app, /role="group"[^>]*aria-label="نشاط آخر سبعة أيام"/, 'description accessible du graphique hebdomadaire absente');
 assert.ok(app.includes("role=\"img\" aria-label=\"'+names[d.getDay()]+' '+key+' : '+(on?'jour actif':'aucune activité enregistrée')+'\""), 'libellés accessibles des jours actifs absents');
 console.log('✅ مسارك : progression et résultats réels, activité hebdomadaire accessible, cartes et caches contrôlés');
