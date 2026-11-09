@@ -3383,3 +3383,10 @@ Le bouton d'annulation du défi MFA appelait `SB.logout()` dans un bloc qui igno
 - Le comportement applicatif plus sûr est conservé ; l'assertion historique a été adaptée pour exiger `returnToLoginAfterMfa()`.
 - Correctif CI : commit `0fa84f74209ca332865a1195de09ea260aff769c`.
 - L'exécution #2750 doit valider le lot après cette correction.
+
+
+#### Deuxième ajustement CI du Lot 199
+- CI #2751 a détecté une collision de nom de variable dans `ci/check-public-portal.mjs` : `mfaCancelBlock` était déjà déclaré par le contrôle du Lot 196.
+- Le contrôle ajouté au Lot 199 utilise désormais le nom distinct `mfaCancelBlock199`. Aucun code applicatif n'a été modifié pour cette correction.
+- Commit : `fe8b13b028ac1276e93412ad1eedc86d974af8f0`.
+- La validation suivante doit confirmer la syntaxe et les assertions complètes.
