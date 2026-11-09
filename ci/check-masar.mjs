@@ -72,9 +72,9 @@ assert.ok(app.includes('"Er lebt in einer reichen Gesellschaft. → « einer » 
 assert.doesNotMatch(app, /كل أسبوع:|1-3 مرات|تصحيح فوري/, 'le coach ne doit pas promettre une fréquence ou une correction non garantie');
 
 
-assert.match(css, /\\.sd-subject-name\\{font-size:15px/, 'typographie du nom de matière alignée sur le HTML réel absente');
-assert.match(css, /\\.sd-subject-meta\\{font-size:11px/, 'lisibilité des métadonnées de matière absente');
-assert.match(css, /\\.sd-subject-progress>div\\{font-size:11px/, 'lisibilité de la progression de matière absente');
-assert.match(css, /\\.sd-subject-open\\{font-size:12px/, 'taille du lien matière absente');
+assert.match(css, /\.sd-subject-name\{font-size:15px/, 'typographie du nom de matière alignée sur le HTML réel absente');
+assert.match(css, /\.sd-subject-meta\{font-size:11px/, 'lisibilité des métadonnées de matière absente');
+assert.match(css, /\.sd-subject-progress>div\{font-size:11px/, 'lisibilité de la progression de matière absente');
+assert.match(css, /\.sd-subject-open\{font-size:12px/, 'taille du lien matière absente');
 
 console.log('✅ مسارك : calculs réels par unité, prochaine séance, compétences, cartes et caches contrôlés');
