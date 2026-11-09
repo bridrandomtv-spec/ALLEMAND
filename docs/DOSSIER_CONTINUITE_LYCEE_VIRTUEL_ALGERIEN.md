@@ -2439,3 +2439,9 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucun changement HTML, JavaScript métier, donnée pédagogique, route, événement, Auth, Supabase, RLS, schéma, migration ou paiement.
 - PR #17 reste ouverte et non fusionnée. Aucun commit n'est effectué sur main.
 - Aucune validation navigateur ni publication Cloudflare n'est revendiquée.
+
+
+### Addendum CI — Lot 173
+- La CI #2619 a validé les ressources, la syntaxe JavaScript et le contrôle du portail, puis a échoué sur la nouvelle assertion regex du breakpoint mobile.
+- La règle CSS mobile était bien présente ; c'est l'assertion qui avait un niveau d'échappement incorrect. Elle est remplacée par une vérification directe de la règle CSS exacte afin d'éviter une nouvelle erreur regex.
+- Le nouveau HEAD doit repasser la suite complète avant validation du Lot 173.

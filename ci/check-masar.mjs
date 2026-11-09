@@ -130,4 +130,4 @@ assert.match(css,/sd-unit-chart-legend/,'légende graphique absente');
 assert.match(css,/sd-subject-icon\{width:48px;height:48px/,'icône des cartes matières trop petite');
 assert.match(css,/sd-subject-name\{font-size:16px/,'typographie desktop des matières absente');
 assert.match(css,/sd-subject-meta\{font-size:12px/,'descriptions des matières trop petites');
-assert.match(css,/@media\(max-width:640px\)[\\s\\S]*?sd-subject-grid\{grid-template-columns:minmax\(0,1fr\)/,'grille matières mobile à une colonne absente');
+assert.ok(css.includes('#shell #app [data-view="dashboard"] .sd-subject-grid{grid-template-columns:minmax(0,1fr);gap:12px}'),'grille matières mobile à une colonne absente');
