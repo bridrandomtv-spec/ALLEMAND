@@ -238,13 +238,13 @@ if (!html.includes('style-prototype-dz.css?v=193')) {
 if (!sw.includes('style-prototype-dz.css?v=193')) {
   fail('version CSS du précache non actualisée (v176 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.123") ||
+if (!sw.includes("dz-de-v3.185.0.0.124") ||
     !sw.includes("style-prototype-dz.css?v=193") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS v193, app.js v3562 et Service Worker v3.185.0.0.118 synchronisés');
+console.log('✅ Cache CSS v193, app.js v3562 et Service Worker v3.185.0.0.124 synchronisés');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -438,7 +438,7 @@ for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 
 if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
   fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
 }
-if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.123')) {
+if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.124')) {
   fail('guide de bienvenue : cache ou Service Worker non actualisé');
 }
 console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
@@ -515,7 +515,7 @@ if (!mfaModule.includes('id=\"mfaPhoneEnrollForm\"') || !mfaModule.includes('id=
 if (!html.includes('supabase/supabase.js?v=3517') || !sw.includes('supabase/supabase.js?v=3517')) fail('cache Supabase MFA non synchronisé');
 if (!html.includes('app.js?v=3562') || !sw.includes('app.js?v=3562')) fail('cache app.js MFA non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=193') || !sw.includes('style-prototype-dz.css?v=193')) fail('cache CSS MFA non synchronisé');
-if (!sw.includes("dz-de-v3.185.0.0.123")) fail('version Service Worker Lot 181 non actualisée');
+if (!sw.includes("dz-de-v3.185.0.0.124")) fail('version Service Worker Lot 181 non actualisée');
 if (!css.includes('LOT 181 — écrans et réglages MFA')) fail('styles MFA Lot 181 absents');
 console.log('✅ Lot 181 : MFA Supabase natif, TOTP, défi AAL2, codes de récupération expérimentaux et cache contrôlés.');
 
