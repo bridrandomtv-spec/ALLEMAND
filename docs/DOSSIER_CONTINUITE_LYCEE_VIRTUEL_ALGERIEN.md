@@ -2715,3 +2715,44 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - CI #2683, sur le HEAD de documentation `43e24bb09604c5fc9dee3ab360855899f94d6814`, est réussie : job « Validation structurelle & pédagogique », 33 étapes terminées avec succès.
 - Les assertions MFA du portail public, le renvoi SMS conditionnel, le renouvellement du challenge et le contrôle مسارك avec Service Worker v3.185.0.0.119 sont validés structurellement.
 - Cette réussite CI ne remplace pas un essai navigateur ou un test SMS réel avec un compte Supabase ; aucun de ces tests n'a été effectué.
+
+
+## Lot 184 — audit en lecture seule de l'application AAL2 et des politiques Supabase (9 novembre 2026)
+
+### Périmètre réellement contrôlé
+- Lecture de la branche PR `design/prototypes-67-74-alignment`, fichiers `supabase/supabase.js`, `mfa-security.js` et `app.js` ; aucune modification de code d'authentification pendant cet audit.
+- Interrogation en lecture seule du catalogue PostgreSQL (`pg_policies`, `pg_class`) et consultation des Security Advisors Supabase.
+- Aucune requête de modification, migration, mise à jour de réglage Auth, rotation de clé, changement de rôle, de secret ou de politique.
+
+### Constat AAL2 — point bloquant
+- La requête sur les politiques RLS des schémas exposés `public` et `storage` ne trouve aucune expression faisant référence à `aal` ou à `auth.jwt()` pour le contrôle du niveau d'assurance.
+- Les 34 tables du schéma `public` observées ont RLS activé ; aucune n'a `FORCE ROW LEVEL SECURITY` activé dans le catalogue au moment de l'audit. Cela ne signifie pas que les politiques existantes sont absentes : elles existent, mais elles ne conditionnent pas leurs autorisations au niveau AAL2.
+- Conclusion : la protection MFA actuelle est une barrière côté interface. Les appels directs à la Data API/RPC avec un JWT AAL1 ne sont pas globalement bloqués par une règle AAL2 restrictive dans les politiques inspectées. Ne pas annoncer le MFA comme enforcement serveur achevé.
+- La documentation Supabase consultée recommande une politique RLS restrictive (`AS RESTRICTIVE`) vérifiant `(select auth.jwt()->>'aal') = 'aal2'`, ou une règle conditionnelle aux facteurs vérifiés pour le mode « utilisateurs ayant activé MFA ». Référence : https://supabase.com/docs/guides/auth/auth-mfa ; https://supabase.com/docs/guides/database/postgres/row-level-security.
+
+### Constats côté application
+- `app.js` appelle `DZ_MFA.requireGate()` après connexion cloud par mot de passe et pendant la restauration d'une session cloud.
+- Le parcours local/démo et le mode hors ligne ont des branches distinctes ; ils ne sont pas une preuve d'authentification cloud AAL2. Les fonctions locales et cloud doivent rester distinguées dans les tests.
+- Le parcours d'inscription cloud qui reçoit immédiatement une session appelle `cloudAuthority()` et `enterApp()` sans défi MFA ; un compte nouvellement créé n'a normalement pas encore de facteur vérifié. Ce comportement doit être clarifié si une politique future rend MFA obligatoire pour tous les comptes.
+- La gestion de facteur dans l'interface ne remplace pas les contrôles d'accès des tables, RPC, Storage et éventuelles API externes.
+
+### Security Advisors — observations à examiner, sans correction automatique
+- Un avertissement signale `public.agreement_current(cle text)` exécutable par `anon` comme fonction `SECURITY DEFINER`.
+- 42 fonctions `SECURITY DEFINER` sont signalées comme exécutables par `authenticated`. Ces alertes nécessitent un examen fonction par fonction des vérifications d'identité, de rôle, des paramètres et du périmètre ; elles ne sont pas toutes automatiquement des vulnérabilités.
+- La protection des mots de passe compromis (contrôle HaveIBeenPwned) est signalée comme désactivée.
+- Les tables contrôlées ont RLS activé, mais la configuration non forcée et les fonctions `SECURITY DEFINER` imposent de vérifier aussi les chemins d'accès privilégiés.
+
+### Décision de sécurité / autorisation requise
+- Ne pas appliquer une politique AAL2 à toutes les tables sans matrice de rôles et de flux : élèves, parents, enseignants, agents, responsables et administrateurs peuvent avoir des besoins d'accès différents.
+- Une politique restrictive AAL2 globale pourrait bloquer des flux existants (lecture de contenu, messagerie, renouvellement de session, inscription, mode parent, fonctions de service). Il faut d'abord cartographier les tables et RPC sensibles, puis définir explicitement quels rôles et quelles opérations exigent AAL2.
+- Conformément au périmètre autorisé, aucune politique RLS, fonction SQL, grant ou configuration distante n'a été modifié. Une autorisation explicite est nécessaire avant toute évolution de la base.
+
+### Suite proposée
+1. Cartographier les tables/RPC sensibles par rôle et action (SELECT/INSERT/UPDATE/DELETE/EXECUTE/Storage).
+2. Définir une matrice MFA : obligatoire ou optionnel pour chaque rôle et opération ; distinguer AAL2 obligatoire et simple session authentifiée.
+3. Préparer un plan de migration SQL isolé et testable, sans l'appliquer, avec politiques restrictives adaptées et stratégie de retour arrière.
+4. Après autorisation explicite, appliquer en environnement de test, tester les parcours AAL1/AAL2 pour chaque rôle et vérifier les fonctions `SECURITY DEFINER`.
+
+### Validation Lot 184
+- Audit catalogue et Security Advisors exécuté en lecture seule ; aucun changement distant effectué.
+- CI du commit de documentation à venir. Aucun test d'accès avec JWT AAL1/AAL2 dédié n'a été exécuté ; l'absence d'expression AAL dans les politiques consultées est un constat catalogue, pas un test d'intrusion.
