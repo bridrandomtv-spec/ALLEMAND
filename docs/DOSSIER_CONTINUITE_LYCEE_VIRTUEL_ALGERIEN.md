@@ -2167,3 +2167,27 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Le conteneur hebdomadaire porte également une description de rôle (« مخطط نشاط ») afin d'annoncer la nature du composant aux lecteurs d'écran.
 - Cache : `app.js?v=3554` ; Service Worker : `dz-de-v3.185.0.0.101`.
 - Les assertions CI et le précache sont alignés sur ces versions.
+
+
+## Lot 164 — composition des métriques du bandeau étudiant (9 novembre 2026)
+
+### Référence prototype
+- Le prototype étudiant présente une bannière d'accueil colorée, avec les métriques secondaires regroupées en cartes compactes à côté du message de bienvenue et de l'objectif hebdomadaire.
+- Dans la version réelle, les valeurs disponibles sont différentes et restent inchangées : XP du compte, série d'activité calculée depuis les jours enregistrés et niveau calculé par le module de gamification.
+
+### Ajustement visuel
+- Sur les grands écrans (à partir de 981 px), les trois métriques réelles passent d'une pile verticale à trois cartes compactes alignées dans la colonne latérale de la bannière.
+- Les libellés et valeurs restent lisibles, avec une disposition verticale interne et un espacement cohérent.
+- Les règles tablette et mobile existantes sont conservées : bannière sur une colonne à 980 px et moins, métriques sur une colonne à 640 px et moins.
+- Aucun chiffre de démonstration du prototype n'est importé.
+
+### Cache et contrôles
+- CSS : `style-prototype-dz.css?v=181`.
+- Service Worker : `dz-de-v3.185.0.0.102`, précache synchronisé.
+- Les contrôles CI du portail, du tableau de bord et de la gamification sont alignés ; une assertion vérifie la nouvelle composition desktop.
+
+### Périmètre
+- Modification CSS uniquement pour l'interface ; références de cache, tests et dossier mis à jour.
+- Aucune modification des routes, identifiants de vue, données, calculs de progression, modules métier, Auth, Supabase, RLS, schéma, migration ou paiement.
+- PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`.
+- Validation visuelle navigateur et nouveau déploiement Cloudflare non revendiqués.
