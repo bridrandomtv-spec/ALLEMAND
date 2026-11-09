@@ -2493,3 +2493,27 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Correction de l'assertion : vérification des classes is-tone-1 et is-tone-6, et interdiction du retour à nth-child.
 - CI #2623 : réussie sur le commit d372ac5215b2bcf30336c7610db27bdde3bd1ad0. Le contrôle مسارك et l'ensemble des contrôles suivants sont passés.
 - Le changement est validé structurellement. La vérification visuelle navigateur sur ordinateur/tablette/téléphone reste à faire ; aucune publication Cloudflare n'est déclarée.
+
+
+## Lot 175 — badges : palette stable par catégorie (9 novembre 2026)
+
+### Défaut identifié
+- Dans l’aperçu du tableau de bord, les accents des badges ouverts étaient distribués avec nth-child. La couleur dépendait donc de l’ordre de présentation (notamment du sous-ensemble des quatre badges récents), pas de la nature de la réussite.
+
+### Correction appliquée
+- Attribution de six tons sémantiques à partir de l’identifiant réel du badge : séances, quiz, résultats, XP, régularité et unités terminées.
+- Les classes is-tone-1 à is-tone-6 sont ajoutées au rendu des badges sans changer leur identifiant, leur condition d’obtention, leur ordre, ni le calcul des récompenses.
+- Les badges ouverts conservent une palette colorée cohérente ; les badges non ouverts restent visuellement distincts par une surface atténuée et un contour discontinu, sans rendre leur titre illisible.
+- Ajustement de la palette en thème sombre et maintien de la grille responsive.
+
+### Cache et contrôles
+- CSS : style-prototype-dz.css?v=189 ; application : app.js?v=3557.
+- Service Worker : dz-de-v3.185.0.0.110 ; précache synchronisé.
+- Assertions ajoutées pour les six catégories, la stabilité des tons, le thème sombre et l’absence de sélecteurs nth-child pour les badges.
+- Validation CI du Lot 175 : en attente sur ce commit.
+
+### Périmètre et limites
+- Changement limité au rendu des badges et aux contrôles de cohérence/cache.
+- Aucun changement au moteur XP, aux données, aux objectifs pédagogiques, aux routes, aux événements, à Auth, Supabase, RLS, schéma, migrations ou paiements.
+- PR #17 reste ouverte et non fusionnée ; aucun commit sur main.
+- Aucun rendu navigateur ni déploiement Cloudflare n’est déclaré.

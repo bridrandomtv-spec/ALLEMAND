@@ -53,7 +53,7 @@ assert.match(css,/\.sd-subject-grid/,'grille des matières du tableau de bord ab
 assert.match(html,/id="sdSubjects"/,'zone des matières du tableau de bord absente');
 assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=188/,'version CSS non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=189/,'version CSS non précachée');
 assert.doesNotMatch(html,/id="studentFocus"|id="studentContinue"/,'ancienne retouche du tableau de bord subsiste dans فضائي الدراسي');
 assert.doesNotMatch(app,/renderStudentFocus|sf-continue-card/,'ancien rendu de tableau de bord subsiste dans فضائي الدراسي');
 
@@ -103,3 +103,11 @@ console.log('✅ XP par compte, événements vérifiés, badges multicolores et 
 assert.match(css,/\.sd-achievement\.is-unlocked>span\{width:44px;height:44px/,'icônes des badges ouverts agrandies absentes');
 assert.match(css,/html\[data-theme="dark"\].*sd-achievement\.is-unlocked/s,'style sombre des badges ouverts absent');
 assert.match(css,/\.sd-goal-unit \.sd-goal-icon/,'identité visuelle des objectifs absente');
+
+// Lot 175 — identité stable des couleurs de badges.
+assert.match(app,/badgeTone=\{[\s\S]*?'first-lesson':1[\s\S]*?'first-quiz':2[\s\S]*?'score-60':3[\s\S]*?'xp-100':4[\s\S]*?'three-days':5[\s\S]*?'first-unit':6/,'palette sémantique des badges absente');
+assert.match(app,/sd-achievement is-tone-/,'classe stable de catégorie absente');
+assert.match(css,/sd-achievement\.is-unlocked\.is-tone-6>span/,'sixième ton de badge absent');
+assert.doesNotMatch(css,/sd-achievement\.is-unlocked:nth-child/,'palette badge encore dépendante de la position DOM');
+assert.match(css,/html\[data-theme="dark"\].*sd-achievement\.is-unlocked\.is-tone-6/s,'palette des badges incomplète en thème sombre');
+assert.match(css,/sd-achievement\.is-locked\{background:var\(--p2\);border-style:dashed/,'état des badges verrouillés insuffisamment distingué');
