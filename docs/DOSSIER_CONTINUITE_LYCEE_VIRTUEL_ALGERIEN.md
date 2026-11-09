@@ -2149,3 +2149,9 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Modifications exclusivement sur `design/prototypes-67-74-alignment` / PR #17.
 - Pas de capture navigateur, de validation visuelle manuelle ni de nouveau déploiement Cloudflare revendiqué.
 - PR #17 doit rester ouverte et non fusionnée ; `main` reste inchangée.
+
+
+### Addendum de cohérence CI — Lot 163
+- Les contrôles `ci/check-masar.mjs` et `ci/check-public-portal.mjs` vérifient tous deux la version réelle du Service Worker `dz-de-v3.185.0.0.99`.
+- Le contrôle du graphique hebdomadaire vérifie le rôle de groupe et le libellé date/état de chaque barre.
+- Le premier passage CI a détecté des assertions de version restées sur v98 ; elles ont été synchronisées avec le worker v99. Un passage CI sur le HEAD final reste à confirmer.
