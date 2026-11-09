@@ -2307,3 +2307,21 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Les assertions ont été corrigées vers CSS v185 et Service Worker .106. La nouvelle exécution sur le HEAD corrigé doit confirmer l'ensemble du lot.
 
 - Une seconde assertion de précache dans `ci/check-gamification.mjs` conservait elle aussi CSS v184 ; elle a été alignée sur v185 après la première exécution. Le contrôle du tableau de bord et celui des interactions ont passé lors de cette exécution ; le contrôle XP/badges doit être rejoué sur le HEAD corrigé.
+
+
+## Lot 169 — ordre du tableau de bord et correction HTML (9 novembre 2026)
+
+### Comparaison avec le prototype étudiant
+- La relecture de `Qwen_html_20261021_bxmtbklup.html` confirme que la bannière « الأستاذ الافتراضي الذكي » est présentée juste après la zone de bienvenue et de progression, avant la carte de la خريطة التعلم البيداغوجية.
+- Dans la composition de la PR, elle avait été déplacée à la fin du tableau de bord. La bannière est donc repositionnée avant `.sd-path-panel` pour rétablir l'ordre narratif du prototype : accueil → assistant → parcours pédagogique → panneaux de suivi.
+
+### Correction de structure
+- Suppression d'une balise fermante `</section>` orpheline découverte dans `.sd-aside` lors de la relecture du HTML final du lot 168.
+- Les panneaux messages et notifications restent dans la colonne latérale.
+- Ajout d'assertions CI sur l'ordre assistant/parcours et l'absence de cette balise orpheline.
+- Aucun contenu de données, fonction JavaScript, route, identifiant de vue ou action utilisateur n'a été modifié.
+
+### Périmètre
+- Fichiers modifiés : `index.html`, `ci/check-masar.mjs`, présent dossier de continuité.
+- CSS v185 et Service Worker .106 inchangés : aucune modification de ressource CSS ni de cache n'est nécessaire pour ce déplacement HTML.
+- PR #17 maintenue ouverte et non fusionnée ; `main` non modifiée. Validation navigateur et déploiement restent à faire.
