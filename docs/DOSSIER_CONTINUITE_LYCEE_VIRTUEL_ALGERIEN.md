@@ -3347,3 +3347,10 @@ Le traitement des trois codes MFA incorrects appelait directement `SB.logout()`,
 - Assertions statiques uniquement ; pas de test navigateur ou de comptes réels.
 - Aucun secret, schéma, migration, RLS, grant, rôle ou réglage Auth global Supabase modifié.
 - Aucun déploiement Cloudflare ; PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
+
+
+#### Ajustement CI après exécution Lot 198
+- CI #2740 sur le correctif applicatif : échec d'une assertion historique qui exigeait encore l'appel direct `SB.logout()` après trois tentatives.
+- Le code a été conservé dans sa version plus sûre ; l'assertion a été adaptée pour exiger `returnToLoginAfterMfa()` et donc le contrôle du résultat de déconnexion.
+- Correction du contrôle CI : commit `ea813d2967c4a2d45983ca492c4f89f8244b4560`.
+- Les exécutions #2742 et #2743 doivent être vérifiées ; aucune réussite n'est présumée.
