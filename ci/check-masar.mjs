@@ -56,10 +56,10 @@ assert.match(js, /ms-unit-grid/, 'cartes de progression par unité absentes');
 assert.match(css, /grid-template-areas:"hero hero" "next chart" "progress progress" "units units"/, 'grille desktop مسارك absente');
 assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/, 'grille mobile مسارك absente');
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
-assert.match(html, /style-prototype-dz\.css\?v=191/, 'cache CSS v184 non actualisé');
+assert.match(html, /style-prototype-dz\\.css\\?v=192/, 'cache CSS v184 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.185\.0\.0\.114/, 'version service worker v3.185 non actualisée');
-assert.match(sw, /style-prototype-dz\.css\?v=191/, 'précache CSS v184 non actualisé');
+assert.match(sw, /dz-de-v3\\.185\\.0\\.0\\.115/, 'version service worker v3.185 non actualisée');
+assert.match(sw, /style-prototype-dz\\.css\\?v=192/, 'précache CSS v184 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
 assert.match(html, /app\.js\?v=3560/, 'cache app.js non actualisé');
@@ -115,12 +115,18 @@ assert.match(css,/sd-achievement\.is-unlocked\.is-tone-6>span/,'sixième catégo
 assert.doesNotMatch(css,/sd-achievement\.is-unlocked:nth-child/,'palette badge dépendante de la position DOM');
 assert.match(css,/prefers-reduced-motion:reduce/,'respect de la réduction des animations absent');
 
-// Lot 168 — l'assistant du tableau de bord est une bannière pleine largeur, hors colonne latérale.
-assert.ok(html.indexOf('sd-path-panel') < html.indexOf('sd-ai-feature'), 'assistant pédagogique doit suivre les panneaux du tableau de bord, comme dans le prototype étudiant');
-assert.ok(html.indexOf('sd-ai-feature') < html.indexOf('sd-quick'), 'les raccourcis complémentaires ne doivent pas précéder le parcours et les panneaux du prototype étudiant');
+// Lot 180 — composition conforme aux deux prototypes : parcours, accès rapides,
+ // puis grille principale avec assistant et recommandations dans la colonne latérale.
+assert.ok(html.indexOf('sd-path-panel') < html.indexOf('sd-quick'), 'les accès rapides doivent suivre la carte pédagogique');
+assert.ok(html.indexOf('sd-quick') < html.indexOf('sd-layout'), 'les accès rapides doivent précéder la grille principale');
+const asideStart = html.indexOf('<aside class="sd-aside">');
+const asideEnd = html.indexOf('</aside>', asideStart);
+assert.ok(asideStart >= 0 && html.indexOf('sd-ai-feature') > asideStart && html.indexOf('sd-ai-feature') < asideEnd, 'assistant IA absent de la colonne latérale');
+assert.ok(html.indexOf('sd-recommend-panel') > asideStart && html.indexOf('sd-recommend-panel') < asideEnd, 'recommandations absentes de la colonne latérale');
+assert.ok(html.indexOf('sd-ai-feature') < html.indexOf('sd-recommend-panel') && html.indexOf('sd-recommend-panel') < html.indexOf('sd-messages-panel'), 'ordre assistant, recommandations et messages incorrect');
 assert.doesNotMatch(html, /<aside class="sd-aside">\s*<\/section>/, 'balise section orpheline dans la colonne latérale');
-assert.match(css, /\.sd-ai-feature\{[^}]*grid-template-areas:"head action" "copy action" "caps action"/, 'composition horizontale de l’assistant absente');
-assert.match(css, /@media\(max-width:720px\)[\s\S]*?\.sd-ai-feature\{[^}]*grid-template-areas:"head" "copy" "caps" "action"/, 'adaptation mobile de la bannière assistant absente');
+assert.match(css, /\.sd-aside \.sd-ai-feature\{[^}]*display:block/, 'assistant IA non adapté à la colonne latérale');
+assert.match(css, /\.sd-aside \.sd-recommend-panel\{grid-column:auto!important\}/, 'recommandation non adaptée à la colonne latérale');
 
 assert.match(app,/sd-unit-chart-legend/,'légende des états de progression absente');
 assert.match(app,/sd-unit-chart-item is-/,'état réel de chaque unité absent du graphique');
