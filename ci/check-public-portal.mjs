@@ -526,6 +526,28 @@ const linkStart=app.indexOf("$('#lcBtn').addEventListener('click'");
 const linkBlock=app.slice(linkStart,linkStart+5000);
 if (!linkBlock.includes("if(!result || !result.ok)") || !linkBlock.includes("if(await window.DZ_MFA.requireGate()) return;")) fail('liaison cloud sans validation du login ou garde MFA');
 
+const mfaGateStart=mfaModule.indexOf('async function requireGate()');
+const mfaGateEnd=mfaModule.indexOf('async function finishLogin()',mfaGateStart);
+const mfaGateBlock=mfaModule.slice(mfaGateStart,mfaGateEnd);
+const mfaFinishStart=mfaModule.indexOf('async function finishLogin()');
+const mfaFinishEnd=mfaModule.indexOf("var method=$('#mfaChallengeMethod')",mfaFinishStart);
+const mfaFinishBlock=mfaModule.slice(mfaFinishStart,mfaFinishEnd);
+const mfaSubmitStart=mfaModule.indexOf("if(challengeForm)challengeForm.addEventListener('submit'");
+const mfaSubmitEnd=mfaModule.indexOf("document.addEventListener('submit'",mfaSubmitStart);
+const mfaSubmitBlock=mfaModule.slice(mfaSubmitStart,mfaSubmitEnd);
+if (!mfaGateBlock.includes('await SB.mfaAssurance()') ||
+    !mfaGateBlock.includes("if(!emailState.ok)") ||
+    !mfaGateBlock.includes("if(emailState.enrolled&&!emailState.verified&&!nativeState.required)") ||
+    !mfaGateBlock.includes('if(!nativeState.required)return false;') ||
+    !mfaGateBlock.includes('return true;')) fail('garde MFA : les états non vérifiés ne bloquent pas explicitement l’accès');
+if (!mfaSubmitBlock.includes('if(result&&result.ok){pending=null;await finishLogin();return;}') ||
+    !mfaSubmitBlock.includes('if(attempts>=3){await SB.logout();') ||
+    !mfaSubmitBlock.includes('SB.mfaVerifyRecovery(value)') ||
+    !mfaSubmitBlock.includes("SB.mfaEmail({action:'verify'")) fail('défi MFA : validation, récupération ou limite des tentatives incomplète');
+if (!mfaFinishBlock.includes('window.cloudAuthority?await window.cloudAuthority():null') ||
+    !mfaFinishBlock.includes('window.DZ.enterApp(profile)')) fail('fin du défi MFA : entrée dans le tableau de bord non conditionnée au profil cloud');
+
+
 for (const marker of ['id="mfaChallengeForm"','id="mfaChallengeMethod"','id="mfaChallengeCode"','id="mfaSecurityCard"','id="mfaSecurityContent"']) if (!html.includes(marker)) fail('interface MFA absente : '+marker);
 if (!html.includes('mfa-security.js?v=8') || !sw.includes('./mfa-security.js?v=8')) fail('module MFA absent du chargement/précache');
 if (!html.includes('id="mfaLoginSmsResend"') || !html.includes('data-mfa-login-resend')) fail('bouton de renvoi SMS au défi de connexion absent');
