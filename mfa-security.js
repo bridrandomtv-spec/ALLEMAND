@@ -128,7 +128,7 @@
       finally{resendLogin.disabled=false;resendLogin.removeAttribute('aria-busy');}
       return;
     }
-    if(ev.target.closest('[data-mfa-cancel]')){ev.preventDefault();try{await SB.logout();}catch(e){}pending=null;showLogin();status('#loginErr','تم إلغاء تسجيل الدخول.');return;}
+    if(ev.target.closest('[data-mfa-cancel]')){ev.preventDefault();await returnToLoginAfterMfa('تم إلغاء تسجيل الدخول.');return;}
     if(ev.target.closest('[data-mfa-enroll]')){await enrollTotp();return;}
     if(ev.target.closest('[data-mfa-email-disable]')){if(!window.confirm('هل تريد تعطيل التحقق عبر البريد الإلكتروني؟'))return;var off=await SB.mfaEmail({action:'disable'});if(!off.ok){status('#mfaSecurityMessage',off.error||off.err||'تعذر التعطيل.');return;}await renderSecurity();status('#mfaSecurityMessage','تم تعطيل التحقق عبر البريد الإلكتروني.');return;}
     if(ev.target.closest('[data-mfa-phone-resend]')){if(enrollingPhone){var again=await SB.mfaStart(enrollingPhone.factorId);if(again.ok)enrollingPhone.challengeId=again.challengeId;else status('#mfaPhoneError',again.err);}return;}
