@@ -3198,3 +3198,10 @@ Permettre de consulter correctement l'état du facteur e-mail tant que le domain
 - Exécuter et contrôler la CI après les commits du lot.
 - Vérifier en navigateur que l'action status fonctionne sans secrets Resend, que start affiche une indisponibilité propre tant que le fournisseur n'est pas configuré, et que les erreurs de statut bloquent bien la connexion.
 - Après acquisition d'un domaine et validation DNS SPF/DKIM, configurer MFA_EMAIL_FROM, RESEND_API_KEY et MFA_EMAIL_PEPPER, puis réaliser un test d'envoi et de vérification réel.
+
+### Complément Lot 192 — contrôle CI du Service Worker
+- CI #2716 (garde MFA côté client) : réussite.
+- CI #2717 (source Edge Function MFA e-mail) : réussite.
+- CI #2719 a échoué sur une assertion de portail préexistante qui imposait encore le numéro de Service Worker dz-de-v3.185.0.0.123 après son incrément à .124 ; les contrôles précédents du job, dont les unités et les vérifications du portail jusqu'au contrôle du précache, étaient réussis.
+- Assertion corrigée dans ci/check-public-portal.mjs pour attendre dz-de-v3.185.0.0.124. Une nouvelle exécution CI sur le HEAD intégrant cette correction reste à confirmer.
+- Aucun test navigateur ou test de compte réel n'est remplacé par cette CI structurelle.
