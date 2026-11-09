@@ -3250,3 +3250,26 @@ Permettre de consulter correctement l'état du facteur e-mail tant que le domain
 - `main` n'a pas été modifiée.
 - Aucun changement Supabase, aucune migration, aucune modification RLS/Auth globale et aucun déploiement Cloudflare n'ont été effectués dans ce lot.
 - Prochaine étape : tests contrôlés avec un compte de test pour la connexion, restauration après rechargement, challenge TOTP/SMS et codes de récupération ; tester l'e-mail seulement après configuration d'un expéditeur vérifié.
+
+
+---
+
+## Lot 195 — assertions CI du défi MFA et de l'entrée après vérification (9 novembre 2026)
+
+### Modifications
+- Extension de `ci/check-public-portal.mjs` pour contrôler la logique du garde MFA, et pas seulement la présence de ses fonctions.
+- Le contrôle vérifie que l'échec de lecture du statut e-mail reste bloquant, que le facteur e-mail non vérifié déclenche un défi lorsque le facteur natif n'impose pas déjà AAL2, et que l'absence d'exigence native permet de poursuivre uniquement après le contrôle du statut e-mail.
+- Le traitement du défi doit appeler `finishLogin()` uniquement après un résultat de vérification positif.
+- Le script vérifie aussi la voie de récupération, la limite de trois tentatives avec déconnexion et le chargement du profil cloud avant `enterApp()`.
+- Commit code : `c161be4cb22605cf79af0e54e5ae399b91af7966`.
+
+### Résultat et limites
+- Les assertions viennent d'être ajoutées ; l'exécution CI associée doit encore être observée. Aucune réussite n'est anticipée.
+- Ces contrôles restent structurels : ils ne simulent pas les appels Supabase, les codes TOTP/SMS, le courrier Resend ni les interactions du navigateur.
+- Aucun changement de logique d'authentification applicative, de configuration Auth globale, de RLS, de schéma ou de fonction Edge n'a été effectué dans ce lot.
+- Aucun secret Resend n'a été lu ou modifié ; l'envoi e-mail reste en attente d'un domaine expéditeur vérifié.
+- PR #17 reste ouverte et non fusionnée ; `main` et Cloudflare production restent inchangés.
+
+### État CI antérieur
+- CI #2729 : réussite sur le commit documentaire `8ded41915f725776c8ec92662b4fae399381491f`.
+- Le commit `c161be4` introduit les nouvelles assertions et nécessite sa propre exécution CI.
