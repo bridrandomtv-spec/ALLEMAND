@@ -2698,3 +2698,9 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 ### Validation Lot 183 — en attente de CI
 - La vérification des fichiers confirme la présence du gestionnaire de renvoi, la mise à jour du challenge, la synchronisation HTML/Service Worker et les assertions CI.
 - La CI complète doit encore confirmer le nouveau HEAD. Aucun SMS réel, test de navigateur ou test de compte Supabase n'est revendiqué.
+
+### Correctif CI Lot 183
+- CI #2676 a exécuté les contrôles jusqu'au portail public, puis a échoué sur une assertion de cache du guide de bienvenue qui conservait encore l'identifiant Service Worker v3.185.0.0.118.
+- Le code du renvoi SMS et les assertions MFA ont passé les contrôles précédents du même job ; l'échec observé était une référence de version historique dans le validateur.
+- Les deux occurrences restantes de v3.185.0.0.118 dans ci/check-public-portal.mjs ont été alignées sur v3.185.0.0.119.
+- Le nouveau HEAD doit être revalidé par une CI complète ; aucun résultat de réussite n'est présumé.
