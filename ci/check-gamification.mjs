@@ -111,3 +111,7 @@ assert.match(css,/sd-achievement\.is-unlocked\.is-tone-6>span/,'sixième ton de 
 assert.doesNotMatch(css,/sd-achievement\.is-unlocked:nth-child/,'palette badge encore dépendante de la position DOM');
 assert.match(css,/html\[data-theme="dark"\].*sd-achievement\.is-unlocked\.is-tone-6/s,'palette des badges incomplète en thème sombre');
 assert.match(css,/sd-achievement\.is-locked\{background:var\(--p2\);border-style:dashed/,'état des badges verrouillés insuffisamment distingué');
+
+assert.match(css,/grid-template-areas:"hero hero"[\s\S]*?"subjects ai"[\s\S]*?"achievements activity"/,'composition complète du tableau de bord étudiant absente');
+assert.match(css,/\.sd-layout,\s*#shell #app \[data-view="dashboard"\] \.sd-main,\s*#shell #app \[data-view="dashboard"\] \.sd-aside\{display:contents!important\}/,'redistribution des zones de la grille absente');
+assert.match(css,/\.sd-ai-feature\{[\s\S]*?grid-template-areas:"head" "copy" "caps" "action"/,'carte IA intégrée à la colonne latérale absente');

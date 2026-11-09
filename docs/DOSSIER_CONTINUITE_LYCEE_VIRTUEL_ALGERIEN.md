@@ -2573,3 +2573,16 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Relancer la suite complète sur le HEAD suivant ; la validation navigateur et le test Supabase réel restent à effectuer séparément.
 
 - Addendum CI : le contrôle de `مسارك` conservait également une assertion sur l'identifiant du Service Worker v3.185.0.0.110 ; elle est alignée sur v3.185.0.0.111.
+
+
+## Lot 177 — recomposition esthétique du tableau de bord étudiant (9 novembre 2026)
+- Comparaison réalisée entre les deux prototypes HTML fournis et la composition réelle de `data-view="dashboard"`.
+- Constat : les éléments existaient déjà (bandeau, 4 indicateurs, parcours, matières, graphiques, recommandations, messages, notifications, assistant IA, raccourcis), mais leur ordre et leur distribution ne reprenaient pas la composition des prototypes ; la carte IA et les raccourcis se retrouvaient notamment en fin de page.
+- Réorganisation CSS par zones de grille, sans modifier le HTML, les IDs, les routes, les données, les calculs ou les gestionnaires d'événements : bandeau et statistiques en tête, parcours pédagogique pleine largeur, raccourcis sous le parcours, matières dans la colonne principale et assistant IA dans la colonne latérale ; progression, recommandations, compétences, messagerie, objectifs, notifications, badges et activité répartis ensuite en deux colonnes équilibrées.
+- Sous 820 px, la grille devient une colonne avec ordre de lecture explicite ; sous 520 px, densité, marges, titres et raccourcis sont adaptés au mobile.
+- Renforcement de la hiérarchie des titres, de la séparation des panneaux, des accents colorés des quatre indicateurs et des ombres ; les couleurs ne représentent aucune note ni aucun niveau de performance.
+- Thème sombre conservé et renforcé pour les panneaux et indicateurs.
+- Aucun chiffre fictif des prototypes, Chart.js, Tailwind, nouvelle dépendance, changement Supabase, RLS, schéma, paiement ou logique pédagogique ajouté.
+- Cache CSS : `style-prototype-dz.css?v=191` ; Service Worker : `dz-de-v3.185.0.0.112`.
+- Assertions de cache et de composition ajoutées aux contrôles existants ; CI à exécuter sur le nouveau HEAD.
+- Limite : validation CSS structurelle uniquement à ce stade ; il faut encore contrôler la prévisualisation sur grand écran, tablette et mobile avant validation visuelle définitive.

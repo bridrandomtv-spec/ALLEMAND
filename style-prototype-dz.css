@@ -17778,3 +17778,127 @@ html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-achievement.is-u
 #gate.public-auth-page .gform button:disabled{opacity:.7!important;cursor:not-allowed!important}
 #gate.public-auth-page .gerr:not([hidden]){display:block!important;margin:2px 0 4px!important}
 html[data-theme="dark"] #gate.public-auth-page .gerr:not([hidden]){border-color:#75414a!important;background:#321d22!important;color:#ffc4cb!important}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   LOT 177 — recomposition du tableau de bord selon les prototypes 67–74
+   La grille redistribue les composants existants sans modifier leurs IDs,
+   leurs données, leurs gestionnaires d'événements ou les vues associées.
+   ══════════════════════════════════════════════════════════════════════ */
+#shell #app [data-view="dashboard"] .sd-wrap{
+  grid-template-columns:minmax(0,1.62fr) minmax(285px,.9fr);
+  grid-template-areas:
+    "hero hero"
+    "stats stats"
+    "path path"
+    "quick quick"
+    "subjects ai"
+    "unit-progress recommend"
+    "skills messages"
+    "goals updates"
+    "achievements activity";
+  align-items:stretch;
+  gap:18px;
+}
+#shell #app [data-view="dashboard"] .sd-layout,
+#shell #app [data-view="dashboard"] .sd-main,
+#shell #app [data-view="dashboard"] .sd-aside{display:contents!important}
+#shell #app [data-view="dashboard"] .sd-hero{grid-area:hero}
+#shell #app [data-view="dashboard"] .sd-stats{grid-area:stats}
+#shell #app [data-view="dashboard"] .sd-path-panel{grid-area:path}
+#shell #app [data-view="dashboard"] .sd-quick{grid-area:quick}
+#shell #app [data-view="dashboard"] .sd-subjects-panel{grid-area:subjects}
+#shell #app [data-view="dashboard"] .sd-ai-feature{
+  grid-area:ai;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-areas:"head" "copy" "caps" "action";
+  align-content:start;
+  align-self:stretch;
+  gap:10px;
+  padding:22px;
+}
+#shell #app [data-view="dashboard"] .sd-unit-progress-panel{grid-area:unit-progress}
+#shell #app [data-view="dashboard"] .sd-recommend-panel{grid-area:recommend;align-self:stretch}
+#shell #app [data-view="dashboard"] .sd-skills-panel{grid-area:skills}
+#shell #app [data-view="dashboard"] .sd-messages-panel{grid-area:messages}
+#shell #app [data-view="dashboard"] .sd-goals-panel{grid-area:goals}
+#shell #app [data-view="dashboard"] .sd-aside>.sd-panel:nth-child(2){grid-area:updates}
+#shell #app [data-view="dashboard"] .sd-achievements-panel{grid-area:achievements}
+#shell #app [data-view="dashboard"] .sd-activity-panel{grid-area:activity}
+#shell #app [data-view="dashboard"] .sd-panel{
+  min-width:0;
+  height:100%;
+  padding:clamp(18px,1.8vw,25px);
+  border-radius:21px;
+  box-shadow:0 7px 22px rgba(15,55,32,.055);
+}
+#shell #app [data-view="dashboard"] .sd-panel-head{align-items:flex-start}
+#shell #app [data-view="dashboard"] .sd-eyebrow{font-size:11px;letter-spacing:.01em}
+#shell #app [data-view="dashboard"] .sd-panel-head h2{font-size:clamp(18px,1.45vw,21px);line-height:1.5}
+#shell #app [data-view="dashboard"] .sd-panel-head p{font-size:12px;line-height:1.75}
+#shell #app [data-view="dashboard"] .sd-stat-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:18px;
+  background:linear-gradient(150deg,var(--p),var(--p2));
+  box-shadow:0 5px 16px rgba(15,55,32,.045);
+}
+#shell #app [data-view="dashboard"] .sd-stat-card:before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:3px;
+  background:var(--sd-stat-accent,#0b8550);
+}
+#shell #app [data-view="dashboard"] .sd-stat-lessons{--sd-stat-accent:#0b8550}
+#shell #app [data-view="dashboard"] .sd-stat-units{--sd-stat-accent:#3975d7}
+#shell #app [data-view="dashboard"] .sd-stat-correct{--sd-stat-accent:#8b55c5}
+#shell #app [data-view="dashboard"] .sd-stat-attempts{--sd-stat-accent:#d68a1d}
+#shell #app [data-view="dashboard"] .sd-stat-icon{border:1px solid color-mix(in srgb,var(--sd-stat-accent) 22%,var(--b));background:color-mix(in srgb,var(--sd-stat-accent) 10%,var(--p));}
+#shell #app [data-view="dashboard"] .sd-quick-card{min-height:88px;padding:15px 16px}
+#shell #app [data-view="dashboard"] .sd-quick-card b{font-size:13px}
+#shell #app [data-view="dashboard"] .sd-quick-card small{font-size:11px;line-height:1.65}
+#shell #app [data-view="dashboard"] .sd-ai-feature>p{font-size:12px;line-height:1.9}
+#shell #app [data-view="dashboard"] .sd-ai-feature>button{width:100%;min-height:50px}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-panel{box-shadow:0 8px 24px rgba(0,0,0,.16)}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-stat-card{background:linear-gradient(150deg,var(--p),var(--p2))}
+@media(max-width:1080px){
+  #shell #app [data-view="dashboard"] .sd-wrap{grid-template-columns:minmax(0,1.35fr) minmax(255px,.9fr);gap:15px}
+  #shell #app [data-view="dashboard"] .sd-panel{padding:19px}
+  #shell #app [data-view="dashboard"] .sd-ai-feature{padding:18px}
+}
+@media(max-width:820px){
+  #shell #app [data-view="dashboard"] .sd-wrap{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:
+      "hero"
+      "stats"
+      "path"
+      "quick"
+      "subjects"
+      "ai"
+      "unit-progress"
+      "recommend"
+      "skills"
+      "messages"
+      "goals"
+      "updates"
+      "achievements"
+      "activity";
+    gap:14px;
+  }
+  #shell #app [data-view="dashboard"] .sd-panel{height:auto}
+  #shell #app [data-view="dashboard"] .sd-ai-feature{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:520px){
+  #shell #app [data-view="dashboard"] .sd-wrap{gap:12px}
+  #shell #app [data-view="dashboard"] .sd-panel{padding:16px;border-radius:17px}
+  #shell #app [data-view="dashboard"] .sd-panel-head{margin-bottom:14px}
+  #shell #app [data-view="dashboard"] .sd-panel-head h2{font-size:17px}
+  #shell #app [data-view="dashboard"] .sd-panel-head p{font-size:11px}
+  #shell #app [data-view="dashboard"] .sd-quick{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  #shell #app [data-view="dashboard"] .sd-quick-card{min-height:76px;padding:10px 9px}
+  #shell #app [data-view="dashboard"] .sd-quick-card b{font-size:11px}
+  #shell #app [data-view="dashboard"] .sd-quick-card small{font-size:9px}
+}
