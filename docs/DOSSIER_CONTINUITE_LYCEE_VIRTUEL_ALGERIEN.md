@@ -2758,3 +2758,48 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - CI du commit de documentation à venir. Aucun test d'accès avec JWT AAL1/AAL2 dédié n'a été exécuté ; l'absence d'expression AAL dans les politiques consultées est un constat catalogue, pas un test d'intrusion.
 
 - CI #2685 : réussite du job « Validation structurelle & pédagogique », 33 étapes terminées avec succès sur le commit d'audit initial `d58513f9625477589b9c9f78e443d761ac52ed0a`.
+
+
+## Lot 185 — cartographie des tables, politiques RLS et fonctions privilégiées (9 novembre 2026)
+
+### Périmètre et méthode
+- Audit réalisé en lecture seule sur le projet Supabase actif `azjwcybivirvpxbfhyzk`, sans exécuter de DDL ni de DML.
+- Inventaire des tables et colonnes du schéma `public`, lecture de `pg_policies` pour `public` et `storage`, inventaire des fonctions `SECURITY DEFINER`, de leurs droits EXECUTE et de marqueurs d'autorisation dans leur définition.
+- Aucun compte utilisateur, JWT AAL1/AAL2 ou flux métier n'a été utilisé pour un test d'accès en direct. Les constats ci-dessous décrivent le catalogue et le code SQL observés, pas une preuve de comportement runtime.
+
+### Résultats quantifiés
+- 34 tables du schéma `public` recensées.
+- 76 politiques RLS recensées dans les schémas `public` et `storage`.
+- 0 politique contenant une condition AAL dans `qual` ou `with_check`.
+- 23 politiques ciblent le rôle PostgreSQL `PUBLIC` (à distinguer du rôle explicite `anon`) ; 1 politique cible explicitement `anon`. Les politiques `PUBLIC` doivent être lues comme applicables à tous les rôles concernés, sous réserve de leurs expressions de filtrage.
+- 71 fonctions `SECURITY DEFINER` dans `public` ; 42 sont exécutables par `authenticated`, 1 par `anon`. 51 définitions contiennent `auth.uid()`, 18 contiennent `admin_can(`. Ces marqueurs textuels ne constituent pas à eux seuls une validation de sécurité : les arguments, branches, appels indirects et droits effectifs doivent être vérifiés fonction par fonction.
+- Les fonctions trigger sans droit EXECUTE direct par les rôles applicatifs ne doivent pas être assimilées aux RPC exposées ; les déclencheurs et les fonctions RPC doivent être traités dans deux catégories distinctes.
+
+### Matrice fonctionnelle préliminaire (à confirmer par les flux applicatifs)
+| Domaine / tables | Opérations observées | Acteurs / garde-fous présents dans les politiques |
+|---|---|---|
+| Identité et profils : `profiles`, `admin_roles`, `admin_permissions`, `wilaya_assignments` | SELECT, UPDATE, ALL | Profil propre, administrateur, membres d'une conversation, agents avec permissions et périmètre wilaya ; certaines tables de rôles/permissions sont lisibles par tout utilisateur authentifié. |
+| Scolarité : `notes`, `seances_done`, `memoire_cards`, `lesson_content`, `lesson_content_trad` | SELECT, INSERT, UPDATE, ALL | Élève/propriétaire, enseignant, administrateur ; contenu conditionné par gratuité/abonnement. Les tables de progression personnelle ont des règles de propriété. |
+| Parent/enfant : `child_links`, `parent_link_requests`, `parent_role_requests` | SELECT et RPC dédiées | Participants au lien et administrateur ; les demandes de rôle parent sont réservées à l'administrateur dans la politique de lecture. |
+| Messagerie et modération : `msg_conversations`, `msg_members`, `msg_messages`, `msg_attachments`, `msg_reports`, `msg_log`, `msg_blocks`, `storage.objects` | SELECT, INSERT, UPDATE, DELETE | Membres de conversation, expéditeur, modérateur ; Storage limite les objets privés aux membres/modérateurs ou au propriétaire selon le chemin. |
+| Paiement/comptabilité : `payments`, `subscriptions`, `plans`, `receipts`, `accounting_entries`, `accounting_closures` | SELECT, INSERT, UPDATE, ALL et RPC comptables | Propriétaire, administrateur, agent de validation/comptabilité avec permission et périmètre wilaya ; plusieurs RPC privilégiées contrôlent `admin_can`. |
+| Gouvernance et support : `agreements`, `agreement_acceptances`, `audit_logs`, `notifications`, `support_tickets`, `platform_settings`, `ads`, `sponsors`, `documents_meta` | SELECT, INSERT, UPDATE, ALL et RPC | Propriétaire, auteur, agents/modérateurs ou administrateur selon la table ; certains flux publics de dépôt (sponsors) sont intentionnels et doivent rester séparés des accès sensibles. |
+
+### Points d'attention qui ressortent de la cartographie
+1. **AAL2 absent partout dans les politiques inspectées.** Le contrôle MFA reste côté client tant qu'une règle serveur adaptée n'est pas définie et testée.
+2. **Politiques `PUBLIC` nombreuses.** Elles ne signifient pas automatiquement accès anonyme aux données : leurs expressions utilisent souvent `auth.uid()`, `is_admin()` ou une propriété de ligne. Elles nécessitent néanmoins un examen de l'exposition réelle aux rôles `anon` et `authenticated`, table par table.
+3. **Données à fort impact.** Profils, notes, demandes parentales, messagerie, pièces jointes, paiements, abonnements, reçus, comptabilité et journaux d'audit sont les premiers domaines à intégrer à une matrice de criticité et de rôles.
+4. **RPC privilégiées.** Les fonctions de validation des paiements/abonnements, gestion des rôles, paramètres, clôture comptable, émission de reçus, modération et support doivent être auditées individuellement. La présence de `auth.uid()` ou `admin_can()` ne suffit pas à conclure qu'elles sont sûres.
+5. **Fonction accessible à anon.** `agreement_current(cle text)` est la seule fonction `SECURITY DEFINER` du périmètre public pour laquelle le privilège EXECUTE de `anon` est observé. Le lot suivant doit lire son corps complet et confirmer qu'elle ne divulgue que le texte/version d'un accord actif et qu'aucune donnée privée ne peut être obtenue par le paramètre.
+6. **Rôles métier à expliciter.** La base distingue les permissions d'agents et de responsables régionaux par `admin_can`, `admin_role_of` et `admin_sees_wilaya`. La future matrice devra inclure élève, parent, enseignant, modérateur, agent de wilaya, responsable régional, administrateur général, anon et service_role.
+
+### Décisions et suite
+- Aucun changement SQL, RLS, rôle, grant, fonction, paramètre Auth ou secret n'a été effectué.
+- Ne pas ajouter une politique restrictive AAL2 globale avant d'avoir identifié les flux qui doivent rester accessibles en AAL1 (inscription, lecture publique/gratuite, connexion, récupération, contenus gratuits, dépôts publics intentionnels et fonctions de service).
+- Étape suivante : examiner le corps complet de `agreement_current`, puis établir la liste des RPC mutatrices et leur garde d'autorisation réelle ; construire une matrice rôle × ressource × opération × niveau AAL recommandé, avec exceptions justifiées.
+- Toute proposition SQL restera un plan non appliqué tant qu'une autorisation explicite n'aura pas été donnée.
+
+### Validation Lot 185
+- CI #2686 : réussite du job « Validation structurelle & pédagogique » sur le commit `e05ff3a3d931271dc8e5dc8d6adef01852ec3c25`.
+- L'audit catalogue du présent lot est en lecture seule. Aucun test navigateur, test de compte réel, test JWT AAL1/AAL2 ou déploiement n'est revendiqué.
+- PR #17 reste ouverte et non fusionnée ; aucune modification de `main` et aucun déploiement Cloudflare.
