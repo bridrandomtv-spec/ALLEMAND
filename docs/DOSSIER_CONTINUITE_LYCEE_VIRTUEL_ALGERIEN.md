@@ -3427,3 +3427,37 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Correction ciblée : assertion mise à jour vers `dz-de-v3.185.0.0.128`, commit `2d6d7af`.
 - Aucun code applicatif Masar ni contenu du tableau de bord n'a été modifié par cette correction.
 - Nouvelle CI à surveiller ; le résultat n'est pas encore connu au moment de cette note.
+
+---
+
+## Lot 201 — restauration des points d'entrée du portail (10 novembre 2026)
+
+### Symptômes observés
+- Console navigateur : `ReferenceError: enterApp is not defined` à la construction de `window.DZ`.
+- `bootGate()` appelait `paintGateStats()`, également absente.
+- `modules.js` signalait ensuite `app.js non chargé`, car l'évaluation de `app.js` s'arrêtait avant l'affectation de `window.DZ`.
+
+### Cause racine
+- L'historique Git confirme que le commit `2f4de81` (Lot 178) a supprimé les déclarations `paintGateStats()` et `enterApp()` alors qu'il conservait leurs appels.
+- Les commits ultérieurs ont restauré `bindGateEvents()` et renforcé MFA, mais ces deux fonctions n'ont pas été réintroduites.
+- Il s'agit donc d'une régression JavaScript de portée globale, antérieure au module `modules.js`, et non d'une erreur de configuration Supabase.
+
+### Correction
+- Restauration de `paintGateStats()` pour rendre les indicateurs descriptifs du portail.
+- Restauration de `enterApp(session)` : masque le portail, affiche `#shell`, puis route vers la vue demandée si elle est valide, sinon vers `masar`.
+- Conservation des gardes MFA, des flux Auth cloud et des événements existants ; aucune modification du schéma Supabase, des politiques RLS ou des données.
+- Cache applicatif : `app.js?v=3563` dans `index.html` et le précache.
+- Service Worker : `dz-de-v3.185.0.0.129`.
+- Assertions CI ajoutées pour vérifier les deux déclarations et l'export `window.DZ.enterApp`.
+
+### Commits
+- Restauration `app.js` : `12cd619`.
+- Cache HTML : `a220980`.
+- Précache Service Worker : `55a3b0d`.
+- Contrôles CI : `61714f3`.
+
+### Validation et limites
+- Les changements sont sur `design/prototypes-67-74-alignment` uniquement.
+- La CI doit encore confirmer le nouveau HEAD ; les assertions statiques ne remplacent pas un test navigateur.
+- Après mise à jour du preview, vérifier le chargement sans erreur de `app.js`, la création de `window.DZ`, le portail de connexion, le mode démo et l'accès au tableau de bord après authentification.
+- Aucun déploiement Cloudflare ni fusion de PR #17 n'a été effectué.
