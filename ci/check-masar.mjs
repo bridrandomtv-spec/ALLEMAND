@@ -56,10 +56,10 @@ assert.match(js, /ms-unit-grid/, 'cartes de progression par unité absentes');
 assert.match(css, /grid-template-areas:"hero hero" "next chart" "progress progress" "units units"/, 'grille desktop مسارك absente');
 assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/, 'grille mobile مسارك absente');
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
-assert.match(html, /style-prototype-dz\.css\?v=185/, 'cache CSS v184 non actualisé');
+assert.match(html, /style-prototype-dz\.css\?v=186/, 'cache CSS v184 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
 assert.match(sw, /dz-de-v3\.185\.0\.0\.107/, 'version service worker v3.185 non actualisée');
-assert.match(sw, /style-prototype-dz\.css\?v=185/, 'précache CSS v184 non actualisé');
+assert.match(sw, /style-prototype-dz\.css\?v=186/, 'précache CSS v184 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
 assert.match(html, /app\.js\?v=3555/, 'cache app.js non actualisé');
@@ -120,9 +120,9 @@ assert.match(css, /@media\(max-width:720px\)[\s\S]*?\.sd-ai-feature\{[^}]*grid-t
 
 assert.match(app,/sd-unit-chart-legend/,'légende des états de progression absente');
 assert.match(app,/sd-unit-chart-item is-/,'état réel de chaque unité absent du graphique');
-assert.match(css,/sd-unit-chart-item\\.is-complete/,'couleur des unités terminées absente');
-assert.match(css,/sd-unit-chart-item\\.is-started/,'couleur des unités commencées absente');
-assert.match(css,/sd-unit-chart-item\\.is-pending/,'couleur des unités non commencées absente');
-assert.match(css,/sd-skill-row:nth-child\\(6n\\+1\\)/,'palette multicolore des résultats par unité absente');
-assert.match(css,/html\\[data-theme="dark"\\].*sd-skill-row/s,'adaptation sombre des indicateurs colorés absente');
+assert.match(css,/sd-unit-chart-item\.is-complete/,'couleur des unités terminées absente');
+assert.match(css,/sd-unit-chart-item\.is-started/,'couleur des unités commencées absente');
+assert.match(css,/sd-unit-chart-item\.is-pending/,'couleur des unités non commencées absente');
+assert.match(css,/sd-skill-row:nth-child\(6n\+1\)/,'palette multicolore des résultats par unité absente');
+assert.match(css,/html\[data-theme="dark"\].*sd-skill-row/s,'adaptation sombre des indicateurs colorés absente');
 assert.match(css,/sd-unit-chart-legend/,'légende graphique absente');

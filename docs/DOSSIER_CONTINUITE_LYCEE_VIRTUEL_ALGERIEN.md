@@ -2394,3 +2394,8 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucun changement aux données pédagogiques, calculs, routes, identifiants HTML, événements métier, Auth, Supabase, RLS, schéma, migration ou paiement.
 - PR #17 reste ouverte et non fusionnée ; main n'est pas modifiée.
 - Aucun déploiement Cloudflare ni validation visuelle navigateur n'est revendiqué. Vérification du rendu desktop/tablette/mobile à effectuer sur la prévisualisation correspondant au nouveau HEAD.
+
+
+### Addendum pré-validation — Lot 172
+- Relecture du contrôle après création du commit : deux familles d'assertions devaient suivre le nouveau cache CSS v186 et les sélecteurs CSS ajoutés devaient être échappés avec un seul niveau dans les littéraux regex JavaScript.
+- Les assertions de version et de palette ont été alignées avant de considérer le Lot 172 validé. La validation complète du nouveau HEAD reste à attendre.
