@@ -17635,3 +17635,40 @@ html[data-theme="dark"] #shell #app .sd-subject-card[class*="tone-"] .sd-subject
   #shell #app .sd-subject-open{font-size:11px}
   #shell #app .sd-unit-chart{grid-template-columns:repeat(auto-fit,minmax(54px,1fr));gap:7px}
 }
+
+
+/* Lot 167 — objectifs et badges : finition chromatique inspirée des cartes du prototype étudiant.
+   Les cartes restent issues des objectifs calculés et du registre réel de récompenses. */
+#shell #app [data-view="dashboard"] .sd-goals-grid{gap:12px}
+#shell #app [data-view="dashboard"] .sd-goal-card{position:relative;overflow:hidden;padding:16px;border-radius:16px;box-shadow:0 4px 13px rgba(22,54,36,.045);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+#shell #app [data-view="dashboard"] .sd-goal-card:hover{transform:translateY(-2px);box-shadow:0 9px 20px rgba(22,54,36,.09)}
+#shell #app [data-view="dashboard"] .sd-goal-unit{border-color:#d8e6f5;background:linear-gradient(145deg,#f0f6ff,var(--p))}
+#shell #app [data-view="dashboard"] .sd-goal-quiz{border-color:#e4dafa;background:linear-gradient(145deg,#f7f1ff,var(--p))}
+#shell #app [data-view="dashboard"] .sd-goal-review{border-color:#f0dfbd;background:linear-gradient(145deg,#fff8e9,var(--p))}
+#shell #app [data-view="dashboard"] .sd-goal-unit .sd-goal-icon{background:linear-gradient(145deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 5px 12px rgba(37,99,235,.2)}
+#shell #app [data-view="dashboard"] .sd-goal-quiz .sd-goal-icon{background:linear-gradient(145deg,#8b5cf6,#6d28d9);color:#fff;box-shadow:0 5px 12px rgba(109,40,217,.18)}
+#shell #app [data-view="dashboard"] .sd-goal-review .sd-goal-icon{background:linear-gradient(145deg,#fbbf24,#d97706);color:#fff;box-shadow:0 5px 12px rgba(217,119,6,.18)}
+#shell #app [data-view="dashboard"] .sd-achievement-grid{gap:11px}
+#shell #app [data-view="dashboard"] .sd-achievement{grid-template-columns:46px minmax(0,1fr);min-height:72px;padding:12px;border-radius:15px;transition:transform .18s ease,border-color .18s ease}
+#shell #app [data-view="dashboard"] .sd-achievement.is-unlocked{border-color:#ead9a8;background:linear-gradient(145deg,#fff9e9,var(--p))}
+#shell #app [data-view="dashboard"] .sd-achievement.is-unlocked>span{width:44px;height:44px;border:1px solid rgba(255,255,255,.72);border-radius:13px;background:linear-gradient(145deg,#fbbf24,#ea580c);color:#fff;font-size:23px;filter:none;opacity:1;box-shadow:0 5px 12px rgba(180,110,15,.2)}
+#shell #app [data-view="dashboard"] .sd-achievement.is-unlocked:nth-child(4n+2)>span{background:linear-gradient(145deg,#60a5fa,#4f46e5);box-shadow:0 5px 12px rgba(79,70,229,.2)}
+#shell #app [data-view="dashboard"] .sd-achievement.is-unlocked:nth-child(4n+3)>span{background:linear-gradient(145deg,#4ade80,#059669);box-shadow:0 5px 12px rgba(5,150,105,.2)}
+#shell #app [data-view="dashboard"] .sd-achievement.is-unlocked:nth-child(4n)>span{background:linear-gradient(145deg,#c084fc,#9333ea);box-shadow:0 5px 12px rgba(147,51,234,.2)}
+#shell #app [data-view="dashboard"] .sd-achievement.is-locked{background:var(--p2)}
+#shell #app [data-view="dashboard"] .sd-achievement.is-locked>span{width:42px;height:42px}
+#shell #app [data-view="dashboard"] .sd-achievement em{font-size:10px}
+#shell #app [data-view="dashboard"] .sd-achievement-link{font-size:12px;padding-block:10px}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-goal-unit{border-color:#344d70;background:linear-gradient(145deg,#1d304a,var(--p))}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-goal-quiz{border-color:#51406d;background:linear-gradient(145deg,#302443,var(--p))}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-goal-review{border-color:#65502d;background:linear-gradient(145deg,#382e1c,var(--p))}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-achievement.is-unlocked{border-color:#66552e;background:linear-gradient(145deg,#352d1d,var(--p))}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-achievement.is-locked{background:var(--p2)}
+@media(max-width:680px){
+  #shell #app [data-view="dashboard"] .sd-goal-card{padding:13px;gap:8px}
+  #shell #app [data-view="dashboard"] .sd-achievement{min-height:66px;padding:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="dashboard"] .sd-goal-card,#shell #app [data-view="dashboard"] .sd-achievement{transition:none}
+  #shell #app [data-view="dashboard"] .sd-goal-card:hover{transform:none}
+}
