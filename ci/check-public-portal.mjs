@@ -238,7 +238,7 @@ if (!html.includes('style-prototype-dz.css?v=193')) {
 if (!sw.includes('style-prototype-dz.css?v=193')) {
   fail('version CSS du précache non actualisée (v176 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.118") ||
+if (!sw.includes("dz-de-v3.185.0.0.119") ||
     !sw.includes("style-prototype-dz.css?v=193") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
@@ -485,15 +485,17 @@ for (const marker of [
   'experimental: { recoveryCodes: true }'
 ]) if (!mfaClient.includes(marker)) fail('API MFA Supabase absente : ' + marker);
 for (const marker of [
-  'async function requireGate()','if(!window.SB || !SB.mfaAssurance)',"if(attempts>=3)",
+  'async function requireGate()','if(!window.SB || !SB.mfaAssurance)','function setLoginResendVisibility(type)',"if(attempts>=3)",
   'SB.mfaVerifyRecovery(value)','SB.mfaVerify(pending.factorId,pending.challengeId,value)',
-  'SB.mfaEnrollTotp(','SB.mfaEnrollPhone(','SB.mfaVerifyEnrollment(','SB.mfaRecoveryGenerate()',
+  'SB.mfaEnrollTotp(','SB.mfaEnrollPhone(','SB.mfaVerifyEnrollment(','SB.mfaRecoveryGenerate()','[data-mfa-login-resend]','pending.challengeId=sent.challengeId','SB.mfaStart(pending.factorId)',
   'window.DZ_MFA={requireGate:requireGate','window.DZ.enterApp(profile)','window.DZ.toast('
 ]) if (!mfaModule.includes(marker)) fail('parcours MFA incomplet : ' + marker);
 if (mfaModule.includes('123456') || mfaModule.includes('JBSW Y3DP') || mfaClient.includes('otplib')) fail('OTP/secret statique ou TOTP local interdit');
 if ((app.split("typeof window.DZ_MFA.requireGate !== 'function'").length-1)!==2 || (app.split('if(await window.DZ_MFA.requireGate()) return;').length-1)!==2) fail('le MFA doit bloquer en mode fermé la connexion et la restauration cloud');
 for (const marker of ['id="mfaChallengeForm"','id="mfaChallengeMethod"','id="mfaChallengeCode"','id="mfaSecurityCard"','id="mfaSecurityContent"']) if (!html.includes(marker)) fail('interface MFA absente : '+marker);
-if (!html.includes('mfa-security.js?v=3') || !sw.includes('./mfa-security.js?v=3')) fail('module MFA absent du chargement/précache');
+if (!html.includes('mfa-security.js?v=4') || !sw.includes('./mfa-security.js?v=4')) fail('module MFA absent du chargement/précache');
+if (!html.includes('id="mfaLoginSmsResend"') || !html.includes('data-mfa-login-resend')) fail('bouton de renvoi SMS au défi de connexion absent');
+if (!mfaModule.includes('setLoginResendVisibility(type)') || !mfaModule.includes("setLoginResendVisibility(preferred.type)") || !mfaModule.includes("setLoginResendVisibility(type);")) fail('visibilité du renvoi SMS non limitée au facteur téléphone');
 if (!mfaModule.includes('id=\"mfaPhoneEnrollForm\"') || !mfaModule.includes('id=\"mfaPhoneVerifyForm\"') || !mfaModule.includes('SB.mfaStart(enrolled.factorId)')) fail('enrôlement et validation du facteur SMS absents');
 if (!html.includes('supabase/supabase.js?v=3515') || !sw.includes('supabase/supabase.js?v=3515')) fail('cache Supabase MFA non synchronisé');
 if (!html.includes('app.js?v=3561') || !sw.includes('app.js?v=3561')) fail('cache app.js MFA non synchronisé');
