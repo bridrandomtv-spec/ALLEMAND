@@ -584,7 +584,7 @@ if(mfaPhoneEnrollStart<0||mfaPhoneEnrollEnd<=mfaPhoneEnrollStart||
    !mfaPhoneEnrollBlock.includes('await SB.mfaEnrollPhone(number)')||
    !mfaPhoneEnrollBlock.includes('await SB.mfaStart(enrolled.factorId)')||
    !mfaPhoneEnrollBlock.includes('await SB.mfaUnenroll(enrolled.factorId)')) fail('enrôlement SMS : nettoyage du facteur si le challenge initial échoue absent');
-if(!mfaCancelBlock.includes('await SB.logout()')||!mfaCancelBlock.includes('pending=null')||!mfaCancelBlock.includes('showLogin()')) fail('annulation du défi MFA : fermeture de session et retour à la connexion incomplets');
+if(!mfaCancelBlock.includes('await returnToLoginAfterMfa(')||mfaCancelBlock.includes('await SB.logout()')) fail('annulation du défi MFA : fermeture de session contrôlée absente');
 console.log('✅ Lot 196 : annulation MFA, changement de facteur et nettoyage de l’enrôlement SMS contrôlés.');
 
 
