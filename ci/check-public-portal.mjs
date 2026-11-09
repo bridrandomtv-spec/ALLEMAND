@@ -565,3 +565,24 @@ console.log('✅ MFA : Supabase natif, TOTP, défi AAL2, codes de récupération
 if (!read('supabase/supabase.js').includes("functions.invoke('mfa-email'")) fail('appel du service MFA e-mail absent');
 if (!mfaModule.includes("SB.mfaEmail({action:'status'})") || !mfaModule.includes("SB.mfaEmail({action:'verify'")) fail('parcours MFA e-mail absent');
 if (!mfaModule.includes("mfaEmailEnrollForm") || !mfaModule.includes("data-mfa-email-disable")) fail('gestion du facteur e-mail incomplète');
+
+
+// Lot 196 — annulation, changement de facteur et enrôlement SMS sans état orphelin.
+const mfaMethodStart=mfaModule.indexOf("if(method)method.addEventListener('change'");
+const mfaMethodEnd=mfaModule.indexOf("var challengeForm=$('#mfaChallengeForm')",mfaMethodStart);
+const mfaMethodBlock=mfaModule.slice(mfaMethodStart,mfaMethodEnd);
+const mfaPhoneEnrollStart=mfaModule.indexOf("if(ev.target && ev.target.id==='mfaPhoneEnrollForm')");
+const mfaPhoneEnrollEnd=mfaModule.indexOf("if(ev.target && ev.target.id==='mfaPhoneVerifyForm')",mfaPhoneEnrollStart);
+const mfaPhoneEnrollBlock=mfaModule.slice(mfaPhoneEnrollStart,mfaPhoneEnrollEnd);
+const mfaCancelBlock=mfaModule.slice(mfaModule.indexOf("if(ev.target.closest('[data-mfa-cancel]'))"),mfaModule.indexOf("if(ev.target.closest('[data-mfa-enroll]'))"));
+if(mfaMethodStart<0||mfaMethodEnd<=mfaMethodStart||
+   !mfaMethodBlock.includes("if(method.value==='recovery')")||
+   !mfaMethodBlock.includes('pending=null;return;')||
+   !mfaMethodBlock.includes('var started=await SB.mfaStart(factorId)')||
+   !mfaMethodBlock.includes('pending={factorId:factorId,challengeId:started.challengeId,type:type}')) fail('changement de facteur MFA : challenge non réinitialisé ou non renouvelé');
+if(mfaPhoneEnrollStart<0||mfaPhoneEnrollEnd<=mfaPhoneEnrollStart||
+   !mfaPhoneEnrollBlock.includes('await SB.mfaEnrollPhone(number)')||
+   !mfaPhoneEnrollBlock.includes('await SB.mfaStart(enrolled.factorId)')||
+   !mfaPhoneEnrollBlock.includes('await SB.mfaUnenroll(enrolled.factorId)')) fail('enrôlement SMS : nettoyage du facteur si le challenge initial échoue absent');
+if(!mfaCancelBlock.includes('await SB.logout()')||!mfaCancelBlock.includes('pending=null')||!mfaCancelBlock.includes('showLogin()')) fail('annulation du défi MFA : fermeture de session et retour à la connexion incomplets');
+console.log('✅ Lot 196 : annulation MFA, changement de facteur et nettoyage de l’enrôlement SMS contrôlés.');
