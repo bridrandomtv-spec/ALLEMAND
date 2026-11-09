@@ -3218,3 +3218,35 @@ Permettre de consulter correctement l'état du facteur e-mail tant que le domain
 - Aucun changement de `main`, aucune fusion de PR #17, aucun déploiement Cloudflare.
 - Complément CI : l'exécution 2723 a ensuite révélé une seconde assertion obsolète, cette fois dans `ci/check-masar.mjs`, qui attendait encore `dz-de-v3.185.0.0.123`. Elle a été alignée sur `.124`. Une nouvelle exécution après ce dernier correctif est en attente.
 - Les contrôles du portail public et du module MFA avaient passé dans l'exécution 2723 ; l'échec se produisait dans le contrôle Masar sur cette seule version de cache obsolète.
+
+---
+
+## Lot 194 — validation CI et audit du parcours de connexion MFA (9 novembre 2026)
+
+### 1. Validation automatisée
+- CI #2727 : réussite sur le commit `b6e75f75a4219a4e1da1d5a88c99db6a15a505b6`.
+- CI #2728 : réussite sur le HEAD `2202ca475f91c4a5b4c1ca7783667ff435de6660`.
+- Le job `Validation structurelle & pédagogique` de #2728 est terminé avec succès.
+- Les assertions de versions du Service Worker et de `mfa-security.js?v=8` sont donc validées sur ce HEAD.
+
+### 2. Audit statique du parcours de connexion
+- Restauration d'une session cloud : `bootGate()` récupère la session Supabase, exige la présence du module MFA, exécute `DZ_MFA.requireGate()` avant de charger le profil et d'ouvrir l'espace étudiant.
+- Connexion par mot de passe : le résultat de `SB.login()` est contrôlé, puis le garde MFA est exécuté avant `cloudAuthority()` et `enterApp()`.
+- Inscription cloud avec session immédiate : le garde MFA est également appelé avant l'entrée dans l'espace.
+- Liaison d'un compte local à un compte cloud : le résultat du login et le garde MFA sont contrôlés avant la validation de la liaison.
+- Les quatre parcours comportent un arrêt si le module MFA est absent ou si le garde exige une vérification supplémentaire.
+- L'API native utilise `getAuthenticatorAssuranceLevel()` et ne demande un facteur natif que lorsque Supabase indique la transition `aal1` vers `aal2`. Les facteurs vérifiés TOTP/téléphone sont utilisés pour le défi.
+- Le code de récupération natif passe par l'API expérimentale Supabase activée dans le chargeur client.
+
+### 3. Limites de cet audit
+- Il s'agit d'une revue statique du code versionné et des assertions CI, pas d'un test navigateur ni d'un test de compte réel.
+- Aucun test réel TOTP, SMS, code de récupération ou e-mail n'est revendiqué.
+- Le facteur e-mail reste personnalisé et ne transforme pas le JWT Supabase en `aal2`.
+- Le contrôle du parcours client ne remplace pas une politique d'autorisation serveur indépendante pour chaque API/RPC sensible. Les politiques RLS et la configuration Auth globale restent hors périmètre.
+- Aucun secret Resend n'a été consulté ou modifié ; l'envoi e-mail attend toujours un domaine d'expédition vérifié et la configuration des secrets Edge Function.
+
+### 4. État Git et périmètre
+- PR #17 : ouverte, non fusionnée ; HEAD contrôlé : `2202ca475f91c4a5b4c1ca7783667ff435de6660`.
+- `main` n'a pas été modifiée.
+- Aucun changement Supabase, aucune migration, aucune modification RLS/Auth globale et aucun déploiement Cloudflare n'ont été effectués dans ce lot.
+- Prochaine étape : tests contrôlés avec un compte de test pour la connexion, restauration après rechargement, challenge TOTP/SMS et codes de récupération ; tester l'e-mail seulement après configuration d'un expéditeur vérifié.
