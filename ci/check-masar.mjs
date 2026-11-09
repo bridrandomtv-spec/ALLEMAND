@@ -123,7 +123,8 @@ assert.match(app,/sd-unit-chart-item is-/,'état réel de chaque unité absent d
 assert.match(css,/sd-unit-chart-item\.is-complete/,'couleur des unités terminées absente');
 assert.match(css,/sd-unit-chart-item\.is-started/,'couleur des unités commencées absente');
 assert.match(css,/sd-unit-chart-item\.is-pending/,'couleur des unités non commencées absente');
-assert.match(css,/sd-skill-row:nth-child\(6n\+1\)/,'palette multicolore des résultats par unité absente');
+assert.match(css,/sd-skill-row\.is-tone-1/,'première couleur stable des résultats par unité absente');
+assert.match(css,/sd-skill-row\.is-tone-6/,'sixième couleur stable des résultats par unité absente');
 assert.match(css,/html\[data-theme="dark"\].*sd-skill-row/s,'adaptation sombre des indicateurs colorés absente');
 assert.match(css,/sd-unit-chart-legend/,'légende graphique absente');
 

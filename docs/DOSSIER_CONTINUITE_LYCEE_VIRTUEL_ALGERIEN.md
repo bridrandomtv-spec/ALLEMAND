@@ -2480,3 +2480,9 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucune modification des résultats, du moteur de quiz, des routes, des événements, des données pédagogiques, Auth, Supabase, RLS, schéma, migration ou paiement.
 - PR #17 reste ouverte et non fusionnée ; main n'est pas modifiée.
 - CI et contrôle visuel navigateur du nouveau HEAD restent à attendre ; aucun déploiement Cloudflare n'est revendiqué.
+
+
+### Addendum CI — Lot 174
+- La CI #2622 a exécuté les contrôles jusqu'au tableau de bord, puis a échoué car check-masar.mjs exigeait encore l'ancienne règle CSS nth-child(6n+1), supprimée au profit des classes stables is-tone-1 à is-tone-6.
+- Le défaut est dans l'assertion CI, pas dans le rendu : le contrôle est actualisé pour vérifier les sélecteurs stables is-tone-1 et is-tone-6, et continue à interdire le retour à nth-child.
+- La suite complète doit être rejouée sur le nouveau HEAD.
