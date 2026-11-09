@@ -3128,3 +3128,12 @@ Mesures de protection :
 - PR #17 reste ouverte et non fusionnée ; `main` n'a pas été modifiée.
 - Aucun test navigateur, SMS réel, TOTP avec compte de production, ou e-mail réel n'est revendiqué.
 - Statut honnête : TOTP + SMS natifs sont codés ; le backend e-mail personnalisé est déployé et son interface est intégrée, mais le transport e-mail attend la configuration des secrets. Le 2FA à trois méthodes n'est donc **pas encore validé de bout en bout**.
+
+
+### Complément Lot 190 — diagnostic CI et fournisseur e-mail
+- L'Edge Function `mfa-email` utilise explicitement l'API HTTP Resend ; aucun autre fournisseur n'est branché dans ce code.
+- Le transport n'est pas prêt : il exige les secrets Supabase `MFA_EMAIL_PEPPER`, `RESEND_API_KEY` et `MFA_EMAIL_FROM`. Aucun secret n'a été lu, exposé ou configuré par le dépôt. Les outils disponibles ne permettent pas de confirmer la présence de secrets existants sans en exposer les valeurs ; leur état reste donc à vérifier dans Supabase Dashboard.
+- Le SMTP configuré pour les e-mails transactionnels natifs Supabase Auth, s'il existe, n'est pas automatiquement réutilisé par l'Edge Function. Pour ce second facteur applicatif, il faut un fournisseur d'envoi HTTP tel que Resend, ou adapter explicitement le code à un autre fournisseur.
+- CI #2710 a échoué sur une assertion historique de `ci/check-masar.mjs` qui exigeait encore la version Service Worker `v3.185.0.0.120`, alors que le Lot 190 avait correctement avancé à `v3.185.0.0.123`. L'assertion a été corrigée dans le commit `8f27308dcf6f3241c3bb795d39e961cfd9cda322`.
+- La correction CI attend une nouvelle exécution. Aucune validation verte du Lot 190 n'est revendiquée à ce stade.
+- PR #17 toujours ouverte et non fusionnée ; aucun changement de `main`, aucun déploiement Cloudflare.
