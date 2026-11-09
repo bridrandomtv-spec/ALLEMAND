@@ -2707,3 +2707,6 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 
 - CI #2677 : le contrôle du portail public est désormais réussi, y compris les assertions Lot 183. Le job a ensuite échoué sur une assertion indépendante de مسارك qui attendait encore le Service Worker v3.185.0.0.118.
 - L'assertion de version dans ci/check-masar.mjs est alignée sur v3.185.0.0.119. Une nouvelle CI complète doit confirmer le HEAD suivant.
+
+- Diagnostic complémentaire de CI #2677 : la chaîne de diagnostic du contrôle مسارك montrait que le motif regex lui-même contenait encore « .118 » ; la première correction avait modifié le texte d'erreur mais pas les chiffres dans le motif. Le motif est maintenant effectivement aligné sur « .119 ».
+- Ce correctif de validateur est enregistré dans ci/check-masar.mjs ; nouvelle validation CI requise.
