@@ -2191,3 +2191,30 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucune modification des routes, identifiants de vue, données, calculs de progression, modules métier, Auth, Supabase, RLS, schéma, migration ou paiement.
 - PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`.
 - Validation visuelle navigateur et nouveau déploiement Cloudflare non revendiqués.
+
+
+## Lot 165 — équilibre des panneaux matières et progression (9 novembre 2026)
+
+### Comparaison structurelle
+- Le prototype étudiant organise le contenu en panneaux de poids distincts : un bloc principal, un bloc secondaire et des paires équilibrées pour les résultats et recommandations.
+- Dans le tableau de bord réel, « مواد شعبتك » et « إنجاز الوحدات » occupaient chacun toute la largeur de la grille principale. Cela créait deux grands panneaux successifs malgré leur complémentarité.
+- Le catalogue réel reste issu de assets/bdd/matieres.json ; la progression des unités reste calculée depuis les séances terminées enregistrées.
+
+### Ajustement de composition
+- À partir de 641 px, le panneau « مواد شعبتك » occupe 4 colonnes sur 6 (2/3) et « إنجاز الوحدات » 2 colonnes sur 6 (1/3).
+- Cette proportion donne la priorité visuelle au catalogue de matières et transforme le graphique des unités en indicateur compact complémentaire.
+- À 640 px et moins, les deux panneaux reprennent chacun toute la largeur afin d’éviter un graphique trop étroit et des cartes comprimées.
+- Aucun composant, ordre métier, contenu pédagogique, calcul, statut ou action n’est remplacé.
+
+### Cache et contrôles
+- CSS : style-prototype-dz.css?v=182.
+- Service Worker : dz-de-v3.185.0.0.103, précache CSS synchronisé.
+- Les contrôles CI du tableau de bord, du portail public et de la gamification sont synchronisés sur les nouvelles références.
+- Le contrôle du tableau de bord vérifie désormais explicitement le panneau et le conteneur de progression des unités, le graphique généré et son état vide, ainsi que les proportions 2/3–1/3.
+
+### Périmètre et limites
+- Modifications CSS, références de cache, assertions CI et documentation uniquement.
+- Aucun changement Auth, Supabase, RLS, schéma, migration, paiement, route, identifiant de vue, donnée pédagogique ou gestionnaire d’événement.
+- PR #17 reste ouverte et non fusionnée ; main n’est pas modifiée.
+- La CI doit confirmer le nouveau HEAD après ces commits.
+- Aucune capture réelle de navigateur ni publication Cloudflare du nouveau HEAD n’est revendiquée. La validation visuelle desktop/tablette/mobile reste à effectuer sur le rendu déployé.
