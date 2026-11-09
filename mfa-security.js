@@ -62,7 +62,8 @@
   document.addEventListener('click',async function(ev){
     if(ev.target.closest('[data-mfa-cancel]')){ev.preventDefault();try{await SB.logout();}catch(e){}pending=null;showLogin();status('#loginErr','تم إلغاء تسجيل الدخول.');return;}
     if(ev.target.closest('[data-mfa-enroll]')){await enrollTotp();return;}
-    if(ev.target.closest('[data-mfa-recovery-generate]')){await generateRecovery();return;}
+    if(ev.target.closest('[data-mfa-recovery-generate]')){await generateRecovery(false);return;}
+    if(ev.target.closest('[data-mfa-recovery-regenerate]')){if(!window.confirm('سيؤدي التجديد إلى إبطال الرموز السابقة. هل تريد المتابعة؟'))return;await generateRecovery(true);return;}
     var remove=ev.target.closest('[data-mfa-unenroll]');
     if(remove){if(!window.confirm('هل تريد تعطيل عامل المصادقة هذا؟'))return;var r=await SB.mfaUnenroll(remove.dataset.mfaUnenroll);if(!r.ok){status('#mfaSecurityMessage',r.err);return;}await renderSecurity();}
   });
@@ -76,7 +77,7 @@
     else markup+='<div class="mfa-status-line mfa-status-off"><span class="mfa-status-dot"></span><b>لم يتم تفعيل تطبيق المصادقة بعد</b></div><button type="button" class="btn btn-p" data-mfa-enroll>🔐 تفعيل تطبيق المصادقة (TOTP)</button>';
     if(pendingFactors.length)markup+='<p class="mfa-muted">يوجد إعداد غير مكتمل؛ أكمل التحقق أو أعد المحاولة.</p>';
     host.innerHTML=markup+'<div id="mfaEnrollStage"></div><div id="mfaRecoveryStage"></div><p id="mfaSecurityMessage" class="mfa-security-message" role="status" aria-live="polite"></p>';
-    if(verified.length){var recovery=await SB.mfaRecoveryStatus(),stage=$('#mfaRecoveryStage');if(recovery.ok){var st=recovery.status||{};stage.innerHTML='<div class="mfa-recovery-row"><span>رموز الاسترداد: '+String(st.remaining||0)+' متبقية</span><button type="button" class="btn btn-sm btn-o" data-mfa-recovery-generate>إنشاء / تجديد الرموز</button></div>';}else stage.innerHTML='<p class="mfa-muted">رموز الاسترداد غير مفعّلة في إعدادات Supabase Auth بعد.</p>';}
+    if(verified.length){var recovery=await SB.mfaRecoveryStatus(),stage=$('#mfaRecoveryStage');if(recovery.ok){var st=recovery.status||{};stage.innerHTML='<div class="mfa-recovery-row"><span>رموز الاسترداد: '+String(st.remaining||0)+' من '+String(st.total||0)+' متبقية</span><button type="button" class="btn btn-sm btn-o" data-mfa-recovery-regenerate>تجديد الرموز</button></div>';}else stage.innerHTML='<p class="mfa-muted">لا توجد رموز استرداد مفعّلة حاليًا أو أن الميزة التجريبية غير مفعّلة.</p><button type="button" class="btn btn-sm btn-o" data-mfa-recovery-generate>إنشاء رموز الاسترداد</button>';}
   }
   async function enrollTotp(){
     var stage=$('#mfaEnrollStage');if(!stage)return;status('#mfaSecurityMessage','جارٍ إنشاء إعداد آمن من Supabase…');
@@ -87,8 +88,8 @@
     if(img.src)slot.appendChild(img);stage.querySelector('.mfa-secret').textContent=r.secret||'';
     $('#mfaEnrollForm').addEventListener('submit',async function(ev){ev.preventDefault();var v=await SB.mfaVerifyEnrollment(enrolling.factorId,$('#mfaEnrollCode').value);if(!v.ok){status('#mfaEnrollError',v.err);return;}enrolling=null;await renderSecurity();status('#mfaSecurityMessage','تم تفعيل المصادقة الثنائية بنجاح.');});
   }
-  async function generateRecovery(){
-    var r=await SB.mfaRecoveryGenerate(),stage=$('#mfaRecoveryStage');if(!stage)return;if(!r.ok){status('#mfaSecurityMessage',r.err);return;}
+  async function generateRecovery(regenerate){
+    var r=regenerate?await SB.mfaRecoveryRegenerate():await SB.mfaRecoveryGenerate(),stage=$('#mfaRecoveryStage');if(!stage)return;if(!r.ok){status('#mfaSecurityMessage',r.err);return;}
     stage.innerHTML='<div class="mfa-recovery-codes"><h3>احفظ رموز الاسترداد الآن</h3><p>تُعرض هذه الرموز مرة واحدة فقط. خزّنها في مكان آمن ولا تشاركها.</p><pre></pre></div>';
     stage.querySelector('pre').textContent=(r.codes||[]).join('\n');
   }
