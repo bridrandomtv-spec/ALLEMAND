@@ -485,7 +485,7 @@ for (const marker of [
   'experimental: { recoveryCodes: true }'
 ]) if (!mfaClient.includes(marker)) fail('API MFA Supabase absente : ' + marker);
 for (const marker of [
-  'async function requireGate()',"if(attempts>=3)",
+  'async function requireGate()','if(!window.SB || !SB.mfaAssurance)','typeof window.DZ_MFA.requireGate !== \'function\',"if(attempts>=3)",
   'SB.mfaVerifyRecovery(value)','SB.mfaVerify(pending.factorId,pending.challengeId,value)',
   'SB.mfaEnrollTotp(','SB.mfaVerifyEnrollment(','SB.mfaRecoveryGenerate()',
   'window.DZ_MFA={requireGate:requireGate','window.DZ.enterApp(profile)','window.DZ.toast('
