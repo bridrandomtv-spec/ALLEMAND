@@ -56,10 +56,10 @@ assert.match(js, /ms-unit-grid/, 'cartes de progression par unité absentes');
 assert.match(css, /grid-template-areas:"hero hero" "next chart" "progress progress" "units units"/, 'grille desktop مسارك absente');
 assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/, 'grille mobile مسارك absente');
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
-assert.match(html, /style-prototype-dz\.css\?v=183/, 'cache CSS v183 non actualisé');
+assert.match(html, /style-prototype-dz\.css\?v=183/, 'cache CSS v184 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
 assert.match(sw, /dz-de-v3\.185\.0\.0\.104/, 'version service worker v3.185 non actualisée');
-assert.match(sw, /style-prototype-dz\.css\?v=183/, 'précache CSS v183 non actualisé');
+assert.match(sw, /style-prototype-dz\.css\?v=183/, 'précache CSS v184 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
 assert.match(html, /app\.js\?v=3554/, 'cache app.js non actualisé');
@@ -102,3 +102,11 @@ assert.match(css,/sd-goal-review \.sd-goal-icon\{background:linear-gradient\(145
 assert.match(css,/sd-achievement\.is-unlocked:nth-child\(4n\+2\)>span/,'palette multicolore des badges ouverts absente');
 assert.match(css,/prefers-reduced-motion:reduce/,'respect de la réduction des animations absent');
 console.log('✅ مسارك : données réelles, objectifs et badges colorés, responsive, caches contrôlés');
+
+// Lot 167 — garde-fous visuels objectifs et badges.
+
+assert.match(css,/sd-goal-unit \.sd-goal-icon\{background:linear-gradient\(145deg,#3b82f6,#1d4ed8\)/,'carte objectif pédagogique bleue absente');
+assert.match(css,/sd-goal-quiz \.sd-goal-icon\{background:linear-gradient\(145deg,#8b5cf6,#6d28d9\)/,'carte objectif quiz violette absente');
+assert.match(css,/sd-goal-review \.sd-goal-icon\{background:linear-gradient\(145deg,#fbbf24,#d97706\)/,'carte objectif révision dorée absente');
+assert.match(css,/sd-achievement\.is-unlocked:nth-child\(4n\+2\)>span/,'palette multicolore des badges ouverts absente');
+assert.match(css,/prefers-reduced-motion:reduce/,'respect de la réduction des animations absent');
