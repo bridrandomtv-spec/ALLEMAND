@@ -2670,6 +2670,6 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - L'envoi du SMS utilise la configuration du fournisseur de messagerie du projet Supabase Auth, partagée avec l'authentification téléphonique. Aucun SMS n'a été envoyé pendant ce lot et aucun fournisseur n'a été configuré à distance.
 - Si un fournisseur spécifique différent de ceux pris en charge nativement est nécessaire, Supabase documente un Send SMS Hook ; aucune Edge Function, clé Twilio ou passerelle locale n'est créée ici.
 - Les codes e-mail ne sont pas ajoutés comme second facteur : le MFA natif Supabase documenté prend en charge TOTP et téléphone. L'e-mail reste utilisé pour les parcours de connexion/récupération existants, pas comme facteur AAL2 dans ce lot.
-- Cache : supabase/supabase.js?v=3514, mfa-security.js?v=2, CSS v193, app.js v3561, Service Worker dz-de-v3.185.0.0.117.
+- Cache : supabase/supabase.js?v=3515, mfa-security.js?v=3, CSS v193, app.js v3561, Service Worker dz-de-v3.185.0.0.118.
 - Aucun schéma, migration, RLS, rôle, paiement, secret serveur ou déploiement n'est modifié.
 - PR #17 reste ouverte et non fusionnée ; main reste inchangée.
