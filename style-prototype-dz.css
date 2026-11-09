@@ -17686,3 +17686,37 @@ html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-achievement.is-l
   #shell #app [data-view="dashboard"] .sd-ai-feature>p{margin:2px 0;font-size:12px}
   #shell #app [data-view="dashboard"] .sd-ai-feature>button{width:100%;min-height:48px;margin-top:3px}
 }
+
+
+/* Lot 172 — graphiques : états explicites et palette inspirée des prototypes.
+   Les couleurs qualifient l'état ou distinguent les séries ; aucune donnée n'est créée. */
+#shell #app [data-view="dashboard"] .sd-unit-chart-legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 15px;margin:0 0 13px;padding:9px 11px;border:1px solid var(--b);border-radius:12px;background:var(--p)}
+#shell #app [data-view="dashboard"] .sd-unit-chart-legend>span{display:inline-flex;align-items:center;gap:6px;color:var(--m);font-size:11px;font-weight:750;line-height:1.5}
+#shell #app [data-view="dashboard"] .sd-unit-chart-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;background:#64748b}
+#shell #app [data-view="dashboard"] .sd-unit-chart-legend i.is-complete{background:#059669}
+#shell #app [data-view="dashboard"] .sd-unit-chart-legend i.is-started{background:#4f46e5}
+#shell #app [data-view="dashboard"] .sd-unit-chart-legend i.is-pending{background:#94a3b8}
+#shell #app [data-view="dashboard"] .sd-unit-chart-item{--sd-unit-accent:#64748b;--sd-unit-soft:color-mix(in srgb,var(--sd-unit-accent) 9%,var(--p));padding:9px 5px 10px;border:1px solid color-mix(in srgb,var(--sd-unit-accent) 25%,var(--b));border-radius:14px;background:linear-gradient(155deg,var(--sd-unit-soft),var(--p));box-shadow:0 3px 10px rgba(18,48,31,.045)}
+#shell #app [data-view="dashboard"] .sd-unit-chart-item.is-complete{--sd-unit-accent:#059669}
+#shell #app [data-view="dashboard"] .sd-unit-chart-item.is-started{--sd-unit-accent:#4f46e5}
+#shell #app [data-view="dashboard"] .sd-unit-chart-item.is-pending{--sd-unit-accent:#64748b}
+#shell #app [data-view="dashboard"] .sd-unit-chart-item>b{min-width:42px;padding:3px 6px;border-radius:8px;background:color-mix(in srgb,var(--sd-unit-accent) 13%,var(--p));color:var(--sd-unit-accent);font-size:12px}
+#shell #app [data-view="dashboard"] .sd-unit-chart-track{background:color-mix(in srgb,var(--sd-unit-accent) 11%,var(--p2));border:1px solid color-mix(in srgb,var(--sd-unit-accent) 12%,var(--b))}
+#shell #app [data-view="dashboard"] .sd-unit-chart-track span{background:linear-gradient(180deg,color-mix(in srgb,var(--sd-unit-accent) 68%,white),var(--sd-unit-accent))}
+#shell #app [data-view="dashboard"] .sd-unit-chart-item em{color:var(--sd-unit-accent);font-weight:850;font-variant-numeric:tabular-nums}
+#shell #app [data-view="dashboard"] .sd-skill-row{--sd-skill-accent:#4f46e5;padding:11px 12px;border:1px solid color-mix(in srgb,var(--sd-skill-accent) 22%,var(--b));border-inline-start:3px solid var(--sd-skill-accent);border-radius:13px;background:linear-gradient(110deg,color-mix(in srgb,var(--sd-skill-accent) 7%,var(--p)),var(--p))}
+#shell #app [data-view="dashboard"] .sd-skill-row:nth-child(6n+1){--sd-skill-accent:#d97706}
+#shell #app [data-view="dashboard"] .sd-skill-row:nth-child(6n+2){--sd-skill-accent:#4f46e5}
+#shell #app [data-view="dashboard"] .sd-skill-row:nth-child(6n+3){--sd-skill-accent:#7c3aed}
+#shell #app [data-view="dashboard"] .sd-skill-row:nth-child(6n+4){--sd-skill-accent:#059669}
+#shell #app [data-view="dashboard"] .sd-skill-row:nth-child(6n+5){--sd-skill-accent:#e11d48}
+#shell #app [data-view="dashboard"] .sd-skill-row:nth-child(6n){--sd-skill-accent:#0284c7}
+#shell #app [data-view="dashboard"] .sd-skill-head strong{color:var(--sd-skill-accent);font-size:15px}
+#shell #app [data-view="dashboard"] .sd-skill-track{height:11px;background:color-mix(in srgb,var(--sd-skill-accent) 12%,var(--p2));border:1px solid color-mix(in srgb,var(--sd-skill-accent) 13%,var(--b))}
+#shell #app [data-view="dashboard"] .sd-skill-track span{background:linear-gradient(90deg,color-mix(in srgb,var(--sd-skill-accent) 62%,white),var(--sd-skill-accent))}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-unit-chart-item{--sd-unit-soft:color-mix(in srgb,var(--sd-unit-accent) 17%,var(--p));border-color:color-mix(in srgb,var(--sd-unit-accent) 38%,var(--b));box-shadow:0 4px 14px rgba(0,0,0,.14)}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-unit-chart-item>b{color:color-mix(in srgb,var(--sd-unit-accent) 72%,white)}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-skill-row{background:linear-gradient(110deg,color-mix(in srgb,var(--sd-skill-accent) 17%,var(--p)),var(--p));border-color:color-mix(in srgb,var(--sd-skill-accent) 40%,var(--b))}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-skill-head strong{color:color-mix(in srgb,var(--sd-skill-accent) 72%,white)}
+@media(max-width:640px){#shell #app [data-view="dashboard"] .sd-unit-chart-legend{gap:7px 11px;padding:8px 9px}#shell #app [data-view="dashboard"] .sd-unit-chart-legend>span{font-size:10px}#shell #app [data-view="dashboard"] .sd-unit-chart-item{padding-inline:3px}#shell #app [data-view="dashboard"] .sd-skill-row{padding:10px}}
+@media(prefers-reduced-motion:reduce){#shell #app [data-view="dashboard"] .sd-unit-chart-track span,#shell #app [data-view="dashboard"] .sd-skill-track span{transition:none}}

@@ -2366,3 +2366,31 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Fichiers modifiés : `index.html`, `ci/check-masar.mjs`, présent dossier de continuité.
 - Aucun changement de CSS, de cache, de logique métier, de route, de données, d'authentification, de Supabase/RLS, de schéma, de migration ou de paiement.
 - PR #17 reste ouverte et non fusionnée ; `main` reste inchangée. Validation CI en attente ; aucune validation visuelle navigateur ni aucun déploiement revendiqué.
+
+
+## Lot 172 — différenciation visuelle des graphiques et indicateurs (9 novembre 2026)
+
+### Comparaison avec les deux prototypes
+- Relecture des prototypes originaux Qwen_html_20261021_bxmtbklup.html et Qwen_html_20261021_juv5xelun.html retrouvés dans la bibliothèque.
+- Le second prototype présente les matières sous forme de cartes multicolores et un graphique radar de démonstration ; le premier emploie un radar illustratif pour six compétences.
+- Les données de démonstration ne sont pas transposables telles quelles dans les comptes réels. Le tableau de bord actuel possède des résultats de quiz cumulés par unité, pas une mesure valide des six compétences linguistiques du prototype.
+
+### Correction appliquée
+- Le graphique vertical des unités distingue désormais les états calculés depuis les séances : terminée (émeraude), commencée (indigo) et non commencée (ardoise).
+- Ajout d'une légende explicite et d'un libellé accessible pour chaque unité ; nombres, pourcentages et décomptes existants inchangés.
+- Les résultats de quiz par unité reçoivent une palette chromatique alternée (ambre, indigo, violet, émeraude, rose et bleu), avec une hiérarchie renforcée des cartes et des barres.
+- Variantes clair/sombre, mobile et préférence de réduction des animations couvertes.
+- Aucun radar artificiel ni indicateur de maîtrise linguistique non mesuré n'est ajouté.
+
+### Cache et contrôles
+- CSS : style-prototype-dz.css?v=186.
+- Application : app.js?v=3555.
+- Service Worker : dz-de-v3.185.0.0.107, précache synchronisé.
+- Contrôles CI du tableau de bord et du portail public actualisés ; assertions ajoutées pour les trois états, la légende, la palette des résultats et le thème sombre.
+- CI #2614 réussie sur le HEAD précédent ; validation du nouveau commit à attendre.
+
+### Périmètre et limites
+- Fichiers modifiés : app.js, style-prototype-dz.css, index.html, sw.js, ci/check-masar.mjs, ci/check-public-portal.mjs et le présent dossier.
+- Aucun changement aux données pédagogiques, calculs, routes, identifiants HTML, événements métier, Auth, Supabase, RLS, schéma, migration ou paiement.
+- PR #17 reste ouverte et non fusionnée ; main n'est pas modifiée.
+- Aucun déploiement Cloudflare ni validation visuelle navigateur n'est revendiqué. Vérification du rendu desktop/tablette/mobile à effectuer sur la prévisualisation correspondant au nouveau HEAD.
