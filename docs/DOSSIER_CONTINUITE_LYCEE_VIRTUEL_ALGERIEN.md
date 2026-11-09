@@ -2486,3 +2486,10 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - La CI #2622 a exécuté les contrôles jusqu'au tableau de bord, puis a échoué car check-masar.mjs exigeait encore l'ancienne règle CSS nth-child(6n+1), supprimée au profit des classes stables is-tone-1 à is-tone-6.
 - Le défaut est dans l'assertion CI, pas dans le rendu : le contrôle est actualisé pour vérifier les sélecteurs stables is-tone-1 et is-tone-6, et continue à interdire le retour à nth-child.
 - La suite complète doit être rejouée sur le nouveau HEAD.
+
+
+### Validation CI — Lot 174
+- CI #2622 : échec initial uniquement sur une ancienne assertion de palette nth-child dans ci/check-masar.mjs, alors que les nouvelles classes stables is-tone-* étaient déjà présentes.
+- Correction de l'assertion : vérification des classes is-tone-1 et is-tone-6, et interdiction du retour à nth-child.
+- CI #2623 : réussie sur le commit d372ac5215b2bcf30336c7610db27bdde3bd1ad0. Le contrôle مسارك et l'ensemble des contrôles suivants sont passés.
+- Le changement est validé structurellement. La vérification visuelle navigateur sur ordinateur/tablette/téléphone reste à faire ; aucune publication Cloudflare n'est déclarée.
