@@ -2571,3 +2571,5 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - La première CI du Lot 176 a validé le contrôle du portail public et le nouveau contrat Auth, puis le contrôle de مسارك a révélé deux références de cache historiques (CSS v189 et application v3557) dans `ci/check-masar.mjs`. Le contrôle XP/badges référençait lui aussi le CSS v189.
 - Les assertions sont alignées sur CSS v190 et app.js v3558 ; aucun rendu métier ni calcul pédagogique n'est modifié par cette correction.
 - Relancer la suite complète sur le HEAD suivant ; la validation navigateur et le test Supabase réel restent à effectuer séparément.
+
+- Addendum CI : le contrôle de `مسارك` conservait également une assertion sur l'identifiant du Service Worker v3.185.0.0.110 ; elle est alignée sur v3.185.0.0.111.
