@@ -2803,3 +2803,11 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - CI #2686 : réussite du job « Validation structurelle & pédagogique » sur le commit `e05ff3a3d931271dc8e5dc8d6adef01852ec3c25`.
 - L'audit catalogue du présent lot est en lecture seule. Aucun test navigateur, test de compte réel, test JWT AAL1/AAL2 ou déploiement n'est revendiqué.
 - PR #17 reste ouverte et non fusionnée ; aucune modification de `main` et aucun déploiement Cloudflare.
+
+
+### Complément ciblé — RPC `agreement_current`
+- Lecture du corps SQL complet : `agreement_current(cle text)` renvoie `select *` sur la ligne `agreements` active de version la plus élevée pour la clé fournie.
+- Le privilège EXECUTE est accordé à `anon` et la fonction est `SECURITY DEFINER`. La table `agreements` possède une politique de lecture limitée aux utilisateurs authentifiés ; la fonction privilégiée constitue donc un chemin distinct de lecture publique.
+- Le résultat contient toutes les colonnes de la ligne (`id`, `cle`, `version`, `titre`, `corps`, `actif`, `cree_par`, `cree_at`), et pas seulement le texte public de l'accord. Le corps du texte actif semble être la donnée fonctionnelle recherchée, mais l'exposition de métadonnées (`cree_par`, `cree_at`) est plus large que nécessaire en principe.
+- Recherche dans `supabase/supabase.js` : aucun appel à `agreement_current` trouvé ; ce fichier lit les accords par la table `agreements` après authentification. Cela ne prouve pas qu'aucun autre module du dépôt n'appelle la RPC.
+- Qualification : **surface d'exposition publique à examiner**, pas vulnérabilité confirmée. Avant toute révocation de grant ou changement SQL, rechercher les appels dans l'ensemble du dépôt et confirmer si la lecture anonyme des accords est une exigence publique. Si non requise, préparer une correction minimale (projection explicite des champs publics et privilèges alignés), sans l'appliquer dans ce lot.
