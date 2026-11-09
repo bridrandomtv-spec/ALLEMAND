@@ -2300,3 +2300,8 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucun changement de route, identifiant de vue, données, calculs, événements métier, Auth, Supabase, RLS, schéma, migration ou paiement.
 - PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`.
 - Le contrôle navigateur réel et la publication Cloudflare du nouveau HEAD restent à effectuer séparément ; la CI ne vaut pas validation visuelle.
+
+
+### Addendum CI — Lot 168
+- La première exécution après déplacement de la bannière a échoué uniquement parce que `ci/check-masar.mjs` conservait deux expressions de version CSS v184 et Service Worker .105.
+- Les assertions ont été corrigées vers CSS v185 et Service Worker .106. La nouvelle exécution sur le HEAD corrigé doit confirmer l'ensemble du lot.
