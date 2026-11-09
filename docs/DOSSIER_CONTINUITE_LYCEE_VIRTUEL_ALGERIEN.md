@@ -3324,3 +3324,26 @@ Après validation positive du défi MFA, `finishLogin()` pouvait laisser la sess
 - CI #2737 sur le commit documentaire `1e40f41` : échec sur le contrôle Masar, qui attendait encore la version Service Worker `dz-de-v3.185.0.0.124` alors que le Lot 197 a correctement incrémenté le cache à `...125`.
 - Le contrôle de version obsolète a été corrigé dans `ci/check-masar.mjs`, sans assouplir le test fonctionnel : commit correctif `e273efe54e515efa398fca37c86c3abd15b1ed5e`.
 - Une nouvelle exécution CI est requise pour valider ensemble la correction et le Lot 197.
+
+
+### Lot 198 — verrouillage MFA avec fermeture de session confirmée (9 novembre 2026)
+
+#### Défaut traité
+Le traitement des trois codes MFA incorrects appelait directement `SB.logout()`, puis affichait l'écran de connexion sans vérifier le résultat. Si la fermeture de session échouait, le message pouvait laisser croire à une déconnexion qui n'avait pas été confirmée.
+
+#### Correction
+- Le verrouillage après trois échecs réutilise désormais `returnToLoginAfterMfa()`, qui vérifie le résultat de `SB.logout()`, efface l'état du défi et revient à l'écran de connexion.
+- En cas d'échec de fermeture, l'interface indique explicitement que la session n'a pas pu être confirmée comme fermée et demande un rechargement.
+- Correction d'un fragment de message français résiduel dans le traitement d'exception ; message désormais en arabe.
+- Cache MFA passé à `v=10), Service Worker à `dz-de-v3.185.0.0.126`, précache et contrôles CI synchronisés.
+- Commits : correctif applicatif `b4ee45d`, cache HTML `39b07ca`, Service Worker `3a8bcbe`, assertions portail `4ad079f`, contrôle Masar `27b3c1b`.
+
+#### Validation
+- CI #2738 : réussie pour la correction du contrôle de version du Lot 197.
+- CI #2739 : réussie pour le dossier de continuité du Lot 197.
+- La CI du Lot 198 doit encore être observée.
+
+#### Limites
+- Assertions statiques uniquement ; pas de test navigateur ou de comptes réels.
+- Aucun secret, schéma, migration, RLS, grant, rôle ou réglage Auth global Supabase modifié.
+- Aucun déploiement Cloudflare ; PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
