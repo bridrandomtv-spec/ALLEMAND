@@ -3163,3 +3163,38 @@ Mesures de protection :
 - Aucun changement sur `main`.
 - Aucun déploiement Cloudflare.
 - Aucune modification des politiques RLS, rôles, grants ou configuration Auth globale existants.
+
+---
+
+## Lot 192 — durcissement du facteur e-mail MFA sans domaine d'expédition (9 novembre 2026)
+
+### 1. Objectif
+Permettre de consulter correctement l'état du facteur e-mail tant que le domaine d'expédition Resend n'est pas acquis, sans transformer l'absence de configuration en contournement MFA.
+
+### 2. Correctifs Edge Function
+- mfa-email déployée en version **7**, statut **ACTIVE**, verify_jwt=true.
+- L'action status ne dépend plus de MFA_EMAIL_PEPPER, RESEND_API_KEY ou MFA_EMAIL_FROM : elle peut donc restituer l'état d'inscription sans transport e-mail configuré.
+- Les erreurs de lecture des tables de facteur/session sont désormais renvoyées comme erreurs serveur explicites (STATUS_LOOKUP_FAILED) ; elles ne sont plus interprétées comme un facteur non inscrit.
+- L'action start vérifie la présence des secrets du fournisseur et du pepper avant de créer un défi. En l'absence de configuration, elle renvoie EMAIL_FACTOR_NOT_CONFIGURED sans créer un défi inutilisable ni consommer le quota d'envoi.
+- L'action verify exige également le pepper avant de calculer l'empreinte HMAC.
+- L'enrôlement e-mail marque la session courante comme récemment vérifiée après confirmation du code, afin que l'utilisateur ne soit pas immédiatement bloqué par le contrôle renforcé lors de la gestion du facteur.
+- L'action disable exige une preuve récente enregistrée côté serveur (ou une session native aal2) avant de supprimer le facteur ; les erreurs de lecture de cette preuve échouent fermées.
+
+### 3. Garde de connexion et cache
+- mfa-security.js bloque désormais la connexion si l'état du facteur e-mail ne peut pas être vérifié ; une erreur de lecture n'est plus assimilée à l'absence de facteur.
+- Référence du module dans index.html et le précache : mfa-security.js?v=8.
+- Service Worker avancé à dz-de-v3.185.0.0.124.
+- La version déployée de la fonction a été comparée à la source versionnée avant le lot ; après les correctifs, le déploiement version 7 a été confirmé.
+
+### 4. Limites et vérifications non revendiquées
+- Aucun domaine d'expédition n'est configuré à ce stade ; l'adresse Gmail de contact n'est pas utilisée comme expéditeur Resend non vérifié.
+- Aucun secret Resend ou pepper n'a été lu, exposé, demandé dans le chat ou ajouté à Git.
+- Aucun e-mail réel n'a été envoyé ; aucun test de compte complet, de TOTP, de SMS ou de réception Resend n'est revendiqué.
+- Le facteur e-mail demeure un second contrôle applicatif personnalisé, pas un facteur Supabase natif AAL2 et pas une protection globale automatique de toutes les politiques RLS/RPC.
+- Les mécanismes TOTP/SMS natifs et les politiques RLS existantes n'ont pas été modifiés par ce lot.
+- Aucun déploiement Cloudflare, aucune modification de main et aucune fusion de PR #17.
+
+### 5. Validation à effectuer
+- Exécuter et contrôler la CI après les commits du lot.
+- Vérifier en navigateur que l'action status fonctionne sans secrets Resend, que start affiche une indisponibilité propre tant que le fournisseur n'est pas configuré, et que les erreurs de statut bloquent bien la connexion.
+- Après acquisition d'un domaine et validation DNS SPF/DKIM, configurer MFA_EMAIL_FROM, RESEND_API_KEY et MFA_EMAIL_PEPPER, puis réaliser un test d'envoi et de vérification réel.
