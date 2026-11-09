@@ -3205,3 +3205,14 @@ Permettre de consulter correctement l'état du facteur e-mail tant que le domain
 - CI #2719 a échoué sur une assertion de portail préexistante qui imposait encore le numéro de Service Worker dz-de-v3.185.0.0.123 après son incrément à .124 ; les contrôles précédents du job, dont les unités et les vérifications du portail jusqu'au contrôle du précache, étaient réussis.
 - Assertion corrigée dans ci/check-public-portal.mjs pour attendre dz-de-v3.185.0.0.124. Une nouvelle exécution CI sur le HEAD intégrant cette correction reste à confirmer.
 - Aucun test navigateur ou test de compte réel n'est remplacé par cette CI structurelle.
+---
+
+## Lot 193 — alignement CI et tests de régression MFA (9 novembre 2026)
+
+- Audit croisé de `mfa-security.js`, `supabase/supabase.js`, `supabase/functions/mfa-email/index.ts`, `index.html` et `sw.js`.
+- Confirmation des références réellement livrées : `mfa-security.js?v=8` dans HTML et précache ; Service Worker `dz-de-v3.185.0.0.124`.
+- Correction de l'assertion CI qui attendait encore `mfa-security.js?v=7` ; alignement du libellé de version Service Worker.
+- Ajout de contrôles de régression statiques pour le statut e-mail, l'échec fermé du contrôle client, l'indisponibilité Resend avant émission, la vérification HMAC et la preuve récente avant désactivation.
+- Les premières exécutions CI du Lot 192 avaient mis en évidence deux assertions obsolètes : version SW `.123` puis module MFA `v7`. Les deux assertions ont été corrigées ; le résultat d'une nouvelle exécution complète sur le HEAD courant reste à confirmer.
+- Aucune simulation de test navigateur, aucune connexion réelle d'élève, aucun envoi e-mail Resend et aucun test réel TOTP/SMS ne sont revendiqués.
+- Aucun changement de `main`, aucune fusion de PR #17, aucun déploiement Cloudflare.
