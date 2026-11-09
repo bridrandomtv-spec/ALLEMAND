@@ -2031,3 +2031,32 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucun changement Auth, Supabase, RLS, schéma, migration ou paiement.
 - La recette visuelle navigateur du tableau de bord étudiant et sa comparaison desktop/mobile avec les deux prototypes restent non réalisées.
 - Prochaine action : confirmer la CI du HEAD après synchronisation des assertions, puis reprendre le travail visuel sur `data-view="dashboard"` sans modifier `فضائي الدراسي`.
+
+
+## Lot 159 — lisibilité et hiérarchie typographique du tableau de bord (9 novembre 2026)
+
+### Comparaison des prototypes
+- Le prototype `Qwen_html_20261021_bxmtbklup.html` organise le tableau autour d'une bannière de bienvenue, du parcours pédagogique, d'une zone compétences/recommandations, des objectifs/badges et de l'activité.
+- Le prototype `Qwen_html_20261021_juv5xelun.html` place les raccourcis sous la bannière, puis les matières et le graphique dans la colonne principale, avec l'assistant, les recommandations et les messages en colonne latérale.
+- La version actuelle conserve sa composition hybride déjà intégrée (bannière, indicateurs réels, raccourcis, parcours, matières et indicateurs d'unité, compétences, objectifs, badges, activité, assistant et communications). L'écart typographique identifié est important : de nombreux libellés et descriptions de cartes étaient encore réglés entre 8 et 11 px, alors que les prototypes utilisent une hiérarchie plus généreuse.
+
+### Modifications du lot
+- Renforcement de la hiérarchie des titres de panneaux, sous-titres, raccourcis, cartes de matières, progression, assistant, recommandations et notifications.
+- Agrandissement des espacements et des marges internes sur ordinateur.
+- Règles mobiles spécifiques pour conserver des libellés lisibles sans faire déborder les cartes.
+- Le thème sombre garde les couleurs et variables existantes ; le lot agit sur la typographie, les proportions et l'espacement, pas sur une recoloration générale.
+- Fichiers : `style-prototype-dz.css`, `index.html`, `sw.js`, `ci/check-masar.mjs`, `ci/check-public-portal.mjs`.
+- Cache CSS : `style-prototype-dz.css?v=178`.
+- Service Worker : `dz-de-v3.185.0.0.96`.
+
+### Validation et limites
+- La CI #2534 avait confirmé le commit précédent `d622bda`.
+- Les workflows du Lot 159 ont été déclenchés successivement par les mises à jour des fichiers. Le dernier commit de code/contrôles est `faf8a09a70437b7d35906ec983a67cd298837062`; la CI #2537 était en attente au moment de la rédaction. Ne pas annoncer la réussite du Lot 159 avant le résultat final sur le HEAD.
+- Aucun rendu navigateur réel ni capture desktop/tablette/mobile n'a été réalisé dans ce lot. Les règles CSS ont été mises à jour et les breakpoints explicitement définis, mais cela ne vaut pas recette visuelle.
+- Le tableau de bord reste à comparer visuellement avec les deux prototypes et à corriger sur la base des écarts observés.
+
+### Périmètre préservé
+- PR #17 ouverte et non fusionnée ; aucune modification de `main`.
+- Aucun changement de routes, identifiants, handlers, `data-view="dashboard"` ou de la vue existante `فضائي الدراسي`.
+- Aucun changement Auth, Supabase, RLS, schéma, migrations ou paiement.
+- Aucun déploiement de production revendiqué.
