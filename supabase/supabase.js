@@ -134,6 +134,11 @@ async function mfaRecoveryGenerate(){
   const r=await c.auth.mfa.recoveryCodes.generate({friendlyName:'DZ Lycée Virtuel recovery codes'});
   return r.error?{ok:false,err:r.error.message}:{ok:true,codes:r.data.codes||[]};
 }
+async function mfaRecoveryRegenerate(){
+  const c=await sb(); if(!c || !c.auth.mfa || !c.auth.mfa.recoveryCodes) return {ok:false,err:'رموز الاسترداد غير مفعّلة'};
+  const r=await c.auth.mfa.recoveryCodes.regenerate();
+  return r.error?{ok:false,err:r.error.message}:{ok:true,codes:r.data.codes||[]};
+}
 async function mfaRecoveryStatus(){
   const c=await sb(); if(!c || !c.auth.mfa || !c.auth.mfa.recoveryCodes) return {ok:false,err:'ميزة رموز الاسترداد غير مفعّلة'};
   const r=await c.auth.mfa.recoveryCodes.getStatus();
@@ -548,7 +553,7 @@ async function msgCreateGroup(wilaya, niveau, filiere, titre){
   return { ok:true, convId:r.data.id };
 }
 
-window.SB = { login, signup, resetPassword, updatePassword, getSession, me, logout, mfaAssurance, mfaStart, mfaVerify, mfaVerifyRecovery, mfaEnrollTotp, mfaVerifyEnrollment, mfaListFactors, mfaUnenroll, mfaRecoveryGenerate, mfaRecoveryStatus, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
+window.SB = { login, signup, resetPassword, updatePassword, getSession, me, logout, mfaAssurance, mfaStart, mfaVerify, mfaVerifyRecovery, mfaEnrollTotp, mfaVerifyEnrollment, mfaListFactors, mfaUnenroll, mfaRecoveryGenerate, mfaRecoveryRegenerate, mfaRecoveryStatus, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
 /* pont dz:view post-sbready (UI-1) : les cartes ADM se re-rendent quand le client devient prêt */
 document.dispatchEvent(new CustomEvent('dz:view', { detail:{ view:(location.hash||'').replace('#','') } }));
