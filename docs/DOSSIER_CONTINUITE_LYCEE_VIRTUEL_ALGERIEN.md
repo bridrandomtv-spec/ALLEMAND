@@ -2937,3 +2937,75 @@ Le registre npm indiquait 2.119.0 comme dernière version publiée au moment de 
 - Audit du code source GitHub effectué ; aucun test navigateur, aucun test SMS réel, aucun test avec compte MFA réel.
 - Aucun changement applicatif, aucune modification Supabase distante, aucune migration, aucun changement RLS/grants, aucun déploiement.
 - Le prochain lot doit corriger les deux parcours alternatifs et épingler la dépendance, sans étendre le périmètre aux politiques serveur tant qu'une autorisation distincte n'a pas été donnée.
+
+
+---
+
+## Lot 188 — harmonisation des parcours MFA et épinglage Supabase JS (9 novembre 2026)
+
+### 1. Corrections applicatives réalisées sur la branche PR #17
+
+**Inscription cloud avec session immédiate**
+- Après une inscription réussie qui retourne effectivement une session, app.js vérifie désormais la disponibilité de DZ_MFA.requireGate().
+- Le garde MFA est exécuté avant cloudAuthority() et enterApp().
+- Si le défi MFA est nécessaire, le flux s'arrête et le module MFA reprend la main sur la finalisation de connexion. Si le module est absent, le parcours est bloqué avec un message explicite.
+- Le parcours d'inscription nécessitant une confirmation e-mail, sans session immédiate, conserve son message de confirmation et ne tente pas d'ouvrir l'application.
+
+**Liaison d'un compte cloud depuis une session locale**
+- Le résultat de SB.login() est désormais contrôlé explicitement par result.ok.
+- Un échec arrête le flux ; il n'est plus suivi d'une tentative implicite de création de compte par SB.signup(). L'interface indique à l'utilisateur de créer un compte depuis la page d'inscription si nécessaire.
+- Le garde MFA est exécuté avant cloudAuthority() et avant la validation de la liaison.
+- L'absence du module MFA bloque le parcours.
+- Si le défi MFA est nécessaire, le parcours s'arrête et laisse le module MFA finaliser l'authentification.
+
+Cette correction réduit le risque de poursuivre une liaison sur la base d'une session cloud préexistante après un échec de mot de passe. Elle ne remplace pas une autorisation AAL2 côté serveur.
+
+### 2. Dépendance Supabase JS épinglée
+
+La version **2.119.0** est confirmée comme publiée le 4 novembre 2026 :
+- https://github.com/supabase/supabase-js/releases/tag/v2.119.0
+- https://www.npmjs.com/package/@supabase/supabase-js
+
+Tous les chemins de chargement présents dans le dépôt ont été épinglés à cette version :
+- Script UMD dans index.html : jsDelivr @2.119.0/dist/umd/supabase.js.
+- Import ESM principal : jsDelivr @2.119.0/+esm.
+- Repli ESM : unpkg @2.119.0/dist/module/index.js.
+- Second repli ESM : esm.sh @2.119.0.
+
+Les options auth.experimental.recoveryCodes: true restent activées. L'épinglage garantit la cohérence de version déclarée dans le code, mais ne constitue pas un test navigateur de disponibilité de chaque URL CDN ni une validation de stabilité de l'API expérimentale.
+
+### 3. Cache et assertions CI
+
+- app.js : version de cache portée de v=3561 à v=3562.
+- supabase/supabase.js : version de cache portée de v=3515 à v=3516.
+- Service Worker : dz-de-v3.185.0.0.120.
+- index.html et le précache du Service Worker ont été synchronisés.
+- ci/check-public-portal.mjs : assertions ajoutées pour la version Supabase 2.119.0, le garde MFA d'inscription, le résultat de connexion dans le flux de liaison et le garde MFA de liaison.
+- ci/check-masar.mjs : assertions de version du cache actualisées.
+
+### 4. État de validation au moment de la mise à jour du dossier
+
+- PR #17 : ouverte, non fusionnée, base main.
+- HEAD contrôlé avant ce commit documentaire : 4be00a6fce89e3bd548cf4a8b1c4274b594a8790.
+- CI #2689 : réussite sur un commit précédent du Lot 187.
+- CI du Lot 188 : exécution déclenchée, état initial pending (run ID 42697338289) ; ne pas la déclarer réussie avant réception de sa conclusion.
+- Modifications réalisées uniquement sur design/prototypes-67-74-alignment.
+- Aucun changement de schéma, migration, politique RLS, grant, rôle, paramètre distant Supabase ou déploiement Cloudflare.
+- Aucun test réel avec compte, facteur TOTP, SMS ou navigateur n'a été réalisé dans ce lot.
+
+### 5. Statut du 2FA à trois méthodes après Lot 188
+
+- TOTP : implémentation existante ; validation réelle de bout en bout encore requise.
+- SMS : implémentation existante ; fournisseur, réception et défi réels encore à tester.
+- E-mail : facteur MFA indépendant non implémenté.
+- Parcours client : inscription avec session immédiate et liaison cloud désormais harmonisés dans le code.
+- Protection serveur AAL2 : toujours non établie dans les politiques RLS auditées au Lot 184.
+- Codes de récupération : API Supabase toujours expérimentale ; version du SDK désormais épinglée, mais validation réelle encore nécessaire.
+
+**Verdict inchangé : le système 2FA professionnel à trois méthodes n'est pas terminé.** Le Lot 188 corrige des lacunes du client et la cohérence de dépendance ; il n'ajoute pas le facteur e-mail et n'instaure pas AAL2 côté serveur.
+
+### 6. Prochaines étapes
+1. Laisser la CI du Lot 188 terminer et corriger toute assertion qui échoue.
+2. Tester en navigateur avec un compte cloud de test : inscription, liaison, connexion, restauration, challenge TOTP et SMS.
+3. Concevoir le facteur e-mail comme une méthode distincte, avec décision explicite sur son niveau d'assurance ; ne pas le présenter comme AAL2 natif Supabase.
+4. Traiter séparément la protection serveur AAL2, après autorisation explicite pour toute migration ou modification RLS.
