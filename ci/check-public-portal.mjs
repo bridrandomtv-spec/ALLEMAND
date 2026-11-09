@@ -488,7 +488,7 @@ for (const marker of [
   'async function requireGate()',"if(attempts>=3)",
   'SB.mfaVerifyRecovery(value)','SB.mfaVerify(pending.factorId,pending.challengeId,value)',
   'SB.mfaEnrollTotp(','SB.mfaVerifyEnrollment(','SB.mfaRecoveryGenerate()',
-  'window.DZ_MFA={requireGate:requireGate'
+  'window.DZ_MFA={requireGate:requireGate','window.DZ.enterApp(profile)','window.DZ.toast('
 ]) if (!mfaModule.includes(marker)) fail('parcours MFA incomplet : ' + marker);
 if (mfaModule.includes('123456') || mfaModule.includes('JBSW Y3DP') || mfaClient.includes('otplib')) fail('OTP/secret statique ou TOTP local interdit');
 if (!app.includes('window.DZ_MFA && await window.DZ_MFA.requireGate()')) fail('le MFA ne bloque pas la connexion et la restauration cloud');
