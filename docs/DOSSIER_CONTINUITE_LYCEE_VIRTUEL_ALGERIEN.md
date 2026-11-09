@@ -3104,6 +3104,7 @@ Mesures de protection :
 - `supabase/supabase.js` expose désormais `SB.mfaEmail()`, qui appelle la fonction via le client Auth de l'utilisateur courant.
 - `mfa-security.js` ajoute l'affichage de l'état du facteur e-mail, son enrôlement, la vérification du code, la désactivation et le défi e-mail au parcours de connexion.
 - Le garde existant continue à traiter TOTP/SMS et codes de récupération natifs ; le défi e-mail personnalisé est ajouté sans le confondre avec les facteurs natifs.
+- Correction de sûreté ajoutée après relecture : si Supabase exige déjà AAL2 pour un facteur natif, le défi e-mail personnalisé ne peut pas remplacer ce défi natif. Le facteur e-mail personnalisé est demandé uniquement lorsque le contrôle natif ne requiert pas AAL2.
 - Cache : `supabase/supabase.js?v=3517`, `mfa-security.js?v=5`, Service Worker `dz-de-v3.185.0.0.121`. Le précache et les références HTML sont alignés.
 - Assertions structurelles CI ajoutées pour le service e-mail, le statut, la vérification, l'enrôlement et la désactivation.
 
