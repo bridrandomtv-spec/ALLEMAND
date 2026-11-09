@@ -3461,3 +3461,9 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - La CI doit encore confirmer le nouveau HEAD ; les assertions statiques ne remplacent pas un test navigateur.
 - Après mise à jour du preview, vérifier le chargement sans erreur de `app.js`, la création de `window.DZ`, le portail de connexion, le mode démo et l'accès au tableau de bord après authentification.
 - Aucun déploiement Cloudflare ni fusion de PR #17 n'a été effectué.
+
+### Ajustement CI du Lot 201
+- CI #2765 a confirmé la syntaxe JavaScript, puis a échoué uniquement dans le contrôle historique de Masar : `ci/check-masar.mjs` attendait encore le Service Worker `.128` et le cache `app.js?v=3562`.
+- Les assertions concernées ont été synchronisées avec les ressources effectivement livrées : `app.js?v=3563` et `dz-de-v3.185.0.0.129`.
+- Correctif CI : commit `3baf00d`. Aucun changement du code applicatif n'a été nécessaire après la restauration des deux fonctions.
+- La nouvelle exécution déclenchée sur ce commit doit encore être observée ; aucune réussite CI n'est anticipée.
