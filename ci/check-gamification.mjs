@@ -93,4 +93,7 @@ assert.equal((html.match(/class="sd-quick-card"/g)||[]).length,5,'les cinq accè
 assert.match(html,/class="sd-quick-card" data-go="msg"/,'accès rapide aux messages absent');
 assert.match(css,/\.sd-quick\{display:grid;grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/,'grille desktop à cinq accès rapides absente');
 assert.match(css,/\.sd-quick\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,'grille mobile des accès rapides absente');
-console.log('✅ XP par compte, événements vérifiés, anti-doublon, 20 badges et grilles responsive contrôlés');
+assert.match(css,/\.sd-achievement\.is-unlocked>span\{width:44px;height:44px/,'icônes des badges ouverts agrandies absentes');
+assert.match(css,/html\[data-theme="dark"\].*sd-achievement\.is-unlocked/s,'style sombre des badges ouverts absent');
+assert.match(css,/\.sd-goal-unit \.sd-goal-icon/,'identité visuelle des objectifs absente');
+console.log('✅ XP par compte, événements vérifiés, badges multicolores et objectifs responsive contrôlés');
