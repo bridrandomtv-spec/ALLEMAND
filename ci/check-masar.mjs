@@ -113,6 +113,7 @@ assert.match(css,/prefers-reduced-motion:reduce/,'respect de la réduction des a
 
 // Lot 168 — l'assistant du tableau de bord est une bannière pleine largeur, hors colonne latérale.
 assert.ok(html.indexOf('sd-path-panel') < html.indexOf('sd-ai-feature'), 'assistant pédagogique doit suivre les panneaux du tableau de bord, comme dans le prototype étudiant');
+assert.ok(html.indexOf('sd-ai-feature') < html.indexOf('sd-quick'), 'les raccourcis complémentaires ne doivent pas précéder le parcours et les panneaux du prototype étudiant');
 assert.doesNotMatch(html, /<aside class="sd-aside">\s*<\/section>/, 'balise section orpheline dans la colonne latérale');
 assert.match(css, /\.sd-ai-feature\{[^}]*grid-template-areas:"head action" "copy action" "caps action"/, 'composition horizontale de l’assistant absente');
 assert.match(css, /@media\(max-width:720px\)[\s\S]*?\.sd-ai-feature\{[^}]*grid-template-areas:"head" "copy" "caps" "action"/, 'adaptation mobile de la bannière assistant absente');
