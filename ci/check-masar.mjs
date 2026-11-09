@@ -96,4 +96,9 @@ assert.match(css, /html\[data-theme="dark"\].*sd-subject-card\[class\*="tone-"\]
 assert.match(app, /role="group"[^>]*aria-label="نشاط آخر سبعة أيام"/, 'description accessible du graphique hebdomadaire absente');
 assert.ok(css.includes('@media(min-width:981px){\n  #shell #app .sd-hero-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}'), 'composition compacte des indicateurs du bandeau étudiant absente');
 assert.ok(app.includes("role=\"img\" aria-label=\"'+names[d.getDay()]+' '+key+' : '+(on?'jour actif':'aucune activité enregistrée')+'\""), 'libellés accessibles des jours actifs absents');
-console.log('✅ مسارك : progression et résultats réels, activité hebdomadaire accessible, cartes et caches contrôlés');
+assert.match(css,/sd-goal-unit \.sd-goal-icon\{background:linear-gradient\(145deg,#3b82f6,#1d4ed8\)/,'carte objectif pédagogique bleue absente');
+assert.match(css,/sd-goal-quiz \.sd-goal-icon\{background:linear-gradient\(145deg,#8b5cf6,#6d28d9\)/,'carte objectif quiz violette absente');
+assert.match(css,/sd-goal-review \.sd-goal-icon\{background:linear-gradient\(145deg,#fbbf24,#d97706\)/,'carte objectif révision dorée absente');
+assert.match(css,/sd-achievement\.is-unlocked:nth-child\(4n\+2\)>span/,'palette multicolore des badges ouverts absente');
+assert.match(css,/prefers-reduced-motion:reduce/,'respect de la réduction des animations absent');
+console.log('✅ مسارك : données réelles, objectifs et badges colorés, responsive, caches contrôlés');
