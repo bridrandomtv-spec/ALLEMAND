@@ -56,7 +56,7 @@ assert.match(js, /ms-unit-grid/, 'cartes de progression par unité absentes');
 assert.match(css, /grid-template-areas:"hero hero" "next chart" "progress progress" "units units"/, 'grille desktop مسارك absente');
 assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/, 'grille mobile مسارك absente');
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
-assert.match(html, /style-prototype-dz\.css\?v=184/, 'cache CSS v184 non actualisé');
+assert.match(html, /style-prototype-dz\.css\?v=185/, 'cache CSS v184 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
 assert.match(sw, /dz-de-v3\.185\.0\.0\.105/, 'version service worker v3.185 non actualisée');
 assert.match(sw, /style-prototype-dz\.css\?v=184/, 'précache CSS v184 non actualisé');
