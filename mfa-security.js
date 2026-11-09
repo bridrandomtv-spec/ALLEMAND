@@ -37,12 +37,25 @@
     var form=$('#mfaChallengeForm');if(form)form.hidden=false;['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(function(x){var n=$(x);if(n)n.hidden=true;});
     status('#mfaChallengeStatus','');if(code)code.focus();return true;
   }
+  async function returnToLoginAfterMfa(message){
+    var closed=false;
+    try{var result=await SB.logout();closed=!!(result&&result.ok);}catch(e){}
+    pending=null;attempts=0;showLogin();
+    status('#loginErr',closed?message:message+' تعذر تأكيد إغلاق الجلسة السحابية؛ أعد تحميل الصفحة قبل إعادة المحاولة.');
+  }
   async function finishLogin(){
-    var profile=window.cloudAuthority?await window.cloudAuthority():null;
-    if(!profile){status('#mfaChallengeStatus','تم التحقق، لكن تعذر تحميل ملفك الدراسي. أعد المحاولة أو تواصل مع الدعم.');return;}
-    if(window.DZ && typeof window.DZ.toast==='function')window.DZ.toast('🎉 تم التحقق من هويتك — أهلاً بك '+profile.nom,'ok');
-    if(window.DZ && typeof window.DZ.enterApp==='function')window.DZ.enterApp(profile);
-    else status('#mfaChallengeStatus','تم التحقق، لكن واجهة المنصة لم تجهز بعد. أعد تحميل الصفحة.');
+    try{
+      var profile=window.cloudAuthority?await window.cloudAuthority():null;
+      if(!profile){await returnToLoginAfterMfa('تم التحقق من الرمز، لكن تعذر تحميل ملفك الدراسي. سجّل الدخول مجددًا.');return;}
+      if(!window.DZ || typeof window.DZ.enterApp!=='function'){
+        await returnToLoginAfterMfa('تم التحقق من الرمز، لكن واجهة المنصة غير جاهزة. سجّل الدخول مجددًا.');
+        return;
+      }
+      if(typeof window.DZ.toast==='function')window.DZ.toast('🎉 تم التحقق من هويتك — أهلاً بك '+profile.nom,'ok');
+      window.DZ.enterApp(profile);
+    }catch(error){
+      await returnToLoginAfterMfa('تعذر terminer la connexion après vérification. سجّل الدخول مجددًا.');
+    }
   }
   var method=$('#mfaChallengeMethod');
   if(method)method.addEventListener('change',async function(){
