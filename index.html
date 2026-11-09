@@ -245,6 +245,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
         <label class="fld"><span id="mfaCodeLabel">رمز التحقق</span><input type="text" id="mfaChallengeCode" required inputmode="numeric" autocomplete="one-time-code" maxlength="32" placeholder="000000"></label>
         <div class="gerr auth-recovery-status" id="mfaChallengeStatus" role="status" aria-live="polite" hidden></div>
         <button type="button" class="btn btn-o btn-block" id="mfaLoginSmsResend" data-mfa-login-resend hidden>📨 إعادة إرسال رمز SMS</button>
+        <button type="button" class="btn btn-o btn-block" id="mfaLoginEmailResend" data-mfa-email-resend hidden>✉️ إعادة إرسال رمز البريد الإلكتروني</button>
         <button type="submit" class="btn btn-p btn-block btn-lg">تحقق وتابع إلى فضائك الدراسي</button>
         <button type="button" class="btn btn-o btn-block" data-mfa-cancel>إلغاء والعودة إلى تسجيل الدخول</button>
         <p class="ghint">بعد ثلاث محاولات غير ناجحة ستُنهى جلسة الدخول الحالية لأسباب أمنية.</p>
@@ -1006,7 +1007,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 <script src="tour.js?v=3510" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
   <script type="module" src="supabase/supabase.js?v=3517"></script>
-  <script src="mfa-security.js?v=11" defer></script>
+  <script src="mfa-security.js?v=12" defer></script>
 <script src="banque.js?v=3510" defer></script>
 <script src="malakhiss.js?v=3510" defer></script>
 <script src="guide.js?v=3511" defer></script>
