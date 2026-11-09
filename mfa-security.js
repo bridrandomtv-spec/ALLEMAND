@@ -11,7 +11,11 @@
     var nativeState=SB.mfaAssurance?await SB.mfaAssurance():{ok:true,required:false,factors:[]};
     if(!nativeState.ok){status('#loginErr',nativeState.err||'تعذر التحقق من إعدادات المصادقة الثنائية.');return true;}
     var emailState=SB.mfaEmail?await SB.mfaEmail({action:'status'}):{ok:false};
-    if(emailState.ok&&emailState.enrolled&&!emailState.verified&&!nativeState.required){
+    if(!emailState.ok){
+      status('#loginErr','تعذر التحقق من حالة المصادقة عبر البريد. أعد المحاولة لاحقًا؛ لم يتم تجاوز فحص الأمان.');
+      return true;
+    }
+    if(emailState.enrolled&&!emailState.verified&&!nativeState.required){
       var started=await SB.mfaEmail({action:'start',purpose:'login'});
       if(!started.ok){status('#loginErr',started.error||started.err||'تعذر إرسال رمز البريد.');return true;}
       pending={type:'email',challengeId:started.challengeId};attempts=0;
