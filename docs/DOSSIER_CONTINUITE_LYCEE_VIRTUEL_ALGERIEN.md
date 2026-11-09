@@ -2412,3 +2412,30 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Les deux assertions ont été actualisées (check-masar.mjs et check-gamification.mjs), ainsi que le contrôle du portail public.
 - CI #2617 : réussie sur a9e9029d154f64a3907c6708d89a78796f61a849. La suite complète des validations structurelles, pédagogiques, d'accès, XP/badges et de régression est passée.
 - Le résultat CI ne remplace pas la vérification visuelle du rendu réel ; aucun déploiement Cloudflare n'est déclaré.
+
+
+## Lot 173 — cartes matières : hiérarchie et responsive (9 novembre 2026)
+
+### Comparaison avec le deuxième prototype
+- Le prototype utilise des cartes de matières en deux colonnes sur les écrans larges, avec icônes de 48 px, titres proéminents, descriptions lisibles, surfaces teintées et barres de progression épaisses.
+- Le tableau de bord réel disposait déjà de deux colonnes internes, d'une palette par matière et de statuts réels, mais les icônes restaient à 38 px et les cartes gardaient des espacements/typographies plus compacts.
+- La grille ne passait à une colonne qu'à 420 px ; elle restait donc trop serrée sur plusieurs formats de téléphone.
+
+### Ajustements appliqués
+- Icônes portées à 48 px sur desktop, titres à 16 px, descriptions/langues à 12 px, statuts à 11 px et barres de progression à 8 px.
+- Cartes mieux respirées : padding 17 px, rayon 18 px, ombre discrète et élévation au survol.
+- Sous 640 px, les cartes passent sur une seule colonne ; icônes à 42 px et tailles typographiques adaptées sans devenir microscopiques.
+- Les accents chromatiques par matière, statuts actif/partiel/planifié, données et destinations restent inchangés.
+- Le mode sombre et prefers-reduced-motion sont pris en charge.
+
+### Cache et contrôles
+- CSS : style-prototype-dz.css?v=187.
+- Service Worker : dz-de-v3.185.0.0.108 ; précache synchronisé.
+- Assertions ajoutées pour les dimensions d'icônes, la typographie et la grille mobile.
+- Le Lot 172 a passé la CI #2617 sur le commit a9e9029 ; la validation du nouveau lot reste à attendre.
+
+### Périmètre
+- Fichiers modifiés : style-prototype-dz.css, index.html, sw.js, ci/check-masar.mjs, ci/check-gamification.mjs, ci/check-public-portal.mjs et ce dossier.
+- Aucun changement HTML, JavaScript métier, donnée pédagogique, route, événement, Auth, Supabase, RLS, schéma, migration ou paiement.
+- PR #17 reste ouverte et non fusionnée. Aucun commit n'est effectué sur main.
+- Aucune validation navigateur ni publication Cloudflare n'est revendiquée.

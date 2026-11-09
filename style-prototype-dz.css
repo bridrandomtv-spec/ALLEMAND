@@ -17720,3 +17720,34 @@ html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-skill-row{backgr
 html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-skill-head strong{color:color-mix(in srgb,var(--sd-skill-accent) 72%,white)}
 @media(max-width:640px){#shell #app [data-view="dashboard"] .sd-unit-chart-legend{gap:7px 11px;padding:8px 9px}#shell #app [data-view="dashboard"] .sd-unit-chart-legend>span{font-size:10px}#shell #app [data-view="dashboard"] .sd-unit-chart-item{padding-inline:3px}#shell #app [data-view="dashboard"] .sd-skill-row{padding:10px}}
 @media(prefers-reduced-motion:reduce){#shell #app [data-view="dashboard"] .sd-unit-chart-track span,#shell #app [data-view="dashboard"] .sd-skill-track span{transition:none}}
+
+
+/* Lot 173 — cartes matières : proportions, typographie et bascule mobile fidèle au prototype.
+   Les cartes et leur statut restent générés depuis le catalogue pédagogique réel. */
+#shell #app [data-view="dashboard"] .sd-subject-card{gap:13px;padding:17px;border-radius:18px;box-shadow:0 5px 16px rgba(20,54,35,.055);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+#shell #app [data-view="dashboard"] .sd-subject-card:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(20,54,35,.09)}
+#shell #app [data-view="dashboard"] .sd-subject-icon{width:48px;height:48px;border-radius:15px;font-size:24px;box-shadow:0 4px 10px rgba(20,54,35,.07)}
+#shell #app [data-view="dashboard"] .sd-subject-status{font-size:11px;line-height:1.5;padding:6px 10px;max-width:100%}
+#shell #app [data-view="dashboard"] .sd-subject-name{font-size:16px;line-height:1.55}
+#shell #app [data-view="dashboard"] .sd-subject-language{font-size:12px;line-height:1.5}
+#shell #app [data-view="dashboard"] .sd-subject-meta{font-size:12px;line-height:1.7;min-height:32px}
+#shell #app [data-view="dashboard"] .sd-subject-progress{gap:7px;margin-top:3px}
+#shell #app [data-view="dashboard"] .sd-subject-progress>div{font-size:11px;line-height:1.6}
+#shell #app [data-view="dashboard"] .sd-subject-progress>i{height:8px;border-radius:99px}
+#shell #app [data-view="dashboard"] .sd-subject-open{font-size:12px;line-height:1.5;padding:9px 13px;border-radius:11px}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-subject-card{box-shadow:0 5px 18px rgba(0,0,0,.16)}
+html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-subject-card:hover{box-shadow:0 9px 22px rgba(0,0,0,.24)}
+@media(max-width:640px){
+  #shell #app [data-view="dashboard"] .sd-subject-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+  #shell #app [data-view="dashboard"] .sd-subject-card{gap:10px;padding:15px;border-radius:16px}
+  #shell #app [data-view="dashboard"] .sd-subject-icon{width:42px;height:42px;border-radius:13px;font-size:21px}
+  #shell #app [data-view="dashboard"] .sd-subject-status{font-size:10px;padding:5px 9px}
+  #shell #app [data-view="dashboard"] .sd-subject-name{font-size:15px}
+  #shell #app [data-view="dashboard"] .sd-subject-language,#shell #app [data-view="dashboard"] .sd-subject-meta{font-size:11px}
+  #shell #app [data-view="dashboard"] .sd-subject-progress>div{font-size:10px}
+  #shell #app [data-view="dashboard"] .sd-subject-open{font-size:11px;padding:9px 12px}
+}
+@media(prefers-reduced-motion:reduce){
+  #shell #app [data-view="dashboard"] .sd-subject-card{transition:none}
+  #shell #app [data-view="dashboard"] .sd-subject-card:hover{transform:none}
+}
