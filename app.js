@@ -2026,12 +2026,14 @@ function renderStudentDashboardSubjects(session,pct,unitCount){
     const byId={};data.matieres.forEach(m=>{byId[m.id]=m;});
     const items=ids.map(id=>byId[id]).filter(Boolean);
     const statuses=data.statuts||{};
+    const subjectTones={allemand:'amber',math:'indigo',physique:'violet',svt:'emerald',espanol:'rose',italien:'teal',francais:'blue',anglais:'red',arabe:'green',philo:'slate',histgeo:'cyan',eco:'orange',info:'sky',islam:'olive'};
     host.innerHTML='<div class="sd-subject-grid">'+items.map(m=>{
+      const tone=subjectTones[m.id]||'neutral';
       const status=statuses[m.statut]||{ar:m.statut||'غير محددة',icon:'•'};
       const active=m.statut==='actif',partial=m.statut==='partiel';
       const route=active?'seances':(m.id==='anglais'&&partial?'english':'');
       const progress=active?'<div class="sd-subject-progress"><div><span>إنجاز المسار الألماني</span><b>'+pct+'%</b></div><i><span style="width:'+pct+'%"></span></i></div><small class="sd-subject-meta">'+unitCount+' وحدات تعليمية مسجلة</small>':'<small class="sd-subject-meta">'+esc(m.desc||'')+'</small>';
-      return '<article class="sd-subject-card '+(active?'is-active':(partial?'is-partial':'is-planned'))+'"><div class="sd-subject-top"><span class="sd-subject-icon">'+esc(m.icon||'📘')+'</span><span class="sd-subject-status '+(active?'is-active':(partial?'is-partial':''))+'">'+esc(status.icon)+' '+esc(status.ar)+'</span></div><b class="sd-subject-name">'+esc(m.ar)+'</b>'+(m.de?'<small class="sd-subject-language" dir="ltr">'+esc(m.de)+'</small>':'')+progress+(route?'<button type="button" class="sd-subject-open" data-go="'+route+'">'+(active?'فتح الحصص':'استكشاف المحتوى')+' ←</button>':'')+'</article>';
+      return '<article class="sd-subject-card tone-'+tone+' '+(active?'is-active':(partial?'is-partial':'is-planned'))+'"><div class="sd-subject-top"><span class="sd-subject-icon">'+esc(m.icon||'📘')+'</span><span class="sd-subject-status '+(active?'is-active':(partial?'is-partial':''))+'">'+esc(status.icon)+' '+esc(status.ar)+'</span></div><b class="sd-subject-name">'+esc(m.ar)+'</b>'+(m.de?'<small class="sd-subject-language" dir="ltr">'+esc(m.de)+'</small>':'')+progress+(route?'<button type="button" class="sd-subject-open" data-go="'+route+'">'+(active?'فتح الحصص':'استكشاف المحتوى')+' ←</button>':'')+'</article>';
     }).join('')+'</div>';
   }
   if(studentDashboardRegistry){paint(studentDashboardRegistry);return;}
