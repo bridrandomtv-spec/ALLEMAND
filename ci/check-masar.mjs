@@ -47,10 +47,10 @@ assert.match(js, /ms-unit-grid/, 'cartes de progression par unité absentes');
 assert.match(css, /grid-template-areas:"hero hero" "next chart" "progress progress" "units units"/, 'grille desktop مسارك absente');
 assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/, 'grille mobile مسارك absente');
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
-assert.match(html, /style-prototype-dz\.css\?v=179/, 'cache CSS v176 non actualisé');
+assert.match(html, /style-prototype-dz\.css\?v=180/, 'cache CSS v176 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.185\.0\.0\.97/, 'version service worker v3.185 non actualisée');
-assert.match(sw, /style-prototype-dz\.css\?v=179/, 'précache CSS v176 non actualisé');
+assert.match(sw, /dz-de-v3\.185\.0\.0\.98/, 'version service worker v3.185 non actualisée');
+assert.match(sw, /style-prototype-dz\.css\?v=180/, 'précache CSS v176 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
 assert.match(html, /app\.js\?v=3551/, 'cache app.js non actualisé');
@@ -76,5 +76,12 @@ assert.match(css, /\.sd-subject-name\{font-size:15px/, 'typographie du nom de ma
 assert.match(css, /\.sd-subject-meta\{font-size:11px/, 'lisibilité des métadonnées de matière absente');
 assert.match(css, /\.sd-subject-progress>div\{font-size:11px/, 'lisibilité de la progression de matière absente');
 assert.match(css, /\.sd-subject-open\{font-size:12px/, 'taille du lien matière absente');
+
+
+assert.match(app, /subjectTones=\{allemand:'amber',math:'indigo',physique:'violet'/, 'palette chromatique des matières absente');
+assert.match(app, /tone-'\+tone/, 'identité chromatique non reliée aux cartes matières');
+assert.match(css, /\.sd-subject-card\.tone-indigo\{--sd-subject-accent:#4f46e5/, 'palette indigo des matières absente');
+assert.match(css, /\.sd-subject-card\.tone-emerald\{--sd-subject-accent:#059669/, 'palette émeraude des matières absente');
+assert.match(css, /html\[data-theme="dark"\].*sd-subject-card\[class\*="tone-"\]/s, 'palette des matières en thème sombre absente');
 
 console.log('✅ مسارك : calculs réels par unité, prochaine séance, compétences, cartes et caches contrôlés');
