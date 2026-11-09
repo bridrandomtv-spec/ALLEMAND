@@ -2325,3 +2325,9 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Fichiers modifiés : `index.html`, `ci/check-masar.mjs`, présent dossier de continuité.
 - CSS v185 et Service Worker .106 inchangés : aucune modification de ressource CSS ni de cache n'est nécessaire pour ce déplacement HTML.
 - PR #17 maintenue ouverte et non fusionnée ; `main` non modifiée. Validation navigateur et déploiement restent à faire.
+
+
+### Addendum CI — Lot 169
+- La CI #2609 a révélé une erreur de syntaxe dans l'expression régulière ajoutée pour détecter une balise orpheline : les antislashs étaient doublés dans le littéral regex, ce qui faisait interpréter le séparateur final comme des indicateurs invalides.
+- Le littéral a été corrigé avec les échappements JavaScript appropriés (`\\s` et `\\/`). La vérification porte toujours sur le même défaut HTML ; elle ne change pas le rendu ni le comportement applicatif.
+- La CI doit être relancée sur le nouveau HEAD. La PR reste ouverte et non fusionnée.
