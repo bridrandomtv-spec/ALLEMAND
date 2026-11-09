@@ -7,27 +7,30 @@
   function showLogin(){var f=$('#mfaChallengeForm');if(f)f.hidden=true;['#loginForm','#signupForm'].forEach(function(s){var n=$(s);if(n)n.hidden=s!=='#loginForm';});}
   function setLoginResendVisibility(type){var b=$('#mfaLoginSmsResend');if(b)b.hidden=type!=='phone';}
   async function requireGate(){
-    if(!window.SB || !SB.mfaAssurance){status('#loginErr','خدمة التحقق الأمني غير جاهزة. أعد تحميل الصفحة.');return true;}
-    var state=await SB.mfaAssurance();
-    if(!state.ok){status('#loginErr',state.err||'تعذر التحقق من إعدادات المصادقة الثنائية.');return true;}
-    if(!state.required) return false;
-    var factors=state.factors||[];
+    if(!window.SB){status('#loginErr','خدمة التحقق الأمني غير جاهزة.');return true;}
+    var nativeState=SB.mfaAssurance?await SB.mfaAssurance():{ok:true,required:false,factors:[]};
+    if(!nativeState.ok){status('#loginErr',nativeState.err||'تعذر التحقق من إعدادات المصادقة الثنائية.');return true;}
+    var emailState=SB.mfaEmail?await SB.mfaEmail({action:'status'}):{ok:false};
+    if(emailState.ok&&emailState.enrolled&&!emailState.verified){
+      var started=await SB.mfaEmail({action:'start',purpose:'login'});
+      if(!started.ok){status('#loginErr',started.error||started.err||'تعذر إرسال رمز البريد.');return true;}
+      pending={type:'email',challengeId:started.challengeId};attempts=0;
+      var select=$('#mfaChallengeMethod');if(select){select.innerHTML='';var o=document.createElement('option');o.value='email';o.textContent='رمز أمني عبر البريد الإلكتروني';select.appendChild(o);select.value='email';}
+      var hint=$('#mfaChallengeHint');if(hint)hint.textContent='أُرسل رمز أمني إلى '+(started.destination||emailState.emailMasked||'بريدك المسجل')+'.';
+      setLoginResendVisibility('');var code=$('#mfaChallengeCode');if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';}
+      var form=$('#mfaChallengeForm');if(form)form.hidden=false;
+      ['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(function(x){var n=$(x);if(n)n.hidden=true;});
+      status('#mfaChallengeStatus','');if(code)code.focus();return true;
+    }
+    var factors=nativeState.factors||[];if(!nativeState.required)return false;
     var preferred=factors.find(function(f){return f.type==='totp';})||factors[0];
     if(!preferred){status('#loginErr','لا يوجد عامل تحقق موثّق لهذا الحساب.');return true;}
-    var challenge=await SB.mfaStart(preferred.id);
-    if(!challenge.ok){status('#loginErr',challenge.err||'تعذر بدء التحقق الإضافي.');return true;}
+    var challenge=await SB.mfaStart(preferred.id);if(!challenge.ok){status('#loginErr',challenge.err||'تعذر بدء التحقق الإضافي.');return true;}
     pending={factorId:preferred.id,challengeId:challenge.challengeId,type:preferred.type};attempts=0;
-    var select=$('#mfaChallengeMethod');
-    if(select){
-      select.innerHTML='';
-      factors.forEach(function(f){var o=document.createElement('option');o.value=f.id;o.textContent=f.type==='phone'?'رسالة نصية إلى الهاتف':'تطبيق المصادقة (TOTP)';o.dataset.type=f.type;select.appendChild(o);});
-      var recovery=document.createElement('option');recovery.value='recovery';recovery.textContent='رمز استرداد احتياطي';select.appendChild(recovery);select.value=preferred.id;
-    }
+    var select=$('#mfaChallengeMethod');if(select){select.innerHTML='';factors.forEach(function(f){var o=document.createElement('option');o.value=f.id;o.textContent=f.type==='phone'?'رسالة نصية إلى الهاتف':'تطبيق المصادقة (TOTP)';o.dataset.type=f.type;select.appendChild(o);});var recovery=document.createElement('option');recovery.value='recovery';recovery.textContent='رمز استرداد احتياطي';select.appendChild(recovery);select.value=preferred.id;}
     var hint=$('#mfaChallengeHint');if(hint)hint.textContent=preferred.type==='phone'?'أُرسل رمز تحقق إلى رقم الهاتف المسجل.':'افتح تطبيق المصادقة المرتبط بحسابك وأدخل الرمز الحالي.';
-    setLoginResendVisibility(preferred.type);
-    var code=$('#mfaChallengeCode');if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';}
-    var form=$('#mfaChallengeForm');if(form)form.hidden=false;
-    ['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(function(s){var n=$(s);if(n)n.hidden=true;});
+    setLoginResendVisibility(preferred.type);var code=$('#mfaChallengeCode');if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';}
+    var form=$('#mfaChallengeForm');if(form)form.hidden=false;['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(function(x){var n=$(x);if(n)n.hidden=true;});
     status('#mfaChallengeStatus','');if(code)code.focus();return true;
   }
   async function finishLogin(){
@@ -55,7 +58,7 @@
     ev.preventDefault();var btn=challengeForm.querySelector('button[type="submit"]'),code=$('#mfaChallengeCode'),value=String(code&&code.value||'').trim();
     if(btn){btn.disabled=true;btn.setAttribute('aria-busy','true');}
     try{
-      var result=$('#mfaChallengeMethod').value==='recovery'?await SB.mfaVerifyRecovery(value):(pending?await SB.mfaVerify(pending.factorId,pending.challengeId,value):{ok:false,err:'أعد اختيار طريقة التحقق.'});
+      var result=$('#mfaChallengeMethod').value==='recovery'?await SB.mfaVerifyRecovery(value):(pending&&pending.type==='email'?await SB.mfaEmail({action:'verify',challengeId:pending.challengeId,code:value}):(pending?await SB.mfaVerify(pending.factorId,pending.challengeId,value):{ok:false,err:'أعد اختيار طريقة التحقق.'}));
       if(result&&result.ok){pending=null;await finishLogin();return;}
       attempts++;var message=(result&&result.err)||'رمز التحقق غير صحيح.';
       if(attempts>=3){await SB.logout();pending=null;showLogin();status('#loginErr','تم إيقاف المحاولة الحالية بعد ثلاث محاولات. سجّل الدخول مجددًا.');}
