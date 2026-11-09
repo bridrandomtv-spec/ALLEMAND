@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   var $=function(s){return document.querySelector(s);};
-  var pending=null, attempts=0, enrolling=null;
+  var pending=null, attempts=0, enrolling=null, enrollingPhone=null;
   function status(id,msg,ok){var n=$(id);if(!n)return;n.textContent=msg||'';n.hidden=!msg;n.classList.toggle('is-success',!!ok);}
   function showLogin(){var f=$('#mfaChallengeForm');if(f)f.hidden=true;['#loginForm','#signupForm'].forEach(function(s){var n=$(s);if(n)n.hidden=s!=='#loginForm';});}
   async function requireGate(){
@@ -60,9 +60,33 @@
     }catch(error){status('#mfaChallengeStatus',error&&error.message||'تعذر التحقق من الرمز.');}
     finally{if(btn){btn.disabled=false;btn.removeAttribute('aria-busy');}}
   });
+  document.addEventListener('submit',async function(ev){
+    if(ev.target && ev.target.id==='mfaPhoneEnrollForm'){
+      ev.preventDefault();
+      var number=String($('#mfaPhoneNumber').value||'').trim();
+      if(!/^\\+[1-9]\\d{7,14}$/.test(number)){status('#mfaPhoneError','أدخل رقمًا دوليًا صحيحًا يبدأ بعلامة +.');return;}
+      var enrolled=await SB.mfaEnrollPhone(number);
+      if(!enrolled.ok){status('#mfaPhoneError',enrolled.err);return;}
+      var challenge=await SB.mfaStart(enrolled.factorId);
+      if(!challenge.ok){await SB.mfaUnenroll(enrolled.factorId);status('#mfaPhoneError',challenge.err);return;}
+      enrollingPhone={factorId:enrolled.factorId,challengeId:challenge.challengeId};
+      var stage=$('#mfaPhoneStage');
+      stage.innerHTML='<div class="mfa-enroll-box"><h3>تحقق من رقم الهاتف</h3><p>أرسل Supabase رمزًا إلى الرقم '+String(enrolled.phone||number).replace(/[&<>"]/g,'')+'. أدخل الرمز لإتمام ربط الهاتف.</p><form id="mfaPhoneVerifyForm"><label class="fld"><span>رمز SMS</span><input id="mfaPhoneCode" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required></label><p id="mfaPhoneError" class="mfa-security-message" role="status"></p><button class="btn btn-p" type="submit">تأكيد رقم الهاتف</button><button class="btn btn-o" type="button" data-mfa-phone-resend>إعادة إرسال الرمز</button><button class="btn btn-o" type="button" data-mfa-phone-cancel>إلغاء</button></form></div>';
+      return;
+    }
+    if(ev.target && ev.target.id==='mfaPhoneVerifyForm'){
+      ev.preventDefault();
+      if(!enrollingPhone)return;
+      var verified=await SB.mfaVerify(enrollingPhone.factorId,enrollingPhone.challengeId,$('#mfaPhoneCode').value);
+      if(!verified.ok){status('#mfaPhoneError',verified.err);return;}
+      enrollingPhone=null;await renderSecurity();status('#mfaSecurityMessage','تم توثيق رقم الهاتف وتفعيل المصادقة عبر SMS.');return;
+    }
+  });
   document.addEventListener('click',async function(ev){
     if(ev.target.closest('[data-mfa-cancel]')){ev.preventDefault();try{await SB.logout();}catch(e){}pending=null;showLogin();status('#loginErr','تم إلغاء تسجيل الدخول.');return;}
     if(ev.target.closest('[data-mfa-enroll]')){await enrollTotp();return;}
+    if(ev.target.closest('[data-mfa-phone-resend]')){if(enrollingPhone){var again=await SB.mfaStart(enrollingPhone.factorId);if(again.ok)enrollingPhone.challengeId=again.challengeId;else status('#mfaPhoneError',again.err);}return;}
+    if(ev.target.closest('[data-mfa-phone-cancel]')){if(enrollingPhone)await SB.mfaUnenroll(enrollingPhone.factorId);enrollingPhone=null;await renderSecurity();return;}
     if(ev.target.closest('[data-mfa-recovery-generate]')){await generateRecovery(false);return;}
     if(ev.target.closest('[data-mfa-recovery-regenerate]')){if(!window.confirm('سيؤدي التجديد إلى إبطال الرموز السابقة. هل تريد المتابعة؟'))return;await generateRecovery(true);return;}
     var remove=ev.target.closest('[data-mfa-unenroll]');
@@ -72,10 +96,15 @@
     var host=$('#mfaSecurityContent');if(!host)return;
     if(!window.SB||!SB.mfaListFactors){host.textContent='خدمة الحماية غير متاحة حاليًا.';return;}
     host.textContent='جارٍ تحميل عوامل التحقق…';var r=await SB.mfaListFactors();if(!r.ok){host.textContent=r.err;return;}
-    var verified=(r.totp||[]).filter(function(f){return f.status==='verified';}),pendingFactors=(r.totp||[]).filter(function(f){return f.status!=='verified';});
+    var verifiedTotp=(r.totp||[]).filter(function(f){return f.status==='verified';});
+    var verifiedPhone=(r.phone||[]).filter(function(f){return f.status==='verified';});
+    var verified=verifiedTotp.concat(verifiedPhone);
+    var pendingFactors=(r.totp||[]).concat(r.phone||[]).filter(function(f){return f.status!=='verified';});
     var markup='';
-    if(verified.length){markup+='<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>المصادقة بتطبيق التحقق مفعّلة</b></div>';verified.forEach(function(f){markup+='<div class="mfa-factor-row"><span>📱 '+String(f.friendly_name||'تطبيق المصادقة').replace(/[&<>"]/g,'')+'</span><button type="button" class="btn btn-sm btn-o" data-mfa-unenroll="'+f.id+'">إزالة العامل</button></div>';});}
-    else markup+='<div class="mfa-status-line mfa-status-off"><span class="mfa-status-dot"></span><b>لم يتم تفعيل تطبيق المصادقة بعد</b></div><button type="button" class="btn btn-p" data-mfa-enroll>🔐 تفعيل تطبيق المصادقة (TOTP)</button>';
+    if(verifiedTotp.length){markup+='<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>تطبيق المصادقة (TOTP) مفعّل</b></div>';verifiedTotp.forEach(function(f){markup+='<div class="mfa-factor-row"><span>📱 '+String(f.friendly_name||'تطبيق المصادقة').replace(/[&<>"]/g,'')+'</span><button type="button" class="btn btn-sm btn-o" data-mfa-unenroll="'+f.id+'">إزالة العامل</button></div>';});}
+    else markup+='<button type="button" class="btn btn-p" data-mfa-enroll>🔐 تفعيل تطبيق المصادقة (TOTP)</button>';
+    if(verifiedPhone.length){markup+='<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>التحقق عبر الهاتف مفعّل</b></div>';verifiedPhone.forEach(function(f){markup+='<div class="mfa-factor-row"><span>📨 '+String(f.phone||'رقم هاتف موثّق').replace(/[&<>"]/g,'')+'</span><button type="button" class="btn btn-sm btn-o" data-mfa-unenroll="'+f.id+'">إزالة العامل</button></div>';});}
+    else markup+='<form id="mfaPhoneEnrollForm" class="mfa-phone-form"><label class="fld"><span>رقم الهاتف بالصيغة الدولية (E.164)</span><input id="mfaPhoneNumber" type="tel" inputmode="tel" autocomplete="tel" placeholder="+213XXXXXXXXX" pattern="\\+[1-9][0-9]{7,14}" required></label><button type="submit" class="btn btn-o">📨 تفعيل التحقق عبر SMS</button><p id="mfaPhoneError" class="mfa-security-message" role="status" aria-live="polite"></p></form><div id="mfaPhoneStage"></div>';
     if(pendingFactors.length)markup+='<p class="mfa-muted">يوجد إعداد غير مكتمل؛ أكمل التحقق أو أعد المحاولة.</p>';
     host.innerHTML=markup+'<div id="mfaEnrollStage"></div><div id="mfaRecoveryStage"></div><p id="mfaSecurityMessage" class="mfa-security-message" role="status" aria-live="polite"></p>';
     if(verified.length){var recovery=await SB.mfaRecoveryStatus(),stage=$('#mfaRecoveryStage');if(recovery.ok){var st=recovery.status||{};stage.innerHTML='<div class="mfa-recovery-row"><span>رموز الاسترداد: '+String(st.remaining||0)+' من '+String(st.total||0)+' متبقية</span><button type="button" class="btn btn-sm btn-o" data-mfa-recovery-regenerate>تجديد الرموز</button></div>';}else stage.innerHTML='<p class="mfa-muted">لا توجد رموز استرداد مفعّلة حاليًا أو أن الميزة التجريبية غير مفعّلة.</p><button type="button" class="btn btn-sm btn-o" data-mfa-recovery-generate>إنشاء رموز الاسترداد</button>';}
