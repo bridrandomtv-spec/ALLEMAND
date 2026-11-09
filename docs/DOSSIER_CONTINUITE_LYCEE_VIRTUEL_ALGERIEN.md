@@ -3273,3 +3273,27 @@ Permettre de consulter correctement l'état du facteur e-mail tant que le domain
 ### État CI antérieur
 - CI #2729 : réussite sur le commit documentaire `8ded41915f725776c8ec92662b4fae399381491f`.
 - Le commit `c161be4` introduit les nouvelles assertions et nécessite sa propre exécution CI.
+
+
+### Lot 196 — contrôles des transitions du défi MFA (9 novembre 2026)
+
+#### Audit effectué
+- Relecture du flux de changement de méthode dans `mfa-security.js` : le choix d'un code de récupération invalide le challenge précédent côté interface (`pending=null`) ; le retour à un facteur TOTP/SMS crée un nouveau challenge avant de remplacer l'état actif.
+- Vérification du chemin d'annulation : la commande d'annulation ferme la session Supabase, efface le challenge en mémoire et revient au formulaire de connexion.
+- Vérification de l'enrôlement SMS : si Supabase ne parvient pas à démarrer le challenge initial après création du facteur téléphone, le facteur en attente est retiré.
+- Ces constats sont une revue statique du code, pas une preuve de comportement réel sur un appareil ou un compte de test.
+
+#### Modifications
+- Ajout dans `ci/check-public-portal.mjs` d'assertions couvrant les trois transitions ci-dessus.
+- Aucun changement de logique applicative MFA dans ce lot.
+- Commit des assertions : `4c9b18db60c2e1fc0c16e9eed736de13235482f8`.
+
+#### Validation
+- CI #2730 sur `c161be4` : réussie.
+- CI #2731 sur `98936b7` : réussie ; ces deux exécutions valident les assertions du Lot 195 et le dossier correspondant.
+- La CI du nouveau commit Lot 196 doit encore être observée ; aucune réussite n'est anticipée.
+
+#### Limites et garde-fous
+- Aucun test navigateur, TOTP réel, SMS réel, e-mail Resend réel ou test multi-compte n'a été exécuté.
+- Aucun secret, schéma, migration, RLS, grant, rôle ou configuration Auth globale Supabase n'a été modifié.
+- Aucun déploiement Cloudflare ; PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
