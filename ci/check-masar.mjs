@@ -33,6 +33,10 @@ assert.match(html, /class="sd-panel sd-unit-progress-panel"/, 'panneau progressi
 assert.match(html, /id="sdUnitProgress"/, 'conteneur progression unités absent');
 assert.match(css, /\.sd-subjects-panel\{grid-column:span 4/, 'proportion matières 2/3 absente');
 assert.match(css, /\.sd-unit-progress-panel\{grid-column:span 2/, 'proportion unités 1/3 absente');
+assert.match(css, /@media\(min-width:641px\) and \(max-width:980px\)[\s\S]*?\.sd-unit-progress-panel\{grid-column:1\/-1\}/, 'panneaux tablette pleine largeur absents');
+assert.match(css, /\.sd-subject-status\{max-width:100%;line-height:1\.5;text-align:center;white-space:normal\}/, 'statuts matière adaptatifs absents');
+assert.match(css, /\.sd-unit-chart-item small,#shell #app \.sd-unit-chart-item em\{font-size:10px/, 'libellés du graphique unités trop petits');
+assert.match(css, /\.sd-skill-row small,#shell #app \.sd-skill-row em\{font-size:11px/, 'détails des résultats quiz trop petits');
 assert.match(app, /unitProgressHost\.innerHTML=.*sd-unit-chart/s, 'graphique réel des unités absent');
 assert.match(app, /لا توجد بيانات كافية بعد/, 'état vide du graphique absent');
 assert.match(css, /\.sd-skills-panel\{[^}]*grid-column:span 4/s, 'proportion compétences 2/3 absente');
