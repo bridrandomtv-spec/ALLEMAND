@@ -807,6 +807,14 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
               <div class="sd-panel-head"><div><span class="sd-eyebrow">مسارك التعليمي</span><h2>خريطة التعلم البيداغوجية</h2><p>الوحدات والحصص وحالتك الفعلية في كل محطة</p></div><button type="button" class="sd-text-link" data-go="seances">كل الحصص ←</button></div>
               <div id="sdPath"></div>
             </section>
+
+        <div class="sd-quick" aria-label="الوصول السريع">
+          <button type="button" class="sd-quick-card" data-go="seances"><span class="sd-quick-icon green">📖</span><b>متابعة الدروس</b><small>الحصص والمسار التعليمي</small></button>
+          <button type="button" class="sd-quick-card" data-go="quiz"><span class="sd-quick-icon amber">🎯</span><b>التمارين والتدريب</b><small>اختبر فهمك وتدرّب</small></button>
+          <button type="button" class="sd-quick-card" data-go="prof"><span class="sd-quick-icon purple">🎙️</span><b>الأستاذ الذكي</b><small>اسأل بالصوت أو النص</small></button>
+          <button type="button" class="sd-quick-card" data-go="examen"><span class="sd-quick-icon red">🎓</span><b>التحضير للبكالوريا</b><small>المواضيع والاختبارات</small></button>
+          <button type="button" class="sd-quick-card" data-go="msg"><span class="sd-quick-icon purple">💬</span><b>الرسائل والتواصل</b><small>تواصل مع القسم</small></button>
+        </div>
         <div class="sd-layout">
           <div class="sd-main">
             
@@ -822,10 +830,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
               <div class="sd-panel-head"><div><span class="sd-eyebrow">نتائج التمارين</span><h2>مؤشرات الأداء حسب الوحدة</h2><p>نتائج إجاباتك الصحيحة المسجّلة في الاختبارات المكتملة</p></div></div>
               <div id="sdSkills"></div>
             </section>
-<section class="sd-panel sd-recommend-panel">
-              <div class="sd-panel-head"><div><span class="sd-eyebrow">اقتراح شخصي</span><h2>خطوتك التالية</h2></div></div>
-              <div id="sdRecommendation"></div>
-            </section>
+
             <section class="sd-panel sd-goals-panel">
               <div class="sd-panel-head"><div><span class="sd-eyebrow">خطة التعلّم</span><h2>أهدافك التعليمية</h2><p>محطات عملية مستخرجة من تقدمك ونتائجك الفعلية</p></div></div>
               <div id="sdGoals"></div>
@@ -840,6 +845,16 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
             </section>
           </div>
           <aside class="sd-aside">
+            <section class="sd-ai-card sd-ai-feature">
+              <div class="sd-ai-head"><span>🎙️</span><div><b>الأستاذ الذكي</b><small>مرافقة تعليمية بالصوت والنص</small></div></div>
+              <p>اطرح سؤالاً حول الدرس، واطلب شرحاً أو أمثلة إضافية باللغة العربية. يمكنك متابعة الحوار كتابةً أو استخدام أدوات الصوت داخل مساحة الأستاذ.</p>
+              <div class="sd-ai-capabilities" aria-label="أنواع المساعدة المتاحة"><span>📖 شرح الدروس</span><span>✍️ تصحيح الجمل</span><span>🎧 تفاعل صوتي</span></div>
+              <button type="button" data-go="prof">فتح مساحة الأستاذ الذكي <span>←</span></button>
+        </section>
+            <section class="sd-panel sd-recommend-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">اقتراح شخصي</span><h2>خطوتك التالية</h2></div></div>
+              <div id="sdRecommendation"></div>
+            </section>
             <section class="sd-panel sd-messages-panel">
               <div class="sd-panel-head"><div><span class="sd-eyebrow">التواصل</span><h2>الرسائل والمجموعات</h2><p>آخر المحادثات المتاحة لحسابك</p></div></div>
               <div id="sdMessages"></div>
@@ -850,20 +865,9 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
             </section>
           </aside>
         </div>
-        <section class="sd-ai-card sd-ai-feature">
-              <div class="sd-ai-head"><span>🎙️</span><div><b>الأستاذ الذكي</b><small>مرافقة تعليمية بالصوت والنص</small></div></div>
-              <p>اطرح سؤالاً حول الدرس، واطلب شرحاً أو أمثلة إضافية باللغة العربية. يمكنك متابعة الحوار كتابةً أو استخدام أدوات الصوت داخل مساحة الأستاذ.</p>
-              <div class="sd-ai-capabilities" aria-label="أنواع المساعدة المتاحة"><span>📖 شرح الدروس</span><span>✍️ تصحيح الجمل</span><span>🎧 تفاعل صوتي</span></div>
-              <button type="button" data-go="prof">فتح مساحة الأستاذ الذكي <span>←</span></button>
-        </section>
+        
 
-        <div class="sd-quick" aria-label="الوصول السريع">
-          <button type="button" class="sd-quick-card" data-go="seances"><span class="sd-quick-icon green">📖</span><b>متابعة الدروس</b><small>الحصص والمسار التعليمي</small></button>
-          <button type="button" class="sd-quick-card" data-go="quiz"><span class="sd-quick-icon amber">🎯</span><b>التمارين والتدريب</b><small>اختبر فهمك وتدرّب</small></button>
-          <button type="button" class="sd-quick-card" data-go="prof"><span class="sd-quick-icon purple">🎙️</span><b>الأستاذ الذكي</b><small>اسأل بالصوت أو النص</small></button>
-          <button type="button" class="sd-quick-card" data-go="examen"><span class="sd-quick-icon red">🎓</span><b>التحضير للبكالوريا</b><small>المواضيع والاختبارات</small></button>
-          <button type="button" class="sd-quick-card" data-go="msg"><span class="sd-quick-icon purple">💬</span><b>الرسائل والتواصل</b><small>تواصل مع القسم</small></button>
-        </div>
+        
 
       </div>
     </section>
