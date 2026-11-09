@@ -3009,3 +3009,56 @@ Les options auth.experimental.recoveryCodes: true restent activées. L'épinglag
 2. Tester en navigateur avec un compte cloud de test : inscription, liaison, connexion, restauration, challenge TOTP et SMS.
 3. Concevoir le facteur e-mail comme une méthode distincte, avec décision explicite sur son niveau d'assurance ; ne pas le présenter comme AAL2 natif Supabase.
 4. Traiter séparément la protection serveur AAL2, après autorisation explicite pour toute migration ou modification RLS.
+
+
+---
+
+## Lot 189 — correction de l’assertion CI MFA et cadrage du facteur e-mail (9 novembre 2026)
+
+### 1. Diagnostic CI du Lot 188
+
+- La CI #2694 (run 42697338289) s’est terminée en échec sur l’étape « Vérifier le portail public (catalogue et inscription) » ; les étapes structurelles précédentes étaient réussies.
+- Le défaut provenait d’une assertion devenue obsolète dans `ci/check-public-portal.mjs` : elle attendait exactement deux appels au garde MFA, alors que le Lot 188 a étendu le garde aux quatre parcours cloud concernés : connexion, restauration de session, inscription avec session immédiate et liaison d’un compte cloud.
+- Le code réel contient quatre vérifications de disponibilité du module MFA et quatre appels à `requireGate()`. L’assertion a été alignée sur ces quatre parcours et son message d’échec précise désormais les quatre flux.
+- Commit de correction CI : `be186d48a359c5a347d7e50f7be3910989868d00`.
+- Cette correction ne modifie ni les flux Auth applicatifs, ni les règles d’accès, ni les données ; elle corrige uniquement le contrat du test structurel.
+
+### 2. Inspection du projet Supabase connecté (lecture seule)
+
+- Projet connecté : `azjwcybivirvpxbfhyzk`, statut ACTIVE_HEALTHY, région eu-west-2.
+- Inventaire Edge Functions : **aucune fonction déployée** (`functions: []`).
+- Aucun service serveur e-mail MFA personnalisé n’existe donc actuellement dans ce projet.
+- Aucune fonction Edge, table, migration, politique RLS, grant, rôle ou configuration Auth n’a été créée ou modifiée dans ce lot.
+
+### 3. Décision technique sur le facteur e-mail
+
+- La documentation Supabase Auth MFA consultée indique que les facteurs MFA natifs disponibles sont TOTP et téléphone ; les OTP e-mail et SMS employés comme méthodes conventionnelles de connexion sont classés parmi les méthodes AAL1.
+- L’API MFA JavaScript documentée expose actuellement TOTP et téléphone comme seconds facteurs ; l’e-mail n’est pas proposé comme facteur MFA natif.
+- En conséquence, un code reçu par e-mail via `signInWithOtp` ne doit pas être présenté comme un troisième facteur MFA indépendant ni comme une élévation AAL2.
+- Pour offrir un véritable facteur e-mail supplémentaire, il faudrait concevoir un service serveur dédié : défi aléatoire à forte entropie, stockage uniquement d’un vérificateur haché, durée de vie courte, consommation atomique à usage unique, limitation des tentatives et des envois, liaison stricte au compte et à la session, prévention du rejeu, journalisation et validation serveur avant l’accès aux opérations protégées.
+- Le client ne doit jamais générer ou valider seul le code, ni le stocker dans localStorage/sessionStorage. Une interface e-mail seule serait trompeuse et insuffisante.
+
+### 4. Autorisation requise avant implémentation serveur
+
+La mise en œuvre réelle du facteur e-mail nécessitera un service serveur (par exemple Edge Function) et un stockage sécurisé des défis, ainsi qu’un mécanisme d’envoi e-mail fiable. Le périmètre actuel interdit toute modification distante du schéma/RLS/configuration sans autorisation distincte. Le Lot 189 s’arrête donc volontairement au diagnostic et à la correction CI ; aucune fausse méthode e-mail n’a été ajoutée au navigateur.
+
+### 5. État de validation et périmètre
+
+- CI #2694 : échec identifié, cause corrigée dans le test structurel par le commit ci-dessus ; nouvelle exécution à vérifier avant de déclarer la CI verte.
+- PR #17 : reste ouverte, non fusionnée, cible `main`.
+- Aucun changement direct sur `main`, aucune fusion et aucun déploiement Cloudflare.
+- Aucun test navigateur, test de compte MFA réel, réception SMS ou réception e-mail n’a été réalisé.
+- Aucune modification distante Supabase ; inventaire des fonctions effectué en lecture seule.
+
+### 6. Statut honnête du 2FA à trois méthodes
+
+- TOTP : implémentation client native Supabase présente ; validation réelle encore requise.
+- SMS : implémentation client native Supabase présente ; fournisseur et livraison réels à tester.
+- E-mail : non implémenté ; aucun facteur e-mail MFA natif Supabase documenté, aucun backend personnalisé déployé.
+- AAL2 côté serveur : non établi dans les politiques RLS auditées précédemment.
+- Verdict : **2 méthodes codées sur 3, mais aucun 2FA professionnel à trois méthodes n’est encore achevé ni validé de bout en bout.**
+
+Références techniques consultées :
+- Supabase Auth MFA : https://supabase.com/docs/guides/auth/auth-mfa
+- Référence JavaScript Auth MFA : https://supabase.com/docs/reference/javascript/auth-mfa
+- Changelog supabase-js (API recovery codes en 2.116.0) : https://github.com/supabase/supabase-js/blob/master/packages/core/supabase-js/CHANGELOG.md
