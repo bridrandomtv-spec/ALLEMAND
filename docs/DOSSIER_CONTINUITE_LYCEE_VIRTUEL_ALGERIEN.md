@@ -2756,3 +2756,5 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 ### Validation Lot 184
 - Audit catalogue et Security Advisors exécuté en lecture seule ; aucun changement distant effectué.
 - CI du commit de documentation à venir. Aucun test d'accès avec JWT AAL1/AAL2 dédié n'a été exécuté ; l'absence d'expression AAL dans les politiques consultées est un constat catalogue, pas un test d'intrusion.
+
+- CI #2685 : réussite du job « Validation structurelle & pédagogique », 33 étapes terminées avec succès sur le commit d'audit initial `d58513f9625477589b9c9f78e443d761ac52ed0a`.
