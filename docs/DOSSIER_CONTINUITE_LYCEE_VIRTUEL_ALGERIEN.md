@@ -2127,3 +2127,25 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucune capture navigateur n'a été prise ; la comparaison est fondée sur le HTML des prototypes et le rendu source du dépôt.
 - PR #17 reste ouverte/non fusionnée ; `main` inchangée.
 - Aucun changement de routes, identifiants de vues, gestionnaires de navigation, Supabase, Auth, RLS, schéma, migration ou paiement.
+
+
+## Lot 163 — accessibilité du graphique d’activité hebdomadaire (9 novembre 2026)
+
+### Audit des indicateurs et comparaison prototype
+- Le prototype multi-matières contient un radar « تطوري في المواد » avec des valeurs fixes (65, 45, 80, 70, 75, 68). Ces valeurs sont des données de démonstration : elles ne sont pas reprises dans le tableau de bord réel.
+- Le tableau de bord réel affiche les résultats par unité depuis `unitQuiz` et la progression des unités depuis les séances réellement terminées. Le titre existant « مؤشرات الأداء حسب الوحدة » décrit correctement ces résultats ; aucune compétence linguistique indépendante n'est inventée.
+- Le graphique hebdomadaire est un indicateur binaire de présence d'activité, et non une mesure de durée ou d'intensité. Sa source est `g.activeDays`, limitée à la fenêtre des sept derniers jours.
+
+### Correctif
+- Ajout d'un rôle de groupe et d'un nom accessible en arabe au graphique hebdomadaire.
+- Chaque barre/jour expose maintenant un libellé accessible comprenant le jour, la date ISO locale et l'état « jour actif » ou « aucune activité enregistrée ».
+- Les données, la fenêtre temporelle, les calculs et l'apparence visible du graphique restent inchangés.
+- Cache application : `app.js?v=3552`.
+- Service Worker : `dz-de-v3.185.0.0.99`, précache de l'application synchronisé.
+- Assertions ajoutées au contrôle du tableau de bord ; références de cache synchronisées dans le contrôle du portail.
+
+### Périmètre et validation
+- Lot limité à l'accessibilité du graphique et aux références de cache ; aucun changement Auth, Supabase, RLS, schéma, migration, paiement, route, identifiant de vue ou gestionnaire métier.
+- Modifications exclusivement sur `design/prototypes-67-74-alignment` / PR #17.
+- Pas de capture navigateur, de validation visuelle manuelle ni de nouveau déploiement Cloudflare revendiqué.
+- PR #17 doit rester ouverte et non fusionnée ; `main` reste inchangée.
