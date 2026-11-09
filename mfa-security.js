@@ -5,6 +5,7 @@
   var pending=null, attempts=0, enrolling=null, enrollingPhone=null;
   function status(id,msg,ok){var n=$(id);if(!n)return;n.textContent=msg||'';n.hidden=!msg;n.classList.toggle('is-success',!!ok);}
   function showLogin(){var f=$('#mfaChallengeForm');if(f)f.hidden=true;['#loginForm','#signupForm'].forEach(function(s){var n=$(s);if(n)n.hidden=s!=='#loginForm';});}
+  function setLoginResendVisibility(type){var b=$('#mfaLoginSmsResend');if(b)b.hidden=type!=='phone';}
   async function requireGate(){
     if(!window.SB || !SB.mfaAssurance){status('#loginErr','خدمة التحقق الأمني غير جاهزة. أعد تحميل الصفحة.');return true;}
     var state=await SB.mfaAssurance();
@@ -23,6 +24,7 @@
       var recovery=document.createElement('option');recovery.value='recovery';recovery.textContent='رمز استرداد احتياطي';select.appendChild(recovery);select.value=preferred.id;
     }
     var hint=$('#mfaChallengeHint');if(hint)hint.textContent=preferred.type==='phone'?'أُرسل رمز تحقق إلى رقم الهاتف المسجل.':'افتح تطبيق المصادقة المرتبط بحسابك وأدخل الرمز الحالي.';
+    setLoginResendVisibility(preferred.type);
     var code=$('#mfaChallengeCode');if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';}
     var form=$('#mfaChallengeForm');if(form)form.hidden=false;
     ['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(function(s){var n=$(s);if(n)n.hidden=true;});
@@ -45,6 +47,7 @@
     if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';}
     if(label)label.textContent='رمز التحقق';
     if(hint)hint.textContent=type==='phone'?'أُرسل رمز تحقق إلى رقم الهاتف المسجل.':'افتح تطبيق المصادقة المرتبط بحسابك وأدخل الرمز الحالي.';
+    setLoginResendVisibility(type);
     status('#mfaChallengeStatus','');
   });
   var challengeForm=$('#mfaChallengeForm');
@@ -83,6 +86,16 @@
     }
   });
   document.addEventListener('click',async function(ev){
+    var resendLogin=ev.target.closest('[data-mfa-login-resend]');
+    if(resendLogin){
+      ev.preventDefault();
+      if(!pending||pending.type!=='phone')return;
+      resendLogin.disabled=true;resendLogin.setAttribute('aria-busy','true');
+      try{var sent=await SB.mfaStart(pending.factorId);if(!sent.ok){status('#mfaChallengeStatus',sent.err||'تعذر إعادة إرسال الرمز.');return;}pending.challengeId=sent.challengeId;status('#mfaChallengeStatus','تم طلب إرسال رمز جديد إلى هاتفك.');}
+      catch(error){status('#mfaChallengeStatus',error&&error.message||'تعذر إعادة إرسال الرمز.');}
+      finally{resendLogin.disabled=false;resendLogin.removeAttribute('aria-busy');}
+      return;
+    }
     if(ev.target.closest('[data-mfa-cancel]')){ev.preventDefault();try{await SB.logout();}catch(e){}pending=null;showLogin();status('#loginErr','تم إلغاء تسجيل الدخول.');return;}
     if(ev.target.closest('[data-mfa-enroll]')){await enrollTotp();return;}
     if(ev.target.closest('[data-mfa-phone-resend]')){if(enrollingPhone){var again=await SB.mfaStart(enrollingPhone.factorId);if(again.ok)enrollingPhone.challengeId=again.challengeId;else status('#mfaPhoneError',again.err);}return;}
