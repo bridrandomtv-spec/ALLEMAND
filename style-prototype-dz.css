@@ -17679,19 +17679,30 @@ html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-achievement.is-l
 }
 
 
-/* Lot 168 — assistant pédagogique en bannière horizontale, conformément au prototype étudiant.
-   Le contenu et l'action existants sont conservés ; seule sa composition change. */
-#shell #app [data-view="dashboard"] .sd-ai-feature{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(220px,.7fr);grid-template-areas:"head action" "copy action" "caps action";align-items:center;column-gap:clamp(18px,3vw,36px);row-gap:5px;padding:clamp(20px,2.5vw,30px);border-radius:22px}
-#shell #app [data-view="dashboard"] .sd-ai-feature .sd-ai-head{grid-area:head}
-#shell #app [data-view="dashboard"] .sd-ai-feature>p{grid-area:copy;max-width:760px;margin:8px 0;color:#f1eafa;font-size:13px;line-height:1.9}
-#shell #app [data-view="dashboard"] .sd-ai-feature .sd-ai-capabilities{grid-area:caps;margin:3px 0 0}
-#shell #app [data-view="dashboard"] .sd-ai-feature>button{grid-area:action;align-self:center;min-height:54px;padding:14px 18px;font-size:13px;box-shadow:0 8px 20px rgba(24,12,44,.18)}
-@media(max-width:720px){
-  #shell #app [data-view="dashboard"] .sd-ai-feature{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "copy" "caps" "action";gap:10px;padding:18px;border-radius:18px}
-  #shell #app [data-view="dashboard"] .sd-ai-feature>p{margin:2px 0;font-size:12px}
-  #shell #app [data-view="dashboard"] .sd-ai-feature>button{width:100%;min-height:48px;margin-top:3px}
+/* Lot 180 — assistant et recommandations dans la colonne latérale, comme le prototype 2.
+   Les panneaux restent dans le tableau de bord autonome ; aucun moteur ni contenu n'est modifié. */
+#shell #app [data-view="dashboard"] .sd-aside .sd-ai-feature{
+  display:block;grid-template-columns:none;grid-template-areas:none;
+  padding:18px;border-radius:19px;
 }
-
+#shell #app [data-view="dashboard"] .sd-aside .sd-ai-feature .sd-ai-head{grid-area:auto}
+#shell #app [data-view="dashboard"] .sd-aside .sd-ai-feature>p{
+  grid-area:auto;max-width:none;margin:13px 0;color:#f1eafa;font-size:11px;line-height:1.85;
+}
+#shell #app [data-view="dashboard"] .sd-aside .sd-ai-feature .sd-ai-capabilities{
+  grid-area:auto;display:grid;grid-template-columns:minmax(0,1fr);gap:6px;margin:0 0 13px;
+}
+#shell #app [data-view="dashboard"] .sd-aside .sd-ai-feature .sd-ai-capabilities span{
+  justify-content:flex-start;white-space:normal;
+}
+#shell #app [data-view="dashboard"] .sd-aside .sd-ai-feature>button{
+  grid-area:auto;width:100%;min-height:48px;margin-top:2px;padding:11px 12px;font-size:11px;
+}
+#shell #app [data-view="dashboard"] .sd-aside .sd-recommend-panel{grid-column:auto!important}
+@media(max-width:720px){
+  #shell #app [data-view="dashboard"] .sd-aside .sd-ai-feature{padding:17px;border-radius:17px}
+  #shell #app [data-view="dashboard"] .sd-aside .sd-ai-feature>p{margin:10px 0;font-size:11px}
+}
 
 /* Lot 172 — graphiques : états explicites et palette inspirée des prototypes.
    Les couleurs qualifient l'état ou distinguent les séries ; aucune donnée n'est créée. */
