@@ -2682,3 +2682,19 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - La validation confirme la cohérence structurelle du module MFA, des formulaires, des appels Supabase et des références de cache ; elle ne prouve pas l'envoi SMS réel ni l'enrôlement sur un compte utilisateur.
 - Le projet Supabase est visible et actif, mais les réglages Auth du fournisseur SMS et l'activation serveur des codes de récupération expérimentaux n'ont pas été consultés ni modifiés via les outils disponibles.
 - Aucun test navigateur visuel, aucun test réel avec compte utilisateur, aucun SMS envoyé, aucun déploiement Cloudflare.
+
+
+## Lot 183 — renvoi du SMS pendant le défi MFA de connexion (9 novembre 2026)
+- Audit du parcours MFA après les Lots 181–182 : l'envoi d'un nouveau code était disponible pendant l'enrôlement du téléphone, mais pas dans le défi présenté après le mot de passe.
+- Ajout d'un bouton « إعادة إرسال رمز SMS » dans le formulaire de défi MFA. Il n'apparaît que lorsque le facteur sélectionné est de type téléphone ; il reste masqué pour TOTP et les codes de récupération.
+- Le bouton appelle le challenge natif Supabase sur le facteur téléphone sélectionné. En cas de succès, le nouvel identifiant de challenge remplace celui utilisé par la vérification suivante. Le bouton est temporairement désactivé pendant la requête et les erreurs sont affichées dans la zone de statut existante.
+- Aucun délai artificiel, minuteur simulé, envoi local, code fictif ou fournisseur SMS supplémentaire n'est ajouté. La délivrabilité dépend toujours du fournisseur déjà configuré dans Supabase Auth.
+- Fichiers modifiés : mfa-security.js, index.html, sw.js, ci/check-public-portal.mjs et ce dossier.
+- Cache : mfa-security.js?v=4 ; Service Worker dz-de-v3.185.0.0.119. Les références CSS, client Supabase et app.js restent inchangées.
+- Assertions structurelles ajoutées pour vérifier le bouton, sa visibilité limitée au facteur téléphone, l'appel challenge et la mise à jour du challenge actif.
+- Aucun changement de schéma, migration, RLS, rôle, secret, Edge Function, réglage Auth distant, paiement ou déploiement Cloudflare.
+- PR #17 reste ouverte et non fusionnée ; main reste inchangée.
+
+### Validation Lot 183 — en attente de CI
+- La vérification des fichiers confirme la présence du gestionnaire de renvoi, la mise à jour du challenge, la synchronisation HTML/Service Worker et les assertions CI.
+- La CI complète doit encore confirmer le nouveau HEAD. Aucun SMS réel, test de navigateur ou test de compte Supabase n'est revendiqué.
