@@ -17590,3 +17590,13 @@ html[data-theme="dark"] #shell #app .sd-message-icon{background:rgba(55,190,125,
 html[data-theme="dark"] #shell #app .sd-subject-card[class*="tone-"]{border-color:color-mix(in srgb,var(--sd-subject-accent) 42%,#26342d);background:linear-gradient(145deg,color-mix(in srgb,var(--sd-subject-accent) 15%,#17231d),var(--p))}
 html[data-theme="dark"] #shell #app .sd-subject-card[class*="tone-"] .sd-subject-icon{background:color-mix(in srgb,var(--sd-subject-accent) 25%,#17231d)}
 html[data-theme="dark"] #shell #app .sd-subject-card[class*="tone-"] .sd-subject-open{border-color:color-mix(in srgb,var(--sd-subject-accent) 45%,#34443a);background:color-mix(in srgb,var(--sd-subject-accent) 18%,#17231d);color:#e7f0e9}
+
+
+/* Lot 164 — métriques compactes dans la bannière, dans l'esprit du prototype étudiant.
+   Les trois valeurs restent issues du compte : XP, série réelle et niveau calculé. */
+@media(min-width:981px){
+  #shell #app .sd-hero-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  #shell #app .sd-hero-metrics>div{min-height:76px;align-items:flex-start;flex-direction:column;justify-content:center;gap:5px;padding:11px 12px}
+  #shell #app .sd-hero-metrics small{font-size:10px;line-height:1.4}
+  #shell #app .sd-hero-metrics b{font-size:13px;line-height:1.4;white-space:nowrap}
+}
