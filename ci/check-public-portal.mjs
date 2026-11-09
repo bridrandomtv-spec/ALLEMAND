@@ -232,19 +232,19 @@ if (!/#gate\\.public-auth-page #passwordUpdateForm\\[hidden\\]\\s*,\\s*#gate\\.p
   fail('règle CSS prioritaire de masquage des formulaires de récupération absente');
 }
 const sw = read('sw.js');
-if (!html.includes('style-prototype-dz.css?v=183')) {
+if (!html.includes('style-prototype-dz.css?v=184')) {
   fail('version CSS du portail non actualisée (v176 attendue)');
 }
-if (!sw.includes('style-prototype-dz.css?v=183')) {
+if (!sw.includes('style-prototype-dz.css?v=184')) {
   fail('version CSS du précache non actualisée (v176 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.104") ||
-    !sw.includes("style-prototype-dz.css?v=183") ||
+if (!sw.includes("dz-de-v3.185.0.0.105") ||
+    !sw.includes("style-prototype-dz.css?v=184") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS v177, app.js v3554 et Service Worker v3.185.0.0.103 synchronisés');
+console.log('✅ Cache CSS v184, app.js v3554 et Service Worker v3.185.0.0.105 synchronisés');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -271,7 +271,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
 if (!html.includes('app.js?v=3554') || !sw.includes('app.js?v=3554')) fail('cache app.js non synchronisé');
-if (!html.includes('style-prototype-dz.css?v=183') || !sw.includes('style-prototype-dz.css?v=183')) fail('cache CSS non synchronisé');
+if (!html.includes('style-prototype-dz.css?v=184') || !sw.includes('style-prototype-dz.css?v=184')) fail('cache CSS non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
 console.log('✅ Lot 99 mobile + Lot 107 desktop : navigation responsive sans sidebar');
@@ -437,7 +437,7 @@ for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 
 if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
   fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
 }
-if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.104')) {
+if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.105')) {
   fail('guide de bienvenue : cache ou Service Worker non actualisé');
 }
 console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
