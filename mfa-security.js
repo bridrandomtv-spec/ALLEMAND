@@ -54,7 +54,7 @@
       if(typeof window.DZ.toast==='function')window.DZ.toast('🎉 تم التحقق من هويتك — أهلاً بك '+profile.nom,'ok');
       window.DZ.enterApp(profile);
     }catch(error){
-      await returnToLoginAfterMfa('تعذر terminer la connexion après vérification. سجّل الدخول مجددًا.');
+      await returnToLoginAfterMfa('تعذر إكمال تسجيل الدخول بعد التحقق. سجّل الدخول مجددًا.');
     }
   }
   var method=$('#mfaChallengeMethod');
@@ -78,7 +78,7 @@
       var result=$('#mfaChallengeMethod').value==='recovery'?await SB.mfaVerifyRecovery(value):(pending&&pending.type==='email'?await SB.mfaEmail({action:'verify',challengeId:pending.challengeId,code:value}):(pending?await SB.mfaVerify(pending.factorId,pending.challengeId,value):{ok:false,err:'أعد اختيار طريقة التحقق.'}));
       if(result&&result.ok){pending=null;await finishLogin();return;}
       attempts++;var message=(result&&result.err)||'رمز التحقق غير صحيح.';
-      if(attempts>=3){await SB.logout();pending=null;showLogin();status('#loginErr','تم إيقاف المحاولة الحالية بعد ثلاث محاولات. سجّل الدخول مجددًا.');}
+      if(attempts>=3){await returnToLoginAfterMfa('تم إيقاف المحاولة الحالية بعد ثلاث محاولات. سجّل الدخول مجددًا.');}
       else status('#mfaChallengeStatus',message+' — المحاولة '+attempts+' من 3.');
     }catch(error){status('#mfaChallengeStatus',error&&error.message||'تعذر التحقق من الرمز.');}
     finally{if(btn){btn.disabled=false;btn.removeAttribute('aria-busy');}}
