@@ -541,7 +541,7 @@ if (!mfaGateBlock.includes('await SB.mfaAssurance()') ||
     !mfaGateBlock.includes('if(!nativeState.required)return false;') ||
     !mfaGateBlock.includes('return true;')) fail('garde MFA : les états non vérifiés ne bloquent pas explicitement l’accès');
 if (!mfaSubmitBlock.includes('if(result&&result.ok){pending=null;await finishLogin();return;}') ||
-    !mfaSubmitBlock.includes('if(attempts>=3){await SB.logout();') ||
+    !mfaSubmitBlock.includes('if(attempts>=3){await returnToLoginAfterMfa(') ||
     !mfaSubmitBlock.includes('SB.mfaVerifyRecovery(value)') ||
     !mfaSubmitBlock.includes("SB.mfaEmail({action:'verify'")) fail('défi MFA : validation, récupération ou limite des tentatives incomplète');
 if (!mfaFinishBlock.includes('window.cloudAuthority?await window.cloudAuthority():null') ||
