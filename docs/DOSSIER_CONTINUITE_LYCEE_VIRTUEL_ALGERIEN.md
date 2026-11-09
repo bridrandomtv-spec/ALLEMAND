@@ -2522,3 +2522,5 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 ### Addendum CI — Lot 175
 - La CI #2625 a validé la syntaxe JavaScript, les contrôles documentaires, le portail public et les vérifications précédant le tableau de bord. Elle s’est arrêtée sur une assertion de version du Service Worker restée en v3.185.0.0.109 dans ci/check-masar.mjs ; le Service Worker et le précache étaient déjà en v3.185.0.0.110.
 - L’assertion de contrôle est alignée sur v3.185.0.0.110. La suite complète doit être relancée sur le nouveau commit avant de déclarer le Lot 175 validé.
+
+- La CI #2626 a ensuite détecté deux assertions historiques nth-child(4n+2) dans ci/check-masar.mjs. Elles exigeaient l’ancienne palette positionnelle que le Lot 175 remplace volontairement. Elles sont alignées sur les tons sémantiques is-tone-2/is-tone-6, avec un garde-fou empêchant le retour à nth-child. Relancer la suite complète sur le prochain commit.

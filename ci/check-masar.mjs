@@ -99,7 +99,9 @@ assert.ok(app.includes("role=\"img\" aria-label=\"'+names[d.getDay()]+' '+key+' 
 assert.match(css,/sd-goal-unit \.sd-goal-icon\{background:linear-gradient\(145deg,#3b82f6,#1d4ed8\)/,'carte objectif pédagogique bleue absente');
 assert.match(css,/sd-goal-quiz \.sd-goal-icon\{background:linear-gradient\(145deg,#8b5cf6,#6d28d9\)/,'carte objectif quiz violette absente');
 assert.match(css,/sd-goal-review \.sd-goal-icon\{background:linear-gradient\(145deg,#fbbf24,#d97706\)/,'carte objectif révision dorée absente');
-assert.match(css,/sd-achievement\.is-unlocked:nth-child\(4n\+2\)>span/,'palette multicolore des badges ouverts absente');
+assert.match(css,/sd-achievement\.is-unlocked\.is-tone-2>span/,'palette stable par catégorie des badges absente');
+assert.match(css,/sd-achievement\.is-unlocked\.is-tone-6>span/,'sixième catégorie de badge absente');
+assert.doesNotMatch(css,/sd-achievement\.is-unlocked:nth-child/,'palette badge dépendante de la position DOM');
 assert.match(css,/prefers-reduced-motion:reduce/,'respect de la réduction des animations absent');
 console.log('✅ مسارك : données réelles, objectifs et badges colorés, responsive, caches contrôlés');
 
@@ -108,7 +110,9 @@ console.log('✅ مسارك : données réelles, objectifs et badges colorés, r
 assert.match(css,/sd-goal-unit \.sd-goal-icon\{background:linear-gradient\(145deg,#3b82f6,#1d4ed8\)/,'carte objectif pédagogique bleue absente');
 assert.match(css,/sd-goal-quiz \.sd-goal-icon\{background:linear-gradient\(145deg,#8b5cf6,#6d28d9\)/,'carte objectif quiz violette absente');
 assert.match(css,/sd-goal-review \.sd-goal-icon\{background:linear-gradient\(145deg,#fbbf24,#d97706\)/,'carte objectif révision dorée absente');
-assert.match(css,/sd-achievement\.is-unlocked:nth-child\(4n\+2\)>span/,'palette multicolore des badges ouverts absente');
+assert.match(css,/sd-achievement\.is-unlocked\.is-tone-2>span/,'palette stable par catégorie des badges absente');
+assert.match(css,/sd-achievement\.is-unlocked\.is-tone-6>span/,'sixième catégorie de badge absente');
+assert.doesNotMatch(css,/sd-achievement\.is-unlocked:nth-child/,'palette badge dépendante de la position DOM');
 assert.match(css,/prefers-reduced-motion:reduce/,'respect de la réduction des animations absent');
 
 // Lot 168 — l'assistant du tableau de bord est une bannière pleine largeur, hors colonne latérale.
