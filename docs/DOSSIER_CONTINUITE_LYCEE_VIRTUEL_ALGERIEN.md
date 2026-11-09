@@ -2517,3 +2517,8 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucun changement au moteur XP, aux données, aux objectifs pédagogiques, aux routes, aux événements, à Auth, Supabase, RLS, schéma, migrations ou paiements.
 - PR #17 reste ouverte et non fusionnée ; aucun commit sur main.
 - Aucun rendu navigateur ni déploiement Cloudflare n’est déclaré.
+
+
+### Addendum CI — Lot 175
+- La CI #2625 a validé la syntaxe JavaScript, les contrôles documentaires, le portail public et les vérifications précédant le tableau de bord. Elle s’est arrêtée sur une assertion de version du Service Worker restée en v3.185.0.0.109 dans ci/check-masar.mjs ; le Service Worker et le précache étaient déjà en v3.185.0.0.110.
+- L’assertion de contrôle est alignée sur v3.185.0.0.110. La suite complète doit être relancée sur le nouveau commit avant de déclarer le Lot 175 validé.
