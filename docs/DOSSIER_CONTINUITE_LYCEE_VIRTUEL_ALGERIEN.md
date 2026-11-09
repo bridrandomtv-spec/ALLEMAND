@@ -2451,3 +2451,32 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - CI #2619 : échec sur une assertion regex responsive mal échappée ; le contrôle a été remplacé par une vérification directe de la règle CSS attendue.
 - CI #2620 : réussie sur dd2c2f92f95a7a733cefd5de5d1df59aa186fa4d. Contrôles du tableau de bord, XP/badges, accès, régressions et validations pédagogiques réussis.
 - Le Lot 173 est validé structurellement. La vérification du rendu réel sur navigateur reste à effectuer ; aucune publication Cloudflare n'est revendiquée.
+
+
+## Lot 174 — graphiques : cohérence des couleurs et interprétation (9 novembre 2026)
+
+### Référence prototypes
+- Le prototype Qwen_html_20261021_bxmtbklup.html présente un graphique radar des compétences linguistiques (vocabulaire, grammaire, compréhension, expression, écoute, écriture), accompagné de quatre cartes colorées. Ses pourcentages sont des données de démonstration et ne doivent pas être importés.
+- Le prototype Qwen_html_20261021_juv5xelun.html présente un radar comparatif des matières, lui aussi alimenté par des valeurs statiques fictives.
+- Le tableau de bord réel ne dispose pas de résultats structurés fiables par compétence linguistique ou par matière. Il expose des résultats par unité issus des tentatives enregistrées. Le graphique radar des prototypes ne peut donc pas être reproduit honnêtement avec les données actuelles.
+
+### Défaut constaté et correction
+- Les lignes du panneau « مؤشرات الأداء حسب الوحدة » recevaient leurs couleurs via nth-child. La couleur dépendait de la position DOM et non de l'identifiant de l'unité.
+- Remplacement par une classe de palette stable calculée depuis le numéro d'unité (is-tone-1 à is-tone-6). La même unité conserve ainsi son accent même si l'ordre ou le sous-ensemble affiché change.
+- Ajout d'une explication visible : les couleurs distinguent les unités, elles ne représentent pas un niveau de réussite.
+- Les pourcentages, nombres de réponses correctes, tentatives, seuil de petite taille d'échantillon et données sources restent inchangés.
+- Les barres d'avancement des unités restent colorées selon leur état réel (complétée, commencée, non commencée).
+
+### Cache et contrôles
+- CSS : style-prototype-dz.css?v=188.
+- Application : app.js?v=3556.
+- Service Worker : dz-de-v3.185.0.0.109 ; précache synchronisé.
+- Contrôle مسارك : vérification de la palette stable et de l'explication des couleurs ; interdiction de revenir aux couleurs indexées sur nth-child.
+- CI du Lot 173 : #2620 réussie sur dd2c2f92f95a7a733cefd5de5d1df59aa186fa4d.
+
+### Limites et périmètre
+- Le radar des prototypes n'est pas reproduit car les axes/compétences et les valeurs du prototype ne correspondent pas à une source de données fiable par élève.
+- Aucun ajout de Chart.js, aucune dépendance frontend.
+- Aucune modification des résultats, du moteur de quiz, des routes, des événements, des données pédagogiques, Auth, Supabase, RLS, schéma, migration ou paiement.
+- PR #17 reste ouverte et non fusionnée ; main n'est pas modifiée.
+- CI et contrôle visuel navigateur du nouveau HEAD restent à attendre ; aucun déploiement Cloudflare n'est revendiqué.

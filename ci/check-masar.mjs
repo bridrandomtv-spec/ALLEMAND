@@ -56,14 +56,14 @@ assert.match(js, /ms-unit-grid/, 'cartes de progression par unité absentes');
 assert.match(css, /grid-template-areas:"hero hero" "next chart" "progress progress" "units units"/, 'grille desktop مسارك absente');
 assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/, 'grille mobile مسارك absente');
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
-assert.match(html, /style-prototype-dz\.css\?v=187/, 'cache CSS v184 non actualisé');
+assert.match(html, /style-prototype-dz\.css\?v=188/, 'cache CSS v184 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.185\.0\.0\.108/, 'version service worker v3.185 non actualisée');
-assert.match(sw, /style-prototype-dz\.css\?v=187/, 'précache CSS v184 non actualisé');
+assert.match(sw, /dz-de-v3\.185\.0\.0\.109/, 'version service worker v3.185 non actualisée');
+assert.match(sw, /style-prototype-dz\.css\?v=188/, 'précache CSS v184 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
-assert.match(html, /app\.js\?v=3555/, 'cache app.js non actualisé');
-assert.match(sw, /app\.js\?v=3555/, 'précache app.js non actualisé');
+assert.match(html, /app\.js\?v=3556/, 'cache app.js non actualisé');
+assert.match(sw, /app\.js\?v=3556/, 'précache app.js non actualisé');
 
 
 assert.match(app, /function studentSession\(\)/, 'le coach doit vérifier la session élève');
@@ -131,3 +131,7 @@ assert.match(css,/sd-subject-icon\{width:48px;height:48px/,'icône des cartes ma
 assert.match(css,/sd-subject-name\{font-size:16px/,'typographie desktop des matières absente');
 assert.match(css,/sd-subject-meta\{font-size:12px/,'descriptions des matières trop petites');
 assert.ok(css.includes('#shell #app [data-view="dashboard"] .sd-subject-grid{grid-template-columns:minmax(0,1fr);gap:12px}'),'grille matières mobile à une colonne absente');
+
+assert.match(app,/sd-skill-row is-tone-/,'palette stable par unité absente');
+assert.match(app,/ألوان البطاقات للتمييز بين الوحدات فقط/,'explication de la signification des couleurs absente');
+assert.doesNotMatch(css,/sd-skill-row:nth-child\(6n/,'palette compétences dépendante de la position DOM');
