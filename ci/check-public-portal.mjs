@@ -472,3 +472,32 @@ const gateBlock=app.slice(gateStart,gateEnd);
 if(gateStart<0||gateEnd<=gateStart||!gateBlock.includes('async function cloudAuthority()')||!gateBlock.includes("localStorage.setItem('dz_de_session_v1'")||!gateBlock.includes("if(lf) lf.addEventListener('submit'")||!gateBlock.includes("if(sf) sf.addEventListener('submit'")) fail('bindGateEvents / cloudAuthority / formulaires Auth absents');
 if(!gateBlock.includes('if(!authLocalMode())')||!gateBlock.includes('if(!result || !result.ok)')||!gateBlock.includes('if(!result.session)')) fail('flux Auth cloud/local ou confirmation email incomplet');
 console.log('✅ Lot 179 : bindGateEvents et cloudAuthority conservés avec le garde-fou Auth.');
+
+
+/* LOT 181 — contrat structurel MFA Supabase (aucun OTP ou secret fictif). */
+const mfaClient = read('supabase/supabase.js');
+const mfaModule = read('mfa-security.js');
+for (const marker of [
+  'auth.mfa.getAuthenticatorAssuranceLevel()','auth.mfa.listFactors()',
+  'auth.mfa.challenge({factorId})','auth.mfa.verify({factorId,challengeId,code:',
+  'auth.mfa.enroll({factorType:','auth.mfa.unenroll({factorId})',
+  'auth.mfa.recoveryCodes.generate(','auth.mfa.recoveryCodes.verify(',
+  'experimental: { recoveryCodes: true }'
+]) if (!mfaClient.includes(marker)) fail('API MFA Supabase absente : ' + marker);
+for (const marker of [
+  'async function requireGate()',"state.data.currentLevel==='aal1'",
+  "state.data.nextLevel==='aal2'","if(attempts>=3)",
+  'SB.mfaVerifyRecovery(value)','SB.mfaVerify(pending.factorId,pending.challengeId,value)',
+  'SB.mfaEnrollTotp(','SB.mfaVerifyEnrollment(','SB.mfaRecoveryGenerate()',
+  'window.DZ_MFA={requireGate:requireGate'
+]) if (!mfaModule.includes(marker)) fail('parcours MFA incomplet : ' + marker);
+if (mfaModule.includes('123456') || mfaModule.includes('JBSW Y3DP') || mfaClient.includes('otplib')) fail('OTP/secret statique ou TOTP local interdit');
+if (!app.includes('window.DZ_MFA && await window.DZ_MFA.requireGate()')) fail('le MFA ne bloque pas la connexion et la restauration cloud');
+for (const marker of ['id="mfaChallengeForm"','id="mfaChallengeMethod"','id="mfaChallengeCode"','id="mfaSecurityCard"','id="mfaSecurityContent"']) if (!html.includes(marker)) fail('interface MFA absente : '+marker);
+if (!html.includes('mfa-security.js?v=1') || !sw.includes('./mfa-security.js?v=1')) fail('module MFA absent du chargement/précache');
+if (!html.includes('supabase/supabase.js?v=3513') || !sw.includes('supabase/supabase.js?v=3513')) fail('cache Supabase MFA non synchronisé');
+if (!html.includes('app.js?v=3561') || !sw.includes('app.js?v=3561')) fail('cache app.js MFA non synchronisé');
+if (!html.includes('style-prototype-dz.css?v=193') || !sw.includes('style-prototype-dz.css?v=193')) fail('cache CSS MFA non synchronisé');
+if (!sw.includes("dz-de-v3.185.0.0.116")) fail('version Service Worker Lot 181 non actualisée');
+if (!css.includes('LOT 181 — écrans et réglages MFA')) fail('styles MFA Lot 181 absents');
+console.log('✅ Lot 181 : MFA Supabase natif, TOTP, défi AAL2, codes de récupération expérimentaux et cache contrôlés.');
