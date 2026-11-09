@@ -41,7 +41,7 @@ async function login(email, pass){
 async function signup(email, pass, meta){
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
   const r = await c.auth.signUp({ email, password: pass, options: { data: meta || {} } });
-  return r.error ? { ok: false, err: r.error.message } : { ok: true, user: r.data.user };
+  return r.error ? { ok: false, err: r.error.message, code: r.error.code || null } : { ok: true, user: r.data.user, session: r.data.session || null };
 }
 async function resetPassword(email){
   const c = await sb();

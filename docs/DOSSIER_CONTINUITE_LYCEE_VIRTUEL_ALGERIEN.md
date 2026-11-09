@@ -2563,3 +2563,5 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Reprendre le tableau de bord étudiant sur les deux prototypes : composition globale, rapport entre bandeau, grille des matières, graphique réel, colonne latérale, assistant vocal, recommandations et messagerie.
 - Conserver exclusivement les données et indicateurs réellement disponibles ; les chiffres et graphiques de démonstration des prototypes ne doivent pas devenir des données d'élève.
 - Vérifier les proportions desktop, tablette et mobile, la lisibilité RTL et les variantes clair/sombre avant validation visuelle utilisateur.
+
+- Addendum Lot 176 : le retour `session` du signup est explicitement contrôlé séparément de celui du login afin de traiter correctement la confirmation email.
