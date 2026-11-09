@@ -2305,3 +2305,5 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 ### Addendum CI — Lot 168
 - La première exécution après déplacement de la bannière a échoué uniquement parce que `ci/check-masar.mjs` conservait deux expressions de version CSS v184 et Service Worker .105.
 - Les assertions ont été corrigées vers CSS v185 et Service Worker .106. La nouvelle exécution sur le HEAD corrigé doit confirmer l'ensemble du lot.
+
+- Une seconde assertion de précache dans `ci/check-gamification.mjs` conservait elle aussi CSS v184 ; elle a été alignée sur v185 après la première exécution. Le contrôle du tableau de bord et celui des interactions ont passé lors de cette exécution ; le contrôle XP/badges doit être rejoué sur le HEAD corrigé.
