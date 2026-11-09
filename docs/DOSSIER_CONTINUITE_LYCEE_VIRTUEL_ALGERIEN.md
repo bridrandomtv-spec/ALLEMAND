@@ -2673,3 +2673,12 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Cache : supabase/supabase.js?v=3515, mfa-security.js?v=3, CSS v193, app.js v3561, Service Worker dz-de-v3.185.0.0.118.
 - Aucun schéma, migration, RLS, rôle, paiement, secret serveur ou déploiement n'est modifié.
 - PR #17 reste ouverte et non fusionnée ; main reste inchangée.
+
+
+### Validation Lot 182 — CI #2670
+- CI #2668 a détecté une assertion qui cherchait le formulaire SMS dans index.html alors que ce formulaire est généré dynamiquement par mfa-security.js ; le contrôle a été corrigé pour vérifier le module propriétaire.
+- CI #2669 a ensuite révélé une référence Service Worker v3.185.0.0.116 restée dans check-masar ; elle a été alignée sur v3.185.0.0.118.
+- CI #2670 : réussite complète du job « Validation structurelle & pédagogique » (33 étapes réussies).
+- La validation confirme la cohérence structurelle du module MFA, des formulaires, des appels Supabase et des références de cache ; elle ne prouve pas l'envoi SMS réel ni l'enrôlement sur un compte utilisateur.
+- Le projet Supabase est visible et actif, mais les réglages Auth du fournisseur SMS et l'activation serveur des codes de récupération expérimentaux n'ont pas été consultés ni modifiés via les outils disponibles.
+- Aucun test navigateur visuel, aucun test réel avec compte utilisateur, aucun SMS envoyé, aucun déploiement Cloudflare.
