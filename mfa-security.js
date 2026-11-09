@@ -64,7 +64,7 @@
     if(ev.target && ev.target.id==='mfaPhoneEnrollForm'){
       ev.preventDefault();
       var number=String($('#mfaPhoneNumber').value||'').trim();
-      if(!/^\\+[1-9]\\d{7,14}$/.test(number)){status('#mfaPhoneError','أدخل رقمًا دوليًا صحيحًا يبدأ بعلامة +.');return;}
+      if(!/^\+[1-9]\d{7,14}$/.test(number)){status('#mfaPhoneError','أدخل رقمًا دوليًا صحيحًا يبدأ بعلامة +.');return;}
       var enrolled=await SB.mfaEnrollPhone(number);
       if(!enrolled.ok){status('#mfaPhoneError',enrolled.err);return;}
       var challenge=await SB.mfaStart(enrolled.factorId);
