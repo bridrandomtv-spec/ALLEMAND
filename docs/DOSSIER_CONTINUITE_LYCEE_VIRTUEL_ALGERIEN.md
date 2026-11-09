@@ -3354,3 +3354,25 @@ Le traitement des trois codes MFA incorrects appelait directement `SB.logout()`,
 - Le code a été conservé dans sa version plus sûre ; l'assertion a été adaptée pour exiger `returnToLoginAfterMfa()` et donc le contrôle du résultat de déconnexion.
 - Correction du contrôle CI : commit `ea813d2967c4a2d45983ca492c4f89f8244b4560`.
 - Les exécutions #2742 et #2743 doivent être vérifiées ; aucune réussite n'est présumée.
+
+
+### Lot 199 — annulation du défi MFA avec fermeture confirmée (9 novembre 2026)
+
+#### Défaut traité
+Le bouton d'annulation du défi MFA appelait `SB.logout()` dans un bloc qui ignorait les erreurs, puis affichait « connexion annulée ». Le résultat de fermeture de session n'était donc pas confirmé.
+
+#### Correction
+- Le gestionnaire `data-mfa-cancel` réutilise désormais `returnToLoginAfterMfa()`.
+- La fermeture de session est contrôlée ; l'état du défi est effacé et l'interface revient à la connexion.
+- Si Supabase ne confirme pas la fermeture, l'utilisateur reçoit le message demandant de recharger la page avant de réessayer.
+- Cache du module MFA passé à `v=11), Service Worker à `dz-de-v3.185.0.0.127`, précache et assertions CI synchronisés.
+- Commits : MFA `f29c1f8`, HTML `09106b8`, Service Worker `b6c9193`, assertions portail `974bbb7`, contrôle Masar `173b4df`.
+
+#### Validation
+- CI #2746 : réussie pour le Lot 198.
+- La CI du Lot 199 doit encore être observée.
+
+#### Limites
+- Validation statique CI ; aucun test navigateur ou compte réel.
+- Aucun changement de schéma, migration, RLS, grant, rôle, secret ou configuration Auth globale Supabase.
+- Aucun déploiement Cloudflare ; PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
