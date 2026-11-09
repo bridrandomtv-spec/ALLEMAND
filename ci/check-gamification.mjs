@@ -97,3 +97,9 @@ assert.match(css,/\.sd-achievement\.is-unlocked>span\{width:44px;height:44px/,'i
 assert.match(css,/html\[data-theme="dark"\].*sd-achievement\.is-unlocked/s,'style sombre des badges ouverts absent');
 assert.match(css,/\.sd-goal-unit \.sd-goal-icon/,'identité visuelle des objectifs absente');
 console.log('✅ XP par compte, événements vérifiés, badges multicolores et objectifs responsive contrôlés');
+
+// Lot 167 — garde-fous visuels objectifs et badges.
+
+assert.match(css,/\.sd-achievement\.is-unlocked>span\{width:44px;height:44px/,'icônes des badges ouverts agrandies absentes');
+assert.match(css,/html\[data-theme="dark"\].*sd-achievement\.is-unlocked/s,'style sombre des badges ouverts absent');
+assert.match(css,/\.sd-goal-unit \.sd-goal-icon/,'identité visuelle des objectifs absente');
