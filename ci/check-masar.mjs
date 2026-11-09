@@ -47,10 +47,10 @@ assert.match(js, /ms-unit-grid/, 'cartes de progression par unité absentes');
 assert.match(css, /grid-template-areas:"hero hero" "next chart" "progress progress" "units units"/, 'grille desktop مسارك absente');
 assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/, 'grille mobile مسارك absente');
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
-assert.match(html, /style-prototype-dz\.css\?v=178/, 'cache CSS v176 non actualisé');
+assert.match(html, /style-prototype-dz\.css\?v=179/, 'cache CSS v176 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.185\.0\.0\.96/, 'version service worker v3.185 non actualisée');
-assert.match(sw, /style-prototype-dz\.css\?v=178/, 'précache CSS v176 non actualisé');
+assert.match(sw, /dz-de-v3\.185\.0\.0\.97/, 'version service worker v3.185 non actualisée');
+assert.match(sw, /style-prototype-dz\.css\?v=179/, 'précache CSS v176 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
 assert.match(html, /app\.js\?v=3551/, 'cache app.js non actualisé');
@@ -70,5 +70,11 @@ assert.ok(app.includes('"Ich trage einen Hut. → « einen » masc Akk.", "t"'),
 assert.ok(app.includes('"Er lebt in einer reichen Gesellschaft. → « einer » Datif.", "t"'), 'corrigé du mini-quiz : datif après in incorrect');
 
 assert.doesNotMatch(app, /كل أسبوع:|1-3 مرات|تصحيح فوري/, 'le coach ne doit pas promettre une fréquence ou une correction non garantie');
+
+
+assert.match(css, /\\.sd-subject-name\\{font-size:15px/, 'typographie du nom de matière alignée sur le HTML réel absente');
+assert.match(css, /\\.sd-subject-meta\\{font-size:11px/, 'lisibilité des métadonnées de matière absente');
+assert.match(css, /\\.sd-subject-progress>div\\{font-size:11px/, 'lisibilité de la progression de matière absente');
+assert.match(css, /\\.sd-subject-open\\{font-size:12px/, 'taille du lien matière absente');
 
 console.log('✅ مسارك : calculs réels par unité, prochaine séance, compétences, cartes et caches contrôlés');
