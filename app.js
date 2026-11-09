@@ -1869,8 +1869,8 @@ function bindGateEvents(){
     }
   });
 
-  /* ── P0.3 : Supabase Auth = autorité PRINCIPALE quand disponible ;
-     localStorage = cache hors-ligne / compatibilité comptes locaux ── */
+  /* ── Auth : Supabase est l'autorité en ligne ; localStorage est réservé au mode hors ligne/démo.
+     Un échec cloud ne doit jamais être transformé en connexion locale réussie. ── */
 async function cloudAuthority(){
   try{
     if(!window.SB || !window.SB.myProfile) return null;
@@ -1885,18 +1885,50 @@ async function cloudAuthority(){
 }
 window.cloudAuthority = cloudAuthority;
 const lf = $('#loginForm');
+  function authLocalMode(){
+    try{
+      const demo = new URLSearchParams(location.search).has('demo')
+        || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+      return !navigator.onLine || demo;
+    }catch(e){ return !navigator.onLine; }
+  }
+  function showGateError(id, message){
+    const node = $(id);
+    if(node){ node.hidden = false; node.textContent = String(message || 'تعذر إتمام العملية.'); }
+  }
   if(lf) lf.addEventListener('submit', async ev => {
     ev.preventDefault();
     const err = $('#loginErr'); if(err) err.hidden = true;
-    let __cs = null;
-    if(navigator.onLine && window.SB && window.SB.login){
-      try{ const __ok = await window.SB.login($('#loginUser').value, $('#loginPass').value); if(__ok){ __cs = await cloudAuthority(); } }catch(e){ __cs = null; }
+    const email = $('#loginUser').value.trim();
+    const password = $('#loginPass').value;
+    if(!authLocalMode()){
+      if(!window.SB || !window.SB.login){
+        showGateError('#loginErr', 'خدمة تسجيل الدخول السحابية غير جاهزة. أعد المحاولة بعد لحظات.');
+        return;
+      }
+      try{
+        const result = await window.SB.login(email, password);
+        if(!result || !result.ok){
+          showGateError('#loginErr', (result && result.err) || 'بيانات الدخول غير صحيحة.');
+          return;
+        }
+        const cloudSession = await cloudAuthority();
+        if(!cloudSession){
+          showGateError('#loginErr', 'تم التحقق من الحساب، لكن تعذر تحميل الملف الدراسي. حاول مجددًا أو تواصل مع الدعم.');
+          return;
+        }
+        toast('🎉 أهلاً بك ' + cloudSession.nom + ' — حساب سحابي (' + cloudSession.niveau + ')', 'ok');
+        enterApp(cloudSession);
+      }catch(error){
+        showGateError('#loginErr', error && error.message ? error.message : 'تعذر الاتصال بخدمة تسجيل الدخول.');
+      }
+      return;
     }
-    if(__cs){ toast('🎉 أهلاً بك ' + __cs.nom + ' — حساب سحابي (' + __cs.niveau + ')', 'ok'); enterApp(__cs); return; }
-    const r = AUTH.login($('#loginUser').value, $('#loginPass').value, $('#loginClasse').value);
-    if(r.ok){ toast('🎉 أهلاً بك ' + r.session.nom + ' — القسم ' + r.session.classe_ar, 'ok');
-              enterApp(r.session); }
-    else if(err){ err.hidden = false; err.textContent = r.err; }
+    const local = AUTH.login(email, password, $('#loginClasse').value);
+    if(local.ok){
+      toast('🎉 أهلاً بك ' + local.session.nom + ' — القسم ' + local.session.classe_ar, 'ok');
+      enterApp(local.session);
+    }else showGateError('#loginErr', local.err);
   });
 
   const bd = $('#btnDemo');
@@ -1912,21 +1944,45 @@ const lf = $('#loginForm');
     const err = $('#suErr'); if(err) err.hidden = true;
     const w = String($('#suWilaya').value || '').split('|');
     const niv = $('#suNiveau').value;
-    let __sc = null;
-    if(navigator.onLine && window.SB && window.SB.signup){
-      try{ await window.SB.signup($('#suMail').value, $('#suPass').value, { pseudo:$('#suName').value, niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0] }); __sc = await cloudAuthority(); }catch(e){ __sc = null; }
+    if(!authLocalMode()){
+      if(!window.SB || !window.SB.signup){
+        showGateError('#suErr', 'خدمة إنشاء الحساب السحابية غير جاهزة. أعد المحاولة بعد لحظات.');
+        return;
+      }
+      try{
+        const result = await window.SB.signup($('#suMail').value.trim(), $('#suPass').value, {
+          pseudo:$('#suName').value.trim(), niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0]
+        });
+        if(!result || !result.ok){
+          showGateError('#suErr', (result && result.err) || 'تعذر إنشاء الحساب.');
+          return;
+        }
+        if(!result.session){
+          showGateError('#suErr', 'تم استلام طلب التسجيل. تحقق من بريدك الإلكتروني لتفعيل الحساب، ثم عُد لتسجيل الدخول.');
+          return;
+        }
+        const cloudSession = await cloudAuthority();
+        if(!cloudSession){
+          showGateError('#suErr', 'تم إنشاء الحساب، لكن تعذر تحميل الملف الدراسي. لا تنشئ حسابًا محليًا بديلًا؛ أعد المحاولة أو تواصل مع الدعم.');
+          return;
+        }
+        toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + cloudSession.niveau, 'ok');
+        enterApp(cloudSession);
+      }catch(error){
+        showGateError('#suErr', error && error.message ? error.message : 'تعذر الاتصال بخدمة إنشاء الحساب.');
+      }
+      return;
     }
-    if(__sc){ toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + __sc.niveau, 'ok'); enterApp(__sc); return; }
-    const r = AUTH.signup({
+    const local = AUTH.signup({
       nom:$('#suName').value, mail:$('#suMail').value, pass:$('#suPass').value,
       niveau:niv, filiere:$('#suFiliere').value,
-        filiere_ar: ($('#suFiliere') && $('#suFiliere').selectedOptions[0]) ? $('#suFiliere').selectedOptions[0].textContent : '',
-        specialite: ($('#suSpecialite') && !$('#suSpecialite').hidden && $('#suSpecialite').selectedOptions[0]) ? $('#suSpecialite').selectedOptions[0].textContent : '',
+      filiere_ar: ($('#suFiliere') && $('#suFiliere').selectedOptions[0]) ? $('#suFiliere').selectedOptions[0].textContent : '',
+      specialite: ($('#suSpecialite') && !$('#suSpecialite').hidden && $('#suSpecialite').selectedOptions[0]) ? $('#suSpecialite').selectedOptions[0].textContent : '',
       wilaya:w[1] || 'Bouira', code_wilaya:w[0] || '10',
       role:$('#suRole').value, classe:niv + '-1'
     });
-    if(r.ok){ toast('✅ تم إنشاء حسابك — أهلاً ' + r.session.nom, 'ok'); enterApp(r.session); }
-    else if(err){ err.hidden = false; err.textContent = r.err; }
+    if(local.ok){ toast('✅ تم إنشاء حسابك — أهلاً ' + local.session.nom, 'ok'); enterApp(local.session); }
+    else showGateError('#suErr', local.err);
   });
 
   const uc = $('#userChip');

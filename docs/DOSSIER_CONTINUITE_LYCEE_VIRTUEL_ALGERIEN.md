@@ -2531,3 +2531,35 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - CI #2626 : échec sur deux assertions historiques nth-child de la palette badges ; elles ont été remplacées par des contrôles is-tone-* stables.
 - CI #2627 : réussie sur le commit 318753942382330a37e4175a5841a1b109bb3b1a. Les 33 étapes du job de validation sont terminées avec succès.
 - La validation structurelle ne remplace pas un contrôle visuel du rendu navigateur ; aucune prévisualisation Cloudflare n’est déclarée vérifiée.
+
+
+## Lot 176 — fiabilisation du flux Supabase Auth et retour visuel (9 novembre 2026)
+
+### Audit du flux existant
+- Le client Supabase JS v2 était déjà initialisé dans `supabase/supabase.js` ; aucun second client ni nouveau CDN n'est ajouté.
+- Le formulaire de connexion pouvait poursuivre vers `AUTH.login` local après un refus Supabase en ligne. Le formulaire d'inscription pouvait de même créer un compte local après un échec cloud ou une inscription nécessitant une confirmation email.
+- Ce repli rendait l'état affiché ambigu et pouvait créer deux identités non synchronisées.
+- Le déclencheur SQL existant impose déjà le rôle `eleve` à l'inscription, sans lire un rôle fourni dans les métadonnées client. Aucun SQL ni politique RLS n'a été modifié.
+
+### Corrections
+- En ligne, connexion et inscription utilisent exclusivement Supabase ; une erreur d'identifiants, un client indisponible ou un profil cloud introuvable affiche une erreur et ne crée pas de session locale.
+- Le mode local reste disponible explicitement hors ligne, sur localhost et via le mode démo.
+- L'inscription retourne désormais la session Supabase lorsqu'elle existe. Si la confirmation email est activée et qu'aucune session n'est encore fournie, l'interface demande de vérifier le courriel au lieu de déclarer une connexion locale réussie.
+- Ajout de `getSession()` dans le client et retour structuré des erreurs de déconnexion ; `signOut({scope:'local'})` évite de fermer les autres appareils.
+- États d'erreur plus visibles dans le portail clair/sombre.
+
+### Cache et contrôles
+- Application : `app.js?v=3558` ; client : `supabase/supabase.js?v=3512`.
+- CSS : `style-prototype-dz.css?v=190` ; Service Worker : `dz-de-v3.185.0.0.111`.
+- Assertions Auth ajoutées au contrôle existant `ci/check-public-portal.mjs`.
+
+### Périmètre et limites
+- Fichiers modifiés : `app.js`, `supabase/supabase.js`, `style-prototype-dz.css`, `index.html`, `sw.js`, `ci/check-public-portal.mjs` et présent dossier.
+- Aucune modification du schéma, des migrations, des politiques RLS, des profils existants, des paiements ou des autorisations administratives.
+- PR #17 reste ouverte et non fusionnée ; `main` n'est pas modifiée.
+- La CI doit valider le nouveau HEAD. Les essais réels d'inscription, confirmation email, connexion, persistance de session et déconnexion nécessitent la prévisualisation Cloudflare et un compte de test ; aucun résultat navigateur ou déploiement n'est présumé.
+
+### Suite esthétique
+- Reprendre le tableau de bord étudiant sur les deux prototypes : composition globale, rapport entre bandeau, grille des matières, graphique réel, colonne latérale, assistant vocal, recommandations et messagerie.
+- Conserver exclusivement les données et indicateurs réellement disponibles ; les chiffres et graphiques de démonstration des prototypes ne doivent pas devenir des données d'élève.
+- Vérifier les proportions desktop, tablette et mobile, la lisibilité RTL et les variantes clair/sombre avant validation visuelle utilisateur.

@@ -36,7 +36,7 @@ async function sb(){
 async function login(email, pass){
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
   const r = await c.auth.signInWithPassword({ email, password: pass });
-  return r.error ? { ok: false, err: r.error.message } : { ok: true, user: r.data.user };
+  return r.error ? { ok: false, err: r.error.message, code: r.error.code || null } : { ok: true, user: r.data.user, session: r.data.session || null };
 }
 async function signup(email, pass, meta){
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
@@ -56,15 +56,25 @@ async function updatePassword(password){
   const r = await c.auth.updateUser({ password });
   return r.error ? { ok:false, err:r.error.message } : { ok:true, user:r.data.user };
 }
-async function me(){
+async function getSession(){
   try{
-    const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
-    if(!c) return null;
+    const c = await sb();
+    if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)', session:null };
     const r = await c.auth.getSession();
-    return r.data.session ? r.data.session.user : null;
-  }catch(e){ return null; }
+    return r.error ? { ok:false, err:r.error.message, session:null }
+      : { ok:true, session:r.data.session || null, user:r.data.session ? r.data.session.user : null };
+  }catch(e){ return { ok:false, err:String((e && e.message) || e), session:null }; }
 }
-async function logout(){ const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' }; await c.auth.signOut(); }
+async function me(){
+  const r = await getSession();
+  return r.ok && r.session ? r.session.user : null;
+}
+async function logout(){
+  const c = await sb();
+  if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.auth.signOut({ scope:'local' });
+  return r.error ? { ok:false, err:r.error.message } : { ok:true };
+}
 
 /* sync mémoire locale → cloud */
 async function pushMemoire(){
@@ -475,7 +485,7 @@ async function msgCreateGroup(wilaya, niveau, filiere, titre){
   return { ok:true, convId:r.data.id };
 }
 
-window.SB = { login, signup, resetPassword, updatePassword, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
+window.SB = { login, signup, resetPassword, updatePassword, getSession, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
 /* pont dz:view post-sbready (UI-1) : les cartes ADM se re-rendent quand le client devient prêt */
 document.dispatchEvent(new CustomEvent('dz:view', { detail:{ view:(location.hash||'').replace('#','') } }));

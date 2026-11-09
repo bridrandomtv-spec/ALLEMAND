@@ -17772,3 +17772,9 @@ html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-achievement.is-u
 html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-achievement.is-unlocked.is-tone-5>span{background:linear-gradient(145deg,#a83d55,#84233b)}
 html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-achievement.is-unlocked.is-tone-6>span{background:linear-gradient(145deg,#176f68,#14544f)}
 @media(max-width:680px){#shell #app [data-view="dashboard"] .sd-achievement-grid{gap:9px}#shell #app [data-view="dashboard"] .sd-achievement{grid-template-columns:44px minmax(0,1fr);column-gap:10px}}
+
+/* Lot 176 — états de soumission Auth : retour visuel clair, sans changement de parcours. */
+#gate.public-auth-page .gform button[aria-busy="true"]{opacity:.76!important;cursor:progress!important;filter:saturate(.82)!important}
+#gate.public-auth-page .gform button:disabled{opacity:.7!important;cursor:not-allowed!important}
+#gate.public-auth-page .gerr:not([hidden]){display:block!important;margin:2px 0 4px!important}
+html[data-theme="dark"] #gate.public-auth-page .gerr:not([hidden]){border-color:#75414a!important;background:#321d22!important;color:#ffc4cb!important}
