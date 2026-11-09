@@ -238,7 +238,7 @@ if (!html.includes('style-prototype-dz.css?v=193')) {
 if (!sw.includes('style-prototype-dz.css?v=193')) {
   fail('version CSS du précache non actualisée (v176 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.126") ||
+if (!sw.includes("dz-de-v3.185.0.0.127") ||
     !sw.includes("style-prototype-dz.css?v=193") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
@@ -438,7 +438,7 @@ for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 
 if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
   fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
 }
-if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.126')) {
+if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.127')) {
   fail('guide de bienvenue : cache ou Service Worker non actualisé');
 }
 console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
@@ -549,14 +549,14 @@ if (!mfaFinishBlock.includes('window.cloudAuthority?await window.cloudAuthority(
 
 
 for (const marker of ['id="mfaChallengeForm"','id="mfaChallengeMethod"','id="mfaChallengeCode"','id="mfaSecurityCard"','id="mfaSecurityContent"']) if (!html.includes(marker)) fail('interface MFA absente : '+marker);
-if (!html.includes('mfa-security.js?v=10') || !sw.includes('./mfa-security.js?v=10')) fail('module MFA absent du chargement/précache');
+if (!html.includes('mfa-security.js?v=11') || !sw.includes('./mfa-security.js?v=11')) fail('module MFA absent du chargement/précache');
 if (!html.includes('id="mfaLoginSmsResend"') || !html.includes('data-mfa-login-resend')) fail('bouton de renvoi SMS au défi de connexion absent');
 if (!mfaModule.includes('setLoginResendVisibility(type)') || !mfaModule.includes("setLoginResendVisibility(preferred.type)") || !mfaModule.includes("setLoginResendVisibility(type);")) fail('visibilité du renvoi SMS non limitée au facteur téléphone');
 if (!mfaModule.includes('id=\"mfaPhoneEnrollForm\"') || !mfaModule.includes('id=\"mfaPhoneVerifyForm\"') || !mfaModule.includes('SB.mfaStart(enrolled.factorId)')) fail('enrôlement et validation du facteur SMS absents');
 if (!html.includes('supabase/supabase.js?v=3517') || !sw.includes('supabase/supabase.js?v=3517')) fail('cache Supabase MFA non synchronisé');
 if (!html.includes('app.js?v=3562') || !sw.includes('app.js?v=3562')) fail('cache app.js MFA non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=193') || !sw.includes('style-prototype-dz.css?v=193')) fail('cache CSS MFA non synchronisé');
-if (!sw.includes("dz-de-v3.185.0.0.126")) fail('version Service Worker Lot 192 non actualisée');
+if (!sw.includes("dz-de-v3.185.0.0.127")) fail('version Service Worker Lot 192 non actualisée');
 if (!css.includes('LOT 181 — écrans et réglages MFA')) fail('styles MFA absents');
 console.log('✅ MFA : Supabase natif, TOTP, défi AAL2, codes de récupération expérimentaux et cache contrôlés.');
 
@@ -598,8 +598,8 @@ if(mfaFinalStart<0||mfaFinalEnd<=mfaFinalStart||
    !mfaFinalBlock.includes('if(!profile)')||
    !mfaFinalBlock.includes("typeof window.DZ.enterApp!=='function'")||
    !mfaFinalBlock.includes('window.DZ.enterApp(profile)')) fail('finalisation MFA : échec profil/entrée sans fermeture de session et retour connexion');
-if (!html.includes('mfa-security.js?v=10') || !sw.includes('./mfa-security.js?v=10')) fail('cache MFA Lot 197 non synchronisé');
-if (!sw.includes("dz-de-v3.185.0.0.126")) fail('version Service Worker Lot 197 non actualisée');
+if (!html.includes('mfa-security.js?v=11') || !sw.includes('./mfa-security.js?v=11')) fail('cache MFA Lot 197 non synchronisé');
+if (!sw.includes("dz-de-v3.185.0.0.127")) fail('version Service Worker Lot 197 non actualisée');
 console.log('✅ Lot 197 : échec de finalisation MFA fermé, retour connexion et cache contrôlés.');
 
 
@@ -611,6 +611,18 @@ if(mfaLockoutStart<0||mfaLockoutEnd<=mfaLockoutStart||
    !mfaLockoutBlock.includes('await returnToLoginAfterMfa(')||
    mfaLockoutBlock.includes('await SB.logout()')) fail('verrouillage MFA : fermeture de session non vérifiée après trois échecs');
 if(!mfaModule.includes("تعذر إكمال تسجيل الدخول بعد التحقق")) fail('message de finalisation MFA non localisé en arabe');
-if(!html.includes('mfa-security.js?v=10')||!sw.includes('./mfa-security.js?v=10')) fail('cache MFA Lot 198 non synchronisé');
-if(!sw.includes("dz-de-v3.185.0.0.126")) fail('version Service Worker Lot 198 non actualisée');
+if(!html.includes('mfa-security.js?v=11')||!sw.includes('./mfa-security.js?v=11')) fail('cache MFA Lot 198 non synchronisé');
+if(!sw.includes("dz-de-v3.185.0.0.127")) fail('version Service Worker Lot 198 non actualisée');
 console.log('✅ Lot 198 : fermeture contrôlée après trois échecs MFA et cache synchronisé.');
+
+
+// Lot 199 — annulation du défi MFA : fermeture de session contrôlée.
+const mfaCancelStart=mfaModule.indexOf("if(ev.target.closest('[data-mfa-cancel]'))");
+const mfaCancelEnd=mfaModule.indexOf("if(ev.target.closest('[data-mfa-enroll]'))",mfaCancelStart);
+const mfaCancelBlock=mfaModule.slice(mfaCancelStart,mfaCancelEnd);
+if(mfaCancelStart<0||mfaCancelEnd<=mfaCancelStart||
+   !mfaCancelBlock.includes('await returnToLoginAfterMfa(')||
+   mfaCancelBlock.includes('await SB.logout()')) fail('annulation MFA : fermeture de session non contrôlée');
+if(!html.includes('mfa-security.js?v=11')||!sw.includes('./mfa-security.js?v=11')) fail('cache MFA Lot 199 non synchronisé');
+if(!sw.includes("dz-de-v3.185.0.0.127")) fail('version Service Worker Lot 199 non actualisée');
+console.log('✅ Lot 199 : annulation MFA avec fermeture de session contrôlée.');
