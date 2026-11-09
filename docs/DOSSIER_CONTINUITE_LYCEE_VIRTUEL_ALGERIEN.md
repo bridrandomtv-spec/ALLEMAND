@@ -2710,3 +2710,8 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 
 - Diagnostic complémentaire de CI #2677 : la chaîne de diagnostic du contrôle مسارك montrait que le motif regex lui-même contenait encore « .118 » ; la première correction avait modifié le texte d'erreur mais pas les chiffres dans le motif. Le motif est maintenant effectivement aligné sur « .119 ».
 - Ce correctif de validateur est enregistré dans ci/check-masar.mjs ; nouvelle validation CI requise.
+
+### Validation finale Lot 183 — CI #2683
+- CI #2683, sur le HEAD de documentation `43e24bb09604c5fc9dee3ab360855899f94d6814`, est réussie : job « Validation structurelle & pédagogique », 33 étapes terminées avec succès.
+- Les assertions MFA du portail public, le renvoi SMS conditionnel, le renouvellement du challenge et le contrôle مسارك avec Service Worker v3.185.0.0.119 sont validés structurellement.
+- Cette réussite CI ne remplace pas un essai navigateur ou un test SMS réel avec un compte Supabase ; aucun de ces tests n'a été effectué.
