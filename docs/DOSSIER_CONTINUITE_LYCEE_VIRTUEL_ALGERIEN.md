@@ -2880,3 +2880,60 @@ Références officielles :
 - PR #17 : ouverte, non fusionnée, base `main`, tête `design/prototypes-67-74-alignment`.
 - Aucun changement de schéma/RLS/grants/Auth distant, aucun test réel de compte, aucun SMS réel, aucun test navigateur, aucun déploiement.
 - Prochain lot : corriger/valider les chemins alternatifs d'authentification dans le client (inscription et liaison de compte), vérifier l'API recovery codes sur une version `supabase-js` épinglée, puis rédiger une décision d'architecture pour l'e-mail. Les politiques AAL2 restent un chantier serveur séparé soumis à autorisation explicite.
+
+---
+
+## Lot 187 — audit des parcours alternatifs MFA et de la dépendance Supabase JS (9 novembre 2026)
+
+### 1. Périmètre
+Audit en lecture seule du HEAD de la PR #17 (3836c963b64ea4d580439c7e6046f00a97c440ce), portant sur la connexion par mot de passe, la restauration de session, l'inscription cloud, la liaison d'un compte cloud depuis une session locale, et le chargement de Supabase JS / l'API des codes de récupération.
+
+Aucun fichier applicatif, paramètre distant, schéma, rôle, grant, politique RLS ou déploiement n'a été modifié dans ce lot.
+
+### 2. Résultats sur les parcours
+
+**Parcours couverts par le garde MFA côté client**
+- Connexion cloud : app.js appelle DZ_MFA.requireGate() après SB.login() et avant cloudAuthority() / enterApp().
+- Restauration de session cloud : le flux vérifie la présence de DZ_MFA.requireGate() puis l'exécute avant de charger le profil et d'entrer dans l'application.
+- Si le module MFA manque sur ces deux parcours, l'accès est bloqué côté client.
+
+**Parcours alternatifs non harmonisés**
+- Inscription cloud avec session immédiate : app.js appelle cloudAuthority() puis enterApp() sans appel explicite à DZ_MFA.requireGate(). L'inscription sans session retourne vers la confirmation e-mail.
+- Liaison d'un compte cloud depuis une session locale (lcBtn) : le code appelle SB.login() puis cloudAuthority() sans vérifier le résultat {ok, err} de SB.login() et sans passer par DZ_MFA.requireGate().
+- Le wrapper SB.login() renvoie un objet d'échec plutôt que de lever systématiquement une exception. Le try/catch du parcours de liaison ne suffit donc pas à traiter correctement un échec. Le flux doit vérifier explicitement result.ok avant de poursuivre ; sinon, un état cloud préexistant pourrait être pris en compte par cloudAuthority().
+
+Ces deux parcours sont des lacunes de cohérence du garde client. Ils ne prouvent pas à eux seuls un contournement des politiques serveur ; le Lot 184 a établi qu'aucune politique RLS inspectée ne vérifiait AAL2.
+
+### 3. Vérification de l'API des codes de récupération
+- Le dépôt active auth.experimental.recoveryCodes: true et utilise auth.mfa.recoveryCodes.generate/verify/regenerate/getStatus.
+- Le changelog officiel de @supabase/supabase-js indique l'ajout de l'API MFA Recovery Codes en version **2.116.0** (7 septembre 2026).
+- La documentation officielle confirme que le flag auth.experimental.recoveryCodes est requis et que la vérification d'un code élève la session à aal2. Les codes sont à usage unique et les codes en clair ne sont remis qu'une seule fois.
+- Il est donc inexact de conclure que l'API est absente de supabase-js : elle existe depuis 2.116.0. Elle reste toutefois explicitement **expérimentale**.
+- Le dépôt charge actuellement Supabase JS via des URL CDN en @2 (UMD et imports ESM de secours), sans version exacte. Le code ne permet donc pas de prouver quelle version est réellement exécutée dans le navigateur. L'absence d'épinglage empêche de garantir que les trois chemins de chargement utilisent la même version.
+
+Références consultées le 9 novembre 2026 :
+- Changelog : https://github.com/supabase/supabase-js/blob/master/packages/core/supabase-js/CHANGELOG.md
+- API generate : https://supabase.com/docs/reference/javascript/auth-mfa-recovery-codes-generate
+- API verify : https://supabase.com/docs/reference/javascript/auth-mfa-recovery-codes-verify
+
+Le registre npm indiquait 2.119.0 comme dernière version publiée au moment de l'audit. Ce numéro est une référence de contrôle, pas une modification effectuée dans le dépôt.
+
+### 4. Actions recommandées pour le Lot 188
+1. Harmoniser l'inscription avec session immédiate : exécuter le garde MFA avant toute entrée dans l'application lorsque la session cloud est créée.
+2. Corriger la liaison cloud depuis une session locale : contrôler result.ok, interrompre le flux en cas d'échec, puis exécuter le défi MFA avant de charger/valider le profil cloud.
+3. Épingler une version exacte de Supabase JS identique dans le script UMD et les imports ESM de secours ; vérifier la compatibilité réelle de l'API recovery codes avec cette version.
+4. Ajouter des assertions CI couvrant connexion, restauration, inscription et liaison ; puis effectuer des tests navigateur avec un compte de test.
+5. Garder séparé le chantier serveur AAL2 : une correction JavaScript ne remplace jamais les contrôles RLS/RPC côté serveur.
+
+### 5. Statut du système 2FA à trois méthodes
+- TOTP : code présent, facteur natif Supabase ; tests réels de compte et navigateur non effectués.
+- SMS : code présent, facteur téléphone natif Supabase ; réception réelle et fournisseur SMS non testés.
+- E-mail : aucun facteur e-mail indépendant implémenté. L'OTP e-mail de connexion ne doit pas être présenté comme facteur MFA AAL2 natif.
+- Verdict : **2 méthodes codées (TOTP + SMS), 1 méthode manquante (e-mail), et validation de production incomplète**. Le système 2FA à trois méthodes n'est pas terminé.
+
+### 6. Validation et limites
+- PR #17 : ouverte, non fusionnée, base main ; HEAD contrôlé : 3836c963b64ea4d580439c7e6046f00a97c440ce.
+- CI #2689 : réussite, 33 étapes sur le commit de la PR contrôlé dans cet audit.
+- Audit du code source GitHub effectué ; aucun test navigateur, aucun test SMS réel, aucun test avec compte MFA réel.
+- Aucun changement applicatif, aucune modification Supabase distante, aucune migration, aucun changement RLS/grants, aucun déploiement.
+- Le prochain lot doit corriger les deux parcours alternatifs et épingler la dépendance, sans étendre le périmètre aux politiques serveur tant qu'une autorisation distincte n'a pas été donnée.
