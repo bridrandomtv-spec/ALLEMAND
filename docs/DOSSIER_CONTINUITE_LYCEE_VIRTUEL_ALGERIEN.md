@@ -2638,3 +2638,20 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Les assertions vérifient maintenant l'ordre parcours → accès rapides → grille, ainsi que la présence de l'assistant et des recommandations dans la colonne latérale.
 - Les contrôles de cache vérifient CSS v192 et Service Worker v3.185.0.0.115.
 - La validation est structurelle et CI uniquement : pas de capture navigateur, pas de test visuel desktop/tablette/mobile, pas de test réel de compte Supabase, et aucun déploiement Cloudflare correspondant n'est déclaré.
+
+
+## Lot 181 — intégration initiale du MFA Supabase natif (9 novembre 2026)
+- Ajout du module mfa-security.js et des wrappers MFA dans supabase/supabase.js : lecture AAL, liste des facteurs vérifiés, challenge, vérification, enrôlement TOTP, désenrôlement et API expérimentale de codes de récupération.
+- Le client active l'option auth.experimental.recoveryCodes. L'activation côté client ne suffit pas : la fonctionnalité expérimentale doit aussi être activée dans le projet Supabase Auth ; aucun réglage distant n'a été modifié depuis ce lot.
+- La connexion et la restauration d'une session cloud interrogent getAuthenticatorAssuranceLevel(). Si Supabase indique aal1 avec aal2 comme niveau suivant, l'application reste bloquée et affiche le défi MFA.
+- Les facteurs TOTP vérifiés sont proposés en priorité ; un facteur téléphone déjà vérifié peut aussi être challengé. L'envoi SMS dépend du fournisseur configuré dans le projet.
+- Limitation d'interface à trois essais par défi, puis fermeture de la session locale et retour à la connexion. Ce compteur navigateur n'est pas une protection anti-abus serveur ; les limites Auth Supabase restent nécessaires.
+- Ajout dans « حسابي » d'un panneau d'enrôlement TOTP : QR code et secret proviennent de Supabase, affichés uniquement pendant l'enrôlement et non stockés dans localStorage ni dans une table applicative.
+- Ajout de la génération native expérimentale des codes de récupération ; les codes en clair sont présentés une seule fois et ne sont pas conservés par l'application. Supabase gère leur vérification et leur consommation unitaire.
+- Aucun otplib, secret TOTP statique, OTP de démonstration, table de secrets, migration SQL, changement RLS, Edge Function, fournisseur SMS ou changement de rôle n'est ajouté.
+- Fichiers concernés : supabase/supabase.js, mfa-security.js (nouveau), app.js, index.html, style-prototype-dz.css, sw.js et ci/check-public-portal.mjs.
+- Références cache : supabase/supabase.js?v=3513, mfa-security.js?v=1, app.js?v=3561, style-prototype-dz.css?v=193, Service Worker dz-de-v3.185.0.0.116.
+- Prérequis avant activation réelle : activer la fonctionnalité recovery codes expérimentale dans Supabase Auth ; vérifier la prise en charge côté serveur ; tester avec un compte dédié ; confirmer l'affichage du QR code sur téléphone et la délivrabilité SMS si un facteur téléphone est utilisé.
+- La CI structurelle ne prouve pas le fonctionnement réel auprès du projet Supabase : les tests navigateur avec un compte de test restent à faire. Aucune capture navigateur ni aucun déploiement Cloudflare n'est revendiqué.
+- L'obligation AAL2 par rôle et les règles d'autorisation des ressources sensibles restent à auditer côté serveur/RLS avant de déclarer le MFA obligatoire pour enseignants, agents ou administrateurs.
+- PR #17 reste ouverte et non fusionnée ; main reste inchangée.
