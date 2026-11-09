@@ -2249,3 +2249,29 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 ### Addendum CI — Lot 166
 - Après la mise à jour des références, deux assertions regex conservaient les anciennes valeurs v182 / worker .103. Elles ont été alignées sur CSS v183 et worker .104 dans les contrôles du tableau de bord et de la gamification.
 - Les assertions couvrent les nouvelles règles responsive et la lisibilité des libellés ; le résultat d'exécution GitHub Actions sur le HEAD final reste à confirmer.
+
+
+## Lot 167 — finition visuelle des objectifs et badges (9 novembre 2026)
+
+### Rectification de l'audit comparatif
+- La relecture du HTML réel confirme que « أهدافك التعليمية » et « الشارات والمكافآت » sont déjà deux panneaux côte à côte sur desktop (grille principale 6 colonnes, 3 colonnes par panneau).
+- Le panneau de recommandations est déjà placé à côté des résultats de quiz (4/2 colonnes) et l'assistant intelligent reste dans la colonne latérale dédiée.
+- La précédente observation selon laquelle objectifs et badges seraient empilés était donc inexacte : aucun déplacement HTML n'était nécessaire. La composition existante est conservée.
+
+### Finition graphique réalisée
+- Les trois familles d'objectifs réels (unité, quiz, révision) disposent désormais de tuiles d'icônes colorées distinctes et de fonds légèrement teintés.
+- Les badges effectivement débloqués reprennent des tuiles plus grandes, avec des dégradés alternés (or, bleu, vert, violet) dans l'esprit des badges illustrés du prototype.
+- Les badges verrouillés restent visuellement atténués ; leur statut demeure explicite. Aucun badge fictif ou nouvel objectif de démonstration n'est ajouté.
+- Les panneaux conservent leur disposition responsive ; les styles sombres ont des fonds adaptés et les animations respectent `prefers-reduced-motion`.
+
+### Cache et contrôles
+- CSS : `style-prototype-dz.css?v=184`.
+- Service Worker : `dz-de-v3.185.0.0.105`, précache synchronisé.
+- Assertions ajoutées aux contrôles du tableau de bord et de gamification pour les palettes d'objectifs, les badges ouverts, le thème sombre et la réduction des animations.
+- Références CSS et Service Worker alignées dans le contrôle du portail public.
+
+### Périmètre et état
+- Modification limitée à CSS, références de cache, assertions CI et documentation.
+- Aucun changement JavaScript métier, HTML structurel, donnée, calcul, route, identifiant de vue, gestionnaire d'événement, Auth, Supabase, RLS, schéma, migration ou paiement.
+- PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`.
+- La CI du nouveau HEAD doit encore s'exécuter. Aucun déploiement Cloudflare ni contrôle visuel navigateur n'est revendiqué.
