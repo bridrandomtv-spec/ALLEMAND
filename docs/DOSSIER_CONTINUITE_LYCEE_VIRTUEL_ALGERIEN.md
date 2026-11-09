@@ -2600,3 +2600,5 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucune modification de la base, du déclencheur SQL, des rôles, des politiques RLS ou des paiements.
 - Cache application : `app.js?v=3559` ; Service Worker : `dz-de-v3.185.0.0.113`.
 - Contrôle Auth ajouté au validateur existant ; CI à relancer. Le test réel de persistance nécessite encore un navigateur et un compte cloud de test.
+
+- Addendum CI Lot 178 : les contrôles de `مسارك` doivent également suivre app.js v3559 et le Service Worker v3.185.0.0.113 ; assertions synchronisées avant la nouvelle validation.

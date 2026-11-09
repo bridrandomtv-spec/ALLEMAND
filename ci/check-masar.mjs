@@ -58,12 +58,12 @@ assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
 assert.match(html, /style-prototype-dz\.css\?v=191/, 'cache CSS v184 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.185\.0\.0\.112/, 'version service worker v3.185 non actualisée');
+assert.match(sw, /dz-de-v3\.185\.0\.0\.113/, 'version service worker v3.185 non actualisée');
 assert.match(sw, /style-prototype-dz\.css\?v=191/, 'précache CSS v184 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
-assert.match(html, /app\.js\?v=3558/, 'cache app.js non actualisé');
-assert.match(sw, /app\.js\?v=3558/, 'précache app.js non actualisé');
+assert.match(html, /app\.js\?v=3559/, 'cache app.js non actualisé');
+assert.match(sw, /app\.js\?v=3559/, 'précache app.js non actualisé');
 
 
 assert.match(app, /function studentSession\(\)/, 'le coach doit vérifier la session élève');
