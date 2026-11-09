@@ -619,10 +619,10 @@ console.log('✅ Lot 198 : fermeture contrôlée après trois échecs MFA et cac
 // Lot 199 — annulation du défi MFA : fermeture de session contrôlée.
 const mfaCancelStart=mfaModule.indexOf("if(ev.target.closest('[data-mfa-cancel]'))");
 const mfaCancelEnd=mfaModule.indexOf("if(ev.target.closest('[data-mfa-enroll]'))",mfaCancelStart);
-const mfaCancelBlock=mfaModule.slice(mfaCancelStart,mfaCancelEnd);
+const mfaCancelBlock199=mfaModule.slice(mfaCancelStart,mfaCancelEnd);
 if(mfaCancelStart<0||mfaCancelEnd<=mfaCancelStart||
-   !mfaCancelBlock.includes('await returnToLoginAfterMfa(')||
-   mfaCancelBlock.includes('await SB.logout()')) fail('annulation MFA : fermeture de session non contrôlée');
+   !mfaCancelBlock199.includes('await returnToLoginAfterMfa(')||
+   mfaCancelBlock199.includes('await SB.logout()')) fail('annulation MFA : fermeture de session non contrôlée');
 if(!html.includes('mfa-security.js?v=11')||!sw.includes('./mfa-security.js?v=11')) fail('cache MFA Lot 199 non synchronisé');
 if(!sw.includes("dz-de-v3.185.0.0.127")) fail('version Service Worker Lot 199 non actualisée');
 console.log('✅ Lot 199 : annulation MFA avec fermeture de session contrôlée.');
