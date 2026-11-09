@@ -3062,3 +3062,68 @@ Références techniques consultées :
 - Supabase Auth MFA : https://supabase.com/docs/guides/auth/auth-mfa
 - Référence JavaScript Auth MFA : https://supabase.com/docs/reference/javascript/auth-mfa
 - Changelog supabase-js (API recovery codes en 2.116.0) : https://github.com/supabase/supabase-js/blob/master/packages/core/supabase-js/CHANGELOG.md
+
+
+---
+
+## Lot 190 — stockage sécurisé et service serveur du second contrôle e-mail (9 novembre 2026)
+
+### 1. Autorisation et périmètre
+- L'utilisateur a explicitement autorisé la création des composants Supabase nécessaires au facteur e-mail personnalisé.
+- Projet : `azjwcybivirvpxbfhyzk`, région `eu-west-2`, statut `ACTIVE_HEALTHY`.
+- Le périmètre a été limité à trois nouvelles tables, deux fonctions SQL internes et une Edge Function dédiée. Aucune table existante, politique RLS existante, rôle métier, grant existant, paramètre Auth global, paiement ou règle de sécurité d'une fonctionnalité préexistante n'a été modifié.
+- Aucun déploiement Cloudflare et aucune fusion de PR n'ont été effectués.
+
+### 2. Stockage Supabase créé
+Migration distante appliquée avec succès : `add_email_mfa_challenge_store`.
+Nouvelles tables :
+- `public.mfa_email_factors` : état d'activation du facteur e-mail par utilisateur.
+- `public.mfa_email_challenges` : défis à usage unique, liés à l'utilisateur et à la session, avec empreinte HMAC, expiration de cinq minutes et plafond de cinq essais.
+- `public.mfa_email_sessions` : validation e-mail enregistrée côté serveur et liée à une session Auth, durée de douze heures.
+
+Mesures de protection :
+- RLS activée sur les trois tables.
+- Aucun accès direct accordé à `anon` ou `authenticated`.
+- Droits limités à `service_role` pour ces tables.
+- Deux fonctions SQL `SECURITY INVOKER`, avec `search_path` verrouillé, pour émettre et consommer les défis.
+- Verrou transactionnel par utilisateur, délai minimal entre envois, plafonds de 5 défis/heure et 10/jour, invalidation des défis précédents, consommation atomique, expiration et verrouillage après cinq essais.
+- Les tables restent dans le schéma `public` mais ne sont pas exposées aux clients par des privilèges directs ; l'accès est opéré par le backend.
+
+### 3. Edge Function déployée
+- Nom : `mfa-email`.
+- Version déployée : 1.
+- Statut Supabase : ACTIVE.
+- Vérification JWT de la plateforme : activée (`verify_jwt=true`).
+- SDK serveur épinglé à `@supabase/supabase-js@2.119.0`.
+- La fonction vérifie le jeton utilisateur auprès de Supabase Auth, exige un e-mail confirmé, récupère le `session_id` du JWT validé, puis effectue les opérations sensibles avec le client serveur.
+- Actions codées : `status`, `start` (enrôlement ou connexion), `verify`, `disable`.
+- Le code à six chiffres est généré côté serveur ; seule son empreinte HMAC-SHA-256 est conservée en base. Le secret HMAC n'est jamais placé dans le dépôt ou dans le navigateur.
+- Envoi via l'API Resend, avec expéditeur et clé lus exclusivement depuis les secrets d'environnement.
+
+### 4. Intégration du client sur la branche PR #17
+- `supabase/supabase.js` expose désormais `SB.mfaEmail()`, qui appelle la fonction via le client Auth de l'utilisateur courant.
+- `mfa-security.js` ajoute l'affichage de l'état du facteur e-mail, son enrôlement, la vérification du code, la désactivation et le défi e-mail au parcours de connexion.
+- Le garde existant continue à traiter TOTP/SMS et codes de récupération natifs ; le défi e-mail personnalisé est ajouté sans le confondre avec les facteurs natifs.
+- Cache : `supabase/supabase.js?v=3517`, `mfa-security.js?v=5`, Service Worker `dz-de-v3.185.0.0.121`. Le précache et les références HTML sont alignés.
+- Assertions structurelles CI ajoutées pour le service e-mail, le statut, la vérification, l'enrôlement et la désactivation.
+
+### 5. Limites importantes — aucune fausse déclaration de sécurité
+- Supabase Auth ne reconnaît pas ce facteur personnalisé comme facteur MFA natif et il ne fait pas passer le JWT à `aal2`.
+- Le défi e-mail est un second contrôle applicatif côté serveur, lié à la session, mais les politiques RLS et RPC métier existantes ne vérifient pas cette preuve. L'accès direct à ces API n'est donc pas universellement bloqué par ce facteur.
+- Aucune politique RLS existante n'a été modifiée, conformément à la limite fixée. Une protection serveur globale nécessiterait un chantier distinct de contrôle des opérations sensibles.
+- Le déploiement de la fonction est effectué, mais l'envoi est **non opérationnel tant que les secrets `MFA_EMAIL_PEPPER`, `RESEND_API_KEY` et `MFA_EMAIL_FROM` ne sont pas configurés** dans Supabase Edge Function Secrets. La fonction renvoie volontairement une erreur de configuration au lieu de simuler un envoi.
+- Aucun secret n'a été inventé, demandé dans le chat ou inscrit dans Git.
+- Aucun e-mail réel n'a été envoyé et aucun test de compte de bout en bout n'a encore été exécuté.
+
+### 6. Audit de sécurité après migration
+- L'advisor Supabase relève trois notices informatives `RLS Enabled No Policy` pour les trois tables MFA nouvelles. C'est intentionnel : les clients ne doivent pas disposer de politiques directes ; seuls les appels serveur avec `service_role` y accèdent.
+- Les alertes préexistantes sur `agreement_current` et les fonctions `SECURITY DEFINER` authentifiées restent présentes et n'ont pas été modifiées dans ce lot.
+- Le déploiement Edge Function est confirmé ACTIVE, version 1, avec vérification JWT activée.
+- La migration et l'inventaire des tables ont été confirmés après application.
+
+### 7. État de la validation et suite
+- CI #2696 : réussite sur le commit `be186d48a359c5a347d7e50f7be3910989868d00` (Lot 189), 33 étapes. Ce résultat précède les changements du Lot 190 et ne valide donc pas encore ceux-ci.
+- Nouvelle CI attendue après les commits du Lot 190 ; son résultat doit être contrôlé avant toute déclaration de validation.
+- PR #17 reste ouverte et non fusionnée ; `main` n'a pas été modifiée.
+- Aucun test navigateur, SMS réel, TOTP avec compte de production, ou e-mail réel n'est revendiqué.
+- Statut honnête : TOTP + SMS natifs sont codés ; le backend e-mail personnalisé est déployé et son interface est intégrée, mais le transport e-mail attend la configuration des secrets. Le 2FA à trois méthodes n'est donc **pas encore validé de bout en bout**.
