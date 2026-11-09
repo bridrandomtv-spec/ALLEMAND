@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.185.0.0.94';
+const VERSION = 'dz-de-v3.185.0.0.95';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -35,7 +35,7 @@ const PRECACHE = [
   './assets/matching_v2.patch.js?v=3510',
   './reservation.js?v=3510',
   './journee.js?v=3511',
-  './guide.js?v=3510',
+  './guide.js?v=3511',
   './memoire.js?v=3510',
   './masar.js?v=3516',
   './matieres.js?v=3510',
