@@ -3420,3 +3420,10 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Aucun secret n'a été lu, affiché ou ajouté au dépôt.
 - Aucun changement de schéma, migration, RLS, grant, rôle ou configuration Auth globale Supabase.
 - PR #17 reste ouverte et non fusionnée ; `main` reste inchangée ; aucun déploiement Cloudflare.
+
+### Complément de validation Lot 200 — assertion CI obsolète (10 novembre 2026)
+- Les workflows #2759 et #2760 ont échoué sur le contrôle du tableau de bord مسارك, avant d'atteindre les assertions ajoutées pour le renvoi MFA.
+- Cause exacte relevée dans les logs : `ci/check-masar.mjs:61` attendait encore `dz-de-v3.185.0.0.127`, alors que le Service Worker et son précache sont en `.128`.
+- Correction ciblée : assertion mise à jour vers `dz-de-v3.185.0.0.128`, commit `2d6d7af`.
+- Aucun code applicatif Masar ni contenu du tableau de bord n'a été modifié par cette correction.
+- Nouvelle CI à surveiller ; le résultat n'est pas encore connu au moment de cette note.
