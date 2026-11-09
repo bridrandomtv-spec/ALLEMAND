@@ -63,8 +63,7 @@ Deno.serve(async (req: Request) => {
   const url = Deno.env.get("SUPABASE_URL");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  const pepper = Deno.env.get("MFA_EMAIL_PEPPER");
-  if (!url || !anonKey || !serviceKey || !pepper || pepper.length < 32) {
+  if (!url || !anonKey || !serviceKey) {
     return json(503, { ok: false, error: "SERVER_CONFIGURATION_INCOMPLETE" });
   }
 
@@ -96,16 +95,19 @@ Deno.serve(async (req: Request) => {
 
   const action = body.action;
   if (action === "status") {
-    const [{ data: factor }, { data: verified }] = await Promise.all([
+    const [factorResult, verifiedResult] = await Promise.all([
       admin.from("mfa_email_factors").select("enabled_at").eq("user_id", user.id).maybeSingle(),
       admin.from("mfa_email_sessions").select("verified_at,expires_at")
         .eq("user_id", user.id).eq("session_id", sessionId).gt("expires_at", new Date().toISOString()).maybeSingle(),
     ]);
+    if (factorResult.error || verifiedResult.error) {
+      return json(500, { ok: false, error: "STATUS_LOOKUP_FAILED" });
+    }
     return json(200, {
       ok: true,
-      enrolled: !!factor,
-      verified: !!verified,
-      verifiedUntil: verified?.expires_at ?? null,
+      enrolled: !!factorResult.data,
+      verified: !!verifiedResult.data,
+      verifiedUntil: verifiedResult.data?.expires_at ?? null,
       emailMasked: email.replace(/^(.{1,2}).*(@.*)$/, "$1•••$2"),
     });
   }
@@ -118,6 +120,11 @@ Deno.serve(async (req: Request) => {
     if (factorError) return json(500, { ok: false, error: "STORAGE_ERROR" });
     if (purpose === "enroll" && factor) return json(409, { ok: false, error: "ALREADY_ENROLLED" });
     if (purpose === "login" && !factor) return json(403, { ok: false, error: "NOT_ENROLLED" });
+
+    const pepper = Deno.env.get("MFA_EMAIL_PEPPER");
+    if (!pepper || pepper.length < 32) {
+      return json(503, { ok: false, error: "EMAIL_FACTOR_NOT_CONFIGURED" });
+    }
 
     const challengeId = crypto.randomUUID();
     const codeBytes = crypto.getRandomValues(new Uint8Array(4));
@@ -149,6 +156,10 @@ Deno.serve(async (req: Request) => {
     if (!/^[0-9a-f-]{36}$/i.test(challengeId) || !/^\d{6}$/.test(code)) {
       return json(400, { ok: false, error: "INVALID_CODE_FORMAT" });
     }
+    const pepper = Deno.env.get("MFA_EMAIL_PEPPER");
+    if (!pepper || pepper.length < 32) {
+      return json(503, { ok: false, error: "EMAIL_FACTOR_NOT_CONFIGURED" });
+    }
     const digest = await hmacHex(pepper, `${user.id}:${sessionId}:${challengeId}:${code}`);
     const { data: consumed, error: consumeError } = await admin.rpc("mfa_email_consume_challenge", {
       p_challenge_id: challengeId,
@@ -161,8 +172,16 @@ Deno.serve(async (req: Request) => {
     if (!result?.ok) return json(400, { ok: false, error: result?.reason ?? "INVALID_CODE" });
 
     if (result.purpose === "enroll") {
-      const { error } = await admin.from("mfa_email_factors").upsert({ user_id: user.id }, { onConflict: "user_id" });
-      if (error) return json(500, { ok: false, error: "ENROLLMENT_FAILED" });
+      const { error: factorError } = await admin.from("mfa_email_factors")
+        .upsert({ user_id: user.id }, { onConflict: "user_id" });
+      if (factorError) return json(500, { ok: false, error: "ENROLLMENT_FAILED" });
+      const { error: sessionError } = await admin.from("mfa_email_sessions").upsert({
+        user_id: user.id,
+        session_id: sessionId,
+        verified_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
+      }, { onConflict: "user_id,session_id" });
+      if (sessionError) return json(500, { ok: false, error: "ENROLLMENT_SESSION_FAILED" });
     } else if (result.purpose === "login") {
       const { error } = await admin.from("mfa_email_sessions").upsert({
         user_id: user.id,
@@ -178,6 +197,13 @@ Deno.serve(async (req: Request) => {
   }
 
   if (action === "disable") {
+    const { data: recentVerification, error: verificationError } = await admin.from("mfa_email_sessions")
+      .select("expires_at").eq("user_id", user.id).eq("session_id", sessionId)
+      .gt("expires_at", new Date().toISOString()).maybeSingle();
+    if (verificationError) return json(500, { ok: false, error: "STEP_UP_CHECK_FAILED" });
+    if (!recentVerification && claimsData.claims.aal !== "aal2") {
+      return json(403, { ok: false, error: "RECENT_STEP_UP_REQUIRED" });
+    }
     const { error: sessionError } = await admin.from("mfa_email_sessions").delete()
       .eq("user_id", user.id).eq("session_id", sessionId);
     if (sessionError) return json(500, { ok: false, error: "DISABLE_FAILED" });
