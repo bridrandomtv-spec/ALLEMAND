@@ -2244,3 +2244,8 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucun changement JavaScript métier, donnée, route, identifiant de vue, événement, Auth, Supabase, RLS, schéma, migration ou paiement.
 - PR #17 reste ouverte et non fusionnée ; aucun changement sur main.
 - La validation CI du nouveau HEAD, les captures réelles navigateur sur desktop/tablette/mobile et le déploiement Cloudflare restent à confirmer séparément.
+
+
+### Addendum CI — Lot 166
+- Après la mise à jour des références, deux assertions regex conservaient les anciennes valeurs v182 / worker .103. Elles ont été alignées sur CSS v183 et worker .104 dans les contrôles du tableau de bord et de la gamification.
+- Les assertions couvrent les nouvelles règles responsive et la lisibilité des libellés ; le résultat d'exécution GitHub Actions sur le HEAD final reste à confirmer.
