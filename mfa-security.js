@@ -7,7 +7,7 @@
   function showLogin(){var f=$('#mfaChallengeForm');if(f)f.hidden=true;['#loginForm','#signupForm'].forEach(function(s){var n=$(s);if(n)n.hidden=s!=='#loginForm';});}
   function setLoginResendVisibility(type){var b=$('#mfaLoginSmsResend');if(b)b.hidden=type!=='phone';}
   async function requireGate(){
-    if(!window.SB){status('#loginErr','خدمة التحقق الأمني غير جاهزة.');return true;}
+    if(!window.SB || !SB.mfaAssurance){status('#loginErr','خدمة التحقق الأمني غير جاهزة.');return true;}
     var nativeState=SB.mfaAssurance?await SB.mfaAssurance():{ok:true,required:false,factors:[]};
     if(!nativeState.ok){status('#loginErr',nativeState.err||'تعذر التحقق من إعدادات المصادقة الثنائية.');return true;}
     var emailState=SB.mfaEmail?await SB.mfaEmail({action:'status'}):{ok:false};
