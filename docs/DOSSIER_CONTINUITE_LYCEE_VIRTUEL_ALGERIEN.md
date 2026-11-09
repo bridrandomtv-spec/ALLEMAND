@@ -2399,3 +2399,8 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 ### Addendum pré-validation — Lot 172
 - Relecture du contrôle après création du commit : deux familles d'assertions devaient suivre le nouveau cache CSS v186 et les sélecteurs CSS ajoutés devaient être échappés avec un seul niveau dans les littéraux regex JavaScript.
 - Les assertions de version et de palette ont été alignées avant de considérer le Lot 172 validé. La validation complète du nouveau HEAD reste à attendre.
+
+
+### Addendum CI — alignement XP et badges
+- La CI #2616 a confirmé les contrôles du tableau de bord et de مسارك, puis a détecté une dernière assertion de précache CSS v185 dans ci/check-gamification.mjs.
+- Cette assertion a été alignée sur la version v186. Le contrôle XP/badges et la suite complète doivent être rejoués sur le nouveau HEAD.
