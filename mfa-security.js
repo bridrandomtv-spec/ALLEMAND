@@ -31,8 +31,9 @@
   async function finishLogin(){
     var profile=window.cloudAuthority?await window.cloudAuthority():null;
     if(!profile){status('#mfaChallengeStatus','تم التحقق، لكن تعذر تحميل ملفك الدراسي. أعد المحاولة أو تواصل مع الدعم.');return;}
-    if(typeof window.toast==='function')window.toast('🎉 تم التحقق من هويتك — أهلاً بك '+profile.nom,'ok');
-    if(typeof window.enterApp==='function')window.enterApp(profile);
+    if(window.DZ && typeof window.DZ.toast==='function')window.DZ.toast('🎉 تم التحقق من هويتك — أهلاً بك '+profile.nom,'ok');
+    if(window.DZ && typeof window.DZ.enterApp==='function')window.DZ.enterApp(profile);
+    else status('#mfaChallengeStatus','تم التحقق، لكن واجهة المنصة لم تجهز بعد. أعد تحميل الصفحة.');
   }
   var method=$('#mfaChallengeMethod');
   if(method)method.addEventListener('change',async function(){
