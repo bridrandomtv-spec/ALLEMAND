@@ -17,9 +17,9 @@ async function sb(){
     return client;
   }
   const urls = [
-    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm',
-    'https://unpkg.com/@supabase/supabase-js@2/dist/module/index.js',
-    'https://esm.sh/@supabase/supabase-js@2'
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/+esm',
+    'https://unpkg.com/@supabase/supabase-js@2.119.0/dist/module/index.js',
+    'https://esm.sh/@supabase/supabase-js@2.119.0'
   ];
   for(const u of urls){
     try{
