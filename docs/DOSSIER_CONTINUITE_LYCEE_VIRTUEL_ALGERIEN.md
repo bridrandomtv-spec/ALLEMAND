@@ -2275,3 +2275,28 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucun changement JavaScript métier, HTML structurel, donnée, calcul, route, identifiant de vue, gestionnaire d'événement, Auth, Supabase, RLS, schéma, migration ou paiement.
 - PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`.
 - La CI du nouveau HEAD doit encore s'exécuter. Aucun déploiement Cloudflare ni contrôle visuel navigateur n'est revendiqué.
+
+
+## Lot 168 — bannière horizontale de l'assistant pédagogique (9 novembre 2026)
+
+### Écart confirmé sur le prototype
+- Le prototype étudiant présente « الأستاذ الافتراضي الذكي » comme une bannière horizontale mise en évidence, avec un bloc descriptif, des capacités visibles et un appel à l'action.
+- Dans le tableau de bord réel, le même assistant était enfermé dans la colonne latérale, ce qui réduisait fortement sa présence visuelle et s'écartait de cette composition.
+
+### Correction réalisée
+- La carte existante de l'assistant a été déplacée hors de `.sd-aside`, après la grille principale du tableau de bord.
+- Elle devient une bannière à deux zones : présentation et capacités à gauche, accès à l'espace professeur à droite.
+- Sous 720 px, les éléments s'empilent dans un ordre lisible et le bouton reprend toute la largeur.
+- Les messages et notifications restent dans la colonne latérale.
+- Le contenu descriptif, les capacités affichées et l'action `data-go="prof"` sont conservés ; aucun moteur IA ni événement métier n'a été modifié.
+
+### Cache et contrôles
+- CSS : `style-prototype-dz.css?v=185`.
+- Service Worker : `dz-de-v3.185.0.0.106`, précache CSS synchronisé.
+- Le contrôle du tableau de bord vérifie désormais la position de la bannière, sa grille horizontale et son empilement mobile.
+
+### Périmètre et limites
+- Modification HTML de présentation, CSS, références de cache, assertions CI et dossier de continuité uniquement.
+- Aucun changement de route, identifiant de vue, données, calculs, événements métier, Auth, Supabase, RLS, schéma, migration ou paiement.
+- PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`.
+- Le contrôle navigateur réel et la publication Cloudflare du nouveau HEAD restent à effectuer séparément ; la CI ne vaut pas validation visuelle.
