@@ -2588,3 +2588,5 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Limite : validation CSS structurelle uniquement à ce stade ; il faut encore contrôler la prévisualisation sur grand écran, tablette et mobile avant validation visuelle définitive.
 
 - Addendum CI Lot 177 : les assertions de cache du contrôle `مسارك` sont alignées sur CSS v191 et Service Worker v3.185.0.0.112 ; le contrôle XP/badges vérifie les noms des zones de la grille sans dépendre de l'espacement typographique du CSS.
+
+- Dernier alignement CI Lot 177 : le contrôle XP/badges conservait une seule assertion de précache CSS v190 ; elle est maintenant alignée sur v191. Les autres contrôles de cache et la vérification de `مسارك` ont passé sur le commit précédent.
