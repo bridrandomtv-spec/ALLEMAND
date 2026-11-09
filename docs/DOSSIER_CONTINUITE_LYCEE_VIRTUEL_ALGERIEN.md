@@ -2331,3 +2331,21 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - La CI #2609 a révélé une erreur de syntaxe dans l'expression régulière ajoutée pour détecter une balise orpheline : les antislashs étaient doublés dans le littéral regex, ce qui faisait interpréter le séparateur final comme des indicateurs invalides.
 - Le littéral a été corrigé avec les échappements JavaScript appropriés (`\\s` et `\\/`). La vérification porte toujours sur le même défaut HTML ; elle ne change pas le rendu ni le comportement applicatif.
 - La CI doit être relancée sur le nouveau HEAD. La PR reste ouverte et non fusionnée.
+
+
+## Lot 170 — rétablissement de l'ordre exact du prototype étudiant (9 novembre 2026)
+
+### Rectification après relecture intégrale du prototype
+- La lecture complète de `Qwen_html_20261021_bxmtbklup.html` montre que le prototype étudiant place la carte de la خريطة التعلم البيداغوجية juste après le bandeau d'accueil, puis les panneaux d'analyse, objectifs et badges, et enfin la bannière de l'assistant virtuel.
+- L'ordre « assistant avant parcours » documenté au Lot 169 était donc une interprétation erronée de l'ordre visuel du prototype. Le lot 169 avait remis la bannière trop tôt ; cette position est corrigée ici.
+
+### Correction réalisée
+- La bannière existante `sd-ai-feature` est replacée après la grille principale `sd-layout`, donc après les panneaux de suivi et la colonne messages/notifications.
+- Son contenu, son style horizontal, son bouton `data-go="prof"` et ses capacités restent inchangés.
+- L'assertion CI vérifie désormais que la carte du parcours précède la bannière assistant, conformément au prototype étudiant.
+- Les cinq raccourcis existants et leurs actions sont conservés ; aucune route, donnée, logique métier ou accès n'est supprimé.
+
+### Périmètre
+- Fichiers modifiés : `index.html`, `ci/check-masar.mjs`, présent dossier de continuité.
+- Aucun changement CSS/cache, JavaScript métier, route, identifiant de vue, Auth, Supabase, RLS, schéma, migration ou paiement.
+- PR #17 reste ouverte et non fusionnée ; `main` reste inchangée. La CI du nouveau HEAD doit confirmer le déplacement. La validation visuelle navigateur reste distincte.
