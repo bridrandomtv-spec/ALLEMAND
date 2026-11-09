@@ -2349,3 +2349,20 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Fichiers modifiés : `index.html`, `ci/check-masar.mjs`, présent dossier de continuité.
 - Aucun changement CSS/cache, JavaScript métier, route, identifiant de vue, Auth, Supabase, RLS, schéma, migration ou paiement.
 - PR #17 reste ouverte et non fusionnée ; `main` reste inchangée. La CI du nouveau HEAD doit confirmer le déplacement. La validation visuelle navigateur reste distincte.
+
+
+## Lot 171 — hiérarchie du tableau de bord et raccourcis secondaires (9 novembre 2026)
+
+### Écart constaté à la comparaison du prototype
+- Le prototype étudiant enchaîne le bandeau d'accueil directement avec la carte du parcours pédagogique. La grille des cinq raccourcis `sd-quick` n'existe pas dans cette maquette de référence et, placée avant le parcours, repoussait le contenu pédagogique principal vers le bas.
+- Ces cinq raccourcis restent une fonction utile déjà présente dans le produit ; ils ne sont donc pas supprimés. Ils sont reclassés comme accès complémentaires après la bannière de l'assistant, en fin de tableau de bord.
+
+### Correction
+- Ordre principal : accueil → parcours pédagogique → panneaux de matières/progression/compétences/recommandations/objectifs/badges/activité et colonne latérale → assistant virtuel → raccourcis complémentaires.
+- Les cinq boutons et leurs destinations `data-go` sont conservés à l'identique.
+- Ajout d'une assertion CI vérifiant que les raccourcis ne précèdent plus le parcours et l'assistant.
+
+### Périmètre
+- Fichiers modifiés : `index.html`, `ci/check-masar.mjs`, présent dossier de continuité.
+- Aucun changement de CSS, de cache, de logique métier, de route, de données, d'authentification, de Supabase/RLS, de schéma, de migration ou de paiement.
+- PR #17 reste ouverte et non fusionnée ; `main` reste inchangée. Validation CI en attente ; aucune validation visuelle navigateur ni aucun déploiement revendiqué.
