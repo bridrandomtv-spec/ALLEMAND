@@ -2000,3 +2000,34 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucun déploiement de production.
 - Aucun changement Auth, Supabase, RLS, schéma, migration ou paiement.
 - Les routes, identifiants et gestionnaires de navigation existants sont conservés.
+
+
+## Lot 158 — synchronisation du courriel de bienvenue (9 novembre 2026)
+
+### Défaut constaté
+- Le guide affiché dans la modale et la vue « الدليل » utilisait les contenus corrigés de `assets/bdd/onboarding.json`, mais la fonction `htmlAccueil(s)` de `guide.js` construisait encore un courriel parallèle codé en dur.
+- Ce courriel conservait des promesses obsolètes (rapport hebdomadaire et présence, correction immédiate systématique, disponibilité 24/7, gratuité universelle et conformité générale non vérifiée).
+
+### Correctif
+- Le courriel est désormais construit à partir des points de l'objectif et des étapes du rôle courant dans `onboarding.json`.
+- Les textes sont échappés avant insertion HTML.
+- `envoiResend(s)` charge explicitement les données d'onboarding avant de produire le courriel, y compris depuis la carte de compte.
+- Le lien du courriel renvoie vers la plateforme Cloudflare actuelle.
+- Cache guide : `guide.js?v=3511`.
+- Service Worker : `dz-de-v3.185.0.0.95`, précache guide synchronisé.
+- Contrôle CI ajouté dans `ci/check-public-portal.mjs` pour interdire le retour des anciennes promesses et vérifier que le courriel dérive bien de `onboarding.json`.
+- Contrôle cache `ci/check-masar.mjs` et garde du portail synchronisés avec le Service Worker v0.95.
+
+### Commits et validation
+- Correctif fonctionnel : `15e97c6`, puis ajout du chargement garanti des données : `325c84a`.
+- Cache et contrôles CI : `46935d3`, puis synchronisation de l'assertion héritée du portail : `cc1bdb1`.
+- CI #2529 : succès sur le commit intermédiaire `15e97c6`.
+- CI #2530 et #2531 : échecs sur une assertion héritée qui attendait encore le Service Worker v0.94 alors que le code était passé à v0.95. L'assertion a été corrigée dans `cc1bdb1`.
+- À la dernière vérification, aucun résultat CI n'était encore disponible pour le HEAD `cc1bdb12ac3d638782aaab4ea2623596caa96e0b`. Ne pas annoncer la validation finale avant un workflow réussi sur ce HEAD ou son successeur.
+- Aucun build Cloudflare n'est revendiqué pour ce lot.
+
+### Périmètre et suite
+- PR #17 reste ouverte et non fusionnée ; base `main`. Aucun changement direct sur `main`, aucun déploiement de production.
+- Aucun changement Auth, Supabase, RLS, schéma, migration ou paiement.
+- La recette visuelle navigateur du tableau de bord étudiant et sa comparaison desktop/mobile avec les deux prototypes restent non réalisées.
+- Prochaine action : confirmer la CI du HEAD après synchronisation des assertions, puis reprendre le travail visuel sur `data-view="dashboard"` sans modifier `فضائي الدراسي`.
