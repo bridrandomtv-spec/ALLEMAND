@@ -62,8 +62,8 @@ assert.match(sw, /dz-de-v3\.185\.0\.0\.115/, 'version service worker v3.185 non 
 assert.match(sw, /style-prototype-dz\.css\?v=192/, 'précache CSS v184 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
-assert.match(html, /app\.js\?v=3560/, 'cache app.js non actualisé');
-assert.match(sw, /app\.js\?v=3560/, 'précache app.js non actualisé');
+assert.match(html, /app\.js\?v=3561/, 'cache app.js non actualisé');
+assert.match(sw, /app\.js\?v=3561/, 'précache app.js non actualisé');
 
 
 assert.match(app, /function studentSession\(\)/, 'le coach doit vérifier la session élève');
