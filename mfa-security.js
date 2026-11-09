@@ -6,7 +6,7 @@
   function status(id,msg,ok){var n=$(id);if(!n)return;n.textContent=msg||'';n.hidden=!msg;n.classList.toggle('is-success',!!ok);}
   function showLogin(){var f=$('#mfaChallengeForm');if(f)f.hidden=true;['#loginForm','#signupForm'].forEach(function(s){var n=$(s);if(n)n.hidden=s!=='#loginForm';});}
   async function requireGate(){
-    if(!window.SB || !SB.mfaAssurance) return false;
+    if(!window.SB || !SB.mfaAssurance){status('#loginErr','خدمة التحقق الأمني غير جاهزة. أعد تحميل الصفحة.');return true;}
     var state=await SB.mfaAssurance();
     if(!state.ok){status('#loginErr',state.err||'تعذر التحقق من إعدادات المصادقة الثنائية.');return true;}
     if(!state.required) return false;
