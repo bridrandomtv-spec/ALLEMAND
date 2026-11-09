@@ -2067,3 +2067,33 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Contrôles réussis sur ce commit : portail public, tableau de bord مسارك, recherche/notifications, XP et badges, accès et tests de fuite, matrice des parcours, régression des trois niveaux et contrôle pédagogique.
 - Les échecs intermédiaires #2537–#2539 ont révélé des assertions de cache non synchronisées dans `check-masar.mjs`, `check-gamification.mjs` et `check-public-portal.mjs`. Elles ont été corrigées ; la validation finale #2540 est verte.
 - Le dernier commit de code est donc validé. L'ajout de cette note de continuité crée un commit documentaire distinct ; vérifier l'état de la PR et de ses validations après cet ajout.
+
+
+## Lot 160 — correction des sélecteurs typographiques des cartes matières (9 novembre 2026)
+
+### Défaut confirmé dans le code source
+- Le HTML produit par `renderStudentDashboardSubjects()` utilise `.sd-subject-name`, `.sd-subject-language`, `.sd-subject-meta`, `.sd-subject-progress` et `.sd-subject-open`.
+- Les règles ajoutées au Lot 159 ciblaient encore les anciennes classes `.sd-subject-copy` et `.sd-subject-card > strong`, qui ne sont pas générées par cette fonction.
+- Résultat : les tailles annoncées pour les noms et descriptions de matières n'étaient pas appliquées à ces éléments. Il s'agissait d'un défaut concret de ciblage CSS, pas d'un problème de données.
+
+### Correctif
+- Remplacement des sélecteurs obsolètes par les classes réellement produites par le rendu JavaScript.
+- Hiérarchie desktop : nom de matière 15 px, langue 12 px, métadonnées 11 px, libellé de progression 11 px, action 12 px et statut 10 px.
+- Adaptation mobile dédiée : nom 13 px, langue/métadonnées 10 px, progression 9 px et action 10 px.
+- Le layout flex des cartes est conservé ; suppression de l'ancienne tentative de colonnes CSS Grid sur ces cartes.
+- Cache CSS : `style-prototype-dz.css?v=179`.
+- Service Worker : `dz-de-v3.185.0.0.97`, précache CSS synchronisé.
+- Assertions ajoutées à `ci/check-masar.mjs` pour vérifier les sélecteurs et tailles réellement attendus.
+
+### Fichiers modifiés
+- `style-prototype-dz.css`, `index.html`, `sw.js`.
+- `ci/check-masar.mjs`, `ci/check-public-portal.mjs`, `ci/check-gamification.mjs`.
+- Présent dossier de continuité.
+
+### Validation et limites
+- Correctif appliqué sur `design/prototypes-67-74-alignment`, exclusivement dans la PR #17.
+- La CI doit encore être exécutée sur le nouveau HEAD ; aucune réussite n'est revendiquée avant son résultat.
+- Aucun nouveau déploiement Cloudflare n'est revendiqué pour ce lot.
+- Aucune recette navigateur ou capture desktop/mobile n'a été effectuée ; le correctif est confirmé par correspondance source HTML/CSS et garde CI.
+- PR #17 reste ouverte et non fusionnée ; `main` n'est pas modifiée.
+- Aucun changement Auth, Supabase, RLS, schéma, migration, paiement, route, identifiant ou gestionnaire d'événement.
