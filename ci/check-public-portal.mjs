@@ -508,16 +508,16 @@ const linkBlock=app.slice(linkStart,linkStart+5000);
 if (!linkBlock.includes("if(!result || !result.ok)") || !linkBlock.includes("if(await window.DZ_MFA.requireGate()) return;")) fail('liaison cloud sans validation du login ou garde MFA');
 
 for (const marker of ['id="mfaChallengeForm"','id="mfaChallengeMethod"','id="mfaChallengeCode"','id="mfaSecurityCard"','id="mfaSecurityContent"']) if (!html.includes(marker)) fail('interface MFA absente : '+marker);
-if (!html.includes('mfa-security.js?v=7') || !sw.includes('./mfa-security.js?v=7')) fail('module MFA absent du chargement/précache');
+if (!html.includes('mfa-security.js?v=8') || !sw.includes('./mfa-security.js?v=8')) fail('module MFA absent du chargement/précache');
 if (!html.includes('id="mfaLoginSmsResend"') || !html.includes('data-mfa-login-resend')) fail('bouton de renvoi SMS au défi de connexion absent');
 if (!mfaModule.includes('setLoginResendVisibility(type)') || !mfaModule.includes("setLoginResendVisibility(preferred.type)") || !mfaModule.includes("setLoginResendVisibility(type);")) fail('visibilité du renvoi SMS non limitée au facteur téléphone');
 if (!mfaModule.includes('id=\"mfaPhoneEnrollForm\"') || !mfaModule.includes('id=\"mfaPhoneVerifyForm\"') || !mfaModule.includes('SB.mfaStart(enrolled.factorId)')) fail('enrôlement et validation du facteur SMS absents');
 if (!html.includes('supabase/supabase.js?v=3517') || !sw.includes('supabase/supabase.js?v=3517')) fail('cache Supabase MFA non synchronisé');
 if (!html.includes('app.js?v=3562') || !sw.includes('app.js?v=3562')) fail('cache app.js MFA non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=193') || !sw.includes('style-prototype-dz.css?v=193')) fail('cache CSS MFA non synchronisé');
-if (!sw.includes("dz-de-v3.185.0.0.124")) fail('version Service Worker Lot 181 non actualisée');
-if (!css.includes('LOT 181 — écrans et réglages MFA')) fail('styles MFA Lot 181 absents');
-console.log('✅ Lot 181 : MFA Supabase natif, TOTP, défi AAL2, codes de récupération expérimentaux et cache contrôlés.');
+if (!sw.includes("dz-de-v3.185.0.0.124")) fail('version Service Worker Lot 192 non actualisée');
+if (!css.includes('LOT 181 — écrans et réglages MFA')) fail('styles MFA absents');
+console.log('✅ MFA : Supabase natif, TOTP, défi AAL2, codes de récupération expérimentaux et cache contrôlés.');
 
 
 // Lot 190 — facteur e-mail personnalisé : assertions de contrat client, sans assimiler à AAL2.
