@@ -3390,3 +3390,33 @@ Le bouton d'annulation du défi MFA appelait `SB.logout()` dans un bloc qui igno
 - Le contrôle ajouté au Lot 199 utilise désormais le nom distinct `mfaCancelBlock199`. Aucun code applicatif n'a été modifié pour cette correction.
 - Commit : `fe8b13b028ac1276e93412ad1eedc86d974af8f0`.
 - La validation suivante doit confirmer la syntaxe et les assertions complètes.
+
+---
+
+## Lot 200 — renvoi des codes MFA par e-mail (9 novembre 2026)
+
+### Défaut constaté
+Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, mais l'interface ne proposait pas de réémission du code. Un retard ou une perte du premier message pouvait donc bloquer l'utilisateur pendant le défi ou l'enrôlement.
+
+### Correction
+- Ajout d'un bouton de réémission dans le défi e-mail de connexion.
+- Ajout d'un bouton de réémission dans l'étape de confirmation d'enrôlement e-mail.
+- Chaque réémission repasse par l'action serveur `start` avec le but correspondant (`login` ou `enroll`) ; le nouvel identifiant de défi remplace l'ancien côté interface.
+- Le bouton est désactivé pendant la requête et le champ du code est vidé après émission d'un nouveau défi.
+- Le serveur conserve la responsabilité des délais, quotas, invalidations de défi et contrôles d'envoi ; aucune limite serveur n'est contournée.
+- Cache du module MFA passé à `v=12), précache synchronisé et Service Worker avancé à `dz-de-v3.185.0.0.128`.
+- Assertions CI ajoutées pour vérifier les deux parcours de réémission et la synchronisation du cache.
+
+### Commits
+- MFA : `e4a2c5e`.
+- HTML : `24dfba8`.
+- Service Worker : `ca5aacd`.
+- Assertions CI : `db433b9`.
+
+### Validation et limites
+- La CI déclenchée par ces commits doit encore être observée ; aucune réussite n'est anticipée.
+- Aucun test d'envoi réel Resend, de réception Gmail, de navigateur ou de compte utilisateur n'a été effectué.
+- La réémission reste conditionnée à la configuration effective des secrets Edge Function et d'un expéditeur Resend vérifié.
+- Aucun secret n'a été lu, affiché ou ajouté au dépôt.
+- Aucun changement de schéma, migration, RLS, grant, rôle ou configuration Auth globale Supabase.
+- PR #17 reste ouverte et non fusionnée ; `main` reste inchangée ; aucun déploiement Cloudflare.
