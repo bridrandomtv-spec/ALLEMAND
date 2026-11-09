@@ -17606,3 +17606,32 @@ html[data-theme="dark"] #shell #app .sd-subject-card[class*="tone-"] .sd-subject
 #shell #app .sd-subjects-panel{grid-column:span 4;min-width:0}
 #shell #app .sd-unit-progress-panel{grid-column:span 2;min-width:0}
 @media(max-width:640px){#shell #app .sd-subjects-panel,#shell #app .sd-unit-progress-panel{grid-column:1/-1}}
+
+
+/* Lot 166 — finition responsive des cartes matières et des indicateurs.
+   Les tablettes donnent la pleine largeur aux deux panneaux ; le ratio asymétrique
+   est réservé aux écrans desktop où les deux blocs gardent une largeur utile. */
+@media(min-width:641px) and (max-width:980px){
+  #shell #app .sd-subjects-panel,#shell #app .sd-unit-progress-panel{grid-column:1/-1}
+}
+#shell #app .sd-subject-status{max-width:100%;line-height:1.5;text-align:center;white-space:normal}
+#shell #app .sd-subject-name{font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+#shell #app .sd-subject-meta{font-size:11px;line-height:1.7;overflow-wrap:anywhere}
+#shell #app .sd-subject-language{font-size:11px;line-height:1.5}
+#shell #app .sd-subject-progress>div{font-size:11px;line-height:1.5}
+#shell #app .sd-subject-open{font-size:12px;line-height:1.5;padding:8px 11px}
+#shell #app .sd-unit-chart{grid-template-columns:repeat(auto-fit,minmax(58px,1fr));gap:8px}
+#shell #app .sd-unit-chart-item{grid-template-rows:auto 88px auto auto;gap:6px}
+#shell #app .sd-unit-chart-track{height:88px}
+#shell #app .sd-unit-chart-item small,#shell #app .sd-unit-chart-item em{font-size:10px;line-height:1.5}
+#shell #app .sd-skill-row{gap:8px;padding-block:9px}
+#shell #app .sd-skill-head b{font-size:13px;line-height:1.5}
+#shell #app .sd-skill-head strong{font-size:15px}
+#shell #app .sd-skill-row small,#shell #app .sd-skill-row em{font-size:11px;line-height:1.65}
+@media(max-width:640px){
+  #shell #app .sd-subject-name{font-size:13px}
+  #shell #app .sd-subject-meta,#shell #app .sd-subject-language{font-size:10px}
+  #shell #app .sd-subject-progress>div{font-size:10px}
+  #shell #app .sd-subject-open{font-size:11px}
+  #shell #app .sd-unit-chart{grid-template-columns:repeat(auto-fit,minmax(54px,1fr));gap:7px}
+}
