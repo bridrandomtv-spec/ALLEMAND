@@ -2060,3 +2060,10 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Aucun changement de routes, identifiants, handlers, `data-view="dashboard"` ou de la vue existante `فضائي الدراسي`.
 - Aucun changement Auth, Supabase, RLS, schéma, migrations ou paiement.
 - Aucun déploiement de production revendiqué.
+
+
+### Addendum Lot 159 — résultat de validation (9 novembre 2026, 10:07 UTC)
+- CI #2540 : **succès** sur le commit `3066563fe295d53511c39f8ae8b3c4d00eb4518b`.
+- Contrôles réussis sur ce commit : portail public, tableau de bord مسارك, recherche/notifications, XP et badges, accès et tests de fuite, matrice des parcours, régression des trois niveaux et contrôle pédagogique.
+- Les échecs intermédiaires #2537–#2539 ont révélé des assertions de cache non synchronisées dans `check-masar.mjs`, `check-gamification.mjs` et `check-public-portal.mjs`. Elles ont été corrigées ; la validation finale #2540 est verte.
+- Le dernier commit de code est donc validé. L'ajout de cette note de continuité crée un commit documentaire distinct ; vérifier l'état de la PR et de ses validations après cet ajout.
