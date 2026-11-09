@@ -17600,3 +17600,9 @@ html[data-theme="dark"] #shell #app .sd-subject-card[class*="tone-"] .sd-subject
   #shell #app .sd-hero-metrics small{font-size:10px;line-height:1.4}
   #shell #app .sd-hero-metrics b{font-size:13px;line-height:1.4;white-space:nowrap}
 }
+
+
+/* Lot 165 — composition 2:1 entre catalogue et progression des unités. */
+#shell #app .sd-subjects-panel{grid-column:span 4;min-width:0}
+#shell #app .sd-unit-progress-panel{grid-column:span 2;min-width:0}
+@media(max-width:640px){#shell #app .sd-subjects-panel,#shell #app .sd-unit-progress-panel{grid-column:1/-1}}
