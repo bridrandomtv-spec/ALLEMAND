@@ -2155,3 +2155,9 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Les contrôles `ci/check-masar.mjs` et `ci/check-public-portal.mjs` vérifient tous deux la version réelle du Service Worker `dz-de-v3.185.0.0.99`.
 - Le contrôle du graphique hebdomadaire vérifie le rôle de groupe et le libellé date/état de chaque barre.
 - Le premier passage CI a détecté des assertions de version restées sur v98 ; elles ont été synchronisées avec le worker v99. Un passage CI sur le HEAD final reste à confirmer.
+
+
+### Addendum cache — Lot 163
+- Le cache de l'application passe à `app.js?v=3553` et le Service Worker à `dz-de-v3.185.0.0.100`.
+- Les contrôles du portail et du tableau de bord ont été synchronisés avec ces références.
+- Une infobulle native reprend le même libellé jour/date/activité que l'alternative accessible du graphique hebdomadaire.
