@@ -2445,3 +2445,9 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - La CI #2619 a validé les ressources, la syntaxe JavaScript et le contrôle du portail, puis a échoué sur la nouvelle assertion regex du breakpoint mobile.
 - La règle CSS mobile était bien présente ; c'est l'assertion qui avait un niveau d'échappement incorrect. Elle est remplacée par une vérification directe de la règle CSS exacte afin d'éviter une nouvelle erreur regex.
 - Le nouveau HEAD doit repasser la suite complète avant validation du Lot 173.
+
+
+### Validation finale — Lot 173
+- CI #2619 : échec sur une assertion regex responsive mal échappée ; le contrôle a été remplacé par une vérification directe de la règle CSS attendue.
+- CI #2620 : réussie sur dd2c2f92f95a7a733cefd5de5d1df59aa186fa4d. Contrôles du tableau de bord, XP/badges, accès, régressions et validations pédagogiques réussis.
+- Le Lot 173 est validé structurellement. La vérification du rendu réel sur navigateur reste à effectuer ; aucune publication Cloudflare n'est revendiquée.
