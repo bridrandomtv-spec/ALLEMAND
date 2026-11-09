@@ -112,6 +112,6 @@ assert.match(css,/sd-achievement\.is-unlocked:nth-child\(4n\+2\)>span/,'palette 
 assert.match(css,/prefers-reduced-motion:reduce/,'respect de la réduction des animations absent');
 
 // Lot 168 — l'assistant du tableau de bord est une bannière pleine largeur, hors colonne latérale.
-assert.match(html, /<aside class="sd-aside">[\\s\\S]*?<\\/aside>\\s*<\\/div>\\s*<section class="sd-ai-card sd-ai-feature">/ , 'assistant pédagogique non placé en bannière après la grille');
+assert.match(html, /<aside class="sd-aside">[\s\S]*?<\/aside>\s*<\/div>\s*<section class="sd-ai-card sd-ai-feature">/, 'assistant pédagogique non placé en bannière après la grille');
 assert.match(css, /\.sd-ai-feature\{[^}]*grid-template-areas:"head action" "copy action" "caps action"/, 'composition horizontale de l’assistant absente');
 assert.match(css, /@media\(max-width:720px\)[\s\S]*?\.sd-ai-feature\{[^}]*grid-template-areas:"head" "copy" "caps" "action"/, 'adaptation mobile de la bannière assistant absente');
