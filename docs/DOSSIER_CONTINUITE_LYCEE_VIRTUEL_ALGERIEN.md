@@ -2811,3 +2811,72 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Le résultat contient toutes les colonnes de la ligne (`id`, `cle`, `version`, `titre`, `corps`, `actif`, `cree_par`, `cree_at`), et pas seulement le texte public de l'accord. Le corps du texte actif semble être la donnée fonctionnelle recherchée, mais l'exposition de métadonnées (`cree_par`, `cree_at`) est plus large que nécessaire en principe.
 - Recherche dans `supabase/supabase.js` : aucun appel à `agreement_current` trouvé ; ce fichier lit les accords par la table `agreements` après authentification. Cela ne prouve pas qu'aucun autre module du dépôt n'appelle la RPC.
 - Qualification : **surface d'exposition publique à examiner**, pas vulnérabilité confirmée. Avant toute révocation de grant ou changement SQL, rechercher les appels dans l'ensemble du dépôt et confirmer si la lecture anonyme des accords est une exigence publique. Si non requise, préparer une correction minimale (projection explicite des champs publics et privilèges alignés), sans l'appliquer dans ce lot.
+
+
+
+## Lot 186 — audit ciblé des RPC privilégiées et statut réel du 2FA à trois méthodes (9 novembre 2026)
+
+### A. Résultat de l'audit des 42 fonctions SECURITY DEFINER accessibles à authenticated
+Périmètre : lecture des définitions SQL et des privilèges EXECUTE dans le projet Supabase actif. Aucun appel métier n'a été exécuté et aucune donnée métier n'a été modifiée.
+
+- 42 fonctions `SECURITY DEFINER` exécutables par `authenticated` ont été inventoriées.
+- 19 de ces fonctions contiennent une opération d'écriture SQL (INSERT, UPDATE ou DELETE).
+- 41/42 contiennent un marqueur d'identité `auth.uid()`, `is_admin()` ou `admin_can()`. Une fonction ne contient aucun de ces marqueurs : `agreement_current(text)`.
+- 42/42 ont un `search_path` explicite dans `proconfig`; aucune occurrence de SQL dynamique `EXECUTE` n'a été détectée dans ce groupe.
+- Attention : ces marqueurs sont des filtres de triage statique, pas une preuve d'autorisation correcte. Une fonction peut être protégée par une condition de propriété, un rôle, une relation ou un contrôle territorial sans appeler `admin_can`.
+
+### B. RPC mutatrices examinées
+Les 19 fonctions mutatrices observées sont :
+`accounting_close_month`, `accounting_depense`, `accounting_mark_rapproche`, `admin_decide_parent_role_request`, `agreement_accept`, `agreement_accept_for`, `agreement_publish`, `agreement_withdraw`, `assignment_set_active`, `cancel_parent_link_request`, `issue_receipt`, `msg_open_direct`, `request_child_link`, `respond_parent_link_request`, `setting_set`, `subscription_decide`, `subscription_set_preuve`, `ticket_set_statut`, `unlink_child`.
+
+Contrôles positifs observés dans le code :
+- Comptabilité : permission `accounting.manage`, restriction au rôle `admin_general` pour la clôture, contrôle de wilaya pour le rapprochement, wilaya unique pour l'écriture de dépense.
+- Paiements/abonnements : permission `payments.validate` et vérification de la wilaya pour la décision ; `subscription_set_preuve` limite l'UPDATE à l'abonnement du propriétaire connecté et à des statuts admissibles.
+- Reçus : permission `receipts.issue`, paiement confirmé/validé, contrôle de périmètre wilaya, prévention d'émission en double.
+- Agents : permission `agents.manage`, contrôle du nombre d'affectations et périmètre territorial avant modification.
+- Tickets : permission `tickets.handle`, contrôle du périmètre du demandeur et de l'agent assigné.
+- Parent/enfant : demandes et réponses liées à l'identité du parent ou de l'élève, vérification des rôles et de la relation confirmée ; retrait du lien réservé aux parties ou à l'administrateur.
+- Messagerie : ouverture d'un DM conditionnée par `msg_can_dm`.
+- Accords : acceptation propre, ou acceptation par un parent pour un enfant lié ; publication réservée à `agreements.manage`.
+
+Points à approfondir avant toute modification :
+1. `admin_decide_parent_role_request` utilise `is_admin()` comme contrôle de rôle global ; confirmer que cette opération doit être limitée au seul administrateur général et pas à d'autres profils administratifs.
+2. `accounting_depense` accepte un paramètre `meta jsonb` qui est stocké tel quel ; définir un schéma/une taille maximale et contrôler l'absence de données sensibles superflues.
+3. `subscription_set_preuve` enregistre `p_preuve` sans validation de format/taille dans la fonction ; vérifier le format attendu par le client et la politique de stockage avant de proposer une restriction.
+4. `agreement_current` reste l'unique RPC du groupe accessible à `anon` sans contrôle d'identité dans son corps et renvoie `SELECT *` sur l'accord actif. Sa projection de colonnes est trop large par rapport au besoin public probable ; confirmer l'usage dans tout le dépôt avant de préparer une correction.
+5. Les contrôles `auth.uid()`/permissions protègent l'identité et le périmètre, mais ne prouvent pas AAL2. Aucun contrôle AAL n'a été détecté dans les définitions RLS inspectées au Lot 184 ni dans les RPC examinées ici.
+
+### C. Statut vérifié du système 2FA (TOTP, SMS, e-mail)
+**Conclusion : le système n'est pas terminé comme 2FA à trois méthodes.** Il existe une base fonctionnelle à deux facteurs natifs, mais il manque le facteur e-mail et plusieurs validations de production.
+
+| Méthode | État du code | Nature réelle |
+|---|---|---|
+| Application d'authentification TOTP | Implémentation présente | Facteur MFA natif Supabase, enrôlement QR/secret, challenge et vérification |
+| SMS | Implémentation présente | Facteur téléphone MFA natif Supabase, enrôlement E.164, challenge, vérification et renvoi |
+| E-mail comme second facteur | Non implémenté | Supabase Email OTP/Magic Link est documenté comme méthode de connexion primaire (AAL1), pas comme facteur MFA enrôlable/éligible à AAL2 |
+
+La documentation officielle Supabase consultée le 9 novembre 2026 expose les facteurs MFA Authenticator TOTP et Phone ; les API de facteurs et `listFactors()` sont structurées autour de `totp` et `phone`. L'e-mail OTP est une méthode de connexion passwordless et reste AAL1. Il ne faut donc pas l'ajouter dans l'interface sous l'étiquette « troisième facteur MFA AAL2 » sans mécanisme d'identité et d'autorisation distinct, explicitement conçu et validé.
+Références officielles :
+- https://supabase.com/docs/guides/auth/auth-mfa
+- https://supabase.com/docs/guides/auth/auth-mfa/phone
+- https://supabase.com/docs/guides/auth/auth-email-passwordless
+
+### D. Lacunes fonctionnelles et de sécurité constatées
+1. Le module `mfa-security.js` et le wrapper `supabase/supabase.js` n'exposent que `totp` et `phone` dans l'enrôlement, le challenge et la liste des facteurs. Aucun facteur e-mail MFA n'est codé.
+2. Le contrôle MFA est actuellement un verrou client. Le Lot 184 a établi qu'aucune politique RLS inspectée ne vérifie `aal2`. Il n'est donc pas exact de présenter l'ensemble des données/RPC sensibles comme protégées côté serveur par le MFA.
+3. Le flux d'inscription cloud qui reçoit immédiatement une session appelle `cloudAuthority()` puis `enterApp()` sans appeler explicitement `DZ_MFA.requireGate()`. Un nouvel utilisateur ne possède normalement aucun facteur enrôlé à cet instant, mais le flux doit être harmonisé avant une éventuelle politique MFA obligatoire.
+4. Le flux de liaison d'un compte cloud depuis une session locale appelle `SB.login()` puis `cloudAuthority()` sans passer par `DZ_MFA.requireGate()`. Il s'agit d'un chemin alternatif à intégrer au contrôle de connexion avant de considérer le verrou client exhaustif.
+5. Le code active `auth.experimental.recoveryCodes: true` et appelle une API `mfa.recoveryCodes`. Cette fonctionnalité doit être traitée comme expérimentale et vérifiée sur la version exacte de `supabase-js` réellement chargée (le code utilise un CDN `@supabase/supabase-js@2` non épinglé). La documentation Auth MFA consultée ne présente pas les recovery codes comme un facteur natif stable.
+6. Le renvoi SMS, la vérification d'enrôlement et le défi TOTP/SMS existent dans le code, mais aucun test de bout en bout avec un vrai compte, un vrai SMS ou un fournisseur configuré n'est revendiqué.
+
+### E. Architecture recommandée pour la méthode e-mail
+- Ne pas détourner `signInWithOtp` après le mot de passe en affirmant que cela élève automatiquement la session à `aal2` : ce n'est pas le contrat MFA documenté.
+- Si l'exigence produit est de proposer trois choix de second contrôle, il faudra une conception dédiée : code aléatoire généré côté serveur, stockage uniquement sous forme hachée, expiration courte, liaison au compte et à la tentative de connexion, usage unique, limites de tentatives, limitation d'envoi, anti-énumération, journalisation et révocation.
+- Un tel facteur e-mail personnalisé ne sera pas reconnu comme facteur MFA natif par Supabase et ne fera pas monter automatiquement le JWT à `aal2`. Il faudra soit accepter explicitement un niveau d'assurance personnalisé et protéger les opérations sensibles via un serveur de confiance, soit choisir un fournisseur d'identité supportant nativement ce facteur. Ne pas prétendre que les politiques RLS `aal2` couvrent un facteur e-mail personnalisé.
+- Pour l'instant, ne pas coder cette méthode sans arbitrage architectural et sans tests de sécurité. Ne pas créer de tables, Edge Functions, triggers, secrets ou migrations dans ce lot.
+
+### F. Validation et suite
+- CI #2688 : réussite, 33 étapes, sur le commit documentaire `e7ba9db4b1b24c59f4f6c0e726306538b5d4bb36`.
+- PR #17 : ouverte, non fusionnée, base `main`, tête `design/prototypes-67-74-alignment`.
+- Aucun changement de schéma/RLS/grants/Auth distant, aucun test réel de compte, aucun SMS réel, aucun test navigateur, aucun déploiement.
+- Prochain lot : corriger/valider les chemins alternatifs d'authentification dans le client (inscription et liaison de compte), vérifier l'API recovery codes sur une version `supabase-js` épinglée, puis rédiger une décision d'architecture pour l'e-mail. Les politiques AAL2 restent un chantier serveur séparé soumis à autorisation explicite.
