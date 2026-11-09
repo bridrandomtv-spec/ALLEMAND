@@ -2630,3 +2630,11 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - Contrôles CI mis à jour pour vérifier l'ordre des blocs et leur appartenance à la colonne latérale. La validation complète du nouveau HEAD reste à obtenir.
 - Aucun changement Auth, Supabase, RLS, schéma, migration, paiement, données de progression ou logique de récompense. Aucun déploiement Cloudflare ni rendu navigateur n'est revendiqué.
 - PR #17 reste ouverte et non fusionnée ; `main` reste inchangée.
+
+
+### Validation finale — Lot 180
+- CI #2644 : réussie sur le commit de code `3e8ffe8f123bd4d94a639c05307163a50b1db8d6`.
+- Le job « Validation structurelle & pédagogique » est terminé avec succès ; les 30 contrôles fonctionnels/pédagogiques et les étapes de préparation/nettoyage sont réussis.
+- Les assertions vérifient maintenant l'ordre parcours → accès rapides → grille, ainsi que la présence de l'assistant et des recommandations dans la colonne latérale.
+- Les contrôles de cache vérifient CSS v192 et Service Worker v3.185.0.0.115.
+- La validation est structurelle et CI uniquement : pas de capture navigateur, pas de test visuel desktop/tablette/mobile, pas de test réel de compte Supabase, et aucun déploiement Cloudflare correspondant n'est déclaré.
