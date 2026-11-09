@@ -494,7 +494,7 @@ if (mfaModule.includes('123456') || mfaModule.includes('JBSW Y3DP') || mfaClient
 if ((app.split("typeof window.DZ_MFA.requireGate !== 'function'").length-1)!==2 || (app.split('if(await window.DZ_MFA.requireGate()) return;').length-1)!==2) fail('le MFA doit bloquer en mode fermé la connexion et la restauration cloud');
 for (const marker of ['id="mfaChallengeForm"','id="mfaChallengeMethod"','id="mfaChallengeCode"','id="mfaSecurityCard"','id="mfaSecurityContent"']) if (!html.includes(marker)) fail('interface MFA absente : '+marker);
 if (!html.includes('mfa-security.js?v=3') || !sw.includes('./mfa-security.js?v=3')) fail('module MFA absent du chargement/précache');
-if (!html.includes('mfaPhoneEnrollForm') || !mfaModule.includes('mfaPhoneVerifyForm') || !mfaModule.includes('SB.mfaStart(enrolled.factorId)')) fail('enrôlement et validation du facteur SMS absents');
+if (!mfaModule.includes('id=\"mfaPhoneEnrollForm\"') || !mfaModule.includes('id=\"mfaPhoneVerifyForm\"') || !mfaModule.includes('SB.mfaStart(enrolled.factorId)')) fail('enrôlement et validation du facteur SMS absents');
 if (!html.includes('supabase/supabase.js?v=3515') || !sw.includes('supabase/supabase.js?v=3515')) fail('cache Supabase MFA non synchronisé');
 if (!html.includes('app.js?v=3561') || !sw.includes('app.js?v=3561')) fail('cache app.js MFA non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=193') || !sw.includes('style-prototype-dz.css?v=193')) fail('cache CSS MFA non synchronisé');
