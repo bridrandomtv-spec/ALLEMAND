@@ -2510,7 +2510,7 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - CSS : style-prototype-dz.css?v=189 ; application : app.js?v=3557.
 - Service Worker : dz-de-v3.185.0.0.110 ; précache synchronisé.
 - Assertions ajoutées pour les six catégories, la stabilité des tons, le thème sombre et l’absence de sélecteurs nth-child pour les badges.
-- Validation CI du Lot 175 : en attente sur ce commit.
+- CI #2627 : réussie sur le commit 318753942382330a37e4175a5841a1b109bb3b1a ; contrôles du tableau de bord, XP/badges, accès, régressions et validations pédagogiques passés.
 
 ### Périmètre et limites
 - Changement limité au rendu des badges et aux contrôles de cohérence/cache.
@@ -2524,3 +2524,10 @@ Rapprocher la colonne latérale du tableau de bord du deuxième prototype, qui p
 - L’assertion de contrôle est alignée sur v3.185.0.0.110. La suite complète doit être relancée sur le nouveau commit avant de déclarer le Lot 175 validé.
 
 - La CI #2626 a ensuite détecté deux assertions historiques nth-child(4n+2) dans ci/check-masar.mjs. Elles exigeaient l’ancienne palette positionnelle que le Lot 175 remplace volontairement. Elles sont alignées sur les tons sémantiques is-tone-2/is-tone-6, avec un garde-fou empêchant le retour à nth-child. Relancer la suite complète sur le prochain commit.
+
+
+### Validation finale — Lot 175
+- CI #2625 : échec sur une assertion de version du Service Worker restée en v3.185.0.0.109 ; corrigée dans ci/check-masar.mjs.
+- CI #2626 : échec sur deux assertions historiques nth-child de la palette badges ; elles ont été remplacées par des contrôles is-tone-* stables.
+- CI #2627 : réussie sur le commit 318753942382330a37e4175a5841a1b109bb3b1a. Les 33 étapes du job de validation sont terminées avec succès.
+- La validation structurelle ne remplace pas un contrôle visuel du rendu navigateur ; aucune prévisualisation Cloudflare n’est déclarée vérifiée.
