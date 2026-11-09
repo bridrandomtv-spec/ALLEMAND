@@ -184,6 +184,7 @@
   }
 
   async function envoiResend(s){
+    await charge(); // garantit que le courriel utilise le guide réel, même depuis la carte du compte.
     /* Ordre de résolution de la clé / du transport :
        1) clé collée UNE fois par le propriétaire dans ⚙️ حسابي → localStorage
           (dz_resend_key) : appel DIRECT api.resend.com, comme ton ancienne app.
