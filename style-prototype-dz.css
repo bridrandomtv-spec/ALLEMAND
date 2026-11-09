@@ -17913,3 +17913,33 @@ html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-stat-card{backgr
   #shell #app [data-view="dashboard"] .sd-quick-card b{font-size:11px}
   #shell #app [data-view="dashboard"] .sd-quick-card small{font-size:9px}
 }
+
+
+/* LOT 181 — écrans et réglages MFA, charte DZ */
+#gate.public-auth-page .auth-mfa-form{grid-area:form!important}
+#gate.public-auth-page .auth-mfa-form[hidden]{display:none!important}
+.auth-mfa-form .ghint{margin:5px 0 0;text-align:center}
+.mfa-security-card{margin:20px 0;padding:clamp(18px,2vw,26px);border:1px solid var(--b);border-radius:20px}
+.mfa-security-heading{display:flex;align-items:flex-start;gap:13px;margin-bottom:18px}
+.mfa-security-heading>span{display:grid;place-items:center;width:48px;height:48px;flex:0 0 48px;border-radius:15px;background:rgba(0,98,51,.1);font-size:24px}
+.mfa-security-heading h2{margin:0 0 5px;font-size:clamp(18px,2vw,22px);color:var(--t)}
+.mfa-security-heading p,.mfa-muted{margin:0;color:var(--m);font-size:13px;line-height:1.8}
+.mfa-status-line,.mfa-factor-row,.mfa-recovery-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 14px;margin:10px 0;border:1px solid var(--b);border-radius:13px;background:var(--p2)}
+.mfa-status-line{justify-content:flex-start}
+.mfa-status-dot{width:10px;height:10px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 4px rgba(22,163,74,.12)}
+.mfa-status-off .mfa-status-dot{background:#d68a1d;box-shadow:0 0 0 4px rgba(214,138,29,.12)}
+.mfa-factor-row span,.mfa-recovery-row span{font-size:13px;font-weight:700}
+.mfa-enroll-box,.mfa-recovery-codes{margin-top:15px;padding:18px;border:1px solid var(--b);border-radius:16px;background:var(--p2)}
+.mfa-enroll-box h3,.mfa-recovery-codes h3{margin:0 0 7px;font-size:17px}
+.mfa-enroll-box p,.mfa-recovery-codes p{font-size:12px;line-height:1.8;color:var(--m)}
+.mfa-qr-slot{display:grid;place-items:center;min-height:170px;margin:14px auto;max-width:230px;padding:12px;background:#fff;border-radius:14px}
+.mfa-qr-slot img{display:block;width:100%;max-width:190px;height:auto;object-fit:contain}
+.mfa-secret-label{margin-bottom:5px!important;font-weight:700}
+.mfa-secret{display:block;direction:ltr;text-align:center;overflow-wrap:anywhere;padding:12px;border-radius:10px;background:var(--p);color:var(--t);user-select:all}
+#mfaEnrollForm{display:grid;gap:12px;margin-top:15px}
+#mfaEnrollCode{text-align:center;direction:ltr;letter-spacing:.3em;font-size:20px;font-weight:800}
+.mfa-security-message{margin:10px 0;color:#b45309;font-size:12px;line-height:1.7}
+.mfa-recovery-codes pre{direction:ltr;white-space:pre-wrap;overflow-wrap:anywhere;padding:14px;background:var(--p);border:1px solid var(--b);border-radius:10px;font-size:14px;line-height:2;user-select:all}
+html[data-theme="dark"] .mfa-security-card,html[data-theme="dark"] .mfa-enroll-box,html[data-theme="dark"] .mfa-recovery-codes{background:var(--p)}
+html[data-theme="dark"] .mfa-status-line,html[data-theme="dark"] .mfa-factor-row,html[data-theme="dark"] .mfa-recovery-row{background:var(--p2)}
+@media(max-width:520px){.mfa-security-card{padding:15px;border-radius:16px}.mfa-security-heading{gap:10px}.mfa-security-heading>span{width:42px;height:42px;flex-basis:42px}.mfa-factor-row,.mfa-recovery-row{align-items:flex-start}.mfa-qr-slot{max-width:190px}}
