@@ -4685,3 +4685,34 @@ where n.nspname = 'public'
 - Ne pas appliquer la migration MFA de la PR sur la base active et ne pas créer de branche Supabase, compte tenu du coût et de l'interdiction déjà posée.
 - Prochaine étape sûre : préparer un plan de bascule sans exécution, avec ordre précis (compatibilité fonction/migration/front), liste des prérequis de secrets SMTP/Auth et vérifications de retour arrière ; puis un essai contrôlé d'inscription uniquement après autorisation explicite et avec une adresse de test choisie par l'utilisateur.
 - Aucun déploiement Edge Function/Cloudflare, aucune migration appliquée, aucune modification Auth/SMTP, aucune nouvelle branche, aucune fusion et aucun frais engagé.
+
+
+
+---
+
+## Lot 252 — vérification des prérequis SQL et du contexte Edge MFA (10 novembre 2026)
+
+### CI et aperçu de la PR
+- CI #2927 / run `42899071357`, HEAD `2e1efa57ce59b9139014905ff4ed8b61dae3e186` : **success**.
+- Contrôle Cloudflare `Workers Builds: allemand` : **success**, URL de build sous `/previews/design-prototypes-67-74-alignment/` ; il s'agit du build d'aperçu de la branche PR, pas d'une fusion ni d'un déploiement manuel de production.
+- Contrôle `Supabase Preview` : skipped ; aucune branche Supabase créée.
+- PR #17 : ouverte, non fusionnée, `mergeable=true`.
+
+### Vérification SQL en lecture seule
+- Historique des migrations du projet actif contient `20261109210413 add_email_mfa_challenge_store`.
+- Les tables `mfa_email_challenges`, `mfa_email_factors` et `mfa_email_sessions` existent dans `public`, avec les colonnes attendues par la fonction source.
+- Les RPC `mfa_email_issue_challenge` et `mfa_email_consume_challenge` existent avec les signatures attendues.
+- Les deux RPC sont non SECURITY DEFINER, avec `search_path` vide, exécution accordée à `service_role` seulement ; aucun droit EXECUTE à `authenticated` ni `anon`. Ce périmètre correspond aux appels effectués par le client admin de la fonction Edge.
+- Conclusion : la migration et le stockage MFA nécessaires sont déjà présents dans le projet actif. **Aucune nouvelle migration SQL n'est identifiée comme prérequis immédiat** pour rendre la fonction source compatible.
+
+### Contexte de la fonction Edge
+- La fonction distante active reste `mfa-email` v7, `verify_jwt=true`, qui utilise l'ancien client admin construit à partir de `SUPABASE_SERVICE_ROLE_KEY` et ne retourne pas le contrat versionné attendu par le client.
+- La source PR importe `createSupabaseContext` depuis `npm:@supabase/server@1`, obtient `supabaseAdmin` après validation du JWT utilisateur, vérifie le rôle `profiles.role`, retourne `contractVersion: 1` et `required`, et réserve les actions MFA aux élèves.
+- La documentation Supabase officielle consultée confirme que `createSupabaseContext(req, { auth: 'user' })` est le mécanisme documenté pour valider le JWT et fournir le contexte admin ; `verify_jwt=true` doit rester activé pour cet endpoint utilisateur.
+- La source utilise toujours les secrets d'envoi `RESEND_API_KEY`, `MFA_EMAIL_FROM` et `MFA_EMAIL_PEPPER`. L'outil disponible ne permet pas de confirmer sans exposition de secret si chacun est configuré ; ne pas afficher ni demander de coller des secrets dans le chat.
+
+### Décision opérationnelle
+- L'écart principal restant est désormais ciblé sur la mise à niveau de la fonction Edge v7 vers la source PR, et la vérification préalable de ses variables d'environnement. Les tables/RPC requises sont déjà présentes.
+- Ne pas déployer tant que la disponibilité des variables requises et la revue finale de la source ne sont pas établies. Aucun changement distant n'a été fait.
+- Pour l'inscription, le transport de confirmation Auth demeure distinct du fournisseur Resend MFA ; il reste à vérifier/configurer séparément, sans désactiver la confirmation d'adresse.
+- Aucun SQL DDL, aucune donnée modifiée, aucun secret modifié, aucun déploiement Edge, aucune fusion, aucun coût engagé.
