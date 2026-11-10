@@ -4767,3 +4767,36 @@ where n.nspname = 'public'
 - Les outils Supabase connectés disponibles permettent l'inspection des fonctions Edge, migrations, SQL et journaux, mais n'exposent pas de lecture directe des paramètres Auth SMTP, des modèles d'e-mail ni des URL de redirection. Leur état actuel reste donc non vérifié.
 - Prochaine action sûre : préparer la checklist minimale des paramètres Auth à contrôler dans le tableau de bord, sans demander de clé ni de mot de passe dans le chat ; ne modifier aucun paramètre avant d'avoir identifié une solution gratuite réellement compatible et autorisée.
 - Aucun secret, SMTP, paramètre Auth, modèle, URL de redirection, compte ou donnée n'a été modifié. Aucun déploiement, migration, nouvelle branche, fusion ni coût engagé.
+
+
+---
+
+## Lot 255 — contrôle CI du dernier HEAD et audit des rôles/migration MFA (10 novembre 2026)
+
+### Résultats du HEAD documentaire précédent
+- HEAD contrôlé : `4706f9daeaa0c634639f3a1e18d17933eba34183`.
+- GitHub Actions #42900995851 : **success**, job « Validation structurelle & pédagogique », 33 étapes utiles terminées avec succès.
+- Les contrôles dédiés au portail public, à مسارك, au MFA e-mail étudiant, à la matrice des parcours, aux accès/fuites et aux régressions sont réussis.
+- Cloudflare Workers Build : **success**, build d'aperçu de la branche PR (pas de déploiement de production). Build ID `31e451a3-f989-4b17-a14d-17f4e5dbae06`.
+- Supabase Preview : **skipped** car aucune branche Supabase n'est associée. Aucune branche créée.
+- PR #17 reste ouverte, non fusionnée ; aucun rebase ni merge.
+
+### Audit de la migration MFA — source PR seulement
+- Relecture de `supabase/migrations/20261110160000_enforce_student_email_mfa.sql`.
+- Le déclencheur `handle_new_user` fixe le rôle initial à `eleve` côté base ; les métadonnées client ne peuvent pas attribuer directement un rôle privilégié. Une demande de rôle parent est enregistrée comme demande en attente, sans modifier `profiles.role`.
+- Le garde privé `private.student_email_mfa_access_allowed()` est SECURITY DEFINER, avec `search_path` vide, et vérifie le rôle du profil, le facteur e-mail, la session MFA liée au `session_id` du JWT et l'existence/expiration de la session Auth.
+- Le garde restrictif est ajouté dynamiquement à chaque table `public` disposant déjà de RLS ; il s'ajoute aux politiques existantes. Le bucket Storage ciblé est uniquement `prive`.
+- Les tables MFA restent fermées aux rôles clients ; les RPC d'émission/consommation sont réservées à `service_role`.
+- Les fonctions SECURITY DEFINER qui contournent RLS sont explicitement protégées par le même garde dans les fonctions réécrites examinées.
+- Cette lecture est une revue statique de la migration source. Elle ne remplace pas une exécution sur une base isolée ni des tests de régression RLS réels ; la migration n'a pas été appliquée au projet actif.
+
+### Vérification des rôles existants — lecture seule
+- Requête sur `public.profiles` : `admin = 1`, `eleve = 4`, `prof = 1`.
+- Aucun profil `parent` n'est actuellement présent dans ce relevé ; les rôles réels observés correspondent aux valeurs traitées par le code. Ce relevé n'est pas une preuve de fonctionnement de la future migration.
+- Aucune donnée n'a été modifiée.
+
+### Décision et suite
+- Le dernier HEAD applicatif/documentaire a une CI verte et un build d'aperçu Cloudflare vert.
+- La prochaine validation technique indispensable reste une exécution de la migration et de la fonction MFA dans un environnement de test isolé. La création d'une branche Supabase peut engager des frais ; elle reste interdite sans autorisation explicite. Aucun autre environnement payant ne sera créé.
+- Sans environnement de test gratuit déjà disponible, ne pas appliquer cette migration risquée au projet actif pour « essayer ».
+- Aucun déploiement, aucune migration appliquée, aucun secret/SMTP/Auth modifié, aucune branche Supabase créée, aucune fusion et aucun coût engagé.
