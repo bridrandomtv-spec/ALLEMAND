@@ -1737,6 +1737,11 @@ function enterApp(session){
       return;
     }
     if(!window.DZ_MFA.consumeGatePass()){
+      // Si un appel tardif arrive depuis un shell déjà ouvert, afficher d'abord
+      // le portail de connexion pour que le défi MFA soit visible.
+      const gateNode = $('#gate'), shellNode = $('#shell');
+      if(shellNode) shellNode.hidden = true;
+      if(gateNode) gateNode.hidden = false;
       window.DZ_MFA.requireGate().then(function(blocked){
         if(!blocked) enterApp(session);
       }).catch(function(error){
