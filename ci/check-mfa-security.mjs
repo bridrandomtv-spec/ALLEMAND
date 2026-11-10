@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 const sql = fs.readFileSync('supabase/migrations/20261110160000_enforce_student_email_mfa.sql', 'utf8');
 const edge = fs.readFileSync('supabase/functions/mfa-email/index.ts', 'utf8');
 const client = fs.readFileSync('mfa-security.js', 'utf8');
+const supabaseClient = fs.readFileSync('supabase/supabase.js', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 const app = fs.readFileSync('app.js', 'utf8');
 
@@ -51,7 +52,7 @@ assert.ok(client.includes("function emailMessage(code,fallback)") &&
   'Student-facing MFA flow must translate known email, rate-limit and challenge errors into actionable Arabic guidance');
 assert.ok(client.includes("case 'NETWORK_UNAVAILABLE'") &&
   client.includes("تعذر الاتصال بخدمة التحقق الآن") &&
-  client.includes("error:'NETWORK_UNAVAILABLE'"),
+  supabaseClient.includes("error:'NETWORK_UNAVAILABLE'"),
   'MFA network interruptions must return a stable error code and a student-friendly message');
 assert.ok(client.includes("تعذر الاتصال بخدمة التحقق الآن") &&
   !client.includes("error&&error.message||'تعذر التحقق من الرمز.'"),
