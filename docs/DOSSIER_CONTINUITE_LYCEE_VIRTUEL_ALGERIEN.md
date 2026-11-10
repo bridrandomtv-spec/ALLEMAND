@@ -4393,5 +4393,7 @@ where n.nspname = 'auth'
   and not t.tgisinternal;
 ~~~
 
+- Première exécution du nouveau test exhaustif (CI #2877) : échec dans le parseur d'inventaire, qui n'avait extrait aucune fonction à cause d'un échappement incorrect des expressions régulières dans le test JavaScript. Le test a été corrigé ; il ne s'agissait pas d'un échec des contrôles MFA de l'application.
+- CI #2878, après correction : réussite complète, y compris l'inventaire exhaustif des fonctions SECURITY DEFINER et tous les contrôles MFA/accès. Le dernier test réussi valide le script à ce commit ; les requêtes catalogue et tests PostgreSQL réels restent à exécuter en environnement isolé.
 - Aucun résultat de ces requêtes n'a été simulé ni inventé : elles restent à exécuter sur une base isolée. Il faudra aussi vérifier les droits effectifs d'exposition du schéma private dans les paramètres Data API et réaliser des tests Auth réels pour les rôles eleve, prof, admin, parent et rôle inconnu.
 - Aucun accès à la base distante, aucune migration appliquée, aucune Edge Function/Worker déployée, aucun secret modifié, aucune fusion et aucune modification de main.
