@@ -4226,3 +4226,25 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - La validation reste statique ; aucun e-mail réel, aucun compte élève réel et aucun test navigateur n'ont été exécutés. Le comportement de délivrabilité dépend toujours du fournisseur et des paramètres Auth actifs.
 - Aucun changement Supabase actif, aucun secret, aucune donnée, aucune migration appliquée, aucun déploiement Edge/Cloudflare ; aucun coût engagé.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
+---
+
+## Lot 228 — audit du défi e-mail, renvoi du code et reprise de session (10 novembre 2026)
+
+### Vérifications du parcours source
+- La CI du Lot 227 (run `42880459153`, commit `6eab7dcdc61ea2d1ebeab07217c3c4c376edda61`) est terminée avec succès ; toutes les étapes du job unique ont réussi, dont les contrôles MFA, la matrice des parcours et les tests de régression.
+- Relecture de `mfa-security.js`, `supabase/supabase.js`, `app.js` et `index.html` : le défi e-mail affiche un champ de code à usage unique, un bouton de renvoi et une action d'annulation.
+- Le renvoi demande un nouveau défi à la fonction Edge, remplace le `challengeId` mémorisé puis vide le champ code ; la vérification utilise ce nouvel identifiant.
+- Après une vérification réussie, le client relance `requireGate()` et relit le statut côté serveur avant d'accorder le permis d'entrée à usage unique. Le contrôle central `enterApp()` consomme ce permis pour toute session cloud.
+- Le parcours de restauration d'une session cloud repasse également par le contrôle MFA ; une erreur de statut, une réponse de contrat incompatible ou un service indisponible maintient le compte bloqué.
+
+### Renforcement des tests
+- `ci/check-mfa-security.mjs` vérifie maintenant la présence du champ OTP accessible et du bouton de renvoi dans `index.html`.
+- Le test vérifie que le renvoi crée un nouveau défi et remplace l'identifiant utilisé ensuite par la vérification.
+- Le test vérifie que la réussite du code relance le contrôle central avant l'ouverture de l'espace étudiant.
+
+### Limites et statut
+- Il s'agit d'un audit de code et de tests statiques ; aucun navigateur réel, compte étudiant de test, e-mail reçu ou livraison Resend n'a été vérifié dans ce lot.
+- L'audit ne prouve pas la délivrabilité ni l'état réel des paramètres Auth/Edge de Supabase. Les essais intégrés restent nécessaires dans un environnement isolé avant toute mise en production.
+- Aucun changement du code de production actif, aucune migration exécutée, aucun secret, réglage Auth, RLS ou donnée Supabase modifié ; aucun déploiement Cloudflare/Supabase.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée ; aucun environnement payant créé et aucun coût engagé.
