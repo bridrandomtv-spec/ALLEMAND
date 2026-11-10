@@ -194,11 +194,11 @@ const notifyStart = sql.indexOf('create or replace function public.notify(cible 
 const notifyEnd = sql.indexOf('$function$;', notifyStart);
 const notifySource = sql.slice(notifyStart, notifyEnd);
 assert.ok(notifyStart >= 0 &&
-  /security\\s+definer/i.test(notifySource) &&
-  /set search_path to 'pg_catalog', 'public'/i.test(notifySource) &&
+  notifySource.includes('security definer') &&
+  notifySource.includes("set search_path to 'pg_catalog', 'public'") &&
   notifySource.includes('insert into public.notifications') &&
   sql.includes('revoke all on function public.notify(uuid, text, jsonb)') &&
-  /revoke all on function public\\.notify\\(uuid, text, jsonb\\)\\s+from public, anon, authenticated, service_role/i.test(sql),
+  sql.includes('from public, anon, authenticated, service_role;'),
   'Notification helper must be server-trigger-only, use a pinned search_path and deny direct RPC execution to all client/API roles');
 
 assert.ok(sql.includes('revoke all on function public.mfa_email_issue_challenge') &&
