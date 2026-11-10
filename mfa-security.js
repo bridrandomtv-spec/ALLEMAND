@@ -6,35 +6,81 @@
   function status(id,msg,ok){var n=$(id);if(!n)return;n.textContent=msg||'';n.hidden=!msg;n.classList.toggle('is-success',!!ok);}
   function showLogin(){var f=$('#mfaChallengeForm');if(f)f.hidden=true;['#loginForm','#signupForm'].forEach(function(s){var n=$(s);if(n)n.hidden=s!=='#loginForm';});}
   function setLoginResendVisibility(type){var sms=$('#mfaLoginSmsResend'),email=$('#mfaLoginEmailResend');if(sms)sms.hidden=type!=='phone';if(email)email.hidden=type!=='email';}
+  function showEmailChallenge(started,emailState,purpose){
+    pending={type:'email',purpose:purpose,challengeId:started.challengeId};attempts=0;
+    var select=$('#mfaChallengeMethod');
+    if(select){select.innerHTML='';var option=document.createElement('option');option.value='email';option.textContent='رمز التحقق عبر البريد الإلكتروني';select.appendChild(option);select.value='email';}
+    var hint=$('#mfaChallengeHint');
+    if(hint){
+      var destination=started.destination||emailState.emailMasked||'بريدك الإلكتروني المسجل';
+      hint.textContent=purpose==='enroll'
+        ? 'لأول دخول آمن، أرسلنا رمز تفعيل إلى '+destination+'. أدخل الرمز لإكمال إعداد حسابك.'
+        : 'أرسلنا رمز التحقق إلى '+destination+'.';
+    }
+    setLoginResendVisibility('email');
+    var code=$('#mfaChallengeCode');
+    if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';code.autocomplete='one-time-code';}
+    var form=$('#mfaChallengeForm');if(form)form.hidden=false;
+    ['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(function(x){var n=$(x);if(n)n.hidden=true;});
+    status('#mfaChallengeStatus','');
+    if(code)code.focus();
+  }
   async function requireGate(){
-    if(!window.SB || !SB.mfaAssurance){status('#loginErr','خدمة التحقق الأمني غير جاهزة.');return true;}
-    var nativeState=SB.mfaAssurance?await SB.mfaAssurance():{ok:true,required:false,factors:[]};
-    if(!nativeState.ok){status('#loginErr',nativeState.err||'تعذر التحقق من إعدادات المصادقة الثنائية.');return true;}
-    var emailState=SB.mfaEmail?await SB.mfaEmail({action:'status'}):{ok:false};
+    if(!window.SB || !SB.mfaAssurance || !SB.mfaEmail){
+      status('#loginErr','خدمة التحقق الأمني غير جاهزة. أعد تحميل الصفحة أو حاول لاحقًا.');
+      return true;
+    }
+    var nativeState=await SB.mfaAssurance();
+    if(!nativeState.ok){
+      status('#loginErr',nativeState.err||'تعذر التحقق من إعدادات المصادقة الثنائية.');
+      return true;
+    }
+    var emailState=await SB.mfaEmail({action:'status'});
     if(!emailState.ok){
       status('#loginErr','تعذر التحقق من حالة المصادقة عبر البريد. أعد المحاولة لاحقًا؛ لم يتم تجاوز فحص الأمان.');
       return true;
     }
-    if(emailState.enrolled&&!emailState.verified&&!nativeState.required){
-      var started=await SB.mfaEmail({action:'start',purpose:'login'});
-      if(!started.ok){status('#loginErr',started.error||started.err||'تعذر إرسال رمز البريد.');return true;}
-      pending={type:'email',challengeId:started.challengeId};attempts=0;
-      var select=$('#mfaChallengeMethod');if(select){select.innerHTML='';var o=document.createElement('option');o.value='email';o.textContent='رمز أمني عبر البريد الإلكتروني';select.appendChild(o);select.value='email';}
-      var hint=$('#mfaChallengeHint');if(hint)hint.textContent='أُرسل رمز أمني إلى '+(started.destination||emailState.emailMasked||'بريدك المسجل')+'.';
-      setLoginResendVisibility('email');var code=$('#mfaChallengeCode');if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';}
-      var form=$('#mfaChallengeForm');if(form)form.hidden=false;
-      ['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(function(x){var n=$(x);if(n)n.hidden=true;});
-      status('#mfaChallengeStatus','');if(code)code.focus();return true;
+
+    // E-mail MFA is mandatory: enroll automatically on first entry, then challenge on each new session.
+    if(!emailState.enrolled || !emailState.verified){
+      var purpose=emailState.enrolled?'login':'enroll';
+      var started=await SB.mfaEmail({action:'start',purpose:purpose});
+      if(!started.ok){
+        var message=started.error||started.err||'تعذر إرسال رمز التحقق.';
+        status('#loginErr',message==='EMAIL_DELIVERY_UNAVAILABLE'
+          ? 'تعذر إرسال رسالة التحقق حاليًا. لم يتم فتح حسابك؛ حاول لاحقًا أو تواصل مع الإدارة.'
+          : message);
+        return true;
+      }
+      showEmailChallenge(started,emailState,purpose);
+      return true;
     }
-    var factors=nativeState.factors||[];if(!nativeState.required)return false;
+
+    // If a native Supabase factor is also required, complete it after the mandatory e-mail check.
+    var factors=nativeState.factors||[];
+    if(!nativeState.required)return false;
     var preferred=factors.find(function(f){return f.type==='totp';})||factors[0];
     if(!preferred){status('#loginErr','لا يوجد عامل تحقق موثّق لهذا الحساب.');return true;}
-    var challenge=await SB.mfaStart(preferred.id);if(!challenge.ok){status('#loginErr',challenge.err||'تعذر بدء التحقق الإضافي.');return true;}
+    var challenge=await SB.mfaStart(preferred.id);
+    if(!challenge.ok){status('#loginErr',challenge.err||'تعذر بدء التحقق الإضافي.');return true;}
     pending={factorId:preferred.id,challengeId:challenge.challengeId,type:preferred.type};attempts=0;
-    var select=$('#mfaChallengeMethod');if(select){select.innerHTML='';factors.forEach(function(f){var o=document.createElement('option');o.value=f.id;o.textContent=f.type==='phone'?'رسالة نصية إلى الهاتف':'تطبيق المصادقة (TOTP)';o.dataset.type=f.type;select.appendChild(o);});var recovery=document.createElement('option');recovery.value='recovery';recovery.textContent='رمز استرداد احتياطي';select.appendChild(recovery);select.value=preferred.id;}
-    var hint=$('#mfaChallengeHint');if(hint)hint.textContent=preferred.type==='phone'?'أُرسل رمز تحقق إلى رقم الهاتف المسجل.':'افتح تطبيق المصادقة المرتبط بحسابك وأدخل الرمز الحالي.';
-    setLoginResendVisibility(preferred.type);var code=$('#mfaChallengeCode');if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';}
-    var form=$('#mfaChallengeForm');if(form)form.hidden=false;['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(function(x){var n=$(x);if(n)n.hidden=true;});
+    var select=$('#mfaChallengeMethod');
+    if(select){
+      select.innerHTML='';
+      factors.forEach(function(f){
+        var o=document.createElement('option');o.value=f.id;
+        o.textContent=f.type==='phone'?'رسالة نصية إلى الهاتف':'تطبيق المصادقة (TOTP)';
+        o.dataset.type=f.type;select.appendChild(o);
+      });
+      var recovery=document.createElement('option');recovery.value='recovery';
+      recovery.textContent='رمز استرداد احتياطي';select.appendChild(recovery);select.value=preferred.id;
+    }
+    var hint=$('#mfaChallengeHint');
+    if(hint)hint.textContent=preferred.type==='phone'?'أُرسل رمز تحقق إلى رقم الهاتف المسجل.':'افتح تطبيق المصادقة المرتبط بحسابك وأدخل الرمز الحالي.';
+    setLoginResendVisibility(preferred.type);
+    var code=$('#mfaChallengeCode');if(code){code.value='';code.placeholder='000000';code.inputMode='numeric';}
+    var form=$('#mfaChallengeForm');if(form)form.hidden=false;
+    ['#loginForm','#signupForm','#passwordResetForm','#passwordUpdateForm'].forEach(function(x){var n=$(x);if(n)n.hidden=true;});
     status('#mfaChallengeStatus','');if(code)code.focus();return true;
   }
   async function returnToLoginAfterMfa(message){
@@ -45,6 +91,7 @@
   }
   async function finishLogin(){
     try{
+      if(await requireGate())return;
       var profile=window.cloudAuthority?await window.cloudAuthority():null;
       if(!profile){await returnToLoginAfterMfa('تم التحقق من الرمز، لكن تعذر تحميل ملفك الدراسي. سجّل الدخول مجددًا.');return;}
       if(!window.DZ || typeof window.DZ.enterApp!=='function'){
@@ -84,18 +131,6 @@
     finally{if(btn){btn.disabled=false;btn.removeAttribute('aria-busy');}}
   });
   document.addEventListener('submit',async function(ev){
-    if(ev.target && ev.target.id==='mfaEmailEnrollForm'){
-      ev.preventDefault();var started=await SB.mfaEmail({action:'start',purpose:'enroll'});
-      if(!started.ok){status('#mfaEmailError',started.error||started.err||'تعذر إرسال رمز التفعيل.');return;}
-      var stage=$('#mfaEmailStage');if(!stage)return;
-      stage.innerHTML='<div class="mfa-enroll-box"><h3>تأكيد البريد الإلكتروني</h3><p>أدخل الرمز المرسل إلى '+String(started.destination||'بريدك الموثق').replace(/[&<>"]/g,'')+'.</p><form id="mfaEmailVerifyForm"><label class="fld"><span>رمز التحقق</span><input id="mfaEmailCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required></label><p id="mfaEmailVerifyError" class="mfa-security-message" role="status"></p><button class="btn btn-o" type="button" data-mfa-email-resend>إعادة إرسال رمز البريد</button><button class="btn btn-p" type="submit">تأكيد وتفعيل البريد</button></form></div>';
-      $('#mfaEmailVerifyForm').dataset.challengeId=started.challengeId;return;
-    }
-    if(ev.target && ev.target.id==='mfaEmailVerifyForm'){
-      ev.preventDefault();var verified=await SB.mfaEmail({action:'verify',challengeId:ev.target.dataset.challengeId,code:$('#mfaEmailCode').value});
-      if(!verified.ok){status('#mfaEmailVerifyError',verified.error||verified.err||'الرمز غير صحيح.');return;}
-      await renderSecurity();status('#mfaSecurityMessage','تم تفعيل التحقق عبر البريد الإلكتروني.');return;
-    }
     if(ev.target && ev.target.id==='mfaPhoneEnrollForm'){
       ev.preventDefault();
       var number=String($('#mfaPhoneNumber').value||'').trim();
@@ -141,7 +176,6 @@
     }
     if(ev.target.closest('[data-mfa-cancel]')){ev.preventDefault();await returnToLoginAfterMfa('تم إلغاء تسجيل الدخول.');return;}
     if(ev.target.closest('[data-mfa-enroll]')){await enrollTotp();return;}
-    if(ev.target.closest('[data-mfa-email-disable]')){if(!window.confirm('هل تريد تعطيل التحقق عبر البريد الإلكتروني؟'))return;var off=await SB.mfaEmail({action:'disable'});if(!off.ok){status('#mfaSecurityMessage',off.error||off.err||'تعذر التعطيل.');return;}await renderSecurity();status('#mfaSecurityMessage','تم تعطيل التحقق عبر البريد الإلكتروني.');return;}
     if(ev.target.closest('[data-mfa-phone-resend]')){if(enrollingPhone){var again=await SB.mfaStart(enrollingPhone.factorId);if(again.ok)enrollingPhone.challengeId=again.challengeId;else status('#mfaPhoneError',again.err);}return;}
     if(ev.target.closest('[data-mfa-phone-cancel]')){if(enrollingPhone)await SB.mfaUnenroll(enrollingPhone.factorId);enrollingPhone=null;await renderSecurity();return;}
     if(ev.target.closest('[data-mfa-recovery-generate]')){await generateRecovery(false);return;}
@@ -160,8 +194,8 @@
     var markup='';
     var emailState=SB.mfaEmail?await SB.mfaEmail({action:'status'}):{ok:false};
     var emailMarkup=emailState.ok&&emailState.enrolled
-      ? '<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>التحقق عبر البريد الإلكتروني مفعّل</b></div><p class="mfa-muted">'+String(emailState.emailMasked||'البريد المسجل').replace(/[&<>"]/g,'')+'</p><button type="button" class="btn btn-sm btn-o" data-mfa-email-disable>تعطيل التحقق عبر البريد</button>'
-      : '<form id="mfaEmailEnrollForm" class="mfa-phone-form"><p class="mfa-muted">رمز تفعيل يُرسل إلى البريد الإلكتروني الموثّق المرتبط بحسابك.</p><button type="submit" class="btn btn-o">✉️ تفعيل التحقق عبر البريد الإلكتروني</button><p id="mfaEmailError" class="mfa-security-message" role="status"></p></form><div id="mfaEmailStage"></div>';
+      ? '<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>التحقق الإلزامي عبر البريد الإلكتروني مفعّل</b></div><p class="mfa-muted">'+String(emailState.emailMasked||'البريد المسجل').replace(/[&<>\"]/g,'')+'</p>'
+      : '<div class="mfa-security-message" role="status">التحقق عبر البريد الإلكتروني إلزامي، وسيُفعّل تلقائيًا عند تسجيل الدخول التالي. لا تحتاج إلى إجراء أي خطوة من هذه الصفحة.</div>';
     if(verifiedTotp.length){markup+='<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>تطبيق المصادقة (TOTP) مفعّل</b></div>';verifiedTotp.forEach(function(f){markup+='<div class="mfa-factor-row"><span>📱 '+String(f.friendly_name||'تطبيق المصادقة').replace(/[&<>"]/g,'')+'</span><button type="button" class="btn btn-sm btn-o" data-mfa-unenroll="'+f.id+'">إزالة العامل</button></div>';});}
     else markup+='<button type="button" class="btn btn-p" data-mfa-enroll>🔐 تفعيل تطبيق المصادقة (TOTP)</button>';
     if(verifiedPhone.length){markup+='<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>التحقق عبر الهاتف مفعّل</b></div>';verifiedPhone.forEach(function(f){markup+='<div class="mfa-factor-row"><span>📨 '+String(f.phone||'رقم هاتف موثّق').replace(/[&<>"]/g,'')+'</span><button type="button" class="btn btn-sm btn-o" data-mfa-unenroll="'+f.id+'">إزالة العامل</button></div>';});}
