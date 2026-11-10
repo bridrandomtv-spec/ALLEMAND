@@ -5004,3 +5004,27 @@ where n.nspname = 'public'
 - Le retrait MFA du code PR reste inchangé. La fonction Edge distante `mfa-email` v7 et les anciennes tables restent des reliquats actifs/passifs du projet distant ; leur suppression n'a pas été autorisée ni effectuée.
 - Confirmation e-mail/SMTP toujours non résolue ; aucun e-mail réel envoyé et aucun réglage Auth modifié.
 - Aucun coût, aucune branche Supabase, aucun déploiement de production, aucune fusion ; `main` inchangée. PR #17 reste ouverte.
+
+
+
+## Lot 263 — revue approfondie des RPC SECURITY DEFINER (10 novembre 2026)
+
+### Périmètre contrôlé
+- Revue statique des 42 fonctions SECURITY DEFINER signalées comme exécutables par `authenticated`, avec contrôle de leur signature, volatilité, `search_path`, présence des vérifications de session et examen ciblé des fonctions d'administration, comptabilité, conventions, messagerie et liens parent-élève.
+- Contrôle ciblé supplémentaire des définitions complètes de `agreement_accept_for`, `agreement_publish`, `assignment_set_active`, `cancel_parent_link_request`, `accounting_close_month`, `accounting_depense`, `accounting_mark_rapproche` et `is_admin`.
+
+### Résultats
+- Les fonctions administratives examinées contrôlent les permissions via `admin_can` / `is_admin` et, lorsque nécessaire, le périmètre de wilaya. Les fonctions d'écriture comptable sont ainsi réservées aux administrateurs autorisés.
+- `agreement_accept_for` exige un parent authentifié, un profil enfant de rôle `eleve`, un lien parent-enfant préalablement confirmé et une convention active avant d'enregistrer l'acceptation au nom de l'enfant.
+- `cancel_parent_link_request` limite l'annulation au parent authentifié propriétaire de la demande encore en attente.
+- `assignment_set_active` contrôle la permission de gestion des agents, refuse les affectations ambiguës et vérifie le périmètre géographique avant modification.
+- Les RPC de messagerie inspectées utilisent l'identité de session et des contrôles de conversation / profil vérifié. La logique d'accès aux groupes repose en partie sur l'appartenance au même niveau, wilaya et filière ; ce comportement doit être confronté aux règles métier attendues avant toute modification.
+- Les fonctions de cet échantillon utilisent un `search_path` fixé à `pg_catalog, public` ou vide avec qualification explicite des objets.
+- Aucun contournement d'autorisation supplémentaire n'a été démontré dans cet échantillon. Cela reste une revue statique : aucun appel hostile avec comptes de test n'a été exécuté.
+
+### Réserves maintenues
+- L'écart précédemment identifié sur `agreement_current(text)` demeure : fonction SECURITY DEFINER exécutable par `anon`, qui retourne une convention active complète alors que la table `agreements` n'autorise pas la lecture directe anonyme par RLS. L'intention de publication publique doit être confirmée avant de révoquer ou conserver cet accès.
+- La protection Auth contre les mots de passe compromis demeure désactivée.
+- La revue statique ne constitue pas encore un test de pénétration ni une validation fonctionnelle de chaque RPC. Les 42 fonctions ne sont pas toutes couvertes par des scénarios de test dynamiques.
+- Aucune modification Supabase, SQL, RLS, privilège, paramètre Auth ou donnée n'a été effectuée. Aucun changement applicatif dans ce lot.
+- Aucun déploiement, aucune fusion, aucune branche Supabase et aucun coût. PR #17 reste ouverte ; `main` inchangée.
