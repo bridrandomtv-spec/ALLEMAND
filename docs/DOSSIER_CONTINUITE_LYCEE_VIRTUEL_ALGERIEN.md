@@ -3552,3 +3552,10 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Les assertions CI du Lot 200 ont été réécrites pour contrôler le renvoi unifié et la réutilisation de l'écran de connexion pour l'enrôlement initial.
 - Commits : MFA `a40e2506ff4f9de5ec28c6d2a6e9edc0d4383790` ; CI `825dbd125a13e6678a2225381dfaa804fc5ce062`.
 - Nouvelle CI à confirmer ; aucun test navigateur ou envoi réel Resend n'a encore été effectué.
+
+
+### Sixième ajustement CI du Lot 202 — bouton de renvoi dans le défi unifié
+- La CI #42826549629 correspondait au commit MFA avant la mise à jour des assertions Lot 200 ; elle a échoué parce qu'un test cherchait le bouton de renvoi dans l'ancien formulaire d'enrôlement des paramètres, supprimé du parcours.
+- Le renvoi existe désormais dans le défi de connexion partagé ; le test vérifie le gestionnaire `data-mfa-email-resend` et l'état e-mail en attente plutôt qu'un ancien formulaire inexistant.
+- Correctif CI : commit `ed4feba3f088f55d41c814ca5fa4148359a4ef8d`. Aucun code applicatif n'a été modifié par ce correctif.
+- Nouvelle CI sur le HEAD à confirmer.
