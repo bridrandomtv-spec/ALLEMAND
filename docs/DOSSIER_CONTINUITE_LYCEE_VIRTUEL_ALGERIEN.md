@@ -3467,3 +3467,52 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Les assertions concernées ont été synchronisées avec les ressources effectivement livrées : `app.js?v=3563` et `dz-de-v3.185.0.0.129`.
 - Correctif CI : commit `3baf00d`. Aucun changement du code applicatif n'a été nécessaire après la restauration des deux fonctions.
 - La nouvelle exécution déclenchée sur ce commit doit encore être observée ; aucune réussite CI n'est anticipée.
+
+
+---
+
+## Lot 202 — MFA e-mail obligatoire et enrôlement automatique (10 novembre 2026)
+
+### Décision fonctionnelle
+- L'utilisateur a choisi la politique A : MFA par e-mail obligatoire pour les étudiants, avec enrôlement automatique lors de la première connexion.
+- Le parcours ne doit plus demander à l'étudiant d'ouvrir les paramètres de son compte ni de cliquer sur un bouton d'activation.
+- Le garde MFA actuellement partagé par les parcours cloud s'applique à tous les comptes cloud qui l'empruntent (élèves, mais aussi autres rôles). Une restriction aux seuls rôles élèves demanderait un contrôle de rôle explicite avant application de la politique.
+
+### Modifications dans la PR #17
+- `mfa-security.js` : si aucun facteur e-mail n'est enrôlé, le garde démarre automatiquement `mfa-email start` avec `purpose: enroll`; si le facteur existe mais que la session courante n'est pas vérifiée, il utilise `purpose: login`.
+- Les deux cas utilisent le même écran de défi e-mail déjà présent au login ; le code d'enrôlement est vérifié par le serveur avant la création du facteur et l'enregistrement de la session vérifiée.
+- Après toute vérification réussie, `finishLogin()` réexécute le garde afin de contrôler l'étape suivante éventuelle, notamment un facteur Supabase natif AAL2, avant de charger le profil et d'ouvrir le tableau de bord.
+- Le renvoi de code conserve le but actif (`enroll` au premier accès, `login` aux connexions suivantes).
+- La page des paramètres n'expose plus de bouton d'activation manuelle ni de désactivation autonome ; elle informe que l'activation se fera automatiquement au prochain login.
+- `supabase/functions/mfa-email/index.ts` : l'action serveur `disable` renvoie désormais HTTP 403 / `EMAIL_FACTOR_REQUIRED` dans la version source de la PR.
+- Cache du module MFA : `mfa-security.js?v=13`; Service Worker : `dz-de-v3.185.0.0.130`; précache et assertions CI synchronisés.
+
+### Commits du lot
+- MFA client : `0a962af096053464b3b203dac5a083045add3ab7`.
+- Fonction Edge (source PR uniquement) : `0d81ce19aaaad1201c0698ca44906982bfbdb3c0`.
+- Assertions CI : `bd9cecabdd145fceac3b0973ef9c114e334db2b0`.
+- Cache HTML : `9092daded5bd45b9187adcd41aee5e3ee24bb4ed`.
+- Service Worker : `a6748e675f9a23cb25f9e6392513e5a8add624d8`.
+- Contrôle cache Masar : `4d35ac0ca2bc991d5490f80c78e49e00d234cc9e`.
+- Correction du renvoi pour conserver `purpose: enroll` : `2c33b5217625efe34ffdaa7ca631f69783edd6a0`.
+
+### Vérifications effectuées
+- Relecture après écriture des six fichiers applicatifs/CI : 16 assertions structurelles ciblées réussies, dont enrôlement initial automatique, blocage fermé, renvoi avec le bon but, recontrôle après vérification, absence du bouton de désactivation, blocage serveur dans la source PR et cohérence des caches.
+- Ces assertions ont été exécutées comme contrôles de contenu du code récupéré ; elles ne remplacent pas l'exécution du workflow CI, un test navigateur ni un test avec un compte réel.
+- Le check Supabase Preview du dernier commit a été retourné `skipped` car la branche n'est pas liée à une Supabase Branch ; ce n'est pas un résultat de validation fonctionnelle.
+- Aucun e-mail réel Resend, aucune réception Gmail et aucun test navigateur n'ont été exécutés.
+
+### Limites de sécurité et déploiement
+- Le facteur e-mail est personnalisé : sa validation ne transforme pas le JWT Supabase en `aal2`. La documentation Supabase précise que l'interface MFA doit être complétée par des règles d'autorisation côté serveur/API/RLS.
+- L'audit antérieur n'a pas établi d'enforcement AAL dans les politiques RLS examinées. Le présent lot verrouille le parcours d'entrée de l'application, mais ne doit pas être présenté comme une enforcement complète des accès directs Data API/RPC.
+- La source Edge Function modifiée appartient à la PR ; la fonction déployée sur le projet Supabase n'a pas été mise à jour. Sa version active reste inchangée tant qu'un déploiement séparé n'a pas été explicitement autorisé.
+- Aucun secret Resend, réglage Auth global, schéma, migration, RLS, grant ou donnée n'a été modifié.
+- Aucun déploiement Cloudflare, aucune fusion, aucun changement sur `main`.
+- PR #17 reste ouverte et non fusionnée. Le workflow CI complet du nouveau HEAD reste à confirmer.
+
+### Étapes restantes avant mise en service
+1. Confirmer la réussite de la CI sur le HEAD du lot.
+2. Effectuer un test navigateur contrôlé : première connexion sans facteur, réception du code, enrôlement, entrée ; puis nouvelle connexion avec défi `login`, renvoi, code erroné et expiration.
+3. Vérifier l'envoi réel Resend avec un expéditeur accepté par Resend.
+4. Définir séparément l'enforcement serveur/RLS nécessaire avant d'annoncer une protection MFA obligatoire de toutes les données.
+5. Déployer la fonction Edge et le front uniquement après validation et autorisation distincte.
