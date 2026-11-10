@@ -4072,3 +4072,28 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Le test de régression a été synchronisé avec ce nouveau contrat, sans affaiblir le contrôle : il vérifie désormais l'émission du permis.
 - Le test MFA dédié et le contrôle Worker du Lot 220 doivent être validés sur le même HEAD final.
 - Aucun changement Supabase actif, aucun déploiement, aucun merge, aucune dépense ; PR #17 reste ouverte.
+
+
+---
+
+## Lot 222 — couverture exhaustive des actifs protégés par le Worker (10 novembre 2026)
+
+### Audit
+- Relevé des fichiers réellement présents à la racine : unite2.js à unite6.js, unite10.js à unite16.js, unites3as_a.js, devoirs_unite.js et la vitrine publique unites3as_vitrine.js.
+- Relevé de assets/bdd : les fichiers buch_3as_*.json et traductions_livre.json sont les ressources JSON sensibles ciblées par le garde.
+- Les motifs PROT actuels du Worker couvrent les unités payantes effectivement présentes, le fichier d'unités 3AS, les devoirs d'unité et les JSON privés 3AS/traductions. La vitrine unites3as_vitrine.js reste volontairement hors du garde payant.
+- L'écart identifié était une faiblesse de couverture des tests : le test vérifiait l'existence du garde et son filtre d'abonnement, mais ne comparait pas l'inventaire réel des fichiers à la liste des chemins protégés.
+
+### Renforcement CI dans la PR #17
+- ci/check-access.mjs extrait maintenant les expressions PROT du Worker et les évalue dans un contexte isolé.
+- Le test parcourt les fichiers unite*.js présents et échoue si l'un d'eux n'est pas protégé.
+- Il contrôle aussi unites3as_a.js, devoirs_unite.js, chaque buch_3as_*.json et traductions_livre.json.
+- Il vérifie explicitement que unites3as_vitrine.js reste accessible comme vitrine gratuite.
+- Le contrôle évite ainsi qu'un nouveau fichier pédagogique sensible soit ajouté au dépôt sans être intégré au garde Worker.
+
+### Validation et limites
+- Le test est ajouté à la suite existante ci/check-access.mjs ; sa réussite sur GitHub Actions doit être confirmée sur le HEAD résultant.
+- Il s'agit d'une vérification statique de correspondance entre inventaire et motifs Worker. Elle ne constitue ni un test HTTP en environnement Cloudflare, ni une preuve de configuration des variables du Worker, ni un test d'abonnement avec un compte réel.
+- Aucun changement dans le Worker lui-même, aucune variable Cloudflare modifiée, aucun déploiement.
+- Aucun changement Supabase actif, aucune migration appliquée, aucun secret/Auth/RLS/donnée modifié.
+- Aucun merge, aucune modification de main, aucune dépense ou branche Supabase payante. PR #17 reste ouverte et non fusionnée.
