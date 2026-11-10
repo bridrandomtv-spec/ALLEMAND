@@ -3961,7 +3961,7 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Migration rendue autonome : création idempotente des trois tables, clés étrangères vers `auth.users`, contraintes, index, activation RLS, révocation des droits des rôles clients et droits CRUD limités à `service_role`.
 - Ajout des deux définitions RPC dans la migration avec les mêmes signatures et la même logique que celles relevées en production, sans exécuter de DDL sur le projet actif.
 - Les RPC restent invoker, `search_path = ''`, non exécutables par `public`, `anon` ou `authenticated`; seul `service_role` peut les appeler.
-- Assertions CI ajoutées pour empêcher la disparition des tables, du RLS, des RPC, des limites de challenge et des privilèges service_role.
+- Assertions CI ajoutées pour empêcher la disparition des tables, du RLS, des RPC, des limites de challenge, des révocations de droits clients, de la consommation unique et des privilèges service_role.
 
 ### Limites
 - Le contrôle SQL effectué était en lecture seule. Aucune migration appliquée, aucune table, fonction, policy, clé, donnée ou paramètre Auth modifié dans Supabase.
