@@ -27,6 +27,8 @@ assert.ok(edge.includes('if (action === "verify")') && edge.includes('if (!isStu
 assert.ok(edge.includes('if (action === "disable")') && edge.includes('error: "EMAIL_FACTOR_REQUIRED"'),
   'Mandatory e-mail MFA must not be disabled through the Edge Function');
 
+assert.ok(edge.includes('contractVersion: 1') && client.includes('emailState.contractVersion!==1'),
+  'Client and Edge Function must explicitly agree on MFA response contract version 1');
 assert.ok(client.includes("typeof emailState.required!=='boolean'"),
   'Client must fail closed when the Edge Function omits the required flag');
 assert.ok(client.includes('if(emailState.required && (!emailState.enrolled || !emailState.verified))'),
