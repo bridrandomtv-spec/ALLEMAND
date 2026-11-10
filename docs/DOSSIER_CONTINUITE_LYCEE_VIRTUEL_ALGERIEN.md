@@ -4829,3 +4829,42 @@ where n.nspname = 'public'
 - La CI statique et le build de preview sont verts, mais aucune validation navigateur, aucun e-mail réel, aucune migration appliquée et aucun test d'intégration sur une base isolée ne sont revendiqués.
 - Ne pas déployer la fonction, ne pas appliquer la migration sur la base active, ne pas créer de branche Supabase, ne pas modifier les secrets/SMTP/Auth et ne pas engager de frais sans autorisation distincte.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
+
+---
+
+## Lot 257 — confirmation de l'état Supabase actif et audit du parcours d'inscription (10 novembre 2026)
+
+### CI et preview du HEAD précédent
+- HEAD contrôlé : `1a52ad42209d56340d426d10be8ae49b9fc61a35`.
+- GitHub Actions #42902211213 : **success**, job « Validation structurelle & pédagogique », 33 étapes utiles réussies.
+- Cloudflare Workers Build : **success**, build ID `acd1ade2-a5ba-48ec-85af-670c68a9d4d4`, preview de la branche PR.
+- Supabase Preview : **skipped**, aucune branche Supabase associée ; aucune branche créée.
+- PR #17 : ouverte, non fusionnée, fusionnable ; cible `main`.
+
+### État réel du projet Supabase — lecture seule
+- Fonction Edge active `mfa-email` : **version 7**, statut ACTIVE, `verify_jwt=true`.
+- La source active est encore l'ancien contrat : elle ne retourne ni `contractVersion: 1` ni `required`, ne contrôle pas le rôle étudiant et utilise directement `SUPABASE_SERVICE_ROLE_KEY`.
+- Le client de la PR exige le contrat v1 et l'Edge Function de la PR utilise `createSupabaseContext(req, { auth: "user" })`. Le décalage v7/v1 est donc confirmé sur l'environnement actif.
+- Historique des migrations retourné par Supabase : dernière migration MFA présente `20261109210413 add_email_mfa_challenge_store`. La migration `20261110160000_enforce_student_email_mfa` n'est pas enregistrée comme appliquée.
+- Aucun déploiement de fonction, aucune migration, aucun secret, aucun paramètre Auth/SMTP et aucune donnée n'ont été modifiés.
+
+### Revue du parcours d'inscription dans la branche PR
+- `supabase/supabase.js` appelle `auth.signUp({ email, password, options: { data: meta } })` ; aucun `emailRedirectTo` n'est fourni. Le parcours dépend donc de l'URL de redirection par défaut et des URL autorisées configurées dans Supabase Auth.
+- `app.js` utilise le mode Auth cloud lorsque le navigateur est en ligne ; le mode local reste réservé au hors-ligne ou au paramètre explicite `?demo`.
+- Après inscription cloud, si Supabase ne retourne pas de session, l'interface bascule vers la connexion, préremplit l'adresse et indique à l'élève d'ouvrir le lien de confirmation.
+- Si une session est retournée, le client exige le garde MFA puis recharge l'autorité du profil cloud avant d'entrer dans l'application.
+- La source ne désactive pas la confirmation d'e-mail et ne crée pas de compte local de secours lorsque l'inscription cloud échoue.
+- Aucun défaut de code statique démontrant à lui seul l'absence d'envoi du mail de confirmation n'a été trouvé dans l'appel `signUp`. La délivrabilité dépend du circuit Supabase Auth SMTP, distinct de Resend utilisé par le MFA personnalisé.
+- L'absence de `emailRedirectTo` n'est pas corrigée à l'aveugle : il faut d'abord connaître l'URL Site URL et la liste Redirect URLs autorisées dans le projet Auth actif. Ces paramètres ne sont pas exposés par les outils connectés.
+
+### Limites de diagnostic
+- La lecture des journaux Supabase a échoué côté service de logs (`Failed to get project's logs`) pendant ce lot ; aucun événement d'inscription ni de livraison n'est donc revendiqué.
+- La présence/validité des secrets `RESEND_API_KEY`, `MFA_EMAIL_FROM` et `MFA_EMAIL_PEPPER` reste non vérifiée ; aucune valeur secrète n'a été lue ou demandée.
+- Le SMTP Auth, les modèles de confirmation, Site URL et Redirect URLs ne sont pas accessibles en lecture via les outils disponibles.
+- Aucun test navigateur réel ni envoi d'e-mail de confirmation/MFA n'a été exécuté.
+
+### Décision
+- Le blocage de mise en service est confirmé : contrat Edge Function actif v7 incompatible avec le contrat client v1, migration d'enforcement absente du projet actif, et circuit SMTP Auth non vérifiable.
+- Ne pas désactiver la confirmation d'e-mail, ne pas déclarer Gmail personnel compatible sans preuve, ne pas remplacer le SMTP, ne pas modifier les Redirect URLs, secrets, fonction ou migration active sans autorisation explicite.
+- PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`, aucun déploiement, aucune migration appliquée, aucune nouvelle branche Supabase et aucun coût engagé.
