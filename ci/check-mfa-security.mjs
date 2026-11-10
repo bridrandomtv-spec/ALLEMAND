@@ -289,4 +289,14 @@ assert.ok(client.includes('if(emailState.required && (!emailState.enrolled || !e
   client.includes("var purpose=emailState.enrolled?'login':'enroll';"),
   'An enrolled student without a valid verification for the current session must receive a login challenge, not skip MFA');
 
+const localModeStart = app.indexOf('function authLocalMode(){');
+const localModeEnd = app.indexOf('function showGateError', localModeStart);
+const localModeBlock = app.slice(localModeStart, localModeEnd);
+assert.ok(localModeStart >= 0 && localModeEnd > localModeStart &&
+  localModeBlock.includes("new URLSearchParams(location.search).has('demo')") &&
+  localModeBlock.includes('return !navigator.onLine || demo;') &&
+  !localModeBlock.includes("location.hostname === 'localhost'") &&
+  !localModeBlock.includes("location.hostname === '127.0.0.1'"),
+  'Online localhost development must use real Supabase Auth; local mode is reserved for explicit demo or offline use');
+
 console.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
