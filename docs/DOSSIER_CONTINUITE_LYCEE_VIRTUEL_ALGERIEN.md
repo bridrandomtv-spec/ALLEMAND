@@ -4269,3 +4269,12 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Le contrôle de la session et de l'expiration a été effectué par lecture des sources Edge et SQL ; aucune session réelle n'a été créée, expirée ou renouvelée dans un environnement de test.
 - Aucun déploiement, aucune migration appliquée, aucun changement de paramètres Auth, RLS, secrets ou données Supabase actives ; aucun environnement payant créé.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
+
+### Lot 230 — traitement explicite des interruptions réseau MFA (10 novembre 2026)
+- Audit ciblé du parcours MFA après restauration de session : les erreurs réseau de `functions.invoke('mfa-email')` pouvaient remonter comme exceptions techniques, alors que le contrôle central bloquait bien l'ouverture de l'espace. Le parcours restait fermé, mais le message pouvait être générique ou exposer un libellé fournisseur.
+- `supabase/supabase.js` : `mfaEmail()` intercepte désormais les exceptions réseau, distingue une session absente/invalide, et renvoie le code stable `NETWORK_UNAVAILABLE` sans exposer le texte brut de l'exception. Les erreurs serveur structurées restent conservées.
+- `mfa-security.js` : traduction arabe explicite pour l'interruption réseau, indiquant que l'espace n'a pas été ouvert et invitant à vérifier la connexion puis réessayer.
+- `ci/check-mfa-security.mjs` : assertion ajoutée pour le code réseau stable et son traitement côté interface.
+- Validation CI à confirmer sur le nouveau HEAD. Ces tests restent statiques ; aucun essai navigateur, e-mail Resend réel ou test sur environnement Supabase isolé n'est revendiqué.
+- Aucun changement Supabase distant, migration appliquée, Edge Function déployée, déploiement Cloudflare, merge ou modification de `main`. PR #17 reste ouverte et non fusionnée.
