@@ -5195,3 +5195,42 @@ La page cible comprend cinq onglets : vue d'ensemble avec indicateurs et graphiq
 
 ### Décisions et périmètre
 Aucune table, politique RLS, migration, fonction Edge, donnée ou secret n'a été créé ou modifié. Aucun paramètre Auth, MFA, SMTP, Storage, paiement ou facturation n'a été modifié. Aucun déploiement, aucune fusion, aucune nouvelle branche et aucun coût. PR #17 reste ouverte et non fusionnée.
+
+
+## Prototype « التقارير الأمنية الدورية عبر البريد » — audit et cadrage — 10 novembre 2026
+
+### Contenu demandé
+L'utilisateur souhaite ajouter l'envoi de rapports de sécurité périodiques par e-mail, en complément du centre de sécurité : choix de fréquence (quotidienne, hebdomadaire, mensuelle), jour/heure, sélection du contenu, adresse destinataire, langue, alerte immédiate, aperçu du message, envoi test et historique des rapports envoyés.
+
+### Audit du HTML fourni
+- Il s'agit d'une maquette autonome, non reliée à Supabase ni au système de notification du projet.
+- `saveSchedule()` et `saveEmailSettings()` affichent seulement des notifications de succès ; aucune préférence n'est enregistrée.
+- `sendTestEmail()` affiche une fausse progression via `setTimeout` puis affirme un envoi réussi ; aucun e-mail n'est envoyé.
+- Les chiffres 24 rapports, 92 % d'ouverture, 3 alertes, 8 jours, le score 85 %, les 12 connexions, les 2 appareils et les événements/localisations affichés sont fictifs.
+- Les dates de janvier 2026 sont figées et incohérentes avec la date actuelle du projet (novembre 2026).
+- Le destinataire `ahmed@email.com`, l'historique des envois, l'état « activé » et le prochain rapport sont des exemples fictifs.
+- Le HTML utilise Tailwind CDN, Chart.js et Lucide ; cela ne respecte pas la contrainte du frontend vanilla sans nouvelle dépendance.
+- Le modèle contient des références à TOTP, codes de secours, téléphone vérifié et activation MFA. Ces éléments doivent être retirés : MFA a été supprimée par décision utilisateur (Lots 259–261).
+- Le suivi du taux d'ouverture n'est pas requis pour confirmer la livraison et augmente le suivi des utilisateurs ; ne pas l'activer par défaut. L'état à afficher doit distinguer demande, acceptation du fournisseur, livraison/échec si ces événements sont réellement disponibles.
+
+### Vérification du mécanisme de planification et d'envoi
+- Lecture seule de `pg_extension` : `pg_cron` et `pg_net` ne sont pas installés dans le projet Supabase consulté.
+- Aucun schéma/table `cron` ou `net` n'a été trouvé dans l'inventaire consulté ; aucun travail périodique Supabase n'est donc configuré à ce jour.
+- Aucune fonction Edge `analyze-security` ni fonction d'envoi de rapports périodiques n'est déployée. L'inventaire des Edge Functions déjà consulté ne montrait que l'ancienne fonction `mfa-email` (version 7), qui n'est pas un service de rapports et ne doit pas être réutilisée.
+- Aucun journal d'authentification personnel fiable (`login_history`, `security_events`) ni registre d'appareils (`user_devices`) n'est disponible à ce stade, comme documenté dans la section précédente.
+- Le SMTP Supabase intégré ne constitue pas une solution d'envoi public : ses limites et restrictions déjà relevées dans le Lot 258 restent applicables. La clé Resend précédemment évoquée dans le contexte de l'ancienne fonction MFA ne configure pas le SMTP Auth et ne prouve pas qu'un service d'envoi périodique soit prêt.
+- Aucun domaine d'envoi vérifié n'est disponible dans le contexte du projet. Ne pas prétendre que l'envoi vers toutes les adresses des élèves est opérationnel ; ne pas exposer ni demander une clé secrète dans le frontend.
+
+### Architecture recommandée, sans engagement de coût
+1. Construire d'abord une source de vérité serveur pour les événements de sécurité réels, sans créer de faux historiques ni réintroduire MFA.
+2. Enregistrer les préférences de rapport par utilisateur : fréquence, fuseau horaire (par défaut `Africa/Algiers`), heure, langue, catégories réellement disponibles, alertes immédiates et état d'abonnement. Le destinataire par défaut doit être l'adresse Auth confirmée ; tout changement d'adresse doit être vérifié.
+3. Générer les rapports côté serveur à partir des événements autorisés du seul compte concerné. Ne jamais faire confiance à un `user_id` fourni librement par le navigateur pour décider du destinataire ou des données à inclure.
+4. Ajouter un planificateur serveur seulement après décision et validation du mécanisme disponible ; chaque exécution doit être idempotente, journalisée, limitée en fréquence et protégée contre les doublons.
+5. Envoyer par un fournisseur d'e-mail configuré côté serveur, avec secrets uniquement dans les secrets de fonction/environnement. Vérifier domaine, expéditeur, limites gratuites et destinataires autorisés avant d'annoncer l'envoi public. Ne pas engager de service payant ni d'achat de domaine sans autorisation explicite.
+6. Conserver un historique minimal des demandes et résultats d'envoi ; distinguer `queued`, `sent/accepted`, `delivered` et `failed` uniquement si le fournisseur fournit réellement ces états. Ne pas afficher de taux d'ouverture sans besoin explicite.
+7. Le rapport doit minimiser les données sensibles : pas de mot de passe, jeton, secret, code de récupération, identifiant de session, adresse IP complète ou géolocalisation précise. En cas d'alerte, envoyer un résumé prudent et un lien vers l'espace sécurisé plutôt que des détails sensibles.
+8. Prévoir désactivation, modification de fréquence et désabonnement accessibles ; les alertes légalement/techniquement essentielles doivent être distinguées des rapports facultatifs.
+9. Le bouton « Envoyer un test » doit déclencher un vrai appel serveur, vérifier le destinataire et afficher le résultat réel ; jamais de `setTimeout` simulant une réussite.
+
+### Décision actuelle et limites
+La maquette est conservée comme référence fonctionnelle uniquement ; elle n'est pas intégrée ni présentée comme opérationnelle. L'envoi périodique n'est pas activé car il manque actuellement une source d'événements de sécurité, un planificateur et un fournisseur/domaine d'envoi vérifié adapté aux destinataires. Aucune table, extension, migration, fonction Edge, tâche planifiée, configuration SMTP, secret, adresse e-mail ou fournisseur n'a été modifié. Aucun e-mail test n'a été envoyé. Aucun coût, déploiement ou fusion. PR #17 reste ouverte et non fusionnée.
