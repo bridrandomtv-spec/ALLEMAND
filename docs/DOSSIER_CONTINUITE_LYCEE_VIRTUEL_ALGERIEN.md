@@ -3538,3 +3538,9 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Le nouveau parcours exige le facteur e-mail dans tous les cas : enrôlement si absent, défi login s'il existe mais que la session n'est pas vérifiée.
 - Assertion mise à jour pour contrôler `!emailState.enrolled || !emailState.verified` et le choix `enroll/login`, commit `bec61ce8078ccb382c358663bf7b0bd713b4825f`.
 - Aucun code applicatif n'a été modifié par ce correctif. Nouvelle exécution CI à surveiller.
+
+
+### Quatrième ajustement CI du Lot 202 — marqueur du garde et cache MFA v13
+- La CI #42826303991 a encore échoué sur une assertion historique : elle exigeait la condition `if(!window.SB || !SB.mfaAssurance)`, alors que le nouveau garde vérifie aussi la disponibilité de `SB.mfaEmail`.
+- Le contrôle CI a été aligné sur le garde réel et les huit références de cache MFA historiques `v=12` ont été mises à jour vers `v=13`, commit `39c552b06a116dc1aefb85925928c64368bba1a6`.
+- Aucun code applicatif n'a été modifié par ce correctif. Nouvelle exécution CI à confirmer.
