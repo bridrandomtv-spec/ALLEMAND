@@ -3968,3 +3968,24 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - La CI statique doit encore être confirmée sur les nouveaux commits ; elle ne remplace pas une exécution sur PostgreSQL isolé.
 - Aucun test réel Resend/navigateur n'a été effectué ; la version Edge active n'a pas été déployée.
 - Aucun coût engagé, aucune branche Supabase payante créée, aucun déploiement Cloudflare production, aucun merge ; PR #17 reste ouverte.
+
+
+---
+
+## Lot 216 — fermeture du chemin de restauration cloud en mode démo/hors ligne (10 novembre 2026)
+
+### Constat
+- L'audit de `bootGate()` a révélé que `cloudRestorePending` était conditionné par `!authLocalMode()`.
+- Comme `authLocalMode()` devient vrai avec `?demo=1` ou lorsque le navigateur est hors ligne, une session cloud déjà mémorisée pouvait entrer directement dans l'interface sans appeler `DZ_MFA.requireGate()`.
+- Les politiques RLS restent le contrôle serveur des données protégées, mais ce chemin contournait le contrôle de connexion côté client et pouvait afficher le shell sans MFA.
+
+### Correction dans la PR #17
+- Toute session dont `src === 'cloud'` passe désormais par la restauration cloud et le contrôle MFA, indépendamment du mode démo ou de l'état réseau.
+- Les sessions locales de démonstration/hors ligne conservent leur parcours local ; elles ne sont pas transformées en sessions cloud.
+- Assertions CI ajoutées pour interdire le retour de cette condition de contournement.
+
+### Limites
+- Aucun accès cloud n'est accordé hors ligne si le statut MFA ne peut pas être vérifié : le parcours reste fail-closed.
+- Les contrôles CI restent statiques ; aucun test navigateur ou compte réel n'a été exécuté.
+- Aucun changement Supabase actif, aucune migration, aucun déploiement Edge Function/Cloudflare production, aucun coût et aucun merge.
+- PR #17 reste ouverte ; `main` inchangée.
