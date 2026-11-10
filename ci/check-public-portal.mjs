@@ -667,7 +667,9 @@ if ((studentMfaMigration.split('private.student_email_mfa_access_allowed()').len
 if (studentMfaMigration.includes("auth.jwt()->>'aal'") || studentMfaMigration.includes("= 'aal2'")) fail('le MFA e-mail personnalisé ne doit pas être confondu avec AAL2');
 if (!mfaEmailServer.includes('required: isStudent') ||
     !mfaEmailServer.includes('const isStudent = profile.role === "eleve"') ||
-    !mfaEmailServer.includes('STUDENT_MFA_ONLY')) fail('Edge Function : politique MFA non limitée au rôle eleve');
+    !mfaEmailServer.includes('if (!isStudent) {') ||
+    !mfaEmailServer.includes('required: false') ||
+    !mfaEmailServer.includes('STUDENT_MFA_ONLY')) fail('Edge Function : politique MFA non limitée au rôle eleve ou bypass des autres rôles absent');
 if (!mfaModule.includes("typeof emailState.required!=='boolean'") ||
     !mfaModule.includes("if(emailState.required && (!emailState.enrolled || !emailState.verified))")) fail('client MFA : statut de rôle absent ou politique étudiant non appliquée');
 console.log('✅ Lot 204 : MFA e-mail étudiant, garde RLS restrictif et RPC SECURITY DEFINER contrôlés.');
