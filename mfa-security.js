@@ -43,7 +43,7 @@
 
     // The Edge Function is authoritative about the profile role; missing policy metadata fails closed.
     if(typeof emailState.required!=='boolean'){
-      status('#loginErr','تعذر تحديد سياسة التحقق الأمني لهذا الحساب. أعد المحاولة لاحقًا.');
+      status('#loginErr','نسخة خدمة التحقق الأمني غير متوافقة مع المنصة. يلزم تحديث الخدمة من الإدارة؛ لم يتم تجاوز فحص الأمان.');
       return true;
     }
     // E-mail MFA is mandatory only for student profiles (role=eleve).
