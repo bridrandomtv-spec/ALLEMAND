@@ -653,7 +653,7 @@ for (const marker of [
   'as restrictive for all to authenticated',
   'on storage.objects as restrictive',
   'c.relrowsecurity',
-  'with check (private.student_email_mfa_access_allowed())',
+  'with check ((select private.student_email_mfa_access_allowed()))',
   'public.agreement_accept',
   'public.agreement_withdraw',
   'public.active_entitlement',
