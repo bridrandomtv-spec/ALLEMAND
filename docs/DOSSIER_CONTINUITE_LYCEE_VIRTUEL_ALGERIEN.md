@@ -4097,3 +4097,28 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Aucun changement dans le Worker lui-même, aucune variable Cloudflare modifiée, aucun déploiement.
 - Aucun changement Supabase actif, aucune migration appliquée, aucun secret/Auth/RLS/donnée modifié.
 - Aucun merge, aucune modification de main, aucune dépense ou branche Supabase payante. PR #17 reste ouverte et non fusionnée.
+
+
+---
+
+## Lot 223 — contrat versionné entre le client et le service MFA e-mail (10 novembre 2026)
+
+### Origine du message affiché
+- mfa-security.js exige déjà un booléen required dans la réponse action=status.
+- Le message arabe « نسخة خدمة التحقق الأمني غير متوافقة مع المنصة... » apparaît lorsque cette propriété manque ou n'est pas un booléen.
+- Le code source Edge Function de la PR renvoie cette propriété, mais l'ancienne version active de la fonction ne la renvoyait pas. Le défaut observé correspond donc à un décalage entre la version du client et celle du service déployé, et non à une manipulation incorrecte de l'élève.
+
+### Correction source dans la PR #17
+- Ajout de contractVersion: 1 aux deux réponses action=status (élève et rôles exemptés) de supabase/functions/mfa-email/index.ts.
+- mfa-security.js exige maintenant simultanément contractVersion === 1 et un booléen required.
+- Une version ancienne, une réponse incomplète ou une version inconnue restent bloquées : aucune ouverture de session sans validation MFA.
+- ci/check-mfa-security.mjs vérifie l'accord explicite entre le numéro de contrat émis par le serveur et celui exigé par le client.
+
+### Procédure de mise en service — non exécutée
+- Pour faire disparaître ce message sur le site actuellement déployé, l'administrateur devra publier la version correspondante de la fonction mfa-email depuis la branche validée, puis vérifier la réponse action=status avec un compte de test.
+- La version du client et la fonction doivent être publiées de manière coordonnée. Une simple modification du navigateur ou un rechargement ne peut pas mettre à jour une Edge Function déjà active.
+- Aucun déploiement n'a été effectué dans ce lot. Ne pas déployer la fonction seule avant que le code client compatible soit lui aussi disponible.
+- Aucun changement de schéma, RLS, données, Auth, secret, Resend ou configuration active Supabase. Aucun merge, aucun déploiement, aucune dépense ; PR #17 reste ouverte.
+
+### Limites
+- La correction et le test sont des modifications de source. Le comportement réel dépend encore du déploiement coordonné, qui nécessite une autorisation distincte.
