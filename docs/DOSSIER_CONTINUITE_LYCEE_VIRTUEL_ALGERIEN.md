@@ -4655,3 +4655,33 @@ where n.nspname = 'public'
 - Cette réussite confirme les assertions automatisées du dépôt ; elle ne constitue pas un test navigateur, une création réelle de compte, une réception d'e-mail Auth, un enrôlement MFA réel, un test PostgreSQL isolé ou une validation de déploiement.
 - PR #17 reste ouverte, non fusionnée et fusionnable. `main` inchangée. Aucun déploiement Cloudflare/Supabase, aucune migration appliquée, aucune branche Supabase créée et aucun coût engagé.
 - Étape fonctionnelle restante : vérifier depuis le navigateur que l'inscription en ligne appelle effectivement Supabase Auth, puis diagnostiquer séparément la livraison de l'e-mail de confirmation et le parcours MFA étudiant. Ne pas modifier le SMTP, les secrets ou les paramètres Auth distants sans autorisation explicite.
+
+
+
+---
+
+## Lot 251 — diagnostic réel du contrat MFA et du circuit e-mail Auth (10 novembre 2026)
+
+### Validation CI
+- CI #2926 / run `42898674799`, HEAD `a85de356282c61fb45352a7573292f9cef9f1cf7` : **success**, job `Validation structurelle & pédagogique`, 33 étapes terminées avec succès.
+- Les étapes 22 (portail public/catalogue/inscription) et 23 (tableau de bord مسارك) sont réussies sur ce HEAD.
+- La PR #17 reste ouverte, non fusionnée et fusionnable ; base `main` inchangée.
+
+### Écart critique confirmé entre le client PR et Supabase actif
+- Lecture seule du projet Supabase actif : fonction Edge `mfa-email` ACTIVE, version **7**, `verify_jwt=true`.
+- Lecture du code distant v7 : la réponse `status` ne contient ni `contractVersion: 1` ni le booléen `required`, et cette version ne lit pas le rôle `profiles.role` pour appliquer l'obligation uniquement aux élèves.
+- Lecture de la source de la PR : le client `mfa-security.js` exige explicitement `contractVersion === 1` et un booléen `required`, puis bloque en cas de contrat absent ou incompatible. La source Edge Function de la PR retourne ce contrat, lit le rôle réel du profil et réserve `start/verify` aux élèves.
+- Conclusion : le client de la PR et la fonction distante v7 ne sont **pas compatibles**. Une connexion peut être authentifiée, mais le garde MFA côté client refuse l'entrée lorsque la fonction v7 renvoie son ancien contrat. Il ne faut ni contourner ce garde ni accepter v7 comme solution.
+- Les journaux Edge montrent des appels à `mfa-email` servis par la version 7, dont un POST HTTP 500 à 19:34:25 UTC. Les logs d'exécution disponibles ne donnent pas la cause applicative de ce 500 ; aucune cause précise n'est donc attribuée.
+- Les journaux Auth consultés sur la fenêtre disponible montrent des connexions `/token` réussies du compte de coordination ; aucune trace d'inscription/confirmation n'a été retrouvée dans les événements Auth retournés. Cela ne prouve pas qu'un essai n'a jamais été fait, mais ne permet pas de valider un appel `signUp` réel ni une livraison d'e-mail.
+
+### Circuit d'inscription et e-mail de confirmation
+- La fonction `mfa-email` et sa clé Resend servent au code MFA personnalisé ; elles ne configurent pas le fournisseur SMTP de Supabase Auth pour les confirmations d'inscription.
+- La documentation Supabase à jour (31 octobre 2026) confirme que le SMTP intégré n'envoie qu'aux adresses pré-autorisées de l'équipe du projet et recommande un SMTP personnalisé pour les utilisateurs publics.
+- Le choix de ne pas désactiver la confirmation d'e-mail est maintenu. Aucun paramètre SMTP, modèle Auth, secret, utilisateur ou réglage distant n'a été modifié.
+
+### Décisions de sécurité et prochaine étape
+- Ne pas déployer la fonction v8 source PR tant que son contrat, ses dépendances de contexte admin, ses migrations requises et ses secrets n'ont pas été audités ensemble. La fonction distante v7 reste active.
+- Ne pas appliquer la migration MFA de la PR sur la base active et ne pas créer de branche Supabase, compte tenu du coût et de l'interdiction déjà posée.
+- Prochaine étape sûre : préparer un plan de bascule sans exécution, avec ordre précis (compatibilité fonction/migration/front), liste des prérequis de secrets SMTP/Auth et vérifications de retour arrière ; puis un essai contrôlé d'inscription uniquement après autorisation explicite et avec une adresse de test choisie par l'utilisateur.
+- Aucun déploiement Edge Function/Cloudflare, aucune migration appliquée, aucune modification Auth/SMTP, aucune nouvelle branche, aucune fusion et aucun frais engagé.
