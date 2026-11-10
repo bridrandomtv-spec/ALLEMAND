@@ -42,7 +42,12 @@ as $function$
             and (auth_session.not_after is null or auth_session.not_after > pg_catalog.now())
         )
     )
-    else true
+    else exists (
+      select 1
+      from public.profiles p
+      where p.id = (select auth.uid())
+        and p.role in ('prof', 'admin', 'parent')
+    )
   end;
 $function$;
 
