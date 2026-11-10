@@ -90,6 +90,11 @@ Deno.serve(async (req: Request) => {
     return json(503, { ok: false, error: "SERVER_CONFIGURATION_INCOMPLETE" });
   }
   const admin = supabaseContext.supabaseAdmin;
+  const { data: profile, error: profileError } = await admin.from("profiles")
+    .select("role").eq("id", user.id).maybeSingle();
+  if (profileError) return json(500, { ok: false, error: "PROFILE_LOOKUP_FAILED" });
+  if (!profile) return json(403, { ok: false, error: "PROFILE_REQUIRED" });
+  const isStudent = profile.role === "eleve";
 
   let body: Record<string, unknown>;
   try {
@@ -110,6 +115,7 @@ Deno.serve(async (req: Request) => {
     }
     return json(200, {
       ok: true,
+      required: isStudent,
       enrolled: !!factorResult.data,
       verified: !!verifiedResult.data,
       verifiedUntil: verifiedResult.data?.expires_at ?? null,
@@ -118,6 +124,7 @@ Deno.serve(async (req: Request) => {
   }
 
   if (action === "start") {
+    if (!isStudent) return json(403, { ok: false, error: "STUDENT_MFA_ONLY" });
     const purpose = body.purpose;
     if (purpose !== "enroll" && purpose !== "login") return json(400, { ok: false, error: "INVALID_PURPOSE" });
     const { data: factor, error: factorError } = await admin.from("mfa_email_factors")
@@ -156,6 +163,7 @@ Deno.serve(async (req: Request) => {
   }
 
   if (action === "verify") {
+    if (!isStudent) return json(403, { ok: false, error: "STUDENT_MFA_ONLY" });
     const challengeId = typeof body.challengeId === "string" ? body.challengeId : "";
     const code = typeof body.code === "string" ? body.code.trim() : "";
     if (!/^[0-9a-f-]{36}$/i.test(challengeId) || !/^\d{6}$/.test(code)) {
