@@ -3516,3 +3516,11 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 3. Vérifier l'envoi réel Resend avec un expéditeur accepté par Resend.
 4. Définir séparément l'enforcement serveur/RLS nécessaire avant d'annoncer une protection MFA obligatoire de toutes les données.
 5. Déployer la fonction Edge et le front uniquement après validation et autorisation distincte.
+
+
+### Ajustement CI du Lot 202 — assertion de version portail obsolète
+- La CI #42825970904 a passé les étapes de validation des fichiers requis, YAML/JSON, corpus, scripts pédagogiques et syntaxe JavaScript.
+- Elle a ensuite échoué dans `ci/check-public-portal.mjs` avec le message `précache Service Worker non synchronisé avec le CSS du portail`.
+- Cause exacte : six assertions/logs du contrôle portail attendaient encore `dz-de-v3.185.0.0.129`, alors que le Lot 202 avait synchronisé le Service Worker sur `.130`.
+- Correctif ciblé : remplacement des six références historiques par `.130`, commit `1ced68a4598a7e0c13810e9d695f7eb4dd4da60a`. Aucun code de portail, CSS ou tableau de bord n'a été changé par ce correctif.
+- Une nouvelle exécution CI est déclenchée sur le nouveau HEAD ; son résultat doit être vérifié avant de déclarer le lot validé.
