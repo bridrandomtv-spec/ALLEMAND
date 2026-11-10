@@ -212,10 +212,85 @@ assert.ok(notifyStart >= 0 &&
   sql.includes('from public, anon, authenticated, service_role;'),
   'Notification helper must be server-trigger-only, use a pinned search_path and deny direct RPC execution to all client/API roles');
 
-assert.ok(sql.includes("pg_catalog.to_regprocedure('public.agreement_current(text)')") &&
-  sql.includes('revoke all on function public.agreement_current(text) from public, anon, authenticated') &&
-  sql.includes('grant execute on function public.agreement_current(text) to service_role'),
-  'The unused agreement_current SECURITY DEFINER RPC must not remain executable by PUBLIC/anon; preserve authenticated and service_role access when it exists');
+const agreementAclStart = sql.indexOf('do $agreement_acl
+
+assert.ok(sql.includes('revoke all on function public.mfa_email_issue_challenge') &&
+  sql.includes('revoke all on function public.mfa_email_consume_challenge'),
+  'Challenge RPCs must revoke default PUBLIC/client execution');
+assert.ok(sql.includes('pg_catalog.pg_advisory_xact_lock') &&
+  sql.includes('for update') &&
+  sql.includes('attempts >= 5') &&
+  sql.includes('attempts + 1 >= 5') &&
+  sql.includes('set consumed_at = pg_catalog.now()'),
+  'Challenge RPCs must serialize issuance, lock verification and enforce one-time/attempt limits');
+
+assert.ok(app.includes("const cloudRestorePending = !!(s && s.src === 'cloud');"),
+  'A remembered cloud session must always enter the MFA restoration gate');
+assert.ok(!app.includes("const cloudRestorePending = !!(s && s.src === 'cloud' && !authLocalMode());"),
+  'Demo/offline mode must not bypass MFA for a remembered cloud session');
+const restoreStart = app.indexOf('if(cloudRestorePending){');
+const restoreGate = app.indexOf('if(await window.DZ_MFA.requireGate()) return;', restoreStart);
+const restoreProfile = app.indexOf('const profile = window.cloudAuthority ? await window.cloudAuthority() : null;', restoreGate);
+const restoreEnter = app.indexOf('if(profile){ enterApp(profile); return; }', restoreProfile);
+const restoreEnd = app.indexOf("if(window.BDD && !BDD.state.ready", restoreStart);
+assert.ok(restoreStart >= 0 && restoreGate > restoreStart && restoreProfile > restoreGate && restoreEnter > restoreProfile,
+  'Cloud session restoration must pass the MFA gate before loading the profile or entering the app');
+assert.ok(restoreEnd > restoreStart && !app.slice(restoreStart, restoreEnd).includes('error && error.message'),
+  'Cloud session restoration must not expose raw exception/provider details to students');
+assert.ok(app.includes('تعذر استعادة جلسة الدخول بأمان. تحقق من اتصال الإنترنت ثم سجّل الدخول مجددًا.'),
+  'Cloud session restoration must show a student-friendly fail-closed error');
+
+
+
+assert.ok(client.includes('gatePass=true;return false;') &&
+  client.includes('consumeGatePass:function(){if(!gatePass)return false;gatePass=false;return true;}'),
+  'Successful MFA verification must create a one-time entry permit');
+assert.ok(app.includes("if(session && session.src === 'cloud'){") &&
+  app.includes("typeof window.DZ_MFA.consumeGatePass !== 'function'") &&
+  app.includes("if(!window.DZ_MFA.consumeGatePass()){") &&
+  app.includes("window.DZ_MFA.requireGate().then(function(blocked){") &&
+  app.includes("if(shellNode) shellNode.hidden = true;") &&
+  app.includes("if(gateNode) gateNode.hidden = false;"),
+  'The central enterApp boundary must fail closed and require a one-time MFA permit for every cloud session');
+
+assert.ok(html.includes('id="mfaChallengeForm"') && html.includes('id="mfaChallengeCode"') && html.includes('autocomplete="one-time-code"'),
+  'Student MFA challenge must expose an accessible one-time-code input');
+assert.ok(html.includes('id="mfaLoginEmailResend"') && html.includes('data-mfa-email-resend'),
+  'Student email MFA challenge must expose an explicit resend control');
+assert.ok(client.includes("var resendEmail=ev.target.closest('[data-mfa-email-resend]')") &&
+  client.includes("SB.mfaEmail({action:'start',purpose:pending.purpose||'login'})") &&
+  client.includes('pending.challengeId=loginSent.challengeId'),
+  'Email resend must request a fresh challenge and replace the challenge identifier used for verification');
+assert.ok(client.includes("pending&&pending.type==='email'?await SB.mfaEmail({action:'verify',challengeId:pending.challengeId,code:value})") &&
+  client.includes('if(result&&result.ok){pending=null;await finishLogin();return;}'),
+  'Email challenge verification must use the current challenge ID and re-run the central MFA gate before entry');
+
+
+assert.ok(edge.includes('.eq("user_id", user.id).eq("session_id", sessionId).gt("expires_at", new Date().toISOString())'),
+  'MFA status must bind verification to the current authenticated session and reject expired verification');
+assert.ok(edge.includes('new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString()') &&
+  edge.includes('p_session_id: sessionId') &&
+  edge.includes('${user.id}:${sessionId}:${challengeId}:${code}'),
+  'Email challenge and its 12-hour verification grant must be bound to the current user and Auth session');
+assert.ok(sql.includes("s.session_id::text = coalesce((select auth.jwt() ->> 'session_id'), '')") &&
+  sql.includes('from auth.sessions auth_session') &&
+  sql.includes('auth_session.user_id = (select auth.uid())') &&
+  sql.includes('(auth_session.not_after is null or auth_session.not_after > pg_catalog.now())'),
+  'Protected data access must require a matching, non-expired Supabase Auth session in addition to email MFA');
+assert.ok(client.includes('if(emailState.required && (!emailState.enrolled || !emailState.verified))') &&
+  client.includes("var purpose=emailState.enrolled?'login':'enroll';"),
+  'An enrolled student without a valid verification for the current session must receive a login challenge, not skip MFA');
+
+console.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
+);
+const agreementAclEnd = sql.indexOf('$agreement_acl$;', agreementAclStart);
+const agreementAclBlock = sql.slice(agreementAclStart, agreementAclEnd);
+assert.ok(agreementAclStart >= 0 &&
+  agreementAclBlock.includes("pg_catalog.to_regprocedure('public.agreement_current(text)')") &&
+  agreementAclBlock.includes('revoke all on function public.agreement_current(text) from public, anon, authenticated') &&
+  agreementAclBlock.includes('grant execute on function public.agreement_current(text) to service_role') &&
+  !/grant execute on function public\\.agreement_current\\(text\\) to [^;]*authenticated/i.test(agreementAclBlock),
+  'The unused agreement_current SECURITY DEFINER RPC must be executable only by service_role, never by PUBLIC, anon or authenticated');
 
 assert.ok(sql.includes('revoke all on function public.mfa_email_issue_challenge') &&
   sql.includes('revoke all on function public.mfa_email_consume_challenge'),
