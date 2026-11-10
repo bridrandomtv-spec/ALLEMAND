@@ -4,6 +4,21 @@
   var $=function(s){return document.querySelector(s);};
   var pending=null, attempts=0, enrolling=null, enrollingPhone=null, gatePass=false;
   function status(id,msg,ok){var n=$(id);if(!n)return;n.textContent=msg||'';n.hidden=!msg;n.classList.toggle('is-success',!!ok);}
+  // Translate known server outcomes into short, student-friendly Arabic; never expose backend details.
+  function emailMessage(code,fallback){
+    switch(String(code||'')){
+      case 'VERIFIED_EMAIL_REQUIRED': return 'قبل تفعيل الحماية، افتح رسالة تأكيد البريد الإلكتروني التي وصلتك واضغط رابط التأكيد، ثم أعد تسجيل الدخول.';
+      case 'PLEASE_WAIT': return 'انتظر دقيقة قبل طلب رمز جديد، ثم أعد المحاولة.';
+      case 'RATE_LIMITED': return 'تم طلب عدة رموز مؤخرًا. انتظر قليلًا ثم حاول مرة أخرى.';
+      case 'INVALID_CODE_FORMAT': return 'أدخل رمز التحقق المكوّن من 6 أرقام كما وصلك في البريد.';
+      case 'expired': case 'EXPIRED': return 'انتهت صلاحية الرمز. اطلب رمزًا جديدًا ثم أدخله فور وصوله.';
+      case 'locked': case 'LOCKED': return 'توقفت المحاولة لأسباب أمنية. سجّل الدخول مجددًا واطلب رمزًا جديدًا.';
+      case 'invalid': case 'invalid_code': case 'INVALID_CODE': return 'الرمز غير صحيح. راجع الرسالة وأعد إدخاله.';
+      case 'EMAIL_DELIVERY_UNAVAILABLE': case 'EMAIL_PROVIDER_NOT_CONFIGURED': case 'EMAIL_DELIVERY_FAILED': case 'EMAIL_FACTOR_NOT_CONFIGURED': return 'تعذر إرسال رسالة التحقق حاليًا. لم يتم فتح الحساب؛ حاول لاحقًا.';
+      case 'INVALID_SESSION': case 'INVALID_SESSION_CLAIMS': return 'انتهت جلسة تسجيل الدخول. ارجع إلى صفحة الدخول وحاول مجددًا.';
+      default: return fallback||'تعذر إكمال التحقق الآن. حاول مرة أخرى بعد قليل.';
+    }
+  }
   function showLogin(){var f=$('#mfaChallengeForm');if(f)f.hidden=true;['#loginForm','#signupForm'].forEach(function(s){var n=$(s);if(n)n.hidden=s!=='#loginForm';});}
   function setLoginResendVisibility(type){var sms=$('#mfaLoginSmsResend'),email=$('#mfaLoginEmailResend');if(sms)sms.hidden=type!=='phone';if(email)email.hidden=type!=='email';}
   function showEmailChallenge(started,emailState,purpose){
@@ -52,10 +67,8 @@
       var purpose=emailState.enrolled?'login':'enroll';
       var started=await SB.mfaEmail({action:'start',purpose:purpose});
       if(!started.ok){
-        var message=started.error||started.err||'تعذر إرسال رمز التحقق.';
-        status('#loginErr',message==='EMAIL_DELIVERY_UNAVAILABLE'
-          ? 'تعذر إرسال رسالة التحقق حاليًا. لم يتم فتح حسابك؛ حاول لاحقًا أو تواصل مع الإدارة.'
-          : message);
+        var message=started.error||started.err;
+        status('#loginErr',emailMessage(message,'تعذر إرسال رمز التحقق. حاول مرة أخرى بعد قليل.'));
         return true;
       }
       showEmailChallenge(started,emailState,purpose);
@@ -130,10 +143,10 @@
     try{
       var result=$('#mfaChallengeMethod').value==='recovery'?await SB.mfaVerifyRecovery(value):(pending&&pending.type==='email'?await SB.mfaEmail({action:'verify',challengeId:pending.challengeId,code:value}):(pending?await SB.mfaVerify(pending.factorId,pending.challengeId,value):{ok:false,err:'أعد اختيار طريقة التحقق.'}));
       if(result&&result.ok){pending=null;await finishLogin();return;}
-      attempts++;var message=(result&&result.err)||'رمز التحقق غير صحيح.';
+      attempts++;var message=emailMessage(result&&(result.error||result.err),'رمز التحقق غير صحيح.');
       if(attempts>=3){await returnToLoginAfterMfa('تم إيقاف المحاولة الحالية بعد ثلاث محاولات. سجّل الدخول مجددًا.');}
       else status('#mfaChallengeStatus',message+' — المحاولة '+attempts+' من 3.');
-    }catch(error){status('#mfaChallengeStatus',error&&error.message||'تعذر التحقق من الرمز.');}
+    }catch(error){status('#mfaChallengeStatus','تعذر الاتصال بخدمة التحقق الآن. تحقق من اتصال الإنترنت ثم حاول مجددًا.');}
     finally{if(btn){btn.disabled=false;btn.removeAttribute('aria-busy');}}
   });
   document.addEventListener('submit',async function(ev){
@@ -165,12 +178,12 @@
       try{
         if(pending&&pending.type==='email'){
           var loginSent=await SB.mfaEmail({action:'start',purpose:pending.purpose||'login'});
-          if(!loginSent.ok){status('#mfaChallengeStatus',loginSent.error||loginSent.err||'تعذر إعادة إرسال الرمز.');return;}
+          if(!loginSent.ok){status('#mfaChallengeStatus',emailMessage(loginSent.error||loginSent.err,'تعذر إعادة إرسال الرمز. حاول لاحقًا.'));return;}
           pending.challengeId=loginSent.challengeId;
           var loginCode=$('#mfaChallengeCode');if(loginCode)loginCode.value='';
           status('#mfaChallengeStatus','تم طلب إرسال رمز جديد إلى بريدك.');
         }
-      }catch(error){status('#mfaChallengeStatus',error&&error.message||'تعذر إعادة إرسال الرمز.');}
+      }catch(error){status('#mfaChallengeStatus','تعذر الاتصال بخدمة البريد الآن. تحقق من اتصال الإنترنت ثم حاول مجددًا.');}
       finally{resendEmail.disabled=false;resendEmail.removeAttribute('aria-busy');}
       return;
     }
