@@ -32,6 +32,12 @@ assert.ok(sql.includes("new.raw_user_meta_data ->> 'pseudo'") &&
   sql.includes("new.raw_user_meta_data ->> 'niveau'") &&
   !sql.includes("new.raw_user_meta_data ->> 'role'"),
   'Profile provisioning may use student metadata but must never trust client-supplied role metadata');
+assert.ok(sql.includes("new.raw_user_meta_data ->> 'requested_role'") &&
+  sql.includes("pg_catalog.to_regclass('public.parent_role_requests')") &&
+  sql.includes("insert into public.parent_role_requests (user_id, status)") &&
+  sql.includes("on conflict (user_id) where status = ''pending'' do nothing") &&
+  !sql.includes("set role = 'parent'"),
+  'Signup may preserve a pending parent-role request when the legacy table exists, but must never assign the parent role from client metadata');
 assert.ok(sql.includes('drop trigger if exists on_auth_user_created on auth.users') &&
   sql.includes('create trigger on_auth_user_created') &&
   sql.includes('revoke all on function public.handle_new_user() from public, anon, authenticated') &&
