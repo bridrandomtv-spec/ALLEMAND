@@ -4526,3 +4526,13 @@ where n.nspname = 'public'
 - Aucun changement du comportement SQL effectif ; il s'agit d'aligner la documentation et l'assertion sur la règle least-privilege déjà présente.
 - CI #2904 / run 42893347936 : réussite des 33 étapes sur le commit applicatif précédent. La correction de cohérence du Lot 245 déclenche une nouvelle CI, dont le résultat devra être confirmé.
 - Aucun SQL exécuté sur Supabase, aucune migration appliquée, aucun déploiement, aucune modification de secrets/Auth distant, aucune fusion et aucune modification de main. PR #17 reste ouverte.
+
+
+#### Suivi CI — Lot 245 (10 novembre 2026)
+
+- CI #2906 / run `42893955276` sur le commit `6314307760b076fb68af13593a28e9cd73ccbe24` : échec à l'étape du contrôle MFA statique. La modification de l'assertion ACL avait laissé une chaîne JavaScript incomplète dans le script CI ; l'échec provient du test lui-même, pas d'un test PostgreSQL ni d'une exécution de la migration.
+- CI #2907 / run `42893961903` sur le commit documentaire `fb09d06e772f78bca01140b058f945c5deaa860c` : même échec hérité du script CI incomplet.
+- Correction effectuée dans `ci/check-mfa-security.mjs`, commit `e3b675a0af3d29fcd8ae8169a4050ccad7722b6e` : l'assertion repère maintenant le bloc ACL par son marqueur stable, vérifie REVOKE pour PUBLIC/anon/authenticated, GRANT pour service_role et absence de GRANT authenticated.
+- CI #2908 / run `42894063370` sur le commit corrigé : en cours au moment de cette note. Ne pas considérer le Lot 245 validé avant son résultat.
+- Vérification PostgreSQL active en lecture seule après ces commits : les droits de `public.agreement_current(text)` sont toujours `anon=true`, `authenticated=true`, `service_role=true`. C'est attendu : aucune migration PR n'a été appliquée au projet actif.
+- PR #17 reste ouverte et non fusionnée. Aucun changement de `main`, aucune migration appliquée, aucun déploiement.
