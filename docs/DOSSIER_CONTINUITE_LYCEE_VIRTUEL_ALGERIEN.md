@@ -3567,3 +3567,47 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Aucun échec d'étape sur cette exécution.
 - Le HEAD de PR a ensuite reçu un commit documentaire `3c950f717d1260558499f6bb93fb9dd302fb36af` ; la CI correspondante #42826682599 est en cours au moment de cette note. Le code applicatif est identique au commit déjà validé.
 - La validation CI reste structurelle et automatisée : aucun test navigateur réel, aucune réception Resend et aucun test sur compte étudiant réel ne sont revendiqués.
+
+
+
+### Lot 203 — audit Supabase MFA / RLS en lecture seule (10 novembre 2026)
+
+#### État Git et CI vérifiés
+- PR #17 : toujours ouverte, non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`.
+- HEAD contrôlé : `1f56b4d7f3c725f4a895321c3ce61cb0d65dd6cc`.
+- CI #42826804786 : **réussie** ; job « Validation structurelle & pédagogique » terminé, toutes les 33 étapes de validation du workflow réussies.
+- Aucun merge, déploiement Cloudflare ou déploiement Supabase effectué.
+
+#### Constat du catalogue PostgreSQL
+- Toutes les tables inspectées dans le schéma exposé `public` ont RLS activé.
+- Les trois tables du MFA e-mail personnalisé sont présentes :
+  - `public.mfa_email_challenges` : challenge, utilisateur, session, finalité, hash, expiration, consommation et compteur d'essais.
+  - `public.mfa_email_factors` : facteur activé par utilisateur.
+  - `public.mfa_email_sessions` : session vérifiée, date de vérification et expiration.
+- RLS est activé sur ces trois tables, mais aucune politique n'y est définie. Les privilèges de table observés sont accordés à `postgres` et `service_role`, pas aux rôles API `anon` ou `authenticated`.
+- Les fonctions `mfa_email_issue_challenge` et `mfa_email_consume_challenge` sont en mode SECURITY INVOKER (pas SECURITY DEFINER) et leur ACL observée limite EXECUTE à `postgres` et `service_role`.
+- La fonction d'émission applique déjà un délai minimal de 60 secondes, des plafonds de 5 défis par heure et 10 par 24 heures, invalide les défis antérieurs non consommés et fixe une durée de vie de 5 minutes. La consommation vérifie l'utilisateur, la session, l'expiration, l'usage unique et bloque après 5 tentatives.
+
+#### Conséquence sécurité
+- Le stockage MFA est isolé des accès directs des rôles API ordinaires, ce qui est cohérent avec un accès serveur via `service_role`.
+- En revanche, aucune politique restrictive des tables applicatives ne vérifie encore qu'une session authentifiée possède une ligne MFA e-mail vérifiée et non expirée correspondant simultanément à `auth.uid()` et à l'identifiant de session du JWT.
+- Le contrôle d'entrée du navigateur ne suffit donc toujours pas à protéger les appels directs à la Data API/RPC.
+- Le facteur e-mail personnalisé ne produit pas le claim Supabase `aal2` ; il ne faut donc pas ajouter une politique `auth.jwt()->>'aal' = 'aal2'` en prétendant qu'elle valide ce facteur personnalisé.
+
+#### Avis Supabase observés
+- Les Security Advisors signalent les trois tables MFA comme « RLS enabled, no policy » (niveau INFO) ; leur accès est néanmoins restreint par les privilèges de table observés.
+- D'autres avertissements de fonctions SECURITY DEFINER existent dans le schéma public ; ils sont hors périmètre de ce contrôle ciblé et nécessitent un audit fonction par fonction avant toute correction.
+
+#### Aucune modification distante
+- Audit effectué en lecture seule : catalogue, colonnes, politiques, privilèges, définitions de fonctions, migrations et Security Advisors.
+- Aucun SQL DDL/DML exécuté ; aucune politique, fonction, grant, table, migration, donnée, secret ou configuration Auth n'a été modifié.
+- Aucun déploiement Supabase ou Cloudflare ; PR #17 toujours ouverte et non fusionnée.
+
+#### Décisions techniques à valider avant une enforcement
+1. Confirmer si l'obligation doit réellement viser uniquement les étudiants, comme le choix fonctionnel initial, ou tous les rôles cloud : le garde client du Lot 202 est actuellement partagé entre rôles.
+2. Concevoir un prédicat serveur vérifiant l'utilisateur, le `session_id` du JWT, l'existence d'un facteur actif et une session MFA non expirée. Le helper éventuel devra être isolé dans un schéma non exposé, avec privilèges minimaux, contrôle explicite de `auth.uid()`, `search_path` verrouillé et EXECUTE limité.
+3. Cartographier les tables applicatives sensibles, les politiques permissives existantes, les RPC et les Edge Functions avant d'ajouter des politiques RLS **restrictives**. Préserver les flux publics réellement nécessaires et les parcours admin/enseignant/parent.
+4. Préparer uniquement une migration source dans la PR après validation de la matrice d'accès ; ne pas l'appliquer au projet Supabase actif sans autorisation distincte.
+5. Tester les cas AAL1/non vérifié, session MFA valide, session expirée, autre utilisateur, autre session, rôles non étudiants et accès RPC direct.
+
+**Décision en attente :** l'audit est terminé, mais aucune enforcement RLS n'est encore autorisée/appliquée. La prochaine modification de politiques ou de schéma nécessite une approbation explicite après présentation de la matrice d'accès.
