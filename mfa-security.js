@@ -157,9 +157,13 @@
     if(resendEmail){
       ev.preventDefault();resendEmail.disabled=true;resendEmail.setAttribute('aria-busy','true');
       try{
-        var enrollForm=resendEmail.closest('#mfaEmailVerifyForm');
-        if(enrollForm){var enrollSent=await SB.mfaEmail({action:'start',purpose:'enroll'});if(!enrollSent.ok){status('#mfaEmailVerifyError',enrollSent.error||enrollSent.err||'تعذر إعادة إرسال الرمز.');return;}enrollForm.dataset.challengeId=enrollSent.challengeId;var enrollCode=$('#mfaEmailCode');if(enrollCode)enrollCode.value='';status('#mfaEmailVerifyError','تم طلب إرسال رمز جديد إلى بريدك.');}
-        else if(pending&&pending.type==='email'){var loginSent=await SB.mfaEmail({action:'start',purpose:pending.purpose||'login'});if(!loginSent.ok){status('#mfaChallengeStatus',loginSent.error||loginSent.err||'تعذر إعادة إرسال الرمز.');return;}pending.challengeId=loginSent.challengeId;var loginCode=$('#mfaChallengeCode');if(loginCode)loginCode.value='';status('#mfaChallengeStatus','تم طلب إرسال رمز جديد إلى بريدك.');}
+        if(pending&&pending.type==='email'){
+          var loginSent=await SB.mfaEmail({action:'start',purpose:pending.purpose||'login'});
+          if(!loginSent.ok){status('#mfaChallengeStatus',loginSent.error||loginSent.err||'تعذر إعادة إرسال الرمز.');return;}
+          pending.challengeId=loginSent.challengeId;
+          var loginCode=$('#mfaChallengeCode');if(loginCode)loginCode.value='';
+          status('#mfaChallengeStatus','تم طلب إرسال رمز جديد إلى بريدك.');
+        }
       }catch(error){status('#mfaChallengeStatus',error&&error.message||'تعذر إعادة إرسال الرمز.');}
       finally{resendEmail.disabled=false;resendEmail.removeAttribute('aria-busy');}
       return;
