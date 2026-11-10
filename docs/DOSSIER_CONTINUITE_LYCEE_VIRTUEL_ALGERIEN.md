@@ -4901,3 +4901,39 @@ where n.nspname = 'public'
 - Le prochain jalon technique nécessite soit un domaine contrôlé et un fournisseur SMTP gratuit dans ses limites, soit une autre méthode d'identité explicitement acceptée. Aucune dépense ne doit être engagée.
 - Aucun secret lu/modifié, aucun paramètre Auth changé, aucun e-mail envoyé, aucune migration ni fonction déployée, aucune branche Supabase créée.
 - PR #17 demeure ouverte et non fusionnée ; `main` reste inchangée.
+
+
+---
+
+## Lot 259 — retrait complet du MFA dans la PR #17 (10 novembre 2026)
+
+### Décision utilisateur
+- Demande explicite : « supprimer mfa donne moi une inscription officielle ».
+- Le MFA est retiré du parcours applicatif et du code source de la PR. L'authentification cloud officielle Supabase par e-mail + mot de passe est conservée.
+- La question de la confirmation e-mail reste ouverte : faut-il conserver la confirmation (sécurité de propriété de l'adresse) ou autoriser la connexion immédiate après inscription sans confirmation ? Aucune modification de ce réglage Auth n'a été faite en attendant la décision.
+
+### Changements sur la branche existante
+- `app.js` : retrait des contrôles MFA au point d'entrée central, à la restauration de session, à la connexion, à l'inscription et au rattachement d'un compte ; maintien de Supabase comme autorité cloud et du chargement du profil/role.
+- `supabase/supabase.js` : suppression des fonctions clientes MFA (AAL2, TOTP, SMS, recovery codes et fonction `mfa-email`) ; conservation de `login`, `signup`, récupération/mise à jour du mot de passe, session et profil.
+- `index.html` : suppression du formulaire de défi MFA, de la carte « Protection du compte / authentification à deux facteurs » et du chargement de `mfa-security.js`.
+- `sw.js` : suppression du fichier MFA du précache ; cache versionné `dz-de-v3.185.0.0.133`, références mises à jour vers `app.js?v=3565` et `supabase/supabase.js?v=3518`.
+- Suppression de la source MFA dédiée `mfa-security.js`, de la fonction Edge MFA du dépôt, de la migration d'enforcement non appliquée et du test CI exclusivement MFA.
+- Suppression de l'étape CI qui exécutait le test MFA.
+
+### Vérifications statiques après modifications
+- Aucune référence `DZ_MFA`, `mfaAssurance`, `mfaEmail`, `mfa-security.js`, `mfaChallengeForm`, `mfa-email` ou `enforce_student_email_mfa` ne subsiste dans les fichiers applicatifs contrôlés (`app.js`, `supabase/supabase.js`, `index.html`, `sw.js`, workflow principal).
+- Le flux d'inscription cloud `SB.signup` et le flux de connexion `SB.login` sont conservés ; le formulaire garde le nom, l'e-mail, le mot de passe et les informations scolaires.
+- Les contrôles de rôle/profil et les protections RLS existantes ne sont pas volontairement retirés.
+- Cette vérification est statique ; le nouveau CI et le build Cloudflare doivent encore être vérifiés après ce commit.
+
+### Limites / environnement actif
+- Aucune modification des paramètres Supabase Auth, SMTP, secrets, base distante ou données utilisateurs.
+- La fonction Edge `mfa-email` v7 déjà active dans le projet Supabase n'a pas été supprimée à distance ; elle n'est plus appelée par le code de cette PR. Aucune fonction n'a été déployée.
+- La migration `20261110160000_enforce_student_email_mfa` n'était pas appliquée au projet actif ; elle a été retirée de la PR, sans opération SQL distante.
+- Aucun test réel d'inscription, aucun e-mail envoyé, aucune confirmation Auth désactivée.
+- Aucune dépense, aucun domaine, aucun SMTP ni fournisseur payant ajouté.
+
+### État Git
+- Branche existante uniquement : `design/prototypes-67-74-alignment`.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+- Aucun déploiement de production.
