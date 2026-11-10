@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   var $=function(s){return document.querySelector(s);};
-  var pending=null, attempts=0, enrolling=null, enrollingPhone=null;
+  var pending=null, attempts=0, enrolling=null, enrollingPhone=null, gatePass=false;
   function status(id,msg,ok){var n=$(id);if(!n)return;n.textContent=msg||'';n.hidden=!msg;n.classList.toggle('is-success',!!ok);}
   function showLogin(){var f=$('#mfaChallengeForm');if(f)f.hidden=true;['#loginForm','#signupForm'].forEach(function(s){var n=$(s);if(n)n.hidden=s!=='#loginForm';});}
   function setLoginResendVisibility(type){var sms=$('#mfaLoginSmsResend'),email=$('#mfaLoginEmailResend');if(sms)sms.hidden=type!=='phone';if(email)email.hidden=type!=='email';}
@@ -26,6 +26,7 @@
     if(code)code.focus();
   }
   async function requireGate(){
+    gatePass=false;
     if(!window.SB || !SB.mfaAssurance || !SB.mfaEmail){
       status('#loginErr','خدمة التحقق الأمني غير جاهزة. أعد تحميل الصفحة أو حاول لاحقًا.');
       return true;
@@ -63,7 +64,7 @@
 
     // If a native Supabase factor is also required, complete it after the mandatory e-mail check.
     var factors=nativeState.factors||[];
-    if(!nativeState.required)return false;
+    if(!nativeState.required){gatePass=true;return false;}
     var preferred=factors.find(function(f){return f.type==='totp';})||factors[0];
     if(!preferred){status('#loginErr','لا يوجد عامل تحقق موثّق لهذا الحساب.');return true;}
     var challenge=await SB.mfaStart(preferred.id);
@@ -231,5 +232,5 @@
   }
   document.addEventListener('dz:view',function(ev){var v=ev&&ev.detail&&(ev.detail.view||ev.detail);if(v==='compte')setTimeout(renderSecurity,180);});
   if((location.hash||'').replace('#','')==='compte')document.addEventListener('DOMContentLoaded',renderSecurity);
-  window.DZ_MFA={requireGate:requireGate,renderSecurity:renderSecurity};
+  window.DZ_MFA={requireGate:requireGate,consumeGatePass:function(){if(!gatePass)return false;gatePass=false;return true;},renderSecurity:renderSecurity};
 })();
