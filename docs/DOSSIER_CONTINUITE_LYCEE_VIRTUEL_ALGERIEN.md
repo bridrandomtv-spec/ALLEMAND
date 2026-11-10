@@ -3900,3 +3900,26 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Pour que l'interface reçoive `required`, il faudra déployer une version compatible de `mfa-email` et appliquer la migration MFA/RLS correspondante dans un environnement autorisé. Un simple rechargement du navigateur ne peut pas ajouter le champ manquant à la fonction serveur.
 - Comme demandé, aucun déploiement n'est effectué maintenant. La migration n'est pas appliquée au projet Supabase actif ; aucune fonction Edge n'est déployée ; aucun changement Auth, secret, RLS, rôle ou donnée n'est effectué.
 - Aucun environnement Supabase payant n'est créé et aucune facturation n'est engagée. Aucun déploiement Cloudflare de production, aucun merge et aucune modification de `main`.
+
+
+---
+
+## Lot 213 — renforcement des tests du contrat MFA (10 novembre 2026)
+
+### Vérifications complémentaires
+- Relecture en lecture seule de la fonction active Supabase : mfa-email est toujours en version 7. Son code status ne renvoie pas required. Cette réponse HTTP 200 demeure incompatible avec le client MFA de la PR.
+- Relecture de la source Edge Function de la PR : le rôle est lu depuis public.profiles côté serveur ; seuls prof, admin et parent sont exemptés ; les rôles inconnus sont refusés ; les réponses de statut contiennent required ; les actions start et verify sont réservées aux élèves ; disable renvoie HTTP 403 / EMAIL_FACTOR_REQUIRED.
+- Documentation Supabase actuelle consultée : createSupabaseContext(req, { auth: 'user' }) et supabaseAdmin sont bien documentés pour les Edge Functions. Les clés SUPABASE_SECRET_KEYS / SUPABASE_PUBLISHABLE_KEYS sont injectées par la plateforme ; aucun secret n'a été lu ni modifié.
+
+### Renforcement de la CI
+- ci/check-mfa-security.mjs étendu pour contrôler explicitement : lecture serveur du rôle, required:false pour les rôles exemptés, required:isStudent pour les élèves, refus des rôles inconnus, protection séparée de start et verify, refus de disable, enrôlement/défi si facteur absent ou non vérifié, et réexécution du garde avant l'entrée dans l'application.
+- Commit du test renforcé : b3b1cda181e555f3242cdb922cd381aefe4b95fe.
+- CI #2826 / run 42859441278 : success sur le HEAD précédent c71cdc322157e5a078abf25a301e855e4196aa41, avec l'étape MFA dédiée réussie.
+- La CI du nouveau commit b3b1cda181e555f3242cdb922cd381aefe4b95fe reste à confirmer ; aucune réussite n'est anticipée dans cette entrée.
+
+### Limites et décisions inchangées
+- Ces tests restent des assertions statiques du dépôt ; ils ne constituent pas un test d'exécution Deno, PostgreSQL/RLS, JWT, Resend ou navigateur.
+- Le message vu par l'utilisateur est expliqué par l'absence du champ required dans la fonction active version 7. Le code source de la PR ne peut pas corriger le backend actif tant qu'il n'est pas déployé.
+- Aucun déploiement Edge Function, aucune migration, aucun changement Auth/RLS/secret/donnée Supabase, aucun déploiement Cloudflare, aucun merge, aucune modification de main.
+- Aucune branche Supabase payante et aucune dépense supplémentaire.
+- PR #17 conservée ouverte et non fusionnée.
