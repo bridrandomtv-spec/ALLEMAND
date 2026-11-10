@@ -4204,3 +4204,25 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 ### Précision après relecture du flux (Lot 226)
 - Le contrôle Edge vérifie la confirmation de l'adresse avant de traiter toutes les actions, y compris STATUS. Le cas VERIFIED_EMAIL_REQUIRED survient donc d'abord pendant la lecture du statut, pas nécessairement pendant l'envoi du code.
 - Le client traduit désormais aussi cette réponse du statut : l'élève reçoit l'instruction de confirmer son adresse par le lien reçu, puis de reprendre la connexion. Le contrôle de sécurité reste bloquant tant que cette étape n'est pas faite.
+
+
+---
+
+## Lot 227 — inscription cloud et première connexion sans ambiguïté (10 novembre 2026)
+
+### Audit du flux existant
+- L'inscription Supabase peut réussir sans créer de session lorsque la confirmation d'adresse est exigée. L'interface affichait alors un message dans l'onglet inscription et laissait à l'élève le soin de retrouver lui-même le formulaire de connexion.
+- Lors d'une tentative de connexion avant confirmation, Supabase Auth renvoie une erreur spécifique (`email_not_confirmed`) avant même l'appel au contrôle MFA ; le client affichait auparavant le message brut du fournisseur.
+- Le MFA e-mail ne peut commencer qu'après une session Auth valide et une adresse confirmée ; cette séquence est cohérente avec la vérification côté Edge.
+
+### Corrections dans la PR #17
+- Après une inscription sans session, l'interface bascule automatiquement sur l'onglet connexion, préremplit l'adresse e-mail et affiche en arabe les étapes : ouvrir le message de confirmation, cliquer le lien, puis saisir le mot de passe. Elle invite aussi à vérifier les courriers indésirables.
+- Les erreurs Auth connues (adresse non confirmée, identifiants incorrects, compte existant, limite d'envoi, mot de passe refusé et problème réseau) sont converties en messages destinés aux élèves ; les détails techniques bruts ne sont plus affichés dans les formulaires cloud concernés.
+- L'erreur `email_not_confirmed` est traitée à la connexion avant l'étape MFA, tandis que `VERIFIED_EMAIL_REQUIRED` est traitée par la fonction MFA après authentification. Les deux chemins guident vers la même confirmation sans contourner le contrôle.
+- Aucun changement des paramètres Auth Supabase, du minimum de mot de passe configuré côté serveur, des URLs de redirection, ni du comportement de la confirmation e-mail n'a été fait.
+
+### Validation et limites
+- Assertion CI ajoutée pour vérifier le basculement automatique vers la connexion et les messages de confirmation.
+- La validation reste statique ; aucun e-mail réel, aucun compte élève réel et aucun test navigateur n'ont été exécutés. Le comportement de délivrabilité dépend toujours du fournisseur et des paramètres Auth actifs.
+- Aucun changement Supabase actif, aucun secret, aucune donnée, aucune migration appliquée, aucun déploiement Edge/Cloudflare ; aucun coût engagé.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée.
