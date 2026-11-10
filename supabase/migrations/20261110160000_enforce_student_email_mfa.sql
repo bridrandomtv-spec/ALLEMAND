@@ -36,6 +36,47 @@ create trigger on_auth_user_created
 -- Une fonction trigger ne doit pas devenir une RPC accessible aux clients.
 revoke all on function public.handle_new_user() from public, anon, authenticated;
 
+
+-- Le rôle du profil pilote l'obligation MFA : un étudiant ne doit jamais
+-- pouvoir s'auto-promouvoir via la policy historique "update own".
+-- SECURITY INVOKER conserve l'identité effective du rôle PostgREST.
+create or replace function public.profiles_role_guard()
+returns trigger
+language plpgsql
+set search_path = ''
+as $function$
+begin
+  if new.role is not distinct from old.role then
+    return new;
+  end if;
+
+  -- Console SQL/maintenance serveur et appels explicitement service_role.
+  if session_user in ('postgres', 'supabase_admin')
+     or (select auth.jwt() ->> 'role') = 'service_role' then
+    return new;
+  end if;
+
+  -- Promotion/démotion uniquement par un administrateur déjà autorisé.
+  if (select auth.uid()) is not null and exists (
+    select 1
+    from public.profiles p
+    where p.id = (select auth.uid())
+      and p.role = 'admin'
+  ) then
+    return new;
+  end if;
+
+  raise exception 'role_reservee_admin';
+end;
+$function$;
+
+revoke all on function public.profiles_role_guard() from public, anon, authenticated;
+drop trigger if exists profiles_tr_role on public.profiles;
+create trigger profiles_tr_role
+  before update on public.profiles
+  for each row execute function public.profiles_role_guard();
+
+
 -- Les trois tables et les deux RPC MFA sont déclarés ici afin que cette migration
 -- soit autonome : ils existaient dans le projet actif, mais n'étaient pas versionnés
 -- dans la migration de la PR. Les données et secrets ne sont jamais copiés.
