@@ -4428,3 +4428,10 @@ where n.nspname = 'auth'
 - **Aucune révocation globale** des fonctions historiques n'a été effectuée : elle pourrait casser les policies RLS, les triggers ou les RPC légitimes. Le contrôle de leurs ACL calculées et de l'exposition PostgREST reste une étape obligatoire dans un environnement Supabase isolé.
 - Le contrôle des schémas exposés par le Data API et les propriétaires/ACL PostgreSQL n'a pas été exécuté sur le projet distant. Aucun résultat de catalogue n'est supposé.
 - Aucun changement Supabase distant, aucune migration appliquée, aucun secret modifié, aucun déploiement Edge/Worker, aucun merge et aucune modification de `main`. PR #17 reste ouverte.
+
+
+#### Validation CI du Lot 237
+
+- CI #2893 et #2894 : échecs du contrôle MFA statique, car l'inventaire exhaustif de la migration n'avait pas encore été étendu à la nouvelle fonction `public.notify`. L'échec a correctement détecté une fonction SECURITY DEFINER non classée ; l'inventaire a été complété et un contrôle spécifique de son ACL a été ajouté.
+- CI #2895 / run `42890025300`, commit `67ade4d367e08596d967eca7e9ea8519dd5e08f3` : **succès complet**. Le contrôle MFA, la matrice des parcours, le test d'accès/fuite et les validations pédagogiques sont tous réussis.
+- Le succès est celui des contrôles automatisés du dépôt. Il ne prouve pas les ACL effectives de la base Supabase distante, la propriété réelle des fonctions, l'exposition PostgREST, ni le comportement d'un trigger exécuté dans PostgreSQL réel.
