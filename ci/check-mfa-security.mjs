@@ -37,4 +37,25 @@ assert.ok(client.includes('async function finishLogin()') &&
   client.includes('if(await requireGate())return;'),
   'Login must re-run the security gate before entering the application');
 
+
+for (const table of ['mfa_email_factors', 'mfa_email_sessions', 'mfa_email_challenges']) {
+  assert.ok(sql.includes(`create table if not exists public.${table}`),
+    `Migration must create the ${table} table`);
+  assert.ok(sql.includes(`alter table public.${table} enable row level security`),
+    `Migration must enable RLS on ${table}`);
+}
+assert.ok(sql.includes('create or replace function public.mfa_email_issue_challenge') &&
+  sql.includes('create or replace function public.mfa_email_consume_challenge'),
+  'Migration must define both challenge RPCs used by the Edge Function');
+assert.ok(sql.includes('grant execute on function public.mfa_email_issue_challenge') &&
+  sql.includes('grant execute on function public.mfa_email_consume_challenge') &&
+  sql.includes('to service_role'),
+  'Challenge RPCs must be executable by service_role only');
+assert.ok(sql.includes('attempts between 0 and 5') &&
+  sql.includes("interval '5 minutes'") &&
+  sql.includes("interval '60 seconds'") &&
+  sql.includes("interval '1 hour'") &&
+  sql.includes("interval '24 hours'"),
+  'Challenge storage must enforce attempt, expiry and issuance rate limits');
+
 console.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
