@@ -4176,3 +4176,26 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Cette vérification statique ne remplace pas l'exécution de la migration sur une base de test ni un contrôle des privilèges effectifs via `has_function_privilege`.
 - Aucun SQL exécuté sur le projet Supabase actif ; aucune migration appliquée, aucun déploiement Edge/Cloudflare, aucun changement Auth/RLS/secret/donnée active.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée ; aucun coût engagé.
+
+
+---
+
+## Lot 226 — messages MFA compréhensibles pour les élèves (10 novembre 2026)
+
+### Constat de l'audit du parcours
+- La fonction Edge renvoie des codes explicites pour le courriel non confirmé (VERIFIED_EMAIL_REQUIRED), les délais et limites d'envoi (PLEASE_WAIT, RATE_LIMITED), les codes invalides/expirés/verrouillés et les indisponibilités de livraison.
+- Le client affichait certains de ces codes techniques directement à l'élève ; les erreurs réseau pouvaient également exposer le texte brut d'une exception.
+- L'élève ne doit ni comprendre Supabase/Resend ni modifier des paramètres techniques pour terminer la vérification.
+
+### Correction source dans la PR #17
+- Ajout d'un traducteur central côté interface qui convertit les réponses connues du serveur en instructions arabes courtes et actionnables.
+- Pour VERIFIED_EMAIL_REQUIRED, l'élève est invité à ouvrir le message de confirmation de son adresse, cliquer le lien reçu, puis reprendre la connexion. Ce cas est distinct du code MFA à six chiffres.
+- Les limites d'envoi expliquent quand réessayer ; les codes erronés, expirés ou verrouillés indiquent comment demander un nouveau code ou reprendre la connexion.
+- Les indisponibilités d'envoi et les erreurs réseau ne révèlent plus les détails techniques du serveur.
+- Le contrôle reste fail-closed : aucune erreur ne permet d'ouvrir le compte sans validation MFA. Aucun changement du contrat Edge ni des règles serveur.
+
+### Tests et limites
+- Assertions CI ajoutées pour vérifier les principaux codes serveur et l'absence d'affichage direct des exceptions réseau.
+- Validation statique seulement : aucune livraison Resend réelle, aucun parcours navigateur ni test avec un compte élève effectué.
+- Aucun changement Supabase actif, aucune migration appliquée, aucun secret/Auth/RLS/donnée modifié ; aucun déploiement Edge/Cloudflare.
+- PR #17 reste ouverte et non fusionnée ; main inchangée ; aucun coût engagé.
