@@ -4743,3 +4743,27 @@ where n.nspname = 'public'
 - Le blocage de mise en service demeure l'écart entre la fonction distante v7 et le contrat v1 de la source PR, ainsi que l'incertitude sur les secrets d'envoi. Le SMTP Auth de confirmation d'inscription reste un circuit distinct.
 - Prochaine action sûre : continuer l'audit en lecture seule du chemin d'inscription et de la configuration de confirmation Auth, sans modifier les paramètres distants ; ensuite préparer une checklist de bascule vérifiable avant toute demande d'autorisation.
 - Aucun déploiement Edge Function/Cloudflare, aucune migration appliquée, aucun changement Auth/SMTP, secret ou donnée, aucune branche Supabase créée, aucune fusion et aucun coût engagé.
+
+
+---
+
+## Lot 254 — audit du chemin d'inscription et options SMTP sans domaine (10 novembre 2026)
+
+### Chemin d'inscription côté code
+- Relecture de `supabase/supabase.js` : `SB.signup(email, password, meta)` appelle bien `supabase.auth.signUp({ email, password, options: { data: meta || {} } })`. Le résultat renvoie la session si Supabase en fournit une, sinon l'application traite le cas « confirmation requise ».
+- Relecture du gestionnaire `#signupForm` dans `app.js` : en mode cloud, il appelle `window.SB.signup`, affiche les erreurs Auth traduites et, en l'absence de session, renvoie l'élève vers l'onglet connexion avec l'adresse préremplie et l'instruction d'attendre le lien de confirmation.
+- Les métadonnées transmises sont pseudo, niveau, filière et wilaya ; le rôle n'est pas fourni par le formulaire cloud. La règle serveur de rôle étudiant ne doit donc pas dépendre d'un rôle déclaré par le navigateur.
+- Aucun défaut démontré dans l'appel `signUp` lui-même par cette lecture statique. Aucun essai navigateur ni événement Auth réel n'est revendiqué.
+- Le paramètre `emailRedirectTo` n'est pas fourni explicitement par le client. Ne pas l'ajouter sans vérifier les URL de redirection autorisées dans Supabase Auth ; aucune configuration de ces URL n'est exposée par les outils disponibles.
+
+### Audit de la voie e-mail gratuite sans domaine
+- Documentation Supabase actuelle : le SMTP intégré refuse les destinataires qui ne sont pas membres autorisés de l'organisation et est limité à 2 e-mails/heure ; il n'est pas utilisable pour les inscriptions publiques. Source : https://supabase.com/docs/guides/auth/auth-smtp
+- La documentation Supabase indique qu'un SMTP personnalisé est nécessaire pour envoyer à tous les destinataires ; le réglage doit rester avec confirmation activée (`mailer_autoconfirm=false`). La configuration du SMTP Auth est distincte des secrets de la fonction Edge MFA.
+- La note Supabase sur Google SMTP (4 novembre 2026) décrit un compte Google Workspace administrateur, une adresse expéditeur/identifiant SMTP Workspace et un mot de passe d'application après activation de la 2FA. Elle ne valide pas l'utilisation d'un compte Gmail personnel `@gmail.com` comme solution gratuite fiable pour Supabase Auth. Source : https://supabase.com/kb/troubleshooting/using-google-smtp-with-supabase-custom-smtp-ZZzU4Y
+- Les limites Gmail personnelles documentées ne constituent pas une garantie de délivrabilité Auth ni une approbation de cet usage ; aucune configuration Gmail n'est donc proposée comme solution certaine. Source : https://support.google.com/mail/answer/22839
+- Conclusion provisoire : avec un compte Gmail personnel, sans domaine, sans dépense et sans configuration Auth vérifiable, aucune voie gratuite de livraison publique suffisamment étayée n'est confirmée à ce stade. Ne pas acheter de domaine, souscrire un fournisseur, ni modifier les paramètres Auth pour « essayer ».
+
+### Limites d'accès et suite
+- Les outils Supabase connectés disponibles permettent l'inspection des fonctions Edge, migrations, SQL et journaux, mais n'exposent pas de lecture directe des paramètres Auth SMTP, des modèles d'e-mail ni des URL de redirection. Leur état actuel reste donc non vérifié.
+- Prochaine action sûre : préparer la checklist minimale des paramètres Auth à contrôler dans le tableau de bord, sans demander de clé ni de mot de passe dans le chat ; ne modifier aucun paramètre avant d'avoir identifié une solution gratuite réellement compatible et autorisée.
+- Aucun secret, SMTP, paramètre Auth, modèle, URL de redirection, compte ou donnée n'a été modifié. Aucun déploiement, migration, nouvelle branche, fusion ni coût engagé.
