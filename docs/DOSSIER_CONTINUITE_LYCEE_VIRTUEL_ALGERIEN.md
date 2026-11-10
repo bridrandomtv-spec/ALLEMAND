@@ -3814,3 +3814,29 @@ Projet `azjwcybivirvpxbfhyzk` :
 
 ### Étape bloquante
 Attendre l'accord explicite de l'utilisateur sur le tarif horaire de 0,01344 USD avant d'appeler `confirm_cost` puis `create_branch`. Après création, exécuter les tests sur la branche isolée uniquement et supprimer la branche de test après validation, avec autorisation explicite.
+
+---
+
+## Lot 210 — confirmation CI du HEAD documentaire et poursuite sans environnement payant (10 novembre 2026)
+
+### CI du HEAD
+- CI #2815 / run `42850641918` sur le commit `8feb85f0cbb352a2844199d7e10c5db3e52b1d38` : **réussie**.
+- Workflow `CI — ALLEMAND`, job unique « Validation structurelle & pédagogique » : conclusion `success`.
+- Toutes les étapes exécutées sont terminées avec succès, notamment les contrôles MFA étudiant, assertions migration RLS/Storage/RPC, syntaxe JavaScript, contrôles d'accès et régressions pédagogiques.
+- La réussite CI reste une validation automatisée du dépôt ; elle ne prouve pas l'application SQL sur PostgreSQL/Supabase isolé, la livraison effective par Resend, ni un parcours navigateur avec comptes réels.
+
+### Décision de coût et environnement
+- L'utilisateur a indiqué que le moment n'est pas approprié pour engager une facturation.
+- **Aucune branche Supabase payante ne sera créée** et aucun coût horaire ne sera engagé.
+- L'estimation précédemment communiquée (0,01344 USD/heure) ne constitue pas une autorisation d'achat ou de création.
+- La suite doit privilégier les vérifications statiques, les tests locaux gratuits et les validations GitHub disponibles. Toute opération payante nécessitera une nouvelle autorisation explicite.
+
+### État opérationnel
+- PR #17 : ouverte, non fusionnée, branche `design/prototypes-67-74-alignment`, cible `main`.
+- HEAD contrôlé : `8feb85f0cbb352a2844199d7e10c5db3e52b1d38`.
+- `main` inchangée.
+- Aucune branche Supabase de test créée ; aucune migration appliquée au projet actif ; aucune Edge Function déployée ; aucun déploiement Cloudflare production.
+- Le MFA e-mail obligatoire reste limité aux profils `role='eleve'`, avec enrôlement automatique à la première connexion selon la source de la PR.
+
+### Prochaine étape sans frais
+Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER, du flux Edge Function et des assertions CI ; documenter toute correction dans la PR. Ne pas prétendre que l'intégration est prête pour la production tant que les tests isolés et la livraison e-mail réelle n'ont pas été validés.
