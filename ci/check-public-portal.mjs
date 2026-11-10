@@ -550,7 +550,7 @@ if (!mfaGateBlock.includes('await SB.mfaAssurance()') ||
     !mfaGateBlock.includes("var purpose=emailState.enrolled?'login':'enroll'") ||
     !mfaGateBlock.includes("if(emailState.required && (!emailState.enrolled || !emailState.verified))") ||
     !mfaGateBlock.includes('showEmailChallenge(started,emailState,purpose)') ||
-    !mfaGateBlock.includes('if(!nativeState.required)return false;') ||
+    !mfaGateBlock.includes('if(!nativeState.required){gatePass=true;return false;}') ||
     !mfaGateBlock.includes('return true;')) fail('garde MFA : enrôlement e-mail initial automatique et blocage des états non vérifiés requis');
 if (!mfaSubmitBlock.includes('if(result&&result.ok){pending=null;await finishLogin();return;}') ||
     !mfaSubmitBlock.includes('if(attempts>=3){await returnToLoginAfterMfa(') ||
