@@ -24,6 +24,14 @@ t(sql.includes('piece_jointe_trop_lourde') && sql.includes('document_trop_lourd'
 t(sql.includes('function public.profiles_role_guard'), 'garde de rôle profiles_role_guard présente (Lot 6b)');
 t(sql.includes('create trigger profiles_tr_role'), 'trigger profiles_tr_role présent');
 t(sql.includes("raise exception 'role_reservee_admin'"), 'auto-promotion client = exception SQL');
-t(sql.includes('if auth.uid() is null then return new; end if;'), 'promotions réservées console (auth.uid NULL) ou admin');
+t(sql.includes("session_user in ('postgres', 'supabase_admin')") &&
+  sql.includes("(select auth.jwt() ->> 'role') = 'service_role'") &&
+  sql.includes("(select auth.uid()) is not null") &&
+  sql.includes("p.role = 'admin'") &&
+  !sql.includes('if auth.uid() is null then return new; end if;'),
+  'promotions réservées à la console SQL, service_role explicite ou administrateur déjà établi');
+t(/create or replace function public\\.profiles_role_guard\\(\\)[\\s\\S]*?language plpgsql[\\s\\S]*?set search_path = ''[\\s\\S]*?as \\$function\\$[\\s\\S]*?\\$function\\$;/i.test(sql) &&
+  !/create or replace function public\\.profiles_role_guard\\([\\s\\S]*?security definer/i.test(sql),
+  'garde de rôle SECURITY INVOKER avec search_path vide');
 if (fails) { console.error('::error:: msg_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== msg_test : TOUT PASSE ==');
