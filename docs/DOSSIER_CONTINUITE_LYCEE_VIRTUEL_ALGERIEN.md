@@ -4536,3 +4536,40 @@ where n.nspname = 'public'
 - CI #2911 / run `42894407199`, déclenchée par la mise à jour documentaire de cette note : en cours au moment de cette mise à jour.
 - Vérification PostgreSQL active en lecture seule après ces commits : les droits de `public.agreement_current(text)` sont toujours `anon=true`, `authenticated=true`, `service_role=true`. C'est attendu : aucune migration PR n'a été appliquée au projet actif.
 - PR #17 reste ouverte et non fusionnée. Aucun changement de `main`, aucune migration appliquée, aucun déploiement.
+
+
+---
+
+## Lot 246 — arrêt de la boucle MFA et diagnostic ciblé de l'inscription (10 novembre 2026)
+
+### Décision impérative de coût
+- L'utilisateur refuse toute facturation ou dépense supplémentaire non approuvée.
+- **Aucune branche Supabase payante, aucun environnement payant, aucun abonnement ni service facturable ne doit être créé/activé.**
+- La règle historique « ne créer aucune nouvelle branche » est maintenue. Le tarif estimé d'une branche Supabase précédemment consulté ne constitue pas une autorisation.
+- Continuer avec les outils, ressources et environnements gratuits déjà disponibles. Demander une autorisation distincte avant toute opération susceptible d'engager un coût.
+
+### État du parcours d'inscription — constat vérifié
+- Le code source de la PR #17 contient déjà le flux MFA étudiant automatique du Lot 202 : après une inscription qui renvoie une session, le client exécute `DZ_MFA.requireGate()`; sans session, il revient à la connexion et attend la confirmation Auth.
+- Le module `mfa-security.js` exige `contractVersion === 1` et un booléen `required` dans la réponse de l'action `status`. Une Edge Function active plus ancienne ne renvoyant pas ces champs provoquera un refus fermé lors du login. La source Edge Function dans la PR renvoie bien ces champs.
+- Le dossier antérieur indique que la fonction distante `mfa-email` était encore en version 7 lors du dernier contrôle. **Il faut re-vérifier sa version distante avant tout diagnostic MFA ultérieur ; ne pas déployer sans autorisation.**
+- Les journaux Auth disponibles sur la fenêtre récente consultée montrent des connexions réussies du compte de coordination, mais aucune action d'inscription (`signup` / `user_signedup`) dans les résultats ciblés. Aucune erreur Auth liée à l'envoi d'e-mail n'a été retournée par la requête ciblée. Cela ne prouve pas à lui seul qu'un clic d'inscription n'a pas eu lieu côté navigateur ; cela signifie qu'aucune tentative Auth d'inscription n'est démontrée par les journaux examinés.
+- Les journaux précédemment examinés pour `mfa-email` ne démontraient aucun appel `start/enroll`. Ne pas confondre l'action `status` avec un envoi de code.
+
+### Cause de configuration à traiter en priorité
+- L'e-mail de confirmation d'inscription est envoyé par **Supabase Auth**, pas par la fonction Edge `mfa-email`.
+- La présence de `RESEND_API_KEY` dans les secrets Edge Function ne configure pas SMTP Auth ni le Send Email Auth Hook.
+- Selon la documentation Supabase actuelle, le fournisseur SMTP intégré est limité aux adresses membres de l'organisation et à environ 2 messages/heure ; il n'est pas adapté à l'envoi public aux élèves. Une configuration SMTP personnalisée ou un Send Email Auth Hook est nécessaire pour envoyer à des adresses externes.
+- L'utilisateur n'a pas de domaine personnalisé et refuse les dépenses non approuvées. Ne pas lui demander d'acheter un domaine ni recommander un service payant comme prérequis. Étudier une voie réellement gratuite compatible avec les contraintes actuelles avant de proposer une action.
+- Ne jamais désactiver la confirmation d'e-mail pour contourner l'absence de livraison.
+
+### Prochaine séquence — sans frais et sans action sur la production
+1. Ne plus reprendre les audits MFA généraux ni les corrections CI sans défaut concret.
+2. Vérifier la configuration Auth/SMTP et le circuit de confirmation en lecture seule, si l'outil disponible l'autorise ; sinon, signaler précisément la limite d'accès plutôt que demander des manipulations répétées.
+3. Établir un chemin de livraison gratuit, compatible avec l'absence de domaine, avant de modifier quoi que ce soit.
+4. Tester d'abord le flux avec les moyens gratuits disponibles ; distinguer clairement création du compte, confirmation, première connexion et MFA.
+5. Ne pas créer de branche Supabase, ne pas modifier les secrets, paramètres Auth, données, schéma, RLS, migrations ou déploiements sans autorisation explicite.
+
+### État Git
+- PR #17 : ouverte, non fusionnée ; branche `design/prototypes-67-74-alignment`.
+- `main) : inchangée.
+- Cette note est documentaire ; aucun changement applicatif, Auth, Supabase, secret, migration, déploiement ou coût n'est engagé par ce lot.
