@@ -38,6 +38,17 @@ assert.ok(sql.includes('drop trigger if exists on_auth_user_created on auth.user
   !sql.includes('create_student_profile_for_new_auth_user') &&
   !sql.includes('on_auth_user_created_student_profile'),
   'Migration must recreate and lock down the one canonical trigger instead of adding a duplicate');
+// The profile role is the server-side switch for mandatory student MFA.
+// Prevent a student from changing that role through the historical own-profile UPDATE policy.
+assert.ok(sql.includes('create or replace function public.profiles_role_guard()') &&
+  /create or replace function public\\.profiles_role_guard\\([\\s\\S]*?language plpgsql[\\s\\S]*?set search_path = ''[\\s\\S]*?as \\$function\\$[\\s\\S]*?if new\\.role is not distinct from old\\.role[\\s\\S]*?session_user in \\('postgres', 'supabase_admin'\\)[\\s\\S]*?auth\\.jwt\\(\\)[\\s\\S]*?auth\\.uid\\(\\)[\\s\\S]*?p\\.role = 'admin'[\\s\\S]*?raise exception 'role_reservee_admin'[\\s\\S]*?\\$function\\$;/i.test(sql) &&
+  !/create or replace function public\\.profiles_role_guard\\([\\s\\S]*?security definer/i.test(sql),
+  'Profile role guard must be SECURITY INVOKER, pin an empty search_path and allow role changes only to trusted SQL/service_role or an existing admin');
+assert.ok(sql.includes('revoke all on function public.profiles_role_guard() from public, anon, authenticated') &&
+  sql.includes('drop trigger if exists profiles_tr_role on public.profiles') &&
+  sql.includes('create trigger profiles_tr_role') &&
+  sql.includes('before update on public.profiles'),
+  'Mandatory MFA migration must install the role-protection trigger, not rely on an optional manual SQL file');
 assert.ok(edge.includes('if (!isStudent && !isExemptRole)') && edge.includes('PROFILE_ROLE_NOT_ALLOWED'),
   'Edge status must reject unknown profile roles');
 assert.ok(edge.includes('required: false') && edge.includes('required: isStudent'),
