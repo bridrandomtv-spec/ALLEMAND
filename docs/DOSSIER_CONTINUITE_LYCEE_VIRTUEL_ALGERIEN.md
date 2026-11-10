@@ -4199,3 +4199,8 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Validation statique seulement : aucune livraison Resend réelle, aucun parcours navigateur ni test avec un compte élève effectué.
 - Aucun changement Supabase actif, aucune migration appliquée, aucun secret/Auth/RLS/donnée modifié ; aucun déploiement Edge/Cloudflare.
 - PR #17 reste ouverte et non fusionnée ; main inchangée ; aucun coût engagé.
+
+
+### Précision après relecture du flux (Lot 226)
+- Le contrôle Edge vérifie la confirmation de l'adresse avant de traiter toutes les actions, y compris STATUS. Le cas VERIFIED_EMAIL_REQUIRED survient donc d'abord pendant la lecture du statut, pas nécessairement pendant l'envoi du code.
+- Le client traduit désormais aussi cette réponse du statut : l'élève reçoit l'instruction de confirmer son adresse par le lien reçu, puis de reprendre la connexion. Le contrôle de sécurité reste bloquant tant que cette étape n'est pas faite.
