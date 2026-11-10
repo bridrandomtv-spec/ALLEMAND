@@ -4716,3 +4716,30 @@ where n.nspname = 'public'
 - Ne pas déployer tant que la disponibilité des variables requises et la revue finale de la source ne sont pas établies. Aucun changement distant n'a été fait.
 - Pour l'inscription, le transport de confirmation Auth demeure distinct du fournisseur Resend MFA ; il reste à vérifier/configurer séparément, sans désactiver la confirmation d'adresse.
 - Aucun SQL DDL, aucune donnée modifiée, aucun secret modifié, aucun déploiement Edge, aucune fusion, aucun coût engagé.
+
+
+---
+
+## Lot 253 — validation du HEAD, de la fonction Edge et de l'état de la PR (10 novembre 2026)
+
+### État Git et CI
+- HEAD contrôlé : `6e7fa44db84871bded8ba695fec9221140de5610`.
+- CI #2928 / run `42899389445` : **success**, job unique « Validation structurelle & pédagogique » ; les 33 étapes utiles sont terminées avec succès, notamment les contrôles portail, مسارك, garde d'accès/TEST DE FUITE, MFA e-mail étudiant, matrice des parcours et régressions.
+- Comparaison GitHub `main...design/prototypes-67-74-alignment` : statut `diverged`, branche PR en avance de 1 777 commits et en retard de 4 commits par rapport à `main`. Le point de divergence commun est `51acfe8c97b6e152208d592dbd2c5bbde5c5c38e`.
+- Métadonnées de la PR #17 relues après comparaison : `state=open`, `merged=false`, `mergeable=true`, cible `main`, HEAD `6e7fa44`. GitHub indique donc actuellement qu'il n'y a pas de conflit bloquant, malgré les quatre commits d'écart.
+- Aucun rebase, merge, changement de base, commit sur `main`, nouvelle branche ou déploiement n'a été effectué. Ne pas rebaser automatiquement une branche de cette taille : cela demanderait une analyse séparée des quatre commits de `main` et des éventuels chevauchements.
+
+### Revue ciblée de la source Edge Function MFA
+- Source relue dans la PR : `supabase/functions/mfa-email/index.ts`.
+- Le code valide le JWT utilisateur, vérifie l'utilisateur et les claims de session, puis construit le contexte via `createSupabaseContext(req, { auth: "user" })` et utilise `supabaseAdmin` pour les seules opérations serveur nécessaires.
+- Le rôle est lu depuis `profiles.role` côté serveur ; seuls les profils `eleve` sont soumis au MFA obligatoire. Les rôles explicitement exemptés sont `prof`, `admin`, `parent` ; les rôles inconnus sont refusés.
+- Le contrat `contractVersion: 1` et `required` est renvoyé dans les réponses `status`. Les actions `start` et `verify` sont réservées aux élèves ; `disable` renvoie HTTP 403.
+- Les variables attendues par la source sont `RESEND_API_KEY`, `MFA_EMAIL_FROM` et `MFA_EMAIL_PEPPER`, en plus du contexte Supabase. Leur présence/validité dans les secrets distants n'a pas été vérifiée et ne doit pas être supposée.
+- La documentation Supabase officielle actuelle confirme l'usage de `createSupabaseContext(req, { auth: 'user' })`, l'accès au client admin via le contexte, et le maintien de `verify_jwt=true` pour une fonction appelée avec le JWT d'un utilisateur. Source : https://supabase.com/docs/guides/functions/auth
+- Le test CI `ci/check-mfa-security.mjs` couvre le contrat versionné, le contrôle de rôle, le blocage de désactivation, les gardes client et les protections SQL. Ces assertions sont statiques ; elles ne prouvent pas qu'un e-mail Resend est livré ni qu'un étudiant peut terminer un enrôlement réel.
+
+### Conclusion et prochaine action
+- La CI du HEAD actuel est verte et GitHub considère la PR fusionnable, mais cela ne valide pas le parcours Auth/MFA réel.
+- Le blocage de mise en service demeure l'écart entre la fonction distante v7 et le contrat v1 de la source PR, ainsi que l'incertitude sur les secrets d'envoi. Le SMTP Auth de confirmation d'inscription reste un circuit distinct.
+- Prochaine action sûre : continuer l'audit en lecture seule du chemin d'inscription et de la configuration de confirmation Auth, sans modifier les paramètres distants ; ensuite préparer une checklist de bascule vérifiable avant toute demande d'autorisation.
+- Aucun déploiement Edge Function/Cloudflare, aucune migration appliquée, aucun changement Auth/SMTP, secret ou donnée, aucune branche Supabase créée, aucune fusion et aucun coût engagé.
