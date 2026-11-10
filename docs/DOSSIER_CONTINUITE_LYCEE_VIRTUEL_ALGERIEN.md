@@ -4287,3 +4287,12 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - La correction distante nécessite une publication coordonnée de la fonction Edge compatible et du frontend correspondant. Cette publication reste interdite dans le cadre actuel (PR #17 sans fusion ni déploiement) ; aucun contrôle MFA n'a été assoupli et aucun contournement n'a été ajouté.
 - Le contrôle CI du correctif est à relancer ; le diagnostic est fondé sur le contrat du code source et le message constaté, pas sur un nouveau test de production.
 - Aucun changement Supabase distant, migration appliquée, secret modifié, déploiement Worker, fusion ou modification de `main`.
+
+
+### Lot 232 — sécurisation de la reprise de session et des messages d'erreur (10 novembre 2026)
+- Le contrôle de restauration a été relu : une session cloud mémorisée doit obtenir une session Supabase valide, passer DZ_MFA.requireGate(), puis seulement charger le profil via cloudAuthority() et appeler enterApp().
+- Le garde central enterApp() reste fail-closed et consomme un permis MFA à usage unique. Un appel tardif sans permis rouvre le portail et relance le contrôle ; aucune ouverture directe n'est introduite.
+- Correction de l'affichage des erreurs : les exceptions brutes de restauration et du garde central ne sont plus répercutées à l'étudiant. Des messages arabes génériques et actionnables évitent d'exposer des détails internes du fournisseur tout en indiquant que l'espace n'a pas été ouvert.
+- ci/check-mfa-security.mjs renforce les assertions d'ordre : MFA avant chargement du profil et avant entrée, et absence d'exposition des messages d'exception bruts dans la restauration.
+- Validation CI du nouveau HEAD à confirmer. Les assertions sont statiques et ne remplacent pas un test navigateur avec sessions réelles.
+- Aucun déploiement Edge/Worker, aucune migration exécutée, aucun changement Auth/RLS/secrets/données Supabase, aucun merge et aucune modification de main. PR #17 reste ouverte.
