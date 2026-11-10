@@ -112,6 +112,7 @@ Deno.serve(async (req: Request) => {
     if (!isStudent) {
       return json(200, {
         ok: true,
+        contractVersion: 1,
         required: false,
         enrolled: false,
         verified: false,
@@ -129,6 +130,7 @@ Deno.serve(async (req: Request) => {
     }
     return json(200, {
       ok: true,
+      contractVersion: 1,
       required: isStudent,
       enrolled: !!factorResult.data,
       verified: !!verifiedResult.data,
