@@ -4278,3 +4278,12 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - `ci/check-mfa-security.mjs` : assertion ajoutée pour le code réseau stable et son traitement côté interface.
 - Validation CI à confirmer sur le nouveau HEAD. Ces tests restent statiques ; aucun essai navigateur, e-mail Resend réel ou test sur environnement Supabase isolé n'est revendiqué.
 - Aucun changement Supabase distant, migration appliquée, Edge Function déployée, déploiement Cloudflare, merge ou modification de `main`. PR #17 reste ouverte et non fusionnée.
+
+
+### Lot 231 — correction du contrôle CI du Lot 230 et diagnostic du message de version (10 novembre 2026)
+- Le premier contrôle CI du Lot 230 a échoué sur une assertion mal ciblée : le test cherchait `error:'NETWORK_UNAVAILABLE'` dans `mfa-security.js`, alors que ce code de transport est correctement défini dans `supabase/supabase.js`. Le message utilisateur et le code réseau sont volontairement répartis entre ces deux couches.
+- Correction du test : `ci/check-mfa-security.mjs` lit maintenant explicitement le client Supabase et vérifie le code stable dans le bon fichier, tout en vérifiant la traduction dans `mfa-security.js`.
+- Diagnostic du message « نسخة خدمة التحقق الأمني غير متوافقة مع المنصة » : le client attend `contractVersion: 1` et `required` booléen. Le code Edge Function présent dans cette branche renvoie bien `contractVersion: 1` dans les deux réponses de statut (élève et rôles exemptés). Le message affiché par le site indique que la version exécutée à distance ne fournit pas ce contrat. Mettre à jour uniquement les fichiers de la PR ne met pas à jour la fonction distante.
+- La correction distante nécessite une publication coordonnée de la fonction Edge compatible et du frontend correspondant. Cette publication reste interdite dans le cadre actuel (PR #17 sans fusion ni déploiement) ; aucun contrôle MFA n'a été assoupli et aucun contournement n'a été ajouté.
+- Le contrôle CI du correctif est à relancer ; le diagnostic est fondé sur le contrat du code source et le message constaté, pas sur un nouveau test de production.
+- Aucun changement Supabase distant, migration appliquée, secret modifié, déploiement Worker, fusion ou modification de `main`.
