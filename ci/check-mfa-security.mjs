@@ -147,4 +147,20 @@ assert.ok(client.includes("pending&&pending.type==='email'?await SB.mfaEmail({ac
   client.includes('if(result&&result.ok){pending=null;await finishLogin();return;}'),
   'Email challenge verification must use the current challenge ID and re-run the central MFA gate before entry');
 
+
+assert.ok(edge.includes('.eq("user_id", user.id).eq("session_id", sessionId).gt("expires_at", new Date().toISOString())'),
+  'MFA status must bind verification to the current authenticated session and reject expired verification');
+assert.ok(edge.includes('new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString()') &&
+  edge.includes('p_session_id: sessionId') &&
+  edge.includes('${user.id}:${sessionId}:${challengeId}:${code}'),
+  'Email challenge and its 12-hour verification grant must be bound to the current user and Auth session');
+assert.ok(sql.includes("s.session_id::text = coalesce((select auth.jwt() ->> 'session_id'), '')") &&
+  sql.includes('from auth.sessions auth_session') &&
+  sql.includes('auth_session.user_id = (select auth.uid())') &&
+  sql.includes('(auth_session.not_after is null or auth_session.not_after > pg_catalog.now())'),
+  'Protected data access must require a matching, non-expired Supabase Auth session in addition to email MFA');
+assert.ok(client.includes('if(emailState.required && (!emailState.enrolled || !emailState.verified))') &&
+  client.includes("var purpose=emailState.enrolled?'login':'enroll';"),
+  'An enrolled student without a valid verification for the current session must receive a login challenge, not skip MFA');
+
 console.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
