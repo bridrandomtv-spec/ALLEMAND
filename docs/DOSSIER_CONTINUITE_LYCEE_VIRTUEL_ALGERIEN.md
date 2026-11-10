@@ -4970,3 +4970,9 @@ where n.nspname = 'public'
 - Aucun MFA réintroduit. Aucune modification distante Auth/SMTP/secrets, schéma, RLS, migration, Edge Function ou donnée. Aucun coût, aucune branche Supabase, aucun déploiement de production et aucune fusion.
 - PR #17 maintenue ouverte et non fusionnée ; changements sur la branche existante uniquement.
 - CI du code et du dossier à confirmer après ce lot.
+
+
+### Lot 261 — synchronisation finale du contrôle Masar
+- La CI #42910652748 a détecté une assertion supplémentaire dans `ci/check-masar.mjs` qui exigeait encore le Service Worker `.133` (test historique Lot 248), alors que le Lot 261 passe en `.134`.
+- Assertion mise à jour vers `.134` ; commit correctif : `cc53c17a751b311ce29ca1de0712878b0ea77183`.
+- L'échec précédent était un décalage du test, pas une erreur du code applicatif. La CI du HEAD corrigé doit encore terminer.
