@@ -4122,3 +4122,36 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 
 ### Limites
 - La correction et le test sont des modifications de source. Le comportement réel dépend encore du déploiement coordonné, qui nécessite une autorisation distincte.
+
+
+---
+
+## Lot 224 — validation finale du contrat MFA et ordre de mise en service (10 novembre 2026)
+
+### CI du HEAD complet
+- Workflow GitHub Actions run `42877673227`, commit `e27673782a3730bcd1e02e1b0990a97f05237122` : **success**.
+- Le job « Validation structurelle & pédagogique » et toutes ses étapes ont réussi, dont les contrôles MFA e-mail, matrice des parcours, garde d'accès et tests de régression.
+- Cette réussite valide les assertions et contrôles automatisés du dépôt. Elle ne constitue pas un test réel de livraison Resend, de session Supabase, de navigateur ou de déploiement Cloudflare.
+
+### Audit de cohérence de l'implémentation
+- Le serveur Edge renvoie `contractVersion: 1` avec `required` pour les réponses `action=status`.
+- Le client n'accepte que le contrat version 1 et un booléen `required`. Toute réponse ancienne ou incomplète reste bloquée (fail-closed).
+- Les actions `start` et `verify` sont limitées côté serveur aux profils étudiants. La désactivation personnelle du facteur est refusée.
+- L'enrôlement initial et les défis de connexion reposent sur les tables et RPC MFA de la migration dédiée. Le déploiement de la fonction Edge sans son prérequis SQL ne constitue donc pas une mise en service complète.
+
+### Ordre de mise en service à respecter — aucune étape exécutée
+1. Préparer un environnement Supabase de test isolé et autorisé, sans créer de branche payante sans accord préalable sur le coût.
+2. Examiner puis appliquer la migration MFA dans cet environnement de test uniquement ; vérifier les tables, policies et RPC attendues.
+3. Déployer la fonction Edge `mfa-email` issue du même commit validé que le client.
+4. Publier le frontend compatible avec `contractVersion: 1`, de façon coordonnée avec la fonction Edge.
+5. Tester avec un compte étudiant dédié : statut `required: true`, enrôlement initial, réception du code, validation, reconnexion et nouveau défi.
+6. Tester avec les rôles exemptés : `required: false`, sans enrôlement étudiant imposé.
+7. Vérifier les refus (code erroné/expiré, limitation de fréquence, session expirée, tentative de désactivation) et confirmer qu'aucune donnée protégée n'est accessible avant validation MFA.
+8. Contrôler la délivrabilité e-mail réelle et les journaux sans exposer codes, secrets ni données personnelles ; seulement après réussite, préparer une demande d'autorisation distincte pour la production.
+
+### État confirmé après le Lot 224
+- PR #17 : ouverte, non fusionnée ; branche `design/prototypes-67-74-alignment`, HEAD `e27673782a3730bcd1e02e1b0990a97f05237122`.
+- CI finale réussie : [run 42877673227](https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/42877673227).
+- `main` inchangée ; aucun déploiement Cloudflare ou Supabase ; aucune migration appliquée ; aucun changement de configuration, secret, Auth, RLS ou donnée du projet Supabase actif.
+- Aucun environnement Supabase payant créé et aucun coût engagé.
+- Le MFA e-mail est **validé au niveau du code source et de la CI**, mais n'est pas déclaré opérationnel en production tant que l'ordre de test et de déploiement ci-dessus n'a pas été exécuté et vérifié.
