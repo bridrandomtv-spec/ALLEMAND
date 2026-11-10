@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.0";
+import { createSupabaseContext } from "npm:@supabase/server@1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -62,8 +63,7 @@ Deno.serve(async (req: Request) => {
 
   const url = Deno.env.get("SUPABASE_URL");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !anonKey || !serviceKey) {
+  if (!url || !anonKey) {
     return json(503, { ok: false, error: "SERVER_CONFIGURATION_INCOMPLETE" });
   }
 
@@ -82,9 +82,14 @@ Deno.serve(async (req: Request) => {
   const email = user.email;
   if (!email || !user.email_confirmed_at) return json(403, { ok: false, error: "VERIFIED_EMAIL_REQUIRED" });
 
-  const admin = createClient(url, serviceKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  // Build the privileged client through Supabase's supported Edge Function context.
+  // Secret API keys are not JWTs and must never be sent as Authorization: Bearer.
+  const { data: supabaseContext, error: contextError } = await createSupabaseContext(req, { auth: "user" });
+  if (contextError || !supabaseContext?.supabaseAdmin) {
+    console.error("MFA admin context unavailable", contextError?.message ?? "missing admin client");
+    return json(503, { ok: false, error: "SERVER_CONFIGURATION_INCOMPLETE" });
+  }
+  const admin = supabaseContext.supabaseAdmin;
 
   let body: Record<string, unknown>;
   try {
