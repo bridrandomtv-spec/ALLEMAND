@@ -1717,6 +1717,18 @@ function showGateError(id, message){
   if(node){ node.hidden = false; node.textContent = String(message || 'تعذر إتمام العملية.'); }
 }
 
+// Messages Auth cloud are normalized for learners; raw provider errors stay in diagnostics only.
+function friendlyCloudAuthMessage(code, detail){
+  const value = String(code || detail || '').toLowerCase();
+  if(value.includes('email_not_confirmed') || value.includes('email not confirmed')) return 'لم يتم تأكيد بريدك الإلكتروني بعد. افتح رسالة التأكيد واضغط الرابط الموجود فيها، ثم ارجع لتسجيل الدخول.';
+  if(value.includes('invalid_login_credentials') || value.includes('invalid login credentials') || value.includes('invalid_credentials')) return 'البريد الإلكتروني أو كلمة المرور غير صحيحة. راجع البيانات وحاول مرة أخرى.';
+  if(value.includes('user_already_exists') || value.includes('already registered') || value.includes('user already registered')) return 'يوجد حساب بهذا البريد الإلكتروني. انتقل إلى تسجيل الدخول بدل إنشاء حساب جديد.';
+  if(value.includes('rate limit') || value.includes('too many requests') || value.includes('over_email_send_rate_limit')) return 'تم إرسال طلبات كثيرة خلال وقت قصير. انتظر قليلًا ثم حاول مرة أخرى.';
+  if(value.includes('password') && (value.includes('weak') || value.includes('short') || value.includes('least'))) return 'كلمة المرور لا تستوفي شروط الحماية. اختر كلمة مرور أقوى ثم أعد المحاولة.';
+  if(value.includes('network') || value.includes('fetch') || value.includes('timeout')) return 'تعذر الاتصال بالخدمة الآن. تحقق من اتصال الإنترنت ثم حاول مجددًا.';
+  return 'تعذر إتمام العملية الآن. تحقق من البيانات وحاول مرة أخرى بعد قليل.';
+}
+
 /* Fonctions d'interface du portail — restaurées après leur suppression accidentelle dans le Lot 178. */
 function paintGateStats(){
   const el = $('#gateStats');
@@ -1959,7 +1971,7 @@ const lf = $('#loginForm');
       try{
         const result = await window.SB.login(email, password);
         if(!result || !result.ok){
-          showGateError('#loginErr', (result && result.err) || 'بيانات الدخول غير صحيحة.');
+          showGateError('#loginErr', friendlyCloudAuthMessage(result && (result.code || result.err), result && result.err));
           return;
         }
         if(!window.DZ_MFA || typeof window.DZ_MFA.requireGate !== 'function'){
@@ -1975,7 +1987,7 @@ const lf = $('#loginForm');
         toast('🎉 أهلاً بك ' + cloudSession.nom + ' — حساب سحابي (' + cloudSession.niveau + ')', 'ok');
         enterApp(cloudSession);
       }catch(error){
-        showGateError('#loginErr', error && error.message ? error.message : 'تعذر الاتصال بخدمة تسجيل الدخول.');
+        showGateError('#loginErr', friendlyCloudAuthMessage(error && error.code, error && error.message));
       }
       return;
     }
@@ -2009,11 +2021,15 @@ const lf = $('#loginForm');
           pseudo:$('#suName').value.trim(), niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0]
         });
         if(!result || !result.ok){
-          showGateError('#suErr', (result && result.err) || 'تعذر إنشاء الحساب.');
+          showGateError('#suErr', friendlyCloudAuthMessage(result && (result.code || result.err), result && result.err));
           return;
         }
         if(!result.session){
-          showGateError('#suErr', 'تم استلام طلب التسجيل. تحقق من بريدك الإلكتروني لتفعيل الحساب، ثم عُد لتسجيل الدخول.');
+          const loginTab = document.querySelector('[data-gate="login"]');
+          if(loginTab) loginTab.click();
+          const loginEmail = $('#loginUser');
+          if(loginEmail) loginEmail.value = $('#suMail').value.trim();
+          showGateError('#loginErr', 'تم إنشاء طلب حسابك. أرسلنا رابط تأكيد إلى بريدك الإلكتروني؛ افتح الرسالة واضغط الرابط، ثم أدخل كلمة المرور هنا لتسجيل الدخول. إذا لم تجد الرسالة، تحقق من مجلد الرسائل غير المرغوب فيها.');
           return;
         }
         if(!window.DZ_MFA || typeof window.DZ_MFA.requireGate !== 'function'){
@@ -2029,7 +2045,7 @@ const lf = $('#loginForm');
         toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + cloudSession.niveau, 'ok');
         enterApp(cloudSession);
       }catch(error){
-        showGateError('#suErr', error && error.message ? error.message : 'تعذر الاتصال بخدمة إنشاء الحساب.');
+        showGateError('#suErr', friendlyCloudAuthMessage(error && error.code, error && error.message));
       }
       return;
     }
