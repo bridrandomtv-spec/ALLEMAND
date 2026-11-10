@@ -3,6 +3,192 @@
 -- Les politiques existantes restent permissives et inchangées ; ce garde est ajouté en RESTRICTIVE.
 
 create schema if not exists private authorization postgres;
+
+-- Les trois tables et les deux RPC MFA sont déclarés ici afin que cette migration
+-- soit autonome : ils existaient dans le projet actif, mais n'étaient pas versionnés
+-- dans la migration de la PR. Les données et secrets ne sont jamais copiés.
+create table if not exists public.mfa_email_factors (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  enabled_at timestamptz not null default pg_catalog.now(),
+  created_at timestamptz not null default pg_catalog.now()
+);
+
+create table if not exists public.mfa_email_sessions (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  session_id uuid not null,
+  verified_at timestamptz not null default pg_catalog.now(),
+  expires_at timestamptz not null,
+  primary key (user_id, session_id),
+  constraint mfa_email_sessions_expiry_check check (expires_at > verified_at)
+);
+
+create table if not exists public.mfa_email_challenges (
+  challenge_id uuid primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  session_id uuid not null,
+  purpose text not null check (purpose in ('enroll', 'login')),
+  code_hash bytea not null,
+  created_at timestamptz not null default pg_catalog.now(),
+  expires_at timestamptz not null,
+  consumed_at timestamptz,
+  attempts smallint not null default 0,
+  constraint mfa_email_challenges_attempts_check check (attempts between 0 and 5),
+  constraint mfa_email_challenges_expiry_check check (expires_at > created_at)
+);
+
+create index if not exists mfa_email_challenges_user_created_idx
+  on public.mfa_email_challenges (user_id, created_at desc);
+
+-- Ces tables ne sont accessibles qu'au backend privilégié de l'Edge Function.
+-- RLS sans policy pour les rôles clients ; service_role reçoit uniquement le CRUD requis.
+alter table public.mfa_email_factors enable row level security;
+alter table public.mfa_email_sessions enable row level security;
+alter table public.mfa_email_challenges enable row level security;
+
+revoke all on table public.mfa_email_factors, public.mfa_email_sessions,
+  public.mfa_email_challenges from public, anon, authenticated;
+grant select, insert, update, delete on table public.mfa_email_factors,
+  public.mfa_email_sessions, public.mfa_email_challenges to service_role;
+
+-- Les RPC sont invoker (pas SECURITY DEFINER) et réservées à service_role.
+-- L'Edge Function authentifie l'utilisateur et contrôle son rôle avant cet appel.
+create or replace function public.mfa_email_issue_challenge(
+  p_challenge_id uuid,
+  p_user_id uuid,
+  p_session_id uuid,
+  p_purpose text,
+  p_code_hash bytea
+)
+returns text
+language plpgsql
+set search_path = ''
+as $function$
+declare
+  v_count integer;
+begin
+  if p_purpose not in ('enroll', 'login') then
+    return 'invalid_purpose';
+  end if;
+
+  perform pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended(p_user_id::text, 0)
+  );
+
+  if exists (
+    select 1
+    from public.mfa_email_challenges c
+    where c.user_id = p_user_id
+      and c.created_at > pg_catalog.now() - interval '60 seconds'
+  ) then
+    return 'cooldown';
+  end if;
+
+  select pg_catalog.count(*) into v_count
+  from public.mfa_email_challenges c
+  where c.user_id = p_user_id
+    and c.created_at > pg_catalog.now() - interval '1 hour';
+
+  if v_count >= 5 then
+    return 'hourly_limit';
+  end if;
+
+  select pg_catalog.count(*) into v_count
+  from public.mfa_email_challenges c
+  where c.user_id = p_user_id
+    and c.created_at > pg_catalog.now() - interval '24 hours';
+
+  if v_count >= 10 then
+    return 'daily_limit';
+  end if;
+
+  update public.mfa_email_challenges
+  set consumed_at = pg_catalog.now()
+  where user_id = p_user_id
+    and consumed_at is null;
+
+  delete from public.mfa_email_challenges
+  where created_at < pg_catalog.now() - interval '7 days';
+
+  insert into public.mfa_email_challenges (
+    challenge_id, user_id, session_id, purpose, code_hash, expires_at
+  ) values (
+    p_challenge_id, p_user_id, p_session_id, p_purpose, p_code_hash,
+    pg_catalog.now() + interval '5 minutes'
+  );
+
+  return 'ok';
+end;
+$function$;
+
+create or replace function public.mfa_email_consume_challenge(
+  p_challenge_id uuid,
+  p_user_id uuid,
+  p_session_id uuid,
+  p_code_hash bytea
+)
+returns table(ok boolean, purpose text, reason text)
+language plpgsql
+set search_path = ''
+as $function$
+declare
+  v_challenge public.mfa_email_challenges%rowtype;
+begin
+  select c.* into v_challenge
+  from public.mfa_email_challenges c
+  where c.challenge_id = p_challenge_id
+    and c.user_id = p_user_id
+    and c.session_id = p_session_id
+  for update;
+
+  if not found then
+    return query select false, null::text, 'invalid';
+    return;
+  end if;
+
+  if v_challenge.consumed_at is not null then
+    return query select false, v_challenge.purpose, 'used';
+    return;
+  end if;
+
+  if v_challenge.expires_at <= pg_catalog.now() then
+    update public.mfa_email_challenges
+    set consumed_at = pg_catalog.now()
+    where challenge_id = p_challenge_id;
+    return query select false, v_challenge.purpose, 'expired';
+    return;
+  end if;
+
+  if v_challenge.attempts >= 5 then
+    return query select false, v_challenge.purpose, 'locked';
+    return;
+  end if;
+
+  if v_challenge.code_hash is distinct from p_code_hash then
+    update public.mfa_email_challenges
+    set attempts = attempts + 1,
+        consumed_at = case when attempts + 1 >= 5 then pg_catalog.now() else consumed_at end
+    where challenge_id = p_challenge_id;
+    return query select false, v_challenge.purpose, 'invalid_code';
+    return;
+  end if;
+
+  update public.mfa_email_challenges
+  set consumed_at = pg_catalog.now()
+  where challenge_id = p_challenge_id;
+
+  return query select true, v_challenge.purpose, 'ok';
+end;
+$function$;
+
+revoke all on function public.mfa_email_issue_challenge(uuid, uuid, uuid, text, bytea)
+  from public, anon, authenticated;
+revoke all on function public.mfa_email_consume_challenge(uuid, uuid, uuid, bytea)
+  from public, anon, authenticated;
+grant execute on function public.mfa_email_issue_challenge(uuid, uuid, uuid, text, bytea)
+  to service_role;
+grant execute on function public.mfa_email_consume_challenge(uuid, uuid, uuid, bytea)
+  to service_role;
+
 revoke all on schema private from public, anon, authenticated;
 grant usage on schema private to authenticated, service_role;
 
