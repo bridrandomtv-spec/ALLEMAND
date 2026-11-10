@@ -213,8 +213,8 @@ assert.ok(notifyStart >= 0 &&
   'Notification helper must be server-trigger-only, use a pinned search_path and deny direct RPC execution to all client/API roles');
 
 assert.ok(sql.includes("pg_catalog.to_regprocedure('public.agreement_current(text)')") &&
-  sql.includes('revoke all on function public.agreement_current(text) from public, anon') &&
-  sql.includes('grant execute on function public.agreement_current(text) to authenticated, service_role'),
+  sql.includes('revoke all on function public.agreement_current(text) from public, anon, authenticated') &&
+  sql.includes('grant execute on function public.agreement_current(text) to service_role'),
   'The unused agreement_current SECURITY DEFINER RPC must not remain executable by PUBLIC/anon; preserve authenticated and service_role access when it exists');
 
 assert.ok(sql.includes('revoke all on function public.mfa_email_issue_challenge') &&
