@@ -3716,3 +3716,9 @@ Le contrôle approfondi de la migration Lot 204 a identifié deux défauts de po
 4. Vérifier que le bucket `prive` est soumis au MFA étudiant et que les autres buckets restent sous leurs seules politiques existantes.
 5. Tester les fonctions SECURITY DEFINER et les accès directs qui contournent RLS.
 6. Seulement après ces validations et une autorisation séparée : déploiement Edge Function, application migration production, puis déploiement front.
+
+### Complément de cohérence des privilèges — Lot 205
+- Le helper est exécutable par `service_role` et son schéma doit également lui être accessible au niveau USAGE. Le grant de schéma est donc aligné sur les grants d'exécution : `authenticated, service_role`.
+- Une assertion CI vérifie maintenant ce privilège de schéma, en plus du grant EXECUTE.
+- Commit migration : `3d05d9761df6fc0cc84816444cf50db19a0df120` ; commit test : `bae3529b75caf68d8102dc0dec421b53c70ec4de`.
+- Cette autorisation de schéma ne rend pas le schéma `private` exposé dans la Data API et n'accorde aucun privilège sur les tables qu'il contient.
