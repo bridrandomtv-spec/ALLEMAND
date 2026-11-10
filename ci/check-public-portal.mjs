@@ -647,6 +647,7 @@ const studentMfaMigration = read('supabase/migrations/20261110160000_enforce_stu
 for (const marker of [
   'create schema if not exists private',
   'private.student_email_mfa_access_allowed()',
+  "when (select auth.role()) = 'service_role' then true",
   "p.role = 'eleve'",
   "auth.jwt() ->> 'session_id'",
   'create policy student_email_mfa_gate',
