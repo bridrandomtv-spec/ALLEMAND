@@ -4061,3 +4061,14 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Modification uniquement dans les sources de la PR ; aucun changement de variable Cloudflare ni déploiement Worker.
 - Aucune modification Supabase active, aucune migration appliquée, aucun merge et aucun coût.
 - PR #17 reste ouverte ; `main` inchangée.
+
+
+---
+
+## Lot 221 — synchronisation des assertions de régression MFA (10 novembre 2026)
+
+- La CI du Lot 218 a identifié une seconde assertion obsolète dans `ci/check-public-portal.mjs` : elle attendait l'ancien retour direct `return false` de `requireGate()`.
+- Depuis le Lot 218, ce retour émet volontairement un permis d'entrée à usage unique (`gatePass=true`) avant de valider l'ouverture du shell.
+- Le test de régression a été synchronisé avec ce nouveau contrat, sans affaiblir le contrôle : il vérifie désormais l'émission du permis.
+- Le test MFA dédié et le contrôle Worker du Lot 220 doivent être validés sur le même HEAD final.
+- Aucun changement Supabase actif, aucun déploiement, aucun merge, aucune dépense ; PR #17 reste ouverte.
