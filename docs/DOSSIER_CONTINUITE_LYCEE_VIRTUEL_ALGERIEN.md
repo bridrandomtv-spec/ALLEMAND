@@ -3791,3 +3791,26 @@ Projet `azjwcybivirvpxbfhyzk` :
 - La livraison Resend n'est pas encore prouvée. La présence des secrets ne prouve ni que l'adresse `MFA_EMAIL_FROM` est un expéditeur autorisé par Resend, ni qu'un étudiant reçoit effectivement le code. Ce test reste obligatoire avant activation.
 - La documentation Supabase actuelle confirme que `createSupabaseContext(..., { auth: 'user' })` fournit `supabaseAdmin` en plus du client RLS-scopé ; le code Edge utilise donc l'API documentée.
 
+
+
+---
+
+## Lot 209 — validation CI/preview et estimation du coût de test Supabase (10 novembre 2026)
+
+### Validations GitHub
+- CI #2813 / run `42850098021` : **success** sur le commit de tests `b6ff000012a899f59f6621dd5da584b36e243054`.
+- CI #2814 / run `42850138153` : **success** sur le HEAD documentaire `300b59c852555319fc8417c6ff240f5515f02367`; job unique, toutes les étapes réussies.
+- Le build Cloudflare associé au HEAD PR est un **preview de branche** (build `6286f3a5-7583-4a72-a393-96ea24d66e5a`), pas un déploiement de production.
+- Supabase Preview est toujours `skipped`, car la branche Git n'est associée à aucune branche Supabase.
+- PR #17 reste ouverte, non fusionnée, mergeable ; base `main` inchangée.
+
+### Estimation Supabase communiquée
+- Organisation : `bridrandomtv-spec's Org` (`yhigaygkffkdygpaglaf`).
+- Estimation retournée par Supabase pour créer une branche : **0,01344 USD par heure**.
+- Équivalent indicatif sur 730 heures : **9,81 USD**. Le montant effectif dépend de la durée réelle et de l'usage facturé.
+- Aucune branche créée : accord explicite sur ce coût pas encore reçu.
+- Aucun changement au projet Supabase actif : pas de migration, pas de déploiement Edge Function, pas de modification Auth/secret/données.
+- Aucun déploiement Cloudflare production et aucun merge.
+
+### Étape bloquante
+Attendre l'accord explicite de l'utilisateur sur le tarif horaire de 0,01344 USD avant d'appeler `confirm_cost` puis `create_branch`. Après création, exécuter les tests sur la branche isolée uniquement et supprimer la branche de test après validation, avec autorisation explicite.
