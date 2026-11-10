@@ -60,7 +60,7 @@ begin
       v_table.relname
     );
     execute pg_catalog.format(
-      'create policy student_email_mfa_gate on public.%I as restrictive for all to authenticated using (private.student_email_mfa_access_allowed()) with check (private.student_email_mfa_access_allowed())',
+      'create policy student_email_mfa_gate on public.%I as restrictive for all to authenticated using ((select private.student_email_mfa_access_allowed())) with check ((select private.student_email_mfa_access_allowed()))',
       v_table.relname
     );
   end loop;
@@ -73,8 +73,8 @@ drop policy if exists student_email_mfa_gate on storage.objects;
 create policy student_email_mfa_gate
   on storage.objects as restrictive
   for all to authenticated
-  using (private.student_email_mfa_access_allowed())
-  with check (private.student_email_mfa_access_allowed());
+  using ((select private.student_email_mfa_access_allowed()))
+  with check ((select private.student_email_mfa_access_allowed()));
 
 -- Les fonctions SECURITY DEFINER ci-dessous contournent les politiques RLS
 -- pendant leur exécution. Elles appliquent donc explicitement le même garde
