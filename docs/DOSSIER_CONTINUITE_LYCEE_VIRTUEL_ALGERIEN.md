@@ -3998,5 +3998,31 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - La relecture immédiate du script après le Lot 216 a détecté un caractère `\\n` littéral devant le `console.log`, introduit lors de l'ajout des assertions sur `bootGate()`.
 - Le script a été corrigé pour rétablir un véritable saut de ligne JavaScript. Aucun code applicatif supplémentaire n'a été modifié dans ce lot.
 - La CI #42864127940 a réussi sur le HEAD précédent `b6300edc548f706baea4b33c4003576c8ba99ab0`, qui incluait l'autonomie de migration et les assertions SQL, mais pas encore la correction du chemin cloud du Lot 216.
-- La CI du nouveau script et du nouveau HEAD doit être vérifiée avant de déclarer les Lots 216–217 validés.
+- La CI #42864403071 a réussi sur le HEAD `97eaff219dba79a35cb2512b8c25f85502b81fdd`, avec le test MFA corrigé et le contrôle cloud du Lot 216.
 - Aucun changement Supabase actif, aucune migration, aucun déploiement, aucune dépense et aucun merge.
+
+
+---
+
+## Lot 218 — verrou centralisé de toute entrée cloud (10 novembre 2026)
+
+### Constat
+- Le contrôle MFA était appelé par les chemins de restauration, connexion, inscription et liaison cloud, mais `enterApp(session)` restait une fonction d'ouverture directe du shell.
+- Un autre module ou un futur appel interne pouvait donc invoquer `enterApp` avec une session cloud sans consommer explicitement le résultat du contrôle MFA.
+
+### Correction dans la PR #17
+- `requireGate()` émet maintenant un permis d'entrée éphémère, utilisable une seule fois, uniquement après réussite du contrôle email et de l'éventuel contrôle natif Supabase.
+- `enterApp(session)` devient le point de contrôle central : toute session `src === 'cloud'` doit consommer ce permis avant que le shell soit affiché.
+- Sans permis ou si le module MFA n'est pas disponible, l'ouverture est bloquée et le message reste sur l'écran de connexion.
+- Si un appel cloud arrive sans permis, `enterApp` relance le contrôle et n'ouvre l'application qu'après réussite.
+- Les sessions locales de démonstration/hors ligne ne changent pas de parcours.
+
+### Validation
+- Assertions CI ajoutées pour vérifier l'émission et la consommation unique du permis, et le verrouillage de la frontière `enterApp`.
+- CI du Lot 218 à attendre ; les validations statiques précédentes ne suffisent pas à déclarer ce lot terminé.
+- Le contrôle central reste une protection d'interface ; la migration RLS/Storage et les RPC gardent la protection serveur des données.
+
+### Limites inchangées
+- Aucun changement dans le projet Supabase actif ; aucun SQL exécuté en écriture.
+- Aucun déploiement Edge Function, aucun déploiement Cloudflare production, aucun merge et aucun coût.
+- PR #17 reste ouverte ; `main` inchangée.
