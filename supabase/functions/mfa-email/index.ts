@@ -105,6 +105,16 @@ Deno.serve(async (req: Request) => {
 
   const action = body.action;
   if (action === "status") {
+    if (!isStudent) {
+      return json(200, {
+        ok: true,
+        required: false,
+        enrolled: false,
+        verified: false,
+        verifiedUntil: null,
+        emailMasked: email.replace(/^(.{1,2}).*(@.*)$/, "$1•••$2"),
+      });
+    }
     const [factorResult, verifiedResult] = await Promise.all([
       admin.from("mfa_email_factors").select("enabled_at").eq("user_id", user.id).maybeSingle(),
       admin.from("mfa_email_sessions").select("verified_at,expires_at")
