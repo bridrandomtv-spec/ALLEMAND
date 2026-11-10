@@ -4,7 +4,7 @@
 
 create schema if not exists private authorization postgres;
 revoke all on schema private from public, anon, authenticated;
-grant usage on schema private to authenticated;
+grant usage on schema private to authenticated, service_role;
 
 create or replace function private.student_email_mfa_access_allowed()
 returns boolean
