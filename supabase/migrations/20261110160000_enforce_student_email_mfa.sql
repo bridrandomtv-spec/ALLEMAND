@@ -1,3 +1,5 @@
+create schema if not exists private authorization postgres;
+
 -- Le schéma versionné possède déjà le déclencheur on_auth_user_created.
 -- On durcit sa fonction existante au lieu d'ajouter un second déclencheur concurrent.
 -- Le rôle initial est imposé à eleve ; aucune métadonnée client de rôle n'est lue.
