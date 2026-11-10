@@ -5132,3 +5132,40 @@ Le fichier fourni est une maquette autonome de démonstration :
 - Le parcours actuel reste l'inscription et la connexion cloud officielles Supabase par e-mail et mot de passe. La confirmation e-mail Auth est un sujet distinct du MFA et reste non résolue côté livraison SMTP ; ne pas la confondre avec un OTP MFA.
 - Aucun code, réglage Auth, schéma, RLS, secret, fonction distante ou donnée n'a été modifié pendant cette vérification. Aucun déploiement, aucune fusion, aucun coût.
 
+
+
+## Vérification du prototype « التقارير الأمنية / Centre de sécurité et confidentialité » — 10 novembre 2026
+
+### Conclusion
+Ce second HTML est une **maquette de tableau de bord**, pas un système de journalisation ou de détection de menaces connecté. Il peut être conservé comme référence de présentation pour une future page de sécurité/ confidentialité, mais ses chiffres, alertes et actions ne doivent jamais être présentés comme des données réelles.
+
+### Éléments simulés ou codés en dur
+- Identité « أحمد محمد », état « compte protégé », date/heure de dernière mise à jour et score de sécurité 85 % : valeurs de démonstration, sans lecture du profil ni calcul à partir de contrôles effectifs.
+- Alerte de connexion suspecte depuis Oran, appareils (iPhone 15 Pro, Windows 11, appareil inconnu), lieux, dates, volumes de connexions et historique : données statiques inscrites dans le HTML ; aucune télémétrie ou journal d'authentification n'est interrogé.
+- Indicateurs et graphiques Chart.js : séries de données fixes (par exemple 47 connexions, 3 tentatives suspectes) ; ils ne représentent pas l'activité réelle de la plateforme.
+- Le tableau de bord affirme que 2FA est activé et attribue 25/25 points à la double authentification. Ces affirmations contredisent la décision actuelle de retrait du MFA et ne doivent pas être reprises.
+- Les autres composantes du score (force du mot de passe, e-mail vérifié, téléphone, sessions, codes de secours) ne sont pas mesurées par ce prototype. Le score 85/100 et les recommandations associées sont donc fictifs.
+- Le journal mentionne des méthodes SMS/TOTP, une activation 2FA, une tentative bloquée automatiquement et des sessions/appareils approuvés : aucun de ces événements n'est prouvé par une source réelle dans ce fichier.
+- Les textes de protection des données et de conformité sont des déclarations génériques non étayées par une vérification de conformité.
+
+### Actions d'interface non opérationnelles
+- « Exporter le rapport PDF » affiche une notification puis annonce un téléchargement, mais ne crée aucun PDF.
+- « Exporter l'historique CSV » affiche seulement une notification ; aucun fichier CSV n'est produit.
+- Filtres, pagination, chargement supplémentaire, fermeture de sessions, blocage d'appareil, affichage des données, export JSON, suppression de compte et réglages de confidentialité ne sont pas reliés à un backend ni à des opérations Supabase.
+- Le bouton de masquage retire uniquement l'alerte du DOM ; il ne marque pas une alerte réelle comme traitée.
+- Le mode sombre utilise `localStorage`, ce qui ne constitue pas une persistance des préférences côté compte.
+
+### Compatibilité avec le projet
+- Le prototype dépend de Tailwind CDN, Chart.js, Lucide et Google Fonts ; il ne respecte donc pas directement la contrainte du projet de conserver l'architecture frontend vanilla sans nouvelle dépendance.
+- Il s'agit d'une page HTML autonome et non d'un module intégré aux routes, composants et contrôles d'accès existants de la PR #17.
+- Aucun contrôle d'accès n'est implémenté dans ce fichier. Une vraie page de sécurité devrait être strictement limitée aux informations de l'utilisateur connecté ; toute vue administrative devrait reposer sur des permissions serveur et des journaux vérifiables.
+
+### Décision et conditions d'une éventuelle réutilisation
+1. Conserver ce fichier uniquement comme **référence visuelle / prototype historique** ; ne pas le publier ni le présenter comme un centre de sécurité fonctionnel.
+2. Ne pas réintroduire 2FA/MFA, TOTP, SMS, OTP e-mail ou codes de secours : la décision de retrait MFA consignée ci-dessus reste prioritaire.
+3. Si une page de sécurité est développée ultérieurement, repartir d'une version conforme au frontend existant et n'afficher que des données effectivement disponibles et vérifiables. À défaut de journal d'événements, afficher clairement « données non disponibles » plutôt que des statistiques ou alertes inventées.
+4. Ne pas promettre une détection géographique fiable, une identification d'appareil, une révocation de sessions ou une suppression de compte tant que les mécanismes serveur correspondants n'ont pas été conçus, autorisés et testés.
+5. Les actions sensibles (révocation de sessions, export ou suppression des données) exigent des contrôles serveur, confirmation explicite et journalisation ; elles ne peuvent pas être simulées par des notifications UI.
+
+### Périmètre de cette vérification
+Analyse statique du HTML/JavaScript fourni uniquement. Aucun appel à Supabase, aucune lecture de données personnelles, aucune modification de code applicatif ou de configuration distante, aucun test sur un compte, aucun déploiement, aucune fusion, aucun coût. PR #17 reste ouverte et non fusionnée.
