@@ -3840,3 +3840,36 @@ Attendre l'accord explicite de l'utilisateur sur le tarif horaire de 0,01344 USD
 
 ### Prochaine étape sans frais
 Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER, du flux Edge Function et des assertions CI ; documenter toute correction dans la PR. Ne pas prétendre que l'intégration est prête pour la production tant que les tests isolés et la livraison e-mail réelle n'ont pas été validés.
+
+---
+
+## Lot 211 — durcissement des rôles MFA et ajout d'une CI dédiée (10 novembre 2026)
+
+### Lacunes détectées pendant l'audit
+1. Le helper SQL et la fonction Edge traitaient tout rôle différent de `eleve` comme exempt. Un profil avec rôle nul/inattendu aurait donc pu être considéré comme non étudiant sans validation explicite.
+2. Le workflow GitHub exécutait des contrôles d'accès et de parcours, mais ne lançait pas de script MFA dédié. Les réussites CI précédentes ne doivent donc pas être interprétées comme une preuve de test automatisé spécifique du flux MFA.
+
+### Corrections dans la PR #17
+- Migration `supabase/migrations/20261110160000_enforce_student_email_mfa.sql` : les seuls rôles explicitement exemptés sont maintenant `prof`, `admin` et `parent`. Un profil absent ou dont le rôle est inconnu renvoie désormais `false` dans le helper.
+- Edge Function `supabase/functions/mfa-email/index.ts` : même liste explicite d'exemptions ; l'action `status` renvoie HTTP 403 / `PROFILE_ROLE_NOT_ALLOWED` pour un rôle inconnu au lieu de retourner `required:false`.
+- Les actions `start` et `verify` restent strictement réservées au rôle `eleve`.
+- Nouveau test statique `ci/check-mfa-security.mjs` : vérifie la liste d'exemptions cohérente SQL/Edge, le refus des rôles inconnus, le périmètre étudiant des challenges et le contrôle fail-closed du client.
+- Workflow `.github/workflows/deploy.yml` : exécute désormais explicitement `node ci/check-mfa-security.mjs`.
+
+### Vérification source effectuée
+- Relecture des fichiers après écriture : les deux listes de rôles sont identiques et le workflow référence bien le nouveau test.
+- Le contenu du test a été relu ; son exécution réelle par GitHub Actions reste à attendre sur le nouveau HEAD.
+- Cette nouvelle vérification est statique : elle ne remplace pas l'exécution PostgreSQL de la migration, les tests JWT/RLS/Storage/RPC, ni un test Resend réel.
+
+### Commits du lot
+- Migration : `2921ceedc34876cb1899ac887183bc475cdbbab0`.
+- Edge Function : `28de1266f776ca885f4ae9462d38c763c4e0b00c`.
+- Test CI dédié : `5c98074c99faca0d60bcf4ea36892b2e68a3d8cd`.
+- Workflow CI : `47de4e61581b259837795f0933f2e728d9d26481`.
+- Mise à jour du présent dossier : à confirmer par le commit résultant.
+
+### État opérationnel inchangé
+- PR #17 reste ouverte, non fusionnée ; `main` n'est pas modifiée.
+- Aucune branche Supabase payante créée ; aucune facturation engagée.
+- Aucune migration exécutée sur le projet Supabase actif ; aucune Edge Function déployée.
+- Aucun déploiement Cloudflare en production.
