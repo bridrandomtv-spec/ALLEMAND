@@ -4626,3 +4626,14 @@ where n.nspname = 'public'
 - L'échec CI était un décalage d'assertions de cache, pas un test fonctionnel navigateur. La création d'un compte étudiant, la réception d'un e-mail Auth et le premier enrôlement MFA restent à tester de bout en bout.
 - PR #17 reste ouverte et non fusionnée ; aucune modification de `main`.
 - Aucun déploiement Cloudflare/Supabase, aucune migration appliquée, aucune modification Auth distante, aucune branche Supabase créée et aucun frais engagé.
+
+
+---
+
+## Lot 249 — synchronisation de la version Service Worker dans le contrôle Masar (10 novembre 2026)
+
+- La CI #2921 / run `42897647482` a dépassé le contrôle du portail public après le Lot 248, puis a échoué à l'étape 23, `Contrôler le tableau de bord مسارك`.
+- Le journal identifie une assertion historique dans `ci/check-masar.mjs` : le test attendait encore `dz-de-v3.185.0.0.131`, alors que `sw.js` et le HTML utilisent `dz-de-v3.185.0.0.132`. Les attentes `app.js?v=3564` étaient déjà correctes.
+- Correction du contrôle Masar : version attendue alignée sur `dz-de-v3.185.0.0.132`, avec libellé Lot 248. Commit `d0c27649d8c7a84967b5979ec3875072e973ca40`.
+- Vérification source après édition : le contrôle Masar n'a plus l'ancienne version .131. La CI du nouveau HEAD doit encore être exécutée et examinée.
+- Aucun changement du tableau de bord étudiant, aucun changement Auth/Supabase, aucune migration, aucun déploiement, aucune fusion, aucune branche Supabase ni frais. PR #17 reste ouverte ; `main` inchangée.
