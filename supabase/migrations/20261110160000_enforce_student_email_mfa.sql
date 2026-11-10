@@ -822,8 +822,8 @@ revoke all on function public.notify(uuid, text, jsonb)
 
 -- agreement_current(text) n'est pas appelée par le client actuel : la page
 -- juridique publique est statique et l'espace compte lit agreements sous RLS.
--- Supprimer uniquement l'exécution implicite/publique, en gardant les rôles
--- applicatifs authentifiés et service_role explicitement autorisés.
+-- La RPC SECURITY DEFINER n'a donc aucun besoin d'être exposée aux rôles clients.
+-- Seul le rôle backend service_role conserve EXECUTE si la fonction existe.
 do $agreement_acl$
 begin
   if pg_catalog.to_regprocedure('public.agreement_current(text)') is not null then
