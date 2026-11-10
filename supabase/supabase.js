@@ -13,7 +13,7 @@ let client = null;
 async function sb(){
   if(client) return client;
   if(window.supabase && window.supabase.createClient){
-    client = window.supabase.createClient(URL, KEY, { auth: { persistSession: true, experimental: { recoveryCodes: true } } });
+    client = window.supabase.createClient(URL, KEY, { auth: { persistSession: true } });
     return client;
   }
   const urls = [
@@ -25,7 +25,7 @@ async function sb(){
     try{
       const m = await import(u);
       if(m && m.createClient){
-        client = m.createClient(URL, KEY, { auth: { persistSession: true, experimental: { recoveryCodes: true } } });
+        client = m.createClient(URL, KEY, { auth: { persistSession: true } });
         return client;
       }
     }catch(e){}
