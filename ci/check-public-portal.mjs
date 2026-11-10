@@ -637,8 +637,8 @@ console.log('✅ Lot 199 : annulation MFA avec fermeture de session contrôlée.
 // Lot 200 — renvoi explicite des codes MFA e-mail, login et enrôlement.
 if(!html.includes('id="mfaLoginEmailResend"')||!html.includes('data-mfa-email-resend')) fail('MFA e-mail : bouton de renvoi absent du défi de connexion');
 if(!mfaModule.includes("setLoginResendVisibility('email')")||!mfaModule.includes("email.hidden=type!=='email'")) fail('MFA e-mail : visibilité du renvoi de connexion non pilotée par le facteur');
-if(!mfaModule.includes("SB.mfaEmail({action:'start',purpose:'login'})")||!mfaModule.includes("pending.challengeId=loginSent.challengeId")) fail('MFA e-mail : renvoi de connexion ne renouvelle pas le challenge');
-if(!mfaModule.includes("SB.mfaEmail({action:'start',purpose:'enroll'})")||!mfaModule.includes("enrollForm.dataset.challengeId=enrollSent.challengeId")) fail('MFA e-mail : renvoi d’enrôlement ne renouvelle pas le challenge');
+if(!mfaModule.includes("SB.mfaEmail({action:'start',purpose:pending.purpose||'login'})")||!mfaModule.includes("pending.challengeId=loginSent.challengeId")) fail('MFA e-mail : renvoi unifié enroll/login ne renouvelle pas le challenge');
+if(!mfaModule.includes("var purpose=emailState.enrolled?'login':'enroll'")||!mfaModule.includes("showEmailChallenge(started,emailState,purpose)")) fail('MFA e-mail : le premier enrôlement ne réutilise pas le défi de connexion');
 if(!mfaModule.includes('data-mfa-email-resend>إعادة إرسال رمز البريد')) fail('MFA e-mail : bouton de renvoi absent de l’enrôlement');
 console.log('✅ Lot 200 : renvoi des codes MFA e-mail et remplacement du challenge contrôlés.');
 
