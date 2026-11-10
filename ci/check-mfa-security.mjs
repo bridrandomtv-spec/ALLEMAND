@@ -80,4 +80,14 @@ assert.ok(!app.includes("const cloudRestorePending = !!(s && s.src === 'cloud' &
   'Demo/offline mode must not bypass MFA for a remembered cloud session');
 
 
+
+assert.ok(client.includes('gatePass=true;return false;') &&
+  client.includes('consumeGatePass:function(){if(!gatePass)return false;gatePass=false;return true;}'),
+  'Successful MFA verification must create a one-time entry permit');
+assert.ok(app.includes("if(session && session.src === 'cloud'){") &&
+  app.includes("typeof window.DZ_MFA.consumeGatePass !== 'function'") &&
+  app.includes("if(!window.DZ_MFA.consumeGatePass()){") &&
+  app.includes("window.DZ_MFA.requireGate().then(function(blocked){"),
+  'The central enterApp boundary must fail closed and require a one-time MFA permit for every cloud session');
+
 console.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
