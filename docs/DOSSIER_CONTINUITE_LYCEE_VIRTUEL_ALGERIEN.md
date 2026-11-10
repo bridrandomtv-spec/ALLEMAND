@@ -4516,3 +4516,13 @@ where n.nspname = 'public'
 - En conséquence, la migration a été renforcée : `agreement_current(text)` est maintenant révoquée pour `PUBLIC`, `anon` **et** `authenticated`; seul `service_role` conserve EXECUTE si la fonction existe. Cela évite que tout compte étudiant authentifié puisse continuer à lire la ligne complète via une RPC SECURITY DEFINER non utilisée par l'interface.
 - Le contrôle CI a été ajusté pour imposer cette ACL plus restrictive. Cette décision reste limitée à la migration PR #17 ; aucune ACL n'a été changée sur Supabase actif.
 - Validation à réaliser en environnement isolé : `anon=false`, `authenticated=false`, `service_role=true` via `has_function_privilege`, puis parcours UI juridique public et accord du compte connecté.
+
+
+### Lot 245 — cohérence du contrat ACL de agreement_current(text) (10 novembre 2026)
+
+- Relecture croisée de la migration et du contrôle CI après la réussite de la CI #2904 : la règle SQL était déjà stricte (REVOKE pour PUBLIC/anon/authenticated, GRANT uniquement à service_role), mais le commentaire de migration et le message d'assertion CI affirmaient encore à tort que le rôle authenticated conservait EXECUTE.
+- Correction documentaire : la migration indique désormais explicitement que seul le backend service_role conserve EXECUTE, si la fonction historique existe.
+- Contrôle CI renforcé et clarifié : il isole le bloc DO agreement_acl, vérifie la révocation des trois rôles clients, le GRANT service_role et l'absence de GRANT authenticated.
+- Aucun changement du comportement SQL effectif ; il s'agit d'aligner la documentation et l'assertion sur la règle least-privilege déjà présente.
+- CI #2904 / run 42893347936 : réussite des 33 étapes sur le commit applicatif précédent. La correction de cohérence du Lot 245 déclenche une nouvelle CI, dont le résultat devra être confirmé.
+- Aucun SQL exécuté sur Supabase, aucune migration appliquée, aucun déploiement, aucune modification de secrets/Auth distant, aucune fusion et aucune modification de main. PR #17 reste ouverte.
