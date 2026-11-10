@@ -1739,28 +1739,6 @@ function paintGateStats(){
 }
 
 function enterApp(session){
-  // Point de contrôle central : aucun appel direct ne peut ouvrir une session cloud
-  // sans avoir consommé une validation MFA récente, même depuis un autre module.
-  if(session && session.src === 'cloud'){
-    if(!window.DZ_MFA || typeof window.DZ_MFA.consumeGatePass !== 'function' ||
-       typeof window.DZ_MFA.requireGate !== 'function'){
-      showGateError('#loginErr', 'تعذر تحميل طبقة التحقق الأمني. لم يتم فتح الحساب السحابي.');
-      return;
-    }
-    if(!window.DZ_MFA.consumeGatePass()){
-      // Si un appel tardif arrive depuis un shell déjà ouvert, afficher d'abord
-      // le portail de connexion pour que le défi MFA soit visible.
-      const gateNode = $('#gate'), shellNode = $('#shell');
-      if(shellNode) shellNode.hidden = true;
-      if(gateNode) gateNode.hidden = false;
-      window.DZ_MFA.requireGate().then(function(blocked){
-        if(!blocked) enterApp(session);
-      }).catch(function(error){
-        showGateError('#loginErr', 'تعذر إكمال التحقق الأمني. أعد تسجيل الدخول؛ لم يتم فتح الحساب السحابي.');
-      });
-      return;
-    }
-  }
   const gate = $('#gate'), shell = $('#shell');
   if(gate) gate.hidden = true;
   if(shell) shell.hidden = false;
@@ -1814,11 +1792,6 @@ function bootGate(){
           showGateError('#loginErr', 'انتهت جلسة الدخول أو لم تعد صالحة. أدخل بياناتك لتسجيل الدخول مجددًا.');
           return;
         }
-        if(!window.DZ_MFA || typeof window.DZ_MFA.requireGate !== 'function'){
-          showGateError('#loginErr', 'تعذر تحميل طبقة التحقق الأمني. أعد تحميل الصفحة.');
-          return;
-        }
-        if(await window.DZ_MFA.requireGate()) return;
         const profile = window.cloudAuthority ? await window.cloudAuthority() : null;
         if(profile){ enterApp(profile); return; }
         AUTH.logout();
@@ -1973,11 +1946,6 @@ const lf = $('#loginForm');
           showGateError('#loginErr', friendlyCloudAuthMessage(result && (result.code || result.err), result && result.err));
           return;
         }
-        if(!window.DZ_MFA || typeof window.DZ_MFA.requireGate !== 'function'){
-          showGateError('#loginErr', 'تعذر تحميل طبقة التحقق الأمني. أعد تحميل الصفحة.');
-          return;
-        }
-        if(await window.DZ_MFA.requireGate()) return;
         const cloudSession = await cloudAuthority();
         if(!cloudSession){
           showGateError('#loginErr', 'تم التحقق من الحساب، لكن تعذر تحميل الملف الدراسي. حاول مجددًا أو تواصل مع الدعم.');
@@ -2031,11 +1999,6 @@ const lf = $('#loginForm');
           showGateError('#loginErr', 'تم إنشاء طلب حسابك. أرسلنا رابط تأكيد إلى بريدك الإلكتروني؛ افتح الرسالة واضغط الرابط، ثم أدخل كلمة المرور هنا لتسجيل الدخول. إذا لم تجد الرسالة، تحقق من مجلد الرسائل غير المرغوب فيها.');
           return;
         }
-        if(!window.DZ_MFA || typeof window.DZ_MFA.requireGate !== 'function'){
-          showGateError('#suErr', 'تعذر تحميل طبقة التحقق الأمني. أعد تحميل الصفحة.');
-          return;
-        }
-        if(await window.DZ_MFA.requireGate()) return;
         const cloudSession = await cloudAuthority();
         if(!cloudSession){
           showGateError('#suErr', 'تم إنشاء الحساب، لكن تعذر تحميل الملف الدراسي. لا تنشئ حسابًا محليًا بديلًا؛ أعد المحاولة أو تواصل مع الدعم.');
@@ -2350,11 +2313,6 @@ function renderLienCloud(){
         msg.textContent = (result && result.err) || 'تعذر تسجيل الدخول إلى الحساب السحابي. إذا لم يكن لديك حساب، أنشئه من صفحة التسجيل.';
         return;
       }
-      if(!window.DZ_MFA || typeof window.DZ_MFA.requireGate !== 'function'){
-        msg.textContent = 'تعذر تحميل طبقة التحقق الأمني. أعد تحميل الصفحة.';
-        return;
-      }
-      if(await window.DZ_MFA.requireGate()) return;
       const p = await window.cloudAuthority();
       if(p){ msg.textContent = '✅ تم الربط — المستوى المعتمد : ' + p.niveau; setTimeout(function(){ location.reload(); }, 900); }
       else msg.textContent = 'تم تسجيل الدخول، لكن تعذر تحميل الملف السحابي. حاول مجددًا.';
