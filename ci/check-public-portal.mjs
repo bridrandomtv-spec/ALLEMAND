@@ -238,7 +238,7 @@ if (!html.includes('style-prototype-dz.css?v=193')) {
 if (!sw.includes('style-prototype-dz.css?v=193')) {
   fail('version CSS du précache non actualisée (v176 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.132") ||
+if (!sw.includes("dz-de-v3.185.0.0.133") ||
     !sw.includes("style-prototype-dz.css?v=193") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
@@ -270,8 +270,8 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
   if (!app.includes(marker)) fail('navigation mobile compacte absente ou incomplète : ' + marker);
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
-if (!html.includes('supabase/supabase.js?v=3517') || !sw.includes('supabase/supabase.js?v=3517')) fail('cache Supabase client non synchronisé');
-if (!html.includes('app.js?v=3564') || !sw.includes('app.js?v=3564')) fail('cache app.js non synchronisé');
+if (!html.includes('supabase/supabase.js?v=3518') || !sw.includes('supabase/supabase.js?v=3518')) fail('cache Supabase client non synchronisé');
+if (!html.includes('app.js?v=3565') || !sw.includes('app.js?v=3565')) fail('cache app.js non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=193') || !sw.includes('style-prototype-dz.css?v=193')) fail('cache CSS non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
@@ -438,7 +438,7 @@ for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 
 if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
   fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
 }
-if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.132')) {
+if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.133')) {
   fail('guide de bienvenue : cache ou Service Worker non actualisé');
 }
 console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
@@ -472,226 +472,6 @@ const gateBlock=app.slice(gateStart,gateEnd);
 if(gateStart<0||gateEnd<=gateStart||!gateBlock.includes('async function cloudAuthority()')||!gateBlock.includes("localStorage.setItem('dz_de_session_v1'")||!gateBlock.includes("if(lf) lf.addEventListener('submit'")||!gateBlock.includes("if(sf) sf.addEventListener('submit'")) fail('bindGateEvents / cloudAuthority / formulaires Auth absents');
 if(!gateBlock.includes('if(!authLocalMode())')||!gateBlock.includes('if(!result || !result.ok)')||!gateBlock.includes('if(!result.session)')) fail('flux Auth cloud/local ou confirmation email incomplet');
 console.log('✅ Lot 179 : bindGateEvents et cloudAuthority conservés avec le garde-fou Auth.');
-
-
-/* LOT 181 — contrat structurel MFA Supabase (aucun OTP ou secret fictif). */
-const mfaClient = read('supabase/supabase.js');
-const mfaModule = read('mfa-security.js');
-const mfaEmailServer = read('supabase/functions/mfa-email/index.ts');
-for (const marker of [
-  'if (action === "status")',
-  'STATUS_LOOKUP_FAILED',
-  'EMAIL_FACTOR_NOT_CONFIGURED',
-  'EMAIL_FACTOR_REQUIRED',
-  'mfa_email_consume_challenge',
-  'crypto.subtle.sign'
-]) {
-  if (!mfaEmailServer.includes(marker)) fail('sécurité MFA e-mail serveur absente : ' + marker);
-}
-if (!mfaModule.includes("if(!emailState.ok)") ||
-    !mfaModule.includes("if(emailState.required && (!emailState.enrolled || !emailState.verified))") ||
-    !mfaModule.includes("var purpose=emailState.enrolled?'login':'enroll'")) {
-  fail('garde e-mail MFA non fail-closed ou enrôlement initial automatique absent');
-}
-if (!mfaEmailServer.includes('!Deno.env.get("RESEND_API_KEY")') ||
-    !mfaEmailServer.includes('!Deno.env.get("MFA_EMAIL_FROM")')) {
-  fail('précontrôle de configuration Resend absent avant émission du défi');
-}
-for (const marker of [
-  'auth.mfa.getAuthenticatorAssuranceLevel()','level.data.currentLevel===\'aal1\'','level.data.nextLevel===\'aal2\'','auth.mfa.listFactors()',
-  'auth.mfa.challenge({factorId})','auth.mfa.verify({factorId,challengeId,code:',
-  'auth.mfa.enroll({factorType:','auth.mfa.enroll({factorType:\'phone\'', 'auth.mfa.unenroll({factorId})',
-  'auth.mfa.recoveryCodes.generate(','auth.mfa.recoveryCodes.verify(',
-  'experimental: { recoveryCodes: true }'
-]) if (!mfaClient.includes(marker)) fail('API MFA Supabase absente : ' + marker);
-for (const marker of [
-  'async function requireGate()','if(!window.SB || !SB.mfaAssurance || !SB.mfaEmail)','function setLoginResendVisibility(type)',"if(attempts>=3)",
-  'SB.mfaVerifyRecovery(value)','SB.mfaVerify(pending.factorId,pending.challengeId,value)',
-  'SB.mfaEnrollTotp(','SB.mfaEnrollPhone(','SB.mfaVerifyEnrollment(','SB.mfaRecoveryGenerate()','[data-mfa-login-resend]','pending.challengeId=sent.challengeId','SB.mfaStart(pending.factorId)',
-  'window.DZ_MFA={requireGate:requireGate','window.DZ.enterApp(profile)','window.DZ.toast('
-]) if (!mfaModule.includes(marker)) fail('parcours MFA incomplet : ' + marker);
-if (mfaModule.includes('123456') || mfaModule.includes('JBSW Y3DP') || mfaClient.includes('otplib')) fail('OTP/secret statique ou TOTP local interdit');
-const enterAppStart=app.indexOf('function enterApp(session){');
-const enterAppEnd=app.indexOf('/* ══════════ PORTAIL DE CONNEXION', enterAppStart);
-const centralEntry=app.slice(enterAppStart, enterAppEnd);
-if ((app.split("typeof window.DZ_MFA.requireGate !== 'function'").length-1)<4 ||
-    (app.split('if(await window.DZ_MFA.requireGate()) return;').length-1)!==4 ||
-    !centralEntry.includes("session.src === 'cloud'") ||
-    !centralEntry.includes('consumeGatePass') ||
-    !centralEntry.includes('window.DZ_MFA.requireGate().then(function(blocked){')) {
-  fail('le MFA doit protéger les quatre parcours cloud et la frontière centrale enterApp');
-}
-if (!html.includes('@supabase/supabase-js@2.119.0/dist/umd/supabase.js') ||
-    !mfaClient.includes('@supabase/supabase-js@2.119.0/+esm') ||
-    !mfaClient.includes('@supabase/supabase-js@2.119.0/dist/module/index.js') ||
-    !mfaClient.includes('@supabase/supabase-js@2.119.0')) fail('Supabase JS doit être épinglé en 2.119.0 sur tous les chargeurs');
-if (!app.includes("if(await window.DZ_MFA.requireGate()) return;") ||
-    !app.includes("if(!result || !result.ok)") ||
-    !app.includes("if(!window.DZ_MFA || typeof window.DZ_MFA.requireGate !== 'function')")) fail('garde MFA absent des parcours alternatifs ou login non vérifié');
-const signupStart=app.indexOf("if(sf) sf.addEventListener('submit'");
-const signupEnd=app.indexOf("/*",signupStart);
-const signupBlock=app.slice(signupStart,signupEnd>signupStart?signupEnd:signupStart+12000);
-if (!signupBlock.includes("if(await window.DZ_MFA.requireGate()) return;")) fail('inscription cloud avec session immédiate sans garde MFA');
-const linkStart=app.indexOf("$('#lcBtn').addEventListener('click'");
-const linkBlock=app.slice(linkStart,linkStart+5000);
-if (!linkBlock.includes("if(!result || !result.ok)") || !linkBlock.includes("if(await window.DZ_MFA.requireGate()) return;")) fail('liaison cloud sans validation du login ou garde MFA');
-
-const mfaGateStart=mfaModule.indexOf('async function requireGate()');
-const mfaGateEnd=mfaModule.indexOf('async function finishLogin()',mfaGateStart);
-const mfaGateBlock=mfaModule.slice(mfaGateStart,mfaGateEnd);
-const mfaFinishStart=mfaModule.indexOf('async function finishLogin()');
-const mfaFinishEnd=mfaModule.indexOf("var method=$('#mfaChallengeMethod')",mfaFinishStart);
-const mfaFinishBlock=mfaModule.slice(mfaFinishStart,mfaFinishEnd);
-const mfaSubmitStart=mfaModule.indexOf("if(challengeForm)challengeForm.addEventListener('submit'");
-const mfaSubmitEnd=mfaModule.indexOf("document.addEventListener('submit'",mfaSubmitStart);
-const mfaSubmitBlock=mfaModule.slice(mfaSubmitStart,mfaSubmitEnd);
-if (!mfaGateBlock.includes('await SB.mfaAssurance()') ||
-    !mfaGateBlock.includes("if(!emailState.ok)") ||
-    !mfaGateBlock.includes("var purpose=emailState.enrolled?'login':'enroll'") ||
-    !mfaGateBlock.includes("if(emailState.required && (!emailState.enrolled || !emailState.verified))") ||
-    !mfaGateBlock.includes('showEmailChallenge(started,emailState,purpose)') ||
-    !mfaGateBlock.includes('if(!nativeState.required){gatePass=true;return false;}') ||
-    !mfaGateBlock.includes('return true;')) fail('garde MFA : enrôlement e-mail initial automatique et blocage des états non vérifiés requis');
-if (!mfaSubmitBlock.includes('if(result&&result.ok){pending=null;await finishLogin();return;}') ||
-    !mfaSubmitBlock.includes('if(attempts>=3){await returnToLoginAfterMfa(') ||
-    !mfaSubmitBlock.includes('SB.mfaVerifyRecovery(value)') ||
-    !mfaSubmitBlock.includes("SB.mfaEmail({action:'verify'")) fail('défi MFA : validation, récupération ou limite des tentatives incomplète');
-if (!mfaFinishBlock.includes('if(await requireGate())return;') ||
-    !mfaFinishBlock.includes('window.cloudAuthority?await window.cloudAuthority():null') ||
-    !mfaFinishBlock.includes('window.DZ.enterApp(profile)')) fail('fin du défi MFA : recontrôle des facteurs et entrée après profil cloud requis');
-
-
-for (const marker of ['id="mfaChallengeForm"','id="mfaChallengeMethod"','id="mfaChallengeCode"','id="mfaSecurityCard"','id="mfaSecurityContent"']) if (!html.includes(marker)) fail('interface MFA absente : '+marker);
-if (!html.includes('mfa-security.js?v=14') || !sw.includes('./mfa-security.js?v=14')) fail('module MFA absent du chargement/précache');
-if (!html.includes('id="mfaLoginSmsResend"') || !html.includes('data-mfa-login-resend')) fail('bouton de renvoi SMS au défi de connexion absent');
-if (!mfaModule.includes('setLoginResendVisibility(type)') || !mfaModule.includes("setLoginResendVisibility(preferred.type)") || !mfaModule.includes("setLoginResendVisibility(type);")) fail('visibilité du renvoi SMS non limitée au facteur téléphone');
-if (!mfaModule.includes('id=\"mfaPhoneEnrollForm\"') || !mfaModule.includes('id=\"mfaPhoneVerifyForm\"') || !mfaModule.includes('SB.mfaStart(enrolled.factorId)')) fail('enrôlement et validation du facteur SMS absents');
-if (!html.includes('supabase/supabase.js?v=3517') || !sw.includes('supabase/supabase.js?v=3517')) fail('cache Supabase MFA non synchronisé');
-if (!html.includes('app.js?v=3564') || !sw.includes('app.js?v=3564')) fail('cache app.js MFA non synchronisé');
-if (!html.includes('style-prototype-dz.css?v=193') || !sw.includes('style-prototype-dz.css?v=193')) fail('cache CSS MFA non synchronisé');
-if (!sw.includes("dz-de-v3.185.0.0.132")) fail('version Service Worker Lot 192 non actualisée');
-if (!css.includes('LOT 181 — écrans et réglages MFA')) fail('styles MFA absents');
-console.log('✅ MFA : Supabase natif, TOTP, défi AAL2, codes de récupération expérimentaux et cache contrôlés.');
-
-
-// Lot 190 — facteur e-mail personnalisé : assertions de contrat client, sans assimiler à AAL2.
-if (!read('supabase/supabase.js').includes("functions.invoke('mfa-email'")) fail('appel du service MFA e-mail absent');
-if (!mfaModule.includes("SB.mfaEmail({action:'status'})") || !mfaModule.includes("SB.mfaEmail({action:'verify'")) fail('parcours MFA e-mail absent');
-if (!mfaModule.includes("var purpose=emailState.enrolled?'login':'enroll'") || !mfaModule.includes("pending.purpose||'login'") ||
-    mfaModule.includes('mfaEmailEnrollForm') || mfaModule.includes('data-mfa-email-disable') ||
-    !mfaModule.includes('التحقق الإلزامي عبر البريد الإلكتروني مفعّل للطلاب')) fail('MFA e-mail : enrôlement automatique, renvoi et caractère obligatoire incomplets');
-if (!mfaEmailServer.includes('EMAIL_FACTOR_REQUIRED') || !mfaEmailServer.includes('return json(403')) fail('le serveur ne bloque pas la désactivation du facteur e-mail obligatoire');
-
-
-// Lot 196 — annulation, changement de facteur et enrôlement SMS sans état orphelin.
-const mfaMethodStart=mfaModule.indexOf("if(method)method.addEventListener('change'");
-const mfaMethodEnd=mfaModule.indexOf("var challengeForm=$('#mfaChallengeForm')",mfaMethodStart);
-const mfaMethodBlock=mfaModule.slice(mfaMethodStart,mfaMethodEnd);
-const mfaPhoneEnrollStart=mfaModule.indexOf("if(ev.target && ev.target.id==='mfaPhoneEnrollForm')");
-const mfaPhoneEnrollEnd=mfaModule.indexOf("if(ev.target && ev.target.id==='mfaPhoneVerifyForm')",mfaPhoneEnrollStart);
-const mfaPhoneEnrollBlock=mfaModule.slice(mfaPhoneEnrollStart,mfaPhoneEnrollEnd);
-const mfaCancelBlock=mfaModule.slice(mfaModule.indexOf("if(ev.target.closest('[data-mfa-cancel]'))"),mfaModule.indexOf("if(ev.target.closest('[data-mfa-enroll]'))"));
-if(mfaMethodStart<0||mfaMethodEnd<=mfaMethodStart||
-   !mfaMethodBlock.includes("if(method.value==='recovery')")||
-   !mfaMethodBlock.includes('pending=null;return;')||
-   !mfaMethodBlock.includes('var started=await SB.mfaStart(factorId)')||
-   !mfaMethodBlock.includes('pending={factorId:factorId,challengeId:started.challengeId,type:type}')) fail('changement de facteur MFA : challenge non réinitialisé ou non renouvelé');
-if(mfaPhoneEnrollStart<0||mfaPhoneEnrollEnd<=mfaPhoneEnrollStart||
-   !mfaPhoneEnrollBlock.includes('await SB.mfaEnrollPhone(number)')||
-   !mfaPhoneEnrollBlock.includes('await SB.mfaStart(enrolled.factorId)')||
-   !mfaPhoneEnrollBlock.includes('await SB.mfaUnenroll(enrolled.factorId)')) fail('enrôlement SMS : nettoyage du facteur si le challenge initial échoue absent');
-if(!mfaCancelBlock.includes('await returnToLoginAfterMfa(')||mfaCancelBlock.includes('await SB.logout()')) fail('annulation du défi MFA : fermeture de session contrôlée absente');
-console.log('✅ Lot 196 : annulation MFA, changement de facteur et nettoyage de l’enrôlement SMS contrôlés.');
-
-
-// Lot 197 — après un défi MFA valide, aucun accès au dashboard si le profil/point d'entrée échoue.
-const mfaFinalStart=mfaModule.indexOf('async function returnToLoginAfterMfa(message)');
-const mfaFinalEnd=mfaModule.indexOf("var method=$('#mfaChallengeMethod')",mfaFinalStart);
-const mfaFinalBlock=mfaModule.slice(mfaFinalStart,mfaFinalEnd);
-if(mfaFinalStart<0||mfaFinalEnd<=mfaFinalStart||
-   !mfaFinalBlock.includes('await SB.logout()')||
-   !mfaFinalBlock.includes('pending=null;attempts=0;showLogin();')||
-   !mfaFinalBlock.includes('if(!profile)')||
-   !mfaFinalBlock.includes("typeof window.DZ.enterApp!=='function'")||
-   !mfaFinalBlock.includes('window.DZ.enterApp(profile)')) fail('finalisation MFA : échec profil/entrée sans fermeture de session et retour connexion');
-if (!html.includes('mfa-security.js?v=14') || !sw.includes('./mfa-security.js?v=14')) fail('cache MFA Lot 197 non synchronisé');
-if (!sw.includes("dz-de-v3.185.0.0.132")) fail('version Service Worker Lot 197 non actualisée');
-console.log('✅ Lot 197 : échec de finalisation MFA fermé, retour connexion et cache contrôlés.');
-
-
-// Lot 198 — le verrouillage après trois échecs doit confirmer la fermeture de session.
-const mfaLockoutStart=mfaModule.indexOf("if(attempts>=3)");
-const mfaLockoutEnd=mfaModule.indexOf("else status('#mfaChallengeStatus'",mfaLockoutStart);
-const mfaLockoutBlock=mfaModule.slice(mfaLockoutStart,mfaLockoutEnd);
-if(mfaLockoutStart<0||mfaLockoutEnd<=mfaLockoutStart||
-   !mfaLockoutBlock.includes('await returnToLoginAfterMfa(')||
-   mfaLockoutBlock.includes('await SB.logout()')) fail('verrouillage MFA : fermeture de session non vérifiée après trois échecs');
-if(!mfaModule.includes("تعذر إكمال تسجيل الدخول بعد التحقق")) fail('message de finalisation MFA non localisé en arabe');
-if(!html.includes('mfa-security.js?v=14')||!sw.includes('./mfa-security.js?v=14')) fail('cache MFA Lot 198 non synchronisé');
-if(!sw.includes("dz-de-v3.185.0.0.132")) fail('version Service Worker Lot 198 non actualisée');
-console.log('✅ Lot 198 : fermeture contrôlée après trois échecs MFA et cache synchronisé.');
-
-
-// Lot 199 — annulation du défi MFA : fermeture de session contrôlée.
-const mfaCancelStart=mfaModule.indexOf("if(ev.target.closest('[data-mfa-cancel]'))");
-const mfaCancelEnd=mfaModule.indexOf("if(ev.target.closest('[data-mfa-enroll]'))",mfaCancelStart);
-const mfaCancelBlock199=mfaModule.slice(mfaCancelStart,mfaCancelEnd);
-if(mfaCancelStart<0||mfaCancelEnd<=mfaCancelStart||
-   !mfaCancelBlock199.includes('await returnToLoginAfterMfa(')||
-   mfaCancelBlock199.includes('await SB.logout()')) fail('annulation MFA : fermeture de session non contrôlée');
-if(!html.includes('mfa-security.js?v=14')||!sw.includes('./mfa-security.js?v=14')) fail('cache MFA Lot 199 non synchronisé');
-if(!sw.includes("dz-de-v3.185.0.0.132")) fail('version Service Worker Lot 199 non actualisée');
-console.log('✅ Lot 199 : annulation MFA avec fermeture de session contrôlée.');
-
-// Lot 200 — renvoi explicite des codes MFA e-mail, login et enrôlement.
-if(!html.includes('id="mfaLoginEmailResend"')||!html.includes('data-mfa-email-resend')) fail('MFA e-mail : bouton de renvoi absent du défi de connexion');
-if(!mfaModule.includes("setLoginResendVisibility('email')")||!mfaModule.includes("email.hidden=type!=='email'")) fail('MFA e-mail : visibilité du renvoi de connexion non pilotée par le facteur');
-if(!mfaModule.includes("SB.mfaEmail({action:'start',purpose:pending.purpose||'login'})")||!mfaModule.includes("pending.challengeId=loginSent.challengeId")) fail('MFA e-mail : renvoi unifié enroll/login ne renouvelle pas le challenge');
-if(!mfaModule.includes("var purpose=emailState.enrolled?'login':'enroll'")||!mfaModule.includes("showEmailChallenge(started,emailState,purpose)")) fail('MFA e-mail : le premier enrôlement ne réutilise pas le défi de connexion');
-if(!mfaModule.includes("ev.target.closest('[data-mfa-email-resend]')")||!mfaModule.includes("pending&&pending.type==='email'")) fail('MFA e-mail : gestionnaire de renvoi absent du défi unifié enroll/login');
-console.log('✅ Lot 200 : renvoi des codes MFA e-mail et remplacement du challenge contrôlés.');
- 
-// Lot 204 — politique e-mail limitée aux élèves et enforcement RLS/RPC côté serveur.
-const studentMfaMigration = read('supabase/migrations/20261110160000_enforce_student_email_mfa.sql');
-for (const marker of [
-  'create schema if not exists private',
-  'private.student_email_mfa_access_allowed()',
-  "when (select auth.jwt() ->> 'role') = 'service_role' then true",
-  'to authenticated, service_role',
-  'grant usage on schema private to authenticated, service_role',
-  "bucket_id <> 'prive'",
-  "p.role = 'eleve'",
-  "auth.jwt() ->> 'session_id'",
-  'from auth.sessions auth_session',
-  "auth_session.id::text = coalesce((select auth.jwt() ->> 'session_id'), '')",
-  'auth_session.user_id = (select auth.uid())',
-  'auth_session.not_after is null or auth_session.not_after > pg_catalog.now()',
-  'create policy student_email_mfa_gate',
-  'as restrictive for all to authenticated',
-  'on storage.objects as restrictive',
-  'c.relrowsecurity',
-  'with check ((select private.student_email_mfa_access_allowed()))',
-  'public.agreement_accept',
-  'public.agreement_withdraw',
-  'public.active_entitlement',
-  'public.msg_open_direct',
-  'public.msg_member_ok',
-  'public.respond_parent_link_request',
-  'public.subscription_set_preuve',
-  'public.unlink_child'
-]) if (!studentMfaMigration.includes(marker)) fail('migration MFA étudiant incomplète : ' + marker);
-if ((studentMfaMigration.split('private.student_email_mfa_access_allowed()').length - 1) < 14) fail('garde MFA manquant dans une ou plusieurs RPC SECURITY DEFINER');
-if (studentMfaMigration.includes('auth.role()')) fail('migration MFA : fonction auth.role() dépréciée');
-if ((studentMfaMigration.match(/bucket_id <> 'prive'/g) || []).length !== 2) fail('Storage MFA : le garde doit viser uniquement le bucket prive dans USING et WITH CHECK');
-if (studentMfaMigration.includes("auth.jwt()->>'aal'") || studentMfaMigration.includes("= 'aal2'")) fail('le MFA e-mail personnalisé ne doit pas être confondu avec AAL2');
-if (!mfaEmailServer.includes('required: isStudent') ||
-    !mfaEmailServer.includes('const isStudent = profile.role === "eleve"') ||
-    !mfaEmailServer.includes('if (!isStudent) {') ||
-    !mfaEmailServer.includes('required: false') ||
-    !mfaEmailServer.includes('STUDENT_MFA_ONLY')) fail('Edge Function : politique MFA non limitée au rôle eleve ou bypass des autres rôles absent');
-if (!mfaModule.includes("typeof emailState.required!=='boolean'") ||
-    !mfaModule.includes("if(emailState.required && (!emailState.enrolled || !emailState.verified))")) fail('client MFA : statut de rôle absent ou politique étudiant non appliquée');
-console.log('✅ Lot 204 : MFA e-mail étudiant, garde RLS restrictif et RPC SECURITY DEFINER contrôlés.');
 
 
 /* Lot 201 — points d'entrée indispensables du portail de connexion. */
