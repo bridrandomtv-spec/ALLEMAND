@@ -639,7 +639,7 @@ if(!html.includes('id="mfaLoginEmailResend"')||!html.includes('data-mfa-email-re
 if(!mfaModule.includes("setLoginResendVisibility('email')")||!mfaModule.includes("email.hidden=type!=='email'")) fail('MFA e-mail : visibilité du renvoi de connexion non pilotée par le facteur');
 if(!mfaModule.includes("SB.mfaEmail({action:'start',purpose:pending.purpose||'login'})")||!mfaModule.includes("pending.challengeId=loginSent.challengeId")) fail('MFA e-mail : renvoi unifié enroll/login ne renouvelle pas le challenge');
 if(!mfaModule.includes("var purpose=emailState.enrolled?'login':'enroll'")||!mfaModule.includes("showEmailChallenge(started,emailState,purpose)")) fail('MFA e-mail : le premier enrôlement ne réutilise pas le défi de connexion');
-if(!mfaModule.includes('data-mfa-email-resend>إعادة إرسال رمز البريد')) fail('MFA e-mail : bouton de renvoi absent de l’enrôlement');
+if(!mfaModule.includes("ev.target.closest('[data-mfa-email-resend]')")||!mfaModule.includes("pending&&pending.type==='email'")) fail('MFA e-mail : gestionnaire de renvoi absent du défi unifié enroll/login');
 console.log('✅ Lot 200 : renvoi des codes MFA e-mail et remplacement du challenge contrôlés.');
 
 /* Lot 201 — points d'entrée indispensables du portail de connexion. */
