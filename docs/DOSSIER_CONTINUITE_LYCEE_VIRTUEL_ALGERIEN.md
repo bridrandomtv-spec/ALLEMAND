@@ -3722,3 +3722,36 @@ Le contrôle approfondi de la migration Lot 204 a identifié deux défauts de po
 - Une assertion CI vérifie maintenant ce privilège de schéma, en plus du grant EXECUTE.
 - Commit migration : `3d05d9761df6fc0cc84816444cf50db19a0df120` ; commit test : `bae3529b75caf68d8102dc0dec421b53c70ec4de`.
 - Cette autorisation de schéma ne rend pas le schéma `private` exposé dans la Data API et n'accorde aucun privilège sur les tables qu'il contient.
+
+---
+
+## Lot 206 — CI finale et audit Supabase en lecture seule (10 novembre 2026)
+
+### CI de la migration corrigée
+- CI #2810 / run `42840220297` sur le HEAD `01e9442ee8164d8470e5fe4ceebe7a7c68123b8d` : **succès**.
+- Job `Validation structurelle & pédagogique` : terminé avec succès, 33 étapes exécutées, aucune étape en échec.
+- Ce résultat valide les contrôles automatisés du dépôt ; il ne constitue pas une exécution SQL de la migration ni un test de bout en bout MFA/Resend.
+
+### Introspection du projet Supabase actif — strictement en lecture seule
+Projet `azjwcybivirvpxbfhyzk` :
+- 37 tables du schéma `public` ont RLS activé, cohérent avec la portée de la boucle de migration.
+- Aucune politique existante ne porte déjà le nom `student_email_mfa_gate` dans `public` ; aucun helper `private.student_email_mfa_access_allowed` n'est actuellement installé.
+- Le bucket Storage existant est `prive` et il est privé.
+- Les tables `mfa_email_factors` et `mfa_email_sessions` existent ; aucune ligne facteur/session n'est actuellement enregistrée.
+- La distribution des profils observée lors de cette lecture : 4 `eleve`, 1 `prof`, 1 `admin`. Cette observation est un instantané, pas une règle de population.
+- Les 13 fonctions SECURITY DEFINER réécrites par la migration ont été retrouvées avec les signatures attendues et sont détenues par `postgres`.
+- Inventaire complémentaire des autres fonctions SECURITY DEFINER exécutables par `authenticated` : les RPC additionnelles examinées sont réservées au rôle `parent`, aux contrôles administrateur, aux opérations comptables/administratives, ou à la lecture des accords actifs. Elles ne constituent pas une voie étudiante identifiée qui permettrait de remplacer le garde MFA. Les fonctions de lecture des rôles et permissions restent des sondes de rôle/autorisation, pas des points d'accès aux données pédagogiques.
+- Les politiques Storage existantes sont permissives et la nouvelle politique restrictive reste limitée à `prive`, conformément au correctif Lot 205.
+
+### Limite de validation de base de données
+- Le projet Supabase connecté ne présente actuellement qu'une branche `main` ; aucune branche de développement isolée n'est disponible.
+- Aucune branche Supabase n'a été créée : la création peut entraîner un coût horaire et exige de vérifier/valider le coût avant toute opération.
+- La migration n'a pas été exécutée, même en lecture/écriture transactionnelle, sur le projet actif. Aucun objet, rôle, grant, politique, secret, utilisateur ou donnée n'a été modifié dans Supabase.
+- L'Edge Function active reste la version 7. La source plus récente est uniquement dans la PR.
+- Le test de syntaxe/effets SQL sur PostgreSQL isolé, la matrice JWT/session, et les essais Resend réels restent à faire sur un environnement de test dédié.
+
+### État Git
+- PR #17 : ouverte, non fusionnée ; HEAD `01e9442ee8164d8470e5fe4ceebe7a7c68123b8d`.
+- CI #2810 réussie.
+- Aucun rebase, merge, déploiement Edge Function, migration production ou déploiement Cloudflare.
+- `main` inchangée.
