@@ -126,6 +126,17 @@ assert.ok(app.includes("const cloudRestorePending = !!(s && s.src === 'cloud');"
   'A remembered cloud session must always enter the MFA restoration gate');
 assert.ok(!app.includes("const cloudRestorePending = !!(s && s.src === 'cloud' && !authLocalMode());"),
   'Demo/offline mode must not bypass MFA for a remembered cloud session');
+const restoreStart = app.indexOf('if(cloudRestorePending){');
+const restoreGate = app.indexOf('if(await window.DZ_MFA.requireGate()) return;', restoreStart);
+const restoreProfile = app.indexOf('const profile = window.cloudAuthority ? await window.cloudAuthority() : null;', restoreGate);
+const restoreEnter = app.indexOf('if(profile){ enterApp(profile); return; }', restoreProfile);
+const restoreEnd = app.indexOf("if(window.BDD && !BDD.state.ready", restoreStart);
+assert.ok(restoreStart >= 0 && restoreGate > restoreStart && restoreProfile > restoreGate && restoreEnter > restoreProfile,
+  'Cloud session restoration must pass the MFA gate before loading the profile or entering the app');
+assert.ok(restoreEnd > restoreStart && !app.slice(restoreStart, restoreEnd).includes('error && error.message'),
+  'Cloud session restoration must not expose raw exception/provider details to students');
+assert.ok(app.includes('تعذر استعادة جلسة الدخول بأمان. تحقق من اتصال الإنترنت ثم سجّل الدخول مجددًا.'),
+  'Cloud session restoration must show a student-friendly fail-closed error');
 
 
 
