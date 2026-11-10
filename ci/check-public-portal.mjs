@@ -489,8 +489,9 @@ for (const marker of [
   if (!mfaEmailServer.includes(marker)) fail('sécurité MFA e-mail serveur absente : ' + marker);
 }
 if (!mfaModule.includes("if(!emailState.ok)") ||
-    !mfaModule.includes("if(emailState.enrolled&&!emailState.verified&&!nativeState.required)")) {
-  fail('garde e-mail MFA non fail-closed ou non conditionnée à l’inscription');
+    !mfaModule.includes("if(!emailState.enrolled || !emailState.verified)") ||
+    !mfaModule.includes("var purpose=emailState.enrolled?'login':'enroll'")) {
+  fail('garde e-mail MFA non fail-closed ou enrôlement initial automatique absent');
 }
 if (!mfaEmailServer.includes('!Deno.env.get("RESEND_API_KEY")') ||
     !mfaEmailServer.includes('!Deno.env.get("MFA_EMAIL_FROM")')) {
