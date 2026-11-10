@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 const sql = fs.readFileSync('supabase/migrations/20261110160000_enforce_student_email_mfa.sql', 'utf8');
 const edge = fs.readFileSync('supabase/functions/mfa-email/index.ts', 'utf8');
 const client = fs.readFileSync('mfa-security.js', 'utf8');
+const html = fs.readFileSync('index.html', 'utf8');
 const app = fs.readFileSync('app.js', 'utf8');
 
 for (const role of ['prof', 'admin', 'parent']) {
@@ -133,5 +134,17 @@ assert.ok(app.includes("if(session && session.src === 'cloud'){") &&
   app.includes("if(shellNode) shellNode.hidden = true;") &&
   app.includes("if(gateNode) gateNode.hidden = false;"),
   'The central enterApp boundary must fail closed and require a one-time MFA permit for every cloud session');
+
+assert.ok(html.includes('id="mfaChallengeForm"') && html.includes('id="mfaChallengeCode"') && html.includes('autocomplete="one-time-code"'),
+  'Student MFA challenge must expose an accessible one-time-code input');
+assert.ok(html.includes('id="mfaLoginEmailResend"') && html.includes('data-mfa-email-resend'),
+  'Student email MFA challenge must expose an explicit resend control');
+assert.ok(client.includes("var resendEmail=ev.target.closest('[data-mfa-email-resend]')") &&
+  client.includes("SB.mfaEmail({action:'start',purpose:pending.purpose||'login'})") &&
+  client.includes('pending.challengeId=loginSent.challengeId'),
+  'Email resend must request a fresh challenge and replace the challenge identifier used for verification');
+assert.ok(client.includes("pending&&pending.type==='email'?await SB.mfaEmail({action:'verify',challengeId:pending.challengeId,code:value})") &&
+  client.includes('if(result&&result.ok){pending=null;await finishLogin();return;}'),
+  'Email challenge verification must use the current challenge ID and re-run the central MFA gate before entry');
 
 console.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
