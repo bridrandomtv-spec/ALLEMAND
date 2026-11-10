@@ -5306,3 +5306,29 @@ La maquette est conservée comme référence fonctionnelle uniquement ; elle n'e
 
 ### Décision et périmètre
 Audit du code uniquement, sans modification applicative ni Supabase distant. Aucun compte, session, e-mail ou secret n'a été utilisé. Aucun endpoint Resend n'a été appelé. Aucun Cron Trigger, aucune fonction Edge, aucune table, aucun secret ou paramètre SMTP n'a été créé ou modifié. Aucun déploiement, coût, fusion ou nouvelle branche. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 270 — nettoyage Auth sans MFA et vérification des sources d'événements — 11 novembre 2026
+
+### Décision MFA respectée
+- Le fichier `supabase/supabase.js` contenait encore deux options client `experimental: { recoveryCodes: true }` dans les deux chemins de création du client Supabase.
+- Ces options résiduelles ont été retirées. Aucun facteur, challenge, méthode TOTP/SMS/e-mail OTP, code de secours, écran MFA ou contrôle AAL n'a été ajouté.
+- Vérification après commit : le fichier ne contient plus la chaîne `recoveryCodes`.
+- Commit code : `f3fbee4f5862eba605da348903b368543dcebb4e`.
+
+### Sources d'événements vérifiées
+- L'inventaire réel des schémas `public` et `auth` confirme l'absence des tables applicatives `login_history`, `security_events` et `user_devices`.
+- `auth.audit_log_entries` existe côté schéma Auth, mais le relevé consulté indique actuellement zéro entrée (aucune date minimale/maximale). Ses colonnes incluent `payload`, `created_at` et `ip_address` ; il ne faut pas exposer directement cette table aux élèves ni supposer qu'elle constitue un journal applicatif complet des connexions.
+- Les privilèges de cette table observés dans `information_schema.role_table_grants` ne sont accordés qu'à `postgres` ; aucun accès direct n'a été observé pour `anon` ou `authenticated`.
+- Le seul journal public déjà identifié, `public.audit_logs`, est un journal d'administration et ne doit pas être présenté comme l'historique de connexion personnel des élèves.
+- `pg_cron` et `pg_net` figurent dans le catalogue des extensions disponibles, mais leur `installed_version` est NULL : ils ne sont pas installés dans ce projet. Aucun déclencheur de planification n'est donc prêt à être utilisé via ces extensions.
+
+### Conséquences pratiques
+- Pour l'instant, l'écran de sécurité doit afficher explicitement « historique de connexion indisponible » plutôt que fabriquer un nombre de connexions, un emplacement, un appareil ou un score.
+- Une source future d'événements devra être alimentée côté serveur à partir d'événements réellement observables, avec minimisation des IP/données personnelles, rétention définie, accès strictement limité et séparation des événements Auth et des événements métier.
+- Ne pas créer de pseudo-historique en lisant les sessions courantes comme si elles représentaient l'historique complet. Ne pas promettre une détection d'activité suspecte tant qu'une règle de détection et une source fiable n'existent pas.
+- Le Worker principal `src/site-worker.js` ne possède toujours pas de handler `scheduled()`. Le fichier d'exemple `worker/resend-welcome.js` reste séparé de l'entrée déclarée par `wrangler.toml` et ne doit pas être réutilisé tel quel : son destinataire est fourni dans le corps de requête et le contrôle CORS ne constitue pas une authentification.
+
+### Périmètre de ce lot
+- Un seul changement de code local à la PR : retrait des options client résiduelles liées aux recovery codes.
+- Le reste est un audit en lecture seule. Aucun schéma, politique RLS, fonction, extension, secret, SMTP, réglage Auth ou donnée distante n'a été modifié. Aucun e-mail envoyé, aucun Cron ajouté, aucun déploiement, aucune dépense, aucune fusion et aucune nouvelle branche.
