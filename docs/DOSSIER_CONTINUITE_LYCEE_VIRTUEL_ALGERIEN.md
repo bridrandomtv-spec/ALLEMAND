@@ -3880,23 +3880,23 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 ## Lot 212 — diagnostic du message « politique de vérification indéterminée » (10 novembre 2026)
 
 ### Cause racine confirmée
-- L'interface \`mfa-security.js\` de la PR attend un booléen \`required\` dans la réponse de l'action Edge Function \`status\`. L'absence de cette métadonnée bloque volontairement la connexion (fail-closed).
-- La fonction réellement active dans Supabase est toujours \`mfa-email\` version **7**. La relecture de son code déployé confirme que sa réponse \`status\` contient \`ok\`, \`enrolled\`, \`verified\`, \`verifiedUntil\` et \`emailMasked\`, mais **pas** \`required\`.
-- Les journaux Supabase en lecture seule confirment des appels navigateur \`POST 200\` vers \`/functions/v1/mfa-email\` servis par le déploiement version 7, notamment le 10 novembre 2026 à 16:50:23 UTC. Le succès HTTP ne signifie pas que le contrat de réponse est compatible avec la nouvelle interface.
-- La source Edge Function dans la PR ajoute bien le champ \`required\`, détermine le rôle depuis \`profiles\` côté serveur, exempte explicitement uniquement \`prof\`, \`admin\` et \`parent\`, et refuse les rôles inconnus. Cette source n'est pas encore déployée.
+- L'interface `mfa-security.js` de la PR attend un booléen `required` dans la réponse de l'action Edge Function `status`. L'absence de cette métadonnée bloque volontairement la connexion (fail-closed).
+- La fonction réellement active dans Supabase est toujours `mfa-email` version **7**. La relecture de son code déployé confirme que sa réponse `status` contient `ok`, `enrolled`, `verified`, `verifiedUntil` et `emailMasked`, mais **pas** `required`.
+- Les journaux Supabase en lecture seule confirment des appels navigateur `POST 200` vers `/functions/v1/mfa-email` servis par le déploiement version 7, notamment le 10 novembre 2026 à 16:50:23 UTC. Le succès HTTP ne signifie pas que le contrat de réponse est compatible avec la nouvelle interface.
+- La source Edge Function dans la PR ajoute bien le champ `required`, détermine le rôle depuis `profiles` côté serveur, exempte explicitement uniquement `prof`, `admin` et `parent`, et refuse les rôles inconnus. Cette source n'est pas encore déployée.
 - Conclusion : le message constaté est expliqué par un décalage de version interface/backend, et non par une preuve de mauvais paramétrage du compte. La réponse actuelle de la version 7 ne permet pas de déduire de manière sûre si l'utilisateur est élève ou non.
 
 ### Ajustement de l'interface dans la PR
 - Le message générique invitant à réessayer a été remplacé par une explication exploitable : « نسخة خدمة التحقق الأمني غير متوافقة مع المنصة. يلزم تحديث الخدمة من الإدارة؛ لم يتم تجاوز فحص الأمان. »
-- Le comportement de sécurité reste inchangé : l'interface refuse l'accès si \`required\` n'est pas un booléen. Aucun fallback permissif ni bypass n'a été ajouté.
-- Le script \`ci/check-mfa-security.mjs\` vérifie désormais également que cette incompatibilité est expliquée explicitement à l'utilisateur.
+- Le comportement de sécurité reste inchangé : l'interface refuse l'accès si `required` n'est pas un booléen. Aucun fallback permissif ni bypass n'a été ajouté.
+- Le script `ci/check-mfa-security.mjs` vérifie désormais également que cette incompatibilité est expliquée explicitement à l'utilisateur.
 
 ### CI et portée des résultats
-- CI #2819 / run \`42854558448\` : **success**. Le job unique a terminé avec succès, y compris l'étape dédiée « Vérifier le MFA e-mail obligatoire des étudiants (contrôles statiques) ».
-- Cette exécution correspond au commit workflow \`47de4e61581b259837795f0933f2e728d9d26481\`. Après l'ajustement de message, CI #2821 / run \`42859134366\` sur \`ab26208508e16b23d391b79d466d0989dbe41427\` est **success**. CI #2822 / run \`42859175770\` sur \`b23ef4c7c380142f795aae9d3b9a383058d0fa3b\`, qui inclut aussi l'assertion CI du nouveau message, est désormais **success**. La mise à jour documentaire finale du présent lot est portée par le commit \`ee6b41cfd52756eba27b270a095e06c569e0afe5\`.
+- CI #2819 / run `42854558448` : **success**. Le job unique a terminé avec succès, y compris l'étape dédiée « Vérifier le MFA e-mail obligatoire des étudiants (contrôles statiques) ».
+- Cette exécution correspond au commit workflow `47de4e61581b259837795f0933f2e728d9d26481`. Après l'ajustement de message, CI #2821 / run `42859134366` sur `ab26208508e16b23d391b79d466d0989dbe41427` est **success**. CI #2822 / run `42859175770` sur `b23ef4c7c380142f795aae9d3b9a383058d0fa3b`, qui inclut aussi l'assertion CI du nouveau message, est désormais **success**. La mise à jour documentaire finale du présent lot est portée par le commit `ee6b41cfd52756eba27b270a095e06c569e0afe5`.
 - Les journaux et le code de la fonction active ont été consultés en lecture seule. Aucun test n'a envoyé de code Resend ni modifié de compte.
 
 ### Étape nécessaire pour une résolution réelle
-- Pour que l'interface reçoive \`required\`, il faudra déployer une version compatible de \`mfa-email\` et appliquer la migration MFA/RLS correspondante dans un environnement autorisé. Un simple rechargement du navigateur ne peut pas ajouter le champ manquant à la fonction serveur.
+- Pour que l'interface reçoive `required`, il faudra déployer une version compatible de `mfa-email` et appliquer la migration MFA/RLS correspondante dans un environnement autorisé. Un simple rechargement du navigateur ne peut pas ajouter le champ manquant à la fonction serveur.
 - Comme demandé, aucun déploiement n'est effectué maintenant. La migration n'est pas appliquée au projet Supabase actif ; aucune fonction Edge n'est déployée ; aucun changement Auth, secret, RLS, rôle ou donnée n'est effectué.
-- Aucun environnement Supabase payant n'est créé et aucune facturation n'est engagée. Aucun déploiement Cloudflare de production, aucun merge et aucune modification de \`main\`.
+- Aucun environnement Supabase payant n'est créé et aucune facturation n'est engagée. Aucun déploiement Cloudflare de production, aucun merge et aucune modification de `main`.
