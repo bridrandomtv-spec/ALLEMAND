@@ -33,7 +33,7 @@ assert.ok(client.includes("typeof emailState.required!=='boolean'"),
   'Client must fail closed when the Edge Function omits the required flag');
 assert.ok(client.includes('if(emailState.required && (!emailState.enrolled || !emailState.verified))'),
   'Student login must enroll or challenge whenever the required factor is absent or unverified');
-const appSource = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+const appSource = app;
 assert.ok(appSource.includes('function friendlyCloudAuthMessage(code, detail)') &&
   appSource.includes('email_not_confirmed') &&
   appSource.includes('افتح رسالة التأكيد واضغط الرابط الموجود فيها') &&
