@@ -33,6 +33,8 @@ assert.ok(client.includes("typeof emailState.required!=='boolean'"),
   'Client must fail closed when the Edge Function omits the required flag');
 assert.ok(client.includes('if(emailState.required && (!emailState.enrolled || !emailState.verified))'),
   'Student login must enroll or challenge whenever the required factor is absent or unverified');
+assert.ok(client.includes("emailMessage(emailState.error||emailState.err") &&
+  'Unconfirmed e-mail status must show the actionable confirmation-link instruction before MFA enrollment');
 assert.ok(client.includes("function emailMessage(code,fallback)") &&
   client.includes("case 'VERIFIED_EMAIL_REQUIRED'") &&
   client.includes("افتح رسالة تأكيد البريد الإلكتروني") &&
