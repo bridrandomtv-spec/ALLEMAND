@@ -87,7 +87,9 @@ assert.ok(client.includes('gatePass=true;return false;') &&
 assert.ok(app.includes("if(session && session.src === 'cloud'){") &&
   app.includes("typeof window.DZ_MFA.consumeGatePass !== 'function'") &&
   app.includes("if(!window.DZ_MFA.consumeGatePass()){") &&
-  app.includes("window.DZ_MFA.requireGate().then(function(blocked){"),
+  app.includes("window.DZ_MFA.requireGate().then(function(blocked){") &&
+  app.includes("if(shellNode) shellNode.hidden = true;") &&
+  app.includes("if(gateNode) gateNode.hidden = false;"),
   'The central enterApp boundary must fail closed and require a one-time MFA permit for every cloud session');
 
 console.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
