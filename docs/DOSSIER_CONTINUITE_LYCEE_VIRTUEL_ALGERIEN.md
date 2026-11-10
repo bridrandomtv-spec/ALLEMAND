@@ -3611,3 +3611,57 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 5. Tester les cas AAL1/non vérifié, session MFA valide, session expirée, autre utilisateur, autre session, rôles non étudiants et accès RPC direct.
 
 **Décision en attente :** l'audit est terminé, mais aucune enforcement RLS n'est encore autorisée/appliquée. La prochaine modification de politiques ou de schéma nécessite une approbation explicite après présentation de la matrice d'accès.
+
+
+---
+
+## Lot 204 — MFA e-mail réservé aux étudiants et enforcement serveur/RLS préparé (10 novembre 2026)
+
+### Périmètre approuvé
+- L'utilisateur a explicitement autorisé la préparation du code et de la migration source dans la PR #17.
+- Politique limitée aux profils dont `public.profiles.role = 'eleve'`.
+- Les profils `prof`, `admin`, `parent` et les autres rôles non étudiants ne sont pas soumis au MFA e-mail obligatoire.
+- Aucun merge, aucun déploiement Cloudflare, aucune application de migration au projet Supabase actif.
+
+### Audit complémentaire
+- Valeurs de rôles constatées dans les profils présents : `admin`, `eleve`, `prof`.
+- Aucune vue dans le schéma `public` n'a été retournée par le catalogue `pg_views`.
+- Le bucket Storage `prive` est privé. Ses politiques actuelles concernent les fichiers personnels et les pièces jointes de messagerie.
+- Les tables publiques inspectées ont RLS activé. Les politiques existantes sont permissives ; l'enforcement prévu s'ajoute sous forme de politique restrictive et ne remplace pas les règles de propriété, rôle, wilaya ou modération.
+- Les RPC SECURITY DEFINER exposées aux étudiants ont été identifiées : accès aux abonnements, acceptation/retrait des accords, messagerie, demandes de rattachement parent-enfant et preuve de paiement. Les RPC administratives et celles réservées aux parents conservent leurs contrôles de rôle/permission existants.
+
+### Code préparé dans la PR
+1. `supabase/functions/mfa-email/index.ts`
+   - Le serveur lit le rôle réel dans `profiles` via le client privilégié.
+   - `status` retourne désormais `required: true` uniquement pour `role='eleve'`.
+   - Les actions `start` et `verify` refusent les autres rôles avec `STUDENT_MFA_ONLY`.
+   - Une absence de profil ou une erreur de lecture bloque le parcours au lieu de supposer un rôle.
+2. `mfa-security.js`
+   - Le client exige un booléen explicite `required` renvoyé par la fonction Edge ; une ancienne réponse sans ce champ échoue de manière fermée.
+   - L'enrôlement automatique et le défi e-mail ne sont déclenchés que si `required=true`.
+   - Le contrôle MFA Supabase natif éventuel reste vérifié indépendamment.
+   - Les paramètres distinguent le statut obligatoire des étudiants des autres comptes.
+3. Migration source `supabase/migrations/20261110160000_enforce_student_email_mfa.sql`
+   - Crée un helper `private.student_email_mfa_access_allowed()` SECURITY DEFINER, avec `search_path` vide, qui vérifie le profil, le rôle étudiant, le claim `session_id`, le facteur actif et la session MFA non expirée.
+   - Le schéma `private` n'est pas ajouté aux schémas exposés ; l'exécution du helper est limitée à `authenticated`.
+   - Ajoute une politique RLS **RESTRICTIVE** sur chaque table publique qui a RLS activé, sans supprimer ni réécrire les politiques permissives existantes.
+   - Ajoute le même garde restrictif à `storage.objects` pour le bucket privé `prive`.
+   - Ajoute une vérification explicite dans les RPC SECURITY DEFINER accessibles aux parcours étudiants : `active_entitlement`, `agreement_accept`, `agreement_status_for`, `agreement_withdraw`, `msg_can_dm`, `msg_is_member`, `msg_member_ok`, `msg_not_blocked`, `msg_open_direct`, `my_parent_link_requests`, `respond_parent_link_request`, `subscription_set_preuve` et `unlink_child`.
+   - Les politiques et fonctions existantes sont conservées par remplacement contrôlé des définitions nécessaires ; les fonctions administratives/parentales non concernées ne sont pas réécrites.
+4. Cache : `mfa-security.js?v=14`, Service Worker `dz-de-v3.185.0.0.131`.
+5. CI : assertions statiques ajoutées pour le rôle étudiant, le statut Edge, les gardes RLS, le Storage privé et les RPC ciblées.
+
+### Limites à conserver explicitement
+- La migration n'a pas été exécutée et aucune politique active du projet Supabase n'a changé.
+- La validation statique CI ne remplace pas une exécution sur une base de test PostgreSQL/Supabase ni les tests d'accès avec comptes de chaque rôle.
+- Les URL Storage signées déjà émises restent utilisables jusqu'à leur expiration ; RLS n'annule pas rétroactivement un lien signé.
+- Les appels directs à une fonction SECURITY DEFINER non identifiée dans cette liste doivent être recontrôlés avant mise en service ; les fonctions administratives restent protégées par leurs contrôles existants de permissions, mais un audit exhaustif de toutes les RPC demeure nécessaire.
+- Les clients utilisant une ancienne Edge Function sans champ `required` seront bloqués par le nouveau garde client. L'ordre de mise en service devra donc être : déployer la nouvelle Edge Function, appliquer la migration validée, puis déployer le front.
+- Le facteur e-mail personnalisé ne produit toujours pas le claim natif `aal2` ; la migration utilise l'état MFA propre à l'application, pas une fausse assertion AAL2.
+
+### Validation / opérations
+- La migration est uniquement un fichier source ajouté à la branche PR #17.
+- Aucun SQL DDL/DML n'a été exécuté sur le projet actif.
+- Aucun secret Resend, réglage Auth global, rôle, grant distant ou donnée n'a été modifié.
+- PR #17 reste ouverte, non fusionnée ; aucun déploiement Cloudflare ou Supabase.
+- Les nouvelles exécutions CI du HEAD après le lot doivent être vérifiées avant de déclarer la validation réussie.
