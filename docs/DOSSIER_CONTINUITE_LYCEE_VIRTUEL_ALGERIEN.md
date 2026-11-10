@@ -4435,3 +4435,53 @@ where n.nspname = 'auth'
 - CI #2893 et #2894 : échecs du contrôle MFA statique, car l'inventaire exhaustif de la migration n'avait pas encore été étendu à la nouvelle fonction `public.notify`. L'échec a correctement détecté une fonction SECURITY DEFINER non classée ; l'inventaire a été complété et un contrôle spécifique de son ACL a été ajouté.
 - CI #2895 / run `42890025300`, commit `67ade4d367e08596d967eca7e9ea8519dd5e08f3` : **succès complet**. Le contrôle MFA, la matrice des parcours, le test d'accès/fuite et les validations pédagogiques sont tous réussis.
 - Le succès est celui des contrôles automatisés du dépôt. Il ne prouve pas les ACL effectives de la base Supabase distante, la propriété réelle des fonctions, l'exposition PostgREST, ni le comportement d'un trigger exécuté dans PostgreSQL réel.
+
+
+### Lot 238 — audit PostgreSQL réel des propriétaires, ACL et RPC historiques (10 novembre 2026)
+
+- Audit effectué en lecture seule sur le projet Supabase actif (PostgreSQL 17.6.1). Aucun DDL, DML, changement de privilège, migration ou déploiement n'a été exécuté.
+- Inventaire catalogue : 71 fonctions `SECURITY DEFINER` dans `public` ; les 71 appartiennent à `postgres` et les 71 ont un `search_path` fixé. 42 sont exécutables par `authenticated`, une seule par `anon`.
+- La seule fonction de cet inventaire accessible à `anon` est `public.agreement_current(text)`. Elle renvoie le composite complet de la ligne active `agreements` (id, cle, version, titre, corps, actif, cree_par, cree_at) en `SECURITY DEFINER`, alors que la policy directe de la table ne permet SELECT qu'à `authenticated`. Ce point constitue une exposition publique effective via RPC, pas une vulnérabilité d'intention déjà démontrée : les conditions d'utilisation peuvent devoir être consultables avant connexion. Il faut vérifier le parcours appelant et décider si l'API publique doit renvoyer uniquement les champs contractuels nécessaires, sans l'identifiant du créateur, ou si l'accès anonyme doit être retiré. Aucun droit n'a été changé.
+- Fonctions administratives vérifiées par leur définition réelle : `admin_role_of(uid)`, `admin_wilayas(uid)`, `admin_can(uid, perm)` et `admin_sees_wilaya(uid, w)` comparent toutes le paramètre utilisateur à `auth.uid()` et retournent une valeur neutre/refusent lorsque l'identité ne correspond pas. Elles ne permettent donc pas de consulter le périmètre d'un autre administrateur en substituant un UUID.
+- Fonctions parent/enfant vérifiées : `my_child_link_requests()`, `my_linked_children()`, `my_parent_link_requests()`, `request_child_link(text)`, `cancel_parent_link_request(bigint)`, `respond_parent_link_request(bigint, boolean)`, `unlink_child(uuid)`, `child_active_entitlement(uuid, uuid)` et `agreement_accept_for(...)`. Les lectures sont bornées à l'utilisateur connecté et à son rôle parent/élève ; les mutations contrôlent le rôle, la propriété de la demande ou l'existence d'un lien confirmé. `link_child(text)` est encore présent dans la base active mais son ACL n'autorise ni `anon` ni `authenticated` (service_role uniquement) ; il n'est pas réactivé par cet audit.
+- Les fonctions parent-only ne portent pas toutes le garde MFA personnalisé dans leur définition historique. Cela correspond à la politique de ce lot (MFA obligatoire pour `profiles.role = 'eleve'`, parents exemptés) ; leur contrôle de rôle/propriété demeure indispensable et a été examiné. Le garde RLS restrictif doit néanmoins être testé en base isolée avec les rôles réels.
+- La fonction réelle `profiles_role_guard()` est encore `SECURITY DEFINER` dans la base active ; la migration PR la remplace par une version `SECURITY INVOKER` avec `search_path` vide. C'est un état attendu tant que la migration n'est pas appliquée : ne pas le présenter comme déjà corrigé en production.
+- Le helper privé `private.student_email_mfa_access_allowed()` et les tables MFA ne sont pas encore installés sur la base active ; aucun résultat de catalogue ne peut donc valider leur propriétaire effectif avant migration. Leur propriété devra être contrôlée après application sur un environnement isolé.
+- Décision : pas de révocation globale sur les 42 fonctions authenticated. Les fonctions d'administration et de liaison sont utilisées par des policies/RPC métier ; une révocation non ciblée risquerait de casser les parcours légitimes. L'exception `agreement_current` doit faire l'objet d'une décision fonctionnelle distincte avant modification.
+- CI #2896 / run `42890251405`, commit `c8ef451ae548d5d5e6bcf564229e3c1057bdf78c` : **succès**, job « Validation structurelle & pédagogique » terminé ; les 33 contrôles métier/sécurité listés sont réussis. Le résultat reste statique et ne constitue pas un test d'exécution PostgreSQL.
+- PR #17 : ouverte, cible `main`, non fusionnée. `main) inchangée. Aucun déploiement Cloudflare ou Edge Function, aucune migration appliquée, aucune modification de secrets ou paramètres Auth.
+
+#### Contrôles SQL de référence — lecture seule
+
+~~~sql
+-- Propriétaire, search_path et droits effectifs des fonctions SECURITY DEFINER
+select n.nspname, p.proname,
+       pg_get_function_identity_arguments(p.oid) as arguments,
+       pg_get_userbyid(p.proowner) as owner_name,
+       p.proconfig,
+       has_function_privilege('anon', p.oid, 'EXECUTE') as anon_execute,
+       has_function_privilege('authenticated', p.oid, 'EXECUTE') as authenticated_execute
+from pg_proc p
+join pg_namespace n on n.oid = p.pronamespace
+where n.nspname in ('public', 'private') and p.prosecdef
+order by n.nspname, p.proname;
+
+-- Définition réelle des fonctions administratives et parent/enfant
+select p.proname, pg_get_function_identity_arguments(p.oid),
+       pg_get_functiondef(p.oid)
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public'
+  and p.proname in ('admin_role_of','admin_wilayas','admin_can','admin_sees_wilaya',
+    'agreement_current','agreement_accept_for','child_active_entitlement',
+    'my_child_link_requests','my_linked_children','my_parent_link_requests',
+    'request_child_link','cancel_parent_link_request','respond_parent_link_request',
+    'unlink_child','link_child');
+~~~
+
+#### Suite obligatoire
+
+1. Vérifier dans le code client l'appel éventuel à `agreement_current` et décider de son contrat d'exposition publique.
+2. Créer un environnement Supabase isolé uniquement après validation explicite de son coût ; la branche de test n'est pas créée.
+3. Appliquer la migration uniquement dans cet environnement, puis contrôler le propriétaire effectif (`postgres`), les ACL, les triggers, le schéma privé, les 37 policies restrictives et le bucket `prive`.
+4. Tester réellement les parcours élève MFA vérifié/non vérifié, élève tentant de changer son rôle, admin, parent, rôle inconnu, RPC et Storage ; vérifier aussi le renvoi Resend réel.
+5. Ne demander aucune fusion ni déploiement avant les résultats de ces tests et une autorisation distincte.
