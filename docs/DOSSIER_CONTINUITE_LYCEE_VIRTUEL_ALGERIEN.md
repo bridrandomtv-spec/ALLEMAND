@@ -5282,3 +5282,27 @@ La maquette est conservée comme référence fonctionnelle uniquement ; elle n'e
 - Dossier de continuité uniquement ; aucun code applicatif ni schéma distant modifié.
 - Aucun changement Auth/RLS/Storage/SMTP/secret, aucune extension, aucune tâche Cron, aucun e-mail envoyé.
 - Aucun coût, aucun déploiement, aucune fusion, aucune branche créée. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 269 — vérification du chemin d'authentification et du Worker pour les rapports — 11 novembre 2026
+
+### Sources relues sur la branche de la PR #17
+- `index.html` charge encore `auth.js` pour compatibilité/démonstration, puis charge séparément le SDK Supabase et `supabase/supabase.js` comme module.
+- Dans `app.js`, `authLocalMode()` ne bascule sur `AUTH.login/signup` que si le navigateur est hors ligne ou si le paramètre `?demo` est présent. En ligne hors mode démo, les formulaires appellent `window.SB.login/signup`.
+- `supabase/supabase.js` utilise `auth.signInWithPassword`, `auth.signUp`, `auth.getSession` et `auth.signOut({scope:'local'})`. La fonction `me()` dérive l'utilisateur de la session Supabase. Le profil pédagogique est ensuite chargé par `cloudAuthority()` depuis `profiles`.
+- `auth.js` conserve un système local historique basé sur `localStorage` et des comptes de démonstration. Il n'est pas le chemin d'authentification normal lorsque le site est en ligne et hors mode démo. Le mode hors ligne/démo ne doit jamais pouvoir activer l'envoi de rapports de sécurité.
+
+### Worker et envoi e-mail
+- `wrangler.toml` désigne uniquement `src/site-worker.js` comme entrée du Worker principal, avec les actifs statiques. Aucun Cron Trigger ni handler `scheduled()` n'est présent dans `src/site-worker.js` à ce commit.
+- `worker/resend-welcome.js` est un fichier distinct, non déclaré comme entrée dans `wrangler.toml`. Il ne constitue donc pas un service actuellement intégré au Worker principal.
+- Ce Worker d'exemple accepte `to` depuis le corps de requête et ne montre pas d'authentification applicative, de vérification de l'adresse du compte, de quota ou de protection anti-abus. Le contrôle CORS limité au navigateur n'authentifie pas les appels serveur-à-serveur. Ne pas le déployer ni le réutiliser tel quel pour des rapports sensibles.
+
+### Conséquences pour la conception des rapports
+- Source d'identité unique : session Supabase validée côté serveur ; ne jamais utiliser le pseudo, l'e-mail, le `user_id` ou la session locale fournis par le navigateur pour sélectionner le compte destinataire ou les données à extraire.
+- Le mode `?demo` et le mode hors ligne doivent refuser explicitement les fonctions « envoyer », « test e-mail », « alertes immédiates » et « planification ». Ils peuvent seulement afficher un aperçu local clairement marqué comme aperçu.
+- Pour les demandes individuelles, le serveur doit dériver l'identité du JWT vérifié et lire l'adresse Auth confirmée. Une adresse alternative nécessite une vérification dédiée.
+- Le Worker principal pourra éventuellement héberger un `scheduled()` après conception et tests ; aucun Cron n'est ajouté dans ce lot. Le planificateur doit appeler un dispatcher authentifié, avec claim atomique/idempotence et limites, et ne pas exposer une route de diffusion publique.
+- L'ancien `auth.js` ne doit pas être supprimé dans ce lot : son usage de compatibilité/démo est conservé tant qu'un audit complet des références n'a pas démontré qu'il est supprimable.
+
+### Décision et périmètre
+Audit du code uniquement, sans modification applicative ni Supabase distant. Aucun compte, session, e-mail ou secret n'a été utilisé. Aucun endpoint Resend n'a été appelé. Aucun Cron Trigger, aucune fonction Edge, aucune table, aucun secret ou paramètre SMTP n'a été créé ou modifié. Aucun déploiement, coût, fusion ou nouvelle branche. PR #17 reste ouverte et non fusionnée.
