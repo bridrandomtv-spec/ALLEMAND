@@ -3755,3 +3755,15 @@ Projet `azjwcybivirvpxbfhyzk` :
 - CI #2810 réussie.
 - Aucun rebase, merge, déploiement Edge Function, migration production ou déploiement Cloudflare.
 - `main` inchangée.
+
+
+---
+
+## Lot 207 — confirmation CI du HEAD documentaire Lot 206 (10 novembre 2026)
+
+- CI #2811 / run `42849377552` sur le commit `14c5bda12a0d74eb78da8c4381602f45fef02f29` : **réussie**.
+- Le workflow `CI — ALLEMAND` est terminé avec conclusion `success`; le job unique « Validation structurelle & pédagogique » a réussi toutes ses étapes, y compris les contrôles MFA étudiant, RLS/Storage/RPC, syntaxe JavaScript et tests pédagogiques.
+- Cette exécution confirme le HEAD documentaire du Lot 206. Elle ne constitue pas un test PostgreSQL/Supabase isolé, un test navigateur, une livraison Resend, ni un test de bout en bout sur un compte étudiant réel.
+- PR #17 relue après le workflow : ouverte, non fusionnée, cible `main`, HEAD `14c5bda12a0d74eb78da8c4381602f45fef02f29`. Aucun changement de `main`.
+- Aucune branche Supabase de test créée ; aucun coût engagé. Aucune migration appliquée, aucune Edge Function déployée, aucun déploiement Cloudflare.
+- **Prochaine étape technique :** obtenir un environnement Supabase isolé après information et accord explicite sur son coût, puis exécuter la migration et la matrice de tests MFA/RLS/Storage/RPC sur cet environnement seulement. La production reste hors périmètre.
