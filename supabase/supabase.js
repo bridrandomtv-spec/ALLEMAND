@@ -153,11 +153,20 @@ async function mfaRecoveryStatus(){
 }
 
 async function mfaEmail(payload){
-  const c=await sb(); if(!c) return {ok:false,err:'الخدمة السحابية غير متاحة'};
-  const session=await c.auth.getSession();
-  if(session.error||!session.data.session) return {ok:false,err:'يرجى تسجيل الدخول أولاً'};
-  const r=await c.functions.invoke('mfa-email',{body:payload||{}});
-  return r.error?{ok:false,err:r.error.message,data:r.data||null}:{ok:!!(r.data&&r.data.ok),...(r.data||{})};
+  try{
+    const c=await sb(); if(!c) return {ok:false,error:'NETWORK_UNAVAILABLE',err:'الخدمة السحابية غير متاحة'};
+    const session=await c.auth.getSession();
+    if(session.error) return {ok:false,error:'NETWORK_UNAVAILABLE',err:'تعذر التحقق من جلسة الدخول'};
+    if(!session.data.session) return {ok:false,error:'INVALID_SESSION',err:'يرجى تسجيل الدخول أولاً'};
+    const r=await c.functions.invoke('mfa-email',{body:payload||{}});
+    if(r.error){
+      const serverError=r.data&&r.data.error;
+      return {ok:false,error:serverError||'NETWORK_UNAVAILABLE',err:serverError||'تعذر الاتصال بخدمة التحقق',data:r.data||null};
+    }
+    return {ok:!!(r.data&&r.data.ok),...(r.data||{})};
+  }catch(error){
+    return {ok:false,error:'NETWORK_UNAVAILABLE',err:'تعذر الاتصال بخدمة التحقق'};
+  }
 }
 
 async function pushMemoire(){
