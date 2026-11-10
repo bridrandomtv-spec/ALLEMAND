@@ -13,7 +13,7 @@ security definer
 set search_path to 'pg_catalog', 'public'
 as $function$
 begin
-  insert into public.profiles (id, pseudo, role, niveau, filiere, wilaya)
+  insert into public.profiles as current_profile (id, pseudo, role, niveau, filiere, wilaya)
   values (
     new.id,
     coalesce(nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'pseudo'), ''), split_part(coalesce(new.email, ''), '@', 1), 'Élève'),
@@ -23,11 +23,11 @@ begin
     nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'wilaya'), '')
   )
   on conflict (id) do update
-    set pseudo = coalesce(nullif(public.profiles.pseudo, ''), excluded.pseudo),
+    set pseudo = coalesce(nullif(current_profile.pseudo, ''), excluded.pseudo),
         role = 'eleve',
-        niveau = coalesce(public.profiles.niveau, excluded.niveau),
-        filiere = coalesce(public.profiles.filiere, excluded.filiere),
-        wilaya = coalesce(public.profiles.wilaya, excluded.wilaya);
+        niveau = coalesce(current_profile.niveau, excluded.niveau),
+        filiere = coalesce(current_profile.filiere, excluded.filiere),
+        wilaya = coalesce(current_profile.wilaya, excluded.wilaya);
   return new;
 end;
 $function$;
