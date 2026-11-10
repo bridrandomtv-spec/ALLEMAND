@@ -49,6 +49,10 @@ assert.ok(client.includes("function emailMessage(code,fallback)") &&
   client.includes("case 'PLEASE_WAIT'") && client.includes("case 'RATE_LIMITED'") &&
   client.includes("case 'expired'") && client.includes("case 'invalid_code'"),
   'Student-facing MFA flow must translate known email, rate-limit and challenge errors into actionable Arabic guidance');
+assert.ok(client.includes("case 'NETWORK_UNAVAILABLE'") &&
+  client.includes("تعذر الاتصال بخدمة التحقق الآن") &&
+  client.includes("error:'NETWORK_UNAVAILABLE'"),
+  'MFA network interruptions must return a stable error code and a student-friendly message');
 assert.ok(client.includes("تعذر الاتصال بخدمة التحقق الآن") &&
   !client.includes("error&&error.message||'تعذر التحقق من الرمز.'"),
   'Student-facing MFA network failures must not expose raw backend exception text');
