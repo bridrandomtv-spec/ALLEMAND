@@ -95,6 +95,7 @@ Deno.serve(async (req: Request) => {
   if (profileError) return json(500, { ok: false, error: "PROFILE_LOOKUP_FAILED" });
   if (!profile) return json(403, { ok: false, error: "PROFILE_REQUIRED" });
   const isStudent = profile.role === "eleve";
+  const isExemptRole = ["prof", "admin", "parent"].includes(profile.role);
 
   let body: Record<string, unknown>;
   try {
@@ -105,6 +106,9 @@ Deno.serve(async (req: Request) => {
 
   const action = body.action;
   if (action === "status") {
+    if (!isStudent && !isExemptRole) {
+      return json(403, { ok: false, error: "PROFILE_ROLE_NOT_ALLOWED" });
+    }
     if (!isStudent) {
       return json(200, {
         ok: true,
