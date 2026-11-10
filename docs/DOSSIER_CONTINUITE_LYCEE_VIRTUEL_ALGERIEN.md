@@ -3767,3 +3767,27 @@ Projet `azjwcybivirvpxbfhyzk` :
 - PR #17 relue après le workflow : ouverte, non fusionnée, cible `main`, HEAD `14c5bda12a0d74eb78da8c4381602f45fef02f29`. Aucun changement de `main`.
 - Aucune branche Supabase de test créée ; aucun coût engagé. Aucune migration appliquée, aucune Edge Function déployée, aucun déploiement Cloudflare.
 - **Prochaine étape technique :** obtenir un environnement Supabase isolé après information et accord explicite sur son coût, puis exécuter la migration et la matrice de tests MFA/RLS/Storage/RPC sur cet environnement seulement. La production reste hors périmètre.
+
+
+---
+
+## Lot 208 — liaison MFA avec la session Auth active (10 novembre 2026)
+
+### Constat et correction source
+- La lecture du catalogue Supabase, strictement en lecture seule, a confirmé que `auth.sessions` expose `id`, `user_id` et `not_after`.
+- Le helper `private.student_email_mfa_access_allowed()` vérifiait déjà le `session_id` du JWT et la session MFA e-mail applicative non expirée. Il vérifie maintenant aussi qu'une session correspondante existe encore dans `auth.sessions`, appartient au même utilisateur et n'a pas dépassé `not_after`.
+- Ce contrôle réduit le risque qu'un jeton d'une session révoquée continue à être accepté uniquement parce qu'une ligne MFA personnalisée reste présente.
+- Assertions CI ajoutées pour les trois contrôles `auth.sessions` (identifiant, propriétaire, expiration).
+
+### Commits
+- Migration : `49340365aec567245f7f2f4fd010f1bbe5e9c6cd`.
+- Assertions CI : `b6ff000012a899f59f6621dd5da584b36e243054`.
+- Le résultat CI du nouveau HEAD doit être vérifié avant de déclarer ce lot validé.
+
+### Limites et sécurité opérationnelle
+- Modification exclusivement dans la branche PR #17. Aucun SQL exécuté sur le projet actif ; aucune session, table, politique, clé, configuration Auth ou donnée n'a été modifiée.
+- Le schéma réel `auth.sessions` a été inspecté en lecture seule ; aucune branche Supabase de test n'existe encore, à part `main`.
+- L'Edge Function active reste v7 ; aucun déploiement Edge Function/Cloudflare, aucune migration appliquée et aucun merge.
+- La livraison Resend n'est pas encore prouvée. La présence des secrets ne prouve ni que l'adresse `MFA_EMAIL_FROM` est un expéditeur autorisé par Resend, ni qu'un étudiant reçoit effectivement le code. Ce test reste obligatoire avant activation.
+- La documentation Supabase actuelle confirme que `createSupabaseContext(..., { auth: 'user' })` fournit `supabaseAdmin` en plus du client RLS-scopé ; le code Edge utilise donc l'API documentée.
+
