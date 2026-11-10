@@ -77,98 +77,7 @@ async function logout(){
 }
 
 /* sync mémoire locale → cloud */
-/* MFA Supabase natif : les secrets et codes restent gérés par Auth. */
-async function mfaAssurance(){
-  const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'واجهة المصادقة الثنائية غير متاحة'};
-  const level=await c.auth.mfa.getAuthenticatorAssuranceLevel();
-  if(level.error) return {ok:false,err:level.error.message};
-  const required=level.data.currentLevel==='aal1' && level.data.nextLevel==='aal2';
-  if(!required) return {ok:true,required:false,currentLevel:level.data.currentLevel,nextLevel:level.data.nextLevel,factors:[]};
-  const listed=await c.auth.mfa.listFactors();
-  if(listed.error) return {ok:false,err:listed.error.message};
-  const factors=[...(listed.data.totp||[]),...(listed.data.phone||[])].filter(f=>f.status==='verified');
-  if(!factors.length) return {ok:false,err:'يتطلب الحساب تحققًا إضافيًا، لكن لم يُعثر على عامل موثّق.'};
-  return {ok:true,required:true,currentLevel:level.data.currentLevel,nextLevel:level.data.nextLevel,
-    factors:factors.map(f=>({id:f.id,type:f.factor_type||'totp',friendlyName:f.friendly_name||''}))};
-}
-async function mfaStart(factorId){
-  const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'خدمة المصادقة الثنائية غير متاحة'};
-  const r=await c.auth.mfa.challenge({factorId});
-  return r.error?{ok:false,err:r.error.message}:{ok:true,challengeId:r.data.id};
-}
-async function mfaVerify(factorId,challengeId,code){
-  const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'خدمة المصادقة الثنائية غير متاحة'};
-  const r=await c.auth.mfa.verify({factorId,challengeId,code:String(code||'').replace(/\s/g,'')});
-  return r.error?{ok:false,err:r.error.message}:{ok:true,session:r.data};
-}
-async function mfaVerifyRecovery(code){
-  const c=await sb(); if(!c || !c.auth.mfa || !c.auth.mfa.recoveryCodes) return {ok:false,err:'رموز الاسترداد غير مفعّلة في إعدادات المشروع'};
-  const r=await c.auth.mfa.recoveryCodes.verify({code:String(code||'').trim()});
-  return r.error?{ok:false,err:r.error.message}:{ok:true,session:r.data};
-}
-async function mfaEnrollTotp(friendlyName){
-  const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'خدمة المصادقة الثنائية غير متاحة'};
-  const r=await c.auth.mfa.enroll({factorType:'totp',friendlyName:friendlyName||'DZ Lycée Virtuel'});
-  if(r.error) return {ok:false,err:r.error.message};
-  return {ok:true,factorId:r.data.id,qrCode:r.data.totp.qr_code,secret:r.data.totp.secret,uri:r.data.totp.uri};
-}
-async function mfaEnrollPhone(phone){
-  const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'خدمة المصادقة الثنائية غير متاحة'};
-  const number=String(phone||'').trim();
-  if(!/^\+[1-9]\d{7,14}$/.test(number)) return {ok:false,err:'أدخل رقم الهاتف بالصيغة الدولية E.164، مثل +213XXXXXXXXX'};
-  const r=await c.auth.mfa.enroll({factorType:'phone',friendlyName:'DZ Lycée Virtuel SMS',phone:number});
-  return r.error?{ok:false,err:r.error.message}:{ok:true,factorId:r.data.id,phone:r.data.phone||number};
-}
-async function mfaVerifyEnrollment(factorId,code){
-  const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'خدمة المصادقة الثنائية غير متاحة'};
-  const ch=await c.auth.mfa.challenge({factorId});
-  if(ch.error) return {ok:false,err:ch.error.message};
-  const v=await c.auth.mfa.verify({factorId,challengeId:ch.data.id,code:String(code||'').replace(/\s/g,'')});
-  return v.error?{ok:false,err:v.error.message}:{ok:true};
-}
-async function mfaListFactors(){
-  const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'خدمة المصادقة الثنائية غير متاحة'};
-  const r=await c.auth.mfa.listFactors();
-  return r.error?{ok:false,err:r.error.message}:{ok:true,totp:r.data.totp||[],phone:r.data.phone||[],recoveryCode:r.data.recoveryCode||[]};
-}
-async function mfaUnenroll(factorId){
-  const c=await sb(); if(!c || !c.auth.mfa) return {ok:false,err:'خدمة المصادقة الثنائية غير متاحة'};
-  const r=await c.auth.mfa.unenroll({factorId});
-  return r.error?{ok:false,err:r.error.message}:{ok:true};
-}
-async function mfaRecoveryGenerate(){
-  const c=await sb(); if(!c || !c.auth.mfa || !c.auth.mfa.recoveryCodes) return {ok:false,err:'فعّل ميزة رموز الاسترداد التجريبية في إعدادات Supabase Auth أولاً'};
-  const r=await c.auth.mfa.recoveryCodes.generate({friendlyName:'DZ Lycée Virtuel recovery codes'});
-  return r.error?{ok:false,err:r.error.message}:{ok:true,codes:r.data.codes||[]};
-}
-async function mfaRecoveryRegenerate(){
-  const c=await sb(); if(!c || !c.auth.mfa || !c.auth.mfa.recoveryCodes) return {ok:false,err:'رموز الاسترداد غير مفعّلة'};
-  const r=await c.auth.mfa.recoveryCodes.regenerate();
-  return r.error?{ok:false,err:r.error.message}:{ok:true,codes:r.data.codes||[]};
-}
-async function mfaRecoveryStatus(){
-  const c=await sb(); if(!c || !c.auth.mfa || !c.auth.mfa.recoveryCodes) return {ok:false,err:'ميزة رموز الاسترداد غير مفعّلة'};
-  const r=await c.auth.mfa.recoveryCodes.getStatus();
-  return r.error?{ok:false,err:r.error.message}:{ok:true,status:r.data};
-}
-
-async function mfaEmail(payload){
-  try{
-    const c=await sb(); if(!c) return {ok:false,error:'NETWORK_UNAVAILABLE',err:'الخدمة السحابية غير متاحة'};
-    const session=await c.auth.getSession();
-    if(session.error) return {ok:false,error:'NETWORK_UNAVAILABLE',err:'تعذر التحقق من جلسة الدخول'};
-    if(!session.data.session) return {ok:false,error:'INVALID_SESSION',err:'يرجى تسجيل الدخول أولاً'};
-    const r=await c.functions.invoke('mfa-email',{body:payload||{}});
-    if(r.error){
-      const serverError=r.data&&r.data.error;
-      return {ok:false,error:serverError||'NETWORK_UNAVAILABLE',err:serverError||'تعذر الاتصال بخدمة التحقق',data:r.data||null};
-    }
-    return {ok:!!(r.data&&r.data.ok),...(r.data||{})};
-  }catch(error){
-    return {ok:false,error:'NETWORK_UNAVAILABLE',err:'تعذر الاتصال بخدمة التحقق'};
-  }
-}
-
+/* sync mémoire locale → cloud */
 async function pushMemoire(){
   const u = await me(); if(!u) return { ok: false, err: 'non connecté' };
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
@@ -577,7 +486,7 @@ async function msgCreateGroup(wilaya, niveau, filiere, titre){
   return { ok:true, convId:r.data.id };
 }
 
-window.SB = { login, signup, resetPassword, updatePassword, getSession, me, logout, mfaAssurance, mfaStart, mfaVerify, mfaVerifyRecovery, mfaEnrollTotp, mfaEnrollPhone, mfaVerifyEnrollment, mfaListFactors, mfaUnenroll, mfaRecoveryGenerate, mfaRecoveryRegenerate, mfaRecoveryStatus, mfaEmail, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
+window.SB = { login, signup, resetPassword, updatePassword, getSession, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
 /* pont dz:view post-sbready (UI-1) : les cartes ADM se re-rendent quand le client devient prêt */
 document.dispatchEvent(new CustomEvent('dz:view', { detail:{ view:(location.hash||'').replace('#','') } }));
