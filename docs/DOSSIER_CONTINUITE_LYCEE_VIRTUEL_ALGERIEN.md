@@ -4976,3 +4976,31 @@ where n.nspname = 'public'
 - La CI #42910652748 a détecté une assertion supplémentaire dans `ci/check-masar.mjs` qui exigeait encore le Service Worker `.133` (test historique Lot 248), alors que le Lot 261 passe en `.134`.
 - Assertion mise à jour vers `.134` ; commit correctif : `cc53c17a751b311ce29ca1de0712878b0ea77183`.
 - L'échec précédent était un décalage du test, pas une erreur du code applicatif. La CI du HEAD corrigé doit encore terminer.
+
+
+
+## Lot 262 — audit Supabase ciblé après retrait MFA (10 novembre 2026)
+
+### Validation PR / aperçu
+- PR #17 : ouverte, non fusionnée, fusionnable ; HEAD contrôlé `587b7df3296f7172726149f136dd5cab9d8f2626`.
+- GitHub Actions #42910826362 : **success**, job « Validation structurelle & pédagogique » terminé avec succès (33 étapes utiles).
+- Build Cloudflare Workers Preview du même HEAD : **success**, build ID `02abe4fd-828a-4f14-9ad5-28a22a3091cf`.
+- Supabase Preview : **skipped** ; aucune branche Supabase créée.
+
+### Audit base active — lecture seule
+- Les 37 tables du schéma `public` observées ont RLS activé.
+- Trois tables historiques du MFA (`mfa_email_challenges`, `mfa_email_factors`, `mfa_email_sessions`) ont RLS activé mais aucune politique. Elles restent donc sans accès via les politiques Data API ordinaires ; elles sont des reliquats de la précédente expérimentation MFA, et non une preuve que le MFA est encore appelé par le client PR.
+- Security Advisors : 1 fonction `SECURITY DEFINER` exécutable par `anon`, 42 fonctions `SECURITY DEFINER` exécutables par `authenticated`, et protection Auth contre les mots de passe compromis désactivée.
+- Fonction anonyme identifiée : `public.agreement_current(cle text)`. Elle a `search_path` fixé à `pg_catalog, public` et retourne la ligne complète de la convention active. La politique RLS de `public.agreements` autorise la lecture directe seulement à `authenticated`, alors que cette fonction SECURITY DEFINER est appelable par `anon` et contourne donc cette frontière RLS. Le contenu des conventions peut être destiné à la lecture publique, mais cet écart doit être explicitement validé ; recommandation : retirer EXECUTE à `anon` si l'accès public n'est pas une exigence.
+- Revue manuelle ciblée de 12 fonctions privilégiées : `admin_dashboard`, `admin_report`, `admin_student`, `admin_decide_parent_role_request`, `accounting_depense`, `accounting_close_month`, `setting_set`, `subscription_decide`, `subscription_set_preuve`, `agreement_accept`, `agreement_publish` et `active_entitlement`. Les définitions observées contiennent des contrôles d'autorisation/perimètre (permission admin, rôle admin général, wilaya, identité de session ou propriété de la ressource selon la fonction). Ce contrôle ciblé ne remplace pas la revue exhaustive des 42 fonctions.
+- Les fonctions privilégiées examinées fixent un `search_path` explicite (plusieurs à `pg_catalog, public`, certaines à vide avec qualification des objets). Aucun défaut d'injection de schéma n'a été démontré dans cet échantillon.
+- Alerte Auth : `auth_leaked_password_protection` est désactivée. Recommandation : activer la protection contre les mots de passe compromis dans les réglages Auth après vérification des impacts de politique ; aucune modification n'a été faite.
+- Les 3 alertes de tables MFA sans politique et les alertes SECURITY DEFINER sont des constats de configuration ; elles ne prouvent pas à elles seules une fuite de données. Le cas `agreement_current` est néanmoins un écart concret entre le privilège RPC et la politique RLS de la table.
+
+### Décisions / limites
+- Audit effectué en lecture seule : aucune révocation de privilège, fonction SQL, politique RLS, table, migration, paramètre Auth, secret, Edge Function ou donnée distante n'a été modifié.
+- Aucun changement de sécurité n'a été poussé dans le code applicatif de ce lot ; les corrections éventuelles seront préparées séparément après validation de l'intention métier pour l'accès public aux conventions.
+- Aucun test d'intrusion, test anonyme HTTP réel, test navigateur ou test de compte étudiant n'est revendiqué.
+- Le retrait MFA du code PR reste inchangé. La fonction Edge distante `mfa-email` v7 et les anciennes tables restent des reliquats actifs/passifs du projet distant ; leur suppression n'a pas été autorisée ni effectuée.
+- Confirmation e-mail/SMTP toujours non résolue ; aucun e-mail réel envoyé et aucun réglage Auth modifié.
+- Aucun coût, aucune branche Supabase, aucun déploiement de production, aucune fusion ; `main` inchangée. PR #17 reste ouverte.
