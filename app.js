@@ -1728,6 +1728,23 @@ function paintGateStats(){
 }
 
 function enterApp(session){
+  // Point de contrôle central : aucun appel direct ne peut ouvrir une session cloud
+  // sans avoir consommé une validation MFA récente, même depuis un autre module.
+  if(session && session.src === 'cloud'){
+    if(!window.DZ_MFA || typeof window.DZ_MFA.consumeGatePass !== 'function' ||
+       typeof window.DZ_MFA.requireGate !== 'function'){
+      showGateError('#loginErr', 'تعذر تحميل طبقة التحقق الأمني. لم يتم فتح الحساب السحابي.');
+      return;
+    }
+    if(!window.DZ_MFA.consumeGatePass()){
+      window.DZ_MFA.requireGate().then(function(blocked){
+        if(!blocked) enterApp(session);
+      }).catch(function(error){
+        showGateError('#loginErr', error && error.message ? error.message : 'تعذر إكمال التحقق الأمني.');
+      });
+      return;
+    }
+  }
   const gate = $('#gate'), shell = $('#shell');
   if(gate) gate.hidden = true;
   if(shell) shell.hidden = false;
