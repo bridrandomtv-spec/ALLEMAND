@@ -4026,3 +4026,14 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Aucun changement dans le projet Supabase actif ; aucun SQL exécuté en écriture.
 - Aucun déploiement Edge Function, aucun déploiement Cloudflare production, aucun merge et aucun coût.
 - PR #17 reste ouverte ; `main` inchangée.
+
+
+---
+
+## Lot 219 — adaptation du contrôle de régression du portail après centralisation MFA (10 novembre 2026)
+
+- La première exécution CI du Lot 218 a révélé une assertion devenue trop stricte dans `ci/check-public-portal.mjs` : elle attendait exactement quatre occurrences du garde MFA, alors que le Lot 218 ajoute volontairement une cinquième vérification centrale dans `enterApp`.
+- L'assertion a été remplacée par un contrôle fonctionnel : les quatre parcours cloud historiques restent présents et la frontière `enterApp` doit vérifier la session cloud, consommer le permis à usage unique et relancer le contrôle MFA si nécessaire.
+- Ce changement corrige uniquement le test de régression ; il ne retire aucune protection applicative.
+- La CI complète du HEAD final doit encore être confirmée.
+- Aucun changement Supabase actif, aucun déploiement, aucun merge, aucune dépense ; PR #17 reste ouverte.
