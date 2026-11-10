@@ -3531,3 +3531,10 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Cause : le Lot 202 a volontairement supprimé le désenrôlement autonome et remplacé l'ancienne vérification préalable au désenrôlement par le refus serveur `EMAIL_FACTOR_REQUIRED`. L'assertion historique attendait encore le marqueur de l'ancien parcours.
 - Correction ciblée : le marqueur CI historique a été remplacé par `EMAIL_FACTOR_REQUIRED`, commit `f9f2c57fd23472b5c9dee35efb5bf77826427cad`. Aucun code applicatif n'a été modifié par ce correctif.
 - Une nouvelle CI est déclenchée ; le résultat reste à confirmer.
+
+
+### Troisième ajustement CI du Lot 202 — assertion du garde e-mail
+- La CI #42826171551 a validé la syntaxe JavaScript et les validations précédentes, puis a échoué sur une seconde assertion historique du garde e-mail qui attendait l'ancienne condition `enrolled && !verified && !nativeState.required`.
+- Le nouveau parcours exige le facteur e-mail dans tous les cas : enrôlement si absent, défi login s'il existe mais que la session n'est pas vérifiée.
+- Assertion mise à jour pour contrôler `!emailState.enrolled || !emailState.verified` et le choix `enroll/login`, commit `bec61ce8078ccb382c358663bf7b0bd713b4825f`.
+- Aucun code applicatif n'a été modifié par ce correctif. Nouvelle exécution CI à surveiller.
