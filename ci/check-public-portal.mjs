@@ -649,6 +649,7 @@ for (const marker of [
   'private.student_email_mfa_access_allowed()',
   "when (select auth.jwt() ->> 'role') = 'service_role' then true",
   'to authenticated, service_role',
+  'grant usage on schema private to authenticated, service_role',
   "bucket_id <> 'prive'",
   "p.role = 'eleve'",
   "auth.jwt() ->> 'session_id'",
