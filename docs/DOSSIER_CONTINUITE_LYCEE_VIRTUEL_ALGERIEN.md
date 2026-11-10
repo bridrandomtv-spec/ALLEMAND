@@ -5076,3 +5076,30 @@ Le contrôle de taille de l'upload général est uniquement côté navigateur et
 5. Vérifier si le dépôt général doit accepter des fichiers exécutables/archives ou seulement les formats pédagogiques réellement nécessaires avant de fixer la liste autorisée.
 
 Aucun changement SQL, Storage, bucket, Auth, RLS, privilège, secret, fichier utilisateur ou compte n'a été effectué. Aucun upload de test, aucun déploiement, aucune nouvelle branche, aucun merge et aucun coût engagé. PR #17 reste ouverte et non fusionnée.
+
+
+
+## Lot 266 — audit des preuves d’abonnement et du circuit de validation — 10 novembre 2026
+
+### Périmètre et méthode
+- Revue en lecture seule du code `supabase/supabase.js`, `billing.js`, `admin.js`, ainsi que des fonctions SQL, privilèges, politiques RLS et colonnes réelles des tables `subscriptions` et `payments`.
+- Aucun compte, abonnement, paiement, fichier ou URL signée n'a été créé, modifié ou consulté. Aucun test d'attaque dynamique n'a été exécuté.
+
+### Contrôles d'accès confirmés
+- `subscription_set_preuve(bigint,text)` est une fonction `SECURITY DEFINER` avec `search_path` vide et qualification explicite. Elle exige `auth.uid()`, n'accepte pas une preuve vide et ne met à jour que l'abonnement dont `user_id = auth.uid()`, en statut `en_attente` ou `preuve`. Aucun remplacement de la preuve d'un autre compte n'est démontré par cette fonction.
+- `subscriptions` : l'étudiant dispose de SELECT et INSERT, pas d'UPDATE SQL direct. La politique INSERT exige que `user_id = auth.uid()` et que le statut initial soit `en_attente`. La preuve passe donc par la RPC dédiée.
+- `subscription_decide` vérifie la permission `payments.validate`, verrouille la ligne, vérifie le statut et limite la décision au périmètre wilaya de l'étudiant. L'activation ne peut pas être déclenchée par un simple UPDATE étudiant.
+- `payments` : le rôle `authenticated` dispose de SELECT uniquement ; aucun privilège INSERT n'est accordé, même si une politique RLS d'insertion existe. Le code client qui tente `createPayment()` ne peut donc pas créer cette ligne avec les privilèges actuellement relevés.
+
+### Incohérences fonctionnelles et risques
+1. **Preuve non stockée dans Storage** : `billing.js` transforme le justificatif en chaîne `data:` (image compressée ou PDF) puis appelle `setPreuve`. La valeur est stockée dans `subscriptions.preuve`, pas dans le bucket privé `prive`. La limite de 1 Mo et le filtre image/PDF sont appliqués dans le navigateur seulement ; un appel direct à la RPC peut fournir un texte arbitraire ou une chaîne beaucoup plus longue. À durcir côté serveur (longueur, format MIME/signature et taille décodée) avant de considérer le justificatif fiable.
+2. **Aucune preuve dans la table payments** : le schéma réel de `payments` ne contient pas de colonne `preuve`. Pourtant `admin.js` lit `r.preuve` dans la file des paiements et passe cette valeur à `ouvrirRecu()`. De plus, `admQueue()` sélectionne explicitement seulement `id,montant,devise,statut,methode,ref_plateforme,user_id`. Les boutons d'ouverture/téléchargement du justificatif dans cette file ne peuvent donc pas fonctionner avec le schéma et la requête actuels.
+3. **Deux circuits non raccordés** : la preuve est enregistrée sur `subscriptions`, alors que la file de validation et les boutons de reçu lisent `payments`. La page principale d'administration affiche la valeur `subscriptions.preuve` comme texte échappé, mais ne la transforme pas en aperçu/téléchargement. L'interface présente ainsi un parcours d'envoi de justificatif sans parcours administratif cohérent pour consulter le document.
+4. **Plan et montant non validés côté serveur à la création** : `createSub(plan,montant)` insère directement `plan` et `montant` depuis le navigateur. La politique RLS ne vérifie que l'identité propriétaire et le statut initial `en_attente`. Aucun déclencheur n'est présent sur `subscriptions` dans l'inventaire relevé, et `subscription_decide` ne compare pas le plan/montant à la table `plans` avant activation. Un client modifié peut donc soumettre une valeur de plan/montant différente de l'offre affichée ; la validation humaine doit actuellement détecter cet écart. C'est un défaut d'intégrité métier, pas un accès aux données d'un autre compte.
+5. **Téléchargement Storage** : `fileUrl(chemin)` crée une URL signée pour le chemin fourni ; la lecture réelle reste soumise à la politique Storage. Le flux de preuve d'abonnement audité n'utilise toutefois pas ce mécanisme. Aucun accès inter-comptes via URL signée n'a été démontré.
+
+### Conclusion et suites proposées — aucune correction appliquée
+- Pas de vulnérabilité démontrée permettant à un étudiant de modifier l'abonnement ou le justificatif d'un autre étudiant.
+- Défauts prioritaires à corriger dans la PR après validation du parcours métier : (a) choisir une seule source de vérité pour le justificatif et aligner le schéma, l'upload et la file admin ; (b) imposer les limites de taille/format côté serveur ; (c) valider plan et montant depuis `plans` côté serveur au moment de la création/décision ; (d) clarifier le modèle `payments`, puisque le client tente un INSERT non autorisé et que l'interface admin attend un champ `preuve` absent.
+- Aucune modification du code applicatif, SQL, RLS, Storage, Auth, privilège, paramètre, secret ou donnée Supabase n'a été effectuée dans ce lot. Aucun changement de facturation ou de tarification n'est appliqué ; ce lot est un audit en lecture seule du flux déjà présent.
+- Aucun déploiement, aucune fusion, aucune nouvelle branche, aucun coût et aucun changement sur `main`. PR #17 reste ouverte et non fusionnée.
