@@ -5,8 +5,7 @@
    d'unités et les JSON de livres/traductions ne partent qu'avec un jeton
    Supabase dont l'entitlement est vérifié PAR LE RLS EXISTANT (lesson_content).
    Variables CF requises : SUPABASE_URL, SUPABASE_ANON_KEY.
-   Tant qu'elles sont absentes : mode temporaire fail-open signalé par
-   X-Content-Guard: config-manquante (le retirer = bloquer tout le monde). */
+   Si elles sont absentes : fail-closed (503), aucun fichier protégé n'est servi. */
 const PROT = [
   /^\/unite(2|3|4|5|6|10|11|12|13|14|15|16)\.js$/,
   /^\/unites3as_[ab]\.js$/,
@@ -23,17 +22,13 @@ export default {
     const url = new URL(request.url);
     if (PROT.some(function(re){ return re.test(url.pathname); })) {
       if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
-        const r = await env.ASSETS.fetch(request);
-        const h = new Headers(r.headers);
-        h.set('Cache-Control', 'no-store');
-        h.set('X-Content-Guard', 'config-manquante');
-        return new Response(r.body, { status: r.status, statusText: r.statusText, headers: h });
+        return jsonRes({ error: 'content_guard_not_configured' }, 503);
       }
       const auth = request.headers.get('Authorization') || '';
       if (!/^Bearer .+/.test(auth)) return jsonRes({ error: 'abonnement_requis' }, 401);
       let ok = false;
       try {
-        const chk = await fetch(env.SUPABASE_URL + '/rest/v1/lesson_content?select=id&limit=1',
+        const chk = await fetch(env.SUPABASE_URL + '/rest/v1/lesson_content?select=id&free=eq.false&limit=1',
           { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: auth } });
         const j = await chk.json();
         ok = Array.isArray(j) && j.length > 0;
