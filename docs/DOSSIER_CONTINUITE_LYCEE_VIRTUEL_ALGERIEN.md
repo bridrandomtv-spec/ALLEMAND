@@ -4937,3 +4937,15 @@ where n.nspname = 'public'
 - Branche existante uniquement : `design/prototypes-67-74-alignment`.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée.
 - Aucun déploiement de production.
+
+
+## Lot 260 — synchronisation des assertions du tableau de bord après retrait MFA (10 novembre 2026)
+
+- CI #42904443609 sur le commit `82997418f5c14bdd63acb48291d32c83bf8931af` : échec isolé à l'étape « Contrôler le tableau de bord مسارك ».
+- Analyse du journal : le contrôle `ci/check-masar.mjs` attendait encore le Service Worker `.132` et `app.js?v=3564`, alors que le code applicatif du Lot 259 utilise `dz-de-v3.185.0.0.133` et `app.js?v=3565`.
+- Correction ciblée de ces deux assertions uniquement, sans modifier le code fonctionnel du tableau de bord : commit `7c40874a428798fc5a55939598c386fbd044e2e7`.
+- Le build Cloudflare de prévisualisation correspondant au HEAD précédent a réussi ; il s'agit d'un build de preview, pas d'une publication de production.
+- La CI du nouveau HEAD doit encore terminer ; aucune réussite n'est anticipée dans cet addendum.
+- Supabase Preview reste ignoré car aucune branche Supabase n'est associée. Aucune branche Supabase n'a été créée.
+- Aucun réglage Auth, SMTP, secret, donnée, schéma, RLS, Edge Function ou migration distante n'a été modifié. Aucun e-mail réel ni test navigateur n'est revendiqué.
+- PR #17 reste ouverte et non fusionnée ; aucune modification de `main`, aucun déploiement de production et aucune dépense.
