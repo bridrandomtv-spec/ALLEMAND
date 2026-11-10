@@ -43,7 +43,7 @@
     }
 
     // The Edge Function is authoritative about the profile role; missing policy metadata fails closed.
-    if(typeof emailState.required!=='boolean'){
+    if(emailState.contractVersion!==1 || typeof emailState.required!=='boolean'){
       status('#loginErr','نسخة خدمة التحقق الأمني غير متوافقة مع المنصة. يلزم تحديث الخدمة من الإدارة؛ لم يتم تجاوز فحص الأمان.');
       return true;
     }
