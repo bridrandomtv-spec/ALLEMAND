@@ -34,6 +34,13 @@ as $function$
       where f.user_id = (select auth.uid())
         and s.session_id::text = coalesce((select auth.jwt() ->> 'session_id'), '')
         and s.expires_at > pg_catalog.now()
+        and exists (
+          select 1
+          from auth.sessions auth_session
+          where auth_session.id::text = coalesce((select auth.jwt() ->> 'session_id'), '')
+            and auth_session.user_id = (select auth.uid())
+            and (auth_session.not_after is null or auth_session.not_after > pg_catalog.now())
+        )
     )
     else true
   end;
