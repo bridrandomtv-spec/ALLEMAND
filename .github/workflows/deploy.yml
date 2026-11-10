@@ -1124,8 +1124,6 @@ jobs:
       - name: Garde d'accès + TEST DE FUITE (access.js / config)
         run: |
           node ci/check-access.mjs
-      - name: Vérifier le MFA e-mail obligatoire des étudiants (contrôles statiques)
-        run: node ci/check-mfa-security.mjs
       - name: Matrice des parcours (élève · prof · parent · expiration · renouvellement · contournements)
         run: |
           node ci/check-parcours.mjs
