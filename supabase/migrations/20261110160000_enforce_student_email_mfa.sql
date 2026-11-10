@@ -1,0 +1,464 @@
+-- Lot 204 — MFA e-mail obligatoire pour les seuls profils role='eleve'.
+-- Migration source destinée à la PR #17. Ne pas exécuter avant validation et déploiement coordonné.
+-- Les politiques existantes restent permissives et inchangées ; ce garde est ajouté en RESTRICTIVE.
+
+create schema if not exists private authorization postgres;
+revoke all on schema private from public, anon, authenticated;
+grant usage on schema private to authenticated;
+
+create or replace function private.student_email_mfa_access_allowed()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select case
+    when (select auth.uid()) is null then false
+    when not exists (
+      select 1
+      from public.profiles p
+      where p.id = (select auth.uid())
+    ) then false
+    when exists (
+      select 1
+      from public.profiles p
+      where p.id = (select auth.uid())
+        and p.role = 'eleve'
+    ) then exists (
+      select 1
+      from public.mfa_email_factors f
+      join public.mfa_email_sessions s
+        on s.user_id = f.user_id
+      where f.user_id = (select auth.uid())
+        and s.session_id::text = coalesce((select auth.jwt() ->> 'session_id'), '')
+        and s.expires_at > pg_catalog.now()
+    )
+    else true
+  end;
+$function$;
+
+revoke all on function private.student_email_mfa_access_allowed() from public, anon;
+grant execute on function private.student_email_mfa_access_allowed() to authenticated;
+
+-- Un garde restrictif par table : il s'additionne aux politiques actuelles
+-- sans remplacer les règles de propriété, de rôle, de modération ou de wilaya.
+do $migration$
+declare
+  v_table record;
+begin
+  for v_table in
+    select c.relname
+    from pg_catalog.pg_class c
+    join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public'
+      and c.relkind in ('r', 'p')
+      and c.relrowsecurity
+  loop
+    execute pg_catalog.format(
+      'drop policy if exists student_email_mfa_gate on public.%I',
+      v_table.relname
+    );
+    execute pg_catalog.format(
+      'create policy student_email_mfa_gate on public.%I as restrictive for all to authenticated using (private.student_email_mfa_access_allowed()) with check (private.student_email_mfa_access_allowed())',
+      v_table.relname
+    );
+  end loop;
+end
+$migration$;
+
+-- Les fonctions SECURITY DEFINER ci-dessous contournent les politiques RLS
+-- pendant leur exécution. Elles appliquent donc explicitement le même garde
+-- pour les opérations et lectures personnelles accessibles aux étudiants.
+
+create or replace function public.active_entitlement(uid uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+  select case
+    when not private.student_email_mfa_access_allowed() then false
+    when uid is null then false
+    when auth.uid() is distinct from uid
+         and not public.is_admin()
+      then false
+    else exists (
+      select 1
+      from public.subscriptions s
+      where s.user_id = uid
+        and s.statut = 'actif'
+        and (s.fin is null or s.fin > now())
+    )
+  end;
+$function$;
+
+create or replace function public.agreement_accept(aid bigint, nom_representant text default ''::text, lien_representant text default ''::text)
+returns jsonb
+language plpgsql
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+declare
+  pr public.profiles%rowtype;
+begin
+  if auth.uid() is null then
+    raise exception 'auth_required';
+  end if;
+  if not private.student_email_mfa_access_allowed() then
+    raise exception 'mfa_required';
+  end if;
+  if not exists (
+    select 1 from public.agreements a
+    where a.id = aid and a.actif
+  ) then
+    raise exception 'agreement_indisponible';
+  end if;
+  select * into pr from public.profiles where id = auth.uid();
+  if not found then raise exception 'profil_introuvable'; end if;
+  if pr.role = 'eleve' and coalesce(nom_representant,'') = '' then
+    raise exception 'representant_requis_pour_mineur';
+  end if;
+  insert into public.agreement_acceptances
+    (agreement_id, user_id, accepte_par, nom_representant, lien_representant)
+  values (
+    aid, auth.uid(), auth.uid(),
+    case when pr.role = 'eleve'
+      then agreement_accept.nom_representant
+      else coalesce(nullif(agreement_accept.nom_representant,''), pr.pseudo)
+    end,
+    coalesce(
+      nullif(agreement_accept.lien_representant,''),
+      case when pr.role = 'eleve' then 'representant_legal' else 'self' end
+    )
+  );
+  return jsonb_build_object('ok', true);
+end;
+$function$;
+
+create or replace function public.agreement_status_for(uid uuid, cle text)
+returns text
+language sql
+stable
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+  select case
+    when auth.uid() is null then null
+    when not private.student_email_mfa_access_allowed() then null
+    when $1 is distinct from auth.uid()
+      and not public.admin_can(auth.uid(), 'reports.read') then null
+    else coalesce((
+      select case
+        when (last.meta->>'retrait') = 'true' then 'retire'
+        when last.agreement_id <> (
+          select c.id from public.agreements c
+          where c.cle = $2 and c.actif
+          order by c.version desc limit 1
+        ) then 'version_a_reevaluer'
+        else 'accepte'
+      end
+      from (
+        select a.* from public.agreement_acceptances a
+        join public.agreements g on g.id = a.agreement_id
+        where a.user_id = $1 and g.cle = $2
+        order by a.accepte_at desc, a.id desc limit 1
+      ) last
+    ), 'jamais')
+  end;
+$function$;
+
+create or replace function public.agreement_withdraw(aid bigint)
+returns jsonb
+language plpgsql
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+begin
+  if auth.uid() is null then raise exception 'auth_required'; end if;
+  if not private.student_email_mfa_access_allowed() then raise exception 'mfa_required'; end if;
+  if not exists (
+    select 1 from public.agreement_acceptances a
+    where a.agreement_id = aid
+      and a.user_id = auth.uid()
+      and a.meta->>'retrait' is distinct from 'true'
+  ) then raise exception 'acceptation_introuvable'; end if;
+  insert into public.agreement_acceptances
+    (agreement_id, user_id, accepte_par, meta)
+  values (aid, auth.uid(), auth.uid(), '{"retrait":true}'::jsonb);
+  return jsonb_build_object('ok', true);
+end;
+$function$;
+
+create or replace function public.msg_can_dm(a uuid, b uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+  select private.student_email_mfa_access_allowed()
+     and auth.uid() is not null
+     and auth.uid() in (a, b)
+     and exists (
+       select 1
+       from public.profiles pa
+       join public.profiles pb
+         on pb.wilaya = pa.wilaya
+        and pb.niveau = pa.niveau
+        and pb.filiere = pa.filiere
+       where pa.id = a and pb.id = b and a <> b
+         and pa.wilaya is not null and pa.niveau is not null
+         and pa.filiere is not null
+         and pa.verif_statut = 'verifie'
+         and pb.verif_statut = 'verifie'
+     );
+$function$;
+
+create or replace function public.msg_is_member(uid uuid, cid bigint)
+returns boolean
+language sql
+stable
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+  select private.student_email_mfa_access_allowed()
+     and auth.uid() is not null
+     and uid = auth.uid()
+     and (
+       exists (
+         select 1 from public.msg_members m
+         where m.conversation_id = cid and m.user_id = auth.uid()
+       )
+       or exists (
+         select 1
+         from public.msg_conversations c
+         join public.profiles p on p.id = auth.uid()
+         where c.id = cid and c.type = 'groupe'
+           and p.wilaya is not null and p.niveau is not null
+           and p.wilaya = c.wilaya and p.niveau = c.niveau
+           and (c.filiere is null or p.filiere = c.filiere)
+       )
+     );
+$function$;
+
+create or replace function public.msg_member_ok(cid bigint, uid uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+  select private.student_email_mfa_access_allowed()
+     and auth.uid() is not null
+     and uid = auth.uid()
+     and exists (
+       select 1 from public.msg_conversations c
+       where c.id = cid and (
+         (
+           c.type = 'direct' and (
+             (
+               (select count(*) from public.msg_members m where m.conversation_id = cid) = 0
+               and c.created_by = auth.uid()
+             )
+             or (
+               (select count(*) from public.msg_members m where m.conversation_id = cid) = 1
+               and exists (
+                 select 1 from public.msg_members m
+                 where m.conversation_id = cid
+                   and m.user_id <> auth.uid()
+                   and public.msg_can_dm(auth.uid(), m.user_id)
+               )
+             )
+           )
+         )
+         or (
+           c.type <> 'direct'
+           and exists (
+             select 1 from public.profiles p
+             where p.id = auth.uid()
+               and p.wilaya is not null and p.niveau is not null
+               and p.wilaya = c.wilaya and p.niveau = c.niveau
+               and (c.filiere is null or p.filiere = c.filiere)
+           )
+         )
+       )
+     );
+$function$;
+
+create or replace function public.msg_not_blocked(cid bigint, snd uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+  select private.student_email_mfa_access_allowed()
+     and auth.uid() is not null
+     and snd = auth.uid()
+     and not exists (
+       select 1
+       from public.msg_members m
+       join public.msg_blocks b
+         on b.blocker_id = m.user_id
+        and b.blocked_id = auth.uid()
+       where m.conversation_id = cid
+     );
+$function$;
+
+create or replace function public.msg_open_direct(p_other uuid)
+returns bigint
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_uid uuid := auth.uid();
+  v_conv bigint;
+begin
+  if v_uid is null then raise exception 'auth_required'; end if;
+  if not private.student_email_mfa_access_allowed() then raise exception 'mfa_required'; end if;
+  if p_other is null or p_other = v_uid then raise exception 'msg_invalid_recipient'; end if;
+  if not public.msg_can_dm(v_uid, p_other) then raise exception 'msg_dm_interdit'; end if;
+  perform pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended(
+      least(v_uid::text, p_other::text) || ':' || greatest(v_uid::text, p_other::text), 0
+    )
+  );
+  select c.id into v_conv
+  from public.msg_conversations c
+  join public.msg_members m on m.conversation_id = c.id
+  where c.type = 'direct'
+  group by c.id
+  having count(*) = 2
+     and count(*) filter (where m.user_id = v_uid) = 1
+     and count(*) filter (where m.user_id = p_other) = 1
+  order by c.id desc limit 1;
+  if v_conv is not null then return v_conv; end if;
+  insert into public.msg_conversations (type, created_by, titre)
+  values ('direct', v_uid, '')
+  returning id into v_conv;
+  insert into public.msg_members (conversation_id, user_id)
+  values (v_conv, v_uid), (v_conv, p_other);
+  return v_conv;
+end;
+$function$;
+
+create or replace function public.my_parent_link_requests()
+returns table(request_id bigint, parent_id uuid, parent_pseudo text, created_at timestamp with time zone)
+language sql
+stable
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+  select r.id, r.parent_id, coalesce(p.pseudo,'') as parent_pseudo, r.created_at
+  from public.parent_link_requests r
+  left join public.profiles p on p.id = r.parent_id
+  where auth.uid() is not null
+    and private.student_email_mfa_access_allowed()
+    and r.child_id = auth.uid()
+    and r.status = 'pending'
+    and exists (
+      select 1 from public.profiles me
+      where me.id = auth.uid() and me.role = 'eleve'
+    )
+  order by r.created_at desc;
+$function$;
+
+create or replace function public.respond_parent_link_request(p_request_id bigint, p_accept boolean)
+returns jsonb
+language plpgsql
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+declare
+  v_req public.parent_link_requests%rowtype;
+  v_parent_role text;
+  v_child_role text;
+begin
+  if auth.uid() is null then raise exception 'auth_required'; end if;
+  if not private.student_email_mfa_access_allowed() then raise exception 'mfa_required'; end if;
+  if p_request_id is null or p_accept is null then raise exception 'parametres_invalides'; end if;
+  select * into v_req
+  from public.parent_link_requests
+  where id = p_request_id and child_id = auth.uid() and status = 'pending'
+  for update;
+  if not found then raise exception 'demande_indisponible'; end if;
+  select role into v_parent_role from public.profiles where id = v_req.parent_id;
+  select role into v_child_role from public.profiles where id = auth.uid();
+  if v_parent_role is distinct from 'parent' or v_child_role is distinct from 'eleve' then
+    raise exception 'roles_incompatibles';
+  end if;
+  if p_accept then
+    insert into public.child_links(parent_id, child_id)
+    values (v_req.parent_id, v_req.child_id)
+    on conflict (parent_id, child_id) do nothing;
+    update public.parent_link_requests
+      set status='accepted', decided_at=now(), decided_by=auth.uid()
+      where id=v_req.id;
+  else
+    update public.parent_link_requests
+      set status='rejected', decided_at=now(), decided_by=auth.uid()
+      where id=v_req.id;
+  end if;
+  return jsonb_build_object('ok', true, 'status',
+    case when p_accept then 'accepted' else 'rejected' end);
+end;
+$function$;
+
+create or replace function public.subscription_set_preuve(p_subscription_id bigint, p_preuve text)
+returns jsonb
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_uid uuid := auth.uid();
+  v_id bigint;
+begin
+  if v_uid is null then raise exception 'authentification_requise'; end if;
+  if not private.student_email_mfa_access_allowed() then raise exception 'mfa_required'; end if;
+  if p_preuve is null or btrim(p_preuve) = '' then raise exception 'preuve_obligatoire'; end if;
+  update public.subscriptions as s
+     set preuve = p_preuve, statut = 'preuve'
+   where s.id = p_subscription_id
+     and s.user_id = v_uid
+     and s.statut in ('en_attente', 'preuve')
+  returning s.id into v_id;
+  if v_id is null then raise exception 'abonnement_introuvable_ou_non_modifiable'; end if;
+  return jsonb_build_object('ok', true, 'id', v_id, 'statut', 'preuve');
+end;
+$function$;
+
+create or replace function public.unlink_child(p_child_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+declare
+  v_deleted integer;
+begin
+  if auth.uid() is null then raise exception 'auth_required'; end if;
+  if not private.student_email_mfa_access_allowed() then raise exception 'mfa_required'; end if;
+  if p_child_id is null then raise exception 'enfant_invalide'; end if;
+  delete from public.child_links cl
+  where cl.child_id = p_child_id
+    and (
+      (cl.parent_id = auth.uid() and exists (
+        select 1 from public.profiles p where p.id = auth.uid() and p.role = 'parent'
+      ))
+      or (cl.child_id = auth.uid() and exists (
+        select 1 from public.profiles p where p.id = auth.uid() and p.role = 'eleve'
+      ))
+      or public.is_admin()
+    );
+  get diagnostics v_deleted = row_count;
+  if v_deleted = 0 then raise exception 'lien_introuvable_ou_non_autorise'; end if;
+  return jsonb_build_object('ok', true);
+end;
+$function$;
+
+comment on function private.student_email_mfa_access_allowed() is
+  'Allows authenticated non-students; requires an unexpired custom e-mail MFA session for profiles.role=eleve.';
