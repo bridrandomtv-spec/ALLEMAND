@@ -4037,3 +4037,27 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Ce changement corrige uniquement le test de régression ; il ne retire aucune protection applicative.
 - La CI complète du HEAD final doit encore être confirmée.
 - Aucun changement Supabase actif, aucun déploiement, aucun merge, aucune dépense ; PR #17 reste ouverte.
+
+
+---
+
+## Lot 220 — fermeture du fail-open Worker et preuve d'abonnement payant (10 novembre 2026)
+
+### Constat de l'audit
+- `src/site-worker.js` servait les fichiers protégés lorsque `SUPABASE_URL` ou `SUPABASE_ANON_KEY` manquait, en ajoutant seulement l'en-tête `X-Content-Guard: config-manquante`.
+- Le contrôle interrogeait `lesson_content?select=id&limit=1`. Or la policy RLS autorise aussi les lignes `free = true`; une seule fiche gratuite suffisait donc à faire réussir le contrôle et à débloquer les fichiers d'unités protégés.
+- Le garde MFA SQL de la PR ne suffisait pas à corriger cette faiblesse de logique dans le Worker.
+
+### Correction source dans la PR #17
+- Configuration Supabase absente : réponse HTTP 503 `content_guard_not_configured`; aucun fichier protégé n'est servi.
+- Contrôle d'accès : la requête exige maintenant `free=eq.false`. Grâce à la policy RLS existante, une ligne payante n'est retournée que si l'utilisateur possède réellement l'entitlement (ou le rôle administrateur prévu).
+- Le contrôle reste effectué côté Worker avant `ASSETS.fetch`, sans exposer la clé service_role.
+
+### Tests
+- `ci/check-access.mjs` vérifie la sélection exclusive de lignes payantes et interdit le retour du chemin fail-open.
+- Les tests CI complets restent à confirmer sur le dernier HEAD.
+
+### Limites
+- Modification uniquement dans les sources de la PR ; aucun changement de variable Cloudflare ni déploiement Worker.
+- Aucune modification Supabase active, aucune migration appliquée, aucun merge et aucun coût.
+- PR #17 reste ouverte ; `main` inchangée.
