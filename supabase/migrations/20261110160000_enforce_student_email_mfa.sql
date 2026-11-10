@@ -14,6 +14,7 @@ security definer
 set search_path = ''
 as $function$
   select case
+    when (select auth.role()) = 'service_role' then true
     when (select auth.uid()) is null then false
     when not exists (
       select 1
