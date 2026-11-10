@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 const sql = fs.readFileSync('supabase/migrations/20261110160000_enforce_student_email_mfa.sql', 'utf8');
 const edge = fs.readFileSync('supabase/functions/mfa-email/index.ts', 'utf8');
 const client = fs.readFileSync('mfa-security.js', 'utf8');
+const app = fs.readFileSync('app.js', 'utf8');
 
 for (const role of ['prof', 'admin', 'parent']) {
   assert.ok(sql.includes(`'${role}'`), `SQL helper must explicitly allow ${role}`);
@@ -73,4 +74,9 @@ assert.ok(sql.includes('pg_catalog.pg_advisory_xact_lock') &&
   sql.includes('set consumed_at = pg_catalog.now()'),
   'Challenge RPCs must serialize issuance, lock verification and enforce one-time/attempt limits');
 
-console.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
+assert.ok(app.includes("const cloudRestorePending = !!(s && s.src === 'cloud');"),
+  'A remembered cloud session must always enter the MFA restoration gate');
+assert.ok(!app.includes("const cloudRestorePending = !!(s && s.src === 'cloud' && !authLocalMode());"),
+  'Demo/offline mode must not bypass MFA for a remembered cloud session');
+
+\nconsole.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
