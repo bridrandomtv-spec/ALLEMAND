@@ -3524,3 +3524,10 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Cause exacte : six assertions/logs du contrôle portail attendaient encore `dz-de-v3.185.0.0.129`, alors que le Lot 202 avait synchronisé le Service Worker sur `.130`.
 - Correctif ciblé : remplacement des six références historiques par `.130`, commit `1ced68a4598a7e0c13810e9d695f7eb4dd4da60a`. Aucun code de portail, CSS ou tableau de bord n'a été changé par ce correctif.
 - Une nouvelle exécution CI est déclenchée sur le nouveau HEAD ; son résultat doit être vérifié avant de déclarer le lot validé.
+
+
+### Deuxième ajustement CI du Lot 202 — assertion step-up devenue obsolète
+- La CI #42826072402 a passé les validations précédentes, puis a échoué dans le contrôle MFA du portail avec `sécurité MFA e-mail serveur absente : RECENT_STEP_UP_REQUIRED`.
+- Cause : le Lot 202 a volontairement supprimé le désenrôlement autonome et remplacé l'ancienne vérification préalable au désenrôlement par le refus serveur `EMAIL_FACTOR_REQUIRED`. L'assertion historique attendait encore le marqueur de l'ancien parcours.
+- Correction ciblée : le marqueur CI historique a été remplacé par `EMAIL_FACTOR_REQUIRED`, commit `f9f2c57fd23472b5c9dee35efb5bf77826427cad`. Aucun code applicatif n'a été modifié par ce correctif.
+- Une nouvelle CI est déclenchée ; le résultat reste à confirmer.
