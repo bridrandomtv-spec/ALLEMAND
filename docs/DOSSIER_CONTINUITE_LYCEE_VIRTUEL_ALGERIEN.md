@@ -4248,3 +4248,24 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - L'audit ne prouve pas la délivrabilité ni l'état réel des paramètres Auth/Edge de Supabase. Les essais intégrés restent nécessaires dans un environnement isolé avant toute mise en production.
 - Aucun changement du code de production actif, aucune migration exécutée, aucun secret, réglage Auth, RLS ou donnée Supabase modifié ; aucun déploiement Cloudflare/Supabase.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée ; aucun environnement payant créé et aucun coût engagé.
+
+---
+
+## Lot 229 — audit des sessions, expiration et reconnexion (10 novembre 2026)
+
+### Vérifications de cohérence client / Edge / PostgreSQL
+- Le statut MFA étudiant ne se contente pas de vérifier l'existence d'un facteur : la fonction Edge recherche une validation liée au `session_id` Auth courant et dont `expires_at` est encore dans le futur.
+- Une validation e-mail réussie crée une autorisation liée à l'utilisateur et à la session Auth courante, valable 12 heures. Le challenge lui-même lie le hachage du code à l'utilisateur, au `session_id` et à l'identifiant du défi.
+- Lors d'une nouvelle session Auth, ou après expiration de la fenêtre de 12 heures, le statut courant n'est plus vérifié ; le client redemande un défi de connexion pour l'élève déjà inscrit. L'inscription initiale et la reconnexion utilisent des finalités distinctes (`enroll` / `login`).
+- La migration vérifie en plus que la session de validation correspond au `session_id` du JWT, au même utilisateur dans `auth.sessions`, et que `not_after` n'est pas dépassé. L'expiration de la validation MFA seule ne suffit donc pas à autoriser l'accès.
+- Les rôles non étudiants connus restent explicitement exemptés ; les rôles inconnus ou absents sont refusés par la fonction Edge et par le garde PostgreSQL.
+
+### Renforcement CI
+- `ci/check-mfa-security.mjs` contrôle désormais le lien entre statut MFA et session Auth courante, l'expiration de 12 heures, l'attachement du défi à la session, ainsi que la vérification de `auth.sessions.not_after` côté PostgreSQL.
+- Ces assertions sont des contrôles statiques de cohérence du code source, pas une simulation de sessions Supabase réelles.
+
+### Statut et limites
+- Le run du Lot 228 (#42881303866) était encore en cours au moment de ce lot ; son résultat doit être vérifié séparément. Le nouveau commit déclenche une validation CI actualisée.
+- Le contrôle de la session et de l'expiration a été effectué par lecture des sources Edge et SQL ; aucune session réelle n'a été créée, expirée ou renouvelée dans un environnement de test.
+- Aucun déploiement, aucune migration appliquée, aucun changement de paramètres Auth, RLS, secrets ou données Supabase actives ; aucun environnement payant créé.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée.
