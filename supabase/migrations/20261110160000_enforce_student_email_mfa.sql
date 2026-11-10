@@ -674,5 +674,48 @@ begin
 end;
 $function$;
 
+-- Les fonctions SECURITY DEFINER publiques de cette migration sont des RPC
+-- réservées aux sessions authentifiées. CREATE OR REPLACE ne retire pas les
+-- droits EXECUTE implicites de PUBLIC : les révoquer explicitement évite tout
+-- appel anonyme, puis accorder les rôles applicatifs attendus.
+revoke all on function public.active_entitlement(uuid) from public, anon;
+grant execute on function public.active_entitlement(uuid) to authenticated, service_role;
+
+revoke all on function public.agreement_accept(bigint, text, text) from public, anon;
+grant execute on function public.agreement_accept(bigint, text, text) to authenticated, service_role;
+
+revoke all on function public.agreement_status_for(uuid, text) from public, anon;
+grant execute on function public.agreement_status_for(uuid, text) to authenticated, service_role;
+
+revoke all on function public.agreement_withdraw(bigint) from public, anon;
+grant execute on function public.agreement_withdraw(bigint) to authenticated, service_role;
+
+revoke all on function public.msg_can_dm(uuid, uuid) from public, anon;
+grant execute on function public.msg_can_dm(uuid, uuid) to authenticated, service_role;
+
+revoke all on function public.msg_is_member(uuid, bigint) from public, anon;
+grant execute on function public.msg_is_member(uuid, bigint) to authenticated, service_role;
+
+revoke all on function public.msg_member_ok(bigint, uuid) from public, anon;
+grant execute on function public.msg_member_ok(bigint, uuid) to authenticated, service_role;
+
+revoke all on function public.msg_not_blocked(bigint, uuid) from public, anon;
+grant execute on function public.msg_not_blocked(bigint, uuid) to authenticated, service_role;
+
+revoke all on function public.msg_open_direct(uuid) from public, anon;
+grant execute on function public.msg_open_direct(uuid) to authenticated, service_role;
+
+revoke all on function public.my_parent_link_requests() from public, anon;
+grant execute on function public.my_parent_link_requests() to authenticated, service_role;
+
+revoke all on function public.respond_parent_link_request(bigint, boolean) from public, anon;
+grant execute on function public.respond_parent_link_request(bigint, boolean) to authenticated, service_role;
+
+revoke all on function public.subscription_set_preuve(bigint, text) from public, anon;
+grant execute on function public.subscription_set_preuve(bigint, text) to authenticated, service_role;
+
+revoke all on function public.unlink_child(uuid) from public, anon;
+grant execute on function public.unlink_child(uuid) to authenticated, service_role;
+
 comment on function private.student_email_mfa_access_allowed() is
   'Allows authenticated non-students; requires an unexpired custom e-mail MFA session for profiles.role=eleve.';
