@@ -505,7 +505,7 @@ for (const marker of [
   'experimental: { recoveryCodes: true }'
 ]) if (!mfaClient.includes(marker)) fail('API MFA Supabase absente : ' + marker);
 for (const marker of [
-  'async function requireGate()','if(!window.SB || !SB.mfaAssurance)','function setLoginResendVisibility(type)',"if(attempts>=3)",
+  'async function requireGate()','if(!window.SB || !SB.mfaAssurance || !SB.mfaEmail)','function setLoginResendVisibility(type)',"if(attempts>=3)",
   'SB.mfaVerifyRecovery(value)','SB.mfaVerify(pending.factorId,pending.challengeId,value)',
   'SB.mfaEnrollTotp(','SB.mfaEnrollPhone(','SB.mfaVerifyEnrollment(','SB.mfaRecoveryGenerate()','[data-mfa-login-resend]','pending.challengeId=sent.challengeId','SB.mfaStart(pending.factorId)',
   'window.DZ_MFA={requireGate:requireGate','window.DZ.enterApp(profile)','window.DZ.toast('
@@ -553,7 +553,7 @@ if (!mfaFinishBlock.includes('if(await requireGate())return;') ||
 
 
 for (const marker of ['id="mfaChallengeForm"','id="mfaChallengeMethod"','id="mfaChallengeCode"','id="mfaSecurityCard"','id="mfaSecurityContent"']) if (!html.includes(marker)) fail('interface MFA absente : '+marker);
-if (!html.includes('mfa-security.js?v=12') || !sw.includes('./mfa-security.js?v=12')) fail('module MFA absent du chargement/précache');
+if (!html.includes('mfa-security.js?v=13') || !sw.includes('./mfa-security.js?v=13')) fail('module MFA absent du chargement/précache');
 if (!html.includes('id="mfaLoginSmsResend"') || !html.includes('data-mfa-login-resend')) fail('bouton de renvoi SMS au défi de connexion absent');
 if (!mfaModule.includes('setLoginResendVisibility(type)') || !mfaModule.includes("setLoginResendVisibility(preferred.type)") || !mfaModule.includes("setLoginResendVisibility(type);")) fail('visibilité du renvoi SMS non limitée au facteur téléphone');
 if (!mfaModule.includes('id=\"mfaPhoneEnrollForm\"') || !mfaModule.includes('id=\"mfaPhoneVerifyForm\"') || !mfaModule.includes('SB.mfaStart(enrolled.factorId)')) fail('enrôlement et validation du facteur SMS absents');
@@ -605,7 +605,7 @@ if(mfaFinalStart<0||mfaFinalEnd<=mfaFinalStart||
    !mfaFinalBlock.includes('if(!profile)')||
    !mfaFinalBlock.includes("typeof window.DZ.enterApp!=='function'")||
    !mfaFinalBlock.includes('window.DZ.enterApp(profile)')) fail('finalisation MFA : échec profil/entrée sans fermeture de session et retour connexion');
-if (!html.includes('mfa-security.js?v=12') || !sw.includes('./mfa-security.js?v=12')) fail('cache MFA Lot 197 non synchronisé');
+if (!html.includes('mfa-security.js?v=13') || !sw.includes('./mfa-security.js?v=13')) fail('cache MFA Lot 197 non synchronisé');
 if (!sw.includes("dz-de-v3.185.0.0.130")) fail('version Service Worker Lot 197 non actualisée');
 console.log('✅ Lot 197 : échec de finalisation MFA fermé, retour connexion et cache contrôlés.');
 
@@ -618,7 +618,7 @@ if(mfaLockoutStart<0||mfaLockoutEnd<=mfaLockoutStart||
    !mfaLockoutBlock.includes('await returnToLoginAfterMfa(')||
    mfaLockoutBlock.includes('await SB.logout()')) fail('verrouillage MFA : fermeture de session non vérifiée après trois échecs');
 if(!mfaModule.includes("تعذر إكمال تسجيل الدخول بعد التحقق")) fail('message de finalisation MFA non localisé en arabe');
-if(!html.includes('mfa-security.js?v=12')||!sw.includes('./mfa-security.js?v=12')) fail('cache MFA Lot 198 non synchronisé');
+if(!html.includes('mfa-security.js?v=13')||!sw.includes('./mfa-security.js?v=13')) fail('cache MFA Lot 198 non synchronisé');
 if(!sw.includes("dz-de-v3.185.0.0.130")) fail('version Service Worker Lot 198 non actualisée');
 console.log('✅ Lot 198 : fermeture contrôlée après trois échecs MFA et cache synchronisé.');
 
@@ -630,7 +630,7 @@ const mfaCancelBlock199=mfaModule.slice(mfaCancelStart,mfaCancelEnd);
 if(mfaCancelStart<0||mfaCancelEnd<=mfaCancelStart||
    !mfaCancelBlock199.includes('await returnToLoginAfterMfa(')||
    mfaCancelBlock199.includes('await SB.logout()')) fail('annulation MFA : fermeture de session non contrôlée');
-if(!html.includes('mfa-security.js?v=12')||!sw.includes('./mfa-security.js?v=12')) fail('cache MFA Lot 199 non synchronisé');
+if(!html.includes('mfa-security.js?v=13')||!sw.includes('./mfa-security.js?v=13')) fail('cache MFA Lot 199 non synchronisé');
 if(!sw.includes("dz-de-v3.185.0.0.130")) fail('version Service Worker Lot 199 non actualisée');
 console.log('✅ Lot 199 : annulation MFA avec fermeture de session contrôlée.');
 
