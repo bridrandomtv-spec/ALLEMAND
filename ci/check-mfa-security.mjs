@@ -157,6 +157,7 @@ const definerFunctions = [...sql.matchAll(
 const expectedDefiners = [
   'public.handle_new_user',
   'private.student_email_mfa_access_allowed',
+  'public.notify',
   ...protectedRpcSignatures.map(signature => 'public.' + signature.slice(0, signature.indexOf('(')))
 ];
 assert.deepEqual(definerFunctions.map(fn => fn.name).sort(), expectedDefiners.sort(),
