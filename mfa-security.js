@@ -41,8 +41,13 @@
       return true;
     }
 
-    // E-mail MFA is mandatory: enroll automatically on first entry, then challenge on each new session.
-    if(!emailState.enrolled || !emailState.verified){
+    // The Edge Function is authoritative about the profile role; missing policy metadata fails closed.
+    if(typeof emailState.required!=='boolean'){
+      status('#loginErr','تعذر تحديد سياسة التحقق الأمني لهذا الحساب. أعد المحاولة لاحقًا.');
+      return true;
+    }
+    // E-mail MFA is mandatory only for student profiles (role=eleve).
+    if(emailState.required && (!emailState.enrolled || !emailState.verified)){
       var purpose=emailState.enrolled?'login':'enroll';
       var started=await SB.mfaEmail({action:'start',purpose:purpose});
       if(!started.ok){
@@ -197,9 +202,11 @@
     var pendingFactors=(r.totp||[]).concat(r.phone||[]).filter(function(f){return f.status!=='verified';});
     var markup='';
     var emailState=SB.mfaEmail?await SB.mfaEmail({action:'status'}):{ok:false};
-    var emailMarkup=emailState.ok&&emailState.enrolled
-      ? '<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>التحقق الإلزامي عبر البريد الإلكتروني مفعّل</b></div><p class="mfa-muted">'+String(emailState.emailMasked||'البريد المسجل').replace(/[&<>\"]/g,'')+'</p>'
-      : '<div class="mfa-security-message" role="status">التحقق عبر البريد الإلكتروني إلزامي، وسيُفعّل تلقائيًا عند تسجيل الدخول التالي. لا تحتاج إلى إجراء أي خطوة من هذه الصفحة.</div>';
+    var emailMarkup=emailState.ok&&emailState.required&&emailState.enrolled
+      ? '<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>التحقق الإلزامي عبر البريد الإلكتروني مفعّل للطلاب</b></div><p class="mfa-muted">'+String(emailState.emailMasked||'البريد المسجل').replace(/[&<>"]/g,'')+'</p>'
+      : emailState.ok&&emailState.required
+        ? '<div class="mfa-security-message" role="status">التحقق عبر البريد الإلكتروني إلزامي للطلاب، وسيُفعّل تلقائيًا عند تسجيل الدخول التالي.</div>'
+        : '<div class="mfa-muted" role="status">سياسة التحقق الإلزامي عبر البريد الإلكتروني مخصصة لحسابات الطلاب.</div>';
     if(verifiedTotp.length){markup+='<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>تطبيق المصادقة (TOTP) مفعّل</b></div>';verifiedTotp.forEach(function(f){markup+='<div class="mfa-factor-row"><span>📱 '+String(f.friendly_name||'تطبيق المصادقة').replace(/[&<>"]/g,'')+'</span><button type="button" class="btn btn-sm btn-o" data-mfa-unenroll="'+f.id+'">إزالة العامل</button></div>';});}
     else markup+='<button type="button" class="btn btn-p" data-mfa-enroll>🔐 تفعيل تطبيق المصادقة (TOTP)</button>';
     if(verifiedPhone.length){markup+='<div class="mfa-status-line"><span class="mfa-status-dot"></span><b>التحقق عبر الهاتف مفعّل</b></div>';verifiedPhone.forEach(function(f){markup+='<div class="mfa-factor-row"><span>📨 '+String(f.phone||'رقم هاتف موثّق').replace(/[&<>"]/g,'')+'</span><button type="button" class="btn btn-sm btn-o" data-mfa-unenroll="'+f.id+'">إزالة العامل</button></div>';});}
