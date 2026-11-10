@@ -663,7 +663,7 @@ for (const marker of [
   'public.subscription_set_preuve',
   'public.unlink_child'
 ]) if (!studentMfaMigration.includes(marker)) fail('migration MFA étudiant incomplète : ' + marker);
-if ((studentMfaMigration.match(/private\\.student_email_mfa_access_allowed\\(\\)/g) || []).length < 14) fail('garde MFA manquant dans une ou plusieurs RPC SECURITY DEFINER');
+if ((studentMfaMigration.split('private.student_email_mfa_access_allowed()').length - 1) < 14) fail('garde MFA manquant dans une ou plusieurs RPC SECURITY DEFINER');
 if (studentMfaMigration.includes("auth.jwt()->>'aal'") || studentMfaMigration.includes("= 'aal2'")) fail('le MFA e-mail personnalisé ne doit pas être confondu avec AAL2');
 if (!mfaEmailServer.includes('required: isStudent') ||
     !mfaEmailServer.includes('const isStudent = profile.role === "eleve"') ||
