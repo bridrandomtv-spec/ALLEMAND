@@ -4573,3 +4573,33 @@ where n.nspname = 'public'
 - PR #17 : ouverte, non fusionnée ; branche `design/prototypes-67-74-alignment`.
 - `main` : inchangée.
 - Cette note est documentaire ; aucun changement applicatif, Auth, Supabase, secret, migration, déploiement ou coût n'est engagé par ce lot.
+
+
+---
+
+## Lot 247 — correction du mode local qui détournait l'inscription Supabase (10 novembre 2026)
+
+### Défaut identifié
+- Dans `app.js`, `authLocalMode()` considérait automatiquement `localhost` et `127.0.0.1` comme mode démo, même lorsque le navigateur était connecté à Internet.
+- Les gestionnaires de connexion et d'inscription appellent `SB.login()` / `SB.signup()` uniquement lorsque `authLocalMode()` est faux. Sur un serveur local en ligne, le formulaire utilisait donc le stockage local et ne déclenchait pas Supabase Auth.
+- Cette condition est cohérente avec l'absence d'événement d'inscription observé dans les journaux Auth ciblés ; les journaux seuls ne suffisaient pas à établir cette cause, mais l'inspection du code l'a confirmée.
+
+### Correction appliquée dans la PR #17
+- `authLocalMode()` n'active désormais le mode local que si le navigateur est hors ligne ou si le paramètre explicite `?demo` est présent.
+- Un site exécuté sur `localhost` avec Internet utilise désormais le vrai client Supabase pour l'inscription et la connexion.
+- Le bouton de démonstration conserve son comportement : il ajoute `?demo=1` et utilise le mode local.
+- Aucun changement de mot de passe, de données utilisateur, de rôle, de schéma, de RLS ou de paramètres Auth/Supabase.
+
+### Cache et contrôles
+- Référence HTML : `app.js?v=3564`.
+- Service Worker : `dz-de-v3.185.0.0.132`, précache aligné sur `app.js?v=3564`.
+- Contrôle CI MFA : assertion ajoutée pour empêcher qu'un hôte localhost connecté soit silencieusement redirigé vers le mode local.
+- Contrôle CI Masar : référence app.js mise à jour vers v3564.
+- Les contrôles CI de ce nouveau HEAD sont en attente de résultat au moment de cette note. Aucun test navigateur réel n'est revendiqué.
+
+### Portée et garde-fous
+- Modification sur la branche existante `design/prototypes-67-74-alignment), PR #17 uniquement.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+- Aucun déploiement Cloudflare manuel, aucun déploiement Edge Function, aucune migration appliquée, aucune branche Supabase créée.
+- Aucun service payant ni frais supplémentaires engagés.
+- La livraison des e-mails de confirmation Auth reste un problème distinct à diagnostiquer après qu'une vraie requête `SB.signup()` aura atteint Supabase. La clé Resend de la fonction MFA ne configure pas le SMTP Auth.
