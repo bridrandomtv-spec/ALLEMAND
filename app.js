@@ -1739,7 +1739,7 @@ function enterApp(session){
 function bootGate(){
   const gate = $('#gate'), shell = $('#shell');
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
-  const cloudRestorePending = !!(s && s.src === 'cloud' && !authLocalMode());
+  const cloudRestorePending = !!(s && s.src === 'cloud');
 
   if(window.AUTH){
     try{
