@@ -5234,3 +5234,51 @@ L'utilisateur souhaite ajouter l'envoi de rapports de sécurité périodiques pa
 
 ### Décision actuelle et limites
 La maquette est conservée comme référence fonctionnelle uniquement ; elle n'est pas intégrée ni présentée comme opérationnelle. L'envoi périodique n'est pas activé car il manque actuellement une source d'événements de sécurité, un planificateur et un fournisseur/domaine d'envoi vérifié adapté aux destinataires. Aucune table, extension, migration, fonction Edge, tâche planifiée, configuration SMTP, secret, adresse e-mail ou fournisseur n'a été modifié. Aucun e-mail test n'a été envoyé. Aucun coût, déploiement ou fusion. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 268 — solution cible pour les rapports périodiques personnalisés — 11 novembre 2026
+
+### Nouvelles exigences confirmées
+- Fréquences : quotidien ; hebdomadaire chaque lundi par défaut ; mensuel le premier jour du mois.
+- Heure et jour personnalisables, fuseau par défaut `Africa/Algiers`.
+- Six rubriques activables : journal de connexion, alertes, appareils actifs, score de sécurité, données de localisation, recommandations.
+- Aperçu HTML réel, rapport urgent distinct, CTA de revue, historique des rapports et test d'envoi.
+- Langues : arabe, français, anglais.
+- L'état « ouvert » n'est pas une preuve de livraison et ne sera pas suivi par défaut. L'historique distinguera au minimum demandé/accepté/échec ; livré seulement si un webhook fournisseur vérifié le confirme.
+- Les six rubriques restent indisponibles tant que leur source de données n'existe pas. Ne pas calculer score, géolocalisation, appareils ou alertes à partir d'hypothèses.
+
+### Revue technique du SQL/Edge Function fourni
+- Le SQL proposé est incomplet : il omet notamment `include_security_score`, `include_locations`, le fuseau horaire, le premier jour du mois, `updated_at`, l'opt-out/confirmation d'adresse et un journal d'envoi idempotent.
+- La politique RLS proposée (`FOR ALL USING` sans `WITH CHECK`) ne constitue pas une politique complète d'écriture sûre ; les opérations doivent séparer SELECT/INSERT/UPDATE et vérifier que `user_id = auth.uid()` avec `USING` et `WITH CHECK`.
+- Ne pas laisser le navigateur définir librement un destinataire ou un `user_id` pour un envoi privilégié. L'adresse par défaut doit venir de l'adresse Auth confirmée ; une adresse différente exige une vérification explicite.
+- La fonction de diffusion ne doit pas traiter tous les utilisateurs à chaque appel public. Séparer les opérations : préférences utilisateur authentifiées (`verify_jwt=true)), demande de test de l'utilisateur courant, et dispatcher interne planifié.
+- Si une fonction interne utilise `verify_jwt=false`, elle doit authentifier le secret de service dans le code/SDK selon la documentation Supabase actuelle ; ce réglage seul rendrait l'endpoint public. Ne jamais exposer de clé secrète dans le navigateur. Préférer la clé secret actuelle plutôt que de copier aveuglément les anciennes variables `SERVICE_ROLE_KEY`.
+- Chaque période d'envoi doit avoir une clé d'idempotence unique par utilisateur, période et type de rapport. Verrouillage/claim atomique avant envoi, reprise après échec, limites par utilisateur, journalisation sans contenu sensible.
+- Le code proposé `supabase/config.toml` avec `[functions.send-security-report.cron]` n'est pas la syntaxe de planification Supabase documentée. Supabase Cron se configure par jobs Postgres (`pg_cron`) ; l'invocation d'une Edge Function requiert `pg_net` et une clé conservée côté serveur/Vault.
+- Les contrôles précédents du projet ont confirmé que `pg_cron` et `pg_net` ne sont pas installés. Aucun changement d'extension n'a été autorisé.
+
+### Option d'ordonnancement préférable à étudier
+- Le dépôt possède déjà un Cloudflare Worker principal `src/site-worker.js` et `wrangler.toml`. Cloudflare Cron Triggers peut appeler un handler `scheduled()` et le plan Free documente jusqu'à cinq triggers par compte.
+- Cela offre une voie possible sans ajouter `pg_cron`/`pg_net` à Supabase : un unique déclencheur périodique UTC (par exemple toutes les 5 minutes) demande au backend de sélectionner les rapports arrivés à échéance selon `Africa/Algiers` ou le fuseau choisi.
+- Il ne faut pas créer un trigger par élève. Le dispatcher doit gérer les échéances multi-fuseaux, le lotissement, l'idempotence et les limites d'exécution.
+- Cette option est à confirmer avec le compte Cloudflare réellement utilisé ; aucune modification du Worker, aucun Cron Trigger et aucun déploiement n'ont été effectués. L'ajout du trigger dans `wrangler.toml` ne prend effet qu'après déploiement.
+- Le fichier `worker/resend-welcome.js` est un Worker distinct d'exemple, non référencé comme entrée du Worker principal dans `wrangler.toml`. Il accepte une adresse `to` fournie par requête, sans authentification applicative ni limitation de débit ; CORS ne protège pas contre les appels serveur-à-serveur. Ne pas réutiliser tel quel pour un service d'envoi de rapports.
+
+### Fournisseur e-mail et absence de domaine
+- La page officielle Resend consultée le 11 novembre 2026 indique un niveau gratuit de 3 000 e-mails/mois, limité à 100/jour, et jusqu'à trois domaines vérifiés. Cela ne dispense pas de posséder et vérifier un domaine d'envoi.
+- Sans domaine contrôlé par l'établissement et configuré DNS (SPF/DKIM, idéalement DMARC), ne pas annoncer `security@lycee-virtuel.dz` comme expéditeur opérationnel. `onboarding@resend.dev` reste un expéditeur de démarrage/test, pas une identité institutionnelle à promettre aux élèves.
+- Aucun fournisseur ni forfait payant ne sera activé. Les prix et quotas doivent être revérifiés au moment de l'activation.
+- Un test ne sera considéré réussi qu'après réponse réelle du fournisseur ; une livraison ne sera confirmée que par un événement webhook authentifié.
+
+### Plan de réalisation sécurisé
+1. Préparer dans la PR uniquement le contrat de données et les tests de validation des préférences, sans exécuter de SQL distant.
+2. Ajouter une table de préférences et une table d'historique avec RLS stricte, destinataire Auth confirmé, catégories disponibles seulement, fuseau et idempotence ; préparer le SQL dans le dépôt après audit du modèle et de la stratégie de migration.
+3. Implémenter les endpoints utilisateur et internes séparément, validation stricte, quotas et journaux.
+4. Implémenter le générateur HTML multi-langue sans Tailwind/Chart.js/Lucide CDN, sans pixel de suivi par défaut, et sans afficher de MFA.
+5. Ajouter le dispatcher Cloudflare Cron seulement après validation du plan Cloudflare et des secrets nécessaires ; tester en prévisualisation contrôlée, jamais en production sans autorisation.
+6. Activer l'envoi réel uniquement après choix/validation du domaine d'expédition et vérification du fournisseur ; sinon conserver l'aperçu et un mode test non expéditeur clairement identifié.
+
+### Périmètre de ce lot
+- Dossier de continuité uniquement ; aucun code applicatif ni schéma distant modifié.
+- Aucun changement Auth/RLS/Storage/SMTP/secret, aucune extension, aucune tâche Cron, aucun e-mail envoyé.
+- Aucun coût, aucun déploiement, aucune fusion, aucune branche créée. PR #17 reste ouverte et non fusionnée.
