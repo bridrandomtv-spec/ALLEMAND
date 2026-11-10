@@ -5169,3 +5169,29 @@ Ce second HTML est une **maquette de tableau de bord**, pas un système de journ
 
 ### Périmètre de cette vérification
 Analyse statique du HTML/JavaScript fourni uniquement. Aucun appel à Supabase, aucune lecture de données personnelles, aucune modification de code applicatif ou de configuration distante, aucun test sur un compte, aucun déploiement, aucune fusion, aucun coût. PR #17 reste ouverte et non fusionnée.
+
+
+## Spécification fonctionnelle proposée — Centre de sécurité — 10 novembre 2026
+
+### Demande utilisateur
+La page cible comprend cinq onglets : vue d'ensemble avec indicateurs et graphiques sur 30 jours ; alertes et signalement ; journal de connexion filtrable avec export CSV et pagination ; activités et appareils ; confidentialité avec export JSON, suppression de compte et préférences. Les exports et interactions doivent produire un résultat réel, pas une notification simulée.
+
+### Vérification de la disponibilité backend — lecture seule
+- L'inventaire du schéma public du projet Supabase azjwcybivirvpxbfhyzk ne contient aucune table login_history, security_events ou user_devices.
+- La table audit_logs existe, mais son modèle audité concerne les opérations d'administration (acteur, action, cible, wilaya) ; elle ne constitue pas un journal personnel des connexions Auth.
+- La liste des Edge Functions actives ne contient que mfa-email (version 7). Aucune fonction analyze-security n'est déployée.
+- Le client SB expose connexion, inscription, récupération et mise à jour du mot de passe, lecture de la session courante et déconnexion locale (signOut scope local). Aucun mécanisme de liste/révocation des sessions distantes, de gestion des appareils, d'analyse des menaces ou de suppression du compte n'a été relevé.
+- L'API illustrative login_history, security_events, user_devices et analyze-security est une proposition, pas une API actuellement disponible dans ce projet.
+
+### Conséquences pour la conception
+- Ne pas créer de données fictives : score 85/100, volumes de connexions, lieux, alertes, appareils ou historique.
+- Ne pas afficher une méthode 2FA et ne pas réintroduire MFA : le retrait MFA des Lots 259–261 reste la décision active.
+- Ne pas présenter audit_logs comme un journal d'authentification étudiant.
+- Les cinq onglets peuvent servir de structure d'interface, mais les sections dépendant d'une télémétrie absente doivent afficher « données non disponibles » ou rester désactivées, sans fausses statistiques.
+- Les exports ne peuvent contenir que des données réellement disponibles et autorisées ; le bouton PDF ne doit être activé qu'après implémentation d'une génération réelle.
+- La révocation de sessions distantes, le blocage d'appareils, la suppression du compte et l'effacement des données exigent une conception serveur, des autorisations et des tests spécifiques. Ne pas les simuler dans le navigateur.
+- Les préférences purement visuelles peuvent être locales. Toute préférence présentée comme un réglage de sécurité/confidentialité du compte doit être persistée et appliquée côté serveur.
+- Toute évolution future doit respecter le frontend vanilla, sans Tailwind, Chart.js ni nouvelle dépendance, et préserver les routes, IDs, handlers et contrôles d'accès.
+
+### Décisions et périmètre
+Aucune table, politique RLS, migration, fonction Edge, donnée ou secret n'a été créé ou modifié. Aucun paramètre Auth, MFA, SMTP, Storage, paiement ou facturation n'a été modifié. Aucun déploiement, aucune fusion, aucune nouvelle branche et aucun coût. PR #17 reste ouverte et non fusionnée.
