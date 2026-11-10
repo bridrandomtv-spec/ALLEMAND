@@ -511,7 +511,16 @@ for (const marker of [
   'window.DZ_MFA={requireGate:requireGate','window.DZ.enterApp(profile)','window.DZ.toast('
 ]) if (!mfaModule.includes(marker)) fail('parcours MFA incomplet : ' + marker);
 if (mfaModule.includes('123456') || mfaModule.includes('JBSW Y3DP') || mfaClient.includes('otplib')) fail('OTP/secret statique ou TOTP local interdit');
-if ((app.split("typeof window.DZ_MFA.requireGate !== 'function'").length-1)!==4 || (app.split('if(await window.DZ_MFA.requireGate()) return;').length-1)!==4) fail('le MFA doit bloquer en mode fermé la connexion, la restauration, l’inscription cloud et la liaison cloud');
+const enterAppStart=app.indexOf('function enterApp(session){');
+const enterAppEnd=app.indexOf('/* ══════════ PORTAIL DE CONNEXION', enterAppStart);
+const centralEntry=app.slice(enterAppStart, enterAppEnd);
+if ((app.split("typeof window.DZ_MFA.requireGate !== 'function'").length-1)<4 ||
+    (app.split('if(await window.DZ_MFA.requireGate()) return;').length-1)!==4 ||
+    !centralEntry.includes("session.src === 'cloud'") ||
+    !centralEntry.includes('consumeGatePass') ||
+    !centralEntry.includes('window.DZ_MFA.requireGate().then(function(blocked){')) {
+  fail('le MFA doit protéger les quatre parcours cloud et la frontière centrale enterApp');
+}
 if (!html.includes('@supabase/supabase-js@2.119.0/dist/umd/supabase.js') ||
     !mfaClient.includes('@supabase/supabase-js@2.119.0/+esm') ||
     !mfaClient.includes('@supabase/supabase-js@2.119.0/dist/module/index.js') ||
