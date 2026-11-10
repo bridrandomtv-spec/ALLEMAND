@@ -22,7 +22,12 @@ begin
     nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'filiere'), ''),
     nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'wilaya'), '')
   )
-  on conflict (id) do nothing;
+  on conflict (id) do update
+    set pseudo = coalesce(nullif(public.profiles.pseudo, ''), excluded.pseudo),
+        role = 'eleve',
+        niveau = coalesce(public.profiles.niveau, excluded.niveau),
+        filiere = coalesce(public.profiles.filiere, excluded.filiere),
+        wilaya = coalesce(public.profiles.wilaya, excluded.wilaya);
   return new;
 end;
 $function$;
