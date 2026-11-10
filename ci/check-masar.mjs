@@ -58,11 +58,11 @@ assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
 assert.match(html, /style-prototype-dz\.css\?v=193/, 'cache CSS v193 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.185\.0\.0\.132/, 'version service worker Lot 248 non actualisée');
+assert.match(sw, /dz-de-v3\.185\.0\.0\.133/, 'version service worker Lot 248 non actualisée');
 assert.match(sw, /style-prototype-dz\.css\?v=193/, 'précache CSS v193 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
-assert.match(html, /app\.js\?v=3564/, 'cache app.js non actualisé');
+assert.match(html, /app\.js\?v=3565/, 'cache app.js non actualisé');
 assert.match(sw, /app\.js\?v=3564/, 'précache app.js non actualisé');
 
 
