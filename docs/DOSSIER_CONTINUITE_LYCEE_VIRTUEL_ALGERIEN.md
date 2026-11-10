@@ -4643,3 +4643,15 @@ where n.nspname = 'public'
 - La première édition de `ci/check-masar.mjs` n'avait pas remplacé correctement le motif regex malgré le commit initial. La relecture du fichier a détecté cette persistance ; ne pas considérer le premier commit comme ayant corrigé l'assertion.
 - Correction exacte effectuée ensuite : motif attendu `/dz-de-v3\\.185\\.0\\.0\\.132/`, commit `c8ddf7fd53be4c93cb20facbc5f5fca8652f4fc6`.
 - Cette rectification est tracée explicitement afin que le dossier reflète l'état réel du dépôt. CI à relancer/contrôler sur le HEAD suivant.
+
+
+---
+
+## Lot 250 — validation CI des corrections portail et مسارك (10 novembre 2026)
+
+- CI #2925 / run `42898023612`, sur le HEAD `56e2e1db22794def4f5f76ba9d8153266623fbe2` : **succès**, job unique `Validation structurelle & pédagogique`, 33/33 étapes réussies.
+- Les étapes spécifiques « Vérifier le portail public (catalogue et inscription) » et « Contrôler le tableau de bord مسارك » sont toutes deux réussies.
+- Les contrôles statiques MFA e-mail étudiant, matrice des parcours, garde d'accès/TEST DE FUITE, régressions RAG/professeur/union et contrôle pédagogique restructuré sont également réussis.
+- Cette réussite confirme les assertions automatisées du dépôt ; elle ne constitue pas un test navigateur, une création réelle de compte, une réception d'e-mail Auth, un enrôlement MFA réel, un test PostgreSQL isolé ou une validation de déploiement.
+- PR #17 reste ouverte, non fusionnée et fusionnable. `main` inchangée. Aucun déploiement Cloudflare/Supabase, aucune migration appliquée, aucune branche Supabase créée et aucun coût engagé.
+- Étape fonctionnelle restante : vérifier depuis le navigateur que l'inscription en ligne appelle effectivement Supabase Auth, puis diagnostiquer séparément la livraison de l'e-mail de confirmation et le parcours MFA étudiant. Ne pas modifier le SMTP, les secrets ou les paramètres Auth distants sans autorisation explicite.
