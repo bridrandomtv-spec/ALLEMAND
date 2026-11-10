@@ -4299,6 +4299,8 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 
 
 ### Lot 233 — provisionnement serveur du profil étudiant à l'inscription (10 novembre 2026)
+
+- Durcissement complémentaire du provisionnement : en cas de collision avec un autre trigger de création de profil, le trigger MFA réaffirme le rôle `eleve` pour le nouvel utilisateur auto-inscrit tout en conservant les champs pédagogiques déjà présents. Les métadonnées client ne peuvent donc pas faire attribuer un rôle privilégié lors de la création.
 - Audit du parcours inscription → confirmation e-mail → première connexion MFA : le client Supabase signUp() ne crée qu'un utilisateur Auth ; la fonction myProfile() lit profiles mais ne crée pas de ligne. Le schéma versionné ne déclarait aucun trigger auth.users de création de profil.
 - Risque identifié : la fonction Edge MFA exige une ligne profiles pour déterminer le rôle. Un nouvel utilisateur confirmé sans profil recevrait PROFILE_REQUIRED et ne pourrait jamais commencer l'enrôlement MFA. En outre, le garde RLS restrictif prévu bloque l'accès d'un profil absent.
 - Correctif source dans la migration de la PR : trigger AFTER INSERT sur auth.users, fonction SECURITY DEFINER dans le schéma privé, profil créé avec rôle imposé `eleve` (jamais repris depuis les métadonnées client) et reprise des seuls champs pédagogiques pseudo/niveau/filière/wilaya. Fonction non exécutable par les rôles client ; trigger recréé de façon idempotente ; conflit d'identifiant ignoré.
