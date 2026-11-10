@@ -1757,7 +1757,7 @@ function enterApp(session){
       window.DZ_MFA.requireGate().then(function(blocked){
         if(!blocked) enterApp(session);
       }).catch(function(error){
-        showGateError('#loginErr', error && error.message ? error.message : 'تعذر إكمال التحقق الأمني.');
+        showGateError('#loginErr', 'تعذر إكمال التحقق الأمني. أعد تسجيل الدخول؛ لم يتم فتح الحساب السحابي.');
       });
       return;
     }
@@ -1825,7 +1825,7 @@ function bootGate(){
         AUTH.logout();
         showGateError('#loginErr', 'تعذر تحميل ملفك الدراسي من الحساب السحابي. حاول تسجيل الدخول مجددًا.');
       }catch(error){
-        showGateError('#loginErr', error && error.message ? error.message : 'تعذر التحقق من الجلسة السحابية.');
+        showGateError('#loginErr', 'تعذر استعادة جلسة الدخول بأمان. تحقق من اتصال الإنترنت ثم سجّل الدخول مجددًا.');
       }
     };
     restoreCloud();
