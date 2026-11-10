@@ -1996,7 +1996,7 @@ const lf = $('#loginForm');
           if(loginTab) loginTab.click();
           const loginEmail = $('#loginUser');
           if(loginEmail) loginEmail.value = $('#suMail').value.trim();
-          showGateError('#loginErr', 'تم إنشاء طلب حسابك. أرسلنا رابط تأكيد إلى بريدك الإلكتروني؛ افتح الرسالة واضغط الرابط، ثم أدخل كلمة المرور هنا لتسجيل الدخول. إذا لم تجد الرسالة، تحقق من مجلد الرسائل غير المرغوب فيها.');
+          showGateError('#loginErr', 'تم استلام طلب التسجيل. إذا كان تأكيد البريد الإلكتروني مفعّلًا، فتحقق من بريدك الوارد والرسائل غير المرغوب فيها، ثم افتح رابط التأكيد وارجع لتسجيل الدخول. إذا لم تصلك رسالة، فقد يلزم إعداد خدمة إرسال البريد من إدارة المنصة.');
           return;
         }
         const cloudSession = await cloudAuthority();
