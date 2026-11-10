@@ -3680,3 +3680,39 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - CI #42838689058 / run #2805 sur le commit `85898309d01a37fded1818c364b927ab1f3e4fec` : **réussie, 33/33 étapes**, zéro échec.
 - Le workflow a terminé avec succès après l'ajout de la note CI au dossier de continuité ; aucune étape en échec.
 - Le commit ne change que la documentation par rapport au code MFA/RLS déjà validé par CI #2803/#2804.
+
+---
+
+## Lot 205 — correction ciblée de la migration MFA étudiant (10 novembre 2026)
+
+### Résultat du second audit
+Le contrôle approfondi de la migration Lot 204 a identifié deux défauts de portée/compatibilité avant toute application :
+1. La politique restrictive initiale sur `storage.objects` n'incluait pas de condition `bucket_id`. Elle aurait donc ajouté le garde MFA aux opérations authentifiées de tous les buckets, alors que le périmètre décidé concerne uniquement le bucket privé `prive`.
+2. Le helper utilisait `auth.role()`, fonction déconseillée dans les politiques RLS et le code d'autorisation Supabase actuel.
+
+### Corrections réalisées dans la branche PR #17
+- `storage.objects` : les expressions `USING` et `WITH CHECK` incluent maintenant `bucket_id <> 'prive' OR private.student_email_mfa_access_allowed()`. Les autres buckets restent soumis à leurs politiques existantes, sans ce garde supplémentaire ; le bucket `prive` exige la session MFA étudiant.
+- Helper : remplacement de `auth.role()` par la lecture du claim JWT `(select auth.jwt() ->> 'role')`.
+- Privilèges : `EXECUTE` du helper accordé explicitement à `authenticated` et `service_role`, nécessaire pour les appels de confiance qui peuvent passer par les RPC SECURITY DEFINER ; le branchement du rôle service reste explicite.
+- Contrôles CI : assertions ajoutées pour interdire `auth.role()` et vérifier les deux clauses de portée `bucket_id <> 'prive'` (USING et WITH CHECK).
+
+### Références Git
+- Migration corrigée : commit `6dd9c9d28be466943b0ab5e97f2a9312fe95dc36`.
+- Assertions CI : commit `fb7547df11d849eadc5ce0e9a6a17838451c93ae`.
+- Le dossier est mis à jour dans la même branche ; le HEAD et la CI de ce dernier commit doivent être vérifiés après l'exécution du workflow.
+
+### État opérationnel inchangé
+- Aucune migration exécutée sur le projet Supabase actif.
+- Aucune Edge Function déployée ; la version active reste à contrôler séparément avant mise en service.
+- Aucun déploiement Cloudflare, aucun merge ; PR #17 reste ouverte.
+- `main` reste inchangée.
+- La CI statique ne remplace toujours pas une exécution de la migration sur une base PostgreSQL/Supabase de test ni une matrice de tests avec comptes réels (élève MFA valide/absent/expiré, professeur, admin, parent, service_role, autres buckets Storage).
+- Les URL Storage signées déjà émises conservent leur validité jusqu'à expiration.
+
+### Ordre de validation avant activation
+1. Vérifier que la nouvelle migration compile et s'applique sur une base de test isolée.
+2. Vérifier les accès Data API/RPC pour les sessions élève non vérifiée, vérifiée, expirée et décalée sur un autre `session_id`.
+3. Vérifier que les rôles non étudiants ne sont pas bloqués.
+4. Vérifier que le bucket `prive` est soumis au MFA étudiant et que les autres buckets restent sous leurs seules politiques existantes.
+5. Tester les fonctions SECURITY DEFINER et les accès directs qui contournent RLS.
+6. Seulement après ces validations et une autorisation séparée : déploiement Edge Function, application migration production, puis déploiement front.
