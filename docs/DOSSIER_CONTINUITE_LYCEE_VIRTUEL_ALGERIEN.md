@@ -3544,3 +3544,11 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - La CI #42826303991 a encore échoué sur une assertion historique : elle exigeait la condition `if(!window.SB || !SB.mfaAssurance)`, alors que le nouveau garde vérifie aussi la disponibilité de `SB.mfaEmail`.
 - Le contrôle CI a été aligné sur le garde réel et les huit références de cache MFA historiques `v=12` ont été mises à jour vers `v=13`, commit `39c552b06a116dc1aefb85925928c64368bba1a6`.
 - Aucun code applicatif n'a été modifié par ce correctif. Nouvelle exécution CI à confirmer.
+
+
+### Cinquième ajustement CI du Lot 202 — renvoi e-mail unifié
+- La CI #42826440032 a validé les assertions MFA précédentes, puis a révélé une assertion du Lot 200 qui attendait encore le renvoi séparé `purpose: login` et un ancien formulaire d'enrôlement manuel.
+- Le parcours automatique utilise désormais un seul gestionnaire de renvoi : il reprend `pending.purpose` (`enroll` au premier accès, `login` ensuite) et remplace le challenge courant. La branche morte liée à l'ancien formulaire de paramètres a été supprimée.
+- Les assertions CI du Lot 200 ont été réécrites pour contrôler le renvoi unifié et la réutilisation de l'écran de connexion pour l'enrôlement initial.
+- Commits : MFA `a40e2506ff4f9de5ec28c6d2a6e9edc0d4383790` ; CI `825dbd125a13e6678a2225381dfaa804fc5ce062`.
+- Nouvelle CI à confirmer ; aucun test navigateur ou envoi réel Resend n'a encore été effectué.
