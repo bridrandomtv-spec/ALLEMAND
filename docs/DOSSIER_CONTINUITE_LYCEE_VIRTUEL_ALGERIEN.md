@@ -3945,3 +3945,26 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - La fonction active Supabase reste en version 7 et ne renvoie pas required dans status ; le message d'incompatibilité à la connexion reste donc attendu tant qu'aucune mise à jour coordonnée n'est autorisée.
 - Aucun changement du projet Supabase actif, aucune migration appliquée, aucune fonction Edge déployée, aucun secret ni paramètre Auth/RLS modifié.
 - Aucune dépense, aucune branche Supabase payante, aucun déploiement Cloudflare de production, aucun merge ; PR #17 reste ouverte.
+
+
+---
+
+## Lot 215 — migration MFA autonome et versionnement des RPC (10 novembre 2026)
+
+### Écart détecté
+- La relecture du dépôt a montré que l'Edge Function appelle deux RPC, `mfa_email_issue_challenge` et `mfa_email_consume_challenge`, absentes de l'unique migration MFA versionnée dans la PR.
+- Une inspection SQL strictement en lecture seule du projet Supabase actif a confirmé que les deux RPC et les trois tables `mfa_email_factors`, `mfa_email_sessions`, `mfa_email_challenges` existent déjà dans cet environnement.
+- Les RPC actives sont invoker (non SECURITY DEFINER), détenues par postgres et accordées à `service_role` uniquement. Les trois tables ont RLS activé, aucune policy client, et des privilèges CRUD réservés à `service_role`.
+- Les fonctions existantes appliquent un délai minimal de 60 secondes, un maximum de 5 émissions par heure et 10 par 24 heures, des codes expirant après 5 minutes, un verrouillage après 5 tentatives, une consommation unique et un verrouillage de ligne `FOR UPDATE`.
+
+### Correction source dans la PR #17
+- Migration rendue autonome : création idempotente des trois tables, clés étrangères vers `auth.users`, contraintes, index, activation RLS, révocation des droits des rôles clients et droits CRUD limités à `service_role`.
+- Ajout des deux définitions RPC dans la migration avec les mêmes signatures et la même logique que celles relevées en production, sans exécuter de DDL sur le projet actif.
+- Les RPC restent invoker, `search_path = ''`, non exécutables par `public`, `anon` ou `authenticated`; seul `service_role` peut les appeler.
+- Assertions CI ajoutées pour empêcher la disparition des tables, du RLS, des RPC, des limites de challenge et des privilèges service_role.
+
+### Limites
+- Le contrôle SQL effectué était en lecture seule. Aucune migration appliquée, aucune table, fonction, policy, clé, donnée ou paramètre Auth modifié dans Supabase.
+- La CI statique doit encore être confirmée sur les nouveaux commits ; elle ne remplace pas une exécution sur PostgreSQL isolé.
+- Aucun test réel Resend/navigateur n'a été effectué ; la version Edge active n'a pas été déployée.
+- Aucun coût engagé, aucune branche Supabase payante créée, aucun déploiement Cloudflare production, aucun merge ; PR #17 reste ouverte.
