@@ -4449,7 +4449,7 @@ where n.nspname = 'auth'
 - Le helper privé `private.student_email_mfa_access_allowed()` et les tables MFA ne sont pas encore installés sur la base active ; aucun résultat de catalogue ne peut donc valider leur propriétaire effectif avant migration. Leur propriété devra être contrôlée après application sur un environnement isolé.
 - Décision : pas de révocation globale sur les 42 fonctions authenticated. Les fonctions d'administration et de liaison sont utilisées par des policies/RPC métier ; une révocation non ciblée risquerait de casser les parcours légitimes. L'exception `agreement_current` doit faire l'objet d'une décision fonctionnelle distincte avant modification.
 - CI #2896 / run `42890251405`, commit `c8ef451ae548d5d5e6bcf564229e3c1057bdf78c` : **succès**, job « Validation structurelle & pédagogique » terminé ; les 33 contrôles métier/sécurité listés sont réussis. Le résultat reste statique et ne constitue pas un test d'exécution PostgreSQL.
-- PR #17 : ouverte, cible `main`, non fusionnée. `main) inchangée. Aucun déploiement Cloudflare ou Edge Function, aucune migration appliquée, aucune modification de secrets ou paramètres Auth.
+- PR #17 : ouverte, cible `main`, non fusionnée. `main` inchangée. Aucun déploiement Cloudflare ou Edge Function, aucune migration appliquée, aucune modification de secrets ou paramètres Auth.
 
 #### Contrôles SQL de référence — lecture seule
 
