@@ -33,6 +33,15 @@ assert.ok(client.includes("typeof emailState.required!=='boolean'"),
   'Client must fail closed when the Edge Function omits the required flag');
 assert.ok(client.includes('if(emailState.required && (!emailState.enrolled || !emailState.verified))'),
   'Student login must enroll or challenge whenever the required factor is absent or unverified');
+assert.ok(client.includes("function emailMessage(code,fallback)") &&
+  client.includes("case 'VERIFIED_EMAIL_REQUIRED'") &&
+  client.includes("افتح رسالة تأكيد البريد الإلكتروني") &&
+  client.includes("case 'PLEASE_WAIT'") && client.includes("case 'RATE_LIMITED'") &&
+  client.includes("case 'expired'") && client.includes("case 'invalid_code'"),
+  'Student-facing MFA flow must translate known email, rate-limit and challenge errors into actionable Arabic guidance');
+assert.ok(client.includes("تعذر الاتصال بخدمة التحقق الآن") &&
+  !client.includes("error&&error.message||'تعذر التحقق من الرمز.'"),
+  'Student-facing MFA network failures must not expose raw backend exception text');
 assert.ok(client.includes('نسخة خدمة التحقق الأمني غير متوافقة مع المنصة') &&
   client.includes('لم يتم تجاوز فحص الأمان'),
   'Client must explain that a missing policy flag requires a compatible Edge Function update');
