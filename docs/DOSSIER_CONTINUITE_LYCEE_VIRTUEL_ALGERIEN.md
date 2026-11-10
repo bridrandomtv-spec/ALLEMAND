@@ -4508,3 +4508,11 @@ where n.nspname = 'public'
 - Contrôle statique ajouté à `ci/check-mfa-security.mjs` pour vérifier la présence de la garde, du REVOKE et du GRANT attendu.
 - Aucun privilège n'a été modifié sur la base Supabase active ; la correction n'existe que dans la migration de la branche PR #17. Le test CI est statique et ne prouve pas encore les ACL effectives après application.
 - Vérifications restantes : après application sur environnement isolé, confirmer `has_function_privilege('anon', ...)` = false, `authenticated` = true et `service_role` = true ; tester également la page légale publique et l'espace compte authentifié.
+
+
+### Complément au Lot 241 — restriction minimale renforcée
+
+- Relecture du code client confirme que la fonction RPC `agreement_current(text)` n'est pas appelée par les fichiers front-end inspectés. Le seul accès compte identifié est `SB.agreementText(id)`, soumis à l'authentification et aux politiques RLS de la table.
+- En conséquence, la migration a été renforcée : `agreement_current(text)` est maintenant révoquée pour `PUBLIC`, `anon` **et** `authenticated`; seul `service_role` conserve EXECUTE si la fonction existe. Cela évite que tout compte étudiant authentifié puisse continuer à lire la ligne complète via une RPC SECURITY DEFINER non utilisée par l'interface.
+- Le contrôle CI a été ajusté pour imposer cette ACL plus restrictive. Cette décision reste limitée à la migration PR #17 ; aucune ACL n'a été changée sur Supabase actif.
+- Validation à réaliser en environnement isolé : `anon=false`, `authenticated=false`, `service_role=true` via `has_function_privilege`, puis parcours UI juridique public et accord du compte connecté.
