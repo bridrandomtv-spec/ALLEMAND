@@ -172,6 +172,10 @@ for (const fn of definerFunctions) {
       /grant execute on function private\.student_email_mfa_access_allowed\(\) to authenticated, service_role/i.test(sql) &&
       /revoke all on function private\.student_email_mfa_access_allowed\(\) from public, anon/i.test(sql),
       'Private MFA predicate must bind authorization to auth.uid and have explicit ACLs');
+  } else if (fn.name === 'public.notify') {
+    assert.ok(/insert into public\.notifications/i.test(fn.body) &&
+      /revoke all on function public\.notify\(uuid, text, jsonb\)\s+from public, anon, authenticated, service_role/i.test(sql),
+      'Notification SECURITY DEFINER helper must remain trigger-only and unavailable to client/API roles');
   } else {
     assert.ok(/auth\.uid\(\)/i.test(fn.body) &&
       /private\.student_email_mfa_access_allowed\(\)/i.test(fn.body),
