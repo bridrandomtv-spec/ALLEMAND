@@ -202,19 +202,9 @@ Deno.serve(async (req: Request) => {
   }
 
   if (action === "disable") {
-    const { data: recentVerification, error: verificationError } = await admin.from("mfa_email_sessions")
-      .select("expires_at").eq("user_id", user.id).eq("session_id", sessionId)
-      .gt("expires_at", new Date().toISOString()).maybeSingle();
-    if (verificationError) return json(500, { ok: false, error: "STEP_UP_CHECK_FAILED" });
-    if (!recentVerification && claimsData.claims.aal !== "aal2") {
-      return json(403, { ok: false, error: "RECENT_STEP_UP_REQUIRED" });
-    }
-    const { error: sessionError } = await admin.from("mfa_email_sessions").delete()
-      .eq("user_id", user.id).eq("session_id", sessionId);
-    if (sessionError) return json(500, { ok: false, error: "DISABLE_FAILED" });
-    const { error } = await admin.from("mfa_email_factors").delete().eq("user_id", user.id);
-    if (error) return json(500, { ok: false, error: "DISABLE_FAILED" });
-    return json(200, { ok: true });
+    // The institution requires e-mail MFA for every student account.
+    // Self-service unenrollment would bypass the mandatory login gate.
+    return json(403, { ok: false, error: "EMAIL_FACTOR_REQUIRED" });
   }
 
   return json(400, { ok: false, error: "UNKNOWN_ACTION" });
