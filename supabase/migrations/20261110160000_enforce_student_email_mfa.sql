@@ -1,42 +1,38 @@
--- Lot 204 — MFA e-mail obligatoire pour les seuls profils role='eleve'.
--- Migration source destinée à la PR #17. Ne pas exécuter avant validation et déploiement coordonné.
--- Les politiques existantes restent permissives et inchangées ; ce garde est ajouté en RESTRICTIVE.
-
-create schema if not exists private authorization postgres;
-
--- Création serveur du profil étudiant : aucun client ne choisit son propre rôle.
--- Le profil doit exister avant que l'Edge Function puisse appliquer la politique MFA.
-create or replace function private.create_student_profile_for_new_auth_user()
+-- Le schéma versionné possède déjà le déclencheur on_auth_user_created.
+-- On durcit sa fonction existante au lieu d'ajouter un second déclencheur concurrent.
+-- Le rôle initial est imposé à eleve ; aucune métadonnée client de rôle n'est lue.
+create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
 security definer
-set search_path to 'pg_catalog', 'public'
+set search_path = ''
 as $function$
 begin
-  insert into public.profiles as current_profile (id, pseudo, role, niveau, filiere, wilaya)
+  insert into public.profiles (id, pseudo, role, niveau, filiere, wilaya)
   values (
     new.id,
-    coalesce(nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'pseudo'), ''), split_part(coalesce(new.email, ''), '@', 1), 'Élève'),
+    coalesce(
+      nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'pseudo'), ''),
+      nullif(pg_catalog.split_part(coalesce(new.email, ''), '@', 1), ''),
+      'Élève'
+    ),
     'eleve',
     nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'niveau'), ''),
     nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'filiere'), ''),
     nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'wilaya'), '')
   )
-  on conflict (id) do update
-    set pseudo = coalesce(nullif(current_profile.pseudo, ''), excluded.pseudo),
-        role = 'eleve',
-        niveau = coalesce(current_profile.niveau, excluded.niveau),
-        filiere = coalesce(current_profile.filiere, excluded.filiere),
-        wilaya = coalesce(current_profile.wilaya, excluded.wilaya);
+  on conflict (id) do nothing;
   return new;
 end;
 $function$;
 
-revoke all on function private.create_student_profile_for_new_auth_user() from public, anon, authenticated;
-drop trigger if exists on_auth_user_created_student_profile on auth.users;
-create trigger on_auth_user_created_student_profile
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
   after insert on auth.users
-  for each row execute function private.create_student_profile_for_new_auth_user();
+  for each row execute function public.handle_new_user();
+
+-- Une fonction trigger ne doit pas devenir une RPC accessible aux clients.
+revoke all on function public.handle_new_user() from public, anon, authenticated;
 
 -- Les trois tables et les deux RPC MFA sont déclarés ici afin que cette migration
 -- soit autonome : ils existaient dans le projet actif, mais n'étaient pas versionnés
