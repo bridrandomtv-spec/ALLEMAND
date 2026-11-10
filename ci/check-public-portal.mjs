@@ -537,15 +537,18 @@ const mfaSubmitEnd=mfaModule.indexOf("document.addEventListener('submit'",mfaSub
 const mfaSubmitBlock=mfaModule.slice(mfaSubmitStart,mfaSubmitEnd);
 if (!mfaGateBlock.includes('await SB.mfaAssurance()') ||
     !mfaGateBlock.includes("if(!emailState.ok)") ||
-    !mfaGateBlock.includes("if(emailState.enrolled&&!emailState.verified&&!nativeState.required)") ||
+    !mfaGateBlock.includes("var purpose=emailState.enrolled?'login':'enroll'") ||
+    !mfaGateBlock.includes("if(!emailState.enrolled || !emailState.verified)") ||
+    !mfaGateBlock.includes('showEmailChallenge(started,emailState,purpose)') ||
     !mfaGateBlock.includes('if(!nativeState.required)return false;') ||
-    !mfaGateBlock.includes('return true;')) fail('garde MFA : les états non vérifiés ne bloquent pas explicitement l’accès');
+    !mfaGateBlock.includes('return true;')) fail('garde MFA : enrôlement e-mail initial automatique et blocage des états non vérifiés requis');
 if (!mfaSubmitBlock.includes('if(result&&result.ok){pending=null;await finishLogin();return;}') ||
     !mfaSubmitBlock.includes('if(attempts>=3){await returnToLoginAfterMfa(') ||
     !mfaSubmitBlock.includes('SB.mfaVerifyRecovery(value)') ||
     !mfaSubmitBlock.includes("SB.mfaEmail({action:'verify'")) fail('défi MFA : validation, récupération ou limite des tentatives incomplète');
-if (!mfaFinishBlock.includes('window.cloudAuthority?await window.cloudAuthority():null') ||
-    !mfaFinishBlock.includes('window.DZ.enterApp(profile)')) fail('fin du défi MFA : entrée dans le tableau de bord non conditionnée au profil cloud');
+if (!mfaFinishBlock.includes('if(await requireGate())return;') ||
+    !mfaFinishBlock.includes('window.cloudAuthority?await window.cloudAuthority():null') ||
+    !mfaFinishBlock.includes('window.DZ.enterApp(profile)')) fail('fin du défi MFA : recontrôle des facteurs et entrée après profil cloud requis');
 
 
 for (const marker of ['id="mfaChallengeForm"','id="mfaChallengeMethod"','id="mfaChallengeCode"','id="mfaSecurityCard"','id="mfaSecurityContent"']) if (!html.includes(marker)) fail('interface MFA absente : '+marker);
@@ -564,7 +567,10 @@ console.log('✅ MFA : Supabase natif, TOTP, défi AAL2, codes de récupération
 // Lot 190 — facteur e-mail personnalisé : assertions de contrat client, sans assimiler à AAL2.
 if (!read('supabase/supabase.js').includes("functions.invoke('mfa-email'")) fail('appel du service MFA e-mail absent');
 if (!mfaModule.includes("SB.mfaEmail({action:'status'})") || !mfaModule.includes("SB.mfaEmail({action:'verify'")) fail('parcours MFA e-mail absent');
-if (!mfaModule.includes("mfaEmailEnrollForm") || !mfaModule.includes("data-mfa-email-disable")) fail('gestion du facteur e-mail incomplète');
+if (!mfaModule.includes("var purpose=emailState.enrolled?'login':'enroll'") || !mfaModule.includes("pending.purpose||'login'") ||
+    mfaModule.includes('mfaEmailEnrollForm') || mfaModule.includes('data-mfa-email-disable') ||
+    !mfaModule.includes('التحقق عبر البريد الإلكتروني إلزامي')) fail('MFA e-mail : enrôlement automatique, renvoi et caractère obligatoire incomplets');
+if (!mfaEmailServer.includes('EMAIL_FACTOR_REQUIRED') || !mfaEmailServer.includes('return json(403')) fail('le serveur ne bloque pas la désactivation du facteur e-mail obligatoire');
 
 
 // Lot 196 — annulation, changement de facteur et enrôlement SMS sans état orphelin.
