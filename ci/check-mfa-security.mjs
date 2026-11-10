@@ -40,9 +40,17 @@ assert.ok(sql.includes('drop trigger if exists on_auth_user_created on auth.user
   'Migration must recreate and lock down the one canonical trigger instead of adding a duplicate');
 // The profile role is the server-side switch for mandatory student MFA.
 // Prevent a student from changing that role through the historical own-profile UPDATE policy.
-assert.ok(sql.includes('create or replace function public.profiles_role_guard()') &&
-  /create or replace function public\.profiles_role_guard\([\s\S]*?language plpgsql[\s\S]*?set search_path = ''[\s\S]*?as \$function\$[\s\S]*?if new\.role is not distinct from old\.role[\s\S]*?session_user in \('postgres', 'supabase_admin'\)[\s\S]*?auth\.jwt\(\)[\s\S]*?auth\.uid\(\)[\s\S]*?p\.role = 'admin'[\s\S]*?raise exception 'role_reservee_admin'[\s\S]*?\$function\$;/i.test(sql) &&
-  !/create or replace function public\.profiles_role_guard\([\s\S]*?security definer/i.test(sql),
+const roleGuardStart = sql.indexOf('create or replace function public.profiles_role_guard()');
+const roleGuardEnd = sql.indexOf('$function$;', roleGuardStart);
+const roleGuardSource = sql.slice(roleGuardStart, roleGuardEnd);
+assert.ok(roleGuardStart >= 0 &&
+  roleGuardSource.includes("set search_path = ''") &&
+  roleGuardSource.includes("session_user in ('postgres', 'supabase_admin')") &&
+  roleGuardSource.includes("(select auth.jwt() ->> 'role') = 'service_role'") &&
+  roleGuardSource.includes("(select auth.uid()) is not null") &&
+  roleGuardSource.includes("p.role = 'admin'") &&
+  roleGuardSource.includes("raise exception 'role_reservee_admin'") &&
+  !roleGuardSource.includes('security definer'),
   'Profile role guard must be SECURITY INVOKER, pin an empty search_path and allow role changes only to trusted SQL/service_role or an existing admin');
 assert.ok(sql.includes('revoke all on function public.profiles_role_guard() from public, anon, authenticated') &&
   sql.includes('drop trigger if exists profiles_tr_role on public.profiles') &&
