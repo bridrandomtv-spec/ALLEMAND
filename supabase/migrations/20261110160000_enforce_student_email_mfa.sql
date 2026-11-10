@@ -67,6 +67,15 @@ begin
 end
 $migration$;
 
+-- Le bucket privé "prive" contient aussi des documents et pièces jointes.
+-- Les URL signées déjà émises restent des liens porteurs jusqu'à leur expiration.
+drop policy if exists student_email_mfa_gate on storage.objects;
+create policy student_email_mfa_gate
+  on storage.objects as restrictive
+  for all to authenticated
+  using (private.student_email_mfa_access_allowed())
+  with check (private.student_email_mfa_access_allowed());
+
 -- Les fonctions SECURITY DEFINER ci-dessous contournent les politiques RLS
 -- pendant leur exécution. Elles appliquent donc explicitement le même garde
 -- pour les opérations et lectures personnelles accessibles aux étudiants.
