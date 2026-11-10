@@ -14,7 +14,7 @@ security definer
 set search_path = ''
 as $function$
   select case
-    when (select auth.role()) = 'service_role' then true
+    when (select auth.jwt() ->> 'role') = 'service_role' then true
     when (select auth.uid()) is null then false
     when not exists (
       select 1
@@ -40,7 +40,7 @@ as $function$
 $function$;
 
 revoke all on function private.student_email_mfa_access_allowed() from public, anon;
-grant execute on function private.student_email_mfa_access_allowed() to authenticated;
+grant execute on function private.student_email_mfa_access_allowed() to authenticated, service_role;
 
 -- Un garde restrictif par table : il s'additionne aux politiques actuelles
 -- sans remplacer les règles de propriété, de rôle, de modération ou de wilaya.
@@ -74,8 +74,14 @@ drop policy if exists student_email_mfa_gate on storage.objects;
 create policy student_email_mfa_gate
   on storage.objects as restrictive
   for all to authenticated
-  using ((select private.student_email_mfa_access_allowed()))
-  with check ((select private.student_email_mfa_access_allowed()));
+  using (
+    bucket_id <> 'prive'
+    or (select private.student_email_mfa_access_allowed())
+  )
+  with check (
+    bucket_id <> 'prive'
+    or (select private.student_email_mfa_access_allowed())
+  );
 
 -- Les fonctions SECURITY DEFINER ci-dessous contournent les politiques RLS
 -- pendant leur exécution. Elles appliquent donc explicitement le même garde
