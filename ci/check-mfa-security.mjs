@@ -20,5 +20,7 @@ assert.match(edge, /if \(!isStudent\) return json\(403,[\s\S]*?STUDENT_MFA_ONLY/
   'Challenge start/verify must remain student-only');
 assert.match(client, /typeof emailState\.required!==['"]boolean['"]/,
   'Client must fail closed when the Edge Function omits the required flag');
+assert.match(client, /نسخة خدمة التحقق الأمني غير متوافقة مع المنصة[\s\S]*لم يتم تجاوز فحص الأمان/,
+  'Client must explain that a missing policy flag requires a compatible Edge Function update');
 
 console.log('MFA static security checks passed: student mandatory; prof/admin/parent exempt; unknown roles denied; client metadata fail-closed.');
