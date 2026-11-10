@@ -5028,3 +5028,27 @@ where n.nspname = 'public'
 - La revue statique ne constitue pas encore un test de pénétration ni une validation fonctionnelle de chaque RPC. Les 42 fonctions ne sont pas toutes couvertes par des scénarios de test dynamiques.
 - Aucune modification Supabase, SQL, RLS, privilège, paramètre Auth ou donnée n'a été effectuée. Aucun changement applicatif dans ce lot.
 - Aucun déploiement, aucune fusion, aucune branche Supabase et aucun coût. PR #17 reste ouverte ; `main` inchangée.
+
+
+## Lot 264 — audit RLS des données sensibles et du stockage privé — 10 novembre 2026
+
+Périmètre : lecture seule sur le projet Supabase actif `azjwcybivirvpxbfhyzk`. Inspection des politiques RLS, privilèges SQL accordés à `anon`/`authenticated`, colonnes et déclencheurs des tables `profiles`, `child_links`, `documents_meta`, `payments`, `receipts`, `subscriptions`, ainsi que du bucket Storage `prive`.
+
+### Résultats vérifiés
+- Aucun privilège SQL direct accordé à `anon` sur les six tables examinées. Les droits `authenticated` sont limités aux opérations listées par table ; par exemple `subscriptions` ne reçoit actuellement que SELECT et INSERT, pas UPDATE.
+- `profiles` : la politique UPDATE propre à l'utilisateur protège explicitement `role` et `niveau`. Les déclencheurs `profiles_role_guard`, `profiles_scope_guard`, `profiles_verif_guard` et `protect_role_niveau` apportent des contrôles supplémentaires sur le rôle, le périmètre wilaya/niveau/filière et les champs de vérification. L'utilisateur ne peut pas s'auto-valider par une simple mise à jour de son profil ; le déclencheur réserve les changements de vérification à l'administration, avec une exception limitée au passage vers `en_attente`.
+- `child_links` : lecture réservée aux deux participants ou à l'administration.
+- `documents_meta` : opérations réservées au propriétaire ou à l'administration. Deux politiques permissives se recouvrent ; c'est redondant, mais les expressions observées ne montrent pas d'élargissement au-delà de ce périmètre.
+- `payments` : création propre limitée à un enregistrement `en_attente` ; lecture propre ou administration, avec lecture/validation agent conditionnée par permission et wilaya. Aucun droit INSERT direct n'est accordé à `authenticated` dans les privilèges SQL relevés.
+- `receipts` : lecture propre ou agent autorisé sur le périmètre wilaya ; les déclencheurs rendent les reçus immuables après création.
+- `subscriptions` : création propre limitée au statut `en_attente`. Une politique UPDATE existe mais aucun privilège SQL UPDATE n'est accordé à `authenticated` : cette politique seule ne donne donc pas la capacité de modifier la table via le rôle API. Les colonnes de montant/plan/ref restent à contrôler dans le flux serveur de validation ; aucune modification n'a été faite.
+- Bucket Storage `prive` : `public=false`, sans limite de taille de bucket configurée (`file_size_limit=null`). Les pièces jointes de messagerie ont une politique dédiée limitant l'envoi à 5 Mio et aux MIME PNG/JPEG/WebP/PDF, avec contrôle d'appartenance à la conversation. Une seconde politique générique `owner upload` autorise toutefois un utilisateur authentifié à envoyer dans son propre préfixe UID sans limite de taille ni filtre MIME. Cela ne rend pas le bucket public et ne donne pas accès aux fichiers d'autrui, mais laisse un risque de consommation abusive de stockage et de dépôt de fichiers non filtrés dans l'espace privé de l'utilisateur. À traiter comme durcissement recommandé, pas comme preuve d'accès inter-comptes.
+
+### Conclusion et suites
+- Aucun contournement direct des frontières entre comptes n'a été démontré dans ce lot.
+- Point prioritaire de durcissement : définir une limite de taille au niveau du bucket et aligner la politique générique `owner upload` sur les limites MIME/taille correspondant aux usages réels, après inventaire des formats légitimes.
+- Les politiques redondantes `documents_meta` pourront être rationalisées séparément, sans urgence démontrée.
+- Ne pas modifier les politiques Storage/RLS ni les privilèges sans autorisation explicite ; aucun SQL d'écriture n'a été exécuté.
+- Aucune création de compte de test, aucun test d'upload réel, aucune modification Auth, aucun secret touché, aucune nouvelle branche, aucun déploiement, aucun merge et aucun coût engagé.
+- PR #17 demeure ouverte et non fusionnée. L'état brouillon a changé dans GitHub (draft=false) ; cela ne vaut ni fusion ni autorisation de fusion. Conserver strictement l'interdiction de merger.
+
