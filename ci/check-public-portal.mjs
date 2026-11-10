@@ -238,13 +238,13 @@ if (!html.includes('style-prototype-dz.css?v=193')) {
 if (!sw.includes('style-prototype-dz.css?v=193')) {
   fail('version CSS du précache non actualisée (v176 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.131") ||
+if (!sw.includes("dz-de-v3.185.0.0.132") ||
     !sw.includes("style-prototype-dz.css?v=193") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS v193, app.js v3563 et Service Worker v3.185.0.0.129 synchronisés');
+console.log('✅ Cache CSS v193, app.js v3564 et Service Worker v3.185.0.0.132 synchronisés');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -271,7 +271,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
 if (!html.includes('supabase/supabase.js?v=3517') || !sw.includes('supabase/supabase.js?v=3517')) fail('cache Supabase client non synchronisé');
-if (!html.includes('app.js?v=3563') || !sw.includes('app.js?v=3563')) fail('cache app.js non synchronisé');
+if (!html.includes('app.js?v=3564') || !sw.includes('app.js?v=3564')) fail('cache app.js non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=193') || !sw.includes('style-prototype-dz.css?v=193')) fail('cache CSS non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
 if (!css.includes('#shell #tabs .desktop-nav{\n    display:flex!important;flex-direction:row!important;')) fail('navigation desktop horizontale intégrée au header absente');
@@ -438,7 +438,7 @@ for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 
 if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
   fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
 }
-if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.131')) {
+if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.132')) {
   fail('guide de bienvenue : cache ou Service Worker non actualisé');
 }
 console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
@@ -567,9 +567,9 @@ if (!html.includes('id="mfaLoginSmsResend"') || !html.includes('data-mfa-login-r
 if (!mfaModule.includes('setLoginResendVisibility(type)') || !mfaModule.includes("setLoginResendVisibility(preferred.type)") || !mfaModule.includes("setLoginResendVisibility(type);")) fail('visibilité du renvoi SMS non limitée au facteur téléphone');
 if (!mfaModule.includes('id=\"mfaPhoneEnrollForm\"') || !mfaModule.includes('id=\"mfaPhoneVerifyForm\"') || !mfaModule.includes('SB.mfaStart(enrolled.factorId)')) fail('enrôlement et validation du facteur SMS absents');
 if (!html.includes('supabase/supabase.js?v=3517') || !sw.includes('supabase/supabase.js?v=3517')) fail('cache Supabase MFA non synchronisé');
-if (!html.includes('app.js?v=3563') || !sw.includes('app.js?v=3563')) fail('cache app.js MFA non synchronisé');
+if (!html.includes('app.js?v=3564') || !sw.includes('app.js?v=3564')) fail('cache app.js MFA non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=193') || !sw.includes('style-prototype-dz.css?v=193')) fail('cache CSS MFA non synchronisé');
-if (!sw.includes("dz-de-v3.185.0.0.131")) fail('version Service Worker Lot 192 non actualisée');
+if (!sw.includes("dz-de-v3.185.0.0.132")) fail('version Service Worker Lot 192 non actualisée');
 if (!css.includes('LOT 181 — écrans et réglages MFA')) fail('styles MFA absents');
 console.log('✅ MFA : Supabase natif, TOTP, défi AAL2, codes de récupération expérimentaux et cache contrôlés.');
 
@@ -615,7 +615,7 @@ if(mfaFinalStart<0||mfaFinalEnd<=mfaFinalStart||
    !mfaFinalBlock.includes("typeof window.DZ.enterApp!=='function'")||
    !mfaFinalBlock.includes('window.DZ.enterApp(profile)')) fail('finalisation MFA : échec profil/entrée sans fermeture de session et retour connexion');
 if (!html.includes('mfa-security.js?v=14') || !sw.includes('./mfa-security.js?v=14')) fail('cache MFA Lot 197 non synchronisé');
-if (!sw.includes("dz-de-v3.185.0.0.131")) fail('version Service Worker Lot 197 non actualisée');
+if (!sw.includes("dz-de-v3.185.0.0.132")) fail('version Service Worker Lot 197 non actualisée');
 console.log('✅ Lot 197 : échec de finalisation MFA fermé, retour connexion et cache contrôlés.');
 
 
@@ -628,7 +628,7 @@ if(mfaLockoutStart<0||mfaLockoutEnd<=mfaLockoutStart||
    mfaLockoutBlock.includes('await SB.logout()')) fail('verrouillage MFA : fermeture de session non vérifiée après trois échecs');
 if(!mfaModule.includes("تعذر إكمال تسجيل الدخول بعد التحقق")) fail('message de finalisation MFA non localisé en arabe');
 if(!html.includes('mfa-security.js?v=14')||!sw.includes('./mfa-security.js?v=14')) fail('cache MFA Lot 198 non synchronisé');
-if(!sw.includes("dz-de-v3.185.0.0.131")) fail('version Service Worker Lot 198 non actualisée');
+if(!sw.includes("dz-de-v3.185.0.0.132")) fail('version Service Worker Lot 198 non actualisée');
 console.log('✅ Lot 198 : fermeture contrôlée après trois échecs MFA et cache synchronisé.');
 
 
@@ -640,7 +640,7 @@ if(mfaCancelStart<0||mfaCancelEnd<=mfaCancelStart||
    !mfaCancelBlock199.includes('await returnToLoginAfterMfa(')||
    mfaCancelBlock199.includes('await SB.logout()')) fail('annulation MFA : fermeture de session non contrôlée');
 if(!html.includes('mfa-security.js?v=14')||!sw.includes('./mfa-security.js?v=14')) fail('cache MFA Lot 199 non synchronisé');
-if(!sw.includes("dz-de-v3.185.0.0.131")) fail('version Service Worker Lot 199 non actualisée');
+if(!sw.includes("dz-de-v3.185.0.0.132")) fail('version Service Worker Lot 199 non actualisée');
 console.log('✅ Lot 199 : annulation MFA avec fermeture de session contrôlée.');
 
 // Lot 200 — renvoi explicite des codes MFA e-mail, login et enrôlement.
