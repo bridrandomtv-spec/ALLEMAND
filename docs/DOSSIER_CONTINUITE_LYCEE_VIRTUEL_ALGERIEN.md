@@ -4298,15 +4298,22 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Aucun déploiement Edge/Worker, aucune migration exécutée, aucun changement Auth/RLS/secrets/données Supabase, aucun merge et aucune modification de main. PR #17 reste ouverte.
 
 
-### Lot 233 — provisionnement serveur du profil étudiant à l'inscription (10 novembre 2026)
+### Lot 233 — audit initial du provisionnement du profil étudiant (10 novembre 2026)
 
-- Revue SQL : la clause `ON CONFLICT DO UPDATE` référence explicitement la ligne cible via l'alias `current_profile`, conformément à la syntaxe PostgreSQL et sans qualification à trois niveaux.
+- L'audit du client confirme que `SB.signup()` appelle uniquement `auth.signUp()` et que `myProfile()` lit la table `profiles` sans créer de ligne.
+- Une première lecture partielle du schéma avait conduit à proposer un nouveau déclencheur. Cette conclusion a été rectifiée au Lot 234 après lecture complète de la section d'inscription de `supabase/schema.sql` : le schéma possède déjà `on_auth_user_created`, qui appelle `public.handle_new_user()` et crée le profil avec le rôle initial `eleve`.
+- Le besoin fonctionnel reste valide : le profil doit exister dès la création Auth, avant la confirmation e-mail, afin que l'Edge Function puisse retrouver le rôle à la première connexion.
+- Aucun deuxième déclencheur ne doit être conservé. La migration a été corrigée au Lot 234 pour renforcer la fonction canonique existante, avec un `search_path` vide, des références qualifiées, aucune lecture de métadonnée client `role`, et révocation de l'exécution directe aux rôles clients.
+- Le profil initial reste `eleve`. En cas de conflit, `ON CONFLICT DO NOTHING` préserve un éventuel profil créé par un autre mécanisme de confiance ; la migration ne force donc pas la rétrogradation d'un compte provisionné séparément.
+- La migration demeure non appliquée. Le déclencheur doit encore être exécuté et testé dans un environnement Supabase isolé avant toute publication.
 
-- Durcissement complémentaire du provisionnement : en cas de collision avec un autre trigger de création de profil, le trigger MFA réaffirme le rôle `eleve` pour le nouvel utilisateur auto-inscrit tout en conservant les champs pédagogiques déjà présents. Les métadonnées client ne peuvent donc pas faire attribuer un rôle privilégié lors de la création.
-- Audit du parcours inscription → confirmation e-mail → première connexion MFA : le client Supabase signUp() ne crée qu'un utilisateur Auth ; la fonction myProfile() lit profiles mais ne crée pas de ligne. Le schéma versionné ne déclarait aucun trigger auth.users de création de profil.
-- Risque identifié : la fonction Edge MFA exige une ligne profiles pour déterminer le rôle. Un nouvel utilisateur confirmé sans profil recevrait PROFILE_REQUIRED et ne pourrait jamais commencer l'enrôlement MFA. En outre, le garde RLS restrictif prévu bloque l'accès d'un profil absent.
-- Correctif source dans la migration de la PR : trigger AFTER INSERT sur auth.users, fonction SECURITY DEFINER dans le schéma privé, profil créé avec rôle imposé `eleve` (jamais repris depuis les métadonnées client) et reprise des seuls champs pédagogiques pseudo/niveau/filière/wilaya. Fonction non exécutable par les rôles client ; trigger recréé de façon idempotente ; conflit d'identifiant ignoré.
-- Le profil existe ainsi dès la création du compte, même si Supabase attend la confirmation du courriel avant d'émettre une session. À la première connexion confirmée, l'Edge Function peut retrouver le rôle étudiant et lancer l'enrôlement MFA obligatoire.
-- CI statique renforcée pour vérifier l'existence du trigger, l'affectation forcée du rôle `eleve`, l'absence d'utilisation du rôle fourni par le client et les ACL de la fonction.
-- Point de validation restant : vérifier en environnement Supabase isolé l'exécution effective du trigger, les permissions/owner et l'enchaînement e-mail confirmé → login → émission du code → validation → accès. Migration non appliquée en production.
-- Aucun changement Supabase distant, aucun déploiement Edge/Worker, aucun secret modifié, aucun merge et aucune modification de `main`. PR #17 reste ouverte.
+### Lot 234 — correction du déclencheur d'inscription et durcissement SQL (10 novembre 2026)
+
+- Découverte confirmée dans `supabase/schema.sql` : le déclencheur existant `on_auth_user_created` appelle déjà `public.handle_new_user()`. Le schéma impose le rôle initial `eleve` et ne lit pas le rôle depuis les métadonnées client.
+- Suppression de la fonction et du déclencheur ajoutés au Lot 233. La migration remplace désormais la fonction existante et recrée le seul déclencheur canonique, évitant les doubles insertions et l'ordre d'exécution entre déclencheurs concurrents.
+- Durcissement de `public.handle_new_user()` : `SECURITY DEFINER` conservé pour l'insertion serveur, `search_path = ''`, fonctions et table explicitement qualifiées, rôle initial fixé à `eleve`, champs pédagogiques nettoyés, et aucune confiance dans `raw_user_meta_data.role`.
+- `ON CONFLICT (id) DO NOTHING` préserve une ligne de profil créée par un autre mécanisme de confiance ; la migration n'écrase pas un rôle déjà attribué par ce mécanisme.
+- Révocation de l'exécution directe de la fonction trigger pour `PUBLIC`, `anon` et `authenticated`. Le déclencheur existant reste le seul chemin d'exécution.
+- CI statique renforcée : comparaison explicite avec le schéma canonique, présence du déclencheur unique, recherche_path fixe, rôle imposé, absence de lecture du rôle client, absence du déclencheur secondaire et ACL de la fonction.
+- Limite : les assertions CI ne prouvent pas l'owner effectif de la fonction ni l'exécution réelle du trigger dans le projet Supabase. Ces points exigent une base isolée et un test Auth réel.
+- Aucun changement Supabase distant, aucune migration appliquée, aucun déploiement Edge/Worker, aucun secret modifié, aucun merge et aucune modification de `main`. PR #17 reste ouverte.
