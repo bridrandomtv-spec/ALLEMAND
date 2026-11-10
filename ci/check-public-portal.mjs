@@ -647,7 +647,9 @@ const studentMfaMigration = read('supabase/migrations/20261110160000_enforce_stu
 for (const marker of [
   'create schema if not exists private',
   'private.student_email_mfa_access_allowed()',
-  "when (select auth.role()) = 'service_role' then true",
+  "when (select auth.jwt() ->> 'role') = 'service_role' then true",
+  'to authenticated, service_role',
+  "bucket_id <> 'prive'",
   "p.role = 'eleve'",
   "auth.jwt() ->> 'session_id'",
   'create policy student_email_mfa_gate',
@@ -665,6 +667,8 @@ for (const marker of [
   'public.unlink_child'
 ]) if (!studentMfaMigration.includes(marker)) fail('migration MFA étudiant incomplète : ' + marker);
 if ((studentMfaMigration.split('private.student_email_mfa_access_allowed()').length - 1) < 14) fail('garde MFA manquant dans une ou plusieurs RPC SECURITY DEFINER');
+if (studentMfaMigration.includes('auth.role()')) fail('migration MFA : fonction auth.role() dépréciée');
+if ((studentMfaMigration.match(/bucket_id <> 'prive'/g) || []).length !== 2) fail('Storage MFA : le garde doit viser uniquement le bucket prive dans USING et WITH CHECK');
 if (studentMfaMigration.includes("auth.jwt()->>'aal'") || studentMfaMigration.includes("= 'aal2'")) fail('le MFA e-mail personnalisé ne doit pas être confondu avec AAL2');
 if (!mfaEmailServer.includes('required: isStudent') ||
     !mfaEmailServer.includes('const isStudent = profile.role === "eleve"') ||
