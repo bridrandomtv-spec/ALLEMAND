@@ -4637,3 +4637,9 @@ where n.nspname = 'public'
 - Correction du contrôle Masar : version attendue alignée sur `dz-de-v3.185.0.0.132`, avec libellé Lot 248. Commit `d0c27649d8c7a84967b5979ec3875072e973ca40`.
 - Vérification source après édition : le contrôle Masar n'a plus l'ancienne version .131. La CI du nouveau HEAD doit encore être exécutée et examinée.
 - Aucun changement du tableau de bord étudiant, aucun changement Auth/Supabase, aucune migration, aucun déploiement, aucune fusion, aucune branche Supabase ni frais. PR #17 reste ouverte ; `main` inchangée.
+
+
+### Rectification technique du Lot 249
+- La première édition de `ci/check-masar.mjs` n'avait pas remplacé correctement le motif regex malgré le commit initial. La relecture du fichier a détecté cette persistance ; ne pas considérer le premier commit comme ayant corrigé l'assertion.
+- Correction exacte effectuée ensuite : motif attendu `/dz-de-v3\\.185\\.0\\.0\\.132/`, commit `c8ddf7fd53be4c93cb20facbc5f5fca8652f4fc6`.
+- Cette rectification est tracée explicitement afin que le dossier reflète l'état réel du dépôt. CI à relancer/contrôler sur le HEAD suivant.
