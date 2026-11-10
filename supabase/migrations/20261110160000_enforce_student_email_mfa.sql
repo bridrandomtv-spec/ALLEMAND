@@ -790,5 +790,23 @@ grant execute on function public.subscription_set_preuve(bigint, text) to authen
 revoke all on function public.unlink_child(uuid) from public, anon;
 grant execute on function public.unlink_child(uuid) to authenticated, service_role;
 
+-- Helper de notification : réservé aux triggers serveur.
+-- Sans ACL explicite, une fonction PostgreSQL peut conserver EXECUTE pour PUBLIC.
+-- Une invocation RPC directe permettrait sinon de créer des notifications arbitraires.
+create or replace function public.notify(cible uuid, cle text, payload jsonb default '{}'::jsonb)
+returns void
+language plpgsql
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+begin
+  insert into public.notifications (user_id, cle, payload)
+  values (cible, cle, payload);
+end;
+$function$;
+
+revoke all on function public.notify(uuid, text, jsonb)
+  from public, anon, authenticated, service_role;
+
 comment on function private.student_email_mfa_access_allowed() is
   'Allows authenticated non-students; requires an unexpired custom e-mail MFA session for profiles.role=eleve.';
