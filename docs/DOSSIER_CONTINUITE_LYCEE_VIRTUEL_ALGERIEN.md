@@ -3893,7 +3893,7 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 
 ### CI et portée des résultats
 - CI #2819 / run \`42854558448\` : **success**. Le job unique a terminé avec succès, y compris l'étape dédiée « Vérifier le MFA e-mail obligatoire des étudiants (contrôles statiques) ».
-- Cette exécution correspond au commit workflow \`47de4e61581b259837795f0933f2e728d9d26481\`. Après l'ajustement de message, CI #2821 / run \`42859134366\` sur \`ab26208508e16b23d391b79d466d0989dbe41427\` est **success**. CI #2822 / run \`42859175770\` sur \`b23ef4c7c380142f795aae9d3b9a383058d0fa3b\`, qui inclut aussi l'assertion CI du nouveau message, était **in_progress** au dernier contrôle. Le HEAD PR comprend ensuite la mise à jour documentaire \`dd3c23e3edf61d4d407aed17b48519be6f23a9d6\`.
+- Cette exécution correspond au commit workflow \`47de4e61581b259837795f0933f2e728d9d26481\`. Après l'ajustement de message, CI #2821 / run \`42859134366\` sur \`ab26208508e16b23d391b79d466d0989dbe41427\` est **success**. CI #2822 / run \`42859175770\` sur \`b23ef4c7c380142f795aae9d3b9a383058d0fa3b\`, qui inclut aussi l'assertion CI du nouveau message, est désormais **success**. La mise à jour documentaire finale du présent lot est portée par le commit \`ee6b41cfd52756eba27b270a095e06c569e0afe5\`.
 - Les journaux et le code de la fonction active ont été consultés en lecture seule. Aucun test n'a envoyé de code Resend ni modifié de compte.
 
 ### Étape nécessaire pour une résolution réelle
