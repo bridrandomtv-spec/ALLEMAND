@@ -125,6 +125,45 @@ const protectedRpcSignatures = [
   'subscription_set_preuve(bigint, text)',
   'unlink_child(uuid)',
 ];
+// Exhaustive audit: every SECURITY DEFINER routine in this migration must be
+// classified, hardened, and covered by the MFA boundary (except the Auth trigger
+// and the private boolean gate, which have their own explicit contracts).
+const definerFunctions = [...sql.matchAll(
+  /create or replace function\\s+([a-z0-9_.]+)\\s*\\(([\\s\\S]*?)\\)\\s*returns[\\s\\S]*?\\bas\\s+\\$function\\$([\\s\\S]*?)\\$function\\$;/gi
+)].map(match => {
+  const statement = match[0];
+  const header = statement.slice(0, statement.indexOf('as $function$'));
+  return { name: match[1], header, body: match[3] };
+}).filter(fn => /security\\s+definer/i.test(fn.header));
+const expectedDefiners = [
+  'public.handle_new_user',
+  'private.student_email_mfa_access_allowed',
+  ...protectedRpcSignatures.map(signature => 'public.' + signature.slice(0, signature.indexOf('(')))
+];
+assert.deepEqual(definerFunctions.map(fn => fn.name).sort(), expectedDefiners.sort(),
+  'Every SECURITY DEFINER routine must be explicitly included in the reviewed inventory');
+for (const fn of definerFunctions) {
+  assert.ok(/set search_path/i.test(fn.header), `SECURITY DEFINER ${fn.name} must pin search_path`);
+  if (fn.name === 'public.handle_new_user') {
+    assert.ok(/set search_path\\s*=\\s*''/i.test(fn.header) &&
+      /revoke all on function public\\.handle_new_user\\(\\) from public, anon, authenticated/i.test(sql),
+      'Auth trigger must use an empty search_path and must not be callable by client roles');
+  } else if (fn.name === 'private.student_email_mfa_access_allowed') {
+    assert.ok(/auth\\.uid\\(\\)/i.test(fn.body) &&
+      /grant execute on function private\\.student_email_mfa_access_allowed\\(\\) to authenticated, service_role/i.test(sql) &&
+      /revoke all on function private\\.student_email_mfa_access_allowed\\(\\) from public, anon/i.test(sql),
+      'Private MFA predicate must bind authorization to auth.uid and have explicit ACLs');
+  } else {
+    assert.ok(/auth\\.uid\\(\\)/i.test(fn.body) &&
+      /private\\.student_email_mfa_access_allowed\\(\\)/i.test(fn.body),
+      `SECURITY DEFINER RPC ${fn.name} must bind caller identity and enforce the MFA gate`);
+    const escaped = fn.name.replace('.', '\\\\.');
+    assert.ok(new RegExp(`revoke all on function ${escaped}\\\\(`, 'i').test(sql) &&
+      new RegExp(`grant execute on function ${escaped}\\\\(`, 'i').test(sql),
+      `SECURITY DEFINER RPC ${fn.name} must have explicit revoke/grant ACLs`);
+  }
+}
+
 for (const signature of protectedRpcSignatures) {
   assert.ok(sql.includes(`revoke all on function public.${signature} from public, anon;`),
     `SECURITY DEFINER RPC ${signature} must revoke PUBLIC and anon execution`);
