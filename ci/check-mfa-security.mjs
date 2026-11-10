@@ -212,7 +212,15 @@ assert.ok(notifyStart >= 0 &&
   sql.includes('from public, anon, authenticated, service_role;'),
   'Notification helper must be server-trigger-only, use a pinned search_path and deny direct RPC execution to all client/API roles');
 
-const agreementAclStart = sql.indexOf('do $agreement_acl
+const agreementAclStart = sql.indexOf('agreement_acl');
+const agreementAclEnd = sql.indexOf('comment on function private.student_email_mfa_access_allowed()', agreementAclStart);
+const agreementAclBlock = sql.slice(agreementAclStart, agreementAclEnd);
+assert.ok(agreementAclStart >= 0 &&
+  agreementAclBlock.includes("pg_catalog.to_regprocedure('public.agreement_current(text)')") &&
+  agreementAclBlock.includes('revoke all on function public.agreement_current(text) from public, anon, authenticated') &&
+  agreementAclBlock.includes('grant execute on function public.agreement_current(text) to service_role') &&
+  !agreementAclBlock.includes('grant execute on function public.agreement_current(text) to authenticated'),
+  'The unused agreement_current SECURITY DEFINER RPC must be executable only by service_role, never by PUBLIC, anon or authenticated');
 
 assert.ok(sql.includes('revoke all on function public.mfa_email_issue_challenge') &&
   sql.includes('revoke all on function public.mfa_email_consume_challenge'),
