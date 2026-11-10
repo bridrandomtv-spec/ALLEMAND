@@ -4497,3 +4497,14 @@ where n.nspname = 'public'
 - Contrôle CI ajouté : vérifie la préservation conditionnelle de la demande, l'idempotence et l'absence d'attribution directe du rôle parent depuis les métadonnées client.
 - Fichiers modifiés dans la PR : migration MFA et `ci/check-mfa-security.mjs`. Aucun changement sur le projet Supabase actif.
 - La nouvelle CI doit encore être exécutée et réussir sur le dernier HEAD avant de valider ce lot. Aucun test PostgreSQL isolé n'a été effectué ; aucun environnement de test n'a été créé.
+
+
+### Lot 241 — réduction de l'exposition de agreement_current(text) (10 novembre 2026)
+
+- Vérification du code client sur la branche PR #17 : aucune occurrence de `agreement_current` ni aucun appel RPC correspondant. `SB.agreementText(id)` lit `agreements` via `from('agreements').select('*').eq('id', id).maybeSingle()` dans l'espace compte ; cette vue est derrière authentification/RLS. `legal.js` affiche le cadre juridique public à partir de contenu statique intégré au bundle.
+- Vérification PostgreSQL active : `public.agreement_current(text)` appartient à `postgres`, est `SECURITY DEFINER`, a `search_path=pg_catalog, public`, et renvoie le composite complet de `agreements`. Son ACL comprenait `EXECUTE` pour `PUBLIC`, `anon`, `authenticated` et `service_role`. L'exécution par anon provenait aussi de l'octroi à PUBLIC.
+- Risque établi : tout appelant non authentifié peut interroger cette RPC pour obtenir la ligne complète d'un accord actif, au-delà de la page légale statique. Aucune dépendance client n'a été trouvée dans les fichiers JS de la branche.
+- Correction ajoutée à la migration PR : bloc DO conditionnel utilisant `pg_catalog.to_regprocedure('public.agreement_current(text)')`. Si la fonction existe, retrait de l'exécution à `PUBLIC` et `anon`, puis octroi explicite à `authenticated` et `service_role`. La garde rend la migration compatible avec un schéma isolé où la RPC historique serait absente.
+- Contrôle statique ajouté à `ci/check-mfa-security.mjs` pour vérifier la présence de la garde, du REVOKE et du GRANT attendu.
+- Aucun privilège n'a été modifié sur la base Supabase active ; la correction n'existe que dans la migration de la branche PR #17. Le test CI est statique et ne prouve pas encore les ACL effectives après application.
+- Vérifications restantes : après application sur environnement isolé, confirmer `has_function_privilege('anon', ...)` = false, `authenticated` = true et `service_role` = true ; tester également la page légale publique et l'espace compte authentifié.
