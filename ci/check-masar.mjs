@@ -63,7 +63,7 @@ assert.match(sw, /style-prototype-dz\.css\?v=193/, 'précache CSS v193 non actua
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
 assert.match(html, /app\.js\?v=3565/, 'cache app.js non actualisé');
-assert.match(sw, /app\.js\?v=3564/, 'précache app.js non actualisé');
+assert.match(sw, /app\.js\?v=3565/, 'précache app.js non actualisé');
 
 
 assert.match(app, /function studentSession\(\)/, 'le coach doit vérifier la session élève');
