@@ -3559,3 +3559,11 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Le renvoi existe désormais dans le défi de connexion partagé ; le test vérifie le gestionnaire `data-mfa-email-resend` et l'état e-mail en attente plutôt qu'un ancien formulaire inexistant.
 - Correctif CI : commit `ed4feba3f088f55d41c814ca5fa4148359a4ef8d`. Aucun code applicatif n'a été modifié par ce correctif.
 - Nouvelle CI sur le HEAD à confirmer.
+
+
+### Validation CI finale du code Lot 202 (10 novembre 2026)
+- CI #42826671288 sur le commit applicatif `ed4feba3f088f55d41c814ca5fa4148359a4ef8d` : **réussie, 33/33 étapes**.
+- La validation du portail public, le contrôle de مسارك, la recherche/notifications, les badges/XP, les tests d'accès/fuite, la matrice des parcours et les régressions pédagogiques sont également réussis.
+- Aucun échec d'étape sur cette exécution.
+- Le HEAD de PR a ensuite reçu un commit documentaire `3c950f717d1260558499f6bb93fb9dd302fb36af` ; la CI correspondante #42826682599 est en cours au moment de cette note. Le code applicatif est identique au commit déjà validé.
+- La validation CI reste structurelle et automatisée : aucun test navigateur réel, aucune réception Resend et aucun test sur compte étudiant réel ne sont revendiqués.
