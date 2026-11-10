@@ -4956,3 +4956,17 @@ where n.nspname = 'public'
 - Cette assertion distincte est maintenant alignée sur le Service Worker livré dans la PR ; commit de correction : `e593bac5b2248fd24c76380de85d93bbde3320ad`.
 - La première correction (.132 → .133 et référence HTML app.js 3564 → 3565) était exacte, mais le test contenait deux références séparées à app.js ; la seconde n'avait pas été remplacée.
 - Nouvelle CI déclenchée par ce commit ; résultat à confirmer. Aucun code applicatif ni paramètre Supabase modifié dans ce correctif de test.
+
+
+## Lot 261 — fiabilisation du formulaire d'inscription officielle (10 novembre 2026)
+
+- Le champ de mot de passe de l'inscription acceptait 4 caractères (`minlength=4`) alors que Supabase Auth utilise une longueur minimale par défaut de 6. Le formulaire demande maintenant au moins 6 caractères ; aucune configuration Auth distante n'a été changée. La documentation Supabase recommande 8 caractères ou davantage pour une meilleure sécurité, mais le lot s'aligne sur le minimum par défaut sans imposer une politique distante inconnue.
+- Le texte d'aide après inscription ne prétend plus qu'un e-mail a nécessairement été envoyé : il indique que la confirmation dépend de l'activation de cette exigence et précise qu'un service d'envoi peut devoir être configuré.
+- Le libellé de l'option élève ne promet plus une « activation immédiate » avant confirmation du compte.
+- Tests statiques ajoutés dans `ci/check-public-portal.mjs` pour ces trois garanties ; assertions de cache Masar synchronisées.
+- Cache actualisé : `app.js?v=3566`, Service Worker `dz-de-v3.185.0.0.134`. Le précache et les assertions CI sont alignés.
+- Le flux reste l'inscription officielle Supabase Auth par e-mail/mot de passe ; aucune création locale de secours en cas d'échec cloud.
+- Limite non résolue : le réglage de confirmation e-mail et le SMTP du projet actif ne sont pas vérifiés/modifiés dans ce lot. Aucun e-mail réel, compte étudiant réel ou parcours navigateur n'est revendiqué. Sans SMTP adapté, la confirmation publique peut ne pas être livrée ; le code seul ne peut pas corriger cette configuration.
+- Aucun MFA réintroduit. Aucune modification distante Auth/SMTP/secrets, schéma, RLS, migration, Edge Function ou donnée. Aucun coût, aucune branche Supabase, aucun déploiement de production et aucune fusion.
+- PR #17 maintenue ouverte et non fusionnée ; changements sur la branche existante uniquement.
+- CI du code et du dossier à confirmer après ce lot.
