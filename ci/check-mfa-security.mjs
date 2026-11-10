@@ -23,8 +23,8 @@ assert.ok(sql.includes('create or replace function private.create_student_profil
   sql.includes('after insert on auth.users') &&
   sql.includes("values (\n    new.id,") &&
   sql.includes("    'eleve',") &&
-  sql.includes('on conflict (id) do nothing'),
-  'New Auth users must receive a server-created student profile before MFA role lookup');
+  sql.includes("on conflict (id) do update") && sql.includes("role = 'eleve'"),
+  'New Auth users must receive a server-created student profile with a forced student role before MFA role lookup');
 assert.ok(sql.includes("new.raw_user_meta_data ->> 'pseudo'") &&
   sql.includes("new.raw_user_meta_data ->> 'niveau'") &&
   !sql.includes("new.raw_user_meta_data ->> 'role'"),
