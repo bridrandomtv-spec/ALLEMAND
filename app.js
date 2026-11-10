@@ -1707,8 +1707,7 @@ function answerQCM(btn){
 /* Auth local uniquement hors ligne ou dans le mode démo explicitement demandé. */
 function authLocalMode(){
   try{
-    const demo = new URLSearchParams(location.search).has('demo')
-      || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const demo = new URLSearchParams(location.search).has('demo');
     return !navigator.onLine || demo;
   }catch(e){ return !navigator.onLine; }
 }
