@@ -53,7 +53,7 @@
     }
     var emailState=await SB.mfaEmail({action:'status'});
     if(!emailState.ok){
-      status('#loginErr','تعذر التحقق من حالة المصادقة عبر البريد. أعد المحاولة لاحقًا؛ لم يتم تجاوز فحص الأمان.');
+      status('#loginErr',emailMessage(emailState.error||emailState.err,'تعذر التحقق من حالة المصادقة عبر البريد. أعد المحاولة لاحقًا؛ لم يتم تجاوز فحص الأمان.'));
       return true;
     }
 
