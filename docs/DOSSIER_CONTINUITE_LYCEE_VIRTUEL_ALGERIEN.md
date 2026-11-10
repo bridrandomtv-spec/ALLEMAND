@@ -4296,3 +4296,13 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - ci/check-mfa-security.mjs renforce les assertions d'ordre : MFA avant chargement du profil et avant entrée, et absence d'exposition des messages d'exception bruts dans la restauration.
 - Validation CI du nouveau HEAD à confirmer. Les assertions sont statiques et ne remplacent pas un test navigateur avec sessions réelles.
 - Aucun déploiement Edge/Worker, aucune migration exécutée, aucun changement Auth/RLS/secrets/données Supabase, aucun merge et aucune modification de main. PR #17 reste ouverte.
+
+
+### Lot 233 — provisionnement serveur du profil étudiant à l'inscription (10 novembre 2026)
+- Audit du parcours inscription → confirmation e-mail → première connexion MFA : le client Supabase signUp() ne crée qu'un utilisateur Auth ; la fonction myProfile() lit profiles mais ne crée pas de ligne. Le schéma versionné ne déclarait aucun trigger auth.users de création de profil.
+- Risque identifié : la fonction Edge MFA exige une ligne profiles pour déterminer le rôle. Un nouvel utilisateur confirmé sans profil recevrait PROFILE_REQUIRED et ne pourrait jamais commencer l'enrôlement MFA. En outre, le garde RLS restrictif prévu bloque l'accès d'un profil absent.
+- Correctif source dans la migration de la PR : trigger AFTER INSERT sur auth.users, fonction SECURITY DEFINER dans le schéma privé, profil créé avec rôle imposé `eleve` (jamais repris depuis les métadonnées client) et reprise des seuls champs pédagogiques pseudo/niveau/filière/wilaya. Fonction non exécutable par les rôles client ; trigger recréé de façon idempotente ; conflit d'identifiant ignoré.
+- Le profil existe ainsi dès la création du compte, même si Supabase attend la confirmation du courriel avant d'émettre une session. À la première connexion confirmée, l'Edge Function peut retrouver le rôle étudiant et lancer l'enrôlement MFA obligatoire.
+- CI statique renforcée pour vérifier l'existence du trigger, l'affectation forcée du rôle `eleve`, l'absence d'utilisation du rôle fourni par le client et les ACL de la fonction.
+- Point de validation restant : vérifier en environnement Supabase isolé l'exécution effective du trigger, les permissions/owner et l'enchaînement e-mail confirmé → login → émission du code → validation → accès. Migration non appliquée en production.
+- Aucun changement Supabase distant, aucun déploiement Edge/Worker, aucun secret modifié, aucun merge et aucune modification de `main`. PR #17 reste ouverte.
