@@ -4014,7 +4014,7 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - `requireGate()` émet maintenant un permis d'entrée éphémère, utilisable une seule fois, uniquement après réussite du contrôle email et de l'éventuel contrôle natif Supabase.
 - `enterApp(session)` devient le point de contrôle central : toute session `src === 'cloud'` doit consommer ce permis avant que le shell soit affiché.
 - Sans permis ou si le module MFA n'est pas disponible, l'ouverture est bloquée et le message reste sur l'écran de connexion.
-- Si un appel cloud arrive sans permis, `enterApp` relance le contrôle et n'ouvre l'application qu'après réussite.
+- Si un appel cloud arrive sans permis, `enterApp` masque d'abord le shell, réaffiche le portail de connexion, relance le contrôle et n'ouvre l'application qu'après réussite.
 - Les sessions locales de démonstration/hors ligne ne changent pas de parcours.
 
 ### Validation
