@@ -5103,3 +5103,32 @@ Aucun changement SQL, Storage, bucket, Auth, RLS, privilège, secret, fichier ut
 - Défauts prioritaires à corriger dans la PR après validation du parcours métier : (a) choisir une seule source de vérité pour le justificatif et aligner le schéma, l'upload et la file admin ; (b) imposer les limites de taille/format côté serveur ; (c) valider plan et montant depuis `plans` côté serveur au moment de la création/décision ; (d) clarifier le modèle `payments`, puisque le client tente un INSERT non autorisé et que l'interface admin attend un champ `preuve` absent.
 - Aucune modification du code applicatif, SQL, RLS, Storage, Auth, privilège, paramètre, secret ou donnée Supabase n'a été effectuée dans ce lot. Aucun changement de facturation ou de tarification n'est appliqué ; ce lot est un audit en lecture seule du flux déjà présent.
 - Aucun déploiement, aucune fusion, aucune nouvelle branche, aucun coût et aucun changement sur `main`. PR #17 reste ouverte et non fusionnée.
+
+
+## Vérification du prototype 2FA fourni — 10 novembre 2026
+
+### Résultat de la comparaison
+Le prototype transmis sous le nom `Texte collé(20261110-224451).txt` (HTML autonome, 1 144 lignes) a été lu et comparé à l'historique de ce dossier et aux décisions des Lots 259–261.
+
+**Conclusion : oui, le sujet MFA a déjà été traité dans le projet, mais ce prototype précis n'a jamais été intégré comme système réel.**
+
+Le fichier fourni est une maquette autonome de démonstration :
+- Il simule l'écran après validation du mot de passe et le choix entre TOTP, SMS, e-mail et codes de secours.
+- Il affiche un QR code décoratif et une clé TOTP codée en dur ; ce ne sont pas des données enrôlées pour un compte.
+- Le code JavaScript contient explicitement `DEMO_OTP = '123456'` et une liste `DEMO_BACKUP_CODES` en dur. La vérification compare les saisies à ces valeurs locales après un `setTimeout`; aucun appel Supabase, serveur TOTP, fournisseur SMS ou service d'e-mail n'est effectué.
+- Le compte à rebours de 30 secondes est une animation d'interface ; il ne génère pas un nouveau TOTP cryptographique.
+- Le prototype charge Tailwind CDN et Lucide, alors que les règles du dépôt demandent de préserver l'interface vanilla et de ne pas ajouter de dépendances frontend.
+
+### Ce qui a réellement été expérimenté dans ALLEMAND
+- Une autre implémentation, distincte de cette maquette, a été développée dans la PR #17 : facteur e-mail personnalisé via Edge Function `mfa-email`, enrôlement et défi OTP, puis tentative d'obligation automatique.
+- Cette implémentation n'était pas équivalente à MFA natif Supabase/AAL2 ; le dossier signalait que la barrière d'interface ne suffisait pas à protéger seule les appels directs Data API/RPC.
+- À la demande ultérieure explicite « supprimer mfa donne moi une inscription officielle », les Lots 259–261 ont retiré le MFA du code de la PR et conservé l'authentification officielle Supabase e-mail/mot de passe.
+- La fonction Edge distante `mfa-email` v7 et les anciennes tables MFA sont restées comme reliquats du projet Supabase ; elles ne sont plus appelées par le code PR. Leur suppression distante n'a pas été autorisée ni exécutée.
+
+### Décision à respecter
+- **Ne pas réintégrer ce prototype ni aucune de ses 4 méthodes 2FA.**
+- **Ne pas réintroduire TOTP, SMS, e-mail OTP, codes de secours, écran de défi ou obligation MFA.**
+- La maquette est une référence visuelle historique uniquement, pas une spécification fonctionnelle actuelle.
+- Le parcours actuel reste l'inscription et la connexion cloud officielles Supabase par e-mail et mot de passe. La confirmation e-mail Auth est un sujet distinct du MFA et reste non résolue côté livraison SMTP ; ne pas la confondre avec un OTP MFA.
+- Aucun code, réglage Auth, schéma, RLS, secret, fonction distante ou donnée n'a été modifié pendant cette vérification. Aucun déploiement, aucune fusion, aucun coût.
+
