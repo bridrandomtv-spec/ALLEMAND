@@ -3674,3 +3674,9 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Le contrôle MFA étudiant, les assertions migration RLS/Storage/RPC, le portail, مسارك, les tests d'accès/fuite, la matrice des parcours et les régressions pédagogiques sont passés dans ce workflow.
 - Cette CI valide les contrôles statiques et les tests automatisés du dépôt ; elle ne prouve pas l'exécution de la migration sur une base de test, la réception Resend ou un test navigateur avec des comptes réels.
 - La PR #17 reste ouverte, non fusionnée, cible `main` ; aucun déploiement Supabase/Cloudflare ni aucune migration distante n'a été effectué.
+
+
+### CI de confirmation après mise à jour finale du dossier — Lot 204
+- CI #42838689058 / run #2805 sur le commit `85898309d01a37fded1818c364b927ab1f3e4fec` : **réussie, 33/33 étapes**, zéro échec.
+- Le workflow a terminé avec succès après l'ajout de la note CI au dossier de continuité ; aucune étape en échec.
+- Le commit ne change que la documentation par rapport au code MFA/RLS déjà validé par CI #2803/#2804.
