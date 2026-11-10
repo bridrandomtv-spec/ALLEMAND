@@ -3989,3 +3989,14 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Les contrôles CI restent statiques ; aucun test navigateur ou compte réel n'a été exécuté.
 - Aucun changement Supabase actif, aucune migration, aucun déploiement Edge Function/Cloudflare production, aucun coût et aucun merge.
 - PR #17 reste ouverte ; `main` inchangée.
+
+
+---
+
+## Lot 217 — correction de syntaxe du test CI MFA après ajout du contrôle cloud (10 novembre 2026)
+
+- La relecture immédiate du script après le Lot 216 a détecté un caractère `\\n` littéral devant le `console.log`, introduit lors de l'ajout des assertions sur `bootGate()`.
+- Le script a été corrigé pour rétablir un véritable saut de ligne JavaScript. Aucun code applicatif supplémentaire n'a été modifié dans ce lot.
+- La CI #42864127940 a réussi sur le HEAD précédent `b6300edc548f706baea4b33c4003576c8ba99ab0`, qui incluait l'autonomie de migration et les assertions SQL, mais pas encore la correction du chemin cloud du Lot 216.
+- La CI du nouveau script et du nouveau HEAD doit être vérifiée avant de déclarer les Lots 216–217 validés.
+- Aucun changement Supabase actif, aucune migration, aucun déploiement, aucune dépense et aucun merge.
