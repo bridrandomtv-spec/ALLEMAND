@@ -24,6 +24,17 @@ begin
     nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'wilaya'), '')
   )
   on conflict (id) do nothing;
+
+  -- Compatibilité : une demande de rôle parent reste une demande en attente.
+  -- Elle ne modifie jamais profiles.role ; seule la RPC admin peut approuver.
+  -- Le test de présence évite de rendre le trigger dépendant d'une table
+  -- historique absente de certains schémas de test/installation.
+  if lower(coalesce(new.raw_user_meta_data ->> 'requested_role', '')) = 'parent'
+     and pg_catalog.to_regclass('public.parent_role_requests') is not null then
+    execute 'insert into public.parent_role_requests (user_id, status) values ($1, ''pending'') on conflict (user_id) where status = ''pending'' do nothing'
+      using new.id;
+  end if;
+
   return new;
 end;
 $function$;
