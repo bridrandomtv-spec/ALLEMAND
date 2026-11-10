@@ -4949,3 +4949,10 @@ where n.nspname = 'public'
 - Supabase Preview reste ignoré car aucune branche Supabase n'est associée. Aucune branche Supabase n'a été créée.
 - Aucun réglage Auth, SMTP, secret, donnée, schéma, RLS, Edge Function ou migration distante n'a été modifié. Aucun e-mail réel ni test navigateur n'est revendiqué.
 - PR #17 reste ouverte et non fusionnée ; aucune modification de `main`, aucun déploiement de production et aucune dépense.
+
+
+### Lot 260 — deuxième assertion de cache corrigée
+- La CI #42909226062 a confirmé que le contrôle Masar utilisait encore une seconde assertion obsolète : le précache `sw.js` attendait `app.js?v=3564` au lieu de `v3565`.
+- Cette assertion distincte est maintenant alignée sur le Service Worker livré dans la PR ; commit de correction : `e593bac5b2248fd24c76380de85d93bbde3320ad`.
+- La première correction (.132 → .133 et référence HTML app.js 3564 → 3565) était exacte, mais le test contenait deux références séparées à app.js ; la seconde n'avait pas été remplacée.
+- Nouvelle CI déclenchée par ce commit ; résultat à confirmer. Aucun code applicatif ni paramètre Supabase modifié dans ce correctif de test.
