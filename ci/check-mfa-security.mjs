@@ -58,4 +58,19 @@ assert.ok(sql.includes('attempts between 0 and 5') &&
   sql.includes("interval '24 hours'"),
   'Challenge storage must enforce attempt, expiry and issuance rate limits');
 
+
+assert.ok(sql.includes('revoke all on table public.mfa_email_factors') &&
+  sql.includes('from public, anon, authenticated') &&
+  sql.includes('to service_role'),
+  'MFA tables must deny direct client-role access and grant backend access only');
+assert.ok(sql.includes('revoke all on function public.mfa_email_issue_challenge') &&
+  sql.includes('revoke all on function public.mfa_email_consume_challenge'),
+  'Challenge RPCs must revoke default PUBLIC/client execution');
+assert.ok(sql.includes('pg_catalog.pg_advisory_xact_lock') &&
+  sql.includes('for update') &&
+  sql.includes('attempts >= 5') &&
+  sql.includes('attempts + 1 >= 5') &&
+  sql.includes('set consumed_at = pg_catalog.now()'),
+  'Challenge RPCs must serialize issuance, lock verification and enforce one-time/attempt limits');
+
 console.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
