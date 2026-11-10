@@ -66,6 +66,28 @@ assert.ok(sql.includes('revoke all on table public.mfa_email_factors') &&
   sql.includes('from public, anon, authenticated') &&
   sql.includes('to service_role'),
   'MFA tables must deny direct client-role access and grant backend access only');
+const protectedRpcSignatures = [
+  'active_entitlement(uuid)',
+  'agreement_accept(bigint, text, text)',
+  'agreement_status_for(uuid, text)',
+  'agreement_withdraw(bigint)',
+  'msg_can_dm(uuid, uuid)',
+  'msg_is_member(uuid, bigint)',
+  'msg_member_ok(bigint, uuid)',
+  'msg_not_blocked(bigint, uuid)',
+  'msg_open_direct(uuid)',
+  'my_parent_link_requests()',
+  'respond_parent_link_request(bigint, boolean)',
+  'subscription_set_preuve(bigint, text)',
+  'unlink_child(uuid)',
+];
+for (const signature of protectedRpcSignatures) {
+  assert.ok(sql.includes(`revoke all on function public.${signature} from public, anon;`),
+    `SECURITY DEFINER RPC ${signature} must revoke PUBLIC and anon execution`);
+  assert.ok(sql.includes(`grant execute on function public.${signature} to authenticated, service_role;`),
+    `SECURITY DEFINER RPC ${signature} must explicitly grant authenticated/service_role execution`);
+}
+
 assert.ok(sql.includes('revoke all on function public.mfa_email_issue_challenge') &&
   sql.includes('revoke all on function public.mfa_email_consume_challenge'),
   'Challenge RPCs must revoke default PUBLIC/client execution');
