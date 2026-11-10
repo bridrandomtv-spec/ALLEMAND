@@ -33,6 +33,13 @@ assert.ok(client.includes("typeof emailState.required!=='boolean'"),
   'Client must fail closed when the Edge Function omits the required flag');
 assert.ok(client.includes('if(emailState.required && (!emailState.enrolled || !emailState.verified))'),
   'Student login must enroll or challenge whenever the required factor is absent or unverified');
+const appSource = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+assert.ok(appSource.includes('function friendlyCloudAuthMessage(code, detail)') &&
+  appSource.includes('email_not_confirmed') &&
+  appSource.includes('افتح رسالة التأكيد واضغط الرابط الموجود فيها') &&
+  appSource.includes('تم إنشاء طلب حسابك. أرسلنا رابط تأكيد') &&
+  appSource.includes('const loginTab = document.querySelector(\'[data-gate="login"]\')'),
+  'Cloud signup must guide unconfirmed students to the login tab and confirm their e-mail before first MFA enrollment');
 assert.ok(client.includes("emailMessage(emailState.error||emailState.err") &&
   'Unconfirmed e-mail status must show the actionable confirmation-link instruction before MFA enrollment');
 assert.ok(client.includes("function emailMessage(code,fallback)") &&
