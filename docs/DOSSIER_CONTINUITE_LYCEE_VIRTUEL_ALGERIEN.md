@@ -4485,3 +4485,15 @@ where n.nspname = 'public'
 3. Appliquer la migration uniquement dans cet environnement, puis contrôler le propriétaire effectif (`postgres`), les ACL, les triggers, le schéma privé, les 37 policies restrictives et le bucket `prive`.
 4. Tester réellement les parcours élève MFA vérifié/non vérifié, élève tentant de changer son rôle, admin, parent, rôle inconnu, RPC et Storage ; vérifier aussi le renvoi Resend réel.
 5. Ne demander aucune fusion ni déploiement avant les résultats de ces tests et une autorisation distincte.
+
+
+### Lot 239 — préservation de la demande parent lors de l'inscription (10 novembre 2026)
+
+- L'inspection du déclencheur réel `public.handle_new_user()` a révélé un effet secondaire historique absent de la version MFA proposée : lorsque `raw_user_meta_data.requested_role = 'parent'`, le trigger crée une ligne `pending` dans `public.parent_role_requests`.
+- La table active est protégée par RLS, sans privilège direct SELECT/INSERT/UPDATE/DELETE accordé à `authenticated` ; sa policy de lecture est réservée aux administrateurs. Elle possède une contrainte d'état `pending/approved/rejected` et un index unique partiel garantissant au plus une demande en attente par utilisateur.
+- La redéfinition de `handle_new_user()` dans la migration MFA aurait supprimé ce comportement et aurait pu casser une inscription legacy demandant le rôle parent.
+- Correction ajoutée dans la migration PR : si la métadonnée `requested_role` vaut `parent` et si la table historique existe, le trigger crée une demande `pending` idempotente via l'index unique partiel. Si la table n'existe pas dans un schéma isolé minimal, le trigger n'échoue pas.
+- Sécurité maintenue : le champ `role` transmis par le navigateur n'est jamais lu ; le profil est toujours créé avec `role = 'eleve'`. La demande ne promeut personne. L'approbation reste une action administrative séparée.
+- Contrôle CI ajouté : vérifie la préservation conditionnelle de la demande, l'idempotence et l'absence d'attribution directe du rôle parent depuis les métadonnées client.
+- Fichiers modifiés dans la PR : migration MFA et `ci/check-mfa-security.mjs`. Aucun changement sur le projet Supabase actif.
+- La nouvelle CI doit encore être exécutée et réussir sur le dernier HEAD avant de valider ce lot. Aucun test PostgreSQL isolé n'a été effectué ; aucun environnement de test n'a été créé.
