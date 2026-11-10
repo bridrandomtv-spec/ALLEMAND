@@ -3923,3 +3923,25 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Aucun déploiement Edge Function, aucune migration, aucun changement Auth/RLS/secret/donnée Supabase, aucun déploiement Cloudflare, aucun merge, aucune modification de main.
 - Aucune branche Supabase payante et aucune dépense supplémentaire.
 - PR #17 conservée ouverte et non fusionnée.
+
+
+---
+
+## Lot 214 — correction de la suite MFA après échec CI (10 novembre 2026)
+
+### Résultat de la CI #2827
+- CI #2827 / run 42860957459 : **failure** sur le commit b3b1cda181e555f3242cdb922cd381aefe4b95fe.
+- Le journal identifie précisément une erreur de syntaxe JavaScript dans les expressions régulières du nouveau test : SyntaxError « Unterminated group ». Il s'agit d'un défaut du test CI, pas d'un échec démontré du mécanisme MFA à l'exécution.
+- Le contrôle MFA dédié n'a donc pas validé ce commit ; la précédente CI #2826 valide uniquement le HEAD précédent.
+
+### Correction appliquée
+- Le script ci/check-mfa-security.mjs a été réécrit pour utiliser des assertions de présence de fragments de code plutôt que des expressions régulières trop échappées.
+- Les assertions couvrent les rôles explicitement autorisés, le refus des rôles inconnus, la politique required, les protections start/verify/disable et le contrôle client avant l'entrée dans l'application.
+- Commit de correction : 5fc98ba45b7727cfe09bfa56a971fb5f5265e57d.
+- La nouvelle CI déclenchée par ce commit doit encore terminer ; aucun succès n'est anticipé.
+
+### Limites et décisions
+- Les assertions sont statiques : elles ne remplacent pas l'exécution Deno, les tests PostgreSQL/RLS, les tests JWT, la livraison Resend ni le parcours navigateur.
+- La fonction active Supabase reste en version 7 et ne renvoie pas required dans status ; le message d'incompatibilité à la connexion reste donc attendu tant qu'aucune mise à jour coordonnée n'est autorisée.
+- Aucun changement du projet Supabase actif, aucune migration appliquée, aucune fonction Edge déployée, aucun secret ni paramètre Auth/RLS modifié.
+- Aucune dépense, aucune branche Supabase payante, aucun déploiement Cloudflare de production, aucun merge ; PR #17 reste ouverte.
