@@ -4603,3 +4603,26 @@ where n.nspname = 'public'
 - Aucun déploiement Cloudflare manuel, aucun déploiement Edge Function, aucune migration appliquée, aucune branche Supabase créée.
 - Aucun service payant ni frais supplémentaires engagés.
 - La livraison des e-mails de confirmation Auth reste un problème distinct à diagnostiquer après qu'une vraie requête `SB.signup()` aura atteint Supabase. La clé Resend de la fonction MFA ne configure pas le SMTP Auth.
+
+
+---
+
+## Lot 248 — synchronisation du contrôle CI portail avec le cache réel (10 novembre 2026)
+
+### Diagnostic vérifié
+- CI #2919 / run `42897009163`, HEAD initial `9a5cc69def08468c64ef76e67b55f964db481021) : échec du job `Validation structurelle & pédagogique` à l'étape 22, `Vérifier le portail public (catalogue et inscription)`.
+- Le journal confirme que les contrôles du catalogue, des routes `#connexion/#inscription`, des champs, du formulaire et de la récupération du mot de passe passent.
+- L'échec exact était : `Portail public : précache Service Worker non synchronisé avec le CSS du portail`.
+- La cause n'était pas le CSS livré : `index.html` et `sw.js` contenaient déjà `style-prototype-dz.css?v=193`, `app.js?v=3564` et le Service Worker `dz-de-v3.185.0.0.132). Le script `ci/check-public-portal.mjs` conservait des attentes historiques `app.js?v=3563` et `dz-de-v3.185.0.0.131` (ainsi qu'un ancien texte de diagnostic).
+
+### Correction appliquée
+- Assertions et messages du contrôle portail synchronisés avec `app.js?v=3564` et `dz-de-v3.185.0.0.132`.
+- Les références CSS v193 et client Supabase v3517 étaient déjà cohérentes et sont conservées.
+- Commit de correction du contrôle : `210682cc5b6bfc77f692bdc886254fa0e8dfc1a2`.
+- Vérification de source après correction : aucune occurrence résiduelle de `app.js?v=3563` ou `dz-de-v3.185.0.0.131` dans `ci/check-public-portal.mjs`.
+
+### Validation et limites
+- La nouvelle CI déclenchée par ce commit doit encore terminer ; aucune réussite n'est anticipée.
+- L'échec CI était un décalage d'assertions de cache, pas un test fonctionnel navigateur. La création d'un compte étudiant, la réception d'un e-mail Auth et le premier enrôlement MFA restent à tester de bout en bout.
+- PR #17 reste ouverte et non fusionnée ; aucune modification de `main`.
+- Aucun déploiement Cloudflare/Supabase, aucune migration appliquée, aucune modification Auth distante, aucune branche Supabase créée et aucun frais engagé.
