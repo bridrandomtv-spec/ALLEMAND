@@ -79,4 +79,5 @@ assert.ok(app.includes("const cloudRestorePending = !!(s && s.src === 'cloud');"
 assert.ok(!app.includes("const cloudRestorePending = !!(s && s.src === 'cloud' && !authLocalMode());"),
   'Demo/offline mode must not bypass MFA for a remembered cloud session');
 
-\nconsole.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
+
+console.log('MFA static security checks passed: explicit student policy; known-role exemptions only; unknown roles denied; challenge/disable guards; client fail-closed and recheck.');
