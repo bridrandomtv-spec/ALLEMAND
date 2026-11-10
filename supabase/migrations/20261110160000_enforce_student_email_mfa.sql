@@ -4,6 +4,35 @@
 
 create schema if not exists private authorization postgres;
 
+-- Création serveur du profil étudiant : aucun client ne choisit son propre rôle.
+-- Le profil doit exister avant que l'Edge Function puisse appliquer la politique MFA.
+create or replace function private.create_student_profile_for_new_auth_user()
+returns trigger
+language plpgsql
+security definer
+set search_path to 'pg_catalog', 'public'
+as $function$
+begin
+  insert into public.profiles (id, pseudo, role, niveau, filiere, wilaya)
+  values (
+    new.id,
+    coalesce(nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'pseudo'), ''), split_part(coalesce(new.email, ''), '@', 1), 'Élève'),
+    'eleve',
+    nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'niveau'), ''),
+    nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'filiere'), ''),
+    nullif(pg_catalog.btrim(new.raw_user_meta_data ->> 'wilaya'), '')
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$function$;
+
+revoke all on function private.create_student_profile_for_new_auth_user() from public, anon, authenticated;
+drop trigger if exists on_auth_user_created_student_profile on auth.users;
+create trigger on_auth_user_created_student_profile
+  after insert on auth.users
+  for each row execute function private.create_student_profile_for_new_auth_user();
+
 -- Les trois tables et les deux RPC MFA sont déclarés ici afin que cette migration
 -- soit autonome : ils existaient dans le projet actif, mais n'étaient pas versionnés
 -- dans la migration de la PR. Les données et secrets ne sont jamais copiés.
