@@ -819,5 +819,19 @@ $function$;
 revoke all on function public.notify(uuid, text, jsonb)
   from public, anon, authenticated, service_role;
 
+
+-- agreement_current(text) n'est pas appelée par le client actuel : la page
+-- juridique publique est statique et l'espace compte lit agreements sous RLS.
+-- Supprimer uniquement l'exécution implicite/publique, en gardant les rôles
+-- applicatifs authentifiés et service_role explicitement autorisés.
+do $agreement_acl$
+begin
+  if pg_catalog.to_regprocedure('public.agreement_current(text)') is not null then
+    execute 'revoke all on function public.agreement_current(text) from public, anon';
+    execute 'grant execute on function public.agreement_current(text) to authenticated, service_role';
+  end if;
+end;
+$agreement_acl$;
+
 comment on function private.student_email_mfa_access_allowed() is
   'Allows authenticated non-students; requires an unexpired custom e-mail MFA session for profiles.role=eleve.';
