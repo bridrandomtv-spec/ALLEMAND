@@ -482,7 +482,7 @@ for (const marker of [
   'if (action === "status")',
   'STATUS_LOOKUP_FAILED',
   'EMAIL_FACTOR_NOT_CONFIGURED',
-  'RECENT_STEP_UP_REQUIRED',
+  'EMAIL_FACTOR_REQUIRED',
   'mfa_email_consume_challenge',
   'crypto.subtle.sign'
 ]) {
