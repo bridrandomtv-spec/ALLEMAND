@@ -5052,3 +5052,27 @@ Périmètre : lecture seule sur le projet Supabase actif `azjwcybivirvpxbfhyzk`.
 - Aucune création de compte de test, aucun test d'upload réel, aucune modification Auth, aucun secret touché, aucune nouvelle branche, aucun déploiement, aucun merge et aucun coût engagé.
 - PR #17 demeure ouverte et non fusionnée. L'état brouillon a changé dans GitHub (draft=false) ; cela ne vaut ni fusion ni autorisation de fusion. Conserver strictement l'interdiction de merger.
 
+
+
+## Lot 265 — revue des chemins d’upload et des autorisations Storage — 10 novembre 2026
+
+### Vérifications complémentaires
+- Lecture de la fonction cliente `SB.upload(file)` dans `supabase/supabase.js` : le code limite la taille à 5 Mio côté navigateur, mais ne contrôle pas le type MIME. Le chemin est construit comme `<uid>/<nom original>`, puis envoyé avec `upsert:true`. Le nom original n'est pas normalisé côté client.
+- La politique Storage `owner upload` autorise INSERT dans le bucket `prive` dès que le premier segment du chemin correspond à `auth.uid()`. Elle n'impose aucune limite de taille ni liste MIME.
+- Il s'agit d'une vraie différence entre contrôle client et contrôle serveur : un appel direct à l'API Storage peut contourner la limite de 5 Mio de l'interface et déposer des types de fichiers arbitraires dans le préfixe personnel. Le bucket reste privé ; les politiques de lecture/suppression limitent le périmètre au préfixe UID.
+- La politique `msg storage upload` est distincte : elle impose 1 à 5 Mio, les MIME PNG/JPEG/WebP/PDF, le propriétaire UID et l'appartenance à la conversation. Le chemin des messages commence par `msg/<conversation_id>/...`, alors que l'upload général commence par `<uid>/...` ; la politique générique ne permet donc pas de remplacer la règle spécifique des pièces jointes de messagerie sur ce chemin.
+- `msg_attachments` vérifie également l'uploader, la conversation, le type MIME, la taille et le statut `pending`. Les fonctions `msg_is_member` et `msg_is_moderator` vérifient l'identité appelante avant le contrôle de l'appartenance/modération.
+- `fileUrl(chemin)` demande une URL signée d'une heure ; l'autorisation effective de lecture reste soumise à la politique Storage SELECT, qui exige le préfixe UID du compte connecté. Aucune URL signée ni donnée privée n'a été générée ou consultée pendant l'audit.
+- Les deux politiques RLS de `documents_meta` (`admin all` et `owner only`) sont permissives et se recouvrent. Cela crée de la redondance, mais les expressions examinées ne démontrent pas d'accès inter-comptes.
+
+### Risque confirmé
+Le contrôle de taille de l'upload général est uniquement côté navigateur et donc contournable. Le contrôle MIME manque à la fois côté client et dans la politique Storage générique. Cela expose le bucket privé à des dépôts volumineux ou de formats inattendus dans le dossier de l'utilisateur ; ce n'est pas une exposition publique et aucun accès croisé n'a été démontré.
+
+### Recommandations — aucune modification appliquée
+1. Définir une limite de taille au niveau du bucket `prive` (valeur à choisir après inventaire des usages légitimes).
+2. Remplacer la politique générique `owner upload` par une politique qui valide taille et MIME au niveau Storage, ou séparer les usages en politiques/buckets dédiés.
+3. Ajouter une validation MIME et un nom de fichier normalisé côté interface, comme défense en profondeur, sans considérer cette validation cliente comme une frontière de sécurité.
+4. Conserver la règle stricte dédiée aux pièces jointes de messagerie.
+5. Vérifier si le dépôt général doit accepter des fichiers exécutables/archives ou seulement les formats pédagogiques réellement nécessaires avant de fixer la liste autorisée.
+
+Aucun changement SQL, Storage, bucket, Auth, RLS, privilège, secret, fichier utilisateur ou compte n'a été effectué. Aucun upload de test, aucun déploiement, aucune nouvelle branche, aucun merge et aucun coût engagé. PR #17 reste ouverte et non fusionnée.
