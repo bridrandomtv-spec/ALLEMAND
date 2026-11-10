@@ -30,8 +30,12 @@ t(sql.includes("session_user in ('postgres', 'supabase_admin')") &&
   sql.includes("p.role = 'admin'") &&
   !sql.includes('if auth.uid() is null then return new; end if;'),
   'promotions réservées à la console SQL, service_role explicite ou administrateur déjà établi');
-t(/create or replace function public\\.profiles_role_guard\\(\\)[\\s\\S]*?language plpgsql[\\s\\S]*?set search_path = ''[\\s\\S]*?as \\$function\\$[\\s\\S]*?\\$function\\$;/i.test(sql) &&
-  !/create or replace function public\\.profiles_role_guard\\([\\s\\S]*?security definer/i.test(sql),
+const roleGuardStart = sql.indexOf('create or replace function public.profiles_role_guard()');
+const roleGuardEnd = sql.indexOf('$function$;', roleGuardStart);
+const roleGuard = sql.slice(roleGuardStart, roleGuardEnd);
+t(roleGuardStart >= 0 && roleGuard.includes('language plpgsql') &&
+  roleGuard.includes("set search_path = ''") &&
+  !roleGuard.includes('security definer'),
   'garde de rôle SECURITY INVOKER avec search_path vide');
 if (fails) { console.error('::error:: msg_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== msg_test : TOUT PASSE ==');
