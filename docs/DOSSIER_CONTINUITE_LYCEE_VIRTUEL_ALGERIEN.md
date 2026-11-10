@@ -4397,3 +4397,19 @@ where n.nspname = 'auth'
 - CI #2878, après correction : réussite complète, y compris l'inventaire exhaustif des fonctions SECURITY DEFINER et tous les contrôles MFA/accès. Le dernier test réussi valide le script à ce commit ; les requêtes catalogue et tests PostgreSQL réels restent à exécuter en environnement isolé.
 - Aucun résultat de ces requêtes n'a été simulé ni inventé : elles restent à exécuter sur une base isolée. Il faudra aussi vérifier les droits effectifs d'exposition du schéma private dans les paramètres Data API et réaliser des tests Auth réels pour les rôles eleve, prof, admin, parent et rôle inconnu.
 - Aucun accès à la base distante, aucune migration appliquée, aucune Edge Function/Worker déployée, aucun secret modifié, aucune fusion et aucune modification de main.
+
+
+### Lot 236 — verrouillage serveur du rôle qui pilote l'obligation MFA (10 novembre 2026)
+
+- L'audit du client a confirmé que le tableau de bord admin appelle encore SB.setRole(), qui effectue une mise à jour directe de profiles.role. La table possède historiquement une policy UPDATE propre et des privilèges UPDATE accordés à authenticated.
+- Un garde existe dans le fichier manuel supabase/msg_schema.sql, mais il était SECURITY DEFINER avec search_path = public et autorisait tout contexte auth.uid() NULL. La migration MFA ne devait pas dépendre implicitement de l'exécution préalable de ce fichier manuel.
+- Risque traité : si un étudiant pouvait modifier profiles.role vers parent/admin/prof, l'Edge Function et le prédicat RLS pourraient le considérer comme exempt du MFA étudiant.
+- La migration MFA définit désormais elle-même public.profiles_role_guard() et le trigger profiles_tr_role. La fonction est SECURITY INVOKER (pas SECURITY DEFINER), utilise search_path vide et refuse par défaut tout changement de rôle sauf :
+  1. session SQL de maintenance postgres/supabase_admin ;
+  2. JWT service_role explicite ;
+  3. utilisateur authentifié dont le profil existant a déjà role = admin.
+- Une mise à jour du rôle par le tableau de bord admin reste donc possible pour un administrateur déjà établi, sous réserve de la policy admin UPDATE existante. Un étudiant ne peut pas s'auto-promouvoir ; une requête sans identité fiable n'est pas considérée comme administrateur.
+- Le même garde durci a été reporté dans supabase/msg_schema.sql pour éviter que le schéma de messagerie ne réintroduise l'ancienne version lors d'une installation/reprise manuelle.
+- CI renforcée : présence du trigger dans la migration, SECURITY INVOKER, search_path vide, validation de l'identité SQL/service_role/admin, refus par défaut et révocation des EXECUTE clients.
+- Contrôle réel restant obligatoire : test Auth isolé prouvant qu'un étudiant ne peut modifier son propre rôle vers prof/parent/admin, qu'un admin existant peut modifier le rôle d'un autre profil, et que le compte initial de coordination peut être promu par SQL Editor. Aucun test de mutation sur le projet de production.
+- Aucun changement de la structure de table ni suppression de l'interface de gestion des rôles ; aucun privilège distant modifié, aucune migration appliquée, aucun déploiement, aucun secret touché, aucun merge et aucune modification de main.
