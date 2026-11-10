@@ -4155,3 +4155,24 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - `main` inchangée ; aucun déploiement Cloudflare ou Supabase ; aucune migration appliquée ; aucun changement de configuration, secret, Auth, RLS ou donnée du projet Supabase actif.
 - Aucun environnement Supabase payant créé et aucun coût engagé.
 - Le MFA e-mail est **validé au niveau du code source et de la CI**, mais n'est pas déclaré opérationnel en production tant que l'ordre de test et de déploiement ci-dessus n'a pas été exécuté et vérifié.
+
+
+---
+
+## Lot 225 — durcissement des privilèges EXECUTE des RPC SECURITY DEFINER (10 novembre 2026)
+
+### Constat
+- La revue statique de la migration MFA a recensé 13 fonctions `SECURITY DEFINER` du schéma `public` utilisées par les parcours abonnement, conventions, messagerie, liens parents et justificatifs.
+- PostgreSQL accorde par défaut le privilège `EXECUTE` à `PUBLIC` lors de la création d'une fonction. Le contrôle interne des fonctions rejetait déjà les sessions sans utilisateur ou sans MFA, mais le privilège d'appel anonyme n'était pas explicitement retiré dans la migration.
+
+### Correction source dans la PR #17
+- La migration révoque maintenant `EXECUTE` de `PUBLIC` et `anon` pour les 13 signatures concernées.
+- Elle accorde explicitement `EXECUTE` à `authenticated` et `service_role`, rôles requis par les appels applicatifs et serveur.
+- Les contrôles métier internes et le garde MFA restent présents ; cette correction complète le contrôle d'accès au niveau des privilèges PostgreSQL.
+- `ci/check-mfa-security.mjs` vérifie chacune des 13 signatures, la révocation des rôles anonymes et l'octroi explicite des rôles attendus.
+
+### Validation et limites
+- Les modifications sont dans la branche PR uniquement. La nouvelle CI doit terminer avant de considérer le lot validé.
+- Cette vérification statique ne remplace pas l'exécution de la migration sur une base de test ni un contrôle des privilèges effectifs via `has_function_privilege`.
+- Aucun SQL exécuté sur le projet Supabase actif ; aucune migration appliquée, aucun déploiement Edge/Cloudflare, aucun changement Auth/RLS/secret/donnée active.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée ; aucun coût engagé.
