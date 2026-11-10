@@ -62,7 +62,7 @@ if (!workerConfigGuard.includes("return jsonRes({ error: 'content_guard_not_conf
 }
 
 /* CONTENT-1d : inventaire exhaustif des actifs statiques sensibles servis par le Worker */
-const protectedBlock = wkc.match(/const PROT = \[([\\s\\S]*?)\];/);
+const protectedBlock = wkc.match(/const PROT = \[([\s\S]*?)\];/);
 if (!protectedBlock) {
   fails.push('site-worker.js : inventaire PROT introuvable');
 } else {
@@ -70,7 +70,7 @@ if (!protectedBlock) {
   try { protectedPatterns = vm.runInNewContext('[' + protectedBlock[1] + ']'); }
   catch (e) { fails.push('site-worker.js : inventaire PROT invalide : ' + e.message); }
   const protectedPath = path => protectedPatterns.some(re => re.test(path));
-  const unitAssets = fs.readdirSync('.').filter(name => /^unite\\d+\\.js$/.test(name));
+  const unitAssets = fs.readdirSync('.').filter(name => /^unite\d+\.js$/.test(name));
   for (const name of unitAssets) {
     if (!protectedPath('/' + name)) fails.push('CONTENT-1d : unité non protégée par le Worker : ' + name);
   }
@@ -80,7 +80,7 @@ if (!protectedBlock) {
   if (protectedPath('/unites3as_vitrine.js')) fails.push('CONTENT-1d : la vitrine gratuite 3AS ne doit pas être bloquée par le garde payant');
   const bddDir = 'assets/bdd';
   if (fs.existsSync(bddDir)) {
-    for (const name of fs.readdirSync(bddDir).filter(name => /^buch_3as_.*\\.json$/.test(name))) {
+    for (const name of fs.readdirSync(bddDir).filter(name => /^buch_3as_.*\.json$/.test(name))) {
       if (!protectedPath('/assets/bdd/' + name)) fails.push('CONTENT-1d : JSON de livre 3AS non protégé : ' + name);
     }
     if (fs.existsSync(bddDir + '/traductions_livre.json') &&
