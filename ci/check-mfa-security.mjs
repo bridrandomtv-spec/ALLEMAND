@@ -18,6 +18,20 @@ assert.ok(!sql.includes('else true'), 'SQL helper must not exempt arbitrary or n
 
 assert.ok(edge.includes('admin.from("profiles")') && edge.includes('.select("role").eq("id", user.id).maybeSingle()'),
   'Edge Function must derive the role from the server-side profiles row');
+const profileProvisioning = sql.slice(0, sql.indexOf('create schema if not exists private')) + sql.slice(sql.indexOf('create schema if not exists private'), sql.indexOf('-- Les trois tables'));
+assert.ok(sql.includes('create or replace function private.create_student_profile_for_new_auth_user()') &&
+  sql.includes('after insert on auth.users') &&
+  sql.includes("values (\n    new.id,") &&
+  sql.includes("    'eleve',") &&
+  sql.includes('on conflict (id) do nothing'),
+  'New Auth users must receive a server-created student profile before MFA role lookup');
+assert.ok(sql.includes("new.raw_user_meta_data ->> 'pseudo'") &&
+  sql.includes("new.raw_user_meta_data ->> 'niveau'") &&
+  !sql.includes("new.raw_user_meta_data ->> 'role'"),
+  'Profile provisioning may use student metadata but must never trust client-supplied role metadata');
+assert.ok(sql.includes('revoke all on function private.create_student_profile_for_new_auth_user() from public, anon, authenticated') &&
+  sql.includes('drop trigger if exists on_auth_user_created_student_profile on auth.users'),
+  'Profile provisioning trigger must be private, idempotently recreated and not client-callable');
 assert.ok(edge.includes('if (!isStudent && !isExemptRole)') && edge.includes('PROFILE_ROLE_NOT_ALLOWED'),
   'Edge status must reject unknown profile roles');
 assert.ok(edge.includes('required: false') && edge.includes('required: isStudent'),
