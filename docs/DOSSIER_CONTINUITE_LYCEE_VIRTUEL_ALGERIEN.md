@@ -4800,3 +4800,32 @@ where n.nspname = 'public'
 - La prochaine validation technique indispensable reste une exécution de la migration et de la fonction MFA dans un environnement de test isolé. La création d'une branche Supabase peut engager des frais ; elle reste interdite sans autorisation explicite. Aucun autre environnement payant ne sera créé.
 - Sans environnement de test gratuit déjà disponible, ne pas appliquer cette migration risquée au projet actif pour « essayer ».
 - Aucun déploiement, aucune migration appliquée, aucun secret/SMTP/Auth modifié, aucune branche Supabase créée, aucune fusion et aucun coût engagé.
+
+
+---
+
+## Lot 256 — confirmation CI et revue de la fonction MFA e-mail (10 novembre 2026)
+
+### État exact du HEAD
+- HEAD contrôlé : `98f9e83b085f9c6a06d14d9e7771f34d3474e91a`.
+- GitHub Actions #42901560337 : **success**, job unique « Validation structurelle & pédagogique », toutes les 33 étapes utiles terminées avec succès.
+- Les contrôles portail public/inscription, tableau de bord مسارك, garde d'accès/TEST DE FUITE, MFA e-mail étudiant, matrice des parcours, régressions et contrôle pédagogique sont réussis.
+- Cloudflare Workers Build : **success**, build ID `ce795104-26fd-40c0-8b87-313fa9185f5e`, associé à l'aperçu de la branche `design/prototypes-67-74-alignment`. Ce n'est pas un déploiement manuel de production.
+- Supabase Preview : **skipped**, car aucune branche Supabase n'est associée. Aucune branche créée.
+- PR #17 : `open`, `merged=false`, `mergeable=true`, cible `main`. Aucun merge, rebase, changement de base ou commit sur `main`.
+
+### Revue ciblée de la source Edge Function MFA
+- Fichier relu : `supabase/functions/mfa-email/index.ts` (236 lignes).
+- Le code valide le JWT et la session, contrôle `email_confirmed_at`, lit le rôle depuis `profiles` côté serveur, puis utilise le contexte privilégié `supabaseAdmin` pour les seules opérations MFA serveur.
+- Le contrat `contractVersion: 1` et le booléen `required` sont explicites ; seuls les rôles `eleve` sont obligés, les rôles `prof`, `admin`, `parent` sont exemptés, et les rôles inconnus sont refusés.
+- L'émission des codes est limitée par RPC, les codes expirent après cinq minutes, les tentatives sont plafonnées à cinq et la désactivation autonome est refusée.
+- Vérification documentaire actuelle : la documentation Supabase du 22 octobre 2026 confirme `createSupabaseContext(req, { auth: 'user' })`, la présence de `supabaseAdmin` dans le contexte et le maintien de `verify_jwt=true` pour les appels utilisateurs. Sources : https://supabase.com/docs/guides/functions/auth et https://supabase.com/docs/reference/server/usage-examples
+- La source nécessite les variables `RESEND_API_KEY`, `MFA_EMAIL_FROM` et `MFA_EMAIL_PEPPER`. Leur présence et leur validité dans les secrets du projet actif ne sont pas vérifiables avec les accès disponibles ; aucune valeur n'a été lue, demandée ou modifiée.
+- Aucun défaut statique supplémentaire suffisamment démontré n'a été retenu dans cette revue. Cela ne prouve pas l'exécution réelle de la fonction, la délivrabilité Resend, ni la réussite d'un enrôlement étudiant.
+
+### Limites et décision
+- Le décalage opérationnel reste inchangé : la fonction active du projet Supabase est toujours v7 et ne fournit pas le contrat v1 exigé par le client de la PR.
+- Les paramètres SMTP Auth pour les e-mails de confirmation restent distincts de Resend MFA et ne sont pas exposés par les outils connectés.
+- La CI statique et le build de preview sont verts, mais aucune validation navigateur, aucun e-mail réel, aucune migration appliquée et aucun test d'intégration sur une base isolée ne sont revendiqués.
+- Ne pas déployer la fonction, ne pas appliquer la migration sur la base active, ne pas créer de branche Supabase, ne pas modifier les secrets/SMTP/Auth et ne pas engager de frais sans autorisation distincte.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée.
