@@ -489,7 +489,7 @@ for (const marker of [
   if (!mfaEmailServer.includes(marker)) fail('sécurité MFA e-mail serveur absente : ' + marker);
 }
 if (!mfaModule.includes("if(!emailState.ok)") ||
-    !mfaModule.includes("if(!emailState.enrolled || !emailState.verified)") ||
+    !mfaModule.includes("if(emailState.required && (!emailState.enrolled || !emailState.verified))") ||
     !mfaModule.includes("var purpose=emailState.enrolled?'login':'enroll'")) {
   fail('garde e-mail MFA non fail-closed ou enrôlement initial automatique absent');
 }
@@ -539,7 +539,7 @@ const mfaSubmitBlock=mfaModule.slice(mfaSubmitStart,mfaSubmitEnd);
 if (!mfaGateBlock.includes('await SB.mfaAssurance()') ||
     !mfaGateBlock.includes("if(!emailState.ok)") ||
     !mfaGateBlock.includes("var purpose=emailState.enrolled?'login':'enroll'") ||
-    !mfaGateBlock.includes("if(!emailState.enrolled || !emailState.verified)") ||
+    !mfaGateBlock.includes("if(emailState.required && (!emailState.enrolled || !emailState.verified))") ||
     !mfaGateBlock.includes('showEmailChallenge(started,emailState,purpose)') ||
     !mfaGateBlock.includes('if(!nativeState.required)return false;') ||
     !mfaGateBlock.includes('return true;')) fail('garde MFA : enrôlement e-mail initial automatique et blocage des états non vérifiés requis');
@@ -570,7 +570,7 @@ if (!read('supabase/supabase.js').includes("functions.invoke('mfa-email'")) fail
 if (!mfaModule.includes("SB.mfaEmail({action:'status'})") || !mfaModule.includes("SB.mfaEmail({action:'verify'")) fail('parcours MFA e-mail absent');
 if (!mfaModule.includes("var purpose=emailState.enrolled?'login':'enroll'") || !mfaModule.includes("pending.purpose||'login'") ||
     mfaModule.includes('mfaEmailEnrollForm') || mfaModule.includes('data-mfa-email-disable') ||
-    !mfaModule.includes('التحقق عبر البريد الإلكتروني إلزامي')) fail('MFA e-mail : enrôlement automatique, renvoi et caractère obligatoire incomplets');
+    !mfaModule.includes('التحقق الإلزامي عبر البريد الإلكتروني مفعّل للطلاب')) fail('MFA e-mail : enrôlement automatique, renvoi et caractère obligatoire incomplets');
 if (!mfaEmailServer.includes('EMAIL_FACTOR_REQUIRED') || !mfaEmailServer.includes('return json(403')) fail('le serveur ne bloque pas la désactivation du facteur e-mail obligatoire');
 
 
@@ -641,6 +641,35 @@ if(!mfaModule.includes("SB.mfaEmail({action:'start',purpose:pending.purpose||'lo
 if(!mfaModule.includes("var purpose=emailState.enrolled?'login':'enroll'")||!mfaModule.includes("showEmailChallenge(started,emailState,purpose)")) fail('MFA e-mail : le premier enrôlement ne réutilise pas le défi de connexion');
 if(!mfaModule.includes("ev.target.closest('[data-mfa-email-resend]')")||!mfaModule.includes("pending&&pending.type==='email'")) fail('MFA e-mail : gestionnaire de renvoi absent du défi unifié enroll/login');
 console.log('✅ Lot 200 : renvoi des codes MFA e-mail et remplacement du challenge contrôlés.');
+ 
+// Lot 204 — politique e-mail limitée aux élèves et enforcement RLS/RPC côté serveur.
+const studentMfaMigration = read('supabase/migrations/20261110160000_enforce_student_email_mfa.sql');
+for (const marker of [
+  'create schema if not exists private',
+  'private.student_email_mfa_access_allowed()',
+  "p.role = 'eleve'",
+  "auth.jwt() ->> 'session_id'",
+  'create policy student_email_mfa_gate',
+  'as restrictive for all to authenticated',
+  'with check (private.student_email_mfa_access_allowed())',
+  'public.agreement_accept',
+  'public.agreement_withdraw',
+  'public.active_entitlement',
+  'public.msg_open_direct',
+  'public.msg_member_ok',
+  'public.respond_parent_link_request',
+  'public.subscription_set_preuve',
+  'public.unlink_child'
+]) if (!studentMfaMigration.includes(marker)) fail('migration MFA étudiant incomplète : ' + marker);
+if ((studentMfaMigration.match(/private\\.student_email_mfa_access_allowed\\(\\)/g) || []).length < 14) fail('garde MFA manquant dans une ou plusieurs RPC SECURITY DEFINER');
+if (studentMfaMigration.includes("auth.jwt()->>'aal'") || studentMfaMigration.includes("= 'aal2'")) fail('le MFA e-mail personnalisé ne doit pas être confondu avec AAL2');
+if (!mfaEmailServer.includes('required: isStudent') ||
+    !mfaEmailServer.includes('const isStudent = profile.role === "eleve"') ||
+    !mfaEmailServer.includes('STUDENT_MFA_ONLY')) fail('Edge Function : politique MFA non limitée au rôle eleve');
+if (!mfaModule.includes("typeof emailState.required!=='boolean'") ||
+    !mfaModule.includes("if(emailState.required && (!emailState.enrolled || !emailState.verified))")) fail('client MFA : statut de rôle absent ou politique étudiant non appliquée');
+console.log('✅ Lot 204 : MFA e-mail étudiant, garde RLS restrictif et RPC SECURITY DEFINER contrôlés.');
+
 
 /* Lot 201 — points d'entrée indispensables du portail de connexion. */
 assert.match(app, /function paintGateStats\(\)\s*\{[\s\S]*?gateStats/, 'rendu des indicateurs du portail absent');
