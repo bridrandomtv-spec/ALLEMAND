@@ -3644,7 +3644,7 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 3. Migration source `supabase/migrations/20261110160000_enforce_student_email_mfa.sql`
    - Crée un helper `private.student_email_mfa_access_allowed()` SECURITY DEFINER, avec `search_path` vide, qui vérifie le profil, le rôle étudiant, le claim `session_id`, le facteur actif et la session MFA non expirée.
    - Le schéma `private` n'est pas ajouté aux schémas exposés ; l'exécution du helper est limitée à `authenticated`.
-   - Ajoute une politique RLS **RESTRICTIVE** sur chaque table publique qui a RLS activé, sans supprimer ni réécrire les politiques permissives existantes.
+   - Ajoute une politique RLS **RESTRICTIVE** sur les 37 tables publiques qui ont RLS activé, sans supprimer ni réécrire les politiques permissives existantes. Le helper est appelé via un sous-SELECT stable pour éviter une réévaluation par ligne.
    - Ajoute le même garde restrictif à `storage.objects` pour le bucket privé `prive`.
    - Ajoute une vérification explicite dans les RPC SECURITY DEFINER accessibles aux parcours étudiants : `active_entitlement`, `agreement_accept`, `agreement_status_for`, `agreement_withdraw`, `msg_can_dm`, `msg_is_member`, `msg_member_ok`, `msg_not_blocked`, `msg_open_direct`, `my_parent_link_requests`, `respond_parent_link_request`, `subscription_set_preuve` et `unlink_child`.
    - Les politiques et fonctions existantes sont conservées par remplacement contrôlé des définitions nécessaires ; les fonctions administratives/parentales non concernées ne sont pas réécrites.
