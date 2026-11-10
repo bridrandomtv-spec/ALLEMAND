@@ -15,6 +15,7 @@
       case 'locked': case 'LOCKED': return 'توقفت المحاولة لأسباب أمنية. سجّل الدخول مجددًا واطلب رمزًا جديدًا.';
       case 'invalid': case 'invalid_code': case 'INVALID_CODE': return 'الرمز غير صحيح. راجع الرسالة وأعد إدخاله.';
       case 'EMAIL_DELIVERY_UNAVAILABLE': case 'EMAIL_PROVIDER_NOT_CONFIGURED': case 'EMAIL_DELIVERY_FAILED': case 'EMAIL_FACTOR_NOT_CONFIGURED': return 'تعذر إرسال رسالة التحقق حاليًا. لم يتم فتح الحساب؛ حاول لاحقًا.';
+      case 'NETWORK_UNAVAILABLE': return 'تعذر الاتصال بخدمة التحقق الآن. تحقق من اتصال الإنترنت ثم حاول مجددًا؛ لم يتم فتح الحساب.';
       case 'INVALID_SESSION': case 'INVALID_SESSION_CLAIMS': return 'انتهت جلسة تسجيل الدخول. ارجع إلى صفحة الدخول وحاول مجددًا.';
       default: return fallback||'تعذر إكمال التحقق الآن. حاول مرة أخرى بعد قليل.';
     }
