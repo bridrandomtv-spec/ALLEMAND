@@ -4868,3 +4868,36 @@ where n.nspname = 'public'
 - Le blocage de mise en service est confirmé : contrat Edge Function actif v7 incompatible avec le contrat client v1, migration d'enforcement absente du projet actif, et circuit SMTP Auth non vérifiable.
 - Ne pas désactiver la confirmation d'e-mail, ne pas déclarer Gmail personnel compatible sans preuve, ne pas remplacer le SMTP, ne pas modifier les Redirect URLs, secrets, fonction ou migration active sans autorisation explicite.
 - PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`, aucun déploiement, aucune migration appliquée, aucune nouvelle branche Supabase et aucun coût engagé.
+
+
+---
+
+## Lot 258 — CI du Lot 257 et décision documentée sur le SMTP sans domaine (10 novembre 2026)
+
+### Validation de la branche
+- HEAD contrôlé : `36f318ebe982e09a8471652cd0c2a2922aba220a`.
+- GitHub Actions #42902477391 : **success**, 33 étapes utiles terminées ; les contrôles portail/inscription, Masar, accès, MFA statique, parcours et régressions sont verts.
+- Cloudflare Workers Build : **success**, build ID `ad438c91-caa8-462f-b0fc-1e812b6f8f64`, aperçu de la branche PR uniquement.
+- Supabase Preview : **skipped**, aucune branche Supabase créée.
+- PR #17 : ouverte, non fusionnée, fusionnable ; aucun merge ni déploiement.
+
+### Revue complémentaire du MFA
+- Relecture de la source PR `supabase/functions/mfa-email/index.ts`, du client `mfa-security.js`, de la migration d'enforcement et du contrôle statique `ci/check-mfa-security.mjs`.
+- Le contrat Edge v1, le contrôle de rôle côté serveur, l'enrôlement automatique au premier accès étudiant, l'expiration à cinq minutes, le plafond de cinq tentatives et les limites d'émission par utilisateur sont explicitement présents.
+- La suite CI MFA est une validation statique du code et de ses invariants ; elle ne prouve ni la bonne configuration des secrets ni un envoi réel.
+- Aucun défaut supplémentaire démontré ne justifie une modification de code dans ce lot.
+
+### Recherche officielle sur la confirmation e-mail et l'option sans frais
+- La documentation Supabase « Send emails with custom SMTP », mise à jour le 31 octobre 2026, confirme que le SMTP intégré n'envoie qu'aux adresses membres de l'organisation et est limité actuellement à 2 e-mails/heure ; il n'est pas destiné à une inscription publique. Source : https://supabase.com/docs/guides/auth/auth-smtp
+- Supabase recommande un fournisseur SMTP personnalisé ou le Send Email Hook pour envoyer à des utilisateurs externes. Le Send Email Hook remplace le transport SMTP mais ne fournit pas lui-même un fournisseur d'envoi. Source : https://supabase.com/docs/guides/auth/auth-hooks/send-email-hook
+- La documentation Google SMTP consultée le 4 novembre 2026 décrit explicitement un compte Google Workspace administrateur et un mot de passe d'application ; elle ne valide pas un compte Gmail personnel comme solution SMTP gratuite fiable. Source : https://supabase.com/kb/troubleshooting/using-google-smtp-with-supabase-custom-smtp-ZZzU4Y
+- Resend a annoncé le 25 août 2026 que son offre gratuite permet de vérifier jusqu'à trois domaines. Cela ne supprime pas l'exigence de posséder/contrôler un domaine pour établir l'identité d'expéditeur et les enregistrements DNS d'authentification. Source : https://resend.com/changelog/three-domains-on-the-free-tier
+- Conclusion pour le contexte actuel (Gmail personnel, aucun domaine détenu, aucun budget autorisé) : aucune solution gratuite, fiable et documentée pour l'envoi public des confirmations Auth n'a été établie. Le SMTP intégré Supabase reste limité aux membres d'organisation ; Resend et les autres fournisseurs demandent une identité d'expéditeur/domaine vérifiable pour une délivrabilité sérieuse. Ne pas promettre que Gmail personnel fonctionnera.
+- La clé Resend utilisée éventuellement par l'Edge Function MFA ne configure pas le SMTP Supabase Auth et ne règle donc pas le mail de confirmation initial.
+
+### Décision et suite
+- Ne pas désactiver la confirmation e-mail ; ne pas utiliser le SMTP intégré pour les élèves publics comme solution de production ; ne pas remplacer le SMTP ni activer un Send Email Hook sans fournisseur et expéditeur vérifiés.
+- Garder le parcours cloud en échec fermé : aucun contournement local lorsqu'une opération cloud échoue.
+- Le prochain jalon technique nécessite soit un domaine contrôlé et un fournisseur SMTP gratuit dans ses limites, soit une autre méthode d'identité explicitement acceptée. Aucune dépense ne doit être engagée.
+- Aucun secret lu/modifié, aucun paramètre Auth changé, aucun e-mail envoyé, aucune migration ni fonction déployée, aucune branche Supabase créée.
+- PR #17 demeure ouverte et non fusionnée ; `main` reste inchangée.
