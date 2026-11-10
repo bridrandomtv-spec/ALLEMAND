@@ -4319,3 +4319,79 @@ Poursuivre l'audit statique ciblé du helper SQL, des fonctions SECURITY DEFINER
 - Nouvelle CI #42886071945 (run #2874), sur le commit migration `cd5bbf14cced5f559f895a8ae8208a2cba65913a` : réussite complète, y compris les contrôles du portail public, du garde d'accès, des contrôles MFA e-mail statiques et de la matrice des parcours. Cette réussite valide le code à ce commit ; elle ne valide ni l'exécution réelle SQL ni l'envoi d'e-mails Resend.
 - Limite : les assertions CI ne prouvent pas l'owner effectif de la fonction ni l'exécution réelle du trigger dans le projet Supabase. Ces points exigent une base isolée et un test Auth réel.
 - Aucun changement Supabase distant, aucune migration appliquée, aucun déploiement Edge/Worker, aucun secret modifié, aucun merge et aucune modification de `main`. PR #17 reste ouverte.
+
+
+### Lot 235 — inventaire exhaustif des fonctions SECURITY DEFINER (10 novembre 2026)
+
+- Audit statique de la migration MFA : inventaire de 15 fonctions SECURITY DEFINER : le déclencheur Auth public.handle_new_user(), le prédicat privé private.student_email_mfa_access_allowed() et 13 RPC applicatives.
+- Les 13 RPC applicatives examinées contiennent toutes un contrôle auth.uid() et un appel à private.student_email_mfa_access_allowed(). Elles fixent leur search_path, révoquent l'exécution héritée de PUBLIC/anon, puis accordent explicitement authenticated et service_role.
+- Le prédicat privé lie le contrôle à auth.uid(), au session_id du JWT, à une ligne MFA non expirée et à une session Auth encore valide. Son ACL est explicitement limitée aux rôles nécessaires.
+- Le déclencheur d'inscription est traité séparément : search_path vide et exécution directe révoquée pour PUBLIC, anon et authenticated. Il s'exécute via le mécanisme PostgreSQL de trigger.
+- CI renforcée par un inventaire exhaustif : toute fonction SECURITY DEFINER supplémentaire ou non classée fait échouer le contrôle ; chaque RPC applicative doit conserver son contrôle MFA, son identité appelante et ses ACL explicites.
+- **Limite importante :** les sources ne révèlent pas le propriétaire effectif (proowner) après application, les ACL réelles calculées par PostgreSQL, ni la configuration effective des schémas exposés par PostgREST. La CI statique ne peut pas prouver ces propriétés.
+- Avant toute application, une base Supabase isolée doit exécuter les contrôles catalogue ci-dessous et les tests de rôles. Les résultats attendus sont : fonctions SECURITY DEFINER détenues par un rôle serveur de confiance (normalement postgres), aucune RPC privilégiée accessible à PUBLIC/anon, aucune table applicative publique sans RLS, une politique restrictive MFA sur chaque table protégée, et schéma private non exposé au Data API.
+- Contrôle catalogue des propriétaires et ACL (à exécuter uniquement dans l'environnement isolé) :
+
+~~~sql
+select
+  n.nspname as schema_name,
+  p.proname as function_name,
+  pg_get_userbyid(p.proowner) as function_owner,
+  p.prosecdef as security_definer,
+  p.proconfig as function_settings,
+  coalesce(
+    array_agg(distinct case
+      when acl.grantee = 0 then 'PUBLIC'
+      else grantee_role.rolname
+    end) filter (where acl.privilege_type = 'EXECUTE'),
+    array[]::text[]
+  ) as execute_grantees
+from pg_catalog.pg_proc p
+join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+left join lateral pg_catalog.aclexplode(
+  coalesce(p.proacl, pg_catalog.acldefault('f', p.proowner))
+) acl on true
+left join pg_catalog.pg_roles grantee_role on grantee_role.oid = acl.grantee
+where p.prosecdef
+  and n.nspname in ('public', 'private')
+group by n.nspname, p.proname, p.proowner, p.prosecdef, p.proconfig
+order by n.nspname, p.proname;
+~~~
+
+- Contrôle de toutes les tables publiques : toute ligne retournée exige une revue et une protection avant publication.
+
+~~~sql
+select c.relname, c.relrowsecurity, c.relforcerowsecurity
+from pg_catalog.pg_class c
+join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relkind in ('r', 'p')
+  and not c.relrowsecurity
+order by c.relname;
+~~~
+
+- Contrôle du nombre et de la couverture des politiques MFA :
+
+~~~sql
+select schemaname, tablename, policyname, permissive, roles, cmd
+from pg_catalog.pg_policies
+where policyname = 'student_email_mfa_gate'
+order by schemaname, tablename;
+~~~
+
+- Contrôle du déclencheur Auth :
+
+~~~sql
+select t.tgname, pg_catalog.pg_get_triggerdef(t.oid) as trigger_definition,
+       pg_catalog.pg_get_userbyid(p.proowner) as function_owner
+from pg_catalog.pg_trigger t
+join pg_catalog.pg_proc p on p.oid = t.tgfoid
+join pg_catalog.pg_class c on c.oid = t.tgrelid
+join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'auth'
+  and c.relname = 'users'
+  and not t.tgisinternal;
+~~~
+
+- Aucun résultat de ces requêtes n'a été simulé ni inventé : elles restent à exécuter sur une base isolée. Il faudra aussi vérifier les droits effectifs d'exposition du schéma private dans les paramètres Data API et réaliser des tests Auth réels pour les rôles eleve, prof, admin, parent et rôle inconnu.
+- Aucun accès à la base distante, aucune migration appliquée, aucune Edge Function/Worker déployée, aucun secret modifié, aucune fusion et aucune modification de main.
