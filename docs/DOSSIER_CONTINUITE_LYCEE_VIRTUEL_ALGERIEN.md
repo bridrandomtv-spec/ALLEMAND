@@ -4571,5 +4571,5 @@ where n.nspname = 'public'
 
 ### État Git
 - PR #17 : ouverte, non fusionnée ; branche `design/prototypes-67-74-alignment`.
-- `main) : inchangée.
+- `main` : inchangée.
 - Cette note est documentaire ; aucun changement applicatif, Auth, Supabase, secret, migration, déploiement ou coût n'est engagé par ce lot.
