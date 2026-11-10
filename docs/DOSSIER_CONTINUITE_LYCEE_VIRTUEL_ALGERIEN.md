@@ -3665,3 +3665,12 @@ Le facteur e-mail personnalisé permettait de démarrer et vérifier un défi, m
 - Aucun secret Resend, réglage Auth global, rôle, grant distant ou donnée n'a été modifié.
 - PR #17 reste ouverte, non fusionnée ; aucun déploiement Cloudflare ou Supabase.
 - Les nouvelles exécutions CI du HEAD après le lot doivent être vérifiées avant de déclarer la validation réussie.
+
+
+
+### Résultat final CI Lot 204 — commit documentaire HEAD (10 novembre 2026)
+- CI #42838420154 / run #2804 sur le HEAD `6745f337a9a7088de1fee2b9657ab29265f55e59` : **réussie, 33/33 étapes**, zéro étape en échec.
+- Le job unique « Validation structurelle & pédagogique » est terminé avec conclusion `success`.
+- Le contrôle MFA étudiant, les assertions migration RLS/Storage/RPC, le portail, مسارك, les tests d'accès/fuite, la matrice des parcours et les régressions pédagogiques sont passés dans ce workflow.
+- Cette CI valide les contrôles statiques et les tests automatisés du dépôt ; elle ne prouve pas l'exécution de la migration sur une base de test, la réception Resend ou un test navigateur avec des comptes réels.
+- La PR #17 reste ouverte, non fusionnée, cible `main` ; aucun déploiement Supabase/Cloudflare ni aucune migration distante n'a été effectué.
