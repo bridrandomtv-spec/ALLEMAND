@@ -6323,3 +6323,13 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Les échecs intermédiaires étaient des incohérences d'assertions de cache, pas des échecs des cinq assertions `ADM-SYS-1` ; l'étape de validation administration est en succès dans le run final.
 - Le commit documentaire du présent addendum déclenche une CI distincte ; son résultat doit être vérifié séparément.
 - PR #17 reste ouverte et non fusionnée ; HEAD applicatif validé : `1ce03711e831aa182297d972562d13d9bbf0dca2`. Aucun changement sur `main`, aucun déploiement.
+
+
+### Correctif immédiat — SyntaxError admin.js:602 (12 novembre 2026)
+- Signalement navigateur : `Unexpected identifier 'un' SyntaxError: Unexpected identifier 'un' admin.js:602`.
+- Cause confirmée dans `renderWilayas()` : apostrophe ASCII non échappée dans la chaîne JavaScript entre apostrophes simples, dans `autorisations d'un administrateur`.
+- Correction appliquée : reformulation en `autorisations de chaque administrateur`, sans apostrophe à l'intérieur de la chaîne.
+- Fichier : `admin.js`; commit correctif `811a1e04cba9699ab9c61014b6ea720e4aeab259`.
+- Cette erreur de parsing empêchait le navigateur d'analyser le fichier entier, donc l'initialisation de l'administration pouvait être interrompue.
+- À ce stade, le correctif est enregistré sur la branche de la PR #17. Les CI #3058/#3059 réussies sont antérieures à ce correctif et ne le valident donc pas. Attendre la CI déclenchée par le commit `811a1e0` avant de déclarer la correction vérifiée.
+- Aucun changement Supabase, aucun déploiement, aucune fusion ; PR #17 reste ouverte.
