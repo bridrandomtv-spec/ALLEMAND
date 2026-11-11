@@ -6161,3 +6161,48 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - La mise à jour documentaire du présent dossier a déclenché CI #3033 / run `43082782842` sur le commit `600e40a24fb8a01eff65db65ba4a5ed9e04ef987` ; état **queued** au dernier contrôle. Cette dernière exécution documentaire reste à confirmer.
 - PR #17 : ouverte, non fusionnée, HEAD `600e40a24fb8a01eff65db65ba4a5ed9e04ef987`, base `main`. Aucun changement sur `main`.
 - CI valide les contrôles automatisés du dépôt ; elle ne remplace pas l'essai navigateur avec les vrais rôles administratifs ni la vérification visuelle responsive.
+
+
+
+## Lot 300 — vues de référence des classes et des wilayas (11 novembre 2026)
+
+### Objectif et décision
+- Poursuite de la transformation de la console administrative existante, sans importer le HTML autonome du prototype.
+- Ajout de deux onglets en lecture seule dans la barre administrative : `🏫 الأقسام · Classes` et `🗺️ الولايات · Wilayas`.
+- Ces vues sont accessibles derrière la permission existante `reports.read`. Elles ne créent ni permission nouvelle ni élargissement de périmètre pour les données opérationnelles.
+
+### Vue Classes — source et limites
+- Source chargée à la demande depuis `assets/bdd/classe.json`.
+- Le fichier contient 5 entrées : 2AS-1 (32), 2AS-2 (28), 2AS-3 (32), 3AS-1 (26), 3AS-2 (24), soit 142 par addition.
+- Les métadonnées du fichier qualifient explicitement les contenus comme maquette pédagogique. La vue affiche donc les 5 entrées comme catalogue de référence et avertit que les nombres 32/28/32/26/24 et leur somme 142 ne prouvent ni les inscriptions réelles, ni les comptes actifs, ni la présence.
+- Les noms des professeurs ne sont pas repris dans ces cartes ; le fichier contient des chaînes de nom altérées/encodées dans certains champs.
+- Aucune requête `profiles`, aucun décompte d'élèves Supabase et aucune donnée nominative ne sont ajoutés à cette vue.
+
+### Vue Wilayas — source et limites
+- Source chargée à la demande depuis `assets/bdd/wilaya.json`.
+- Vérification du JSON du dépôt : 58 entrées exactement, réparties dans les régions référentielles (Centre, Est, Ouest, Sud, Grand Sud, Hauts-Plateaux).
+- Affichage des codes, noms arabes/français et régions, avec recherche locale côté navigateur ; aucune requête distante n'est déclenchée par la recherche.
+- Cette liste géographique n'est pas une liste d'affectations administratives. Les wilayas autorisées à un compte restent issues de `SB.admMyPerms()` et les contrôles de la base (`admin_can()`, `admin_sees_wilaya()`, RLS) restent souverains.
+
+### Détails techniques et garde-fous
+- Ajout de `loadAdminReference()`, `renderClasses()`, `renderWilayas()` dans `admin.js`; chargement des JSON via les assets statiques existants.
+- Ajout des deux cartes à `KNOWN` pour éviter qu'elles ne soient classées dans le panneau historique « opérations ».
+- Recherche des wilayas limitée aux attributs déjà chargés ; les valeurs injectées dans le HTML passent par `esq5()`.
+- Tests dans `tests/adm_test.mjs` couvrant les deux onglets, les sources GitHub, l'avertissement de maquette, les cinq classes/le total indicatif, les 58 wilayas, la recherche locale et la garde `reports.read`.
+- Commits : `b52b44636826dee4918d818d544bdda079fe6697` (vues), `e1888438ab32a9f961fbf32e4b1244b82ae7e9a2` (simplification du chemin fetch), `2446846e59c8872ee4281f2e13fbe236f105e124` (tests initiaux), `beff4320863fcb88a74ae9d8cab49e5b737b3fc3` (correction d'une assertion de test).
+- CI #3035 / run `43083392935` sur le commit `b52b446...` : success.
+- CI #3036 / run `43083436676` sur `2446846...` : failure due à une assertion de test dont le texte ne correspondait pas exactement à l'avertissement UI ; les journaux montrent que les autres assertions ADM-REF-1 passaient. Aucun échec de syntaxe JavaScript.
+- Correction de l'assertion pour vérifier le libellé arabe exact présent dans l'interface.
+- CI #3037 / run `43083476345` sur `beff432...` : **success**, y compris la validation syntaxique JavaScript et la suite d'administration.
+- Aucun test navigateur ni contrôle visuel responsive effectué. Aucun test d'une session Supabase active ni d'un utilisateur réel effectué.
+
+### Hors périmètre confirmé
+- Aucun SQL, migration, table, fonction, RLS, grant, rôle, affectation ou donnée Supabase modifié.
+- Aucun changement Auth, Worker, Cron, Realtime, e-mail, API GitHub publique ou secret.
+- Aucun module de paiement/facturation, tarif, encaissement ou fonctionnalité financière ajouté.
+- Aucun déploiement, nouvelle branche ou fusion ; `main` reste inchangée. PR #17 reste ouverte et non fusionnée.
+
+### Suite recommandée
+1. Vérifier les deux onglets dans le navigateur, en particulier l'affichage mobile et les erreurs réseau de chargement des assets.
+2. Vérifier avec un compte admin ayant `reports.read` et un compte sans cette permission que l'accès reste correctement refusé.
+3. Passer ensuite à l'audit et à la présentation des vues de sécurité, en réutilisant uniquement les sources opérationnelles déjà disponibles et sans inventer de télémétrie.
