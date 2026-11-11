@@ -5459,3 +5459,30 @@ Audit du code uniquement, sans modification applicative ni Supabase distant. Auc
 - Contrat d'authentification documenté uniquement ; aucune route, fonction Edge, RPC, table, politique RLS, secret, configuration Auth ou variable Cloudflare n'a été modifié.
 - Aucun jeton Management API, service_role ou secret administratif introduit.
 - Aucun déploiement, e-mail, coût, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 276 — disponibilité réelle de la source Auth pour les rapports — 11 novembre 2026
+
+### État de la PR et validation
+- PR #17 vérifiée : ouverte, non fusionnée, branche `design/prototypes-67-74-alignment`, tête `4ef7f92970510034e4e50acc44151519809c4f2f`.
+- CI #2969 / run `43008844732` sur ce HEAD : **success**.
+- Le dossier de continuité est la seule modification prévue pour ce lot ; aucun changement applicatif n'est justifié tant que la source d'événements n'est pas disponible au runtime.
+
+### Vérification PostgreSQL en lecture seule
+- La table `auth.audit_log_entries` existe et expose les colonnes `instance_id`, `id`, `payload`, `created_at` et `ip_address`.
+- Comptage effectué directement sur la table : **0 ligne** au moment de la vérification.
+- Inventaire des privilèges : les droits SELECT/INSERT/UPDATE/DELETE relevés appartiennent au rôle `postgres`. Aucun droit n'a été relevé pour `anon` ou `authenticated`.
+- En parallèle, le flux externe unifié a déjà montré des événements Auth réels sur une fenêtre de 24 heures. La table PostgreSQL vide ne signifie donc pas qu'il n'y a eu aucune connexion ; elle indique seulement qu'aucun événement n'est actuellement disponible dans cette table.
+- Le réglage du tableau de bord qui contrôle l'écriture des journaux Auth dans PostgreSQL n'a pas été modifié ni confirmé dans ce lot.
+
+### Documentation et décision technique
+- La documentation officielle « Auth Audit Logs » décrit les événements suivis et la possibilité de conserver les entrées dans `auth.audit_log_entries`, tout en conservant un stockage externe consultable depuis le tableau de bord : https://supabase.com/docs/guides/auth/audit-logs
+- La lecture de cette table n'est pas une voie applicative prête à l'emploi : aucun droit navigateur n'existe et il ne faut pas en ajouter pour contourner le problème.
+- La validation JWT par `GET /auth/v1/user` établit l'identité d'une session, mais ne fournit pas les événements historiques Auth.
+- Le flux externe unifié observé via l'outil d'exploitation n'est pas une API applicative accessible directement au Worker. L'API Management correspondante requiert un jeton administratif ; aucun jeton de ce type ne sera placé dans le navigateur, le dépôt ou un secret Worker sans décision de sécurité et autorisation explicites.
+- Conclusion : aucun endpoint d'historique, rapport périodique, faux résultat vide, stockage, RPC ou planificateur n'est ajouté. La fonctionnalité reste indisponible côté application jusqu'à la validation d'une source de données runtime alimentée et d'un accès serveur de moindre privilège.
+
+### Périmètre
+- Requêtes SQL strictement en lecture seule ; documentation officielle consultée.
+- Aucun réglage Auth/Audit Logs, privilège, table, vue, RPC, migration, politique RLS, secret, fonction Edge, Worker, Cron, SMTP ou fournisseur d'e-mail modifié.
+- Aucun e-mail envoyé, coût engagé, déploiement, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
