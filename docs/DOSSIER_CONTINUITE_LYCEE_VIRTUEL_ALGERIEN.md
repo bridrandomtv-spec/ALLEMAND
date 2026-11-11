@@ -6206,3 +6206,40 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 1. Vérifier les deux onglets dans le navigateur, en particulier l'affichage mobile et les erreurs réseau de chargement des assets.
 2. Vérifier avec un compte admin ayant `reports.read` et un compte sans cette permission que l'accès reste correctement refusé.
 3. Passer ensuite à l'audit et à la présentation des vues de sécurité, en réutilisant uniquement les sources opérationnelles déjà disponibles et sans inventer de télémétrie.
+
+
+
+## Lot 301 — vue « accès administratif et audit » (11 novembre 2026)
+
+### Objectif
+- Ajouter une vue de transparence sur les autorisations du compte administratif connecté et les dernières opérations d'audit disponibles.
+- Ne pas la présenter comme un centre de détection des menaces, une surveillance des sessions ou un tableau de télémétrie en temps réel : les sources actuelles ne fournissent pas ces fonctions.
+
+### Sources réutilisées
+- `SB.admMyPerms()` : rôle effectif, clés de permissions et codes des wilayas affectées au compte courant (affectations actives).
+- `SB.admAuditLast(20)` : jusqu'à 20 opérations récentes de `audit_logs`, selon ce que les politiques RLS autorisent à lire.
+- Aucun nouvel endpoint, RPC, table, trigger, événement ou stockage ajouté.
+
+### Réalisation
+- Nouvel onglet `🛡️ الوصول والتدقيق · Access & Audit`, derrière la permission existante `reports.read`.
+- Affiche le code de rôle, le nombre et les clés de permissions renvoyées, le nombre et les codes des wilayas affectées.
+- Affiche les opérations renvoyées par le journal avec date, action, type/identifiant de cible, wilaya et identifiant d'acteur abrégé.
+- Les valeurs dynamiques affichées sont échappées par `esq5()`.
+- Un avertissement visible précise que cette page ne détecte pas les menaces et ne surveille pas les sessions en direct.
+- Ajout des assertions `ADM-SEC-1` dans `tests/adm_test.mjs`.
+- Commits : `d3403653f8520dd7f7d865fe259e5989c4b6f439` (vue) et `31339e724955fc5946d9485a3c3fd88b91a4d6da` (tests).
+- CI #3039 / run `43083828141` sur le commit `d340365...` : **success**.
+- CI #3040 / run `43083855288` sur le commit `31339e...` : en cours au moment de cette mise à jour documentaire ; vérifier le résultat final avant de déclarer le lot validé.
+- CI #3038 / run `43083687815` sur le commit documentaire du Lot 300 : **success**.
+
+### Limites et périmètre
+- Le journal est un journal administratif selon RLS, pas un flux d'alertes de sécurité ni un historique complet des connexions.
+- L'affichage des permissions ne remplace pas les contrôles SQL : `admin_can()`, `admin_sees_wilaya()` et les policies RLS restent souverains.
+- Aucun contrôle de navigateur, de compte réel, de rôle réel ou d'affichage responsive exécuté.
+- Aucun SQL/migration, aucune donnée ni configuration Supabase distante modifiée. Aucun changement Auth, secret, Worker, Cron, Realtime, e-mail, API GitHub, déploiement ou branche. Aucun module financier ajouté.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
+### Suite
+1. Confirmer CI #3040.
+2. Effectuer une vérification navigateur avec plusieurs profils administratifs autorisés et non autorisés.
+3. Examiner ensuite les vues système uniquement si une source serveur fiable et sécurisée est identifiée ; aucune métrique de disponibilité ou de menaces ne doit être simulée.
