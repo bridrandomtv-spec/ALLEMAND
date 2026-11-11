@@ -453,11 +453,13 @@ function rendreCouvertureORG1(mount){
   function esq5(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   var TABS = [
     { id:'dash', label:'📊 لوحة القيادة · Dashboard', cards:['admDashCard'], perm:'reports.read' },
+    { id:'classes', label:'🏫 الأقسام · Classes', cards:['admClassesCard'], perm:'reports.read' },
+    { id:'wilayas', label:'🗺️ الولايات · Wilayas', cards:['admWilayasCard'], perm:'reports.read' },
     { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard'], perm:'students.read' },
     { id:'ops', label:'🧰 العمليات · Operations', cards:['admAgentsCard','admQueueCard','admAccordsCard','__legacy__'], perm:null },
     { id:'settings', label:'⚙️ الإعدادات · Settings', cards:['admSettingsCard'], perm:'settings.manage' }
   ];
-  var KNOWN = ['admDashCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
+  var KNOWN = ['admDashCard','admClassesCard','admWilayasCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
   var state4 = { perms:[], tab:'dash', role:'', wilayas:[] };
   function section(){ return document.querySelector('section[data-view="admin"]'); }
   function cardsOf(tab){
@@ -527,6 +529,76 @@ function rendreCouvertureORG1(mount){
       + '</div>'
       + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">المصدر: RPC admin_dashboard وسجل audit_logs. الأرقام محصورة في صلاحياتك ونطاق ولاياتك؛ لا تعرض هذه الصفحة أرقاماً تقديرية أو مؤشرات مالية.</p>';
   }
+  async function loadAdminReference(path){
+    try{
+      var response = await fetch('/' + path.replace(/^\\//, ''));
+      if(!response.ok) throw new Error('HTTP ' + response.status);
+      return await response.json();
+    }catch(e){
+      return { _error: String(e && e.message || e) };
+    }
+  }
+  async function renderClasses(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admClassesCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admClassesCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div class="ad-load">⏳ تحميل مرجع الأقسام…</div>';
+    var data = await loadAdminReference('assets/bdd/classe.json');
+    if(data._error || !Array.isArray(data.sections)){
+      box.innerHTML = '<h2>🏫 مرجع الأقسام</h2><p>تعذر تحميل المرجع من GitHub: ' + esq5(data._error||'بنية غير صالحة') + '</p>';
+      return;
+    }
+    var rows = data.sections;
+    var total = rows.reduce(function(sum, row){ return sum + (Number(row.eleves)||0); }, 0);
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🏫</span><div><h2>مرجع الأقسام الدراسية</h2>'
+      + '<p class="ad-sub">كتالوج ثابت من ملفات GitHub · سنة ' + esq5(data._meta && data._meta.annee_scolaire || '—') + '</p></div></div>'
+      + '<div class="card" style="margin:12px 0;padding:12px;border-inline-start:4px solid var(--p)">'
+      + '<b>تنبيه حول مصدر البيانات</b><p style="margin:5px 0 0">هذه بيانات مرجعية واردة في ملف maquette pédagogique. الأعداد المعروضة تقديرية/توضيحية ضمن النموذج، وليست عدد الحسابات المسجلة أو الحضور الفعلي في Supabase.</p></div>'
+      + '<div class="grid3" style="margin-top:12px">'
+      + '<div class="card mini"><b>' + rows.length + '</b><p>أقسام في المرجع</p></div>'
+      + '<div class="card mini"><b>' + total + '</b><p>مجموع الأعداد المذكورة في النموذج فقط</p></div>'
+      + '<div class="card mini"><b>' + esq5(data._meta && data._meta.annee_scolaire || '—') + '</b><p>السنة المرجعية</p></div></div>'
+      + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px">'
+      + rows.map(function(row){
+          return '<article class="card" style="padding:14px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center">'
+            + '<b style="font-size:18px">' + esq5(row.ar||row.id) + '</b><span class="badge">' + esq5(row.niveau||'') + '</span></div>'
+            + '<p style="margin:8px 0 4px">' + esq5(row.filiere||'') + '</p>'
+            + '<p style="font-size:12px;color:var(--m)">📍 ' + esq5(row.salle||'—') + '</p>'
+            + '<p style="font-size:12px;color:var(--m)">عدد التلاميذ في النموذج: ' + esq5(row.eleves) + '</p></article>';
+        }).join('') + '</div>'
+      + '<p style="font-size:11px;color:var(--m);margin-top:12px">المصدر: assets/bdd/classe.json · لا تُستخدم هذه البيانات لإثبات التسجيلات أو لتحديد صلاحيات الوصول.</p>';
+  }
+  async function renderWilayas(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admWilayasCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admWilayasCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div class="ad-load">⏳ تحميل قائمة الولايات…</div>';
+    var data = await loadAdminReference('assets/bdd/wilaya.json');
+    if(data._error || !Array.isArray(data.wilayas)){
+      box.innerHTML = '<h2>🗺️ مرجع الولايات</h2><p>تعذر تحميل المرجع من GitHub: ' + esq5(data._error||'بنية غير صالحة') + '</p>';
+      return;
+    }
+    var regions = {};
+    data.wilayas.forEach(function(w){ (regions[w.region||'غير مصنف']||(regions[w.region||'غير مصنف']=[])).push(w); });
+    var regionNames = Object.keys(regions).sort();
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🗺️</span><div><h2>المرجع الجغرافي للولايات</h2>'
+      + '<p class="ad-sub">قائمة GitHub المرجعية · ' + data.wilayas.length + ' ولاية · ليست إحصاءات تسجيلات</p></div></div>'
+      + '<div class="fld" style="margin:12px 0"><span>ابحث عن ولاية بالاسم أو الرمز</span><input id="admWilayaSearch" type="search" placeholder="مثال: برج بوعريريج أو 34" autocomplete="off"></div>'
+      + '<div id="admWilayaResults">'
+      + regionNames.map(function(region){
+          return '<section style="margin:12px 0"><h3>' + esq5(region) + ' · ' + regions[region].length + '</h3>'
+            + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px">'
+            + regions[region].map(function(w){
+                return '<div class="rep-row" data-wilaya-search="' + esq5([w.code,w.ar,w.fr,w.region].join(' ').toLowerCase()) + '">'
+                  + '<b>' + esq5(w.code) + ' · ' + esq5(w.ar) + '</b><span>' + esq5(w.fr) + '</span></div>';
+              }).join('') + '</div></section>';
+        }).join('') + '</div>'
+      + '<p style="font-size:11px;color:var(--m);margin-top:12px">المصدر: assets/bdd/wilaya.json · القائمة officielle de 58 wilayas. Les affectations et autorisations d'un administrateur sont déterminées séparément par Supabase (admin_sees_wilaya / RLS).</p>';
+  }
   async function renderStudents(){
     var h = section(); if(!h) return;
     var box = document.getElementById('admStudentsCard');
@@ -549,11 +621,17 @@ function rendreCouvertureORG1(mount){
           + '<button class="btn btn-p btn-sm" data-adm4-save="' + esq5(s.cle) + '" type="button">enregistrer</button></div>'; }).join('') : '<p>⛔ ' + esq5(r.err) + '</p>')
       + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">Valeurs JSON ; chaque enregistrement passe par setting_set (permission settings.manage) et laisse une ligne au journal d’audit.</p>';
   }
+  document.addEventListener('input', function(e){
+    if(!e.target || e.target.id !== 'admWilayaSearch') return;
+    var q = String(e.target.value||'').trim().toLowerCase();
+    var rows = document.querySelectorAll('#admWilayaResults [data-wilaya-search]');
+    Array.prototype.forEach.call(rows, function(row){ row.hidden = q !== '' && row.getAttribute('data-wilaya-search').indexOf(q) === -1; });
+  });
   document.addEventListener('click', function(e){
     var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu]') : null;
     if(!t) return;
     var tab = t.getAttribute('data-adm-tab');
-    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='students') renderStudents(); if(tab==='settings') renderSettings(); return; }
+    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='classes') renderClasses(); if(tab==='wilayas') renderWilayas(); if(tab==='students') renderStudents(); if(tab==='settings') renderSettings(); return; }
     if(t.getAttribute('data-adm4-search')){
       var q = ((document.getElementById('admStuQ')||{}).value || '');
       SB.admSearchStudents(q).then(function(r){
