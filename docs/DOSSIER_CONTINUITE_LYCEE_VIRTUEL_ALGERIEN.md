@@ -5950,3 +5950,15 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Découpage proposé des Lots 288 à 293, depuis le contrat de données jusqu'à une éventuelle activation distinctement autorisée.
 - Aucun code applicatif, SQL, migration, table, fonction, politique RLS, secret, endpoint, Cron, e-mail ou déploiement n'a été créé ou activé. Aucun achat ni coût.
 - La spécification est documentaire et ne constitue pas une autorisation de modifier Supabase ou d'activer un fournisseur.
+
+
+### Lot 288 — contrat de données et matrice d'accès des rapports périodiques — 11 novembre 2026
+
+- Création de `docs/security/LOT-288-periodic-reports-data-contract-access-matrix.md`.
+- Séparation proposée entre les préférences élève dans `public.security_report_preferences` (RLS propriétaire, privilèges limités aux colonnes de préférence) et les événements, exécutions et livraisons dans le schéma privé non exposé à la Data API.
+- Identité dérivée de `auth.uid()` pour les préférences et de la réponse serveur validée à Supabase Auth `/auth/v1/user` pour les traitements Worker. Le destinataire doit être résolu côté serveur à partir d'une adresse confirmée ; le navigateur ne choisit ni destinataire ni statut d'envoi.
+- Définition des contrats logiques pour les événements `app_access_observed`, les exécutions idempotentes et les livraisons avec états distincts. L'acceptation fournisseur n'est pas présentée comme une livraison ; les cas ambigus passent en état `unknown` et ne déclenchent pas de renvoi aveugle.
+- Matrice d'accès et 14 tests négatifs documentés : accès croisé, falsification d'identité, accès anon, privilèges de colonnes, schéma privé, destinataire, validation de jeton, concurrence, réponse fournisseur perdue, suppression et purge.
+- Points bloquants laissés explicitement ouverts : liste exacte des catégories issue de la maquette, règles fin de mois/DST, rétention, exposition éventuelle d'un historique à l'élève et capacités d'idempotence/réconciliation du fournisseur.
+- Aucun test n'est déclaré réussi ; aucune migration SQL, table, fonction, policy RLS, grant, secret, réglage Auth, endpoint, Worker, Cron, e-mail ou déploiement n'a été créé ou modifié. Aucun coût.
+- Le Lot 288 est documentaire ; toute migration ou opération distante requiert une revue et une autorisation distinctes.
