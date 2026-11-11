@@ -457,6 +457,12 @@ const supaSignupStart=supabase.indexOf('async function signup('), supaSignupEnd=
 if(!supabase.includes('async function getSession()')||!supabase.slice(supaSignupStart,supaSignupEnd).includes('session: r.data.session || null')||!supabase.includes("signOut({ scope:'local' })")) fail('Supabase Auth : session signup/getSession/logout incomplet');
 console.log('✅ Lot 176 : refus Auth cloud, confirmation email et mode local contrôlés.');
 
+// Le bouton ne promet pas une connexion immédiate lorsque la confirmation email est requise.
+const signupFormStartForCopy=html.indexOf('<form id="signupForm"');
+const signupFormEndForCopy=html.indexOf('</form>',signupFormStartForCopy);
+const signupFormForCopy=signupFormStartForCopy>=0&&signupFormEndForCopy>=0?html.slice(signupFormStartForCopy,signupFormEndForCopy):'';
+if(!signupFormForCopy.includes('>✅ إنشاء الحساب</button>')||signupFormForCopy.includes('إنشاء الحساب والدخول')) fail('inscription : le bouton ne doit pas promettre une entrée immédiate après création');
+
 // Lot 261 — cohérence des exigences et messages d'inscription Supabase.
 if (!html.includes('id="suPass" required minlength="6"') || !html.includes('6 أحرف على الأقل')) {
   fail('inscription : le formulaire doit appliquer le minimum Supabase de 6 caractères');
