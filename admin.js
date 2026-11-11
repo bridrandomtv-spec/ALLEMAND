@@ -455,11 +455,12 @@ function rendreCouvertureORG1(mount){
     { id:'dash', label:'📊 لوحة القيادة · Dashboard', cards:['admDashCard'], perm:'reports.read' },
     { id:'classes', label:'🏫 الأقسام · Classes', cards:['admClassesCard'], perm:'reports.read' },
     { id:'wilayas', label:'🗺️ الولايات · Wilayas', cards:['admWilayasCard'], perm:'reports.read' },
+    { id:'security', label:'🛡️ الوصول والتدقيق · Access & Audit', cards:['admSecurityCard'], perm:'reports.read' },
     { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard'], perm:'students.read' },
     { id:'ops', label:'🧰 العمليات · Operations', cards:['admAgentsCard','admQueueCard','admAccordsCard','__legacy__'], perm:null },
     { id:'settings', label:'⚙️ الإعدادات · Settings', cards:['admSettingsCard'], perm:'settings.manage' }
   ];
-  var KNOWN = ['admDashCard','admClassesCard','admWilayasCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
+  var KNOWN = ['admDashCard','admClassesCard','admWilayasCard','admSecurityCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
   var state4 = { perms:[], tab:'dash', role:'', wilayas:[] };
   function section(){ return document.querySelector('section[data-view="admin"]'); }
   function cardsOf(tab){
@@ -599,6 +600,39 @@ function rendreCouvertureORG1(mount){
         }).join('') + '</div>'
       + '<p style="font-size:11px;color:var(--m);margin-top:12px">المصدر: assets/bdd/wilaya.json · القائمة officielle de 58 wilayas. Les affectations et autorisations d'un administrateur sont déterminées séparément par Supabase (admin_sees_wilaya / RLS).</p>';
   }
+  async function renderSecurity(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admSecurityCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admSecurityCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div class="ad-load">⏳ تحميل صلاحيات الحساب وسجل التدقيق…</div>';
+    var audit = (window.SB && SB.admAuditLast) ? await SB.admAuditLast(20) : {ok:false,err:'سجل التدقيق غير متاح'};
+    var permissions = state4.perms.length
+      ? state4.perms.map(function(p){ return '<span class="badge" style="display:inline-block;margin:3px">' + esq5(p) + '</span>'; }).join('')
+      : '<p>لا توجد صلاحيات إدارية معادة لهذا الحساب.</p>';
+    var wilayas = state4.wilayas.length
+      ? state4.wilayas.map(function(w){ return '<span class="badge" style="display:inline-block;margin:3px">' + esq5(w) + '</span>'; }).join('')
+      : '<p>لم تُرجع خدمة الصلاحيات أي ولاية مخصصة لهذا الحساب.</p>';
+    var rows = audit.ok ? (audit.rows||[]).map(function(l){
+      var actor = String(l.acteur||'');
+      return '<div class="rep-row"><span>' + esq5(String(l.at||'').slice(0,16).replace('T',' '))
+        + ' · ' + esq5(l.action) + ' · ' + esq5(l.cible_type) + ' #' + esq5(l.cible_id)
+        + (l.wilaya ? ' · ' + esq5(l.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">'
+        + (actor ? esq5(actor.slice(0,8)) : 'غير محدد') + '</span></div>';
+    }).join('') : '<p>تعذر قراءة سجل التدقيق: ' + esq5(audit.err||'غير متاح') + '</p>';
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🛡️</span><div><h2>الوصول الإداري وسجل التدقيق</h2>'
+      + '<p class="ad-sub">معلومات الحساب الحالي كما أعادتها خدمة الصلاحيات في Supabase</p></div></div>'
+      + '<div class="grid3" style="margin-top:12px">'
+      + '<div class="card mini"><b>' + esq5(state4.role||'—') + '</b><p>الدور الإداري الحالي</p></div>'
+      + '<div class="card mini"><b>' + state4.perms.length + '</b><p>مفاتيح الصلاحيات المعادة</p></div>'
+      + '<div class="card mini"><b>' + state4.wilayas.length + '</b><p>الولايات المخصصة للحساب</p></div></div>'
+      + '<div class="card" style="margin-top:12px"><b>🔑 الصلاحيات الفعلية المعادة</b><div style="margin-top:8px">' + permissions + '</div></div>'
+      + '<div class="card" style="margin-top:12px"><b>🗺️ رموز الولايات المخصصة</b><div style="margin-top:8px">' + wilayas + '</div></div>'
+      + '<div class="card" style="margin-top:12px"><b>📜 آخر 20 عملية في سجل التدقيق</b>'
+      + (audit.ok && audit.rows && audit.rows.length ? rows : (audit.ok ? '<p>لا توجد عمليات مسجلة في النتيجة المعادة.</p>' : rows))
+      + '</div><p style="font-size:11px;color:var(--m);margin-top:10px">هذه الصفحة تعرض صلاحيات الحساب وسجل العمليات المتاح وفق RLS. وهي ليست نظام كشف تهديدات أو مراقبة جلسات مباشرة؛ لا تعرض أحداثاً لم توفرها المصادر الحالية.</p>';
+  }
   async function renderStudents(){
     var h = section(); if(!h) return;
     var box = document.getElementById('admStudentsCard');
@@ -631,7 +665,7 @@ function rendreCouvertureORG1(mount){
     var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu]') : null;
     if(!t) return;
     var tab = t.getAttribute('data-adm-tab');
-    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='classes') renderClasses(); if(tab==='wilayas') renderWilayas(); if(tab==='students') renderStudents(); if(tab==='settings') renderSettings(); return; }
+    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='classes') renderClasses(); if(tab==='wilayas') renderWilayas(); if(tab==='security') renderSecurity(); if(tab==='students') renderStudents(); if(tab==='settings') renderSettings(); return; }
     if(t.getAttribute('data-adm4-search')){
       var q = ((document.getElementById('admStuQ')||{}).value || '');
       SB.admSearchStudents(q).then(function(r){
