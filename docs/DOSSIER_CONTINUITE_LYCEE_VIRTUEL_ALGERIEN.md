@@ -6074,3 +6074,22 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Commit du rapport Lot 296 : `57f215cd1c41f66251e02683b7e1d239fcc23a38`.
 - Aucun code applicatif, route, ID ou style modifié ; aucun SQL, migration, table, fonction, RLS, grant, secret, réglage Auth, donnée, opération financière, Worker, Cron, Realtime, e-mail, déploiement, achat ou coût. Aucune requête au projet Supabase distant.
 - PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`. La CI du commit documentaire final doit être vérifiée séparément.
+
+
+
+### Lot 297 — audit du descriptif du tableau de bord et des requêtes Supabase — 11 novembre 2026
+
+- Deuxième pièce reçue concernant le même tableau de bord à sept sections : descriptif fonctionnel arabe et quatre extraits PostgREST pour profils, comptage, paiements et analyses de sécurité. Aucun nouveau HTML/JavaScript complet ni capture n'était joint ; ce lot est donc une revue de spécification et de raccordement, pas un audit visuel.
+- Le dossier conserve deux entrées distinctes et complémentaires :
+  - **Lot 296** : audit du prototype HTML/JavaScript autonome (maquette, données statiques, boutons inertes, absence de garde d'accès).
+  - **Lot 297** : audit du descriptif fonctionnel et des quatre requêtes de branchement Supabase proposées.
+- Création de `docs/security/LOT-297-admin-dashboard-supabase-integration-audit.md`.
+- Conclusion : **NO-GO pour copier/exécuter les quatre requêtes telles quelles**. Les relations `user_roles(role)` et `wilayas(name)` ne sont pas établies par les schémas administratifs examinés ; le modèle versionné utilise `profiles.role` et les tables `admin_roles`, `admin_permissions`, `wilaya_assignments`. `select('*')` et le comptage global ne garantissent ni minimisation ni périmètre.
+- La requête financière propose `amount`, alors que les contrats versionnés utilisent `montant`, `devise` et `statut`. Les recettes doivent être lues via `admin_report` / `accounting_entries`, qui distinguent recettes, remboursements et dépenses, et non déduites de toutes les lignes `payments`.
+- La table `security_analyses` et ses policies ne sont pas établies comme déployées ; le Lot 295 a déjà identifié les défauts de confiance de ses événements, de l'identité et du score. Aucune action de blocage n'est autorisée par cette maquette.
+- Les wrappers existants `SB.admMyPerms`, `SB.admDashboard`, `SB.admSearchStudents`, `SB.admStudent`, `SB.admReport`, `SB.admAuditLast`, `SB.admEntries` et les fonctions de reçus/paiements sont à réutiliser uniquement après vérification de leur disponibilité et des policies réellement installées.
+- Le journal `audit_logs` existe dans les scripts versionnés, mais la promesse « immuable comme GitHub » est trop absolue : le trigger SQL présent dans Git retourne `OLD` lorsque `auth.uid()` est NULL, ce qui laisse notamment le contexte privilégié hors de la garantie annoncée. La portée exacte doit être testée et décrite sans surpromesse.
+- 10 constats transversaux et 18 tests négatifs sont documentés. Aucun test n'est déclaré exécuté ; aucune introspection distante Supabase n'a été effectuée.
+- Aucun code applicatif, SQL, migration, table, fonction, policy RLS, grant, secret, donnée, action admin, opération financière, Worker, Cron, Realtime, e-mail, déploiement, achat ou coût n'a été modifié/créé/exécuté. Aucune nouvelle branche ; `main` inchangée.
+- Rapport Lot 297 créé au commit `b158fc354dfa65527b70356d48a3af303fb628e5`.
+- La CI du commit documentaire final doit être vérifiée séparément. PR #17 doit rester ouverte et non fusionnée.
