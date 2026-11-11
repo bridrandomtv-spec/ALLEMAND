@@ -70,10 +70,10 @@ assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
 assert.match(html, /app\.js\?v=3568/, 'cache app.js non actualisé');
 assert.match(sw, /app\.js\?v=3568/, 'précache app.js non actualisé');
-assert.match(html, /admin\.js\?v=3511/, 'cache admin.js non actualisé');
-assert.match(sw, /admin\.js\?v=3511/, 'précache admin.js non actualisé');
-assert.match(sw, /classe\.json\?v=3511/, 'précache classe.json non actualisé');
-assert.match(sw, /wilaya\.json\?v=3511/, 'précache wilaya.json non actualisé');
+assert.match(html, /admin\.js\?v=3512/, 'cache admin.js non actualisé');
+assert.match(sw, /admin\.js\?v=3512/, 'précache admin.js non actualisé');
+assert.match(sw, /classe\.json\?v=3512/, 'précache classe.json non actualisé');
+assert.match(sw, /wilaya\.json\?v=3512/, 'précache wilaya.json non actualisé');
 
 
 assert.match(app, /function studentSession\(\)/, 'le coach doit vérifier la session élève');
