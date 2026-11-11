@@ -158,7 +158,7 @@ t(adjs.includes("data-wilaya-search") && adjs.includes("id !== 'admWilayaSearch'
 t(adjs.includes("state4.perms.indexOf('reports.read') === -1"), 'ADM-REF-1 : les vues de référence restent derrière le contrôle d accès administratif');
 t(adjs.includes("KNOWN = ['admDashCard','admClassesCard','admWilayasCard'"), 'ADM-REF-1 : les cartes de référence ne sont pas réaffichées dans les opérations historiques');
 /* ADM-SEC-1 : afficher les permissions réelles sans inventer une télémétrie de sécurité */
-t(adjs.includes("id:'security'") && adjs.includes("id:'admSecurityCard'"), 'ADM-SEC-1 : onglet Accès et audit présent');
+t(adjs.includes("id:'security'") && adjs.includes("cards:['admSecurityCard']"), 'ADM-SEC-1 : onglet Accès et audit présent');
 t(adjs.includes("async function renderSecurity()") && adjs.includes("SB.admAuditLast(20)"), 'ADM-SEC-1 : vue construite à partir du service de permissions et du journal existants');
 t(adjs.includes("state4.perms.length") && adjs.includes("state4.wilayas.length") && adjs.includes("state4.role"), 'ADM-SEC-1 : rôle, permissions et wilayas proviennent de admMyPerms');
 t(adjs.includes("n'est pas un système") === false && adjs.includes("ليست نظام كشف تهديدات"), 'ADM-SEC-1 : la vue précise qu elle ne constitue pas une détection de menaces');
