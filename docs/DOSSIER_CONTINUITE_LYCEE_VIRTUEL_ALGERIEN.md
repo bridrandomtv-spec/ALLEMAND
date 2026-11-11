@@ -6030,3 +6030,16 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Commit du contrat Lot 293 : `2e35e6607f5bdd5a0723bdeb4bbef25fa048f3aa`.
 - La CI du HEAD final de documentation reste à vérifier ; les résultats #3012/#3014 concernent des commits antérieurs et ne valident pas ce nouveau fichier.
 - PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`.
+
+
+### Lot 294 — clôture de l'audit du prototype des rapports périodiques — 11 novembre 2026
+
+- Création de `docs/security/LOT-294-periodic-reports-go-no-go-review.md`.
+- Conclusion : audit de la maquette et documentation des contrats Lots 287–293 terminés ; fonctionnalité non implémentée et mise en service NO-GO.
+- Les blocages sont explicités : sources réelles de catégories, durées de conservation/suppression, fuseau et règles calendrier, fenêtre de rattrapage, tests isolés, fournisseur/SMTP, planificateur et éventuel historique élève.
+- Les statistiques, historiques, dates, adresses et succès simulés de la maquette ne doivent pas être repris dans l'application comme des données réelles.
+- Les conditions cumulatives d'une éventuelle activation sont documentées ; chaque changement distant, secret, migration, endpoint, Cron, envoi et déploiement exige une autorisation explicite distincte.
+- Commit de la revue Go/No-Go : `eac84524948b68b09a8b176f09b6a1f3dea14364`.
+- Aucun code fonctionnel, SQL, migration, table, fonction, RLS, grant, secret, Auth/SMTP, endpoint, Worker, Cron, e-mail, purge, déploiement, achat ou coût.
+- PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`. Aucun changement direct de `main`.
+- La revue documentaire de ce prototype est close. Le prochain prototype peut être transmis pour une analyse indépendante.
