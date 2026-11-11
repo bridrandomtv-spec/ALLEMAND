@@ -646,6 +646,8 @@ function rendreCouvertureORG1(mount){
   }
   function showOnly(ids){
     var h = section5(); if(!h) return;
+    var legacyBody = document.getElementById('adminBody');
+    if(legacyBody) legacyBody.hidden = true;
     Array.prototype.slice.call(h.querySelectorAll('.card')).forEach(function(c){ c.hidden = ids.indexOf(c.id) === -1; });
     Array.prototype.slice.call(h.querySelectorAll('[data-adm-tab],[data-adm5-tab]')).forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-adm5-tab') && ids.indexOf(b.getAttribute('data-adm5-tab') === -1 ? '' : b.getAttribute('data-adm5-tab')) !== -1); });
   }
