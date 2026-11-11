@@ -5986,3 +5986,18 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Vérification de l'exécution CI #3009 sur le commit précédent `51b83bc65822fec569c767c30d325a543b5a8d22` : conclusion `success`, job « Validation structurelle & pédagogique » terminé avec succès. Cette validation ne couvre pas le nouveau texte Lot 290, qui déclenchera une nouvelle exécution.
 - Aucun SQL, objet Supabase, RLS, privilège, secret, réglage Auth/SMTP, Worker, Cron, e-mail ou déploiement modifié. Aucun coût.
 - PR #17 reste ouverte et non fusionnée.
+
+
+### Lot 291 — politique de conservation, purge et suppression des rapports périodiques — 11 novembre 2026
+
+- Création de `docs/security/LOT-291-periodic-reports-retention-deletion-policy.md`.
+- Classification du cycle de vie : préférences, événements observés, exécutions, livraisons, copies du fournisseur et e-mails déjà remis.
+- Définition des principes de minimisation, suppression liée au compte, annulation des rapports en attente, traitement des éventuelles obligations de conservation et limites de suppression des copies externes.
+- Spécification d'une purge serveur idempotente : échéances calculées côté serveur, mode simulation préalable, lots bornés, reprise après panne, journaux agrégés et vérification post-purge.
+- Définition de 12 tests négatifs couvrant échéances, suppression de compte, appels navigateur, panne partielle, données sensibles et rétention fournisseur.
+- Aucune durée chiffrée n'a été inventée : les durées par type de données, le délai de suppression du compte, la rétention des sauvegardes et celle du fournisseur restent des décisions à approuver avant toute activation.
+- Le séquencement du programme est corrigé : Lot 291 rétention/suppression, Lot 292 endpoint sécurisé, Lot 293 planification/historique, Lot 294 activation éventuelle. Le tableau de la spécification Lot 287 a été actualisé en conséquence.
+- Commits : document Lot 291 `3f5a790859ab04ce103dd66543ab75cbab401f76` ; séquencement Lot 287 `860dab9ec780fc2d25bd3750effe3ccf46f05412`.
+- Aucun SQL, migration, table, fonction, policy RLS, grant, secret, réglage Auth/SMTP, endpoint, Worker, Cron, e-mail ou purge n'a été créé, exécuté ou activé. Aucun déploiement, achat ou coût.
+- La validation CI #3011 a réussi sur le HEAD précédent `588f6ae69a08a6bac19e0a6d9710c9715b8ce22b). Elle ne valide pas les deux commits documentaires de ce Lot 291 ; la CI déclenchée sur le nouveau HEAD doit être vérifiée séparément.
+- PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`. Aucune modification directe de `main`.
