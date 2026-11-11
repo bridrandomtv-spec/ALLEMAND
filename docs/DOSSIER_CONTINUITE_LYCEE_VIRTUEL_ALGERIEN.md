@@ -6314,3 +6314,12 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 1. Confirmer CI #3056 et la CI déclenchée par le présent addendum.
 2. Vérifier visuellement l'onglet System sur ordinateur et mobile avec un compte autorisé.
 3. N'afficher des indicateurs d'exploitation en direct qu'après mise en place et validation d'une source de télémétrie serveur adaptée, sans exposer de secret au navigateur.
+
+
+### Rectification CI et validation finale — Lot 302
+- Les exécutions intermédiaires #3054 à #3057 ont échoué sur des assertions de cache restées temporairement désynchronisées pendant les commits successifs : version SW attendue, version de `admin.js`, puis version attendue des JSON de référence.
+- Les sources de référence `classe.json` et `wilaya.json` restent en v3511 ; seul `admin.js` passe en v3512. Les assertions ont été corrigées en conséquence dans `ci/check-masar.mjs`.
+- CI #3058 / run `43119235099` sur le commit `1ce03711e831aa182297d972562d13d9bbf0dca2` : **success**. Le job « Validation structurelle & pédagogique » est terminé avec succès ; les contrôles d'administration, de syntaxe JavaScript, de cache et du portail sont passés.
+- Les échecs intermédiaires étaient des incohérences d'assertions de cache, pas des échecs des cinq assertions `ADM-SYS-1` ; l'étape de validation administration est en succès dans le run final.
+- Le commit documentaire du présent addendum déclenche une CI distincte ; son résultat doit être vérifié séparément.
+- PR #17 reste ouverte et non fusionnée ; HEAD applicatif validé : `1ce03711e831aa182297d972562d13d9bbf0dca2`. Aucun changement sur `main`, aucun déploiement.
