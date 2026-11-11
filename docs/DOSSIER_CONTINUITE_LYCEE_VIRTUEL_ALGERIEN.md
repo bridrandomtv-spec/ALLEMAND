@@ -5846,3 +5846,9 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Aucun changement à `main), aucune fusion, aucun déploiement.
 - Aucun changement Supabase, Auth, RLS, schéma, secret, fournisseur e-mail ou paiement.
 - Le rendu réel dans le navigateur sur ordinateur et mobile reste à vérifier ; les tests structurels ne remplacent pas cette revue visuelle.
+
+
+#### Addendum de validation du Lot 284
+- Le premier contrôle CI du nouveau garde-fou a échoué à cause d'une expression régulière mal échappée dans le test lui-même ; le diagnostic du journal confirme une erreur de syntaxe du test, pas une erreur d'exécution de `renderStudentDashboard()`.
+- Les expressions du test ont été corrigées dans le commit `897b8c61ec6f12d70a994119f43916280c638fa7`.
+- Une nouvelle exécution CI est attendue sur le HEAD corrigé. Le lot reste non validé jusqu'à son résultat.
