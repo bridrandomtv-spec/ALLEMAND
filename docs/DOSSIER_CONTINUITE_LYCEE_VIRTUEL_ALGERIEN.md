@@ -5551,7 +5551,76 @@ Audit du code uniquement, sans modification applicative ni Supabase distant. Auc
 - Aucune ressource Cloudflare/Supabase ne doit être créée sur la seule base de cette comparaison. Aucun service payant, branche de test ou dépassement de quota n'est présumé autorisé.
 
 ### Décisions et périmètre de ce lot
-- Analyse documentaire et lecture seule de `wrangler.toml) ; aucun code applicatif, SQL ou configuration distante modifié.
+- Analyse documentaire et lecture seule de `wrangler.toml` ; aucun code applicatif, SQL ou configuration distante modifié.
 - Aucune table, migration, vue, RPC, politique RLS, binding, ressource D1/KV, Cron, secret, fournisseur e-mail, réglage Auth ou journalisation activé.
 - Aucun rapport fictif, e-mail, déploiement, coût, fusion, nouvelle branche ou modification de `main`.
 - PR #17 reste ouverte et non fusionnée. Toute mise en œuvre d'un stockage dédié exige une autorisation explicite préalable.
+
+
+## Lot 279 — spécification minimale du journal de sécurité — 11 novembre 2026
+
+### Objectif et séparation des preuves
+Le journal doit permettre à l'élève de consulter les événements réellement observés, sans transformer une interaction déclarée par le navigateur en preuve d'authentification.
+- `auth_login_success` : uniquement si l'événement provient d'une source Auth de confiance et que son ingestion serveur est opérationnelle.
+- `worker_endpoint_access` : uniquement lorsqu'un endpoint Worker protégé a validé le Bearer et exécuté l'opération.
+- `report_generated` et `report_email_sent` : uniquement après confirmation de l'opération côté serveur / fournisseur ; une demande ou une tentative échouée n'est pas un envoi réussi.
+- `client_page_view` : événement déclaratif non probant, désactivé par défaut et toujours affiché séparément des connexions Auth. Il n'est pas requis pour le premier périmètre.
+
+### Schéma logique proposé (pas de SQL exécuté)
+Table candidate : `private.security_events` dans un schéma non exposé par la Data API.
+
+| Champ | Type logique | Règle |
+|---|---|---|
+| `id` | UUID | Clé primaire générée côté serveur |
+| `actor_id` | UUID | Compte concerné, dérivé de l'identité validée côté serveur ; jamais accepté depuis le corps client |
+| `event_type` | texte contrôlé / CHECK | Liste blanche des événements autorisés |
+| `source` | texte contrôlé | `auth_ingest`, `worker` ou `report_service` ; jamais librement défini par le navigateur |
+| `occurred_at` | timestamptz | Horodatage serveur UTC, non modifiable par le client |
+| `outcome` | texte contrôlé | `success` ou `failure` selon les événements où cela s'applique |
+| `request_id` | UUID nullable | Corrélation technique sans jeton ni donnée personnelle |
+| `details` | JSONB | Objet réduit à une liste blanche de propriétés non sensibles ; taille maximale à imposer |
+| `source_event_id` | texte nullable | Identifiant d'événement source pour déduplication ; index unique partiel si une source fiable le fournit |
+
+### Index et contraintes
+- Index B-tree `(actor_id, occurred_at DESC, id DESC)` pour l'historique personnel paginé.
+- Index unique partiel sur `(source, source_event_id)` lorsque `source_event_id` n'est pas NULL, afin de rendre l'ingestion idempotente.
+- CHECK sur `event_type`, `source`, `outcome` et la forme/longueur de `details` ; aucun champ libre permettant de stocker des jetons, mots de passe, codes, adresses e-mail ou contenus de messages.
+- `occurred_at` est défini par la base ou le service de confiance ; aucune date arbitraire envoyée par le navigateur.
+- La clé étrangère vers `auth.users` et le comportement de suppression du compte doivent être décidés avec la politique de conservation et de suppression des données avant migration ; ne pas choisir silencieusement CASCADE ou SET NULL.
+
+### Accès et frontière de confiance
+- Schéma `private` non exposé par la Data API ; aucun GRANT direct à `anon` ou `authenticated` sur la table.
+- Les insertions sont réservées au service serveur qui a validé l'événement et l'identité. Ne pas ouvrir une politique INSERT générale `actor_id = auth.uid()` pour ce journal : un client authentifié pourrait appeler directement l'API et fabriquer des événements.
+- Les lectures passent par un endpoint serveur authentifié qui valide le jeton, prend `actor_id` depuis la réponse Auth et applique ce filtre côté serveur. Aucun `actor_id` fourni par le client n'est utilisé.
+- Ne pas créer de fonction `SECURITY DEFINER` dans un schéma exposé. Si une fonction privilégiée est finalement nécessaire, la placer dans un schéma non exposé, fixer `search_path`, valider l'identité et les paramètres, révoquer les privilèges par défaut et n'accorder EXECUTE qu'au rôle serveur nécessaire. Préférer une exécution invoker lorsque cela permet le même contrôle.
+- Un secret serveur ne doit jamais être inclus dans le JavaScript, les réponses HTTP, les commits ou les journaux. Une clé `service_role` est très privilégiée ; son usage éventuel doit être strictement serveur, documenté et évalué séparément, pas considéré comme un mécanisme de moindre privilège.
+- La lecture d'un élève est limitée à son compte. Toute lecture administrative éventuelle est un besoin séparé, autorisé par rôle et périmètre ; elle n'est pas implicite dans ce schéma.
+
+### Rétention et minimisation
+- Valeur initiale proposée à arbitrer avant activation : conserver les événements individuels 90 jours, puis purge automatisée ; aucun archivage illimité.
+- Pas d'adresse IP, géolocalisation, empreinte d'appareil, user-agent complet, email, contenu de requête, jeton ou secret dans la première version.
+- Si une métadonnée technique devient indispensable, documenter sa finalité, sa durée et son accès avant collecte.
+- Pagination par curseur `(occurred_at, id)`, limite de page courte (par exemple 50), période de recherche bornée et réponses `Cache-Control: no-store`.
+- Les événements absents de la source ne doivent jamais être représentés par « aucune connexion » ; l'interface doit distinguer « aucun événement trouvé » de « source indisponible / historique non collecté ».
+
+### Tests de sécurité obligatoires avant toute mise en service
+1. Jeton absent, mal formé, expiré ou révoqué : refus sans écriture.
+2. Mode démo / session locale : refus sans écriture.
+3. Élève A tente de lire l'UUID de B : aucune donnée de B retournée.
+4. Élève tente d'insérer directement un événement ou de modifier `actor_id`, `occurred_at`, `source` ou `event_type` : refus.
+5. Rejeu du même événement source : une seule ligne conservée.
+6. Paramètres de pagination, période et JSONB trop grands / invalides : rejet.
+7. Compte supprimé, purge de rétention et panne de source : comportement explicite, sans divulgation ni fabrication d'historique.
+8. Vérifier les grants effectifs, RLS, schémas exposés, fonctions et vues ; tests négatifs avec rôles anon/authenticated et contrôle de régression des fonctions privilégiées.
+
+### Hors périmètre et décisions encore nécessaires
+- Ce schéma ne rend pas les journaux Auth externes accessibles au Worker. Un mécanisme fiable d'ingestion `auth_login_success` reste à choisir et à valider séparément.
+- Le schéma ne crée ni préférences de rapport, ni planificateur, ni historique d'envoi, ni fournisseur e-mail. Ces composants auront leurs propres spécifications et autorisations.
+- La durée de 90 jours est une proposition technique à confirmer, pas une politique déjà adoptée.
+- Avant migration : valider quotas/ressources actuels, choix du composant serveur, stratégie de suppression de compte, rétention, coûts éventuels et tests sur environnement autorisé.
+
+### Périmètre du lot
+- Spécification documentaire uniquement ; correction d'une coquille de balisage dans l'entrée du Lot 278.
+- Aucun fichier SQL ou migration ajouté ; aucun SQL exécuté ; aucune table, fonction, vue, politique RLS, grant ou donnée modifié.
+- Aucun secret, réglage Auth, binding, ressource Cloudflare, Cron, SMTP, fournisseur e-mail ou service payant ajouté.
+- Aucun déploiement, e-mail, coût, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
