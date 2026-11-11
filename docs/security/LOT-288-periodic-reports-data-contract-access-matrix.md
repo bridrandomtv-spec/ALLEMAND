@@ -27,12 +27,12 @@ Une ligne au plus par compte, clé primaire `user_id` avec référence à `auth.
 | local_time | time nullable | heure locale choisie |
 | timezone | text nullable | identifiant IANA, validé côté serveur |
 | language | texte contrôlé | ar, fr ou en |
-| categories | jsonb contrôlé | objet de booléens avec clés allowlistées, liste finale à valider contre le prototype |
+| categories | jsonb contrôlé | objet de booléens avec les six clés confirmées dans la maquette : login_history, security_alerts, active_devices, security_score, geographic_locations, security_recommendations |
 | created_at / updated_at | timestamptz | générés côté base, jamais fournis par le navigateur |
 
 Contraintes : `enabled = false` et `frequency = disabled` par défaut ; fréquence hebdomadaire exige weekday ; fréquence mensuelle exige monthday ; les champs non pertinents doivent être NULL. Une fréquence active exige heure, fuseau et langue valides. La règle de fin de mois (par exemple jour 31) doit être fixée explicitement avant migration ; aucune règle implicite n'est supposée.
 
-Les catégories exactes ne sont pas figées dans ce lot : elles doivent reprendre les catégories réelles de la maquette après vérification du document source et faire l'objet d'une liste blanche. Les catégories non implémentées ou sans source de données ne peuvent pas être activées.
+La maquette source confirme exactement six catégories : سجل الدخول (historique des connexions), التنبيهات الأمنية (alertes de sécurité), الأجهزة النشطة (appareils actifs), درجة الأمان (score de sécurité), المواقع الجغرافية (localisations géographiques) et التوصيات الأمنية (recommandations de sécurité). Ces libellés sont la liste blanche fonctionnelle de référence. Leur présence dans la maquette ne prouve toutefois pas que les données existent : chaque catégorie reste indisponible tant qu'une source fiable, autorisée et suffisamment complète n'est pas définie. Aucun score, lieu, appareil ou alerte ne doit être inventé.
 
 ### 2.2 `private.security_report_events` — événements observés côté serveur
 Journal append-only, non exposé à la Data API. Champs proposés :
@@ -97,11 +97,12 @@ Pour les tables du schéma `private`, ne créer aucune policy destinée aux rôl
 - Les erreurs persistées sont des codes bornés, jamais le corps complet d'une réponse fournisseur, un jeton ou une adresse e-mail.
 
 ## 6. Questions de conception bloquantes
-1. Valider la liste exacte des catégories de rapport en la comparant à la maquette source ; exclure toute catégorie sans source réelle.
+1. Les six catégories sont désormais relevées dans la source ; leur disponibilité réelle reste conditionnée à l'existence d'une source fiable pour chacune.
 2. Fixer la règle mensuelle pour les jours absents (ex. 29–31) et les transitions DST : heure locale inexistante ou répétée.
 3. Fixer les durées de rétention et les règles d'effacement/anonymisation.
-4. Décider si l'élève doit consulter un historique d'envoi dans l'interface ; si oui, exposer ultérieurement une vue/RPC filtrée sur `auth.uid()`, jamais les tables de livraison directement.
+4. Décider si l'élève doit consulter un historique d'envoi dans l'interface ; si oui, exposer ultérieurement une vue/RPC filtrée sur auth.uid(), jamais les tables de livraison directement.
 5. Vérifier les capacités d'idempotence et de réconciliation du fournisseur retenu avant de définir le comportement de reprise.
+6. Le prototype ne comporte aucun sélecteur de fuseau horaire : le champ timezone est une exigence technique, pas un choix déjà présenté à l'élève. Décider si le fuseau est proposé depuis le navigateur puis confirmé/éditable, ou choisi explicitement.
 
 ## 7. Tests négatifs requis avant toute migration
 | ID | Test | Résultat attendu |
@@ -127,3 +128,40 @@ Ces tests sont une matrice à exécuter dans un environnement isolé ; aucun ré
 Le contrat sépare les préférences utilisateur des données de traitement privées et fixe les frontières d'identité, de destinataire, de statut et de rétention. Les catégories exactes, règles de calendrier, rétention et capacité d'idempotence fournisseur restent des décisions bloquantes.
 
 **Aucune migration SQL, table, fonction, policy RLS, grant, secret, réglage Auth, endpoint, Worker, Cron, e-mail ou déploiement n'a été créé ou modifié.** La prochaine étape ne peut être une migration qu'après validation explicite des points bloquants et autorisation distincte.
+
+## 9. Addendum Lot 289 — vérification de la maquette source
+
+La maquette HTML source de 759 lignes a été relue, notamment les blocs « محتوى التقرير », « جدولة الإرسال » et « إعدادات البريد ».
+
+### Liste blanche exacte confirmée
+1. سجل الدخول — historique des connexions.
+2. التنبيهات الأمنية — alertes de sécurité.
+3. الأجهزة النشطة — appareils actifs.
+4. درجة الأمان — score de sécurité.
+5. المواقع الجغرافية — localisations géographiques.
+6. التوصيات الأمنية — recommandations de sécurité.
+
+La maquette ne présente pas de sélecteur de fuseau horaire. Elle propose la fréquence quotidien/hebdomadaire/mensuel, le jour pour la fréquence hebdomadaire et des heures prédéfinies. Le champ IANA timezone reste donc une exigence technique, mais son mode d'alimentation est une décision produit à prendre avant l'implémentation.
+
+### Correspondance avec les données réellement disponibles
+- Historique des connexions : pas encore de journal applicatif élève complet ; la source doit être construite et sa sémantique limitée à ce qui est effectivement observé.
+- Alertes de sécurité : la maquette ne définit ni catalogue d'alertes ni source d'événements. Les alertes fictives de l'aperçu ne sont pas des alertes réelles.
+- Appareils actifs : aucune source applicative complète n'a été identifiée ; ne pas déduire les appareils depuis un simple nombre de sessions.
+- Score de sécurité : aucune formule, pondération ou référence comparative n'est spécifiée ; ne pas afficher le score de démonstration ni un pourcentage inventé.
+- Localisations géographiques : la maquette ne définit ni provenance ni précision ; aucune géolocalisation ne doit être inventée ou déduite d'une adresse IP non collectée.
+- Recommandations de sécurité : elles peuvent être éditoriales et statiques, mais doivent être séparées des constats personnalisés issus des événements du compte.
+
+### Autres champs de la maquette à ne pas reprendre tels quels
+- Adresse ahmed@email.com : valeur fictive préremplie ; le destinataire doit être résolu côté serveur depuis l'adresse Auth confirmée.
+- Date, statistiques, historique, appareil, lieu et score de l'aperçu : valeurs de démonstration, pas des données utilisateur.
+- Bouton « إرسال تجريبي » : le prototype simule un succès via temporisation ; il ne prouve aucun envoi.
+- Fuseau horaire : absent de l'interface source, décision produit/technique encore ouverte.
+
+### Décisions restant bloquantes
+- Règle mensuelle pour les jours 29–31 et règle DST pour les heures inexistantes ou répétées.
+- Politique et durées de rétention/suppression.
+- Mode d'obtention et de confirmation du fuseau horaire.
+- Sources et définitions métier acceptables pour alertes, appareils, score et géographie.
+- Idempotence et procédure de réconciliation du fournisseur d'e-mail.
+
+**Résultat :** les six libellés du prototype sont confirmés dans le contrat. Cela clôt la vérification documentaire des catégories, mais pas la disponibilité des données ni l'autorisation d'implémenter. Aucun SQL, objet Supabase, secret, e-mail, Worker, Cron ou déploiement n'a été modifié.
