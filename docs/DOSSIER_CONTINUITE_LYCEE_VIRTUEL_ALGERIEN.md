@@ -5820,3 +5820,29 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - PR #17 reste ouverte et non fusionnée.
 - Aucun test exécuté contre Supabase, aucun SQL appliqué, aucune permission distante changée, aucun hook activé, aucun secret modifié, aucun e-mail, déploiement ou coût.
 - Validation CI du commit documentaire final à vérifier séparément.
+
+
+### Lot 284 — prochaine séance strictement liée au niveau du compte — 11 novembre 2026
+
+#### Constat
+- La fonction `renderStudentDashboard()` construisait la liste `units` à partir du niveau de la session élève, mais obtenait la prochaine séance par `prochaineSeance()`, fonction qui dépend de l'état global `niveauActif`.
+- En cas de décalage pendant la synchronisation du niveau, la carte « prochaine séance » pouvait donc afficher une unité hors de la liste filtrée utilisée par le tableau de bord.
+- Le défaut concernait la cohérence entre le niveau de compte et l'action suivante ; il ne justifiait ni une modification du stockage des séances ni une modification Auth/RLS.
+
+#### Correction intégrée dans la PR #17
+- La prochaine unité est maintenant recherchée directement dans `units`, déjà filtrées selon le niveau de la session.
+- La première séance non terminée est choisie à partir de `loadSeancesFor(unit.n)`, donc du suivi propre à cette unité.
+- Le rendu du parcours, la carte de prochaine séance et l'action de reprise partagent désormais la même source filtrée.
+- Un contrôle de régression dans `ci/check-masar.mjs` vérifie que `renderStudentDashboard()` calcule `nextUnit` depuis `units` et n'appelle plus `prochaineSeance()`.
+
+#### Cache et contrôles
+- `app.js` : version de cache incrémentée de `3566` à `3567`.
+- Service Worker : version incrémentée de `dz-de-v3.185.0.0.134` à `dz-de-v3.185.0.0.135`.
+- Références de cache synchronisées dans `index.html`, `sw.js`, `ci/check-masar.mjs` et `ci/check-public-portal.mjs`.
+- La CI doit confirmer les assertions après ces changements ; aucune réussite n'est déclarée avant le résultat du workflow.
+
+#### État et limites
+- Correctif appliqué uniquement à la branche `design/prototypes-67-74-alignment) de la PR #17.
+- Aucun changement à `main), aucune fusion, aucun déploiement.
+- Aucun changement Supabase, Auth, RLS, schéma, secret, fournisseur e-mail ou paiement.
+- Le rendu réel dans le navigateur sur ordinateur et mobile reste à vérifier ; les tests structurels ne remplacent pas cette revue visuelle.
