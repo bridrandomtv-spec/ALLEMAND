@@ -5897,3 +5897,11 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Un contrôle CI vérifie ce libellé afin d'éviter une promesse d'accès immédiat.
 - Le Service Worker est passé à `dz-de-v3.185.0.0.137` ; les assertions correspondantes ont été actualisées.
 - Une nouvelle CI est attendue sur le HEAD comprenant le changement de libellé et ses tests.
+
+
+#### Validation du libellé d'inscription et de l'ensemble Lot 285
+- CI #3000 : réussite sur le commit `730ada625eeb39ca4b4386bcbe2c030c15b4f572`.
+- Les contrôles du portail public, de l'inscription officielle, du tableau de bord, des permissions et des régressions ont réussi.
+- La création d'un compte local depuis le formulaire d'inscription est bloquée par le code et vérifiée par le test CI.
+- Le libellé du bouton ne promet plus une connexion immédiate.
+- L'envoi effectif du message de confirmation n'a pas été testé et reste dépendant du SMTP Auth configuré dans le projet Supabase.
