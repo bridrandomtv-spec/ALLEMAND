@@ -5788,3 +5788,12 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - PR #17 maintenue ouverte et non fusionnée ; aucun changement direct sur `main`.
 - Aucun SQL exécuté, aucune table/fonction/hook activé sur Supabase, aucun secret ou réglage Auth modifié, aucun e-mail, déploiement ou coût.
 - CI du commit documentaire final à vérifier séparément.
+
+
+#### Correction de prudence du Lot 282
+- Le premier brouillon utilisait un nom générique `private.security_events`, qui aurait pu entrer en conflit avec le schéma global prévu au Lot 279. Il a été corrigé avant la clôture du lot.
+- La table du brouillon porte maintenant un nom dédié : `private.security_auth_hook_events`. Elle ne prétend pas remplacer la future table générique des événements de sécurité.
+- Les révocations de privilèges au niveau du schéma `private` ont été retirées afin de ne pas modifier les droits d'autres objets déjà présents dans ce schéma.
+- La fonction est créée avec `CREATE FUNCTION` (et non `CREATE OR REPLACE`) afin d'échouer si une fonction homonyme existe déjà, plutôt que de la remplacer silencieusement.
+- Le SQL final a été relu : table dédiée, exclusion des renouvellements, déduplication par session, bloc d'exception fail-open, privilèges de fonction restreints et `ROLLBACK` de sécurité présents.
+- Le brouillon demeure non exécuté et non validé par un moteur PostgreSQL. Un contrôle de compatibilité sur une base isolée reste obligatoire.
