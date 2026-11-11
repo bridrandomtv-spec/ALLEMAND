@@ -5486,3 +5486,32 @@ Audit du code uniquement, sans modification applicative ni Supabase distant. Auc
 - Requêtes SQL strictement en lecture seule ; documentation officielle consultée.
 - Aucun réglage Auth/Audit Logs, privilège, table, vue, RPC, migration, politique RLS, secret, fonction Edge, Worker, Cron, SMTP ou fournisseur d'e-mail modifié.
 - Aucun e-mail envoyé, coût engagé, déploiement, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 277 — audit des journaux applicatifs existants — 11 novembre 2026
+
+### Inventaire des tables candidates (lecture seule)
+- Inventaire des noms/colonnes des schémas `public` et `auth` : les seules tables pertinentes détectées sont `auth.audit_log_entries`, `auth.sessions`, `public.audit_logs` et `public.msg_log`. Aucun journal applicatif dédié aux connexions/activités des élèves n'a été identifié.
+- `public.audit_logs` contient les opérations administratives : agrégats observés par action/type = statuts de paiement (6), affectations d'agents (6), publication d'accords (3), acceptations d'accords (2), révocation d'affectation (1), changement de rôle (1). Ces données ne constituent pas un historique de connexions étudiantes.
+- RLS est activé sur `public.audit_logs`. Sa politique SELECT autorise la lecture par l'acteur concerné ou par certains administrateurs selon leur périmètre territorial. Le rôle `authenticated` ne possède que SELECT sur cette table ; aucune insertion directe n'est accordée à ce rôle.
+- La fonction `public.audit_log(action, cible_type, cible_id, avant, apres, wilaya)` est SECURITY DEFINER et insère avec `auth.uid()`, mais l'inventaire des privilèges indique qu'elle n'est pas exécutable par `anon` ni `authenticated`. Elle ne constitue donc pas une API de journalisation utilisateur réutilisable.
+- `public.msg_log` est un journal de modération/messages. Sa politique SELECT est limitée aux modérateurs ; il ne doit pas être détourné en journal de sécurité ou d'activité générale.
+- `auth.sessions` contient des métadonnées de sessions (dates, user-agent, IP, expiration, etc.), mais les privilèges relevés ne donnent l'accès qu'à `postgres`. Cette table décrit les sessions Auth, pas un historique applicatif durable des actions, et n'est pas exposée au Worker.
+- `auth.audit_log_entries` demeure vide (0 ligne au contrôle précédent) et non accessible aux rôles navigateur.
+
+### Conséquence pour la solution « accès observés par le Worker »
+- Le Worker `src/site-worker.js` ne comporte toujours qu'un handler `fetch` pour les actifs et la garde des contenus protégés ; `wrangler.toml` ne déclare que le binding `ASSETS`.
+- Aucun stockage durable de type KV/D1/Analytics Engine n'est configuré dans le dépôt. Les journaux d'observabilité Cloudflare ne sont pas une table de données applicative consultable par l'élève.
+- Instrumenter une route de ping ou compter les requêtes dans le Worker sans stockage durable ne fournirait pas un historique fiable ; enregistrer les identifiants et user-agents dans des logs généraux exposerait inutilement des données personnelles.
+- Un véritable journal d'accès applicatif nécessite un stockage dédié, une politique de rétention, un schéma d'événements minimal, une identité validée côté serveur et un mécanisme d'écriture avec privilèges restreints. Ce serait une évolution de schéma/infra et doit faire l'objet d'une autorisation distincte avant toute mise en œuvre.
+- Les événements « ouverture de page », « activité récente », « connexion Auth » et « session active » devront rester des catégories distinctes. Un simple appel au Worker ne prouve pas une connexion Auth ; un user-agent ne prouve pas un appareil unique ; une session active ne reconstitue pas l'historique.
+
+### Décision
+- Ne pas réutiliser `audit_logs`, `msg_log` ou `auth.sessions` pour fabriquer un historique étudiant.
+- Ne pas ajouter de route de suivi qui prétendrait produire des rapports durables sans stockage.
+- Prochaine décision d'architecture, avant toute modification : autoriser ou non un stockage dédié sans coût additionnel, puis définir la source d'identité, les événements minimaux, la durée de conservation et le contrôle d'accès. Aucune solution payante ni aucun service externe n'est présumé acceptable.
+
+### Périmètre
+- Introspection SQL et lecture du Worker/Wrangler uniquement.
+- Aucun enregistrement créé, aucune donnée utilisateur consultée individuellement, aucun privilège, table, vue, RPC, migration, RLS, secret ou binding modifié.
+- Aucun déploiement, e-mail, coût, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
