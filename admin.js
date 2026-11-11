@@ -599,7 +599,7 @@ function rendreCouvertureORG1(mount){
                   + '<b>' + esq5(w.code) + ' · ' + esq5(w.ar) + '</b><span>' + esq5(w.fr) + '</span></div>';
               }).join('') + '</div></section>';
         }).join('') + '</div>'
-      + '<p style="font-size:11px;color:var(--m);margin-top:12px">المصدر: assets/bdd/wilaya.json · القائمة officielle de 58 wilayas. Les affectations et autorisations d'un administrateur sont déterminées séparément par Supabase (admin_sees_wilaya / RLS).</p>';
+      + '<p style="font-size:11px;color:var(--m);margin-top:12px">المصدر: assets/bdd/wilaya.json · القائمة officielle de 58 wilayas. Les affectations et autorisations de chaque administrateur sont déterminées séparément par Supabase (admin_sees_wilaya / RLS).</p>';
   }
   async function renderSecurity(){
     var h = section(); if(!h) return;
