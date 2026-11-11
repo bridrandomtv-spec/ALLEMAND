@@ -5515,3 +5515,43 @@ Audit du code uniquement, sans modification applicative ni Supabase distant. Auc
 - Introspection SQL et lecture du Worker/Wrangler uniquement.
 - Aucun enregistrement créé, aucune donnée utilisateur consultée individuellement, aucun privilège, table, vue, RPC, migration, RLS, secret ou binding modifié.
 - Aucun déploiement, e-mail, coût, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 278 — comparaison des stockages pour les rapports de sécurité — 11 novembre 2026
+
+### État vérifié avant décision
+- PR #17 : ouverte, non fusionnée ; HEAD avant ce lot : `cea140e8cbe51eb2dd534e6b28cee8b98896f403`.
+- CI du HEAD précédent : run #2971 / workflow #43009399444, **success**.
+- `wrangler.toml` relu sur la branche : seul binding déclaré = `ASSETS`. Aucun binding KV, D1, Durable Object ou Analytics Engine, aucune tâche Cron.
+- Le dossier des lots 276–277 établit qu'aucune table applicative existante ne convient et qu'aucun accès runtime aux journaux Auth externes n'est configuré.
+
+### Comparaison des options
+
+| Option | Avantages | Limites et risques | Décision |
+|---|---|---|---|
+| Table dédiée dans Supabase Postgres | SQL relationnel, filtres par utilisateur, pagination et rétention explicites ; réutilise le projet déjà connecté | Migration, grants, RLS et tests nécessaires ; l'écriture doit être exclusivement serveur pour éviter les événements falsifiés ; quotas du projet à vérifier avant toute charge | **Option privilégiée à étudier**, sans l'implémenter dans ce lot |
+| Cloudflare D1 | Stockage SQL proche du Worker, adapté à des événements datés et indexés | Nouvelle ressource, binding, migrations et contrôle d'accès à créer ; quotas/offre et éventuels coûts à vérifier dans le compte | Alternative, non retenue à ce stade |
+| Cloudflare KV | Simple stockage clé/valeur | Pas adapté aux requêtes chronologiques, filtres multi-critères et pagination d'un journal ; index et cohérence à gérer séparément | Rejeté pour l'historique d'audit |
+| Analytics Engine / logs d'observabilité | Utile pour métriques agrégées et diagnostic technique | Pas conçu comme registre transactionnel individuel garantissant un historique consultable et exportable par élève ; disponibilité et quotas à confirmer | Ne pas utiliser comme source officielle du rapport individuel |
+| API Management des logs Supabase | Donne accès aux journaux Auth externes déjà observés | Jeton administratif requis, fenêtres de requête limitées, secret à protéger et filtrage strict côté serveur ; risque disproportionné pour une fonctionnalité élève | Non retenue |
+| `auth.sessions` / tables existantes | Déjà présentes | Accès non disponible au Worker et sémantique différente d'un historique ; aucune table existante ne représente les connexions et actions de l'élève | Rejeté |
+
+### Architecture cible proposée (non implémentée)
+1. **Séparer les catégories d'événements.** Un événement de connexion Auth doit provenir d'une source Auth fiable ; une requête authentifiée vers un endpoint pédagogique peut seulement prouver un accès à cet endpoint ; une ouverture de page côté navigateur est une télémétrie déclarative et ne doit pas être présentée comme une preuve de connexion.
+2. **Valider l'identité côté serveur.** Le serveur valide le Bearer auprès de Supabase Auth et dérive l'UUID du compte de la réponse Auth. Il ignore tout identifiant, rôle, adresse ou destinataire transmis dans le corps HTTP.
+3. **Écrire côté serveur uniquement.** Une Edge Function ou un endpoint Worker authentifié reçoit les événements autorisés et effectue une insertion contrôlée dans une table dédiée. Aucun secret administratif ou `service_role` ne doit être envoyé au navigateur, inclus dans le dépôt ou exposé dans une réponse. Toute clé serveur éventuelle reste dans le gestionnaire de secrets et ses privilèges doivent être réduits au strict nécessaire.
+4. **Protéger la lecture.** RLS propriétaire, filtrage obligatoire sur l'identité validée, pagination bornée, période maximale, `Cache-Control: no-store`, limitation de fréquence et absence d'accès inter-élèves. Les administrateurs ne voient que les données explicitement autorisées par leur rôle et périmètre.
+5. **Minimiser et expirer.** Enregistrer uniquement type d'événement, compte, horodatage serveur, résultat et métadonnées techniques strictement nécessaires. Définir une durée de conservation et une purge avant d'activer la collecte. Ne pas collecter de géolocalisation ni d'empreinte d'appareil.
+6. **Ne pas confondre les rapports et leur envoi.** Le stockage d'événements, les préférences, l'historique des rapports, le planificateur et le fournisseur e-mail sont des composants distincts. Aucun envoi périodique ne doit être annoncé avant validation de chacun.
+
+### Recommandation
+- Pour limiter la multiplication des services, étudier en premier une table dédiée Supabase Postgres et une écriture serveur contrôlée, avec lecture strictement propriétaire via RLS.
+- Cette recommandation ne signifie pas que la fonction est prête : elle nécessite une migration, des politiques et privilèges, une fonction serveur, des tests d'accès négatifs (autre élève, jeton invalide, mode démo, rôle non autorisé), une stratégie de rétention et la vérification des quotas actuels.
+- Les événements de connexion Auth ne doivent pas être inventés à partir d'un appel Worker. Tant qu'une source Auth exploitable au runtime n'est pas validée, le rapport doit indiquer clairement que l'historique de connexions Auth n'est pas disponible plutôt que d'afficher zéro.
+- Aucune ressource Cloudflare/Supabase ne doit être créée sur la seule base de cette comparaison. Aucun service payant, branche de test ou dépassement de quota n'est présumé autorisé.
+
+### Décisions et périmètre de ce lot
+- Analyse documentaire et lecture seule de `wrangler.toml) ; aucun code applicatif, SQL ou configuration distante modifié.
+- Aucune table, migration, vue, RPC, politique RLS, binding, ressource D1/KV, Cron, secret, fournisseur e-mail, réglage Auth ou journalisation activé.
+- Aucun rapport fictif, e-mail, déploiement, coût, fusion, nouvelle branche ou modification de `main`.
+- PR #17 reste ouverte et non fusionnée. Toute mise en œuvre d'un stockage dédié exige une autorisation explicite préalable.
