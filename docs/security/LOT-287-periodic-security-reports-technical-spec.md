@@ -72,8 +72,9 @@ Les tests sont exécutés sur données synthétiques dans un environnement isol�
 | 288 | Contrat de données et politiques proposées | Revue de sécurité, sans application distante |
 | 289 | Collecteur d'accès authentifié en test | Identité, déduplication et confidentialité validées |
 | 290 | Générateur et aperçus trilingues | Tests déterministes, aucune donnée fictive |
-| 291 | Endpoint d'envoi sécurisé | Tests négatifs, idempotence et destinataire confirmé |
-| 292 | Planification et historique | Tests de calendrier et de reprise |
-| 293 | Activation éventuelle | Autorisation distincte et validation du fournisseur |
+| 291 | Politique de rétention, purge et suppression | Durées approuvées et tests de purge spécifiés |
+| 292 | Endpoint d'envoi sécurisé | Tests négatifs, idempotence et destinataire confirmé |
+| 293 | Planification et historique | Tests de calendrier, reprise et rétention |
+| 294 | Activation éventuelle | Autorisation distincte, fournisseur validé et contrôles de sécurité passés |
 
 **État à la clôture du Lot 287 :** spécification seulement. Aucun écran, SQL, table, fonction, politique RLS, secret, endpoint, e-mail, Cron ou déploiement n'a été créé ou activé.
