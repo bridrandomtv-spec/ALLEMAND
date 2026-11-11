@@ -456,11 +456,12 @@ function rendreCouvertureORG1(mount){
     { id:'classes', label:'🏫 الأقسام · Classes', cards:['admClassesCard'], perm:'reports.read' },
     { id:'wilayas', label:'🗺️ الولايات · Wilayas', cards:['admWilayasCard'], perm:'reports.read' },
     { id:'security', label:'🛡️ الوصول والتدقيق · Access & Audit', cards:['admSecurityCard'], perm:'reports.read' },
+    { id:'system', label:'🖥️ النظام والبنية التقنية · System', cards:['admSystemCard'], perm:'reports.read' },
     { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard'], perm:'students.read' },
     { id:'ops', label:'🧰 العمليات · Operations', cards:['admAgentsCard','admQueueCard','admAccordsCard','__legacy__'], perm:null },
     { id:'settings', label:'⚙️ الإعدادات · Settings', cards:['admSettingsCard'], perm:'settings.manage' }
   ];
-  var KNOWN = ['admDashCard','admClassesCard','admWilayasCard','admSecurityCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
+  var KNOWN = ['admDashCard','admClassesCard','admWilayasCard','admSecurityCard','admSystemCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
   var state4 = { perms:[], tab:'dash', role:'', wilayas:[] };
   function section(){ return document.querySelector('section[data-view="admin"]'); }
   function cardsOf(tab){
@@ -633,6 +634,36 @@ function rendreCouvertureORG1(mount){
       + (audit.ok && audit.rows && audit.rows.length ? rows : (audit.ok ? '<p>لا توجد عمليات مسجلة في النتيجة المعادة.</p>' : rows))
       + '</div><p style="font-size:11px;color:var(--m);margin-top:10px">هذه الصفحة تعرض صلاحيات الحساب وسجل العمليات المتاح وفق RLS. وهي ليست نظام كشف تهديدات أو مراقبة جلسات مباشرة؛ لا تعرض أحداثاً لم توفرها المصادر الحالية.</p>';
   }
+  function renderSystem(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admSystemCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admSystemCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🖥️</span><div><h2>النظام والبنية التقنية</h2>'
+      + '<p class="ad-sub">جرد ثابت مستخرج من ملفات إعداد المشروع — لا يمثل فحصاً مباشراً للخوادم</p></div></div>'
+      + '<div class="grid3" style="margin-top:12px">'
+      + '<div class="card mini"><b>Cloudflare Worker</b><p>نقطة الدخول المعرّفة في wrangler.toml</p></div>'
+      + '<div class="card mini"><b>ASSETS</b><p>ربط الملفات الثابتة من مجلد المشروع</p></div>'
+      + '<div class="card mini"><b>غير مقاس</b><p>زمن الاستجابة والتوافر الفعلي</p></div></div>'
+      + '<div class="card" style="margin-top:12px"><b>⚙️ إعدادات المصدر</b>'
+      + '<div class="rep-row"><span>ملف إعداد النشر</span><code>wrangler.toml</code></div>'
+      + '<div class="rep-row"><span>مدخل Worker</span><code>src/site-worker.js</code></div>'
+      + '<div class="rep-row"><span>تاريخ التوافق المعلن</span><code>2024-09-01</code></div>'
+      + '<div class="rep-row"><span>مجلد الأصول الثابتة</span><code>./</code></div>'
+      + '<div class="rep-row"><span>اسم الربط</span><code>ASSETS</code></div></div>'
+      + '<div class="card" style="margin-top:12px"><b>🔐 حارس المحتوى</b>'
+      + '<p>يحتوي Worker على تحقق خادمي لمسارات محتوى محددة باستخدام رمز Bearer، ويستعلم عن جدول <code>lesson_content</code> عبر Supabase REST وسياسات الوصول الموجودة.</p>'
+      + '<p>أسماء متغيرات البيئة المطلوبة في المصدر: <code>SUPABASE_URL</code> و<code>SUPABASE_ANON_KEY</code>. لا تُعرض قيم الأسرار في هذه الواجهة.</p>'
+      + '<p>عند غياب المتغيرات، يعيد المسار المحمي خطأ إعداد HTTP 503؛ وغياب الرمز أو فشل التحقق يمنع تسليم المحتوى المحمي.</p></div>'
+      + '<div class="card" style="margin-top:12px"><b>📡 حدود المراقبة الحالية</b>'
+      + '<div class="rep-row"><span>مسار /health أو /metrics في Worker</span><b>غير موجود في المصدر المفحوص</b></div>'
+      + '<div class="rep-row"><span>معالج مجدول أو Cron في Worker</span><b>غير موجود في المصدر المفحوص</b></div>'
+      + '<div class="rep-row"><span>قياس uptime / CPU / mémoire / latence</span><b>غير متاح من هذه الملفات</b></div>'
+      + '<div class="rep-row"><span>حالة النشر الفعلية أو صحة Supabase</span><b>غير متحققة هنا</b></div>'
+      + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">هذا جرد تكويني للشفرة فقط. لا يرسل طلبات فحص، ولا يقرأ الأسرار، ولا يدّعي أن الخدمة متاحة الآن. يلزم مصدر مراقبة خادمي مستقل قبل عرض مؤشرات تشغيلية حية.</p></div>'
+      + '<p style="font-size:11px;color:var(--m);margin-top:10px">المصادر: wrangler.toml وsrc/site-worker.js · صلاحية العرض: reports.read.</p>';
+  }
   async function renderStudents(){
     var h = section(); if(!h) return;
     var box = document.getElementById('admStudentsCard');
@@ -665,7 +696,7 @@ function rendreCouvertureORG1(mount){
     var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu]') : null;
     if(!t) return;
     var tab = t.getAttribute('data-adm-tab');
-    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='classes') renderClasses(); if(tab==='wilayas') renderWilayas(); if(tab==='security') renderSecurity(); if(tab==='students') renderStudents(); if(tab==='settings') renderSettings(); return; }
+    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='classes') renderClasses(); if(tab==='wilayas') renderWilayas(); if(tab==='security') renderSecurity(); if(tab==='system') renderSystem(); if(tab==='students') renderStudents(); if(tab==='settings') renderSettings(); return; }
     if(t.getAttribute('data-adm4-search')){
       var q = ((document.getElementById('admStuQ')||{}).value || '');
       SB.admSearchStudents(q).then(function(r){
