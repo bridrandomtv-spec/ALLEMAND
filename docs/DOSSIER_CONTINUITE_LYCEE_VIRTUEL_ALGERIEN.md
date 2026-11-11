@@ -6256,3 +6256,21 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 ### Validation documentaire finale — Lot 301
 - CI #3043 / run `43084185301` sur le commit documentaire `95e65224cac75d27217c02600c8f7c72f8d543ca` : **success**. Le contrôle des fichiers requis et la validation administration ont réussi.
 - PR #17 reste ouverte, non fusionnée ; le commit applicatif corrigé `c9a457f9aceeb51e06a09b6da1803245196e5b79` a une CI complète en succès. La présente mise à jour déclenche une nouvelle CI documentaire à contrôler séparément.
+
+
+### Lot 300/301 — cohérence du cache et du Service Worker (11 novembre 2026)
+- Découverte : `index.html` chargeait encore `admin.js?v=3510`, tandis que les nouvelles vues et leurs assets n'étaient pas alignés sur les URL versionnées du Service Worker.
+- Correction : `index.html` passe à `admin.js?v=3511` ; `sw.js` précache maintenant `./admin.js?v=3511`, `./assets/bdd/classe.json?v=3511` et `./assets/bdd/wilaya.json?v=3511`. La version du cache Service Worker est passée de `dz-de-v3.185.0.0.137` à `dz-de-v3.185.0.0.138`.
+- `admin.js` charge les deux référentiels avec les mêmes paramètres de version ; les fichiers JSON eux-mêmes n'ont pas été modifiés.
+- `ci/check-masar.mjs` vérifie désormais la version SW .138 et les versions précachées du script admin et des deux référentiels.
+- Le contrôle `ci/check-public-portal.mjs` contenait également l'ancienne version SW .137. Il a été synchronisé vers .138 après que CI #3048 l'a signalé.
+- Commits de cache : `0d277062002fb25f4caf8c588d8ba158b35833f8` (admin.js), `cb654a6f8a1272f23f61481b3fdde14afbf093ac` (index.html), `9f03de2592b503a39ac0452a6f93c97a82622415` (sw.js), `89f703cf097dd5292ff1da0e77f73b834ef2e723` (check-masar), `58452442ef233cd1ec048166f836a0fab7c1887e` (tests), `074ada2d23e1ea891c135d7d2205accc04e738a4` (assertions de cache), `434e82b1000041ce4252e59a0863dba74a0ee4b3` (check-public-portal).
+- CI #3048 / run `43084923162` : failure car `ci/check-public-portal.mjs` attendait encore l'ancienne version .137 ; les tests admin et syntaxe JS étaient en succès.
+- Après correction de ce contrôle, CI #3049 / run `43085197538` sur le commit `434e82b...` : **success**. Les logs confirment que le contrôle portail public reconnaît maintenant le Service Worker v3.185.0.0.138.
+- Aucune donnée de référence n'a été modifiée ; aucun SQL, changement Supabase, Worker déployé ou modification de production n'a eu lieu.
+
+### État d'exécution après Lot 301
+- Vues présentes dans le code : tableau de bord, catalogue des classes, référentiel des wilayas, accès & audit, élèves/parents, opérations et paramètres selon permissions.
+- Tests statiques ADM-DASH-1, ADM-REF-1 et ADM-SEC-1 présents ; CI applicative #3042 et CI complète cache/portail #3049 réussies.
+- Le commit documentaire courant déclenchera une CI distincte ; vérifier son résultat séparément.
+- Toujours aucune validation navigateur réelle, aucune session Supabase réelle, aucune preuve de rendu responsive, aucune fusion et aucun déploiement. PR #17 reste ouverte ; `main` inchangée.
