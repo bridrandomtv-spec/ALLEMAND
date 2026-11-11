@@ -452,7 +452,7 @@ const authSignupEnd=app.indexOf("const uc = $('#userChip')",authSignupStart);
 if(authLoginStart<0||authLoginEnd<=authLoginStart||authSignupStart<0||authSignupEnd<=authSignupStart) fail('flux Auth : formulaires introuvables');
 const authLogin=app.slice(authLoginStart,authLoginEnd), authSignup=app.slice(authSignupStart,authSignupEnd);
 if(!authLogin.includes('if(!authLocalMode())')||!authLogin.includes('if(!result || !result.ok)')||authLogin.indexOf('if(!result || !result.ok)')>authLogin.indexOf('AUTH.login(')) fail('login : refus Supabase peut encore basculer vers localStorage');
-if(!authSignup.includes('if(!authLocalMode())')||!authSignup.includes('if(!result || !result.ok)')||!authSignup.includes('if(!result.session)')||authSignup.indexOf('if(!result.session)')>authSignup.indexOf('AUTH.signup(')) fail('signup : erreur cloud ou confirmation email peut créer un compte local');
+if(authSignup.includes('authLocalMode()')||authSignup.includes('AUTH.signup(')||!authSignup.includes('if(!navigator.onLine)')||!authSignup.includes('window.SB.signup(')||!authSignup.includes('if(!result || !result.ok)')||!authSignup.includes('if(!result.session)')) fail('signup : seule la création Supabase officielle est autorisée, sans compte local démo/hors ligne');
 const supaSignupStart=supabase.indexOf('async function signup('), supaSignupEnd=supabase.indexOf('async function resetPassword(',supaSignupStart);
 if(!supabase.includes('async function getSession()')||!supabase.slice(supaSignupStart,supaSignupEnd).includes('session: r.data.session || null')||!supabase.includes("signOut({ scope:'local' })")) fail('Supabase Auth : session signup/getSession/logout incomplet');
 console.log('✅ Lot 176 : refus Auth cloud, confirmation email et mode local contrôlés.');
