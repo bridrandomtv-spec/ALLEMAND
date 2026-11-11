@@ -458,7 +458,7 @@ function rendreCouvertureORG1(mount){
     { id:'settings', label:'⚙️ الإعدادات · Settings', cards:['admSettingsCard'], perm:'settings.manage' }
   ];
   var KNOWN = ['admDashCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
-  var state4 = { perms:[], tab:'ops' };
+  var state4 = { perms:[], tab:'dash', role:'', wilayas:[] };
   function section(){ return document.querySelector('section[data-view="admin"]'); }
   function cardsOf(tab){
     var h = section(); if(!h) return [];
@@ -470,6 +470,8 @@ function rendreCouvertureORG1(mount){
   }
   function applyTab(id){
     state4.tab = id;
+    var legacyBody = document.getElementById('adminBody');
+    if(legacyBody) legacyBody.hidden = (id !== 'ops');
     TABS.forEach(function(t){
       cardsOf(t).forEach(function(c){ c.hidden = (t.id !== id); });
       var b = document.querySelector('[data-adm-tab="' + t.id + '"]');
@@ -480,6 +482,8 @@ function rendreCouvertureORG1(mount){
     var h = section(); if(!h) return;
     var meP = (window.SB && SB.admMyPerms) ? await SB.admMyPerms() : { ok:false, perms:[] };
     state4.perms = meP.ok ? (meP.perms||[]) : [];
+    state4.role = meP.ok ? (meP.role||'') : '';
+    state4.wilayas = meP.ok && Array.isArray(meP.wilayas) ? meP.wilayas : [];
     var bar = document.getElementById('admTabs');
     if(!bar){ bar = document.createElement('div'); bar.id = 'admTabs'; bar.className = 'tabs'; bar.style.position = 'static'; bar.style.height = 'auto'; bar.style.width = 'auto'; h.insertBefore(bar, h.firstChild); }
     bar.innerHTML = TABS.filter(function(t){ return !t.perm || state4.perms.indexOf(t.perm) !== -1; })
@@ -491,18 +495,37 @@ function rendreCouvertureORG1(mount){
     var box = document.getElementById('admDashCard');
     if(!box){ box = document.createElement('div'); box.id = 'admDashCard'; box.className = 'card'; h.appendChild(box); }
     if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div class="ad-load">⏳ تحميل مؤشرات النطاق وسجل التدقيق…</div>';
     var r = await SB.admDashboard();
-    if(!r.ok){ box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard</h2><p>⛔ ' + esq5(r.err) + '</p>'; return; }
+    if(!r.ok){ box.innerHTML = '<h2>📊 لوحة القيادة</h2><p>⛔ ' + esq5(r.err) + '</p>'; return; }
     var d = r.dash || {};
-    box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard (النطاق · scope : ' + esq5(d.perimetre) + ')</h2>'
-      + '<div class="grid3" style="margin-top:10px">'
-      + '<div class="card mini"><div class="mini-i">🎓</div><b>' + (d.eleves||0) + '</b><p>تلاميذ النطاق · students in scope</p></div>'
-      + '<div class="card mini"><div class="mini-i">⏳</div><b>' + (d.paiements_attente||0) + '</b><p>paiements à traiter</p></div>'
-      + '<div class="card mini"><div class="mini-i">💰</div><b>' + (d.recettes_confirmees_da||0) + ' DA</b><p>recettes confirmées</p></div>'
-      + '<div class="card mini"><div class="mini-i">↩️</div><b>' + (d.remboursements||0) + '</b><p>remboursements tracés</p></div>'
-      + '<div class="card mini"><div class="mini-i">🪪</div><b>' + (d.verifications_attente||0) + '</b><p>vérifications d’identité</p></div>'
-      + '<div class="card mini"><div class="mini-i">🚩</div><b>' + (d.signalements_ouverts||0) + '</b><p>signalements ouverts</p></div>'
-      + '</div><p style="font-size:11.5px;color:var(--m);margin-top:8px">Chiffres calculés côté base, filtrés par wilaya : un agent régional ne voit jamais le national.</p>';
+    var au = await SB.admAuditLast(8);
+    var scope = d.perimetre === 'national' ? 'وطني' : (d.perimetre || 'غير محدد');
+    var scopeCount = d.perimetre === 'national' ? 'وطني' : (state4.wilayas.length ? String(state4.wilayas.length) : '—');
+    function metric(value, label, icon){
+      return '<div class="card mini"><div class="mini-i">' + icon + '</div><b>' + esq5(value) + '</b><p>' + label + '</p></div>';
+    }
+    var auditRows = au.ok ? (au.rows||[]).map(function(l){
+      var actor = String(l.acteur||'');
+      return '<div class="rep-row"><span>' + esq5(String(l.at||'').slice(0,16).replace('T',' '))
+        + ' · ' + esq5(l.action) + ' · ' + esq5(l.cible_type) + ' #' + esq5(l.cible_id)
+        + (l.wilaya ? ' · ' + esq5(l.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">'
+        + (actor ? 'منفّذ ' + esq5(actor.slice(0,8)) : 'منفّذ غير محدد') + '</span></div>';
+    }).join('') : '<p>تعذر تحميل سجل التدقيق: ' + esq5(au.err||'غير متاح') + '</p>';
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">📊</span><div>'
+      + '<h2>لوحة القيادة · نظرة عامة</h2><p class="ad-sub">مؤشرات حقيقية من قاعدة البيانات · نطاق الصلاحية: '
+      + esq5(scope) + ' · الدور: ' + esq5(state4.role||'—') + '</p></div></div>'
+      + '<div class="grid3" style="margin-top:12px">'
+      + metric(d.eleves||0, 'التلاميذ ضمن نطاق الصلاحية', '🎓')
+      + metric(d.verifications_attente||0, 'طلبات التحقق قيد الانتظار', '🪪')
+      + metric(d.signalements_ouverts||0, 'التبليغات المفتوحة', '🚩')
+      + metric(scopeCount, 'نطاق الولايات (وطني أو عدد الولايات المعيّنة)', '🗺️')
+      + '</div>'
+      + '<div class="card" style="margin-top:14px"><b>📜 آخر إجراءات سجل التدقيق</b>'
+      + (au.ok && au.rows && au.rows.length ? auditRows : (au.ok ? '<p>لا توجد إجراءات مسجلة بعد.</p>' : auditRows))
+      + '</div>'
+      + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">المصدر: RPC admin_dashboard وسجل audit_logs. الأرقام محصورة في صلاحياتك ونطاق ولاياتك؛ لا تعرض هذه الصفحة أرقاماً تقديرية أو مؤشرات مالية.</p>';
   }
   async function renderStudents(){
     var h = section(); if(!h) return;
@@ -558,7 +581,7 @@ function rendreCouvertureORG1(mount){
     var v = (e && e.detail && (e.detail.view||e.detail)) || '';
     if(String(v).indexOf('admin')>=0){ renderTabs().then(function(){ if(state4.tab==='dash') renderDash(); if(state4.tab==='students') renderStudents(); if(state4.tab==='settings') renderSettings(); }); }
   });
-  if((location.hash||'').replace('#','') === 'admin') renderTabs();
+  if((location.hash||'').replace('#','') === 'admin') renderTabs().then(function(){ if(state4.tab==='dash') renderDash(); });
 })();
 
 /* ── phase 10 (ADM-5) : onglets 💰 Comptabilité & rapports + 🎫 الدعم · Support ─ */
