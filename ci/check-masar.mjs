@@ -15,7 +15,7 @@ assert.match(app, /sd-map-lesson/, 'jalons réels des séances absents');
 assert.match(app, /loadSeancesFor\(u\.n\)/, 'état des séances par unité absent');
 assert.match(app, /nextInfo\.prochaine/, 'action de prochaine séance absente');
 const dashboardStart = app.indexOf('function renderStudentDashboard(){');
-const dashboardEnd = app.indexOf('\\nwindow.renderStudentDashboard=renderStudentDashboard;', dashboardStart);
+const dashboardEnd = app.indexOf('\nwindow.renderStudentDashboard=renderStudentDashboard;', dashboardStart);
 assert.ok(dashboardStart >= 0 && dashboardEnd > dashboardStart, 'fonction du tableau de bord étudiant introuvable');
 const dashboard = app.slice(dashboardStart, dashboardEnd);
 assert.match(dashboard, /const nextUnit=units\\.find/, 'prochaine séance non calculée dans les unités du niveau du compte');
