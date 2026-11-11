@@ -5624,3 +5624,56 @@ Table candidate : `private.security_events` dans un schéma non exposé par la D
 - Aucun fichier SQL ou migration ajouté ; aucun SQL exécuté ; aucune table, fonction, vue, politique RLS, grant ou donnée modifié.
 - Aucun secret, réglage Auth, binding, ressource Cloudflare, Cron, SMTP, fournisseur e-mail ou service payant ajouté.
 - Aucun déploiement, e-mail, coût, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 280 — source fiable des événements de session Auth — 11 novembre 2026
+
+### Vérifications réalisées
+- PR #17 avant le lot : ouverte, non fusionnée ; HEAD `87ce2d61d3c6c59a32361ee4bca955ce01db8ae5`.
+- Documentation officielle Supabase relue via la recherche documentaire :
+  - Auth Audit Logs : `https://supabase.com/docs/guides/auth/audit-logs`
+  - Auth Hooks : `https://supabase.com/docs/guides/auth/auth-hooks`
+  - Custom Access Token Hook : `https://supabase.com/docs/guides/auth/auth-hooks/custom-access-token-hook`
+  - Password Verification Hook : `https://supabase.com/docs/guides/auth/auth-hooks/password-verification-hook`
+  - Sessions : `https://supabase.com/docs/guides/auth/sessions`
+  - Management API logs : `https://supabase.com/docs/reference/api/v1-get-project-logs`
+  - Log Drains : `https://supabase.com/docs/guides/platform/manage-your-usage/log-drains`
+- La documentation Auth Hooks indique que le Custom Access Token Hook est disponible sur Free et Pro ; il est appelé avant l'émission d'un JWT et reçoit `user_id`, `claims` et `authentication_method`. La liste documentée comprend notamment `password`, `otp`, `totp`, `magiclink`, `recovery`, `invite`, `sso/saml`, `oauth_provider/authorization_code`, `email/signup`, `anonymous` et `token_refresh`.
+- La documentation Sessions confirme que `session_id` identifie une session et reste le même lors des renouvellements de jeton.
+- Inventaire SQL en lecture seule des fonctions : aucune fonction nommée selon les motifs `custom_access_token` ou `login_event` n'a été trouvée. Cela ne prouve pas à lui seul l'absence d'un HTTP Hook configuré ; le réglage Auth Hooks distant n'a pas été modifié et sa configuration complète n'a pas été inspectée.
+- Consultation du flux unifié `auth_audit_logs` : 37 événements observés dans le résultat disponible, dont 23 `login`, 7 `token_refreshed` et 7 `token_revoked`. Le dernier événement `login` observé date du 10 novembre 2026 à 22:39:34 UTC. Ces résultats proviennent de l'outil d'observabilité, pas d'une API accessible au Worker.
+- `auth.audit_log_entries` était vide (0 ligne lors du contrôle précédent). La table n'est pas accessible aux rôles navigateur. La documentation décrit la conservation PostgreSQL et externe ; aucun réglage de stockage n'a été modifié.
+
+### Découverte : Custom Access Token Hook
+- C'est la meilleure piste native pour enregistrer un événement au moment où Supabase Auth prépare l'émission d'un jeton, sans consulter les journaux externes ni utiliser de Personal Access Token Management API.
+- Le hook reçoit le `user_id` et le `session_id` des claims côté Auth, ainsi que `authentication_method`. Il permet donc de distinguer une authentification qui ouvre une session d'un renouvellement `token_refresh`.
+- Architecture proposée : une fonction Postgres hook, appelée par Supabase Auth, écrit une ligne dans `private.security_events` avec `actor_id = user_id`, `source = 'auth_token_hook'`, `source_event_id = session_id`, horodatage serveur et méthode d'authentification limitée à une liste blanche. Une contrainte unique sur `(source, source_event_id)` empêche qu'un renouvellement crée une nouvelle ligne pour la même session.
+- Enregistrer l'événement sous le nom sémantique `auth_session_started` / « session Auth ouverte », pas comme preuve d'une activité continue ni comme inventaire d'appareils. Le hook s'exécute avant l'émission du JWT ; le rapport doit donc refléter cette frontière technique et ne pas prétendre mesurer l'utilisation réelle après connexion.
+- Traiter `token_refresh` comme renouvellement et ne pas le compter comme nouvelle connexion. Traiter `email/signup` comme création de compte, et `anonymous` séparément ou l'exclure du rapport élève. Les autres méthodes reconnues sont conservées comme attribut `authentication_method` contrôlé, sans exposer le jeton.
+- L'événement n'est fiable que si le hook est effectivement configuré, sa fonction est exécutée avec les permissions attendues et les tests démontrent que les erreurs/échecs d'émission ne produisent pas de fausse entrée. Le comportement de transaction et l'ordre exact des opérations doivent être vérifiés dans un test autorisé avant production.
+
+### Permissions et sécurité prévues
+- Préférer un hook Postgres plutôt qu'un HTTP Hook afin de ne pas introduire de secret de webhook, de service externe ou d'appel réseau.
+- Fonction dans un schéma non exposé, par exemple `private`, avec `search_path` fixé et validation stricte des propriétés d'entrée.
+- Accorder uniquement `USAGE` sur le schéma et `EXECUTE` sur la fonction au rôle `supabase_auth_admin`, et uniquement le droit INSERT requis sur la table. Révoquer l'accès de `anon`, `authenticated` et `PUBLIC` à la fonction et à la table selon le modèle retenu.
+- Ne pas utiliser `SECURITY DEFINER` par commodité. Préférer une fonction invoker avec privilèges explicites au rôle Auth ; toute exception doit être justifiée et auditée.
+- Aucun `service_role`, clé secrète ou jeton Management API n'est nécessaire pour cette voie Postgres Hook.
+- La lecture par l'élève reste une opération séparée, protégée par l'endpoint/RPC de lecture défini au Lot 279 et un filtrage propriétaire strict.
+
+### Limites identifiées
+- Le hook ne fournit pas un flux complet de tentatives de connexion échouées. Le Password Verification Hook documenté reçoit `user_id` et `valid`, mais il est indiqué comme disponible uniquement sur Team et Enterprise ; il est donc exclu de la solution sans coût supplémentaire.
+- Le Custom Access Token Hook ne remplace pas les journaux Auth complets de Supabase et ne fournit pas à lui seul les événements de révocation, de logout, d'échec de connexion ou de sécurité de compte.
+- L'API Management des logs reste administrative, limitée à des fenêtres d'au plus 24 heures, et peut répondre `402 Usage exceeded`. Elle n'est pas retenue comme API de production pour les élèves.
+- Les Log Drains sont réservés aux plans Pro, Team et Enterprise et sont facturés en supplément selon la documentation d'usage ; ils sont exclus du périmètre.
+- Aucun historique antérieur ne peut être reconstitué depuis le hook : les événements ne commenceront qu'après son activation. Le rapport devra afficher clairement la date de début de collecte.
+
+### Recommandation / suite
+- Retenir le Custom Access Token Hook Postgres comme source primaire future des ouvertures de sessions Auth, sous réserve de validation sur environnement autorisé.
+- Avant toute mise en œuvre, il faudra obtenir l'autorisation explicite pour : migration de la table, création de la fonction, grants minimaux et activation du hook dans Authentication > Hooks. Ces opérations changent le schéma et la configuration Auth du projet actif ; elles ne sont pas exécutées dans ce lot.
+- Tests à préparer : méthodes de connexion autorisées, renouvellement répété du même `session_id`, signup, session anonyme, jeton invalide, panne/exception du hook, unicité, insertion et lecture propriétaire. Aucun test de connexion utilisateur n'a été déclenché pour ce lot.
+
+### Périmètre
+- Recherche documentaire Supabase, inventaire de fonctions en lecture seule et consultation agrégée des journaux Auth.
+- Aucun hook créé ou activé ; aucune fonction, table, migration, vue, politique RLS, grant, secret, paramètre Auth ou configuration SMTP modifié.
+- Aucun e-mail, déploiement, nouvelle ressource, coût, fusion, nouvelle branche ou modification de `main`.
+- PR #17 reste ouverte et non fusionnée.
