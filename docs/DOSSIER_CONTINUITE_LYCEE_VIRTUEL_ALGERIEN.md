@@ -5375,3 +5375,31 @@ Audit du code uniquement, sans modification applicative ni Supabase distant. Auc
 - Le prototype de rapports périodiques demeure une maquette ; il n'envoie aucun e-mail et n'a pas de planificateur actif.
 - L'historique individuel et les rapports ne peuvent pas encore être activés proprement depuis l'application. Les données affichées doivent rester « indisponibles » jusqu'à la mise en place et la validation d'un accès serveur sécurisé.
 - Aucun 2FA n'est dans le périmètre de ce lot. Aucun déploiement, aucun e-mail, aucune dépense, aucune fusion et aucune nouvelle branche.
+
+
+
+## Lot 273 — vérification du schéma réel des attributs Auth et granularité des événements — 11 novembre 2026
+
+### État du projet et CI
+- Lecture seule du projet Supabase : statut `ACTIVE_HEALTHY`, région `eu-west-2`, PostgreSQL `17.6.1.166`.
+- CI GitHub #2966 / run `43008079677` sur le HEAD documentaire précédent `d1311ac15e25c2bdecb78b7095c23bc71935895e` : **success**.
+- CI du Lot 271 #2965 / run `43008025308` : **success**.
+- PR #17 vérifiée ouverte, `merged = false`, tête `d1311ac15e25c2bdecb78b7095c23bc71935895e`.
+
+### Correction de la lecture des logs Auth
+- La première requête de vérification utilisait des clés de premier niveau qui ne correspondent pas au schéma réel des événements ; elle renvoyait des chaînes vides. Aucune conclusion sur l'absence de ces champs ne doit être tirée de cette requête initiale.
+- L'inventaire des clés de `log_attributes` révèle les champs réels : `auth_audit_event.action`, `auth_audit_event.actor_id`, `auth_audit_event.actor_username`, `auth_audit_event.created_at`, `auth_audit_event.log_type`, `auth_audit_event.request_id`, `auth_audit_event.traits.provider` et `auth_audit_event.user_agent`.
+- Aucun attribut IP n'apparaît dans les clés observées de ces 37 événements. La géolocalisation reste donc non prise en charge par cette source.
+- Requête agrégée corrigée sur la fenêtre par défaut des dernières 24 heures : 23 événements `login`, 7 `token_refreshed`, 7 `token_revoked`. Les 23 connexions couvrent 2 acteurs distincts ; chaque catégorie de 7 événements de session couvre 1 acteur distinct. Tous les événements ont un `actor_id` et un `user_agent` non vides ; le fournisseur est présent sur les 23 événements `login`.
+- Ces nombres sont des agrégats projet. Les identifiants d'acteur n'ont pas été affichés ni ajoutés au dossier ; ces données ne constituent pas l'historique d'un compte particulier.
+
+### Conséquence pour l'implémentation
+- Un filtre individuel peut s'appuyer sur `auth_audit_event.actor_id`, mais uniquement après validation serveur du JWT et extraction de l'identité depuis ce JWT ; le navigateur ne doit jamais choisir l'acteur, le destinataire ou l'identifiant de compte.
+- Les réponses applicatives devront distinguer `login`, `token_refreshed` et `token_revoked`, avec période bornée et colonnes minimisées. Le user-agent est une indication déclarative, pas une preuve d'identité d'appareil.
+- Cette vérification n'établit toujours pas la rétention au-delà de la fenêtre interrogée ni une API applicative stable permettant d'interroger ces logs depuis le Worker. Aucun endpoint de consultation n'est donc ajouté.
+- Prochaine étape sans changement distant : vérifier les capacités disponibles dans le Worker et la configuration de logs accessible en lecture seule ; préparer ensuite une spécification d'adaptateur serveur sans l'activer tant que sa source et son identité ne sont pas garanties.
+
+### Périmètre
+- Lecture seule : projet Supabase et flux unifié de logs.
+- Aucun réglage Auth/Audit Logs, table, vue, RPC, migration, politique RLS, secret, fonction Edge, Cron, SMTP ou fournisseur d'e-mail modifié.
+- Aucun e-mail, coût, déploiement, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
