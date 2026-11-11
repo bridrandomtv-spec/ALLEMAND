@@ -5975,3 +5975,14 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Mise à jour documentaire du contrat : commit `2fa8d5b14be77ff93f86dce2030d5bf662efe70d`.
 - Aucun SQL exécuté, aucun objet Supabase, privilège, RLS, secret, réglage Auth/SMTP, endpoint, Worker, Cron, e-mail ou déploiement modifié. Aucun coût.
 - PR #17 reste la seule branche de travail ; ne pas fusionner ni déployer. Vérifier son état et la CI sur le HEAD après la mise à jour du dossier.
+
+### Lot 290 — proposition de règles calendaires des rapports périodiques — 11 novembre 2026
+
+- Documenté dans `docs/security/LOT-288-periodic-reports-data-contract-access-matrix.md` : calcul hebdomadaire en calendrier local, report des jours mensuels inexistants au dernier jour du mois, traitement déterministe des heures DST inexistantes/répétées, rattrapage borné et idempotence par période locale.
+- Ces règles sont des propositions techniques non approuvées ; elles ne sont pas codées et ne déclenchent aucun rapport.
+- Le fuseau IANA doit être explicite ; le prototype n'offre pas de sélecteur. Le choix entre détection navigateur confirmée et paramètre choisi par l'élève reste ouvert.
+- Les durées de conservation et la fenêtre de rattrapage restent à approuver ; aucune durée arbitraire n'a été inventée.
+- Contrat enrichi au commit `eb86db7383288490c3640ab07fbfb11e79bae191`.
+- Vérification de l'exécution CI #3009 sur le commit précédent `51b83bc65822fec569c767c30d325a543b5a8d22` : conclusion `success`, job « Validation structurelle & pédagogique » terminé avec succès. Cette validation ne couvre pas le nouveau texte Lot 290, qui déclenchera une nouvelle exécution.
+- Aucun SQL, objet Supabase, RLS, privilège, secret, réglage Auth/SMTP, Worker, Cron, e-mail ou déploiement modifié. Aucun coût.
+- PR #17 reste ouverte et non fusionnée.
