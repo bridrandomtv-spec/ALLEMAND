@@ -5332,3 +5332,25 @@ Audit du code uniquement, sans modification applicative ni Supabase distant. Auc
 ### Périmètre de ce lot
 - Un seul changement de code local à la PR : retrait des options client résiduelles liées aux recovery codes.
 - Le reste est un audit en lecture seule. Aucun schéma, politique RLS, fonction, extension, secret, SMTP, réglage Auth ou donnée distante n'a été modifié. Aucun e-mail envoyé, aucun Cron ajouté, aucun déploiement, aucune dépense, aucune fusion et aucune nouvelle branche.
+
+
+## Lot 271 — validation des journaux Auth disponibles pour les rapports — 11 novembre 2026
+
+### Découverte importante : les événements Auth existent dans les logs unifiés
+- Le contrôle SQL précédent de `auth.audit_log_entries` retournait zéro ligne et les rôles API n'avaient aucun privilège direct sur cette table. Cela ne signifie pas que Supabase ne produit aucun événement : l'exploration en lecture seule du flux unifié de logs a identifié une source distincte `auth_audit_logs`.
+- Sur la fenêtre des dernières 24 heures au moment de l'audit, le flux exposait 37 événements : 23 `login` via le fournisseur `email`, 7 `token_refreshed` et 7 `token_revoked`. Ces chiffres sont des observations globales du projet pour cette fenêtre, pas des statistiques par élève et ne doivent pas être affichés comme données personnelles.
+- Les événements incluent un identifiant d'acteur, une date, une action, un fournisseur, un user-agent et un identifiant de requête. Dans les 37 événements observés, le champ IP était vide ; aucune géolocalisation fiable ne peut donc être déduite.
+- Les autres sources unifiées présentes incluent notamment `auth_logs`, `edge_logs`, `postgres_logs`, `function_edge_logs`, `function_logs`, `storage_logs` et `realtime_logs`.
+
+### Limites et implications d'architecture
+- `auth_audit_logs` est un flux de logs de plateforme consultable via les outils d'observabilité du projet, pas une table applicative exposée au navigateur. Ne pas donner à un étudiant un accès direct au flux de logs ni créer une vue publique qui le réplique.
+- L'accès de production aux événements devra passer par un composant serveur de confiance qui authentifie l'utilisateur à partir du JWT vérifié, filtre impérativement sur son propre `actor_id`, limite les colonnes et la période, puis renvoie un schéma de réponse minimal. Ne jamais accepter `user_id`, email, actor_id ou destinataire comme critère d'autorisation fourni par le navigateur.
+- Ne pas assimiler `token_refreshed` à une nouvelle connexion. Pour l'historique, distinguer au minimum « connexion » (`login`) et « activité de session » (rafraîchissement/révocation de jeton). Les événements de révocation ne prouvent pas à eux seuls une déconnexion manuelle explicite.
+- L'IP n'étant pas renseignée dans les événements observés, les fonctions « localisation », « pays/ville » et « connexion suspecte par géolocalisation » restent indisponibles. Le user-agent est une chaîne déclarative et ne prouve pas l'identité réelle de l'appareil.
+- Les résultats couvrent uniquement la fenêtre d'observabilité interrogée (maximum 24 h par requête selon l'outil), et ne prouvent pas la rétention complète des logs. Avant de promettre un historique sur 7/30/90 jours ou d'envoyer un rapport périodique, vérifier la rétention réelle et la disponibilité du flux sur cette période.
+- Les rapports peuvent, à terme, compter les événements Auth réels par compte et par période si un accès serveur supporté et stable est validé. Si cette source n'est pas accessible dans le runtime applicatif, afficher « données indisponibles » plutôt que reconstituer ou inventer un historique.
+
+### Décision technique
+- Étape suivante recommandée : tester en environnement de prévisualisation un adaptateur serveur isolé qui consomme uniquement une source officiellement supportée, valide l'identité côté serveur, applique un filtre propriétaire et retourne des événements minimisés. Aucun endpoint de ce type n'est encore créé ni déployé.
+- Le tableau de bord et les e-mails périodiques restent non fonctionnels tant que l'adaptateur, la rétention, la politique d'accès et le fournisseur d'envoi ne sont pas validés.
+- Aucun changement Auth, SQL, RLS, fonction distante, secret, SMTP, Worker déployé ou paramètre de production n'a été effectué dans ce lot. Aucun e-mail envoyé, aucune dépense, aucun déploiement, aucune fusion et aucune nouvelle branche.
