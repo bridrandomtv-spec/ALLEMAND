@@ -6274,3 +6274,43 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Tests statiques ADM-DASH-1, ADM-REF-1 et ADM-SEC-1 présents ; CI applicative #3042 et CI complète cache/portail #3049 réussies.
 - Le commit documentaire courant déclenchera une CI distincte ; vérifier son résultat séparément.
 - Toujours aucune validation navigateur réelle, aucune session Supabase réelle, aucune preuve de rendu responsive, aucune fusion et aucun déploiement. PR #17 reste ouverte ; `main` inchangée.
+
+
+## Lot 302 — inventaire technique vérifiable de l’administration (12 novembre 2026)
+
+### Objectif et périmètre
+- Ajouter une vue « 🖥️ النظام والبنية التقنية · System » à la console administrative existante.
+- La vue est protégée par la permission déjà utilisée par les vues de référence, `reports.read`.
+- Elle présente uniquement la configuration lisible dans le dépôt ; elle ne prétend pas mesurer la santé d'un service en production.
+
+### Faits vérifiés dans le dépôt
+- `wrangler.toml` désigne `src/site-worker.js` comme entrée du Worker.
+- Le binding `ASSETS` sert le contenu statique depuis `./`.
+- La date de compatibilité déclarée est `2024-09-01`.
+- Le Worker contient un garde serveur sur certains chemins de contenus : il exige un Bearer token et vérifie l'accès à `lesson_content` via Supabase REST en utilisant les politiques existantes.
+- Le code attend les noms de variables d'environnement `SUPABASE_URL` et `SUPABASE_ANON_KEY`. La vue n'expose aucune valeur de secret.
+- Le Worker renvoie HTTP 503 sur les chemins protégés si ces variables ne sont pas configurées ; il refuse aussi l'accès si le jeton manque ou si le contrôle d'accès échoue.
+
+### Limites explicitement affichées
+- Le Worker inspecté n'implémente pas de route `/health` ou `/metrics`, ni de gestionnaire planifié `scheduled()`.
+- Les fichiers consultés ne permettent pas de connaître l'uptime, la latence réelle, le CPU, la mémoire, la disponibilité actuelle de Supabase ou l'état d'un déploiement Cloudflare.
+- La vue indique ces mesures comme « non mesurées / non vérifiées » au lieu de produire des valeurs fictives.
+- Aucun appel de surveillance, aucune API GitHub côté navigateur, aucun token et aucune nouvelle dépendance ne sont ajoutés.
+
+### Réalisation et tests
+- `admin.js` : nouvel onglet `system`, carte `admSystemCard` et fonction `renderSystem()`.
+- Les données présentées sont des libellés statiques dérivés de `wrangler.toml` et `src/site-worker.js`; la carte est intégrée au filtrage existant des onglets et ne réapparaît pas dans « Opérations ».
+- `tests/adm_test.mjs` : cinq assertions `ADM-SYS-1` couvrent le contrôle `reports.read`, les sources, les noms des variables, l'absence de métriques inventées et le branchement de la navigation.
+- Cache : `admin.js?v=3512`, Service Worker `dz-de-v3.185.0.0.139`; `index.html`, `sw.js`, `ci/check-masar.mjs` et `ci/check-public-portal.mjs` sont synchronisés.
+- Commits : `7744ff3fc4ca2023f909733aadee761f0bced07b` (vue système), `3d55638fb18725eb0f0db203a75d3dee0d38e6c7` (tests), `8f8a31e5c1e46f9e4708582e793893433cbeb10c` (Service Worker), `6611801577b27d6db44e4a672a3d643f0d9ab4d3` (index), `d75224acaeac6d77e9df6d34213e524163b34c6b` (contrôle portail), `cf4cb2b32a093e2a7dc8a8336772e96aa4bededd` (contrôle Masar).
+
+### Validation et état de livraison
+- CI #3056 / run `43119052071` sur le commit `cf4cb2b32a093e2a7dc8a8336772e96aa4bededd` : en attente au dernier contrôle ; ne pas déclarer le lot validé avant le résultat final.
+- Aucun essai navigateur, aucune vérification visuelle responsive, aucune mesure runtime et aucun test d'une session administrative réelle ne sont revendiqués.
+- Aucun changement de schéma, migration, RLS, Auth, secret, donnée ou configuration Supabase distante ; aucun déploiement Cloudflare, aucune fusion et aucune modification de `main`.
+- PR #17 reste ouverte et non fusionnée.
+
+### Suite
+1. Confirmer CI #3056 et la CI déclenchée par le présent addendum.
+2. Vérifier visuellement l'onglet System sur ordinateur et mobile avec un compte autorisé.
+3. N'afficher des indicateurs d'exploitation en direct qu'après mise en place et validation d'une source de télémétrie serveur adaptée, sans exposer de secret au navigateur.
