@@ -5677,3 +5677,75 @@ Table candidate : `private.security_events` dans un schéma non exposé par la D
 - Aucun hook créé ou activé ; aucune fonction, table, migration, vue, politique RLS, grant, secret, paramètre Auth ou configuration SMTP modifié.
 - Aucun e-mail, déploiement, nouvelle ressource, coût, fusion, nouvelle branche ou modification de `main`.
 - PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 281 — architecture opérationnelle des rapports périodiques — 11 novembre 2026
+
+### Réconciliation avec les demandes et prototypes transmis
+Le périmètre fonctionnel consolidé comprend :
+- Centre de sécurité à cinq onglets : aperçu, connexions, activités, appareils, confidentialité.
+- Rapports périodiques quotidiens, hebdomadaires et mensuels ; jour/heure personnalisables.
+- Valeur initiale : lundi 09:00, fuseau `Africa/Algiers`.
+- Six rubriques configurables : historique des connexions, alertes de sécurité, appareils actifs, niveau/score de sécurité, localisation, recommandations.
+- Aperçu HTML trilingue (arabe/français/anglais), historique des rapports, export et test d'envoi réel.
+- Alertes immédiates uniquement si une règle de détection réelle et vérifiable déclenche l'événement.
+- Adresse e-mail Auth confirmée par défaut ; adresse alternative uniquement après vérification.
+- Aucune statistique, alerte, localisation, appareil, score, rapport envoyé ou état « ouvert/livré » fictif. Les anciennes mentions MFA et la colonne « méthode 2FA » ne font pas partie de ce périmètre.
+
+### Vérification de l'état actuel du dépôt
+- PR #17 : ouverte, non fusionnée, mergeable ; HEAD observé : `8d796d24cd0de6910cf2e686b7a40e5191b535e2`.
+- Le dossier de continuité lu sur ce HEAD contient les Lots 279 et 280 ; cette mise à jour constitue le Lot 281.
+- `wrangler.toml` contient actuellement uniquement le binding statique `ASSETS`, sans section `[triggers] / crons`.
+- `src/site-worker.js` ne contient qu'un handler `fetch`, sans `scheduled()`, endpoint de rapports, gestion de préférences ou traitement d'e-mails.
+- Aucun `supabase/config.toml` n'a été trouvé à la racine attendue du dépôt.
+- Le run CI associé au HEAD vérifié (run #2974 / ID `43010490504`) est terminé avec conclusion `success`. Cette validation ne prouve pas le fonctionnement d'un système de rapports, qui n'est pas encore implémenté.
+
+### Architecture recommandée — un seul planificateur Cloudflare, traitement serveur
+1. Le navigateur gère uniquement l'interface et appelle un endpoint authentifié pour lire/modifier les préférences du compte courant. Il ne fournit jamais `user_id`, destinataire arbitraire, date d'envoi ou résultat d'envoi comme autorité.
+2. Une table privée dédiée stocke les préférences, le fuseau, les rubriques, l'adresse destinataire vérifiée, l'état d'activation, la prochaine échéance et l'historique des envois. Les tables `login_history`, `security_events` et `user_devices` n'existent pas dans l'état audité ; elles ne doivent pas être supposées présentes.
+3. Un unique Cron Trigger Cloudflare périodique (proposition : toutes les 15 minutes) appelle le traitement serveur. Le traitement sélectionne un petit lot d'envois échus, calcule les échéances dans le fuseau IANA de chaque compte, réserve atomiquement chaque période et évite les doubles envois.
+4. Un endpoint serveur protégé produit le rapport à partir des seules sources disponibles, puis appelle le fournisseur d'e-mail. L'identité du compte, les données, l'adresse et l'échéance sont revalidées côté serveur.
+5. L'historique conserve séparément les états `queued`, `sent`, `delivered`, `bounced` et `failed` lorsque ces états sont réellement connus. Une réponse HTTP positive du fournisseur ne doit pas être décrite comme une livraison confirmée ; la livraison nécessite un webhook fournisseur vérifié.
+6. Les événements immédiats passent par la même chaîne serveur et la même idempotence ; aucune alerte n'est émise sur la base d'une règle de détection simulée.
+
+### Pourquoi un Cron unique toutes les 15 minutes
+- Cloudflare Cron Triggers exécutent le handler `scheduled()` et utilisent UTC ; les échéances des utilisateurs doivent donc être calculées à partir du fuseau IANA enregistré, et non codées en dur dans une expression Cron.
+- L'heure locale de référence lundi 09:00 à Sétif/Alger (`Africa/Algiers`, UTC+1 à la date de l'audit) correspond à lundi 08:00 UTC. Le calcul doit toujours utiliser le fuseau et la date locale, pour rester correct si les règles de fuseau changent.
+- Un seul Cron périodique est préférable à un Cron par utilisateur ou fréquence : les préférences quotidiennes, hebdomadaires, mensuelles et personnalisées sont évaluées en base.
+- Limites Cloudflare vérifiées dans la documentation au 11 novembre 2026 : cinq Cron Triggers par compte Workers Free, 100 000 requêtes quotidiennes, CPU de 10 ms par invocation Cron sur Free et durée murale maximale de 15 minutes par invocation. Le traitement doit donc rester borné, paginé et idempotent ; le quota et le compte Cloudflare réel doivent être vérifiés avant activation.
+- Le Cron Trigger et le handler `scheduled()` n'existent pas encore dans ce dépôt. Ajouter leur configuration activerait une tâche planifiée après déploiement ; aucun déclencheur n'est ajouté dans ce lot.
+
+### Fournisseur d'e-mail et blocage de domaine
+- Resend reste le fournisseur envisagé, sous réserve de la disponibilité réelle du compte et de la clé API côté serveur.
+- Pour envoyer aux adresses des élèves depuis une identité institutionnelle, le domaine expéditeur doit être possédé et vérifié, avec les enregistrements DNS SPF/DKIM requis. L'adresse Gmail personnelle `coordination34000@gmail.com` n'est pas un domaine d'envoi institutionnel vérifié.
+- Le domaine de test Resend `onboarding@resend.dev` est réservé aux essais contrôlés vers l'adresse du propriétaire du compte ; il ne permet pas de lancer une campagne vers tous les élèves.
+- Tant qu'aucun domaine d'envoi n'est vérifié, le système peut préparer les préférences, générer un aperçu local et exécuter les tests de logique, mais il ne doit pas annoncer l'envoi aux étudiants comme disponible.
+- Aucun prix ou quota gratuit n'est garanti dans cette spécification ; les conditions du fournisseur doivent être relues au moment de l'activation. Aucun achat ou abonnement n'est autorisé par ce lot.
+
+### Correction importante apportée à la piste du Lot 280
+- Le Custom Access Token Hook reçoit bien `user_id`, `claims.session_id` et `authentication_method`, notamment `token_refresh`. Cependant, il s'exécute avant l'émission du jeton, dans le flux critique d'authentification. La documentation Supabase précise que les erreurs d'un Postgres Hook sont propagées à Auth et ne sont pas réessayées.
+- En conséquence, ce hook ne doit pas être adopté automatiquement comme mécanisme principal de journalisation : une panne de journalisation pourrait compromettre l'émission du jeton. Son éventuel usage pour enregistrer les ouvertures de session reste conditionné à un test de disponibilité, de transaction et de comportement en cas d'erreur, et à une décision explicite.
+- Une autre piste native à évaluer avant activation est le stockage PostgreSQL des Auth Audit Logs dans `auth.audit_log_entries`, actuellement vide au contrôle précédent et non accessible directement aux rôles navigateur. L'activation du stockage et l'exposition d'une lecture limitée demanderaient une modification de configuration Auth et une interface serveur privée ; aucune n'est effectuée ici.
+- Les sessions, les journaux Auth, les événements applicatifs et les rapports e-mail restent des sources distinctes. Le rapport doit indiquer explicitement les catégories non collectées plutôt que de les remplacer par zéro.
+
+### Sécurité du traitement périodique
+- Pas de `verify_jwt = false` sans authentification de service alternative robuste. Le déclencheur serveur doit utiliser une authentification inter-service forte, avec secret uniquement côté serveur, rotation et limitation d'accès.
+- Aucun service_role, Resend API key ou secret de déclencheur dans le navigateur, les réponses, les logs ou le dépôt. Tout accès privilégié reste côté serveur et strictement limité au traitement requis.
+- Réservation atomique des échéances, clé d'idempotence par compte/période/type, reprise contrôlée après panne, limites de lots, rate limit et journalisation minimale.
+- Préférences : contrôle de propriété `auth.uid()` à la lecture et à l'écriture, validation des champs et `WITH CHECK` sur les changements de propriétaire ; adresse alternative vérifiée séparément.
+- Le « test d'envoi » n'utilise que le compte connecté et un destinataire vérifié ; résultat affiché selon la réponse réelle du fournisseur.
+- Les taux d'ouverture sont désactivés par défaut pour les rapports sensibles ; un pixel d'ouverture n'est ni une preuve de lecture ni un état de sécurité fiable.
+- Le score de sécurité n'est pas affiché tant qu'une formule explicite, auditable et alimentée par des événements réels n'a pas été approuvée.
+
+### Ordre de réalisation proposé
+A. Spécification/migration des préférences et de l'historique, avec RLS et tests négatifs.
+B. Source réelle des événements de connexion et des activités ; préciser les limites et la date de début de collecte.
+C. Générateur de rapport trilingue, avec aperçus et tests sans envoi.
+D. Endpoint serveur d'envoi avec destinataire confirmé, idempotence, journal d'état et tests de sécurité.
+E. Handler Cron et déclencheur Cloudflare ajoutés seulement après tests locaux et autorisation distincte de déploiement.
+F. Activation de l'envoi aux élèves seulement après vérification du domaine expéditeur et confirmation du fournisseur.
+
+### Périmètre et autorisations
+- Lot documentaire uniquement : aucune page intégrée, table, migration, fonction, hook, politique RLS, grant, secret, configuration Auth, binding, Cron Trigger ou fournisseur n'a été créé ou activé.
+- Aucun e-mail envoyé, aucun test fournisseur, aucun déploiement Cloudflare/Supabase, aucune dépense, aucune fusion, aucune nouvelle branche et aucune modification de `main`.
+- PR #17 reste ouverte et non fusionnée. Les étapes A à F devront être développées et vérifiées séparément ; toute opération distante ou activation planifiée nécessitera une autorisation explicite.
