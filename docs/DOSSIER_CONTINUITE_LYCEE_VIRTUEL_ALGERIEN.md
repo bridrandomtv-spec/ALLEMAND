@@ -6152,3 +6152,12 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 2. Vérifier en navigateur avec un administrateur autorisé et un compte sans permission que l'accueil, le journal et le périmètre sont corrects.
 3. Ajouter ensuite, séparément, un panneau de référentiel des classes clairement identifié comme catalogue de configuration (pas comme inscriptions réelles).
 4. N'ajouter une vue système ou GitHub dynamique que lorsqu'une source de télémétrie/API sécurisée existe ; ne jamais exposer un token GitHub dans le navigateur.
+
+
+
+### Validation CI Lot 299 — mise à jour du 11 novembre 2026
+- CI #3031 / run `43082683771` sur `a4e7bddf8534a444329697b9e5b441ffba5f51a4` : **success**, job de validation terminé.
+- CI #3032 / run `43082695013` sur `19fc4ea9a89d24f620dfcb54f6488d7c971e8012` : **success**. Les étapes « Valider la syntaxe JavaScript (esprima) » et « Valider l'administration EduDZ (schéma ADM + permissions) » sont en succès ; le job complet est réussi.
+- La mise à jour documentaire du présent dossier a déclenché CI #3033 / run `43082782842` sur le commit `600e40a24fb8a01eff65db65ba4a5ed9e04ef987` ; état **queued** au dernier contrôle. Cette dernière exécution documentaire reste à confirmer.
+- PR #17 : ouverte, non fusionnée, HEAD `600e40a24fb8a01eff65db65ba4a5ed9e04ef987`, base `main`. Aucun changement sur `main`.
+- CI valide les contrôles automatisés du dépôt ; elle ne remplace pas l'essai navigateur avec les vrais rôles administratifs ni la vérification visuelle responsive.
