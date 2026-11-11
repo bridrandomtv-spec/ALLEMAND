@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.185.0.0.137';
+const VERSION = 'dz-de-v3.185.0.0.138';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -18,6 +18,7 @@ const PRECACHE = [
   './auth.js?v=3510',
   './bdd.js?v=3510',
   './app.js?v=3568',
+  './admin.js?v=3511',
   './supabase/supabase.js?v=3518',
   './dz-interactions.js?v=5',
   './js/voice-chat.js?v=1',
@@ -61,7 +62,7 @@ const BDD_FILES = [
   './assets/bdd/bac.json',
   './assets/bdd/annales.json',
   './assets/bdd/grammaire.json',
-  './assets/bdd/classe.json?v=3510',
+  './assets/bdd/classe.json?v=3511',
   './assets/bdd/eleves.json?v=3510',
   './assets/bdd/bac_archive.json',
   './assets/bdd/parents.json?v=3510',
@@ -71,7 +72,7 @@ const BDD_FILES = [
   './assets/bdd/reservation.json',
   './assets/bdd/matieres.json',
   './assets/bdd/subjects.json',
-  './assets/bdd/wilaya.json',
+  './assets/bdd/wilaya.json?v=3511',
   './assets/bdd/onboarding.json',
   './assets/bdd/corpus.json',
   './assets/bdd/shards_manifest.json',
