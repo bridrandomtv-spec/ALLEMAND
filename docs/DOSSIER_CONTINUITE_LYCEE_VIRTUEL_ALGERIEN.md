@@ -6058,3 +6058,19 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Commit du rapport Lot 295 : `d9f82f6e217c17d640b357895b3118c38ff8b97f`.
 - Aucun SQL, migration, table, fonction Edge, policy RLS, grant, secret, paramètre Auth, trigger, modèle ML, alerte, action de blocage, terminal connecté, collecte d'appareil/localisation, e-mail ou déploiement créé/activé. Aucun achat ni coût.
 - PR #17 demeure ouverte et non fusionnée sur `design/prototypes-67-74-alignment`, cible `main`.
+
+
+### Lot 296 — audit sécurité du prototype de tableau de bord administratif global — 11 novembre 2026
+
+- Matériel reçu : HTML/JavaScript RTL autonome avec sept vues (aperçu, utilisateurs, sécurité, finances, wilayas, système, audit). Audit statique du code fourni ; aucun test navigateur ni appel réseau de la maquette.
+- Création de `docs/security/LOT-296-admin-dashboard-prototype-security-audit.md`.
+- Conclusion : NO-GO pour intégrer ou publier le prototype en l'état. Les KPI, graphiques, activités « directes », alertes, états système, chiffres financiers et lignes d'audit sont statiques/fictifs. Recherche, pagination, notifications, boutons utilisateurs, actions de sécurité et déconnexion ne sont pas reliés à un service réel.
+- 15 constats documentés : absence de garde d'accès dans le HTML autonome ; modèle « accès complet » non conforme au moindre privilège ; coexistence de chemins d'administration historiques et récents dans le dépôt ; exposition de données personnelles ; absence de source fiable pour l'activité et les alertes ; actions sensibles non implémentées ; métriques sécurité/système non étayées ; finance sans source comptable connectée ; journal d'audit statique malgré l'affirmation d'immutabilité ; risque XSS lors du futur branchement de données à `innerHTML` ; dépendances CDN et thème divergents ; navigation mobile incomplète ; pagination/export non opérationnels ; séparation démonstration/production absente.
+- Comparaison en lecture seule de `admin.js`, `supabase/supabase.js`, `supabase/adm_schema.sql`, `supabase/adm2_schema.sql`, `supabase/adm5_schema.sql` et `src/site-worker.js`. Le dépôt contient déjà des permissions et périmètres administratifs, ainsi que des RPC de synthèse, fiches élèves et rapports ; le prototype ne les utilise pas.
+- Le modèle cible doit réutiliser les autorisations serveur `admin_can` et les périmètres par wilaya ; ne pas ajouter un troisième modèle de rôles ni faire confiance aux contrôles JavaScript. Les données d'activité, de sécurité et de santé système doivent avoir des sources distinctes et documentées.
+- La présence de scripts SQL/RPC dans Git ne prouve pas leur application au projet Supabase actif. Aucune introspection distante n'a été effectuée dans ce lot ; disponibilité et politiques en production restent à vérifier avant tout branchement.
+- La section financière reste non intégrée : les chiffres sont fictifs et aucune nouvelle fonction de facturation, d'encaissement, de tarification ou de monétisation n'a été ajoutée. Aucun chiffre ne doit être déduit d'abonnements actifs sans rapprochement comptable.
+- 15 tests négatifs sont spécifiés ; aucun n'est déclaré exécuté.
+- Commit du rapport Lot 296 : `57f215cd1c41f66251e02683b7e1d239fcc23a38`.
+- Aucun code applicatif, route, ID ou style modifié ; aucun SQL, migration, table, fonction, RLS, grant, secret, réglage Auth, donnée, opération financière, Worker, Cron, Realtime, e-mail, déploiement, achat ou coût. Aucune requête au projet Supabase distant.
+- PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`. La CI du commit documentaire final doit être vérifiée séparément.
