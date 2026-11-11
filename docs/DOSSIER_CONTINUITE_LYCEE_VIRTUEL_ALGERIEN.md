@@ -6110,3 +6110,45 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - 18 tests d'acceptation/négatifs consignés ; aucun test navigateur ou Supabase réel n'a été exécuté dans ce lot.
 - Aucune modification applicative, aucun SQL/migration/RLS/grant/secret/Auth, aucune donnée Supabase, aucune action financière, aucun Worker/Cron/Realtime/e-mail, aucun déploiement, aucune branche, aucun merge, aucun achat ni coût. Aucune nouvelle fonction de facturation ou paiement.
 - Rapport Lot 298 créé au commit `772c198c3e77ceb057e2a80a5dbed4f31c280aab`. Mise à jour du présent dossier effectuée séparément ; PR #17 doit rester ouverte et non fusionnée.
+
+
+
+## Lot 299 — synthèse des deux prototypes et première évolution réelle de la لوحة التحكم (11 novembre 2026)
+
+### Décision de conception
+- Les prototypes des Lots 296 et 298 sont traités comme des références d'expérience utilisateur, pas comme des sources de chiffres à recopier.
+- La véritable vue administrative reste celle de `index.html` (`section[data-view="admin"]`, `#adminBody`) et de `admin.js`. Aucun second tableau de bord autonome n'est introduit.
+- Séparation stricte des sources :
+  1. données opérationnelles : RPC Supabase et tables soumises aux permissions/RLS ;
+  2. référentiels pédagogiques et territoriaux : fichiers versionnés dans GitHub ;
+  3. état du dépôt et CI : GitHub Actions, à afficher uniquement si un flux fiable est raccordé ;
+  4. indicateurs indisponibles : signalés comme indisponibles, jamais remplacés par des chiffres de démonstration.
+- `assets/bdd/classe.json` décrit une maquette/référence de classes. Les cinq classes et le total arithmétique 142 ne sont pas présentés comme 142 comptes élèves actifs.
+- Le dépôt ne fournit pas à ce stade de télémétrie vérifiable pour l'uptime Cloudflare, la santé instantanée de Supabase ou le taux d'utilisation du stockage. Aucun faux badge « connecté », « 99,9 % » ou « temps réel » ne sera ajouté.
+- Le prototype financier n'est pas repris dans le nouvel accueil. Les données financières restent hors du périmètre de cette évolution.
+
+### Inventaire des sources opérationnelles existantes
+- `SB.admMyPerms()` retourne le rôle administratif, les permissions et les wilayas affectées.
+- `SB.admDashboard()` appelle le RPC serveur `admin_dashboard()`, qui contrôle `reports.read` et calcule dans le périmètre autorisé : élèves, vérifications en attente, signalements ouverts, ainsi que d'autres champs opérationnels historiques.
+- `SB.admAuditLast(n)` lit les dernières lignes de `audit_logs`, sous réserve des règles RLS.
+- `SB.admCouverture()` appelle le RPC `admin_couverture_wilayas()` pour les vues de couverture autorisées.
+- Les fonctions `admin_can()` et `admin_sees_wilaya()` restent les autorités de permission et de périmètre côté base ; l'interface ne devient jamais l'autorité d'accès.
+
+### Première tranche implémentée — ADM-DASH-1
+- La vue par défaut de la barre d'onglets administrative devient le tableau de bord, au lieu de l'ancien panneau historique.
+- Le panneau historique `#adminBody` est isolé dans l'onglet « opérations » et masqué dans les autres onglets, y compris les vues auxiliaires.
+- Le tableau de bord affiche quatre indicateurs issus des sources existantes : nombre d'élèves dans le périmètre, vérifications en attente, signalements ouverts et périmètre des wilayas (national ou nombre d'affectations).
+- Ajout des huit dernières lignes du journal d'audit, avec action, cible, date, wilaya éventuelle et identifiant d'acteur abrégé. Les champs dynamiques sont échappés avant insertion HTML.
+- Suppression des compteurs financiers de la vue d'accueil. Aucun nouveau module financier, paiement, tarification ou facturation n'est créé.
+- Initialisation directe de `#admin` corrigée pour charger aussi les données du tableau de bord.
+- Tests statiques ajoutés dans `tests/adm_test.mjs` pour la vue par défaut, la visibilité du panneau historique, les sources de données, le périmètre, le chargement direct, l'absence de métriques financières et l'échappement du journal.
+- Commits applicatifs/tests : `4adcdfaeefeb44eea7f00e4483c7c34a13e3301f`, `8abd231e8ca16943b53bbde88da9b121f5192de5`, `a4e7bddf8534a444329697b9e5b441ffba5f51a4`, `19fc4ea9a89d24f620dfcb54f6488d7c971e8012`.
+- CI #3030 sur le premier changement admin : succès confirmé. CI #3031 sur le changement de visibilité auxiliaire : en cours au dernier contrôle. CI #3032 sur les assertions finales : en attente au dernier contrôle ; ne pas déclarer le lot validé avant leur fin.
+- Aucun test navigateur, aucune session Supabase réelle et aucune validation visuelle mobile/ordinateur effectués dans ce lot.
+- Aucun SQL, migration, RLS, grant, Auth, secret, donnée ou configuration Supabase distante modifié. Aucun Worker, Cron, Realtime, e-mail, déploiement, nouvelle branche ou fusion. PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
+### Suite recommandée
+1. Confirmer CI #3031 et #3032 sur les commits correspondants.
+2. Vérifier en navigateur avec un administrateur autorisé et un compte sans permission que l'accueil, le journal et le périmètre sont corrects.
+3. Ajouter ensuite, séparément, un panneau de référentiel des classes clairement identifié comme catalogue de configuration (pas comme inscriptions réelles).
+4. N'ajouter une vue système ou GitHub dynamique que lorsqu'une source de télémétrie/API sécurisée existe ; ne jamais exposer un token GitHub dans le navigateur.
