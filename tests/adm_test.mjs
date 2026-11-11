@@ -13,6 +13,8 @@ const sql5 = readFileSync('supabase/adm5_schema.sql', 'utf8');
 const bill = readFileSync('supabase/billing.sql', 'utf8');
 const appjs = readFileSync('app.js', 'utf8');
 const css = readFileSync('style.css', 'utf8');
+const classRef = JSON.parse(readFileSync('assets/bdd/classe.json', 'utf8'));
+const wilayaRef = JSON.parse(readFileSync('assets/bdd/wilaya.json', 'utf8'));
 const bibjs = readFileSync('biblio.js', 'utf8');
 let fails = 0;
 const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
@@ -146,5 +148,14 @@ const dashCode = dashStart >= 0 && dashEnd > dashStart ? adjs.slice(dashStart, d
 t(!!dashCode && !dashCode.includes('recettes_confirmees_da') && !dashCode.includes('paiements_attente'), 'ADM-DASH-1 : la vue d accueil ne présente pas de chiffres financiers');
 t(dashCode.includes('esq5(l.action)') && dashCode.includes('esq5(l.cible_type)') && dashCode.includes('esq5(l.cible_id)'), 'ADM-DASH-1 : les champs du journal sont échappés avant affichage');
 t(adjs.includes("if(legacyBody) legacyBody.hidden = true;"), 'ADM-DASH-1 : les onglets auxiliaires masquent aussi le tableau historique');
+/* ADM-REF-1 : référentiels GitHub affichés sans les confondre avec les données opérationnelles */
+t(adjs.includes("id:'classes'") && adjs.includes("id:'wilayas'"), 'ADM-REF-1 : onglets Classes et Wilayas présents');
+t(adjs.includes("loadAdminReference('assets/bdd/classe.json')") && adjs.includes("loadAdminReference('assets/bdd/wilaya.json')"), 'ADM-REF-1 : les deux vues chargent les fichiers GitHub de référence');
+t(adjs.includes('maquette pédagogique') && adjs.includes('ne sont pas le nombre des comptes'), 'ADM-REF-1 : le catalogue de classes est explicitement distingué des inscriptions réelles');
+t(classRef.sections.length === 5 && classRef.sections.reduce((n, x) => n + Number(x.eleves||0), 0) === 142, 'ADM-REF-1 : le référentiel de maquette conserve les cinq classes et son total indicatif');
+t(wilayaRef.wilayas.length === 58, 'ADM-REF-1 : le référentiel territorial contient exactement 58 wilayas');
+t(adjs.includes("data-wilaya-search") && adjs.includes("id !== 'admWilayaSearch'"), 'ADM-REF-1 : recherche locale des wilayas sans requête distante');
+t(adjs.includes("state4.perms.indexOf('reports.read') === -1"), 'ADM-REF-1 : les vues de référence restent derrière le contrôle d accès administratif');
+t(adjs.includes("KNOWN = ['admDashCard','admClassesCard','admWilayasCard'"), 'ADM-REF-1 : les cartes de référence ne sont pas réaffichées dans les opérations historiques');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
