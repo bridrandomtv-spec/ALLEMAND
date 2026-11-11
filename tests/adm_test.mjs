@@ -133,5 +133,17 @@ t(!sbjs.includes('getPublicUrl') && !adjs.includes('getPublicUrl'), 'RECUFIX-1 :
 t(!adjs.includes('Sponsoren') && !adjs.includes('veröffentlichen') && !adjs.includes('Beleg:'), 'RECUFIX-1 : aucun libellé allemand d interface dans admin.js');
 t(!adjs.includes('Konten') && !adjs.includes('Noten') && !adjs.includes(' aktiv)'), 'TRAD-ADM-1 : aucun reliquat allemand dans les libellés du tableau de bord');
 t(bibjs.includes('[A-Za-zÄÖÜäöüß0-9]'), 'TRAD-DIG-1 : chiffres admis dans les fragments de traduire()');
+/* ADM-DASH-1 : accueil admin réel, données scopées et journal vérifiable */
+t(adjs.includes("var state4 = { perms:[], tab:'dash', role:'', wilayas:[] }"), 'ADM-DASH-1 : la vue d accueil est le tableau de bord');
+t(adjs.includes("legacyBody.hidden = (id !== 'ops')"), 'ADM-DASH-1 : le tableau historique est isolé dans l onglet opérations');
+t(adjs.includes("state4.role = meP.ok ? (meP.role||'') : ''") && adjs.includes("state4.wilayas = meP.ok && Array.isArray(meP.wilayas)"), 'ADM-DASH-1 : le rôle et le périmètre viennent de admMyPerms');
+t(adjs.includes("SB.admDashboard()") && adjs.includes("SB.admAuditLast(8)"), 'ADM-DASH-1 : les indicateurs et le journal utilisent les sources Supabase existantes');
+t(adjs.includes("d.verifications_attente") && adjs.includes("d.signalements_ouverts"), 'ADM-DASH-1 : les cartes de suivi utilisent les compteurs réels du RPC');
+t(adjs.includes("if((location.hash||'').replace('#','') === 'admin') renderTabs().then(function(){ if(state4.tab==='dash') renderDash(); });"), 'ADM-DASH-1 : le tableau de bord se charge aussi sur accès direct #admin');
+const dashStart = adjs.indexOf('  async function renderDash(){');
+const dashEnd = adjs.indexOf('  async function renderStudents(){', dashStart);
+const dashCode = dashStart >= 0 && dashEnd > dashStart ? adjs.slice(dashStart, dashEnd) : '';
+t(!!dashCode && !dashCode.includes('recettes_confirmees_da') && !dashCode.includes('paiements_attente'), 'ADM-DASH-1 : la vue d accueil ne présente pas de chiffres financiers');
+t(dashCode.includes('esq5(l.action)') && dashCode.includes('esq5(l.cible_type)') && dashCode.includes('esq5(l.cible_id)'), 'ADM-DASH-1 : les champs du journal sont échappés avant affichage');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
