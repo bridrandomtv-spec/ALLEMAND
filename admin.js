@@ -546,7 +546,7 @@ function rendreCouvertureORG1(mount){
     if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
     box.hidden = false;
     box.innerHTML = '<div class="ad-load">⏳ تحميل مرجع الأقسام…</div>';
-    var data = await loadAdminReference('assets/bdd/classe.json');
+    var data = await loadAdminReference('assets/bdd/classe.json?v=3511');
     if(data._error || !Array.isArray(data.sections)){
       box.innerHTML = '<h2>🏫 مرجع الأقسام</h2><p>تعذر تحميل المرجع من GitHub: ' + esq5(data._error||'بنية غير صالحة') + '</p>';
       return;
@@ -578,7 +578,7 @@ function rendreCouvertureORG1(mount){
     if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
     box.hidden = false;
     box.innerHTML = '<div class="ad-load">⏳ تحميل قائمة الولايات…</div>';
-    var data = await loadAdminReference('assets/bdd/wilaya.json');
+    var data = await loadAdminReference('assets/bdd/wilaya.json?v=3511');
     if(data._error || !Array.isArray(data.wilayas)){
       box.innerHTML = '<h2>🗺️ مرجع الولايات</h2><p>تعذر تحميل المرجع من GitHub: ' + esq5(data._error||'بنية غير صالحة') + '</p>';
       return;
