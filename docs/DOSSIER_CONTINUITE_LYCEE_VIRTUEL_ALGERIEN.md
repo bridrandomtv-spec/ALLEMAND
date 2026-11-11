@@ -6043,3 +6043,18 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Aucun code fonctionnel, SQL, migration, table, fonction, RLS, grant, secret, Auth/SMTP, endpoint, Worker, Cron, e-mail, purge, déploiement, achat ou coût.
 - PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`. Aucun changement direct de `main`.
 - La revue documentaire de ce prototype est close. Le prochain prototype peut être transmis pour une analyse indépendante.
+
+
+### Lot 295 — audit sécurité du prototype d'analyse intelligente des activités suspectes — 11 novembre 2026
+
+- Matériel reçu : descriptif fonctionnel arabe, extrait Edge Function TypeScript/Deno et SQL de deux tables. Aucun fichier HTML ni capture n'était joint ; l'audit porte donc sur le texte et le code transmis, pas sur une inspection navigateur.
+- Création de `docs/security/LOT-295-ai-threat-detection-prototype-security-audit.md`.
+- Écarts fonctionnels relevés : six facteurs annoncés mais quatre seulement codés ; fonction heuristique déterministe et non modèle IA ; score pondéré non probabiliste ; précision 99,2 %, faux positifs 0,8 % et latence <200 ms non démontrés ; alertes, terminal, simulation, recommandations et réponses automatiques non fournis dans l'extrait.
+- 12 constats principaux documentés, dont identité `userId` contrôlée par le client, événement falsifiable, absence de validation du JWT, usage non encadré de la clé privilégiée, profil absent/null, validation insuffisante, empoisonnement du profil, données de localisation/appareil, score non calibré, blocage sans gouvernance, contrôles HTTP/anti-abus manquants et erreurs de persistance/alertes non traitées.
+- Le SQL proposé est incomplet : RLS/policies/grants absents, colonnes sans contraintes, dates et données comportementales insuffisamment protégées, rétention et suppression non définies.
+- 22 tests négatifs et une architecture cible en étapes sont spécifiés.
+- Décision : NO-GO pour exécuter le code ou créer les objets dans le projet Supabase réel. Les actions de réponse restent désactivées par défaut ; aucune donnée ou mesure fictive ne doit être affichée comme réelle.
+- Le descriptif est audité ; une maquette HTML ou des captures restent nécessaires pour l'audit visuel et des interactions.
+- Commit du rapport Lot 295 : `d9f82f6e217c17d640b357895b3118c38ff8b97f`.
+- Aucun SQL, migration, table, fonction Edge, policy RLS, grant, secret, paramètre Auth, trigger, modèle ML, alerte, action de blocage, terminal connecté, collecte d'appareil/localisation, e-mail ou déploiement créé/activé. Aucun achat ni coût.
+- PR #17 demeure ouverte et non fusionnée sur `design/prototypes-67-74-alignment`, cible `main`.
