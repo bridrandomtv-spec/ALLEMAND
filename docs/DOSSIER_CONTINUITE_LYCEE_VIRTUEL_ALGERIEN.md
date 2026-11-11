@@ -5858,3 +5858,10 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Après correction de la syntaxe des regex, la CI a identifié une deuxième assertion restée sur l'ancienne version Service Worker `dz-de-v3.185.0.0.134` dans `ci/check-masar.mjs`.
 - Cette assertion a été alignée sur `dz-de-v3.185.0.0.135` dans le commit `7386114d4cc19a53a84570f506e0ed59f8d6b402`.
 - Le test du tableau de bord doit être rejoué sur le HEAD courant ; le lot reste en attente de validation CI.
+
+
+#### Validation confirmée du Lot 284 — 11 novembre 2026
+- CI #2991 : réussite sur le commit de code `7386114d4cc19a53a84570f506e0ed59f8d6b402`.
+- CI #2992 : réussite sur le commit documentaire `c83ef65b691e814dfe93ab018802b6e1f34a1655`.
+- Le contrôle « Contrôler le tableau de bord مسارك » ainsi que les autres contrôles de la suite ont réussi sur ces exécutions.
+- Cette réussite valide les contrôles automatisés ; elle ne remplace pas la vérification visuelle dans le navigateur sur ordinateur, tablette et téléphone.
