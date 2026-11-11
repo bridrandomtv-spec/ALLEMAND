@@ -20,11 +20,10 @@ BEGIN;
 
 CREATE SCHEMA IF NOT EXISTS private;
 
-REVOKE ALL ON SCHEMA private FROM PUBLIC;
-REVOKE ALL ON SCHEMA private FROM anon;
-REVOKE ALL ON SCHEMA private FROM authenticated;
+-- Ne pas modifier les privilèges du schéma private existant : il peut
+-- héberger d'autres objets de l'application.
 
-CREATE TABLE IF NOT EXISTS private.security_events (
+CREATE TABLE private.security_auth_hook_events (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     actor_id uuid NOT NULL,
     session_id uuid NOT NULL,
@@ -38,17 +37,17 @@ CREATE TABLE IF NOT EXISTS private.security_events (
     CONSTRAINT security_events_session_unique UNIQUE (session_id)
 );
 
-ALTER TABLE private.security_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE private.security_auth_hook_events ENABLE ROW LEVEL SECURITY;
 
-REVOKE ALL ON TABLE private.security_events FROM PUBLIC;
-REVOKE ALL ON TABLE private.security_events FROM anon;
-REVOKE ALL ON TABLE private.security_events FROM authenticated;
-REVOKE ALL ON TABLE private.security_events FROM supabase_auth_admin;
+REVOKE ALL ON TABLE private.security_auth_hook_events FROM PUBLIC;
+REVOKE ALL ON TABLE private.security_auth_hook_events FROM anon;
+REVOKE ALL ON TABLE private.security_auth_hook_events FROM authenticated;
+REVOKE ALL ON TABLE private.security_auth_hook_events FROM supabase_auth_admin;
 
 CREATE INDEX IF NOT EXISTS security_events_actor_time_idx
-    ON private.security_events (actor_id, occurred_at DESC);
+    ON private.security_auth_hook_events (actor_id, occurred_at DESC);
 
-CREATE OR REPLACE FUNCTION public.custom_access_token_hook(event jsonb)
+CREATE FUNCTION public.custom_access_token_hook(event jsonb)
 RETURNS jsonb
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -82,7 +81,7 @@ BEGIN
             v_user_id := (event ->> 'user_id')::uuid;
             v_session_id := (original_claims ->> 'session_id')::uuid;
 
-            INSERT INTO private.security_events (
+            INSERT INTO private.security_auth_hook_events (
                 actor_id,
                 session_id,
                 event_type,
@@ -114,7 +113,7 @@ REVOKE ALL ON FUNCTION public.custom_access_token_hook(jsonb) FROM authenticated
 GRANT EXECUTE ON FUNCTION public.custom_access_token_hook(jsonb)
     TO supabase_auth_admin;
 
-COMMENT ON TABLE private.security_events IS
+COMMENT ON TABLE private.security_auth_hook_events IS
     'Journal minimal des passages du Custom Access Token Hook ; ne prouve pas la réception du jeton par le client.';
 
 COMMENT ON FUNCTION public.custom_access_token_hook(jsonb) IS
