@@ -1978,49 +1978,42 @@ const lf = $('#loginForm');
     const err = $('#suErr'); if(err) err.hidden = true;
     const w = String($('#suWilaya').value || '').split('|');
     const niv = $('#suNiveau').value;
-    if(!authLocalMode()){
-      if(!window.SB || !window.SB.signup){
-        showGateError('#suErr', 'خدمة إنشاء الحساب السحابية غير جاهزة. أعد المحاولة بعد لحظات.');
-        return;
-      }
-      try{
-        const result = await window.SB.signup($('#suMail').value.trim(), $('#suPass').value, {
-          pseudo:$('#suName').value.trim(), niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0]
-        });
-        if(!result || !result.ok){
-          showGateError('#suErr', friendlyCloudAuthMessage(result && (result.code || result.err), result && result.err));
-          return;
-        }
-        if(!result.session){
-          const loginTab = document.querySelector('[data-gate="login"]');
-          if(loginTab) loginTab.click();
-          const loginEmail = $('#loginUser');
-          if(loginEmail) loginEmail.value = $('#suMail').value.trim();
-          showGateError('#loginErr', 'تم استلام طلب التسجيل. إذا كان تأكيد البريد الإلكتروني مفعّلًا، فتحقق من بريدك الوارد والرسائل غير المرغوب فيها، ثم افتح رابط التأكيد وارجع لتسجيل الدخول. إذا لم تصلك رسالة، فقد يلزم إعداد خدمة إرسال البريد من إدارة المنصة.');
-          return;
-        }
-        const cloudSession = await cloudAuthority();
-        if(!cloudSession){
-          showGateError('#suErr', 'تم إنشاء الحساب، لكن تعذر تحميل الملف الدراسي. لا تنشئ حسابًا محليًا بديلًا؛ أعد المحاولة أو تواصل مع الدعم.');
-          return;
-        }
-        toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + cloudSession.niveau, 'ok');
-        enterApp(cloudSession);
-      }catch(error){
-        showGateError('#suErr', friendlyCloudAuthMessage(error && error.code, error && error.message));
-      }
+    // L'inscription crée uniquement un compte Auth officiel ; le mode démo/hors ligne
+    // ne doit jamais fabriquer un compte local présenté comme une inscription.
+    if(!navigator.onLine){
+      showGateError('#suErr', 'يتطلب إنشاء حساب رسمي اتصالاً بالإنترنت. اتصل بالشبكة ثم أعد المحاولة.');
       return;
     }
-    const local = AUTH.signup({
-      nom:$('#suName').value, mail:$('#suMail').value, pass:$('#suPass').value,
-      niveau:niv, filiere:$('#suFiliere').value,
-      filiere_ar: ($('#suFiliere') && $('#suFiliere').selectedOptions[0]) ? $('#suFiliere').selectedOptions[0].textContent : '',
-      specialite: ($('#suSpecialite') && !$('#suSpecialite').hidden && $('#suSpecialite').selectedOptions[0]) ? $('#suSpecialite').selectedOptions[0].textContent : '',
-      wilaya:w[1] || 'Bouira', code_wilaya:w[0] || '10',
-      role:$('#suRole').value, classe:niv + '-1'
-    });
-    if(local.ok){ toast('✅ تم إنشاء حسابك — أهلاً ' + local.session.nom, 'ok'); enterApp(local.session); }
-    else showGateError('#suErr', local.err);
+    if(!window.SB || !window.SB.signup){
+      showGateError('#suErr', 'خدمة إنشاء الحساب السحابية غير جاهزة. أعد المحاولة بعد لحظات.');
+      return;
+    }
+    try{
+      const result = await window.SB.signup($('#suMail').value.trim(), $('#suPass').value, {
+        pseudo:$('#suName').value.trim(), niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0]
+      });
+      if(!result || !result.ok){
+        showGateError('#suErr', friendlyCloudAuthMessage(result && (result.code || result.err), result && result.err));
+        return;
+      }
+      if(!result.session){
+        const loginTab = document.querySelector('[data-gate="login"]');
+        if(loginTab) loginTab.click();
+        const loginEmail = $('#loginUser');
+        if(loginEmail) loginEmail.value = $('#suMail').value.trim();
+        showGateError('#loginErr', 'تم استلام طلب التسجيل. إذا كان تأكيد البريد الإلكتروني مفعّلًا، فتحقق من بريدك الوارد والرسائل غير المرغوب فيها، ثم افتح رابط التأكيد وارجع لتسجيل الدخول. إذا لم تصلك رسالة، فقد يلزم إعداد خدمة إرسال البريد من إدارة المنصة.');
+        return;
+      }
+      const cloudSession = await cloudAuthority();
+      if(!cloudSession){
+        showGateError('#suErr', 'تم إنشاء الحساب، لكن تعذر تحميل الملف الدراسي. لا تنشئ حسابًا محليًا بديلًا؛ أعد المحاولة أو تواصل مع الدعم.');
+        return;
+      }
+      toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + cloudSession.niveau, 'ok');
+      enterApp(cloudSession);
+    }catch(error){
+      showGateError('#suErr', friendlyCloudAuthMessage(error && error.code, error && error.message));
+    }
   });
 
   const uc = $('#userChip');
