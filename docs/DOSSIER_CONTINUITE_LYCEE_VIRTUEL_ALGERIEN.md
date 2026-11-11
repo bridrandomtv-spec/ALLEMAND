@@ -5865,3 +5865,27 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - CI #2992 : réussite sur le commit documentaire `c83ef65b691e814dfe93ab018802b6e1f34a1655`.
 - Le contrôle « Contrôler le tableau de bord مسارك » ainsi que les autres contrôles de la suite ont réussi sur ces exécutions.
 - Cette réussite valide les contrôles automatisés ; elle ne remplace pas la vérification visuelle dans le navigateur sur ordinateur, tablette et téléphone.
+
+
+### Lot 285 — inscription officielle sans création locale de secours — 11 novembre 2026
+
+#### Constat
+- Le gestionnaire `#signupForm` utilisait `authLocalMode()` ; le mode démo (`?demo=1`) ou hors ligne pouvait donc diriger l'inscription vers `AUTH.signup()` et créer un compte local.
+- Ce comportement ne convient pas au parcours d'inscription officiel : un compte local de démonstration ne doit jamais être présenté comme un compte étudiant créé sur Supabase.
+
+#### Correction dans la PR #17
+- Le formulaire d'inscription exige maintenant une connexion réseau et `window.SB.signup`.
+- Toute création de compte passe par `supabase.auth.signUp` via le module existant.
+- Le mode démo/hors ligne reste réservé à l'exploration et à la connexion de démonstration ; il ne peut plus créer de compte depuis le formulaire officiel.
+- En cas d'absence de réseau, d'indisponibilité du client Supabase ou d'erreur Auth, le formulaire affiche un message et ne crée aucun compte local.
+- Si Supabase renvoie un utilisateur sans session (cas de confirmation e-mail), l'interface demande de vérifier le courrier puis de revenir se connecter ; elle ne prétend pas que le compte est connecté.
+- Le contrôle CI `ci/check-public-portal.mjs` vérifie désormais que le gestionnaire d'inscription n'appelle ni `authLocalMode()` ni `AUTH.signup()`, et qu'il exige `navigator.onLine` et `window.SB.signup`.
+
+#### Cache et périmètre
+- `app.js` : cache `3568`.
+- Service Worker : `dz-de-v3.185.0.0.136`.
+- Références actualisées dans `index.html`, `sw.js`, `ci/check-masar.mjs` et `ci/check-public-portal.mjs`.
+- Aucun changement Supabase distant, aucune modification Auth/SMTP, aucun secret ajouté, aucun e-mail envoyé, aucun compte réel créé ou testé.
+- Le problème de distribution des e-mails de confirmation n'est pas résolu par cette correction : il dépend toujours de la configuration SMTP du projet et doit être validé séparément.
+- PR #17 reste ouverte et non fusionnée ; aucun déploiement de production ni aucune dépense.
+- Validation CI à attendre sur le HEAD du lot.
