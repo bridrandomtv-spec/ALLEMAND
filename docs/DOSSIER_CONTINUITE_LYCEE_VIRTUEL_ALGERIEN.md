@@ -5403,3 +5403,25 @@ Audit du code uniquement, sans modification applicative ni Supabase distant. Auc
 - Lecture seule : projet Supabase et flux unifié de logs.
 - Aucun réglage Auth/Audit Logs, table, vue, RPC, migration, politique RLS, secret, fonction Edge, Cron, SMTP ou fournisseur d'e-mail modifié.
 - Aucun e-mail, coût, déploiement, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
+
+
+
+## Lot 274 — audit de capacité du Worker pour les rapports — 11 novembre 2026
+
+### Entrée Worker et routes
+- Lecture de `wrangler.toml` : l'entrée unique est `src/site-worker.js`, avec le binding d'actifs statiques `ASSETS`. Aucun bloc `[triggers]`, `crons` ou autre planification n'est déclaré.
+- Lecture complète de `src/site-worker.js` : le Worker expose un handler `fetch(request, env, ctx)` et aucun handler `scheduled()`.
+- Le seul contrôle serveur applicatif identifié dans ce Worker concerne les ressources pédagogiques protégées : il vérifie la présence d'un Bearer token et interroge Supabase REST sur `lesson_content` en transmettant le jeton utilisateur et la clé publishable/anon. Les autres chemins sont servis via `ASSETS.fetch(request)`.
+- Aucun endpoint de rapports, d'historique Auth, de préférences de rapport, d'envoi e-mail ou de dispatcher n'existe dans cette entrée Worker au HEAD audité.
+- Le contrôle de ressources pédagogiques ne peut pas être réutilisé comme preuve d'identité/autorisation pour des rapports : son objectif est l'entitlement des contenus et il ne fournit pas l'interface d'événements Auth requise.
+
+### Décision d'architecture confirmée
+- Le Worker existant ne peut pas actuellement produire des rapports périodiques : il manque à la fois une source de données Auth accessible au runtime, une route authentifiée dédiée, un stockage des préférences/historique et un planificateur.
+- Une future route devra valider le JWT avec Supabase Auth côté serveur, dériver l'identité depuis la réponse de validation, appliquer une période maximale et ne retourner que les événements du propriétaire. Les paramètres `actor_id`, `user_id`, adresse e-mail ou destinataire fournis par le client ne seront jamais utilisés comme autorité.
+- La planification devra être un déclencheur distinct, idempotent et limité ; aucun Cron n'est ajouté tant que l'accès aux événements, le stockage, les quotas et le canal d'envoi ne sont pas validés.
+- Aucun usage du fichier d'exemple `worker/resend-welcome.js` n'est retenu pour les rapports : il n'est pas l'entrée Worker déclarée et son modèle de destinataire fourni par le client n'est pas adapté à un rapport de sécurité.
+
+### Périmètre
+- Audit en lecture seule de `src/site-worker.js` et `wrangler.toml`, sans changement applicatif.
+- Aucun secret, variable Cloudflare, route, binding, Cron, fournisseur e-mail, paramètre Supabase ou donnée distante modifié.
+- Aucun déploiement, e-mail, coût, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
