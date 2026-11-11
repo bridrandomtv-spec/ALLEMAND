@@ -6249,5 +6249,10 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - CI #3040 / run `43083855288` sur `31339e724955fc5946d9485a3c3fd88b91a4d6da` : failure due à une assertion trop stricte sur le texte de déclaration de carte (`id:'admSecurityCard'` alors que l'identifiant est créé par `box.id` et référencé dans `cards:[...]`). Les autres assertions ADM-SEC-1 étaient en succès.
 - Correction limitée au test : l'assertion vérifie maintenant `cards:['admSecurityCard']`, sans modifier le code de production.
 - Commit de correction : `c9a457f9aceeb51e06a09b6da1803245196e5b79`.
-- CI #3042 / run `43084081392` sur ce commit : étapes syntaxe JavaScript et validation administration en succès ; le job était encore en cours de finalisation au moment de cette note.
+- CI #3042 / run `43084081392` sur ce commit : **success** ; le journal confirme les six assertions `ADM-SEC-1`, `adm_test : TOUT PASSE`, et la validation complète de l'administration.
 - CI #3041 / run `43083993004` sur le commit documentaire précédent a échoué parce qu'il validait le HEAD de code antérieur à la correction du test. Une nouvelle CI est déclenchée par la présente mise à jour.
+
+
+### Validation documentaire finale — Lot 301
+- CI #3043 / run `43084185301` sur le commit documentaire `95e65224cac75d27217c02600c8f7c72f8d543ca` : **success**. Le contrôle des fichiers requis et la validation administration ont réussi.
+- PR #17 reste ouverte, non fusionnée ; le commit applicatif corrigé `c9a457f9aceeb51e06a09b6da1803245196e5b79` a une CI complète en succès. La présente mise à jour déclenche une nouvelle CI documentaire à contrôler séparément.
