@@ -5936,3 +5936,17 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - La réalisation reste conditionnée aux étapes A à F déjà définies dans le dossier : stockage minimal et RLS des préférences, source fiable des événements, générateur de rapport, endpoint sécurisé et idempotent, planification, puis activation après validation du fournisseur d'e-mail.
 - Aucun SQL, table, fonction, politique RLS, secret, réglage Auth/SMTP, Worker, Cron Trigger, e-mail ou déploiement n'a été créé ou activé dans ce lot.
 - Aucun coût ni achat n'est engagé ; PR #17 reste ouverte et non fusionnée.
+
+
+### Lot 287 — spécification technique des rapports périodiques — 11 novembre 2026
+
+- Création de `docs/security/LOT-287-periodic-security-reports-technical-spec.md`.
+- Définition des préférences (fréquence, calendrier, fuseau, langue, catégories), du contenu autorisé, des états d'historique et des quatre ensembles de données proposés.
+- Règle de confidentialité : l'identité et le destinataire sont résolus côté serveur à partir d'un jeton vérifié et d'une adresse confirmée ; le navigateur ne choisit pas librement le destinataire.
+- Distinction sémantique : `app_access_observed` décrit une observation d'accès authentifié après validation serveur ; ce n'est pas une preuve de connexion complète, de présence continue ou de déconnexion.
+- Le hook de jeton pré-émission ne prouve pas la réception du jeton ni l'ouverture de l'application. Aucun historique rétroactif n'est disponible.
+- L'endpoint de bienvenue existant est exclu du périmètre d'envoi des rapports privés en l'état.
+- Définition des tests obligatoires : isolation RLS, identité, destinataire confirmé, idempotence, calendrier, confidentialité, pannes et rendu trilingue.
+- Découpage proposé des Lots 288 à 293, depuis le contrat de données jusqu'à une éventuelle activation distinctement autorisée.
+- Aucun code applicatif, SQL, migration, table, fonction, politique RLS, secret, endpoint, Cron, e-mail ou déploiement n'a été créé ou activé. Aucun achat ni coût.
+- La spécification est documentaire et ne constitue pas une autorisation de modifier Supabase ou d'activer un fournisseur.
