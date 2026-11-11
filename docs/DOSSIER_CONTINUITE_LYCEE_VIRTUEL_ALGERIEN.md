@@ -5797,3 +5797,26 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - La fonction est créée avec `CREATE FUNCTION` (et non `CREATE OR REPLACE`) afin d'échouer si une fonction homonyme existe déjà, plutôt que de la remplacer silencieusement.
 - Le SQL final a été relu : table dédiée, exclusion des renouvellements, déduplication par session, bloc d'exception fail-open, privilèges de fonction restreints et `ROLLBACK` de sécurité présents.
 - Le brouillon demeure non exécuté et non validé par un moteur PostgreSQL. Un contrôle de compatibilité sur une base isolée reste obligatoire.
+
+
+### Lot 283 — matrice de tests négatifs du hook Auth — 11 novembre 2026
+
+#### Artefact ajouté
+- Nouveau document : `docs/security/LOT-283-auth-hook-negative-test-matrix.md`.
+- Matrice de 16 scénarios : identité discordante, session absente/mal formée, renouvellements répétés, déduplication, méthodes signup/invitation, comptes anonymes, panne d'insertion, claims invalides, privilèges des rôles navigateur, minimisation des données et suppression de compte.
+- Ajout des contrôles de privilèges effectifs (`has_table_privilege`, `has_schema_privilege`, `has_function_privilege`) à effectuer uniquement dans un projet isolé.
+- Critères de sortie explicites : tests critiques/hauts réussis, propriétaire et permissions effectifs confirmés, traitement signup/invitation/anonyme décidé, rétention et suppression définies.
+- Aucun scénario n'est déclaré réussi : il s'agit d'une matrice de tests à exécuter, pas d'un rapport de tests passés.
+
+#### Revue technique importante
+- Le rôle Auth qui exécute le hook et le propriétaire de la fonction `SECURITY DEFINER` sont deux identités distinctes. Le seul `GRANT EXECUTE` au rôle `supabase_auth_admin` ne prouve pas que l'insertion fonctionnera : il faut vérifier le propriétaire effectif de la fonction et ses droits sur la table dans un projet isolé.
+- Le traitement `fail-open` préserve le parcours d'authentification si l'insertion échoue, mais peut rendre le journal incomplet. Cette limite doit être visible aux administrateurs.
+- Les méthodes `email/signup`, `invite` et les comptes anonymes ne doivent pas être assimilés automatiquement à une connexion élève ordinaire. Leur classification reste une décision métier à prendre avant activation.
+- Le nom d'événement reste `auth_token_preissue`, jamais `auth_login_success`, car le hook intervient avant l'émission du jeton.
+
+#### État et périmètre
+- Commit de la matrice : `2d465cc734d258af0d5edd563622ab06b306bed4`.
+- Dossier de continuité complété dans ce lot.
+- PR #17 reste ouverte et non fusionnée.
+- Aucun test exécuté contre Supabase, aucun SQL appliqué, aucune permission distante changée, aucun hook activé, aucun secret modifié, aucun e-mail, déploiement ou coût.
+- Validation CI du commit documentaire final à vérifier séparément.
