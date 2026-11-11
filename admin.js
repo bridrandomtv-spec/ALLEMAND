@@ -531,7 +531,7 @@ function rendreCouvertureORG1(mount){
   }
   async function loadAdminReference(path){
     try{
-      var response = await fetch('/' + path.replace(/^\\//, ''));
+      var response = await fetch('/' + path);
       if(!response.ok) throw new Error('HTTP ' + response.status);
       return await response.json();
     }catch(e){
