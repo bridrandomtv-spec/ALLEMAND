@@ -165,3 +165,27 @@ La maquette ne présente pas de sélecteur de fuseau horaire. Elle propose la fr
 - Idempotence et procédure de réconciliation du fournisseur d'e-mail.
 
 **Résultat :** les six libellés du prototype sont confirmés dans le contrat. Cela clôt la vérification documentaire des catégories, mais pas la disponibilité des données ni l'autorisation d'implémenter. Aucun SQL, objet Supabase, secret, e-mail, Worker, Cron ou déploiement n'a été modifié.
+
+## 10. Lot 290 — proposition de règles calendaires (non activées)
+
+Cette note transforme les cas limites calendaires en décisions explicites. Elle ne constitue pas une activation du planificateur et n'autorise aucun envoi.
+
+### Proposition technique à faire valider
+- **Hebdomadaire :** exécuter une fois le jour local choisi, à l'heure locale configurée. La période du rapport est la semaine locale précédente, bornée en UTC par deux instants calculés dans le fuseau IANA du compte.
+- **Mensuel :** si le jour demandé n'existe pas dans le mois (ex. 31 en avril), exécuter le dernier jour de ce mois. Une seule exécution par mois civil local.
+- **Heure locale inexistante au passage à l'heure d'été :** décaler vers la première heure locale valide après le saut, sans créer une deuxième exécution.
+- **Heure locale répétée au retour à l'heure d'hiver :** choisir la première occurrence chronologique et interdire toute seconde exécution pour la même période.
+- **Rattrapage après indisponibilité :** produire au maximum une exécution idempotente par période manquée encore dans la fenêtre de conservation ; ne pas envoyer en rafale plusieurs rapports obsolètes sans règle produit explicite.
+- **Fuseau :** utiliser un identifiant IANA explicite, jamais un simple décalage UTC fixe. Tant que l'interface n'expose pas le fuseau, le contrat doit préciser si celui-ci est détecté depuis le navigateur et confirmé par l'élève, ou sélectionné dans les paramètres.
+
+### Invariants d'implémentation
+- Calculer les bornes de période à partir du calendrier local, puis les convertir en UTC ; ne pas soustraire simplement 7 ou 30 jours à un timestamp.
+- La clé d'idempotence doit inclure l'utilisateur, le type de rapport et la période locale normalisée, indépendamment de l'instant réel d'envoi.
+- Une exécution reportée ne change pas la période couverte.
+- Les changements de fuseau ou de préférence ne doivent pas recréer une livraison déjà acceptée pour la même période logique.
+- Journaliser les instants UTC et l'identifiant IANA utilisé pour rendre les calculs vérifiables, sans stocker de données de géolocalisation.
+
+### Décisions toujours réservées
+Ces règles sont des propositions d'ingénierie, pas des choix produit approuvés. Avant toute migration ou activation, il faudra valider la règle de fin de mois, les deux cas DST, la fenêtre de rattrapage, le fuseau présenté à l'élève et la durée de conservation. Aucune durée de conservation n'est proposée ici faute de base réglementaire et produit suffisante.
+
+**État Lot 290 :** analyse et proposition documentées uniquement. Aucun code d'exécution, SQL, table, fonction, RLS, secret, paramètre Auth/SMTP, Worker, Cron, e-mail ou déploiement modifié.
