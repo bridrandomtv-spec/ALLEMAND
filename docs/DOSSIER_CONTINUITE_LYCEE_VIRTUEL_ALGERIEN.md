@@ -6015,3 +6015,18 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Commit du contrat Lot 292 : `914732e654e8751fbf5bbe7f85ee750a2e74ab4a`.
 - La CI #3011 est réussie sur le HEAD antérieur `588f6ae69a08a6bac19e0a6d9710c9715b8ce22b). Les exécutions #3012 et #3013 déclenchées par les commits Lot 291 étaient encore en cours/en attente lors de la dernière vérification ; elles ne valident pas le HEAD final Lot 292. Nouvelle vérification CI requise.
 - PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`. Aucune modification directe de `main`.
+
+
+### Lot 293 — contrat de planification et d'historique des rapports — 11 novembre 2026
+
+- Création de `docs/security/LOT-293-periodic-reports-scheduling-history-contract.md`.
+- Définition du calcul des échéances selon le calendrier local et le fuseau IANA, avec conversion UTC, règles DST proposées, fin de mois, changement de fuseau et rattrapage borné.
+- Définition des états de traitement, des leases anti-concurrence et de l'idempotence des occurrences.
+- Définition des règles d'un éventuel historique élève : données limitées au propriétaire, statut compréhensible, aucune adresse, erreur interne ou donnée fournisseur exposée ; historique vide tant qu'aucun rapport réel n'existe.
+- 14 tests de calendrier, concurrence, suppression, accès croisé, rétention et données absentes spécifiés.
+- Les règles de calendrier Lot 290 restent proposées et non approuvées. La fenêtre de rattrapage, le fuseau à confirmer, l'affichage d'un historique et les durées Lot 291 restent ouverts.
+- L'infrastructure n'a pas été modifiée : aucun handler scheduled(), Cron Trigger, Worker, endpoint ou table ajouté.
+- Aucun SQL, migration, RLS, grant, secret, réglage Auth/SMTP, e-mail, purge, déploiement, achat ou coût.
+- Commit du contrat Lot 293 : `2e35e6607f5bdd5a0723bdeb4bbef25fa048f3aa`.
+- La CI du HEAD final de documentation reste à vérifier ; les résultats #3012/#3014 concernent des commits antérieurs et ne valident pas ce nouveau fichier.
+- PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`.
