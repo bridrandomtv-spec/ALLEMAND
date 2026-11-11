@@ -5889,3 +5889,11 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Le problème de distribution des e-mails de confirmation n'est pas résolu par cette correction : il dépend toujours de la configuration SMTP du projet et doit être validé séparément.
 - PR #17 reste ouverte et non fusionnée ; aucun déploiement de production ni aucune dépense.
 - Validation CI à attendre sur le HEAD du lot.
+
+
+#### Validation intermédiaire et précision du libellé — Lot 285
+- CI #2998 : réussite sur le commit `f6d1cccbc116415f8f80d98bf6966abb4d5dac0b`. Le contrôle du portail public et les autres vérifications de la suite ont réussi.
+- Le bouton du formulaire a été renommé de « إنشاء الحساب والدخول » à « إنشاء الحساب » : la création d'un compte ne garantit pas une connexion immédiate lorsque la confirmation e-mail est requise.
+- Un contrôle CI vérifie ce libellé afin d'éviter une promesse d'accès immédiat.
+- Le Service Worker est passé à `dz-de-v3.185.0.0.137` ; les assertions correspondantes ont été actualisées.
+- Une nouvelle CI est attendue sur le HEAD comprenant le changement de libellé et ses tests.
