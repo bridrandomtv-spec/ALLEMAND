@@ -164,5 +164,11 @@ t(adjs.includes("state4.perms.length") && adjs.includes("state4.wilayas.length")
 t(adjs.includes("n'est pas un système") === false && adjs.includes("ليست نظام كشف تهديدات"), 'ADM-SEC-1 : la vue précise qu elle ne constitue pas une détection de menaces');
 t(adjs.includes("esq5(l.action)") && adjs.includes("esq5(l.cible_type)") && adjs.includes("esq5(l.cible_id)"), 'ADM-SEC-1 : les valeurs du journal sont échappées');
 t(adjs.includes("if(tab==='security') renderSecurity();"), 'ADM-SEC-1 : navigation vers la vue accès et audit câblée');
+/* ADM-SYS-1 : inventaire technique fondé sur la configuration, sans télémétrie simulée */
+t(adjs.includes("id:'system'") && adjs.includes("cards:['admSystemCard']") && adjs.includes("perm:'reports.read'"), 'ADM-SYS-1 : onglet système protégé par reports.read');
+t(adjs.includes('function renderSystem()') && adjs.includes('wrangler.toml') && adjs.includes('src/site-worker.js'), 'ADM-SYS-1 : inventaire fondé sur les fichiers de configuration et Worker');
+t(adjs.includes('SUPABASE_URL') && adjs.includes('SUPABASE_ANON_KEY') && adjs.includes('lesson_content'), 'ADM-SYS-1 : le garde de contenu est décrit sans afficher les valeurs des secrets');
+t(adjs.includes('غير موجود في المصدر المفحوص') && adjs.includes('غير متحققة هنا'), 'ADM-SYS-1 : absence de monitoring et de statut runtime explicitement signalée');
+t(adjs.includes("if(tab==='system') renderSystem();") && adjs.includes("'admSystemCard'"), 'ADM-SYS-1 : navigation système câblée et carte isolée des opérations historiques');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
