@@ -6243,3 +6243,11 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 1. Confirmer CI #3040.
 2. Effectuer une vérification navigateur avec plusieurs profils administratifs autorisés et non autorisés.
 3. Examiner ensuite les vues système uniquement si une source serveur fiable et sécurisée est identifiée ; aucune métrique de disponibilité ou de menaces ne doit être simulée.
+
+
+### Rectification CI Lot 301 — suite de test ADM-SEC-1
+- CI #3040 / run `43083855288` sur `31339e724955fc5946d9485a3c3fd88b91a4d6da` : failure due à une assertion trop stricte sur le texte de déclaration de carte (`id:'admSecurityCard'` alors que l'identifiant est créé par `box.id` et référencé dans `cards:[...]`). Les autres assertions ADM-SEC-1 étaient en succès.
+- Correction limitée au test : l'assertion vérifie maintenant `cards:['admSecurityCard']`, sans modifier le code de production.
+- Commit de correction : `c9a457f9aceeb51e06a09b6da1803245196e5b79`.
+- CI #3042 / run `43084081392` sur ce commit : étapes syntaxe JavaScript et validation administration en succès ; le job était encore en cours de finalisation au moment de cette note.
+- CI #3041 / run `43083993004` sur le commit documentaire précédent a échoué parce qu'il validait le HEAD de code antérieur à la correction du test. Une nouvelle CI est déclenchée par la présente mise à jour.
