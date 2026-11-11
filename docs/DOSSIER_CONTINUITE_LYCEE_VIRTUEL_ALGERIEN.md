@@ -6093,3 +6093,20 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Aucun code applicatif, SQL, migration, table, fonction, policy RLS, grant, secret, donnée, action admin, opération financière, Worker, Cron, Realtime, e-mail, déploiement, achat ou coût n'a été modifié/créé/exécuté. Aucune nouvelle branche ; `main` inchangée.
 - Rapport Lot 297 créé au commit `b158fc354dfa65527b70356d48a3af303fb628e5`.
 - La CI du commit documentaire final doit être vérifiée séparément. PR #17 doit rester ouverte et non fusionnée.
+
+
+
+### Lot 298 — audit du prototype « tableau de bord basé sur les données réelles de GitHub » — 11 novembre 2026
+
+- Nouveau prototype HTML autonome reçu : huit entrées de navigation (overview, classes, security, finance, messaging, wilayas, audit, codebase). Audit statique du HTML/JS et comparaison en lecture seule avec la branche GitHub PR #17.
+- Création de `docs/security/LOT-298-github-real-data-admin-dashboard-audit.md`.
+- Décision : **NO-GO pour présenter/intégrer ce HTML comme un tableau de bord réel**. Le HTML ne charge ni `supabase.js`, ni `admin.js`, ne crée aucun client Supabase, n'appelle aucune API GitHub/RPC et n'a aucune souscription Realtime. Les badges « Supabase connecté », profil admin et chiffres sont codés en dur.
+- Vérification GitHub réelle au HEAD `594d7a891a2475ba8e5ecac26d2ca3cde9c41d4e` : PR #17 ouverte et non fusionnée ; CI #3026 / run `43081483343` terminée avec succès. Les 29 étapes de validation métier du job ont réussi. Cette preuve concerne le commit consulté et la CI du dépôt, pas l'exécution navigateur du HTML.
+- Le fichier `assets/bdd/classe.json` contient les cinq classes et effectifs 32/28/32/26/24 (total arithmétique 142), mais ses métadonnées le définissent comme maquette pédagogique. Le chiffre 142 ne peut donc pas être présenté comme le nombre réel d'inscrits.
+- Les référentiels `assets/bdd/wilaya.json` et `assets/bdd/wilayas_geo.json` existent ; le client contient `SB.admCouverture()` → RPC `admin_couverture_wilayas`. Le HTML ne les utilise pas.
+- Briques réelles repérées dans le dépôt : `SB.admMyPerms`, `SB.admDashboard`, `SB.admReport`, `SB.admAuditLast`, `SB.admCouverture`, recherche/fiches élèves et wrappers messagerie. Leur présence dans Git ne prouve pas leur déploiement effectif dans Supabase actif.
+- Les chiffres/états financiers et numéros de reçus sont statiques ; les règles de sécurité affichées ne constituent pas une mesure du niveau de sécurité ; aucune source de menaces ou de télémétrie système n'alimente l'interface.
+- Défauts fonctionnels : vues `messaging`, `wilayas`, `audit` absentes alors que les boutons les appellent (exception JS au clic) ; vue classes limitée à trois cartes ; Chart.js chargé sans graphique ; déconnexion sans action ; navigation mobile partielle ; thème isolé ; dépendances CDN inutilisées/non conformes à la préférence vanilla ; `showNotification` injecte ses paramètres via `innerHTML` sans échappement.
+- 18 tests d'acceptation/négatifs consignés ; aucun test navigateur ou Supabase réel n'a été exécuté dans ce lot.
+- Aucune modification applicative, aucun SQL/migration/RLS/grant/secret/Auth, aucune donnée Supabase, aucune action financière, aucun Worker/Cron/Realtime/e-mail, aucun déploiement, aucune branche, aucun merge, aucun achat ni coût. Aucune nouvelle fonction de facturation ou paiement.
+- Rapport Lot 298 créé au commit `772c198c3e77ceb057e2a80a5dbed4f31c280aab`. Mise à jour du présent dossier effectuée séparément ; PR #17 doit rester ouverte et non fusionnée.
