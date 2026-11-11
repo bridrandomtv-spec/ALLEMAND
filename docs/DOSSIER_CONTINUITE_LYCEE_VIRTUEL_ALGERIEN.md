@@ -5749,3 +5749,42 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Lot documentaire uniquement : aucune page intégrée, table, migration, fonction, hook, politique RLS, grant, secret, configuration Auth, binding, Cron Trigger ou fournisseur n'a été créé ou activé.
 - Aucun e-mail envoyé, aucun test fournisseur, aucun déploiement Cloudflare/Supabase, aucune dépense, aucune fusion, aucune nouvelle branche et aucune modification de `main`.
 - PR #17 reste ouverte et non fusionnée. Les étapes A à F devront être développées et vérifiées séparément ; toute opération distante ou activation planifiée nécessitera une autorisation explicite.
+
+
+### Lot 282 — brouillon SQL prudent du Custom Access Token Hook — 11 novembre 2026
+
+#### Vérification documentaire
+- La documentation officielle Supabase confirme que le hook reçoit `user_id`, `claims.session_id` et `authentication_method`, avec notamment la valeur `token_refresh`.
+- Le hook s'exécute avant l'émission du jeton. Il ne constitue donc pas, à lui seul, une preuve que le client a effectivement reçu le jeton ou terminé l'ouverture de l'application.
+- Le hook fait partie du chemin critique d'authentification. Le brouillon ci-dessous isole les erreurs d'insertion (fail-open) pour que l'indisponibilité du journal ne bloque pas les connexions ; cette tolérance implique que l'historique puisse être incomplet.
+
+#### Artefact créé dans la PR
+- Nouveau fichier documentaire : `docs/security/LOT-282-custom-access-token-hook-draft.sql`.
+- Le brouillon prévoit un schéma privé, une table inaccessible aux rôles navigateur, un enregistrement minimal sans jeton/e-mail/IP/user-agent, une déduplication par `session_id`, l'exclusion des renouvellements `token_refresh` et le retour des claims d'origine.
+- Le type d'événement est volontairement nommé `auth_token_preissue` et non `auth_login_success` : la nuance reflète exactement ce que le hook permet d'observer.
+- La fonction est conçue pour n'être exécutable que par `supabase_auth_admin`, avec `SECURITY DEFINER`, `search_path` vide et noms de schéma qualifiés. Cette configuration reste à valider sur un projet de test avant toute activation.
+- Le fichier se termine par `ROLLBACK` : même exécuté tel quel, il ne conserve aucun changement. Il s'agit d'un support de revue, pas d'une migration exécutable de mise en service.
+
+#### Tests obligatoires avant toute adoption
+1. Vérifier que le tableau de bord Supabase accepte la fonction dans le schéma `public` et que le rôle d'exécution est bien `supabase_auth_admin`.
+2. Vérifier l'identité concordante `event.user_id = claims.sub` et le format UUID de `session_id`.
+3. Tester chaque méthode d'authentification réellement activée, puis vérifier l'exclusion de `token_refresh` et `email_change`.
+4. Répéter plusieurs émissions pour une même session et confirmer une seule ligne.
+5. Simuler une erreur d'insertion et vérifier que l'authentification reste fonctionnelle tout en signalant explicitement la lacune de journalisation.
+6. Vérifier qu'aucun rôle `anon` ou `authenticated` ne peut lire la table ou exécuter la fonction.
+7. Vérifier les cas signup, invitation et session anonyme : ils ne doivent pas être présentés comme des connexions ordinaires.
+8. Vérifier le comportement en cas de suppression d'utilisateur, de session invalide et de claims mal formés.
+
+#### Limites non résolues
+- Le hook ne journalise pas les tentatives échouées avant son invocation.
+- Il ne prouve pas la réception du jeton par le navigateur ; l'événement doit rester nommé et présenté comme un passage du hook avant émission.
+- Le mécanisme ne fournit aucun historique rétroactif.
+- Le brouillon n'ajoute pas encore de lecture élève, de rapport, de purge automatique ni de planificateur.
+- L'adoption nécessite un projet de test isolé et une autorisation distincte pour la table, la fonction, les privilèges et l'activation du hook.
+
+#### État et périmètre
+- Commit du brouillon SQL : `d727155aba8c4d2dcb814f4ead92ce6c0f5672bb`.
+- Dossier de continuité mis à jour dans ce lot.
+- PR #17 maintenue ouverte et non fusionnée ; aucun changement direct sur `main`.
+- Aucun SQL exécuté, aucune table/fonction/hook activé sur Supabase, aucun secret ou réglage Auth modifié, aucun e-mail, déploiement ou coût.
+- CI du commit documentaire final à vérifier séparément.
