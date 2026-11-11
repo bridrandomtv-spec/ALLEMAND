@@ -5354,3 +5354,24 @@ Audit du code uniquement, sans modification applicative ni Supabase distant. Auc
 - Étape suivante recommandée : tester en environnement de prévisualisation un adaptateur serveur isolé qui consomme uniquement une source officiellement supportée, valide l'identité côté serveur, applique un filtre propriétaire et retourne des événements minimisés. Aucun endpoint de ce type n'est encore créé ni déployé.
 - Le tableau de bord et les e-mails périodiques restent non fonctionnels tant que l'adaptateur, la rétention, la politique d'accès et le fournisseur d'envoi ne sont pas validés.
 - Aucun changement Auth, SQL, RLS, fonction distante, secret, SMTP, Worker déployé ou paramètre de production n'a été effectué dans ce lot. Aucun e-mail envoyé, aucune dépense, aucun déploiement, aucune fusion et aucune nouvelle branche.
+
+
+## Lot 272 — validation de la voie d'accès technique aux logs Auth — 11 novembre 2026
+
+### Documentation Supabase officielle vérifiée
+- La documentation Auth Audit Logs confirme deux stockages distincts : stockage externe de logs (utilisable via l'observabilité) et stockage PostgreSQL facultatif dans `auth.audit_log_entries`. Le stockage PostgreSQL se règle dans Authentication > Audit Logs > « Write audit logs to the database » et consomme de l'espace DB.
+- Cela explique le constat local : des événements Auth sont présents dans le flux externe `auth_audit_logs`, alors que `auth.audit_log_entries` reste vide.
+- La documentation « Query logs with SQL » indique que l'accès programmatique passe par le Supabase MCP ou la Management API `GET /v1/projects/{ref}/analytics/endpoints/logs`. L'API exige un jeton Management API autorisé avec le scope `analytics_logs_read` et une fenêtre maximale de 24 heures par requête.
+- La documentation Log Drains précise que les drains ne sont disponibles que sur les plans Pro, Team et Enterprise. Cette option n'est donc pas retenue : pas de changement de plan, de service externe ou de dépense.
+- Références officielles : https://supabase.com/docs/guides/auth/audit-logs ; https://supabase.com/docs/guides/observability/advanced-log-filtering ; https://supabase.com/docs/reference/api/v1-get-project-logs ; https://supabase.com/docs/guides/observability/log-drains
+
+### Choix d'architecture
+- Ne pas intégrer un jeton personnel Supabase Management API dans le navigateur, le dépôt, les paramètres publics ni dans une fonction accessible sans contrôle. Ce jeton est un secret d'administration et son scope doit être limité au strict nécessaire.
+- La voie à privilégier pour une fonctionnalité durable est d'abord de décider si le stockage PostgreSQL facultatif des logs Auth peut être activé, puis de concevoir un accès serveur limité qui ne renvoie que les événements du compte authentifié. Cette activation est un changement de configuration distante et n'a pas été effectuée.
+- Alternative possible mais non retenue à ce stade : un Worker serveur avec un secret Management API restreint, appels par tranches de 24 h, quotas, filtrage actor_id et rétention contrôlée. Cette voie dépend d'un secret personnel à forte portée et doit être évaluée séparément avant toute création.
+- Aucun code d'accès aux logs n'a été ajouté ; aucune table, vue, RPC, migration, politique RLS, réglage Auth, secret, Worker Cron, Log Drain ou intégration tierce n'a été créé ou activé.
+
+### État de la fonctionnalité
+- Le prototype de rapports périodiques demeure une maquette ; il n'envoie aucun e-mail et n'a pas de planificateur actif.
+- L'historique individuel et les rapports ne peuvent pas encore être activés proprement depuis l'application. Les données affichées doivent rester « indisponibles » jusqu'à la mise en place et la validation d'un accès serveur sécurisé.
+- Aucun 2FA n'est dans le périmètre de ce lot. Aucun déploiement, aucun e-mail, aucune dépense, aucune fusion et aucune nouvelle branche.
