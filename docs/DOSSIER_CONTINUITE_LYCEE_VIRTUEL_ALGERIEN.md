@@ -5425,3 +5425,37 @@ Audit du code uniquement, sans modification applicative ni Supabase distant. Auc
 - Audit en lecture seule de `src/site-worker.js` et `wrangler.toml`, sans changement applicatif.
 - Aucun secret, variable Cloudflare, route, binding, Cron, fournisseur e-mail, paramètre Supabase ou donnée distante modifié.
 - Aucun déploiement, e-mail, coût, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
+
+
+
+## Lot 275 — audit de la validation d'identité JWT côté Worker — 11 novembre 2026
+
+### Code client observé
+- `supabase/supabase.js` expose `getSession()`, qui appelle `c.auth.getSession()` et renvoie la session conservée par le SDK ; `me()` retourne le user inclus dans cette session.
+- `app.js` appelle `cloudAuthority()`, qui récupère le profil via `SB.myProfile()`, puis écrit une représentation locale dans `dz_de_session_v1`. Cette représentation sert à l'interface/niveau et ne constitue pas une preuve d'identité pour une ressource de sécurité.
+- Le code de connexion en ligne utilise `SB.login()` puis `cloudAuthority()`. Le mode local reste séparé (hors ligne ou `?demo`) et ne doit jamais être accepté par un endpoint de rapport.
+- Une fonction de chargement de contenu récupère l'`access_token` depuis `getSession()` et le transmet au Worker comme Bearer. Ce jeton est une donnée de transport ; son objet `user` local ne doit pas être considéré comme validé par le serveur.
+
+### Worker observé
+- `src/site-worker.js` ne vérifie actuellement pas explicitement le sujet d'un utilisateur pour un endpoint de compte. Pour les ressources protégées, il transmet le Bearer à Supabase REST et laisse le contexte Auth/RLS existant décider si une ligne de contenu est visible.
+- Cette délégation RLS est appropriée à la garde actuelle de contenus, mais ne fournit pas encore un identifiant utilisateur validé à un futur gestionnaire de rapports.
+- Aucun endpoint de rapport n'est créé dans ce lot.
+
+### Contrat d'authentification proposé pour un futur endpoint
+1. Accepter uniquement une requête HTTPS avec un unique en-tête `Authorization: Bearer <access_token>` ; rejeter les absences, formats multiples et jetons vides.
+2. Valider le jeton côté serveur auprès de l'instance Auth du projet, par exemple avec `GET /auth/v1/user` et la clé publishable/anon dans `apikey`, en transmettant le Bearer reçu. Ne pas se fier à `getSession().user`, à `localStorage`, au profil affiché ou à un `user_id` du corps.
+3. En cas de réponse Auth non 2xx, réponse invalide, utilisateur absent ou erreur réseau, refuser l'accès (fail closed) ; ne jamais basculer vers une identité locale ou une adresse e-mail saisie.
+4. Extraire le seul identifiant de compte depuis le user retourné par Auth ; cet identifiant est la source de vérité pour tout filtrage. Ignorer tout `actor_id`, `user_id`, destinataire ou adresse e-mail fournis par le navigateur.
+5. Ne renvoyer que les champs explicitement nécessaires, avec période bornée, pagination contrôlée, limites de fréquence, réponses `Cache-Control: no-store` et journalisation sans jeton ni donnée sensible.
+6. Distinguer les événements `login`, `token_refreshed` et `token_revoked`. Un user-agent est indicatif et ne prouve pas qu'il s'agit d'un appareil unique. Aucune géolocalisation n'est disponible dans les attributs audités.
+7. Si la future lecture s'appuie sur une table PostgreSQL, exécuter les requêtes avec le contexte Auth de l'utilisateur et RLS ; ne jamais exposer une clé `service_role`/secret au client. Si une source de logs externe administrative est retenue, le service doit filtrer sur l'identité validée et ne jamais accepter une identité fournie par le client.
+
+### Documentation Supabase vérifiée
+- Le guide officiel « Build a User Management App » distingue explicitement `getSession()` (session chargée depuis le stockage local, non revalidée) de `getUser()` (appel réseau Auth) et `getClaims()` (validation cryptographique des claims, selon la configuration de signature). Pour une réponse utilisateur à jour, `getUser()` est la voie retenue ici.
+- Le guide officiel « Integrating With Supabase Auth » pour les fonctions montre l'extraction du Bearer, l'appel `auth.getUser(token)` et l'utilisation du contexte Auth pour appliquer RLS.
+- Références : https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs ; https://supabase.com/docs/guides/functions/auth-legacy-jwt ; https://supabase.com/docs/reference/javascript/auth-getuser
+
+### Décision / périmètre
+- Contrat d'authentification documenté uniquement ; aucune route, fonction Edge, RPC, table, politique RLS, secret, configuration Auth ou variable Cloudflare n'a été modifié.
+- Aucun jeton Management API, service_role ou secret administratif introduit.
+- Aucun déploiement, e-mail, coût, fusion, nouvelle branche ou modification de `main`. PR #17 reste ouverte et non fusionnée.
