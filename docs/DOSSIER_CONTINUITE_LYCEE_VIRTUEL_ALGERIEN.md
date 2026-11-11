@@ -5962,3 +5962,16 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Points bloquants laissés explicitement ouverts : liste exacte des catégories issue de la maquette, règles fin de mois/DST, rétention, exposition éventuelle d'un historique à l'élève et capacités d'idempotence/réconciliation du fournisseur.
 - Aucun test n'est déclaré réussi ; aucune migration SQL, table, fonction, policy RLS, grant, secret, réglage Auth, endpoint, Worker, Cron, e-mail ou déploiement n'a été créé ou modifié. Aucun coût.
 - Le Lot 288 est documentaire ; toute migration ou opération distante requiert une revue et une autorisation distinctes.
+
+
+### Lot 289 — vérification des catégories du prototype des rapports périodiques — 11 novembre 2026
+
+- Relecture ciblée du fichier source `Texte collé(20261111-170408).txt` (759 lignes), sections de planification, contenu du rapport et paramètres e-mail.
+- Les six catégories exactes sont confirmées : `سجل الدخول` (historique des connexions), `التنبيهات الأمنية` (alertes de sécurité), `الأجهزة النشطة` (appareils actifs), `درجة الأمان` (score de sécurité), `المواقع الجغرافية` (localisations géographiques), `التوصيات الأمنية` (recommandations de sécurité). Elles sont désormais inscrites comme liste blanche dans `docs/security/LOT-288-periodic-reports-data-contract-access-matrix.md`.
+- Le prototype ne comporte aucun sélecteur de fuseau horaire. Le champ IANA `timezone` reste nécessaire au contrat technique, mais son origine et son éventuelle confirmation par l'élève restent à décider.
+- Les sources de données ne sont pas toutes disponibles : pas de journal applicatif complet, pas de catalogue d'alertes défini, pas de source fiable d'appareils actifs, pas de formule de score ni de source géographique spécifiée. Les recommandations peuvent être éditoriales, mais doivent être distinguées des observations propres au compte.
+- Les statistiques, dates, appareils, lieux, score, adresse e-mail et historique préremplis de l'aperçu sont des valeurs fictives. Le bouton de test simule un succès et n'envoie aucun e-mail.
+- Les règles de fin de mois, DST, rétention/suppression et idempotence fournisseur restent ouvertes.
+- Mise à jour documentaire du contrat : commit `2fa8d5b14be77ff93f86dce2030d5bf662efe70d`.
+- Aucun SQL exécuté, aucun objet Supabase, privilège, RLS, secret, réglage Auth/SMTP, endpoint, Worker, Cron, e-mail ou déploiement modifié. Aucun coût.
+- PR #17 reste la seule branche de travail ; ne pas fusionner ni déployer. Vérifier son état et la CI sur le HEAD après la mise à jour du dossier.
