@@ -2173,9 +2173,16 @@ function renderStudentDashboard(){
   let completed=0,total=0;
   unitProgress.forEach(u=>{completed+=u.completed;total+=u.total;});
   const pct=total?Math.round(completed/total*100):0;
-  const nextInfo=prochaineSeance();
-  const unit=nextInfo?UNITES.find(u=>String(u.n)===String(nextInfo.unite)):null;
-  const unitDone=unit?(loadSeancesFor(unit.n).done||[]):[];
+  // La prochaine séance doit provenir des unités filtrées pour le niveau du compte,
+  // et non de niveauActif, qui peut encore être en cours de synchronisation.
+  const nextUnit=units.find(function(u){
+    const done=loadSeancesFor(u.n).done||[];
+    return (u.seances||[]).some(function(lesson){return done.indexOf(lesson.n)<0;});
+  })||null;
+  const unitDone=nextUnit?(loadSeancesFor(nextUnit.n).done||[]):[];
+  const nextLesson=nextUnit?(nextUnit.seances||[]).find(function(lesson){return unitDone.indexOf(lesson.n)<0;})||null:null;
+  const nextInfo=nextUnit&&nextLesson?{unite:nextUnit.n,prochaine:nextLesson}:null;
+  const unit=nextUnit;
   const unitTotal=unit&&unit.seances?unit.seances.length:0;
   const unitCompleted=unit&&unit.seances?unit.seances.filter(x=>unitDone.indexOf(x.n)>=0).length:0;
   let g={xp:0,activeDays:[],lessons:[]},lvl={n:1,name:'مبتدئ',pct:0,next:100};
