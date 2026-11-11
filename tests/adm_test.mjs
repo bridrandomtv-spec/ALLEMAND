@@ -145,5 +145,6 @@ const dashEnd = adjs.indexOf('  async function renderStudents(){', dashStart);
 const dashCode = dashStart >= 0 && dashEnd > dashStart ? adjs.slice(dashStart, dashEnd) : '';
 t(!!dashCode && !dashCode.includes('recettes_confirmees_da') && !dashCode.includes('paiements_attente'), 'ADM-DASH-1 : la vue d accueil ne présente pas de chiffres financiers');
 t(dashCode.includes('esq5(l.action)') && dashCode.includes('esq5(l.cible_type)') && dashCode.includes('esq5(l.cible_id)'), 'ADM-DASH-1 : les champs du journal sont échappés avant affichage');
+t(adjs.includes("if(legacyBody) legacyBody.hidden = true;"), 'ADM-DASH-1 : les onglets auxiliaires masquent aussi le tableau historique');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
