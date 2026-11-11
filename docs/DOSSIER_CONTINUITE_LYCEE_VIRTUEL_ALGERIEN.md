@@ -5852,3 +5852,9 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Le premier contrôle CI du nouveau garde-fou a échoué à cause d'une expression régulière mal échappée dans le test lui-même ; le diagnostic du journal confirme une erreur de syntaxe du test, pas une erreur d'exécution de `renderStudentDashboard()`.
 - Les expressions du test ont été corrigées dans le commit `897b8c61ec6f12d70a994119f43916280c638fa7`.
 - Une nouvelle exécution CI est attendue sur le HEAD corrigé. Le lot reste non validé jusqu'à son résultat.
+
+
+#### Second diagnostic CI du Lot 284
+- Après correction de la syntaxe des regex, la CI a identifié une deuxième assertion restée sur l'ancienne version Service Worker `dz-de-v3.185.0.0.134` dans `ci/check-masar.mjs`.
+- Cette assertion a été alignée sur `dz-de-v3.185.0.0.135` dans le commit `7386114d4cc19a53a84570f506e0ed59f8d6b402`.
+- Le test du tableau de bord doit être rejoué sur le HEAD courant ; le lot reste en attente de validation CI.
