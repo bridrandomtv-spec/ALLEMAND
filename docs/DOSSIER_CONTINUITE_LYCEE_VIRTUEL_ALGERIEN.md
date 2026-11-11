@@ -6001,3 +6001,17 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Aucun SQL, migration, table, fonction, policy RLS, grant, secret, réglage Auth/SMTP, endpoint, Worker, Cron, e-mail ou purge n'a été créé, exécuté ou activé. Aucun déploiement, achat ou coût.
 - La validation CI #3011 a réussi sur le HEAD précédent `588f6ae69a08a6bac19e0a6d9710c9715b8ce22b). Elle ne valide pas les deux commits documentaires de ce Lot 291 ; la CI déclenchée sur le nouveau HEAD doit être vérifiée séparément.
 - PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`. Aucune modification directe de `main`.
+
+
+### Lot 292 — contrat de sécurité de l'endpoint d'envoi — 11 novembre 2026
+
+- Création de `docs/security/LOT-292-periodic-reports-secure-delivery-endpoint-contract.md`.
+- Séparation des appels utilisateur (Bearer token validé côté serveur auprès de Supabase Auth) et des tâches internes planifiées (authentification interne distincte).
+- Le serveur dérive l'identité du compte et résout lui-même l'adresse Auth confirmée ; aucun destinataire, statut, identifiant fournisseur ou contenu HTML n'est accepté comme autorité depuis le navigateur.
+- Contrat de génération côté serveur, contrôle d'appartenance, limites de débit, verrou/lease, idempotence par compte/période, gestion de l'état ambigu unknown et codes d'erreur expurgés.
+- Définition de 18 tests négatifs couvrant appels anonymes, jetons, accès croisés, destinataire falsifié, comptes supprimés, rapports désactivés, secret interne, concurrence, fournisseur, injection HTML, données indisponibles, pannes et fuite d'informations.
+- Le document est une spécification, pas un endpoint implémenté. Le fournisseur, les seuils de limitation et les paramètres de conservation restent à approuver ; la politique Lot 291 et les sources de données fiables sont des préconditions.
+- Aucun code Worker/endpoint, secret, réglage Supabase Auth/SMTP, SQL, table, fonction, RLS, grant, Cron, e-mail, purge ou déploiement créé/exécuté/activé. Aucun achat ni coût.
+- Commit du contrat Lot 292 : `914732e654e8751fbf5bbe7f85ee750a2e74ab4a`.
+- La CI #3011 est réussie sur le HEAD antérieur `588f6ae69a08a6bac19e0a6d9710c9715b8ce22b). Les exécutions #3012 et #3013 déclenchées par les commits Lot 291 étaient encore en cours/en attente lors de la dernière vérification ; elles ne valident pas le HEAD final Lot 292. Nouvelle vérification CI requise.
+- PR #17 reste ouverte et non fusionnée ; branche `design/prototypes-67-74-alignment`, cible `main`. Aucune modification directe de `main`.
