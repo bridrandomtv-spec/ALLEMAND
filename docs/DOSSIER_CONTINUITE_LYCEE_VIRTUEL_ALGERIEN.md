@@ -5905,3 +5905,34 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - La création d'un compte local depuis le formulaire d'inscription est bloquée par le code et vérifiée par le test CI.
 - Le libellé du bouton ne promet plus une connexion immédiate.
 - L'envoi effectif du message de confirmation n'a pas été testé et reste dépendant du SMTP Auth configuré dans le projet Supabase.
+
+
+### Lot 286 — audit du prototype « التقارير الأمنية الدورية » — 11 novembre 2026
+
+#### Prototype source examiné
+- Fichier fourni : `Texte collé(20261111-170408).txt`, maquette HTML autonome de 759 lignes.
+- La maquette contient la sélection quotidien/hebdomadaire/mensuel, le choix du jour et de l'heure, six catégories de contenu, une adresse de réception, une langue, une option d'alerte immédiate, un aperçu et un historique.
+- Elle affiche des valeurs statiques de démonstration : 24 rapports, 92 % d'ouverture, 3 alertes, une prochaine date fixe, une adresse fictive `ahmed@email.com` et des entrées d'historique préremplies.
+- `saveSchedule()` et `saveEmailSettings()` affichent seulement une notification de succès ; elles ne sauvegardent aucune préférence.
+- `sendTestEmail()` affiche une notification puis simule un succès après deux secondes via `setTimeout` ; aucun appel réseau ou fournisseur d'e-mail n'est effectué.
+- Le choix de fréquence ne fait que modifier l'état visuel des cartes ; les paramètres des champs, les interrupteurs et l'historique ne sont reliés à aucune donnée persistante.
+
+#### État de l'application sur la branche de la PR #17
+- Aucun écran intégré `data-view` relatif aux rapports périodiques n'est présent dans `index.html` ou `app.js).
+- Aucun stockage de préférences de rapport, historique de rapports ou source applicative complète des événements de connexion n'est ajouté par ce prototype.
+- `wrangler.toml` ne déclare que le binding statique `ASSETS` ; aucun `triggers.crons` n'est configuré.
+- `src/site-worker.js` sert les ressources et ne comporte pas de handler `scheduled()`.
+- Les audits antérieurs des Lots 274, 276 et 277 restent applicables : pas de planificateur Worker, pas de journal applicatif élève complet et pas de table existante adaptée pour fournir l'historique demandé.
+
+#### Revue de sécurité du worker e-mail existant
+- `worker/resend-welcome.js` est un endpoint distinct destiné à l'e-mail de bienvenue, pas un moteur de rapports périodiques.
+- Il accepte le destinataire depuis le corps de la requête et ne démontre pas de validation d'identité du compte, d'autorisation propriétaire, de limitation de débit ou de clé d'idempotence.
+- CORS ne constitue pas une authentification et ne protège pas cet endpoint contre les appels serveur-à-serveur.
+- Le fichier n'est pas relié au Worker principal dans `wrangler.toml`. Il ne doit pas être réutilisé pour envoyer des rapports sensibles sans conception et contrôles serveur séparés.
+
+#### Décision et étapes bloquantes
+- Ne pas intégrer les statistiques, dates, historiques ou confirmations de la maquette comme des données réelles.
+- Ne pas afficher un succès d'envoi tant qu'une réponse réelle du fournisseur n'a pas confirmé l'envoi.
+- La réalisation reste conditionnée aux étapes A à F déjà définies dans le dossier : stockage minimal et RLS des préférences, source fiable des événements, générateur de rapport, endpoint sécurisé et idempotent, planification, puis activation après validation du fournisseur d'e-mail.
+- Aucun SQL, table, fonction, politique RLS, secret, réglage Auth/SMTP, Worker, Cron Trigger, e-mail ou déploiement n'a été créé ou activé dans ce lot.
+- Aucun coût ni achat n'est engagé ; PR #17 reste ouverte et non fusionnée.
