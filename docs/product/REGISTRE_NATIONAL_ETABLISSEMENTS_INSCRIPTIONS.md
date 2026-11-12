@@ -148,3 +148,16 @@ Ne pas activer le registre ni l'annuaire national tant que :
 Ce document est une conception, pas une migration. Il ne crée pas de fausse liste d'établissements et ne prétend pas disposer d'un accès au registre national du ministère.
 
 Aucune table, colonne, policy, fonction, grant, Auth, Storage ou donnée Supabase n'est modifiée. Aucun paramètre Cloudflare, déploiement, merge ou changement de `main`. La PR #17 reste ouverte.
+
+
+## 11. Lot 314 — inventaire des sources officielles (12 novembre 2026)
+
+Une source primaire a été confirmée : le JORADP. Le décret exécutif n° 24-224 du 2 juillet 2024 (JO n° 48 du 14 juillet 2024) publie des annexes de création et de suppression de lycées pour la rentrée 2022-2023, avec code wilaya, code commune, numéro d'identification nationale, dénomination et adresse : https://www.joradp.dz/FTP/jo-francais/2024/F2024048.pdf. Les numéros 9609 à 9662 apparaissent dans les entrées de création reproduites.
+
+Le décret exécutif n° 22-253 (JO n° 48 du 17 juillet 2022) contient des listes similaires pour la rentrée 2021-2022 : https://www.joradp.dz/FTP/jo-francais/2022/F2022048.pdf. Le décret n° 21-519 (JO n° 97 du 27 décembre 2021) constitue une source historique complémentaire : https://www.joradp.dz/FTP/jo-francais/2021/F2021097.pdf. L'article 82 de la loi n° 08-04 prévoit que la création et la suppression des lycées interviennent par décret : https://www.premier-ministre.gov.dz/fr/document/loi-n0-08-04-portant-loi-d-orientation-sur-l-education-nationale.
+
+**Limite essentielle :** ces textes sont des journaux d'événements juridiques, pas un instantané exhaustif des lycées actifs en 2026-2027. Les statistiques ONS sont agrégées et les annuaires privés/cartographiques ne sont pas des sources officielles exhaustives. Aucun export public consolidé et actualisé n'a été confirmé pendant la recherche (cela ne prouve pas qu'un export interne n'existe pas).
+
+Décision : demander au ministère/DEW un export officiel des établissements actifs, accompagné des identifiants, codes géographiques, statuts, dates d'effet, provenance et procédure de mise à jour. Ne pas reconstituer une liste dite exhaustive à partir des seuls actes partiels. Aucun import Supabase ni activation d'annuaire/invitations nationales. Rapport détaillé : `docs/product/LOT-314-INVENTAIRE-SOURCES-OFFICIELLES-LYCEES.md`.
+
+Lot suivant : 315 — maquette de prévisualisation/import sur données synthétiques explicitement fictives, sans écriture dans Supabase.
