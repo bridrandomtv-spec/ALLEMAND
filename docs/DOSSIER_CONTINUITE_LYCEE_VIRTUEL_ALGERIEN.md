@@ -7292,3 +7292,21 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Ces 11 deltas ne constituent pas un baseline initial ni une chaîne de reconstruction complète ; le journal de migration n'offre aucun rollback pour les 27 entrées. Pas de PostgreSQL isolé disponible, donc aucun test de restauration/rejeu exécuté.
 - Aucune écriture SQL, DDL, migration, modification Auth/RLS/GRANT/Storage en base active, création de ressource payante, modification client, déploiement Cloudflare, changement `main` ou merge PR #17.
 - Étape suivante : établir le baseline initial et l'inventaire des objets dépendants (extensions, rôles, fonctions, triggers, policies, grants, publications Realtime, Storage), puis vérifier la reconstruction dans un PostgreSQL isolé avant d'ajouter des migrations nationales Messenger.
+
+
+---
+
+## LOT 343 — Inventaire baseline PostgreSQL vivant (12 novembre 2026)
+
+- Inventaire en lecture seule des catalogues Supabase actifs : schémas `auth`, `extensions`, `graphql`, `graphql_public`, `public`, `realtime`, `storage`, `supabase_migrations`, `vault` ; tables de base : public 37, auth 27, realtime 10, storage 10, supabase_migrations 1, vault 1.
+- RLS activé sur les 37 tables public et 10 tables storage ; FORCE RLS non activé sur ces tables lors de l'instantané.
+- Extensions : pg_stat_statements 1.11, pgcrypto 1.3, plpgsql 1.0, supabase_vault 0.3.1, uuid-ossp 1.1.
+- Fonctions : public 74 dont 71 SECURITY DEFINER ; storage 24 dont 3 ; auth 4 dont 0. Les fonctions SECURITY DEFINER publiques ont un search_path défini ; `msg_open_direct` utilise `search_path=''`.
+- Triggers : public 37, storage 13, auth 1. Policies : public 71 couvrant 34 tables ; storage 5 couvrant `storage.objects`.
+- Realtime : `supabase_realtime` publie `public.msg_conversations` et `public.msg_messages` ; publication interne distincte contient huit partitions `realtime.messages_2026_10_12` à `2026_10_18`.
+- Storage : bucket `prive`, privé, `file_size_limit=NULL`, `allowed_mime_types=NULL`. Les restrictions Messenger reposent sur policies/métadonnées et ne prouvent pas une inspection du contenu binaire.
+- Les politiques permissives Storage incluent des règles génériques de propriétaire et les règles Messenger dédiées ; elles se combinent par OR et doivent être testées ensemble.
+- Rapport : `docs/product/LOT-343-INVENTAIRE-BASELINE-POSTGRESQL-VIVANT.md`.
+- Le rapport est un inventaire de catalogues, pas un dump reconstructible. Il manque encore DDL complet, définitions fonctions/triggers, ACL détaillées, séquences/default privileges, publication complète, dépendances des services Supabase et protocole de restauration.
+- Aucun SQL d'écriture, DDL, migration, changement Auth/RLS/GRANT/Storage, export de données personnelles, ressource payante, modification client, déploiement Cloudflare, changement `main` ou merge PR #17. Pas de MFA/2FA ni facturation.
+- Étape suivante : établir un baseline applicatif public (hors schémas internes managés) et un manifeste des dépendances Supabase, puis comparer ce baseline à un environnement isolé avant tout développement des invitations nationales.
