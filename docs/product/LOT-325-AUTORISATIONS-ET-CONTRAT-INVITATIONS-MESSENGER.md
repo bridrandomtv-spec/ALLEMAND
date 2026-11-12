@@ -66,9 +66,9 @@ Le schéma limite le MIME déclaré et la taille à 5 Mio, mais le MIME envoyé 
 - `blocked` : action empêchée par un blocage actif ; aucun DM n'est créé.
 
 Transitions permises :
-- expéditeur : `pending → cancelled) ;
-- destinataire : `pending → accepted|declined) ;
-- traitement serveur : `pending → expired) après échéance.
+- expéditeur : `pending → cancelled` ;
+- destinataire : `pending → accepted|declined` ;
+- traitement serveur : `pending → expired` après échéance.
 
 Aucune transition ne doit permettre à l'expéditeur de s'auto-accepter ou à un tiers de répondre.
 
@@ -82,7 +82,7 @@ Aucune transition ne doit permettre à l'expéditeur de s'auto-accepter ou à un
 6. L'acceptation vérifie à nouveau l'identité du destinataire, l'état `pending`, l'expiration, les blocages et l'éligibilité des deux affiliations.
 7. L'acceptation crée conversation + deux membres + événement d'audit dans une seule transaction. Si une étape échoue, rien n'est créé.
 8. Une invitation ne peut créer qu'une seule conversation directe ; les appels répétés renvoient le résultat existant.
-9. Le client ne peut ni insérer directement un DM, ni ajouter le correspondant à `msg_members), ni changer l'état d'une invitation hors RPC autorisée.
+9. Le client ne peut ni insérer directement un DM, ni ajouter le correspondant à `msg_members`, ni changer l'état d'une invitation hors RPC autorisée.
 10. Les événements d'audit ne contiennent ni matricule en clair, ni document, ni jeton secret.
 11. Les refus, expirations et annulations ne créent aucune conversation.
 12. La suppression/blocage ultérieur respecte les droits et ne réactive pas une invitation ancienne.
@@ -138,3 +138,26 @@ Ces noms sont des contrats de conception, pas des fonctions présentes ni déplo
 ## 8. Garde-fous
 
 Aucun changement SQL/RLS/GRANT/Auth/Storage, aucune migration, aucune écriture Supabase active, aucun déploiement, aucun merge, aucune modification de `main). PR #17 reste ouverte. Aucun MFA/2FA et aucune facturation.
+
+
+## 9. Précisions techniques après relecture des triggers
+
+### Course critique sur l'ajout du second membre
+
+`msg_guard_direct` cherche le membre opposé au moment du INSERT et ne valide `msg_can_dm` que si cette ligne est déjà visible. Deux insertions concurrentes de membres distincts peuvent chacune ne pas voir l'insertion non validée de l'autre au niveau d'isolation usuel READ COMMITTED. Le contrôle du trigger n'est donc pas un verrou transactionnel garantissant à lui seul la règle DM.
+
+**Exigence :** l'acceptation d'invitation doit verrouiller la ligne d'invitation et sérialiser la création du DM ; les deux membres doivent être insérés dans la même transaction serveur. Le contrôle de cohérence doit porter sur le couple complet, pas sur la présence opportuniste d'un autre membre.
+
+### Fermeture des écritures directes
+
+La future migration devra examiner les privilèges et policies effectifs sur :
+- `msg_conversations` : refuser l'INSERT client pour `type='direct'`, conserver uniquement le chemin de création de groupe réservé aux personnes habilitées ;
+- `msg_members` : interdire l'INSERT client sur les conversations directes, y compris l'auto-ajout ; définir séparément l'adhésion aux groupes ;
+- `msg_invites` : aucune modification d'état directe par le client ; opérations limitées aux RPC dédiées ;
+- séquences et fonctions : vérifier les privilèges EXECUTE et l'exposition des fonctions `SECURITY DEFINER`, avec `search_path` fixé et contrôle explicite de `auth.uid()`.
+
+Les grants SQL et RLS doivent être vérifiés ensemble : retirer un droit trop large sans vérifier les policies, ou l'inverse, ne suffit pas. La migration doit aussi préserver la création de groupes officiels par les modérateurs habilités et ne pas casser les conversations existantes.
+
+### Limite du client actuel
+
+`msgOpenDirect` ne recherche les conversations communes que dans les 500 adhésions les plus récentes du compte courant. Cela peut ne pas retrouver une ancienne conversation pour un compte très actif. À terme, remplacer cette recherche client par une RPC paginée/serveur qui vérifie les deux membres et retourne uniquement une conversation déjà accessible. Ce point n'autorise jamais à créer un DM depuis le client.
