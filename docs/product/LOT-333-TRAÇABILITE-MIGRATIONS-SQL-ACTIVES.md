@@ -79,3 +79,8 @@ Si le SQL source exact ne peut pas être retrouvé, la solution correcte est de 
 ## Actions explicitement non réalisées
 
 Aucune migration SQL appliquée, aucune requête d'écriture, aucune modification Auth/RLS/GRANT/Storage, aucune branche Supabase créée, aucun déploiement Cloudflare, aucun changement sur `main), aucune fusion de PR. Aucun travail de facturation ou MFA/2FA entrepris.
+
+
+## Addendum Lot 341 — correction de provenance (12 novembre 2026)
+
+L'inspection complémentaire de `supabase_migrations.schema_migrations` sur le projet actif révèle que les corps SQL ne sont pas perdus : les 27 entrées ont chacune un élément dans `statements`, récupérable par SELECT. Le champ `rollback` est NULL pour les 27. GitHub ne contient toujours aucun fichier/commit sous `supabase/migrations/`. Le Lot 341 corrige donc l'affirmation antérieure : `list_migrations` n'expose que noms/versions, mais le catalogue PostgreSQL contient aussi les corps exacts. Ces 27 deltas ne remplacent pas un baseline initial complet.
