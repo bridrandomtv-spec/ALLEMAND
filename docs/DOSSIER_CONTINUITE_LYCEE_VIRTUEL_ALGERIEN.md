@@ -6579,3 +6579,16 @@ L'enquête a été menée directement dans le dépôt GitHub, les migrations et 
 **Conséquence :** ne pas ouvrir la recherche nationale ni les invitations inter-lycées en s'appuyant sur wilaya/niveau/filière ou sur la vérification actuelle. Ne pas assouplir `msg_can_dm`. Une source institutionnelle ou un processus d'admission administratif traçable devra être conçu avant la migration des invitations.
 
 Aucun changement applicatif ou Supabase, aucune migration/SQL d'écriture, aucun changement Auth/RLS/GRANT/Storage/Cloudflare, aucun merge ni déploiement. PR #17 reste ouverte, `main` inchangée.
+
+
+## Lot 313 — conception du registre national des établissements et inscriptions (12 novembre 2026)
+
+- Le travail continue sans solliciter l'utilisateur pour localiser une source technique : l'audit avait établi que la source d'affiliation n'existe pas dans le schéma actif inspecté.
+- Création de `docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md` : modèle séparant référentiel des lycées et inscriptions annuelles individuelles, preuves, rôles de validation, imports traçables, cycle annuel, confidentialité et contrat de découverte Messenger.
+- Piste officielle vérifiée : Bulletin officiel du ministère n° 618 (juillet–août 2022) publie des actes de création/annulation d'établissements ; utile comme source juridique de changements mais pas comme annuaire national complet et actualisé. URL : https://www.education.gov.dz/wp-content/uploads/2023/06/boen-618-1.pdf
+- Les tableaux ONS trouvés fournissent des effectifs agrégés de lycées par wilaya pour des années antérieures ; ils ne contiennent pas les identités des établissements ni les inscriptions des élèves : https://www.ons.dz/IMG/pdf/Education-3.pdf
+- Aucun endpoint ou export officiel exhaustif actualisé n'a été confirmé. Étape suivante : rechercher/obtenir un export officiel nominatif ou un protocole de validation via ministère/DEW ; ne pas inventer le référentiel à partir de données de maquette ou de sources non autorisées.
+- Décision : référentiel géographique versionné ; code officiel établissement ; inscriptions historisées par année scolaire ; preuve contrôlée (code à usage unique émis par établissement privilégié, import institutionnel signé en alternative, vérification documentaire minimale en dernier recours). Un profil professeur/admin ordinaire ne reçoit pas automatiquement le droit de valider des inscriptions.
+- Annuaire Messenger uniquement pour comptes avec inscription courante vérifiée, profils minimaux, pagination, rate-limit, anti-énumération, préférences et blocage bilatéral. Les profils en attente/non inscrits ne sont pas découvrables.
+- Aucun code applicatif ni SQL/Migration/RLS/GRANT/Auth/Storage exécuté ou appliqué ; aucun changement Cloudflare, déploiement, merge ou modification de `main`. PR #17 reste ouverte et non fusionnée.
+- CI du commit documentaire à vérifier avant de qualifier le lot de validé.
