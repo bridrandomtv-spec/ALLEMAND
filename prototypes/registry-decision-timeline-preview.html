@@ -12,7 +12,7 @@ header{background:#123d2d;color:#fff;padding:24px max(18px,calc((100% - 1160px)/
 header small{color:#c9e6d4}header h1{font-size:25px;margin:8px 0}header p{margin:0;color:#deebe2;line-height:1.8}
 main{max-width:1160px;margin:22px auto;padding:0 18px}
 .notice{background:#fff8e7;border:1px solid #e6c978;color:#674c15;border-radius:12px;padding:13px 16px;line-height:1.8}
-.toolbar{display:grid;grid-template-columns:minmax(220px,1fr) minmax(180px,.65fr) auto;gap:10px;margin:16px 0}
+.toolbar{display:grid;grid-template-columns:minmax(190px,1fr) minmax(170px,.7fr) minmax(190px,.8fr) auto;gap:10px;margin:16px 0}
 input,select{border:1px solid #cbd8cf;border-radius:9px;padding:11px;background:#fff;color:#1b3024;min-width:0}
 button{border:1px solid #cbd8cf;background:#fff;color:#1e4732;border-radius:9px;padding:10px 14px;cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #86b7a0;outline-offset:2px}
@@ -59,12 +59,14 @@ footer{max-width:1160px;margin:18px auto 35px;padding:0 18px;color:#69776e;font-
       <option value="SYN-CASE-01">SYN-CASE-01 — مؤسسة جديدة</option>
       <option value="SYN-CASE-02">SYN-CASE-02 — تغيير وصفي</option>
     </select>
-    <button id="export" class="primary" type="button">تصدير JSON تجريبي</button>
+    <input id="ledger-file" type="file" accept="application/json,.json" aria-label="استيراد سجل تجريبي من Lot 317">
+    <button id="export" class="primary" type="button">تصدير عرض JSON</button>
   </div>
+  <p id="import-status" class="sub" role="status" aria-live="polite">وضع العرض: بيانات تجريبية مدمجة. يمكن استيراد ملف JSON تجريبي صادر عن Lot 317 للتحقق محلياً.</p>
   <div class="layout">
     <section class="panel" aria-labelledby="timeline-heading">
       <h2 id="timeline-heading">التسلسل الزمني</h2>
-      <p class="sub">الأحداث مرتبة حسب رقمها داخل كل ملف. اختر حدثاً لعرض تفاصيله.</p>
+      <p class="sub">الأحداث مرتبة حسب رقمها داخل كل ملف. اختر حدثاً لعرض تفاصيله. عند الاستيراد، تُفحص سلسلة SHA-256 محلياً قبل العرض.</p>
       <ol id="timeline" class="timeline" aria-live="polite"></ol>
       <p id="empty" class="empty" hidden>لا توجد أحداث مطابقة للبحث.</p>
     </section>
@@ -80,7 +82,7 @@ footer{max-width:1160px;margin:18px auto 35px;padding:0 18px;color:#69776e;font-
   البصمات المعروضة رموز اصطناعية للشرح وليست SHA-256 محسوبة أو قابلة للتحقق.
 </footer>
 <script type="module">
-const events = [
+const demoEvents = [
  {caseId:"SYN-CASE-01",seq:1,type:"revue_operateur",label:"مراجعة الموظف",role:"موظف مراجعة",actor:"SYN-OP-01",at:"2026-11-12 09:10",reason:"تمت مقارنة المعرّف مع سجل الدفعة التجريبية.",evidence:"SYN-SOURCE-01",hash:"DEMO-HASH-CASE01-01",previous:"DEMO-GENESIS-CASE01"},
  {caseId:"SYN-CASE-01",seq:2,type:"correction_demandee",label:"طلب استكمال",role:"مسؤول اعتماد",actor:"SYN-AP-02",at:"2026-11-12 09:35",reason:"يلزم إرفاق مرجع القرار المؤسسي قبل اعتماد السجل.",evidence:"SYN-NOTE-02",hash:"DEMO-HASH-CASE01-02",previous:"DEMO-HASH-CASE01-01"},
  {caseId:"SYN-CASE-01",seq:3,type:"revue_operateur",label:"مراجعة بعد الاستكمال",role:"موظف مراجعة",actor:"SYN-OP-03",at:"2026-11-12 10:05",reason:"تم فحص المرجع الإضافي في هذا السيناريو الوهمي.",evidence:"SYN-DOC-03",hash:"DEMO-HASH-CASE01-03",previous:"DEMO-HASH-CASE01-02"},
@@ -88,6 +90,7 @@ const events = [
  {caseId:"SYN-CASE-02",seq:1,type:"revue_operateur",label:"مراجعة الموظف",role:"موظف مراجعة",actor:"SYN-OP-11",at:"2026-11-12 11:00",reason:"تم رصد اختلاف وصفي بين نسختين اصطناعيتين.",evidence:"SYN-SOURCE-11",hash:"DEMO-HASH-CASE02-01",previous:"DEMO-GENESIS-CASE02"},
  {caseId:"SYN-CASE-02",seq:2,type:"quarantaine",label:"حجر للمراجعة",role:"مسؤول اعتماد",actor:"SYN-AP-12",at:"2026-11-12 11:25",reason:"لا يكفي الاختلاف الوصفي وحده لإثبات تغيير رسمي.",evidence:"SYN-REVIEW-12",hash:"DEMO-HASH-CASE02-02",previous:"DEMO-HASH-CASE02-01"}
 ];
+let events=[...demoEvents];
 const $=id=>document.getElementById(id);
 let selectedKey="";
 function filtered(){
@@ -110,9 +113,10 @@ function showDetail(e){
  addField(dl,"معرّف الفاعل التجريبي",e.actor);
  addField(dl,"التاريخ والوقت التوضيحي",e.at);
  addField(dl,"التبرير",e.reason);
- addField(dl,"مرجع تجريبي",e.evidence);
- addField(dl,"البصمة التوضيحية",e.hash,"hash");
- addField(dl,"بصمة الحدث السابق التوضيحية",e.previous,"hash");
+ addField(dl,"مرجع المستند",e.evidence);
+ if(e.sourceReference)addField(dl,"مرجع مصدر السجل",e.sourceReference);
+ addField(dl,e.hash.startsWith("DEMO-")?"البصمة التوضيحية":"بصمة SHA-256 للحدث",e.hash,"hash");
+ addField(dl,e.previous.startsWith("DEMO-")?"بصمة الحدث السابق التوضيحية":"بصمة الحدث السابق",e.previous,"hash");
  render();
 }
 function render(){
