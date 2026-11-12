@@ -237,3 +237,32 @@ Le Lot 319 ajoute un adaptateur Node vers le modèle de chronologie et un import
 La vérification porte uniquement sur la cohérence cryptographique interne du fichier. Elle ne certifie ni l'identité des acteurs, ni les dates, ni l'autorité des pièces, ni l'inaltérabilité face à un acteur pouvant recalculer toute la chaîne. L'export de la page reste un export de vue, pas le journal original signé.
 
 Tests CI : prototypes/registry-decision-timeline-adapter.test.mjs et prototypes/registry-decision-timeline-preview.test.mjs. Aucun dossier réel, appel réseau, persistance, écriture Supabase, migration ou déploiement.
+
+
+## Lot 320 — validation sémantique du journal de décisions (12 novembre 2026)
+
+### Constat de revue
+- Les Lots 317–319 vérifiaient la cohérence SHA-256, l'ordre des séquences et les combinaisons rôle/type, mais ne rejouaient pas intégralement les transitions métier lors de la vérification d'un JSON importé.
+- Un fichier pouvait donc présenter une chaîne de hash recalculée cohérente tout en décrivant une séquence impossible (par exemple deux revues opérateur successives sans demande de correction/réouverture, ou une approbation sans revue préalable).
+
+### Correctifs préparés sur la branche PR #17
+- `prototypes/registry-decision-ledger-core.mjs` : validation centralisée de l'en-tête, des champs obligatoires, des rôles/types, de la séparation des tâches et des transitions de revue/correction/décision/réouverture ; `appendDecisionEvent` et `verifyDecisionLedger` appliquent la même machine d'état.
+- `prototypes/registry-decision-ledger-core.test.mjs` : ajout de chaînes synthétiques dont les hashes sont valides mais dont les transitions sont interdites ; l'import/export doit les refuser.
+- `prototypes/registry-decision-timeline-preview.html` : même contrôle sémantique exécuté localement dans le navigateur avant d'afficher un journal.
+- `prototypes/registry-decision-timeline-preview.test.mjs` : assertions de présence des gardes de transitions côté navigateur.
+
+### Limites inchangées
+- Les identifiants SYN restent fictifs ; les rôles et identités ne sont pas authentifiés.
+- SHA-256 prouve seulement la cohérence de la chaîne présentée, pas l'identité, l'horodatage fiable, l'autorité de la preuve ni l'absence d'un recalcul complet malveillant.
+- Aucun dossier réel, aucune collecte, aucun service réseau, aucun stockage durable, aucune connexion Supabase, Auth, RLS, GRANT ou Storage.
+- Aucun SQL, aucune migration, aucun changement de base active, aucun déploiement Cloudflare et aucune fusion.
+
+### Validation
+- Les tests Lot 320 sont ajoutés aux tests existants Lot 317 et Lot 319 ; le workflow CI les exécute via les mêmes commandes Node.
+- Attendre le résultat CI du HEAD final avant de déclarer le lot validé.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
+### Décision et suite
+- GO pour durcir et tester les prototypes hors ligne avec des données SYN uniquement.
+- NO-GO pour le schéma SQL/migration et les tests PostgreSQL contre un environnement réel tant que le protocole institutionnel n'a pas été validé et qu'un environnement isolé n'a pas été autorisé.
+- Prochaine étape après validation institutionnelle : rédiger le modèle de données et la migration versionnée, puis exécuter les tests d'intégration PostgreSQL dans une base jetable dédiée, jamais dans la base active.
