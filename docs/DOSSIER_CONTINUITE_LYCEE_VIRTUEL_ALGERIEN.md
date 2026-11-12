@@ -7397,3 +7397,20 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucune écriture SQL/DDL/migration, modification Auth/RLS/GRANT/Storage, donnée personnelle consultée, ressource payante créée ou déploiement Cloudflare.
 - PR #17 reste ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
 - Étape suivante : spécifier le contrat de consentement et de blocage, inventorier toutes les voies RPC/INSERT encore ouvertes, puis préparer des tests multi-comptes sur PostgreSQL isolé avant toute modification de la base active.
+
+
+---
+
+## 14. Lot 348 — Cartographie des points d'entrée Messenger (12 novembre 2026)
+
+- Rapport : `docs/product/LOT-348-CARTOGRAPHIE-POINTS-ENTREE-MESSENGER.md`.
+- Cartographie des méthodes client `SB`, de la vue `msg.js`, des opérations directes sur les tables, du RPC DM et des policies vivantes.
+- `msg.js` passe par `window.SB` et ne fait pas d'écriture directe dans les tables `msg_*`. `msgOpenDirect()` ne crée plus de DM ; il retrouve seulement un DM partagé ou retourne `msg_invitation_requise`.
+- **Trois voies serveur de DM sans invitation restent ouvertes** : RPC `msg_open_direct(uuid)` ; INSERT direct d'une conversation `type='direct'` par son créateur ; auto-ajout du deuxième membre via `msg_member_ok` lorsque le DM contient déjà un membre compatible. Aucun chemin ne consulte un enregistrement d'invitation.
+- La fonction vivante `msg_member_ok` est plus stricte que celle du fichier versionné `supabase/msg_schema.sql` : elle réserve le premier membership au créateur et permet le deuxième membre compatible à s'ajouter lui-même. La version durcie correspond à l'archive migration `20261030132512_close_direct_chat_join_and_lock_trigger_functions.sql`. Elle ne garantit toutefois pas le consentement.
+- **Drift dépôt/base confirmé** : ne pas réappliquer `supabase/msg_schema.sql` à l'aveugle ; il pourrait remplacer une fonction vivante plus stricte par une définition plus faible. L'archive est source de provenance, pas une chaîne de déploiement.
+- `msgCreateGroup()` réalise un INSERT groupe, mais la policy vivante exige un modérateur ; ne pas confondre ce chemin avec l'ouverture d'un DM.
+- `msgSend()` est un INSERT de message sous RLS ; il ne crée pas de conversation. `msgUpload()` passe par Storage puis métadonnées, avec politiques distinctes.
+- Les tests statiques vérifient l'absence d'INSERT DM dans le client, mais ne testent pas les appels RPC directs, INSERT REST, consentement ni concurrence. Prévoir tests PostgreSQL isolés multi-comptes.
+- Contrat cible : seule opération transactionnelle serveur depuis une invitation acceptée ; fermer INSERT DM client, auto-ajout membre DM et RPC historique ; valider destinataire, expiration, affiliation officielle, blocage bilatéral ; créer conversation + deux membres + audit atomiquement et idempotemment.
+- Aucun changement base/code runtime, aucun déploiement ou ressource payante ; PR #17 reste ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
