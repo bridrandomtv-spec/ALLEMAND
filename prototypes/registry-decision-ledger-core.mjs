@@ -6,7 +6,7 @@ const APPROVER_EVENTS = new Set(["accepte", "rejete", "quarantaine", "correction
 const FINAL_DECISIONS = new Set(["accepte", "rejete", "quarantaine"]);
 const REOPENING_EVENTS = new Set(["correction_demandee", "reouvert"]);
 
-function clean(value) { return String(value ?? "").replace(/[\\r\\n\\t]+/g, " ").trim(); }
+function clean(value) { return String(value ?? "").replace(/[\r\n\t]+/g, " ").trim(); }
 function required(value, label) {
   const v = clean(value);
   if (!v) throw new Error(label + " obligatoire.");
