@@ -41,3 +41,12 @@ test("rejects unknown roles and illegal operator decisions", () => {
   assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "X", role: "admin", at: "t1", reason: "x" }), /Rôle non autorisé/);
   assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "X", role: "operateur", at: "t1", reason: "x" }), /interdit à l'opérateur/);
 });
+
+test("allows a documented correction cycle and requires a final decision before reopening", () => {
+  const ledger = reviewed();
+  assert.throws(() => appendDecisionEvent(ledger, { type: "reouvert", actorId: "SYN-AP-2", role: "approbateur", at: "t2", reason: "Réouverture", evidenceReference: "SYN-REF" }), /Aucune décision finale/);
+  appendDecisionEvent(ledger, { type: "correction_demandee", actorId: "SYN-AP-2", role: "approbateur", at: "t2", reason: "Compléter la référence." });
+  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-3", role: "operateur", at: "t3", reason: "Correction effectuée." });
+  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-4", role: "approbateur", at: "t4", reason: "Dossier corrigé.", evidenceReference: "SYN-ACT-04" });
+  assert.equal(verifyDecisionLedger(ledger).valid, true);
+});
