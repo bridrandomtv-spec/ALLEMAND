@@ -6787,3 +6787,30 @@ Attendre le résultat de la CI du Lot 316-B, puis poursuivre avec une revue de r
 ### Suite proposée
 
 Après succès CI, effectuer une revue statique ciblée du traitement des priorités, des rôles et des exports. Ensuite, concevoir une maquette d'écran de revue administrative hors ligne, sans brancher de données réelles ni de service d'authentification.
+
+
+## Lot 316-D — maquette UX de revue administrative (12 novembre 2026)
+
+### Livrables
+
+- `prototypes/registry-review-preview.html` : maquette autonome RTL, filtres P1/P2/P3, recherche, détails, revue opérateur et approbateur.
+- `prototypes/registry-review-preview.test.mjs` : contrôle automatisé des garde-fous d'isolation.
+- `docs/product/LOT-316D-MAQUETTE-REVUE-ADMINISTRATIVE.md` : guide, limites et décision.
+- `docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md` : section Lot 316-D ajoutée.
+- Workflow : vérification des deux nouveaux fichiers et exécution du test Node dédié.
+
+### Sécurité
+
+- Quatre identifiants SYN fictifs uniquement.
+- Aucune requête réseau, API, Supabase, Auth, RLS, Storage, Cloudflare ou persistance navigateur.
+- Les actions sont simulées en mémoire ; rechargement = remise à zéro.
+- Les identifiants opérateur/approbateur sont libres et non authentifiés ; aucune décision réelle, signature ou traçabilité institutionnelle n'est créée.
+- Maquette hors navigation et hors production.
+
+### État CI
+
+Le run du Lot 316-C `43286385705` est terminé avec succès ; les tests Lot 315, 316-B et 316-C ont réussi. Le test du Lot 316-D vient d'être ajouté et doit être confirmé dans le run déclenché par le nouveau commit de workflow.
+
+### Décision
+
+GO pour revue UX locale sur données fictives. NO-GO pour l'usage administratif réel. PR #17 reste ouverte, non fusionnée ; aucun déploiement ni changement Supabase.
