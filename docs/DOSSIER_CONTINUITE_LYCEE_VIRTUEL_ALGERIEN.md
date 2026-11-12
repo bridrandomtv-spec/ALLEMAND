@@ -6441,3 +6441,19 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Aucun changement applicatif, SQL, migration, RLS, GRANT, Auth, Storage ou données Supabase. Aucun MFA/2FA, paiement, déploiement, merge ou changement sur `main`. PR #17 reste ouverte et non fusionnée.
 - Prochaine priorité : décider et corriger la matrice de rôles DM (élève ↔ professeur) côté serveur, avec tests négatifs, avant toute adaptation visuelle des niveaux 0→7. Les autres niveaux exigent une définition explicite des rôles, permissions, destinataires et notifications.
 
+
+
+## Lot 306 — nouvelle orientation : Messenger scolaire (12 novembre 2026)
+
+- Préférence produit clarifiée par l'utilisateur : il souhaite un **véritable système de messagerie de type Messenger de Facebook/Meta**, plutôt qu'une page structurée autour de 8 niveaux fixes.
+- Décision UX : expérience conversationnelle centrée sur la boîte de réception, la recherche, les DM autorisés, les groupes, le fil, les pièces jointes, les états de présence/lecture et les notifications. Les niveaux 0→7 deviennent au mieux des catégories ou actions institutionnelles secondaires, jamais la navigation principale.
+- Spécification produit : [docs/product/MESSAGERIE_MESSENGER_SCOLAIRE_SPEC.md](product/MESSAGERIE_MESSENGER_SCOLAIRE_SPEC.md), commit `e1255333987af3ea10edf15a30983c72f1c72bdb`.
+- La référence est l'expérience d'usage Messenger (liste de conversations, fil, détails, mobile), sans copier marque, identité ou code Meta.
+- La plateforme conserve son backend `msg_*` existant : `msg_conversations`, `msg_members`, `msg_messages`, `msg_attachments`, `msg_blocks`, `msg_reports`, `msg_log`. Aucun second `public.messages`.
+- Fonctions déjà présentes côté client : liste des conversations, lecture paginée, envoi, DM, groupes, upload, édition/suppression, blocage, signalements et modération. Realtime est déjà utilisé pour les nouveaux messages et une présence agrégée ; ne pas afficher « écrit… » ni les reçus de lecture comme actifs avant leur implémentation réelle.
+- Évolutions futures (après audit) : reçus individuels par membre, saisie éphémère, réactions, réponses, épingles, archivage, notes vocales et recherche dans les messages. Les statuts doivent être basés sur des données/événements réels, jamais simulés.
+- Garde sécurité prioritaire : corriger la matrice des rôles et le rattachement pédagogique de `msg_can_dm(a,b)`, qui ne suffit pas actuellement à interdire le DM élève→élève. Tests négatifs RLS requis avant ouverture générale.
+- Découpage prévu : A UX shell Messenger dans `msg.js`; B sécurité DM; C MVP conversation réel; D états sociaux; E interactions avancées; F services scolaires (groupes de classe, parents et transfert administratif).
+- Aucun code applicatif, SQL, migration, RLS, GRANT, Auth, Storage ou donnée Supabase modifié dans ce lot de conception. Aucun MFA/2FA, paiement/facturation, dépendance frontend, déploiement, merge ou changement sur `main`. PR #17 reste ouverte et non fusionnée.
+- Prochaine étape : démarrer la composition UX de la boîte de réception Messenger dans la vue existante, en parallèle de la préparation des tests de rôle ; toute migration reste séparée et soumise à validation avant application.
+
