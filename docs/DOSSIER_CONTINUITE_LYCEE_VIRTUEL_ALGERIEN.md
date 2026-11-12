@@ -6592,3 +6592,15 @@ Aucun changement applicatif ou Supabase, aucune migration/SQL d'écriture, aucun
 - Annuaire Messenger uniquement pour comptes avec inscription courante vérifiée, profils minimaux, pagination, rate-limit, anti-énumération, préférences et blocage bilatéral. Les profils en attente/non inscrits ne sont pas découvrables.
 - Aucun code applicatif ni SQL/Migration/RLS/GRANT/Auth/Storage exécuté ou appliqué ; aucun changement Cloudflare, déploiement, merge ou modification de `main`. PR #17 reste ouverte et non fusionnée.
 - CI du commit documentaire à vérifier avant de qualifier le lot de validé.
+
+
+## Lot 314 — inventaire des sources officielles du registre des lycées (12 novembre 2026)
+
+- Recherche documentaire terminée et consignée dans `docs/product/LOT-314-INVENTAIRE-SOURCES-OFFICIELLES-LYCEES.md`.
+- Source primaire confirmée : JORADP, décret exécutif n° 24-224 (JO n° 48 du 14 juillet 2024), annexes de créations/suppressions applicables à la rentrée 2022-2023. Les lignes contiennent codes wilaya/commune, numéro d'identification nationale, dénomination et adresse. Source : https://www.joradp.dz/FTP/jo-francais/2024/F2024048.pdf.
+- Sources complémentaires : décret n° 22-253 (JO n° 48 du 17 juillet 2022) et décret n° 21-519 (JO n° 97 du 27 décembre 2021). L'article 82 de la loi n° 08-04 établit que la création/suppression des lycées intervient par décret.
+- Ces actes constituent un historique partiel de changements, pas un registre exhaustif et actuel des lycées actifs en 2026-2027. Aucun export public centralisé et actualisé n'a été confirmé. Les annuaires privés/cartographiques et statistiques agrégées ONS ne sont pas des substituts.
+- Décision : demande institutionnelle d'un export courant au ministère/DEW, avec codes, identifiants, statuts, dates d'effet, provenance et mécanisme de mise à jour. NO-GO pour une liste publique prétendument exhaustive, import production ou annuaire/invitations Messenger avant validation officielle.
+- Prochaine étape : Lot 315, prototype de prévisualisation/import avec données synthétiques, sans écriture Supabase.
+- Contrôle CI du HEAD précédent `5e712a7b83ef30ad77eb2d8a5047783da15feb98` : run 43279775155, échec unique au contrôle portail public car `ci/check-public-portal.mjs` attend le cache-busting CSS `v176`. Les validations structurelles, données, JavaScript, messagerie et administration listées avant ce contrôle sont passées. Le diagnostic exact est indépendant du lot 314 ; aucune correction n'a été apportée dans ce lot et le CI n'est pas déclaré vert.
+- Aucun code applicatif, SQL/migration, donnée Supabase, Auth/RLS/GRANT/Storage, configuration Cloudflare ou déploiement modifié. Aucun merge ni changement de `main`. PR #17 reste ouverte et non fusionnée.
