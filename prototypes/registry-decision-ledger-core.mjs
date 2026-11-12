@@ -4,7 +4,7 @@ const ROLES = new Set(["operateur", "approbateur"]);
 const OPERATOR_EVENTS = new Set(["revue_operateur", "mise_en_quarantaine_operateur"]);
 const APPROVER_DECISIONS = new Set(["accepte", "rejete", "quarantaine", "correction_demandee", "reouvert"]);
 
-function clean(value) { return String(value ?? "").replace(/[\\r\\n\\t]+/g, " ").trim(); }
+function clean(value) { return String(value ?? "").replace(/[\r\n\t]+/g, " ").trim(); }
 function required(value, label) {
   const v = clean(value);
   if (!v) throw new Error(label + " obligatoire.");
