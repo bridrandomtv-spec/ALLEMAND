@@ -6424,3 +6424,20 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 2. Ajouter des tests négatifs par rôle avec fixtures synthétiques ; ne pas utiliser de vrais dossiers élèves.
 3. Vérifier séparément `agreement_current(text)` (Lot 303), qui reste exécutable par `anon` et retourne le composite complet.
 4. Une fois ces points de sécurité documentés et la CI confirmée, clôturer cette passe d'audit et attendre le prochain prototype fourni par l'utilisateur.
+
+
+## Lot 305 — audit du prototype « المراسلة المدرسية (0→7) » (12 novembre 2026)
+
+- Prototype HTML de 544 lignes examiné et comparé à la messagerie existante de la PR et à la base Supabase active.
+- Rapport détaillé : [docs/security/LOT-305-messaging-levels-prototype-audit.md](security/LOT-305-messaging-levels-prototype-audit.md), commit rapport `f135000ccca62bee5155ee45f7ab25a7cc0c6682`.
+- Décision : **NO-GO pour intégrer le prototype tel quel ou exécuter son SQL**. La page est une maquette statique : messages/conversations codés en dur, envoi simulé, escalade simulée, boutons de recherche/nouvelle conversation/fichier/exercice/récompense non reliés au backend.
+- Architecture active confirmée en lecture seule : `msg_conversations`, `msg_members`, `msg_messages`, `msg_attachments`, `msg_blocks`, `msg_reports`, `msg_log`, toutes avec RLS activé. Aucun `public.messages`; les colonnes `level`, `subject_id`, `class_id`, `is_read` du prototype ne sont pas dans `msg_messages`.
+- La publication Realtime active inclut `msg_messages` et `msg_conversations`. Le client existant `msg.js` / `supabase/supabase.js` gère déjà conversations, groupes, DM, envoi, présence, pièces jointes, vérification, signalements, blocage et modération. Ne pas créer une deuxième messagerie.
+- Écart de rôle confirmé : `msg_can_dm(a,b)` exige deux profils vérifiés du même wilaya/niveau/filière, mais ne contrôle pas `profiles.role`. La base ne garantit donc pas la règle prototype « élève → professeur uniquement » ; deux élèves vérifiés du même groupe peuvent satisfaire la condition. Correction recommandée côté SQL/RLS avec matrice de rôles et tests négatifs, non appliquée.
+- Écart d'audit confirmé : `audit_logs` existe, mais ses colonnes sont `acteur`, `action`, `cible_type`, `cible_id`, `avant`, `apres`, `wilaya` ; le snippet utilise les colonnes inexistantes `user_id` et `details`. Aucun trigger actif n'a été constaté pour journaliser chaque INSERT de `msg_messages`. `msg_log` journalise des actions de modération/suppression, pas chaque message envoyé.
+- Autres lacunes du SQL prototype : seul le niveau 1 est contrôlé ; pas de liaison explicite `NEW.sender_id = auth.uid()`, pas de policy INSERT dans le snippet, pas de trigger de déclenchement, pas de `verif_guard`, pas de validation cohérente classe/matière/enseignant, et fonction SECURITY DEFINER sans search_path fixé.
+- Niveau 5 « rapports financiers » exclu du périmètre ; ne pas réintroduire de module de paiement/facturation. Niveau 7 ne doit pas promettre une réponse immédiate sans chaîne d'astreinte et SLA.
+- CI #3063 / run `43269906495` sur le commit documentaire précédent : **success**, y compris l'étape de validation de la messagerie. Cette CI ne teste pas l'autorisation réelle avec des comptes ni le navigateur.
+- Aucun changement applicatif, SQL, migration, RLS, GRANT, Auth, Storage ou données Supabase. Aucun MFA/2FA, paiement, déploiement, merge ou changement sur `main`. PR #17 reste ouverte et non fusionnée.
+- Prochaine priorité : décider et corriger la matrice de rôles DM (élève ↔ professeur) côté serveur, avec tests négatifs, avant toute adaptation visuelle des niveaux 0→7. Les autres niveaux exigent une définition explicite des rôles, permissions, destinataires et notifications.
+
