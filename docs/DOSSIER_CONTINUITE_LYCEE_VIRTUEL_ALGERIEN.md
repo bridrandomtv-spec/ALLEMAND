@@ -7232,3 +7232,20 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucun test multi-compte ni PostgreSQL isolé exécuté. Aucune écriture SQL, DDL, migration, Auth/RLS/GRANT/Storage, modification du client, branche Supabase supplémentaire, déploiement Cloudflare, changement `main` ou merge PR #17. Pas de MFA/2FA ni facturation.
 - Décision : NO-GO pour ouverture nationale tant que les chemins DM directs ne sont pas fermés côté serveur, que les affiliations officielles ne sont pas disponibles et que les contrats n'ont pas passé les tests PostgreSQL réels.
 - Étape suivante : définir le protocole de compatibilité des groupes officiels et des DMs historiques avec l'affiliation scolaire, sans convertir les groupes actuels en preuve d'inscription ni modifier les données vivantes.
+
+
+---
+
+## LOT 339 — Compatibilité groupes et DMs historiques (12 novembre 2026)
+
+- Comptage agrégé strictement en lecture seule sur Supabase actif `azjwcybivirvpxbfhyzk` : 1 conversation au total, 0 DM, 1 groupe, 0 adhésion, 0 message, 0 pièce jointe, 0 signalement, 0 blocage.
+- Aucun contenu de message ni donnée nominative n'a été consulté. Cet instantané ne prouve pas l'absence de données dans des sauvegardes, exports ou environnements distincts.
+- Le groupe unique est sans adhésion. Il doit être conservé pendant la préparation, sans ajout automatique d'élèves ni suppression. Il n'est pas démontré comme groupe actif.
+- Le rapport distingue groupe historique non certifié, groupe officiel certifié par affiliation institutionnelle, et groupe communautaire à adhésion volontaire. Le type SQL `groupe` ne suffit pas à distinguer ces catégories.
+- Les règles proposées retirent à l'égalité wilaya/niveau/filière le rôle de contrôle final des groupes scolaires. Les accès futurs doivent reposer sur l'affiliation officielle active, l'année scolaire, la source approuvée et une portée de groupe explicite.
+- Protocole DM historique conservé pour cardinalités 0/1/2/>2, même si aucun DM n'existe dans l'instantané vivant ; aucune invitation rétroactive ni participant inventé.
+- Rapport : `docs/product/LOT-339-COMPATIBILITE-GROUPES-DM-HISTORIQUES.md`.
+- CI #3212 sur le Lot 338 était `in_progress` au dernier contrôle ; à repoller. Aucun test PostgreSQL multi-rôle exécuté.
+- Aucun SQL d'écriture, DDL, migration, changement Auth/RLS/GRANT/Storage, modification client, branche Supabase, déploiement Cloudflare, changement `main` ou merge PR #17. Pas de MFA/2FA ni facturation.
+- Décision : ne pas convertir le groupe isolé ni activer les groupes scolaires nationaux avant disponibilité du registre d'affiliation et contrôles serveur testés. Messenger national reste NO-GO.
+- Étape suivante : contrôler CI des Lots 338/339 puis préparer le plan de test fonctionnel multi-compte (élève, vérificateur, modérateur, administrateur) sur PostgreSQL isolé, sans utiliser la base active comme banc d'essai.
