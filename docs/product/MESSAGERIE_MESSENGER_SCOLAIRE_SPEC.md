@@ -187,3 +187,15 @@ Le contrat d'invitation a été préparé dans `docs/security/LOT-311-invitation
 Le réseau national souhaité reste l'objectif produit : un élève vérifié pourra inviter un autre élève vérifié d'une autre wilaya si l'affiliation institutionnelle active est prouvée. Une invitation en attente ne crée aucune conversation ; l'acceptation du destinataire créera le DM et ses deux adhésions atomiquement. Blocage bilatéral, anti-doublon, pagination, limites anti-énumération et tests négatifs sont obligatoires.
 
 Aucun SQL, migration, RPC, RLS, GRANT, Auth ou Storage n'a été modifié ou exécuté. Les écrans reçus/envoyés restent bloqués jusqu'à validation du contrat serveur.
+
+## Lot 313 — registre national des établissements et preuves d'inscription
+
+- Nouveau document de conception : `docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md`.
+- Séparation obligatoire entre référentiel officiel des lycées et inscriptions individuelles des élèves ; un lycée existant dans le référentiel ne prouve pas l'inscription d'un compte.
+- Piste documentaire officielle repérée : Bulletin officiel de l'Éducation nationale n° 618 (juillet–août 2022), qui publie des actes de création/annulation d'établissements. Ce bulletin est une preuve juridique pour des changements précis, pas un annuaire exhaustif actualisé. Les statistiques ONS retrouvées sont agrégées par wilaya et ne prouvent aucune affiliation individuelle.
+- Aucun export/API national exhaustif actualisé ni registre nominatif d'inscriptions n'a été confirmé. La liste d'établissements doit être obtenue et validée auprès du ministère / des Directions de l'Éducation de wilaya.
+- Modèle conceptuel : référentiel géographique versionné, établissements avec code administratif officiel, inscriptions annuelles historisées et statut de validation, preuve traçable, rôles administratifs habilités.
+- Parcours recommandé : code d'affiliation à usage unique émis par l'établissement, import institutionnel signé en alternative, vérification documentaire minimale en secours avec conservation limitée.
+- L'annuaire Messenger ne retournera que des profils minimaux avec inscription courante vérifiée ; aucun email, téléphone, matricule, justificatif ou donnée sensible. Pagination, anti-énumération, préférences et blocage bilatéral obligatoires.
+- Lots planifiés : source officielle, maquette d'import sur données synthétiques, migration/test isolé, processus de validation, puis RPC annuaire/invitations.
+- NO-GO maintenu : pas de données officielles confirmées, pas de migration, pas d'ouverture de l'annuaire national. Aucun changement Supabase/Cloudflare, aucun merge/déploiement, PR #17 reste ouverte.
