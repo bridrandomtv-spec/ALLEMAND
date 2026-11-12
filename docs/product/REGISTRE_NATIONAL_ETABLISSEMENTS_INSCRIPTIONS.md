@@ -271,3 +271,30 @@ Tests CI : prototypes/registry-decision-timeline-adapter.test.mjs et prototypes/
 ### Complément Lot 320 — cohérence de l'en-tête importé
 - Le validateur navigateur exige désormais aussi que `sourceReference` soit une chaîne, conformément au validateur Node ; les fichiers JSON dont l'en-tête diverge sont rejetés.
 - Assertion statique ajoutée au test de la maquette. La validation finale reste suspendue au run CI du HEAD documentaire final.
+
+
+## Lot 321 — validation chronologique des journaux importés (12 novembre 2026)
+
+### Constat
+Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, mais acceptait encore des horodatages non normalisés ou non croissants. Un journal pouvait donc contenir une date invalide ou une approbation antérieure à la revue tout en respectant les transitions de rôles.
+
+### Correctifs sur la branche PR #17
+- `prototypes/registry-decision-ledger-core.mjs` : ajout d'une validation stricte des horodatages UTC ISO-8601 normalisés (format accepté par `Date.prototype.toISOString()`). La date de création doit être valide ; chaque événement doit avoir une date valide strictement postérieure à la création et à l'événement précédent.
+- `prototypes/registry-decision-ledger-core.test.mjs` : les scénarios synthétiques utilisent désormais des dates ISO-8601 ; ajout d'un test de date initiale invalide, d'événement antidaté et de chaîne hash-valide mais chronologiquement incohérente.
+- `prototypes/registry-decision-timeline-preview.html` : vérification identique côté navigateur avant affichage du journal importé.
+- `prototypes/registry-decision-timeline-preview.test.mjs` : assertions de présence des contrôles temporels côté navigateur.
+
+### Limites
+- Une date ISO valide et croissante reste une valeur fournie par le fichier ; elle ne prouve pas l'heure réelle, l'identité de l'acteur, la signature d'une autorité ou l'intégrité d'une horloge de confiance.
+- SHA-256 non signé n'est pas une signature et ne rend pas le journal inviolable si un acteur peut recalculer toute la chaîne.
+- Données SYN uniquement, traitement local, aucun service réseau ni persistance.
+- Aucun SQL, migration, PostgreSQL, Supabase/Auth/RLS/GRANT/Storage, modification de `main`, ni déploiement de production.
+
+### Validation CI
+- HEAD testé : `2bc9134cb8cdb32efad6f0d20e600ebca17ebdc4`.
+- Run GitHub Actions #3169 / `43297481014` : en cours lors de la rédaction. Le job a passé les contrôles de préparation et de structure ; la validation messagerie était encore en cours et les tests du registre n'avaient pas encore démarré. Ne pas déclarer le lot réussi avant la conclusion finale.
+
+### Décision
+- GO pour les tests hors ligne sur données synthétiques.
+- NO-GO pour tout modèle SQL/migration et tout test sur la base active. Une base PostgreSQL jetable nécessitera un environnement local ou isolé explicitement autorisé, sans coût cloud implicite.
+- PR #17 reste ouverte et non fusionnée.
