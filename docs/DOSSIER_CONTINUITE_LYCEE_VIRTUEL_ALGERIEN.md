@@ -7199,3 +7199,18 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Rapport : [LOT-336-AUDIT-PRIVILEGES-PROFILES-ANNUAIRE.md](product/LOT-336-AUDIT-PRIVILEGES-PROFILES-ANNUAIRE.md).
 - Aucun correctif ni test multi-rôle appliqué ; aucun SQL d'écriture, DDL, migration, changement Auth/RLS/GRANT/Storage, déploiement Cloudflare, changement `main`, fusion PR #17 ou branche Supabase créée. Pas de MFA/2FA ni facturation.
 - Suite : préparer les projections minimales et la matrice d'essais PostgreSQL multi-rôle, sans toucher au projet actif avant environnement isolé et autorisation distincte.
+
+
+---
+
+## LOT 337 — Contrat serveur annuaire et invitations nationales (12 novembre 2026)
+
+- Contrat d'architecture ajouté : `docs/product/LOT-337-CONTRAT-SERVEUR-ANNUAIRE-INVITATIONS-NATIONALES.md`.
+- Définit les surfaces séparées : annuaire opt-in, invitations, DM, groupes officiels, profil privé et vérification institutionnelle.
+- Propose le modèle logique `msg_directory_preferences` et `msg_invites`, les RPC de recherche paginée, boîte inbox/outbox, création/réponse/annulation/expiration d'invitation et résolution des labels de membres.
+- L'annuaire doit vérifier une affiliation officielle active et une source approuvée à chaque requête ; `profiles.verif_statut='verifie'` et les champs déclaratifs ne suffisent pas. Projection minimale sans matricule, section, rôle interne, statut/acteur/date de vérification.
+- L'acceptation doit verrouiller l'invitation et la paire, revalider affiliation/blocage/expiration, puis créer ou retrouver le DM et ses deux membres dans une transaction unique ; refus/annulation/expiration ne créent jamais de conversation.
+- Ajout de 40+ scénarios de tests couvrant annuaire, opt-in, anti-scraping, idempotence, acteur, courses concurrentes, blocages, transferts, DM historiques, groupes, confidentialité, Realtime et Storage. Tests non exécutés : matrice contractuelle seulement.
+- Audit client lié : `msg.js` récupère encore `profiles(id,pseudo,role,niveau)` pour les noms ; `msgVerificationQueue` lit directement les champs sensibles de `profiles`. Ces appels doivent migrer vers des opérations dédiées avant l'ouverture nationale.
+- Aucun SQL exécutable ni changement applicatif/DB réalisé ; aucune migration, Auth/RLS/GRANT/Storage, déploiement Cloudflare, changement `main` ou merge PR #17. PR #17 reste ouverte, non fusionnée. MFA/2FA et facturation hors périmètre.
+- Suite : compléter la baseline catalogue pour les relations d'affiliation et les dépendances exactes du client, puis établir un environnement PostgreSQL jetable avant d'écrire et tester les migrations. Ne pas modifier le projet Supabase actif sans autorisation distincte.
