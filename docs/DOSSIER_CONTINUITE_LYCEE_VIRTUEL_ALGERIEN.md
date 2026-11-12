@@ -6540,3 +6540,16 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Le correctif regex de détection d'image et le chargement groupé ont été poussés après ces exécutions : nouvelle CI à examiner sur le HEAD courant avant de déclarer le lot validé.
 
 - Résultat final de la CI #3079 (HEAD code batch `7437c687`) : échec identique au contrôle « Vérifier le portail public (catalogue et inscription) ». Le job n'échoue pas sur les étapes messagerie ; le motif détaillé reste la divergence de version du CSS du portail public documentée ci-dessus. La validation globale du lot 309 reste donc bloquée par ce contrôle hors périmètre.
+
+
+## Lot 310 — audit des invitations Messenger (12 novembre 2026)
+
+- Audit réalisé en lecture seule de `msg.js`, `supabase/supabase.js` et `supabase/msg_schema.sql`.
+- Constat : `msgOpenDirect(otherId)` crée directement un DM et tente d'insérer expéditeur + destinataire. La politique `msg members ajout` exige `auth.uid() = user_id` ; le client ne peut donc pas ajouter le destinataire. `msg_member_ok` accepte tout type direct et ne constitue pas un consentement.
+- La définition finale de `msg_can_dm` exige deux profils vérifiés avec wilaya, niveau et filière identiques : cela bloque actuellement les DM nationaux inter-lycées/inter-wilayas.
+- Aucune table `msg_invites` n'existe. Le cycle d'invitation ne peut pas être livré correctement par un simple changement d'interface.
+- Rapport : `docs/security/LOT-310-audit-invitations-messenger.md`, commit `c0fef879`.
+- Spécification mise à jour : `docs/product/MESSAGERIE_MESSENGER_SCOLAIRE_SPEC.md`, commit `f95f0dfc`.
+- Décision : invitation `pending` sans conversation ; acceptation/refus par le destinataire ; annulation par l'expéditeur ; création transactionnelle du DM uniquement à l'acceptation. Contrôles serveur : identité vérifiée, blocage bilatéral, préférences, limites anti-spam, statut du compte et idempotence.
+- Aucun code applicatif, SQL, migration, RLS, GRANT, Auth, Storage, donnée Supabase modifié ou exécuté. Aucun MFA/2FA, paiement/facturation, merge ou déploiement ; PR #17 reste ouverte et `main` inchangé.
+- Prochaine étape : préparer une migration SQL et des tests RLS/RPC synthétiques, sans exécution, puis intégrer les écrans de demandes reçues/envoyées après validation du modèle.
