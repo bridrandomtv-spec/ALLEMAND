@@ -126,7 +126,7 @@ export function registryReviewCsv(report) {
 }
 
 export function recordReviewDecision(report, nationalId, decision, actor) {
-  const allowed = new Set(["accepte", "rejete", "quarantaine"]);
+  const allowed = new Set(["accepte", "rejete", "quarantaine", "a_revoir"]);
   if (!allowed.has(decision)) throw new Error("Décision inconnue.");
   if (!actor || !safeText(actor.id) || !safeText(actor.role)) {
     throw new Error("Acteur de revue non identifié.");
@@ -137,9 +137,11 @@ export function recordReviewDecision(report, nationalId, decision, actor) {
     throw new Error("Séparation des tâches : l'opérateur ne peut pas approuver son propre dossier.");
   }
   if (actor.role === "operateur") {
+    if (!["a_revoir", "quarantaine"].includes(decision)) throw new Error("L’opérateur ne peut que documenter ou mettre en quarantaine.");
     record.operator = safeText(actor.id);
     record.operatorComment = safeText(actor.comment);
   } else if (actor.role === "approbateur") {
+    if (decision === "a_revoir") throw new Error("L’approbateur doit rendre une décision explicite.");
     if (!record.operator) throw new Error("La revue opérateur doit précéder l'approbation.");
     record.approver = safeText(actor.id);
     record.approverComment = safeText(actor.comment);
