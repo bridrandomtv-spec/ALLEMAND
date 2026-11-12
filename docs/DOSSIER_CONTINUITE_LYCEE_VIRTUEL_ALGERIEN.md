@@ -6333,3 +6333,46 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Cette erreur de parsing empêchait le navigateur d'analyser le fichier entier, donc l'initialisation de l'administration pouvait être interrompue.
 - À ce stade, le correctif est enregistré sur la branche de la PR #17. Les CI #3058/#3059 réussies sont antérieures à ce correctif et ne le valident donc pas. Attendre la CI déclenchée par le commit `811a1e0` avant de déclarer la correction vérifiée.
 - Aucun changement Supabase, aucun déploiement, aucune fusion ; PR #17 reste ouverte.
+
+
+## Lot 303 — audit en lecture seule des fonctions SECURITY DEFINER et dérive des scripts SQL (12 novembre 2026)
+
+### Périmètre
+- Reprise après les Lots 295–302, sans répéter leurs audits de prototypes et de tableau de bord.
+- Inspection des scripts versionnés `supabase/schema.sql`, `supabase/fix_rls.sql`, `supabase/p0_locks.sql`, `supabase/plans.sql` et `supabase/msg_schema.sql`.
+- Introspection PostgreSQL en lecture seule du projet Supabase actif : catalogue `pg_proc`, propriétaires, `search_path`, ACL effectives et triggers associés.
+- Aucune requête de modification, aucun test d'exploitation, aucune migration ou modification distante.
+
+### État réel du catalogue PostgreSQL
+- 71 fonctions `SECURITY DEFINER` dans le schéma `public`.
+- Les 71 appartiennent à `postgres` et les 71 possèdent une configuration `search_path` explicite.
+- 42 fonctions sont exécutables par `authenticated`.
+- Une seule fonction est exécutable par `anon` : `public.agreement_current(text)`.
+- `public.agreement_current(text)` est également exécutable par `authenticated`. Son ACL effective conserve `EXECUTE` pour `PUBLIC`, `anon`, `authenticated` et `service_role`.
+- Son corps renvoie la ligne complète de l'accord actif (`select *` sur `public.agreements`) : identifiant, clé, version, titre, corps, statut, créateur et date. Cela contourne la frontière de lecture directe RLS de la table pour les rôles anon/authenticated.
+- Le correctif prévu au Lot 225 (révocation de `PUBLIC`, `anon` et `authenticated`, conservation de `service_role`) n'est pas reflété dans l'ACL actuellement observée. Le point reste ouvert ; aucune correction n'a été appliquée.
+- Rectification du signalement antérieur sur `public.audit_log(...)` : son ACL réelle est limitée à `postgres` et `service_role`; `anon` et `authenticated` n'ont pas EXECUTE. L'absence d'un REVOKE visible dans un ancien extrait de script ne prouve donc pas une exposition dans la base active.
+- `public.profiles_role_guard()` et `public.protect_role_niveau()` sont toutes deux attachées à `public.profiles`, en `BEFORE UPDATE`, avec `SECURITY DEFINER` et `search_path=pg_catalog, public`. `protect_role_niveau()` utilise `current_user` pour distinguer les rôles privilégiés ; dans une fonction SECURITY DEFINER, ce contexte est celui du propriétaire de la fonction. Ce test ne constitue donc pas, à lui seul, une distinction fiable de l'appelant. Les triggers séparés `profiles_role_guard` et `profiles_scope_guard` sont également présents ; aucun contournement effectif n'a été testé ni démontré dans ce lot.
+
+### Dérive détectée entre scripts historiques et fonctions actives
+- `supabase/msg_schema.sql` contient des définitions anciennes de helpers SECURITY DEFINER (`msg_is_moderator`, `msg_is_member`, `msg_member_ok`, `msg_not_blocked`, etc.) qui ne lient pas systématiquement l'argument utilisateur à `auth.uid()`. Les définitions actuellement installées contrôlées dans la base appliquent notamment cette liaison et, pour la modération, la permission `messaging.moderate`.
+- `supabase/plans.sql` contient des versions historiques de `link_child` et `child_active_entitlement`, avec des GRANT et sans révocation explicite des droits par défaut. Dans la base active contrôlée, ces deux fonctions ne sont exécutables ni par `anon` ni par `authenticated`.
+- `supabase/p0_locks.sql` contient l'ancienne version de `protect_role_niveau()` décrite ci-dessus.
+- **Consigne de sécurité : ne pas réexécuter ces scripts historiques sur le projet actif.** Ils peuvent remplacer des définitions plus récentes et réintroduire une logique moins restrictive. Toute remise en cohérence devra partir d'un diff explicite entre script, migration et catalogue actif, après autorisation distincte.
+
+### Résultat et limites
+- Point confirmé à traiter en priorité : ACL trop large de `public.agreement_current(text)` et retour du composite complet.
+- Point de conception à revoir : le test `current_user` dans le trigger SECURITY DEFINER `protect_role_niveau()`; la présence d'autres triggers protecteurs doit être conservée et testée avant toute proposition.
+- Pas de vulnérabilité supplémentaire confirmée par le seul inventaire des ACL. Les 42 fonctions accessibles à `authenticated` doivent rester classées selon leur corps, leurs contrôles d'identité/permission, leur usage client et leur signature ; le nombre seul n'est pas une preuve de vulnérabilité.
+- CI #3060 / run `43120208905` sur le commit `811a1e04cba9699ab9c61014b6ea720e4aeab259` : **success**, y compris syntaxe JavaScript et validation administration. Cela valide le correctif de parsing `admin.js:602`, pas les tests navigateur ni le présent audit SQL.
+
+### Hors périmètre confirmé
+- Aucune modification SQL, table, fonction, policy RLS, grant, migration, Auth, donnée ou paramètre distant.
+- Aucun MFA/2FA, aucune facturation/paiement ajouté ou réactivé dans l'interface.
+- Aucun déploiement Supabase/Cloudflare, aucune fusion, aucune modification de `main`. PR #17 reste ouverte et non fusionnée.
+
+### Suite exacte
+1. Continuer la revue fonction par fonction des RPC SECURITY DEFINER exécutables par `authenticated`, en donnant priorité aux fonctions administratives et aux fonctions qui retournent des données personnelles ; vérifier les contrôles `auth.uid()`, permission, périmètre wilaya et minimisation des colonnes.
+2. Comparer chaque fonction à son usage réel dans le client et aux scripts/migrations versionnés, sans réexécuter les scripts historiques.
+3. Conserver `agreement_current(text)` comme anomalie ouverte à documenter ; ne pas appliquer de REVOKE ni de migration sans instruction distincte.
+4. La recette navigateur desktop/mobile et le contrôle de session admin réelle restent des étapes séparées, non réalisées.
