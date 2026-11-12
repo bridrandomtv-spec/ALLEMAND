@@ -161,3 +161,20 @@ Le décret exécutif n° 22-253 (JO n° 48 du 17 juillet 2022) contient des list
 Décision : demander au ministère/DEW un export officiel des établissements actifs, accompagné des identifiants, codes géographiques, statuts, dates d'effet, provenance et procédure de mise à jour. Ne pas reconstituer une liste dite exhaustive à partir des seuls actes partiels. Aucun import Supabase ni activation d'annuaire/invitations nationales. Rapport détaillé : `docs/product/LOT-314-INVENTAIRE-SOURCES-OFFICIELLES-LYCEES.md`.
 
 Lot suivant : 315 — maquette de prévisualisation/import sur données synthétiques explicitement fictives, sans écriture dans Supabase.
+
+
+## 12. Lot 315 — maquette isolée de prévisualisation CSV (12 novembre 2026)
+
+Un prototype autonome a été ajouté sous `prototypes/` :
+
+- `registry-import-preview.html` : interface de chargement local, indicateurs, tableau de prévisualisation, modèle CSV vide et rapport d'anomalies.
+- `registry-import-core.mjs` : parseur CSV et contrôles de structure/métier.
+- `registry-import-core.test.mjs` : tests Node natifs.
+
+Le contrat provisoire comporte les champs `source_id`, `identifiant_national`, `nom_ar`, `nom_fr`, `wilaya_code`, `commune_code`, `statut`, `date_effet`, `reference_acte`, `source`, `annee_scolaire`. Les statuts techniques acceptés dans la maquette sont `actif`, `suspendu`, `ferme`, `fusionne` ; ils restent à aligner sur la nomenclature ministérielle. Les codes géographiques restent des chaînes, sans prétendre les valider sur une nomenclature officielle.
+
+Contrôles : en-têtes exacts, lignes surdimensionnées, champs obligatoires, date calendaire ISO, statut, doublons des deux identifiants, marquage des valeurs `SYN-*` et sources fictives. Les cellules du rapport CSV sont neutralisées contre l'interprétation de formules dans un tableur.
+
+**Sécurité et portée :** trois lignes de démonstration sont explicitement fictives et comportent un doublon volontaire. Le module est isolé, n'est pas relié à l'application ni à Supabase, n'effectue aucun appel réseau et ne persiste aucun fichier. Le bouton d'import est désactivé. Il ne peut pas vérifier l'authenticité d'une source, l'existence d'un établissement ou l'affiliation d'un élève.
+
+Rapport détaillé : `docs/product/LOT-315-PROTOTYPE-IMPORT-REGISTRE.md`. Commande de test : `node --test prototypes/registry-import-core.test.mjs`. Les cas principaux ont été vérifiés localement avec Node ; l'exécution CI sur le HEAD de PR reste à confirmer.
