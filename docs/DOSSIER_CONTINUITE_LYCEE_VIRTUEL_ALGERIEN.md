@@ -7061,3 +7061,17 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucun fichier nominatif réel collecté ou importé ; aucun changement SQL, migration, Auth/RLS/GRANT/Storage, Supabase actif, Cloudflare, `main`, merge ou déploiement. Données de prototype SYN/TEST uniquement. Pas de MFA/2FA ni facturation.
 - PR #17 était ouverte et non fusionnée au début du lot, HEAD initial `e41f13d328cdf58abba6fa90369b07bdb5a62765`. CI #3188 sur ce HEAD : succès. Nouveau commit documentaire Lot 327 à valider par CI.
 - Prochaine étape : vérifier la CI du nouveau HEAD, puis poursuivre le registre par une matrice de décision et scénarios d'affiliation synthétiques (transfert, réinscription, doublon, source révoquée, approbateur hors périmètre), sans créer de migration.
+
+
+## Lot 328 — scénarios synthétiques du cycle d'affiliation (12 novembre 2026)
+
+- Création d'un simulateur hors ligne `prototypes/registry-affiliation-scenarios-core.mjs` et de ses tests `prototypes/registry-affiliation-scenarios-core.test.mjs`.
+- Scénarios couverts : validation par responsable du bon établissement, refus d'un responsable hors périmètre, interdiction d'auto-validation, source non vérifiée/révoquée, décision finale non répétable, transfert avec clôture de l'affiliation source, révocation réservée à l'approbateur, expiration système et critères d'éligibilité à l'annuaire.
+- Tous les identifiants et acteurs sont SYN-* ; aucune donnée réelle, aucun appel réseau, aucun stockage, aucune intégration Auth/Supabase.
+- Nouveau document : `docs/product/LOT-328-SCENARIOS-CYCLE-AFFILIATION.md`.
+- Limite : simulateur pédagogique non sécurisé, sans concurrence ni transactions PostgreSQL ; ne prouve pas l'exclusivité des affiliations ni la validité d'une source. Les règles de rôle/visibilité sont une proposition de test, pas des droits activés.
+- Commande de test : `node --test prototypes/registry-affiliation-scenarios-core.test.mjs`. Exécution locale non revendiquée ici ; CI GitHub à confirmer.
+- Lot 327 : CI #3189 réussie sur le premier commit documentaire ; CI #3190 réussie sur le HEAD `3cffad6` (continuity). PR #17 ouverte, non fusionnée et fusionnable au dernier contrôle.
+- Commits Lot 328 : core `8cc6a6e`, tests `177e9f0`, documentation `894774e`; mise à jour du dossier de continuité en attente de commit/CI.
+- Aucun SQL, migration, changement Auth/RLS/GRANT/Storage, écriture Supabase, changement Cloudflare, merge ou déploiement. Aucun changement sur `main`. Pas de MFA/2FA ni facturation.
+- Étape suivante : lancer/consulter la CI sur le HEAD final, puis traiter les scénarios de concurrence et d'idempotence uniquement dans un PostgreSQL jetable si les outils de test locaux disponibles le permettent ; sinon documenter les tests requis sans les prétendre exécutés.
