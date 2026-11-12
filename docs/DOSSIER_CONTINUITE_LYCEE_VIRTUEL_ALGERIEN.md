@@ -7516,3 +7516,16 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Matrice de 16 tests WKR-01 à WKR-16, incluant anon, JWT invalide/expiré, session locale seule, compte suspendu, non-abonné, quota multi-instance, timeout Auth, chemins non autorisés et rejeu e-mail.
 - Ce lot est une spécification seulement : aucun code Worker/app modifié, aucun déploiement, aucune écriture Supabase ni modification Auth/RLS/GRANT/Storage/Realtime.
 - PR #17 demeure ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation exclus.
+
+---
+
+## 21. Lot 355 — Messenger visible dans la navigation (12 novembre 2026)
+
+- Rapport : `docs/product/LOT-355-MESSENGER-NAVIGATION-VISIBLE.md`.
+- Cause confirmée : `TABS` contenait déjà la vue `msg`, mais `renderTabs()` la supprimait du tableau `visible`; la catégorie `NAVCATS` « القسم والتواصل » ne contenait pas `msg`, et le fallback l'excluait aussi.
+- Correction sur la branche `design/prototypes-67-74-alignment` : ajout de `msg` à « القسم والتواصل », suppression des deux exclusions. L'entrée doit maintenant apparaître dans le menu desktop et dans le panneau « ☰ المزيد » mobile.
+- Contrôles de non-régression ajoutés à `ci/check-msg.mjs` : vérifier que `msg` est classé dans la navigation et qu'il n'est plus filtré.
+- Commits : app.js `9b88ae270b68f3e51c3692934e95852d9522d3a7`; test `d8c26ae488c658c5251dff4586f33a18c8229781`; rapport `77bd0087879a5acf6b34b4c336212831bfce9df1`.
+- Ce lot ne modifie pas le moteur Messenger, les autorisations ni la base active. L'invitation nationale, l'affiliation officielle et les protections serveur restent inachevées.
+- Aucun changement Supabase, aucun déploiement Cloudflare, aucune modification de `main), aucune fusion de PR. MFA/2FA et facturation hors périmètre.
+
