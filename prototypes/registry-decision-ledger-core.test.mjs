@@ -50,3 +50,13 @@ test("allows a documented correction cycle and requires a final decision before 
   appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-4", role: "approbateur", at: "t4", reason: "Dossier corrigé.", evidenceReference: "SYN-ACT-04" });
   assert.equal(verifyDecisionLedger(ledger).valid, true);
 });
+
+test("requires a reasoned reopening before a second final decision", () => {
+  const ledger = reviewed();
+  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "t2", reason: "Accepté.", evidenceReference: "SYN-ACT-1" });
+  assert.throws(() => appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-3", role: "operateur", at: "t3", reason: "Nouvelle revue." }), /correction ou réouverture/);
+  appendDecisionEvent(ledger, { type: "reouvert", actorId: "SYN-AP-4", role: "approbateur", at: "t3", reason: "Réexamen demandé.", evidenceReference: "SYN-DECISION-REOUVERTURE" });
+  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-3", role: "operateur", at: "t4", reason: "Nouvelle pièce examinée." });
+  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-5", role: "approbateur", at: "t5", reason: "Réexamen terminé.", evidenceReference: "SYN-ACT-2" });
+  assert.equal(verifyDecisionLedger(ledger).valid, true);
+});
