@@ -428,6 +428,20 @@ async function msgUpload(convId, msgId, file){
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, path:path };
 }
+async function msgAttachmentInfo(messageId){
+  const c = await sb(); if(!c) return { ok:false, found:false, err:'cloud indisponible' };
+  const r = await c.from('msg_attachments')
+    .select('id,storage_path,mime,octets,statut')
+    .eq('message_id', messageId).maybeSingle();
+  if(r.error) return { ok:false, found:false, err:r.error.message };
+  if(!r.data) return { ok:true, found:false };
+  if(r.data.statut && r.data.statut!=='approved' && r.data.statut!=='active')
+    return { ok:true, found:false };
+  const signed = await c.storage.from('prive').createSignedUrl(r.data.storage_path, 900);
+  if(signed.error) return { ok:false, found:false, err:signed.error.message };
+  return { ok:true, found:true, url:signed.data.signedUrl, mime:r.data.mime,
+    octets:r.data.octets, name:String(r.data.storage_path||'').split('/').pop() };
+}
 function msgSubscribe(convId, cb){
   let ch = null;
   (async function(){
@@ -486,7 +500,7 @@ async function msgCreateGroup(wilaya, niveau, filiere, titre){
   return { ok:true, convId:r.data.id };
 }
 
-window.SB = { login, signup, resetPassword, updatePassword, getSession, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
+window.SB = { login, signup, resetPassword, updatePassword, getSession, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgAttachmentInfo, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
 /* pont dz:view post-sbready (UI-1) : les cartes ADM se re-rendent quand le client devient prêt */
 document.dispatchEvent(new CustomEvent('dz:view', { detail:{ view:(location.hash||'').replace('#','') } }));
