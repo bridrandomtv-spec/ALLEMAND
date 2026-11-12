@@ -159,13 +159,28 @@ async function verifyAndMapLedger(ledger){
  const genesis={version:ledger.version,caseId:ledger.caseId,createdAt:ledger.createdAt,sourceReference:ledger.sourceReference??""};
  let previous=await sha256(genesis);
  const labels={revue_operateur:"مراجعة الموظف",mise_en_quarantaine_operateur:"إحالة إلى الحجر",accepte:"قبول",rejete:"رفض",quarantaine:"حجر",correction_demandee:"طلب استكمال",reouvert:"إعادة فتح"};
- const operatorTypes=["revue_operateur","mise_en_quarantaine_operateur"],approverTypes=["accepte","rejete","quarantaine","correction_demandee","reouvert"],mapped=[];
+ const operatorTypes=["revue_operateur","mise_en_quarantaine_operateur"],approverTypes=["accepte","rejete","quarantaine","correction_demandee","reouvert"],finalTypes=["accepte","rejete","quarantaine"],reopenTypes=["correction_demandee","reouvert"],mapped=[];
+ let lastOperator=null,lastApprover=null;const approverActors=new Set();
  for(let i=0;i<ledger.events.length;i++){
-  const event=ledger.events[i],{hash,...payload}=event;
-  if(payload.sequence!==i+1||payload.previousHash!==previous||await sha256(payload)!==hash)throw new Error("فشل التحقق من سلسلة SHA-256 عند الحدث "+(i+1)+".");
+  const event=ledger.events[i],{hash,...payload}=event,n=i+1;
+  if(payload.sequence!==n||payload.previousHash!==previous||await sha256(payload)!==hash)throw new Error("فشل التحقق من سلسلة SHA-256 عند الحدث "+n+".");
   const valid=payload.role==="operateur"?operatorTypes.includes(payload.type):payload.role==="approbateur"&&approverTypes.includes(payload.type);
-  if(!valid||!labels[payload.type])throw new Error("نوع الحدث أو الدور غير معروف عند الحدث "+(i+1)+".");
-  for(const key of ["actorId","at","reason"])if(typeof payload[key]!=="string"||!payload[key].trim())throw new Error("حقل إلزامي مفقود عند الحدث "+(i+1)+".");
+  if(!valid||!labels[payload.type])throw new Error("نوع الحدث أو الدور غير معروف عند الحدث "+n+".");
+  for(const key of ["actorId","at","reason"])if(typeof payload[key]!=="string"||!payload[key].trim())throw new Error("حقل إلزامي مفقود عند الحدث "+n+".");
+  if(payload.role==="operateur"){
+   if(approverActors.has(payload.actorId))throw new Error("لا يجوز لمسؤول اعتماد أن يعود كموظف مراجعة.");
+   if(lastOperator&&(!lastApprover||!reopenTypes.includes(lastApprover.type)||lastApprover.sequence<lastOperator.sequence))throw new Error("مراجعة جديدة دون طلب استكمال أو إعادة فتح.");
+   lastOperator=payload;
+  }else{
+   if(!lastOperator)throw new Error("قرار اعتماد دون مراجعة موظف مسبقة.");
+   if(lastApprover&&lastApprover.sequence>lastOperator.sequence&&payload.type!=="reouvert")throw new Error("قرار مكرر دون مراجعة جديدة.");
+   if(lastOperator.actorId===payload.actorId)throw new Error("يجب فصل هوية المراجع عن المعتمد.");
+   const finalExists=Boolean(lastApprover&&finalTypes.includes(lastApprover.type));
+   if(finalExists&&payload.type!=="reouvert")throw new Error("الملف حُسم؛ يلزم فتحه من جديد.");
+   if(payload.type==="reouvert"&&!finalExists)throw new Error("لا يوجد قرار نهائي لإعادة فتحه.");
+   if(["accepte","reouvert"].includes(payload.type)&&!(typeof payload.evidenceReference==="string"&&payload.evidenceReference.trim()))throw new Error("مرجع الإثبات أو إعادة الفتح إلزامي.");
+   lastApprover=payload;approverActors.add(payload.actorId);
+  }
   mapped.push({caseId:ledger.caseId,seq:payload.sequence,type:payload.type,label:labels[payload.type],role:payload.role==="operateur"?"موظف مراجعة":"مسؤول اعتماد",actor:payload.actorId,at:payload.at,reason:payload.reason,evidence:payload.evidenceReference||"—",hash,previous:payload.previousHash,sourceReference:ledger.sourceReference||""});
   previous=hash;
  }
