@@ -30,7 +30,7 @@
     var mine = state.me && m.sender_id===state.me;
     var att = '';
     if(attachment && attachment.ok && attachment.url){
-      var isImage = /^image\\//.test(attachment.mime||'');
+      var isImage = String(attachment.mime||'').indexOf('image/')===0;
       att = '<div class="msg-attachment">'+(isImage
         ? '<a href="'+esc(attachment.url)+'" target="_blank" rel="noopener noreferrer"><img src="'+esc(attachment.url)+'" alt="Image jointe" loading="lazy"></a>'
         : '<a href="'+esc(attachment.url)+'" target="_blank" rel="noopener noreferrer">📄 Ouvrir le fichier joint</a>')+
