@@ -108,7 +108,9 @@
     var g = await window.SB.msgGroups();
     var c = await window.SB.msgConvs();
     var vf = await window.SB.msgMyVerification();
-    var h = '<div class="msg-head"><h3>💬 Ressources</h3>'.replace('Ressources','Messages')+'<button class="msg-refresh" data-act="refresh" type="button">⟳ rafraîchir</button></div>';
+    var h = '<div class="msg-head msg-messenger-head"><div><h3>💬 الرسائل</h3><small>Messagerie scolaire · réseau national</small></div><button class="msg-refresh" data-act="refresh" type="button">⟳ Actualiser</button></div>' +
+      '<div class="msg-searchbar"><span aria-hidden="true">⌕</span><input id="msgListSearch" type="search" placeholder="Rechercher dans mes conversations et groupes…" autocomplete="off" aria-label="Rechercher dans mes conversations et groupes"></div>' +
+      '<div class="msg-filters" role="group" aria-label="Filtrer les conversations"><button type="button" class="active" data-msg-filter="all">Tout</button><button type="button" data-msg-filter="direct">Privées</button><button type="button" data-msg-filter="group">Groupes</button></div>';
     var isMod0 = u && (u.role==='prof' || u.role==='admin');
     if(!isMod0 && vf.ok && vf.statut!=='verifie'){
       h += '<div class="msg-verif">' + (vf.statut==='en_attente'
@@ -121,19 +123,20 @@
     h += '<div class="msg-sec">🕌 Groupes officiels (wilaya · niveau · filière)</div><div class="msg-grid">';
     if(g.ok && g.groups.length){
       h += g.groups.map(function(x){
-        return card(x.titre || ('Groupe '+(x.wilaya||'')+' '+(x.niveau||'')+' '+(x.filiere||'')),
-                    'dernière activité : '+stamp(x.last_activity),
-                    '<button class="msg-open" data-conv="'+x.id+'" type="button">Ouvrir</button>');
+        var title = x.titre || ('Groupe '+(x.wilaya||'')+' '+(x.niveau||'')+' '+(x.filiere||''));
+        return '<div class="msg-item" data-msg-kind="group" data-msg-search="'+esc((title+' '+(x.wilaya||'')+' '+(x.niveau||'')+' '+(x.filiere||'')).toLowerCase())+'">'+
+          card(title, 'Groupe scolaire · '+stamp(x.last_activity),
+          '<button class="msg-open" data-conv="'+x.id+'" type="button">Ouvrir la discussion</button>')+'</div>';
       }).join('');
     } else {
       h += '<div class="msg-empty">Aucun groupe officiel ouvert pour ton profil pour l\'instant — création par l\'équipe pédagogique (modération, Lot 5).</div>';
     }
-    h += '</div><div class="msg-sec">✉️ Conversations directes (groupe scolaire commun)</div><div class="msg-grid">';
+    h += '</div><div class="msg-sec">✉️ Conversations privées</div><div class="msg-grid msg-direct-grid">';
     var directs = (c.ok ? c.convs : []).filter(function(x){ return x.type==='direct'; });
     if(directs.length){
-      h += directs.map(function(x){ return card('Conversation directe #'+x.id, 'dernière activité : '+stamp(x.last_activity), '<button class="msg-open" data-conv="'+x.id+'" type="button">Ouvrir</button>'); }).join('');
+      h += directs.map(function(x){ var title='Conversation privée #'+x.id; return '<div class="msg-item" data-msg-kind="direct" data-msg-search="'+esc((title+' '+stamp(x.last_activity)).toLowerCase())+'">'+card(title, 'Dernière activité · '+stamp(x.last_activity), '<button class="msg-open" data-conv="'+x.id+'" type="button">Ouvrir la discussion</button>')+'</div>'; }).join('');
     } else {
-      h += '<div class="msg-empty">Aucune conversation directe — l\'ouverture de nouveaux DMs arrivera avec la vérification d\'identité (Lot 6).</div>';
+      h += '<div class="msg-empty">Aucune conversation privée pour le moment. La recherche nationale de contacts et les invitations seront ajoutées après sécurisation du service côté serveur.</div>';
     }
     h += '</div>';
     var isMod = u && (u.role==='prof' || u.role==='admin');
@@ -204,10 +207,25 @@
     if(String(v).indexOf('msg')>=0){ closeChannel(); state.conv=null; renderList(); }
     else { closeChannel(); }
   });
+  document.addEventListener('input', function(e){
+    if(!e.target || e.target.id!=='msgListSearch') return;
+    var q=String(e.target.value||'').trim().toLowerCase();
+    document.querySelectorAll('#msgBody .msg-item').forEach(function(item){
+      var hay=String(item.getAttribute('data-msg-search')||'');
+      item.hidden=!!q && hay.indexOf(q)===-1;
+    });
+  });
   document.addEventListener('click', function(e){
     var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report]') : null;
     if(!t) return;
     if(t.getAttribute('data-conv')){ renderThread(+t.getAttribute('data-conv')); return; }
+    var filter = t.getAttribute('data-msg-filter');
+    if(filter){
+      var items=document.querySelectorAll('#msgBody .msg-item');
+      items.forEach(function(item){ item.hidden=filter!=='all' && item.getAttribute('data-msg-kind')!==filter; });
+      document.querySelectorAll('#msgBody [data-msg-filter]').forEach(function(b){ b.classList.toggle('active',b===t); });
+      return;
+    }
     var act = t.getAttribute('data-act');
     if(act==='refresh'){ if(state.conv) renderThread(state.conv); else renderList(); return; }
     if(act==='back'){ closeChannel(); state.conv=null; renderList(); return; }
