@@ -84,3 +84,32 @@ Aucune migration appliquée ; aucun SQL exécuté ; aucune écriture Supabase ; 
 ## Prochaine étape
 
 Obtenir l'identifiant exact de la source institutionnelle d'affiliation élève↔lycée et confirmer la règle de découverte nationale. Ensuite seulement, produire une migration transactionnelle testée sur une base PostgreSQL isolée, avec rollback, avant toute demande d'autorisation distincte pour le projet Supabase actif.
+
+
+## Complément Lot 312 — vérification du schéma Supabase actif et du parcours d'inscription (12 novembre 2026)
+
+### Conclusion vérifiée
+La source officielle d'affiliation élève↔lycée **n'existe pas actuellement dans le schéma actif inspecté**. Il n'y a donc aucune table/colonne permettant d'affirmer qu'un compte appartient officiellement à un lycée déterminé.
+
+### Preuves relevées
+- Introspection en lecture seule du projet Supabase actif `azjwcybivirvpxbfhyzk` (PostgreSQL 17.6) : dans `public.profiles`, les seules colonnes scolaires sont `niveau`, `filiere`, `wilaya`, puis `matricule` et `section`. Aucune colonne `lycee_id`, `etablissement_id`, aucun identifiant d'établissement et aucune table de relation d'inscription élève↔établissement n'ont été trouvés dans `public` / `auth` par recherche des noms et colonnes pertinents.
+- Les migrations actives listées s'arrêtent à `20261109210413_add_email_mfa_challenge_store` ; aucune migration d'affiliation ou d'inscription scolaire n'apparaît.
+- `supabase/schema.sql` crée le profil depuis les métadonnées d'inscription : `pseudo`, `niveau`, `filiere`, `wilaya`. Le rôle est imposé à `eleve`. Aucun lycée n'est demandé ni enregistré dans ce trigger.
+- `app.js` transmet à `SB.signup` exactement `pseudo`, `niveau`, `filiere`, `wilaya`. Aucun établissement n'est transmis.
+- Le Lot 6 de `supabase/msg_schema.sql` ajoute `matricule` et `section`. Le commentaire SQL prévoit que l'élève les déclare lui-même avant de demander le statut `en_attente`. Le garde autorise ce passage à l'attente ; un profil `prof` ou `admin` peut ensuite modifier le statut. Aucun document justificatif, numéro d'établissement, registre officiel ou rapprochement externe n'est vérifié par ce mécanisme.
+- `msg.js` affiche « matricule scolaire » et « section / classe » dans deux champs texte, puis propose aux modérateurs les boutons « vérifier » / « rejeter ». La validation actuelle prouve donc au mieux une revue manuelle de valeurs déclarées, pas une affiliation institutionnelle documentée.
+- La base active contient actuellement 5 profils élèves, tous `non_verifie`, avec 0 matricule renseigné et 0 section renseignée (agrégat seulement ; aucune donnée nominative consultée).
+- `assets/bdd/classe.json` contient cinq classes et des effectifs/statistiques de maquette. Il s'agit d'un fichier JSON statique de démonstration, non relié aux identifiants Auth ni à une table d'inscriptions : **il ne peut pas servir de source de vérité**.
+- Les fichiers Worker repérés (`worker/ia-ask.js`, `worker/resend-welcome.js`) ne fournissent pas de service d'affiliation scolaire ou de registre d'élèves.
+
+### Décision technique
+- Ne pas demander à l'utilisateur de localiser cette source : l'audit a établi qu'elle n'est pas présente dans l'architecture active inspectée.
+- Ne pas traiter `wilaya+niveau+filiere`, `section`, `matricule` auto-déclarés, le statut de vérification manuel, ni `classe.json` comme preuve officielle d'inscription.
+- L'annuaire national inter-lycées et les invitations nationales restent bloqués pour les élèves tant qu'une source institutionnelle vérifiable n'est pas intégrée (ou qu'un processus d'admission contrôlé, traçable et approuvé n'est pas défini).
+- Ne pas élargir `msg_can_dm` ni modifier les policies/RLS pour contourner cette absence.
+
+### Périmètre de l'opération
+Introspection Supabase strictement en lecture seule et lecture GitHub. Aucun compte individuel, email, message ou document personnel consulté. Aucune donnée, table, migration, fonction, policy, GRANT, Auth, Storage ou configuration Cloudflare modifié. Aucun merge, déploiement ou changement de `main` ; PR #17 reste ouverte.
+
+### Suite
+Documenter avec le propriétaire du produit la future source officielle attendue (par exemple un registre d'établissements et une inscription validée par l'administration), puis concevoir son modèle et son processus d'import/validation. En attendant, conserver les invitations nationales en NO-GO.
