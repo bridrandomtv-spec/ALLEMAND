@@ -6692,3 +6692,13 @@ Aucun changement Supabase (schéma/données/RLS/GRANT/Auth/Storage), aucun chang
 - Les contrôles portail public, مسارك, interactions, gamification, contrôle d'accès, matrice des parcours, régressions RAG/professeur et contrôle pédagogique restructuré sont tous terminés avec succès.
 - Cette réussite couvre le code et workflow testés à ce commit. Les commits postérieurs ont uniquement complété ce dossier de continuité ; aucun code applicatif n'a été modifié après ce run.
 - Le CI est donc vert pour le commit testé. PR #17 demeure ouverte et non fusionnée.
+
+
+## Lot 316-A — projet de protocole institutionnel (12 novembre 2026)
+
+- Document créé : `docs/product/LOT-316A-PROTOCOLE-INSTITUTIONNEL-REGISTRE.md`.
+- Il formalise la demande d'export au ministère/DEW, la provenance, la conservation immuable de l'original et son empreinte SHA-256, la prévalidation isolée, le rapprochement versionné, l'approbation à deux personnes, la correction/retrait et les critères de quarantaine.
+- Le protocole distingue registre des établissements et affiliation des élèves ; les droits d'un modérateur de messagerie ne donnent aucune autorité de certification.
+- Document ajouté en référence dans `docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md`.
+- Proposition à faire valider par l'autorité institutionnelle ; aucune donnée réelle reçue ni traitée. Aucun SQL/migration, aucune écriture Supabase, aucune connexion au registre, aucun annuaire ni invitation nationale activé.
+- Le dernier CI code `43282792809` sur `81517d8fd5eb12252370f0d912bf6afe12ae493c` est vert. Les changements suivants sont documentaires uniquement.
