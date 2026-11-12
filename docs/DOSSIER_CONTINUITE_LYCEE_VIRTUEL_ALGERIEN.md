@@ -7310,3 +7310,45 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Le rapport est un inventaire de catalogues, pas un dump reconstructible. Il manque encore DDL complet, définitions fonctions/triggers, ACL détaillées, séquences/default privileges, publication complète, dépendances des services Supabase et protocole de restauration.
 - Aucun SQL d'écriture, DDL, migration, changement Auth/RLS/GRANT/Storage, export de données personnelles, ressource payante, modification client, déploiement Cloudflare, changement `main` ou merge PR #17. Pas de MFA/2FA ni facturation.
 - Étape suivante : établir un baseline applicatif public (hors schémas internes managés) et un manifeste des dépendances Supabase, puis comparer ce baseline à un environnement isolé avant tout développement des invitations nationales.
+
+
+---
+
+## 10. Reprise du 12 novembre 2026 — Lots 341 à 344 (source SQL et baseline)
+
+### État GitHub vérifié à 23:04 (heure Algérie)
+
+- PR #17 : ouverte, non fusionnée, `mergeable=true`.
+- Branche : `design/prototypes-67-74-alignment`.
+- HEAD observé : `0ffbc14f89827580906b9d3f2207d29efd55a15f`.
+- CI #3225 : `success` sur ce HEAD (run https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/43315988376).
+- Aucun changement direct sur `main`, aucune fusion et aucun déploiement effectué pendant cette reprise.
+
+### Lots 341–342 — Source SQL et archive Messenger
+
+- Le catalogue `supabase_migrations.schema_migrations` contient 27 migrations, chacune avec un élément SQL non vide dans `statements`.
+- Les 11 migrations ciblées Messenger/profils/Storage/vérification ont été archivées sous `docs/architecture/migration-archive/`, hors de `supabase/migrations/` pour éviter toute application automatique.
+- Le manifeste `docs/architecture/LOT-342-MANIFEST-ARCHIVE-MIGRATIONS-MESSENGER.md` consigne leurs versions et empreintes SHA-256 calculées depuis le SQL UTF-8 exact en base.
+- Les 16 autres migrations ne sont pas archivées dans ce lot. Aucune migration liée au MFA/2FA n'est remise dans le périmètre.
+- Les 11 deltas ne constituent pas un baseline initial complet ; les rollbacks du journal sont NULL.
+
+### Lot 343 — Inventaire baseline vivant
+
+- Rapport : `docs/product/LOT-343-INVENTAIRE-BASELINE-POSTGRESQL-VIVANT.md`.
+- Inventaire catalogué : 37 tables `public`, 10 tables `storage`, 74 fonctions `public`, 24 fonctions `storage`, 51 triggers et 76 policies recensées selon le périmètre du rapport.
+- La reproduction complète doit distinguer les objets applicatifs de ceux gérés par Supabase (Auth, Storage, Realtime, Vault, rôles et extensions).
+- Le rapport est un inventaire, pas un dump restaurable.
+
+### Lot 344 — Décision de périmètre du baseline de test
+
+- Construire un baseline applicatif contrôlé centré sur `public` et ses dépendances explicites, puis un manifeste séparé des services Supabase managés.
+- Ne pas copier les schémas internes `auth`, `realtime`, `storage` ou `vault` dans PostgreSQL vanilla.
+- Avant tout test d'intégration, il faudra un export DDL contrôlé et validé des objets applicatifs, ACL, politiques, fonctions, triggers, extensions et publications nécessaires, puis comparer le catalogue restauré au snapshot source.
+- L'environnement actuel ne dispose pas d'un moteur PostgreSQL local/isolé confirmé. Aucun environnement payant ne sera créé sans autorisation.
+
+### Garde-fous toujours actifs
+
+- Supabase actif : lecture seule ; aucune écriture SQL, DDL, migration, changement Auth/RLS/GRANT/Storage.
+- Aucun changement client Messenger dans ce lot ; aucun déploiement Cloudflare.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+- Le Messenger national reste NO-GO jusqu'à l'affiliation scolaire officielle, l'invitation acceptée imposée côté serveur, la fermeture des voies de création DM directes et des tests multi-comptes réels sur environnement isolé.
