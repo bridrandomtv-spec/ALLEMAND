@@ -7075,3 +7075,15 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Commits Lot 328 : core `8cc6a6e`, tests `177e9f0`, documentation `894774e`; mise à jour du dossier de continuité en attente de commit/CI.
 - Aucun SQL, migration, changement Auth/RLS/GRANT/Storage, écriture Supabase, changement Cloudflare, merge ou déploiement. Aucun changement sur `main`. Pas de MFA/2FA ni facturation.
 - Étape suivante : lancer/consulter la CI sur le HEAD final, puis traiter les scénarios de concurrence et d'idempotence uniquement dans un PostgreSQL jetable si les outils de test locaux disponibles le permettent ; sinon documenter les tests requis sans les prétendre exécutés.
+
+
+## Lot 329 — concurrence, idempotence et unicité des affiliations (12 novembre 2026)
+
+- La CI #3193 est confirmée réussie sur le HEAD du lot 328 (`65ccd1f`).
+- Correction d'un défaut dans le simulateur Lot 328 : la condition de contrôle de `previousEnrollment` était contradictoire et ne pouvait pas détecter une affiliation précédente encore `verified`. Le contrôle refuse désormais une seconde affiliation pour le même élève, la même année et un autre établissement tant que l'affiliation source n'est pas explicitement `transferred`.
+- Test synthétique ajouté pour couvrir : affiliation précédente vérifiée (refus), transférée (acceptation), autre année (non bloquante), autre élève (non bloquante).
+- Nouveau document `docs/product/LOT-329-CONCURRENCE-IDEMPOTENCE-AFFILIATIONS.md` : matrice des courses (validations concurrentes, transferts concurrents, source révoquée, approbateurs contradictoires), contrat transactionnel cible, clés d'idempotence, contraintes d'unicité, ordre de verrouillage et critères NO-GO.
+- Limite essentielle : les nouveaux tests du simulateur sont séquentiels et en mémoire. Aucun test multi-session PostgreSQL n'a été exécuté ; aucune garantie de concurrence réelle n'est revendiquée.
+- Commits : correctif modèle `803e21c`, test `2e84825`, documentation `e79a3f4`. Dossier de continuité mis à jour dans le commit qui suit.
+- Aucun SQL, migration, RPC, changement Auth/RLS/GRANT/Storage, écriture Supabase active, import nominatif, changement Cloudflare, déploiement ou changement sur `main`. PR #17 reste ouverte et non fusionnée. Pas de MFA/2FA ni facturation.
+- Étape suivante : contrôler les exécutions CI du HEAD final. Si les tests passent, passer à la préparation du protocole de test PostgreSQL multi-session et à la revue du schéma réel en lecture seule, sans exécuter de migration.
