@@ -44,9 +44,9 @@
       (mine?'':'<button class="msg-report" data-report="'+m.id+'" type="button" title="signaler">🚩</button>')+'</div>'+
       '<div class="msg-body">'+esc(m.body)+(m.flagged?' <em class="msg-flag">· signalé</em>':'')+'</div>'+att+'</div>';
   }
-  async function attachmentFor(messageId){
-    try{ return await window.SB.msgAttachmentInfo(messageId); }
-    catch(e){ return {ok:false}; }
+  async function attachmentsFor(messageIds){
+    try{ return await window.SB.msgAttachmentInfos(messageIds); }
+    catch(e){ return {}; }
   }
   function sizeLabel(n){
     n=Number(n)||0; return n>=1048576?(n/1048576).toFixed(1)+' Mo':Math.max(1,Math.round(n/1024))+' Ko';
@@ -65,8 +65,9 @@
           if(state.me && m.sender_id===state.me) return;
           var th = el('msgBody') && el('msgBody').querySelector('.msg-thread');
           if(!th || th.querySelector('[data-mid="'+m.id+'"]')) return;
-          Promise.all([fetchNames([m.sender_id]), attachmentFor(m.id)]).then(function(parts){
-            var a=parts[1]; if(a && a.ok) a.sizeLabel=sizeLabel(a.octets);
+          Promise.all([fetchNames([m.sender_id]), attachmentsFor([m.id])]).then(function(parts){
+            var a=parts[1] && parts[1][m.id];
+            if(a && a.ok) a.sizeLabel=sizeLabel(a.octets);
             th.insertAdjacentHTML('beforeend', rowHtml(m, true, a && a.found ? a : null));
           });
         })
@@ -207,11 +208,12 @@
     var h = '<button class="msg-back" data-act="back" type="button">← retour à la liste</button>'+
             '<div class="msg-head"><h3>💬 Fil #'+id+'</h3><span class="msg-pres" id="msgPres"></span></div>'+
             '<div class="msg-thread">';
-    var renderedRows = await Promise.all(r.msgs.map(async function(m){
-      var a = await attachmentFor(m.id);
-      if(a && a.ok) a.sizeLabel = sizeLabel(a.octets);
+    var attachmentMap = await attachmentsFor(r.msgs.map(function(m){ return m.id; }));
+    var renderedRows = r.msgs.map(function(m){
+      var a=attachmentMap && attachmentMap[m.id];
+      if(a && a.ok) a.sizeLabel=sizeLabel(a.octets);
       return rowHtml(m, false, a && a.found ? a : null);
-    }));
+    });
     h += renderedRows.join('') || '<div class="msg-empty">Aucun message pour l\'instant.</div>';
     h += '</div><div class="msg-input"><textarea id="msgText" rows="2" maxlength="2000" placeholder="اكتب رسالتك… / ton message…"></textarea>'+
          '<label class="msg-pj" title="joindre un fichier (png/jpeg/webp/pdf, 5 Mo max)">📎<input type="file" id="msgFile" accept="image/png,image/jpeg,image/webp,application/pdf" hidden></label>'+
