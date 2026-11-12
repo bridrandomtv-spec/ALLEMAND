@@ -142,13 +142,56 @@ function render(){
 }
 $("search").addEventListener("input",render);
 $("case-filter").addEventListener("change",render);
+function refreshCaseOptions(){
+ const select=$("case-filter"),current=select.value,ids=[...new Set(events.map(e=>e.caseId))];
+ select.replaceChildren(new Option("كل الملفات المعروضة","all"));
+ for(const id of ids)select.add(new Option(id,id));
+ select.value=ids.includes(current)?current:"all";
+}
+async function sha256(value){
+ const bytes=new TextEncoder().encode(JSON.stringify(value));
+ const digest=await crypto.subtle.digest("SHA-256",bytes);
+ return Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("");
+}
+async function verifyAndMapLedger(ledger){
+ if(!globalThis.crypto?.subtle)throw new Error("التحقق التشفيري غير متاح في هذا المتصفح أو السياق.");
+ if(!ledger||ledger.version!==1||!Array.isArray(ledger.events)||typeof ledger.caseId!=="string"||!ledger.caseId.startsWith("SYN-")||typeof ledger.createdAt!=="string"||!ledger.createdAt.trim())throw new Error("صيغة غير صالحة أو معرّف غير تجريبي؛ هذه الماكيت تقبل ملفات SYN فقط.");
+ const genesis={version:ledger.version,caseId:ledger.caseId,createdAt:ledger.createdAt,sourceReference:ledger.sourceReference??""};
+ let previous=await sha256(genesis);
+ const labels={revue_operateur:"مراجعة الموظف",mise_en_quarantaine_operateur:"إحالة إلى الحجر",accepte:"قبول",rejete:"رفض",quarantaine:"حجر",correction_demandee:"طلب استكمال",reouvert:"إعادة فتح"};
+ const operatorTypes=["revue_operateur","mise_en_quarantaine_operateur"],approverTypes=["accepte","rejete","quarantaine","correction_demandee","reouvert"],mapped=[];
+ for(let i=0;i<ledger.events.length;i++){
+  const event=ledger.events[i],{hash,...payload}=event;
+  if(payload.sequence!==i+1||payload.previousHash!==previous||await sha256(payload)!==hash)throw new Error("فشل التحقق من سلسلة SHA-256 عند الحدث "+(i+1)+".");
+  const valid=payload.role==="operateur"?operatorTypes.includes(payload.type):payload.role==="approbateur"&&approverTypes.includes(payload.type);
+  if(!valid||!labels[payload.type])throw new Error("نوع الحدث أو الدور غير معروف عند الحدث "+(i+1)+".");
+  for(const key of ["actorId","at","reason"])if(typeof payload[key]!=="string"||!payload[key].trim())throw new Error("حقل إلزامي مفقود عند الحدث "+(i+1)+".");
+  mapped.push({caseId:ledger.caseId,seq:payload.sequence,type:payload.type,label:labels[payload.type],role:payload.role==="operateur"?"موظف مراجعة":"مسؤول اعتماد",actor:payload.actorId,at:payload.at,reason:payload.reason,evidence:payload.evidenceReference||"—",hash,previous:payload.previousHash,sourceReference:ledger.sourceReference||""});
+  previous=hash;
+ }
+ if(ledger.headHash!==previous)throw new Error("بصمة رأس السجل لا تطابق آخر حدث.");
+ return mapped;
+}
+$("ledger-file").addEventListener("change",async event=>{
+ const file=event.target.files?.[0];if(!file)return;
+ $("import-status").textContent="جارٍ فحص ملف JSON محلياً…";
+ try{
+  const parsed=JSON.parse(await file.text()),mapped=await verifyAndMapLedger(parsed);
+  events=mapped;selectedKey="";$("detail-hint").textContent="تم التحقق من سلسلة SHA-256 لهذا الملف التجريبي.";$("detail-fields").replaceChildren();
+  refreshCaseOptions();render();
+  $("import-status").textContent="نجح التحقق من سلسلة SHA-256: "+mapped.length+" حدثاً. هذا لا يثبت هوية الفاعل أو صحة التاريخ أو المصدر.";
+ }catch(error){
+  $("import-status").textContent="تعذر الاستيراد: "+error.message+" — بقيت بيانات العرض السابقة كما هي.";
+ }finally{event.target.value="";}
+});
 $("export").addEventListener("click",()=>{
- const payload={notice:"DEMO ONLY — synthetic records, not official evidence",events:filtered()};
+ const payload={format:"timeline-view-v1",notice:"DEMO ONLY — export is a view, not a signed original ledger",events:filtered()};
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
  const url=URL.createObjectURL(blob),a=document.createElement("a");
- a.href=url;a.download="registry-decision-ledger-demo.json";a.click();URL.revokeObjectURL(url);
+ a.href=url;a.download="registry-decision-timeline-view.json";a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
-render();
+refreshCaseOptions();render();
 </script>
 </body>
 </html>
