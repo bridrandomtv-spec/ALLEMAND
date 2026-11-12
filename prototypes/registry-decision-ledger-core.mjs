@@ -106,7 +106,7 @@ export function verifyDecisionLedger(ledger) {
     if (!event || typeof event !== "object") return { valid: false, checked: i, error: "Événement invalide à la position " + (i + 1) + "." };
     const { hash, ...payload } = event;
     if (payload.sequence !== i + 1 || payload.previousHash !== previous || digest(payload) !== hash) {
-      return { valid: false, checked: i, error: "Chaîne d'intégrité inválide à l'événement " + (i + 1) + "." };
+      return { valid: false, checked: i, error: "Chaîne d'intégrité invalide à l'événement " + (i + 1) + "." };
     }
     previous = hash;
   }
