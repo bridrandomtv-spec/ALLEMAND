@@ -178,3 +178,10 @@ Contrôles : en-têtes exacts, lignes surdimensionnées, champs obligatoires, da
 **Sécurité et portée :** trois lignes de démonstration sont explicitement fictives et comportent un doublon volontaire. Le module est isolé, n'est pas relié à l'application ni à Supabase, n'effectue aucun appel réseau et ne persiste aucun fichier. Le bouton d'import est désactivé. Il ne peut pas vérifier l'authenticité d'une source, l'existence d'un établissement ou l'affiliation d'un élève.
 
 Rapport détaillé : `docs/product/LOT-315-PROTOTYPE-IMPORT-REGISTRE.md`. Commande de test : `node --test prototypes/registry-import-core.test.mjs`. Les cas principaux ont été vérifiés localement avec Node ; l'exécution CI sur le HEAD de PR reste à confirmer.
+
+
+## 13. Lot 316-A — protocole de réception et d'approbation institutionnelle
+
+Un projet de protocole a été rédigé dans `docs/product/LOT-316A-PROTOCOLE-INSTITUTIONNEL-REGISTRE.md`. Il définit la demande d'export officiel, la chaîne de conservation (original en lecture seule, empreinte SHA-256, lots versionnés), la prévalidation isolée, le rapprochement historique, l'approbation à deux personnes, la correction/retrait et la séparation entre établissement et affiliation d'élève.
+
+Ce document est une proposition à faire confirmer par le ministère/DEW ; il ne prétend pas créer une autorité interne de validation. Le prototype Lot 315 ne doit pas recevoir de fichiers réels. Pas de schéma SQL, migration, accès réel, import, annuaire ni changement Supabase. La recherche nationale et les invitations Messenger restent bloquées jusqu'à preuve d'affiliation émise/confirmée par une autorité compétente.
