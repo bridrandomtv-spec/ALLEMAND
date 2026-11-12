@@ -7171,3 +7171,17 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Rapport : [LOT-334-PROVENANCE-GITHUB-MIGRATIONS.md](product/LOT-334-PROVENANCE-GITHUB-MIGRATIONS.md).
 - Suite : rechercher la source de déploiement d'origine ; à défaut, produire un baseline de référence daté à partir d'un export contrôlé, explicitement distinct de l'historique original, puis tester sur PostgreSQL jetable.
 - Aucun SQL d'écriture/DDL/migration, aucune branche Supabase, aucun changement Auth/RLS/GRANT/Storage, aucun déploiement Cloudflare, aucun changement `main), aucun merge PR. Aucun travail facturation ni MFA/2FA.
+
+
+---
+
+## LOT 335 — Baseline partiel du schéma Messenger vivant (12 novembre 2026)
+
+- CI #3207 confirmée en succès sur le HEAD précédent `77c70c2` ; PR #17 relue : ouverte, `merged=false`, `mergeable=true`, HEAD `77c70c22a15c0e8a7285085fbd92dacff066df96`.
+- Nouvelle extraction strictement en lecture seule du catalogue PostgreSQL 17.6 actif : colonnes des six tables Messenger, contraintes/index, politiques RLS Messenger et Storage, fonctions Messenger ciblées avec définitions et ACL, triggers et métadonnées du bucket `prive`.
+- Confirmation technique majeure : `msg_open_direct` reste exécutable par `authenticated` et crée conversation + deux membres sans invitation. Les politiques INSERT `msg_conversations` et `msg_members` permettent également création directe/auto-adhésion selon `msg_member_ok`. L'interface client qui exige une invitation ne constitue donc pas une protection serveur.
+- `msg_can_dm` exige encore égalité wilaya+niveau+filière et deux profils vérifiés : le DM inter-wilayas est bloqué. `msg_not_blocked` est directionnel dans son test ; le blocage bilatéral n'est pas démontré.
+- Storage `prive` est privé. Les politiques contrôlent les chemins et métadonnées MIME/taille à 5 Mio, mais les paramètres globaux `file_size_limit` et `allowed_mime_types` du bucket sont nuls ; aucune analyse antivirus ou validation binaire serveur n'est démontrée.
+- Rapport ajouté : [LOT-335-BASELINE-PARTIEL-SCHEMA-MESSENGER-VIVANT.md](product/LOT-335-BASELINE-PARTIEL-SCHEMA-MESSENGER-VIVANT.md). Il est explicitement un baseline partiel daté, pas un pg_dump complet ni un historique de migrations/restauration.
+- Aucun test PostgreSQL multi-session, aucune migration, aucun DDL, aucune écriture SQL, aucun changement Auth/RLS/GRANT/Storage, aucune branche Supabase payante, aucun déploiement Cloudflare, aucun changement `main` ni merge. PR #17 reste ouverte et non fusionnée. MFA/2FA et facturation restent hors périmètre.
+- Étape suivante : étendre le baseline contrôlé aux fonctions et privilèges de profil/annuaire, puis préparer la matrice PostgreSQL multi-rôle. L'implémentation des invitations ne commencera qu'après environnement isolé et tests serveur ; aucune modification du projet Supabase actif sans autorisation distincte.
