@@ -38,3 +38,8 @@ La prochaine méthode sûre est :
 ## Actions non réalisées
 
 Aucune requête d'écriture, aucun DDL, aucune migration appliquée, aucune modification Auth/RLS/GRANT/Storage, aucune branche Supabase créée, aucun déploiement Cloudflare, aucun changement sur `main), aucune fusion de PR. Aucun travail de facturation ni MFA/2FA.
+
+
+## Addendum Lot 341 — source SQL retrouvée (12 novembre 2026)
+
+Correction : le catalogue actif `supabase_migrations.schema_migrations` expose `statements` (ARRAY) et contient les corps SQL exacts des 27 migrations. La recherche GitHub sur `supabase/migrations` reste vide, mais cela ne signifie pas que les corps sont irrécupérables. Les 27 lignes ont une seule instruction chacune et `rollback` est NULL. Il reste à archiver les deltas et à construire un baseline initial contrôlé ; ne pas exécuter les scripts historiques agrégés pour simuler la chaîne. Voir `docs/product/LOT-341-RECUPERATION-SOURCE-SQL-MIGRATIONS.md`.
