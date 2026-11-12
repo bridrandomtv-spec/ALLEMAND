@@ -167,3 +167,14 @@ Cette ouverture change la règle précédente « élève ↔ élève interdit pa
 - E — états sociaux et fonctions avancées : reçus, présence, saisie, réactions et réponses uniquement avec mécanismes réels.
 
 **Critère de réussite produit :** un étudiant vérifié d'un lycée de Bordj Bou Arréridj peut trouver et, selon les préférences de confidentialité, échanger avec un étudiant vérifié d'un lycée d'une autre wilaya, sans devoir partager son établissement, sa classe ou sa filière, tout en conservant blocage, signalement et contrôle serveur.
+
+
+## Addendum Lot 310 — invitations Messenger avant DM (12 novembre 2026)
+
+Le DM national doit suivre un consentement explicite. Le flux actuel `msgOpenDirect(otherId)` crée immédiatement une conversation et tente d'ajouter les deux membres ; ce n'est pas un système d'invitations. La politique RLS d'ajout de membres limite l'insertion à `auth.uid() = user_id`, de sorte que le client ne doit pas tenter d'ajouter lui-même le destinataire.
+
+Le schéma actuel ne comporte pas de table d'invitations. Le flux cible est donc : invitation `pending` sans conversation ; acceptation/refus par le destinataire ; annulation par l'expéditeur ; à l'acceptation seulement, RPC transactionnelle créant/retrouvant le DM et ajoutant les deux membres. Les blocages, la vérification scolaire, les limites anti-spam et les préférences de réception sont contrôlés côté serveur.
+
+La dernière définition de `msg_can_dm` dans `supabase/msg_schema.sql` exige actuellement la même wilaya, le même niveau et la même filière, en plus de deux identités vérifiées. Elle devra être remplacée par une autorisation nationale contrôlée (comptes scolaires vérifiés et règles anti-abus), sans ouvrir le DM direct avant acceptation.
+
+Le modèle serveur proposé est documenté dans `docs/security/LOT-310-audit-invitations-messenger.md`. Aucun SQL ou code de production n'est modifié dans ce lot : migration et RPC doivent être préparées, testées puis validées avant toute exécution sur Supabase.
