@@ -7482,3 +7482,20 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucune donnée personnelle ou contenu de message lu ; aucune écriture SQL/DDL, migration, Auth/RLS/GRANT/Storage/Realtime, aucun déploiement Cloudflare, aucune ressource payante.
 - CI #3235 réussie sur commit rapport Lot351 `4ea88d71efd832323b230fefe758cc8783db1048`. Les commits Lot352 et continuité déclenchent les prochaines CI à contrôler.
 - PR #17 reste ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
+
+
+---
+
+## 19. Lot 353 — Audit navigateur, secrets et Workers Cloudflare (12 novembre 2026)
+
+- Rapport : `docs/security/LOT-353-AUDIT-SECRETS-NAVIGATEUR-WORKERS-CLOUDFLARE.md`.
+- Audit statique ciblé de 11 fichiers de configuration, client, Workers, workflow et authentification ; aucun secret concret `service_role`, `sb_secret_`, Resend, Cloudflare ou GitHub détecté dans ces fichiers. La clé `sb_publishable_...` dans `supabase/supabase.js` est une clé publishable destinée au navigateur, pas une clé service_role. Ce n'est pas un scan exhaustif de tout l'historique Git.
+- `assets/bdd/config.json` expose l'URL publique du Worker IA `ia-ask.bridrandomtv.workers.dev` ; `resend_proxy` est vide dans la configuration auditée.
+- `worker/ia-ask.js` : `POST /ask` sans JWT/session/compte/abonnement. CORS n'est pas une authentification ; le quota de 20/minute est stocké dans un tableau en mémoire d'instance, non durable, non global, non par utilisateur. Le corps est lu intégralement avant troncature. Risque d'abus de capacité IA.
+- `worker/resend-welcome.js` : `POST /send-welcome` sans authentification ni preuve d'inscription, destinataire arbitraire validé syntaxiquement, sans rate limit ni idempotence. La clé Resend est seulement lue via `env.RESEND_API_KEY`, pas présente en clair. Le proxy n'est pas activé par la config du site ; déploiement effectif non vérifié.
+- `src/site-worker.js` : les chemins dans PROT exigent un Bearer et consultent `lesson_content` avec clé anon + JWT ; fail-closed si bindings absents. Couverture de l'allowlist et règle RLS d'abonnement à tester avec JWT anon, élève non abonné, abonné, expiré et chemins non listés.
+- Workflow GitHub : validation uniquement, pas de job deploy ; wrangler.toml déclare le Worker principal seulement. Les secrets/bindings Cloudflare réels ne sont pas visibles dans le dépôt.
+- Corrections prioritaires documentées : JWT validé pour IA, quota durable par utilisateur/IP, limite du corps, protection et idempotence e-mail côté serveur, vérification complète de l'allowlist contenus, tests HTTP et secret scanning CI.
+- Aucune écriture Supabase, migration, changement Auth/RLS/GRANT/Storage/Realtime, modification Worker ou déploiement Cloudflare. Pas de scan complet de l'historique Git, pas de test HTTP production, aucun secret runtime consulté.
+- CI #3239 réussie sur le HEAD précédent `d11d5d5cf6630544e09ff08a68baa69764f78f42`. Le rapport Lot353 et le présent dossier déclenchent de nouveaux runs.
+- PR #17 reste ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
