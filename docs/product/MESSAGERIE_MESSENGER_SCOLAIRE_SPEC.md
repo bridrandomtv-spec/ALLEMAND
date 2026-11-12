@@ -199,3 +199,34 @@ Aucun SQL, migration, RPC, RLS, GRANT, Auth ou Storage n'a été modifié ou ex�
 - L'annuaire Messenger ne retournera que des profils minimaux avec inscription courante vérifiée ; aucun email, téléphone, matricule, justificatif ou donnée sensible. Pagination, anti-énumération, préférences et blocage bilatéral obligatoires.
 - Lots planifiés : source officielle, maquette d'import sur données synthétiques, migration/test isolé, processus de validation, puis RPC annuaire/invitations.
 - NO-GO maintenu : pas de données officielles confirmées, pas de migration, pas d'ouverture de l'annuaire national. Aucun changement Supabase/Cloudflare, aucun merge/déploiement, PR #17 reste ouverte.
+
+
+
+## Addendum Lot 324 — fermeture du faux parcours de création DM côté client (12 novembre 2026)
+
+### Constat de code
+
+L'audit de `supabase/supabase.js` a révélé que `msgOpenDirect(otherId)` tentait de créer une ligne `msg_conversations`, puis d'insérer les deux lignes `msg_members` directement depuis le navigateur. Or la policy RLS `msg members ajout` impose `auth.uid() = user_id) : le client ne peut donc pas ajouter le destinataire. Les deux appels étant séparés, l'insertion de la conversation pouvait en outre laisser une conversation directe orpheline si l'étape d'ajout des membres échouait.
+
+Ce comportement ne constitue pas un système d'invitation et ne doit pas être utilisé pour ouvrir un DM national.
+
+### Correction effectuée sur la branche
+
+- `msgOpenDirect` ne crée désormais aucune conversation ni aucune adhésion.
+- Il peut uniquement retrouver une conversation directe déjà partagée par l'utilisateur et le destinataire.
+- En l'absence de conversation existante, il retourne `msg_invitation_requise` : le parcours attend une invitation acceptée et une création transactionnelle côté serveur.
+- Les erreurs de lecture des adhésions/conversations sont propagées au lieu d'être ignorées.
+- Le contrôle statique `tests/msg_test.mjs` et le contrôle CI `ci/check-msg.mjs` vérifient que cette méthode ne contient plus d'INSERT client dans `msg_conversations` ou `msg_members`.
+
+### Limites et sécurité
+
+Cette correction ferme un chemin client incohérent ; elle ne livre pas encore les invitations. Aucune table `msg_invites), RPC transactionnelle, annuaire national ou autorisation DM inter-wilayas n'a été ajoutée. La règle actuelle `msg_can_dm` et l'absence de preuve institutionnelle d'affiliation restent des bloqueurs. Aucun changement de schéma SQL, RLS, GRANT, Auth, Storage ou base active.
+
+### Validation CI au moment de l'enregistrement
+
+- CI #3178 et #3179 : succès sur les commits de documentation précédents.
+- CI #3180 : en cours sur le premier commit de correction.
+- CI #3181 : en attente sur le commit intégrant les nouveaux tests.
+- La validation finale de ce correctif dépend de la réussite du run #3181 ; ne pas annoncer le lot comme validé avant son résultat.
+
+Aucun déploiement, aucune fusion, aucune modification de `main). PR #17 reste ouverte. Aucun MFA/2FA ni facturation.
