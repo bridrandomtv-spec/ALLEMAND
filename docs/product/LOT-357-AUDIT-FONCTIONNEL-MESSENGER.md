@@ -82,3 +82,17 @@ Le fil s'abonne aux INSERT et UPDATE de messages, puis suit une présence Realti
 ## 6. Prochaine étape
 
 Lot 358 : transformer la matrice P0/P1 en plan de tests serveur multi-comptes et vérifier les dépendances exactes de chaque voie DM avant de préparer une migration isolée. Ne pas ouvrir l'annuaire national ni les nouveaux DM avant la preuve de fermeture côté serveur.
+
+## Rectificatif — continuité des prototypes et travaux antérieurs (13 novembre 2026)
+
+Ce lot 357 est une synthèse de confirmation de l'état courant, pas une décision de recommencer Messenger ni de refaire les prototypes déjà étudiés.
+
+- Les travaux UX antérieurs, notamment Lot 308 (recherche locale, filtres et responsive) et Lot 309 (photos, PDF, upload privé et intégration au fil), sont conservés. Ils ne doivent pas être réimplémentés.
+- Le prototype de messagerie à niveaux et ses parcours ont déjà été audités au Lot 305 ; les niveaux 0→7, les limites de rôles, les parents, les urgences et les notifications ont été documentés. On ne recommence pas leur analyse.
+- Les invitations ont déjà été étudiées aux lots 310–311, puis spécifiées et approfondies dans les lots 323–340 et 348–352. Les contrats, scénarios et matrices existants sont la référence ; ils ne sont pas à réécrire.
+- Les lots 355–356 ont déjà corrigé la découvrabilité de Messenger dans la navigation.
+- Le tableau du Lot 357 sert uniquement à distinguer ce qui existe déjà dans le code, ce qui est prévu par les prototypes/contrats et ce qui reste réellement à intégrer ou valider. Il ne remplace pas les travaux précédents.
+
+**Règle de continuité : ne pas refaire les prototypes, écrans, contrats ou tests déjà réalisés.** Réutiliser les éléments acceptés et ne travailler que sur les écarts non livrés : source d'affiliation institutionnelle, exécution des protections serveur dans un environnement PostgreSQL isolé, raccordement du flux d'invitation/annuaire déjà spécifié, puis validation d'intégration. Le plan multi-comptes du Lot 340 et le verrouillage du Lot 326 sont déjà disponibles : ne pas recréer un second plan équivalent.
+
+Le Lot 357 n'a modifié aucun code runtime. Il n'a pas ouvert un nouveau chantier de refonte UX.
