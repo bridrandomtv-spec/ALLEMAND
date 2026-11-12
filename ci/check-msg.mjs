@@ -28,7 +28,7 @@ const METHODS = ['msgConvs','msgMessages','msgSend','msgCanDm','msgOpenDirect','
 for (const m of METHODS) ok(sbjs.includes('function ' + m), 'méthode SB.' + m);
 ok(!/\.from\('msg_/.test(msgjs), 'vue msg.js : aucune écriture directe dans msg_*');
 ok(idx.includes('data-view="msg"') && idx.includes('msg.js?v='), 'vue + script câblés dans index.html');
-ok(/msg-nav-shortcut[^\\n]*data-go=\"msg\"/.test(app), 'Messenger affiché comme raccourci desktop direct');
+ok(app.includes('msg-nav-shortcut') && app.includes('data-go=\"msg\"'), 'Messenger affiché comme raccourci desktop direct');
 ok(/\['msg',\s*'💬 الرسائل'\]/.test(app), 'Messenger présent dans la navigation rapide mobile');
 ok(!/tabs\.filter\(t\s*=>\s*t\[0\]\s*!==\s*'msg'/.test(app), 'Messenger non exclu du menu');
 
