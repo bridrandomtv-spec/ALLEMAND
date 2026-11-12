@@ -6740,3 +6740,11 @@ Aucun changement Supabase (schéma/données/RLS/GRANT/Auth/Storage), aucun chang
 ### Prochaine étape
 
 Attendre le résultat de la CI du Lot 316-B, puis poursuivre avec une revue de robustesse des règles de rapprochement et un modèle de rapport d'écarts lisible par un responsable administratif. Ne pas créer de schéma ni manipuler de vrais dossiers avant réception et validation institutionnelle du référentiel.
+
+
+### Point de contrôle CI Lot 316-B (12 novembre 2026)
+
+- Run GitHub Actions `43283998214` : les étapes `Tester le prototype CSV du registre des lycées (Lot 315)` et `Tester le rapprochement versionné du registre (Lot 316-B)` sont toutes deux terminées avec `success`.
+- Les étapes de validation suivantes, jusqu'au contrôle pédagogique restructuré et à l'étape Information, apparaissent également réussies dans le job.
+- Au dernier relevé, le statut global du run est encore `in_progress` (conclusion non disponible). Lot 316-B n'est donc pas encore déclaré CI globalement vert.
+- Suivi : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/43283998214
