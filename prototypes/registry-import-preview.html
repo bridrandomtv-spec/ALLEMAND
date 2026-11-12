@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prévisualisation du registre des lycées — Lot 315</title>
+<style>
+:root{font-family:Inter,system-ui,"Segoe UI",sans-serif;color:#173528;background:#f3f7f4}
+*{box-sizing:border-box}body{margin:0}header{background:#075b35;color:white;padding:24px max(20px,calc((100% - 1180px)/2))}
+header small{opacity:.8}header h1{margin:8px 0;font-size:clamp(22px,3vw,32px)}header p{margin:0;max-width:850px;line-height:1.7}
+main{max-width:1180px;margin:22px auto;padding:0 18px 50px}.notice{border:1px solid #e6c77a;background:#fff8e5;color:#62480b;padding:14px 16px;border-radius:12px;line-height:1.65;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.metric,.panel{background:#fff;border:1px solid #dce8df;border-radius:14px;padding:16px;box-shadow:0 3px 14px #1233}.metric b{font-size:27px;display:block}.metric span{font-size:13px;color:#587064}
+.panel{margin:14px 0}.panel h2{font-size:18px;margin:0 0 12px}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer;background:#08643b;color:white}.btn.secondary{background:#e9f2ec;color:#174b32}.btn:disabled{opacity:.45;cursor:not-allowed}
+input[type=file]{max-width:100%}.help{color:#60766a;font-size:13px;line-height:1.6}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:850px;font-size:13px}th,td{padding:10px;border-bottom:1px solid #e5ece7;text-align:left;vertical-align:top}th{background:#f0f6f2;position:sticky;top:0}.status{display:inline-block;border-radius:30px;padding:4px 8px;font-size:11px;font-weight:700}.ok{background:#e5f5eb;color:#17643b}.warn{background:#fff2ce;color:#775600}.bad{background:#fde9e7;color:#a12e25}.muted{color:#708278}.row-errors{color:#a12e25}.row-warnings{color:#775600}.empty{text-align:center;padding:24px;color:#6c8075}
+footer{font-size:12px;color:#64786d;margin-top:18px}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}header{padding:20px}.metric b{font-size:22px}}
+</style></head>
+<body>
+<header><small>LYCÉE VIRTUEL ALGÉRIEN · OUTIL INTERNE DE CONCEPTION</small><h1>Registre des établissements — Prévisualisation d'import</h1><p>Lot 315 · Contrôle de fichier avant toute décision institutionnelle. Cette page est isolée de l'application et ne se connecte à aucune base de données.</p></header>
+<main>
+<div class="notice"><strong>MODE SIMULATION — DONNÉES FICTIVES</strong><br>Les établissements et identifiants affichés ci-dessous sont inventés. Ce prototype ne constitue pas un registre officiel, ne vérifie pas l'existence d'un lycée et ne réalise aucun import. Aucun fichier n'est envoyé ni conservé.</div>
+<section class="panel"><h2>1. Charger un fichier CSV</h2><p class="help">Format UTF-8, séparateur virgule, première ligne = en-têtes. Taille maximale : 2 Mo. Les champs attendus sont documentés dans le modèle CSV.</p><div class="actions"><input id="csvFile" type="file" accept=".csv,text/csv"><button class="btn secondary" id="templateBtn" type="button">Télécharger le modèle CSV vide</button><button class="btn secondary" id="sampleBtn" type="button">Recharger l'exemple fictif</button></div><p id="fileStatus" class="help" aria-live="polite">Exemple fictif chargé pour illustrer les contrôles.</p></section>
+<section class="grid" aria-label="Résultats de validation"><div class="metric"><b id="countTotal">0</b><span>Lignes analysées</span></div><div class="metric"><b id="countValid">0</b><span>Lignes sans anomalie</span></div><div class="metric"><b id="countWarn">0</b><span>Lignes avec avertissement</span></div><div class="metric"><b id="countError">0</b><span>Lignes en erreur</span></div></section>
+<section class="panel"><h2>2. Prévisualisation et contrôles</h2><div class="actions"><button class="btn secondary" id="reportBtn" type="button" disabled>Télécharger le rapport d'anomalies</button><button class="btn" type="button" disabled title="Import désactivé dans ce prototype">Import production désactivé</button></div><p class="help">Une ligne n'est considérée comme propre que si elle ne contient ni erreur ni avertissement. Les identifiants SYN-* sont volontairement rejetés comme données de démonstration.</p><div class="table-wrap"><table><thead><tr><th>Ligne</th><th>Identifiant</th><th>Établissement</th><th>Wilaya / commune</th><th>Statut</th><th>Résultat</th><th>Détails</th></tr></thead><tbody id="previewBody"><tr><td colspan="7" class="empty">Chargement…</td></tr></tbody></table></div></section>
+<footer>Prototype local autonome · Lot 315 · Aucune authentification, aucun appel réseau, aucun stockage local, aucune écriture Supabase · Ne pas utiliser avec des données personnelles ou réelles.</footer>
+</main>
+<script type="module">
+import { parseCsv, validateRows, REQUIRED } from "./registry-import-core.mjs";
+const $ = id => document.getElementById(id);
+const sample = [
+  ["SYN-LYC-001","SYN-NAT-001","ثانوية تجريبية النور","Lycée fictif En Nour","TEST-WIL-01","TEST-COM-001","actif","2026-09-01","SIMULATION-LOT315","Donnée synthétique","2026/2027"],
+  ["SYN-LYC-002","SYN-NAT-002","ثانوية تجريبية الأمل","Lycée fictif El Amal","TEST-WIL-02","TEST-COM-002","actif","2026-09-01","SIMULATION-LOT315","Donnée synthétique","2026/2027"],
+  ["SYN-LYC-003","SYN-NAT-002","ثانوية تجريبية المستقبل","Lycée fictif El Mostakbal","TEST-WIL-02","TEST-COM-003","ferme","2025-06-30","SIMULATION-LOT315","Donnée synthétique","2025/2026"]
+];
+let current = [];
+function csvText(rows){return [REQUIRED.join(","),...rows.map(r=>REQUIRED.map(k=>'"'+String(r[k]??"").replace(/"/g,'""')+'"').join(","))].join("\r\n");}
+function download(name,text){const blob=new Blob([text],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function render(rows){
+ current=validateRows(rows);
+ const total=current.length, errors=current.filter(r=>r._errors.length).length, warns=current.filter(r=>r._warnings.length).length;
+ $("countTotal").textContent=total;$("countValid").textContent=total-errors-warns;$("countWarn").textContent=warns;$("countError").textContent=errors;
+ $("reportBtn").disabled=!total;
+ $("previewBody").innerHTML= current.length ? current.map(r=>{
+  const issues=[...r._errors,...r._warnings];
+  const label=r._errors.length?"Erreur":r._warnings.length?"Avertissement":"Conforme";
+  const cls=r._errors.length?"bad":r._warnings.length?"warn":"ok";
+  return '<tr><td>'+r._line+'</td><td>'+escapeHtml(r.identifiant_national||"—")+'</td><td><b>'+escapeHtml(r.nom_ar||"—")+'</b><br>'+escapeHtml(r.nom_fr||"")+'</td><td>'+escapeHtml((r.wilaya_code||"—")+" / "+(r.commune_code||"—"))+'</td><td>'+escapeHtml(r.statut||"—")+'</td><td><span class="status '+cls+'">'+label+'</span></td><td>'+(issues.length?issues.map(x=>'<div class="'+(r._errors.length?'row-errors':'row-warnings')+'">• '+escapeHtml(x)+'</div>').join(""):'<span class="muted">Aucun problème détecté</span>')+'</td></tr>';
+ }).join(""):'<tr><td colspan="7" class="empty">Aucune ligne à afficher.</td></tr>';
+}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function sampleRows(){return sample.map(values=>Object.fromEntries(REQUIRED.map((k,i)=>[k,values[i]])));}
+$("sampleBtn").addEventListener("click",()=>{render(sampleRows());$("fileStatus").textContent="Exemple fictif chargé : 3 lignes, avec avertissements et doublon volontaire.";});
+$("templateBtn").addEventListener("click",()=>download("modele-registre-lycees.csv",REQUIRED.join(",")+"\r\n"));
+$("reportBtn").addEventListener("click",()=>{
+ const rows=current.flatMap(r=>[...r._errors.map(issue=>({ligne:r._line,type:"ERREUR",identifiant:r.identifiant_national||"",detail:issue})),...r._warnings.map(issue=>({ligne:r._line,type:"AVERTISSEMENT",identifiant:r.identifiant_national||"",detail:issue}))]);
+ const headers=["ligne","type","identifiant","detail"];
+ download("rapport-controle-registre.csv",[headers.join(","),...rows.map(r=>headers.map(k=>'"'+String(r[k]).replace(/"/g,'""')+'"').join(","))].join("\r\n"));
+});
+$("csvFile").addEventListener("change",async e=>{
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ if(file.size>2*1024*1024){$("fileStatus").textContent="Fichier refusé : taille supérieure à 2 Mo.";return;}
+ try{const parsed=parseCsv(await file.text());render(parsed);$("fileStatus").textContent=file.name+" · "+parsed.length+" lignes analysées localement. Aucun transfert effectué.";}
+ catch(err){render([]);$("fileStatus").textContent="Fichier refusé : "+err.message;}
+});
+render(sampleRows());
+</script></body></html>
