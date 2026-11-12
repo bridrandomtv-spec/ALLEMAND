@@ -43,7 +43,7 @@ export function appendDecisionEvent(ledger, input) {
     }
   } else {
     if (!APPROVER_DECISIONS.has(eventType)) throw new Error("Décision d'approbateur inconnue.");
-    if (!lastOperator || (lastApprover && lastApprover.sequence > lastOperator.sequence)) {
+    if (!lastOperator || (lastApprover && lastApprover.sequence > lastOperator.sequence && eventType !== "reouvert")) {
       throw new Error("La revue opérateur doit précéder la décision.");
     }
     if (lastOperator.actorId === actorId) throw new Error("Séparation des tâches : deux acteurs distincts sont requis.");
