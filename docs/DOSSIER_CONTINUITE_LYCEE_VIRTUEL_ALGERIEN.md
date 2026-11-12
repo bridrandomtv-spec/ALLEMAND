@@ -7263,3 +7263,18 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Le lot 340 est une spécification de tests, pas une exécution PostgreSQL ni une validation de sécurité. Les tests Node statiques existants ne remplacent pas les tests RLS multi-comptes.
 - Aucun SQL d'écriture, DDL, migration, Auth/RLS/GRANT/Storage, environnement payant, modification client, déploiement Cloudflare, changement `main` ou merge PR #17. Aucun MFA/2FA ni facturation.
 - Étape suivante : établir une chaîne de schéma/migrations reproductible et non payante, puis implémenter le harness PostgreSQL isolé. Ne pas utiliser la base active comme banc d'essai.
+
+
+---
+
+## LOT 341 — Récupération de la source SQL des migrations (12 novembre 2026)
+
+- Découverte importante : `supabase_migrations.schema_migrations` possède les colonnes `version`, `name`, `statements` (ARRAY), `created_by`, `idempotency_key`, `rollback` (ARRAY). Les corps SQL exacts des 27 migrations appliquées sont récupérables depuis `statements[1]` par SELECT en lecture seule.
+- Les 27 entrées ont exactement une instruction SQL chacune ; `rollback` est NULL pour les 27. Les versions s'étendent du 30 octobre au 9 novembre 2026.
+- 11 migrations pertinentes Messenger/profils/pièces jointes/vérification ont été lues : `20261030131545`, `132222`, `132512`, `132541`, `133016`, `155716`, `171035`, `171056`, `171127`, `171556`, `171618` (préfixe complet `20261030...`). Les corps confirment que `msg_open_direct` crée un DM après `msg_can_dm`, sans vérifier une invitation acceptée ; les guards membership n'ajoutent pas ce consentement.
+- Correction des Lots 333/334 : GitHub n'a aucun dossier/commit `supabase/migrations`, mais les corps SQL ne sont pas perdus ; le catalogue actif les conserve. Les rapports 333 et 334 reçoivent chacun un addendum de correction.
+- Rapport Lot 341 : `docs/product/LOT-341-RECUPERATION-SOURCE-SQL-MIGRATIONS.md`.
+- Les 27 deltas ne fournissent pas à eux seuls le baseline initial complet. Les scripts `schema.sql`/`msg_schema.sql` restent des scripts agrégés historiques ; aucun baseline n'est validé pour une reconstruction à neuf. Aucun moteur PostgreSQL isolé disponible ; aucun test d'intégration exécuté.
+- CI #3214 et #3215 : success ; #3212 et #3213 : success. PR #17 toujours ouverte, non fusionnée, mergeable=true.
+- Aucune écriture SQL/DDL/migration, aucun changement Auth/RLS/GRANT/Storage, aucune ressource payante, aucune modification client, aucun déploiement Cloudflare, aucun changement `main`, aucun merge PR #17. Pas de travail MFA/2FA ni facturation.
+- Étape suivante : archiver sans transformation les 27 corps SQL avec leurs versions et empreintes SHA-256, puis construire un baseline initial séparé et le faire vérifier avant tout banc PostgreSQL.
