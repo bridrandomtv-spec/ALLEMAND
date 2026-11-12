@@ -34,22 +34,28 @@ export function appendDecisionEvent(ledger, input) {
   if (ledger.events.some(e => e.actorId === actorId && e.role === "approbateur") && role === "operateur") {
     throw new Error("Un approbateur ne peut pas reprendre le dossier comme opérateur.");
   }
-  const operatorEvent = ledger.events.find(e => OPERATOR_EVENTS.has(e.type));
+  const lastApprover = [...ledger.events].reverse().find(e => e.role === "approbateur");
+  const lastOperator = [...ledger.events].reverse().find(e => ROLES.has(e.role) && e.role === "operateur");
   if (role === "operateur") {
     if (!OPERATOR_EVENTS.has(eventType)) throw new Error("Événement interdit à l'opérateur.");
-    if (ledger.events.some(e => OPERATOR_EVENTS.has(e.type))) throw new Error("La revue opérateur existe déjà ; utiliser une demande de correction.");
+    if (lastOperator && (!lastApprover || !["correction_demandee", "reouvert"].includes(lastApprover.type) || lastApprover.sequence < lastOperator.sequence)) {
+      throw new Error("Une revue opérateur existe déjà ; une correction ou réouverture de l'approbateur est requise.");
+    }
   } else {
     if (!APPROVER_DECISIONS.has(eventType)) throw new Error("Décision d'approbateur inconnue.");
-    if (!operatorEvent) throw new Error("La revue opérateur doit précéder la décision.");
-    if (operatorEvent.actorId === actorId) throw new Error("Séparation des tâches : deux acteurs distincts sont requis.");
-    if (ledger.events.some(e => e.role === "approbateur" && ["accepte", "rejete", "quarantaine"].includes(e.type))) {
-      if (eventType !== "reouvert") throw new Error("Dossier déjà décidé ; une réouverture explicite est requise.");
+    if (!lastOperator || (lastApprover && lastApprover.sequence > lastOperator.sequence)) {
+      throw new Error("La revue opérateur doit précéder la décision.");
     }
-    if (eventType === "accepte" && !clean(input.evidenceReference)) {
-      throw new Error("Une référence de preuve/acte est obligatoire pour accepter.");
+    if (lastOperator.actorId === actorId) throw new Error("Séparation des tâches : deux acteurs distincts sont requis.");
+    const finalDecisionExists = ledger.events.some(e => e.role === "approbateur" && ["accepte", "rejete", "quarantaine"].includes(e.type));
+    if (finalDecisionExists && eventType !== "reouvert") {
+      throw new Error("Dossier déjà décidé ; une réouverture explicite est requise.");
     }
-    if (eventType === "reouvert" && !clean(input.evidenceReference)) {
-      throw new Error("La référence justifiant la réouverture est obligatoire.");
+    if (eventType === "reouvert" && !finalDecisionExists) {
+      throw new Error("Aucune décision finale à réouvrir.");
+    }
+    if (["accepte", "reouvert"].includes(eventType) && !clean(input.evidenceReference)) {
+      throw new Error(eventType === "accepte" ? "Une référence de preuve/acte est obligatoire pour accepter." : "La référence justifiant la réouverture est obligatoire.");
     }
   }
   const payload = {
