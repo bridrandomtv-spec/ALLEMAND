@@ -24,3 +24,6 @@ test("rejects invalid dates and status values",()=>{
  assert.ok(out[0]._errors.some(x=>x.includes("date_effet n'est pas une date valide")));
  assert.ok(out[0]._errors.some(x=>x.includes("Statut inconnu")));
 });
+
+test("requires the complete known header set",()=>assert.throws(()=>parseCsv("source_id,nom_ar\\nA,B"),/En-têtes obligatoires absents/));
+test("rejects extra CSV columns instead of silently truncating",()=>assert.throws(()=>parseCsv(REQUIRED.join(",")+"\\n"+REQUIRED.map(()=> "x").join(",")+",extra"),/trop de colonnes/));
