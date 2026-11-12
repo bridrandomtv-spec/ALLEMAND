@@ -36,6 +36,7 @@ test("rejects unknown decisions, roles and missing records", () => {
   assert.throws(() => recordReviewDecision(report, "CHG1", "valide", { id: "X", role: "operateur" }), /inconnue/);
   assert.throws(() => recordReviewDecision(report, "CHG1", "rejete", { id: "X", role: "admin" }), /non autorisé/);
   assert.throws(() => recordReviewDecision(report, "UNKNOWN", "rejete", { id: "X", role: "operateur" }), /absent/);
+  assert.throws(() => recordReviewDecision(report, "CHG1", "accepte", { id: "OP-2", role: "operateur" }), /ne peut que documenter/);
 });
 
 test("exports a spreadsheet-safe CSV with separate reviewer columns", () => {
