@@ -13,6 +13,7 @@ test("Lot 318 timeline is an isolated RTL mockup with synthetic-only data", asyn
   assert.match(html, /id="ledger-file"/);
   assert.match(html, /crypto\.subtle/);
   assert.match(html, /startsWith\("SYN-"\)/);
+  assert.match(html, /typeof ledger\.sourceReference!=="string"/);
   assert.match(html, /نجح التحقق من سلسلة SHA-256/);
   assert.match(html, /مراجعة جديدة دون طلب استكمال أو إعادة فتح/);
   assert.match(html, /قرار اعتماد دون مراجعة موظف مسبقة/);
