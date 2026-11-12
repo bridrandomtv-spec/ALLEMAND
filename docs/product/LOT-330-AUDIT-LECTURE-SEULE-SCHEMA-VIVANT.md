@@ -110,3 +110,23 @@ Le comptage agrégé des tables Messenger indique une conversation, zéro adhés
 - NO-GO : modifier la base active, supprimer les tables MFA, appliquer une migration ou changer Auth/RLS/GRANT/Storage sans autorisation distincte.
 
 Aucune écriture SQL, aucun DDL, aucune migration appliquée, aucun changement Auth/RLS/GRANT/Storage, aucun déploiement Cloudflare, aucun changement sur `main`, aucune fusion de PR #17.
+
+
+## 11. Résultats des Supabase Advisors (12 novembre 2026)
+
+Les Advisors sécurité et performance ont été consultés en lecture seule après l'inspection du schéma.
+
+### Sécurité
+- 3 tables MFA signalées « RLS enabled, no policy » : `mfa_email_challenges`, `mfa_email_factors`, `mfa_email_sessions`. L'inventaire des privilèges confirme que seuls `postgres` et `service_role` ont des privilèges de table ; aucun privilège table `anon` ou `authenticated` n'est accordé. Cette isolation est cohérente avec des tables serveur privées, mais ne change pas la décision produit de retirer le MFA.
+- 1 fonction SECURITY DEFINER exécutable par `anon` : `agreement_current(cle)`. Son corps ne retourne que la version active la plus récente d'un accord pour une clé donnée. Cela peut être intentionnel pour publier les conditions d'utilisation ; la décision de garder l'accès public doit être documentée et limitée aux textes destinés à être publics.
+- 42 fonctions SECURITY DEFINER exécutables par `authenticated` sont signalées. Ce signal est un inventaire de surface RPC, pas la preuve que les 42 fonctions sont vulnérables. Les fonctions Messenger examinées contrôlent l'identité appelante, mais doivent rester dans une revue fonction par fonction des autorisations, paramètres, objets et effets de bord.
+- Protection Auth contre les mots de passe compromis désactivée (avertissement Advisor). Cette protection n'est pas le MFA/2FA ; aucune modification Auth n'a été faite.
+
+### Performance
+- 20 clés étrangères sans index couvrant, dont cinq rattachées aux tables Messenger : uploader de pièce jointe, blocked_id, created_by de conversation, handled_by et reporter_id des signalements.
+- 53 politiques RLS signalées pour réévaluation répétée de fonctions Auth ; plusieurs concernent les tables Messenger et `profiles`.
+- 57 cas de politiques permissives multiples ; plusieurs concernent `profiles`. Leur combinaison est permissive (OR) et doit être relue pour vérifier l'intention de chaque accès.
+- 6 index non utilisés signalés, dont `msg_msg_sender_idx`, `msg_conv_geo_idx` et `msg_members_user_idx`. Ne pas les supprimer sur cette seule base : le volume actuel Messenger est quasi nul et les index peuvent être prévus pour la charge future.
+
+### Décision
+Aucun avertissement Advisor n'a été corrigé dans ce lot : certains sont intentionnels, d'autres nécessitent une analyse de code ou une décision de produit. Le lot suivant devra prioriser l'exposition des profils et l'API d'invitation, puis établir une revue des 42 fonctions SECURITY DEFINER avant toute modification.
