@@ -7049,3 +7049,15 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Nouveau document : `docs/product/LOT-326-PLAN-VERROUILLAGE-SERVEUR-MESSENGER.md`. Il détaille inventaire préalable des grants/policies/fonctions, modèle logique des invitations, fermeture des INSERT directs, RPC transactionnelle avec verrouillage `FOR UPDATE`, blocage bilatéral, tests PostgreSQL multi-session et compatibilité des DM historiques.
 - Le plan recommande de ne jamais convertir automatiquement les DM historiques en invitations acceptées. Il distingue également blocage individuel et appartenance à un groupe commun.
 - Aucun SQL exécutable livré, aucune modification de schéma/RLS/GRANT/Auth/Storage, aucune écriture Supabase active, aucun merge, déploiement ou changement de `main`. PR #17 reste ouverte. Pas de MFA/2FA ni facturation.
+
+
+## Lot 327 — preuve de provenance et affiliation officielle (12 novembre 2026)
+
+- Inspection du tree GitHub et relecture des lots 314, 315, 316-A/316-C, 322, 323 et 326.
+- Le dépôt contient des références JORADP et des prototypes isolés ; aucun export ministériel complet/courant, aucun connecteur officiel, aucune base nominative d'inscriptions ni relation active prouvant compte-élève ↔ lycée ↔ année scolaire n'a été trouvé dans les fichiers audités.
+- Les décrets JORADP n° 21-519, 22-253 et 24-224 sont des sources primaires pour les événements juridiques qu'ils publient, mais ne forment pas un instantané exhaustif des lycées actifs en 2026-2027.
+- Distinction désormais explicite : (A) preuve de l'existence/statut administratif de l'établissement ; (B) preuve de l'inscription d'un élève précis pour une année scolaire. La preuve A ne permet jamais d'inférer B.
+- Nouveau document : `docs/product/LOT-327-PREUVE-PROVENANCE-ET-AFFILIATION.md`. Il formalise la demande institutionnelle au ministère/DEW, la provenance et chaîne de conservation, les preuves admissibles, les rôles habilités, les transferts annuels et les critères NO-GO du Messenger national.
+- Aucun fichier nominatif réel collecté ou importé ; aucun changement SQL, migration, Auth/RLS/GRANT/Storage, Supabase actif, Cloudflare, `main`, merge ou déploiement. Données de prototype SYN/TEST uniquement. Pas de MFA/2FA ni facturation.
+- PR #17 était ouverte et non fusionnée au début du lot, HEAD initial `e41f13d328cdf58abba6fa90369b07bdb5a62765`. CI #3188 sur ce HEAD : succès. Nouveau commit documentaire Lot 327 à valider par CI.
+- Prochaine étape : vérifier la CI du nouveau HEAD, puis poursuivre le registre par une matrice de décision et scénarios d'affiliation synthétiques (transfert, réinscription, doublon, source révoquée, approbateur hors périmètre), sans créer de migration.
