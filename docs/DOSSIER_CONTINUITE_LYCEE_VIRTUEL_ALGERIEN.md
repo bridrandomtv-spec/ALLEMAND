@@ -6660,3 +6660,11 @@ Aucun changement Supabase (schéma/données/RLS/GRANT/Auth/Storage), aucun chang
 - Pour ne pas laisser les tests du prototype hors CI, `.github/workflows/deploy.yml` vérifie désormais la présence des trois fichiers Lot 315 et exécute `node --test prototypes/registry-import-core.test.mjs`. Le workflow consulté est un job de validation ; aucune étape de déploiement n'y a été ajoutée.
 - Commit workflow : `b7b39f3f9e7634bfb308ea05cbf29e94417778ca`.
 - Nouveau run PR #17 : `43282238264`, en cours au dernier contrôle. Le résultat du test Lot 315 et le statut global restent à confirmer.
+
+
+### Résultat CI du run 43282238264 et second correctif de cache
+
+- Le nouveau test automatisé Lot 315 a bien été exécuté par GitHub Actions et a terminé avec succès dans le job (étape `Tester le prototype CSV du registre des lycées (Lot 315)`).
+- Le job global a encore échoué plus loin dans `ci/check-public-portal.mjs`, cette fois à la ligne 442 : l'assertion du guide de bienvenue attendait toujours la version SW `dz-de-v3.185.0.0.139`, alors que le Service Worker a été incrémenté à `.143`.
+- Correctif appliqué dans `ci/check-public-portal.mjs` : assertion du guide alignée sur `.143`. Commit `1d246c52e00c4568d96a0582ec7679d088c5da1c`.
+- Le run suivant doit confirmer l'ensemble ; CI global non déclaré vert à ce stade.
