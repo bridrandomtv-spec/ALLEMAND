@@ -6683,3 +6683,12 @@ Aucun changement Supabase (schéma/données/RLS/GRANT/Auth/Storage), aucun chang
 - Run `43282610083` : les contrôles portail public et مسارك sont maintenant passés. L'étape suivante a révélé une assertion historique dans `ci/check-gamification.mjs` qui attendait encore le CSS précaché `v193`.
 - Assertion mise à jour vers `style-prototype-dz.css?v=195` : commit `81517d8fd5eb12252370f0d912bf6afe12ae493c`.
 - Le test Lot 315 reste réussi dans le run précédent. Le prochain run doit confirmer la suite restante et le statut global.
+
+
+### Résultat final du run CI 43282792809 — SUCCÈS
+
+- Le run `43282792809` (commit de code `81517d8fd5eb12252370f0d912bf6afe12ae493c`) est terminé avec `conclusion=success`.
+- L'étape dédiée `Tester le prototype CSV du registre des lycées (Lot 315)` est réussie.
+- Les contrôles portail public, مسارك, interactions, gamification, contrôle d'accès, matrice des parcours, régressions RAG/professeur et contrôle pédagogique restructuré sont tous terminés avec succès.
+- Cette réussite couvre le code et workflow testés à ce commit. Les commits postérieurs ont uniquement complété ce dossier de continuité ; aucun code applicatif n'a été modifié après ce run.
+- Le CI est donc vert pour le commit testé. PR #17 demeure ouverte et non fusionnée.
