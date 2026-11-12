@@ -33,5 +33,5 @@ test("rejects unknown event-role combinations even with a valid hash chain", () 
   const hash = createHash("sha256").update(JSON.stringify(payload), "utf8").digest("hex");
   ledger.events.push({ ...payload, hash });
   ledger.headHash = hash;
-  assert.throws(() => ledgerToTimeline(ledger), /Type ou rôle non reconnu/);
+  assert.throws(() => ledgerToTimeline(ledger), /Journal invalide/);
 });
