@@ -41,3 +41,8 @@ Les tests couvrent la chaîne SHA-256, l'ordre opérateur/approbateur, la sépar
 - Aucun appel réseau, stockage navigateur, connexion Supabase, authentification, signature numérique ou persistance serveur.
 - Aucun SQL/migration, schéma, donnée, RLS, GRANT, Auth, Storage, Cloudflare ou déploiement modifié.
 - GO pour tests locaux et revue de conception ; NO-GO pour toute décision administrative réelle ou publication du registre.
+
+
+## Complément — cycle de correction et réouverture
+
+Le journal autorise désormais une demande de correction par l'approbateur, suivie d'une nouvelle revue par un opérateur, puis d'une décision. Après une décision finale (acceptation, rejet ou quarantaine), une nouvelle revue est bloquée tant qu'une réouverture explicite, motivée et référencée n'a pas été enregistrée. Une seconde décision finale peut ensuite être prise après la nouvelle revue. Les tests couvrent ces deux séquences.
