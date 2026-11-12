@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مراجعة سجل المؤسسات — نموذج تجريبي</title>
+<style>
+:root{font-family:Tahoma,Arial,sans-serif;color:#18231f;background:#f3f6f4;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,textarea{font:inherit}
+header{background:#123d2d;color:#fff;padding:22px max(20px,calc((100% - 1180px)/2))}
+header small{color:#c9e6d4}header h1{font-size:24px;margin:8px 0}header p{margin:0;color:#d9e9df}
+main{max-width:1180px;margin:24px auto;padding:0 18px}
+.warning{border:1px solid #e5bd62;background:#fff8e6;color:#634814;padding:13px 16px;border-radius:12px;margin-bottom:18px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}
+.metric,.panel{background:white;border:1px solid #e2e9e4;border-radius:14px;padding:16px}
+.metric strong{display:block;font-size:26px;margin-top:6px}.muted{color:#66756d;font-size:13px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}
+input[type=search]{min-width:230px;flex:1;border:1px solid #ccd8d0;border-radius:9px;padding:10px}
+button{border:1px solid #cbd8d0;border-radius:9px;background:white;color:#203b2e;padding:9px 13px;cursor:pointer}
+button.active{background:#194d37;color:white;border-color:#194d37}
+button:disabled{opacity:.45;cursor:not-allowed}
+.table-wrap{overflow-x:auto;background:#fff;border:1px solid #e2e9e4;border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:760px;text-align:right}
+th,td{padding:13px 14px;border-bottom:1px solid #edf1ee;font-size:14px}
+th{background:#f8faf8;color:#5b6b62;font-weight:600}
+tr:last-child td{border-bottom:0}.priority{display:inline-block;border-radius:20px;padding:4px 9px;font-size:12px;font-weight:700}
+.p1{background:#fff0e9;color:#a33c1d}.p2{background:#fff7df;color:#825c08}.p3{background:#eaf4ee;color:#286344}
+.state{color:#56645c;font-size:12px}.open{color:#17633e;font-weight:700}
+.panel{margin-top:16px}.panel h2{font-size:18px;margin:0 0 8px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-size:13px;color:#53645a;margin:10px 0 6px}
+input,textarea{width:100%;border:1px solid #ccd8d0;border-radius:9px;padding:10px;background:#fff}
+textarea{min-height:76px;resize:vertical}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.primary{background:#194d37;color:white;border-color:#194d37}
+footer{max-width:1180px;margin:16px auto 36px;padding:0 18px;color:#69766f;font-size:12px}
+@media(max-width:700px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-grid{grid-template-columns:1fr}header h1{font-size:20px}}
+</style>
+</head>
+<body>
+<header>
+  <small>الثانوية الافتراضية الجزائرية · أدوات إدارية تجريبية</small>
+  <h1>مراجعة فروق سجل المؤسسات</h1>
+  <p>قائمة عمل للمراجعة الثنائية — لا تعتمد أي قرار قانوني أو إداري تلقائياً</p>
+</header>
+<main>
+  <div class="warning"><strong>نموذج تجريبي ببيانات وهمية فقط.</strong> لا توجد قاعدة بيانات أو شبكة أو حفظ دائم. كل القرارات تختفي عند تحديث الصفحة. لا تستخدمه مع ملفات حقيقية.</div>
+  <section class="metrics" aria-label="ملخص المراجعة">
+    <div class="metric"><span class="muted">إجمالي الحالات</span><strong id="m-total">4</strong></div>
+    <div class="metric"><span class="muted">أولوية P1</span><strong id="m-p1">2</strong></div>
+    <div class="metric"><span class="muted">أولوية P2</span><strong id="m-p2">1</strong></div>
+    <div class="metric"><span class="muted">أولوية P3</span><strong id="m-p3">1</strong></div>
+  </section>
+  <div class="toolbar" aria-label="تصفية الحالات">
+    <input id="search" type="search" placeholder="ابحث بالمعرّف أو سبب المراجعة" aria-label="بحث">
+    <button class="filter active" data-filter="all">الكل</button>
+    <button class="filter" data-filter="P1">P1</button>
+    <button class="filter" data-filter="P2">P2</button>
+    <button class="filter" data-filter="P3">P3</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>الأولوية</th><th>المعرّف الوطني التجريبي</th><th>الحالة</th><th>سبب المراجعة</th><th>القرار الحالي</th><th></th></tr></thead>
+      <tbody id="records"></tbody>
+    </table>
+  </div>
+  <section class="panel" id="detail" aria-live="polite">
+    <h2>تفاصيل المراجعة</h2>
+    <p class="muted">اختر حالة من الجدول لعرض تفاصيلها.</p>
+  </section>
+</main>
+<footer>هذا النموذج يشرح سير العمل فقط. هوية المراجع والأدوار غير موثّقة، ولا يمثل نظام صلاحيات أو توقيعاً رقمياً أو سجلاً تدقيقياً.</footer>
+<script type="module">
+const rows = [
+ {id:"SYN-OR-001",priority:"P1",category:"مؤسسة جديدة",reason:"معرّف جديد يحتاج إلى التحقق من المصدر والقرار",action:"التحقق من المعرّف والمصدر والوثيقة",decision:"قيد المراجعة"},
+ {id:"SYN-OR-002",priority:"P1",category:"سجل غائب",reason:"غير موجود في النسخة الجديدة؛ لا يعني الإغلاق",action:"تعليق الحالة والتحقق من المصدر",decision:"حجر مؤقت"},
+ {id:"SYN-OR-003",priority:"P2",category:"تغيير وصفي",reason:"تغيير اسم تجريبي بين نسختين",action:"مقارنة المصدر وتوثيق الفرق",decision:"قيد المراجعة"},
+ {id:"SYN-OR-004",priority:"P3",category:"دون تغيير",reason:"لم يظهر اختلاف في الحقول المقارنة",action:"تأكيد وجود السجل وسلامة الدفعة",decision:"قيد المراجعة"}
+];
+let selected = null, filter = "all";
+const $ = id => document.getElementById(id);
+function visible() {
+ const q=$("search").value.trim().toLowerCase();
+ return rows.filter(r=>(filter==="all"||r.priority===filter)&&(!q||(r.id+" "+r.reason).toLowerCase().includes(q)));
+}
+function render() {
+ const list=visible();
+ $("records").innerHTML=list.map(r=>'<tr><td><span class="priority '+r.priority.toLowerCase()+'">'+r.priority+'</span></td><td dir="ltr">'+r.id+'</td><td>'+r.category+'</td><td>'+r.reason+'</td><td class="state">'+r.decision+'</td><td><button data-open="'+r.id+'">مراجعة</button></td></tr>').join("");
+ document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.open)));
+ $("m-total").textContent=rows.length;
+ for(const p of ["P1","P2","P3"]) $("m-"+p.toLowerCase()).textContent=rows.filter(r=>r.priority===p).length;
+}
+function show(id) {
+ selected=rows.find(r=>r.id===id);
+ if(!selected)return;
+ $("detail").innerHTML='<h2>ملف الحالة: <span dir="ltr">'+selected.id+'</span></h2>'+
+ '<p><span class="priority '+selected.priority.toLowerCase()+'">'+selected.priority+'</span> · '+selected.category+'</p>'+
+ '<p>'+selected.reason+'</p><p class="muted">الإجراء المقترح: '+selected.action+'</p>'+
+ '<div class="detail-grid"><div><h3>مراجعة الموظف</h3><label for="op-id">معرّف الموظف التجريبي</label><input id="op-id" autocomplete="off"><label for="op-note">ملاحظة الموظف</label><textarea id="op-note"></textarea><div class="actions"><button class="primary" id="op-save">تسجيل المراجعة التجريبية</button></div></div>'+
+ '<div><h3>اعتماد مراجع ثانٍ</h3><label for="ap-id">معرّف المراجع الثاني</label><input id="ap-id" autocomplete="off"><label for="ap-note">ملاحظة الاعتماد</label><textarea id="ap-note"></textarea><div class="actions"><button id="ap-accept">قبول تجريبي</button><button id="ap-reject">رفض تجريبي</button><button id="ap-hold">حجر</button></div></div></div>'+
+ '<p id="feedback" class="muted" role="status">القرارات محلية ومؤقتة داخل الصفحة.</p>';
+ $("op-save").addEventListener("click",()=>{
+  const actor=$("op-id").value.trim();
+  if(!actor){$("feedback").textContent="أدخل معرّفاً تجريبياً للموظف.";return;}
+  selected.operator=actor;selected.operatorNote=$("op-note").value;selected.decision="مراجعة الموظف مكتملة";
+  $("feedback").textContent="تم تسجيل خطوة الموظف في ذاكرة الصفحة فقط.";
+  render();
+ });
+ for(const [id,decision] of [["ap-accept","مقبول تجريبياً"],["ap-reject","مرفوض تجريبياً"],["ap-hold","حجر مؤقت"]]) {
+  $(id).addEventListener("click",()=>{
+   const actor=$("ap-id").value.trim();
+   if(!selected.operator){$("feedback").textContent="يجب إكمال مراجعة الموظف أولاً.";return;}
+   if(!actor){$("feedback").textContent="أدخل معرّفاً تجريبياً للمراجع الثاني.";return;}
+   if(actor===selected.operator){$("feedback").textContent="يجب أن يختلف المراجع الثاني عن الموظف.";return;}
+   selected.approver=actor;selected.approverNote=$("ap-note").value;selected.decision=decision;
+   $("feedback").textContent="تم تسجيل قرار محاكاة؛ لا توجد موافقة رسمية أو حفظ دائم.";
+   render();
+  });
+ }
+}
+$("search").addEventListener("input",render);
+document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
+ filter=b.dataset.filter;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));render();
+}));
+render();
+</script>
+</body>
+</html>
