@@ -493,7 +493,7 @@ let currentView = 'accueil';
 const NAVCATS = [
   ['learning', '🎓', 'التعلّم', ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud', 'projet']],
   ['assessment', '📝', 'التدريب والاختبارات', ['revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen']],
-  ['classroom', '💬', 'القسم والتواصل', ['classe', 'msg', 'live', 'rag']],
+  ['classroom', '💬', 'القسم والتواصل', ['classe', 'live', 'rag']],
   ['support', '🤝', 'فضاءات التأطير', ['prof', 'profboard', 'parents']],
   ['services', '⚙️', 'الخدمات والحساب', ['reservation', 'abonne', 'compte', 'legal', 'admin']]
 ];
@@ -518,6 +518,7 @@ function renderTabs(){
   desktop += '<button class="tab' + (currentView === 'dashboard' ? ' on' : '') + '" data-go="dashboard">🎓 لوحة التلميذ</button>';
   desktop += '<button class="tab' + (currentView === 'masar' ? ' on' : '') + '" data-go="masar">🧭 مسارك</button>';
   desktop += '<button class="tab' + (currentView === 'accueil' ? ' on' : '') + '" data-go="accueil">🏠 فضائي الدراسي</button>';
+  desktop += '<button type="button" class="tab msg-nav-shortcut' + (currentView === 'msg' ? ' on' : '') + '" data-go="msg"' + (currentView === 'msg' ? ' aria-current="page"' : '') + '>💬 الرسائل</button>';
   for(const cat of NAVCATS){
     const items = cat[3].filter(id => id !== 'matieres' && id !== 'english').map(id => byId.get(id)).filter(Boolean);
     if(!items.length) continue;
@@ -541,6 +542,7 @@ function renderTabs(){
     ['accueil', '🏠 الرئيسية'],
     ['matieres', window.__SUBJECT__ === 'en' ? '🇬🇧 English' : '📚 المواد'],
     ['masar', '🧭 مساري'],
+    ['msg', '💬 الرسائل'],
     ['prof', '🤖 الأستاذ الذكي']
   ];
   const primaryIds = new Set(primary.map(x => x[0]));
