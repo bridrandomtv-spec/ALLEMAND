@@ -194,3 +194,12 @@ Le module isolé `prototypes/registry-reconcile-core.mjs` compare deux versions 
 Le rapport détaillé `docs/product/LOT-316B-RECONCILIATION-REVUE.md` fournit une checklist opérateur/approbateur distinct, un modèle de manifeste de lot (source, périmètre, date, SHA-256, volumes et décisions) et les limites de gouvernance. Les changements sont descriptifs ; toute modification de statut doit être corroborée par un acte et approuvée par l'autorité compétente.
 
 Le test Node dédié est intégré au workflow de validation. Les données et tests sont synthétiques. Aucun export institutionnel n'a été reçu ; aucune connexion, écriture, migration, activation d'annuaire ou preuve d'affiliation n'est introduite.
+
+
+## 15. Lot 316-C — rapport administratif de revue des écarts
+
+Le Lot 316-C ajoute `prototypes/registry-review-report-core.mjs` et ses tests. Il transforme les catégories du Lot 316-B en priorités de revue P1/P2/P3 et actions attendues. P1 couvre les nouveaux identifiants, les absences entre versions et les changements de statut/date/référence/source ; P2 les changements d'identité ou descriptifs ; P3 les lignes sans différence détectée. Ces niveaux sont des priorités opérationnelles, jamais une qualification juridique.
+
+Le prototype distingue l'opérateur de l'approbateur : l'opérateur peut documenter ou mettre en quarantaine, tandis que l'approbateur distinct peut accepter, rejeter ou mettre en quarantaine après revue opérateur. Le contrôle des identifiants d'acteurs est uniquement une garde de démonstration ; il ne constitue pas une authentification ni une autorisation sécurisée. L'export CSV sépare les commentaires des deux rôles et neutralise les cellules pouvant être interprétées comme des formules.
+
+Le workflow exécute les tests Lot 316-C. Données synthétiques seulement ; aucun stockage, aucune écriture, aucune connexion, aucun changement Supabase/Auth/RLS/GRANT/Storage, aucune migration ni déploiement. L'utilisation administrative réelle reste interdite avant mise en place et validation institutionnelle de l'identité, des permissions, de la traçabilité et des signatures.
