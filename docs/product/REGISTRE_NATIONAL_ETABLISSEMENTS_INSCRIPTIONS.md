@@ -203,3 +203,10 @@ Le Lot 316-C ajoute `prototypes/registry-review-report-core.mjs` et ses tests. I
 Le prototype distingue l'opérateur de l'approbateur : l'opérateur peut documenter ou mettre en quarantaine, tandis que l'approbateur distinct peut accepter, rejeter ou mettre en quarantaine après revue opérateur. Le contrôle des identifiants d'acteurs est uniquement une garde de démonstration ; il ne constitue pas une authentification ni une autorisation sécurisée. L'export CSV sépare les commentaires des deux rôles et neutralise les cellules pouvant être interprétées comme des formules.
 
 Le workflow exécute les tests Lot 316-C. Données synthétiques seulement ; aucun stockage, aucune écriture, aucune connexion, aucun changement Supabase/Auth/RLS/GRANT/Storage, aucune migration ni déploiement. L'utilisation administrative réelle reste interdite avant mise en place et validation institutionnelle de l'identité, des permissions, de la traçabilité et des signatures.
+
+
+## 16. Lot 316-D — maquette hors ligne de revue administrative
+
+La page isolée `prototypes/registry-review-preview.html` illustre la file P1/P2/P3, les filtres, le détail d'un écart et la séquence opérateur puis approbateur. Elle utilise quatre identifiants synthétiques et conserve les décisions uniquement en mémoire de la page. Aucun état n'est conservé après rechargement.
+
+Le test `prototypes/registry-review-preview.test.mjs` est exécuté par le workflow et vérifie les avertissements de démonstration ainsi que l'absence d'appel réseau et de stockage navigateur. La maquette n'est pas reliée à l'application, à Supabase ou à Cloudflare et n'est pas publiée en production. Les identifiants saisis ne prouvent aucune identité ou permission ; les actions ne sont pas des décisions officielles.
