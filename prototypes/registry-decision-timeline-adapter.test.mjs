@@ -5,9 +5,9 @@ import { createDecisionLedger, appendDecisionEvent } from "./registry-decision-l
 import { ledgerToTimeline } from "./registry-decision-timeline-adapter.mjs";
 
 function makeLedger() {
-  const ledger = createDecisionLedger({ caseId: "SYN-ADAPTER-01", createdAt: "2026-11-12T08:00:00Z", sourceReference: "SYN-SOURCE" });
-  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-1", role: "operateur", at: "2026-11-12T08:10:00Z", reason: "Revue fictive." });
-  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T08:20:00Z", reason: "Décision fictive.", evidenceReference: "SYN-ACT-2" });
+  const ledger = createDecisionLedger({ caseId: "SYN-ADAPTER-01", createdAt: "2026-11-12T08:00:00.000Z", sourceReference: "SYN-SOURCE" });
+  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-1", role: "operateur", at: "2026-11-12T08:10:00.000Z", reason: "Revue fictive." });
+  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T08:20:00.000Z", reason: "Décision fictive.", evidenceReference: "SYN-ACT-2" });
   return ledger;
 }
 
@@ -27,9 +27,9 @@ test("rejects a ledger whose event chain was altered", () => {
 });
 
 test("rejects unknown event-role combinations even with a valid hash chain", () => {
-  const ledger = createDecisionLedger({ caseId: "SYN-ADAPTER-02", createdAt: "t0" });
-  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "OP", role: "operateur", at: "t1", reason: "Revue." });
-  const payload = { sequence: 2, type: "accepte", actorId: "AP", role: "superadmin", at: "t2", reason: "Test de rôle.", evidenceReference: "", previousHash: ledger.headHash };
+  const ledger = createDecisionLedger({ caseId: "SYN-ADAPTER-02", createdAt: "2026-11-12T08:00:00.000Z" });
+  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "OP", role: "operateur", at: "2026-11-12T08:10:00.000Z", reason: "Revue." });
+  const payload = { sequence: 2, type: "accepte", actorId: "AP", role: "superadmin", at: "2026-11-12T08:20:00.000Z", reason: "Test de rôle.", evidenceReference: "", previousHash: ledger.headHash };
   const hash = createHash("sha256").update(JSON.stringify(payload), "utf8").digest("hex");
   ledger.events.push({ ...payload, hash });
   ledger.headHash = hash;
