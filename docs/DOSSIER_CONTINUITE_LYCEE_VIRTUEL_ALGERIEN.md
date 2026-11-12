@@ -6702,3 +6702,41 @@ Aucun changement Supabase (schéma/données/RLS/GRANT/Auth/Storage), aucun chang
 - Document ajouté en référence dans `docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md`.
 - Proposition à faire valider par l'autorité institutionnelle ; aucune donnée réelle reçue ni traitée. Aucun SQL/migration, aucune écriture Supabase, aucune connexion au registre, aucun annuaire ni invitation nationale activé.
 - Le dernier CI code `43282792809` sur `81517d8fd5eb12252370f0d912bf6afe12ae493c` est vert. Les changements suivants sont documentaires uniquement.
+
+
+## Lot 316-B — rapprochement versionné et revue du registre (12 novembre 2026)
+
+### Livrables ajoutés sur la branche PR #17
+
+- `prototypes/registry-reconcile-core.mjs` : rapprochement déterministe de deux versions par `identifiant_national`.
+- `prototypes/registry-reconcile-core.test.mjs` : tests Node natifs couvrant catégories, doublons, identifiants manquants/synthétiques, absences et export CSV.
+- `docs/product/LOT-316B-RECONCILIATION-REVUE.md` : règles de comparaison, checklist de revue à deux personnes et modèle de manifeste de lot.
+- `docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md` : section Lot 316-B ajoutée.
+
+### Règles de rapprochement
+
+- Catégories séparées : nouveau, modifié, inchangé, absent à examiner.
+- Clé unique : identifiant national fourni par l'autorité ; aucun rapprochement automatique par nom/adresse.
+- Identifiant manquant, doublon ou identifiant synthétique : rapprochement rejeté.
+- Une ligne absente de la nouvelle version est mise en quarantaine et ne signifie jamais automatiquement fermeture ou suppression.
+- Une modification de statut doit être corroborée par un acte et une date d'effet, puis validée par l'autorité compétente.
+- Le manifeste prévoit émetteur, périmètre, année scolaire, dates, référence source, nom du fichier original, empreinte SHA-256, nombre de lignes, version précédente, opérateur, approbateur distinct et décision.
+
+### CI
+
+- Le workflow `.github/workflows/deploy.yml` vérifie la présence des deux nouveaux fichiers et exécute `node --test prototypes/registry-reconcile-core.test.mjs`.
+- Commit du workflow : `acf6cc15ebf8832f6185d6cb327773ad95d2e2c9`.
+- Commit de documentation registre : `a2c120fd920ca236c83158681734af708e77c9aa`.
+- La CI déclenchée par ces changements doit terminer avant de déclarer Lot 316-B validé. Le run vert Lot 315 #43282792809 ne couvre pas ces nouveaux tests.
+
+### État de sécurité
+
+- Démonstration et tests uniquement ; aucun fichier réel ni aucune donnée d'élève.
+- Aucun appel réseau dans le prototype ; aucun import ni stockage persistant.
+- Aucun changement Supabase (schéma, données, RLS, GRANT, Auth, Storage), aucune migration, aucune modification Cloudflare, aucun déploiement.
+- Aucun annuaire national ni invitation Messenger activé.
+- PR #17 confirmée ouverte et non fusionnée avant ce lot ; ne pas fusionner ni déployer.
+
+### Prochaine étape
+
+Attendre le résultat de la CI du Lot 316-B, puis poursuivre avec une revue de robustesse des règles de rapprochement et un modèle de rapport d'écarts lisible par un responsable administratif. Ne pas créer de schéma ni manipuler de vrais dossiers avant réception et validation institutionnelle du référentiel.
