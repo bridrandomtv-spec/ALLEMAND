@@ -17943,3 +17943,27 @@ html[data-theme="dark"] #shell #app [data-view="dashboard"] .sd-stat-card{backgr
 html[data-theme="dark"] .mfa-security-card,html[data-theme="dark"] .mfa-enroll-box,html[data-theme="dark"] .mfa-recovery-codes{background:var(--p)}
 html[data-theme="dark"] .mfa-status-line,html[data-theme="dark"] .mfa-factor-row,html[data-theme="dark"] .mfa-recovery-row{background:var(--p2)}
 @media(max-width:520px){.mfa-security-card{padding:15px;border-radius:16px}.mfa-security-heading{gap:10px}.mfa-security-heading>span{width:42px;height:42px;flex-basis:42px}.mfa-factor-row,.mfa-recovery-row{align-items:flex-start}.mfa-qr-slot{max-width:190px}}
+
+
+/* Lot 308 — boîte de réception Messenger, recherche et filtres locaux */
+section[data-view="msg"] #msgBody .msg-messenger-head{align-items:center;margin-bottom:14px}
+section[data-view="msg"] #msgBody .msg-messenger-head h3{margin:0;font-size:clamp(20px,2.2vw,27px);font-weight:900}
+section[data-view="msg"] #msgBody .msg-messenger-head small{display:block;margin-top:3px;color:var(--texte-secondaire,#718078);font-size:12px}
+section[data-view="msg"] #msgBody .msg-searchbar{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 15px;margin:12px 0;border:1px solid var(--bordure,#dce9e0);border-radius:999px;background:var(--surface2,#f3f7f4);color:var(--texte,#20352a)}
+section[data-view="msg"] #msgBody .msg-searchbar>span{font-size:25px;line-height:1}
+section[data-view="msg"] #msgBody .msg-searchbar input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:inherit;font:inherit}
+section[data-view="msg"] #msgBody .msg-filters{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 18px}
+section[data-view="msg"] #msgBody .msg-filters button{border:1px solid var(--bordure,#dce9e0);border-radius:999px;padding:8px 15px;background:var(--surface,#fff);color:var(--texte,inherit);font:inherit;font-size:13px;font-weight:750;cursor:pointer}
+section[data-view="msg"] #msgBody .msg-filters button.active{border-color:#006233;background:#e9f5ed;color:#00552c}
+section[data-view="msg"] #msgBody .msg-item{min-width:0}
+section[data-view="msg"] #msgBody .msg-item[hidden]{display:none!important}
+section[data-view="msg"] #msgBody .msg-item .msg-card{height:100%;display:flex;align-items:center;gap:12px;justify-content:space-between}
+section[data-view="msg"] #msgBody .msg-item .msg-ct{min-width:0}
+section[data-view="msg"] #msgBody .msg-item .msg-ct b{overflow-wrap:anywhere}
+html[data-theme="dark"] section[data-view="msg"] #msgBody .msg-searchbar{background:#10271b;border-color:#31543e;color:#f4fff7}
+html[data-theme="dark"] section[data-view="msg"] #msgBody .msg-filters button{background:#142d20;border-color:#31543e;color:#e4f7e9}
+html[data-theme="dark"] section[data-view="msg"] #msgBody .msg-filters button.active{background:#1d5133;border-color:#3d9b60;color:#fff}
+@media(max-width:640px){
+ section[data-view="msg"] #msgBody .msg-item .msg-card{align-items:flex-start;flex-direction:column}
+ section[data-view="msg"] #msgBody .msg-filters{position:sticky;top:0;z-index:2;padding:6px 0;background:var(--fond,#fff)}
+}
