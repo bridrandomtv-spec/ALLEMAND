@@ -7414,3 +7414,21 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Les tests statiques vérifient l'absence d'INSERT DM dans le client, mais ne testent pas les appels RPC directs, INSERT REST, consentement ni concurrence. Prévoir tests PostgreSQL isolés multi-comptes.
 - Contrat cible : seule opération transactionnelle serveur depuis une invitation acceptée ; fermer INSERT DM client, auto-ajout membre DM et RPC historique ; valider destinataire, expiration, affiliation officielle, blocage bilatéral ; créer conversation + deux membres + audit atomiquement et idempotemment.
 - Aucun changement base/code runtime, aucun déploiement ou ressource payante ; PR #17 reste ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
+
+
+---
+
+## 15. Lot 349 — Contrat de fermeture serveur des DM sans invitation (12 novembre 2026)
+
+- Rapport : `docs/product/LOT-349-CONTRAT-FERMETURE-SERVEUR-DM.md`.
+- Spécification consolidée de la machine d'états des invitations : `pending`, `accepted`, `declined`, `cancelled`, `expired`. Le blocage reste une relation indépendante dans `msg_blocks`, pas un état d'invitation.
+- Création d'invitation : identité expéditeur issue de `auth.uid()`, anti-auto-invitation, idempotence, limitation anti-spam, opt-in annuaire, affiliation institutionnelle active et vérifiée, prise en charge nationale inter-wilayas, contrôle des blocages dans les deux sens.
+- Acceptation cible : RPC `msg_direct_open_from_accepted_invite(invite_id)`, destinataire uniquement, verrouillage de l'invitation et de la paire, revalidation de l'affiliation/consentement/blocage, création conversation + exactement deux memberships + audit dans une transaction, rollback intégral en cas d'échec.
+- Contrat de fermeture des trois voies découvertes au lot 348 : RPC historique `msg_open_direct(uuid)`, INSERT direct `msg_conversations` type direct, auto-ajout `msg_members`. Les groupes gardent une voie d'autorisation distincte.
+- Compatibilité : aucun DM historique converti artificiellement en invitation acceptée ; aucun historique supprimé ; conversations à 0/1/3+ membres isolées pour revue ; groupes, pièces jointes, signalements et Realtime soumis à des tests de régression.
+- Blocage : vérification symétrique A→B et B→A à la création et à l'acceptation ; préservation de l'historique des DM existants et interdiction des nouveaux envois selon règle serveur à valider.
+- Affiliation : le statut `profiles.verif_statut`, le matricule ou la wilaya déclarés ne sont pas une preuve officielle. Le futur annuaire national doit exiger une affiliation institutionnelle vérifiée, active pour l'année en cours, avec source approuvée et consentement explicite.
+- Matrice d'intégration ajoutée : appels RPC directs, INSERT REST, auto-adhésion, course double acceptation, annulation/refus/expiration, blocages, révocation/transfert d'affiliation, historique, groupes, Storage et Realtime. Tests à exécuter uniquement sur PostgreSQL isolé avec identités synthétiques.
+- **Aucune implémentation runtime, écriture Supabase, migration, modification Auth/RLS/GRANT/Storage, création de ressource payante ou déploiement Cloudflare** dans ce lot. Les tests multi-comptes réels restent à exécuter ; le Messenger n'est pas déclaré prêt pour ouverture nationale.
+- CI #3230 : `success` sur le HEAD précédent `fe017a397f5e5d225532c6f5e3b13561003744d5`. Le rapport et la présente mise à jour de continuité déclenchent une nouvelle CI à contrôler.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
