@@ -7542,3 +7542,19 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Contrôle visuel navigateur Cloudflare non effectué dans ce lot. La correction doit être validée sur l'aperçu PR avant fusion.
 - Aucun changement Supabase, aucun déploiement Cloudflare, aucune modification de `main), aucune fusion de PR. PR #17 demeure ouverte/non fusionnée. MFA/2FA et facturation hors périmètre.
 
+---
+
+## 23. Lot 357 — Audit fonctionnel du Messenger (13 novembre 2026)
+
+- Rapport : `docs/product/LOT-357-AUDIT-FONCTIONNEL-MESSENGER.md` (commit `7205bd4adc5a8d7757247a79b27095855863e871`).
+- Verdict : le dépôt possède une messagerie scolaire partielle (groupes, liste de conversations, messages texte, Realtime, présence par fil, fichiers limités, signalement/modération). Ce n'est pas encore un Messenger national équivalent à Meta.
+- Recherche : le champ actuel filtre uniquement les 50 conversations/cartes déjà chargées; aucun annuaire national ou recherche d'élèves/lycées/wilayas n'est appelé. Les DM sont affichés sous un libellé générique « Conversation privée #ID ».
+- Nouveau DM : `msgOpenDirect()` ne réouvre qu'un DM existant partagé et renvoie `msg_invitation_requise` pour un nouveau contact. Aucun flux d'invitation/acceptation n'est implémenté dans le client ni aucune table/opération d'invitation déployée.
+- Fichiers : PNG/JPEG/WebP/PDF, 5 Mio max; Storage privé et URL signée. Pas d'analyse antivirus démontrée.
+- Temps réel : INSERT/UPDATE messages et présence Realtime pendant un fil; accusés de lecture, non-lus, typing, push et synchronisation multi-appareils non démontrés.
+- Actions modifier/supprimer/bloquer existent en méthodes client mais ne disposent pas de parcours complet visible dans l'écran audité.
+- Risque confidentialité : `fetchNames()` lit directement `profiles(id,pseudo,role,niveau)`; ne pas réutiliser cette lecture pour l'annuaire national. Construire une projection serveur minimale avec consentement.
+- Priorités : P0 fermer les trois voies serveur DM sans invitation et vérifier blocage bilatéral; P1 affiliation institutionnelle officielle, invitations transactionnelles, annuaire opt-in national; P2 UX contacts, non-lus, lecture, pagination, notifications et durcissement médias.
+- Lot 358 prévu : plan de tests serveur multi-comptes et inventaire final des dépendances avant toute migration isolée.
+- Aucun code runtime modifié, aucun changement Supabase, aucun déploiement Cloudflare, aucune modification de `main), aucune fusion PR #17. PR #17 demeure ouverte/non fusionnée. MFA/2FA et facturation hors périmètre.
+
