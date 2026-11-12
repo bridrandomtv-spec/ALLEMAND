@@ -155,7 +155,7 @@ async function sha256(value){
 }
 async function verifyAndMapLedger(ledger){
  if(!globalThis.crypto?.subtle)throw new Error("التحقق التشفيري غير متاح في هذا المتصفح أو السياق.");
- if(!ledger||ledger.version!==1||!Array.isArray(ledger.events)||typeof ledger.caseId!=="string"||!ledger.caseId.startsWith("SYN-")||typeof ledger.createdAt!=="string"||!ledger.createdAt.trim())throw new Error("صيغة غير صالحة أو معرّف غير تجريبي؛ هذه الماكيت تقبل ملفات SYN فقط.");
+ if(!ledger||ledger.version!==1||!Array.isArray(ledger.events)||typeof ledger.caseId!=="string"||!ledger.caseId.startsWith("SYN-")||typeof ledger.createdAt!=="string"||!ledger.createdAt.trim()||typeof ledger.sourceReference!=="string")throw new Error("صيغة غير صالحة أو معرّف غير تجريبي؛ هذه الماكيت تقبل ملفات SYN فقط.");
  const genesis={version:ledger.version,caseId:ledger.caseId,createdAt:ledger.createdAt,sourceReference:ledger.sourceReference??""};
  let previous=await sha256(genesis);
  const labels={revue_operateur:"مراجعة الموظف",mise_en_quarantaine_operateur:"إحالة إلى الحجر",accepte:"قبول",rejete:"رفض",quarantaine:"حجر",correction_demandee:"طلب استكمال",reouvert:"إعادة فتح"};
