@@ -6883,3 +6883,27 @@ Après CI verte, effectuer une revue des transitions et de l'export, puis concev
 
 ### Validation
 Le test de présence/isolation est ajouté à la CI. Attendre le résultat du run déclenché par ce commit avant de déclarer Lot 318 validé. PR #17 doit rester ouverte et non fusionnée, base main.
+
+
+## Lot 319 — liaison contrôlée entre moteur et chronologie (12 novembre 2026)
+
+### Livrables
+- prototypes/registry-decision-timeline-adapter.mjs : projection Node du journal Lot 317 après vérification SHA-256 et contrôle rôle/type.
+- prototypes/registry-decision-timeline-adapter.test.mjs : tests de journal valide, détection d'altération et rôle/type non autorisé.
+- prototypes/registry-decision-timeline-preview.html : import local JSON avec Web Crypto, vérification de la genèse, de chaque événement, de previousHash et headHash ; affichage des événements et références.
+- prototypes/registry-decision-timeline-preview.test.mjs : assertions de présence/isolation et garde SYN-only.
+- docs/product/LOT-319-IMPORT-VERIFIE-JOURNAL.md : contrat, tests et limites.
+- docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md : section Lot 319 ajoutée.
+- .github/workflows/deploy.yml : deux fichiers adapter ajoutés aux prérequis et test dédié ajouté à la CI.
+
+### Garde-fous
+- Import de fichiers locaux uniquement ; aucun upload.
+- Identifiant dossier commençant par SYN- obligatoire.
+- Si Web Crypto est indisponible, le fichier est refusé.
+- Une altération, un ordre incorrect, un hash de liaison invalide, un headHash incohérent ou un type/rôle non reconnu bloque l'import.
+- Une chaîne valide ne prouve pas l'identité, la date réelle, la légitimité de la pièce ou l'absence de recalcul de toute la chaîne.
+- Aucun dossier réel, réseau, persistance navigateur, backend, Supabase/Auth/RLS/GRANT/Storage, SQL/migration, Cloudflare ou déploiement.
+- L'export depuis l'interface reste un modèle de vue JSON et non le journal original signé.
+
+### Validation
+Attendre la CI du HEAD final avant de déclarer le Lot 319 validé. PR #17 reste ouverte et non fusionnée, base main.
