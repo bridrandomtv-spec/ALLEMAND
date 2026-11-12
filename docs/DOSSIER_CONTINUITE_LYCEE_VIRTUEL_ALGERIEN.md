@@ -6676,3 +6676,10 @@ Aucun changement Supabase (schéma/données/RLS/GRANT/Auth/Storage), aucun chang
 - L'échec suivant se trouvait dans `ci/check-masar.mjs` : trois assertions conservaient CSS `v193` et Service Worker `.139`, alors que HTML/SW sont désormais synchronisés sur CSS `v195` et SW `.143`.
 - Assertions du contrôle مسارك mises à jour sur ces versions : commit `cc3fbfad4c5795a53c7b360094097a034dbb11db`.
 - Le test Lot 315 a réussi dans le run précédent. Le prochain run doit reprendre la suite complète ; résultat global encore en attente.
+
+
+### Correctif CI — assertion cache CSS de la gamification
+
+- Run `43282610083` : les contrôles portail public et مسارك sont maintenant passés. L'étape suivante a révélé une assertion historique dans `ci/check-gamification.mjs` qui attendait encore le CSS précaché `v193`.
+- Assertion mise à jour vers `style-prototype-dz.css?v=195` : commit `81517d8fd5eb12252370f0d912bf6afe12ae493c`.
+- Le test Lot 315 reste réussi dans le run précédent. Le prochain run doit confirmer la suite restante et le statut global.
