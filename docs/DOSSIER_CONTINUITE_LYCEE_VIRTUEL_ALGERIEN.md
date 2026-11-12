@@ -6604,3 +6604,12 @@ Aucun changement applicatif ou Supabase, aucune migration/SQL d'écriture, aucun
 - Prochaine étape : Lot 315, prototype de prévisualisation/import avec données synthétiques, sans écriture Supabase.
 - Contrôle CI du HEAD précédent `5e712a7b83ef30ad77eb2d8a5047783da15feb98` : run 43279775155, échec unique au contrôle portail public car `ci/check-public-portal.mjs` attend le cache-busting CSS `v176`. Les validations structurelles, données, JavaScript, messagerie et administration listées avant ce contrôle sont passées. Le diagnostic exact est indépendant du lot 314 ; aucune correction n'a été apportée dans ce lot et le CI n'est pas déclaré vert.
 - Aucun code applicatif, SQL/migration, donnée Supabase, Auth/RLS/GRANT/Storage, configuration Cloudflare ou déploiement modifié. Aucun merge ni changement de `main`. PR #17 reste ouverte et non fusionnée.
+
+
+### Correctif CI/cache public — synchronisation vérifiée statiquement (12 novembre 2026)
+
+- Diagnostic : le HTML de la branche chargeait `style-prototype-dz.css?v=195`, tandis que le précache du Service Worker et les assertions CI attendaient encore `v193`. Le contrôle CI comportait aussi une attente de version SW `dz-de-v3.185.0.0.139`, alors que le SW était déjà en `.141`. Les messages de diagnostic étaient eux-mêmes restés sur v176/.138.
+- Correction limitée : `sw.js` passe à `dz-de-v3.185.0.0.142` et précache le CSS `v195`. `ci/check-public-portal.mjs` vérifie maintenant CSS `v195` et SW `.142`, avec messages alignés.
+- Commits : SW `7e84ec0da3d6306079f5a6a08bd72e4000ce162d`; contrôle CI `613c981c7da627806437e1499cbe61bd70a19ba0`.
+- Le contrôle structurel doit encore être exécuté par GitHub Actions sur le nouveau HEAD. Ne pas annoncer le CI vert avant résultat effectif.
+- Aucun déploiement Cloudflare ni merge. PR #17 reste ouverte ; `main` inchangée.
