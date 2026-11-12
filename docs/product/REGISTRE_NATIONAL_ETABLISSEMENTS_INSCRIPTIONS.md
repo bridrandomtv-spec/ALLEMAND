@@ -185,3 +185,12 @@ Rapport détaillé : `docs/product/LOT-315-PROTOTYPE-IMPORT-REGISTRE.md`. Comman
 Un projet de protocole a été rédigé dans `docs/product/LOT-316A-PROTOCOLE-INSTITUTIONNEL-REGISTRE.md`. Il définit la demande d'export officiel, la chaîne de conservation (original en lecture seule, empreinte SHA-256, lots versionnés), la prévalidation isolée, le rapprochement historique, l'approbation à deux personnes, la correction/retrait et la séparation entre établissement et affiliation d'élève.
 
 Ce document est une proposition à faire confirmer par le ministère/DEW ; il ne prétend pas créer une autorité interne de validation. Le prototype Lot 315 ne doit pas recevoir de fichiers réels. Pas de schéma SQL, migration, accès réel, import, annuaire ni changement Supabase. La recherche nationale et les invitations Messenger restent bloquées jusqu'à preuve d'affiliation émise/confirmée par une autorité compétente.
+
+
+## 14. Lot 316-B — rapprochement versionné et revue à deux personnes
+
+Le module isolé `prototypes/registry-reconcile-core.mjs` compare deux versions par identifiant national strict. Il distingue les lignes nouvelles, modifiées, inchangées et absentes à examiner. Les absences sont mises en quarantaine : elles ne sont jamais assimilées à une fermeture ou à une suppression. Les doublons, identifiants manquants et identifiants synthétiques bloquent le rapprochement.
+
+Le rapport détaillé `docs/product/LOT-316B-RECONCILIATION-REVUE.md` fournit une checklist opérateur/approbateur distinct, un modèle de manifeste de lot (source, périmètre, date, SHA-256, volumes et décisions) et les limites de gouvernance. Les changements sont descriptifs ; toute modification de statut doit être corroborée par un acte et approuvée par l'autorité compétente.
+
+Le test Node dédié est intégré au workflow de validation. Les données et tests sont synthétiques. Aucun export institutionnel n'a été reçu ; aucune connexion, écriture, migration, activation d'annuaire ou preuve d'affiliation n'est introduite.
