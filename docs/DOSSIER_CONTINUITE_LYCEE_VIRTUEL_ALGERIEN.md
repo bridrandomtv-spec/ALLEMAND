@@ -6376,3 +6376,51 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 2. Comparer chaque fonction à son usage réel dans le client et aux scripts/migrations versionnés, sans réexécuter les scripts historiques.
 3. Conserver `agreement_current(text)` comme anomalie ouverte à documenter ; ne pas appliquer de REVOKE ni de migration sans instruction distincte.
 4. La recette navigateur desktop/mobile et le contrôle de session admin réelle restent des étapes séparées, non réalisées.
+
+
+## Lot 304 — contrôle du moindre privilège sur la fiche élève (12 novembre 2026)
+
+### Périmètre
+- Suite du Lot 303 : comparaison des RPC SECURITY DEFINER actives avec les permissions réellement définies et leur usage dans `admin.js` / `supabase/supabase.js`.
+- Introspection PostgreSQL en lecture seule ; lecture du code de la branche `design/prototypes-67-74-alignment`.
+- Aucun appel RPC avec un compte réel, aucune lecture de fiche personnelle, aucun test d'accès inter-comptes et aucune modification.
+
+### Anomalie confirmée — `admin_student(uuid)`
+- La fonction active vérifie uniquement `admin_can(auth.uid(), 'students.read')`, puis le périmètre de wilaya via `admin_sees_wilaya()`.
+- Une fois ces contrôles passés, elle renvoie dans le même JSON :
+  - le profil élève ;
+  - les paiements (identifiant, montant, statut, méthode) ;
+  - les reçus (numéro, montant, date) ;
+  - les acceptations d'accords et leurs métadonnées.
+- La matrice active des rôles confirme que `responsable_pedagogique` possède `students.read`, mais ne possède ni `payments.validate` ni `accounting.manage`.
+- Le client `SB.admStudent()` appelle directement cette RPC. Dans `admin.js`, le résultat complet est sérialisé dans un bloc `<pre>` après échappement HTML. Un responsable pédagogique autorisé à consulter une fiche peut donc également recevoir et voir les montants, paiements, reçus et métadonnées d'accords de l'élève.
+- Il s'agit d'un défaut confirmé de moindre privilège et de minimisation des données. Ce n'est pas une preuve d'accès inter-wilayas : le contrôle `admin_sees_wilaya()` reste appliqué.
+
+### Mesure corrective recommandée — non appliquée
+1. Limiter `admin_student()` aux données pédagogiques et d'identité strictement nécessaires à `students.read`.
+2. Si un besoin administratif distinct le justifie, créer une réponse séparée pour les données de paiement/reçus, protégée par une permission financière dédiée et le même contrôle de wilaya. Ne pas réintroduire ces données dans la fiche pédagogique.
+3. Retirer le rendu JSON brut de la fiche au profit d'une présentation explicite des champs autorisés.
+4. Ajouter des tests de permissions couvrant au minimum `responsable_pedagogique`, `responsable_regional` et `admin_general`, avec des données synthétiques ; vérifier qu'un rôle pédagogique ne reçoit aucune donnée de paiement/reçu.
+5. Cette correction doit respecter la décision produit de ne pas ajouter ni remettre en avant de module de facturation/paiement. Aucun écran financier nouveau n'est proposé par ce lot.
+
+### Contrôles de cohérence associés
+- `admin_dashboard()` renvoie aussi des agrégats `paiements_attente`, `recettes_confirmees_da` et `remboursements` sous la seule permission `reports.read`, même si le rendu actuel de `admin.js` n'affiche que les élèves, les vérifications, les signalements et le périmètre. À conserver comme point de minimisation secondaire : le serveur devrait idéalement ne retourner que les champs réellement nécessaires à cette vue.
+- `admin_parent_role_requests()` et `admin_decide_parent_role_request()` utilisent `is_admin()` (profil `role='admin'`) au lieu de la matrice `admin_permissions`. Le contrôle est actuellement limité aux profils admin, mais ce chemin historique doit être confronté à la politique de gestion des rôles avant toute évolution. Aucun accès ou abus n'a été démontré.
+- `admin_couverture_wilayas()` utilise aussi `is_admin()` comme voie d'accès globale, sinon exige `reports.read` et applique le périmètre de wilaya. Le comportement est cohérent avec le rôle admin général tel que défini dans la base, sous réserve de conserver l'alignement entre profil et affectations.
+
+### Validation documentaire et CI
+- CI #3062 / run `43264373044` sur le commit documentaire `edab5d15d966e7566d61ed47ec2b7ac6832debfa` : **success**. Les validations structurelles, pédagogiques, administration, messagerie, JavaScript et contrôles du dépôt ont terminé avec succès.
+- Cette CI valide le dépôt et le correctif `admin.js:602`; elle ne teste pas l'autorisation SQL décrite dans ce lot.
+- Le présent addendum déclenche une nouvelle CI documentaire ; son résultat doit être contrôlé séparément.
+
+### Hors périmètre confirmé
+- Aucune modification SQL, RPC, RLS, GRANT, table, donnée, Auth ou paramètre Supabase.
+- Aucune modification de `admin.js` ou `supabase/supabase.js`.
+- Aucun MFA/2FA, aucune facturation ou paiement ajouté, aucune nouvelle dépendance.
+- Aucun déploiement, aucune fusion et aucune modification de `main`. PR #17 reste ouverte et non fusionnée.
+
+### Suite exacte
+1. Corriger ultérieurement `admin_student()` et son rendu client, uniquement dans la branche de la PR après validation de cette correction de moindre privilège.
+2. Ajouter des tests négatifs par rôle avec fixtures synthétiques ; ne pas utiliser de vrais dossiers élèves.
+3. Vérifier séparément `agreement_current(text)` (Lot 303), qui reste exécutable par `anon` et retourne le composite complet.
+4. Une fois ces points de sécurité documentés et la CI confirmée, clôturer cette passe d'audit et attendre le prochain prototype fourni par l'utilisateur.
