@@ -7027,3 +7027,16 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - CI #3180 et #3181 : succès ; l'étape CI « Valider la messagerie EduDZ (schéma RLS + client + vue) » est verte sur #3181 (commit `6e3f1ee`). Le correctif est validé au niveau des contrôles statiques du dépôt, sans prétendre à une recette runtime.
 - Ce lot ne livre pas encore le système d'invitations : aucune table/RPC d'invitation, annuaire national, ni DM inter-wilayas. La preuve institutionnelle d'affiliation et la règle `msg_can_dm` restent bloquantes.
 - Aucun SQL, migration, Auth/RLS/GRANT/Storage, écriture Supabase active, merge, déploiement ou changement de `main). PR #17 reste ouverte. Pas de MFA/2FA ni facturation.
+
+
+## Lot 325 — revue des autorisations et contrat d'invitation Messenger (12 novembre 2026)
+
+- Relecture ciblée du schéma `supabase/msg_schema.sql` (RLS, fonctions, triggers, GRANT, stockage), du client `supabase/supabase.js` et de l'interface `msg.js`.
+- **S1 critique avant ouverture :** le schéma autorise encore la création d'une conversation `direct` par un utilisateur authentifié et l'auto-insertion de sa propre ligne `msg_members` pour un DM ; le trigger `msg_guard_direct` contrôle l'appartenance au groupe scolaire commun quand le second membre existe, mais n'exige aucune invitation acceptée. Le correctif client Lot 324 ne ferme donc pas à lui seul le chemin serveur. À corriger dans une migration/RPC transactionnelle distincte après autorisation.
+- **S2 bloquant produit :** `verif_statut='verifie'` reste fondé sur matricule/section déclarés et validation prof/admin ; il ne constitue pas une preuve d'inscription à un établissement canonique. Le registre institutionnel doit être relié à l'affiliation et à l'année scolaire.
+- **S3 bloquant objectif national :** `msg_can_dm` exige actuellement deux profils vérifiés partageant wilaya+niveau+filière ; cette règle ne permet pas les DM inter-wilayas et ne doit pas être simplement supprimée.
+- **S4 à corriger/tester :** la logique `msg_not_blocked` semble traiter le blocage par le destinataire sur l'expéditeur sans symétrie complète ; tests bilatéraux nécessaires.
+- **S5 à cloisonner :** les rôles `prof` et `admin` sont tous deux modérateurs et peuvent agir sur la vérification ; distinguer modération du contenu, validation institutionnelle et administration technique.
+- **S6 à renforcer avant ouverture :** le MIME déclaré et la taille ne suffisent pas à valider le contenu réel des pièces jointes ; prévoir analyse serveur, quotas et accès privé à durée limitée.
+- Nouveau document : `docs/product/LOT-325-AUTORISATIONS-ET-CONTRAT-INVITATIONS-MESSENGER.md`, avec états/transitions des invitations, invariants transactionnels, opérations serveur cibles, matrice d'autorisation et tests négatifs.
+- Aucun SQL/RLS/GRANT/Auth/Storage, aucune migration, aucune écriture Supabase active, aucun merge, déploiement ou changement de `main`. PR #17 reste ouverte. Pas de MFA/2FA ni facturation.
