@@ -6814,3 +6814,34 @@ Le run du Lot 316-C `43286385705` est terminé avec succès ; les tests Lot 315,
 ### Décision
 
 GO pour revue UX locale sur données fictives. NO-GO pour l'usage administratif réel. PR #17 reste ouverte, non fusionnée ; aucun déploiement ni changement Supabase.
+
+
+## Lot 317 — traçabilité des décisions de revue (12 novembre 2026)
+
+### Livrables ajoutés sur la branche PR #17
+
+- prototypes/registry-decision-ledger-core.mjs : journal séquentiel des événements, chaîne d'intégrité SHA-256 et export JSON vérifié.
+- prototypes/registry-decision-ledger-core.test.mjs : tests Node natifs.
+- docs/product/LOT-317-TRACEABILITE-DECISIONS.md : règles métier, protocole de test et limites cryptographiques.
+- docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md : section Lot 317 ajoutée.
+- .github/workflows/deploy.yml : fichiers déclarés dans les prérequis et test Lot 317 ajouté à la CI.
+
+### Contrôles
+
+- Horodatage fourni explicitement par l'appelant ; tests déterministes.
+- Justification obligatoire pour chaque événement.
+- Revue opérateur avant décision d'approbateur ; identifiants distincts.
+- Référence de preuve/acte obligatoire pour accepter ou rouvrir.
+- Vérification de la chaîne SHA-256 et refus d'export JSON si une altération est détectée.
+
+### Limites et sécurité
+
+- SHA-256 sans signature ni stockage append-only ne constitue pas une preuve d'identité, d'horodatage fiable ou d'inaltérabilité face à un acteur privilégié.
+- Identités, dossiers et références synthétiques ; aucun document réel.
+- Aucun réseau, stockage navigateur, Supabase/Auth/RLS/GRANT/Storage, SQL/migration, Cloudflare ou déploiement modifié.
+- Le test CI du Lot 317 doit terminer avant de déclarer le lot validé.
+- PR #17 doit rester ouverte et non fusionnée ; main inchangée.
+
+### Suite
+
+Après CI verte, effectuer une revue des transitions et de l'export, puis concevoir un écran chronologique de consultation du journal en données fictives. Ne pas intégrer de vrais dossiers avant validation institutionnelle et conception de l'audit serveur.
