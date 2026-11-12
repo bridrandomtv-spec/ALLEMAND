@@ -298,3 +298,21 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - GO pour les tests hors ligne sur données synthétiques.
 - NO-GO pour tout modèle SQL/migration et tout test sur la base active. Une base PostgreSQL jetable nécessitera un environnement local ou isolé explicitement autorisé, sans coût cloud implicite.
 - PR #17 reste ouverte et non fusionnée.
+
+
+### Correctifs finaux et validation CI — Lot 321 (12 novembre 2026)
+
+- Analyse des échecs intermédiaires #3166 à #3173 : le journal révélait un défaut supplémentaire dans `clean()`. L'expression régulière était doublement échappée et supprimait les lettres ordinaires `r`, `n` et `t` au lieu de ne neutraliser que CR/LF/TAB. Elle est corrigée en `/[\\r\\n\\t]+/g`, ce qui préserve les rôles `operateur`, les identifiants SYN et les références.
+- Les fixtures des tests du moteur et de l'adaptateur ont été normalisées en UTC ISO-8601 avec millisecondes. Le test d'association de rôle a été aligné sur le rejet central du moteur lorsqu'un rôle inconnu est rencontré.
+- Validation finale : GitHub Actions **#3174**, run `43298187072`, commit `10e919749b85238c03dfde19eefcae00c27247cb` : **success, 40/40 étapes**. Les tests du journal Lot 317, de la chronologie Lot 318 et de l'adaptateur Lot 319 sont passés dans cette exécution.
+- Les runs antérieurs de la série étaient en échec pendant les corrections successives ; ils ne sont pas comptés comme validation. #3174 est le résultat vert de référence pour le code Lot 321.
+- PR #17 reste ouverte, non fusionnée ; HEAD au moment de ce constat : `10e919749b85238c03dfde19eefcae00c27247cb`. Comparaison avec `main` : 2 072 commits en avance et 4 en retard ; `main` reste au commit `12367172a6038cfd9de709be37e6de9fa62b9462` dans la comparaison consultée.
+- La description de la PR a été nettoyée : les addenda MFA historiques 181–209 ont été remplacés par une exclusion explicite MFA/2FA. Ce changement de description n'est pas une suppression de code ; aucun fichier MFA n'apparaît dans la liste des fichiers actuellement modifiés de la PR. Un audit séparé de toute source résiduelle reste obligatoire avant fusion.
+- GitHub contient une notification Cloudflare confirmant un **déploiement de prévisualisation de branche** pour le commit `74b1f99`. Il ne s'agit pas d'une publication de production. Le déploiement de prévisualisation automatique ne doit pas être confondu avec un déploiement de production ; la prévisualisation exacte du HEAD `10e9197` n'a pas été confirmée dans cette vérification.
+- Aucun SQL exécuté, aucune migration appliquée, aucune base PostgreSQL/Supabase active modifiée, aucun changement direct sur `main`, aucun déploiement de production.
+
+### Décision après validation
+- Lot 321 : validation structurelle CI acquise sur le commit indiqué.
+- GO pour préparer le modèle relationnel PostgreSQL en documentation et les tests sur base jetable locale.
+- NO-GO pour appliquer une migration, créer une branche Supabase payante, ou utiliser une base distante sans autorisation explicite distincte.
+- Le protocole institutionnel du registre reste une proposition à faire valider ; aucun établissement réel ni aucune inscription officielle n'est importé.
