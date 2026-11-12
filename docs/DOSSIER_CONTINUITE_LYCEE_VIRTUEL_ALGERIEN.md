@@ -6613,3 +6613,40 @@ Aucun changement applicatif ou Supabase, aucune migration/SQL d'écriture, aucun
 - Commits : SW `7e84ec0da3d6306079f5a6a08bd72e4000ce162d`; contrôle CI `613c981c7da627806437e1499cbe61bd70a19ba0`.
 - Le contrôle structurel doit encore être exécuté par GitHub Actions sur le nouveau HEAD. Ne pas annoncer le CI vert avant résultat effectif.
 - Aucun déploiement Cloudflare ni merge. PR #17 reste ouverte ; `main` inchangée.
+
+
+## Lot 315 — prototype de prévisualisation/import du registre (12 novembre 2026)
+
+### Livrables sur la branche PR #17
+
+- `prototypes/registry-import-preview.html` : écran autonome de prévisualisation CSV, statistiques de validation, modèle CSV et export du rapport d'anomalies.
+- `prototypes/registry-import-core.mjs` : parseur CSV et validations structurelles/métier.
+- `prototypes/registry-import-core.test.mjs` : 8 tests Node natifs.
+- `docs/product/LOT-315-PROTOTYPE-IMPORT-REGISTRE.md` : périmètre, contrat CSV, limites et protocole de test.
+- `docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md` : section Lot 315 ajoutée.
+
+### Contrôles implémentés
+
+- En-têtes exacts requis ; en-têtes inconnus/dupliqués et colonnes excédentaires rejetés.
+- CSV avec virgules et guillemets échappés.
+- Champs obligatoires, statuts provisoires et date ISO calendaire contrôlés.
+- Doublons détectés pour `source_id` et `identifiant_national`.
+- Identifiants `SYN-*` et sources/références de démonstration marqués non importables.
+- Rapport CSV avec neutralisation des cellules de formule pour éviter l'exécution accidentelle dans un tableur.
+- Trois lignes de démo fictives, avec doublon volontaire, affichées par défaut.
+
+### Limites de sécurité
+
+Prototype séparé dans `prototypes/`, non raccordé à la navigation de l'application. Aucun appel réseau, aucun envoi de fichier, aucun stockage local, aucune connexion Supabase. Le bouton d'import est désactivé. Aucune authentification, preuve officielle, activité réelle d'un lycée ou affiliation d'élève n'est vérifiée. Le vocabulaire de statut est provisoire et doit être confirmé par l'autorité émettrice.
+
+### Tests
+
+- 7 contrôles de parsing/validation ont été exécutés localement avec Node lors de la revue de la logique (CSV cité, guillemet non fermé, ligne structurée, doublon, identifiant synthétique, date/statut invalides, en-têtes/colonnes incorrects).
+- Le fichier de test automatisé contient 8 cas ; la commande prévue est `node --test prototypes/registry-import-core.test.mjs`.
+- L'exécution de ce fichier exact et le résultat GitHub Actions restent à confirmer ; ne pas annoncer le CI vert avant résultat réel.
+
+### Décision
+
+GO pour la maquette isolée uniquement. NO-GO pour l'import, le déploiement, l'annuaire national, les affiliations ou toute écriture Supabase. Le lot suivant doit être une revue du contrat et du protocole d'approbation institutionnel, avant toute conception de migration.
+
+Aucun changement Supabase (schéma/données/RLS/GRANT/Auth/Storage), aucun changement Cloudflare, aucun déploiement, aucun merge, aucune modification de `main`. PR #17 doit rester ouverte.
