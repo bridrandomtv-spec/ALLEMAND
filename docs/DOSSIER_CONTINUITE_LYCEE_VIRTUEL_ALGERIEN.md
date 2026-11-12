@@ -6854,3 +6854,12 @@ Après CI verte, effectuer une revue des transitions et de l'export, puis concev
 - Une nouvelle décision finale est possible après la nouvelle revue, avec un approbateur distinct de l'opérateur du cycle.
 - Tests additionnels : cycle correction → nouvelle revue → décision, et décision finale → réouverture → nouvelle revue → nouvelle décision.
 - Correctifs de normalisation des caractères de contrôle et de garde de transition intégrés. Le dernier run CI doit couvrir le HEAD final avant validation du Lot 317.
+
+
+### Validation finale du Lot 317 — 12 novembre 2026
+
+- Run GitHub Actions **43289871367** sur le commit de code 1e9d154c16e075a5511ca3c3410ac7ead4c54edf : **success**, job unique et 38/38 étapes réussies.
+- L'étape « Tester la traçabilité des décisions (Lot 317) » est réussie ; les contrôles Lots 315, 316-B, 316-C et 316-D sont également réussis.
+- Le run a couvert le correctif de réouverture et les deux tests de cycle correction/réouverture. Les premiers échecs ciblés ont été corrigés avant cette validation finale.
+- Le présent ajout documentaire déclenche sa propre CI ; il ne modifie aucun code.
+- PR #17 confirmée ouverte, non fusionnée, base main. Aucun déploiement Cloudflare/Supabase, aucune migration ni écriture Supabase.
