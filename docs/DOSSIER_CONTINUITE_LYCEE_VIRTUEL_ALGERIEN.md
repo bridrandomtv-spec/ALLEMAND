@@ -6472,3 +6472,40 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Spécification mise à jour : [docs/product/MESSAGERIE_MESSENGER_SCOLAIRE_SPEC.md](product/MESSAGERIE_MESSENGER_SCOLAIRE_SPEC.md), commit `a48efa39a1b4b68fd83896184ec027d3099c7ab8`.
 - Aucun code applicatif, SQL, migration, RLS, GRANT, Auth, Storage ou donnée Supabase modifié. Aucun MFA/2FA, paiement/facturation, déploiement, merge ou changement sur `main`. PR #17 reste ouverte et non fusionnée.
 - Prochaine étape : concevoir l'annuaire national et l'UX de découverte dans `msg.js`, après inspection des fonctions de recherche de profils et des règles RLS existantes. La recherche ne doit pas exposer directement la table `profiles` ni charger tous les profils côté client.
+
+
+## Lot 308 — première évolution fonctionnelle de la boîte de réception Messenger (12 novembre 2026)
+
+### Référence visuelle reçue
+- Deux captures Messenger mobile fournies par l'utilisateur servent de référence UX : menu (communautés, invitations par message, archives, invitations à rejoindre un canal, paramètres) et boîte de réception (recherche, contacts/raccourcis, conversations récentes, non-lus, nouvelle conversation).
+- Direction retenue : reprendre les conventions d'usage, sans copier la marque, le logo ou le code Meta, et conserver l'identité algérienne / arabe RTL.
+
+### Changements réalisés sur la branche PR #17
+- `msg.js` : ajout d'une barre de recherche locale dans les conversations et groupes déjà chargés, et de filtres « Tout / Privées / Groupes ».
+- Les éléments filtrables sont alimentés par les vraies lignes renvoyées par `msgGroups()` et `msgConvs()`. Aucun faux contact, faux message, statut fictif ou donnée de démonstration n'est ajouté.
+- Le libellé de l'espace est repositionné comme une messagerie scolaire nationale ; l'absence de DM est explicitement décrite sans suggérer qu'une recherche nationale de contacts existe déjà.
+- `style-prototype-dz.css` : styles responsive pour l'en-tête Messenger, la recherche, les filtres et les cartes ; prise en charge clair/sombre.
+- `index.html` : cache CSS incrémenté de `v193` à `v194`.
+
+### Limites fonctionnelles constatées — à ne pas masquer
+- La recherche actuelle ne cherche que dans les conversations et groupes déjà retournés par le compte (limite actuelle de 50) ; elle ne constitue PAS l'annuaire national des étudiants.
+- L'interface de demande d'invitation, la boîte « invitations par message », l'archive, les canaux, la découverte des communautés, les avatars réels et les reçus de lecture ne sont pas encore implémentés comme fonctions complètes.
+- L'envoi de fichiers existe côté client (PNG/JPEG/WebP/PDF, 5 Mo), mais le fil actuel ne présente pas encore une expérience complète de pièce jointe avec aperçu image, téléchargement sécurisé, progression et reprise d'erreur. Ne pas annoncer cette fonction comme finalisée.
+- Les états de présence/temps réel existants ne doivent pas être assimilés à des reçus de lecture ni à un indicateur « écrit… ».
+
+### Sécurité et suite
+- Avant annuaire national / invitations / DM inter-wilayas : définir une RPC ou une couche serveur de recherche minimisée, vérifier identité scolaire, visibilité, consentement, blocage, signalement, quotas, anti-énumération et RLS ; la restriction de même wilaya dans `msg_can_dm` doit être revue côté serveur.
+- Avant d'afficher les pièces jointes : lire les métadonnées depuis `msg_attachments` sous RLS et créer des URL signées de courte durée depuis le bucket privé `prive`, sans rendre le bucket public.
+- Aucun SQL, migration, politique RLS, GRANT, Auth, Storage, donnée Supabase, MFA/2FA ou paiement modifié dans le Lot 308.
+- Aucun changement direct sur `main`, aucun merge ni déploiement. PR #17 reste ouverte.
+- CI structurelle déclenchée par les commits du lot ; validation navigateur réelle ordinateur/mobile et test de compte cloud restent à effectuer.
+
+### Commits Lot 308
+- `msg.js` : `51e0dc80a785991d9eb75c13feb36bfc25970aca`.
+- `style-prototype-dz.css` : `cd85d343269153cec08a7cd27ca210b34f37cdbf`.
+- `index.html` : `d55b5517bca974b8d77871b1b0bfca306e4eb75b`.
+
+### Prochaine séquence de réalisation
+1. Construire la vue fil Messenger et les vraies pièces jointes (aperçu, téléchargement signé, erreurs d'upload) à partir des tables et politiques existantes.
+2. Concevoir le menu et les vues Invitations / Archivées / Communautés seulement après confirmation du modèle serveur correspondant.
+3. Préparer la recherche nationale et les invitations en backend, puis tests RLS synthétiques ; pas de lecture directe non bornée de `profiles`.
