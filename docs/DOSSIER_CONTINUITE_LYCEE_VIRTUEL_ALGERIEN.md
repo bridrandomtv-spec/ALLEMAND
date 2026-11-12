@@ -7104,3 +7104,12 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Nouveau document `docs/product/LOT-330-AUDIT-LECTURE-SEULE-SCHEMA-VIVANT.md`. Commit documentaire : `de3dfd8` ; mise à jour du présent dossier à suivre.
 - Aucun SQL de modification, DDL, migration, changement Auth/RLS/GRANT/Storage, déploiement Cloudflare, changement `main` ou merge PR #17. PR #17 reste ouverte et non fusionnée.
 - Étape suivante : lot 331 — protocole d'intégration PostgreSQL jetable à deux sessions et matrice de tests RLS/ACL/DM/invitations/profil minimal. Ne pas créer de branche Supabase payante ni modifier le projet actif sans accord.
+
+
+### Addendum Lot 330 — Supabase Advisors
+
+- Consultation des Advisors en lecture seule : sécurité — 3 tables MFA avec RLS sans politique, 1 fonction SECURITY DEFINER publique (`agreement_current`), 42 fonctions SECURITY DEFINER exécutables par `authenticated`, protection des mots de passe compromis désactivée. Ces avertissements doivent être évalués au cas par cas ; le nombre de fonctions n'est pas une preuve de vulnérabilité. `agreement_current` ne retourne que le texte actif d'un accord, accès public à confirmer comme intentionnel.
+- Performance — 20 clés étrangères sans index couvrant (dont cinq sur Messenger), 53 politiques RLS avec initplan Auth, 57 cas de politiques permissives multiples, 6 index non utilisés dont trois index Messenger. Pas de suppression automatique d'index ; données Messenger quasi inexistantes, donc l'usage observé ne permet pas de juger la charge future.
+- Les tables MFA n'accordent des privilèges qu'à `postgres` et `service_role`, pas à `anon`/`authenticated`. MFA/2FA reste exclu ; aucun changement Auth ni suppression de table dans ce lot.
+- Aucun correctif Advisor appliqué. Priorités suivantes : minimisation de `profiles`, cohérence API invitation/DM, puis revue des fonctions SECURITY DEFINER et des politiques permissives.
+- CI #3197 (commit initial du document Lot 330 `de3dfd8`) était en cours lors du dernier contrôle ; l'addendum Advisor et la présente mise à jour déclenchent de nouveaux contrôles.
