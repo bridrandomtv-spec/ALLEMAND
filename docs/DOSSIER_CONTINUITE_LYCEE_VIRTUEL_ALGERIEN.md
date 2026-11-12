@@ -7003,3 +7003,16 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Les références exactes à `profiles`, les clés et types doivent être confirmés sur le schéma réel avant DDL.
 - GO documentaire uniquement ; NO-GO DDL, migration, PostgreSQL/Supabase actif, Auth/RLS/GRANT/Storage, import réel, activation de l'annuaire et déploiement.
 - Les tests futurs doivent utiliser une base PostgreSQL jetable locale ; aucune branche cloud payante ne sera créée sans autorisation distincte.
+
+
+## Lot 323 — audit de préparation du Messenger national (12 novembre 2026)
+
+- Audit du code réel `msg.js`, du contrat `supabase/msg_schema.sql`, de `tests/msg_test.mjs`, de `ci/check-msg.mjs` et du cahier des charges Messenger.
+- Conclusion : **Messenger national non terminé**. Le dépôt contient une messagerie scolaire restreinte (groupes par wilaya/niveau/filière, conversations privées existantes, fil, Realtime par conversation, pièces jointes et modération), mais pas encore un réseau national inter-lycées opérationnel.
+- Constat UI : la recherche actuelle filtre les conversations/groupes chargés ; elle ne constitue pas un annuaire national. Le code indique explicitement que la recherche nationale et les invitations seront ajoutées après sécurisation serveur.
+- Constat schéma : tables `msg_*` présentes ; pas de table/RPC d'invitations dans le schéma audité ; `msg_can_dm` reste fondée sur l'égalité wilaya+niveau+filière.
+- Blocage majeur confirmé : aucune relation institutionnelle canonique élève↔lycée prouvée par une source officielle n'est présente dans le schéma versionné. Les champs déclaratifs du profil et le matricule/section saisis ne sont pas une preuve d'affiliation.
+- Tests actuels : assertions statiques de contrat/présence ; elles ne prouvent pas les autorisations runtime RLS, le parcours d'invitation concurrent, ni la recette multi-utilisateurs Realtime.
+- Nouveau document : `docs/product/LOT-323-AUDIT-PREPARATION-MESSENGER-NATIONAL.md` (audit, écarts, séquencement 323-A à 323-H).
+- Prochaine priorité : finaliser la compatibilité du registre avec le schéma réel et la matrice d'accès, puis concevoir invitations et annuaire avant tout élargissement de `msg_can_dm`.
+- Aucun changement applicatif, SQL, migration, Auth/RLS/GRANT/Storage, base Supabase active, `main`, merge ou déploiement effectué. PR #17 reste ouverte et non fusionnée. Pas de facturation ni MFA/2FA.
