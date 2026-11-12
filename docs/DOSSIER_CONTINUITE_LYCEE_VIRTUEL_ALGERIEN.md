@@ -6748,3 +6748,42 @@ Attendre le résultat de la CI du Lot 316-B, puis poursuivre avec une revue de r
 - Les étapes de validation suivantes, jusqu'au contrôle pédagogique restructuré et à l'étape Information, apparaissent également réussies dans le job.
 - Au dernier relevé, le statut global du run est encore `in_progress` (conclusion non disponible). Lot 316-B n'est donc pas encore déclaré CI globalement vert.
 - Suivi : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/43283998214
+
+
+## Lot 316-C — rapport administratif de revue des écarts (12 novembre 2026)
+
+### Livrables sur la branche PR #17
+
+- `prototypes/registry-review-report-core.mjs` : rapport de revue trié P1/P2/P3, export CSV neutralisé et garde de séquence opérateur/approbateur.
+- `prototypes/registry-review-report-core.test.mjs` : tests du classement, de la quarantaine, des rôles, de l'ordre de validation et de l'export.
+- `docs/product/LOT-316C-RAPPORT-REVUE-ECARTS.md` : protocole administratif, priorités, décisions et limites.
+- `docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md` : section Lot 316-C ajoutée.
+- `.github/workflows/deploy.yml` : fichiers ajoutés à la liste des prérequis et test Node dédié.
+
+### Règles métier
+
+- P1 : nouvel identifiant, ligne absente entre versions, ou changement de statut/date/référence/source.
+- P2 : changement de nom, identité, rattachement géographique ou champ descriptif.
+- P3 : aucun changement détecté sur les champs comparés.
+- Les priorités P1/P2/P3 organisent la file de travail ; elles ne constituent pas un jugement juridique.
+- L'opérateur peut seulement documenter « à revoir » ou mettre en quarantaine.
+- Un approbateur distinct peut accepter, rejeter ou mettre en quarantaine après revue opérateur.
+- Les identifiants opérateur/approbateur sont simulés : le prototype ne fournit ni authentification, ni contrôle serveur, ni signature, ni journal d'audit inviolable.
+
+### Sécurité et limites
+
+- CSV neutralisé contre les formules de tableur ; colonnes séparées pour commentaires opérateur et approbateur.
+- Aucun établissement réel ni donnée d'élève.
+- Aucun stockage durable, aucun appel réseau, aucun import ou publication.
+- Aucun changement Supabase (schéma/données/RLS/GRANT/Auth/Storage), aucune migration, aucune modification Cloudflare et aucun déploiement.
+- Le registre national et les invitations Messenger restent désactivés tant que la source institutionnelle et la preuve d'affiliation ne sont pas validées.
+
+### CI et état de la PR
+
+- L'étape `Tester le rapport administratif de revue des écarts (Lot 316-C)` est ajoutée au workflow. Son résultat doit être contrôlé avant de déclarer ce lot validé.
+- Lot 316-B : CI globale précédemment terminée avec succès, run `43283998214`.
+- PR #17 doit rester ouverte et non fusionnée ; aucun déploiement n'est autorisé.
+
+### Suite proposée
+
+Après succès CI, effectuer une revue statique ciblée du traitement des priorités, des rôles et des exports. Ensuite, concevoir une maquette d'écran de revue administrative hors ligne, sans brancher de données réelles ni de service d'authentification.
