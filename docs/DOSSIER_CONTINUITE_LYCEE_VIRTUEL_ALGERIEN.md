@@ -6509,3 +6509,24 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 1. Construire la vue fil Messenger et les vraies pièces jointes (aperçu, téléchargement signé, erreurs d'upload) à partir des tables et politiques existantes.
 2. Concevoir le menu et les vues Invitations / Archivées / Communautés seulement après confirmation du modèle serveur correspondant.
 3. Préparer la recherche nationale et les invitations en backend, puis tests RLS synthétiques ; pas de lecture directe non bornée de `profiles`.
+
+
+## Lot 309 — pièces jointes Messenger dans les fils (12 novembre 2026)
+
+### Modifications réalisées sur la branche PR #17
+- `msg.js` : le rendu des messages récupère maintenant les métadonnées de pièce jointe par message et affiche les images dans le fil (aperçu avec ouverture en grand) ou un lien d'ouverture pour les PDF. Les lignes Realtime nouvellement reçues utilisent le même rendu.
+- `supabase/supabase.js` : ajout de `msgAttachmentInfo(messageId)`. La fonction interroge `msg_attachments` avec le filtre `message_id`, puis génère une URL signée temporaire (15 minutes) dans le bucket privé `prive`. L'accès réel reste conditionné par les politiques RLS et Storage existantes.
+- Statuts vérifiés dans `supabase/msg_schema.sql` : valeurs autorisées `pending`, `ok`, `retire`. L'interface masque les pièces jointes retirées ; les pièces en attente restent accessibles uniquement si les politiques Storage/RLS l'autorisent. Aucun faux statut « approved/active » n'est utilisé.
+- Sélection de fichier : contrôle client du MIME (PNG/JPEG/WebP/PDF) et du plafond 5 Mo avant envoi ; message d'erreur visible si l'envoi ou le téléversement échoue ; indication de téléversement et confirmation après réussite.
+- Zone de rédaction : Entrée envoie le message, Maj+Entrée conserve le saut de ligne.
+- CSS ciblé pour les aperçus, liens de fichiers et états d'envoi, avec variante sombre.
+- Cache actualisé : `style-prototype-dz.css?v=195`, `msg.js?v=3511`, `supabase/supabase.js?v=3519`, Service Worker `dz-de-v3.185.0.0.140`.
+
+### Limites et vérifications restantes
+- Les pièces jointes ne sont pas encore testées en conditions réelles avec deux comptes scolaires distincts ; les liens signés et l'accès inter-membres dépendent des règles RLS/Storage déjà déployées.
+- La valeur `statut='pending'` est autorisée par le schéma ; aucune nouvelle validation de modération n'a été ajoutée. Les pièces `retire` ne sont pas rendues.
+- Le message de pièce jointe est créé avant le téléversement : si le téléversement échoue, un message de référence peut rester dans la conversation. L'erreur est désormais affichée, mais le nettoyage atomique demanderait une évolution serveur.
+- Aucun changement SQL, migration, RLS, GRANT, Auth, Storage policy, données, MFA/2FA, paiement ou facturation. Aucun déploiement ni merge ; `main` inchangé et PR #17 reste ouverte.
+
+### Prochaine étape
+- Vérifier la CI du Lot 309, puis concevoir les invitations par message (accepter/refuser) et l'annuaire national via une RPC sécurisée. Ne pas exposer `profiles` directement ni réutiliser sans correction la règle locale actuelle de `msg_can_dm`.
