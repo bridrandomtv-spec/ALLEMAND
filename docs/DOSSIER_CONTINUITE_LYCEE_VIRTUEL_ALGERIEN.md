@@ -7024,6 +7024,6 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Correction sur la branche : `msgOpenDirect` ne crée plus de conversation ni de membre. Il ne rouvre qu'un DM existant partagé ; sinon il retourne `msg_invitation_requise`. Les erreurs de lecture sont propagées.
 - Ajout de garde-fous statiques dans `tests/msg_test.mjs` et `ci/check-msg.mjs) : interdiction d'INSERT client dans `msg_conversations` / `msg_members` depuis cette méthode.
 - Spécification complétée dans `docs/product/MESSAGERIE_MESSENGER_SCOLAIRE_SPEC.md` (Addendum Lot 324).
-- CI #3180 en cours sur le premier commit correctif ; CI #3181 en attente sur le commit qui ajoute les tests. Le correctif ne sera considéré validé qu'après un run vert sur le HEAD complet.
+- CI #3180 et #3181 : succès ; l'étape CI « Valider la messagerie EduDZ (schéma RLS + client + vue) » est verte sur #3181 (commit `6e3f1ee`). Le correctif est validé au niveau des contrôles statiques du dépôt, sans prétendre à une recette runtime.
 - Ce lot ne livre pas encore le système d'invitations : aucune table/RPC d'invitation, annuaire national, ni DM inter-wilayas. La preuve institutionnelle d'affiliation et la règle `msg_can_dm` restent bloquantes.
 - Aucun SQL, migration, Auth/RLS/GRANT/Storage, écriture Supabase active, merge, déploiement ou changement de `main). PR #17 reste ouverte. Pas de MFA/2FA ni facturation.
