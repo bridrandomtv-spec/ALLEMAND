@@ -178,3 +178,12 @@ Le schéma actuel ne comporte pas de table d'invitations. Le flux cible est donc
 La dernière définition de `msg_can_dm` dans `supabase/msg_schema.sql` exige actuellement la même wilaya, le même niveau et la même filière, en plus de deux identités vérifiées. Elle devra être remplacée par une autorisation nationale contrôlée (comptes scolaires vérifiés et règles anti-abus), sans ouvrir le DM direct avant acceptation.
 
 Le modèle serveur proposé est documenté dans `docs/security/LOT-310-audit-invitations-messenger.md`. Aucun SQL ou code de production n'est modifié dans ce lot : migration et RPC doivent être préparées, testées puis validées avant toute exécution sur Supabase.
+
+
+## Mise à jour Lot 311 — invitations nationales (12 novembre 2026)
+
+Le contrat d'invitation a été préparé dans `docs/security/LOT-311-invitations-migration-preflight.md`. Décision **NO-GO pour une migration exécutable à ce stade** : le schéma versionné montre les champs de vérification et de wilaya dans `profiles`, mais ne démontre pas de relation canonique active élève↔lycée, de préférence de découverte ni de statut de suspension exploitable. La seule wilaya et les champs libres du profil ne suffisent pas pour ouvrir un annuaire national.
+
+Le réseau national souhaité reste l'objectif produit : un élève vérifié pourra inviter un autre élève vérifié d'une autre wilaya si l'affiliation institutionnelle active est prouvée. Une invitation en attente ne crée aucune conversation ; l'acceptation du destinataire créera le DM et ses deux adhésions atomiquement. Blocage bilatéral, anti-doublon, pagination, limites anti-énumération et tests négatifs sont obligatoires.
+
+Aucun SQL, migration, RPC, RLS, GRANT, Auth ou Storage n'a été modifié ou exécuté. Les écrans reçus/envoyés restent bloqués jusqu'à validation du contrat serveur.
