@@ -210,3 +210,12 @@ Le workflow exécute les tests Lot 316-C. Données synthétiques seulement ; auc
 La page isolée `prototypes/registry-review-preview.html` illustre la file P1/P2/P3, les filtres, le détail d'un écart et la séquence opérateur puis approbateur. Elle utilise quatre identifiants synthétiques et conserve les décisions uniquement en mémoire de la page. Aucun état n'est conservé après rechargement.
 
 Le test `prototypes/registry-review-preview.test.mjs` est exécuté par le workflow et vérifie les avertissements de démonstration ainsi que l'absence d'appel réseau et de stockage navigateur. La maquette n'est pas reliée à l'application, à Supabase ou à Cloudflare et n'est pas publiée en production. Les identifiants saisis ne prouvent aucune identité ou permission ; les actions ne sont pas des décisions officielles.
+
+
+## 17. Lot 317 — traçabilité des décisions de revue
+
+Le module hors ligne prototypes/registry-decision-ledger-core.mjs ajoute un journal séquentiel des décisions. Chaque événement conserve le type, l'identifiant et le rôle déclarés de l'acteur, l'horodatage fourni, la justification, la référence documentaire et l'empreinte SHA-256 de l'événement précédent. L'acceptation exige une référence de preuve/acte ; la revue opérateur précède l'approbation et les deux acteurs doivent être distincts.
+
+Le test prototypes/registry-decision-ledger-core.test.mjs vérifie l'intégrité de la chaîne, les séquences autorisées, les justifications et références obligatoires, ainsi que le refus d'export après altération. Le workflow exécute désormais ce test dans la CI.
+
+**Limite :** une chaîne SHA-256 non signée détecte certaines altérations, mais ne prouve ni l'identité, ni l'heure, ni l'inaltérabilité face à un acteur pouvant recalculer le journal. Il n'existe aucun stockage durable ni authentification. Les identités et références sont synthétiques. Aucun changement Supabase/Auth/RLS/GRANT/Storage, aucune migration, aucun déploiement et aucune activation du registre ou de Messenger.
