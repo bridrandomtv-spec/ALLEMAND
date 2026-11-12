@@ -14,8 +14,16 @@ function required(value, label) {
 }
 function canonical(value) { return JSON.stringify(value); }
 function digest(value) { return createHash("sha256").update(canonical(value), "utf8").digest("hex"); }
+function utcMillis(value) {
+  if (typeof value !== "string") return null;
+  const millis = Date.parse(value);
+  if (!Number.isFinite(millis)) return null;
+  return new Date(millis).toISOString() === value ? millis : null;
+}
 
-function validateDecisionSequence(events) {
+function validateDecisionSequence(events, createdAt) {
+  let previousTimestamp = utcMillis(createdAt);
+  if (previousTimestamp === null) return { valid: false, error: "Horodatage initial ISO-8601 UTC invalide." };
   let lastOperator = null;
   let lastApprover = null;
   const approverActors = new Set();
@@ -27,6 +35,9 @@ function validateDecisionSequence(events) {
     for (const [key, label] of [["actorId", "Identifiant acteur"], ["at", "Horodatage"], ["reason", "Justification"]]) {
       if (typeof event[key] !== "string" || !event[key].trim()) return { valid: false, error: label + " manquant à l'événement " + n + "." };
     }
+    const eventTimestamp = utcMillis(event.at);
+    if (eventTimestamp === null || eventTimestamp <= previousTimestamp) return { valid: false, error: "Horodatage ISO-8601 invalide ou non croissant au numéro " + n + "." };
+    previousTimestamp = eventTimestamp;
     if (!ROLES.has(event.role)) return { valid: false, error: "Rôle non autorisé à l'événement " + n + "." };
 
     if (event.role === "operateur") {
@@ -60,6 +71,7 @@ function validateDecisionSequence(events) {
 export function createDecisionLedger({ caseId, createdAt, sourceReference }) {
   const id = required(caseId, "Identifiant du dossier");
   const timestamp = required(createdAt, "Horodatage initial");
+  if (utcMillis(timestamp) === null) throw new Error("Horodatage initial ISO-8601 UTC invalide.");
   const source = clean(sourceReference);
   const genesis = { version: 1, caseId: id, createdAt: timestamp, sourceReference: source };
   return { ...genesis, events: [], headHash: digest(genesis) };
@@ -80,7 +92,7 @@ export function appendDecisionEvent(ledger, input) {
     previousHash: ledger.headHash
   };
   const candidate = [...ledger.events, payload];
-  const sequence = validateDecisionSequence(candidate);
+  const sequence = validateDecisionSequence(candidate, ledger.createdAt);
   if (!sequence.valid) throw new Error(sequence.error);
   const event = { ...payload, hash: digest(payload) };
   ledger.events.push(event);
@@ -111,7 +123,7 @@ export function verifyDecisionLedger(ledger) {
     previous = hash;
   }
   if (ledger.headHash !== previous) return { valid: false, checked: ledger.events.length, error: "Empreinte de tête incohérente." };
-  const sequence = validateDecisionSequence(ledger.events);
+  const sequence = validateDecisionSequence(ledger.events, ledger.createdAt);
   if (!sequence.valid) return { valid: false, checked: ledger.events.length, error: sequence.error };
   return { valid: true, checked: ledger.events.length, headHash: previous };
 }
