@@ -493,7 +493,7 @@ let currentView = 'accueil';
 const NAVCATS = [
   ['learning', '🎓', 'التعلّم', ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud', 'projet']],
   ['assessment', '📝', 'التدريب والاختبارات', ['revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen']],
-  ['classroom', '💬', 'القسم والتواصل', ['classe', 'live', 'rag']],
+  ['classroom', '💬', 'القسم والتواصل', ['classe', 'msg', 'live', 'rag']],
   ['support', '🤝', 'فضاءات التأطير', ['prof', 'profboard', 'parents']],
   ['services', '⚙️', 'الخدمات والحساب', ['reservation', 'abonne', 'compte', 'legal', 'admin']]
 ];
@@ -505,7 +505,7 @@ const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
-  const visible = tabs.filter(t => t[0] !== 'msg' && t[0] !== 'sponsor' && (t[0] !== 'admin' || isAdmin()) && (t[0] !== 'parents' || isParent()) && (t[0] !== 'dashboard' || canSeeStudentDashboard()));
+  const visible = tabs.filter(t => t[0] !== 'sponsor' && (t[0] !== 'admin' || isAdmin()) && (t[0] !== 'parents' || isParent()) && (t[0] !== 'dashboard' || canSeeStudentDashboard()));
   const byId = new Map(visible.map(t => [t[0], t]));
   const used = new Set(['dashboard', 'accueil', 'masar', 'matieres', 'english']);
   let desktop = '';
@@ -534,7 +534,7 @@ function renderTabs(){
   }
   /* Conserve les éventuelles rubriques futures non encore classées. */
   for(const t of visible){
-    if(used.has(t[0]) || t[0] === 'msg') continue;
+    if(used.has(t[0])) continue;
     desktop += '<button class="tab" data-go="' + t[0] + '">' + t[1] + '</button>';
   }
   const primary = [
