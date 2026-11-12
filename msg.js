@@ -26,13 +26,30 @@
     return out;
   }
   function nameOf(id){ return state.names[id] || ('membre '+String(id).slice(0,4)); }
-  function rowHtml(m, live){
+  function rowHtml(m, live, attachment){
     var mine = state.me && m.sender_id===state.me;
+    var att = '';
+    if(attachment && attachment.ok && attachment.url){
+      var isImage = /^image\\//.test(attachment.mime||'');
+      att = '<div class="msg-attachment">'+(isImage
+        ? '<a href="'+esc(attachment.url)+'" target="_blank" rel="noopener noreferrer"><img src="'+esc(attachment.url)+'" alt="Image jointe" loading="lazy"></a>'
+        : '<a href="'+esc(attachment.url)+'" target="_blank" rel="noopener noreferrer">📄 Ouvrir le fichier joint</a>')+
+        '<small>'+esc(attachment.name||'Pièce jointe')+' · '+esc(attachment.sizeLabel||'')+'</small></div>';
+    } else if(attachment && !attachment.ok){
+      att = '<div class="msg-attachment msg-attachment-error">📎 Pièce jointe indisponible pour ce compte.</div>';
+    }
     return '<div class="msg-row '+(mine?'me':'')+(live?' live':'')+'" data-mid="'+m.id+'">'+
       '<div class="msg-meta"><b class="msg-name">'+esc(mine?'moi':nameOf(m.sender_id))+'</b>'+
       '<span>'+String(m.created_at||'').slice(11,16)+' UTC</span>'+
       (mine?'':'<button class="msg-report" data-report="'+m.id+'" type="button" title="signaler">🚩</button>')+'</div>'+
-      '<div class="msg-body">'+esc(m.body)+(m.flagged?' <em class="msg-flag">· signalé</em>':'')+'</div></div>';
+      '<div class="msg-body">'+esc(m.body)+(m.flagged?' <em class="msg-flag">· signalé</em>':'')+'</div>'+att+'</div>';
+  }
+  async function attachmentFor(messageId){
+    try{ return await window.SB.msgAttachmentInfo(messageId); }
+    catch(e){ return {ok:false}; }
+  }
+  function sizeLabel(n){
+    n=Number(n)||0; return n>=1048576?(n/1048576).toFixed(1)+' Mo':Math.max(1,Math.round(n/1024))+' Ko';
   }
   function closeChannel(){
     if(state.ch){ try{ state.ch.unsubscribe(); }catch(e){} state.ch = null; }
@@ -48,7 +65,10 @@
           if(state.me && m.sender_id===state.me) return;
           var th = el('msgBody') && el('msgBody').querySelector('.msg-thread');
           if(!th || th.querySelector('[data-mid="'+m.id+'"]')) return;
-          fetchNames([m.sender_id]).then(function(){ th.insertAdjacentHTML('beforeend', rowHtml(m, true)); });
+          Promise.all([fetchNames([m.sender_id]), attachmentFor(m.id)]).then(function(parts){
+            var a=parts[1]; if(a && a.ok) a.sizeLabel=sizeLabel(a.octets);
+            th.insertAdjacentHTML('beforeend', rowHtml(m, true, a && a.found ? a : null));
+          });
         })
         .on('postgres_changes', { event:'UPDATE', schema:'public', table:'msg_messages', filter:'conversation_id=eq.'+id }, function(){
           if(state.conv===id) renderThread(id);
@@ -187,7 +207,12 @@
     var h = '<button class="msg-back" data-act="back" type="button">← retour à la liste</button>'+
             '<div class="msg-head"><h3>💬 Fil #'+id+'</h3><span class="msg-pres" id="msgPres"></span></div>'+
             '<div class="msg-thread">';
-    h += r.msgs.map(function(m){ return rowHtml(m, false); }).join('') || '<div class="msg-empty">Aucun message pour l\'instant.</div>';
+    var renderedRows = await Promise.all(r.msgs.map(async function(m){
+      var a = await attachmentFor(m.id);
+      if(a && a.ok) a.sizeLabel = sizeLabel(a.octets);
+      return rowHtml(m, false, a && a.found ? a : null);
+    }));
+    h += renderedRows.join('') || '<div class="msg-empty">Aucun message pour l\'instant.</div>';
     h += '</div><div class="msg-input"><textarea id="msgText" rows="2" maxlength="2000" placeholder="اكتب رسالتك… / ton message…"></textarea>'+
          '<label class="msg-pj" title="joindre un fichier (png/jpeg/webp/pdf, 5 Mo max)">📎<input type="file" id="msgFile" accept="image/png,image/jpeg,image/webp,application/pdf" hidden></label>'+
          '<button class="msg-send" data-act="send" type="button">Envoyer ➤</button></div><div class="msg-err" id="msgErr" hidden></div>';
@@ -195,12 +220,14 @@
     startChannel(id);
   }
   async function send(){
-    var t = el('msgText'), err = el('msgErr');
-    if(!t || !state.conv) return;
-    var r = await window.SB.msgSend(state.conv, t.value);
-    if(!r.ok){ if(err){ err.hidden=false; err.textContent='⛔ '+r.err; } return; }
+    var t = el('msgText'), err = el('msgErr'), b = document.querySelector('#msgBody [data-act="send"]');
+    if(!t || !state.conv || !t.value.trim()) return;
+    var conv = state.conv, body = t.value;
+    if(b) b.disabled=true;
+    var r = await window.SB.msgSend(conv, body);
+    if(!r.ok){ if(err){ err.hidden=false; err.textContent='⛔ '+r.err; } if(b) b.disabled=false; return; }
     t.value=''; if(err) err.hidden=true;
-    renderThread(state.conv);
+    await renderThread(conv);
   }
   document.addEventListener('dz:view', function(e){
     var v = (e && e.detail && (e.detail.view||e.detail)) || '';
@@ -294,11 +321,38 @@
   }
   setTimeout(refreshNav, 400);
   document.addEventListener('dz:auth', function(){ setTimeout(refreshNav, 200); });
-  document.addEventListener('change', function(e){
+  document.addEventListener('change', async function(e){
     if(!e.target || e.target.id!=='msgFile' || !state.conv) return;
-    var f = e.target.files && e.target.files[0]; if(!f) return;
-    window.SB.msgSend(state.conv, '📎 ' + f.name).then(function(s){
-      if(s.ok) return window.SB.msgUpload(state.conv, s.msg.id, f).then(function(){ renderThread(state.conv); });
-    });
+    var input=e.target, f=input.files && input.files[0]; if(!f) return;
+    var err=el('msgErr'), conv=state.conv;
+    var allowed=['image/png','image/jpeg','image/webp','application/pdf'];
+    if(allowed.indexOf(f.type)===-1 || !f.size || f.size>5242880){
+      if(err){ err.hidden=false; err.textContent='⛔ Format accepté : PNG, JPEG, WebP ou PDF, 5 Mo maximum.'; }
+      input.value=''; return;
+    }
+    var sendButton=document.querySelector('#msgBody [data-act="send"]');
+    if(sendButton) sendButton.disabled=true;
+    if(err){ err.hidden=false; err.textContent='⏳ Téléversement de '+f.name+'…'; }
+    var sent=await window.SB.msgSend(conv, '📎 '+f.name);
+    if(!sent.ok){
+      if(err){ err.hidden=false; err.textContent='⛔ '+sent.err; }
+      if(sendButton) sendButton.disabled=false;
+      input.value=''; return;
+    }
+    var uploaded=await window.SB.msgUpload(conv, sent.msg.id, f);
+    if(!uploaded.ok){
+      if(err){ err.hidden=false; err.textContent='⛔ Le fichier n’a pas pu être joint : '+uploaded.err; }
+      if(sendButton) sendButton.disabled=false;
+      input.value=''; await renderThread(conv); return;
+    }
+    input.value='';
+    await renderThread(conv);
+    var successErr=el('msgErr');
+    if(successErr){ successErr.hidden=false; successErr.textContent='✔ Fichier envoyé.'; }
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.target && e.target.id==='msgText' && e.key==='Enter' && !e.shiftKey){
+      e.preventDefault(); send();
+    }
   });
 })();
