@@ -30,16 +30,16 @@ test("creates a verifiable append-only hash chain", () => {
 });
 
 test("requires an operator review and distinct approver", () => {
-  const ledger = createDecisionLedger({ caseId: "SYN-2", createdAt: "t0", sourceReference: "" });
-  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "A", role: "approbateur", at: "t1", reason: "ok", evidenceReference: "ACT" }), /sans revue opérateur/);
-  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "A", role: "operateur", at: "t1", reason: "revue" });
-  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "A", role: "approbateur", at: "t2", reason: "ok", evidenceReference: "ACT" }), /distincts/);
+  const ledger = createDecisionLedger({ caseId: "SYN-2", createdAt: "2026-11-12T10:00:00.000Z", sourceReference: "" });
+  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "A", role: "approbateur", at: "2026-11-12T10:05:00.000Z", reason: "ok", evidenceReference: "ACT" }), /sans revue opérateur/);
+  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "A", role: "operateur", at: "2026-11-12T10:05:00.000Z", reason: "revue" });
+  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "A", role: "approbateur", at: "2026-11-12T10:10:00.000Z", reason: "ok", evidenceReference: "ACT" }), /distincts/);
 });
 
 test("requires justification and documentary reference for acceptance", () => {
   const ledger = reviewed();
-  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "t2", reason: "", evidenceReference: "ACT" }), /Justification obligatoire/);
-  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "t2", reason: "Décision", evidenceReference: "" }), /Référence de preuve/);
+  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T10:10:00.000Z", reason: "", evidenceReference: "ACT" }), /Justification obligatoire/);
+  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T10:10:00.000Z", reason: "Décision", evidenceReference: "" }), /Référence de preuve/);
 });
 
 test("rejects tampering and refuses export of a modified ledger", () => {
@@ -50,34 +50,34 @@ test("rejects tampering and refuses export of a modified ledger", () => {
 });
 
 test("rejects unknown roles and illegal operator decisions", () => {
-  const ledger = createDecisionLedger({ caseId: "SYN-3", createdAt: "t0", sourceReference: "" });
-  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "X", role: "admin", at: "t1", reason: "x" }), /Rôle non autorisé/);
-  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "X", role: "operateur", at: "t1", reason: "x" }), /interdit à l'opérateur/);
+  const ledger = createDecisionLedger({ caseId: "SYN-3", createdAt: "2026-11-12T10:00:00.000Z", sourceReference: "" });
+  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "X", role: "admin", at: "2026-11-12T10:05:00.000Z", reason: "x" }), /Rôle non autorisé/);
+  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "X", role: "operateur", at: "2026-11-12T10:05:00.000Z", reason: "x" }), /interdit à l'opérateur/);
 });
 
 test("allows a documented correction cycle and requires a final decision before reopening", () => {
   const ledger = reviewed();
-  assert.throws(() => appendDecisionEvent(ledger, { type: "reouvert", actorId: "SYN-AP-2", role: "approbateur", at: "t2", reason: "Réouverture", evidenceReference: "SYN-REF" }), /Aucune décision finale/);
-  appendDecisionEvent(ledger, { type: "correction_demandee", actorId: "SYN-AP-2", role: "approbateur", at: "t2", reason: "Compléter la référence." });
-  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-3", role: "operateur", at: "t3", reason: "Correction effectuée." });
-  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-4", role: "approbateur", at: "t4", reason: "Dossier corrigé.", evidenceReference: "SYN-ACT-04" });
+  assert.throws(() => appendDecisionEvent(ledger, { type: "reouvert", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T10:10:00.000Z", reason: "Réouverture", evidenceReference: "SYN-REF" }), /Aucune décision finale/);
+  appendDecisionEvent(ledger, { type: "correction_demandee", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T10:10:00.000Z", reason: "Compléter la référence." });
+  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-3", role: "operateur", at: "2026-11-12T10:15:00.000Z", reason: "Correction effectuée." });
+  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-4", role: "approbateur", at: "2026-11-12T10:20:00.000Z", reason: "Dossier corrigé.", evidenceReference: "SYN-ACT-04" });
   assert.equal(verifyDecisionLedger(ledger).valid, true);
 });
 
 test("requires a reasoned reopening before a second final decision", () => {
   const ledger = reviewed();
-  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "t2", reason: "Accepté.", evidenceReference: "SYN-ACT-1" });
-  assert.throws(() => appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-3", role: "operateur", at: "t3", reason: "Nouvelle revue." }), /sans correction ou réouverture/);
-  appendDecisionEvent(ledger, { type: "reouvert", actorId: "SYN-AP-4", role: "approbateur", at: "t3", reason: "Réexamen demandé.", evidenceReference: "SYN-DECISION-REOUVERTURE" });
-  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-3", role: "operateur", at: "t4", reason: "Nouvelle pièce examinée." });
-  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-5", role: "approbateur", at: "t5", reason: "Réexamen terminé.", evidenceReference: "SYN-ACT-2" });
+  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T10:10:00.000Z", reason: "Accepté.", evidenceReference: "SYN-ACT-1" });
+  assert.throws(() => appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-3", role: "operateur", at: "2026-11-12T10:15:00.000Z", reason: "Nouvelle revue." }), /sans correction ou réouverture/);
+  appendDecisionEvent(ledger, { type: "reouvert", actorId: "SYN-AP-4", role: "approbateur", at: "2026-11-12T10:15:00.000Z", reason: "Réexamen demandé.", evidenceReference: "SYN-DECISION-REOUVERTURE" });
+  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-3", role: "operateur", at: "2026-11-12T10:20:00.000Z", reason: "Nouvelle pièce examinée." });
+  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-5", role: "approbateur", at: "2026-11-12T10:25:00.000Z", reason: "Réexamen terminé.", evidenceReference: "SYN-ACT-2" });
   assert.equal(verifyDecisionLedger(ledger).valid, true);
 });
 
 test("rejects a hash-valid chain with impossible decision transitions", () => {
   const forged = forgedLedger([
-    { type: "revue_operateur", actorId: "SYN-OP-1", role: "operateur", at: "t1", reason: "Revue." },
-    { type: "revue_operateur", actorId: "SYN-OP-2", role: "operateur", at: "t2", reason: "Deuxième revue sans correction." }
+    { type: "revue_operateur", actorId: "SYN-OP-1", role: "operateur", at: "2026-11-12T10:05:00.000Z", reason: "Revue." },
+    { type: "revue_operateur", actorId: "SYN-OP-2", role: "operateur", at: "2026-11-12T10:10:00.000Z", reason: "Deuxième revue sans correction." }
   ]);
   assert.equal(verifyDecisionLedger(forged).valid, false);
   assert.throws(() => decisionLedgerJson(forged), /journal invalide/);
@@ -85,7 +85,18 @@ test("rejects a hash-valid chain with impossible decision transitions", () => {
 
 test("rejects a hash-valid approval without prior operator review", () => {
   const forged = forgedLedger([
-    { type: "accepte", actorId: "SYN-AP-1", role: "approbateur", at: "t1", reason: "Accepté.", evidenceReference: "SYN-ACT-1" }
+    { type: "accepte", actorId: "SYN-AP-1", role: "approbateur", at: "2026-11-12T10:05:00.000Z", reason: "Accepté.", evidenceReference: "SYN-ACT-1" }
+  ]);
+  assert.equal(verifyDecisionLedger(forged).valid, false);
+});
+
+test("requires normalized UTC ISO timestamps and strict chronological order", () => {
+  assert.throws(() => createDecisionLedger({ caseId: "SYN-BAD-DATE", createdAt: "not-a-date", sourceReference: "" }), /ISO-8601 UTC invalide/);
+  const ledger = reviewed();
+  assert.throws(() => appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T10:04:00.000Z", reason: "Date antérieure à la revue.", evidenceReference: "SYN-ACT" }), /non croissant/);
+  const forged = forgedLedger([
+    { type: "revue_operateur", actorId: "SYN-OP-1", role: "operateur", at: "2026-11-12T10:05:00.000Z", reason: "Revue." },
+    { type: "correction_demandee", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T10:04:00.000Z", reason: "Demande antidatée." }
   ]);
   assert.equal(verifyDecisionLedger(forged).valid, false);
 });
