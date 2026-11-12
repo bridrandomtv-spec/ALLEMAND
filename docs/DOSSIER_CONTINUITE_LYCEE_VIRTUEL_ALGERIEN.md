@@ -7352,3 +7352,16 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucun changement client Messenger dans ce lot ; aucun déploiement Cloudflare.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée.
 - Le Messenger national reste NO-GO jusqu'à l'affiliation scolaire officielle, l'invitation acceptée imposée côté serveur, la fermeture des voies de création DM directes et des tests multi-comptes réels sur environnement isolé.
+
+
+## 11. Lot 345 — Vérification exacte de l'archive SQL Messenger (12 novembre 2026)
+
+- Rapport : `docs/product/LOT-345-VERIFICATION-EXACTE-ARCHIVE-MIGRATIONS.md`.
+- Comparaison caractère par caractère des 11 fichiers GitHub de `docs/architecture/migration-archive/` avec `supabase_migrations.schema_migrations.statements[1]` dans le projet actif.
+- Résultat : **11/11 correspondances exactes** ; longueurs de texte concordantes pour chaque version.
+- Les SHA-256 du manifeste Lot 342 sont ceux calculés depuis le SQL source avec pgcrypto.
+- Cette vérification prouve la fidélité des copies archivées, pas la sûreté du SQL, ni la complétude du baseline initial, ni la restaurabilité de l'ensemble.
+- Supabase actif consulté en lecture seule. Aucune écriture SQL, DDL, migration, modification Auth/RLS/GRANT/Storage.
+- Aucun déploiement Cloudflare, aucune modification de `main`, aucun merge PR #17.
+- PR #17 : ouverte, non fusionnée ; après recalcul GitHub, `mergeable=true`.
+- CI #3226 déclenché sur le HEAD `ab3f585ddfb38dd185eb140c14f0387648c0c8a2` ; statut à confirmer avant clôture.
