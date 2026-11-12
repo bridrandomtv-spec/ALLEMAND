@@ -7214,3 +7214,21 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Audit client lié : `msg.js` récupère encore `profiles(id,pseudo,role,niveau)` pour les noms ; `msgVerificationQueue` lit directement les champs sensibles de `profiles`. Ces appels doivent migrer vers des opérations dédiées avant l'ouverture nationale.
 - Aucun SQL exécutable ni changement applicatif/DB réalisé ; aucune migration, Auth/RLS/GRANT/Storage, déploiement Cloudflare, changement `main` ou merge PR #17. PR #17 reste ouverte, non fusionnée. MFA/2FA et facturation hors périmètre.
 - Suite : compléter la baseline catalogue pour les relations d'affiliation et les dépendances exactes du client, puis établir un environnement PostgreSQL jetable avant d'écrire et tester les migrations. Ne pas modifier le projet Supabase actif sans autorisation distincte.
+
+
+---
+
+## LOT 338 — Cartographie des dépendances client Messenger (12 novembre 2026)
+
+- CI #3211 confirmée `success` sur HEAD `ebcd13741d793d540e8b0b0e4539f2d455498416` ; PR #17 reste `open`, `merged=false`, `mergeable=true`, sans fusion.
+- Audit en lecture seule des fichiers `msg.js`, `supabase/supabase.js`, `admin.js`, `supabase/msg_schema.sql`, plus des politiques et fonctions Messenger ciblées du catalogue Supabase actif.
+- `msg.js` ne possède pas d'annuaire national : `msgListSearch` filtre uniquement les conversations et groupes déjà chargés. `fetchNames()` lit directement `profiles(id,pseudo,role,niveau)` pour les libellés ; `role` est inutile à ce rendu.
+- Dépendances de vérification identifiées : `msgMyVerification()` lit statut/matricule/section ; `msgRequestVerification()` écrit les champs déclaratifs ; `msgVerificationQueue()` lit des champs personnels/administratifs ; `msgSetVerification()` modifie statut, acteur et date. Ces opérations doivent devenir des RPC scoppées, séparées de l'annuaire.
+- `msgOpenDirect()` côté client ne crée plus de nouveau DM, mais cherche dans les 500 dernières adhésions ; un RPC `msg_direct_open_existing` doit remplacer ce scan limité.
+- `myProfile()` et `listProfiles()` utilisent `select('*')`. L'ancien écran admin appelle `listProfiles()` ; ne pas le supprimer avant migration admin dédiée. `admListProfiles()` et `admQueue()` ont leurs propres projections et usages à préserver.
+- Catalogue vivant : `msg_open_direct(uuid)` reste SECURITY DEFINER et exécutable par authenticated/service_role ; la politique d'insertion des conversations autorise les DM directs ; la politique d'ajout des membres permet encore l'auto-ajout selon `msg_member_ok`. Les chemins serveur directs ne sont donc pas fermés par la seule correction client du Lot 324.
+- Le rapport définit l'ordre de migration : libellés de membres, statut personnel, file de vérification, commande de demande, ouverture des DM historiques, annuaire/invitations, puis écrans admin séparés. Il fixe les critères de non-régression des DMs historiques, groupes, Realtime, modération et pièces jointes.
+- Rapport : `docs/product/LOT-338-CARTOGRAPHIE-DEPENDANCES-CLIENT-MESSENGER.md`.
+- Aucun test multi-compte ni PostgreSQL isolé exécuté. Aucune écriture SQL, DDL, migration, Auth/RLS/GRANT/Storage, modification du client, branche Supabase supplémentaire, déploiement Cloudflare, changement `main` ou merge PR #17. Pas de MFA/2FA ni facturation.
+- Décision : NO-GO pour ouverture nationale tant que les chemins DM directs ne sont pas fermés côté serveur, que les affiliations officielles ne sont pas disponibles et que les contrats n'ont pas passé les tests PostgreSQL réels.
+- Étape suivante : définir le protocole de compatibilité des groupes officiels et des DMs historiques avec l'affiliation scolaire, sans convertir les groupes actuels en preuve d'inscription ni modifier les données vivantes.
