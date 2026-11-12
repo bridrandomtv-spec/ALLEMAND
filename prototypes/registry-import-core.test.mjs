@@ -4,8 +4,9 @@ import { parseCsv, validateRows, REQUIRED } from "./registry-import-core.mjs";
 const valid = Object.fromEntries(REQUIRED.map(k=>[k,"x"]));
 valid.source_id="SRC-1";valid.identifiant_national="NAT-1";valid.statut="actif";valid.date_effet="2026-09-01";
 test("parse CSV quoted commas and escaped quotes",()=>{
- const rows=parseCsv('name,detail\n"Lycée, test","mot ""cité"""');
- assert.equal(rows[0].name,"Lycée, test");assert.equal(rows[0].detail,'mot "cité"');
+ const values=REQUIRED.map(k=>k==="nom_fr" ? '"Lycée, test"' : k==="nom_ar" ? '"mot ""cité"""' : "x");
+ const rows=parseCsv(REQUIRED.join(",")+"\n"+values.join(","));
+ assert.equal(rows[0].nom_fr,"Lycée, test");assert.equal(rows[0].nom_ar,'mot "cité"');
 });
 test("rejects unclosed quoted cell",()=>assert.throws(()=>parseCsv('a,b\n"bad,x'),/guillemet non refermé/));
 test("validates a structurally complete official-shaped row",()=>{
