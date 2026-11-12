@@ -7040,3 +7040,12 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - **S6 à renforcer avant ouverture :** le MIME déclaré et la taille ne suffisent pas à valider le contenu réel des pièces jointes ; prévoir analyse serveur, quotas et accès privé à durée limitée.
 - Nouveau document : `docs/product/LOT-325-AUTORISATIONS-ET-CONTRAT-INVITATIONS-MESSENGER.md`, avec états/transitions des invitations, invariants transactionnels, opérations serveur cibles, matrice d'autorisation et tests négatifs.
 - Aucun SQL/RLS/GRANT/Auth/Storage, aucune migration, aucune écriture Supabase active, aucun merge, déploiement ou changement de `main`. PR #17 reste ouverte. Pas de MFA/2FA ni facturation.
+
+
+## Lot 326 — plan de verrouillage serveur Messenger (12 novembre 2026)
+
+- Précisions ajoutées au Lot 325 : `msg_guard_direct` s'appuie sur la visibilité du second membre au moment du trigger ; deux INSERT concurrents peuvent ne pas voir la ligne non validée de l'autre. Ce contrôle n'est pas un verrou transactionnel. Le client `msgOpenDirect` limite aussi la recherche de conversations communes aux 500 adhésions les plus récentes ; une RPC paginée côté serveur sera préférable.
+- CI #3184 (SHA `e3dac5d`) et #3185 (SHA `a5f087d`) confirmées en succès.
+- Nouveau document : `docs/product/LOT-326-PLAN-VERROUILLAGE-SERVEUR-MESSENGER.md`. Il détaille inventaire préalable des grants/policies/fonctions, modèle logique des invitations, fermeture des INSERT directs, RPC transactionnelle avec verrouillage `FOR UPDATE`, blocage bilatéral, tests PostgreSQL multi-session et compatibilité des DM historiques.
+- Le plan recommande de ne jamais convertir automatiquement les DM historiques en invitations acceptées. Il distingue également blocage individuel et appartenance à un groupe commun.
+- Aucun SQL exécutable livré, aucune modification de schéma/RLS/GRANT/Auth/Storage, aucune écriture Supabase active, aucun merge, déploiement ou changement de `main`. PR #17 reste ouverte. Pas de MFA/2FA ni facturation.
