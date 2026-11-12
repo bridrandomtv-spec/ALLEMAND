@@ -7128,3 +7128,18 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucune modification de Supabase actif, aucune migration/DDL/RLS/GRANT/Auth/Storage, aucune écriture SQL, aucun déploiement Cloudflare, aucun changement sur `main), aucun merge PR #17. Pas de MFA/2FA ni facturation.
 - Commits documentaires : Lot 331 `dfb95231c61136e61635fa3c557ebe4288c3d225`; mise à jour du présent dossier à suivre. CI du Lot 331 à contrôler après le commit final.
 - Étape suivante : préparer un environnement PostgreSQL jetable et exécuter réellement les tests ACL/RLS/colonnes/DM/invitations à deux sessions. Tant que cet environnement n'est pas disponible, ne pas présenter la matrice comme validée. Après validation, implémenter par étapes les RPC minimales et les invitations, sans toucher au projet Supabase actif avant autorisation explicite.
+
+
+
+## Lot 332 — préparation des tests PostgreSQL isolés (12 novembre 2026)
+
+- CI #3201 confirmée en succès sur le document Lot 331 (`dfb95231c61136e61635fa3c557ebe4288c3d225`) ; CI #3202 confirmée en succès sur le précédent HEAD continuité (`4884807f8db6a83786279cab72ff568149763727`).
+- Vérification des outils locaux : Node.js v22.16.0 disponible ; `psql`, `postgres`, `initdb`, `docker` et `podman` absents. Aucun moteur PostgreSQL local isolé n'est disponible.
+- Vérification du tree GitHub : pas de `supabase/migrations/` ni de `config.toml` local. Les scripts `supabase/*.sql) sont historiques ; `supabase/msg_schema.sql` porte explicitement la mention « JAMAIS exécuté par un robot » et ne peut pas reconstruire à lui seul la base vivante.
+- Lecture des métadonnées Supabase : projet `azjwcybivirvpxbfhyzk`, 27 migrations répertoriées de `20261030131545` à `20261109210413`, une seule branche Supabase `main`, aucune branche de développement existante. Aucune requête de modification ni test applicatif n'a été exécuté sur le projet actif.
+- La création d'une branche Supabase peut générer des coûts horaires. Le périmètre exclut les frais et la facturation ; aucune branche n'a été créée, aucun coût engagé.
+- Nouveau rapport `docs/product/LOT-332-ENVIRONNEMENT-TESTS-POSTGRESQL-ISOLE.md`. Il consigne les vérifications, la distinction entre tests statiques et intégration PostgreSQL, les prérequis de reconstruction fidèle des migrations et les scénarios multi-session à exécuter.
+- Conclusion : les tests PostgreSQL multi-session ne sont **pas exécutés** et aucune validation RLS/ACL nouvelle n'est revendiquée. Les tests Node existants analysent du texte et ne prouvent pas les droits effectifs ni la concurrence.
+- Aucun DDL, migration, modification Auth/RLS/GRANT/Storage, écriture SQL, déploiement Cloudflare, changement sur `main) ou merge PR #17. Pas de MFA/2FA et pas de facturation.
+- Commit rapport Lot 332 : `6adb449af0139af6db2a307e86a6ea5d64560054`. Mise à jour du dossier de continuité à suivre ; CI du rapport et de la continuité à contrôler.
+- Étape suivante : récupérer/constituer les migrations SQL exactes versionnées et préparer un harnais reproductible. L'exécution réelle attend un moteur PostgreSQL isolé sans coût ou une autorisation explicite après présentation du coût d'une branche Supabase.
