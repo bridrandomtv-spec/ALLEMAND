@@ -7529,3 +7529,16 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Ce lot ne modifie pas le moteur Messenger, les autorisations ni la base active. L'invitation nationale, l'affiliation officielle et les protections serveur restent inachevées.
 - Aucun changement Supabase, aucun déploiement Cloudflare, aucune modification de `main), aucune fusion de PR. MFA/2FA et facturation hors périmètre.
 
+---
+
+## 22. Lot 356 — Accès direct à Messenger (12 novembre 2026)
+
+- Rapport : `docs/product/LOT-356-ACCES-DIRECT-MESSENGER.md`.
+- Retour utilisateur après Lot355 : la messagerie restait trop enfouie dans une catégorie. Décision : accès direct depuis les deux formats.
+- Desktop : bouton « 💬 الرسائل » ajouté aux accès principaux. Mobile : même entrée ajoutée à la barre rapide, sans ouvrir « ☰ المزيد ».
+- `msg` retiré de NAVCATS pour éviter le doublon et ajouté à l'ensemble `used` pour empêcher le fallback desktop de recréer une seconde entrée.
+- Tests de non-régression étendus dans `ci/check-msg.mjs` pour le raccourci desktop, l'entrée mobile, l'absence d'exclusion et l'absence de doublon.
+- Commits : raccourcis `89de542f5bb879ea4c0d887ea6725f39b2511ea5`; protection doublon `2144774410cb9d1a310a088c2bef6f51394ef7a5`; tests `3e96799fe13fad368444f8d46dd54c887a855a0c` et `6d7715d4736a04cc2932c823c8a851f81a3e446d`; rapport `ce8a5c4e4238ded1bced8a50a60420488c485752`.
+- Contrôle visuel navigateur Cloudflare non effectué dans ce lot. La correction doit être validée sur l'aperçu PR avant fusion.
+- Aucun changement Supabase, aucun déploiement Cloudflare, aucune modification de `main), aucune fusion de PR. PR #17 demeure ouverte/non fusionnée. MFA/2FA et facturation hors périmètre.
+
