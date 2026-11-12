@@ -6530,3 +6530,11 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 
 ### Prochaine étape
 - Vérifier la CI du Lot 309, puis concevoir les invitations par message (accepter/refuser) et l'annuaire national via une RPC sécurisée. Ne pas exposer `profiles` directement ni réutiliser sans correction la règle locale actuelle de `msg_can_dm`.
+
+
+### Optimisation Lot 309 — chargement groupé des pièces jointes
+- Après revue du premier rendu, remplacement des requêtes unitaires par message par une lecture groupée des pièces jointes de la page de conversation, suivie de la création des URLs signées nécessaires. Cela évite une requête PostgREST par message dans un fil de 50 éléments.
+- Méthode cliente finale : `msgAttachmentInfos(messageIds)`; le rendu Realtime utilise le même chemin avec un seul identifiant.
+- Cache final : `msg.js?v=3512`, `supabase/supabase.js?v=3520`, `style-prototype-dz.css?v=195`, Service Worker `dz-de-v3.185.0.0.141`.
+- CI #3076 et #3077 échouent tous deux sur un contrôle préexistant du portail public : `style.css?v=3515` alors que `ci/check-public-portal.mjs` attend `v176`. Les contrôles messagerie `ci/check-msg.mjs` et `tests/msg_test.mjs` passent dans le log #3076. Le contrôle du portail est hors périmètre du lot ; il n'a pas été modifié pour éviter un changement non justifié.
+- Le correctif regex de détection d'image et le chargement groupé ont été poussés après ces exécutions : nouvelle CI à examiner sur le HEAD courant avant de déclarer le lot validé.
