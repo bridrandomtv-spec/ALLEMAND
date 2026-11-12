@@ -7157,3 +7157,17 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - PR #17 confirmée ouverte, non fusionnée, mergeable=true, mergeable_state=clean ; HEAD `6da36ebe0a1aacd29216fbf90f57a35c3daa2b23`.
 - Aucun SQL d'écriture/DDL/migration appliqué ; aucune branche Supabase créée ; aucune modification Auth/RLS/GRANT/Storage ; aucun déploiement Cloudflare ; aucun changement `main` ; aucun merge.
 - Suite : rechercher une copie authentique et complète des 27 corps de migration (historique de déploiement ou source originale). Si introuvable, proposer un baseline versionné dérivé d'un export contrôlé, sans le confondre avec l'historique original.
+
+
+---
+
+## LOT 334 — Provenance GitHub des migrations Supabase (12 novembre 2026)
+
+- CI #3205 et #3206 confirmées `success`.
+- Recherche de commits sur `supabase/migrations` : aucun résultat ; aucun répertoire migrations dans l'arbre Git.
+- Workflow `.github/workflows/deploy.yml` : un seul job `validate`, aucun déploiement/migration Supabase ; les assertions Messenger restent statiques.
+- Historique `supabase/msg_schema.sql` : 8 commits du 11 au 13 octobre 2026. Le commit `a63e6b323eaa34c11e5daf64be05213549b338a8` documente explicitement une dérive : politique `profils visibles entre membres` présente dans la base vivante mais absente du dépôt. Le commit `6f529c67e6f83212242ac62d505bb5e117c0e643` ajoute les gardes de taille 5 Mo.
+- Conclusion : aucun moyen démontré de reconstituer les 27 corps SQL historiques à partir du dépôt accessible. Ne pas exécuter les scripts agrégés comme substitut.
+- Rapport : [LOT-334-PROVENANCE-GITHUB-MIGRATIONS.md](product/LOT-334-PROVENANCE-GITHUB-MIGRATIONS.md).
+- Suite : rechercher la source de déploiement d'origine ; à défaut, produire un baseline de référence daté à partir d'un export contrôlé, explicitement distinct de l'historique original, puis tester sur PostgreSQL jetable.
+- Aucun SQL d'écriture/DDL/migration, aucune branche Supabase, aucun changement Auth/RLS/GRANT/Storage, aucun déploiement Cloudflare, aucun changement `main), aucun merge PR. Aucun travail facturation ni MFA/2FA.
