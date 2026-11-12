@@ -7465,3 +7465,20 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucune donnée personnelle/contenu lue ; aucune écriture Supabase, DDL, migration, changement Auth/RLS/GRANT/Storage/Realtime, test multi-compte ou ressource payante. Pas de déploiement Cloudflare.
 - CI #3233 réussie sur le commit rapport Lot350 `7ccf9ddc7879ab05db8475f7fd2f1cb3b6641ab1`. Le rapport Lot351 et la mise à jour de continuité déclenchent les CI suivantes à contrôler.
 - PR #17 ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
+
+
+---
+
+## 18. Lot 352 — Audit accès indirects PostgREST, rôles et ACL par défaut (12 novembre 2026)
+
+- Rapport : `docs/product/LOT-352-AUDIT-ACCES-INDIRECTS-POSTGREST-ACL-ROLES.md`.
+- Tables Messenger : RLS activée sur les sept tables vérifiées ; aucun SELECT/INSERT direct pour anon ; SELECT/INSERT pour authenticated sous réserve des policies ; FORCE RLS désactivé.
+- Routines référant à `msg_*` : `admin_dashboard()` et les fonctions Messenger connues. `admin_dashboard()` est SECURITY DEFINER, non exécutable par anon, exécutable par authenticated mais vérifie `admin_can(auth.uid(),'reports.read')` avant de renvoyer des agrégats administratifs, dont le nombre de signalements ouverts dans le périmètre autorisé. Tests de refus élève et cloisonnement admin à ajouter.
+- Aucune vue/vue matérialisée public/graphql_public référençant les tables Messenger détectée dans l'inspection.
+- Rôles : anon et authenticated sans BYPASSRLS ni appartenance héritée à un rôle privilégié ; service_role BYPASSRLS ; authenticator hérite désactivé et sert au routage API. La clé service_role doit rester strictement côté serveur.
+- ACL par défaut : pour objets futurs créés par supabase_admin, EXECUTE fonctions et privilèges de tables/séquences sont accordés par défaut à anon/authenticated/service_role ; pour objets créés par postgres, ACL par défaut plus restrictives (postgres/service_role). La migration devra fixer propriétaire et révoquer explicitement les droits non nécessaires. Aucun changement ACL effectué.
+- Les paramètres PostgREST n'étaient pas visibles dans pg_settings ; configuration effective des schémas exposés non confirmée. Aucun test HTTP/PostgREST dans ce lot.
+- Tests ajoutés au plan : RPC anon, élève/admin_dashboard, périmètres administratifs, ACL post-migration, helper privé, service_role absent du client, schémas PostgREST, vues/agrégats, tests HTTP multi-JWT.
+- Aucune donnée personnelle ou contenu de message lu ; aucune écriture SQL/DDL, migration, Auth/RLS/GRANT/Storage/Realtime, aucun déploiement Cloudflare, aucune ressource payante.
+- CI #3235 réussie sur commit rapport Lot351 `4ea88d71efd832323b230fefe758cc8783db1048`. Les commits Lot352 et continuité déclenchent les prochaines CI à contrôler.
+- PR #17 reste ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
