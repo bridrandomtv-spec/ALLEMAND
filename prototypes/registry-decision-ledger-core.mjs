@@ -47,7 +47,7 @@ export function appendDecisionEvent(ledger, input) {
       throw new Error("La revue opérateur doit précéder la décision.");
     }
     if (lastOperator.actorId === actorId) throw new Error("Séparation des tâches : deux acteurs distincts sont requis.");
-    const finalDecisionExists = ledger.events.some(e => e.role === "approbateur" && ["accepte", "rejete", "quarantaine"].includes(e.type));
+    const finalDecisionExists = Boolean(lastApprover && ["accepte", "rejete", "quarantaine"].includes(lastApprover.type));
     if (finalDecisionExists && eventType !== "reouvert") {
       throw new Error("Dossier déjà décidé ; une réouverture explicite est requise.");
     }
