@@ -7365,3 +7365,15 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucun déploiement Cloudflare, aucune modification de `main`, aucun merge PR #17.
 - PR #17 : ouverte, non fusionnée ; après recalcul GitHub, `mergeable=true`.
 - CI #3226 déclenché sur le HEAD `ab3f585ddfb38dd185eb140c14f0387648c0c8a2` ; statut à confirmer avant clôture.
+
+
+## 12. Lot 346 — Inventaire DDL ciblé Messenger/profils (12 novembre 2026)
+
+- Rapport : `docs/product/LOT-346-INVENTAIRE-DDL-MESSENGER-PROFILES.md`.
+- Extraction catalogue en lecture seule de 8 tables : les 7 tables Messenger et `profiles`, soit 66 colonnes au total.
+- Contraintes PK/FK/CHECK/UNIQUE extraites ; références directes à `auth.users` confirmées.
+- Aucun lien d'affiliation scolaire canonique/annuelle n'est présent dans `profiles`.
+- Aucune table d'invitations n'existe dans ce périmètre.
+- Observation à vérifier : aucune FK de `msg_messages.attachment_id` vers `msg_attachments` n'apparaît dans les contraintes recensées ; ne pas modifier avant audit triggers et usage client.
+- Le rapport reste un inventaire, pas un DDL restaurable. Les index complets, séquences, ACL, fonctions, triggers et policies doivent encore être capturés.
+- Aucune écriture Supabase, aucune migration, aucun déploiement, aucun merge PR #17, aucune modification de `main`.
