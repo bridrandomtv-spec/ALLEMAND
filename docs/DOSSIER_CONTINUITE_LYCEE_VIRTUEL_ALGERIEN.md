@@ -6845,3 +6845,12 @@ GO pour revue UX locale sur données fictives. NO-GO pour l'usage administratif 
 ### Suite
 
 Après CI verte, effectuer une revue des transitions et de l'export, puis concevoir un écran chronologique de consultation du journal en données fictives. Ne pas intégrer de vrais dossiers avant validation institutionnelle et conception de l'audit serveur.
+
+
+### Complément Lot 317 — transitions et tests étendus
+
+- La revue opérateur peut être répétée uniquement après une demande de correction ou une réouverture explicite de l'approbateur.
+- Une décision finale bloque toute nouvelle revue jusqu'à une réouverture motivée et référencée.
+- Une nouvelle décision finale est possible après la nouvelle revue, avec un approbateur distinct de l'opérateur du cycle.
+- Tests additionnels : cycle correction → nouvelle revue → décision, et décision finale → réouverture → nouvelle revue → nouvelle décision.
+- Correctifs de normalisation des caractères de contrôle et de garde de transition intégrés. Le dernier run CI doit couvrir le HEAD final avant validation du Lot 317.
