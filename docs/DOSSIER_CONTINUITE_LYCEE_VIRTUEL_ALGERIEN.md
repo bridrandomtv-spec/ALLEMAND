@@ -7377,3 +7377,23 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Observation à vérifier : aucune FK de `msg_messages.attachment_id` vers `msg_attachments` n'apparaît dans les contraintes recensées ; ne pas modifier avant audit triggers et usage client.
 - Le rapport reste un inventaire, pas un DDL restaurable. Les index complets, séquences, ACL, fonctions, triggers et policies doivent encore être capturés.
 - Aucune écriture Supabase, aucune migration, aucun déploiement, aucun merge PR #17, aucune modification de `main`.
+
+
+---
+
+## 13. Lot 347 — Audit fonctions, triggers, RLS et flux Messenger (12 novembre 2026)
+
+- Rapport : `docs/product/LOT-347-AUDIT-FONCTIONS-TRIGGERS-RLS-MESSENGER.md`.
+- Audit en lecture seule des fonctions `msg_%`, triggers sur conversations/membres/messages/pièces jointes, policies, index, publication Realtime et flux client.
+- **NO-GO DM sans invitation côté serveur** : `msg_open_direct(uuid)` reste exécutable par `authenticated` et crée une conversation directe + deux membres sans consulter d'invitation. Le client `msgOpenDirect()` refuse désormais de créer un nouveau DM, mais ce garde-fou est contournable par appel RPC direct.
+- Les policies permettent toujours l'INSERT d'une conversation directe par son créateur et l'auto-ajout d'un membre si `msg_member_ok` l'autorise ; le trigger limite à deux membres et vérifie `msg_can_dm`, mais ne vérifie pas le consentement.
+- `msg_can_dm` exige même wilaya/niveau/filière et `verif_statut='verifie'` : incompatible avec le Messenger national et non équivalent à une preuve officielle d'affiliation.
+- `msg_not_blocked` vérifie le blocage posé par un autre membre contre l'expéditeur, mais pas le blocage posé par l'expéditeur contre l'autre membre : sémantique directionnelle à arbitrer et tester.
+- Le client rattache les pièces jointes via `msg_attachments.message_id`; `msg_messages.attachment_id` existe mais n'est pas utilisé par le flux client observé. Ne pas ajouter/supprimer de FK avant recherche exhaustive.
+- Policy d'upload des métadonnées : membre de conversation, uploader courant, message existant, chemin et MIME autorisés, taille max 5 Mio ; elle ne vérifie pas que l'uploader est aussi l'auteur du message référencé. Le contrôle du MIME déclaré ne prouve pas l'analyse du contenu binaire.
+- Triggers constatés : contrôle de DM, limitation messages (20/minute et 2 000 caractères), actualisation activité, taille pièces jointes, journalisation partielle des mises à jour.
+- Realtime publie conversations et messages, pas membres ni métadonnées des pièces jointes. Index Messenger principaux recensés ; index dédié sur `msg_blocks.blocked_id` non observé.
+- Aucun test d'attaque RPC, PostgreSQL isolé, multi-comptes ou Storage n'a été exécuté ; résultats = audit statique catalogue/code, pas certification de sécurité.
+- Aucune écriture SQL/DDL/migration, modification Auth/RLS/GRANT/Storage, donnée personnelle consultée, ressource payante créée ou déploiement Cloudflare.
+- PR #17 reste ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
+- Étape suivante : spécifier le contrat de consentement et de blocage, inventorier toutes les voies RPC/INSERT encore ouvertes, puis préparer des tests multi-comptes sur PostgreSQL isolé avant toute modification de la base active.
