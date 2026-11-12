@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>سجل القرارات — نموذج تجريبي</title>
+<style>
+:root{font-family:Tahoma,Arial,sans-serif;color:#18271f;background:#f2f6f3;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}
+header{background:#123d2d;color:#fff;padding:24px max(18px,calc((100% - 1160px)/2))}
+header small{color:#c9e6d4}header h1{font-size:25px;margin:8px 0}header p{margin:0;color:#deebe2;line-height:1.8}
+main{max-width:1160px;margin:22px auto;padding:0 18px}
+.notice{background:#fff8e7;border:1px solid #e6c978;color:#674c15;border-radius:12px;padding:13px 16px;line-height:1.8}
+.toolbar{display:grid;grid-template-columns:minmax(220px,1fr) minmax(180px,.65fr) auto;gap:10px;margin:16px 0}
+input,select{border:1px solid #cbd8cf;border-radius:9px;padding:11px;background:#fff;color:#1b3024;min-width:0}
+button{border:1px solid #cbd8cf;background:#fff;color:#1e4732;border-radius:9px;padding:10px 14px;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #86b7a0;outline-offset:2px}
+button.primary{background:#194d37;color:#fff;border-color:#194d37}
+.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.8fr);gap:16px;align-items:start}
+.panel{background:#fff;border:1px solid #e0e9e3;border-radius:14px;padding:17px;min-width:0}
+.panel h2{font-size:18px;margin:0 0 5px}.sub{font-size:13px;color:#68766e;line-height:1.7;margin:0 0 14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}
+.stat{background:#f7faf8;border:1px solid #e7eee9;border-radius:10px;padding:11px}
+.stat strong{display:block;font-size:21px;margin-top:5px}.stat span{font-size:12px;color:#64746a}
+.timeline{list-style:none;margin:0;padding:0 12px 0 0;border-right:2px solid #dce8df}
+.event{position:relative;padding:0 16px 20px 0}
+.event:before{content:"";position:absolute;right:-19px;top:4px;width:10px;height:10px;border-radius:50%;background:#286849;border:3px solid #e7f1ea}
+.event button{width:100%;text-align:right;padding:13px;border-radius:11px}
+.event button[aria-pressed=true]{border-color:#286849;background:#f1f8f3}
+.event-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.event-title{font-weight:700;color:#203d2d}.event-meta{font-size:12px;color:#69766e;margin-top:7px}
+.tag{display:inline-block;background:#edf4ef;color:#315c42;border-radius:20px;padding:4px 9px;font-size:11px}
+.case-id{direction:ltr;unicode-bidi:isolate;font-size:12px;color:#66756c}
+.detail dl{margin:0}.detail dt{font-size:12px;color:#6b786f;margin-top:14px}.detail dd{margin:4px 0 0;line-height:1.7;overflow-wrap:anywhere}
+.detail .hash{font-family:ui-monospace,monospace;direction:ltr;text-align:left;background:#f5f7f5;border-radius:7px;padding:8px;font-size:11px}
+.empty{color:#68766e;padding:20px;text-align:center}
+footer{max-width:1160px;margin:18px auto 35px;padding:0 18px;color:#69776e;font-size:12px;line-height:1.8}
+@media(max-width:760px){.toolbar{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}header h1{font-size:21px}}
+</style>
+</head>
+<body>
+<header>
+  <small>الثانوية الافتراضية الجزائرية · أدوات إدارية تجريبية</small>
+  <h1>السجل الزمني لقرارات المراجعة</h1>
+  <p>عرض تسلسلي للأحداث والتبريرات والمراجع — للشرح والتقييم فقط</p>
+</header>
+<main>
+  <div class="notice"><strong>بيانات وهمية فقط.</strong> هذه شاشة مستقلة لا تتصل بقاعدة بيانات ولا بالشبكة ولا تحفظ تغييرات. المعرّفات والمراجع والبصمات أدناه أمثلة توضيحية وليست أدلة أو توقيعات رقمية.</div>
+  <section class="stats" aria-label="ملخص الأحداث">
+    <div class="stat"><span>عدد الأحداث المعروضة</span><strong id="count-events">0</strong></div>
+    <div class="stat"><span>مراجعات الموظف</span><strong id="count-operator">0</strong></div>
+    <div class="stat"><span>قرارات المسؤول</span><strong id="count-approver">0</strong></div>
+  </section>
+  <div class="toolbar">
+    <input id="search" type="search" placeholder="ابحث في السبب أو الفاعل أو المرجع" aria-label="بحث في سجل الأحداث">
+    <select id="case-filter" aria-label="اختر ملفاً">
+      <option value="all">كل الملفات التجريبية</option>
+      <option value="SYN-CASE-01">SYN-CASE-01 — مؤسسة جديدة</option>
+      <option value="SYN-CASE-02">SYN-CASE-02 — تغيير وصفي</option>
+    </select>
+    <button id="export" class="primary" type="button">تصدير JSON تجريبي</button>
+  </div>
+  <div class="layout">
+    <section class="panel" aria-labelledby="timeline-heading">
+      <h2 id="timeline-heading">التسلسل الزمني</h2>
+      <p class="sub">الأحداث مرتبة حسب رقمها داخل كل ملف. اختر حدثاً لعرض تفاصيله.</p>
+      <ol id="timeline" class="timeline" aria-live="polite"></ol>
+      <p id="empty" class="empty" hidden>لا توجد أحداث مطابقة للبحث.</p>
+    </section>
+    <aside class="panel detail" aria-labelledby="detail-heading" aria-live="polite">
+      <h2 id="detail-heading">تفاصيل الحدث</h2>
+      <p id="detail-hint" class="sub">اختر حدثاً من التسلسل الزمني.</p>
+      <dl id="detail-fields"></dl>
+    </aside>
+  </div>
+</main>
+<footer>
+  نموذج عرض فقط · لا توجد مصادقة أو صلاحيات حقيقية · لا يُثبت هوية الفاعل أو صحة الوقت أو سلامة المصدر.
+  البصمات المعروضة رموز اصطناعية للشرح وليست SHA-256 محسوبة أو قابلة للتحقق.
+</footer>
+<script type="module">
+const events = [
+ {caseId:"SYN-CASE-01",seq:1,type:"revue_operateur",label:"مراجعة الموظف",role:"موظف مراجعة",actor:"SYN-OP-01",at:"2026-11-12 09:10",reason:"تمت مقارنة المعرّف مع سجل الدفعة التجريبية.",evidence:"SYN-SOURCE-01",hash:"DEMO-HASH-CASE01-01",previous:"DEMO-GENESIS-CASE01"},
+ {caseId:"SYN-CASE-01",seq:2,type:"correction_demandee",label:"طلب استكمال",role:"مسؤول اعتماد",actor:"SYN-AP-02",at:"2026-11-12 09:35",reason:"يلزم إرفاق مرجع القرار المؤسسي قبل اعتماد السجل.",evidence:"SYN-NOTE-02",hash:"DEMO-HASH-CASE01-02",previous:"DEMO-HASH-CASE01-01"},
+ {caseId:"SYN-CASE-01",seq:3,type:"revue_operateur",label:"مراجعة بعد الاستكمال",role:"موظف مراجعة",actor:"SYN-OP-03",at:"2026-11-12 10:05",reason:"تم فحص المرجع الإضافي في هذا السيناريو الوهمي.",evidence:"SYN-DOC-03",hash:"DEMO-HASH-CASE01-03",previous:"DEMO-HASH-CASE01-02"},
+ {caseId:"SYN-CASE-01",seq:4,type:"accepte",label:"قبول تجريبي",role:"مسؤول اعتماد",actor:"SYN-AP-04",at:"2026-11-12 10:20",reason:"اكتمل مسار العرض التجريبي بعد مراجعة مستقلة.",evidence:"SYN-ACT-04",hash:"DEMO-HASH-CASE01-04",previous:"DEMO-HASH-CASE01-03"},
+ {caseId:"SYN-CASE-02",seq:1,type:"revue_operateur",label:"مراجعة الموظف",role:"موظف مراجعة",actor:"SYN-OP-11",at:"2026-11-12 11:00",reason:"تم رصد اختلاف وصفي بين نسختين اصطناعيتين.",evidence:"SYN-SOURCE-11",hash:"DEMO-HASH-CASE02-01",previous:"DEMO-GENESIS-CASE02"},
+ {caseId:"SYN-CASE-02",seq:2,type:"quarantaine",label:"حجر للمراجعة",role:"مسؤول اعتماد",actor:"SYN-AP-12",at:"2026-11-12 11:25",reason:"لا يكفي الاختلاف الوصفي وحده لإثبات تغيير رسمي.",evidence:"SYN-REVIEW-12",hash:"DEMO-HASH-CASE02-02",previous:"DEMO-HASH-CASE02-01"}
+];
+const $=id=>document.getElementById(id);
+let selectedKey="";
+function filtered(){
+ const q=$("search").value.trim().toLocaleLowerCase();
+ const c=$("case-filter").value;
+ return events.filter(e=>(c==="all"||e.caseId===c)&&(!q||[e.caseId,e.label,e.role,e.actor,e.reason,e.evidence].join(" ").toLocaleLowerCase().includes(q)));
+}
+function addField(dl,label,value,cls=""){
+ const dt=document.createElement("dt");dt.textContent=label;
+ const dd=document.createElement("dd");dd.textContent=value;
+ if(cls)dd.className=cls;
+ dl.append(dt,dd);
+}
+function showDetail(e){
+ selectedKey=e.caseId+":"+e.seq;
+ $("detail-hint").textContent=e.caseId+" · الحدث رقم "+e.seq;
+ const dl=$("detail-fields");dl.replaceChildren();
+ addField(dl,"نوع الحدث",e.label);
+ addField(dl,"الدور المعلن",e.role);
+ addField(dl,"معرّف الفاعل التجريبي",e.actor);
+ addField(dl,"التاريخ والوقت التوضيحي",e.at);
+ addField(dl,"التبرير",e.reason);
+ addField(dl,"مرجع تجريبي",e.evidence);
+ addField(dl,"البصمة التوضيحية",e.hash,"hash");
+ addField(dl,"بصمة الحدث السابق التوضيحية",e.previous,"hash");
+ render();
+}
+function render(){
+ const list=filtered(), ol=$("timeline");ol.replaceChildren();
+ $("count-events").textContent=String(list.length);
+ $("count-operator").textContent=String(list.filter(e=>e.role==="موظف مراجعة").length);
+ $("count-approver").textContent=String(list.filter(e=>e.role==="مسؤول اعتماد").length);
+ $("empty").hidden=list.length!==0;
+ for(const e of list){
+  const li=document.createElement("li");li.className="event";
+  const b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed",selectedKey===e.caseId+":"+e.seq?"true":"false");
+  const top=document.createElement("div");top.className="event-top";
+  const title=document.createElement("span");title.className="event-title";title.textContent=e.label;
+  const tag=document.createElement("span");tag.className="tag";tag.textContent=e.role;
+  top.append(title,tag);
+  const meta=document.createElement("div");meta.className="event-meta";meta.textContent=e.at+" · "+e.actor;
+  const id=document.createElement("div");id.className="case-id";id.textContent=e.caseId+" · #"+e.seq;
+  b.append(top,meta,id);b.addEventListener("click",()=>showDetail(e));li.append(b);ol.append(li);
+ }
+ if(selectedKey&&!list.some(e=>e.caseId+":"+e.seq===selectedKey)){
+  selectedKey="";$("detail-hint").textContent="اختر حدثاً من التسلسل الزمني.";$("detail-fields").replaceChildren();
+ }
+}
+$("search").addEventListener("input",render);
+$("case-filter").addEventListener("change",render);
+$("export").addEventListener("click",()=>{
+ const payload={notice:"DEMO ONLY — synthetic records, not official evidence",events:filtered()};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="registry-decision-ledger-demo.json";a.click();URL.revokeObjectURL(url);
+});
+render();
+</script>
+</body>
+</html>
