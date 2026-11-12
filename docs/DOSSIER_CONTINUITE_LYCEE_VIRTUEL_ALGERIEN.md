@@ -7448,3 +7448,20 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Le rapport confirme les trois voies de création DM sans consentement et précise qu'aucune correction isolée n'est suffisante : RPC, INSERT conversation et auto-ajout doivent être fermés de manière cohérente.
 - Aucun SELECT de données personnelles/contenus, aucune écriture Supabase, DDL, migration, changement Auth/RLS/GRANT/Storage/Realtime ou ressource payante. Aucun test multi-comptes/JWT ou concurrence exécuté.
 - PR #17 reste ouverte/non fusionnée ; `main` inchangée. Aucun déploiement Cloudflare. MFA/2FA et facturation hors périmètre.
+
+
+---
+
+## 17. Lot 351 — Audit des dépendances SECURITY DEFINER, triggers et policies (12 novembre 2026)
+
+- Rapport : `docs/product/LOT-351-AUDIT-DEPENDANCES-SECURITY-DEFINER-RLS-TRIGGERS.md`.
+- Inspection en lecture seule du graphe des fonctions `msg_*`, ACL, search_path, SECURITY DEFINER, triggers et policies RLS Messenger.
+- Fonctions SECURITY DEFINER et dépendances relevées : `msg_open_direct`, `msg_can_dm`, `msg_member_ok`, `msg_not_blocked`, `msg_is_member`, `msg_is_moderator`. Les helpers de contrôle uid vérifient `uid=auth.uid()` ; leur EXECUTE ne permet pas, à lui seul, d'interroger librement le statut d'un tiers.
+- Trigger `msg_tr_direct` → `msg_guard_direct()` : verrouille la conversation, limite les DM à deux membres, exige le créateur comme premier membre et vérifie la compatibilité de profil pour le second. **Il ne vérifie pas d'invitation acceptée** ; il protège la cardinalité, pas le consentement.
+- Triggers complémentaires : limite 20 messages/minute et 2 000 caractères, actualisation `last_activity`, plafond pièces jointes 5 MiB, journalisation de mises à jour. Tous les détails et ACL sont dans le rapport.
+- Policies dépendantes : création de conversation directe par le créateur ; auto-ajout via `msg_member_ok` ; envoi message via `msg_not_blocked` directionnel ; lecture via `msg_is_member`/`msg_is_moderator` ; règles distinctes fichiers, blocs et signalements.
+- La migration future doit fermer ensemble RPC historique, INSERT direct conversation et auto-ajout membre ; préserver les fonctions de lecture/modération/groupes et refaire l'inventaire des policies permissives cumulées, grants hérités, wrappers RPC et search_path au moment de l'application.
+- Matrice de tests complémentaire ajoutée : trigger sans invitation, chemin d'acceptation, troisième membre, appels helpers, blocage dans les deux sens, groupes, pièces jointes, signalements et journalisation.
+- Aucune donnée personnelle/contenu lue ; aucune écriture Supabase, DDL, migration, changement Auth/RLS/GRANT/Storage/Realtime, test multi-compte ou ressource payante. Pas de déploiement Cloudflare.
+- CI #3233 réussie sur le commit rapport Lot350 `7ccf9ddc7879ab05db8475f7fd2f1cb3b6641ab1`. Le rapport Lot351 et la mise à jour de continuité déclenchent les CI suivantes à contrôler.
+- PR #17 ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
