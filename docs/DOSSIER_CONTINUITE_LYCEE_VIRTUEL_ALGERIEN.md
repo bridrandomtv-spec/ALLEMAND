@@ -7432,3 +7432,19 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - **Aucune implémentation runtime, écriture Supabase, migration, modification Auth/RLS/GRANT/Storage, création de ressource payante ou déploiement Cloudflare** dans ce lot. Les tests multi-comptes réels restent à exécuter ; le Messenger n'est pas déclaré prêt pour ouverture nationale.
 - CI #3230 : `success` sur le HEAD précédent `fe017a397f5e5d225532c6f5e3b13561003744d5`. Le rapport et la présente mise à jour de continuité déclenchent une nouvelle CI à contrôler.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
+
+
+---
+
+## 16. Lot 350 — Vérification des définitions SQL vivantes Messenger (12 novembre 2026)
+
+- Rapport : `docs/product/LOT-350-VERIFICATION-DEFINITIONS-SQL-VIVANTES-MESSENGER.md`.
+- Inspection SELECT du catalogue Supabase actif : définitions de `msg_open_direct(uuid)`, `msg_can_dm(uuid,uuid)`, `msg_member_ok(bigint,uuid)`, `msg_not_blocked(bigint,uuid)`, ACL fonctions/tables et policies INSERT sur `msg_conversations` / `msg_members`.
+- `msg_open_direct` est SECURITY DEFINER, propriétaire postgres, exécutable par authenticated/postgres/service_role ; elle vérifie auth.uid, la compatibilité de profil, verrouille la paire, puis crée conversation et deux membres sans consulter d'invitation.
+- `msg_can_dm` exige même wilaya/niveau/filière et `profiles.verif_statut='verifie'` ; aucune affiliation institutionnelle canonique/année scolaire ; blocage du scénario national inter-wilayas.
+- `msg_member_ok` autorise le premier membership au créateur et le second auto-ajout si compatible via `msg_can_dm`, sans invitation acceptée.
+- `msg_not_blocked` vérifie le cas où un autre membre a bloqué l'expéditeur, mais pas le cas où l'expéditeur a bloqué l'autre membre : contrôle directionnel confirmé.
+- RLS vivante : INSERT conversation autorisé au créateur pour type direct (ou modérateur pour groupe) ; INSERT membre autorisé à l'utilisateur sur son propre identifiant si `msg_member_ok` passe. GRANT INSERT est accordé à authenticated, sous réserve RLS.
+- Le rapport confirme les trois voies de création DM sans consentement et précise qu'aucune correction isolée n'est suffisante : RPC, INSERT conversation et auto-ajout doivent être fermés de manière cohérente.
+- Aucun SELECT de données personnelles/contenus, aucune écriture Supabase, DDL, migration, changement Auth/RLS/GRANT/Storage/Realtime ou ressource payante. Aucun test multi-comptes/JWT ou concurrence exécuté.
+- PR #17 reste ouverte/non fusionnée ; `main` inchangée. Aucun déploiement Cloudflare. MFA/2FA et facturation hors périmètre.
