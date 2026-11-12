@@ -219,3 +219,12 @@ Le module hors ligne prototypes/registry-decision-ledger-core.mjs ajoute un jour
 Le test prototypes/registry-decision-ledger-core.test.mjs vérifie l'intégrité de la chaîne, les séquences autorisées, les justifications et références obligatoires, ainsi que le refus d'export après altération. Le workflow exécute désormais ce test dans la CI.
 
 **Limite :** une chaîne SHA-256 non signée détecte certaines altérations, mais ne prouve ni l'identité, ni l'heure, ni l'inaltérabilité face à un acteur pouvant recalculer le journal. Il n'existe aucun stockage durable ni authentification. Les identités et références sont synthétiques. Aucun changement Supabase/Auth/RLS/GRANT/Storage, aucune migration, aucun déploiement et aucune activation du registre ou de Messenger.
+
+
+## 18. Lot 318 — chronologie de consultation du journal
+
+La maquette prototypes/registry-decision-timeline-preview.html présente un fil chronologique RTL des événements, le rôle et l'identifiant fictifs de l'acteur, l'horodatage de démonstration, la justification, la référence illustrative et les marqueurs de chaîne. Elle permet la recherche, le filtrage par dossier et l'export JSON de la sélection affichée.
+
+Le jeu de données est synthétique (deux dossiers SYN, six événements). Les marqueurs DEMO-HASH sont des libellés fictifs et ne sont ni calculés ni vérifiés. La page ne lit pas directement le module Node du Lot 317 ; il s'agit d'une maquette autonome, sans connexion ni persistance. Le test d'isolation est ajouté au workflow CI.
+
+Aucun dossier réel, aucune authentification, aucun registre institutionnel, aucune écriture Supabase, migration, modification Auth/RLS/GRANT/Storage ou déploiement.
