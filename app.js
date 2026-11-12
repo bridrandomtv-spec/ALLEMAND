@@ -507,7 +507,7 @@ function renderTabs(){
   const tabs = allTabs();
   const visible = tabs.filter(t => t[0] !== 'sponsor' && (t[0] !== 'admin' || isAdmin()) && (t[0] !== 'parents' || isParent()) && (t[0] !== 'dashboard' || canSeeStudentDashboard()));
   const byId = new Map(visible.map(t => [t[0], t]));
-  const used = new Set(['dashboard', 'accueil', 'masar', 'matieres', 'english']);
+  const used = new Set(['dashboard', 'accueil', 'masar', 'matieres', 'english', 'msg']);
   let desktop = '';
   if(window.__SUBJECT__ === 'en'){
     desktop += '<button class="tab subject-home' + (currentView === 'english' ? ' on' : '') + '" data-go="english">🇬🇧 English</button>';
