@@ -37,5 +37,16 @@ t(roleGuardStart >= 0 && roleGuard.includes('language plpgsql') &&
   roleGuard.includes("set search_path = ''") &&
   !roleGuard.includes('security definer'),
   'garde de rôle SECURITY INVOKER avec search_path vide');
+
+const sbjs = readFileSync('supabase/supabase.js', 'utf8');
+const openDirectStart = sbjs.indexOf('async function msgOpenDirect(');
+const openDirectEnd = sbjs.indexOf('\nasync function msgGroups(', openDirectStart);
+const openDirect = sbjs.slice(openDirectStart, openDirectEnd);
+t(openDirectStart >= 0 && openDirectEnd > openDirectStart, 'msgOpenDirect existe et peut être audité isolément');
+t(openDirect.includes("err:'msg_invitation_requise'") &&
+  !/\.from\('msg_conversations'\)\.insert/.test(openDirect) &&
+  !/\.from\('msg_members'\)\.insert/.test(openDirect),
+  'aucun DM ni membre destinataire créé côté client sans invitation acceptée');
+
 if (fails) { console.error('::error:: msg_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== msg_test : TOUT PASSE ==');
