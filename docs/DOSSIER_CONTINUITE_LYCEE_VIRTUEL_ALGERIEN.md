@@ -6563,3 +6563,19 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Décision : réseau national inter-lycées/inter-wilayas maintenu comme objectif, mais invitations `pending` sans conversation ; création du DM et des deux membres atomique uniquement à l'acceptation par le destinataire. Anti-blocage bilatéral, anti-doublon, idempotence, pagination, anti-énumération et profils minimaux requis.
 - Aucun code applicatif, SQL exécutable, migration, RPC, RLS, GRANT, Auth, Storage ou donnée Supabase modifié/exécuté. Aucun MFA/2FA, paiement/facturation, merge ou déploiement ; `main` inchangée.
 - Prochaine action : confirmer la source institutionnelle canonique de l'affiliation élève↔lycée et les champs visibles dans l'annuaire. Après cela : migration + tests PostgreSQL isolés ; pas d'application sur Supabase actif sans autorisation distincte.
+
+
+## Lot 312 — réponse établie : aucune source officielle lycée↔élève n'est présente (12 novembre 2026)
+
+L'enquête a été menée directement dans le dépôt GitHub, les migrations et le projet Supabase actif `azjwcybivirvpxbfhyzk`, en lecture seule. La question précédemment posée à l'utilisateur est donc résolue par l'audit : **la source d'affiliation officielle n'existe pas actuellement dans l'architecture inspectée**.
+
+- Le schéma actif `public.profiles` contient `niveau`, `filiere`, `wilaya`, `matricule`, `section`, mais aucun identifiant de lycée/établissement et aucune relation d'inscription. La recherche dans les tables/colonnes `public` et `auth` n'a révélé aucune table `schools/lycees/etablissements/enrollments/inscriptions/classes` faisant autorité.
+- Le trigger d'inscription de `supabase/schema.sql` enregistre uniquement pseudo, niveau, filière et wilaya depuis les métadonnées utilisateur ; `app.js` envoie les mêmes quatre valeurs. Aucun lycée n'est collecté.
+- `matricule` et `section` ont été ajoutés pour la vérification de messagerie ; l'élève les saisit dans deux champs texte, puis un professeur/admin peut marquer le profil vérifié. Aucun justificatif ou registre d'établissement n'est contrôlé : ce statut n'est pas une preuve d'inscription au lycée.
+- L'état réel agrégé de la base au moment de l'audit : 5 profils élèves, tous `non_verifie`, 0 avec matricule, 0 avec section. Aucune identité individuelle n'a été consultée.
+- `assets/bdd/classe.json` est une maquette statique (cinq classes, effectifs fictifs/illustratifs), sans lien avec les comptes Auth. Ne pas l'utiliser comme source d'autorité.
+- Les Workers Cloudflare présents dans le dépôt traitent l'IA et l'envoi d'emails ; aucun service de registre scolaire n'a été trouvé.
+
+**Conséquence :** ne pas ouvrir la recherche nationale ni les invitations inter-lycées en s'appuyant sur wilaya/niveau/filière ou sur la vérification actuelle. Ne pas assouplir `msg_can_dm`. Une source institutionnelle ou un processus d'admission administratif traçable devra être conçu avant la migration des invitations.
+
+Aucun changement applicatif ou Supabase, aucune migration/SQL d'écriture, aucun changement Auth/RLS/GRANT/Storage/Cloudflare, aucun merge ni déploiement. PR #17 reste ouverte, `main` inchangée.
