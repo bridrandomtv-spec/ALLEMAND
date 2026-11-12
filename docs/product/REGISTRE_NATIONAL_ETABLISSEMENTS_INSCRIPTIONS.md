@@ -228,3 +228,12 @@ La maquette prototypes/registry-decision-timeline-preview.html présente un fil 
 Le jeu de données est synthétique (deux dossiers SYN, six événements). Les marqueurs DEMO-HASH sont des libellés fictifs et ne sont ni calculés ni vérifiés. La page ne lit pas directement le module Node du Lot 317 ; il s'agit d'une maquette autonome, sans connexion ni persistance. Le test d'isolation est ajouté au workflow CI.
 
 Aucun dossier réel, aucune authentification, aucun registre institutionnel, aucune écriture Supabase, migration, modification Auth/RLS/GRANT/Storage ou déploiement.
+
+
+## 19. Lot 319 — import local vérifié du journal
+
+Le Lot 319 ajoute un adaptateur Node vers le modèle de chronologie et un import JSON local dans la maquette du Lot 318. Le navigateur recalcule la chaîne SHA-256 (genèse, événements ordonnés, previousHash et headHash) avant d'afficher le journal. Les combinaisons rôle/type et les champs obligatoires sont contrôlés. L'import est volontairement limité aux identifiants SYN-* fictifs.
+
+La vérification porte uniquement sur la cohérence cryptographique interne du fichier. Elle ne certifie ni l'identité des acteurs, ni les dates, ni l'autorité des pièces, ni l'inaltérabilité face à un acteur pouvant recalculer toute la chaîne. L'export de la page reste un export de vue, pas le journal original signé.
+
+Tests CI : prototypes/registry-decision-timeline-adapter.test.mjs et prototypes/registry-decision-timeline-preview.test.mjs. Aucun dossier réel, appel réseau, persistance, écriture Supabase, migration ou déploiement.
