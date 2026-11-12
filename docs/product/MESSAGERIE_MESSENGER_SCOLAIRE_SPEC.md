@@ -119,3 +119,51 @@ Le schéma des messages stocke actuellement `conversation_id`, `sender_id`, `bod
 ## Prochaine action technique
 
 Commencer par le lot A (composition de l'interface dans la vue `msg.js`) et le lot B (audit/correction de la matrice DM côté branche), mais garder deux validations distinctes : la présentation peut être développée sans changer le backend ; aucune mise en service réelle ne doit précéder les tests de sécurité et la validation explicite des migrations.
+
+
+## Addendum Lot 307 — ouverture nationale entre lycées et wilayas (12 novembre 2026)
+
+### Décision produit confirmée par l'utilisateur
+
+La messagerie est un réseau scolaire national : **un étudiant doit pouvoir découvrir et contacter des étudiants d'autres lycées et d'autres wilayas d'Algérie**, et pas uniquement les membres de son établissement, de sa classe ou de son groupe local. La portée cible couvre les 58 wilayas et les lycées participants à la plateforme.
+
+Cette ouverture change la règle précédente « élève ↔ élève interdit par défaut ». Elle est remplacée par une règle d'autorisation explicite : les échanges élève ↔ élève inter-lycées et inter-wilayas sont une fonction produit voulue, mais doivent être accessibles uniquement entre comptes scolaires authentifiés et selon des protections anti-abus. La vérification de l'identité scolaire ne doit pas imposer que les deux étudiants partagent la même wilaya, le même niveau ou la même filière.
+
+### Expérience attendue
+
+- Recherche nationale de membres autorisés, avec filtres facultatifs : wilaya, lycée, niveau, filière et centres d'intérêt scolaires.
+- Profil de découverte limité : pseudonyme/nom d'affichage, lycée, wilaya, niveau et filière seulement si ces champs sont validés et que leur visibilité est autorisée. Ne jamais exposer email, téléphone, matricule, adresse ou identifiants internes.
+- Demande de conversation / invitation contrôlable, possibilité de refuser, bloquer et signaler ; limitation de fréquence et protection contre le démarchage massif.
+- DM entre étudiants de lycées différents et wilayas différentes, après validation du compte et des règles de sécurité nationales.
+- Groupes inter-lycées et nationaux par matière, langue, niveau, préparation BAC, entraide et projets ; adhésion visible et règles de modération.
+- Groupes locaux (classe/lycée/wilaya) conservés comme espaces distincts, sans enfermer l'étudiant dans son périmètre local.
+- Les conversations élève ↔ professeur restent soumises à une règle séparée de rattachement pédagogique et aux permissions professionnelles.
+
+### Sécurité obligatoire pour l'ouverture nationale
+
+1. Distinguer visibilité dans l'annuaire, capacité à envoyer une invitation et capacité à envoyer directement un message. Un profil visible ne signifie pas qu'il accepte les messages entrants de tous.
+2. Exiger un compte authentifié et un statut scolaire vérifié pour les fonctions nationales entre étudiants ; le statut doit être contrôlé côté serveur.
+3. Prévoir des paramètres de confidentialité : invitations autorisées, visibilité du profil, blocage et signalement. Valeurs par défaut prudentes adaptées aux mineurs ; ne pas afficher de données personnelles sensibles.
+4. Appliquer une limitation serveur des invitations/messages, détection d'abus, modération et traitement des signalements à l'échelle nationale.
+5. Vérifier les politiques RLS et fonctions RPC sur tous les parcours inter-wilayas ; ne pas réutiliser telle quelle la contrainte actuelle de même wilaya/niveau/filière dans `msg_can_dm(a,b)`.
+6. Tests négatifs avec comptes synthétiques : non authentifié, étudiant non vérifié, étudiant vérifié d'une autre wilaya, étudiant bloqué, invitation refusée, compte suspendu, professeur non affecté, et tentative d'énumération de profils.
+7. La recherche nationale doit utiliser une RPC/endpoint minimisant les champs retournés et une pagination contrôlée ; ne pas charger directement tous les profils dans le navigateur.
+
+### Portée et exclusions
+
+- Le réseau national ne signifie pas accès anonyme ni accès aux données privées des établissements.
+- Aucun échange avec des comptes non vérifiés ou suspendus.
+- Aucun accès aux données personnelles d'un étudiant hors des champs explicitement autorisés.
+- Aucun SLA d'urgence ni promesse de surveillance 24 h/24.
+- Aucun module financier, aucune facturation ni paiement.
+- Aucun changement Supabase/SQL/RLS appliqué par cet addendum : il s'agit d'une décision de produit et d'un cahier des charges. La mise en œuvre serveur nécessite une migration séparée, des tests et une validation explicite.
+
+### Découpage ajusté
+
+- A — UX Messenger : boîte de réception, annuaire national et filtres, sans données fictives.
+- B — sécurité nationale : matrice des rôles, visibilité des profils, invitations, DM inter-wilayas, blocage, limites et tests RLS.
+- C — MVP réel : invitations et conversations inter-lycées alimentées par le backend, Realtime et pagination.
+- D — groupes nationaux : création, découverte, adhésion, modération et règles de gouvernance.
+- E — états sociaux et fonctions avancées : reçus, présence, saisie, réactions et réponses uniquement avec mécanismes réels.
+
+**Critère de réussite produit :** un étudiant vérifié d'un lycée de Bordj Bou Arréridj peut trouver et, selon les préférences de confidentialité, échanger avec un étudiant vérifié d'un lycée d'une autre wilaya, sans devoir partager son établissement, sa classe ou sa filière, tout en conservant blocage, signalement et contrôle serveur.
