@@ -7278,3 +7278,17 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - CI #3214 et #3215 : success ; #3212 et #3213 : success. PR #17 toujours ouverte, non fusionnée, mergeable=true.
 - Aucune écriture SQL/DDL/migration, aucun changement Auth/RLS/GRANT/Storage, aucune ressource payante, aucune modification client, aucun déploiement Cloudflare, aucun changement `main`, aucun merge PR #17. Pas de travail MFA/2FA ni facturation.
 - Étape suivante : archiver sans transformation les 27 corps SQL avec leurs versions et empreintes SHA-256, puis construire un baseline initial séparé et le faire vérifier avant tout banc PostgreSQL.
+
+
+---
+
+## LOT 342 — Archive des migrations SQL Messenger (12 novembre 2026)
+
+- CI #3216 et #3217 confirmés success avant les commits d'archivage ; PR #17 ouverte/non fusionnée.
+- Extraction en lecture seule des 11 migrations Messenger/profils/pièces jointes/vérification depuis `supabase_migrations.schema_migrations.statements[1]` du projet actif. SHA-256 calculé côté PostgreSQL sur `convert_to(sql,'UTF8')` puis `digest(...,'sha256')`.
+- 11 copies exactes créées sous `docs/architecture/migration-archive/`, une par version. Elles sont volontairement hors `supabase/migrations/` et ne doivent pas être rejouées automatiquement.
+- Manifest et empreintes : `docs/architecture/LOT-342-MANIFEST-ARCHIVE-MIGRATIONS-MESSENGER.md`.
+- Le lot exclut les 16 autres migrations hors périmètre, notamment comptabilité/paiements/Auth et le stockage MFA. Aucun travail de facturation ou MFA/2FA.
+- Ces 11 deltas ne constituent pas un baseline initial ni une chaîne de reconstruction complète ; le journal de migration n'offre aucun rollback pour les 27 entrées. Pas de PostgreSQL isolé disponible, donc aucun test de restauration/rejeu exécuté.
+- Aucune écriture SQL, DDL, migration, modification Auth/RLS/GRANT/Storage en base active, création de ressource payante, modification client, déploiement Cloudflare, changement `main` ou merge PR #17.
+- Étape suivante : établir le baseline initial et l'inventaire des objets dépendants (extensions, rôles, fonctions, triggers, policies, grants, publications Realtime, Storage), puis vérifier la reconstruction dans un PostgreSQL isolé avant d'ajouter des migrations nationales Messenger.
