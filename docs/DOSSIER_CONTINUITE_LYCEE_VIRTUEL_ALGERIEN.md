@@ -6944,3 +6944,8 @@ Attendre la CI du HEAD final avant de déclarer le Lot 319 validé. PR #17 reste
 - GO pour durcir et tester les prototypes hors ligne avec des données SYN uniquement.
 - NO-GO pour le schéma SQL/migration et les tests PostgreSQL contre un environnement réel tant que le protocole institutionnel n'a pas été validé et qu'un environnement isolé n'a pas été autorisé.
 - Prochaine étape après validation institutionnelle : rédiger le modèle de données et la migration versionnée, puis exécuter les tests d'intégration PostgreSQL dans une base jetable dédiée, jamais dans la base active.
+
+
+### Complément Lot 320 — cohérence de l'en-tête importé
+- Le validateur navigateur exige désormais aussi que `sourceReference` soit une chaîne, conformément au validateur Node ; les fichiers JSON dont l'en-tête diverge sont rejetés.
+- Assertion statique ajoutée au test de la maquette. La validation finale reste suspendue au run CI du HEAD documentaire final.
