@@ -6650,3 +6650,13 @@ Prototype séparé dans `prototypes/`, non raccordé à la navigation de l'appli
 GO pour la maquette isolée uniquement. NO-GO pour l'import, le déploiement, l'annuaire national, les affiliations ou toute écriture Supabase. Le lot suivant doit être une revue du contrat et du protocole d'approbation institutionnel, avant toute conception de migration.
 
 Aucun changement Supabase (schéma/données/RLS/GRANT/Auth/Storage), aucun changement Cloudflare, aucun déploiement, aucun merge, aucune modification de `main`. PR #17 doit rester ouverte.
+
+
+### Contrôle CI supplémentaire — cache Supabase et exécution des tests Lot 315
+
+- Le run précédent `43281953862` a échoué au contrôle portail public : `index.html` chargeait `supabase/supabase.js?v=3520`, mais `sw.js` et `ci/check-public-portal.mjs` attendaient encore `v3518`.
+- Correctif : précache SW synchronisé sur `v3520`, version SW incrémentée à `dz-de-v3.185.0.0.143`, assertions CI/messages mises à jour.
+- Commits : SW `6f993ddc1d45a913ce7de89fd2ccd395f938861c`; contrôle CI `36fae020ae89afd2d4e8e4498af877c364b6d257`.
+- Pour ne pas laisser les tests du prototype hors CI, `.github/workflows/deploy.yml` vérifie désormais la présence des trois fichiers Lot 315 et exécute `node --test prototypes/registry-import-core.test.mjs`. Le workflow consulté est un job de validation ; aucune étape de déploiement n'y a été ajoutée.
+- Commit workflow : `b7b39f3f9e7634bfb308ea05cbf29e94417778ca`.
+- Nouveau run PR #17 : `43282238264`, en cours au dernier contrôle. Le résultat du test Lot 315 et le statut global restent à confirmer.
