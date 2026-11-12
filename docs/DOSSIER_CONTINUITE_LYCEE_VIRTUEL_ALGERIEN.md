@@ -6457,3 +6457,18 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Aucun code applicatif, SQL, migration, RLS, GRANT, Auth, Storage ou donnée Supabase modifié dans ce lot de conception. Aucun MFA/2FA, paiement/facturation, dépendance frontend, déploiement, merge ou changement sur `main`. PR #17 reste ouverte et non fusionnée.
 - Prochaine étape : démarrer la composition UX de la boîte de réception Messenger dans la vue existante, en parallèle de la préparation des tests de rôle ; toute migration reste séparée et soumise à validation avant application.
 
+
+
+## Lot 307 — décision de réseau scolaire national (12 novembre 2026)
+
+- Nouvelle précision utilisateur : **les étudiants doivent pouvoir discuter avec des étudiants de tous les lycées et de toutes les wilayas d'Algérie**, et non uniquement avec leur établissement ou leur groupe local.
+- Décision produit : faire évoluer la vision Messenger scolaire vers un réseau national couvrant les 58 wilayas et les lycées présents sur la plateforme.
+- La règle antérieure « élève ↔ élève interdit en DM par défaut » est donc remplacée pour le produit cible : les DM entre étudiants vérifiés de lycées/wilayas différents sont autorisés, sous réserve de confidentialité, invitation/acceptation si nécessaire, blocage, signalement, limitation anti-spam et modération.
+- L'appartenance à la même wilaya, au même lycée, au même niveau ou à la même filière ne doit pas être une condition pour communiquer entre étudiants. Cette contrainte actuelle de `msg_can_dm(a,b)` doit être réévaluée côté serveur ; aucune modification SQL/RLS n'a été faite.
+- Expérience prévue : annuaire national avec recherche et filtres lycée/wilaya/niveau/filière ; profils publics minimisés ; demandes de contact ; DM inter-lycées ; groupes nationaux par matière, langue, préparation BAC et entraide ; groupes locaux conservés en parallèle.
+- Les emails, téléphones, matricules, adresses et identifiants internes ne doivent jamais être exposés dans l'annuaire. Un profil visible n'implique pas que les messages entrants soient ouverts à tous.
+- Sécurité : authentification et vérification scolaire côté serveur, paramètres de confidentialité, contrôle des invitations, limitation de fréquence, anti-énumération, modération nationale et tests RLS synthétiques incluant les cas inter-wilayas, bloqués, non vérifiés et suspendus.
+- Les DM élève ↔ professeur restent séparés et exigent un rattachement pédagogique réel. Les règles de rôles professionnels et d'administration restent inchangées.
+- Spécification mise à jour : [docs/product/MESSAGERIE_MESSENGER_SCOLAIRE_SPEC.md](product/MESSAGERIE_MESSENGER_SCOLAIRE_SPEC.md), commit `a48efa39a1b4b68fd83896184ec027d3099c7ab8`.
+- Aucun code applicatif, SQL, migration, RLS, GRANT, Auth, Storage ou donnée Supabase modifié. Aucun MFA/2FA, paiement/facturation, déploiement, merge ou changement sur `main`. PR #17 reste ouverte et non fusionnée.
+- Prochaine étape : concevoir l'annuaire national et l'UX de découverte dans `msg.js`, après inspection des fonctions de recherche de profils et des règles RLS existantes. La recherche ne doit pas exposer directement la table `profiles` ni charger tous les profils côté client.
