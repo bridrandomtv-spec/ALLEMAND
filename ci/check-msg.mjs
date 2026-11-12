@@ -27,5 +27,15 @@ const METHODS = ['msgConvs','msgMessages','msgSend','msgCanDm','msgOpenDirect','
 for (const m of METHODS) ok(sbjs.includes('function ' + m), 'méthode SB.' + m);
 ok(!/\.from\('msg_/.test(msgjs), 'vue msg.js : aucune écriture directe dans msg_*');
 ok(idx.includes('data-view="msg"') && idx.includes('msg.js?v='), 'vue + script câblés dans index.html');
+
+const dmStart = sbjs.indexOf('async function msgOpenDirect(');
+const dmEnd = sbjs.indexOf('\nasync function msgGroups(', dmStart);
+const dmMethod = sbjs.slice(dmStart, dmEnd);
+ok(dmStart >= 0 && dmEnd > dmStart &&
+   dmMethod.includes("err:'msg_invitation_requise'") &&
+   !/\.from\('msg_conversations'\)\.insert/.test(dmMethod) &&
+   !/\.from\('msg_members'\)\.insert/.test(dmMethod),
+   'nouveau DM interdit côté client avant invitation acceptée');
+
 if (fail.length) { console.error('::error:: check-msg : ' + fail.length + ' échec(s)'); process.exit(1); }
 console.log('== check-msg : TOUT PASSE ==');
