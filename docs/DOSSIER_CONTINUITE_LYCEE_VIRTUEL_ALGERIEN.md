@@ -6668,3 +6668,11 @@ Aucun changement Supabase (schéma/données/RLS/GRANT/Auth/Storage), aucun chang
 - Le job global a encore échoué plus loin dans `ci/check-public-portal.mjs`, cette fois à la ligne 442 : l'assertion du guide de bienvenue attendait toujours la version SW `dz-de-v3.185.0.0.139`, alors que le Service Worker a été incrémenté à `.143`.
 - Correctif appliqué dans `ci/check-public-portal.mjs` : assertion du guide alignée sur `.143`. Commit `1d246c52e00c4568d96a0582ec7679d088c5da1c`.
 - Le run suivant doit confirmer l'ensemble ; CI global non déclaré vert à ce stade.
+
+
+### Correctif CI — assertions historiques du dashboard مسارك
+
+- Run `43282427341` : contrôle portail public réussi, y compris l'assertion guide/Service Worker après correction.
+- L'échec suivant se trouvait dans `ci/check-masar.mjs` : trois assertions conservaient CSS `v193` et Service Worker `.139`, alors que HTML/SW sont désormais synchronisés sur CSS `v195` et SW `.143`.
+- Assertions du contrôle مسارك mises à jour sur ces versions : commit `cc3fbfad4c5795a53c7b360094097a034dbb11db`.
+- Le test Lot 315 a réussi dans le run précédent. Le prochain run doit reprendre la suite complète ; résultat global encore en attente.
