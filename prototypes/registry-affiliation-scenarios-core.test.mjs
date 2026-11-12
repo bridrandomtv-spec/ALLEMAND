@@ -59,3 +59,12 @@ test("expires only verified affiliations and hides stale or opted-out students",
 test("rejects unknown transitions and invalid actor roles", () => {
   assert.throws(()=>decideAffiliation(base(),{type:"promote",actorId:"X",actorRole:"admin",at:"2026-11-12T10:00:00.000Z",reason:"test"}),/Transition inconnue/);
 });
+
+test("rejects a second school for the same student and year until source transfer is closed", () => {
+  const next=base();
+  const previous={studentId:"SYN-STUDENT-01",schoolId:"SYN-SCHOOL-B",schoolYear:"2026-2027",status:"verified"};
+  assert.throws(()=>verify(next,{previousEnrollment:previous}),/Transfert préalable non clôturé/);
+  assert.doesNotThrow(()=>verify(base(),{previousEnrollment:{...previous,status:"transferred"}}));
+  assert.doesNotThrow(()=>verify(base(),{previousEnrollment:{...previous,schoolYear:"2025-2026"}}));
+  assert.doesNotThrow(()=>verify(base(),{previousEnrollment:{...previous,studentId:"SYN-STUDENT-02"}}));
+});
