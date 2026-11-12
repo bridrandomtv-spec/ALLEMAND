@@ -6863,3 +6863,23 @@ Après CI verte, effectuer une revue des transitions et de l'export, puis concev
 - Le run a couvert le correctif de réouverture et les deux tests de cycle correction/réouverture. Les premiers échecs ciblés ont été corrigés avant cette validation finale.
 - Le présent ajout documentaire déclenche sa propre CI ; il ne modifie aucun code.
 - PR #17 confirmée ouverte, non fusionnée, base main. Aucun déploiement Cloudflare/Supabase, aucune migration ni écriture Supabase.
+
+
+## Lot 318 — chronologie de consultation du journal (12 novembre 2026)
+
+### Livrables
+- prototypes/registry-decision-timeline-preview.html : maquette arabe RTL responsive, chronologie, recherche, filtre par dossier, panneau de détail et export JSON de la sélection visible.
+- prototypes/registry-decision-timeline-preview.test.mjs : test Node natif d'isolation.
+- docs/product/LOT-318-CHRONOLOGIE-JOURNAL.md : périmètre, mode d'emploi, limites et décision.
+- docs/product/REGISTRE_NATIONAL_ETABLISSEMENTS_INSCRIPTIONS.md : section Lot 318 ajoutée.
+- .github/workflows/deploy.yml : fichiers requis et test Lot 318 ajoutés.
+
+### Jeu de données et garde-fous
+- Deux dossiers SYN fictifs, six événements, identités, horodatages et références inventés.
+- Marqueurs DEMO-HASH illustratifs seulement ; aucune empreinte réelle n'est recalculée ou vérifiée dans la page.
+- La maquette est indépendante du module Node du Lot 317 ; elle n'est pas connectée à un journal réel.
+- Aucun appel réseau, aucune persistance navigateur, aucune authentification, aucun backend, aucune modification Supabase/Auth/RLS/GRANT/Storage, SQL/migration, Cloudflare ou déploiement.
+- Export JSON local limité aux événements synthétiques filtrés ; aucun envoi de données.
+
+### Validation
+Le test de présence/isolation est ajouté à la CI. Attendre le résultat du run déclenché par ce commit avant de déclarer Lot 318 validé. PR #17 doit rester ouverte et non fusionnée, base main.
