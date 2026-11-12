@@ -6907,3 +6907,11 @@ Le test de présence/isolation est ajouté à la CI. Attendre le résultat du ru
 
 ### Validation
 Attendre la CI du HEAD final avant de déclarer le Lot 319 validé. PR #17 reste ouverte et non fusionnée, base main.
+
+
+### Validation CI finale du Lot 319 — 12 novembre 2026
+
+- Run GitHub Actions **43292271080** sur le HEAD 240b6e1afe9ee2686392b32b1f84bcccb35a4024 : **success**, job unique, 40/40 étapes réussies.
+- Étapes Lots 318 et 319 réussies : test de la maquette chronologique et test de l'adaptateur du journal Lot 317.
+- Le run antérieur 43292098443 avait échoué sur l'assertion de libellé du bouton d'export après évolution de l'interface ; l'assertion a été mise à jour et le run suivant 43292184775 a confirmé les deux tests. Le run final du HEAD a ensuite réussi.
+- PR #17 confirmée ouverte, non fusionnée, base main. Aucun déploiement, aucune modification Supabase/Auth/RLS/GRANT/Storage, aucune migration ni donnée réelle.
