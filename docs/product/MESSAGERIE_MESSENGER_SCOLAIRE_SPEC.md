@@ -225,8 +225,8 @@ Cette correction ferme un chemin client incohérent ; elle ne livre pas encore l
 ### Validation CI au moment de l'enregistrement
 
 - CI #3178 et #3179 : succès sur les commits de documentation précédents.
-- CI #3180 : en cours sur le premier commit de correction.
-- CI #3181 : en attente sur le commit intégrant les nouveaux tests.
-- La validation finale de ce correctif dépend de la réussite du run #3181 ; ne pas annoncer le lot comme validé avant son résultat.
+- CI #3180 : succès sur le premier commit de correction.
+- CI #3181 : succès sur le commit intégrant les tests statiques ; l'étape « Valider la messagerie EduDZ (schéma RLS + client + vue) » est verte.
+- Le correctif Lot 324 est validé par la CI statique du dépôt ; cela ne remplace pas des tests d'intégration PostgreSQL/RLS ni une recette multi-comptes.
 
 Aucun déploiement, aucune fusion, aucune modification de `main). PR #17 reste ouverte. Aucun MFA/2FA ni facturation.
