@@ -7558,3 +7558,11 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Lot 358 prévu : plan de tests serveur multi-comptes et inventaire final des dépendances avant toute migration isolée.
 - Aucun code runtime modifié, aucun changement Supabase, aucun déploiement Cloudflare, aucune modification de `main), aucune fusion PR #17. PR #17 demeure ouverte/non fusionnée. MFA/2FA et facturation hors périmètre.
 
+### Rectificatif de continuité — Lot 357 (13 novembre 2026)
+
+- Le Lot 357 est une synthèse de vérification, pas une demande de refaire Messenger. Les travaux UX Lot 308 (recherche locale, filtres, responsive) et Lot 309 (photos/PDF, upload privé, fil) restent acquis et ne sont pas à réimplémenter.
+- Le prototype messagerie à niveaux 0→7 a déjà été audité au Lot 305. Les invitations ont été étudiées aux lots 310–311 et spécifiées dans les lots 323–340 et 348–352. Le plan multi-comptes Lot 340 et le plan de verrouillage Lot 326 existent déjà : ne pas les réécrire.
+- Les lots 355–356 ont traité la visibilité et l'accès direct à Messenger. Ces corrections restent conservées.
+- La prochaine suite doit réutiliser les prototypes, écrans, contrats et tests déjà réalisés. Seuls les écarts non livrés sont à traiter : affiliation institutionnelle officielle, fermeture et tests serveur dans PostgreSQL isolé, intégration du flux d'invitation/annuaire déjà spécifié, puis recette de non-régression.
+- Aucun nouveau chantier de refonte UX ni de reconstruction Messenger n'est autorisé par ce rectificatif. Aucun changement Supabase actif, déploiement Cloudflare, modification de main ou fusion PR #17.
+
