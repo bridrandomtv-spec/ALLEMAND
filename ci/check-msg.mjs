@@ -6,6 +6,7 @@ const sql = readFileSync('supabase/msg_schema.sql', 'utf8');
 const sbjs = readFileSync('supabase/supabase.js', 'utf8');
 const msgjs = readFileSync('msg.js', 'utf8');
 const idx = readFileSync('index.html', 'utf8');
+const app = readFileSync('app.js', 'utf8');
 const TABLES = ['msg_conversations','msg_members','msg_messages','msg_attachments','msg_reports','msg_blocks','msg_log'];
 for (const t of TABLES) {
   ok(sql.includes('create table if not exists public.' + t), 'table ' + t);
@@ -27,6 +28,8 @@ const METHODS = ['msgConvs','msgMessages','msgSend','msgCanDm','msgOpenDirect','
 for (const m of METHODS) ok(sbjs.includes('function ' + m), 'méthode SB.' + m);
 ok(!/\.from\('msg_/.test(msgjs), 'vue msg.js : aucune écriture directe dans msg_*');
 ok(idx.includes('data-view="msg"') && idx.includes('msg.js?v='), 'vue + script câblés dans index.html');
+ok(/\['classroom',[^\]]*\['classe',\s*'msg',/.test(app), 'Messenger classé dans la navigation principale');
+ok(!/tabs\.filter\(t\s*=>\s*t\[0\]\s*!==\s*'msg'/.test(app), 'Messenger non exclu du menu');
 
 const dmStart = sbjs.indexOf('async function msgOpenDirect(');
 const dmEnd = sbjs.indexOf('\nasync function msgGroups(', dmStart);
