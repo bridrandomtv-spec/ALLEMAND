@@ -6553,3 +6553,13 @@ F. Activation de l'envoi aux élèves seulement après vérification du domaine 
 - Décision : invitation `pending` sans conversation ; acceptation/refus par le destinataire ; annulation par l'expéditeur ; création transactionnelle du DM uniquement à l'acceptation. Contrôles serveur : identité vérifiée, blocage bilatéral, préférences, limites anti-spam, statut du compte et idempotence.
 - Aucun code applicatif, SQL, migration, RLS, GRANT, Auth, Storage, donnée Supabase modifié ou exécuté. Aucun MFA/2FA, paiement/facturation, merge ou déploiement ; PR #17 reste ouverte et `main` inchangé.
 - Prochaine étape : préparer une migration SQL et des tests RLS/RPC synthétiques, sans exécution, puis intégrer les écrans de demandes reçues/envoyées après validation du modèle.
+
+
+## Lot 311 — prérequis des invitations nationales Messenger (12 novembre 2026)
+
+- Vérification du schéma versionné `schema.sql` et `msg_schema.sql` : `profiles` expose notamment rôle, niveau, filière, wilaya et statut de vérification ; `msg_blocks`, `msg_conversations` et `msg_members` existent déjà.
+- Bloquant identifié : aucune relation canonique active élève↔lycée ni préférence de découverte / statut de suspension exploitable n'a été démontrée. Les seuls champs wilaya/niveau/filière ne prouvent pas une affiliation scolaire nationale.
+- Préparation du contrat de migration et de la matrice de tests dans `docs/security/LOT-311-invitations-migration-preflight.md`. La migration SQL exécutable est volontairement suspendue jusqu'à confirmation de la source d'affiliation et des règles de visibilité.
+- Décision : réseau national inter-lycées/inter-wilayas maintenu comme objectif, mais invitations `pending` sans conversation ; création du DM et des deux membres atomique uniquement à l'acceptation par le destinataire. Anti-blocage bilatéral, anti-doublon, idempotence, pagination, anti-énumération et profils minimaux requis.
+- Aucun code applicatif, SQL exécutable, migration, RPC, RLS, GRANT, Auth, Storage ou donnée Supabase modifié/exécuté. Aucun MFA/2FA, paiement/facturation, merge ou déploiement ; `main` inchangée.
+- Prochaine action : confirmer la source institutionnelle canonique de l'affiliation élève↔lycée et les champs visibles dans l'annuaire. Après cela : migration + tests PostgreSQL isolés ; pas d'application sur Supabase actif sans autorisation distincte.
