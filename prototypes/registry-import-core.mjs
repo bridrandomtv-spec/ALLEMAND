@@ -29,7 +29,12 @@ export function parseCsv(input) {
   if (!rows.length) return [];
   const headers = rows.shift().map(v => v.trim());
   if (new Set(headers).size !== headers.length) throw new Error("CSV mal formé : en-têtes en double.");
+  const missing = REQUIRED.filter(k => !headers.includes(k));
+  const unknown = headers.filter(k => !REQUIRED.includes(k));
+  if (missing.length) throw new Error("En-têtes obligatoires absents : " + missing.join(", "));
+  if (unknown.length) throw new Error("En-têtes inconnus : " + unknown.join(", "));
   return rows.map((values, index) => {
+    if (values.length > headers.length) throw new Error("CSV mal formé : trop de colonnes à la ligne " + (index + 2) + ".");
     const item = { _line: index + 2 };
     headers.forEach((header, i) => { item[header] = String(values[i] ?? "").trim(); });
     return item;
