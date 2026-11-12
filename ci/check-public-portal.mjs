@@ -238,13 +238,13 @@ if (!html.includes('style-prototype-dz.css?v=195')) {
 if (!sw.includes('style-prototype-dz.css?v=195')) {
   fail('version CSS du précache non actualisée (v195 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.142") ||
+if (!sw.includes("dz-de-v3.185.0.0.143") ||
     !sw.includes("style-prototype-dz.css?v=195") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS v195, app.js v3568 et Service Worker v3.185.0.0.142 synchronisés');
+console.log('✅ Cache CSS v195, app.js v3568 et Service Worker v3.185.0.0.143 synchronisés');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -270,7 +270,7 @@ for (const marker of ["const primary = [","['accueil', '🏠 الرئيسية']"
   if (!app.includes(marker)) fail('navigation mobile compacte absente ou incomplète : ' + marker);
 }
 if (!css.includes('LOT 99 — navigation mobile compacte')) fail('styles Lot 99 absents');
-if (!html.includes('supabase/supabase.js?v=3518') || !sw.includes('supabase/supabase.js?v=3518')) fail('cache Supabase client non synchronisé');
+if (!html.includes('supabase/supabase.js?v=3520') || !sw.includes('supabase/supabase.js?v=3520')) fail('cache Supabase client non synchronisé');
 if (!html.includes('app.js?v=3568') || !sw.includes('app.js?v=3568')) fail('cache app.js non synchronisé');
 if (!html.includes('style-prototype-dz.css?v=195') || !sw.includes('style-prototype-dz.css?v=195')) fail('cache CSS non synchronisé');
 if (!css.includes('NAV V2 — navigation intégrée au header, sans sidebar ni barre basse')) fail('règle NAV V2 sans sidebar absente');
