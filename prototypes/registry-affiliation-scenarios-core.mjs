@@ -29,11 +29,12 @@ export function decideAffiliation(record, { type, actorId, actorRole, actorSchoo
     if (actorSchoolId !== record.schoolId) throw new Error("Responsable hors périmètre de l'établissement.");
     if (actorId === record.studentId) throw new Error("Auto-validation interdite.");
     if (!ACTIVE_SOURCE_STATES.has(sourceState)) throw new Error("Source institutionnelle non vérifiée ou révoquée.");
-    if (previousEnrollment && previousEnrollment.status === "verified" &&
+    if (previousEnrollment &&
         previousEnrollment.studentId === record.studentId &&
         previousEnrollment.schoolYear === record.schoolYear &&
-        previousEnrollment.schoolId !== record.schoolId) {
-      if (previousEnrollment.status !== "transferred") throw new Error("Transfert préalable non clôturé.");
+        previousEnrollment.schoolId !== record.schoolId &&
+        previousEnrollment.status !== "transferred") {
+      throw new Error("Transfert préalable non clôturé.");
     }
     record.status = "verified";
   } else if (type === "reject") {
