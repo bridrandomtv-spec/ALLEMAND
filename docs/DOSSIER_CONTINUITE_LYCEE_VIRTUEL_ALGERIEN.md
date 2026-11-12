@@ -7143,3 +7143,17 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucun DDL, migration, modification Auth/RLS/GRANT/Storage, écriture SQL, déploiement Cloudflare, changement sur `main) ou merge PR #17. Pas de MFA/2FA et pas de facturation.
 - Commit rapport Lot 332 : `6adb449af0139af6db2a307e86a6ea5d64560054`. Mise à jour du dossier de continuité à suivre ; CI du rapport et de la continuité à contrôler.
 - Étape suivante : récupérer/constituer les migrations SQL exactes versionnées et préparer un harnais reproductible. L'exécution réelle attend un moteur PostgreSQL isolé sans coût ou une autorisation explicite après présentation du coût d'une branche Supabase.
+
+
+---
+
+## LOT 333 — Traçabilité des migrations SQL actives (12 novembre 2026)
+
+- CI #3203 confirmée `success` sur le commit `6adb449af0139af6db2a307e86a6ea5d64560054`.
+- Inventaire GitHub de l'arbre complet : aucun répertoire/fichier `migrations/` sur la branche ; 17 scripts SQL historiques sous `supabase/`.
+- Supabase retourne 27 migrations actives (versions 20261030131545 à 20261109210413). Le connecteur fournit les versions/noms, pas les corps SQL historiques.
+- Aucun des 17 scripts SQL n'est identifié comme le fichier horodaté correspondant à ces migrations. Ne pas exécuter ces scripts agrégés pour prétendre reconstruire la base active.
+- Rapport détaillé : [LOT-333-TRAÇABILITÉ-MIGRATIONS-SQL-ACTIVES.md](product/LOT-333-TRAÇABILITÉ-MIGRATIONS-SQL-ACTIVES.md).
+- PR #17 confirmée ouverte, non fusionnée, mergeable=true, mergeable_state=clean ; HEAD `6da36ebe0a1aacd29216fbf90f57a35c3daa2b23`.
+- Aucun SQL d'écriture/DDL/migration appliqué ; aucune branche Supabase créée ; aucune modification Auth/RLS/GRANT/Storage ; aucun déploiement Cloudflare ; aucun changement `main` ; aucun merge.
+- Suite : rechercher une copie authentique et complète des 27 corps de migration (historique de déploiement ou source originale). Si introuvable, proposer un baseline versionné dérivé d'un export contrôlé, sans le confondre avec l'historique original.
