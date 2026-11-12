@@ -349,26 +349,30 @@ async function msgCanDm(otherId){
   return { ok:true, allowed:!!r.data };
 }
 async function msgOpenDirect(otherId){
-  const can = await msgCanDm(otherId); if(!can.ok) return can;
-  if(!can.allowed) return { ok:false, err:'msg_dm_interdit' };
-  const u = await me(); const c = await sb();
-  const ex = await c.from('msg_members').select('conversation_id').in('user_id',[u.id, otherId]);
-  const ids = (ex.data || []).map(function(x){ return x.conversation_id; });
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  if(!otherId || otherId === u.id) return { ok:false, err:'destinataire invalide' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+
+  /* Une conversation existante peut être rouverte par ses membres.
+     Une nouvelle conversation doit obligatoirement passer par l'invitation
+     acceptée côté serveur : le client ne crée jamais un DM ni le membre adverse. */
+  const mine = await c.from('msg_members').select('conversation_id')
+    .eq('user_id',u.id).limit(500);
+  if(mine.error) return { ok:false, err:mine.error.message };
+  const ids = Array.from(new Set((mine.data || []).map(function(x){ return x.conversation_id; })));
   if(ids.length){
-    const m = await c.from('msg_members').select('conversation_id').in('conversation_id', ids).in('user_id',[u.id, otherId]);
-    const cnt = {}; (m.data || []).forEach(function(x){ cnt[x.conversation_id] = (cnt[x.conversation_id]||0)+1; });
-    for(const id of ids){
-      if(cnt[id] === 2){
-        const t = await c.from('msg_conversations').select('id').eq('id', id).eq('type','direct').maybeSingle();
-        if(t.data) return { ok:true, convId:id, existing:true };
-      }
+    const theirs = await c.from('msg_members').select('conversation_id')
+      .eq('user_id',otherId).in('conversation_id',ids);
+    if(theirs.error) return { ok:false, err:theirs.error.message };
+    const shared = Array.from(new Set((theirs.data || []).map(function(x){ return x.conversation_id; })));
+    if(shared.length){
+      const convs = await c.from('msg_conversations').select('id')
+        .eq('type','direct').in('id',shared).limit(1);
+      if(convs.error) return { ok:false, err:convs.error.message };
+      if(convs.data && convs.data.length) return { ok:true, convId:convs.data[0].id, existing:true };
     }
   }
-  const r = await c.from('msg_conversations').insert({ type:'direct', created_by:u.id, titre:'' }).select('id').single();
-  if(r.error) return { ok:false, err:r.error.message };
-  const m1 = await c.from('msg_members').insert([{conversation_id:r.data.id,user_id:u.id},{conversation_id:r.data.id,user_id:otherId}]);
-  if(m1.error) return { ok:false, err:m1.error.message };
-  return { ok:true, convId:r.data.id, existing:false };
+  return { ok:false, err:'msg_invitation_requise' };
 }
 async function msgGroups(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
