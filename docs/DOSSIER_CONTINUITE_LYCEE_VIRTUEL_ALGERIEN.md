@@ -7249,3 +7249,17 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucun SQL d'écriture, DDL, migration, changement Auth/RLS/GRANT/Storage, modification client, branche Supabase, déploiement Cloudflare, changement `main` ou merge PR #17. Pas de MFA/2FA ni facturation.
 - Décision : ne pas convertir le groupe isolé ni activer les groupes scolaires nationaux avant disponibilité du registre d'affiliation et contrôles serveur testés. Messenger national reste NO-GO.
 - Étape suivante : contrôler CI des Lots 338/339 puis préparer le plan de test fonctionnel multi-compte (élève, vérificateur, modérateur, administrateur) sur PostgreSQL isolé, sans utiliser la base active comme banc d'essai.
+
+
+---
+
+## LOT 340 — Plan de tests fonctionnels multi-comptes Messenger (12 novembre 2026)
+
+- CI #3213 confirmé `success` sur commit `44f3bf3e3dc9820e6ca881ba814f60bca4a90d32` ; CI #3212 `success`. PR #17 reste ouverte, non fusionnée et fusionnable.
+- Créé `docs/product/LOT-340-PLAN-TESTS-MULTICOMPTES-MESSENGER.md` : jeu d'identités synthétiques pour élèves de deux établissements/wilayas, élève sans affiliation, élève opt-out, vérificateurs limités par établissement, modérateur, admin et compte extérieur.
+- Matrice de tests couvrant annuaire (projection minimale, opt-in, affiliation, pagination, anti-énumération), invitations/DM (consentement, accept/refuse/cancel/expire, idempotence, courses, blocages, fermeture des INSERT directs), groupes (établissement, national, communautaire, transfert), vérification/admin, messages, pièces jointes, Realtime et modération.
+- Le plan distingue tests négatifs d'autorisation, tests fonctionnels et tests multi-session/concurrence ; un simple succès HTTP ne suffit pas : l'état final transactionnel doit être vérifié.
+- Blocage d'exécution confirmé par l'audit antérieur : pas de `psql`, moteur PostgreSQL, Docker ou Podman dans l'environnement ; aucune chaîne complète de migrations versionnées dans le dépôt. Pas de base de test Supabase créée (risque de coût, non autorisé).
+- Le lot 340 est une spécification de tests, pas une exécution PostgreSQL ni une validation de sécurité. Les tests Node statiques existants ne remplacent pas les tests RLS multi-comptes.
+- Aucun SQL d'écriture, DDL, migration, Auth/RLS/GRANT/Storage, environnement payant, modification client, déploiement Cloudflare, changement `main` ou merge PR #17. Aucun MFA/2FA ni facturation.
+- Étape suivante : établir une chaîne de schéma/migrations reproductible et non payante, puis implémenter le harness PostgreSQL isolé. Ne pas utiliser la base active comme banc d'essai.
