@@ -7016,3 +7016,14 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Nouveau document : `docs/product/LOT-323-AUDIT-PREPARATION-MESSENGER-NATIONAL.md` (audit, écarts, séquencement 323-A à 323-H).
 - Prochaine priorité : finaliser la compatibilité du registre avec le schéma réel et la matrice d'accès, puis concevoir invitations et annuaire avant tout élargissement de `msg_can_dm`.
 - Aucun changement applicatif, SQL, migration, Auth/RLS/GRANT/Storage, base Supabase active, `main`, merge ou déploiement effectué. PR #17 reste ouverte et non fusionnée. Pas de facturation ni MFA/2FA.
+
+
+## Lot 324 — fermeture du parcours DM direct côté client (12 novembre 2026)
+
+- Audit de `supabase/supabase.js` : `msgOpenDirect` créait le DM côté navigateur puis tentait d'ajouter expéditeur et destinataire dans `msg_members`. La policy RLS impose `auth.uid() = user_id`, donc le client ne peut pas ajouter le destinataire ; l'appel séparé pouvait laisser une conversation orpheline.
+- Correction sur la branche : `msgOpenDirect` ne crée plus de conversation ni de membre. Il ne rouvre qu'un DM existant partagé ; sinon il retourne `msg_invitation_requise`. Les erreurs de lecture sont propagées.
+- Ajout de garde-fous statiques dans `tests/msg_test.mjs` et `ci/check-msg.mjs) : interdiction d'INSERT client dans `msg_conversations` / `msg_members` depuis cette méthode.
+- Spécification complétée dans `docs/product/MESSAGERIE_MESSENGER_SCOLAIRE_SPEC.md` (Addendum Lot 324).
+- CI #3180 en cours sur le premier commit correctif ; CI #3181 en attente sur le commit qui ajoute les tests. Le correctif ne sera considéré validé qu'après un run vert sur le HEAD complet.
+- Ce lot ne livre pas encore le système d'invitations : aucune table/RPC d'invitation, annuaire national, ni DM inter-wilayas. La preuve institutionnelle d'affiliation et la règle `msg_can_dm` restent bloquantes.
+- Aucun SQL, migration, Auth/RLS/GRANT/Storage, écriture Supabase active, merge, déploiement ou changement de `main). PR #17 reste ouverte. Pas de MFA/2FA ni facturation.
