@@ -435,7 +435,7 @@ async function msgAttachmentInfo(messageId){
     .eq('message_id', messageId).maybeSingle();
   if(r.error) return { ok:false, found:false, err:r.error.message };
   if(!r.data) return { ok:true, found:false };
-  if(r.data.statut && r.data.statut!=='approved' && r.data.statut!=='active')
+  if(r.data.statut && r.data.statut==='retire')
     return { ok:true, found:false };
   const signed = await c.storage.from('prive').createSignedUrl(r.data.storage_path, 900);
   if(signed.error) return { ok:false, found:false, err:signed.error.message };
