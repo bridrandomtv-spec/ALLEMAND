@@ -4,12 +4,12 @@ import { createHash } from "node:crypto";
 import { createDecisionLedger, appendDecisionEvent, verifyDecisionLedger, decisionLedgerJson } from "./registry-decision-ledger-core.mjs";
 
 function reviewed() {
-  const ledger = createDecisionLedger({ caseId: "SYN-CASE-01", createdAt: "2026-11-12T10:00:00Z", sourceReference: "SYNTHETIC-SOURCE" });
-  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-1", role: "operateur", at: "2026-11-12T10:05:00Z", reason: "Contrôle fictif effectué." });
+  const ledger = createDecisionLedger({ caseId: "SYN-CASE-01", createdAt: "2026-11-12T10:00:00.000Z", sourceReference: "SYNTHETIC-SOURCE" });
+  appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "SYN-OP-1", role: "operateur", at: "2026-11-12T10:05:00.000Z", reason: "Contrôle fictif effectué." });
   return ledger;
 }
 function forgedLedger(events) {
-  const ledger = createDecisionLedger({ caseId: "SYN-FORGED-01", createdAt: "2026-11-12T10:00:00Z", sourceReference: "SYNTHETIC-SOURCE" });
+  const ledger = createDecisionLedger({ caseId: "SYN-FORGED-01", createdAt: "2026-11-12T10:00:00.000Z", sourceReference: "SYNTHETIC-SOURCE" });
   let previousHash = ledger.headHash;
   ledger.events = events.map((input, index) => {
     const payload = { sequence: index + 1, evidenceReference: "", ...input, previousHash };
@@ -23,7 +23,7 @@ function forgedLedger(events) {
 
 test("creates a verifiable append-only hash chain", () => {
   const ledger = reviewed();
-  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T10:10:00Z", reason: "Décision de démonstration.", evidenceReference: "SYN-ACT-02" });
+  appendDecisionEvent(ledger, { type: "accepte", actorId: "SYN-AP-2", role: "approbateur", at: "2026-11-12T10:10:00.000Z", reason: "Décision de démonstration.", evidenceReference: "SYN-ACT-02" });
   assert.equal(verifyDecisionLedger(ledger).valid, true);
   assert.equal(verifyDecisionLedger(ledger).checked, 2);
   assert.match(decisionLedgerJson(ledger), /SYN-CASE-01/);
