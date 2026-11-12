@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { createDecisionLedger, appendDecisionEvent } from "./registry-decision-ledger-core.mjs";
 import { ledgerToTimeline } from "./registry-decision-timeline-adapter.mjs";
 
@@ -28,7 +29,6 @@ test("rejects a ledger whose event chain was altered", () => {
 test("rejects unknown event-role combinations even with a valid hash chain", () => {
   const ledger = createDecisionLedger({ caseId: "SYN-ADAPTER-02", createdAt: "t0" });
   appendDecisionEvent(ledger, { type: "revue_operateur", actorId: "OP", role: "operateur", at: "t1", reason: "Revue." });
-  const { createHash } = await import("node:crypto");
   const payload = { sequence: 2, type: "accepte", actorId: "AP", role: "superadmin", at: "t2", reason: "Test de rôle.", evidenceReference: "", previousHash: ledger.headHash };
   const hash = createHash("sha256").update(JSON.stringify(payload), "utf8").digest("hex");
   ledger.events.push({ ...payload, hash });
