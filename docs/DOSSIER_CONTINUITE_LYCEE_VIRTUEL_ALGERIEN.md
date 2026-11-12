@@ -7499,3 +7499,20 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Aucune écriture Supabase, migration, changement Auth/RLS/GRANT/Storage/Realtime, modification Worker ou déploiement Cloudflare. Pas de scan complet de l'historique Git, pas de test HTTP production, aucun secret runtime consulté.
 - CI #3239 réussie sur le HEAD précédent `d11d5d5cf6630544e09ff08a68baa69764f78f42`. Le rapport Lot353 et le présent dossier déclenchent de nouveaux runs.
 - PR #17 reste ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation hors périmètre.
+
+
+---
+
+## 20. Lot 354 — Contrat d'authentification des Workers (12 novembre 2026)
+
+- Contrat : `docs/security/LOT-354-CONTRAT-AUTHENTIFICATION-WORKERS.md`.
+- CI #3240 et #3241 : succès ; #3241 sur le HEAD du dossier Lot353 `e7e251897d400c7ebb75f9911749a8a7182f3ad5`.
+- Constat de raccordement client : `supabase/supabase.js` expose `SB.getSession()` et un helper `authHeaders()` pour le JWT ; l'appel IA dans `app.js` ne transmet actuellement pas Authorization.
+- Point de vigilance : `auth.js` possède encore une session locale/localStorage indépendante. Un Worker ne doit jamais accepter cette session locale comme preuve d'identité ; seul un JWT Supabase validé côté serveur est recevable.
+- Contrat commun : Bearer Supabase obligatoire, validation serveur via Auth `/auth/v1/user` avec clé publishable/anon, refus fail-closed, rôles/abonnements relus côté serveur, corps borné avant parsing, erreurs neutres, aucun JWT dans les logs.
+- IA : session active, quotas durables partagés par utilisateur et limites globales, contrôle concurrence/timeout, contexte fourni par client traité comme non fiable. L'ancienne limite mémoire 20/minute n'est pas un contrôle robuste.
+- E-mail : décision par défaut de désactiver `/send-welcome` public et garder `resend_proxy` vide ; privilégier événement serveur d'inscription/confirmation, destinataire dérivé d'Auth, idempotence et anti-abus.
+- Contenus : vérifier le droit sur la ressource précise et couvrir toute l'allowlist ; PostgREST avec clé publishable/anon + JWT utilisateur pour préserver RLS.
+- Matrice de 16 tests WKR-01 à WKR-16, incluant anon, JWT invalide/expiré, session locale seule, compte suspendu, non-abonné, quota multi-instance, timeout Auth, chemins non autorisés et rejeu e-mail.
+- Ce lot est une spécification seulement : aucun code Worker/app modifié, aucun déploiement, aucune écriture Supabase ni modification Auth/RLS/GRANT/Storage/Realtime.
+- PR #17 demeure ouverte/non fusionnée ; `main` inchangée. MFA/2FA et facturation exclus.
