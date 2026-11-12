@@ -7185,3 +7185,17 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Rapport ajouté : [LOT-335-BASELINE-PARTIEL-SCHEMA-MESSENGER-VIVANT.md](product/LOT-335-BASELINE-PARTIEL-SCHEMA-MESSENGER-VIVANT.md). Il est explicitement un baseline partiel daté, pas un pg_dump complet ni un historique de migrations/restauration.
 - Aucun test PostgreSQL multi-session, aucune migration, aucun DDL, aucune écriture SQL, aucun changement Auth/RLS/GRANT/Storage, aucune branche Supabase payante, aucun déploiement Cloudflare, aucun changement `main` ni merge. PR #17 reste ouverte et non fusionnée. MFA/2FA et facturation restent hors périmètre.
 - Étape suivante : étendre le baseline contrôlé aux fonctions et privilèges de profil/annuaire, puis préparer la matrice PostgreSQL multi-rôle. L'implémentation des invitations ne commencera qu'après environnement isolé et tests serveur ; aucune modification du projet Supabase actif sans autorisation distincte.
+
+
+---
+
+## LOT 336 — Privilèges profiles et annuaire national (12 novembre 2026)
+
+- Revue catalogue en lecture seule des privilèges colonne, politiques RLS, vues publiques et triggers de protection de `public.profiles`.
+- `authenticated` possède SELECT explicite sur toutes les colonnes de profil, dont matricule, section, statut, vérificateur et date de vérification. Les politiques RLS filtrent les lignes, pas les colonnes ; toute ligne visible via la politique « profils visibles entre membres » expose donc aussi ces colonnes au rôle.
+- INSERT/UPDATE authenticated couvrent également plusieurs champs sensibles ; les triggers `profiles_role_guard`, `profiles_scope_guard` et `profiles_verif_guard` bloquent certaines modifications selon le rôle et le périmètre. Cela doit être éprouvé en intégration, pas seulement présumé sûr sur lecture du code.
+- Aucune vue publique dédiée d'annuaire/profil minimal n'a été repérée dans le schéma public par la recherche ciblée.
+- Décision : **NO-GO annuaire national sur `profiles` actuel**. Il faut des projections/RPC minimales distinctes (profil personnel, étiquette conversation, annuaire opt-in, file de vérification, administration) et une affiliation scolaire officielle active ; aucun matricule/section/champ de vérification ne doit sortir dans l'annuaire.
+- Rapport : [LOT-336-AUDIT-PRIVILEGES-PROFILES-ANNUAIRE.md](product/LOT-336-AUDIT-PRIVILEGES-PROFILES-ANNUAIRE.md).
+- Aucun correctif ni test multi-rôle appliqué ; aucun SQL d'écriture, DDL, migration, changement Auth/RLS/GRANT/Storage, déploiement Cloudflare, changement `main`, fusion PR #17 ou branche Supabase créée. Pas de MFA/2FA ni facturation.
+- Suite : préparer les projections minimales et la matrice d'essais PostgreSQL multi-rôle, sans toucher au projet actif avant environnement isolé et autorisation distincte.
