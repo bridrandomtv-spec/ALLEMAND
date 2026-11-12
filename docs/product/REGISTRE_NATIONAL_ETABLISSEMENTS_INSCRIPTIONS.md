@@ -316,3 +316,12 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - GO pour préparer le modèle relationnel PostgreSQL en documentation et les tests sur base jetable locale.
 - NO-GO pour appliquer une migration, créer une branche Supabase payante, ou utiliser une base distante sans autorisation explicite distincte.
 - Le protocole institutionnel du registre reste une proposition à faire valider ; aucun établissement réel ni aucune inscription officielle n'est importé.
+
+
+## Lot 322 — modèle relationnel logique (12 novembre 2026)
+- Nouveau document : `docs/product/LOT-322-MODELE-RELATIONNEL-REGISTRE.md`.
+- Sépare établissements, sources versionnées, lots/lignes d'import, affiliations annuelles, codes de vérification, journal de décisions et projection d'annuaire Messenger.
+- Définit les règles d'idempotence, de conservation historique, de minimisation des données et de séparation opérateur/approbateur.
+- Les références exactes à `profiles`, les clés et types doivent être confirmés sur le schéma réel avant DDL.
+- GO documentaire uniquement ; NO-GO DDL, migration, PostgreSQL/Supabase actif, Auth/RLS/GRANT/Storage, import réel, activation de l'annuaire et déploiement.
+- Les tests futurs doivent utiliser une base PostgreSQL jetable locale ; aucune branche cloud payante ne sera créée sans autorisation distincte.
