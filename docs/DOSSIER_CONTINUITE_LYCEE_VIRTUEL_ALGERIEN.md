@@ -165,3 +165,11 @@
 - Le projet Supabase actif n'a subi aucune écriture : migration non appliquée, aucun DDL/DML, aucune modification RLS/Auth/Realtime, aucun changement Messenger. Aucun coût ou projet payant ajouté.
 - Blocage avant activation réelle : attendre le résultat du test PostgreSQL isolé et corriger tout échec. Même après réussite, confirmer explicitement l'application de la migration sur le projet Supabase actif avant exécution ; cette note ne vaut pas autorisation d'appliquer la migration.
 - PR #17 : toujours ouverte, non fusionnée ; branche `design/prototypes-67-74-alignment`, HEAD `52fade90b98d8da16901d1d787addd1191aeca93`, base `main`. Aucun déploiement Cloudflare.
+
+
+### Addendum Lot 446-B — résultat du test PostgreSQL isolé
+- Le run GitHub Actions #1 `43499787337` du commit `52fade90b98d8da16901d1d787addd1191aeca93` est terminé avec la conclusion **success**.
+- Le job a exécuté avec succès la migration communautaire dans PostgreSQL 17 éphémère, puis les assertions de privilèges (aucun accès direct aux tables, RPC non exécutables par anon), accès élève vérifié, refus des comptes en attente/non-élèves/sans identité, publication, lecture du fil, commentaire, réaction, signalement et suppression par l'auteur.
+- Ce résultat valide la syntaxe et les scénarios couverts par le test isolé ; il ne remplace pas un test réel avec JWT/Supabase Auth, ni la vérification navigateur, ni les tests de charge/concurrence complets.
+- Un second run du même workflow est en cours sur le commit documentaire `29041aeacc9f4bfdad6053230d1b6c7526ccb51d` ; suivre son résultat avant de conclure le pipeline du HEAD.
+- La migration n'a toujours pas été appliquée au projet Supabase actif. Toute application en production reste une opération DDL distincte qui nécessite une confirmation explicite ; aucun changement Auth, RLS, données, Messenger ou Realtime n'a été fait.
