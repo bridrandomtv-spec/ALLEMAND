@@ -8277,3 +8277,22 @@ Poursuivre l'audit technique du chemin d'invitation national : définir le réso
 
 ### Suite — Lot 391
 Concevoir la couche sociale « ملتقى الطلاب » sur les modules et routes réellement présents : annuaire/profils à visibilité contrôlée, demandes de connexion, fil de publications, commentaires/réactions/partages, médias, notifications et groupes. Raccorder l'action de messagerie au module Messenger existant, sans dupliquer les conversations. Préserver les IDs, routes et handlers ; ne pas appliquer de migration tant que le modèle de confidentialité et les tests isolés ne sont pas prêts.
+
+---
+
+## Lot 391 — architecture fonctionnelle du réseau social « ملتقى الطلاب » (13 novembre 2026)
+
+- Recontrôle GitHub au début du lot : PR #17 OPEN, non fusionnée, mergeable=true/clean ; HEAD observé 344ef908150ff77bb196a4823c25c577723d3ada ; base 51acfe8c97b6e152208d592dbd2c5bbde5c5c38e.
+- Cartographie de app.js : VIEWS à la ligne 450 et NAVSOLO_TOP à la ligne 500 ; la vue Messenger msg existe déjà. Aucun module social applicatif dédié au fil/publications/relations n'a été trouvé dans l'inventaire consulté.
+- msg.js et les tables Messenger restent le socle privé existant ; ne pas reconstruire Messenger.
+- supabase.js expose myNotifications/notifMarkRead, mais les notifications repérées sont orientées compte/administration. Les notifications sociales devront être séparées ou réutilisées uniquement après audit du schéma actif et des producteurs.
+- Les lectures génériques de profiles ne doivent pas devenir un annuaire national. Prévoir une projection serveur minimale, consentement opt-in, champs autorisés et contrôles d'accès serveur.
+- Architecture cible : ملتقى الطلاب (fil social, publications, commentaires, réactions, partages, médias, groupes communautaires), زملائي (relations distinctes des conversations), المجموعات الدراسية (communautés distinctes des groupes Messenger), ماسنجر (module de conversation existant).
+- Fonctions proposées, non codées : آخر الأخبار, اكتشف الطلاب, زملائي, المجموعات الدراسية, الصور والفيديوهات, الفعاليات, الإشعارات, ملفي الشخصي, الخصوصية والأمان.
+- Confidentialité : ne pas exposer email/téléphone/UUID Auth/matricule/justificatifs ; découverte nationale opt-in pour élèves vérifiés ; niveaux 1AS/2AS/3AS et wilaya/filière sont filtres facultatifs ; source institutionnelle officielle d'affiliation toujours à confirmer.
+- Le bucket privé prive a ses propres politiques Messenger : aucun partage de chemin ou changement Storage sans conception séparée.
+- Rapport : docs/product/LOT-391-ARCHITECTURE-RESEAU-SOCIAL-META.md, commit e1dd7ebf0696b696aa26d9f089d174e693835d9d.
+- Aucun code runtime, SQL, migration, RPC, policy, GRANT, Auth, RLS, Storage ou Realtime modifié ; aucun test PostgreSQL/RLS réel ; aucun CI hébergé, déploiement, merge, projet payant ou coût.
+
+### Suite — Lot 392
+Préparer la spécification d'expérience arabe RTL et la carte d'intégration de « ملتقى الطلاب » : emplacement de l'entrée dans la navigation existante, structure du fil, carte de publication, profil public minimal, demandes « زملائي » et actions de renvoi vers « ماسنجر ». Rester en conception tant que la source officielle d'affiliation et les tests PostgreSQL/RLS isolés ne sont pas disponibles.
