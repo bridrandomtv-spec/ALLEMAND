@@ -226,10 +226,11 @@ declare
 begin
   if auth.uid() is null then raise exception 'auth_required'; end if;
 
+  -- Première lecture sans verrou de ligne : prendre le verrou de paire avant
+  -- le verrou d'invitation évite un deadlock sur deux invitations réciproques.
   select * into v_inv
     from public.msg_invites
-   where id = p_invite and recipient_id = auth.uid()
-   for update;
+   where id = p_invite and recipient_id = auth.uid();
   if not found then raise exception 'invite_not_found'; end if;
 
   -- Une seule création de DM par paire, même si deux invitations opposées sont acceptées simultanément.
@@ -240,6 +241,13 @@ begin
       0
     )
   );
+
+  -- Relecture verrouillée après le verrou de paire : statut potentiellement modifié.
+  select * into v_inv
+    from public.msg_invites
+   where id = p_invite and recipient_id = auth.uid()
+   for update;
+  if not found then raise exception 'invite_not_found'; end if;
 
   if v_inv.status = 'accepted' and v_inv.conversation_id is not null then
     return v_inv.conversation_id;
