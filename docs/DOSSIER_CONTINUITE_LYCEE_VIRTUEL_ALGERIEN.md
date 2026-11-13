@@ -8755,3 +8755,20 @@ Contrôle local en lecture seule de la présence et des versions de PostgreSQL, 
 - PR #17 relue : **ouverte, non fusionnée, mergeable=true, draft=false** au moment du contrôle ; HEAD `5a97c8b553dda06dc8981cac8d5777ceed28fbda`. Ne pas fusionner sans autorisation explicite.
 - Aucun changement sur `main), aucune action sur Supabase actif, aucune modification de code applicatif et aucun déploiement Cloudflare.
 
+
+
+## Lot 420 — Audit statique des écarts Messenger (13 novembre 2026)
+
+- Rapport : [LOT-420-AUDIT-ECARTS-MESSENGER-VERIFICATION-CONSENTEMENT-BLOCAGE.md](product/LOT-420-AUDIT-ECARTS-MESSENGER-VERIFICATION-CONSENTEMENT-BLOCAGE.md).
+- Audit de `msg.js`, `supabase/supabase.js`, `supabase/msg_schema.sql`, des 11 migrations archivées et des tests statiques.
+- Écart confirmé : la méthode réelle `msgRequestVerification` exige encore un abonnement actif et enregistre son identifiant comme `matricule`. La vérification gratuite indépendante du paiement n'est donc pas implémentée dans le client réel.
+- Le client `msgOpenDirect` bloque la création d'un nouveau DM depuis cette méthode et renvoie `msg_invitation_requise`. Mais l'archive de migration `20261030131545_harden_messages_attachments_sponsors_and_direct_rpc.sql` expose une RPC `msg_open_direct(uuid)` à `authenticated`, qui crée un DM sans preuve d'invitation acceptée dans le SQL archivé. Les archives ultérieures verrouillent l'ajout de membres, mais ne montrent pas le contrôle de consentement.
+- Divergence documentaire : le SQL agrégé `supabase/msg_schema.sql` et le constat historique du catalogue vivant rapporté au Lot 399 ne décrivent pas la même définition de `msg_can_dm`. Ne pas considérer le SQL agrégé comme le schéma actif.
+- La CI vérifie des invariants textuels/statique ; elle ne réalise pas de tests PostgreSQL multi-comptes ni d'appels RPC authentifiés directs.
+- Décision : NO-GO pour déclarer Messenger privé terminé ou activer la vérification gratuite avant audit du catalogue actif et tests isolés.
+- Lot 421 proposé : inventaire en lecture seule des RPC, ACL, policies et triggers actifs. Aucun SQL exécuté, aucune lecture/écriture de données réelles, aucun changement Supabase, aucun déploiement, aucune fusion.
+
+### CI après les mises à jour précédentes
+- CI #3431 (run `43449772844`) : **success**.
+- CI #3432 (run `43449779686`) : **success**.
+- PR #17 demeure ouverte et non fusionnée.
