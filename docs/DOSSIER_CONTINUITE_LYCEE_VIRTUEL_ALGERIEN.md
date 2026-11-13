@@ -8165,3 +8165,21 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 
 ### Suite proposée
 Lot 385 : extraire un manifeste comparatif précis des définitions des policies, triggers, contraintes, index et fonctions, puis préparer une procédure de restauration locale vérifiable. Garder le périmètre en lecture seule côté Supabase actif et ne jamais présenter les contrôles de catalogue comme des tests d'autorisation réels.
+
+
+---
+
+## Lot 385 — manifeste catalogue et constats fonctionnels Messenger (13 novembre 2026)
+
+- Ajout de `tests/messenger/export_catalog_manifest.sql`, export JSONB en lecture seule des 12 tables, 30 policies, 14 triggers, contraintes, index et 10 fonctions critiques.
+- Le manifeste ne lit aucune ligne applicative et n'exporte aucun message, profil ou pièce jointe.
+- Rapport : `docs/product/LOT-385-MANIFESTE-ET-CONSTATS-FONCTIONNELS-MESSENGER.md`.
+- Constat C-385-01 : `msg_open_direct` crée/réutilise un DM après contrôle de compatibilité des profils, mais sans invitation acceptée ; `msg_member_ok` permet au second participant compatible de s'ajouter sans acceptation explicite. Le mécanisme invitation → acceptation n'est donc pas garanti par les contrôles SQL actuels.
+- Constat C-385-02 : `msg_not_blocked` est appliqué à l'envoi de message, mais pas par `msg_open_direct` à la création/réouverture du DM.
+- Constat C-385-03 : `msg_can_dm` utilise les champs déclaratifs wilaya/niveau/filière et `verif_statut='verifie'`; cela ne prouve pas à lui seul l'affiliation officielle de l'élève à un lycée.
+- Ces constats sont documentaires uniquement. Aucune correction n'a été appliquée sur Supabase actif ; aucun test comportemental multi-comptes n'a été exécuté.
+- Aucun projet de test, frais, CI, déploiement ou fusion. PR #17 reste ouverte et non fusionnée ; main inchangée.
+- Commits : manifeste SQL `5a03b95ed9e9ea03b200d84a21fe0a5bc3f1808e`, rapport `bc8e839772faf56034769d0e862e86fe0151da4e`.
+
+### Suite — Lot 386
+Formaliser les invariants du cycle invitation/acceptation et du blocage, avec matrice d'états et tests négatifs/positifs à exécuter uniquement sur PostgreSQL isolé. Ne pas modifier la base active sans autorisation explicite.
