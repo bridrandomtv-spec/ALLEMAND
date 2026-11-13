@@ -8048,3 +8048,18 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Aucun moteur PostgreSQL local disponible ; aucune base de test créée et aucun test PostgreSQL/RLS multi-compte exécuté. La création du second projet Free estimé à 0 USD/mois reste en attente d'une autorisation explicite ; aucune ressource payante ou facturation.
 - Aucun changement du projet Supabase actif, Auth/RLS/GRANT/Storage/Realtime, main ou production. PR #17 reste ouverte et non fusionnée.
 - Prochaine étape : préparer le harness de scénarios synthétiques sous forme de fichiers SQL/tests, sans l'exécuter contre la base active. L'exécution réelle attendra un moteur isolé gratuit explicitement autorisé.
+
+
+## Lot 378 — preflight catalogue Messenger reproductible (13 novembre 2026)
+
+- Audit de tests/msg_test.mjs : ses assertions ciblent le fichier historique supabase/msg_schema.sql et du code client ; ce n'est pas un test RLS/PostgreSQL comportemental.
+- Ajout de tests/messenger/catalog_preflight.sql : contrôle SELECT-only de présence tables, RLS/FORCE RLS, policies, triggers, fonctions et signatures. Aucun fixture ni écriture.
+- Exécution de la requête de référence sur les catalogues actifs : 12 tables cibles présentes et RLS activé sur les 12 ; FORCE RLS désactivé sur les 12.
+- Policies observées : msg_conversations 2, msg_members 3, msg_messages 3, msg_attachments 3, msg_blocks 3, msg_reports 3, msg_log 1, profiles 7, audit_logs 1, admin_roles 1, admin_permissions 1, wilaya_assignments 2.
+- Fonctions ciblées présentes : msg_open_direct, msg_can_dm, msg_member_ok, msg_not_blocked, msg_guard_direct, msg_rate_limit, profiles_verif_guard, profiles_scope_guard, handle_new_user, audit_log.
+- Triggers observés : msg_members 1, msg_messages 3, msg_attachments 2, msg_reports 1, profiles 5, audit_logs 1. Aucun trigger dans le périmètre sur msg_blocks et msg_conversations.
+- Le preflight vérifie la présence et la configuration catalogue, pas le comportement RLS multi-comptes. Il ne doit pas être décrit comme un test d'autorisation.
+- Rapport : docs/product/LOT-378-PREFLIGHT-CATALOGUE-MESSENGER.md, commit fffc0815f903863f52e5c290dd2251307fe1c004. Script : tests/messenger/catalog_preflight.sql, commits d48b5b50e5727cd82c823e18b31a39d8c687948b et d8c520e79a1728764cb04ab993b034e8a48870c4.
+- Aucun profil, message, conversation, pièce jointe ou journal réel consulté ; aucun test RLS multi-compte exécuté ; aucun DDL/écriture/migration/GRANT ou changement Auth/Storage/Realtime.
+- Aucun projet de test créé ni frais engagé. PR #17 reste ouverte et non fusionnée ; main/production inchangées.
+- Suite : extraction/comparaison exacte des définitions de policies et ACL puis création du harness comportemental isolé. La création du second projet Free reste en attente d'une autorisation explicite.
