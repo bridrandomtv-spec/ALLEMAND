@@ -7747,3 +7747,10 @@ Attendre le résultat CI du commit, puis poursuivre l'audit des contrats serveur
 - Correction sur la branche : commit `4f9b4023cddb5c6e2fc25ae5cc2430ababfd864a`, fichier `prototypes/registry-affiliation-scenarios-core.mjs`. L'état `verified` n'est plus dans l'ensemble des états finaux ; les états réellement clôturés restent `rejected`, `revoked`, `expired` et `transferred`.
 - Les tests existants couvrent directement les trois transitions précédemment bloquées. La CI du commit correctif doit encore confirmer le résultat ; aucun succès n'est présumé.
 - Cette correction concerne uniquement le simulateur synthétique hors ligne. Elle ne change ni une règle de base active ni une affiliation réelle.
+
+
+### Lot 362-B — précision de la machine d'états après second passage CI
+
+- Après le premier correctif, la CI a fait passer 7 scénarios sur 8. Le test de non-répétition d'une décision finale a alors révélé qu'une deuxième validation pouvait être tentée sur un dossier déjà `verified`.
+- Correctif complémentaire : commit `c837747ae60d1ee563d9fd7e6f42152ec4d8f379`. Les transitions `verify` et `reject` sont maintenant réservées à un dossier `pending`, tandis que les transitions autorisées depuis `verified` (transfert, révocation, expiration) restent possibles.
+- Résultat CI de ce commit : en attente de confirmation. Le prototype reste synthétique et hors ligne.
