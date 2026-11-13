@@ -231,3 +231,12 @@
 - CI statique actualisée pour exiger la vérification gratuite et les nouvelles références de cache. Les contrôles finaux doivent être confirmés sur le HEAD documentaire final.
 - Aucun SQL, changement RLS/Auth, aucune donnée Supabase, aucun abonnement, aucun profil d'élève, aucun message privé, main, fusion ou déploiement manuel n'a été modifié.
 - Limite de sécurité : la demande client réutilise la mise à jour de profil déjà présente dans le parcours historique. Avant toute fusion/déploiement, confirmer que la policy RLS active n'autorise que le titulaire à déposer sa propre demande et que seul un rôle autorisé peut faire passer en_attente à verifie ou rejete. Aucun audit RLS supplémentaire ni test navigateur réel n'est revendiqué dans ce lot.
+
+
+### Complément de validation Lot 450 — 13 novembre 2026
+- Après les premiers échecs CI, inspection des logs a isolé des assertions historiques de cache restées sur CSS v201 et Service Worker v154. Les contrôles check-gamification.mjs, check-masar.mjs et check-public-portal.mjs ont été synchronisés sur CSS v202 et SW v155 ; les contrôles métier n'ont pas été désactivés.
+- Le contrôle check-masar.mjs garde volontairement masar.js?v=3516, qui est bien la référence réelle présente dans index.html et sw.js.
+- Les premières relances sur les commits intermédiaires ont encore échoué sur une assertion Masar v154, puis cette assertion a été corrigée précisément. Le commit de correction est 994d808e33fe03e2170e178e10b7b59434f1f4fe; les workflows CI et PostgreSQL 17 correspondants sont en cours au moment de cette note.
+- Diagnostic catalogue Supabase strictement SELECT-only sur pg_policies et pg_trigger pour public.profiles : policy update own limitée à la ligne auth.uid() = id, et trigger profiles_tr_verif qui autorise le titulaire uniquement à déposer une demande depuis non_verifie ou rejete vers en_attente, sans lui permettre de passer à verifie; la décision reste modérateur/admin autorisé. Aucun enregistrement de profil n'a été lu.
+- La vérification scolaire gratuite du Lot 450 est donc compatible avec les protections existantes constatées ; aucune migration ni modification RLS n'est requise pour ce flux.
+- PR #17 reste ouverte, non fusionnée, base main; aucun changement direct sur main, aucune écriture Supabase, aucun déploiement manuel. Le test navigateur réel avec compte élève vérifié et la confirmation de prévisualisation à jour restent à effectuer.
