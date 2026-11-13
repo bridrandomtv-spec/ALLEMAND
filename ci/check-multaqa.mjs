@@ -3,6 +3,8 @@ import fs from 'node:fs';
 const app = fs.readFileSync('app.js', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 const msg = fs.readFileSync('msg.js', 'utf8');
+const communityClient = fs.readFileSync('multaqa.js', 'utf8');
+const sw = fs.readFileSync('sw.js', 'utf8');
 const fails = [];
 const has = (condition, message) => { if (!condition) fails.push(message); };
 has(/\['dashboard',[\s\S]{0,160}?'msg','multaqa'/.test(app), 'app.js : route multaqa absente de VIEWS/TABS');
@@ -13,7 +15,12 @@ has(/item\[0\]\s*!==\s*'multaqa'\s*\|\|\s*canSeeStudentDashboard\(\)/.test(app),
 has(/data-view="multaqa"[^>]*class="view mtq-view"[^>]*hidden/.test(html), 'index.html : vue ملتقى absente ou non masquée initialement');
 has(/data-view="msg"/.test(html) && /data-go="msg"[^>]*>💬 الانتقال إلى الرسائل/.test(html), 'index.html : lien distinct vers Messenger absent');
 has(/document\.addEventListener\('dz:view'/.test(msg), 'msg.js : écoute du cycle de navigation Messenger absente');
-has(/لم يتم ربط المنشورات والتعليقات والتفاعلات بقاعدة البيانات بعد/.test(html) && /لا توجد منشورات فعلية للعرض/.test(html), 'index.html : état vide transparent, sans publications fictives absent');
+has(/id="mtqApp"/.test(html) && /multaqa\.js\?v=1/.test(html), 'index.html : conteneur et client dynamique du fil absents');
+has(/multaqa_feed/.test(communityClient) && /multaqa_create_post/.test(communityClient) && /multaqa_create_comment/.test(communityClient), 'multaqa.js : lecture et publication RPC absentes');
+has(/multaqa_toggle_reaction/.test(communityClient) && /multaqa_report/.test(communityClient) && /multaqa_comments/.test(communityClient), 'multaqa.js : réactions, commentaires et signalements RPC absents');
+has(/verif_statut!==\'verifie\'/.test(communityClient), 'multaqa.js : garde de vérification scolaire côté interface absente');
+has(/function esc\(/.test(communityClient) && /esc\(p\.body\)/.test(communityClient), 'multaqa.js : échappement des contenus utilisateurs absent');
+has(/multaqa\.js\?v=1/.test(sw), 'sw.js : client communautaire absent du précache');
 
 
 const communitySql = fs.readFileSync('supabase/migrations/202611130002_multaqa_community_feed.sql', 'utf8');
@@ -35,5 +42,5 @@ has(communitySql.includes('NON exécutée sur Supabase') && communitySql.include
 
 
 if (fails.length) { for (const failure of fails) console.error('❌ ' + failure); process.exit(1); }
-console.log('✅ ملتقى الطلاب : route protégée côté interface, navigation desktop/mobile filtrée, Messenger distinct, maquette sans données élèves.');
+console.log('✅ ملتقى الطلاب : route protégée côté interface, navigation desktop/mobile filtrée, Messenger distinct, fil RPC avec vérification, sans données fictives.');
 console.log('ℹ️ Contrôle statique uniquement : ne remplace pas des tests multi-comptes ni les autorisations serveur.');
