@@ -18209,3 +18209,27 @@ html:not([data-theme="light"]) section[data-view="multaqa"] .mtq-profile-card,ht
  section[data-view="multaqa"] .mtq-compose-actions button{width:100%;margin:4px 0 0}
  section[data-view="multaqa"] .mtq-feed-state{min-height:260px;padding:26px 16px}
 }
+
+
+/* Lot 444 — fil communautaire raccordé aux RPC */
+.mtq-live-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px;color:var(--t)}
+.mtq-live-toolbar button,.mtq-live-post button,.mtq-live-more{border:1px solid var(--b);background:var(--p);color:var(--t);border-radius:10px;padding:9px 12px;font:700 12px var(--ff-ar);cursor:pointer}
+.mtq-live-compose{display:grid;gap:12px}
+.mtq-live-compose label{font-size:13px;font-weight:900}
+.mtq-live-compose textarea{width:100%;min-height:112px;resize:vertical;border:1px solid var(--b);border-radius:12px;background:var(--p2);color:var(--t);padding:13px;font:inherit;line-height:1.8;outline-offset:2px}
+.mtq-live-compose>div{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.mtq-live-compose small,.mtq-live-muted{font-size:11px;color:var(--m)}
+.mtq-live-compose button,.mtq-live-comment-form button{border:0;border-radius:10px;background:var(--vert2);color:#fff;padding:10px 17px;font:800 12px var(--ff-ar);cursor:pointer;min-height:42px}
+.mtq-live-list{display:grid;gap:13px}
+.mtq-live-post{padding:18px}
+.mtq-live-post .mtq-post-foot button[aria-pressed="true"]{background:rgba(0,132,61,.1);border-color:rgba(0,132,61,.25);color:var(--g)}
+.mtq-live-body{white-space:pre-wrap;overflow-wrap:anywhere}
+.mtq-live-comments{margin-top:14px;padding-top:13px;border-top:1px solid var(--b);display:grid;gap:12px}
+.mtq-live-comment-list{display:grid;gap:9px}
+.mtq-live-comment{padding:10px 12px;border-radius:11px;background:var(--p2)}
+.mtq-live-comment b{font-size:12px}.mtq-live-comment small{font-size:10px;color:var(--m);margin-inline-start:9px}
+.mtq-live-comment p{margin:6px 0 0;font-size:12px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.mtq-live-comment-form{display:flex;gap:8px}
+.mtq-live-comment-form input{flex:1;min-width:0;border:1px solid var(--b);border-radius:10px;background:var(--p2);color:var(--t);padding:10px;font:inherit}
+.mtq-live-more{width:100%;padding:12px}
+@media(max-width:560px){.mtq-live-post{padding:14px}.mtq-live-comment-form{flex-direction:column}.mtq-live-comment-form button{width:100%}}
