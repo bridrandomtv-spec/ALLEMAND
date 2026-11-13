@@ -55,5 +55,8 @@ ok(idx.includes('msg.js?v=3513'), 'version cache du module de messagerie actuali
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.145'") && sw.includes("./msg.js?v=3513"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
+// Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
+ok(!/indisponible pour ce compte/.test(msgjs), 'aucun message de pièce jointe en français');
+
 if (fail.length) { console.error('::error:: check-msg : ' + fail.length + ' échec(s)'); process.exit(1); }
 console.log('== check-msg : TOUT PASSE ==');
