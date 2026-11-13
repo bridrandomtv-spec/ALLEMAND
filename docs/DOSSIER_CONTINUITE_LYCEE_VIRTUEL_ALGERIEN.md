@@ -85,3 +85,15 @@
 - Cache : msg.js?v=3516, style-prototype-dz.css?v=199, service worker dz-de-v3.185.0.0.150.
 - CI : correction du test de blocage bilatéral afin qu'il vérifie la condition réellement implémentée dans msg_is_member (DM + msg_pair_blocked sur le membre pair). Synchronisation des assertions de précache.
 - Aucun message fictif ajouté. Aucun changement de schéma actif, Auth, RLS, données Supabase, paiement, main ou déploiement. PR #17 reste ouverte et non fusionnée. Migration des invitations toujours non appliquée.
+
+
+## Lot 443 — application du modèle communautaire professionnel à la vue réelle (13 novembre 2026)
+- Application du modèle de composition du prototype à la vue réelle `data-view="multaqa"` : fil principal prioritaire, panneau latéral de profil/navigation et panneau de découverte regroupés en seconde colonne, au lieu de trois colonnes étroites.
+- Hiérarchie visuelle renforcée : bandeau d'accueil, cartes, profil communautaire, navigation, composition de publication, état vide et découverte. Les couleurs DZ, les thèmes clair/sombre et les styles RTL sont conservés.
+- Responsive revu : tablette avec fil en premier puis panneaux latéraux en deux colonnes; mobile en une colonne avec actions pleine largeur. Le CSS est strictement ciblé sur `section[data-view="multaqa"]`.
+- Aucun profil, publication, commentaire, réaction ou compteur fictif ajouté. Le bouton de publication reste désactivé tant que le service de publication n'existe pas. Le message d'état vide continue d'expliquer que le fil n'est pas raccordé à la base.
+- Cache CSS mis à jour à `style-prototype-dz.css?v=200`; service worker `dz-de-v3.185.0.0.151`.
+- Correction du contrôle statique Messenger : l'expression régulière de l'assertion de blocage bilatéral avait des échappements doublés et ne reconnaissait pas la fonction SQL réellement présente. L'assertion vérifie maintenant `msg_is_member`, le type direct et `msg_pair_blocked(uid,peer.user_id)`.
+- Contrôle forum synchronisé avec le véritable état vide de l'interface, au lieu d'exiger un ancien avertissement de maquette supprimé.
+- Aucun changement Supabase, SQL appliqué, Auth, RLS, données, paiement, `main` ou déploiement Cloudflare. PR #17 reste ouverte et non fusionnée.
+- Validation visuelle dans un navigateur non effectuée à ce stade; la CI du nouveau commit doit encore être consultée avant toute déclaration de réussite.
