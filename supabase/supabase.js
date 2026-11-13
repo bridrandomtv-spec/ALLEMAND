@@ -555,6 +555,51 @@ async function msgSetVerification(uid, statut){
 }
 Object.assign(window.SB, { msgMyVerification, msgRequestVerification, msgVerificationQueue, msgSetVerification });
 
+/* ── MSG-8 · centre des invitations — disponible après migration serveur consentement ── */
+async function msgInvites(){
+  const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.from('msg_invites')
+    .select('id,sender_id,recipient_id,status,created_at,responded_at,conversation_id')
+    .or('sender_id.eq.'+u.id+',recipient_id.eq.'+u.id)
+    .order('created_at',{ascending:false}).limit(100);
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  return {
+    ok:true,
+    incoming:(r.data||[]).filter(x=>x.recipient_id===u.id),
+    outgoing:(r.data||[]).filter(x=>x.sender_id===u.id)
+  };
+}
+async function msgInviteSend(recipientId){
+  const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
+  if(!recipientId || recipientId===u.id) return { ok:false, err:'المستلم غير صالح' };
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.rpc('msg_invite_send',{p_recipient:recipientId});
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  return { ok:true, inviteId:r.data };
+}
+async function msgInviteAccept(inviteId){
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.rpc('msg_invite_accept',{p_invite:inviteId});
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  if(!r.data) return { ok:false, err:'انتهت صلاحية الطلب أو لم يعد متاحاً' };
+  return { ok:true, convId:r.data };
+}
+async function msgInviteDecline(inviteId){
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.rpc('msg_invite_decline',{p_invite:inviteId});
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  return { ok:!!r.data };
+}
+async function msgInviteCancel(inviteId){
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.rpc('msg_invite_cancel',{p_invite:inviteId});
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  return { ok:!!r.data };
+}
+Object.assign(window.SB, { msgInvites, msgInviteSend, msgInviteAccept, msgInviteDecline, msgInviteCancel });
+
+
 /* ── ADM-1 · sous-admins & wilayas (client fin — le RLS décide) ── */
 async function admMyPerms(){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
