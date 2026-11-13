@@ -8011,3 +8011,15 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Aucun test PostgreSQL/RLS multi-compte exécuté : le lot est une extraction et une spécification de tests, pas une validation comportementale.
 - PR #17 reste ouverte et non fusionnée ; main/production inchangées.
 - Suite recommandée : terminer l'inventaire des rôles/claims/extensions et préparer un export SQL de baseline reproductible, en distinguant clairement les objets Supabase managés (`auth`, `storage`, rôles) des objets applicatifs. La création du second projet Free estimé à 0 USD/mois reste en attente d'une autorisation explicite.
+
+
+## Lot 375 — rôles PostgreSQL, extensions et claims JWT (13 novembre 2026)
+
+- Extraction SELECT des rôles SQL, memberships, propriétés BYPASSRLS, extensions et définitions auth.uid(), auth.jwt(), auth.role(), ainsi que des fonctions Storage de chemin.
+- PostgreSQL actif confirmé en 17.6. Extensions observées : pg_stat_statements 1.11, pgcrypto 1.3, plpgsql 1.0, supabase_vault 0.3.1, uuid-ossp 1.1.
+- Rôles clés : anon et authenticated sans BYPASSRLS ; authenticator rôle de connexion ; service_role et postgres avec BYPASSRLS ; supabase_admin superuser. Les tests RLS ordinaires doivent s'exécuter en authenticated/anon, jamais sous postgres ou service_role.
+- auth.uid() lit le claim sub depuis request.jwt.claim.sub ou request.jwt.claims ; auth.jwt()/auth.role() lisent également les paramètres de claims. Le harness devra fixer des claims synthétiques cohérents ET le rôle SQL effectif pour chaque cas.
+- Rapport : docs/product/LOT-375-ROLES-EXTENSIONS-CLAIMS-JWT-MESSENGER.md, commit a3338ab233ba6270289e57f4df5bac716f2f4b03.
+- Aucun secret/JWT réel ou donnée applicative consulté ; aucun test PostgreSQL/RLS exécuté ; aucune écriture/DDL/migration ou modification Auth/RLS/GRANT/Storage/Realtime.
+- Aucun projet de test créé ni frais engagé. PR #17 reste ouverte et non fusionnée ; main et production inchangées.
+- Suite : identifier les objets managés auth/storage nécessaires et assembler un manifeste de restauration qui sépare le schéma applicatif des composants Supabase non reproductibles par un PostgreSQL générique. La création d'un second projet Free reste en attente d'une autorisation explicite.
