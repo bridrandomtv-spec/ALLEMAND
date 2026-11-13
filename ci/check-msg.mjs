@@ -29,6 +29,7 @@ for (const m of METHODS) ok(sbjs.includes('function ' + m), 'méthode SB.' + m);
 ok(!/\.from\('msg_/.test(msgjs), 'vue msg.js : aucune écriture directe dans msg_*');
 ok(idx.includes('data-view="msg"') && idx.includes('msg.js?v='), 'vue + script câblés dans index.html');
 ok(app.includes('msg-nav-shortcut') && app.includes('data-go=\"msg\"'), 'Messenger affiché comme raccourci desktop direct');
+ok(/const VIEWS\s*=\s*\[[^\]]*'msg'/.test(app), 'route msg autorisée par le routeur principal');
 ok(/\['msg',\s*'💬 الرسائل'\]/.test(app), 'Messenger présent dans la navigation rapide mobile');
 ok(app.includes("'english', 'msg'"), 'Messenger réservé au raccourci desktop sans doublon de secours');
 ok(!/tabs\.filter\(t\s*=>\s*t\[0\]\s*!==\s*'msg'/.test(app), 'Messenger non exclu du menu');
