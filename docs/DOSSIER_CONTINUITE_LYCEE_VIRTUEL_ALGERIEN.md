@@ -7612,3 +7612,12 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Cette correction est une finition de localisation, pas une reconstruction de Messenger. Les lots UX 305, 308–310, 323–352 et les lots de navigation/routage 355–358 restent la référence et ne sont pas repris.
 - Aucun changement Supabase/Auth/RLS/schéma/Storage, aucune modification de `main`, aucun déploiement Cloudflare et aucune fusion de PR #17.
 - Validation CI et aperçu navigateur du HEAD mis à jour encore à effectuer ; aucune réussite CI ni validation visuelle n'est revendiquée dans ce lot.
+
+
+## 28. Lot 359-D — Correction du test CI Messenger (13 novembre 2026)
+
+- La CI #3275 sur le commit `6ed6799` a échoué dans l'étape de validation Messenger avant l'exécution des assertions : expression régulière JavaScript invalide dans `ci/check-msg.mjs` (parenthèse de « Modération (signalements) » mal échappée).
+- Correction limitée à l'échappement du motif de test ; aucun code fonctionnel de Messenger, aucune donnée, aucun accès ou contrat serveur modifié.
+- Commit correctif : `6a5694e`. Une nouvelle exécution CI doit confirmer la reprise complète des assertions.
+- Le commentaire Cloudflare de la PR confirme un déploiement Preview réussi du commit `6ed6799` (URL de branche et URL de commit fournies dans le commentaire). Ce déploiement ne comprend pas le correctif CI `6a5694e` tant qu'un nouveau build n'est pas confirmé.
+- Aucun déploiement production, aucune fusion, aucune modification de `main`, aucun changement Supabase/Auth/RLS/schéma/Storage.
