@@ -52,8 +52,8 @@ ok(msgjs.includes('ابحث في محادثاتي ومجموعاتي') && msgjs.
 ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'rédaction et pièces jointes en arabe');
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
-ok(idx.includes('msg.js?v=3515'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.149'") && sw.includes("./msg.js?v=3515"), 'service worker et précache Messenger synchronisés');
+ok(idx.includes('msg.js?v=3516'), 'version cache du module de messagerie actualisée');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.150'") && sw.includes("./msg.js?v=3515") && sw.includes("./style-prototype-dz.css?v=199"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
@@ -73,7 +73,7 @@ ok(inviteSql.includes('msg_guard_direct_consent') && inviteSql.includes('msg_inv
    'ajout de membres DM protégé côté serveur');
 ok(/create or replace function public\.msg_member_ok[\s\S]*?c\.type='groupe'/.test(inviteSql),
    'auto-ajout direct d’un membre à un DM existant interdit');
-ok(inviteSql.includes('msg_pair_blocked') && inviteSql.includes('public.msg_is_member(uid, cid)'),
+ok(inviteSql.includes('msg_pair_blocked') && /create or replace function public\\.msg_is_member[\\s\\S]*?c\\.type = 'direct'[\\s\\S]*?public\\.msg_pair_blocked\\(uid,peer\\.user_id\\)/.test(inviteSql),
    'blocage bilatéral appliqué aux accès DM');
 
 
@@ -128,3 +128,5 @@ ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجمو
 ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter]')"), 'filtres Messenger accessibles via délégation de clic');
 ok(idx.includes('style-prototype-dz.css?v=198') && idx.includes('msg.js?v=3515'), 'versions de ressources Messenger actualisées');
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.149'") && sw.includes('./style-prototype-dz.css?v=198') && sw.includes('./msg.js?v=3515'), 'précache synchronisé avec la nouvelle interface');
+
+ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
