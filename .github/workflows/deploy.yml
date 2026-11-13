@@ -39,7 +39,7 @@ jobs:
                    classe.js grammaire.js examen.js officiels.js quiz.js projet.js \
                    reservation.js journee.js prof.js parents.js library.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
-                   ci/check-unites.mjs ci/check-public-portal.mjs ci/check-masar.mjs ci/check-interactions.mjs ci/check-gamification.mjs prototypes/registry-import-preview.html prototypes/registry-import-core.mjs prototypes/registry-import-core.test.mjs prototypes/registry-reconcile-core.mjs prototypes/registry-reconcile-core.test.mjs prototypes/registry-review-report-core.mjs prototypes/registry-review-report-core.test.mjs prototypes/registry-review-preview.html prototypes/registry-review-preview.test.mjs prototypes/registry-decision-ledger-core.mjs prototypes/registry-decision-ledger-core.test.mjs prototypes/registry-decision-timeline-preview.html prototypes/registry-decision-timeline-preview.test.mjs prototypes/registry-decision-timeline-adapter.mjs prototypes/registry-decision-timeline-adapter.test.mjs dz-interactions.js dz-gamification.js matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js voix.js tour.js public-portal.js; do
+                   ci/check-unites.mjs ci/check-public-portal.mjs ci/check-masar.mjs ci/check-interactions.mjs ci/check-gamification.mjs prototypes/registry-import-preview.html prototypes/registry-import-core.mjs prototypes/registry-import-core.test.mjs prototypes/registry-reconcile-core.mjs prototypes/registry-reconcile-core.test.mjs prototypes/registry-review-report-core.mjs prototypes/registry-review-report-core.test.mjs prototypes/registry-review-preview.html prototypes/registry-review-preview.test.mjs prototypes/registry-decision-ledger-core.mjs prototypes/registry-decision-ledger-core.test.mjs prototypes/registry-decision-timeline-preview.html prototypes/registry-decision-timeline-preview.test.mjs prototypes/registry-decision-timeline-adapter.mjs prototypes/registry-decision-timeline-adapter.test.mjs prototypes/registry-affiliation-scenarios-core.mjs prototypes/registry-affiliation-scenarios-core.test.mjs dz-interactions.js dz-gamification.js matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js voix.js tour.js public-portal.js; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -1125,6 +1125,9 @@ jobs:
       - name: Tester l'adaptateur du journal vers la chronologie (Lot 319)
         run: |
           node --test prototypes/registry-decision-timeline-adapter.test.mjs
+      - name: Tester le cycle de vie des affiliations scolaires synthétiques (Lot 328)
+        run: |
+          node --test prototypes/registry-affiliation-scenarios-core.test.mjs
       - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
         run: |
           set -e
