@@ -18233,3 +18233,29 @@ html:not([data-theme="light"]) section[data-view="multaqa"] .mtq-profile-card,ht
 .mtq-live-comment-form input{flex:1;min-width:0;border:1px solid var(--b);border-radius:10px;background:var(--p2);color:var(--t);padding:10px;font:inherit}
 .mtq-live-more{width:100%;padding:12px}
 @media(max-width:560px){.mtq-live-post{padding:14px}.mtq-live-comment-form{flex-direction:column}.mtq-live-comment-form button{width:100%}}
+
+
+/* LOT 450 — cohérence visuelle du centre de messagerie avec le modèle communautaire DZ. */
+section[data-view="msg"] #msgBody{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
+section[data-view="msg"] #msgBody .msg-pro-hero{min-height:142px;padding:26px 30px;border-radius:18px}
+section[data-view="msg"] #msgBody .msg-pro-hero h2{letter-spacing:0}
+section[data-view="msg"] #msgBody .msg-pro-toolbar{margin:5px 0 0;padding:0 2px}
+section[data-view="msg"] #msgBody .msg-searchbar{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 15px;border:1px solid var(--b);border-radius:13px;background:var(--p);box-shadow:var(--sh)}
+section[data-view="msg"] #msgBody .msg-searchbar>span{font-size:21px;color:var(--g)}
+section[data-view="msg"] #msgBody .msg-searchbar input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--t);font:inherit;font-size:12px}
+section[data-view="msg"] #msgBody .msg-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0}
+section[data-view="msg"] #msgBody .msg-filters button{min-height:36px;padding:7px 14px;border:1px solid var(--b);border-radius:999px;background:var(--p);color:var(--m);font:800 11px var(--ff-ar);cursor:pointer}
+section[data-view="msg"] #msgBody .msg-filters button.active{border-color:rgba(0,98,51,.3);background:rgba(0,98,51,.1);color:var(--g)}
+section[data-view="msg"] #msgBody .msg-sec{margin:9px 0 0;padding:12px 15px;border:1px solid var(--b);border-radius:13px;background:linear-gradient(100deg,rgba(0,98,51,.08),var(--p) 70%);color:var(--t);font-size:13px;font-weight:900}
+section[data-view="msg"] #msgBody .msg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0}
+section[data-view="msg"] #msgBody .msg-grid .msg-item{min-width:0}
+section[data-view="msg"] #msgBody .msg-grid .msg-card{height:100%;min-height:126px;padding:17px;border:1px solid var(--b);border-radius:15px;background:var(--p);box-shadow:var(--sh);display:flex;flex-direction:column;justify-content:space-between;gap:12px}
+section[data-view="msg"] #msgBody .msg-grid .msg-card .msg-ct{min-width:0}
+section[data-view="msg"] #msgBody .msg-grid .msg-card .msg-ct b{font-size:13px;line-height:1.7}
+section[data-view="msg"] #msgBody .msg-grid .msg-card .msg-ct span{font-size:10px;line-height:1.8}
+section[data-view="msg"] #msgBody .msg-grid .msg-card .msg-open{align-self:flex-start;min-height:34px;padding:7px 13px;border:0;border-radius:9px;background:var(--g);color:#fff;font:800 10px var(--ff-ar)}
+section[data-view="msg"] #msgBody .msg-verif{border-radius:15px;line-height:1.9}
+section[data-view="msg"] #msgBody .msg-vhint{margin:8px 0;color:var(--m);font-size:11px}
+html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-sec{background:linear-gradient(100deg,#123b27,#10251b 70%);border-color:#315b42;color:#e5f5e9}
+html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-searchbar,html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-filters button{background:#10251b;border-color:#315b42;color:#d9eee0}
+@media(max-width:720px){section[data-view="msg"] #msgBody .msg-grid{grid-template-columns:minmax(0,1fr)}section[data-view="msg"] #msgBody .msg-pro-hero{padding:19px}}
