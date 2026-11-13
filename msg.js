@@ -36,7 +36,7 @@
         : '<a href="'+esc(attachment.url)+'" target="_blank" rel="noopener noreferrer">📄 فتح الملف المرفق</a>')+
         '<small>'+esc(attachment.name||'ملف مرفق')+' · '+esc(attachment.sizeLabel||'')+'</small></div>';
     } else if(attachment && !attachment.ok){
-      att = '<div class="msg-attachment msg-attachment-error">📎 ملف مرفق indisponible pour ce compte.</div>';
+      att = '<div class="msg-attachment msg-attachment-error">📎 تعذّر الوصول إلى الملف المرفق من هذا الحساب.</div>';
     }
     return '<div class="msg-row '+(mine?'me':'')+(live?' live':'')+'" data-mid="'+m.id+'">'+
       '<div class="msg-meta"><b class="msg-name">'+esc(mine?'أنا':nameOf(m.sender_id))+'</b>'+
