@@ -106,6 +106,26 @@ as $$
   );
 $$;
 
+-- La policy historique msg members ajoutait un membre à soi-même dès que
+-- msg_member_ok retournait true; l'ancienne fonction autorisait tout DM.
+-- Désormais, seuls les groupes scolaires peuvent être rejoints par INSERT
+-- direct du client. La RPC SECURITY DEFINER d'acceptation ajoute les membres
+-- d'un DM après vérification du consentement et passe par le trigger ci-dessous.
+create or replace function public.msg_member_ok(cid bigint, uid uuid)
+returns boolean
+language sql stable security definer
+set search_path = pg_catalog, public
+as $
+  select exists (
+    select 1 from public.msg_conversations c
+    join public.profiles p on p.id=uid
+    where c.id=cid and c.type='groupe'
+      and p.wilaya is not null and p.niveau is not null
+      and p.wilaya=c.wilaya and p.niveau=c.niveau
+      and (c.filiere is null or p.filiere=c.filiere)
+  );
+$;
+
 -- Le rôle authenticated ne peut plus créer lui-même une conversation directe.
 drop policy if exists "msg conv creation" on public.msg_conversations;
 create policy "msg conv creation" on public.msg_conversations
