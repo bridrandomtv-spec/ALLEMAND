@@ -115,3 +115,52 @@ end $$;
 reset role;
 
 select 'PASS: migration isolée, privilèges, vérification scolaire et RPC principales' as result;
+
+-- ── Lot 453 : découverte privée Messenger ──
+alter table public.profiles add column if not exists wilaya text;
+alter table public.profiles add column if not exists niveau text;
+alter table public.profiles add column if not exists filiere text;
+insert into auth.users(id) values
+ ('20000000-0000-4000-8000-000000000001'),
+ ('20000000-0000-4000-8000-000000000002'),
+ ('20000000-0000-4000-8000-000000000003'),
+ ('20000000-0000-4000-8000-000000000004')
+on conflict do nothing;
+insert into public.profiles(id,role,verif_statut,pseudo,wilaya,niveau,filiere) values
+ ('20000000-0000-4000-8000-000000000001','eleve','verifie','Alpha Student','34','2AS','Sciences'),
+ ('20000000-0000-4000-8000-000000000002','eleve','verifie','Beta Student','34','2AS','Sciences'),
+ ('20000000-0000-4000-8000-000000000003','eleve','en_attente','Gamma Student','34','2AS','Sciences'),
+ ('20000000-0000-4000-8000-000000000004','prof','verifie','Teacher','34','2AS','Sciences')
+on conflict(id) do update set wilaya=excluded.wilaya,niveau=excluded.niveau,filiere=excluded.filiere;
+create function public.msg_pair_blocked(a uuid,b uuid) returns boolean
+language sql stable security definer set search_path=pg_catalog,public as $$ select false $$;
+\i supabase/migrations/202611130003_msg_student_discovery.sql
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
+do $$ declare n integer; begin
+ if public.msg_can_dm('20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000002') is not true then raise exception 'verified_pair_denied'; end if;
+ if public.msg_can_dm('20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000003') then raise exception 'unverified_target_allowed'; end if;
+ if public.msg_can_dm('20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000004') then raise exception 'non_student_target_allowed'; end if;
+ select count(*) into n from public.msg_student_search('Beta',12);
+ if n<>1 then raise exception 'expected_one_verified_peer_got_%',n; end if;
+ select count(*) into n from public.msg_student_search('Gamma',12);
+ if n<>0 then raise exception 'unverified_profile_leaked'; end if;
+ begin
+   perform * from public.msg_student_search('Be',12);
+   raise exception 'short_query_allowed';
+ exception when others then
+   if sqlerrm='short_query_allowed' then raise; end if;
+   if sqlerrm<>'search_query_length' then raise; end if;
+ end;
+end $$;
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000003',false);
+do $$ begin
+ begin
+   perform * from public.msg_student_search('Beta',12);
+   raise exception 'unverified_search_allowed';
+ exception when others then
+   if sqlerrm='unverified_search_allowed' then raise; end if;
+   if sqlerrm<>'school_verification_required' then raise; end if;
+ end;
+end $$;
+reset role;
+select 'PASS: Lot 453 — découverte limitée aux élèves vérifiés' as result;
