@@ -214,3 +214,10 @@
 - Les premiers contrôles CI ont détecté des assertions de cache encore en v2 dans `check-multaqa.mjs` et une assertion v153 dans `check-masar.mjs`. Ces références ont été corrigées ; ne déclarer le lot validé qu'après les workflows sur le HEAD final.
 - Aucun changement Supabase, aucune lecture de données d'élèves autres que les champs du profil courant via le mécanisme existant, aucune publication de test, aucune modification Messenger, aucune fusion ni déploiement manuel.
 - Le test navigateur avec une session élève vérifiée reste requis pour confirmer visuellement la carte et les opérations réelles du fil.
+
+### Clôture du Lot 449 — validation CI finale
+- Les premières exécutions ont signalé deux assertions de cache encore en v2 dans `check-multaqa.mjs` ; correction effectuée en ciblant les assertions exactes. Une assertion Masar v153 avait également été synchronisée en v154 avant la validation finale.
+- Sur le commit de code `4c404e87117be6e2c46a94a1e90373120fa9f881`, les trois contrôles requis sont **success** : `Validation structurelle & pédagogique`, `multaqa-postgres` (PostgreSQL 17 isolé) et `Workers Builds: allemand`.
+- Le test PostgreSQL isolé confirme encore la migration et les scénarios d'accès synthétiques ; il ne teste pas l'affichage du pseudo dans un vrai navigateur.
+- PR #17 reste ouverte, non fusionnée et mergeable, base `main`. Aucun déploiement manuel ni modification Supabase.
+- La validation visuelle et fonctionnelle avec un compte élève vérifié réel reste le seul point de contrôle bloquant avant de qualifier l'expérience utilisateur de bout en bout.
