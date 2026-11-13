@@ -23,6 +23,7 @@ has(/multaqa_toggle_reaction/.test(communityClient) && /multaqa_report/.test(com
 has(/verif_statut!==\'verifie\'/.test(communityClient), 'multaqa.js : garde de vérification scolaire côté interface absente');
 has(/function esc\(/.test(communityClient) && /esc\(p\.body\)/.test(communityClient), 'multaqa.js : échappement des contenus utilisateurs absent');
 has(/function waitForSupabase\(\)/.test(communityClient) && /dz:sbready/.test(communityClient), 'multaqa.js : attente du client Supabase absente');
+has(/function updateProfileCard\(\)/.test(communityClient) && /updateProfileCard\(\)/.test(communityClient), 'multaqa.js : profil du membre vérifié non affiché');
 has(/multaqa\.js\?v=2/.test(sw), 'sw.js : client communautaire absent du précache');
 
 
