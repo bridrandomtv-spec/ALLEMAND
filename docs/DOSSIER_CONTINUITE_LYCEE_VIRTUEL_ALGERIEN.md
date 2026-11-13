@@ -8183,3 +8183,21 @@ Lot 385 : extraire un manifeste comparatif précis des définitions des policies
 
 ### Suite — Lot 386
 Formaliser les invariants du cycle invitation/acceptation et du blocage, avec matrice d'états et tests négatifs/positifs à exécuter uniquement sur PostgreSQL isolé. Ne pas modifier la base active sans autorisation explicite.
+
+
+---
+
+## Lot 386 — invariants invitations privées et blocage Messenger (13 novembre 2026)
+
+- Ajout de `tests/messenger/LOT-386-INVARIANTS-INVITATIONS-BLOCAGE.md`.
+- Spécification d'états d'invitation : pending, accepted, rejected, cancelled, expired ; transitions et acteurs autorisés définis.
+- Invariants séparant l'éligibilité scolaire/identité vérifiée du consentement explicite à une conversation privée.
+- Règles proposées pour empêcher création/réouverture d'un DM sans acceptation, auto-ajout, contournement par invitation ou conversation existante, et concurrence acceptation/refus.
+- Matrice de 29 scénarios négatifs/positifs couvrant invitations, blocages, rôles et falsification d'identité JWT.
+- Spécification uniquement : aucune table, fonction, policy, donnée ou paramètre Supabase modifié. Aucun test comportemental exécuté.
+- Le document laisse explicitement ouvertes les décisions produit nécessaires : durée d'expiration, historique après blocage/déblocage, règles enseignants-élèves et source officielle d'affiliation.
+- Aucun projet de test, frais, CI, déploiement ou fusion. PR #17 reste ouverte et non fusionnée ; main inchangée.
+- Commit matrice : `bb4619360ba4c664fcd64600225f54c354ab5083`.
+
+### Suite — Lot 387
+Examiner le modèle de données existant et préparer une proposition de schéma d'invitations isolée, sans migration active. Définir précisément les contraintes uniques, les clés étrangères, les index, les transitions atomiques et les privilèges minimaux avant tout SQL de modification.
