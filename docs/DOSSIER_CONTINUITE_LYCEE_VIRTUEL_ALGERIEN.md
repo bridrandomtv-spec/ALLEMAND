@@ -8221,3 +8221,23 @@ Examiner le modèle de données existant et préparer une proposition de schéma
 
 ### Suite — Lot 388
 Préparer le patch SQL candidat dans un fichier de migration isolé et non appliqué, accompagné des RPC et policies, puis effectuer une revue statique de cohérence et de privilèges. Garder le statut NO-GO tant que l'affiliation scolaire officielle et les règles institutionnelles d'accès élève↔élève ne sont pas confirmées.
+
+
+---
+
+## Lot 388 — candidat SQL et revue des contournements Messenger (13 novembre 2026)
+
+- Candidat SQL créé : `tests/messenger/LOT-388-CANDIDAT-SCHEMA-INVITATIONS-NON-EXECUTER.sql` (commit `d67e21c0b7dda2db8e1e2b525994c6e8b607a377`).
+- Le candidat ne prépare que la table `msg_invitations`, contraintes, index et RLS de lecture par participants ; aucune écriture directe client. Il est explicitement non exécutable et n'a pas été testé sur PostgreSQL.
+- Revue : `docs/product/LOT-388-REVUE-CANDIDAT-MIGRATION-ET-CONTournements-MESSENGER.md` (commit `a158eb0945afe371e46fc20acbb640b08e216f98`).
+- Découverte critique : le RPC actif `msg_open_direct(uuid)` reste SECURITY DEFINER et peut créer/réutiliser un DM sans invitation acceptée ; le correctif client du lot 324 ne ferme donc pas le chemin SQL direct.
+- `msg_member_ok` permet encore des auto-ajouts directs selon l'ancienne compatibilité `msg_can_dm`, sans invitation acceptée.
+- Le trigger `msg_guard_direct` dépend de la même règle wilaya/niveau/filière et bloque les paires inter-wilayas, même si le produit vise un réseau national.
+- `msg_open_direct` ne vérifie pas explicitement le blocage avant création/réouverture. Le blocage bilatéral doit être appliqué à toutes les étapes.
+- Le correctif devra traiter ensemble RPC, helper RLS et trigger, avec transaction unique lors de l'acceptation. Aucun changement actif n'a été appliqué.
+- Source officielle d'affiliation individuelle toujours non confirmée ; les champs déclaratifs du profil ne suffisent pas. Pas de facturation.
+- Aucun SQL exécuté, aucune migration/RPC/policy/ACL/Auth/Storage/Realtime modifiée, aucun test PostgreSQL/RLS réel, aucun CI hébergé, aucun déploiement, aucun merge, aucun coût.
+- Décision : GO revue de conception ; NO-GO exécution et ouverture nationale.
+
+### Suite — Lot 389
+Préparer le correctif serveur complet en patch isolé, puis vérifier ses scénarios négatifs multi-comptes sur PostgreSQL 17 local isolé. Ne pas appliquer tant que l'affiliation officielle et l'environnement de test sûr ne sont pas disponibles.
