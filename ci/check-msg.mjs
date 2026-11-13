@@ -53,7 +53,7 @@ ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'ré
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
 ok(idx.includes('msg.js?v=3516'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.153'") && sw.includes("./msg.js?v=3516") && sw.includes("./style-prototype-dz.css?v=201"), 'service worker et précache Messenger synchronisés');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.154'") && sw.includes("./msg.js?v=3516") && sw.includes("./style-prototype-dz.css?v=201"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
@@ -127,7 +127,7 @@ ok(msgjs.includes('msg-pro-hero') && msgjs.includes('msg-pro-stats'), 'nouvelle 
 ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجموعة '("), 'libellé de groupe construit sans appel de chaîne invalide');
 ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter]')"), 'filtres Messenger accessibles via délégation de clic');
 ok(idx.includes('style-prototype-dz.css?v=201') && idx.includes('msg.js?v=3516'), 'versions de ressources Messenger actualisées');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.153'") && sw.includes('./style-prototype-dz.css?v=201') && sw.includes('./msg.js?v=3516'), 'précache synchronisé avec la nouvelle interface');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.154'") && sw.includes('./style-prototype-dz.css?v=201') && sw.includes('./msg.js?v=3516'), 'précache synchronisé avec la nouvelle interface');
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
 
