@@ -8611,3 +8611,19 @@ Vérifier le résultat CI après le correctif de références de cache, puis con
 
 ### Suite — Lot 411 (à poursuivre)
 Vérifier le run CI déclenché après le commit `bbc113c`, puis examiner la définition SQL/RLS existante de `msgRequestVerification` et `msgCanDm` en lecture seule, sans requête sur les données personnelles. Définir ensuite une matrice d'accès qui distingue explicitement compte inscrit, élève vérifié, abonnement et consentement.
+
+
+### Lot 411 — audit des points d'entrée identité / abonnement / Messenger (13 novembre 2026)
+
+- Correction CI complémentaire : le run `43444154689` a confirmé que l'assertion Service Worker de `ci/check-masar.mjs` était corrigée, puis a révélé une autre assertion obsolète dans `ci/check-gamification.mjs` (CSS `v195` au lieu de `v196`). Correctif appliqué à `ci/check-gamification.mjs` ; commit `43704e5f1540e4deb18515aff150465705a27f51`.
+- Recherche ciblée dans les 9 scripts de contrôle du dossier `ci/` : aucune autre référence `v=195` ou `.146` trouvée après ce correctif.
+- CI GitHub run `43444556745` sur le commit `43704e5f1540e4deb18515aff150465705a27f51` : **success**. Tous les contrôles du workflow ont passé sur ce commit. Le commit documentaire qui suit déclenchera sa propre exécution CI ; ne pas confondre les deux HEAD.
+- Audit statique : `auth.js` utilise une session locale `localStorage` sans état de vérification ; `app.js` s'appuie sur ce rôle local pour l'affichage de `multaqa`. Le client Supabase est distinct et utilise `auth.getSession/getUser`.
+- `access.js` vérifie un abonnement backend pour les fonctions pédagogiques payantes ; aucun élément ne justifie de réutiliser ce paywall pour fermer la communauté.
+- `msgRequestVerification` exige côté client un numéro correspondant à un abonnement actif avant de soumettre une demande. En revanche, le trigger `profiles_verif_guard` décrit dans le SQL autorise la transition personnelle vers `en_attente` sans vérifier lui-même l'abonnement ; il faut auditer les policies/grants/colonnes déployés avant de considérer le contrôle client comme une sécurité.
+- Le script `supabase/msg_schema.sql` décrit `msg_can_dm` avec deux profils `verifie` et un groupe scolaire commun. Il décrit aussi une visibilité RLS entre membres sur `profiles` : les grants de colonnes doivent être vérifiés pour exclure toute exposition de matricule, e-mail ou identifiant privé. Ce script du dépôt ne prouve pas l'état exact de la base active.
+- Rapport détaillé : `docs/product/LOT-411-AUDIT-IDENTITE-ABONNEMENT-MESSAGERIE.md`, commit `06360ab297cf36e5ef34239b4cfc72b9d4ae0c31`.
+- Aucun accès à la base Supabase active, aucune donnée d'élève lue, aucun SQL exécuté, aucune migration, aucune modification Auth/RLS/Storage/Realtime, aucun paiement, aucun déploiement Cloudflare et aucune fusion.
+
+### Suite — Lot 412
+Vérifier la CI du HEAD documentaire courant, puis préparer une spécification courte de vérification scolaire indépendante de l'abonnement et de demande de contact Messenger avec consentement. Rester en lecture seule/documentation jusqu'à validation explicite et tests multi-comptes sur environnement isolé.
