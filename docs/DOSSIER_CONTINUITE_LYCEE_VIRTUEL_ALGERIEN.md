@@ -8802,3 +8802,17 @@ Comparer l'export du catalogue actif aux scripts du dépôt, identifier les RPC 
 ### Suite — Lots 423 à 426
 
 Les lots suivants sont consignés dans [LOT-426-RENFORCEMENT-PREFLIGHT-ET-RESTAURATION-CONTINUITE.md](product/LOT-426-RENFORCEMENT-PREFLIGHT-ET-RESTAURATION-CONTINUITE.md), avec leurs rapports individuels. Le dossier principal conserve l'historique jusqu'au Lot 422 ; cet addendum prolonge la continuité sans dépasser la limite de restitution du fichier.
+
+---
+
+## Lot 435 — synchronisation du cache CSS après la refonte Lot 434 (13 novembre 2026)
+
+- Le contrôle du run CI #3477 a révélé une incohérence précise : `index.html` chargeait `style-prototype-dz.css?v=197`, mais `sw.js` précachait encore `v=196` et `ci/check-public-portal.mjs` exigeait également `v=196`.
+- Correction appliquée sur `design/prototypes-67-74-alignment` :
+  - `sw.js` : précache CSS `v=197`, version Service Worker `dz-de-v3.185.0.0.148` (commit `dcdbd71`).
+  - `ci/check-public-portal.mjs` : assertions et message de validation alignés sur CSS `v=197` (commit `e660278`).
+  - `docs/product/CONTINUITE-LOT-434.md` : trace du Lot 435 (commit `1078ef5`).
+- PR #17 : toujours ouverte et non fusionnée. Le dernier contrôle après les commits de code indiquait `mergeable=true`; après le commit de continuité, GitHub a renvoyé `mergeable=false`. Cause non déterminée ; ne pas rebaser/synchroniser sans autorisation.
+- Le run #3477 échouait au contrôle portail public uniquement parce que la version CSS attendue était périmée ; les validations antérieures de ce job avaient réussi. Aucun résultat CI n'est encore confirmé sur le HEAD final `1078ef57e0ec06575950aba0b5857c3693d60f7f`.
+- Aucun changement sur `main`, aucune fusion, aucun déploiement Cloudflare, aucune requête ni modification Supabase, aucun coût.
+- Portée : réparation de cache/CI uniquement. Les fonctions réelles du réseau social et de Messenger restent à développer.
