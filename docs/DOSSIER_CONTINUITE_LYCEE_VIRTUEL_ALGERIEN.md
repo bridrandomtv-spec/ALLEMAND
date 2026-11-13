@@ -7587,3 +7587,7 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Ajout de contrôles ciblés dans `ci/check-msg.mjs` pour les libellés arabes et l'absence des principaux textes français visibles.
 - Aucun changement Supabase/Auth/RLS/schéma/Storage, aucune modification de `main`, aucun déploiement de production et aucune fusion de PR #17.
 - Validation visuelle navigateur non revendiquée ; attendre la CI et la preview Cloudflare de ce HEAD, puis vérifier le rendu arabe RTL sur ordinateur et mobile.
+
+- Commits du lot 359 : traduction initiale de l'interface `21c2576`, garde CI `21fe9fc`, dossier `a62e124`, corrections de libellés résiduels `14d1d1d`, assertions CI replacées avant la condition d'échec `14bb710`.
+- Vérification CI GitHub déclenchée sur `14bb710` : run #3269, état **pending** au moment de cette mise à jour ; aucune réussite n'est revendiquée avant la fin du workflow.
+- Relecture statique après correction : aucun libellé français statique détecté dans les éléments HTML visibles ciblés. Les messages d'erreur dynamiques renvoyés par les fonctions serveur restent affichés tels quels afin de ne pas modifier les contrats métier dans ce lot.
