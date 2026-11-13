@@ -49,8 +49,17 @@
     var posts=state.posts.length?state.posts.map(postHtml).join(''):stateCard('🌱','ابدأ أول نقاش دراسي','لا توجد منشورات منشورة حالياً. يمكنك أن تكون أول من يطرح سؤالاً أو يشارك فكرة نافعة.','بداية المجتمع');
     b.innerHTML=top+composer+'<div class="mtq-live-list">'+posts+'</div>'+(state.hasMore?'<button class="mtq-live-more" data-mtq-action="more" type="button">تحميل منشورات أقدم</button>':'');
   }
+  function waitForSupabase(){
+    if(window.SB&&window.SB.sb&&window.SB.me&&window.SB.myProfile)return Promise.resolve(true);
+    return new Promise(function(resolve){
+      var settled=false;
+      var timer=setTimeout(function(){finish(false);},12000);
+      function finish(ok){if(settled)return;settled=true;clearTimeout(timer);resolve(ok);}
+      document.addEventListener('dz:sbready',function(){finish(!!(window.SB&&window.SB.sb&&window.SB.me&&window.SB.myProfile));},{once:true});
+    });
+  }
   async function client(){
-    if(!window.SB||!window.SB.sb||!window.SB.me)throw new Error('cloud_client_unavailable');
+    if(!await waitForSupabase())throw new Error('cloud_client_unavailable');
     var c=await window.SB.sb();if(!c)throw new Error('cloud_client_unavailable');return c;
   }
   async function load(reset){
@@ -70,10 +79,11 @@
     var b=box();if(!b)return;
     b.innerHTML=stateCard('⏳','جارٍ الاتصال بالملتقى','يتم التحقق من جلسة الحساب وصلاحية الوصول إلى المجتمع.','لحظة من فضلك');
     try{
-      if(!window.SB||!window.SB.me||!window.SB.myProfile){unavailable('cloud_client_unavailable');return;}
+      if(!await waitForSupabase()){unavailable('cloud_client_unavailable');return;}
       state.user=await window.SB.me();
       if(!state.user){b.innerHTML=stateCard('🔐','سجّل الدخول للمتابعة','تحتاج إلى حساب على المنصة قبل الدخول إلى ملتقى الطلاب.','حساب المنصة');return;}
       state.profile=await window.SB.myProfile();
+      if(state.profile&&state.profile.ok===false)throw new Error(state.profile.err||'profile_lookup_failed');
       if(!state.profile||state.profile.role!=='eleve'){b.innerHTML=stateCard('🎓','هذا الفضاء مخصص للتلاميذ','الملتقى الشخصي مخصص لحسابات التلاميذ.','صلاحية الحساب');return;}
       if(state.profile.verif_statut!=='verifie'){b.innerHTML=accessCard();return;}
       state.posts=[];state.comments={};state.expanded={};state.hasMore=false;
@@ -126,4 +136,5 @@
     finally{state.busy=false;}
   });
   window.renderMultaqa=enter;
+  if(document.querySelector('[data-view="multaqa"]:not([hidden])'))enter();
 })();
