@@ -8081,3 +8081,16 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Aucun test comportemental PostgreSQL/RLS multi-compte exécuté ; aucune ressource ou dépense créée. PR #17 reste ouverte et non fusionnée ; main et production inchangées.
 - Suite : préparer l'export SQL contrôlé des objets applicatifs et le harness synthétique ; demander une confirmation distincte avant de créer un deuxième projet Free. Aucune facturation ou ressource payante.
 
+
+
+### Complément Lot 379 — scénarios négatifs RLS multi-comptes (13 novembre 2026)
+
+- Nouvelle extraction en lecture seule des définitions exactes pg_policies pour msg_conversations, msg_members, msg_messages, msg_blocks, msg_attachments et profiles.
+- Confirmé : policy msg conv creation (INSERT) n'impose que created_by=auth.uid() et type direct ou modérateur ; aucune preuve d'invitation acceptée.
+- Confirmé : policy msg members ajout (INSERT) impose user_id=auth.uid() et msg_member_ok(conversation_id,auth.uid()) ; la fonction n'exige pas d'invitation acceptée.
+- Confirmé : policy msg members retrait (DELETE) autorise le membre à retirer sa propre ligne ou un modérateur à retirer une ligne. Les tests devront vérifier que le membre ne peut pas retirer l'appartenance d'un tiers.
+- Confirmé : profils visibles entre membres autorise la lecture des profils liés par une conversation commune ; les politiques own profile/admin/vérificateur/agent s'ajoutent à ces règles. Les scénarios d'annuaire devront vérifier les colonnes et grants séparément des filtres de lignes.
+- Matrice de tests ajoutée : tests/messenger/LOT-379-MATRICE-NEGATIVE-RLS.md, commit 055eda8ebf0c8e700c99538264448348b3ae7454.
+- La matrice couvre les DM sans invitation, auto-ajout, tiers, refus/annulation, blocages dans les deux sens, retrait d'appartenance, lecture profils/messages, vérificateurs hors périmètre, pièces jointes, et cas positifs anti-régression pour groupes et conversations historiques.
+- Cette matrice est une spécification de tests, pas une preuve d'exécution. Aucun compte synthétique ni aucune donnée n'a été inséré dans Supabase actif. Aucun test comportemental PostgreSQL/RLS n'a été exécuté.
+- Aucune modification de main, fusion de PR, migration, DDL, Auth/RLS/Storage/Realtime ou déploiement. Aucune ressource payante créée, dépense 0 USD.
