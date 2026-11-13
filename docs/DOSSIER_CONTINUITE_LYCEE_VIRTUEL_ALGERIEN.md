@@ -111,3 +111,8 @@
 - Validation non acquise : aucun PostgreSQL isolé disponible/confirmé ; la migration n'a pas été compilée ni exécutée sur une base de test. La CI du commit ec20bb4 était encore en attente lors du contrôle ; le commit courant après ajout du quota doit également recevoir son run. Ne pas annoncer le backend prêt ni appliquer la migration à Supabase actif.
 - Aucun DDL/DML sur Supabase actif, aucune modification Auth/RLS/Storage/Realtime/paiement en production, aucune lecture de données personnelles, aucun changement main, aucune fusion ni déploiement Cloudflare. PR #17 reste ouverte et non fusionnée.
 - Étape suivante : obtenir le résultat CI du HEAD courant, faire une revue SQL ciblée et un test PostgreSQL réel multi-comptes sans données réelles ; ensuite seulement câbler le client ملتقى الطلاب aux RPC et demander une autorisation distincte avant toute application sur Supabase actif.
+
+### Addendum Lot 444 — cohérence CI du portail public
+- La CI #3523/#3524 a ensuite révélé que ci/check-public-portal.mjs attendait encore style-prototype-dz.css?v=197 et le service worker dz-de-v3.185.0.0.147. Ces références étaient dépassées par le Lot 443.
+- Assertions et messages de contrôle synchronisés vers CSS v200 et service worker .151 dans le commit e135a23cb09484dd163220da8fe798146231d239.
+- Run CI #3526 associé à ce HEAD : en attente au moment de cette note. Ne pas déclarer la validation globale réussie avant son résultat.
