@@ -134,3 +134,6 @@
 - Correction du contrôle d'accès : conformément au Lot 413, le fil personnel est réservé aux élèves vérifiés ; les comptes en attente/non vérifiés ne peuvent pas voir le contenu personnel. L'abonnement n'intervient pas dans cette décision.
 - Limites actuelles : aucun test navigateur visuel/exécution réelle de bout en bout ; migration toujours non appliquée ; pas de test PostgreSQL multi-comptes ; les fonctions de fichiers/images, groupes, الزمالة, modération administrative et Realtime ne sont pas dans cette première tranche.
 - Aucun DDL/DML exécuté sur Supabase actif, aucune lecture de contenu d'élève, aucune modification de main, aucune fusion PR #17, aucun déploiement.
+
+- Revue complémentaire des privilèges RPC : chaque fonction préparée révoque maintenant explicitement EXECUTE à PUBLIC, anon et authenticated avant le GRANT ciblé à authenticated. Le contrôle CI vérifie cette révocation préalable. Commits : migration 94d1a288af26dec4207956abd190e1c3e2d57a53 ; assertion CI ca709b02450b988091c8be6f268b694507627392.
+- Le client dynamique reste un raccordement préparatoire : l'appel RPC renverra une erreur explicite tant que la migration n'est pas appliquée. Aucun test réel de navigateur ou PostgreSQL n'a encore été effectué.
