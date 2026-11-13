@@ -8743,3 +8743,15 @@ Préparer un protocole de baseline PostgreSQL isolée, les sources exactes néce
 ### Suite — Lot 419
 
 Contrôle local en lecture seule de la présence et des versions de PostgreSQL, Docker et WSL, puis choix de la voie gratuite. Ne rien installer et ne créer aucune ressource cloud sans accord distinct.
+
+
+## Lot 419 — Contrôle local PostgreSQL sans installation (13 novembre 2026)
+
+- Rapport ajouté : [LOT-419-CONTROLE-LOCAL-POSTGRESQL-SANS-INSTALLATION.md](product/LOT-419-CONTROLE-LOCAL-POSTGRESQL-SANS-INSTALLATION.md).
+- La session GitHub ne peut pas exécuter de commandes sur le PC Windows de l'utilisateur ; aucune conclusion n'est donc tirée sur la présence de PostgreSQL, Docker ou WSL.
+- Commandes PowerShell strictement en lecture locale fournies dans le rapport. Elles ne font aucune installation, aucun démarrage de service, aucune connexion réseau et ne créent aucune base.
+- Étape bloquante : recevoir la sortie PowerShell avant de choisir l'environnement local de test. Ne pas installer quoi que ce soit sans autorisation.
+- CI GitHub Actions #3430 (run `43448840485`) : **success**, 39 étapes du job « Validation structurelle & pédagogique » terminées avec succès, sur le commit `5a97c8b553dda06dc8981cac8d5777ceed28fbda`. Cela valide la suite CI automatisée, pas un test PostgreSQL multi-comptes ni un test navigateur.
+- PR #17 relue : **ouverte, non fusionnée, mergeable=true, draft=false** au moment du contrôle ; HEAD `5a97c8b553dda06dc8981cac8d5777ceed28fbda`. Ne pas fusionner sans autorisation explicite.
+- Aucun changement sur `main), aucune action sur Supabase actif, aucune modification de code applicatif et aucun déploiement Cloudflare.
+
