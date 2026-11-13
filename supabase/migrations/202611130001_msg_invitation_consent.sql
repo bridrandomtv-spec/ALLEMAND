@@ -37,6 +37,21 @@ create policy msg_invites_participant_read on public.msg_invites
   for select to authenticated
   using (auth.uid() in (sender_id, recipient_id));
 
+-- Les notifications d'invitation arrivent en temps réel; la policy RLS ci-dessus
+-- limite chaque événement aux deux participants de la demande.
+do $
+begin
+  if exists (select 1 from pg_publication where pubname='supabase_realtime')
+     and not exists (
+       select 1 from pg_publication_tables
+        where pubname='supabase_realtime'
+          and schemaname='public' and tablename='msg_invites'
+     ) then
+    alter publication supabase_realtime add table public.msg_invites;
+  end if;
+end;
+$;
+
 -- Aucun accès direct en écriture : tous les changements passent par RPC.
 revoke insert, update, delete on public.msg_invites from anon, authenticated;
 
