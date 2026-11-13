@@ -60,7 +60,15 @@ do $$ declare n integer; begin
    if sqlerrm='short_query_allowed' then raise; end if;
    if sqlerrm<>'search_query_length' then raise; end if;
  end;
-end $$;
+ for i in 1..5 loop perform * from public.msg_student_search('Beta',12); end loop;
+ begin
+   perform * from public.msg_student_search('Beta',12);
+   raise exception 'search_quota_not_enforced';
+ exception when others then
+   if sqlerrm='search_quota_not_enforced' then raise; end if;
+   if sqlerrm<>'search_rate_limit' then raise; end if;
+ end;
+end $;
 -- Le compte non vérifié ne peut pas lancer de recherche.
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000003',false);
 do $$ begin
