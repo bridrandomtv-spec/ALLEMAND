@@ -33,3 +33,10 @@
 
 ## Prochaine étape — Lot 432
 Rédiger une spécification serveur consolidée (pas encore un script exécutable) qui traite ensemble la RPC directe, les insertions de conversations/membres, le blocage bilatéral, la projection de profil minimale et l'éligibilité scolaire nationale. Le point bloquant préalable reste la source officielle d'affiliation et le choix d'un environnement de test isolé sans coût.
+
+## Contrôle après commits documentaires
+- Commits du Lot 431 : rapport 49666ae117ffc7e277ed22472e9b8b1d31db585d ; continuité 28f85768022538de7db0be2258f472ebbf272c18 ; lien de continuité Lot 430 mis à jour par fd8606e02f4fe9c973b84ec21072f73dd171d608.
+- HEAD PR #17 relu : fd8606e02f4fe9c973b84ec21072f73dd171d608.
+- PR #17 : ouverte, non fusionnée, draft=false ; GitHub retourne mergeable=false au dernier contrôle. La cause n'a pas été diagnostiquée dans ce lot ; ne pas lancer de synchronisation/rebase automatique.
+- Recherche des exécutions CI associées au dernier commit : aucune exécution retournée. La CI n'est donc pas déclarée réussie.
+- Aucun déploiement Cloudflare.
