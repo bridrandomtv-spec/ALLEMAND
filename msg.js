@@ -1,7 +1,7 @@
 /* ── MSG-4 · vue « الرسائل » — temps réel + pseudos + présence bornée ──
    Lot 4 : canal Realtime par conversation (INSERT = ajout live, UPDATE = refresh),
    pseudos des co-membres via la politique « profils visibles entre membres » (Lot 3b),
-   présence « N en ligne » trackée seulement pendant qu'un fil est ouvert.
+   présence « N متصل الآن » trackée seulement pendant qu'un fil est ouvert.
    Aucune autorité côté client : le payload postgres_changes reste filtré par le RLS.
    Lot 1-3 inchangés dans leurs garanties : pas de DM créé ici, pas de modération UI. */
 (function(){
@@ -21,35 +21,35 @@
       var c = await window.SB.sb(); if(!c){ ids.forEach(function(i){ out[i]=state.names[i]; }); return out; }
       var r = await c.from('profiles').select('id,pseudo,role,niveau').in('id', miss);
       (r.data||[]).forEach(function(p){ state.names[p.id] = (p.pseudo||'') + (p.niveau?' · '+p.niveau:''); });
-      ids.forEach(function(i){ out[i] = state.names[i] || ('membre '+String(i).slice(0,4)); });
-    }catch(e){ ids.forEach(function(i){ out[i]=state.names[i]||('membre '+String(i).slice(0,4)); }); }
+      ids.forEach(function(i){ out[i] = state.names[i] || ('عضو '+String(i).slice(0,4)); });
+    }catch(e){ ids.forEach(function(i){ out[i]=state.names[i]||('عضو '+String(i).slice(0,4)); }); }
     return out;
   }
-  function nameOf(id){ return state.names[id] || ('membre '+String(id).slice(0,4)); }
+  function nameOf(id){ return state.names[id] || ('عضو '+String(id).slice(0,4)); }
   function rowHtml(m, live, attachment){
     var mine = state.me && m.sender_id===state.me;
     var att = '';
     if(attachment && attachment.ok && attachment.url){
       var isImage = String(attachment.mime||'').indexOf('image/')===0;
       att = '<div class="msg-attachment">'+(isImage
-        ? '<a href="'+esc(attachment.url)+'" target="_blank" rel="noopener noreferrer"><img src="'+esc(attachment.url)+'" alt="Image jointe" loading="lazy"></a>'
-        : '<a href="'+esc(attachment.url)+'" target="_blank" rel="noopener noreferrer">📄 Ouvrir le fichier joint</a>')+
-        '<small>'+esc(attachment.name||'Pièce jointe')+' · '+esc(attachment.sizeLabel||'')+'</small></div>';
+        ? '<a href="'+esc(attachment.url)+'" target="_blank" rel="noopener noreferrer"><img src="'+esc(attachment.url)+'" alt="صورة مرفقة" loading="lazy"></a>'
+        : '<a href="'+esc(attachment.url)+'" target="_blank" rel="noopener noreferrer">📄 فتح الملف المرفق</a>')+
+        '<small>'+esc(attachment.name||'ملف مرفق')+' · '+esc(attachment.sizeLabel||'')+'</small></div>';
     } else if(attachment && !attachment.ok){
-      att = '<div class="msg-attachment msg-attachment-error">📎 Pièce jointe indisponible pour ce compte.</div>';
+      att = '<div class="msg-attachment msg-attachment-error">📎 ملف مرفق indisponible pour ce compte.</div>';
     }
     return '<div class="msg-row '+(mine?'me':'')+(live?' live':'')+'" data-mid="'+m.id+'">'+
-      '<div class="msg-meta"><b class="msg-name">'+esc(mine?'moi':nameOf(m.sender_id))+'</b>'+
+      '<div class="msg-meta"><b class="msg-name">'+esc(mine?'أنا':nameOf(m.sender_id))+'</b>'+
       '<span>'+String(m.created_at||'').slice(11,16)+' UTC</span>'+
-      (mine?'':'<button class="msg-report" data-report="'+m.id+'" type="button" title="signaler">🚩</button>')+'</div>'+
-      '<div class="msg-body">'+esc(m.body)+(m.flagged?' <em class="msg-flag">· signalé</em>':'')+'</div>'+att+'</div>';
+      (mine?'':'<button class="msg-report" data-report="'+m.id+'" type="button" title="إبلاغ">🚩</button>')+'</div>'+
+      '<div class="msg-body">'+esc(m.body)+(m.flagged?' <em class="msg-flag">· تم الإبلاغ عنه</em>':'')+'</div>'+att+'</div>';
   }
   async function attachmentsFor(messageIds){
     try{ return await window.SB.msgAttachmentInfos(messageIds); }
     catch(e){ return {}; }
   }
   function sizeLabel(n){
-    n=Number(n)||0; return n>=1048576?(n/1048576).toFixed(1)+' Mo':Math.max(1,Math.round(n/1024))+' Ko';
+    n=Number(n)||0; return n>=1048576?(n/1048576).toFixed(1)+' ميغابايت':Math.max(1,Math.round(n/1024))+' كيلوبايت';
   }
   function closeChannel(){
     if(state.ch){ try{ state.ch.unsubscribe(); }catch(e){} state.ch = null; }
@@ -77,12 +77,12 @@
         .on('presence', { event:'sync' }, function(){
           try{
             var ps = ch.presenceState(); var n = Object.keys(ps||{}).length;
-            var pe = el('msgPres'); if(pe) pe.textContent = n>0 ? ('● '+n+' en ligne') : '';
+            var pe = el('msgPres'); if(pe) pe.textContent = n>0 ? ('● '+n+' متصل الآن') : '';
           }catch(e){}
         });
       ch.subscribe(function(st2){
         if(st2==='SUBSCRIBED'){
-          try{ ch.track({ p: (state.meName||'moi') }); }catch(e){}
+          try{ ch.track({ p: (state.meName||'أنا') }); }catch(e){}
         }
       });
       state.ch = ch;
@@ -91,7 +91,7 @@
   async function renderList(){
     closeChannel();
     var box = el('msgBody'); if(!box) return;
-    var u = await session(); state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'moi';
+    var u = await session(); state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'أنا';
     if(!u){
       var localSess = false;
       try{ localSess = !!localStorage.getItem('dz_de_session_v1'); }catch(e){}
@@ -99,114 +99,114 @@
       var appSess = localSess || !!(ucN && ucN.textContent && ucN.textContent.trim());
       var cloudUp = !!(window.SB && window.SB.sb);
       if(appSess){
-        box.innerHTML = '<div class="msg-land"><h2>💬 Messages — compte cloud requis</h2>'
-          + '<p>Tu es connecté à la plateforme, mais ta session actuelle est ' + (cloudUp ? 'locale/hors-ligne' : 'locale, et le client cloud n\'a pas pu se charger (réseau/CDN)') + '. La messagerie nationale (groupes officiels, temps réel, modération, vérification d\'identité) repose sur ton compte cloud protégé par RLS : connecte-toi ou crée un compte cloud pour l\'activer ici.</p>'
-          + '<div class="msg-cta"><button class="in" data-act="msg-login" type="button">🔐 Connecter mon compte cloud</button>'
-          + '<button class="up" data-act="msg-signup" type="button">📝 Créer un compte cloud</button></div></div>';
+        box.innerHTML = '<div class="msg-land"><h2>💬 الرسائل — يلزم حساب سحابي</h2>'
+          + '<p>أنت متصل بالمنصة، لكن جلستك الحالية ' + (cloudUp ? 'محلية أو دون اتصال' : 'محلية، وتعذر تحميل خدمة الاتصال السحابي (الشبكة أو CDN)') + '. تعتمد خدمة المراسلة الوطنية (المجموعات الرسمية والمراسلة الفورية والإشراف والتحقق من الهوية) على حسابك السحابي المحمي؛ سجّل الدخول أو أنشئ حساباً لتفعيلها هنا.</p>'
+          + '<div class="msg-cta"><button class="in" data-act="msg-login" type="button">🔐 ربط حسابي السحابي</button>'
+          + '<button class="up" data-act="msg-signup" type="button">📝 إنشاء حساب سحابي</button></div></div>';
         return;
       }
-      var L = '<div class="msg-land"><h2>💬 الرسائل — la messagerie nationale des élèves 🇩🇿</h2>'
-        + '<p>Un espace d\'échange scolaire organisé par wilaya, niveau et filière : cours, devoirs, compositions, annales du BAC et résumés — dans un cadre protégé, modéré par tes professeurs.</p>'
-        + '<div class="msg-cta"><button class="in" data-act="msg-login" type="button">🔐 تسجيل الدخول — Se connecter</button>'
-        + '<button class="up" data-act="msg-signup" type="button">📝 حساب جديد — Créer un compte</button></div></div>'
+      var L = '<div class="msg-land"><h2>💬 الرسائل — منصة المراسلة الوطنية للتلاميذ 🇩🇿</h2>'
+        + '<p>فضاء للتواصل الدراسي منظّم حسب الولاية والمستوى والشعبة، لتبادل الدروس والواجبات والاختبارات ومواضيع البكالوريا والملخصات، ضمن بيئة محمية وتحت إشراف الأساتذة.</p>'
+        + '<div class="msg-cta"><button class="in" data-act="msg-login" type="button">🔐 تسجيل الدخول</button>'
+        + '<button class="up" data-act="msg-signup" type="button">📝 حساب جديد</button></div></div>'
         + '<div class="msg-bene">'
-        + '<div class="b"><span class="i">🕌</span><b>Groupes officiels</b><span>Ton groupe par wilaya · niveau · filière, sans inscription manuelle : ton profil scolaire t\'y place automatiquement.</span></div>'
-        + '<div class="b"><span class="i">📝</span><b>Devoirs & compos</b><span>Partage et reçois devoirs, compositions, annales BAC et résumés en pièces jointes (pdf · png · jpeg · webp, 5 Mo max).</span></div>'
-        + '<div class="b"><span class="i">⚡</span><b>Temps réel</b><span>Les messages arrivent instantanément, avec présence « en ligne » et pseudos des camarades de ta conversation.</span></div>'
-        + '<div class="b"><span class="i">🛡</span><b>Cadre protégé</b><span>Signalement 🚩, blocage, modération prof/admin et journal immuable : chaque action laisse une trace.</span></div>'
-        + '<div class="b"><span class="i">🪪</span><b>Identité vérifiée</b><span>Les messages privés n\'existent qu\'entre élèves vérifiés par un professeur du même groupe scolaire.</span></div>'
-        + '<div class="b"><span class="i">📚</span><b>Qualité des cours</b><span>Enrichis tes cours par les échanges nationaux : méthodes, corrections commentées, expériences de chaque wilaya.</span></div>'
+        + '<div class="b"><span class="i">🕌</span><b>المجموعات الرسمية</b><span>مجموعتك حسب الولاية والمستوى والشعبة؛ يحدد ملفك الدراسي المجموعة المناسبة تلقائياً.</span></div>'
+        + '<div class="b"><span class="i">📝</span><b>الواجبات والاختبارات</b><span>Partage et reçois devoirs, compositions, annales BAC et résumés en pièces jointes (pdf · png · jpeg · webp, 5 ميغابايت max).</span></div>'
+        + '<div class="b"><span class="i">⚡</span><b>مراسلة فورية</b><span>Les messages arrivent instantanément, avec présence « متصل الآن » et pseudos des camarades de ta conversation.</span></div>'
+        + '<div class="b"><span class="i">🛡</span><b>بيئة آمنة</b><span>الإبلاغ 🚩 والحظر وإشراف الأساتذة والإدارة وسجلّ موثّق لكل إجراء.</span></div>'
+        + '<div class="b"><span class="i">🪪</span><b>الهوية المدرسية</b><span>تُتاح الرسائل الخاصة بين التلاميذ بعد التحقق من هويتهم المدرسية.</span></div>'
+        + '<div class="b"><span class="i">📚</span><b>تطوير التعلّم</b><span>طوّر تعلّمك عبر تبادل المنهجيات والتصحيحات المشروحة والخبرات من مختلف الولايات.</span></div>'
         + '</div>'
-        + '<div class="msg-sec">🧭 Comment ça marche</div><div class="msg-steps4">'
-        + '<div class="s"><span class="n">1</span><b>Crée ton compte</b>niveau · filière · wilaya à l\'inscription : ce sont eux qui ouvrent tes groupes.</div>'
-        + '<div class="s"><span class="n">2</span><b>Ouvre « 💬 الرسائل »</b>tes groupes officiels t\'attendent, déjà rejoints par ton profil.</div>'
-        + '<div class="s"><span class="n">3</span><b>Vérifie ton identité</b>matricule + section → validation prof/admin → messages privés autorisés.</div>'
-        + '<div class="s"><span class="n">4</span><b>Échange et progresse</b>messages, pièces jointes, signalement si besoin — tout reste dans ton groupe scolaire.</div>'
+        + '<div class="msg-sec">🧭 كيف تعمل المراسلة؟</div><div class="msg-steps4">'
+        + '<div class="s"><span class="n">1</span><b>أنشئ حسابك</b>المستوى · الشعبة · الولاية؛ وهي معلومات تساعد على تحديد مجموعاتك.</div>'
+        + '<div class="s"><span class="n">2</span><b>افتح « 💬 الرسائل »</b>ستجد مجموعاتك الدراسية المرتبطة بملفك.</div>'
+        + '<div class="s"><span class="n">3</span><b>تحقّق من هويتك</b>رقم التسجيل والشعبة ← مراجعة الأستاذ أو الإدارة ← إتاحة الرسائل الخاصة.</div>'
+        + '<div class="s"><span class="n">4</span><b>تواصل وتقدّم</b>تبادل الرسائل والملفات، وأبلغ عن أي مخالفة عند الحاجة.</div>'
         + '</div>'
-        + '<div class="msg-empty" style="margin-top:12px">🧑🏫 <b>Professeurs & admins</b> : la section 🛡 Modération (signalements, vérifications d\'identité, création de groupes officiels, journal) apparaît automatiquement dans cette vue après connexion.</div>';
+        + '<div class="msg-empty" style="margin-top:12px">🧑🏫 <b>الأساتذة والإدارة</b> : la section 🛡 ميغابايتdération (بلاغs, vérifications d\'identité, création de groupes officiels, journal) apparaît automatiquement dans cette vue après connexion.</div>';
       box.innerHTML = L; return;
     }
     var g = await window.SB.msgGroups();
     var c = await window.SB.msgConvs();
     var vf = await window.SB.msgMyVerification();
-    var h = '<div class="msg-head msg-messenger-head"><div><h3>💬 الرسائل</h3><small>Messagerie scolaire · réseau national</small></div><button class="msg-refresh" data-act="refresh" type="button">⟳ Actualiser</button></div>' +
-      '<div class="msg-searchbar"><span aria-hidden="true">⌕</span><input id="msgListSearch" type="search" placeholder="Rechercher dans mes conversations et groupes…" autocomplete="off" aria-label="Rechercher dans mes conversations et groupes"></div>' +
-      '<div class="msg-filters" role="group" aria-label="Filtrer les conversations"><button type="button" class="active" data-msg-filter="all">Tout</button><button type="button" data-msg-filter="direct">Privées</button><button type="button" data-msg-filter="group">Groupes</button></div>';
-    var isMod0 = u && (u.role==='prof' || u.role==='admin');
-    if(!isMod0 && vf.ok && vf.statut!=='verifie'){
+    var h = '<div class="msg-head msg-messenger-head"><div><h3>💬 الرسائل</h3><small>مراسلة مدرسية · شبكة وطنية</small></div><button class="msg-refresh" data-act="refresh" type="button">⟳ تحديث</button></div>' +
+      '<div class="msg-searchbar"><span aria-hidden="true">⌕</span><input id="msgListSearch" type="search" placeholder="ابحث في محادثاتي ومجموعاتي…" autocomplete="off" aria-label="Rechercher dans mes conversations et groupes"></div>' +
+      '<div class="msg-filters" role="group" aria-label="تصفية المحادثات"><button type="button" class="active" data-msg-filter="all">الكل</button><button type="button" data-msg-filter="direct">خاصة</button><button type="button" data-msg-filter="group">مجموعات</button></div>';
+    var isميغابايتd0 = u && (u.role==='prof' || u.role==='admin');
+    if(!isميغابايتd0 && vf.ok && vf.statut!=='verifie'){
       h += '<div class="msg-verif">' + (vf.statut==='en_attente'
-        ? '⏳ <b>Vérification d\'identité en cours</b> — un professeur ou un admin contrôle ton matricule et ta section. Les groupes officiels restent ouverts ; les messages privés s\'ouvriront après validation.'
-        : (vf.statut==='rejete' ? '⛔ <b>Demande rejetée</b> — corrige ton matricule / ta section puis renvoie. ' : '🪪 <b>Vérification d\'identité scolaire</b> — requise avant d\'ouvrir un message privé. ') +
-          '<div class="msg-vform"><input id="vfMat" placeholder="matricule scolaire" maxlength="40" value="'+esc(vf.matricule||'')+'"><input id="vfSec" placeholder="section / classe (ex. 2AS-1)" maxlength="40" value="'+esc(vf.section||'')+'"><button class="msg-send" data-act="verif-req" type="button">Envoyer la demande</button></div>')
+        ? '⏳ <b>التحقق من الهوية جارٍ</b> — يراجع أستاذ أو مسؤول رقم تسجيلك وشعبتك. تبقى المجموعات الرسمية متاحة، وتُفعّل الرسائل الخاصة بعد المصادقة.'
+        : (vf.statut==='rejete' ? '⛔ <b>تم رفض الطلب</b> — صحّح رقم التسجيل أو الشعبة ثم أعد إرسال الطلب. ' : '🪪 <b>التحقق من الهوية المدرسية</b> — مطلوب قبل بدء محادثة خاصة. ') +
+          '<div class="msg-vform"><input id="vfMat" placeholder="رقم التسجيل المدرسي" maxlength="40" value="'+esc(vf.matricule||'')+'"><input id="vfSec" placeholder="الشعبة / القسم (مثال: 2AS-1)" maxlength="40" value="'+esc(vf.section||'')+'"><button class="msg-send" data-act="verif-req" type="button">إرسال طلب التحقق</button></div>')
         + '</div>';
     }
-    if(!isMod0 && vf.ok && vf.statut==='verifie'){ h += '<div class="msg-verif ok">✔ Identité scolaire vérifiée — messages privés autorisés (groupe scolaire commun).</div>'; }
-    h += '<div class="msg-sec">🕌 Groupes officiels (wilaya · niveau · filière)</div><div class="msg-grid">';
+    if(!isميغابايتd0 && vf.ok && vf.statut==='verifie'){ h += '<div class="msg-verif ok">✔ تم التحقق من الهوية المدرسية — الرسائل الخاصة متاحة ضمن المجموعة الدراسية المشتركة.</div>'; }
+    h += '<div class="msg-sec">🕌 المجموعات الرسمية (wilaya · niveau · filière)</div><div class="msg-grid">';
     if(g.ok && g.groups.length){
       h += g.groups.map(function(x){
         var title = x.titre || ('Groupe '+(x.wilaya||'')+' '+(x.niveau||'')+' '+(x.filiere||''));
         return '<div class="msg-item" data-msg-kind="group" data-msg-search="'+esc((title+' '+(x.wilaya||'')+' '+(x.niveau||'')+' '+(x.filiere||'')).toLowerCase())+'">'+
-          card(title, 'Groupe scolaire · '+stamp(x.last_activity),
-          '<button class="msg-open" data-conv="'+x.id+'" type="button">Ouvrir la discussion</button>')+'</div>';
+          card(title, 'مجموعة دراسية · '+stamp(x.last_activity),
+          '<button class="msg-open" data-conv="'+x.id+'" type="button">فتح المحادثة</button>')+'</div>';
       }).join('');
     } else {
-      h += '<div class="msg-empty">Aucun groupe officiel ouvert pour ton profil pour l\'instant — création par l\'équipe pédagogique (modération, Lot 5).</div>';
+      h += '<div class="msg-empty">لا توجد مجموعة رسمية متاحة لملفك حالياً؛ يتولى الفريق التربوي إنشاء المجموعات والإشراف عليها.</div>';
     }
-    h += '</div><div class="msg-sec">✉️ Conversations privées</div><div class="msg-grid msg-direct-grid">';
+    h += '</div><div class="msg-sec">✉️ المحادثات الخاصة</div><div class="msg-grid msg-direct-grid">';
     var directs = (c.ok ? c.convs : []).filter(function(x){ return x.type==='direct'; });
     if(directs.length){
-      h += directs.map(function(x){ var title='Conversation privée #'+x.id; return '<div class="msg-item" data-msg-kind="direct" data-msg-search="'+esc((title+' '+stamp(x.last_activity)).toLowerCase())+'">'+card(title, 'Dernière activité · '+stamp(x.last_activity), '<button class="msg-open" data-conv="'+x.id+'" type="button">Ouvrir la discussion</button>')+'</div>'; }).join('');
+      h += directs.map(function(x){ var title='محادثة خاصة رقم '+x.id; return '<div class="msg-item" data-msg-kind="direct" data-msg-search="'+esc((title+' '+stamp(x.last_activity)).toLowerCase())+'">'+card(title, 'آخر نشاط · '+stamp(x.last_activity), '<button class="msg-open" data-conv="'+x.id+'" type="button">فتح المحادثة</button>')+'</div>'; }).join('');
     } else {
-      h += '<div class="msg-empty">Aucune conversation privée pour le moment. La recherche nationale de contacts et les invitations seront ajoutées après sécurisation du service côté serveur.</div>';
+      h += '<div class="msg-empty">لا توجد محادثات خاصة حالياً. سيُضاف البحث الوطني عن جهات الاتصال ونظام الدعوات بعد استكمال تأمين الخدمة على الخادم.</div>';
     }
     h += '</div>';
-    var isMod = u && (u.role==='prof' || u.role==='admin');
-    if(isMod){
+    var isميغابايتd = u && (u.role==='prof' || u.role==='admin');
+    if(isميغابايتd){
       var rep0 = await window.SB.msgReportsOpen();
       var lg0 = await window.SB.msgLogLast();
-      h += '<div class="msg-sec">🛡 Modération (prof / admin)</div><div class="msg-mod">';
-      h += '<div class="msg-modrow"><b>Signalements ouverts :</b> ' + (rep0.ok ? rep0.reports.length : '⛔ ' + esc(rep0.err)) + '</div>';
+      h += '<div class="msg-sec">🛡 ميغابايتdération (prof / admin)</div><div class="msg-mod">';
+      h += '<div class="msg-modrow"><b>البلاغات المفتوحة:</b> ' + (rep0.ok ? rep0.reports.length : '⛔ ' + esc(rep0.err)) + '</div>';
       if(rep0.ok && rep0.reports.length){
         h += rep0.reports.map(function(r){
           var m = r.msg_messages || {};
-          return '<div class="msg-modcard"><div class="msg-meta"><b>🚩 ' + esc(r.motif || 'signalement') + '</b><span>' + stamp(r.created_at) + '</span></div>' +
-            '<div class="msg-body">' + esc(m.deleted_at ? '(message déjà supprimé)' : (m.body || '')) + '</div>' +
+          return '<div class="msg-modcard"><div class="msg-meta"><b>🚩 ' + esc(r.motif || 'بلاغ') + '</b><span>' + stamp(r.created_at) + '</span></div>' +
+            '<div class="msg-body">' + esc(m.deleted_at ? '(تم حذف الرسالة سابقاً)' : (m.body || '')) + '</div>' +
             '<div class="msg-modbtns">' +
-            '<button class="msg-modbtn" data-mod="traite" data-rid="' + r.id + '" type="button">✅ traiter</button>' +
-            '<button class="msg-modbtn" data-mod="rejete" data-rid="' + r.id + '" type="button">❌ rejeter</button>' +
-            '<button class="msg-modbtn" data-mod="delmsg" data-rid="' + r.id + '" type="button">🚫 retirer le message</button>' +
-            '<button class="msg-modbtn" data-mod="retireatt" data-rid="' + r.id + '" type="button">📎 retirer la PJ</button>' +
+            '<button class="msg-modbtn" data-mod="traite" data-rid="' + r.id + '" type="button">✅ معالجة</button>' +
+            '<button class="msg-modbtn" data-mod="rejete" data-rid="' + r.id + '" type="button">❌ رفض</button>' +
+            '<button class="msg-modbtn" data-mod="delmsg" data-rid="' + r.id + '" type="button">🚫 حذف الرسالة</button>' +
+            '<button class="msg-modbtn" data-mod="retireatt" data-rid="' + r.id + '" type="button">📎 حذف المرفق</button>' +
             '</div></div>';
         }).join('');
       }
       var vq = await window.SB.msgVerificationQueue();
-      h += '<div class="msg-modrow"><b>Vérifications d\'identité en attente :</b> ' + (vq.ok ? vq.queue.length : '⛔') + '</div>';
+      h += '<div class="msg-modrow"><b>طلبات التحقق من الهوية قيد الانتظار:</b> ' + (vq.ok ? vq.queue.length : '⛔') + '</div>';
       if(vq.ok && vq.queue.length){
         h += vq.queue.map(function(q){
           return '<div class="msg-modcard"><div class="msg-meta"><b>🪪 ' + esc(q.pseudo||'?') + '</b><span>' + esc((q.wilaya||'?')+' · '+(q.niveau||'?')+' · '+(q.filiere||'?')) + '</span></div>' +
-            '<div class="msg-body">matricule : ' + esc(q.matricule||'—') + ' · section : ' + esc(q.section||'—') + '</div>' +
-            '<div class="msg-modbtns"><button class="msg-modbtn" data-mod="verif-ok" data-uid="' + q.id + '" type="button">✔ vérifier</button>' +
-            '<button class="msg-modbtn" data-mod="verif-no" data-uid="' + q.id + '" type="button">⛔ rejeter</button></div></div>';
+            '<div class="msg-body">رقم التسجيل: ' + esc(q.matricule||'—') + ' · الشعبة: ' + esc(q.section||'—') + '</div>' +
+            '<div class="msg-modbtns"><button class="msg-modbtn" data-mod="verif-ok" data-uid="' + q.id + '" type="button">✔ تأكيد</button>' +
+            '<button class="msg-modbtn" data-mod="verif-no" data-uid="' + q.id + '" type="button">⛔ رفض</button></div></div>';
         }).join('');
       }
-      h += '<div class="msg-modrow"><b>Créer un groupe officiel</b> (wilaya · niveau · filière) :</div>' +
-           '<div class="msg-modform"><input id="mgWil" placeholder="wilaya (ex. 16)" maxlength="2"><select id="mgNiv"><option value="1AS">1AS</option><option value="2AS">2AS</option><option value="3AS">3AS</option></select><input id="mgFil" placeholder="filière (ex. sciences)"><button class="msg-modbtn" data-mod="creategroup" type="button">➕ créer</button></div>';
-      h += '<div class="msg-modrow"><b>Journal (20 dernières actions) :</b></div><div class="msg-log">';
-      h += (lg0.ok ? (lg0.log.slice(0,20).map(function(l){ return '<div>' + stamp(l.at) + ' · ' + esc(l.action) + ' · ' + esc(l.cible_type) + ' #' + esc(l.cible_id) + '</div>'; }).join('') || '<div>journal vide</div>') : '<div>⛔ ' + esc(lg0.err) + '</div>');
+      h += '<div class="msg-modrow"><b>إنشاء مجموعة رسمية</b> (الولاية · المستوى · الشعبة): </div>' +
+           '<div class="msg-modform"><input id="mgWil" placeholder="رقم الولاية (مثال: 16)" maxlength="2"><select id="mgNiv"><option value="1AS">1AS</option><option value="2AS">2AS</option><option value="3AS">3AS</option></select><input id="mgFil" placeholder="الشعبة (مثال: علوم)"><button class="msg-modbtn" data-mod="creategroup" type="button">➕ إنشاء</button></div>';
+      h += '<div class="msg-modrow"><b>السجل (آخر 20 إجراء): </b></div><div class="msg-log">';
+      h += (lg0.ok ? (lg0.log.slice(0,20).map(function(l){ return '<div>' + stamp(l.at) + ' · ' + esc(l.action) + ' · ' + esc(l.cible_type) + ' #' + esc(l.cible_id) + '</div>'; }).join('') || '<div>السجل فارغ</div>') : '<div>⛔ ' + esc(lg0.err) + '</div>');
       h += '</div></div>';
     }
     box.innerHTML = h; state.conv = null;
   }
   async function renderThread(id){
     var box = el('msgBody'); if(!box) return;
-    var u = await session(); state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'moi';
+    var u = await session(); state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'أنا';
     var r = await window.SB.msgMessages(id, null, 50);
-    if(!r.ok){ closeChannel(); box.innerHTML = '<div class="msg-empty">⛔ '+esc(r.err)+'</div><button class="msg-back" data-act="back" type="button">← retour</button>'; return; }
+    if(!r.ok){ closeChannel(); box.innerHTML = '<div class="msg-empty">⛔ '+esc(r.err)+'</div><button class="msg-back" data-act="back" type="button">العودة ←</button>'; return; }
     var others = [];
     r.msgs.forEach(function(m){ if(m.sender_id!==state.me && others.indexOf(m.sender_id)===-1) others.push(m.sender_id); });
     await fetchNames(others);
-    var h = '<button class="msg-back" data-act="back" type="button">← retour à la liste</button>'+
-            '<div class="msg-head"><h3>💬 Fil #'+id+'</h3><span class="msg-pres" id="msgPres"></span></div>'+
+    var h = '<button class="msg-back" data-act="back" type="button">العودة إلى قائمة المحادثات ←</button>'+
+            '<div class="msg-head"><h3>💬 المحادثة رقم '+id+'</h3><span class="msg-pres" id="msgPres"></span></div>'+
             '<div class="msg-thread">';
     var attachmentMap = await attachmentsFor(r.msgs.map(function(m){ return m.id; }));
     var renderedRows = r.msgs.map(function(m){
@@ -214,10 +214,10 @@
       if(a && a.ok) a.sizeLabel=sizeLabel(a.octets);
       return rowHtml(m, false, a && a.found ? a : null);
     });
-    h += renderedRows.join('') || '<div class="msg-empty">Aucun message pour l\'instant.</div>';
-    h += '</div><div class="msg-input"><textarea id="msgText" rows="2" maxlength="2000" placeholder="اكتب رسالتك… / ton message…"></textarea>'+
-         '<label class="msg-pj" title="joindre un fichier (png/jpeg/webp/pdf, 5 Mo max)">📎<input type="file" id="msgFile" accept="image/png,image/jpeg,image/webp,application/pdf" hidden></label>'+
-         '<button class="msg-send" data-act="send" type="button">Envoyer ➤</button></div><div class="msg-err" id="msgErr" hidden></div>';
+    h += renderedRows.join('') || '<div class="msg-empty">لا توجد رسائل حالياً.</div>';
+    h += '</div><div class="msg-input"><textarea id="msgText" rows="2" maxlength="2000" placeholder="اكتب رسالتك…"></textarea>'+
+         '<label class="msg-pj" title="joindre un fichier (png/jpeg/webp/pdf, 5 ميغابايت max)">📎<input type="file" id="msgFile" accept="image/png,image/jpeg,image/webp,application/pdf" hidden></label>'+
+         '<button class="msg-send" data-act="send" type="button">إرسال ➤</button></div><div class="msg-err" id="msgErr" hidden></div>';
     box.innerHTML = h; state.conv = id;
     startChannel(id);
   }
@@ -306,7 +306,7 @@
       return;
     }
     var rep = t.getAttribute('data-report');
-    if(rep){ window.SB.msgReport(+rep,'signalé depuis la vue messages').then(function(){ t.disabled=true; t.textContent='🚩✓'; }); }
+    if(rep){ window.SB.msgReport(+rep,'تم الإبلاغ عنه depuis la vue messages').then(function(){ t.disabled=true; t.textContent='🚩✓'; }); }
   });
 
   /* ── MSG-7 : l'entrée « 💬 الرسائل » doit apparaître même si la sidebar a été
@@ -329,12 +329,12 @@
     var err=el('msgErr'), conv=state.conv;
     var allowed=['image/png','image/jpeg','image/webp','application/pdf'];
     if(allowed.indexOf(f.type)===-1 || !f.size || f.size>5242880){
-      if(err){ err.hidden=false; err.textContent='⛔ Format accepté : PNG, JPEG, WebP ou PDF, 5 Mo maximum.'; }
+      if(err){ err.hidden=false; err.textContent='⛔ Format accepté : PNG, JPEG, WebP ou PDF, 5 ميغابايت maximum.'; }
       input.value=''; return;
     }
     var sendButton=document.querySelector('#msgBody [data-act="send"]');
     if(sendButton) sendButton.disabled=true;
-    if(err){ err.hidden=false; err.textContent='⏳ Téléversement de '+f.name+'…'; }
+    if(err){ err.hidden=false; err.textContent='⏳ جارٍ رفع الملف '+f.name+'…'; }
     var sent=await window.SB.msgSend(conv, '📎 '+f.name);
     if(!sent.ok){
       if(err){ err.hidden=false; err.textContent='⛔ '+sent.err; }
@@ -343,14 +343,14 @@
     }
     var uploaded=await window.SB.msgUpload(conv, sent.msg.id, f);
     if(!uploaded.ok){
-      if(err){ err.hidden=false; err.textContent='⛔ Le fichier n’a pas pu être joint : '+uploaded.err; }
+      if(err){ err.hidden=false; err.textContent='⛔ تعذّر إرفاق الملف: '+uploaded.err; }
       if(sendButton) sendButton.disabled=false;
       input.value=''; await renderThread(conv); return;
     }
     input.value='';
     await renderThread(conv);
     var successErr=el('msgErr');
-    if(successErr){ successErr.hidden=false; successErr.textContent='✔ Fichier envoyé.'; }
+    if(successErr){ successErr.hidden=false; successErr.textContent='✔ تم إرسال الملف.'; }
   });
   document.addEventListener('keydown', function(e){
     if(e.target && e.target.id==='msgText' && e.key==='Enter' && !e.shiftKey){
