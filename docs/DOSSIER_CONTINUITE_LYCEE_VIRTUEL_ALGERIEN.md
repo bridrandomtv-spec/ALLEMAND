@@ -153,3 +153,15 @@
 - La migration `202611130002_multaqa_community_feed.sql` reste préparée dans GitHub et non appliquée. Aucun DDL/DML, Auth, RLS, donnée ou paramètre de Supabase actif n'a été modifié.
 - Prochaine étape : obtenir une validation PostgreSQL réelle sans utiliser la base active et sans créer de branche/projet payant. Tant qu'aucun environnement de test gratuit contrôlé n'est disponible, conserver le fil en état explicite « service non activé » plutôt que prétendre que les publications fonctionnent.
 - Aucun changement sur `main`, aucune fusion PR #17, aucun déploiement Cloudflare.
+
+
+## Lot 446 — préparation contrôlée de l'activation PostgreSQL de ملتقى الطلاب (13 novembre 2026)
+- Accord utilisateur reçu pour préparer l'activation sur le projet Supabase gratuit existant. Cet accord n'autorise ni la migration Messenger, ni une modification de main, ni une fusion, ni un déploiement Cloudflare.
+- Préflight en lecture seule sur le projet actif `azjwcybivirvpxbfhyzk` : connexion confirmée ; tables `profiles`, `msg_conversations`, `msg_members`, `msg_blocks` présentes ; colonnes `profiles.id/role/verif_statut/pseudo` présentes ; contrainte CHECK de `verif_statut` cohérente avec les quatre valeurs documentées.
+- Historique Supabase : aucune migration communautaire `multaqa` enregistrée. Les quatre tables `multaqa_posts/comments/reactions/reports` et les RPC `multaqa_*` n'existent pas encore. Aucun profil, message, contenu d'élève ou enregistrement métier n'a été lu.
+- Revue des dépendances : `auth.users` est la cible des clés étrangères ; `profiles` fournit rôle, statut de vérification et pseudo. Les dépendances structurelles requises sont présentes. Les migrations Messenger restent distinctes et non appliquées.
+- Création d'un test PostgreSQL isolé dans GitHub Actions : `ci/multaqa-postgres-test.sql` et `.github/workflows/multaqa-postgres-test.yml`. Le workflow démarre un PostgreSQL 17 jetable, construit uniquement des comptes synthétiques, applique la migration communautaire dans cette base éphémère et teste privilèges, refus anon/non-élève/non-vérifié, fil, publication, commentaire, réaction, signalement et suppression auteur.
+- Commit du test SQL : `00e0e718bcd0de05f5289963d8fc3220688338ce`. Commit du workflow : `52fade90b98d8da16901d1d787addd1191aeca93`. Run GitHub Actions #1 : `43499787337`, statut en cours au moment de cette note ; ne pas déclarer le test réussi avant conclusion GitHub.
+- Le projet Supabase actif n'a subi aucune écriture : migration non appliquée, aucun DDL/DML, aucune modification RLS/Auth/Realtime, aucun changement Messenger. Aucun coût ou projet payant ajouté.
+- Blocage avant activation réelle : attendre le résultat du test PostgreSQL isolé et corriger tout échec. Même après réussite, confirmer explicitement l'application de la migration sur le projet Supabase actif avant exécution ; cette note ne vaut pas autorisation d'appliquer la migration.
+- PR #17 : toujours ouverte, non fusionnée ; branche `design/prototypes-67-74-alignment`, HEAD `52fade90b98d8da16901d1d787addd1191aeca93`, base `main`. Aucun déploiement Cloudflare.
