@@ -8656,3 +8656,20 @@ Vérifier la CI sur le HEAD Lot 412. Ensuite, présenter les décisions non tech
 ### Suite — Lot 414
 
 Vérifier la CI déclenchée par le Lot 413. Puis poursuivre l'audit de préparation fonctionnelle du prototype ملتقى : inventaire des interactions réellement actives, séparation stricte entre démonstration locale et fonctionnalités persistées, et liste des dépendances backend nécessaires. Ne pas activer de fonctions sociales réelles tant que l'identité scolaire et les autorisations serveur ne sont pas démontrées.
+
+
+### Lot 414 — parcours et écrans arabes de vérification scolaire gratuite (13 novembre 2026)
+
+- Clarification produit prioritaire : le propriétaire souhaite que ملتقى الطلاب soit accessible gratuitement aux élèves disposant d'un compte actif inscrit sur la plateforme, sans exiger la vérification scolaire pour participer au forum. La modération, les limites anti-abus et les autorisations serveur restent obligatoires.
+- الرسائل reste contrôlé : identité/affiliation scolaire vérifiée avant le premier contact privé, puis acceptation explicite du destinataire avant création du DM.
+- L'abonnement ne prouve jamais l'identité et ne conditionne pas la vérification gratuite.
+- Cette décision corrige la matrice trop restrictive du Lot 413 : sa formulation réservant l'accès au contenu social aux élèves vérifiés est supersédée. Les autres principes du Lot 413 (gratuité essentielle, consentement, blocage, sécurité et séparation du paiement) restent applicables.
+- Prototype arabe ajouté : prototypes/school-verification-preview.html (formulaire élève + écran de responsable habilité ; données fictives ; actions désactivées ; aucune connexion backend).
+- Rapport : docs/product/LOT-414-PARCOURS-VERIFICATION-SCOLAIRE-ARABE.md.
+- Audit statique confirmé : msgRequestVerification(subscriptionNumber, section) dans supabase/supabase.js exige actuellement un abonnement actif et écrit ce numéro dans profiles.matricule ; msg.js demande le numéro d'abonnement après paiement. Le présent lot n'a pas corrigé le code actuel.
+- Aucune écriture ou lecture de données personnelles Supabase, aucun changement Auth/SQL/schéma/migration/RLS/Storage/Realtime/paiement, aucun déploiement, aucune modification de main, aucune synchronisation et aucune fusion.
+- CI précédente sur le HEAD b9887b76 : run #3420 (43446744226) terminé avec succès. Le nouveau HEAD documentaire/prototype doit être contrôlé séparément.
+
+### Suite — Lot 415
+
+Contrôler la CI déclenchée par le Lot 414. Ensuite définir la matrice des rôles vérificateurs (établissement / wilaya / administration centrale), les preuves acceptables et la procédure de recours, sans raccordement ni modification de la base active.
