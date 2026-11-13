@@ -53,7 +53,7 @@ assert.match(css,/\.sd-subject-grid/,'grille des matières du tableau de bord ab
 assert.match(html,/id="sdSubjects"/,'zone des matières du tableau de bord absente');
 assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
 assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
-assert.match(sw,/style-prototype-dz\.css\?v=195/,'version CSS v195 non précachée');
+assert.match(sw,/style-prototype-dz\.css\?v=195/,'version CSS v196 non précachée');
 assert.doesNotMatch(html,/id="studentFocus"|id="studentContinue"/,'ancienne retouche du tableau de bord subsiste dans فضائي الدراسي');
 assert.doesNotMatch(app,/renderStudentFocus|sf-continue-card/,'ancien rendu de tableau de bord subsiste dans فضائي الدراسي');
 
