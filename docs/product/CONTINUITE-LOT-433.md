@@ -34,3 +34,12 @@ Préparer un paquet de requêtes de diagnostic SELECT sur le catalogue PostgreSQ
 ## Contrôle PR / CI
 - La vérification PR/CI reste à refaire après le commit du Lot 433.
 - Ne pas fusionner, rebaser ou synchroniser la branche sans autorisation.
+
+## Contrôle GitHub après commits du Lot 433
+- Commit du rapport Lot 433 : f74d7c9118e60e8d2fc69c931e02efe863e35ef2.
+- Commit de la continuité Lot 433 : ad9fd420503d0fd4524f9824f7bb4ca80a549304.
+- Commit ajoutant le lien Lot 433 à la continuité Lot 432 : 4bcd12b6fcc397a0e3f1fbd38c1063d1444aa612.
+- HEAD PR #17 confirmé : 4bcd12b6fcc397a0e3f1fbd38c1063d1444aa612.
+- PR #17 : toujours ouverte, non fusionnée, base main ; GitHub retourne mergeable=false. Aucun rebase, changement de base ou synchronisation effectué.
+- Aucune exécution CI associée au HEAD retournée par la recherche. CI non confirmée, donc pas déclarée réussie.
+- Aucun déploiement Cloudflare.
