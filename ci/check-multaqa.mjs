@@ -17,12 +17,13 @@ has(/item\[0\]\s*!==\s*'multaqa'\s*\|\|\s*canSeeStudentDashboard\(\)/.test(app),
 has(/data-view="multaqa"[^>]*class="view mtq-view"[^>]*hidden/.test(html), 'index.html : vue ملتقى absente ou non masquée initialement');
 has(/data-view="msg"/.test(html) && /data-go="msg"[^>]*>💬 الانتقال إلى الرسائل/.test(html), 'index.html : lien distinct vers Messenger absent');
 has(/document\.addEventListener\('dz:view'/.test(msg), 'msg.js : écoute du cycle de navigation Messenger absente');
-has(/id="mtqApp"/.test(html) && /multaqa\.js\?v=1/.test(html), 'index.html : conteneur et client dynamique du fil absents');
+has(/id="mtqApp"/.test(html) && /multaqa\.js\?v=2/.test(html), 'index.html : conteneur et client dynamique du fil absents');
 has(/multaqa_feed/.test(communityClient) && /multaqa_create_post/.test(communityClient) && /multaqa_create_comment/.test(communityClient), 'multaqa.js : lecture et publication RPC absentes');
 has(/multaqa_toggle_reaction/.test(communityClient) && /multaqa_report/.test(communityClient) && /multaqa_comments/.test(communityClient), 'multaqa.js : réactions, commentaires et signalements RPC absents');
 has(/verif_statut!==\'verifie\'/.test(communityClient), 'multaqa.js : garde de vérification scolaire côté interface absente');
 has(/function esc\(/.test(communityClient) && /esc\(p\.body\)/.test(communityClient), 'multaqa.js : échappement des contenus utilisateurs absent');
-has(/multaqa\.js\?v=1/.test(sw), 'sw.js : client communautaire absent du précache');
+has(/function waitForSupabase\(\)/.test(communityClient) && /dz:sbready/.test(communityClient), 'multaqa.js : attente du client Supabase absente');
+has(/multaqa\.js\?v=2/.test(sw), 'sw.js : client communautaire absent du précache');
 
 
 const communitySql = fs.readFileSync('supabase/migrations/202611130002_multaqa_community_feed.sql', 'utf8');
