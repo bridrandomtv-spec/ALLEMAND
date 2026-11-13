@@ -8035,3 +8035,16 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Aucun compte, identité, session, refresh token, bucket ou objet réel consulté ; aucun test Auth/Storage/Realtime exécuté ; aucune écriture/DDL/migration ou modification Auth/RLS/GRANT/Storage/Realtime.
 - Aucun projet de test créé ni frais engagé. PR #17 reste ouverte et non fusionnée ; main et production inchangées.
 - Suite : construire le manifeste d'assemblage du baseline en classant les objets par couche (application, Auth simulé, services Supabase managés), puis préparer les tests négatifs d'auto-vérification et de DM sans invitation. La création du second projet Free reste en attente d'une autorisation explicite.
+
+
+## Lot 377 — manifeste de baseline et plan de tests Messenger (13 novembre 2026)
+
+- Consolidation des Lots 366–376 en manifeste de restauration à trois couches : schéma applicatif, contrat Auth simulable, services Supabase managés (Auth complet, Storage API, Realtime) qui ne sont pas équivalents à un PostgreSQL générique.
+- Ordre de restauration défini : version/extensions, rôles minimaux, shim Auth éventuel, tables dépendances, contraintes/index/séquences, fonctions/triggers, RLS/ACL, comptes synthétiques, tests multi-rôles ; tests Storage/Realtime séparés.
+- Jeu de comptes synthétiques défini : ELEVE_A/B/C/D, MOD_W01/W02, ADMIN_TEST et ANON, avec périmètres fictifs et sans identifiants réels.
+- Matrice prioritaire : auto-vérification, modération par wilaya, claims user_metadata non fiables, INSERT/RPC DM sans invitation, invitation acceptée/refusée/expirée, concurrence/idempotence, blocage bilatéral, suspension, pièces jointes, débit, audit et périmètres administratifs.
+- Critères de sortie définis : comparaison catalogues, exécution sous rôle/claim corrects, scénarios négatifs effectifs, limites d'émulation documentées et zéro accès en écriture à la production.
+- Rapport : docs/product/LOT-377-MANIFESTE-BASELINE-ET-PLAN-TESTS-MESSENGER.md, commit 973894b892520471d9fcc1d6621d134e2221588b.
+- Aucun moteur PostgreSQL local disponible ; aucune base de test créée et aucun test PostgreSQL/RLS multi-compte exécuté. La création du second projet Free estimé à 0 USD/mois reste en attente d'une autorisation explicite ; aucune ressource payante ou facturation.
+- Aucun changement du projet Supabase actif, Auth/RLS/GRANT/Storage/Realtime, main ou production. PR #17 reste ouverte et non fusionnée.
+- Prochaine étape : préparer le harness de scénarios synthétiques sous forme de fichiers SQL/tests, sans l'exécuter contre la base active. L'exécution réelle attendra un moteur isolé gratuit explicitement autorisé.
