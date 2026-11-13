@@ -54,6 +54,42 @@ $$;
 revoke all on function public.msg_pair_blocked(uuid, uuid) from public;
 grant execute on function public.msg_pair_blocked(uuid, uuid) to authenticated;
 
+-- Bloquer également la lecture d'un DM dès qu'une des deux parties bloque l'autre.
+-- Les règles de groupes restent inchangées.
+create or replace function public.msg_is_member(uid uuid, cid bigint)
+returns boolean
+language sql stable security definer
+set search_path = pg_catalog, public
+as $
+  select exists (
+    select 1
+      from public.msg_conversations c
+     where c.id = cid
+       and (
+         (c.type = 'direct'
+          and exists (select 1 from public.msg_members mine
+                       where mine.conversation_id=c.id and mine.user_id=uid)
+          and not exists (
+            select 1 from public.msg_members peer
+             where peer.conversation_id=c.id and peer.user_id<>uid
+               and public.msg_pair_blocked(uid,peer.user_id)
+          ))
+         or
+         (c.type = 'groupe'
+          and (
+            exists (select 1 from public.msg_members m
+                     where m.conversation_id=c.id and m.user_id=uid)
+            or exists (
+              select 1 from public.profiles p
+               where p.id=uid and p.wilaya is not null and p.niveau is not null
+                 and p.wilaya=c.wilaya and p.niveau=c.niveau
+                 and (c.filiere is null or p.filiere=c.filiere)
+            )
+          ))
+       )
+  );
+$;
+
 -- Le test existant reste requis (identité vérifiée + compatibilité scolaire).
 -- On lui ajoute le blocage bilatéral au niveau des contrôles de parcours DM.
 create or replace function public.msg_not_blocked(cid bigint, snd uuid)
