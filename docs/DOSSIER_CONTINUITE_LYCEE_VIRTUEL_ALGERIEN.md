@@ -8122,3 +8122,16 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Script : tests/messenger/auth_test_shim_generic_postgres.sql, commit fea1ca9b5a036ce3b1568ad4e2defd5d2f07c50e.
 - Aucune écriture Supabase active, aucune ressource payante, aucun déclenchement manuel de GitHub Actions, aucun changement sur main, aucune fusion ni déploiement.
 
+
+
+## Lot 382 — dépendances Auth et fixtures synthétiques (13 novembre 2026)
+
+- Extraction SELECT-only de `public.handle_new_user()` et du trigger `auth.users.on_auth_user_created`.
+- Constat exact : la fonction crée le profil avec le rôle forcé à `eleve`, copie pseudo/niveau/filiere/wilaya depuis `raw_user_meta_data`, et crée une demande parent `pending` uniquement si `requested_role='parent'`. Elle ne donne pas directement le rôle parent.
+- Risque produit confirmé : les valeurs scolaires de `raw_user_meta_data` sont déclaratives, non une preuve indépendante d'inscription dans un lycée. Le futur annuaire national doit distinguer profil, vérification interne et affiliation officielle. La source officielle élève↔lycée n'est pas encore établie.
+- Fixtures synthétiques A/B/C/D/E/F/G/H/M1/M2/ADM et scénarios AUTH/VER/SCOPE/DM/MOD ajoutés dans `tests/messenger/LOT-382-FIXTURES-IDENTITES-SYNTHETIQUES.md`, commit d0378f6c46ea5b77220cf3bed4fc65f760ea6459.
+- Rapport : `docs/product/LOT-382-DEPENDANCES-AUTH-ET-FIXTURES-SYNTHETIQUES.md`, commit 7b0b1a8e311cb3e4fd22a06a877b684694da1ead.
+- Aucun compte créé, aucun test exécuté, aucun accès aux lignes Auth ou profils réels. Aucun changement Supabase actif, aucune création de projet, aucun paiement, aucun CI hébergé déclenché.
+- PR #17 reste ouverte et non fusionnée ; main et production inchangées.
+- Suite : concevoir l'adaptateur Auth local et les fixtures administratives minimales, puis obtenir un PostgreSQL 17 isolé avant toute exécution.
+
