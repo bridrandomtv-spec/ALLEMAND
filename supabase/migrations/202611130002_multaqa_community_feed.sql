@@ -66,6 +66,8 @@ create table if not exists public.multaqa_reports (
 
 create index if not exists multaqa_reports_queue_idx
   on public.multaqa_reports(created_at) where status = 'open';
+create index if not exists multaqa_reports_reporter_idx
+  on public.multaqa_reports(reporter_id, created_at desc);
 
 alter table public.multaqa_posts enable row level security;
 alter table public.multaqa_comments enable row level security;
@@ -262,6 +264,7 @@ as $$
 declare
   v_uid uuid := auth.uid();
   v_details text := nullif(btrim(coalesce(p_details, '')), '');
+  v_count integer;
 begin
   if v_uid is null or not exists (
     select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve'
@@ -271,6 +274,11 @@ begin
     raise exception 'invalid_report_reason';
   end if;
   if v_details is not null and char_length(v_details) > 500 then raise exception 'report_too_long'; end if;
+
+  perform pg_advisory_xact_lock(hashtextextended(v_uid::text, 446));
+  select count(*) into v_count from public.multaqa_reports
+   where reporter_id = v_uid and created_at > now() - interval '24 hours';
+  if v_count >= 20 then raise exception 'report_rate_limit'; end if;
 
   if p_target_kind = 'post' and not exists (
     select 1 from public.multaqa_posts p where p.id = p_target_id and p.status = 'published'
@@ -348,6 +356,6 @@ commit;
 -- 5. commentaire parent d'un autre post refusé; suppression limitée à l'auteur.
 -- 6. réaction idempotente/concurrente : une seule ligne par couple post/utilisateur.
 -- 7. quotas concurrentiels : 10 posts et 30 commentaires / 24 h maximum.
--- 8. signalement idempotent, cible inexistante et raisons invalides refusées.
+-- 8. signalement idempotent, cible inexistante, raisons invalides et quota 20/24 h refusés.
 -- 9. accès REST direct aux quatre tables refusé malgré RPC autorisées.
 -- 10. aucune régression sur les tables Messenger, groupes, RLS, Realtime ou Auth.
