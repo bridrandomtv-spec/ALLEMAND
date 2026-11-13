@@ -18168,3 +18168,44 @@ html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-input text
  section[data-view="msg"] #msgBody .msg-send:after{content:'➤';font-size:16px}
  section[data-view="msg"] #msgBody .msg-thread-nav-label{display:none}
 }
+
+
+/* LOT 443 — alignement du vrai ملتقى الطلاب sur le modèle communautaire professionnel. */
+section[data-view="multaqa"] .mtq-layout{grid-template-columns:minmax(0,1fr) minmax(260px,292px);gap:18px;align-items:start}
+section[data-view="multaqa"] .mtq-feed{grid-column:1;grid-row:1 / span 2;min-width:0}
+section[data-view="multaqa"] .mtq-rail{grid-column:2;grid-row:1;position:static;gap:12px}
+section[data-view="multaqa"] .mtq-discover{grid-column:2;grid-row:2;position:static;gap:12px}
+section[data-view="multaqa"] .mtq-topline{padding:23px 26px;border-radius:18px;background:linear-gradient(115deg,rgba(0,98,51,.13),var(--p) 62%,rgba(210,16,52,.07))}
+section[data-view="multaqa"] .mtq-topline h1{letter-spacing:0;line-height:1.45}
+section[data-view="multaqa"] .mtq-profile-card,section[data-view="multaqa"] .mtq-nav,section[data-view="multaqa"] .mtq-rail-note,section[data-view="multaqa"] .mtq-discover-card,section[data-view="multaqa"] .mtq-compose-card,section[data-view="multaqa"] .mtq-feed-state{border-radius:15px;box-shadow:0 4px 16px rgba(17,64,37,.055)}
+section[data-view="multaqa"] .mtq-profile-cover{height:86px;background:linear-gradient(125deg,#064b2d 0%,#087d43 62%,#d21034 100%)}
+section[data-view="multaqa"] .mtq-nav-item{min-height:43px;transition:background .16s ease,color .16s ease}
+section[data-view="multaqa"] .mtq-nav-item.active{background:rgba(0,98,51,.11);box-shadow:inset -3px 0 0 var(--g)}
+section[data-view="multaqa"] .mtq-welcome{min-height:176px;padding:26px 28px;border-radius:17px}
+section[data-view="multaqa"] .mtq-compose-card{padding:18px}
+section[data-view="multaqa"] .mtq-compose-actions{gap:8px}
+section[data-view="multaqa"] .mtq-compose-actions>span{border:1px solid var(--b);border-radius:9px;padding:8px 10px}
+section[data-view="multaqa"] .mtq-compose-actions button{min-height:38px;border-radius:9px}
+section[data-view="multaqa"] .mtq-feed-state{min-height:300px;padding:34px clamp(18px,4vw,42px)}
+section[data-view="multaqa"] .mtq-discover-card{padding:17px}
+section[data-view="multaqa"] .mtq-discover-card>div{padding:12px 0}
+section[data-view="multaqa"] .mtq-messenger-link{min-height:46px;border-radius:11px}
+html:not([data-theme="light"]) section[data-view="multaqa"] .mtq-topline{background:linear-gradient(115deg,#123b27,#10251b 62%,#321b22);border-color:#315b42}
+html:not([data-theme="light"]) section[data-view="multaqa"] .mtq-profile-card,html:not([data-theme="light"]) section[data-view="multaqa"] .mtq-nav,html:not([data-theme="light"]) section[data-view="multaqa"] .mtq-rail-note,html:not([data-theme="light"]) section[data-view="multaqa"] .mtq-discover-card,html:not([data-theme="light"]) section[data-view="multaqa"] .mtq-compose-card,html:not([data-theme="light"]) section[data-view="multaqa"] .mtq-feed-state{box-shadow:0 5px 18px rgba(0,0,0,.16)}
+@media(max-width:920px){
+ section[data-view="multaqa"] .mtq-layout{grid-template-columns:minmax(0,1fr)}
+ section[data-view="multaqa"] .mtq-feed{grid-column:1;grid-row:1}
+ section[data-view="multaqa"] .mtq-rail{grid-column:1;grid-row:2;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
+ section[data-view="multaqa"] .mtq-discover{grid-column:1;grid-row:3;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+ section[data-view="multaqa"] .mtq-discover>.mtq-messenger-link{grid-column:1/-1}
+}
+@media(max-width:620px){
+ section[data-view="multaqa"] .mtq-topline{padding:18px;gap:12px}
+ section[data-view="multaqa"] .mtq-layout{gap:13px}
+ section[data-view="multaqa"] .mtq-rail,section[data-view="multaqa"] .mtq-discover{grid-template-columns:1fr}
+ section[data-view="multaqa"] .mtq-welcome{min-height:0;padding:19px}
+ section[data-view="multaqa"] .mtq-compose-card{padding:14px}
+ section[data-view="multaqa"] .mtq-compose-actions>span{flex:1 1 auto;text-align:center}
+ section[data-view="multaqa"] .mtq-compose-actions button{width:100%;margin:4px 0 0}
+ section[data-view="multaqa"] .mtq-feed-state{min-height:260px;padding:26px 16px}
+}
