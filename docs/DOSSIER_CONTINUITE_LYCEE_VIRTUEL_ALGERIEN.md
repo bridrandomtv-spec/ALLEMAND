@@ -8553,3 +8553,17 @@ Faire vérifier le rendu sur de vrais navigateurs et tailles d'écran (Windows/m
 - Périmètre : aucun changement à `main`, aucune fusion, aucun déploiement Cloudflare, aucune modification Supabase/Auth/RLS/Storage/Realtime, aucune dépendance ajoutée.
 - Limites de validation : contrôles de cohérence des références et CI à vérifier après commit ; aucun navigateur réel ni appareil Windows/macOS/Android/iPhone n'a été piloté dans ce lot. Le manifeste PWA ne constitue pas une publication native dans les stores.
 - Suite : vérifier la CI sur le nouveau HEAD, puis effectuer une validation visuelle réelle de la preview déployée correspondant exactement à ce HEAD avant d'envisager l'activation fonctionnelle du réseau social.
+
+
+---
+
+## Lot 409 — audit des accès et garde-fous de navigation du ملتقى الطلاب (13 novembre 2026)
+
+- Vérification de `app.js` : `multaqa` est enregistré comme vue ; `canSeeStudentDashboard()` exige une session avec rôle `eleve` ; `go('multaqa')` redirige les autres rôles vers `accueil`.
+- La navigation desktop et le raccourci mobile filtrent aussi le lien `multaqa` selon le même contrôle d'interface.
+- Le bouton depuis le ملتقى vers `💬 الرسائل` utilise toujours la route distincte `msg` ; le module Messenger conserve son écouteur de navigation `dz:view`.
+- Création de `ci/check-multaqa.mjs` et ajout à `.github/workflows/deploy.yml` pour empêcher la régression des gardes de navigation, du lien Messenger et des avertissements de maquette.
+- Limite de sécurité importante : le contrôle du rôle dans `app.js` est un garde-fou d'interface, pas une autorisation serveur. Il ne suffit pas à sécuriser de futures publications, recherches, profils ou groupes. Toute fonction sociale devra utiliser des opérations serveur/RLS et des tests multi-comptes dédiés.
+- Aucun appel/écriture Supabase, aucune migration, aucun changement Auth/RLS/Storage/Realtime, aucune donnée d'élève consultée, aucun déploiement Cloudflare et aucune fusion. La CI doit exécuter le nouveau test sur le HEAD courant.
+- Le réseau social reste une maquette intégrée : aucun post, commentaire, relation, groupe ou notification sociale n'est activé.
+- Suite : vérifier le résultat CI et concevoir les opérations serveur minimales du MVP social dans un document de contrat, sans appliquer de migration à la base active.
