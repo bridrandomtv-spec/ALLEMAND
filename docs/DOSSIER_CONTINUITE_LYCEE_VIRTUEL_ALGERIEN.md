@@ -8135,3 +8135,16 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - PR #17 reste ouverte et non fusionnée ; main et production inchangées.
 - Suite : concevoir l'adaptateur Auth local et les fixtures administratives minimales, puis obtenir un PostgreSQL 17 isolé avant toute exécution.
 
+
+
+## Lot 383 — adaptateur Auth local PostgreSQL 17 (13 novembre 2026)
+
+- Extraction SELECT-only des colonnes de `public.profiles` et `public.parent_role_requests` ; aucune ligne consultée.
+- Colonnes profils confirmées : id, pseudo, role, niveau, filiere, wilaya, created_at, verif_statut, verif_by, verif_at, matricule, section.
+- Colonnes parent_role_requests confirmées : id, user_id, status, created_at, decided_at, decided_by.
+- Ajout de `tests/messenger/auth_local_adapter_postgres17.sql` : table Auth locale minimale id/raw_user_meta_data, garde-fou d'environnement isolé, vérification des dépendances et trigger local distinct vers `public.handle_new_user()`. Les exemples de fixtures restent commentés et synthétiques.
+- Script initial commit 2c23e335074f2412c1b32401e3f09a0f100d5b0c ; correction des UUID de probes pour éviter tout chevauchement avec les alias A..ADM commit 420fa0ad6d2f5aff573ba882b212d4be18cd3eaf.
+- Rapport : `docs/product/LOT-383-ADAPTATEUR-AUTH-LOCAL-POSTGRESQL-17.md`, commit 950ad91c718575f7ebd4d70052d8d0d6b157915c.
+- Limite : l'adaptateur est une substitution locale minimale, pas le schéma ni le service Auth Supabase. Il n'a pas été exécuté ; aucun compte synthétique créé ; aucun test de trigger/RLS lancé.
+- Aucun changement sur Supabase actif, aucun projet de test créé, aucun frais, aucun workflow CI lancé. PR #17 ouverte et non fusionnée ; main inchangée.
+
