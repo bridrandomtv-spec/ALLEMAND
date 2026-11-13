@@ -522,11 +522,19 @@ async function msgMyVerification(){
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, statut:(r.data && r.data.verif_statut) || 'non_verifie', matricule:(r.data && r.data.matricule) || '', section:(r.data && r.data.section) || '' };
 }
-async function msgRequestVerification(matricule, section){
-  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
-  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+async function msgRequestVerification(subscriptionNumber, section){
+  const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const number = String(subscriptionNumber || '').trim();
+  if(!/^\\d{1,20}$/.test(number) || !Number.isSafeInteger(Number(number)) || Number(number) < 1){
+    return { ok:false, err:'أدخل رقم اشتراك صحيحًا.' };
+  }
+  const sub = await c.from('subscriptions').select('id')
+    .eq('id', number).eq('user_id', u.id).eq('statut', 'actif').maybeSingle();
+  if(sub.error) return { ok:false, err:'تعذّر التحقق من الاشتراك. حاول مجددًا.' };
+  if(!sub.data) return { ok:false, err:'رقم الاشتراك غير صحيح أو غير مرتبط بهذا الحساب أو لم يُفعّل الدفع بعد.' };
   const r = await c.from('profiles')
-    .update({ verif_statut:'en_attente', matricule:String(matricule||'').slice(0,40), section:String(section||'').slice(0,40) })
+    .update({ verif_statut:'en_attente', matricule:number, section:String(section||'').trim().slice(0,40) })
     .eq('id', u.id).or('verif_statut.eq.non_verifie,verif_statut.eq.rejete');
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true };
