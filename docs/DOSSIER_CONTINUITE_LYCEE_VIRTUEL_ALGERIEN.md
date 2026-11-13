@@ -8799,6 +8799,6 @@ Comparer l'export du catalogue actif aux scripts du dépôt, identifier les RPC 
 - Décisions produit maintenues : `ملتقى الطلاب` gratuit pour les élèves actifs ; vérification scolaire gratuite ; messagerie privée conditionnée à la vérification et à l'acceptation du destinataire.
 - Dépendances : export catalogue expurgé ou autorisation de lecture seule limitée ; sortie PowerShell Lot 419 pour identifier l'environnement local déjà disponible.
 
-### Suite — Lot 423
+### Suite — Lots 423 à 426
 
-Dès réception des preuves du catalogue et de l'environnement local, produire la comparaison « dépôt / catalogue actif / tests » et un verdict pour chaque invariant. Sans ces éléments, le NO-GO reste maintenu pour déclarer le Messenger privé terminé.
+Les lots suivants sont consignés dans [LOT-426-RENFORCEMENT-PREFLIGHT-ET-RESTAURATION-CONTINUITE.md](product/LOT-426-RENFORCEMENT-PREFLIGHT-ET-RESTAURATION-CONTINUITE.md), avec leurs rapports individuels. Le dossier principal conserve l'historique jusqu'au Lot 422 ; cet addendum prolonge la continuité sans dépasser la limite de restitution du fichier.
