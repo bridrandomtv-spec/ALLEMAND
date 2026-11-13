@@ -7621,3 +7621,13 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Commit correctif : `6a5694e`. Une nouvelle exécution CI doit confirmer la reprise complète des assertions.
 - Le commentaire Cloudflare de la PR confirme un déploiement Preview réussi du commit `6ed6799` (URL de branche et URL de commit fournies dans le commentaire). Ce déploiement ne comprend pas le correctif CI `6a5694e` tant qu'un nouveau build n'est pas confirmé.
 - Aucun déploiement production, aucune fusion, aucune modification de `main`, aucun changement Supabase/Auth/RLS/schéma/Storage.
+
+
+## 29. Lot 359-E — Alignement du contrôle CI sur le Service Worker v145 (13 novembre 2026)
+
+- La CI #3276 a exécuté avec succès les validations de syntaxe, de Messenger, d'administration, du registre et des unités pédagogiques. Elle s'est arrêtée ensuite sur le contrôle du portail public.
+- Cause exacte : `sw.js` et `index.html` référencent correctement `style-prototype-dz.css?v=195` et le Service Worker est déjà en version `dz-de-v3.185.0.0.145`. Le test `ci/check-public-portal.mjs` conservait deux assertions historiques sur la version `.144`, provoquant un faux échec.
+- Correction limitée au test : les deux attentes de version du Service Worker sont alignées sur `.145`. Aucun CSS, HTML, code runtime, route, identifiant ou contrat serveur modifié dans ce correctif.
+- Commit du correctif CI : `e498fdb`. Une nouvelle CI doit confirmer le passage complet du workflow ; aucun succès n'est présumé avant sa conclusion.
+- Les contrôles Messenger de la CI #3276 ont tous réussi, y compris l'harmonisation arabe et les assertions ajoutées au lot 359-D.
+- Aucun changement Supabase/Auth/RLS/schéma/Storage, aucune modification de `main`, aucun déploiement de production et aucune fusion de PR #17. PR #17 reste ouverte et non fusionnée.
