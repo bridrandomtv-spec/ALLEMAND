@@ -76,3 +76,12 @@
 - Aucun faux message, faux contact, faux compteur ou faux contenu pédagogique n'est injecté : les compteurs sont dérivés des résultats réels des fonctions existantes.
 - Limites fonctionnelles inchangées : les invitations de conversation et les nouvelles règles de consentement restent indisponibles tant que la migration préparée n'a pas été testée dans PostgreSQL puis appliquée avec autorisation. Le forum ملتقى الطلاب reste une interface sans backend de publication.
 - Aucun changement Auth, RLS, schéma actif, paiement, données Supabase, main ou déploiement Cloudflare. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 442 — écran de conversation Messenger (13 novembre 2026)
+- Refonte de l'écran intérieur des conversations : barre de retour, en-tête de dialogue sans identifiant technique visible, présence, zone de lecture distincte, bulles entrantes/sortantes, horodatage, signalement, aperçus de pièces jointes et compositeur de message.
+- Styles RTL responsives, thèmes clair/sombre, hauteur de fil adaptée aux écrans mobiles. Les mécanismes existants de lecture, envoi, Realtime, pièces jointes et signalement sont conservés.
+- Recherche accessible : le libellé aria-label garde l'expression « ابحث في محادثاتي ومجموعاتي » tout en précisant les nouveaux critères.
+- Cache : msg.js?v=3516, style-prototype-dz.css?v=199, service worker dz-de-v3.185.0.0.150.
+- CI : correction du test de blocage bilatéral afin qu'il vérifie la condition réellement implémentée dans msg_is_member (DM + msg_pair_blocked sur le membre pair). Synchronisation des assertions de précache.
+- Aucun message fictif ajouté. Aucun changement de schéma actif, Auth, RLS, données Supabase, paiement, main ou déploiement. PR #17 reste ouverte et non fusionnée. Migration des invitations toujours non appliquée.
