@@ -165,7 +165,7 @@
       h += '<div class="msg-empty">لا توجد محادثات خاصة بعد. لا تُفتح أي محادثة جديدة إلا بعد قبول دعوة صريحة من الطرف الآخر.</div>';
     }
     h += '</div>';
-    h += '<div class="msg-sec">📨 طلبات المحادثة الخاصة</div><div class="msg-invite-note">قبول الطلب يفتح المحادثة الخاصة فقط؛ ولا ينشئ زمالة تلقائياً. يمكنك رفض الطلب أو إلغاء دعوتك الصادرة.</div>';
+    h += '<div class="msg-sec">📨 طلبات المحادثة الخاصة</div><div class="msg-modrow">قبول الطلب يفتح المحادثة الخاصة فقط؛ ولا ينشئ زمالة تلقائياً. يمكنك رفض الطلب أو إلغاء دعوتك الصادرة.</div>';
     var inv = await window.SB.msgInvites();
     if(!inv.ok){
       h += '<div class="msg-empty">تعذّر تحميل مركز الدعوات حالياً. تأكد من اتصال الخدمة وتفعيل تحديث الدعوات على الخادم. لم يتم إنشاء أي محادثة.</div>';
@@ -174,8 +174,8 @@
       var statusLabel = function(s){
         return ({pending:'قيد الانتظار',accepted:'مقبول',declined:'مرفوض',cancelled:'ملغى',expired:'منتهي الصلاحية'})[s] || 'غير معروف';
       };
-      h += '<div class="msg-invite-grid">';
-      h += '<section class="msg-invite-panel"><h3>📥 الدعوات الواردة</h3>';
+      h += '<div class="msg-grid">';
+      h += '<section class="msg-card"><h3>📥 الدعوات الواردة</h3>';
       if(incoming.length){
         h += incoming.map(function(x){
           var actions = x.status==='pending'
@@ -184,7 +184,7 @@
           return '<article class="msg-modcard"><div class="msg-meta"><b>طلب محادثة خاصة من طالب</b><span>'+stamp(x.created_at)+'</span></div><div class="msg-body">الحالة: '+statusLabel(x.status)+'</div>'+actions+'</article>';
         }).join('');
       } else h += '<div class="msg-empty">لا توجد دعوات واردة.</div>';
-      h += '</section><section class="msg-invite-panel"><h3>📤 الدعوات الصادرة</h3>';
+      h += '</section><section class="msg-card"><h3>📤 الدعوات الصادرة</h3>';
       if(outgoing.length){
         h += outgoing.map(function(x){
           var actions = x.status==='pending'
