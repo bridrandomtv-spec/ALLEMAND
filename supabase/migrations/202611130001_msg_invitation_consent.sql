@@ -211,7 +211,7 @@ begin
      and created_at > now() - interval '7 days';
   return found;
 end;
-$;
+$$;
 
 create or replace function public.msg_invite_cancel(p_invite uuid)
 returns boolean
@@ -230,7 +230,7 @@ begin
      and created_at > now() - interval '7 days';
   return found;
 end;
-$;
+$$;
 
 create or replace function public.msg_invite_accept(p_invite uuid)
 returns bigint
