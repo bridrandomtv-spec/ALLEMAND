@@ -162,9 +162,39 @@
     if(directs.length){
       h += directs.map(function(x){ var title='محادثة خاصة'; return '<div class="msg-item" data-msg-kind="direct" data-msg-search="'+esc((title+' '+stamp(x.last_activity)).toLowerCase())+'">'+card(title, '🔒 محادثة بين أعضاء مخوّلين · آخر نشاط '+stamp(x.last_activity), '<button class="msg-open" data-conv="'+x.id+'" type="button">فتح المحادثة</button>')+'</div>'; }).join('');
     } else {
-      h += '<div class="msg-empty">لا توجد محادثات خاصة بعد. ستظهر هنا المحادثات التي فُتحت وفق نظام الدعوات والموافقة الصريحة بعد تفعيل التحديث الخادمي.</div>';
+      h += '<div class="msg-empty">لا توجد محادثات خاصة بعد. لا تُفتح أي محادثة جديدة إلا بعد قبول دعوة صريحة من الطرف الآخر.</div>';
     }
     h += '</div>';
+    h += '<div class="msg-sec">📨 طلبات المحادثة الخاصة</div><div class="msg-invite-note">قبول الطلب يفتح المحادثة الخاصة فقط؛ ولا ينشئ زمالة تلقائياً. يمكنك رفض الطلب أو إلغاء دعوتك الصادرة.</div>';
+    var inv = await window.SB.msgInvites();
+    if(!inv.ok){
+      h += '<div class="msg-empty">تعذّر تحميل مركز الدعوات حالياً. تأكد من اتصال الخدمة وتفعيل تحديث الدعوات على الخادم. لم يتم إنشاء أي محادثة.</div>';
+    } else {
+      var incoming = inv.incoming || [], outgoing = inv.outgoing || [];
+      var statusLabel = function(s){
+        return ({pending:'قيد الانتظار',accepted:'مقبول',declined:'مرفوض',cancelled:'ملغى',expired:'منتهي الصلاحية'})[s] || 'غير معروف';
+      };
+      h += '<div class="msg-invite-grid">';
+      h += '<section class="msg-invite-panel"><h3>📥 الدعوات الواردة</h3>';
+      if(incoming.length){
+        h += incoming.map(function(x){
+          var actions = x.status==='pending'
+            ? '<div class="msg-modbtns"><button class="msg-modbtn" data-invite-act="accept" data-invite-id="'+esc(x.id)+'" type="button">✔ قبول وفتح المحادثة</button><button class="msg-modbtn" data-invite-act="decline" data-invite-id="'+esc(x.id)+'" type="button">رفض الدعوة</button></div>'
+            : (x.status==='accepted' && x.conversation_id ? '<div class="msg-modbtns"><button class="msg-modbtn" data-conv="'+esc(x.conversation_id)+'" type="button">فتح المحادثة</button></div>' : '');
+          return '<article class="msg-modcard"><div class="msg-meta"><b>طلب محادثة خاصة من طالب</b><span>'+stamp(x.created_at)+'</span></div><div class="msg-body">الحالة: '+statusLabel(x.status)+'</div>'+actions+'</article>';
+        }).join('');
+      } else h += '<div class="msg-empty">لا توجد دعوات واردة.</div>';
+      h += '</section><section class="msg-invite-panel"><h3>📤 الدعوات الصادرة</h3>';
+      if(outgoing.length){
+        h += outgoing.map(function(x){
+          var actions = x.status==='pending'
+            ? '<div class="msg-modbtns"><button class="msg-modbtn" data-invite-act="cancel" data-invite-id="'+esc(x.id)+'" type="button">إلغاء الدعوة</button></div>'
+            : (x.status==='accepted' && x.conversation_id ? '<div class="msg-modbtns"><button class="msg-modbtn" data-conv="'+esc(x.conversation_id)+'" type="button">فتح المحادثة</button></div>' : '');
+          return '<article class="msg-modcard"><div class="msg-meta"><b>دعوة أرسلتها</b><span>'+stamp(x.created_at)+'</span></div><div class="msg-body">الحالة: '+statusLabel(x.status)+'</div>'+actions+'</article>';
+        }).join('');
+      } else h += '<div class="msg-empty">لم ترسل أي دعوة بعد.</div>';
+      h += '</section></div>';
+    }
     var isMod = u && (u.role==='prof' || u.role==='admin');
     if(isMod){
       var rep0 = await window.SB.msgReportsOpen();
@@ -251,8 +281,20 @@
     });
   });
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act]') : null;
     if(!t) return;
+    var inviteAct = t.getAttribute('data-invite-act');
+    if(inviteAct){
+      var inviteId = t.getAttribute('data-invite-id');
+      var inviteMethod = inviteAct==='accept' ? 'msgInviteAccept' : (inviteAct==='decline' ? 'msgInviteDecline' : 'msgInviteCancel');
+      t.disabled = true;
+      window.SB[inviteMethod](inviteId).then(function(result){
+        if(!result || !result.ok){ window.alert('⛔ '+((result && result.err)||'تعذّر تنفيذ الطلب')); renderList(); return; }
+        if(inviteAct==='accept' && result.convId){ renderThread(+result.convId); }
+        else renderList();
+      }).catch(function(error){ window.alert('⛔ '+String(error && error.message || error)); renderList(); });
+      return;
+    }
     if(t.getAttribute('data-conv')){ renderThread(+t.getAttribute('data-conv')); return; }
     var filter = t.getAttribute('data-msg-filter');
     if(filter){
