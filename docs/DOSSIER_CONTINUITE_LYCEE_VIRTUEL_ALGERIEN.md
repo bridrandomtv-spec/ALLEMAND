@@ -204,3 +204,13 @@
 - Le build Cloudflare associé au commit est validé. Cela ne vaut pas approbation de fusion ni autorisation de déploiement manuel ; PR #17 demeure ouverte, non fusionnée, base main.
 - Le dernier commit documentaire de ce dossier peut déclencher une nouvelle exécution CI ; les résultats cités ci-dessus portent précisément sur le commit de code 3dcc929.
 - Le point restant pour qualifier l'expérience de réellement opérationnelle est un test de bout en bout dans le navigateur avec une session d'élève vérifié autorisée. Aucun compte réel n'a été utilisé pour publier ou commenter pendant ce lot.
+
+
+## Lot 449 — carte de profil réelle dans ملتقى الطلاب (13 novembre 2026)
+- Revue de la vue `multaqa` : la carte latérale affichait encore un message périmé (« le profil apparaîtra après liaison du service »), alors que la lecture du profil via le client Supabase existait déjà.
+- La carte a maintenant des cibles DOM identifiées et reçoit après contrôle serveur le pseudo du compte courant et, si disponible, le niveau 2AS/3AS. Elle n'affiche pas de nom réel, d'adresse, de wilaya ni d'identifiant ; aucun profil d'un autre élève n'est interrogé.
+- Les comptes non connectés, non élèves ou non vérifiés n'obtiennent pas la carte personnelle ni le fil ; la règle serveur reste inchangée.
+- Version client passée à `multaqa.js?v=3`, précache Service Worker synchronisé, version `dz-de-v3.185.0.0.154`. Assertions CI ajoutées pour le rendu du profil et synchronisées avec le client v3.
+- Les premiers contrôles CI ont détecté des assertions de cache encore en v2 dans `check-multaqa.mjs` et une assertion v153 dans `check-masar.mjs`. Ces références ont été corrigées ; ne déclarer le lot validé qu'après les workflows sur le HEAD final.
+- Aucun changement Supabase, aucune lecture de données d'élèves autres que les champs du profil courant via le mécanisme existant, aucune publication de test, aucune modification Messenger, aucune fusion ni déploiement manuel.
+- Le test navigateur avec une session élève vérifiée reste requis pour confirmer visuellement la carte et les opérations réelles du fil.
