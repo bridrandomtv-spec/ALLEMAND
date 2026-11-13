@@ -29,9 +29,8 @@ table_checks AS (
     (SELECT count(*)::int FROM pg_trigger t
       WHERE t.tgrelid=c.oid AND NOT t.tgisinternal) AS actual_triggers
   FROM expected_tables e
-  LEFT JOIN pg_class c ON c.relname=e.table_name
-  LEFT JOIN pg_namespace n ON n.oid=c.relnamespace AND n.nspname='public'
-  WHERE c.oid IS NULL OR n.oid IS NOT NULL
+  LEFT JOIN pg_namespace n ON n.nspname='public'
+  LEFT JOIN pg_class c ON c.relnamespace=n.oid AND c.relname=e.table_name
 ),
 required_functions(function_name) AS (
   VALUES ('msg_open_direct'),('msg_can_dm'),('msg_member_ok'),
