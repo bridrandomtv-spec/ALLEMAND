@@ -7932,3 +7932,15 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Rapport : `docs/product/LOT-368-PREBASELINE-POSTGRESQL-MESSENGER-ET-ENVIRONNEMENT.md`.
 - Décision : GO pour compléter le baseline documentaire et le harness ; NO-GO pour déclarer la restauration ou les tests multi-comptes terminés. La création d'une branche Supabase payante attend une autorisation explicite.
 - Aucun SQL d'écriture, migration, changement Auth/RLS/GRANT/Storage/Realtime, aucun compte ni contenu de message lu ; aucun changement sur `main), aucun merge PR #17, aucun déploiement Cloudflare.
+
+## Lot 369 — validation d'un second projet Supabase gratuit (13 novembre 2026)
+
+- Lecture directe des métadonnées de l'organisation Supabase `yhigaygkffkdygpaglaf` : plan confirmé `free` / `tier_free`.
+- Inventaire de l'organisation : un seul projet actif connu, `azjwcybivirvpxbfhyzk` (PostgreSQL 17.6.1.166, région `eu-west-2`).
+- Devis API Supabase pour un nouveau projet dans cette organisation : `0 USD/mois`. Aucun projet n'a été créé pendant cette vérification.
+- Documentation officielle Supabase consultée le 13 novembre 2026 : deux projets Free actifs sont autorisés ; quotas partagés au niveau de l'organisation ; les projets Free peuvent être mis en pause après une semaine d'inactivité. Le branching reste indisponible sur Free.
+- Sources : https://supabase.com/docs/guides/platform/billing-on-supabase ; https://supabase.com/docs/guides/platform/billing-faq ; https://supabase.com/docs/guides/platform/free-project-pausing
+- Décision de sécurité : ne pas créer le second projet sans confirmation explicite de l'utilisateur. Aucun coût, aucune carte, aucun upgrade, aucun changement de projet actif.
+- Une fois autorisé, créer uniquement un projet de test séparé dans l'organisation Free, en région `eu-west-2`, sans données de production. Le restaurer à partir du baseline Messenger reconstruit, puis exécuter les tests PostgreSQL avec comptes synthétiques. Contrôler les quotas Free avant d'importer quoi que ce soit.
+- État de test : aucun test PostgreSQL/RLS multi-compte n'est encore exécuté ; le fichier historique `supabase/msg_schema.sql` reste non fiable comme miroir exact de la base active.
+- PR #17 reste ouverte, non fusionnée ; aucune modification de `main`, aucune migration sur le projet actif, aucun déploiement Cloudflare.
