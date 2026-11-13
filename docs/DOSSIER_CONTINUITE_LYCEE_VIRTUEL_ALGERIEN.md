@@ -8691,3 +8691,21 @@ Contrôler la CI déclenchée par le Lot 414. Ensuite définir la matrice des r�
 ### Suite — Lot 416
 
 Inventorier statiquement les écrans et fonctions de vérification existants, comparer les champs/états au contrat des Lots 414–415 et préparer un plan de remplacement du numéro d'abonnement par un flux scolaire gratuit. Documentation et lecture seule uniquement.
+
+
+### Lot 416 — audit statique du parcours de vérification câblé (13 novembre 2026)
+
+- Fichiers examinés en lecture seule : `msg.js`, `supabase/supabase.js`, `prototypes/school-verification-preview.html` et contrat du Lot 412.
+- Constat dans `msg.js` : le formulaire demande actuellement le numéro d'abonnement après paiement ; le clic appelle `msgRequestVerification(mv, sv)`.
+- Constat dans `supabase/supabase.js` : `msgRequestVerification(subscriptionNumber, section)` vérifie une ligne `subscriptions` active liée à l'utilisateur, puis copie le numéro dans `profiles.matricule` et place le statut en `en_attente`.
+- La file `msgVerificationQueue()` sélectionne notamment `matricule` et plusieurs champs de profil. Son périmètre et ses grants doivent être prouvés côté serveur ; le code client ne suffit pas.
+- La maquette du Lot 414 est indépendante et non connectée ; ses actions sont désactivées. Elle ne remplace pas encore le parcours réel.
+- Rapport : `docs/product/LOT-416-AUDIT-STATIQUE-PARCOURS-VERIFICATION.md`, commit `6bb603436cac1ef02020d4604f50b3918815a1bb`.
+- Plan de transition documenté : demande gratuite, informations scolaires minimales, séparation du champ d'abonnement et de l'affiliation, file de dossiers minimale, habilitations serveur par périmètre, recours indépendant, maintien du forum gratuit et tests multi-comptes isolés.
+- Run CI #3423 (43447733360), déclenché sur le commit du document Lot 415 `3d005154b2b793d1f29a2b9c2e71c2aa41771748), était encore en cours lors du contrôle. Le Lot 416 déclenche une exécution plus récente ; suivre celle du HEAD final.
+- PR #17 était toujours ouverte et non fusionnée ; GitHub signalait `mergeable=true` lors du contrôle post-Lot 415. Aucun rebase/synchronisation n'a été fait malgré le retard de 4 commits par rapport à main.
+- Aucun correctif applicatif, SQL, Auth, RLS, GRANT, Storage, Realtime, paiement ou données élèves ; aucun accès à la base active, aucun déploiement, aucune modification de main ni fusion.
+
+### Suite — Lot 417
+
+Inventorier toutes les dépendances de `profiles.matricule`, `verif_statut` et des fonctions `msg*` dans le code client, scripts SQL du dépôt et contrôles CI ; préparer une stratégie de transition sans collision avec les usages historiques. Lecture seule/documentation uniquement.
