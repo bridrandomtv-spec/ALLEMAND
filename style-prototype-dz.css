@@ -18070,3 +18070,49 @@ html:not([data-theme="light"]) .mtq-view .mtq-post-foot{color:#b9d0c0}
 #msgBody .msg-input textarea{border-radius:12px;min-height:46px;font-size:13px}#msgBody .msg-send{background:var(--vert2);color:#fff;border:0;padding:10px 17px}
 @media(max-width:1050px){.mtq-layout{grid-template-columns:minmax(0,1fr) 235px}.mtq-rail{display:none}.mtq-discover{position:static}}
 @media(max-width:700px){.mtq-topline{padding:18px;align-items:flex-start;flex-direction:column}.mtq-top-action{width:100%}.mtq-layout{grid-template-columns:1fr}.mtq-discover{grid-template-columns:1fr}.mtq-welcome{padding:20px}.mtq-welcome-art{font-size:38px}.mtq-compose-actions{gap:6px}.mtq-compose-actions button{width:100%;margin:4px 0 0}#msgBody .msg-messenger-head{padding:13px;flex-wrap:wrap}#msgBody .msg-messenger-head h3{font-size:17px}#msgBody .msg-row{max-width:95%}}
+
+
+/* LOT 441 — Messenger : espace de communication pédagogique structuré (sans données fictives). */
+section[data-view="msg"] #msgBody .msg-pro-hero{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 27px;margin:0 0 15px;border:1px solid var(--b);border-radius:20px;background:linear-gradient(115deg,rgba(0,98,51,.13),var(--p) 62%,rgba(210,16,52,.07));box-shadow:var(--sh)}
+section[data-view="msg"] #msgBody .msg-pro-hero-copy{min-width:0}
+section[data-view="msg"] #msgBody .msg-pro-eyebrow{display:block;color:var(--g);font-size:10px;font-weight:900;letter-spacing:.03em}
+section[data-view="msg"] #msgBody .msg-pro-hero h2{margin:7px 0;font-size:clamp(21px,2.6vw,29px);font-weight:900;color:var(--t);line-height:1.5}
+section[data-view="msg"] #msgBody .msg-pro-hero p{margin:0;color:var(--m);font-size:12px;line-height:1.9}
+section[data-view="msg"] #msgBody .msg-pro-hero-mark{display:grid;place-items:center;width:68px;height:68px;flex:0 0 68px;border-radius:21px;background:var(--p2);font-size:32px}
+section[data-view="msg"] #msgBody .msg-pro-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0 10px}
+section[data-view="msg"] #msgBody .msg-pro-heading b,section[data-view="msg"] #msgBody .msg-pro-heading span{display:block}
+section[data-view="msg"] #msgBody .msg-pro-heading b{font-size:16px;color:var(--t)}
+section[data-view="msg"] #msgBody .msg-pro-heading span{margin-top:3px;font-size:10px;color:var(--m)}
+section[data-view="msg"] #msgBody .msg-pro-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+section[data-view="msg"] #msgBody .msg-pro-stats>div{display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto;column-gap:9px;align-items:center;padding:12px 14px;border:1px solid var(--b);border-radius:14px;background:var(--p);box-shadow:var(--sh)}
+section[data-view="msg"] #msgBody .msg-pro-stats>div>span{grid-row:1/3;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--p2);font-size:16px}
+section[data-view="msg"] #msgBody .msg-pro-stats b{font-size:17px;color:var(--t);line-height:1.2}
+section[data-view="msg"] #msgBody .msg-pro-stats small{font-size:10px;color:var(--m)}
+section[data-view="msg"] #msgBody .msg-learning-note{display:flex;align-items:flex-start;gap:11px;margin:13px 0 18px;padding:13px 15px;border:1px solid rgba(0,98,51,.18);border-radius:13px;background:rgba(0,98,51,.055)}
+section[data-view="msg"] #msgBody .msg-learning-note>span{font-size:20px}
+section[data-view="msg"] #msgBody .msg-learning-note b{display:block;color:var(--g);font-size:11px}
+section[data-view="msg"] #msgBody .msg-learning-note p{margin:3px 0 0;color:var(--m);font-size:10px;line-height:1.8}
+section[data-view="msg"] #msgBody .msg-grid .msg-item .msg-card{min-height:112px}
+section[data-view="msg"] #msgBody .msg-grid .msg-item .msg-ct span{display:block;overflow-wrap:anywhere}
+html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-pro-hero{background:linear-gradient(115deg,#123b27,#10251b 62%,#321b22);border-color:#315b42}
+html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-pro-hero h2{color:#e5f5e9}
+html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-pro-hero p,html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-pro-heading span{color:#b9d0c0}
+html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-pro-stats>div{background:#10251b;border-color:#315b42}
+html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-pro-stats b{color:#e5f5e9}
+html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-learning-note{background:#102f20;border-color:#315b42}
+html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-learning-note b{color:#9be0b0}
+@media(max-width:680px){
+ section[data-view="msg"] #msgBody .msg-pro-hero{padding:18px;gap:10px}
+ section[data-view="msg"] #msgBody .msg-pro-hero-mark{width:48px;height:48px;flex-basis:48px;font-size:23px;border-radius:15px}
+ section[data-view="msg"] #msgBody .msg-pro-stats{gap:7px}
+ section[data-view="msg"] #msgBody .msg-pro-stats>div{grid-template-columns:1fr;justify-items:start;gap:5px;padding:10px}
+ section[data-view="msg"] #msgBody .msg-pro-stats>div>span{grid-row:auto;width:29px;height:29px}
+ section[data-view="msg"] #msgBody .msg-pro-stats b{font-size:15px}
+ section[data-view="msg"] #msgBody .msg-pro-stats small{font-size:9px}
+ section[data-view="msg"] #msgBody .msg-learning-note{padding:11px}
+}
+@media(max-width:390px){
+ section[data-view="msg"] #msgBody .msg-pro-hero-mark{display:none}
+ section[data-view="msg"] #msgBody .msg-pro-stats{grid-template-columns:1fr 1fr}
+ section[data-view="msg"] #msgBody .msg-pro-stats>div:last-child{grid-column:1/-1}
+}
