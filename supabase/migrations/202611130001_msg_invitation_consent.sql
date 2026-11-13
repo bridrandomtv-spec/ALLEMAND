@@ -164,6 +164,12 @@ begin
   if public.msg_pair_blocked(v_sender, p_recipient) then raise exception 'user_blocked'; end if;
   if not public.msg_can_dm(v_sender, p_recipient) then raise exception 'school_verification_required'; end if;
 
+  -- Libère l'index unique pour une nouvelle invitation après expiration (7 jours).
+  update public.msg_invites
+     set status='expired', responded_at=now()
+   where sender_id=v_sender and status='pending'
+     and created_at <= now() - interval '7 days';
+
   select count(*) into v_count
   from public.msg_invites
   where sender_id = v_sender and created_at > now() - interval '24 hours';
@@ -195,12 +201,17 @@ set search_path = pg_catalog, public
 as $$
 begin
   update public.msg_invites
+     set status = 'expired', responded_at = now()
+   where id = p_invite and recipient_id = auth.uid() and status = 'pending'
+     and created_at <= now() - interval '7 days';
+
+  update public.msg_invites
      set status = 'declined', responded_at = now()
    where id = p_invite and recipient_id = auth.uid() and status = 'pending'
      and created_at > now() - interval '7 days';
   return found;
 end;
-$$;
+$;
 
 create or replace function public.msg_invite_cancel(p_invite uuid)
 returns boolean
@@ -209,11 +220,17 @@ set search_path = pg_catalog, public
 as $$
 begin
   update public.msg_invites
+     set status = 'expired', responded_at = now()
+   where id = p_invite and sender_id = auth.uid() and status = 'pending'
+     and created_at <= now() - interval '7 days';
+
+  update public.msg_invites
      set status = 'cancelled', responded_at = now()
-   where id = p_invite and sender_id = auth.uid() and status = 'pending';
+   where id = p_invite and sender_id = auth.uid() and status = 'pending'
+     and created_at > now() - interval '7 days';
   return found;
 end;
-$$;
+$;
 
 create or replace function public.msg_invite_accept(p_invite uuid)
 returns bigint
