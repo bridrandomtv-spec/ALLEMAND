@@ -7984,3 +7984,15 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Aucun objet Storage consulté, aucun fichier téléchargé, aucune modification de bucket/policy, aucun test Storage/Realtime exécuté.
 - Aucun projet de test créé ni coût engagé ; projet actif intact ; PR #17 ouverte et non fusionnée ; aucun changement main ni déploiement.
 - Suite : exporter `audit_logs`, ses policies/ACL, fonctions/triggers de dépendance, puis assembler un baseline SQL synthétique et testable.
+
+## Lot 373 — audit_logs et immutabilité des journaux (13 novembre 2026)
+
+- Extraction SELECT de la table `audit_logs` sans lire aucune ligne réelle : colonnes, PK, index, séquence, RLS, policy de lecture et ACL.
+- Policy active : acteur lit ses entrées ; les agents avec `reports.read` lisent les wilayas autorisées.
+- `audit_log(...)` SECURITY DEFINER écrit avec `acteur=auth.uid()`, EXECUTE réservé à postgres/service_role.
+- Trigger `audit_logs_tr_immuable` appelle `immutable_row()` ; UPDATE/DELETE authentifiés lèvent une exception, le contexte sans auth.uid() retourne OLD selon la fonction active.
+- Cette dépendance est requise par `profiles_tr_audit_role` ; omission de la table/fonction/trigger rendrait le baseline incomplet.
+- Rapport : `docs/product/LOT-373-AUDIT-LOGS-IMMUTABILITE-MESSENGER.md`, commit `568e99be7e58acc9b510d39f84d03d503d64b8d4`.
+- Aucun journal réel lu, aucune écriture ou modification Supabase, aucun test comportemental PostgreSQL exécuté.
+- Aucun second projet créé ; aucun coût engagé. PR #17 toujours ouverte et non fusionnée ; main/production intactes.
+- Suite : inventorier précisément les rôles, extensions et dépendances Auth nécessaires, puis préparer l'assemblage reproductible du schéma et le jeu de comptes synthétiques.
