@@ -117,17 +117,44 @@ JOIN pg_namespace n ON n.oid = p.pronamespace
 JOIN pg_language l ON l.oid = p.prolang
 ORDER BY n.nspname, p.proname, identity_arguments;
 
--- D. EXECUTE effectif déclaré par ACL pour chaque fonction sélectionnée.
-WITH selected_functions AS (
+-- D. EXECUTE effectif déclaré par ACL pour le même périmètre de fonctions que C.
+WITH target_relations AS (
+  SELECT c.oid
+  FROM pg_class c
+  JOIN pg_namespace n ON n.oid = c.relnamespace
+  WHERE (n.nspname = 'public' AND c.relname IN (
+      'msg_conversations','msg_members','msg_messages','msg_attachments',
+      'msg_blocks','msg_reports','msg_log','profiles','audit_logs',
+      'admin_roles','admin_permissions','wilaya_assignments'
+    ))
+     OR (n.nspname = 'storage' AND c.relname = 'objects')
+),
+policy_functions AS (
+  SELECT DISTINCT d.refobjid AS function_oid
+  FROM pg_depend d
+  JOIN pg_policy pol
+    ON d.classid = 'pg_policy'::regclass AND d.objid = pol.oid
+  JOIN target_relations tr ON tr.oid = pol.polrelid
+  WHERE d.refclassid = 'pg_proc'::regclass
+),
+trigger_functions AS (
+  SELECT DISTINCT t.tgfoid AS function_oid
+  FROM pg_trigger t
+  JOIN target_relations tr ON tr.oid = t.tgrelid
+  WHERE NOT t.tgisinternal
+),
+selected_functions AS (
   SELECT p.oid
   FROM pg_proc p
   JOIN pg_namespace n ON n.oid = p.pronamespace
   WHERE n.nspname = 'public'
     AND (
-      p.proname LIKE 'msg\_%' ESCAPE '\'
+      p.proname LIKE 'msg\\_%' ESCAPE '\\'
       OR p.proname ILIKE '%verif%'
       OR p.proname ILIKE '%block%'
       OR p.proname ILIKE '%invitation%'
+      OR p.oid IN (SELECT function_oid FROM policy_functions)
+      OR p.oid IN (SELECT function_oid FROM trigger_functions)
     )
 )
 SELECT
