@@ -1,6 +1,6 @@
 // Offline synthetic model only. Not connected to Auth, Supabase, or a school registry.
 const ACTIVE_SOURCE_STATES = new Set(["verified"]);
-const FINAL = new Set(["verified", "rejected", "revoked", "expired", "transferred"]);
+const FINAL = new Set(["rejected", "revoked", "expired", "transferred"]);
 
 function need(value, label) {
   if (typeof value !== "string" || !value.trim()) throw new Error(label + " obligatoire.");
