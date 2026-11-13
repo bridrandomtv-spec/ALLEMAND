@@ -32,6 +32,7 @@ for (const table of ['multaqa_posts','multaqa_comments','multaqa_reactions','mul
 for (const fn of ['multaqa_feed','multaqa_comments','multaqa_create_post','multaqa_create_comment','multaqa_toggle_reaction','multaqa_report','multaqa_delete_own_post','multaqa_delete_own_comment']) {
   has(communitySql.includes('function public.' + fn), 'migration communauté : RPC ' + fn + ' absente');
   has(communitySql.includes('grant execute on function public.' + fn), 'migration communauté : grant RPC ' + fn + ' absent');
+  has(communitySql.includes('revoke all on function public.' + fn) && communitySql.includes('from public, anon, authenticated;'), 'migration communauté : révocation préalable RPC ' + fn + ' absente');
 }
 has((communitySql.match(/p\.role = 'eleve'/g) || []).length >= 8, 'migration communauté : contrôle rôle élève manquant sur une ou plusieurs RPC');
 has((communitySql.match(/p\.verif_statut = 'verifie'/g) || []).length >= 6, 'migration communauté : vérification scolaire exigée pour les contenus personnels');
