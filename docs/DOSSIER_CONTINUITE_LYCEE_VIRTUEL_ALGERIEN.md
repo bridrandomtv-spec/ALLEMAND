@@ -7762,3 +7762,11 @@ Attendre le résultat CI du commit, puis poursuivre l'audit des contrats serveur
 - Le comportement était correct : la seconde validation était bien refusée. Le message a été aligné sur le contrat historique `Dossier déjà clôturé.`.
 - Commit correctif : `fd9805218b5a427299063fb152678b374a894d5d`.
 - Nouvelle exécution CI requise ; résultat non présumé à la rédaction.
+
+
+### Lot 362-D — validation CI réussie
+
+- Le commit de code `fd9805218b5a427299063fb152678b374a894d5d` a été validé par le workflow GitHub Actions `43413853042`.
+- Conclusion : `success`, job « Validation structurelle & pédagogique » terminé sans étape en échec.
+- Les 8 scénarios du cycle d'affiliation synthétique sont désormais exécutés dans la CI et passent.
+- Cela valide uniquement le simulateur hors ligne et les assertions automatisées. Cela ne valide pas encore une implémentation PostgreSQL, RLS, une source institutionnelle réelle ou l'annuaire national.
