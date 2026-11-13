@@ -8528,3 +8528,14 @@ Poursuivre l'inventaire technique en lecture seule : récupérer les signatures,
 
 ### Suite — Lot 407
 Valider unicité des IDs, correspondance VIEWS/data-view, raccourcis desktop/mobile, garde de rôle et absence de fetch/Supabase dans la vue. Examiner le CI sans modifier `main` ni la base active.
+
+## Lot 407 — compatibilité multi-écrans et PWA (13 novembre 2026)
+
+- Vérification du socle existant : meta viewport avec `viewport-fit=cover`, manifest web app en arabe RTL, `display: standalone`, icônes 192/512, `apple-mobile-web-app-capable`, `apple-touch-icon` et Service Worker avec précache de `index.html` et `style-prototype-dz.css`.
+- Confirmation : il s'agit d'une application web responsive/PWA unique utilisable dans les navigateurs sur Windows, macOS, Android et iOS. Ce n'est pas quatre applications natives distinctes ; aucune application Android/iOS publiée sur les stores n'est créée.
+- Amélioration du manifeste : ajout du raccourci PWA `ملتقى الطلاب` vers `#multaqa` et retrait de la contrainte `portrait-primary` afin de ne pas imposer le mode portrait sur les appareils mobiles/tablettes.
+- Les raccourcis et l'installation dépendent du navigateur et de la version du système : Chrome/Edge sur ordinateur Windows, Chrome et Safari sur macOS récent, Chrome sur Android, Safari et « Ajouter à l’écran d’accueil » sur iPhone. Firefox reste utilisable comme navigateur, sans promettre une installation PWA native.
+- Le navigateur doit charger la version déployée qui contient les derniers changements. Aucun déploiement Cloudflare, test réel sur appareils physiques, publication Play Store/App Store, changement Supabase, merge ou coût.
+
+### Suite — Lot 408
+Faire vérifier le rendu sur de vrais navigateurs et tailles d'écran (Windows/macOS desktop, Android et iPhone), puis corriger les écarts observés avant d'activer les interactions sociales. Le contrôle statique ne remplace pas ces essais physiques.
