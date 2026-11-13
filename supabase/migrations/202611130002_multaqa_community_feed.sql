@@ -1,5 +1,6 @@
 -- Lot 444 — première tranche serveur du fil ملتقى الطلاب.
--- Préparée sur la branche uniquement. NON exécutée sur Supabase.
+-- Migration appliquée au projet Supabase gratuit actif le 13 novembre 2026 (historique : 20261113201922_multaqa_community_feed).
+-- Le test PostgreSQL 17 isolé a réussi avant l'application ; ce fichier reste rejouable dans le banc de test éphémère.
 -- L'accès aux contenus personnels exige un compte élève vérifié (profiles.verif_statut = 'verifie').
 -- Aucun abonnement n'est requis. Les comptes en attente/non vérifiés ne voient pas le fil personnel.
 -- Aucune lecture directe des profils : les RPC ne retournent que profiles.pseudo.
