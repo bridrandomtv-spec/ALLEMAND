@@ -8063,3 +8063,21 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Aucun profil, message, conversation, pièce jointe ou journal réel consulté ; aucun test RLS multi-compte exécuté ; aucun DDL/écriture/migration/GRANT ou changement Auth/Storage/Realtime.
 - Aucun projet de test créé ni frais engagé. PR #17 reste ouverte et non fusionnée ; main/production inchangées.
 - Suite : extraction/comparaison exacte des définitions de policies et ACL puis création du harness comportemental isolé. La création du second projet Free reste en attente d'une autorisation explicite.
+
+
+## Lot 379 — policies RLS, fonctions DM et capacité Supabase Free (13 novembre 2026)
+
+- Vérification de l'organisation Supabase : plan Free confirmé ; projet ALLEMAND unique actif (PostgreSQL 17.6.1.166, eu-west-2) ; une seule branche `main`. Aucun deuxième projet ou branche de test créé.
+- Documentation officielle Supabase vérifiée : le plan Free autorise deux projets actifs par utilisateur Owner/Admin, tous organismes confondus ; les branches de développement restent réservées au plan Pro. Un deuxième projet Free indépendant est donc une piste gratuite dans les limites du quota, mais sa création n'a pas été effectuée dans ce lot.
+- Extraction SELECT des définitions exactes de policies RLS pour msg_conversations, msg_members, msg_messages, msg_attachments, msg_blocks et profiles.
+- Confirmation : la policy INSERT de msg_conversations ne requiert pas d'invitation acceptée ; la policy INSERT de msg_members délègue à msg_member_ok, qui permet l'ajout du second membre d'un DM compatible sans vérifier une invitation acceptée.
+- Confirmation : msg_open_direct vérifie compatibilité wilaya/niveau/filière et statut verifie, prend un verrou consultatif, puis crée le DM et les deux membres ; aucun contrôle d'invitation acceptée ni de blocage n'est effectué dans cette fonction.
+- Confirmation : msg_not_blocked ne vérifie que les blocages entrants du point de vue de l'expéditeur ; la vérification n'est pas symétrique. msg_open_direct n'appelle pas cette fonction.
+- Profiles : SELECT authenticated demeure accordé à la table ; les policies RLS filtrent les lignes, mais ne constituent pas une projection minimale des colonnes. Ne pas ouvrir directement profiles pour l'annuaire national.
+- Pièces jointes : la policy impose uploader, appartenance, chemin, MIME, taille et statut ; le contrôle de cohérence uploader ↔ auteur du message doit être vérifié sur une base isolée.
+- Correction de comptage Lot 378 : le total exact des triggers ciblés est **13** (1 msg_members, 3 msg_messages, 2 msg_attachments, 1 msg_reports, 5 profiles, 1 audit_logs), confirmé par COUNT(*) sur pg_trigger. Aucun trigger ciblé sur msg_blocks/msg_conversations.
+- Rapport : docs/product/LOT-379-POLICIES-RLS-FONCTIONS-DM-ET-CAPACITE-FREE.md, commit f72da303c436c367ffa7c80fbb2f644d10dce0b4.
+- Toutes les requêtes Supabase de ce lot étaient des SELECT de catalogues/définitions ; aucune ligne applicative n'a été consultée. Aucun DDL, INSERT, UPDATE, DELETE, migration, GRANT ou changement Auth/RLS/Storage/Realtime.
+- Aucun test comportemental PostgreSQL/RLS multi-compte exécuté ; aucune ressource ou dépense créée. PR #17 reste ouverte et non fusionnée ; main et production inchangées.
+- Suite : préparer l'export SQL contrôlé des objets applicatifs et le harness synthétique ; demander une confirmation distincte avant de créer un deuxième projet Free. Aucune facturation ou ressource payante.
+
