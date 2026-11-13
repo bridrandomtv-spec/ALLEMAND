@@ -526,7 +526,7 @@ async function msgRequestVerification(subscriptionNumber, section){
   const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
   const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
   const number = String(subscriptionNumber || '').trim();
-  if(!/^\\d{1,20}$/.test(number) || !Number.isSafeInteger(Number(number)) || Number(number) < 1){
+  if(!/^\d{1,20}$/.test(number) || !Number.isSafeInteger(Number(number)) || Number(number) < 1){
     return { ok:false, err:'أدخل رقم اشتراك صحيحًا.' };
   }
   const sub = await c.from('subscriptions').select('id')
