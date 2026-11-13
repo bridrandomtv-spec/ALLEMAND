@@ -7754,3 +7754,11 @@ Attendre le résultat CI du commit, puis poursuivre l'audit des contrats serveur
 - Après le premier correctif, la CI a fait passer 7 scénarios sur 8. Le test de non-répétition d'une décision finale a alors révélé qu'une deuxième validation pouvait être tentée sur un dossier déjà `verified`.
 - Correctif complémentaire : commit `c837747ae60d1ee563d9fd7e6f42152ec4d8f379`. Les transitions `verify` et `reject` sont maintenant réservées à un dossier `pending`, tandis que les transitions autorisées depuis `verified` (transfert, révocation, expiration) restent possibles.
 - Résultat CI de ce commit : en attente de confirmation. Le prototype reste synthétique et hors ligne.
+
+
+### Lot 362-C — alignement du message de garde avec le test existant
+
+- La CI a confirmé les 7 autres scénarios ; le dernier échec était uniquement une divergence de texte entre le message d'erreur de la nouvelle garde et l'expression attendue par le test de non-répétition.
+- Le comportement était correct : la seconde validation était bien refusée. Le message a été aligné sur le contrat historique `Dossier déjà clôturé.`.
+- Commit correctif : `fd9805218b5a427299063fb152678b374a894d5d`.
+- Nouvelle exécution CI requise ; résultat non présumé à la rédaction.
