@@ -8407,3 +8407,20 @@ Préparer une proposition de modèle relationnel (tables, clés, contraintes uni
 
 ### Suite — Lot 398
 Revue de compatibilité applicative en lecture seule : identifier les consommateurs actuels de `notifications`, les fonctions et policies de `msg_blocks`, puis concevoir le contrat d'intégration du blocage social avec Messenger sans modifier le runtime ni la base active. Maintenir l'interdiction de DM automatique après acceptation d'une زمالة.
+
+
+---
+
+## Lot 398 — compatibilité notifications et blocages Messenger (13 novembre 2026)
+
+- Création de `docs/product/LOT-398-INTEGRATION-NOTIFICATIONS-BLOCAGES-MESSENGER.md`.
+- Analyse en lecture seule des consommateurs de notifications dans `app.js`, `dz-interactions.js` et `supabase/supabase.js`.
+- Distinction établie entre `public.notifications` (notifications persistées avec policies SELECT/UPDATE propriétaires) et le centre local `DZ_INTERACTIONS` stocké dans `localStorage`.
+- Vérification des policies de `msg_blocks` et `msg_messages`, ainsi que des fonctions `msg_not_blocked`, `msg_open_direct`, `msg_can_dm` et `msg_member_ok`.
+- Écart confirmé : `msg_not_blocked` vérifie les blocages des membres vers l'expéditeur courant, mais pas explicitement le sens inverse ; il ne consulte pas le futur `social_blocks`. `msg_open_direct` et `msg_can_dm` ne consultent pas les blocages ni une invitation sociale acceptée.
+- Contrat cible documenté : prédicat serveur bilatéral unique, contrôle dans ouverture DM et envoi, opération atomique de blocage, réponses génériques anti-énumération, aucun DM automatique après ajout d'un contact.
+- Commit du document Lot 398 : `b0f98bed548a2304f7484f3fa515d270eaf4ba8a`.
+- Aucun contenu de profil, message ou notification d'élève lu. Aucun DDL/DML, RPC, GRANT, policy, Auth/RLS/Storage/Realtime modifié. Aucun test comportemental, CI hébergé, déploiement, merge ou dépense.
+
+### Suite — Lot 399
+Spécification de migration progressive et plan de tests isolés pour le prédicat de blocage bilatéral et l'ouverture de DM. Distinguer écarts confirmés, hypothèses, prérequis d'invitation et tests impossibles sans environnement PostgreSQL isolé gratuit et fidèle.
