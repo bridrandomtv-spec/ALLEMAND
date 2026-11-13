@@ -125,3 +125,12 @@
 - La CI #3527 a échoué sur ci/check-masar.mjs, qui attendait encore CSS v196 ; correction vers v200 commit 8466b426f827cb1eadb2aa19328e776588cdc8a5. Le résultat du run déclenché pour ce correctif doit être suivi.
 
 - Suite au run #3528, le contrôle Masar a révélé une seconde attente périmée dans le même script : le service worker .147. Le contrôle a été aligné sur .151 dans le commit 55e705be78acaed4ff8a4a19a5ec06b260aeac2b. Le run #3529, lancé avant ce second correctif, a reproduit ce défaut ; il ne valide donc pas le commit correctif. Attendre le run suivant pour juger.
+
+### Addendum Lot 444 — premier raccordement du client du fil
+- Création de multaqa.js : client de la vue ملتقى qui appelle exclusivement les RPC multaqa_feed, multaqa_comments, multaqa_create_post, multaqa_create_comment, multaqa_toggle_reaction et multaqa_report. Les contenus utilisateurs sont échappés avant rendu HTML. Le client vérifie le rôle élève et verif_statut='verifie' avant d'afficher le fil personnel ; la sécurité réelle reste dans les RPC.
+- index.html remplace le formulaire factice désactivé et l'état statique par un conteneur mtqApp ; le module gère l'état de service non activé sans fausses données. Aucun enregistrement n'est créé tant que la RPC serveur n'existe pas.
+- Les publications du flux exposent un booléen my_post pour distinguer le propriétaire sans divulguer son Auth ID. La projection publique conserve le pseudo seulement.
+- style-prototype-dz.css reçoit les styles du fil dynamique ; cache CSS v201. sw.js passe en dz-de-v3.185.0.0.152 et précache multaqa.js?v=1. Les contrôles check-public-portal, check-masar, check-msg et check-multaqa ont été synchronisés avec ces versions et le client RPC.
+- Correction du contrôle d'accès : conformément au Lot 413, le fil personnel est réservé aux élèves vérifiés ; les comptes en attente/non vérifiés ne peuvent pas voir le contenu personnel. L'abonnement n'intervient pas dans cette décision.
+- Limites actuelles : aucun test navigateur visuel/exécution réelle de bout en bout ; migration toujours non appliquée ; pas de test PostgreSQL multi-comptes ; les fonctions de fichiers/images, groupes, الزمالة, modération administrative et Realtime ne sont pas dans cette première tranche.
+- Aucun DDL/DML exécuté sur Supabase actif, aucune lecture de contenu d'élève, aucune modification de main, aucune fusion PR #17, aucun déploiement.
