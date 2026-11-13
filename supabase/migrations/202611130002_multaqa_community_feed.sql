@@ -1,7 +1,7 @@
 -- Lot 444 — première tranche serveur du fil ملتقى الطلاب.
 -- Préparée sur la branche uniquement. NON exécutée sur Supabase.
--- Aucun abonnement ni statut de vérification scolaire n'est requis pour le forum de base.
--- L'appelant doit avoir une session Supabase et profiles.role = 'eleve'.
+-- L'accès aux contenus personnels exige un compte élève vérifié (profiles.verif_statut = 'verifie').
+-- Aucun abonnement n'est requis. Les comptes en attente/non vérifiés ne voient pas le fil personnel.
 -- Aucune lecture directe des profils : les RPC ne retournent que profiles.pseudo.
 --
 -- Périmètre : publications texte, commentaires/réponses, réactions, signalements.
@@ -97,7 +97,7 @@ declare
   v_uid uuid := auth.uid();
 begin
   if v_uid is null or not exists (
-    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve'
+    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve' and p.verif_statut = 'verifie'
   ) then
     raise exception 'student_account_required';
   end if;
@@ -135,7 +135,7 @@ declare
   v_uid uuid := auth.uid();
 begin
   if v_uid is null or not exists (
-    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve'
+    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve' and p.verif_statut = 'verifie'
   ) then
     raise exception 'student_account_required';
   end if;
@@ -169,7 +169,7 @@ declare
   v_count integer;
 begin
   if v_uid is null or not exists (
-    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve'
+    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve' and p.verif_statut = 'verifie'
   ) then raise exception 'student_account_required'; end if;
   if char_length(v_body) < 1 or char_length(v_body) > 3000 then
     raise exception 'invalid_post_length';
@@ -200,7 +200,7 @@ declare
   v_count integer;
 begin
   if v_uid is null or not exists (
-    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve'
+    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve' and p.verif_statut = 'verifie'
   ) then raise exception 'student_account_required'; end if;
   if char_length(v_body) < 1 or char_length(v_body) > 2000 then
     raise exception 'invalid_comment_length';
@@ -234,7 +234,7 @@ declare
   v_existing text;
 begin
   if v_uid is null or not exists (
-    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve'
+    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve' and p.verif_statut = 'verifie'
   ) then raise exception 'student_account_required'; end if;
   if p_reaction not in ('like','helpful','support') then raise exception 'invalid_reaction'; end if;
   if not exists (
@@ -267,7 +267,7 @@ declare
   v_count integer;
 begin
   if v_uid is null or not exists (
-    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve'
+    select 1 from public.profiles p where p.id = v_uid and p.role = 'eleve' and p.verif_statut = 'verifie'
   ) then raise exception 'student_account_required'; end if;
   if p_target_kind not in ('post','comment') then raise exception 'invalid_report_target'; end if;
   if p_reason not in ('spam','harassment','inappropriate','misinformation','other') then
@@ -350,7 +350,8 @@ commit;
 
 -- Tests PostgreSQL isolés obligatoires avant application :
 -- 1. compte non connecté, role != eleve, ou session élève absente : toutes RPC refusées.
--- 2. élève non abonné et non vérifié : lecture/création autorisées.
+-- 2. élève vérifié sans abonnement : lecture/création autorisées ; compte non vérifié/en attente : fil personnel refusé.
+-- 2b. élève dont la vérification est révoquée : lecture/interactions refusées ; suppression de ses propres contenus encore possible.
 -- 3. lecture feed/commentaires : uniquement pseudo, jamais matricule/section/verif_by/verif_at.
 -- 4. pagination keyset, limites 1..50/100, aucun contenu hidden/deleted.
 -- 5. commentaire parent d'un autre post refusé; suppression limitée à l'auteur.
