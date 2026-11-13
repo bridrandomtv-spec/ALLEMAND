@@ -8567,3 +8567,6 @@ Faire vérifier le rendu sur de vrais navigateurs et tailles d'écran (Windows/m
 - Aucun appel/écriture Supabase, aucune migration, aucun changement Auth/RLS/Storage/Realtime, aucune donnée d'élève consultée, aucun déploiement Cloudflare et aucune fusion. La CI doit exécuter le nouveau test sur le HEAD courant.
 - Le réseau social reste une maquette intégrée : aucun post, commentaire, relation, groupe ou notification sociale n'est activé.
 - Suite : vérifier le résultat CI et concevoir les opérations serveur minimales du MVP social dans un document de contrat, sans appliquer de migration à la base active.
+
+
+- Correctif CI pendant le lot 409 : l'assertion existante `ci/check-msg.mjs` attendait encore l'ancienne version Service Worker `dz-de-v3.185.0.0.146`. Elle a été alignée sur `dz-de-v3.185.0.0.147` ; la référence `msg.js?v=3514` reste inchangée et synchronisée dans `index.html` et `sw.js`.
