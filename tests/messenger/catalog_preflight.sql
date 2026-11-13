@@ -89,7 +89,7 @@ UNION ALL
 SELECT
   'POLICY',
   p.schemaname || '.' || p.tablename,
-  CASE WHEN p.policy_count IS NULL THEN 'NO_POLICY' ELSE 'PRESENT' END,
+  CASE WHEN p.policy_count = 0 THEN 'NO_POLICY' ELSE 'PRESENT' END,
   jsonb_build_object('count', p.policy_count, 'names', p.policy_names)
 FROM policy_state p
 
