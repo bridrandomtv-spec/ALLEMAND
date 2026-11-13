@@ -65,3 +65,14 @@
 - Toujours aucune migration exécutée sur Supabase actif. Aucun environnement de test gratuit existant n'a été trouvé : la seule branche Supabase listée est main. Ne pas créer de branche/projet payant.
 - État PR #17 au dernier contrôle : ouverte, non fusionnée, mergeable=true, base main, HEAD 87d1a783d2da1a4e13ff9cdf8cc2241438bf4265. Aucun workflow CI associé retourné pour le commit.
 - Étape suivante : fournir un harnais d'intégration exécutable sur PostgreSQL local gratuit (ou machine de développement existante) et obtenir un résultat réel avant toute application cloud; ensuite intégrer les abonnements Realtime d'invitations et les panneaux arabes الواردة / المرسلة.
+
+
+## Lot 441 — interface pédagogique professionnelle de la messagerie (13 novembre 2026)
+- Recomposition de l'accueil réel de الرسائل : bandeau éditorial pédagogique, compteurs calculés exclusivement à partir des groupes et conversations réellement retournés par Supabase, recherche, filtres, repères d'usage scolaire et cartes mieux hiérarchisées.
+- Les groupes affichent les métadonnées réellement disponibles (wilaya, niveau, filière, dernier échange). Les conversations privées ne révèlent plus leur identifiant technique dans le titre visible.
+- Correction du libellé de groupe qui appelait une chaîne comme une fonction, ainsi que du sélecteur de délégation de clic : les boutons de filtre étaient affichés mais non interceptés par le gestionnaire global.
+- Ajout d'un traitement CSS ciblé, RTL, responsive et compatible avec les thèmes clair/sombre. Aucun framework ni dépendance ajoutés.
+- Cache actualisé : msg.js?v=3515, style-prototype-dz.css?v=198, service worker dz-de-v3.185.0.0.149.
+- Aucun faux message, faux contact, faux compteur ou faux contenu pédagogique n'est injecté : les compteurs sont dérivés des résultats réels des fonctions existantes.
+- Limites fonctionnelles inchangées : les invitations de conversation et les nouvelles règles de consentement restent indisponibles tant que la migration préparée n'a pas été testée dans PostgreSQL puis appliquée avec autorisation. Le forum ملتقى الطلاب reste une interface sans backend de publication.
+- Aucun changement Auth, RLS, schéma actif, paiement, données Supabase, main ou déploiement Cloudflare. PR #17 reste ouverte et non fusionnée.
