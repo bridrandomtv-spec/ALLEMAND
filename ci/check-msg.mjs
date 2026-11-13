@@ -45,3 +45,9 @@ ok(dmStart >= 0 && dmEnd > dmStart &&
 
 if (fail.length) { console.error('::error:: check-msg : ' + fail.length + ' échec(s)'); process.exit(1); }
 console.log('== check-msg : TOUT PASSE ==');
+
+// Lot 359 — interface visible de la messagerie en arabe RTL.
+ok(msgjs.includes('💬 الرسائل — منصة المراسلة الوطنية للتلاميذ'), 'accueil Messenger entièrement en arabe');
+ok(msgjs.includes('البحث في محادثاتي ومجموعاتي') && msgjs.includes('فتح المحادثة'), 'recherche et actions de conversation en arabe');
+ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'rédaction et pièces jointes en arabe');
+ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations/.test(msgjs), 'aucun ancien libellé français visible prioritaire');
