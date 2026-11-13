@@ -302,7 +302,7 @@ begin
 
   return v_conv;
 end;
-$;
+$$;
 
 -- Les nouvelles conversations directes ne peuvent recevoir de membres que
 -- pendant la RPC d'acceptation. Les DM historiques restent consultables.
