@@ -7803,3 +7803,51 @@ Ne pas révoquer isolément l'ancienne RPC ni retirer les policies immédiatemen
 5. passe une matrice PostgreSQL multi-rôle et les tests de non-régression sur une base jetable.
 
 Aucune écriture, migration, révocation de privilège ou modification de policy n'a été effectuée sur Supabase actif.
+
+## Lot 364 — inventaire des chemins de création Messenger et compatibilité des droits (13 novembre 2026)
+
+### Périmètre contrôlé
+
+Lecture de `msg.js`, `supabase/supabase.js`, `supabase/msg_schema.sql`, des tests Messenger et des anciennes migrations archivées. Complément par introspection SELECT du catalogue PostgreSQL actif (`azjwcybivirvpxbfhyzk`). Aucun message, profil nominatif ou contenu de conversation consulté.
+
+### Chemins applicatifs identifiés
+
+- `msgOpenDirect(otherId)` dans `supabase/supabase.js` ne crée pas de conversation depuis le navigateur : il recherche un DM partagé existant, puis renvoie `msg_invitation_requise` si aucun n'existe.
+- `msgCreateGroup(wilaya,niveau,filiere,titre)` crée en revanche un groupe par INSERT direct dans `msg_conversations`. Ce chemin est utilisé par l'interface de modération des groupes officiels.
+- Les opérations ordinaires de lecture, envoi, fichiers et modération utilisent les tables `msg_*` et leurs policies ; elles ne doivent pas être neutralisées par une révocation globale mal ciblée.
+- Les tests `tests/msg_test.mjs` et `ci/check-msg.mjs` vérifient l'absence de création DM côté client, mais ne démontrent pas à eux seuls que la base active refuse les INSERT/API/RPC forgés.
+
+### Définition serveur observée sur la base active
+
+- `msg_open_direct(uuid)` reste une fonction SECURITY DEFINER accordée à `authenticated`. Son corps vérifie `msg_can_dm`, cherche une conversation existante, puis crée la conversation et les deux adhésions dans la même transaction. Il ne consulte aucune invitation acceptée.
+- `msg_can_dm(a,b)` exige que l'appelant soit l'un des deux UUID et que les deux profils soient vérifiés et partagent wilaya, niveau et filière. Cette règle ne couvre donc pas le réseau national inter-wilayas souhaité et ne prouve pas une inscription à un lycée.
+- `msg_member_ok(cid,uid)` vérifie que `uid=auth.uid()`. Pour un DM, il permet au créateur de s'ajouter quand la conversation ne contient aucun membre, puis permet à l'autre utilisateur de s'ajouter si `msg_can_dm` l'autorise. Le trigger `msg_guard_direct` vérifie le nombre de membres et `msg_can_dm`, mais ne vérifie pas d'invitation.
+- La policy INSERT `msg conv creation` autorise un utilisateur authentifié à créer une conversation de type `direct` dont il est le créateur. La policy INSERT `msg members ajout` autorise l'utilisateur à s'ajouter lui-même si `msg_member_ok` passe. Ensemble, ces chemins permettent encore de contourner le garde du navigateur ; l'ancienne RPC constitue un second chemin indépendant.
+- Le trigger `msg_tr_direct` est présent sur `msg_members`. Il ne remplace pas une vérification d'invitation : il délègue actuellement à `msg_can_dm`.
+
+### Matrice de compatibilité à respecter pour la future migration
+
+| Chemin | État actuel | Exigence de correction |
+|---|---|---|
+| Création d'un groupe officiel par un modérateur | INSERT client existant, soumis à policy | Préserver uniquement pour les rôles habilités et les contrôles de groupe |
+| Auto-adhésion à un groupe | Contrôle de correspondance wilaya/niveau/filière | Préserver provisoirement sans présenter ces champs comme une preuve d'inscription officielle |
+| Réouverture d'un DM historique | Lecture d'un DM dont l'utilisateur est déjà membre | Préserver sans recréer ni ré-enrôler un membre |
+| Nouveau DM par `msg_open_direct` | RPC SECURITY DEFINER sans invitation | Remplacer par acceptation d'invitation atomique ; ne pas laisser l'ancienne RPC créer de nouveaux DM |
+| Nouveau DM par INSERT direct | Policies + trigger ne demandent pas d'invitation | Refuser toute création/adhésion directe à un DM hors RPC d'acceptation |
+| Lecture/envoi/messages/pièces jointes | Policies dédiées | Conserver les accès des membres et les restrictions existantes |
+
+### Décision technique
+
+La correction ne doit pas consister à supprimer indistinctement les INSERT sur les deux tables : cela casserait `msgCreateGroup` et potentiellement des parcours de modération. Il faut séparer les autorisations selon le type de conversation, déplacer la création du DM dans une RPC d'acceptation transactionnelle, puis retirer l'accès direct aux chemins DM après tests d'intégration. Les DM historiques doivent rester accessibles à leurs membres, sans que leur existence autorise l'ajout d'un nouveau membre.
+
+Les migrations archivées des 30 octobre (notamment `20261030132222`, `20261030132512` et `20261030131545`) sont des versions antérieures du durcissement de l'adhésion/RPC ; elles ne constituent pas une migration d'invitation et ne doivent pas être rejouées telles quelles sur la base active.
+
+### Suite immédiate
+
+1. Construire une migration candidate séparant explicitement les INSERT groupe/direct et l'acceptation des invitations.
+2. Tester sur PostgreSQL isolé avec deux élèves synthétiques, un modérateur et un tiers : RPC historique, INSERT conversation direct, auto-adhésion au DM, acceptation valide, double acceptation concurrente, réouverture historique et création de groupe.
+3. Vérifier les droits effectifs et le comportement RLS après migration candidate ; fournir un rollback.
+4. Garder l'annuaire national inter-lycées bloqué jusqu'à l'intégration d'une source institutionnelle d'affiliation.
+
+Aucun SQL n'a été appliqué à Supabase actif. Aucun fichier applicatif, Auth, RLS, GRANT, Storage ou donnée active n'a été modifié dans ce lot. Aucun changement sur `main), aucun merge et aucun déploiement de production.
+
