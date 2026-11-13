@@ -597,7 +597,14 @@ async function msgInviteCancel(inviteId){
   if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
   return { ok:!!r.data };
 }
-Object.assign(window.SB, { msgInvites, msgInviteSend, msgInviteAccept, msgInviteDecline, msgInviteCancel });
+async function msgStudentSearch(query, limit){
+  const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.rpc('msg_student_search',{p_query:String(query||''),p_limit:limit||12});
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  return { ok:true, students:Array.isArray(r.data)?r.data:[] };
+}
+Object.assign(window.SB, { msgInvites, msgInviteSend, msgInviteAccept, msgInviteDecline, msgInviteCancel, msgStudentSearch });
 
 
 /* ── ADM-1 · sous-admins & wilayas (client fin — le RLS décide) ── */
