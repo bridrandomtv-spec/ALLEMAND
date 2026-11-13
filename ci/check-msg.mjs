@@ -43,11 +43,12 @@ ok(dmStart >= 0 && dmEnd > dmStart &&
    !/\.from\('msg_members'\)\.insert/.test(dmMethod),
    'nouveau DM interdit côté client avant invitation acceptée');
 
-if (fail.length) { console.error('::error:: check-msg : ' + fail.length + ' échec(s)'); process.exit(1); }
-console.log('== check-msg : TOUT PASSE ==');
 
 // Lot 359 — interface visible de la messagerie en arabe RTL.
 ok(msgjs.includes('💬 الرسائل — منصة المراسلة الوطنية للتلاميذ'), 'accueil Messenger entièrement en arabe');
-ok(msgjs.includes('البحث في محادثاتي ومجموعاتي') && msgjs.includes('فتح المحادثة'), 'recherche et actions de conversation en arabe');
+ok(msgjs.includes('ابحث في محادثاتي ومجموعاتي') && msgjs.includes('فتح المحادثة'), 'recherche et actions de conversation en arabe');
 ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'rédaction et pièces jointes en arabe');
-ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations/.test(msgjs), 'aucun ancien libellé français visible prioritaire');
+ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
+
+if (fail.length) { console.error('::error:: check-msg : ' + fail.length + ' échec(s)'); process.exit(1); }
+console.log('== check-msg : TOUT PASSE ==');
