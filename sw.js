@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.185.0.0.144';
+const VERSION = 'dz-de-v3.185.0.0.145';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -40,6 +40,7 @@ const PRECACHE = [
   './guide.js?v=3511',
   './memoire.js?v=3510',
   './masar.js?v=3516',
+  './msg.js?v=3513',
   './matieres.js?v=3510',
   './public-portal.js?v=10',
   './library.js?v=3510',
