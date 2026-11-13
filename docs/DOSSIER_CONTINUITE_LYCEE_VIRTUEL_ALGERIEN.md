@@ -116,3 +116,10 @@
 - La CI #3523/#3524 a ensuite révélé que ci/check-public-portal.mjs attendait encore style-prototype-dz.css?v=197 et le service worker dz-de-v3.185.0.0.147. Ces références étaient dépassées par le Lot 443.
 - Assertions et messages de contrôle synchronisés vers CSS v200 et service worker .151 dans le commit e135a23cb09484dd163220da8fe798146231d239.
 - Run CI #3526 associé à ce HEAD : en attente au moment de cette note. Ne pas déclarer la validation globale réussie avant son résultat.
+
+### Addendum Lot 444 — contrôle d'accès rectifié après confrontation à la décision produit
+- La lecture de LOT-413 a mis en évidence une divergence dans la première version de la migration : elle laissait accéder au fil personnel aux comptes non vérifiés. Ce n'était pas conforme à la décision produit (fil personnel réservé aux élèves vérifiés ; comptes en attente limités aux annonces institutionnelles/aide, hors périmètre de cette première tranche).
+- Le catalogue Supabase a confirmé par contrainte CHECK les valeurs exactes de verif_statut : non_verifie, en_attente, verifie, rejete ; valeur par défaut non_verifie. Aucune ligne de profil n'a été lue.
+- Migration corrigée : les six RPC de lecture/interactions (fil, commentaires, création publication, création commentaire, réaction, signalement) exigent role='eleve' ET verif_statut='verifie'. L'abonnement n'est pas vérifié. La suppression de ses propres contenus reste possible à un élève auteur même si sa vérification a été révoquée, pour permettre le retrait de son contenu.
+- ci/check-multaqa.mjs vérifie maintenant les six contrôles verif_statut et la séparation entre vérification scolaire et abonnement. Commit migration : 750c1b1b8c585380bbae69255dcc71c9de3b3665 ; CI : e99d0625b3f6240d35fd34c3ecfe2ba752e6e775.
+- La CI #3527 a échoué sur ci/check-masar.mjs, qui attendait encore CSS v196 ; correction vers v200 commit 8466b426f827cb1eadb2aa19328e776588cdc8a5. Le résultat du run déclenché pour ce correctif doit être suivi.
