@@ -97,6 +97,13 @@ ok(/Première lecture sans verrou de ligne[\s\S]*?pg_advisory_xact_lock[\s\S]*?R
    'acceptation verrouille la paire avant la ligne pour éviter les deadlocks réciproques');
 ok(/Une invitation réciproque devenue redondante[\s\S]*?status='cancelled'/.test(inviteSql),
    'invitation réciproque annulée après ouverture du DM');
+
+ok(/msg_invite_send[\s\S]*?status='expired'[\s\S]*?created_at <= now\(\) - interval '7 days'/.test(inviteSql),
+   'anciennes invitations sortantes expirées avant une nouvelle demande');
+ok(/msg_invite_decline[\s\S]*?set status = 'expired'[\s\S]*?set status = 'declined'/.test(inviteSql),
+   'refus d’une demande ancienne la marque expirée, pas refusée');
+ok(/msg_invite_cancel[\s\S]*?set status = 'expired'[\s\S]*?set status = 'cancelled'/.test(inviteSql),
+   'annulation d’une demande ancienne la marque expirée');
 ok(inviteSql.includes('NON exécutée sur Supabase') && inviteSql.includes('Tests obligatoires'),
    'migration identifiée comme non appliquée et tests documentés');
 
