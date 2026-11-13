@@ -58,3 +58,21 @@ La restauration vérifiée a été effectuée au commit `174c3a010d13dd64070dd02
 - Modification de `main`, rebase ou fusion PR #17 : non.
 
 **Décision :** le préflight est plus explicite sur les absences, mais Messenger n'est toujours pas certifié. Le NO-GO reste maintenu jusqu'à comparaison avec un catalogue actuel autorisé et tests comportementaux isolés.
+
+
+## 6. Lot 427 — Audit du catalogue Supabase actif
+
+Rapport : `docs/product/LOT-427-AUDIT-CATALOGUE-ACTIF-SUPABASE-MESSENGER.md`.
+
+Le 13 novembre 2026, après autorisation explicite de lecture seule, les requêtes SELECT ont été exécutées sur le projet Supabase existant. Seuls les catalogues et métadonnées ont été consultés ; aucune ligne applicative n'a été lue.
+
+Constats bloquants :
+- la RPC active `msg_open_direct(uuid)` est `SECURITY DEFINER`, exécutable par `authenticated`, et crée les deux membres sans vérifier une invitation acceptée ;
+- `msg_not_blocked` ne couvre pas les deux sens du blocage ;
+- la policy de visibilité des profils entre membres, combinée aux SELECT de toutes les 12 colonnes de `profiles`, expose potentiellement les champs administratifs aux co-membres ;
+- le client exige un abonnement actif pour demander la vérification, mais le trigger serveur ne vérifie pas cet abonnement ;
+- le client Messenger n'a pas encore d'écran de recherche nationale, de demandes de contact ni de blocage branché.
+
+Décision : NO-GO pour l'ouverture nationale des DM jusqu'à correction et tests isolés. Le modèle produit du Lot 413 est maintenu : réseau social et messagerie essentiels gratuits pour les élèves vérifiés, indépendamment de l'abonnement.
+
+Périmètre strict : SELECT uniquement ; aucune migration, écriture, modification Auth/RLS/GRANT/RPC/trigger/Storage/Realtime, aucune installation, dépense ou déploiement. `main` inchangée ; PR #17 ouverte et non fusionnée.
