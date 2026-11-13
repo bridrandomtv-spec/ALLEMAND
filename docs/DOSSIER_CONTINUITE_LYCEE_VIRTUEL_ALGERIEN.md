@@ -8515,3 +8515,16 @@ Poursuivre l'inventaire technique en lecture seule : récupérer les signatures,
 - Aucun code applicatif modifié, aucun test navigateur revendiqué, aucun backend, SQL, migration, Auth/RLS/Storage/Realtime, déploiement, merge ou coût.
 - Décision : GO conditionnel pour un lot front-end isolé (Lot 406), après revue du patch ; NO-GO pour connexion aux données sociales réelles tant que les contrats et tests multi-comptes ne sont pas établis.
 
+
+## Lot 406 — première intégration de ملتقى الطلاب dans la plateforme (13 novembre 2026)
+
+- Nouvelle vue `multaqa` intégrée dans `index.html` : introduction, fil de démonstration, composition désactivée, découverte, confidentialité et lien Messenger.
+- Raccourci `🌐 ملتقى الطلاب` ajouté à la navigation desktop et mobile. Accès réservé au rôle `eleve` avec contrôle applicatif.
+- Route `msg` et module Messenger inchangés ; passage explicite du ملتقى الطلاب vers `💬 الرسائل`.
+- Styles isolés sous le préfixe `mtq-` dans `style-prototype-dz.css`, avec responsive et thème sombre.
+- Exemples explicitement fictifs. Publication, recherche, demandes de زمالة, commentaires, réactions, groupes, notifications, upload et persistance non activés. Aucune donnée élève lue.
+- Modifications limitées à `app.js`, `index.html`, `style-prototype-dz.css` et ce dossier. Aucun nouveau module ou dépendance.
+- Aucun changement Supabase (SQL, migration, RPC, policy, GRANT, Auth, RLS, Storage, Realtime), aucun déploiement Cloudflare, merge ou coût. Tests navigateur non revendiqués ; contrôles statiques et CI à suivre.
+
+### Suite — Lot 407
+Valider unicité des IDs, correspondance VIEWS/data-view, raccourcis desktop/mobile, garde de rôle et absence de fetch/Supabase dans la vue. Examiner le CI sans modifier `main` ni la base active.
