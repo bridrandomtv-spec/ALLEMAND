@@ -7892,3 +7892,16 @@ Le travail serveur doit rester en deux phases indépendantes :
 
 Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navigation existe, mais le véritable cycle d'invitation, l'annuaire national et l'autorisation serveur sans contournement ne sont pas encore livrés.
 
+
+
+## Lot 366 — confirmation du référentiel scolaire et des affiliations sur la base active (13 novembre 2026)
+
+- Reprise des lots 314, 315, 322, 327 et 337 : les sources JORADP, le prototype d'import hors ligne, le modèle relationnel logique, la provenance des preuves et le contrat serveur Messenger sont déjà documentés. Aucun de ces travaux n'est réécrit.
+- Introspection en lecture seule du catalogue PostgreSQL actif `azjwcybivirvpxbfhyzk` : aucune table publique nommée comme un registre scolaire, un lycée, une école, une inscription ou une affiliation n'a été trouvée.
+- Les colonnes existantes de `profiles` incluent `wilaya`, `niveau`, `filiere`, `matricule`, `section`, `verif_statut`, `verif_by` et `verif_at`. `wilaya_assignments` représente des affectations d'agents par wilaya, pas une inscription d'élève dans un lycée.
+- Seuls les catalogues `information_schema` ont été interrogés : aucune ligne de profil, d'affectation, d'audit ou de Messenger n'a été lue. Aucun SQL d'écriture, DDL, migration, Auth, RLS, GRANT ou Storage n'a été modifié.
+- Conclusion : aucun élément du schéma public actif ne permet actuellement de certifier une relation élève↔lycée. Les champs déclaratifs du profil, le matricule et la vérification interne ne doivent pas alimenter l'annuaire national comme preuves officielles.
+- La conception SQL est déjà suffisamment documentée dans le Lot 322 ; le blocage est institutionnel : obtenir un référentiel courant émis par une autorité habilitée, puis un mécanisme autorisé de vérification des inscriptions individuelles, avec rôles, base juridique, consentement et rétention définis.
+- Nouveau rapport détaillé : `docs/product/LOT-366-CONFIRMATION-REFERENTIEL-AFFILIATION-ACTIVE.md`.
+- Aucun changement sur `main), aucune fusion de PR #17, aucun déploiement Cloudflare. PR #17 est toujours ouverte et non fusionnée au contrôle API ; son indicateur `draft` est actuellement `false`, sans intervention de ce lot.
+- Décision : NO-GO pour l'annuaire national réel et les invitations inter-lycées tant que la preuve institutionnelle n'est pas obtenue ; GO pour les tests hors ligne sur données synthétiques.
