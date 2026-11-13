@@ -7591,3 +7591,14 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Commits du lot 359 : traduction initiale de l'interface `21c2576`, garde CI `21fe9fc`, dossier `a62e124`, corrections de libellés résiduels `14d1d1d`, assertions CI replacées avant la condition d'échec `14bb710`.
 - Vérification CI GitHub déclenchée sur `14bb710` : run #3269, état **pending** au moment de cette mise à jour ; aucune réussite n'est revendiquée avant la fin du workflow.
 - Relecture statique après correction : aucun libellé français statique détecté dans les éléments HTML visibles ciblés. Les messages d'erreur dynamiques renvoyés par les fonctions serveur restent affichés tels quels afin de ne pas modifier les contrats métier dans ce lot.
+
+
+## 26. Lot 359-B — Correction du bandeau et du cache Messenger (13 novembre 2026)
+
+- La relecture après CI a détecté que le bandeau de la vue `data-view="msg"` dans `index.html` était encore en français ; il est désormais en arabe.
+- Correction de deux identifiants internes affectés par une substitution trop large dans le lot précédent : restauration de `isMod0` et `isMod`. Le libellé de modération et le libellé de groupe résiduel ont été harmonisés en arabe.
+- Cache navigateur synchronisé : `msg.js?v=3513`, précache correspondant ajouté au service worker et version SW portée à `dz-de-v3.185.0.0.145`.
+- Contrôle CI étendu au bandeau HTML, au cache de `msg.js`, au précache SW et à l'intégrité des identifiants de modération.
+- La CI #3269 avait réussi sur le commit antérieur `14bb710`; cette validation ne couvre pas le présent correctif 359-B. Une nouvelle exécution est requise.
+- La dernière preview Cloudflare connue pointait sur le commit `27533e1`, antérieur au lot 359. Aucun déploiement preview du HEAD `db48a25` ni de ce correctif n'est encore confirmé. Aucun test visuel en navigateur n'est revendiqué.
+- Aucun changement Supabase/Auth/RLS/schéma/Storage, aucune modification de `main`, aucun déploiement production et aucune fusion de PR #17.
