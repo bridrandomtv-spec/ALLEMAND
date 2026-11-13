@@ -8772,3 +8772,18 @@ Contrôle local en lecture seule de la présence et des versions de PostgreSQL, 
 - CI #3431 (run `43449772844`) : **success**.
 - CI #3432 (run `43449779686`) : **success**.
 - PR #17 demeure ouverte et non fusionnée.
+
+
+## Lot 421 — Préparation de l'audit du catalogue Supabase actif Messenger (13 novembre 2026)
+
+- Rapport ajouté : [LOT-421-PREPARATION-AUDIT-CATALOGUE-SUPABASE-MESSENGER.md](product/LOT-421-PREPARATION-AUDIT-CATALOGUE-SUPABASE-MESSENGER.md), commit initial `5497fb36b6e1a176f7e1621773a2f023c2ac651d`.
+- Audit statique complémentaire du SQL agrégé : `msg_can_dm` ne contrôle pas `verif_statut` dans ce fichier ; `msg_not_blocked` vérifie le cas où un membre a bloqué l'expéditeur, mais pas le cas symétrique où l'expéditeur a bloqué l'autre membre ; la policy agrégée de création autorise un utilisateur authentifié à créer une conversation directe dont il est créateur. Ces observations ne décrivent pas nécessairement le catalogue Supabase actif.
+- Le Lot 421 fournit cinq requêtes SQL SELECT uniquement pour extraire les définitions de fonctions/RPC, ACL EXECUTE, policies RLS, triggers et état RLS. Elles ne lisent aucune donnée de profil, message ou Auth. Elles ne doivent être exécutées dans le SQL Editor du projet actif qu'après autorisation explicite.
+- CI #3434 (run `43462290529`) : **success**, job « Validation structurelle & pédagogique » terminé ; le contrôle de messagerie statique fait partie du job. Cette réussite valide le commit de continuité précédent `f6491ffdc06c890b5ef84c2037975865f04b889a`, pas les deux nouveaux commits Lot 421.
+- Aucun accès au catalogue Supabase actif, aucune lecture de données personnelles, aucun SQL exécuté, aucune modification Auth/RLS/GRANT/schéma/migration/Storage/Realtime/paiement, aucun déploiement, aucun changement sur `main), aucun rebase ni fusion PR #17.
+- Le forum `ملتقى الطلاب` reste destiné aux comptes élèves actifs sans condition d'abonnement ou de vérification ; la vérification scolaire reste gratuite ; les messages privés restent conditionnés à la vérification puis au consentement explicite du destinataire.
+- Dépendances toujours bloquantes : autorisation distincte ou export expurgé du catalogue actif ; sortie PowerShell du Lot 419 pour choisir une solution PostgreSQL locale déjà disponible, sans installation ni coût.
+
+### Suite — Lot 422
+
+Comparer l'export du catalogue actif aux scripts du dépôt, identifier les RPC réellement exposées et les droits effectifs, puis établir une matrice d'écarts vérifiable. Ne pas interroger le projet actif sans autorisation explicite et ne rien installer sur le PC avant la sortie du Lot 419.
