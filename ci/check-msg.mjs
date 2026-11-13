@@ -104,6 +104,11 @@ ok(/msg_invite_decline[\s\S]*?set status = 'expired'[\s\S]*?set status = 'declin
    'refus d’une demande ancienne la marque expirée, pas refusée');
 ok(/msg_invite_cancel[\s\S]*?set status = 'expired'[\s\S]*?set status = 'cancelled'/.test(inviteSql),
    'annulation d’une demande ancienne la marque expirée');
+
+ok(/alter publication supabase_realtime add table public\.msg_invites/.test(inviteSql),
+   'notifications d’invitation publiées en Realtime');
+ok(/create policy msg_invites_participant_read[\s\S]*?auth\.uid\(\) in \(sender_id, recipient_id\)/.test(inviteSql),
+   'événements Realtime limités aux deux participants par RLS');
 ok(inviteSql.includes('NON exécutée sur Supabase') && inviteSql.includes('Tests obligatoires'),
    'migration identifiée comme non appliquée et tests documentés');
 
