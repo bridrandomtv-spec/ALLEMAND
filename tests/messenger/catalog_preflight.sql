@@ -98,7 +98,7 @@ UNION ALL
 SELECT
   'TRIGGER',
   t.schema_name || '.' || t.table_name,
-  CASE WHEN t.trigger_count IS NULL THEN 'NO_TRIGGER' ELSE 'PRESENT' END,
+  CASE WHEN t.trigger_count = 0 THEN 'NO_TRIGGER' ELSE 'PRESENT' END,
   jsonb_build_object('count', t.trigger_count, 'names', t.trigger_names)
 FROM trigger_state t
 
