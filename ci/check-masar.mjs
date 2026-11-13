@@ -64,12 +64,12 @@ assert.match(css, /grid-template-areas:"hero" "next" "chart" "progress" "units"/
 assert.match(css, /html\[data-theme="dark"\].*ms-unit-card/s, 'thème sombre des unités absent');
 assert.match(html, /style-prototype-dz\.css\?v=195/, 'cache CSS v195 non actualisé');
 assert.match(html, /masar\.js\?v=3516/, 'cache JS non actualisé');
-assert.match(sw, /dz-de-v3\.185\.0\.0\.143/, 'version service worker Lot 315 non actualisée');
+assert.match(sw, /dz-de-v3\.185\.0\.0\.144/, 'version service worker Lot 315 non actualisée');
 assert.match(sw, /style-prototype-dz\.css\?v=195/, 'précache CSS v195 non actualisé');
 assert.match(sw, /masar\.js\?v=3516/, 'précache JS non actualisé');
 
-assert.match(html, /app\.js\?v=3568/, 'cache app.js non actualisé');
-assert.match(sw, /app\.js\?v=3568/, 'précache app.js non actualisé');
+assert.match(html, /app\.js\?v=3569/, 'cache app.js non actualisé');
+assert.match(sw, /app\.js\?v=3569/, 'précache app.js non actualisé');
 assert.match(html, /admin\.js\?v=3512/, 'cache admin.js non actualisé');
 assert.match(sw, /admin\.js\?v=3512/, 'précache admin.js non actualisé');
 assert.match(sw, /classe\.json\?v=3511/, 'précache classe.json non actualisé');
