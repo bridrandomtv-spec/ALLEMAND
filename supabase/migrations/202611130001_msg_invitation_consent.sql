@@ -60,7 +60,7 @@ create or replace function public.msg_is_member(uid uuid, cid bigint)
 returns boolean
 language sql stable security definer
 set search_path = pg_catalog, public
-as $
+as $$
   select auth.uid() is not null
      and uid = auth.uid()
      and exists (
@@ -90,7 +90,7 @@ as $
           ))
        )
   );
-$;
+$$;
 
 -- Le test existant reste requis (identité vérifiée + compatibilité scolaire).
 -- On lui ajoute le blocage bilatéral au niveau des contrôles de parcours DM.
@@ -98,7 +98,7 @@ create or replace function public.msg_not_blocked(cid bigint, snd uuid)
 returns boolean
 language sql stable security definer
 set search_path = pg_catalog, public
-as $
+as $$
   select auth.uid() is not null
      and snd = auth.uid()
      and not exists (
@@ -108,7 +108,7 @@ as $
       and m.user_id <> snd
       and public.msg_pair_blocked(snd, m.user_id)
   );
-$;
+$$;
 
 -- La policy historique msg members ajoutait un membre à soi-même dès que
 -- msg_member_ok retournait true; l'ancienne fonction autorisait tout DM.
@@ -119,7 +119,7 @@ create or replace function public.msg_member_ok(cid bigint, uid uuid)
 returns boolean
 language sql stable security definer
 set search_path = pg_catalog, public
-as $
+as $$
   select auth.uid() is not null
      and uid = auth.uid()
      and exists (
@@ -130,7 +130,7 @@ as $
       and p.wilaya=c.wilaya and p.niveau=c.niveau
       and (c.filiere is null or p.filiere=c.filiere)
   );
-$;
+$$;
 
 -- Le rôle authenticated ne peut plus créer lui-même une conversation directe.
 drop policy if exists "msg conv creation" on public.msg_conversations;
