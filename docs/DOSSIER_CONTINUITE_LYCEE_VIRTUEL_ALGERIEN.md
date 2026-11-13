@@ -8787,3 +8787,18 @@ Contrôle local en lecture seule de la présence et des versions de PostgreSQL, 
 ### Suite — Lot 422
 
 Comparer l'export du catalogue actif aux scripts du dépôt, identifier les RPC réellement exposées et les droits effectifs, puis établir une matrice d'écarts vérifiable. Ne pas interroger le projet actif sans autorisation explicite et ne rien installer sur le PC avant la sortie du Lot 419.
+
+
+## Lot 422 — Registre des écarts et critères de preuve Messenger (13 novembre 2026)
+
+- Rapport : [LOT-422-REGISTRE-ECARTS-PREUVES-MESSENGER.md](product/LOT-422-REGISTRE-ECARTS-PREUVES-MESSENGER.md), commit du rapport `ea4e1cf6e134b2b40905978bb7e09201b37bce2c`.
+- Consolidation des écarts connus : vérification gratuite, périmètres de validation, création DM et consentement, éligibilité scolaire, blocage, RLS cumulatives, privilèges RPC et accès gratuit au forum.
+- Le catalogue Supabase actif reste **non vérifié** : aucun export n'a été remis et aucune autorisation explicite de lecture du catalogue actif n'a été donnée. Le statut « inconnu » n'est pas assimilé à « sécurisé » ni à « vulnérable ».
+- Le Lot 422 fixe l'ordre de preuve requis : définition des fonctions, propriétaire et sécurité, ACL/grants, policies cumulatives, triggers, exposition Data API, puis tests multi-comptes sur baseline isolée.
+- Aucun accès à Supabase actif, aucune lecture de lignes applicatives, aucun SQL exécuté, aucune modification de données/structure/RLS/Auth/GRANT/Storage/Realtime/paiement ; aucune installation ou facturation ; aucun déploiement ; aucun changement sur `main), aucun rebase ni fusion PR #17.
+- Décisions produit maintenues : `ملتقى الطلاب` gratuit pour les élèves actifs ; vérification scolaire gratuite ; messagerie privée conditionnée à la vérification et à l'acceptation du destinataire.
+- Dépendances : export catalogue expurgé ou autorisation de lecture seule limitée ; sortie PowerShell Lot 419 pour identifier l'environnement local déjà disponible.
+
+### Suite — Lot 423
+
+Dès réception des preuves du catalogue et de l'environnement local, produire la comparaison « dépôt / catalogue actif / tests » et un verdict pour chaque invariant. Sans ces éléments, le NO-GO reste maintenu pour déclarer le Messenger privé terminé.
