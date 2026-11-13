@@ -13,7 +13,7 @@ has(/item\[0\]\s*!==\s*'multaqa'\s*\|\|\s*canSeeStudentDashboard\(\)/.test(app),
 has(/data-view="multaqa"[^>]*class="view mtq-view"[^>]*hidden/.test(html), 'index.html : vue ملتقى absente ou non masquée initialement');
 has(/data-view="msg"/.test(html) && /data-go="msg"[^>]*>💬 الانتقال إلى الرسائل/.test(html), 'index.html : lien distinct vers Messenger absent');
 has(/document\.addEventListener\('dz:view'/.test(msg), 'msg.js : écoute du cycle de navigation Messenger absente');
-has(/نسخة أولية للواجهة/.test(html) && /لا تُقرأ أي بيانات طلاب/.test(html), 'index.html : avertissement de maquette et absence de lecture des données absent');
+has(/لم يتم ربط المنشورات والتعليقات والتفاعلات بقاعدة البيانات بعد/.test(html) && /لا توجد منشورات فعلية للعرض/.test(html), 'index.html : état vide transparent, sans publications fictives absent');
 if (fails.length) { for (const failure of fails) console.error('❌ ' + failure); process.exit(1); }
 console.log('✅ ملتقى الطلاب : route protégée côté interface, navigation desktop/mobile filtrée, Messenger distinct, maquette sans données élèves.');
 console.log('ℹ️ Contrôle statique uniquement : ne remplace pas des tests multi-comptes ni les autorisations serveur.');
