@@ -8023,3 +8023,15 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Aucun secret/JWT réel ou donnée applicative consulté ; aucun test PostgreSQL/RLS exécuté ; aucune écriture/DDL/migration ou modification Auth/RLS/GRANT/Storage/Realtime.
 - Aucun projet de test créé ni frais engagé. PR #17 reste ouverte et non fusionnée ; main et production inchangées.
 - Suite : identifier les objets managés auth/storage nécessaires et assembler un manifeste de restauration qui sépare le schéma applicatif des composants Supabase non reproductibles par un PostgreSQL générique. La création d'un second projet Free reste en attente d'une autorisation explicite.
+
+
+## Lot 376 — frontière Auth/Storage managés et profils (13 novembre 2026)
+
+- Extraction SELECT des colonnes de auth.users, auth.identities, auth.sessions, auth.refresh_tokens, auth.instances, storage.buckets et storage.objects, sans lire aucune ligne de ces tables.
+- Trigger auth.users.on_auth_user_created confirmé : handle_new_user() crée le profil public, force role=eleve et copie pseudo/niveau/filiere/wilaya depuis raw_user_meta_data ; requested_role=parent ne crée qu'une demande parent pending.
+- Point de sécurité : raw_user_meta_data est contrôlé par l'utilisateur. Niveau/filière/wilaya initiaux sont déclaratifs, pas une preuve d'inscription ou d'affiliation officielle. Aucune métadonnée utilisateur ne doit accorder verif_statut=verifie ou un rôle privilégié.
+- Les triggers Storage gèrent notamment versioning/lifecycle, protection de suppression et métadonnées. Une base PostgreSQL générique ne reproduit pas Storage API, objets, URLs signées ou Realtime ; ces tests doivent être distingués des tests SQL/RLS.
+- Rapport : docs/product/LOT-376-AUTH-MANAGE-ET-PROFILS-MESSENGER.md, commit fde5d9198ed1209cb7f0a4eb11c233da1307b3af.
+- Aucun compte, identité, session, refresh token, bucket ou objet réel consulté ; aucun test Auth/Storage/Realtime exécuté ; aucune écriture/DDL/migration ou modification Auth/RLS/GRANT/Storage/Realtime.
+- Aucun projet de test créé ni frais engagé. PR #17 reste ouverte et non fusionnée ; main et production inchangées.
+- Suite : construire le manifeste d'assemblage du baseline en classant les objets par couche (application, Auth simulé, services Supabase managés), puis préparer les tests négatifs d'auto-vérification et de DM sans invitation. La création du second projet Free reste en attente d'une autorisation explicite.
