@@ -15,7 +15,7 @@ WITH expected_tables(table_name, expected_policies, expected_triggers) AS (
     ('audit_logs',1,1),
     ('admin_roles',1,0),
     ('admin_permissions',1,0),
-    ('wilaya_assignments',2,0)
+    ('wilaya_assignments',2,1)
 ),
 table_checks AS (
 -- NOTE: Le rattachement du schéma public est contrôlé dans table_checks ;
@@ -102,7 +102,7 @@ FROM (
 ) x
 ORDER BY x.object_name;
 
--- Synthèse des totaux : attendus 12 tables, 29 policies, 13 triggers.
+-- Synthèse des totaux : attendus 12 tables, 30 policies, 14 triggers.
 SELECT
   count(*) AS target_tables,
   sum((SELECT count(*) FROM pg_policies p
