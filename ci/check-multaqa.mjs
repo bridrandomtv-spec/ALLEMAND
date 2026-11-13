@@ -1,11 +1,13 @@
 /* ci/check-multaqa.mjs — garde-fous de navigation du ملتقى الطلاب */
 import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
 const app = fs.readFileSync('app.js', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 const msg = fs.readFileSync('msg.js', 'utf8');
 const communityClient = fs.readFileSync('multaqa.js', 'utf8');
 const sw = fs.readFileSync('sw.js', 'utf8');
 const fails = [];
+try { execFileSync(process.execPath, ['--check', 'multaqa.js']); } catch (e) { console.error('❌ multaqa.js : erreur de syntaxe JavaScript'); process.exit(1); }
 const has = (condition, message) => { if (!condition) fails.push(message); };
 has(/\['dashboard',[\s\S]{0,160}?'msg','multaqa'/.test(app), 'app.js : route multaqa absente de VIEWS/TABS');
 has(/function canSeeStudentDashboard\s*\(\)\s*\{[\s\S]{0,220}?s\.role\s*===\s*'eleve'/.test(app), 'app.js : contrôle de rôle élève absent ou affaibli');
