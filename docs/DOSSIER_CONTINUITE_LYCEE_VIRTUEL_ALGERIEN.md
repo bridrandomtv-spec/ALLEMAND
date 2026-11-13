@@ -7675,12 +7675,12 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - HEAD contrôlé : `4500a722fbd4723569fb36c4455a123084de82a8`.
 - PR #17 : ouverte, non fusionnée, base `main`.
 - CI #3288 / run GitHub Actions `43407890297` : `success`, job « Validation structurelle & pédagogique » terminé sans étape en échec.
-- Cloudflare a publié le commit `4500a72) en prévisualisation : build et déploiement réussis le 13 novembre 2026 à 10:17:06 UTC. URL du déploiement précis : `https://efde7e82-allemand.brid-randomtv.workers.dev`. URL de branche : `https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev`.
+- Cloudflare a publié le commit `4500a72` en prévisualisation : build et déploiement réussis le 13 novembre 2026 à 10:17:06 UTC. URL du déploiement précis : `https://efde7e82-allemand.brid-randomtv.workers.dev`. URL de branche : `https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev`.
 - Cette prévisualisation est un déploiement de PR, pas une publication de production.
 
 ### Découvrabilité de Messenger
 
-- Relecture de `app.js` et `index.html) : route `msg`, vue `data-view="msg"` et module `msg.js` sont raccordés.
+- Relecture de `app.js` et `index.html` : route `msg`, vue `data-view="msg"` et module `msg.js` sont raccordés.
 - Ordinateur : bouton direct `💬 الرسائل` dans la navigation principale, à côté des accès principaux.
 - Mobile : entrée `💬 الرسائل` dans la navigation rapide.
 - Les assertions correspondantes existent dans `ci/check-msg.mjs` et passent dans la CI #3288.
@@ -7708,4 +7708,4 @@ La relecture du code courant confirme les limites déjà documentées aux lots 3
 - Ne pas déclarer le Messenger national terminé : l'annuaire national, le cycle d'invitation réel, l'affiliation institutionnelle prouvée et la création transactionnelle des DM ne sont pas livrés.
 - Ne pas contourner l'absence de registre d'affiliation en se fondant sur des champs de profil déclaratifs, la wilaya ou le numéro d'abonnement. Le numéro d'abonnement prouve le lien avec l'abonnement de la plateforme, pas l'inscription officielle dans un lycée.
 - Réutiliser les contrats et plans déjà écrits ; prochaine étape technique sûre : préparer/valider un environnement PostgreSQL isolé pour exécuter la matrice de tests existante et éprouver les fonctions, triggers, RLS et chemins de création DM, sans toucher à la base active. L'annuaire national et les invitations inter-wilayas restent bloqués jusqu'à preuve institutionnelle et autorisation de migration.
-- Aucun SQL ou migration exécuté ; aucune écriture Supabase ; aucun changement Auth/RLS/GRANT/Storage ; aucun changement de `main) ; aucun merge ; aucune publication de production.
+- Aucun SQL ou migration exécuté ; aucune écriture Supabase ; aucun changement Auth/RLS/GRANT/Storage ; aucun changement de `main` ; aucun merge ; aucune publication de production.
