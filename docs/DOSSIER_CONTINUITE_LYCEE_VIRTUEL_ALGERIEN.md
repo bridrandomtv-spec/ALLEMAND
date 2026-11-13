@@ -7631,3 +7631,15 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Commit du correctif CI : `e498fdb`. Une nouvelle CI doit confirmer le passage complet du workflow ; aucun succès n'est présumé avant sa conclusion.
 - Les contrôles Messenger de la CI #3276 ont tous réussi, y compris l'harmonisation arabe et les assertions ajoutées au lot 359-D.
 - Aucun changement Supabase/Auth/RLS/schéma/Storage, aucune modification de `main`, aucun déploiement de production et aucune fusion de PR #17. PR #17 reste ouverte et non fusionnée.
+
+
+## 30. Lot 360 — Numéro d’abonnement pour la vérification Messenger (13 novembre 2026)
+
+- Remplacement du champ étudiant « رقم التسجيل المدرسي » par « رقم الاشتراك بعد تفعيل الدفع » ; la saisie est numérique et la section/classe reste demandée.
+- Source du numéro : `public.subscriptions.id`, identifiant `GENERATED ALWAYS AS IDENTITY PRIMARY KEY`, donc attribué par PostgreSQL et unique. Le numéro n’est affiché dans la page الاشتراك المميز qu’après activation (`statut = 'actif'`).
+- Le formulaire vérifie que ce numéro correspond à une ligne d’abonnement active du compte connecté (`user_id = auth.uid()`), sous la politique RLS de lecture des abonnements propres au compte. Un numéro d’un autre compte ou non activé est refusé par le parcours normal.
+- La colonne historique `profiles.matricule` est réutilisée pour stocker ce numéro, afin d’éviter toute migration de schéma. Les libellés visibles de la file de modération sont renommés en « رقم الاشتراك ».
+- `billing.js` versionné en v3511 ; `msg.js` en v3514 ; Service Worker `dz-de-v3.185.0.0.146`, avec précache de `msg.js` et `billing.js`. Assertions ajoutées à `ci/check-msg.mjs`.
+- Limite de sécurité explicitement conservée : le déclencheur SQL historique `profiles_verif_guard` ne lie pas encore lui-même `matricule` à un abonnement actif. Le parcours applicatif vérifie le lien, et la validation reste manuelle par un modérateur ; une garantie contre un appel API forgé nécessiterait une évolution SQL/RPC/RLS. Aucune de ces modifications n’est déployée ni ajoutée au schéma actif dans ce lot.
+- Le contrôle CI précédent (#3278) avait échoué sur une attente historique `.144` dans `ci/check-masar.mjs` ; l’attente est maintenant alignée sur `.146`. Le nouveau workflow doit confirmer l’ensemble.
+- Aucun changement de base Supabase active, Auth, RLS, schéma ou paiement ; aucune modification de `main`, aucun déploiement de production et aucune fusion de PR #17.
