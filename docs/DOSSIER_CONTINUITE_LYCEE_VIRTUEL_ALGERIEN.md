@@ -185,3 +185,13 @@
 - Aucun profil, compte, message privé, contenu scolaire existant ou autre donnée métier n'a été lu ou modifié. Aucune migration Messenger, modification de paiement, Storage, Auth, Realtime ou table existante n'a été appliquée.
 - État produit : **backend de base installé**, mais l'expérience complète n'est pas encore déclarée opérationnelle. Étape suivante obligatoire : vérifier le raccordement de `multaqa.js` aux RPC dans une session élève vérifié réelle, contrôler l'affichage et les erreurs dans le navigateur, puis tester publication/commentaire/réaction/signalement avec des comptes de test autorisés. Aucun contenu fictif ne doit être ajouté.
 - PR #17 reste ouverte et non fusionnée, base `main`. Aucun changement sur `main`, aucune fusion et aucun déploiement Cloudflare.
+
+
+## Lot 448 — fiabilisation du démarrage du fil communautaire (13 novembre 2026)
+- Revue du raccordement réel entre `multaqa.js`, `app.js` et le module ES Supabase : le client communautaire était chargé avant l'initialisation asynchrone de `window.SB`. Une navigation très rapide pouvait donc produire un faux état d'indisponibilité, alors que le client finissait ensuite son initialisation.
+- Correction de `multaqa.js` : attente explicite de l'événement `dz:sbready` avec délai maximal de 12 secondes, contrôle de disponibilité des méthodes `sb/me/myProfile`, distinction d'une erreur de lecture de profil d'une absence de profil, et reprise du rendu si la vue ملتقى est déjà ouverte au chargement du module.
+- Cache client incrémenté à `multaqa.js?v=2`, précache synchronisé et Service Worker porté à `dz-de-v3.185.0.0.153`.
+- Contrôles CI synchronisés : vérification de l'attente Supabase, de la version v2 du client, du précache et de l'état réel « migration appliquée » dans l'en-tête SQL. Le contrôle Messenger a également été synchronisé sur le Service Worker v153.
+- Le test PostgreSQL 17 isolé du workflow dédié reste distinct du test réel avec session JWT dans un navigateur. Aucun compte de test élève réel n'a été utilisé, aucune publication ni aucun commentaire n'a été créé sur la base active.
+- Les workflows déclenchés sur les commits intermédiaires ont montré un échec transitoire du contrôle Messenger dû à une seconde assertion restée sur le Service Worker v152 ; assertion corrigée vers v153. Ne considérer le lot validé qu'après conclusion positive des workflows sur le HEAD final.
+- Aucun changement de schéma Supabase dans ce lot ; aucune donnée élève ou message privé lue/modifiée ; aucune migration Messenger ; aucune fusion PR #17 ; aucun déploiement Cloudflare.
