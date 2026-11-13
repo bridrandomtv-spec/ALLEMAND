@@ -8490,3 +8490,16 @@ Poursuivre l'inventaire technique en lecture seule : récupérer les signatures,
 - Lot documentaire uniquement : aucun bucket, table, fonction, policy, écran ou maquette modifié. Aucun DDL/DML, migration, Auth/RLS/Storage/Realtime, déploiement Cloudflare, merge, coût ou donnée personnelle consultée.
 - Suite proposée : Lot 404 — audit statique de la maquette HTML et inventaire des interactions réellement fonctionnelles vs éléments de présentation, puis définition du parcours MVP sans branchement backend.
 
+
+
+## Lot 404 — audit fonctionnel statique de la maquette ملتقى الطلاب (13 novembre 2026)
+
+- Audit statique de `prototypes/multaqa-students-preview.html`, version `294a60e102fbb62b44f1fa14bf585deafbc1c1c2`.
+- Inventaire : 33 IDs sans doublon, 25 boutons, 9 boutons désactivés, 11 écouteurs click ; aucun appel fetch/Supabase/storage navigateur ni dépendance externe détectée.
+- Interactions locales identifiées : menus de demandes/notifications, bascule fil/profil, édition locale du profil, onglets et focus de composition. Elles ne sauvegardent aucune donnée serveur.
+- Les boutons accepter/refuser, retirer une relation, ajouter photo/vidéo/fichier, publier et inviter sont explicitement désactivés. Publications, compteurs, profils et groupes sont statiques. Aucune recherche nationale, publication persistante, upload, commentaire, réaction, adhésion ou notification serveur n'est raccordé.
+- Rapport : `docs/product/LOT-404-AUDIT-FONCTIONNEL-MAQUETTE-MULTAQAA.md`, commit `db7dee5742d7af9becf9610bc017ef7fbab84ac5`.
+- Décision : la page est une maquette de présentation, pas encore un réseau social opérationnel. Plan MVP séquencé : fil/texte et interactions de base, relations sociales/recherche avec consentement, groupes explicites, puis médias image et enfin vidéo.
+- Aucun fichier d'application modifié, aucun SQL, migration, Auth/RLS/Storage/Realtime, déploiement, merge ou coût.
+- Suite : Lot 405 — cartographier les points d'entrée/navigation de l'application actuelle et choisir le point d'intégration le moins risqué pour rendre la maquette accessible sans casser routes, IDs, modules ou Messenger. Pas de branchement backend à ce stade.
+
