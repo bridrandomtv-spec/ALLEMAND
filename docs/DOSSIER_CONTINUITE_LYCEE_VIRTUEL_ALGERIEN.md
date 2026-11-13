@@ -8440,3 +8440,16 @@ Spécification de migration progressive et plan de tests isolés pour le prédic
 
 ### Suite — Lot 400
 Poursuivre l'inventaire technique en lecture seule : récupérer les signatures, définitions complètes, propriétaires, modes SECURITY INVOKER/DEFINER, search_path, EXECUTE grants et dépendances des fonctions Messenger critiques ; dresser la liste des policies et chemins d'ajout de membres. Ne pas lire les données élèves, ne pas exécuter de SQL de changement, et ne pas prétendre que le comportement RLS est testé.
+
+## Lot 400 — audit en lecture seule des fonctions critiques Messenger (13 novembre 2026)
+
+- Projet Supabase identifié par la connexion active : `azjwcybivirvpxbfhyzk`. Requêtes de catalogue uniquement ; aucun contenu de ligne élève/message consulté.
+- Fonctions critiques inspectées : `msg_can_dm(uuid,uuid)`, `msg_member_ok(bigint,uuid)`, `msg_not_blocked(bigint,uuid)`, `msg_open_direct(uuid)`, `msg_is_member(uuid,bigint)`, `msg_is_moderator(uuid)`, triggers `msg_guard_direct()` et `msg_rate_limit()`.
+- Propriétaires des fonctions inspectées : `postgres`. Modes SECURITY DEFINER confirmés ; search_path fixé à `pg_catalog, public` ou vide pour `msg_open_direct`. Les ACL explicites ciblées n'accordent pas EXECUTE à PUBLIC/anon ; les privilèges effectifs confirment l'accès authenticated aux RPC prévues et l'absence d'accès anon.
+- Policies `msg_*` et triggers non internes des tables Messenger recensés. Les privilèges effectifs montrent qu'authenticated possède INSERT sur `msg_conversations` et `msg_members` ; la voie directe est contrôlée par RLS et le trigger `msg_guard_direct`, en plus de la RPC `msg_open_direct`.
+- Écart de sécurité confirmé : `msg_not_blocked` ne vérifie que le cas où un autre membre a bloqué l'expéditeur courant. Il ne vérifie pas le cas inverse où l'expéditeur courant a bloqué un membre. En outre, `msg_open_direct`, `msg_can_dm`, `msg_member_ok` et `msg_guard_direct` ne consultent pas `msg_blocks`. Le blocage bilatéral n'est donc pas garanti à l'ouverture/ajout et le contrôle d'envoi est unidirectionnel.
+- La RPC `msg_open_direct` ne requiert pas d'invitation Messenger acceptée ; elle s'appuie actuellement sur identité vérifiée et égalité wilaya/niveau/filière. Aucune relation sociale ne doit être branchée sur cette règle sans décision de consentement distincte.
+- Rapport : `docs/product/LOT-400-AUDIT-FONCTIONS-CRITIQUES-MESSENGER.md`, commit `f1c3b48a4eef2f82633948233c59f17212355ee0`.
+- Aucun DDL/DML, migration, fonction, policy, GRANT, Auth, RLS, Storage ou Realtime modifié. Aucun test comportemental PostgreSQL/RLS/concurrence exécuté ; aucun déploiement, merge, coût ou service payant.
+- Suite : Lot 401 — spécification corrective documentaire du blocage bilatéral et du consentement DM, puis plan de tests isolés gratuits. Ne pas modifier la base active.
+
