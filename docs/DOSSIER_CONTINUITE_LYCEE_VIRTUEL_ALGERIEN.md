@@ -8802,12 +8802,3 @@ Comparer l'export du catalogue actif aux scripts du dépôt, identifier les RPC 
 ### Suite — Lot 423
 
 Dès réception des preuves du catalogue et de l'environnement local, produire la comparaison « dépôt / catalogue actif / tests » et un verdict pour chaque invariant. Sans ces éléments, le NO-GO reste maintenu pour déclarer le Messenger privé terminé.
-
-
-## Lot 426 — Contrôle de restauration du dossier de continuité (13 novembre 2026)
-
-- Le dossier a été vérifié sur le commit de branche après les mises à jour documentaires précédentes et retournait un contenu vide. Cette version restaure le texte historique complet récupéré depuis le commit non vide `d3f64f601330f93fbc01d4c133c1d8db1910895b`, puis réintègre les entrées des Lots 423–425 et les livrables documentés dans les rapports correspondants.
-- Le Lot 425 a ajouté `tests/messenger/catalog_security_export.sql`, script SELECT-only non exécuté. Sa revue statique n'est pas une validation PostgreSQL.
-- Le Lot 419 attend toujours le résultat PowerShell local pour savoir si PostgreSQL, Docker ou WSL sont déjà disponibles. Aucun outil ne doit être installé sans accord.
-- Aucun accès Supabase actif, aucune lecture de données applicatives, aucune modification Auth/RLS/GRANT/RPC/schéma, aucune dépense, aucun déploiement, aucune modification de `main`, aucun rebase ni merge de PR #17.
-- Prochaine étape : vérifier la syntaxe du script sur une instance PostgreSQL locale déjà disponible. Sans environnement local confirmé, rester au stade de revue statique et attendre les éléments du Lot 419.
