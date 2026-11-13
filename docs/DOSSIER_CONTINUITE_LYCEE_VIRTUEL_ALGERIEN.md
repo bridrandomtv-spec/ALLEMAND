@@ -8329,3 +8329,9 @@ Préparer une maquette HTML/CSS isolée, non raccordée à Supabase et sans modi
 
 ### Suite — Lot 394
 Examiner l'état exact de comparaison PR #17/base et identifier la cause de mergeable=false sans modifier main ni réécrire l'historique. Ensuite, compléter la spécification fonctionnelle de publication photo/vidéo, audiences, invitations sociales, modération et limites de téléversement ; aucune activation serveur avant tests isolés PostgreSQL/RLS et audit dédié Storage.
+
+
+### Vérification finale complémentaire — Lot 393
+
+- Le booléen GitHub `mergeable` a fluctué pendant les recalculs (false puis true). Relecture de l'API Pull Request complète au HEAD 8a1ec4c6a6228925ec2b83a5d8cb539c04e3426c : PR #17 `state=open`, `merged=false`, `mergeable=true`, `mergeable_state=clean`, base 51acfe8c97b6e152208d592dbd2c5bbde5c5c38e.
+- Conclusion au dernier contrôle : aucune indication GitHub d'un conflit de fusion ; PR toujours ouverte et non fusionnée. Ne pas fusionner sans accord explicite.
