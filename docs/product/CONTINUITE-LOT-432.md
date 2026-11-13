@@ -32,3 +32,12 @@
 
 ## Prochaine étape — Lot 433
 Faire un préflight de compatibilité et de migration sur le schéma exact déjà observé, en vérifiant les dépendances de chaque fonction/RPC, policy, trigger, grant et client. La sortie sera un plan de migration ordonné avec critères de rollback, toujours documentaire. Ne pas écrire ni exécuter de SQL sur Supabase actif. L'environnement de test isolé sans coût et la source institutionnelle d'affiliation restent des prérequis non résolus.
+
+## Contrôle après commits documentaires
+- Commit de la spécification : 739ca676722692e42b876db992519b568c909331.
+- Commit de la continuité Lot 432 : 8a9fd70b664e5676474ecc280b775a6f4bd31281.
+- Commit ajoutant le lien Lot 432 à la continuité Lot 431 : b0f0bc7ac7fb22ac49037a492e4164ffa6c158f8.
+- HEAD PR #17 relu : b0f0bc7ac7fb22ac49037a492e4164ffa6c158f8.
+- PR #17 : ouverte, non fusionnée, draft=false ; GitHub retourne mergeable=false. La cause n'a pas été établie ; aucun rebase ni synchronisation n'a été lancé.
+- Aucune exécution CI associée au dernier commit n'a été retournée par la recherche effectuée ; ne pas déclarer la CI réussie.
+- Aucun déploiement Cloudflare.
