@@ -24,7 +24,7 @@ export function decideAffiliation(record, { type, actorId, actorRole, actorSchoo
   if (!record || !Array.isArray(record.events)) throw new Error("Dossier invalide.");
   need(actorId, "Acteur"); need(at, "Date"); need(reason, "Motif");
   if (FINAL.has(record.status)) throw new Error("Dossier déjà clôturé.");
-  if (["verify", "reject"].includes(type) && record.status !== "pending") throw new Error("Décision finale déjà enregistrée.");
+  if (["verify", "reject"].includes(type) && record.status !== "pending") throw new Error("Dossier déjà clôturé.");
   if (type === "verify") {
     if (actorRole !== "school_verifier") throw new Error("Rôle de validation établissement requis.");
     if (actorSchoolId !== record.schoolId) throw new Error("Responsable hors périmètre de l'établissement.");
