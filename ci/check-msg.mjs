@@ -52,8 +52,8 @@ ok(msgjs.includes('ابحث في محادثاتي ومجموعاتي') && msgjs.
 ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'rédaction et pièces jointes en arabe');
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
-ok(idx.includes('msg.js?v=3519'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.158'") && sw.includes("./msg.js?v=3519") && sw.includes("./style-prototype-dz.css?v=202"), 'service worker et précache Messenger synchronisés');
+ok(idx.includes('msg.js?v=3520'), 'version cache du module de messagerie actualisée');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.159'") && sw.includes("./msg.js?v=3520") && sw.includes("./style-prototype-dz.css?v=202"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
@@ -136,12 +136,25 @@ if (fail.length) { console.error('::error:: check-msg Lot 360 : ' + fail.length 
 
 ok(msgjs.includes('msg-pro-hero') && msgjs.includes('msg-pro-stats'), 'nouvelle hiérarchie pédagogique Messenger');
 ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجموعة '("), 'libellé de groupe construit sans appel de chaîne invalide');
-ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter]')"), 'filtres Messenger accessibles via délégation de clic');
-ok(idx.includes('style-prototype-dz.css?v=202') && idx.includes('msg.js?v=3519'), 'versions de ressources Messenger actualisées');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.158'") && sw.includes('./style-prototype-dz.css?v=202') && sw.includes('./msg.js?v=3519'), 'précache synchronisé avec la nouvelle interface');
+ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key]')"), 'filtres Messenger accessibles via délégation de clic');
+ok(idx.includes('style-prototype-dz.css?v=202') && idx.includes('msg.js?v=3520'), 'versions de ressources Messenger actualisées');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.159'") && sw.includes('./style-prototype-dz.css?v=202') && sw.includes('./msg.js?v=3520'), 'précache synchronisé avec la nouvelle interface');
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
 
 
 // Lot 444 — exécuter aussi les contrôles du fil communautaire dans le pipeline CI actif.
 await import('./check-multaqa.mjs');
+
+
+const discoverySql = readFileSync('supabase/migrations/202611130003_msg_student_discovery.sql', 'utf8');
+ok(discoverySql.includes('create or replace function public.msg_student_search'), 'RPC de recherche scolaire versionnée');
+ok(discoverySql.includes("pa.verif_statut = 'verifie'") && discoverySql.includes("pb.verif_statut = 'verifie'"), 'DM exige deux identités vérifiées côté serveur');
+ok(discoverySql.includes("p.role='eleve'") && discoverySql.includes("p.verif_statut='verifie'"), 'annuaire limité aux élèves vérifiés');
+ok(discoverySql.includes('msg_discovery_limits') && discoverySql.includes('interval \'10 minutes\'') && discoverySql.includes('v_count > 8'), 'recherche protégée contre le scraping par quota');
+ok(discoverySql.includes('position(lower(v_query) in lower(coalesce(p.pseudo'), 'recherche uniquement sur le pseudo');
+ok(discoverySql.includes('revoke all on function public.msg_student_search(text,integer) from public, anon'), 'recherche interdite aux visiteurs anonymes');
+ok(sbjs.includes('async function msgStudentSearch(query, limit)') && sbjs.includes("rpc('msg_student_search'"), 'client appelle exclusivement la RPC de recherche');
+ok(msgjs.includes('data-peer-key') && msgjs.includes('state.peers[key]=p.student_id'), 'identifiant destinataire conservé hors du DOM');
+ok(msgjs.includes('msgStudentSearch(query,12)') && msgjs.includes('msgInviteSend(recipient)'), 'recherche reliée à l’envoi de demande de consentement');
+ok(msgjs.includes('ابحث عن زميل لطلب محادثة خاصة'), 'interface de découverte en arabe');
