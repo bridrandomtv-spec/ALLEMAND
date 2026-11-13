@@ -8390,3 +8390,20 @@ Faire une revue de cohérence des règles de confidentialité et des invitations
 
 ### Suite — Lot 397
 Préparer une proposition de modèle relationnel (tables, clés, contraintes uniques, index et règles RLS attendues) en document seulement, puis la confronter à l'inventaire du schéma actif en lecture seule. Ne pas exécuter de SQL ni modifier Supabase tant qu'un environnement isolé gratuit et fidèle n'est pas disponible et autorisé.
+
+
+---
+
+## Lot 397 — modèle relationnel de ملتقى الطلاب (13 novembre 2026)
+
+- Création de `docs/product/LOT-397-MODELE-RELATIONNEL-SOCIAL.md`.
+- Proposition documentaire des tables `social_profile_settings`, `social_invitations`, `social_contacts`, `social_blocks`, `social_reports`, avec clés, contraintes, index, cardinalités, transactions et règles RLS attendues.
+- Inventaire Supabase actif en lecture seule : `profiles` contient notamment `pseudo`, `niveau`, `filiere`, `wilaya`, `verif_statut` et `matricule`. Le matricule reste strictement privé et ne doit jamais être exposé dans l'annuaire.
+- Confirmation de l'existence de `notifications` générique et des tables `msg_*`. Décision : ne pas recréer les notifications ; ne pas détourner `msg_blocks` ni `msg_reports` pour le social. Le blocage social devra être consulté par Messenger après audit séparé.
+- Aucun contenu de ligne élève ou message lu ; uniquement catalogue, inventaire et colonnes via `information_schema.columns`.
+- Le modèle interdit qu'une relation sociale crée automatiquement une conversation Messenger. Aucun endpoint d'annuaire ne doit révéler email, téléphone, matricule, UUID ou justificatif.
+- Commit du document Lot 397 : `f1a07da315a6591dbe6c70495ca3eead6cb70b4f`.
+- Aucun SQL DDL/DML, migration, RPC, policy, GRANT, Auth, RLS, Storage ou Realtime modifié. Aucun test comportemental PostgreSQL/RLS, CI hébergé, déploiement, merge ou coût engagé.
+
+### Suite — Lot 398
+Revue de compatibilité applicative en lecture seule : identifier les consommateurs actuels de `notifications`, les fonctions et policies de `msg_blocks`, puis concevoir le contrat d'intégration du blocage social avec Messenger sans modifier le runtime ni la base active. Maintenir l'interdiction de DM automatique après acceptation d'une زمالة.
