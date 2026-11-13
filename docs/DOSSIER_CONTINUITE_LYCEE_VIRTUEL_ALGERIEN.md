@@ -8313,3 +8313,19 @@ Préparer la spécification d'expérience arabe RTL et la carte d'intégration d
 
 ### Suite — Lot 393
 Préparer une maquette HTML/CSS isolée, non raccordée à Supabase et sans modifier les vues existantes, pour matérialiser le fil d'actualité, la carte de publication, le profil minimal et les onglets زملائي / المجموعات. Vérifier d'abord les règles de contribution du dépôt et les chemins de prototypes déjà existants ; ne pas inventer de faux contenus réels ni d'identifiants actifs.
+
+---
+
+## Lot 393 — maquette isolée du fil social étudiant (13 novembre 2026)
+
+- Clarification produit utilisateur : tout étudiant autorisé doit pouvoir publier un texte, une photo ou une vidéo, avec une audience nationale « جميع الطلاب » ; les autres étudiants peuvent voir la publication et éventuellement envoyer une invitation à son auteur.
+- Traduction UX : compositeur de publication avec choix d'audience ; aperçu média ; fil « آخر الأخبار » ; actions de réaction/commentaire/partage ; panneau « اكتشف الطلاب » avec action « دعوة » ; sections « زملائي » et « المجموعات الدراسية ».
+- La demande « دعوة » du prototype désigne une demande sociale pour ajouter l'auteur à « زملائي ». Elle ne crée pas de conversation privée et ne vaut pas invitation Messenger. « مراسلة » reste une action distincte, régie par le flux sécurisé Messenger.
+- Création de la maquette autonome prototypes/multaqa-students-preview.html (HTML/CSS RTL, responsive, sans dépendance externe, sans JavaScript, sans connexion réseau/base). Contenu, noms, chiffres et profils explicitement fictifs ; boutons désactivés pour ne pas simuler une fonction réellement opérationnelle.
+- La maquette montre des exemples de publication texte + zone photo et publication vidéo, le sélecteur « جميع الطلاب », et l'invitation sociale. Elle n'effectue aucun upload, partage, publication, invitation ou accès aux données étudiantes.
+- Fichier vérifié après création : blob SHA dc90d83f246a2e291fb8d051fcb4a4d3dca812a1, 11 691 caractères.
+- Aucun fichier runtime, route, ID applicatif, handler, module Messenger, CSS de production, SQL, migration, RPC, policy, GRANT, Auth, RLS, Storage ou Realtime modifié. Aucun accès aux lignes des élèves, aucune écriture Supabase, aucun CI hébergé, déploiement, merge ou coût.
+- PR #17 reste OPEN et non fusionnée. Le contrôle de GitHub a retourné mergeable=false après la création du prototype ; ce seul booléen ne suffit pas à conclure à un conflit de fusion. Diagnostic de l'état de comparaison requis avant toute action. Aucune tentative de merge, rebase ou force-push.
+
+### Suite — Lot 394
+Examiner l'état exact de comparaison PR #17/base et identifier la cause de mergeable=false sans modifier main ni réécrire l'historique. Ensuite, compléter la spécification fonctionnelle de publication photo/vidéo, audiences, invitations sociales, modération et limites de téléversement ; aucune activation serveur avant tests isolés PostgreSQL/RLS et audit dédié Storage.
