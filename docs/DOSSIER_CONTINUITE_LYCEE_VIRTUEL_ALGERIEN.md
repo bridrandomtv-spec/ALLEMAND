@@ -8590,3 +8590,10 @@ Faire vérifier le rendu sur de vrais navigateurs et tailles d'écran (Windows/m
 
 ### Suite — Lot 411
 Vérifier le résultat CI après le correctif de références de cache, puis contrôler les points d'entrée de l'identité scolaire et de l'abonnement existants afin de préparer une matrice d'accès cohérente. Audit en lecture seule uniquement ; aucune modification Auth/RLS ou base active.
+
+
+### Addendum Lot 410 — seconde assertion de cache CI
+
+- Le run `43440449464` a confirmé que le contrôle du portail public passe après le premier correctif, puis a révélé une seconde assertion obsolète dans `ci/check-masar.mjs` : CSS `v195` et Service Worker `.146`, alors que les références effectives sont `v196` et `.147`.
+- Correctif appliqué à `ci/check-masar.mjs` : assertions CSS et Service Worker alignées sur `v196` / `dz-de-v3.185.0.0.147`. Commit : `163536400d5e911566aa67fa47d939f17afd210d`.
+- Le run `43440611839` a été déclenché sur le commit précédent pendant cette correction ; il ne valide donc pas encore ce dernier correctif. Une nouvelle exécution CI sur le HEAD mis à jour est attendue.
