@@ -120,7 +120,7 @@
         + '<div class="msg-sec">🧭 كيف تعمل المراسلة؟</div><div class="msg-steps4">'
         + '<div class="s"><span class="n">1</span><b>أنشئ حسابك</b>المستوى · الشعبة · الولاية؛ وهي معلومات تساعد على تحديد مجموعاتك.</div>'
         + '<div class="s"><span class="n">2</span><b>افتح « 💬 الرسائل »</b>ستجد مجموعاتك الدراسية المرتبطة بملفك.</div>'
-        + '<div class="s"><span class="n">3</span><b>تحقّق من هويتك</b>رقم التسجيل والشعبة ← مراجعة الأستاذ أو الإدارة ← إتاحة الرسائل الخاصة.</div>'
+        + '<div class="s"><span class="n">3</span><b>تحقّق من هويتك</b>رقم الاشتراك والشعبة ← مراجعة الأستاذ أو الإدارة ← إتاحة الرسائل الخاصة.</div>'
         + '<div class="s"><span class="n">4</span><b>تواصل وتقدّم</b>تبادل الرسائل والملفات، وأبلغ عن أي مخالفة عند الحاجة.</div>'
         + '</div>'
         + '<div class="msg-empty" style="margin-top:12px">🧑🏫 <b>الأساتذة والإدارة</b> : يظهر قسم 🛡 الإشراف (البلاغات والتحقق من الهوية وإنشاء المجموعات الرسمية والسجل) تلقائياً بعد تسجيل الدخول.</div>';
@@ -136,8 +136,8 @@
     if(!isMod0 && vf.ok && vf.statut!=='verifie'){
       h += '<div class="msg-verif">' + (vf.statut==='en_attente'
         ? '⏳ <b>التحقق من الهوية جارٍ</b> — يراجع أستاذ أو مسؤول رقم تسجيلك وشعبتك. تبقى المجموعات الرسمية متاحة، وتُفعّل الرسائل الخاصة بعد المصادقة.'
-        : (vf.statut==='rejete' ? '⛔ <b>تم رفض الطلب</b> — صحّح رقم التسجيل أو الشعبة ثم أعد إرسال الطلب. ' : '🪪 <b>التحقق من الهوية المدرسية</b> — مطلوب قبل بدء محادثة خاصة. ') +
-          '<div class="msg-vform"><input id="vfMat" placeholder="رقم التسجيل المدرسي" maxlength="40" value="'+esc(vf.matricule||'')+'"><input id="vfSec" placeholder="الشعبة / القسم (مثال: 2AS-1)" maxlength="40" value="'+esc(vf.section||'')+'"><button class="msg-send" data-act="verif-req" type="button">إرسال طلب التحقق</button></div>')
+        : (vf.statut==='rejete' ? '⛔ <b>تم رفض الطلب</b> — صحّح رقم الاشتراك أو الشعبة ثم أعد إرسال الطلب. ' : '🪪 <b>التحقق من الهوية المدرسية</b> — مطلوب قبل بدء محادثة خاصة. ') +
+          '<div class="msg-vhint">أدخل الرقم الفريد الظاهر في صفحة الاشتراك بعد تفعيل الدفع. يجب أن يكون الاشتراك نشطًا ومرتبطًا بهذا الحساب.</div><div class="msg-vform"><input id="vfMat" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="رقم الاشتراك بعد تفعيل الدفع" maxlength="20"><input id="vfSec" placeholder="الشعبة / القسم (مثال: 2AS-1)" maxlength="40" value="'+esc(vf.section||'')+'"><button class="msg-send" data-act="verif-req" type="button">إرسال طلب التحقق</button></div>')
         + '</div>';
     }
     if(!isMod0 && vf.ok && vf.statut==='verifie'){ h += '<div class="msg-verif ok">✔ تم التحقق من الهوية المدرسية — الرسائل الخاصة متاحة ضمن المجموعة الدراسية المشتركة.</div>'; }
@@ -184,7 +184,7 @@
       if(vq.ok && vq.queue.length){
         h += vq.queue.map(function(q){
           return '<div class="msg-modcard"><div class="msg-meta"><b>🪪 ' + esc(q.pseudo||'?') + '</b><span>' + esc((q.wilaya||'?')+' · '+(q.niveau||'?')+' · '+(q.filiere||'?')) + '</span></div>' +
-            '<div class="msg-body">رقم التسجيل: ' + esc(q.matricule||'—') + ' · الشعبة: ' + esc(q.section||'—') + '</div>' +
+            '<div class="msg-body">رقم الاشتراك: ' + esc(q.matricule||'—') + ' · الشعبة: ' + esc(q.section||'—') + '</div>' +
             '<div class="msg-modbtns"><button class="msg-modbtn" data-mod="verif-ok" data-uid="' + q.id + '" type="button">✔ تأكيد</button>' +
             '<button class="msg-modbtn" data-mod="verif-no" data-uid="' + q.id + '" type="button">⛔ رفض</button></div></div>';
         }).join('');
