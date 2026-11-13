@@ -75,6 +75,20 @@ ok(/create or replace function public\.msg_member_ok[\s\S]*?c\.type='groupe'/.te
    'auto-ajout direct d’un membre à un DM existant interdit');
 ok(inviteSql.includes('msg_pair_blocked') && inviteSql.includes('public.msg_is_member(uid, cid)'),
    'blocage bilatéral appliqué aux accès DM');
+
+ok(!/^as \\$/m.test(inviteSql) && !/^\\$;$/m.test(inviteSql),
+   'quotage dollar SQL valide pour toutes les fonctions');
+ok(/create or replace function public\\.msg_is_member[\\s\\S]*?uid = auth\\.uid\\(\\)/.test(inviteSql),
+   'msg_is_member reste limité à l’utilisateur connecté');
+ok(/create or replace function public\\.msg_member_ok[\\s\\S]*?uid = auth\\.uid\\(\\)/.test(inviteSql),
+   'msg_member_ok ne révèle pas les droits d’un autre profil');
+ok(/create or replace function public\\.msg_not_blocked[\\s\\S]*?snd = auth\\.uid\\(\\)/.test(inviteSql),
+   'msg_not_blocked reste lié à l’expéditeur connecté');
+ok(/revoke all on function public\\.msg_pair_blocked\\(uuid, uuid\\) from public, anon, authenticated/.test(inviteSql),
+   'fonction interne de blocage non exposée comme oracle');
+ok(/status='expired'[\\s\\S]*?return null/.test(inviteSql) &&
+   !/status='expired'[\\s\\S]*?raise exception 'invite_expired'/.test(inviteSql),
+   'expiration persistante sans rollback de la transaction');
 ok(inviteSql.includes('NON exécutée sur Supabase') && inviteSql.includes('Tests obligatoires'),
    'migration identifiée comme non appliquée et tests documentés');
 
