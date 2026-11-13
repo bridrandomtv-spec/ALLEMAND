@@ -8726,3 +8726,20 @@ Inventorier toutes les dépendances de `profiles.matricule`, `verif_statut` et d
 ### Suite — Lot 418
 
 Préparer un protocole de baseline PostgreSQL isolée, les sources exactes nécessaires et les contrôles de coût avant toute création d'environnement. Aucun SQL actif, aucune branche Supabase et aucune ressource payante.
+
+
+### Lot 418 — protocole de baseline PostgreSQL isolée sans coût (13 novembre 2026)
+
+- Protocole créé : `docs/product/LOT-418-PROTOCOLE-BASELINE-POSTGRESQL-SANS-COUT.md`, commit `bf9ffd52672c81e0be8576cb7ef47bdf1f589cb8`.
+- Conditions de coût : aucun nouveau projet Supabase, aucune branche cloud, aucun compute additionnel, aucun plan payant, aucun déploiement Worker ; candidat prioritaire = moteur PostgreSQL local déjà installé, sinon arrêt avant installation.
+- Sources exigées : 27 corps de migrations authentifiés, empreintes du manifeste Lot 342, baseline sans données personnelles (tables, colonnes, contraintes, fonctions, triggers, policies, grants, ACL, rôles, vues, Storage, Realtime, extensions) et versions exactes.
+- Les scripts agrégés `supabase/*.sql` et les archives déjà appliquées ne doivent pas être rejoués à l'aveugle.
+- Protocole prévoit des comptes synthétiques, tests vérification/abonnement, vérificateurs scoping, consentement DM, blocage bilatéral et accès gratuit du forum pour tous les élèves actifs.
+- Aucun moteur local n'a été inspecté, aucune installation, aucun export, aucun SQL exécuté, aucune donnée utilisateur consultée. La prochaine opération est uniquement un contrôle local en lecture seule si les outils locaux sont accessibles.
+- CI #3426 (run 43447871883) : succès sur le commit de continuité précédent. CI #3427 (run 43448688301) : en cours sur le rapport Lot 417 au dernier contrôle.
+- PR #17 : ouverte, non fusionnée ; GitHub signalait `mergeable=false` après le commit de continuité Lot 417. Aucune synchronisation/rebase effectuée.
+- Aucun changement Auth/RLS/GRANT/Storage/Realtime/paiement, aucun accès distant à la base active, aucun déploiement, aucune modification de main ni fusion.
+
+### Suite — Lot 419
+
+Contrôle local en lecture seule de la présence et des versions de PostgreSQL, Docker et WSL, puis choix de la voie gratuite. Ne rien installer et ne créer aucune ressource cloud sans accord distinct.
