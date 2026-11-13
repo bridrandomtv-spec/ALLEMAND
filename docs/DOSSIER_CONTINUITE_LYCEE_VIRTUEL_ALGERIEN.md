@@ -8094,3 +8094,19 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - La matrice couvre les DM sans invitation, auto-ajout, tiers, refus/annulation, blocages dans les deux sens, retrait d'appartenance, lecture profils/messages, vérificateurs hors périmètre, pièces jointes, et cas positifs anti-régression pour groupes et conversations historiques.
 - Cette matrice est une spécification de tests, pas une preuve d'exécution. Aucun compte synthétique ni aucune donnée n'a été inséré dans Supabase actif. Aucun test comportemental PostgreSQL/RLS n'a été exécuté.
 - Aucune modification de main, fusion de PR, migration, DDL, Auth/RLS/Storage/Realtime ou déploiement. Aucune ressource payante créée, dépense 0 USD.
+
+
+## Lot 380 — préparation du baseline PostgreSQL 17 (13 novembre 2026)
+
+- Ajout de `tests/messenger/baseline_catalog_export.sql` : export de catalogue strictement SELECT-only couvrant tables/colonnes/defaults/identity, contraintes, index, policies, triggers, fonctions/SECURITY DEFINER/search_path/ACL, grants relationnels et de colonnes, extensions et publication Realtime.
+- Requêtes exécutées en lecture seule sur Supabase actif : inventaire des colonnes des 12 tables, contraintes et index. Aucune donnée de ligne applicative n'a été consultée.
+- Les identifiants des tables msg_conversations, msg_messages, msg_attachments, msg_reports, msg_log et audit_logs utilisent des colonnes identity ALWAYS avec séquences attachées.
+- Les contraintes actives de msg_attachments comprennent MIME allowlist, octets 1..5242880, format SHA-256, statut, chemin contraint et FK message_id vers msg_messages. Les dépendances Auth users et les FK admin_roles/admin_permissions/wilaya_assignments sont également recensées.
+- Confirmation : supabase/msg_schema.sql ne peut pas être utilisé comme baseline fidèle ; il ne contient pas l'ensemble des tables administratives/audit ni l'ensemble des définitions actives (notamment msg_open_direct). Auth, Storage et Realtime demeurent des dépendances gérées distinctes.
+- Rapport : docs/product/LOT-380-PREPARATION-BASELINE-POSTGRESQL-17.md, commit 92fd27c1f115e4054af47f340a316ed83940e91e.
+- Export catalogue : tests/messenger/baseline_catalog_export.sql, commit 9d70827a9f1d4587434b3e7cdc6b3ad8480dad0c.
+- Limites : le fichier d'export est un ensemble de SELECT à exécuter séparément, pas un pg_dump ni un script restaurable. Baseline complet non produit, instance PostgreSQL de test indisponible, tests RLS multi-comptes non exécutés.
+- Aucun projet/branche Supabase créé ; aucun GitHub Actions déclenché ; aucun paiement ; aucune écriture ou modification Auth/RLS/Storage/Realtime sur l'actif.
+- PR #17 reste ouverte et non fusionnée ; main inchangée ; aucun déploiement.
+- Suite : consolider les extractions de catalogue sans données, préparer le shim Auth et le jeu de comptes synthétiques, puis demander confirmation avant toute création éventuelle d'un second projet Free.
+
