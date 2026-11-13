@@ -5,6 +5,7 @@ console.log('== check-msg · messagerie EduDZ ==');
 const sql = readFileSync('supabase/msg_schema.sql', 'utf8');
 const sbjs = readFileSync('supabase/supabase.js', 'utf8');
 const msgjs = readFileSync('msg.js', 'utf8');
+const billing = readFileSync('billing.js', 'utf8');
 const idx = readFileSync('index.html', 'utf8');
 const sw = readFileSync('sw.js', 'utf8');
 const app = readFileSync('app.js', 'utf8');
