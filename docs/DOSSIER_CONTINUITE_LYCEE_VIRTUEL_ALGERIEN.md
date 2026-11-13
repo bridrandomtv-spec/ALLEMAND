@@ -8807,14 +8807,25 @@ Dès réception des preuves du catalogue et de l'environnement local, produire l
 ## Lot 423 — Audit des outils d'export du catalogue Messenger (13 novembre 2026)
 
 - Rapport : [LOT-423-AUDIT-OUTILS-EXPORT-CATALOGUE-MESSENGER.md](product/LOT-423-AUDIT-OUTILS-EXPORT-CATALOGUE-MESSENGER.md), commit du rapport `d3f64f601330f93fbc01d4c133c1d8db1910895b`.
-- Correction de traçabilité : les migrations archivées sont sous `docs/architecture/migration-archive/`, et non `supabase/migrations/`. Les outils d'export SELECT-only existent déjà dans `tests/messenger/` : `catalog_preflight.sql`, `baseline_catalog_export.sql`, `export_catalog_manifest.sql` et `baseline_structure_check.sql`.
-- Audit des scripts : `baseline_catalog_export.sql` est l'export détaillé principal (colonnes, contraintes, index, policies, triggers, fonctions, ACL relation/colonne, extensions et publication). Le manifeste JSON est plus compact et ne remplace pas l'audit des grants. Le préflight et le contrôle structurel ne prouvent pas la sûreté des expressions RLS.
-- Les archives `20261030131545`, `20261030132222` et `20261030132512` ont été relues à leur emplacement exact. Elles restent des sources historiques, jamais à rejouer sur le projet actif.
-- Comparaison GitHub `main...design/prototypes-67-74-alignment` au moment du contrôle : état `diverged`, branche de travail 2 385 commits en avance et 4 commits en retard sur `main`. Aucun rebase/synchronisation/merge effectué ; PR #17 doit rester ouverte et non fusionnée.
-- Aucun workflow run n'a été retourné pour le nouveau commit de continuité Lot 422 à ce contrôle ; aucun succès CI n'est revendiqué pour les nouveaux lots 421–423.
-- Aucun SQL exécuté, aucun accès Supabase actif, aucune lecture de lignes applicatives, aucune modification de données/structure/Auth/RLS/grants/Storage/Realtime/paiement, aucune installation, aucun déploiement et aucun changement sur `main`.
-- Dépendances : export catalogue expurgé ou autorisation de lecture seule limitée ; sortie PowerShell Lot 419 pour connaître les outils locaux déjà installés.
+- Correction de traçabilité : les migrations archivées sont sous `docs/architecture/migration-archive/`. Les outils d'export SELECT-only existent déjà dans `tests/messenger/` : `catalog_preflight.sql`, `baseline_catalog_export.sql`, `export_catalog_manifest.sql` et `baseline_structure_check.sql`.
+- L'export détaillé est la meilleure base de comparaison, mais ne couvre pas à lui seul les rôles, memberships, l'ensemble des ACL RPC, les policies Storage ou l'exposition Data API. Le manifeste compact ne remplace pas l'export des grants.
+- Comparaison GitHub `main...design/prototypes-67-74-alignment` à ce contrôle : état `diverged`, branche de travail 2 385 commits en avance et 4 commits en retard. Aucun rebase/synchronisation/merge effectué ; PR #17 reste à laisser ouverte et non fusionnée.
+- Aucun nouveau workflow run n'a été retourné pour le commit documentaire Lot 422 ; aucun succès CI n'est revendiqué pour les nouveaux lots 421–423.
+- Aucun SQL exécuté, aucun accès Supabase actif, aucune lecture de lignes applicatives, aucune modification Auth/RLS/grants/Storage/Realtime/paiement, aucune installation, aucun déploiement, aucun changement sur `main), aucun rebase ni fusion PR #17.
 
 ### Suite — Lot 424
 
-Comparer l'export du catalogue actif aux archives et scripts du dépôt, classer les divergences et préparer les tests isolés. Ne pas synchroniser la branche ni toucher au projet Supabase actif sans autorisation distincte.
+Revue technique des scripts d'export, couverture des métadonnées et limites des contrôles de présence/comptage. Aucun accès au projet actif sans autorisation explicite.
+
+## Lot 424 — Revue technique des scripts d'export Messenger (13 novembre 2026)
+
+- Rapport : [LOT-424-REVUE-TECHNIQUE-SCRIPTS-EXPORT-MESSENGER.md](product/LOT-424-REVUE-TECHNIQUE-SCRIPTS-EXPORT-MESSENGER.md), commit du rapport `316b313e16de283ad0350950f7d47cd3e2df48cf`.
+- Revue des quatre scripts SQL versionnés : le préflight ne retourne pas explicitement les tables sans policy/trigger ; l'export détaillé n'inclut pas les policies Storage, les rôles/memberships ni l'inventaire complet des RPC exposées ; le manifeste compact ne contient pas les ACL et omet deux fonctions auxiliaires présentes dans l'export détaillé ; le contrôle structurel valide des présences et des nombres, pas les expressions RLS, grants ou états d'activation des triggers.
+- Les observations historiques du Lot 398 consignées au Lot 399 sont conservées avec leur date ; elles ne sont pas présentées comme une consultation fraîche du catalogue actif.
+- **Correction de continuité :** le commit documentaire précédent `1fea0d12baaaefc6ff5082f6b79c883979208125` a produit un fichier de continuité vide, car le contenu source n'avait pas été récupéré lors de sa mise à jour. Ce lot restaure le contenu complet de la version non vide du commit `d3f64f601330f93fbc01d4c133c1d8db1910895b` (historique jusqu'au Lot 422), puis ajoute les entrées Lots 423 et 424.
+- Aucun script SQL exécuté ; aucun accès Supabase actif ; aucune lecture de lignes applicatives ; aucune modification Auth/RLS/GRANT/RPC/trigger/schéma/Storage/Realtime/paiement ; aucune installation, dépense ou ressource payante ; aucun déploiement ; aucun changement sur `main`, aucun rebase ni fusion PR #17.
+- Le verdict reste **NO-GO** pour déclarer Messenger privé terminé jusqu'à comparaison avec un export actuel et tests comportementaux isolés.
+
+### Suite — Lot 425
+
+Préparer un paquet d'export catalogue sans données applicatives, avec inventaire exhaustif des fonctions auxiliaires, ACL développées, rôles pertinents et policies Storage, puis attendre l'autorisation de lecture seule ou les résultats fournis. Ne pas interroger le projet actif sans autorisation distincte.
