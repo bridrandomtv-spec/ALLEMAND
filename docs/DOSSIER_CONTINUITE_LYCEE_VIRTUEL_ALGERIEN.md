@@ -272,3 +272,12 @@
 - CI renforcée pour vérifier la présence des quatre RPC côté client, des trois actions d'invitation dans l'interface et la séparation explicite entre `زمالة` et conversation privée.
 - Aucun SQL exécuté, aucune écriture Supabase, aucun changement RLS/Auth, aucun accès aux messages privés ou aux lignes de profils, aucun déploiement manuel, aucune modification de `main`, aucune fusion de PR #17.
 - Tests GitHub du HEAD de ce lot à suivre jusqu'à conclusion terminale. Prévisualisation Cloudflare et test navigateur authentifié non confirmés.
+
+
+### Validation finale Lot 452 — 13 novembre 2026
+- Le client `supabase/supabase.js` ayant reçu les nouvelles fonctions d'invitation, son cache a également été incrémenté : `supabase.js?v=3521` dans `index.html` et le précache.
+- Références finales : `msg.js?v=3519`, `supabase.js?v=3521`, Service Worker `dz-de-v3.185.0.0.158`, CSS `style-prototype-dz.css?v=202`. Les assertions CI Messenger, Masar et portail public sont synchronisées.
+- CI — ALLEMAND : run `43509116776`, succès sur le commit de code `ebcc980da2fe2af8ca4763886b76c90a1e425305`.
+- Tests PostgreSQL 17 isolés — Multaqa : run `43509116739`, succès sur le même commit. Ces tests portent sur le forum; ils ne valident pas la migration Messenger non appliquée.
+- Une exécution CI intermédiaire sur `ec97ca503aa06763bb1bb4c214e6d37cbd6649ba` a échoué parce que le contrôle du portail attendait encore la version SW v157 alors que le précache était déjà en v158. Le contrôle a été synchronisé dans le commit final `ebcc980da2fe2af8ca4763886b76c90a1e425305`, dont la CI complète est verte.
+- Ces résultats ne constituent ni un test navigateur réel, ni une confirmation de prévisualisation Cloudflare actualisée, ni une validation du backend Messenger en production.
