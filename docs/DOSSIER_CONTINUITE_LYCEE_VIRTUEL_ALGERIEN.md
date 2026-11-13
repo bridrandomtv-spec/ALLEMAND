@@ -7944,3 +7944,17 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Une fois autorisé, créer uniquement un projet de test séparé dans l'organisation Free, en région `eu-west-2`, sans données de production. Le restaurer à partir du baseline Messenger reconstruit, puis exécuter les tests PostgreSQL avec comptes synthétiques. Contrôler les quotas Free avant d'importer quoi que ce soit.
 - État de test : aucun test PostgreSQL/RLS multi-compte n'est encore exécuté ; le fichier historique `supabase/msg_schema.sql` reste non fiable comme miroir exact de la base active.
 - PR #17 reste ouverte, non fusionnée ; aucune modification de `main`, aucune migration sur le projet actif, aucun déploiement Cloudflare.
+
+## Lot 370 — extraction complémentaire des dépendances PostgreSQL Messenger (13 novembre 2026)
+
+- Nouvelle lecture SELECT des catalogues du projet Supabase actif : colonnes et état RLS des huit tables Messenger/profiles, policies actives, définitions des fonctions Messenger, triggers et dépendances d'administration.
+- Confirmation : `msg_open_direct(uuid)` est SECURITY DEFINER, exige Auth, valide la compatibilité via `msg_can_dm`, prend un verrou consultatif transactionnel, réutilise un DM existant ou crée conversation + membres. **Elle ne vérifie toujours pas une invitation acceptée**. Correction de précision par rapport au résumé précédent : la fonction vérifie bien la compatibilité, mais pas le consentement préalable.
+- Confirmation : `msg_member_ok` autorise l'auto-ajout du second membre compatible sans invitation acceptée ; policies direct creation / member add encore présentes.
+- `msg_not_blocked` ne constitue pas une vérification bilatérale générale ; tests séparés A→B et B→A requis.
+- Policy upload active : uploader courant, MIME whitelist, 1–5 242 880 octets, statut pending, message existant, membre de conversation et chemin préfixé par conversation + UUID uploader. Elle ne compare pas explicitement l'uploader à `msg_messages.sender_id`.
+- Dépendances admin actives identifiées : `wilaya_assignments`, `admin_permissions`, `admin_roles`, fonctions `is_admin`, `admin_can`, `admin_role_of`, `admin_wilayas`, `admin_sees_wilaya`. Triggers additionnels de `profiles` à capturer : `profiles_tr_audit_role` et `trg_protect_role_niveau`.
+- Rapport créé : `docs/product/LOT-370-EXTRACTION-CATALOGUE-DEPENDANCES-MESSENGER.md`, commit `a71432c61fba73340e4ba5fb0a1a47d3df74982e`.
+- Aucun test PostgreSQL/RLS multi-compte exécuté ; aucune donnée applicative lue ; aucun DDL, migration, écriture ou changement Auth/RLS/GRANT/Storage/Realtime.
+- Le second projet Free n'a pas été créé : le devis précédent est à 0 USD/mois, mais la création reste en attente d'une autorisation explicite. Aucun frais engagé.
+- PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`, aucun déploiement Cloudflare.
+- Prochaine étape technique : terminer l'export reproductible des contraintes/index/ACL/fonctions/triggers/storage/realtime, puis assembler le baseline et les scripts de tests synthétiques à exécuter sur une instance isolée autorisée.
