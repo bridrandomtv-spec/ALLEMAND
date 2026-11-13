@@ -43,3 +43,7 @@ Préparer un paquet de requêtes de diagnostic SELECT sur le catalogue PostgreSQ
 - PR #17 : toujours ouverte, non fusionnée, base main ; GitHub retourne mergeable=false. Aucun rebase, changement de base ou synchronisation effectué.
 - Aucune exécution CI associée au HEAD retournée par la recherche. CI non confirmée, donc pas déclarée réussie.
 - Aucun déploiement Cloudflare.
+
+## Suite — Lot 434
+- [Rapport Lot 434 — refonte visuelle de ملتقى الطلاب et الرسائل](LOT-434-REFONTE-VISUELLE-MULTAQA-MESSENGER.md)
+- [Dossier de continuité Lot 434](CONTINUITE-LOT-434.md)
