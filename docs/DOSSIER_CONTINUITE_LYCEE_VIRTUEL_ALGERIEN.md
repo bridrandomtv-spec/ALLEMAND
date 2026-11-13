@@ -195,3 +195,12 @@
 - Le test PostgreSQL 17 isolé du workflow dédié reste distinct du test réel avec session JWT dans un navigateur. Aucun compte de test élève réel n'a été utilisé, aucune publication ni aucun commentaire n'a été créé sur la base active.
 - Les workflows déclenchés sur les commits intermédiaires ont montré un échec transitoire du contrôle Messenger dû à une seconde assertion restée sur le Service Worker v152 ; assertion corrigée vers v153. Ne considérer le lot validé qu'après conclusion positive des workflows sur le HEAD final.
 - Aucun changement de schéma Supabase dans ce lot ; aucune donnée élève ou message privé lue/modifiée ; aucune migration Messenger ; aucune fusion PR #17 ; aucun déploiement Cloudflare.
+
+
+### Clôture du Lot 448 — contrôles finaux
+- Les premières exécutions de CI ont révélé trois assertions de version restées en v152 dans les contrôles check-public-portal.mjs, check-masar.mjs et check-msg.mjs. Elles ont été synchronisées sur le Service Worker v153 ; aucun code métier de ces modules n'a été modifié pour contourner les tests.
+- Sur le commit 3dcc929ca18f9d4a665b45b27be200d8c981dec7, les trois contrôles décisifs sont terminés avec succès : Validation structurelle & pédagogique, multaqa-postgres (PostgreSQL 17 isolé) et Workers Builds: allemand.
+- Le contrôle dédié « Contrôler les accès et la navigation de ملتقى الطلاب » est success dans la CI générale. Le test PostgreSQL isolé a également terminé success sur le même commit.
+- Le build Cloudflare associé au commit est validé. Cela ne vaut pas approbation de fusion ni autorisation de déploiement manuel ; PR #17 demeure ouverte, non fusionnée, base main.
+- Le dernier commit documentaire de ce dossier peut déclencher une nouvelle exécution CI ; les résultats cités ci-dessus portent précisément sur le commit de code 3dcc929.
+- Le point restant pour qualifier l'expérience de réellement opérationnelle est un test de bout en bout dans le navigateur avec une session d'élève vérifié autorisée. Aucun compte réel n'a été utilisé pour publier ou commenter pendant ce lot.
