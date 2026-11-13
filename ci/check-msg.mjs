@@ -130,3 +130,7 @@ ok(idx.includes('style-prototype-dz.css?v=201') && idx.includes('msg.js?v=3516')
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.152'") && sw.includes('./style-prototype-dz.css?v=201') && sw.includes('./msg.js?v=3516'), 'précache synchronisé avec la nouvelle interface');
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
+
+
+// Lot 444 — exécuter aussi les contrôles du fil communautaire dans le pipeline CI actif.
+await import('./check-multaqa.mjs');
