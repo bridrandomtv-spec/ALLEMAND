@@ -90,6 +90,13 @@ ok(/revoke all on function public\.msg_pair_blocked\(uuid, uuid\) from public, a
 ok(/status='expired'[\s\S]*?return null/.test(inviteSql) &&
    !/status='expired'[\s\S]*?raise exception 'invite_expired'/.test(inviteSql),
    'expiration persistante sans rollback de la transaction');
+
+ok(/msg_invite_send[\s\S]*?pg_advisory_xact_lock\(hashtextextended\(v_sender::text, 0\)\)/.test(inviteSql),
+   'limite 24 h sérialisée contre les envois concurrents');
+ok(/Première lecture sans verrou de ligne[\s\S]*?pg_advisory_xact_lock[\s\S]*?Relecture verrouillée après le verrou de paire/.test(inviteSql),
+   'acceptation verrouille la paire avant la ligne pour éviter les deadlocks réciproques');
+ok(/Une invitation réciproque devenue redondante[\s\S]*?status='cancelled'/.test(inviteSql),
+   'invitation réciproque annulée après ouverture du DM');
 ok(inviteSql.includes('NON exécutée sur Supabase') && inviteSql.includes('Tests obligatoires'),
    'migration identifiée comme non appliquée et tests documentés');
 
