@@ -140,3 +140,5 @@
 
 - Le contrôle `ci/check-multaqa.mjs` n'était pas appelé par le workflow CI actif. Pour éviter un contrôle isolé non exécuté, il est maintenant importé à la fin de `ci/check-msg.mjs`, étape effectivement exécutée par le workflow `CI — ALLEMAND`. Commit : 79af97adc3a697e22864478604a76fd3ae9e17b0. Les assertions locales sur les fichiers confirment : 8 contrôles de rôle, 6 contrôles de vérification, 8 révocations RPC explicites, échappement des contenus, client précaché et intégration du contrôle au pipeline. Ces vérifications statiques ne remplacent pas l'exécution Node complète du workflow ni les tests PostgreSQL.
 - Une autre référence de cache v196 a été trouvée dans `ci/check-gamification.mjs` et corrigée vers v201 (commit a64d5389681f428dbf00ecd510c93ab40f246076). Le workflow courant doit confirmer la disparition de cette assertion obsolète.
+
+- Le contrôle communautaire intégré à check-msg inclut désormais `node --check multaqa.js` afin que la CI valide aussi la syntaxe du nouveau client (commit d1efbfc58bd5b5f7c21c0abe3bb8c0e3fa79cd4f). Le workflow doit encore terminer sur le HEAD final.
