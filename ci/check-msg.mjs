@@ -52,7 +52,7 @@ ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'ré
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
 ok(idx.includes('msg.js?v=3514'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.146'") && sw.includes("./msg.js?v=3513"), 'service worker et précache Messenger synchronisés');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.146'") && sw.includes("./msg.js?v=3514"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
@@ -66,3 +66,5 @@ ok(msgjs.includes('رقم الاشتراك بعد تفعيل الدفع'), 'form
 ok(!msgjs.includes('رقم التسجيل المدرسي'), 'ancien numéro d’inscription scolaire retiré du formulaire');
 ok(sbjs.includes(".eq('id', number).eq('user_id', u.id).eq('statut', 'actif').maybeSingle()"), 'numéro vérifié contre un abonnement actif du compte connecté');
 ok(billing.includes("esc(act.id)") && billing.includes('رقم الاشتراك'), 'numéro unique affiché après activation dans la page abonnement');
+
+if (fail.length) { console.error('::error:: check-msg Lot 360 : ' + fail.length + ' échec(s)'); process.exit(1); }
