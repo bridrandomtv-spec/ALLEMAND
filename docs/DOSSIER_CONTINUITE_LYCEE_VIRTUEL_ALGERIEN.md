@@ -7709,3 +7709,32 @@ La relecture du code courant confirme les limites déjà documentées aux lots 3
 - Ne pas contourner l'absence de registre d'affiliation en se fondant sur des champs de profil déclaratifs, la wilaya ou le numéro d'abonnement. Le numéro d'abonnement prouve le lien avec l'abonnement de la plateforme, pas l'inscription officielle dans un lycée.
 - Réutiliser les contrats et plans déjà écrits ; prochaine étape technique sûre : préparer/valider un environnement PostgreSQL isolé pour exécuter la matrice de tests existante et éprouver les fonctions, triggers, RLS et chemins de création DM, sans toucher à la base active. L'annuaire national et les invitations inter-wilayas restent bloqués jusqu'à preuve institutionnelle et autorisation de migration.
 - Aucun SQL ou migration exécuté ; aucune écriture Supabase ; aucun changement Auth/RLS/GRANT/Storage ; aucun changement de `main` ; aucun merge ; aucune publication de production.
+
+
+## Lot 362 — intégration des tests d'affiliation synthétique à la CI (13 novembre 2026)
+
+### Constat
+
+- Les tests du prototype `prototypes/registry-affiliation-scenarios-core.test.mjs` existaient déjà, mais n'étaient pas appelés par `.github/workflows/deploy.yml`.
+- Ces scénarios couvrent l'habilitation d'un vérificateur au périmètre exact d'un lycée, l'interdiction d'auto-validation, la provenance de source vérifiée, la clôture des décisions, le transfert, la révocation, l'expiration et l'éligibilité conditionnelle à l'annuaire.
+- Les identifiants utilisés sont synthétiques (`SYN-*`). Ces tests ne constituent pas une preuve administrative ni un test PostgreSQL/RLS.
+
+### Modification sur la branche
+
+- Commit : `bd10a426f34e603694f02e8a25b04e7bc7a9b6b1`.
+- Fichier modifié : `.github/workflows/deploy.yml`.
+- Ajout des deux fichiers du moteur de scénarios d'affiliation dans la liste des fichiers requis.
+- Ajout d'une étape CI dédiée qui exécute `node --test prototypes/registry-affiliation-scenarios-core.test.mjs`.
+- La CI du commit est en attente au moment de la rédaction ; ne pas déclarer les tests passés avant la fin du workflow.
+
+### Garde-fous et décisions inchangés
+
+- Aucun dossier élève réel ni export ministériel n'est présent dans le dépôt. Les sources JORADP identifiées au lot 314 documentent des actes de création/suppression d'établissements, pas un instantané exhaustif des lycées actifs ni les inscriptions individuelles.
+- Aucun changement SQL, Auth, RLS, GRANT, Storage ou donnée Supabase.
+- Aucun environnement de base jetable créé ; aucun coût engagé.
+- PR #17 reste ouverte, non fusionnée ; aucun changement sur `main), aucun déploiement de production.
+- Le défaut serveur `msg_open_direct` et les INSERT directs décrits au lot 347 restent bloquants. La correction doit être préparée après test PostgreSQL isolé et revue des dépendances ; le client seul ne suffit pas.
+
+### Suite
+
+Attendre le résultat CI du commit, puis poursuivre l'audit des contrats serveur et des dépendances de l'ancienne RPC sans l'exécuter ni la modifier dans la base active. Le cycle réel d'invitations et l'annuaire national restent non livrés tant que les preuves d'affiliation institutionnelle et les contrôles serveur atomiques ne sont pas disponibles.
