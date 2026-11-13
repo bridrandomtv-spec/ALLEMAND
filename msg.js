@@ -9,7 +9,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
-  var state = { conv:null, me:null, ch:null, names:{} };
+  var state = { conv:null, me:null, ch:null, names:{}, peers:{} };
   async function session(){ try{ return (window.SB && window.SB.me) ? await window.SB.me() : null; }catch(e){ return null; } }
   function stamp(x){ return String(x||'').slice(0,16).replace('T',' '); }
   function card(t,s,btn){ return '<div class="msg-card"><div class="msg-ct"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div>'+(btn||'')+'</div>'; }
@@ -146,6 +146,13 @@
         + '</div>';
     }
     if(!isMod0 && vf.ok && vf.statut==='verifie'){ h += '<div class="msg-verif ok">✔ تم التحقق من الهوية المدرسية — الرسائل الخاصة متاحة ضمن المجموعة الدراسية المشتركة.</div>'; }
+    state.peers = {};
+    if(!isMod0 && vf.ok && vf.statut==='verifie'){
+      h += '<div class="msg-sec">🔎 ابحث عن زميل لطلب محادثة خاصة</div>'+
+        '<div class="msg-card"><p>ابحث بالاسم المستعار فقط. تظهر حسابات التلاميذ الذين تم التحقق من هويتهم وفي نفس الولاية والمستوى والشعبة. لا تُرسل الدعوة إلا بعد اختيارك.</p>'+
+        '<div class="msg-modform"><input id="msgStudentSearchQuery" type="search" maxlength="40" minlength="3" autocomplete="off" placeholder="اكتب الاسم المستعار (3 أحرف على الأقل)">'+
+        '<button class="msg-modbtn" data-act="search-students" type="button">بحث عن زملاء</button></div><div id="msgStudentResults" aria-live="polite"></div></div>';
+    }
     h += '<div class="msg-sec">🕌 المجموعات الرسمية (الولاية · المستوى · الشعبة)</div><div class="msg-grid">';
     if(g.ok && g.groups.length){
       h += g.groups.map(function(x){
@@ -281,8 +288,20 @@
     });
   });
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key]') : null;
     if(!t) return;
+    var peerKey = t.getAttribute('data-peer-key');
+    if(peerKey){
+      var recipient = state.peers[peerKey];
+      if(!recipient){ window.alert('⛔ انتهت صلاحية نتيجة البحث. أعد البحث من فضلك.'); return; }
+      t.disabled = true;
+      window.SB.msgInviteSend(recipient).then(function(result){
+        if(!result || !result.ok){ window.alert('⛔ '+((result && result.err)||'تعذّر إرسال الدعوة')); renderList(); return; }
+        window.alert('تم إرسال طلب المحادثة. ستُفتح المحادثة فقط بعد موافقة الطرف الآخر.');
+        renderList();
+      }).catch(function(error){ window.alert('⛔ '+String(error && error.message || error)); renderList(); });
+      return;
+    }
     var inviteAct = t.getAttribute('data-invite-act');
     if(inviteAct){
       var inviteId = t.getAttribute('data-invite-id');
@@ -304,6 +323,31 @@
       return;
     }
     var act = t.getAttribute('data-act');
+    if(act==='search-students'){
+      var query = (el('msgStudentSearchQuery')||{}).value || '';
+      var resultsBox = el('msgStudentResults');
+      if(query.trim().length<3){ if(resultsBox) resultsBox.textContent='اكتب ثلاثة أحرف على الأقل للبحث.'; return; }
+      if(!window.SB || typeof window.SB.msgStudentSearch!=='function'){ if(resultsBox) resultsBox.textContent='خدمة البحث غير مفعّلة بعد على الخادم.'; return; }
+      t.disabled=true;
+      if(resultsBox) resultsBox.textContent='جارٍ البحث عن زملاء مطابقين لملفك الدراسي…';
+      window.SB.msgStudentSearch(query,12).then(function(result){
+        t.disabled=false;
+        if(!result || !result.ok){ if(resultsBox) resultsBox.textContent='تعذّر البحث حالياً. قد تحتاج قاعدة البيانات إلى تفعيل تحديث البحث الآمن.'; return; }
+        state.peers={};
+        var students=result.students||[];
+        if(!students.length){ if(resultsBox) resultsBox.textContent='لم نعثر على زملاء مطابقين. تحقق من الاسم المستعار وحاول لاحقاً.'; return; }
+        var html='<div class="msg-grid">';
+        students.forEach(function(p,i){
+          var key='peer'+i; state.peers[key]=p.student_id;
+          html+='<article class="msg-modcard"><div class="msg-meta"><b>'+esc(p.pseudo||'طالب')+'</b><span>'+esc(p.niveau||'')+'</span></div>'+
+            '<div class="msg-body">'+esc(p.filiere||'')+' · ولاية '+esc(p.wilaya||'')+'</div>'+
+            '<div class="msg-modbtns"><button class="msg-modbtn" data-peer-key="'+key+'" type="button">📨 إرسال طلب محادثة</button></div></article>';
+        });
+        html+='</div>';
+        if(resultsBox) resultsBox.innerHTML=html;
+      }).catch(function(error){ t.disabled=false; if(resultsBox) resultsBox.textContent='تعذّر البحث: '+String(error && error.message || error); });
+      return;
+    }
     if(act==='refresh'){ if(state.conv) renderThread(state.conv); else renderList(); return; }
     if(act==='back'){ closeChannel(); state.conv=null; renderList(); return; }
     if(act==='send'){ send(); return; }
