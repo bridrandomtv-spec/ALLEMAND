@@ -41,3 +41,11 @@ Faire un préflight de compatibilité et de migration sur le schéma exact déj�
 - PR #17 : ouverte, non fusionnée, draft=false ; GitHub retourne mergeable=false. La cause n'a pas été établie ; aucun rebase ni synchronisation n'a été lancé.
 - Aucune exécution CI associée au dernier commit n'a été retournée par la recherche effectuée ; ne pas déclarer la CI réussie.
 - Aucun déploiement Cloudflare.
+
+---
+
+## Prolongement — Lot 433
+
+Le préflight de compatibilité et le plan de migration ordonné sont documentés dans [LOT-433-PREFLIGHT-COMPATIBILITE-PLAN-MIGRATION.md](LOT-433-PREFLIGHT-COMPATIBILITE-PLAN-MIGRATION.md), avec la continuité détaillée [CONTINUITE-LOT-433.md](CONTINUITE-LOT-433.md).
+
+Le Lot 433 confirme que `supabase/msg_schema.sql` est un script historique marqué comme jamais exécuté, et non la référence du schéma actif. Il documente les risques de policies RLS cumulatives, grants, dépendances RPC/triggers, conversations héritées et rollback. Aucun SQL, code applicatif ou changement Supabase n'a été effectué.
