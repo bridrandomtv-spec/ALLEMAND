@@ -447,8 +447,8 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['dashboard', 'masar', 'accueil','msg','seances','live','classe','grammaire' ,'biblio','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
-const TABS  = [['dashboard','🎓 لوحة التلميذ'], ['masar','🧭 مسارك'], ['accueil','🏠 فضائي الدراسي'],['msg','💬 الرسائل'],['seances','📚 الحصص'],
+const VIEWS = ['dashboard', 'masar', 'accueil','msg','multaqa','seances','live','classe','grammaire' ,'biblio','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
+const TABS  = [['dashboard','🎓 لوحة التلميذ'], ['masar','🧭 مسارك'], ['accueil','🏠 فضائي الدراسي'],['msg','💬 الرسائل'],['multaqa','🌐 ملتقى الطلاب'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
                ['quiz','🎯 تمارين'],
@@ -505,9 +505,9 @@ const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
-  const visible = tabs.filter(t => t[0] !== 'sponsor' && (t[0] !== 'admin' || isAdmin()) && (t[0] !== 'parents' || isParent()) && (t[0] !== 'dashboard' || canSeeStudentDashboard()));
+  const visible = tabs.filter(t => t[0] !== 'sponsor' && (t[0] !== 'admin' || isAdmin()) && (t[0] !== 'parents' || isParent()) && (t[0] !== 'dashboard' || canSeeStudentDashboard()) && (t[0] !== 'multaqa' || canSeeStudentDashboard()));
   const byId = new Map(visible.map(t => [t[0], t]));
-  const used = new Set(['dashboard', 'accueil', 'masar', 'matieres', 'english', 'msg']);
+  const used = new Set(['dashboard', 'accueil', 'masar', 'matieres', 'english', 'msg', 'multaqa']);
   let desktop = '';
   if(window.__SUBJECT__ === 'en'){
     desktop += '<button class="tab subject-home' + (currentView === 'english' ? ' on' : '') + '" data-go="english">🇬🇧 English</button>';
@@ -518,7 +518,8 @@ function renderTabs(){
   desktop += '<button class="tab' + (currentView === 'dashboard' ? ' on' : '') + '" data-go="dashboard">🎓 لوحة التلميذ</button>';
   desktop += '<button class="tab' + (currentView === 'masar' ? ' on' : '') + '" data-go="masar">🧭 مسارك</button>';
   desktop += '<button class="tab' + (currentView === 'accueil' ? ' on' : '') + '" data-go="accueil">🏠 فضائي الدراسي</button>';
-  desktop += '<button type="button" class="tab msg-nav-shortcut' + (currentView === 'msg' ? ' on' : '') + '" data-go="msg"' + (currentView === 'msg' ? ' aria-current="page"' : '') + '>💬 الرسائل</button>';
+  desktop += '<button type="button" class="tab msg-nav-shortcut' + (currentView === 'msg' ? ' on' : '') + '" data-go="msg"' + (currentView === 'msg' ? ' aria-current="page"' : '') + ' >💬 الرسائل</button>';
+  if(canSeeStudentDashboard()) desktop += '<button type="button" class="tab mtq-nav-shortcut' + (currentView === 'multaqa' ? ' on' : '') + '" data-go="multaqa">🌐 ملتقى الطلاب</button>';
   for(const cat of NAVCATS){
     const items = cat[3].filter(id => id !== 'matieres' && id !== 'english').map(id => byId.get(id)).filter(Boolean);
     if(!items.length) continue;
@@ -543,6 +544,7 @@ function renderTabs(){
     ['matieres', window.__SUBJECT__ === 'en' ? '🇬🇧 English' : '📚 المواد'],
     ['masar', '🧭 مساري'],
     ['msg', '💬 الرسائل'],
+    ['multaqa', '🌐 ملتقى الطلاب'],
     ['prof', '🤖 الأستاذ الذكي']
   ];
   const primaryIds = new Set(primary.map(x => x[0]));
@@ -627,6 +629,7 @@ window.getNiveauActif = function(){ return niveauActif; }; try{ (window.cloudAut
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
   if(view === 'dashboard' && !canSeeStudentDashboard()){toast('⛔ لوحة التلميذ مخصّصة لحسابات التلاميذ فقط','ko');view='accueil';}
+  if(view === 'multaqa' && !canSeeStudentDashboard()){toast('⛔ ملتقى الطلاب مخصّص لحسابات التلاميذ فقط','ko');view='accueil';}
   /* La vue parents ne doit pas être atteignable par hash ou data-go depuis un autre rôle. */
   if(view === 'parents' && !isParent()){
     toast('⛔ هذا الفضاء مخصّص لحسابات الأولياء فقط', 'ko');
