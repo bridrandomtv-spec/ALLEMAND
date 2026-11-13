@@ -88,7 +88,8 @@ returns table (
   author_pseudo text,
   comments_count bigint,
   reactions_count bigint,
-  my_reaction text
+  my_reaction text,
+  my_post boolean
 )
 language plpgsql stable security definer
 set search_path = pg_catalog, public
@@ -108,7 +109,8 @@ begin
       where c.post_id = p.id and c.status = 'published'),
     (select count(*) from public.multaqa_reactions r where r.post_id = p.id),
     (select r.reaction from public.multaqa_reactions r
-      where r.post_id = p.id and r.user_id = v_uid)
+      where r.post_id = p.id and r.user_id = v_uid),
+    (p.author_id = v_uid)
   from public.multaqa_posts p
   join public.profiles pr on pr.id = p.author_id
   where p.status = 'published'
