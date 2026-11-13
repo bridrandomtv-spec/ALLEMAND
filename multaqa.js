@@ -17,6 +17,14 @@
     b.innerHTML=stateCard('🛠️','الخدمة المجتمعية لم تُفعّل بعد','واجهة الملتقى جاهزة للاتصال، لكن خدمة المنشورات غير متاحة على الخادم حالياً. لن نعرض بيانات تجريبية أو ننشئ محتوى محلياً.','الربط بالخادم قيد الاستكمال');
     if(err) console.warn('[ملتقى الطلاب] backend:',err);
   }
+  function updateProfileCard(){
+    var name=el('mtqProfileName'),meta=el('mtqProfileMeta'),note=el('mtqProfileNote');
+    if(!name||!meta||!note||!state.profile)return;
+    name.textContent=state.profile.pseudo||'تلميذ';
+    var level=state.profile.niveau==='2AS'||state.profile.niveau==='3AS'?state.profile.niveau:'';
+    meta.textContent=level?'تلميذ موثّق · '+level:'تلميذ موثّق';
+    note.textContent='حسابك المدرسي موثّق. مرحباً بك في مجتمع الثانوية الافتراضية.';
+  }
   function accessCard(){
     var p=state.profile||{};
     var msg=p.verif_statut==='en_attente'
@@ -86,6 +94,7 @@
       if(state.profile&&state.profile.ok===false)throw new Error(state.profile.err||'profile_lookup_failed');
       if(!state.profile||state.profile.role!=='eleve'){b.innerHTML=stateCard('🎓','هذا الفضاء مخصص للتلاميذ','الملتقى الشخصي مخصص لحسابات التلاميذ.','صلاحية الحساب');return;}
       if(state.profile.verif_statut!=='verifie'){b.innerHTML=accessCard();return;}
+      updateProfileCard();
       state.posts=[];state.comments={};state.expanded={};state.hasMore=false;
       await load(true);
     }catch(e){unavailable(e&&e.message||e);}
