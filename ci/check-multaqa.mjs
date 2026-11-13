@@ -42,7 +42,7 @@ has(communitySql.includes('élève vérifié sans abonnement') && communitySql.i
 has(communitySql.includes('author_pseudo text') && communitySql.includes('join public.profiles pr on pr.id = p.author_id'), 'migration communauté : projection publique limitée au pseudo absente');
 has(communitySql.includes('my_post boolean') && communitySql.includes('(p.author_id = v_uid)'), 'migration communauté : indicateur auteur minimal absent');
 has(communitySql.includes('post_rate_limit') && communitySql.includes('comment_rate_limit'), 'migration communauté : quotas anti-spam absents');
-has(communitySql.includes('NON exécutée sur Supabase') && communitySql.includes('Tests PostgreSQL isolés obligatoires'), 'migration communauté : statut préparatoire et tests requis non documentés');
+has(communitySql.includes('create table if not exists public.multaqa_posts') && communitySql.includes('Ne pas appliquer sans tests PostgreSQL isolés'), 'migration communauté : périmètre et prérequis de test absents');
 
 
 if (fails.length) { for (const failure of fails) console.error('❌ ' + failure); process.exit(1); }
