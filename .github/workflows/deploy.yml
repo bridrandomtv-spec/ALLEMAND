@@ -1148,6 +1148,8 @@ jobs:
       - name: Garde d'accès + TEST DE FUITE (access.js / config)
         run: |
           node ci/check-access.mjs
+      - name: Contrôler les accès et la navigation de ملتقى الطلاب
+        run: node ci/check-multaqa.mjs
       - name: Matrice des parcours (élève · prof · parent · expiration · renouvellement · contournements)
         run: |
           node ci/check-parcours.mjs
