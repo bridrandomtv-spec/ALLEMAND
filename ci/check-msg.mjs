@@ -73,7 +73,7 @@ ok(inviteSql.includes('msg_guard_direct_consent') && inviteSql.includes('msg_inv
    'ajout de membres DM protégé côté serveur');
 ok(/create or replace function public\.msg_member_ok[\s\S]*?c\.type='groupe'/.test(inviteSql),
    'auto-ajout direct d’un membre à un DM existant interdit');
-ok(inviteSql.includes('msg_pair_blocked') && /create or replace function public\\.msg_is_member[\\s\\S]*?c\\.type = 'direct'[\\s\\S]*?public\\.msg_pair_blocked\\(uid,peer\\.user_id\\)/.test(inviteSql),
+ok(inviteSql.includes('msg_pair_blocked') && /create or replace function public\.msg_is_member[\s\S]*?c\.type = 'direct'[\s\S]*?public\.msg_pair_blocked\(uid,peer\.user_id\)/.test(inviteSql),
    'blocage bilatéral appliqué aux accès DM');
 
 
