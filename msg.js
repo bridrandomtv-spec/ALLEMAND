@@ -129,9 +129,14 @@
     var g = await window.SB.msgGroups();
     var c = await window.SB.msgConvs();
     var vf = await window.SB.msgMyVerification();
-    var h = '<div class="msg-head msg-messenger-head"><div><h3>💬 الرسائل</h3><small>مراسلة مدرسية · شبكة وطنية</small></div><button class="msg-refresh" data-act="refresh" type="button">⟳ تحديث</button></div>' +
-      '<div class="msg-searchbar"><span aria-hidden="true">⌕</span><input id="msgListSearch" type="search" placeholder="ابحث في محادثاتي ومجموعاتي…" autocomplete="off" aria-label="ابحث في محادثاتي ومجموعاتي"></div>' +
-      '<div class="msg-filters" role="group" aria-label="تصفية المحادثات"><button type="button" class="active" data-msg-filter="all">الكل</button><button type="button" data-msg-filter="direct">خاصة</button><button type="button" data-msg-filter="group">مجموعات</button></div>';
+    var directCount = c.ok ? c.convs.filter(function(x){ return x.type==='direct'; }).length : 0;
+    var groupCount = g.ok ? g.groups.length : 0;
+    var h = '<div class="msg-pro-hero"><div class="msg-pro-hero-copy"><span class="msg-pro-eyebrow">الثانوية الافتراضية الجزائرية · فضاء التعلّم التعاوني</span><h2>💬 تواصل، تعاون، وتقدّم مع زملائك</h2><p>مساحات دراسية منظّمة حسب الولاية والمستوى والشعبة، ومحادثاتك الخاصة وفق ضوابط الهوية المدرسية.</p></div><div class="msg-pro-hero-mark" aria-hidden="true">✉️</div></div>' +
+      '<div class="msg-pro-toolbar"><div class="msg-pro-heading"><b>مساحات التواصل</b><span>إدارة مجموعاتك ومحادثاتك من مكان واحد</span></div><button class="msg-refresh" data-act="refresh" type="button">⟳ تحديث</button></div>' +
+      '<div class="msg-pro-stats"><div><span>🏫</span><b>'+groupCount+'</b><small>مجموعات دراسية</small></div><div><span>🔒</span><b>'+directCount+'</b><small>محادثات خاصة</small></div><div><span>🛡️</span><b>آمن</b><small>وصول وفق الصلاحيات</small></div></div>' +
+      '<div class="msg-searchbar"><span aria-hidden="true">⌕</span><input id="msgListSearch" type="search" placeholder="ابحث باسم المجموعة أو الولاية أو المستوى…" autocomplete="off" aria-label="ابحث في مجموعاتك ومحادثاتك"></div>' +
+      '<div class="msg-filters" role="group" aria-label="تصفية مساحات التواصل"><button type="button" class="active" data-msg-filter="all">الكل</button><button type="button" data-msg-filter="group">🏫 المجموعات</button><button type="button" data-msg-filter="direct">🔒 الخاصة</button></div>' +
+      '<div class="msg-learning-note"><span>📘</span><div><b>اجعل التواصل امتداداً لتعلّمك</b><p>استخدم المجموعات لتبادل الأسئلة والملخصات والموارد الدراسية، واحرص على احترام زملائك وعدم مشاركة بياناتك الشخصية.</p></div></div>';
     var isMod0 = u && (u.role==='prof' || u.role==='admin');
     if(!isMod0 && vf.ok && vf.statut!=='verifie'){
       h += '<div class="msg-verif">' + (vf.statut==='en_attente'
@@ -144,9 +149,9 @@
     h += '<div class="msg-sec">🕌 المجموعات الرسمية (الولاية · المستوى · الشعبة)</div><div class="msg-grid">';
     if(g.ok && g.groups.length){
       h += g.groups.map(function(x){
-        var title = x.titre || ('مجموعة '(x.wilaya||'')+' '+(x.niveau||'')+' '+(x.filiere||''));
+        var title = x.titre || ('مجموعة '+(x.wilaya||'')+' · '+(x.niveau||'')+' · '+(x.filiere||''));
         return '<div class="msg-item" data-msg-kind="group" data-msg-search="'+esc((title+' '+(x.wilaya||'')+' '+(x.niveau||'')+' '+(x.filiere||'')).toLowerCase())+'">'+
-          card(title, 'مجموعة دراسية · '+stamp(x.last_activity),
+          card(title, '🏷️ '+(x.wilaya||'ولاية غير محددة')+' · '+(x.niveau||'مستوى غير محدد')+' · '+(x.filiere||'شعبة غير محددة')+' · آخر نشاط '+stamp(x.last_activity),
           '<button class="msg-open" data-conv="'+x.id+'" type="button">فتح المحادثة</button>')+'</div>';
       }).join('');
     } else {
@@ -155,9 +160,9 @@
     h += '</div><div class="msg-sec">✉️ المحادثات الخاصة</div><div class="msg-grid msg-direct-grid">';
     var directs = (c.ok ? c.convs : []).filter(function(x){ return x.type==='direct'; });
     if(directs.length){
-      h += directs.map(function(x){ var title='محادثة خاصة رقم '+x.id; return '<div class="msg-item" data-msg-kind="direct" data-msg-search="'+esc((title+' '+stamp(x.last_activity)).toLowerCase())+'">'+card(title, 'آخر نشاط · '+stamp(x.last_activity), '<button class="msg-open" data-conv="'+x.id+'" type="button">فتح المحادثة</button>')+'</div>'; }).join('');
+      h += directs.map(function(x){ var title='محادثة خاصة'; return '<div class="msg-item" data-msg-kind="direct" data-msg-search="'+esc((title+' '+stamp(x.last_activity)).toLowerCase())+'">'+card(title, '🔒 محادثة بين أعضاء مخوّلين · آخر نشاط '+stamp(x.last_activity), '<button class="msg-open" data-conv="'+x.id+'" type="button">فتح المحادثة</button>')+'</div>'; }).join('');
     } else {
-      h += '<div class="msg-empty">لا توجد محادثات خاصة حالياً. سيُضاف البحث الوطني عن جهات الاتصال ونظام الدعوات بعد استكمال تأمين الخدمة على الخادم.</div>';
+      h += '<div class="msg-empty">لا توجد محادثات خاصة بعد. ستظهر هنا المحادثات التي فُتحت وفق نظام الدعوات والموافقة الصريحة بعد تفعيل التحديث الخادمي.</div>';
     }
     h += '</div>';
     var isMod = u && (u.role==='prof' || u.role==='admin');
@@ -245,7 +250,7 @@
     });
   });
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter]') : null;
     if(!t) return;
     if(t.getAttribute('data-conv')){ renderThread(+t.getAttribute('data-conv')); return; }
     var filter = t.getAttribute('data-msg-filter');
