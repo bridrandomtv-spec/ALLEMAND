@@ -8673,3 +8673,21 @@ Vérifier la CI déclenchée par le Lot 413. Puis poursuivre l'audit de prépara
 ### Suite — Lot 415
 
 Contrôler la CI déclenchée par le Lot 414. Ensuite définir la matrice des rôles vérificateurs (établissement / wilaya / administration centrale), les preuves acceptables et la procédure de recours, sans raccordement ni modification de la base active.
+
+
+### Lot 415 — matrice des rôles, preuves et recours de vérification scolaire (13 novembre 2026)
+
+- CI #3421 (run 43447368090) : succès sur le commit a19f9a2f79b9610620010c5fb6b20b927629f95a.
+- CI #3422 (run 43447385169) : succès sur le HEAD Lot 414 f750a36d60aa08cf4ad05278cd9f3a9a00e7f5ed.
+- PR #17 : toujours ouverte, non fusionnée ; GitHub signale actuellement `mergeable=true`. Comparaison avec main : branches divergentes, branche de travail en retard de 4 commits. Aucune synchronisation/rebase effectuée.
+- Matrice documentaire créée : `docs/product/LOT-415-MATRICE-ROLES-PREUVES-RECOURS-VERIFICATION.md`, commit `3d005154b2b793d1f29a2b9c2e71c2aa41771748`.
+- Rôles proposés : élève demandeur ; vérificateur d'établissement limité à ses établissements ; vérificateur de wilaya limité à sa wilaya ; superviseur central pour habilitations et recours ; modérateur social sans accès aux preuves d'identité ; administrateur technique sans pouvoir d'auto-validation.
+- Preuves hiérarchisées : confirmation par source institutionnelle autorisée, puis confirmation directe par établissement ; justificatif fourni par l'élève seulement en dernier recours avec canal dédié, base juridique, rétention courte et suppression. Aucun document dans Messenger ou le forum.
+- Recours : révision par une personne différente de l'auteur de la décision initiale. Habilitations nominatives, limitées, expirables et révocables ; contrôle serveur à chaque action.
+- Matrice de tests couvre forum gratuit non vérifié, élève vérifié sans abonnement, abonné non vérifié, refus/consentement DM, blocage bilatéral, périmètres établissement/wilaya, révocation, auto-validation, appel, falsification de wilaya et concurrence.
+- Rappel : `msgRequestVerification(subscriptionNumber, section)` exige toujours un abonnement actif dans le code client. Cet écart reste présent et n'a pas été corrigé.
+- Aucun changement applicatif, Auth, Supabase, SQL, schéma, migration, RLS, Storage, Realtime, paiement ou données élèves ; aucun déploiement, modification de main, rebase ou fusion.
+
+### Suite — Lot 416
+
+Inventorier statiquement les écrans et fonctions de vérification existants, comparer les champs/états au contrat des Lots 414–415 et préparer un plan de remplacement du numéro d'abonnement par un flux scolaire gratuit. Documentation et lecture seule uniquement.
