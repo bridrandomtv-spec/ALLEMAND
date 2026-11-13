@@ -7577,3 +7577,13 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Commits du lot : `ed80c1e` (route), `99576a9` (test), `abf2bee` (cache index), `4d6ceb4` (service worker).
 - Validation navigateur réelle non revendiquée à ce stade ; attendre la CI et vérifier l'URL de prévisualisation Cloudflare du nouveau HEAD. La correction n'est pas en production.
 - Aucun changement Supabase/Auth/RLS/schéma, aucun déploiement de production, aucune modification de `main), aucune fusion de PR #17. PR #17 reste ouverte et non fusionnée.
+
+
+## 25. Lot 359 — Harmonisation arabe de la messagerie (13 novembre 2026)
+
+- Constat confirmé dans `msg.js` : l'entrée de navigation était déjà « 💬 الرسائل », mais l'accueil non connecté, les explications, les filtres, la recherche, les groupes, les conversations, la modération, les formulaires de vérification et la rédaction contenaient encore des libellés français ou mixtes.
+- Harmonisation des textes visibles de la messagerie en arabe : accueil et états de session, présentation des fonctionnalités, filtres et recherche, groupes et conversations, vérification scolaire, modération, fil de discussion, envoi et pièces jointes.
+- Conservation des identifiants DOM, attributs `data-act`/`data-mod`, méthodes `window.SB`, événements, routes, limites de fichiers et contrats serveur. Les noms techniques internes et les commentaires de développement ne sont pas des libellés d'interface et restent inchangés.
+- Ajout de contrôles ciblés dans `ci/check-msg.mjs` pour les libellés arabes et l'absence des principaux textes français visibles.
+- Aucun changement Supabase/Auth/RLS/schéma/Storage, aucune modification de `main`, aucun déploiement de production et aucune fusion de PR #17.
+- Validation visuelle navigateur non revendiquée ; attendre la CI et la preview Cloudflare de ce HEAD, puis vérifier le rendu arabe RTL sur ordinateur et mobile.
