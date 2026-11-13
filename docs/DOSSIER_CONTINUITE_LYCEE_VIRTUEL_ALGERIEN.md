@@ -7572,7 +7572,7 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 
 - Problème reproductible identifié dans `app.js` : le raccourci desktop/mobile pointait bien vers `data-go="msg"`, et `index.html` contenait `data-view="msg"`, mais la constante `VIEWS` ne déclarait pas `msg`. La fonction `go(view)` rejetait donc cette vue et redirigeait vers `accueil`. Le bouton pouvait être visible sans ouvrir Messenger.
 - Correction minimale : ajout de `msg` dans la liste des vues autorisées. Aucun nouvel écran ni refonte Messenger ; les lots UX et les prototypes précédents sont conservés.
-- Non-régression : `ci/check-msg.mjs` vérifie désormais explicitement que la route `msg` figure dans `VIEWS`.
+- Non-régression : `ci/check-msg.mjs` vérifie désormais explicitement que la route `msg` figure dans `VIEWS`. Le contrôle `ci/check-public-portal.mjs` a également été synchronisé avec `app.js?v=3569` et la version service worker `dz-de-v3.185.0.0.144` ; son premier passage a révélé des attentes de cache encore fixées sur les numéros précédents, corrigées dans le commit `9e1d5b2`.
 - Cache : référence `app.js?v=3569` dans `index.html` et le précache du service worker ; version du worker `dz-de-v3.185.0.0.144`.
 - Commits du lot : `ed80c1e` (route), `99576a9` (test), `abf2bee` (cache index), `4d6ceb4` (service worker).
 - Validation navigateur réelle non revendiquée à ce stade ; attendre la CI et vérifier l'URL de prévisualisation Cloudflare du nouveau HEAD. La correction n'est pas en production.
