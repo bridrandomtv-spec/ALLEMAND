@@ -120,7 +120,7 @@ ok(msgjs.includes('رقم التسجيل المدرسي (مجاني)'), 'formula
 ok(sbjs.includes('async function msgRequestVerification(schoolRegistrationNumber, section)'), 'fonction de demande de vérification scolaire présente');
 ok(sbjs.includes("update({ verif_statut:'en_attente', matricule:number"), 'demande déposée sur le profil du compte courant');
 ok(!msgjs.includes('رقم الاشتراك') && !msgjs.includes('رقم اشتراك'), 'aucun ancien libellé abonnement dans le parcours de vérification');
-ok(msgjs.includes('رقم التسجيل المدرسي') && msg.includes('التحقق المدرسي مجاني'), 'parcours de vérification gratuit et libellé scolaire cohérent');
+ok(msgjs.includes('رقم التسجيل المدرسي') && msgjs.includes('التحقق المدرسي مجاني'), 'parcours de vérification gratuit et libellé scolaire cohérent');
 const verificationFn = sbjs.slice(sbjs.indexOf('async function msgRequestVerification('), sbjs.indexOf('async function msgVerificationQueue('));
 ok(!verificationFn.includes(".from('subscriptions')"), 'vérification scolaire sans contrôle d’abonnement payant');
 
