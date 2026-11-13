@@ -8453,3 +8453,15 @@ Poursuivre l'inventaire technique en lecture seule : récupérer les signatures,
 - Aucun DDL/DML, migration, fonction, policy, GRANT, Auth, RLS, Storage ou Realtime modifié. Aucun test comportemental PostgreSQL/RLS/concurrence exécuté ; aucun déploiement, merge, coût ou service payant.
 - Suite : Lot 401 — spécification corrective documentaire du blocage bilatéral et du consentement DM, puis plan de tests isolés gratuits. Ne pas modifier la base active.
 
+
+
+## Lot 401 — contrat correctif du blocage bilatéral et du consentement DM (13 novembre 2026)
+
+- Création de `docs/product/LOT-401-CONTRAT-BLOCAGE-BILATERAL-CONSENTEMENT-DM.md`.
+- Invariants documentés : blocage bilatéral, contrôle sur ouverture DM/ajout de membres/envoi, fail closed, contrôle des deux sources `msg_blocks` et `social_blocks`, réponses génériques anti-énumération.
+- Séparation rappelée : relation `زملائي` ≠ invitation Messenger ≠ conversation privée. Une relation sociale acceptée ne crée jamais un DM.
+- Contrat cible d'acceptation atomique d'une invitation Messenger et matrice de 25 tests négatifs/préventifs rédigés. Les règles de consentement et de visibilité des conversations historiques restent à arbitrer avant implémentation.
+- Prérequis bloquants : retrouver les 27 migrations fidèles, obtenir un PostgreSQL local jetable gratuit sans données réelles, auditer les chemins d'ajout aux groupes et Storage, revue des fonctions SECURITY DEFINER.
+- Commit du document Lot 401 : `9491007cb89f5361ce33aa3eeca95a5f24a3897e`.
+- Aucun SQL exécuté, aucun DDL/DML, migration, RPC, policy, GRANT, Auth, RLS, Storage ou Realtime modifié. Aucun test comportemental, déploiement, merge ou coût.
+
