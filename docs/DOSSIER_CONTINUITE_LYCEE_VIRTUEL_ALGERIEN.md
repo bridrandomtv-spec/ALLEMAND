@@ -8465,3 +8465,15 @@ Poursuivre l'inventaire technique en lecture seule : récupérer les signatures,
 - Commit du document Lot 401 : `9491007cb89f5361ce33aa3eeca95a5f24a3897e`.
 - Aucun SQL exécuté, aucun DDL/DML, migration, RPC, policy, GRANT, Auth, RLS, Storage ou Realtime modifié. Aucun test comportemental, déploiement, merge ou coût.
 
+
+
+## Lot 402 — audit des groupes Messenger et du Storage privé (13 novembre 2026)
+
+- Inventaire en lecture seule des policies `storage.objects`, de la configuration du bucket `prive`, des privilèges tables Messenger et du modèle de membre des groupes.
+- Le prédicat `msg_is_member` accorde l'accès aux groupes de type `groupe` selon la correspondance wilaya/niveau/filière, même sans ligne `msg_members`. La policy d'INSERT membres impose toutefois l'auto-inscription (`user_id = auth.uid()`). Ce modèle d'affiliation implicite ne doit pas être repris pour les groupes sociaux sans décision distincte.
+- Bucket `prive` : privé, sans limite de taille ni MIME allowlist au niveau bucket. Les policies Messenger dédiées restreignent les uploads à 5 Mio et PNG/JPEG/WebP/PDF ; les policies génériques de dossier personnel ont un périmètre différent. Aucune policy UPDATE storage.objects relevée.
+- La lecture des pièces jointes Messenger repose sur l'appartenance à la conversation ou la modération ; le blocage bilatéral n'est pas intégré au prédicat de lecture Storage inspecté. Traitement des médias historiques après blocage à arbitrer.
+- Rapport : `docs/product/LOT-402-AUDIT-GROUPES-STORAGE-MESSENGER.md`, commit `4964bb09d085174287d5bc5150cd6d1fd2c368f3`.
+- Aucun objet Storage ni donnée d'élève lu ; aucun upload ni test comportemental. Aucun DDL/DML, migration, policy, GRANT, Auth/RLS/Storage/Reatime modifié ; aucun déploiement, merge ou coût.
+- Suite : Lot 403 — conception séparée des groupes sociaux et du pipeline sécurisé de médias sociaux ; ne pas réutiliser le bucket Messenger.
+
