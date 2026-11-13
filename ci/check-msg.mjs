@@ -71,6 +71,8 @@ ok(inviteSql.includes("type = 'groupe'") && inviteSql.includes('public.msg_is_mo
    'création directe interdite par policy');
 ok(inviteSql.includes('msg_guard_direct_consent') && inviteSql.includes('msg_invitation_requise'),
    'ajout de membres DM protégé côté serveur');
+ok(/create or replace function public\\.msg_member_ok[\\s\\S]*?c\\.type='groupe'/.test(inviteSql),
+   'auto-ajout direct d’un membre à un DM existant interdit');
 ok(inviteSql.includes('msg_pair_blocked') && inviteSql.includes('public.msg_is_member(uid, cid)'),
    'blocage bilatéral appliqué aux accès DM');
 ok(inviteSql.includes('NON exécutée sur Supabase') && inviteSql.includes('Tests obligatoires'),
