@@ -8241,3 +8241,21 @@ Préparer le patch SQL candidat dans un fichier de migration isolé et non appli
 
 ### Suite — Lot 389
 Préparer le correctif serveur complet en patch isolé, puis vérifier ses scénarios négatifs multi-comptes sur PostgreSQL 17 local isolé. Ne pas appliquer tant que l'affiliation officielle et l'environnement de test sûr ne sont pas disponibles.
+
+
+---
+
+## Lot 389 — décision Messenger national inter-niveaux (13 novembre 2026)
+
+- Décision utilisateur confirmée : les élèves de **1AS, 2AS et 3AS peuvent communiquer entre tous les niveaux**. Le niveau, la filière et la wilaya ne sont pas des restrictions de compatibilité pour l'invitation élève↔élève ; ils restent des filtres facultatifs de recherche et des informations d'affichage lorsqu'ils sont validés.
+- La portée produit est nationale : un élève de 1AS peut inviter un élève de 2AS ou 3AS, y compris dans un autre lycée et une autre wilaya. Même principe pour les élèves de 2AS et 3AS.
+- Document de décision : `docs/product/LOT-389-DECISION-MESSENGER-NATIONAL-INTER-NIVEAUX.md`, commit `029fd8e33e23ed81072908586822cbe0cc55e8e6`.
+- Le consentement reste obligatoire : invitation pending sans DM ; acceptation explicite du destinataire ; création/réutilisation atomique du DM côté serveur ; blocage bilatéral et contrôle anti-abus à toutes les étapes.
+- Les échanges élève↔professeur restent soumis à une règle distincte de rattachement pédagogique et de rôle professionnel.
+- Aucune facturation ni paiement. Le « numéro d'abonnement après paiement » présent dans l'interface ne doit pas être une dépendance ; un identifiant scolaire/code institutionnel non financier devra être défini avec une source officielle vérifiable. Cette source d'affiliation individuelle reste non confirmée.
+- Cette décision n'implémente pas l'annuaire ni les invitations et ne signifie pas que le Messenger national est déjà disponible dans l'application.
+- PR #17 vérifiée après le début du lot : **OPEN**, **non fusionnée**, tête `19b2620a1397de927c090c4df325d92e03202511`, base `51acfe8c97b6e152208d592dbd2c5bbde5c5c38e`, GitHub indiquait `mergeable=true` / `clean` à cet instant. Aucun merge demandé.
+- Aucun SQL, migration, RPC, policy, GRANT, Auth, Storage ou Realtime appliqué sur Supabase actif ; aucun projet/branche supplémentaire ni frais ; aucun test PostgreSQL/RLS réel ; aucun CI hébergé ni déploiement.
+
+### Suite — Lot 390
+Poursuivre l'audit technique du chemin d'invitation national : définir le résolveur d'affiliation institutionnelle sans utiliser niveau/wilaya/filière comme preuve, puis concevoir la compatibilité des DM historiques et le patch atomique `msg_open_direct` / `msg_member_ok` / `msg_guard_direct`. Garder le NO-GO d'exécution tant que la source officielle et un PostgreSQL 17 isolé ne sont pas disponibles.
