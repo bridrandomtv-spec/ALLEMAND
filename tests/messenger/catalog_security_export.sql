@@ -149,7 +149,7 @@ selected_functions AS (
   JOIN pg_namespace n ON n.oid = p.pronamespace
   WHERE n.nspname = 'public'
     AND (
-      p.proname LIKE 'msg\\_%' ESCAPE '\\'
+      p.proname LIKE 'msg\_%' ESCAPE '\'
       OR p.proname ILIKE '%verif%'
       OR p.proname ILIKE '%block%'
       OR p.proname ILIKE '%invitation%'
