@@ -142,7 +142,7 @@
       h += '<div class="msg-verif">' + (vf.statut==='en_attente'
         ? '⏳ <b>التحقق من الهوية جارٍ</b> — يراجع أستاذ أو مسؤول رقم تسجيلك وشعبتك. تبقى المجموعات الرسمية متاحة، وتُفعّل الرسائل الخاصة بعد المصادقة.'
         : (vf.statut==='rejete' ? '⛔ <b>تم رفض الطلب</b> — صحّح رقم الاشتراك أو الشعبة ثم أعد إرسال الطلب. ' : '🪪 <b>التحقق من الهوية المدرسية</b> — مطلوب قبل بدء محادثة خاصة. ') +
-          '<div class="msg-vhint">أدخل الرقم الفريد الظاهر في صفحة الاشتراك بعد تفعيل الدفع. يجب أن يكون الاشتراك نشطًا ومرتبطًا بهذا الحساب.</div><div class="msg-vform"><input id="vfMat" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="رقم الاشتراك بعد تفعيل الدفع" maxlength="20"><input id="vfSec" placeholder="الشعبة / القسم (مثال: 2AS-1)" maxlength="40" value="'+esc(vf.section||'')+'"><button class="msg-send" data-act="verif-req" type="button">إرسال طلب التحقق</button></div>')
+          '<div class="msg-vhint">التحقق المدرسي مجاني ولا يتطلب اشتراكاً مدفوعاً. أدخل رقم تسجيلك المدرسي والشعبة لإرسال الطلب إلى فريق الإشراف.</div><div class="msg-vform"><input id="vfMat" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="رقم التسجيل المدرسي (مجاني)" maxlength="20"><input id="vfSec" placeholder="الشعبة / القسم (مثال: 2AS-1)" maxlength="40" value="'+esc(vf.section||'')+'"><button class="msg-send" data-act="verif-req" type="button">إرسال طلب التحقق</button></div>')
         + '</div>';
     }
     if(!isMod0 && vf.ok && vf.statut==='verifie'){ h += '<div class="msg-verif ok">✔ تم التحقق من الهوية المدرسية — الرسائل الخاصة متاحة ضمن المجموعة الدراسية المشتركة.</div>'; }
