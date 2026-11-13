@@ -251,3 +251,13 @@
 - Aucun changement Supabase actif, aucune écriture RLS/Auth, aucune migration Messenger, aucune donnée élève ou conversation privée consultée, aucune modification de `main`, aucune fusion ni déploiement manuel.
 - Les workflows CI et PostgreSQL 17 isolés déclenchés sur les commits précédents ont été suivis ; le contrôle final doit être jugé uniquement sur le HEAD après correction `3eb3817851270e40b9b501436f3014c2728536f5` et après clôture de ses workflows. Le test navigateur réel et la prévisualisation à jour restent à confirmer.
 - PR #17 reste ouverte et non fusionnée. Le dernier contrôle API avant le Lot 451 indiquait `mergeable=true`; vérifier à nouveau l'état après le dernier commit.
+
+
+### Complément Lot 451 — clôture du contrôle CI (13 novembre 2026)
+- Le workflow CI sur le commit `4e97f46040fa4835ae4de4f53ccae9e2116eb8c1` a échoué sur une référence de variable erronée dans `ci/check-msg.mjs` (`msg` au lieu de `msgjs`). Le test PostgreSQL 17 isolé du même HEAD a réussi.
+- Correction exacte dans le commit `aefad2f9694841a1b01247b190784d11fcee05b8`. Le CI a ensuite révélé une assertion de cache historique dans `ci/check-masar.mjs`, qui attendait encore le Service Worker v155 alors que le code est en v156.
+- Assertion synchronisée sur v156 dans le commit `bf977125f6240e8e562d11fdc7bac487416f9995`; aucune vérification métier n'a été supprimée ou contournée.
+- CI — ALLEMAND : run `43507427751`, réussite sur le HEAD `bf977125f6240e8e562d11fdc7bac487416f9995`. Les contrôles Messenger, Masar, portail public, sécurité d'accès, navigation Multaqa et contrôle pédagogique sont réussis.
+- Tests PostgreSQL isolés — Multaqa : run `43507427746`, dernière observation pendant la phase de nettoyage des conteneurs; attendre la conclusion terminale avant de déclarer le test réussi.
+- Aucun changement Supabase actif, aucune migration Messenger exécutée, aucun message privé ni profil élève consulté, aucun déploiement manuel, aucune fusion et aucun changement direct sur `main`.
+- PR #17 reste ouverte et non fusionnée, branche `design/prototypes-67-74-alignment`, base `main`. Le test navigateur réel avec compte élève vérifié et la confirmation de prévisualisation Cloudflare du HEAD courant restent à faire.
