@@ -13,7 +13,6 @@
     "standalone",
     "minimal-ui"
   ],
-  "orientation": "portrait-primary",
   "background_color": "#04140c",
   "theme_color": "#04140c",
   "categories": [
@@ -91,6 +90,18 @@
       "short_name": "الأستاذ",
       "description": "محادثة مع الأستاذ خريف أحمد",
       "url": "./index.html#prof",
+      "icons": [
+        {
+          "src": "assets/logo.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "ملتقى الطلاب",
+      "short_name": "الملتقى",
+      "description": "فضاء التلاميذ للتواصل الدراسي وتبادل الأفكار",
+      "url": "./index.html#multaqa",
       "icons": [
         {
           "src": "assets/logo.png",
