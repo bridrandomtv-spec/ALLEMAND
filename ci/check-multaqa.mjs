@@ -37,6 +37,7 @@ has((communitySql.match(/p\.role = 'eleve'/g) || []).length >= 8, 'migration com
 has((communitySql.match(/p\.verif_statut = 'verifie'/g) || []).length >= 6, 'migration communauté : vérification scolaire exigée pour les contenus personnels');
 has(communitySql.includes('élève vérifié sans abonnement') && communitySql.includes('compte non vérifié/en attente'), 'migration communauté : distinction vérification/abonnement non documentée');
 has(communitySql.includes('author_pseudo text') && communitySql.includes('join public.profiles pr on pr.id = p.author_id'), 'migration communauté : projection publique limitée au pseudo absente');
+has(communitySql.includes('my_post boolean') && communitySql.includes('(p.author_id = v_uid)'), 'migration communauté : indicateur auteur minimal absent');
 has(communitySql.includes('post_rate_limit') && communitySql.includes('comment_rate_limit'), 'migration communauté : quotas anti-spam absents');
 has(communitySql.includes('NON exécutée sur Supabase') && communitySql.includes('Tests PostgreSQL isolés obligatoires'), 'migration communauté : statut préparatoire et tests requis non documentés');
 
