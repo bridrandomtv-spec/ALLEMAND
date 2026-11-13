@@ -52,8 +52,8 @@ ok(msgjs.includes('ابحث في محادثاتي ومجموعاتي') && msgjs.
 ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'rédaction et pièces jointes en arabe');
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
-ok(idx.includes('msg.js?v=3514'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.148'") && sw.includes("./msg.js?v=3514"), 'service worker et précache Messenger synchronisés');
+ok(idx.includes('msg.js?v=3515'), 'version cache du module de messagerie actualisée');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.149'") && sw.includes("./msg.js?v=3514"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
@@ -122,3 +122,9 @@ ok(sbjs.includes(".eq('id', number).eq('user_id', u.id).eq('statut', 'actif').ma
 ok(billing.includes("esc(act.id)") && billing.includes('رقم الاشتراك'), 'numéro unique affiché après activation dans la page abonnement');
 
 if (fail.length) { console.error('::error:: check-msg Lot 360 : ' + fail.length + ' échec(s)'); process.exit(1); }
+
+ok(msgjs.includes('msg-pro-hero') && msgjs.includes('msg-pro-stats'), 'nouvelle hiérarchie pédagogique Messenger');
+ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجموعة '("), 'libellé de groupe construit sans appel de chaîne invalide');
+ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter]')"), 'filtres Messenger accessibles via délégation de clic');
+ok(idx.includes('style-prototype-dz.css?v=198') && idx.includes('msg.js?v=3515'), 'versions de ressources Messenger actualisées');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.149'") && sw.includes('./style-prototype-dz.css?v=198') && sw.includes('./msg.js?v=3515'), 'précache synchronisé avec la nouvelle interface');
