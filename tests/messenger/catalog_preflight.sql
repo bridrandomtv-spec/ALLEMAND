@@ -30,32 +30,32 @@ table_state AS (
     AND c.relname = e.table_name
     AND c.relkind IN ('r','p')
 ),
+expected_relations AS (
+  SELECT schema_name, table_name FROM expected_tables
+  UNION ALL
+  SELECT 'storage', 'objects'
+),
 policy_state AS (
-  SELECT schemaname, tablename, count(*)::int AS policy_count,
-         string_agg(policyname, ', ' ORDER BY policyname) AS policy_names
-  FROM pg_policies
-  WHERE schemaname = 'public'
-    AND tablename IN (
-      'msg_conversations','msg_members','msg_messages','msg_attachments',
-      'msg_blocks','msg_reports','msg_log','profiles','audit_logs',
-      'admin_roles','admin_permissions','wilaya_assignments'
-    )
-  GROUP BY schemaname, tablename
+  SELECT e.schema_name AS schemaname,
+         e.table_name AS tablename,
+         count(p.policyname)::int AS policy_count,
+         string_agg(p.policyname, ', ' ORDER BY p.policyname) AS policy_names
+  FROM expected_relations e
+  LEFT JOIN pg_policies p
+    ON p.schemaname = e.schema_name
+   AND p.tablename = e.table_name
+  GROUP BY e.schema_name, e.table_name
 ),
 trigger_state AS (
-  SELECT n.nspname AS schema_name, c.relname AS table_name,
-         count(*) FILTER (WHERE NOT t.tgisinternal)::int AS trigger_count,
+  SELECT e.schema_name, e.table_name,
+         count(t.oid) FILTER (WHERE NOT t.tgisinternal)::int AS trigger_count,
          string_agg(t.tgname, ', ' ORDER BY t.tgname)
            FILTER (WHERE NOT t.tgisinternal) AS trigger_names
-  FROM pg_trigger t
-  JOIN pg_class c ON c.oid = t.tgrelid
-  JOIN pg_namespace n ON n.oid = c.relnamespace
-  WHERE n.nspname = 'public'
-    AND c.relname IN (
-      'msg_conversations','msg_members','msg_messages','msg_attachments',
-      'msg_blocks','msg_reports','msg_log','profiles','audit_logs'
-    )
-  GROUP BY n.nspname, c.relname
+  FROM expected_relations e
+  LEFT JOIN pg_namespace n ON n.nspname = e.schema_name
+  LEFT JOIN pg_class c ON c.relnamespace = n.oid AND c.relname = e.table_name
+  LEFT JOIN pg_trigger t ON t.tgrelid = c.oid
+  GROUP BY e.schema_name, e.table_name
 ),
 function_state AS (
   SELECT n.nspname AS schema_name, p.proname AS function_name,
