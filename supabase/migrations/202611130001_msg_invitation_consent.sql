@@ -51,8 +51,8 @@ as $$
        or (x.blocker_id = b and x.blocked_id = a)
   );
 $$;
-revoke all on function public.msg_pair_blocked(uuid, uuid) from public;
-grant execute on function public.msg_pair_blocked(uuid, uuid) to authenticated;
+-- Fonction interne uniquement : ne pas exposer un oracle de blocage entre deux UUID.
+revoke all on function public.msg_pair_blocked(uuid, uuid) from public, anon, authenticated;
 
 -- Bloquer également la lecture d'un DM dès qu'une des deux parties bloque l'autre.
 -- Les règles de groupes restent inchangées.
@@ -61,7 +61,9 @@ returns boolean
 language sql stable security definer
 set search_path = pg_catalog, public
 as $
-  select exists (
+  select auth.uid() is not null
+     and uid = auth.uid()
+     and exists (
     select 1
       from public.msg_conversations c
      where c.id = cid
@@ -96,15 +98,17 @@ create or replace function public.msg_not_blocked(cid bigint, snd uuid)
 returns boolean
 language sql stable security definer
 set search_path = pg_catalog, public
-as $$
-  select not exists (
+as $
+  select auth.uid() is not null
+     and snd = auth.uid()
+     and not exists (
     select 1
     from public.msg_members m
     where m.conversation_id = cid
       and m.user_id <> snd
       and public.msg_pair_blocked(snd, m.user_id)
   );
-$$;
+$;
 
 -- La policy historique msg members ajoutait un membre à soi-même dès que
 -- msg_member_ok retournait true; l'ancienne fonction autorisait tout DM.
@@ -116,7 +120,9 @@ returns boolean
 language sql stable security definer
 set search_path = pg_catalog, public
 as $
-  select exists (
+  select auth.uid() is not null
+     and uid = auth.uid()
+     and exists (
     select 1 from public.msg_conversations c
     join public.profiles p on p.id=uid
     where c.id=cid and c.type='groupe'
@@ -228,7 +234,8 @@ begin
   if v_inv.status <> 'pending' then raise exception 'invite_not_pending'; end if;
   if v_inv.created_at < now() - interval '7 days' then
     update public.msg_invites set status='expired', responded_at=now() where id=p_invite;
-    raise exception 'invite_expired';
+    -- Ne pas lever d'exception ici : elle annulerait aussi le passage à expired.
+    return null;
   end if;
   if public.msg_pair_blocked(v_inv.sender_id, v_inv.recipient_id) then
     raise exception 'user_blocked';
