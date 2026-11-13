@@ -330,14 +330,14 @@ $$;
 
 -- Les fonctions ne sont pas des API anonymes. Le profil est projeté uniquement
 -- par pseudo dans les RPC de lecture, jamais par SELECT direct sur profiles.
-revoke all on function public.multaqa_feed(integer, bigint) from public, anon;
-revoke all on function public.multaqa_comments(bigint, integer, bigint) from public, anon;
-revoke all on function public.multaqa_create_post(text) from public, anon;
-revoke all on function public.multaqa_create_comment(bigint, text, bigint) from public, anon;
-revoke all on function public.multaqa_toggle_reaction(bigint, text) from public, anon;
-revoke all on function public.multaqa_report(text, bigint, text, text) from public, anon;
-revoke all on function public.multaqa_delete_own_post(bigint) from public, anon;
-revoke all on function public.multaqa_delete_own_comment(bigint) from public, anon;
+revoke all on function public.multaqa_feed(integer, bigint) from public, anon, authenticated;
+revoke all on function public.multaqa_comments(bigint, integer, bigint) from public, anon, authenticated;
+revoke all on function public.multaqa_create_post(text) from public, anon, authenticated;
+revoke all on function public.multaqa_create_comment(bigint, text, bigint) from public, anon, authenticated;
+revoke all on function public.multaqa_toggle_reaction(bigint, text) from public, anon, authenticated;
+revoke all on function public.multaqa_report(text, bigint, text, text) from public, anon, authenticated;
+revoke all on function public.multaqa_delete_own_post(bigint) from public, anon, authenticated;
+revoke all on function public.multaqa_delete_own_comment(bigint) from public, anon, authenticated;
 
 grant execute on function public.multaqa_feed(integer, bigint) to authenticated;
 grant execute on function public.multaqa_comments(bigint, integer, bigint) to authenticated;
