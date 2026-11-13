@@ -35,7 +35,7 @@ revoke all on function public.msg_can_dm(uuid,uuid) from public, anon, authentic
 create table if not exists public.msg_discovery_limits (
   actor_id uuid primary key references auth.users(id) on delete cascade,
   window_started timestamptz not null default now(),
-  searches integer not null default 0 check (searches between 0 and 8)
+  searches integer not null default 0 check (searches >= 0)
 );
 alter table public.msg_discovery_limits enable row level security;
 revoke all on public.msg_discovery_limits from public, anon, authenticated;
