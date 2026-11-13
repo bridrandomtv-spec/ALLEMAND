@@ -238,7 +238,7 @@ if (!html.includes('style-prototype-dz.css?v=195')) {
 if (!sw.includes('style-prototype-dz.css?v=195')) {
   fail('version CSS du précache non actualisée (v195 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.144") ||
+if (!sw.includes("dz-de-v3.185.0.0.145") ||
     !sw.includes("style-prototype-dz.css?v=195") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
@@ -438,7 +438,7 @@ for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 
 if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
   fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
 }
-if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.144')) {
+if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.145')) {
   fail('guide de bienvenue : cache ou Service Worker non actualisé');
 }
 console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
