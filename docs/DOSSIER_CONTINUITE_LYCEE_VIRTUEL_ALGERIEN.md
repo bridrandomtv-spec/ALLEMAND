@@ -8335,3 +8335,23 @@ Examiner l'état exact de comparaison PR #17/base et identifier la cause de merg
 
 - Le booléen GitHub `mergeable` a fluctué pendant les recalculs (false puis true). Relecture de l'API Pull Request complète au HEAD 8a1ec4c6a6228925ec2b83a5d8cb539c04e3426c : PR #17 `state=open`, `merged=false`, `mergeable=true`, `mergeable_state=clean`, base 51acfe8c97b6e152208d592dbd2c5bbde5c5c38e.
 - Conclusion au dernier contrôle : aucune indication GitHub d'un conflit de fusion ; PR toujours ouverte et non fusionnée. Ne pas fusionner sans accord explicite.
+
+
+---
+
+## Lot 394 — barre sociale, invitations, notifications et tableau de bord personnel (13 novembre 2026)
+
+- Demande utilisateur : ajouter une action « publier », une icône pour les invitations reçues, une cloche de notifications et un avatar/photo de profil cliquable qui ouvre l'espace personnel ; dans cet espace, prévoir un menu trois points, un crayon de modification du profil et des fonctions personnelles complémentaires.
+- Maquette `prototypes/multaqa-students-preview.html` enrichie :
+  - barre supérieure : « نشر », invitations « طلبات الزملاء » avec badge, « الإشعارات » avec badge, avatar personnel cliquable ;
+  - menus déroulants de demandes reçues et d'alertes (réactions, commentaires, invitations de groupes), exemples clairement fictifs ;
+  - clic sur l'avatar : vue « مساحتي الشخصية » distincte du fil ; couverture, avatar, nom, bio, compteurs de démonstration, onglets المنشورات / حول / الصور والفيديوهات / زملائي / المجموعات / العناصر المحفوظة ;
+  - bouton crayon « تعديل الملف الشخصي » ouvrant un formulaire de démonstration ; le bouton « حفظ المعاينة » modifie uniquement le texte local dans la page ;
+  - menu « ••• » : paramètres et confidentialité, audience du profil, éléments enregistrés, historique d'activité, médias, sécurité/blocage/signalement, aide ;
+  - retour explicite au fil et bouton « نشر » qui ramène au compositeur.
+- Les interactions de menus, ouverture/fermeture du tableau de bord et édition locale sont exécutées dans le navigateur uniquement. Aucune information n'est envoyée ou persistée ; les boutons de demandes, notifications et publication ne déclenchent aucune opération réelle.
+- Dernière version du prototype vérifiée : `prototypes/multaqa-students-preview.html`, commit de branche `642ba0a234ccb678a958c72d629e104ffa202230`, blob `cbe605e35a474eb5a9a60dcff9cf58ae6b9ac7c1`.
+- Pas de changement dans les modules runtime, la navigation de production, les routes/IDs existants, Messenger, les CSS de production ou la base. Aucun SQL, migration, RPC, policy, GRANT, Auth, RLS, Storage ou Realtime modifié ; aucune écriture de données élèves, aucun CI hébergé, déploiement, merge, service payant ou coût.
+
+### Suite — Lot 395
+Relire l'ergonomie de la maquette sur mobile et desktop ; compléter les états vides, confirmations et paramètres de confidentialité. Définir ensuite le contrat de données serveur des notifications sociales et des demandes de contact, sans réutiliser aveuglément les notifications administratives ni contourner les garde-fous Messenger. Aucun raccordement actif avant tests PostgreSQL/RLS isolés et audit Storage.
