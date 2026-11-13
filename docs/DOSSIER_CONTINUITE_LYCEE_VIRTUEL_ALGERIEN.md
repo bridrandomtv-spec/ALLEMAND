@@ -221,3 +221,13 @@
 - Le test PostgreSQL isolé confirme encore la migration et les scénarios d'accès synthétiques ; il ne teste pas l'affichage du pseudo dans un vrai navigateur.
 - PR #17 reste ouverte, non fusionnée et mergeable, base `main`. Aucun déploiement manuel ni modification Supabase.
 - La validation visuelle et fonctionnelle avec un compte élève vérifié réel reste le seul point de contrôle bloquant avant de qualifier l'expérience utilisateur de bout en bout.
+
+
+## Lot 450 — harmonisation Messenger et vérification scolaire gratuite (13 novembre 2026)
+- Correction d'une contradiction produit repérée dans le parcours réel Messenger : l'écran et le client exigeaient encore un numéro d'abonnement actif pour déposer une demande de vérification scolaire.
+- Le formulaire demande désormais le numéro d'inscription scolaire et précise explicitement que la vérification est gratuite. Le client ne consulte plus la table des abonnements et dépose le statut en_attente ainsi que le numéro et la section sur le profil du compte connecté. La décision finale reste réservée à l'équipe d'administration ; aucun statut verifie n'est attribué automatiquement.
+- Harmonisation visuelle ciblée du centre Messenger : barre de recherche, filtres, titres de sections, cartes de groupes/conversations, boutons et variantes clair/sombre/mobile. Le comportement des groupes, conversations, filtres et contrôles existants est conservé ; aucune fonction de recherche nationale n'est revendiquée.
+- Cache : msg.js?v=3517, style-prototype-dz.css?v=202, Service Worker dz-de-v3.185.0.0.155.
+- CI statique actualisée pour exiger la vérification gratuite et les nouvelles références de cache. Les contrôles finaux doivent être confirmés sur le HEAD documentaire final.
+- Aucun SQL, changement RLS/Auth, aucune donnée Supabase, aucun abonnement, aucun profil d'élève, aucun message privé, main, fusion ou déploiement manuel n'a été modifié.
+- Limite de sécurité : la demande client réutilise la mise à jour de profil déjà présente dans le parcours historique. Avant toute fusion/déploiement, confirmer que la policy RLS active n'autorise que le titulaire à déposer sa propre demande et que seul un rôle autorisé peut faire passer en_attente à verifie ou rejete. Aucun audit RLS supplémentaire ni test navigateur réel n'est revendiqué dans ce lot.
