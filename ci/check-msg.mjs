@@ -59,6 +59,23 @@ ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(ms
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
 ok(!/indisponible pour ce compte/.test(msgjs), 'aucun message de pièce jointe en français');
 
+// Lot 437 — contrat de consentement Messenger (migration préparée, non exécutée).
+const inviteSql = readFileSync('supabase/migrations/202611130001_msg_invitation_consent.sql', 'utf8');
+ok(inviteSql.includes('create table if not exists public.msg_invites'), 'table invitations Messenger versionnée');
+ok(inviteSql.includes('msg_invite_send') && inviteSql.includes('msg_invite_accept') &&
+   inviteSql.includes('msg_invite_decline') && inviteSql.includes('msg_invite_cancel'),
+   'RPC distinctes envoyer/accepter/refuser/annuler');
+ok(inviteSql.includes("revoke execute on function public.msg_open_direct(uuid) from public, anon, authenticated"),
+   'ancienne RPC directe sans consentement révoquée');
+ok(inviteSql.includes("type = 'groupe'") && inviteSql.includes('public.msg_is_moderator(auth.uid())'),
+   'création directe interdite par policy');
+ok(inviteSql.includes('msg_guard_direct_consent') && inviteSql.includes('msg_invitation_requise'),
+   'ajout de membres DM protégé côté serveur');
+ok(inviteSql.includes('msg_pair_blocked') && inviteSql.includes('public.msg_is_member(uid, cid)'),
+   'blocage bilatéral appliqué aux accès DM');
+ok(inviteSql.includes('NON exécutée sur Supabase') && inviteSql.includes('Tests obligatoires'),
+   'migration identifiée comme non appliquée et tests documentés');
+
 if (fail.length) { console.error('::error:: check-msg : ' + fail.length + ' échec(s)'); process.exit(1); }
 console.log('== check-msg : TOUT PASSE ==');
 
