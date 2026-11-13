@@ -17991,3 +17991,29 @@ html[data-theme="dark"] section[data-view="msg"] #msgBody .msg-attachment a{colo
 html:not([data-theme="light"]) .mtq-intro{background:linear-gradient(120deg,#102f20,#10251b 65%,#321b22);border-color:#315b42}html:not([data-theme="light"]) .mtq-intro h2,html:not([data-theme="light"]) .mtq-intro p{color:#e1f0e6}html:not([data-theme="light"]) .mtq-notice{background:#302a1b;border-color:#69572e;color:#f0dfad}
 html:not([data-theme="light"]) .mtq-compose,html:not([data-theme="light"]) .mtq-post,html:not([data-theme="light"]) .mtq-side-card{background:#10251b;border-color:#315b42}html:not([data-theme="light"]) .mtq-post-quiet{background:#0c2017}html:not([data-theme="light"]) .mtq-post-head strong,html:not([data-theme="light"]) .mtq-compose strong,html:not([data-theme="light"]) .mtq-post>p,html:not([data-theme="light"]) .mtq-side-link{color:#e1f0e6}html:not([data-theme="light"]) .mtq-example{background:#1d3b2a;color:#c9e4d2}html:not([data-theme="light"]) .mtq-privacy{background:#17442c;color:#d4f1dc}
 @media(max-width:820px){.mtq-grid{grid-template-columns:1fr}.mtq-side{grid-template-columns:repeat(2,minmax(0,1fr))}.mtq-messenger-link{grid-column:1/-1}}@media(max-width:560px){.mtq-intro{padding:20px;align-items:flex-start}.mtq-mark{width:54px;height:54px;flex-basis:54px;font-size:27px;border-radius:17px}.mtq-notice{display:grid;gap:4px}.mtq-side{grid-template-columns:1fr}.mtq-post-foot{gap:10px;font-size:11px}}
+
+
+/* LOT 408 — robustesse responsive et contraste du ملتقى الطلاب. */
+.mtq-view,.mtq-view .mtq-shell,.mtq-view .mtq-grid,.mtq-view .mtq-main,.mtq-view .mtq-side{min-width:0;max-width:100%}
+.mtq-view .mtq-intro>div:first-child,.mtq-view .mtq-compose>div:last-child{min-width:0;flex:1 1 auto}
+.mtq-view .mtq-intro p,.mtq-view .mtq-post>p,.mtq-view .mtq-side-card p,.mtq-view .mtq-post-foot span{overflow-wrap:anywhere}
+.mtq-view .mtq-compose button,.mtq-view .mtq-messenger-link{min-height:44px}
+html:not([data-theme="light"]) .mtq-view .mtq-kicker,
+html:not([data-theme="light"]) .mtq-view .mtq-side-card h3{color:#9be0b0}
+html:not([data-theme="light"]) .mtq-view .mtq-post-head small,
+html:not([data-theme="light"]) .mtq-view .mtq-compose p,
+html:not([data-theme="light"]) .mtq-view .mtq-post-foot{color:#b9d0c0}
+@media(max-width:560px){
+  .mtq-view .mtq-intro{gap:12px;padding:18px}
+  .mtq-view .mtq-intro h2{font-size:clamp(20px,6vw,25px)}
+  .mtq-view .mtq-compose,.mtq-view .mtq-post,.mtq-view .mtq-side-card{padding:15px}
+  .mtq-view .mtq-compose{gap:10px}
+  .mtq-view .mtq-post-foot{column-gap:12px;row-gap:8px}
+}
+@media(max-width:380px){
+  .mtq-view .mtq-intro{padding:15px}
+  .mtq-view .mtq-mark{width:44px;height:44px;flex-basis:44px;font-size:23px}
+  .mtq-view .mtq-notice{padding:11px}
+  .mtq-view .mtq-compose-avatar,.mtq-view .mtq-avatar{width:38px;height:38px;flex-basis:38px}
+  .mtq-view .mtq-post-head{gap:8px}
+}
