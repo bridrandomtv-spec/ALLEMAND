@@ -8539,3 +8539,17 @@ Valider unicité des IDs, correspondance VIEWS/data-view, raccourcis desktop/mob
 
 ### Suite — Lot 408
 Faire vérifier le rendu sur de vrais navigateurs et tailles d'écran (Windows/macOS desktop, Android et iPhone), puis corriger les écarts observés avant d'activer les interactions sociales. Le contrôle statique ne remplace pas ces essais physiques.
+
+
+---
+
+## Lot 408 — compatibilité responsive du ملتقى الطلاب (13 novembre 2026)
+
+- Inspection du HEAD de la branche : la vue `multaqa` est intégrée dans `index.html`, son accès est réservé aux comptes élèves dans `app.js`, et le raccourci PWA `ملتقى الطلاب` existe dans `manifest.json`.
+- CI du HEAD avant ce lot : réussite sur le commit `321a6a4428bd26ad600e50f7f62938fb16a51a25`.
+- Ajustements CSS ciblés dans `style-prototype-dz.css` : contraintes `min-width:0` contre les débordements flex/grid, retour à la ligne des textes longs, hauteur tactile minimale de 44 px pour les actions, resserrement progressif à 560 px et 380 px.
+- Contraste du mode sombre amélioré pour le surtitre, les titres de cartes, les métadonnées et les textes secondaires du ملتقى.
+- Références de cache alignées : `style-prototype-dz.css?v=196` dans `index.html` et `sw.js`; version du Service Worker portée à `dz-de-v3.185.0.0.147`.
+- Périmètre : aucun changement à `main`, aucune fusion, aucun déploiement Cloudflare, aucune modification Supabase/Auth/RLS/Storage/Realtime, aucune dépendance ajoutée.
+- Limites de validation : contrôles de cohérence des références et CI à vérifier après commit ; aucun navigateur réel ni appareil Windows/macOS/Android/iPhone n'a été piloté dans ce lot. Le manifeste PWA ne constitue pas une publication native dans les stores.
+- Suite : vérifier la CI sur le nouveau HEAD, puis effectuer une validation visuelle réelle de la preview déployée correspondant exactement à ce HEAD avant d'envisager l'activation fonctionnelle du réseau social.
