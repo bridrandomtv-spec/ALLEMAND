@@ -8201,3 +8201,23 @@ Formaliser les invariants du cycle invitation/acceptation et du blocage, avec ma
 
 ### Suite — Lot 387
 Examiner le modèle de données existant et préparer une proposition de schéma d'invitations isolée, sans migration active. Définir précisément les contraintes uniques, les clés étrangères, les index, les transitions atomiques et les privilèges minimaux avant tout SQL de modification.
+
+
+---
+
+## Lot 387 — proposition de modèle SQL des invitations Messenger (13 novembre 2026)
+
+- Audit croisé du catalogue actif, de `msg.js`, de `docs/product/MESSAGERIE_MESSENGER_SCOLAIRE_SPEC.md` et du schéma historique `supabase/msg_schema.sql`.
+- Nouveau document : `docs/product/LOT-387-PROPOSITION-SCHEMA-INVITATIONS-MESSENGER.md`.
+- Proposition d'une table `msg_invitations` : requester/recipient, statut, dates, expiration et lien facultatif vers le DM créé après acceptation.
+- Index unique partiel sur la paire non ordonnée pour éviter les demandes pending en doublon dans les deux sens ; index de boîte de réception et demandes envoyées.
+- RPC proposées : `msg_invite_send`, `msg_invite_respond`, `msg_invite_cancel`, et durcissement de `msg_open_direct` / `msg_member_ok`.
+- L'acceptation doit créer/réutiliser le DM et ses deux adhésions dans une seule transaction ; blocage vérifié dans les deux sens à l'envoi, l'acceptation, l'ouverture et l'envoi de messages.
+- Écart confirmé : dans le catalogue actif, `msg_attachments.message_id` est NOT NULL, contrairement au fichier historique `supabase/msg_schema.sql`. La base active est la référence ; le schéma historique ne doit pas être restauré comme baseline fidèle.
+- L'objectif utilisateur de conversations entre élèves de lycées/wilayas différents exige une règle nationale, distincte de l'ancienne égalité wilaya/niveau/filière. L'affiliation officielle courante reste à prouver ; les métadonnées déclaratives ne suffisent pas.
+- Le texte actuel de `msg.js` évoque un numéro d'abonnement après paiement. Aucun paiement/facturation ne doit être développé dans l'immédiat ; prévoir un identifiant institutionnel non financier pour le parcours transitoire, après validation.
+- GO conception / NO-GO migration : aucun SQL exécuté sur Supabase actif, aucune table/RPC/RLS/ACL modifiée, aucune donnée métier consultée, aucun coût, aucun CI/déploiement/merge.
+- Commit proposition : `7fb01a32da116804974415bc0ec1b0c01dd9067a`.
+
+### Suite — Lot 388
+Préparer le patch SQL candidat dans un fichier de migration isolé et non appliqué, accompagné des RPC et policies, puis effectuer une revue statique de cohérence et de privilèges. Garder le statut NO-GO tant que l'affiliation scolaire officielle et les règles institutionnelles d'accès élève↔élève ne sont pas confirmées.
