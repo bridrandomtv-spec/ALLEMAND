@@ -8503,3 +8503,15 @@ Poursuivre l'inventaire technique en lecture seule : récupérer les signatures,
 - Aucun fichier d'application modifié, aucun SQL, migration, Auth/RLS/Storage/Realtime, déploiement, merge ou coût.
 - Suite : Lot 405 — cartographier les points d'entrée/navigation de l'application actuelle et choisir le point d'intégration le moins risqué pour rendre la maquette accessible sans casser routes, IDs, modules ou Messenger. Pas de branchement backend à ce stade.
 
+
+
+## Lot 405 — cartographie navigation et point d'intégration de ملتقى الطلاب (13 novembre 2026)
+
+- Audit en lecture seule de `index.html`, `app.js`, `msg.js`, `masar.js` et de la maquette sociale.
+- Confirmation : Messenger existe déjà sous le libellé arabe `💬 الرسائل`, route `msg`, section DOM `data-view="msg"`, conteneur `#msgBody`. `msg.js` écoute `dz:view` et rend les conversations à l'ouverture. Il ne faut ni reconstruire ni renommer ce module.
+- Navigation actuelle : `#tabs` et `renderTabs()` gèrent les raccourcis desktop/mobile ; `VIEWS`, `TABS` et `go(view)` pilotent les vues et événements. La barre mobile a ses propres raccourcis, donc les deux dispositions doivent être mises à jour.
+- Point d'intégration proposé : nouvelle route `multaqa`, libellé `🌐 ملتقى الطلاب`, raccourci autonome près de `💬 الرسائل`. La vue sociale reste distincte ; les actions « مراسلة » ne doivent jamais créer un DM sans le flux de consentement Messenger.
+- Rapport : `docs/product/LOT-405-CARTOGRAPHIE-NAVIGATION-INTEGRATION-MULTAQAA.md`, commit `4bb2d3e4bc7974125d4a8019c13d6af0ce815e7d`.
+- Aucun code applicatif modifié, aucun test navigateur revendiqué, aucun backend, SQL, migration, Auth/RLS/Storage/Realtime, déploiement, merge ou coût.
+- Décision : GO conditionnel pour un lot front-end isolé (Lot 406), après revue du patch ; NO-GO pour connexion aux données sociales réelles tant que les contrats et tests multi-comptes ne sont pas établis.
+
