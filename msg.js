@@ -111,8 +111,8 @@
         + '<button class="up" data-act="msg-signup" type="button">📝 حساب جديد</button></div></div>'
         + '<div class="msg-bene">'
         + '<div class="b"><span class="i">🕌</span><b>المجموعات الرسمية</b><span>مجموعتك حسب الولاية والمستوى والشعبة؛ يحدد ملفك الدراسي المجموعة المناسبة تلقائياً.</span></div>'
-        + '<div class="b"><span class="i">📝</span><b>الواجبات والاختبارات</b><span>Partage et reçois devoirs, compositions, annales BAC et résumés en pièces jointes (pdf · png · jpeg · webp, 5 ميغابايت max).</span></div>'
-        + '<div class="b"><span class="i">⚡</span><b>مراسلة فورية</b><span>Les messages arrivent instantanément, avec présence « متصل الآن » et pseudos des camarades de ta conversation.</span></div>'
+        + '<div class="b"><span class="i">📝</span><b>الواجبات والاختبارات</b><span>تبادل الواجبات والاختبارات ومواضيع البكالوريا والملخصات كمرفقات (PDF وPNG وJPEG وWebP، حتى 5 ميغابايت).</span></div>'
+        + '<div class="b"><span class="i">⚡</span><b>مراسلة فورية</b><span>تصلك الرسائل فورياً، مع إظهار حالة الاتصال وأسماء زملائك في المحادثة.</span></div>'
         + '<div class="b"><span class="i">🛡</span><b>بيئة آمنة</b><span>الإبلاغ 🚩 والحظر وإشراف الأساتذة والإدارة وسجلّ موثّق لكل إجراء.</span></div>'
         + '<div class="b"><span class="i">🪪</span><b>الهوية المدرسية</b><span>تُتاح الرسائل الخاصة بين التلاميذ بعد التحقق من هويتهم المدرسية.</span></div>'
         + '<div class="b"><span class="i">📚</span><b>تطوير التعلّم</b><span>طوّر تعلّمك عبر تبادل المنهجيات والتصحيحات المشروحة والخبرات من مختلف الولايات.</span></div>'
@@ -123,14 +123,14 @@
         + '<div class="s"><span class="n">3</span><b>تحقّق من هويتك</b>رقم التسجيل والشعبة ← مراجعة الأستاذ أو الإدارة ← إتاحة الرسائل الخاصة.</div>'
         + '<div class="s"><span class="n">4</span><b>تواصل وتقدّم</b>تبادل الرسائل والملفات، وأبلغ عن أي مخالفة عند الحاجة.</div>'
         + '</div>'
-        + '<div class="msg-empty" style="margin-top:12px">🧑🏫 <b>الأساتذة والإدارة</b> : la section 🛡 ميغابايتdération (بلاغs, vérifications d\'identité, création de groupes officiels, journal) apparaît automatiquement dans cette vue après connexion.</div>';
+        + '<div class="msg-empty" style="margin-top:12px">🧑🏫 <b>الأساتذة والإدارة</b> : يظهر قسم 🛡 الإشراف (البلاغات والتحقق من الهوية وإنشاء المجموعات الرسمية والسجل) تلقائياً بعد تسجيل الدخول.</div>';
       box.innerHTML = L; return;
     }
     var g = await window.SB.msgGroups();
     var c = await window.SB.msgConvs();
     var vf = await window.SB.msgMyVerification();
     var h = '<div class="msg-head msg-messenger-head"><div><h3>💬 الرسائل</h3><small>مراسلة مدرسية · شبكة وطنية</small></div><button class="msg-refresh" data-act="refresh" type="button">⟳ تحديث</button></div>' +
-      '<div class="msg-searchbar"><span aria-hidden="true">⌕</span><input id="msgListSearch" type="search" placeholder="ابحث في محادثاتي ومجموعاتي…" autocomplete="off" aria-label="Rechercher dans mes conversations et groupes"></div>' +
+      '<div class="msg-searchbar"><span aria-hidden="true">⌕</span><input id="msgListSearch" type="search" placeholder="ابحث في محادثاتي ومجموعاتي…" autocomplete="off" aria-label="ابحث في محادثاتي ومجموعاتي"></div>' +
       '<div class="msg-filters" role="group" aria-label="تصفية المحادثات"><button type="button" class="active" data-msg-filter="all">الكل</button><button type="button" data-msg-filter="direct">خاصة</button><button type="button" data-msg-filter="group">مجموعات</button></div>';
     var isميغابايتd0 = u && (u.role==='prof' || u.role==='admin');
     if(!isميغابايتd0 && vf.ok && vf.statut!=='verifie'){
@@ -216,7 +216,7 @@
     });
     h += renderedRows.join('') || '<div class="msg-empty">لا توجد رسائل حالياً.</div>';
     h += '</div><div class="msg-input"><textarea id="msgText" rows="2" maxlength="2000" placeholder="اكتب رسالتك…"></textarea>'+
-         '<label class="msg-pj" title="joindre un fichier (png/jpeg/webp/pdf, 5 ميغابايت max)">📎<input type="file" id="msgFile" accept="image/png,image/jpeg,image/webp,application/pdf" hidden></label>'+
+         '<label class="msg-pj" title="إرفاق ملف (PNG/JPEG/WebP/PDF، حتى 5 ميغابايت)">📎<input type="file" id="msgFile" accept="image/png,image/jpeg,image/webp,application/pdf" hidden></label>'+
          '<button class="msg-send" data-act="send" type="button">إرسال ➤</button></div><div class="msg-err" id="msgErr" hidden></div>';
     box.innerHTML = h; state.conv = id;
     startChannel(id);
@@ -306,7 +306,7 @@
       return;
     }
     var rep = t.getAttribute('data-report');
-    if(rep){ window.SB.msgReport(+rep,'تم الإبلاغ عنه depuis la vue messages').then(function(){ t.disabled=true; t.textContent='🚩✓'; }); }
+    if(rep){ window.SB.msgReport(+rep,'تم الإبلاغ عنه من واجهة الرسائل').then(function(){ t.disabled=true; t.textContent='🚩✓'; }); }
   });
 
   /* ── MSG-7 : l'entrée « 💬 الرسائل » doit apparaître même si la sidebar a été
@@ -329,7 +329,7 @@
     var err=el('msgErr'), conv=state.conv;
     var allowed=['image/png','image/jpeg','image/webp','application/pdf'];
     if(allowed.indexOf(f.type)===-1 || !f.size || f.size>5242880){
-      if(err){ err.hidden=false; err.textContent='⛔ Format accepté : PNG, JPEG, WebP ou PDF, 5 ميغابايت maximum.'; }
+      if(err){ err.hidden=false; err.textContent='⛔ الصيغ المقبولة: PNG أو JPEG أو WebP أو PDF، بحد أقصى 5 ميغابايت.'; }
       input.value=''; return;
     }
     var sendButton=document.querySelector('#msgBody [data-act="send"]');
