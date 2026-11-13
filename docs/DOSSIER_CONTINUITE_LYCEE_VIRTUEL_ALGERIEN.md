@@ -142,3 +142,14 @@
 - Une autre référence de cache v196 a été trouvée dans `ci/check-gamification.mjs` et corrigée vers v201 (commit a64d5389681f428dbf00ecd510c93ab40f246076). Le workflow courant doit confirmer la disparition de cette assertion obsolète.
 
 - Le contrôle communautaire intégré à check-msg inclut désormais `node --check multaqa.js` afin que la CI valide aussi la syntaxe du nouveau client (commit d1efbfc58bd5b5f7c21c0abe3bb8c0e3fa79cd4f). Le workflow doit encore terminer sur le HEAD final.
+
+
+## Lot 445 — validation CI du premier raccordement communautaire (13 novembre 2026)
+- Le workflow GitHub Actions #3552, déclenché sur le HEAD `fac74e314273782f09d7a6f4800aca2efa00c98e`, est terminé avec la conclusion **success**.
+- Le job « Validation structurelle & pédagogique » a exécuté avec succès l'étape « Valider les accès et la navigation de ملتقى الطلاب » (étape 35), ainsi que les étapes de syntaxe JavaScript, de validation des contenus et les autres contrôles du workflow.
+- La vérification communautaire inclut maintenant le contrôle de syntaxe réel `node --check multaqa.js`, les appels RPC attendus, l'échappement HTML, les garde-fous rôle/vérification, RLS, révocations de privilèges, projection pseudo et précache du client.
+- PR #17 contrôlée après le run : toujours `open`, `merged=false`, `mergeable=true`, HEAD `fac74e314273782f09d7a6f4800aca2efa00c98e`. Aucune fusion.
+- **Portée exacte de ce succès : CI structurelle/statique uniquement.** Il ne prouve ni la compilation/exécution de la migration PostgreSQL, ni les autorisations multi-comptes à l'exécution, ni le rendu visuel dans un navigateur, ni le fonctionnement du fil sur le site.
+- La migration `202611130002_multaqa_community_feed.sql` reste préparée dans GitHub et non appliquée. Aucun DDL/DML, Auth, RLS, donnée ou paramètre de Supabase actif n'a été modifié.
+- Prochaine étape : obtenir une validation PostgreSQL réelle sans utiliser la base active et sans créer de branche/projet payant. Tant qu'aucun environnement de test gratuit contrôlé n'est disponible, conserver le fil en état explicite « service non activé » plutôt que prétendre que les publications fonctionnent.
+- Aucun changement sur `main`, aucune fusion PR #17, aucun déploiement Cloudflare.
