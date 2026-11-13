@@ -447,7 +447,7 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['dashboard', 'masar', 'accueil','seances','live','classe','grammaire' ,'biblio','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
+const VIEWS = ['dashboard', 'masar', 'accueil','msg','seances','live','classe','grammaire' ,'biblio','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
 const TABS  = [['dashboard','🎓 لوحة التلميذ'], ['masar','🧭 مسارك'], ['accueil','🏠 فضائي الدراسي'],['msg','💬 الرسائل'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
