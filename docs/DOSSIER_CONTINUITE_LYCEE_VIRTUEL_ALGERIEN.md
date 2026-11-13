@@ -7665,3 +7665,47 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Le correctif `.145` → `.146` de `ci/check-public-portal.mjs` a supprimé le dernier échec CI connu.
 - La prévisualisation Cloudflare n’a pas encore publié de commentaire de déploiement pour les commits Lot 360 ; le dernier déploiement confirmé reste `9add8b1`. Ne pas présenter ce lien comme contenant la nouvelle interface tant qu’un nouveau déploiement n’est pas confirmé.
 - PR #17 reste ouverte et non fusionnée. Aucun déploiement de production ni aucune modification de `main` ou de la base Supabase active.
+
+
+## Lot 361 — contrôle de continuité Messenger et prévisualisation publiée (13 novembre 2026)
+
+### État vérifié sur le HEAD du PR #17
+
+- Branche : `design/prototypes-67-74-alignment`.
+- HEAD contrôlé : `4500a722fbd4723569fb36c4455a123084de82a8`.
+- PR #17 : ouverte, non fusionnée, base `main`.
+- CI #3288 / run GitHub Actions `43407890297` : `success`, job « Validation structurelle & pédagogique » terminé sans étape en échec.
+- Cloudflare a publié le commit `4500a72) en prévisualisation : build et déploiement réussis le 13 novembre 2026 à 10:17:06 UTC. URL du déploiement précis : `https://efde7e82-allemand.brid-randomtv.workers.dev`. URL de branche : `https://design-prototypes-67-74-alignment-allemand.brid-randomtv.workers.dev`.
+- Cette prévisualisation est un déploiement de PR, pas une publication de production.
+
+### Découvrabilité de Messenger
+
+- Relecture de `app.js` et `index.html) : route `msg`, vue `data-view="msg"` et module `msg.js` sont raccordés.
+- Ordinateur : bouton direct `💬 الرسائل` dans la navigation principale, à côté des accès principaux.
+- Mobile : entrée `💬 الرسائل` dans la navigation rapide.
+- Les assertions correspondantes existent dans `ci/check-msg.mjs` et passent dans la CI #3288.
+- Il s'agit d'une confirmation du câblage du code et des tests. La recette visuelle interactive dans le navigateur reste distincte.
+
+### Contrôle de continuité du vrai Messenger
+
+La relecture du code courant confirme les limites déjà documentées aux lots 310–357 ; elles ne doivent pas être traitées comme des fonctions livrées :
+
+- Le filtre de recherche de l'écran porte sur les conversations et groupes déjà chargés ; il ne constitue pas un annuaire national des élèves.
+- `msgOpenDirect(otherId)` peut rouvrir un DM déjà partagé, mais renvoie `msg_invitation_requise` lorsqu'il n'existe pas. Il ne crée pas de conversation et n'enrôle pas le destinataire.
+- Le schéma versionné `supabase/msg_schema.sql` contient les tables de conversations, membres, messages, pièces jointes, signalements, blocages et journal ; il ne contient toujours pas de table `msg_invites` ni de RPC d'invitation, réponse ou annulation.
+- La spécification existante reste la référence : invitation `pending` sans conversation, acceptation/refus par le destinataire, annulation par l'expéditeur et création atomique du DM uniquement à l'acceptation. Aucun nouvel écran d'invitation ne doit être ajouté comme s'il était opérationnel avant le contrat serveur.
+- La règle actuelle `msg_can_dm` repose encore sur la correspondance wilaya+niveau+filière et la vérification des profils. Elle ne démontre pas une affiliation officielle à un lycée et ne répond pas à l'objectif de réseau national inter-wilayas.
+- Les travaux antérieurs sur les prototypes, la spécification des invitations, la matrice de tests multi-comptes et le verrouillage serveur sont conservés. Ce lot ne les réécrit pas.
+
+### Numéro d'abonnement et sécurité
+
+- Le lot 360 est bien présent dans le HEAD contrôlé : le formulaire arabe demande le numéro d'abonnement ; le client vérifie que l'identifiant correspond à un abonnement actif du compte connecté ; la page abonnement affiche l'identifiant après activation.
+- La clé primaire de l'abonnement empêche deux lignes d'abonnement d'avoir le même identifiant.
+- Limite inchangée : le lien profil↔abonnement n'est pas encore imposé par le garde SQL historique lors d'une modification directe du profil. Le contrôle client ne constitue pas une protection contre un appel API forgé. Le renforcement serveur reste en attente d'une autorisation distincte pour les changements de schéma/règles sur la base active.
+
+### Décision et prochaine étape
+
+- Ne pas déclarer le Messenger national terminé : l'annuaire national, le cycle d'invitation réel, l'affiliation institutionnelle prouvée et la création transactionnelle des DM ne sont pas livrés.
+- Ne pas contourner l'absence de registre d'affiliation en se fondant sur des champs de profil déclaratifs, la wilaya ou le numéro d'abonnement. Le numéro d'abonnement prouve le lien avec l'abonnement de la plateforme, pas l'inscription officielle dans un lycée.
+- Réutiliser les contrats et plans déjà écrits ; prochaine étape technique sûre : préparer/valider un environnement PostgreSQL isolé pour exécuter la matrice de tests existante et éprouver les fonctions, triggers, RLS et chemins de création DM, sans toucher à la base active. L'annuaire national et les invitations inter-wilayas restent bloqués jusqu'à preuve institutionnelle et autorisation de migration.
+- Aucun SQL ou migration exécuté ; aucune écriture Supabase ; aucun changement Auth/RLS/GRANT/Storage ; aucun changement de `main) ; aucun merge ; aucune publication de production.
