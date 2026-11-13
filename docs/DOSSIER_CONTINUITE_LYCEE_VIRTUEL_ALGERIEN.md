@@ -261,3 +261,14 @@
 - Tests PostgreSQL isolés — Multaqa : run `43507427746`, dernière observation pendant la phase de nettoyage des conteneurs; attendre la conclusion terminale avant de déclarer le test réussi.
 - Aucun changement Supabase actif, aucune migration Messenger exécutée, aucun message privé ni profil élève consulté, aucun déploiement manuel, aucune fusion et aucun changement direct sur `main`.
 - PR #17 reste ouverte et non fusionnée, branche `design/prototypes-67-74-alignment`, base `main`. Le test navigateur réel avec compte élève vérifié et la confirmation de prévisualisation Cloudflare du HEAD courant restent à faire.
+
+
+## Lot 452 — centre des invitations Messenger (13 novembre 2026)
+- Ajout côté client dans `supabase/supabase.js` des fonctions de lecture des invitations participantes et des RPC `msg_invite_send`, `msg_invite_accept`, `msg_invite_decline`, `msg_invite_cancel`. Les changements de statut passent exclusivement par les fonctions serveur prévues dans la migration de consentement; aucun INSERT/UPDATE direct sur `msg_invites`.
+- Ajout dans `msg.js` d'un centre des invitations entrantes et sortantes : le destinataire peut accepter ou refuser, l'expéditeur peut annuler, et une conversation acceptée peut être rouverte. L'identité de l'autre participant et ses UUID ne sont pas affichés dans la carte; seules les dates et les états sont montrés.
+- Le texte de l'interface précise que l'acceptation d'une invitation de conversation privée ne crée pas automatiquement une relation de `زمالة`. Aucun annuaire d'élèves ni recherche par UUID n'a été ajouté : le parcours d'envoi depuis une fiche élève reste à raccorder à une source de profils publics autorisée.
+- Si la table d'invitations ou ses RPC ne sont pas disponibles, l'interface affiche une indisponibilité explicite et ne prétend pas qu'une demande a été créée. La migration `202611130001_msg_invitation_consent.sql` reste NON appliquée à Supabase; le centre ne sera réellement opérationnel qu'après activation approuvée et testée de cette migration.
+- Cache : `msg.js?v=3519`, Service Worker `dz-de-v3.185.0.0.157`; précache et contrôles `check-msg.mjs`, `check-masar.mjs`, `check-public-portal.mjs` synchronisés. CSS inchangé `style-prototype-dz.css?v=202`.
+- CI renforcée pour vérifier la présence des quatre RPC côté client, des trois actions d'invitation dans l'interface et la séparation explicite entre `زمالة` et conversation privée.
+- Aucun SQL exécuté, aucune écriture Supabase, aucun changement RLS/Auth, aucun accès aux messages privés ou aux lignes de profils, aucun déploiement manuel, aucune modification de `main`, aucune fusion de PR #17.
+- Tests GitHub du HEAD de ce lot à suivre jusqu'à conclusion terminale. Prévisualisation Cloudflare et test navigateur authentifié non confirmés.
