@@ -7971,3 +7971,16 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Aucun test PostgreSQL/RLS multi-compte exécuté ; aucune écriture/DDL/migration sur le projet actif ; aucun projet additionnel créé et aucun coût engagé.
 - PR #17 toujours ouverte et non fusionnée ; main et production inchangées.
 - Suite : exporter policies Storage intégrales, bucket `prive`, Realtime, audit_log et ACL séquences, puis produire le baseline SQL reproductible.
+
+## Lot 372 — Storage privé et Realtime Messenger (13 novembre 2026)
+
+- Lecture SELECT de l'ensemble des policies `storage.objects` : policies Messenger lecture/upload et policies génériques owner read/upload/delete.
+- Bucket `prive` confirmé privé (`public=false`) ; limites globales taille/MIME NULL. La policy Messenger upload impose néanmoins owner courant, membership, taille metadata 1–5 MiB et MIME PNG/JPEG/WEBP/PDF.
+- Les policies génériques utilisent le premier segment du chemin égal à auth.uid() ; les chemins Messenger commencent par `msg`. Leur combinaison permissive OR doit être reproduite et testée, pas supposée.
+- Publication `supabase_realtime` : `public.msg_conversations` et `public.msg_messages`.
+- `audit_log` SECURITY DEFINER insère dans `public.audit_logs`, EXECUTE réservé à postgres/service_role selon ACL observée ; la structure et la sécurité de `audit_logs` restent à extraire.
+- Séquences Messenger identifiées : attachments, conversations, log, messages, reports.
+- Rapport : `docs/product/LOT-372-STORAGE-REALTIME-MESSENGER.md`, commit `bea7cdc7517dd2b11d67aba914a533a7e6282830`.
+- Aucun objet Storage consulté, aucun fichier téléchargé, aucune modification de bucket/policy, aucun test Storage/Realtime exécuté.
+- Aucun projet de test créé ni coût engagé ; projet actif intact ; PR #17 ouverte et non fusionnée ; aucun changement main ni déploiement.
+- Suite : exporter `audit_logs`, ses policies/ACL, fonctions/triggers de dépendance, puis assembler un baseline SQL synthétique et testable.
