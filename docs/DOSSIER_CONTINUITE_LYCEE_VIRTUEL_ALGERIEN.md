@@ -8355,3 +8355,22 @@ Examiner l'état exact de comparaison PR #17/base et identifier la cause de merg
 
 ### Suite — Lot 395
 Relire l'ergonomie de la maquette sur mobile et desktop ; compléter les états vides, confirmations et paramètres de confidentialité. Définir ensuite le contrat de données serveur des notifications sociales et des demandes de contact, sans réutiliser aveuglément les notifications administratives ni contourner les garde-fous Messenger. Aucun raccordement actif avant tests PostgreSQL/RLS isolés et audit Storage.
+
+
+---
+
+## Lot 395 — enrichissement des rubriques du profil étudiant (13 novembre 2026)
+
+- Maquette `prototypes/multaqa-students-preview.html` enrichie avec de vrais panneaux d'onglets côté navigateur : المنشورات، حول، الصور والفيديوهات، زملائي، المجموعات، العناصر المحفوظة، الخصوصية.
+- Onglet « حول » : niveau, wilaya, filière et intérêts sont présentés comme informations facultatives choisies par l'élève. L'établissement n'est pas publiquement affiché par défaut ; son affichage exigerait un contrôle de vérification et un consentement distinct. Email, téléphone, numéro d'inscription et pièces de vérification ne sont pas exposés.
+- Onglet médias : sections albums photos, ressources/notes et vidéos, avec exemples de démonstration. Aucun fichier réel n'est téléversé.
+- Onglet « زملائي » : séparation visible entre demandes reçues et contacts déjà acceptés ; actions accepter/refuser/retirer restent désactivées dans cette maquette.
+- Onglet « المجموعات » : communautés d'étude séparées des conversations de groupe Messenger.
+- Onglet « العناصر المحفوظة » : espace personnel privé par défaut.
+- Onglet « الخصوصية » : audiences de publications, visibilité dans l'annuaire, autorisation des demandes de contact, visibilité du niveau/wilaya et contrôle des identifications. Sélecteurs de démonstration uniquement, aucune persistance serveur.
+- Formulaire local de profil complété : nom affiché, wilaya, niveau, filière, intérêts et bio ; mise à jour locale des valeurs visibles après clic, sans sauvegarde distante.
+- Version créée et vérifiée dans GitHub : `prototypes/multaqa-students-preview.html`, commit `2efa9af362b19e6217d5d603cb9d15066d20fcd3`, blob `294a60e102fbb62b44f1fa14bf585deafbc1c1c2`, 30 748 caractères.
+- Limite assumée : aucune fonction réelle de compte, média, invitations, notifications, groupes ou confidentialité n'est activée ; pas de liaison avec Supabase. Aucun runtime, route, ID applicatif, Messenger, SQL, migration, RPC, policy, GRANT, Auth, RLS, Storage ou Realtime modifié. Aucun accès aux données élèves, aucune facturation, aucun CI hébergé, déploiement ou merge.
+
+### Suite — Lot 396
+Faire une revue de cohérence des règles de confidentialité et des invitations sociales : états envoyé/reçu/accepté/refusé/annulé, prévention des doublons, blocage bilatéral, anti-énumération, suppression et signalement. Préparer une spécification d'API/permissions et une matrice de tests négatifs sans exécuter de changement sur la base active.
