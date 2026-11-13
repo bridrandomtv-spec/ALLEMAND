@@ -25,7 +25,7 @@
     return stateCard('🪪','يلزم التحقق من الهوية المدرسية',msg,'حماية المجتمع');
   }
   function postHtml(p){
-    var mine=state.user&&p.author_id===state.user.id;
+    var mine=!!p.my_post;
     var comments=Number(p.comments_count)||0, reactions=Number(p.reactions_count)||0;
     return '<article class="mtq-post mtq-live-post" data-post="'+esc(p.post_id)+'">'+
       '<header class="mtq-post-head"><div class="mtq-avatar">🎓</div><div><strong>'+esc(p.author_pseudo||'تلميذ')+'</strong><small>'+esc(stamp(p.created_at))+'</small></div><span class="mtq-privacy">تلميذ موثّق</span></header>'+
@@ -118,6 +118,7 @@
       else r=await c.rpc('multaqa_create_comment',{p_post_id:Number(form.getAttribute('data-post')),p_body:body,p_parent_id:null});
       if(r.error)throw r.error;
       form.reset();
+      state.busy=false;
       if(kind==='comment')await comments(form.getAttribute('data-post'));
       else await load(true);
       if(window.toast)toast(kind==='post'?'تم نشر المنشور':'تم إرسال التعليق','ok');
