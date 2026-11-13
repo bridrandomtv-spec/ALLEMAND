@@ -8709,3 +8709,20 @@ Inventorier statiquement les écrans et fonctions de vérification existants, co
 ### Suite — Lot 417
 
 Inventorier toutes les dépendances de `profiles.matricule`, `verif_statut` et des fonctions `msg*` dans le code client, scripts SQL du dépôt et contrôles CI ; préparer une stratégie de transition sans collision avec les usages historiques. Lecture seule/documentation uniquement.
+
+
+### Lot 417 — cartographie des dépendances de vérification scolaire Messenger (13 novembre 2026)
+
+- Rapport créé : `docs/product/LOT-417-CARTOGRAPHIE-DEPENDANCES-VERIFICATION-MESSENGER.md`, commit `d306821be3a83b7b6fc1c79227d84eebd1a21058`.
+- Dépendances confirmées : colonnes `profiles.verif_statut`, `verif_by`, `verif_at`, `matricule`, `section` ; trigger `profiles_verif_guard` ; policies de dossiers en attente ; fonctions `msg_can_dm`, `msg_member_ok), trigger `msg_tr_direct` ; fonctions client `msgMyVerification`, `msgRequestVerification`, `msgVerificationQueue`, `msgSetVerification) ; rendu dans `msg.js) ; contrôles `ci/check-msg.mjs` et `tests/msg_test.mjs`.
+- Le parcours client exige toujours une souscription active et copie son identifiant dans `profiles.matricule`. Ne pas réutiliser ce champ pour un identifiant scolaire sans audit de tous les consommateurs et stratégie de compatibilité.
+- Distinction importante : le script agrégé `supabase/msg_schema.sql` contient une ancienne garde globale `admin/prof), tandis que les migrations archivées `separate_global_moderation_and_student_verification` et `scope_student_verification_by_wilaya` utilisent le droit `students.verify` et un contrôle de portée wilaya. Le manifeste Lot 342 identifie ces fichiers comme archives de migrations appliquées ; ne pas les rejouer.
+- `supabase/adm4_schema.sql` expose également un compteur de vérifications en attente et un champ de statut dans la projection administrative ; à minimiser lors de la refonte.
+- Les tests CI sont principalement des invariants statiques ; ils ne remplacent pas les tests PostgreSQL multi-comptes sur une baseline isolée.
+- CI #3423 (run 43447733360) : succès. CI #3424 (run 43447757873) : succès. CI #3425 (run 43447844116) : annulée ; elle correspond au commit documentaire précédent et ne constitue pas une réussite.
+- PR #17 contrôlée après le Lot 416 : ouverte, non fusionnée, GitHub indiquait `mergeable=true`. La tête était `8b5cdbe51f22f8a54c82505768ed8454a2d811e2` avant le présent lot ; recontrôler après le commit final.
+- Aucun accès en écriture à Supabase, aucune migration, aucun changement Auth/RLS/GRANT/Storage/Realtime/paiement, aucun déploiement, aucune modification de main, aucun rebase/synchronisation ni fusion.
+
+### Suite — Lot 418
+
+Préparer un protocole de baseline PostgreSQL isolée, les sources exactes nécessaires et les contrôles de coût avant toute création d'environnement. Aucun SQL actif, aucune branche Supabase et aucune ressource payante.
