@@ -63,3 +63,11 @@ Une éventuelle lecture du catalogue actif exige toujours l'autorisation explici
 - Déploiement Cloudflare, modification de `main`, rebase ou fusion PR #17 : non.
 
 **Décision :** le script est un outil d'export préparatoire, pas une preuve que le catalogue actif est conforme. Le NO-GO reste maintenu pour déclarer le Messenger privé terminé.
+
+
+### Historique de correction du script
+
+- Création : `bcd69091684d69e7b7e64320a68cf824c7abec40`.
+- Extension du périmètre ACL aux fonctions liées aux policies et triggers : `c615bcd12f734760081175ea03c9f9fb2383f628`.
+- Correction du caractère d'échappement dans le filtre `LIKE` de la requête ACL : `710e8f6acf97e702edcff668e3ceec4a21163381`.
+- Cette correction est une revue statique du texte SQL ; aucune exécution PostgreSQL ni validation de syntaxe n'est revendiquée.
