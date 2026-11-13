@@ -8374,3 +8374,19 @@ Relire l'ergonomie de la maquette sur mobile et desktop ; compléter les états 
 
 ### Suite — Lot 396
 Faire une revue de cohérence des règles de confidentialité et des invitations sociales : états envoyé/reçu/accepté/refusé/annulé, prévention des doublons, blocage bilatéral, anti-énumération, suppression et signalement. Préparer une spécification d'API/permissions et une matrice de tests négatifs sans exécuter de changement sur la base active.
+
+
+---
+
+## Lot 396 — contrat des invitations sociales et de la confidentialité (13 novembre 2026)
+
+- Création de `docs/product/LOT-396-CONTRAT-INVITATIONS-SOCIALES-ET-PRIVACITE.md`.
+- Formalisation des états d'invitation `pending`, `accepted`, `declined`, `cancelled`, des transitions autorisées, de l'idempotence, des invitations croisées et de la prévention des doublons.
+- Séparation stricte entre les relations « زمالة » de ملتقى الطلاب et les conversations privées de ماسنجر : accepter une relation n'ouvre pas de DM.
+- Définition des contrôles de découverte nationale, champs publics minimaux, confidentialité du profil, blocage bilatéral, signalement, modération et anti-énumération/anti-spam.
+- Proposition d'un contrat API logique indicatif et d'une matrice de 22 tests négatifs avant activation.
+- Commit de la spécification : `6971f166dcd627046409d6e95aedc2a02693495a`.
+- Aucun code applicatif, schéma, SQL, migration, RPC, policy, GRANT, Auth, RLS, Storage ou Realtime modifié. Aucun accès aux lignes élèves. Aucun test comportemental Postgres/RLS exécuté. Aucun CI hébergé, déploiement, merge ou coût engagé.
+
+### Suite — Lot 397
+Préparer une proposition de modèle relationnel (tables, clés, contraintes uniques, index et règles RLS attendues) en document seulement, puis la confronter à l'inventaire du schéma actif en lecture seule. Ne pas exécuter de SQL ni modifier Supabase tant qu'un environnement isolé gratuit et fidèle n'est pas disponible et autorisé.
