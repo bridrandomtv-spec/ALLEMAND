@@ -7851,3 +7851,44 @@ Les migrations archivées des 30 octobre (notamment `20261030132222`, `202610301
 
 Aucun SQL n'a été appliqué à Supabase actif. Aucun fichier applicatif, Auth, RLS, GRANT, Storage ou donnée active n'a été modifié dans ce lot. Aucun changement sur `main), aucun merge et aucun déploiement de production.
 
+## Lot 365 — vérification finale des consommateurs Messenger et correction de la chronologie (13 novembre 2026)
+
+### Relecture ciblée du client réel
+
+Fichiers relus sur la branche :
+- `supabase/supabase.js` (fonctions Messenger et vérification scolaire) ;
+- `msg.js` (actions d'interface) ;
+- `tests/msg_test.mjs` ;
+- `ci/check-msg.mjs` ;
+- `supabase/msg_schema.sql` ;
+- contrats Lots 310 et 311.
+
+Constats exacts dans le HEAD :
+
+1. `msgOpenDirect(otherId)` ne fait plus appel à `msg_can_dm` pour créer un DM. Il recherche un identifiant de conversation où les deux utilisateurs sont déjà membres, puis renvoie `msg_invitation_requise` si aucun DM partagé n'existe. Il n'effectue aucun INSERT.
+2. Les tests `tests/msg_test.mjs` et `ci/check-msg.mjs` vérifient explicitement l'absence d'INSERT client dans cette fonction. La CI valide ce garde du client, pas les garanties de la base active.
+3. `msgCreateGroup(wilaya,niveau,filiere,titre)` conserve un INSERT direct dans `msg_conversations` avec `type='groupe'`. Il est appelé depuis l'action de modération `creategroup` dans `msg.js`. Toute migration doit préserver ce parcours uniquement pour les modérateurs autorisés par la policy serveur.
+4. Le client ne possède pas encore de méthodes `msgInviteCreate`, `msgInviteRespond`, `msgInviteCancel`, `msgInvitesInbox` ou `msgInvitesOutbox`. Aucun écran d'invitations réellement connecté au backend n'est livré.
+5. `msgCanDm(otherId)` reste exposée côté client et appelle la RPC `msg_can_dm`. Elle ne doit jamais être utilisée comme autorisation finale par le navigateur ; seule la vérification atomique serveur doit décider.
+6. `msgRequestVerification` vérifie un abonnement actif associé au compte, puis inscrit un numéro dans `profiles.matricule` et un statut `en_attente`. Cela ne constitue pas une preuve institutionnelle d'affiliation à un lycée. La validation manuelle `msgSetVerification` ne remplace pas non plus un registre officiel.
+
+### Rectification de lecture historique
+
+Le texte initial du Lot 310 décrivait l'ancien comportement client de `msgOpenDirect` (appel `msgCanDm`, tentative de création et d'insertion de deux membres). Ce comportement n'est plus celui du HEAD actuel : il a été remplacé par la recherche d'un DM existant et le refus `msg_invitation_requise`. La faille du serveur actif reste distincte et confirmée au Lot 363 : l'ancienne RPC `msg_open_direct` et les politiques/privileges INSERT actifs permettent encore des créations directes hors du client. Il ne faut donc ni attribuer la faille actuelle au code client corrigé, ni confondre la protection du client avec la sécurité serveur.
+
+### État de validation
+
+- Commit documentaire précédent : `de97391e11c1716e940b7a47cacb828b8a0de193`.
+- Workflow CI de ce commit : `43415464389`, conclusion `success`.
+- PR #17 toujours ouverte, non fusionnée ; HEAD documentaire mis à jour dans la continuité de la branche.
+- Aucune migration candidate SQL ajoutée : la dépendance institutionnelle du Lot 311 reste non résolue. Créer maintenant une table d'invitations qui s'appuierait sur `verif_statut`, `matricule`, `wilaya` ou `niveau` reviendrait à présenter une vérification de plateforme comme preuve d'inscription officielle.
+- Aucun SQL appliqué, aucune écriture Supabase, aucune modification Auth/RLS/GRANT/Storage, aucun compte ni message réel consulté ; aucun changement de `main), aucun merge, aucun déploiement de production.
+
+### Décision et prochaine étape
+
+Le travail serveur doit rester en deux phases indépendantes :
+- **Phase de prérequis institutionnel** : définir et intégrer une relation vérifiable et traçable élève↔lycée, un statut d'activité/suspension et les règles de visibilité/consentement de l'annuaire.
+- **Phase Messenger** : préparer la migration d'invitations et le durcissement des DM sur PostgreSQL isolé, en gardant la création de groupes modérés et la lecture des DM historiques, puis tester tous les contournements directs et RPC.
+
+Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navigation existe, mais le véritable cycle d'invitation, l'annuaire national et l'autorisation serveur sans contournement ne sont pas encore livrés.
+
