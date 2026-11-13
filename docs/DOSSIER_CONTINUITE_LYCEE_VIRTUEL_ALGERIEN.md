@@ -7917,3 +7917,18 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Rapport détaillé : `docs/product/LOT-367-LIMITES-PROTOTYPE-AFFILIATION-PREPARATION-INVITATIONS.md`.
 - Décision : GO pour prototypes et tests synthétiques isolés ; NO-GO pour annuaire national, invitations inter-lycées et migrations de production avant source institutionnelle, baseline PostgreSQL fiable et tests transactionnels.
 - Aucun SQL appliqué à Supabase actif ; aucune donnée personnelle ou conversation consultée ; aucune modification Auth/RLS/GRANT/Storage ; aucun changement sur `main), aucun merge, aucun déploiement Cloudflare.
+
+
+## Lot 368 — pré-reconstitution du baseline PostgreSQL Messenger (13 novembre 2026)
+
+- Reprise de la tâche prioritaire : reconstituer une base de test PostgreSQL fidèle puis tester les autorisations avec plusieurs comptes synthétiques. Aucun écran Messenger ni parcours d'invitation n'a été reconstruit dans ce lot.
+- Contrôle de l'environnement d'exécution : Node.js 22.16.0 présent ; `psql`, `postgres`, `initdb`, `pg_ctl`, Docker, Podman et Supabase CLI absents ; aucun paquet PostgreSQL disponible dans les index apt locaux.
+- Contrôle Supabase : PostgreSQL actif version 17.6 ; 27 versions de migration appliquées listées, mais les noms seuls ne reconstituent pas leurs corps SQL ; la liste des branches ne contient que `main` (`with_data=false`), aucune branche de test.
+- Vérification du coût : création d'une branche Supabase de développement chiffrée à 0,01344 USD/heure. Aucune branche créée, aucune dépense engagée.
+- Extraction SELECT des catalogues pour huit tables (sept tables Messenger et `profiles`) : colonnes, types, defaults, identity, contraintes, index, état RLS, policies, triggers, fonctions/ACL EXECUTE, privilèges table/colonnes, policies Storage et publication Realtime. Aucune donnée applicative ou nominative consultée.
+- Faits serveur reconfirmés : `msg_open_direct(uuid)` SECURITY DEFINER exécutable par authenticated crée un DM sans invitation ; INSERT direct sur conversations et auto-adhésion par `msg_member_ok` restent ouverts sous RLS ; la règle `msg_can_dm` dépend encore de wilaya/niveau/filière et du statut de profil ; blocage directionnel ; policy d'attachement non liée explicitement à l'auteur du message ; bucket `prive` privé, limites MIME/taille portées par policies/metadata ; Realtime sur conversations/messages.
+- Les tables ont RLS activé mais `FORCE ROW LEVEL SECURITY=false` sur le périmètre extrait : les tests doivent utiliser les rôles applicatifs non propriétaires. Le harness doit initialiser correctement `auth.uid()` et les claims de test ; les tests propriétaires ne prouvent pas RLS.
+- Aucun moteur PostgreSQL local n'est disponible et la branche Supabase a un coût horaire non nul. Aucun test PostgreSQL multi-rôle/concurrent n'a été exécuté. Un émulateur JS ne sera pas présenté comme équivalent à PostgreSQL.
+- Rapport : `docs/product/LOT-368-PREBASELINE-POSTGRESQL-MESSENGER-ET-ENVIRONNEMENT.md`.
+- Décision : GO pour compléter le baseline documentaire et le harness ; NO-GO pour déclarer la restauration ou les tests multi-comptes terminés. La création d'une branche Supabase payante attend une autorisation explicite.
+- Aucun SQL d'écriture, migration, changement Auth/RLS/GRANT/Storage/Realtime, aucun compte ni contenu de message lu ; aucun changement sur `main), aucun merge PR #17, aucun déploiement Cloudflare.
