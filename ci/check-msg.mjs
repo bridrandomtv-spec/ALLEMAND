@@ -122,6 +122,14 @@ ok(sbjs.includes("update({ verif_statut:'en_attente', matricule:number"), 'deman
 ok(!msgjs.includes('رقم الاشتراك') && !msgjs.includes('رقم اشتراك'), 'aucun ancien libellé abonnement dans le parcours de vérification');
 ok(msgjs.includes('رقم التسجيل المدرسي') && msgjs.includes('التحقق المدرسي مجاني'), 'parcours de vérification gratuit et libellé scolaire cohérent');
 const verificationFn = sbjs.slice(sbjs.indexOf('async function msgRequestVerification('), sbjs.indexOf('async function msgVerificationQueue('));
+ok(/async function msgInvites\(\)/.test(sbjs), 'lecture du centre des invitations disponible');
+ok(/async function msgInviteSend\(recipientId\)/.test(sbjs) && /msg_invite_send/.test(sbjs), 'envoi d’invitation exclusivement par RPC serveur');
+ok(/async function msgInviteAccept\(inviteId\)/.test(sbjs) && /msg_invite_accept/.test(sbjs), 'acceptation explicite d’une invitation par RPC');
+ok(/async function msgInviteDecline\(inviteId\)/.test(sbjs) && /msg_invite_decline/.test(sbjs), 'refus réservé au destinataire via RPC');
+ok(/async function msgInviteCancel\(inviteId\)/.test(sbjs) && /msg_invite_cancel/.test(sbjs), 'annulation réservée à l’expéditeur via RPC');
+ok(msgjs.includes('data-invite-act="accept"') && msgjs.includes('data-invite-act="decline"') && msgjs.includes('data-invite-act="cancel"'), 'interface des invitations : accepter, refuser et annuler');
+ok(msgjs.includes('[data-invite-act]') && msgjs.includes('لا ينشئ زمالة تلقائياً'), 'délégation des actions et séparation entre زمالة et conversation privée');
+
 ok(!verificationFn.includes(".from('subscriptions')"), 'vérification scolaire sans contrôle d’abonnement payant');
 
 if (fail.length) { console.error('::error:: check-msg Lot 360 : ' + fail.length + ' échec(s)'); process.exit(1); }
