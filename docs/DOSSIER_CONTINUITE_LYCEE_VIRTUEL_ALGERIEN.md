@@ -8597,3 +8597,17 @@ Vérifier le résultat CI après le correctif de références de cache, puis con
 - Le run `43440449464` a confirmé que le contrôle du portail public passe après le premier correctif, puis a révélé une seconde assertion obsolète dans `ci/check-masar.mjs` : CSS `v195` et Service Worker `.146`, alors que les références effectives sont `v196` et `.147`.
 - Correctif appliqué à `ci/check-masar.mjs` : assertions CSS et Service Worker alignées sur `v196` / `dz-de-v3.185.0.0.147`. Commit : `163536400d5e911566aa67fa47d939f17afd210d`.
 - Le run `43440611839` a été déclenché sur le commit précédent pendant cette correction ; il ne valide donc pas encore ce dernier correctif. Une nouvelle exécution CI sur le HEAD mis à jour est attendue.
+
+
+### Correctif CI — Lot 410 / reprise Lot 411 (13 novembre 2026)
+
+- Run `43440774909` : échec isolé dans l'étape « Contrôler le tableau de bord مسارك », fichier `ci/check-masar.mjs`, ligne 67. La cause exacte était une assertion encore fixée sur Service Worker `.146`, alors que `sw.js` et le précache sont en `.147`. Les contrôles antérieurs du job, notamment le contrôle du ملتقى et du Messenger, avaient passé.
+- Assertion corrigée de `.146` à `.147` ; aucun code applicatif ni comportement utilisateur modifié. Commit : `bbc113c0a03c8a5f1dbec8b6c7a9bc0028865582`.
+- Une nouvelle exécution CI sur ce commit est à attendre ; aucune réussite n'est revendiquée.
+- Audit en lecture seule des points d'entrée : `auth.js` crée actuellement des comptes locaux via `localStorage` et ne porte aucun état de vérification scolaire ni d'abonnement dans la session locale ; `app.js` utilise ce rôle local `eleve` pour la visibilité d'interface de `multaqa`. Ce garde d'interface ne prouve donc pas une identité scolaire.
+- En parallèle, `supabase/supabase.js` expose des opérations Supabase distinctes : abonnements (`subscriptions`), profil (`profiles`), Messenger et demande de vérification scolaire (`msgRequestVerification`). Le contrôle d'accès réel doit être établi par les politiques RLS et fonctions SQL, pas par les méthodes clientes seules. L'audit de ces politiques reste à faire sur une base de test isolée.
+- `access.js` / `paywall.js` gouvernent actuellement des droits d'accès pédagogiques et des plans ; aucune preuve n'a été trouvée que l'abonnement soit déjà relié à l'autorisation sociale `multaqa` ou à une condition d'ouverture Messenger. Ne pas détourner le paywall pédagogique pour verrouiller la communauté.
+- Aucun changement Auth, RLS, SQL, schéma, données élèves, paiement, stockage, déploiement ou fusion. PR #17 demeure ouverte et non fusionnée.
+
+### Suite — Lot 411 (à poursuivre)
+Vérifier le run CI déclenché après le commit `bbc113c`, puis examiner la définition SQL/RLS existante de `msgRequestVerification` et `msgCanDm` en lecture seule, sans requête sur les données personnelles. Définir ensuite une matrice d'accès qui distingue explicitement compte inscrit, élève vérifié, abonnement et consentement.
