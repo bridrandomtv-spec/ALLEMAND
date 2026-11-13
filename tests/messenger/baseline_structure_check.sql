@@ -18,6 +18,8 @@ WITH expected_tables(table_name, expected_policies, expected_triggers) AS (
     ('wilaya_assignments',2,0)
 ),
 table_checks AS (
+-- NOTE: Le rattachement du schéma public est contrôlé dans table_checks ;
+-- une table homonyme d'un autre schéma ne doit pas satisfaire le contrôle.
   SELECT e.table_name,e.expected_policies,e.expected_triggers,
     (c.oid IS NOT NULL) AS exists_table,
     COALESCE(c.relrowsecurity,false) AS rls_enabled,
