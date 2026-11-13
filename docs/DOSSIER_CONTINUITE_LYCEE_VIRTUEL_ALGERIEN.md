@@ -8806,38 +8806,29 @@ Dès réception des preuves du catalogue et de l'environnement local, produire l
 
 ## Lot 423 — Audit des outils d'export du catalogue Messenger (13 novembre 2026)
 
-- Rapport : [LOT-423-AUDIT-OUTILS-EXPORT-CATALOGUE-MESSENGER.md](product/LOT-423-AUDIT-OUTILS-EXPORT-CATALOGUE-MESSENGER.md), commit du rapport `d3f64f601330f93fbc01d4c133c1d8db1910895b`.
+- Rapport : [LOT-423-AUDIT-OUTILS-EXPORT-CATALOGUE-MESSENGER.md](product/LOT-423-AUDIT-OUTILS-EXPORT-CATALOGUE-MESSENGER.md), commit `d3f64f601330f93fbc01d4c133c1d8db1910895b`.
 - Les migrations archivées sont sous `docs/architecture/migration-archive/`. Les outils SELECT-only existants sont sous `tests/messenger/` : `catalog_preflight.sql`, `baseline_catalog_export.sql`, `export_catalog_manifest.sql` et `baseline_structure_check.sql`.
-- L'export détaillé est la meilleure base de comparaison, mais ne couvre pas à lui seul les rôles, memberships, toutes les ACL RPC, les policies Storage ou l'exposition Data API. Le manifeste compact ne remplace pas l'export des grants.
-- Comparaison GitHub au moment du Lot 423 : état `diverged`, branche de travail 2 385 commits en avance et 4 en retard sur `main`. Aucun rebase/synchronisation/merge effectué ; PR #17 doit rester ouverte et non fusionnée.
-- Aucun nouveau workflow run n'a été retourné pour le commit documentaire Lot 422 ; aucun succès CI n'est revendiqué pour les nouveaux lots 421–423.
+- L'export détaillé ne couvre pas à lui seul les rôles, memberships, toutes les ACL RPC, les policies Storage ou l'exposition Data API. Le manifeste compact ne remplace pas l'export des grants.
+- Comparaison GitHub au moment du Lot 423 : état `diverged`, branche de travail 2 385 commits en avance et 4 en retard. Aucun rebase/synchronisation/merge effectué ; PR #17 reste ouverte et non fusionnée.
 - Aucun SQL exécuté, aucun accès Supabase actif, aucune lecture de lignes applicatives, aucune modification Auth/RLS/grants/Storage/Realtime/paiement, aucune installation, aucun déploiement, aucun changement sur `main), aucun rebase ni fusion PR #17.
-
-### Suite — Lot 424
-
-Revue technique des scripts d'export, couverture des métadonnées et limites des contrôles de présence/comptage. Aucun accès au projet actif sans autorisation explicite.
 
 ## Lot 424 — Revue technique des scripts d'export Messenger (13 novembre 2026)
 
-- Rapport : [LOT-424-REVUE-TECHNIQUE-SCRIPTS-EXPORT-MESSENGER.md](product/LOT-424-REVUE-TECHNIQUE-SCRIPTS-EXPORT-MESSENGER.md), commit du rapport `316b313e16de283ad0350950f7d47cd3e2df48cf`.
-- Revue des quatre scripts SQL versionnés : le préflight ne retourne pas explicitement les tables sans policy/trigger ; l'export détaillé n'inclut pas les policies Storage, les rôles/memberships ni l'inventaire complet des RPC exposées ; le manifeste compact ne contient pas les ACL et omet deux fonctions auxiliaires présentes dans l'export détaillé ; le contrôle structurel valide des présences et des nombres, pas les expressions RLS, grants ou états d'activation des triggers.
-- Les observations historiques du Lot 398 consignées au Lot 399 sont conservées avec leur date ; elles ne sont pas présentées comme une consultation fraîche du catalogue actif.
-- **Correction de continuité :** le commit `1fea0d12baaaefc6ff5082f6b79c883979208125` a produit un fichier de continuité vide. Le commit `9a15cc4e13bd927159a0df1c66ed6877195851e2` a restauré le contenu historique complet et réintroduit les entrées Lots 423 et 424. La présente mise à jour poursuit depuis cette base non vide.
-- Aucun script SQL exécuté ; aucun accès Supabase actif ; aucune lecture de lignes applicatives ; aucune modification Auth/RLS/GRANT/RPC/trigger/schéma/Storage/Realtime/paiement ; aucune installation, dépense ou ressource payante ; aucun déploiement ; aucun changement sur `main`, aucun rebase ni fusion PR #17.
-- Le verdict reste **NO-GO** pour déclarer Messenger privé terminé jusqu'à comparaison avec un export actuel et tests comportementaux isolés.
-
-### Suite — Lot 425
-
-Ajouter un export complémentaire SELECT-only pour les ACL développées, rôles, memberships et policies Storage.
+- Rapport : [LOT-424-REVUE-TECHNIQUE-SCRIPTS-EXPORT-MESSENGER.md](product/LOT-424-REVUE-TECHNIQUE-SCRIPTS-EXPORT-MESSENGER.md), commit `316b313e16de283ad0350950f7d47cd3e2df48cf`.
+- Le préflight n'affiche pas explicitement les tables sans policy/trigger ; l'export détaillé omet les policies Storage et l'inventaire complet des rôles/RPC exposées ; le manifeste compact n'inclut pas les ACL ; le contrôle structurel vérifie des présences et des nombres, pas les expressions RLS ou les grants.
+- Les observations du Lot 398 consignées au Lot 399 restent historiques et ne sont pas présentées comme une consultation fraîche.
+- Le commit `1fea0d12baaaefc6ff5082f6b79c883979208125` a produit un fichier de continuité vide. Le commit `9a15cc4e13bd927159a0df1c66ed6877195851e2` a restauré le contenu historique complet et réintroduit les entrées Lots 423 et 424.
+- Aucun SQL exécuté, aucun accès Supabase actif, aucune lecture de lignes applicatives, aucune modification Auth/RLS/GRANT/RPC/trigger/schéma/Storage/Realtime/paiement, aucune installation, dépense ou ressource payante, aucun déploiement, aucun changement sur `main), aucun rebase ni fusion PR #17.
 
 ## Lot 425 — Export complémentaire des autorisations Messenger (13 novembre 2026)
 
-- Script ajouté : [catalog_security_export.sql](../../tests/messenger/catalog_security_export.sql), commit initial `bcd69091684d69e7b7e64320a68cf824c7abec40`, complété par le commit `c615bcd12f734760081175ea03c9f9fb2383f628` pour inclure les ACL des fonctions référencées par policies et triggers.
-- Rapport : [LOT-425-EXPORT-COMPLEMENTAIRE-AUTORISATIONS-MESSENGER.md](product/LOT-425-EXPORT-COMPLEMENTAIRE-AUTORISATIONS-MESSENGER.md), commit `bb95cb9e0e2d536a0413cf32c1d7d140535ca18d`.
-- Le script complète l'export existant : policies `public` et `storage.objects`, triggers et état d'activation, fonctions nommées et auxiliaires référencées par policies/triggers, ACL EXECUTE développées, rôles/memberships, grants de schémas/séquences, ACL par défaut et publications Realtime.
-- Limites : les appels dynamiques/PLpgSQL peuvent ne pas apparaître dans les dépendances catalogue ; la visibilité des rôles dépend du rôle d'exécution ; l'exposition Data API/PostgREST doit être rapprochée de la configuration Supabase. Le script n'a pas été exécuté ni validé syntaxiquement par PostgreSQL.
-- Aucun accès Supabase actif, aucune lecture de lignes applicatives, aucune modification Auth/RLS/grants/RPC/trigger/schéma/Storage/Realtime/paiement, aucune installation, dépense, ressource payante ou déploiement ; aucun changement sur `main), aucun rebase ni fusion PR #17.
-- Le NO-GO reste maintenu pour déclarer Messenger privé terminé jusqu'à comparaison du catalogue actuel et tests comportementaux isolés.
+- Script ajouté : [catalog_security_export.sql](../../tests/messenger/catalog_security_export.sql), créé au commit `bcd69091684d69e7b7e64320a68cf824c7abec40`, étendu au commit `c615bcd12f734760081175ea03c9f9fb2383f628`, puis corrigé au commit `710e8f6acf97e702edcff668e3ceec4a21163381`.
+- Rapport : [LOT-425-EXPORT-COMPLEMENTAIRE-AUTORISATIONS-MESSENGER.md](product/LOT-425-EXPORT-COMPLEMENTAIRE-AUTORISATIONS-MESSENGER.md), créé au commit `bb95cb9e0e2d536a0413cf32c1d7d140535ca18d`, complété au commit `01e2c76d6294e8d2e975ef3a18d8cd8c299d733d`.
+- Le script couvre policies `public` et `storage.objects`, triggers et état d'activation, fonctions nommées et auxiliaires référencées par policies/triggers, ACL EXECUTE développées, rôles/memberships, grants de schémas/séquences, ACL par défaut et publications Realtime.
+- Limites : les appels dynamiques/PLpgSQL peuvent ne pas apparaître dans les dépendances catalogue ; la visibilité des rôles dépend du rôle d'exécution ; l'exposition Data API/PostgREST doit être rapprochée de la configuration Supabase.
+- La correction du filtre LIKE a été revue statiquement ; aucune validation de syntaxe PostgreSQL, aucun SQL exécuté et aucun test RLS ne sont revendiqués.
+- Aucun accès Supabase actif, aucune lecture de lignes applicatives, aucune modification Auth/RLS/GRANT/RPC/trigger/schéma/Storage/Realtime/paiement, aucune installation, dépense, ressource payante ou déploiement ; aucun changement sur `main), aucun rebase ni fusion PR #17.
+- Le NO-GO reste maintenu pour déclarer Messenger privé terminé.
 
 ### Suite — Lot 426
 
