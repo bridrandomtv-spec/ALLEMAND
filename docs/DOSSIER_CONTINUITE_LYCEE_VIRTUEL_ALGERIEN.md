@@ -8259,3 +8259,21 @@ Préparer le correctif serveur complet en patch isolé, puis vérifier ses scén
 
 ### Suite — Lot 390
 Poursuivre l'audit technique du chemin d'invitation national : définir le résolveur d'affiliation institutionnelle sans utiliser niveau/wilaya/filière comme preuve, puis concevoir la compatibilité des DM historiques et le patch atomique `msg_open_direct` / `msg_member_ok` / `msg_guard_direct`. Garder le NO-GO d'exécution tant que la source officielle et un PostgreSQL 17 isolé ne sont pas disponibles.
+
+
+---
+
+## Lot 390 — audit d'intégration du réseau social au Messenger existant (13 novembre 2026)
+
+- Clarification utilisateur : Messenger est déjà créé dans la plateforme. Décision ferme : **ne pas le recréer** ; « ملتقى الطلاب » sera le réseau social complémentaire et réutilisera « ماسنجر » pour les conversations privées.
+- Audit en lecture du code `msg.js`, `supabase/supabase.js`, de la spécification Messenger et du Lot 357.
+- Le module existant fournit déjà la vue RTL des conversations et groupes, le fil de messages, la recherche locale dans les conversations/groupes, Realtime, les pièces jointes, le signalement et le blocage.
+- La recherche actuelle est limitée à « ابحث في محادثاتي ومجموعاتي… » ; ce n'est pas un annuaire national. Dans le code client inspecté, aucune liste d'amis/contacts ni opérations d'envoi/acceptation/refus d'invitations n'est raccordée à l'interface. L'ouverture d'un DM existant est présente ; le client renvoie `msg_invitation_requise` pour une nouvelle conversation.
+- Important : ce garde-fou client ne suffit pas. Les lots 385–388 ont déjà identifié les chemins SQL actifs `msg_open_direct` / `msg_member_ok` à durcir avant activation sûre du parcours national.
+- Architecture retenue : `ملتقى الطلاب` (fil social, publications, photos, commentaires, réactions, partages, profils, notifications, communautés) ; `ماسنجر` (module et conversations existants) ; `زملائي` (relations sociales distinctes des membres d'une conversation) ; `المجموعات الدراسية` (communautés sociales distinctes des conversations Messenger).
+- Un contact/ami ne devient pas automatiquement membre d'un DM ; une conversation privée suit le consentement et le flux d'invitation sécurisé. Les élèves vérifiés 1AS/2AS/3AS peuvent interagir nationalement, tous niveaux/lycées/wilayas, avec niveau/filière/wilaya comme filtres facultatifs.
+- Rapport : `docs/product/LOT-390-AUDIT-INTEGRATION-RESEAU-SOCIAL-MESSENGER.md`, commit `306f6719df77ebbba180a9d29d6d18ae14719e34`.
+- Aucun code runtime ni schéma modifié ; aucune écriture Supabase, migration, RPC, policy, Auth, Storage ou Realtime ; aucun test RLS réel, CI, déploiement, merge ou coût.
+
+### Suite — Lot 391
+Concevoir la couche sociale « ملتقى الطلاب » sur les modules et routes réellement présents : annuaire/profils à visibilité contrôlée, demandes de connexion, fil de publications, commentaires/réactions/partages, médias, notifications et groupes. Raccorder l'action de messagerie au module Messenger existant, sans dupliquer les conversations. Préserver les IDs, routes et handlers ; ne pas appliquer de migration tant que le modèle de confidentialité et les tests isolés ne sont pas prêts.
