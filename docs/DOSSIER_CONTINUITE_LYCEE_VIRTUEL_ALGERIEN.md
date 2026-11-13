@@ -8424,3 +8424,19 @@ Revue de compatibilité applicative en lecture seule : identifier les consommate
 
 ### Suite — Lot 399
 Spécification de migration progressive et plan de tests isolés pour le prédicat de blocage bilatéral et l'ouverture de DM. Distinguer écarts confirmés, hypothèses, prérequis d'invitation et tests impossibles sans environnement PostgreSQL isolé gratuit et fidèle.
+
+
+## Lot 399 — migration progressive du blocage bilatéral et ouverture DM (13 novembre 2026)
+
+- Création de `docs/product/LOT-399-MIGRATION-PROGRESSIVE-BLOCAGE-BILATERAL-DM.md`.
+- La spécification sépare les faits confirmés au catalogue/code lors du Lot 398 des points restant à vérifier : dépendances SQL complètes, autres chemins d'ajout de membres, grants, concurrence, politique des conversations historiques et règle définitive de consentement DM.
+- Contrat cible : blocage bilatéral dans les deux directions et dans `msg_blocks` comme `social_blocks`, refus en mode fermé, absence de fuite sur l'identité du bloqueur, et vérification centralisée sur ouverture DM et envoi.
+- L'ouverture DM reste distincte de l'acceptation d'un contact social. Une invitation Messenger explicite ou une autre règle de consentement devra être approuvée ; aucune ouverture automatique n'est autorisée.
+- Séquence documentaire : inventaire exact des 27 migrations et dépendances, base PostgreSQL locale jetable sans données réelles, prédicat bilatéral, contrôles d'ouverture/ajout de membres, contrôles d'envoi et revue avant toute décision de déploiement.
+- Matrice de 25 scénarios définie : blocages croisés, consentement, identité vérifiée, auto-ajout, concurrence, historique, pièces jointes, anti-énumération, transaction et RLS.
+- Commit du document Lot 399 : `c27a834f0b40aae516d18163d60d878fd9661cd3`.
+- Validation : revue documentaire uniquement. Aucun SQL de migration ou de test exécuté ; aucun test comportemental PostgreSQL/RLS ; aucune écriture Supabase active ; aucun CI hébergé, déploiement, merge ou coût.
+- Le PR #17 a été revérifié après le lot : ouvert, non fusionné et mergeable. La branche `design/prototypes-67-74-alignment` reste la seule branche de travail.
+
+### Suite — Lot 400
+Poursuivre l'inventaire technique en lecture seule : récupérer les signatures, définitions complètes, propriétaires, modes SECURITY INVOKER/DEFINER, search_path, EXECUTE grants et dépendances des fonctions Messenger critiques ; dresser la liste des policies et chemins d'ajout de membres. Ne pas lire les données élèves, ne pas exécuter de SQL de changement, et ne pas prétendre que le comportement RLS est testé.
