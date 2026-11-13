@@ -132,19 +132,19 @@
     var h = '<div class="msg-head msg-messenger-head"><div><h3>💬 الرسائل</h3><small>مراسلة مدرسية · شبكة وطنية</small></div><button class="msg-refresh" data-act="refresh" type="button">⟳ تحديث</button></div>' +
       '<div class="msg-searchbar"><span aria-hidden="true">⌕</span><input id="msgListSearch" type="search" placeholder="ابحث في محادثاتي ومجموعاتي…" autocomplete="off" aria-label="ابحث في محادثاتي ومجموعاتي"></div>' +
       '<div class="msg-filters" role="group" aria-label="تصفية المحادثات"><button type="button" class="active" data-msg-filter="all">الكل</button><button type="button" data-msg-filter="direct">خاصة</button><button type="button" data-msg-filter="group">مجموعات</button></div>';
-    var isميغابايتd0 = u && (u.role==='prof' || u.role==='admin');
-    if(!isميغابايتd0 && vf.ok && vf.statut!=='verifie'){
+    var isMod0 = u && (u.role==='prof' || u.role==='admin');
+    if(!isMod0 && vf.ok && vf.statut!=='verifie'){
       h += '<div class="msg-verif">' + (vf.statut==='en_attente'
         ? '⏳ <b>التحقق من الهوية جارٍ</b> — يراجع أستاذ أو مسؤول رقم تسجيلك وشعبتك. تبقى المجموعات الرسمية متاحة، وتُفعّل الرسائل الخاصة بعد المصادقة.'
         : (vf.statut==='rejete' ? '⛔ <b>تم رفض الطلب</b> — صحّح رقم التسجيل أو الشعبة ثم أعد إرسال الطلب. ' : '🪪 <b>التحقق من الهوية المدرسية</b> — مطلوب قبل بدء محادثة خاصة. ') +
           '<div class="msg-vform"><input id="vfMat" placeholder="رقم التسجيل المدرسي" maxlength="40" value="'+esc(vf.matricule||'')+'"><input id="vfSec" placeholder="الشعبة / القسم (مثال: 2AS-1)" maxlength="40" value="'+esc(vf.section||'')+'"><button class="msg-send" data-act="verif-req" type="button">إرسال طلب التحقق</button></div>')
         + '</div>';
     }
-    if(!isميغابايتd0 && vf.ok && vf.statut==='verifie'){ h += '<div class="msg-verif ok">✔ تم التحقق من الهوية المدرسية — الرسائل الخاصة متاحة ضمن المجموعة الدراسية المشتركة.</div>'; }
-    h += '<div class="msg-sec">🕌 المجموعات الرسمية (wilaya · niveau · filière)</div><div class="msg-grid">';
+    if(!isMod0 && vf.ok && vf.statut==='verifie'){ h += '<div class="msg-verif ok">✔ تم التحقق من الهوية المدرسية — الرسائل الخاصة متاحة ضمن المجموعة الدراسية المشتركة.</div>'; }
+    h += '<div class="msg-sec">🕌 المجموعات الرسمية (الولاية · المستوى · الشعبة)</div><div class="msg-grid">';
     if(g.ok && g.groups.length){
       h += g.groups.map(function(x){
-        var title = x.titre || ('Groupe '+(x.wilaya||'')+' '+(x.niveau||'')+' '+(x.filiere||''));
+        var title = x.titre || ('مجموعة '(x.wilaya||'')+' '+(x.niveau||'')+' '+(x.filiere||''));
         return '<div class="msg-item" data-msg-kind="group" data-msg-search="'+esc((title+' '+(x.wilaya||'')+' '+(x.niveau||'')+' '+(x.filiere||'')).toLowerCase())+'">'+
           card(title, 'مجموعة دراسية · '+stamp(x.last_activity),
           '<button class="msg-open" data-conv="'+x.id+'" type="button">فتح المحادثة</button>')+'</div>';
@@ -160,11 +160,11 @@
       h += '<div class="msg-empty">لا توجد محادثات خاصة حالياً. سيُضاف البحث الوطني عن جهات الاتصال ونظام الدعوات بعد استكمال تأمين الخدمة على الخادم.</div>';
     }
     h += '</div>';
-    var isميغابايتd = u && (u.role==='prof' || u.role==='admin');
-    if(isميغابايتd){
+    var isMod = u && (u.role==='prof' || u.role==='admin');
+    if(isMod){
       var rep0 = await window.SB.msgReportsOpen();
       var lg0 = await window.SB.msgLogLast();
-      h += '<div class="msg-sec">🛡 ميغابايتdération (prof / admin)</div><div class="msg-mod">';
+      h += '<div class="msg-sec">🛡 الإشراف (الأستاذ / الإدارة)</div><div class="msg-mod">';
       h += '<div class="msg-modrow"><b>البلاغات المفتوحة:</b> ' + (rep0.ok ? rep0.reports.length : '⛔ ' + esc(rep0.err)) + '</div>';
       if(rep0.ok && rep0.reports.length){
         h += rep0.reports.map(function(r){
