@@ -8570,3 +8570,23 @@ Faire vérifier le rendu sur de vrais navigateurs et tailles d'écran (Windows/m
 
 
 - Correctif CI pendant le lot 409 : l'assertion existante `ci/check-msg.mjs` attendait encore l'ancienne version Service Worker `dz-de-v3.185.0.0.146`. Elle a été alignée sur `dz-de-v3.185.0.0.147` ; la référence `msg.js?v=3514` reste inchangée et synchronisée dans `index.html` et `sw.js`.
+
+
+---
+
+## Lot 410 — contrat MVP social, accès et confidentialité (13 novembre 2026)
+
+- Décision produit recommandée : l'inscription ne vaut pas vérification scolaire ; l'abonnement ne vaut pas preuve d'identité. Ces trois états restent indépendants : compte, affiliation scolaire vérifiée, abonnement.
+- `🌐 ملتقى الطلاب` : l'espace peut être visible depuis le compte inscrit, mais un compte non vérifié ne voit que la présentation et les annonces institutionnelles publiques ; le contenu personnel des élèves est réservé aux élèves vérifiés et autorisés.
+- `💬 الرسائل` : les fonctions textuelles essentielles restent accessibles aux élèves vérifiés, sans abonnement obligatoire. Les demandes de contact et le consentement sont nécessaires ; aucune ouverture automatique de DM depuis une relation sociale.
+- L'abonnement ne contourne jamais la vérification, le refus, le blocage ou les restrictions de sécurité. Les options premium éventuelles sont différées et ne doivent pas retirer les échanges essentiels.
+- Le contrat couvre posts textuels, commentaires, réactions, relations, blocage, signalements, profils minimaux, audiences, découverte, séparation Messenger, groupes/médias différés, exigences serveur/RLS et 25 scénarios de test.
+- Protection des mineurs : pas d'annuaire public national par défaut ; aucun numéro d'inscription/abonnement, téléphone, e-mail, document ou localisation précise dans les profils visibles. Les audiences `wilaya` et `public` restent désactivées par défaut.
+- Rapport : `docs/product/LOT-410-CONTRAT-MVP-SOCIAL-SECURITE.md`, commit `af9703e8bd284904ccaea8335f7576de04e4c9ef`.
+- Correctif CI identifié pendant la reprise du Lot 409 : le run `43439229063` échoue dans `ci/check-public-portal.mjs`, et non dans le nouveau contrôle du ملتقى الطلاب. L'assertion portail attendait CSS `v195` et Service Worker `dz-de-v3.185.0.0.146`, alors que `index.html` et `sw.js` sont déjà en CSS `v196` et Service Worker `dz-de-v3.185.0.0.147`. Les contrôles précédents du job, y compris les tests de messagerie EduDZ et les contrôles de structure, ont réussi avant cette assertion.
+- Correctif appliqué dans `ci/check-public-portal.mjs` : références CSS `v195` -> `v196`, Service Worker `.146` -> `.147`, messages de validation synchronisés. Commit : `1cee41a016a221d1e0c4ae18cec42b4c9924b3bd`.
+- Le nouveau run CI après ce correctif doit encore être observé ; aucune réussite n'est revendiquée à ce stade.
+- Aucun SQL, DDL/DML, migration, Auth, RLS, GRANT, Storage, Realtime, accès aux données élèves, déploiement Cloudflare, fusion ou coût. PR #17 reste ouverte et non fusionnée.
+
+### Suite — Lot 411
+Vérifier le résultat CI après le correctif de références de cache, puis contrôler les points d'entrée de l'identité scolaire et de l'abonnement existants afin de préparer une matrice d'accès cohérente. Audit en lecture seule uniquement ; aucune modification Auth/RLS ou base active.
