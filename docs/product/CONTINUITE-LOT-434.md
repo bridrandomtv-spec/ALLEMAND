@@ -26,3 +26,13 @@
 
 ## Prochaine étape
 Construire le véritable fil communautaire et les interactions sociales sur des contrats serveur vérifiés, puis le répertoire national et les invitations Messenger. Avant toute requête sur le projet Supabase actif, demander une autorisation distincte et rester strictement en SELECT catalogue ; aucun frais ni ressource payante.
+
+## Lot 435 — synchronisation du cache après le Lot 434
+
+- Diagnostic CI : le run #3477 échouait dans `ci/check-public-portal.mjs`, car le HTML chargeait `style-prototype-dz.css?v=197`, tandis que le Service Worker et les assertions CI attendaient encore `v=196`.
+- Correction réelle : `sw.js` précache désormais `style-prototype-dz.css?v=197` et passe à `dz-de-v3.185.0.0.148` pour forcer le renouvellement du cache statique.
+- Le contrôle `ci/check-public-portal.mjs` attend maintenant la référence CSS `v=197` dans le HTML et le Service Worker.
+- Commits : Service Worker `dcdbd71`, contrôle CI `e660278`.
+- Vérifications : PR #17 toujours ouverte, non fusionnée ; GitHub indique `mergeable=true`. Aucun workflow n'était encore associé au HEAD après ces deux commits lors du contrôle.
+- Aucun changement de `main`, aucune fusion, aucun déploiement Cloudflare, aucune requête Supabase et aucune modification de données.
+- Le Lot 435 ne construit pas encore les fonctions sociales/Messenger ; il répare uniquement la cohérence du cache et son test CI.
