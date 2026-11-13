@@ -40,3 +40,11 @@ Rédiger une spécification serveur consolidée (pas encore un script exécutabl
 - PR #17 : ouverte, non fusionnée, draft=false ; GitHub retourne mergeable=false au dernier contrôle. La cause n'a pas été diagnostiquée dans ce lot ; ne pas lancer de synchronisation/rebase automatique.
 - Recherche des exécutions CI associées au dernier commit : aucune exécution retournée. La CI n'est donc pas déclarée réussie.
 - Aucun déploiement Cloudflare.
+
+---
+
+## Prolongement — Lot 432
+
+Le contrat serveur consolidé est documenté dans [LOT-432-SPECIFICATION-SERVEUR-CONSOLIDEE-MULTAQA-MESSENGER.md](LOT-432-SPECIFICATION-SERVEUR-CONSOLIDEE-MULTAQA-MESSENGER.md) et son suivi dans [CONTINUITE-LOT-432.md](CONTINUITE-LOT-432.md).
+
+Le Lot 432 fixe les invariants de consentement, la séparation زمالة/Messenger, le blocage bilatéral, la projection de profil minimale, le parcours gratuit de vérification, les règles d'accès au forum et la matrice de tests. Il reste une spécification de conception : aucun SQL ni code n'a été exécuté ou modifié.
