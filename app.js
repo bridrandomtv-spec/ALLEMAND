@@ -546,7 +546,7 @@ function renderTabs(){
     ['msg', '💬 الرسائل'],
     ['multaqa', '🌐 ملتقى الطلاب'],
     ['prof', '🤖 الأستاذ الذكي']
-  ];
+  ].filter(item => item[0] !== 'multaqa' || canSeeStudentDashboard());
   const primaryIds = new Set(primary.map(x => x[0]));
   const mobileItems = visible.filter(t =>
     !primaryIds.has(t[0]) && t[0] !== 'matieres' && t[0] !== 'english'
