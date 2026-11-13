@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#075b36">
+<title>ملتقى الطلاب — نموذج واجهة تجريبي</title>
+<style>
+:root{font-family:"Cairo","Tajawal",Tahoma,Arial,sans-serif;color:#1c3025;background:#f2f6f3;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,textarea,select{font:inherit}
+a{color:inherit;text-decoration:none}.top{background:#fff;border-bottom:1px solid #dfe9e2;position:sticky;top:0;z-index:2}
+.top-in{max-width:1320px;margin:auto;padding:12px 20px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;min-width:205px}.mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#075b36,#0a8b4a);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:800}
+.brand b{display:block;color:#075b36;font-size:18px}.brand small{color:#728278;font-size:11px}
+.search{flex:1;max-width:520px;border:1px solid #e0e9e3;border-radius:12px;background:#f6f9f7;padding:11px 14px;color:#68786e}
+.nav{display:flex;gap:6px;align-items:center;margin-inline-start:auto}.nav a{padding:10px 12px;border-radius:10px;color:#596b60;font-size:13px;font-weight:700}.nav a.active{background:#e8f3ec;color:#075b36}
+.avatar{width:38px;height:38px;border-radius:50%;background:#d9eee1;color:#075b36;display:grid;place-items:center;font-weight:800}
+main{max-width:1320px;margin:22px auto;padding:0 20px 50px}
+.notice{border:1px solid #e8d39a;background:#fff9e9;color:#745515;border-radius:12px;padding:11px 14px;font-size:12px;line-height:1.7;margin-bottom:18px}
+.heading{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:4px 0 18px}.heading h1{font-size:25px;margin:0;color:#153e2a}.heading p{margin:5px 0 0;color:#718077;font-size:13px}.tag{background:#edf5ef;color:#246341;border-radius:20px;padding:7px 11px;font-size:11px;font-weight:700}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:18px;align-items:start}
+.feed{min-width:0}.side{display:grid;gap:14px}
+.panel,.post{background:#fff;border:1px solid #e0e9e3;border-radius:16px;box-shadow:0 4px 18px rgba(17,64,37,.045)}
+.composer{padding:17px;margin-bottom:15px}.compose-top{display:flex;gap:11px;align-items:center}.compose-top input{flex:1;border:1px solid #e2eae4;border-radius:24px;padding:12px 16px;background:#f7faf8;color:#6e7d73}
+.compose-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #edf1ee;margin-top:15px;padding-top:13px;flex-wrap:wrap}
+.tools{display:flex;gap:7px;flex-wrap:wrap}.tool{border:0;background:#f4f8f5;color:#50695a;border-radius:9px;padding:9px 12px;font-size:12px;font-weight:700}
+.tool.photo{color:#26794b}.tool.video{color:#a34743}.audience{border:1px solid #dfe9e2;background:white;border-radius:9px;padding:8px 10px;color:#52665a;font-size:12px}
+.publish{background:#075b36;color:white;border:0;border-radius:9px;padding:9px 18px;font-size:12px;font-weight:800}
+.filters{display:flex;gap:7px;margin:0 0 14px;flex-wrap:wrap}.filters span{border:1px solid #e0e9e3;background:#fff;border-radius:20px;padding:7px 13px;font-size:12px;color:#64756a}.filters .selected{background:#e8f3ec;color:#075b36;border-color:#c9e0d0;font-weight:800}
+.post{padding:17px;margin-bottom:14px}.post-head{display:flex;align-items:center;gap:10px}.person{flex:1}.person b{display:block;font-size:13px;color:#203c2b}.person small{color:#849188;font-size:11px}.verified{color:#16814a;font-size:10px;margin-inline-start:5px}.more{color:#7b8a80;letter-spacing:2px}
+.post-text{font-size:14px;line-height:1.9;color:#304438;margin:15px 0}.post-image{border-radius:13px;overflow:hidden;background:#e9f1eb;min-height:210px;display:grid;place-items:center;text-align:center;color:#547360;padding:20px}
+.photo-art{width:100%;max-height:310px;object-fit:cover;border-radius:13px;display:block}
+.media-placeholder{font-size:13px;line-height:1.8}.media-placeholder strong{display:block;font-size:28px;margin-bottom:4px;color:#34724c}
+.post-meta{display:flex;justify-content:space-between;color:#849188;font-size:11px;padding:10px 2px;border-bottom:1px solid #edf1ee}
+.post-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding-top:10px}.post-actions span{text-align:center;padding:8px 4px;border-radius:8px;color:#65766b;font-size:12px;font-weight:700;background:#fafcfa}
+.side .panel{padding:16px}.side h2{font-size:14px;margin:0 0 12px;color:#244631}.profile{display:flex;align-items:center;gap:10px}.profile b{font-size:13px}.profile small{display:block;color:#829087;font-size:11px;margin-top:3px}
+.side-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #eff3f0}.side-row:first-of-type{border-top:0}.mini{width:36px;height:36px;border-radius:11px;background:#edf5ef;display:grid;place-items:center;color:#287047;font-weight:800}.side-row .info{flex:1;min-width:0}.side-row b{font-size:12px;display:block}.side-row small{font-size:10px;color:#87948b}
+.invite{border:1px solid #cfe3d5;background:#f2f8f4;color:#17623b;border-radius:8px;padding:7px 9px;font-size:11px;font-weight:800;white-space:nowrap}
+.group-icon{background:#f8f1e5;color:#946c25}.hint{font-size:11px;color:#7a897f;line-height:1.8;margin:8px 0 0}
+.footer{font-size:11px;color:#8b978f;text-align:center;margin-top:24px}
+@media(max-width:980px){.layout{grid-template-columns:minmax(0,1fr) 245px}.brand{min-width:auto}.search{max-width:none}.nav a{padding:9px 8px}}
+@media(max-width:760px){.top-in{flex-wrap:wrap;padding:10px 14px;gap:9px}.brand{flex:1}.search{order:3;flex-basis:100%;max-width:none}.nav{order:2;margin:0}.nav a{font-size:11px;padding:8px}.nav a:nth-child(2){display:none}main{padding:0 12px 35px;margin-top:14px}.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.heading h1{font-size:21px}.heading p{font-size:11px}.post,.composer{padding:13px}}
+@media(max-width:480px){.side{grid-template-columns:1fr}.nav a{padding:7px 8px}.brand b{font-size:16px}.heading{align-items:start;flex-direction:column}.tag{align-self:start}.post-image{min-height:170px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+ <div class="brand"><div class="mark">ط</div><div><b>ملتقى الطلاب</b><small>فضاء طلابي وطني</small></div></div>
+ <div class="search">ابحث عن منشور أو طالب أو مجموعة…</div>
+ <nav class="nav" aria-label="التنقل الاجتماعي"><a class="active" href="#feed">آخر الأخبار</a><a href="#discover">اكتشف الطلاب</a><a href="#friends">زملائي</a><a href="#groups">المجموعات</a></nav>
+ <div class="avatar" aria-label="صورة الملف التجريبي">م</div>
+</div></header>
+<main>
+ <div class="notice"><strong>معاينة تصميم فقط — كل الأسماء والمنشورات والصور هنا أمثلة خيالية.</strong> لا يوجد تسجيل دخول أو رفع ملفات أو اتصال بالشبكة أو قاعدة بيانات. أزرار النشر والدعوة للعرض البصري فقط.</div>
+ <div class="heading"><div><h1>مساحة الطلاب الجزائرية</h1><p>شارك أفكارك، اكتشف زملاءك، وتواصل مع طلاب من مختلف الولايات.</p></div><span class="tag">تجربة واجهة · RTL</span></div>
+ <div class="layout">
+  <section class="feed" id="feed">
+   <section class="panel composer" aria-label="إنشاء منشور تجريبي">
+    <div class="compose-top"><div class="avatar">م</div><input aria-label="محتوى المنشور" placeholder="بماذا تفكر اليوم؟ شارك فكرة أو سؤالاً مع الطلاب…" disabled></div>
+    <div class="compose-tools"><div class="tools"><button class="tool photo" type="button" disabled>▧ صورة</button><button class="tool video" type="button" disabled>▷ فيديو</button><button class="tool" type="button" disabled>▤ ملف</button></div><div class="tools"><select class="audience" aria-label="جمهور المنشور" disabled><option>🌐 جميع الطلاب</option><option>زملائي</option><option>أنا فقط</option></select><button class="publish" type="button" disabled>نشر</button></div></div>
+    <p class="hint">يمكن أن يكون المنشور نصاً أو صورة أو فيديو. قبل النشر الحقيقي ستظهر معاينة للملف، وحجمه، ونوع الجمهور الذي اخترته.</p>
+   </section>
+   <div class="filters" aria-label="تصفية المنشورات"><span class="selected">الكل</span><span>زملائي</span><span>مجموعاتي</span><span>الصور والفيديوهات</span></div>
+   <article class="post">
+    <div class="post-head"><div class="avatar">ي</div><div class="person"><b>ياسمين · مثال تجريبي <span class="verified">✓ طالب موثّق (مثال)</span></b><small>ثانوية افتراضية · منذ 20 دقيقة · 🌐 جميع الطلاب</small></div><span class="more">•••</span></div>
+    <p class="post-text">السلام عليكم 👋 هل يوجد طلاب مهتمون بمراجعة الرياضيات والتحضير للبكالوريا؟ أقترح أن ننشئ مجموعة للمراجعة وتبادل التمارين المفيدة. مرحباً بكل الزملاء من جميع الولايات!</p>
+    <div class="post-image"><div class="media-placeholder"><strong>📚</strong>مساحة معاينة لصورة المنشور<br>ستظهر الصورة الحقيقية هنا بعد رفعها ومراجعة نوع الملف</div></div>
+    <div class="post-meta"><span>♡ 24 تفاعلاً · 8 تعليقات</span><span>12 مشاركة</span></div>
+    <div class="post-actions"><span>♡ أعجبني</span><span>◯ تعليق</span><span>↗ مشاركة</span></div>
+   </article>
+   <article class="post">
+    <div class="post-head"><div class="avatar" style="background:#f7eadc;color:#98632d">ع</div><div class="person"><b>عبد الرحمن · مثال تجريبي</b><small>طالب 2AS · منذ ساعة · 🌐 جميع الطلاب</small></div><span class="more">•••</span></div>
+    <p class="post-text">هذا مثال على منشور فيديو تعليمي قصير. في النسخة الفعلية يمكن للطالب إضافة فيديو، مع إظهار صورة مصغرة ومدة المقطع، ثم تشغيله داخل المنصة وفق ضوابط الأمان.</p>
+    <div class="post-image"><div class="media-placeholder"><strong>▷</strong>معاينة فيديو تجريبية<br>لا يوجد ملف فيديو مرفق في هذا النموذج</div></div>
+    <div class="post-meta"><span>♡ 9 تفاعلات · 3 تعليقات</span><span>2 مشاركة</span></div>
+    <div class="post-actions"><span>♡ أعجبني</span><span>◯ تعليق</span><span>↗ مشاركة</span></div>
+   </article>
+  </section>
+  <aside class="side">
+   <section class="panel"><h2>ملفي الشخصي</h2><div class="profile"><div class="avatar">م</div><div><b>طالب تجريبي</b><small>الملف الشخصي · بيانات وهمية</small></div></div><p class="hint">الاسم الظاهر اختياري. لا يظهر رقم التسجيل أو البريد أو الهاتف أو وثائق التحقق للطلاب.</p></section>
+   <section class="panel" id="discover"><h2>اكتشف الطلاب</h2>
+    <div class="side-row"><div class="mini">س</div><div class="info"><b>سارة · مثال</b><small>3AS · ولاية تجريبية</small></div><button class="invite" type="button" disabled>دعوة</button></div>
+    <div class="side-row"><div class="mini">أ</div><div class="info"><b>أمين · مثال</b><small>2AS · ولاية تجريبية</small></div><button class="invite" type="button" disabled>دعوة</button></div>
+    <p class="hint">الدعوة هنا طلب إضافة إلى «زملائي»، وليست دعوة إلى محادثة خاصة. الاكتشاف الوطني يتطلب موافقة الطالب على الظهور.</p>
+   </section>
+   <section class="panel" id="friends"><h2>زملائي</h2><div class="side-row"><div class="mini">✓</div><div class="info"><b>طلبات الصداقة</b><small>الواردة · المرسلة · زملائي</small></div></div><p class="hint">قبول الدعوة ينشئ علاقة اجتماعية فقط؛ لا يفتح محادثة ماسنجر تلقائياً.</p></section>
+   <section class="panel" id="groups"><h2>المجموعات الدراسية</h2>
+    <div class="side-row"><div class="mini group-icon">∑</div><div class="info"><b>مراجعة الرياضيات</b><small>مجموعة تعليمية · مثال</small></div></div>
+    <div class="side-row"><div class="mini group-icon">ع</div><div class="info"><b>اللغة العربية</b><small>مجموعة تعليمية · مثال</small></div></div>
+    <p class="hint">المجموعة الدراسية مساحة منشورات ونقاشات؛ وهي منفصلة عن مجموعة محادثة ماسنجر.</p>
+   </section>
+  </aside>
+ </div>
+ <div class="footer">نموذج HTML/CSS مستقل · لا يقرأ بيانات الطلاب ولا يرسل أو يخزن أي شيء · لا يغيّر صفحات المنصة الحالية</div>
+</main>
+</body>
+</html>
