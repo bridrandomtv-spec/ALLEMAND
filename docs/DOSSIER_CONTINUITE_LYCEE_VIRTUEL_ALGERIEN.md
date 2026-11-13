@@ -8110,3 +8110,15 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - PR #17 reste ouverte et non fusionnée ; main inchangée ; aucun déploiement.
 - Suite : consolider les extractions de catalogue sans données, préparer le shim Auth et le jeu de comptes synthétiques, puis demander confirmation avant toute création éventuelle d'un second projet Free.
 
+
+
+## Lot 381 — shim Auth pour PostgreSQL générique isolé (13 novembre 2026)
+
+- Préparation de `tests/messenger/auth_test_shim_generic_postgres.sql` pour auth.uid(), auth.jwt() et auth.role(), avec rôles anon/authenticated NOLOGIN, NOSUPERUSER et NOBYPASSRLS.
+- Garde-fou d'exécution : le script refuse de continuer sans le paramètre explicite `app.messenger_test_environment='isolated-postgres-only'`. Il ne doit jamais être exécuté dans Supabase ni en production.
+- Limites explicites : ce shim ne valide pas de JWT et ne remplace pas Supabase Auth ; auth.users, handle_new_user, Storage et Realtime restent à adapter séparément. Les claims sont des variables contrôlées par le harness SQL et ne sont pas une frontière d'authentification contre un utilisateur contrôlant sa connexion PostgreSQL.
+- Le shim n'a pas été exécuté : aucun moteur PostgreSQL isolé n'est disponible actuellement. Aucun compte synthétique créé et aucun test RLS comportemental exécuté.
+- Rapport : docs/product/LOT-381-SHIM-AUTH-POSTGRESQL-ISOLE.md, commit 25cc689bb3997f9d832dcd8436c9461d54c9198e.
+- Script : tests/messenger/auth_test_shim_generic_postgres.sql, commit fea1ca9b5a036ce3b1568ad4e2defd5d2f07c50e.
+- Aucune écriture Supabase active, aucune ressource payante, aucun déclenchement manuel de GitHub Actions, aucun changement sur main, aucune fusion ni déploiement.
+
