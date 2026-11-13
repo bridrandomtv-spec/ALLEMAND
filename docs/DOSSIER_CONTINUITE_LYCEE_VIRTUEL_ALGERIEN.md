@@ -8148,3 +8148,20 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Limite : l'adaptateur est une substitution locale minimale, pas le schéma ni le service Auth Supabase. Il n'a pas été exécuté ; aucun compte synthétique créé ; aucun test de trigger/RLS lancé.
 - Aucun changement sur Supabase actif, aucun projet de test créé, aucun frais, aucun workflow CI lancé. PR #17 ouverte et non fusionnée ; main inchangée.
 
+
+
+---
+
+## Lot 384 — contrôle de cohérence structurelle Messenger (13 novembre 2026)
+
+- Ajout de `tests/messenger/baseline_structure_check.sql`, requête de contrôle en lecture seule des 12 tables applicatives ciblées, de leurs politiques RLS et triggers, des 10 fonctions critiques, et des 11 colonnes de profil requises.
+- Exécution sur le catalogue du projet Supabase actif, sans lecture de lignes applicatives et sans écriture.
+- Le premier total avait révélé un écart avec l'inventaire précédent : le contrôle détaillé a localisé le déclencheur supplémentaire sur `public.wilaya_assignments`. Inventaire corrigé : **30 policies et 14 triggers** (au lieu de 29/13).
+- Résultat du contrôle structurel : **12/12 tables PASS**, RLS activé sur les 12, **10/10 fonctions PASS**, **11/11 colonnes de profil PASS**. Les comptes de policies et triggers correspondent aux valeurs relevées.
+- FORCE RLS reste désactivé sur les 12 tables. C'est une observation, pas une modification.
+- Les dépendances Auth locales et les tests RLS comportementaux ne sont pas validés par ce contrôle. Aucun PostgreSQL 17 isolé restauré n'est encore disponible ; aucun test multi-comptes n'a été exécuté.
+- Aucun changement de données, schéma, Auth, RLS, Storage, Realtime ou facturation Supabase. Aucun workflow CI, déploiement ou fusion déclenché.
+- Commit du script : `b3deb415500afcf24b0a32f1a420285907f10f3e` (branche `design/prototypes-67-74-alignment`).
+
+### Suite proposée
+Lot 385 : extraire un manifeste comparatif précis des définitions des policies, triggers, contraintes, index et fonctions, puis préparer une procédure de restauration locale vérifiable. Garder le périmètre en lecture seule côté Supabase actif et ne jamais présenter les contrôles de catalogue comme des tests d'autorisation réels.
