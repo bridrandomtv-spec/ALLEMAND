@@ -7602,3 +7602,13 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - La CI #3269 avait réussi sur le commit antérieur `14bb710`; cette validation ne couvre pas le présent correctif 359-B. Une nouvelle exécution est requise.
 - La dernière preview Cloudflare connue pointait sur le commit `27533e1`, antérieur au lot 359. Aucun déploiement preview du HEAD `db48a25` ni de ce correctif n'est encore confirmé. Aucun test visuel en navigateur n'est revendiqué.
 - Aucun changement Supabase/Auth/RLS/schéma/Storage, aucune modification de `main`, aucun déploiement production et aucune fusion de PR #17.
+
+
+## 27. Lot 359-C — Dernier libellé résiduel de pièce jointe (13 novembre 2026)
+
+- Relecture de `msg.js` après le lot 359-B : un état d'erreur de pièce jointe affichait encore « indisponible pour ce compte » en français.
+- Texte visible remplacé par `تعذّر الوصول إلى الملف المرفق من هذا الحساب.` ; aucun identifiant DOM, événement, méthode Supabase ou contrat métier modifié.
+- Test `ci/check-msg.mjs` complété pour interdire la réintroduction de ce libellé français.
+- Cette correction est une finition de localisation, pas une reconstruction de Messenger. Les lots UX 305, 308–310, 323–352 et les lots de navigation/routage 355–358 restent la référence et ne sont pas repris.
+- Aucun changement Supabase/Auth/RLS/schéma/Storage, aucune modification de `main`, aucun déploiement Cloudflare et aucune fusion de PR #17.
+- Validation CI et aperçu navigateur du HEAD mis à jour encore à effectuer ; aucune réussite CI ni validation visuelle n'est revendiquée dans ce lot.
