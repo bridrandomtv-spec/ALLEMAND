@@ -14,22 +14,24 @@ has(/data-view="multaqa"[^>]*class="view mtq-view"[^>]*hidden/.test(html), 'inde
 has(/data-view="msg"/.test(html) && /data-go="msg"[^>]*>💬 الانتقال إلى الرسائل/.test(html), 'index.html : lien distinct vers Messenger absent');
 has(/document\.addEventListener\('dz:view'/.test(msg), 'msg.js : écoute du cycle de navigation Messenger absente');
 has(/لم يتم ربط المنشورات والتعليقات والتفاعلات بقاعدة البيانات بعد/.test(html) && /لا توجد منشورات فعلية للعرض/.test(html), 'index.html : état vide transparent, sans publications fictives absent');
-if (fails.length) { for (const failure of fails) console.error('❌ ' + failure); process.exit(1); }
-console.log('✅ ملتقى الطلاب : route protégée côté interface, navigation desktop/mobile filtrée, Messenger distinct, maquette sans données élèves.');
-console.log('ℹ️ Contrôle statique uniquement : ne remplace pas des tests multi-comptes ni les autorisations serveur.');
 
 
 const communitySql = fs.readFileSync('supabase/migrations/202611130002_multaqa_community_feed.sql', 'utf8');
 for (const table of ['multaqa_posts','multaqa_comments','multaqa_reactions','multaqa_reports']) {
   has(communitySql.includes('create table if not exists public.' + table), 'migration communauté : table ' + table + ' absente');
-  has(new RegExp('alter table public\\\\.' + table + '\\\\s+enable row level security').test(communitySql), 'migration communauté : RLS absent pour ' + table);
+  has(new RegExp('alter table public\\.' + table + '\\s+enable row level security').test(communitySql), 'migration communauté : RLS absent pour ' + table);
   has(communitySql.includes('revoke all on public.' + table + ' from public, anon, authenticated'), 'migration communauté : accès REST direct non révoqué pour ' + table);
 }
 for (const fn of ['multaqa_feed','multaqa_comments','multaqa_create_post','multaqa_create_comment','multaqa_toggle_reaction','multaqa_report','multaqa_delete_own_post','multaqa_delete_own_comment']) {
   has(communitySql.includes('function public.' + fn), 'migration communauté : RPC ' + fn + ' absente');
   has(communitySql.includes('grant execute on function public.' + fn), 'migration communauté : grant RPC ' + fn + ' absent');
 }
-has((communitySql.match(/p\\.role = 'eleve'/g) || []).length >= 8, 'migration communauté : contrôle rôle élève manquant sur une ou plusieurs RPC');
+has((communitySql.match(/p\.role = 'eleve'/g) || []).length >= 8, 'migration communauté : contrôle rôle élève manquant sur une ou plusieurs RPC');
 has(communitySql.includes('author_pseudo text') && communitySql.includes('join public.profiles pr on pr.id = p.author_id'), 'migration communauté : projection publique limitée au pseudo absente');
 has(communitySql.includes('post_rate_limit') && communitySql.includes('comment_rate_limit'), 'migration communauté : quotas anti-spam absents');
 has(communitySql.includes('NON exécutée sur Supabase') && communitySql.includes('Tests PostgreSQL isolés obligatoires'), 'migration communauté : statut préparatoire et tests requis non documentés');
+
+
+if (fails.length) { for (const failure of fails) console.error('❌ ' + failure); process.exit(1); }
+console.log('✅ ملتقى الطلاب : route protégée côté interface, navigation desktop/mobile filtrée, Messenger distinct, maquette sans données élèves.');
+console.log('ℹ️ Contrôle statique uniquement : ne remplace pas des tests multi-comptes ni les autorisations serveur.');
