@@ -7566,3 +7566,14 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - La prochaine suite doit réutiliser les prototypes, écrans, contrats et tests déjà réalisés. Seuls les écarts non livrés sont à traiter : affiliation institutionnelle officielle, fermeture et tests serveur dans PostgreSQL isolé, intégration du flux d'invitation/annuaire déjà spécifié, puis recette de non-régression.
 - Aucun nouveau chantier de refonte UX ni de reconstruction Messenger n'est autorisé par ce rectificatif. Aucun changement Supabase actif, déploiement Cloudflare, modification de main ou fusion PR #17.
 
+
+
+## 24. Lot 358 — Correction du routage Messenger (13 novembre 2026)
+
+- Problème reproductible identifié dans `app.js` : le raccourci desktop/mobile pointait bien vers `data-go="msg"`, et `index.html` contenait `data-view="msg"`, mais la constante `VIEWS` ne déclarait pas `msg`. La fonction `go(view)` rejetait donc cette vue et redirigeait vers `accueil`. Le bouton pouvait être visible sans ouvrir Messenger.
+- Correction minimale : ajout de `msg` dans la liste des vues autorisées. Aucun nouvel écran ni refonte Messenger ; les lots UX et les prototypes précédents sont conservés.
+- Non-régression : `ci/check-msg.mjs` vérifie désormais explicitement que la route `msg` figure dans `VIEWS`.
+- Cache : référence `app.js?v=3569` dans `index.html` et le précache du service worker ; version du worker `dz-de-v3.185.0.0.144`.
+- Commits du lot : `ed80c1e` (route), `99576a9` (test), `abf2bee` (cache index), `4d6ceb4` (service worker).
+- Validation navigateur réelle non revendiquée à ce stade ; attendre la CI et vérifier l'URL de prévisualisation Cloudflare du nouveau HEAD. La correction n'est pas en production.
+- Aucun changement Supabase/Auth/RLS/schéma, aucun déploiement de production, aucune modification de `main), aucune fusion de PR #17. PR #17 reste ouverte et non fusionnée.
