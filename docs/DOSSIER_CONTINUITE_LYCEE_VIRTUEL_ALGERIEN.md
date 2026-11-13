@@ -7958,3 +7958,16 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Le second projet Free n'a pas été créé : le devis précédent est à 0 USD/mois, mais la création reste en attente d'une autorisation explicite. Aucun frais engagé.
 - PR #17 reste ouverte et non fusionnée ; aucun changement sur `main`, aucun déploiement Cloudflare.
 - Prochaine étape technique : terminer l'export reproductible des contraintes/index/ACL/fonctions/triggers/storage/realtime, puis assembler le baseline et les scripts de tests synthétiques à exécuter sur une instance isolée autorisée.
+
+## Lot 371 — contraintes, index et ACL Messenger (13 novembre 2026)
+
+- Extraction SELECT des contraintes PK/FK/CHECK/UNIQUE, index, ACL table et ACL EXECUTE des fonctions Messenger et helpers admin.
+- Dépendances Auth confirmées : plusieurs clés étrangères Messenger pointent directement vers `auth.users(id)`; `profiles.id` référence également Auth. La reconstruction doit inclure le modèle de rôles et de claims Auth, pas seulement le schéma public.
+- Contraintes importantes : membres PK composite conversation/user ; blocages PK blocker/blocked ; signalements uniques par message/reporter ; pièces jointes avec MIME allowlist, taille 1–5 MiB, chemin contraint et SHA-256 ; affectations admin liées aux rôles.
+- ACL observées : RPC `msg_open_direct` exécutable par authenticated/service_role ; helpers de lecture/décision exposés aux rôles prévus ; fonctions internes de triggers non accordées à authenticated. Ces distinctions doivent être conservées.
+- Dépendance additionnelle : `profiles_tr_audit_role_fn()` appelle `audit_log(...)`, dont EXECUTE est réservé à postgres/service_role. `protect_role_niveau()` dépend de `is_admin()` et du contexte current_user.
+- Rapport : `docs/product/LOT-371-CONTRAINTES-INDEX-ACL-MESSENGER.md`, commit `7fca7274892fb1c43db027d16c49a2bee205e79b`.
+- La requête ciblée Storage n'a pas retourné de policy via son filtre de nom ; cela ne prouve pas l'absence de policies. Export complet storage.objects/bucket encore requis.
+- Aucun test PostgreSQL/RLS multi-compte exécuté ; aucune écriture/DDL/migration sur le projet actif ; aucun projet additionnel créé et aucun coût engagé.
+- PR #17 toujours ouverte et non fusionnée ; main et production inchangées.
+- Suite : exporter policies Storage intégrales, bucket `prive`, Realtime, audit_log et ACL séquences, puis produire le baseline SQL reproductible.
