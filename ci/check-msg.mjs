@@ -127,7 +127,7 @@ ok(msgjs.includes('msg-pro-hero') && msgjs.includes('msg-pro-stats'), 'nouvelle 
 ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجموعة '("), 'libellé de groupe construit sans appel de chaîne invalide');
 ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter]')"), 'filtres Messenger accessibles via délégation de clic');
 ok(idx.includes('style-prototype-dz.css?v=201') && idx.includes('msg.js?v=3516'), 'versions de ressources Messenger actualisées');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.152'") && sw.includes('./style-prototype-dz.css?v=201') && sw.includes('./msg.js?v=3516'), 'précache synchronisé avec la nouvelle interface');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.153'") && sw.includes('./style-prototype-dz.css?v=201') && sw.includes('./msg.js?v=3516'), 'précache synchronisé avec la nouvelle interface');
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
 
