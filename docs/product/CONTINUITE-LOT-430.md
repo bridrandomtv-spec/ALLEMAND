@@ -28,3 +28,13 @@
 
 ## Prochaine étape
 Préparer les tests serveur isolés et la proposition de migration SQL comme artefacts de revue seulement, en comparant d'abord le modèle du Lot 387 et le catalogue actif. Ne pas exécuter ces scripts sur le projet Supabase actif sans une nouvelle autorisation explicite.
+
+---
+
+## Prolongement — Lot 431
+
+Le suivi a continué dans [CONTINUITE-LOT-431.md](CONTINUITE-LOT-431.md) et le rapport [LOT-431-RAPPROCHEMENT-SCHEMA-INVITATIONS-CATALOGUE-ACTIF.md](LOT-431-RAPPROCHEMENT-SCHEMA-INVITATIONS-CATALOGUE-ACTIF.md).
+
+Le Lot 431 a rapproché les propositions des Lots 387/388/396/413/420 avec le catalogue actif du Lot 427 et le plan du Lot 430. Il confirme que le schéma d'invitation n'est pas encore déployable : la RPC directe, l'ajout de membres, le blocage bilatéral, la projection minimale des profils et la preuve d'affiliation scolaire doivent être traités ensemble.
+
+Aucun SQL, code applicatif ou changement Supabase n'a été exécuté dans ce lot. PR #17 reste ouverte et non fusionnée.
