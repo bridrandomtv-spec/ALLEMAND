@@ -8296,3 +8296,20 @@ Concevoir la couche sociale « ملتقى الطلاب » sur les modules et rou
 
 ### Suite — Lot 392
 Préparer la spécification d'expérience arabe RTL et la carte d'intégration de « ملتقى الطلاب » : emplacement de l'entrée dans la navigation existante, structure du fil, carte de publication, profil public minimal, demandes « زملائي » et actions de renvoi vers « ماسنجر ». Rester en conception tant que la source officielle d'affiliation et les tests PostgreSQL/RLS isolés ne sont pas disponibles.
+---
+
+## Lot 392 — spécification UX arabe RTL de « ملتقى الطلاب » (13 novembre 2026)
+
+- PR #17 recontrôlée avant rédaction : ouverte, non fusionnée, mergeable=true ; HEAD 8cc4b74cab89ba77c24e82c54334658f14cde2b8 ; base main 51acfe8c97b6e152208d592dbd2c5bbde5c5c38e.
+- Vérification du code : app.js déclare VIEWS/TABS/NAVCATS/NAVSOLO_TOP et utilise data-go ; index.html contient déjà data-view=msg et data-view=dashboard ; le tableau de bord pointe vers الرسائل والتواصل.
+- msg.js s'auto-enregistre et pilote le Messenger existant. Conserver la vue msg et ses handlers ; ne pas créer un deuxième Messenger.
+- supabase.js expose myNotifications/notifMarkRead dans le contexte des notifications compte/administration ; aucune preuve suffisante d'un système social complet. Annuaire national via projection serveur dédiée, jamais par SELECT direct de profiles.
+- Décision UX : future vue sociale distincte (identifiant technique provisoire social) ; entrée autonome ملتقى الطلاب près de الرسائل ; mobile au premier niveau de navigation rapide ou dans المزيد.
+- Parcours spécifiés : آخر الأخبار, اكتشف الطلاب, زملائي, المجموعات الدراسية, الصور والفيديوهات, الفعاليات, الإشعارات, ملفي الشخصي, الخصوصية والأمان. Le fil comporte audiences explicites ; le partage ne peut élargir l'audience d'origine.
+- Distinction ferme : relation زملائي ≠ invitation Messenger ≠ appartenance à un groupe social ≠ appartenance à un groupe de conversation Messenger.
+- Découverte nationale opt-in pour élèves vérifiés 1AS/2AS/3AS ; niveau/filière/wilaya sont des filtres facultatifs, pas des barrières. Source institutionnelle d'affiliation reste à établir.
+- Rapport : docs/product/LOT-392-SPECIFICATION-UX-ARABE-RTL-MULTAQAA.md, blob SHA 51081e213c5b1f7124840188afdb8788d1db3c9e.
+- Aucun code runtime/route/CSS/SQL, migration, RPC, policy, GRANT, Auth, RLS, Storage ou Realtime modifié ; aucun test PostgreSQL/RLS réel, CI hébergé, déploiement, merge ou coût.
+
+### Suite — Lot 393
+Préparer une maquette HTML/CSS isolée, non raccordée à Supabase et sans modifier les vues existantes, pour matérialiser le fil d'actualité, la carte de publication, le profil minimal et les onglets زملائي / المجموعات. Vérifier d'abord les règles de contribution du dépôt et les chemins de prototypes déjà existants ; ne pas inventer de faux contenus réels ni d'identifiants actifs.
