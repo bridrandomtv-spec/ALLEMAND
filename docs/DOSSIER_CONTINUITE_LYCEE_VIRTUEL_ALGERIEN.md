@@ -8627,3 +8627,16 @@ Vérifier le run CI déclenché après le commit `bbc113c`, puis examiner la dé
 
 ### Suite — Lot 412
 Vérifier la CI du HEAD documentaire courant, puis préparer une spécification courte de vérification scolaire indépendante de l'abonnement et de demande de contact Messenger avec consentement. Rester en lecture seule/documentation jusqu'à validation explicite et tests multi-comptes sur environnement isolé.
+
+
+### Lot 412 — proposition de vérification gratuite et consentement DM (13 novembre 2026)
+
+- Création du document `docs/product/LOT-412-CONTRAT-VERIFICATION-SCOLAIRE-GRATUITE-CONSENTEMENT-DM.md`, commit `a6de1e24c846bc763f79706924161726fbef9321`.
+- Proposition : la vérification scolaire doit être gratuite et indépendante de l'abonnement ; le numéro d'inscription scolaire ne sert qu'au rapprochement interne s'il existe une source autorisée ; le numéro d'abonnement reste dans la facturation.
+- Proposition de flux Messenger : demande de contact, acceptation explicite, puis seulement création de la conversation. Relation dans le ملتقى, abonnement ou appartenance à la même classe ne créent pas de DM automatiquement.
+- Le document définit la matrice d'accès cible, les données à ne jamais exposer, les contrôles serveur/RLS, 15 tests bloquants et les décisions à valider avant code.
+- Statut : proposition documentaire uniquement ; aucune migration, modification Auth/RLS, code applicatif, donnée d'élève, paiement ou déploiement.
+- Le run CI `43444753255` du commit documentaire précédent était encore en cours au dernier contrôle. Le commit Lot 412 déclenche une nouvelle exécution ; vérifier le dernier run avant d'annoncer la validation du HEAD.
+
+### Suite — Lot 413
+Vérifier la CI sur le HEAD Lot 412. Ensuite, présenter les décisions non techniques qui exigent l'accord du propriétaire (source de vérification scolaire et périmètre de découverte/DM) avant toute implémentation.
