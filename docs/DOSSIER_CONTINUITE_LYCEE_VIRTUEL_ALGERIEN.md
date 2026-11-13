@@ -7738,3 +7738,12 @@ La relecture du code courant confirme les limites déjà documentées aux lots 3
 ### Suite
 
 Attendre le résultat CI du commit, puis poursuivre l'audit des contrats serveur et des dépendances de l'ancienne RPC sans l'exécuter ni la modifier dans la base active. Le cycle réel d'invitations et l'annuaire national restent non livrés tant que les preuves d'affiliation institutionnelle et les contrôles serveur atomiques ne sont pas disponibles.
+
+
+### Correctif découvert par la nouvelle exécution CI — Lot 362-A
+
+- La première exécution du test nouvellement branché a échoué : 5 scénarios sur 8 passaient, 3 échouaient.
+- Cause racine : le moteur hors ligne classait `verified` comme état terminal. Cela empêchait ensuite les transitions pourtant prévues de transfert, révocation et expiration.
+- Correction sur la branche : commit `4f9b4023cddb5c6e2fc25ae5cc2430ababfd864a`, fichier `prototypes/registry-affiliation-scenarios-core.mjs`. L'état `verified` n'est plus dans l'ensemble des états finaux ; les états réellement clôturés restent `rejected`, `revoked`, `expired` et `transferred`.
+- Les tests existants couvrent directement les trois transitions précédemment bloquées. La CI du commit correctif doit encore confirmer le résultat ; aucun succès n'est présumé.
+- Cette correction concerne uniquement le simulateur synthétique hors ligne. Elle ne change ni une règle de base active ni une affiliation réelle.
