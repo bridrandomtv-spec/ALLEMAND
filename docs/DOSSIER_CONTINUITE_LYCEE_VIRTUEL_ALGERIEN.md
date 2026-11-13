@@ -7770,3 +7770,36 @@ Attendre le résultat CI du commit, puis poursuivre l'audit des contrats serveur
 - Conclusion : `success`, job « Validation structurelle & pédagogique » terminé sans étape en échec.
 - Les 8 scénarios du cycle d'affiliation synthétique sont désormais exécutés dans la CI et passent.
 - Cela valide uniquement le simulateur hors ligne et les assertions automatisées. Cela ne valide pas encore une implémentation PostgreSQL, RLS, une source institutionnelle réelle ou l'annuaire national.
+
+
+## Lot 363 — confirmation en lecture seule du contournement DM dans Supabase actif (13 novembre 2026)
+
+### Recontrôle du catalogue PostgreSQL actif
+
+Projet contrôlé : `azjwcybivirvpxbfhyzk`. Requêtes strictement SELECT sur `pg_proc`, ACL des fonctions, `pg_policies` et `information_schema.role_table_grants`. Aucune donnée personnelle, aucun message ni contenu de conversation lu.
+
+Résultats observés :
+
+- `public.msg_open_direct(p_other uuid)` existe toujours.
+- La fonction est `SECURITY DEFINER`, avec `search_path = ''`.
+- Son ACL inclut explicitement `authenticated` pour EXECUTE.
+- Sa définition vérifie `auth.uid()), le destinataire et `msg_can_dm`, recherche un DM existant, puis crée une nouvelle conversation et les deux lignes membres si aucun DM n'existe. Elle ne vérifie aucune invitation acceptée.
+- `public.msg_can_dm(a uuid,b uuid)` est également SECURITY DEFINER et exécutable par authenticated.
+- La policy INSERT `msg conv creation` sur `msg_conversations` autorise authenticated à créer un direct lorsque `auth.uid() = created_by).
+- La policy INSERT `msg members ajout` sur `msg_members` autorise authenticated à s'ajouter lui-même si `msg_member_ok(conversation_id,auth.uid())` passe.
+- Le rôle authenticated possède les privilèges INSERT sur `msg_conversations` et `msg_members`.
+
+### Conclusion de sécurité
+
+Le contournement identifié au lot 347 est confirmé sur le catalogue actif à la date du contrôle. Le blocage côté navigateur ne constitue pas une protection suffisante. **NO-GO confirmé** pour l'ouverture générale du Messenger et pour annoncer que les invitations protègent déjà les nouveaux DM.
+
+### Décision opérationnelle
+
+Ne pas révoquer isolément l'ancienne RPC ni retirer les policies immédiatement : cela pourrait casser les parcours de conversations existants sans que le cycle d'invitations serveur soit prêt. La correction doit être une migration coordonnée qui :
+1. introduit et teste les opérations serveur d'invitation ;
+2. rend la création directe impossible hors acceptation atomique ;
+3. retire les droits d'insertion directs incompatibles après inventaire des consommateurs ;
+4. conserve les groupes officiels et les DM historiques ;
+5. passe une matrice PostgreSQL multi-rôle et les tests de non-régression sur une base jetable.
+
+Aucune écriture, migration, révocation de privilège ou modification de policy n'a été effectuée sur Supabase actif.
