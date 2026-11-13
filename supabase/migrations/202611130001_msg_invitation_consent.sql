@@ -157,6 +157,10 @@ declare
 begin
   if v_sender is null then raise exception 'auth_required'; end if;
   if p_recipient is null or p_recipient = v_sender then raise exception 'invalid_recipient'; end if;
+
+  -- Sérialise les envois d'un même compte : le plafond 24 h résiste aux appels concurrents.
+  perform pg_advisory_xact_lock(hashtextextended(v_sender::text, 0));
+
   if public.msg_pair_blocked(v_sender, p_recipient) then raise exception 'user_blocked'; end if;
   if not public.msg_can_dm(v_sender, p_recipient) then raise exception 'school_verification_required'; end if;
 
@@ -228,6 +232,15 @@ begin
    for update;
   if not found then raise exception 'invite_not_found'; end if;
 
+  -- Une seule création de DM par paire, même si deux invitations opposées sont acceptées simultanément.
+  perform pg_advisory_xact_lock(
+    hashtextextended(
+      least(v_inv.sender_id::text, v_inv.recipient_id::text) || ':' ||
+      greatest(v_inv.sender_id::text, v_inv.recipient_id::text),
+      0
+    )
+  );
+
   if v_inv.status = 'accepted' and v_inv.conversation_id is not null then
     return v_inv.conversation_id;
   end if;
@@ -271,9 +284,17 @@ begin
        set status='accepted', responded_at=now(), conversation_id=v_conv
      where id=p_invite;
   end if;
+
+  -- Une invitation réciproque devenue redondante ne doit pas rester pendante.
+  update public.msg_invites
+     set status='cancelled', responded_at=now()
+   where sender_id=v_inv.recipient_id
+     and recipient_id=v_inv.sender_id
+     and status='pending';
+
   return v_conv;
 end;
-$$;
+$;
 
 -- Les nouvelles conversations directes ne peuvent recevoir de membres que
 -- pendant la RPC d'acceptation. Les DM historiques restent consultables.
