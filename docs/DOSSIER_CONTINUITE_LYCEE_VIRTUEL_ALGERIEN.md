@@ -7996,3 +7996,18 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Aucun journal réel lu, aucune écriture ou modification Supabase, aucun test comportemental PostgreSQL exécuté.
 - Aucun second projet créé ; aucun coût engagé. PR #17 toujours ouverte et non fusionnée ; main/production intactes.
 - Suite : inventorier précisément les rôles, extensions et dépendances Auth nécessaires, puis préparer l'assemblage reproductible du schéma et le jeu de comptes synthétiques.
+
+
+## Lot 374 — gardes de vérification des profils et triggers Messenger (13 novembre 2026)
+
+- Extraction SELECT des définitions complètes des fonctions et triggers liés aux profils, conversations, membres, messages, pièces jointes, signalements et journaux.
+- Découverte confirmée : `profiles_verif_guard()` autorise l'élève à demander le statut `en_attente` sous conditions, mais réserve le passage à `verifie` et les modifications de `matricule`, `section`, `verif_by` à un administrateur ou à un agent `students.verify` habilité sur la wilaya du profil.
+- `profiles_scope_guard()` interdit l'auto-modification du périmètre wilaya/niveau/filière et encadre les modifications administratives par rôle et wilaya. Les triggers de rôle et d'audit sont également dépendances nécessaires du baseline.
+- Triggers Messenger confirmés : garde de DM à deux membres et compatibilité, rate limit 20 messages/minute et corps de 2 000 caractères, mise à jour d'activité, journalisation, limite pièce jointe 5 MiB et immutabilité des audit_logs.
+- Conséquence : `verif_statut='verifie'` est une validation interne de plateforme, pas une preuve institutionnelle d'inscription élève↔lycée. Elle ne suffit pas à autoriser un annuaire national inter-lycées.
+- Matrice de tests synthétiques préparée : auto-demande vs auto-validation, modérateur autorisé/hors wilaya, protection du périmètre, audit des changements de rôle, création DM sans invitation, blocage dans les deux sens, pièces jointes et limites de débit.
+- Rapport : `docs/product/LOT-374-VERIFICATION-PROFILS-ET-TRIGGERS-MESSENGER.md`, commit `d318c21c8ee69f99b4a2edae2d079fd750d6a278`.
+- Aucun profil, message, fichier ou journal réel consulté ; aucune écriture/DDL/migration sur Supabase actif ; aucun changement Auth/RLS/GRANT/Storage/Realtime ; aucun projet de test créé ni frais engagé.
+- Aucun test PostgreSQL/RLS multi-compte exécuté : le lot est une extraction et une spécification de tests, pas une validation comportementale.
+- PR #17 reste ouverte et non fusionnée ; main/production inchangées.
+- Suite recommandée : terminer l'inventaire des rôles/claims/extensions et préparer un export SQL de baseline reproductible, en distinguant clairement les objets Supabase managés (`auth`, `storage`, rôles) des objets applicatifs. La création du second projet Free estimé à 0 USD/mois reste en attente d'une autorisation explicite.
