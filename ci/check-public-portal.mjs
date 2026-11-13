@@ -238,13 +238,13 @@ if (!html.includes('style-prototype-dz.css?v=201')) {
 if (!sw.includes('style-prototype-dz.css?v=201')) {
   fail('version CSS du précache non actualisée (v201 attendue)');
 }
-if (!sw.includes("dz-de-v3.185.0.0.152") ||
+if (!sw.includes("dz-de-v3.185.0.0.153") ||
     !sw.includes("style-prototype-dz.css?v=201") ||
     !sw.includes("if (!error || error.name !== 'InvalidStateError') throw error;")) {
   fail('précache Service Worker non synchronisé avec le CSS du portail');
 }
 console.log('✅ Récupération : formulaires positionnés dans la grille desktop et mobile');
-console.log('✅ Cache CSS v201, app.js v3569 et Service Worker v3.185.0.0.152 synchronisés');
+console.log('✅ Cache CSS v201, app.js v3569 et Service Worker v3.185.0.0.153 synchronisés');
 if (sw.includes("./assets/bdd/shards/shard_00.json")) {
   fail('précache un shard documentaire absent du dépôt');
 }
@@ -438,7 +438,7 @@ for (const stale of ['تقرير أسبوعي : نقاط وحضور', 'اسأل 
 if (!guideScript.includes('D.mode_emploi[role]') || !guideScript.includes('objectif.points')) {
   fail('courriel de bienvenue : contenu non dérivé de onboarding.json');
 }
-if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.152')) {
+if (!html.includes('guide.js?v=3511') || !sw.includes('guide.js?v=3511') || !sw.includes('dz-de-v3.185.0.0.153')) {
   fail('guide de bienvenue : cache ou Service Worker non actualisé');
 }
 console.log('✅ Lot 158 : courriel de bienvenue synchronisé avec le guide publié et ses ressources réelles.');
