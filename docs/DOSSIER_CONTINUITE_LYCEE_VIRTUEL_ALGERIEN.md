@@ -7650,3 +7650,10 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Le workflow #3284 a confirmé que les assertions du nouveau numéro et le contrôle d’abonnement actif passent. Le test s’arrêtait uniquement parce que `billing.js` n’était pas encore chargé dans `ci/check-msg.mjs` avant l’assertion qui vérifie l’affichage du numéro.
 - Déclaration de lecture de `billing.js` ajoutée au test. Aucun code applicatif ni aucune donnée Supabase modifiés par ce correctif.
 - Nouveau workflow attendu avant de déclarer le lot vert.
+
+
+### Lot 360-B — Synchronisation du test du portail public
+
+- La CI #3285 a validé le contrôle Messenger du lot 360, y compris la vérification d’un abonnement actif propre au compte et l’affichage du numéro dans la page d’abonnement.
+- Le run s’est ensuite arrêté sur deux assertions historiques de `ci/check-public-portal.mjs` qui attendaient le Service Worker `.145` après le passage légitime à `.146`. Les deux attentes et le message de diagnostic sont alignés sur `.146`.
+- Aucun code d’exécution supplémentaire ni aucune donnée Supabase modifiés dans ce correctif.
