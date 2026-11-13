@@ -134,7 +134,7 @@
     var h = '<div class="msg-pro-hero"><div class="msg-pro-hero-copy"><span class="msg-pro-eyebrow">الثانوية الافتراضية الجزائرية · فضاء التعلّم التعاوني</span><h2>💬 تواصل، تعاون، وتقدّم مع زملائك</h2><p>مساحات دراسية منظّمة حسب الولاية والمستوى والشعبة، ومحادثاتك الخاصة وفق ضوابط الهوية المدرسية.</p></div><div class="msg-pro-hero-mark" aria-hidden="true">✉️</div></div>' +
       '<div class="msg-pro-toolbar"><div class="msg-pro-heading"><b>مساحات التواصل</b><span>إدارة مجموعاتك ومحادثاتك من مكان واحد</span></div><button class="msg-refresh" data-act="refresh" type="button">⟳ تحديث</button></div>' +
       '<div class="msg-pro-stats"><div><span>🏫</span><b>'+groupCount+'</b><small>مجموعات دراسية</small></div><div><span>🔒</span><b>'+directCount+'</b><small>محادثات خاصة</small></div><div><span>🛡️</span><b>آمن</b><small>وصول وفق الصلاحيات</small></div></div>' +
-      '<div class="msg-searchbar"><span aria-hidden="true">⌕</span><input id="msgListSearch" type="search" placeholder="ابحث باسم المجموعة أو الولاية أو المستوى…" autocomplete="off" aria-label="ابحث في مجموعاتك ومحادثاتك"></div>' +
+      '<div class="msg-searchbar"><span aria-hidden="true">⌕</span><input id="msgListSearch" type="search" placeholder="ابحث باسم المجموعة أو الولاية أو المستوى…" autocomplete="off" aria-label="ابحث في محادثاتي ومجموعاتي أو باسم المجموعة والولاية والمستوى"></div>' +
       '<div class="msg-filters" role="group" aria-label="تصفية مساحات التواصل"><button type="button" class="active" data-msg-filter="all">الكل</button><button type="button" data-msg-filter="group">🏫 المجموعات</button><button type="button" data-msg-filter="direct">🔒 الخاصة</button></div>' +
       '<div class="msg-learning-note"><span>📘</span><div><b>اجعل التواصل امتداداً لتعلّمك</b><p>استخدم المجموعات لتبادل الأسئلة والملخصات والموارد الدراسية، واحرص على احترام زملائك وعدم مشاركة بياناتك الشخصية.</p></div></div>';
     var isMod0 = u && (u.role==='prof' || u.role==='admin');
@@ -210,8 +210,9 @@
     var others = [];
     r.msgs.forEach(function(m){ if(m.sender_id!==state.me && others.indexOf(m.sender_id)===-1) others.push(m.sender_id); });
     await fetchNames(others);
-    var h = '<button class="msg-back" data-act="back" type="button">العودة إلى قائمة المحادثات ←</button>'+
-            '<div class="msg-head"><h3>💬 المحادثة رقم '+id+'</h3><span class="msg-pres" id="msgPres"></span></div>'+
+    var h = '<div class="msg-thread-nav"><button class="msg-back" data-act="back" type="button">← العودة إلى مساحات التواصل</button><span class="msg-thread-nav-label">الرسائل · فضاء تعليمي آمن</span></div>'+
+            '<section class="msg-conversation-panel" aria-label="محادثة دراسية">'+
+            '<div class="msg-thread-topbar"><div class="msg-thread-avatar" aria-hidden="true">💬</div><div class="msg-thread-heading"><b>مساحة الحوار الدراسي</b><small>تبادل المعرفة باحترام · رسائل الأعضاء المخوّلين فقط</small></div><span class="msg-pres" id="msgPres"></span></div>'+
             '<div class="msg-thread">';
     var attachmentMap = await attachmentsFor(r.msgs.map(function(m){ return m.id; }));
     var renderedRows = r.msgs.map(function(m){
@@ -220,9 +221,9 @@
       return rowHtml(m, false, a && a.found ? a : null);
     });
     h += renderedRows.join('') || '<div class="msg-empty">لا توجد رسائل حالياً.</div>';
-    h += '</div><div class="msg-input"><textarea id="msgText" rows="2" maxlength="2000" placeholder="اكتب رسالتك…"></textarea>'+
+    h += '</div><div class="msg-input"><span class="msg-composer-mark" aria-hidden="true">✍️</span><textarea id="msgText" rows="2" maxlength="2000" placeholder="اكتب رسالة مفيدة ومحترمة…"></textarea>'+
          '<label class="msg-pj" title="إرفاق ملف (PNG/JPEG/WebP/PDF، حتى 5 ميغابايت)">📎<input type="file" id="msgFile" accept="image/png,image/jpeg,image/webp,application/pdf" hidden></label>'+
-         '<button class="msg-send" data-act="send" type="button">إرسال ➤</button></div><div class="msg-err" id="msgErr" hidden></div>';
+         '<button class="msg-send" data-act="send" type="button">إرسال ➤</button></div><div class="msg-err" id="msgErr" hidden></div></section>';
     box.innerHTML = h; state.conv = id;
     startChannel(id);
   }
