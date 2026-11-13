@@ -7905,3 +7905,15 @@ Le lot ne peut pas être déclaré « Messenger terminé ». L'interface de navi
 - Nouveau rapport détaillé : `docs/product/LOT-366-CONFIRMATION-REFERENTIEL-AFFILIATION-ACTIVE.md`.
 - Aucun changement sur `main), aucune fusion de PR #17, aucun déploiement Cloudflare. PR #17 est toujours ouverte et non fusionnée au contrôle API ; son indicateur `draft` est actuellement `false`, sans intervention de ce lot.
 - Décision : NO-GO pour l'annuaire national réel et les invitations inter-lycées tant que la preuve institutionnelle n'est pas obtenue ; GO pour les tests hors ligne sur données synthétiques.
+
+
+## Lot 367 — limites du prototype d'affiliation et préparation du cycle d'invitations (13 novembre 2026)
+
+- Relecture des contrats Lots 322, 327 et 337 et des deux fichiers du prototype synthétique `registry-affiliation-scenarios-core`.
+- Les huit tests actuels valident des transitions unitaires sur des identifiants SYN ; ils ne valident ni PostgreSQL, ni RLS, ni les rôles réels, ni la concurrence transactionnelle.
+- Limite importante : l'unicité élève/année dépend actuellement d'un paramètre facultatif `previousEnrollment`. Le helper ne possède pas de dépôt global ; il ne peut donc pas garantir à lui seul l'unicité des affiliations actives.
+- Limite annuaire : `canAppearInNationalDirectory` vérifie statut, année, état de source et opt-in, mais pas encore compte suspendu, rôle étudiant, dates d'effet, blocages Messenger, quotas ou habilitation de l'approbateur. Ces contrôles restent des exigences du contrat serveur Lot 337, pas des fonctions livrées.
+- Aucune méthode réelle d'invitation n'a été ajoutée : les opérations du Lot 337 sont toujours contractuelles. La création du DM après acceptation devra être atomique et testée en concurrence.
+- Rapport détaillé : `docs/product/LOT-367-LIMITES-PROTOTYPE-AFFILIATION-PREPARATION-INVITATIONS.md`.
+- Décision : GO pour prototypes et tests synthétiques isolés ; NO-GO pour annuaire national, invitations inter-lycées et migrations de production avant source institutionnelle, baseline PostgreSQL fiable et tests transactionnels.
+- Aucun SQL appliqué à Supabase actif ; aucune donnée personnelle ou conversation consultée ; aucune modification Auth/RLS/GRANT/Storage ; aucun changement sur `main), aucun merge, aucun déploiement Cloudflare.
