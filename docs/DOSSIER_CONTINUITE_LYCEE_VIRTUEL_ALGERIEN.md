@@ -8640,3 +8640,19 @@ Vérifier la CI du HEAD documentaire courant, puis préparer une spécification 
 
 ### Suite — Lot 413
 Vérifier la CI sur le HEAD Lot 412. Ensuite, présenter les décisions non techniques qui exigent l'accord du propriétaire (source de vérification scolaire et périmètre de découverte/DM) avant toute implémentation.
+
+
+### Lot 413 — décision produit sur l'accès à ملتقى الطلاب et الرسائل (13 novembre 2026)
+
+- Recommandation formalisée : `ملتقى الطلاب` est gratuit pour les élèves dont l'affiliation scolaire est vérifiée, avec accès aux publications, réactions, commentaires et groupes autorisés ; l'abonnement ne doit pas conditionner les fonctions sociales essentielles.
+- `الرسائل` : messagerie textuelle essentielle gratuite pour les élèves vérifiés, avec demande de contact et acceptation explicite avant création d'un DM. Aucun DM pour les comptes non vérifiés.
+- Les comptes en attente peuvent consulter l'accueil, le règlement, l'aide et les annonces institutionnelles, mais pas les contenus personnels ni l'annuaire privé.
+- L'abonnement reste réservé aux avantages pédagogiques premium. Il ne prouve pas l'identité scolaire et ne contourne ni consentement, ni blocage, ni refus, ni modération.
+- Le document rappelle que le prototype ملتقى n'est pas encore un réseau social national opérationnel ; aucune activation ne doit précéder les contrôles serveur et les tests isolés.
+- Rapport : `docs/product/LOT-413-POLITIQUE-ACCES-MULTAQA-MESSENGER.md`.
+- CI du HEAD précédent `11f24971` : run #3418 (`43445019266`) réussi. Le présent commit documentaire déclenche une nouvelle CI qui doit être contrôlée séparément.
+- Aucun code applicatif, Auth, Supabase, SQL, schéma, migration, RLS, Storage, Realtime, paiement, donnée d'élève, déploiement Cloudflare ou fusion n'a été modifié.
+
+### Suite — Lot 414
+
+Vérifier la CI déclenchée par le Lot 413. Puis poursuivre l'audit de préparation fonctionnelle du prototype ملتقى : inventaire des interactions réellement actives, séparation stricte entre démonstration locale et fonctionnalités persistées, et liste des dépendances backend nécessaires. Ne pas activer de fonctions sociales réelles tant que l'identité scolaire et les autorisations serveur ne sont pas démontrées.
