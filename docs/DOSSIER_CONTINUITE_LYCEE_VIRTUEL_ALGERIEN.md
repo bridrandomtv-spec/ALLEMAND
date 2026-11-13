@@ -7657,3 +7657,11 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - La CI #3285 a validé le contrôle Messenger du lot 360, y compris la vérification d’un abonnement actif propre au compte et l’affichage du numéro dans la page d’abonnement.
 - Le run s’est ensuite arrêté sur deux assertions historiques de `ci/check-public-portal.mjs` qui attendaient le Service Worker `.145` après le passage légitime à `.146`. Les deux attentes et le message de diagnostic sont alignés sur `.146`.
 - Aucun code d’exécution supplémentaire ni aucune donnée Supabase modifiés dans ce correctif.
+
+
+### Lot 360-C — Validation complète
+
+- Workflow GitHub Actions #3287 : `success`. Le contrôle Messenger passe, y compris les quatre assertions Lot 360 ; le portail public, le cache, le tableau مسارك et les autres contrôles structurels/pédagogiques passent également.
+- Le correctif `.145` → `.146` de `ci/check-public-portal.mjs` a supprimé le dernier échec CI connu.
+- La prévisualisation Cloudflare n’a pas encore publié de commentaire de déploiement pour les commits Lot 360 ; le dernier déploiement confirmé reste `9add8b1`. Ne pas présenter ce lien comme contenant la nouvelle interface tant qu’un nouveau déploiement n’est pas confirmé.
+- PR #17 reste ouverte et non fusionnée. Aucun déploiement de production ni aucune modification de `main` ou de la base Supabase active.
