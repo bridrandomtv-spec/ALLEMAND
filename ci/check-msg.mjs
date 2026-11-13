@@ -49,7 +49,7 @@ ok(dmStart >= 0 && dmEnd > dmStart &&
 ok(msgjs.includes('💬 الرسائل — منصة المراسلة الوطنية للتلاميذ'), 'accueil Messenger entièrement en arabe');
 ok(msgjs.includes('ابحث في محادثاتي ومجموعاتي') && msgjs.includes('فتح المحادثة'), 'recherche et actions de conversation en arabe');
 ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'rédaction et pièces jointes en arabe');
-ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \\(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
+ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
 ok(idx.includes('msg.js?v=3513'), 'version cache du module de messagerie actualisée');
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.145'") && sw.includes("./msg.js?v=3513"), 'service worker et précache Messenger synchronisés');
