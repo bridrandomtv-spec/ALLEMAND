@@ -887,18 +887,30 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
   <div class="page-head"><h1>💬 الرسائل</h1><p>المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة</p></div>
   <div id="msgBody"></div>
 </section>
-<!-- ملتقى الطلاب — واجهة أولية مدمجة، بلا بيانات أو اتصال اجتماعي فعلي -->
+<!-- ملتقى الطلاب — واجهة اجتماعية قيد البناء؛ لا تعرض منشورات وهمية -->
 <section data-view="multaqa" class="view mtq-view" hidden>
-  <div class="page-head"><h1>🌐 ملتقى الطلاب</h1><p>فضاء للتعارف الدراسي وتبادل الأفكار بين تلاميذ الثانوية الافتراضية</p></div>
-  <div class="mtq-shell">
-    <div class="mtq-intro"><div><span class="mtq-kicker">فضاء اجتماعي تعليمي</span><h2>أفكار تجمعنا، وتعلّم يقربنا</h2><p>شارك سؤالاً دراسياً، واكتشف مبادرات المراجعة، وتعرّف إلى زملاء يشاركونك الاهتمامات.</p></div><div class="mtq-mark" aria-hidden="true">🌐</div></div>
-    <div class="mtq-notice" role="note"><strong>نسخة أولية للواجهة</strong><span>المنشورات والأمثلة أدناه توضيحية فقط. النشر والتعليقات والبحث وطلبات الزمالة غير مفعّلة بعد، ولا تُقرأ أي بيانات طلاب.</span></div>
-    <div class="mtq-grid"><section class="mtq-main">
-      <div class="mtq-compose"><div class="mtq-compose-avatar" aria-hidden="true">✍️</div><div><strong>ما الفكرة أو السؤال الذي تريد مشاركته؟</strong><p>سيُتاح إنشاء المنشورات بعد تجهيز الحفظ والخصوصية والإشراف.</p><button type="button" disabled>＋ إنشاء منشور — قريباً</button></div></div>
-      <article class="mtq-post"><div class="mtq-post-head"><span class="mtq-avatar">📚</span><div><strong>مبادرة مراجعة جماعية</strong><small>منشور توضيحي · مثال غير حقيقي</small></div><span class="mtq-example">مثال</span></div><p>هل ترغبون في تنظيم مراجعة مشتركة للرياضيات؟ يمكن أن يجمع الملتقى أسئلة التلاميذ وملخصاتهم ومبادراتهم الدراسية في فضاء واحد.</p><div class="mtq-post-foot"><span>♡ التفاعلات</span><span>◯ التعليقات</span><span>↗ المشاركة</span></div></article>
-      <article class="mtq-post mtq-post-quiet"><div class="mtq-post-head"><span class="mtq-avatar">💡</span><div><strong>سؤال الأسبوع</strong><small>مساحة مقترحة · ليست منشوراً فعلياً</small></div><span class="mtq-example">تصوّر</span></div><p>ما الطريقة التي تساعدك على تنظيم وقت المراجعة قبل الفروض؟</p><div class="mtq-post-foot"><span>مساحة للنقاش مستقبلاً</span></div></article>
-    </section><aside class="mtq-side"><section class="mtq-side-card"><h3>🧭 استكشف الملتقى</h3><div class="mtq-side-link">👥 زملائي <small>طلبات الزمالة وفق الموافقة</small></div><div class="mtq-side-link">👨‍👩‍👧 المجموعات الدراسية <small>انضمام صريح وموافقة عند الحاجة</small></div><div class="mtq-side-link">🔔 الإشعارات <small>تنبيهات وفق إعدادات الخصوصية</small></div></section>
-      <section class="mtq-side-card"><h3>🔒 خصوصيتك أولاً</h3><p>لن يظهر رقم التسجيل أو البريد أو الهاتف أو وثائق التحقق في الملتقى. قبول الزمالة لا يفتح محادثة خاصة تلقائياً.</p><span class="mtq-privacy">الحماية قبل التفعيل</span></section><button type="button" class="mtq-messenger-link" data-go="msg">💬 الانتقال إلى الرسائل</button></aside></div>
+  <div class="mtq-topline">
+    <div><span class="mtq-kicker">الثانوية الافتراضية الجزائرية · المجتمع</span><h1>🌐 ملتقى الطلاب</h1><p>مساحة واحدة تجمع تلاميذ الثانويات الجزائرية حول الدراسة والأفكار والمبادرات.</p></div>
+    <button type="button" class="mtq-top-action" data-go="msg">💬 فتح الرسائل</button>
+  </div>
+  <div class="mtq-layout">
+    <aside class="mtq-rail">
+      <section class="mtq-profile-card"><div class="mtq-profile-cover"></div><div class="mtq-profile-avatar">🎓</div><strong>مجتمع الثانوية الافتراضية</strong><span>فضاء تعليمي للطلبة</span><small>سيظهر ملفك الشخصي بعد ربط خدمة المجتمع بالحساب.</small></section>
+      <nav class="mtq-nav" aria-label="أقسام الملتقى">
+        <div class="mtq-nav-item active"><span>📰</span><b>آخر المنشورات</b></div><div class="mtq-nav-item"><span>👥</span><b>زملائي</b></div><div class="mtq-nav-item"><span>🏫</span><b>المجموعات الدراسية</b></div><div class="mtq-nav-item"><span>🔔</span><b>الإشعارات</b></div><div class="mtq-nav-item"><span>🔖</span><b>المحفوظات</b></div>
+      </nav>
+      <div class="mtq-rail-note"><b>🔐 مجتمع آمن</b><p>الزمالة والمحادثات الخاصة صلاحيتان منفصلتان. لا يفتح قبول الزمالة محادثة تلقائياً.</p></div>
+    </aside>
+    <main class="mtq-feed">
+      <section class="mtq-welcome"><div><span>أهلاً بك في مجتمعنا</span><h2>تعلّم مع زملائك، وشارك ما يفيدهم.</h2><p>الملتقى سيجمع الأسئلة الدراسية ومبادرات المراجعة والموارد التي ينشرها التلاميذ.</p></div><div class="mtq-welcome-art" aria-hidden="true">🌍</div></section>
+      <section class="mtq-compose-card" aria-label="إنشاء منشور"><div class="mtq-compose-row"><div class="mtq-compose-avatar">✍️</div><div><b>ما الذي تريد مشاركته مع زملائك؟</b><span>سؤال، فكرة، ملخص أو مبادرة دراسية</span></div></div><div class="mtq-compose-actions"><span>📷 صورة</span><span>📄 ملف دراسي</span><span>📚 مبادرة مراجعة</span><button type="button" disabled>إنشاء منشور</button></div></section>
+      <section class="mtq-feed-state"><div class="mtq-state-icon">📰</div><span class="mtq-state-tag">المرحلة الحالية</span><h3>سيظهر هنا المحتوى الحقيقي للطلاب</h3><p>لم يتم ربط المنشورات والتعليقات والتفاعلات بقاعدة البيانات بعد. لذلك لن نعرض منشورات تجريبية على أنها منشورات حقيقية.</p><div class="mtq-state-line"><i></i><span>واجهة المجتمع قيد الإعداد · لا توجد منشورات فعلية للعرض</span></div></section>
+    </main>
+    <aside class="mtq-discover">
+      <section class="mtq-discover-card"><h3>🧭 اكتشف المجتمع</h3><div><b>👥 الزمالة</b><small>طلبات مستقلة بموافقة الطرف الآخر</small></div><div><b>🏫 المجموعات</b><small>فضاءات حسب الولاية والمستوى والشعبة</small></div><div><b>💬 الرسائل</b><small>محادثات خاصة بعد دعوة وقبول صريح</small></div></section>
+      <section class="mtq-discover-card mtq-rules"><h3>🛡️ قواعد المجتمع</h3><p>احترام الآخرين، عدم نشر المعلومات الشخصية، والإبلاغ عن المحتوى المخالف. لا تظهر بيانات التسجيل أو الاتصال في الملف العام.</p></section>
+      <button type="button" class="mtq-messenger-link" data-go="msg">💬 الانتقال إلى الرسائل <span>←</span></button>
+    </aside>
   </div>
 </section>
 
