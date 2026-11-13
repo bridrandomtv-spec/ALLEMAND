@@ -49,10 +49,10 @@ FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 --  '{"pseudo":"Eleve E","niveau":"2AS","filiere":"SC","wilaya":"01"}'),
 -- ('00000000-0000-4000-8000-00000000000f',
 --  '{"pseudo":"Eleve F","niveau":"2AS","filiere":"SC","wilaya":"01"}'),
--- ('00000000-0000-4000-8000-000000000014',
+-- ('00000000-0000-4000-8000-000000000016',
 --  '{"pseudo":"Role escalation attempt","requested_role":"admin",
 --    "niveau":"2AS","filiere":"SC","wilaya":"01"}'),
--- ('00000000-0000-4000-8000-000000000015',
+-- ('00000000-0000-4000-8000-000000000017',
 --  '{"pseudo":"Parent request","requested_role":"parent"}');
 -- ROLLBACK;
 --
