@@ -8477,3 +8477,16 @@ Poursuivre l'inventaire technique en lecture seule : récupérer les signatures,
 - Aucun objet Storage ni donnée d'élève lu ; aucun upload ni test comportemental. Aucun DDL/DML, migration, policy, GRANT, Auth/RLS/Storage/Reatime modifié ; aucun déploiement, merge ou coût.
 - Suite : Lot 403 — conception séparée des groupes sociaux et du pipeline sécurisé de médias sociaux ; ne pas réutiliser le bucket Messenger.
 
+
+
+## Lot 403 — architecture des médias et groupes sociaux de ملتقى الطلاب (13 novembre 2026)
+
+- Rapport créé : `docs/product/LOT-403-ARCHITECTURE-MEDIAS-GROUPES-SOCIAUX.md`, commit `d4163052b293a9cf1c988bba29f9c6ac1eda22d6`.
+- Séparation définie entre réseau social, Messenger existant et identité scolaire vérifiée. Relation sociale, adhésion à un groupe et consentement DM restent trois autorisations indépendantes.
+- Audiences proposées : `private`, `connections`, `class`, `school`, `wilaya`, `public`; la visibilité doit être contrôlée côté serveur dans le fil, les recherches, notifications, aperçus et accès médias. Aucune audience publique activée par ce lot.
+- Groupes sociaux conçus avec adhésion explicite (open/approval/invite_only), rôles, visibilité, état et journalisation. Ne pas reprendre le modèle d'accès implicite des groupes Messenger.
+- Médias : ne pas réutiliser le bucket Messenger `prive`. Architecture cible d'un stockage social distinct privé par défaut, quarantaine, vérification réelle du type, quotas, scan, transcodage contrôlé, URLs temporaires autorisées et purge documentée.
+- Modération, blocage, anti-spam, protection des données scolaires et 25 scénarios de tests documentés. Décisions produit restantes : accès visiteurs/public, vidéos MVP, administrateurs scolaires, rétention et disponibilité réelle d'outils gratuits de scan/transcodage.
+- Lot documentaire uniquement : aucun bucket, table, fonction, policy, écran ou maquette modifié. Aucun DDL/DML, migration, Auth/RLS/Storage/Realtime, déploiement Cloudflare, merge, coût ou donnée personnelle consultée.
+- Suite proposée : Lot 404 — audit statique de la maquette HTML et inventaire des interactions réellement fonctionnelles vs éléments de présentation, puis définition du parcours MVP sans branchement backend.
+
