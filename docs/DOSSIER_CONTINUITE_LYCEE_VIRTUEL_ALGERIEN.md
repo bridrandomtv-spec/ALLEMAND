@@ -7643,3 +7643,10 @@ Le contrôle sémantique du Lot 320 vérifiait l'ordre logique des décisions, m
 - Limite de sécurité explicitement conservée : le déclencheur SQL historique `profiles_verif_guard` ne lie pas encore lui-même `matricule` à un abonnement actif. Le parcours applicatif vérifie le lien, et la validation reste manuelle par un modérateur ; une garantie contre un appel API forgé nécessiterait une évolution SQL/RPC/RLS. Aucune de ces modifications n’est déployée ni ajoutée au schéma actif dans ce lot.
 - Le contrôle CI précédent (#3278) avait échoué sur une attente historique `.144` dans `ci/check-masar.mjs` ; l’attente est maintenant alignée sur `.146`. Le nouveau workflow doit confirmer l’ensemble.
 - Aucun changement de base Supabase active, Auth, RLS, schéma ou paiement ; aucune modification de `main`, aucun déploiement de production et aucune fusion de PR #17.
+
+
+### Lot 360-A — Ajustement du test CI
+
+- Le workflow #3284 a confirmé que les assertions du nouveau numéro et le contrôle d’abonnement actif passent. Le test s’arrêtait uniquement parce que `billing.js` n’était pas encore chargé dans `ci/check-msg.mjs` avant l’assertion qui vérifie l’affichage du numéro.
+- Déclaration de lecture de `billing.js` ajoutée au test. Aucun code applicatif ni aucune donnée Supabase modifiés par ce correctif.
+- Nouveau workflow attendu avant de déclarer le lot vert.
