@@ -1947,3 +1947,25 @@ Obtenir une exécution GitHub Actions avec étapes/journaux exploitables ou exé
 - La migration `202611140001_msg_storage_owner_cleanup.sql` reste candidate, non appliquée. Aucun code client de compensation n'a été activé. Aucun accès en écriture au projet Supabase actif, aucun déploiement Cloudflare, aucune modification de `main`, aucun rebase ni fusion.
 - PR #17 revérifiée après le correctif : `state=open`, `merged=false`, `mergeable=true`, HEAD `a935ca64692a9c0ed7bd0d2585c5f29a38dc5c55`. Elle reste ouverte pour validation visuelle et technique.
 - Suite : obtenir un run GitHub Actions avec étapes/journaux disponibles ou exécuter la pile dans un environnement disposant réellement de Docker/Supabase CLI/psql. Ne pas ajouter de nouveaux correctifs spéculatifs avant d'avoir les premiers résultats d'exécution.
+
+
+---
+
+## Lot 506 — protection des pièces jointes déjà liées (14 novembre 2026)
+
+### Défaut critique identifié
+- La revue de la migration candidate a montré que la politique Storage autorisait l'uploader à supprimer son objet Messenger dès lors que le chemin et le propriétaire correspondaient, sans vérifier si msg_messages.attachment_id pointait déjà vers la ligne msg_attachments correspondante. Un utilisateur aurait donc pu supprimer directement via Storage un fichier encore lié à un message.
+- La politique metadata utilisait une sous-requête soumise au RLS de msg_messages. Dans le schéma réel, la lecture des messages dépend de l'appartenance à la conversation ; ce contrôle n'était donc pas suffisamment robuste pour une opération de nettoyage indépendante de cette visibilité.
+
+### Correction candidate
+- Migration candidate réécrite pour ajouter deux fonctions SECURITY DEFINER à search_path fixe, qui dérivent l'identité de auth.uid() et ne prennent jamais un UUID utilisateur fourni par le client.
+- msg_storage_cleanup_allowed(path) refuse explicitement tout chemin qui n'est pas de forme msg/<id numérique>/<UUID-auth-...> et refuse tout objet dont les métadonnées sont liées par msg_messages.attachment_id.
+- msg_attachment_cleanup_allowed(id) n'autorise que la suppression d'une ligne appartenant à l'utilisateur, en statut pending, dont le message lui appartient et n'est pas lié à cette pièce jointe.
+- Exécution des helpers révoquée à public et anon, accordée uniquement à authenticated. Le contrôle de chemin dans le helper borne aussi son usage RPC au namespace Messenger de l'utilisateur courant.
+- Le script d'intégration ajoute désormais un objet synthétique lié à un message et vérifie que même son propriétaire ne peut pas le supprimer via Storage. Le scénario metadata pending utilise aussi un objet propre à A plutôt que le chemin de B.
+
+### État de validation
+- Commits de migration et test : 47fbc52, 02a8e75, puis durcissement du helper 91d5588.
+- Le correctif est uniquement sur la branche de la PR. Migration non appliquée au Supabase actif ; aucun code client de compensation activé.
+- Aucun runtime n'est disponible ici (Docker, Supabase CLI et psql absents). GitHub Actions continue de terminer les jobs sans étapes/journaux exposés ; la migration et les tests ne sont donc pas déclarés validés.
+- Prochaine étape : obtenir une exécution réelle du workflow et vérifier particulièrement les permissions EXECUTE, la politique Storage et le refus de suppression d'un objet lié. Aucun déploiement ni fusion avant cette preuve.
