@@ -1678,3 +1678,10 @@
 - Conclusion : la piste Realtime v2.143.3 est techniquement cohérente avec le symptôme, mais reste non confirmée pour notre pile locale. Ne pas forcer une version Realtime, ne pas modifier le schéma/la publication/RLS et ne pas modifier le protocole avant d'avoir la preuve de l'image et des logs.
 - Aucun changement sur Supabase actif, Auth, RLS, schéma, données, publication, secrets ou facturation. Aucun changement sur `main`, aucune fusion PR #17, aucun déploiement de production. PR #17 reste ouverte et non fusionnée.
 - Prochaine étape : obtenir une exécution effective du workflow instrumenté (ou lancer le même workflow sur un poste disposant déjà de Docker), puis comparer l'image/digest réellement démarrée aux versions v2.143.3 et v2.148.3 et lire les journaux CDC avant toute correction.
+
+
+### Addendum Lot 491 — divergence de la branche constatée après documentation
+
+- Comparaison GitHub au 14 novembre : la branche de PR #17 est en avance de 2 766 commits et en retard de 4 commits sur `main` (état `diverged`, base commune `51acfe8c97b6e152208d592dbd2c5bbde5c5c38e`). Les quatre commits propres à `main` touchent uniquement `brand/85.PNG`, `brand/86.jpeg` et `brand/87.jpeg` ; aucune modification des workflows, scripts de test, migrations ou fichiers Messenger n'apparaît dans ce delta de `main`.
+- Après les commits documentaires Lot 491, GitHub a momentanément retourné `mergeable=false` pour la PR. Ne pas interpréter ce champ seul comme une preuve de conflit de contenu : la branche est simplement en retard de quatre commits, et l'API peut recalculer l'état de fusion. Aucune mise à jour de base, rebase, fusion ou modification de `main` n'a été effectuée.
+- Décision conservatoire : garder la PR ouverte et ne pas la rebaser automatiquement ; vérifier à nouveau le statut de fusion après stabilisation de GitHub et avant toute demande de revue. Le travail Messenger continue sur la branche dédiée.
