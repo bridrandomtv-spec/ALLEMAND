@@ -403,3 +403,11 @@
 - Aucune migration Messenger n'a été appliquée au projet Supabase cloud ; aucun compte ou message réel n'a été consulté ; aucun déploiement Cloudflare ni coût cloud n'a été engagé. La migration Multaqa 002 n'est pas incluse dans ce test.
 - PR #17 vérifiée au même HEAD : ouverte, non fusionnée, base `main`, état mergeable positif. Conserver impérativement cette PR ouverte pour validation visuelle utilisateur ; aucune modification directe sur `main`.
 - Étape suivante : auditer les chemins d'intégration de l'interface réelle `msg.js` avec les RPC et le consentement, puis construire des tests navigateur multi-comptes et Realtime dans un environnement local. Ne pas annoncer Messenger opérationnel sur le cloud avant validation et autorisation distincte d'installation des migrations 001/003.
+
+
+#### Extension du banc d'intégration Auth/RLS — commit code `1628087e73f2f9dbec2528fda880efaa7b1a6359` (14 novembre 2026)
+- Après le premier succès Auth/JWT/PostgREST/RLS, le script `ci/msg-supabase-local-test.mjs` a été étendu sans modifier le runtime Messenger ni les migrations.
+- Nouveaux scénarios ajoutés : contrat minimal de découverte (uniquement `student_id,pseudo,niveau,filiere,wilaya`, sans e-mail) ; confidentialité d'une invitation vis-à-vis d'un troisième compte non participant ; impossibilité pour le destinataire d'annuler une invitation sortante ; annulation possible par l'expéditeur ; impossibilité pour l'expéditeur de refuser sa propre invitation ; refus possible par le destinataire ; absence de conversation directe après annulation/refus.
+- Le run correspondant au commit `1628087e`, ID `43537268300`, a commencé. Au dernier contrôle : syntaxe Node réussie, initialisation CLI et configuration Auth réussies, démarrage des conteneurs locaux en cours ; les scénarios HTTP étendus n'ont pas encore été exécutés. Ne pas anticiper leur résultat.
+- Le test local précédent reste vert : run `43536751470`, avec le succès explicite GoTrue/JWT/PostgREST/consentement/RLS. La CI générale du HEAD documentaire précédent `8eb31f24` est verte ; les autres contrôles de ce HEAD sont en cours.
+- Prochaine étape : attendre le run `43537268300`, examiner le journal détaillé, corriger si nécessaire, puis inscrire le résultat définitif. Aucun changement Supabase cloud, aucune migration Messenger cloud, aucun déploiement, aucune fusion.
