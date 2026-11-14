@@ -756,3 +756,18 @@
 - Aucun changement apporté au workflow, aux migrations, à la configuration Supabase, aux secrets ou aux données. Aucun nouveau lancement aveugle des workflows.
 - Conclusion opérationnelle : le code du workflow est configuré pour un runner GitHub hébergé standard ; le blocage actuel est la fourniture d'un runner/journaux par les exécutions GitHub observées. La voie gratuite prévue reste inchangée : attendre que GitHub fournisse un runner normal, ou utiliser la machine de développement existante avec Docker et le même banc local. Il n'y a aucun besoin de créer une branche Supabase hébergée ni d'activer une facturation.
 - État PR #17 : ouverte, non fusionnée ; base `main`. Ne pas fusionner avant validation visuelle et runtime requise.
+
+## Lot 483 — confirmation du dernier preview Cloudflare et nouvel échantillon des runs CI (14 novembre 2026)
+
+- HEAD de la PR #17 : `e4897668821635d9c3259f37bc78c89052c464dc`; état `open`, fusionnée = `false`, base `main`. La PR reste ouverte et non fusionnée.
+- Le commentaire automatique Cloudflare sur la PR confirme que le commit `e4897668821635d9c3259f37bc78c89052c464dc` a été construit et déployé avec succès en preview. URL stable de preview affichée : `https://design-prototypes-67-74-alignment-allemand.bridrandomtv.workers.dev`. Cela confirme la livraison du bundle Worker en environnement preview, pas le fonctionnement du flux Messenger ni une validation de production.
+- Runs PR déclenchés sur ce HEAD :
+  - `43584505476` — tests PostgreSQL isolés ملتقى الطلاب ;
+  - `43584505462` — intégration Supabase local Messenger ;
+  - `43584505589` — PostgreSQL consentement Messenger ;
+  - `43584505565` — PostgreSQL découverte Messenger ;
+  - `43584505558` — CI ALLEMAND.
+- Inspection des jobs pour Messenger local (`132416011278`), CI (`132416011996`) et découverte PostgreSQL (`132416011348`) : tous sont terminés en échec avec `steps=null` et `logs_url=null`. Aucun script, commande ou étape de test n'a été exécuté selon les données disponibles. Ce nouvel échantillon confirme le blocage en amont de l'exécution ; il ne constitue pas un résultat de test applicatif.
+- Relecture complémentaire du script d'intégration : le scénario synthétique ouvre le WebSocket avec le JWT du destinataire, attend l'ACK du canal et l'état système `postgres_changes`, vérifie l'accès RLS du destinataire, crée l'invitation via RPC, attend l'INSERT correspondant, puis annule l'invitation. Le test inclut également l'usage du jeton opaque de découverte, lié à l'acteur.
+- Aucun changement de code ou de configuration déclenché par ce lot ; aucune migration Messenger appliquée en production, aucune modification Auth/RLS/Realtime/secret, aucun coût, aucun changement sur `main`.
+- Conclusion : le preview Cloudflare de la branche est disponible ; le test Messenger Realtime reste non validé, car le runner GitHub n'a toujours pas fourni d'étapes ni de journaux. Reprendre dès qu'un run fournit un job réellement exécuté, ou depuis le poste local avec Docker et le banc gratuit existant. Ne pas assimiler le succès Cloudflare preview à une validation Messenger.
