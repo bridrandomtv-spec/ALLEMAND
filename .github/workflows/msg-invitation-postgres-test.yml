@@ -32,3 +32,11 @@ jobs:
         env:
           PGPASSWORD: postgres
         run: psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d postgres -f ci/msg-invitation-postgres-test.sql
+      - name: Tester les courses concurrentes acceptation/annulation sur deux sessions PostgreSQL
+        env:
+          PGHOST: 127.0.0.1
+          PGPORT: 5432
+          PGUSER: postgres
+          PGDATABASE: postgres
+          PGPASSWORD: postgres
+        run: bash ci/msg-invitation-concurrency-test.sh
