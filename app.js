@@ -2402,6 +2402,7 @@ function renderCompte(){
           '<p class="dz-account-footnote">لا تُعرض نسب أو أهداف غير مسجّلة في حسابك.</p>' +
         '</section>' +
       '</div>' +
+      (s.role === 'eleve' ? '<section class="dz-account-card dz-account-verification"><div class="dz-account-card-head"><span>🪪</span><div><h3>الهوية المدرسية</h3><p>حالة التحقق المدرسي المرتبطة بحسابك</p></div></div><p id="accountVerificationStatus" aria-live="polite">جارٍ تحميل حالة التحقق…</p><button class="btn btn-o" type="button" data-go="msg">فتح نموذج التحقق في الرسائل</button><small>التحقق مجاني ولا يتطلب اشتراكاً مدفوعاً.</small></section>' : '') +
       '<section class="dz-account-card dz-account-privacy">' +
         '<div class="dz-account-card-head"><span>🔒</span><div><h3>الخصوصية وحماية البيانات</h3><p>توضيح مكان حفظ بيانات حسابك</p></div></div>' +
         '<div class="dz-account-privacy-note">' +
@@ -2416,6 +2417,26 @@ function renderCompte(){
         '<button class="btn btn-r" id="btnLogout" type="button">🚪 تسجيل الخروج</button>' +
       '</div>' +
     '</div>';
+
+  if(s.role === 'eleve'){
+    const verificationStatus = $('#accountVerificationStatus');
+    if(verificationStatus){
+      if(s.src !== 'cloud' || !window.SB || !window.SB.msgMyVerification){
+        verificationStatus.textContent = 'اربط حساباً سحابياً أولاً حتى تتمكن من إرسال طلب التحقق المدرسي.';
+      } else {
+        const accountUid = s.uid;
+        window.SB.msgMyVerification().then(function(vf){
+          const active = window.AUTH && AUTH.session ? AUTH.session() : null;
+          if(!verificationStatus.isConnected || !active || active.uid !== accountUid) return;
+          if(!vf || !vf.ok){ verificationStatus.textContent = 'تعذّر تحميل حالة التحقق الآن. افتح الرسائل وأعد المحاولة.'; return; }
+          const labels = {verifie:'✔ تم التحقق من هويتك المدرسية.',en_attente:'⏳ طلبك قيد المراجعة من فريق الإشراف.',rejete:'⛔ رُفض الطلب. يمكنك تصحيح رقم التسجيل أو الشعبة وإعادة الإرسال.',non_verifie:'لم ترسل طلب التحقق بعد.'};
+          verificationStatus.textContent = labels[vf.statut] || 'حالة التحقق غير محددة.';
+        }).catch(function(){
+          if(verificationStatus.isConnected) verificationStatus.textContent = 'تعذّر تحميل حالة التحقق الآن. افتح الرسائل وأعد المحاولة.';
+        });
+      }
+    }
+  }
 
   const lo = $('#btnLogout');
   if(lo) lo.addEventListener('click', () => {
