@@ -68,7 +68,8 @@ grant usage on schema public to anon,authenticated,service_role;
 grant select,insert,update,delete on public.msg_messages,public.msg_attachments to authenticated,service_role;
 grant select,insert,update,delete on public.msg_conversations,public.msg_members to authenticated,service_role;
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
-values ('prive','prive',false,5242880,array['application/pdf'])
+values ('prive','prive',false,5242880,array['application/pdf']),
+       ('prive-autre','prive-autre',false,5242880,array['application/pdf'])
 on conflict (id) do nothing;
 -- Narrow upload rule matching the Messenger path contract used by msgUpload().
 create policy "lot503 msg storage upload" on storage.objects
@@ -81,6 +82,39 @@ create policy "lot503 msg storage upload" on storage.objects
     and case when (storage.foldername(name))[2] ~ '^[0-9]+$'
       then public.msg_is_member(auth.uid(),(storage.foldername(name))[2]::bigint)
       else false end
+  );
+
+
+-- Additional upload paths exist only to exercise deny rules in this isolated fixture.
+create policy "lot503 other bucket fixture upload" on storage.objects
+  for insert to authenticated with check (
+    bucket_id='prive-autre'
+    and owner=auth.uid()
+    and (storage.foldername(name))[1]='msg'
+    and cardinality(storage.foldername(name))=2
+    and split_part(name,'/',3) like auth.uid()::text || '-%'
+    and case when (storage.foldername(name))[2] ~ '^[0-9]+$'
+      then public.msg_is_member(auth.uid(),(storage.foldername(name))[2]::bigint)
+      else false end
+  );
+create policy "lot503 malformed path fixture upload" on storage.objects
+  for insert to authenticated with check (
+    bucket_id='prive'
+    and owner=auth.uid()
+    and (storage.foldername(name))[1]='msg'
+    and (
+      ((storage.foldername(name))[2]='not-a-number'
+        and cardinality(storage.foldername(name))=2
+        and split_part(name,'/',3) like auth.uid()::text || '-%')
+      or
+      ((storage.foldername(name))[2] ~ '^[0-9]+$'
+        and cardinality(storage.foldername(name))=3
+        and split_part(name,'/',4) like auth.uid()::text || '-%')
+      or
+      ((storage.foldername(name))[2] ~ '^[0-9]+$'
+        and cardinality(storage.foldername(name))=2
+        and split_part(name,'/',3) = 'not-' || auth.uid()::text || '-fixture.pdf')
+    )
   );
 
 -- Reproduce the pre-existing permissive owner-delete rule. PostgreSQL RLS
