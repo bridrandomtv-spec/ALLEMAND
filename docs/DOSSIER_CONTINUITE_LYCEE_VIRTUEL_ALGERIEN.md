@@ -2755,3 +2755,11 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Après ouverture de la PR, GitHub a retourné quatre exécutions en échec : CI ALLEMAND run `43640947504`, tests PostgreSQL ملتقى run `43640947517`, tests PostgreSQL consentement Messenger run `43640947578`, tests PostgreSQL découverte Messenger run `43640947557`. Les jobs sont signalés terminés en échec, mais l’API consultée ne fournit aucune étape et le téléchargement des journaux retourne 404 ; la cause précise ne peut donc pas être attribuée à un défaut du code ni à la restriction de facturation sans les journaux.
 - GitHub indique actuellement `mergeable=false` pour la PR #20. Malgré l’absence de retard de branche, ne pas fusionner tant que GitHub ne confirme pas l’état fusionnable et que l’échec CI n’est pas expliqué. Aucun déploiement Cloudflare et aucune modification Supabase.
 - Correction source incluse dans le HEAD : littéral HTML de la carte confidentialité refermé correctement dans `app.js` ; toutes les assertions de version Service Worker de `check-msg.mjs` attendent maintenant `.168`.
+
+
+### Clôture du Lot 552 — PR #20 fusionnée (14 novembre 2026)
+- PR #20 fusionnée avec squash dans `main` : commit `431d4c6f80aac4ca79a5026f832981070fd03681` ; GitHub a confirmé `merged=true`.
+- Contrôle après fusion sur `main` : le statut de vérification du compte, le bouton Forum → Messenger, la carte identité du tableau de bord et les versions `app.js?v=3570`, `multaqa.js?v=4`, Service Worker `.168` sont présents.
+- Les quatre exécutions Actions en échec sur le premier HEAD restent non diagnostiquées faute d’étapes/journaux consultables. Ne pas présenter la CI comme verte. La compilation statique sans exécution de `app.js` et `multaqa.js` et les vérifications ciblées sont les validations confirmées.
+- `main` contient désormais les changements. Le déploiement Cloudflare n’a pas été effectué ni vérifié ; l’interface de production ne doit donc pas être annoncée comme mise à jour.
+- Aucun changement de schéma, migration, Auth, RLS, RPC ou donnée Supabase.
