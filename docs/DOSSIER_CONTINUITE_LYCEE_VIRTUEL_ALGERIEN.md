@@ -2686,3 +2686,11 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Fichier modifié : `ci/msg-supabase-local-test.mjs`. Commits : ajout des scénarios `83929ff44631dfc98036610f84ba217bef97e3aa`, correction de l'assertion numérique de l'identifiant `ad29038fdec12395183bf8bd25dbd3ee17cf35b6`.
 - Validation limitée à la relecture statique du test et de la migration. Aucun test dynamique Node/PostgreSQL/Supabase n'a pu être lancé : GitHub Actions reste bloqué avant démarrage du runner pour la restriction de facturation du compte.
 - Aucun DDL/DML ni changement Auth/RLS/Realtime sur Supabase actif ; aucune modification de `main`, aucune fusion PR #17 et aucun déploiement Cloudflare.
+
+## Lot 547 — réutilisation d'un DM historique lors d'une nouvelle acceptation (14 novembre 2026)
+- La migration `msg_invite_accept` recherche déjà un DM direct historique entre les deux membres avant d'en créer un nouveau. Si elle en trouve un, elle rattache l'invitation à ce `conversation_id`, la marque `accepted` et conserve la conversation existante.
+- Le test local couvrait la première création d'un DM et l'idempotence de la même acceptation, mais pas une nouvelle invitation créée après qu'un DM existe déjà.
+- Ajout d'un second cycle complet : l'expéditeur crée une nouvelle invitation au même destinataire ; celui-ci l'accepte ; le test exige que la RPC retourne l'identifiant du DM initial, que l'invitation soit `accepted` avec ce même `conversation_id` et un `responded_at`, et que la liste des DM visibles du destinataire ne contienne toujours qu'une seule conversation.
+- Fichier modifié : `ci/msg-supabase-local-test.mjs`. Commit : `9a3cae800d36c5c011ac2707d7c442cab7f592d4`.
+- Contrôle effectué par relecture statique de la séquence de test et de la fonction SQL. Aucun test dynamique Node/PostgreSQL/Supabase n'a été exécuté, le runner GitHub Actions étant toujours bloqué avant démarrage pour la restriction de facturation du compte.
+- Aucun changement de migration, schéma, Auth, RLS ou Realtime sur Supabase actif ; aucune modification de `main`, aucune fusion PR #17, aucun déploiement Cloudflare.
