@@ -544,3 +544,12 @@
 - Les relances des cinq jobs ont reproduit le même symptôme. Aucune autre relance en boucle n'est lancée ; attendre une exécution où un runner est effectivement attribué, puis reprendre l'analyse fonctionnelle.
 - La PR #17 est toujours ouverte, non fusionnée et mergeable au dernier contrôle. Aucun changement sur `main`, aucune migration hébergée, aucun changement Auth/RLS de production et aucun déploiement Cloudflare.
 - Le défaut Realtime de Messenger reste distinct et non résolu : le destinataire n'a toujours pas reçu d'événement INSERT dans le test local. Messenger ne doit donc pas être annoncé comme opérationnel.
+
+## Lot 468 — validation explicite de l'ACK Postgres Changes (14 novembre 2026)
+
+- L'analyse du protocole officiel Realtime confirme que le `phx_reply` positif à `phx_join` doit contenir `response.postgres_changes` avec l'identifiant et la cible de chaque abonnement. Les événements `system` de l'extension `postgres_changes` donnent séparément le statut de l'inscription CDC ; l'architecture Realtime utilise un worker Postgres CDC distinct du flux Broadcast.
+- Le test local vérifiait seulement `payload.status === "ok"` et conservait les trames brutes en cas de timeout. Il ne validait pas que la réponse d'adhésion confirme explicitement `public.msg_invites` ni ne classait les statuts `system` de l'extension CDC.
+- Le test vérifie désormais que `phx_reply.response.postgres_changes` contient effectivement `schema=public` et `table=msg_invites`. Un ACK positif sans cette entrée est maintenant rejeté immédiatement avec la réponse du serveur.
+- Les événements `system` dont `extension=postgres_changes` sont conservés dans un journal borné et ajoutés au message d'échec, avec les lignes `realtime.subscription` relues après le délai. Cela permettra de distinguer un ACK incomplet, une erreur d'inscription CDC et une souscription correcte sans livraison WAL.
+- Commit du test : `d36af34a1b5c3d9e333ec1e06564927ecc18f9e2`. Exécution CI à contrôler ; les workflows précédents avaient échoué avant affectation de runner (`runner_id=0`), donc aucune conclusion d'exécution n'est encore possible pour ce changement.
+- Aucun changement des migrations, du runtime Messenger, des politiques, des données réelles ou de Supabase hébergé. PR #17 reste ouverte et non fusionnée ; `main` reste inchangée. Messenger n'est pas déclaré opérationnel tant que le test n'a pas confirmé la réception effective de l'événement par le destinataire.
