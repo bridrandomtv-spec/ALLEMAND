@@ -202,16 +202,23 @@ do $$ begin
    raise exception 'accept_rpc_not_granted';
  end if;
 end $$;
-do $$ begin
+do $
+declare v_conv bigint;
+begin
  begin
+   -- La politique autorise la création d'un conteneur direct vide par son créateur.
+   -- Le garde-fou doit refuser le premier membre tant qu'aucune invitation n'est acceptée.
    insert into public.msg_conversations(type,created_by,titre)
-   values('direct','20000000-0000-4000-8000-000000000001','bypass');
-   raise exception 'direct_conversation_insert_bypass';
+   values('direct','20000000-0000-4000-8000-000000000001','bypass')
+   returning id into v_conv;
+   insert into public.msg_members(conversation_id,user_id)
+   values(v_conv,'20000000-0000-4000-8000-000000000001');
+   raise exception 'direct_membership_bypass';
  exception when others then
-   if sqlerrm='direct_conversation_insert_bypass' then raise; end if;
-   if sqlerrm not like '%row-level security%' then raise; end if;
+   if sqlerrm='direct_membership_bypass' then raise; end if;
+   if sqlerrm<>'msg_invitation_requise' then raise; end if;
  end;
-end $$;
+end $;
 
 reset role;
 select 'PASS: envoi, consentement, refus, annulation, idempotence et anti-contournement DM' as result;
