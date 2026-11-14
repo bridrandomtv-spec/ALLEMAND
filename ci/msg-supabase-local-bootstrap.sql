@@ -35,6 +35,7 @@ create table public.msg_messages (
   conversation_id bigint not null references public.msg_conversations(id) on delete cascade,
   sender_id uuid not null references auth.users(id) on delete cascade,
   body text not null default '',
+  attachment_id bigint,
   flagged int not null default 0,
   created_at timestamptz not null default now(),
   edited_at timestamptz,
