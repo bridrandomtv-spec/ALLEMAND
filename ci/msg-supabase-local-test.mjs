@@ -270,8 +270,10 @@ async function subscribeToMessageChanges(user, conversationId) {
           return;
         }
         const changes = payload.response?.postgres_changes ?? [];
-        if (!changes.some((item) => item.schema === "public" && item.table === "msg_messages")) {
-          rejectReady(new Error("Realtime did not acknowledge the expected public.msg_messages table: " + JSON.stringify(changes)));
+        if (!changes.some((item) => item.schema === "public" && item.table === "msg_messages" &&
+            item.filter === filter)) {
+          rejectReady(new Error("Realtime did not acknowledge public.msg_messages with the exact conversation filter " +
+            filter + ": " + JSON.stringify(changes)));
           return;
         }
         joinAcknowledged = true;
