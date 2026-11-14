@@ -169,6 +169,19 @@ ok(insertStart >= 0 && insertEnd > insertStart &&
    insertHandler.includes("currentThread.querySelector('[data-mid="'+m.id+'"]')"),
    'INSERT Realtime : DOM courant revalidé après les lectures asynchrones, sans écriture dans un fil détaché');
 
+// Lot 530 — le SDK renouvelle le JWT Realtime; l'UI suit les changements d'identité.
+ok(/client\.auth\.onAuthStateChange\(function\(event\)/.test(msgjs) &&
+   msgjs.includes("if(event!=='SIGNED_IN' && event!=='SIGNED_OUT') return;"),
+   'Messenger observe les changements de session sans intercepter le renouvellement normal du jeton');
+ok(msgjs.includes('if(authClient!==client) return;') &&
+   msgjs.includes("if(event==='SIGNED_OUT'){ ") || msgjs.includes("if(event==='SIGNED_OUT'){"),
+   'changement de compte : ancien client ignoré et déconnexion traitée');
+ok(msgjs.includes('if(state.inviteViewActive) renderList();') &&
+   msgjs.includes('if(activeConv) renderThread(activeConv);'),
+   'vue Messenger réconciliée après connexion ou déconnexion');
+ok(msgjs.includes('Supabase JS 2.x propage lui-même le JWT vers Realtime sur TOKEN_REFRESHED') &&
+   !/realtime\.setAuth\(/.test(msgjs),
+   'aucun setAuth manuel concurrent : le SDK Supabase gère déjà TOKEN_REFRESHED');
 // Lot 529 — initialisation single-flight : un seul client Auth/Realtime même en repli CDN.
 const sbInitStart = sbjs.indexOf('async function sb(){');
 const sbInitEnd = sbjs.indexOf('\nasync function login(', sbInitStart);
