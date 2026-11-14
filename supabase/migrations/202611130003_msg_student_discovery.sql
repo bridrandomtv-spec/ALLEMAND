@@ -50,6 +50,8 @@ create table if not exists public.msg_discovery_targets (
 );
 create index if not exists msg_discovery_targets_actor_expiry_idx
   on public.msg_discovery_targets(actor_id, expires_at);
+create index if not exists msg_discovery_targets_expiry_idx
+  on public.msg_discovery_targets(expires_at);
 alter table public.msg_discovery_targets enable row level security;
 revoke all on public.msg_discovery_targets from public, anon, authenticated;
 
@@ -93,8 +95,10 @@ begin
   select searches into v_count from public.msg_discovery_limits where actor_id=v_actor;
   if v_count > 8 then raise exception 'search_rate_limit'; end if;
 
+  -- Nettoyage global borné par l'index d'expiration : évite de conserver
+  -- indéfiniment les jetons expirés des comptes qui ne relancent pas de recherche.
   delete from public.msg_discovery_targets
-   where actor_id=v_actor and expires_at <= now();
+   where expires_at <= now();
 
   return query
     with candidates as materialized (
