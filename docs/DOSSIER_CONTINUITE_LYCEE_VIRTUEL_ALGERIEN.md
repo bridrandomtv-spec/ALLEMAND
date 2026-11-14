@@ -782,3 +782,16 @@
 - Les workflows associés à ce commit ne sont pas encore retournés par l'API au moment de la rédaction. Aucun résultat d'exécution n'est revendiqué.
 - Aucun changement de migration, schéma, données, Auth, RLS, publication Realtime ou secret en production ; aucun service payant ; aucun changement sur `main`.
 - La PR #17 reste le seul canal de travail et doit rester ouverte/non fusionnée jusqu'à validation visuelle et fonctionnelle explicite.
+
+
+## Lot 485 — jetons de découverte à usage unique (14 novembre 2026)
+
+- Audit du flux de découverte Messenger : le jeton opaque était lié au compte demandeur et expirait après cinq minutes, mais pouvait être rejoué plusieurs fois pendant sa période de validité.
+- Migration `202611130003_msg_student_discovery.sql` : ajout de `used_at` à `msg_discovery_targets` ; `msg_invite_send_by_key` consomme maintenant le jeton par un `UPDATE ... WHERE used_at IS NULL ... RETURNING` atomique. Un rejeu, un jeton expiré ou un jeton d'un autre acteur est rejeté. Si l'envoi de l'invitation échoue, la transaction annule également la consommation.
+- Test d'intégration `ci/msg-supabase-local-test.mjs` : ajout d'un test négatif qui rejoue le même jeton après son premier usage et attend un refus.
+- Contrôle statique `ci/check-msg.mjs` : assertions sur la consommation atomique et le test de rejeu.
+- Commits code : migration `eddf385f3a4658b41825e68c0cd5581a8fe36e3d` ; test `5105a74df5f8de9638a70fc13eea57752888a7d1` ; contrôle statique `d184ac7d0078397294c5c5b9aaacd9c33fe3e7ec`.
+- Les fichiers ont été relus sur la branche après écriture : les trois modifications sont présentes. La validation SQL/PostgreSQL réelle reste en attente d'un runner GitHub fonctionnel ; aucune exécution locale Docker n'est possible dans l'environnement actuel.
+- Aucun déploiement de migration sur Supabase actif, aucun changement Auth/RLS/données/Realtime de production, aucun secret modifié, aucun service payant. `main` reste inchangée.
+- PR #17 vérifiée après les commits : ouverte, non fusionnée, cible `main`, fusionnabilité signalée true.
+- Les workflows observés sur le commit précédent `0ebabf0` ont échoué avant leurs étapes (`steps=null`) ; aucun runner n'a été attribué. Les commits de ce lot nécessitent encore leur propre exécution CI pour valider les tests.
