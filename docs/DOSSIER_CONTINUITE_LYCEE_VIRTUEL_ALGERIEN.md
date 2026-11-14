@@ -2341,3 +2341,13 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - **Non exécuté** : le runner GitHub Actions demeure bloqué avant démarrage par l'annotation de facturation du compte. Le nouveau contrôle est donc une assertion préparée, pas un résultat de test. Il faudra exécuter le workflow dans un environnement local isolé ou après rétablissement indépendant de l'accès aux runners, sans modifier le plafond de dépenses.
 - PR #17 demeure ouverte et non fusionnée ; `main` reste inchangée. Aucun déploiement.
 
+## Lot 522 — parité UPDATE, édition et suppression logique des messages
+
+- L'audit du dossier a retrouvé le résultat de l'inspection antérieure du catalogue Supabase actif : `authenticated` ne possède pas de privilège UPDATE global sur `msg_messages`; seuls `body`, `edited_at` et `deleted_at` sont modifiables. Les colonnes `sender_id`, `conversation_id`, `attachment_id`, `flagged` et `id` ne sont pas modifiables par ce rôle. La policy active limite l'UPDATE à l'expéditeur ou au modérateur, avec contrôle de la ligne après mise à jour.
+- Écart constaté dans le test synthétique : le bootstrap accordait auparavant UPDATE sur toute la table et ne créait pas la policy `msg messages edition`. Il ne pouvait donc pas valider les garde-fous de l'édition/suppression.
+- Correctif du bootstrap local : ajout de la policy UPDATE expéditeur/modérateur avec `USING` et `WITH CHECK`; retrait du privilège UPDATE global ; attribution du privilège UPDATE uniquement sur `body`, `edited_at` et `deleted_at`.
+- Extension de `ci/msg-supabase-local-test.mjs` : la souscription destinataire écoute désormais tous les événements `msg_messages` ; le test vérifie l'édition par l'expéditeur et l'événement Realtime UPDATE, le refus d'édition par le non-membre, le refus de modification de `sender_id` malgré l'identité de l'expéditeur, puis la suppression logique via `deleted_at` et son événement UPDATE. L'abonné extérieur observe les événements INSERT et UPDATE et doit n'en recevoir aucun.
+- Commits : bootstrap RLS/grants `0a44aa60a5536fac053d189aeaecdcbe929629f0` ; tests édition/suppression `b1d7438924b660953d500e33d9d5a13d59684d87` ; observation de tous les événements privés `e339ff8f9b32d70429766d0cf9add0bc8f28e5b2`.
+- Limite : ce fixture est un environnement synthétique ciblé, pas une copie complète des triggers et objets de production. Les tests restent **non exécutés** tant que les runners GitHub sont bloqués par l'annotation de facturation. Aucun changement sur la base Supabase hébergée, aucune donnée réelle, aucun déploiement Cloudflare.
+- PR #17 reste ouverte et non fusionnée ; `main` n'est pas modifiée.
+
