@@ -86,6 +86,8 @@ async function subscribeToInviteChanges(user) {
   let cdcReady = false;
   let closedByTest = false;
   let eventSettled = false;
+  let expectedInviteId = null;
+  const queuedInviteEvents = [];
   const receivedFrames = [];
   let joinPostgresChanges = null;
   const postgresSystemFrames = [];
@@ -186,11 +188,15 @@ async function subscribeToInviteChanges(user) {
         const changeType = data.type || data.eventType || payload.eventType;
         if (String(changeType || "").toUpperCase() === "INSERT" &&
             record.recipient_id === user.id && record.status === "pending") {
-          if (!eventSettled) {
+          const inviteEvent = { changeType: "INSERT", record };
+          if (expectedInviteId !== null && String(record.id) === expectedInviteId && !eventSettled) {
             eventSettled = true;
             clearTimeout(timeout);
             timeout = null;
-            resolveEvent({ changeType: "INSERT", record });
+            resolveEvent(inviteEvent);
+          } else {
+            queuedInviteEvents.push(inviteEvent);
+            if (queuedInviteEvents.length > 50) queuedInviteEvents.shift();
           }
         }
       }
@@ -224,7 +230,21 @@ async function subscribeToInviteChanges(user) {
     }
     console.log("Realtime CDC subscriptions for public.msg_invites:", subscriptionProbe.stdout.trim() || "(aucune ligne)");
     return {
-      waitForInvite: () => eventPromise,
+      waitForInvite: (inviteId) => {
+        assert.ok(inviteId, "waitForInvite requires the expected invitation id");
+        assert.equal(expectedInviteId, null, "waitForInvite can only be called once");
+        expectedInviteId = String(inviteId);
+        const queuedIndex = queuedInviteEvents.findIndex((change) =>
+          String(change.record.id) === expectedInviteId
+        );
+        if (queuedIndex !== -1 && !eventSettled) {
+          eventSettled = true;
+          clearTimeout(timeout);
+          timeout = null;
+          resolveEvent(queuedInviteEvents.splice(queuedIndex, 1)[0]);
+        }
+        return eventPromise;
+      },
       close: () => {
         clearTimeout(timeout);
         timeout = null;
@@ -419,26 +439,42 @@ try {
     bearer: sender.token,
     body: { p_recipient: observer.id },
   });
+  assert.match(realtimeInvite, /^[0-9a-f-]{36}$/i, "Invitation RPC did not return a UUID");
   const realtimeServiceRow = await call(
     `/rest/v1/msg_invites?select=id,sender_id,recipient_id,status&id=eq.${realtimeInvite}`,
     { key: serviceRoleKey, bearer: serviceRoleKey },
   );
   assert.equal(realtimeServiceRow.length, 1, "Invitation RPC did not persist a row visible to service_role");
+  assert.equal(String(realtimeServiceRow[0].id), realtimeInvite);
+  assert.equal(realtimeServiceRow[0].sender_id, sender.id);
   assert.equal(realtimeServiceRow[0].recipient_id, observer.id);
+  assert.equal(realtimeServiceRow[0].status, "pending");
   const realtimeRecipientRow = await call(
     `/rest/v1/msg_invites?select=id,recipient_id,status&id=eq.${realtimeInvite}`,
     { bearer: observer.token },
   );
   assert.equal(realtimeRecipientRow.length, 1, "Recipient RLS cannot read its own pending invitation");
-  const realtimeEvent = await realtimeObserver.waitForInvite();
-  assert.equal(realtimeEvent.record.id, realtimeInvite, "Realtime event did not match the created invitation");
+  assert.equal(String(realtimeRecipientRow[0].id), realtimeInvite);
+  assert.equal(realtimeRecipientRow[0].recipient_id, observer.id);
+  assert.equal(realtimeRecipientRow[0].status, "pending");
+  const realtimeEvent = await realtimeObserver.waitForInvite(realtimeInvite);
+  assert.equal(String(realtimeEvent.record.id), realtimeInvite, "Realtime event did not match the created invitation");
   assert.equal(realtimeEvent.record.sender_id, sender.id);
+  assert.equal(realtimeEvent.record.recipient_id, observer.id);
+  assert.equal(realtimeEvent.record.status, "pending");
   const realtimeCancelled = await call("/rest/v1/rpc/msg_invite_cancel", {
     method: "POST",
     bearer: sender.token,
     body: { p_invite: realtimeInvite },
   });
   assert.equal(realtimeCancelled, true, "Could not clean up the synthetic Realtime invitation");
+  const cancelledRealtimeRow = await call(
+    `/rest/v1/msg_invites?select=id,status&id=eq.${realtimeInvite}`,
+    { key: serviceRoleKey, bearer: serviceRoleKey },
+  );
+  assert.equal(cancelledRealtimeRow.length, 1, "Cancelled Realtime invitation disappeared unexpectedly");
+  assert.equal(cancelledRealtimeRow[0].status, "cancelled",
+    "Cancellation RPC returned true but the persisted invitation status did not change");
 } finally {
   realtimeObserver.close();
 }
