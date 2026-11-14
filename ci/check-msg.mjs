@@ -169,6 +169,32 @@ ok(insertStart >= 0 && insertEnd > insertStart &&
    insertHandler.includes("currentThread.querySelector('[data-mid="'+m.id+'"]')"),
    'INSERT Realtime : DOM courant revalidé après les lectures asynchrones, sans écriture dans un fil détaché');
 
+
+// Lot 534 — les réponses de découverte et d'invitation ne traversent pas une transition Auth.
+const peerSendStart = msgjs.indexOf("var peerKey = t.getAttribute('data-peer-key');");
+const peerSendEnd = msgjs.indexOf("var inviteAct = t.getAttribute('data-invite-act');", peerSendStart);
+const peerSendFn = msgjs.slice(peerSendStart, peerSendEnd);
+ok(peerSendFn.includes('inviteIdentityEpoch = state.authEpoch') &&
+   peerSendFn.includes('if(state.authEpoch!==inviteIdentityEpoch) return;') &&
+   peerSendFn.includes('if(state.authEpoch!==inviteIdentityEpoch) return;'),
+   'envoi d’invitation par jeton opaque : résultat/erreur tardifs ignorés après changement de compte');
+const inviteActionStart = msgjs.indexOf("var inviteAct = t.getAttribute('data-invite-act');");
+const inviteActionEnd = msgjs.indexOf("if(t.getAttribute('data-conv'))", inviteActionStart);
+const inviteActionFn = msgjs.slice(inviteActionStart, inviteActionEnd);
+ok(inviteActionFn.includes('inviteActionIdentityEpoch = state.authEpoch') &&
+   inviteActionFn.includes('if(state.authEpoch!==inviteActionIdentityEpoch) return;'),
+   'acceptation/refus/annulation : réponse tardive neutralisée après transition Auth');
+const studentSearchStart = msgjs.indexOf("if(act==='search-students'){");
+const studentSearchEnd = msgjs.indexOf("if(act==='refresh')", studentSearchStart);
+const studentSearchFn = msgjs.slice(studentSearchStart, studentSearchEnd);
+ok(studentSearchFn.includes('searchIdentityEpoch = state.authEpoch') &&
+   studentSearchFn.includes('if(state.authEpoch!==searchIdentityEpoch) return;') &&
+   studentSearchFn.includes('resultsBox && resultsBox.isConnected'),
+   'recherche de camarades : aucune liste de jetons ni erreur injectée par une ancienne session');
+ok(idx.includes('msg.js?v=3524') && sw.includes('msg.js?v=3524') &&
+   sw.includes("dz-de-v3.185.0.0.163"),
+   'cache module et version service worker alignés sur Lot 534');
+
 // Lot 531 — le canal d'invitations a son propre cycle de reprise.
 ok(msgjs.includes('inviteRecoveryTimer:null') && msgjs.includes('inviteRecoveryAttempts:0') &&
    msgjs.includes('inviteNeedsRecovery:false'),
