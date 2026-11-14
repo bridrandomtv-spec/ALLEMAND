@@ -639,3 +639,10 @@
 - Commit code : `b51d0386b86d816fa715bb8c965d6aaef5f5e834`.
 - Validation : revue statique des ancres modifiées et vérification de présence des contrôles. Aucun test navigateur ni exécution locale n'a été réalisée ; les workflows GitHub précédents n'ont exécuté aucune étape.
 - La réception CDC `public.msg_invites` demeure non démontrée. Aucun changement de schéma, migration, Auth/RLS, données hébergées, `main` ou déploiement de production.
+
+
+### Complément Lot 477 — couverture de tous les appels asynchrones de la liste
+
+- Relecture après le premier commit : `renderList()` comporte aussi des chargements asynchrones des invitations, signalements et file de vérification réservés à certains profils. J'ai ajouté les contrôles `renderEpoch` après chacun de ces appels (y compris entre les deux chargements de modération) pour qu'aucun résultat tardif ne poursuive la construction d'un ancien écran.
+- Commit complémentaire code : `c8d9a6b` (voir SHA complet dans l'historique Git de la branche).
+- Contrôle : vérification statique des emplacements d'attente et des gardes. Pas d'exécution locale ni navigateur ; CI reste non probante tant que les jobs n'exécutent aucune étape.
