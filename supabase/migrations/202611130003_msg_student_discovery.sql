@@ -32,7 +32,7 @@ as $$
 $$;
 revoke all on function public.msg_can_dm(uuid,uuid) from public, anon, authenticated;
 
--- Un seul compteur par compte, sans exposer l'historique de recherche.
+-- Compteur de recherches par acteur : aucune lecture client directe.
 create table if not exists public.msg_discovery_limits (
   actor_id uuid primary key references auth.users(id) on delete cascade,
   window_started timestamptz not null default now(),
@@ -41,8 +41,22 @@ create table if not exists public.msg_discovery_limits (
 alter table public.msg_discovery_limits enable row level security;
 revoke all on public.msg_discovery_limits from public, anon, authenticated;
 
-create or replace function public.msg_student_search(p_query text, p_limit integer default 12)
-returns table(student_id uuid, pseudo text, niveau text, filiere text, wilaya text)
+-- Jetons aléatoires à durée courte : le client ne reçoit jamais le UUID du compte cible.
+create table if not exists public.msg_discovery_targets (
+  token uuid primary key default gen_random_uuid(),
+  actor_id uuid not null references auth.users(id) on delete cascade,
+  student_id uuid not null references auth.users(id) on delete cascade,
+  expires_at timestamptz not null default (now() + interval '5 minutes')
+);
+create index if not exists msg_discovery_targets_actor_expiry_idx
+  on public.msg_discovery_targets(actor_id, expires_at);
+alter table public.msg_discovery_targets enable row level security;
+revoke all on public.msg_discovery_targets from public, anon, authenticated;
+
+-- Le contrat public renvoie un jeton opaque, jamais l'UUID auth/profil.
+drop function if exists public.msg_student_search(text,integer);
+create function public.msg_student_search(p_query text, p_limit integer default 12)
+returns table(student_key uuid, pseudo text, niveau text, filiere text, wilaya text)
 language plpgsql security definer
 set search_path = pg_catalog, public
 as $$
@@ -79,23 +93,55 @@ begin
   select searches into v_count from public.msg_discovery_limits where actor_id=v_actor;
   if v_count > 8 then raise exception 'search_rate_limit'; end if;
 
+  delete from public.msg_discovery_targets
+   where actor_id=v_actor and expires_at <= now();
+
   return query
-    select p.id, p.pseudo, p.niveau, p.filiere, p.wilaya
-      from public.profiles p
-     where p.id <> v_actor
-       and p.role='eleve'
-       and p.verif_statut='verifie'
-       and p.wilaya=v_profile.wilaya
-       and p.niveau=v_profile.niveau
-       and p.filiere=v_profile.filiere
-       and position(lower(v_query) in lower(coalesce(p.pseudo,''))) > 0
-       and not public.msg_pair_blocked(v_actor,p.id)
-     order by lower(p.pseudo), p.id
-     limit greatest(1,least(coalesce(p_limit,12),15));
+    with candidates as materialized (
+      select p.id, p.pseudo, p.niveau, p.filiere, p.wilaya
+        from public.profiles p
+       where p.id <> v_actor
+         and p.role='eleve'
+         and p.verif_statut='verifie'
+         and p.wilaya=v_profile.wilaya
+         and p.niveau=v_profile.niveau
+         and p.filiere=v_profile.filiere
+         and position(lower(v_query) in lower(coalesce(p.pseudo,''))) > 0
+         and not public.msg_pair_blocked(v_actor,p.id)
+       order by lower(p.pseudo), p.id
+       limit greatest(1,least(coalesce(p_limit,12),15))
+    ),
+    issued as (
+      insert into public.msg_discovery_targets(actor_id,student_id,expires_at)
+      select v_actor,c.id,now()+interval '5 minutes' from candidates c
+      returning token, student_id
+    )
+    select i.token, c.pseudo, c.niveau, c.filiere, c.wilaya
+      from issued i join candidates c on c.id=i.student_id;
 end;
 $$;
 
+-- Seul le propriétaire du jeton peut le convertir en invitation ; le jeton expire.
+create or replace function public.msg_invite_send_by_key(p_student_key uuid)
+returns uuid
+language plpgsql security definer
+set search_path = pg_catalog, public
+as $$
+declare
+  v_actor uuid := auth.uid();
+  v_recipient uuid;
+begin
+  if v_actor is null then raise exception 'auth_required'; end if;
+  select student_id into v_recipient
+    from public.msg_discovery_targets
+   where token=p_student_key and actor_id=v_actor and expires_at>now();
+  if v_recipient is null then raise exception 'discovery_result_expired'; end if;
+  return public.msg_invite_send(v_recipient);
+end;
+$$;
 revoke all on function public.msg_student_search(text,integer) from public, anon;
 grant execute on function public.msg_student_search(text,integer) to authenticated;
+revoke all on function public.msg_invite_send_by_key(uuid) from public, anon;
+grant execute on function public.msg_invite_send_by_key(uuid) to authenticated;
 
 commit;
