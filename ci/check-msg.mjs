@@ -78,8 +78,10 @@ ok(inviteSql.includes('msg_pair_blocked') && /create or replace function public\
    'blocage bilatéral appliqué aux accès DM');
 
 
-ok(!/^as \$$/m.test(inviteSql) && !/^\$;$/m.test(inviteSql),
+ok(!/^as \$/m.test(inviteSql) && !/^\$;$/m.test(inviteSql),
    'quotage dollar SQL valide pour toutes les fonctions');
+ok(!/^do \$(?!\$)/m.test(postgresSql) && !/^end \$(?!\$);$/m.test(postgresSql),
+   'blocs PL/pgSQL du test PostgreSQL correctement délimités');
 ok(/create or replace function public\.msg_is_member[\s\S]*?uid = auth\.uid\(\)/.test(inviteSql),
    'msg_is_member reste limité à l’utilisateur connecté');
 ok(/create or replace function public\.msg_member_ok[\s\S]*?uid = auth\.uid\(\)/.test(inviteSql),
