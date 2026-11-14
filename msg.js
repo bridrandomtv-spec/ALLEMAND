@@ -9,7 +9,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
-  var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, updateRefreshTimer:null, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
+  var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, recoveryAttempts:0, updateRefreshTimer:null, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
   async function session(){ try{ return (window.SB && window.SB.me) ? await window.SB.me() : null; }catch(e){ return null; } }
   function stamp(x){ return String(x||'').slice(0,16).replace('T',' '); }
   function card(t,s,btn){ return '<div class="msg-card"><div class="msg-ct"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div>'+(btn||'')+'</div>'; }
@@ -128,17 +128,24 @@
             var pe = el('msgPres'); if(pe) pe.textContent = n>0 ? ('● '+n+' متصل الآن') : '';
           }catch(e){}
         });
-      ch.subscribe(function(st2){
+      ch.subscribe(function(st2, err){
         if(epoch!==state.channelEpoch || state.conv!==id || state.ch!==ch) return;
         if(st2==='SUBSCRIBED'){
+          if(state.recoveryTimer){ clearTimeout(state.recoveryTimer); state.recoveryTimer=null; }
+          state.recoveryAttempts=0;
           try{ ch.track({ p: (state.meName||'أنا') }); }catch(e){}
-          /* Recharge l'instantané serveur après l'abonnement ou une reconnexion.
-             Contrairement à un simple ajout des messages manquants, ce rendu
-             réconcilie aussi les éditions et suppressions intervenues hors ligne.
-             keepChannel évite de recréer l'abonnement depuis son propre callback. */
+          /* SUBSCRIBED confirme le retour du canal : réconcilier le fil sans
+             remplacer l'abonnement qui vient de redevenir actif. */
           renderThread(id, true).catch(function(){});
         } else if(st2==='CHANNEL_ERROR' || st2==='TIMED_OUT' || st2==='CLOSED'){
           var pe=el('msgPres'); if(pe) pe.textContent='اتصال مباشر غير مستقر · جارٍ إعادة الاتصال';
+          if(window.console && typeof window.console.warn==='function'){
+            window.console.warn('[Messenger Realtime]', st2, err || null);
+          }
+          /* CHANNEL_ERROR est repris par le retry interne du client Supabase.
+             TIMED_OUT/CLOSED : programmer un remplacement borné du canal;
+             SUBSCRIBED annulera ce timer si le client se rétablit entre-temps. */
+          if(st2==='TIMED_OUT' || st2==='CLOSED') scheduleThreadRecovery();
         }
       });
       state.ch = ch;
@@ -372,14 +379,19 @@
   function scheduleThreadRecovery(){
     var id = state.conv;
     if(!id || (document.visibilityState && document.visibilityState==='hidden')) return;
-    if(state.recoveryTimer) clearTimeout(state.recoveryTimer);
+    /* Ne pas repousser une reprise déjà planifiée à chaque notification d'erreur.
+       Le délai augmente jusqu'à 32 s si le canal échoue de façon répétée. */
+    if(state.recoveryTimer) return;
+    var attempt = Math.min(state.recoveryAttempts || 0, 7);
+    var delay = Math.min(32000, 250 * Math.pow(2, attempt));
     state.recoveryTimer = setTimeout(function(){
       state.recoveryTimer = null;
       if(!state.conv || state.conv!==id || (document.visibilityState && document.visibilityState==='hidden')) return;
-      /* Réconciliation HTTP + nouvel abonnement au retour du réseau/onglet.
-         renderEpoch empêche une réponse ancienne de remplacer la conversation courante. */
+      state.recoveryAttempts = Math.min((state.recoveryAttempts || 0) + 1, 7);
+      /* Réconciliation HTTP + nouveau canal après TIMED_OUT/CLOSED inattendu.
+         renderEpoch neutralise les réponses anciennes; SUBSCRIBED remet le backoff à zéro. */
       renderThread(id).catch(function(){});
-    }, 250);
+    }, delay);
   }
   window.addEventListener('online', scheduleThreadRecovery);
   window.addEventListener('pageshow', scheduleThreadRecovery);
