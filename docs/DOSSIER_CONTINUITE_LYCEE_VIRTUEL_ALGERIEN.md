@@ -629,3 +629,13 @@
 - Ce correctif traite une course de cycle de vie côté navigateur. Il ne corrige pas et ne prouve pas la réception CDC côté serveur ; le test d'intégration Supabase local reste la preuve requise pour le transport `public.msg_invites`.
 - Validation : relecture statique des points d'entrée et des gardes modifiés. Aucun test JavaScript ou workflow GitHub Actions n'a été exécuté dans cet environnement ; les récents jobs GitHub restent bloqués avant attribution d'un runner. Ne pas présenter ce correctif comme testé en exécution.
 - Aucun changement de schéma, migration, Auth/RLS, données hébergées, `main` ou déploiement de production. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 477 — protection contre les rendus asynchrones obsolètes (14 novembre 2026)
+
+- Les cinq workflows déclenchés après le Lot 476 ont terminé en échec. L'API des jobs renvoie `steps=[]` pour chacun des cinq jobs ; les journaux ne sont pas disponibles (BlobNotFound). Aucun test applicatif n'a donc été exécuté par ces jobs, et leur conclusion ne permet pas d'attribuer un défaut aux scripts SQL ou au code Messenger.
+- Une seconde revue du cycle de vie de `msg.js` a révélé une autre course : `renderThread(id)` attend plusieurs appels asynchrones (session, messages, noms, pièces jointes) avant d'écrire dans `#msgBody`. Si l'utilisateur change de conversation ou revient à la liste pendant ces attentes, un ancien rendu pouvait remplacer la vue plus récente. Le même risque existait entre plusieurs appels concurrents à `renderList()`.
+- Correctif appliqué : compteur global `renderEpoch`, invalidation à chaque rendu liste/fil, et contrôles après les attentes asynchrones avant de poursuivre ou d'écrire le DOM. Le fil sélectionné est posé dès l'entrée dans `renderThread`, et l'ancien assignement tardif a été supprimé.
+- Commit code : `b51d0386b86d816fa715bb8c965d6aaef5f5e834`.
+- Validation : revue statique des ancres modifiées et vérification de présence des contrôles. Aucun test navigateur ni exécution locale n'a été réalisée ; les workflows GitHub précédents n'ont exécuté aucune étape.
+- La réception CDC `public.msg_invites` demeure non démontrée. Aucun changement de schéma, migration, Auth/RLS, données hébergées, `main` ou déploiement de production.
