@@ -521,3 +521,14 @@
 - Commits : workflow `70c0ce2f80952daf3eb2eb88d30dee04a8ddf2ee`; test `58a285dff8212ff3439240f9f349301f1c00d26e`. Le dossier est mis à jour dans le commit suivant; exécutions automatiques à contrôler.
 - Aucune modification des migrations, du runtime Messenger, des policies, de la base Supabase hébergée ou des données réelles. PR #17 reste ouverte et non fusionnée; aucun changement sur `main` et aucun déploiement Cloudflare.
 - Ne pas déclarer Messenger opérationnel tant que le destinataire n'a pas reçu l'événement temps réel dans le test.
+
+
+## Lot 466 — diagnostic CDC après délai (14 novembre 2026)
+
+- Le run d’intégration Supabase locale `43542582148` sur le commit `cc802a73` a échoué ; les quatre autres workflows du même commit sont réussis.
+- La publication `supabase_realtime` contient `public.msg_invites` ; la table a une clé primaire, `relreplident=d` et RLS activé. L’utilisateur destinataire lit bien sa propre invitation via son JWT.
+- Le WebSocket accepte la souscription et répond `Subscribed to PostgreSQL`, mais aucun événement INSERT n’arrive en 12 secondes.
+- La table `realtime.subscription` existe avec les colonnes attendues, mais la première lecture immédiatement après l’accusé de souscription ne retourne aucune ligne pour `public.msg_invites`. Le conteneur indique `DB_AFTER_CONNECT_QUERY=SET search_path TO _realtime` ; cela ne suffit pas à conclure que le schéma interrogé est incorrect, car la table est effectivement présente dans `realtime`.
+- Le test est renforcé pour relire `realtime.subscription` à l’expiration des 12 secondes et inclure le résultat dans l’erreur. Cela distinguera une simple course au moment de l’inspection d’une absence persistante d’enregistrement CDC.
+- Les diagnostics du conteneur ne montrent pas les variables `PUBLICATIONS` ou `SLOT_NAME` dans l’environnement sélectionné ; cette observation est conservée comme piste, pas comme cause prouvée.
+- Aucune modification de Supabase hébergé, aucune migration de production, aucune modification de `main` et aucun déploiement.
