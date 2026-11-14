@@ -2677,3 +2677,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Fichiers modifiés : `ci/msg-supabase-local-test.mjs` (commit `6157d0578e846c27cd1ecda16314399c59a5cb2f`) et présent dossier de continuité (commit à relever après écriture).
 - Vérification effectuée par relecture statique du code et de la migration : `msg_invite_send` retourne bien un UUID ; les statuts SQL autorisés comprennent `pending` et `cancelled` ; `msg_invite_cancel` renvoie un booléen et met à jour la ligne en `cancelled` pour une invitation récente. Aucun test Node/PostgreSQL/Supabase dynamique n'a été exécuté, le runner GitHub Actions restant bloqué avant démarrage pour le problème de facturation du compte.
 - Aucun changement de schéma ni écriture sur Supabase actif, aucun changement sur `main`, aucune fusion de PR #17 et aucun déploiement Cloudflare.
+
+## Lot 546 — acceptation idempotente et invitations réciproques (14 novembre 2026)
+- Audit de `msg_invite_accept(p_invite)` : la migration verrouille la paire via `pg_advisory_xact_lock`, relit l'invitation `FOR UPDATE`, retourne le même `conversation_id` si elle est déjà acceptée et annule les invitations pendantes dans le sens inverse après acceptation.
+- Le test local ne couvrait pas ces trois garanties. Il crée maintenant une invitation réciproque avant l'acceptation, vérifie qu'elle est initialement `pending`, accepte l'invitation initiale, puis exige que l'invitation réciproque soit `cancelled`.
+- Le test rejoue l'acceptation de la même invitation et exige le même identifiant de conversation. Il vérifie aussi côté `service_role` que l'invitation initiale est `accepted`, que `conversation_id` correspond au DM retourné et que `responded_at` est renseigné.
+- Le contrôle confirme déjà que les deux membres peuvent lire le DM et que l'ensemble des membres est exactement `{sender, recipient}` ; ces assertions restent en place.
+- Fichier modifié : `ci/msg-supabase-local-test.mjs`. Commits : ajout des scénarios `83929ff44631dfc98036610f84ba217bef97e3aa`, correction de l'assertion numérique de l'identifiant `ad29038fdec12395183bf8bd25dbd3ee17cf35b6`.
+- Validation limitée à la relecture statique du test et de la migration. Aucun test dynamique Node/PostgreSQL/Supabase n'a pu être lancé : GitHub Actions reste bloqué avant démarrage du runner pour la restriction de facturation du compte.
+- Aucun DDL/DML ni changement Auth/RLS/Realtime sur Supabase actif ; aucune modification de `main`, aucune fusion PR #17 et aucun déploiement Cloudflare.
