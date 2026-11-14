@@ -2253,3 +2253,30 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Pas de paiement, pas d'augmentation de limite, pas de création de branche Supabase payante.
 - Pas de test de message avec des comptes réels, pas de DDL/DML, pas de changement Auth/RLS/Realtime/Storage de production.
 - PR #17 et PR #19 restent ouvertes et non fusionnées ; `main` et la production restent inchangées.
+
+
+
+## Lot 518 — première cause applicative plausible isolée dans le cycle Realtime (14 novembre 2026)
+
+### Comparaison directe de `msg.js` entre `main` et PR #17
+- `main` : blob `msg.js` `1b4e2223ee587dfb12f4855700b37c96b7f8ae80` (20 656 caractères).
+- PR #17 : blob `msg.js` `4a3f1b331c1a91a95a8fdf8926bd6e40657f2ecd` (37 702 caractères).
+- Le client Realtime de `main` charge l'instantané des 50 derniers messages dans `renderThread(id)`, injecte le HTML, puis appelle `startChannel(id)`. Il n'effectue aucun rechargement de réconciliation après le statut `SUBSCRIBED`.
+- Il existe donc une fenêtre de perte : si un message est inséré après la lecture initiale `msgMessages(id)` mais avant que l'abonnement Realtime soit effectivement confirmé, l'événement INSERT peut ne pas être reçu et le message n'apparaît pas dans le fil jusqu'à un rafraîchissement manuel ou une nouvelle ouverture.
+- La branche PR #17 ajoute précisément une réconciliation après `SUBSCRIBED` : `renderThread(id, true)` recharge l'instantané serveur sans recréer le canal. C'est le correctif ciblé pour fermer cette fenêtre de course.
+- Autre défaut confirmé sur `main` : le handler UPDATE appelle `renderThread(id)` sans préserver le canal. Comme le rendu termine par `startChannel(id)`, chaque UPDATE peut fermer puis recréer l'abonnement. La branche PR #17 utilise `renderThread(id, true)` et conserve le canal.
+- La branche PR #17 ajoute également `channelEpoch` et `renderEpoch` pour ignorer les réponses asynchrones devenues obsolètes lors d'un changement de conversation, et vérifie l'identité de la conversation après l'attente de création du client Supabase.
+- Le handler INSERT de PR #17 protège aussi l'insertion DOM après les lectures asynchrones des noms et des pièces jointes en revérifiant l'époque du canal et la conversation courante.
+
+### Portée de la conclusion
+- Ces différences établissent des défauts de cycle de vie et une fenêtre de course réels dans le code de `main`. Elles rendent plausible une réception intermittente/incomplète sur la production, particulièrement lors de l'ouverture du fil et des UPDATE.
+- Elles ne prouvent pas à elles seules que tous les symptômes observés proviennent de cette fenêtre, ni que le transport Supabase Realtime est sain. Le test isolé `msg_messages INSERT → CDC → WebSocket → SELECT RLS` du Lot 510 reste nécessaire pour distinguer un défaut applicatif d'un défaut du transport/RLS.
+- `supabase/supabase.js` conserve la même fonction utilitaire `msgSubscribe` sur les deux branches ; le différentiel pertinent de ce diagnostic se trouve dans le cycle de vie géré par `msg.js`, pas dans cette fonction utilitaire.
+- La production basée sur `main` ne bénéficie pas des protections ajoutées dans la branche PR #17. Ne pas fusionner PR #17 automatiquement : elle contient un grand ensemble de changements sans rapport avec le correctif Messenger.
+- Aucun code applicatif n'a été modifié dans ce lot ; diagnostic fondé sur lecture comparative des deux versions.
+- Aucun message réel, aucune écriture Supabase, aucun changement Auth/RLS/Realtime/Storage, aucune fusion, aucun changement de `main`, aucun déploiement.
+- Validation dynamique non réalisée : GitHub Actions reste bloqué avant la première étape par l'annotation de facturation documentée au Lot 517.
+
+### Prochaine étape
+- Auditer le test local Lot 510 et sa fixture pour vérifier que son protocole WebSocket démontre bien l'accusé de réception de l'abonnement, l'événement INSERT et la lecture RLS, sans dépendre d'un état de runner inaccessible.
+- Ne pas créer un nouveau correctif applicatif tant que le test local n'est pas exécutable ; conserver les protections déjà présentes dans PR #17 comme correctif candidat, sans les promouvoir en production.
