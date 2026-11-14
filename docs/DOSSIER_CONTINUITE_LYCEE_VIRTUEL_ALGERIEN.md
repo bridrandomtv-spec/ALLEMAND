@@ -595,3 +595,11 @@
 
 - Le changement de `ci/msg-supabase-local-test.mjs` a déclenché les cinq workflows : `43581817328`, `43581817377`, `43581817369`, `43581817332` et `43581817370`. Tous ont échoué en environ une seconde avant la première étape ; l'API Jobs confirme pour chacun `runner_id=0`, `runner_name` vide et `steps=[]`.
 - Le nouveau délai distinct CDC-ready/événement n'a donc pas encore été exécuté. Il reste une correction de logique du test, relue dans le dépôt, pas un test validé en CI.
+
+## Lot 474 — validation stricte du type d'événement Realtime (14 novembre 2026)
+
+- Relecture du bloc de réception dans `ci/msg-supabase-local-test.mjs` : le test acceptait un événement ciblé si son type était absent, en le traitant implicitement comme un INSERT. Ce fallback pouvait produire un faux positif si le serveur envoyait une trame incomplète ou différente du protocole attendu.
+- Le filtre exige maintenant explicitement `data.type`, `data.eventType` ou `payload.eventType` égal à `INSERT` (insensible à la casse), en plus de l'identifiant destinataire et du statut `pending`. L'assertion ultérieure vérifie toujours que l'UUID reçu est exactement celui créé par la RPC, puis contrôle l'expéditeur.
+- Changement limité au harnais de test local avec comptes synthétiques ; aucune modification de `msg.js`, des migrations, des policies, d'Auth/RLS hébergé, des données réelles ou de Cloudflare.
+- Vérification disponible à ce stade : diff ciblé relu et prédicat confirmé dans le dépôt. Aucun résultat d'exécution n'est revendiqué : les derniers jobs Actions (ex. run `43581868013`, job `132408113216`) se terminent avant toute étape, sans runner attribué. Il faudra exécuter le test dès qu'un runner démarre réellement.
+- PR #17 reste ouverte et non fusionnée. `main` n'a pas été modifiée. Messenger n'est toujours pas certifié opérationnel tant que le vrai événement INSERT n'a pas été reçu par le destinataire synthétique.
