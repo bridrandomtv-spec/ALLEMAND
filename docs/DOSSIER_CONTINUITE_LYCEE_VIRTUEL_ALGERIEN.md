@@ -434,3 +434,12 @@
 - CI antérieure sur le code Realtime initial : cinq workflows réussis (validation générale, consentement PostgreSQL, découverte PostgreSQL, Multaqa PostgreSQL, Supabase local GoTrue/JWT/PostgREST/RLS). Ces résultats ne valident pas encore ce correctif Lot 456; ses propres workflows doivent s'exécuter après les commits ci-dessus.
 - Limite : aucune session navigateur multi-compte ni livraison WebSocket Realtime réelle n'a encore été exercée. Le test reste statique côté client et intégration serveur locale; ne pas présenter les notifications live comme opérationnelles en production.
 - Aucun changement sur `main`, aucune fusion, aucun déploiement Cloudflare et aucune opération sur Supabase en production. PR #17 reste ouverte et non fusionnée.
+
+
+### Lot 457 — correction du contrôle statique Realtime (14 novembre 2026)
+- La CI principale du commit `e5ae61ea0af7ca82997ee21acb47303eb381eeee` a échoué uniquement dans `tests/msg_test.mjs`, sur l'assertion qui cherchait une condition JavaScript sous forme compacte.
+- Le code réel `msg.js` applique bien les quatre gardes dans le callback Realtime : génération d'abonnement toujours valide, vue Messenger active, même utilisateur connecté et absence de fil ouvert. Le contrôle statique attendait à tort une expression sur une seule ligne et ne tenait pas compte des gardes supplémentaires.
+- Correction du test au commit `870f6431ed535203b53efeceb489181da0dc6aec` : assertion regex tolérant les espaces/retours à la ligne, tout en exigeant explicitement les quatre conditions et l'appel à `renderList()`. Aucun affaiblissement du code runtime ni des règles serveur.
+- Le run de référence sur le HEAD précédent a montré les quatre workflows Messenger/PostgreSQL et Supabase local verts ; seul le contrôle structurel principal échouait sur cette assertion. Le nouveau commit doit encore être validé par ses propres workflows avant toute conclusion.
+- PR #17 reste ouverte et non fusionnée. Aucun changement sur `main`, aucune migration Messenger appliquée à Supabase cloud, aucun déploiement ni coût cloud engagé.
+- Étape suivante : contrôler les nouveaux runs déclenchés par `870f643`, corriger uniquement les erreurs réellement remontées, puis tester le canal Realtime avec deux sessions synthétiques si un banc local adapté peut être ajouté sans dépendance frontend payante.
