@@ -85,3 +85,14 @@ Le run Storage #13 échoue avant exposition des étapes (`steps=null`, `logs_url
 - Run GitHub Actions Storage #16 (`43591195498`) : échec sans étapes exposées (`steps=[]`, `logs_url=null`), récupération des logs `BlobNotFound`. Les workflows CI générale et PostgreSQL du même commit ont le même défaut de visibilité. Cause d'exécution indéterminée ; ne pas déclarer le script ni la migration exécutés.
 - Environnement de travail : Node `v22.16.0` présent ; Docker, Supabase CLI et psql absents. Pas de runtime local possible ici.
 - Le schéma réel confirme statiquement les colonnes référencées par la politique metadata. Migration toujours candidate non appliquée ; aucun test Storage/PostgREST runtime n'est validé et aucune compensation client n'est activée.
+
+
+## Lot 506 — protection des objets déjà liés
+
+La revue du schéma réel a révélé que la politique Storage candidate initiale ne distinguait pas un objet orphelin d'un objet déjà lié à un message. Elle aurait permis à son propriétaire de supprimer directement le fichier d'un message existant. Ce comportement est interdit.
+
+La migration candidate utilise maintenant les helpers SECURITY DEFINER msg_storage_cleanup_allowed(text) et msg_attachment_cleanup_allowed(bigint), avec search_path fixe, identité dérivée de auth.uid(), exécution révoquée à public/anon et accordée à authenticated. Le helper Storage vérifie également le format exact du chemin et l'absence de liaison msg_messages.attachment_id. Le helper metadata exige propriétaire, statut pending, message du même expéditeur et absence de liaison.
+
+Nouveau scénario d'intégration : A téléverse un fichier, crée ses métadonnées, lie la pièce jointe à son message, puis tente de supprimer l'objet Storage. Résultat attendu : refus, objet toujours présent. La suppression de la métadonnée liée doit également être refusée.
+
+**Statut : correctif statique uniquement.** Le workflow GitHub ne fournit toujours pas d'étapes/journaux et aucun environnement local Docker/Supabase/psql n'est disponible ici. Ne pas appliquer la migration au projet actif tant que les tests HTTP réels n'ont pas passé.
