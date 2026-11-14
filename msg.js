@@ -262,6 +262,7 @@
     startInviteChannel();
   }
   async function renderThread(id){
+    closeInviteChannel();
     var box = el('msgBody'); if(!box) return;
     var u = await session(); state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'أنا';
     var r = await window.SB.msgMessages(id, null, 50);
