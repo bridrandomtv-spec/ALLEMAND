@@ -316,3 +316,8 @@
 - L'audit du parcours client confirme que la vue distingue les demandes entrantes/sortantes, réserve accepter/refuser au destinataire et annuler à l'expéditeur, et n'assimile pas l'acceptation à une création de زمالة. Le client n'écrit pas directement dans les tables d'invitations.
 - Les migrations `202611130001_msg_invitation_consent.sql` et `202611130003_msg_student_discovery.sql` restent préparées dans Git uniquement et **non appliquées** à Supabase. Aucune écriture Supabase, aucun accès aux messages privés réels, aucun déploiement Cloudflare.
 - PR #17 reste ouverte, non fusionnée, cible `main`; HEAD observé : `b0788c60a5b1db7cf3184b1b0beab449e5fbc9a1`. Aucun changement direct sur `main`.
+
+### Correctif de validation Lot 454
+- Premier run `43532909278` : échec au démarrage du harnais, avant l'exécution de la migration, sur un délimiteur dollar du stub `msg_member_ok` tronqué dans le fichier de test. Ce résultat ne signale pas un défaut de la migration Messenger.
+- Correctif du fichier de test : `dafa489353a1862adcfab0dcb700f4677344ad48`. Le bloc PL/pgSQL a été remis en `$$ ... $$`.
+- Le workflow doit être relu sur le nouveau HEAD avant de déclarer le test réussi. Le Lot 454 reste non validé tant que cette exécution n'est pas terminée.
