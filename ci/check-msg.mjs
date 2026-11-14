@@ -148,7 +148,7 @@ await import('./check-multaqa.mjs');
 
 
 const discoverySql = readFileSync('supabase/migrations/202611130003_msg_student_discovery.sql', 'utf8');
-ok(discoverySql.includes('create or replace function public.msg_student_search'), 'RPC de recherche scolaire versionnée');
+ok(discoverySql.includes('create function public.msg_student_search'), 'RPC de recherche scolaire versionnée');
 ok(discoverySql.includes("pa.verif_statut = 'verifie'") && discoverySql.includes("pb.verif_statut = 'verifie'"), 'DM exige deux identités vérifiées côté serveur');
 ok(/create or replace function public\.msg_can_dm\(a uuid, b uuid\)[\s\S]*?auth\.uid\(\) is not null[\s\S]*?auth\.uid\(\) in \(a, b\)/.test(discoverySql),
    'msg_can_dm conserve la liaison entre JWT appelant et paire concernée');
