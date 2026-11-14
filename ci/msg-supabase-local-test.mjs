@@ -793,6 +793,45 @@ const accepted = await call(`/rest/v1/msg_invites?select=status&id=eq.${invite}`
 });
 assert.equal(accepted[0]?.status, "accepted");
 
+// Lot 547 : un DM historique entre les mêmes membres doit être réutilisé.
+const historicalReuseInvite = await call("/rest/v1/rpc/msg_invite_send", {
+  method: "POST",
+  bearer: sender.token,
+  body: { p_recipient: recipient.id },
+});
+assert.match(historicalReuseInvite, /^[0-9a-f-]{36}$/i,
+  "Historical-DM reuse invitation RPC did not return a UUID");
+const historicalReusePending = await call(
+  `/rest/v1/msg_invites?select=id,status&id=eq.${historicalReuseInvite}`,
+  { bearer: recipient.token },
+);
+assert.equal(historicalReusePending.length, 1);
+assert.equal(historicalReusePending[0].status, "pending");
+
+const reusedConversationId = await call("/rest/v1/rpc/msg_invite_accept", {
+  method: "POST",
+  bearer: recipient.token,
+  body: { p_invite: historicalReuseInvite },
+});
+assert.equal(String(reusedConversationId), String(acceptedConversationId),
+  "Acceptance did not reuse the existing historical direct conversation");
+
+const historicalReuseState = await call(
+  `/rest/v1/msg_invites?select=status,conversation_id,responded_at&id=eq.${historicalReuseInvite}`,
+  { key: serviceRoleKey, bearer: serviceRoleKey },
+);
+assert.equal(historicalReuseState.length, 1);
+assert.equal(historicalReuseState[0].status, "accepted");
+assert.equal(String(historicalReuseState[0].conversation_id), String(acceptedConversationId));
+assert.ok(historicalReuseState[0].responded_at);
+
+const directConversationsAfterReuse = await call(
+  "/rest/v1/msg_conversations?select=id,type&type=eq.direct",
+  { bearer: recipient.token },
+);
+assert.equal(directConversationsAfterReuse.length, 1,
+  "Accepting an invitation with a historical DM created a duplicate direct conversation");
+assert.equal(String(directConversationsAfterReuse[0].id), String(acceptedConversationId));
 // La recherche ne retourne que les champs publics prévus et reste limitée au profil scolaire.
 const discovered = await call("/rest/v1/rpc/msg_student_search", {
   method: "POST",
