@@ -35,12 +35,14 @@ async function upload(who,path) {
   const raw=await r.text();
   assert.ok(r.ok,`Storage upload ${path}: HTTP ${r.status} ${raw}`);
 }
-async function removeObject(who,path,allowed) {
-  const r=await fetch(`${api}/storage/v1/object/prive/${path.split("/").map(encodeURIComponent).join("/")}`,{
-    method:"DELETE",headers:{apikey:anon,Authorization:`Bearer ${who.token}`,"Content-Type":"application/json"}
-  });
+async function removeObject(who,path,allowed,bucket='prive') {
+  const encoded=path.split('/').map(encodeURIComponent).join('/');
+  const url=api+'/storage/v1/object/'+bucket+'/'+encoded;
+  const r=await fetch(url,{method:'DELETE',headers:{apikey:anon,Authorization:'Bearer '+who.token,'Content-Type':'application/json'}});
   const raw=await r.text();
-  assert.equal(r.ok,allowed,`Storage DELETE ${path}: expected allowed=${allowed}, got HTTP ${r.status}: ${raw}`);
+  if(allowed) assert.ok(r.ok,'Storage DELETE '+path+': HTTP '+r.status+': '+raw);
+  const probe=await fetch(url,{headers:{apikey:service,Authorization:'Bearer '+service}});
+  assert.equal(probe.ok,!allowed,'Storage object '+path+': expected exists='+(!allowed)+', GET returned HTTP '+probe.status);
 }
 async function createMessage(sender,conversationId) {
   const rows=await must("/rest/v1/msg_messages?select=id",{method:"POST",body:{conversation_id:conversationId,sender_id:sender.id,body:"fixture"} ,headers:{"Prefer":"return=representation"}});
@@ -75,7 +77,7 @@ await deleteMetadata(a,pendingId,true);
 const linkedId=await createAttachment(a,msgA,pathB);
 await must(`/rest/v1/msg_messages?id=eq.${msgA}`,{method:"PATCH",body:{attachment_id:linkedId}});
 await deleteMetadata(a,linkedId,false);
-const retainedId=await createAttachment(a,msgB,pathB);
+const retainedId=await createAttachment(a,msgA,pathA);
 await must(`/rest/v1/msg_attachments?id=eq.${retainedId}`,{method:"PATCH",body:{statut:"ok"}});
 await deleteMetadata(a,retainedId,false);
 console.log("Lot 503: Storage owner isolation and metadata RLS scenarios passed on ephemeral Supabase.");
