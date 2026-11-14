@@ -121,6 +121,9 @@ async function subscribeToInviteChanges(user) {
   };
   const readyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
   const eventPromise = new Promise((resolve, reject) => { resolveEvent = resolve; rejectEvent = reject; });
+  // L'observateur peut échouer avant que le scénario n'attache son await.
+  // Ce handler évite un rejet non traité sans modifier le rejet reçu par waitForInvite().
+  eventPromise.catch(() => {});
   timeout = setTimeout(() => {
     fail(new Error("Realtime Postgres Changes subscription did not become CDC-ready within 12 seconds; join ACK: " + JSON.stringify(joinPostgresChanges) + "; system frames: " + JSON.stringify(postgresSystemFrames)));
   }, 12000);
