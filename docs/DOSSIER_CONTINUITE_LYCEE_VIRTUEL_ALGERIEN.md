@@ -771,3 +771,14 @@
 - Relecture complémentaire du script d'intégration : le scénario synthétique ouvre le WebSocket avec le JWT du destinataire, attend l'ACK du canal et l'état système `postgres_changes`, vérifie l'accès RLS du destinataire, crée l'invitation via RPC, attend l'INSERT correspondant, puis annule l'invitation. Le test inclut également l'usage du jeton opaque de découverte, lié à l'acteur.
 - Aucun changement de code ou de configuration déclenché par ce lot ; aucune migration Messenger appliquée en production, aucune modification Auth/RLS/Realtime/secret, aucun coût, aucun changement sur `main`.
 - Conclusion : le preview Cloudflare de la branche est disponible ; le test Messenger Realtime reste non validé, car le runner GitHub n'a toujours pas fourni d'étapes ni de journaux. Reprendre dès qu'un run fournit un job réellement exécuté, ou depuis le poste local avec Docker et le banc gratuit existant. Ne pas assimiler le succès Cloudflare preview à une validation Messenger.
+
+## Lot 484 — correction d'une assertion CI obsolète pour les invitations Messenger (14 novembre 2026)
+
+- Audit croisé des sources actuelles `supabase/supabase.js`, `msg.js`, `ci/check-msg.mjs`, `ci/msg-supabase-local-test.mjs` et de la migration de découverte.
+- Défaut confirmé : `msgInviteSend` accepte maintenant `studentKey` et appelle `msg_invite_send_by_key(p_student_key)`, mais un contrôle statique du lot précédent cherchait encore l'ancienne signature `msgInviteSend(recipientId)` et l'ancien RPC `msg_invite_send`. Ce contrôle aurait rejeté la nouvelle implémentation au prochain passage réel de la CI.
+- Correction limitée dans `ci/check-msg.mjs` : assertion alignée sur la signature `studentKey` et sur l'appel RPC `msg_invite_send_by_key`. Les contrôles de versions CSS/JS ont été comparés aux références courantes de `index.html` et `sw.js` et restent cohérents (CSS v202, Messenger JS v3520).
+- Commit de code : `705f30be460e4c195e976b7a49d7d363c1b75128`.
+- La suite locale Supabase n'a pas été exécutée dans cet environnement : Docker et Supabase CLI ne sont pas disponibles ici. La correction est une mise en cohérence du test statique, pas une preuve de réception Realtime.
+- Les workflows associés à ce commit ne sont pas encore retournés par l'API au moment de la rédaction. Aucun résultat d'exécution n'est revendiqué.
+- Aucun changement de migration, schéma, données, Auth, RLS, publication Realtime ou secret en production ; aucun service payant ; aucun changement sur `main`.
+- La PR #17 reste le seul canal de travail et doit rester ouverte/non fusionnée jusqu'à validation visuelle et fonctionnelle explicite.
