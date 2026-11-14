@@ -1725,3 +1725,19 @@
 - Décision de sécurité : ne pas appliquer les migrations à Supabase actif et ne pas réactiver silencieusement `msg_open_direct` depuis le client pour contourner le consentement. Le nouveau flux doit soit être masqué/neutralisé tant que son backend n'est pas déployé, soit être déployé après validation PostgreSQL isolée et autorisation explicite distincte.
 - Aucun code applicatif modifié dans ce lot. Seul ce dossier de continuité est mis à jour sur la branche. Aucun changement Supabase actif, Auth, RLS, schéma, données, Realtime, secrets, facturation, `main` ou déploiement de production. PR #17 reste ouverte et non fusionnée.
 - Prochaine étape recommandée : décider de la stratégie de compatibilité avant toute modification : (A) retour temporaire au parcours client historique compatible avec la base actuelle, en examinant séparément les garanties de consentement ; ou (B) finalisation des migrations et tests PostgreSQL isolés, puis demande d'autorisation avant application au projet actif. Aucun choix n'est appliqué par ce lot.
+
+
+
+## Lot 494 — précision des droits du contrat historique actif (14 novembre 2026)
+
+- Complément de l'audit SQL en lecture seule du projet Supabase actif. Cette vérification affine le Lot 493 : le backend historique n'est pas simplement « sans vérification scolaire ».
+- Le catalogue actif confirme :
+  - `msg_can_dm(uuid,uuid)` exige déjà un utilisateur authentifié membre de la paire, des profils de même wilaya/niveau/filière et `verif_statut='verifie'` pour les deux profils.
+  - `msg_member_ok(bigint,uuid)` autorise encore le parcours historique d'ajout des membres à un DM, en s'appuyant sur `msg_can_dm` et l'état des membres.
+  - `msg_open_direct(uuid)` est toujours exécutable par `authenticated` et crée/réutilise un DM après `msg_can_dm`. Il ne requiert pas une invitation explicitement acceptée.
+  - `msg_is_member` et `msg_not_blocked` restent les définitions historiques et ne sont pas encore remplacées par les versions du Lot 437.
+- Conclusion affinée : l'ancien backend impose déjà une vérification scolaire bilatérale, mais n'impose pas encore le nouveau consentement explicite côté serveur. Le nouveau frontend attend `msg_invites` et les RPC de consentement/découverte qui sont absentes. La migration 001 est précisément conçue pour remplacer ce contrat : révoquer `msg_open_direct`, verrouiller l'ajout direct de membres et créer les RPC d'invitation.
+- Ne pas confondre « l'ancien parcours peut encore fonctionner » et « le nouveau parcours est opérationnel ». L'ancien chemin ne doit pas être remis dans le nouveau frontend comme contournement du consentement.
+- Aucun changement effectué sur Supabase actif. Aucun test d'action (création de DM, invitation, message, publication Realtime) n'a été exécuté : seulement lecture du catalogue, définitions et privilèges. Aucune donnée utilisateur consultée.
+- Aucun code applicatif modifié. Seul le dossier de continuité est mis à jour sur la branche. PR #17 reste ouverte/non fusionnée ; `main`, production, données, schéma, RLS, Auth, Realtime et facturation inchangés.
+- Étape suivante : exécuter les migrations 001 + 003 sur une instance PostgreSQL/Supabase locale jetable, vérifier les droits avant/après et faire passer les tests d'intégration et de concurrence. Tant que les runners GitHub n'exécutent aucun step, ne pas interpréter l'absence de résultat comme un échec fonctionnel SQL. Pas de déploiement actif sans autorisation distincte.
