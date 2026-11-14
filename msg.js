@@ -34,6 +34,7 @@
       state.me = null;
       state.meName = 'أنا';
       state.peers = {};
+      state.names = {};
       if(event==='SIGNED_OUT') state.conv = null;
       setTimeout(function(){
         if(authClient!==client || state.authEpoch!==transitionEpoch) return;
@@ -61,15 +62,28 @@
   function stamp(x){ return String(x||'').slice(0,16).replace('T',' '); }
   function card(t,s,btn){ return '<div class="msg-card"><div class="msg-ct"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div>'+(btn||'')+'</div>'; }
   async function fetchNames(ids){
-    var out = {};
+    var out = {}, identityEpoch = state.authEpoch;
     try{
       var miss = ids.filter(function(i){ return i && !state.names[i]; });
-      if(!miss.length || !window.SB || !window.SB.sb) { ids.forEach(function(i){ out[i]=state.names[i]; }); return out; }
-      var c = await window.SB.sb(); if(!c){ ids.forEach(function(i){ out[i]=state.names[i]; }); return out; }
+      if(!miss.length || !window.SB || !window.SB.sb) {
+        ids.forEach(function(i){ out[i]=state.names[i]; });
+        return out;
+      }
+      var c = await window.SB.sb();
+      if(identityEpoch!==state.authEpoch) return out;
+      if(!c){ ids.forEach(function(i){ out[i]=state.names[i]; }); return out; }
       var r = await c.from('profiles').select('id,pseudo,role,niveau').in('id', miss);
-      (r.data||[]).forEach(function(p){ state.names[p.id] = (p.pseudo||'') + (p.niveau?' · '+p.niveau:''); });
+      /* Une lecture démarrée sous le compte précédent ne doit jamais alimenter
+         le cache partagé après SIGNED_IN/SIGNED_OUT. */
+      if(identityEpoch!==state.authEpoch) return out;
+      (r.data||[]).forEach(function(p){
+        state.names[p.id] = (p.pseudo||'') + (p.niveau?' · '+p.niveau:'');
+      });
       ids.forEach(function(i){ out[i] = state.names[i] || ('عضو '+String(i).slice(0,4)); });
-    }catch(e){ ids.forEach(function(i){ out[i]=state.names[i]||('عضو '+String(i).slice(0,4)); }); }
+    }catch(e){
+      if(identityEpoch!==state.authEpoch) return out;
+      ids.forEach(function(i){ out[i]=state.names[i]||('عضو '+String(i).slice(0,4)); });
+    }
     return out;
   }
   function nameOf(id){ return state.names[id] || ('عضو '+String(id).slice(0,4)); }
