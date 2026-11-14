@@ -2449,3 +2449,21 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Cache applicatif : `msg.js?v=3522`, service worker `dz-de-v3.185.0.0.161`, précache et assertions CI alignés.
 - Validation : relecture du code modifié et vérification statique des marqueurs/contrats; aucun test dynamique Realtime n'a pu être exécuté, car les runners Actions ne démarrent toujours pas en raison de la restriction de facturation. Aucun test sur compte réel, aucune modification Supabase hébergé, aucune migration/RLS/Auth/Realtime/Storage, aucun déploiement Cloudflare.
 - PR #17 reste ouverte et non fusionnée; `main` reste inchangée.
+
+## Lot 532 — vérification du retrait effectif des canaux Realtime
+
+Objectif : vérifier si les fermetures de canaux Messenger laissent des abonnements fantômes dans `RealtimeClient.channels`, ce qui pourrait accumuler des canaux après changements de conversation, fermeture de la vue ou reconnexions.
+
+Vérification de la version réellement utilisée par le projet (`@supabase/supabase-js@2.119.0`) dans les sources officielles du tag `v2.119.0` :
+
+- `RealtimeChannel` enregistre un hook `_onClose(() => this.socket._remove(this))` lors de sa construction.
+- `RealtimeClient._remove(channel)` filtre le canal correspondant de `this.channels` et planifie la déconnexion du transport lorsqu'il ne reste plus de canaux.
+- `channel.unsubscribe()` déclenche le processus de désabonnement/fermeture ; le hook `_onClose` effectue donc le retrait du tableau du client.
+- `client.removeChannel(channel)` attend en plus le résultat du désabonnement et appelle `channel.teardown()` uniquement si le statut est `ok`. Ce n'est pas nécessaire pour obtenir le retrait du tableau : celui-ci est déjà assuré par le hook de fermeture du canal.
+
+Conclusion : l'hypothèse d'une accumulation systématique des canaux due à l'utilisation actuelle de `unsubscribe()` n'est pas confirmée. Remplacer mécaniquement les fermetures par `removeChannel()` ne serait pas un correctif démontré et introduirait une complexité asynchrone inutile dans les fonctions de fermeture synchrones. Aucun changement applicatif ou Supabase n'est effectué pour ce lot.
+
+Fichiers Messenger consultés sur la branche PR #17 : `msg.js` (fermetures `closeChannel()` et `closeInviteChannel()`, toutes deux utilisant `unsubscribe()`). Source SDK consultée : `packages/core/realtime-js/src/RealtimeChannel.ts` et `RealtimeClient.ts`, tag officiel `v2.119.0`.
+
+Vérification limitée à l'inspection des sources : aucun test Realtime dynamique n'a été exécuté. Le blocage de démarrage des runners GitHub Actions lié à la facturation demeure distinct de ce résultat. Aucun accès à la base de production, aucune modification Auth/RLS/Realtime/Storage, aucun déploiement et aucune fusion de PR ne sont effectués.
+
