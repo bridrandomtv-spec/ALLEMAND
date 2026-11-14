@@ -170,9 +170,9 @@ async function subscribeToInviteChanges(user) {
         const data = payload.data || payload;
         const record = data.record || data.new || payload.record || payload.new || {};
         const changeType = data.type || data.eventType || payload.eventType;
-        if ((!changeType || String(changeType).toUpperCase() === "INSERT") &&
+        if (String(changeType || "").toUpperCase() === "INSERT" &&
             record.recipient_id === user.id && record.status === "pending") {
-          resolveEvent({ changeType: changeType || "INSERT", record });
+          resolveEvent({ changeType: "INSERT", record });
         }
       }
       if (eventName === "phx_error" || eventName === "phx_close") {
