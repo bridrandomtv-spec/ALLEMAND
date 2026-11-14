@@ -41,6 +41,29 @@ create policy "lot503 messages own read" on public.msg_messages
   for select to authenticated using (sender_id=auth.uid());
 create policy "lot503 attachments own read" on public.msg_attachments
   for select to authenticated using (uploader=auth.uid());
+
+create policy "lot503 messages insert own" on public.msg_messages
+  for insert to authenticated with check (
+    sender_id=auth.uid()
+    and public.msg_is_member(auth.uid(),conversation_id)
+  );
+create policy "lot503 messages update own" on public.msg_messages
+  for update to authenticated
+  using (sender_id=auth.uid())
+  with check (sender_id=auth.uid());
+create policy "lot503 attachments insert own" on public.msg_attachments
+  for insert to authenticated with check (
+    uploader=auth.uid()
+    and exists (
+      select 1 from public.msg_messages m
+      where m.id=message_id and m.sender_id=auth.uid()
+    )
+  );
+create policy "lot503 attachments update own" on public.msg_attachments
+  for update to authenticated
+  using (uploader=auth.uid())
+  with check (uploader=auth.uid());
+
 grant usage on schema public to anon,authenticated,service_role;
 grant select,insert,update,delete on public.msg_messages,public.msg_attachments to authenticated,service_role;
 grant select,insert,update,delete on public.msg_conversations,public.msg_members to authenticated,service_role;
