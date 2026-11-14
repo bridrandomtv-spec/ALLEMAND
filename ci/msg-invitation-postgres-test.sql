@@ -123,8 +123,31 @@ do $$ begin
  end if;
 end $$;
 
+-- Une répétition de la même demande pendante reste idempotente au plafond du quota.
+reset role;
+insert into public.msg_invites(sender_id,recipient_id,status,created_at,responded_at)
+select '20000000-0000-4000-8000-000000000001',
+       '20000000-0000-4000-8000-000000000002',
+       'declined', now()-interval '1 hour', now()
+from generate_series(1,20);
+set role authenticated;
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
+do $ begin
+ if public.msg_invite_send('20000000-0000-4000-8000-000000000002')
+    <> (select id from test_invite) then
+   raise exception 'pending_invite_retry_blocked_by_rate_limit';
+ end if;
+end $;
+reset role;
+update public.msg_invites
+   set created_at=now()-interval '2 days'
+ where sender_id='20000000-0000-4000-8000-000000000001'
+   and recipient_id='20000000-0000-4000-8000-000000000002'
+   and status='declined'
+   and created_at > now()-interval '2 hours';
+
 -- L'expéditeur ne peut pas accepter/refuser la demande reçue par B.
-do $$ begin
+do $ begin
  begin
    perform public.msg_invite_accept((select id from test_invite));
    raise exception 'sender_accepted_own_invite';
