@@ -87,7 +87,18 @@ async function subscribeToInviteChanges(user) {
   const eventPromise = new Promise((resolve, reject) => { resolveEvent = resolve; rejectEvent = reject; });
   const timeout = setTimeout(() => {
     if (!ready) rejectReady(new Error("Realtime subscription did not become SUBSCRIBED within 12 seconds"));
-    else rejectEvent(new Error("No msg_invites INSERT event received within 12 seconds; received frames: " + JSON.stringify(receivedFrames)));
+    else {
+      const lateProbe = spawnSync("psql", [
+        process.env.DB_URL,
+        "-X", "-A", "-t", "-v", "ON_ERROR_STOP=1",
+        "-c",
+        "select jsonb_build_object('subscription_id', subscription_id, 'entity', entity::text, 'filters', filters, 'claims_role', claims_role::text, 'action_filter', action_filter)::text from realtime.subscription where entity = 'public.msg_invites'::regclass;"
+      ], { encoding: "utf8" });
+      const diagnostic = lateProbe.status === 0
+        ? (lateProbe.stdout.trim() || "(aucune ligne après attente)")
+        : (lateProbe.stderr || lateProbe.error?.message || "psql failed");
+      rejectEvent(new Error("No msg_invites INSERT event received within 12 seconds; CDC rows after wait: " + diagnostic + "; received frames: " + JSON.stringify(receivedFrames)));
+    }
   }, 12000);
   socket.addEventListener("open", () => {
     socket.send(JSON.stringify([
