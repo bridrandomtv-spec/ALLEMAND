@@ -2606,3 +2606,22 @@ Fichier modifié : `ci/msg-supabase-local-test.mjs` (commit `247a1babf7c9808a778
 Rectification de l'audit : le chemin `msg_invites` traitait déjà explicitement le `phx_reply` négatif. Aucune modification n'a été faite sur ce point.
 
 Validation : contrôle de cohérence par relecture des blocs modifiés et de leurs appels. Le test Node/Supabase local n'a pas été exécuté dans cette session; aucune réussite dynamique n'est revendiquée. Les runners GitHub Actions restent soumis au blocage de démarrage lié à la facturation précédemment observé. Aucun accès ni changement sur Supabase hébergé, aucune modification Auth/RLS/Realtime/Storage en production, aucun déploiement Cloudflare et aucune fusion. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 542 — borner les attentes UPDATE et propager les fermetures WebSocket
+
+Audit du cycle de vie de `subscribeToMessageChanges()` dans `ci/msg-supabase-local-test.mjs`.
+
+Défaut confirmé : `waitForUpdate()` créait une promesse sans délai maximal et ajoutait un simple callback dans `updateWaiters`. Si le canal Realtime se fermait ou si le transport échouait après CDC-ready, le code rejetait l'attente du premier événement mais ne rejetait pas les attentes UPDATE déjà en attente. Le scénario pouvait donc rester suspendu indéfiniment au lieu de produire un échec exploitable.
+
+Correctif sur PR #17 :
+- Chaque attente UPDATE dispose maintenant d'un délai maximal de 12 secondes et retire son propre waiter à expiration.
+- Les événements `phx_error`, `phx_close`, la fermeture WebSocket inattendue et l'erreur de transport propagent une erreur aux attentes UPDATE actives.
+- Les erreurs CDC tardives et les erreurs de décodage de trame après CDC-ready passent par le même chemin d'échec.
+- L'arrivée d'un INSERT annule le délai de surveillance de cet INSERT; les délais des UPDATE sont gérés indépendamment.
+- La fermeture volontaire du socket par le test est distinguée d'une fermeture inattendue afin de ne pas créer de faux échec pendant le nettoyage.
+- Les sockets des observateurs destinataire et témoin restent fermés dans le bloc `finally` déjà présent.
+
+Fichier modifié : `ci/msg-supabase-local-test.mjs` (commits `47e113f8` et `b845a263`).
+
+Validation : relecture du cycle d'attente, des chemins d'erreur, du timeout et du nettoyage. Aucun test Node/Supabase dynamique n'a été exécuté dans cette session; les Actions ne démarrent toujours pas de runner en raison de la restriction de facturation documentée. Aucun compte réel, aucune modification de Supabase hébergé (schéma, données, Auth, RLS, Realtime ou Storage), aucun déploiement Cloudflare et aucune fusion. PR #17 reste ouverte et non fusionnée.
