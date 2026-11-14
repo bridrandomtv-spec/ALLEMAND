@@ -23,8 +23,28 @@ jobs:
         run: node --check ci/msg-storage-local-test.mjs
       - name: Initialiser Supabase CLI
         run: npx --yes supabase@2.122.1 init
+      - name: Désactiver la confirmation e-mail pour les comptes synthétiques locaux
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path("supabase/config.toml")
+          content = path.read_text()
+          match = re.search(r"(?ms)^\\[auth\\.email\\]\\s*$([\\s\\S]*?)(?=^\\[|\\Z)", content)
+          if not match or not re.search(r"(?m)^enable_confirmations\\s*=", match.group(1)):
+              raise SystemExit("Configuration auth.email.enable_confirmations introuvable")
+          section = re.sub(r"(?m)^enable_confirmations\\s*=\\s*\\w+", "enable_confirmations = false", match.group(1), count=1)
+          path.write_text(content[:match.start(1)] + section + content[match.end(1):])
+          PY
+      - name: Mettre les migrations du dépôt de côté avant le démarrage
+        run: |
+          mkdir -p /tmp/allemand-storage-migrations
+          cp supabase/migrations/*.sql /tmp/allemand-storage-migrations/
+          rm supabase/migrations/*.sql
       - name: Démarrer Supabase local avec Storage activé
         run: npx --yes supabase@2.122.1 start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta
+      - name: Restaurer les migrations après le démarrage isolé
+        run: cp /tmp/allemand-storage-migrations/*.sql supabase/migrations/
       - name: Exporter les clés éphémères
         shell: bash
         run: |
@@ -38,7 +58,9 @@ jobs:
       - name: Préparer les tables et le bucket synthétiques
         run: psql "$DB_URL" -v ON_ERROR_STOP=1 -f ci/msg-storage-local-bootstrap.sql
       - name: Appliquer le candidat de politique uniquement en local
-        run: psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/202611140001_msg_storage_owner_cleanup.sql
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/202611140001_msg_storage_owner_cleanup.sql
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "NOTIFY pgrst, 'reload schema';"
       - name: Tester Storage API et PostgREST avec deux JWT synthétiques
         run: node ci/msg-storage-local-test.mjs
       - name: Arrêter Supabase local
