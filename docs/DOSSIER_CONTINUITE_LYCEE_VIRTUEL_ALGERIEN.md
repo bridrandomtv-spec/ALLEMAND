@@ -807,3 +807,12 @@
 - Vérification GitHub : modifications relues sur la branche. L'exécution réelle PostgreSQL n'a pas été réalisée dans cet environnement ; les nouveaux tests attendent un runner disponible. Ne pas présenter les assertions statiques comme une validation runtime.
 - Aucune migration appliquée au projet Supabase actif ; aucun changement de données, Auth, RLS, publication Realtime ou secret en production. Aucun service payant.
 - PR #17 reste ouverte et non fusionnée, cible `main`. Aucun changement sur `main`.
+
+
+## Lot 487 — idempotence des invitations et contrôle du quota (14 novembre 2026)
+
+- Audit du cycle d'acceptation : les acceptations réciproques acquièrent le même verrou transactionnel de paire avant le verrou de ligne. La relecture `FOR UPDATE` vérifie le statut après attente. L'annulation/refus d'une invitation donnée se sérialise avec l'acceptation via le verrou de ligne PostgreSQL ; ce contrôle statique ne remplace pas un test concurrent à deux sessions.
+- Défaut corrigé dans `msg_invite_send` : la recherche d'une invitation déjà pendante intervient désormais avant le contrôle du quota de 20 créations sur 24 h. Une répétition idempotente ne consomme pas une nouvelle création et ne doit pas échouer au plafond.
+- Test ajouté à `ci/msg-invitation-postgres-test.sql` : crée une demande pendante, ajoute 20 invitations antérieures dans la fenêtre, puis vérifie que le même appel renvoie le même UUID. Les lignes de surcharge sont vieillies après le test afin de ne pas perturber les scénarios suivants.
+- Assertions statiques renforcées dans `ci/check-msg.mjs`.
+- Validation : modifications versionnées uniquement sur la branche de PR. Aucun test PostgreSQL n'a été exécuté dans cette session (Docker/Supabase CLI indisponibles ici) ; le nouveau test reste à confirmer dans l'environnement PostgreSQL éphémère. Aucun changement sur Supabase actif, Auth, RLS, Realtime, secrets, facturation ou `main`. PR #17 reste ouverte et non fusionnée.
