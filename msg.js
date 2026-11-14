@@ -41,8 +41,8 @@
     return '<div class="msg-row '+(mine?'me':'')+(live?' live':'')+'" data-mid="'+m.id+'">'+
       '<div class="msg-meta"><b class="msg-name">'+esc(mine?'أنا':nameOf(m.sender_id))+'</b>'+
       '<span>'+String(m.created_at||'').slice(11,16)+' UTC</span>'+
-      (mine?'':'<button class="msg-report" data-report="'+m.id+'" type="button" title="إبلاغ">🚩</button>')+'</div>'+
-      '<div class="msg-body">'+esc(m.body)+(m.flagged?' <em class="msg-flag">· تم الإبلاغ عنه</em>':'')+'</div>'+att+'</div>';
+      (mine?'<span class="msg-own-actions"><button class="msg-report" data-msg-act="edit" data-mid="'+m.id+'" type="button" title="تعديل الرسالة">✏️</button><button class="msg-report" data-msg-act="delete" data-mid="'+m.id+'" type="button" title="حذف الرسالة">🗑️</button></span>':'<button class="msg-report" data-report="'+m.id+'" type="button" title="إبلاغ">🚩</button>')+'</div>'+
+      '<div class="msg-body">'+esc(m.body)+(m.edited_at?' <em class="msg-flag">· عُدّلت</em>':'')+(m.flagged?' <em class="msg-flag">· تم الإبلاغ عنها</em>':'')+'</div>'+att+'</div>';
   }
   async function attachmentsFor(messageIds){
     try{ return await window.SB.msgAttachmentInfos(messageIds); }
@@ -348,8 +348,36 @@
     });
   });
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act]') : null;
     if(!t) return;
+    var msgAct = t.getAttribute('data-msg-act');
+    if(msgAct){
+      var messageId = t.getAttribute('data-mid');
+      var row = t.closest('.msg-row');
+      if(!messageId || !row || !row.classList.contains('me') || !state.me){ return; }
+      if(msgAct==='edit'){
+        var bodyNode = row.querySelector('.msg-body');
+        var currentText = bodyNode ? bodyNode.textContent.replace(/\\s*·\\s*(عُدّلت|تم الإبلاغ عنها).*$/,'').trim() : '';
+        var revised = window.prompt('تعديل رسالتك :', currentText);
+        if(revised===null) return;
+        if(!revised.trim() || revised.length>2000){ window.alert('اكتب رسالة بين 1 و2000 حرف.'); return; }
+        t.disabled=true;
+        window.SB.msgEdit(messageId,revised).then(function(result){
+          if(!result || !result.ok){ window.alert('⛔ '+((result&&result.err)||'تعذّر تعديل الرسالة')); }
+          renderThread(state.conv);
+        }).catch(function(error){ window.alert('⛔ '+String(error&&error.message||error)); renderThread(state.conv); });
+        return;
+      }
+      if(msgAct==='delete'){
+        if(!window.confirm('هل تريد حذف هذه الرسالة؟ لن تظهر بعد ذلك في المحادثة.')) return;
+        t.disabled=true;
+        window.SB.msgDelete(messageId).then(function(result){
+          if(!result || !result.ok){ window.alert('⛔ '+((result&&result.err)||'تعذّر حذف الرسالة')); }
+          renderThread(state.conv);
+        }).catch(function(error){ window.alert('⛔ '+String(error&&error.message||error)); renderThread(state.conv); });
+        return;
+      }
+    }
     var peerKey = t.getAttribute('data-peer-key');
     if(peerKey){
       var recipientKey = state.peers[peerKey];
