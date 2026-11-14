@@ -157,6 +157,16 @@ ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.159'") && sw.includes('./style-proto
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
  
+// Lot 525 — ordre déterministe des messages partageant le même created_at.
+const messagesFnStart = sbjs.indexOf('async function msgMessages(');
+const messagesFnEnd = sbjs.indexOf('\nasync function msgSend(', messagesFnStart);
+const messagesFn = sbjs.slice(messagesFnStart, messagesFnEnd);
+ok(messagesFnStart >= 0 && messagesFnEnd > messagesFnStart &&
+   messagesFn.includes(".order('created_at',{ascending:false}).order('id',{ascending:false})"),
+   'historique Messenger : tri stable par horodatage puis identifiant');
+ok(/create table if not exists public\.msg_messages \([\s\S]*?id bigint generated always as identity primary key[\s\S]*?created_at timestamptz not null default now\(\)/.test(sql) &&
+   !/client_nonce|idempotency_key|request_id/.test(sql),
+   'schéma actuel : identifiant serveur, sans clé d’idempotence client');
 // Lot 524 — une réponse d'envoi asynchrone ne doit jamais voler la vue courante.
 const sendStart = msgjs.indexOf('async function send(){');
 const sendEnd = msgjs.indexOf('\n  function scheduleThreadRecovery()', sendStart);
