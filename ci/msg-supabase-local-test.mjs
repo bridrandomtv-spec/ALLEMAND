@@ -307,17 +307,29 @@ const discovered = await call("/rest/v1/rpc/msg_student_search", {
   body: { p_query: "Test", p_limit: 12 },
 });
 assert.ok(Array.isArray(discovered));
-assert.ok(discovered.some((student) => student.student_id === recipient.id));
-assert.ok(discovered.some((student) => student.student_id === observer.id));
+const recipientResult = discovered.find((student) => student.pseudo === "Test-recipient");
+const observerResult = discovered.find((student) => student.pseudo === "Test-observer");
+assert.ok(recipientResult?.student_key, "Discovery did not issue an opaque key for recipient");
+assert.ok(observerResult?.student_key, "Discovery did not issue an opaque key for observer");
+assert.notEqual(recipientResult.student_key, recipient.id, "Discovery exposed the recipient auth UUID");
+assert.notEqual(observerResult.student_key, observer.id, "Discovery exposed the observer auth UUID");
 assert.ok(discovered.every((student) =>
-  Object.keys(student).sort().join(",") === "filiere,niveau,pseudo,student_id,wilaya"
-), "Discovery RPC returned fields outside the minimal public contract");
+  Object.keys(student).sort().join(",") === "filiere,niveau,pseudo,student_key,wilaya"
+), "Discovery RPC returned fields outside the opaque public contract");
 
-// Un troisième compte non participant ne doit pas pouvoir lire une invitation.
-const cancelInvite = await call("/rest/v1/rpc/msg_invite_send", {
+// Un jeton de découverte est lié au compte qui l'a demandé.
+await call("/rest/v1/rpc/msg_invite_send_by_key", {
+  method: "POST",
+  bearer: recipient.token,
+  body: { p_student_key: observerResult.student_key },
+  expected: false,
+});
+
+// L'expéditeur utilise le jeton opaque ; aucun UUID du destinataire ne passe par le navigateur.
+const cancelInvite = await call("/rest/v1/rpc/msg_invite_send_by_key", {
   method: "POST",
   bearer: sender.token,
-  body: { p_recipient: observer.id },
+  body: { p_student_key: observerResult.student_key },
 });
 const observerCannotRead = await call(
   `/rest/v1/msg_invites?select=id,status&id=eq.${cancelInvite}`,
