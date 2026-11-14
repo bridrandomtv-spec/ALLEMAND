@@ -497,7 +497,22 @@ const beforeConsent = await call("/rest/v1/msg_conversations?select=id,type&type
 });
 assert.equal(beforeConsent.length, 0, "A direct conversation was created before recipient consent");
 
-const senderCannotAccept = await call("/rest/v1/rpc/msg_invite_accept", {
+// Une invitation réciproque est volontairement créée avant l'acceptation.
+ // L'acceptation de la première doit neutraliser cette demande redondante.
+ const reciprocalInvite = await call("/rest/v1/rpc/msg_invite_send", {
+   method: "POST",
+   bearer: recipient.token,
+   body: { p_recipient: sender.id },
+ });
+ assert.match(reciprocalInvite, /^[0-9a-f-]{36}$/i, "Reciprocal invitation RPC did not return a UUID");
+ const reciprocalPending = await call(
+   `/rest/v1/msg_invites?select=id,status&id=eq.${reciprocalInvite}`,
+   { bearer: recipient.token },
+ );
+ assert.equal(reciprocalPending.length, 1);
+ assert.equal(reciprocalPending[0].status, "pending");
+
+ const senderCannotAccept = await call("/rest/v1/rpc/msg_invite_accept", {
   method: "POST",
   bearer: sender.token,
   body: { p_invite: invite },
@@ -511,6 +526,33 @@ const acceptedConversationId = await call("/rest/v1/rpc/msg_invite_accept", {
   body: { p_invite: invite },
 });
 assert.ok(acceptedConversationId, "Recipient acceptance did not create a direct conversation");
+assert.match(String(acceptedConversationId), /^\\d+$/, "Acceptance RPC did not return a conversation id");
+
+// Rejouer la même acceptation doit être idempotent et retourner le même DM.
+const repeatedAcceptance = await call("/rest/v1/rpc/msg_invite_accept", {
+  method: "POST",
+  bearer: recipient.token,
+  body: { p_invite: invite },
+});
+assert.equal(String(repeatedAcceptance), String(acceptedConversationId),
+  "Repeated acceptance created or returned a different direct conversation");
+
+const acceptedInviteState = await call(
+  `/rest/v1/msg_invites?select=id,status,conversation_id,responded_at&id=eq.${invite}`,
+  { key: serviceRoleKey, bearer: serviceRoleKey },
+);
+assert.equal(acceptedInviteState.length, 1, "Accepted invitation is missing from service_role view");
+assert.equal(acceptedInviteState[0].status, "accepted");
+assert.equal(String(acceptedInviteState[0].conversation_id), String(acceptedConversationId));
+assert.ok(acceptedInviteState[0].responded_at, "Accepted invitation has no response timestamp");
+
+const reciprocalState = await call(
+  `/rest/v1/msg_invites?select=id,status&id=eq.${reciprocalInvite}`,
+  { key: serviceRoleKey, bearer: serviceRoleKey },
+);
+assert.equal(reciprocalState.length, 1, "Reciprocal invitation disappeared unexpectedly");
+assert.equal(reciprocalState[0].status, "cancelled",
+  "Accepting one direction did not cancel the reciprocal pending invitation");
 
 const recipientConversations = await call(
   `/rest/v1/msg_conversations?select=id,type&id=eq.${acceptedConversationId}&type=eq.direct`,
