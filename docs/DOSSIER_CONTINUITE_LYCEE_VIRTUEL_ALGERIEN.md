@@ -2417,3 +2417,14 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Assertion statique ajoutée à ci/check-msg.mjs pour le diagnostic de l'erreur, le traitement distinct des statuts, l'annulation après SUBSCRIBED et le backoff.
 - Limite : cette modification améliore l'observabilité et le traitement des fermetures/timeouts; elle ne démontre pas encore que la réception fonctionne sur le projet hébergé. Le test d'intégration local Supabase reste non exécuté à cause du blocage GitHub Actions déjà documenté.
 - Aucun test sur des comptes réels, aucune écriture ou modification de configuration sur Supabase hébergé, aucun changement de schéma/RLS/Auth/Realtime/Storage, aucun déploiement Cloudflare. PR #17 reste ouverte et non fusionnée; main inchangée.
+
+
+## Lot 529 — initialisation single-flight du client Supabase
+
+- Audit de l'initialisation dans supabase/supabase.js : le chemin UMD construit le client de façon synchrone. En revanche, si le global UMD n'est pas disponible et que l'un des imports CDN est utilisé, plusieurs appels simultanés à sb() pouvaient tous entrer dans la boucle import() avant l'affectation de client. Ils pouvaient alors construire plusieurs instances Supabase indépendantes.
+- Risque Messenger : le canal Realtime peut être créé avec une instance, tandis qu'une lecture HTTP ou un autre module récupère une autre instance. Les deux utilisent la même configuration et le stockage de session, mais leurs cycles de vie Auth/Realtime ne sont pas mutualisés.
+- Correctif : ajout de clientPromise (single-flight). Le premier appel crée la promesse d'initialisation; tous les appels concurrents attendent cette même promesse. En cas d'échec complet des CDN, la promesse est réinitialisée afin qu'un appel ultérieur puisse retenter le chargement. Le chemin UMD normal reste inchangé.
+- Contrôle statique ajouté à ci/check-msg.mjs pour vérifier la promesse partagée, le retour du client existant et la remise à zéro après échec.
+- Audit de session : le client est configuré avec persistSession:true; autoRefreshToken reste sur sa valeur par défaut du SDK (activée). La session Messenger interrogée par SB.me() est la session Auth Supabase; la session locale dz_de_session_v1 ne constitue pas le JWT Supabase et ne doit pas être utilisée pour autoriser les lectures Realtime.
+- Limite : le défaut de concurrence est corrigé dans le code, mais aucun test navigateur avec panne CDN simulée ni vérification de l'instance runtime n'a pu être exécuté dans cette session. Les tests CI restent soumis au blocage de démarrage des runners.
+- Aucun test sur comptes réels, aucune modification Supabase hébergé, aucune migration ni modification Auth/RLS/Realtime/Storage, aucun déploiement Cloudflare. PR #17 reste ouverte et non fusionnée; main inchangée.
