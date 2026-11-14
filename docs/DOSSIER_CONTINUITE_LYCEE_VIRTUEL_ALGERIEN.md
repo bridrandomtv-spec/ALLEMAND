@@ -2113,3 +2113,27 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Le run précédent `43593417351` reste inexploitable : job terminé en échec, mais aucune étape ni URL de logs ; tentative de lecture des logs = `BlobNotFound`. Il ne permet pas de conclure sur le nouveau scénario.
 - Sur le HEAD `319abbd8c9f77242528474158726c72af8b8c4a8`, le dernier relevé de checks exposait seulement le check Supabase Preview `skipped`; aucun résultat de test `msg_messages` n'est donc déclaré.
 - PR #17 : toujours `open`, `merged=false`. Le champ `mergeable` a retourné `false` lors de cette lecture ; aucune fusion ni rebase n'a été tentée. Recalculer l'état avant toute décision future.
+
+
+---
+
+## Lot 511 — audit de sûreté du test Messenger et diagnostic du runner GitHub (14 novembre 2026)
+
+### Vérifications réalisées
+- Relecture du HEAD réel de PR #17 : `2f2f43962a5eaf3d3b4723f71e94a2f927303332`, branche `design/prototypes-67-74-alignment`.
+- Relecture du test `ci/msg-supabase-local-test.mjs`, de sa fixture `ci/msg-supabase-local-bootstrap.sql`, du workflow `.github/workflows/msg-supabase-local-test.yml`, du schéma historique `supabase/msg_schema.sql` et des deux migrations explicitement appliquées par ce workflow.
+- La fixture `msg_messages` contient les colonnes essentielles utilisées par le test INSERT/Realtime/SELECT : `id`, `conversation_id`, `sender_id`, `body`, `created_at`, `edited_at`, `deleted_at`. Le schéma historique contient en plus `attachment_id`, qui n'est pas nécessaire au scénario de message texte.
+- Le scénario de test utilise trois comptes synthétiques `@example.test` dans la pile Supabase CLI locale : expéditeur, destinataire et observateur non membre. Il ne référence ni URL ni clé de production dans son code ; les clés sont lues depuis les variables d'environnement éphémères du service local.
+- Le workflow démarre explicitement une pile Supabase locale, applique le bootstrap et les migrations ciblées sur cette base locale, puis exécute le test. Aucune étape de ce workflow ne déploie Cloudflare ou n'applique une migration à Supabase de production.
+
+### Diagnostic GitHub Actions plus précis
+- Lecture directe de l'API GitHub pour le run Messenger `43593541383` : état `completed/failure`, job `messenger-supabase-local`, commencé à `12:11:03Z`, terminé à `12:11:05Z`.
+- Le job expose `runner_id=0`, `runner_name=""`, `runner_group_id=0`, `steps=[]`. Aucune commande du workflow n'a donc été exécutée par un runner identifiable.
+- Cette observation confirme que ce run ne constitue pas un échec du test SQL, de PostgREST ou de Realtime : le script de test n'a pas été lancé. La cause côté service GitHub Actions reste à établir ; ne pas l'attribuer plus précisément sans journaux ou diagnostic GitHub.
+- Le test d'intégration `msg_messages INSERT → CDC → WebSocket → SELECT RLS` reste donc non exécuté et non validé. Aucun résultat positif ou négatif ne doit lui être attribué.
+
+### Décision de préservation
+- Aucun changement de `msg.js`, `supabase/supabase.js`, des migrations, du schéma de production, des politiques RLS, des conversations ou des messages réels dans ce lot.
+- Aucun nouveau test d'envoi sur les comptes réels, aucune écriture Supabase de production, aucune branche payante, aucun déploiement Cloudflare.
+- Aucun correctif applicatif supplémentaire n'est justifié par le seul échec de runner. Priorité : obtenir une exécution GitHub avec runner attribué et étapes visibles, puis examiner le premier vrai résultat du test avant d'étendre le périmètre aux UPDATE, suppressions logiques et reconnexions.
+- PR #17 reste ouverte et non fusionnée ; `main` reste intacte. Aucun rebase ni merge tenté.
