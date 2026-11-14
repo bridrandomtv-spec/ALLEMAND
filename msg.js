@@ -9,7 +9,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
-  var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
+  var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, updateRefreshTimer:null, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
   async function session(){ try{ return (window.SB && window.SB.me) ? await window.SB.me() : null; }catch(e){ return null; } }
   function stamp(x){ return String(x||'').slice(0,16).replace('T',' '); }
   function card(t,s,btn){ return '<div class="msg-card"><div class="msg-ct"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div>'+(btn||'')+'</div>'; }
@@ -54,6 +54,7 @@
   function closeChannel(){
     state.channelEpoch++;
     if(state.recoveryTimer){ clearTimeout(state.recoveryTimer); state.recoveryTimer=null; }
+    if(state.updateRefreshTimer){ clearTimeout(state.updateRefreshTimer); state.updateRefreshTimer=null; }
     if(state.ch){ try{ state.ch.unsubscribe(); }catch(e){} state.ch = null; }
   }
   function closeInviteChannel(){
@@ -83,6 +84,16 @@
       if(epoch===state.inviteEpoch) state.inviteCh = null;
     }
   }
+  function scheduleUpdateRefresh(id, epoch){
+    /* Regroupe les UPDATE rapprochés (édition, suppression logique, pièce jointe)
+       en une seule lecture cohérente du fil après la fin de la rafale CDC. */
+    if(state.updateRefreshTimer){ clearTimeout(state.updateRefreshTimer); state.updateRefreshTimer=null; }
+    state.updateRefreshTimer = setTimeout(function(){
+      state.updateRefreshTimer = null;
+      if(epoch!==state.channelEpoch || state.conv!==id) return;
+      renderThread(id, true).catch(function(){});
+    }, 90);
+  }
   async function startChannel(id){
     closeChannel();
     var epoch = state.channelEpoch;
@@ -108,7 +119,7 @@
           });
         })
         .on('postgres_changes', { event:'UPDATE', schema:'public', table:'msg_messages', filter:'conversation_id=eq.'+id }, function(){
-          if(epoch===state.channelEpoch && state.conv===id) renderThread(id, true);
+          if(epoch===state.channelEpoch && state.conv===id) scheduleUpdateRefresh(id, epoch);
         })
         .on('presence', { event:'sync' }, function(){
           try{
