@@ -682,3 +682,9 @@
 - État cloud confirmé : projet Supabase `azjwcybivirvpxbfhyzk` sain ; `msg_invites` et les quatre RPC d'invitation toujours absents ; publication Realtime limitée actuellement à `msg_conversations` et `msg_messages`. Aucune donnée de conversation ou message privé n'a été consultée.
 - Cloudflare Workers Build preview du HEAD Lot 478 : success, Build ID `8207e2e3-e133-4d79-9932-3aef64698f64`. Aucun déploiement production ou changement de bindings/secrets.
 - PR #17 reste ouverte, non fusionnée, base `main`. Aucun changement direct sur `main`, aucune migration/écriture cloud, aucune modification Auth/RLS ou paiement.
+
+
+### Résultats d'exécution après le correctif Lot 479
+- Sur le commit code `09e3f223454eb0ce6d3722d3cbde4567d8f2a40d`, les cinq jobs GitHub Actions (CI structurelle, Messenger local, consentement PostgreSQL, découverte PostgreSQL, Multaqa PostgreSQL) se sont terminés en échec avec `runner_id=0`, `runner_name=""` et `steps=[]`. Aucune assertion, commande Node ou migration de test n'a été exécutée ; aucune conclusion sur la validité runtime du correctif ne peut être tirée de ces jobs.
+- Le check `Supabase Preview` est `skipped` (pas de branche Supabase Preview provisionnée pour cette PR). Le check Cloudflare Workers Builds du commit code `09e3f223`, Build ID `8a1bacf8-de85-44e8-84c1-54300dc756f7`, était encore `in_progress` lors de la dernière lecture ; ne pas le déclarer réussi avant sa conclusion.
+- Ces résultats ne changent pas l'état de la base active : migrations Messenger 001/003 absentes et non appliquées. Aucune action cloud ou déploiement production n'a été réalisé.
