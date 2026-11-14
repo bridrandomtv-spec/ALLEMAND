@@ -10,6 +10,11 @@ t(ui.includes('function closeInviteChannel()') && ui.includes('closeInviteChanne
   'le canal Realtime des invitations est fermé au changement de vue et relancé dans la liste');
 t(ui.includes("if(state.me!==userId || state.conv!==null) return;") && ui.includes('renderList();'),
   'les changements d’invitation actualisent la liste uniquement pour la session active hors fil de discussion');
+t(ui.includes('inviteEpoch') && ui.includes('epoch!==state.inviteEpoch'),
+  'un abonnement asynchrone devenu obsolète ne peut pas se réactiver après fermeture du canal');
+t(ui.includes('state.inviteViewActive = String(v).indexOf(\'msg\')>=0;') &&
+  ui.includes('!state.inviteViewActive || !userId'),
+  'aucun canal invitation ne démarre lorsque la vue Messenger est inactive');
 
 const pols = [...sql.matchAll(/create policy "(msg[^"]*)" on public\.(\w+) for (\w+) to (\w+)/g)];
 t(pols.length >= 18, 'au moins 18 politiques msg_* (' + pols.length + ')');
