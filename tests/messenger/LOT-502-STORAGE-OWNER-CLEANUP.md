@@ -77,3 +77,11 @@ Le harness a été renforcé :
 - inventaire des politiques DELETE permissives authentifiées : exactement deux attendues dans la pile synthétique (historique `owner delete` et candidate Messenger).
 
 Le run Storage #13 échoue avant exposition des étapes (`steps=null`, `logs_url=null`), comme les autres workflows du même commit. Les journaux renvoient `BlobNotFound`. **La couverture est écrite mais non exécutée** ; ne pas qualifier les assertions de passées et ne pas appliquer la migration à la production.
+
+
+## Lot 505 — correction du workflow et état des preuves (14 novembre 2026)
+
+- Corrigé le bloc `DO` du contrôle des politiques Storage dans `.github/workflows/msg-storage-local-test.yml` : délimiteurs PostgreSQL `$$` manquants, commit `a935ca64692a9c0ed7bd0d2585c5f29a38dc5c55`.
+- Run GitHub Actions Storage #16 (`43591195498`) : échec sans étapes exposées (`steps=[]`, `logs_url=null`), récupération des logs `BlobNotFound`. Les workflows CI générale et PostgreSQL du même commit ont le même défaut de visibilité. Cause d'exécution indéterminée ; ne pas déclarer le script ni la migration exécutés.
+- Environnement de travail : Node `v22.16.0` présent ; Docker, Supabase CLI et psql absents. Pas de runtime local possible ici.
+- Le schéma réel confirme statiquement les colonnes référencées par la politique metadata. Migration toujours candidate non appliquée ; aucun test Storage/PostgREST runtime n'est validé et aucune compensation client n'est activée.
