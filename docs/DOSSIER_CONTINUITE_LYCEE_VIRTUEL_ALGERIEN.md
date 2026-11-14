@@ -2645,3 +2645,24 @@ Correctif sur PR #17 :
 Fichier modifié : `ci/msg-supabase-local-test.mjs` (commit `80c1d57c4973d0cf8a9b595d6515abee86ee799d`).
 
 Validation : relecture du dispatcher, des prédicats, des attentes d'édition et de suppression et des assertions de correspondance. Aucun test Node/Supabase dynamique n'a été exécuté; le blocage des runners GitHub Actions avant démarrage demeure. Aucun accès ni changement sur Supabase hébergé, aucune modification de schéma, données, Auth, RLS, Realtime ou Storage en production, aucun déploiement Cloudflare et aucune fusion. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 544 — fiabiliser le cycle de vie du canal Realtime des invitations
+
+Audit de `subscribeToInviteChanges()` dans `ci/msg-supabase-local-test.mjs`.
+
+Défauts confirmés : l'observateur d'invitations avait un délai de réception INSERT, mais ne traitait pas explicitement l'événement WebSocket `close`; une fermeture du transport après CDC-ready pouvait laisser `waitForInvite()` en attente jusqu'au timeout. La fermeture volontaire de l'observateur ne rejetait pas non plus une attente encore pendante. Enfin, les erreurs de canal/transport survenant avant que le scénario n'attache son `await` à la promesse INSERT pouvaient provoquer un rejet non traité par Node.
+
+Correctifs sur PR #17 :
+
+- Un chemin central `fail(error)` annule le timer et rejette les attentes readiness et INSERT encore pendantes.
+- Les refus de `phx_join`, les ACK ne confirmant pas `public.msg_invites`, les erreurs CDC, les trames invalides, `phx_error` et `phx_close` passent par ce chemin commun.
+- Un listener WebSocket `close` détecte désormais les fermetures inattendues après comme avant CDC-ready et conserve le code ainsi que la raison de fermeture dans le diagnostic.
+- L'arrivée d'un INSERT valide marque l'attente comme résolue et annule le timeout de réception.
+- Le timeout de réception conserve le diagnostic SQL local de `realtime.subscription`, puis rejette explicitement l'attente.
+- `close()` annule le timer et rejette une attente INSERT non résolue avant de fermer le socket; un drapeau distingue cette fermeture volontaire du signal `close` asynchrone.
+- La promesse INSERT reçoit immédiatement un handler de rejet neutre afin d'éviter un `unhandledRejection` si le canal échoue avant l'installation du `await` dans le scénario. La promesse originale reste rejetée pour l'appelant de `waitForInvite()`.
+
+Fichier modifié : `ci/msg-supabase-local-test.mjs` (commits `5dee6667194a66faec972647417ab6c1de5a5797` et `a2710602d728a0378c1509c44face31cce1e840c`).
+
+Validation : relecture statique du cycle readiness/INSERT, des erreurs de protocole, des erreurs de transport, de la fermeture inattendue, du timeout et du nettoyage volontaire. Aucun test Node/Supabase dynamique n'a été exécuté; les runners GitHub Actions restent bloqués avant démarrage. Aucun changement de Supabase hébergé (schéma, données, Auth, RLS, Realtime ou Storage), aucun déploiement Cloudflare, aucune fusion. PR #17 reste ouverte et non fusionnée.
