@@ -52,8 +52,8 @@ ok(msgjs.includes('ابحث في محادثاتي ومجموعاتي') && msgjs.
 ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'rédaction et pièces jointes en arabe');
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
-ok(idx.includes('msg.js?v=3521'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.160'") && sw.includes("./msg.js?v=3521") && sw.includes("./style-prototype-dz.css?v=202"), 'service worker et précache Messenger synchronisés');
+ok(idx.includes('msg.js?v=3522'), 'version cache du module de messagerie actualisée');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.161'") && sw.includes("./msg.js?v=3522") && sw.includes("./style-prototype-dz.css?v=202"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
@@ -152,8 +152,8 @@ if (fail.length) { console.error('::error:: check-msg Lot 360 : ' + fail.length 
 ok(msgjs.includes('msg-pro-hero') && msgjs.includes('msg-pro-stats'), 'nouvelle hiérarchie pédagogique Messenger');
 ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجموعة '("), 'libellé de groupe construit sans appel de chaîne invalide');
 ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key]')"), 'filtres Messenger accessibles via délégation de clic');
-ok(idx.includes('style-prototype-dz.css?v=202') && idx.includes('msg.js?v=3521'), 'versions de ressources Messenger actualisées');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.160'") && sw.includes('./style-prototype-dz.css?v=202') && sw.includes('./msg.js?v=3521'), 'précache synchronisé avec la nouvelle interface');
+ok(idx.includes('style-prototype-dz.css?v=202') && idx.includes('msg.js?v=3522'), 'versions de ressources Messenger actualisées');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.161'") && sw.includes('./style-prototype-dz.css?v=202') && sw.includes('./msg.js?v=3522'), 'précache synchronisé avec la nouvelle interface');
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
  
@@ -169,6 +169,23 @@ ok(insertStart >= 0 && insertEnd > insertStart &&
    insertHandler.includes("currentThread.querySelector('[data-mid="'+m.id+'"]')"),
    'INSERT Realtime : DOM courant revalidé après les lectures asynchrones, sans écriture dans un fil détaché');
 
+// Lot 531 — le canal d'invitations a son propre cycle de reprise.
+ok(msgjs.includes('inviteRecoveryTimer:null') && msgjs.includes('inviteRecoveryAttempts:0') &&
+   msgjs.includes('inviteNeedsRecovery:false'),
+   'état de reprise des invitations isolé du canal de conversation');
+ok(msgjs.includes("ch.subscribe(function(status, err){") &&
+   msgjs.includes("if(epoch!==state.inviteEpoch || state.inviteCh!==ch || state.me!==userId) return;") &&
+   msgjs.includes("if(status==='SUBSCRIBED'){") &&
+   msgjs.includes("if(status==='TIMED_OUT' || status==='CLOSED') scheduleInviteRecovery();"),
+   'canal invitations : statut, génération, identité et reprise après fermeture contrôlés');
+ok(msgjs.includes("window.console.warn('[Messenger invitations Realtime]', status, err || null);") &&
+   msgjs.includes('Math.min(32000, 500 * Math.pow(2, attempt))') &&
+   msgjs.includes('renderList().catch(function(){});'),
+   'diagnostic sans jeton et reprise exponentielle bornée des invitations');
+ok(msgjs.includes('scheduleInviteRecovery();') &&
+   msgjs.includes("if(document.visibilityState==='visible'){") &&
+   msgjs.includes('state.inviteNeedsRecovery = false;'),
+   'reprise invitations à la reconnexion/visibilité et annulation après SUBSCRIBED');
 // Lot 530 — le SDK renouvelle le JWT Realtime; l'UI suit les changements d'identité.
 ok(/client\.auth\.onAuthStateChange\(function\(event\)/.test(msgjs) &&
    msgjs.includes("if(event!=='SIGNED_IN' && event!=='SIGNED_OUT') return;"),
