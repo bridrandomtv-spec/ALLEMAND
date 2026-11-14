@@ -2385,3 +2385,13 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Commits Lot 525 : tri stable d159940ff3841193258e1824ee6ba464b65890ea; assertions statiques 7eb33c5b8aed886a0260c49d76ec3bc9120f6301; dossier à suivre.
 - Validation dynamique non acquise : les runners GitHub Actions restent bloqués par l'annotation de facturation. Aucun test PostgreSQL local n'a été exécuté dans cette session. Aucun accès en écriture à Supabase hébergé, aucune migration, aucun changement Auth/RLS/Realtime/Storage/paiement, aucun déploiement Cloudflare.
 - PR #17 reste ouverte et non fusionnée; main reste inchangée.
+
+## Lot 526 — correction d'une course INSERT Realtime / rendu DOM
+
+- Audit du callback INSERT dans msg.js : le callback capturait l'élément `.msg-thread` avant deux opérations asynchrones (`fetchNames()` et `attachmentsFor()`). Pendant ces attentes, un événement UPDATE ou une réconciliation `SUBSCRIBED` pouvait appeler `renderThread(id, true)`, remplacer le contenu de `#msgBody` et détacher l'ancien fil. Le callback INSERT continuait ensuite à écrire dans l'ancien élément DOM, sans erreur visible : le message était reçu par Realtime mais n'apparaissait pas dans l'écran courant jusqu'au prochain rechargement.
+- Correctif : capture de `state.renderEpoch` au début du traitement asynchrone; après les lectures, abandon si le rendu a changé. Le callback récupère ensuite le `.msg-thread` actuellement monté, vérifie `isConnected`, puis recontrôle l'absence du `data-mid` avant insertion. Le contrôle de `channelEpoch` et de la conversation reste en place.
+- Ce défaut explique un scénario précis de réception intermittente côté interface; il ne prouve pas à lui seul que tous les symptômes Realtime ont la même cause. Il est distinct d'un refus CDC/RLS côté serveur.
+- Contrôle statique Lot 526 ajouté dans ci/check-msg.mjs pour exiger le garde `renderEpoch`, la récupération du DOM courant, `isConnected` et la déduplication juste avant insertion.
+- Commits : correctif msg.js db4f6a1aea84c2602e995d78e6dc6c4bde0b2c11; assertion CI a1fd163d1d3f742910b80089baa7847b56b388f2; dossier à suivre.
+- Validation dynamique non effectuée : GitHub Actions reste bloqué par l'annotation de facturation. Le test Supabase local de bout en bout existe mais n'a pas pu démarrer. Aucun test sur Supabase hébergé, aucun changement DB/RLS/Realtime/Auth/Storage, aucun déploiement Cloudflare.
+- PR #17 reste ouverte et non fusionnée; main inchangée.
