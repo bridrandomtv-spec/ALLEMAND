@@ -79,6 +79,8 @@ jobs:
 
       - name: Vérifier la publication PostgreSQL Realtime avant le test
         run: |
+          published="$(psql "$DB_URL" -X -A -t -v ON_ERROR_STOP=1 -c "select count(distinct tablename) from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename in ('msg_invites','msg_messages');")"
+          test "$published" = "2" || { echo "::error::La publication supabase_realtime doit contenir msg_invites et msg_messages (trouvées: $published)"; exit 1; }
           psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
             select pubname, schemaname, tablename
             from pg_publication_tables
