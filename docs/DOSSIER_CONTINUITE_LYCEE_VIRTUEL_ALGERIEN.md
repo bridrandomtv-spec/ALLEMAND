@@ -2061,3 +2061,47 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - PR #17 relue après ce commit : `state=open`, `merged=false`, `mergeable=true`, HEAD `6e8e86544fd2f59d8da225c60420a67ffc74d2cb`. Une lecture intermédiaire immédiatement après le push avait retourné `mergeable=false`, puis la lecture suivante `true` ; conserver la dernière valeur et ne pas interpréter ce champ comme une validation de fusion.
 - Comparaison recalculée : branche divergente, 2 830 commits en avance et 4 en retard, merge-base `51acfe8c97b6e152208d592dbd2c5bbde5c5c38e`. Aucun rebase ni merge tenté.
 - Les checks GitHub Actions déclenchés sur ce HEAD étaient encore en file d'attente lors du dernier contrôle, y compris les deux jobs minimaux Ubuntu. Aucun résultat d'exécution n'est anticipé.
+
+
+---
+
+## Lot 510 — ajouter le test Realtime du vrai flux de messages (14 novembre 2026)
+
+### Lacune trouvée dans la suite existante
+- Le test local `ci/msg-supabase-local-test.mjs` ouvrait un WebSocket Realtime avec le JWT du destinataire et vérifiait la livraison d'une invitation `msg_invites`.
+- Il n'existait pas de test équivalent pour `msg_messages`, la table réellement utilisée par la réception des messages de conversation.
+- `tests/msg_test.mjs` et `ci/check-msg.mjs` contrôlent principalement des invariants statiques du code et du SQL ; ils ne prouvent pas la livraison d'un INSERT `msg_messages` par le transport WebSocket.
+- Les lots 340 et 377 avaient déjà prescrit un environnement Supabase local/isolé, mais le test multi-compte exécuté jusque-là couvrait surtout invitations, consentement, RLS et annuaire.
+
+### Modifications de test commitées sur la branche PR #17
+- `ci/msg-supabase-local-bootstrap.sql` :
+  - ajout d'une table `msg_messages` de fixture avec les colonnes essentielles alignées sur `supabase/msg_schema.sql` ;
+  - RLS activé ;
+  - politiques SELECT membre/modérateur et INSERT expéditeur + membre + non bloqué ;
+  - droits authentifiés et séquence d'identité ;
+  - ajout de `public.msg_messages` à la publication locale `supabase_realtime`.
+- `ci/msg-supabase-local-test.mjs` :
+  - ajout de `subscribeToMessageChanges(user, conversationId)` : WebSocket réel sur la pile Supabase CLI locale, JWT GoTrue du destinataire, événement INSERT et filtre `conversation_id=eq.<id>) ;
+  - après acceptation d'une invitation et création du DM synthétique, l'expéditeur insère un message via PostgREST avec son propre JWT ;
+  - le test attend l'événement CDC/WebSocket, vérifie conversation, expéditeur, corps et identifiant ;
+  - le destinataire relit le message sous son propre JWT (preuve de visibilité RLS) ;
+  - un troisième compte non membre doit obtenir zéro ligne (contrôle négatif RLS).
+- `.github/workflows/msg-supabase-local-test.yml` :
+  - précontrôle de publication étendu à `msg_invites` et `msg_messages`.
+- Aucun code applicatif `msg.js` / `supabase/supabase.js` n'a été modifié dans ce lot.
+
+### Résultat CI et limite
+- Le run `43593417351` (`messenger-supabase-local`) s'est terminé en échec, mais l'API GitHub retourne `steps=null`, `logs_url=null`; la récupération des logs renvoie `BlobNotFound`.
+- Les deux jobs minimaux Ubuntu et la validation structurelle du même HEAD ont également échoué sans étapes ni journaux (`steps=null`, `logs_url=null`). Il est donc impossible d'attribuer l'échec au nouveau test, à une étape du workflow ou à l'initialisation du runner. Aucun résultat positif ou négatif du test Realtime `msg_messages` n'est revendiqué.
+- Le code du test et les fichiers de fixture sont présents sur la branche, mais la validation dynamique reste **non démontrée** jusqu'à obtention d'une exécution GitHub avec logs exploitables ou d'un runtime local Supabase disponible.
+
+### Sécurité et état
+- La pile de test est démarrée par Supabase CLI dans le workflow GitHub et utilise des utilisateurs synthétiques `@example.test`; aucun compte réel ni clé de production n'est utilisé par ce script.
+- La seule branche Supabase recensée est `main` du projet actif `azjwcybivirvpxbfhyzk`. Aucune branche payante ni second projet n'a été créé.
+- Aucun SQL, migration, Auth, RLS, GRANT, Storage ou Realtime n'a été modifié sur le projet Supabase actif.
+- Aucun déploiement Cloudflare, aucune fusion, aucun changement `main`.
+- PR #17 reste ouverte et non fusionnée ; dernier HEAD observé avant le présent addendum : `04525d1360923b9f550650e3baeece933060a316`.
+
+### Étape suivante
+- Obtenir un run exploitable de `messenger-supabase-local` et examiner en premier lieu l'accusé de réception de l'abonnement CDC, le filtre de conversation, puis la trame INSERT.
+- Si le test passe, seulement alors ajouter les tests UPDATE (édition/suppression logique) et reconnexion. Ne pas déduire ces comportements du test INSERT.
