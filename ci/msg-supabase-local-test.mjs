@@ -213,6 +213,108 @@ async function subscribeToInviteChanges(user) {
   }
 }
 
+// Vérification du transport réel de la table msg_messages, filtré par conversation_id.
+async function subscribeToMessageChanges(user, conversationId) {
+  assert.equal(typeof WebSocket, "function", "Node 22 WebSocket global is unavailable");
+  const topic = "realtime:msg-messages-local-" + user.id + "-" + conversationId;
+  const filter = "conversation_id=eq." + conversationId;
+  const wsUrl = `ws://127.0.0.1:54321/realtime/v1/websocket?apikey=${encodeURIComponent(anonKey)}&vsn=2.0.0`;
+  const socket = new WebSocket(wsUrl);
+  let resolveReady, rejectReady, resolveEvent, rejectEvent;
+  let ready = false, joinAcknowledged = false, cdcReady = false;
+  let timeout;
+  const frames = [];
+  const readyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
+  const eventPromise = new Promise((resolve, reject) => { resolveEvent = resolve; rejectEvent = reject; });
+  const maybeReady = () => {
+    if (joinAcknowledged && cdcReady && !ready) {
+      ready = true;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => rejectEvent(new Error(
+        "No msg_messages INSERT event for " + filter + " within 12 seconds; frames: " + JSON.stringify(frames)
+      )), 12000);
+      resolveReady();
+    }
+  };
+  timeout = setTimeout(() => rejectReady(new Error(
+    "msg_messages subscription did not become CDC-ready; frames: " + JSON.stringify(frames)
+  )), 12000);
+  socket.addEventListener("open", () => {
+    socket.send(JSON.stringify([
+      "1", "1", topic, "phx_join",
+      {
+        config: {
+          broadcast: { ack: false, self: false },
+          presence: { key: "" },
+          postgres_changes: [{ event: "INSERT", schema: "public", table: "msg_messages", filter }]
+        },
+        access_token: user.token,
+        version: "1.0.0"
+      }
+    ]));
+  });
+  socket.addEventListener("message", (event) => {
+    try {
+      const raw = String(event.data);
+      const frame = JSON.parse(raw);
+      frames.push(raw.slice(0, 1400));
+      if (frames.length > 10) frames.shift();
+      if (!Array.isArray(frame) || frame.length < 5 || frame[2] !== topic) return;
+      const eventName = frame[3];
+      const payload = frame[4] || {};
+      if (eventName === "phx_reply") {
+        if (payload.status !== "ok") {
+          rejectReady(new Error("msg_messages join rejected: " + JSON.stringify(payload.response || payload)));
+          return;
+        }
+        const changes = payload.response?.postgres_changes ?? [];
+        if (!changes.some((item) => item.schema === "public" && item.table === "msg_messages" &&
+          (item.filter === filter || JSON.stringify(item).includes(filter)))) {
+          rejectReady(new Error("Realtime did not acknowledge the expected msg_messages filter: " + JSON.stringify(changes)));
+          return;
+        }
+        joinAcknowledged = true;
+        maybeReady();
+      } else if (eventName === "system" && payload.extension === "postgres_changes") {
+        if (payload.status === "ok") {
+          cdcReady = true;
+          maybeReady();
+        } else if (payload.status === "error" || payload.status === "timeout") {
+          rejectReady(new Error("msg_messages CDC readiness failed: " + JSON.stringify(payload)));
+        }
+      } else if (eventName === "postgres_changes") {
+        const data = payload.data || payload;
+        const record = data.record || data.new || payload.record || payload.new || {};
+        const kind = data.type || data.eventType || payload.eventType;
+        if (String(kind || "").toUpperCase() === "INSERT" &&
+            String(record.conversation_id) === String(conversationId)) {
+          resolveEvent({ record, frame: payload });
+        }
+      } else if (eventName === "phx_error" || eventName === "phx_close") {
+        const error = new Error("msg_messages channel closed: " + JSON.stringify(payload));
+        if (!ready) rejectReady(error); else rejectEvent(error);
+      }
+    } catch (error) {
+      if (!ready) rejectReady(error); else rejectEvent(error);
+    }
+  });
+  socket.addEventListener("error", () => {
+    const error = new Error("msg_messages WebSocket transport error");
+    if (!ready) rejectReady(error); else rejectEvent(error);
+  });
+  try {
+    await readyPromise;
+    return {
+      waitForMessage: () => eventPromise,
+      close: () => { clearTimeout(timeout); socket.close(); }
+    };
+  } catch (error) {
+    clearTimeout(timeout);
+    socket.close();
+    throw error;
+  }
+}
+
 const realtimeObserver = await subscribeToInviteChanges(observer);
 try {
   const realtimeInvite = await call("/rest/v1/rpc/msg_invite_send", {
@@ -294,6 +396,45 @@ const senderConversations = await call(
   { bearer: sender.token },
 );
 assert.equal(senderConversations.length, 1, "Sender cannot read the conversation after consent");
+
+
+// Test de bout en bout du chemin qui manquait : INSERT msg_messages → CDC → WebSocket destinataire → SELECT RLS.
+const realtimeMessageObserver = await subscribeToMessageChanges(recipient, acceptedConversationId);
+try {
+  const messageBody = "Realtime message delivery smoke test";
+  await call("/rest/v1/msg_messages", {
+    method: "POST",
+    bearer: sender.token,
+    body: [{
+      conversation_id: acceptedConversationId,
+      sender_id: sender.id,
+      body: messageBody
+    }]
+  });
+  const receivedMessage = await realtimeMessageObserver.waitForMessage();
+  assert.equal(String(receivedMessage.record.conversation_id), String(acceptedConversationId),
+    "Realtime message event belongs to another conversation");
+  assert.equal(receivedMessage.record.sender_id, sender.id, "Realtime event has the wrong sender");
+  assert.equal(receivedMessage.record.body, messageBody, "Realtime event body differs from the inserted message");
+  assert.ok(receivedMessage.record.id, "Realtime event did not include the message id");
+
+  const recipientCanReadMessage = await call(
+    `/rest/v1/msg_messages?select=id,conversation_id,sender_id,body&id=eq.${receivedMessage.record.id}`,
+    { bearer: recipient.token }
+  );
+  assert.equal(recipientCanReadMessage.length, 1, "Recipient RLS cannot read the message delivered by Realtime");
+  assert.equal(recipientCanReadMessage[0].body, messageBody);
+
+  const outsiderCannotReadMessage = await call(
+    `/rest/v1/msg_messages?select=id&id=eq.${receivedMessage.record.id}`,
+    { bearer: observer.token }
+  );
+  assert.equal(outsiderCannotReadMessage.length, 0, "Non-member can read a message from another conversation");
+  console.log("PASS: msg_messages INSERT → Realtime CDC/WebSocket → recipient RLS SELECT");
+} finally {
+  realtimeMessageObserver.close();
+}
+
 
 const accepted = await call(`/rest/v1/msg_invites?select=status&id=eq.${invite}`, {
   bearer: recipient.token,
