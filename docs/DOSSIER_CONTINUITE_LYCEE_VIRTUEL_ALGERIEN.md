@@ -2483,3 +2483,19 @@ Correctif sur la branche PR #17 :
 Limites : ce lot traite les transitions Auth observées par le client et les opérations UI explicitement protégées. Il ne prouve pas l'issue côté serveur d'une requête déjà envoyée avant la déconnexion ; seul un test avec deux sessions synthétiques peut vérifier cette frontière. Aucun test Realtime dynamique n'a été exécuté, les runners Actions restant bloqués avant démarrage pour le motif de facturation déjà documenté.
 
 Aucune modification de schéma, de données, d'Auth/RLS/Realtime/Storage en production, aucun déploiement et aucune fusion. PR #17 reste à confirmer visuellement et fonctionnellement avant toute fusion.
+
+
+## Lot 534 — isolation des réponses de recherche et d'invitation entre sessions Auth
+
+Constat : après le Lot 533, l'identité de session est invalidée avec `authEpoch`, mais trois opérations asynchrones du parcours de découverte/mise en relation n'en capturaient pas la génération. Une recherche de camarades commencée sous le compte A pouvait terminer après reconnexion sous le compte B et repeupler `state.peers` avec des jetons opaques liés à A. De même, une réponse tardive d'envoi, d'acceptation, de refus ou d'annulation d'invitation pouvait afficher un résultat ou relancer `renderList()` dans la nouvelle session.
+
+Correctif sur la branche PR #17 :
+
+- La recherche de camarades capture `state.authEpoch`; résultat et erreur sont ignorés si l'identité a changé. Le rendu d'erreur vérifie également que le conteneur de résultats est toujours connecté au document.
+- L'envoi d'une invitation par jeton opaque capture l'epoch de session et ignore les callbacks de succès/erreur obsolètes.
+- Les actions d'acceptation, refus et annulation d'invitation appliquent le même contrôle avant toute alerte ou navigation/rendu.
+- Les requêtes déjà transmises au serveur ne sont pas annulées par ce garde-fou client : il empêche uniquement une réponse d'une ancienne session de modifier l'interface de la session courante. L'autorisation serveur reste déterminante.
+- Assertions statiques dédiées ajoutées à `ci/check-msg.mjs`; cache du module aligné sur `msg.js?v=3524` et service worker sur `dz-de-v3.185.0.0.163`.
+
+Validation : relecture des branches de callbacks et vérification des assertions source/cache. Aucun test dynamique n'a été exécuté : GitHub Actions ne démarre toujours pas ses runners en raison de la restriction de facturation déjà signalée. Aucun test sur compte réel, aucune modification Supabase hébergé (schéma, données, Auth, RLS, Realtime ou Storage), aucun déploiement Cloudflare et aucune fusion. PR #17 reste ouverte et non fusionnée.
+
