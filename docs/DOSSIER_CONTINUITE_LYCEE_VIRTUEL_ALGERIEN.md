@@ -688,3 +688,11 @@
 - Sur le commit code `09e3f223454eb0ce6d3722d3cbde4567d8f2a40d`, les cinq jobs GitHub Actions (CI structurelle, Messenger local, consentement PostgreSQL, découverte PostgreSQL, Multaqa PostgreSQL) se sont terminés en échec avec `runner_id=0`, `runner_name=""` et `steps=[]`. Aucune assertion, commande Node ou migration de test n'a été exécutée ; aucune conclusion sur la validité runtime du correctif ne peut être tirée de ces jobs.
 - Le check `Supabase Preview` est `skipped` (pas de branche Supabase Preview provisionnée pour cette PR). Le check Cloudflare Workers Builds du commit code `09e3f223`, Build ID `8a1bacf8-de85-44e8-84c1-54300dc756f7`, était encore `in_progress` lors de la dernière lecture ; ne pas le déclarer réussi avant sa conclusion.
 - Ces résultats ne changent pas l'état de la base active : migrations Messenger 001/003 absentes et non appliquées. Aucune action cloud ou déploiement production n'a été réalisé.
+
+
+### Clôture des checks Lot 479 et synchronisation PR
+- Le check Cloudflare Workers Builds du commit code `09e3f223454eb0ce6d3722d3cbde4567d8f2a40d` est finalement `success`, Build ID `8a1bacf8-de85-44e8-84c1-54300dc756f7`, preview Cloudflare de la branche PR. Cela valide le build du Worker et des assets pour ce commit, pas le parcours utilisateur authentifié ni les migrations Supabase.
+- Le check `Supabase Preview` reste `skipped`.
+- Les cinq jobs GitHub Actions restent en échec pré-run sur le commit code : `runner_id=0`, aucune étape. Aucun test n'a exécuté l'assertion Lot 479.
+- Après mise à jour du dossier, la lecture REST directe de PR #17 donne `state=open`, `merged=false`, `mergeable=true`, `mergeable_state=unstable`. La branche est en divergence avec `main` (2712 commits en avance côté PR, 4 commits de base non intégrés). Ne pas interpréter `unstable` comme une fusion ou une validation CI ; conserver la PR ouverte et non fusionnée.
+- HEAD documentaire : `1cd36accbff5ea9bbb20d4793b1b21dce26b6dd1`. Aucun merge, aucune modification de `main`, aucune migration cloud.
