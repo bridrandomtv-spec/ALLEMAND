@@ -1760,3 +1760,21 @@
 - Aucun défaut SQL supplémentaire certain n'a été établi par cette revue statique ; aucun résultat PASS ne doit être revendiqué. Les scénarios négatifs et Realtime restent à exécuter dans l'environnement éphémère du workflow.
 - Aucun changement de code ou de schéma. Aucune action d'écriture sur Supabase actif. Seul le dossier de continuité est mis à jour sur la branche ; `main`, production, Auth, RLS, données, Realtime, facturation et PR #17 (ouverte/non fusionnée) restent inchangés.
 - Prochaine étape sans coût Supabase supplémentaire : faire exécuter le workflow d'intégration local par GitHub Actions lorsqu'un runner est disponible, puis exploiter les vrais logs/artefacts. Ne pas déclarer le système validé tant que les tests SQL, Auth, RLS, Realtime et concurrence ne sont pas réellement passés.
+
+
+
+## Lot 496 — diagnostic des exécutions GitHub Actions (14 novembre 2026)
+
+- Vérification des cinq workflows associés au HEAD `c705eae674276d16b9683b888272883ea2385d52` :
+  - Messenger Supabase local : run `43588318883`, job `132427473975`
+  - Tests PostgreSQL `ملتقى الطلاب` : run `43588318866`, job `132427473888`
+  - CI générale : run `43588318848`, job `132427473959`
+  - Découverte Messenger : run `43588318936`, job `132427474212`
+  - Consentement Messenger : run `43588318962`, job `132427474220`
+- Les cinq runs ont été déclenchés par `pull_request`, créés vers 11:05:08 UTC et terminés vers 11:05:11 UTC (durée observée d'environ trois secondes pour le run Messenger local). Pour chacun, l'API Jobs renvoie `status=completed`, `conclusion=failure`, `steps=null` et `logs_url=null`.
+- Tentative de récupération des cinq journaux via l'API GitHub : chaque téléchargement renvoie HTTP 404 `BlobNotFound`. Aucune trace de checkout, setup-node, Supabase CLI, psql ou test applicatif n'est exposée.
+- Conclusion strictement étayée : ces cinq exécutions n'apportent aucune preuve d'un échec dans le SQL Messenger, Realtime ou les tests métier, car aucune étape de workflow n'est disponible. Le point de blocage est antérieur à toute étape visible du job ; la cause précise (runner/plateforme/permissions ou autre) reste inconnue. Ne pas présenter ces échecs comme des tests SQL exécutés et ratés.
+- L'état PR relu après actualisation indique `mergeable=true`, `state=open`, `merged=false`. La comparaison de branches reste `diverged` avec 2 771 commits en avance et 4 en retard. Le booléen mergeable est une appréciation GitHub, pas une validation produit ni une autorisation de fusion.
+- Aucun endpoint de lancement `workflow_dispatch` n'est exposé par les actions GitHub disponibles dans cette session. Aucun rerun n'a été demandé, afin d'éviter de multiplier des exécutions potentiellement facturées sans avoir résolu l'absence d'étapes/logs.
+- Aucun code applicatif, workflow, configuration, branche Supabase ou donnée n'a été modifié. Seul ce dossier est complété. `main`, Supabase actif, production et PR #17 restent inchangés et la PR demeure ouverte/non fusionnée.
+- Suite : déterminer pourquoi GitHub Actions termine les jobs avant la première étape (état des runners/permissions/quota dans l'interface du dépôt), puis relancer une seule exécution contrôlée du workflow local. Une fois les étapes exécutées, traiter les éventuels vrais défauts SQL/Realtime révélés.
