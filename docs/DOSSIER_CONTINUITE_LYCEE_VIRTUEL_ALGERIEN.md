@@ -2559,3 +2559,18 @@ Correctif sur PR #17 :
 
 Validation : vérification statique du chemin d'exécution et relecture des fichiers après écriture. Aucun test dynamique n'a été exécuté, les runners GitHub Actions restant bloqués avant démarrage par la restriction de facturation déjà documentée. Aucun compte réel, aucune modification Supabase hébergé (schéma, données, Auth, RLS, Realtime, Storage), aucun déploiement Cloudflare et aucune fusion. PR #17 reste ouverte et non fusionnée; `main` reste inchangée.
 
+
+## Lot 539 — audit des lectures asynchrones du fil et du tableau Messenger
+
+Audit effectué sur le HEAD réellement présent de la PR #17 (branche `design/prototypes-67-74-alignment`), après constat que le Lot 538 est déjà intégré dans le dossier et dans le code courant (`msg.js?v=3528`, service worker `.167`).
+
+- `renderList()` vérifie son `renderEpoch` après la lecture de session, des groupes, des conversations, de la vérification, des invitations et des lectures de modération (signalements, journal et file de vérification) avant de poursuivre le rendu.
+- `renderThread()` vérifie `renderEpoch` et l'identifiant de conversation après la session, le chargement des messages, la résolution des noms et la lecture des métadonnées de pièces jointes.
+- `fetchNames()` capture `authEpoch`, vérifie la génération après obtention du client et après la lecture de `profiles`, puis seulement alimente `state.names`; le listener Auth vide ce cache à chaque changement d'identité.
+- Les callbacks Realtime du fil contrôlent l'epoch du canal, la conversation et l'epoch de rendu avant toute insertion DOM; ils retrouvent le conteneur courant et vérifient `isConnected`.
+- Les opérations de récupération des canaux sont annulées à la fermeture; leurs callbacks vérifient la conversation et l'état de vue avant de relancer un rendu.
+- `session()` délègue la lecture à `SB.me()`, qui utilise `auth.getSession()`; ses appelants `renderList()` et `renderThread()` invalident ensuite le résultat par `renderEpoch` si une transition Auth a été observée. Aucun défaut supplémentaire démontrable dans ce parcours n'a été identifié pendant cette passe.
+
+Décision : aucun changement applicatif spéculatif n'est apporté à `msg.js`, à `supabase/supabase.js` ou aux appels Realtime. Le Lot 538 est déjà présent dans le HEAD consulté; ce Lot 539 consigne la vérification du parcours de lectures et la décision de ne pas multiplier les garde-fous redondants.
+
+Validation : inspection statique des fichiers de la branche uniquement. Aucun test navigateur ni test Realtime dynamique n'a été exécuté. Les workflows Actions restent à vérifier lorsqu'un runner pourra effectivement démarrer. Aucune modification de Supabase hébergé (schéma, données, Auth, RLS, Realtime, Storage), aucun changement Cloudflare, aucun déploiement et aucune fusion. PR #17 reste ouverte et non fusionnée; `main` reste inchangée.
