@@ -9,7 +9,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
-  var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, recoveryAttempts:0, updateRefreshTimer:null, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
+  var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, recoveryAttempts:0, updateRefreshTimer:null, inviteCh:null, inviteEpoch:0, inviteRecoveryTimer:null, inviteRecoveryAttempts:0, inviteNeedsRecovery:false, inviteViewActive:false, names:{}, peers:{} };
   var authClient = null, authSubscription = null;
   function bindAuthLifecycle(client){
     if(!client || !client.auth || typeof client.auth.onAuthStateChange!=='function' || authClient===client) return;
@@ -99,7 +99,23 @@
   }
   function closeInviteChannel(){
     state.inviteEpoch++;
+    if(state.inviteRecoveryTimer){ clearTimeout(state.inviteRecoveryTimer); state.inviteRecoveryTimer=null; }
+    state.inviteNeedsRecovery = false;
     if(state.inviteCh){ try{ state.inviteCh.unsubscribe(); }catch(e){} state.inviteCh = null; }
+  }
+  function scheduleInviteRecovery(){
+    var userId = state.me, epoch = state.inviteEpoch;
+    if(!state.inviteNeedsRecovery || !state.inviteViewActive || !userId || state.conv!==null ||
+       (document.visibilityState && document.visibilityState==='hidden') || state.inviteRecoveryTimer) return;
+    var attempt = Math.min(state.inviteRecoveryAttempts || 0, 7);
+    var delay = Math.min(32000, 500 * Math.pow(2, attempt));
+    state.inviteRecoveryTimer = setTimeout(function(){
+      state.inviteRecoveryTimer = null;
+      if(!state.inviteNeedsRecovery || !state.inviteViewActive || state.me!==userId ||
+         state.conv!==null || (document.visibilityState && document.visibilityState==='hidden')) return;
+      state.inviteRecoveryAttempts = Math.min((state.inviteRecoveryAttempts || 0) + 1, 7);
+      renderList().catch(function(){});
+    }, delay);
   }
   async function startInviteChannel(){
     closeInviteChannel();
@@ -119,7 +135,22 @@
           renderList();
         });
       state.inviteCh = ch;
-      ch.subscribe();
+      ch.subscribe(function(status, err){
+        if(epoch!==state.inviteEpoch || state.inviteCh!==ch || state.me!==userId) return;
+        if(status==='SUBSCRIBED'){
+          state.inviteNeedsRecovery = false;
+          state.inviteRecoveryAttempts = 0;
+          if(state.inviteRecoveryTimer){ clearTimeout(state.inviteRecoveryTimer); state.inviteRecoveryTimer=null; }
+        } else if(status==='CHANNEL_ERROR' || status==='TIMED_OUT' || status==='CLOSED'){
+          state.inviteNeedsRecovery = true;
+          if(window.console && typeof window.console.warn==='function'){
+            window.console.warn('[Messenger invitations Realtime]', status, err || null);
+          }
+          /* CHANNEL_ERROR reste géré par le retry interne du SDK; timeout/fermeture
+             déclenchent une reprise bornée du canal d'invitations. */
+          if(status==='TIMED_OUT' || status==='CLOSED') scheduleInviteRecovery();
+        }
+      });
     }catch(e){
       if(epoch===state.inviteEpoch) state.inviteCh = null;
     }
@@ -433,10 +464,19 @@
       renderThread(id).catch(function(){});
     }, delay);
   }
-  window.addEventListener('online', scheduleThreadRecovery);
-  window.addEventListener('pageshow', scheduleThreadRecovery);
+  window.addEventListener('online', function(){
+    scheduleThreadRecovery();
+    scheduleInviteRecovery();
+  });
+  window.addEventListener('pageshow', function(){
+    scheduleThreadRecovery();
+    scheduleInviteRecovery();
+  });
   document.addEventListener('visibilitychange', function(){
-    if(document.visibilityState==='visible') scheduleThreadRecovery();
+    if(document.visibilityState==='visible'){
+      scheduleThreadRecovery();
+      scheduleInviteRecovery();
+    }
   });
   document.addEventListener('dz:view', function(e){
     var v = (e && e.detail && (e.detail.view||e.detail)) || '';
