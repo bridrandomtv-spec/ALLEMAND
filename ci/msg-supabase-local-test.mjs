@@ -588,7 +588,7 @@ try {
     { bearer: observer.token }
   );
   assert.equal(outsiderCannotReadMessage.length, 0, "Non-member can read a message from another conversation");
-  console.log("PASS: msg_messages INSERT → Realtime CDC/WebSocket → recipient RLS SELECT");
+  console.log("PASS: msg_messages INSERT/UPDATE → recipient Realtime + RLS, sender edit/soft-delete, column grants, non-member isolation");
 } finally {
   realtimeMessageObserver.close();
   outsiderRealtimeObserver.close();
