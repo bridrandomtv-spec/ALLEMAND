@@ -405,17 +405,23 @@ async function msgUnblock(otherId){
 async function msgEdit(msgId, body){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
-  const r = await c.from('msg_messages').update({ body:String(body||'').slice(0,2000), edited_at:new Date().toISOString() })
-    .eq('id', msgId).eq('sender_id', u.id).is('deleted_at', null);
+  const text = String(body||'').trim();
+  if(!text || text.length>2000) return { ok:false, err:'message invalide (1 à 2000 caractères)' };
+  const r = await c.from('msg_messages').update({ body:text, edited_at:new Date().toISOString() })
+    .eq('id', msgId).eq('sender_id', u.id).is('deleted_at', null)
+    .select('id').maybeSingle();
   if(r.error) return { ok:false, err:r.error.message };
+  if(!r.data) return { ok:false, err:'message introuvable, déjà supprimé ou modification non autorisée' };
   return { ok:true };
 }
 async function msgDelete(msgId){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
   const r = await c.from('msg_messages').update({ deleted_at:new Date().toISOString() })
-    .eq('id', msgId).eq('sender_id', u.id);
+    .eq('id', msgId).eq('sender_id', u.id).is('deleted_at', null)
+    .select('id').maybeSingle();
   if(r.error) return { ok:false, err:r.error.message };
+  if(!r.data) return { ok:false, err:'message introuvable, déjà supprimé ou suppression non autorisée' };
   return { ok:true };
 }
 async function msgUpload(convId, msgId, file){
