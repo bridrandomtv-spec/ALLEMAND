@@ -2587,3 +2587,22 @@ Audit du transport Realtime sur le HEAD de la PR #17 :
 Fichiers modifiés : `ci/msg-supabase-local-test.mjs`, `.github/workflows/msg-supabase-local-test.yml`, et le présent dossier. Aucun changement applicatif `msg.js`, aucune migration SQL, aucun changement de schéma ou de publication Supabase hébergée. Aucun déploiement Cloudflare ni fusion. PR #17 reste ouverte et non fusionnée.
 
 Validation : relecture statique des modifications et vérification des assertions source uniquement. Le workflow n'a pas été exécuté : les runners GitHub Actions ne démarrent toujours pas à cause du blocage de facturation. Le contrôle renforcé n'est donc pas présenté comme un test dynamique réussi.
+
+
+## Lot 541 — distinguer le silence RLS d'une perte du canal non-membre
+
+Audit ciblé du test WebSocket du compte témoin non-membre dans `ci/msg-supabase-local-test.mjs`.
+
+Constat : le test attendait que le compte extérieur ne reçoive aucun événement privé après avoir atteint l'état CDC-ready. Toutefois, après cet état, les événements `phx_error`, `phx_close` et l'erreur de transport n'étaient pas conservés comme erreur fatale. Un canal qui se fermait après l'ACK et la disponibilité CDC pouvait donc être interprété à tort comme une preuve d'absence de fuite : aucun événement n'arrivait simplement parce que le canal n'était plus vivant. En outre, l'ACK du témoin vérifiait la table `msg_messages`, mais pas le filtre exact `conversation_id=eq.<id>`.
+
+Correctif sur la branche PR #17 :
+- L'ACK `phx_reply` du témoin doit confirmer simultanément `public.msg_messages` et le filtre exact de conversation demandé.
+- Les événements `phx_error` / `phx_close` et les erreurs WebSocket reçus après CDC-ready sont mémorisés comme erreurs terminales.
+- Avant de conclure que le témoin n'a reçu aucun événement privé, le test vérifie que le canal n'a signalé aucune erreur et que le WebSocket est toujours ouvert. Le silence n'est donc accepté que si le canal témoin est encore vivant.
+- Le contrôle est limité au harnais d'intégration local; aucun changement dans `msg.js`, aucune migration ni modification de la configuration Supabase hébergée.
+
+Fichier modifié : `ci/msg-supabase-local-test.mjs` (commit `247a1babf7c9808a7782226c99e29ed64a374b92`).
+
+Rectification de l'audit : le chemin `msg_invites` traitait déjà explicitement le `phx_reply` négatif. Aucune modification n'a été faite sur ce point.
+
+Validation : contrôle de cohérence par relecture des blocs modifiés et de leurs appels. Le test Node/Supabase local n'a pas été exécuté dans cette session; aucune réussite dynamique n'est revendiquée. Les runners GitHub Actions restent soumis au blocage de démarrage lié à la facturation précédemment observé. Aucun accès ni changement sur Supabase hébergé, aucune modification Auth/RLS/Realtime/Storage en production, aucun déploiement Cloudflare et aucune fusion. PR #17 reste ouverte et non fusionnée.
