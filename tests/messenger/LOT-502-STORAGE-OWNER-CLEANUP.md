@@ -96,3 +96,13 @@ La migration candidate utilise maintenant les helpers SECURITY DEFINER msg_stora
 Nouveau scénario d'intégration : A téléverse un fichier, crée ses métadonnées, lie la pièce jointe à son message, puis tente de supprimer l'objet Storage. Résultat attendu : refus, objet toujours présent. La suppression de la métadonnée liée doit également être refusée.
 
 **Statut : correctif statique uniquement.** Le workflow GitHub ne fournit toujours pas d'étapes/journaux et aucun environnement local Docker/Supabase/psql n'est disponible ici. Ne pas appliquer la migration au projet actif tant que les tests HTTP réels n'ont pas passé.
+
+## Lot 507 — correction de la migration candidate (14 novembre 2026)
+
+La relecture du blob GitHub a révélé que le corps de `msg_storage_cleanup_allowed(text)` était tronqué au milieu de l'expression régulière et que la fin de l'ancienne définition se trouvait après `COMMIT`. Le fichier n'était donc pas un SQL exécutable fiable.
+
+Le fichier a été remplacé intégralement : helper Storage complet (namespace `msg/`, deux dossiers exactement, identifiant de conversation numérique, préfixe UUID du propriétaire et exclusion des pièces jointes déjà liées), helper metadata conservant les contrôles uploader/`pending`/expéditeur/non-lié, droits EXECUTE bornés à `authenticated`, puis politiques DELETE.
+
+**Preuve disponible :** le commit GitHub a été créé. La relecture du fichier après écriture et l'exécution SQL restent nécessaires. Le run Storage #20 précédent ne fournit aucune étape ni aucun journal (`steps=[]`, `logs_url=null`, téléchargement `BlobNotFound`) ; il ne permet pas de valider le test ni d'expliquer son échec.
+
+Migration toujours candidate, non appliquée à Supabase actif. Aucun changement client, déploiement, rebase ou fusion.
