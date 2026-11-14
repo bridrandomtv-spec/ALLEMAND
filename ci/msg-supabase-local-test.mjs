@@ -223,8 +223,17 @@ async function subscribeToMessageChanges(user, conversationId) {
   let resolveReady, rejectReady, resolveEvent, rejectEvent;
   const updateWaiters = [];
   const queuedUpdates = [];
-  let ready = false, joinAcknowledged = false, cdcReady = false;
+  let ready = false, joinAcknowledged = false, cdcReady = false, closedByTest = false;
   let timeout;
+  const failPending = (error) => {
+    clearTimeout(timeout);
+    rejectEvent(error);
+    while (updateWaiters.length) {
+      const waiter = updateWaiters.shift();
+      clearTimeout(waiter.timer);
+      waiter.reject(error);
+    }
+  };
   const frames = [];
   const readyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
   const eventPromise = new Promise((resolve, reject) => { resolveEvent = resolve; rejectEvent = reject; });
@@ -232,7 +241,7 @@ async function subscribeToMessageChanges(user, conversationId) {
     if (joinAcknowledged && cdcReady && !ready) {
       ready = true;
       clearTimeout(timeout);
-      timeout = setTimeout(() => rejectEvent(new Error(
+      timeout = setTimeout(() => failPending(new Error(
         "No msg_messages INSERT event for " + filter + " within 12 seconds; frames: " + JSON.stringify(frames)
       )), 12000);
       resolveReady();
@@ -292,16 +301,21 @@ async function subscribeToMessageChanges(user, conversationId) {
         const eventKind = String(kind || "").toUpperCase();
         if (String(record.conversation_id) === String(conversationId)) {
           const change = { record, frame: payload, kind: eventKind };
-          if (eventKind === "INSERT") resolveEvent(change);
+          if (eventKind === "INSERT") {
+            clearTimeout(timeout);
+            resolveEvent(change);
+          }
           if (eventKind === "UPDATE") {
             const waiter = updateWaiters.shift();
-            if (waiter) waiter(change);
-            else queuedUpdates.push(change);
+            if (waiter) {
+              clearTimeout(waiter.timer);
+              waiter.resolve(change);
+            } else queuedUpdates.push(change);
           }
         }
       } else if (eventName === "phx_error" || eventName === "phx_close") {
         const error = new Error("msg_messages channel closed: " + JSON.stringify(payload));
-        if (!ready) rejectReady(error); else rejectEvent(error);
+        if (!ready) rejectReady(error); else failPending(error);
       }
     } catch (error) {
       if (!ready) rejectReady(error); else rejectEvent(error);
@@ -309,7 +323,13 @@ async function subscribeToMessageChanges(user, conversationId) {
   });
   socket.addEventListener("error", () => {
     const error = new Error("msg_messages WebSocket transport error");
-    if (!ready) rejectReady(error); else rejectEvent(error);
+    if (!ready) rejectReady(error); else failPending(error);
+  });
+  socket.addEventListener("close", (event) => {
+    if (closedByTest) return;
+    const error = new Error("msg_messages WebSocket closed unexpectedly (code=" +
+      event.code + ", reason=" + event.reason + ")");
+    if (!ready) rejectReady(error); else failPending(error);
   });
   try {
     await readyPromise;
@@ -317,8 +337,27 @@ async function subscribeToMessageChanges(user, conversationId) {
       waitForMessage: () => eventPromise,
       waitForUpdate: () => queuedUpdates.length
         ? Promise.resolve(queuedUpdates.shift())
-        : new Promise((resolve) => updateWaiters.push(resolve)),
-      close: () => { clearTimeout(timeout); socket.close(); }
+        : new Promise((resolve, reject) => {
+            const waiter = { resolve, reject, timer: null };
+            waiter.timer = setTimeout(() => {
+              const index = updateWaiters.indexOf(waiter);
+              if (index !== -1) updateWaiters.splice(index, 1);
+              reject(new Error("No msg_messages UPDATE event for " + filter +
+                " within 12 seconds; frames: " + JSON.stringify(frames)));
+            }, 12000);
+            updateWaiters.push(waiter);
+          }),
+      close: () => {
+        closedByTest = true;
+        clearTimeout(timeout);
+        const error = new Error("msg_messages observer closed by test");
+        while (updateWaiters.length) {
+          const waiter = updateWaiters.shift();
+          clearTimeout(waiter.timer);
+          waiter.reject(error);
+        }
+        socket.close();
+      }
     };
   } catch (error) {
     clearTimeout(timeout);
