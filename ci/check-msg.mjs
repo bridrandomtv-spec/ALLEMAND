@@ -52,8 +52,8 @@ ok(msgjs.includes('ابحث في محادثاتي ومجموعاتي') && msgjs.
 ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'rédaction et pièces jointes en arabe');
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
-ok(idx.includes('msg.js?v=3520'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.159'") && sw.includes("./msg.js?v=3520") && sw.includes("./style-prototype-dz.css?v=202"), 'service worker et précache Messenger synchronisés');
+ok(idx.includes('msg.js?v=3521'), 'version cache du module de messagerie actualisée');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.160'") && sw.includes("./msg.js?v=3521") && sw.includes("./style-prototype-dz.css?v=202"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
@@ -152,8 +152,8 @@ if (fail.length) { console.error('::error:: check-msg Lot 360 : ' + fail.length 
 ok(msgjs.includes('msg-pro-hero') && msgjs.includes('msg-pro-stats'), 'nouvelle hiérarchie pédagogique Messenger');
 ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجموعة '("), 'libellé de groupe construit sans appel de chaîne invalide');
 ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key]')"), 'filtres Messenger accessibles via délégation de clic');
-ok(idx.includes('style-prototype-dz.css?v=202') && idx.includes('msg.js?v=3520'), 'versions de ressources Messenger actualisées');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.159'") && sw.includes('./style-prototype-dz.css?v=202') && sw.includes('./msg.js?v=3520'), 'précache synchronisé avec la nouvelle interface');
+ok(idx.includes('style-prototype-dz.css?v=202') && idx.includes('msg.js?v=3521'), 'versions de ressources Messenger actualisées');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.160'") && sw.includes('./style-prototype-dz.css?v=202') && sw.includes('./msg.js?v=3521'), 'précache synchronisé avec la nouvelle interface');
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
  
@@ -174,7 +174,7 @@ ok(/client\.auth\.onAuthStateChange\(function\(event\)/.test(msgjs) &&
    msgjs.includes("if(event!=='SIGNED_IN' && event!=='SIGNED_OUT') return;"),
    'Messenger observe les changements de session sans intercepter le renouvellement normal du jeton');
 ok(msgjs.includes('if(authClient!==client) return;') &&
-   msgjs.includes("if(event==='SIGNED_OUT'){ ") || msgjs.includes("if(event==='SIGNED_OUT'){"),
+   msgjs.includes("if(event==='SIGNED_OUT'){"),
    'changement de compte : ancien client ignoré et déconnexion traitée');
 ok(msgjs.includes('if(state.inviteViewActive) renderList();') &&
    msgjs.includes('if(activeConv) renderThread(activeConv);'),
