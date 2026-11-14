@@ -715,3 +715,10 @@
 - Dernière exécution des cinq workflows sur le premier commit de Lot 480 : `43583691064` consentement PostgreSQL, `43583691047` validation structurelle, `43583691045` découverte PostgreSQL, `43583691040` Multaqa PostgreSQL, `43583690984` Messenger local. Tous sont en échec avant exécution : `runner_id=0`, aucun runner et `steps=[]`. Les tests d'intégration n'ont donc pas validé ce lot en runtime.
 - Le check Cloudflare de la version antérieure du code (Lot 479) a réussi ; aucun résultat Cloudflare n'est revendiqué pour les derniers commits du Lot 480 tant qu'un check correspondant n'a pas été relu.
 - Aucun changement sur Supabase cloud, aucun déploiement production et aucune modification de secrets/bindings Cloudflare. Migrations 001/003 toujours préparées uniquement sur la branche.
+
+
+### Clôture des contrôles Lot 480
+- Les cinq workflows relancés sur le HEAD documentaire `10ca9ccc3e4187e5033e59a8e0ebc33278b4f778` (`43583756048` découverte PostgreSQL, `43583755998` validation structurelle, `43583755968` consentement PostgreSQL, `43583756023` Messenger local, `43583756009` Multaqa PostgreSQL) ont tous échoué avant la première étape : `runner_id=0`, `steps=[]`. Aucun résultat d'exécution SQL/Node ne valide ni n'invalide le nouveau parcours opaque.
+- Le check Supabase Preview reste `skipped` : aucune branche Supabase Preview n'est associée à cette PR. Il n'y a donc pas de base preview Supabase pour exécuter les migrations dans cette PR.
+- État de PR #17 vérifié après les commits : ouverte, non fusionnée, `mergeable=true`, `mergeable_state=clean`, branche `design/prototypes-67-74-alignment`, base `main`. HEAD documentaire `10ca9ccc3e4187e5033e59a8e0ebc33278b4f778`.
+- Lot 480 est un correctif de confidentialité préparé, pas une mise en production. Les migrations Messenger restent non appliquées sur le projet Supabase cloud ; aucun déploiement Cloudflare production, aucun changement sur `main`, aucune modification de secrets/bindings.
