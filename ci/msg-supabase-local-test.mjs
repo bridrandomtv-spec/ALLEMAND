@@ -526,7 +526,7 @@ const acceptedConversationId = await call("/rest/v1/rpc/msg_invite_accept", {
   body: { p_invite: invite },
 });
 assert.ok(acceptedConversationId, "Recipient acceptance did not create a direct conversation");
-assert.match(String(acceptedConversationId), /^\\d+$/, "Acceptance RPC did not return a conversation id");
+assert.match(String(acceptedConversationId), /^\d+$/, "Acceptance RPC did not return a conversation id");
 
 // Rejouer la même acceptation doit être idempotent et retourner le même DM.
 const repeatedAcceptance = await call("/rest/v1/rpc/msg_invite_accept", {
