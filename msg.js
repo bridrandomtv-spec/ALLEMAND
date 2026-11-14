@@ -620,29 +620,55 @@
     }
     if(act==='verif-req'){
       var mv = (el('vfMat')||{}).value || '', sv = (el('vfSec')||{}).value || '';
-      window.SB.msgRequestVerification(mv, sv).then(function(r4){ if(r4.ok){ renderList(); } else { window.alert('⛔ '+r4.err); } });
+      var verificationIdentityEpoch = state.authEpoch;
+      window.SB.msgRequestVerification(mv, sv).then(function(r4){
+        if(state.authEpoch!==verificationIdentityEpoch) return;
+        if(r4 && r4.ok){ renderList(); } else { window.alert('⛔ '+((r4&&r4.err)||'تعذّر إرسال طلب التحقق')); }
+      }).catch(function(error){ if(state.authEpoch!==verificationIdentityEpoch) return; window.alert('⛔ '+String(error && error.message || error)); });
       return;
     }
     var mod = t.getAttribute('data-mod');
     if(mod){
       if(mod==='creategroup'){
         var w = (el('mgWil')||{}).value || '', n = (el('mgNiv')||{}).value || '', f = (el('mgFil')||{}).value || '';
-        window.SB.msgCreateGroup(w, n, f, '').then(function(r2){ if(r2.ok){ renderList(); } else { window.alert('⛔ ' + r2.err); } });
+        var groupIdentityEpoch = state.authEpoch;
+        window.SB.msgCreateGroup(w, n, f, '').then(function(r2){
+          if(state.authEpoch!==groupIdentityEpoch) return;
+          if(r2 && r2.ok){ renderList(); } else { window.alert('⛔ ' + ((r2&&r2.err)||'تعذّر إنشاء المجموعة')); }
+        }).catch(function(error){ if(state.authEpoch!==groupIdentityEpoch) return; window.alert('⛔ '+String(error && error.message || error)); });
         return;
       }
       if(mod==='verif-ok' || mod==='verif-no'){
         var uidv = t.getAttribute('data-uid');
-        window.SB.msgSetVerification(uidv, mod==='verif-ok'?'verifie':'rejete').then(function(r3){ if(r3.ok){ renderList(); } else { window.alert('⛔ '+r3.err); } });
+        var moderationIdentityEpoch = state.authEpoch;
+        window.SB.msgSetVerification(uidv, mod==='verif-ok'?'verifie':'rejete').then(function(r3){
+          if(state.authEpoch!==moderationIdentityEpoch) return;
+          if(r3 && r3.ok){ renderList(); } else { window.alert('⛔ '+((r3&&r3.err)||'تعذّر تحديث التحقق')); }
+        }).catch(function(error){ if(state.authEpoch!==moderationIdentityEpoch) return; window.alert('⛔ '+String(error && error.message || error)); });
         return;
       }
       var rid = +t.getAttribute('data-rid');
       var opts = { retireAtt: mod==='retireatt', deleteMsg: mod==='delmsg' };
       var dec = (mod==='rejete') ? 'rejete' : 'traite';
-      window.SB.msgHandle(rid, dec, opts).then(function(r2){ if(r2.ok){ renderList(); } else { window.alert('⛔ ' + r2.err); } });
+      var reportActionIdentityEpoch = state.authEpoch;
+      window.SB.msgHandle(rid, dec, opts).then(function(r2){
+        if(state.authEpoch!==reportActionIdentityEpoch) return;
+        if(r2 && r2.ok){ renderList(); } else { window.alert('⛔ ' + ((r2&&r2.err)||'تعذّر معالجة البلاغ')); }
+      }).catch(function(error){ if(state.authEpoch!==reportActionIdentityEpoch) return; window.alert('⛔ '+String(error && error.message || error)); });
       return;
     }
     var rep = t.getAttribute('data-report');
-    if(rep){ window.SB.msgReport(+rep,'تم الإبلاغ عنه من واجهة الرسائل').then(function(){ t.disabled=true; t.textContent='🚩✓'; }); }
+    if(rep){
+      var reportIdentityEpoch = state.authEpoch;
+      window.SB.msgReport(+rep,'تم الإبلاغ عنه من واجهة الرسائل').then(function(result){
+        if(state.authEpoch!==reportIdentityEpoch || !t.isConnected) return;
+        if(result && result.ok){ t.disabled=true; t.textContent='🚩✓'; }
+        else window.alert('⛔ '+((result&&result.err)||'تعذّر إرسال البلاغ'));
+      }).catch(function(error){
+        if(state.authEpoch!==reportIdentityEpoch || !t.isConnected) return;
+        window.alert('⛔ '+String(error && error.message || error));
+      });
+    }
   });
 
   /* ── MSG-7 : l'entrée « 💬 الرسائل » doit apparaître même si la sidebar a été
