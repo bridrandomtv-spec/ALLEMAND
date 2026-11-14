@@ -169,6 +169,17 @@ ok(insertStart >= 0 && insertEnd > insertStart &&
    insertHandler.includes("currentThread.querySelector('[data-mid="'+m.id+'"]')"),
    'INSERT Realtime : DOM courant revalidé après les lectures asynchrones, sans écriture dans un fil détaché');
 
+// Lot 529 — initialisation single-flight : un seul client Auth/Realtime même en repli CDN.
+const sbInitStart = sbjs.indexOf('async function sb(){');
+const sbInitEnd = sbjs.indexOf('\nasync function login(', sbInitStart);
+const sbInit = sbjs.slice(sbInitStart, sbInitEnd);
+ok(sbInitStart >= 0 && sbInitEnd > sbInitStart &&
+   sbInit.includes('if(clientPromise) return clientPromise;') &&
+   sbInit.includes('clientPromise = (async function(){') &&
+   sbInit.includes('if(!ready) clientPromise = null;') &&
+   sbInit.includes('catch(e){\n    clientPromise = null;'),
+   'client Supabase : initialisation mutualisée, sans instances Auth/Realtime concurrentes lors du repli CDN');
+
 // Lot 528 — reprise contrôlée sur TIMED_OUT/CLOSED et diagnostic des statuts Realtime.
 ok(/ch\.subscribe\(function\(st2, err\)/.test(msgjs) &&
    msgjs.includes("window.console.warn('[Messenger Realtime]', st2, err || null)"),
