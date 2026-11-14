@@ -2198,3 +2198,22 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - La version source de `main`, qui alimente la production Cloudflare selon la configuration connue du projet, ne contient actuellement pas le module/route du ملتقى. La branche PR #17, elle, le contient. Cela explique une différence possible entre l'aperçu de PR et la plateforme de production, mais ne permet pas à lui seul de dater ni d'attribuer la disparition initiale.
 - Ne pas fusionner PR #17 pour rétablir le ملتقى : cette PR contient aussi d'autres changements et reste non approuvée/non fusionnée. Ne pas modifier la production dans le cadre de ce diagnostic.
 - Aucun fichier applicatif, aucune route, aucune donnée Supabase et aucun déploiement n'ont été modifiés dans ce lot. PR #17 reste ouverte et non fusionnée.
+
+
+---
+
+## Lot 515 — traçage historique de 🌐 ملتقى الطلاب (14 novembre 2026)
+
+- L'historique de `design/prototypes-67-74-alignment` situe l'ajout initial de la vue au Lot 406 (commit `d55319b2b165e6cc8c3e775e9990d71b614fb466`, 13 novembre), la refonte visuelle au Lot 434 (`07bbee5bc9e23cde64062ddec73193a79e76fb09`) et le raccordement du client RPC au Lot 444 (`08442cdbe98a4e9a42564bcb9299d85d952d16fc`).
+- L'arbre Git de `main` ne contenait ni `multaqa.js`, ni `data-view="multaqa"`, ni la route. Les changements communautaires sont restés sur la branche de la PR #17 et n'ont pas été promus vers `main`. Les lots Messenger 498–513 n'ont supprimé aucun de ces éléments.
+- Le dossier confirme déjà l'application de la migration communautaire sur le projet Supabase actif sous l'identifiant `20261113201922_multaqa_community_feed`, puis la vérification en lecture seule des quatre tables, de RLS et des huit RPC. Aucune nouvelle migration n'est nécessaire pour réintroduire le client.
+
+## Lot 516 — PR isolée de restauration du forum (14 novembre 2026)
+
+- Création de la branche indépendante `fix/restore-multaqa-only` depuis le `main` courant `12367172a6038cfd9de709be37e6de9fa62b9462`. Aucun commit sur `main` et aucun changement de la PR #17.
+- PR brouillon #19 ouverte vers `main` : https://github.com/bridrandomtv-spec/ALLEMAND/pull/19 ; HEAD initial `0fabc72ee848fdd146777b0e8745dffe4c0bef11`.
+- Périmètre limité à cinq fichiers : `app.js`, `index.html`, `multaqa.js`, `style-prototype-dz.css`, `sw.js`. Restauration de la vue, du client RPC, des styles responsive, du routage et du précache.
+- La navigation et l'accès direct au `multaqa` sont filtrés au rôle `eleve`. La route `msg` a aussi été ajoutée à `VIEWS` sur cette base `main`, où l'onglet et la vue Messenger existaient déjà mais la route manquait ; aucune logique de conversation Messenger n'a été modifiée.
+- La PR ne contient aucun SQL/migration, aucune modification de `supabase/supabase.js`, Auth, RLS, Storage ou donnée. Elle ne déclenche aucune opération Supabase et aucun déploiement Cloudflare volontaire.
+- Contrôle statique des cinq fichiers : vue HTML, script client, route, filtre de rôle, RPC attendues et précache présents. Aucun test runtime n'est revendiqué ; les jobs GitHub Actions observés échouent encore avant la première étape, sans runner ni logs.
+- PR #19 est un brouillon, ouvert et non fusionné. PR #17 demeure ouverte et non fusionnée. Production et `main` restent inchangés.
