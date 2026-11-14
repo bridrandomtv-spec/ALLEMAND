@@ -2395,3 +2395,14 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Commits : correctif msg.js db4f6a1aea84c2602e995d78e6dc6c4bde0b2c11; assertion CI a1fd163d1d3f742910b80089baa7847b56b388f2; dossier à suivre.
 - Validation dynamique non effectuée : GitHub Actions reste bloqué par l'annotation de facturation. Le test Supabase local de bout en bout existe mais n'a pas pu démarrer. Aucun test sur Supabase hébergé, aucun changement DB/RLS/Realtime/Auth/Storage, aucun déploiement Cloudflare.
 - PR #17 reste ouverte et non fusionnée; main inchangée.
+
+
+## Lot 527 — regroupement des rafales UPDATE Realtime
+
+- L'audit du fil confirme que chaque événement UPDATE déclenchait immédiatement un rendu complet. Une modification de message, son ajout de pièce jointe et plusieurs changements rapprochés pouvaient donc lancer plusieurs chaînes concurrentes de session + lecture des 50 messages + profils + métadonnées de pièces jointes.
+- Les générations renderEpoch empêchaient déjà une réponse ancienne de remplacer un rendu plus récent : aucun défaut de perte de données n'est démontré ici. Le problème identifié est une amplification inutile des requêtes et des rendus concurrents sous rafale CDC, qui augmente la latence et multiplie les occasions de courses DOM.
+- Correctif dans msg.js : les UPDATE d'une même conversation sont regroupés sur une fenêtre de 90 ms. Chaque nouvel UPDATE repousse l'échéance; à la fin de la rafale, un seul instantané HTTP du fil réconcilie le texte, l'édition, la suppression logique et les métadonnées de pièce jointe. Le callback vérifie toujours la génération du canal et la conversation courante. Le timer est annulé dans closeChannel() pour empêcher un rafraîchissement après navigation ou fermeture.
+- Assertion statique Lot 527 ajoutée à ci/check-msg.mjs : présence du debounce, garde de génération/conversation, rendu conservant le canal et annulation du timer.
+- Limite : ce regroupement ne répare pas une souscription serveur qui ne reçoit aucun événement; il réduit seulement le travail déclenché par les UPDATE effectivement reçus. Le flux INSERT conserve son chemin dédié et la protection DOM du Lot 526.
+- Validation dynamique toujours non acquise : les jobs GitHub Actions sont bloqués avant démarrage par la restriction de facturation déjà signalée. Aucun test réel, aucun accès en écriture à Supabase hébergé, aucune modification de schéma/RLS/Auth/Realtime/Storage, aucun déploiement Cloudflare.
+- PR #17 demeure ouverte et non fusionnée; main inchangée.
