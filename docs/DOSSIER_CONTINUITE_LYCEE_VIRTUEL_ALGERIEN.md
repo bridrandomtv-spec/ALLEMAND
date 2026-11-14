@@ -2666,3 +2666,14 @@ Correctifs sur PR #17 :
 Fichier modifié : `ci/msg-supabase-local-test.mjs` (commits `5dee6667194a66faec972647417ab6c1de5a5797` et `a2710602d728a0378c1509c44face31cce1e840c`).
 
 Validation : relecture statique du cycle readiness/INSERT, des erreurs de protocole, des erreurs de transport, de la fermeture inattendue, du timeout et du nettoyage volontaire. Aucun test Node/Supabase dynamique n'a été exécuté; les runners GitHub Actions restent bloqués avant démarrage. Aucun changement de Supabase hébergé (schéma, données, Auth, RLS, Realtime ou Storage), aucun déploiement Cloudflare, aucune fusion. PR #17 reste ouverte et non fusionnée.
+
+## Lot 545 — corrélation exacte et vérification de bout en bout de l'invitation Realtime (14 novembre 2026)
+- Audit du scénario `msg_invite_send` → lecture `service_role` → lecture RLS destinataire → événement CDC → `msg_invite_cancel`.
+- Défaut de robustesse identifié : l'observateur résolvait sur le premier INSERT `pending` du destinataire. Une autre invitation destinée au même compte pouvait donc être consommée avant celle créée par ce scénario, provoquant un échec parasite.
+- Correction du harnais local : `waitForInvite(inviteId)` corrèle désormais l'événement avec l'UUID exact. Les événements arrivant avant le retour RPC sont mis en file (maximum 50) et seul l'événement de l'UUID attendu valide le test ; les événements étrangers ne désarment plus le délai de surveillance.
+- Renforcement des assertions : validation du format UUID retourné, identité expéditeur/destinataire, statut `pending` et identifiant exact sur la lecture `service_role`, la lecture du destinataire et le payload Realtime.
+- Après annulation, le test relit la ligne avec `service_role` et exige `status='cancelled'` ; le booléen `true` de la RPC ne suffit plus à déclarer la persistance correcte.
+- L'observateur est fermé dans un bloc `finally`, y compris en cas d'échec d'une lecture ou d'une assertion intermédiaire.
+- Fichiers modifiés : `ci/msg-supabase-local-test.mjs` (commit `6157d0578e846c27cd1ecda16314399c59a5cb2f`) et présent dossier de continuité (commit à relever après écriture).
+- Vérification effectuée par relecture statique du code et de la migration : `msg_invite_send` retourne bien un UUID ; les statuts SQL autorisés comprennent `pending` et `cancelled` ; `msg_invite_cancel` renvoie un booléen et met à jour la ligne en `cancelled` pour une invitation récente. Aucun test Node/PostgreSQL/Supabase dynamique n'a été exécuté, le runner GitHub Actions restant bloqué avant démarrage pour le problème de facturation du compte.
+- Aucun changement de schéma ni écriture sur Supabase actif, aucun changement sur `main`, aucune fusion de PR #17 et aucun déploiement Cloudflare.
