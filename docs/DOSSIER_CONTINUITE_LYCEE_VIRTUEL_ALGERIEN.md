@@ -1860,3 +1860,40 @@
 - Étape suivante : exécuter la migration candidate et la matrice dans une pile Supabase locale/éphémère avec identités synthétiques, puis vérifier les appels réels Storage API/PostgREST et les politiques permissives combinées par OR. Après réussite seulement, ajouter au client une compensation sûre : après erreur d'insertion metadata, tenter le retrait du seul chemin uploadé ; après erreur de liaison, relire `attachment_id` et ne nettoyer que si la non-liaison est confirmée. En cas de lecture ambiguë, conserver l'objet et signaler un nettoyage différé.
 - Limite CI vérifiée pendant le lot : le workflow existant `.github/workflows/msg-supabase-local-test.yml` démarre Supabase avec `-x ... storage-api ...`, donc le service HTTP Storage est explicitement désactivé. Il applique uniquement les migrations 001/003 et son bootstrap ne crée pas le schéma complet `msg_messages/msg_attachments` ni les fixtures de bucket Messenger. Il ne peut donc pas valider ce candidat Storage tel quel. Ne pas ajouter simplement la migration 004 à cette séquence : elle échouerait sur le schéma incomplet. Il faut un workflow de test Storage distinct, avec un bootstrap minimal dédié, le service Storage activé, un bucket privé synthétique et deux comptes synthétiques ; tester via l'API Storage réelle ainsi que via PostgREST/RLS.
 - La valeur GitHub `mergeable=false` a été observée après les commits du Lot 502. La comparaison reste `diverged`, 2 789 commits en avance et 4 en retard. L'origine précise de l'indicateur false n'a pas été démontrée par les outils disponibles ; aucun conflit de fichier précis n'a été identifié. Aucun rebase ou merge n'a été tenté.
+
+
+---
+
+## Lot 503 — workflow Storage Messenger isolé (14 novembre 2026)
+
+### Objectif et périmètre
+Créer une voie de test distincte pour la migration candidate `202611140001_msg_storage_owner_cleanup.sql`. Le workflow Realtime existant n'est pas modifié : il continue d'exclure `storage-api`, alors que ce lot a besoin de tester le vrai service HTTP Storage. Aucun accès en écriture au projet Supabase actif, aucune donnée réelle, aucun déploiement Cloudflare et aucun changement sur `main`.
+
+### Fichiers ajoutés
+- `.github/workflows/msg-storage-local-test.yml` : workflow CI autonome, déclenché sur les changements du candidat, du bootstrap ou du test ; Supabase CLI épinglé en `2.122.1`, Node 22, Storage non exclu du démarrage.
+- `ci/msg-storage-local-bootstrap.sql` : tables Messenger minimales synthétiques, RLS de lecture nécessaire à l'évaluation de la politique DELETE, bucket privé `prive` et politique INSERT Storage limitée au chemin `msg/<conversation>/<uploader>-...`.
+- `ci/msg-storage-local-test.mjs` : crée deux utilisateurs locaux par Auth Admin, obtient leurs JWT GoTrue, puis appelle Storage API et PostgREST sous les identités A et B.
+- `tests/messenger/LOT-502-STORAGE-OWNER-CLEANUP.md` : couverture et limites du harness ajoutées à la matrice existante.
+
+### Scénarios couverts par le script
+- Upload d'un objet par chacun des deux comptes synthétiques.
+- B ne peut pas supprimer l'objet appartenant à A.
+- A peut supprimer son objet ; B peut supprimer le sien.
+- B ne peut pas supprimer les métadonnées de A.
+- A peut supprimer sa métadonnée `pending` non liée.
+- A ne peut supprimer ni une métadonnée liée à son message, ni une métadonnée dont le statut est passé à `ok`.
+
+### Limites et statut de validation
+- Le workflow et le script sont ajoutés au dépôt, mais **l'exécution CI n'est pas encore confirmée**. La simple présence du workflow ne prouve pas le fonctionnement de la pile ni le succès des appels HTTP.
+- Le premier harness ne couvre pas encore les noms de fichiers non conformes, les chemins mal formés/profondeurs incorrectes, les objets d'un autre bucket, ni l'inventaire exhaustif des politiques permissives Storage préexistantes. Ces scénarios restent ouverts avant de considérer la matrice complète.
+- Aucun résultat PostgreSQL/Storage runtime n'est revendiqué dans ce lot. La migration reste candidate uniquement et ne doit pas être appliquée à la base active.
+- Aucune compensation automatique n'a été ajoutée à `msgUpload` : la sécurité du nettoyage doit être démontrée par les tests avant de modifier le flux utilisateur.
+
+### PR #17 et intégrité du périmètre
+- Vérification GitHub après les changements du Lot 502 : `state=open`, `merged=false`, `mergeable=true`.
+- Comparaison `main...design/prototypes-67-74-alignment` : `diverged`, 2 790 commits en avance et 4 en retard ; merge-base observé : `51acfe8c97b6e152208d592dbd2c5bbde5c5c38e`.
+- L'indicateur `mergeable` est désormais `true` dans la réponse GitHub ; cela ne constitue pas une autorisation de fusion. PR #17 reste ouverte et non fusionnée.
+- Aucun rebase, merge, commit sur `main`, déploiement Cloudflare, écriture Supabase active, migration appliquée ou branche payante créée.
+
+### Prochaine étape
+Vérifier l'exécution du workflow Lot 503 sur GitHub. En cas d'échec, diagnostiquer les journaux et corriger le harness sans toucher à la production. Ensuite compléter les scénarios négatifs manquants et vérifier les politiques Storage permissives combinées par OR. Seulement après réussite complète, réévaluer la compensation côté client et le déploiement séparé de la migration.
