@@ -2351,3 +2351,14 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Limite : ce fixture est un environnement synthétique ciblé, pas une copie complète des triggers et objets de production. Les tests restent **non exécutés** tant que les runners GitHub sont bloqués par l'annotation de facturation. Aucun changement sur la base Supabase hébergée, aucune donnée réelle, aucun déploiement Cloudflare.
 - PR #17 reste ouverte et non fusionnée ; `main` n'est pas modifiée.
 
+## Lot 523 — durcissement du cycle de vie Realtime et reprise au premier plan
+
+- Audit de `msg.js` : le callback `SUBSCRIBED` d'un canal de conversation ne vérifiait pas son `channelEpoch`. Un canal fermé pouvait donc encore déclencher `renderThread(id, true)` après un changement de conversation. Les callbacks INSERT, UPDATE et Presence n'étaient pas tous protégés par la génération du canal.
+- Correctif : les callbacks SUBSCRIBED, INSERT, UPDATE et Presence vérifient maintenant la génération courante ; SUBSCRIBED vérifie aussi que `state.ch` référence encore le canal concerné. Les états `CHANNEL_ERROR`, `TIMED_OUT` et `CLOSED` sont signalés comme connexion instable.
+- Reprise : au retour réseau (`online`), au retour de page (`pageshow`) et au retour de visibilité (`visibilitychange` vers visible), une réconciliation différée recharge le fil depuis l'API et recrée le canal. Les réponses anciennes restent neutralisées par `renderEpoch`. Le timer de reprise est annulé à la fermeture du canal et à la sortie de la vue Messenger ; la conversation courante est invalidée lorsqu'on quitte cette vue.
+- Ajout de contrôles statiques Lot 523 dans `ci/check-msg.mjs` pour prévenir la régression des gardes de génération, des événements de reprise et de l'annulation du timer.
+- Commits : correction du filtrage des callbacks et reprise `8be1b0aea55189b6780228694a1bb4ca1c0c1321` ; annulation de la reprise après navigation `30972cc2524dc39a8e02876b3ee4a8230fd128aa` ; contrôles statiques `0e9a1d2437f90c8158a46f82d00c19ef4f55f9ad`.
+- Référence Supabase consultée : le guide Realtime documente la reconnexion avec backoff après `phx_error`, le traitement des fermetures inattendues et la nécessité de distinguer `SUBSCRIBED`, `CHANNEL_ERROR`, `CLOSED` et `TIMED_OUT`. La KB récente recommande également de journaliser les statuts et de vérifier les abonnements obsolètes. Sources : https://supabase.com/docs/guides/realtime/protocol et https://supabase.com/kb/troubleshooting/realtime-postgres-changes-troubleshooting.
+- **Non validé dynamiquement** : les runners GitHub Actions restent bloqués par la restriction de facturation déjà constatée. Les nouveaux contrôles statiques sont ajoutés au script CI, mais n'ont pas été exécutés ici. Aucun test sur des comptes réels, aucune modification de Supabase hébergé, aucun déploiement Cloudflare.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
