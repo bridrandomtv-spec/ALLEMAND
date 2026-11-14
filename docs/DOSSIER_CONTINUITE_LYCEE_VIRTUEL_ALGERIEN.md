@@ -2030,3 +2030,27 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Vérification complémentaire du catalogue actif : `authenticated` ne possède pas de privilège UPDATE au niveau global de la table `msg_messages`; les seuls privilèges UPDATE par colonne sont `body`, `deleted_at` et `edited_at`. Les colonnes `sender_id`, `conversation_id`, `attachment_id`, `flagged` et `id` n'ont pas de privilège UPDATE pour ce rôle.
 - Ce garde-fou complète la policy RLS : même si elle autorise l'UPDATE de la ligne à l'expéditeur membre (ou au modérateur), les droits SQL limitent les champs modifiables. La chaîne client `msgEdit` et `msgDelete` correspond aux colonnes autorisées.
 - Contrôle réalisé en SELECT sur `information_schema.table_privileges` et `information_schema.column_privileges`; aucune modification de la base active.
+
+
+---
+
+## Lot 509 — distinguer le code Messenger de la cible Cloudflare réellement testée (14 novembre 2026)
+
+### Constat décisif sur les branches
+- Relecture indépendante de `msg.js` sur `main` et sur `design/prototypes-67-74-alignment` :
+  - `main` : 20 656 caractères ; pas de `channelEpoch`, pas de garde contre une création tardive d'un canal, et pas de réconciliation `renderThread(id, true)` après `SUBSCRIBED`.
+  - branche PR #17 : 37 702 caractères ; contient les gardes `channelEpoch`, les contrôles d'époque/conversation et la réconciliation du fil après abonnement/reconnexion.
+- Les modifications des lots 498, 499 et 501 sont des commits de la branche PR #17. Les diffs de ces commits ne changent pas `main`. La version améliorée du moteur Messenger n'est donc pas présente dans le code de la branche de production tant que PR #17 n'est pas intégrée.
+- Le workflow `.github/workflows/deploy.yml` confirme un déclencheur `push` limité à `main` et un déclencheur `pull_request` ciblant `main`. Il ne contient aucun job `deploy` ; son étape d'information indique que la production publique est assurée par Cloudflare Workers et que le build de production est automatique à chaque push via l'intégration OAuth Cloudflare.
+- Conséquence : si le test Messenger est effectué sur `https://allemand.brid-randomtv.workers.dev` (production), il teste le code issu de `main`, pas les corrections Realtime non fusionnées des lots 498–501. C'est une explication opérationnelle forte de l'écart entre les corrections commitées et le comportement observé en production. Elle ne démontre pas encore que le code de la PR résout à lui seul toute la panne Realtime.
+
+### État du build de la branche
+- Le check Cloudflare `Workers Builds: allemand` du HEAD `d5da9c1d783b44dafb883a3435a1ed6fc68bab17` est terminé avec `success`, build ID `1ee91949-d769-4254-8f86-e5ec6917a3cb`, dans le chemin Cloudflare de preview `design-prototypes-67-74-alignment`.
+- Cela prouve que Cloudflare a construit le code de la branche PR. Le check ne fournit pas d'URL publique exacte du preview ; aucune URL de preview n'est inventée ou réutilisée.
+- Le check Supabase Preview est `skipped` avec le motif : « This git branch is not associated with any Supabase Branch ». Aucune branche Supabase n'a été créée. Le fichier client de la branche référence toujours le projet Supabase actif `azjwcybivirvpxbfhyzk` ; un test fonctionnel sur ce preview pourrait donc écrire dans la base active. Ne pas effectuer de test d'envoi avec des comptes réels sans décision explicite et sans comptes de test dédiés.
+
+### Décision et limites
+- La priorité n'est plus d'ajouter un nouveau patch Realtime à l'aveugle : il faut comparer le comportement sur le build Cloudflare de preview de la branche PR avec celui de la production, en sachant que le preview utilise le projet Supabase actif tant qu'aucune branche Supabase isolée n'existe.
+- Aucune fusion, aucun push sur `main`, aucun déploiement de production, aucune écriture ou migration Supabase, aucune création de branche payante et aucun test d'envoi multi-compte n'ont été effectués dans ce lot.
+- PR #17 revérifiée : `state=open`, `merged=false`, `mergeable=true`, HEAD `d5da9c1d783b44dafb883a3435a1ed6fc68bab17`.
+- Aucun défaut supplémentaire du transport Realtime n'est déclaré corrigé. Le test navigateur à deux comptes reste à faire sur une cible explicitement choisie et avec des comptes de test.
