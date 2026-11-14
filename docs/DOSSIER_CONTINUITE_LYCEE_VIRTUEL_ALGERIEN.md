@@ -2373,3 +2373,15 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - **Non validé dynamiquement** : les contrôles CI ne sont pas exécutés car les runners GitHub Actions restent bloqués par la restriction de facturation. Aucun changement Supabase hébergé, aucun compte réel, aucun déploiement Cloudflare.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée.
 
+
+## Lot 525 — ordre déterministe de l'historique et limite d'idempotence
+
+- Audit ciblé de supabase/supabase.js, supabase/msg_schema.sql, msg.js et du fixture PostgreSQL local. Le fil charge actuellement les 50 derniers messages, puis les remet en ordre chronologique pour l'affichage. La requête ne triait que sur created_at; plusieurs INSERT pouvant partager le même horodatage, leur ordre relatif n'était pas déterministe.
+- Correctif sans changement de schéma : msgMessages() trie maintenant par created_at DESC, puis id DESC. Le rendu conserve ensuite l'ordre chronologique. L'identifiant primaire bigint sert de second critère stable; aucun champ métier n'est réinterprété.
+- Vérification de l'idempotence : le schéma msg_messages ne comporte que l'identifiant serveur, la conversation, l'expéditeur, le corps, la pièce jointe, les indicateurs et les horodatages. Aucun client_nonce, idempotency_key ou request_id n'existe dans le schéma versionné ni dans le fixture de test. L'INSERT client ne transmet donc aucun identifiant de requête persistant. Une garantie exactement une fois après perte de la réponse HTTP ne peut pas être construite honnêtement côté navigateur avec les colonnes actuelles; comparer le texte et l'heure serait ambigu si un élève envoie deux fois le même texte.
+- Aucun faux mécanisme d'idempotence ajouté. Une garantie robuste nécessiterait un jeton client stocké et protégé par contrainte unique, puis une adaptation SQL/RLS et des tests PostgreSQL; cela implique une évolution du schéma et n'est pas engagé sans autorisation.
+- Le paramètre before de msgMessages() existe mais aucun appelant actuel ne l'utilise : renderThread() demande toujours null, 50. La pagination historique n'est donc pas encore exposée dans l'interface. Si elle est activée, le curseur devra être composite (created_at, id) afin de ne pas sauter les messages partageant le même timestamp.
+- Contrôle statique ajouté dans ci/check-msg.mjs pour le tri secondaire et l'absence documentée de clé d'idempotence dans le schéma.
+- Commits Lot 525 : tri stable d159940ff3841193258e1824ee6ba464b65890ea; assertions statiques 7eb33c5b8aed886a0260c49d76ec3bc9120f6301; dossier à suivre.
+- Validation dynamique non acquise : les runners GitHub Actions restent bloqués par l'annotation de facturation. Aucun test PostgreSQL local n'a été exécuté dans cette session. Aucun accès en écriture à Supabase hébergé, aucune migration, aucun changement Auth/RLS/Realtime/Storage/paiement, aucun déploiement Cloudflare.
+- PR #17 reste ouverte et non fusionnée; main reste inchangée.
