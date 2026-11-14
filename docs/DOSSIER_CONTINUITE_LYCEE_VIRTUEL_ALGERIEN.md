@@ -1934,3 +1934,16 @@ Vérifier l'exécution du workflow Lot 503 sur GitHub. En cas d'échec, diagnost
 
 ### Suite immédiate
 Obtenir une exécution GitHub Actions avec étapes/journaux exploitables ou exécuter ce workflow dans un environnement local Docker/Supabase isolé. Si les tests démarrent, traiter les erreurs SQL/API réelles, puis seulement après succès décider si le nettoyage compensatoire peut être ajouté au client Messenger.
+
+
+---
+
+## Lot 505 — correction du contrôle SQL et état d'exécution CI (14 novembre 2026)
+
+- Revue du workflow `.github/workflows/msg-storage-local-test.yml` : le bloc anonyme PostgreSQL chargé de compter les politiques DELETE permissives était délimité par `DO $ ... END $;`, syntaxe invalide. Correction en `DO $$ ... END $$;`, commit `a935ca64692a9c0ed7bd0d2585c5f29a38dc5c55` sur `design/prototypes-67-74-alignment`.
+- Le run Storage déclenché sur ce commit (`43591195498`, run #16) est terminé en échec, mais GitHub renvoie `steps=[]`, `steps=null` dans le résumé du job et `logs_url=null`; le téléchargement renvoie `BlobNotFound`. Les runs CI générale, PostgreSQL Messenger et découverte PostgreSQL du même commit présentent le même état sans étapes exposées. Impossible d'attribuer cet échec à la syntaxe SQL corrigée, au runner, au script ou à la migration : aucune étape du job n'est consultable.
+- Vérification locale de l'environnement : Node.js `v22.16.0` est disponible, mais `docker`, `supabase` et `psql` sont absents. Il n'est donc pas possible d'exécuter le harness dans ce conteneur. Aucun résultat d'intégration Storage/PostgREST n'est revendiqué.
+- Revue statique du schéma réel `supabase/msg_schema.sql` : les noms/colonnes ciblés par le candidat correspondent aux tables (`msg_messages.id/sender_id/attachment_id`, `msg_attachments.message_id/uploader/statut`). Les tables du bootstrap sont volontairement réduites et synthétiques ; elles ne remplacent pas une validation contre la base réelle.
+- La migration `202611140001_msg_storage_owner_cleanup.sql` reste candidate, non appliquée. Aucun code client de compensation n'a été activé. Aucun accès en écriture au projet Supabase actif, aucun déploiement Cloudflare, aucune modification de `main`, aucun rebase ni fusion.
+- PR #17 revérifiée après le correctif : `state=open`, `merged=false`, `mergeable=true`, HEAD `a935ca64692a9c0ed7bd0d2585c5f29a38dc5c55`. Elle reste ouverte pour validation visuelle et technique.
+- Suite : obtenir un run GitHub Actions avec étapes/journaux disponibles ou exécuter la pile dans un environnement disposant réellement de Docker/Supabase CLI/psql. Ne pas ajouter de nouveaux correctifs spéculatifs avant d'avoir les premiers résultats d'exécution.
