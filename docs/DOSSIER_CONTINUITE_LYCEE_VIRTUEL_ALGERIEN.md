@@ -1741,3 +1741,22 @@
 - Aucun changement effectué sur Supabase actif. Aucun test d'action (création de DM, invitation, message, publication Realtime) n'a été exécuté : seulement lecture du catalogue, définitions et privilèges. Aucune donnée utilisateur consultée.
 - Aucun code applicatif modifié. Seul le dossier de continuité est mis à jour sur la branche. PR #17 reste ouverte/non fusionnée ; `main`, production, données, schéma, RLS, Auth, Realtime et facturation inchangés.
 - Étape suivante : exécuter les migrations 001 + 003 sur une instance PostgreSQL/Supabase locale jetable, vérifier les droits avant/après et faire passer les tests d'intégration et de concurrence. Tant que les runners GitHub n'exécutent aucun step, ne pas interpréter l'absence de résultat comme un échec fonctionnel SQL. Pas de déploiement actif sans autorisation distincte.
+
+
+
+## Lot 495 — revue statique des migrations et capacité d'exécution isolée (14 novembre 2026)
+
+- Relecture complète de `202611130001_msg_invitation_consent.sql`, `202611130003_msg_student_discovery.sql`, `ci/msg-supabase-local-bootstrap.sql`, `.github/workflows/msg-supabase-local-test.yml`, `ci/msg-supabase-local-test.mjs` et `ci/msg-invitation-concurrency-test.sh`.
+- Contrat client / SQL vérifié statiquement :
+  - `msgInvites()` lit les sept colonnes effectivement créées dans `msg_invites`, avec filtre participant.
+  - `msgInviteSend(studentKey)` appelle `msg_invite_send_by_key(p_student_key)`, qui consomme atomiquement le jeton lié à l'acteur puis appelle `msg_invite_send`.
+  - Acceptation/refus/annulation appellent les RPC et paramètres présents dans la migration 001.
+  - `msgStudentSearch(query,limit)` appelle `msg_student_search(p_query,p_limit)`, dont le contrat renvoie le jeton opaque et les quatre champs de profil prévus.
+  - Le contrôle des profils vérifiés et l'égalité wilaya/niveau/filière est refait côté serveur ; les tables de jetons et de limites n'accordent aucun accès direct aux rôles publics.
+  - La migration 001 révoque l'ouverture directe historique et l'ajout client de membres DM ; le trigger n'autorise les membres d'un nouveau DM que lorsqu'une invitation acceptée référence cette conversation.
+- Revue de concurrence : le verrou consultatif par paire dans `msg_invite_accept` sérialise les acceptations réciproques ; les mises à jour `FOR UPDATE` permettent à acceptation/refus/annulation de converger sur un seul statut. Le script couvre les trois courses opposées. Cela reste une analyse du code, pas un test exécuté.
+- Le workflow local est conçu pour démarrer une pile Supabase CLI éphémère, retirer temporairement les migrations générales, installer le fixture synthétique Messenger, appliquer seulement les migrations 001/003, puis tester Auth/JWT, PostgREST, RLS, recherche, consentement, Realtime et concurrence. Aucun secret ou identifiant réel ne devrait être utilisé par le fixture.
+- Limite d'exécution constatée dans cet environnement : aucun binaire `psql`, `postgres` ou `docker` n'est disponible. Dans le projet Supabase connecté, `list_branches` ne retourne que la branche `main` ; aucune base de développement isolée déjà existante n'est disponible. La création d'une branche Supabase peut générer des frais horaires ; elle n'a pas été demandée ni tentée. Les jobs GitHub précédemment consultés n'avaient enregistré aucune étape, et leurs logs n'étaient pas récupérables (404 BlobNotFound). En conséquence, aucune preuve d'exécution SQL isolée n'est disponible à ce stade.
+- Aucun défaut SQL supplémentaire certain n'a été établi par cette revue statique ; aucun résultat PASS ne doit être revendiqué. Les scénarios négatifs et Realtime restent à exécuter dans l'environnement éphémère du workflow.
+- Aucun changement de code ou de schéma. Aucune action d'écriture sur Supabase actif. Seul le dossier de continuité est mis à jour sur la branche ; `main`, production, Auth, RLS, données, Realtime, facturation et PR #17 (ouverte/non fusionnée) restent inchangés.
+- Prochaine étape sans coût Supabase supplémentaire : faire exécuter le workflow d'intégration local par GitHub Actions lorsqu'un runner est disponible, puis exploiter les vrais logs/artefacts. Ne pas déclarer le système validé tant que les tests SQL, Auth, RLS, Realtime et concurrence ne sont pas réellement passés.
