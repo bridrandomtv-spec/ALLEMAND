@@ -9,28 +9,43 @@
 const URL = 'https://azjwcybivirvpxbfhyzk.supabase.co';
 const KEY = 'sb_publishable_eLv27yLjmxuiE9xP_h50qw_4ID6dDHz';
 let client = null;
+let clientPromise = null;
 
 async function sb(){
   if(client) return client;
-  if(window.supabase && window.supabase.createClient){
-    client = window.supabase.createClient(URL, KEY, { auth: { persistSession: true } });
-    return client;
+  /* Single-flight : si le SDK doit être chargé par import() (repli CDN),
+     tous les appels concurrents attendent la même initialisation. Sans cela,
+     deux vues peuvent créer deux clients Auth/Realtime indépendants. */
+  if(clientPromise) return clientPromise;
+  clientPromise = (async function(){
+    if(window.supabase && window.supabase.createClient){
+      client = window.supabase.createClient(URL, KEY, { auth: { persistSession: true } });
+      return client;
+    }
+    const urls = [
+      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/+esm',
+      'https://unpkg.com/@supabase/supabase-js@2.119.0/dist/module/index.js',
+      'https://esm.sh/@supabase/supabase-js@2.119.0'
+    ];
+    for(const u of urls){
+      try{
+        const m = await import(u);
+        if(m && m.createClient){
+          client = m.createClient(URL, KEY, { auth: { persistSession: true } });
+          return client;
+        }
+      }catch(e){}
+    }
+    return null;
+  })();
+  try{
+    const ready = await clientPromise;
+    if(!ready) clientPromise = null;
+    return ready;
+  }catch(e){
+    clientPromise = null;
+    throw e;
   }
-  const urls = [
-    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/+esm',
-    'https://unpkg.com/@supabase/supabase-js@2.119.0/dist/module/index.js',
-    'https://esm.sh/@supabase/supabase-js@2.119.0'
-  ];
-  for(const u of urls){
-    try{
-      const m = await import(u);
-      if(m && m.createClient){
-        client = m.createClient(URL, KEY, { auth: { persistSession: true } });
-        return client;
-      }
-    }catch(e){}
-  }
-  return null;
 }
 
 async function login(email, pass){
