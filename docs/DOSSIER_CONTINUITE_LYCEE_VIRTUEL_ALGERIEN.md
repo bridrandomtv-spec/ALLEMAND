@@ -295,3 +295,13 @@
 - Cache actualisé : msg.js?v=3520, supabase/supabase.js?v=3522, service worker dz-de-v3.185.0.0.159 ; contrôles check-msg, check-masar et check-public-portal synchronisés.
 - **Limites de validation :** aucune exécution navigateur réelle, aucun compte élève réel utilisé, aucune migration Messenger appliquée, aucun déploiement Cloudflare. Les tests PostgreSQL doivent réussir dans GitHub Actions avant de considérer le SQL validé.
 - Aucun accès à des messages privés ni lecture de profils réels. Aucun changement sur main. PR #17 doit rester ouverte et non fusionnée.
+
+### Validation finale du Lot 453 — 14 novembre 2026
+- Deux premiers essais du nouveau test PostgreSQL ont échoué sur des délimiteurs PL/pgSQL mal formés dans les scripts de test ; les blocs DO ont été corrigés, puis les tests ont été relancés. Ces échecs concernaient les scripts de test isolés, pas une base Supabase.
+- Sur le commit code d60638f197db67dee2826e19dddf94c5b075a62e :
+  - CI — ALLEMAND run 43531607530 : **success**.
+  - Tests PostgreSQL isolés — découverte Messenger run 43531607736 : **success**.
+  - Tests PostgreSQL isolés — ملتقى الطلاب run 43531607933 : **success**.
+- Ces tests s'exécutent sur PostgreSQL 17 éphémère. Ils valident le contrat de recherche et les contrôles de privilèges dans un environnement isolé ; ils ne prouvent pas encore le comportement sur les JWT réels du projet Supabase ni le parcours navigateur.
+- Le module client et le formulaire de recherche sont prêts dans la branche. Tant que les migrations Messenger 001 et 003 ne sont pas appliquées, le serveur de production ne connaît pas les RPC d'invitation/recherche : l'interface doit afficher un état d'indisponibilité et ne doit pas prétendre envoyer une invitation.
+- PR #17 reste ouverte, non fusionnée ; aucune modification de main, aucun déploiement Cloudflare et aucune écriture sur Supabase.
