@@ -358,7 +358,7 @@
       var actionConv = state.conv;
       if(msgAct==='edit'){
         var bodyNode = row.querySelector('.msg-body');
-        var currentText = bodyNode ? bodyNode.textContent.replace(/\\s*·\\s*(عُدّلت|تم الإبلاغ عنها).*$/,'').trim() : '';
+        var currentText = bodyNode ? bodyNode.textContent.replace(/\s*·\s*(عُدّلت|تم الإبلاغ عنها).*$/,'').trim() : '';
         var revised = window.prompt('تعديل رسالتك :', currentText);
         if(revised===null) return;
         if(!revised.trim() || revised.length>2000){ window.alert('اكتب رسالة بين 1 و2000 حرف.'); return; }
