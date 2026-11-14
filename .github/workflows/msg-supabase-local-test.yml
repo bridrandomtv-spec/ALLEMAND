@@ -101,6 +101,23 @@ jobs:
       - name: Vérifier Auth GoTrue, JWT signés, RPC PostgREST et RLS avec deux élèves synthétiques
         run: node ci/msg-supabase-local-test.mjs
 
+      - name: Diagnostiquer les slots et connexions de réplication PostgreSQL
+        if: always()
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+            select slot_name, plugin, slot_type, active, restart_lsn, confirmed_flush_lsn
+            from pg_replication_slots
+            order by slot_name;
+          "
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+            select application_name, state, sync_state, sent_lsn, write_lsn, flush_lsn, replay_lsn
+            from pg_stat_replication;
+          "
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+            select pubname, pubinsert, pubupdate, pubdelete, pubtruncate
+            from pg_publication where pubname = 'supabase_realtime';
+          "
+
       - name: Capturer les journaux Realtime locaux en cas de diagnostic
         if: always()
         run: |
