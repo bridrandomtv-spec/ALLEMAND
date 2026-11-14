@@ -39,4 +39,4 @@ jobs:
           PGUSER: postgres
           PGDATABASE: postgres
           PGPASSWORD: postgres
-        run: bash ci/msg-invitation-concurrency-test.sh
+        run: bash -n ci/msg-invitation-concurrency-test.sh && bash ci/msg-invitation-concurrency-test.sh
