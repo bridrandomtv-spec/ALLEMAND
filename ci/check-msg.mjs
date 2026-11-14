@@ -156,6 +156,28 @@ ok(idx.includes('style-prototype-dz.css?v=202') && idx.includes('msg.js?v=3520')
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.159'") && sw.includes('./style-prototype-dz.css?v=202') && sw.includes('./msg.js?v=3520'), 'précache synchronisé avec la nouvelle interface');
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
+ 
+// Lot 523 — cycle de vie Realtime : ignorer les anciens canaux et resynchroniser au retour.
+ok(/epoch!==state\.channelEpoch \|\| state\.conv!==id \|\| state\.ch!==ch/.test(msgjs),
+   'callback SUBSCRIBED ignore un canal obsolète');
+ok(/epoch!==state\.channelEpoch \|\| !m \|\| state\.conv!==id/.test(msgjs),
+   'événement INSERT ignore un canal obsolète');
+ok(/epoch===state\.channelEpoch && state\.conv===id/.test(msgjs),
+   'événement UPDATE ignore un canal obsolète');
+ok(/epoch!==state\.channelEpoch \|\| state\.conv!==id/.test(msgjs),
+   'présence ignore un canal obsolète');
+ok(msgjs.includes("st2==='CHANNEL_ERROR' || st2==='TIMED_OUT' || st2==='CLOSED'"),
+   'états CHANNEL_ERROR, TIMED_OUT et CLOSED signalés');
+ok(msgjs.includes("window.addEventListener('online', scheduleThreadRecovery)") &&
+   msgjs.includes("window.addEventListener('pageshow', scheduleThreadRecovery)") &&
+   msgjs.includes("document.addEventListener('visibilitychange'"),
+   'reprise réseau, retour de page et visibilité déclenchent une réconciliation');
+ok(msgjs.includes('renderThread(id).catch(function(){})'),
+   'retour au premier plan recharge le fil et recrée le canal');
+ok(msgjs.includes('if(!state.inviteViewActive) state.conv = null') &&
+   msgjs.includes('if(state.recoveryTimer){ clearTimeout(state.recoveryTimer); state.recoveryTimer=null; }'),
+   'navigation hors Messenger annule la récupération différée');
+
 
 
 // Lot 444 — exécuter aussi les contrôles du fil communautaire dans le pipeline CI actif.
