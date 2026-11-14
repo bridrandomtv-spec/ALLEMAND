@@ -196,6 +196,15 @@ ok(msgjs.includes('if(authClient!==client) return;') &&
 ok(msgjs.includes('if(state.inviteViewActive) renderList();') &&
    msgjs.includes('if(activeConv) renderThread(activeConv);'),
    'vue Messenger réconciliée après connexion ou déconnexion');
+ok(msgjs.includes('authEpoch:0') && msgjs.includes('state.authEpoch++;') &&
+   msgjs.includes('state.renderEpoch++;') && msgjs.includes('state.peers = {};'),
+   'transition Auth : invalidation des rendus en vol, fermeture des canaux et purge des clés de recherche');
+ok(msgjs.includes('identityEpoch = state.authEpoch') &&
+   (msgjs.match(/state\.authEpoch!==identityEpoch/g)||[]).length>=2,
+   'envoi : une réponse tardive de l’ancienne identité ne modifie pas la nouvelle session');
+ok(msgjs.includes('actionIdentityEpoch = state.authEpoch') &&
+   (msgjs.match(/state\.authEpoch===actionIdentityEpoch/g)||[]).length===4,
+   'édition/suppression : callbacks neutralisés après changement de compte');
 ok(msgjs.includes('Supabase JS 2.x propage lui-même le JWT vers Realtime sur TOKEN_REFRESHED') &&
    !/realtime\.setAuth\(/.test(msgjs),
    'aucun setAuth manuel concurrent : le SDK Supabase gère déjà TOKEN_REFRESHED');
