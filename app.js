@@ -405,8 +405,8 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
-const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['msg','💬 الرسائل'],['seances','📚 الحصص'],
+const VIEWS = ['masar', 'accueil','msg','multaqa','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
+const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['msg','💬 الرسائل'],['multaqa','🌐 ملتقى الطلاب'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
                ['stats','🗺️ الإحصائيات'],['quiz','🎯 تمارين'],
@@ -428,13 +428,17 @@ function isProf(){
   try{ const s = window.AUTH && AUTH.session ? AUTH.session() : null; return !!(s && s.role === 'prof'); }
   catch(e){ return false; }
 }
+function isEleve(){
+  try{ const s = window.AUTH && AUTH.session ? AUTH.session() : null; return !!(s && s.role === 'eleve'); }
+  catch(e){ return false; }
+}
 let currentView = 'accueil';
 
 const NAVCATS = [
   ['etudes', '🎓', 'الدراسة', ['seances', 'classe', 'grammaire', 'matieres', 'guide']],
   ['entrain', '📝', 'التدريب والاختبارات', ['revision', 'malakhiss', 'quiz', 'officiels', 'devoir', 'simulation', 'examen']],
   ['ress', '📚', 'الموارد', ['biblio', 'corpus', 'banque', 'methode', 'devoirs', 'buch']],
-  ['inter', '💬', 'التفاعل', ['live', 'rag']],
+  ['inter', '💬', 'التفاعل', ['live', 'rag', 'msg', 'multaqa']],
   ['profcat', '👨', 'الأستاذ', ['prof', 'profboard']],
   ['parentscat', '👨‍👩‍👧', 'الأولياء', ['parents']],
   ['suivi', '📊', 'المتابعة', ['stats']],
@@ -447,7 +451,7 @@ const NAVSOLO_TOP = ['accueil', 'masar'];
 const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
-  const tabs = allTabs();
+  const tabs = allTabs().filter(t => t[0] !== 'multaqa' || isEleve());
   const byId = {};
   for(const t of tabs) byId[t[0]] = t;
   const used = {};
@@ -536,6 +540,7 @@ window.getNiveauActif = function(){ return niveauActif; }; try{ (window.cloudAut
 
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
+  if(view === 'multaqa' && !isEleve()){ toast('⛔ ملتقى الطلاب مخصّص لحسابات التلاميذ فقط','ko'); view = 'accueil'; }
   /* ── Porte 3.2 : vues entièrement payantes (config.paid_views, vide par défaut) ── */
   if(window.ACCESS && !ACCESS.canAccessView(view)){
     ACCESS.setReturn({ view: view });
