@@ -96,11 +96,15 @@
           if(state.me && m.sender_id===state.me) return;
           var th = el('msgBody') && el('msgBody').querySelector('.msg-thread');
           if(!th || th.querySelector('[data-mid="'+m.id+'"]')) return;
+          var eventRenderEpoch = state.renderEpoch;
           Promise.all([fetchNames([m.sender_id]), attachmentsFor([m.id])]).then(function(parts){
-            if(epoch!==state.channelEpoch || state.conv!==id) return;
+            if(epoch!==state.channelEpoch || state.conv!==id || eventRenderEpoch!==state.renderEpoch) return;
+            var currentThread = el('msgBody') && el('msgBody').querySelector('.msg-thread');
+            if(!currentThread || !currentThread.isConnected ||
+               currentThread.querySelector('[data-mid="'+m.id+'"]')) return;
             var a=parts[1] && parts[1][m.id];
             if(a && a.ok) a.sizeLabel=sizeLabel(a.octets);
-            th.insertAdjacentHTML('beforeend', rowHtml(m, true, a && a.found ? a : null));
+            currentThread.insertAdjacentHTML('beforeend', rowHtml(m, true, a && a.found ? a : null));
           });
         })
         .on('postgres_changes', { event:'UPDATE', schema:'public', table:'msg_messages', filter:'conversation_id=eq.'+id }, function(){
