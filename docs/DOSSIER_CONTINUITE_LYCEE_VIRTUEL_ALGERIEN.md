@@ -305,3 +305,14 @@
 - Ces tests s'exécutent sur PostgreSQL 17 éphémère. Ils valident le contrat de recherche et les contrôles de privilèges dans un environnement isolé ; ils ne prouvent pas encore le comportement sur les JWT réels du projet Supabase ni le parcours navigateur.
 - Le module client et le formulaire de recherche sont prêts dans la branche. Tant que les migrations Messenger 001 et 003 ne sont pas appliquées, le serveur de production ne connaît pas les RPC d'invitation/recherche : l'interface doit afficher un état d'indisponibilité et ne doit pas prétendre envoyer une invitation.
 - PR #17 reste ouverte, non fusionnée ; aucune modification de main, aucun déploiement Cloudflare et aucune écriture sur Supabase.
+
+
+## Lot 454 — harnais PostgreSQL isolé du cycle de consentement Messenger (14 novembre 2026)
+- Ajout de `ci/msg-invitation-postgres-test.sql` et du workflow `.github/workflows/msg-invitation-postgres-test.yml`, exécuté sur PostgreSQL 17 jetable dans GitHub Actions.
+- Le harnais reconstitue les tables et fonctions historiques minimales (comptes/profils synthétiques, conversations, membres, blocages et garde DM historique), puis exécute la migration préparatoire `202611130001_msg_invitation_consent.sql`.
+- Scénarios exercés : envoi sans création prématurée de DM, refus d'une acceptation par l'expéditeur, acceptation par le seul destinataire, création d'un DM avec exactement deux membres, idempotence de l'acceptation, annulation par l'expéditeur, refus par le destinataire, impossibilité d'accepter une demande refusée, révocation de l'ancienne RPC directe et refus de l'INSERT direct de conversation.
+- Commits du harnais : `1d22d9d06f0641ab11131fc94ef81e5dc5e61516` (test + workflow), `b0788c60a5b1db7cf3184b1b0beab449e5fbc9a1` (modélisation de l'ancienne policy d'adhésion avant migration).
+- Workflow GitHub Actions : run `43532909278`, déclenché sur PR #17 et toujours en cours au moment de cette mise à jour. **Aucun succès PostgreSQL du Lot 454 n'est encore revendiqué.** Si le run échoue, lire le journal, corriger le test ou la migration sur la branche puis relancer.
+- L'audit du parcours client confirme que la vue distingue les demandes entrantes/sortantes, réserve accepter/refuser au destinataire et annuler à l'expéditeur, et n'assimile pas l'acceptation à une création de زمالة. Le client n'écrit pas directement dans les tables d'invitations.
+- Les migrations `202611130001_msg_invitation_consent.sql` et `202611130003_msg_student_discovery.sql` restent préparées dans Git uniquement et **non appliquées** à Supabase. Aucune écriture Supabase, aucun accès aux messages privés réels, aucun déploiement Cloudflare.
+- PR #17 reste ouverte, non fusionnée, cible `main`; HEAD observé : `b0788c60a5b1db7cf3184b1b0beab449e5fbc9a1`. Aucun changement direct sur `main`.
