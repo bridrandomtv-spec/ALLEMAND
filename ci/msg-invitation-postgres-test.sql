@@ -95,6 +95,18 @@ create policy "msg conv creation" on public.msg_conversations for insert to auth
 create policy "msg members ajout" on public.msg_members for insert to authenticated
  with check(auth.uid()=user_id and public.msg_member_ok(conversation_id,auth.uid()));
 
+
+-- Helpers de lecture réservés au test : contournent la RLS uniquement dans la
+-- base éphémère pour vérifier l'état produit par les RPC SECURITY DEFINER.
+create function public.test_direct_count() returns bigint
+language sql security definer set search_path=pg_catalog,public as $test$
+ select count(*) from public.msg_conversations where type='direct'
+$test$;
+create function public.test_member_count(cid bigint) returns bigint
+language sql security definer set search_path=pg_catalog,public as $test$
+ select count(*) from public.msg_members where conversation_id=cid
+$test$;
+
 \i supabase/migrations/202611130001_msg_invitation_consent.sql
 
 -- A envoie à B : seule une demande pending existe, aucun DM n'est créé.
@@ -103,7 +115,7 @@ select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001'
 create temporary table test_invite(id uuid);
 insert into test_invite select public.msg_invite_send('20000000-0000-4000-8000-000000000002');
 do $$ begin
- if (select count(*) from public.msg_conversations where type='direct')<>0 then
+ if public.test_direct_count()<>0 then
    raise exception 'dm_created_before_consent';
  end if;
  if (select status from public.msg_invites where id=(select id from test_invite))<>'pending' then
@@ -133,7 +145,7 @@ do $$ begin
  if (select count(*) from public.msg_conversations where type='direct')<>1 then
    raise exception 'accepted_invite_did_not_create_one_dm';
  end if;
- if (select count(*) from public.msg_members where conversation_id=(select id from accepted_conv))<>2 then
+ if public.test_member_count((select id from accepted_conv))<>2 then
    raise exception 'accepted_dm_membership_invalid';
  end if;
  if (select status from public.msg_invites where id=(select id from test_invite))<>'accepted' then
