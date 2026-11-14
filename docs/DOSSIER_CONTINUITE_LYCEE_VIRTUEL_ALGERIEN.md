@@ -2054,3 +2054,10 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Aucune fusion, aucun push sur `main`, aucun déploiement de production, aucune écriture ou migration Supabase, aucune création de branche payante et aucun test d'envoi multi-compte n'ont été effectués dans ce lot.
 - PR #17 revérifiée : `state=open`, `merged=false`, `mergeable=true`, HEAD `d5da9c1d783b44dafb883a3435a1ed6fc68bab17`.
 - Aucun défaut supplémentaire du transport Realtime n'est déclaré corrigé. Le test navigateur à deux comptes reste à faire sur une cible explicitement choisie et avec des comptes de test.
+
+
+### Addendum Lot 509 — actualisation après commit du dossier
+- Commit du présent addendum : `6e8e86544fd2f59d8da225c60420a67ffc74d2cb`.
+- PR #17 relue après ce commit : `state=open`, `merged=false`, `mergeable=true`, HEAD `6e8e86544fd2f59d8da225c60420a67ffc74d2cb`. Une lecture intermédiaire immédiatement après le push avait retourné `mergeable=false`, puis la lecture suivante `true` ; conserver la dernière valeur et ne pas interpréter ce champ comme une validation de fusion.
+- Comparaison recalculée : branche divergente, 2 830 commits en avance et 4 en retard, merge-base `51acfe8c97b6e152208d592dbd2c5bbde5c5c38e`. Aucun rebase ni merge tenté.
+- Les checks GitHub Actions déclenchés sur ce HEAD étaient encore en file d'attente lors du dernier contrôle, y compris les deux jobs minimaux Ubuntu. Aucun résultat d'exécution n'est anticipé.
