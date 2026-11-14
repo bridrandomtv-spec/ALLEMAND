@@ -114,6 +114,32 @@
       ch.subscribe(function(st2){
         if(st2==='SUBSCRIBED'){
           try{ ch.track({ p: (state.meName||'أنا') }); }catch(e){}
+          /* Rattrape les messages arrivés entre le chargement initial et
+             l'abonnement Realtime, ainsi qu'après une reconnexion. */
+          Promise.resolve(window.SB.msgMessages(id, null, 50)).then(async function(r){
+            if(!r || !r.ok || epoch!==state.channelEpoch || state.conv!==id) return;
+            var th = el('msgBody') && el('msgBody').querySelector('.msg-thread');
+            if(!th) return;
+            var missing = (r.msgs||[]).filter(function(m){
+              return !th.querySelector('[data-mid="'+m.id+'"]');
+            });
+            if(!missing.length) return;
+            var names = missing.filter(function(m){ return m.sender_id!==state.me; })
+              .map(function(m){ return m.sender_id; });
+            await fetchNames(names);
+            if(epoch!==state.channelEpoch || state.conv!==id) return;
+            var files = await attachmentsFor(missing.map(function(m){ return m.id; }));
+            if(epoch!==state.channelEpoch || state.conv!==id) return;
+            missing.forEach(function(m){
+              var a=files && files[m.id];
+              if(a && a.ok) a.sizeLabel=sizeLabel(a.octets);
+              if(!th.querySelector('[data-mid="'+m.id+'"]')){
+                th.insertAdjacentHTML('beforeend', rowHtml(m, m.sender_id!==state.me, a && a.found ? a : null));
+              }
+            });
+          }).catch(function(){});
+        } else if(st2==='CHANNEL_ERROR' || st2==='TIMED_OUT'){
+          var pe=el('msgPres'); if(pe) pe.textContent='اتصال مباشر غير مستقر · جارٍ إعادة الاتصال';
         }
       });
       state.ch = ch;
