@@ -46,7 +46,15 @@ jobs:
         run: npx --yes supabase@2.122.1 start -x studio,imgproxy,storage-api,edge-runtime,logflare,vector,supavisor,postgres-meta,mailpit
 
       - name: Exporter les clés éphémères de la pile locale
-        run: npx --yes supabase@2.122.1 status -o env >> "$GITHUB_ENV"
+        shell: bash
+        run: |
+          eval "$(npx --yes supabase@2.122.1 status -o env)"
+          {
+            echo "API_URL=$API_URL"
+            echo "DB_URL=$DB_URL"
+            echo "ANON_KEY=$ANON_KEY"
+            echo "SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+          } >> "$GITHUB_ENV"
 
       - name: Préparer un schéma Messenger synthétique
         run: psql "$DB_URL" -v ON_ERROR_STOP=1 -f ci/msg-supabase-local-bootstrap.sql
