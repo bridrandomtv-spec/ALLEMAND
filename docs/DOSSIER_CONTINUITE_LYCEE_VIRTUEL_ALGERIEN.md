@@ -385,3 +385,9 @@
 - Deuxième run de l'intégration locale : `43536593612`, sur le commit `8942b889`, encore en cours au dernier contrôle, à l'étape de démarrage de la pile. Aucun succès JWT/PostgREST/RLS n'est encore revendiqué.
 - Le déclenchement du workflow est conservé sur les événements pull_request pour que les prochaines mises à jour de la PR relancent ce contrôle. HEAD documentaire actuel : `d4b733469f278df0d545d6d3431b523cf2b7447a`.
 - Les workflows classiques sur le commit `8942b889` sont en cours ; le précédent lot sur `93adcbfc` avait sa CI générale et ses trois suites PostgreSQL existantes réussies.
+
+
+#### Point de contrôle après correction — HEAD `d16bf090f93a24ba90dd397be4fe9545747225a9`
+- Sur le commit de code `d4b73346`, les quatre workflows classiques sont tous terminés avec succès : CI `43536613782`, consentement `43536613783`, découverte `43536613836`, et Multaqa `43536613871`.
+- Le nouveau workflow Supabase local correspondant à ce commit, run `43536613808`, est encore en cours à l'étape de démarrage de la pile Supabase. La syntaxe Node et les étapes préalables de configuration/isolement des migrations sont terminées avec succès. Le scénario Auth/JWT/RPC/RLS n'a pas encore commencé.
+- PR #17 : toujours ouverte, non fusionnée ; `mergeable_state=clean` au dernier contrôle. Le HEAD documentaire a avancé à `d16bf090` pour consigner ce point. `main` reste inchangée.
