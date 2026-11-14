@@ -61,6 +61,15 @@ create function public.msg_open_direct(p_peer uuid) returns bigint
 language sql security definer as $$ select 999::bigint $$;
 grant execute on function public.msg_open_direct(uuid) to authenticated;
 
+create function public.msg_member_ok(cid bigint,uid uuid) returns boolean
+language sql stable security definer set search_path=pg_catalog,public as $
+ select exists(select 1 from public.msg_conversations c
+   where c.id=cid and (c.type='direct' or exists(
+     select 1 from public.profiles p where p.id=uid
+       and p.wilaya=c.wilaya and p.niveau=c.niveau
+       and (c.filiere is null or p.filiere=c.filiere))))
+$;
+
 create function public.msg_guard_direct() returns trigger
 language plpgsql security definer set search_path=pg_catalog,public as $$
 declare v_type text; v_other uuid;
