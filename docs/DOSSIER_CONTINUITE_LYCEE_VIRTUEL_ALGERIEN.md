@@ -453,3 +453,13 @@
 - Ce test n'est pas encore validé : son workflow doit confirmer le protocole WebSocket, la publication locale et la réception RLS effective. Le succès des tests HTTP/RPC antérieurs ne suffit pas à déclarer Realtime opérationnel.
 - PR #17 reste ouverte/non fusionnée. Aucun changement sur `main`, aucun déploiement Cloudflare, aucune migration appliquée au Supabase hébergé.
 - Si le test échoue, examiner le message de jointure et la forme du payload du protocole local, puis corriger le banc de test sans désactiver RLS ni élargir la publication.
+
+## Lot 459 — correction du protocole Phoenix du test Realtime (14 novembre 2026)
+- Vérification des cinq workflows sur le HEAD précédent `f6a629f1d64f2d23f08d33514d6902b355a94bdd` : CI générale, tests PostgreSQL de découverte, tests PostgreSQL de consentement et tests PostgreSQL de `ملتقى الطلاب` réussis; le workflow d'intégration Supabase local a échoué uniquement au nouveau test WebSocket Realtime.
+- Diagnostic tiré du journal GitHub Actions : Supabase local démarrait correctement, les migrations Messenger s'appliquaient dans la base éphémère, puis le client de test expirait en attendant `SUBSCRIBED`. Le test envoyait les trames Phoenix sous forme de tableau JSON tout en déclarant `vsn=1.0.0`.
+- La documentation officielle du protocole Realtime distingue précisément les formats : `1.0.0` utilise un objet JSON; `2.0.0` utilise le tableau ordonné `[join_ref, ref, topic, event, payload]`. La cause identifiée est donc une incohérence de version de protocole dans le harnais, et non une preuve d'échec de la policy RLS ou de la publication SQL.
+- Correction limitée à `ci/msg-supabase-local-test.mjs` : alignement du paramètre WebSocket sur `vsn=2.0.0`, qui correspond au tableau JSON déjà envoyé. Aucun changement au code applicatif Messenger, aux migrations SQL, à Supabase hébergé, aux données, à Auth/RLS ou aux paiements.
+- Commit correctif : `f365c77fe82d88cb6ea444ceeea5a487b7082f07`.
+- Validation : en attente de la nouvelle exécution GitHub Actions sur ce commit. Ne pas déclarer le transport Realtime validé avant que le test reçoive effectivement le `phx_reply` de souscription et l'événement INSERT synthétique.
+- La migration `202611130001_msg_invitation_consent.sql` et la migration `202611130003_msg_student_discovery.sql` restent non appliquées sur Supabase hébergé; elles sont utilisées uniquement dans la pile locale éphémère du workflow.
+- PR #17 doit rester ouverte et non fusionnée; aucune modification de `main`, aucun déploiement Cloudflare.
