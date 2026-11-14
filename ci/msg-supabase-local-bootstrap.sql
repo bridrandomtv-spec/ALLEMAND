@@ -113,12 +113,17 @@ create policy "msg messages envoi" on public.msg_messages
   with check (auth.uid()=sender_id
     and public.msg_is_member(auth.uid(),conversation_id)
     and public.msg_not_blocked(conversation_id,sender_id));
+create policy "msg messages edition" on public.msg_messages
+  for update to authenticated
+  using (auth.uid()=sender_id or public.msg_is_moderator(auth.uid()))
+  with check (auth.uid()=sender_id or public.msg_is_moderator(auth.uid()));
 
 grant usage on schema public to anon,authenticated,service_role;
 grant select on public.msg_conversations,public.msg_members to authenticated;
 grant all on public.profiles to service_role;
 
-grant select, insert, update, delete on public.msg_messages to authenticated;
+grant select, insert, delete on public.msg_messages to authenticated;
+grant update (body, edited_at, deleted_at) on public.msg_messages to authenticated;
 grant usage, select on sequence public.msg_messages_id_seq to authenticated;
 
 do $$
