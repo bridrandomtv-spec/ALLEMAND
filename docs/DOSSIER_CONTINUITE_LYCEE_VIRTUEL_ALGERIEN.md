@@ -422,3 +422,15 @@
 - Les workflows lancés sur `c8c7e663` étaient encore en cours lors du contrôle ; ils ne valident donc pas encore le canal Realtime. Le commit final `ad2e81c` déclenche également une nouvelle série CI. Attendre les résultats avant de déclarer cette modification vérifiée.
 - API GitHub PR #17 au dernier contrôle : ouverte, non fusionnée ; `mergeable=true`, `mergeable_state=unstable` pendant les contrôles Actions. Ne pas confondre cet état transitoire avec un conflit confirmé.
 - Aucun changement sur `main`, aucune migration Messenger appliquée à Supabase hébergé, aucun déploiement Cloudflare. Realtime des invitations est implémenté dans le code de la branche, mais pas encore prouvé en navigateur multi-comptes ni sur l'instance cloud.
+
+
+## Lot 456 — fermeture des courses asynchrones Realtime Messenger (14 novembre 2026)
+- Revue du cycle de vie du canal d'invitations dans `msg.js` après validation CI du Lot 455.
+- Défaut identifié : `startInviteChannel()` attendait la création du client Supabase avant d'enregistrer le canal. Si l'utilisateur quittait Messenger ou ouvrait un fil pendant cette attente, la fermeture pouvait arriver avant l'affectation de `state.inviteCh`; l'opération asynchrone pouvait ensuite créer un abonnement devenu inutile.
+- Correction : ajout d'un compteur de génération `inviteEpoch`; chaque fermeture invalide les opérations asynchrones antérieures. Après l'attente du client Supabase, l'abonnement vérifie encore la génération, l'identité active, l'état hors fil et l'activité de la vue Messenger.
+- Le gestionnaire `dz:view` met désormais explicitement à jour `inviteViewActive`, ferme les canaux et ne relance le rendu que lorsque la vue Messenger est réellement active.
+- Ajout de deux assertions statiques dans `tests/msg_test.mjs` pour vérifier l'invalidation des opérations obsolètes et l'interdiction de démarrer le canal hors de la vue Messenger.
+- Commits : code `aa89e6112b63fdf97641c5841f85369f7ce2946c`; tests `7ad3cb9d1d7ac68ff29cdac8d58d5965835c93aa`. Le présent dossier est mis à jour séparément ci-dessous.
+- CI antérieure sur le code Realtime initial : cinq workflows réussis (validation générale, consentement PostgreSQL, découverte PostgreSQL, Multaqa PostgreSQL, Supabase local GoTrue/JWT/PostgREST/RLS). Ces résultats ne valident pas encore ce correctif Lot 456; ses propres workflows doivent s'exécuter après les commits ci-dessus.
+- Limite : aucune session navigateur multi-compte ni livraison WebSocket Realtime réelle n'a encore été exercée. Le test reste statique côté client et intégration serveur locale; ne pas présenter les notifications live comme opérationnelles en production.
+- Aucun changement sur `main`, aucune fusion, aucun déploiement Cloudflare et aucune opération sur Supabase en production. PR #17 reste ouverte et non fusionnée.
