@@ -82,13 +82,21 @@ async function subscribeToInviteChanges(user) {
   let resolveEvent;
   let rejectEvent;
   let ready = false;
+  let joinAcknowledged = false;
+  let cdcReady = false;
   const receivedFrames = [];
   let joinPostgresChanges = null;
   const postgresSystemFrames = [];
+  const maybeResolveReady = () => {
+    if (joinAcknowledged && cdcReady && !ready) {
+      ready = true;
+      resolveReady();
+    }
+  };
   const readyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
   const eventPromise = new Promise((resolve, reject) => { resolveEvent = resolve; rejectEvent = reject; });
   const timeout = setTimeout(() => {
-    if (!ready) rejectReady(new Error("Realtime subscription did not become SUBSCRIBED within 12 seconds"));
+    if (!ready) rejectReady(new Error("Realtime Postgres Changes subscription did not become CDC-ready within 12 seconds; join ACK: " + JSON.stringify(joinPostgresChanges) + "; system frames: " + JSON.stringify(postgresSystemFrames)));
     else {
       const lateProbe = spawnSync("psql", [
         process.env.DB_URL,
@@ -139,8 +147,8 @@ async function subscribeToInviteChanges(user) {
             rejectReady(new Error("Realtime phx_join acknowledged without the expected public.msg_invites subscription: " + JSON.stringify(payload.response || payload)));
             return;
           }
-          ready = true;
-          resolveReady();
+          joinAcknowledged = true;
+          maybeResolveReady();
         } else {
           rejectReady(new Error("Realtime join rejected: " + JSON.stringify(payload.response || payload)));
         }
@@ -148,6 +156,12 @@ async function subscribeToInviteChanges(user) {
       if (eventName === "system" && payload.extension === "postgres_changes") {
         postgresSystemFrames.push(payload);
         if (postgresSystemFrames.length > 8) postgresSystemFrames.shift();
+        if (payload.status === "ok") {
+          cdcReady = true;
+          maybeResolveReady();
+        } else if (payload.status === "error" || payload.status === "timeout") {
+          rejectReady(new Error("Realtime Postgres Changes subscription reported " + payload.status + ": " + JSON.stringify(payload)));
+        }
       }
       if (eventName === "postgres_changes") {
         const data = payload.data || payload;
