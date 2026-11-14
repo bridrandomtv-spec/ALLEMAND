@@ -72,7 +72,7 @@ const observer = await createUser("observer");
 // une nouvelle invitation créée par l'expéditeur, avec son JWT GoTrue propre.
 async function subscribeToInviteChanges(user) {
   assert.equal(typeof WebSocket, "function", "Node 22 WebSocket global is unavailable");
-  const wsUrl = `ws://127.0.0.1:54321/realtime/v1/websocket?apikey=${encodeURIComponent(anonKey)}&vsn=1.0.0`;
+  const wsUrl = `ws://127.0.0.1:54321/realtime/v1/websocket?apikey=${encodeURIComponent(anonKey)}&vsn=2.0.0`;
   const socket = new WebSocket(wsUrl);
   let joinRef = "1";
   let messageRef = 1;
