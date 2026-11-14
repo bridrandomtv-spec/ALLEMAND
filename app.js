@@ -2403,7 +2403,7 @@ function renderCompte(){
         '</section>' +
       '</div>' +
       (s.role === 'eleve' ? '<section class="dz-account-card dz-account-verification"><div class="dz-account-card-head"><span>🪪</span><div><h3>الهوية المدرسية</h3><p>حالة التحقق المدرسي المرتبطة بحسابك</p></div></div><p id="accountVerificationStatus" aria-live="polite">جارٍ تحميل حالة التحقق…</p><button class="btn btn-o" type="button" data-go="msg">فتح نموذج التحقق في الرسائل</button><small>التحقق مجاني ولا يتطلب اشتراكاً مدفوعاً.</small></section>' : '') +
-      '<section class="dz-account-card dz-account-privacy"> +
+      '<section class="dz-account-card dz-account-privacy">' +
         '<div class="dz-account-card-head"><span>🔒</span><div><h3>الخصوصية وحماية البيانات</h3><p>توضيح مكان حفظ بيانات حسابك</p></div></div>' +
         '<div class="dz-account-privacy-note">' +
           (s.src === 'cloud'
