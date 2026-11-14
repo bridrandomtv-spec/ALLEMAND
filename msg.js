@@ -9,7 +9,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
-  var state = { conv:null, me:null, ch:null, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
+  var state = { conv:null, me:null, ch:null, channelEpoch:0, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
   async function session(){ try{ return (window.SB && window.SB.me) ? await window.SB.me() : null; }catch(e){ return null; } }
   function stamp(x){ return String(x||'').slice(0,16).replace('T',' '); }
   function card(t,s,btn){ return '<div class="msg-card"><div class="msg-ct"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div>'+(btn||'')+'</div>'; }
@@ -52,6 +52,7 @@
     n=Number(n)||0; return n>=1048576?(n/1048576).toFixed(1)+' ميغابايت':Math.max(1,Math.round(n/1024))+' كيلوبايت';
   }
   function closeChannel(){
+    state.channelEpoch++;
     if(state.ch){ try{ state.ch.unsubscribe(); }catch(e){} state.ch = null; }
   }
   function closeInviteChannel(){
@@ -83,9 +84,11 @@
   }
   async function startChannel(id){
     closeChannel();
+    var epoch = state.channelEpoch;
     try{
       if(!window.SB || !window.SB.sb) return;
-      var c = await window.SB.sb(); if(!c || !c.channel) return;
+      var c = await window.SB.sb();
+      if(!c || !c.channel || epoch!==state.channelEpoch || state.conv!==id) return;
       var ch = c.channel('msg4-'+id)
         .on('postgres_changes', { event:'INSERT', schema:'public', table:'msg_messages', filter:'conversation_id=eq.'+id }, function(p){
           var m = p && p.new; if(!m || state.conv!==id || m.deleted_at) return;
@@ -93,6 +96,7 @@
           var th = el('msgBody') && el('msgBody').querySelector('.msg-thread');
           if(!th || th.querySelector('[data-mid="'+m.id+'"]')) return;
           Promise.all([fetchNames([m.sender_id]), attachmentsFor([m.id])]).then(function(parts){
+            if(epoch!==state.channelEpoch || state.conv!==id) return;
             var a=parts[1] && parts[1][m.id];
             if(a && a.ok) a.sizeLabel=sizeLabel(a.octets);
             th.insertAdjacentHTML('beforeend', rowHtml(m, true, a && a.found ? a : null));
