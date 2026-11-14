@@ -8,7 +8,7 @@ t(ui.includes("table:'msg_invites'") && ui.includes("event:'*'") && ui.includes(
   'le centre des invitations écoute les événements Realtime msg_invites');
 t(ui.includes('function closeInviteChannel()') && ui.includes('closeInviteChannel();') && ui.includes('startInviteChannel();'),
   'le canal Realtime des invitations est fermé au changement de vue et relancé dans la liste');
-t(ui.includes("if(state.me!==userId || state.conv!==null) return;") && ui.includes('renderList();'),
+t(/if\s*\(epoch!==state\.inviteEpoch\s*\|\|\s*!state\.inviteViewActive\s*\|\|\s*state\.me!==userId\s*\|\|\s*state\.conv!==null\)\s*return;/.test(ui) && ui.includes('renderList();'),
   'les changements d’invitation actualisent la liste uniquement pour la session active hors fil de discussion');
 t(ui.includes('inviteEpoch') && ui.includes('epoch!==state.inviteEpoch'),
   'un abonnement asynchrone devenu obsolète ne peut pas se réactiver après fermeture du canal');
