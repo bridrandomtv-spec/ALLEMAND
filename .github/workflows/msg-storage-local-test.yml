@@ -1,0 +1,46 @@
+name: Tests Storage Messenger — pile Supabase isolée
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "supabase/migrations/202611140001_msg_storage_owner_cleanup.sql"
+      - "ci/msg-storage-local-bootstrap.sql"
+      - "ci/msg-storage-local-test.mjs"
+      - ".github/workflows/msg-storage-local-test.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  messenger-storage-local:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Vérifier le script d'intégration
+        run: node --check ci/msg-storage-local-test.mjs
+      - name: Initialiser Supabase CLI
+        run: npx --yes supabase@2.122.1 init
+      - name: Démarrer Supabase local avec Storage activé
+        run: npx --yes supabase@2.122.1 start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta
+      - name: Exporter les clés éphémères
+        shell: bash
+        run: |
+          eval "$(npx --yes supabase@2.122.1 status -o env)"
+          {
+            echo "API_URL=$API_URL"
+            echo "DB_URL=$DB_URL"
+            echo "ANON_KEY=$ANON_KEY"
+            echo "SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+          } >> "$GITHUB_ENV"
+      - name: Préparer les tables et le bucket synthétiques
+        run: psql "$DB_URL" -v ON_ERROR_STOP=1 -f ci/msg-storage-local-bootstrap.sql
+      - name: Appliquer le candidat de politique uniquement en local
+        run: psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/202611140001_msg_storage_owner_cleanup.sql
+      - name: Tester Storage API et PostgREST avec deux JWT synthétiques
+        run: node ci/msg-storage-local-test.mjs
+      - name: Arrêter Supabase local
+        if: always()
+        run: npx --yes supabase@2.122.1 stop
