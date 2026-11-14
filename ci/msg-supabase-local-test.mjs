@@ -84,10 +84,21 @@ async function subscribeToInviteChanges(user) {
   let ready = false;
   let joinAcknowledged = false;
   let cdcReady = false;
+  let closedByTest = false;
+  let eventSettled = false;
   const receivedFrames = [];
   let joinPostgresChanges = null;
   const postgresSystemFrames = [];
   let timeout;
+  const fail = (error) => {
+    clearTimeout(timeout);
+    timeout = null;
+    rejectReady(error);
+    if (!eventSettled) {
+      eventSettled = true;
+      rejectEvent(error);
+    }
+  };
   const failEventTimeout = () => {
     const lateProbe = spawnSync("psql", [
       process.env.DB_URL,
@@ -98,7 +109,7 @@ async function subscribeToInviteChanges(user) {
     const diagnostic = lateProbe.status === 0
       ? (lateProbe.stdout.trim() || "(aucune ligne après attente)")
       : (lateProbe.stderr || lateProbe.error?.message || "psql failed");
-    rejectEvent(new Error("No msg_invites INSERT event received within 12 seconds after CDC readiness; join postgres_changes: " + JSON.stringify(joinPostgresChanges) + "; postgres_changes system frames: " + JSON.stringify(postgresSystemFrames) + "; CDC rows after wait: " + diagnostic + "; received frames: " + JSON.stringify(receivedFrames)));
+    fail(new Error("No msg_invites INSERT event received within 12 seconds after CDC readiness; join postgres_changes: " + JSON.stringify(joinPostgresChanges) + "; postgres_changes system frames: " + JSON.stringify(postgresSystemFrames) + "; CDC rows after wait: " + diagnostic + "; received frames: " + JSON.stringify(receivedFrames)));
   };
   const maybeResolveReady = () => {
     if (joinAcknowledged && cdcReady && !ready) {
@@ -111,7 +122,7 @@ async function subscribeToInviteChanges(user) {
   const readyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
   const eventPromise = new Promise((resolve, reject) => { resolveEvent = resolve; rejectEvent = reject; });
   timeout = setTimeout(() => {
-    rejectReady(new Error("Realtime Postgres Changes subscription did not become CDC-ready within 12 seconds; join ACK: " + JSON.stringify(joinPostgresChanges) + "; system frames: " + JSON.stringify(postgresSystemFrames)));
+    fail(new Error("Realtime Postgres Changes subscription did not become CDC-ready within 12 seconds; join ACK: " + JSON.stringify(joinPostgresChanges) + "; system frames: " + JSON.stringify(postgresSystemFrames)));
   }, 12000);
   socket.addEventListener("open", () => {
     socket.send(JSON.stringify([
@@ -147,13 +158,13 @@ async function subscribeToInviteChanges(user) {
           if (!Array.isArray(joinPostgresChanges) || !joinPostgresChanges.some((change) =>
             change.schema === "public" && change.table === "msg_invites"
           )) {
-            rejectReady(new Error("Realtime phx_join acknowledged without the expected public.msg_invites subscription: " + JSON.stringify(payload.response || payload)));
+            fail(new Error("Realtime phx_join acknowledged without the expected public.msg_invites subscription: " + JSON.stringify(payload.response || payload)));
             return;
           }
           joinAcknowledged = true;
           maybeResolveReady();
         } else {
-          rejectReady(new Error("Realtime join rejected: " + JSON.stringify(payload.response || payload)));
+          fail(new Error("Realtime join rejected: " + JSON.stringify(payload.response || payload)));
         }
       }
       if (eventName === "system" && payload.extension === "postgres_changes") {
@@ -163,7 +174,7 @@ async function subscribeToInviteChanges(user) {
           cdcReady = true;
           maybeResolveReady();
         } else if (payload.status === "error" || payload.status === "timeout") {
-          rejectReady(new Error("Realtime Postgres Changes subscription reported " + payload.status + ": " + JSON.stringify(payload)));
+          fail(new Error("Realtime Postgres Changes subscription reported " + payload.status + ": " + JSON.stringify(payload)));
         }
       }
       if (eventName === "postgres_changes") {
@@ -172,21 +183,28 @@ async function subscribeToInviteChanges(user) {
         const changeType = data.type || data.eventType || payload.eventType;
         if (String(changeType || "").toUpperCase() === "INSERT" &&
             record.recipient_id === user.id && record.status === "pending") {
-          resolveEvent({ changeType: "INSERT", record });
+          if (!eventSettled) {
+            eventSettled = true;
+            clearTimeout(timeout);
+            timeout = null;
+            resolveEvent({ changeType: "INSERT", record });
+          }
         }
       }
       if (eventName === "phx_error" || eventName === "phx_close") {
-        const error = new Error("Realtime channel closed: " + JSON.stringify(payload));
-        if (!ready) rejectReady(error); else rejectEvent(error);
+        fail(new Error("Realtime channel closed: " + JSON.stringify(payload)));
       }
     } catch (error) {
-      if (!ready) rejectReady(error);
-      else rejectEvent(error);
+      fail(error);
     }
   });
   socket.addEventListener("error", () => {
-    const error = new Error("Realtime WebSocket transport error");
-    if (!ready) rejectReady(error); else rejectEvent(error);
+    fail(new Error("Realtime WebSocket transport error"));
+  });
+  socket.addEventListener("close", (event) => {
+    if (closedByTest) return;
+    fail(new Error("Realtime WebSocket closed unexpectedly (code=" +
+      event.code + ", reason=" + String(event.reason || "") + ")"));
   });
   try {
     await readyPromise;
@@ -204,10 +222,20 @@ async function subscribeToInviteChanges(user) {
     console.log("Realtime CDC subscriptions for public.msg_invites:", subscriptionProbe.stdout.trim() || "(aucune ligne)");
     return {
       waitForInvite: () => eventPromise,
-      close: () => { clearTimeout(timeout); socket.close(); }
+      close: () => {
+        clearTimeout(timeout);
+        timeout = null;
+        if (!eventSettled) {
+          fail(new Error("Realtime invitation observer closed before receiving its INSERT event"));
+        }
+        closedByTest = true;
+        socket.close();
+      }
     };
   } catch (error) {
     clearTimeout(timeout);
+    timeout = null;
+    closedByTest = true;
     socket.close();
     throw error;
   }
