@@ -185,16 +185,17 @@ begin
    where sender_id=v_sender and status='pending'
      and created_at <= now() - interval '7 days';
 
-  select count(*) into v_count
-  from public.msg_invites
-  where sender_id = v_sender and created_at > now() - interval '24 hours';
-  if v_count >= 20 then raise exception 'invite_rate_limit'; end if;
-
-  -- Réutilise une demande pendante identique (idempotence).
+  -- Une nouvelle tentative sur une demande déjà pendante reste idempotente,
+  -- même si le compte a atteint son quota de nouvelles invitations.
   select id into v_id from public.msg_invites
    where sender_id = v_sender and recipient_id = p_recipient and status = 'pending'
    limit 1;
   if v_id is not null then return v_id; end if;
+
+  select count(*) into v_count
+  from public.msg_invites
+  where sender_id = v_sender and created_at > now() - interval '24 hours';
+  if v_count >= 20 then raise exception 'invite_rate_limit'; end if;
 
   insert into public.msg_invites(sender_id, recipient_id)
   values (v_sender, p_recipient)
