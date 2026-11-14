@@ -84,7 +84,7 @@ jobs:
             from pg_publication_tables
             where pubname = 'supabase_realtime'
               and schemaname = 'public'
-              and tablename = 'msg_invites';
+              and tablename in ('msg_invites','msg_messages');
           "
           psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
             select c.relname, c.relreplident,
@@ -94,7 +94,7 @@ jobs:
             join pg_namespace n on n.oid = c.relnamespace
             left join pg_publication_tables p
               on p.schemaname = n.nspname and p.tablename = c.relname
-            where n.nspname = 'public' and c.relname = 'msg_invites'
+            where n.nspname = 'public' and c.relname in ('msg_invites','msg_messages')
             group by c.relname, c.relreplident, c.relrowsecurity;
           "
 
