@@ -481,3 +481,13 @@
 - Commit instrumentation : `62a87c37c4ded3fc422c9d51d5c865307393fcdd`. Les contrôles de ce nouveau commit sont à attendre; le diagnostic n'est pas encore exécuté.
 - Résultats confirmés sur le commit antérieur `95ebce7a` : CI générale, PostgreSQL consentement, PostgreSQL découverte et PostgreSQL `ملتقى الطلاب` réussis; intégration Supabase locale échouée uniquement à la réception de l'événement Realtime.
 - La PR #17 reste ouverte et non fusionnée. Aucun changement sur `main`, aucun déploiement Cloudflare. Les migrations Messenger 001 et 003 restent non appliquées sur Supabase hébergé.
+
+
+## Lot 462 — vérification de la persistance et de la réplication Realtime (14 novembre 2026)
+- Résultat des diagnostics du Lot 461 sur le commit `89bc8345` : la requête catalogue confirme que `public.msg_invites` appartient à `supabase_realtime`; `relreplident=d` (identité par défaut), RLS est activé. La souscription Phoenix répond `status=ok`, puis le serveur annonce `Subscribed to PostgreSQL`, mais aucun événement n'est livré.
+- La clé primaire de `msg_invites.id` est bien définie dans la migration. Il n'y a donc pas d'indice justifiant de modifier arbitrairement l'identité de réplication ou de désactiver RLS.
+- Ajout au test local de deux vérifications explicites immédiatement après la RPC d'invitation : la ligne doit être visible avec la clé service_role, puis lisible par le destinataire avec son JWT GoTrue et la policy RLS. Cela distingue une absence d'écriture d'un défaut de diffusion Realtime.
+- Ajout au workflow d'une capture systématique des slots de réplication, des connexions `pg_stat_replication` et des options de la publication `supabase_realtime`, même en cas d'échec.
+- Commits : test persistance/RLS `f76f376a24e570634df62d0ca26934ba2a7c6fdd`; diagnostic PostgreSQL `c6bc87c95a5bdd447599122d63b73ccb9331a528`.
+- Les nouveaux contrôles sont à attendre. Aucun changement au runtime Messenger, aux migrations, à Supabase hébergé, à Auth/RLS de production ou aux données réelles.
+- PR #17 reste ouverte et non fusionnée; aucun changement sur `main`, aucun déploiement Cloudflare.
