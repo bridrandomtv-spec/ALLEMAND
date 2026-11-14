@@ -443,3 +443,13 @@
 - Le run de référence sur le HEAD précédent a montré les quatre workflows Messenger/PostgreSQL et Supabase local verts ; seul le contrôle structurel principal échouait sur cette assertion. Le nouveau commit doit encore être validé par ses propres workflows avant toute conclusion.
 - PR #17 reste ouverte et non fusionnée. Aucun changement sur `main`, aucune migration Messenger appliquée à Supabase cloud, aucun déploiement ni coût cloud engagé.
 - Étape suivante : contrôler les nouveaux runs déclenchés par `870f643`, corriger uniquement les erreurs réellement remontées, puis tester le canal Realtime avec deux sessions synthétiques si un banc local adapté peut être ajouté sans dépendance frontend payante.
+
+
+### Lot 458 — test de réception WebSocket Realtime avec comptes synthétiques (14 novembre 2026)
+- Ajout dans `ci/msg-supabase-local-test.mjs` d'un test de transport réel vers le service Realtime de la pile Supabase locale, avec le WebSocket natif de Node 22 et le JWT GoTrue signé du compte destinataire.
+- Le test ouvre le canal PostgreSQL `public.msg_invites`, attend la confirmation du `phx_join`, crée une invitation depuis le compte expéditeur par RPC PostgREST, puis attend l'événement INSERT reçu par le destinataire. Il vérifie l'identifiant, l'expéditeur et le statut de l'invitation, puis annule l'invitation synthétique et ferme le socket dans un bloc `finally`.
+- Le test utilise exclusivement les trois comptes synthétiques déjà créés dans la base locale éphémère. Aucun message privé ni profil réel n'est consulté.
+- Commit du test : `8ef0132c8d95827b4ea21ae8fc8735ca8e0c416c`.
+- Ce test n'est pas encore validé : son workflow doit confirmer le protocole WebSocket, la publication locale et la réception RLS effective. Le succès des tests HTTP/RPC antérieurs ne suffit pas à déclarer Realtime opérationnel.
+- PR #17 reste ouverte/non fusionnée. Aucun changement sur `main`, aucun déploiement Cloudflare, aucune migration appliquée au Supabase hébergé.
+- Si le test échoue, examiner le message de jointure et la forme du payload du protocole local, puis corriger le banc de test sans désactiver RLS ni élargir la publication.
