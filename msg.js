@@ -9,7 +9,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
-  var state = { conv:null, me:null, ch:null, channelEpoch:0, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
+  var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
   async function session(){ try{ return (window.SB && window.SB.me) ? await window.SB.me() : null; }catch(e){ return null; } }
   function stamp(x){ return String(x||'').slice(0,16).replace('T',' '); }
   function card(t,s,btn){ return '<div class="msg-card"><div class="msg-ct"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div>'+(btn||'')+'</div>'; }
@@ -120,10 +120,13 @@
     }catch(e){ state.ch = null; }
   }
   async function renderList(){
+    var renderEpoch = ++state.renderEpoch;
     closeChannel();
     closeInviteChannel();
     var box = el('msgBody'); if(!box) return;
-    var u = await session(); state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'أنا';
+    var u = await session();
+    if(renderEpoch!==state.renderEpoch) return;
+    state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'أنا';
     if(!u){
       var localSess = false;
       try{ localSess = !!localStorage.getItem('dz_de_session_v1'); }catch(e){}
@@ -159,8 +162,11 @@
       box.innerHTML = L; return;
     }
     var g = await window.SB.msgGroups();
+    if(renderEpoch!==state.renderEpoch) return;
     var c = await window.SB.msgConvs();
+    if(renderEpoch!==state.renderEpoch) return;
     var vf = await window.SB.msgMyVerification();
+    if(renderEpoch!==state.renderEpoch) return;
     var directCount = c.ok ? c.convs.filter(function(x){ return x.type==='direct'; }).length : 0;
     var groupCount = g.ok ? g.groups.length : 0;
     var h = '<div class="msg-pro-hero"><div class="msg-pro-hero-copy"><span class="msg-pro-eyebrow">الثانوية الافتراضية الجزائرية · فضاء التعلّم التعاوني</span><h2>💬 تواصل، تعاون، وتقدّم مع زملائك</h2><p>مساحات دراسية منظّمة حسب الولاية والمستوى والشعبة، ومحادثاتك الخاصة وفق ضوابط الهوية المدرسية.</p></div><div class="msg-pro-hero-mark" aria-hidden="true">✉️</div></div>' +
@@ -273,19 +279,26 @@
     startInviteChannel();
   }
   async function renderThread(id){
+    var renderEpoch = ++state.renderEpoch;
+    state.conv = id;
     closeInviteChannel();
     var box = el('msgBody'); if(!box) return;
-    var u = await session(); state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'أنا';
+    var u = await session();
+    if(renderEpoch!==state.renderEpoch || state.conv!==id) return;
+    state.me = u ? u.id : null; state.meName = (u && (u.nom||u.pseudo)) || 'أنا';
     var r = await window.SB.msgMessages(id, null, 50);
+    if(renderEpoch!==state.renderEpoch || state.conv!==id) return;
     if(!r.ok){ closeChannel(); box.innerHTML = '<div class="msg-empty">⛔ '+esc(r.err)+'</div><button class="msg-back" data-act="back" type="button">العودة ←</button>'; return; }
     var others = [];
     r.msgs.forEach(function(m){ if(m.sender_id!==state.me && others.indexOf(m.sender_id)===-1) others.push(m.sender_id); });
     await fetchNames(others);
+    if(renderEpoch!==state.renderEpoch || state.conv!==id) return;
     var h = '<div class="msg-thread-nav"><button class="msg-back" data-act="back" type="button">← العودة إلى مساحات التواصل</button><span class="msg-thread-nav-label">الرسائل · فضاء تعليمي آمن</span></div>'+
             '<section class="msg-conversation-panel" aria-label="محادثة دراسية">'+
             '<div class="msg-thread-topbar"><div class="msg-thread-avatar" aria-hidden="true">💬</div><div class="msg-thread-heading"><b>مساحة الحوار الدراسي</b><small>تبادل المعرفة باحترام · رسائل الأعضاء المخوّلين فقط</small></div><span class="msg-pres" id="msgPres"></span></div>'+
             '<div class="msg-thread">';
     var attachmentMap = await attachmentsFor(r.msgs.map(function(m){ return m.id; }));
+    if(renderEpoch!==state.renderEpoch || state.conv!==id) return;
     var renderedRows = r.msgs.map(function(m){
       var a=attachmentMap && attachmentMap[m.id];
       if(a && a.ok) a.sizeLabel=sizeLabel(a.octets);
@@ -295,7 +308,7 @@
     h += '</div><div class="msg-input"><span class="msg-composer-mark" aria-hidden="true">✍️</span><textarea id="msgText" rows="2" maxlength="2000" placeholder="اكتب رسالة مفيدة ومحترمة…"></textarea>'+
          '<label class="msg-pj" title="إرفاق ملف (PNG/JPEG/WebP/PDF، حتى 5 ميغابايت)">📎<input type="file" id="msgFile" accept="image/png,image/jpeg,image/webp,application/pdf" hidden></label>'+
          '<button class="msg-send" data-act="send" type="button">إرسال ➤</button></div><div class="msg-err" id="msgErr" hidden></div></section>';
-    box.innerHTML = h; state.conv = id;
+    box.innerHTML = h;
     startChannel(id);
   }
   async function send(){
