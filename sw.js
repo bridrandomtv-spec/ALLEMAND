@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.66.0';
+const VERSION = 'dz-de-v3.67.0';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -14,10 +14,11 @@ const PRECACHE = [
   './',
   './index.html',
   './style.css?v=3512',
-  './style-prototype-dz.css?v=13',
+  './style-prototype-dz.css?v=18',
+  './multaqa.js?v=3',
   './auth.js?v=3510',
   './bdd.js?v=3510',
-  './app.js?v=3510',
+  './app.js?v=3512',
   './unites3as_vitrine.js?v=3510',
   './prof_core.js?v=3510',
   './access.js?v=3510',

@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
-</noscript><link rel="stylesheet" href="style.css?v=3512"><link rel="stylesheet" href="style-prototype-dz.css?v=17">
+</noscript><link rel="stylesheet" href="style.css?v=3512"><link rel="stylesheet" href="style-prototype-dz.css?v=18">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -564,6 +564,31 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
   <div class="page-head"><h1>💬 الرسائل</h1><p>Messagerie nationale — groupes officiels par wilaya · niveau · filière</p></div>
   <div id="msgBody"></div>
 </section>
+<!-- ملتقى الطلاب -->
+<section data-view="multaqa" class="view mtq-view" hidden>
+  <div class="mtq-topline">
+    <div><span class="mtq-kicker">الثانوية الافتراضية الجزائرية · المجتمع</span><h1>🌐 ملتقى الطلاب</h1><p>مساحة واحدة تجمع تلاميذ الثانويات الجزائرية حول الدراسة والأفكار والمبادرات.</p></div>
+    <button type="button" class="mtq-top-action" data-go="msg">💬 فتح الرسائل</button>
+  </div>
+  <div class="mtq-layout">
+    <aside class="mtq-rail">
+      <section class="mtq-profile-card"><div class="mtq-profile-cover"></div><div class="mtq-profile-avatar">🎓</div><strong id="mtqProfileName">مجتمع الثانوية الافتراضية</strong><span id="mtqProfileMeta">فضاء تعليمي للطلبة</span><small id="mtqProfileNote">مساحة آمنة للتعلم والتعاون بين التلاميذ.</small></section>
+      <nav class="mtq-nav" aria-label="أقسام الملتقى">
+        <div class="mtq-nav-item active"><span>📰</span><b>آخر المنشورات</b></div><div class="mtq-nav-item"><span>👥</span><b>زملائي</b></div><div class="mtq-nav-item"><span>🏫</span><b>المجموعات الدراسية</b></div><div class="mtq-nav-item"><span>🔔</span><b>الإشعارات</b></div><div class="mtq-nav-item"><span>🔖</span><b>المحفوظات</b></div>
+      </nav>
+      <div class="mtq-rail-note"><b>🔐 مجتمع آمن</b><p>الزمالة والمحادثات الخاصة صلاحيتان منفصلتان. لا يفتح قبول الزمالة محادثة تلقائياً.</p></div>
+    </aside>
+    <main class="mtq-feed">
+      <section class="mtq-welcome"><div><span>أهلاً بك في مجتمعنا</span><h2>تعلّم مع زملائك، وشارك ما يفيدهم.</h2><p>الملتقى سيجمع الأسئلة الدراسية ومبادرات المراجعة والموارد التي ينشرها التلاميذ.</p></div><div class="mtq-welcome-art" aria-hidden="true">🌍</div></section>
+      <div id="mtqApp" aria-live="polite"><div class="mtq-feed-state"><div class="mtq-state-icon">⏳</div><h3>جارٍ تهيئة ملتقى الطلاب</h3><p>سيتم عرض المحتوى الحقيقي بعد التحقق من صلاحيات الحساب والاتصال بالخادم.</p></div></div>
+    </main>
+    <aside class="mtq-discover">
+      <section class="mtq-discover-card"><h3>🧭 اكتشف المجتمع</h3><div><b>👥 الزمالة</b><small>طلبات مستقلة بموافقة الطرف الآخر</small></div><div><b>🏫 المجموعات</b><small>فضاءات حسب الولاية والمستوى والشعبة</small></div><div><b>💬 الرسائل</b><small>محادثات خاصة بعد دعوة وقبول صريح</small></div></section>
+      <section class="mtq-discover-card mtq-rules"><h3>🛡️ قواعد المجتمع</h3><p>احترام الآخرين، عدم نشر المعلومات الشخصية، والإبلاغ عن المحتوى المخالف. لا تظهر بيانات التسجيل أو الاتصال في الملف العام.</p></section>
+      <button type="button" class="mtq-messenger-link" data-go="msg">💬 الانتقال إلى الرسائل <span>←</span></button>
+    </aside>
+  </div>
+</section>
 <!-- REVISION ESPACEE -->
     <section data-view="revision" class="view" hidden>
       <div class="page-head">
@@ -623,7 +648,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
   <script src="access.js?v=3510"></script>
 <script src="prof_core.js?v=3510"></script>
   <script src="js/subject.js?v=3510"></script>
-<script src="app.js?v=3511"></script>
+<script src="app.js?v=3512"></script>
   <script defer src="unites3as_vitrine.js?v=3510"></script>
 <script src="js/context.js?v=3510"></script>
 <script src="modules.js?v=3510" defer></script>
@@ -644,6 +669,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 <script src="memoire.js?v=3510" defer></script>
 <script src="masar.js?v=3511" defer></script>
 <script src="msg.js?v=3510"></script>
+<script src="multaqa.js?v=3"></script>
 <script src="corpus.js?v=3510" defer></script>
 <script src="js/qust.js?v=3510" defer></script>
 <script src="rag.js?v=3510" defer></script>
