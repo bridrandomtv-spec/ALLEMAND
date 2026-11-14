@@ -2748,7 +2748,7 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Branche de travail : `feat/verification-school-central-access` (créée depuis `main`). À ce stade, modifications préparées sur cette branche ; aucun merge ni déploiement Cloudflare. Tests locaux et CI à confirmer avant PR ; les runners GitHub peuvent rester indisponibles en raison de la restriction de facturation déjà observée.
 
 
-### Suivi du Lot 552 — PR #20 et validation (14 novembre 2026, 22:0x CET)
+### Suivi du Lot 552 — PR #20 et validation (14 novembre 2026)
 - PR créée : https://github.com/bridrandomtv-spec/ALLEMAND/pull/20 ; branche `feat/verification-school-central-access` ; HEAD observé `2b1d55de6eab6a9d42c7a55fd4efa9a9e4456177` avant cette mise à jour documentaire.
 - Comparaison avec `main` : branche en avance de 9 commits, en retard de 0 commit ; les 7 fichiers attendus sont les seuls fichiers modifiés.
 - Vérification source : compilation statique sans exécution de `app.js` et `multaqa.js` réussie ; contrôles ciblés relus : CTA Forum → Messenger, carte tableau de bord → compte, statut compte → `msgMyVerification()`, garde de session asynchrone, versions HTML/SW synchronisées, deux attentes de version dans `check-msg.mjs` synchronisées sur `.168`.
