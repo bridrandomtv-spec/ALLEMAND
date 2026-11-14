@@ -32,7 +32,7 @@ language sql stable security definer set search_path=pg_catalog,public as $$ sel
 \i supabase/migrations/202611130003_msg_student_discovery.sql
 
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',false);
-do $ begin
+do $$ begin
  if public.msg_can_dm('10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002') is not true then
    raise exception 'verified_same_class_pair_denied';
  end if;
