@@ -1897,3 +1897,12 @@ Créer une voie de test distincte pour la migration candidate `202611140001_msg_
 
 ### Prochaine étape
 Vérifier l'exécution du workflow Lot 503 sur GitHub. En cas d'échec, diagnostiquer les journaux et corriger le harness sans toucher à la production. Ensuite compléter les scénarios négatifs manquants et vérifier les politiques Storage permissives combinées par OR. Seulement après réussite complète, réévaluer la compensation côté client et le déploiement séparé de la migration.
+
+
+### Addendum Lot 503 — résultat CI et revue du test négatif (14 novembre 2026)
+- Le workflow Storage distinct a bien été détecté par GitHub Actions et lancé (run #5, commit HEAD `2f75e695661e9e094441a7e4aa2e3fbfafba0d97`), mais son job se termine en échec avec `steps=null` et `logs_url=null`. La récupération des journaux du run précédent a renvoyé `BlobNotFound`. Impossible de savoir si le runner a commencé les étapes ou si le script Node a été exécuté ; aucun résultat fonctionnel n'est donc attribué au test.
+- Le bootstrap a été complété pour recréer la politique Storage permissive historique `owner delete`, afin que les prochains essais évaluent la coexistence OR de cette règle avec la politique candidate.
+- Revue du script : le contrôle actuel `removeObject` assimile encore succès HTTP et suppression effective. Ce n'est pas une preuve suffisante, car RLS peut masquer une suppression de zéro ligne. Le test doit vérifier l'existence de l'objet après l'appel, via un GET sous service-role limité à la pile locale, puis comparer l'état attendu. Cette correction du script reste à faire ; ne pas présenter le test négatif comme validé.
+- Le premier harness ne couvre toujours pas les chemins mal formés/profondeur incorrecte, les noms de fichiers non conformes ni le second bucket. La couverture demeure partielle.
+- PR #17 au dernier contrôle : ouverte, non fusionnée, `mergeable=true`; comparaison divergente, 2 798 commits en avance et 4 en retard. Aucun rebase ni fusion.
+- Aucun changement Supabase actif, aucun déploiement, aucune action sur `main`. Le candidat SQL demeure non appliqué.
