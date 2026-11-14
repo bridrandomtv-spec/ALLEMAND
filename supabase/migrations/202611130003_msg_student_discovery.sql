@@ -11,6 +11,7 @@ language sql stable security definer
 set search_path = pg_catalog, public
 as $$
   select auth.uid() is not null
+     and auth.uid() in (a, b)
      and a <> b
      and not public.msg_pair_blocked(a,b)
      and exists (
