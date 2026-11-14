@@ -169,6 +169,19 @@ ok(insertStart >= 0 && insertEnd > insertStart &&
    insertHandler.includes("currentThread.querySelector('[data-mid="'+m.id+'"]')"),
    'INSERT Realtime : DOM courant revalidé après les lectures asynchrones, sans écriture dans un fil détaché');
 
+// Lot 527 — les rafales UPDATE ne déclenchent pas des rendus concurrents non bornés.
+const updateRefreshFnStart = msgjs.indexOf('function scheduleUpdateRefresh(id, epoch){');
+const updateRefreshFnEnd = msgjs.indexOf('\n  async function startChannel(id){', updateRefreshFnStart);
+const updateRefreshFn = msgjs.slice(updateRefreshFnStart, updateRefreshFnEnd);
+ok(updateRefreshFnStart >= 0 && updateRefreshFnEnd > updateRefreshFnStart &&
+   updateRefreshFn.includes('clearTimeout(state.updateRefreshTimer)') &&
+   updateRefreshFn.includes('setTimeout(function()') &&
+   updateRefreshFn.includes('epoch!==state.channelEpoch || state.conv!==id') &&
+   updateRefreshFn.includes('renderThread(id, true)') &&
+   msgjs.includes("if(state.updateRefreshTimer){ clearTimeout(state.updateRefreshTimer); state.updateRefreshTimer=null; }") &&
+   /scheduleUpdateRefresh\(id, epoch\)/.test(msgjs),
+   'UPDATE Realtime : rafales regroupées, canal obsolète ignoré et timer annulé à la fermeture');
+
 // Lot 525 — ordre déterministe des messages partageant le même created_at.
 const messagesFnStart = sbjs.indexOf('async function msgMessages(');
 const messagesFnEnd = sbjs.indexOf('\nasync function msgSend(', messagesFnStart);
