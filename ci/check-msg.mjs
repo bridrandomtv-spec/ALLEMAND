@@ -160,6 +160,8 @@ ok(sbjs.includes('async function msgStudentSearch(query, limit)') && sbjs.includ
 ok(msgjs.includes('data-peer-key') && msgjs.includes('state.peers[key]=p.student_key'), 'jeton opaque de destinataire conservé hors du DOM');
 ok(discoverySql.includes('returns table(student_key uuid') && discoverySql.includes('msg_discovery_targets'), 'recherche retourne un jeton opaque stocké côté serveur');
 ok(discoverySql.includes('expires_at>now()') && discoverySql.includes('actor_id=v_actor'), 'jeton de découverte expirant et lié au compte demandeur');
+ok(discoverySql.includes('used_at=now()') && discoverySql.includes('used_at is null') && discoverySql.includes('returning student_id into v_recipient'), 'jeton de découverte consommé atomiquement une seule fois');
+ok(test.includes('Le jeton est à usage unique') && test.includes('expected: false'), 'test d’intégration du rejeu de jeton');
 ok(discoverySql.includes('msg_discovery_targets_expiry_idx') && discoverySql.includes('where expires_at <= now()'), 'jetons expirés nettoyés avec index de rétention');
 ok(/create or replace function public\.msg_invite_send_by_key\(p_student_key uuid\)/.test(discoverySql) && discoverySql.includes('return public.msg_invite_send(v_recipient)'), 'RPC serveur dédiée à la conversion du jeton opaque');
 ok(discoverySql.includes('grant execute on function public.msg_invite_send_by_key(uuid) to authenticated'), 'conversion du jeton autorisée uniquement aux comptes connectés');
