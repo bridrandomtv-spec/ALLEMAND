@@ -2625,3 +2625,23 @@ Correctif sur PR #17 :
 Fichier modifié : `ci/msg-supabase-local-test.mjs` (commits `47e113f8` et `b845a263`).
 
 Validation : relecture du cycle d'attente, des chemins d'erreur, du timeout et du nettoyage. Aucun test Node/Supabase dynamique n'a été exécuté dans cette session; les Actions ne démarrent toujours pas de runner en raison de la restriction de facturation documentée. Aucun compte réel, aucune modification de Supabase hébergé (schéma, données, Auth, RLS, Realtime ou Storage), aucun déploiement Cloudflare et aucune fusion. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 543 — associer chaque UPDATE Realtime au bon message et à la bonne modification
+
+Audit du mécanisme d'attente UPDATE dans `ci/msg-supabase-local-test.mjs`.
+
+Défaut confirmé : le dispatcher retirait systématiquement le premier waiter de `updateWaiters`, sans comparer l'identifiant de ligne ni le contenu de l'événement. La file `queuedUpdates` était également consommée en FIFO sans filtre. Un UPDATE retardé ou relatif à une autre ligne de la même conversation pouvait donc satisfaire une attente qui concernait une édition ou une suppression logique différente.
+
+Correctif sur PR #17 :
+
+- `waitForUpdate()` exige désormais l'identifiant du message attendu et accepte un prédicat portant sur les champs du record, ainsi qu'un libellé de diagnostic.
+- Le dispatcher recherche le premier waiter dont l'identifiant et le prédicat correspondent à l'événement reçu; les autres attentes restent en place.
+- Les événements arrivés avant l'installation d'un waiter sont recherchés dans la file par le même critère, au lieu d'être consommés aveuglément. La file est bornée à 50 événements pour éviter une croissance non limitée du harnais.
+- Le test d'édition attend explicitement le bon `message_id` et le nouveau corps; il vérifie également l'identifiant du record reçu.
+- Le test de suppression logique attend le bon identifiant et la valeur exacte de `deleted_at`, puis vérifie ces deux éléments dans l'événement.
+- Les timeouts de 12 secondes et la propagation d'erreurs/fermetures introduits au Lot 542 sont conservés.
+
+Fichier modifié : `ci/msg-supabase-local-test.mjs` (commit `80c1d57c4973d0cf8a9b595d6515abee86ee799d`).
+
+Validation : relecture du dispatcher, des prédicats, des attentes d'édition et de suppression et des assertions de correspondance. Aucun test Node/Supabase dynamique n'a été exécuté; le blocage des runners GitHub Actions avant démarrage demeure. Aucun accès ni changement sur Supabase hébergé, aucune modification de schéma, données, Auth, RLS, Realtime ou Storage en production, aucun déploiement Cloudflare et aucune fusion. PR #17 reste ouverte et non fusionnée.
