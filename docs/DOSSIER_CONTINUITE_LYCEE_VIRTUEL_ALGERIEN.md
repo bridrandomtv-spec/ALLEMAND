@@ -611,3 +611,12 @@
 - Les Check Runs GitHub n'exposent toujours aucun résumé textuel; l'endpoint des annotations n'est pas accessible via la connexion GitHub disponible. La cause précise du défaut d'affectation reste indéterminée. Ne pas modifier les workflows ni ajouter de runner auto-hébergé sans diagnostic et décision explicites.
 - Le prédicat Realtime strict du Lot 474 est présent sur le HEAD, mais non exécuté. Le test exige désormais un type INSERT explicite et l'identité exacte de l'invitation. Messenger reste non certifié opérationnel.
 - État final vérifié : PR #17 ouverte, non fusionnée, base `main`, HEAD `67d5b48b9c11b1e3d262da337869c6a2e52d7365`, `mergeable=true` au dernier contrôle. Aucun changement direct sur `main`, aucune migration Supabase hébergée, aucun changement de données réelles et aucun déploiement Cloudflare.
+
+## Lot 475 — nouvelle tentative ciblée du runner GitHub Actions (14 novembre 2026)
+
+- Pour éviter de relancer inutilement les cinq workflows, une seule relance ciblée a été effectuée sur le job Messenger local du run `43582066252` (job initial `132408702929`). GitHub a accepté la relance et créé la tentative 2, job `132408975893`.
+- La tentative est passée de `queued` à `completed/failure` en environ deux secondes. Lecture de l'endpoint REST du job : `runner_id=0`, `runner_name=""`, `steps=[]`, label demandé `ubuntu-latest`. Les journaux restent absents (`logs_url=null`).
+- Cette répétition confirme que la relance manuelle d'un job unique ne résout pas le défaut d'attribution du runner. Elle ne permet toujours pas d'identifier sa cause exacte (quota, politique, incident GitHub ou autre) ; aucune de ces hypothèses n'est affirmée.
+- Aucun changement de workflow, aucune modification de configuration GitHub Actions et aucun runner auto-hébergé n'ont été ajoutés. Le code de test du Lot 474 reste inchangé.
+- État PR #17 contrôlé après la relance : ouverte, non fusionnée, base `main`, HEAD `2fa40b1ccfe4b48822020f7b8c7c0adfe5656695`, `mergeable=true` à cet instant. Aucun changement sur `main`, aucune action sur Supabase hébergé ni sur Cloudflare.
+- Prochaine action technique : obtenir un diagnostic GitHub exploitable sur l'échec d'allocation de runner ou attendre le rétablissement de l'exécution standard. Ne pas contourner ce blocage en modifiant arbitrairement les workflows ; dès qu'un runner démarre, exécuter le test de bout en bout et confirmer la réception effective de l'INSERT côté destinataire synthétique.
