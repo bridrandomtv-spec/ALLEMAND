@@ -3,6 +3,14 @@ const sql = readFileSync('supabase/msg_schema.sql', 'utf8');
 let fails = 0;
 const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
 console.log('== msg_test · invariants de sécurité messagerie ==');
+const ui = readFileSync('msg.js', 'utf8');
+t(ui.includes("table:'msg_invites'") && ui.includes("event:'*'") && ui.includes('function startInviteChannel()'),
+  'le centre des invitations écoute les événements Realtime msg_invites');
+t(ui.includes('function closeInviteChannel()') && ui.includes('closeInviteChannel();') && ui.includes('startInviteChannel();'),
+  'le canal Realtime des invitations est fermé au changement de vue et relancé dans la liste');
+t(ui.includes("if(state.me!==userId || state.conv!==null) return;") && ui.includes('renderList();'),
+  'les changements d’invitation actualisent la liste uniquement pour la session active hors fil de discussion');
+
 const pols = [...sql.matchAll(/create policy "(msg[^"]*)" on public\.(\w+) for (\w+) to (\w+)/g)];
 t(pols.length >= 18, 'au moins 18 politiques msg_* (' + pols.length + ')');
 t(pols.every(p => p[4] === 'authenticated'), 'toutes les politiques msg_* → to authenticated');
