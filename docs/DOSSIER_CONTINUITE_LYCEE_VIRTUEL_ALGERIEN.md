@@ -501,3 +501,12 @@
 - Commit workflow : `32f1376612b477fa461ef63163c71d1294ddc67a`. Exécutions déclenchées automatiquement par la PR; résultat à contrôler avant de conclure.
 - Les workflows isolés CI, consentement, découverte et `ملتقى الطلاب` sont verts sur le commit précédent. PR #17 reste ouverte et non fusionnée.
 - Prochaine étape : exploiter les nouveaux diagnostics pour vérifier si le serveur Realtime lance bien son consommateur Postgres Changes/wal2json et s'il enregistre le canal dans `realtime.subscription`. Ne pas changer arbitrairement replica identity, RLS ou migrations.
+
+## Lot 464 — Stabilisation du diagnostic Realtime (14 novembre 2026)
+
+- La nouvelle exécution sur `087733f5` confirme le même défaut : RPC persistée, lecture RLS du destinataire réussie, abonnement WebSocket accepté, mais aucun événement INSERT délivré.
+- Les diagnostics confirment encore deux slots actifs (`wal2json` pour `supabase_realtime_replication_slot_`, `pgoutput` pour le slot Broadcast `realtime.messages`) et `pubinsert=true`. Les logs Realtime observés démarrent explicitement le flux Broadcast, mais ne montrent pas le démarrage d'un consommateur CDC pour `public.msg_invites`.
+- Le contrôle additionnel du Lot 463 était lui-même marqué en échec et interrompait la collecte de certaines informations. Lot 464 le rend non bloquant, sépare les requêtes, liste les tables du schéma `realtime` et garde la capture des variables de configuration non sensibles. Cela évite qu'un diagnostic auxiliaire masque la cause initiale.
+- Commit workflow : `559cd3cbd879bb8a4b38ec32e7ad46d68a3a6fa3`. Tests déclenchés automatiquement; résultats à vérifier.
+- Aucune modification de schéma/migration, RLS ou service hébergé. PR #17 reste ouverte et non fusionnée.
+- Étape suivante : examiner les objets `realtime`, les variables effectives du conteneur et les logs complets pour déterminer si le mode CDC Postgres Changes est désactivé ou si le service Realtime ne lance pas son worker de réplication. Ne pas déclarer Messenger opérationnel tant que l'événement temps réel n'est pas effectivement reçu.
