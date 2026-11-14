@@ -428,9 +428,17 @@ async function msgUpload(convId, msgId, file){
   const path = 'msg/' + convId + '/' + u.id + '-' + Date.now() + '-' + safe;
   const up = await c.storage.from('prive').upload(path, file, { upsert:false });
   if(up.error) return { ok:false, err:up.error.message };
-  const r = await c.from('msg_attachments').insert({ message_id:msgId, uploader:u.id, storage_path:path, mime:file.type, octets:file.size, statut:'pending' });
+  const r = await c.from('msg_attachments').insert({ message_id:msgId, uploader:u.id, storage_path:path, mime:file.type, octets:file.size, statut:'pending' })
+    .select('id').single();
   if(r.error) return { ok:false, err:r.error.message };
-  return { ok:true, path:path };
+  /* Publie l'arrivée du fichier via UPDATE sur msg_messages, déjà abonné
+     dans Realtime. Le destinataire recharge alors les métadonnées signées. */
+  const linked = await c.from('msg_messages').update({ attachment_id:r.data.id })
+    .eq('id',msgId).eq('conversation_id',convId).eq('sender_id',u.id).is('deleted_at',null)
+    .select('id').maybeSingle();
+  if(linked.error) return { ok:false, err:linked.error.message };
+  if(!linked.data) return { ok:false, err:'message introuvable ou non modifiable' };
+  return { ok:true, path:path, attachmentId:r.data.id };
 }
 async function msgAttachmentInfos(messageIds){
   const c = await sb(); if(!c) return {};
