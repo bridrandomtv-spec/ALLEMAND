@@ -150,7 +150,7 @@ await import('./check-multaqa.mjs');
 const discoverySql = readFileSync('supabase/migrations/202611130003_msg_student_discovery.sql', 'utf8');
 ok(discoverySql.includes('create or replace function public.msg_student_search'), 'RPC de recherche scolaire versionnée');
 ok(discoverySql.includes("pa.verif_statut = 'verifie'") && discoverySql.includes("pb.verif_statut = 'verifie'"), 'DM exige deux identités vérifiées côté serveur');
-ok(/create or replace function public\\.msg_can_dm\\(a uuid, b uuid\\)[\\s\\S]*?auth\\.uid\\(\\) is not null[\\s\\S]*?auth\\.uid\\(\\) in \\(a, b\\)/.test(discoverySql),
+ok(/create or replace function public\.msg_can_dm\(a uuid, b uuid\)[\s\S]*?auth\.uid\(\) is not null[\s\S]*?auth\.uid\(\) in \(a, b\)/.test(discoverySql),
    'msg_can_dm conserve la liaison entre JWT appelant et paire concernée');
 ok(discoverySql.includes("p.role='eleve'") && discoverySql.includes("p.verif_statut='verifie'"), 'annuaire limité aux élèves vérifiés');
 ok(discoverySql.includes('msg_discovery_limits') && discoverySql.includes('interval \'10 minutes\'') && discoverySql.includes('v_count > 8'), 'recherche protégée contre le scraping par quota');
@@ -160,7 +160,7 @@ ok(sbjs.includes('async function msgStudentSearch(query, limit)') && sbjs.includ
 ok(msgjs.includes('data-peer-key') && msgjs.includes('state.peers[key]=p.student_key'), 'jeton opaque de destinataire conservé hors du DOM');
 ok(discoverySql.includes('returns table(student_key uuid') && discoverySql.includes('msg_discovery_targets'), 'recherche retourne un jeton opaque stocké côté serveur');
 ok(discoverySql.includes('expires_at>now()') && discoverySql.includes('actor_id=v_actor'), 'jeton de découverte expirant et lié au compte demandeur');
-ok(/create or replace function public\\.msg_invite_send_by_key\\(p_student_key uuid\\)/.test(discoverySql) && discoverySql.includes('return public.msg_invite_send(v_recipient)'), 'RPC serveur dédiée à la conversion du jeton opaque');
+ok(/create or replace function public\.msg_invite_send_by_key\(p_student_key uuid\)/.test(discoverySql) && discoverySql.includes('return public.msg_invite_send(v_recipient)'), 'RPC serveur dédiée à la conversion du jeton opaque');
 ok(discoverySql.includes('grant execute on function public.msg_invite_send_by_key(uuid) to authenticated'), 'conversion du jeton autorisée uniquement aux comptes connectés');
 ok(sbjs.includes("rpc('msg_invite_send_by_key',{p_student_key:studentKey})"), 'client envoie le jeton opaque sans UUID destinataire');
 ok(msgjs.includes('msgStudentSearch(query,12)') && msgjs.includes('msgInviteSend(recipient)'), 'recherche reliée à l’envoi de demande de consentement');
