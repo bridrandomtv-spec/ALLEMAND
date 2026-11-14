@@ -59,3 +59,12 @@ create policy "lot503 msg storage upload" on storage.objects
       then public.msg_is_member(auth.uid(),(storage.foldername(name))[2]::bigint)
       else false end
   );
+
+-- Reproduce the pre-existing permissive owner-delete rule. PostgreSQL RLS
+-- permissive policies combine with OR; the candidate must not widen this rule.
+create policy "owner delete" on storage.objects
+  for delete to authenticated using (
+    bucket_id='prive'
+    and owner=auth.uid()
+    and (storage.foldername(name))[1]=auth.uid()::text
+  );
