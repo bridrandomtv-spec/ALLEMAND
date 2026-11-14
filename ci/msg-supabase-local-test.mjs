@@ -83,6 +83,8 @@ async function subscribeToInviteChanges(user) {
   let rejectEvent;
   let ready = false;
   const receivedFrames = [];
+  let joinPostgresChanges = null;
+  const postgresSystemFrames = [];
   const readyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
   const eventPromise = new Promise((resolve, reject) => { resolveEvent = resolve; rejectEvent = reject; });
   const timeout = setTimeout(() => {
@@ -97,7 +99,7 @@ async function subscribeToInviteChanges(user) {
       const diagnostic = lateProbe.status === 0
         ? (lateProbe.stdout.trim() || "(aucune ligne après attente)")
         : (lateProbe.stderr || lateProbe.error?.message || "psql failed");
-      rejectEvent(new Error("No msg_invites INSERT event received within 12 seconds; CDC rows after wait: " + diagnostic + "; received frames: " + JSON.stringify(receivedFrames)));
+      rejectEvent(new Error("No msg_invites INSERT event received within 12 seconds; join postgres_changes: " + JSON.stringify(joinPostgresChanges) + "; postgres_changes system frames: " + JSON.stringify(postgresSystemFrames) + "; CDC rows after wait: " + diagnostic + "; received frames: " + JSON.stringify(receivedFrames)));
     }
   }, 12000);
   socket.addEventListener("open", () => {
@@ -130,11 +132,22 @@ async function subscribeToInviteChanges(user) {
       if (topic !== "realtime:msg-invites-local-" + user.id) return;
       if (eventName === "phx_reply") {
         if (payload.status === "ok") {
+          joinPostgresChanges = payload.response?.postgres_changes ?? null;
+          if (!Array.isArray(joinPostgresChanges) || !joinPostgresChanges.some((change) =>
+            change.schema === "public" && change.table === "msg_invites"
+          )) {
+            rejectReady(new Error("Realtime phx_join acknowledged without the expected public.msg_invites subscription: " + JSON.stringify(payload.response || payload)));
+            return;
+          }
           ready = true;
           resolveReady();
         } else {
           rejectReady(new Error("Realtime join rejected: " + JSON.stringify(payload.response || payload)));
         }
+      }
+      if (eventName === "system" && payload.extension === "postgres_changes") {
+        postgresSystemFrames.push(payload);
+        if (postgresSystemFrames.length > 8) postgresSystemFrames.shift();
       }
       if (eventName === "postgres_changes") {
         const data = payload.data || payload;
