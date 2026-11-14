@@ -27,8 +27,8 @@ async function user(label) {
   assert.ok(created.id && login.access_token,"Synthetic Auth user/JWT creation failed");
   return {id:created.id,token:login.access_token};
 }
-async function upload(who,path) {
-  const r=await fetch(`${api}/storage/v1/object/prive/${path.split("/").map(encodeURIComponent).join("/")}`,{
+async function upload(who,path,bucket='prive') {
+  const r=await fetch(`${api}/storage/v1/object/${bucket}/${path.split("/").map(encodeURIComponent).join("/")}`,{
     method:"POST",headers:{apikey:anon,Authorization:`Bearer ${who.token}`,"Content-Type":"application/pdf","x-upsert":"false"},
     body:Buffer.from("%PDF-1.4 lot503 fixture")
   });
@@ -71,6 +71,18 @@ await upload(a,pathA); await upload(b,pathB);
 await removeObject(b,pathA,false);
 await removeObject(a,pathA,true);
 await removeObject(b,pathB,true);
+const otherBucketPath=`msg/${conv}/${a.id}-other-bucket.pdf`;
+await upload(a,otherBucketPath,'prive-autre');
+await removeObject(a,otherBucketPath,false,'prive-autre');
+const malformedPath=`msg/not-a-number/${a.id}-malformed.pdf`;
+await upload(a,malformedPath);
+await removeObject(a,malformedPath,false);
+const deepPath=`msg/${conv}/nested/${a.id}-deep.pdf`;
+await upload(a,deepPath);
+await removeObject(a,deepPath,false);
+const badNamePath=`msg/${conv}/not-${a.id}-fixture.pdf`;
+await upload(a,badNamePath);
+await removeObject(a,badNamePath,false);
 const pendingId=await createAttachment(a,msgA,pathB);
 await deleteMetadata(b,pendingId,false);
 await deleteMetadata(a,pendingId,true);
