@@ -65,3 +65,15 @@ Le script `ci/msg-storage-local-test.mjs` vérifie via HTTP :
 - Le bootstrap inclut désormais une reproduction de la politique historique `owner delete` pour tester la combinaison OR.
 - **Correction requise avant de faire confiance au test négatif Storage :** le script vérifie actuellement le statut HTTP de DELETE. Il doit vérifier que l'objet existe toujours après une tentative refusée (GET de contrôle avec service-role, uniquement sur la pile locale), car une suppression filtrée par RLS peut être une opération sans erreur sur zéro ligne.
 - Les cas chemins mal formés, nom non conforme et bucket différent restent non couverts. Aucun critère de sortie complet n'est atteint ; ne pas appliquer la migration en production.
+
+
+## Lot 504 — couverture étendue et statut
+
+Le harness a été renforcé :
+- suppression Storage par l'endpoint batch `DELETE /object/{bucket}` avec `prefixes` ;
+- vérification de persistance via GET service-role local après chaque tentative ;
+- fixture RLS avec insert/update authentifiés pour les messages et métadonnées ;
+- deuxième bucket privé et chemins de test réservés pour segment non numérique, profondeur incorrecte et nom de fichier invalide ;
+- inventaire des politiques DELETE permissives authentifiées : exactement deux attendues dans la pile synthétique (historique `owner delete` et candidate Messenger).
+
+Le run Storage #13 échoue avant exposition des étapes (`steps=null`, `logs_url=null`), comme les autres workflows du même commit. Les journaux renvoient `BlobNotFound`. **La couverture est écrite mais non exécutée** ; ne pas qualifier les assertions de passées et ne pas appliquer la migration à la production.
