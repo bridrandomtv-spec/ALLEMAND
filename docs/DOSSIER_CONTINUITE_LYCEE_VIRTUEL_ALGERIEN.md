@@ -1991,3 +1991,7 @@ Obtenir une exécution GitHub Actions avec étapes/journaux exploitables ou exé
 - PR #17 revérifiée après les commits de documentation : ouverte, non fusionnée, `mergeable=true`, HEAD `0d488ae2e18042b26762e34f5adfaa85d3a9c7c6`.
 - Aucune migration appliquée à Supabase actif, aucune écriture de données, aucun déploiement Cloudflare, aucune modification de `main`, aucun rebase ni fusion. Aucun changement client Messenger.
 - Suite : débloquer l'observabilité de GitHub Actions ou disposer d'un environnement local Docker/Supabase/psql. Le candidat reste non validé et ne doit pas être déployé.
+
+### Vérification croisée des journaux GitHub Actions — Lot 507
+
+Sur le même commit, les jobs de trois workflows indépendants ont été interrogés : CI générale (`43591834136`), tests PostgreSQL consentement (`43591834145`) et intégration Supabase locale Messenger (`43591834111`). Tous renvoient une liste d'étapes vide et un téléchargement de logs `BlobNotFound`, comme le workflow Storage #22. Cette convergence confirme que l'absence de journaux n'est pas isolée au seul workflow Storage ; elle ne permet toutefois pas d'identifier la cause sous-jacente ni de conclure que le code a été exécuté.
