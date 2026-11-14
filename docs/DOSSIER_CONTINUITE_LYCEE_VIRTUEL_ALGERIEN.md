@@ -2529,3 +2529,18 @@ Correctifs sur PR #17 :
 
 Validation : relecture des callbacks et vérification statique après écriture. Les opérations déjà transmises au serveur ne sont pas annulées par ce mécanisme; seule leur réponse côté interface est neutralisée si l'identité change. Les tests dynamiques restent non exécutés tant que GitHub Actions ne démarre pas de runner. Aucun changement Supabase hébergé, aucune modification SQL/RLS/Auth/Realtime/Storage, aucun déploiement et aucune fusion. PR #17 reste ouverte.
 
+## Lot 537 — invalidation synchrone à la notification Auth
+
+Constat : même après le Lot 533, le listener `onAuthStateChange` effectuait l'incrément de `authEpoch` et de `renderEpoch` à l'intérieur d'un `setTimeout(0)`. Entre la réception de `SIGNED_OUT` / `SIGNED_IN` et l'exécution de ce timer, une promesse de lecture ou un callback déjà planifié pouvait encore constater les anciennes générations et modifier l'interface.
+
+Correctif sur la branche PR #17 :
+
+- L'incrément de `authEpoch` et de `renderEpoch` est maintenant synchrone dès la réception de l'événement Auth. Les continuations asynchrones de l'ancienne identité deviennent immédiatement obsolètes.
+- Les canaux conversation et invitations sont fermés immédiatement; l'identité locale et les jetons de pairs sont purgés avant le travail différé.
+- À `SIGNED_OUT`, la conversation active est effacée immédiatement. À `SIGNED_IN`, la vue précédemment active est reconstruite dans le timer uniquement si sa génération d'identité est toujours la plus récente.
+- Les opérations réseau de reconstruction restent hors du callback Auth : le timer ne fait que démarrer le rendu après validation du client et de l'epoch. Les transitions Auth successives rendent leurs timers antérieurs inopérants.
+- Assertions statiques ajoutées/mises à jour dans `ci/check-msg.mjs` pour vérifier l'ordre d'invalidation synchrone et l'alignement des caches.
+- Cache : `msg.js?v=3527`; service worker : `dz-de-v3.185.0.0.166`.
+
+Validation : inspection du code et contrôle statique des marqueurs et références cache après écriture. Aucun test dynamique n'a été exécuté : les workflows GitHub Actions sont toujours bloqués avant le démarrage d'un runner par la restriction de facturation déjà signalée. Aucun compte réel, aucune modification de Supabase hébergé (schéma, données, Auth, RLS, Realtime ou Storage), aucun changement Cloudflare, aucun déploiement et aucune fusion. PR #17 reste ouverte et non fusionnée; `main` reste inchangée.
+
