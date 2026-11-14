@@ -330,9 +330,28 @@
     if(!t || !state.conv || !t.value.trim()) return;
     var conv = state.conv, body = t.value;
     if(b) b.disabled=true;
-    var r = await window.SB.msgSend(conv, body);
-    if(!r.ok){ if(err){ err.hidden=false; err.textContent='⛔ '+r.err; } if(b) b.disabled=false; return; }
-    t.value=''; if(err) err.hidden=true;
+    var r;
+    try{
+      r = await window.SB.msgSend(conv, body);
+    }catch(error){
+      /* Une réponse réseau tardive ne doit pas réécrire une autre conversation. */
+      if(state.conv!==conv) return;
+      var currentErr=el('msgErr'), currentButton=document.querySelector('#msgBody [data-act="send"]');
+      if(currentErr){ currentErr.hidden=false; currentErr.textContent='⛔ '+String(error && error.message || error); }
+      if(currentButton) currentButton.disabled=false;
+      return;
+    }
+    /* L'utilisateur peut avoir changé de conversation pendant l'INSERT. */
+    if(state.conv!==conv) return;
+    if(!r || !r.ok){
+      var currentErr=el('msgErr'), currentButton=document.querySelector('#msgBody [data-act="send"]');
+      if(currentErr){ currentErr.hidden=false; currentErr.textContent='⛔ '+((r&&r.err)||'تعذّر إرسال الرسالة'); }
+      if(currentButton) currentButton.disabled=false;
+      return;
+    }
+    var currentComposer=el('msgText');
+    if(currentComposer===t) currentComposer.value='';
+    var currentErr=el('msgErr'); if(currentErr) currentErr.hidden=true;
     await renderThread(conv);
   }
   function scheduleThreadRecovery(){
