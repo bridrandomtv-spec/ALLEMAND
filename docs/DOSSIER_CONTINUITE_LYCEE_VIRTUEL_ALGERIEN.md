@@ -463,3 +463,11 @@
 - Validation : en attente de la nouvelle exécution GitHub Actions sur ce commit. Ne pas déclarer le transport Realtime validé avant que le test reçoive effectivement le `phx_reply` de souscription et l'événement INSERT synthétique.
 - La migration `202611130001_msg_invitation_consent.sql` et la migration `202611130003_msg_student_discovery.sql` restent non appliquées sur Supabase hébergé; elles sont utilisées uniquement dans la pile locale éphémère du workflow.
 - PR #17 doit rester ouverte et non fusionnée; aucune modification de `main`, aucun déploiement Cloudflare.
+
+## Lot 460 — diagnostic de la livraison Realtime (14 novembre 2026)
+- Après l'alignement du protocole Phoenix sur `vsn=2.0.0`, le serveur accepte désormais la souscription du client WebSocket (le test dépasse l'attente de `SUBSCRIBED`). Le workflow échoue ensuite car aucun événement `msg_invites INSERT` n'est observé dans les 12 secondes.
+- Les quatre autres workflows sur le commit `f365c77f` réussissent : CI générale, PostgreSQL consentement, PostgreSQL découverte, PostgreSQL `ملتقى الطلاب`. Le workflow Supabase local confirme également que la pile locale démarre, que les deux migrations Messenger s'appliquent et que l'étape de test GoTrue/PostgREST/RLS démarre; l'échec est désormais localisé à la réception de l'événement Realtime.
+- Ajout d'une instrumentation limitée au harnais `ci/msg-supabase-local-test.mjs` : conservation des dernières trames WebSocket reçues et inclusion de ces trames dans le message d'échec, afin de distinguer la réponse d'abonnement, les notifications serveur, les données de ligne et les éventuelles erreurs de canal.
+- Commit diagnostic : `a4cd51a59ed033b71965216e4c5817a81626238f`.
+- État : le diagnostic doit encore être exécuté par GitHub Actions; aucun résultat de livraison Realtime n'est déclaré. Pas de changement au code applicatif Messenger, aux migrations, à Supabase hébergé, aux données réelles ou aux paramètres Auth/RLS de production.
+- PR #17 reste ouverte et non fusionnée; aucun changement sur `main`, aucun déploiement Cloudflare.
