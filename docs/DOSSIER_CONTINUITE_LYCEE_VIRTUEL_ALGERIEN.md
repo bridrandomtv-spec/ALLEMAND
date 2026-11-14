@@ -2514,3 +2514,18 @@ Correctif sur la branche PR #17 :
 
 Limite importante : si la création du message a déjà été acceptée côté serveur avant la transition d'identité, ce message texte de pièce jointe peut rester sans fichier associé. Le garde-fou empêche la poursuite de l'upload et les mutations de l'ancienne interface, mais ne supprime pas rétroactivement une opération serveur déjà validée. Aucun test dynamique n'a été exécuté; les runners GitHub Actions restent bloqués avant démarrage par l'annotation de facturation. Aucune modification de Supabase hébergé, aucun déploiement et aucune fusion; PR #17 reste ouverte.
 
+
+## Lot 536 — isolation des callbacks de modération et de vérification scolaire
+
+Audit du gestionnaire d'événements : les actions de demande de vérification, création de groupe, décision de vérification d'un élève, traitement d'un signalement et signalement d'un message n'étaient pas toutes liées à la génération d'identité. Une réponse asynchrone pouvait donc déclencher une alerte, un rendu de liste ou modifier un bouton après déconnexion/reconnexion.
+
+Correctifs sur PR #17 :
+- Capture de `state.authEpoch` pour chacune de ces actions.
+- Les callbacks de succès et d'erreur ignorent désormais les réponses d'une ancienne session.
+- Le signalement utilisateur vérifie aussi que le bouton est toujours connecté au document avant toute mutation.
+- Les exceptions sont traitées sans laisser de promesse rejetée sans gestion.
+- Les attentes CI historiques relatives aux versions du module/service worker ont été alignées sur les versions réellement présentes; nouvelles assertions dédiées au Lot 536.
+- Cache : `msg.js?v=3526`; service worker : `dz-de-v3.185.0.0.165`.
+
+Validation : relecture des callbacks et vérification statique après écriture. Les opérations déjà transmises au serveur ne sont pas annulées par ce mécanisme; seule leur réponse côté interface est neutralisée si l'identité change. Les tests dynamiques restent non exécutés tant que GitHub Actions ne démarre pas de runner. Aucun changement Supabase hébergé, aucune modification SQL/RLS/Auth/Realtime/Storage, aucun déploiement et aucune fusion. PR #17 reste ouverte.
+
