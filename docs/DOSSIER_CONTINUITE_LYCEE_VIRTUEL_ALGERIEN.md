@@ -471,3 +471,13 @@
 - Commit diagnostic : `a4cd51a59ed033b71965216e4c5817a81626238f`.
 - État : le diagnostic doit encore être exécuté par GitHub Actions; aucun résultat de livraison Realtime n'est déclaré. Pas de changement au code applicatif Messenger, aux migrations, à Supabase hébergé, aux données réelles ou aux paramètres Auth/RLS de production.
 - PR #17 reste ouverte et non fusionnée; aucun changement sur `main`, aucun déploiement Cloudflare.
+
+
+## Lot 461 — instrumentation publication et journaux Realtime (14 novembre 2026)
+- Lecture du run du commit `a4cd51a5` : la souscription WebSocket est acceptée. Les seules trames reçues sont le `phx_reply` de souscription et le message système `Subscribed to PostgreSQL`; aucune trame `postgres_changes`, aucun `phx_error` et aucun événement de ligne n'arrivent avant l'expiration.
+- Le journal confirme que le test utilise bien le JWT GoTrue du destinataire et que la RPC d'envoi est appelée après la souscription. Le problème ne vient donc plus du format de trame Phoenix ni d'un rejet explicite du canal.
+- Ajout au workflow local de deux diagnostics avant le test : présence effective de `public.msg_invites` dans `pg_publication_tables`, et état de réplication/RLS de la table. Ajout aussi de la capture des 300 dernières lignes du conteneur Realtime même si le test échoue, avant l'arrêt de la pile.
+- Modification limitée à `.github/workflows/msg-supabase-local-test.yml`; aucune migration, aucun code Messenger runtime, aucune policy, aucune donnée de production et aucun réglage Supabase hébergé modifiés.
+- Commit instrumentation : `62a87c37c4ded3fc422c9d51d5c865307393fcdd`. Les contrôles de ce nouveau commit sont à attendre; le diagnostic n'est pas encore exécuté.
+- Résultats confirmés sur le commit antérieur `95ebce7a` : CI générale, PostgreSQL consentement, PostgreSQL découverte et PostgreSQL `ملتقى الطلاب` réussis; intégration Supabase locale échouée uniquement à la réception de l'événement Realtime.
+- La PR #17 reste ouverte et non fusionnée. Aucun changement sur `main`, aucun déploiement Cloudflare. Les migrations Messenger 001 et 003 restent non appliquées sur Supabase hébergé.
