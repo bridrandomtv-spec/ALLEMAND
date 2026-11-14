@@ -67,6 +67,113 @@ const sender = await createUser("sender");
 const recipient = await createUser("recipient");
 const observer = await createUser("observer");
 
+ 
+// Vérification du transport WebSocket Realtime : le destinataire reçoit en direct
+// une nouvelle invitation créée par l'expéditeur, avec son JWT GoTrue propre.
+async function subscribeToInviteChanges(user) {
+  assert.equal(typeof WebSocket, "function", "Node 22 WebSocket global is unavailable");
+  const wsUrl = `ws://127.0.0.1:54321/realtime/v1/websocket?apikey=${encodeURIComponent(anonKey)}&vsn=1.0.0`;
+  const socket = new WebSocket(wsUrl);
+  let joinRef = "1";
+  let messageRef = 1;
+  let resolveReady;
+  let rejectReady;
+  let resolveEvent;
+  let rejectEvent;
+  let ready = false;
+  const readyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
+  const eventPromise = new Promise((resolve, reject) => { resolveEvent = resolve; rejectEvent = reject; });
+  const timeout = setTimeout(() => {
+    if (!ready) rejectReady(new Error("Realtime subscription did not become SUBSCRIBED within 12 seconds"));
+    else rejectEvent(new Error("No msg_invites INSERT event received within 12 seconds"));
+  }, 12000);
+  socket.addEventListener("open", () => {
+    socket.send(JSON.stringify([
+      joinRef,
+      String(messageRef++),
+      "realtime:msg-invites-local-" + user.id,
+      "phx_join",
+      {
+        config: {
+          broadcast: { ack: false, self: false },
+          presence: { key: "" },
+          postgres_changes: [{ event: "*", schema: "public", table: "msg_invites" }]
+        },
+        access_token: user.token,
+        version: "1.0.0"
+      }
+    ]));
+  });
+  socket.addEventListener("message", (event) => {
+    try {
+      const frame = JSON.parse(String(event.data));
+      if (!Array.isArray(frame) || frame.length < 5) return;
+      const topic = frame[2];
+      const eventName = frame[3];
+      const payload = frame[4] || {};
+      if (topic !== "realtime:msg-invites-local-" + user.id) return;
+      if (eventName === "phx_reply") {
+        if (payload.status === "ok") {
+          ready = true;
+          resolveReady();
+        } else {
+          rejectReady(new Error("Realtime join rejected: " + JSON.stringify(payload.response || payload)));
+        }
+      }
+      if (eventName === "postgres_changes") {
+        const data = payload.data || payload;
+        const record = data.record || data.new || payload.record || payload.new || {};
+        const changeType = data.type || data.eventType || payload.eventType;
+        if ((!changeType || String(changeType).toUpperCase() === "INSERT") &&
+            record.recipient_id === user.id && record.status === "pending") {
+          resolveEvent({ changeType: changeType || "INSERT", record });
+        }
+      }
+      if (eventName === "phx_error" || eventName === "phx_close") {
+        const error = new Error("Realtime channel closed: " + JSON.stringify(payload));
+        if (!ready) rejectReady(error); else rejectEvent(error);
+      }
+    } catch (error) {
+      rejectEvent(error);
+    }
+  });
+  socket.addEventListener("error", () => {
+    const error = new Error("Realtime WebSocket transport error");
+    if (!ready) rejectReady(error); else rejectEvent(error);
+  });
+  try {
+    await readyPromise;
+    return {
+      waitForInvite: () => eventPromise,
+      close: () => { clearTimeout(timeout); socket.close(); }
+    };
+  } catch (error) {
+    clearTimeout(timeout);
+    socket.close();
+    throw error;
+  }
+}
+
+const realtimeObserver = await subscribeToInviteChanges(observer);
+try {
+  const realtimeInvite = await call("/rest/v1/rpc/msg_invite_send", {
+    method: "POST",
+    bearer: sender.token,
+    body: { p_recipient: observer.id },
+  });
+  const realtimeEvent = await realtimeObserver.waitForInvite();
+  assert.equal(realtimeEvent.record.id, realtimeInvite, "Realtime event did not match the created invitation");
+  assert.equal(realtimeEvent.record.sender_id, sender.id);
+  const realtimeCancelled = await call("/rest/v1/rpc/msg_invite_cancel", {
+    method: "POST",
+    bearer: sender.token,
+    body: { p_invite: realtimeInvite },
+  });
+  assert.equal(realtimeCancelled, true, "Could not clean up the synthetic Realtime invitation");
+} finally {
+  realtimeObserver.close();
+}
+
 const invite = await call("/rest/v1/rpc/msg_invite_send", {
   method: "POST",
   bearer: sender.token,
