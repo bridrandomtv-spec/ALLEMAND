@@ -2574,3 +2574,16 @@ Audit effectué sur le HEAD réellement présent de la PR #17 (branche `design/p
 Décision : aucun changement applicatif spéculatif n'est apporté à `msg.js`, à `supabase/supabase.js` ou aux appels Realtime. Le Lot 538 est déjà présent dans le HEAD consulté; ce Lot 539 consigne la vérification du parcours de lectures et la décision de ne pas multiplier les garde-fous redondants.
 
 Validation : inspection statique des fichiers de la branche uniquement. Aucun test navigateur ni test Realtime dynamique n'a été exécuté. Les workflows Actions restent à vérifier lorsqu'un runner pourra effectivement démarrer. Aucune modification de Supabase hébergé (schéma, données, Auth, RLS, Realtime, Storage), aucun changement Cloudflare, aucun déploiement et aucune fusion. PR #17 reste ouverte et non fusionnée; `main` reste inchangée.
+
+## Lot 540 — rendre les diagnostics CDC stricts et vérifiables
+
+Audit du transport Realtime sur le HEAD de la PR #17 :
+
+- La migration `202611130001_msg_invitation_consent.sql` ajoute bien `public.msg_invites` à `supabase_realtime` (avec vérification préalable d'absence). Le bootstrap local ajoute séparément `public.msg_messages`; le workflow applique ensuite la migration d'invitation. Le constat initial d'une table d'invitation absente du seul bootstrap était donc incomplet et ne justifiait pas une modification SQL.
+- Le workflow listait les tables de la publication, mais ne faisait pas échouer le job si l'une manquait. Le contrôle est désormais bloquant : les deux tables `msg_invites` et `msg_messages` doivent être présentes.
+- Le test WebSocket de `msg_messages` vérifiait que le serveur accusait réception de la table, mais pas du filtre exact `conversation_id=eq.<id>`. Il exige maintenant que le `phx_reply` confirme aussi ce filtre. Cela permet de distinguer une souscription acceptée sur la mauvaise portée d'une souscription correctement filtrée.
+- Les tests existants continuent de séparer l'ACK `phx_join`, le signal CDC `system/postgres_changes` prêt, la réception INSERT/UPDATE par le destinataire, et l'absence d'événement pour le non-membre. Ils vérifient aussi la lecture RLS HTTP indépendamment du transport.
+
+Fichiers modifiés : `ci/msg-supabase-local-test.mjs`, `.github/workflows/msg-supabase-local-test.yml`, et le présent dossier. Aucun changement applicatif `msg.js`, aucune migration SQL, aucun changement de schéma ou de publication Supabase hébergée. Aucun déploiement Cloudflare ni fusion. PR #17 reste ouverte et non fusionnée.
+
+Validation : relecture statique des modifications et vérification des assertions source uniquement. Le workflow n'a pas été exécuté : les runners GitHub Actions ne démarrent toujours pas à cause du blocage de facturation. Le contrôle renforcé n'est donc pas présenté comme un test dynamique réussi.
