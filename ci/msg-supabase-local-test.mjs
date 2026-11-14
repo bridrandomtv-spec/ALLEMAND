@@ -165,6 +165,17 @@ try {
     bearer: sender.token,
     body: { p_recipient: observer.id },
   });
+  const realtimeServiceRow = await call(
+    `/rest/v1/msg_invites?select=id,sender_id,recipient_id,status&id=eq.${realtimeInvite}`,
+    { key: serviceRoleKey, bearer: serviceRoleKey },
+  );
+  assert.equal(realtimeServiceRow.length, 1, "Invitation RPC did not persist a row visible to service_role");
+  assert.equal(realtimeServiceRow[0].recipient_id, observer.id);
+  const realtimeRecipientRow = await call(
+    `/rest/v1/msg_invites?select=id,recipient_id,status&id=eq.${realtimeInvite}`,
+    { bearer: observer.token },
+  );
+  assert.equal(realtimeRecipientRow.length, 1, "Recipient RLS cannot read its own pending invitation");
   const realtimeEvent = await realtimeObserver.waitForInvite();
   assert.equal(realtimeEvent.record.id, realtimeInvite, "Realtime event did not match the created invitation");
   assert.equal(realtimeEvent.record.sender_id, sender.id);
