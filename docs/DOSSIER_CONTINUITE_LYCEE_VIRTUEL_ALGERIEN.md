@@ -2544,3 +2544,18 @@ Correctif sur la branche PR #17 :
 
 Validation : inspection du code et contrôle statique des marqueurs et références cache après écriture. Aucun test dynamique n'a été exécuté : les workflows GitHub Actions sont toujours bloqués avant le démarrage d'un runner par la restriction de facturation déjà signalée. Aucun compte réel, aucune modification de Supabase hébergé (schéma, données, Auth, RLS, Realtime ou Storage), aucun changement Cloudflare, aucun déploiement et aucune fusion. PR #17 reste ouverte et non fusionnée; `main` reste inchangée.
 
+## Lot 538 — isolation du cache des noms entre sessions Auth
+
+Constat : `fetchNames(ids)` charge les pseudos/niveaux des profils puis les écrit dans `state.names`, cache partagé du module Messenger. Le rendu de fil vérifiait bien son `renderEpoch` après `await fetchNames()`, mais la fonction elle-même pouvait encore alimenter le cache après une transition `SIGNED_IN` / `SIGNED_OUT`. Le garde-fou du rendu empêchait l'affichage immédiat dans l'ancien fil, mais ne protégeait pas cet état partagé; de plus, `state.names` n'était pas purgé au changement d'identité.
+
+Correctif sur PR #17 :
+
+- `fetchNames()` capture `state.authEpoch` au démarrage.
+- La génération est vérifiée après l'initialisation/obtention du client Supabase et immédiatement après la lecture de `profiles`, avant toute écriture dans `state.names`.
+- Le chemin d'erreur vérifie également la génération avant de réutiliser les valeurs du cache.
+- Le listener Auth vide désormais `state.names` en même temps que `state.peers`, de façon synchrone avec l'invalidation des rendus et la fermeture des canaux.
+- Assertions statiques ajoutées dans `ci/check-msg.mjs` pour la capture d'epoch, les vérifications post-await et la purge du cache.
+- Cache : `msg.js?v=3528`; service worker : `dz-de-v3.185.0.0.167`; index, précache et assertions CI alignés.
+
+Validation : vérification statique du chemin d'exécution et relecture des fichiers après écriture. Aucun test dynamique n'a été exécuté, les runners GitHub Actions restant bloqués avant démarrage par la restriction de facturation déjà documentée. Aucun compte réel, aucune modification Supabase hébergé (schéma, données, Auth, RLS, Realtime, Storage), aucun déploiement Cloudflare et aucune fusion. PR #17 reste ouverte et non fusionnée; `main` reste inchangée.
+
