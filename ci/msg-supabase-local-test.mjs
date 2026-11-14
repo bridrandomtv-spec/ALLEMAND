@@ -435,7 +435,7 @@ async function observeMessageChanges(user, conversationId) {
       config: {
         broadcast: { ack: false, self: false },
         presence: { key: "" },
-        postgres_changes: [{ event: "INSERT", schema: "public", table: "msg_messages", filter }]
+        postgres_changes: [{ event: "*", schema: "public", table: "msg_messages", filter }]
       },
       access_token: user.token,
       version: "1.0.0"
