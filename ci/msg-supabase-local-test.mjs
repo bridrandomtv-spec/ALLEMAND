@@ -15,10 +15,10 @@ const headers = (key, bearer = key) => ({
   "Content-Type": "application/json",
 });
 
-async function call(path, { method = "GET", key = anonKey, bearer = key, body, expected = true } = {}) {
+async function call(path, { method = "GET", key = anonKey, bearer = key, body, expected = true, prefer } = {}) {
   const response = await fetch(`${apiUrl}${path}`, {
     method,
-    headers: headers(key, bearer),
+    headers: { ...headers(key, bearer), ...(prefer ? { Prefer: prefer } : {}) },
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
   });
   const raw = await response.text();
@@ -221,6 +221,8 @@ async function subscribeToMessageChanges(user, conversationId) {
   const wsUrl = `ws://127.0.0.1:54321/realtime/v1/websocket?apikey=${encodeURIComponent(anonKey)}&vsn=2.0.0`;
   const socket = new WebSocket(wsUrl);
   let resolveReady, rejectReady, resolveEvent, rejectEvent;
+  const updateWaiters = [];
+  const queuedUpdates = [];
   let ready = false, joinAcknowledged = false, cdcReady = false;
   let timeout;
   const frames = [];
@@ -246,7 +248,7 @@ async function subscribeToMessageChanges(user, conversationId) {
         config: {
           broadcast: { ack: false, self: false },
           presence: { key: "" },
-          postgres_changes: [{ event: "INSERT", schema: "public", table: "msg_messages", filter }]
+          postgres_changes: [{ event: "*", schema: "public", table: "msg_messages", filter }]
         },
         access_token: user.token,
         version: "1.0.0"
@@ -285,9 +287,15 @@ async function subscribeToMessageChanges(user, conversationId) {
         const data = payload.data || payload;
         const record = data.record || data.new || payload.record || payload.new || {};
         const kind = data.type || data.eventType || payload.eventType;
-        if (String(kind || "").toUpperCase() === "INSERT" &&
-            String(record.conversation_id) === String(conversationId)) {
-          resolveEvent({ record, frame: payload });
+        const eventKind = String(kind || "").toUpperCase();
+        if (String(record.conversation_id) === String(conversationId)) {
+          const change = { record, frame: payload, kind: eventKind };
+          if (eventKind === "INSERT") resolveEvent(change);
+          if (eventKind === "UPDATE") {
+            const waiter = updateWaiters.shift();
+            if (waiter) waiter(change);
+            else queuedUpdates.push(change);
+          }
         }
       } else if (eventName === "phx_error" || eventName === "phx_close") {
         const error = new Error("msg_messages channel closed: " + JSON.stringify(payload));
@@ -305,6 +313,9 @@ async function subscribeToMessageChanges(user, conversationId) {
     await readyPromise;
     return {
       waitForMessage: () => eventPromise,
+      waitForUpdate: () => queuedUpdates.length
+        ? Promise.resolve(queuedUpdates.shift())
+        : new Promise((resolve) => updateWaiters.push(resolve)),
       close: () => { clearTimeout(timeout); socket.close(); }
     };
   } catch (error) {
@@ -506,6 +517,65 @@ try {
   );
   assert.equal(recipientCanReadMessage.length, 1, "Recipient RLS cannot read the message delivered by Realtime");
   assert.equal(recipientCanReadMessage[0].body, messageBody);
+
+  // L'édition autorisée doit produire un UPDATE reçu par le destinataire.
+  const editedBody = "Realtime message edited by its sender";
+  const editEventPromise = realtimeMessageObserver.waitForUpdate();
+  const editedRows = await call(
+    `/rest/v1/msg_messages?id=eq.${receivedMessage.record.id}&select=id,body,edited_at`,
+    {
+      method: "PATCH",
+      bearer: sender.token,
+      body: { body: editedBody, edited_at: new Date().toISOString() },
+      prefer: "return=representation"
+    }
+  );
+  assert.equal(editedRows.length, 1, "Sender could not edit their own message");
+  assert.equal(editedRows[0].body, editedBody);
+  const editedEvent = await editEventPromise;
+  assert.equal(editedEvent.kind, "UPDATE", "Message edit did not emit an UPDATE event");
+  assert.equal(editedEvent.record.body, editedBody, "Realtime UPDATE did not contain the edited body");
+
+  // Un compte extérieur ne peut pas modifier la ligne, même avec son ID.
+  const outsiderEdit = await call(
+    `/rest/v1/msg_messages?id=eq.${receivedMessage.record.id}&select=id`,
+    {
+      method: "PATCH",
+      bearer: observer.token,
+      body: { body: "unauthorized edit" },
+      prefer: "return=representation"
+    }
+  );
+  assert.equal(outsiderEdit.length, 0, "Non-member unexpectedly updated a private message");
+
+  // Les privilèges SQL empêchent même l'expéditeur de réassigner sender_id.
+  await call(
+    `/rest/v1/msg_messages?id=eq.${receivedMessage.record.id}`,
+    {
+      method: "PATCH",
+      bearer: sender.token,
+      body: { sender_id: recipient.id },
+      expected: false
+    }
+  );
+
+  // Suppression logique : seul deleted_at est modifié, sans DELETE physique.
+  const deleteEventPromise = realtimeMessageObserver.waitForUpdate();
+  const deletedAt = new Date().toISOString();
+  const deletedRows = await call(
+    `/rest/v1/msg_messages?id=eq.${receivedMessage.record.id}&select=id,deleted_at`,
+    {
+      method: "PATCH",
+      bearer: sender.token,
+      body: { deleted_at: deletedAt },
+      prefer: "return=representation"
+    }
+  );
+  assert.equal(deletedRows.length, 1, "Sender could not soft-delete their own message");
+  assert.ok(deletedRows[0].deleted_at, "Soft-delete did not persist deleted_at");
+  const deleteEvent = await deleteEventPromise;
+  assert.equal(deleteEvent.kind, "UPDATE", "Soft-delete did not emit an UPDATE event");
+  assert.ok(deleteEvent.record.deleted_at, "Realtime soft-delete event omitted deleted_at");
 
   // Le compte tiers est abonné et CDC-ready avant l'INSERT. Il ne doit recevoir
   // aucun payload de cette conversation, même si le destinataire reçoit le message.
