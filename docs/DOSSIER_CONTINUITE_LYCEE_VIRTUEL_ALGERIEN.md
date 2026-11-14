@@ -2311,3 +2311,22 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Ne pas élargir les tests tant que le test INSERT n'a pas une première exécution réelle.
 - La prochaine validation doit être un lancement local isolé de la pile Supabase CLI ou une exécution GitHub après résolution volontaire du blocage de provisionnement. Aucun changement de facturation n'est entrepris.
 - Après réussite du test de base, ajouter séparément une souscription tiers pour vérifier le filtrage RLS Realtime, puis UPDATE, soft-delete et reconnexion. Si le test échoue, exploiter d'abord le premier message d'erreur et les journaux Realtime du conteneur avant de modifier le code applicatif.
+
+## Lot 520 — Parité du schéma de test Realtime avec la table réelle
+
+### Contrôle effectué
+- Comparaison statique de `supabase/msg_schema.sql` avec `ci/msg-supabase-local-bootstrap.sql` et le scénario `ci/msg-supabase-local-test.mjs`.
+- La table réelle `public.msg_messages` contient notamment `id`, `conversation_id`, `sender_id`, `body`, `attachment_id`, `flagged`, `created_at`, `edited_at`, `deleted_at`. Le fixture local omettait `attachment_id`.
+- Le scénario actuel envoie un message texte et contrôle l'événement CDC ; l'absence de cette colonne n'expliquait pas à elle seule le blocage de runner ni ne prouvait la cause du défaut de réception, mais elle réduisait la fidélité du schéma de test.
+
+### Correction locale
+- Ajout de `attachment_id bigint` au fixture éphémère, à la même position logique que dans le schéma applicatif.
+- Fichier modifié : `ci/msg-supabase-local-bootstrap.sql`.
+- Commit : `3461ff7adf1dbda677be61bf36954fb44fd628df`.
+- Aucun changement de code applicatif, de migration de production, de politique RLS hébergée ou de workflow.
+
+### Limites et suites
+- Le fixture demeure volontairement minimal : il ne reproduit pas tous les triggers métier de `msg_schema.sql` (limitation assumée pour isoler le transport INSERT/CDC/RLS). Il faut donc lire le résultat du futur test comme un test d'intégration ciblé du chemin Realtime, pas comme une reproduction exhaustive de la base de production.
+- L'annotation du run GitHub Actions 43596842138 confirme que le runner n'a pas été provisionné en raison d'un problème de facturation/limite de dépenses ; l'avertissement Ubuntu 26 est indépendant et informatif.
+- Le test reste non exécuté. Aucun résultat dynamique ne peut être annoncé.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée ; aucun déploiement Cloudflare et aucune écriture sur Supabase hébergé.
