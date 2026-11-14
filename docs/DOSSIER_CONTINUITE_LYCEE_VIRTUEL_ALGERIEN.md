@@ -2499,3 +2499,18 @@ Correctif sur la branche PR #17 :
 
 Validation : relecture des branches de callbacks et vérification des assertions source/cache. Aucun test dynamique n'a été exécuté : GitHub Actions ne démarre toujours pas ses runners en raison de la restriction de facturation déjà signalée. Aucun test sur compte réel, aucune modification Supabase hébergé (schéma, données, Auth, RLS, Realtime ou Storage), aucun déploiement Cloudflare et aucune fusion. PR #17 reste ouverte et non fusionnée.
 
+
+## Lot 535 — sécurisation du parcours asynchrone des pièces jointes
+
+Constat : le changement de compte ou de conversation pouvait survenir pendant les deux étapes du parcours fichier (création du message puis upload Storage). Le gestionnaire réutilisait ensuite des références DOM potentiellement détachées et pouvait lancer la seconde étape sous une session différente de celle qui avait initié le parcours.
+
+Correctif sur la branche PR #17 :
+
+- Capture de `state.authEpoch` et de l'identifiant de conversation au début du parcours fichier.
+- Après chaque attente asynchrone, arrêt immédiat du traitement UI si l'identité ou la conversation a changé.
+- Contrôle supplémentaire avant l'appel Storage : si la session a changé après la création du message, l'upload n'est pas démarré.
+- Vérification de la connexion au document des éléments DOM avant de les modifier; gestion des exceptions réseau avec restauration du bouton uniquement s'il est encore présent.
+- Cache actualisé : `msg.js?v=3525`, service worker `dz-de-v3.185.0.0.164`; assertions statiques ajoutées.
+
+Limite importante : si la création du message a déjà été acceptée côté serveur avant la transition d'identité, ce message texte de pièce jointe peut rester sans fichier associé. Le garde-fou empêche la poursuite de l'upload et les mutations de l'ancienne interface, mais ne supprime pas rétroactivement une opération serveur déjà validée. Aucun test dynamique n'a été exécuté; les runners GitHub Actions restent bloqués avant démarrage par l'annotation de facturation. Aucune modification de Supabase hébergé, aucun déploiement et aucune fusion; PR #17 reste ouverte.
+
