@@ -620,3 +620,12 @@
 - Aucun changement de workflow, aucune modification de configuration GitHub Actions et aucun runner auto-hébergé n'ont été ajoutés. Le code de test du Lot 474 reste inchangé.
 - État PR #17 contrôlé après la relance : ouverte, non fusionnée, base `main`, HEAD `2fa40b1ccfe4b48822020f7b8c7c0adfe5656695`, `mergeable=true` à cet instant. Aucun changement sur `main`, aucune action sur Supabase hébergé ni sur Cloudflare.
 - Prochaine action technique : obtenir un diagnostic GitHub exploitable sur l'échec d'allocation de runner ou attendre le rétablissement de l'exécution standard. Ne pas contourner ce blocage en modifiant arbitrairement les workflows ; dès qu'un runner démarre, exécuter le test de bout en bout et confirmer la réception effective de l'INSERT côté destinataire synthétique.
+
+
+## Lot 476 — protection contre les souscriptions Messenger obsolètes (14 novembre 2026)
+
+- Audit ciblé de `msg.js` : `startChannel(id)` attendait la résolution asynchrone de `window.SB.sb()` sans vérifier si l'utilisateur avait entre-temps quitté le fil ou ouvert une autre conversation. Une résolution tardive pouvait donc créer un canal Realtime inutile et conserver un abonnement obsolète. Le callback INSERT attendait aussi les noms et métadonnées de pièce jointe sans revalider que le fil était toujours actif avant son insertion DOM.
+- Correctif appliqué : ajout d'un compteur `channelEpoch`. Chaque fermeture invalide les initialisations en cours ; après la résolution du client Supabase, le code vérifie l'époque et l'identifiant de conversation avant de créer le canal. Le callback INSERT revérifie ces deux conditions après ses appels asynchrones avant de modifier le fil.
+- Ce correctif traite une course de cycle de vie côté navigateur. Il ne corrige pas et ne prouve pas la réception CDC côté serveur ; le test d'intégration Supabase local reste la preuve requise pour le transport `public.msg_invites`.
+- Validation : relecture statique des points d'entrée et des gardes modifiés. Aucun test JavaScript ou workflow GitHub Actions n'a été exécuté dans cet environnement ; les récents jobs GitHub restent bloqués avant attribution d'un runner. Ne pas présenter ce correctif comme testé en exécution.
+- Aucun changement de schéma, migration, Auth/RLS, données hébergées, `main` ou déploiement de production. PR #17 reste ouverte et non fusionnée.
