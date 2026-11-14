@@ -169,6 +169,19 @@ ok(insertStart >= 0 && insertEnd > insertStart &&
    insertHandler.includes("currentThread.querySelector('[data-mid="'+m.id+'"]')"),
    'INSERT Realtime : DOM courant revalidé après les lectures asynchrones, sans écriture dans un fil détaché');
 
+// Lot 528 — reprise contrôlée sur TIMED_OUT/CLOSED et diagnostic des statuts Realtime.
+ok(/ch\.subscribe\(function\(st2, err\)/.test(msgjs) &&
+   msgjs.includes("window.console.warn('[Messenger Realtime]', st2, err || null)"),
+   'statut Realtime et erreur complète transmis au diagnostic console');
+ok(msgjs.includes("if(st2==='TIMED_OUT' || st2==='CLOSED') scheduleThreadRecovery();") &&
+   msgjs.includes("if(st2==='SUBSCRIBED'){\n          if(state.recoveryTimer){ clearTimeout(state.recoveryTimer); state.recoveryTimer=null; }") &&
+   msgjs.includes('state.recoveryAttempts=0;'),
+   'TIMED_OUT/CLOSED planifient une reprise; SUBSCRIBED annule le timer et réinitialise le backoff');
+ok(msgjs.includes('if(state.recoveryTimer) return;') &&
+   msgjs.includes('250 * Math.pow(2, attempt)') &&
+   msgjs.includes('state.recoveryAttempts = Math.min((state.recoveryAttempts || 0) + 1, 7);'),
+   'reprise bornée avec backoff exponentiel, sans boucle de recréation rapide');
+
 // Lot 527 — les rafales UPDATE ne déclenchent pas des rendus concurrents non bornés.
 const updateRefreshFnStart = msgjs.indexOf('function scheduleUpdateRefresh(id, epoch){');
 const updateRefreshFnEnd = msgjs.indexOf('\n  async function startChannel(id){', updateRefreshFnStart);
