@@ -103,7 +103,7 @@
           });
         })
         .on('postgres_changes', { event:'UPDATE', schema:'public', table:'msg_messages', filter:'conversation_id=eq.'+id }, function(){
-          if(state.conv===id) renderThread(id);
+          if(state.conv===id) renderThread(id, true);
         })
         .on('presence', { event:'sync' }, function(){
           try{
@@ -355,6 +355,7 @@
       var messageId = t.getAttribute('data-mid');
       var row = t.closest('.msg-row');
       if(!messageId || !row || !row.classList.contains('me') || !state.me){ return; }
+      var actionConv = state.conv;
       if(msgAct==='edit'){
         var bodyNode = row.querySelector('.msg-body');
         var currentText = bodyNode ? bodyNode.textContent.replace(/\\s*·\\s*(عُدّلت|تم الإبلاغ عنها).*$/,'').trim() : '';
@@ -364,8 +365,8 @@
         t.disabled=true;
         window.SB.msgEdit(messageId,revised).then(function(result){
           if(!result || !result.ok){ window.alert('⛔ '+((result&&result.err)||'تعذّر تعديل الرسالة')); }
-          renderThread(state.conv);
-        }).catch(function(error){ window.alert('⛔ '+String(error&&error.message||error)); renderThread(state.conv); });
+          if(state.conv===actionConv) renderThread(actionConv, true);
+        }).catch(function(error){ window.alert('⛔ '+String(error&&error.message||error)); if(state.conv===actionConv) renderThread(actionConv, true); });
         return;
       }
       if(msgAct==='delete'){
@@ -373,8 +374,8 @@
         t.disabled=true;
         window.SB.msgDelete(messageId).then(function(result){
           if(!result || !result.ok){ window.alert('⛔ '+((result&&result.err)||'تعذّر حذف الرسالة')); }
-          renderThread(state.conv);
-        }).catch(function(error){ window.alert('⛔ '+String(error&&error.message||error)); renderThread(state.conv); });
+          if(state.conv===actionConv) renderThread(actionConv, true);
+        }).catch(function(error){ window.alert('⛔ '+String(error&&error.message||error)); if(state.conv===actionConv) renderThread(actionConv, true); });
         return;
       }
     }
