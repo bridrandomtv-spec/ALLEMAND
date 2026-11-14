@@ -1982,3 +1982,12 @@ Obtenir une exécution GitHub Actions avec étapes/journaux exploitables ou exé
 - PR #17 au contrôle : ouverte, non fusionnée, `mergeable=true`, HEAD antérieur à la réparation `b49379c8edc389bf168887d9f62c2587b69d4618). Ne pas fusionner.
 - Aucun accès en écriture à Supabase actif, aucune migration appliquée, aucun déploiement Cloudflare, aucun changement sur `main`, aucun rebase/fusion, aucune branche payante.
 - Suite : vérifier le blob réparé, attendre/inspecter le workflow déclenché par le commit, corriger uniquement sur la base d'une erreur reproductible. Ne pas activer la compensation côté client avant validation intégrale.
+
+### Addendum Lot 507 — contrôle après correction et nouvelle tentative CI
+
+- Relecture du blob SQL après commit : un seul `BEGIN`, un seul `COMMIT`, quatre délimiteurs `$$` correspondant aux deux fonctions ; les motifs tronqués et fragment SQL après `COMMIT` ne sont plus présents. Il s'agit d'un contrôle textuel du blob, pas d'une validation PostgreSQL.
+- Le commit SQL `673ef228f82046187688874dd87f37b7d1a8f3e6` a déclenché le workflow Storage #22 (`43591834159`). Le run s'est d'abord terminé en échec sans étapes ni logs de job (`steps=null`, `logs_url=null`, `BlobNotFound`). Une relance des jobs échoués a été demandée ; le job relancé s'est de nouveau terminé en échec sans étapes exposées. Aucun résultat de script Node, bootstrap ou SQL ne peut être inféré.
+- Les workflows PostgreSQL Messenger et la CI générale du même commit se sont également terminés en échec. Les données disponibles ne permettent toujours pas d'attribuer la cause à la migration, au code, au runner ou au service de logs.
+- PR #17 revérifiée après les commits de documentation : ouverte, non fusionnée, `mergeable=true`, HEAD `0d488ae2e18042b26762e34f5adfaa85d3a9c7c6`.
+- Aucune migration appliquée à Supabase actif, aucune écriture de données, aucun déploiement Cloudflare, aucune modification de `main`, aucun rebase ni fusion. Aucun changement client Messenger.
+- Suite : débloquer l'observabilité de GitHub Actions ou disposer d'un environnement local Docker/Supabase/psql. Le candidat reste non validé et ne doit pas être déployé.
