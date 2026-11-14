@@ -22,20 +22,22 @@
          SIGNED_IN et INITIAL_SESSION. Ne pas appeler setAuth() ici : cela ferait
          double emploi avec le client. On ne réconcilie que les changements d'identité. */
       if(event!=='SIGNED_IN' && event!=='SIGNED_OUT') return;
+      /* Invalider immédiatement les continuations asynchrones : reporter même
+         l'incrément des epochs dans setTimeout laissait une fenêtre où un rendu
+         de l'ancienne identité pouvait encore passer ses gardes. Aucune requête
+         Supabase n'est lancée dans le callback Auth. */
+      var transitionEpoch = ++state.authEpoch;
+      var activeConv = event==='SIGNED_IN' ? state.conv : null;
+      state.renderEpoch++;
+      closeChannel();
+      closeInviteChannel();
+      state.me = null;
+      state.meName = 'أنا';
+      state.peers = {};
+      if(event==='SIGNED_OUT') state.conv = null;
       setTimeout(function(){
-        if(authClient!==client) return;
-        var activeConv = state.conv;
-        /* Toute transition d'identité invalide les rendus et opérations UI en vol,
-           puis ferme les canaux de l'ancien contexte avant de reconstruire la vue. */
-        state.authEpoch++;
-        state.renderEpoch++;
-        closeChannel();
-        closeInviteChannel();
-        state.me = null;
-        state.meName = 'أنا';
-        state.peers = {};
+        if(authClient!==client || state.authEpoch!==transitionEpoch) return;
         if(event==='SIGNED_OUT'){
-          state.conv = null;
           if(state.inviteViewActive) renderList();
           return;
         }
