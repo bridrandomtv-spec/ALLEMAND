@@ -345,10 +345,10 @@
     if(!t) return;
     var peerKey = t.getAttribute('data-peer-key');
     if(peerKey){
-      var recipient = state.peers[peerKey];
-      if(!recipient){ window.alert('⛔ انتهت صلاحية نتيجة البحث. أعد البحث من فضلك.'); return; }
+      var recipientKey = state.peers[peerKey];
+      if(!recipientKey){ window.alert('⛔ انتهت صلاحية نتيجة البحث. أعد البحث من فضلك.'); return; }
       t.disabled = true;
-      window.SB.msgInviteSend(recipient).then(function(result){
+      window.SB.msgInviteSend(recipientKey).then(function(result){
         if(!result || !result.ok){ window.alert('⛔ '+((result && result.err)||'تعذّر إرسال الدعوة')); renderList(); return; }
         window.alert('تم إرسال طلب المحادثة. ستُفتح المحادثة فقط بعد موافقة الطرف الآخر.');
         renderList();
@@ -391,7 +391,7 @@
         if(!students.length){ if(resultsBox) resultsBox.textContent='لم نعثر على زملاء مطابقين. تحقق من الاسم المستعار وحاول لاحقاً.'; return; }
         var html='<div class="msg-grid">';
         students.forEach(function(p,i){
-          var key='peer'+i; state.peers[key]=p.student_id;
+          var key='peer'+i; state.peers[key]=p.student_key;
           html+='<article class="msg-modcard"><div class="msg-meta"><b>'+esc(p.pseudo||'طالب')+'</b><span>'+esc(p.niveau||'')+'</span></div>'+
             '<div class="msg-body">'+esc(p.filiere||'')+' · ولاية '+esc(p.wilaya||'')+'</div>'+
             '<div class="msg-modbtns"><button class="msg-modbtn" data-peer-key="'+key+'" type="button">📨 إرسال طلب محادثة</button></div></article>';
