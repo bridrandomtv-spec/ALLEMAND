@@ -65,7 +65,7 @@ jobs:
       - name: Vérifier les politiques DELETE permissives de Storage
         run: |
           psql "$DB_URL" -v ON_ERROR_STOP=1 <<'SQL'
-          DO $
+          DO $$
           DECLARE policy_count integer;
           BEGIN
             SELECT count(*) INTO policy_count
@@ -78,7 +78,7 @@ jobs:
             IF policy_count <> 2 THEN
               RAISE EXCEPTION 'Expected exactly two authenticated permissive DELETE policies, found %', policy_count;
             END IF;
-          END $;
+          END $$;
           SQL
       - name: Tester Storage API et PostgREST avec deux JWT synthétiques
         run: node ci/msg-storage-local-test.mjs
