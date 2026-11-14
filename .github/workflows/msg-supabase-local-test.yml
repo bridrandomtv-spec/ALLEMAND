@@ -146,8 +146,7 @@ jobs:
           echo '--- Variables non sensibles du conteneur ---'
           container="$(docker ps -a --format '{{.Names}}' | grep -E 'realtime|supabase_realtime' | head -n 1 || true)"
           if [ -n "$container" ]; then
-            docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$container" \\
-              | grep -E '^(PUBLICATIONS|SLOT_NAME|TEMPORARY_SLOT|REPLICATION_MODE|DB_HOST|DB_PORT|DB_USER|DB_NAME|DB_SSL)=' || true
+            docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$container" | grep -E '^(PUBLICATIONS|SLOT_NAME|TEMPORARY_SLOT|REPLICATION_MODE|DB_HOST|DB_PORT|DB_USER|DB_NAME|DB_SSL|DB_AFTER_CONNECT_QUERY|PORT)=' || true
           else
             echo 'Conteneur Realtime introuvable'
           fi
