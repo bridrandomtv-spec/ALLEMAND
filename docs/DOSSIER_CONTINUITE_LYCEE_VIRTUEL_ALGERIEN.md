@@ -2467,3 +2467,19 @@ Fichiers Messenger consultés sur la branche PR #17 : `msg.js` (fermetures `clos
 
 Vérification limitée à l'inspection des sources : aucun test Realtime dynamique n'a été exécuté. Le blocage de démarrage des runners GitHub Actions lié à la facturation demeure distinct de ce résultat. Aucun accès à la base de production, aucune modification Auth/RLS/Realtime/Storage, aucun déploiement et aucune fusion de PR ne sont effectués.
 
+## Lot 533 — invalidation des opérations UI lors d'un changement d'identité Auth
+
+Constat : le listener Auth de Messenger traitait `SIGNED_OUT` en fermant les canaux et en effaçant `state.me`, mais ne changeait pas `state.renderEpoch`. Une lecture de liste ou de fil déjà en attente pouvait donc conserver le même jeton de rendu et continuer après la transition d'identité. De plus, une opération d'envoi/édition/suppression pouvait terminer après une reconnexion sur le même identifiant de conversation : le seul contrôle `state.conv` ne distinguait pas les deux sessions.
+
+Correctif sur la branche PR #17 :
+
+- Ajout de `state.authEpoch`, compteur de génération d'identité.
+- À chaque `SIGNED_IN` ou `SIGNED_OUT`, incrément de `authEpoch` et de `renderEpoch`, fermeture des canaux conversation/invitations, effacement de l'identité locale et purge des jetons de recherche de pairs (`state.peers`).
+- `SIGNED_OUT` efface aussi la conversation active. `SIGNED_IN` reconstruit la vue active après invalidation des opérations précédentes.
+- `send()` capture l'epoch d'identité et ignore les réponses/résultats d'une session antérieure.
+- Les callbacks d'édition et de suppression ne relancent plus le rendu si l'identité a changé pendant l'opération.
+- Assertions statiques ajoutées à `ci/check-msg.mjs`; références cache alignées sur `msg.js?v=3523` et `dz-de-v3.185.0.0.162`.
+
+Limites : ce lot traite les transitions Auth observées par le client et les opérations UI explicitement protégées. Il ne prouve pas l'issue côté serveur d'une requête déjà envoyée avant la déconnexion ; seul un test avec deux sessions synthétiques peut vérifier cette frontière. Aucun test Realtime dynamique n'a été exécuté, les runners Actions restant bloqués avant démarrage pour le motif de facturation déjà documenté.
+
+Aucune modification de schéma, de données, d'Auth/RLS/Realtime/Storage en production, aucun déploiement et aucune fusion. PR #17 reste à confirmer visuellement et fonctionnellement avant toute fusion.
