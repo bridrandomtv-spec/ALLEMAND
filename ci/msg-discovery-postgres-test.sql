@@ -46,7 +46,7 @@ end $$;
 
 set role authenticated;
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',false);
-do $$ declare n integer; begin
+do $ declare n integer; i integer; begin
  select count(*) into n from public.msg_student_search('Beta',12);
  if n<>1 then raise exception 'discovery_expected_one_verified_peer_got_%',n; end if;
  select count(*) into n from public.msg_student_search('Gamma',12);
