@@ -45,8 +45,17 @@ jobs:
           path.write_text(content[:match.start(1)] + section + content[match.end(1):])
           PY
 
+      - name: Mettre temporairement les migrations de côté avant le démarrage
+        run: |
+          mkdir -p /tmp/allemand-supabase-migrations
+          cp supabase/migrations/*.sql /tmp/allemand-supabase-migrations/
+          rm supabase/migrations/*.sql
+
       - name: Démarrer Supabase local isolé
         run: npx --yes supabase@2.122.1 start -x studio,imgproxy,storage-api,edge-runtime,logflare,vector,supavisor,postgres-meta
+
+      - name: Restaurer les migrations pour application explicite dans la base locale
+        run: cp /tmp/allemand-supabase-migrations/*.sql supabase/migrations/
 
       - name: Exporter les clés éphémères de la pile locale
         shell: bash
