@@ -158,3 +158,6 @@ ok(sbjs.includes('async function msgStudentSearch(query, limit)') && sbjs.includ
 ok(msgjs.includes('data-peer-key') && msgjs.includes('state.peers[key]=p.student_id'), 'identifiant destinataire conservé hors du DOM');
 ok(msgjs.includes('msgStudentSearch(query,12)') && msgjs.includes('msgInviteSend(recipient)'), 'recherche reliée à l’envoi de demande de consentement');
 ok(msgjs.includes('ابحث عن زميل لطلب محادثة خاصة'), 'interface de découverte en arabe');
+
+if (fail.length) { console.error('::error:: check-msg Lot 453 : ' + fail.length + ' échec(s)'); process.exit(1); }
+console.log('== check-msg Lot 453 : TOUT PASSE ==');
