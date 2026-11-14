@@ -1656,3 +1656,13 @@
 - Aucun changement appliqué au projet Supabase actif, aucune migration, aucun changement Auth/RLS/données/publication/secret, aucun service payant, aucun changement sur `main`. PR #17 maintenue ouverte et non fusionnée.
 
 - Addendum Lot 489 : après constat officiel « Actions Operational », relance ciblée du seul job PostgreSQL Messenger (job initial `132421945043`). La tentative `132422867634` a de nouveau terminé en échec avec `steps=[]` ; aucun test n'a démarré. La disponibilité générale annoncée par GitHub Status ne garantit donc pas que ce job précis obtienne un runner. Arrêt des relances répétitives ; conserver les preuves de run/job pour une éventuelle demande d'assistance GitHub.
+
+
+## Lot 490 — instrumenter la version réelle de Realtime (14 novembre 2026)
+
+- Réexamen du workflow `.github/workflows/msg-supabase-local-test.yml` : la pile est créée par Supabase CLI `2.122.1`, mais le dépôt ne consignait pas explicitement l'image Docker Realtime réellement tirée par cette version du CLI. Il était donc prématuré d'affirmer que le défaut de Realtime Docker 0.8.3 affectait le test.
+- La documentation officielle Supabase Docker distingue deux cas : la version Realtime `v2.143.3` (Docker 0.8.3, 16 octobre) avait un défaut de reconnexion périodique pouvant manquer les changements pendant quelques secondes toutes les 10 minutes ; le changelog Docker 0.8.4 du 5 novembre annonce le correctif dans Realtime `v2.148.3`. Il faut comparer cette plage à l'image effective du runner avant de retenir cette hypothèse.
+- Instrumentation ajoutée à l'étape de capture des logs du workflow : image configurée, image ID/digest, labels de build, date de démarrage et état du conteneur ; interrogation du health endpoint Realtime interne ; puis les 300 dernières lignes des journaux. Les diagnostics restent non sensibles : aucune valeur d'environnement complète, clé API, JWT ou mot de passe n'est imprimé.
+- Le workflow continue d'utiliser le Supabase CLI épinglé `2.122.1`. Aucun changement de version d'image forcé, aucune mise à niveau CLI, aucun contournement de Realtime et aucune modification de schéma ne sont introduits avant d'avoir identifié le binaire exact.
+- Les runs précédents n'ayant pas alloué de runner (`steps=[]`), cette instrumentation est ajoutée mais pas encore exécutée. La réception Realtime et les scénarios concurrents restent NON VALIDÉS en runtime.
+- Aucune modification du projet Supabase actif, des données, Auth, RLS, migrations, publication, secrets ou facturation. Aucun changement sur `main`. PR #17 conservée ouverte et non fusionnée.
