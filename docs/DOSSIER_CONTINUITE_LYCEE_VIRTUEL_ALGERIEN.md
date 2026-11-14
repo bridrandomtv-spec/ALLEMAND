@@ -795,3 +795,15 @@
 - Aucun déploiement de migration sur Supabase actif, aucun changement Auth/RLS/données/Realtime de production, aucun secret modifié, aucun service payant. `main` reste inchangée.
 - PR #17 vérifiée après les commits : ouverte, non fusionnée, cible `main`, fusionnabilité signalée true.
 - Les workflows observés sur le commit précédent `0ebabf0` ont échoué avant leurs étapes (`steps=null`) ; aucun runner n'a été attribué. Les commits de ce lot nécessitent encore leur propre exécution CI pour valider les tests.
+
+
+## Lot 486 — cohérence des retours d'expiration (14 novembre 2026)
+
+- Audit du cycle de vie : les RPC `msg_invite_decline` et `msg_invite_cancel` effectuaient d'abord la transition `pending → expired` pour une demande de plus de sept jours, puis retournaient `FOUND` après une seconde mise à jour `pending → declined/cancelled`. Cette seconde mise à jour ne trouvait aucune ligne ; l'API retournait donc `false` alors que l'expiration avait bien été enregistrée.
+- Correction dans `202611130001_msg_invitation_consent.sql` : capture du `ROW_COUNT` de la première mise à jour et retour `true` si la transition vers `expired` a modifié une ligne. Le traitement des demandes encore valides reste inchangé.
+- Ajout dans `ci/msg-invitation-postgres-test.sql` de deux scénarios isolés : annulation par l'expéditeur d'une demande expirée et refus par le destinataire d'une demande expirée. Ils vérifient le retour positif et le statut final `expired`.
+- Contrôle statique `ci/check-msg.mjs` : assertions sur les deux RPC et lecture explicite du fichier SQL PostgreSQL. Une première révision de ce contrôle a omis la déclaration de `postgresSql`; elle a été corrigée avant clôture du lot.
+- Commits : migration `c99f65a1cf4eb8bb8d9bce37bab7c2168e3739d7` ; tests PostgreSQL `0bf98985d55cb8f5745b80ab9255bab0dc0ccd98` ; assertions CI `40eec72b31f8b2699e81c93ce52df89857250d46` ; correction de la déclaration du fichier de test `f899f3d293e5b9b12059286475ab9c9dad092145`.
+- Vérification GitHub : modifications relues sur la branche. L'exécution réelle PostgreSQL n'a pas été réalisée dans cet environnement ; les nouveaux tests attendent un runner disponible. Ne pas présenter les assertions statiques comme une validation runtime.
+- Aucune migration appliquée au projet Supabase actif ; aucun changement de données, Auth, RLS, publication Realtime ou secret en production. Aucun service payant.
+- PR #17 reste ouverte et non fusionnée, cible `main`. Aucun changement sur `main`.
