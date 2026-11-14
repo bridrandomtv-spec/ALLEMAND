@@ -41,3 +41,19 @@ Ne jamais utiliser de comptes, messages, fichiers ou chemins de production.
 - Vérifier qu'aucune politique permissive existante ne donne à B un droit plus large : les politiques RLS permissives se combinent par OR.
 - Vérifier les droits réels Storage API et PostgREST, pas uniquement une simulation SQL de l'expression.
 - Tant que les tests ne sont pas exécutés, ne pas annoncer le nettoyage comme opérationnel et ne pas appliquer la migration à la base active.
+
+
+## Lot 503 — harness d'intégration local ajouté
+
+Le workflow distinct `.github/workflows/msg-storage-local-test.yml` démarre la pile Supabase CLI éphémère avec Storage activé, crée un bucket privé synthétique, applique le bootstrap dédié puis la migration candidate et utilise deux utilisateurs Auth synthétiques.
+
+Le script `ci/msg-storage-local-test.mjs` vérifie via HTTP :
+- upload Storage sous JWT A et B ;
+- refus du DELETE de l'objet A par B ;
+- suppression de l'objet A par A et de l'objet B par B ;
+- refus de suppression par B des métadonnées de A ;
+- suppression par A d'une métadonnée `pending` non liée ;
+- refus par A de supprimer une métadonnée liée ;
+- refus par A de supprimer une métadonnée dont le statut n'est plus `pending`.
+
+**Limites explicites du premier harness :** les cas de nom de fichier non conforme, de chemin mal formé/profondeur incorrecte et d'objet d'un autre bucket ne sont pas encore exercés par l'API HTTP. La vérification de l'absence de politique permissive concurrente reste à compléter sur le catalogue de la pile locale. Le harness n'est pas déclaré réussi avant une exécution réelle de l'action GitHub. Aucun test ni changement n'a été effectué sur le projet Supabase actif.
