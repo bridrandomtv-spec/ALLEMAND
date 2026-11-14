@@ -324,7 +324,7 @@ async function msgMessages(convId, before, limit){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
   let q = c.from('msg_messages').select('id,conversation_id,sender_id,body,attachment_id,flagged,created_at,edited_at')
     .eq('conversation_id', convId).is('deleted_at', null)
-    .order('created_at',{ascending:false}).limit(limit || 50);
+    .order('created_at',{ascending:false}).order('id',{ascending:false}).limit(limit || 50);
   if(before) q = q.lt('created_at', before);
   const r = await q;
   if(r.error) return { ok:false, err:r.error.message };
