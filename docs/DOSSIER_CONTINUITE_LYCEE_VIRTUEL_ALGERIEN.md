@@ -321,3 +321,14 @@
 - Premier run `43532909278` : échec au démarrage du harnais, avant l'exécution de la migration, sur un délimiteur dollar du stub `msg_member_ok` tronqué dans le fichier de test. Ce résultat ne signale pas un défaut de la migration Messenger.
 - Correctif du fichier de test : `dafa489353a1862adcfab0dcb700f4677344ad48`. Le bloc PL/pgSQL a été remis en `$$ ... $$`.
 - Le workflow doit être relu sur le nouveau HEAD avant de déclarer le test réussi. Le Lot 454 reste non validé tant que cette exécution n'est pas terminée.
+
+
+### Suite du Lot 454 — expiration et blocage bilatéral (14 novembre 2026)
+- Après correction du harnais SQL (commit `1284f614b89784c1c04b0988deeea8bffbfd1d5b`), les quatre workflows ont réussi : CI principale run `43534924307`, tests consentement Messenger run `43534924354`, tests découverte Messenger run `43534924331`, tests PostgreSQL `ملتقى الطلاب` run `43534924333`. Ces exécutions validaient les scénarios du harnais avant ajout des tests supplémentaires ci-dessous.
+- Extension du harnais `ci/msg-invitation-postgres-test.sql` dans le commit `58f92b70ed143eaf7601f0a9cfa3a473fb2d00a6` :
+  - invitation de plus de sept jours : acceptation renvoie `NULL`, statut devient `expired`, aucun DM supplémentaire n'est créé ;
+  - blocage dans le sens destinataire → expéditeur : acceptation refusée avec `user_blocked` ;
+  - blocage dans le sens expéditeur → destinataire : nouvel envoi refusé avec `user_blocked`.
+- Les quatre workflows du commit `58f92b7` ont été déclenchés et étaient encore en cours lors de la rédaction de cette note : CI principale run `43535465882`, consentement Messenger run `43535465836`, découverte Messenger run `43535465842`, PostgreSQL `ملتقى الطلاب` run `43535465837`. Ne pas déclarer cette extension validée avant leurs conclusions finales.
+- Les tests restent limités à PostgreSQL 17 éphémère avec comptes synthétiques. Ils ne valident pas encore les JWT Supabase réels, l'expérience navigateur, les notifications Realtime en environnement actif ni la disponibilité de Messenger en production.
+- Les migrations Messenger `202611130001_msg_invitation_consent.sql` et `202611130003_msg_student_discovery.sql` demeurent préparatoires et non appliquées à Supabase. Aucun message privé réel consulté, aucune modification de `main`, aucun déploiement. PR #17 reste ouverte et non fusionnée.
