@@ -2217,3 +2217,11 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - La PR ne contient aucun SQL/migration, aucune modification de `supabase/supabase.js`, Auth, RLS, Storage ou donnée. Elle ne déclenche aucune opération Supabase et aucun déploiement Cloudflare volontaire.
 - Contrôle statique des cinq fichiers : vue HTML, script client, route, filtre de rôle, RPC attendues et précache présents. Aucun test runtime n'est revendiqué ; les jobs GitHub Actions observés échouent encore avant la première étape, sans runner ni logs.
 - PR #19 est un brouillon, ouvert et non fusionné. PR #17 demeure ouverte et non fusionnée. Production et `main` restent inchangés.
+
+
+### Addendum Lot 516 — précision du client et statut CI (14 novembre 2026)
+
+- Relecture du diff de la PR #19 : exactement cinq fichiers applicatifs, aucun SQL/migration ni modification Supabase. La branche est à 6 commits au-dessus de `main`, 0 en retard ; la PR #19 reste brouillon, ouverte et non fusionnée.
+- Correction documentaire du commentaire d'en-tête de `multaqa.js` : les publications/commentaires/réactions utilisent les RPC ; la carte latérale appelle le helper existant `SB.myProfile()` pour le compte connecté, sous les règles RLS existantes. Le commentaire précédent affirmait à tort qu'aucune lecture de profil REST n'avait lieu.
+- Le run CI principal déclenché à l'ouverture de la PR #19 (`43596204451`) s'est terminé en échec. Son job `Validation structurelle & pédagogique` (`132451124276`) renvoie `steps=[]`; aucun contrôle du code n'a été exécuté. Cela ne constitue ni un échec fonctionnel du forum ni une validation runtime.
+- La PR #17 reste ouverte et non fusionnée. Aucun déploiement, test sur compte réel, écriture Supabase ou changement de `main` n'a été effectué.
