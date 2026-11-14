@@ -1,0 +1,43 @@
+# Lot 502 — matrice de validation Storage Messenger
+
+Statut : plan de tests pour environnement Supabase local/éphémère uniquement. Aucun test de ce document n'a été exécuté contre la production.
+
+## Fixtures synthétiques requises
+
+- Deux comptes authentifiés distincts A et B.
+- Une conversation de test C à laquelle A et B appartiennent.
+- Un message de A dans C.
+- Un objet Storage synthétique dans le bucket privé avec le chemin exact `msg/C/A-<nonce>-fixture.pdf`, propriétaire Storage A.
+- Un second objet identique mais appartenant à B.
+- Une pièce jointe `pending` de A non liée (`message_id` renseigné, `msg_messages.attachment_id` différent de son identifiant).
+
+Ne jamais utiliser de comptes, messages, fichiers ou chemins de production.
+
+## Scénarios attendus
+
+| Identité / objet | Opération DELETE | Résultat attendu |
+|---|---|---|
+| A / son objet Messenger dans C | Storage DELETE | Autorisé |
+| B / objet Messenger appartenant à A | Storage DELETE | Refusé |
+| A / objet Messenger dont le nom ne commence pas par `A-` | Storage DELETE | Refusé |
+| A / objet d'un autre bucket | Storage DELETE | Refusé par cette politique |
+| A / chemin Messenger mal formé (segment conversation non numérique ou profondeur différente) | Storage DELETE | Refusé sans erreur de cast |
+| A / sa ligne `msg_attachments` pending non liée à son message | SQL DELETE sous rôle authenticated | Autorisé |
+| B / ligne de métadonnées de A | SQL DELETE | Refusé |
+| A / pièce jointe déjà liée (`attachment_id = id`) | SQL DELETE | Refusé |
+| A / ligne non-pending ou liée à un message d'un autre expéditeur | SQL DELETE | Refusé |
+
+## Tests de compensation client à ajouter après validation de la migration
+
+1. Upload Storage réussi, insertion `msg_attachments` refusée : le client tente `storage.remove([path])`; confirmer suppression si propriétaire A, et signaler explicitement l'échec de nettoyage si refus/réseau.
+2. Upload et insertion metadata réussis, liaison message refusée : relire `msg_messages.attachment_id` avant toute compensation. Si la liaison est confirmée, conserver l'objet. Si la lecture confirme qu'il n'est pas lié, supprimer d'abord l'objet puis supprimer uniquement la ligne metadata pending non liée.
+3. Si la lecture de confirmation échoue ou reste ambiguë, ne rien supprimer ; signaler que le nettoyage est différé. Ne jamais supprimer un fichier sur la seule base d'une erreur réseau de l'UPDATE.
+4. Après suppression logique du message, appliquer la politique de rétention décidée séparément ; cette migration n'autorise pas la suppression automatique des pièces jointes liées.
+
+## Critères de sortie
+
+- Tous les scénarios positifs et négatifs ci-dessus passent sur une pile Supabase locale/éphémère.
+- Le client ne nettoie jamais un objet dont la propriété ou l'état de liaison n'est pas confirmé.
+- Vérifier qu'aucune politique permissive existante ne donne à B un droit plus large : les politiques RLS permissives se combinent par OR.
+- Vérifier les droits réels Storage API et PostgREST, pas uniquement une simulation SQL de l'expression.
+- Tant que les tests ne sont pas exécutés, ne pas annoncer le nettoyage comme opérationnel et ne pas appliquer la migration à la base active.
