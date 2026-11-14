@@ -164,7 +164,7 @@ jobs:
               docker image inspect --format 'repo_digests={{json .RepoDigests}} labels={{json .Config.Labels}}' "$image_id" || true
             fi
             echo '--- Version Realtime rapportée par le service ---'
-            curl -sS -m 5 -H "Authorization: Bearer $ANON_KEY" http://127.0.0.1:54321/realtime/v1/api/tenants/realtime-dev/health || true
+            docker exec "$container" curl -sS -m 5 -H "Authorization: Bearer $ANON_KEY" http://localhost:4000/api/tenants/realtime-dev/health || true
             echo
             echo '--- Journaux Realtime (300 dernières lignes) ---'
             docker logs "$container" 2>&1 | tail -n 300
