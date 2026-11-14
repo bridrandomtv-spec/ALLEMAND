@@ -420,6 +420,7 @@ async function observeMessageChanges(user, conversationId) {
   const socket = new WebSocket(wsUrl);
   let resolveReady, rejectReady, ready = false, joinAcknowledged = false, cdcReady = false, timeout;
   const events = [];
+  let terminalError = null;
   const readyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
   const maybeReady = () => {
     if (joinAcknowledged && cdcReady && !ready) {
@@ -455,8 +456,10 @@ async function observeMessageChanges(user, conversationId) {
           return;
         }
         const changes = payload.response?.postgres_changes ?? [];
-        if (!changes.some((item) => item.schema === "public" && item.table === "msg_messages")) {
-          rejectReady(new Error("Non-member subscription was not acknowledged for msg_messages: " + JSON.stringify(changes)));
+        if (!changes.some((item) => item.schema === "public" && item.table === "msg_messages" &&
+            item.filter === filter)) {
+          rejectReady(new Error("Non-member subscription was not acknowledged for msg_messages with exact filter " +
+            filter + ": " + JSON.stringify(changes)));
           return;
         }
         joinAcknowledged = true;
@@ -473,18 +476,29 @@ async function observeMessageChanges(user, conversationId) {
         const record = data.record || data.new || payload.record || payload.new || {};
         if (String(record.conversation_id) === String(conversationId)) events.push(record);
       } else if (name === "phx_error" || name === "phx_close") {
-        if (!ready) rejectReady(new Error("Non-member channel closed: " + JSON.stringify(payload)));
+        terminalError = new Error("Non-member channel closed after subscription: " + JSON.stringify(payload));
+        if (!ready) rejectReady(terminalError);
       }
     } catch (error) {
       if (!ready) rejectReady(error);
     }
   });
   socket.addEventListener("error", () => {
-    if (!ready) rejectReady(new Error("Non-member Realtime WebSocket transport error"));
+    terminalError = new Error("Non-member Realtime WebSocket transport error");
+    if (!ready) rejectReady(terminalError);
   });
   try {
     await readyPromise;
-    return { events, close: () => { clearTimeout(timeout); socket.close(); } };
+    return {
+      events,
+      assertHealthy: () => {
+        if (terminalError) throw terminalError;
+        if (socket.readyState !== WebSocket.OPEN) {
+          throw new Error("Non-member Realtime WebSocket is not open after CDC readiness (readyState=" + socket.readyState + ")");
+        }
+      },
+      close: () => { clearTimeout(timeout); socket.close(); }
+    };
   } catch (error) {
     clearTimeout(timeout);
     socket.close();
@@ -582,6 +596,7 @@ try {
   // Le compte tiers est abonné et CDC-ready avant l'INSERT. Il ne doit recevoir
   // aucun payload de cette conversation, même si le destinataire reçoit le message.
   await new Promise((resolve) => setTimeout(resolve, 2000));
+  outsiderRealtimeObserver.assertHealthy();
   assert.equal(outsiderRealtimeObserver.events.length, 0,
     "Non-member unexpectedly received a private msg_messages Realtime event");
 
