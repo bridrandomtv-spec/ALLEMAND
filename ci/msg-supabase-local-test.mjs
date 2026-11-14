@@ -337,6 +337,14 @@ const observerCannotRead = await call(
 );
 assert.equal(observerCannotRead.length, 0, "A non-participant can read another pair's invitation");
 
+// Le jeton est à usage unique : un rejeu par le même acteur est rejeté.
+await call("/rest/v1/rpc/msg_invite_send_by_key", {
+  method: "POST",
+  bearer: sender.token,
+  body: { p_student_key: observerResult.student_key },
+  expected: false,
+});
+
 // Le destinataire ne peut pas annuler l'invitation sortante ; seul l'expéditeur peut.
 const recipientCannotCancel = await call("/rest/v1/rpc/msg_invite_cancel", {
   method: "POST",
