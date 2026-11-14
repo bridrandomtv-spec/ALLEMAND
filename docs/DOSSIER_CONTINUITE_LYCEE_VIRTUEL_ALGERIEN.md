@@ -491,3 +491,13 @@
 - Commits : test persistance/RLS `f76f376a24e570634df62d0ca26934ba2a7c6fdd`; diagnostic PostgreSQL `c6bc87c95a5bdd447599122d63b73ccb9331a528`.
 - Les nouveaux contrôles sont à attendre. Aucun changement au runtime Messenger, aux migrations, à Supabase hébergé, à Auth/RLS de production ou aux données réelles.
 - PR #17 reste ouverte et non fusionnée; aucun changement sur `main`, aucun déploiement Cloudflare.
+
+## Lot 463 — Diagnostic ciblé du pipeline CDC Realtime (14 novembre 2026)
+
+- Les exécutions du test local Supabase sur `fab6451c` échouent encore uniquement au contrôle de livraison WebSocket : abonnement accepté (`phx_reply status=ok`, puis `Subscribed to PostgreSQL`), mais aucun événement `postgres_changes INSERT` reçu dans les 12 secondes.
+- Les contrôles précédant l'attente événementielle ne lèvent aucune erreur : l'appel RPC d'envoi persiste l'invitation (lecture service_role vérifiée), et le destinataire peut lire sa propre invitation via son JWT GoTrue/RLS. L'échec est donc postérieur à l'écriture SQL et à la lecture RLS.
+- Diagnostic PostgreSQL : `public.msg_invites` est bien dans `supabase_realtime`; la table a RLS activé et replica identity `d` (normal avec sa clé primaire); la publication indique `pubinsert=true`. Deux slots logiques actifs existent : `supabase_realtime_replication_slot_` (wal2json) et `supabase_realtime_messages_replication_slot_` (pgoutput). La connexion `realtime_replication_connection` observée dans `pg_stat_replication` est celle du flux broadcast `realtime.messages`; elle ne suffit pas à prouver le traitement CDC de `msg_invites`.
+- Lot 463 ajoute des diagnostics non destructifs au workflow local : connexions `pg_stat_activity`, structure de `realtime.subscription` et variables non secrètes de configuration Realtime (`PUBLICATIONS`, `SLOT_NAME`, `TEMPORARY_SLOT`, paramètres DB non sensibles). Aucun schéma de production ni aucune migration hébergée n'est modifié.
+- Commit workflow : `32f1376612b477fa461ef63163c71d1294ddc67a`. Exécutions déclenchées automatiquement par la PR; résultat à contrôler avant de conclure.
+- Les workflows isolés CI, consentement, découverte et `ملتقى الطلاب` sont verts sur le commit précédent. PR #17 reste ouverte et non fusionnée.
+- Prochaine étape : exploiter les nouveaux diagnostics pour vérifier si le serveur Realtime lance bien son consommateur Postgres Changes/wal2json et s'il enregistre le canal dans `realtime.subscription`. Ne pas changer arbitrairement replica identity, RLS ou migrations.
