@@ -57,3 +57,11 @@ Le script `ci/msg-storage-local-test.mjs` vérifie via HTTP :
 - refus par A de supprimer une métadonnée dont le statut n'est plus `pending`.
 
 **Limites explicites du premier harness :** les cas de nom de fichier non conforme, de chemin mal formé/profondeur incorrecte et d'objet d'un autre bucket ne sont pas encore exercés par l'API HTTP. La vérification de l'absence de politique permissive concurrente reste à compléter sur le catalogue de la pile locale. Le harness n'est pas déclaré réussi avant une exécution réelle de l'action GitHub. Aucun test ni changement n'a été effectué sur le projet Supabase actif.
+
+
+## Addendum Lot 503 — limites découvertes à l'exécution CI
+
+- Le workflow dédié a été déclenché, mais le run GitHub Actions #5 se termine avec un job sans étapes exposées (`steps=null`, `logs_url=null`) ; le téléchargement des logs renvoie `BlobNotFound`. Impossible de confirmer que le runner a exécuté le bootstrap ou le test Node.
+- Le bootstrap inclut désormais une reproduction de la politique historique `owner delete` pour tester la combinaison OR.
+- **Correction requise avant de faire confiance au test négatif Storage :** le script vérifie actuellement le statut HTTP de DELETE. Il doit vérifier que l'objet existe toujours après une tentative refusée (GET de contrôle avec service-role, uniquement sur la pile locale), car une suppression filtrée par RLS peut être une opération sans erreur sur zéro ligne.
+- Les cas chemins mal formés, nom non conforme et bucket différent restent non couverts. Aucun critère de sortie complet n'est atteint ; ne pas appliquer la migration en production.
