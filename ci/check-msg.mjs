@@ -157,6 +157,18 @@ ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.159'") && sw.includes('./style-proto
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
  
+// Lot 526 — un INSERT asynchrone ne doit pas écrire dans un ancien DOM.
+const insertStart = msgjs.indexOf(".on('postgres_changes', { event:'INSERT', schema:'public', table:'msg_messages'");
+const insertEnd = msgjs.indexOf(".on('postgres_changes', { event:'UPDATE'", insertStart);
+const insertHandler = msgjs.slice(insertStart, insertEnd);
+ok(insertStart >= 0 && insertEnd > insertStart &&
+   insertHandler.includes('var eventRenderEpoch = state.renderEpoch;') &&
+   insertHandler.includes('eventRenderEpoch!==state.renderEpoch') &&
+   insertHandler.includes("el('msgBody').querySelector('.msg-thread')") &&
+   insertHandler.includes('currentThread.isConnected') &&
+   insertHandler.includes("currentThread.querySelector('[data-mid="'+m.id+'"]')"),
+   'INSERT Realtime : DOM courant revalidé après les lectures asynchrones, sans écriture dans un fil détaché');
+
 // Lot 525 — ordre déterministe des messages partageant le même created_at.
 const messagesFnStart = sbjs.indexOf('async function msgMessages(');
 const messagesFnEnd = sbjs.indexOf('\nasync function msgSend(', messagesFnStart);
