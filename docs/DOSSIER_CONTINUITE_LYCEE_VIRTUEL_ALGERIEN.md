@@ -532,3 +532,15 @@
 - Le test est renforcé pour relire `realtime.subscription` à l’expiration des 12 secondes et inclure le résultat dans l’erreur. Cela distinguera une simple course au moment de l’inspection d’une absence persistante d’enregistrement CDC.
 - Les diagnostics du conteneur ne montrent pas les variables `PUBLICATIONS` ou `SLOT_NAME` dans l’environnement sélectionné ; cette observation est conservée comme piste, pas comme cause prouvée.
 - Aucune modification de Supabase hébergé, aucune migration de production, aucune modification de `main` et aucun déploiement.
+
+
+
+## Lot 467 — diagnostic des échecs de démarrage GitHub Actions (14 novembre 2026)
+
+- Vérification du commit HEAD `c9b69c5ba0a46cda6e049a1abe68c8da79665bb4`: les cinq workflows CI, Supabase local Messenger, PostgreSQL consentement, PostgreSQL découverte et PostgreSQL `ملتقى الطلاب` ont tous échoué avant toute étape de test.
+- Inspection directe des objets Jobs GitHub : chacun affiche `runner_id=0`, `runner_name` vide, `steps=[]` et une durée d'environ deux secondes entre démarrage et clôture. Les cinq jobs demandent pourtant le label `ubuntu-latest`.
+- Comparaison avec l'exécution précédente `435425...` : les runners étaient alors affectés (IDs `1000003838` à `1000003842`) et les étapes étaient bien exécutées. Cela confirme que les échecs du Lot 466 sont des échecs de provisionnement/affectation du runner GitHub Actions, et non des échecs fonctionnels démontrés par les tests.
+- Les journaux des jobs échoués ne sont pas disponibles (réponse BlobNotFound) ; aucune annotation exploitable n'a pu être obtenue par les interfaces GitHub disponibles. Il serait incorrect d'inventer une cause plus précise ou de modifier le code pour masquer ce défaut d'infrastructure.
+- Les relances des cinq jobs ont reproduit le même symptôme. Aucune autre relance en boucle n'est lancée ; attendre une exécution où un runner est effectivement attribué, puis reprendre l'analyse fonctionnelle.
+- La PR #17 est toujours ouverte, non fusionnée et mergeable au dernier contrôle. Aucun changement sur `main`, aucune migration hébergée, aucun changement Auth/RLS de production et aucun déploiement Cloudflare.
+- Le défaut Realtime de Messenger reste distinct et non résolu : le destinataire n'a toujours pas reçu d'événement INSERT dans le test local. Messenger ne doit donc pas être annoncé comme opérationnel.
