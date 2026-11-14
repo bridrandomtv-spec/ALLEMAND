@@ -591,3 +591,7 @@
 - Correction complémentaire : une erreur de parsing/traitement d'une trame WebSocket avant l'état prêt rejette désormais `readyPromise` immédiatement (`rejectReady`) au lieu de rejeter uniquement `eventPromise`, ce qui évite d'attendre inutilement le timeout CDC-ready.
 - Commit du script : `862046974c35da422c4f4d6c290c426cd44624e0`. Relecture du bloc modifié effectuée sur la branche. Aucune exécution Node ou CI réussie n'est revendiquée : GitHub Actions reste bloqué avant runner et le test doit encore être exécuté.
 - Aucun changement des migrations, du client `msg.js`, de Supabase hébergé, des données, Auth/RLS ou Cloudflare. PR #17 reste ouverte et non fusionnée ; `main` non modifiée. Messenger n'est pas déclaré opérationnel tant que l'INSERT destinataire n'a pas été reçu et vérifié.
+### Résultat CI du commit Lot 473
+
+- Le changement de `ci/msg-supabase-local-test.mjs` a déclenché les cinq workflows : `43581817328`, `43581817377`, `43581817369`, `43581817332` et `43581817370`. Tous ont échoué en environ une seconde avant la première étape ; l'API Jobs confirme pour chacun `runner_id=0`, `runner_name` vide et `steps=[]`.
+- Le nouveau délai distinct CDC-ready/événement n'a donc pas encore été exécuté. Il reste une correction de logique du test, relue dans le dépôt, pas un test validé en CI.
