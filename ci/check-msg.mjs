@@ -170,6 +170,23 @@ ok(insertStart >= 0 && insertEnd > insertStart &&
    'INSERT Realtime : DOM courant revalidé après les lectures asynchrones, sans écriture dans un fil détaché');
 
 
+
+ // Lot 535 — upload de pièce jointe lié à la conversation et à l'identité initiatrices.
+const uploadStart = msgjs.indexOf("document.addEventListener('change', async function(e){");
+const uploadEnd = msgjs.indexOf("\n  document.addEventListener('keydown'", uploadStart);
+const uploadFn = msgjs.slice(uploadStart, uploadEnd);
+ok(uploadFn.includes('uploadIdentityEpoch=state.authEpoch') &&
+   uploadFn.includes('function uploadContextCurrent()') &&
+   (uploadFn.match(/if\(!uploadContextCurrent\(\)\) return;/g)||[]).length>=3,
+   'pièce jointe : arrêt du flux UI après changement de compte ou de conversation');
+ok(uploadFn.includes('if(!uploadContextCurrent()) return;\n      var uploaded=await window.SB.msgUpload') &&
+   uploadFn.includes('catch(error)') &&
+   uploadFn.includes('input.isConnected'),
+   'pièce jointe : pas de transfert Storage démarré après invalidation; erreurs et éléments DOM détachés protégés');
+ok(idx.includes('msg.js?v=3525') && sw.includes('msg.js?v=3525') &&
+   sw.includes("dz-de-v3.185.0.0.164"),
+   'cache module et service worker alignés sur Lot 535');
+
 // Lot 534 — les réponses de découverte et d'invitation ne traversent pas une transition Auth.
 const peerSendStart = msgjs.indexOf("var peerKey = t.getAttribute('data-peer-key');");
 const peerSendEnd = msgjs.indexOf("var inviteAct = t.getAttribute('data-invite-act');", peerSendStart);
