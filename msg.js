@@ -184,12 +184,16 @@
         + '</div>';
     }
     if(!isMod0 && vf.ok && vf.statut==='verifie'){ h += '<div class="msg-verif ok">✔ تم التحقق من الهوية المدرسية — الرسائل الخاصة متاحة ضمن المجموعة الدراسية المشتركة.</div>'; }
+    var inv = await window.SB.msgInvites();
+    if(renderEpoch!==state.renderEpoch) return;
     state.peers = {};
-    if(!isMod0 && vf.ok && vf.statut==='verifie'){
+    if(!isMod0 && vf.ok && vf.statut==='verifie' && inv.ok){
       h += '<div class="msg-sec">🔎 ابحث عن زميل لطلب محادثة خاصة</div>'+
         '<div class="msg-card"><p>ابحث بالاسم المستعار فقط. تظهر حسابات التلاميذ الذين تم التحقق من هويتهم وفي نفس الولاية والمستوى والشعبة. لا تُرسل الدعوة إلا بعد اختيارك.</p>'+
         '<div class="msg-modform"><input id="msgStudentSearchQuery" type="search" maxlength="40" minlength="3" autocomplete="off" placeholder="اكتب الاسم المستعار (3 أحرف على الأقل)">'+
         '<button class="msg-modbtn" data-act="search-students" type="button">بحث عن زملاء</button></div><div id="msgStudentResults" aria-live="polite"></div></div>';
+    } else if(!isMod0 && vf.ok && vf.statut==='verifie' && !inv.ok){
+      h += '<div class="msg-empty">🔒 خدمة الدعوات والبحث عن الزملاء غير مفعّلة حالياً على الخادم. تبقى مجموعاتك ومحادثاتك الحالية متاحة؛ لن نستخدم طريقة قديمة تتجاوز موافقة الطرف الآخر.</div>';
     }
     h += '<div class="msg-sec">🕌 المجموعات الرسمية (الولاية · المستوى · الشعبة)</div><div class="msg-grid">';
     if(g.ok && g.groups.length){
@@ -211,10 +215,8 @@
     }
     h += '</div>';
     h += '<div class="msg-sec">📨 طلبات المحادثة الخاصة</div><div class="msg-modrow">قبول الطلب يفتح المحادثة الخاصة فقط؛ ولا ينشئ زمالة تلقائياً. يمكنك رفض الطلب أو إلغاء دعوتك الصادرة.</div>';
-    var inv = await window.SB.msgInvites();
-    if(renderEpoch!==state.renderEpoch) return;
     if(!inv.ok){
-      h += '<div class="msg-empty">تعذّر تحميل مركز الدعوات حالياً. تأكد من اتصال الخدمة وتفعيل تحديث الدعوات على الخادم. لم يتم إنشاء أي محادثة.</div>';
+      h += '<div class="msg-empty">مركز الدعوات غير متاح لأن واجهة الموافقة الصريحة غير مفعّلة على الخادم. لم يتم إنشاء أي محادثة.</div>';
     } else {
       var incoming = inv.incoming || [], outgoing = inv.outgoing || [];
       var statusLabel = function(s){
