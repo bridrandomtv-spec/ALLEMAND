@@ -9,7 +9,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
-  var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
+  var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
   async function session(){ try{ return (window.SB && window.SB.me) ? await window.SB.me() : null; }catch(e){ return null; } }
   function stamp(x){ return String(x||'').slice(0,16).replace('T',' '); }
   function card(t,s,btn){ return '<div class="msg-card"><div class="msg-ct"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div>'+(btn||'')+'</div>'; }
@@ -91,7 +91,7 @@
       if(!c || !c.channel || epoch!==state.channelEpoch || state.conv!==id) return;
       var ch = c.channel('msg4-'+id)
         .on('postgres_changes', { event:'INSERT', schema:'public', table:'msg_messages', filter:'conversation_id=eq.'+id }, function(p){
-          var m = p && p.new; if(!m || state.conv!==id || m.deleted_at) return;
+          var m = p && p.new; if(epoch!==state.channelEpoch || !m || state.conv!==id || m.deleted_at) return;
           if(state.me && m.sender_id===state.me) return;
           var th = el('msgBody') && el('msgBody').querySelector('.msg-thread');
           if(!th || th.querySelector('[data-mid="'+m.id+'"]')) return;
@@ -103,15 +103,17 @@
           });
         })
         .on('postgres_changes', { event:'UPDATE', schema:'public', table:'msg_messages', filter:'conversation_id=eq.'+id }, function(){
-          if(state.conv===id) renderThread(id, true);
+          if(epoch===state.channelEpoch && state.conv===id) renderThread(id, true);
         })
         .on('presence', { event:'sync' }, function(){
           try{
+            if(epoch!==state.channelEpoch || state.conv!==id) return;
             var ps = ch.presenceState(); var n = Object.keys(ps||{}).length;
             var pe = el('msgPres'); if(pe) pe.textContent = n>0 ? ('● '+n+' متصل الآن') : '';
           }catch(e){}
         });
       ch.subscribe(function(st2){
+        if(epoch!==state.channelEpoch || state.conv!==id || state.ch!==ch) return;
         if(st2==='SUBSCRIBED'){
           try{ ch.track({ p: (state.meName||'أنا') }); }catch(e){}
           /* Recharge l'instantané serveur après l'abonnement ou une reconnexion.
@@ -119,7 +121,7 @@
              réconcilie aussi les éditions et suppressions intervenues hors ligne.
              keepChannel évite de recréer l'abonnement depuis son propre callback. */
           renderThread(id, true).catch(function(){});
-        } else if(st2==='CHANNEL_ERROR' || st2==='TIMED_OUT'){
+        } else if(st2==='CHANNEL_ERROR' || st2==='TIMED_OUT' || st2==='CLOSED'){
           var pe=el('msgPres'); if(pe) pe.textContent='اتصال مباشر غير مستقر · جارٍ إعادة الاتصال';
         }
       });
@@ -332,6 +334,23 @@
     t.value=''; if(err) err.hidden=true;
     await renderThread(conv);
   }
+  function scheduleThreadRecovery(){
+    var id = state.conv;
+    if(!id || (document.visibilityState && document.visibilityState==='hidden')) return;
+    if(state.recoveryTimer) clearTimeout(state.recoveryTimer);
+    state.recoveryTimer = setTimeout(function(){
+      state.recoveryTimer = null;
+      if(!state.conv || state.conv!==id || (document.visibilityState && document.visibilityState==='hidden')) return;
+      /* Réconciliation HTTP + nouvel abonnement au retour du réseau/onglet.
+         renderEpoch empêche une réponse ancienne de remplacer la conversation courante. */
+      renderThread(id).catch(function(){});
+    }, 250);
+  }
+  window.addEventListener('online', scheduleThreadRecovery);
+  window.addEventListener('pageshow', scheduleThreadRecovery);
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState==='visible') scheduleThreadRecovery();
+  });
   document.addEventListener('dz:view', function(e){
     var v = (e && e.detail && (e.detail.view||e.detail)) || '';
     state.inviteViewActive = String(v).indexOf('msg')>=0;
