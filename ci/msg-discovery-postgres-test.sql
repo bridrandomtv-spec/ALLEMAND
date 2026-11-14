@@ -68,7 +68,7 @@ do $$ declare n integer; begin
    if sqlerrm='search_quota_not_enforced' then raise; end if;
    if sqlerrm<>'search_rate_limit' then raise; end if;
  end;
-end $;
+end $$;
 -- Le compte non vérifié ne peut pas lancer de recherche.
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000003',false);
 do $$ begin
