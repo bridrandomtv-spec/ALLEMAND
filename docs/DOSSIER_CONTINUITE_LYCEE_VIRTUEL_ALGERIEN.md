@@ -1791,3 +1791,14 @@
 - Suite : obtenir un vrai runner pour exécuter les tests isolés des migrations 001/003, puis décider séparément de la validation et de l'éventuel déploiement backend. Le présent correctif améliore le repli UI mais ne rend pas les invitations opérationnelles tant que le backend n'est pas déployé.
 
 - Ajustement de finition après vérification du rendu source : suppression du message de repli redondant afin de ne présenter qu'une seule alerte lorsque le backend d'invitations est indisponible. Commit complémentaire : `8aa3818cea86bdf1a64ae16e614b6e9975753bef`. Le contrôle statique confirme un seul appel `msgInvites()`, un formulaire de recherche conditionné par `inv.ok` et une seule alerte de repli.
+
+
+## Lot 498 — rattrapage des messages après abonnement Realtime (14 novembre 2026)
+
+- Revue ciblée du cycle de vie des conversations : `renderThread()` charge les 50 derniers messages avant de démarrer le canal Realtime. Un message pouvait donc être publié après la lecture initiale mais avant que l'abonnement soit confirmé ; dans cette fenêtre, l'événement INSERT pouvait être manqué et le message ne pas apparaître avant une actualisation manuelle.
+- Correctif sur la branche de PR : à chaque état `SUBSCRIBED` (abonnement initial ou reconnexion), le client relit les 50 derniers messages, compare leurs identifiants aux lignes déjà affichées et ajoute uniquement les messages manquants. Les contrôles d'époque du canal et de conversation empêchent une réponse asynchrone d'une ancienne conversation de modifier la vue courante. Les états `CHANNEL_ERROR` et `TIMED_OUT` affichent désormais une indication de connexion instable.
+- Le rattrapage réutilise les fonctions existantes `msgMessages`, `fetchNames`, `attachmentsFor` et `rowHtml` ; aucune nouvelle dépendance ni RPC n'est introduite. Les droits de lecture restent déterminés par RLS et le rattrapage ne crée ni conversation ni membre.
+- Vérifications statiques réalisées avant commit : présence de la lecture de rattrapage, déduplication par `data-mid`, garde d'époque/conversation et traitement des états d'erreur du canal. Aucun test navigateur, test multi-utilisateur ou test Realtime réel n'a été exécuté dans cette session ; ne pas présenter ce correctif comme une validation de transport.
+- Commit applicatif : `fef181db62dfa7a43e24ffb23350cdc60eaf76bf`.
+- Aucun changement sur Supabase actif, Auth, RLS, schéma, données, secrets, facturation, `main` ou déploiement Cloudflare. PR #17 reste ouverte et non fusionnée.
+- Suite : vérifier les mises à jour/suppressions pendant une reconnexion et tester deux sessions réelles lorsque le runner isolé sera disponible. Examiner séparément le statut de fusion PR #17 ; ne pas rebaser ou fusionner automatiquement la branche fortement divergée.
