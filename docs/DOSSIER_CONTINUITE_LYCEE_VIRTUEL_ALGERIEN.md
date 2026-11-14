@@ -2225,3 +2225,31 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Correction documentaire du commentaire d'en-tête de `multaqa.js` : les publications/commentaires/réactions utilisent les RPC ; la carte latérale appelle le helper existant `SB.myProfile()` pour le compte connecté, sous les règles RLS existantes. Le commentaire précédent affirmait à tort qu'aucune lecture de profil REST n'avait lieu.
 - Le run CI principal déclenché à l'ouverture de la PR #19 (`43596204451`) s'est terminé en échec. Son job `Validation structurelle & pédagogique` (`132451124276`) renvoie `steps=[]`; aucun contrôle du code n'a été exécuté. Cela ne constitue ni un échec fonctionnel du forum ni une validation runtime.
 - La PR #17 reste ouverte et non fusionnée. Aucun déploiement, test sur compte réel, écriture Supabase ou changement de `main` n'a été effectué.
+
+
+
+## Lot 517 — cause confirmée du blocage GitHub Actions et reprise du diagnostic Realtime (14 novembre 2026)
+
+### Cause du non-démarrage des runners désormais confirmée
+- L'annotation exacte fournie depuis l'interface GitHub Actions indique : « The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings ».
+- Cette information explique les jobs terminés avant leur première étape, avec `steps=[]` / `steps=null`, sans runner attribué et sans journaux exploitables. Les scripts CI, y compris le test local Realtime de `msg_messages`, n'ont donc pas été exécutés dans ces runs.
+- Cette annotation remplace la conclusion des Lots 511 à 516 selon laquelle la cause exacte restait inconnue : le blocage de provisionnement est maintenant associé à l'état de facturation ou à la limite de dépenses du compte GitHub.
+- L'avis séparé sur la migration de `ubuntu-latest` vers Ubuntu 26 à compter du 19 octobre 2026 est informatif et n'explique pas le non-démarrage des jobs. Aucun changement de runner/workflow n'est justifié par cet avis.
+- Aucune modification de facturation ni augmentation de limite n'a été effectuée ou demandée. Les validations doivent continuer par revue statique et tests locaux réellement exécutables ; ne pas relancer en boucle les mêmes workflows tant que le blocage GitHub n'est pas levé par le propriétaire du compte.
+
+### État des PR et périmètres
+- PR #17 : toujours ouverte, non fusionnée, base `main`, HEAD observé `5f921b07bf90d7acda3cc1e1feba64b6120af8d7`; GitHub retourne `mergeable=true`, sans que cela vaille validation fonctionnelle ou autorisation de fusion.
+- PR #19 : ouverte, brouillon, non fusionnée, base `main`, branche `fix/restore-multaqa-only`, HEAD observé `f56663fb66d0a872488258032d5e8c943097ea6a`; cinq fichiers modifiés. Elle reste indépendante de la PR #17.
+- Aucun changement direct sur `main`, aucune fusion, aucun déploiement Cloudflare et aucune écriture Supabase de production dans ce lot.
+
+### Conséquence pour le diagnostic Messenger Realtime
+- Le test d'intégration ajouté au Lot 510 (`msg_messages INSERT → CDC → WebSocket → SELECT RLS`) demeure non exécuté et non validé : le blocage GitHub intervient avant les étapes du job, pas dans le test lui-même.
+- Il n'est pas correct de conclure que Realtime fonctionne ou échoue à partir de ces runs. Il faut conserver le test et reprendre son exécution uniquement dans un environnement local réellement disponible ou après rétablissement du runner GitHub.
+- Les correctifs applicatifs Realtime des Lots 498, 499 et 501 sont présents dans la branche de la PR #17 mais absents de `main`. La production issue de `main` ne peut donc pas être considérée comme bénéficiant de ces correctifs tant qu'ils n'ont pas été promus ; aucune fusion n'est autorisée implicitement.
+- Le preview Cloudflare ne constitue pas un bac à sable Supabase : le contrôle Supabase Preview est ignoré et le client du preview peut viser le projet Supabase actif. Ne pas envoyer de messages de test depuis ce preview avec des comptes réels.
+- Prochaine action sûre : poursuivre la comparaison statique des versions `msg.js` / `supabase/supabase.js` et vérifier les mécanismes de cycle de vie des canaux Realtime, sans écrire dans la base active. Une correction ne sera proposée que si un défaut concret est démontré par le code ou par un test isolé exécutable.
+
+### Décisions de sûreté
+- Pas de paiement, pas d'augmentation de limite, pas de création de branche Supabase payante.
+- Pas de test de message avec des comptes réels, pas de DDL/DML, pas de changement Auth/RLS/Realtime/Storage de production.
+- PR #17 et PR #19 restent ouvertes et non fusionnées ; `main` et la production restent inchangées.
