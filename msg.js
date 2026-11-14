@@ -10,7 +10,47 @@
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
   var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, recoveryAttempts:0, updateRefreshTimer:null, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
-  async function session(){ try{ return (window.SB && window.SB.me) ? await window.SB.me() : null; }catch(e){ return null; } }
+  var authClient = null, authSubscription = null;
+  function bindAuthLifecycle(client){
+    if(!client || !client.auth || typeof client.auth.onAuthStateChange!=='function' || authClient===client) return;
+    if(authSubscription && typeof authSubscription.unsubscribe==='function'){
+      try{ authSubscription.unsubscribe(); }catch(e){}
+    }
+    authClient = client;
+    var registration = client.auth.onAuthStateChange(function(event){
+      /* Supabase JS 2.x propage lui-même le JWT vers Realtime sur TOKEN_REFRESHED,
+         SIGNED_IN et INITIAL_SESSION. Ne pas appeler setAuth() ici : cela ferait
+         double emploi avec le client. On ne réconcilie que les changements d'identité. */
+      if(event!=='SIGNED_IN' && event!=='SIGNED_OUT') return;
+      setTimeout(function(){
+        if(authClient!==client) return;
+        var activeConv = state.conv;
+        if(event==='SIGNED_OUT'){
+          closeChannel();
+          closeInviteChannel();
+          state.conv = null;
+          state.me = null;
+          state.meName = 'أنا';
+          if(state.inviteViewActive) renderList();
+          return;
+        }
+        if(!state.inviteViewActive) return;
+        if(activeConv) renderThread(activeConv);
+        else renderList();
+      }, 0);
+    });
+    authSubscription = registration && registration.data ? registration.data.subscription : null;
+  }
+  async function session(){
+    try{
+      if(!window.SB || !window.SB.me) return null;
+      if(typeof window.SB.sb==='function'){
+        var client = await window.SB.sb();
+        if(client) bindAuthLifecycle(client);
+      }
+      return await window.SB.me();
+    }catch(e){ return null; }
+  }
   function stamp(x){ return String(x||'').slice(0,16).replace('T',' '); }
   function card(t,s,btn){ return '<div class="msg-card"><div class="msg-ct"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div>'+(btn||'')+'</div>'; }
   async function fetchNames(ids){
