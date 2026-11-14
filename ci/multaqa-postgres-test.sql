@@ -136,7 +136,7 @@ create function public.msg_pair_blocked(a uuid,b uuid) returns boolean
 language sql stable security definer set search_path=pg_catalog,public as $$ select false $$;
 \i supabase/migrations/202611130003_msg_student_discovery.sql
 select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
-do $ declare n integer; i integer; begin
+do $$ declare n integer; i integer; begin
  if public.msg_can_dm('20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000002') is not true then raise exception 'verified_pair_denied'; end if;
  if public.msg_can_dm('20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000003') then raise exception 'unverified_target_allowed'; end if;
  if public.msg_can_dm('20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000004') then raise exception 'non_student_target_allowed'; end if;
