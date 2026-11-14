@@ -75,4 +75,7 @@ await deleteMetadata(a,pendingId,true);
 const linkedId=await createAttachment(a,msgA,pathB);
 await must(`/rest/v1/msg_messages?id=eq.${msgA}`,{method:"PATCH",body:{attachment_id:linkedId}});
 await deleteMetadata(a,linkedId,false);
+const retainedId=await createAttachment(a,msgB,pathB);
+await must(`/rest/v1/msg_attachments?id=eq.${retainedId}`,{method:"PATCH",body:{statut:"ok"}});
+await deleteMetadata(a,retainedId,false);
 console.log("Lot 503: Storage owner isolation and metadata RLS scenarios passed on ephemeral Supabase.");
