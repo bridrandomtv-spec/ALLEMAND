@@ -157,6 +157,18 @@ ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.159'") && sw.includes('./style-proto
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
  
+// Lot 524 — une réponse d'envoi asynchrone ne doit jamais voler la vue courante.
+const sendStart = msgjs.indexOf('async function send(){');
+const sendEnd = msgjs.indexOf('\n  function scheduleThreadRecovery()', sendStart);
+const sendFn = msgjs.slice(sendStart, sendEnd);
+ok(sendStart >= 0 && sendEnd > sendStart && /if\(state\.conv!==conv\) return;/.test(sendFn),
+   'envoi terminé après navigation : aucun retour forcé à l’ancienne conversation');
+ok(sendFn.includes('try{') && sendFn.includes('catch(error)') && sendFn.includes('currentButton.disabled=false'),
+   'erreur réseau d’envoi traitée sans laisser le bouton bloqué');
+ok(sendFn.includes('if(currentComposer===t) currentComposer.value=\'\';'),
+   'le résultat d’un envoi ne vide pas un composeur remplacé entre-temps');
+
+ 
 // Lot 523 — cycle de vie Realtime : ignorer les anciens canaux et resynchroniser au retour.
 ok(/epoch!==state\.channelEpoch \|\| state\.conv!==id \|\| state\.ch!==ch/.test(msgjs),
    'callback SUBSCRIBED ignore un canal obsolète');
