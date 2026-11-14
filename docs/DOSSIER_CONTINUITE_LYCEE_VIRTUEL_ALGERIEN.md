@@ -1969,3 +1969,16 @@ Obtenir une exécution GitHub Actions avec étapes/journaux exploitables ou exé
 - Le correctif est uniquement sur la branche de la PR. Migration non appliquée au Supabase actif ; aucun code client de compensation activé.
 - Aucun runtime n'est disponible ici (Docker, Supabase CLI et psql absents). GitHub Actions continue de terminer les jobs sans étapes/journaux exposés ; la migration et les tests ne sont donc pas déclarés validés.
 - Prochaine étape : obtenir une exécution réelle du workflow et vérifier particulièrement les permissions EXECUTE, la politique Storage et le refus de suppression d'un objet lié. Aucun déploiement ni fusion avant cette preuve.
+
+
+
+## Lot 507 — réparation du SQL candidat Storage Messenger (14 novembre 2026)
+
+- Inspection du run Storage #20 (`43591530104`) : un seul job terminé en échec ; endpoint des étapes = liste vide ; `logs_url=null` ; téléchargement des journaux = `BlobNotFound`. Le run ne permet pas d'établir si le runner a commencé le workflow ni quelle étape aurait échoué.
+- La relecture directe du blob de `supabase/migrations/202611140001_msg_storage_owner_cleanup.sql` a révélé une corruption réelle du fichier : la fonction `msg_storage_cleanup_allowed(text)` était coupée après le motif regex `^[0-9]+`, et un fragment du corps SQL réapparaissait après `COMMIT`. Le candidat n'était pas exécutable en l'état.
+- Remplacement intégral du fichier par un SQL cohérent : contrôle du namespace `msg/`, exactement deux dossiers, identifiant de conversation numérique, nom commençant par l'UUID de `auth.uid()`, exclusion des objets liés par `msg_messages.attachment_id`, helper metadata limité à l'uploader, au statut `pending`, au message du même expéditeur et à l'absence de liaison. Les fonctions gardent un `search_path` fixe ; EXECUTE est révoqué à `public/anon` et accordé à `authenticated`.
+- Commit de réparation SQL : `673ef228f82046187688874dd87f37b7d1a8f3e6`.
+- Le commit prouve seulement l'enregistrement du texte dans GitHub. Il ne prouve ni syntaxe/exécution PostgreSQL ni comportement Storage API. Relecture du blob après commit et nouveau run CI à contrôler.
+- PR #17 au contrôle : ouverte, non fusionnée, `mergeable=true`, HEAD antérieur à la réparation `b49379c8edc389bf168887d9f62c2587b69d4618). Ne pas fusionner.
+- Aucun accès en écriture à Supabase actif, aucune migration appliquée, aucun déploiement Cloudflare, aucun changement sur `main`, aucun rebase/fusion, aucune branche payante.
+- Suite : vérifier le blob réparé, attendre/inspecter le workflow déclenché par le commit, corriger uniquement sur la base d'une erreur reproductible. Ne pas activer la compensation côté client avant validation intégrale.
