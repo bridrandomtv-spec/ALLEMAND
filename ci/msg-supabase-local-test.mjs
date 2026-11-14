@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 
 const apiUrl = process.env.API_URL;
 const anonKey = process.env.ANON_KEY;
@@ -147,6 +148,18 @@ async function subscribeToInviteChanges(user) {
   });
   try {
     await readyPromise;
+    // Diagnostic non secret pendant que le canal est réellement actif :
+    // vérifier que Realtime a enregistré la souscription CDC sur la table attendue.
+    const subscriptionProbe = spawnSync("psql", [
+      process.env.DB_URL,
+      "-X", "-A", "-t", "-v", "ON_ERROR_STOP=1",
+      "-c",
+      "select jsonb_build_object('subscription_id', subscription_id, 'entity', entity::text, 'filters', filters, 'claims_role', claims_role::text, 'action_filter', action_filter)::text from realtime.subscription where entity = 'public.msg_invites'::regclass;"
+    ], { encoding: "utf8" });
+    if (subscriptionProbe.error || subscriptionProbe.status !== 0) {
+      throw new Error("Impossible d'inspecter realtime.subscription : " + (subscriptionProbe.stderr || subscriptionProbe.error?.message || "psql failed"));
+    }
+    console.log("Realtime CDC subscriptions for public.msg_invites:", subscriptionProbe.stdout.trim() || "(aucune ligne)");
     return {
       waitForInvite: () => eventPromise,
       close: () => { clearTimeout(timeout); socket.close(); }
