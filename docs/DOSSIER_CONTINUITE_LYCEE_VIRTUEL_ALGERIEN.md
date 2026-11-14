@@ -1633,3 +1633,12 @@
 - Test ajouté à `ci/msg-invitation-postgres-test.sql` : crée une demande pendante, ajoute 20 invitations antérieures dans la fenêtre, puis vérifie que le même appel renvoie le même UUID. Les lignes de surcharge sont vieillies après le test afin de ne pas perturber les scénarios suivants.
 ). Correction en délimiteurs `$` ouvrant/fermant, et conservation du contrôle statique qui interdit cette régression.
 - Validation : modifications versionnées uniquement sur la branche de PR. Aucun test PostgreSQL n'a été exécuté dans cette session (Docker/Supabase CLI indisponibles ici) ; le nouveau test reste à confirmer dans l'environnement PostgreSQL éphémère. Aucun changement sur Supabase actif, Auth, RLS, Realtime, secrets, facturation ou `main`. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 488 — test concurrent à deux sessions PostgreSQL (14 novembre 2026)
+
+- Audit du test existant : le scénario de quota du Lot 487 avait introduit quatre blocs PL/pgSQL avec délimiteurs `$` incomplets dans `ci/msg-invitation-postgres-test.sql`. Correction en `$$` ouvrant/fermant ; le contrôle statique vérifie désormais également le fichier de test.
+- Nouveau script `ci/msg-invitation-concurrency-test.sh`, exécuté sur le PostgreSQL 17 éphémère du workflow, avec sessions `psql` distinctes et identités synthétiques : (1) acceptation simultanée de deux invitations réciproques, (2) annulation gagnante face à une acceptation, (3) acceptation gagnante face à une annulation.
+- Synchronisation des courses par observation de `pg_stat_activity` pendant un `pg_sleep` dans un trigger temporaire de test ; vérification des statuts, du nombre de conversations directes par paire et des deux membres. Le trigger est supprimé par le nettoyage shell.
+- Le workflow PostgreSQL exécute d'abord `bash -n` puis le test concurrent après le cycle de vie séquentiel. Le contrôle statique vérifie la présence des trois scénarios.
+- Validation locale non exécutée dans cette session : aucun Docker/PostgreSQL/Supabase CLI disponible. Le test est versionné pour GitHub Actions ; aucun résultat vert n'est revendiqué. Aucun changement Supabase actif, Auth, RLS, Realtime, secrets, facturation ou `main`. PR #17 reste ouverte et non fusionnée.
