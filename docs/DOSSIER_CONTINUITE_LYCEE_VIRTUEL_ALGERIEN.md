@@ -1685,3 +1685,21 @@
 - Comparaison GitHub au 14 novembre : la branche de PR #17 est en avance de 2 766 commits et en retard de 4 commits sur `main` (état `diverged`, base commune `51acfe8c97b6e152208d592dbd2c5bbde5c5c38e`). Les quatre commits propres à `main` touchent uniquement `brand/85.PNG`, `brand/86.jpeg` et `brand/87.jpeg` ; aucune modification des workflows, scripts de test, migrations ou fichiers Messenger n'apparaît dans ce delta de `main`.
 - Après les commits documentaires Lot 491, GitHub a momentanément retourné `mergeable=false` pour la PR. Ne pas interpréter ce champ seul comme une preuve de conflit de contenu : la branche est simplement en retard de quatre commits, et l'API peut recalculer l'état de fusion. Aucune mise à jour de base, rebase, fusion ou modification de `main` n'a été effectuée.
 - Décision conservatoire : garder la PR ouverte et ne pas la rebaser automatiquement ; vérifier à nouveau le statut de fusion après stabilisation de GitHub et avant toute demande de revue. Le travail Messenger continue sur la branche dédiée.
+
+
+## Lot 492 — cinq nouvelles exécutions Actions sans allocation d'étapes (14 novembre 2026)
+
+- Après le commit documentaire `4d9b1d9f63a7fb7e6c8eacc0acea06929846e8b0`, cinq workflows ont été associés au HEAD de la PR :
+  - Supabase local Messenger : run `43587502337`, job `132425048004`.
+  - Découverte Messenger PostgreSQL : run `43587502316`, job `132425048025`.
+  - Consentement / invitations PostgreSQL : run `43587502354`, job `132425048084`.
+  - CI structurelle : run `43587502331`, job `132425048057`.
+  - ملتقى الطلاب PostgreSQL : run `43587502323`, job `132425047926`.
+- Les cinq runs sont terminés en échec. L'API GitHub renvoie `steps=[]` pour chacun des cinq jobs. Le téléchargement des journaux du job Supabase local Messenger échoue avec HTTP 404 `BlobNotFound` (horodatage API 10:55:51 UTC) ; les runs ne fournissent donc aucun log d'étape, aucune trace Docker et aucune sortie SQL. Le résultat est un défaut d'exécution/allocation en amont des étapes, pas un test applicatif rouge.
+- La relance en boucle est suspendue : les cinq échecs concordants ne justifient pas de nouvelles tentatives identiques. Conserver les IDs des runs/jobs comme éléments de diagnostic pour une éventuelle demande au support GitHub.
+- Revue statique complémentaire du script `ci/msg-invitation-concurrency-test.sh` : trois courses sont couvertes (acceptations réciproques, annulation gagnante, acceptation gagnante). Le verrou advisory de paire dans `msg_invite_accept` sérialise les acceptations réciproques ; les scénarios acceptation/annulation attendent le verrou de ligne et contrôlent l'état final. Le trigger de pause `pg_sleep` rend la fenêtre de concurrence observable. Aucun défaut statique décisif n'a été confirmé dans ce script ; les trois scénarios restent NON VALIDÉS faute d'exécution PostgreSQL.
+- Revue statique du workflow Supabase local : le diagnostic de l'image, du digest, de la santé et des journaux Realtime est bien placé en `if: always()` et `continue-on-error: true` pour les inspections non bloquantes. Il ne peut toutefois produire de preuve lorsque le runner n'exécute aucune étape.
+- État PR #17 revérifié après ces runs : ouverte, non fusionnée, `mergeable=true`, HEAD `4d9b1d9f63a7fb7e6c8eacc0acea06929846e8b0`. Comparaison avec `main` : branche divergente, 2 767 commits en avance et 4 en retard. Aucun rebase ni changement sur `main`.
+- Aucun test PostgreSQL ou Realtime n'a été exécuté dans ces cinq runs ; aucune version réelle du conteneur Realtime n'a donc été récupérée. L'hypothèse du défaut v2.143.3 demeure non confirmée.
+- Aucun changement du projet Supabase actif, d'Auth, RLS, publication, données, secrets ou facturation. Aucun déploiement de production. PR #17 reste ouverte et non fusionnée.
+- Suite : ne pas confondre les échecs sans étapes avec les résultats des tests. Reprendre l'exécution uniquement quand un runner fournit une étape/log exploitable, ou reproduire la pile sur un environnement local Docker déjà disponible. À la première exécution réelle, relever l'image/digest Realtime et les journaux CDC avant tout correctif.
