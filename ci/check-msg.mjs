@@ -62,6 +62,7 @@ ok(!/indisponible pour ce compte/.test(msgjs), 'aucun message de pièce jointe e
 // Lot 437 — contrat de consentement Messenger (migration préparée, non exécutée).
 const inviteSql = readFileSync('supabase/migrations/202611130001_msg_invitation_consent.sql', 'utf8');
 const postgresSql = readFileSync('ci/msg-invitation-postgres-test.sql', 'utf8');
+const concurrencySql = readFileSync('ci/msg-invitation-concurrency-test.sh', 'utf8');
 ok(inviteSql.includes('create table if not exists public.msg_invites'), 'table invitations Messenger versionnée');
 ok(inviteSql.includes('msg_invite_send') && inviteSql.includes('msg_invite_accept') &&
    inviteSql.includes('msg_invite_decline') && inviteSql.includes('msg_invite_cancel'),
@@ -100,6 +101,10 @@ ok(/demande pendante identique reste idempotente[\s\S]*?if v_id is not null then
    'répétition idempotente vérifiée avant la limite 24 h');
 ok(postgresSql.includes('pending_invite_retry_blocked_by_rate_limit'),
    'test PostgreSQL : répétition pendante autorisée au plafond du quota');
+ok(concurrencySql.includes('lot488-accept-ab') && concurrencySql.includes('lot488-cancel-first') && concurrencySql.includes('lot488-accept-first'),
+   'test concurrent couvre acceptations réciproques et les deux issues annulation/acceptation');
+ok(concurrencySql.includes('pg_stat_activity') && concurrencySql.includes('pg_sleep(1.5)'),
+   'test concurrent synchronise réellement deux sessions PostgreSQL');
 ok(/Première lecture sans verrou de ligne[\s\S]*?pg_advisory_xact_lock[\s\S]*?Relecture verrouillée après le verrou de paire/.test(inviteSql),
    'acceptation verrouille la paire avant la ligne pour éviter les deadlocks réciproques');
 ok(/Une invitation réciproque devenue redondante[\s\S]*?status='cancelled'/.test(inviteSql),
