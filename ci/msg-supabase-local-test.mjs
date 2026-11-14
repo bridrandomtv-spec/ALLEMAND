@@ -65,6 +65,7 @@ async function createUser(label) {
 
 const sender = await createUser("sender");
 const recipient = await createUser("recipient");
+const observer = await createUser("observer");
 
 const invite = await call("/rest/v1/rpc/msg_invite_send", {
   method: "POST",
@@ -122,4 +123,79 @@ const accepted = await call(`/rest/v1/msg_invites?select=status&id=eq.${invite}`
 });
 assert.equal(accepted[0]?.status, "accepted");
 
-console.log("PASS: GoTrue JWT réel local, RPC PostgREST, consentement du destinataire et RLS des deux membres");
+// La recherche ne retourne que les champs publics prévus et reste limitée au profil scolaire.
+const discovered = await call("/rest/v1/rpc/msg_student_search", {
+  method: "POST",
+  bearer: sender.token,
+  body: { p_query: "Test", p_limit: 12 },
+});
+assert.ok(Array.isArray(discovered));
+assert.ok(discovered.some((student) => student.student_id === recipient.id));
+assert.ok(discovered.some((student) => student.student_id === observer.id));
+assert.ok(discovered.every((student) =>
+  Object.keys(student).sort().join(",") === "filiere,niveau,pseudo,student_id,wilaya"
+), "Discovery RPC returned fields outside the minimal public contract");
+
+// Un troisième compte non participant ne doit pas pouvoir lire une invitation.
+const cancelInvite = await call("/rest/v1/rpc/msg_invite_send", {
+  method: "POST",
+  bearer: sender.token,
+  body: { p_recipient: observer.id },
+});
+const observerCannotRead = await call(
+  `/rest/v1/msg_invites?select=id,status&id=eq.${cancelInvite}`,
+  { bearer: recipient.token },
+);
+assert.equal(observerCannotRead.length, 0, "A non-participant can read another pair's invitation");
+
+// Le destinataire ne peut pas annuler l'invitation sortante ; seul l'expéditeur peut.
+const recipientCannotCancel = await call("/rest/v1/rpc/msg_invite_cancel", {
+  method: "POST",
+  bearer: observer.token,
+  body: { p_invite: cancelInvite },
+});
+assert.equal(recipientCannotCancel, false, "Recipient unexpectedly cancelled sender's invitation");
+const senderCancelled = await call("/rest/v1/rpc/msg_invite_cancel", {
+  method: "POST",
+  bearer: sender.token,
+  body: { p_invite: cancelInvite },
+});
+assert.equal(senderCancelled, true, "Sender could not cancel their pending invitation");
+const cancelledState = await call(
+  `/rest/v1/msg_invites?select=status&id=eq.${cancelInvite}`,
+  { bearer: sender.token },
+);
+assert.equal(cancelledState[0]?.status, "cancelled");
+
+// L'expéditeur ne peut pas refuser à la place du destinataire ; le destinataire le peut.
+const declineInvite = await call("/rest/v1/rpc/msg_invite_send", {
+  method: "POST",
+  bearer: sender.token,
+  body: { p_recipient: observer.id },
+});
+const senderCannotDecline = await call("/rest/v1/rpc/msg_invite_decline", {
+  method: "POST",
+  bearer: sender.token,
+  body: { p_invite: declineInvite },
+});
+assert.equal(senderCannotDecline, false, "Sender unexpectedly declined their own invitation");
+const observerDeclined = await call("/rest/v1/rpc/msg_invite_decline", {
+  method: "POST",
+  bearer: observer.token,
+  body: { p_invite: declineInvite },
+});
+assert.equal(observerDeclined, true, "Recipient could not decline the invitation");
+const declinedState = await call(
+  `/rest/v1/msg_invites?select=status&id=eq.${declineInvite}`,
+  { bearer: observer.token },
+);
+assert.equal(declinedState[0]?.status, "declined");
+
+// Annulation et refus ne doivent pas créer de conversation directe.
+const observerDirects = await call("/rest/v1/msg_conversations?select=id,type&type=eq.direct", {
+  bearer: observer.token,
+});
+assert.equal(observerDirects.length, 0, "A direct conversation exists after cancellation/decline");
+
+console.log("PASS: GoTrue JWT, PostgREST, RLS, consentement, recherche minimale, confidentialité des invitations, annulation et refus");
+
