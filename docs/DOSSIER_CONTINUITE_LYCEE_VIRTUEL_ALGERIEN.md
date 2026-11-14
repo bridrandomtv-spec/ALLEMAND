@@ -2280,3 +2280,34 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 ### Prochaine étape
 - Auditer le test local Lot 510 et sa fixture pour vérifier que son protocole WebSocket démontre bien l'accusé de réception de l'abonnement, l'événement INSERT et la lecture RLS, sans dépendre d'un état de runner inaccessible.
 - Ne pas créer un nouveau correctif applicatif tant que le test local n'est pas exécutable ; conserver les protections déjà présentes dans PR #17 comme correctif candidat, sans les promouvoir en production.
+
+
+
+## Lot 519 — audit statique approfondi du test CDC `msg_messages` (14 novembre 2026)
+
+### Éléments vérifiés
+- Lecture complète de `ci/msg-supabase-local-test.mjs`, `ci/msg-supabase-local-bootstrap.sql`, `.github/workflows/msg-supabase-local-test.yml`, ainsi que des migrations locales `202611130001_msg_invitation_consent.sql` et `202611130003_msg_student_discovery.sql`.
+- Le test de message est bien séquencé après l'acceptation d'une invitation synthétique : le destinataire est donc déjà membre de la conversation avant l'ouverture du canal.
+- Le WebSocket utilise le JWT du destinataire et une souscription `postgres_changes` ciblée sur `public.msg_messages`, événement `INSERT`, filtre `conversation_id=eq.<id>`.
+- Le test attend à la fois l'accusé de réception `phx_reply` contenant la table attendue et le message système `postgres_changes` avec `status=ok` avant d'insérer le message. Il ne confond donc pas simplement l'ouverture TCP/WebSocket avec la disponibilité CDC.
+- L'insertion HTTP utilise le JWT de l'expéditeur. Le test vérifie ensuite le contenu, l'identifiant, le conversation_id et le sender_id de l'événement, relit le message avec le JWT du destinataire et vérifie qu'un troisième compte non membre ne peut pas le lire.
+- La fixture active RLS sur `msg_messages`, accorde les privilèges SQL nécessaires à `authenticated`, ajoute la table à `supabase_realtime` et laisse les migrations ciblées installer les règles d'accès et RPC de consentement.
+- Le workflow démarre une pile Supabase CLI locale éphémère, prépare le schéma synthétique, applique uniquement les deux migrations Messenger ciblées, puis exécute le test Node 22. Les contrôles et diagnostics sont exécutés dans ce job local ; aucune URL de projet Supabase hébergé n'est fournie par ce workflow.
+
+### Résultat de l'audit
+- Aucun défaut certain dans le scénario INSERT/CDC/lecture RLS n'a été démontré par la lecture statique. Le test couvre bien le trajet qui manquait et attend explicitement la disponibilité CDC.
+- Cette conclusion est uniquement statique : elle ne prouve pas que le test passe sur une pile locale. Les versions effectives des images Realtime/Postgres, le handshake réel et le format des trames ne peuvent être validés sans exécution.
+- Les assertions de confidentialité portent sur la lecture PostgREST du tiers non membre ; le test ne crée pas encore de seconde souscription Realtime par un tiers pour démontrer directement l'absence d'événement chez cet abonné. Cela constitue une extension possible, mais elle ne doit pas être confondue avec le test de réception principal.
+- Le scénario n'ajoute pas encore UPDATE, suppression logique ou reconnexion. Ces cas restent volontairement en attente du succès du test INSERT de base.
+- Aucun changement applicatif, SQL ou workflow n'a été effectué au Lot 519 ; aucune relance identique des workflows n'a été faite, car l'annotation GitHub de blocage de facturation empêche les jobs de démarrer.
+
+### État GitHub revérifié
+- PR #17 : ouverte, non fusionnée, branche `design/prototypes-67-74-alignment`, HEAD `f6509d8a4a199c6a856b79717b2b672bbe2d3c15`, 2 845 commits / 235 fichiers dans cette PR. Le volume de cette PR renforce la décision de ne pas l'utiliser comme véhicule de promotion isolé du correctif Messenger.
+- PR #19 : ouverte, brouillon, non fusionnée, branche `fix/restore-multaqa-only`, HEAD `f56663fb66d0a872488258032d5e8c943097ea6a`, exactement cinq fichiers modifiés (`app.js`, `index.html`, `multaqa.js`, `style-prototype-dz.css`, `sw.js`). Elle reste distincte du diagnostic Messenger.
+- Les deux PR ont un indicateur GitHub `mergeable=true` au moment de la lecture ; cela ne constitue ni un résultat de tests ni une autorisation de fusion.
+- `main` n'a pas été modifiée. Pas de fusion, pas de déploiement Cloudflare, pas d'accès en écriture à Supabase hébergé.
+
+### Suite du diagnostic
+- Ne pas élargir les tests tant que le test INSERT n'a pas une première exécution réelle.
+- La prochaine validation doit être un lancement local isolé de la pile Supabase CLI ou une exécution GitHub après résolution volontaire du blocage de provisionnement. Aucun changement de facturation n'est entrepris.
+- Après réussite du test de base, ajouter séparément une souscription tiers pour vérifier le filtrage RLS Realtime, puis UPDATE, soft-delete et reconnexion. Si le test échoue, exploiter d'abord le premier message d'erreur et les journaux Realtime du conteneur avant de modifier le code applicatif.
