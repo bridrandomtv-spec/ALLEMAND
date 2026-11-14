@@ -2735,3 +2735,14 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucune modification de code Messenger n'a été faite dans ce lot : le code actuel possède déjà les gardes de rendu et la souscription filtrée ; sans preuve issue du navigateur ou du test local, ajouter un autre correctif serait spéculatif et risquerait de répéter les erreurs antérieures.
 - Confirmation utilisateur de la nouvelle interface enregistrée ; déploiement visuel confirmé. État fonctionnel Messenger encore partiellement bloqué par les migrations d'invitations absentes ; réception Realtime des messages non résolue dynamiquement. Aucune migration appliquée, aucun message ou compte personnel consulté, aucune donnée modifiée dans Supabase.
 - Prochaine action utile : diagnostic instrumenté d'une seule session Messenger réelle, dans deux navigateurs/comptes de test contrôlés par l'utilisateur : relever l'état SUBSCRIBED du destinataire, l'identifiant non sensible de conversation, le résultat de l'INSERT HTTP expéditeur et l'arrivée (ou non) de l'INSERT Realtime. Ne pas demander les mots de passe ou jetons ; masquer les identifiants personnels dans les captures.
+
+## Lot 552 — accès centralisé à la vérification scolaire (14 novembre 2026)
+- Audit de `main` : le formulaire réel reste dans Messenger (`msg.js`), alimenté par `SB.msgMyVerification()` et `SB.msgRequestVerification()`. Le Forum (`multaqa.js`) bloque l’accès aux élèves non vérifiés mais n’offrait aucun bouton vers ce formulaire. Le tableau de bord renvoyait seulement vers les messages sans expliquer le statut.
+- Mise en place d’un parcours unique sans dupliquer le formulaire :
+  - tableau de bord : nouvelle carte « الهوية المدرسية » ouvrant « حسابي » ;
+  - compte étudiant : nouvelle carte affichant le statut réel (`verifie`, `en_attente`, `rejete`, `non_verifie`) obtenu via `msgMyVerification()`, avec bouton vers le formulaire Messenger ;
+  - Forum : l’écran de blocage propose désormais un accès direct vers Messenger, avec libellé adapté à l’état (en attente, rejeté ou non vérifié).
+- Le formulaire de saisie et l’envoi de demande restent exclusivement dans Messenger. Pas de nouvelle table, RPC, migration, écriture SQL, changement Auth/RLS, abonnement ou paiement.
+- Garde de session ajoutée au rendu asynchrone du statut du compte : un résultat tardif ne met pas à jour l’écran si le compte affiché a changé.
+- Cache synchronisé : `app.js?v=3570`, `multaqa.js?v=4`, Service Worker `dz-de-v3.185.0.0.168` ; contrôles statiques `check-multaqa.mjs` et `check-msg.mjs` adaptés.
+- Branche de travail : `feat/verification-school-central-access` (créée depuis `main`). À ce stade, modifications préparées sur cette branche ; aucun merge ni déploiement Cloudflare. Tests locaux et CI à confirmer avant PR ; les runners GitHub peuvent rester indisponibles en raison de la restriction de facturation déjà observée.
