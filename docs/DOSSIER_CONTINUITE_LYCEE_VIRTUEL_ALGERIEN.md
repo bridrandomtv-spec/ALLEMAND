@@ -2330,3 +2330,14 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - L'annotation du run GitHub Actions 43596842138 confirme que le runner n'a pas été provisionné en raison d'un problème de facturation/limite de dépenses ; l'avertissement Ubuntu 26 est indépendant et informatif.
 - Le test reste non exécuté. Aucun résultat dynamique ne peut être annoncé.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée ; aucun déploiement Cloudflare et aucune écriture sur Supabase hébergé.
+
+## Lot 521 — contrôle de confidentialité Realtime pour les non-membres
+
+- Audit statique comparatif de `supabase/msg_schema.sql` et `ci/msg-supabase-local-bootstrap.sql` : le schéma de production définit sur `msg_messages` les colonnes `id`, `conversation_id`, `sender_id`, `body`, `attachment_id`, `flagged`, `created_at`, `edited_at`, `deleted_at`. Le fixture local reprend maintenant ces colonnes (dont `attachment_id`, ajouté au Lot 520).
+- Le schéma de référence protège la lecture de `msg_messages` par la politique `msg messages lecture`, limitée aux membres de la conversation et aux modérateurs. La publication Realtime contient `public.msg_messages`. Le fixture local reproduit la politique de lecture membre/non-membre et l'ajout à la publication, mais reste volontairement minimal : il ne reproduit pas les triggers de limitation de débit, auto-flag, journalisation ni l'ensemble du modèle de modération.
+- Lot 521 : ajout dans `ci/msg-supabase-local-test.mjs` d'un second abonné WebSocket synthétique, authentifié mais extérieur à la conversation. Il doit d'abord obtenir l'accusé de souscription et l'état CDC-ready ; ensuite l'expéditeur insère un message, le destinataire doit le recevoir, et le test observe pendant 2 secondes que le compte extérieur ne reçoit aucun événement pour cette conversation. Le test vérifie toujours séparément le refus de lecture REST du non-membre.
+- Commit du test : `85dfa323d4526912912d16050a9a163cdc892b35`.
+- Ce contrôle est ajouté au test local éphémère uniquement. Il ne touche ni les comptes réels, ni le projet Supabase hébergé, ni les politiques RLS de production, ni Cloudflare.
+- **Non exécuté** : le runner GitHub Actions demeure bloqué avant démarrage par l'annotation de facturation du compte. Le nouveau contrôle est donc une assertion préparée, pas un résultat de test. Il faudra exécuter le workflow dans un environnement local isolé ou après rétablissement indépendant de l'accès aux runners, sans modifier le plafond de dépenses.
+- PR #17 demeure ouverte et non fusionnée ; `main` reste inchangée. Aucun déploiement.
+
