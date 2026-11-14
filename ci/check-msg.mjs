@@ -123,7 +123,7 @@ ok(!msgjs.includes('رقم الاشتراك') && !msgjs.includes('رقم اشت�
 ok(msgjs.includes('رقم التسجيل المدرسي') && msgjs.includes('التحقق المدرسي مجاني'), 'parcours de vérification gratuit et libellé scolaire cohérent');
 const verificationFn = sbjs.slice(sbjs.indexOf('async function msgRequestVerification('), sbjs.indexOf('async function msgVerificationQueue('));
 ok(/async function msgInvites\(\)/.test(sbjs), 'lecture du centre des invitations disponible');
-ok(/async function msgInviteSend\(recipientId\)/.test(sbjs) && /msg_invite_send/.test(sbjs), 'envoi d’invitation exclusivement par RPC serveur');
+ok(/async function msgInviteSend\(studentKey\)/.test(sbjs) && sbjs.includes("rpc('msg_invite_send_by_key',{p_student_key:studentKey})"), 'envoi d’invitation par jeton opaque via RPC serveur');
 ok(/async function msgInviteAccept\(inviteId\)/.test(sbjs) && /msg_invite_accept/.test(sbjs), 'acceptation explicite d’une invitation par RPC');
 ok(/async function msgInviteDecline\(inviteId\)/.test(sbjs) && /msg_invite_decline/.test(sbjs), 'refus réservé au destinataire via RPC');
 ok(/async function msgInviteCancel\(inviteId\)/.test(sbjs) && /msg_invite_cancel/.test(sbjs), 'annulation réservée à l’expéditeur via RPC');
