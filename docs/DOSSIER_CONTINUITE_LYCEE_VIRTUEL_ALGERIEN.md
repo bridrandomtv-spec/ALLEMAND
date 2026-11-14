@@ -1703,3 +1703,25 @@
 - Aucun test PostgreSQL ou Realtime n'a été exécuté dans ces cinq runs ; aucune version réelle du conteneur Realtime n'a donc été récupérée. L'hypothèse du défaut v2.143.3 demeure non confirmée.
 - Aucun changement du projet Supabase actif, d'Auth, RLS, publication, données, secrets ou facturation. Aucun déploiement de production. PR #17 reste ouverte et non fusionnée.
 - Suite : ne pas confondre les échecs sans étapes avec les résultats des tests. Reprendre l'exécution uniquement quand un runner fournit une étape/log exploitable, ou reproduire la pile sur un environnement local Docker déjà disponible. À la première exécution réelle, relever l'image/digest Realtime et les journaux CDC avant tout correctif.
+
+
+
+## Lot 493 — audit de compatibilité Messenger client / Supabase actif (14 novembre 2026)
+
+- Audit réalisé sans modification de code ni écriture dans Supabase. PR #17 observée ouverte et non fusionnée ; HEAD avant documentation : `f231057ecc7d68b30d29b020848b51cb193b00d7`.
+- Comparaison historique : au commit `66ee5cd5d3c407e5768d2d244c5c42ab0e7b4867`, avant l'ajout du centre des invitations, `msg.js` ne contenait ni appel à `msgInvites()` ni parcours `msgStudentSearch()`. Le client `supabase/supabase.js` de cette révision n'appelait pas les RPC d'invitation/découverte. La base active conserve aujourd'hui l'ancien contrat avec `msg_open_direct(uuid)` et `msg_can_dm(uuid,uuid)`.
+- Historique précis du décalage :
+  - Commit `a4c33ea0b57a423347c449dfd8a9995514f5d441` : ajout dans le client des appels à `msg_invites`, `msg_invite_send`, `msg_invite_accept`, `msg_invite_decline`, `msg_invite_cancel`. Le commentaire du code précise que le centre est disponible après migration serveur.
+  - Commit `614340fb0c1874131e3a3261255a817f309014f5` : appel inconditionnel à `msgInvites()` depuis le rendu de la liste et affichage du centre des invitations.
+  - Commit `cd12f4ea73cd34f5e0cf229144f12a405e024124` : ajout de la recherche de camarades et du parcours d'envoi.
+  - Commit `a24dabcae19c72c9c960513723dd8b02f741ea72` puis `cfea362aad8ca605adffe19c880e8cecb3b46727` / `b5806bac17123609fd8d1dc90ae1f08ec51e7e4f` : remplacement du contrat par jeton opaque ; le client appelle désormais `msg_student_search` et `msg_invite_send_by_key`.
+- Contrôle en lecture seule du projet Supabase actif le 14 novembre :
+  - `to_regclass('public.msg_invites')`, `msg_discovery_limits` et `msg_discovery_targets` retournent tous `NULL` : les tables du nouveau parcours sont absentes.
+  - Le catalogue `public` contient `msg_open_direct(p_other uuid)` et `msg_can_dm(a uuid,b uuid)`, mais aucune des RPC `msg_student_search`, `msg_invite_send_by_key`, `msg_invite_send`, `msg_invite_accept`, `msg_invite_decline` ou `msg_invite_cancel`.
+  - L'historique des migrations actives ne contient pas les migrations de branche `202611130001_msg_invitation_consent.sql` ni `202611130003_msg_student_discovery.sql`.
+  - La définition de `msg_open_direct` reste présente et contrôle `msg_can_dm` avant de créer/réutiliser un DM. Aucune ligne de compte, de profil, de conversation ou de message n'a été lue.
+- Conséquence confirmée : le client actuel utilise un contrat serveur non déployé. L'ouverture de la liste tente de lire `msg_invites` et affiche le message d'indisponibilité du centre ; les élèves vérifiés voient une recherche dont la RPC n'existe pas ; l'envoi/acceptation/refus/annulation des invitations ne peut pas fonctionner sur la base active. Cela ne prouve pas que la lecture des groupes ou des anciennes conversations est cassée : ces parcours sont distincts et doivent être testés séparément.
+- Cause à distinguer du problème GitHub Actions : les jobs sans étapes expliquent l'absence de tests automatisés, mais ne causent pas le décalage client/base ci-dessus. L'hypothèse de version Realtime n'est pas nécessaire pour expliquer l'échec des invitations.
+- Décision de sécurité : ne pas appliquer les migrations à Supabase actif et ne pas réactiver silencieusement `msg_open_direct` depuis le client pour contourner le consentement. Le nouveau flux doit soit être masqué/neutralisé tant que son backend n'est pas déployé, soit être déployé après validation PostgreSQL isolée et autorisation explicite distincte.
+- Aucun code applicatif modifié dans ce lot. Seul ce dossier de continuité est mis à jour sur la branche. Aucun changement Supabase actif, Auth, RLS, schéma, données, Realtime, secrets, facturation, `main` ou déploiement de production. PR #17 reste ouverte et non fusionnée.
+- Prochaine étape recommandée : décider de la stratégie de compatibilité avant toute modification : (A) retour temporaire au parcours client historique compatible avec la base actuelle, en examinant séparément les garanties de consentement ; ou (B) finalisation des migrations et tests PostgreSQL isolés, puis demande d'autorisation avant application au projet actif. Aucun choix n'est appliqué par ce lot.
