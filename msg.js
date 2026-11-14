@@ -53,6 +53,7 @@
   }
   function closeChannel(){
     state.channelEpoch++;
+    if(state.recoveryTimer){ clearTimeout(state.recoveryTimer); state.recoveryTimer=null; }
     if(state.ch){ try{ state.ch.unsubscribe(); }catch(e){} state.ch = null; }
   }
   function closeInviteChannel(){
@@ -354,6 +355,7 @@
   document.addEventListener('dz:view', function(e){
     var v = (e && e.detail && (e.detail.view||e.detail)) || '';
     state.inviteViewActive = String(v).indexOf('msg')>=0;
+    if(!state.inviteViewActive) state.conv = null;
     closeChannel();
     closeInviteChannel();
     if(state.inviteViewActive){ state.conv=null; renderList(); }
