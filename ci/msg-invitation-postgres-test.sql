@@ -201,11 +201,11 @@ do $$ begin
  if has_function_privilege('authenticated','public.msg_invite_accept(uuid)','EXECUTE') is not true then
    raise exception 'accept_rpc_not_granted';
  end if;
-end $;
+end $$;
 
 -- Le test passe en rôle propriétaire pour isoler le trigger du filtrage RLS.
 reset role;
-do $
+do $$
 declare v_conv bigint;
 begin
  begin
