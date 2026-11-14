@@ -36,12 +36,12 @@ async function upload(who,path) {
   assert.ok(r.ok,`Storage upload ${path}: HTTP ${r.status} ${raw}`);
 }
 async function removeObject(who,path,allowed,bucket='prive') {
-  const encoded=path.split('/').map(encodeURIComponent).join('/');
-  const url=api+'/storage/v1/object/'+bucket+'/'+encoded;
-  const r=await fetch(url,{method:'DELETE',headers:{apikey:anon,Authorization:'Bearer '+who.token,'Content-Type':'application/json'}});
+  const url=api+'/storage/v1/object/'+bucket;
+  const r=await fetch(url,{method:'DELETE',headers:{apikey:anon,Authorization:'Bearer '+who.token,'Content-Type':'application/json'},body:JSON.stringify({prefixes:[path]})});
   const raw=await r.text();
   if(allowed) assert.ok(r.ok,'Storage DELETE '+path+': HTTP '+r.status+': '+raw);
-  const probe=await fetch(url,{headers:{apikey:service,Authorization:'Bearer '+service}});
+  const encoded=path.split('/').map(encodeURIComponent).join('/');
+  const probe=await fetch(url+'/'+encoded,{headers:{apikey:service,Authorization:'Bearer '+service}});
   assert.equal(probe.ok,!allowed,'Storage object '+path+': expected exists='+(!allowed)+', GET returned HTTP '+probe.status);
 }
 async function createMessage(sender,conversationId) {
