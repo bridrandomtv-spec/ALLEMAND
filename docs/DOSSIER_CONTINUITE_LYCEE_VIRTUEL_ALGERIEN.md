@@ -510,3 +510,14 @@
 - Commit workflow : `559cd3cbd879bb8a4b38ec32e7ad46d68a3a6fa3`. Tests déclenchés automatiquement; résultats à vérifier.
 - Aucune modification de schéma/migration, RLS ou service hébergé. PR #17 reste ouverte et non fusionnée.
 - Étape suivante : examiner les objets `realtime`, les variables effectives du conteneur et les logs complets pour déterminer si le mode CDC Postgres Changes est désactivé ou si le service Realtime ne lance pas son worker de réplication. Ne pas déclarer Messenger opérationnel tant que l'événement temps réel n'est pas effectivement reçu.
+
+
+## Lot 465 — inspection de la souscription CDC en direct (14 novembre 2026)
+
+- Le run `43542139984` sur le HEAD `6a4915fc` termine en échec uniquement sur l'attente d'un événement Realtime : l'invitation est persistée (contrôle service_role), lisible par le destinataire (JWT GoTrue + RLS), la souscription WebSocket est acceptée (`phx_reply status=ok` et `Subscribed to PostgreSQL`), mais aucun `postgres_changes INSERT` n'arrive en 12 secondes.
+- Les journaux précisent que le slot `wal2json` est actif et que la connexion logique visible dans `pg_stat_replication` correspond au slot `pgoutput` du flux Broadcast `realtime.messages`. La publication `supabase_realtime` autorise INSERT/UPDATE/DELETE/TRUNCATE et contient bien `public.msg_invites`; la table garde sa PK, replica identity `d` et RLS activé.
+- Le diagnostic du conteneur du Lot 464 contenait une continuation de ligne shell invalide (`\\` doublé), qui a interrompu l'inspection des variables. Lot 465 remplace la commande par un pipeline sur une seule ligne et capture aussi `DB_AFTER_CONNECT_QUERY` et `PORT` sans exposer de secrets.
+- Le test Node interroge maintenant `realtime.subscription` pendant que le WebSocket destinataire est effectivement souscrit, et affiche uniquement les champs de diagnostic non secrets (identifiant de souscription, table, filtres, rôle, action). Cela doit confirmer si la souscription CDC est enregistrée pour `public.msg_invites` au moment précis de l'envoi.
+- Commits : workflow `70c0ce2f80952daf3eb2eb88d30dee04a8ddf2ee`; test `58a285dff8212ff3439240f9f349301f1c00d26e`. Le dossier est mis à jour dans le commit suivant; exécutions automatiques à contrôler.
+- Aucune modification des migrations, du runtime Messenger, des policies, de la base Supabase hébergée ou des données réelles. PR #17 reste ouverte et non fusionnée; aucun changement sur `main` et aucun déploiement Cloudflare.
+- Ne pas déclarer Messenger opérationnel tant que le destinataire n'a pas reçu l'événement temps réel dans le test.
