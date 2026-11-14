@@ -2105,3 +2105,11 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 ### Étape suivante
 - Obtenir un run exploitable de `messenger-supabase-local` et examiner en premier lieu l'accusé de réception de l'abonnement CDC, le filtre de conversation, puis la trame INSERT.
 - Si le test passe, seulement alors ajouter les tests UPDATE (édition/suppression logique) et reconnexion. Ne pas déduire ces comportements du test INSERT.
+
+
+### Addendum Lot 510 — précision du protocole Realtime et état final
+- Le contrôle de l'accusé de réception du `phx_join` a été rendu tolérant aux différences de représentation du filtre dans la réponse serveur : il vérifie que la table `public.msg_messages` est bien reconnue ; le test vérifie ensuite sur l'événement livré que `conversation_id` correspond exactement au fil demandé. Cela évite de rejeter un abonnement valide uniquement parce que le serveur ne sérialise pas le champ `filter` de la même façon.
+- Commit du test : `319abbd8c9f77242528474158726c72af8b8c4a8`.
+- Le run précédent `43593417351` reste inexploitable : job terminé en échec, mais aucune étape ni URL de logs ; tentative de lecture des logs = `BlobNotFound`. Il ne permet pas de conclure sur le nouveau scénario.
+- Sur le HEAD `319abbd8c9f77242528474158726c72af8b8c4a8`, le dernier relevé de checks exposait seulement le check Supabase Preview `skipped`; aucun résultat de test `msg_messages` n'est donc déclaré.
+- PR #17 : toujours `open`, `merged=false`. Le champ `mergeable` a retourné `false` lors de cette lecture ; aucune fusion ni rebase n'a été tentée. Recalculer l'état avant toute décision future.
