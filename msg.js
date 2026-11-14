@@ -9,7 +9,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
-  var state = { conv:null, me:null, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, recoveryAttempts:0, updateRefreshTimer:null, inviteCh:null, inviteEpoch:0, inviteRecoveryTimer:null, inviteRecoveryAttempts:0, inviteNeedsRecovery:false, inviteViewActive:false, names:{}, peers:{} };
+  var state = { conv:null, me:null, authEpoch:0, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, recoveryAttempts:0, updateRefreshTimer:null, inviteCh:null, inviteEpoch:0, inviteRecoveryTimer:null, inviteRecoveryAttempts:0, inviteNeedsRecovery:false, inviteViewActive:false, names:{}, peers:{} };
   var authClient = null, authSubscription = null;
   function bindAuthLifecycle(client){
     if(!client || !client.auth || typeof client.auth.onAuthStateChange!=='function' || authClient===client) return;
@@ -25,12 +25,17 @@
       setTimeout(function(){
         if(authClient!==client) return;
         var activeConv = state.conv;
+        /* Toute transition d'identité invalide les rendus et opérations UI en vol,
+           puis ferme les canaux de l'ancien contexte avant de reconstruire la vue. */
+        state.authEpoch++;
+        state.renderEpoch++;
+        closeChannel();
+        closeInviteChannel();
+        state.me = null;
+        state.meName = 'أنا';
+        state.peers = {};
         if(event==='SIGNED_OUT'){
-          closeChannel();
-          closeInviteChannel();
           state.conv = null;
-          state.me = null;
-          state.meName = 'أنا';
           if(state.inviteViewActive) renderList();
           return;
         }
@@ -421,21 +426,21 @@
   async function send(){
     var t = el('msgText'), err = el('msgErr'), b = document.querySelector('#msgBody [data-act="send"]');
     if(!t || !state.conv || !t.value.trim()) return;
-    var conv = state.conv, body = t.value;
+    var conv = state.conv, body = t.value, identityEpoch = state.authEpoch;
     if(b) b.disabled=true;
     var r;
     try{
       r = await window.SB.msgSend(conv, body);
     }catch(error){
       /* Une réponse réseau tardive ne doit pas réécrire une autre conversation. */
-      if(state.conv!==conv) return;
+      if(state.conv!==conv || state.authEpoch!==identityEpoch) return;
       var currentErr=el('msgErr'), currentButton=document.querySelector('#msgBody [data-act="send"]');
       if(currentErr){ currentErr.hidden=false; currentErr.textContent='⛔ '+String(error && error.message || error); }
       if(currentButton) currentButton.disabled=false;
       return;
     }
     /* L'utilisateur peut avoir changé de conversation pendant l'INSERT. */
-    if(state.conv!==conv) return;
+    if(state.conv!==conv || state.authEpoch!==identityEpoch) return;
     if(!r || !r.ok){
       var currentErr=el('msgErr'), currentButton=document.querySelector('#msgBody [data-act="send"]');
       if(currentErr){ currentErr.hidden=false; currentErr.textContent='⛔ '+((r&&r.err)||'تعذّر إرسال الرسالة'); }
@@ -502,7 +507,7 @@
       var messageId = t.getAttribute('data-mid');
       var row = t.closest('.msg-row');
       if(!messageId || !row || !row.classList.contains('me') || !state.me){ return; }
-      var actionConv = state.conv;
+      var actionConv = state.conv, actionIdentityEpoch = state.authEpoch;
       if(msgAct==='edit'){
         var bodyNode = row.querySelector('.msg-body');
         var currentText = bodyNode ? bodyNode.textContent.replace(/\s*·\s*(عُدّلت|تم الإبلاغ عنها).*$/,'').trim() : '';
@@ -512,8 +517,8 @@
         t.disabled=true;
         window.SB.msgEdit(messageId,revised).then(function(result){
           if(!result || !result.ok){ window.alert('⛔ '+((result&&result.err)||'تعذّر تعديل الرسالة')); }
-          if(state.conv===actionConv) renderThread(actionConv, true);
-        }).catch(function(error){ window.alert('⛔ '+String(error&&error.message||error)); if(state.conv===actionConv) renderThread(actionConv, true); });
+          if(state.conv===actionConv && state.authEpoch===actionIdentityEpoch) renderThread(actionConv, true);
+        }).catch(function(error){ window.alert('⛔ '+String(error&&error.message||error)); if(state.conv===actionConv && state.authEpoch===actionIdentityEpoch) renderThread(actionConv, true); });
         return;
       }
       if(msgAct==='delete'){
@@ -521,8 +526,8 @@
         t.disabled=true;
         window.SB.msgDelete(messageId).then(function(result){
           if(!result || !result.ok){ window.alert('⛔ '+((result&&result.err)||'تعذّر حذف الرسالة')); }
-          if(state.conv===actionConv) renderThread(actionConv, true);
-        }).catch(function(error){ window.alert('⛔ '+String(error&&error.message||error)); if(state.conv===actionConv) renderThread(actionConv, true); });
+          if(state.conv===actionConv && state.authEpoch===actionIdentityEpoch) renderThread(actionConv, true);
+        }).catch(function(error){ window.alert('⛔ '+String(error&&error.message||error)); if(state.conv===actionConv && state.authEpoch===actionIdentityEpoch) renderThread(actionConv, true); });
         return;
       }
     }
