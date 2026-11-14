@@ -708,3 +708,10 @@
 - Vérification textuelle des cinq fichiers après modifications : migration, wrapper, UI, test structurel et test Supabase local. Le seul `student_id` restant dans le parcours de découverte est dans la table privée et dans les opérations SQL internes ; il n'est plus retourné au client. Aucun test d'exécution n'a encore été lancé avec succès : les runners GitHub précédents ne démarraient pas les étapes. Ne pas présenter le correctif comme testé en runtime.
 - Le prévol Supabase cloud reste en lecture seule : migration 003 non appliquée, table privée et RPC de jeton absentes de la production tant que la migration n'a pas été activée. Aucun accès ni changement de données réelles. Aucun secret Cloudflare/Supabase lu ou affiché.
 - Contrat produit inchangé : seuls les élèves vérifiés du même niveau, filière et wilaya sont découvrables ; la découverte n'ouvre pas un DM ; l'invitation nécessite toujours le consentement explicite du destinataire.
+
+
+### Complément Lot 480 — rétention des jetons et résultat des workflows
+- Durcissement complémentaire de la rétention : ajout d'un index dédié sur `expires_at` et nettoyage des jetons expirés de tous les acteurs à chaque nouvelle recherche. Cela évite de conserver indéfiniment les correspondances expirées des comptes qui ne reviennent pas dans l'annuaire. Assertion correspondante ajoutée dans `ci/check-msg.mjs`.
+- Dernière exécution des cinq workflows sur le premier commit de Lot 480 : `43583691064` consentement PostgreSQL, `43583691047` validation structurelle, `43583691045` découverte PostgreSQL, `43583691040` Multaqa PostgreSQL, `43583690984` Messenger local. Tous sont en échec avant exécution : `runner_id=0`, aucun runner et `steps=[]`. Les tests d'intégration n'ont donc pas validé ce lot en runtime.
+- Le check Cloudflare de la version antérieure du code (Lot 479) a réussi ; aucun résultat Cloudflare n'est revendiqué pour les derniers commits du Lot 480 tant qu'un check correspondant n'a pas été relu.
+- Aucun changement sur Supabase cloud, aucun déploiement production et aucune modification de secrets/bindings Cloudflare. Migrations 001/003 toujours préparées uniquement sur la branche.
