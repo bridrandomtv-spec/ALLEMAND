@@ -2137,3 +2137,26 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Aucun nouveau test d'envoi sur les comptes réels, aucune écriture Supabase de production, aucune branche payante, aucun déploiement Cloudflare.
 - Aucun correctif applicatif supplémentaire n'est justifié par le seul échec de runner. Priorité : obtenir une exécution GitHub avec runner attribué et étapes visibles, puis examiner le premier vrai résultat du test avant d'étendre le périmètre aux UPDATE, suppressions logiques et reconnexions.
 - PR #17 reste ouverte et non fusionnée ; `main` reste intacte. Aucun rebase ni merge tenté.
+
+
+---
+
+## Lot 512 — recontrôle après Lot 511 : état PR, runner et preview (14 novembre 2026)
+
+### État confirmé sur le HEAD du Lot 511
+- HEAD de branche : `afda8427ed0b7a4880bb2e2de958aefc6e4466df`.
+- PR #17 : `open`, `merged=false`, cible `main`. Le champ GitHub `mergeable` est revenu à `true` lors du recontrôle ; la valeur `false` de la lecture précédente était transitoire/non stabilisée. Aucune fusion ni rebase n'a été effectuée.
+- La comparaison avec `main` conserve un écart important de branche : `2838` commits en avance et `4` en retard selon l'API compare. Le merge-base indiqué est `51acfe8c97b6e152208d592dbd2c5bbde5c5c38e`. Ne pas interpréter `mergeable=true` comme une approbation de fusion ou comme une validation fonctionnelle.
+- Le commit `afda842` ne modifie que le dossier de continuité ; aucun fichier Messenger applicatif n'a été modifié dans ce commit.
+
+### Nouveaux résultats CI / Cloudflare
+- Les workflows déclenchés sur `afda842` ont de nouveau échoué quasi immédiatement. Le diagnostic minimal présente deux jobs (`ubuntu-latest` et `ubuntu-22.04`) terminés en échec, avec `steps=null`; le job Messenger local présente également `steps=null`.
+- Téléchargement des logs des jobs de diagnostic et Messenger : réponse `BlobNotFound`. Aucun script de test n'a pu être confirmé comme exécuté. Le problème reste en amont du test et sa cause précise n'est pas démontrée.
+- Le check Cloudflare `Workers Builds: allemand` sur `afda842` est `success`, avec build ID `a7d069d8-6a3d-4196-a831-965b10fb0cb3`, présenté par le check comme un build de preview `design-prototypes-67-74-alignment`. Ce résultat confirme la construction du preview, pas une validation Messenger ni un déploiement production.
+- Le check Supabase Preview est `skipped` : la branche n'est associée à aucune branche Supabase dédiée. Aucun environnement Supabase isolé n'est donc disponible pour un essai navigateur sûr avec plusieurs comptes.
+
+### Décision
+- Pas de nouveau changement applicatif Messenger : l'absence de runner/logs ne fournit aucun signal permettant de choisir un correctif client, SQL, Realtime ou RLS.
+- Pas de test d'envoi via le preview Cloudflare : en l'absence de branche Supabase isolée, le preview peut utiliser la configuration Supabase active ; ne pas risquer d'écrire dans les conversations réelles.
+- Production Supabase, données réelles et `main` non modifiées dans ce lot. PR #17 demeure ouverte et non fusionnée.
+- Prochaine action technique : rétablir une exécution CI observable (runner attribué, étapes et logs) ou obtenir un environnement Supabase local/isolé exécutable, puis reprendre le test de réception. Ne pas multiplier les modifications de `msg.js` sans résultat de ce test.
