@@ -332,3 +332,16 @@
 - Les quatre workflows du commit `58f92b7` ont été déclenchés et étaient encore en cours lors de la rédaction de cette note : CI principale run `43535465882`, consentement Messenger run `43535465836`, découverte Messenger run `43535465842`, PostgreSQL `ملتقى الطلاب` run `43535465837`. Ne pas déclarer cette extension validée avant leurs conclusions finales.
 - Les tests restent limités à PostgreSQL 17 éphémère avec comptes synthétiques. Ils ne valident pas encore les JWT Supabase réels, l'expérience navigateur, les notifications Realtime en environnement actif ni la disponibilité de Messenger en production.
 - Les migrations Messenger `202611130001_msg_invitation_consent.sql` et `202611130003_msg_student_discovery.sql` demeurent préparatoires et non appliquées à Supabase. Aucun message privé réel consulté, aucune modification de `main`, aucun déploiement. PR #17 reste ouverte et non fusionnée.
+
+
+### Résultats définitifs — Lot 454, commit `848d232b0ea5a900da20de699b667ae2ec54f475` (14 novembre 2026)
+- Correction du SQL de test : les blocs anonymes des scénarios d'expiration et de blocage utilisent désormais les délimiteurs dollar `$$` correctement appariés.
+- Les quatre workflows sur le commit `848d232b` sont terminés avec succès :
+  - CI principale ALLEMAND : run `43535588239` — succès.
+  - PostgreSQL isolé — consentement Messenger : run `43535588296` — succès.
+  - PostgreSQL isolé — découverte Messenger : run `43535588243` — succès.
+  - PostgreSQL isolé — `ملتقى الطلاب` : run `43535588234` — succès.
+- Le test de consentement couvre désormais, dans le harnais PostgreSQL temporaire, l'envoi sans création immédiate de DM, l'acceptation uniquement par le destinataire, l'idempotence, l'annulation, le refus, l'expiration au-delà de sept jours sans création de DM, et les blocages dans les deux sens.
+- Ces succès sont des validations automatisées en environnement PostgreSQL isolé avec identités synthétiques. Ils ne constituent pas une preuve de fonctionnement en production : restent à effectuer les tests d'intégration avec JWT Supabase réels dans un environnement de test autorisé, les parcours navigateur multi-comptes, ainsi que la vérification Realtime/notifications.
+- État inchangé des protections : PR #17 ouverte et non fusionnée ; `main` non modifiée ; aucune migration Messenger appliquée au projet Supabase actif ; aucun déploiement ; aucune lecture de messages privés réels.
+- Étape suivante recommandée : préparer un environnement Supabase de test distinct (sans facturation ni modification du projet actif), puis valider les RPC avec deux comptes synthétiques et les parcours UI avant toute décision d'activation.
