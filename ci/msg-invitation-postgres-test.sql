@@ -202,7 +202,7 @@ do $$ begin
    raise exception 'accept_rpc_not_granted';
  end if;
 end $$;
-do $
+do $$
 declare v_conv bigint;
 begin
  begin
@@ -218,7 +218,7 @@ begin
    if sqlerrm='direct_membership_bypass' then raise; end if;
    if sqlerrm<>'msg_invitation_requise' then raise; end if;
  end;
-end $;
+end $$;
 
 reset role;
 select 'PASS: envoi, consentement, refus, annulation, idempotence et anti-contournement DM' as result;
