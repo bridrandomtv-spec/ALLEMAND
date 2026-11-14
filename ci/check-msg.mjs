@@ -202,9 +202,9 @@ ok(uploadFn.includes('if(!uploadContextCurrent()) return;\n      var uploaded=aw
    uploadFn.includes('catch(error)') &&
    uploadFn.includes('input.isConnected'),
    'pièce jointe : pas de transfert Storage démarré après invalidation; erreurs et éléments DOM détachés protégés');
-ok(idx.includes('msg.js?v=3526') && sw.includes('msg.js?v=3526') &&
-   sw.includes("dz-de-v3.185.0.0.165"),
-   'cache module et service worker alignés sur Lot 535');
+ok(idx.includes('msg.js?v=3527') && sw.includes('msg.js?v=3527') &&
+   sw.includes("dz-de-v3.185.0.0.166"),
+   'cache module et service worker alignés sur Lot 537');
 
 // Lot 534 — les réponses de découverte et d'invitation ne traversent pas une transition Auth.
 const peerSendStart = msgjs.indexOf("var peerKey = t.getAttribute('data-peer-key');");
@@ -258,9 +258,12 @@ ok(msgjs.includes('if(authClient!==client) return;') &&
 ok(msgjs.includes('if(state.inviteViewActive) renderList();') &&
    msgjs.includes('if(activeConv) renderThread(activeConv);'),
    'vue Messenger réconciliée après connexion ou déconnexion');
-ok(msgjs.includes('authEpoch:0') && msgjs.includes('state.authEpoch++;') &&
-   msgjs.includes('state.renderEpoch++;') && msgjs.includes('state.peers = {};'),
-   'transition Auth : invalidation des rendus en vol, fermeture des canaux et purge des clés de recherche');
+ok(msgjs.includes('authEpoch:0') && msgjs.includes('var transitionEpoch = ++state.authEpoch;') &&
+   msgjs.includes('state.renderEpoch++;') && msgjs.includes('state.peers = {};') &&
+   msgjs.includes('state.authEpoch!==transitionEpoch') &&
+   msgjs.indexOf('var transitionEpoch = ++state.authEpoch;') < msgjs.indexOf('setTimeout(function(){', msgjs.indexOf('var transitionEpoch = ++state.authEpoch;')) &&
+   msgjs.includes("if(event==='SIGNED_OUT') state.conv = null;"),
+   'transition Auth : epochs invalidés synchroniquement, ancien timer ignoré et état de session nettoyé avant le rendu différé');
 ok(msgjs.includes('identityEpoch = state.authEpoch') &&
    (msgjs.match(/state\.authEpoch!==identityEpoch/g)||[]).length>=2,
    'envoi : une réponse tardive de l’ancienne identité ne modifie pas la nouvelle session');
