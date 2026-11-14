@@ -1906,3 +1906,31 @@ Vérifier l'exécution du workflow Lot 503 sur GitHub. En cas d'échec, diagnost
 - Le premier harness ne couvre toujours pas les chemins mal formés/profondeur incorrecte, les noms de fichiers non conformes ni le second bucket. La couverture demeure partielle.
 - PR #17 au dernier contrôle : ouverte, non fusionnée, `mergeable=true`; comparaison divergente, 2 798 commits en avance et 4 en retard. Aucun rebase ni fusion.
 - Aucun changement Supabase actif, aucun déploiement, aucune action sur `main`. Le candidat SQL demeure non appliqué.
+
+
+---
+
+## Lot 504 — durcissement du harness Storage et diagnostic CI (14 novembre 2026)
+
+### Correctifs apportés au harness isolé
+- Le DELETE Storage utilise maintenant l'API batch documentée `DELETE /storage/v1/object/{bucket}` avec `{prefixes:[path]}`, au lieu d'un chemin d'objet ajouté à l'URL DELETE.
+- Après chaque tentative de suppression, le script effectue un GET de contrôle avec la clé service-role **locale uniquement** pour vérifier l'existence réelle de l'objet. Un HTTP 2xx de DELETE n'est plus considéré seul comme preuve d'une suppression.
+- Le bootstrap comprend les politiques INSERT/UPDATE nécessaires aux opérations PostgREST des deux utilisateurs synthétiques ; auparavant les tables RLS n'autorisaient que SELECT, ce qui aurait bloqué la création des messages et pièces jointes de test.
+- Le workflow désactive la confirmation e-mail uniquement dans la configuration Auth locale et met les migrations du dépôt de côté avant `supabase start`, puis les restaure et applique explicitement le seul candidat Storage après le bootstrap. Cela évite d'exécuter implicitement toutes les migrations historiques dans la pile de test.
+- Ajout d'un inventaire strict des politiques DELETE permissives applicables à `authenticated` sur `storage.objects` : le test attend uniquement la politique historique `owner delete` et la nouvelle politique Messenger.
+- Le bootstrap crée un second bucket privé synthétique et des chemins de fixture réservés aux cas négatifs. Le script vérifie désormais le refus de suppression pour : autre utilisateur, autre bucket, segment de conversation non numérique, profondeur de chemin incorrecte et nom de fichier ne commençant pas par l'UUID du propriétaire.
+- La matrice metadata conserve les cas : suppression pending non liée autorisée, autre utilisateur refusé, pièce jointe liée protégée, statut non-pending protégé.
+
+### Résultat CI observé
+- Le workflow Storage a été redéclenché et apparaît comme run #13 (`43590914771`) ; le job se termine en échec avec `steps=null`, `logs_url=null`. L'endpoint des étapes renvoie une liste vide et le téléchargement des journaux renvoie `BlobNotFound`.
+- Les workflows PostgreSQL, Realtime et CI générale du même commit échouent également sans étapes exposées. Cela pointe vers un problème en amont de l'exécution des étapes GitHub Actions, mais les données disponibles ne permettent pas d'identifier si la cause est l'allocation runner, le service de logs ou un autre incident GitHub.
+- **Aucun test du script Node, aucun bootstrap SQL et aucune migration candidate ne sont déclarés exécutés ou réussis.** Le code et le workflow sont prêts à être testés, mais l'état fonctionnel reste non validé tant qu'un run ne fournit pas des étapes et des journaux exploitables.
+
+### Intégrité et état
+- PR #17 au dernier contrôle : `state=open`, `merged=false`, `mergeable=true`.
+- Comparaison `main...design/prototypes-67-74-alignment` : `diverged`, 2 808 commits en avance et 4 en retard.
+- Aucun rebase, merge, modification de `main`, déploiement Cloudflare, écriture Supabase active ou branche payante.
+- La migration `202611140001_msg_storage_owner_cleanup.sql` reste un candidat non appliqué. Aucun changement de code client Messenger n'est entrepris avant validation effective des tests.
+
+### Suite immédiate
+Obtenir une exécution GitHub Actions avec étapes/journaux exploitables ou exécuter ce workflow dans un environnement local Docker/Supabase isolé. Si les tests démarrent, traiter les erreurs SQL/API réelles, puis seulement après succès décider si le nettoyage compensatoire peut être ajouté au client Messenger.
