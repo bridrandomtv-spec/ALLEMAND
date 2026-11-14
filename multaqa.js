@@ -1,5 +1,6 @@
 /* Lot 444 — client du fil communautaire.
-   Les RPC restent la seule frontière de sécurité ; ce module ne lit jamais profiles en REST.
+   Les publications, commentaires et réactions passent exclusivement par les RPC.
+   La carte latérale utilise SB.myProfile() pour le compte connecté, avec la RLS existante.
    Tant que la migration n'est pas appliquée, le fil affiche un état d'indisponibilité explicite. */
 (function(){
   'use strict';
