@@ -46,8 +46,11 @@ create table if not exists public.msg_discovery_targets (
   token uuid primary key default gen_random_uuid(),
   actor_id uuid not null references auth.users(id) on delete cascade,
   student_id uuid not null references auth.users(id) on delete cascade,
-  expires_at timestamptz not null default (now() + interval '5 minutes')
+  expires_at timestamptz not null default (now() + interval '5 minutes'),
+  used_at timestamptz
 );
+alter table public.msg_discovery_targets
+  add column if not exists used_at timestamptz;
 create index if not exists msg_discovery_targets_actor_expiry_idx
   on public.msg_discovery_targets(actor_id, expires_at);
 create index if not exists msg_discovery_targets_expiry_idx
@@ -136,9 +139,13 @@ declare
   v_recipient uuid;
 begin
   if v_actor is null then raise exception 'auth_required'; end if;
-  select student_id into v_recipient
-    from public.msg_discovery_targets
-   where token=p_student_key and actor_id=v_actor and expires_at>now();
+  -- Consommation atomique : un jeton ne peut être converti qu'une seule fois.
+  -- Si msg_invite_send échoue, la transaction annule aussi cette consommation.
+  update public.msg_discovery_targets
+     set used_at=now()
+   where token=p_student_key and actor_id=v_actor
+     and expires_at>now() and used_at is null
+   returning student_id into v_recipient;
   if v_recipient is null then raise exception 'discovery_result_expired'; end if;
   return public.msg_invite_send(v_recipient);
 end;
