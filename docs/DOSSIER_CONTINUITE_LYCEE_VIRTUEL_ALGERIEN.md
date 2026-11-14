@@ -2746,3 +2746,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Garde de session ajoutée au rendu asynchrone du statut du compte : un résultat tardif ne met pas à jour l’écran si le compte affiché a changé.
 - Cache synchronisé : `app.js?v=3570`, `multaqa.js?v=4`, Service Worker `dz-de-v3.185.0.0.168` ; contrôles statiques `check-multaqa.mjs` et `check-msg.mjs` adaptés.
 - Branche de travail : `feat/verification-school-central-access` (créée depuis `main`). À ce stade, modifications préparées sur cette branche ; aucun merge ni déploiement Cloudflare. Tests locaux et CI à confirmer avant PR ; les runners GitHub peuvent rester indisponibles en raison de la restriction de facturation déjà observée.
+
+
+### Suivi du Lot 552 — PR #20 et validation (14 novembre 2026, 22:0x CET)
+- PR créée : https://github.com/bridrandomtv-spec/ALLEMAND/pull/20 ; branche `feat/verification-school-central-access` ; HEAD observé `2b1d55de6eab6a9d42c7a55fd4efa9a9e4456177` avant cette mise à jour documentaire.
+- Comparaison avec `main` : branche en avance de 9 commits, en retard de 0 commit ; les 7 fichiers attendus sont les seuls fichiers modifiés.
+- Vérification source : compilation statique sans exécution de `app.js` et `multaqa.js` réussie ; contrôles ciblés relus : CTA Forum → Messenger, carte tableau de bord → compte, statut compte → `msgMyVerification()`, garde de session asynchrone, versions HTML/SW synchronisées, deux attentes de version dans `check-msg.mjs` synchronisées sur `.168`.
+- Après ouverture de la PR, GitHub a retourné quatre exécutions en échec : CI ALLEMAND run `43640947504`, tests PostgreSQL ملتقى run `43640947517`, tests PostgreSQL consentement Messenger run `43640947578`, tests PostgreSQL découverte Messenger run `43640947557`. Les jobs sont signalés terminés en échec, mais l’API consultée ne fournit aucune étape et le téléchargement des journaux retourne 404 ; la cause précise ne peut donc pas être attribuée à un défaut du code ni à la restriction de facturation sans les journaux.
+- GitHub indique actuellement `mergeable=false` pour la PR #20. Malgré l’absence de retard de branche, ne pas fusionner tant que GitHub ne confirme pas l’état fusionnable et que l’échec CI n’est pas expliqué. Aucun déploiement Cloudflare et aucune modification Supabase.
+- Correction source incluse dans le HEAD : littéral HTML de la carte confidentialité refermé correctement dans `app.js` ; toutes les assertions de version Service Worker de `check-msg.mjs` attendent maintenant `.168`.
