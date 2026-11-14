@@ -142,7 +142,7 @@ select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000002'
 create temporary table accepted_conv(id bigint);
 insert into accepted_conv select public.msg_invite_accept((select id from test_invite));
 do $$ begin
- if (select count(*) from public.msg_conversations where type='direct')<>1 then
+ if public.test_direct_count()<>1 then
    raise exception 'accepted_invite_did_not_create_one_dm';
  end if;
  if public.test_member_count((select id from accepted_conv))<>2 then
