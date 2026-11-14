@@ -570,11 +570,11 @@ async function msgInvites(){
     outgoing:(r.data||[]).filter(x=>x.sender_id===u.id)
   };
 }
-async function msgInviteSend(recipientId){
+async function msgInviteSend(studentKey){
   const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
-  if(!recipientId || recipientId===u.id) return { ok:false, err:'المستلم غير صالح' };
+  if(!studentKey) return { ok:false, err:'انتهت صلاحية نتيجة البحث؛ أعد البحث من فضلك' };
   const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
-  const r = await c.rpc('msg_invite_send',{p_recipient:recipientId});
+  const r = await c.rpc('msg_invite_send_by_key',{p_student_key:studentKey});
   if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
   return { ok:true, inviteId:r.data };
 }
