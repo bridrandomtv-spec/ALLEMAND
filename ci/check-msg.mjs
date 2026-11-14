@@ -103,6 +103,9 @@ ok(/msg_invite_send[\s\S]*?status='expired'[\s\S]*?created_at <= now\(\) - inter
 ok(/msg_invite_decline[\s\S]*?set status = 'expired'[\s\S]*?set status = 'declined'/.test(inviteSql),
    'refus d’une demande ancienne la marque expirée, pas refusée');
 ok(/msg_invite_cancel[\s\S]*?set status = 'expired'[\s\S]*?set status = 'cancelled'/.test(inviteSql),
+ok(/msg_invite_decline[\s\S]*?get diagnostics v_changed = row_count[\s\S]*?if v_changed > 0 then return true/.test(inviteSql), 'un refus d’invitation expirée confirme la transition expired');
+ok(/msg_invite_cancel[\s\S]*?get diagnostics v_changed = row_count[\s\S]*?if v_changed > 0 then return true/.test(inviteSql), 'une annulation d’invitation expirée confirme la transition expired');
+ok(postgresSql.includes('expired_cancel_not_reported') && postgresSql.includes('expired_decline_not_reported'), 'tests PostgreSQL du retour positif des transitions expirées');
    'annulation d’une demande ancienne la marque expirée');
 
 ok(/alter publication supabase_realtime add table public\.msg_invites/.test(inviteSql),
