@@ -193,6 +193,67 @@ do $$ begin
  end;
 end $$;
 
+-- Expiration après sept jours : le destinataire ne peut plus accepter et aucun DM n'est créé.
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
+create temporary table expiry_invite(id uuid);
+insert into expiry_invite select public.msg_invite_send('20000000-0000-4000-8000-000000000003');
+
+-- Un blocage du destinataire vers l'expéditeur interdit l'acceptation.
+reset role;
+insert into public.msg_blocks(blocker_id,blocked_id)
+values('20000000-0000-4000-8000-000000000003','20000000-0000-4000-8000-000000000001');
+set role authenticated;
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000003',false);
+do $ begin
+ begin
+   perform public.msg_invite_accept((select id from expiry_invite));
+   raise exception 'blocked_pair_was_accepted';
+ exception when others then
+   if sqlerrm='blocked_pair_was_accepted' then raise; end if;
+   if sqlerrm<>'user_blocked' then raise; end if;
+ end;
+end $;
+
+-- Le blocage dans le sens inverse interdit également l'envoi d'une invitation.
+reset role;
+delete from public.msg_blocks
+ where blocker_id='20000000-0000-4000-8000-000000000003'
+   and blocked_id='20000000-0000-4000-8000-000000000001';
+insert into public.msg_blocks(blocker_id,blocked_id)
+values('20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000003');
+set role authenticated;
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
+do $ begin
+ begin
+   perform public.msg_invite_send('20000000-0000-4000-8000-000000000003');
+   raise exception 'blocked_pair_sent_invite';
+ exception when others then
+   if sqlerrm='blocked_pair_sent_invite' then raise; end if;
+   if sqlerrm<>'user_blocked' then raise; end if;
+ end;
+end $;
+
+-- On retire le blocage pour isoler le scénario d'expiration.
+reset role;
+delete from public.msg_blocks
+ where blocker_id='20000000-0000-4000-8000-000000000001'
+   and blocked_id='20000000-0000-4000-8000-000000000003';
+update public.msg_invites
+   set created_at=now()-interval '8 days'
+ where id=(select id from expiry_invite);
+set role authenticated;
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000003',false);
+do $ declare v_result bigint; begin
+ v_result:=public.msg_invite_accept((select id from expiry_invite));
+ if v_result is not null then raise exception 'expired_invite_created_dm'; end if;
+ if (select status from public.msg_invites where id=(select id from expiry_invite))<>'expired' then
+   raise exception 'expired_invite_status_invalid';
+ end if;
+ if public.test_direct_count()<>1 then
+   raise exception 'expired_invite_changed_dm_count';
+ end if;
+end $;
+
 -- Les anciennes RPC et INSERT directs ne permettent plus de contourner le consentement.
 do $$ begin
  if has_function_privilege('authenticated','public.msg_open_direct(uuid)','EXECUTE') then
