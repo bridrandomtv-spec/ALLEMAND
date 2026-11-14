@@ -94,6 +94,10 @@ ok(/status='expired'[\s\S]*?return null/.test(inviteSql) &&
 
 ok(/msg_invite_send[\s\S]*?pg_advisory_xact_lock\(hashtextextended\(v_sender::text, 0\)\)/.test(inviteSql),
    'limite 24 h sérialisée contre les envois concurrents');
+ok(/demande pendante identique reste idempotente[\s\S]*?if v_id is not null then return v_id; end if;[\s\S]*?select count\(\*\) into v_count/.test(inviteSql),
+   'répétition idempotente vérifiée avant la limite 24 h');
+ok(postgresSql.includes('pending_invite_retry_blocked_by_rate_limit'),
+   'test PostgreSQL : répétition pendante autorisée au plafond du quota');
 ok(/Première lecture sans verrou de ligne[\s\S]*?pg_advisory_xact_lock[\s\S]*?Relecture verrouillée après le verrou de paire/.test(inviteSql),
    'acceptation verrouille la paire avant la ligne pour éviter les deadlocks réciproques');
 ok(/Une invitation réciproque devenue redondante[\s\S]*?status='cancelled'/.test(inviteSql),
@@ -104,10 +108,10 @@ ok(/msg_invite_send[\s\S]*?status='expired'[\s\S]*?created_at <= now\(\) - inter
 ok(/msg_invite_decline[\s\S]*?set status = 'expired'[\s\S]*?set status = 'declined'/.test(inviteSql),
    'refus d’une demande ancienne la marque expirée, pas refusée');
 ok(/msg_invite_cancel[\s\S]*?set status = 'expired'[\s\S]*?set status = 'cancelled'/.test(inviteSql),
+   'annulation d’une demande ancienne la marque expirée');
 ok(/msg_invite_decline[\s\S]*?get diagnostics v_changed = row_count[\s\S]*?if v_changed > 0 then return true/.test(inviteSql), 'un refus d’invitation expirée confirme la transition expired');
 ok(/msg_invite_cancel[\s\S]*?get diagnostics v_changed = row_count[\s\S]*?if v_changed > 0 then return true/.test(inviteSql), 'une annulation d’invitation expirée confirme la transition expired');
 ok(postgresSql.includes('expired_cancel_not_reported') && postgresSql.includes('expired_decline_not_reported'), 'tests PostgreSQL du retour positif des transitions expirées');
-   'annulation d’une demande ancienne la marque expirée');
 
 ok(/alter publication supabase_realtime add table public\.msg_invites/.test(inviteSql),
    'notifications d’invitation publiées en Realtime');
