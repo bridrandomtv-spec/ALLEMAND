@@ -2183,3 +2183,18 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Ne pas modifier `msg.js`, `supabase/supabase.js`, les migrations ou les politiques RLS sur la base de ce signal. Ne pas multiplier les relances identiques : le prochain diagnostic utile doit obtenir un message d'échec de provisionnement via l'interface GitHub Actions ou un contrôle de configuration/limites du dépôt effectué par le propriétaire.
 - Aucun test n'a écrit dans Supabase de production ; aucun message réel n'a été envoyé ; aucun déploiement Cloudflare n'a été demandé dans ce lot.
 - PR #17 reste ouverte et non fusionnée ; `main` reste intacte.
+
+
+---
+
+## Lot 514 — vérification de la présence de 🌐 ملتقى الطلاب (14 novembre 2026)
+
+### Résultat de l'inspection des sources
+- Recherche effectuée dans l'arbre Git complet de `main` (1 180 chemins, arbre non tronqué) : aucun fichier ou chemin correspondant à `multaqa`, `forum`, `community` ou `student` n'est présent. Les recherches dans `index.html`, `app.js`, `modules.js`, `classe.js` et `supabase/supabase.js` de `main` ne trouvent aucune occurrence de `ملتقى الطلاب`/route `multaqa`.
+- Sur la branche `design/prototypes-67-74-alignment` (PR #17), la fonctionnalité est bien présente : `index.html` contient le panneau et l'en-tête 🌐 ملتقى الطلاب (autour des lignes 890–906) ; `app.js` inclut l'onglet `multaqa`, son raccourci de navigation et le contrôle d'accès étudiant (autour des lignes 451, 522, 547 et 632).
+- Le dossier ne contient pas, dans ce lot, d'élément prouvant qu'une suppression a été effectuée par les Lots 498–513. Ces lots portaient sur Messenger/Realtime et les diagnostics CI ; le Lot 513 n'a modifié que le dossier.
+
+### Interprétation et précaution
+- La version source de `main`, qui alimente la production Cloudflare selon la configuration connue du projet, ne contient actuellement pas le module/route du ملتقى. La branche PR #17, elle, le contient. Cela explique une différence possible entre l'aperçu de PR et la plateforme de production, mais ne permet pas à lui seul de dater ni d'attribuer la disparition initiale.
+- Ne pas fusionner PR #17 pour rétablir le ملتقى : cette PR contient aussi d'autres changements et reste non approuvée/non fusionnée. Ne pas modifier la production dans le cadre de ce diagnostic.
+- Aucun fichier applicatif, aucune route, aucune donnée Supabase et aucun déploiement n'ont été modifiés dans ce lot. PR #17 reste ouverte et non fusionnée.
