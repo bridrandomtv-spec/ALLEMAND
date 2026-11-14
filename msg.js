@@ -212,6 +212,7 @@
     h += '</div>';
     h += '<div class="msg-sec">📨 طلبات المحادثة الخاصة</div><div class="msg-modrow">قبول الطلب يفتح المحادثة الخاصة فقط؛ ولا ينشئ زمالة تلقائياً. يمكنك رفض الطلب أو إلغاء دعوتك الصادرة.</div>';
     var inv = await window.SB.msgInvites();
+    if(renderEpoch!==state.renderEpoch) return;
     if(!inv.ok){
       h += '<div class="msg-empty">تعذّر تحميل مركز الدعوات حالياً. تأكد من اتصال الخدمة وتفعيل تحديث الدعوات على الخادم. لم يتم إنشاء أي محادثة.</div>';
     } else {
@@ -243,7 +244,9 @@
     var isMod = u && (u.role==='prof' || u.role==='admin');
     if(isMod){
       var rep0 = await window.SB.msgReportsOpen();
+      if(renderEpoch!==state.renderEpoch) return;
       var lg0 = await window.SB.msgLogLast();
+      if(renderEpoch!==state.renderEpoch) return;
       h += '<div class="msg-sec">🛡 الإشراف (الأستاذ / الإدارة)</div><div class="msg-mod">';
       h += '<div class="msg-modrow"><b>البلاغات المفتوحة:</b> ' + (rep0.ok ? rep0.reports.length : '⛔ ' + esc(rep0.err)) + '</div>';
       if(rep0.ok && rep0.reports.length){
@@ -260,6 +263,7 @@
         }).join('');
       }
       var vq = await window.SB.msgVerificationQueue();
+      if(renderEpoch!==state.renderEpoch) return;
       h += '<div class="msg-modrow"><b>طلبات التحقق من الهوية قيد الانتظار:</b> ' + (vq.ok ? vq.queue.length : '⛔') + '</div>';
       if(vq.ok && vq.queue.length){
         h += vq.queue.map(function(q){
