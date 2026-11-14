@@ -163,7 +163,7 @@ ok(discoverySql.includes('expires_at>now()') && discoverySql.includes('actor_id=
 ok(/create or replace function public\.msg_invite_send_by_key\(p_student_key uuid\)/.test(discoverySql) && discoverySql.includes('return public.msg_invite_send(v_recipient)'), 'RPC serveur dédiée à la conversion du jeton opaque');
 ok(discoverySql.includes('grant execute on function public.msg_invite_send_by_key(uuid) to authenticated'), 'conversion du jeton autorisée uniquement aux comptes connectés');
 ok(sbjs.includes("rpc('msg_invite_send_by_key',{p_student_key:studentKey})"), 'client envoie le jeton opaque sans UUID destinataire');
-ok(msgjs.includes('msgStudentSearch(query,12)') && msgjs.includes('msgInviteSend(recipient)'), 'recherche reliée à l’envoi de demande de consentement');
+ok(msgjs.includes('msgStudentSearch(query,12)') && msgjs.includes('msgInviteSend(recipientKey)'), 'recherche reliée à l’envoi de demande de consentement par jeton opaque');
 ok(msgjs.includes('ابحث عن زميل لطلب محادثة خاصة'), 'interface de découverte en arabe');
 
 if (fail.length) { console.error('::error:: check-msg Lot 453 : ' + fail.length + ' échec(s)'); process.exit(1); }
