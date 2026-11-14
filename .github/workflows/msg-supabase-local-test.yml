@@ -77,8 +77,41 @@ jobs:
           psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/202611130003_msg_student_discovery.sql
           psql "$DB_URL" -v ON_ERROR_STOP=1 -c "NOTIFY pgrst, 'reload schema';"
 
+      - name: Vérifier la publication PostgreSQL Realtime avant le test
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+            select pubname, schemaname, tablename
+            from pg_publication_tables
+            where pubname = 'supabase_realtime'
+              and schemaname = 'public'
+              and tablename = 'msg_invites';
+          "
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+            select c.relname, c.relreplident,
+                   coalesce(bool_or(p.pubname = 'supabase_realtime'), false) as in_realtime_publication,
+                   c.relrowsecurity as rls_enabled
+            from pg_class c
+            join pg_namespace n on n.oid = c.relnamespace
+            left join pg_publication_tables p
+              on p.schemaname = n.nspname and p.tablename = c.relname
+            where n.nspname = 'public' and c.relname = 'msg_invites'
+            group by c.relname, c.relreplident, c.relrowsecurity;
+          "
+
       - name: Vérifier Auth GoTrue, JWT signés, RPC PostgREST et RLS avec deux élèves synthétiques
         run: node ci/msg-supabase-local-test.mjs
+
+      - name: Capturer les journaux Realtime locaux en cas de diagnostic
+        if: always()
+        run: |
+          container="$(docker ps -a --format '{{.Names}}' | grep -E 'realtime|supabase_realtime' | head -n 1 || true)"
+          if [ -n "$container" ]; then
+            echo "Conteneur Realtime : $container"
+            docker logs "$container" 2>&1 | tail -n 300
+          else
+            echo "Conteneur Realtime introuvable dans cette exécution."
+            docker ps -a --format 'table {{.Names}}\\t{{.Status}}'
+          fi
 
       - name: Arrêter la pile locale
         if: always()
