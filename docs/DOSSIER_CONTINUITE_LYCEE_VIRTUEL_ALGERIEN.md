@@ -376,3 +376,12 @@
 - Contrôles existants sur le commit `93adcbfc` : CI générale, PostgreSQL consentement, PostgreSQL découverte et PostgreSQL ملتقى الطلاب terminés avec succès. Cela ne valide pas encore le nouveau workflow local.
 - Garde-fous inchangés : PR #17 ouverte et non fusionnée ; `main` non modifiée ; aucune migration Messenger exécutée sur Supabase cloud ; aucun déploiement Cloudflare ; aucun coût cloud engagé.
 - Prochaine étape : obtenir un résultat complet du workflow Supabase local sur le HEAD courant, consulter ses logs, corriger les erreurs de démarrage ou d'intégration puis relancer jusqu'à un résultat reproductible. Tant que ce workflow n'est pas vert, Messenger reste non validé avec Auth/JWT/PostgREST réels, et n'est pas déclaré opérationnel.
+
+
+#### Diagnostic et correction du premier lancement Supabase local — 14 novembre 2026
+- Le run `43536384262` a échoué à l'étape « Démarrer Supabase local isolé ». Les logs montrent que `supabase start` a automatiquement tenté d'appliquer `202611130001_msg_invitation_consent.sql` avant le bootstrap et a échoué sur `relation public.msg_conversations does not exist`. La cause est donc l'ordre d'initialisation des migrations, pas une modification de la base cloud.
+- Correction du workflow au commit `8942b889ba9a0978e996069dfeb2609321b3b108` : les fichiers SQL du dossier de migrations sont copiés temporairement hors de `supabase/migrations` pendant le démarrage local, puis restaurés après le démarrage. Le bootstrap synthétique est exécuté avant l'application explicite des migrations 001 et 003. La migration Multaqa 002 n'est pas appliquée dans ce scénario.
+- La syntaxe du script Node a été vérifiée avec `node --check` et a réussi dans le run `43536593612`. Le CLI local initialise également sa configuration et le paramètre Auth sans erreur.
+- Deuxième run de l'intégration locale : `43536593612`, sur le commit `8942b889`, encore en cours au dernier contrôle, à l'étape de démarrage de la pile. Aucun succès JWT/PostgREST/RLS n'est encore revendiqué.
+- Le déclenchement du workflow est conservé sur les événements pull_request pour que les prochaines mises à jour de la PR relancent ce contrôle. HEAD documentaire actuel : `d4b733469f278df0d545d6d3431b523cf2b7447a`.
+- Les workflows classiques sur le commit `8942b889` sont en cours ; le précédent lot sur `93adcbfc` avait sa CI générale et ses trois suites PostgreSQL existantes réussies.
