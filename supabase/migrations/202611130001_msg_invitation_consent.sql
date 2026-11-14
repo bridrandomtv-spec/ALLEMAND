@@ -213,12 +213,16 @@ create or replace function public.msg_invite_decline(p_invite uuid)
 returns boolean
 language plpgsql security definer
 set search_path = pg_catalog, public
-as $$
+as $
+declare
+  v_changed integer;
 begin
   update public.msg_invites
      set status = 'expired', responded_at = now()
    where id = p_invite and recipient_id = auth.uid() and status = 'pending'
      and created_at <= now() - interval '7 days';
+  get diagnostics v_changed = row_count;
+  if v_changed > 0 then return true; end if;
 
   update public.msg_invites
      set status = 'declined', responded_at = now()
@@ -226,18 +230,22 @@ begin
      and created_at > now() - interval '7 days';
   return found;
 end;
-$$;
+$;
 
 create or replace function public.msg_invite_cancel(p_invite uuid)
 returns boolean
 language plpgsql security definer
 set search_path = pg_catalog, public
-as $$
+as $
+declare
+  v_changed integer;
 begin
   update public.msg_invites
      set status = 'expired', responded_at = now()
    where id = p_invite and sender_id = auth.uid() and status = 'pending'
      and created_at <= now() - interval '7 days';
+  get diagnostics v_changed = row_count;
+  if v_changed > 0 then return true; end if;
 
   update public.msg_invites
      set status = 'cancelled', responded_at = now()
@@ -245,7 +253,7 @@ begin
      and created_at > now() - interval '7 days';
   return found;
 end;
-$$;
+$;
 
 create or replace function public.msg_invite_accept(p_invite uuid)
 returns bigint
