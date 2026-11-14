@@ -308,11 +308,16 @@ async function subscribeToMessageChanges(user, conversationId) {
             resolveEvent(change);
           }
           if (eventKind === "UPDATE") {
-            const waiter = updateWaiters.shift();
-            if (waiter) {
+            const waiterIndex = updateWaiters.findIndex((waiter) => waiter.matches(change));
+            if (waiterIndex !== -1) {
+              const [waiter] = updateWaiters.splice(waiterIndex, 1);
               clearTimeout(waiter.timer);
               waiter.resolve(change);
-            } else queuedUpdates.push(change);
+            } else {
+              queuedUpdates.push(change);
+              // Le harnais ne conserve qu'un historique borné des événements non consommés.
+              if (queuedUpdates.length > 50) queuedUpdates.shift();
+            }
           }
         }
       } else if (eventName === "phx_error" || eventName === "phx_close") {
@@ -337,18 +342,26 @@ async function subscribeToMessageChanges(user, conversationId) {
     await readyPromise;
     return {
       waitForMessage: () => eventPromise,
-      waitForUpdate: () => queuedUpdates.length
-        ? Promise.resolve(queuedUpdates.shift())
-        : new Promise((resolve, reject) => {
-            const waiter = { resolve, reject, timer: null };
-            waiter.timer = setTimeout(() => {
-              const index = updateWaiters.indexOf(waiter);
-              if (index !== -1) updateWaiters.splice(index, 1);
-              reject(new Error("No msg_messages UPDATE event for " + filter +
-                " within 12 seconds; frames: " + JSON.stringify(frames)));
-            }, 12000);
-            updateWaiters.push(waiter);
-          }),
+      waitForUpdate: ({ messageId, predicate = () => true, label = "UPDATE" } = {}) => {
+        assert.ok(messageId, "waitForUpdate requires the expected message id");
+        assert.equal(typeof predicate, "function", "waitForUpdate predicate must be a function");
+        const matches = (change) =>
+          String(change.record.id) === String(messageId) && predicate(change.record);
+        const queuedIndex = queuedUpdates.findIndex(matches);
+        if (queuedIndex !== -1) {
+          return Promise.resolve(queuedUpdates.splice(queuedIndex, 1)[0]);
+        }
+        return new Promise((resolve, reject) => {
+          const waiter = { resolve, reject, matches, timer: null, label };
+          waiter.timer = setTimeout(() => {
+            const index = updateWaiters.indexOf(waiter);
+            if (index !== -1) updateWaiters.splice(index, 1);
+            reject(new Error("No matching msg_messages UPDATE (" + label + ") for message " +
+              messageId + " and " + filter + " within 12 seconds; frames: " + JSON.stringify(frames)));
+          }, 12000);
+          updateWaiters.push(waiter);
+        });
+      },
       close: () => {
         closedByTest = true;
         clearTimeout(timeout);
@@ -577,7 +590,11 @@ try {
 
   // L'édition autorisée doit produire un UPDATE reçu par le destinataire.
   const editedBody = "Realtime message edited by its sender";
-  const editEventPromise = realtimeMessageObserver.waitForUpdate();
+  const editEventPromise = realtimeMessageObserver.waitForUpdate({
+    messageId: receivedMessage.record.id,
+    label: "édition",
+    predicate: (record) => record.body === editedBody
+  });
   const editedRows = await call(
     `/rest/v1/msg_messages?id=eq.${receivedMessage.record.id}&select=id,body,edited_at`,
     {
@@ -591,6 +608,8 @@ try {
   assert.equal(editedRows[0].body, editedBody);
   const editedEvent = await editEventPromise;
   assert.equal(editedEvent.kind, "UPDATE", "Message edit did not emit an UPDATE event");
+  assert.equal(String(editedEvent.record.id), String(receivedMessage.record.id),
+    "Realtime edit UPDATE belongs to another message");
   assert.equal(editedEvent.record.body, editedBody, "Realtime UPDATE did not contain the edited body");
 
   // Un compte extérieur ne peut pas modifier la ligne, même avec son ID.
@@ -617,7 +636,11 @@ try {
   );
 
   // Suppression logique : seul deleted_at est modifié, sans DELETE physique.
-  const deleteEventPromise = realtimeMessageObserver.waitForUpdate();
+  const deleteEventPromise = realtimeMessageObserver.waitForUpdate({
+    messageId: receivedMessage.record.id,
+    label: "suppression logique",
+    predicate: (record) => Boolean(record.deleted_at) && record.deleted_at === deletedAt
+  });
   const deletedAt = new Date().toISOString();
   const deletedRows = await call(
     `/rest/v1/msg_messages?id=eq.${receivedMessage.record.id}&select=id,deleted_at`,
@@ -632,7 +655,10 @@ try {
   assert.ok(deletedRows[0].deleted_at, "Soft-delete did not persist deleted_at");
   const deleteEvent = await deleteEventPromise;
   assert.equal(deleteEvent.kind, "UPDATE", "Soft-delete did not emit an UPDATE event");
-  assert.ok(deleteEvent.record.deleted_at, "Realtime soft-delete event omitted deleted_at");
+  assert.equal(String(deleteEvent.record.id), String(receivedMessage.record.id),
+    "Realtime soft-delete UPDATE belongs to another message");
+  assert.equal(deleteEvent.record.deleted_at, deletedAt,
+    "Realtime soft-delete event does not match the requested timestamp");
 
   // Le compte tiers est abonné et CDC-ready avant l'INSERT. Il ne doit recevoir
   // aucun payload de cette conversation, même si le destinataire reçoit le message.
