@@ -1995,3 +1995,20 @@ Obtenir une exécution GitHub Actions avec étapes/journaux exploitables ou exé
 ### Vérification croisée des journaux GitHub Actions — Lot 507
 
 Sur le même commit, les jobs de trois workflows indépendants ont été interrogés : CI générale (`43591834136`), tests PostgreSQL consentement (`43591834145`) et intégration Supabase locale Messenger (`43591834111`). Tous renvoient une liste d'étapes vide et un téléchargement de logs `BlobNotFound`, comme le workflow Storage #22. Cette convergence confirme que l'absence de journaux n'est pas isolée au seul workflow Storage ; elle ne permet toutefois pas d'identifier la cause sous-jacente ni de conclure que le code a été exécuté.
+
+## Lot 508 — diagnostic isolé du démarrage des runners (14 novembre 2026)
+
+**Changement de méthode :** ajout de `.github/workflows/diag-runner-provisioning.yml`, workflow minimal sans checkout, sans installation, sans secret et sans accès réseau applicatif. Il lance uniquement trois commandes `echo/date`, sur deux images indépendantes (`ubuntu-latest` et `ubuntu-22.04`). Commit : `cbe97eb31c37aa43a59d0d49f31dbd6bfd3a41ea`.
+
+**Résultat discriminant :** le run diagnostic #1 (`43592180990`) a échoué sur les deux jobs. Pour chacun : `steps=[]`, `logs_url=null`, téléchargement des logs = `BlobNotFound`. Aucun des deux n'a exécuté la première commande `echo`. Au même commit, Storage #27 (`43592180931`) et CI générale #3802 (`43592180902`) montrent le même motif.
+
+**Conclusion technique :** le problème observé est en amont des commandes YAML, du checkout, de Node, de Supabase CLI, de PostgreSQL et du code Messenger. Le test minimal ne prouve pas à lui seul quelle composante GitHub est en cause, mais il permet d'écarter comme explication immédiate une erreur dans le script Storage ou dans son SQL. L'hypothèse principale devient un échec de dispatch/provisionnement/initialisation des runners hébergés, ou une restriction de service au niveau du dépôt/compte. Seuls les diagnostics côté GitHub peuvent départager ces causes.
+
+**Vérification de l'environnement local :** le conteneur de travail ne possède ni Docker, Podman, Supabase CLI, PostgreSQL/psql, ni les modules Python/Node de parsing PostgreSQL. Il n'offre donc pas de voie locale immédiate pour exécuter la migration. Aucun téléchargement ni installation non autorisés n'ont été tentés.
+
+**Actions sûres à effectuer côté GitHub :**
+1. Dans Actions, ouvrir le run `43592180990` et vérifier si GitHub expose une annotation de job, un runner ID/name ou un motif de refus avant le démarrage.
+2. Vérifier dans Settings → Actions que Actions est activé pour le dépôt et que les GitHub-hosted runners sont autorisés ; vérifier également les limites/quota Actions et les éventuelles restrictions du compte/organisation.
+3. Si les deux runners minimaux continuent d'échouer sans étapes, transmettre à GitHub Support les run IDs `43592180990`, `43592180931`, `43592180902` et les job IDs `132439053353`, `132439053538`, `132439053173`, `132439053254`, en demandant l'inspection des événements d'assignation et de provisionnement côté serveur. Les logs n'existent pas côté job pour cette tentative.
+
+**État inchangé :** PR #17 ouverte, non fusionnée ; aucune action sur `main`, aucun déploiement Cloudflare, aucune écriture/migration sur Supabase actif, aucune activation de compensation client. La migration Storage reste candidate non validée.
