@@ -182,6 +182,40 @@ do $$ begin
  end if;
 end $$;
 
+-- Les transitions d'expiration par le destinataire/l'expéditeur sont signalées comme réussies.
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
+create temporary table expired_cancel_invite(id uuid);
+insert into expired_cancel_invite select public.msg_invite_send('20000000-0000-4000-8000-000000000003');
+reset role;
+update public.msg_invites set created_at=now()-interval '8 days'
+ where id=(select id from expired_cancel_invite);
+set role authenticated;
+do $ begin
+ if not public.msg_invite_cancel((select id from expired_cancel_invite)) then
+   raise exception 'expired_cancel_not_reported';
+ end if;
+ if (select status from public.msg_invites where id=(select id from expired_cancel_invite))<>'expired' then
+   raise exception 'expired_cancel_status_invalid';
+ end if;
+end $;
+
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
+create temporary table expired_decline_invite(id uuid);
+insert into expired_decline_invite select public.msg_invite_send('20000000-0000-4000-8000-000000000004');
+reset role;
+update public.msg_invites set created_at=now()-interval '8 days'
+ where id=(select id from expired_decline_invite);
+set role authenticated;
+select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000004',false);
+do $ begin
+ if not public.msg_invite_decline((select id from expired_decline_invite)) then
+   raise exception 'expired_decline_not_reported';
+ end if;
+ if (select status from public.msg_invites where id=(select id from expired_decline_invite))<>'expired' then
+   raise exception 'expired_decline_status_invalid';
+ end if;
+end $;
+
 -- Le destinataire ne peut pas accepter une demande déjà annulée/refusée.
 do $$ begin
  begin
