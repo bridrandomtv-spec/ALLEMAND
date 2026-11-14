@@ -1789,3 +1789,5 @@
 - Commit applicatif : `f1fd68a1f6e6d657b87d85bac94fc446196811f1`.
 - Aucun changement sur Supabase actif, Auth, RLS, schéma, données, Realtime, secrets, facturation, `main` ou déploiement Cloudflare. PR #17 reste ouverte et non fusionnée.
 - Suite : obtenir un vrai runner pour exécuter les tests isolés des migrations 001/003, puis décider séparément de la validation et de l'éventuel déploiement backend. Le présent correctif améliore le repli UI mais ne rend pas les invitations opérationnelles tant que le backend n'est pas déployé.
+
+- Ajustement de finition après vérification du rendu source : suppression du message de repli redondant afin de ne présenter qu'une seule alerte lorsque le backend d'invitations est indisponible. Commit complémentaire : `8aa3818cea86bdf1a64ae16e614b6e9975753bef`. Le contrôle statique confirme un seul appel `msgInvites()`, un formulaire de recherche conditionné par `inv.ok` et une seule alerte de repli.
