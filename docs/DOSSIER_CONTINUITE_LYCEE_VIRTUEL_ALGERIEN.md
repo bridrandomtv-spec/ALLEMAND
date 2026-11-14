@@ -730,3 +730,20 @@
 - Les échecs actuels des workflows avec `runner_id=0` et `steps=[]` sont un problème d'attribution du runner GitHub, pas une raison de créer une branche Supabase. Les Lots 467–478 demandent de ne pas multiplier les relances ni de bricoler les workflows sans diagnostic. Les précédentes exécutions où un runner avait été attribué prouvent que le banc local a déjà fonctionné.
 - Alternative locale gratuite déjà prévue dans les Lots 439–440 : exécuter le même harnais sur la machine de développement existante avec Docker, sans service cloud supplémentaire. Aucun achat, branche payante, nouveau projet, migration de production ou modification des secrets n'est nécessaire.
 - La demande de confirmation de création d'une branche Supabase payante posée après le Lot 480 est annulée. La suite reprend le banc local gratuit existant et résout le blocage runner/Realtime sans facturation.
+
+## Lot 481 — diagnostic des exécutions GitHub Actions et continuité du banc local gratuit (14 novembre 2026)
+
+- Reprise à partir du HEAD de la branche `design/prototypes-67-74-alignment`, sans recommencer les lots précédents.
+- PR #17 vérifiée : état `open`, fusionnée = `false`, base = `inconnue`, HEAD = `non exposé`. La PR reste ouverte et non fusionnée ; aucune action de fusion/fermeture n'a été effectuée.
+- Les runs associés au commit de continuité `8a55482ece551c5335ea72ada9414adfcb423eb4` incluent :
+  - `43584029260` — Tests intégration Supabase local — Messenger ;
+  - `43584029258` — CI — ALLEMAND ;
+  - `43584029216` — Tests PostgreSQL isolés — découverte Messenger ;
+  - `43584029259` — Tests PostgreSQL isolés — ملتقى الطلاب ;
+  - `43584029305` — Tests PostgreSQL isolés — consentement Messenger.
+- Pour les trois premiers runs inspectés, GitHub retourne des jobs terminés en échec mais sans étapes (`steps=null`). La récupération des journaux de jobs renvoie `BlobNotFound`. Cela ne prouve pas une défaillance des tests : aucune étape de test n'est disponible à examiner. Ne pas classer ces exécutions comme des échecs SQL, RLS ou Realtime.
+- Le workflow local gratuit reste inchangé : Supabase CLI épinglée à `2.122.1`, pile locale éphémère, comptes GoTrue synthétiques, PostgREST/JWT/RLS/PostgreSQL/Realtime ; aucune branche Supabase hébergée, aucun service payant.
+- Relecture statique des fichiers `ci/msg-supabase-local-test.mjs`, `.github/workflows/msg-supabase-local-test.yml`, `ci/msg-supabase-local-bootstrap.sql`, migrations Messenger 001/003 et `ci/check-msg.mjs). Le test Realtime attend toujours à la fois l'ACK de jointure et le signal système `postgres_changes` avant de démarrer le délai de réception INSERT. Aucune preuve nouvelle ne permet de déclarer la réception Realtime réparée.
+- La migration 003 continue de remplacer l'identifiant Auth exposé par un jeton opaque de découverte lié à l'acteur et valable cinq minutes. Les vérifications de ce lot sont statiques ; aucune exécution locale du banc n'a été possible depuis les runs sans étapes.
+- Aucun changement de code, de schéma, de données, d'Auth, de RLS, de Realtime ou de secrets en production. Aucune migration 001/003 appliquée à Supabase actif. Aucun changement sur `main`.
+- Prochaine action : rétablir un environnement d'exécution GitHub Actions qui fournit réellement un runner et des journaux, ou exécuter le même banc sur la machine de développement existante avec Docker. Une fois un runner opérationnel, reprendre par le workflow local Messenger et examiner les logs Realtime complets ; ne pas relancer aveuglément des lots ni modifier le protocole à partir d'une exécution sans étapes.
