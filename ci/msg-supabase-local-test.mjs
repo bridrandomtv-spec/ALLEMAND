@@ -87,28 +87,31 @@ async function subscribeToInviteChanges(user) {
   const receivedFrames = [];
   let joinPostgresChanges = null;
   const postgresSystemFrames = [];
+  let timeout;
+  const failEventTimeout = () => {
+    const lateProbe = spawnSync("psql", [
+      process.env.DB_URL,
+      "-X", "-A", "-t", "-v", "ON_ERROR_STOP=1",
+      "-c",
+      "select jsonb_build_object('subscription_id', subscription_id, 'entity', entity::text, 'filters', filters, 'claims_role', claims_role::text, 'action_filter', action_filter)::text from realtime.subscription where entity = 'public.msg_invites'::regclass;"
+    ], { encoding: "utf8" });
+    const diagnostic = lateProbe.status === 0
+      ? (lateProbe.stdout.trim() || "(aucune ligne après attente)")
+      : (lateProbe.stderr || lateProbe.error?.message || "psql failed");
+    rejectEvent(new Error("No msg_invites INSERT event received within 12 seconds after CDC readiness; join postgres_changes: " + JSON.stringify(joinPostgresChanges) + "; postgres_changes system frames: " + JSON.stringify(postgresSystemFrames) + "; CDC rows after wait: " + diagnostic + "; received frames: " + JSON.stringify(receivedFrames)));
+  };
   const maybeResolveReady = () => {
     if (joinAcknowledged && cdcReady && !ready) {
       ready = true;
+      clearTimeout(timeout);
+      timeout = setTimeout(failEventTimeout, 12000);
       resolveReady();
     }
   };
   const readyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
   const eventPromise = new Promise((resolve, reject) => { resolveEvent = resolve; rejectEvent = reject; });
-  const timeout = setTimeout(() => {
-    if (!ready) rejectReady(new Error("Realtime Postgres Changes subscription did not become CDC-ready within 12 seconds; join ACK: " + JSON.stringify(joinPostgresChanges) + "; system frames: " + JSON.stringify(postgresSystemFrames)));
-    else {
-      const lateProbe = spawnSync("psql", [
-        process.env.DB_URL,
-        "-X", "-A", "-t", "-v", "ON_ERROR_STOP=1",
-        "-c",
-        "select jsonb_build_object('subscription_id', subscription_id, 'entity', entity::text, 'filters', filters, 'claims_role', claims_role::text, 'action_filter', action_filter)::text from realtime.subscription where entity = 'public.msg_invites'::regclass;"
-      ], { encoding: "utf8" });
-      const diagnostic = lateProbe.status === 0
-        ? (lateProbe.stdout.trim() || "(aucune ligne après attente)")
-        : (lateProbe.stderr || lateProbe.error?.message || "psql failed");
-      rejectEvent(new Error("No msg_invites INSERT event received within 12 seconds; join postgres_changes: " + JSON.stringify(joinPostgresChanges) + "; postgres_changes system frames: " + JSON.stringify(postgresSystemFrames) + "; CDC rows after wait: " + diagnostic + "; received frames: " + JSON.stringify(receivedFrames)));
-    }
+  timeout = setTimeout(() => {
+    rejectReady(new Error("Realtime Postgres Changes subscription did not become CDC-ready within 12 seconds; join ACK: " + JSON.stringify(joinPostgresChanges) + "; system frames: " + JSON.stringify(postgresSystemFrames)));
   }, 12000);
   socket.addEventListener("open", () => {
     socket.send(JSON.stringify([
@@ -177,7 +180,8 @@ async function subscribeToInviteChanges(user) {
         if (!ready) rejectReady(error); else rejectEvent(error);
       }
     } catch (error) {
-      rejectEvent(error);
+      if (!ready) rejectReady(error);
+      else rejectEvent(error);
     }
   });
   socket.addEventListener("error", () => {
