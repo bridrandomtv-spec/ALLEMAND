@@ -2160,3 +2160,26 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - Pas de test d'envoi via le preview Cloudflare : en l'absence de branche Supabase isolée, le preview peut utiliser la configuration Supabase active ; ne pas risquer d'écrire dans les conversations réelles.
 - Production Supabase, données réelles et `main` non modifiées dans ce lot. PR #17 demeure ouverte et non fusionnée.
 - Prochaine action technique : rétablir une exécution CI observable (runner attribué, étapes et logs) ou obtenir un environnement Supabase local/isolé exécutable, puis reprendre le test de réception. Ne pas multiplier les modifications de `msg.js` sans résultat de ce test.
+
+
+---
+
+## Lot 513 — nouvelle exécution du diagnostic runner sur le HEAD courant (14 novembre 2026)
+
+### Vérification de la branche et de la PR
+- Relecture de la PR #17 : état `open`, `merged=false`, base `main`, HEAD au début du lot `3f61e0c2afbc77312a58f7af44e37ba14ee046cb`. Le champ `mergeable` retourné par GitHub était `true`, ce qui ne constitue ni une validation fonctionnelle ni une autorisation de fusion.
+- Aucun merge, rebase, changement de base ou push vers `main` effectué.
+
+### Nouveau diagnostic GitHub Actions
+- Le workflow minimal `.github/workflows/diag-runner-provisioning.yml` a été relancé automatiquement sur le HEAD courant : run `43594239166`, créé à `12:19:24Z`, terminé en échec à `12:19:27Z`.
+- Les deux jobs matriciels, `ubuntu-latest` (job `132445241908`) et `ubuntu-22.04` (job `132445242099`), sont terminés en échec. L'API dédiée aux étapes renvoie une liste vide `steps=[]` pour chacun ; aucun checkout, script shell ou commande du workflow n'a donc été exécuté.
+- Le téléchargement des logs pour ces nouveaux jobs renvoie encore `BlobNotFound`. Il n'existe donc pas de message d'erreur runner exploitable dans les journaux accessibles.
+- Le workflow de diagnostic ne contient pourtant qu'une matrice de deux runners Ubuntu et une étape shell qui imprime `RUNNER_BOOTSTRAP_OK`, sans checkout, dépendance, secret ni accès Supabase. Le test est ainsi indépendant de Messenger et de Supabase.
+- Le workflow Messenger local est bien configuré pour utiliser une pile Supabase CLI locale éphémère, mais son test ne peut pas être considéré comme exécuté tant que l'attribution du runner échoue avant la première étape.
+
+### Conclusion technique affinée
+- Le nouvel essai confirme que le blocage n'est pas une erreur produite par le code du test Realtime : même le workflow minimal sans dépendance échoue avant sa première étape, sur deux images Ubuntu différentes.
+- Les données disponibles ne permettent toujours pas d'identifier la cause exacte (quota, politique de dépôt, service GitHub, capacité runner ou autre). Il serait incorrect d'affirmer qu'il s'agit nécessairement d'un quota ou d'une panne générale GitHub.
+- Ne pas modifier `msg.js`, `supabase/supabase.js`, les migrations ou les politiques RLS sur la base de ce signal. Ne pas multiplier les relances identiques : le prochain diagnostic utile doit obtenir un message d'échec de provisionnement via l'interface GitHub Actions ou un contrôle de configuration/limites du dépôt effectué par le propriétaire.
+- Aucun test n'a écrit dans Supabase de production ; aucun message réel n'a été envoyé ; aucun déploiement Cloudflare n'a été demandé dans ce lot.
+- PR #17 reste ouverte et non fusionnée ; `main` reste intacte.
