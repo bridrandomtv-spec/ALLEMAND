@@ -160,7 +160,8 @@ ok(sbjs.includes('async function msgStudentSearch(query, limit)') && sbjs.includ
 ok(msgjs.includes('data-peer-key') && msgjs.includes('state.peers[key]=p.student_key'), 'jeton opaque de destinataire conservé hors du DOM');
 ok(discoverySql.includes('returns table(student_key uuid') && discoverySql.includes('msg_discovery_targets'), 'recherche retourne un jeton opaque stocké côté serveur');
 ok(discoverySql.includes('expires_at>now()') && discoverySql.includes('actor_id=v_actor'), 'jeton de découverte expirant et lié au compte demandeur');
-ok(/create or replace function public\\.msg_invite_send_by_key\\(p_student_key uuid\\)/.test(discoverySql) && discoverySql.includes("rpc('msg_invite_send_by_key'") === false, 'RPC serveur dédiée à la conversion du jeton opaque');
+ok(/create or replace function public\\.msg_invite_send_by_key\\(p_student_key uuid\\)/.test(discoverySql) && discoverySql.includes('return public.msg_invite_send(v_recipient)'), 'RPC serveur dédiée à la conversion du jeton opaque');
+ok(discoverySql.includes('grant execute on function public.msg_invite_send_by_key(uuid) to authenticated'), 'conversion du jeton autorisée uniquement aux comptes connectés');
 ok(sbjs.includes("rpc('msg_invite_send_by_key',{p_student_key:studentKey})"), 'client envoie le jeton opaque sans UUID destinataire');
 ok(msgjs.includes('msgStudentSearch(query,12)') && msgjs.includes('msgInviteSend(recipient)'), 'recherche reliée à l’envoi de demande de consentement');
 ok(msgjs.includes('ابحث عن زميل لطلب محادثة خاصة'), 'interface de découverte en arabe');
