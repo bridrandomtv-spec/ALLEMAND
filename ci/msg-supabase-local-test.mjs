@@ -81,11 +81,12 @@ async function subscribeToInviteChanges(user) {
   let resolveEvent;
   let rejectEvent;
   let ready = false;
+  const receivedFrames = [];
   const readyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
   const eventPromise = new Promise((resolve, reject) => { resolveEvent = resolve; rejectEvent = reject; });
   const timeout = setTimeout(() => {
     if (!ready) rejectReady(new Error("Realtime subscription did not become SUBSCRIBED within 12 seconds"));
-    else rejectEvent(new Error("No msg_invites INSERT event received within 12 seconds"));
+    else rejectEvent(new Error("No msg_invites INSERT event received within 12 seconds; received frames: " + JSON.stringify(receivedFrames)));
   }, 12000);
   socket.addEventListener("open", () => {
     socket.send(JSON.stringify([
@@ -106,7 +107,10 @@ async function subscribeToInviteChanges(user) {
   });
   socket.addEventListener("message", (event) => {
     try {
-      const frame = JSON.parse(String(event.data));
+      const rawFrame = String(event.data);
+      const frame = JSON.parse(rawFrame);
+      receivedFrames.push(rawFrame.slice(0, 1600));
+      if (receivedFrames.length > 12) receivedFrames.shift();
       if (!Array.isArray(frame) || frame.length < 5) return;
       const topic = frame[2];
       const eventName = frame[3];
