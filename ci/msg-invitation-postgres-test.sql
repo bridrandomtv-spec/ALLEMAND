@@ -132,12 +132,12 @@ select '20000000-0000-4000-8000-000000000001',
 from generate_series(1,20);
 set role authenticated;
 select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
-do $ begin
+do $$ begin
  if public.msg_invite_send('20000000-0000-4000-8000-000000000002')
     <> (select id from test_invite) then
    raise exception 'pending_invite_retry_blocked_by_rate_limit';
  end if;
-end $;
+end $$;
 reset role;
 update public.msg_invites
    set created_at=now()-interval '2 days'
@@ -147,7 +147,7 @@ update public.msg_invites
    and created_at > now()-interval '2 hours';
 
 -- L'expéditeur ne peut pas accepter/refuser la demande reçue par B.
-do $ begin
+do $$ begin
  begin
    perform public.msg_invite_accept((select id from test_invite));
    raise exception 'sender_accepted_own_invite';
@@ -213,14 +213,14 @@ reset role;
 update public.msg_invites set created_at=now()-interval '8 days'
  where id=(select id from expired_cancel_invite);
 set role authenticated;
-do $ begin
+do $$ begin
  if not public.msg_invite_cancel((select id from expired_cancel_invite)) then
    raise exception 'expired_cancel_not_reported';
  end if;
  if (select status from public.msg_invites where id=(select id from expired_cancel_invite))<>'expired' then
    raise exception 'expired_cancel_status_invalid';
  end if;
-end $;
+end $$;
 
 select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
 create temporary table expired_decline_invite(id uuid);
@@ -230,14 +230,14 @@ update public.msg_invites set created_at=now()-interval '8 days'
  where id=(select id from expired_decline_invite);
 set role authenticated;
 select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000004',false);
-do $ begin
+do $$ begin
  if not public.msg_invite_decline((select id from expired_decline_invite)) then
    raise exception 'expired_decline_not_reported';
  end if;
  if (select status from public.msg_invites where id=(select id from expired_decline_invite))<>'expired' then
    raise exception 'expired_decline_status_invalid';
  end if;
-end $;
+end $$;
 
 -- Le destinataire ne peut pas accepter une demande déjà annulée/refusée.
 do $$ begin
