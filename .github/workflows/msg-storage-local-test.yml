@@ -62,6 +62,24 @@ jobs:
         run: |
           psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/202611140001_msg_storage_owner_cleanup.sql
           psql "$DB_URL" -v ON_ERROR_STOP=1 -c "NOTIFY pgrst, 'reload schema';"
+      - name: Vérifier les politiques DELETE permissives de Storage
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          DO $
+          DECLARE policy_count integer;
+          BEGIN
+            SELECT count(*) INTO policy_count
+            FROM pg_policies
+            WHERE schemaname='storage'
+              AND tablename='objects'
+              AND cmd='DELETE'
+              AND permissive='PERMISSIVE'
+              AND 'authenticated'=ANY(roles);
+            IF policy_count <> 2 THEN
+              RAISE EXCEPTION 'Expected exactly two authenticated permissive DELETE policies, found %', policy_count;
+            END IF;
+          END $;
+          SQL
       - name: Tester Storage API et PostgREST avec deux JWT synthétiques
         run: node ci/msg-storage-local-test.mjs
       - name: Arrêter Supabase local
