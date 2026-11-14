@@ -214,7 +214,7 @@ create or replace function public.msg_invite_decline(p_invite uuid)
 returns boolean
 language plpgsql security definer
 set search_path = pg_catalog, public
-as $
+as $$
 declare
   v_changed integer;
 begin
@@ -231,13 +231,13 @@ begin
      and created_at > now() - interval '7 days';
   return found;
 end;
-$;
+$$;
 
 create or replace function public.msg_invite_cancel(p_invite uuid)
 returns boolean
 language plpgsql security definer
 set search_path = pg_catalog, public
-as $
+as $$
 declare
   v_changed integer;
 begin
@@ -254,7 +254,7 @@ begin
      and created_at > now() - interval '7 days';
   return found;
 end;
-$;
+$$;
 
 create or replace function public.msg_invite_accept(p_invite uuid)
 returns bigint
