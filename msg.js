@@ -533,26 +533,28 @@
     }
     var peerKey = t.getAttribute('data-peer-key');
     if(peerKey){
-      var recipientKey = state.peers[peerKey];
+      var recipientKey = state.peers[peerKey], inviteIdentityEpoch = state.authEpoch;
       if(!recipientKey){ window.alert('⛔ انتهت صلاحية نتيجة البحث. أعد البحث من فضلك.'); return; }
       t.disabled = true;
       window.SB.msgInviteSend(recipientKey).then(function(result){
+        if(state.authEpoch!==inviteIdentityEpoch) return;
         if(!result || !result.ok){ window.alert('⛔ '+((result && result.err)||'تعذّر إرسال الدعوة')); renderList(); return; }
         window.alert('تم إرسال طلب المحادثة. ستُفتح المحادثة فقط بعد موافقة الطرف الآخر.');
         renderList();
-      }).catch(function(error){ window.alert('⛔ '+String(error && error.message || error)); renderList(); });
+      }).catch(function(error){ if(state.authEpoch!==inviteIdentityEpoch) return; window.alert('⛔ '+String(error && error.message || error)); renderList(); });
       return;
     }
     var inviteAct = t.getAttribute('data-invite-act');
     if(inviteAct){
-      var inviteId = t.getAttribute('data-invite-id');
+      var inviteId = t.getAttribute('data-invite-id'), inviteActionIdentityEpoch = state.authEpoch;
       var inviteMethod = inviteAct==='accept' ? 'msgInviteAccept' : (inviteAct==='decline' ? 'msgInviteDecline' : 'msgInviteCancel');
       t.disabled = true;
       window.SB[inviteMethod](inviteId).then(function(result){
+        if(state.authEpoch!==inviteActionIdentityEpoch) return;
         if(!result || !result.ok){ window.alert('⛔ '+((result && result.err)||'تعذّر تنفيذ الطلب')); renderList(); return; }
         if(inviteAct==='accept' && result.convId){ renderThread(+result.convId); }
         else renderList();
-      }).catch(function(error){ window.alert('⛔ '+String(error && error.message || error)); renderList(); });
+      }).catch(function(error){ if(state.authEpoch!==inviteActionIdentityEpoch) return; window.alert('⛔ '+String(error && error.message || error)); renderList(); });
       return;
     }
     if(t.getAttribute('data-conv')){ renderThread(+t.getAttribute('data-conv')); return; }
@@ -565,13 +567,14 @@
     }
     var act = t.getAttribute('data-act');
     if(act==='search-students'){
-      var query = (el('msgStudentSearchQuery')||{}).value || '';
+      var query = (el('msgStudentSearchQuery')||{}).value || '', searchIdentityEpoch = state.authEpoch;
       var resultsBox = el('msgStudentResults');
       if(query.trim().length<3){ if(resultsBox) resultsBox.textContent='اكتب ثلاثة أحرف على الأقل للبحث.'; return; }
       if(!window.SB || typeof window.SB.msgStudentSearch!=='function'){ if(resultsBox) resultsBox.textContent='خدمة البحث غير مفعّلة بعد على الخادم.'; return; }
       t.disabled=true;
       if(resultsBox) resultsBox.textContent='جارٍ البحث عن زملاء مطابقين لملفك الدراسي…';
       window.SB.msgStudentSearch(query,12).then(function(result){
+        if(state.authEpoch!==searchIdentityEpoch) return;
         t.disabled=false;
         if(!result || !result.ok){ if(resultsBox) resultsBox.textContent='تعذّر البحث حالياً. قد تحتاج قاعدة البيانات إلى تفعيل تحديث البحث الآمن.'; return; }
         state.peers={};
@@ -586,7 +589,7 @@
         });
         html+='</div>';
         if(resultsBox) resultsBox.innerHTML=html;
-      }).catch(function(error){ t.disabled=false; if(resultsBox) resultsBox.textContent='تعذّر البحث: '+String(error && error.message || error); });
+      }).catch(function(error){ if(state.authEpoch!==searchIdentityEpoch) return; t.disabled=false; if(resultsBox && resultsBox.isConnected) resultsBox.textContent='تعذّر البحث: '+String(error && error.message || error); });
       return;
     }
     if(act==='refresh'){ if(state.conv) renderThread(state.conv); else renderList(); return; }
