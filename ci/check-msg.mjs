@@ -61,6 +61,7 @@ ok(!/indisponible pour ce compte/.test(msgjs), 'aucun message de pièce jointe e
 
 // Lot 437 — contrat de consentement Messenger (migration préparée, non exécutée).
 const inviteSql = readFileSync('supabase/migrations/202611130001_msg_invitation_consent.sql', 'utf8');
+const postgresSql = readFileSync('ci/msg-invitation-postgres-test.sql', 'utf8');
 ok(inviteSql.includes('create table if not exists public.msg_invites'), 'table invitations Messenger versionnée');
 ok(inviteSql.includes('msg_invite_send') && inviteSql.includes('msg_invite_accept') &&
    inviteSql.includes('msg_invite_decline') && inviteSql.includes('msg_invite_cancel'),
