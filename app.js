@@ -247,6 +247,47 @@ const UNITES = [
 
 ];
 
+/* CONTENT-1 : réconcilie le registre avec les modules chargés après le démarrage.
+   Les identifiants visibles 10→19 restent stables ; les noms de fichiers protégés
+   (UNITE10→UNITE16) sont volontairement mappés sur les entrées 13→19. */
+function hydrateUnitRegistry(){
+  var a = window.UNITES_3AS_A;
+  if(a && Array.isArray(a)){
+    [10,11,12].forEach(function(n,i){
+      var u = UNITES.find(function(x){ return x.n === n; });
+      var src = a[i];
+      if(u && src){
+        u.seances = Array.isArray(src.seances) ? src.seances : [];
+        u.devoir = src.devoir || null;
+        u.duree = src.duree_totale || (src.meta && src.meta.duree_totale) || 360;
+      }
+    });
+  }
+  [[13,10],[14,11],[15,12],[16,13],[17,14],[18,15],[19,16]].forEach(function(pair){
+    var u = UNITES.find(function(x){ return x.n === pair[0]; });
+    var src = window['UNITE' + pair[1]];
+    if(u && src){
+      u.seances = Array.isArray(src.seances) ? src.seances : [];
+      u.devoir = src.devoir || null;
+      u.duree = (src.meta && src.meta.duree_totale) || 360;
+    }
+  });
+  var active = UNITES.find(function(x){ return x.n === currentUnite; });
+  if(active && active.seances && active.seances.length){
+    SEANCES = active.seances;
+    DEVOIR = active.devoir || DEVOIR_U1;
+  }
+  var host = $('.unite-sel');
+  if(host){
+    var tmp = document.createElement('div');
+    tmp.innerHTML = uniteSelector();
+    var replacement = tmp.querySelector('.unite-sel');
+    if(replacement) host.replaceWith(replacement);
+  }
+  try{ renderSeances(); paintUniteHead(); renderStats(); }catch(e){}
+}
+document.addEventListener('DOMContentLoaded', hydrateUnitRegistry);
+window.addEventListener('content1:loaded', hydrateUnitRegistry);
 
 let SEANCES = UNITES[0].seances;
 let DEVOIR   = UNITES[0].devoir;
@@ -376,6 +417,7 @@ function esc(s){
 
 let toastTimer = null;
 function toast(msg, type){
+  try{ if(window.DZ_INTERACTIONS && DZ_INTERACTIONS.recordToast) DZ_INTERACTIONS.recordToast(msg,type); }catch(e){}
   const el = $('#toast'); if(!el) return;
   el.className = 'toast on ' + (type || ''); el.innerHTML = msg; el.hidden = false;
   clearTimeout(toastTimer);
@@ -405,15 +447,15 @@ function speak(text){
 }
 
 /* ─────────────── NAVIGATION ─────────────── */
-const VIEWS = ['masar', 'accueil','seances','live','classe','grammaire','biblio','stats','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
-const TABS  = [['masar','🧭 مسارك'], ['accueil','🏠 الرئيسية'],['msg','💬 الرسائل'],['seances','📚 الحصص'],
+const VIEWS = ['dashboard', 'masar', 'accueil','msg','multaqa','seances','live','classe','grammaire' ,'biblio','quiz','officiels','examen','devoir','simulation','prof','parents','reservation','projet','profboard','matieres', 'guide', 'revision', 'corpus', 'rag', 'banque', 'malakhiss', 'cloud', 'methode', 'devoirs', 'buch', 'legal', 'abonne', 'sponsor', 'admin', 'compte', 'english'];
+const TABS  = [['dashboard','🎓 لوحة التلميذ'], ['masar','🧭 مسارك'], ['accueil','🏠 فضائي الدراسي'],['msg','💬 الرسائل'],['multaqa','🌐 ملتقى الطلاب'],['seances','📚 الحصص'],
                ['live','📹 القاعة المباشرة'],
                ['classe','🏫 القسم'],['grammaire','📘 القواعد'],['biblio','🗂️ المكتبة'],
-               ['stats','🗺️ الإحصائيات'],['quiz','🎯 تمارين'],
+               ['quiz','🎯 تمارين'],
                ['officiels','📄 الفروض'],['examen','🎓 البكالوريا'],
                ['devoir','📝 الفرض'],['simulation','⏱️ المحاكاة'],
                ['prof','🤖 الأستاذ'],['parents','👨‍👩‍👧 الأولياء'],
-               ['reservation','🗓️ احجز حصّة'],['projet','📋 Plan de projet'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 révision'], ['corpus','📚 Corpus'], ['rag','🔎 اسأل'], ['banque','✍️ Banque'], ['malakhiss','📑 ملخصات'], ['cloud','☁️ Cloud'], ['methode','🎯 Methode'], ['devoirs','📝 Klausuren'], ['buch','📗 Buch'], ['abonne','💳 الاشتراك'], ['sponsor','📢 Sponsoring'], ['admin','🛡️ Admin'], ['legal','⚖️ قانوني'], ['compte','⚙️ حسابي']];
+               ['reservation','🗓️ احجز حصّة'],['projet','📋 \u0645\u0634\u0631\u0648\u0639\u064a \u0627\u0644\u062f\u0631\u0627\u0633\u064a'],['matieres','📚 المواد'], ['guide','📖 الدليل'], ['revision','🧠 \u0627\u0644\u0645\u0631\u0627\u062c\u0639\u0629'], ['corpus','📚 \u0628\u0646\u0643 \u0627\u0644\u0645\u0639\u0631\u0641\u0629'], ['rag','🔎 اسأل'], ['banque','✍️ \u0628\u0646\u0643 \u0627\u0644\u062a\u0645\u0627\u0631\u064a\u0646'], ['malakhiss','📑 ملخصات'], ['cloud','☁️ \u0645\u0644\u0641\u0627\u062a\u064a'], ['methode','🎯 \u0645\u0646\u0647\u062c\u064a\u0629 \u0627\u0644\u062a\u0639\u0644\u0645'], ['devoirs','📝 \u0627\u0644\u0648\u0627\u062c\u0628\u0627\u062a'], ['buch','📗 \u0627\u0644\u0643\u062a\u0627\u0628 \u0627\u0644\u0645\u062f\u0631\u0633\u064a'], ['abonne','💳 الاشتراك'], ['sponsor','📢 \u0627\u0644\u0634\u0631\u0627\u0643\u0627\u062a'], ['admin','🛡️ \u0627\u0644\u0625\u062f\u0627\u0631\u0629'], ['legal','⚖️ قانوني'], ['compte','⚙️ حسابي']];
 
 /* Onglet réservé au rôle « prof » — inséré avant « حسابي » */
 function allTabs(){
@@ -428,19 +470,34 @@ function isProf(){
   try{ const s = window.AUTH && AUTH.session ? AUTH.session() : null; return !!(s && s.role === 'prof'); }
   catch(e){ return false; }
 }
+
+/* Espace parents : réservé aux comptes portant explicitement le rôle parent. */
+function isParent(){
+  try{ const s = window.AUTH && AUTH.session ? AUTH.session() : null; return !!(s && s.role === 'parent'); }
+  catch(e){ return false; }
+}
+
+/* Onglet administration : visible uniquement pour une session portant le rôle admin.
+   Le contrôle d'accès réel reste effectué côté Supabase dans admin.js. */
+function isAdmin(){
+  try{ const s = window.AUTH && AUTH.session ? AUTH.session() : null; return !!(s && s.role === 'admin'); }
+  catch(e){ return false; }
+}
+function canSeeStudentDashboard(){
+  try{const s=window.AUTH&&AUTH.session?AUTH.session():null;return !!s&&s.role==='eleve';}
+  catch(e){return false;}
+}
 let currentView = 'accueil';
 
+/* Navigation hiérarchique : catégories courtes, sous-rubriques regroupées. */
 const NAVCATS = [
-  ['etudes', '🎓', 'الدراسة', ['seances', 'classe', 'grammaire', 'matieres', 'guide']],
-  ['entrain', '📝', 'التدريب والاختبارات', ['revision', 'malakhiss', 'quiz', 'officiels', 'devoir', 'simulation', 'examen']],
-  ['ress', '📚', 'الموارد', ['biblio', 'corpus', 'banque', 'methode', 'devoirs', 'buch']],
-  ['inter', '💬', 'التفاعل', ['live', 'rag']],
-  ['profcat', '👨', 'الأستاذ', ['prof', 'profboard']],
-  ['parentscat', '👨‍👩‍👧', 'الأولياء', ['parents']],
-  ['suivi', '📊', 'المتابعة', ['stats']],
-  ['services', '🗓️', 'الخدمات', ['reservation']]
+  ['learning', '🎓', 'التعلّم', ['seances', 'grammaire', 'guide', 'biblio', 'corpus', 'malakhiss', 'methode', 'buch', 'banque', 'cloud', 'projet']],
+  ['assessment', '📝', 'التدريب والاختبارات', ['revision', 'quiz', 'officiels', 'devoir', 'devoirs', 'simulation', 'examen']],
+  ['classroom', '💬', 'القسم والتواصل', ['classe', 'live', 'rag']],
+  ['support', '🤝', 'فضاءات التأطير', ['prof', 'profboard', 'parents']],
+  ['services', '⚙️', 'الخدمات والحساب', ['reservation', 'abonne', 'compte', 'legal', 'admin']]
 ];
-const NAVSOLO_TOP = ['accueil', 'masar'];
+const NAVSOLO_TOP = ['dashboard', 'accueil', 'masar'];
 /* UI-6 : le sponsoring se gère depuis #admin uniquement — retiré de la colonne de navigation ;
    la page reste atteignable par URL directe pour les annonceurs qui ont le lien. */
 /* LANG-4 : #admin ne s affiche plus dans la colonne — accès par hash, lien de la section الإدارة et chip utilisateur */
@@ -448,55 +505,90 @@ const NAVSOLO_BOT = ['cloud', 'abonne', 'projet', 'compte', 'legal'];
 function renderTabs(){
   const c = $('#tabs'); if(!c) return;
   const tabs = allTabs();
-  const byId = {};
-  for(const t of tabs) byId[t[0]] = t;
-  const used = {};
-  const btn = (id, cls) => {
-    const t = byId[id]; if(!t) return '';
-    used[id] = 1;
-    return '<button class="tab ' + (cls || '') + (id === currentView ? ' on' : '')
-      + '" data-go="' + id + '">' + t[1] + '</button>';
-  };
-  /* Navigation compacte : catégories accordéon (fermées par défaut,
-     une seule ouverte à la fois ; celle de la vue courante s'ouvre seule). */
-  let h = '';
-  /* P7 : menu 2 niveaux — Matières puis sous-navigation de la matière active */
+  const visible = tabs.filter(t => t[0] !== 'sponsor' && (t[0] !== 'admin' || isAdmin()) && (t[0] !== 'parents' || isParent()) && (t[0] !== 'dashboard' || canSeeStudentDashboard()) && (t[0] !== 'multaqa' || canSeeStudentDashboard()));
+  const byId = new Map(visible.map(t => [t[0], t]));
+  const used = new Set(['dashboard', 'accueil', 'masar', 'matieres', 'english', 'msg', 'multaqa']);
+  let desktop = '';
   if(window.__SUBJECT__ === 'en'){
-    h += '<button class="cat-head open" style="cursor:default"><span>📚 Matières ▸ 🇬 English</span></button>'
-      + '<div class="cat-body">'
-      + '<button class="tab sub" data-go="english">🇬 English · الصفحة الرئيسية</button>'
-      + '<button class="tab sub" data-subj="de">🇩🇪 الرجوع إلى الألمانية</button>'
-      + '</div>';
+    desktop += '<button class="tab subject-home' + (currentView === 'english' ? ' on' : '') + '" data-go="english">🇬🇧 English</button>';
+    desktop += '<button class="tab subject-switch" data-subj="de">🇩🇪 الألمانية</button>';
   } else {
-    h += '<button class="cat-head open" style="cursor:default"><span>📚 Matières · المواد</span></button>'
-      + '<div class="cat-body">'
-      + '<button class="tab sub" data-go="matieres">📚 المواد · اختيار المادة</button>'
-      + '</div>';
+    desktop += '<button class="tab subject-home' + (currentView === 'matieres' ? ' on' : '') + '" data-go="matieres">📚 المواد</button>';
   }
-  for(const id of NAVSOLO_TOP) h += btn(id, 'solo');
-  for(const g of NAVCATS){
-    const items = g[3].filter(v => byId[v]);
+  desktop += '<button class="tab' + (currentView === 'dashboard' ? ' on' : '') + '" data-go="dashboard">🎓 لوحة التلميذ</button>';
+  desktop += '<button class="tab' + (currentView === 'masar' ? ' on' : '') + '" data-go="masar">🧭 مسارك</button>';
+  desktop += '<button class="tab' + (currentView === 'accueil' ? ' on' : '') + '" data-go="accueil">🏠 فضائي الدراسي</button>';
+  desktop += '<button type="button" class="tab msg-nav-shortcut' + (currentView === 'msg' ? ' on' : '') + '" data-go="msg"' + (currentView === 'msg' ? ' aria-current="page"' : '') + ' >💬 الرسائل</button>';
+  if(canSeeStudentDashboard()) desktop += '<button type="button" class="tab mtq-nav-shortcut' + (currentView === 'multaqa' ? ' on' : '') + '" data-go="multaqa">🌐 ملتقى الطلاب</button>';
+  for(const cat of NAVCATS){
+    const items = cat[3].filter(id => id !== 'matieres' && id !== 'english').map(id => byId.get(id)).filter(Boolean);
     if(!items.length) continue;
-    const open = items.indexOf(currentView) !== -1;
-    h += '<button class="cat-head' + (open ? ' open' : '') + '" data-cat="' + g[0]
-      + '" aria-expanded="' + (open ? 'true' : 'false') + '"><span>' + g[1] + ' ' + g[2]
-      + '</span><span class="cat-arrow">▾</span></button>';
-    h += '<div class="cat-body"' + (open ? '' : ' hidden') + '>'
-      + items.map(v => btn(v, 'sub')).join('') + '</div>';
+    items.forEach(t => used.add(t[0]));
+    const active = items.some(t => t[0] === currentView);
+    desktop += '<details class="nav-group' + (active ? ' has-active' : '') + '"><summary class="nav-group-trigger" aria-label="' + cat[2] + '">' +
+      '<span class="nav-group-icon">' + cat[1] + '</span><span>' + cat[2] + '</span><span class="nav-group-chevron" aria-hidden="true">⌄</span></summary>' +
+      '<div class="nav-submenu" role="group" aria-label="' + cat[2] + '">';
+    for(const t of items){
+      desktop += '<button type="button" class="nav-subitem' + (t[0] === currentView ? ' on' : '') +
+        '" data-go="' + t[0] + '"' + (t[0] === currentView ? ' aria-current="page"' : '') + '>' + t[1] + '</button>';
+    }
+    desktop += '</div></details>';
   }
-  for(const id of NAVSOLO_BOT) h += btn(id, 'solo');
-  /* filet de sécurité : aucun onglet autorisé à disparaître */
-  const rest = tabs.filter(t => !used[t[0]]);
-  if(rest.length){
-    const open = rest.some(t => t[0] === currentView);
-    h += '<button class="cat-head' + (open ? ' open' : '') + '" data-cat="autres" aria-expanded="'
-      + (open ? 'true' : 'false') + '"><span>➕ أخرى</span><span class="cat-arrow">▾</span></button>'
-      + '<div class="cat-body"' + (open ? '' : ' hidden') + '>'
-      + rest.map(t => { used[t[0]] = 1; return btn(t[0], 'sub'); }).join('') + '</div>';
+  /* Conserve les éventuelles rubriques futures non encore classées. */
+  for(const t of visible){
+    if(used.has(t[0])) continue;
+    desktop += '<button class="tab" data-go="' + t[0] + '">' + t[1] + '</button>';
   }
-  /* D7: renderTabs() reconstruit #tabs à chaque navigation.
-     Réinsérer les commandes déplacées avant de remplacer le DOM, puis
-     libérer le verrou pour que le réagencement soit rejoué sur la nouvelle vue. */
+  const primary = [
+    ['accueil', '🏠 الرئيسية'],
+    ['matieres', window.__SUBJECT__ === 'en' ? '🇬🇧 English' : '📚 المواد'],
+    ['masar', '🧭 مساري'],
+    ['msg', '💬 الرسائل'],
+    ['multaqa', '🌐 ملتقى الطلاب'],
+    ['prof', '🤖 الأستاذ الذكي']
+  ].filter(item => item[0] !== 'multaqa' || canSeeStudentDashboard());
+  const primaryIds = new Set(primary.map(x => x[0]));
+  const mobileItems = visible.filter(t =>
+    !primaryIds.has(t[0]) && t[0] !== 'matieres' && t[0] !== 'english'
+  );
+  let mobile = '<div class="mobile-nav-primary" aria-label="التنقل السريع">';
+  for(const item of primary){
+    const route = item[0] === 'matieres' && window.__SUBJECT__ === 'en' ? 'english' : item[0];
+    mobile += '<button type="button" class="mobile-nav-item' + (currentView === route ? ' on' : '') +
+      '" data-go="' + route + '"' + (currentView === route ? ' aria-current="page"' : '') + '><span>' +
+      item[1] + '</span></button>';
+  }
+  mobile += '<button type="button" class="mobile-nav-item mobile-nav-more" data-nav-more aria-expanded="false" aria-controls="mobileNavMore"><span>☰ المزيد</span></button></div>';
+  mobile += '<div class="mobile-nav-panel" id="mobileNavMore" hidden><div class="mobile-nav-panel-head"><strong>جميع أقسام المنصة</strong>' +
+    '<button type="button" class="mobile-nav-close" data-nav-more-close aria-label="إغلاق القائمة">✕</button></div><div class="mobile-nav-panel-grid">';
+  mobile += window.__SUBJECT__ === 'en'
+    ? '<button type="button" class="mobile-nav-link mobile-nav-subject" data-subj="de">🇩🇪 الألمانية</button>'
+    : '<button type="button" class="mobile-nav-link mobile-nav-subject" data-go="english">🇬🇧 الإنجليزية</button>';
+  for(const cat of NAVCATS){
+    const items = cat[3].filter(id => !primaryIds.has(id) && id !== 'matieres' && id !== 'english')
+      .map(id => byId.get(id)).filter(Boolean);
+    if(!items.length) continue;
+    const active = items.some(t => t[0] === currentView);
+    mobile += '<details class="mobile-nav-group"' + (active ? ' open' : '') + '><summary class="mobile-nav-group-trigger">' +
+      '<span>' + cat[1] + '</span><strong>' + cat[2] + '</strong><span class="mobile-nav-group-chevron" aria-hidden="true">⌄</span></summary>' +
+      '<div class="mobile-nav-group-items">';
+    for(const t of items){
+      mobile += '<button type="button" class="mobile-nav-link' + (t[0] === currentView ? ' on' : '') +
+        '" data-go="' + t[0] + '">' + t[1] + '</button>';
+    }
+    mobile += '</div></details>';
+  }
+  const groupedMobile = new Set(NAVCATS.flatMap(cat => cat[3]));
+  const mobileOther = mobileItems.filter(t => !groupedMobile.has(t[0]));
+  if(mobileOther.length){
+    mobile += '<details class="mobile-nav-group"><summary class="mobile-nav-group-trigger"><span>➕</span><strong>أقسام أخرى</strong><span class="mobile-nav-group-chevron" aria-hidden="true">⌄</span></summary><div class="mobile-nav-group-items">';
+    for(const t of mobileOther){
+      mobile += '<button type="button" class="mobile-nav-link' + (t[0] === currentView ? ' on' : '') +
+        '" data-go="' + t[0] + '">' + t[1] + '</button>';
+    }
+    mobile += '</div></details>';
+  }
+  mobile += '</div></div>';
   const d7bot = document.getElementById('d7bot');
   if(d7bot){
     const host = document.querySelector('.topbar-act');
@@ -511,7 +603,7 @@ function renderTabs(){
     }
   }
   if(c.dataset.d7 === '1') delete c.dataset.d7;
-  c.innerHTML = h;
+  c.innerHTML = '<div class="desktop-nav">' + desktop + '</div>' + mobile;
 }
 
 /* 🧭 prochaine حصة non faite du niveau actif (pour masar.js). */
@@ -536,6 +628,13 @@ window.getNiveauActif = function(){ return niveauActif; }; try{ (window.cloudAut
 
 function go(view){
   if(VIEWS.indexOf(view) === -1) view = 'accueil';
+  if(view === 'dashboard' && !canSeeStudentDashboard()){toast('⛔ لوحة التلميذ مخصّصة لحسابات التلاميذ فقط','ko');view='accueil';}
+  if(view === 'multaqa' && !canSeeStudentDashboard()){toast('⛔ ملتقى الطلاب مخصّص لحسابات التلاميذ فقط','ko');view='accueil';}
+  /* La vue parents ne doit pas être atteignable par hash ou data-go depuis un autre rôle. */
+  if(view === 'parents' && !isParent()){
+    toast('⛔ هذا الفضاء مخصّص لحسابات الأولياء فقط', 'ko');
+    view = 'accueil';
+  }
   /* ── Porte 3.2 : vues entièrement payantes (config.paid_views, vide par défaut) ── */
   if(window.ACCESS && !ACCESS.canAccessView(view)){
     ACCESS.setReturn({ view: view });
@@ -567,7 +666,12 @@ function go(view){
   });
   renderTabs();
   /* Ferme TOUT tiroir de navigation mobile (plusieurs sélecteurs possibles). */
-  $$('#tabs, .tabs, .drawer, #navDrawer').forEach(t => t.classList.remove('open'));
+  Array.from(document.querySelectorAll('#tabs, .tabs, .drawer, #navDrawer')).forEach(t => t.classList.remove('open'));
+  document.querySelectorAll('#tabs .nav-group[open]').forEach(group => group.removeAttribute('open'));
+  const morePanel = $('#mobileNavMore');
+  const moreButton = $('#tabs [data-nav-more]');
+  if(morePanel) morePanel.hidden = true;
+  if(moreButton) moreButton.setAttribute('aria-expanded', 'false');
   const bg = $('#tabsBg') || $('#drawerBg') || $('.drawer-bg');
   if(bg) bg.hidden = true;
   /* Remonte en haut IMMÉDIATEMENT : sur mobile un scroll 'smooth' donne l'impression
@@ -592,7 +696,6 @@ function go(view){
   document.dispatchEvent(new CustomEvent('dz:view', { detail: view }));
   if(view === 'seances'){ renderSeances(); paintUniteHead(); }
   if(view === 'biblio' && window.renderBiblio) window.renderBiblio();
-  if(view === 'stats' && window.renderStats2) window.renderStats2();
   if(view === 'quiz' && window.renderQuiz) window.renderQuiz();
   if(view === 'officiels' && window.renderOfficiels) window.renderOfficiels();
   if(view === 'examen' && window.renderExamen) window.renderExamen();
@@ -625,21 +728,30 @@ function go(view){
   if(view === 'profboard' && window.renderProfBoard) window.renderProfBoard();
   const mp = $('#miniProf'); if(mp) mp.hidden = !isProf();
   if(view === 'prof'){ const l = $('#chatLog'); if(l && l.children.length === 0) initChat(); }
+  if(view === 'dashboard') renderStudentDashboard();
   if(view === 'accueil')    renderStats();
   if(window.MEMOIRE && window.MEMOIRE.carteAccueil) window.MEMOIRE.carteAccueil();
 }
 
 /* ─────────────── ACCUEIL : STATISTIQUES ─────────────── */
 function renderStats(){
-  const st   = loadSeances();
+  const st = loadSeances();
   const done = (st.done || []).length;
-  const sim  = load(LS.sim, {});
+  const total = SEANCES.length || 0;
+  const remaining = Math.max(0, total - done);
+  const sim = load(LS.sim, {});
   const best = (sim.best !== undefined && sim.best !== null) ? sim.best + '/20' : '—';
+  const k = (window.BDD && BDD.state && BDD.state.ready && typeof BDD.kpis === 'function') ? BDD.kpis() : null;
   const el = $('#statsHome'); if(!el) return;
-  el.innerHTML = [[done + '/' + (SEANCES.length||8),'حصص مكتملة'],[DEVOIR.total,'نقطة في الفرض'],
-                  [best,'أفضل نتيجة'],['0555…7931','واتساب']]
-    .map(s => '<div class="stat"><div class="stat-n">' + s[0] + '</div><div class="stat-l">' + s[1] + '</div></div>')
-    .join('');
+  const items = [
+    [done + '/' + total, 'حصص مكتملة في الوحدة'],
+    [String(remaining), 'حصص متبقية في الوحدة'],
+    [best, 'أفضل نتيجة في المحاكاة'],
+    [k ? String(k.total) : '—', 'وثائق متاحة في المكتبة']
+  ];
+  el.innerHTML = items.map(s =>
+    '<div class="stat"><div class="stat-n">' + s[0] + '</div><div class="stat-l">' + s[1] + '</div></div>'
+  ).join('');
 }
 
 /* ─────────────── SÉANCES ─────────────── */
@@ -983,6 +1095,7 @@ function markSeanceDone(){
   var wasTrial = window.ACCESS ? ACCESS.trialFinished() : false;
   if(st.done.indexOf(n) === -1){
     st.done.push(n); saveSeances(st);
+    document.dispatchEvent(new CustomEvent('dz:lesson-complete',{detail:{unit:currentUnite,session:n,unitComplete:st.done.length >= (SEANCES.length||8),at:Date.now()}}));
     toast('🎉 أحسنت! تم إنهاء الحصة ' + n + '/' + (SEANCES.length||8), 'ok');
   }
   var nowTrial = window.ACCESS ? ACCESS.trialFinished() : false;
@@ -1140,21 +1253,48 @@ function addMsg(who, txt, noSave){
 }
 
 async function sendChat(v){
-  /* 🔎 RAG gardé : si le corpus répond avec confiance, on sert l'extrait verbatim
-     AVANT le tuteur à règles ; jamais de texte inventé. */
-  if(window.RAG && window.RAG.cherche){
-    try{
-      const rr = await window.RAG.cherche(v);
-      const ff = window.RAG.formule(rr);
-      if(ff){ addMsg('bot', ff); return; }
-    }catch(e){}
-  }
   addMsg('me', esc(v));
   const log = $('#chatLog');
+  if(!log) return;
   const tp = document.createElement('div');
   tp.className = 'msg bot typing'; tp.innerHTML = '<i></i><i></i><i></i>';
   log.appendChild(tp); log.scrollTop = log.scrollHeight;
-  setTimeout(() => {
+  let answered = false;
+  try{
+    /* 1) Corpus local : réponse exacte prioritaire, sans invention. */
+    if(window.RAG && window.RAG.cherche){
+      try{
+        const rr = await window.RAG.cherche(v);
+        const ff = window.RAG.formule(rr);
+        if(ff){ tp.remove(); addMsg('bot', ff); answered = true; return; }
+      }catch(e){}
+    }
+    /* 2) Tuteur IA distant : URL issue de la configuration publique, jamais de secret côté client. */
+    try{
+      const cfg = await fetch('./assets/bdd/config.json', {cache:'no-cache'}).then(r=>r.ok?r.json():null);
+      const proxy = cfg && typeof cfg.ia_proxy === 'string' ? cfg.ia_proxy.replace(/\/$/,'') : '';
+      if(proxy){
+        const response = await fetch(proxy + '/ask', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({q:String(v).slice(0,600),ctx:'منصة الثانوية الافتراضية الجزائرية. المساعدة التعليمية في اللغة الألمانية، مع شرح مبسط بالعربية والألمانية.'})
+        });
+        const data = await response.json().catch(()=>null);
+        if(response.ok && data && data.ok && typeof data.rep === 'string' && data.rep.trim()){
+          tp.remove();
+          const safe = esc(data.rep.trim()).replace(/\n/g,'<br>');
+          addMsg('bot', safe);
+          answered = true;
+          if(soundOn && 'speechSynthesis' in window){
+            const utterance = new SpeechSynthesisUtterance(data.rep.trim());
+            utterance.lang = /[\u0600-\u06FF]/.test(data.rep) ? 'ar' : (/[äöüß]/i.test(data.rep) ? 'de-DE' : 'fr-FR');
+            speechSynthesis.cancel(); speechSynthesis.speak(utterance);
+          }
+          return;
+        }
+      }
+    }catch(e){}
+    /* 3) Secours local si le réseau ou le Worker IA est indisponible. */
     tp.remove();
     const rep = PROF.repondre(v);
     addMsg('bot', rep);
@@ -1162,7 +1302,10 @@ async function sendChat(v){
       const m = rep.match(/<span class="de-in">([^<]+)<\/span>/);
       if(m) speak(m[1].replace(/<[^>]+>/g,''));
     }
-  }, 480 + Math.random() * 420);
+    answered = true;
+  }finally{
+    if(!answered && tp.isConnected) tp.remove();
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -1329,40 +1472,7 @@ function journalDemarrage(origine){
   return txt;
 }
 
-/* Bloc visible et copiable — utile quand la console n'est pas accessible (mobile). */
-function boutonDiagnostic(){
-  if(document.getElementById('dzDiagBtn')) return;
-  const b = document.createElement('button');
-  b.id = 'dzDiagBtn';
-  b.textContent = '🩺 diagnostic';
-  b.setAttribute('title', 'Afficher l’état réel du démarrage (copiable)');
-  b.style.cssText = 'position:fixed;z-index:9998;left:10px;bottom:10px;background:#12351f;'
-    + 'color:#9fe8bd;border:1px solid #2f6b45;border-radius:999px;padding:8px 13px;'
-    + 'font:600 11.5px system-ui,sans-serif;cursor:pointer;opacity:.72';
-  b.addEventListener('mouseenter', () => { b.style.opacity = '1'; });
-  b.addEventListener('mouseleave', () => { b.style.opacity = '.72'; });
-  b.addEventListener('click', () => {
-    const txt = journalDemarrage('manuel');
-    if(document.getElementById('dzDiagOut')){
-      document.getElementById('dzDiagOut').remove();
-      return;
-    }
-    const pre = document.createElement('pre');
-    pre.id = 'dzDiagOut';
-    pre.setAttribute('dir', 'ltr');
-    pre.style.cssText = 'position:fixed;z-index:9998;left:10px;right:10px;bottom:52px;'
-      + 'max-height:52vh;overflow:auto;margin:0;background:#08130c;color:#9fe8bd;'
-      + 'border:1px solid #2f6b45;border-radius:13px;padding:12px 14px;'
-      + 'font:11px/1.6 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;'
-      + 'word-break:break-word;text-align:left;direction:ltr';
-    pre.textContent = txt;
-    document.body.appendChild(pre);
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(txt).catch(() => {});
-    }
-  });
-  document.body.appendChild(b);
-}
+/* Bouton diagnostic flottant désactivé : le diagnostic reste disponible dans la console. */
 
 /* ─────────────── INITIALISATION ─────────────── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -1373,7 +1483,7 @@ document.addEventListener('DOMContentLoaded', () => {
     panneauPanne(errBoot, 'bootGate');
   }
   /* État réel du DOM, dans la console ET via le bouton 🩺 en bas à gauche. */
-  setTimeout(() => { journalDemarrage('après bootGate'); boutonDiagnostic(); }, 1600);
+  setTimeout(() => { journalDemarrage('après bootGate'); }, 1600);
   /* Filet : si après 3,5 s ni #gate ni #shell n'est visible, on force le portail. */
   setTimeout(() => {
     const g = $('#gate'), sh = $('#shell');
@@ -1386,6 +1496,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 3500);
 
   document.addEventListener('click', ev => {
+    const moreToggle = ev.target.closest('[data-nav-more]');
+    const moreClose = ev.target.closest('[data-nav-more-close]');
+    const morePanel = $('#mobileNavMore');
+    const moreButton = $('#tabs [data-nav-more]');
+    if(moreToggle){
+      ev.preventDefault();
+      if(morePanel){
+        morePanel.hidden = !morePanel.hidden;
+        moreToggle.setAttribute('aria-expanded', morePanel.hidden ? 'false' : 'true');
+      }
+      return;
+    }
+    if(moreClose || (morePanel && !morePanel.hidden &&
+        !ev.target.closest('#mobileNavMore') && !ev.target.closest('[data-nav-more]'))){
+      if(morePanel) morePanel.hidden = true;
+      if(moreButton) moreButton.setAttribute('aria-expanded', 'false');
+      if(moreClose) return;
+    }
     const nv = ev.target.closest('[data-niveau]');
     if(nv){
       if(niveauVerrou && nv.dataset.niveau !== niveauVerrou){ toast('🔒 مستواك مرتبط بحسابك : ' + niveauVerrou + ' — لا يمكن التبديل.', 'ko'); return; }
@@ -1460,6 +1588,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if(ev.target.closest('#btnSimFromDevoir')){ go('simulation'); return; }
   });
 
+  if(!window.__mobileNavEscapeWired){
+    window.__mobileNavEscapeWired = true;
+    document.addEventListener('keydown', ev => {
+      if(ev.key !== 'Escape') return;
+      const panel = $('#mobileNavMore');
+      const button = $('#tabs [data-nav-more]');
+      if(panel && !panel.hidden){
+        panel.hidden = true;
+        if(button) button.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
   const b = $('#btnBurger');
   if(b) b.addEventListener('click', () => { const t = $('#tabs'); if(t) t.classList.toggle('open'); });
   /* Accordéon : une seule catégorie ouverte à la fois (navigation compacte). */
@@ -1525,7 +1665,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if('serviceWorker' in navigator){
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js?v=3520').then(reg => {
+      navigator.serviceWorker.register('sw.js?v=3525').then(reg => {
         reg.addEventListener('updatefound', () => toast('🔄 تحديث جديد قيد التنزيل…'));
       }).catch(() => {});
     });
@@ -1569,10 +1709,53 @@ function answerQCM(btn){
   st.ans[id] = {v:chosen, ok:correct, pts:correct ? found.pts : 0}; store(LS.devoir, st);
 }
 
+/* Auth local uniquement hors ligne ou dans le mode démo explicitement demandé. */
+function authLocalMode(){
+  try{
+    const demo = new URLSearchParams(location.search).has('demo');
+    return !navigator.onLine || demo;
+  }catch(e){ return !navigator.onLine; }
+}
+function showGateError(id, message){
+  const node = $(id);
+  if(node){ node.hidden = false; node.textContent = String(message || 'تعذر إتمام العملية.'); }
+}
+
+// Messages Auth cloud are normalized for learners; raw provider errors stay in diagnostics only.
+function friendlyCloudAuthMessage(code, detail){
+  const value = String(code || detail || '').toLowerCase();
+  if(value.includes('email_not_confirmed') || value.includes('email not confirmed')) return 'لم يتم تأكيد بريدك الإلكتروني بعد. افتح رسالة التأكيد واضغط الرابط الموجود فيها، ثم ارجع لتسجيل الدخول.';
+  if(value.includes('invalid_login_credentials') || value.includes('invalid login credentials') || value.includes('invalid_credentials')) return 'البريد الإلكتروني أو كلمة المرور غير صحيحة. راجع البيانات وحاول مرة أخرى.';
+  if(value.includes('user_already_exists') || value.includes('already registered') || value.includes('user already registered')) return 'يوجد حساب بهذا البريد الإلكتروني. انتقل إلى تسجيل الدخول بدل إنشاء حساب جديد.';
+  if(value.includes('rate limit') || value.includes('too many requests') || value.includes('over_email_send_rate_limit')) return 'تم إرسال طلبات كثيرة خلال وقت قصير. انتظر قليلًا ثم حاول مرة أخرى.';
+  if(value.includes('password') && (value.includes('weak') || value.includes('short') || value.includes('least'))) return 'كلمة المرور لا تستوفي شروط الحماية. اختر كلمة مرور أقوى ثم أعد المحاولة.';
+  if(value.includes('network') || value.includes('fetch') || value.includes('timeout')) return 'تعذر الاتصال بالخدمة الآن. تحقق من اتصال الإنترنت ثم حاول مجددًا.';
+  return 'تعذر إتمام العملية الآن. تحقق من البيانات وحاول مرة أخرى بعد قليل.';
+}
+
+/* Fonctions d'interface du portail — restaurées après leur suppression accidentelle dans le Lot 178. */
+function paintGateStats(){
+  const el = $('#gateStats');
+  if(!el) return;
+  /* Indicateurs descriptifs du catalogue, pas des statistiques d'utilisateurs actifs. */
+  el.innerHTML = [[3,'سنوات ثانوي'],[14,'مادة في الفهرس'],[6,'لغات مدرجة'],[1,'مادة متاحة حاليًا']]
+    .map(x => '<div class="gstat"><div class="gstat-n">' + x[0] + '</div>' +
+              '<div class="gstat-l">' + x[1] + '</div></div>').join('');
+}
+
+function enterApp(session){
+  const gate = $('#gate'), shell = $('#shell');
+  if(gate) gate.hidden = true;
+  if(shell) shell.hidden = false;
+  const hash = String(location.hash || '').replace('#', '');
+  go(VIEWS.indexOf(hash) !== -1 ? hash : 'masar');
+}
+
 /* ══════════ PORTAIL DE CONNEXION ══════════ */
 function bootGate(){
   const gate = $('#gate'), shell = $('#shell');
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+  const cloudRestorePending = !!(s && s.src === 'cloud');
 
   if(window.AUTH){
     try{
@@ -1581,26 +1764,48 @@ function bootGate(){
     }catch(e){ AUTH.initSelects(null); }
   }
 
-  if(s){ enterApp(s); return; }
+  if(s && !cloudRestorePending){
+    if(authLocalMode()){ enterApp(s); return; }
+    /* Une session locale n'est jamais une preuve d'identité lorsque le navigateur est en ligne. */
+    AUTH.logout();
+  }
 
   if(shell) shell.hidden = true;
   if(!gate) return;
   gate.hidden = false;
-  /* Le portail doit être INTERACTIF même sans session : sans cet appel, les onglets
-     login/signup, la soumission du formulaire et le bouton démo restent morts sur une
-     visite fraîche (bindGateEvents n'était posé que dans enterApp, donc qu'avec session).
-     Idempotent via bindGateEvents._done. */
   try{ bindGateEvents(); }
   catch(errBind){
     try{ console.error('[bootGate] bindGateEvents :', errBind); }catch(e2){}
     panneauPanne(errBind, 'bootGate → bindGateEvents');
   }
-  /* Le portail est démasqué AVANT tout rendu : un échec de paintGateStats ne doit plus
-     laisser l'écran vide. */
   try{ paintGateStats(); }
   catch(errStats){
     try{ console.error('[bootGate] paintGateStats :', errStats); }catch(e2){}
     panneauPanne(errStats, 'bootGate → paintGateStats');
+  }
+
+  if(cloudRestorePending){
+    const restoreCloud = async function(){
+      try{
+        if(!window.SB || typeof window.SB.getSession !== 'function'){
+          showGateError('#loginErr', 'تعذر التحقق من الجلسة السحابية. سجّل الدخول من جديد.');
+          return;
+        }
+        const state = await window.SB.getSession();
+        if(!state || !state.ok || !state.session){
+          AUTH.logout();
+          showGateError('#loginErr', 'انتهت جلسة الدخول أو لم تعد صالحة. أدخل بياناتك لتسجيل الدخول مجددًا.');
+          return;
+        }
+        const profile = window.cloudAuthority ? await window.cloudAuthority() : null;
+        if(profile){ enterApp(profile); return; }
+        AUTH.logout();
+        showGateError('#loginErr', 'تعذر تحميل ملفك الدراسي من الحساب السحابي. حاول تسجيل الدخول مجددًا.');
+      }catch(error){
+        showGateError('#loginErr', 'تعذر استعادة جلسة الدخول بأمان. تحقق من اتصال الإنترنت ثم سجّل الدخول مجددًا.');
+      }
+    };
+    restoreCloud();
   }
 
   if(window.BDD && !BDD.state.ready && !BDD.state._loading){
@@ -1612,39 +1817,27 @@ function bootGate(){
         AUTH.initSelects(r ? r.wilayas : null);
       }catch(e){}
       const c = $('#cBdd'); if(c && BDD.state.ready) c.textContent = BDD.kpis().total;
+      if(typeof renderStats === 'function') renderStats();
     });
   }
 }
-
-function paintGateStats(){
-  const el = $('#gateStats'); if(!el) return;
-  const a = window.AUTH ? AUTH.stats() : { comptes:0, sections:5, eleves:142, wilayas:58 };
-  const bdd = (window.BDD && BDD.state.ready) ? BDD.kpis().total : 684;
-  el.innerHTML = [[bdd,'وثيقة'],[a.eleves,'تلميذ'],[a.sections,'أقسام'],[a.wilayas,'ولاية']]
-    .map(x => '<div class="gstat"><div class="gstat-n">' + x[0] + '</div>' +
-              '<div class="gstat-l">' + x[1] + '</div></div>').join('');
-}
-
-function enterApp(s){
-  /* Version MINIMALE et robuste : aucune variable intermédiaire fragile.
-     Le rendu de chaque widget est fait par go() (déjà isolé par vue).
-     Atterrissage sur 🧭 مسارك (ou le hash si présent). */
-  const gate = $('#gate'), shell = $('#shell');
-  if(gate) gate.hidden = true;
-  if(shell) shell.hidden = false;
-  const hash = String(location.hash || '').replace('#', '');
-  go(VIEWS.indexOf(hash) !== -1 ? hash : 'masar');
-}
-
 
 function bindGateEvents(){
   if(bindGateEvents._done) return;
   bindGateEvents._done = true;
 
-  $$('.gtab').forEach(b => b.addEventListener('click', () => {
-    $$('.gtab').forEach(x => x.classList.remove('on'));
-    b.classList.add('on');
+  /* Les boutons publics data-gate-open sont gérés par public-portal.js,
+     seul propriétaire de l'ouverture des routes #connexion/#inscription. */
+
+  Array.from(document.querySelectorAll('.gtab')).forEach(b => b.addEventListener('click', () => {
+    const tabs = Array.from(document.querySelectorAll('.gtab'));
     const isLogin = b.dataset.gate === 'login';
+    tabs.forEach(x => {
+      const selected = x === b;
+      x.classList.toggle('on', selected);
+      x.setAttribute('aria-selected', selected ? 'true' : 'false');
+      x.tabIndex = selected ? 0 : -1;
+    });
     const lf = $('#loginForm'), sf = $('#signupForm');
     if(lf) lf.hidden = !isLogin;
     if(sf) sf.hidden = isLogin;
@@ -1658,8 +1851,76 @@ function bindGateEvents(){
     });
   });
 
-  /* ── P0.3 : Supabase Auth = autorité PRINCIPALE quand disponible ;
-     localStorage = cache hors-ligne / compatibilité comptes locaux ── */
+  /* Parcours de récupération : aucune donnée de mot de passe n'est stockée localement. */
+  document.addEventListener('click', ev => {
+    if(ev.target.closest('[data-password-reset-open]')){
+      ev.preventDefault();
+      location.hash='#mot-de-passe-oublie';
+    }else if(ev.target.closest('[data-password-reset-back]')){
+      ev.preventDefault();
+      location.hash='#connexion';
+    }
+  });
+
+  const resetForm=$('#passwordResetForm');
+  if(resetForm) resetForm.addEventListener('submit', async ev=>{
+    ev.preventDefault();
+    const status=$('#passwordResetStatus');
+    const button=resetForm.querySelector('button[type="submit"]');
+    if(status){status.hidden=true;status.classList.remove('is-success');}
+    if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
+    try{
+      if(!navigator.onLine || !window.SB || !window.SB.resetPassword){
+        throw new Error('تحقق من اتصال الإنترنت وحاول مرة أخرى.');
+      }
+      const result=await window.SB.resetPassword($('#resetEmail').value);
+      if(!result || !result.ok) throw new Error((result && result.err) || 'تعذر إرسال رابط الاستعادة.');
+      if(status){
+        status.textContent='إذا كان البريد مرتبطًا بحساب، فستصلك رسالة تحتوي على رابط آمن لإعادة تعيين كلمة المرور. تحقق أيضًا من البريد غير المرغوب فيه.';
+        status.hidden=false;status.classList.add('is-success');
+      }
+    }catch(error){
+      if(status){status.textContent=error.message || 'تعذر إرسال رابط الاستعادة.';status.hidden=false;}
+    }finally{
+      if(button){button.disabled=false;button.removeAttribute('aria-busy');}
+    }
+  });
+
+  const updateForm=$('#passwordUpdateForm');
+  if(updateForm) updateForm.addEventListener('submit', async ev=>{
+    ev.preventDefault();
+    const status=$('#passwordUpdateStatus');
+    const button=updateForm.querySelector('button[type="submit"]');
+    const password=$('#newPassword').value;
+    const confirmation=$('#confirmNewPassword').value;
+    if(status){status.hidden=true;status.classList.remove('is-success');}
+    if(password.length<8 || password!==confirmation){
+      if(status){
+        status.textContent=password!==confirmation?'كلمتا المرور غير متطابقتين.':'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.';
+        status.hidden=false;
+      }
+      return;
+    }
+    if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
+    try{
+      if(!window.SB || !window.SB.updatePassword) throw new Error('خدمة تحديث كلمة المرور غير متاحة.');
+      const result=await window.SB.updatePassword(password);
+      if(!result || !result.ok) throw new Error((result && result.err) || 'تعذر تحديث كلمة المرور.');
+      if(status){
+        status.textContent='تم تحديث كلمة المرور بنجاح. يمكنك الآن العودة إلى صفحة تسجيل الدخول.';
+        status.hidden=false;status.classList.add('is-success');
+      }
+      $('#newPassword').value='';
+      $('#confirmNewPassword').value='';
+    }catch(error){
+      if(status){status.textContent=error.message || 'تعذر تحديث كلمة المرور.';status.hidden=false;}
+    }finally{
+      if(button){button.disabled=false;button.removeAttribute('aria-busy');}
+    }
+  });
+
+  /* ── Auth : Supabase est l'autorité en ligne ; localStorage est réservé au mode hors ligne/démo.
+     Un échec cloud ne doit jamais être transformé en connexion locale réussie. ── */
 async function cloudAuthority(){
   try{
     if(!window.SB || !window.SB.myProfile) return null;
@@ -1677,15 +1938,36 @@ const lf = $('#loginForm');
   if(lf) lf.addEventListener('submit', async ev => {
     ev.preventDefault();
     const err = $('#loginErr'); if(err) err.hidden = true;
-    let __cs = null;
-    if(navigator.onLine && window.SB && window.SB.login){
-      try{ const __ok = await window.SB.login($('#loginUser').value, $('#loginPass').value); if(__ok){ __cs = await cloudAuthority(); } }catch(e){ __cs = null; }
+    const email = $('#loginUser').value.trim();
+    const password = $('#loginPass').value;
+    if(!authLocalMode()){
+      if(!window.SB || !window.SB.login){
+        showGateError('#loginErr', 'خدمة تسجيل الدخول السحابية غير جاهزة. أعد المحاولة بعد لحظات.');
+        return;
+      }
+      try{
+        const result = await window.SB.login(email, password);
+        if(!result || !result.ok){
+          showGateError('#loginErr', friendlyCloudAuthMessage(result && (result.code || result.err), result && result.err));
+          return;
+        }
+        const cloudSession = await cloudAuthority();
+        if(!cloudSession){
+          showGateError('#loginErr', 'تم التحقق من الحساب، لكن تعذر تحميل الملف الدراسي. حاول مجددًا أو تواصل مع الدعم.');
+          return;
+        }
+        toast('🎉 أهلاً بك ' + cloudSession.nom + ' — حساب سحابي (' + cloudSession.niveau + ')', 'ok');
+        enterApp(cloudSession);
+      }catch(error){
+        showGateError('#loginErr', friendlyCloudAuthMessage(error && error.code, error && error.message));
+      }
+      return;
     }
-    if(__cs){ toast('🎉 أهلاً بك ' + __cs.nom + ' — حساب سحابي (' + __cs.niveau + ')', 'ok'); enterApp(__cs); return; }
-    const r = AUTH.login($('#loginUser').value, $('#loginPass').value, $('#loginClasse').value);
-    if(r.ok){ toast('🎉 أهلاً بك ' + r.session.nom + ' — القسم ' + r.session.classe_ar, 'ok');
-              enterApp(r.session); }
-    else if(err){ err.hidden = false; err.textContent = r.err; }
+    const local = AUTH.login(email, password, $('#loginClasse').value);
+    if(local.ok){
+      toast('🎉 أهلاً بك ' + local.session.nom + ' — القسم ' + local.session.classe_ar, 'ok');
+      enterApp(local.session);
+    }else showGateError('#loginErr', local.err);
   });
 
   const bd = $('#btnDemo');
@@ -1701,27 +1983,50 @@ const lf = $('#loginForm');
     const err = $('#suErr'); if(err) err.hidden = true;
     const w = String($('#suWilaya').value || '').split('|');
     const niv = $('#suNiveau').value;
-    let __sc = null;
-    if(navigator.onLine && window.SB && window.SB.signup){
-      try{ await window.SB.signup($('#suMail').value, $('#suPass').value, { pseudo:$('#suName').value, niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0] }); __sc = await cloudAuthority(); }catch(e){ __sc = null; }
+    // L'inscription crée uniquement un compte Auth officiel ; le mode démo/hors ligne
+    // ne doit jamais fabriquer un compte local présenté comme une inscription.
+    if(!navigator.onLine){
+      showGateError('#suErr', 'يتطلب إنشاء حساب رسمي اتصالاً بالإنترنت. اتصل بالشبكة ثم أعد المحاولة.');
+      return;
     }
-    if(__sc){ toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + __sc.niveau, 'ok'); enterApp(__sc); return; }
-    const r = AUTH.signup({
-      nom:$('#suName').value, mail:$('#suMail').value, pass:$('#suPass').value,
-      niveau:niv, filiere:$('#suFiliere').value,
-        filiere_ar: ($('#suFiliere') && $('#suFiliere').selectedOptions[0]) ? $('#suFiliere').selectedOptions[0].textContent : '',
-        specialite: ($('#suSpecialite') && !$('#suSpecialite').hidden && $('#suSpecialite').selectedOptions[0]) ? $('#suSpecialite').selectedOptions[0].textContent : '',
-      wilaya:w[1] || 'Bouira', code_wilaya:w[0] || '10',
-      role:$('#suRole').value, classe:niv + '-1'
-    });
-    if(r.ok){ toast('✅ تم إنشاء حسابك — أهلاً ' + r.session.nom, 'ok'); enterApp(r.session); }
-    else if(err){ err.hidden = false; err.textContent = r.err; }
+    if(!window.SB || !window.SB.signup){
+      showGateError('#suErr', 'خدمة إنشاء الحساب السحابية غير جاهزة. أعد المحاولة بعد لحظات.');
+      return;
+    }
+    try{
+      const result = await window.SB.signup($('#suMail').value.trim(), $('#suPass').value, {
+        pseudo:$('#suName').value.trim(), niveau:niv, filiere:$('#suFiliere').value, wilaya:w[0]
+      });
+      if(!result || !result.ok){
+        showGateError('#suErr', friendlyCloudAuthMessage(result && (result.code || result.err), result && result.err));
+        return;
+      }
+      if(!result.session){
+        const loginTab = document.querySelector('[data-gate="login"]');
+        if(loginTab) loginTab.click();
+        const loginEmail = $('#loginUser');
+        if(loginEmail) loginEmail.value = $('#suMail').value.trim();
+        showGateError('#loginErr', 'تم استلام طلب التسجيل. إذا كان تأكيد البريد الإلكتروني مفعّلًا، فتحقق من بريدك الوارد والرسائل غير المرغوب فيها، ثم افتح رابط التأكيد وارجع لتسجيل الدخول. إذا لم تصلك رسالة، فقد يلزم إعداد خدمة إرسال البريد من إدارة المنصة.');
+        return;
+      }
+      const cloudSession = await cloudAuthority();
+      if(!cloudSession){
+        showGateError('#suErr', 'تم إنشاء الحساب، لكن تعذر تحميل الملف الدراسي. لا تنشئ حسابًا محليًا بديلًا؛ أعد المحاولة أو تواصل مع الدعم.');
+        return;
+      }
+      toast('🎉 تم إنشاء الحساب السحابي — المستوى ' + cloudSession.niveau, 'ok');
+      enterApp(cloudSession);
+    }catch(error){
+      showGateError('#suErr', friendlyCloudAuthMessage(error && error.code, error && error.message));
+    }
   });
 
   const uc = $('#userChip');
   if(uc) uc.addEventListener('click', () => go('compte'));
 
   document.addEventListener('dz:auth', e => {
+    renderTabs();
+    if(e.detail && currentView === 'parents' && !isParent()) go('accueil');
     if(!e.detail){
       const sh = $('#shell'), gt = $('#gate');
       if(sh) sh.hidden = true;
@@ -1734,45 +2039,233 @@ const lf = $('#loginForm');
 function renderWelcome(){
   const el = $('#welcomeBox'); if(!el) return;
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
-  if(!s){ el.innerHTML = ''; return; }
+  if(!s){ el.innerHTML = '';  return; }
   const h = new Date().getHours();
   const salut = h < 12 ? 'صباح الخير' : 'مساء الخير';
   const de = h < 12 ? 'Guten Morgen' : (h < 18 ? 'Guten Tag' : 'Guten Abend');
   const st = loadSeances();
   const next = SEANCES.filter(x => (st.done || []).indexOf(x.n) === -1)[0];
+  const niveauProgression = ['2AS','3AS'].includes(s.niveau) ? s.niveau : (niveauActif || 'tous');
+  const unitesProgression = UNITES.filter(u =>
+    (niveauProgression === 'tous' || u.niveau === niveauProgression) &&
+    Array.isArray(u.seances) && u.seances.length
+  );
   let totDone = 0, totSeanc = 0;
-  UNITES.forEach(u => {
-    if(!u.seances || !u.seances.length) return;
-    totSeanc += u.seances.length;
-    totDone  += (loadSeancesFor(u.n).done || []).length;
+  unitesProgression.forEach(u => {
+    const sessions = u.seances;
+    const completed = loadSeancesFor(u.n).done || [];
+    totSeanc += sessions.length;
+    totDone += sessions.filter(session => completed.indexOf(session.n) !== -1).length;
   });
   const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
-
+  const pct = totSeanc ? Math.round(totDone / totSeanc * 100) : 0;
+  const niveauLibelle = niveauProgression === 'tous' ? 'كل المستويات' : 'المستوى ' + niveauProgression;
   el.innerHTML =
-    '<h1>' + salut + '، ' + esc(s.nom) + ' 👋</h1>' +
-    '<p>مرحباً بك في قسمك الافتراضي <b dir="ltr">' + esc(s.classe_ar) + '</b> — ' +
-      'الثانوية الافتراضية الجزائرية · شعبة <b>' + esc(s.filiere) + '</b>.<br>' +
-      '<span class="de-display" dir="ltr">' + esc(de) + '! Willkommen in deiner virtuellen Klasse.</span></p>' +
-    '<div class="welcome-cta">' +
-      (next ? '<button class="btn btn-p" data-go="seances">📚 الحصة ' + next.n + ' — ' +
-               esc(next.ar) + '</button>'
-            : '<button class="btn btn-p" data-go="seances">📚 مراجعة الحصص</button>') +
-      '<button class="btn btn-g" data-go="biblio">🗂️ المكتبة' +
-        (k ? ' (' + k.total + ')' : '') + '</button>' +
-      '<button class="btn btn-o" data-go="devoir">📝 الفرض /20</button>' +
+    '<div class="dz-student-hero">' +
+      '<div class="dz-hero-copy">' +
+        '<span class="dz-hero-kicker"><i aria-hidden="true"></i> الثانوية الافتراضية الجزائرية · فضاؤك الدراسي</span>' +
+        '<h1>' + salut + '، ' + esc(s.nom) + ' 👋</h1>' +
+        '<p>مرحباً بك في قسمك الافتراضي <b dir="ltr">' + esc(s.classe_ar) + '</b> — ' +
+          'شعبة <b>' + esc(s.filiere) + '</b>.' +
+          '<span class="de-display dz-hero-de" dir="ltr">' + esc(de) + '! Willkommen in deiner virtuellen Klasse.</span></p>' +
+        '<div class="welcome-cta dz-hero-actions">' +
+          (next ? '<button class="btn btn-p" data-go="seances">📚 الحصة ' + next.n + ' — ' +
+                   esc(next.ar) + '</button>'
+                : '<button class="btn btn-p" data-go="seances">📚 مراجعة الحصص</button>') +
+          '<button class="btn btn-o" data-go="biblio">🗂️ المكتبة' +
+            (k ? ' (' + k.total + ')' : '') + '</button>' +
+          '<button class="btn btn-outline-light" data-go="devoir">📝 الفرض /20</button>' +
+        '</div>' +
+        '<div class="dz-hero-progress">' +
+          '<div class="dz-hero-progress-head"><span>تقدمك الدراسي</span><b>' + pct + '%</b></div>' +
+          '<div class="dz-hero-track"><i style="width:' + pct + '%"></i></div>' +
+          '<small>' + (totSeanc ? totDone + ' / ' + totSeanc + ' حصص مكتملة · ' +
+            unitesProgression.length + ' وحدات تعليمية · ' + niveauLibelle : 'لم تُسجَّل حصص متاحة لهذا المستوى بعد') + '</small>' +
+        '</div>' +
+      '</div>' +
+      '<div class="dz-hero-emblem" aria-hidden="true"><span>🇩🇿</span><b>تعلم<br>وتقدّم</b><i></i></div>' +
     '</div>' +
-    '<div class="welcome-prog"><div class="progress-wrap"><div class="progress" style="width:' +
-      (totSeanc ? Math.round(totDone / totSeanc * 100) : 0) + '%"></div></div>' +
-      '<div class="progress-lbl">📈 تقدّمك الإجمالي : ' + totDone + ' / ' + totSeanc +
-      ' حصص عبر ' + UNITES.filter(u => u.seances && u.seances.length).length +
-      ' وحدات — الوحدة الحالية : <b>' + uniteActive().n + '</b></div></div>' +
     '<div class="welcome-meta">' +
-      '<span class="sec-pill">🏫 ' + esc(s.classe_ar) + ' · ' + s.eleves + ' تلميذ</span>' +
-      '<span class="sec-pill or">📖 المادة : ' + esc(s.matiere || 'اللغة الألمانية') + '</span>' +
-      '<span class="sec-pill rg">🎓 ' + esc(s.niveau) + '</span>' +
-      '<span class="sec-live"><i></i> ' + esc(s.prof || 'الأستاذ خريف أحمد') + ' · متصل الآن</span>' +
+      '<span class="sec-pill">🏫 قسم ' + esc(s.classe_ar || '—') + '</span>' +
+      '<span class="sec-pill or">📖 المادة : ' + esc(s.matiere || 'المادة المحددة في حسابك') + '</span>' +
+      '<span class="sec-pill rg">🎓 ' + esc(s.niveau || '—') + '</span>' +
+      (s.prof ? '<span class="sec-live">👨‍🏫 ' + esc(s.prof) + '</span>' : '') +
     '</div>';
+  
 }
+
+
+let studentDashboardRegistry=null,studentDashboardRegistryPromise=null;
+function renderStudentDashboardSubjects(session,pct,unitCount){
+  const host=$('#sdSubjects');if(!host)return;
+  function paint(data){
+    if(currentView!=='dashboard')return;
+    if(!data||!Array.isArray(data.matieres)){host.innerHTML='<p class="sd-subject-empty">تعذّر تحميل فهرس المواد حالياً.</p>';return;}
+    const level=['1AS','2AS','3AS'].includes(session.niveau)?session.niveau:'2AS';
+    const branches=data.par_niveau&&data.par_niveau[level]?data.par_niveau[level]:{};
+    const branchMap={
+      'Lettres et Langues':'langues','Langues étrangères':'langues','لغات أجنبية':'langues',
+      'Sciences expérimentales':'sciences','Sciences':'sciences','علوم تجريبية':'sciences',
+      'Mathématiques':'math','Math':'math','رياضيات':'math',
+      'Technique Mathématique':'tech','تقني رياضي':'tech',
+      'Gestion et économie':'gestion','Gestion':'gestion','تسيير واقتصاد':'gestion',
+      'Lettres et Philosophie':'philo','آداب وفلسفة':'philo',
+      'Tronc commun lettres':'tc-lettres','جذع مشترك آداب':'tc-lettres',
+      'Tronc commun sciences':'tc-sciences','جذع مشترك علوم وتكنولوجيا':'tc-sciences'
+    };
+    const branch=branchMap[session.filiere_ar||session.filiere||'']||Object.keys(branches)[0];
+    const ids=branches[branch]||Object.values(branches)[0]||[];
+    const byId={};data.matieres.forEach(m=>{byId[m.id]=m;});
+    const items=ids.map(id=>byId[id]).filter(Boolean);
+    const statuses=data.statuts||{};
+    const subjectTones={allemand:'amber',math:'indigo',physique:'violet',svt:'emerald',espanol:'rose',italien:'teal',francais:'blue',anglais:'red',arabe:'green',philo:'slate',histgeo:'cyan',eco:'orange',info:'sky',islam:'olive'};
+    host.innerHTML='<div class="sd-subject-grid">'+items.map(m=>{
+      const tone=subjectTones[m.id]||'neutral';
+      const status=statuses[m.statut]||{ar:m.statut||'غير محددة',icon:'•'};
+      const active=m.statut==='actif',partial=m.statut==='partiel';
+      const route=active?'seances':(m.id==='anglais'&&partial?'english':'');
+      const progress=active?'<div class="sd-subject-progress"><div><span>إنجاز المسار الألماني</span><b>'+pct+'%</b></div><i><span style="width:'+pct+'%"></span></i></div><small class="sd-subject-meta">'+unitCount+' وحدات تعليمية مسجلة</small>':'<small class="sd-subject-meta">'+esc(m.desc||'')+'</small>';
+      return '<article class="sd-subject-card tone-'+tone+' '+(active?'is-active':(partial?'is-partial':'is-planned'))+'"><div class="sd-subject-top"><span class="sd-subject-icon">'+esc(m.icon||'📘')+'</span><span class="sd-subject-status '+(active?'is-active':(partial?'is-partial':''))+'">'+esc(status.icon)+' '+esc(status.ar)+'</span></div><b class="sd-subject-name">'+esc(m.ar)+'</b>'+(m.de?'<small class="sd-subject-language" dir="ltr">'+esc(m.de)+'</small>':'')+progress+(route?'<button type="button" class="sd-subject-open" data-go="'+route+'">'+(active?'فتح الحصص':'استكشاف المحتوى')+' ←</button>':'')+'</article>';
+    }).join('')+'</div>';
+  }
+  if(studentDashboardRegistry){paint(studentDashboardRegistry);return;}
+  host.innerHTML='<p class="sd-subject-empty">⏳ جارٍ تحميل فهرس المواد…</p>';
+  if(!studentDashboardRegistryPromise){
+    studentDashboardRegistryPromise=fetch('assets/bdd/matieres.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(data=>{studentDashboardRegistry=data;return data;}).catch(()=>null);
+  }
+  studentDashboardRegistryPromise.then(paint);
+}
+
+/* ══════════ TABLEAU DE BORD ÉTUDIANT — composition indépendante des prototypes 1+2 ══════════ */
+function renderStudentDashboardMessages(host){
+  if(!host)return;
+  const empty='<div class="sd-message-empty">افتح صندوق الرسائل للاطلاع على مجموعاتك ومحادثاتك.</div><button type="button" class="sd-message-open" data-go="msg">فتح الرسائل ←</button>';
+  if(!window.SB||typeof window.SB.msgConvs!=='function'){host.innerHTML=empty;return;}
+  let request;
+  try{request=window.SB.msgConvs();}catch(e){host.innerHTML=empty;return;}
+  Promise.resolve(request).then(function(result){
+    if(currentView!=='dashboard'||!host.isConnected)return;
+    if(!result||!result.ok){host.innerHTML=empty;return;}
+    const rows=Array.isArray(result.convs)?result.convs:[];
+    const recent=rows.slice(0,3);
+    const cards=recent.map(function(row){
+      const title=row.titre||(row.type==='groupe'?'مجموعة دراسية':'محادثة مباشرة');
+      const raw=String(row.last_activity||'');
+      const date=raw?raw.slice(0,10):'—';
+      return '<div class="sd-message-item"><span class="sd-message-icon">'+(row.type==='groupe'?'👥':'💬')+'</span><div><b>'+esc(title)+'</b><small>آخر نشاط: '+esc(date)+'</small></div></div>';
+    }).join('');
+    host.innerHTML='<div class="sd-message-count"><b>'+rows.length+'</b><span>محادثة ومجموعة متاحة لحسابك</span></div>'+(cards||'<div class="sd-message-empty">لا توجد محادثات متاحة حالياً.</div>')+'<button type="button" class="sd-message-open" data-go="msg">فتح صندوق الرسائل ←</button>';
+  }).catch(function(){
+    if(currentView==='dashboard'&&host.isConnected)host.innerHTML=empty;
+  });
+}
+
+function renderStudentDashboard(){
+  const hero=$('#studentDashboardHero'),stats=$('#sdStats'),path=$('#sdPath'),subjects=$('#sdSubjects'),unitProgressHost=$('#sdUnitProgress'),skills=$('#sdSkills'),goals=$('#sdGoals'),achievements=$('#sdAchievements'),activity=$('#sdActivity'),recommend=$('#sdRecommendation'),updates=$('#sdUpdates');
+  if(!hero||!stats||!path||!subjects||!unitProgressHost||!skills||!goals||!achievements||!activity||!recommend||!updates)return;
+  const s=(window.AUTH&&AUTH.session)?AUTH.session():null;
+  if(!s){hero.innerHTML='';stats.innerHTML='';path.innerHTML='';subjects.innerHTML='';unitProgressHost.innerHTML='';skills.innerHTML='';goals.innerHTML='';achievements.innerHTML='';activity.innerHTML='';recommend.innerHTML='';updates.innerHTML='';return;}
+  const levelCode=['1AS','2AS','3AS'].includes(s.niveau)?s.niveau:(niveauActif||'2AS');
+  const units=UNITES.filter(u=>(!u.niveau||u.niveau===levelCode)&&Array.isArray(u.seances)&&u.seances.length);
+  const unitProgress=units.map(u=>{const done=(loadSeancesFor(u.n).done||[]),sessions=u.seances||[],count=sessions.length,doneCount=sessions.filter(x=>done.indexOf(x.n)>=0).length;return {n:u.n,completed:doneCount,total:count,pct:count?Math.round(doneCount/count*100):0};});
+  let completed=0,total=0;
+  unitProgress.forEach(u=>{completed+=u.completed;total+=u.total;});
+  const pct=total?Math.round(completed/total*100):0;
+  // La prochaine séance doit provenir des unités filtrées pour le niveau du compte,
+  // et non de niveauActif, qui peut encore être en cours de synchronisation.
+  const nextUnit=units.find(function(u){
+    const done=loadSeancesFor(u.n).done||[];
+    return (u.seances||[]).some(function(lesson){return done.indexOf(lesson.n)<0;});
+  })||null;
+  const unitDone=nextUnit?(loadSeancesFor(nextUnit.n).done||[]):[];
+  const nextLesson=nextUnit?(nextUnit.seances||[]).find(function(lesson){return unitDone.indexOf(lesson.n)<0;})||null:null;
+  const nextInfo=nextUnit&&nextLesson?{unite:nextUnit.n,prochaine:nextLesson}:null;
+  const unit=nextUnit;
+  const unitTotal=unit&&unit.seances?unit.seances.length:0;
+  const unitCompleted=unit&&unit.seances?unit.seances.filter(x=>unitDone.indexOf(x.n)>=0).length:0;
+  let g={xp:0,activeDays:[],lessons:[]},lvl={n:1,name:'مبتدئ',pct:0,next:100};
+  try{if(window.DZ_GAMIFICATION){g=DZ_GAMIFICATION.read();lvl=DZ_GAMIFICATION.level(g.xp||0);}}catch(e){}
+  const streak=(function(){const a=Array.isArray(g.activeDays)?g.activeDays:[],key=d=>{const z=new Date(d);return z.getFullYear()+'-'+String(z.getMonth()+1).padStart(2,'0')+'-'+String(z.getDate()).padStart(2,'0');};let d=new Date();d.setHours(12,0,0,0);let today=key(d),y=new Date(d);y.setDate(y.getDate()-1);let base=a.indexOf(today)>=0?today:(a.indexOf(key(y))>=0?key(y):null);if(!base)return 0;let n=0;while(a.indexOf(base)>=0){n++;d.setDate(d.getDate()-1);base=key(d);}return n;})();
+  const h=new Date().getHours(),greeting=h<12?'صباح الخير':(h<18?'نهارك سعيد':'مساء الخير');
+  const name=esc(s.nom||s.pseudo||'تلميذنا'),className=esc(s.classe_ar||s.niveau||'المستوى الدراسي');
+  hero.innerHTML='<div class="sd-hero-copy"><span class="sd-hero-kicker">🇩🇿 الثانوية الافتراضية الجزائرية</span><span class="sd-class-pill">'+className+'</span><h1>'+greeting+'، '+name+' 👋</h1><p>هذا فضاؤك لمتابعة الدروس والمواد والإنجازات التعليمية.</p><div class="sd-hero-progress"><div><span>التقدم في وحدات مسارك</span><b>'+completed+' / '+total+' · '+pct+'%</b></div><i><span style="width:'+pct+'%"></span></i></div></div><div class="sd-hero-metrics"><div><small>رصيد الخبرة</small><b>⭐ '+(g.xp||0)+' XP</b></div><div><small>سلسلة المواظبة</small><b>🔥 '+streak+' أيام</b></div><div><small>المستوى</small><b>'+esc(lvl.name)+' · '+lvl.n+'</b></div></div>';
+  const completedUnits=unitProgress.filter(row=>row.completed===row.total&&row.total>0).length;
+  const mapRows=unitProgress.map((row,index)=>{
+    const u=units.find(item=>String(item.n)===String(row.n));
+    if(!u)return '';
+    const done=(loadSeancesFor(u.n).done||[]);
+    const isCurrent=!!(unit&&nextInfo&&nextInfo.prochaine&&String(unit.n)===String(u.n));
+    const priorComplete=unitProgress.slice(0,index).every(item=>item.total>0&&item.completed===item.total);
+    const state=row.pct===100?'complete':(isCurrent?'current':(row.completed>0?'started':(priorComplete?'next':'pending')));
+    const stateLabel=state==='complete'?'مكتملة':(state==='current'?'قيد التعلّم':(state==='started'?'بدأت':'لم تبدأ بعد'));
+    const lessonNodes=(u.seances||[]).map(x=>{
+      const isDone=done.indexOf(x.n)>=0;
+      const isNext=isCurrent&&nextInfo.prochaine&&String(x.n)===String(nextInfo.prochaine.n);
+      const lessonState=isDone?'complete':(isNext?'current':'pending');
+      const lessonTitle=x.ar||x.titre||('الحصة '+x.n);
+      return '<div class="sd-map-lesson '+(lessonState==='complete'?'is-complete':(lessonState==='current'?'is-current':'is-pending'))+'" aria-label="'+esc(lessonTitle)+'" title="'+esc(lessonTitle)+'"><span>'+(isDone?'✓':(isNext?'▶':esc(x.n)))+'</span><small>الحصة '+esc(x.n)+'</small></div>';
+    }).join('');
+    return '<article class="sd-map-unit is-'+state+'"><div class="sd-map-unit-head"><span class="sd-map-unit-number">'+esc(row.n)+'</span><div class="sd-map-unit-title"><span>الوحدة '+esc(row.n)+'</span><h3>'+esc(u.ar||u.de||('الوحدة '+row.n))+'</h3>'+(u.de?'<bdi dir="ltr">'+esc(u.de)+'</bdi>':'')+'</div><span class="sd-map-unit-state">'+stateLabel+'</span></div><div class="sd-map-unit-progress"><div><span>'+row.completed+' من '+row.total+' حصص مكتملة</span><strong>'+row.pct+'%</strong></div><i><span style="width:'+row.pct+'%"></span></i></div><div class="sd-map-lessons">'+lessonNodes+'</div>'+(isCurrent&&nextInfo.prochaine?'<div class="sd-map-unit-action"><span>الحصة التالية: <b>'+esc(nextInfo.prochaine.ar||nextInfo.prochaine.titre||('الحصة '+nextInfo.prochaine.n))+'</b></span><button type="button" data-go="seances">متابعة الحصة ←</button></div>':'')+'</article>';
+  }).join('');
+  const currentLabel=unit&&nextInfo&&nextInfo.prochaine
+    ?'الوحدة '+esc(unit.n)+' · '+esc(unit.ar||unit.de||'') 
+    :(completedUnits===unitProgress.length&&unitProgress.length?'أكملت جميع الوحدات المسجّلة':'تابع الوحدات غير المكتملة');
+  path.innerHTML='<div class="sd-learning-map"><div class="sd-map-overview"><div><span class="sd-map-kicker">خريطة التعلّم البيداغوجية</span><h3>'+currentLabel+'</h3><p>مسار الوحدات والحصص وفق سجل إنجازك الفعلي</p></div><div class="sd-map-total"><strong>'+completedUnits+' / '+unitProgress.length+'</strong><small>وحدات مكتملة</small></div></div>'+(nextInfo&&nextInfo.prochaine?'<div class="sd-map-next"><span class="sd-map-next-icon">▶</span><div><small>خطوتك التعليمية التالية</small><b>'+esc(nextInfo.prochaine.ar||nextInfo.prochaine.titre||('الحصة '+nextInfo.prochaine.n))+'</b><span>الوحدة '+esc(nextInfo.unite)+'</span></div><button type="button" data-go="seances">متابعة الآن ←</button></div>':'<div class="sd-map-complete-note">🎓 لا توجد حصة تالية مسجّلة حالياً. يمكنك مراجعة الوحدات المكتملة أو استكشاف مواردك.</div>')+'<div class="sd-map-legend"><span><i class="is-complete"></i> حصة مكتملة</span><span><i class="is-current"></i> الحصة التالية</span><span><i class="is-pending"></i> حصة متبقية</span></div><div class="sd-map-units">'+(mapRows||'<div class="sd-empty"><b>لا توجد وحدات تعليمية مسجّلة لهذا المستوى بعد.</b></div>')+'</div></div>';
+  renderStudentDashboardSubjects(s,pct,units.length);
+  if(unitProgress.length){
+    unitProgressHost.innerHTML='<div class="sd-unit-chart-legend" aria-label="حالات إنجاز الوحدات"><span><i class="is-complete"></i> مكتملة</span><span><i class="is-started"></i> قيد الإنجاز</span><span><i class="is-pending"></i> لم تبدأ</span></div><div class="sd-unit-chart">'+unitProgress.map(u=>{const state=u.completed===u.total?'complete':(u.completed>0?'started':'pending');const stateLabel=state==='complete'?'مكتملة':(state==='started'?'قيد الإنجاز':'لم تبدأ');return '<div class="sd-unit-chart-item is-'+state+'" aria-label="الوحدة '+esc(u.n)+' : '+stateLabel+' · '+u.completed+' من '+u.total+' حصص مكتملة"><b>'+u.pct+'%</b><div class="sd-unit-chart-track" role="img" aria-label="الوحدة '+esc(u.n)+' : '+u.completed+' من '+u.total+' حصص مكتملة"><span style="height:'+u.pct+'%"></span></div><small>الوحدة '+esc(u.n)+'</small><em>'+u.completed+'/'+u.total+'</em></div>';}).join('')+'</div><p class="sd-unit-chart-note">النسب محسوبة من الحصص المسجّلة فعلياً في كل وحدة.</p>';
+  }else{
+    unitProgressHost.innerHTML='<div class="sd-empty"><span>📊</span><b>لا توجد بيانات كافية بعد</b><p>سيظهر تقدم الوحدات عند توفر حصص مسجّلة لهذا المستوى.</p></div>';
+  }
+  const unitQuiz=g&&g.unitQuiz&&typeof g.unitQuiz==='object'?g.unitQuiz:{};
+  let quizCorrect=0,quizTotal=0,quizAttempts=0;
+  Object.keys(unitQuiz).forEach(function(key){const row=unitQuiz[key]||{};quizCorrect+=Number(row.correct)||0;quizTotal+=Number(row.total)||0;quizAttempts+=Number(row.attempts)||0;});
+  stats.innerHTML='<div class="sd-stat-card sd-stat-lessons"><div class="sd-stat-top"><span class="sd-stat-icon">📘</span><span class="sd-stat-tag">التعلّم</span></div><strong>'+completed+'</strong><b>الحصص المكتملة</b><small>من '+total+' حصة مسجّلة</small></div>'+
+    '<div class="sd-stat-card sd-stat-units"><div class="sd-stat-top"><span class="sd-stat-icon">🧭</span><span class="sd-stat-tag">المسار</span></div><strong>'+units.length+'</strong><b>الوحدات التعليمية</b><small>في مستواك الدراسي</small></div>'+
+    '<div class="sd-stat-card sd-stat-correct"><div class="sd-stat-top"><span class="sd-stat-icon">✓</span><span class="sd-stat-tag">الاختبارات</span></div><strong>'+quizCorrect+'</strong><b>الإجابات الصحيحة</b><small>من '+quizTotal+' إجابة مسجّلة</small></div>'+
+    '<div class="sd-stat-card sd-stat-attempts"><div class="sd-stat-top"><span class="sd-stat-icon">🎯</span><span class="sd-stat-tag">التدريب</span></div><strong>'+quizAttempts+'</strong><b>محاولات الاختبار</b><small>في جميع الوحدات</small></div>';
+  const skillRows=Object.keys(unitQuiz).map(function(key){const row=unitQuiz[key]||{},correct=Number(row.correct)||0,total=Number(row.total)||0;return {unit:key,correct:correct,total:total,attempts:Number(row.attempts)||0,pct:total?Math.round(correct/total*100):0};}).filter(function(row){return row.total>0;}).sort(function(x,y){return Number(x.unit)-Number(y.unit);});
+  if(skillRows.length){
+    skills.innerHTML='<div class="sd-skill-list">'+skillRows.map(function(row){const tone=((Math.max(1,Number(row.unit)||1)-1)%6)+1;return '<div class="sd-skill-row is-tone-'+tone+'"><div class="sd-skill-head"><b>الوحدة '+esc(row.unit)+'</b><strong>'+row.pct+'%</strong></div><div class="sd-skill-track" role="img" aria-label="الوحدة '+esc(row.unit)+' : '+row.correct+' إجابة صحيحة من '+row.total+'"><span style="width:'+row.pct+'%"></span></div><small>'+row.correct+' صحيحة من '+row.total+' إجابة · '+row.attempts+' محاولات</small>'+(row.total<10?'<em>عينة محدودة — واصل حل التمارين</em>':'')+'</div>';}).join('')+'</div><p class="sd-skill-note">النسبة تمثل الإجابات الصحيحة من محاولاتك المسجّلة، وليست حكماً نهائياً على إتقان الوحدة. ألوان البطاقات للتمييز بين الوحدات فقط ولا تعبّر عن مستوى الأداء.</p>';
+  }else{
+    skills.innerHTML='<div class="sd-empty"><span>🎯</span><b>لم تُسجّل نتائج تمارين بعد</b><p>أكمل اختباراً أو سلسلة تمارين لتظهر نتائجك هنا.</p><button type="button" data-go="quiz">ابدأ التمارين</button></div>';
+  }
+  const focusUnit=unitProgress.find(function(u){return u.completed<u.total;})||unitProgress[0]||null;
+  let dueCount=0;try{dueCount=window.MEMOIRE&&typeof MEMOIRE.dues==='function'?MEMOIRE.dues().length:0;}catch(e){}
+  const focusQuiz=focusUnit&&unitQuiz[String(focusUnit.n)]?unitQuiz[String(focusUnit.n)]:null;
+  const focusAttempts=focusQuiz?Number(focusQuiz.attempts)||0:0;
+  const goalCards=[];
+  if(focusUnit){
+    goalCards.push('<article class="sd-goal-card sd-goal-unit"><div class="sd-goal-icon">📘</div><div class="sd-goal-copy"><span>المحطة التعليمية</span><b>'+(focusUnit.completed>=focusUnit.total?'راجع الوحدة '+esc(focusUnit.n):'أكمل الوحدة '+esc(focusUnit.n))+'</b><small>'+focusUnit.completed+' من '+focusUnit.total+' حصص مكتملة · '+(focusUnit.total-focusUnit.completed)+' متبقية</small><div class="sd-goal-track"><i style="width:'+focusUnit.pct+'%"></i></div></div><strong>'+focusUnit.pct+'%</strong><button type="button" data-go="seances">متابعة الحصص ←</button></article>');
+    goalCards.push('<article class="sd-goal-card sd-goal-quiz"><div class="sd-goal-icon">🎯</div><div class="sd-goal-copy"><span>محطة التدريب</span><b>اختبر فهمك في الوحدة '+esc(focusUnit.n)+'</b><small>'+(focusAttempts?focusAttempts+' محاولات مسجّلة في هذه الوحدة':'لم تُسجّل محاولة اختبار لهذه الوحدة بعد')+'</small></div><strong>'+(focusAttempts?'✓':'—')+'</strong><button type="button" data-go="quiz">ابدأ التمرين ←</button></article>');
+  }else{
+    goalCards.push('<article class="sd-goal-card"><div class="sd-goal-icon">📘</div><div class="sd-goal-copy"><span>المحطة التعليمية</span><b>لا توجد وحدات مسجّلة لهذا المستوى</b><small>سيظهر هدف الوحدة عند توفر بيانات المسار.</small></div></article>');
+  }
+  goalCards.push('<article class="sd-goal-card sd-goal-review"><div class="sd-goal-icon">🧠</div><div class="sd-goal-copy"><span>المراجعة الذكية</span><b>'+(dueCount?'لديك '+dueCount+' بطاقة حان موعد مراجعتها':'لا توجد بطاقات مستحقة حالياً')+'</b><small>'+(dueCount?'استعد المعلومات في الوقت المناسب.':'ستظهر البطاقات هنا عندما يحين موعد مراجعتها.')+'</small></div><strong>'+(dueCount||'✓')+'</strong>'+(dueCount?'<button type="button" data-go="revision">راجع الآن ←</button>':'<span class="sd-goal-status">لا إجراء مطلوب</span>')+'</article>');
+  goals.innerHTML='<div class="sd-goals-grid">'+goalCards.join('')+'</div><p class="sd-goals-note">هذه محطات مقترحة تُحدّث من حصصك واختباراتك وبطاقات المراجعة المسجّلة؛ لا تمثل أهدافاً زمنية أو نتائج مفترضة.</p>';
+  let badgeData=[];
+  try{badgeData=window.DZ_GAMIFICATION&&typeof DZ_GAMIFICATION.badges==='function'?DZ_GAMIFICATION.badges(g):[];}catch(e){}
+  const unlockedBadges=badgeData.filter(b=>b[4]),shownBadges=(unlockedBadges.length?unlockedBadges.slice(-4).reverse():badgeData.filter(b=>!b[4]).slice(0,4));
+  const badgeTone={'first-lesson':1,'five-lessons':1,'ten-lessons':1,'twenty-five-lessons':1,'fifty-lessons':1,'first-quiz':2,'five-quizzes':2,'ten-quizzes':2,'score-60':3,'score-80':3,'perfect':3,'three-perfect':3,'xp-100':4,'xp-500':4,'xp-1000':4,'three-days':5,'seven-streak':5,'first-unit':6,'three-units':6,'five-units':6};
+  achievements.innerHTML=badgeData.length
+    ?'<div class="sd-achievement-summary"><b>'+unlockedBadges.length+' / '+badgeData.length+'</b><span>شارة مفتوحة من سجل إنجازاتك</span></div><div class="sd-achievement-grid">'+shownBadges.map(b=>'<article class="sd-achievement is-tone-'+(badgeTone[b[0]]||1)+' '+(b[4]?'is-unlocked':'is-locked')+'"><span>'+b[1]+'</span><div><b>'+esc(b[2])+'</b><small>'+esc(b[3])+'</small></div><em>'+(b[4]?'مفتوحة':'لم تُفتح بعد')+'</em></article>').join('')+'</div><button type="button" class="sd-achievement-link" data-go="masar">عرض جميع الشارات والإنجازات ←</button>'
+    :'<div class="sd-empty"><span>🏅</span><b>سجل الإنجازات غير متاح حالياً</b><p>ستظهر الشارات عند تحميل سجل المكافآت.</p></div>';
+  const active=Array.isArray(g.activeDays)?g.activeDays:[],names=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],today=new Date();today.setHours(12,0,0,0);today.setDate(today.getDate()-6);let count=0;
+  const days=[];for(let i=0;i<7;i++){const d=new Date(today),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),on=active.indexOf(key)>=0;if(on)count++;days.push('<div class="sd-day '+(on?'is-active':'')+'" role="img" aria-label="'+names[d.getDay()]+' '+key+' : '+(on?'jour actif':'aucune activité enregistrée')+'" title="'+names[d.getDay()]+' '+key+' : '+(on?'jour actif':'aucune activité enregistrée')+'"><i><span></span></i><small>'+names[d.getDay()]+'</small></div>');today.setDate(today.getDate()+1);}
+  activity.innerHTML='<div class="sd-activity-head"><b>'+count+' من 7 أيام نشطة</b><span>آخر سبعة أيام</span></div><div class="sd-week-bars" role="group" aria-roledescription="مخطط نشاط" aria-label="نشاط آخر سبعة أيام">'+days.join('')+'</div><p>تُحتسب الأيام عند تسجيل إكمال حصة أو اختبار فقط.</p>';
+  const due=dueCount;
+  if(due)recommend.innerHTML='<div class="sd-recommend"><span>🧠</span><div><b>مراجعة مستحقة</b><p>لديك '+due+' بطاقة ذاكرة حان موعد مراجعتها.</p></div><button type="button" data-go="revision">راجع الآن</button></div>';
+  else if(nextInfo&&nextInfo.prochaine)recommend.innerHTML='<div class="sd-recommend"><span>✨</span><div><b>واصل التعلّم</b><p>الحصة التالية في مسارك جاهزة للمتابعة.</p></div><button type="button" data-go="seances">ابدأ</button></div>';
+  else recommend.innerHTML='<div class="sd-recommend"><span>📚</span><div><b>استكشف مواردك</b><p>تصفّح المواد والموارد التعليمية المتاحة.</p></div><button type="button" data-go="matieres">المواد</button></div>';
+  let unread=0;try{unread=window.DZ_INTERACTIONS&&DZ_INTERACTIONS.unreadCount?DZ_INTERACTIONS.unreadCount():0;}catch(e){}
+  updates.innerHTML='<div class="sd-update-row"><span>🔔</span><div><b>'+unread+' إشعار غير مقروء</b><small>'+(unread?'توجد تنبيهات تحتاج إلى الاطلاع.':'لا توجد إشعارات غير مقروءة حالياً.')+'</small></div><button type="button" id="sdOpenNotifications">عرض التنبيهات ←</button></div>';
+  const notice=$('#sdOpenNotifications');if(notice)notice.addEventListener('click',function(){if(window.DZ_INTERACTIONS&&DZ_INTERACTIONS.openNotifications)DZ_INTERACTIONS.openNotifications();});
+  renderStudentDashboardMessages($('#sdMessages'));
+}
+window.renderStudentDashboard=renderStudentDashboard;
+document.addEventListener('dz:lesson-complete',function(){if(currentView==='dashboard')setTimeout(renderStudentDashboard,100);});
+document.addEventListener('dz:quiz-complete',function(){if(currentView==='dashboard')setTimeout(renderStudentDashboard,100);});
+document.addEventListener('dz:auth',function(){if(currentView==='dashboard')setTimeout(renderStudentDashboard,100);});
 
 /* ══════════ BARRE DE SECTION ══════════ */
 function renderSectionBar(){
@@ -1781,12 +2274,12 @@ function renderSectionBar(){
   if(!s){ el.innerHTML = ''; return; }
   const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
   el.innerHTML =
-    '<span class="sec-pill">🇩🇿 جمهورية جزائرية</span>' +
-    '<span class="sec-pill or">🏫 قسم ' + esc(s.classe_ar) + ' · ' + s.eleves + ' تلميذ</span>' +
-    '<span class="sec-pill">📖 ' + esc(s.matiere || 'اللغة الألمانية') + '</span>' +
-    '<span class="sec-pill rg">🎓 ' + esc(s.niveau) + ' — البرنامج الرسمي MEN</span>' +
+    '<span class="sec-pill">🇩🇿 الثانوية الافتراضية الجزائرية</span>' +
+    '<span class="sec-pill or">🏫 قسم ' + esc(s.classe_ar || '—') + '</span>' +
+    '<span class="sec-pill">📖 ' + esc(s.matiere || 'المادة المحددة في حسابك') + '</span>' +
+    '<span class="sec-pill rg">🎓 المستوى ' + esc(s.niveau || '—') + '</span>' +
     (k ? '<span class="sec-pill">🗂️ ' + k.total + ' وثيقة</span>' : '') +
-    '<span class="sec-live"><i></i> الأستاذ 🤖 متصل · يتحدث العربية</span>';
+    '<span class="sec-live">🤖 فضاء المساعدة التعليمية</span>';
 }
 
 /* ══════════ PASTILLE UTILISATEUR ══════════ */
@@ -1815,51 +2308,113 @@ function renderLienCloud(){
   $('#lcBtn').addEventListener('click', async () => {
     const msg = $('#lcMsg'); const mail = $('#lcMail').value, pass = $('#lcPass').value;
     if(!mail || !pass){ msg.textContent = 'أدخل البريد وكلمة السر.'; return; }
-    let p = null;
-    try{ await window.SB.login(mail, pass); p = await window.cloudAuthority(); }
-    catch(e){
-      try{ await window.SB.signup(mail, pass, { pseudo:s.nom, niveau:s.niveau, filiere:s.filiere, wilaya:s.wilaya }); p = await window.cloudAuthority(); }
-      catch(e2){ msg.textContent = 'تعذر الربط : ' + ((e2 && (e2.message || e2.msg)) || 'تحقق من البيانات'); return; }
+    if(!window.SB || typeof window.SB.login !== 'function'){
+      msg.textContent = 'خدمة الحساب السحابي غير جاهزة. أعد تحميل الصفحة.';
+      return;
     }
-    if(p){ msg.textContent = '✅ تم الربط — المستوى المعتمد : ' + p.niveau; setTimeout(function(){ location.reload(); }, 900); }
+    try{
+      const result = await window.SB.login(mail, pass);
+      if(!result || !result.ok){
+        msg.textContent = (result && result.err) || 'تعذر تسجيل الدخول إلى الحساب السحابي. إذا لم يكن لديك حساب، أنشئه من صفحة التسجيل.';
+        return;
+      }
+      const p = await window.cloudAuthority();
+      if(p){ msg.textContent = '✅ تم الربط — المستوى المعتمد : ' + p.niveau; setTimeout(function(){ location.reload(); }, 900); }
+      else msg.textContent = 'تم تسجيل الدخول، لكن تعذر تحميل الملف السحابي. حاول مجددًا.';
+    }catch(e){
+      msg.textContent = 'تعذر الربط : ' + ((e && (e.message || e.msg)) || 'تحقق من البيانات');
+    }
   });
 }
-/* ══════════ VUE COMPTE ══════════ */
+/* ══════════ VUE COMPTE — composition inspirée du prototype étudiant ══════════ */
 function renderCompte(){
   const el = $('#compteBody'); if(!el) return;
   const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
-  if(!s){ el.innerHTML = '<div class="card empty"><div class="empty-i">🔐</div><p>غير متصل</p></div>'; return; }
-  const st = loadSeances();
-  const sim = load(LS.sim, {best:null, tries:[]});
-  const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
+  if(!s){
+    el.innerHTML = '<div class="card empty"><div class="empty-i">🔐</div><p>غير متصل</p></div>';
+    return;
+  }
 
-  function row(a,b){ return '<div class="rep-row"><span>' + a + '</span>' +
-                            '<span class="rep-v">' + esc(b) + '</span></div>'; }
+  const st = loadSeances() || {};
+  const sim = load(LS.sim, {best:null, tries:[]}) || {best:null, tries:[]};
+  const k = (window.BDD && BDD.state.ready) ? BDD.kpis() : null;
+  const done = Array.isArray(st.done) ? st.done.length : 0;
+  const exercises = Object.keys(st.exo || {}).length;
+  const attempts = Array.isArray(sim.tries) ? sim.tries.length : 0;
+  const best = sim.best !== null && sim.best !== undefined ? esc(sim.best + '/20') : '—';
+  const points = Number(s.points) || 0;
+  const initials = String(s.nom || '؟').trim().charAt(0) || '؟';
+  const wilaya = [s.code_wilaya, s.wilaya].filter(Boolean).join(' — ') || '—';
+  const classe = [s.classe_ar, s.eleves ? s.eleves + ' تلميذ' : ''].filter(Boolean).join(' · ') || '—';
+  const lastLogin = s.loginAt ? new Date(s.loginAt).toLocaleString('fr-DZ') : '—';
+  const role = window.AUTH ? (AUTH.ROLES[s.role] || s.role || '—') : (s.role || '—');
+  const source = s.src === 'cloud' ? 'حساب سحابي' : 'حساب محلي';
+
+  function row(label, value){
+    return '<div class="dz-account-row"><span>' + esc(label) + '</span><strong>' + esc(value == null || value === '' ? '—' : value) + '</strong></div>';
+  }
+  function metric(icon, label, value, note){
+    return '<article class="dz-account-metric"><span class="dz-account-metric-icon" aria-hidden="true">' + icon + '</span>' +
+      '<div><small>' + esc(label) + '</small><strong>' + esc(value) + '</strong><em>' + esc(note) + '</em></div></article>';
+  }
 
   el.innerHTML =
-    '<div class="card"><h2>👤 معلوماتي</h2>' +
-      row('الاسم الكامل', s.nom) + row('المعرّف', '@' + s.user) +
-      row('الدور', (window.AUTH ? (AUTH.ROLES[s.role] || s.role) : s.role)) +
-      row('المستوى', s.niveau) + row('الشعبة', s.filiere) +
-      row('الولاية', (s.code_wilaya || '') + ' — ' + (s.wilaya || '')) +
-      row('القسم', s.classe_ar + ' · ' + s.eleves + ' تلميذ') +
-      row('الأستاذ', s.prof || 'الأستاذ خريف أحمد') +
-      row('النقاط', (s.points || 0) + ' نقطة') +
-      row('آخر دخول', new Date(s.loginAt || Date.now()).toLocaleString('fr-DZ')) +
-    '</div>' +
-    '<div class="card"><h2>📊 تقدمي</h2>' +
-      row('الحصص المكتملة', (st.done || []).length + ' / 8') +
-      row('التمارين المنجزة', Object.keys(st.exo || {}).length) +
-      row('المحاكيات', (sim.tries || []).length) +
-      row('أفضل نتيجة', sim.best !== null && sim.best !== undefined ? sim.best + '/20' : '—') +
-      (k ? row('وثائق المكتبة', k.total + ' متاحة') : '') +
-    '</div>' +
-    '<div class="card"><h2>🔒 الخصوصية</h2><div class="privacy">' +
-      'حسابك وبياناتك محفوظة <b>على جهازك فقط</b> (localStorage) — لا تُرسل لأي خادم. ' +
-      'نتائج المحاكاة سرّية ولا يطّلع عليها أحد إلا بقرارك.</div></div>' +
-    '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
-      '<button class="btn btn-o" id="btnSound2">🔊 النطق الألماني</button>' +
-      '<button class="btn btn-r" id="btnLogout">🚪 تسجيل الخروج</button>' +
+    '<div class="dz-account-layout">' +
+      '<section class="dz-account-hero">' +
+        '<div class="dz-account-person">' +
+          '<div class="dz-account-avatar" aria-hidden="true">' + esc(initials) + '</div>' +
+          '<div class="dz-account-heading"><span class="dz-account-kicker">فضاؤك الشخصي</span>' +
+            '<h2>مرحباً، ' + esc(s.nom || 'بك') + '</h2>' +
+            '<p>' + esc([s.niveau, s.filiere].filter(Boolean).join(' · ') || 'بياناتك الدراسية') + '</p>' +
+            '<div class="dz-account-tags"><span>👤 ' + esc(role) + '</span><span>☁️ ' + esc(source) + '</span></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="dz-account-hero-note"><span>🇩🇿</span><div><b>حسابك الدراسي</b><small>معلوماتك وإحصاءات نشاطك المسجّل</small></div></div>' +
+      '</section>' +
+      '<section class="dz-account-metrics" aria-label="ملخص نشاط الحساب">' +
+        metric('⭐','النقاط المسجّلة',points,'من بيانات الحساب') +
+        metric('📘','الحصص المكتملة',done,'حصص مسجّلة') +
+        metric('✍️','التمارين المنجزة',exercises,'تمارين مسجّلة') +
+        metric('🎯','المحاكيات',attempts,'محاولات مسجّلة') +
+      '</section>' +
+      '<div class="dz-account-columns">' +
+        '<section class="dz-account-card dz-account-profile">' +
+          '<div class="dz-account-card-head"><span>👤</span><div><h3>معلوماتي الشخصية</h3><p>البيانات المرتبطة بحسابك الحالي</p></div></div>' +
+          row('الاسم الكامل',s.nom) +
+          row('المعرّف','@' + (s.user || '—')) +
+          row('الدور',role) +
+          row('المستوى الدراسي',s.niveau) +
+          row('الشعبة',s.filiere) +
+          row('الولاية',wilaya) +
+          row('القسم',classe) +
+          row('الأستاذ',s.prof || 'الأستاذ خريف أحمد') +
+          row('آخر دخول',lastLogin) +
+        '</section>' +
+        '<section class="dz-account-card dz-account-activity">' +
+          '<div class="dz-account-card-head"><span>📊</span><div><h3>ملخص التقدّم</h3><p>أرقام مستخرجة من نشاطك المحفوظ</p></div></div>' +
+          '<div class="dz-account-progress-list">' +
+            '<div><span>الحصص المكتملة</span><b>' + done + '</b></div>' +
+            '<div><span>التمارين المنجزة</span><b>' + exercises + '</b></div>' +
+            '<div><span>محاولات المحاكاة</span><b>' + attempts + '</b></div>' +
+            '<div><span>أفضل نتيجة</span><b>' + best + '</b></div>' +
+            (k ? '<div><span>وثائق المكتبة المتاحة</span><b>' + esc(k.total) + '</b></div>' : '') +
+          '</div>' +
+          '<p class="dz-account-footnote">لا تُعرض نسب أو أهداف غير مسجّلة في حسابك.</p>' +
+        '</section>' +
+      '</div>' +
+      '<section class="dz-account-card dz-account-privacy">' +
+        '<div class="dz-account-card-head"><span>🔒</span><div><h3>الخصوصية وحماية البيانات</h3><p>توضيح مكان حفظ بيانات حسابك</p></div></div>' +
+        '<div class="dz-account-privacy-note">' +
+          (s.src === 'cloud'
+            ? 'حسابك مرتبط بالخدمة السحابية. تخضع البيانات المتاحة للمزامنة لصلاحيات الحساب وسياسات الوصول المعتمدة.'
+            : 'هذا الحساب محلي؛ تُحفظ بياناته على هذا الجهاز في مساحة التخزين المحلية. لن تنتقل تلقائياً إلى أجهزتك الأخرى ما لم تربطه بحساب سحابي.') +
+          ' نتائج المحاكاة تبقى ضمن بيانات حسابك ولا تُعرض هنا إلا لك.' +
+        '</div>' +
+      '</section>' +
+      '<div class="dz-account-actions">' +
+        '<button class="btn btn-o" id="btnSound2" type="button">🔊 النطق الألماني</button>' +
+        '<button class="btn btn-r" id="btnLogout" type="button">🚪 تسجيل الخروج</button>' +
+      '</div>' +
     '</div>';
 
   const lo = $('#btnLogout');
@@ -1875,7 +2430,7 @@ function renderCompte(){
 }
 
 
-  /* ── Bug #71 : handlers délégués (capture) pour logout + chip compte ──
+/* ── Bug #71 : handlers délégués (capture) pour logout + chip compte ──
      indépendants des re-rendus et sans window.confirm (bloqué en PWA installée) */
   document.addEventListener('click', ev => {
     if(ev.target.closest('#btnLogout')){
@@ -1985,24 +2540,24 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
    3AS : étape BAC + test vers l'archive BAC. Entraînement inline 3 questions
    inventées selon l'unité (sans exposer la banque payante). ── */
 (function(){
-  var QB = {"1": [["Ich heiße Sami. → « heiße » vient de heißen.", "t"], ["Du bist 16 Jahre alt. → « bist » vient de sein.", "t"], ["Ich habe einen Bruder. → « habe » vient de haben.", "t"]], "2": [["Das Haus hat vier Zimmer. → « das » article de Haus.", "t"], ["Ich wohne in einem Haus. → « in » + Datif.", "t"], ["Die Küche est masculin.", "f"]], "3": [["Die Schule beginnt um 8 Uhr. → « beginnt » de beginnen.", "t"], ["Wir lernen Deutsch. → « lernen » pour wir.", "t"], ["Das Lieblingsfach est féminin.", "f"]], "4": [["Es ist warm. → « es » sujet météo.", "t"], ["Die Sonne scheint. → « scheint » de scheinen.", "t"], ["Morgen regnet es. → verbe 2e position.", "t"]], "5": [["Ich spiele gern Fußball. → « spiele » pour ich.", "t"], ["Er mag Deutsch. → « mag » de mögen.", "t"], ["Wir gern schwimmen. → ordre correct.", "f"]], "6": [["Ich habe Kopfschmerzen. → « habe » de haben.", "t"], ["Er ist krank. → « ist » de sein.", "t"], ["Du sollst zum Arzt gehen. → « sollst » conseil.", "t"]], "7": [["Ich bestelle einen Tee. → Akkusativ « einen ».", "t"], ["Sie trinkt ein Wasser. → « ein » neutre Akk.", "t"], ["Der Kuchen est féminin.", "f"]], "8": [["Sie ist freundlich. → adjectif sans terminaison.", "t"], ["Er hat kurze Haare. → « kurze » accord.", "t"], ["Ich trage einen Hut. → « einen » masc Akk.", "f"]], "9": [["Die Stadt ist laut. → « laut » adjectif.", "t"], ["Auf dem Land ist es ruhig. → « auf » + Datif.", "t"], ["Ich wohne lieber im Stadt. → correct.", "f"]], "10": [["Ich interessiere mich für Musik. → « für » + Akk.", "t"], ["Er ist selbstbewusst. → adjectif.", "t"], ["Sie freut sich über das Geschenk. → « über ».", "t"]], "11": [["Der Bürger respektiert die Gesetze. → « die » pluriel Akk.", "t"], ["Wir müssen Verantwortung tragen. → « müssen ».", "t"], ["Die Freiheit est masculin.", "f"]], "12": [["Man hilft einander. → « man » impersonnel.", "t"], ["Die Nachbarn besuchen sich. → pronominal.", "t"], ["Er lebt in einer reichen Gesellschaft. → « einer » Datif.", "f"]], "13": [["Die Technik verändert sich. → pronominal.", "t"], ["Wir haben das Internet benutzt. → Perfekt haben.", "t"], ["Der Computer ist ein Mensch.", "f"]], "14": [["Die Wirtschaft wächst. → « wächst » de wachsen.", "t"], ["Viele arbeiten im Ausland. → « im ».", "t"], ["Der Export est féminin.", "f"]], "15": [["Wir müssen die Umwelt schützen. → modal + infinitif.", "t"], ["Der Müll wird getrennt. → Passiv.", "t"], ["Die Luft est masculin.", "f"]], "16": [["Man sollte gesund essen. → « sollte » conseil.", "t"], ["Sport macht den Körper stark. → Akk « den ».", "t"], ["Rauchen ist gesund.", "f"]], "17": [["Die Welt ist ein Dorf geworden. → Perfekt sein.", "t"], ["Waren werden schneller bewegt. → Passiv.", "t"], ["Globalisierung hat keine Nachteile.", "f"]], "18": [["Die Medien informieren schnell. → 2e position.", "t"], ["Wir müssen Quellen prüfen. → modal.", "t"], ["Fake News sind immer wahr.", "f"]], "19": [["Der Dialog verbindet Menschen. → 2e position.", "t"], ["Sprachen sind Brücken. → « sind ».", "t"], ["Der Dialog macht uns ärmer.", "f"]]};
+  var QB = {"1": [["Ich heiße Sami. → « heiße » vient de heißen.", "t"], ["Du bist 16 Jahre alt. → « bist » vient de sein.", "t"], ["Ich habe einen Bruder. → « habe » vient de haben.", "t"]], "2": [["Das Haus hat vier Zimmer. → « das » article de Haus.", "t"], ["Ich wohne in einem Haus. → « in » + Datif.", "t"], ["Die Küche est masculin.", "f"]], "3": [["Die Schule beginnt um 8 Uhr. → « beginnt » de beginnen.", "t"], ["Wir lernen Deutsch. → « lernen » pour wir.", "t"], ["Das Lieblingsfach est féminin.", "f"]], "4": [["Es ist warm. → « es » sujet météo.", "t"], ["Die Sonne scheint. → « scheint » de scheinen.", "t"], ["Morgen regnet es. → verbe 2e position.", "t"]], "5": [["Ich spiele gern Fußball. → « spiele » pour ich.", "t"], ["Er mag Deutsch. → « mag » de mögen.", "t"], ["Wir gern schwimmen. → ordre correct.", "f"]], "6": [["Ich habe Kopfschmerzen. → « habe » de haben.", "t"], ["Er ist krank. → « ist » de sein.", "t"], ["Du sollst zum Arzt gehen. → « sollst » conseil.", "t"]], "7": [["Ich bestelle einen Tee. → Akkusativ « einen ».", "t"], ["Sie trinkt ein Wasser. → « ein » neutre Akk.", "t"], ["Der Kuchen est féminin.", "f"]], "8": [["Sie ist freundlich. → adjectif sans terminaison.", "t"], ["Er hat kurze Haare. → « kurze » accord.", "t"], ["Ich trage einen Hut. → « einen » masc Akk.", "t"]], "9": [["Die Stadt ist laut. → « laut » adjectif.", "t"], ["Auf dem Land ist es ruhig. → « auf » + Datif.", "t"], ["Ich wohne lieber im Stadt. → correct.", "f"]], "10": [["Ich interessiere mich für Musik. → « für » + Akk.", "t"], ["Er ist selbstbewusst. → adjectif.", "t"], ["Sie freut sich über das Geschenk. → « über ».", "t"]], "11": [["Der Bürger respektiert die Gesetze. → « die » pluriel Akk.", "t"], ["Wir müssen Verantwortung tragen. → « müssen ».", "t"], ["Die Freiheit est masculin.", "f"]], "12": [["Man hilft einander. → « man » impersonnel.", "t"], ["Die Nachbarn besuchen sich. → pronominal.", "t"], ["Er lebt in einer reichen Gesellschaft. → « einer » Datif.", "t"]], "13": [["Die Technik verändert sich. → pronominal.", "t"], ["Wir haben das Internet benutzt. → Perfekt haben.", "t"], ["Der Computer ist ein Mensch.", "f"]], "14": [["Die Wirtschaft wächst. → « wächst » de wachsen.", "t"], ["Viele arbeiten im Ausland. → « im ».", "t"], ["Der Export est féminin.", "f"]], "15": [["Wir müssen die Umwelt schützen. → modal + infinitif.", "t"], ["Der Müll wird getrennt. → Passiv.", "t"], ["Die Luft est masculin.", "f"]], "16": [["Man sollte gesund essen. → « sollte » conseil.", "t"], ["Sport macht den Körper stark. → Akk « den ».", "t"], ["Rauchen ist gesund.", "f"]], "17": [["Die Welt ist ein Dorf geworden. → Perfekt sein.", "t"], ["Waren werden schneller bewegt. → Passiv.", "t"], ["Globalisierung hat keine Nachteile.", "f"]], "18": [["Die Medien informieren schnell. → 2e position.", "t"], ["Wir müssen Quellen prüfen. → modal.", "t"], ["Fake News sind immer wahr.", "f"]], "19": [["Der Dialog verbindet Menschen. → 2e position.", "t"], ["Sprachen sind Brücken. → « sind ».", "t"], ["Der Dialog macht uns ärmer.", "f"]]};
   function niv(){ return (window.getNiveauActif && window.getNiveauActif()==='3AS') ? 3 : 2; }
   function buildSteps(){
     var n = niv();
     var S = [
-      { ar:"ابدأ بتشخيص مستواك ثم افتح خطتك في « مسارك ».", de:"Starte mit dem Diagnosetest und öffne deinen Plan.", view:"masar", ic:"🎯" },
-      { ar:"شاهد حصة واحدة فقط اليوم (Lektion).", de:"Schaue heute nur eine Lektion.", view:"seances", ic:"📖" },
-      { ar:"افتح الكتاب واستمع لصفحة Lektion ثم اقرأها بصوت عالٍ.", de:"Höre die Buchseite und lies sie laut.", view:"buch", ic:"👂" },
+      { ar:"افتح « مسارك » وتعرّف على وحدتك التعليمية القادمة.", de:"Öffne deinen Lernpfad und wähle deine nächste Einheit.", view:"masar", ic:"🎯" },
+      { ar:"شاهد حصة منشورة واحدة اليوم (Lektion).", de:"Schaue heute eine verfügbare Lektion.", view:"seances", ic:"📖" },
+      { ar:"افتح الكتاب واستمع إلى المورد الصوتي المتاح ثم اقرأ النص بصوت عالٍ.", de:"Öffne das Buch, höre das verfügbare Audio und lies den Text laut.", view:"buch", ic:"👂" },
       { ar:"حاور المنصة: اضغط 🎙️ وتكلم بالألمانية أو الدارجة.", de:"Sprich mit der Plattform über 🎙️.", view:null, ic:"🗣️" },
-      { ar:"ثبّت ما تعلمت: 3 أسئلة مخترعة حسب وحدتك (بدون فتح البنك).", de:"Festige: 3 erfundene Fragen zu deiner Einheit.", quiz:true, ic:"✍️" },
-      { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole die fälligen 🧠-Karten.", view:"memoire", ic:"🧠" },
-      { ar:"أنهِ الوحدة بفرض مُنقّط (تصحيح فوري).", de:"Schließe mit einer benoteten Aufgabe ab.", view:"devoirs", ic:"📝" }
+      { ar:"تدرّب بثلاثة أسئلة توضيحية؛ نتيجتها لا تُحفظ ولا تدخل في تقدمك.", de:"Übe mit drei Beispielfragen; das Ergebnis wird nicht gespeichert.", quiz:true, ic:"✍️" },
+      { ar:"راجع بطاقات الذاكرة 🧠 المستحقة قبل أي جديد.", de:"Wiederhole die fälligen 🧠-Karten.", view:"revision", ic:"🧠" },
+      { ar:"استكشف الفروض المتاحة لوحدتك، وراجع التصحيح إن كان مرفقًا.", de:"Sieh dir verfügbare Aufgaben an und prüfe die Lösung, falls vorhanden.", view:"devoirs", ic:"📝" }
     ];
     if(n===2){
-      S.push({ ar:"كل أسبوع: فرض أو اختبار قصير بتوقيت حقيقي.", de:"Wöchentlich eine kurze Klassenarbeit unter Echtzeit.", view:"devoirs", ic:"🧪" });
+      S.push({ ar:"جرّب فرضًا أو اختبارًا قصيرًا إذا كان متاحًا لمستواك.", de:"Nutze eine kurze Prüfung, wenn sie für deine Stufe verfügbar ist.", view:"devoirs", ic:"🧪" });
     } else {
-      S.push({ ar:"كل أسبوع: اختبار بتوقيت حقيقي (1-3 مرات).", de:"Wöchentlich ein Test unter Echtzeit.", view:"examen", ic:"🧪" });
-      S.push({ ar:"للبكالوريا: حضّر باك بمواضيع رسمية مصححة.", de:"Fürs Abi: offizielle Prüfungen üben.", view:"examen", ic:"🎓" });
+      S.push({ ar:"استعمل اختبارًا متاحًا ضمن تحضيرك للبكالوريا.", de:"Nutze einen verfügbaren Test zur Abiturvorbereitung.", view:"examen", ic:"🧪" });
+      S.push({ ar:"للبكالوريا: تدرّب على المواضيع المنشورة وراجع الحلول المتاحة.", de:"Fürs Abi: übe veröffentlichte Prüfungen und prüfe verfügbare Lösungen.", view:"examen", ic:"🎓" });
     }
     return S;
   }
@@ -2011,7 +2566,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     var n = niv(); var def = n===3 ? 10 : 1;
     var ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;display:flex;align-items:center;justify-content:center';
     var box=document.createElement('div'); box.style.cssText='background:#0f2b1d;border:1px solid #2c7a4f;border-radius:14px;padding:16px;max-width:380px;width:92%;color:#eafff2;font-size:14px';
-    box.innerHTML='<b>✍️ تدريب سريع — 3 أسئلة</b> <select id="qzU" style="float:left"></select><div id="qzB" style="margin-top:10px"></div><div id="qzS" style="margin-top:8px"></div><button id="qzX" style="margin-top:10px;background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px">✕ إغلاق</button>';
+    box.innerHTML='<b>✍️ تدريب توضيحي — 3 أسئلة غير محفوظة</b> <select id="qzU" style="float:left"></select><div id="qzB" style="margin-top:10px"></div><div id="qzS" style="margin-top:8px"></div><button id="qzX" style="margin-top:10px;background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px">✕ إغلاق</button>';
     ov.appendChild(box); document.body.appendChild(ov);
     var sel=box.querySelector('#qzU');
     var units = n===3 ? [10,11,12,13,14,15,16,17,18,19] : [1,2,3,4,5,6,7,8,9];
@@ -2025,11 +2580,32 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     render(def);
     box.querySelector('#qzX').addEventListener('click', function(){ ov.remove(); });
   }
+  function studentSession(){
+    try{
+      var s=window.AUTH&&typeof AUTH.session==='function'?AUTH.session():null;
+      return s&&s.role==='eleve'?s:null;
+    }catch(e){ return null; }
+  }
+  function userStorageKey(kind, session){
+    var user=String(session&&session.user||'eleve').toLowerCase().replace(/[^a-z0-9_-]/g,'_');
+    return 'dz_coach_'+kind+'_'+user;
+  }
+  function markCoach(kind, session){
+    try{ localStorage.setItem(userStorageKey(kind,session),'1'); }catch(e){}
+  }
   function show(){
-    if(document.getElementById('coachCard')) return;
+    var session=studentSession();
+    var existing=document.getElementById('coachCard');
+    if(!session){ if(existing) existing.remove(); return; }
+    if(existing) return;
+    try{
+      if(localStorage.getItem(userStorageKey('dismissed',session))==='1' ||
+         localStorage.getItem(userStorageKey('done',session))==='1') return;
+    }catch(e){}
     var STEPS = buildSteps();
-    var i=0; try{ i=parseInt(localStorage.getItem('dz_coach_step')||'0',10)||0; }catch(e){}
-    if(i>=STEPS.length) i=0;
+    var i=0;
+    try{ i=parseInt(localStorage.getItem(userStorageKey('step',session))||'0',10)||0; }catch(e){}
+    if(i>=STEPS.length){ markCoach('done',session); return; }
     var s=STEPS[i];
     var card=document.createElement('div'); card.id='coachCard';
     card.style.cssText='position:fixed;bottom:70px;inset-inline-start:14px;z-index:9997;max-width:330px;background:#0f2b1d;border:1px solid #2c7a4f;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:13px;color:#eafff2';
@@ -2038,15 +2614,25 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
       +'<div dir="ltr" lang="de" style="color:#9fd8b4;text-align:left">'+s.de+'</div>'
       +'<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'
       +((s.quiz||s.view)?'<button id="coachGo" style="background:#2c7a4f;border:0;color:#fff;border-radius:8px;padding:6px 10px;cursor:pointer">▶ ابدأ · Start</button>':'')
-      +'<button id="coachNext" style="flex:1;background:#d9a520;border:0;border-radius:8px;padding:6px;font-weight:700;cursor:pointer">التالي ▸ · Weiter</button>'
+      +'<button id="coachNext" style="flex:1;background:#d9a520;border:0;border-radius:8px;padding:6px;font-weight:700;cursor:pointer">'+(i===STEPS.length-1?'إنهاء الجولة ✓ · Fertig':'التالي ▸ · Weiter')+'</button>'
       +'<button id="coachX" style="background:transparent;border:1px solid #2c7a4f;color:#9fd8b4;border-radius:8px;padding:6px 10px">✕</button></div>';
     document.body.appendChild(card);
     var g=document.getElementById('coachGo');
-    if(g) g.addEventListener('click', function(){ if(s.quiz) openQuiz(); else goView(s.view); });
-    document.getElementById('coachNext').addEventListener('click', function(){ try{ localStorage.setItem('dz_coach_step', String((i+1)%STEPS.length)); }catch(e){} card.remove(); setTimeout(show,400); });
-    document.getElementById('coachX').addEventListener('click', function(){ card.remove(); });
+    if(g) g.addEventListener('click', function(){ if(s.quiz) openQuiz(); else if(s.view) goView(s.view); });
+    document.getElementById('coachNext').addEventListener('click', function(){
+      if(i+1>=STEPS.length){ markCoach('done',session); card.remove(); return; }
+      try{ localStorage.setItem(userStorageKey('step',session),String(i+1)); }catch(e){}
+      card.remove(); setTimeout(show,250);
+    });
+    document.getElementById('coachX').addEventListener('click', function(){
+      markCoach('dismissed',session); card.remove();
+    });
   }
-  setTimeout(show, 4000);
+  document.addEventListener('dz:auth', function(){
+    if(studentSession()) setTimeout(show,250);
+    else { var card=document.getElementById('coachCard'); if(card) card.remove(); }
+  });
+  setTimeout(show,4000);
 })();
 
 
@@ -2175,7 +2761,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     var sp = document.querySelector('.splash-de');
     if(sp) sp.textContent = en ? 'English Language · Program 2026' : 'Deutsche Sprache · Programm 2026';
     var gt = document.querySelector('.gate-sub');
-    if(gt) gt.textContent = en ? 'برنامج الأصل · English Language — 1AS' : 'برنامج الأصل · Deutsche Sprache — السنة الثانية والثالثة ثانوي';
+    if(gt) gt.textContent = 'منصة تعليمية شاملة • جميع المواد واللغات';
     var ft = document.querySelector('.foot-de');
     if(ft) ft.textContent = en ? 'Virtual Algerian High School · English Language · Program MEN 2026' : 'Virtuelle Algerische Schule · Deutsche Sprache · Programm MEN 2026';
     document.title = '🇩🇿 الثانوية الافتراضية — برنامج الأصل · ' + (en ? 'English Language' : 'Deutsche Sprache');
@@ -2246,11 +2832,14 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   function badge(st){ return st==='implemented' ? 'متوفرة · disponible' : st==='partial' ? 'قيد التطوير · partiel' : 'قريباً · bientôt'; }
   function card(s){
     var m = META[s.slug] || {ar:s.name,flag:'📚',code:s.slug};
-    var btn = s.status==='implemented' ? '<button class="btn" data-subj="'+m.code+'">دخول المادة</button>'
-      : s.status==='partial' ? '<button class="btn" data-subj="'+m.code+'">استكشاف</button>'
-      : '<button class="btn" disabled>قريباً</button>';
-    return '<div class="card" style="padding:14px;margin:10px 0;text-align:center">'+m.flag+' <b>'+m.ar+' · '+s.name+'</b>'
-      + '<div style="color:#9fd8b4;font-size:12px;margin:6px 0">'+badge(s.status)+'</div>'+btn+'</div>';
+    var state = s.status==='implemented' ? 'ready' : (s.status==='partial' ? 'partial' : 'soon');
+    var btn = s.status==='implemented' ? '<button class="subject-action" data-subj="'+m.code+'">دخول المادة <span aria-hidden="true">←</span></button>'
+      : s.status==='partial' ? '<button class="subject-action" data-subj="'+m.code+'">استكشاف <span aria-hidden="true">←</span></button>'
+      : '<button class="subject-action" disabled>قريباً</button>';
+    return '<article class="subject-card '+state+'">'
+      + '<div class="subject-card-top"><span class="subject-flag" aria-hidden="true">'+m.flag+'</span><span class="subject-state">'+badge(s.status)+'</span></div>'
+      + '<h3>'+m.ar+'</h3><p class="subject-native" dir="auto">'+s.name+'</p>'
+      + '<div class="subject-card-foot">'+btn+'</div></article>';
   }
   function hub(){
     var b = document.getElementById('matieresBody');
@@ -2267,7 +2856,11 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     var box = hub(); if(!box) return;
     if(!window.SUBJECT || !SUBJECT.ready){ box.innerHTML='<p>…</p>'; return; }
     SUBJECT.ready().then(function(list){
-      box.innerHTML = (list||[]).map(card).join('') || '<p>Aucune matière.</p>';
+      var items = Array.isArray(list) ? list : [];
+      var ready = items.filter(function(x){ return x.status==='implemented'; }).length;
+      box.innerHTML = '<section class="subjects-intro"><div><span class="subjects-kicker">الثانوية الافتراضية الجزائرية</span><h2>اختر مادّتك الدراسية</h2><p>مساحة منظّمة للتعلّم، المراجعة والتقدّم حسب برنامجك الدراسي.</p></div><span class="subjects-count"><b>'+items.length+'</b><small>مواد مدرجة</small></span></section>'
+        + '<div class="subjects-grid">' + (items.map(card).join('') || '<p>لا توجد مواد متاحة حالياً.</p>') + '</div>'
+        + '<p class="subjects-footnote">تُعرض حالة كل مادة بوضوح؛ لا يعني ظهورها أن جميع وحداتها أصبحت متاحة.</p>';
     });
   }
   document.addEventListener('click', function(e){
@@ -2664,6 +3257,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   function submitSearch(){
     var inp=el('tbSearch'); if(!inp) return;
     var q=String(inp.value||'').trim(); if(!q) return;
+    if(window.DZ_INTERACTIONS && typeof DZ_INTERACTIONS.search==='function'){ DZ_INTERACTIONS.search(q); return; }
     nav('corpus');
     setTimeout(function(){
       var t=el('cpQ');
@@ -2682,10 +3276,13 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   }
   function renderBell(){
     var b=el('tbBell'); if(!b) return;
-    var n=bellCount();
-    if(n<=0){ b.hidden=true; return; }
-    b.hidden=false;
-    var g=el('tbBadge'); if(g) g.textContent=(n>9?'9+':String(n));
+    if(window.DZ_INTERACTIONS && typeof DZ_INTERACTIONS.renderBell==='function'){
+      DZ_INTERACTIONS.renderBell(); return;
+    }
+    var s=null; try{ s=window.AUTH&&typeof AUTH.session==='function'?AUTH.session():null; }catch(e){}
+    var n=bellCount(),g=el('tbBadge');
+    b.hidden=!s;
+    if(g){g.hidden=!n;g.textContent=n>9?'9+':String(n);}
   }
   /* ── avatar : initiale de session sur le #userChip existant (handler conservé) ── */
   function renderAva(){
@@ -2707,7 +3304,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
     var inp=el('tbSearch');
     if(inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); submitSearch(); } });
     var b=el('tbBell');
-    if(b) b.addEventListener('click', function(){ nav('masar'); });
+    if(b) b.addEventListener('click', function(){ if(window.DZ_INTERACTIONS && DZ_INTERACTIONS.openNotifications) DZ_INTERACTIONS.openNotifications(); else nav('masar'); });
     renderAll();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(bind,300); });
@@ -2976,9 +3573,9 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
             + (n.lue ? '<span style="font-size:11px;color:var(--m)">' + String(n.created_at||'').slice(0,10) + '</span>'
                      : '<button class="btn btn-sm btn-o" data-notif-read="' + n.id + '" type="button">marquer lue</button>') + '</div>';
         }).join('') : '<p>aucune notification</p>') : '<p>⛔ ' + esq7(r.err) + '</p>')
-      + '<div class="fld" style="margin-top:10px"><span>Ouvrir un ticket support</span>'
-      + '<input id="tickSujet" placeholder="sujet"> <input id="tickCorps" placeholder="détail (optionnel)">'
-      + '<button class="btn btn-sm btn-p" data-tick-new="1" type="button">envoyer</button></div>';
+      + '<div class="fld" style="margin-top:10px"><strong>🛠️ الإبلاغ عن مشكلة أو طلب المساعدة</strong><p class="muted">أرسل وصفًا مختصرًا للمشكلة إلى فريق الدعم.</p>'
+      + '<input id="tickSujet" placeholder="موضوع المشكلة" aria-label="موضوع المشكلة"> <input id="tickCorps" placeholder="اشرح المشكلة (اختياري)" aria-label="تفاصيل المشكلة">'
+      + '<button class="btn btn-sm btn-p" data-tick-new="1" type="button">إرسال البلاغ</button></div>';
   }
   document.addEventListener('click', function(e){
     var t = e.target && e.target.closest ? e.target.closest('[data-notif-read],[data-tick-new]') : null;
@@ -3055,36 +3652,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
   if((location.hash||'').replace('#','') === 'compte') renderRecus();
 })();
 
-/* ── phase 13 (OPS-1) : bouton « signaler un bug » → ticket support pré-rempli ── */
-(function(){
-  function meta(){
-    return 'page: ' + (location.hash || '(accueil)') + '\n'
-         + 'date: ' + new Date().toISOString() + '\n'
-         + 'ecran: ' + window.innerWidth + 'x' + window.innerHeight + '\n'
-         + 'agent: ' + String(navigator.userAgent || '').slice(0,120);
-  }
-  function build(){
-    if(document.getElementById('opsBugBtn')) return;
-    var b = document.createElement('button');
-    b.id = 'opsBugBtn'; b.type = 'button';
-    b.textContent = '🐞 Signaler un bug';
-    b.style.cssText = 'position:fixed;bottom:14px;inset-inline-start:14px;z-index:9997;background:#7a4a06;color:#fff;border:0;border-radius:999px;padding:9px 14px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)';
-    document.body.appendChild(b);
-    b.addEventListener('click', function(){
-      var txt = window.prompt('Décris le bug : page, geste fait, résultat vu (une phrase ou plus)');
-      if(txt === null) return;
-      txt = String(txt).trim();
-      if(!txt){ window.alert('⛔ Description vide — ticket non créé.'); return; }
-      if(!window.SB || !SB.ticketCreate){ window.alert('⛔ Cloud indisponible : note ton texte et réessaie plus tard.'); return; }
-      SB.ticketCreate('[BUG] ' + txt.slice(0,80), txt + '\n\n--- meta ---\n' + meta()).then(function(r){
-        if(r.ok) window.alert('✅ Ticket créé, merci ! Il arrive dans 🎫 الدعم · Support (ton wilaya + admin général).');
-        else window.alert('⛔ ' + r.err);
-      });
-    });
-  }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
-  else setTimeout(build, 600);
-})();
+/* Bouton flottant « Signaler un bug » désactivé : il recouvrait le contenu à lire. */
 
 /* ══ CONTENT-1 : chargeur authentifié des contenus payants ══
    Les fichiers d'unités ne sont plus des <script> publics : le worker ne les

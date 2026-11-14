@@ -435,9 +435,18 @@ const QUIZ_BANK = [
 
   function terminer(){
     setBest('u' + filtre, score);
+    var attemptAt = Date.now();
     pushHist({ unite: filtre, score: score, total: PAR_SERIE,
                pct: Math.round(score / PAR_SERIE * 100),
-               date: new Date().toLocaleString('fr-DZ'), at: Date.now() });
+               date: new Date().toLocaleString('fr-DZ'), at: attemptAt });
+    const unitResults={};
+    serie.forEach(function(question){
+      const unit=String(question.u||filtre||0);
+      if(!unitResults[unit])unitResults[unit]={unit:Number(unit),correct:0,total:0};
+      unitResults[unit].total++;
+      if(question._rep===question.c)unitResults[unit].correct++;
+    });
+    document.dispatchEvent(new CustomEvent('dz:quiz-complete',{detail:{attemptId:String(attemptAt)+':'+filtre+':'+score,unit:filtre,unitResults:Object.keys(unitResults).map(function(k){return unitResults[k];}),score:score,total:PAR_SERIE,at:attemptAt}}));
     vue = 'resultat'; render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if(window.DZ && DZ.speak && score === serie.length) DZ.speak('Sehr gut! Perfekt!');
@@ -485,5 +494,5 @@ const QUIZ_BANK = [
   render = function(){ _render0(); const bx = document.getElementById('quizBody'); if(bx) brancher(bx); };
   window.renderQuiz = render;
   window.DZ_QUIZ = { render:render, bank:QUIZ_BANK, nouvelleSerie:nouvelleSerie,
-                     PAR_SERIE:PAR_SERIE, best:best, hist:hist };
+                     PAR_SERIE:PAR_SERIE, best:best, hist:hist, selectUnit:function(n){ filtre=+n||0; vue='accueil'; render(); } };
 })();

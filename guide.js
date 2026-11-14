@@ -184,6 +184,7 @@
   }
 
   async function envoiResend(s){
+    await charge(); // garantit que le courriel utilise le guide réel, même depuis la carte du compte.
     /* Ordre de résolution de la clé / du transport :
        1) clé collée UNE fois par le propriétaire dans ⚙️ حسابي → localStorage
           (dz_resend_key) : appel DIRECT api.resend.com, comme ton ancienne app.
@@ -291,25 +292,25 @@
 
   /* HTML du message (partagé appel direct / Worker) */
   function htmlAccueil(s){
-    const fem = /أنثى|طالبة|f/.test(s.genre || '');
-    const salut = s.role === 'prof' ? ('مرحبًا بك أستاذ ' + (s.nom || ''))
-                : s.role === 'parent' ? ('مرحبًا بك وليّ الأمر ' + (s.nom || ''))
-                : ('مرحبًا بك يا ' + (s.nom || ''));
-    const guide = s.role === 'prof'
-      ? ['🧑‍🏫 لوحة الأستاذ : نقاط، CSV، قاعة مباشرة','📝 الفروض الرسمية /20','🤖 مساعد التمارين']
-      : s.role === 'parent'
-      ? ['📈 تقرير أسبوعي : نقاط وحضور','📅 الحصص والفروض القادمة','💬 مراسلة الأستاذ']
-      : ['📚 اتبع الحصص بالترتيب (تصحيح فوري)','📝 حلّ الفرض /20 مع التصحيح','🎓 أرشيف البكالوريا · 🤖 اسأل 24/7'];
+    const role = s.role === 'prof' ? 'prof' : (s.role === 'parent' ? 'parent' : 'eleve');
+    const salut = role === 'prof' ? ('مرحبًا بك أستاذ ' + esc(s.nom || ''))
+                : role === 'parent' ? ('مرحبًا بك وليّ الأمر ' + esc(s.nom || ''))
+                : ('مرحبًا بك يا ' + esc(s.nom || ''));
+    const objectif = D && D.objectif ? D.objectif : {};
+    const points = (objectif.points || []).map(p =>
+      '<li><b>' + esc(p.t) + '</b> — ' + esc(p.d) + '</li>').join('');
+    const steps = ((D && D.mode_emploi && D.mode_emploi[role]) || []).map(p =>
+      '<li><b>' + esc(p.t) + '</b> — ' + esc(p.d) + '</li>').join('');
     return '<div dir="rtl" style="font-family:Tahoma,Segoe UI,sans-serif;background:#04140c;'
       + 'color:#e8edf8;padding:26px;border-radius:18px">'
       + '<h2 style="color:#3ddc84;margin:0 0 6px">🇩🇿 الثانوية الافتراضية الجزائرية</h2>'
       + '<p style="font-size:17px;line-height:1.9">' + salut + ' 👋</p>'
-      + '<p style="color:#9fb3c8;line-height:1.9">« الرجوع إلى الأصل فضيلة » — منصّة مجانية '
-      + 'مطابقة لمنهاج وزارة التربية.</p>'
+      + '<p style="color:#9fb3c8;line-height:1.9">' + esc(objectif.chapeau || 'فضاء تعليمي رقمي يجمع الموارد المتاحة في مسار واضح.') + '</p>'
+      + '<h3 style="color:#e8b64c">🎯 هدف المنصة</h3>'
+      + '<ul style="line-height:2;color:#9fb3c8">' + points + '</ul>'
       + '<h3 style="color:#e8b64c">📖 دليل الاستعمال</h3>'
-      + '<ul style="line-height:2;color:#9fb3c8">' + guide.map(g => '<li>' + g + '</li>').join('')
-      + '</ul>'
-      + '<p style="margin-top:16px"><a href="https://bridrandomtv-spec.github.io/ALLEMAND/" '
+      + '<ul style="line-height:2;color:#9fb3c8">' + steps + '</ul>'
+      + '<p style="margin-top:16px"><a href="https://allemand.brid-randomtv.workers.dev/#accueil" '
       + 'style="background:#3ddc84;color:#04140c;padding:11px 20px;border-radius:11px;'
       + 'text-decoration:none;font-weight:700">🚀 فتح المنصة</a></p></div>';
   }

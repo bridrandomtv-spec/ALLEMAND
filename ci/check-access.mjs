@@ -54,6 +54,42 @@ const appc = fs.readFileSync('app.js', 'utf8');
 if (swc.includes('./unite2.js')) fails.push('sw.js : contenu payant encore précaché (CONTENT-1)');
 if (idxc.includes('src="unite2.js')) fails.push('index.html : script unité payant encore public (CONTENT-1)');
 if (!wkc.includes('abonnement_requis')) fails.push('site-worker.js : garde CONTENT-1 absente');
+if (!wkc.includes('lesson_content?select=id&free=eq.false&limit=1')) fails.push('site-worker.js : le contrôle doit prouver l’accès à au moins une ligne payante, pas une ligne gratuite');
+const workerConfigGuard = wkc.slice(wkc.indexOf('if (!env.SUPABASE_URL'), wkc.indexOf("const auth = request.headers.get('Authorization')"));
+if (!workerConfigGuard.includes("return jsonRes({ error: 'content_guard_not_configured' }, 503);") ||
+    workerConfigGuard.includes('env.ASSETS.fetch(request)')) {
+  fails.push('site-worker.js : configuration Supabase absente doit bloquer en 503, jamais servir les ressources protégées');
+}
+
+/* CONTENT-1d : inventaire exhaustif des actifs statiques sensibles servis par le Worker */
+const protectedBlock = wkc.match(/const PROT = \[([\s\S]*?)\];/);
+if (!protectedBlock) {
+  fails.push('site-worker.js : inventaire PROT introuvable');
+} else {
+  let protectedPatterns = [];
+  try { protectedPatterns = vm.runInNewContext('[' + protectedBlock[1] + ']'); }
+  catch (e) { fails.push('site-worker.js : inventaire PROT invalide : ' + e.message); }
+  const protectedPath = path => protectedPatterns.some(re => re.test(path));
+  const unitAssets = fs.readdirSync('.').filter(name => /^unite\d+\.js$/.test(name));
+  for (const name of unitAssets) {
+    if (!protectedPath('/' + name)) fails.push('CONTENT-1d : unité non protégée par le Worker : ' + name);
+  }
+  for (const name of ['unites3as_a.js', 'devoirs_unite.js']) {
+    if (fs.existsSync(name) && !protectedPath('/' + name)) fails.push('CONTENT-1d : actif pédagogique sensible non protégé : ' + name);
+  }
+  if (protectedPath('/unites3as_vitrine.js')) fails.push('CONTENT-1d : la vitrine gratuite 3AS ne doit pas être bloquée par le garde payant');
+  const bddDir = 'assets/bdd';
+  if (fs.existsSync(bddDir)) {
+    for (const name of fs.readdirSync(bddDir).filter(name => /^buch_3as_.*\.json$/.test(name))) {
+      if (!protectedPath('/assets/bdd/' + name)) fails.push('CONTENT-1d : JSON de livre 3AS non protégé : ' + name);
+    }
+    if (fs.existsSync(bddDir + '/traductions_livre.json') &&
+        !protectedPath('/assets/bdd/traductions_livre.json')) {
+      fails.push('CONTENT-1d : traductions_livre.json doit être protégé par le Worker');
+    }
+  }
+}
+
 if (!appc.includes('CONTENT-1 : chargeur authentifié')) fails.push('app.js : chargeur CONTENT-1 absent');
 if (swc.includes('./unite2.js')) fails.push('sw.js : precache payant encore présent (CONTENT-1b)');
 if (!idxc.includes('unites3as_vitrine.js')) fails.push('index.html : script vitrine 3AS absent (CONTENT-1b)');

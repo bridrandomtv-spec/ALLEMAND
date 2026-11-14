@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/reem-kufi/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css">
-</noscript><link rel="stylesheet" href="style.css?v=3512"><link rel="stylesheet" href="style-prototype-dz.css?v=17">
+</noscript><link rel="stylesheet" href="style.css?v=3515"><link rel="stylesheet" href="style-prototype-dz.css?v=202">
 <script>
 /* mapping unité→pages du manuel (généré depuis les 9 Lektionen réels) */
 window.UNITE_PAGES = {"1": [5, 29], "2": [31, 55], "3": [57, 76], "4": [77, 101], "5": [103, 127], "6": [129, 149], "7": [151, 180], "8": [181, 205], "9": [207, 223]};
@@ -41,7 +41,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 };
 </script>
 <style id="bidi-fix">p[dir="ltr"],span[dir="ltr"],.de-ltr{direction:ltr;text-align:left;unicode-bidi:plaintext} .s-d[dir="ltr"]{direction:ltr;text-align:left}</style>  <meta property="og:title" content="الثانوية الافتراضية الجزائرية — Lycée virtuel">
-  <meta property="og:description" content="منصة تعليمية للغة الألمانية — كتاب تفاعلي، فروض، بكالوريا، ذكاء اصطناعي">
+  <meta property="og:description" content="منصة تعليمية جزائرية متعددة المواد واللغات، للسنوات الأولى والثانية والثالثة ثانوي، مع مسارات حسب الشعبة وموارد تعليمية ومرافقة ذكية.">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
 </head>
@@ -60,24 +60,167 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
   <div class="gate-bg" aria-hidden="true"></div>
   <div class="gate-wrap">
 
-    <div class="gate-brand">
-      <div class="gate-crest">🇩🇿</div>
-      <div class="gate-titles">
-        <h1 class="gate-title">الثانوية الافتراضية الجزائرية</h1>
-        <p class="gate-sub">برنامج الأصل · Lycée virtuel — متعدد المواد والمستويات</p>
-        <p class="gate-motto">✨ الرجوع إلى الأصل فضيلة — نرافق أبناءكم نحو النجاح... خطوة بخطوة ✨</p>
+    <div class="public-header">
+      <div class="gate-brand">
+        <div class="gate-crest">🇩🇿</div>
+        <div class="gate-titles">
+          <h1 class="gate-title">الثانوية الافتراضية</h1>
+          <p class="gate-sub">منصة متعددة المواد • التوفر حسب كل مادة</p>
+        </div>
       </div>
+
+      <nav class="public-nav" aria-label="التنقل العام">
+        <button type="button" class="active" data-public-view="home" aria-current="page">استكشف المنصة</button>
+        <button type="button" data-public-view="subjects">المواد التعليمية</button>
+        <button type="button" data-public-view="levels">المستويات الدراسية</button>
+        <button type="button" data-gate-open="login">تسجيل الدخول</button>
+        <button type="button" class="public-nav-cta" data-gate-open="signup">إنشاء حساب</button>
+      </nav>
     </div>
 
+    <section class="public-landing" aria-labelledby="publicTitle">
+      <div class="public-copy">
+        <span class="public-kicker"><i></i> منصة تعليمية جزائرية · 2026/2027</span>
+        <h2 id="publicTitle">الثانوية الافتراضية الجزائرية<br><em>تعلّم منظّم، ومسار أوضح</em></h2>
+        <p>فضاء تعليمي رقمي يرافق تلاميذ السنوات الأولى والثانية والثالثة ثانوي، ويجمع المسارات الدراسية والمواد والموارد في تجربة عربية واضحة. يتيح فهرس المواد التحقق من حالة توفر المحتوى قبل البدء.</p>
+        <div class="public-stats" aria-label="خصائص المنصة">
+          <div class="public-stat"><b>3</b><span>سنوات ثانوي</span></div>
+          <div class="public-stat"><b>6</b><span>لغات في الفهرس</span></div>
+          <div class="public-stat"><b>14</b><span>مادة في الفهرس</span></div>
+          <div class="public-stat"><b>AI</b><span>مرافقة ذكية</span></div>
+        </div>
+        <div class="public-trust"><span>🇩🇿</span> تعليم ثانوي جزائري · واجهة عربية من اليمين إلى اليسار</div>
+        <div class="public-actions">
+          <button type="button" class="public-btn primary" data-gate-open="signup">ابدأ التعلم الآن <span aria-hidden="true">←</span></button>
+          <button type="button" class="public-btn secondary" data-public-view="subjects">اكتشف المواد</button>
+        </div>
+      </div>
+      <div class="public-ai-card">
+        <div class="public-ai-head">
+          <span class="public-ai-icon" aria-hidden="true">🎓</span>
+          <div><b>الأستاذ الذكي</b><small>مرافقة تعليمية تفاعلية · اللغة الألمانية</small></div>
+          <span class="public-ai-live">نموذج توضيحي</span>
+        </div>
+        <div class="public-ai-demo" aria-label="مثال توضيحي لسؤال وجواب في اللغة الألمانية">
+          <div class="public-ai-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="public-ai-question">
+            <small>سؤال التلميذ</small>
+            <b lang="de">Wann benutze ich den Nominativ und den Akkusativ?</b>
+          </div>
+          <div class="public-ai-answer">
+            <small>شرح تعليمي نموذجي</small>
+            <p lang="ar">نستعمل <b lang="de">Nominativ</b> للفاعل الذي يقوم بالفعل، و<b lang="de">Akkusativ</b> للمفعول به الذي يقع عليه الفعل.</p>
+            <p lang="de">Der Schüler liest das Buch.</p>
+          </div>
+        </div>
+        <button type="button" class="public-ai-cta" data-public-view="subjects">استكشف المواد وموارد التعلّم <span aria-hidden="true">←</span></button>
+        <p class="public-ai-note">هذا مثال بصري توضيحي، وليس محادثة مباشرة أو جلسة صوتية نشطة.</p>
+      </div>
+      <div class="public-features" aria-label="خدمات المنصة">
+        <article class="public-feature"><span class="pf-icon">📚</span><div><b>مكتبة دراسية</b><small>دروس وكتب وتمارين ومواضيع</small></div></article>
+        <article class="public-feature"><span class="pf-icon">🎯</span><div><b>مسار دراسي منظم</b><small>السنة ثم الشعبة ثم المادة</small></div></article>
+        <article class="public-feature"><span class="pf-icon">🤖</span><div><b>مرافقة تعليمية</b><small>أدوات مساعدة وفق المحتوى المتاح</small></div></article>
+      </div>
+      <section class="public-quality-section" aria-labelledby="publicQualityTitle">
+        <div class="public-quality-intro">
+          <span class="public-quality-kicker">موارد تعليمية موثقة</span>
+          <span class="public-quality-track" lang="ar">مسار اللغة الألمانية · Deutsch</span>
+          <h3 id="publicQualityTitle">تعلّم وتدرّب بثقة</h3>
+          <p>تخصّ هذه الموارد <strong>مسار اللغة الألمانية</strong> في المنصة، وتشمل تمارين مصححة ومواضيع رسمية ووحدات تعليمية موثقة لدعم التعلّم والتدريب.</p>
+        </div>
+        <div class="public-quality-proof" aria-label="موارد تعليمية موثقة في المسار الألماني">
+          <article class="public-proof-card"><span class="public-proof-icon">✍️</span><strong>234</strong><b>تمرينًا مصححًا</b><small>من كتاب اللغة الألمانية للسنة الثانية ثانوي</small></article>
+          <article class="public-proof-card"><span class="public-proof-icon">📋</span><strong>55</strong><b>موضوعًا رسميًا مصححًا</b><small>امتحانات اللغة الألمانية للسنة الثانية ثانوي</small></article>
+          <article class="public-proof-card"><span class="public-proof-icon">📚</span><strong>19</strong><b>وحدة تعليمية</b><small>اللغة الألمانية · السنتان الثانية والثالثة ثانوي</small></article>
+        </div>
+
+      </section>
+      <div class="public-landing-sections">
+        <div class="public-section-heading"><div><span>استكشف فضاءك الدراسي</span><h3>المواد الدراسية واللغات</h3></div><button type="button" data-public-view="subjects">عرض فهرس المواد ←</button></div>
+        <div class="public-catalog-note" role="note">
+          <span aria-hidden="true">ⓘ</span>
+          <p>الفهرس يعرض المواد واللغات المدرجة، ولا يعني أن جميع محتوياتها منشورة. تحقّق من حالة كل مادة قبل اعتمادها في خطة الدراسة.</p>
+          <button type="button" data-public-view="subjects">تحقّق من التوفّر</button>
+        </div>
+        <div class="public-mini-catalog">
+          <div class="public-mini-card language"><span>🇩🇿</span><b>اللغة العربية</b><small>اللغة والأدب</small></div>
+          <div class="public-mini-card language"><span>🇫🇷</span><b>اللغة الفرنسية</b><small>Français</small></div>
+          <div class="public-mini-card language"><span>🇬🇧</span><b>اللغة الإنجليزية</b><small>English</small></div>
+          <div class="public-mini-card language"><span>🇩🇪</span><b>اللغة الألمانية</b><small>المسار الألماني · 2AS و3AS</small></div>
+          <div class="public-mini-card language"><span>🇪🇸</span><b>اللغة الإسبانية</b><small>Español</small></div>
+          <div class="public-mini-card language"><span>🇮🇹</span><b>اللغة الإيطالية</b><small>Italiano</small></div>
+          <div class="public-mini-card"><span>📐</span><b>الرياضيات</b><small>جبر · تحليل · هندسة</small></div>
+          <div class="public-mini-card"><span>⚛️</span><b>العلوم الفيزيائية</b><small>فيزياء · كيمياء</small></div>
+          <div class="public-mini-card"><span>🧬</span><b>علوم الطبيعة والحياة</b><small>علوم الحياة والأرض</small></div>
+          <div class="public-mini-card"><span>🗺️</span><b>التاريخ والجغرافيا</b><small>تاريخ · جغرافيا</small></div>
+          <div class="public-mini-card"><span>📖</span><b>الفلسفة</b><small>تفكير · منهجية</small></div>
+          <div class="public-mini-card"><span>📊</span><b>التسيير والاقتصاد</b><small>اقتصاد · محاسبة</small></div>
+          <div class="public-mini-card"><span>💻</span><b>الإعلام الآلي</b><small>خوارزميات · برمجة</small></div>
+          <div class="public-mini-card"><span>🕌</span><b>التربية الإسلامية</b><small>قيم · معارف</small></div>
+        </div>
+        <div class="public-section-heading public-years-heading"><div><span>المستويات الدراسية</span><h3>اختر مستواك وشعبتك</h3></div><button type="button" data-public-view="levels">استكشف المستويات ←</button></div>
+        <div class="public-year-cards">
+          <button type="button" data-public-view="levels"><strong>1</strong><span><b>السنة الأولى ثانوي</b><small>جذع مشترك علوم وتكنولوجيا · آداب</small></span><i>←</i></button>
+          <button type="button" data-public-view="levels"><strong>2</strong><span><b>السنة الثانية ثانوي</b><small>الشعب والتخصصات</small></span><i>←</i></button>
+          <button type="button" data-public-view="levels"><strong>3</strong><span><b>السنة الثالثة ثانوي</b><small>التحضير لشهادة البكالوريا</small></span><i>←</i></button>
+        </div>
+
+        <section class="public-faq" aria-labelledby="publicFaqTitle">
+          <div class="public-faq-heading">
+            <span>معلومات واضحة قبل التسجيل</span>
+            <h3 id="publicFaqTitle">أسئلة تهمّ التلميذ ووليّ الأمر</h3>
+            <p>إجابات مباشرة تساعد الأسرة على معرفة ما هو متاح فعلًا وكيفية استكشاف المنصة.</p>
+            <div class="public-faq-actions" aria-label="روابط استكشاف المنصة">
+              <button type="button" data-public-view="subjects">استكشف المواد المتاحة <span aria-hidden="true">←</span></button>
+              <button type="button" data-public-view="levels">اختر المستوى الدراسي <span aria-hidden="true">←</span></button>
+            </div>
+          </div>
+          <div class="public-faq-list">
+            <details class="public-faq-item">
+              <summary>هل جميع المواد والدروس متاحة الآن؟</summary>
+              <p>ليس بالضرورة. يعرض فهرس المواد حالة توفر كل مادة ومحتواها؛ فبعض المسارات منشور وبعضها قيد الإعداد. ننصح بمراجعة حالة المادة قبل اعتمادها ضمن خطة الدراسة.</p>
+            </details>
+            <details class="public-faq-item">
+              <summary>هل أرقام 234 تمرينًا و55 موضوعًا و19 وحدة تخص كل المواد؟</summary>
+              <p>لا. هذه الموارد تخص مسار اللغة الألمانية تحديدًا: 234 تمرينًا من كتاب السنة الثانية ثانوي، و55 موضوعًا رسميًا مصححًا للألمانية، و19 وحدة للسنتين الثانية والثالثة ثانوي.</p>
+            </details>
+            <details class="public-faq-item">
+              <summary>كيف أتحقق من جودة التعلّم ونسب النجاح؟</summary>
+              <p>يمكن استكشاف نوعية الموارد والتصحيحات المنشورة قبل التسجيل. أما نسب النجاح العامة فلا تُعرض حاليًا، لأن نتائج الاختبارات الفردية محفوظة محليًا ولا توجد بعد بيانات مجمّعة موثوقة تسمح بحساب نسبة عادلة.</p>
+            </details>
+            <details class="public-faq-item">
+              <summary>كيف يستكشف وليّ الأمر المنصة قبل إنشاء حساب؟</summary>
+              <p>يمكنه استكشاف المستويات الدراسية وفهرس المواد وقراءة حالة توفر كل مادة، ثم إنشاء الحساب بعد التأكد من أن المسار المطلوب مناسب لما هو منشور حاليًا.</p>
+            </details>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="publicExplorer" class="public-explorer" hidden aria-live="polite">
+      <div id="publicExplorerContent"></div>
+    </section>
+
     <div class="gate-card">
-      <div class="gate-tabs">
-        <button class="gtab on" data-gate="login">🔐 تسجيل الدخول</button>
-        <button class="gtab" data-gate="signup">📝 حساب جديد</button>
+      <div class="gate-card-intro">
+        <button type="button" class="public-auth-back" data-public-auth-back>← العودة إلى الصفحة الرئيسية</button>
+        <span class="auth-eyebrow">🇩🇿 بوابة التعلّم · 2026/2027</span>
+        <h2>مسارك الدراسي يبدأ من هنا</h2>
+        <p>ادخل إلى فضائك التعليمي لمتابعة الدروس والموارد وإنجازاتك، أو أنشئ حسابًا للانطلاق في رحلتك.</p>
+        <div class="auth-benefits" aria-label="مزايا الفضاء التعليمي">
+          <div><i aria-hidden="true">📚</i><span><b>مواردك التعليمية</b><small>دروس وتمارين ومواد بحسب المتاح</small></span></div>
+          <div><i aria-hidden="true">🎯</i><span><b>مسارك الدراسي</b><small>تابع الحصص وما أنجزته</small></span></div>
+          <div><i aria-hidden="true">🤖</i><span><b>مرافقة تعليمية</b><small>اكتشف أدوات المساعدة داخل المنصة</small></span></div>
+        </div>
+      </div>
+      <div class="gate-tabs" role="tablist" aria-label="اختيار نوع الدخول">
+        <button type="button" class="gtab on" id="loginTab" role="tab" aria-selected="true" aria-controls="loginForm" tabindex="0" data-gate="login">🔐 تسجيل الدخول</button>
+        <button type="button" class="gtab" id="signupTab" role="tab" aria-selected="false" aria-controls="signupForm" tabindex="-1" data-gate="signup">📝 حساب جديد</button>
       </div>
 
       <!-- Connexion -->
-      <form id="loginForm" class="gform" aria-label="نموذج تسجيل الدخول">
-        <label class="fld"><span>👤 اسم المستخدم أو البريد</span>
+      <form id="loginForm" class="gform" role="tabpanel" aria-labelledby="loginTab" aria-label="نموذج تسجيل الدخول">
+        <label class="fld"><span>📧 البريد الإلكتروني أو اسم المستخدم</span>
           <input type="text" id="loginUser" required autocomplete="username"
                  placeholder="ahmed  ·  ahmed@lycee.dz"></label>
         <label class="fld"><span>🔒 كلمة السر</span>
@@ -88,21 +231,43 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
         <label class="fld"><span>🏫 القسم</span>
           <select id="loginClasse"></select></label>
         <div class="gerr" id="loginErr" hidden></div>
-        <button type="submit" class="btn btn-p btn-block btn-lg">🚀 الدخول إلى القسم</button>
-        <button type="button" class="btn btn-o btn-block" id="btnDemo">🎮 دخول تجريبي (تلميذ)</button>
-        <p class="ghint">💡 حسابات تجريبية : <code>ahmed</code> / <code>1234</code> (تلميذ)
-          · <code>prof</code> / <code>1234</code> (أستاذ → لوحة الأستاذ)</p>
+        <button type="submit" class="btn btn-p btn-block btn-lg">تسجيل الدخول إلى المنصة <span aria-hidden="true">←</span></button>
+        <button type="button" class="btn btn-o btn-block" id="btnDemo">استكشاف المنصة بحساب تجريبي · تلميذ</button>
+        <p class="ghint">الدخول التجريبي مخصص لاستكشاف الواجهة التعليمية، ولا يمثل حسابًا شخصيًا.</p>
+        <button type="button" class="auth-forgot-link" data-password-reset-open>نسيت كلمة المرور؟</button>
+      </form>
+
+
+      <!-- Récupération et réinitialisation du mot de passe — Supabase Auth -->
+      <form id="passwordResetForm" class="gform auth-recovery-form" aria-label="استعادة كلمة المرور" hidden>
+        <div class="auth-recovery-heading"><span aria-hidden="true">✉️</span><h3>استعادة كلمة المرور</h3><p>أدخل بريدك الإلكتروني وسنرسل إليك رابطًا آمنًا لإعادة تعيين كلمة المرور.</p></div>
+        <label class="fld"><span>📧 البريد الإلكتروني</span>
+          <input type="email" id="resetEmail" required autocomplete="email" placeholder="name@example.com"></label>
+        <div class="gerr auth-recovery-status" id="passwordResetStatus" role="status" aria-live="polite" hidden></div>
+        <button type="submit" class="btn btn-p btn-block btn-lg">إرسال رابط الاستعادة</button>
+        <button type="button" class="btn btn-o btn-block" data-password-reset-back>العودة إلى تسجيل الدخول</button>
+      </form>
+
+      <form id="passwordUpdateForm" class="gform auth-recovery-form" aria-label="تعيين كلمة مرور جديدة" hidden>
+        <div class="auth-recovery-heading"><span aria-hidden="true">🔐</span><h3>تعيين كلمة مرور جديدة</h3><p>اختر كلمة مرور قوية لحماية حسابك التعليمي.</p></div>
+        <label class="fld"><span>كلمة المرور الجديدة</span>
+          <input type="password" id="newPassword" required minlength="8" autocomplete="new-password" placeholder="8 أحرف على الأقل"></label>
+        <label class="fld"><span>تأكيد كلمة المرور</span>
+          <input type="password" id="confirmNewPassword" required minlength="8" autocomplete="new-password" placeholder="أعد كتابة كلمة المرور"></label>
+        <div class="gerr auth-recovery-status" id="passwordUpdateStatus" role="status" aria-live="polite" hidden></div>
+        <button type="submit" class="btn btn-p btn-block btn-lg">حفظ كلمة المرور الجديدة</button>
+        <button type="button" class="btn btn-o btn-block" data-password-reset-back>العودة إلى تسجيل الدخول</button>
       </form>
 
       <!-- Inscription -->
-      <form id="signupForm" class="gform" hidden>
+      <form id="signupForm" class="gform" role="tabpanel" aria-labelledby="signupTab" aria-label="نموذج إنشاء حساب جديد" hidden>
         <label class="fld"><span>👤 الاسم الكامل</span>
           <input type="text" id="suName" required placeholder="أحمد محمد"></label>
         <label class="fld"><span>📧 البريد الإلكتروني</span>
           <input type="email" id="suMail" required placeholder="ahmed@lycee.dz"></label>
         <label class="fld"><span>🔒 كلمة السر</span>
           <div class="fld-row">
-            <input type="password" id="suPass" required minlength="4" placeholder="4 أحرف على الأقل">
+            <input type="password" id="suPass" required minlength="6" placeholder="6 أحرف على الأقل">
             <button type="button" class="eye" id="eye2" aria-label="إظهار كلمة السر أو إخفاؤها">👁️</button>
           </div></label>
         <div class="gfields2">
@@ -124,19 +289,19 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
             </select></label>
           <label class="fld"><span>👥 نوع الحساب <small style="opacity:.65">(الدور النهائي يُعتمد من الإدارة — لا يُمنح أي دور من المتصفح)</small></span>
             <select id="suRole">
-              <option value="eleve">تلميذ — تفعيل فوري</option>
+              <option value="eleve">تلميذ — حساب طالب</option>
               <option value="parent">ولي / عائلة — بانتظار اعتماد الإدارة</option>
               <option value="prof">أستاذ — بانتظار اعتماد الإدارة</option>
             </select></label>
         </div>
         <label class="fld" style="margin-top:6px"><span style="font-size:12px;opacity:.85;line-height:1.6">بإنشاء الحساب أوافق على <button type="button" class="btn btn-sm btn-o" data-go="legal" style="display:inline-block;padding:3px 9px">الشروط وسياسة الخصوصية (بيانات القاصرين)</button> — القاصرون يسجَّلون تحت مسؤولية الولي.</span></label>
         <div class="gerr" id="suErr" hidden></div>
-        <button type="submit" class="btn btn-p btn-block btn-lg">✅ إنشاء الحساب والدخول</button>
+        <button type="submit" class="btn btn-p btn-block btn-lg">✅ إنشاء الحساب</button>
       </form>
     </div>
 
     <div class="gate-stats" id="gateStats"></div>
-    <div class="gate-foot">© 2026 الأستاذ خريف أحمد 🇩🇿 · <span class="de-in">Alle Rechte vorbehalten</span></div>
+    <div class="gate-foot">الثانوية الافتراضية الجزائرية · منصة تعليمية شاملة © 2026</div>
   </div>
 </div>
 
@@ -153,7 +318,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
         <div class="brand-crest">🇩🇿</div>
         <div>
           <div class="brand-t">الثانوية الافتراضية</div>
-          <div class="brand-s">برنامج الأصل · <span class="de-in">Lycée virtuel</span></div>
+          <div class="brand-s">منصة تعليمية شاملة • جميع المواد واللغات</div>
         </div>
       </div>
             <div class="tb-search"><input type="search" id="tbSearch" placeholder="🔍 ابحث : درس، قاعدة، فرض…" aria-label="بحث في المنصة"></div>
@@ -174,16 +339,26 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
     <!-- ACCUEIL -->
     <section data-view="accueil" class="view">
             <div id="accueilMemo"></div>
-  <div class="home-grid"><aside class="home-side" id="homeSide">
+    <div class="home-grid"><aside class="home-side" id="homeSide">
+    <section class="home-ai-card" aria-labelledby="homeAiTitle">
+      <div class="home-ai-top">
+        <span class="home-ai-icon" aria-hidden="true">🎙️</span>
+        <div><h2 id="homeAiTitle">الأستاذ الذكي</h2><p>مرافقة تعليمية بالصوت والنص</p></div>
+      </div>
+      <div class="home-ai-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <p class="home-ai-copy">اطرح سؤالك حول الدرس، أو اطلب شرحاً وأمثلة إضافية.</p>
+      <button type="button" data-go="prof">ابدأ المحادثة <span aria-hidden="true">←</span></button>
+    </section>
     <div class="panel" id="panelProgress" hidden></div>
     <div class="panel" id="panelQuick" hidden><div class="panel-h">⚡ أقسام سريعة</div><div id="quickBody"></div></div>
     <div class="panel" id="panelToday" hidden></div>
     <div class="panel" id="panelActivity" hidden></div>
   </aside><div class="home-main">
-  <div id="subjHome" class="subj-home"></div>
 <div class="welcome" id="welcomeBox"></div>
-<div class="welcome-art" aria-hidden="true"><svg viewBox="0 0 220 150" width="220" height="150"><ellipse cx="110" cy="140" rx="95" ry="8" fill="rgba(255,255,255,.14)"/><rect x="52" y="70" width="86" height="52" rx="5" fill="#fff" opacity=".96"/><rect x="58" y="76" width="74" height="36" rx="3" fill="#1e5fd9" opacity=".35"/><rect x="44" y="122" width="102" height="7" rx="3.5" fill="#fff" opacity=".92"/><rect x="150" y="96" width="42" height="10" rx="3" fill="#f5b74e"/><rect x="150" y="84" width="42" height="10" rx="3" fill="#ff8fa3"/><rect x="150" y="72" width="42" height="10" rx="3" fill="#7ef0ae" opacity=".9"/><rect x="160" y="34" width="26" height="34" rx="4" fill="#fff" opacity=".92"/><rect x="165" y="24" width="3" height="14" rx="1.5" fill="#f5b74e"/><rect x="171" y="20" width="3" height="18" rx="1.5" fill="#ff8fa3"/><rect x="177" y="26" width="3" height="12" rx="1.5" fill="#7b4bd0"/><circle cx="34" cy="52" r="10" fill="#7ef0ae" opacity=".85"/><rect x="31" y="60" width="6" height="14" rx="3" fill="#fff" opacity=".85"/><circle cx="196" cy="30" r="3" fill="#fff" opacity=".8"/><circle cx="28" cy="26" r="2.5" fill="#fff" opacity=".6"/><circle cx="120" cy="18" r="2" fill="#fff" opacity=".7"/></svg></div>
+<div class="welcome-art" aria-hidden="true"><svg viewBox="0 0 220 150" width="220" height="150"><ellipse cx="110" cy="140" rx="95" ry="8" fill="rgba(255,255,255,.14)"/><rect x="52" y="70" width="86" height="52" rx="5" fill="#fff" opacity=".96"/><rect x="58" y="76" width="74" height="36" rx="3" fill="#006233" opacity=".35"/><rect x="44" y="122" width="102" height="7" rx="3.5" fill="#fff" opacity=".92"/><rect x="150" y="96" width="42" height="10" rx="3" fill="#d21034"/><rect x="150" y="84" width="42" height="10" rx="3" fill="#fff"/><rect x="150" y="72" width="42" height="10" rx="3" fill="#00843d" opacity=".9"/><rect x="160" y="34" width="26" height="34" rx="4" fill="#fff" opacity=".92"/><rect x="165" y="24" width="3" height="14" rx="1.5" fill="#d21034"/><rect x="171" y="20" width="3" height="18" rx="1.5" fill="#fff"/><rect x="177" y="26" width="3" height="12" rx="1.5" fill="#d21034"/><circle cx="34" cy="52" r="10" fill="#00843d" opacity=".85"/><rect x="31" y="60" width="6" height="14" rx="3" fill="#fff" opacity=".85"/><circle cx="196" cy="30" r="3" fill="#fff" opacity=".8"/><circle cx="28" cy="26" r="2.5" fill="#fff" opacity=".6"/><circle cx="120" cy="18" r="2" fill="#fff" opacity=".7"/></svg></div>
       <div class="stats" id="statsHome"></div>
+      <div id="homeGamification" style="margin:18px 0 22px" aria-live="polite"></div>
+  <div id="subjHome" class="subj-home"></div>
 
       <!-- 📅 حصص اليوم + accès rapide (rendu par journee.js) -->
       <div id="todayBody"></div>
@@ -191,39 +366,31 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       <!-- 📘 Aperçu de l'وحدة 1 (rendu par journee.js) -->
       <div id="apercuBody"></div>
 
-      <div class="grid3">
-        <div class="card mini" data-go="seances"><div class="mini-i">📚</div><h3>الحصص</h3>
-          <p>الوحدة 1 — 8 حصص تفاعلية</p><span class="mini-n" id="cSeances">8</span></div>
-        <div class="card mini" data-go="biblio"><div class="mini-i">🗂️</div><h3>المكتبة</h3>
-          <p>فروض · اختبارات · بكالوريا · حوليات</p><span class="mini-n" id="cBdd">—</span></div>
-        <div class="card mini live-mini" data-go="live"><div class="mini-i">📹</div><h3>القاعة المباشرة</h3>
-          <p><span class="live-dot"><i></i></span> بثّ حيّ الآن · 32 تلميذ</p><span class="mini-n">🔴</span></div>
-        <div class="card mini" data-go="classe"><div class="mini-i">🏫</div><h3>القسم</h3>
-          <p>الرزنامة · الدروس · الحضور · النقاط</p><span class="mini-n">5</span></div>
-        <div class="card mini" data-go="grammaire"><div class="mini-i">📘</div><h3>القواعد</h3>
-          <p>83 قاعدة — A1 → B2</p><span class="mini-n">83</span></div>
+      <div class="grid3 home-actions" aria-label="الوصول السريع إلى أدوات التعلّم">
+        <div class="card mini" data-go="seances"><div class="mini-i">📚</div><h3>دروسي وحصصي</h3>
+          <p>تابع الدروس، أنجز الحصص، وراجع ما تعلمته</p><span class="mini-n">ابدأ التعلّم ←</span></div>
+        <div class="card mini" data-go="matieres"><div class="mini-i">🎓</div><h3>المواد التعليمية</h3>
+          <p>اكتشف المواد المتاحة ومستوى التقدّم في كل مادة</p><span class="mini-n">استكشف المواد ←</span></div>
+        <div class="card mini" data-go="biblio"><div class="mini-i">🗂️</div><h3>المكتبة التعليمية</h3>
+          <p>موارد، وثائق، فروض وحلول بحسب المتاح</p><span class="mini-n" id="cBdd">افتح المكتبة ←</span></div>
+        <div class="card mini" data-go="prof"><div class="mini-i">🤖</div><h3>الأستاذ الذكي</h3>
+          <p>اطرح سؤالك واحصل على المساعدة في التعلّم</p><span class="mini-n">اسأل الأستاذ ←</span></div>
+        <div class="card mini" data-go="quiz"><div class="mini-i">🎯</div><h3>التدريب والتمارين</h3>
+          <p>اختبر فهمك وتدرّب مع التصحيح</p><span class="mini-n">تدرّب الآن ←</span></div>
+        <div class="card mini" data-go="officiels"><div class="mini-i">📝</div><h3>الفروض والاختبارات</h3>
+          <p>راجع المواضيع المتاحة واستعد للتقييم</p><span class="mini-n">راجع المواضيع ←</span></div>
+        <div class="card mini" data-go="examen"><div class="mini-i">🎓</div><h3>التحضير للبكالوريا</h3>
+          <p>تصفّح أرشيف المواضيع والموارد المتاحة</p><span class="mini-n">ابدأ المراجعة ←</span></div>
+        <div class="card mini" data-go="masar"><div class="mini-i">📈</div><h3>مساري الدراسي</h3>
+          <p>تابع إنجازاتك وتقدّمك وخطة المراجعة</p><span class="mini-n">عرض مساري ←</span></div>
+        <div class="card mini" data-go="devoir"><div class="mini-i">✍️</div><h3>الواجب الحالي</h3>
+          <p>انتقل إلى الواجبات والتصحيح عند توفرها</p><span class="mini-n">افتح الواجب ←</span></div>
+        <div class="card mini" data-go="classe"><div class="mini-i">🏫</div><h3>فضاء القسم</h3>
+          <p>اطّلع على محتوى القسم والأنشطة المنشورة</p><span class="mini-n">ادخل القسم ←</span></div>
+        <div class="card mini" data-go="live"><div class="mini-i">📹</div><h3>القاعة المباشرة</h3>
+          <p>تحقّق من الدروس المباشرة والمواعيد المتاحة</p><span class="mini-n">افتح القاعة ←</span></div>
         <div class="card mini" id="miniProf" data-go="profboard" hidden><div class="mini-i">🧑‍🏫</div><h3>لوحة الأستاذ</h3>
-          <p>32 تلميذ · إدخال النقاط · CSV</p><span class="mini-n">32</span></div>
-        <div class="card mini" data-go="devoir"><div class="mini-i">📝</div><h3>الفرض</h3>
-          <p>الوحدة 1 · /20 مع التصحيح</p><span class="mini-n">20</span></div>
-        <div class="card mini" data-go="simulation"><div class="mini-i">⏱️</div><h3>المحاكاة</h3>
-          <p>45 دقيقة أو 10 دقائق</p><span class="mini-n">2</span></div>
-        <div class="card mini" data-go="examen"><div class="mini-i">🎓</div><h3>البكالوريا</h3>
-          <p>أرشيف 2010→2026 · 68 موضوعاً</p><span class="mini-n">68</span></div>
-        <div class="card mini" data-go="officiels"><div class="mini-i">📄</div><h3>الفروض الرسمية</h3>
-          <p>ثانويات الوطن · 📄 الموضوع / ✅ الحل</p><span class="mini-n">10</span></div>
-        <div class="card mini" data-go="quiz"><div class="mini-i">🎯</div><h3>تمارين</h3>
-          <p>30 سؤالاً · تصحيح فوري + شرح</p><span class="mini-n">30</span></div>
-        <div class="card mini rs-mini" data-go="reservation"><div class="mini-i">🗓️</div><h3>احجز حصّة</h3>
-          <p>٦ أساتذة · حساب فوري · واتساب</p><span class="mini-n">6</span></div>
-        <div class="card mini pj-mini" data-go="projet"><div class="mini-i">📋</div><h3>Plan de projet</h3>
-          <p>LinguaConnect · dossier de présentation</p><span class="mini-n">13</span></div>
-        <div class="card mini" data-go="stats"><div class="mini-i">🗺️</div><h3>الإحصائيات</h3>
-          <p>خريطة 58 ولاية · توزيع وطني</p><span class="mini-n">58</span></div>
-        <div class="card mini" data-go="prof"><div class="mini-i">🤖</div><h3>الأستاذ</h3>
-          <p>محادثة ذكية 🇩🇿 + 🇩🇪</p><span class="mini-n">24/7</span></div>
-        <div class="card mini" data-go="parents"><div class="mini-i">👨‍👩‍👧</div><h3>الأولياء</h3>
-          <p>تقرير أسبوعي + واتساب</p><span class="mini-n">📊</span></div>
+          <p>أدوات متابعة القسم وإدارة التقييمات</p><span class="mini-n">لوحة الأستاذ ←</span></div>
       </div>
 
       <div class="card prof-card" hidden>
@@ -260,40 +427,80 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       </div>
 
       <div class="card prog-off">
-        <h2>📜 البرنامج الرسمي لوزارة التربية الوطنية</h2>
-        <div class="po-sub">📚 الدروس الرسمية — السنة الثانية ثانوي - منهاج ٢٠٢٦/٢٠٢٧</div>
+        <h2>📜 البرنامج الوزاري ومراجع الكتاب المدرسي</h2>
+        <div class="po-sub">📚 اللغة الألمانية · المحاور الوزارية المنشورة + فهرس الكتاب المدرسي</div>
+
+        <h3 class="po-level">السنة الثانية ثانوي · ٩ وحدات</h3>
         <div class="po-grid">
-            <div class="po-t">
-              <div class="po-h"><b>📘 الفصل الأول</b> · ٣ وحدات · سبتمبر - ديسمبر<br>الوحدة 1 · التعريف بالنفس (Sich vorstellen)<br>الوحدة 2 · البيت والعائلة (Haus und Familie)<br>الوحدة 3 · المدرسة والدرس (Schule und Unterricht)<br><span class="pg">(L1: p5–29 · L2: p31–55 · L3: p57–76)</span><br>📚 الحصص<br><br><b>📗 الفصل الثاني</b> · ٣ وحدات · جانفي - مارس<br>الوحدة 4 · الوقت والطقس (Zeit und Wetter)<br>الوحدة 5 · أوقات الفراغ (Freizeit)<br>الوحدة 6 · الإنسان والصحة (Mensch und Gesundheit)<br><span class="pg">(L4: p77–101 · L5: p103–127 · L6: p129–149)</span><br>📚 الحصص<br><br><b>📙 الفصل الثالث</b> · ٣ وحدات · أفريل - جوان<br>الوحدة 7 · المأكل والمشرب (Essen und Trinken)<br>الوحدة 8 · المظهر والشخصية (Aussehen und Charakter)<br>الوحدة 9 · حياة المدينة والريف (Stadtleben – Landleben)<br><span class="pg">(L7: p151–180 · L8: p181–205 · L9: p207–223)</span><br>📚 الحصص<br><br>🎓 السنة الثالثة ثانوي — برنامج البكالوريا (CEFR B1 → B2) · ١٠ وحدات · ٦٠ حصة · ✅ السنة كاملة</div>
-          <div class="po-grid">
-            <div class="po-t">
-              <div class="po-h"><b>📗 الفصل الأول</b><span class="po-n">٣ وحدات</span></div>
-              <div class="po-p">سبتمبر - ديسمبر</div>
-              <div class="po-bar"><i style="width:100%"></i></div>
-              <div class="po-s ok">✅ متاح — ١٨ حصة</div>
-              <div class="po-u">U10 · Persönlichkeit und Identität<br>U11 · Staatsbürgerschaft<br>U12 · Leben in der Gesellschaft</div>
-              <button class="btn btn-o btn-sm po-b" data-go="seances">📚 الحصص</button>
-            </div>
-            <div class="po-t">
-              <div class="po-h"><b>📘 الفصل الثاني</b><span class="po-n">٣ وحدات</span></div>
-              <div class="po-p">جانفي - مارس</div>
-              <div class="po-bar"><i style="width:100%"></i></div>
-              <div class="po-s ok">✅ متاح — ١٨ حصة</div>
-              <div class="po-u">U13 · Wissenschaft und Technologie<br>U14 · Wirtschaft und Arbeit<br>U15 · Umweltprobleme</div>
-              <button class="btn btn-o btn-sm po-b" data-go="seances">📚 الحصص</button>
-            </div>
-            <div class="po-t">
-              <div class="po-h"><b>📕 الفصل الثالث</b><span class="po-n">٤ وحدات</span></div>
-              <div class="po-p">أفريل - جوان</div>
-              <div class="po-bar"><i style="width:100%"></i></div>
-              <div class="po-s ok">✅ متاح — ٢٤ حصة</div>
-              <div class="po-u">U16 · Gesundheit und Lebensweise<br>U17 · Globalisierung<br>U18 · Medienwelt<br>U19 · Kultureller Dialog</div>
-              <button class="btn btn-o btn-sm po-b" data-go="seances">📚 الحصص</button>
-            </div>
+          <div class="po-t">
+            <div class="po-h"><b>📘 الفصل الأول</b><span class="po-n">٣ وحدات</span></div>
+            <div class="po-p">سبتمبر – ديسمبر</div>
+            <div class="po-u">U1 · التعريف بالنفس — Sich vorstellen<br>U2 · البيت والعائلة — Haus und Familie<br>U3 · المدرسة والدرس — Schule und Unterricht</div>
+            <div class="pg">صفحات الكتاب: 5–76 · L1–L3</div>
+          </div>
+          <div class="po-t">
+            <div class="po-h"><b>📗 الفصل الثاني</b><span class="po-n">٣ وحدات</span></div>
+            <div class="po-p">جانفي – مارس</div>
+            <div class="po-u">U4 · الوقت والطقس — Zeit und Wetter<br>U5 · أوقات الفراغ — Freizeit<br>U6 · الإنسان والصحة — Mensch und Gesundheit</div>
+            <div class="pg">صفحات الكتاب: 77–149 · L4–L6</div>
+          </div>
+          <div class="po-t">
+            <div class="po-h"><b>📙 الفصل الثالث</b><span class="po-n">٣ وحدات</span></div>
+            <div class="po-p">أفريل – جوان</div>
+            <div class="po-u">U7 · المأكل والمشرب — Essen und Trinken<br>U8 · المظهر والشخصية — Aussehen und Charakter<br>U9 · حياة المدينة والريف — Stadtleben und Landleben</div>
+            <div class="pg">صفحات الكتاب: 151–223 · L7–L9</div>
           </div>
         </div>
-        <div class="po-note">💡 كل فصل يضم **٣ وحدات** رسمية — تجدها في 🏫 القسم → 📖 الدروس، مع المفردات والقواعد والأنشطة لكل درس.<b>٦ دروس</b> officielles — retrouvez-les dans 🏫 القسم → 📖 الدروس، avec المفردات والقواعد والنشاط de chaque درس.</div>
+
+        <h3 class="po-level">السنة الثالثة ثانوي · ٨ محاور في فهرس الكتاب (L1–L8)</h3>
+        <div class="po-grid">
+          <div class="po-t">
+            <div class="po-h"><b>📘 L1 · البلدان الناطقة بالألمانية والجزائر</b><span class="po-n">ص 5</span></div>
+            <div class="po-u">Die deutschsprachigen Länder und Algerien heute</div>
+            <div class="pg">المحور الوزاري: Les pays germanophones et l’Algérie</div>
+          </div>
+          <div class="po-t">
+            <div class="po-h"><b>📘 L2 · حياة الفنانين</b><span class="po-n">ص 31</span></div>
+            <div class="po-u">Künstlerleben</div>
+            <div class="pg">المحور الوزاري: La vie des artistes</div>
+          </div>
+          <div class="po-t">
+            <div class="po-h"><b>📘 L3 · التقدم التقني</b><span class="po-n">ص 49</span></div>
+            <div class="po-u">Der technische Fortschritt</div>
+            <div class="pg">المحور الوزاري: Le progrès technique</div>
+          </div>
+          <div class="po-t">
+            <div class="po-h"><b>📘 L4 · مشكلات البيئة</b><span class="po-n">ص 71</span></div>
+            <div class="po-u">Umweltprobleme</div>
+            <div class="pg">المحور الوزاري: Les problèmes de l’environnement</div>
+          </div>
+          <div class="po-t">
+            <div class="po-h"><b>📗 L5 · وسائل الإعلام والإشهار</b><span class="po-n">ص 93</span></div>
+            <div class="po-u">Die Massenmedien</div>
+            <div class="pg">المحور الوزاري: Les mass media et la publicité</div>
+          </div>
+          <div class="po-t">
+            <div class="po-h"><b>📗 L6 · المراسلة والتواصل</b><span class="po-n">ص 111</span></div>
+            <div class="po-u">Die Kommunikationsmittel</div>
+            <div class="pg">المحور الوزاري: Correspondance et communication</div>
+          </div>
+          <div class="po-t">
+            <div class="po-h"><b>📙 L7 · مشكلات الشباب</b><span class="po-n">ص 129</span></div>
+            <div class="po-u">Jugendprobleme</div>
+            <div class="pg">المحور الوزاري: Les problèmes de la jeunesse</div>
+          </div>
+          <div class="po-t">
+            <div class="po-h"><b>📙 L8 · المهن والعمل</b><span class="po-n">ص 153</span></div>
+            <div class="po-u">Arbeitswelt</div>
+            <div class="pg">المحور الوزاري: Métiers et professions</div>
+          </div>
         </div>
+        <div class="po-note"><b>مدى تغطية هذه المحاور داخل المنصة — تدقيق المحتوى الحالي</b><br>
+          <b>متوفر:</b> L3 التقدم التقني (Wissenschaft und Technologie)، وL4 البيئة (Umweltprobleme).<br>
+          <b>تغطية جزئية:</b> L1 البلدان الناطقة بالألمانية والجزائر (الموجود حالياً يتناول الهوية والمواطنة والمجتمع، وليس المحور نفسه مباشرة)؛ L5 الإعلام والإشهار (محتوى الإعلام موجود، والإشهار غير مثبت كوحدة مستقلة)؛ L7 مشكلات الشباب وL8 المهن والعمل (توجد وحدة واحدة عن الاقتصاد والعمل والبطالة، ولا تغطي المحورين بالكامل).<br>
+          <b>غير متوفر كوحدة مطابقة حالياً:</b> L2 حياة الفنانين (وردت كلمة Künstler عرضاً في نص الحوار الثقافي U16، دون درس عن حياة الفنانين أو أعمالهم)؛ L6 المراسلة والتواصل (توجد في U11 رسالة تحفيزية للتوظيف Bewerbung، وفي U15 مفردات الإعلام والتواصل، لكن لا توجد وحدة مستقلة للمراسلات أو تبادل الرسائل). هذه الموارد القريبة لا تُحتسب تغطية كاملة للمحورين.<br>
+          <b>محتويات إضافية لا تُحسب فصولاً من هذا الفهرس:</b> الصحة ونمط الحياة، العولمة، والحوار الثقافي. أرقام الوحدات الداخلية محفوظة كما هي حتى لا تتغير روابط الدروس والفروض والتصحيحات.</div>
+        <div class="po-note">تنبيه توثيقي: المحاور مأخوذة من <a href="https://education.gov.dz/wp-content/uploads/2015/04/Programme-Allemand-3%C2%B0AS-Aout-2012.pdf" target="_blank" rel="noopener noreferrer">برنامج الألمانية المنشور من وزارة التربية الوطنية (أوت 2012)</a>. التدرجات السنوية لشهر سبتمبر 2022 تجمع «مشكلات الشباب وعالم العمل» في Lektion واحدة؛ أما فهرس الكتاب المدرسي فيفصلها إلى L7 وL8، لذلك يظهر عدد فصول الكتاب هنا ٨. لم نعتمد توزيعاً فصلياً أو أعداد حصص غير مثبتة. لا يتوفر في المصادر التي تم التحقق منها إلى الآن جدول وزاري مفصل خاص بموسم 2026/2027.</div>
       </div>
 
       <div class="card offer">
@@ -309,14 +516,14 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 </section>
 
     <!-- SÉANCES -->
-    <section data-view="seances" class="view" hidden>
-      <div class="page-head" id="seancesHead">
+    <section data-view="seances" class="view dz-course-page" hidden>
+      <div class="page-head dz-course-hero" id="seancesHead">
         <h1>📚 الوحدة 1 : <span class="de-display">Sich vorstellen</span></h1>
         <p>التعريف بالنفس — 8 حصص · 60 دقيقة لكل حصة · البرنامج الرسمي MEN</p>
         <div class="progress-wrap"><div class="progress" id="progSeances"></div></div>
         <div class="progress-lbl" id="progLbl"></div>
       </div>
-      <div class="card" id="seancesGrid"></div>
+      <div class="card dz-course-catalog" id="seancesGrid"></div>
       <div id="seanceDetail"></div>
     </section>
 
@@ -356,15 +563,6 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       <div id="officielsBody"></div>
     </section>
 
-    <!-- STATISTIQUES NATIONALES -->
-    <section data-view="stats" class="view" hidden>
-      <div class="page-head">
-        <h1>🗺️ الإحصائيات الوطنية</h1>
-        <p>خريطة تفاعلية للولايات الـ58 · التوزيع حسب النوع والسنة والصعوبة · إحصائيات البكالوريا</p>
-      </div>
-      <div id="statsBody"></div>
-    </section>
-
     <!-- BIBLIOTHÈQUE -->
     <section data-view="biblio" class="view" hidden>
       <div class="page-head">
@@ -388,7 +586,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
     <section data-view="examen" class="view" hidden>
       <div class="page-head">
         <h1>🎓 البكالوريا — <span class="de-display">Abitur-Archiv</span></h1>
-        <p>أرشيف رسمي 2010 → 2026 · 68 موضوعاً · 180 دقيقة · تصحيح آلي حسب السلّم الرسمي /20</p>
+        <p>أرشيف رسمي 2010 → 2026 · 79 موضوعاً · 180 دقيقة · تصحيح آلي حسب السلّم الرسمي /20</p>
       </div>
       <div id="examBody"></div>
     </section>
@@ -411,19 +609,67 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       <div id="simBody"></div>
     </section>
 
-    <!-- PROF -->
+    <!-- PROF : espace IA pédagogique — structure visuelle, contrôles existants conservés -->
     <section data-view="prof" class="view" hidden>
-      <div class="page-head">
-        <h1>🤖 الأستاذ الافتراضي</h1>
-        <p>🇩🇿 يتحدث العربية · 🇩🇪 يتحدث الألمانية · مدرَّب على محتوى الوحدة 1</p>
+      <div class="dz-ai-intro">
+        <div class="dz-ai-intro-copy">
+          <span class="dz-ai-eyebrow"><i></i> مُرافقك في التعلّم · EDUDZ AI</span>
+          <h1>أستاذك الافتراضي <span>🤖</span></h1>
+          <p>اسأل، تعلّم، وتدرّب خطوة بخطوة. اطرح سؤالك حول دروسك، قواعد اللغة الألمانية أو التمارين.</p>
+          <div class="dz-ai-capabilities">
+            <span>📘 شرح الدروس</span><span>✍️ تصحيح وفهم التمارين</span><span>🎙️ إدخال صوتي عند دعم المتصفح</span>
+          </div>
+        </div>
+        <div class="dz-ai-orb" aria-hidden="true">
+          <div class="dz-ai-orb-core">✦</div>
+          <i class="wave w1"></i><i class="wave w2"></i><i class="wave w3"></i>
+          <span>KI · IA</span>
+        </div>
       </div>
-      <div class="chat card">
-        <div class="chat-log" id="chatLog" aria-live="polite" role="log"></div>
-        <div class="chat-sug" id="chatSug"></div>
-        <form class="chat-in" id="chatForm">
-          <input type="text" id="chatInput" placeholder="اكتب سؤالك بالألمانية أو بالعربية…" autocomplete="off">
-          <button type="submit" class="btn btn-p">➤</button>
-        </form>
+      <div class="dz-ai-workspace">
+        <div class="dz-ai-chat-column">
+          <div class="dz-ai-chat-heading">
+            <div><span class="dz-ai-online"></span><b>مساحة الحوار التعليمي</b><small>اكتب سؤالك أو استخدم زر الميكروفون</small></div>
+            <span class="dz-ai-lockup">🇩🇿 <b>EDUDZ</b></span>
+          </div>
+          <div class="chat card">
+            <div class="dz-ai-voice-stage" aria-label="الإملاء الصوتي للأستاذ الذكي">
+              <div class="dz-ai-voice-content">
+                <div class="dz-ai-voice-heading"><b>المحادثة مع الأستاذ الذكي</b><small>تحدث بلغتك؛ راجع النص المتعرّف عليه ثم أرسله للسؤال</small></div>
+                <div class="dz-ai-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <button type="button" id="chatMicBtn" class="dz-ai-mic chat-mic" aria-label="بدء الإملاء الصوتي" title="إملاء صوتي">🎙️</button>
+              <div class="chat-voice-tools">
+                <label for="chatVoiceLang">لغة الإملاء</label>
+                <select id="chatVoiceLang" aria-label="لغة التعرف على الكلام">
+                  <option value="de-DE">🇩🇪 Deutsch</option>
+                  <option value="ar-DZ">🇩🇿 العربية الجزائرية</option>
+                  <option value="ar-SA">العربية الفصحى</option>
+                  <option value="fr-FR">🇫🇷 Français</option>
+                  <option value="en-US">🇬🇧 English</option>
+                </select>
+                <span id="chatVoiceStatus" class="chat-voice-status" role="status" aria-live="polite">الإملاء الصوتي جاهز عند توفره في المتصفح</span>
+              </div>
+            </div>
+            <div class="chat-log" id="chatLog" aria-live="polite" role="log"></div>
+            <div class="chat-sug" id="chatSug"></div>
+            <form class="chat-in" id="chatForm">
+              <input type="text" id="chatInput" placeholder="اكتب سؤالك بالألمانية أو بالعربية…" autocomplete="off">
+              <button type="submit" class="btn btn-p" aria-label="إرسال السؤال">➤</button>
+            </form>
+          </div>
+        </div>
+        <aside class="dz-ai-side">
+          <div class="dz-ai-side-icon">🧠</div>
+          <h2>كيف أستفيد من الأستاذ؟</h2>
+          <ol>
+            <li><b>اسأل بوضوح</b><span>اكتب سؤالك حول نقطة لم تفهمها.</span></li>
+            <li><b>حدّد الدرس</b><span>اذكر الوحدة أو الحصة إن أمكن.</span></li>
+            <li><b>تدرّب</b><span>اطلب مثالاً أو تمريناً إضافياً.</span></li>
+          </ol>
+          <div class="dz-ai-note"><b>💡 نصيحة</b><p>يمكنك السؤال بالعربية أو الألمانية. اختر لغة الإملاء قبل استخدام الميكروفون.</p></div>
+          <button type="button" class="dz-ai-go" data-go="seances">العودة إلى الحصص <span>←</span></button>
+        </aside>
       </div>
     </section>
 
@@ -550,20 +796,123 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
       <div id="corpusBody"></div>
     </section>
 
+
+    <!-- TABLEAU DE BORD ÉTUDIANT — vue indépendante de فضائي الدراسي -->
+    <section data-view="dashboard" class="view dz-student-dashboard" hidden>
+      <div class="sd-wrap">
+        <div id="studentDashboardHero" class="sd-hero"></div>
+        <div id="sdStats" class="sd-stats" aria-label="ملخص إنجازاتك"></div>
+
+
+        <section class="sd-panel sd-path-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">مسارك التعليمي</span><h2>خريطة التعلم البيداغوجية</h2><p>الوحدات والحصص وحالتك الفعلية في كل محطة</p></div><button type="button" class="sd-text-link" data-go="seances">كل الحصص ←</button></div>
+              <div id="sdPath"></div>
+            </section>
+
+        <div class="sd-quick" aria-label="الوصول السريع">
+          <button type="button" class="sd-quick-card" data-go="seances"><span class="sd-quick-icon green">📖</span><b>متابعة الدروس</b><small>الحصص والمسار التعليمي</small></button>
+          <button type="button" class="sd-quick-card" data-go="quiz"><span class="sd-quick-icon amber">🎯</span><b>التمارين والتدريب</b><small>اختبر فهمك وتدرّب</small></button>
+          <button type="button" class="sd-quick-card" data-go="prof"><span class="sd-quick-icon purple">🎙️</span><b>الأستاذ الذكي</b><small>اسأل بالصوت أو النص</small></button>
+          <button type="button" class="sd-quick-card" data-go="examen"><span class="sd-quick-icon red">🎓</span><b>التحضير للبكالوريا</b><small>المواضيع والاختبارات</small></button>
+          <button type="button" class="sd-quick-card" data-go="msg"><span class="sd-quick-icon purple">💬</span><b>الرسائل والتواصل</b><small>تواصل مع القسم</small></button>
+        </div>
+        <div class="sd-layout">
+          <div class="sd-main">
+            
+            <section class="sd-panel sd-subjects-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">المواد</span><h2>مواد شعبتك</h2><p>حالة توفر المواد التعليمية في مستواك وشعبتك</p></div><button type="button" class="sd-text-link" data-go="matieres">فهرس المواد ←</button></div>
+              <div id="sdSubjects"></div>
+            </section>
+            <section class="sd-panel sd-unit-progress-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">مؤشرات التقدم</span><h2>إنجاز الوحدات</h2><p>نسبة الحصص المكتملة في كل وحدة من مستواك</p></div></div>
+              <div id="sdUnitProgress"></div>
+            </section>
+            <section class="sd-panel sd-skills-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">نتائج التمارين</span><h2>مؤشرات الأداء حسب الوحدة</h2><p>نتائج إجاباتك الصحيحة المسجّلة في الاختبارات المكتملة</p></div></div>
+              <div id="sdSkills"></div>
+            </section>
+
+            <section class="sd-panel sd-goals-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">خطة التعلّم</span><h2>أهدافك التعليمية</h2><p>محطات عملية مستخرجة من تقدمك ونتائجك الفعلية</p></div></div>
+              <div id="sdGoals"></div>
+            </section>
+            <section class="sd-panel sd-achievements-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">إنجازاتك</span><h2>الشارات والمكافآت</h2><p>إنجازات تُفتح عند تحقيق شروطها الفعلية</p></div></div>
+              <div id="sdAchievements"></div>
+            </section>
+            <section class="sd-panel sd-activity-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">المواظبة</span><h2>نشاط التعلّم</h2><p>الأيام التي سُجّل فيها إنجاز حصة أو اختبار</p></div></div>
+              <div id="sdActivity"></div>
+            </section>
+          </div>
+          <aside class="sd-aside">
+            <section class="sd-ai-card sd-ai-feature">
+              <div class="sd-ai-head"><span>🎙️</span><div><b>الأستاذ الذكي</b><small>مرافقة تعليمية بالصوت والنص</small></div></div>
+              <p>اطرح سؤالاً حول الدرس، واطلب شرحاً أو أمثلة إضافية باللغة العربية. يمكنك متابعة الحوار كتابةً أو استخدام أدوات الصوت داخل مساحة الأستاذ.</p>
+              <div class="sd-ai-capabilities" aria-label="أنواع المساعدة المتاحة"><span>📖 شرح الدروس</span><span>✍️ تصحيح الجمل</span><span>🎧 تفاعل صوتي</span></div>
+              <button type="button" data-go="prof">فتح مساحة الأستاذ الذكي <span>←</span></button>
+        </section>
+            <section class="sd-panel sd-recommend-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">اقتراح شخصي</span><h2>خطوتك التالية</h2></div></div>
+              <div id="sdRecommendation"></div>
+            </section>
+            <section class="sd-panel sd-messages-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">التواصل</span><h2>الرسائل والمجموعات</h2><p>آخر المحادثات المتاحة لحسابك</p></div></div>
+              <div id="sdMessages"></div>
+            </section>
+            <section class="sd-panel">
+              <div class="sd-panel-head"><div><span class="sd-eyebrow">التنبيهات</span><h2>الإشعارات</h2><p>الإشعارات المسجّلة لحسابك</p></div></div>
+              <div id="sdUpdates"></div>
+            </section>
+          </aside>
+        </div>
+        
+
+        
+
+      </div>
+    </section>
+
     <!-- MASAR : une seule prochaine action -->
-    <section data-view="masar" class="view" hidden>
-      <div class="page-head">
+    <section data-view="masar" class="view dz-masar-page" hidden>
+      <div class="page-head dz-masar-page-head">
         <h1>🧭 مسارك</h1>
-        <p>شيء واحد فقط الآن — والباقي ينتظر</p>
+        <p>تابع إنجازك، واكتشف خطوتك التعليمية التالية</p>
       </div>
       <div id="masarBody"></div>
     </section>
 
     <!-- MESSAGERIE EDUDZ (Lot 3) -->
 <section data-view="msg" class="view" hidden>
-  <div class="page-head"><h1>💬 الرسائل</h1><p>Messagerie nationale — groupes officiels par wilaya · niveau · filière</p></div>
+  <div class="page-head"><h1>💬 الرسائل</h1><p>المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة</p></div>
   <div id="msgBody"></div>
 </section>
+<!-- ملتقى الطلاب — واجهة اجتماعية قيد البناء؛ لا تعرض منشورات وهمية -->
+<section data-view="multaqa" class="view mtq-view" hidden>
+  <div class="mtq-topline">
+    <div><span class="mtq-kicker">الثانوية الافتراضية الجزائرية · المجتمع</span><h1>🌐 ملتقى الطلاب</h1><p>مساحة واحدة تجمع تلاميذ الثانويات الجزائرية حول الدراسة والأفكار والمبادرات.</p></div>
+    <button type="button" class="mtq-top-action" data-go="msg">💬 فتح الرسائل</button>
+  </div>
+  <div class="mtq-layout">
+    <aside class="mtq-rail">
+      <section class="mtq-profile-card"><div class="mtq-profile-cover"></div><div class="mtq-profile-avatar">🎓</div><strong id="mtqProfileName">مجتمع الثانوية الافتراضية</strong><span id="mtqProfileMeta">فضاء تعليمي للطلبة</span><small id="mtqProfileNote">مساحة آمنة للتعلم والتعاون بين التلاميذ.</small></section>
+      <nav class="mtq-nav" aria-label="أقسام الملتقى">
+        <div class="mtq-nav-item active"><span>📰</span><b>آخر المنشورات</b></div><div class="mtq-nav-item"><span>👥</span><b>زملائي</b></div><div class="mtq-nav-item"><span>🏫</span><b>المجموعات الدراسية</b></div><div class="mtq-nav-item"><span>🔔</span><b>الإشعارات</b></div><div class="mtq-nav-item"><span>🔖</span><b>المحفوظات</b></div>
+      </nav>
+      <div class="mtq-rail-note"><b>🔐 مجتمع آمن</b><p>الزمالة والمحادثات الخاصة صلاحيتان منفصلتان. لا يفتح قبول الزمالة محادثة تلقائياً.</p></div>
+    </aside>
+    <main class="mtq-feed">
+      <section class="mtq-welcome"><div><span>أهلاً بك في مجتمعنا</span><h2>تعلّم مع زملائك، وشارك ما يفيدهم.</h2><p>الملتقى سيجمع الأسئلة الدراسية ومبادرات المراجعة والموارد التي ينشرها التلاميذ.</p></div><div class="mtq-welcome-art" aria-hidden="true">🌍</div></section>
+      <div id="mtqApp" aria-live="polite"><div class="mtq-feed-state"><div class="mtq-state-icon">⏳</div><h3>جارٍ تهيئة ملتقى الطلاب</h3><p>سيتم عرض المحتوى الحقيقي بعد التحقق من صلاحيات الحساب والاتصال بالخادم.</p></div></div>
+    </main>
+    <aside class="mtq-discover">
+      <section class="mtq-discover-card"><h3>🧭 اكتشف المجتمع</h3><div><b>👥 الزمالة</b><small>طلبات مستقلة بموافقة الطرف الآخر</small></div><div><b>🏫 المجموعات</b><small>فضاءات حسب الولاية والمستوى والشعبة</small></div><div><b>💬 الرسائل</b><small>محادثات خاصة بعد دعوة وقبول صريح</small></div></section>
+      <section class="mtq-discover-card mtq-rules"><h3>🛡️ قواعد المجتمع</h3><p>احترام الآخرين، عدم نشر المعلومات الشخصية، والإبلاغ عن المحتوى المخالف. لا تظهر بيانات التسجيل أو الاتصال في الملف العام.</p></section>
+      <button type="button" class="mtq-messenger-link" data-go="msg">💬 الانتقال إلى الرسائل <span>←</span></button>
+    </aside>
+  </div>
+</section>
+
 <!-- REVISION ESPACEE -->
     <section data-view="revision" class="view" hidden>
       <div class="page-head">
@@ -610,7 +959,7 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 
   <footer class="foot">
     <div class="foot-flag" aria-hidden="true"></div>
-    <div>جميع الحقوق محفوظة © 2026 — الأستاذ خريف أحمد 🇩🇿</div>
+    <div>الثانوية الافتراضية الجزائرية · منصة تعليمية شاملة © 2026</div>
     <div class="foot-q">الرجوع إلى الأصل فضيلة — نرافق أبناءكم نحو النجاح... خطوة بخطوة</div>
     <div class="foot-de de-in">Lycée virtuel algérien · Programme MEN 2026/2027</div>
   </footer>
@@ -623,7 +972,9 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
   <script src="access.js?v=3510"></script>
 <script src="prof_core.js?v=3510"></script>
   <script src="js/subject.js?v=3510"></script>
-<script src="app.js?v=3511"></script>
+<script src="app.js?v=3569"></script>
+<script src="dz-interactions.js?v=5" defer></script>
+<script src="js/voice-chat.js?v=1" defer></script>
   <script defer src="unites3as_vitrine.js?v=3510"></script>
 <script src="js/context.js?v=3510"></script>
 <script src="modules.js?v=3510" defer></script>
@@ -634,16 +985,17 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 <script src="officiels.js?v=3510" defer></script>
 <script src="prof.js?v=3510" defer></script>
 <script src="parents.js?v=3510" defer></script>
-<script src="stats.js?v=3510" defer></script>
-<script src="quiz.js?v=3510" defer></script>
+<script src="quiz.js?v=3513" defer></script>
+<script src="dz-gamification.js?v=5" defer></script>
 <script src="projet.js?v=3510" defer></script>
-<script src="journee.js?v=3510" defer></script>
+<script src="journee.js?v=3511" defer></script>
 <script src="reservation.js?v=3510" defer></script>
 <script src="assets/matching_v2.patch.js?v=3510"></script>
 <script src="matieres.js?v=3510" defer></script>
 <script src="memoire.js?v=3510" defer></script>
-<script src="masar.js?v=3511" defer></script>
-<script src="msg.js?v=3510"></script>
+<script src="masar.js?v=3516" defer></script>
+<script src="msg.js?v=3528"></script>
+<script src="multaqa.js?v=3"></script>
 <script src="corpus.js?v=3510" defer></script>
 <script src="js/qust.js?v=3510" defer></script>
 <script src="rag.js?v=3510" defer></script>
@@ -651,8 +1003,8 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 <script src="ia.js?v=3510" defer></script>
 <script src="voix.js?v=3510" defer></script>
 <script src="cloud.js?v=3510" defer></script>
-<script src="admin.js?v=3510"></script>
-<script src="billing.js?v=3510"></script>
+<script src="admin.js?v=3512"></script>
+<script src="billing.js?v=3511"></script>
   <script src="paywall.js?v=3510"></script>
 <script src="methode.js?v=3510" defer></script>
 <script src="devoirnote.js?v=3510" defer></script>
@@ -663,11 +1015,12 @@ window.LIEN_SEANCE_PAGE = function(unite, seance){
 <script src="install.js?v=3510"></script>
 <script src="trial.js?v=3510" defer></script>
 <script src="tour.js?v=3510" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script type="module" src="supabase/supabase.js?v=3510"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
+  <script type="module" src="supabase/supabase.js?v=3522"></script>
 <script src="banque.js?v=3510" defer></script>
 <script src="malakhiss.js?v=3510" defer></script>
-<script src="guide.js?v=3510" defer></script>
+<script src="guide.js?v=3511" defer></script>
 <script src="library.js?v=3510" defer></script>
+<script src="public-portal.js?v=10" defer></script>
 </body>
 </html>

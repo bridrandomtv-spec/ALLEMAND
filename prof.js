@@ -121,6 +121,7 @@
     const box = $('#profBody'); if(!box) return;
     const sec = D.section || {};
     box.innerHTML =
+      '<div class="dz-prof-dashboard">' +
       '<div class="card prof-hero">' +
         '<div><div class="ch-badge">🔐 لوحة الأستاذ — accès ' +
           esc((window.AUTH && AUTH.session()) ? AUTH.session().nom : '') + '</div>' +
@@ -144,7 +145,8 @@
         '(<span class="de-in">localStorage</span>) ولا تُرسل لأي خادم. ' +
         'السلّم الرسمي : <b>I /8 · II /8 · III /4 = /20</b> · ' +
         'العتبات : <b>≥10 جاهز</b> · <b>7–9,9 يحتاج تثبيت</b> · <b>&lt;7 غير جاهز</b>.</div>' +
-      '<div id="prContenu"></div>';
+      '<div id="prContenu"></div>' +
+      '</div>';
     paint();
   }
   function ong(id, lbl){
@@ -692,7 +694,6 @@
     });
   }
 
-  document.addEventListener('dz:view', e => { if(e.detail === 'profboard') boot(); });
   window.renderProfBoard = boot;
   window.DZ_PROF = { boot:boot, render:render, toCSV:toCSV, moyenneEleve:moyenneEleve,
                      readiness:readiness, accesAutorise:accesAutorise, PRET:PRET, CONS:CONS };

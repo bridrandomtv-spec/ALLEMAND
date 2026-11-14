@@ -105,7 +105,9 @@
       + 'المتابعة الكاملة · الدفع عبر CCP / BaridiMob · التفعيل من المدير</p><p class="bl-sub" style="margin-top:6px"><b>⭐ اشتراك واحد = 2AS + 3AS معًا</b> · يشمل الإخوة عند الطلب — عائلة واحدة، حساب واحد.</p></div></div>';
     if(act){
       h += '<div class="card bl-ok">⭐ <b>مشترك</b> — خطة ' + esc(act.plan)
-        + ' · تنتهي في ' + esc((act.fin || '').slice(0, 10)) + '</div>';
+        + ' · تنتهي في ' + esc((act.fin || '').slice(0, 10))
+        + '<br>🪪 <b>رقم الاشتراك:</b> <strong dir="ltr">' + esc(act.id) + '</strong>'
+        + '<br><small>رقم فريد مرتبط بهذا الحساب. استخدمه لطلب التحقق من الهوية في 💬 الرسائل.</small></div>';
     }
     if(att){
       h += '<div class="card bl-wait"><b>⏳ طلب جارٍ</b> — المرجع ' + esc(att.ref)

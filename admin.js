@@ -48,7 +48,7 @@
       + stat(profs.filter(x => x.role === 'prof').length, 'profs')
       + stat(notes.length, 'notes') + stat(moy, 'moyenne /20') + '</div>'
       + '<div class="ad-grid">'
-      + '<div class="card"><b>👥 Konten (' + profs.length + ')</b>'
+      + '<div class="card"><b>👥 الحسابات (' + profs.length + ')</b>'
       + '<button class="btn btn-o btn-sm" id="adCsvP">⬇️ CSV</button>'
       + '<table class="ad-tab"><tr><th>pseudo</th><th>rôle</th><th>niveau</th><th>wilaya</th><th></th></tr>'
       + profs.map(x => '<tr><td>' + esc(x.pseudo || x.id.slice(0, 8)) + '</td>'
@@ -58,7 +58,7 @@
           + '</select></td><td>' + esc(x.niveau || '') + '</td><td>' + esc(x.wilaya || '')
           + '</td><td>' + esc((x.created_at || '').slice(0, 10)) + '</td></tr>').join('')
       + '</table></div>'
-      + '<div class="card"><b>📝 Noten (' + notes.length + ')</b>'
+      + '<div class="card"><b>📝 النقاط (' + notes.length + ')</b>'
       + '<button class="btn btn-o btn-sm" id="adCsvN">⬇️ CSV</button>'
       + '<table class="ad-tab"><tr><th>élève</th><th>trim.</th><th>/20</th><th>appréciation</th></tr>'
       + notes.map(n => {
@@ -91,7 +91,7 @@
     mono.innerHTML =
       '<div class="ad-grid" style="margin-top:12px">'
       + '<div class="card"><b>💳 Abonnements (' + subs.length + ' · '
-      + CA.toLocaleString('fr-FR') + ' DA aktiv)</b>'
+      + CA.toLocaleString('fr-FR') + ' دج نشطة)</b>'
       + '<table class="ad-tab"><tr><th>user</th><th>plan</th><th>DA</th><th>statut</th><th></th></tr>'
       + subs.map(s => '<tr><td>' + esc(s.user_id.slice(0, 8)) + '</td><td>' + esc(s.plan)
         + '</td><td>' + s.montant + '</td><td>' + esc(s.statut) + '</td><td>'
@@ -151,7 +151,6 @@
   }
   function stat(v, l){ return '<div class="ad-s"><b>' + esc(v) + '</b><span>' + l + '</span></div>'; }
   window.renderAdmin = render;
-  document.addEventListener('dz:view', e => { if(e.detail === 'admin') render(); });
 })();
 
 /* ── phase 5 : éditeur de plans (admin) — prix NULL autorisés (décision B) ── */
@@ -454,12 +453,16 @@ function rendreCouvertureORG1(mount){
   function esq5(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   var TABS = [
     { id:'dash', label:'📊 لوحة القيادة · Dashboard', cards:['admDashCard'], perm:'reports.read' },
+    { id:'classes', label:'🏫 الأقسام · Classes', cards:['admClassesCard'], perm:'reports.read' },
+    { id:'wilayas', label:'🗺️ الولايات · Wilayas', cards:['admWilayasCard'], perm:'reports.read' },
+    { id:'security', label:'🛡️ الوصول والتدقيق · Access & Audit', cards:['admSecurityCard'], perm:'reports.read' },
+    { id:'system', label:'🖥️ النظام والبنية التقنية · System', cards:['admSystemCard'], perm:'reports.read' },
     { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard'], perm:'students.read' },
     { id:'ops', label:'🧰 العمليات · Operations', cards:['admAgentsCard','admQueueCard','admAccordsCard','__legacy__'], perm:null },
     { id:'settings', label:'⚙️ الإعدادات · Settings', cards:['admSettingsCard'], perm:'settings.manage' }
   ];
-  var KNOWN = ['admDashCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
-  var state4 = { perms:[], tab:'ops' };
+  var KNOWN = ['admDashCard','admClassesCard','admWilayasCard','admSecurityCard','admSystemCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
+  var state4 = { perms:[], tab:'dash', role:'', wilayas:[] };
   function section(){ return document.querySelector('section[data-view="admin"]'); }
   function cardsOf(tab){
     var h = section(); if(!h) return [];
@@ -471,6 +474,8 @@ function rendreCouvertureORG1(mount){
   }
   function applyTab(id){
     state4.tab = id;
+    var legacyBody = document.getElementById('adminBody');
+    if(legacyBody) legacyBody.hidden = (id !== 'ops');
     TABS.forEach(function(t){
       cardsOf(t).forEach(function(c){ c.hidden = (t.id !== id); });
       var b = document.querySelector('[data-adm-tab="' + t.id + '"]');
@@ -481,6 +486,8 @@ function rendreCouvertureORG1(mount){
     var h = section(); if(!h) return;
     var meP = (window.SB && SB.admMyPerms) ? await SB.admMyPerms() : { ok:false, perms:[] };
     state4.perms = meP.ok ? (meP.perms||[]) : [];
+    state4.role = meP.ok ? (meP.role||'') : '';
+    state4.wilayas = meP.ok && Array.isArray(meP.wilayas) ? meP.wilayas : [];
     var bar = document.getElementById('admTabs');
     if(!bar){ bar = document.createElement('div'); bar.id = 'admTabs'; bar.className = 'tabs'; bar.style.position = 'static'; bar.style.height = 'auto'; bar.style.width = 'auto'; h.insertBefore(bar, h.firstChild); }
     bar.innerHTML = TABS.filter(function(t){ return !t.perm || state4.perms.indexOf(t.perm) !== -1; })
@@ -492,18 +499,170 @@ function rendreCouvertureORG1(mount){
     var box = document.getElementById('admDashCard');
     if(!box){ box = document.createElement('div'); box.id = 'admDashCard'; box.className = 'card'; h.appendChild(box); }
     if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div class="ad-load">⏳ تحميل مؤشرات النطاق وسجل التدقيق…</div>';
     var r = await SB.admDashboard();
-    if(!r.ok){ box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard</h2><p>⛔ ' + esq5(r.err) + '</p>'; return; }
+    if(!r.ok){ box.innerHTML = '<h2>📊 لوحة القيادة</h2><p>⛔ ' + esq5(r.err) + '</p>'; return; }
     var d = r.dash || {};
-    box.innerHTML = '<h2>📊 لوحة القيادة · Dashboard (النطاق · scope : ' + esq5(d.perimetre) + ')</h2>'
-      + '<div class="grid3" style="margin-top:10px">'
-      + '<div class="card mini"><div class="mini-i">🎓</div><b>' + (d.eleves||0) + '</b><p>تلاميذ النطاق · students in scope</p></div>'
-      + '<div class="card mini"><div class="mini-i">⏳</div><b>' + (d.paiements_attente||0) + '</b><p>paiements à traiter</p></div>'
-      + '<div class="card mini"><div class="mini-i">💰</div><b>' + (d.recettes_confirmees_da||0) + ' DA</b><p>recettes confirmées</p></div>'
-      + '<div class="card mini"><div class="mini-i">↩️</div><b>' + (d.remboursements||0) + '</b><p>remboursements tracés</p></div>'
-      + '<div class="card mini"><div class="mini-i">🪪</div><b>' + (d.verifications_attente||0) + '</b><p>vérifications d’identité</p></div>'
-      + '<div class="card mini"><div class="mini-i">🚩</div><b>' + (d.signalements_ouverts||0) + '</b><p>signalements ouverts</p></div>'
-      + '</div><p style="font-size:11.5px;color:var(--m);margin-top:8px">Chiffres calculés côté base, filtrés par wilaya : un agent régional ne voit jamais le national.</p>';
+    var au = await SB.admAuditLast(8);
+    var scope = d.perimetre === 'national' ? 'وطني' : (d.perimetre || 'غير محدد');
+    var scopeCount = d.perimetre === 'national' ? 'وطني' : (state4.wilayas.length ? String(state4.wilayas.length) : '—');
+    function metric(value, label, icon){
+      return '<div class="card mini"><div class="mini-i">' + icon + '</div><b>' + esq5(value) + '</b><p>' + label + '</p></div>';
+    }
+    var auditRows = au.ok ? (au.rows||[]).map(function(l){
+      var actor = String(l.acteur||'');
+      return '<div class="rep-row"><span>' + esq5(String(l.at||'').slice(0,16).replace('T',' '))
+        + ' · ' + esq5(l.action) + ' · ' + esq5(l.cible_type) + ' #' + esq5(l.cible_id)
+        + (l.wilaya ? ' · ' + esq5(l.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">'
+        + (actor ? 'منفّذ ' + esq5(actor.slice(0,8)) : 'منفّذ غير محدد') + '</span></div>';
+    }).join('') : '<p>تعذر تحميل سجل التدقيق: ' + esq5(au.err||'غير متاح') + '</p>';
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">📊</span><div>'
+      + '<h2>لوحة القيادة · نظرة عامة</h2><p class="ad-sub">مؤشرات حقيقية من قاعدة البيانات · نطاق الصلاحية: '
+      + esq5(scope) + ' · الدور: ' + esq5(state4.role||'—') + '</p></div></div>'
+      + '<div class="grid3" style="margin-top:12px">'
+      + metric(d.eleves||0, 'التلاميذ ضمن نطاق الصلاحية', '🎓')
+      + metric(d.verifications_attente||0, 'طلبات التحقق قيد الانتظار', '🪪')
+      + metric(d.signalements_ouverts||0, 'التبليغات المفتوحة', '🚩')
+      + metric(scopeCount, 'نطاق الولايات (وطني أو عدد الولايات المعيّنة)', '🗺️')
+      + '</div>'
+      + '<div class="card" style="margin-top:14px"><b>📜 آخر إجراءات سجل التدقيق</b>'
+      + (au.ok && au.rows && au.rows.length ? auditRows : (au.ok ? '<p>لا توجد إجراءات مسجلة بعد.</p>' : auditRows))
+      + '</div>'
+      + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">المصدر: RPC admin_dashboard وسجل audit_logs. الأرقام محصورة في صلاحياتك ونطاق ولاياتك؛ لا تعرض هذه الصفحة أرقاماً تقديرية أو مؤشرات مالية.</p>';
+  }
+  async function loadAdminReference(path){
+    try{
+      var response = await fetch('/' + path);
+      if(!response.ok) throw new Error('HTTP ' + response.status);
+      return await response.json();
+    }catch(e){
+      return { _error: String(e && e.message || e) };
+    }
+  }
+  async function renderClasses(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admClassesCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admClassesCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div class="ad-load">⏳ تحميل مرجع الأقسام…</div>';
+    var data = await loadAdminReference('assets/bdd/classe.json?v=3511');
+    if(data._error || !Array.isArray(data.sections)){
+      box.innerHTML = '<h2>🏫 مرجع الأقسام</h2><p>تعذر تحميل المرجع من GitHub: ' + esq5(data._error||'بنية غير صالحة') + '</p>';
+      return;
+    }
+    var rows = data.sections;
+    var total = rows.reduce(function(sum, row){ return sum + (Number(row.eleves)||0); }, 0);
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🏫</span><div><h2>مرجع الأقسام الدراسية</h2>'
+      + '<p class="ad-sub">كتالوج ثابت من ملفات GitHub · سنة ' + esq5(data._meta && data._meta.annee_scolaire || '—') + '</p></div></div>'
+      + '<div class="card" style="margin:12px 0;padding:12px;border-inline-start:4px solid var(--p)">'
+      + '<b>تنبيه حول مصدر البيانات</b><p style="margin:5px 0 0">هذه بيانات مرجعية واردة في ملف maquette pédagogique. الأعداد المعروضة تقديرية/توضيحية ضمن النموذج، وليست عدد الحسابات المسجلة أو الحضور الفعلي في Supabase.</p></div>'
+      + '<div class="grid3" style="margin-top:12px">'
+      + '<div class="card mini"><b>' + rows.length + '</b><p>أقسام في المرجع</p></div>'
+      + '<div class="card mini"><b>' + total + '</b><p>مجموع الأعداد المذكورة في النموذج فقط</p></div>'
+      + '<div class="card mini"><b>' + esq5(data._meta && data._meta.annee_scolaire || '—') + '</b><p>السنة المرجعية</p></div></div>'
+      + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px">'
+      + rows.map(function(row){
+          return '<article class="card" style="padding:14px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center">'
+            + '<b style="font-size:18px">' + esq5(row.ar||row.id) + '</b><span class="badge">' + esq5(row.niveau||'') + '</span></div>'
+            + '<p style="margin:8px 0 4px">' + esq5(row.filiere||'') + '</p>'
+            + '<p style="font-size:12px;color:var(--m)">📍 ' + esq5(row.salle||'—') + '</p>'
+            + '<p style="font-size:12px;color:var(--m)">عدد التلاميذ في النموذج: ' + esq5(row.eleves) + '</p></article>';
+        }).join('') + '</div>'
+      + '<p style="font-size:11px;color:var(--m);margin-top:12px">المصدر: assets/bdd/classe.json · لا تُستخدم هذه البيانات لإثبات التسجيلات أو لتحديد صلاحيات الوصول.</p>';
+  }
+  async function renderWilayas(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admWilayasCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admWilayasCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div class="ad-load">⏳ تحميل قائمة الولايات…</div>';
+    var data = await loadAdminReference('assets/bdd/wilaya.json?v=3511');
+    if(data._error || !Array.isArray(data.wilayas)){
+      box.innerHTML = '<h2>🗺️ مرجع الولايات</h2><p>تعذر تحميل المرجع من GitHub: ' + esq5(data._error||'بنية غير صالحة') + '</p>';
+      return;
+    }
+    var regions = {};
+    data.wilayas.forEach(function(w){ (regions[w.region||'غير مصنف']||(regions[w.region||'غير مصنف']=[])).push(w); });
+    var regionNames = Object.keys(regions).sort();
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🗺️</span><div><h2>المرجع الجغرافي للولايات</h2>'
+      + '<p class="ad-sub">قائمة GitHub المرجعية · ' + data.wilayas.length + ' ولاية · ليست إحصاءات تسجيلات</p></div></div>'
+      + '<div class="fld" style="margin:12px 0"><span>ابحث عن ولاية بالاسم أو الرمز</span><input id="admWilayaSearch" type="search" placeholder="مثال: برج بوعريريج أو 34" autocomplete="off"></div>'
+      + '<div id="admWilayaResults">'
+      + regionNames.map(function(region){
+          return '<section style="margin:12px 0"><h3>' + esq5(region) + ' · ' + regions[region].length + '</h3>'
+            + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px">'
+            + regions[region].map(function(w){
+                return '<div class="rep-row" data-wilaya-search="' + esq5([w.code,w.ar,w.fr,w.region].join(' ').toLowerCase()) + '">'
+                  + '<b>' + esq5(w.code) + ' · ' + esq5(w.ar) + '</b><span>' + esq5(w.fr) + '</span></div>';
+              }).join('') + '</div></section>';
+        }).join('') + '</div>'
+      + '<p style="font-size:11px;color:var(--m);margin-top:12px">المصدر: assets/bdd/wilaya.json · القائمة officielle de 58 wilayas. Les affectations et autorisations de chaque administrateur sont déterminées séparément par Supabase (admin_sees_wilaya / RLS).</p>';
+  }
+  async function renderSecurity(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admSecurityCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admSecurityCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div class="ad-load">⏳ تحميل صلاحيات الحساب وسجل التدقيق…</div>';
+    var audit = (window.SB && SB.admAuditLast) ? await SB.admAuditLast(20) : {ok:false,err:'سجل التدقيق غير متاح'};
+    var permissions = state4.perms.length
+      ? state4.perms.map(function(p){ return '<span class="badge" style="display:inline-block;margin:3px">' + esq5(p) + '</span>'; }).join('')
+      : '<p>لا توجد صلاحيات إدارية معادة لهذا الحساب.</p>';
+    var wilayas = state4.wilayas.length
+      ? state4.wilayas.map(function(w){ return '<span class="badge" style="display:inline-block;margin:3px">' + esq5(w) + '</span>'; }).join('')
+      : '<p>لم تُرجع خدمة الصلاحيات أي ولاية مخصصة لهذا الحساب.</p>';
+    var rows = audit.ok ? (audit.rows||[]).map(function(l){
+      var actor = String(l.acteur||'');
+      return '<div class="rep-row"><span>' + esq5(String(l.at||'').slice(0,16).replace('T',' '))
+        + ' · ' + esq5(l.action) + ' · ' + esq5(l.cible_type) + ' #' + esq5(l.cible_id)
+        + (l.wilaya ? ' · ' + esq5(l.wilaya) : '') + '</span><span style="font-size:11px;color:var(--m)">'
+        + (actor ? esq5(actor.slice(0,8)) : 'غير محدد') + '</span></div>';
+    }).join('') : '<p>تعذر قراءة سجل التدقيق: ' + esq5(audit.err||'غير متاح') + '</p>';
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🛡️</span><div><h2>الوصول الإداري وسجل التدقيق</h2>'
+      + '<p class="ad-sub">معلومات الحساب الحالي كما أعادتها خدمة الصلاحيات في Supabase</p></div></div>'
+      + '<div class="grid3" style="margin-top:12px">'
+      + '<div class="card mini"><b>' + esq5(state4.role||'—') + '</b><p>الدور الإداري الحالي</p></div>'
+      + '<div class="card mini"><b>' + state4.perms.length + '</b><p>مفاتيح الصلاحيات المعادة</p></div>'
+      + '<div class="card mini"><b>' + state4.wilayas.length + '</b><p>الولايات المخصصة للحساب</p></div></div>'
+      + '<div class="card" style="margin-top:12px"><b>🔑 الصلاحيات الفعلية المعادة</b><div style="margin-top:8px">' + permissions + '</div></div>'
+      + '<div class="card" style="margin-top:12px"><b>🗺️ رموز الولايات المخصصة</b><div style="margin-top:8px">' + wilayas + '</div></div>'
+      + '<div class="card" style="margin-top:12px"><b>📜 آخر 20 عملية في سجل التدقيق</b>'
+      + (audit.ok && audit.rows && audit.rows.length ? rows : (audit.ok ? '<p>لا توجد عمليات مسجلة في النتيجة المعادة.</p>' : rows))
+      + '</div><p style="font-size:11px;color:var(--m);margin-top:10px">هذه الصفحة تعرض صلاحيات الحساب وسجل العمليات المتاح وفق RLS. وهي ليست نظام كشف تهديدات أو مراقبة جلسات مباشرة؛ لا تعرض أحداثاً لم توفرها المصادر الحالية.</p>';
+  }
+  function renderSystem(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admSystemCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admSystemCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('reports.read') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🖥️</span><div><h2>النظام والبنية التقنية</h2>'
+      + '<p class="ad-sub">جرد ثابت مستخرج من ملفات إعداد المشروع — لا يمثل فحصاً مباشراً للخوادم</p></div></div>'
+      + '<div class="grid3" style="margin-top:12px">'
+      + '<div class="card mini"><b>Cloudflare Worker</b><p>نقطة الدخول المعرّفة في wrangler.toml</p></div>'
+      + '<div class="card mini"><b>ASSETS</b><p>ربط الملفات الثابتة من مجلد المشروع</p></div>'
+      + '<div class="card mini"><b>غير مقاس</b><p>زمن الاستجابة والتوافر الفعلي</p></div></div>'
+      + '<div class="card" style="margin-top:12px"><b>⚙️ إعدادات المصدر</b>'
+      + '<div class="rep-row"><span>ملف إعداد النشر</span><code>wrangler.toml</code></div>'
+      + '<div class="rep-row"><span>مدخل Worker</span><code>src/site-worker.js</code></div>'
+      + '<div class="rep-row"><span>تاريخ التوافق المعلن</span><code>2024-09-01</code></div>'
+      + '<div class="rep-row"><span>مجلد الأصول الثابتة</span><code>./</code></div>'
+      + '<div class="rep-row"><span>اسم الربط</span><code>ASSETS</code></div></div>'
+      + '<div class="card" style="margin-top:12px"><b>🔐 حارس المحتوى</b>'
+      + '<p>يحتوي Worker على تحقق خادمي لمسارات محتوى محددة باستخدام رمز Bearer، ويستعلم عن جدول <code>lesson_content</code> عبر Supabase REST وسياسات الوصول الموجودة.</p>'
+      + '<p>أسماء متغيرات البيئة المطلوبة في المصدر: <code>SUPABASE_URL</code> و<code>SUPABASE_ANON_KEY</code>. لا تُعرض قيم الأسرار في هذه الواجهة.</p>'
+      + '<p>عند غياب المتغيرات، يعيد المسار المحمي خطأ إعداد HTTP 503؛ وغياب الرمز أو فشل التحقق يمنع تسليم المحتوى المحمي.</p></div>'
+      + '<div class="card" style="margin-top:12px"><b>📡 حدود المراقبة الحالية</b>'
+      + '<div class="rep-row"><span>مسار /health أو /metrics في Worker</span><b>غير موجود في المصدر المفحوص</b></div>'
+      + '<div class="rep-row"><span>معالج مجدول أو Cron في Worker</span><b>غير موجود في المصدر المفحوص</b></div>'
+      + '<div class="rep-row"><span>قياس uptime / CPU / mémoire / latence</span><b>غير متاح من هذه الملفات</b></div>'
+      + '<div class="rep-row"><span>حالة النشر الفعلية أو صحة Supabase</span><b>غير متحققة هنا</b></div>'
+      + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">هذا جرد تكويني للشفرة فقط. لا يرسل طلبات فحص، ولا يقرأ الأسرار، ولا يدّعي أن الخدمة متاحة الآن. يلزم مصدر مراقبة خادمي مستقل قبل عرض مؤشرات تشغيلية حية.</p></div>'
+      + '<p style="font-size:11px;color:var(--m);margin-top:10px">المصادر: wrangler.toml وsrc/site-worker.js · صلاحية العرض: reports.read.</p>';
   }
   async function renderStudents(){
     var h = section(); if(!h) return;
@@ -527,11 +686,17 @@ function rendreCouvertureORG1(mount){
           + '<button class="btn btn-p btn-sm" data-adm4-save="' + esq5(s.cle) + '" type="button">enregistrer</button></div>'; }).join('') : '<p>⛔ ' + esq5(r.err) + '</p>')
       + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">Valeurs JSON ; chaque enregistrement passe par setting_set (permission settings.manage) et laisse une ligne au journal d’audit.</p>';
   }
+  document.addEventListener('input', function(e){
+    if(!e.target || e.target.id !== 'admWilayaSearch') return;
+    var q = String(e.target.value||'').trim().toLowerCase();
+    var rows = document.querySelectorAll('#admWilayaResults [data-wilaya-search]');
+    Array.prototype.forEach.call(rows, function(row){ row.hidden = q !== '' && row.getAttribute('data-wilaya-search').indexOf(q) === -1; });
+  });
   document.addEventListener('click', function(e){
     var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu]') : null;
     if(!t) return;
     var tab = t.getAttribute('data-adm-tab');
-    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='students') renderStudents(); if(tab==='settings') renderSettings(); return; }
+    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='classes') renderClasses(); if(tab==='wilayas') renderWilayas(); if(tab==='security') renderSecurity(); if(tab==='system') renderSystem(); if(tab==='students') renderStudents(); if(tab==='settings') renderSettings(); return; }
     if(t.getAttribute('data-adm4-search')){
       var q = ((document.getElementById('admStuQ')||{}).value || '');
       SB.admSearchStudents(q).then(function(r){
@@ -559,7 +724,7 @@ function rendreCouvertureORG1(mount){
     var v = (e && e.detail && (e.detail.view||e.detail)) || '';
     if(String(v).indexOf('admin')>=0){ renderTabs().then(function(){ if(state4.tab==='dash') renderDash(); if(state4.tab==='students') renderStudents(); if(state4.tab==='settings') renderSettings(); }); }
   });
-  if((location.hash||'').replace('#','') === 'admin') renderTabs();
+  if((location.hash||'').replace('#','') === 'admin') renderTabs().then(function(){ if(state4.tab==='dash') renderDash(); });
 })();
 
 /* ── phase 10 (ADM-5) : onglets 💰 Comptabilité & rapports + 🎫 الدعم · Support ─ */
@@ -624,6 +789,8 @@ function rendreCouvertureORG1(mount){
   }
   function showOnly(ids){
     var h = section5(); if(!h) return;
+    var legacyBody = document.getElementById('adminBody');
+    if(legacyBody) legacyBody.hidden = true;
     Array.prototype.slice.call(h.querySelectorAll('.card')).forEach(function(c){ c.hidden = ids.indexOf(c.id) === -1; });
     Array.prototype.slice.call(h.querySelectorAll('[data-adm-tab],[data-adm5-tab]')).forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-adm5-tab') && ids.indexOf(b.getAttribute('data-adm5-tab') === -1 ? '' : b.getAttribute('data-adm5-tab')) !== -1); });
   }

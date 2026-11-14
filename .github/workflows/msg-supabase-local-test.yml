@@ -1,0 +1,180 @@
+name: Tests intégration Supabase local — Messenger
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "supabase/migrations/202611130001_msg_invitation_consent.sql"
+      - "supabase/migrations/202611130003_msg_student_discovery.sql"
+      - "ci/msg-supabase-local-bootstrap.sql"
+      - "ci/msg-supabase-local-test.mjs"
+      - ".github/workflows/msg-supabase-local-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  messenger-supabase-local:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Vérifier la syntaxe du test HTTP
+        run: node --check ci/msg-supabase-local-test.mjs
+
+      - name: Initialiser Supabase CLI local (version v2 épinglée)
+        run: npx --yes supabase@2.122.1 init
+
+      - name: Désactiver la confirmation e-mail uniquement pour les comptes synthétiques locaux
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path("supabase/config.toml")
+          content = path.read_text()
+          match = re.search(r"(?ms)^\[auth\.email\]\s*$([\s\S]*?)(?=^\[|\Z)", content)
+          if not match or not re.search(r"(?m)^enable_confirmations\s*=", match.group(1)):
+              raise SystemExit("La configuration Auth locale ne contient pas auth.email.enable_confirmations")
+          section = re.sub(r"(?m)^enable_confirmations\s*=\s*\w+", "enable_confirmations = false", match.group(1), count=1)
+          path.write_text(content[:match.start(1)] + section + content[match.end(1):])
+          PY
+
+      - name: Mettre temporairement les migrations de côté avant le démarrage
+        run: |
+          mkdir -p /tmp/allemand-supabase-migrations
+          cp supabase/migrations/*.sql /tmp/allemand-supabase-migrations/
+          rm supabase/migrations/*.sql
+
+      - name: Démarrer Supabase local isolé
+        run: npx --yes supabase@2.122.1 start -x studio,imgproxy,storage-api,edge-runtime,logflare,vector,supavisor,postgres-meta
+
+      - name: Restaurer les migrations pour application explicite dans la base locale
+        run: cp /tmp/allemand-supabase-migrations/*.sql supabase/migrations/
+
+      - name: Exporter les clés éphémères de la pile locale
+        shell: bash
+        run: |
+          eval "$(npx --yes supabase@2.122.1 status -o env)"
+          {
+            echo "API_URL=$API_URL"
+            echo "DB_URL=$DB_URL"
+            echo "ANON_KEY=$ANON_KEY"
+            echo "SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+          } >> "$GITHUB_ENV"
+
+      - name: Préparer un schéma Messenger synthétique
+        run: psql "$DB_URL" -v ON_ERROR_STOP=1 -f ci/msg-supabase-local-bootstrap.sql
+
+      - name: Appliquer les migrations Messenger uniquement dans Supabase local
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/202611130001_msg_invitation_consent.sql
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/202611130003_msg_student_discovery.sql
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "NOTIFY pgrst, 'reload schema';"
+
+      - name: Vérifier la publication PostgreSQL Realtime avant le test
+        run: |
+          published="$(psql "$DB_URL" -X -A -t -v ON_ERROR_STOP=1 -c "select count(distinct tablename) from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename in ('msg_invites','msg_messages');")"
+          test "$published" = "2" || { echo "::error::La publication supabase_realtime doit contenir msg_invites et msg_messages (trouvées: $published)"; exit 1; }
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+            select pubname, schemaname, tablename
+            from pg_publication_tables
+            where pubname = 'supabase_realtime'
+              and schemaname = 'public'
+              and tablename in ('msg_invites','msg_messages');
+          "
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+            select c.relname, c.relreplident,
+                   coalesce(bool_or(p.pubname = 'supabase_realtime'), false) as in_realtime_publication,
+                   c.relrowsecurity as rls_enabled
+            from pg_class c
+            join pg_namespace n on n.oid = c.relnamespace
+            left join pg_publication_tables p
+              on p.schemaname = n.nspname and p.tablename = c.relname
+            where n.nspname = 'public' and c.relname in ('msg_invites','msg_messages')
+            group by c.relname, c.relreplident, c.relrowsecurity;
+          "
+
+      - name: Vérifier Auth GoTrue, JWT signés, RPC PostgREST et RLS avec deux élèves synthétiques
+        run: node ci/msg-supabase-local-test.mjs
+
+      - name: Diagnostiquer les slots et connexions de réplication PostgreSQL
+        if: always()
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+            select slot_name, plugin, slot_type, active, restart_lsn, confirmed_flush_lsn
+            from pg_replication_slots
+            order by slot_name;
+          "
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+            select application_name, state, sync_state, sent_lsn, write_lsn, flush_lsn, replay_lsn
+            from pg_stat_replication;
+          "
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+            select pubname, pubinsert, pubupdate, pubdelete, pubtruncate
+            from pg_publication where pubname = 'supabase_realtime';
+          "
+
+      - name: Inspecter les connexions et la configuration Realtime locale
+        if: always()
+        continue-on-error: true
+        run: |
+          echo '--- Connexions PostgreSQL Realtime ---'
+          psql "$DB_URL" -c "
+            select application_name, backend_type, state, wait_event_type, wait_event,
+                   left(query, 180) as query
+            from pg_stat_activity
+            where datname = current_database()
+              and (application_name ilike '%realtime%' or usename ilike '%supabase%')
+            order by application_name, backend_type;
+          " || true
+          echo '--- Objets du schéma realtime ---'
+          psql "$DB_URL" -c "
+            select table_name from information_schema.tables
+            where table_schema = 'realtime' order by table_name;
+          " || true
+          echo '--- Colonnes de realtime.subscription si présente ---'
+          psql "$DB_URL" -c "
+            select column_name, data_type
+            from information_schema.columns
+            where table_schema = 'realtime' and table_name = 'subscription'
+            order by ordinal_position;
+          " || true
+          echo '--- Variables non sensibles du conteneur ---'
+          container="$(docker ps -a --format '{{.Names}}' | grep -E 'realtime|supabase_realtime' | head -n 1 || true)"
+          if [ -n "$container" ]; then
+            docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$container" | grep -E '^(PUBLICATIONS|SLOT_NAME|TEMPORARY_SLOT|REPLICATION_MODE|DB_HOST|DB_PORT|DB_USER|DB_NAME|DB_SSL|DB_AFTER_CONNECT_QUERY|PORT)=' || true
+          else
+            echo 'Conteneur Realtime introuvable'
+          fi
+
+      - name: Capturer les journaux Realtime locaux en cas de diagnostic
+        if: always()
+        run: |
+          container="$(docker ps -a --format '{{.Names}}' | grep -E 'realtime|supabase_realtime' | head -n 1 || true)"
+          if [ -n "$container" ]; then
+            echo "Conteneur Realtime : $container"
+            echo '--- Image, digest, version et labels de build ---'
+            docker inspect --format 'configured_image={{.Config.Image}} image_id={{.Image}} started={{.State.StartedAt}} status={{.State.Status}} exit={{.State.ExitCode}}' "$container" || true
+            image_id="$(docker inspect --format '{{.Image}}' "$container" 2>/dev/null || true)"
+            if [ -n "$image_id" ]; then
+              docker image inspect --format 'repo_digests={{json .RepoDigests}} labels={{json .Config.Labels}}' "$image_id" || true
+            fi
+            echo '--- Version Realtime rapportée par le service ---'
+            docker exec "$container" curl -sS -m 5 -H "Authorization: Bearer $ANON_KEY" http://localhost:4000/api/tenants/realtime-dev/health || true
+            echo
+            echo '--- Journaux Realtime (300 dernières lignes) ---'
+            docker logs "$container" 2>&1 | tail -n 300
+          else
+            echo "Conteneur Realtime introuvable dans cette exécution."
+            docker ps -a --format 'table {{.Names}}\\t{{.Status}}'
+          fi
+
+      - name: Arrêter la pile locale
+        if: always()
+        run: npx --yes supabase@2.122.1 stop

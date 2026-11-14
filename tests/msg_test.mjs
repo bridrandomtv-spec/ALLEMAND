@@ -3,6 +3,19 @@ const sql = readFileSync('supabase/msg_schema.sql', 'utf8');
 let fails = 0;
 const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
 console.log('== msg_test · invariants de sécurité messagerie ==');
+const ui = readFileSync('msg.js', 'utf8');
+t(ui.includes("table:'msg_invites'") && ui.includes("event:'*'") && ui.includes('function startInviteChannel()'),
+  'le centre des invitations écoute les événements Realtime msg_invites');
+t(ui.includes('function closeInviteChannel()') && ui.includes('closeInviteChannel();') && ui.includes('startInviteChannel();'),
+  'le canal Realtime des invitations est fermé au changement de vue et relancé dans la liste');
+t(/if\s*\(epoch!==state\.inviteEpoch\s*\|\|\s*!state\.inviteViewActive\s*\|\|\s*state\.me!==userId\s*\|\|\s*state\.conv!==null\)\s*return;/.test(ui) && ui.includes('renderList();'),
+  'les changements d’invitation actualisent la liste uniquement pour la session active hors fil de discussion');
+t(ui.includes('inviteEpoch') && ui.includes('epoch!==state.inviteEpoch'),
+  'un abonnement asynchrone devenu obsolète ne peut pas se réactiver après fermeture du canal');
+t(ui.includes('state.inviteViewActive = String(v).indexOf(\'msg\')>=0;') &&
+  ui.includes('!state.inviteViewActive || !userId'),
+  'aucun canal invitation ne démarre lorsque la vue Messenger est inactive');
+
 const pols = [...sql.matchAll(/create policy "(msg[^"]*)" on public\.(\w+) for (\w+) to (\w+)/g)];
 t(pols.length >= 18, 'au moins 18 politiques msg_* (' + pols.length + ')');
 t(pols.every(p => p[4] === 'authenticated'), 'toutes les politiques msg_* → to authenticated');
@@ -24,6 +37,29 @@ t(sql.includes('piece_jointe_trop_lourde') && sql.includes('document_trop_lourd'
 t(sql.includes('function public.profiles_role_guard'), 'garde de rôle profiles_role_guard présente (Lot 6b)');
 t(sql.includes('create trigger profiles_tr_role'), 'trigger profiles_tr_role présent');
 t(sql.includes("raise exception 'role_reservee_admin'"), 'auto-promotion client = exception SQL');
-t(sql.includes('if auth.uid() is null then return new; end if;'), 'promotions réservées console (auth.uid NULL) ou admin');
+t(sql.includes("session_user in ('postgres', 'supabase_admin')") &&
+  sql.includes("(select auth.jwt() ->> 'role') = 'service_role'") &&
+  sql.includes("(select auth.uid()) is not null") &&
+  sql.includes("p.role = 'admin'") &&
+  !sql.includes('if auth.uid() is null then return new; end if;'),
+  'promotions réservées à la console SQL, service_role explicite ou administrateur déjà établi');
+const roleGuardStart = sql.indexOf('create or replace function public.profiles_role_guard()');
+const roleGuardEnd = sql.indexOf('$function$;', roleGuardStart);
+const roleGuard = sql.slice(roleGuardStart, roleGuardEnd);
+t(roleGuardStart >= 0 && roleGuard.includes('language plpgsql') &&
+  roleGuard.includes("set search_path = ''") &&
+  !roleGuard.includes('security definer'),
+  'garde de rôle SECURITY INVOKER avec search_path vide');
+
+const sbjs = readFileSync('supabase/supabase.js', 'utf8');
+const openDirectStart = sbjs.indexOf('async function msgOpenDirect(');
+const openDirectEnd = sbjs.indexOf('\nasync function msgGroups(', openDirectStart);
+const openDirect = sbjs.slice(openDirectStart, openDirectEnd);
+t(openDirectStart >= 0 && openDirectEnd > openDirectStart, 'msgOpenDirect existe et peut être audité isolément');
+t(openDirect.includes("err:'msg_invitation_requise'") &&
+  !/\.from\('msg_conversations'\)\.insert/.test(openDirect) &&
+  !/\.from\('msg_members'\)\.insert/.test(openDirect),
+  'aucun DM ni membre destinataire créé côté client sans invitation acceptée');
+
 if (fails) { console.error('::error:: msg_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== msg_test : TOUT PASSE ==');

@@ -1,0 +1,57 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read=p=>fs.readFileSync(p,'utf8');
+const js=read('dz-interactions.js'),app=read('app.js'),quiz=read('quiz.js'),grammar=read('grammaire.js'),html=read('index.html'),css=read('style-prototype-dz.css'),sw=read('sw.js'),voice=read('js/voice-chat.js');
+assert.match(html,/dz-interactions\.js\?v=5/,'module recherche/notifications non chargé');
+assert.match(sw,/dz-interactions\.js\?v=5/,'module absent du précache');
+assert.match(js,/typeof UNITES/,'indexation des unités de cours absente');
+assert.match(js,/typeof QUIZ_BANK/,'indexation des exercices absente');
+assert.match(js,/loadGrammarIndex/,'chargement du corpus réel de grammaire absent');
+assert.match(js,/data-search-q/,'filtre direct d’une règle grammaticale absent');
+assert.ok(js.includes("replace(/[أإآٱ]/g,'ا')"), 'normalisation des variantes arabes de recherche absente');
+assert.match(js,/data-search-unit/,'navigation directe vers une unité absente');
+assert.match(js,/DZ_QUIZ\.selectUnit/,'navigation vers les exercices par unité absente');
+assert.match(quiz,/selectUnit:function\(n\)/,'sélecteur d’unité du quiz absent');
+assert.match(grammar,/DZ_GRAMMAR_SEARCH/,'raccord du moteur de recherche au filtre des règles absent');
+assert.match(js,/Ctrl \+ K|Ctrl\s*\+\s*K|e\.ctrlKey/,'raccourci clavier Ctrl+K absent');
+assert.match(js,/dz_de_notifications_v1:/,'notifications non isolées par compte');
+assert.match(js,/b\.hidden=!a;if\(g\)\{g\.hidden=!a\|\|!n/,'la cloche doit rester accessible même sans notification non lue');
+assert.match(app,/DZ_INTERACTIONS\.renderBell\(\); return;/,'le rendu historique de la cloche écrase le centre de notifications');
+assert.match(js,/success:'نجاح',error:'خطأ',warning:'تنبيه',info:'معلومة'/,'catégories notification incomplètes');
+assert.match(js,/data-mark-all/,'action marquer tout comme lu absente');
+assert.match(js,/data-notif-id/,'action notification individuelle absente');
+assert.match(js,/function cleanLong/,'indexation longue du contenu réel absente');
+assert.ok(js.includes('b=cleanLong(s.textContent)'), 'indexation complète des vues absente');
+assert.match(js,/dz:view/,'rafraîchissement du compteur à la navigation absent');
+assert.match(app,/DZ_INTERACTIONS\.search\(q\)/,'recherche existante non raccordée');
+assert.match(app,/DZ_INTERACTIONS\.openNotifications/,'cloche non raccordée au centre');
+assert.match(app,/DZ_INTERACTIONS\.recordToast/,'toasts réels non enregistrés');
+assert.match(css,/\.dz-interaction-panel/,'styles du panneau interaction absents');
+assert.ok(html.includes('class="dz-ai-voice-stage"'), 'scène vocale du prototype absente');
+assert.ok(html.includes('id="chatMicBtn" class="dz-ai-mic chat-mic"'), 'grand bouton micro absent');
+assert.ok(html.includes('id="chatVoiceLang"'), 'sélecteur de langue vocale absent');
+const formStart=html.indexOf('<form class="chat-in" id="chatForm">');
+const formEnd=html.indexOf('</form>',formStart);
+assert.ok(formStart>=0 && formEnd>formStart && !html.slice(formStart,formEnd).includes('chatMicBtn'), 'le microphone doit rester hors du formulaire d’envoi');
+assert.ok(voice.includes("getElementById('chatMicBtn')"), 'contrôle du micro non raccordé au moteur vocal existant');
+assert.ok(css.includes('.dz-ai-voice-stage'), 'styles de la scène vocale absents');
+assert.ok(css.includes('@keyframes dzAiWave'), 'animation des ondes vocales absente');
+
+assert.match(css,/@media\(max-width:600px\).*dz-interaction-layer/s,'adaptation mobile du panneau absente');
+console.log('✅ Recherche globale, notifications par compte, catégories, actions et responsive contrôlés');
+
+
+// Compte étudiant : composition prototype 2, données réelles et actions conservées.
+assert.match(app,/dz-account-hero/,'bandeau de profil du compte absent');
+assert.match(app,/dz-account-metrics/,'indicateurs personnels du compte absents');
+assert.match(app,/dz-account-profile/,'fiche des informations personnelles absente');
+assert.match(app,/dz-account-privacy/,'bloc de confidentialité du compte absent');
+assert.match(app,/id="btnSound2"/,'commande de prononciation du compte absente');
+assert.match(app,/id="btnLogout"/,'commande de déconnexion du compte absente');
+assert.match(css,/\.dz-account-hero/,'styles du bandeau de compte absents');
+assert.match(css,/\.dz-account-metrics/,'styles des indicateurs du compte absents');
+assert.match(css,/html\[data-theme="dark"\] section\[data-view="compte"\] \.dz-account-card/,'variante sombre du compte absente');
+assert.match(css,/section\[data-view="compte"\].*@media/s,'adaptation responsive du compte absente');
+console.log('✅ Compte étudiant : identité, indicateurs réels, confidentialité, commandes et responsive contrôlés');
+
+

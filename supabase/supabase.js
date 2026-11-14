@@ -9,50 +9,89 @@
 const URL = 'https://azjwcybivirvpxbfhyzk.supabase.co';
 const KEY = 'sb_publishable_eLv27yLjmxuiE9xP_h50qw_4ID6dDHz';
 let client = null;
+let clientPromise = null;
 
 async function sb(){
   if(client) return client;
-  if(window.supabase && window.supabase.createClient){
-    client = window.supabase.createClient(URL, KEY, { auth: { persistSession: true } });
-    return client;
+  /* Single-flight : si le SDK doit être chargé par import() (repli CDN),
+     tous les appels concurrents attendent la même initialisation. Sans cela,
+     deux vues peuvent créer deux clients Auth/Realtime indépendants. */
+  if(clientPromise) return clientPromise;
+  clientPromise = (async function(){
+    if(window.supabase && window.supabase.createClient){
+      client = window.supabase.createClient(URL, KEY, { auth: { persistSession: true } });
+      return client;
+    }
+    const urls = [
+      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/+esm',
+      'https://unpkg.com/@supabase/supabase-js@2.119.0/dist/module/index.js',
+      'https://esm.sh/@supabase/supabase-js@2.119.0'
+    ];
+    for(const u of urls){
+      try{
+        const m = await import(u);
+        if(m && m.createClient){
+          client = m.createClient(URL, KEY, { auth: { persistSession: true } });
+          return client;
+        }
+      }catch(e){}
+    }
+    return null;
+  })();
+  try{
+    const ready = await clientPromise;
+    if(!ready) clientPromise = null;
+    return ready;
+  }catch(e){
+    clientPromise = null;
+    throw e;
   }
-  const urls = [
-    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm',
-    'https://unpkg.com/@supabase/supabase-js@2/dist/module/index.js',
-    'https://esm.sh/@supabase/supabase-js@2'
-  ];
-  for(const u of urls){
-    try{
-      const m = await import(u);
-      if(m && m.createClient){
-        client = m.createClient(URL, KEY, { auth: { persistSession: true } });
-        return client;
-      }
-    }catch(e){}
-  }
-  return null;
 }
 
 async function login(email, pass){
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
   const r = await c.auth.signInWithPassword({ email, password: pass });
-  return r.error ? { ok: false, err: r.error.message } : { ok: true, user: r.data.user };
+  return r.error ? { ok: false, err: r.error.message, code: r.error.code || null } : { ok: true, user: r.data.user, session: r.data.session || null };
 }
 async function signup(email, pass, meta){
   const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
   const r = await c.auth.signUp({ email, password: pass, options: { data: meta || {} } });
-  return r.error ? { ok: false, err: r.error.message } : { ok: true, user: r.data.user };
+  return r.error ? { ok: false, err: r.error.message, code: r.error.code || null } : { ok: true, user: r.data.user, session: r.data.session || null };
+}
+async function resetPassword(email){
+  const c = await sb();
+  if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة حاليًا' };
+  const redirectTo = window.location.origin + window.location.pathname;
+  const r = await c.auth.resetPasswordForEmail(String(email || '').trim(), { redirectTo });
+  return r.error ? { ok:false, err:r.error.message } : { ok:true };
+}
+async function updatePassword(password){
+  const c = await sb();
+  if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة حاليًا' };
+  const r = await c.auth.updateUser({ password });
+  return r.error ? { ok:false, err:r.error.message } : { ok:true, user:r.data.user };
+}
+async function getSession(){
+  try{
+    const c = await sb();
+    if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)', session:null };
+    const r = await c.auth.getSession();
+    return r.error ? { ok:false, err:r.error.message, session:null }
+      : { ok:true, session:r.data.session || null, user:r.data.session ? r.data.session.user : null };
+  }catch(e){ return { ok:false, err:String((e && e.message) || e), session:null }; }
 }
 async function me(){
-  try{
-    const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' };
-    if(!c) return null;
-    const r = await c.auth.getSession();
-    return r.data.session ? r.data.session.user : null;
-  }catch(e){ return null; }
+  const r = await getSession();
+  return r.ok && r.session ? r.session.user : null;
 }
-async function logout(){ const c = await sb(); if(!c) return { ok: false, err: 'cloud indisponible (reseau/CDN)' }; await c.auth.signOut(); }
+async function logout(){
+  const c = await sb();
+  if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+  const r = await c.auth.signOut({ scope:'local' });
+  return r.error ? { ok:false, err:r.error.message } : { ok:true };
+}
 
+/* sync mémoire locale → cloud */
 /* sync mémoire locale → cloud */
 async function pushMemoire(){
   const u = await me(); if(!u) return { ok: false, err: 'non connecté' };
@@ -300,7 +339,7 @@ async function msgMessages(convId, before, limit){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
   let q = c.from('msg_messages').select('id,conversation_id,sender_id,body,attachment_id,flagged,created_at,edited_at')
     .eq('conversation_id', convId).is('deleted_at', null)
-    .order('created_at',{ascending:false}).limit(limit || 50);
+    .order('created_at',{ascending:false}).order('id',{ascending:false}).limit(limit || 50);
   if(before) q = q.lt('created_at', before);
   const r = await q;
   if(r.error) return { ok:false, err:r.error.message };
@@ -325,26 +364,30 @@ async function msgCanDm(otherId){
   return { ok:true, allowed:!!r.data };
 }
 async function msgOpenDirect(otherId){
-  const can = await msgCanDm(otherId); if(!can.ok) return can;
-  if(!can.allowed) return { ok:false, err:'msg_dm_interdit' };
-  const u = await me(); const c = await sb();
-  const ex = await c.from('msg_members').select('conversation_id').in('user_id',[u.id, otherId]);
-  const ids = (ex.data || []).map(function(x){ return x.conversation_id; });
+  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
+  if(!otherId || otherId === u.id) return { ok:false, err:'destinataire invalide' };
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
+
+  /* Une conversation existante peut être rouverte par ses membres.
+     Une nouvelle conversation doit obligatoirement passer par l'invitation
+     acceptée côté serveur : le client ne crée jamais un DM ni le membre adverse. */
+  const mine = await c.from('msg_members').select('conversation_id')
+    .eq('user_id',u.id).limit(500);
+  if(mine.error) return { ok:false, err:mine.error.message };
+  const ids = Array.from(new Set((mine.data || []).map(function(x){ return x.conversation_id; })));
   if(ids.length){
-    const m = await c.from('msg_members').select('conversation_id').in('conversation_id', ids).in('user_id',[u.id, otherId]);
-    const cnt = {}; (m.data || []).forEach(function(x){ cnt[x.conversation_id] = (cnt[x.conversation_id]||0)+1; });
-    for(const id of ids){
-      if(cnt[id] === 2){
-        const t = await c.from('msg_conversations').select('id').eq('id', id).eq('type','direct').maybeSingle();
-        if(t.data) return { ok:true, convId:id, existing:true };
-      }
+    const theirs = await c.from('msg_members').select('conversation_id')
+      .eq('user_id',otherId).in('conversation_id',ids);
+    if(theirs.error) return { ok:false, err:theirs.error.message };
+    const shared = Array.from(new Set((theirs.data || []).map(function(x){ return x.conversation_id; })));
+    if(shared.length){
+      const convs = await c.from('msg_conversations').select('id')
+        .eq('type','direct').in('id',shared).limit(1);
+      if(convs.error) return { ok:false, err:convs.error.message };
+      if(convs.data && convs.data.length) return { ok:true, convId:convs.data[0].id, existing:true };
     }
   }
-  const r = await c.from('msg_conversations').insert({ type:'direct', created_by:u.id, titre:'' }).select('id').single();
-  if(r.error) return { ok:false, err:r.error.message };
-  const m1 = await c.from('msg_members').insert([{conversation_id:r.data.id,user_id:u.id},{conversation_id:r.data.id,user_id:otherId}]);
-  if(m1.error) return { ok:false, err:m1.error.message };
-  return { ok:true, convId:r.data.id, existing:false };
+  return { ok:false, err:'msg_invitation_requise' };
 }
 async function msgGroups(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
@@ -377,17 +420,23 @@ async function msgUnblock(otherId){
 async function msgEdit(msgId, body){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
-  const r = await c.from('msg_messages').update({ body:String(body||'').slice(0,2000), edited_at:new Date().toISOString() })
-    .eq('id', msgId).eq('sender_id', u.id).is('deleted_at', null);
+  const text = String(body||'').trim();
+  if(!text || text.length>2000) return { ok:false, err:'message invalide (1 à 2000 caractères)' };
+  const r = await c.from('msg_messages').update({ body:text, edited_at:new Date().toISOString() })
+    .eq('id', msgId).eq('sender_id', u.id).is('deleted_at', null)
+    .select('id').maybeSingle();
   if(r.error) return { ok:false, err:r.error.message };
+  if(!r.data) return { ok:false, err:'message introuvable, déjà supprimé ou modification non autorisée' };
   return { ok:true };
 }
 async function msgDelete(msgId){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible (reseau/CDN)' };
   const r = await c.from('msg_messages').update({ deleted_at:new Date().toISOString() })
-    .eq('id', msgId).eq('sender_id', u.id);
+    .eq('id', msgId).eq('sender_id', u.id).is('deleted_at', null)
+    .select('id').maybeSingle();
   if(r.error) return { ok:false, err:r.error.message };
+  if(!r.data) return { ok:false, err:'message introuvable, déjà supprimé ou suppression non autorisée' };
   return { ok:true };
 }
 async function msgUpload(convId, msgId, file){
@@ -400,9 +449,36 @@ async function msgUpload(convId, msgId, file){
   const path = 'msg/' + convId + '/' + u.id + '-' + Date.now() + '-' + safe;
   const up = await c.storage.from('prive').upload(path, file, { upsert:false });
   if(up.error) return { ok:false, err:up.error.message };
-  const r = await c.from('msg_attachments').insert({ message_id:msgId, uploader:u.id, storage_path:path, mime:file.type, octets:file.size, statut:'pending' });
+  const r = await c.from('msg_attachments').insert({ message_id:msgId, uploader:u.id, storage_path:path, mime:file.type, octets:file.size, statut:'pending' })
+    .select('id').single();
   if(r.error) return { ok:false, err:r.error.message };
-  return { ok:true, path:path };
+  /* Publie l'arrivée du fichier via UPDATE sur msg_messages, déjà abonné
+     dans Realtime. Le destinataire recharge alors les métadonnées signées. */
+  const linked = await c.from('msg_messages').update({ attachment_id:r.data.id })
+    .eq('id',msgId).eq('conversation_id',convId).eq('sender_id',u.id).is('deleted_at',null)
+    .select('id').maybeSingle();
+  if(linked.error) return { ok:false, err:linked.error.message };
+  if(!linked.data) return { ok:false, err:'message introuvable ou non modifiable' };
+  return { ok:true, path:path, attachmentId:r.data.id };
+}
+async function msgAttachmentInfos(messageIds){
+  const c = await sb(); if(!c) return {};
+  const ids = Array.from(new Set((messageIds||[]).filter(Boolean)));
+  if(!ids.length) return {};
+  const r = await c.from('msg_attachments')
+    .select('id,message_id,storage_path,mime,octets,statut')
+    .in('message_id', ids);
+  if(r.error) return {};
+  const visible = (r.data||[]).filter(function(a){ return a.statut!=='retire'; });
+  const signed = await Promise.all(visible.map(async function(a){
+    const u = await c.storage.from('prive').createSignedUrl(a.storage_path, 900);
+    if(u.error) return null;
+    return { messageId:a.message_id, ok:true, found:true, url:u.data.signedUrl,
+      mime:a.mime, octets:a.octets, name:String(a.storage_path||'').split('/').pop() };
+  }));
+  const out = {};
+  signed.forEach(function(a){ if(a) out[a.messageId]=a; });
+  return out;
 }
 function msgSubscribe(convId, cb){
   let ch = null;
@@ -462,7 +538,7 @@ async function msgCreateGroup(wilaya, niveau, filiere, titre){
   return { ok:true, convId:r.data.id };
 }
 
-window.SB = { login, signup, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
+window.SB = { login, signup, resetPassword, updatePassword, getSession, me, logout, pushMemoire, pullMemoire, upload, listFiles, fileUrl, sb, myProfile, listProfiles, listNotes, setRole, createSub, mySubs, setPreuve, listSubs, setSubStatut, createPayment, myPayments, adminPayments, deciderSub, addSponsor, listSponsors, setSponsorStatut, activeAds, createAd, msgConvs, msgMessages, msgSend, msgCanDm, msgOpenDirect, msgGroups, msgAttachmentInfos, msgReport, msgBlock, msgUnblock, msgEdit, msgDelete, msgUpload, msgSubscribe, msgReportsOpen, msgHandle, msgLogLast, msgCreateGroup };
 document.dispatchEvent(new CustomEvent('dz:sbready'));
 /* pont dz:view post-sbready (UI-1) : les cartes ADM se re-rendent quand le client devient prêt */
 document.dispatchEvent(new CustomEvent('dz:view', { detail:{ view:(location.hash||'').replace('#','') } }));
@@ -475,11 +551,15 @@ async function msgMyVerification(){
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, statut:(r.data && r.data.verif_statut) || 'non_verifie', matricule:(r.data && r.data.matricule) || '', section:(r.data && r.data.section) || '' };
 }
-async function msgRequestVerification(matricule, section){
-  const u = await me(); if(!u) return { ok:false, err:'non connecté' };
-  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+async function msgRequestVerification(schoolRegistrationNumber, section){
+  const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const number = String(schoolRegistrationNumber || '').trim();
+  if(!/^\d{1,20}$/.test(number) || !Number.isSafeInteger(Number(number)) || Number(number) < 1){
+    return { ok:false, err:'أدخل رقم تسجيل مدرسي صحيحًا.' };
+  }
   const r = await c.from('profiles')
-    .update({ verif_statut:'en_attente', matricule:String(matricule||'').slice(0,40), section:String(section||'').slice(0,40) })
+    .update({ verif_statut:'en_attente', matricule:number, section:String(section||'').trim().slice(0,40) })
     .eq('id', u.id).or('verif_statut.eq.non_verifie,verif_statut.eq.rejete');
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true };
@@ -503,6 +583,58 @@ async function msgSetVerification(uid, statut){
   return { ok:true };
 }
 Object.assign(window.SB, { msgMyVerification, msgRequestVerification, msgVerificationQueue, msgSetVerification });
+
+/* ── MSG-8 · centre des invitations — disponible après migration serveur consentement ── */
+async function msgInvites(){
+  const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.from('msg_invites')
+    .select('id,sender_id,recipient_id,status,created_at,responded_at,conversation_id')
+    .or('sender_id.eq.'+u.id+',recipient_id.eq.'+u.id)
+    .order('created_at',{ascending:false}).limit(100);
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  return {
+    ok:true,
+    incoming:(r.data||[]).filter(x=>x.recipient_id===u.id),
+    outgoing:(r.data||[]).filter(x=>x.sender_id===u.id)
+  };
+}
+async function msgInviteSend(studentKey){
+  const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
+  if(!studentKey) return { ok:false, err:'انتهت صلاحية نتيجة البحث؛ أعد البحث من فضلك' };
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.rpc('msg_invite_send_by_key',{p_student_key:studentKey});
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  return { ok:true, inviteId:r.data };
+}
+async function msgInviteAccept(inviteId){
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.rpc('msg_invite_accept',{p_invite:inviteId});
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  if(!r.data) return { ok:false, err:'انتهت صلاحية الطلب أو لم يعد متاحاً' };
+  return { ok:true, convId:r.data };
+}
+async function msgInviteDecline(inviteId){
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.rpc('msg_invite_decline',{p_invite:inviteId});
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  return { ok:!!r.data };
+}
+async function msgInviteCancel(inviteId){
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.rpc('msg_invite_cancel',{p_invite:inviteId});
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  return { ok:!!r.data };
+}
+async function msgStudentSearch(query, limit){
+  const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const r = await c.rpc('msg_student_search',{p_query:String(query||''),p_limit:limit||12});
+  if(r.error) return { ok:false, err:r.error.message, code:r.error.code||null };
+  return { ok:true, students:Array.isArray(r.data)?r.data:[] };
+}
+Object.assign(window.SB, { msgInvites, msgInviteSend, msgInviteAccept, msgInviteDecline, msgInviteCancel, msgStudentSearch });
+
 
 /* ── ADM-1 · sous-admins & wilayas (client fin — le RLS décide) ── */
 async function admMyPerms(){

@@ -387,16 +387,25 @@ $$;
 -- autorise : (a) absence de changement de rôle, (b) auth.uid() NULL = éditeur
 -- SQL / console (ton collage de promotion), (c) un admin existant.
 create or replace function public.profiles_role_guard() returns trigger
-language plpgsql security definer set search_path = public as $$
-declare ismod boolean;
+language plpgsql
+set search_path = ''
+as $function$
 begin
   if new.role is not distinct from old.role then return new; end if;
-  if auth.uid() is null then return new; end if;
-  select exists (select 1 from public.profiles p
-                  where p.id = auth.uid() and p.role = 'admin') into ismod;
-  if ismod then return new; end if;
+  if session_user in ('postgres', 'supabase_admin')
+     or (select auth.jwt() ->> 'role') = 'service_role' then
+    return new;
+  end if;
+  if (select auth.uid()) is not null and exists (
+    select 1 from public.profiles p
+    where p.id = (select auth.uid()) and p.role = 'admin'
+  ) then
+    return new;
+  end if;
   raise exception 'role_reservee_admin';
-end $$;
+end;
+$function$;
+revoke all on function public.profiles_role_guard() from public, anon, authenticated;
 drop trigger if exists profiles_tr_role on public.profiles;
 create trigger profiles_tr_role before update on public.profiles
   for each row execute function public.profiles_role_guard();

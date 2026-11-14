@@ -133,8 +133,8 @@ code{font-family:var(--ff-de);background:rgba(255,255,255,.08);padding:1px 7px;b
   align-items:center;justify-content:center;font-size:23px;
   background:linear-gradient(140deg,var(--vert3),var(--p));border:1px solid var(--b2)}
 .brand-t{font-family:var(--ff-ar-display);font-size:16.5px;font-weight:700;white-space:nowrap;
-  color:#fff}
-.brand-s{font-size:10.5px;color:var(--m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  color:var(--t)}
+.brand-s{font-size:14.5px;font-weight:600;color:var(--m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-act{display:flex;align-items:center;gap:7px}
 .icon-btn{width:38px;height:38px;border-radius:12px;background:var(--p);border:1px solid var(--b);
   font-size:16px;display:flex;align-items:center;justify-content:center;transition:.2s}
@@ -532,6 +532,7 @@ table.conj tr:last-child td{border:none}
   .tabs.open{right:0}
   .tab{width:100%;text-align:right;font-size:14px;padding:13px 16px;border-radius:13px}
   .brand-t{font-size:14.5px}
+  .brand-s{font-size:12px}
   .uc-n{display:none}
   .prof{flex-direction:column;align-items:center;text-align:center}
   .prof img,.prof-ph{width:132px;height:132px}
@@ -3197,7 +3198,7 @@ html[data-theme="light"] code{background:rgba(17,28,46,.06)}
    1) focus-visible global (33 entrées de nav + widgets + champs) ;
    2) media reduced-motion global (animations et transitions coupées) ;
    3) contrastes WCAG AA en thème clair (pill active, badge cloche, bouton du jour)
-      + remappage des hex SVG de stats.js (fonds sombres → clairs, accents → foncés,
+      + remappage des couleurs SVG de l’interface (fonds sombres → clairs, accents → foncés,
       textes → #334155) ; ratios vérifiés : texte ≥ 4.5:1, graphique ≥ 3:1 ;
    4) bornes responsive ajoutées : ≤400 px compact · ≥1440 px contenu élargi. */
 :focus-visible{outline:2px solid var(--vert2);outline-offset:2px}
@@ -3666,3 +3667,119 @@ html[data-theme="light"] .tabs .tab.on{background:linear-gradient(135deg,#006233
 /* F) thème clair */
 html[data-theme="light"] .seance,html[data-theme="light"] .fiche{background:#fff}
 html[data-theme="light"] .seance::after{border-color:#fff}
+
+/* V6.11 — correctif structurel : sticky + vraie lisibilité sur PC
+   Le overflow-x:hidden sur html/body créait un conteneur de défilement
+   qui empêchait le header sticky de suivre le défilement de la page.
+   overflow-x:clip conserve le masquage horizontal sans casser sticky. */
+html,body{
+  overflow-x:clip!important;
+}
+#shell > header.topbar{
+  position:sticky!important;
+  top:0!important;
+  inset-block-start:0!important;
+  z-index:1200!important;
+  align-self:start;
+}
+@media(min-width:901px){
+  #shell > header.topbar{
+    /* Suit le thème actif : blanc en clair, vert profond en sombre. */
+    background:var(--p);
+    box-shadow:var(--sh);
+  }
+  #shell main#app > .view{
+    font-size:17px!important;
+    line-height:1.8!important;
+  }
+  #shell main#app > .view p,
+  #shell main#app > .view li,
+  #shell main#app > .view label,
+  #shell main#app > .view td,
+  #shell main#app > .view th{
+    font-size:16.5px!important;
+    line-height:1.85!important;
+  }
+  #shell main#app .reading,
+  #shell main#app .reading p,
+  #shell main#app .reading li{
+    font-size:20px!important;
+    line-height:2.05!important;
+  }
+  #shell main#app .sujet-box,
+  #shell main#app .corrige-box{
+    font-size:17px!important;
+    line-height:2!important;
+  }
+  #shell main#app .page-head h1{
+    font-size:clamp(26px,2.4vw,34px)!important;
+  }
+}
+@media(max-width:900px){
+  #shell > header.topbar{
+    position:sticky!important;
+    top:0!important;
+    inset-block-start:0!important;
+  }
+}
+
+/* 36 — Accueil élève : catalogue réel et accès rapides, sélecteurs vérifiés sur le DOM dynamique */
+#shell #app section[data-view="accueil"] #subjHome{margin:0 0 18px;padding:18px;border:1px solid var(--b);border-radius:22px;background:linear-gradient(155deg,var(--p),var(--p2));box-shadow:0 10px 28px rgba(0,55,28,.055)}
+#shell #app section[data-view="accueil"] #subjHome .subj-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:0 0 12px}
+#shell #app section[data-view="accueil"] #subjHome .subj-card{min-height:146px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:17px 13px;border-radius:18px;border:1px solid var(--b);background:linear-gradient(150deg,var(--p),var(--p2));box-shadow:0 5px 16px rgba(0,55,28,.045);transition:transform .2s,border-color .2s,box-shadow .2s}
+#shell #app section[data-view="accueil"] #subjHome .subj-card[data-subj]:hover{transform:translateY(-3px);border-color:#00843d;box-shadow:0 12px 24px rgba(0,98,51,.12)}
+#shell #app section[data-view="accueil"] #subjHome .subj-card.on{border:2px solid #00843d;background:linear-gradient(145deg,rgba(0,98,51,.11),var(--p))}
+#shell #app section[data-view="accueil"] #subjHome .subj-i{display:grid;place-items:center;width:48px;height:48px;margin-bottom:10px;border-radius:15px;background:#eaf5ed;font-size:25px}
+#shell #app section[data-view="accueil"] #subjHome .subj-n{font-size:15px;font-weight:900;line-height:1.5}
+#shell #app section[data-view="accueil"] #subjHome .subj-l{font-size:11px}
+#shell #app section[data-view="accueil"] #subjHome .subj-s{margin-top:10px;padding:5px 10px;border-radius:999px;font-size:10px;font-weight:900}
+#shell #app section[data-view="accueil"] #subjHome .subj-s.ok{color:#075d35;background:#e6f4ea;border:1px solid #b9dfc4}
+#shell #app section[data-view="accueil"] #subjHome .subj-s.part{color:#8b4c00;background:#fff3dc;border:1px solid #f0d39c}
+#shell #app section[data-view="accueil"] #subjHome .subj-s.soon{color:#65756a;background:#edf1ee;border:1px solid #d6dfd8}
+#shell #app section[data-view="accueil"] #subjHome .sc-lang{grid-column:1/-1;min-height:auto;flex-direction:row;justify-content:flex-start;gap:12px;padding:12px 15px;background:linear-gradient(100deg,#f0f8f2,#fff)}
+#shell #app section[data-view="accueil"] #subjHome .sc-lang .subj-i{width:40px;height:40px;margin:0}
+#shell #app section[data-view="accueil"] #subjHome .subj-chips{display:flex;flex-wrap:wrap;gap:7px;margin-inline-start:auto}
+#shell #app section[data-view="accueil"] #subjHome .subj-chips .chip{display:inline-flex;align-items:center;min-height:32px;padding:5px 11px;border:1px solid #cfe2d4;border-radius:999px;background:#fff;color:#14512e;font-size:11px;font-weight:800}
+#shell #app section[data-view="accueil"] #subjHome .explore-all{display:flex;justify-content:center;align-items:center;width:100%;min-height:44px;margin-top:7px;border:1px solid #006233;border-radius:13px;background:#006233;color:#fff;font-weight:900;cursor:pointer}
+#shell #app section[data-view="accueil"] #statsHome.stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:18px 0}
+#shell #app section[data-view="accueil"] #statsHome .stat{min-width:0;min-height:92px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--b);border-radius:17px;padding:13px 9px;background:linear-gradient(155deg,var(--p),var(--p2));box-shadow:0 6px 18px rgba(0,55,28,.045)}
+#shell #app section[data-view="accueil"] #statsHome .stat-n{font-size:clamp(15px,2vw,22px);font-weight:900;overflow-wrap:anywhere}
+#shell #app section[data-view="accueil"] #statsHome .stat-l{font-size:10px;line-height:1.5}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody>.grid3{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;margin:0}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody>.grid3>.mini{display:grid;grid-template-columns:38px minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;column-gap:10px;min-height:64px;padding:9px 10px;border:1px solid var(--b);border-radius:13px;background:var(--p2);box-shadow:none;text-align:start}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody>.grid3>.mini:hover{transform:translateX(-2px);border-color:#00843d;box-shadow:0 6px 15px rgba(0,98,51,.08)}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody .mini-i{grid-column:1;grid-row:1/3;display:grid;place-items:center;width:36px;height:36px;margin:0;border-radius:11px;background:#eaf5ed;font-size:19px}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody .mini h3{grid-column:2;grid-row:1;margin:0;font-size:12px;font-weight:900}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody .mini p{grid-column:2;grid-row:2;margin:1px 0 0;font-size:9px;line-height:1.5}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody .mini-n{position:static;grid-column:3;grid-row:1/3;min-width:27px;padding:4px 6px;border:1px solid var(--b);border-radius:999px;background:var(--p);font-size:10px;opacity:1}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #subjHome{background:linear-gradient(155deg,#142c1e,#102319);border-color:#31543e}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #subjHome .subj-card{background:linear-gradient(150deg,#193524,#142b1e);border-color:#31543e}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #subjHome .subj-card.on{border-color:#35a96a;background:linear-gradient(145deg,rgba(0,132,61,.25),#142b1e)}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #subjHome .subj-i,html[data-theme="dark"] #shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody .mini-i{color:#d9f5e1;background:#1c4930}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #subjHome .sc-lang{background:linear-gradient(100deg,#193c29,#142b1e)}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #subjHome .subj-chips .chip{color:#d8f0df;background:#193524;border-color:#31543e}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #subjHome .subj-s.ok{color:#c9f1d4;background:#173b28;border-color:#315a40}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #subjHome .subj-s.part{color:#ffe0a3;background:#493719;border-color:#765b2c}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #subjHome .subj-s.soon{color:#d2ded5;background:#26372c;border-color:#405747}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody>.grid3>.mini{background:#142c1e;border-color:#31543e}
+html[data-theme="dark"] #shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody .mini-n{color:#d8f0df;background:#193524;border-color:#31543e}
+@media(max-width:900px){
+#shell #app section[data-view="accueil"] #subjHome .subj-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#shell #app section[data-view="accueil"] #statsHome.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody>.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody>.grid3>.mini{grid-template-columns:34px minmax(0,1fr);min-height:70px}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody .mini-i{width:32px;height:32px}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody .mini-n{display:none}
+}
+@media(max-width:520px){
+#shell #app section[data-view="accueil"] #subjHome{padding:12px;border-radius:17px}
+#shell #app section[data-view="accueil"] #subjHome .subj-card{min-height:128px;padding:12px 8px}
+#shell #app section[data-view="accueil"] #subjHome .subj-n{font-size:13px}
+#shell #app section[data-view="accueil"] #subjHome .sc-lang{grid-column:1/-1;flex-wrap:wrap}
+#shell #app section[data-view="accueil"] #subjHome .subj-chips{width:100%;margin:0}
+#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody>.grid3{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+#shell #app section[data-view="accueil"] #subjHome .subj-card,#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody>.grid3>.mini{transition:none}
+#shell #app section[data-view="accueil"] #subjHome .subj-card:hover,#shell #app section[data-view="accueil"] #homeSide #panelQuick #quickBody>.grid3>.mini:hover{transform:none}
+}

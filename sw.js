@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.66.0';
+const VERSION = 'dz-de-v3.185.0.0.167';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -13,30 +13,38 @@ const CACHE_ASSETS = VERSION + '-assets';
 const PRECACHE = [
   './',
   './index.html',
-  './style.css?v=3512',
-  './style-prototype-dz.css?v=13',
+  './style.css?v=3515',
+  './style-prototype-dz.css?v=202',
+  './multaqa.js?v=3',
   './auth.js?v=3510',
   './bdd.js?v=3510',
-  './app.js?v=3510',
+  './app.js?v=3569',
+  './admin.js?v=3512',
+  './supabase/supabase.js?v=3522',
+  './dz-interactions.js?v=5',
+  './js/voice-chat.js?v=1',
   './unites3as_vitrine.js?v=3510',
   './prof_core.js?v=3510',
   './access.js?v=3510',
   './paywall.js?v=3510', './assets/bdd/access_config.json',
-  './brand/favicon.svg?v=3510',
+  './brand/favicon.svg?v=3511',
   './modules.js?v=3510',
   './live.js?v=3510',
   './classe.js?v=3510',
   './grammaire.js?v=3510',
-  './stats.js?v=3510',
-  './quiz.js?v=3510',
+  './quiz.js?v=3513',
+  './dz-gamification.js?v=5',
   './projet.js?v=3510',
-  './assets/matching_v2.patch.js',
+  './assets/matching_v2.patch.js?v=3510',
   './reservation.js?v=3510',
-  './journee.js?v=3510',
-  './guide.js?v=3510',
+  './journee.js?v=3511',
+  './guide.js?v=3511',
   './memoire.js?v=3510',
-  './masar.js?v=3511',
+  './masar.js?v=3516',
+  './msg.js?v=3528',
+  './billing.js?v=3511',
   './matieres.js?v=3510',
+  './public-portal.js?v=10',
   './library.js?v=3510',
   './examen.js?v=3510',
   './officiels.js?v=3510',
@@ -57,7 +65,7 @@ const BDD_FILES = [
   './assets/bdd/bac.json',
   './assets/bdd/annales.json',
   './assets/bdd/grammaire.json',
-  './assets/bdd/classe.json?v=3510',
+  './assets/bdd/classe.json?v=3511',
   './assets/bdd/eleves.json?v=3510',
   './assets/bdd/bac_archive.json',
   './assets/bdd/parents.json?v=3510',
@@ -66,11 +74,11 @@ const BDD_FILES = [
   './assets/bdd/plan_projet.json',
   './assets/bdd/reservation.json',
   './assets/bdd/matieres.json',
-  './assets/bdd/wilaya.json',
+  './assets/bdd/subjects.json',
+  './assets/bdd/wilaya.json?v=3511',
   './assets/bdd/onboarding.json',
   './assets/bdd/corpus.json',
   './assets/bdd/shards_manifest.json',
-  './assets/bdd/shards/shard_00.json',
   './assets/bdd/contenu_original.json',
   './assets/bdd/malakhiss.json',
   './assets/bdd/sujet14_farid.json',
@@ -99,9 +107,17 @@ self.addEventListener('install', event => {
       cache.add(new Request(url, { cache: 'reload' })).catch(() => null)
     ));
     const cdnCache = await caches.open(CACHE_ASSETS);
-    await Promise.all(CDN.map(url =>
-      cdnCache.add(new Request(url, { mode: 'no-cors' })).catch(() => null)
-    ));
+    await Promise.all(CDN.map(async url => {
+      try {
+        const request = new Request(url, { mode: 'no-cors', cache: 'reload' });
+        const response = await fetch(request);
+        if (response && (response.ok || response.type === 'opaque')) {
+          await cdnCache.put(request, response);
+        }
+      } catch (_) {
+        /* CDN indisponible ou refusé : les polices restent chargées par le navigateur en ligne. */
+      }
+    }));
     await self.skipWaiting();
     /* Pré-téléchargement différé de la base de données (684 fiches) */
     setTimeout(() => {
@@ -119,7 +135,13 @@ self.addEventListener('activate', event => {
     await Promise.all(keys
       .filter(k => k.indexOf(VERSION) !== 0)
       .map(k => caches.delete(k)));
-    await self.clients.claim();
+    try {
+      await self.clients.claim();
+    } catch (error) {
+      /* Une course de cycle de vie peut rendre claim() invalide sur un worker
+         qui n'est plus active. Ne pas laisser cette exception interrompre l'activation. */
+      if (!error || error.name !== 'InvalidStateError') throw error;
+    }
   })());
 });
 
@@ -160,12 +182,26 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  /* 1bis) D0 — assets statiques same-origin -> stale-while-revalidate
-     (cache immediat + rafraichissement en arriere-plan).
-     La navigation HTML reste network-first : branche 1) inchangee. */
+  /* 1bis) Assets same-origin.
+     JavaScript et CSS : réseau d'abord pour ne jamais servir une ancienne interface ;
+     cache uniquement en secours hors ligne. JSON, polices et images : cache rapide
+     avec actualisation réseau en arrière-plan. */
   if (url.origin === self.location.origin && /\.(js|css|json|woff2?|png|svg|webp)$/i.test(url.pathname)) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_ASSETS);
+      const estCode = /\.(js|css)$/i.test(url.pathname);
+      if (estCode) {
+        try {
+          const fresh = await fetch(req, { cache: 'no-store' });
+          if (fresh && (fresh.ok || fresh.type === 'opaque')) {
+            cache.put(req, fresh.clone()).catch(() => {});
+          }
+          return fresh;
+        } catch (e) {
+          const hit = await cache.match(req) || await caches.match(req);
+          return hit || new Response('', { status: 504 });
+        }
+      }
       const hit = await cache.match(req);
       const bg = fetch(req).then(res => {
         if (res && (res.ok || res.type === 'opaque')) { cache.put(req, res.clone()).catch(() => {}); return res; }

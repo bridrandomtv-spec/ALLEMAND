@@ -4,7 +4,7 @@
    Multi-enfants · examens I/II/III · présence datée · حصص القادمة ·
    messages des professeurs · programme officiel MEN · exercices ·
    rapport PDF/TXT · tarifs (CIB · Edahabia · BaridiMob · CCP)
-   Données 100% locales — aucune transmission serveur
+   Données de démonstration locales ; le rapport réel utilise les services connectés
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
@@ -26,6 +26,11 @@
 
   /* ── Chargement ── */
   async function boot(){
+    const s = (window.AUTH && AUTH.session) ? AUTH.session() : null;
+    if(!s || s.role !== 'parent'){
+      toast('⛔ هذا الفضاء مخصّص لحسابات الأولياء فقط', 'ko');
+      return;
+    }
     const box = $('#parentsBody'); if(!box) return;
     if(!D){
       box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل فضاء الأولياء…</div>';
@@ -92,7 +97,8 @@
     return '<div class="card par-hero">' +
       '<div><div class="ch-badge">👨‍👩‍👧 فضاء الأولياء — ' + esc(D._meta.annee_scolaire) + '</div>' +
       '<h2>مرحباً بك، ' + esc(s.nom) + ' 👋</h2>' +
-      '<div class="ch-sub">' + esc(D._meta.etablissement) + ' · متابعة شفّافة لنجاح أبنائك</div></div>' +
+      '<div class="ch-sub">' + esc(D._meta.etablissement) + ' · متابعة شفّافة لنجاح أبنائك</div>' +
+      '<div class="ch-sub" role="note">⚠️ بيانات تجريبية توضيحية — لا تمثل نتائج تلميذ حقيقي</div></div>' +
       '<div class="ph-act">' +
         '<button class="btn btn-g btn-sm" id="pPdf">📄 تقرير PDF</button>' +
         '<button class="btn btn-o btn-sm" id="pTxt">📥 تقرير نصي</button>' +
@@ -630,8 +636,7 @@
   });
 
   document.addEventListener('dz:view', e => {
-    if(e.detail === 'parents') boot();
-    else clearInterval(tReste);
+    if(e.detail !== 'parents') clearInterval(tReste);
   });
   window.addEventListener('beforeunload', () => clearInterval(tReste));
 

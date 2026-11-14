@@ -26,7 +26,12 @@
   }
 
   /* ── Helpers ── */
+  function isDemoSchedule(){
+    return !!(D && D._meta && /démonstration/i.test(String(D._meta.confidentialite || '')));
+  }
+
   function statutChip(s){
+    if(isDemoSchedule()) return '<span class="jd-st demo">🧪 نموذج توضيحي</span>';
     const map = { en_cours:['🔴 جارية الآن','live'], termine:['✅ منتهية','done'],
                   a_venir:['⏳ قادمة','soon'] };
     const v = map[s] || ['—',''];
@@ -48,16 +53,18 @@
     catch(e){ box.innerHTML = '<div class="bdd-status err">❌ ' + esc(e.message) + '</div>'; return; }
 
     const list = D.aujourdhui || [];
+    const demo = isDemoSchedule();
     box.innerHTML =
       '<div class="card jd-hero">' +
+        (demo ? '<div class="jd-demo-note" role="note"><b>🧪 جدول تجريبي للمعاينة</b><span>هذه المواعيد والقاعة وأسماء الأساتذة ليست بيانات حسابك، ولا تعني وجود حصة مباشرة الآن.</span></div>' : '') +
         '<div class="jd-h"><div><h2>📅 حصص اليوم</h2>' +
           '<div class="jd-d">' + esc(D._meta.jour_reference) + ' ' +
           esc(fmtDate(D._meta.date_reference)) + ' · ' + esc(D._meta.annee_scolaire) + '</div></div>' +
-        '<button class="btn btn-o btn-sm" id="jdSemaine">🗓️ الجدول الكامل</button></div>' +
+        '<button class="btn btn-o btn-sm" id="jdSemaine">' + (demo ? '🗓️ معاينة الجدول الأسبوعي' : '🗓️ الجدول الكامل') + '</button></div>' +
         '<div class="jd-list">' + list.map(coursCard).join('') + '</div>' +
-        '<div class="jd-foot">🇩🇪 <b>' + list.filter(c => c.matiere_principale).length +
-          '</b> حصة ألمانية · 📚 <b>' + list.length + '</b> حصص اليوم · ' +
-          '⏱️ <b>' + list.reduce((a,c) => a + (c.duree||0), 0) + '</b> دقيقة</div>' +
+        '<div class="jd-foot">' + (demo ? 'معاينة توضيحية · لا تمثل جدولًا شخصيًا أو حصصًا مباشرة' :
+          '🇩🇿 <b>' + list.length + '</b> حصص اليوم · ⏱️ <b>' +
+          list.reduce((a,c) => a + (c.duree||0), 0) + '</b> دقيقة') + '</div>' +
       '</div>' +
       accesRapide();
   }
@@ -75,9 +82,10 @@
         '<div class="jd-p"><span class="jd-av">' + esc(c.init) + '</span>' + esc(c.prof) + '</div>' +
       '</div>' +
       '<div class="jd-r">' + statutChip(c.statut) +
-        (c.statut === 'en_cours' ? '<div class="jd-cd">' + dansCombien(c.heure_iso) + '</div>' : '') +
-        '<button class="btn btn-sm ' + (c.statut === 'en_cours' ? 'btn-p' : 'btn-o') +
-          '" data-go="' + esc(c.vue) + '">' + esc(c.cta) + '</button>' +
+        (isDemoSchedule() ? '<span class="jd-demo-label">مثال غير مرتبط بحسابك</span>' :
+          (c.statut === 'en_cours' ? '<div class="jd-cd">' + dansCombien(c.heure_iso) + '</div>' : '') +
+          '<button class="btn btn-sm ' + (c.statut === 'en_cours' ? 'btn-p' : 'btn-o') +
+            '" data-go="' + esc(c.vue) + '">' + esc(c.cta) + '</button>') +
       '</div></div>';
   }
 
@@ -106,7 +114,7 @@
       '<div class="fiche-de">' + esc(D._meta.annee_scolaire) + ' · قسم ٢AS-٣ · ' +
       sem.length + ' أيام</div></div>' +
       '<button class="close-x" id="mClose">✕</button></div>' +
-      '<div class="modal-b">' + sem.map(j =>
+      '<div class="modal-b">' + (isDemoSchedule() ? '<div class="jd-demo-note" role="note"><b>🧪 جدول أسبوعي تجريبي</b><span>هذه البيانات للمعاينة فقط ولا تمثل رزنامتك الفعلية.</span></div>' : '') + sem.map(j =>
         '<div class="jd-jour"><div class="jd-jh"><b>' + esc(j.jour) + '</b>' +
           '<span class="de-display">' + esc(j.jour_de) + '</span>' +
           '<span class="jd-jn">' + j.cours.length + ' حصص</span></div>' +

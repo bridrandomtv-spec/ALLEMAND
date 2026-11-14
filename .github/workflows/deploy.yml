@@ -1,4 +1,4 @@
-name: CI + Deploy — ALLEMAND
+name: CI — ALLEMAND
 
 on:
   push:
@@ -9,8 +9,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: "pages"
@@ -25,7 +23,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -38,10 +36,10 @@ jobs:
           for f in index.html style.css auth.js bdd.js unite2.js unite3.js unite4.js \
                    unite5.js unite6.js unites3as_a.js unite10.js unite11.js unite12.js \
                    unite13.js unite14.js unite15.js unite16.js app.js modules.js live.js \
-                   classe.js grammaire.js examen.js officiels.js stats.js quiz.js projet.js \
+                   classe.js grammaire.js examen.js officiels.js quiz.js projet.js \
                    reservation.js journee.js prof.js parents.js library.js manifest.json \
                    sw.js README.md 404.html robots.txt sitemap.xml .nojekyll \
-                   ci/check-unites.mjs matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js voix.js tour.js; do
+                   ci/check-unites.mjs ci/check-public-portal.mjs ci/check-masar.mjs ci/check-interactions.mjs ci/check-gamification.mjs prototypes/registry-import-preview.html prototypes/registry-import-core.mjs prototypes/registry-import-core.test.mjs prototypes/registry-reconcile-core.mjs prototypes/registry-reconcile-core.test.mjs prototypes/registry-review-report-core.mjs prototypes/registry-review-report-core.test.mjs prototypes/registry-review-preview.html prototypes/registry-review-preview.test.mjs prototypes/registry-decision-ledger-core.mjs prototypes/registry-decision-ledger-core.test.mjs prototypes/registry-decision-timeline-preview.html prototypes/registry-decision-timeline-preview.test.mjs prototypes/registry-decision-timeline-adapter.mjs prototypes/registry-decision-timeline-adapter.test.mjs prototypes/registry-affiliation-scenarios-core.mjs prototypes/registry-affiliation-scenarios-core.test.mjs dz-interactions.js dz-gamification.js matieres.js guide.js worker/resend-welcome.js memoire.js masar.js corpus.js rag.js malakhiss.js voix.js tour.js public-portal.js; do
               test -f "$f" || { echo "::error::Fichier manquant : $f"; exit 1; }
           done
           for a in assets/corriges.json assets/logo.png assets/prof.jpg \
@@ -56,7 +54,7 @@ jobs:
                    assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json assets/bdd/onboarding.json assets/bdd/config.json assets/bdd/corpus.json assets/bdd/corpus_index.json assets/bdd/malakhiss.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
-          echo "✅ 36 fichiers racine + 22 assets présents"
+          echo "✅ 51 fichiers racine + assets présents"
 
       - name: Valider le YAML et les JSON
         run: |
@@ -136,7 +134,7 @@ jobs:
           for s in sj:
               for k in ('id', 'annee', 'session', 'theme_de', 'theme_ar', 'wilaya',
                         'filiere', 'duree_minutes', 'bareme', 'coefficient',
-                        'parties', 'corrige', 'stats', 'source', 'niveau_cefr'):
+                        'parties', 'corrige', 'source', 'niveau_cefr'):
                   if k not in s or s[k] in (None, ''):
                       fails.append(str(s.get('id', '?')) + ' : ' + k + ' absent')
               if s['id'] in ids:
@@ -169,9 +167,6 @@ jobs:
                   fails.append(s['id'] + ' : corrige trop court')
               if not s['corrige_inclus']:
                   fails.append(s['id'] + ' : corrige_inclus faux')
-              for k in ('candidats', 'moyenne_nationale', 'taux_reussite_pct'):
-                  if k not in s['stats']:
-                      fails.append(s['id'] + ' : stats.' + k + ' absent')
               for q in qi + qii:
                   if q['type'] == 'qcm' and not (0 <= q['a'] < len(q['opts'])):
                       fails.append(s['id'] + '/' + q['id'] + ' : indice qcm hors plage')
@@ -443,7 +438,7 @@ jobs:
           print('✅ Plan de projet LinguaConnect : 13 sections, revenus 36→540 M DA, roadmap')
           print('✅ Quiz interactif : 30 questions, 6 unites, series de 5, feedback immediat')
           print('✅ Moteur IA : 9 cas de reference du professeur + estCopie + texte Lena officiel')
-          print('✅ Statistiques nationales : carte 58 wilayas, 6 onglets, heatmap, BAC')
+          print('✅ Donnees geographiques des wilayas : fichier de reference valide (sans vue de statistiques nationales)')
           print('✅ Devoirs officiels : 10 devoirs · 10 lycees · onglets sujet/solution · notation /20')
           print('✅ Espace parents : ' + str(len(enf)) + ' enfants · '
                 + str(len(pa['prochaines_seances'])) + ' seances a venir · '
@@ -510,7 +505,7 @@ jobs:
           for dv in off:
               for k in ('id', 'numero', 'titre', 'lycee', 'wilaya', 'code_wilaya',
                         'niveau', 'unite', 'trimestre', 'duree_minutes', 'bareme',
-                        'parties', 'stats', 'source'):
+                        'parties', 'source'):
                   if k not in dv:
                       fails.append('devoir ' + str(dv.get('id', '?')) + ' : ' + k + ' absent')
               if dv['id'] in ids:
@@ -571,9 +566,6 @@ jobs:
                       fails.append(dv['id'] + ' : grille sans 0,4/معلومة')
               if 'Ich heiße Omar' not in pIII.get('modele', ''):
                   fails.append(dv['id'] + ' : modele officiel absent')
-              for k in ('vues', 'telechargements', 'reussite_pct'):
-                  if k not in dv['stats']:
-                      fails.append(dv['id'] + ' : stats.' + k + ' absent')
           if len(set(x['code_wilaya'] for x in off if x.get('code_wilaya'))) < 8:
               fails.append('officiels : moins de 8 wilayas')
           if len(set(x['unite'] for x in ds if x.get('unite'))) < 6:
@@ -595,7 +587,7 @@ jobs:
               print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
           PY
 
-      - name: Valider la géographie nationale (wilayas_geo.json)
+      - name: Valider le référentiel géographique des wilayas
         run: |
           python - <<'PY'
           import json, sys
@@ -951,11 +943,20 @@ jobs:
           import json, re, sys
           fails = []
           res = []
-          # ── T1 : workflow deploy.yml (clés requises) ──
+          # ── T1 : vérifier la CI réelle sans prétendre tester un déploiement ──
           dy = open('.github/workflows/deploy.yml', encoding='utf-8').read()
-          t1 = all(k in dy for k in ('actions/checkout@v4', 'actions/deploy-pages@v4',
-                                     'github-pages'))
-          res.append(('T1 Workflow deploy.yml (cles requises)', t1))
+          workflow_lines = dy.splitlines()
+          t1 = (workflow_lines[0] == 'name: CI — ALLEMAND'
+                and 'jobs:' in workflow_lines
+                and '  validate:' in workflow_lines
+                and 'actions/checkout@v5' in dy
+                and 'actions/setup-python@v6' in dy
+                and 'permissions:' in workflow_lines
+                and '  contents: read' in workflow_lines
+                and '  pages: write' not in workflow_lines
+                and '  id-token: write' not in workflow_lines
+                and '  deploy:' not in workflow_lines)
+          res.append(('T1 Workflow : CI seulement, permissions minimales, aucun job deploy', t1))
           # ── T2 : corrigés conformes au fichier du prof ──
           co = json.load(open('assets/corriges.json', encoding='utf-8'))
           t2 = (co.get('II.1_conjugaison') == ['bin', 'hast', 'sind', 'hat']
@@ -1086,14 +1087,14 @@ jobs:
           FICHIERS = ('auth.js', 'bdd.js', 'unite2.js', 'unite3.js', 'unite4.js',
                       'unite5.js', 'unite6.js', 'unites3as_a.js', 'unite10.js',
                       'unite11.js', 'unite12.js', 'unite13.js', 'unite14.js',
-                      'unite15.js', 'unite16.js', 'app.js', 'modules.js', 'live.js',
+                      'unite15.js', 'unite16.js', 'app.js', 'public-portal.js', 'modules.js', 'live.js',
                       'classe.js', 'grammaire.js', 'examen.js', 'officiels.js',
-                      'stats.js', 'quiz.js', 'projet.js', 'reservation.js', 'journee.js',
-                      'prof.js', 'parents.js', 'library.js', 'banque.js', 'malakhiss.js', 'sw.js', 'assets/matching_v2.patch.js')
+                      'quiz.js', 'projet.js', 'reservation.js', 'journee.js', 'masar.js',
+                      'prof.js', 'parents.js', 'library.js', 'banque.js', 'malakhiss.js', 'sw.js', 'dz-interactions.js', 'dz-gamification.js', 'assets/matching_v2.patch.js')
           for f in FICHIERS:
               esprima.parseScript(open(f, encoding='utf-8').read())
               print('✅', f)
-          print('✅ ' + str(len(FICHIERS)) + '/41 fichiers JS valides')
+          print('✅ ' + str(len(FICHIERS)) + '/37 fichiers JS valides')
           PY
 
       - name: Valider la messagerie EduDZ (schéma RLS + client + vue)
@@ -1103,15 +1104,52 @@ jobs:
       - name: Valider l'administration EduDZ (schéma ADM + permissions)
         run: |
           node tests/adm_test.mjs
+      - name: Tester le prototype CSV du registre des lycées (Lot 315)
+        run: |
+          node --test prototypes/registry-import-core.test.mjs
+      - name: Tester le rapprochement versionné du registre (Lot 316-B)
+        run: |
+          node --test prototypes/registry-reconcile-core.test.mjs
+      - name: Tester le rapport administratif de revue des écarts (Lot 316-C)
+        run: |
+          node --test prototypes/registry-review-report-core.test.mjs
+      - name: Vérifier l'isolation de la maquette de revue (Lot 316-D)
+        run: |
+          node --test prototypes/registry-review-preview.test.mjs
+      - name: Tester la traçabilité des décisions (Lot 317)
+        run: |
+          node --test prototypes/registry-decision-ledger-core.test.mjs
+      - name: Tester la chronologie du journal administratif (Lot 318)
+        run: |
+          node --test prototypes/registry-decision-timeline-preview.test.mjs
+      - name: Tester l'adaptateur du journal vers la chronologie (Lot 319)
+        run: |
+          node --test prototypes/registry-decision-timeline-adapter.test.mjs
+      - name: Tester le cycle de vie des affiliations scolaires synthétiques (Lot 328)
+        run: |
+          node --test prototypes/registry-affiliation-scenarios-core.test.mjs
       - name: Vérifier qu'aucune unité n'est vide (exécution Node réelle)
         run: |
           set -e
           node --version
           node ci/check-unites.mjs
 
+      - name: Vérifier le portail public (catalogue et inscription)
+        run: |
+          node ci/check-public-portal.mjs
+      - name: Contrôler le tableau de bord مسارك
+        run: node ci/check-masar.mjs
+      - name: Vérifier recherche globale et centre de notifications
+        run: node ci/check-interactions.mjs
+
+      - name: Vérifier XP et badges fondés sur les activités réelles
+        run: node ci/check-gamification.mjs
+
       - name: Garde d'accès + TEST DE FUITE (access.js / config)
         run: |
           node ci/check-access.mjs
+      - name: Contrôler les accès et la navigation de ملتقى الطلاب
+        run: node ci/check-multaqa.mjs
       - name: Matrice des parcours (élève · prof · parent · expiration · renouvellement · contournements)
         run: |
           node ci/check-parcours.mjs

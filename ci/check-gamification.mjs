@@ -1,0 +1,118 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read=p=>fs.readFileSync(p,'utf8');
+const js=read('dz-gamification.js'),app=read('app.js'),quiz=read('quiz.js'),html=read('index.html'),css=read('style-prototype-dz.css'),sw=read('sw.js');
+assert.match(html,/dz-gamification\.js\?v=5/,'module XP non chargé');
+assert.match(sw,/dz-gamification\.js\?v=5/,'module XP absent du précache');
+assert.match(app,/dz:lesson-complete/,'événement de fin de séance absent');
+assert.match(quiz,/unitResults:Object\.keys\(unitResults\)/,'résultats par unité absents de l’événement quiz');
+assert.match(js,/unitQuiz:\{\}/,'stockage des résultats par unité absent');
+assert.match(js,/detail\.unitResults\)\)detail\.unitResults\.forEach/,'agrégation des résultats par unité absente');
+assert.match(quiz,/dz:quiz-complete/,'événement de fin de quiz absent');
+assert.match(js,/KEY='dz_de_gamification_v1'/,'clé XP absente');
+assert.ok(js.includes("return a?KEY+':'+a:null;"), 'progression XP non isolée par compte');
+assert.match(js,/var thresholds=\[0,100,250,450,700,1000,1400,1900,2500,3200\]/,'échelle de niveaux incohérente');
+assert.match(js,/function level\(xp\)/,'calcul des niveaux absent');
+assert.match(js,/function streak\(s\)/,'calcul de série d’activité absent');
+assert.match(js,/function badgeList\(s\)/,'catalogue de badges absent');
+assert.ok(js.includes('s.lessons.length'), 'compteur de séances accomplies absent');
+assert.ok(js.includes("streak(s)+' <small>أيام"), 'affichage de la série de jours absent');
+assert.equal((js.match(/\['[a-z0-9-]+','/g)||[]).length,20,'le catalogue doit contenir exactement 20 badges');
+assert.match(js,/function award\(id,xp,kind,detail\)/,'récompense événementielle absente');
+assert.match(js,/s\.events\.indexOf\(id\)>=0/,'protection contre les doubles récompenses absente');
+assert.match(js,/showCelebration/,'modal de niveau ou badge absent');
+assert.match(html,/id="homeGamification"/,'zone XP absente de l’accueil élève');
+const homeOrder=['id="welcomeBox"','id="statsHome"','id="homeGamification"','id="subjHome"','id="todayBody"','id="apercuBody"'];
+const homeStart=html.indexOf('<div class="home-main">');
+const homePositions=homeOrder.map(token=>html.indexOf(token,homeStart));
+assert.ok(homeStart>=0 && homePositions.every((p,i)=>p>homeStart && (i===0 || p>homePositions[i-1])), 'ordre DOM de l’accueil élève différent du prototype');
+assert.ok(html.indexOf('home-ai-card')<html.indexOf('<div class="home-main">'), 'carte professeur IA absente de la colonne latérale');
+assert.match(js,/getElementById\('homeGamification'\)/,'XP non intégré à l’accueil élève');
+assert.match(js,/dzGamificationPanelMasar/,'panneau de progression historique absent');
+assert.match(js,/dzGamificationPanelHome/,'panneau XP de l’accueil absent');
+assert.match(css,/\.dz-gamification-panel/,'panneau XP absent');
+assert.match(css,/grid-template-areas:"hero hero" "gamify gamify"/,'zone XP absente de la grille desktop');
+assert.match(css,/grid-template-areas:"hero" "gamify" "next"/,'zone XP absente de la grille mobile');
+assert.doesNotMatch(js,/ahmed|850|leaderboard/i,'données de démonstration interdites dans les récompenses');
+assert.ok(js.includes('function weekMarkup(s)'), 'graphique hebdomadaire d’activité absent');
+assert.ok(js.includes('نشاطك خلال آخر 7 أيام'), 'libellé du graphique hebdomadaire absent');
+assert.ok(js.includes('active.indexOf(key)>=0'), 'activité hebdomadaire non issue des jours réellement enregistrés');
+assert.ok(js.includes('دون تقدير دقائق غير مسجّلة'), 'absence de minutes fictives non documentée');
+assert.match(css,/\.dz-week-activity/,'styles du graphique hebdomadaire absents');
+assert.match(html,/home-ai-card/,'carte professeur IA absente de l’accueil');
+assert.match(html,/data-view="dashboard"/,'vue autonome du tableau de bord étudiant absente');
+assert.match(app,/function renderStudentDashboard\(\)/,'rendu du tableau de bord étudiant autonome absent');
+assert.match(app,/function canSeeStudentDashboard\(\)/,'contrôle de rôle du tableau de bord absent');
+assert.match(app,/!canSeeStudentDashboard\(\)/,'protection de la route tableau de bord absente');
+assert.match(app,/if\(view === 'dashboard'\) renderStudentDashboard\(\)/,'activation du tableau de bord étudiant absente');
+assert.match(css,/\.sd-layout/,'composition principale du tableau de bord absente');
+assert.match(css,/\.sd-quick/,'raccourcis du tableau de bord absents');
+assert.ok(app.includes("assets/bdd/matieres.json"),'catalogue des matières non relié au tableau de bord');
+assert.ok(app.includes("m.statut==='actif'") && app.includes("m.statut==='partiel'"),'états réels des matières non exploités');
+assert.match(css,/\.sd-subject-grid/,'grille des matières du tableau de bord absente');
+assert.match(html,/id="sdSubjects"/,'zone des matières du tableau de bord absente');
+assert.match(app,/data-go="dashboard"/,'accès à la vue du tableau de bord absent');
+assert.match(css,/\.home-ai-card/,'styles de la carte professeur IA absents');
+assert.match(sw,/style-prototype-dz\.css\?v=202/,'version CSS v201 non précachée');
+assert.doesNotMatch(html,/id="studentFocus"|id="studentContinue"/,'ancienne retouche du tableau de bord subsiste dans فضائي الدراسي');
+assert.doesNotMatch(app,/renderStudentFocus|sf-continue-card/,'ancien rendu de tableau de bord subsiste dans فضائي الدراسي');
+
+assert.match(html,/id="sdUnitProgress"/,'graphique réel de progression des unités absent');
+assert.match(html,/id="sdSkills"/,'zone des résultats de quiz par unité absente');
+assert.match(app,/const skillRows=Object\.keys\(unitQuiz\)/,'résultats personnels par unité non rendus');
+assert.match(app,/ليست حكماً نهائياً على إتقان الوحدة/,'limite d’interprétation des scores non indiquée');
+assert.match(css,/\.sd-skill-track/,'styles des résultats de quiz par unité absents');
+assert.match(app,/const unitProgress=units\.map\(u=>/,'calcul individuel de progression des unités absent');
+assert.match(app,/loadSeancesFor\(u\.n\)/,'progression des unités non calculée depuis les séances enregistrées');
+assert.match(app,/unitProgress\.map\(u=>/,'rendu du graphique de progression des unités absent');
+assert.match(css,/\.sd-unit-chart-track/,'styles du graphique de progression des unités absents');
+
+assert.match(html,/id="sdStats"/,'rangée des quatre indicateurs du tableau de bord absente');
+assert.match(app,/let quizCorrect=0,quizTotal=0,quizAttempts=0/,'indicateurs des quiz non calculés depuis les résultats personnels');
+assert.match(app,/stats\.innerHTML=.*الحصص المكتملة/s,'cartes statistiques personnelles non rendues');
+assert.match(css,/\.sd-stats\{display:grid;grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/,'grille des quatre indicateurs absente');
+assert.match(css,/\.sd-stat-correct/,'styles de la carte des réponses correctes absents');
+assert.match(html,/id="sdGoals"/,'zone des objectifs pédagogiques absente');
+assert.match(app,/const focusUnit=unitProgress\.find/,'objectif unité non calculé depuis les séances réelles');
+assert.match(app,/const focusAttempts=focusQuiz\?Number\(focusQuiz\.attempts\)\|\|0:0/,'tentatives de quiz de l’unité non lues');
+assert.match(app,/MEMOIRE\.dues\(\)/,'objectif de révision non relié aux cartes dues');
+assert.match(app,/محطات مقترحة تُحدّث من حصصك/,'origine réelle des objectifs non explicitée');
+assert.match(css,/\.sd-goals-grid/,'grille des objectifs pédagogiques absente');
+assert.match(css,/\.sd-goal-track/,'barre de progression des objectifs absente');
+assert.match(html,/id="sdAchievements"/,'zone des badges du tableau de bord étudiant absente');
+assert.match(app,/DZ_GAMIFICATION\.badges\(g\)/,'badges non reliés au moteur de récompenses réel');
+assert.match(app,/unlockedBadges=badgeData\.filter\(b=>b\[4\]\)/,'état réel des badges non utilisé');
+assert.match(app,/shownBadges\.map\(b=>/,'aperçu des badges non rendu dans le tableau de bord');
+assert.match(app,/data-go="masar">عرض جميع الشارات/,'accès au registre complet des badges absent');
+assert.match(css,/\.sd-achievement-grid/,'styles de la grille des badges absents');
+assert.match(html,/sd-ai-capabilities/,'repères des fonctions du professeur IA absents du tableau de bord');
+assert.match(html,/data-go="prof">فتح مساحة الأستاذ الذكي/,'accès à l’espace professeur IA absent');
+assert.match(css,/\.sd-ai-capabilities/,'styles des fonctions du professeur IA absents');
+
+assert.equal((html.match(/class="sd-quick-card"/g)||[]).length,5,'les cinq accès rapides du prototype ne sont pas présents');
+assert.match(html,/class="sd-quick-card" data-go="msg"/,'accès rapide aux messages absent');
+assert.match(css,/\.sd-quick\{display:grid;grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/,'grille desktop à cinq accès rapides absente');
+assert.match(css,/\.sd-quick\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,'grille mobile des accès rapides absente');
+assert.match(css,/\.sd-achievement\.is-unlocked>span\{width:44px;height:44px/,'icônes des badges ouverts agrandies absentes');
+assert.match(css,/html\[data-theme="dark"\].*sd-achievement\.is-unlocked/s,'style sombre des badges ouverts absent');
+assert.match(css,/\.sd-goal-unit \.sd-goal-icon/,'identité visuelle des objectifs absente');
+console.log('✅ XP par compte, événements vérifiés, badges multicolores et objectifs responsive contrôlés');
+
+// Lot 167 — garde-fous visuels objectifs et badges.
+
+assert.match(css,/\.sd-achievement\.is-unlocked>span\{width:44px;height:44px/,'icônes des badges ouverts agrandies absentes');
+assert.match(css,/html\[data-theme="dark"\].*sd-achievement\.is-unlocked/s,'style sombre des badges ouverts absent');
+assert.match(css,/\.sd-goal-unit \.sd-goal-icon/,'identité visuelle des objectifs absente');
+
+// Lot 175 — identité stable des couleurs de badges.
+assert.match(app,/badgeTone=\{[\s\S]*?'first-lesson':1[\s\S]*?'first-quiz':2[\s\S]*?'score-60':3[\s\S]*?'xp-100':4[\s\S]*?'three-days':5[\s\S]*?'first-unit':6/,'palette sémantique des badges absente');
+assert.match(app,/sd-achievement is-tone-/,'classe stable de catégorie absente');
+assert.match(css,/sd-achievement\.is-unlocked\.is-tone-6>span/,'sixième ton de badge absent');
+assert.doesNotMatch(css,/sd-achievement\.is-unlocked:nth-child/,'palette badge encore dépendante de la position DOM');
+assert.match(css,/html\[data-theme="dark"\].*sd-achievement\.is-unlocked\.is-tone-6/s,'palette des badges incomplète en thème sombre');
+assert.match(css,/sd-achievement\.is-locked\{background:var\(--p2\);border-style:dashed/,'état des badges verrouillés insuffisamment distingué');
+
+
+if(!css.includes('"hero hero"')||!css.includes('"subjects ai"')||!css.includes('"achievements activity"')) fail('composition en zones du tableau de bord étudiant absente');
+if(!css.includes('.sd-layout,')||!css.includes('display:contents!important')) fail('redistribution des zones de la grille absente');
+if(!css.includes('grid-template-areas:"head" "copy" "caps" "action"')) fail('carte IA intégrée à la colonne latérale absente');

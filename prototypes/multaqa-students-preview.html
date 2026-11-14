@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#075b36">
+<title>ملتقى الطلاب — نموذج واجهة تجريبي</title>
+<style>
+:root{font-family:"Cairo","Tajawal",Tahoma,Arial,sans-serif;color:#1c3025;background:#f2f6f3;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,textarea,select{font:inherit}
+a{color:inherit;text-decoration:none}.top{background:#fff;border-bottom:1px solid #dfe9e2;position:sticky;top:0;z-index:2}
+.top-in{max-width:1320px;margin:auto;padding:12px 20px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;min-width:205px}.mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#075b36,#0a8b4a);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:800}
+.brand b{display:block;color:#075b36;font-size:18px}.brand small{color:#728278;font-size:11px}
+.search{flex:1;max-width:520px;border:1px solid #e0e9e3;border-radius:12px;background:#f6f9f7;padding:11px 14px;color:#68786e}
+.nav{display:flex;gap:6px;align-items:center;margin-inline-start:auto}.nav a{padding:10px 12px;border-radius:10px;color:#596b60;font-size:13px;font-weight:700}.nav a.active{background:#e8f3ec;color:#075b36}
+.avatar{width:38px;height:38px;border-radius:50%;background:#d9eee1;color:#075b36;display:grid;place-items:center;font-weight:800}
+main{max-width:1320px;margin:22px auto;padding:0 20px 50px}
+.notice{border:1px solid #e8d39a;background:#fff9e9;color:#745515;border-radius:12px;padding:11px 14px;font-size:12px;line-height:1.7;margin-bottom:18px}
+.heading{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:4px 0 18px}.heading h1{font-size:25px;margin:0;color:#153e2a}.heading p{margin:5px 0 0;color:#718077;font-size:13px}.tag{background:#edf5ef;color:#246341;border-radius:20px;padding:7px 11px;font-size:11px;font-weight:700}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:18px;align-items:start}
+.feed{min-width:0}.side{display:grid;gap:14px}
+.panel,.post{background:#fff;border:1px solid #e0e9e3;border-radius:16px;box-shadow:0 4px 18px rgba(17,64,37,.045)}
+.composer{padding:17px;margin-bottom:15px}.compose-top{display:flex;gap:11px;align-items:center}.compose-top input{flex:1;border:1px solid #e2eae4;border-radius:24px;padding:12px 16px;background:#f7faf8;color:#6e7d73}
+.compose-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #edf1ee;margin-top:15px;padding-top:13px;flex-wrap:wrap}
+.tools{display:flex;gap:7px;flex-wrap:wrap}.tool{border:0;background:#f4f8f5;color:#50695a;border-radius:9px;padding:9px 12px;font-size:12px;font-weight:700}
+.tool.photo{color:#26794b}.tool.video{color:#a34743}.audience{border:1px solid #dfe9e2;background:white;border-radius:9px;padding:8px 10px;color:#52665a;font-size:12px}
+.publish{background:#075b36;color:white;border:0;border-radius:9px;padding:9px 18px;font-size:12px;font-weight:800}
+.filters{display:flex;gap:7px;margin:0 0 14px;flex-wrap:wrap}.filters span{border:1px solid #e0e9e3;background:#fff;border-radius:20px;padding:7px 13px;font-size:12px;color:#64756a}.filters .selected{background:#e8f3ec;color:#075b36;border-color:#c9e0d0;font-weight:800}
+.post{padding:17px;margin-bottom:14px}.post-head{display:flex;align-items:center;gap:10px}.person{flex:1}.person b{display:block;font-size:13px;color:#203c2b}.person small{color:#849188;font-size:11px}.verified{color:#16814a;font-size:10px;margin-inline-start:5px}.more{color:#7b8a80;letter-spacing:2px}
+.post-text{font-size:14px;line-height:1.9;color:#304438;margin:15px 0}.post-image{border-radius:13px;overflow:hidden;background:#e9f1eb;min-height:210px;display:grid;place-items:center;text-align:center;color:#547360;padding:20px}
+.photo-art{width:100%;max-height:310px;object-fit:cover;border-radius:13px;display:block}
+.media-placeholder{font-size:13px;line-height:1.8}.media-placeholder strong{display:block;font-size:28px;margin-bottom:4px;color:#34724c}
+.post-meta{display:flex;justify-content:space-between;color:#849188;font-size:11px;padding:10px 2px;border-bottom:1px solid #edf1ee}
+.post-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding-top:10px}.post-actions span{text-align:center;padding:8px 4px;border-radius:8px;color:#65766b;font-size:12px;font-weight:700;background:#fafcfa}
+.side .panel{padding:16px}.side h2{font-size:14px;margin:0 0 12px;color:#244631}.profile{display:flex;align-items:center;gap:10px}.profile b{font-size:13px}.profile small{display:block;color:#829087;font-size:11px;margin-top:3px}
+.side-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #eff3f0}.side-row:first-of-type{border-top:0}.mini{width:36px;height:36px;border-radius:11px;background:#edf5ef;display:grid;place-items:center;color:#287047;font-weight:800}.side-row .info{flex:1;min-width:0}.side-row b{font-size:12px;display:block}.side-row small{font-size:10px;color:#87948b}
+.invite{border:1px solid #cfe3d5;background:#f2f8f4;color:#17623b;border-radius:8px;padding:7px 9px;font-size:11px;font-weight:800;white-space:nowrap}
+.group-icon{background:#f8f1e5;color:#946c25}.hint{font-size:11px;color:#7a897f;line-height:1.8;margin:8px 0 0}
+.footer{font-size:11px;color:#8b978f;text-align:center;margin-top:24px}
+@media(max-width:980px){.layout{grid-template-columns:minmax(0,1fr) 245px}.brand{min-width:auto}.search{max-width:none}.nav a{padding:9px 8px}}
+@media(max-width:760px){.top-in{flex-wrap:wrap;padding:10px 14px;gap:9px}.brand{flex:1}.search{order:3;flex-basis:100%;max-width:none}.nav{order:2;margin:0}.nav a{font-size:11px;padding:8px}.nav a:nth-child(2){display:none}main{padding:0 12px 35px;margin-top:14px}.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.heading h1{font-size:21px}.heading p{font-size:11px}.post,.composer{padding:13px}}
+@media(max-width:480px){.side{grid-template-columns:1fr}.nav a{padding:7px 8px}.brand b{font-size:16px}.heading{align-items:start;flex-direction:column}.tag{align-self:start}.post-image{min-height:170px}}
+
+/* Lot 394 — barre d'actions, menus et espace personnel */
+.header-actions{display:flex;align-items:center;gap:7px;margin-inline-start:auto}
+.head-action{position:relative}
+.icon-btn{width:40px;height:40px;border:1px solid #e1eae4;border-radius:12px;background:#fff;color:#345a42;display:grid;place-items:center;cursor:pointer;position:relative;font-size:19px}
+.icon-btn:hover,.icon-btn[aria-expanded="true"]{background:#edf6f0;border-color:#c9e0d0}
+.icon-btn .count{position:absolute;top:-5px;inset-inline-start:-5px;min-width:18px;height:18px;border-radius:20px;background:#d52b3f;color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;border:2px solid #fff;padding:0 4px}
+.create-btn{border:0;background:#075b36;color:#fff;border-radius:11px;padding:10px 13px;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:7px}
+.avatar-btn{border:2px solid #d6e9dc;padding:0;overflow:hidden;border-radius:50%;width:42px;height:42px;cursor:pointer;background:#d9eee1;color:#075b36;font-weight:900;font-size:17px}
+.menu-pop{position:absolute;top:calc(100% + 10px);inset-inline-end:0;width:290px;background:#fff;border:1px solid #e0e9e3;border-radius:15px;box-shadow:0 14px 38px rgba(17,64,37,.16);padding:12px;z-index:8;display:none}
+.menu-pop.open{display:block}.menu-title{font-size:14px;font-weight:900;color:#244631;padding:4px 6px 10px;border-bottom:1px solid #edf1ee;margin-bottom:5px}
+.menu-item{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:9px;font-size:12px;color:#42584a}
+.menu-item:hover{background:#f3f8f4}.menu-item .menu-symbol{width:30px;height:30px;display:grid;place-items:center;background:#eef5f0;border-radius:9px}
+.menu-item b{display:block}.menu-item small{display:block;color:#849188;font-size:10px;margin-top:2px}
+.menu-empty{font-size:11px;color:#7c8a81;line-height:1.8;padding:10px 6px}
+.view-switch{display:flex;gap:8px;align-items:center;margin-bottom:14px}
+.back-feed{border:1px solid #dce8df;background:#fff;color:#24553a;border-radius:10px;padding:9px 13px;font-size:12px;font-weight:800;cursor:pointer}
+.profile-dashboard{display:none}.profile-dashboard.active{display:block}
+.profile-cover{height:190px;border-radius:18px 18px 0 0;background:linear-gradient(125deg,#064b2d,#0b8950 58%,#d9eee1);position:relative;overflow:hidden}
+.profile-cover:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.24),transparent 30%),linear-gradient(25deg,transparent 55%,rgba(255,255,255,.10) 55% 56%,transparent 56%)}
+.cover-label{position:absolute;bottom:15px;inset-inline-start:18px;color:#fff;font-size:11px;z-index:1}
+.profile-main{background:#fff;border:1px solid #e0e9e3;border-top:0;border-radius:0 0 17px 17px;padding:0 22px 17px;box-shadow:0 4px 18px rgba(17,64,37,.045)}
+.profile-identity{display:flex;align-items:end;gap:15px;margin-top:-43px;position:relative;z-index:1;flex-wrap:wrap}
+.profile-photo{width:108px;height:108px;border-radius:50%;border:5px solid #fff;background:#d9eee1;color:#075b36;display:grid;place-items:center;font-size:36px;font-weight:900;box-shadow:0 2px 8px #1232}
+.profile-names{flex:1;padding-bottom:8px;min-width:180px}.profile-names h2{margin:0;color:#193e2a;font-size:22px}.profile-names p{margin:5px 0 0;color:#7b897f;font-size:12px}
+.profile-controls{display:flex;gap:8px;padding-bottom:8px;flex-wrap:wrap}
+.profile-btn{border:1px solid #dce8df;background:#f7faf8;color:#345b42;border-radius:9px;padding:9px 12px;font-size:12px;font-weight:800;cursor:pointer}
+.profile-btn.primary{background:#075b36;color:#fff;border-color:#075b36}
+.profile-bio{font-size:13px;color:#506458;line-height:1.8;margin:13px 0}
+.profile-stats{display:flex;gap:22px;flex-wrap:wrap;border-top:1px solid #edf1ee;padding-top:13px;color:#718077;font-size:12px}
+.profile-stats b{color:#244631}
+.profile-tabs{display:flex;gap:5px;overflow:auto;margin:14px 0;background:#fff;border:1px solid #e0e9e3;border-radius:13px;padding:6px}
+.profile-tabs button{white-space:nowrap;border:0;background:transparent;color:#6c7b71;padding:9px 13px;border-radius:9px;font-size:12px;cursor:pointer}
+.profile-tabs button.active{background:#e8f3ec;color:#075b36;font-weight:900}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.profile-card{background:#fff;border:1px solid #e0e9e3;border-radius:15px;padding:16px}
+.profile-card h3{font-size:14px;color:#244631;margin:0 0 10px}
+.profile-card p{font-size:12px;line-height:1.9;color:#68796e;margin:0}
+.profile-actions-list{display:grid;gap:7px}.profile-actions-list button{text-align:right;border:1px solid #e8eee9;background:#f9fbf9;border-radius:9px;padding:10px;color:#52675a;font-size:12px;cursor:pointer}
+.edit-panel{display:none;background:#fff;border:1px solid #dce8df;border-radius:15px;padding:17px;margin:14px 0;box-shadow:0 4px 18px rgba(17,64,37,.045)}
+.edit-panel.open{display:block}.edit-panel h3{margin:0 0 12px;color:#244631;font-size:15px}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.edit-grid label{font-size:11px;color:#68796e;display:grid;gap:5px}.edit-grid input,.edit-grid textarea{border:1px solid #dce8df;border-radius:9px;padding:10px;color:#314b39;background:#fbfdfb;width:100%;font-size:12px}
+.edit-grid textarea{min-height:70px;grid-column:1/-1}
+.edit-actions{display:flex;gap:8px;margin-top:12px}
+@media(max-width:760px){.header-actions{gap:5px}.icon-btn{width:36px;height:36px}.create-btn{padding:9px 10px;font-size:11px}.menu-pop{position:fixed;top:116px;inset-inline:12px;width:auto}.profile-cover{height:145px}.profile-main{padding:0 14px 14px}.profile-photo{width:88px;height:88px}.profile-names h2{font-size:18px}.profile-controls{width:100%;padding-bottom:12px}.profile-grid{grid-template-columns:1fr}}
+@media(max-width:460px){.create-btn .create-label{display:none}.create-btn{width:36px;height:36px;justify-content:center;padding:0}.edit-grid{grid-template-columns:1fr}.edit-grid textarea{grid-column:auto}.profile-identity{gap:9px}}
+
+
+.profile-tab-pane{display:none}.profile-tab-pane.active{display:block}
+.album-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.album-tile{min-height:115px;border-radius:12px;background:linear-gradient(145deg,#e7f2e9,#c8e2d0);display:grid;place-items:center;text-align:center;color:#346447;padding:12px;font-size:12px;font-weight:800}
+.album-tile:nth-child(2){background:linear-gradient(145deg,#f6eddb,#e8d9b5)}.album-tile:nth-child(3){background:linear-gradient(145deg,#e5edf6,#cbdced)}
+.detail-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.detail-item{background:#f7faf8;border:1px solid #e8eee9;border-radius:10px;padding:11px;font-size:12px;color:#5c7163}
+.detail-item b{display:block;color:#2e503a;margin-bottom:4px}
+.privacy-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #edf1ee;font-size:12px;color:#52675a}
+.privacy-row:last-child{border-bottom:0}.privacy-row select{border:1px solid #dce8df;border-radius:8px;padding:7px;background:#fff;color:#365642;font-size:11px}
+@media(max-width:600px){.album-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-list{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+ <div class="brand"><div class="mark">ط</div><div><b>ملتقى الطلاب</b><small>فضاء طلابي وطني</small></div></div>
+ <div class="search">ابحث عن منشور أو طالب أو مجموعة…</div>
+ <nav class="nav" aria-label="التنقل الاجتماعي"><a class="active" href="#feed" data-view-link="feed">آخر الأخبار</a><a href="#discover" data-view-link="feed">اكتشف الطلاب</a><a href="#friends" data-view-link="feed">زملائي</a><a href="#groups" data-view-link="feed">المجموعات</a></nav>
+ <div class="header-actions">
+  <button class="create-btn" id="headerCreate" type="button" title="إنشاء منشور"><span>＋</span><span class="create-label">نشر</span></button>
+  <div class="head-action"><button class="icon-btn" id="requestsToggle" type="button" aria-label="طلبات الدعوة" aria-expanded="false">👥<span class="count">3</span></button><div class="menu-pop" id="requestsMenu"><div class="menu-title">طلبات الزملاء <span class="tag">3 جديدة</span></div><div class="menu-item"><span class="avatar">س</span><span><b>سارة · مثال تجريبي</b><small>ترغب في إضافتك إلى زملائها</small></span></div><div class="menu-item"><span class="avatar">ع</span><span><b>عمر · مثال تجريبي</b><small>طالب من ولاية أخرى</small></span></div><div class="menu-item"><span class="avatar">ن</span><span><b>نور · مثال تجريبي</b><small>طلب إضافة جديد</small></span></div><div class="menu-item"><b>عرض جميع الطلبات ←</b></div><p class="menu-empty">أمثلة وهمية؛ القبول أو الرفض غير متصل بخدمة فعلية.</p></div></div>
+  <div class="head-action"><button class="icon-btn" id="notificationsToggle" type="button" aria-label="الإشعارات" aria-expanded="false">🔔<span class="count">5</span></button><div class="menu-pop" id="notificationsMenu"><div class="menu-title">الإشعارات</div><div class="menu-item"><span class="menu-symbol">♡</span><span><b>تفاعل جديد على منشورك</b><small>منذ 10 دقائق · مثال</small></span></div><div class="menu-item"><span class="menu-symbol">▤</span><span><b>تعليق جديد على منشورك</b><small>منذ 25 دقيقة · مثال</small></span></div><div class="menu-item"><span class="menu-symbol">♧</span><span><b>دعوة للانضمام إلى مجموعة</b><small>منذ ساعة · مثال</small></span></div><div class="menu-item"><b>عرض كل الإشعارات ←</b></div><p class="menu-empty">الإشعارات الحقيقية ستخضع لإعدادات الخصوصية والتنبيهات.</p></div></div>
+  <div class="head-action"><button class="avatar-btn" id="profileToggle" type="button" aria-label="فتح ملفي الشخصي" title="ملفي الشخصي">م</button></div>
+ </div>
+</div></header>
+<main>
+ <div class="notice"><strong>معاينة تصميم فقط — كل الأسماء والمنشورات والصور هنا أمثلة خيالية.</strong> لا يوجد تسجيل دخول أو رفع ملفات أو اتصال بالشبكة أو قاعدة بيانات. أزرار النشر والدعوة للعرض البصري فقط.</div>
+ <div class="heading"><div><h1>مساحة الطلاب الجزائرية</h1><p>شارك أفكارك، اكتشف زملاءك، وتواصل مع طلاب من مختلف الولايات.</p></div><span class="tag">تجربة واجهة · RTL</span></div>
+ <section class="profile-dashboard" id="profileDashboard">
+  <div class="view-switch"><button class="back-feed" id="backToFeed" type="button">→ العودة إلى آخر الأخبار</button><span class="tag">مساحتي الشخصية</span></div>
+  <div class="profile-cover"><span class="cover-label">صورة الغلاف · نموذج تجريبي</span></div>
+  <section class="profile-main">
+   <div class="profile-identity"><div class="profile-photo">م</div><div class="profile-names"><h2 id="profileName">محمد الطالب</h2><p>طالب · الثانوية الافتراضية الجزائرية · بيانات تجريبية</p></div>
+    <div class="profile-controls"><button class="profile-btn primary" id="editProfileBtn" type="button">✎ تعديل الملف الشخصي</button><div class="head-action"><button class="profile-btn" id="profileMoreToggle" type="button" aria-expanded="false">•••</button><div class="menu-pop" id="profileMoreMenu"><div class="menu-title">المزيد من الخيارات</div><div class="menu-item">⚙️ إعدادات الحساب والخصوصية</div><div class="menu-item">🔒 من يمكنه رؤية ملفي؟</div><div class="menu-item">📌 العناصر المحفوظة</div><div class="menu-item">🕘 سجل النشاطات</div><div class="menu-item">📷 إدارة الصور والفيديوهات</div><div class="menu-item">🛡️ الأمان والحظر والإبلاغ</div><div class="menu-item">❔ المساعدة والدعم</div></div></div></div>
+   </div>
+   <p class="profile-bio" id="profileBio">أحب التعلم ومشاركة المعرفة مع زملائي في مختلف ولايات الجزائر. 🌿</p>
+   <div class="profile-stats"><span><b>12</b> منشوراً</span><span><b>48</b> زميلاً</span><span><b>6</b> مجموعات</span><span><b>3</b> ألبومات</span></div>
+  </section>
+  <section class="edit-panel" id="editPanel"><h3>تعديل الملف الشخصي</h3><div class="edit-grid"><label>الاسم الظاهر<input id="editName" value="محمد الطالب"></label><label>الولاية (اختياري)<input id="editWilaya" value="غير محددة"></label><label>المستوى الدراسي (اختياري)<input id="editLevel" value="2AS"></label><label>الشعبة (اختياري)<input id="editStream" value="غير محددة"></label><label>الاهتمامات<input id="editInterests" value="الرياضيات، المطالعة، البرمجة"></label><label>الصورة الشخصية<input value="تغيير الصورة — غير متاح في النموذج" disabled></label><label>نبذة عني<textarea id="editBio">أحب التعلم ومشاركة المعرفة مع زملائي في مختلف ولايات الجزائر.</textarea></label></div><div class="edit-actions"><button class="profile-btn primary" id="saveProfile" type="button">حفظ المعاينة</button><button class="profile-btn" id="cancelEdit" type="button">إلغاء</button></div><p class="hint">التغييرات هنا محلية للعرض فقط ولا تُحفظ في الحساب أو قاعدة البيانات.</p></section>
+  <div class="profile-tabs" id="profileTabs"><button class="active" type="button" data-tab="posts">المنشورات</button><button type="button" data-tab="about">حول</button><button type="button" data-tab="media">الصور والفيديوهات</button><button type="button" data-tab="friends">زملائي</button><button type="button" data-tab="groups">المجموعات</button><button type="button" data-tab="saved">العناصر المحفوظة</button><button type="button" data-tab="privacy">الخصوصية</button></div>
+  <div id="profileContent">
+   <section class="profile-tab-pane active" data-pane="posts"><div class="profile-grid"><section class="profile-card"><h3>منشوراتي</h3><p>ستظهر هنا منشورات الطالب، مع خيارات تعديلها أو حذفها وتغيير جمهورها.</p><div class="profile-mini-post">🌐 جميع الطلاب · مثال تجريبي<br>أشارك اليوم ملخصاً مفيداً في مادة الرياضيات.</div></section><section class="profile-card"><h3>نشاطي الأخير</h3><p>التعليقات والتفاعلات والمجموعات والعناصر المحفوظة، مع إمكانية إدارة سجل النشاط.</p></section></div></section>
+   <section class="profile-tab-pane" data-pane="about"><section class="profile-card"><h3>معلومات أختار مشاركتها</h3><div class="detail-list"><div class="detail-item"><b>المستوى الدراسي</b><span id="aboutLevel">2AS · اختياري</span></div><div class="detail-item"><b>الولاية</b><span id="aboutWilaya">غير محددة</span></div><div class="detail-item"><b>الشعبة</b><span id="aboutStream">غير محددة</span></div><div class="detail-item"><b>الاهتمامات</b><span id="aboutInterests">الرياضيات، المطالعة، البرمجة</span></div><div class="detail-item"><b>المدرسة</b><span>لا تُعرض إلا وفق سياسة تحقق وموافقة منفصلة</span></div><div class="detail-item"><b>معلومات الاتصال</b><span>البريد والهاتف ورقم التسجيل غير معروضة</span></div></div></section></section>
+   <section class="profile-tab-pane" data-pane="media"><section class="profile-card"><h3>ألبومات الصور والفيديوهات</h3><div class="album-grid"><div class="album-tile">▧<br>لحظات دراسية<br><small>ألبوم تجريبي</small></div><div class="album-tile">📚<br>ملخصاتي<br><small>ألبوم تجريبي</small></div><div class="album-tile">▷<br>فيديوهاتي<br><small>ألبوم تجريبي</small></div></div><p class="hint">في النسخة الفعلية يستطيع الطالب إنشاء ألبوم، اختيار جمهوره، وإدارة الصور أو الفيديوهات أو حذفها.</p></section></section>
+   <section class="profile-tab-pane" data-pane="friends"><section class="profile-card"><h3>زملائي وطلبات الإضافة</h3><div class="side-row"><div class="mini">س</div><div class="info"><b>سارة · مثال</b><small>طلب إضافة وارد</small></div><div class="request-actions"><button class="accept" type="button" disabled>قبول</button><button type="button" disabled>رفض</button></div></div><div class="side-row"><div class="mini">ع</div><div class="info"><b>عمر · مثال</b><small>زميل · مثال تجريبي</small></div><button class="invite" type="button" disabled>إزالة</button></div><p class="hint">قبول الطلب ينشئ علاقة زمالة فقط. لا تُفتح محادثة ماسنجر تلقائياً.</p></section></section>
+   <section class="profile-tab-pane" data-pane="groups"><section class="profile-card"><h3>مجموعاتي الدراسية</h3><div class="side-row"><div class="mini group-icon">∑</div><div class="info"><b>مراجعة الرياضيات</b><small>مجموعة تعليمية · مثال</small></div></div><div class="side-row"><div class="mini group-icon">ع</div><div class="info"><b>اللغة العربية</b><small>مجموعة تعليمية · مثال</small></div></div></section></section>
+   <section class="profile-tab-pane" data-pane="saved"><section class="profile-card"><h3>العناصر المحفوظة</h3><p>المنشورات والموارد التي يحفظها الطالب للرجوع إليها لاحقاً. هذه المساحة خاصة به افتراضياً.</p></section></section>
+   <section class="profile-tab-pane" data-pane="privacy"><section class="profile-card"><h3>الخصوصية والتحكم في الظهور</h3><div class="privacy-row"><span>من يمكنه رؤية منشوراتي الجديدة؟</span><select><option>جميع الطلاب</option><option>زملائي فقط</option><option>أنا فقط</option></select></div><div class="privacy-row"><span>إظهار ملفي في اكتشف الطلاب</span><select><option>نعم، إذا كان الحساب مؤهلاً</option><option>لا</option></select></div><div class="privacy-row"><span>من يمكنه إرسال طلب زمالة؟</span><select><option>جميع الطلاب</option><option>لا أحد</option></select></div><div class="privacy-row"><span>إظهار المستوى والولاية</span><select><option>إظهار المعلومات التي أختارها</option><option>إخفاؤها</option></select></div><div class="privacy-row"><span>السماح بالإشارة إليّ في المنشورات</span><select><option>بعد مراجعتي</option><option>لا</option></select></div><p class="hint">هذه اختيارات تصميمية فقط؛ لا تحفظ أي إعداد ولا تتجاوز قواعد حماية القاصرين أو التحقق المدرسي.</p></section></section>
+  </div>
+ </section>
+ <div class="layout" id="feedLayout">
+  <section class="feed" id="feed">
+   <section class="panel composer" aria-label="إنشاء منشور تجريبي">
+    <div class="compose-top"><div class="avatar">م</div><input aria-label="محتوى المنشور" placeholder="بماذا تفكر اليوم؟ شارك فكرة أو سؤالاً مع الطلاب…"></div>
+    <div class="compose-tools"><div class="tools"><button class="tool photo" type="button" disabled>▧ صورة</button><button class="tool video" type="button" disabled>▷ فيديو</button><button class="tool" type="button" disabled>▤ ملف</button></div><div class="tools"><select class="audience" aria-label="جمهور المنشور" disabled><option>🌐 جميع الطلاب</option><option>زملائي</option><option>أنا فقط</option></select><button class="publish" type="button" disabled>نشر</button></div></div>
+    <p class="hint">يمكن أن يكون المنشور نصاً أو صورة أو فيديو. قبل النشر الحقيقي ستظهر معاينة للملف، وحجمه، ونوع الجمهور الذي اخترته.</p>
+   </section>
+   <div class="filters" aria-label="تصفية المنشورات"><span class="selected">الكل</span><span>زملائي</span><span>مجموعاتي</span><span>الصور والفيديوهات</span></div>
+   <article class="post">
+    <div class="post-head"><div class="avatar">ي</div><div class="person"><b>ياسمين · مثال تجريبي <span class="verified">✓ طالب موثّق (مثال)</span></b><small>ثانوية افتراضية · منذ 20 دقيقة · 🌐 جميع الطلاب</small></div><span class="more">•••</span></div>
+    <p class="post-text">السلام عليكم 👋 هل يوجد طلاب مهتمون بمراجعة الرياضيات والتحضير للبكالوريا؟ أقترح أن ننشئ مجموعة للمراجعة وتبادل التمارين المفيدة. مرحباً بكل الزملاء من جميع الولايات!</p>
+    <div class="post-image"><div class="media-placeholder"><strong>📚</strong>مساحة معاينة لصورة المنشور<br>ستظهر الصورة الحقيقية هنا بعد رفعها ومراجعة نوع الملف</div></div>
+    <div class="post-meta"><span>♡ 24 تفاعلاً · 8 تعليقات</span><span>12 مشاركة</span></div>
+    <div class="post-actions"><span>♡ أعجبني</span><span>◯ تعليق</span><span>↗ مشاركة</span></div>
+   </article>
+   <article class="post">
+    <div class="post-head"><div class="avatar" style="background:#f7eadc;color:#98632d">ع</div><div class="person"><b>عبد الرحمن · مثال تجريبي</b><small>طالب 2AS · منذ ساعة · 🌐 جميع الطلاب</small></div><span class="more">•••</span></div>
+    <p class="post-text">هذا مثال على منشور فيديو تعليمي قصير. في النسخة الفعلية يمكن للطالب إضافة فيديو، مع إظهار صورة مصغرة ومدة المقطع، ثم تشغيله داخل المنصة وفق ضوابط الأمان.</p>
+    <div class="post-image"><div class="media-placeholder"><strong>▷</strong>معاينة فيديو تجريبية<br>لا يوجد ملف فيديو مرفق في هذا النموذج</div></div>
+    <div class="post-meta"><span>♡ 9 تفاعلات · 3 تعليقات</span><span>2 مشاركة</span></div>
+    <div class="post-actions"><span>♡ أعجبني</span><span>◯ تعليق</span><span>↗ مشاركة</span></div>
+   </article>
+  </section>
+  <aside class="side">
+   <section class="panel"><h2>ملفي الشخصي</h2><div class="profile"><div class="avatar">م</div><div><b>طالب تجريبي</b><small>الملف الشخصي · بيانات وهمية</small></div></div><p class="hint">الاسم الظاهر اختياري. لا يظهر رقم التسجيل أو البريد أو الهاتف أو وثائق التحقق للطلاب.</p></section>
+   <section class="panel" id="discover"><h2>اكتشف الطلاب</h2>
+    <div class="side-row"><div class="mini">س</div><div class="info"><b>سارة · مثال</b><small>3AS · ولاية تجريبية</small></div><button class="invite" type="button" disabled>دعوة</button></div>
+    <div class="side-row"><div class="mini">أ</div><div class="info"><b>أمين · مثال</b><small>2AS · ولاية تجريبية</small></div><button class="invite" type="button" disabled>دعوة</button></div>
+    <p class="hint">الدعوة هنا طلب إضافة إلى «زملائي»، وليست دعوة إلى محادثة خاصة. الاكتشاف الوطني يتطلب موافقة الطالب على الظهور.</p>
+   </section>
+   <section class="panel" id="friends"><h2>زملائي</h2><div class="side-row"><div class="mini">✓</div><div class="info"><b>طلبات الصداقة</b><small>الواردة · المرسلة · زملائي</small></div></div><p class="hint">قبول الدعوة ينشئ علاقة اجتماعية فقط؛ لا يفتح محادثة ماسنجر تلقائياً.</p></section>
+   <section class="panel" id="groups"><h2>المجموعات الدراسية</h2>
+    <div class="side-row"><div class="mini group-icon">∑</div><div class="info"><b>مراجعة الرياضيات</b><small>مجموعة تعليمية · مثال</small></div></div>
+    <div class="side-row"><div class="mini group-icon">ع</div><div class="info"><b>اللغة العربية</b><small>مجموعة تعليمية · مثال</small></div></div>
+    <p class="hint">المجموعة الدراسية مساحة منشورات ونقاشات؛ وهي منفصلة عن مجموعة محادثة ماسنجر.</p>
+   </section>
+  </aside>
+ </div>
+ <div class="footer">نموذج HTML/CSS مستقل · لا يقرأ بيانات الطلاب ولا يرسل أو يخزن أي شيء · لا يغيّر صفحات المنصة الحالية</div>
+</main>
+
+<script>
+(()=>{
+ const $=id=>document.getElementById(id);
+ const menus=[["requestsToggle","requestsMenu"],["notificationsToggle","notificationsMenu"],["profileMoreToggle","profileMoreMenu"]];
+ function closeMenus(except){menus.forEach(([b,m])=>{if(m!==except){$(m).classList.remove("open");$(b).setAttribute("aria-expanded","false")}})}
+ menus.forEach(([bid,mid])=>$(bid).addEventListener("click",e=>{e.stopPropagation();const menu=$(mid),open=!menu.classList.contains("open");closeMenus(mid);menu.classList.toggle("open",open);$(bid).setAttribute("aria-expanded",String(open))}));
+ document.addEventListener("click",e=>{if(!e.target.closest(".head-action"))closeMenus(null)});
+ function showProfile(){closeMenus(null);$("feedLayout").style.display="none";document.querySelector(".heading").style.display="none";$("profileDashboard").classList.add("active");window.scrollTo({top:0,behavior:"smooth"})}
+ function showFeed(){ $("profileDashboard").classList.remove("active");$("feedLayout").style.display="";document.querySelector(".heading").style.display="";$("editPanel").classList.remove("open");window.scrollTo({top:0,behavior:"smooth"})}
+ $("profileToggle").addEventListener("click",showProfile);$("backToFeed").addEventListener("click",showFeed);
+ $("editProfileBtn").addEventListener("click",()=>$("editPanel").classList.toggle("open"));
+ $("cancelEdit").addEventListener("click",()=>$("editPanel").classList.remove("open"));
+ $("saveProfile").addEventListener("click",()=>{const n=$("editName").value.trim();if(n)$("profileName").textContent=n;$("profileBio").textContent=$("editBio").value;$("editPanel").classList.remove("open")});
+ $("headerCreate").addEventListener("click",()=>{showFeed();$("feed").scrollIntoView({behavior:"smooth"});document.querySelector(".compose-top input").focus()});
+ document.querySelectorAll("#profileTabs button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("#profileTabs button").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".profile-tab-pane").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelector('[data-pane="'+b.dataset.tab+'"]').classList.add("active")}));
+ $("saveProfile").addEventListener("click",()=>{ $("aboutLevel").textContent=$("editLevel").value+" · اختياري";$("aboutWilaya").textContent=$("editWilaya").value;$("aboutStream").textContent=$("editStream").value;$("aboutInterests").textContent=$("editInterests").value;});
+ document.querySelectorAll(".profile-actions-list button").forEach((b,i)=>b.addEventListener("click",()=>{if(i===0)$("editPanel").classList.add("open");if(i===3)document.querySelector('[data-tab="privacy"]').click()}));
+})();
+</script>
+</body>
+</html>

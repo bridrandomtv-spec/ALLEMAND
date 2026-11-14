@@ -13,6 +13,8 @@ const sql5 = readFileSync('supabase/adm5_schema.sql', 'utf8');
 const bill = readFileSync('supabase/billing.sql', 'utf8');
 const appjs = readFileSync('app.js', 'utf8');
 const css = readFileSync('style.css', 'utf8');
+const classRef = JSON.parse(readFileSync('assets/bdd/classe.json', 'utf8'));
+const wilayaRef = JSON.parse(readFileSync('assets/bdd/wilaya.json', 'utf8'));
 const bibjs = readFileSync('biblio.js', 'utf8');
 let fails = 0;
 const t = (cond, label) => { console.log((cond ? '  ✅ ' : '  ❌ ') + label); if (!cond) fails++; };
@@ -110,6 +112,8 @@ t(['admCloseMonth','admMarkRapproche','admClosures'].every(m => sbjs.includes('f
 t(adjs.includes('data-adm5-rap') && adjs.includes('data-adm5-close'), 'F6 : UI pointer + clôturer');
 t(sbjs.includes('pont dz:view post-sbready'), 'UI-1 : re-rendu des cartes ADM quand le client cloud devient prêt');
 t(appjs.includes('ENG-1 : la vue english se peint aussi à la navigation'), 'ENG-1 : rendu de #english à la navigation, plus de Chargement permanent');
+t(appjs.includes("t[0] !== 'admin' || isAdmin()"), 'NAV-ADM-1 : lien administration réservé au rôle admin dans la navigation');
+t(appjs.includes("s && s.role === 'admin'") && appjs.includes("localStorage.setItem('dz_de_session_v1'") && readFileSync('auth.js', 'utf8').includes("const K_SESSION = 'dz_de_session_v1'"), 'NAV-ADM-2 : le rôle cloud admin est persisté dans la session lue par AUTH.session()');
 t(adjs.includes('UI-2 : un clic sur un onglet de la phase 9 ne masque QUE les cartes'), 'UI-2 : onglets phase 9 ne vident plus la section Opérations');
 t(!sbjs.includes('admin_permissions(permission)'), 'PERMS-1 : plus d embed impossible wilaya_assignments→admin_permissions (400 PostgREST)');
 t(sbjs.includes('PERMS-1'), 'PERMS-1 : jointure permissions en deux requêtes client');
@@ -120,14 +124,51 @@ t(sql3.includes('public.agreements.cle = agreement_publish.cle'), 'ADM-3d : colo
 t(sql3.includes('agreement_accept.nom_representant'), 'ADM-3d : paramètres qualifiés dans accept (42702 latent)');
 t(sql3.includes('agreement_accept_for.nom_representant'), 'ADM-3d : paramètres qualifiés dans accept_for (42702 latent)');
 t(sbjs.includes('MAX_OCTETS_PJ'), 'MSG-LIM : plafond client 5 Mo dans upload()');
-t(appjs.includes('phase 13 (OPS-1)'), 'OPS-1 : bouton signaler un bug + ticket pré-rempli');
+t(!appjs.includes('opsBugBtn') && !appjs.includes('phase 13 (OPS-1)'), 'OPS-1 : bouton flottant de signalement désactivé pour ne plus masquer le contenu');
 t(sbjs.includes('function admCouverture'), 'GARDES-ORG1 : facade expose admCouverture (rpc admin_couverture_wilayas)');
 t(adjs.includes('rendreCouvertureORG1') && !adjs.includes('.org1{'), 'GARDES-ORG1 : carte ORG-1 en JS seul dans admin.js (aucun CSS collé)');
+t(adjs.includes("if(!u || !p || p.role !== 'admin')") && adjs.indexOf("if(!u || !p || p.role !== 'admin')") < adjs.indexOf('window.SB.listProfiles()'), 'NAV-ADM-3 : le tableau admin principal refuse un profil non-admin avant toute lecture des listes');
 t(css.includes('.org1-badge'), 'GARDES-ORG1 : styles .org1-badge présents dans style.css');
 t(adjs.includes('📎 reçu'), 'PJ-PAY-1 : accès reçu présent dans la file de validation (libellé gardé)');
 t(!adjs.includes('/object/public/'), 'RECUFIX-1 : admin.js ne construit jamais d URL publique /object/public/');
 t(!sbjs.includes('getPublicUrl') && !adjs.includes('getPublicUrl'), 'RECUFIX-1 : lectures signées seulement (aucun getPublicUrl)');
 t(!adjs.includes('Sponsoren') && !adjs.includes('veröffentlichen') && !adjs.includes('Beleg:'), 'RECUFIX-1 : aucun libellé allemand d interface dans admin.js');
+t(!adjs.includes('Konten') && !adjs.includes('Noten') && !adjs.includes(' aktiv)'), 'TRAD-ADM-1 : aucun reliquat allemand dans les libellés du tableau de bord');
 t(bibjs.includes('[A-Za-zÄÖÜäöüß0-9]'), 'TRAD-DIG-1 : chiffres admis dans les fragments de traduire()');
+/* ADM-DASH-1 : accueil admin réel, données scopées et journal vérifiable */
+t(adjs.includes("var state4 = { perms:[], tab:'dash', role:'', wilayas:[] }"), 'ADM-DASH-1 : la vue d accueil est le tableau de bord');
+t(adjs.includes("legacyBody.hidden = (id !== 'ops')"), 'ADM-DASH-1 : le tableau historique est isolé dans l onglet opérations');
+t(adjs.includes("state4.role = meP.ok ? (meP.role||'') : ''") && adjs.includes("state4.wilayas = meP.ok && Array.isArray(meP.wilayas)"), 'ADM-DASH-1 : le rôle et le périmètre viennent de admMyPerms');
+t(adjs.includes("SB.admDashboard()") && adjs.includes("SB.admAuditLast(8)"), 'ADM-DASH-1 : les indicateurs et le journal utilisent les sources Supabase existantes');
+t(adjs.includes("d.verifications_attente") && adjs.includes("d.signalements_ouverts"), 'ADM-DASH-1 : les cartes de suivi utilisent les compteurs réels du RPC');
+t(adjs.includes("if((location.hash||'').replace('#','') === 'admin') renderTabs().then(function(){ if(state4.tab==='dash') renderDash(); });"), 'ADM-DASH-1 : le tableau de bord se charge aussi sur accès direct #admin');
+const dashStart = adjs.indexOf('  async function renderDash(){');
+const dashEnd = adjs.indexOf('  async function renderStudents(){', dashStart);
+const dashCode = dashStart >= 0 && dashEnd > dashStart ? adjs.slice(dashStart, dashEnd) : '';
+t(!!dashCode && !dashCode.includes('recettes_confirmees_da') && !dashCode.includes('paiements_attente'), 'ADM-DASH-1 : la vue d accueil ne présente pas de chiffres financiers');
+t(dashCode.includes('esq5(l.action)') && dashCode.includes('esq5(l.cible_type)') && dashCode.includes('esq5(l.cible_id)'), 'ADM-DASH-1 : les champs du journal sont échappés avant affichage');
+t(adjs.includes("if(legacyBody) legacyBody.hidden = true;"), 'ADM-DASH-1 : les onglets auxiliaires masquent aussi le tableau historique');
+/* ADM-REF-1 : référentiels GitHub affichés sans les confondre avec les données opérationnelles */
+t(adjs.includes("id:'classes'") && adjs.includes("id:'wilayas'"), 'ADM-REF-1 : onglets Classes et Wilayas présents');
+t(adjs.includes("loadAdminReference('assets/bdd/classe.json?v=3511')") && adjs.includes("loadAdminReference('assets/bdd/wilaya.json?v=3511')"), 'ADM-REF-1 : les deux vues chargent les fichiers GitHub de référence');
+t(adjs.includes('maquette pédagogique') && adjs.includes('ليست عدد الحسابات المسجلة'), 'ADM-REF-1 : le catalogue de classes est explicitement distingué des inscriptions réelles');
+t(classRef.sections.length === 5 && classRef.sections.reduce((n, x) => n + Number(x.eleves||0), 0) === 142, 'ADM-REF-1 : le référentiel de maquette conserve les cinq classes et son total indicatif');
+t(wilayaRef.wilayas.length === 58, 'ADM-REF-1 : le référentiel territorial contient exactement 58 wilayas');
+t(adjs.includes("data-wilaya-search") && adjs.includes("id !== 'admWilayaSearch'"), 'ADM-REF-1 : recherche locale des wilayas sans requête distante');
+t(adjs.includes("state4.perms.indexOf('reports.read') === -1"), 'ADM-REF-1 : les vues de référence restent derrière le contrôle d accès administratif');
+t(adjs.includes("KNOWN = ['admDashCard','admClassesCard','admWilayasCard'"), 'ADM-REF-1 : les cartes de référence ne sont pas réaffichées dans les opérations historiques');
+/* ADM-SEC-1 : afficher les permissions réelles sans inventer une télémétrie de sécurité */
+t(adjs.includes("id:'security'") && adjs.includes("cards:['admSecurityCard']"), 'ADM-SEC-1 : onglet Accès et audit présent');
+t(adjs.includes("async function renderSecurity()") && adjs.includes("SB.admAuditLast(20)"), 'ADM-SEC-1 : vue construite à partir du service de permissions et du journal existants');
+t(adjs.includes("state4.perms.length") && adjs.includes("state4.wilayas.length") && adjs.includes("state4.role"), 'ADM-SEC-1 : rôle, permissions et wilayas proviennent de admMyPerms');
+t(adjs.includes("n'est pas un système") === false && adjs.includes("ليست نظام كشف تهديدات"), 'ADM-SEC-1 : la vue précise qu elle ne constitue pas une détection de menaces');
+t(adjs.includes("esq5(l.action)") && adjs.includes("esq5(l.cible_type)") && adjs.includes("esq5(l.cible_id)"), 'ADM-SEC-1 : les valeurs du journal sont échappées');
+t(adjs.includes("if(tab==='security') renderSecurity();"), 'ADM-SEC-1 : navigation vers la vue accès et audit câblée');
+/* ADM-SYS-1 : inventaire technique fondé sur la configuration, sans télémétrie simulée */
+t(adjs.includes("id:'system'") && adjs.includes("cards:['admSystemCard']") && adjs.includes("perm:'reports.read'"), 'ADM-SYS-1 : onglet système protégé par reports.read');
+t(adjs.includes('function renderSystem()') && adjs.includes('wrangler.toml') && adjs.includes('src/site-worker.js'), 'ADM-SYS-1 : inventaire fondé sur les fichiers de configuration et Worker');
+t(adjs.includes('SUPABASE_URL') && adjs.includes('SUPABASE_ANON_KEY') && adjs.includes('lesson_content'), 'ADM-SYS-1 : le garde de contenu est décrit sans afficher les valeurs des secrets');
+t(adjs.includes('غير موجود في المصدر المفحوص') && adjs.includes('غير متحققة هنا'), 'ADM-SYS-1 : absence de monitoring et de statut runtime explicitement signalée');
+t(adjs.includes("if(tab==='system') renderSystem();") && adjs.includes("'admSystemCard'"), 'ADM-SYS-1 : navigation système câblée et carte isolée des opérations historiques');
 if (fails) { console.error('::error:: adm_test : ' + fails + ' échec(s)'); process.exit(1); }
 console.log('== adm_test : TOUT PASSE ==');
