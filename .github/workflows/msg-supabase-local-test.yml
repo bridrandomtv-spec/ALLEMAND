@@ -1,8 +1,8 @@
 name: Tests intégration Supabase local — Messenger
 
 on:
-  push:
-    branches: ["design/prototypes-67-74-alignment"]
+  pull_request:
+    branches: ["main"]
     paths:
       - "supabase/migrations/202611130001_msg_invitation_consent.sql"
       - "supabase/migrations/202611130003_msg_student_discovery.sql"
