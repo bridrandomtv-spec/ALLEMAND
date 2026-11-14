@@ -9,7 +9,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
-  var state = { conv:null, me:null, ch:null, inviteCh:null, names:{}, peers:{} };
+  var state = { conv:null, me:null, ch:null, inviteCh:null, inviteEpoch:0, inviteViewActive:false, names:{}, peers:{} };
   async function session(){ try{ return (window.SB && window.SB.me) ? await window.SB.me() : null; }catch(e){ return null; } }
   function stamp(x){ return String(x||'').slice(0,16).replace('T',' '); }
   function card(t,s,btn){ return '<div class="msg-card"><div class="msg-ct"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div>'+(btn||'')+'</div>'; }
@@ -55,24 +55,31 @@
     if(state.ch){ try{ state.ch.unsubscribe(); }catch(e){} state.ch = null; }
   }
   function closeInviteChannel(){
+    state.inviteEpoch++;
     if(state.inviteCh){ try{ state.inviteCh.unsubscribe(); }catch(e){} state.inviteCh = null; }
   }
   async function startInviteChannel(){
     closeInviteChannel();
+    var epoch = state.inviteEpoch;
+    var userId = state.me;
     try{
-      if(!state.me || !window.SB || !window.SB.sb) return;
-      var c = await window.SB.sb(); if(!c || !c.channel) return;
-      var userId = state.me;
+      if(!state.inviteViewActive || !userId || !window.SB || !window.SB.sb) return;
+      var c = await window.SB.sb();
+      if(!c || !c.channel || epoch!==state.inviteEpoch || !state.inviteViewActive ||
+         state.me!==userId || state.conv!==null) return;
       var ch = c.channel('msg-invites-'+userId)
         .on('postgres_changes', { event:'*', schema:'public', table:'msg_invites' }, function(){
-          if(state.me!==userId || state.conv!==null) return;
+          if(epoch!==state.inviteEpoch || !state.inviteViewActive ||
+             state.me!==userId || state.conv!==null) return;
           var box = el('msgBody');
           if(!box || !box.isConnected) return;
           renderList();
         });
-      ch.subscribe();
       state.inviteCh = ch;
-    }catch(e){ state.inviteCh = null; }
+      ch.subscribe();
+    }catch(e){
+      if(epoch===state.inviteEpoch) state.inviteCh = null;
+    }
   }
   async function startChannel(id){
     closeChannel();
@@ -299,8 +306,10 @@
   }
   document.addEventListener('dz:view', function(e){
     var v = (e && e.detail && (e.detail.view||e.detail)) || '';
-    if(String(v).indexOf('msg')>=0){ closeChannel(); closeInviteChannel(); state.conv=null; renderList(); }
-    else { closeChannel(); closeInviteChannel(); }
+    state.inviteViewActive = String(v).indexOf('msg')>=0;
+    closeChannel();
+    closeInviteChannel();
+    if(state.inviteViewActive){ state.conv=null; renderList(); }
   });
   document.addEventListener('input', function(e){
     if(!e.target || e.target.id!=='msgListSearch') return;
