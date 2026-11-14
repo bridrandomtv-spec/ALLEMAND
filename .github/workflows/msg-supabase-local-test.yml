@@ -120,25 +120,36 @@ jobs:
 
       - name: Inspecter les connexions et la configuration Realtime locale
         if: always()
+        continue-on-error: true
         run: |
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+          echo '--- Connexions PostgreSQL Realtime ---'
+          psql "$DB_URL" -c "
             select application_name, backend_type, state, wait_event_type, wait_event,
                    left(query, 180) as query
             from pg_stat_activity
             where datname = current_database()
               and (application_name ilike '%realtime%' or usename ilike '%supabase%')
             order by application_name, backend_type;
-          "
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
-            select table_schema, table_name, column_name, data_type
+          " || true
+          echo '--- Objets du schéma realtime ---'
+          psql "$DB_URL" -c "
+            select table_name from information_schema.tables
+            where table_schema = 'realtime' order by table_name;
+          " || true
+          echo '--- Colonnes de realtime.subscription si présente ---'
+          psql "$DB_URL" -c "
+            select column_name, data_type
             from information_schema.columns
             where table_schema = 'realtime' and table_name = 'subscription'
             order by ordinal_position;
-          "
+          " || true
+          echo '--- Variables non sensibles du conteneur ---'
           container="$(docker ps -a --format '{{.Names}}' | grep -E 'realtime|supabase_realtime' | head -n 1 || true)"
           if [ -n "$container" ]; then
             docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$container" \\
               | grep -E '^(PUBLICATIONS|SLOT_NAME|TEMPORARY_SLOT|REPLICATION_MODE|DB_HOST|DB_PORT|DB_USER|DB_NAME|DB_SSL)=' || true
+          else
+            echo 'Conteneur Realtime introuvable'
           fi
 
       - name: Capturer les journaux Realtime locaux en cas de diagnostic
