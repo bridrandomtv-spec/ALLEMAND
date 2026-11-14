@@ -157,6 +157,16 @@ jobs:
           container="$(docker ps -a --format '{{.Names}}' | grep -E 'realtime|supabase_realtime' | head -n 1 || true)"
           if [ -n "$container" ]; then
             echo "Conteneur Realtime : $container"
+            echo '--- Image, digest, version et labels de build ---'
+            docker inspect --format 'configured_image={{.Config.Image}} image_id={{.Image}} started={{.State.StartedAt}} status={{.State.Status}} exit={{.State.ExitCode}}' "$container" || true
+            image_id="$(docker inspect --format '{{.Image}}' "$container" 2>/dev/null || true)"
+            if [ -n "$image_id" ]; then
+              docker image inspect --format 'repo_digests={{json .RepoDigests}} labels={{json .Config.Labels}}' "$image_id" || true
+            fi
+            echo '--- Version Realtime rapportée par le service ---'
+            curl -sS -m 5 -H "Authorization: Bearer $ANON_KEY" http://127.0.0.1:54321/realtime/v1/api/tenants/realtime-dev/health || true
+            echo
+            echo '--- Journaux Realtime (300 dernières lignes) ---'
             docker logs "$container" 2>&1 | tail -n 300
           else
             echo "Conteneur Realtime introuvable dans cette exécution."
