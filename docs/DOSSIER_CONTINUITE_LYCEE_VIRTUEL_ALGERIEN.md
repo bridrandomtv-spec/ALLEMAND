@@ -2362,3 +2362,14 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 - **Non validé dynamiquement** : les runners GitHub Actions restent bloqués par la restriction de facturation déjà constatée. Les nouveaux contrôles statiques sont ajoutés au script CI, mais n'ont pas été exécutés ici. Aucun test sur des comptes réels, aucune modification de Supabase hébergé, aucun déploiement Cloudflare.
 - PR #17 reste ouverte et non fusionnée ; `main` inchangée.
 
+## Lot 524 — sécurisation de la fin asynchrone d'envoi Messenger
+
+- Audit du parcours `send()` / `SB.msgSend()` : après un INSERT réussi, l'ancien code appelait toujours `renderThread(conv)`. Si l'utilisateur changeait de conversation pendant que la requête réseau était en cours, la réponse tardive pouvait le ramener à l'ancienne conversation et remplacer son écran courant.
+- Correctif dans `msg.js` : après la résolution ou le rejet de l'envoi, la fonction vérifie que `state.conv` correspond toujours à la conversation d'origine avant de toucher l'interface. Elle récupère les éléments d'erreur/bouton courants plutôt que de modifier des nœuds DOM potentiellement détachés. Les erreurs réseau rejetées sont désormais interceptées et le bouton courant est réactivé. Le composeur n'est vidé que s'il s'agit toujours du même élément.
+- Analyse de livraison : l'expéditeur ignore volontairement son propre événement INSERT Realtime ; le rafraîchissement après confirmation de `msgSend` reste donc nécessaire pour afficher le message envoyé. Le destinataire, lui, reçoit l'événement INSERT et l'ajoute sans doublon si son identifiant existe déjà dans le fil. Le rafraîchissement complet remplace le contenu du fil, il ne concatène pas un second exemplaire.
+- Contrôles statiques Lot 524 ajoutés à `ci/check-msg.mjs` : réponse d'envoi tardive après navigation, capture des erreurs réseau, protection du composeur remplacé.
+- Commits : correctif `fc4fd174263bd7364935320c26de51d44a6ac4d7` ; assertions CI `24039f3aacb14ad44e9257d2474223c1fad4a7d1`.
+- Limite identifiée : une coupure réseau après validation côté serveur mais avant réception de la réponse HTTP peut rendre l'issue de l'INSERT ambiguë pour le client. Il n'existe pas dans le schéma actuellement audité de clé d'idempotence client pour garantir qu'une répétition manuelle ne crée jamais un doublon. Je n'ajoute pas de colonne ni de migration sans autorisation explicite et test local dynamique.
+- **Non validé dynamiquement** : les contrôles CI ne sont pas exécutés car les runners GitHub Actions restent bloqués par la restriction de facturation. Aucun changement Supabase hébergé, aucun compte réel, aucun déploiement Cloudflare.
+- PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
