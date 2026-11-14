@@ -275,7 +275,8 @@ async function subscribeToMessageChanges(user, conversationId) {
       const payload = frame[4] || {};
       if (eventName === "phx_reply") {
         if (payload.status !== "ok") {
-          rejectReady(new Error("msg_messages join rejected: " + JSON.stringify(payload.response || payload)));
+          const error = new Error("msg_messages join rejected: " + JSON.stringify(payload.response || payload));
+          if (!ready) rejectReady(error); else failPending(error);
           return;
         }
         const changes = payload.response?.postgres_changes ?? [];
@@ -292,7 +293,8 @@ async function subscribeToMessageChanges(user, conversationId) {
           cdcReady = true;
           maybeReady();
         } else if (payload.status === "error" || payload.status === "timeout") {
-          rejectReady(new Error("msg_messages CDC readiness failed: " + JSON.stringify(payload)));
+          const error = new Error("msg_messages CDC readiness failed: " + JSON.stringify(payload));
+          if (!ready) rejectReady(error); else failPending(error);
         }
       } else if (eventName === "postgres_changes") {
         const data = payload.data || payload;
@@ -318,7 +320,7 @@ async function subscribeToMessageChanges(user, conversationId) {
         if (!ready) rejectReady(error); else failPending(error);
       }
     } catch (error) {
-      if (!ready) rejectReady(error); else rejectEvent(error);
+      if (!ready) rejectReady(error); else failPending(error);
     }
   });
   socket.addEventListener("error", () => {
