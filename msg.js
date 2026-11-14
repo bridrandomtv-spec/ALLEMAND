@@ -662,7 +662,13 @@
   document.addEventListener('change', async function(e){
     if(!e.target || e.target.id!=='msgFile' || !state.conv) return;
     var input=e.target, f=input.files && input.files[0]; if(!f) return;
-    var err=el('msgErr'), conv=state.conv;
+    var err=el('msgErr'), conv=state.conv, uploadIdentityEpoch=state.authEpoch;
+    function uploadContextCurrent(){
+      return state.authEpoch===uploadIdentityEpoch && state.conv===conv;
+    }
+    function uploadUi(){
+      return uploadContextCurrent() && input.isConnected && el('msgErr');
+    }
     var allowed=['image/png','image/jpeg','image/webp','application/pdf'];
     if(allowed.indexOf(f.type)===-1 || !f.size || f.size>5242880){
       if(err){ err.hidden=false; err.textContent='⛔ الصيغ المقبولة: PNG أو JPEG أو WebP أو PDF، بحد أقصى 5 ميغابايت.'; }
@@ -671,22 +677,38 @@
     var sendButton=document.querySelector('#msgBody [data-act="send"]');
     if(sendButton) sendButton.disabled=true;
     if(err){ err.hidden=false; err.textContent='⏳ جارٍ رفع الملف '+f.name+'…'; }
-    var sent=await window.SB.msgSend(conv, '📎 '+f.name);
-    if(!sent.ok){
-      if(err){ err.hidden=false; err.textContent='⛔ '+sent.err; }
-      if(sendButton) sendButton.disabled=false;
-      input.value=''; return;
+    try{
+      var sent=await window.SB.msgSend(conv, '📎 '+f.name);
+      if(!uploadContextCurrent()) return;
+      if(!sent || !sent.ok){
+        if(uploadUi()){ err.hidden=false; err.textContent='⛔ '+((sent&&sent.err)||'تعذّر إرسال الملف.'); }
+        if(sendButton && sendButton.isConnected) sendButton.disabled=false;
+        if(input.isConnected) input.value='';
+        return;
+      }
+      /* Ne pas lancer l'upload Storage si l'identité a changé après l'envoi du message. */
+      if(!uploadContextCurrent()) return;
+      var uploaded=await window.SB.msgUpload(conv, sent.msg.id, f);
+      if(!uploadContextCurrent()) return;
+      if(!uploaded || !uploaded.ok){
+        if(uploadUi()){ err.hidden=false; err.textContent='⛔ تعذّر إرفاق الملف: '+((uploaded&&uploaded.err)||'خطأ غير معروف'); }
+        if(sendButton && sendButton.isConnected) sendButton.disabled=false;
+        if(input.isConnected) input.value='';
+        await renderThread(conv);
+        return;
+      }
+      if(input.isConnected) input.value='';
+      await renderThread(conv);
+      if(uploadContextCurrent()){
+        var successErr=el('msgErr');
+        if(successErr){ successErr.hidden=false; successErr.textContent='✔ تم إرسال الملف.'; }
+      }
+    }catch(error){
+      if(!uploadContextCurrent()) return;
+      if(uploadUi()){ err.hidden=false; err.textContent='⛔ تعذّر رفع الملف: '+String(error && error.message || error); }
+      if(sendButton && sendButton.isConnected) sendButton.disabled=false;
+      if(input.isConnected) input.value='';
     }
-    var uploaded=await window.SB.msgUpload(conv, sent.msg.id, f);
-    if(!uploaded.ok){
-      if(err){ err.hidden=false; err.textContent='⛔ تعذّر إرفاق الملف: '+uploaded.err; }
-      if(sendButton) sendButton.disabled=false;
-      input.value=''; await renderThread(conv); return;
-    }
-    input.value='';
-    await renderThread(conv);
-    var successErr=el('msgErr');
-    if(successErr){ successErr.hidden=false; successErr.textContent='✔ تم إرسال الملف.'; }
   });
   document.addEventListener('keydown', function(e){
     if(e.target && e.target.id==='msgText' && e.key==='Enter' && !e.shiftKey){
