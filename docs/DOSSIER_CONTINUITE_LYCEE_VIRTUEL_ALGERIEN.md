@@ -603,3 +603,11 @@
 - Changement limité au harnais de test local avec comptes synthétiques ; aucune modification de `msg.js`, des migrations, des policies, d'Auth/RLS hébergé, des données réelles ou de Cloudflare.
 - Vérification disponible à ce stade : diff ciblé relu et prédicat confirmé dans le dépôt. Aucun résultat d'exécution n'est revendiqué : les derniers jobs Actions (ex. run `43581868013`, job `132408113216`) se terminent avant toute étape, sans runner attribué. Il faudra exécuter le test dès qu'un runner démarre réellement.
 - PR #17 reste ouverte et non fusionnée. `main` n'a pas été modifiée. Messenger n'est toujours pas certifié opérationnel tant que le vrai événement INSERT n'a pas été reçu par le destinataire synthétique.
+
+### Résultat CI du Lot 474
+
+- Le commit de code `69e59576eccc08db19869cf0c935fd236e3e6200` et la mise à jour du dossier `67d5b48b9c11b1e3d262da337869c6a2e52d7365` ont déclenché les cinq contrôles : CI ALLEMAND `43582007156`, PostgreSQL `ملتقى الطلاب` `43582007232`, Supabase local Messenger `43582007190`, PostgreSQL découverte `43582007137`, PostgreSQL consentement `43582007152`.
+- L'inspection directe des cinq objets Jobs confirme la même signature : clôture en deux secondes, `runner_id=0`, `runner_name` vide et `steps=[]`. Le script `node --check` et les tests SQL/Realtime n'ont donc pas été exécutés. Il s'agit d'un échec pré-run commun aux jobs, pas d'un résultat négatif des tests.
+- Les Check Runs GitHub n'exposent toujours aucun résumé textuel; l'endpoint des annotations n'est pas accessible via la connexion GitHub disponible. La cause précise du défaut d'affectation reste indéterminée. Ne pas modifier les workflows ni ajouter de runner auto-hébergé sans diagnostic et décision explicites.
+- Le prédicat Realtime strict du Lot 474 est présent sur le HEAD, mais non exécuté. Le test exige désormais un type INSERT explicite et l'identité exacte de l'invitation. Messenger reste non certifié opérationnel.
+- État final vérifié : PR #17 ouverte, non fusionnée, base `main`, HEAD `67d5b48b9c11b1e3d262da337869c6a2e52d7365`, `mergeable=true` au dernier contrôle. Aucun changement direct sur `main`, aucune migration Supabase hébergée, aucun changement de données réelles et aucun déploiement Cloudflare.
