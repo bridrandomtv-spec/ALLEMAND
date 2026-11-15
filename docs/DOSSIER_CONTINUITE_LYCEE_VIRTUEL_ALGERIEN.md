@@ -4017,3 +4017,14 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Commits Lot 636 : rapport `17d0d96c3f0c272cc4b7456383e5777fc7148683`; sharder `4050e4bf6e870976a5185151b4cf4f3198bab44f`; lecteur `6b8e7c2210425755c2908ff593000b8987976e14`; tests `64719235ab2049dd67af22984469d84c6a71f627`.
 - Validation : tests non exécutés faute de runner CI confirmé ; ne pas déclarer la CI verte. Le manifeste réel n'a pas été régénéré et aucun corpus n'a été ingéré : le nouveau contrat sera activé lors d'une future génération contrôlée des shards. Aucun PDF/OCR, Supabase/Auth/RLS, paiement, déploiement Cloudflare ou fusion dans main.
 - Suite : ajouter un contrôle de cohérence catalogue ↔ chunks (références documentaires orphelines, métadonnées de langue/matière/niveau) et des tests synthétiques multilingues avant de connecter le RAG au parcours vocal.
+
+
+## Lot 637 — cohérence catalogue pédagogique ↔ index RAG
+- Inventaire réel de `assets/bdd/corpus.json` : 239 fiches ; IDs non vides et uniques ; `matiere`, `niveau`, `langue` renseignés sur les 239 fiches. Langues présentes : `ar+de`, `de`, `de+ar`, `en`. Matières : allemand et anglais. Aucun enregistrement espagnol/italien dans ce catalogue à ce stade.
+- `assets/bdd/corpus_rag_index.json` absent de la branche audit : aucune conclusion possible sur les références orphelines réelles ou le taux de couverture RAG.
+- Le bloc d'architecture historique dans `corpus.json` parle de `corpus_index.json`, alors que les indexeurs actuels utilisent `corpus_rag_index.json` ; divergence documentaire à clarifier sans renommer les fichiers à l'aveugle.
+- Ajout de `valider_coherence_catalogue_index()` dans `tools/corpus_contracts.py` et branchement avant publication dans `tools/ingest_corpus.py` et `tools/indexer_pdf.py`. Le contrôle refuse chunks orphelins, IDs documentaires dupliqués, métadonnées matière/niveau/langue manquantes sur les docs référencés et SHA-256 divergents. Il autorise les fiches legacy sans chunk.
+- Six tests synthétiques ajoutés, dont couverture de métadonnées allemand/arabe/français/espagnol/italien. `tests/tutor_matrix.json` compte 23 cas de langues/dialectes ; statut existant `prepared_not_executed`.
+- Rapport : `docs/LOTS/LOT_637_COHERENCE_CATALOGUE_INDEX_MULTILINGUE.md`.
+- Tests non exécutés faute de runner confirmé. Aucun corpus réel/PDF/OCR ingéré ; aucun manifeste/catalogue de production modifié ; aucune modification Supabase/Auth/RLS/paiement, aucun déploiement, aucune fusion dans main.
+- Suite : Lot 638, clarifier la divergence documentaire des chemins d'index, puis organiser l'exécution réelle des 23 cas et distinguer les réponses fondées sur source de celles sans source disponible.
