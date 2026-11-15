@@ -430,7 +430,9 @@ ok(sbjs.includes(".select('id').maybeSingle()") && sbjs.includes("if(r.error || 
 ok(msgjs.includes('id="vfCard"') && msgjs.includes('msgUploadSchoolCard(cardFile)'), 'formulaire étudiant : justificatif obligatoire avant envoi');
 ok(adminjs.includes("missing.push('البطاقة المدرسية')") && adminjs.includes('data-adm-verif-doc'), 'file administrative : pièce obligatoire et bouton de consultation');
 ok(sbjs.includes('createSignedUrl(path,300)'), 'consultation par lien signé limité à 5 minutes');
-ok(idx.includes('msg.js?v=3529') && idx.includes('admin.js?v=3517') && idx.includes('supabase/supabase.js?v=3526'), 'versions des modules de vérification actualisées');
+ok(msgjs.includes('if(r4.cleanupWarning) window.alert'), 'avertissement de nettoyage de l’ancienne carte affiché à l’élève');
+ok(idx.includes('supabase/supabase.js?v=3527') && sw.includes("'./supabase/supabase.js?v=3527'") && sw.includes("VERSION = 'dz-de-v3.185.0.0.177'"), 'cache Supabase et version du service worker synchronisés Lot 562');
+ok(idx.includes('msg.js?v=3529') && idx.includes('admin.js?v=3517') && idx.includes('supabase/supabase.js?v=3527'), 'versions des modules de vérification actualisées');
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.175'") && sw.includes("./msg.js?v=3529") && sw.includes("./admin.js?v=3517") && sw.includes("./supabase/supabase.js?v=3526"), 'précache et service worker synchronisés Lot 556');
 
 if (fail.length) { console.error('::error:: check-msg Lot 453 : ' + fail.length + ' échec(s)'); process.exit(1); }
