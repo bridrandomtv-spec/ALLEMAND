@@ -1,13 +1,14 @@
 {
   "_meta": {
-    "version": 2,
-    "langue": "arabe classique (fusha) — conversion FUS-1 sur ordre du propriétaire",
+    "version": 3,
+    "langue": "arabe standard et darija algérienne — adaptation selon la langue et le dialecte de l’élève",
     "validation": "relecture propriétaire + prof référent avant pilote",
     "principe": "contenu ORIGINAL rédigé pour la plateforme ; aucune copie de contenus tiers ; chaque entrée future porte source+licence",
-    "usage": "indexée par biblio.js (src=darja) ; contexte vérifié pour 🔎 اسأل et 🤖 ; réponses en derja quand l'élève écrit en derja",
+    "usage": "indexée par biblio.js (src=darja) ; contexte vérifié pour 🔎 اسأل et 🤖 ; la réponse suit la langue de l’élève ; si la sortie est arabe, elle suit son dialecte (darija algérienne ou arabe standard), sauf consigne explicite de langue différente",
     "note_darja1b": "DARJA-1b : +62 entrées thématiques originales (nombres, couleurs, adjectifs, comparatif/superlatif, temps, corps, nourriture, maison, ville, loisirs, métiers, école, connecteurs, questions, politesse, consignes d'examen, opinion). Total exact : 98 entrées.",
-    "note_fus1": "FUS-1 : toutes les explications arabes converties en arabe classique (fusha). La compréhension des requêtes en derja reste active côté entrée (normalisation), mais toute sortie de la plateforme est en fusha."
+    "note_langue_adaptative": "POLITIQUE LINGUISTIQUE ADAPTATIVE : la langue et le dialecte de sortie suivent ceux de l’élève. Une consigne explicite de langue de sortie reste prioritaire. La détection Darija/Arabizi concerne le style de réponse arabe, pas les réponses demandées en français, allemand, anglais, espagnol ou italien."
   },
+
   "entrees": [
     {
       "cle": "lex-01",
