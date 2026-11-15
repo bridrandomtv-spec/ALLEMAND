@@ -3020,3 +3020,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Cache Supabase porté à `supabase/supabase.js?v=3528`, Service Worker à `dz-de-v3.185.0.0.184`, précache synchronisé. Assertion CI statique ajoutée.
 - Aucun fichier réel, message, compte, profil, permission, schéma, politique RLS ou règle Storage modifié pendant cette correction. Le nettoyage s’appliquera uniquement aux futurs échecs d’upload.
 - CI et déploiement Cloudflare non revendiqués.
+
+
+## Lot 570 — clôture de l’audit technique Messenger (15 novembre 2026)
+- Revue croisée du code client, des migrations, des fonctions et du catalogue Supabase actif : permissions de modération, politiques RLS des conversations/messages/membres/rapports/invitations, fonctions d’invitation, fonctions de contrôle des DM, déclencheurs de limitation et de mise à jour d’activité, publication Realtime et politiques Storage du bucket privé.
+- La publication `supabase_realtime` contient `msg_messages`, `msg_conversations` et `msg_invites`. Les tables Messenger contrôlées ont RLS activé. Les invitations ne disposent pas de politiques directes d’écriture ; les opérations passent par les fonctions serveur dédiées.
+- La permission active `messaging.moderate` est attribuée à `admin_general`. Le rôle professeur seul ne confère pas la modération globale ; l’interface a été alignée sur ce contrôle serveur au Lot 568.
+- Lots 567–569 : pagination de la file de vérification Messenger, alignement de l’interface de modération sur la permission serveur, et récupération/nettoyage des uploads non liés. Cache `msg.js?v=3534`, `supabase/supabase.js?v=3528`, Service Worker `dz-de-v3.185.0.0.184` et précache synchronisés.
+- Contrôles de syntaxe réussis pour `msg.js`, `admin.js` et `supabase/supabase.js`; assertions statiques ciblées relues positives. La recherche de runs pour le dernier commit n’a retourné aucun workflow : CI non déclarée réussie. Aucun test E2E avec comptes réels, aucune création de compte de test, aucune modification SQL/RLS/permissions, aucun message ni dossier réel touché. Aucun déploiement Cloudflare revendiqué.
+- État : audit du code et des catalogues actifs Messenger clôturé. La validation opérationnelle finale nécessite une exécution CI et un test contrôlé avec comptes de test autorisés ; ces validations ne doivent pas être confondues avec l’audit statique réalisé ici.
