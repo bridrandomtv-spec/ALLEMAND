@@ -9,6 +9,8 @@ const ia = read('ia.js');
 const voice = read('parle.js');
 const worker = read('worker/ia-ask.js');
 const matrix = JSON.parse(read('tests/tutor_matrix.json'));
+const subjects = JSON.parse(read('assets/bdd/subjects.json'));
+const matieres = JSON.parse(read('assets/bdd/matieres.json'));
 
 function extractRegex(source, name) {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -57,9 +59,14 @@ assert.match(ia, /en: 'I did not fully understand/, 'message de secours anglais 
 assert.match(voice, /const EN_VOTE =/, 'vote de langue anglaise absent du TTS');
 assert.match(voice, /en > Math.max\(de, fr, es, it\)/, 'anglais absent du vote TTS');
 assert.match(voice, /en:'en-US'/, 'voix anglaise par défaut absente');
-assert.match(worker, /MAÎTRISES SIX langues[^\n]*anglais/, 'anglais absent du contrat de langue du Worker');
+assert.match(worker, /MAÎTRISES SIX langues[\s\S]*?allemand, anglais/, 'anglais absent du contrat de langue du Worker');
 assert.match(worker, /\['ar','de','en','fr','es','it'\]/, 'anglais refusé par la validation Worker');
 for (const subject of ['anglais','espanol','italien']) assert.ok(matrix.cases.some(x => x.subject === subject), 'cas de test absent pour la matière ' + subject);
+for (const subject of ['allemand','anglais','espanol','italien']) assert.ok(subjects.some(x => x.id === subject), 'matière absente de subjects.json : ' + subject);
+assert.equal(subjects.find(x => x.id === 'anglais').status, 'partial', 'anglais doit rester déclaré partiel');
+assert.equal(subjects.find(x => x.id === 'espanol').status, 'planned', 'espagnol ne doit pas être annoncé actif avant ses contenus');
+assert.equal(subjects.find(x => x.id === 'italien').status, 'planned', 'italien ne doit pas être annoncé actif avant ses contenus');
+for (const level of ['2AS','3AS']) for (const subject of ['espanol','italien']) assert.ok(matieres.par_niveau[level].langues.includes(subject), subject + ' absent du parcours langues ' + level);
 assert.match(voice, /voteLang\(ph\) \|\| preferred \|\| 'de'/, 'repli de langue TTS absent');
 assert.match(ia, /function sortieFaible\(local, cause\)[\s\S]*?if\(answerLanguage === 'de'\)[\s\S]*?else if\(answerLanguage === 'fr'\)/, 'messages de secours non alignés sur la langue de sortie');
 assert.match(ia, /explicitOutputLanguage && !reponseCourteValide/, 'une réponse locale ne doit pas contourner une consigne explicite de langue');
@@ -74,4 +81,5 @@ console.log('PASS ' + positivesArabic.length + ' exemples Darija arabes reconnus
 console.log('PASS matrice pédagogique : ' + matrix.cases.length + ' cas uniques et structurés');
 console.log('PASS contrat de langue de sortie et repli TTS');
 console.log('PASS ' + positivesEnglish.length + ' formulations anglaises reconnues et ' + negativesEnglish.length + ' faux positifs rejetés');
-console.log('PASS anglais/espagnol/italien couverts comme matières distinctes dans la matrice');
+console.log('PASS anglais partiel et espagnol/italien programmés dans les registres de matières');
+console.log('PASS espagnol et italien référencés dans les parcours langues 2AS/3AS');
