@@ -6,6 +6,10 @@ const sql = readFileSync('supabase/msg_schema.sql', 'utf8');
 const sbjs = readFileSync('supabase/supabase.js', 'utf8');
 const msgjs = readFileSync('msg.js', 'utf8');
 const adminjs = readFileSync('admin.js', 'utf8');
+const legaljs = readFileSync('legal.js', 'utf8');
+const privacyHtml = readFileSync('privacy.html', 'utf8');
+const retentionFn = readFileSync('supabase/functions/school-card-retention/index.ts', 'utf8');
+const retentionHoldSql = readFileSync('supabase/migrations/20261115011056_school_card_retention_appeal_holds.sql', 'utf8');
 const adminCss = readFileSync('style-prototype-dz.css', 'utf8');
 const billing = readFileSync('billing.js', 'utf8');
 const idx = readFileSync('index.html', 'utf8');
@@ -420,3 +424,9 @@ ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.174'") && sw.includes("./msg.js?v=35
 
 if (fail.length) { console.error('::error:: check-msg Lot 453 : ' + fail.length + ' échec(s)'); process.exit(1); }
 console.log('== check-msg Lot 453 : TOUT PASSE ==');
+// Lot 557 — conservation et recours des justificatifs scolaires.
+ok(retentionFn.includes('school_card_retention_secret_valid') && retentionFn.includes('school_card_retention_is_held'), 'purge serveur authentifiée et respect des suspensions');
+ok(retentionFn.includes('.storage.from(BUCKET).remove([path])') && retentionFn.includes('school_card_retention_clear_path'), 'suppression via Storage API puis effacement conditionnel de la référence');
+ok(retentionHoldSql.includes('school_card_retention_set_hold') && retentionHoldSql.includes('p_days not between 1 and 90'), 'suspension de purge limitée à 90 jours via RPC autorisée');
+ok(adminjs.includes('data-adm-card-hold') && adminjs.includes('data-adm-card-release'), 'fiche élève : contrôles de suspension et levée de suspension');
+ok(legaljs.includes('90 يوماً قابلة للتجديد') && privacyHtml.includes('90 يوماً قابلة للتجديد'), 'notice juridique : suspension de purge avec durée plafonnée');
