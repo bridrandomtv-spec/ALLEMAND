@@ -22,6 +22,8 @@
       if(el && txt) el.textContent = txt;
     }catch(e){}
   }
+  const DARJA_AR = /(?:واش|علاش|كيفاش|راني|راك|راكي|بزاف|ما\s*فهمتش|مفهمتش|وش|علاه|نحب|حاب|حابة|تاع|درك|كاين|ماكانش|صح)/i;
+  const DARJA_LATIN = /(?:^|[^A-Za-z0-9])(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|ma\s*fhemtch|nheb|hab|habi|ta3|dorka|kayn|makanch|saha)(?=$|[^A-Za-z0-9])/i;
   /* Mémoire de dialogue éphémère : jamais écrite dans localStorage.
      Elle est isolée par la clé de session AUTH.user et effacée au changement de compte. */
   let DIALOGUE = [], DIALOGUE_OWNER = null;
@@ -69,8 +71,7 @@
     const inputMode = req.input_mode === 'voice' ? 'voice' : 'text';
     const selectedLanguage = String(req.selected_language || 'auto').slice(0, 20);
     const detectedLanguage = String(req.detected_language || '').slice(0, 20);
-    const dialect = String(req.dialect || (/(?:واش|علاش|كيفاش|راني|راك|راكي|بزاف|ما\s*فهمتش|مفهمتش|وش|علاه|نحب|حاب|حابة|تاع|درك|كاين|ماكانش|صح)/i.test(q)
-      || /(?:^|[^A-Za-z0-9])(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|ma\s*fhemtch|nheb|hab|habi|ta3|dorka|kayn|makanch|saha)(?=$|[^A-Za-z0-9])/i.test(q) ? 'darija' : 'unknown')).slice(0, 30);
+    const dialect = String(req.dialect || (DARJA_AR.test(q) || DARJA_LATIN.test(q) ? 'darija' : 'unknown')).slice(0, 30);
     let schoolContext = { subject: 'allemand', level: 'tous', track: '' };
     try{
       if(window.CONTEXT && typeof window.CONTEXT.ctx === 'function'){
@@ -146,7 +147,6 @@
       if(/(?:بالدارجة|بالدزيرية|بالجزائرية|en darija|darija|derdja)/i.test(s)) return 'ar';
       if(/(?:en français|en francais|بالفرنسية)/i.test(s)) return 'fr';
       if(/(?:auf deutsch|en allemand|بالألمانية)/i.test(s)) return 'de';
-      if(/(?:in english|en anglais|بالإنجليزية)/i.test(s)) return 'en';
       if(/(?:en español|en espagnol|بالإسبانية)/i.test(s)) return 'es';
       if(/(?:in italiano|en italien|بالإيطالية)/i.test(s)) return 'it';
       if(/(?:بالعربية|بالفصحى|en arabe)/i.test(s)) return 'ar';
@@ -154,8 +154,8 @@
     })(q);
     const selectedPrefix = selectedLanguage.toLowerCase().slice(0, 2);
     const answerLanguage = explicitOutputLanguage ||
-      (['ar','de','fr','es','it','en'].includes(QL) ? QL :
-       (['ar','de','fr','es','it','en'].includes(selectedPrefix) ? selectedPrefix : 'de'));
+      (['ar','de','fr','es','it'].includes(QL) ? QL :
+       (['ar','de','fr','es','it'].includes(selectedPrefix) ? selectedPrefix : 'de'));
     window.__IA_LAST_LANGUAGE = answerLanguage;
     const FB = {
       de: 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung — oder sag « Seite 11 », ich lese sie dir vor.',
@@ -249,7 +249,7 @@
           if(r2.ok){
             const j2 = await r2.json();
             if(j2 && j2.ok && j2.rep && j2.rep.length > 10){
-              if(['ar','de','fr','es','it','en'].includes(String(j2.answer_language || '')))
+              if(['ar','de','fr','es','it'].includes(String(j2.answer_language || '')))
                 window.__IA_LAST_LANGUAGE = j2.answer_language;
               rememberTurn(dialogueUser, q, j2.rep);
               return j2.rep;
@@ -259,7 +259,7 @@
         return sortieFaible(local, 'http-' + r.status);
       }
       const j = await r.json();
-      if(j && ['ar','de','fr','es','it','en'].includes(String(j.answer_language || '')))
+      if(j && ['ar','de','fr','es','it'].includes(String(j.answer_language || '')))
         window.__IA_LAST_LANGUAGE = j.answer_language;
       if(!j.ok){ window.__IA_ERR = j.err || 'http';
         try{ console.warn('🧠 ia-ask :', j.err); }catch(_){}
