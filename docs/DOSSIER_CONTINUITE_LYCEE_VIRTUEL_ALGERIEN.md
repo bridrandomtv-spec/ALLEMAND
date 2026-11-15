@@ -3651,3 +3651,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun Worker n'a été déployé ; aucune modification de `main`, PR, secret, configuration, ressource ou donnée Supabase n'a été effectuée.
 - **Suite Lot 614** : exécuter réellement les tests de contrat et du lecteur RAG dans un checkout, puis construire une matrice de validation Darija arabe/Arabizi, mélange Darija-allemand/français, arabe standard et questions scolaires. Comparer réponses et TTS sur les deux canaux avant toute livraison.
 - Messenger reste non terminé : tests E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
+
+- Garde supplémentaire après revue de concurrence : `rememberTurn` vérifie de nouveau l'identité de session au moment où une réponse asynchrone revient. Une réponse commencée avant le logout ou le changement de compte ne peut donc pas réinjecter l'ancien historique dans la session suivante. Assertion statique ajoutée au contrat de test.
