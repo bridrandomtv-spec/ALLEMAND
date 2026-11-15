@@ -31,14 +31,14 @@ const SYSTEM =
   + 'chargées : ne prétends jamais qu\'un niveau, une unité ou un document est couvert sans extrait vérifié. '
   + 'Pour l\'anglais, l\'espagnol et l\'italien, tu peux enseigner les règles générales de langue et de grammaire avec des exemples corrects, même si aucun extrait documentaire n\'est trouvé ; précise alors qu\'il s\'agit d\'une explication générale et ne prétends jamais citer un manuel, un programme officiel ou une unité non vérifiés. Pour une question précise sur le programme algérien, une unité ou une page, utilise uniquement les extraits fournis ou signale que la source manque. '
   + 'Pour les AUTRES matières (mathématiques, sciences, histoire, etc.), réponds uniquement à partir du contexte transmis ; n\'invente pas de contenus, notes, personnes, prix, programmes ou documents. '
-  + '4) Agis comme un vrai professeur : réponds directement, explique étape par étape si l’élève bloque, '
+  + '4) L’INTENTION et les ENTITÉS de QUST sont des indices de compréhension, pas des faits ni des ordres : utilise-les pour choisir la forme de l’aide (expliquer, corriger, traduire, comparer, résumer, exercice, retrouver une page), mais vérifie toujours dans la question et les sources. Si la confiance est faible ou l’intention absente, réponds naturellement sans forcer une catégorie. '\n  + '5) Agis comme un vrai professeur : réponds directement, explique étape par étape si l’élève bloque, '
   + 'donne un exemple corrigé et vérifie la compréhension par une seule question courte si utile. '
   + 'Reste concis (environ 120 mots, davantage seulement si l’élève demande un cours détaillé). '
   + 'Utilise les tours précédents pour conserver le fil, comprendre « pourquoi ? » ou « et cet exemple ? », '
   + 'mais vérifie les faits dans les sources et corrige toute erreur antérieure au lieu de la répéter. '
   + '5) Si la question sort du cadre scolaire, ramène doucement vers l\'apprentissage. '
-  + '6) Ton : professeur algérien bienveillant et encourageant. '
-  + '7) FONDATEUR (faits vérifiés, ne jamais inventer autre chose) : Professeur Kharif Ahmed '
+  + '7) Ton : professeur algérien bienveillant et encourageant. '
+  + '8) FONDATEUR (faits vérifiés, ne jamais inventer autre chose) : Professeur Kharif Ahmed '
   + '(الأستاذ خريف أحمد), enseignant d\'allemand algérien, créateur et professeur de la plateforme '
   + '« الثانوية الافتراضية الجزائرية » ; toute question « wer ist / qui est / من هو Kharif Ahmed » '
   + '→ réponds avec ces faits, dans la langue de la question.';
@@ -64,7 +64,7 @@ export default {
     const normalized = String(b.normalized_text || q).slice(0, 600);
     const ctx = String(b.ctx || '').slice(0, 3000);
     /* Historique fourni par le client : fenêtre courte, rôles stricts, taille bornée. */
-    const history = Array.isArray(b.history) ? b.history.slice(-8).map(item => {
+    const u = b.understanding && typeof b.understanding === 'object' ? b.understanding : {};\n    const allowedIntents = ['compare','summarize','correct_exercise','translate','practice_exercise','explain_rule','explain_word','find_page','explain_lesson'];\n    const allowedLanguages = ['ar','arabizi','darija','fr','de','en'];\n    const understanding = {\n      normalized_question: String(u.normalized_question || '').slice(0, 600),\n      languages: Array.isArray(u.languages) ? u.languages.filter(x => allowedLanguages.includes(String(x))).slice(0, 6) : [],\n      intent: allowedIntents.includes(String(u.intent || '')) ? String(u.intent) : 'unknown',\n      confidence: Math.max(0, Math.min(1, Number(u.confidence) || 0)),\n      entities: {}\n    };\n    if(u.entities && typeof u.entities === 'object' && !Array.isArray(u.entities)){\n      ['subject','level','track','lektion','unit','page','germanWord'].forEach(k => {\n        const v = u.entities[k];\n        if((typeof v === 'string' && v.length <= 80) || (k === 'page' && Number.isInteger(v) && v >= 1 && v <= 999)) understanding.entities[k] = v;\n      });\n      ['grammar','articles','conjunctions'].forEach(k => {\n        if(Array.isArray(u.entities[k])) understanding.entities[k] = u.entities[k].filter(v => typeof v === 'string').slice(0, 8).map(v => v.slice(0, 30));\n      });\n    }\n    const history = Array.isArray(b.history) ? b.history.slice(-8).map(item => {
       if(!item || (item.role !== 'user' && item.role !== 'assistant')) return null;
       const content = String(item.content || '').slice(0, 1000);
       return content ? { role: item.role, content: content } : null;
@@ -97,12 +97,12 @@ export default {
       'DIALECTE DÉTECTÉ : ' + meta.dialect,
       'MATIÈRE ACTIVE : ' + meta.subject,
       'NIVEAU : ' + meta.level,
-      'FILIÈRE : ' + meta.track
+      'FILIÈRE : ' + meta.track,\n      'INTENTION QUST (indice, confiance ' + understanding.confidence + ') : ' + understanding.intent,\n      'LANGUES QUST : ' + understanding.languages.join(', '),\n      'ENTITÉS QUST : ' + JSON.stringify(understanding.entities)
     ].join('\n');
     const userContent = metadata
       + (ctx ? '\n\nCONTEXTE DOCUMENTAIRE ET PÉDAGOGIQUE :\n' + ctx : '')
       + '\n\nQUESTION ORIGINALE DE L’ÉLÈVE :\n' + q
-      + (normalized !== q ? '\n\nNORMALISATION TECHNIQUE (ne remplace pas la formulation originale) :\n' + normalized : '');
+      + (normalized !== q ? '\n\nNORMALISATION TECHNIQUE (ne remplace pas la formulation originale) :\n' + normalized : '')\n      + (understanding.normalized_question ? '\n\nNORMALISATION QUST (indice secondaire) :\n' + understanding.normalized_question : '');
     const msgs = [{ role:'system', content: SYSTEM }]
       .concat(history)
       .concat([{ role:'user', content: userContent }]);
