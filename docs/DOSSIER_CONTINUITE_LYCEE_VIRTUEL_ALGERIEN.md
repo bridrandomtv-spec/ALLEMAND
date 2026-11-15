@@ -2987,3 +2987,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - L’interface d’administration disposait déjà d’un bouton de consultation et de son gestionnaire ; aucune modification de cette voie n’a été nécessaire.
 - Cache Messenger porté à `msg.js?v=3532`, Service Worker à `dz-de-v3.185.0.0.180`, précache synchronisé. Assertions statiques ajoutées pour vérifier le routage des actions et l’ouverture protégée du document.
 - Aucun SQL, policy RLS, bucket, compte, profil ou document réel modifié. Aucun test d’accès utilisateur réel, CI exécutée ou déploiement Cloudflare revendiqué.
+
+
+## Lot 566 — durcissement de la file d’identité dans l’administration (15 novembre 2026)
+- L’audit a relevé que l’interface d’administration vérifiait la présence d’un chemin de carte, mais pas qu’il commençait par l’UUID du profil concerné. Messenger possédait déjà ce contrôle.
+- La carte n’est maintenant ouverte que si la ligne provient de la file courante et si son chemin respecte le préfixe `<UUID>/`. Les réponses asynchrones de création d’URL signée sont ignorées et la fenêtre fermée si la file a été rechargée entre-temps.
+- Le clic de confirmation revalide les champs requis depuis la ligne de la file courante : pseudo, matricule numérique de 1 à 20 chiffres (zéros initiaux conservés), niveau, wilaya, filière, section et chemin de carte lié à l’UUID. Le serveur conserve ses propres contrôles et reste l’autorité finale.
+- Les retours asynchrones de confirmation/rejet sont également neutralisés si une autre page de file a été chargée entre-temps.
+- Cache administration porté à `admin.js?v=3518`, Service Worker à `dz-de-v3.185.0.0.181`, précache synchronisé. Assertions de régression ajoutées.
+- Aucun SQL, policy RLS, Storage, compte ou dossier réel modifié. Les contrôles restent des garde-fous d’interface en complément des contrôles serveur ; ils ne prouvent pas qu’un humain a effectivement lu le document. CI et déploiement non revendiqués.
