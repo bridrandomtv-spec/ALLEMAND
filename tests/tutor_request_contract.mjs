@@ -51,7 +51,17 @@ const checks = [
     /\[\^A-Za-z0-9\]/.test(ia) && /ma\\s\*fhemtch/.test(ia) &&
     /\[\^A-Za-z0-9\]/.test(voice) && /function detectDialect\(t\)/.test(voice)],
   ['le chat réutilise le moteur TTS segmenté du professeur vocal',
-    /window\.parleSpeak\(rep\)/.test(chat) && /window\.parleSpeak = function\(texte, langue\)/.test(voice)]
+    /window\.parleSpeak\(rep, window\.__IA_LAST_LANGUAGE/.test(chat) && /window\.parleSpeak = function\(texte, langue\)/.test(voice)],
+  ['ia.js calcule et transmet la langue de sortie demandée',
+    /const answerLanguage = explicitOutputLanguage/.test(ia) && /output_language: answerLanguage/.test(ia)],
+  ['Worker renvoie une métadonnée de langue de réponse validée',
+    /answer_language: meta\.output_language/.test(worker) && /LANGUE DE SORTIE EXIGÉE/.test(worker)],
+  ['TTS utilise la langue préférée quand le vote lexical est indécis',
+    /if\(best === 0\) return ''/.test(voice) && /voteLang\(ph\) \|\| preferred \|\| 'de'/.test(voice)],
+  ['la voix transmet la langue de sortie au TTS',
+    /speak\(rep\.slice\(0, 2200\), window\.__IA_LAST_LANGUAGE/.test(voice)],
+  ['le double nettoyage TTS est supprimé',
+    !/texte = spoken\(texte\);\s*texte = spoken\(texte\);/.test(voice)]
 ];
 
 let failures = 0;
