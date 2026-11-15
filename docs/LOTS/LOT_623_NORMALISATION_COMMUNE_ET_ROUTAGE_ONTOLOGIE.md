@@ -15,7 +15,7 @@ Réduire les divergences de normalisation entre les questions arabes, la darija,
 
 Création d’un module sans dépendance externe, exposant `window.DZ_TEXT` :
 
-- `normalize()` : normalisation Unicode, casse, variantes arabes, diacritiques et ponctuation arabe ;
+- `normalize()` : normalisation Unicode NFKC, casse, variantes arabes, diacritiques et ponctuation arabe ;
 - `tokens()` : tokenisation qui ne colle plus les points d’interrogation arabes aux mots latins ;
 - `arabiziToArabic()` : petit lexique déterministe de formes fréquentes (wach, chno, kifach, 3lach, 3tini, nsta3mel, etc.) et conversion de chiffres Arabizi 3/7/5/9/2 ;
 - `withArabizi()` : forme de recherche combinant la formulation d’origine et ses équivalents connus ;
