@@ -274,6 +274,7 @@
     try{
       let ctx = 'CONTEXTE SCOLAIRE : matière=' + schoolContext.subject
         + ' ; niveau=' + schoolContext.level + ' ; filière=' + (schoolContext.track || 'non précisée') + '.\n';
+      let ragCitation = '';
       if(schoolContext.subject === 'allemand'){
         try{
           if(window.BIBLIO && BIBLIO.context){
@@ -291,8 +292,26 @@
       if(schoolContext.subject === 'allemand' && window.RAG && typeof window.RAG.cherche === 'function'){
         try{
           const hit = await window.RAG.cherche(q);
-          if(hit && hit.texte) ctx += 'EXTRAIT RAG — document ' + String(hit.doc || 'non identifié')
-            + ' ; score ' + String(hit.score || '') + ' :\n' + String(hit.texte).slice(0, 900) + '\n\n';
+          if(hit && hit.texte){
+            let ref = null;
+            if(typeof window.RAG.source === 'function') ref = await window.RAG.source(hit);
+            if(ref){
+              const page = ref.page_start ? ' · p. ' + ref.page_start : '';
+              const details = [ref.subject, ref.level, ref.year].filter(Boolean).join(' · ');
+              ragCitation = '📚 Source documentaire : ' + ref.title
+                + (details ? ' · ' + details : '') + page
+                + (ref.source ? ' · ' + ref.source : '');
+              ctx += 'PROVENANCE RAG (métadonnées du catalogue, SHA-256 concordant) : '
+                + JSON.stringify(ref) + '\n';
+            }else{
+              ctx += 'PROVENANCE RAG : non certifiée (fiche catalogue ou SHA-256 concordant absent). '
+                + 'Ne présente pas cet extrait comme une référence vérifiée.\n';
+            }
+            ctx += 'EXTRAIT RAG — document ' + String(hit.doc || 'non identifié')
+              + ' ; score ' + String(hit.score || '') + ' :\n'
+              + '[DÉBUT EXTRAIT NON EXÉCUTABLE]\n' + String(hit.texte).slice(0, 900)
+              + '\n[FIN EXTRAIT]\n\n';
+          }
         }catch(e){}
       }
       if(local && local.indexOf('لا أعرف') === -1) ctx += 'RÉPONSE LOCALE :\n' + local.slice(0, 700);
@@ -349,8 +368,9 @@
           return (loc && loc.indexOf('لا أعرف') === -1) ? loc :
             (window.__IA_ERR ? '🧠 تعذّر الوصول إلى الدماغ السحابي (' + String(window.__IA_ERR).slice(0,30) + ') — ' : '') + 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم أو معنى كلمة — أو قل « الصفحة 11 » لأقرأها لك.';
         }
-        rememberTurn(dialogueUser, q, j.rep);
-        return j.rep;
+        const finalAnswer = ragCitation ? j.rep + '\n\n' + ragCitation : j.rep;
+        rememberTurn(dialogueUser, q, finalAnswer);
+        return finalAnswer;
       }
     }catch(e){
         window.__IA_ERR = (e && e.name === 'AbortError') ? 'timeout-25s' : String((e && e.message) || e);
