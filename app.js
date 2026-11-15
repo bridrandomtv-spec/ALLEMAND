@@ -1277,25 +1277,25 @@ async function sendChat(v){
     rep = String(rep || '').trim();
     if(rep){
       tp.remove();
-      const safe = esc(rep).replace(/\\n/g,'<br>');
+      const safe = esc(rep).replace(/\n/g,'<br>');
       addMsg('bot', safe);
       answered = true;
       if(soundOn && 'speechSynthesis' in window){
         const utterance = new SpeechSynthesisUtterance(rep);
-        utterance.lang = /[\\u0600-\\u06FF]/.test(rep) ? 'ar-SA'
+        utterance.lang = /[\u0600-\u06FF]/.test(rep) ? 'ar-SA'
           : (/[äöüß]/i.test(rep) ? 'de-DE'
-          : (/\\b(the|what|why|how|you|is|are)\\b/i.test(rep) ? 'en-US' : 'fr-FR'));
+          : (/\b(the|what|why|how|you|is|are)\b/i.test(rep) ? 'en-US' : 'fr-FR'));
         speechSynthesis.cancel(); speechSynthesis.speak(utterance);
       }
       return;
     }
     /* Secours historique si le moteur commun n'est pas chargé ou ne répond pas. */
     tp.remove();
-    const secours = PROF && typeof PROF.repondre === 'function' ? PROF.repondre(v)
+    const secours = window.PROF && typeof window.PROF.repondre === 'function' ? window.PROF.repondre(v)
       : 'Je rencontre un problème temporaire. Reformule ta question, s’il te plaît.';
     addMsg('bot', secours);
     if(soundOn && /de-in/.test(secours)){
-      const m = secours.match(/<span class="de-in">([^<]+)<\\/span>/);
+      const m = secours.match(/<span class="de-in">([^<]+)<\/span>/);
       if(m) speak(m[1].replace(/<[^>]+>/g,''));
     }
     answered = true;
@@ -1303,7 +1303,7 @@ async function sendChat(v){
     try{ console.warn('[chat] orchestrateur pédagogique :', e); }catch(_){}
     if(tp.isConnected){
       tp.remove();
-      const secours = PROF && typeof PROF.repondre === 'function' ? PROF.repondre(v)
+      const secours = window.PROF && typeof window.PROF.repondre === 'function' ? window.PROF.repondre(v)
         : 'Je rencontre un problème temporaire. Reformule ta question, s’il te plaît.';
       addMsg('bot', secours);
       answered = true;
