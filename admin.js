@@ -711,7 +711,7 @@ function rendreCouvertureORG1(mount){
           if(!String(x.wilaya||'').trim()) missing.push('الولاية');
           if(!String(x.filiere||'').trim()) missing.push('الشعبة');
           if(!String(x.section||'').trim()) missing.push('القسم');
-          if(!String(x.carte_scolaire_path||'').trim()) missing.push('البطاقة المدرسية');
+          if(!x.id || !String(x.carte_scolaire_path||'').startsWith(String(x.id)+'/')) missing.push('البطاقة المدرسية أو مسارها غير صالح');
           var canApprove = missing.length === 0;
           return '<article class="card adm-verification-item">'
             + '<div class="adm-verif-head"><b>👤 ' + esq5(x.pseudo||'تلميذ') + '</b><span class="badge">قيد المراجعة</span></div>'
@@ -754,16 +754,21 @@ function rendreCouvertureORG1(mount){
     if(verifyDoc){
       var docRow = (window.__admVerificationRows||[]).find(function(row){ return row.id===verifyDoc; });
       var docPath = docRow && docRow.carte_scolaire_path;
-      if(!docPath || !window.SB || typeof SB.msgSchoolCardUrl!=='function'){ window.alert('⛔ المستند غير متاح'); return; }
+      var docQueueEpoch = verificationQueueEpoch;
+      if(!docRow || !docPath || !String(docPath).startsWith(String(verifyDoc)+'/') || !window.SB || typeof SB.msgSchoolCardUrl!=='function'){ window.alert('⛔ المستند غير متاح أو مساره غير صالح'); return; }
       var docWindow = window.open('about:blank','_blank');
       if(!docWindow){ window.alert('⛔ اسمح بفتح نافذة جديدة لعرض البطاقة المدرسية.'); return; }
       try{ docWindow.opener = null; }catch(ignore){}
       t.disabled = true;
       SB.msgSchoolCardUrl(docPath).then(function(result){
+        if(docQueueEpoch !== verificationQueueEpoch){ try{ docWindow.close(); }catch(ignore){} return; }
         t.disabled = false;
         if(result && result.ok && result.url){ docWindow.location.replace(result.url); }
         else { try{ docWindow.close(); }catch(ignore){} window.alert('⛔ '+esq5(result && result.err || 'تعذّر فتح البطاقة')); }
-      }).catch(function(err){ t.disabled=false; try{ docWindow.close(); }catch(ignore){} window.alert('⛔ '+esq5(err && err.message || err)); });
+      }).catch(function(err){
+        if(docQueueEpoch !== verificationQueueEpoch){ try{ docWindow.close(); }catch(ignore){} return; }
+        t.disabled=false; try{ docWindow.close(); }catch(ignore){} window.alert('⛔ '+esq5(err && err.message || err));
+      });
       return;
     }
     var verifyPage = t.getAttribute('data-adm-verif-page');
@@ -773,12 +778,30 @@ function rendreCouvertureORG1(mount){
       var nextStatus = t.getAttribute('data-status');
       if(nextStatus !== 'verifie' && nextStatus !== 'rejete') return;
       if(!window.SB || typeof SB.msgSetVerification !== 'function'){ window.alert('⛔ خدمة التحقق غير متاحة'); return; }
+      var verifyRow = (window.__admVerificationRows||[]).find(function(row){ return row.id===verifyId; });
+      if(!verifyRow){ window.alert('⛔ انتهت صلاحية الطلب المعروض. أعد تحميل القائمة.'); return; }
+      if(nextStatus === 'verifie'){
+        var verifyMissing = [];
+        if(!String(verifyRow.pseudo||'').trim()) verifyMissing.push('اسم الحساب');
+        if(!/^[0-9]{1,20}$/.test(String(verifyRow.matricule||'').trim())) verifyMissing.push('رقم التسجيل');
+        if(!String(verifyRow.niveau||'').trim()) verifyMissing.push('المستوى');
+        if(!String(verifyRow.wilaya||'').trim()) verifyMissing.push('الولاية');
+        if(!String(verifyRow.filiere||'').trim()) verifyMissing.push('الشعبة');
+        if(!String(verifyRow.section||'').trim()) verifyMissing.push('القسم');
+        if(!verifyRow.id || !String(verifyRow.carte_scolaire_path||'').startsWith(String(verifyRow.id)+'/')) verifyMissing.push('البطاقة المدرسية أو مسارها');
+        if(verifyMissing.length){ window.alert('⛔ لا يمكن تأكيد الطلب قبل استكمال والتحقق من: '+verifyMissing.join('، ')); return; }
+      }
       if(nextStatus === 'rejete' && !window.confirm('تأكيد رفض طلب التحقق؟')) return;
+      var verifyQueueEpoch = verificationQueueEpoch;
       t.disabled = true;
       SB.msgSetVerification(verifyId, nextStatus).then(function(r){
+        if(verifyQueueEpoch !== verificationQueueEpoch) return;
         if(r && r.ok){ renderVerificationQueue(); }
         else { t.disabled = false; window.alert('⛔ ' + esq5(r && r.err || 'تعذّر تحديث الطلب')); }
-      }).catch(function(err){ t.disabled = false; window.alert('⛔ ' + esq5(err && err.message || err)); });
+      }).catch(function(err){
+        if(verifyQueueEpoch !== verificationQueueEpoch) return;
+        t.disabled = false; window.alert('⛔ ' + esq5(err && err.message || err));
+      });
       return;
     }
     var tab = t.getAttribute('data-adm-tab');
