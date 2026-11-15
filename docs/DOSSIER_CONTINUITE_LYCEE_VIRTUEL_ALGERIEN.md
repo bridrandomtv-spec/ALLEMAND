@@ -3824,3 +3824,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Rapport : `docs/LOTS/LOT_624_AUDIT_PIPELINE_DOCUMENTAIRE_RAG.md`.
 - Étape suivante : Lot 625, unifier les scripts autour de `corpus_rag_index.json`, garder `corpus_index.json` réservé à BIBLIO, aligner les workflows, imposer une licence explicite et ajouter des tests de contrat.
 - Aucun changement Supabase/Auth/RLS/schéma/données/paiement/secrets ; aucun merge, déploiement ou changement de `main`. PR #17 reste séparée et ouverte.
+
+
+## Lot 625 — unification et sécurisation du pipeline RAG (15 novembre 2026)
+
+- `tools/indexer_pdf.py` écrit désormais l'index documentaire dans `corpus_rag_index.json`, et ne touche plus à `corpus_index.json` (catalogue BIBLIO).
+- Les PDF/documents doivent avoir un sidecar `_<nom>.json` et une licence explicite autorisée (`production_propre`, `domaine_public`, `autorisation_ecrite`, `licence_libre`). Les valeurs implicites et la mention automatique « document utilisateur » ne valent plus autorisation.
+- Si aucun chunk autorisé n'est produit, les scripts s'arrêtent sans remplacer les index existants. Écritures JSON atomiques ; index PDF conforme au contrat `global_id/doc/n/texte`.
+- `tools/sharder_index.py` refuse les index vides, chunks incomplets, IDs invalides/dupliqués et postings orphelins/dupliqués ; manifeste v2 publié après génération des shards.
+- `sharder.yml` surveille maintenant `corpus_rag_index.json`. Les workflows d'indexation et de sharding sont bloqués sur `main` et ciblent la branche déclenchante. Le workflow indexer exécute `tests/test_corpus_pipeline.py` avant ingestion.
+- Tests ajoutés pour la séparation BIBLIO/RAG, licence explicite, index vide, IDs globaux et postings orphelins. Tests Python et Actions non exécutés/confirmés dans cet environnement.
+- OCR temporairement désactivé : les scans sans texte sont ignorés, pas injectés comme contenu vide. Réintégration prévue après tests de qualité.
+- Aucun PDF réel n'a été réindexé et aucun contenu artificiel n'a été créé. Aucun changement Supabase/Auth/RLS/schéma/données/paiement/secrets ; aucun merge, déploiement ou changement de `main`. PR #17 reste ouverte.
+- Rapport : `docs/LOTS/LOT_625_REPARATION_PIPELINE_RAG.md`.
+- Suite : Lot 626, vérifier les workflows sur la branche et auditer les PDF réels + licences/sidecars, puis restaurer l'OCR contrôlé.
