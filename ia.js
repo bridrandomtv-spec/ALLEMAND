@@ -40,13 +40,13 @@
   async function englishContext(question){
     const data = await loadEnglishData();
     const stop = new Set(['the','and','for','with','what','when','where','which','who','why','how','are','was','were','is','am','do','does','did','can','could','would','should','have','has','had','you','your','my','our','their','this','that','these','those','from','into','about','between','please','explain','tell','give','me']);
-    const terms = String(question || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')
+    const terms = String(question || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
       .match(/[a-z]{3,}/g) || [];
     const words = Array.from(new Set(terms.filter(w => !stop.has(w))));
     if(!words.length) return '';
     const docs = [];
     function add(label, body){
-      const text = String(body || '').replace(/\\s+/g,' ').trim();
+      const text = String(body || '').replace(/\s+/g,' ').trim();
       if(!text) return;
       const low = text.toLowerCase();
       const score = words.reduce((n,w) => n + (low.indexOf(w) >= 0 ? 1 : 0), 0);
@@ -66,7 +66,7 @@
     });
     docs.sort((a,b) => b.score-a.score);
     const chosen = docs.slice(0,4).map(d => d.label + ': ' + d.text);
-    return chosen.join('\\n').slice(0,1700);
+    return chosen.join('\n').slice(0,1700);
   }
   let DIALOGUE = [], DIALOGUE_OWNER = null;
   function dialogueOwner(){
