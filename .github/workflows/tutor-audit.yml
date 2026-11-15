@@ -30,6 +30,7 @@ on:
       - "tests/rag_loader_contract.mjs"
       - "tests/rag_loader_runtime.mjs"
       - "tests/worker_request_runtime.mjs"
+      - "tests/ia_rag_orchestration_runtime.mjs"
       - "tests/sharder_fixture.py"
       - ".github/workflows/tutor-audit.yml"
   workflow_dispatch:
@@ -94,6 +95,9 @@ jobs:
 
       - name: Tester le Worker CERVEAU avec modèle simulé
         run: node tests/worker_request_runtime.mjs
+
+      - name: Tester l’orchestration navigateur et les citations RAG
+        run: node tests/ia_rag_orchestration_runtime.mjs
 
       - name: Tester le sharder sur fixtures temporaires
         run: python tests/sharder_fixture.py
