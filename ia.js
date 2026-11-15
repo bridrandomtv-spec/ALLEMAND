@@ -116,7 +116,8 @@
     let understanding = null;
     try{
       if(window.QUST && typeof window.QUST.understand === 'function') understanding = window.QUST.understand(q, null);
-    }catch(e){}\n    const dialect = String(req.dialect || (understanding && understanding.dialect === 'darija' ? 'darija' : (DARJA_AR.test(q) || DARJA_LATIN.test(q) ? 'darija' : 'unknown'))).slice(0, 30);
+    }catch(e){}
+    const dialect = String(req.dialect || (understanding && understanding.dialect === 'darija' ? 'darija' : (DARJA_AR.test(q) || DARJA_LATIN.test(q) ? 'darija' : 'unknown'))).slice(0, 30);
     let schoolContext = { subject: 'allemand', level: 'tous', track: '' };
     try{
       if(window.CONTEXT && typeof window.CONTEXT.ctx === 'function'){
@@ -304,7 +305,8 @@
             intent: String(understanding.intent || '').slice(0, 40),
             confidence: Number(understanding.confidence || 0),
             entities: understanding.entities && typeof understanding.entities === 'object' ? understanding.entities : {}
-          } : null,\n          history: DIALOGUE.slice(-8)
+          } : null,
+          history: DIALOGUE.slice(-8)
         }) }, 25000);
       if(!r.ok){
         let e = {};
