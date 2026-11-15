@@ -307,7 +307,7 @@
           if(r2.ok){
             const j2 = await r2.json();
             if(j2 && j2.ok && j2.rep && j2.rep.length > 10){
-              if(['ar','de','fr','es','it'].includes(String(j2.answer_language || '')))
+              if(['ar','de','en','fr','es','it'].includes(String(j2.answer_language || '')))
                 window.__IA_LAST_LANGUAGE = j2.answer_language;
               rememberTurn(dialogueUser, q, j2.rep);
               return j2.rep;
@@ -317,7 +317,7 @@
         return sortieFaible(local, 'http-' + r.status);
       }
       const j = await r.json();
-      if(j && ['ar','de','fr','es','it'].includes(String(j.answer_language || '')))
+      if(j && ['ar','de','en','fr','es','it'].includes(String(j.answer_language || '')))
         window.__IA_LAST_LANGUAGE = j.answer_language;
       if(!j.ok){ window.__IA_ERR = j.err || 'http';
         try{ console.warn('🧠 ia-ask :', j.err); }catch(_){}
