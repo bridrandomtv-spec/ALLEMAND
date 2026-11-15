@@ -3085,3 +3085,11 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le correcteur est une série de règles regex limitées (sein/haben pour quelques pronoms, âge, kommen aus, wohnen in, ponctuation). L’absence d’une règle déclenchée est interprétée comme « Sehr gut » et non comme « erreur non détectée / vérification insuffisante ».
 - Impact : risque de faux positifs et de faux négatifs dans le chat principal lorsque le Worker cloud échoue et que `PROF.repondre()` sert de secours, mais aussi dans les exercices texte utilisant ce noyau.
 - Aucune modification du correcteur. Correction recommandée : corriger le test de casse, introduire un état « non vérifiable » distinct de « correct », élargir les tests de conjugaison/syntaxe et éviter d’attribuer 100 % sans analyse grammaticale suffisante.
+
+
+## Lot 577 — fiabilité du chat principal et absence de mémoire conversationnelle (15 novembre 2026)
+- `app.js / sendChat()` appelle le Worker directement sans `AbortController`, timeout, jeton d’authentification ni historique des tours précédents. Le chat stocke localement les messages pour les réafficher, mais n’envoie au modèle que la question courante.
+- Le contexte envoyé au Worker est une phrase générique fixe sur la plateforme et l’allemand ; il ne contient aucun extrait de livre, devoir, règle, niveau, filière ou matière active. Le prompt système demande pourtant au modèle de s’appuyer d’abord sur des extraits officiels et interdit l’invention hors bibliothèque.
+- Les erreurs du premier RAG local et du Worker sont absorbées par des `catch` silencieux ; en cas d’échec, le chat bascule sur `PROF.repondre()` sans signaler que le moteur cloud n’a pas répondu. L’utilisateur ne peut donc pas distinguer une réponse LLM, une réponse locale ou une panne.
+- En conséquence, le chat principal peut rester en état de réflexion sans limite, ou fournir une réponse de secours heuristique sans indiquer le changement de moteur. La conversation n’est pas réellement multi-tours côté LLM malgré l’historique d’affichage local.
+- Aucune modification appliquée. Correction recommandée : pipeline unique avec délai maximal, statut explicite du moteur, contexte documentaire validé côté serveur, historique limité et authentifié, et indication claire du niveau de confiance/source.
