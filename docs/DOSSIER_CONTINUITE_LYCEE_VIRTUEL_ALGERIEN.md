@@ -3066,3 +3066,13 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le conflit est structurel : `biblio.js` utilise le même `corpus_index.json` comme liste `items` de vocabulaire ; `tools/ingest_corpus.py` l’écrase au format `chunks/termes` ; `tools/indexer_pdf.py` et `tools/sharder_index.py` attendent également `chunks/termes`. Les outils ne partagent donc pas un contrat de fichier unique compatible.
 - Le test `tests/regression_rag.mjs` ne teste que `reponsePedagogique()` sur son contrat local et ne teste pas `cherche()`, le manifeste ou la compatibilité du format d’index. Le défaut est ainsi invisible dans la couverture actuelle.
 - Correction recommandée après audit : séparer l’index lexical de vocabulaire utilisé par BIBLIO et l’index plein-texte RAG (nouveau fichier dédié), aligner l’ingestion et le sharding sur ce contrat, puis ajouter des tests de recherche réelle, d’absence d’index et de repli sans crash. Aucune correction de code ou de données n’a été appliquée à ce lot.
+
+
+## Lot 575 — précision sur les trois parcours IA distincts (15 novembre 2026)
+- Correction/complément au Lot 572 : le cloud n’est pas limité à la voix. Le dépôt contient trois pipelines distincts :
+  1. Chat principal `app.js / sendChat()` : tente `RAG.cherche()`, puis appelle directement `/ask` avec un contexte générique fixe (plateforme + allemand), puis utilise `PROF.repondre()` en secours local.
+  2. Formulaire `rag.js / ragForm` : appelle `reponsePedagogique()`, puis `cherche()` ; aucun appel cloud dans ce formulaire.
+  3. Voix `parle.js` : appelle `ia.js / reponseIA()`, qui tente le moteur local, construit un contexte via `BIBLIO.context()`, puis appelle le Worker.
+- Ces parcours n’emploient ni le même contexte, ni la même stratégie de repli, ni la même détection de langue. Le chat principal n’envoie pas l’historique local qu’il conserve ; le parcours vocal ne transmet pas non plus l’historique ; le formulaire RAG reste local. Le contexte générique du chat principal n’est pas un extrait documentaire vérifié.
+- Le défaut d’index du Lot 574 affecte aussi le premier essai `RAG.cherche()` du chat principal ; son `catch` silencieux le fait basculer vers le Worker sans afficher l’échec du RAG.
+- Aucune modification applicative ; cette note corrige la cartographie des flux IA avant toute proposition de consolidation.
