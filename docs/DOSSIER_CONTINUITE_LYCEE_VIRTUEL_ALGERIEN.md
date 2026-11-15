@@ -3653,3 +3653,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Messenger reste non terminé : tests E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
 
 - Garde supplémentaire après revue de concurrence : `rememberTurn` vérifie de nouveau l'identité de session au moment où une réponse asynchrone revient. Une réponse commencée avant le logout ou le changement de compte ne peut donc pas réinjecter l'ancien historique dans la session suivante. Assertion statique ajoutée au contrat de test.
+
+
+## Lot 614 — langue de sortie explicite et prononciation multilingue (15 novembre 2026)
+
+- Défaut confirmé dans `parle.js` : `voteLang()` classait par défaut toute phrase latine sans marqueur lexical en allemand (`de`). Les phrases françaises ou anglaises courtes et peu lexicalisées pouvaient donc être prononcées avec une mauvaise voix.
+- Correction candidate : le vote linguistique retourne désormais « indéterminé » quand aucun indice n'est présent ; `splitByScript()` utilise alors la langue de sortie attendue, tout en conservant la détection phrase par phrase des segments qui ont des indices propres.
+- `ia.js` calcule une langue de sortie attendue à partir des consignes explicites (ex. « en français », « auf Deutsch », « بالدارجة »), puis de la langue détectée/sélectionnée. Cette métadonnée est envoyée au Worker.
+- `worker/ia-ask.js` transmet la langue de sortie exigée au modèle et renvoie `answer_language` dans sa réponse JSON. Le client valide la valeur avant de la réutiliser.
+- Le chat et le parcours vocal passent désormais la langue de sortie au même moteur TTS segmenté. Les segments allemands/français/arabe identifiables restent traités individuellement ; la langue préférée sert de repli lorsque le vote est indécis.
+- Nettoyage mineur : suppression d'un double appel identique à `spoken()` dans `parle.js`.
+- Tests de contrat étendus pour la langue de sortie, la métadonnée Worker, le repli TTS et le nettoyage.
+- **Non validé à ce stade** : les tests ne sont pas encore exécutés. Le champ `answer_language` représente la langue demandée/attendue, pas une preuve automatique que le modèle a respecté cette langue. La qualité réelle doit être contrôlée sur les réponses du modèle.
+- Aucune modification de Supabase, authentification, données, configuration Cloudflare ou déploiement. Les modifications restent candidates sur la branche d'audit.
+- **Suite** : exécuter une suite CI strictement non-déployante sur la branche d'audit : syntaxe JavaScript, contrats tuteur, lecteur RAG runtime et fixture sharder. Puis contrôler les 16 cas de `tests/tutor_matrix.json` avec réponses réelles et évaluation pédagogique.
