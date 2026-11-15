@@ -38,11 +38,13 @@ def build_shards(index, taille=TAILLE):
     for term, postings in raw_terms.items():
         if not isinstance(term, str) or not term.strip() or not isinstance(postings, list):
             raise ValueError("terme ou postings invalides: %r" % term)
-        if len(postings) != len(set(postings)):
-            raise ValueError("posting dupliqué pour le terme %s" % term)
+        vus_postings = set()
         for posting in postings:
             if not isinstance(posting, int) or isinstance(posting, bool) or posting not in ids:
                 raise ValueError("posting sans chunk correspondant: %r (%s)" % (posting, term))
+            if posting in vus_postings:
+                raise ValueError("posting dupliqué pour le terme %s" % term)
+            vus_postings.add(posting)
 
     shards = []
     for start in range(0, len(chunks), taille):
