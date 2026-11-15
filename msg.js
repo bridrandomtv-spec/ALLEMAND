@@ -408,7 +408,9 @@
           return '<div class="msg-modcard"><div class="msg-meta"><b>🪪 ' + esc(q.pseudo||'?') + '</b><span>' + esc((q.wilaya||'?')+' · '+(q.niveau||'?')+' · '+(q.filiere||'?')) + '</span></div>' +
             '<div class="msg-body">رقم التسجيل المدرسي: ' + esc(q.matricule||'—') + ' · الشعبة: ' + esc(q.section||'—') + '</div>' +
             (canVerify ? '' : '<div class="msg-empty" role="alert">⛔ لا يمكن التفعيل: معلومات ناقصة أو غير صالحة — '+esc(missingVerification.join('، '))+'</div>') +
-            '<div class="msg-modbtns"><button class="msg-modbtn" data-mod="verif-ok" data-uid="' + q.id + '" type="button"' + (canVerify ? '' : ' disabled title="أكمل معلومات الهوية المدرسية أولاً"') + '>✔ تأكيد</button>' +
+            '<div class="msg-modbtns">' +
+            (q.carte_scolaire_path ? '<button class="msg-modbtn" data-mod="verif-doc" data-uid="' + q.id + '" type="button">🪪 فتح البطاقة المدرسية</button>' : '<span class="msg-empty">⛔ لا توجد بطاقة مدرسية مرفقة</span>') +
+            '<button class="msg-modbtn" data-mod="verif-ok" data-uid="' + q.id + '" type="button"' + (canVerify ? '' : ' disabled title="أكمل معلومات الهوية المدرسية أولاً"') + '>✔ تأكيد</button>' +
             '<button class="msg-modbtn" data-mod="verif-no" data-uid="' + q.id + '" type="button">⛔ رفض</button></div></div>';
         }).join('');
       }
@@ -531,7 +533,7 @@
     });
   });
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-mod]') : null;
     if(!t) return;
     var msgAct = t.getAttribute('data-msg-act');
     if(msgAct){
@@ -668,6 +670,33 @@
     }
     var mod = t.getAttribute('data-mod');
     if(mod){
+      if(mod==='verif-doc'){
+        var docUid = t.getAttribute('data-uid');
+        var docRow = (window.__msgVerificationRows||[]).find(function(row){ return row.id===docUid; });
+        var docPath = docRow && docRow.carte_scolaire_path;
+        if(!docRow || !docPath || !String(docPath).startsWith(String(docUid)+'/') ||
+           !window.SB || typeof window.SB.msgSchoolCardUrl!=='function'){
+          window.alert('⛔ مستند الهوية غير متاح أو مساره غير صالح');
+          return;
+        }
+        var docWindow = window.open('about:blank','_blank');
+        if(!docWindow){ window.alert('⛔ اسمح بفتح نافذة جديدة لعرض البطاقة المدرسية.'); return; }
+        try{ docWindow.opener = null; }catch(ignore){}
+        t.disabled = true;
+        var docIdentityEpoch = state.authEpoch;
+        window.SB.msgSchoolCardUrl(docPath).then(function(result){
+          if(state.authEpoch!==docIdentityEpoch){ try{ docWindow.close(); }catch(ignore){} return; }
+          t.disabled = false;
+          if(result && result.ok && result.url){ docWindow.location.replace(result.url); }
+          else { try{ docWindow.close(); }catch(ignore){} window.alert('⛔ '+((result&&result.err)||'تعذّر فتح البطاقة')); }
+        }).catch(function(error){
+          if(state.authEpoch!==docIdentityEpoch){ try{ docWindow.close(); }catch(ignore){} return; }
+          t.disabled = false;
+          try{ docWindow.close(); }catch(ignore){}
+          window.alert('⛔ '+String(error&&error.message||error));
+        });
+        return;
+      }
       if(mod==='creategroup'){
         var w = (el('mgWil')||{}).value || '', n = (el('mgNiv')||{}).value || '', f = (el('mgFil')||{}).value || '';
         var groupIdentityEpoch = state.authEpoch;
