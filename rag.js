@@ -2,9 +2,9 @@
    الثانوية الافتراضية الجزائرية — rag.js  (v2 : index shardé)
    🔎 RAG GARDÉ : la réponse est TOUJOURS un extrait verbatim d'un chunk du
    corpus + sa source. Jamais inventé.
-   · Si shards_manifest.json existe : recherche shard par shard (mémoire
-     bornée à 1 shard, chargement progressif, arrêt précoce si match fort).
-   · Sinon : repli sur l'index unique corpus_rag_index.json.
+   · Manifeste v2 validé avant lecture ; chaque shard et chaque posting
+     doivent être cohérents, et tous les shards doivent être lus.
+   · En cas d'artefact incomplet/corrompu : repli sur l'index complet validé.
    ══════════════════════════════════════════════════════════════════════ */
 'use strict';
 
