@@ -319,5 +319,21 @@ class CorpusPipelineContract(unittest.TestCase):
                                 "langue": "de", "source_sha256": "a" * 64}]},
                 {"chunks": [{"doc": "doc-a", "texte": "Hallo", "source_sha256": "b" * 64}]})
 
+
+    def test_catalogue_index_accepts_multilingual_document_metadata(self):
+        documents = [
+            {"id": "de", "matiere": "allemand", "niveau": "2AS", "langue": "de"},
+            {"id": "ar", "matiere": "arabe", "niveau": "1AS", "langue": "ar"},
+            {"id": "fr", "matiere": "francais", "niveau": "3AS", "langue": "fr"},
+            {"id": "es", "matiere": "espanol", "niveau": "2AS", "langue": "es"},
+            {"id": "it", "matiere": "italien", "niveau": "2AS", "langue": "it"}
+        ]
+        index = {"chunks": [{"doc": doc["id"], "texte": "synthetic lesson"}
+                            for doc in documents]}
+        result = contracts.valider_coherence_catalogue_index(
+            {"documents": documents}, index)
+        self.assertEqual(result["documents_indexes"], 5)
+        self.assertEqual(result["documents_sans_chunks"], 0)
+
 if __name__ == "__main__":
     unittest.main()
