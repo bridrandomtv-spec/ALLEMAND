@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 
 const source = fs.readFileSync('ia.js', 'utf8');
 
-async function runCase(sourceState) {
+async function runCase(sourceState, question='Explique weil en français') {
   let posted = null;
   const responseText = 'La conjonction « weil » introduit une proposition subordonnée.';
   const window = {
@@ -18,9 +18,9 @@ async function runCase(sourceState) {
       confidence: 0.95, entities: { grammar: ['weil'] }, dialect: 'unknown'
     }) },
     CONTEXT: { ctx: () => ({ subject: 'allemand', level: '2AS', track: 'langues' }) },
-    BIBLIO: { context: async () => '' },
+    BIBLIO: { context: async () => sourceState === 'biblio-only' ? 'Extrait BIBLIO de fixture sans référence documentaire vérifiée.' : '' },
     RAG: {
-      cherche: async () => sourceState === 'unavailable' ? null : ({
+      cherche: async () => ['unavailable','biblio-only'].includes(sourceState) ? null : ({
         doc: 'fixture-de-2as', texte: 'weil introduit une subordonnée.',
         score: 5, page_start: 4, page_end: 4,
         source_sha256: 'a'.repeat(64)
@@ -57,13 +57,13 @@ async function runCase(sourceState) {
     setTimeout, clearTimeout
   });
   const answer = await window.reponseIA({
-    raw_text: 'Explique weil en français',
-    normalized_text: 'expliquer weil',
+    raw_text: question,
+    normalized_text: question,
     input_mode: 'text', selected_language: 'auto',
     detected_language: 'fr', output_language: 'fr'
   });
   assert.ok(posted, 'aucune requête /ask émise');
-  assert.equal(posted.raw_text, 'Explique weil en français');
+  assert.equal(posted.raw_text, question);
   assert.match(posted.ctx, /EXTRAIT RAG/);
   return { answer, context: posted.ctx, payload: posted };
 }
@@ -89,6 +89,34 @@ const unavailable = await runCase('unavailable');
 assert.equal(unavailable.payload.rag_source_status, 'unavailable');
 assert.match(unavailable.context, /aucun extrait RAG pertinent et vérifié/);
 assert.doesNotMatch(unavailable.answer, /Source documentaire/);
+
+const exactPage = await runCase('verified', 'Explique la page 4');
+assert.equal(exactPage.payload.rag_scope_type, 'page');
+assert.equal(exactPage.payload.rag_scope_value, 4);
+assert.equal(exactPage.payload.rag_scope_status, 'verified');
+
+const unknownPage = await runCase('verified', 'Explique la page 42');
+assert.equal(unknownPage.payload.rag_scope_status, 'mismatch');
+
+const requestedUnit = await runCase('verified', 'Explique unité 7');
+assert.equal(requestedUnit.payload.rag_scope_type, 'unit');
+assert.equal(requestedUnit.payload.rag_scope_status, 'unsupported');
+
+const requestedExercise = await runCase('verified', 'Corrige exercice 3');
+assert.equal(requestedExercise.payload.rag_scope_type, 'exercise');
+assert.equal(requestedExercise.payload.rag_scope_status, 'unsupported');
+
+const general = await runCase('verified', 'Explique weil en français');
+assert.equal(general.payload.rag_scope_type, 'none');
+assert.equal(general.payload.rag_scope_status, 'none');
+
+const biblioOnly = await runCase('biblio-only', 'Donne la page 4 du manuel');
+assert.equal(biblioOnly.payload.rag_source_status, 'unavailable');
+assert.equal(biblioOnly.payload.rag_scope_status, 'unavailable');
+assert.match(biblioOnly.context, /Extrait BIBLIO de fixture/);
+
+console.log('PASS portée RAG : page exacte admise, page différente refusée, unité/exercice non certifiés');
+console.log('PASS portée RAG : explication générale non bloquée et BIBLIO seul ne certifie aucune référence');
 
 console.log('PASS ia.js transmet la question originale et le contexte RAG au endpoint /ask simulé');
 console.log('PASS une source vérifiée produit une citation avec titre et page');
