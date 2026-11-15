@@ -424,6 +424,7 @@ ok(msgjs.includes('ابحث عن زميل لطلب محادثة خاصة'), 'int
 // Lot 556 — justificatif scolaire privé obligatoire pour l'activation.
 ok(sbjs.includes("from('cartes-scolaires').upload") && sbjs.includes('carte_scolaire_path:cardPath'), 'dépôt carte scolaire dans le bucket privé et chemin enregistré au profil');
 ok(sbjs.includes("select('carte_scolaire_path')") && sbjs.includes('remove([cardPath])') && sbjs.includes('remove([oldPath])'), 'nettoyage du nouvel upload si échec et remplacement de l’ancienne carte');
+ok(sbjs.includes(".select('id').maybeSingle()") && sbjs.includes("if(r.error || !r.data)"), 'demande de vérification confirmée uniquement si une ligne profil a été mise à jour');
 ok(msgjs.includes('id="vfCard"') && msgjs.includes('msgUploadSchoolCard(cardFile)'), 'formulaire étudiant : justificatif obligatoire avant envoi');
 ok(adminjs.includes("missing.push('البطاقة المدرسية')") && adminjs.includes('data-adm-verif-doc'), 'file administrative : pièce obligatoire et bouton de consultation');
 ok(sbjs.includes('createSignedUrl(path,300)'), 'consultation par lien signé limité à 5 minutes');
