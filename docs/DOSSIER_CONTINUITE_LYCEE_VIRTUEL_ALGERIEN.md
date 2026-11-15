@@ -2872,3 +2872,8 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Runs GitHub Actions observés sur les commits précédents : `43660673274` et `43660721867` terminés en échec sans étapes/journaux (`steps=null`, `logs_url=null`) ; le run `43660764564` s’est lui aussi terminé en échec avant qu’aucune étape soit exposée. La cause ne peut pas être attribuée à une assertion de code ; ne pas déclarer la CI verte.
 - Les advisors Supabase retournent des avertissements généraux déjà présents dans le projet (fonctions SECURITY DEFINER exposées, policies permissives multiples, protections de mots de passe compromis non activées, optimisation RLS). Aucun avertissement spécifique au bucket `cartes-scolaires` n’est ressorti des catégories de lint retournées. Aucun de ces sujets généraux n’a été modifié dans ce lot.
 - Syntaxe JavaScript vérifiée pour `supabase/supabase.js`, `msg.js`, `admin.js` et `sw.js`. Le fichier CI `.mjs` conserve des imports ESM et une structure historique concaténée ; son exécution réelle n’est pas confirmée par les runs GitHub qui n’ont fourni aucune étape.
+
+### Correctif UX Lot 556 — ouverture fiable du justificatif
+- Le clic sur « ouvrir la carte scolaire » ouvre désormais une fenêtre immédiatement pendant l’interaction utilisateur, puis y redirige vers le lien signé après son obtention. Cela évite le blocage fréquent des fenêtres asynchrones par les navigateurs ; la fenêtre est fermée si la création du lien échoue.
+- Commit `admin.js` : `545dd697b367fd86b9a63aeb9326d88d15d88407`.
+- Cache : `admin.js?v=3516`, Service Worker `dz-de-v3.185.0.0.172`. Assertions de cache `check-msg.mjs` et `check-public-portal.mjs` alignées.
