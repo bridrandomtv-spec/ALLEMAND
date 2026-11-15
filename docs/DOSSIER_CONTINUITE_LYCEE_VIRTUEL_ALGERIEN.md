@@ -2978,3 +2978,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Correction : le contrôle `renderEpoch` est maintenant effectué immédiatement après le retour de `msgVerificationQueue()`, avant toute publication des lignes dans `window.__msgVerificationRows`. Une réponse d’un rendu précédent ne peut donc plus écraser l’état de contrôle du rendu courant.
 - Assertion de régression ajoutée à `ci/check-msg.mjs`. Cache Messenger porté à `msg.js?v=3531`, Service Worker à `dz-de-v3.185.0.0.179`.
 - Aucun changement Supabase, aucune modification de compte ou de dossier scolaire. CI et déploiement restent non confirmés.
+
+
+## Lot 565 — activation effective des actions de modération Messenger et accès au justificatif (15 novembre 2026)
+- Audit du gestionnaire d’événements : les boutons de modération portent `data-mod`, mais le sélecteur `closest(...)` du gestionnaire ne les incluait pas. Les traitements de validation/rejet et les autres actions de modération n’étaient donc jamais atteints par ce gestionnaire de clic.
+- Correction : ajout de `[data-mod]` au sélecteur délégué, sans modifier les contrôles d’autorisation côté serveur.
+- La file Messenger propose désormais l’ouverture de la carte scolaire. Au clic, l’interface retrouve le dossier dans la file fraîchement chargée, vérifie que le chemin est lié à l’UUID du profil, ouvre une fenêtre synchroniquement pour éviter le blocage des popups, puis demande une URL signée de 5 minutes via `SB.msgSchoolCardUrl`. En cas de changement de session ou d’erreur, la fenêtre est fermée.
+- L’interface d’administration disposait déjà d’un bouton de consultation et de son gestionnaire ; aucune modification de cette voie n’a été nécessaire.
+- Cache Messenger porté à `msg.js?v=3532`, Service Worker à `dz-de-v3.185.0.0.180`, précache synchronisé. Assertions statiques ajoutées pour vérifier le routage des actions et l’ouverture protégée du document.
+- Aucun SQL, policy RLS, bucket, compte, profil ou document réel modifié. Aucun test d’accès utilisateur réel, CI exécutée ou déploiement Cloudflare revendiqué.
