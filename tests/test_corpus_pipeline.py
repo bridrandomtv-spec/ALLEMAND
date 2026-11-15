@@ -40,12 +40,33 @@ class CorpusPipelineContract(unittest.TestCase):
             "declarant": "Auteur du cours",
             "date_declaration": "2026-11-15",
             "declaration_droits": True,
+            "usages_autorises": ["hebergement_source", "extraction_texte", "indexation_rag", "restitution_extraits"],
             "validation": {
                 "statut": "valide", "verificateur": "Responsable pédagogique",
                 "date": "2026-11-15", "reference_preuve": "declaration-interne-001"
             }
         }
         self.assertTrue(rights.valider_metadonnees(meta)[0])
+
+    def test_ingestion_requires_explicit_exploitation_scope(self):
+        meta = self._metadata_authorisee()
+        del meta["usages_autorises"]
+        self.assertFalse(rights.valider_metadonnees(meta)[0])
+
+    def test_ingestion_rejects_incomplete_or_unknown_scope(self):
+        meta = self._metadata_authorisee()
+        meta["usages_autorises"] = ["indexation_rag", "restitution_extraits"]
+        self.assertFalse(rights.valider_metadonnees(meta)[0])
+        meta["usages_autorises"] = [
+            "hebergement_source", "extraction_texte", "indexation_rag",
+            "restitution_extraits", "usage_invente"
+        ]
+        self.assertFalse(rights.valider_metadonnees(meta)[0])
+
+    def test_full_document_redistribution_is_not_implicitly_granted(self):
+        meta = self._metadata_authorisee()
+        self.assertTrue(rights.valider_metadonnees(meta)[0])
+        self.assertNotIn("redistribution_document", meta["usages_autorises"])
 
     def test_missing_human_validation_is_rejected(self):
         meta = {
@@ -99,6 +120,7 @@ class CorpusPipelineContract(unittest.TestCase):
             "licence": "production_propre", "source": "PDF de test synthétique",
             "titulaire_droits": "Auteur du test", "declarant": "Auteur du test",
             "date_declaration": "2026-11-15", "declaration_droits": True,
+            "usages_autorises": ["hebergement_source", "extraction_texte", "indexation_rag", "restitution_extraits"],
             "validation": {"statut": "valide", "verificateur": "Test",
                            "date": "2026-11-15", "reference_preuve": "fixture-test"}
         }
