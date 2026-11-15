@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Construit des shards depuis le seul index RAG corpus_rag_index.json."""
+import hashlib
 import json
 import os
 import re
@@ -55,6 +56,9 @@ def build_shards(index, taille=TAILLE):
                 raise ValueError("posting dupliqué pour le terme %s" % term)
             vus_postings.add(posting)
 
+    generation_payload = json.dumps(index, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    generation = hashlib.sha256(generation_payload).hexdigest()
+
     shards = []
     for start in range(0, len(chunks), taille):
         part = chunks[start:start + taille]
@@ -64,8 +68,8 @@ def build_shards(index, taille=TAILLE):
         terms = {term: postings for term, postings in terms.items() if postings}
         shards.append({"file": "shard_%02d.json" % (start // taille),
                        "chunks": part, "termes": terms})
-    manifest = {"version": "2.0.0", "nb_shards": len(shards),
-                "total_chunks": len(chunks),
+    manifest = {"version": "2.0.0", "generation": generation,
+                "nb_shards": len(shards), "total_chunks": len(chunks),
                 "shards": [{"file": s["file"], "nb_chunks": len(s["chunks"]),
                             "nb_termes": len(s["termes"])} for s in shards]}
     return shards, manifest
@@ -86,7 +90,8 @@ def main():
     # Tous les shards sont écrits avant de remplacer le manifeste public.
     for shard in shards:
         ecrire_atomiquement(os.path.join(OUT, shard["file"]),
-                            {"chunks": shard["chunks"], "termes": shard["termes"]})
+                            {"_generation": manifest["generation"],
+                             "chunks": shard["chunks"], "termes": shard["termes"]})
     attendus = {s["file"] for s in shards}
     for filename in os.listdir(OUT):
         if re.fullmatch(r"shard_[0-9]{2,}\.json", filename) and filename not in attendus:
