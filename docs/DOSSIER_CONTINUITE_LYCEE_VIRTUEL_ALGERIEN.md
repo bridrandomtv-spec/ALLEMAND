@@ -3753,3 +3753,6 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun déploiement, aucune modification de `main`, aucune écriture Supabase.
 
 - Garde de concurrence supplémentaire : chaque tour vocal reçoit un identifiant `VOICE_TURN`. `off()` invalide les tours en attente ; si l'utilisateur arrête puis relance rapidement le professeur, une réponse de l'ancienne session ne peut pas être prononcée dans la nouvelle ni libérer son verrou de traitement.
+
+- Validation complémentaire Lot 619 dans le harnais V8 : syntaxe de `parle.js` vérifiée ; les 11 contrats de verrouillage/annulation (état processing, garde listen, blocage onend/onerror, identifiant de tour, invalidation au stop, transfert au TTS) correspondent au code. Ce n'est pas un test navigateur/microphone réel ni un run CI.
+- Point de politique linguistique à arbitrer avant toute modification de sortie : `assets/bdd/darja.json` contient à la fois un champ `usage` indiquant des réponses en derja lorsque l'élève écrit en derja et une note FUS-1 disant que toute sortie arabe doit être en fusha ; le prompt Worker actuel demande au contraire la darija lorsque le dialecte est détecté. Ce conflit documentaire n'a pas été modifié dans les lots 617–619.
