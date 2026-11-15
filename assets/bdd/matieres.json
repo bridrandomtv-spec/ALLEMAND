@@ -1,9 +1,9 @@
 {
   "_meta": {
     "titre": "سجل المواد — الثانوية الافتراضية الجزائرية",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "annee": "2026/2027",
-    "vision": "L'application devient un lycée virtuel complet : chaque matière a son propre registre d'unités et de séances, branché sur le même moteur que l'allemand. L'allemand est la première matière active ; les autres sont déclarées ici pour être branchées une à une sans toucher au moteur.",
+    "vision": "L'application devient un lycée virtuel complet : chaque matière possède son registre d'unités et de séances. L'allemand est la première matière active ; l'anglais est partiellement disponible (1AS). L'espagnol et l'italien sont déclarés comme matières programmées pour la filière langues, sans être présentés comme des parcours déjà opérationnels.",
     "auteur": "Prof. Kharif Ahmed",
     "confidentialite": "Données pédagogiques locales, aucun serveur externe."
   },
