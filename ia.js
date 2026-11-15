@@ -275,6 +275,7 @@
       let ctx = 'CONTEXTE SCOLAIRE : matière=' + schoolContext.subject
         + ' ; niveau=' + schoolContext.level + ' ; filière=' + (schoolContext.track || 'non précisée') + '.\n';
       let ragCitation = '';
+      let ragSourceStatus = schoolContext.subject === 'allemand' ? 'unavailable' : 'not_applicable';
       if(schoolContext.subject === 'allemand'){
         try{
           if(window.BIBLIO && BIBLIO.context){
@@ -296,6 +297,7 @@
             let ref = null;
             if(typeof window.RAG.source === 'function') ref = await window.RAG.source(hit);
             if(ref){
+              ragSourceStatus = 'verified';
               const page = ref.page_start ? ' · p. ' + ref.page_start : '';
               const details = [ref.subject, ref.level, ref.year].filter(Boolean).join(' · ');
               ragCitation = '📚 Source documentaire : ' + ref.title
@@ -304,6 +306,7 @@
               ctx += 'PROVENANCE RAG (métadonnées du catalogue, SHA-256 concordant) : '
                 + JSON.stringify(ref) + '\n';
             }else{
+              ragSourceStatus = 'unverified';
               ctx += 'PROVENANCE RAG : non certifiée (fiche catalogue ou SHA-256 concordant absent). '
                 + 'Ne présente pas cet extrait comme une référence vérifiée.\n';
             }
@@ -314,6 +317,7 @@
           }
         }catch(e){}
       }
+      if(ragSourceStatus === 'unavailable') ctx += 'PROVENANCE RAG : aucun extrait RAG pertinent et vérifié n’a été trouvé pour cette question. Ne prétends pas citer une page, une unité ou un exercice officiel.\n';
       if(local && local.indexOf('لا أعرف') === -1) ctx += 'RÉPONSE LOCALE :\n' + local.slice(0, 700);
       ctx = ctx.slice(0, 3000);
       statutIA('🧠 réflexion… (cerveau cloud)');
@@ -325,7 +329,7 @@
           detected_language: QL || detectedLanguage || 'unknown',
           output_language: answerLanguage, dialect: dialect,
           subject: schoolContext.subject, level: schoolContext.level,
-          track: schoolContext.track, ctx: ctx,
+          track: schoolContext.track, ctx: ctx, rag_source_status: ragSourceStatus,
           understanding: understanding ? {
             normalized_question: String(understanding.norm || '').slice(0, 600),
             languages: Array.isArray(understanding.langs) ? understanding.langs.slice(0, 6) : [],
