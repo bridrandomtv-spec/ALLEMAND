@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lot 604 — exécute le sharder actuel sur une fixture temporaire multi-documents.
+"""Lot 605 — vérifie le sharder corrigé sur une fixture temporaire multi-documents.
 
 Depuis la racine du dépôt :
     python tests/sharder_fixture.py
@@ -7,7 +7,7 @@ Depuis la racine du dépôt :
 Le script copie tools/sharder_index.py dans un répertoire temporaire, y écrit
 un index synthétique, puis exécute le véritable fichier de production copié.
 Aucun fichier assets/ du dépôt n'est lu ou modifié.
-Le test est volontairement rouge avec le sharder actuel : il doit préserver
+Le test doit être vert avec le sharder corrigé : il vérifie
 les postings globaux et résoudre chaque posting vers le bon document.
 """
 import json
@@ -72,6 +72,8 @@ class SharderMultiDocumentFixture(unittest.TestCase):
             )
             self.assertEqual(by_global_id[2]["doc"], "doc-B")
             self.assertEqual(by_global_id[3]["doc"], "doc-B")
+            self.assertEqual(by_global_id[2]["n"], 0)
+            self.assertEqual(by_global_id[3]["n"], 1)
 
 
 if __name__ == "__main__":
