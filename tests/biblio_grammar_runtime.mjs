@@ -23,7 +23,12 @@ assert.ok(akkusativ.some(x => x.src === 'grammaire' && /Akkusativ/i.test(x.titre
 const wfragen = await window.BIBLIO.search('W-Fragen', 8);
 assert.ok(wfragen.some(x => x.src === 'grammaire' && /W-Fragen/i.test(x.titre + ' ' + x.texte)),
   'W-Fragen doit être retrouvable comme entrée de grammaire');
-const context = await window.BIBLIO.context('Akkusativ', 1800);
+const longQuestion = 'ما فهمتش قاعدة Akkusativ، علاش der تتبدل إلى den؟';
+const hints = { intent:'explain_rule', confidence:0.85, entities:{ grammar:['akkusativ'] } };
+const longHits = await window.BIBLIO.search(longQuestion, 4, hints);
+assert.ok(longHits[0] && /Akkusativ/i.test(longHits[0].titre + ' ' + longHits[0].texte),
+  'la notion grammaticale QUST doit rester en tête sur une question longue en darija');
+const context = await window.BIBLIO.context(longQuestion, 1800, hints);
 assert.match(context, /GRAMMAIRE/i, 'le contexte transmis doit citer la source grammaire');
 assert.match(context, /Akkusativ/i, 'le contexte doit contenir la règle demandée');
 
