@@ -3364,3 +3364,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun changement de `rag.js`, `js/qust.js`, `biblio.js`, `prof_core.js`, du corpus, des workflows, du Worker, des secrets ou des données/politiques Supabase. Aucun déploiement.
 - Messenger reste distinct et non terminé : les tests E2E multi-comptes A/B/C et les événements Realtime n'ont pas été exécutés.
 - Suite recommandée : Lot 598 — exécuter la sonde dans un checkout Node local ou un workflow de test contrôlé, corriger d'abord les éventuels défauts du harnais, puis produire un rapport d'observation; aucune correction du moteur ne sera intégrée sans examiner ces résultats.
+
+
+## Lot 598 — état réel de l'exécution CI et couverture des tests IA (15 novembre 2026)
+
+- Le push du commit documentaire du Lot 597 a déclenché le workflow existant `.github/workflows/deploy.yml` sur `main`.
+- Run observé : `43721764797`, intitulé `CI — ALLEMAND`, commit `721a24868374461f143d417276e1a6bda1c049b4`, événement `push`, état `completed`, conclusion `failure`.
+- Le run contient le job `Validation structurelle & pédagogique`, mais l'API GitHub renvoie une liste d'étapes vide. La récupération des journaux du job échoue par HTTP 404 / `BlobNotFound`. Il n'est donc pas possible d'identifier avec certitude la cause de l'échec ni d'affirmer qu'une étape de validation a commencé. Les anciens problèmes de facturation/limite de dépenses constituent un contexte historique, pas une cause démontrée pour ce run précis.
+- Relecture de `.github/workflows/deploy.yml` : le workflow comporte bien un bloc de régression qui lance `tests/regression_rag.mjs`, `tests/regression_prof.mjs` et `tests/regression.mjs` (lignes 1157–1160). Il ne lance pas `tests/qust_unit.mjs` ni `tests/rag_qust_probe.mjs`. Les nouvelles suites QUST restent donc hors de la couverture CI actuelle.
+- Le workflow contient d'autres tests Node (Messenger, accès, navigation et prototypes), mais le run 43721764797 ne fournit aucune étape permettant de confirmer qu'ils ont été exécutés.
+- Conclusion : aucun résultat de test ne peut être attribué au Lot 597/598. L'existence du run prouve le déclenchement du workflow, pas l'exécution du code de test.
+- Aucun workflow, script de production, moteur IA, corpus, Worker, secret ou ressource Supabase n'a été modifié dans ce lot. Aucun déploiement n'a été lancé volontairement.
+- Suite recommandée : débloquer l'exécution GitHub Actions au niveau du compte/repository, puis intégrer explicitement `node tests/qust_unit.mjs` et `node tests/rag_qust_probe.mjs` à une étape CI dédiée après validation du harnais. Ne pas confondre les anciennes régressions RAG/PROF avec les nouveaux tests QUST.
