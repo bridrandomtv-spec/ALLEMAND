@@ -457,11 +457,11 @@ function rendreCouvertureORG1(mount){
     { id:'wilayas', label:'🗺️ الولايات · Wilayas', cards:['admWilayasCard'], perm:'reports.read' },
     { id:'security', label:'🛡️ الوصول والتدقيق · Access & Audit', cards:['admSecurityCard'], perm:'reports.read' },
     { id:'system', label:'🖥️ النظام والبنية التقنية · System', cards:['admSystemCard'], perm:'reports.read' },
-    { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard'], perm:'students.read' },
+    { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard','admVerificationCard'], perm:'students.read' },
     { id:'ops', label:'🧰 العمليات · Operations', cards:['admAgentsCard','admQueueCard','admAccordsCard','__legacy__'], perm:null },
     { id:'settings', label:'⚙️ الإعدادات · Settings', cards:['admSettingsCard'], perm:'settings.manage' }
   ];
-  var KNOWN = ['admDashCard','admClassesCard','admWilayasCard','admSecurityCard','admSystemCard','admStudentsCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
+  var KNOWN = ['admDashCard','admClassesCard','admWilayasCard','admSecurityCard','admSystemCard','admStudentsCard','admVerificationCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
   var state4 = { perms:[], tab:'dash', role:'', wilayas:[] };
   function section(){ return document.querySelector('section[data-view="admin"]'); }
   function cardsOf(tab){
@@ -674,6 +674,33 @@ function rendreCouvertureORG1(mount){
       + '<button class="btn btn-p btn-sm" data-adm4-search="1" type="button">chercher</button></div>'
       + '<div id="admStuList" style="margin-top:10px"></div><div id="admStuFiche" style="margin-top:10px"></div>';
   }
+  async function renderVerificationQueue(){
+    var h = section(); if(!h) return;
+    var box = document.getElementById('admVerificationCard');
+    if(!box){ box = document.createElement('div'); box.id = 'admVerificationCard'; box.className = 'card'; h.appendChild(box); }
+    if(state4.perms.indexOf('messaging.moderate') === -1){ box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ · School verification</h2><p class="ad-load">⏳ تحميل الطلبات المعلّقة…</p>';
+    if(!window.SB || typeof SB.msgVerificationQueue !== 'function'){
+      box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ</h2><p>⛔ خدمة التحقق غير متاحة في هذا الإصدار.</p>'; return;
+    }
+    var q = await SB.msgVerificationQueue();
+    if(!q || !q.ok){
+      box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ</h2><p>⛔ تعذر تحميل الطلبات: ' + esq5(q && q.err || 'خطأ غير محدد') + '</p><p style="font-size:12px;color:var(--m)">تأكد من صلاحية messaging.moderate ومن سياسات Supabase. لم يتم تغيير أي حالة.</p>'; return;
+    }
+    var rows = Array.isArray(q.queue) ? q.queue : [];
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🪪</span><div><h2>طلبات تفعيل التلاميذ</h2><p class="ad-sub">طلبات الهوية المدرسية المعلّقة · الصلاحية المطلوبة: messaging.moderate · ' + rows.length + ' طلب</p></div></div>'
+      + (rows.length ? rows.map(function(x){
+          return '<article class="card" style="margin:10px 0;padding:12px">'
+            + '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>👤 ' + esq5(x.pseudo||'تلميذ') + '</b><span class="badge">قيد المراجعة</span></div>'
+            + '<div class="rep-row"><span>المستوى: ' + esq5(x.niveau||'—') + ' · الولاية: ' + esq5(x.wilaya||'—') + ' · الشعبة: ' + esq5(x.filiere||'—') + '</span></div>'
+            + '<div class="rep-row"><span>رقم التسجيل: ' + esq5(x.matricule||'—') + ' · القسم المصرّح به: ' + esq5(x.section||'—') + '</span></div>'
+            + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'
+            + '<button class="btn btn-sm btn-g" data-adm-verif="' + esq5(x.id) + '" data-status="verifie" type="button">✔ تأكيد التفعيل</button>'
+            + '<button class="btn btn-sm btn-r" data-adm-verif="' + esq5(x.id) + '" data-status="rejete" type="button">رفض الطلب</button></div></article>';
+        }).join('') : '<div class="card" style="margin-top:10px"><p>لا توجد طلبات تفعيل معلّقة حالياً.</p></div>')
+      + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">لا يؤدي ظهور الطلب إلى تفعيل تلقائي. القرار يتطلب مراجعة بشرية، وتتحقق قاعدة البيانات من صلاحية المشرف عند تنفيذ الإجراء.</p>';
+  }
   async function renderSettings(){
     var h = section(); if(!h) return;
     var box = document.getElementById('admSettingsCard');
@@ -695,8 +722,21 @@ function rendreCouvertureORG1(mount){
   document.addEventListener('click', function(e){
     var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu]') : null;
     if(!t) return;
+    var verifyId = t.getAttribute('data-adm-verif');
+    if(verifyId){
+      var nextStatus = t.getAttribute('data-status');
+      if(nextStatus !== 'verifie' && nextStatus !== 'rejete') return;
+      if(!window.SB || typeof SB.msgSetVerification !== 'function'){ window.alert('⛔ خدمة التحقق غير متاحة'); return; }
+      if(nextStatus === 'rejete' && !window.confirm('تأكيد رفض طلب التحقق؟')) return;
+      t.disabled = true;
+      SB.msgSetVerification(verifyId, nextStatus).then(function(r){
+        if(r && r.ok){ renderVerificationQueue(); }
+        else { t.disabled = false; window.alert('⛔ ' + esq5(r && r.err || 'تعذّر تحديث الطلب')); }
+      }).catch(function(err){ t.disabled = false; window.alert('⛔ ' + esq5(err && err.message || err)); });
+      return;
+    }
     var tab = t.getAttribute('data-adm-tab');
-    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='classes') renderClasses(); if(tab==='wilayas') renderWilayas(); if(tab==='security') renderSecurity(); if(tab==='system') renderSystem(); if(tab==='students') renderStudents(); if(tab==='settings') renderSettings(); return; }
+    if(tab){ applyTab(tab); if(tab==='dash') renderDash(); if(tab==='classes') renderClasses(); if(tab==='wilayas') renderWilayas(); if(tab==='security') renderSecurity(); if(tab==='system') renderSystem(); if(tab==='students'){ renderStudents(); renderVerificationQueue(); } if(tab==='settings') renderSettings(); return; }
     if(t.getAttribute('data-adm4-search')){
       var q = ((document.getElementById('admStuQ')||{}).value || '');
       SB.admSearchStudents(q).then(function(r){
@@ -722,7 +762,7 @@ function rendreCouvertureORG1(mount){
   });
   document.addEventListener('dz:view', function(e){
     var v = (e && e.detail && (e.detail.view||e.detail)) || '';
-    if(String(v).indexOf('admin')>=0){ renderTabs().then(function(){ if(state4.tab==='dash') renderDash(); if(state4.tab==='students') renderStudents(); if(state4.tab==='settings') renderSettings(); }); }
+    if(String(v).indexOf('admin')>=0){ renderTabs().then(function(){ if(state4.tab==='dash') renderDash(); if(state4.tab==='students'){ renderStudents(); renderVerificationQueue(); } if(state4.tab==='settings') renderSettings(); }); }
   });
   if((location.hash||'').replace('#','') === 'admin') renderTabs().then(function(){ if(state4.tab==='dash') renderDash(); });
 })();
