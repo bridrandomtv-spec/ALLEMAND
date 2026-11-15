@@ -90,6 +90,45 @@ def fusionner_index_rag(existant, entrants, docs_remplaces):
     return {"_meta": meta, "chunks": chunks, "termes": termes}
 
 
+
+def valider_coherence_catalogue_index(catalogue, index):
+    """Vérifie les références des chunks vers le catalogue sans exiger
+    qu'un document catalogue possède déjà des chunks RAG.
+    """
+    if not isinstance(catalogue, dict) or not isinstance(catalogue.get("documents"), list):
+        raise ValueError("catalogue invalide : documents[] requis")
+    if not isinstance(index, dict) or not isinstance(index.get("chunks"), list):
+        raise ValueError("index RAG invalide : chunks[] requis")
+    documents = {}
+    for position, doc in enumerate(catalogue["documents"]):
+        if not isinstance(doc, dict):
+            raise ValueError("document catalogue invalide à la position %d" % position)
+        identifiant = doc.get("id")
+        if not isinstance(identifiant, str) or not identifiant.strip():
+            raise ValueError("document catalogue sans ID à la position %d" % position)
+        if identifiant in documents:
+            raise ValueError("ID documentaire dupliqué dans le catalogue : " + identifiant)
+        documents[identifiant] = doc
+    references = set()
+    for position, chunk in enumerate(index["chunks"]):
+        if not isinstance(chunk, dict):
+            raise ValueError("chunk RAG invalide à la position %d" % position)
+        identifiant = chunk.get("doc")
+        if not isinstance(identifiant, str) or identifiant not in documents:
+            raise ValueError("chunk orphelin : document catalogue absent (%r)" % identifiant)
+        doc = documents[identifiant]
+        for champ in ("matiere", "niveau", "langue"):
+            valeur = doc.get(champ)
+            if not isinstance(valeur, str) or not valeur.strip():
+                raise ValueError("métadonnée %s absente pour le document %s" % (champ, identifiant))
+        empreinte_chunk = chunk.get("source_sha256")
+        empreinte_doc = doc.get("source_sha256")
+        if empreinte_chunk and empreinte_doc and empreinte_chunk != empreinte_doc:
+            raise ValueError("empreinte source divergente pour le document " + identifiant)
+        references.add(identifiant)
+    return {"documents": len(documents), "chunks": len(index["chunks"]),
+            "documents_indexes": len(references), "documents_sans_chunks": len(documents) - len(references)}
+
 def ecrire_json_transactionnel(artefacts):
     """Prépare plusieurs JSON puis les remplace ; restaure les originaux si un replace échoue.
 
