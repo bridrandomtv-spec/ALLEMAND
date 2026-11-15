@@ -23,7 +23,7 @@ except ModuleNotFoundError:  # exécution directe
     from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
     from corpus_contracts import (
         sha256_fichier, decouper_pages, fusionner_documents, construire_chunk,
-        fusionner_index_rag
+        fusionner_index_rag, ecrire_json_transactionnel
     )
 
 TAILLE_CHUNK = 1200
