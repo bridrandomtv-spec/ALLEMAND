@@ -396,7 +396,8 @@
           return (loc && loc.indexOf('لا أعرف') === -1) ? loc :
             (window.__IA_ERR ? '🧠 تعذّر الوصول إلى الدماغ السحابي (' + String(window.__IA_ERR).slice(0,30) + ') — ' : '') + 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم أو معنى كلمة — أو قل « الصفحة 11 » لأقرأها لك.';
         }
-        const finalAnswer = ragCitation ? j.rep + '\n\n' + ragCitation : j.rep;
+        const citationAllowed = requestedScope.type === 'none' || ragScopeStatus === 'verified';
+        const finalAnswer = ragCitation && citationAllowed ? j.rep + '\n\n' + ragCitation : j.rep;
         rememberTurn(dialogueUser, q, finalAnswer);
         return finalAnswer;
       }
