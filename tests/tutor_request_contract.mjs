@@ -21,9 +21,9 @@ const checks = [
     /level: schoolContext\.level/.test(ia) && /track: schoolContext\.track/.test(ia)],
   ['ia.js enrichit le Worker avec BIBLIO et RAG allemand',
     /BIBLIO\.context\(q/.test(ia) && /window\.RAG\.cherche\(q\)/.test(ia)],
-  ['parle.js transmet transcription brute, mode voix et langues',
+  ['parle.js sépare la langue du micro de la langue détectée pour la réponse',
     /raw_text: q/.test(voice) && /input_mode: 'voice'/.test(voice) &&
-    /selected_language: lang/.test(voice) && /detected_language: LASTLANG/.test(voice)],
+    /selected_language: 'auto'/.test(voice) && /recognition_language: lang/.test(voice) && /detected_language: LASTLANG \|\| ''/.test(voice)],
   ['parle.js distingue des marqueurs Darija/Arabizi',
     /function detectDialect\(t\)/.test(voice) && /3lach|kifach|bezaf/.test(voice)],
   ['app.js appelle le même orchestrateur pour le chat écrit',
@@ -78,3 +78,7 @@ for (const [label, ok] of checks) {
 }
 console.log('\nContrat partagé chat/voix : ' + (checks.length - failures) + '/' + checks.length);
 if (failures) process.exitCode = 1;
+
+// Une langue de reconnaissance choisie pour le navigateur ne doit jamais être présentée comme langue détectée de la question.
+if (/LASTLANG = detectLang\(q\) \|\| lang/.test(voice)) throw new Error('la langue du micro force encore la langue de réponse');
+console.log('PASS langue de reconnaissance indépendante de la langue de réponse');
