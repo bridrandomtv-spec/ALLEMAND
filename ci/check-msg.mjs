@@ -149,6 +149,13 @@ ok(/create policy msg_invites_participant_read[\s\S]*?auth\.uid\(\) in \(sender_
 ok(inviteSql.includes('NON exécutée sur Supabase') && inviteSql.includes('Tests obligatoires'),
    'migration identifiée comme non appliquée et tests documentés');
 
+// Lot 557 — conservation et recours des justificatifs scolaires.
+ok(retentionFn.includes('school_card_retention_secret_valid') && retentionFn.includes('school_card_retention_is_held'), 'purge serveur authentifiée et respect des suspensions');
+ok(retentionFn.includes('.storage.from(BUCKET).remove([path])') && retentionFn.includes('school_card_retention_clear_path'), 'suppression via Storage API puis effacement conditionnel de la référence');
+ok(retentionHoldSql.includes('school_card_retention_set_hold') && retentionHoldSql.includes('p_days not between 1 and 90'), 'suspension de purge limitée à 90 jours via RPC autorisée');
+ok(adminjs.includes('data-adm-card-hold') && adminjs.includes('data-adm-card-release'), 'fiche élève : contrôles de suspension et levée de suspension');
+ok(legaljs.includes('90 يوماً قابلة للتجديد') && privacyHtml.includes('90 يوماً قابلة للتجديد'), 'notice juridique : suspension de purge avec durée plafonnée');
+
 if (fail.length) { console.error('::error:: check-msg : ' + fail.length + ' échec(s)'); process.exit(1); }
 console.log('== check-msg : TOUT PASSE ==');
 
@@ -424,9 +431,3 @@ ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.175'") && sw.includes("./msg.js?v=35
 
 if (fail.length) { console.error('::error:: check-msg Lot 453 : ' + fail.length + ' échec(s)'); process.exit(1); }
 console.log('== check-msg Lot 453 : TOUT PASSE ==');
-// Lot 557 — conservation et recours des justificatifs scolaires.
-ok(retentionFn.includes('school_card_retention_secret_valid') && retentionFn.includes('school_card_retention_is_held'), 'purge serveur authentifiée et respect des suspensions');
-ok(retentionFn.includes('.storage.from(BUCKET).remove([path])') && retentionFn.includes('school_card_retention_clear_path'), 'suppression via Storage API puis effacement conditionnel de la référence');
-ok(retentionHoldSql.includes('school_card_retention_set_hold') && retentionHoldSql.includes('p_days not between 1 and 90'), 'suspension de purge limitée à 90 jours via RPC autorisée');
-ok(adminjs.includes('data-adm-card-hold') && adminjs.includes('data-adm-card-release'), 'fiche élève : contrôles de suspension et levée de suspension');
-ok(legaljs.includes('90 يوماً قابلة للتجديد') && privacyHtml.includes('90 يوماً قابلة للتجديد'), 'notice juridique : suspension de purge avec durée plafonnée');
