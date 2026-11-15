@@ -2799,3 +2799,8 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le run CI `43658519248` s'est terminé avec `conclusion=failure`. L'API GitHub ne retourne aucune étape (`steps=[]`), aucun runner affecté (`runner_id=0`) et aucun détail de journal exploitable. Il est donc impossible d'attribuer cet échec à une assertion du code ; le statut reste rouge et la validation CI n'est pas acquise.
 - Vérification GitHub après les commits : `main` pointe sur `cd2ad532993b52992ee55c70e30bcdd0f9922e1c`. Les références de cache HTML et Service Worker sont synchronisées sur CSS 203, admin 3513 et Supabase client 3523 ; les marqueurs de pagination et de contraste sont présents dans les fichiers relus.
 - Aucun test navigateur réel et aucun déploiement Cloudflare n'ont été exécutés. Le résultat visuel en production reste à confirmer après déploiement.
+
+
+### Addendum — correction du contrôle CI de pagination
+- Relecture du contrôle ajouté : l'ancre de fin de fonction utilisait une séquence de nouvelle ligne littérale dans la chaîne de recherche. Elle a été simplifiée en recherche directe de `async function msgSetVerification(`. Commit : `4ce90029f2bfd22f8ca155708aeddaa74f9a2711`.
+- Le run CI correspondant `43658601490` a lui aussi terminé en échec avant toute étape : `steps=[]`, `runner_id=0`. Il ne fournit donc toujours aucune validation du code ni diagnostic de test. La cause de l'échec reste non attribuée.
