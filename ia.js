@@ -117,7 +117,15 @@
     try{
       if(window.QUST && typeof window.QUST.understand === 'function') understanding = window.QUST.understand(q, null);
     }catch(e){}
-    const dialect = String(req.dialect || (understanding && understanding.dialect === 'darija' ? 'darija' : (DARJA_AR.test(q) || DARJA_LATIN.test(q) ? 'darija' : 'unknown'))).slice(0, 30);
+    const requestedDialect = String(req.dialect || '').toLowerCase();
+    /* Un 'unknown' fourni par la voix ne doit pas écraser QUST. Une demande
+       explicite de réponse en darija est aussi un signal de style de sortie. */
+    const dialect = requestedDialect === 'darija' || requestedDialect === 'arabizi' ? 'darija'
+      : (requestedDialect === 'fusha' || requestedDialect === 'msa' ? 'fusha'
+      : ((understanding && understanding.dialect === 'darija')
+        || DARJA_AR.test(q) || DARJA_LATIN.test(q)
+        || /(?:بالدارجة|بالدزيرية|بالجزائرية|en darija|darija|derdja)/i.test(q)
+        ? 'darija' : 'unknown'));
     let schoolContext = { subject: 'allemand', level: 'tous', track: '' };
     try{
       if(window.CONTEXT && typeof window.CONTEXT.ctx === 'function'){
