@@ -58,6 +58,23 @@
         titre:String(g.titre || g.nom || ('règle ' + (i + 1))),
         texte:String((g.titre || g.nom || '') + ' ' + (g.texte || g.contenu || g.regle || JSON.stringify(g).slice(0, 600))).slice(0, 1200),
         tags:['grammaire'] }));
+    }else if(G && Array.isArray(G.items)){
+      /* Le schéma réel grammaire.json est { _meta, chapitres, items:[86 règles] }.
+         Indexer chaque règle séparément évite de tronquer tout le catalogue au premier
+         fragment JSON et permet une recherche par titre, explication ou exemple. */
+      G.items.forEach((g, i) => {
+        if(!g || typeof g !== 'object') return;
+        const de = String(g.titre_de || g.titre || g.nom || ('règle ' + (i + 1)));
+        const ar = String(g.titre_ar || '');
+        const exemples = Array.isArray(g.exemples)
+          ? g.exemples.map(x => Array.isArray(x) ? x.join(' — ') : String(x || '')).join(' ')
+          : String(g.exemples || '');
+        const texte = [de, ar, g.explication || g.texte || g.contenu || '',
+          g.regle || '', exemples].join(' ').slice(0, 1600);
+        const titre = [de, ar].filter(Boolean).join(' — ');
+        E.push({ src:'grammaire', id:String(g.id || ('g' + i)), titre:titre,
+          texte:texte, tags:['grammaire', String(g.chapitre || ''), String(g.cefr || '')] });
+      });
     }else if(G && typeof G === 'object'){
       Object.keys(G).forEach(k => {
         const g = G[k];
