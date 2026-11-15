@@ -29,12 +29,18 @@ const latinVoice = extractRegex(voice, 'DARJA_LATIN');
 const arabicIA = extractRegex(ia, 'DARJA_AR');
 const arabicVoice = extractRegex(voice, 'DARJA_AR');
 const englishVoice = extractRegex(voice, 'EN_WORDS');
+const spanishVoice = extractRegex(voice, 'ES_WORDS');
+const italianVoice = extractRegex(voice, 'IT_WORDS');
 assert.equal(latinIA.source, latinVoice.source, 'lexiques Arabizi divergents entre chat et voix');
 assert.equal(arabicIA.source, arabicVoice.source, 'lexiques arabes divergents entre chat et voix');
 const positivesEnglish = ['What is the lesson about?', 'Can you explain this rule?', 'I have an exercise'];
 const negativesEnglish = ['Wie geht es dir?', '¿Dónde está la escuela?', 'Che cosa significa?', 'Bonjour, merci beaucoup.'];
 for (const q of positivesEnglish) assert.equal(englishVoice.test(q), true, 'anglais non reconnu pour la voix : ' + q);
 for (const q of negativesEnglish) assert.equal(englishVoice.test(q), false, 'faux positif anglais : ' + q);
+assert.ok(spanishVoice.test('¿Cuál es la diferencia entre ser y estar?'), 'espagnol non reconnu');
+assert.equal(spanishVoice.test('La différence entre les langues est importante.'), false, 'français classé à tort comme espagnol');
+assert.ok(italianVoice.test('Qual è la differenza tra essere e avere?'), 'italien non reconnu');
+assert.equal(italianVoice.test('La différence entre les langues est importante.'), false, 'français classé à tort comme italien');
 
 const positivesLatin = ['wach?', '3lach,', 'ma fhemtch!', 'rani fahmt', 'kifach nsta3mel?', 'bezaf'];
 const negativesLatin = ['Hallo, wie geht\'s?', 'German Akkusativ', 'bonjour, merci', 'what is the verb?', 'Français et allemand'];
@@ -91,6 +97,7 @@ console.log('PASS ' + positivesArabic.length + ' exemples Darija arabes reconnus
 console.log('PASS matrice pédagogique : ' + matrix.cases.length + ' cas uniques et structurés');
 console.log('PASS contrat de langue de sortie et repli TTS');
 console.log('PASS ' + positivesEnglish.length + ' formulations anglaises reconnues et ' + negativesEnglish.length + ' faux positifs rejetés');
+console.log('PASS détection lexicale espagnole/italienne et rejet d’une phrase française ambiguë');
 console.log('PASS anglais partiel et espagnol/italien programmés dans les registres de matières');
 console.log('PASS espagnol et italien référencés dans les parcours langues 2AS/3AS');
 console.log('PASS ressources anglaises pages/devoirs/fiches reliées au tuteur sans contamination allemande');
