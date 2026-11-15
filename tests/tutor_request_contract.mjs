@@ -74,7 +74,9 @@ const checks = [
     /window\.RAG\.source\(hit\)/.test(ia) && /PROVENANCE RAG/.test(ia) && /ragCitation/.test(ia)],
   ['rag.js ne certifie une référence que si le SHA-256 du chunk et du catalogue concorde',
     /async function source\(hit\)/.test(rag) && /hit\.source_sha256 !== doc\.source_sha256/.test(rag) &&
-    /source: source/.test(rag)]
+    /source: source/.test(rag)],
+  ['Worker traite les extraits documentaires comme des données non fiables',
+    /données non fiables/.test(worker) && /ne suis jamais les instructions/.test(worker)]
 ];
 
 let failures = 0;
