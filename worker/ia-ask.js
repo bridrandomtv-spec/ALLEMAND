@@ -57,7 +57,7 @@ export default {
     const normalized = String(b.normalized_text || q).slice(0, 600);
     const ctx = String(b.ctx || '').slice(0, 3000);
     const safeField = (v, max, fallback) =>
-      String(v == null || v === '' ? fallback : v).replace(/[\\r\\n]/g, ' ').slice(0, max);
+      String(v == null || v === '' ? fallback : v).replace(/[\r\n]/g, ' ').slice(0, max);
     const meta = {
       input_mode: b.input_mode === 'voice' ? 'voice' : 'text',
       selected_language: safeField(b.selected_language, 20, 'auto'),
@@ -80,11 +80,11 @@ export default {
       'MATIÈRE ACTIVE : ' + meta.subject,
       'NIVEAU : ' + meta.level,
       'FILIÈRE : ' + meta.track
-    ].join('\\n');
+    ].join('\n');
     const userContent = metadata
-      + (ctx ? '\\n\\nCONTEXTE DOCUMENTAIRE ET PÉDAGOGIQUE :\\n' + ctx : '')
-      + '\\n\\nQUESTION ORIGINALE DE L’ÉLÈVE :\\n' + q
-      + (normalized !== q ? '\\n\\nNORMALISATION TECHNIQUE (ne remplace pas la formulation originale) :\\n' + normalized : '');
+      + (ctx ? '\n\nCONTEXTE DOCUMENTAIRE ET PÉDAGOGIQUE :\n' + ctx : '')
+      + '\n\nQUESTION ORIGINALE DE L’ÉLÈVE :\n' + q
+      + (normalized !== q ? '\n\nNORMALISATION TECHNIQUE (ne remplace pas la formulation originale) :\n' + normalized : '');
     const msgs = [{ role:'system', content: SYSTEM }, { role:'user', content: userContent }];
     try{
       let rep = '';
