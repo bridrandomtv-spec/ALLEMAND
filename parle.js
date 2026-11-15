@@ -32,7 +32,7 @@
     zh: n => '欢迎你，' + n.n + '！你是' + n.r + '。请用德语、阿拉伯语或达尔贾语提问——我会用语音回答。',
     tr: n => 'Hoş geldin, ' + n.n + ' ! Sen bir ' + n.r + '. Almanca, Arapça veya Darica sor — sesimle cevaplarım.'
   };
-  let ON = false, rec = null, lang = 'ar', speaking = false, listeningGuard = false, NS = 0, CONT = false, UT = 0, LASTSP = { t: 0, txt: '' }, LASTQ = { q: '', t: 0 }, LASTLANG = '';
+  let ON = false, rec = null, lang = 'ar', speaking = false, processing = false, listeningGuard = false, NS = 0, CONT = false, UT = 0, LASTSP = { t: 0, txt: '' }, LASTQ = { q: '', t: 0 }, LASTLANG = '';
 
   /* ══════════ MOTEUR DE VOIX : FÉMININE NATURELLE prioritaire (mobile + laptop) ══════════ */
   const FEM = /female|femme|woman|frau|weiblich|dame|sara|anna|lena|hedda|katja|vicky|marlene|amelie|clara|zira|hazel|susan|hortense|julie|paulina|monica|lucia|valentina|elsa|petra|gitta|vicki|josephine|amira|nora/i;
@@ -334,7 +334,7 @@
   }
   /* ══════════ écoute ══════════ */
   function listen(){
-    if(!ON || listeningGuard) return;
+    if(!ON || listeningGuard || processing) return;
     if(speaking){ setTimeout(listen, 600); return; }
     listeningGuard = true;
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -344,11 +344,13 @@
     rec.lang = (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2];
     rec.interimResults = false;
     rec.onresult = async ev => {
+      if(processing) return;
       const q = String(ev.results[0][0].transcript || '').trim();
       if(!q){ setStatus('🎧 …'); return; }
       NS = 0;
       if(q === LASTQ.q && Date.now() - LASTQ.t < 3000) return;
       LASTQ = { q: q, t: Date.now() };
+      processing = true;
       LASTLANG = detectLang(q) || lang;
       setStatus('⏳ ' + q.slice(0, 40));
       const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
@@ -376,6 +378,7 @@
         catch(e){ try{ console.warn('[parle] reponseIA :', e); }catch(_){}} 
       }
       clearInterval(compteur);
+      if(!ON){ processing = false; return; }
       if(rep && typeof rep === 'object') rep = rep.texte || rep.reponse || '';
       rep = String(rep || '');
       if(!rep || rep.indexOf('لا أعرف') !== -1){
@@ -401,6 +404,7 @@
       if(mot && rep.length < 60) rep = mot + '. ' + rep;
       const RL = /[\u0600-\u06FF]/.test(rep) ? 'ar' : (/[\u00e4\u00f6\u00fc\u00df]/i.test(rep) ? 'de' : '');
       setStatus('🌐 ' + (RL === 'ar' ? 'رد بالعربية' : RL === 'de' ? 'Antwort auf Deutsch' : 'réponse'));
+      processing = false;
       speak(rep.slice(0, 2200), window.__IA_LAST_LANGUAGE || null);
     };
     rec.onerror = e => { listeningGuard = false;
@@ -409,8 +413,8 @@
         NS++;
         setStatus(NS >= 3 ? '🎤 appuie sur 🎙 quand tu es prêt à parler' : '🎧 …');
       }else setStatus('⚠️ micro : ' + er);
-      if(ON) setTimeout(listen, er === 'no-speech' ? 900 : 1500); };
-    rec.onend = () => { listeningGuard = false; if(ON && !speaking) setTimeout(listen, 800); };
+      if(ON && !processing) setTimeout(listen, er === 'no-speech' ? 900 : 1500); };
+    rec.onend = () => { listeningGuard = false; if(ON && !speaking && !processing) setTimeout(listen, 800); };
     rec.start();
   }
   function setStatus(t){ const s = document.getElementById('parleSt'); if(s) s.textContent = t; }
@@ -437,7 +441,7 @@
     ON = false;
     try{ if(rec) rec.stop(); }catch(e){}
     try{ speechSynthesis.cancel(); }catch(e){}
-    speaking = false; listeningGuard = false;
+    speaking = false; processing = false; listeningGuard = false;
     const b = document.getElementById('parleBtn');
     b.classList.remove('on'); b.textContent = '🗣️ تحدث';
     setStatus('⚪ في وضع الانتظار');
