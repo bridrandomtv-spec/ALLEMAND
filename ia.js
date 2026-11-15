@@ -179,7 +179,7 @@
       s = String(s || '');
       if(/[\u0600-\u06FF]/.test(s)) return 'ar';
       if(/[\u00e4\u00f6\u00fc\u00df]/i.test(s) || /\b(der|die|das|und|nicht|ich|du|ist|ein|eine|wo|wie|was|wer|bist|geht|hallo)\b/i.test(s)) return 'de';
-      if(/[¿¡]/.test(s) || /\b(el|los|las|yo|usted|es|ser|estar|diferencia|entre|gracias|hola|buenos|buenas|porque|tengo|quiero|puedo|muy|pero|para|con|sin|cual|cuál)\b/i.test(s)) return 'es';
+      if(/[¿¡]/.test(s) || /\b(el|los|las|yo|usted|es|ser|estar|diferencia|gracias|hola|buenos|buenas|porque|tengo|quiero|puedo|muy|pero|para|con|sin|cual|cuál)\b/i.test(s)) return 'es';
       if(/\b(gli|che|di|sono|grazie|ciao|differenza|essere|avere|tra|questa|quello)\b/i.test(s)) return 'it';
       if(/[àâçéèêëîïôûùüÿœ]/i.test(s) || /\b(le|les|je|tu|il|elle|est|suis|pourquoi|bonjour|merci|différence|comment)\b/i.test(s)) return 'fr';
       if(/\b(the|this|that|these|those|what|where|when|why|how|who|which|because|with|without|from|have|has|does|did|could|should|would|please|thank|hello|morning|school|lesson|exercise|answer|question|sentence|example|they|we|are|was|were|your|you|my)\b/i.test(s)) return 'en';
