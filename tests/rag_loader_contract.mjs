@@ -16,6 +16,10 @@ const checks = [
   ['comptage total vérifié avant résultat shardé', /total === man\.total_chunks && idsVus\.size === man\.total_chunks/],
   ['repli sur index complet après incident shardé', /const idx = await chargeLegacy\(\);\s*return idx \? meilleur\(idx, ts\) : null;/],
   ['absence d’arrêt anticipé avant lecture de tous les shards', /if\(best && best\.score >= SEUIL \+ 3\) break/],
+  ['normalisation partagée utilisée par l’ontologie', /window\.DZ_TEXT\.withArabizi\(s\)/],
+  ['tokenisation arabe sans ponctuation attachée', /window\.DZ_TEXT\.tokens\(s\)/],
+  ['ontologie appelée quand le routeur local ne reconnaît pas la demande', /const _onto = await ontoRoute\(rawQuestion\)/],
+  ['QUST reçoit la formulation brute avant réécriture Darija', /understand\(rawQuestion, _qctx\)/],
 ];
 
 let failures = 0;
