@@ -174,6 +174,49 @@ class CorpusPipelineContract(unittest.TestCase):
         self.assertEqual(merged["termes"]["ancien"], [0])
         self.assertEqual(merged["termes"]["nouvelle"], [1])
 
+
+    def test_transactional_json_write_rolls_back_on_second_replace_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first = os.path.join(tmp, "corpus.json")
+            second = os.path.join(tmp, "index.json")
+            with open(first, "w", encoding="utf-8") as stream:
+                stream.write('{"old":"catalogue"}')
+            with open(second, "w", encoding="utf-8") as stream:
+                stream.write('{"old":"index"}')
+            original_replace = os.replace
+            failed = {"value": False}
+
+            def replace_with_one_failure(src, dst):
+                if dst == second and os.path.basename(src).startswith(".corpus-tmp-") and not failed["value"]:
+                    failed["value"] = True
+                    raise OSError("simulation panne disque")
+                return original_replace(src, dst)
+
+            with patch("os.replace", side_effect=replace_with_one_failure):
+                with self.assertRaises(OSError):
+                    contracts.ecrire_json_transactionnel({
+                        first: {"new": "catalogue"},
+                        second: {"new": "index"}
+                    })
+            with open(first, encoding="utf-8") as stream:
+                self.assertEqual(stream.read(), '{"old":"catalogue"}')
+            with open(second, encoding="utf-8") as stream:
+                self.assertEqual(stream.read(), '{"old":"index"}')
+            self.assertEqual(os.listdir(tmp), ["corpus.json", "index.json"])
+
+    def test_transactional_json_write_creates_both_valid_artifacts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first = os.path.join(tmp, "corpus.json")
+            second = os.path.join(tmp, "index.json")
+            contracts.ecrire_json_transactionnel({
+                first: {"documents": [1]},
+                second: {"chunks": [2]}
+            })
+            with open(first, encoding="utf-8") as stream:
+                self.assertEqual(json.load(stream), {"documents": [1]})
+            with open(second, encoding="utf-8") as stream:
+                self.assertEqual(json.load(stream), {"chunks": [2]})
+
     def test_empty_index_is_rejected(self):
         with self.assertRaises(ValueError):
             sharder.build_shards({"chunks": [], "termes": {}})
