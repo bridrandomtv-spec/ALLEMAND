@@ -54,6 +54,9 @@ const checks = [
     /window\.parleSpeak\(rep, window\.__IA_LAST_LANGUAGE/.test(chat) && /window\.parleSpeak = function\(texte, langue\)/.test(voice)],
   ['ia.js calcule et transmet la langue de sortie demandée',
     /const answerLanguage = explicitOutputLanguage/.test(ia) && /output_language: answerLanguage/.test(ia)],
+  ['une valeur unknown fournie par la voix ne masque pas le dialecte QUST ni une demande explicite en darija',
+    /requestedDialect/.test(ia) && /understanding && understanding\.dialect === 'darija'/.test(ia) &&
+    /بالدارجة\|بالدزيرية\|بالجزائرية\|en darija\|darija\|derdja/.test(ia)],
   ['les lexiques Darija arabe et Arabizi sont nommés et cohérents entre canaux',
     /const DARJA_AR =/.test(ia) && /const DARJA_LATIN =/.test(ia) &&
     /const DARJA_AR =/.test(voice) && /const DARJA_LATIN =/.test(voice) &&
