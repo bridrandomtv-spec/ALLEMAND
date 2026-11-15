@@ -40,5 +40,9 @@ jobs:
         run: python -m pip install --disable-pip-version-check pypdf
       - name: Exécuter les tests de contrats
         run: python -m unittest tests/test_corpus_pipeline.py -v
+      - name: Installer Node.js pour le contrôle statique
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Vérifier la syntaxe JavaScript du moteur RAG
         run: node --check rag.js
