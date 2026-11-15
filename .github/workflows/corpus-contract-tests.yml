@@ -10,6 +10,9 @@ on:
       - 'tools/rights_metadata.py'
       - 'tests/test_corpus_pipeline.py'
       - 'rag.js'
+      - 'assets/bdd/corpus.json'
+      - 'biblio.js'
+      - 'tests/index_paths_contract.mjs'
       - '.github/workflows/corpus-contract-tests.yml'
   pull_request:
     paths:
@@ -20,6 +23,9 @@ on:
       - 'tools/rights_metadata.py'
       - 'tests/test_corpus_pipeline.py'
       - 'rag.js'
+      - 'assets/bdd/corpus.json'
+      - 'biblio.js'
+      - 'tests/index_paths_contract.mjs'
 
 permissions:
   contents: read
@@ -46,3 +52,5 @@ jobs:
           node-version: '22'
       - name: Vérifier la syntaxe JavaScript du moteur RAG
         run: node --check rag.js
+      - name: Vérifier la séparation des index BIBLIO et RAG
+        run: node tests/index_paths_contract.mjs
