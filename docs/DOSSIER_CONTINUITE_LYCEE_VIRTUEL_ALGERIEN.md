@@ -3751,3 +3751,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Nouveau test source `tests/voice_capture_contract.mjs` : verrou avant l'appel IA, garde `listen/onend/onerror`, arrêt utilisateur, transfert du verrou au TTS et purge à l'arrêt.
 - Workflow d'audit non-déployant enrichi pour exécuter ce test. Validation microphone/navigateur réelle non effectuée ; le test vérifie le contrat source, pas le comportement de tous les moteurs SpeechRecognition.
 - Aucun déploiement, aucune modification de `main`, aucune écriture Supabase.
+
+- Garde de concurrence supplémentaire : chaque tour vocal reçoit un identifiant `VOICE_TURN`. `off()` invalide les tours en attente ; si l'utilisateur arrête puis relance rapidement le professeur, une réponse de l'ancienne session ne peut pas être prononcée dans la nouvelle ni libérer son verrou de traitement.
