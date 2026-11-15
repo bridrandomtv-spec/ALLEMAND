@@ -3756,3 +3756,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 
 - Validation complémentaire Lot 619 dans le harnais V8 : syntaxe de `parle.js` vérifiée ; les 11 contrats de verrouillage/annulation (état processing, garde listen, blocage onend/onerror, identifiant de tour, invalidation au stop, transfert au TTS) correspondent au code. Ce n'est pas un test navigateur/microphone réel ni un run CI.
 - Point de politique linguistique à arbitrer avant toute modification de sortie : `assets/bdd/darja.json` contient à la fois un champ `usage` indiquant des réponses en derja lorsque l'élève écrit en derja et une note FUS-1 disant que toute sortie arabe doit être en fusha ; le prompt Worker actuel demande au contraire la darija lorsque le dialecte est détecté. Ce conflit documentaire n'a pas été modifié dans les lots 617–619.
+
+
+## Lot 620 — politique linguistique adaptative du professeur intelligent (15 novembre 2026)
+
+- Décision validée par le propriétaire : le professeur intelligent adapte sa réponse à la langue et au dialecte de l'élève.
+- Le Worker distingue maintenant la langue de sortie (`answer_language`) du style de réponse (`answer_style`). Pour une sortie arabe : `darija` si QUST détecte la darija/Arabizi ; `fusha` si l'entrée est en arabe standard. Pour les autres langues, le style est `natural`.
+- La consigne explicite de langue de sortie reste prioritaire sur le dialecte d'entrée : une question en darija demandant « en français » doit recevoir une réponse en français.
+- `assets/bdd/darja.json` : métadonnées version 3 alignées sur cette règle ; suppression de la note FUS-1 qui imposait une sortie arabe systématiquement en Fusha et contredisait la politique choisie.
+- `tests/tutor_language_matrix.mjs` : assertions de contrat sur la séparation langue/style, le retour `answer_style`, la priorité de la langue explicitement demandée et l'absence de l'ancienne note contradictoire.
+- `tests/tutor_matrix.json` : matrice portée à 22 cas avec DAR-005 (arabe standard → Fusha) et DAR-006 (Darija + demande explicite en français → français).
+- Validation réalisée dans l'environnement d'édition : parsing JSON du corpus Darija et de la matrice PASS ; compilation syntaxique V8 du Worker et du script de test PASS ; vérification après écriture des 5 fichiers et des assertions source PASS.
+- Limite : les tests Node natifs, GitHub Actions, les réponses réelles du LLM/Worker, le microphone et la voix TTS ne sont pas validés. Le Worker n'a pas été déployé.
+- Aucun merge, aucune modification de `main`, aucun changement Supabase/Auth/RLS/schéma/données/paiement/secrets. Messenger reste ouvert : les scénarios Realtime E2E A/B/C et reconnexion restent à exécuter.
+- Commits du lot : `536192e4e4e013b80c20c9dd914802a5baec36ae`, `d58e22d985b05c5acdc6ab270bc36623f4cda0bd`, `fcc38d89ff97bfb533c74f34df45988ba23d1a38`, `dede5e2075cc027ae9768e2b71090eeab3f74374`, documentation de lot `1040c502a125de35915f9bc653845508cf0bd949`.
