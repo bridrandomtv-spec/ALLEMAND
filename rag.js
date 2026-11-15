@@ -837,14 +837,11 @@ async function chargeOnto(){
   return ONTO;
 }
 function normOnto(s){
+  if(window.DZ_TEXT) return window.DZ_TEXT.withArabizi(s);
   s = String(s||'').toLowerCase();
-  s = s.replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[\u064B-\u065F\u0670]/g,'');
-  if(!/[a-zäöüß]/.test(s))
-    s = s.replace(/3/g,'ع').replace(/7/g,'ح').replace(/5/g,'خ').replace(/9/g,'ق').replace(/2/g,'ء');
-  s = s.replace(/\s+/g,' ').trim();
-  return s;
+  return s.replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[\u064B-\u065F\u0670]/g,'').replace(/[،؛؟۔٪٫٬]/g,' ').replace(/\s+/g,' ').trim();
 }
-function tokOnto(s){ return s.split(/[^\w\u0600-\u06FF]+/).filter(w => w.length > 1); }
+function tokOnto(s){ return window.DZ_TEXT ? window.DZ_TEXT.tokens(s).filter(w => w.length > 1) : String(s||'').split(/[^\w\u0621-\u064A\u066E-\u06D3]+/).filter(w => w.length > 1); }
 async function matchOnto(q){
   const O = await chargeOnto();
   const nq = normOnto(q);
@@ -963,7 +960,8 @@ async function qustFallback(qu){
   return null;
 }
 async function reponsePedagogique(q){
-    q = darja(q);
+    const rawQuestion = String(q || '');
+    q = darja(rawQuestion);
     var _qust = null;
     /* ── P2-G.1 : contexte unifié transmis à QUST ─────────────────────────
        Variable de contexte UNIQUE : _qctx. Variable de résultat UNIQUE : _qust
@@ -995,7 +993,7 @@ async function reponsePedagogique(q){
     }
     try{
       if(window.QUST && window.QUST.understand){
-        _qust = window.QUST.understand(q, _qctx);
+        _qust = window.QUST.understand(rawQuestion, _qctx);
       }
     }catch(e){ _qust = null; }
     const _bib = await intentBiblio(q);
@@ -1019,7 +1017,13 @@ async function reponsePedagogique(q){
       return { html: tableauConj(vb), speakWord: null, conj: vb };
     }
     const t = await matchType(q);
-    if(!t){ var _qf = await qustFallback(_qust); if(_qf) return _qf; return null; }
+    if(!t){
+      /* L’ontologie n’est plus un catalogue mort : dernier routeur déterministe
+         avant le repli QUST, sur la formulation originale non réécrite. */
+      const _onto = await ontoRoute(rawQuestion);
+      if(_onto) return _onto;
+      var _qf = await qustFallback(_qust); if(_qf) return _qf; return null;
+    }
     const n = numeroUnite(q);
     const mal = await chargeMalakhiss();
 
