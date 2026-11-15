@@ -31,7 +31,7 @@ ok(!/service_role/i.test(sbjs), 'client Supabase : aucune clé service_role');
 const METHODS = ['msgConvs','msgMessages','msgSend','msgCanDm','msgOpenDirect','msgGroups','msgReport','msgBlock','msgUnblock','msgEdit','msgDelete','msgUpload','msgSubscribe','msgReportsOpen','msgHandle','msgCreateGroup','msgLogLast','msgMyVerification','msgRequestVerification','msgVerificationQueue','msgSetVerification'];
 for (const m of METHODS) ok(sbjs.includes('function ' + m), 'méthode SB.' + m);
 const verifyStart = sbjs.indexOf('async function msgVerificationQueue(');
-const verifyEnd = sbjs.indexOf('\nasync function msgSetVerification(', verifyStart);
+const verifyEnd = sbjs.indexOf('async function msgSetVerification(', verifyStart);
 const verifyMethod = sbjs.slice(verifyStart, verifyEnd);
 ok(verifyStart >= 0 && verifyEnd > verifyStart &&
    verifyMethod.includes("{ count:'exact' }") &&
