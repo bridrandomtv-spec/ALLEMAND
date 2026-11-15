@@ -426,15 +426,12 @@ class CorpusPipelineContract(unittest.TestCase):
             }
             pages = ["Hallo Schüler Guten Morgen", "Ich lerne Deutsch heute"]
             page_parts = contracts.decouper_pages(pages, taille=3)
-            chunks = [
-                contracts.construire_chunk(
-                    gid, doc["id"], numero, part["texte"], digest,
+            chunks = []
+            for gid, part in enumerate(page_parts):
+                chunks.append(contracts.construire_chunk(
+                    gid, doc["id"], gid, part["texte"], digest,
                     part["page_start"], part["page_end"]
-                )
-                for gid, (numero, part) in enumerate(
-                    (item for item in enumerate(page_parts))
-                )
-            ]
+                ))
             index = contracts.fusionner_index_rag(
                 {"_meta": {}, "chunks": []}, chunks, set()
             )
