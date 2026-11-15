@@ -3901,3 +3901,18 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun PDF extrait, OCRisé, copié ou indexé pendant ce lot. Aucun shard généré ; les tests Python et Actions restent non certifiés en raison du blocage runner documenté au Lot 626.
 - Aucun changement de `main`, aucune fusion, aucun déploiement ; aucun changement Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste ouverte.
 - Suite : renseigner la référence exacte, la date, l'autorité émettrice et le périmètre de l'autorisation ; puis traiter un échantillon 2AS/3AS autorisé et mesurer la qualité d'extraction avant indexation à grande échelle.
+
+
+---
+
+## Lot 630 — audit de sûreté de l'ingestion et provenance page-aware (2026-11-15)
+
+- Relecture statique de `tools/rights_metadata.py`, `tools/indexer_pdf.py`, `tools/ingest_corpus.py`, `tools/sharder_index.py`, `tests/test_corpus_pipeline.py`, `rag.js` et `assets/bdd/corpus.json`.
+- Défaut de traçabilité confirmé : les deux indexeurs aplatissent le texte de toutes les pages avant découpage en blocs de 1 200 mots. Les chunks ne conservent que `global_id/doc/n/texte`, sans numéro/plage de page ni empreinte SHA-256. Le sharder préserve cette absence et le meilleur résultat RAG ne renvoie pas de page. Une citation de page ne peut donc pas être garantie.
+- Risque destructif confirmé : `tools/ingest_corpus.py::construire()` repart de `docs=[]`, puis `main()` remplace `assets/bdd/corpus.json` par le seul lot fourni. Un import partiel peut effacer les fiches préexistantes qui ne sont pas dans ce lot. Ne pas utiliser ce chemin en production avant fusion non destructive testée.
+- Les pipelines PDF et multi-formats restent concurrents : effets sur le registre, champs documentaires et segmentation différents. Aucun ne doit être lancé en séquence pour compenser l'autre.
+- Le validateur des droits exige une référence de preuve sous forme de texte, mais ne contrôle pas encore l'existence de la pièce ni sa portée (documents/éditions, extraction, indexation, affichage/redistribution, territoire, durée). L'autorisation ministérielle déclarée au Lot 629 devra être reliée à sa pièce et à son périmètre exact ; aucun numéro ou périmètre n'est inventé.
+- Rapport : `docs/LOTS/LOT_630_AUDIT_SURETE_INGESTION_ET_PROVENANCE_RAG.md`.
+- Aucun test Python/Node, OCR, extraction PDF, Action GitHub ou RAG live exécuté. Aucun PDF converti/copié/indexé, aucun sidecar ni index généré.
+- Aucun changement de `main`, fusion, déploiement ou modification Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste ouverte et indépendante.
+- Suite : Lot 631 — définir et tester sur fixtures synthétiques le schéma page-aware, la fusion non destructive du registre et la propagation des citations à travers sharding puis RAG.
