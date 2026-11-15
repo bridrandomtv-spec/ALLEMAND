@@ -67,6 +67,8 @@
     const box = $('#matieresBody'); if(!box || !D) return;
     const liste = listeMatieres();
     const actifs = liste.filter(m => m.statut === 'actif').length;
+    const partielles = liste.filter(m => m.statut === 'partiel').length;
+    const programmees = liste.filter(m => m.statut === 'programme').length;
 
     let h = '<div class="card mat-hero">'
       + '<div class="mat-t"><span class="mat-crest">🏫</span><div>'
@@ -79,7 +81,8 @@
       + '<div class="mat-stats">'
       + '<div class="mat-st"><b>' + liste.length + '</b><span>مادة في شعبتك</span></div>'
       + '<div class="mat-st"><b>' + actifs + '</b><span>نشطة الآن</span></div>'
-      + '<div class="mat-st"><b>' + (liste.length - actifs) + '</b><span>مبرمجة — قريبًا</span></div>'
+      + '<div class="mat-st"><b>' + partielles + '</b><span>متاحة جزئيًا</span></div>'
+      + '<div class="mat-st"><b>' + programmees + '</b><span>مبرمجة — قريبًا</span></div>'
       + '<div class="mat-st"><b>' + D.matieres.length + '</b><span>مادة في السجل</span></div>'
       + '</div></div>';
 
@@ -128,13 +131,15 @@
       + '<div class="mat-ch"><span class="mat-i">' + esc(m.icon || '📘') + '</span>'
       + '<span class="mat-stt ' + (actif ? 'ok' : '') + '">' + esc(st.icon) + ' ' + esc(st.ar) + '</span></div>'
       + '<b class="mat-n">' + esc(m.ar) + '</b>'
-      + (m.de ? '<i class="mat-de de-display">' + esc(m.de) + '</i>' : '')
+      + ((m.de || m.en || m.es || m.it) ? '<i class="mat-de de-display" dir="ltr">' + esc(m.de || m.en || m.es || m.it) + '</i>' : '')
       + '<p class="mat-d">' + esc(m.desc || '') + '</p>'
       + (actif
           ? '<div class="mat-kv"><span><b>' + (m.unites || 0) + '</b> وحدة</span>'
             + '<span><b>' + (m.seances || 0) + '</b> حصة</span></div>'
             + '<button class="btn btn-p btn-sm" data-go="seances">📚 فتح الحصص</button>'
-          : '<button class="btn btn-o btn-sm" disabled>🗓️ قريبًا</button>')
+          : (m.statut === 'partiel' && m.id === 'anglais'
+            ? '<button class="btn btn-o btn-sm" data-go="english">🇬🇧 استكشاف محتوى الإنجليزية</button>'
+            : '<button class="btn btn-o btn-sm" disabled>🗓️ قريبًا</button>'))
       + '</div>';
   }
 
