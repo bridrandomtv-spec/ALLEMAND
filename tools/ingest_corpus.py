@@ -17,7 +17,7 @@ try:
     from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
     from tools.corpus_contracts import (
         sha256_fichier, decouper_pages, fusionner_documents, construire_chunk,
-        fusionner_index_rag
+        fusionner_index_rag, ecrire_json_transactionnel
     )
 except ModuleNotFoundError:  # exécution directe
     from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
@@ -122,14 +122,6 @@ def construire(dossier, documents_existants=None):
     return catalogue, index, ignores, fichiers_copies
 
 
-def ecrire_atomiquement(path, value):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    tmp = path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as stream:
-        json.dump(value, stream, ensure_ascii=False, separators=(",", ":"))
-    os.replace(tmp, path)
-
-
 def main(dossier):
     docs_existants = lire_json_existant(CORPUS, "documents", [])
     chunks_existants = lire_json_existant(INDEX, "chunks", [])
@@ -144,8 +136,7 @@ def main(dossier):
     os.makedirs(DESTINATION, exist_ok=True)
     for source, cible in copies:
         shutil.copy2(source, cible)
-    ecrire_atomiquement(INDEX, index_final)
-    ecrire_atomiquement(CORPUS, corpus_final)
+    ecrire_json_transactionnel({INDEX: index_final, CORPUS: corpus_final})
     print("Documents:", len(catalogue), "| chunks:", len(index_final["chunks"]),
           "| ignorés:", ignores)
 
