@@ -1146,11 +1146,13 @@ async function reponsePedagogique(q){
     const contexte = doc
       ? [doc.matiere, doc.niveau, doc.annee].filter(Boolean).map(esc).join(' · ')
       : '';
+    const provenance = doc && doc.source ? ' · source : ' + esc(doc.source) : '';
+    const format = doc && doc.format ? ' · format ' + esc(doc.format) : '';
     const empreinte = typeof r.source_sha256 === 'string'
       ? ' · SHA-256 ' + r.source_sha256.slice(0, 12) + '…' : '';
     return '📚 <b>من قاعدة معرفتك</b> — '
       + '<span class="rag-src"><b>' + esc(titre) + '</b>'
-      + (contexte ? ' · ' + contexte : '') + page
+      + (contexte ? ' · ' + contexte : '') + page + provenance + format
       + '<br>score ' + r.score + ' · ID ' + esc(r.doc || '')
       + empreinte + '</span>'
       + '<br><span class="rag-x">« ' + esc(extrait) + ' … »</span>'
