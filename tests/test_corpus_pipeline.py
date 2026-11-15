@@ -368,5 +368,48 @@ class CorpusPipelineContract(unittest.TestCase):
         self.assertEqual(result["documents_indexes"], 5)
         self.assertEqual(result["documents_sans_chunks"], 0)
 
+
+    def test_main_rejected_batch_preserves_existing_json_and_source(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source_dir = os.path.join(tmp, "incoming")
+            destination = os.path.join(tmp, "published")
+            os.makedirs(source_dir)
+            source = os.path.join(source_dir, "sans_autorisation.txt")
+            source_bytes = b"document sans preuve de droits"
+            with open(source, "wb") as stream:
+                stream.write(source_bytes)
+
+            corpus_path = os.path.join(tmp, "corpus.json")
+            index_path = os.path.join(tmp, "corpus_rag_index.json")
+            old_corpus = {"_meta": {"version": "stable"}, "documents": [
+                {"id": "document-existant", "titre": "Ne pas remplacer"}
+            ]}
+            old_index = {"_meta": {"version": "stable"}, "chunks": [
+                {"global_id": 0, "doc": "document-existant", "n": 0,
+                 "texte": "contenu déjà publié"}
+            ]}
+            with open(corpus_path, "w", encoding="utf-8") as stream:
+                json.dump(old_corpus, stream, ensure_ascii=False)
+            with open(index_path, "w", encoding="utf-8") as stream:
+                json.dump(old_index, stream, ensure_ascii=False)
+            with open(corpus_path, "rb") as stream:
+                corpus_before = stream.read()
+            with open(index_path, "rb") as stream:
+                index_before = stream.read()
+
+            with patch.object(ingest, "DESTINATION", destination), \
+                 patch.object(ingest, "CORPUS", corpus_path), \
+                 patch.object(ingest, "INDEX", index_path):
+                with self.assertRaisesRegex(RuntimeError, "Aucun chunk autorisé"):
+                    ingest.main(source_dir)
+
+            with open(corpus_path, "rb") as stream:
+                self.assertEqual(stream.read(), corpus_before)
+            with open(index_path, "rb") as stream:
+                self.assertEqual(stream.read(), index_before)
+            with open(source, "rb") as stream:
+                self.assertEqual(stream.read(), source_bytes)
+            self.assertFalse(os.path.exists(destination))
+
 if __name__ == "__main__":
     unittest.main()
