@@ -2947,3 +2947,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Commits Lot 560 : `bcc3d02d67fa3ef177072571190e7460a0782739` (`supabase/supabase.js`), `22bd1a383e04e822bec24edab4715b0c400fed66` (`ci/check-msg.mjs`).
 
 - Durcissement complémentaire Lot 560 : `.update()` peut réussir sans erreur tout en modifiant zéro ligne si le statut a changé entre-temps. La demande exige maintenant `.select('id').maybeSingle()` et n’est considérée enregistrée que si une ligne est retournée. En cas d’absence de ligne, le nouvel upload est supprimé (sauf s’il s’agit déjà du chemin référencé). Commit : `d5d8d0a7e67bd82915559b03bb58e20c851dbebf`.
+
+- Garde CI finale du Lot 560 ajoutée : le test vérifie aussi que la mise à jour du profil retourne effectivement une ligne avant de confirmer la demande et supprimer l’ancien justificatif. Commit CI : `dfc6c9497add3bd0b74b6195a10dab4c952a5058`.
