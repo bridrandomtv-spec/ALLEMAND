@@ -2949,3 +2949,9 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Durcissement complémentaire Lot 560 : `.update()` peut réussir sans erreur tout en modifiant zéro ligne si le statut a changé entre-temps. La demande exige maintenant `.select('id').maybeSingle()` et n’est considérée enregistrée que si une ligne est retournée. En cas d’absence de ligne, le nouvel upload est supprimé (sauf s’il s’agit déjà du chemin référencé). Commit : `d5d8d0a7e67bd82915559b03bb58e20c851dbebf`.
 
 - Garde CI finale du Lot 560 ajoutée : le test vérifie aussi que la mise à jour du profil retourne effectivement une ligne avant de confirmer la demande et supprimer l’ancien justificatif. Commit CI : `dfc6c9497add3bd0b74b6195a10dab4c952a5058`.
+
+
+## Lot 561 — cohérence du numéro scolaire et confirmation réelle de la modération (15 novembre 2026)
+- Audit du parcours d’inscription : le client exigeait `Number.isSafeInteger(Number(matricule))` alors que le formulaire et le trigger SQL acceptent une chaîne de 1 à 20 chiffres. Cette conversion rejetait certains identifiants longs et pouvait altérer les zéros initiaux ; le contrôle client est maintenant aligné sur la règle serveur (`^[0-9]{1,20}$`) sans conversion en Number.
+- Défaut de retour d’action : `msgSetVerification` traitait une mise à jour sans erreur comme une réussite, même si le statut avait changé entre le chargement et le clic et que zéro ligne était affectée. La requête retourne maintenant `id` via `.select('id').maybeSingle()` et ne renvoie `ok:true` que si une ligne a réellement été modifiée. L’interface conserve alors la demande et affiche l’erreur au lieu de faire croire à une activation ou un rejet.
+- Garde statique ajoutée dans `ci/check-msg.mjs` pour les deux contrats. Aucun profil, statut, document Storage, schéma ou politique Supabase n’a été modifié ; aucun déploiement Cloudflare ni exécution CI n’est présumé.
