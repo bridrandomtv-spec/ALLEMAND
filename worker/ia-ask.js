@@ -123,7 +123,7 @@ export default {
     HITS.push(now);
     meta.output_style = meta.output_language === 'ar'
       ? (meta.dialect === 'darija' ? 'darija' : 'fusha') : 'natural';
-    if(meta.rag_scope_type !== 'none' && meta.rag_scope_status !== 'verified'){
+    if(meta.rag_scope_type !== 'none' && (meta.rag_scope_status !== 'verified' || meta.rag_source_status !== 'verified')){
       const refusal = meta.output_language === 'ar'
         ? (meta.dialect === 'darija'
           ? 'ما نقدرش نأكد هذي الصفحة أو الوحدة أو التمرين من مصدر موثّق. ابعثلي الوثيقة أو المرجع باش نتحقق.'
@@ -137,9 +137,11 @@ export default {
               : meta.output_language === 'it'
                 ? 'Non posso verificare questa pagina, unità o esercizio con una fonte attendibile. Invia il documento o il riferimento esatto.'
                 : 'Je ne peux pas confirmer cette page, unité ou cet exercice à partir d’une source vérifiée. Merci de fournir le document ou la référence exacte.';
+      const reason = meta.rag_scope_status !== 'verified'
+        ? 'rag_scope_' + meta.rag_scope_status : 'rag_source_' + meta.rag_source_status;
       return json({ ok:true, rep:refusal, answer_language:meta.output_language,
         answer_style:meta.output_style || 'natural', abstained:true,
-        abstention_reason:'rag_scope_' + meta.rag_scope_status }, 200, org);
+        abstention_reason:reason }, 200, org);
     }
     const metadata = [
       'MODE D’ENTRÉE : ' + meta.input_mode,
