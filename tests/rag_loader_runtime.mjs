@@ -119,6 +119,30 @@ await test('une génération de shard différente du manifeste déclenche le rep
 });
 
 
+
+await test('la source RAG est résolue uniquement si le SHA-256 concorde', async () => {
+  const digest = 'c'.repeat(64);
+  const routes = {
+    'assets/bdd/corpus.json':()=>ok({documents:[{
+      id:'doc-source', titre:'Manuel synthétique', matiere:'allemand',
+      niveau:'2AS', annee:'2026/2027', source:'fixture contrôlée',
+      format:'pdf', source_sha256:digest
+    }]})
+  };
+  const rag = await createRag(routes);
+  const ref = await rag.source({
+    doc:'doc-source', page_start:4, page_end:4, source_sha256:digest
+  });
+  assert.equal(ref.title, 'Manuel synthétique');
+  assert.equal(ref.page_start, 4);
+  assert.equal(ref.sha256, digest);
+  const mismatch = await rag.source({
+    doc:'doc-source', page_start:4, page_end:4, source_sha256:'d'.repeat(64)
+  });
+  assert.equal(mismatch, null);
+});
+
+
 for (const [name, passed, message] of results) {
   console.log((passed ? 'PASS ' : 'FAIL ') + name + (message ? ' — ' + message : ''));
 }
