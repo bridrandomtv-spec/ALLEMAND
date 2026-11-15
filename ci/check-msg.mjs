@@ -59,6 +59,10 @@ ok(msgjs.includes('verificationPage:0') &&
    msgjs.includes('data-verif-page') &&
    msgjs.includes('renderList(Number(verificationPage))'),
    'Messenger : file de vérification paginée, total exact et navigation précédente/suivante');
+ok(msgjs.includes("var isMod = !!(u && u.role==='admin')") &&
+   msgjs.includes("moderationAccess.perms.indexOf('messaging.moderate')!==-1") &&
+   !msgjs.includes("u.role==='prof' || u.role==='admin'"),
+   'Messenger : panneau de modération affiché selon la permission serveur, pas le simple rôle professeur');
 ok(msgjs.includes('function verificationMissing(q)') &&
    msgjs.includes("startsWith(String(q.id)+'/')") &&
    msgjs.includes("window.__msgVerificationRows = vq && vq.ok") &&
@@ -103,8 +107,8 @@ ok(msgjs.includes('ابحث في محادثاتي ومجموعاتي') && msgjs.
 ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'rédaction et pièces jointes en arabe');
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
-ok(idx.includes('msg.js?v=3533'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.182'") && sw.includes("./msg.js?v=3532") && sw.includes("./style-prototype-dz.css?v=204"), 'service worker et précache Messenger synchronisés');
+ok(idx.includes('msg.js?v=3534'), 'version cache du module de messagerie actualisée');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.183'") && sw.includes("./msg.js?v=3532") && sw.includes("./style-prototype-dz.css?v=204"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
