@@ -2763,3 +2763,14 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Les quatre exécutions Actions en échec sur le premier HEAD restent non diagnostiquées faute d’étapes/journaux consultables. Ne pas présenter la CI comme verte. La compilation statique sans exécution de `app.js` et `multaqa.js` et les vérifications ciblées sont les validations confirmées.
 - `main` contient désormais les changements. Le déploiement Cloudflare n’a pas été effectué ni vérifié ; l’interface de production ne doit donc pas être annoncée comme mise à jour.
 - Aucun changement de schéma, migration, Auth, RLS, RPC ou donnée Supabase.
+
+
+## Lot 553 — file d’activation scolaire dans l’administration (15 novembre 2026)
+- À la demande explicite de l’utilisateur, ajout dans `admin.js` d’une file dédiée « 🪪 طلبات تفعيل التلاميذ · School verification » dans l’onglet existant « 👥 التلاميذ والأولياء · Students & Parents ».
+- Le Dashboard affiche désormais un accès direct « فتح طلبات تفعيل التلاميذ » pour les comptes ayant `students.verify` ou le rôle `admin`.
+- La rubrique Élèves & Parents est également accessible avec `students.verify` même si `students.read` n’est pas attribuée ; la recherche des élèves reste conditionnée à `students.read`.
+- La file réutilise exclusivement les méthodes déjà présentes `SB.msgVerificationQueue()` et `SB.msgSetVerification()`. Les actions proposées sont confirmation (`verifie`) et rejet (`rejete`) ; le rejet demande une confirmation utilisateur. Après une décision réussie, la file est rechargée.
+- Audit Supabase en lecture seule : la politique SELECT « profils en attente visibles modérateurs » et la politique UPDATE « verif update par modérateurs » protègent `public.profiles` avec `is_admin()` ou `admin_can(auth.uid(),'students.verify') AND admin_sees_wilaya(...)`. L’interface a donc été alignée sur `students.verify`, et non `messaging.moderate`. La base conserve le contrôle d’autorisation et le périmètre wilaya.
+- Aucun changement SQL, migration, rôle, permission, politique RLS, donnée d’élève ou statut de vérification n’a été modifié. Aucun dossier réel n’a été approuvé ou rejeté.
+- Commits directs successifs sur `main` : `b9bca050164b9006e884ccf9a3dd20e030a0e112` (première intégration), `8b11abe581d402f2294bc14e50d6136d9ab4e630` (délégation des clics), `fb652558ae58eeb48b17a5c7c3a6381b406d3928` (alignement RLS), `3b7432c471ad12cb6f0ee42c815f2e01147da589` (accès depuis Dashboard).
+- Contrôles statiques de présence des onglets, permission, RPC et gestion des actions : à confirmer après lecture finale. Syntaxe exécutée, CI et déploiement Cloudflare : non vérifiés dans ce lot. Après déploiement, ouvrir Dashboard → « فتح طلبات تفعيل التلاميذ » ou directement « Élèves & Parents » ; si la file affiche une erreur, relever son message exact sans modifier les statuts manuellement.
