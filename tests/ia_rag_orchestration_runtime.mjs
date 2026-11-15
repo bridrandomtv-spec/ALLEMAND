@@ -69,16 +69,19 @@ async function runCase(sourceState) {
 }
 
 const verified = await runCase('verified');
+assert.equal(verified.payload.rag_source_status, 'verified');
 assert.match(verified.context, /SHA-256 concordant/);
 assert.match(verified.context, /Manuel allemand synthétique/);
 assert.match(verified.answer, /Source documentaire : Manuel allemand synthétique/);
 assert.match(verified.answer, /p\. 4/);
 
 const absent = await runCase('absent');
+assert.equal(absent.payload.rag_source_status, 'unverified');
 assert.match(absent.context, /PROVENANCE RAG : non certifiée/);
 assert.doesNotMatch(absent.answer, /Source documentaire/);
 
 const mismatch = await runCase('mismatch');
+assert.equal(mismatch.payload.rag_source_status, 'unverified');
 assert.match(mismatch.context, /PROVENANCE RAG : non certifiée/);
 assert.doesNotMatch(mismatch.answer, /Source documentaire/);
 
