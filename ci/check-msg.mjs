@@ -5,6 +5,8 @@ console.log('== check-msg · messagerie EduDZ ==');
 const sql = readFileSync('supabase/msg_schema.sql', 'utf8');
 const sbjs = readFileSync('supabase/supabase.js', 'utf8');
 const msgjs = readFileSync('msg.js', 'utf8');
+const adminjs = readFileSync('admin.js', 'utf8');
+const adminCss = readFileSync('style-prototype-dz.css', 'utf8');
 const billing = readFileSync('billing.js', 'utf8');
 const idx = readFileSync('index.html', 'utf8');
 const sw = readFileSync('sw.js', 'utf8');
@@ -28,6 +30,21 @@ ok(sql.includes('alter publication supabase_realtime add table public.msg_messag
 ok(!/service_role/i.test(sbjs), 'client Supabase : aucune clé service_role');
 const METHODS = ['msgConvs','msgMessages','msgSend','msgCanDm','msgOpenDirect','msgGroups','msgReport','msgBlock','msgUnblock','msgEdit','msgDelete','msgUpload','msgSubscribe','msgReportsOpen','msgHandle','msgCreateGroup','msgLogLast','msgMyVerification','msgRequestVerification','msgVerificationQueue','msgSetVerification'];
 for (const m of METHODS) ok(sbjs.includes('function ' + m), 'méthode SB.' + m);
+const verifyStart = sbjs.indexOf('async function msgVerificationQueue(');
+const verifyEnd = sbjs.indexOf('\nasync function msgSetVerification(', verifyStart);
+const verifyMethod = sbjs.slice(verifyStart, verifyEnd);
+ok(verifyStart >= 0 && verifyEnd > verifyStart &&
+   verifyMethod.includes("{ count:'exact' }") &&
+   verifyMethod.includes(".range(from,to)") &&
+   verifyMethod.includes(".order('id',{ascending:true})"),
+   'file de vérification paginée avec total et ordre stable');
+ok(adminjs.includes('data-adm-verif-page') &&
+   adminjs.includes('renderVerificationQueue(Number(verifyPage))') &&
+   adminjs.includes('var pageSize = 50'),
+   'navigation de la file par pages de 50 demandes');
+ok(adminCss.includes('#admVerificationCard.adm-verification-card') &&
+   adminCss.includes('color:#fff!important'),
+   'contraste blanc renforcé dans la file de vérification');
 ok(!/\.from\('msg_/.test(msgjs), 'vue msg.js : aucune écriture directe dans msg_*');
 ok(idx.includes('data-view="msg"') && idx.includes('msg.js?v='), 'vue + script câblés dans index.html');
 ok(app.includes('msg-nav-shortcut') && app.includes('data-go=\"msg\"'), 'Messenger affiché comme raccourci desktop direct');
