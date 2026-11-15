@@ -748,7 +748,7 @@ function rendreCouvertureORG1(mount){
     Array.prototype.forEach.call(rows, function(row){ row.hidden = q !== '' && row.getAttribute('data-wilaya-search').indexOf(q) === -1; });
   });
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu],[data-adm-verif],[data-adm-verif-page],[data-adm-verif-doc]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu],[data-adm-verif],[data-adm-verif-page],[data-adm-verif-doc],[data-adm-card-hold],[data-adm-card-release]') : null;
     if(!t) return;
     var verifyDoc = t.getAttribute('data-adm-verif-doc');
     if(verifyDoc){
@@ -795,8 +795,24 @@ function rendreCouvertureORG1(mount){
     if(stu){
       SB.admStudent(stu).then(function(r){
         var f = document.getElementById('admStuFiche'); if(!f) return;
-        f.innerHTML = r.ok ? '<pre style="background:var(--p2);border:1px solid var(--b);border-radius:10px;padding:10px;font-size:11px;overflow:auto">' + esq5(JSON.stringify(r.fiche, null, 1)) + '</pre>' : '<p>⛔ ' + esq5(r.err) + '</p>';
+        f.innerHTML = r.ok ? ('<pre style="background:var(--p2);border:1px solid var(--b);border-radius:10px;padding:10px;font-size:11px;overflow:auto">' + esq5(JSON.stringify(r.fiche, null, 1)) + '</pre>' + ((state4.perms.indexOf('students.verify')!==-1 || state4.role==='admin') ? '<div class="card" style="margin-top:10px"><b>🛡️ حفظ بطاقة الهوية عند الطعن</b><p class="adm-verif-muted">يمكن للمشرف المخوّل تعليق الحذف لمدة 1 إلى 90 يوماً عند وجود طعن موثق.</p><label for="admCardHoldDays">مدة التعليق بالأيام</label><input id="admCardHoldDays" type="number" min="1" max="90" value="30"><label for="admCardHoldReason">سبب التعليق / مرجع الطعن</label><textarea id="admCardHoldReason" rows="2" maxlength="500" placeholder="أدخل سبباً موثقاً (10 إلى 500 حرف)"></textarea><div class="adm-verif-actions"><button class="btn btn-sm btn-o" data-adm-card-hold="' + esq5(stu) + '" type="button">⏸ تعليق الحذف</button><button class="btn btn-sm btn-r" data-adm-card-release="' + esq5(stu) + '" type="button">رفع التعليق</button></div></div>' : '')) : '<p>⛔ ' + esq5(r.err) + '</p>';
       });
+      return;
+    }
+    var holdId = t.getAttribute('data-adm-card-hold');
+    if(holdId){
+      var holdDays = Number((document.getElementById('admCardHoldDays')||{}).value||30);
+      var holdReason = (document.getElementById('admCardHoldReason')||{}).value||'';
+      if(!Number.isInteger(holdDays)||holdDays<1||holdDays>90||holdReason.trim().length<10){ window.alert('⛔ أدخل مدة من 1 إلى 90 يوماً وسبباً موثقاً من 10 أحرف على الأقل.'); return; }
+      t.disabled=true;
+      SB.admSchoolCardHold(holdId,holdDays,holdReason).then(function(r){ t.disabled=false; if(r&&r.ok) window.alert('✔ تم تعليق حذف البطاقة للمدة المحددة.'); else window.alert('⛔ '+esq5(r&&r.err||'تعذّر تسجيل التعليق')); }).catch(function(err){ t.disabled=false; window.alert('⛔ '+esq5(err&&err.message||err)); });
+      return;
+    }
+    var releaseId = t.getAttribute('data-adm-card-release');
+    if(releaseId){
+      if(!window.confirm('رفع تعليق حذف البطاقة؟ قد تصبح مؤهلة للحذف بعد انتهاء مهلة الاحتفاظ.')) return;
+      t.disabled=true;
+      SB.admSchoolCardReleaseHold(releaseId).then(function(r){ t.disabled=false; if(r&&r.ok) window.alert('✔ تم رفع تعليق الحذف.'); else window.alert('⛔ '+esq5(r&&r.err||'لا يوجد تعليق أو تعذّر رفعه')); }).catch(function(err){ t.disabled=false; window.alert('⛔ '+esq5(err&&err.message||err)); });
       return;
     }
     var save = t.getAttribute('data-adm4-save');
