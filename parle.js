@@ -158,6 +158,7 @@
   const FR_WORDS = /\b(le|la|les|je|tu|il|elle|ne|pas|est|suis|mon|ma|bonjour|merci|pourquoi)\b/i;
   const ES_WORDS = /\b(el|la|los|las|yo|usted|es|son|mi|su|gracias|hola|buenos|porque)\b/i;
   const IT_WORDS = /\b(il|lo|gli|che|di|io|tu|lei|sono|grazie|ciao|perch\u00e9|questa|quello)\b/i;
+  const EN_WORDS = /\b(the|this|that|these|those|what|where|when|why|how|who|which|because|with|without|from|have|has|does|did|could|should|would|please|thank|hello|morning|school|lesson|exercise|answer|question|sentence|example|they|we|are|was|were|your|you|my)\b/i;
   const LCODE = { ar:'ar-SA', de:'de-DE', fr:'fr-FR', es:'es-ES', it:'it-IT', en:'en-US' };
   const DARJA_AR = /(?:واش|علاش|كيفاش|راني|راك|راكي|بزاف|ما\s*فهمتش|مفهمتش|وش|علاه|نحب|حاب|حابة|تاع|درك|كاين|ماكانش|صح)/i;
   const DARJA_LATIN = /(?:^|[^A-Za-z0-9])(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|ma\s*fhemtch|nheb|hab|habi|ta3|dorka|kayn|makanch|saha)(?=$|[^A-Za-z0-9])/i;
@@ -171,6 +172,7 @@
     if(/[\u00e0\u00e2\u00e7\u00e8\u00ea\u00eb\u00ee\u00ef\u00f4\u00fb\u00f9]/i.test(t) || FR_WORDS.test(t)) return 'fr';
     if(/[\u00bf\u00a1]/.test(t) || /[\u00e1\u00e9\u00ed\u00f3\u00f1]/i.test(t) || ES_WORDS.test(t)) return 'es';
     if(/[\u00e0\u00e8\u00ec\u00f2\u00f9]/i.test(t) || IT_WORDS.test(t)) return 'it';
+    if(EN_WORDS.test(t)) return 'en';
     return '';
   }
   function langOfBar(){ try{ return (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2]; }catch(e){ return 'de-DE'; } }
@@ -184,6 +186,7 @@
   const FR_VOTE = /\b(je|tu|nous|vous|ils|elles|le|la|les|un|une|des|ne|pas|est|suis|sont|mon|ma|mes|ton|ta|son|sa|bonjour|merci|pourquoi|comment|avec|sans|pour|dans|chez|etre|avoir|faire|aller|tres|aussi|comme|mais|donc|parce|cette|ces|mot|mots|phrase|verbe|verbes|exemple|exemples|signifie)\b/gi;
   const ES_VOTE = /\b(yo|usted|ustedes|el|los|las|uno|una|unos|unas|somos|son|mi|su|gracias|hola|buenos|buenas|porque|como|esta|este|estos|tengo|quiero|puedo|muy|tambien|pero|para|con|sin|palabra|frase|verbo|ejemplo)\b/gi;
   const IT_VOTE = /\b(io|lui|lei|noi|voi|loro|il|lo|gli|un|uno|una|che|di|sono|grazie|ciao|questa|questo|quello|molto|anche|per|con|senza|essere|avere|fare|parola|frase|verbo|esempio)\b/gi;
+  const EN_VOTE = /\b(the|this|that|these|those|what|where|when|why|how|who|which|because|with|without|from|have|has|does|did|could|should|would|please|thank|hello|morning|school|lesson|exercise|answer|question|sentence|example|they|we|are|was|were|your|you|my)\b/gi;
   function voteLang(span){
     const t = String(span || '');
     let de = 0, fr = 0, es = 0, it = 0, en = 0;
