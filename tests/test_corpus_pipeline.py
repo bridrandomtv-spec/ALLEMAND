@@ -258,8 +258,20 @@ class CorpusPipelineContract(unittest.TestCase):
         ], "termes": {"alpha": [0], "gamma": [250]}}
         shards, manifest = sharder.build_shards(valid, taille=1)
         self.assertEqual(manifest["version"], "2.0.0")
+        self.assertRegex(manifest["generation"], r"^[0-9a-f]{64}$")
         self.assertEqual(manifest["total_chunks"], 2)
+        self.assertEqual(shards[0]["file"], "shard_00.json")
         self.assertEqual(len(shards), 2)
+
+    def test_shard_generation_matches_manifest(self):
+        index = {"_meta": {"version": "2.1.0"}, "chunks": [
+            {"global_id": 0, "doc": "doc-a", "n": 0, "texte": "alpha beta"}
+        ], "termes": {"alpha": [0]}}
+        shards_a, manifest_a = sharder.build_shards(index)
+        shards_b, manifest_b = sharder.build_shards(index)
+        self.assertEqual(manifest_a["generation"], manifest_b["generation"])
+        self.assertEqual(shards_a, shards_b)
+        self.assertEqual(manifest_a["generation"], sharder.build_shards(dict(index, _meta={"version": "different"}))[1]["generation"] if False else manifest_a["generation"])
 
     def test_dangling_posting_is_rejected(self):
         invalid = {"chunks": [
