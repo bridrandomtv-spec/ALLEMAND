@@ -3452,3 +3452,13 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Document de continuité mis à jour sur la branche audit/lot-601-voice-intelligence-contract, pas sur main. Aucune PR ouverte et aucun déploiement volontaire.
 - Messenger reste non terminé : E2E A/B/C, INSERT/UPDATE/suppression logique Realtime et reconnexion restent à vérifier.
 - Suite recommandée : Lot 603 — concevoir et ajouter des tests de contrat de schéma et d'identité des chunks, isolés et sans toucher aux données de production ; ensuite seulement proposer la séparation des fichiers et la correction du sharder.
+
+## Lot 603 — suite diagnostique des contrats BIBLIO/RAG (15 novembre 2026)
+
+- Création de tests/corpus_contract.mjs, suite Node native sans dépendance externe, sans navigateur et sans réseau. Elle vérifie le format du catalogue BIBLIO, l'existence d'un artefact RAG distinct, la cible d'écriture de l'ingestion, l'usage d'identifiants globaux dans le sharder et dans le lecteur RAG, la cohérence du manifeste et un fixture à deux documents où les compteurs locaux n=0 entrent en collision.
+- Les contrôles attendus sont volontairement bloquants : le dépôt actuel ne satisfait pas encore les contrats cibles. Un échec de cette suite serait un constat de défaut connu, pas une régression introduite par le test. La suite n'est pas ajoutée au workflow CI pour ne pas rendre les validations de production rouges pendant que les contrats sont en cours de correction.
+- Important : le test est créé mais **non exécuté**. Aucun PASS/FAIL runtime ne peut être annoncé ; l'environnement de cette session ne fournit pas de checkout local/Node pour lancer ce script. Le contrôle par lecture de source ne remplace pas son exécution.
+- Aucun index, shard, corpus, donnée pédagogique, code applicatif, Worker, secret, configuration, workflow CI ou ressource Supabase n'a été modifié. Seul le nouveau fichier de test et le présent dossier de continuité sont ajoutés sur la branche d'audit.
+- Commit du test : e894af1f87f21cb54854a902d8f311e915fd9b5f.
+- Le lot 603 reste préparatoire : il formalise les contrats et une reproduction synthétique du problème d'identifiants, mais ne prouve pas encore le comportement du script Python en exécution. Le prochain pas est une validation de syntaxe/exécution dans un environnement Node du dépôt, puis une fixture Python isolée du sharder avant toute modification des artefacts de production.
+- Messenger reste non terminé : tests E2E multi-comptes A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime non exécutés.
