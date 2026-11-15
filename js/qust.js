@@ -14,19 +14,17 @@
   var EN = ["what","where","when","why","how","which","because","without","please","thank","lesson","exercise","grammar","explain","translate","difference","between","present","simple"];
   var ES = ["qué","cómo","porque","por qué","diferencia","explica","ejercicio","leccion","lección","gracias","escuela","verbo","ser","estar"];
   var IT = ["perche","perché","differenza","tra","spiegare","esercizio","lezione","grazie","essere","avere","voglio"];
-  function norm(s){
-    s = String(s==null?'':s).toLowerCase();
-    s = s.replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');
-    s = s.replace(/[ً-ٰٟ]/g,'');
-    return s.replace(/\s+/g,' ').trim();
-  }
-  function toks(s){ return s.split(/[^0-9A-Za-z_؀-ۿ]+/).filter(function(w){return w.length>1;}); }
+  var TXT = (typeof window!=='undefined' && window.DZ_TEXT) ? window.DZ_TEXT : null;
+  function norm(s){ return TXT ? TXT.normalize(s) : String(s==null?'':s).toLowerCase().replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[ً-ٰٟ]/g,'').replace(/[^a-z0-9\u0621-\u064A\u066E-\u06D3]+/gi,' ').replace(/\s+/g,' ').trim(); }
+  function toks(s){ return TXT ? TXT.tokens(s) : norm(s).split(' ').filter(Boolean); }
   function langs(raw, nq){
     var out = [];
     if(AR.test(raw)) out.push("ar");
     if(/[a-z]/.test(nq) && /[3759]/.test(nq) && !AR.test(raw)) out.push("arabizi");
     var t = toks(nq);
-    if(t.some(function(w){return DZ.indexOf(w)!==-1;}) || DZ_AR.some(function(w){return nq.indexOf(w)!==-1;})) out.push("darija");
+    var semantic = TXT ? TXT.withArabizi(raw) : nq;
+    var st = toks(semantic);
+    if((TXT && TXT.isArabizi(raw)) || st.some(function(w){return DZ.indexOf(w)!==-1;}) || DZ_AR.some(function(w){return semantic.indexOf(w)!==-1;})) out.push("darija");
     if(t.some(function(w){return FR.indexOf(w)!==-1;})) out.push("fr");
     if(t.some(function(w){return DE.indexOf(w)!==-1;}) || /[äöüß]/.test(nq)) out.push("de");
     if(t.some(function(w){return EN.indexOf(w)!==-1;})) out.push("en");
@@ -35,16 +33,17 @@
     return out;
   }
   function intent(nq){
-    function has(a){ return a.some(function(k){ return nq.indexOf(k)!==-1; }); }
-    if(has(["فرق","difference","compare","قارن"]) && has(["بين","و"])) return ["compare",0.8];
+    var semantic = TXT ? TXT.withArabizi(nq) : nq;
+    function has(a){ return a.some(function(k){ return semantic.indexOf(k)!==-1; }); }
+    if(has(["فرق","difference","compare","قارن"]) && has(["بين","و","between","entre","tra"])) return ["compare",0.8];
     if(has(["لخص","ملخص","rsume","resume","summarize"])) return ["summarize",0.85];
     if(has(["صحح","corrige","correct","صلح"])) return ["correct_exercise",0.85];
     if(has(["ترجم","traduis","translate","comment on dit","كيفاش نقول"])) return ["translate",0.85];
     if(has(["تمرين","exercice","exercise","quiz","فرض","اختبار","tamrin"])) return ["practice_exercise",0.85];
-    if(has(["قاعدة","قواعد","regel","akkusativ","dativ","nominativ","genitiv","صرف","conjug"])) return ["explain_rule",0.85];
+    if(has(["قاعدة","قواعد","regel","akkusativ","dativ","nominativ","genitiv","weil","dass","صرف","conjug","why do we use","when do we use","كيفاش نستعمل","علاش نستعمل","نستعمل"])) return ["explain_rule",0.85];
     if(has(["معنى","معناها","ma3na","signification","bedeutet","واش معنى"])) return ["explain_word",0.9];
     if(has(["وين نلقى","صفحة","page","seite","trouve","oت"])) return ["find_page",0.7];
-    if(has(["درس","leon","lecon","lesson","شرحلي","explique","فهمني"])) return ["explain_lesson",0.8];
+    if(has(["درس","leon","lecon","lesson","شرحلي","explique","فهمني","explain","why","علاش","fahmni","fhmny"])) return ["explain_lesson",0.8];
     return [null,0.1];
   }
   function entities(raw, nq, ctx){
