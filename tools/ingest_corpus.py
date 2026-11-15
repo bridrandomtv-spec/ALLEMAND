@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Ingestion documentaire locale avec licence explicite et index RAG séparé.
+"""Ingestion multi-format non destructive avec provenance et droits explicites.
 
-Chaque fichier doit avoir un sidecar _<nom>.json et une licence parmi :
-production_propre, domaine_public, autorisation_ecrite, licence_libre.
-Le catalogue lexical corpus_index.json est strictement préservé.
+Chaque fichier doit posséder un sidecar _<nom>.json validé par rights_metadata.
+Le catalogue et l'index RAG existants sont fusionnés ; les données sans rapport
+avec le lot entrant sont conservées. Aucun document non autorisé n'est copié.
 """
 import hashlib
 import json
@@ -15,102 +15,164 @@ import sys
 
 try:
     from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
-except ModuleNotFoundError:  # exécution directe: python tools/script.py
+    from tools.corpus_contracts import (
+        sha256_fichier, decouper_pages, fusionner_documents, construire_chunk
+    )
+except ModuleNotFoundError:  # exécution directe
     from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+    from corpus_contracts import (
+        sha256_fichier, decouper_pages, fusionner_documents, construire_chunk
+    )
 
 TAILLE_CHUNK = 1200
+BDD = os.path.join("assets", "bdd")
+CORPUS = os.path.join(BDD, "corpus.json")
+INDEX = os.path.join(BDD, "corpus_rag_index.json")
+DESTINATION = os.path.join("assets", "corpus")
+EXTENSIONS = ("pdf", "docx", "txt", "md")
 
 
-def extraire(chemin, ext):
+def extraire_pages(chemin, ext):
     if ext == "pdf":
         from pypdf import PdfReader
-        return "\n".join((p.extract_text() or "") for p in PdfReader(chemin).pages)
+        return [(p.extract_text() or "") for p in PdfReader(chemin).pages]
     if ext == "docx":
         import docx
-        return "\n".join(p.text for p in docx.Document(chemin).paragraphs)
-    with open(chemin, encoding="utf-8", errors="ignore") as f:
-        return f.read()
+        return ["\n".join(p.text for p in docx.Document(chemin).paragraphs)]
+    with open(chemin, encoding="utf-8", errors="ignore") as stream:
+        return [stream.read()]
 
 
-def construire(dossier):
-    docs, index = [], {"_meta": {"version": "2.0.0"}, "termes": {}, "chunks": []}
+def lire_json_existant(path, cle, valeur_defaut):
+    if not os.path.isfile(path):
+        return valeur_defaut
+    with open(path, encoding="utf-8") as stream:
+        data = json.load(stream)
+    if not isinstance(data, dict) or not isinstance(data.get(cle), type(valeur_defaut)):
+        raise ValueError("Artefact existant invalide : " + path)
+    return data[cle]
+
+
+def fusionner_index(existant, entrants, docs_remplaces):
+    """Fusionne par document, puis reconstruit IDs et postings sans trous."""
+    if not isinstance(existant, dict):
+        raise ValueError("Index RAG existant invalide")
+    anciens = existant.get("chunks", [])
+    if not isinstance(anciens, list):
+        raise ValueError("chunks existants invalides")
+    remplaces = set(docs_remplaces)
+    conserves = [dict(c) for c in anciens
+                 if isinstance(c, dict) and c.get("doc") not in remplaces]
+    combines = conserves + [dict(c) for c in entrants]
+    chunks, termes = [], {}
+    for gid, chunk in enumerate(combines):
+        if not isinstance(chunk.get("doc"), str) or not chunk["doc"]:
+            raise ValueError("chunk sans document pendant la fusion")
+        if not isinstance(chunk.get("texte"), str) or not chunk["texte"].strip():
+            raise ValueError("chunk sans texte pendant la fusion")
+        chunk["global_id"] = gid
+        chunks.append(chunk)
+        for terme in set(re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06ff]{3,}", chunk["texte"].lower())):
+            termes.setdefault(terme, []).append(gid)
+    meta = dict(existant.get("_meta", {}))
+    meta.update({"version": "2.1.0", "nb_chunks": len(chunks),
+                 "nb_termes": len(termes), "source": "fusion multi-format"})
+    return {"_meta": meta, "chunks": chunks, "termes": termes}
+
+
+def construire(dossier, documents_existants=None):
     if not os.path.isdir(dossier):
         raise FileNotFoundError("Dossier source absent: " + dossier)
+    entrants, index = [], {"_meta": {"version": "2.1.0"}, "termes": {}, "chunks": []}
+    fichiers_copies = []
+    ignores = 0
     for nom in sorted(os.listdir(dossier)):
         chemin = os.path.join(dossier, nom)
         if not os.path.isfile(chemin):
             continue
         ext = os.path.splitext(nom)[1].lower().lstrip(".")
-        if ext not in ("pdf", "docx", "txt", "md"):
+        if ext not in EXTENSIONS or nom.startswith("_"):
             continue
         base = os.path.splitext(nom)[0]
-        mp = os.path.join(dossier, "_" + base + ".json")
-        if not os.path.isfile(mp):
+        sidecar = os.path.join(dossier, "_" + base + ".json")
+        if not os.path.isfile(sidecar):
             print("IGNORE (métadonnées/licence absentes):", nom)
+            ignores += 1
             continue
-        with open(mp, encoding="utf-8") as f:
-            meta = json.load(f)
-        ok_droits, raison_droits = valider_metadonnees(meta)
+        with open(sidecar, encoding="utf-8") as stream:
+            meta = json.load(stream)
+        ok_droits, raison = valider_metadonnees(meta)
         if not ok_droits:
-            print("IGNORE (droits non vérifiés):", nom, "-", raison_droits)
+            print("IGNORE (droits non vérifiés):", nom, "-", raison)
+            ignores += 1
             continue
-        licence = str(meta.get("licence", "")).strip().lower()
-        texte = extraire(chemin, ext).strip()
+        pages = extraire_pages(chemin, ext)
+        texte = "\n".join(pages).strip()
         if len(texte) < 20:
             print("IGNORE (contenu extrait insuffisant):", nom)
+            ignores += 1
             continue
+        digest = sha256_fichier(chemin)
         did = "c-" + hashlib.sha256(nom.encode("utf-8")).hexdigest()[:16]
-        docs.append({
+        doc = {
             "id": did, "titre": meta.get("titre", nom),
             "matiere": meta.get("matiere", "allemand"),
             "niveau": meta.get("niveau", "2AS"),
             "type": meta.get("type", "cours"),
+            "langue": meta.get("langue", "de"),
             "annee": meta.get("annee", "2026/2027"),
             "format": ext, "url": "assets/corpus/" + did + "." + ext,
-            "source": meta.get("source", "document local"),
-            "licence": licence, "tags": meta.get("tags", []),
-            "extrait": texte[:300].replace("\n", " ")
-        })
-        mots = texte.split()
-        for numero, debut in enumerate(range(0, len(mots), TAILLE_CHUNK)):
-            morceau = " ".join(mots[debut:debut + TAILLE_CHUNK])
+            "source_sha256": digest, "source": meta.get("source", "document local"),
+            "licence": str(meta.get("licence", "")).strip().lower(),
+            "tags": meta.get("tags", []), "extrait": texte[:300].replace("\n", " ")
+        }
+        entrants.append(doc)
+        fichiers_copies.append((chemin, doc["url"]))
+        if ext == "pdf":
+            parties = decouper_pages(pages, TAILLE_CHUNK)
+        else:
+            parties = [{"texte": part, "page_start": None, "page_end": None}
+                       for part in (" ".join(texte.split()[i:i + TAILLE_CHUNK])
+                                    for i in range(0, len(texte.split()), TAILLE_CHUNK))]
+        for numero, partie in enumerate(parties):
             gid = len(index["chunks"])
-            index["chunks"].append({"global_id": gid, "doc": did, "n": numero, "texte": morceau})
-            for terme in set(re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06ff]{3,}", morceau.lower())):
-                index["termes"].setdefault(terme, []).append(gid)
-    index["_meta"].update({"nb_chunks": len(index["chunks"]), "nb_termes": len(index["termes"])})
-    return docs, index
+            index["chunks"].append(construire_chunk(
+                gid, did, numero, partie["texte"], digest,
+                partie["page_start"], partie["page_end"]
+            ))
+    if not index["chunks"]:
+        raise RuntimeError("Aucun chunk autorisé : aucun artefact existant ne sera remplacé.")
+    index = fusionner_index({"_meta": {}, "chunks": []}, index["chunks"], [])
+    catalogue = fusionner_documents(documents_existants or [], entrants)
+    return catalogue, index, ignores, fichiers_copies
+
+
+def ecrire_atomiquement(path, value):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as stream:
+        json.dump(value, stream, ensure_ascii=False, separators=(",", ":"))
+    os.replace(tmp, path)
 
 
 def main(dossier):
-    docs, index = construire(dossier)
-    if not index["chunks"]:
-        raise RuntimeError("Aucun chunk autorisé : aucun fichier de production ne sera écrasé.")
-    os.makedirs("assets/bdd", exist_ok=True)
-    os.makedirs("assets/corpus", exist_ok=True)
-    for nom in sorted(os.listdir(dossier)):
-        chemin = os.path.join(dossier, nom)
-        if not os.path.isfile(chemin) or nom.startswith("_"):
-            continue
-        ext = os.path.splitext(nom)[1].lower().lstrip(".")
-        if ext not in ("pdf", "docx", "txt", "md"):
-            continue
-        base = os.path.splitext(nom)[0]
-        mp = os.path.join(dossier, "_" + base + ".json")
-        if not os.path.isfile(mp):
-            continue
-        with open(mp, encoding="utf-8") as f:
-            meta = json.load(f)
-        ok_droits, _ = valider_metadonnees(meta)
-        if ok_droits:
-            did = "c-" + hashlib.sha256(nom.encode("utf-8")).hexdigest()[:16]
-            shutil.copy2(chemin, "assets/corpus/" + did + "." + ext)
-    corpus = {"_meta": {"version": "2.0.0", "nb": len(docs)}, "documents": docs}
-    for path, value in (("assets/bdd/corpus_rag_index.json", index), ("assets/bdd/corpus.json", corpus)):
-        tmp = path + ".tmp"
-        with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(value, f, ensure_ascii=False, separators=(",", ":"))
-        os.replace(tmp, path)
+    docs_existants = lire_json_existant(CORPUS, "documents", [])
+    chunks_existants = lire_json_existant(INDEX, "chunks", [])
+    index_existant = {"_meta": {}, "chunks": chunks_existants}
+    catalogue, index_nouveau, ignores, copies = construire(dossier, docs_existants)
+    ids_importes = {doc["id"] for doc in catalogue if doc["id"].startswith("c-")}
+    # N'enlève de l'index que les versions remplacées par ce lot.
+    index_final = fusionner_index(index_existant, index_nouveau["chunks"], ids_importes)
+    corpus_final = {"_meta": {"version": "2.1.0", "nb": len(catalogue)},
+                    "documents": catalogue}
+    # Les sources ne sont copiées qu'après validation complète des deux artefacts.
+    os.makedirs(DESTINATION, exist_ok=True)
+    for source, cible in copies:
+        shutil.copy2(source, cible)
+    ecrire_atomiquement(INDEX, index_final)
+    ecrire_atomiquement(CORPUS, corpus_final)
+    print("Documents:", len(catalogue), "| chunks:", len(index_final["chunks"]),
+          "| ignorés:", ignores)
 
 
 if __name__ == "__main__":
