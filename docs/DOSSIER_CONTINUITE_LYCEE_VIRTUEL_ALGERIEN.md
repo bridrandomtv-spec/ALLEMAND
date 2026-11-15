@@ -2810,3 +2810,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Après la pagination, consultation de `pg_indexes` pour `public.profiles` : seul l'index `profiles_pkey(id)` est présent ; aucun index ne couvre `verif_statut` avec l'ordre `created_at, id`.
 - La pagination limite bien chaque réponse à 50 dossiers, mais PostgreSQL peut devoir parcourir/ordonner davantage de lignes à chaque page. Pour soutenir une file qui grandit, index partiel candidat : `(created_at, id) WHERE verif_statut='en_attente'`.
 - Aucun index ni autre objet de base n'a été créé. Une migration d'index nécessite une autorisation distincte ; elle n'est pas incluse dans le correctif d'interface.
+
+
+### Exécution autorisée — index de la file de vérification (15 novembre 2026)
+- L'utilisateur a explicitement autorisé la création de l'index partiel recommandé.
+- Création exécutée sur le projet Supabase actif `azjwcybivirvpxbfhyzk` :
+  `CREATE INDEX CONCURRENTLY IF NOT EXISTS profiles_verification_pending_created_id_idx ON public.profiles (created_at ASC, id ASC) WHERE verif_statut = 'en_attente';`
+- Vérification catalogue : index présent, définition conforme, `indisvalid=true`, `indisready=true`, taille observée 16 kB.
+- Vérification du plan SQL : le planificateur choisit actuellement un Seq Scan + Sort sur la requête de file, ce qui est normal pour une table encore minuscule (coût estimé très bas). L'index partiel est disponible et pourra être choisi lorsque le volume rendra son utilisation plus économique. Aucun test de charge de 1 000 lignes n'a été simulé.
+- Aucun profil ni statut n'a été modifié ; aucune politique RLS, permission, fonction, table ou colonne n'a été changée.
