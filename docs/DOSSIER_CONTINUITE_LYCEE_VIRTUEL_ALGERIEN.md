@@ -3511,3 +3511,25 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun index RAG réel, shard publié, manifeste, corpus, fichier BIBLIO, Worker, secret, configuration, workflow CI, ressource ou donnée Supabase n'a été modifié. Aucun push sur `main`, aucune PR et aucun déploiement.
 - **Point technique à traiter ensuite** : le sharder valide les IDs et postings, mais il faut encore vérifier le contrat de chargement du manifeste et des shards dans `rag.js` (version, nombre attendu, erreurs réseau/JSON, IDs dupliqués entre shards et correspondance posting→chunk). Il faut également vérifier que le fallback legacy ne masque pas un artefact RAG absent ou incohérent.
 - Messenger demeure non terminé : les scénarios E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime n'ont pas été exécutés.
+
+
+## Lot 607 — audit statique du chargement manifeste/shards dans le lecteur RAG (15 novembre 2026)
+
+- Relecture ciblée de `rag.js` (lignes du chargeur du manifeste et de `cherche()`), du manifeste publié dans la branche et vérification de la présence de l'index RAG complet.
+- **État des artefacts dans cette branche** :
+  - `assets/bdd/shards_manifest.json` existe mais annonce `version: 1.0.0`, `nb_shards: 0`, `total_chunks: 0`, `shards: []`.
+  - `assets/bdd/corpus_rag_index.json` n'est pas présent dans le dépôt à ce chemin (lecture GitHub : 404).
+  - Le code candidat de l'ingestion et du sharder cible bien `corpus_rag_index.json`, mais aucun index n'a été généré/commité, ce qui est volontaire tant que le corpus n'a pas été validé.
+- **Comportement actuel du lecteur** :
+  1. Si le manifeste contient une liste de shards non vide, le lecteur essaie chaque fichier. Une erreur HTTP, réseau ou JSON sur un shard est absorbée et le shard est ignoré.
+  2. Après cette boucle, le lecteur retourne le meilleur résultat, éventuellement `null`; il ne tente pas alors l'index complet comme solution de secours.
+  3. La version du manifeste, `nb_shards`, `total_chunks` et les `nb_chunks` annoncés ne sont pas contrôlés avant la recherche.
+  4. Les chunks et postings d'un shard ne sont pas validés ensemble : le lecteur ne vérifie pas que chaque posting correspond à exactement un chunk du shard, ni l'unicité des `global_id` entre shards.
+  5. L'arrêt anticipé dès qu'un score dépasse `SEUIL + 3` signifie que le résultat n'est pas nécessairement le meilleur score global de tous les shards. C'est une optimisation de latence qui doit être explicitement assumée et mesurée.
+  6. Si le manifeste est vide, le lecteur bascule vers `corpus_rag_index.json`; or cet artefact n'est pas actuellement présent dans la branche. Le chemin RAG ne dispose donc pas ici d'un index complet de repli.
+- **Conclusion** : le correctif Lot 605 répare l'identité des chunks côté génération et lecture, mais la robustesse du chargement des artefacts n'est pas encore garantie. Une génération valide doit être accompagnée d'un manifeste cohérent et d'un contrôle de disponibilité/complétude côté lecteur.
+- **Nature de la vérification** : analyse statique et consultation des fichiers GitHub uniquement. Aucun fetch navigateur, aucune requête RAG, aucun index/shard n'a été généré ou servi; aucun test n'a été exécuté. Les observations ci-dessus ne constituent pas une mesure runtime.
+- Aucun fichier applicatif, corpus, index, shard, manifeste, Worker, secret, configuration, workflow CI, ressource ou donnée Supabase n'a été modifié dans ce lot. Seul le présent dossier de continuité est complété.
+- Commit documentaire Lot 607 : à renseigner après l'enregistrement GitHub.
+- **Suite proposée — Lot 608** : définir un contrat de chargement strict (version supportée, comptages, noms de fichiers sûrs, IDs uniques, postings résolubles), puis tester les cas shard manquant/corrompu et stratégie de repli. Ne pas générer ni publier le corpus réel avant validation explicite.
+- Messenger reste non terminé : scénarios E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
