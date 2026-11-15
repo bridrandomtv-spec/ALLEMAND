@@ -2935,3 +2935,4 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - GitHub `main` : dernier commit observé `d1389a128b95fda3123be8ff49c3ee356bbc4df7`. La consultation des workflows PR et des statuts combinés pour ce SHA ne retourne aucun résultat ; cela ne constitue ni une réussite ni un échec CI. Aucun déploiement Cloudflare ni test navigateur n’est confirmé.
 
 - Cache après correction juridique : `legal.js?v=3512` dans `index.html` ; Service Worker `dz-de-v3.185.0.0.176`. Commits : `976f5fd9dcbc79762fe20652532be895388534e6` (HTML), `2ba7037df568a6714b72f7f6c3f3bf0c47ed6bc6` (SW).
+- Contrôle de relecture après commit : une seconde occurrence de « منطقة الاتحاد الأوروبي » subsistait dans le paragraphe d’accès à la carte de `privacy.html`; elle a été corrigée elle aussi en « منطقة لندن، المملكة المتحدة (eu-west-2) ». Commit : `36960e6fab7126f337ecbf4d258a8effa124ee14`. Relecture finale à effectuer sur le fichier complet avant clôture.
