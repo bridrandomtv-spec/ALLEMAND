@@ -703,12 +703,21 @@ function rendreCouvertureORG1(mount){
     box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🪪</span><div><h2>طلبات تفعيل التلاميذ</h2><p class="ad-sub">طلبات الهوية المدرسية المعلّقة · الصلاحية المطلوبة: students.verify</p></div></div>'
       + '<div class="adm-verif-summary"><b>' + total + '</b> طلب معلّق · عرض ' + first + '–' + last + ' · ' + (currentPage+1) + '/' + totalPages + '</div>'
       + (rows.length ? rows.map(function(x){
+          var missing = [];
+          if(!String(x.pseudo||'').trim()) missing.push('اسم الحساب');
+          if(!/^[0-9]{1,20}$/.test(String(x.matricule||'').trim())) missing.push('رقم التسجيل');
+          if(!String(x.niveau||'').trim()) missing.push('المستوى');
+          if(!String(x.wilaya||'').trim()) missing.push('الولاية');
+          if(!String(x.filiere||'').trim()) missing.push('الشعبة');
+          if(!String(x.section||'').trim()) missing.push('القسم');
+          var canApprove = missing.length === 0;
           return '<article class="card adm-verification-item">'
             + '<div class="adm-verif-head"><b>👤 ' + esq5(x.pseudo||'تلميذ') + '</b><span class="badge">قيد المراجعة</span></div>'
             + '<div class="rep-row"><span>المستوى: ' + esq5(x.niveau||'—') + ' · الولاية: ' + esq5(x.wilaya||'—') + ' · الشعبة: ' + esq5(x.filiere||'—') + '</span></div>'
             + '<div class="rep-row"><span>رقم التسجيل: ' + esq5(x.matricule||'—') + ' · القسم المصرّح به: ' + esq5(x.section||'—') + '</span></div>'
+            + (canApprove ? '' : '<div class="adm-verif-missing" role="alert">⛔ لا يمكن التفعيل: معلومات ناقصة أو غير صالحة — ' + esq5(missing.join('، ')) + '</div>')
             + '<div class="adm-verif-actions">'
-            + '<button class="btn btn-sm btn-g" data-adm-verif="' + esq5(x.id) + '" data-status="verifie" type="button">✔ تأكيد التفعيل</button>'
+            + '<button class="btn btn-sm btn-g" data-adm-verif="' + esq5(x.id) + '" data-status="verifie" type="button"' + (canApprove ? '' : ' disabled title="أكمل معلومات الهوية المدرسية أولاً"') + '>✔ تأكيد التفعيل</button>'
             + '<button class="btn btn-sm btn-r" data-adm-verif="' + esq5(x.id) + '" data-status="rejete" type="button">رفض الطلب</button></div></article>';
         }).join('') : '<div class="card adm-verification-item"><p>لا توجد طلبات تفعيل معلّقة حالياً.</p></div>')
       + '<nav class="adm-verif-pager" aria-label="صفحات طلبات التفعيل">'
