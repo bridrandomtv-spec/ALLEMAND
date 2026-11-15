@@ -123,8 +123,8 @@
     }else{
       local = String(localObj || '');
     }
-    /* ── langue de la question : une question allemande/fr/es/it ne doit JAMAIS
-       recevoir une réponse arabe du moteur local ── */
+    /* ── langue de la question : la réponse et le TTS suivent la langue détectée,
+       ou la langue de la matière active si la question est trop courte ── */
     const QL = (function(s){
       const declared = String(detectedLanguage || '').toLowerCase();
       if(declared.indexOf('ar') === 0) return 'ar';
@@ -132,6 +132,7 @@
       if(declared.indexOf('fr') === 0) return 'fr';
       if(declared.indexOf('es') === 0) return 'es';
       if(declared.indexOf('it') === 0) return 'it';
+      if(declared.indexOf('en') === 0) return 'en';
       if(dialect === 'darija') return 'ar';
       s = String(s || '');
       if(/[\u0600-\u06FF]/.test(s)) return 'ar';
@@ -139,6 +140,7 @@
       if(/\b(le|la|les|je|tu|il|elle|est|suis|pourquoi|bonjour|merci)\b/i.test(s)) return 'fr';
       if(/\b(el|los|las|yo|usted|gracias|hola|buenos)\b/i.test(s)) return 'es';
       if(/\b(gli|che|di|sono|grazie|ciao)\b/i.test(s)) return 'it';
+      if(/\b(the|this|that|these|those|what|where|when|why|how|who|which|because|with|without|from|have|has|does|did|could|should|would|please|thank|hello|morning|school|lesson|exercise|answer|question|sentence|example|they|we|are|was|were|your|you|my)\b/i.test(s)) return 'en';
       return '';
     })(q);
     /* Langue attendue en sortie : une consigne explicite prime sur la langue
@@ -149,20 +151,23 @@
       if(/(?:auf deutsch|en allemand|بالألمانية)/i.test(s)) return 'de';
       if(/(?:en español|en espagnol|بالإسبانية)/i.test(s)) return 'es';
       if(/(?:in italiano|en italien|بالإيطالية)/i.test(s)) return 'it';
+      if(/(?:in English|en anglais|بالإنجليزية|بالانجليزية)/i.test(s)) return 'en';
       if(/(?:بالعربية|بالفصحى|en arabe)/i.test(s)) return 'ar';
       return '';
     })(q);
     const selectedPrefix = selectedLanguage.toLowerCase().slice(0, 2);
+    const subjectLanguage = ({ allemand:'de', anglais:'en', espanol:'es', español:'es', italien:'it' })[schoolContext.subject.toLowerCase()] || '';
     const answerLanguage = explicitOutputLanguage ||
-      (['ar','de','fr','es','it'].includes(QL) ? QL :
-       (['ar','de','fr','es','it'].includes(selectedPrefix) ? selectedPrefix : 'de'));
+      (['ar','de','fr','es','it','en'].includes(QL) ? QL :
+       (subjectLanguage || (['ar','de','fr','es','it','en'].includes(selectedPrefix) ? selectedPrefix : 'de')));
     window.__IA_LAST_LANGUAGE = answerLanguage;
     const FB = {
       ar: 'لم أفهم سؤالك تمامًا. أعد صياغته أو حدّد ما تريد شرحه.',
       de: 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung — oder sag « Seite 11 », ich lese sie dir vor.',
       fr: 'Je n\u2019ai pas compris. Demande-moi une conjugaison, un article, un pluriel, un nombre ou un sens — ou dis « page 11 ».',
       es: 'No lo he entendido. Pregúntame por conjugación, artículo, plural, número o significado — o di « página 11 ».',
-      it: 'Non ho capito. Chiedimi coniugazione, articolo, plurale, numero o significato — o di « pagina 11 ».'
+      it: 'Non ho capito. Chiedimi coniugazione, articolo, plurale, numero o significato — o di « pagina 11 ».',
+      en: 'I did not fully understand your question. Try asking about a word, a verb, a grammar rule, or an exercise.'
     };
     /* ratio de caractères arabes : une réponse n'est « dans la mauvaise langue »
        que si elle est MAJORITAIREMENT arabe — quelques mots arabes (noms propres,
@@ -179,7 +184,8 @@
         !explicitOutputLanguage) ? loc : '';
       const c = String(cause || '?');
       let msg;
-      if(answerLanguage === 'de') msg = '🤔 Ich habe die Frage nicht ganz verstanden. Grund: ' + c + '. Tipp: Konjugation, Artikel, Plural, Zahl, Bedeutung oder « Seite 11 ». Der 🧠-Knopf unten rechts testet das Cloud-Gehirn.';
+      if(answerLanguage === 'en') msg = '🤔 I did not fully understand the question. Cause: ' + c + '. Try asking about a word, verb, grammar rule, or exercise. The 🧠 button tests the cloud tutor.';
+      else if(answerLanguage === 'de') msg = '🤔 Ich habe die Frage nicht ganz verstanden. Grund: ' + c + '. Tipp: Konjugation, Artikel, Plural, Zahl, Bedeutung oder « Seite 11 ». Der 🧠-Knopf unten rechts testet das Cloud-Gehirn.';
       else if(answerLanguage === 'fr') msg = '🤔 Je n’ai pas pleinement compris la question. Cause : ' + c + '. Essaie : conjugaison, article, pluriel, nombre, sens d’un mot, ou « page 11 ». Le bouton 🧠 en bas à droite teste le cerveau cloud.';
       else if(answerLanguage === 'es') msg = '🤔 No entendí del todo la pregunta. Causa: ' + c + '. Prueba: conjugación, artículo, plural, número, significado o « página 11 ». El botón 🧠 prueba el cerebro cloud.';
       else if(answerLanguage === 'it') msg = '🤔 Non ho capito bene la domanda. Causa: ' + c + '. Prova: coniugazione, articolo, plurale, numero, significato o « pagina 11 ». Il pulsante 🧠 testa il cervello cloud.';
