@@ -108,7 +108,7 @@ ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'ré
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
 ok(idx.includes('msg.js?v=3534'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.183'") && sw.includes("./msg.js?v=3532") && sw.includes("./style-prototype-dz.css?v=204"), 'service worker et précache Messenger synchronisés');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.184'") && sw.includes("./msg.js?v=3532") && sw.includes("./style-prototype-dz.css?v=204"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
@@ -460,9 +460,17 @@ ok(sbjs.includes("select('carte_scolaire_path')") && sbjs.includes('remove([card
 ok(sbjs.includes(".select('id').maybeSingle()") && sbjs.includes("if(r.error || !r.data)"), 'demande de vérification confirmée uniquement si une ligne profil a été mise à jour');
 ok(msgjs.includes('id="vfCard"') && msgjs.includes('msgUploadSchoolCard(cardFile)'), 'formulaire étudiant : justificatif obligatoire avant envoi');
 ok(adminjs.includes("missing.push('البطاقة المدرسية')") && adminjs.includes('data-adm-verif-doc'), 'file administrative : pièce obligatoire et bouton de consultation');
+const uploadStart = sbjs.indexOf('async function msgUpload(');
+const uploadEnd = sbjs.indexOf('async function msgAttachmentInfos(', uploadStart);
+const uploadMethod = sbjs.slice(uploadStart, uploadEnd);
+ok(uploadStart >= 0 && uploadEnd > uploadStart &&
+   uploadMethod.includes("storage.from('prive').remove([path])") &&
+   uploadMethod.includes("probeMessage.data.attachment_id===attachmentId") &&
+   uploadMethod.includes("from('msg_attachments').delete()"),
+   'Messenger : upload réconcilié et nettoyage des pièces jointes non liées après échec');
 ok(sbjs.includes('createSignedUrl(path,300)'), 'consultation par lien signé limité à 5 minutes');
 ok(msgjs.includes('if(r4.cleanupWarning) window.alert'), 'avertissement de nettoyage de l’ancienne carte affiché à l’élève');
-ok(idx.includes('supabase/supabase.js?v=3527') && sw.includes("'./supabase/supabase.js?v=3527'") && sw.includes("VERSION = 'dz-de-v3.185.0.0.181'"), 'cache Supabase et version du service worker synchronisés Lot 562');
+ok(idx.includes('supabase/supabase.js?v=3528') && sw.includes("'./supabase/supabase.js?v=3528'") && sw.includes("VERSION = 'dz-de-v3.185.0.0.181'"), 'cache Supabase et version du service worker synchronisés Lot 562');
 ok(idx.includes('msg.js?v=3532') && idx.includes('admin.js?v=3518') && idx.includes('supabase/supabase.js?v=3527'), 'versions des modules de vérification actualisées');
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.181'") && sw.includes("./msg.js?v=3532") && sw.includes("./admin.js?v=3518") && sw.includes("./supabase/supabase.js?v=3527"), 'précache et service worker synchronisés Lot 556');
 
