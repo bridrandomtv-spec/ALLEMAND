@@ -3838,3 +3838,9 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun PDF réel n'a été réindexé et aucun contenu artificiel n'a été créé. Aucun changement Supabase/Auth/RLS/schéma/données/paiement/secrets ; aucun merge, déploiement ou changement de `main`. PR #17 reste ouverte.
 - Rapport : `docs/LOTS/LOT_625_REPARATION_PIPELINE_RAG.md`.
 - Suite : Lot 626, vérifier les workflows sur la branche et auditer les PDF réels + licences/sidecars, puis restaurer l'OCR contrôlé.
+
+
+### Complément de vérification CI — Lot 625
+
+- Runs observés après les commits : indexer `43756829069`, sharder `43756820944`, audit tuteur `43756821072` — tous en échec avant étapes, jobs de 2–3 secondes et tableau d'étapes vide. Les logs détaillés répondent 404 ; la cause précise n'est donc pas confirmée. Ne pas conclure à un échec du code ou des tests.
+- Les trois workflows ont bien été déclenchés sur `audit/lot-603-corpus-contract-tests`, pas sur `main`. Les artefacts RAG ne sont pas générés tant qu'un run effectif et des PDF autorisés ne sont pas disponibles.
