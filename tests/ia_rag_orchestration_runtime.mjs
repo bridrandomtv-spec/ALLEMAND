@@ -20,7 +20,7 @@ async function runCase(sourceState) {
     CONTEXT: { ctx: () => ({ subject: 'allemand', level: '2AS', track: 'langues' }) },
     BIBLIO: { context: async () => '' },
     RAG: {
-      cherche: async () => ({
+      cherche: async () => sourceState === 'unavailable' ? null : ({
         doc: 'fixture-de-2as', texte: 'weil introduit une subordonnée.',
         score: 5, page_start: 4, page_end: 4,
         source_sha256: 'a'.repeat(64)
@@ -85,6 +85,11 @@ assert.equal(mismatch.payload.rag_source_status, 'unverified');
 assert.match(mismatch.context, /PROVENANCE RAG : non certifiée/);
 assert.doesNotMatch(mismatch.answer, /Source documentaire/);
 
+const unavailable = await runCase('unavailable');
+assert.equal(unavailable.payload.rag_source_status, 'unavailable');
+assert.match(unavailable.context, /aucun extrait RAG pertinent et vérifié/);
+assert.doesNotMatch(unavailable.answer, /Source documentaire/);
+
 console.log('PASS ia.js transmet la question originale et le contexte RAG au endpoint /ask simulé');
 console.log('PASS une source vérifiée produit une citation avec titre et page');
-console.log('PASS une source absente ou non concordante ne produit aucune citation vérifiée');
+console.log('PASS source absente, provenance non concordante et RAG sans résultat ne produisent aucune citation vérifiée');
