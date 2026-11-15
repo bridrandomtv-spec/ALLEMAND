@@ -97,14 +97,17 @@ assert.equal(exactPage.payload.rag_scope_status, 'verified');
 
 const unknownPage = await runCase('verified', 'Explique la page 42');
 assert.equal(unknownPage.payload.rag_scope_status, 'mismatch');
+assert.doesNotMatch(unknownPage.answer, /Source documentaire/, 'ne pas citer une page différente de celle demandée');
 
 const requestedUnit = await runCase('verified', 'Explique unité 7');
 assert.equal(requestedUnit.payload.rag_scope_type, 'unit');
 assert.equal(requestedUnit.payload.rag_scope_status, 'unsupported');
+assert.doesNotMatch(requestedUnit.answer, /Source documentaire/, 'ne pas citer une unité non certifiée');
 
 const requestedExercise = await runCase('verified', 'Corrige exercice 3');
 assert.equal(requestedExercise.payload.rag_scope_type, 'exercise');
 assert.equal(requestedExercise.payload.rag_scope_status, 'unsupported');
+assert.doesNotMatch(requestedExercise.answer, /Source documentaire/, 'ne pas citer un exercice non certifié');
 
 const general = await runCase('verified', 'Explique weil en français');
 assert.equal(general.payload.rag_scope_type, 'none');
