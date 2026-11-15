@@ -26,6 +26,48 @@
   const DARJA_LATIN = /(?:^|[^A-Za-z0-9])(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|ma\s*fhemtch|nheb|hab|habi|ta3|dorka|kayn|makanch|saha)(?=$|[^A-Za-z0-9])/i;
   /* Mémoire de dialogue éphémère : jamais écrite dans localStorage.
      Elle est isolée par la clé de session AUTH.user et effacée au changement de compte. */
+  let ENGLISH_DATA = null;
+  function loadEnglishData(){
+    if(ENGLISH_DATA) return ENGLISH_DATA;
+    ENGLISH_DATA = Promise.all([
+      fetchTimeout('assets/bdd/english_pages.json', { cache:'no-store' }, 7000).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetchTimeout('assets/bdd/english_devoirs.json', { cache:'no-store' }, 7000).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetchTimeout('assets/bdd/english_malakhiss.json', { cache:'no-store' }, 7000).then(r => r.ok ? r.json() : null).catch(() => null)
+    ]).then(a => ({ pages:(a[0] && a[0].pages) || {}, devoirs:(a[1] && a[1].items) || [], fiches:(a[2] && a[2].malakhiss) || [] }))
+      .catch(() => ({ pages:{}, devoirs:[], fiches:[] }));
+    return ENGLISH_DATA;
+  }
+  async function englishContext(question){
+    const data = await loadEnglishData();
+    const stop = new Set(['the','and','for','with','what','when','where','which','who','why','how','are','was','were','is','am','do','does','did','can','could','would','should','have','has','had','you','your','my','our','their','this','that','these','those','from','into','about','between','please','explain','tell','give','me']);
+    const terms = String(question || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')
+      .match(/[a-z]{3,}/g) || [];
+    const words = Array.from(new Set(terms.filter(w => !stop.has(w))));
+    if(!words.length) return '';
+    const docs = [];
+    function add(label, body){
+      const text = String(body || '').replace(/\\s+/g,' ').trim();
+      if(!text) return;
+      const low = text.toLowerCase();
+      const score = words.reduce((n,w) => n + (low.indexOf(w) >= 0 ? 1 : 0), 0);
+      if(score) docs.push({score:score,label:label,text:text.slice(0,520)});
+    }
+    Object.keys(data.pages).forEach(function(page){
+      const p = data.pages[page] || {};
+      add('[ANGLAIS — LIVRE p.' + page + ']', [p.titre].concat(p.lignes || []).join(' '));
+    });
+    data.devoirs.forEach(function(d){
+      add('[ANGLAIS — DEVOIR ' + String(d.id || 'sans-id') + ' · unité ' + String(d.unite || '?') + ' · production plateforme]',
+        [d.unite_en,d.grammaire,d.sujet,d.corrige].join(' '));
+    });
+    data.fiches.forEach(function(f){
+      add('[ANGLAIS — FICHE unité ' + String(f.unite || '?') + ' · ' + String(f.titre_en || '') + ']',
+        [f.titre_en,(f.grammaire || []).join(' '),(f.sequences || []).map(x => [x.name,(x.skills || []).join(' '),(x.functions || []).join(' ')].join(' ')).join(' ')].join(' '));
+    });
+    docs.sort((a,b) => b.score-a.score);
+    const chosen = docs.slice(0,4).map(d => d.label + ': ' + d.text);
+    return chosen.join('\\n').slice(0,1700);
+  }
   let DIALOGUE = [], DIALOGUE_OWNER = null;
   function dialogueOwner(){
     try{
@@ -111,7 +153,7 @@
         .trim();
     }
     let localObj = null, local = '', speakWord = '', reponseCourteValide = false;
-    if(typeof fn === 'function'){ try{ localObj = await fn(q); }catch(e){} }
+    if(schoolContext.subject === 'allemand' && typeof fn === 'function'){ try{ localObj = await fn(q); }catch(e){} }
     if(localObj && typeof localObj === 'object'){
       local     = html2txt(localObj.html || localObj.texte || localObj.reponse || '');
       speakWord = String(localObj.speakWord || '');
@@ -220,12 +262,19 @@
     try{
       let ctx = 'CONTEXTE SCOLAIRE : matière=' + schoolContext.subject
         + ' ; niveau=' + schoolContext.level + ' ; filière=' + (schoolContext.track || 'non précisée') + '.\n';
-      try{
-        if(window.BIBLIO && BIBLIO.context){
-          const bc = await BIBLIO.context(q, 1800);
-          if(bc) ctx += 'BIBLIOTHÈQUE (extraits documentaires) :\n' + bc + '\n\n';
-        }
-      }catch(e){}
+      if(schoolContext.subject === 'allemand'){
+        try{
+          if(window.BIBLIO && BIBLIO.context){
+            const bc = await BIBLIO.context(q, 1800);
+            if(bc) ctx += 'BIBLIOTHÈQUE ALLEMANDE (extraits documentaires) :\n' + bc + '\n\n';
+          }
+        }catch(e){}
+      }else if(schoolContext.subject === 'anglais'){
+        try{
+          const ec = await englishContext(q);
+          if(ec) ctx += 'RESSOURCES ANGLAISES LOCALES (pages, fiches et devoirs de la plateforme) :\n' + ec + '\n\n';
+        }catch(e){}
+      }
       /* Le RAG allemand enrichit le prompt ; il ne remplace pas l'explication du professeur. */
       if(schoolContext.subject === 'allemand' && window.RAG && typeof window.RAG.cherche === 'function'){
         try{
