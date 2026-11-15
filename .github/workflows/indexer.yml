@@ -1,4 +1,4 @@
-name: Indexer les PDF du corpus
+name: Indexer les PDF autorisés du corpus
 on:
   workflow_dispatch:
   push:
@@ -10,25 +10,23 @@ permissions:
   contents: write
 jobs:
   index:
+    if: github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Installer tesseract + poppler (OCR)
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq tesseract-ocr tesseract-ocr-deu tesseract-ocr-ara poppler-utils
+        with:
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Installer libs Python
-        run: pip install -q pypdf pytesseract pdf2image Pillow
-      - name: Extraire + OCR + indexer les PDF
+      - name: Installer le parseur PDF
+        run: pip install -q pypdf
+      - name: Vérifier et indexer uniquement les PDF autorisés
         run: python tools/indexer_pdf.py docs/archive/documents
-      - name: Committer le corpus indexe
+      - name: Committer le corpus RAG sur la branche courante
         run: |
-          git config user.name 'Prof. Kharif Ahmed'
-          git config user.email 'bridrandomtv-spec@users.noreply.github.com'
-          git add assets/bdd/corpus.json assets/bdd/corpus_index.json
-          git diff --cached --quiet || git commit -m 'feat(corpus): indexation PDF + OCR des scans (tesseract deu+ara)'
-          git pull --rebase origin main
-          git push
+          git config user.name 'GitHub Actions'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/bdd/corpus.json assets/bdd/corpus_rag_index.json
+          git diff --cached --quiet || git commit -m 'build(corpus): générer le corpus RAG autorisé'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
