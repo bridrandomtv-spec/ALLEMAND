@@ -18,8 +18,6 @@ assert.match(voice, /if\(!ON \|\| turn !== VOICE_TURN\)/,
   'une réponse appartenant à une ancienne session ne doit pas être prononcée');
 assert.match(voice, /VOICE_TURN\+\+;\s*ON = false;/,
   'arrêter le professeur doit invalider les réponses en attente');
-assert.match(voice, /if\(!ON \|\| turn !== VOICE_TURN\)/,
-  'un résultat tardif après arrêt ou redémarrage ne doit pas être prononcé');
 assert.match(voice, /processing = false;\s*speak\(rep\.slice/,
   'le verrou doit céder au moment où le TTS prend la main');
 assert.match(voice, /if\(ON && !speaking && !processing\) setTimeout\(listen, 800\)/,
