@@ -3093,3 +3093,10 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Les erreurs du premier RAG local et du Worker sont absorbées par des `catch` silencieux ; en cas d’échec, le chat bascule sur `PROF.repondre()` sans signaler que le moteur cloud n’a pas répondu. L’utilisateur ne peut donc pas distinguer une réponse LLM, une réponse locale ou une panne.
 - En conséquence, le chat principal peut rester en état de réflexion sans limite, ou fournir une réponse de secours heuristique sans indiquer le changement de moteur. La conversation n’est pas réellement multi-tours côté LLM malgré l’historique d’affichage local.
 - Aucune modification appliquée. Correction recommandée : pipeline unique avec délai maximal, statut explicite du moteur, contexte documentaire validé côté serveur, historique limité et authentifié, et indication claire du niveau de confiance/source.
+
+
+## Lot 578 — exactitude de la promesse « RAG gardé » (15 novembre 2026)
+- L’interface `rag.js` annonce : « la réponse vient TOUJOURS d’un extrait de ton corpus — jamais inventée ».
+- Or `ragForm` appelle d’abord `reponsePedagogique()`, qui peut renvoyer des réponses issues de règles codées en dur, tableaux de conjugaison, dialogues, conseils, navigation et gabarits d’exercices ; ces réponses ne sont pas nécessairement des extraits verbatim du corpus. Seule la branche `cherche()/formule()` cite un chunk extrait.
+- La promesse d’interface ne décrit donc pas exactement le fonctionnement réel. Il faut distinguer réponse locale déterministe, réponse documentaire avec source, et réponse LLM, avec provenance affichée pour chacune.
+- Aucun changement appliqué à ce lot.
