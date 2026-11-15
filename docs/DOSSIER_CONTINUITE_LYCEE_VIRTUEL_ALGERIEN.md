@@ -3533,3 +3533,21 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Commit documentaire Lot 607 : à renseigner après l'enregistrement GitHub.
 - **Suite proposée — Lot 608** : définir un contrat de chargement strict (version supportée, comptages, noms de fichiers sûrs, IDs uniques, postings résolubles), puis tester les cas shard manquant/corrompu et stratégie de repli. Ne pas générer ni publier le corpus réel avant validation explicite.
 - Messenger reste non terminé : scénarios E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
+
+
+## Lot 608 — durcissement candidat du lecteur RAG (15 novembre 2026)
+
+- Travail effectué uniquement sur la branche d'audit `audit/lot-603-corpus-contract-tests`. Aucun changement sur `main`, aucune PR et aucun déploiement.
+- **Contrat de manifeste** : `rag.js` n'accepte désormais comme manifeste shardé que la version `2.0.0`, avec des nombres entiers cohérents (`nb_shards`, `total_chunks)), une liste de fichiers unique, des noms limités au motif `shard_NN.json` et une somme des `nb_chunks` égale au total annoncé.
+- **Contrat de chunk** : chaque chunk doit être un objet avec `global_id` entier sûr, non négatif et unique dans son shard, ainsi qu'un texte et un identifiant de document de type chaîne.
+- **Contrat de postings** : chaque terme doit pointer vers une liste d'identifiants entiers, sans doublon, et chaque identifiant doit exister dans le shard concerné.
+- **Intégrité inter-shards** : le lecteur détecte désormais les identifiants globaux répétés entre shards et vérifie le nombre total de chunks effectivement lus. Il parcourt tous les shards avant de retenir le meilleur score ; l'ancien arrêt anticipé pouvait manquer un résultat plus pertinent dans un shard ultérieur.
+- **Récupération** : si le manifeste est absent/invalide, ou si un shard est manquant, illisible, incohérent ou incomplet, aucun résultat partiel issu des shards n'est renvoyé. Le lecteur tente alors l'index complet `corpus_rag_index.json`, lui-même soumis à validation. Si cet index n'existe pas ou est invalide, la recherche retourne `null` au lieu de présenter un résultat non vérifié.
+- Fichiers modifiés :
+  - `rag.js` — validation et récupération strictes. Commit principal : `e8ba58e58ef35f4e7d2681f0baecbe6df3e4659a`; alignement du commentaire d'en-tête : `34ba67b845c970dfe98b7f5f8a717ed46e5ead6b`.
+  - `tests/rag_loader_contract.mjs` — contrôles statiques de présence des garanties du contrat. Commit : `260261545b82f2ac3b4979f8aa95006036ae4ca8`.
+- **Validation non exécutée** : les fichiers ont été relus sur GitHub, mais aucun test Node, navigateur, fetch HTTP, scénario de shard manquant/corrompu, ni comparaison de pertinence n'a été exécuté dans cette étape. Le nouveau fichier de test vérifie la présence des garanties dans le source ; il ne simule pas le runtime. Aucun PASS d'exécution n'est revendiqué.
+- **Limite fonctionnelle restante** : le fallback ne peut réellement récupérer la recherche que si l'index complet est présent et valide. Or `assets/bdd/corpus_rag_index.json` est absent de la branche et le manifeste publié dans cette branche reste en version 1.0.0 vide. Aucun corpus réel ne doit être généré ou publié sans validation séparée de sa provenance et de ses volumes.
+- Aucun contenu BIBLIO, corpus, index, shard, manifeste, Worker, secret, configuration, workflow CI, ressource ou donnée Supabase n'a été modifié. Le changement applicatif candidat se limite au lecteur RAG.
+- **Suite Lot 609** : préparer des tests runtime isolés du lecteur avec serveur/fetch simulé : manifeste v2 valide, shard absent, JSON invalide, posting orphelin, IDs dupliqués entre shards, index complet de repli présent/absent, et sélection du meilleur score global. Ensuite, reprendre le contrat partagé chat/voix et la conservation du texte brut, de la langue, de la darija et du contexte pédagogique.
+- Messenger reste non terminé : scénarios E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
