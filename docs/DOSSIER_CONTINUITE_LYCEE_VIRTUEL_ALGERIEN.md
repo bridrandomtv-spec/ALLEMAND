@@ -3742,3 +3742,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Régression détectée pendant le harnais : le mot anglais « difference » déclenchait aussi l'étiquette française à cause d'un lexique FR trop permissif. Le lexique français a été resserré autour de marqueurs distinctifs (différence accentuée, français, merci, etc.) ; un test garantit maintenant qu'une question anglaise contenant « difference » n'est pas étiquetée française, tout en conservant un cas français positif.
 
 - Deux autres collisions ont été trouvées et corrigées pendant les essais : « entre » et « que » faisaient classer certaines phrases françaises comme espagnoles ; ils ont été retirés des marqueurs ES ambigus. Le lexique allemand QUST a aussi été complété par des marqueurs fréquents (« wie », « geht », « dir », « woher », etc.). Les tests exigent désormais une reconnaissance DE positive et le rejet ES d'une phrase française.
+
+
+## Lot 619 — protection contre les questions vocales simultanées (15 novembre 2026)
+
+- Défaut confirmé dans `parle.js` : le navigateur peut déclencher `SpeechRecognition.onend` alors que le traitement asynchrone de `reponseIA()` attend encore le Worker. Comme seul l'état `speaking` (lecture TTS) était contrôlé, `onend` pouvait relancer `listen()` avant la réponse, et un nouvel énoncé pouvait démarrer une seconde requête.
+- Correction candidate : état distinct `processing`; `listen()` et `onend` refusent de rouvrir le micro pendant le traitement ; les événements de transcription concurrents sont ignorés ; le verrou est posé avant l'appel asynchrone, puis libéré juste avant le démarrage TTS (qui pose synchroniquement `speaking=true`). Si l'utilisateur arrête le professeur pendant l'attente, la réponse tardive n'est pas prononcée.
+- Nouveau test source `tests/voice_capture_contract.mjs` : verrou avant l'appel IA, garde `listen/onend/onerror`, arrêt utilisateur, transfert du verrou au TTS et purge à l'arrêt.
+- Workflow d'audit non-déployant enrichi pour exécuter ce test. Validation microphone/navigateur réelle non effectuée ; le test vérifie le contrat source, pas le comportement de tous les moteurs SpeechRecognition.
+- Aucun déploiement, aucune modification de `main`, aucune écriture Supabase.
