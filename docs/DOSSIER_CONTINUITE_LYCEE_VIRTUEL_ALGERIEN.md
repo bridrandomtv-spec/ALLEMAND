@@ -4152,3 +4152,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Exécution CI non attestée à ce stade ; les tests simulés ne démontrent pas encore le comportement d'un modèle réel. Aucun document réel ingéré/OCRisé/indexé, aucun déploiement, aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucune fusion.
 - Rapport : `docs/LOTS/LOT_647_ETAT_PROVENANCE_ET_ABSTENTION.md`.
 - Suite Lot 648 : matrice adversariale d'abstention puis exécution et analyse des tests CI avant toute ingestion documentaire réelle.
+
+
+## Lot 648 — contrôle déterministe de la portée exacte des références RAG (2026-11-16)
+
+- Constat : le SHA-256 concordant du Lot 647 authentifie le document/chunk, mais ne garantit pas que l'extrait corresponde à la page, l'unité ou l'exercice explicitement demandé.
+- `ia.js` détecte les demandes explicites de page, unité et exercice en français, allemand et arabe ; les chiffres arabes et persans sont normalisés. Il transmet séparément type, valeur et statut de portée au Worker.
+- Une page est vérifiée uniquement si le chunk vérifié correspond exactement à la page demandée. Une page différente devient `mismatch`. Les demandes d'unité/exercice restent `unsupported` tant que les chunks ne portent pas les identifiants structurés correspondants. Une question générale garde `none`.
+- Le Worker CERVEAU refuse déterministement, avant appel au modèle, toute demande précise dont la portée n'est pas vérifiée. Le refus est formulé dans la langue de sortie, avec distinction darija/arabe standard.
+- Matrice ajoutée aux tests d'orchestration : page exacte, page différente, unité, exercice, question générale, BIBLIO seul sans référence RAG certifiée. Le test Worker contrôle que le modèle n'est pas appelé pour une page divergente et une unité non certifiée.
+- Tests synthétiques uniquement ; modèle simulé. Aucun PASS n'est annoncé avant consultation d'un run GitHub Actions sur le commit courant. La qualité de réponse d'un vrai modèle n'est pas mesurée.
+- Limite restante : métadonnées de leçon/unité/exercice absentes du schéma de chunks actuel. Aucun corpus réel réindexé, aucun PDF/OCR, aucune preuve individuelle de droits ajoutée.
+- Aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucun déploiement Cloudflare, aucune fusion dans `main`.
+- Rapport : `docs/LOTS/LOT_648_PORTÉE_EXACTE_RAG_ET_ABSTENTION.md`.
+- Suite Lot 649 : vérifier les runs Actions, corriger les éventuels échecs, puis concevoir le schéma de portée structurée unité/leçon/exercice avant toute réindexation réelle.
