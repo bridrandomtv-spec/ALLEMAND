@@ -55,8 +55,10 @@ const ia = fs.readFileSync('ia.js', 'utf8');
 const worker = fs.readFileSync('worker/ia-ask.js', 'utf8');
 assert.match(ia, /window\.QUST && typeof window\.QUST\.understand/);
 assert.match(ia, /understanding: understanding \?/);
+assert.match(ia, /BIBLIO\.context\(q, 1800, understanding\)/, 'les entités QUST doivent guider la recherche BIBLIO');
 assert.match(worker, /allowedIntents/);
 assert.match(worker, /allowedLanguages/);
+assert.match(worker, /'ar','arabizi','darija','fr','de','en','es','it'/, 'les six langues doivent être autorisées dans les indices QUST');
 assert.match(worker, /INTENTION QUST/);
 assert.match(worker, /ENTITÉS QUST/);
 
