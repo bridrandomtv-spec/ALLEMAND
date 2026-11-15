@@ -398,8 +398,8 @@
         }).join('');
       }
       var vq = await window.SB.msgVerificationQueue();
-      window.__msgVerificationRows = vq && vq.ok && Array.isArray(vq.queue) ? vq.queue : [];
       if(renderEpoch!==state.renderEpoch) return;
+      window.__msgVerificationRows = vq && vq.ok && Array.isArray(vq.queue) ? vq.queue : [];
       h += '<div class="msg-modrow"><b>طلبات التحقق من الهوية قيد الانتظار:</b> ' + (vq.ok ? vq.queue.length : '⛔') + '</div>';
       if(vq.ok && vq.queue.length){
         h += vq.queue.map(function(q){
