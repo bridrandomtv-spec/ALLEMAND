@@ -1136,6 +1136,32 @@ async function reponsePedagogique(q){
     return null;
   }
 
+  async function source(hit){
+    if(!hit || typeof hit.doc !== 'string' || !hit.doc) return null;
+    const corpus = await chargeCorp();
+    const doc = corpus && Array.isArray(corpus.documents)
+      ? corpus.documents.find(d => d && d.id === hit.doc) : null;
+    const validHash = value => typeof value === 'string' && /^[0-9a-f]{64}$/.test(value);
+    if(!doc || !validHash(hit.source_sha256) || !validHash(doc.source_sha256)
+       || hit.source_sha256 !== doc.source_sha256) return null;
+    const pageStart = Number.isSafeInteger(hit.page_start) && hit.page_start > 0
+      ? hit.page_start : null;
+    const pageEnd = Number.isSafeInteger(hit.page_end) && hit.page_end === pageStart
+      ? hit.page_end : null;
+    return {
+      id: hit.doc,
+      title: String(doc.titre || hit.doc).slice(0, 160),
+      subject: String(doc.matiere || '').slice(0, 60),
+      level: String(doc.niveau || '').slice(0, 30),
+      year: String(doc.annee || '').slice(0, 30),
+      source: String(doc.source || '').slice(0, 160),
+      format: String(doc.format || '').slice(0, 12),
+      page_start: pageStart,
+      page_end: pageEnd,
+      sha256: hit.source_sha256
+    };
+  }
+
   function formule(r, corpus){
     if(!r) return null;
     const extrait = String(r.texte || '').split(/\s+/).slice(0, 70).join(' ');
@@ -1236,7 +1262,7 @@ async function reponsePedagogique(q){
   }
 
   window.reponsePedagogique = reponsePedagogique;
-  window.RAG = { cherche: cherche, formule: formule, SEUIL: SEUIL, render: render };
+  window.RAG = { cherche: cherche, source: source, formule: formule, SEUIL: SEUIL, render: render };
   window.renderRag = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'rag') render(); });
 })();
