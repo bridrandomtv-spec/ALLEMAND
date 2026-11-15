@@ -109,6 +109,17 @@
     try{ return await window.SB.msgAttachmentInfos(messageIds); }
     catch(e){ return {}; }
   }
+  function verificationMissing(q){
+    var missing = [];
+    if(!q || !String(q.pseudo||'').trim()) missing.push('اسم الحساب');
+    if(!q || !/^[0-9]{1,20}$/.test(String(q.matricule||'').trim())) missing.push('رقم التسجيل');
+    if(!q || !String(q.niveau||'').trim()) missing.push('المستوى');
+    if(!q || !String(q.wilaya||'').trim()) missing.push('الولاية');
+    if(!q || !String(q.filiere||'').trim()) missing.push('الشعبة');
+    if(!q || !String(q.section||'').trim()) missing.push('القسم');
+    if(!q || !q.id || !String(q.carte_scolaire_path||'').startsWith(String(q.id)+'/')) missing.push('البطاقة المدرسية');
+    return missing;
+  }
   function sizeLabel(n){
     n=Number(n)||0; return n>=1048576?(n/1048576).toFixed(1)+' ميغابايت':Math.max(1,Math.round(n/1024))+' كيلوبايت';
   }
@@ -387,13 +398,17 @@
         }).join('');
       }
       var vq = await window.SB.msgVerificationQueue();
+      window.__msgVerificationRows = vq && vq.ok && Array.isArray(vq.queue) ? vq.queue : [];
       if(renderEpoch!==state.renderEpoch) return;
       h += '<div class="msg-modrow"><b>طلبات التحقق من الهوية قيد الانتظار:</b> ' + (vq.ok ? vq.queue.length : '⛔') + '</div>';
       if(vq.ok && vq.queue.length){
         h += vq.queue.map(function(q){
+          var missingVerification = verificationMissing(q);
+          var canVerify = missingVerification.length === 0;
           return '<div class="msg-modcard"><div class="msg-meta"><b>🪪 ' + esc(q.pseudo||'?') + '</b><span>' + esc((q.wilaya||'?')+' · '+(q.niveau||'?')+' · '+(q.filiere||'?')) + '</span></div>' +
             '<div class="msg-body">رقم التسجيل المدرسي: ' + esc(q.matricule||'—') + ' · الشعبة: ' + esc(q.section||'—') + '</div>' +
-            '<div class="msg-modbtns"><button class="msg-modbtn" data-mod="verif-ok" data-uid="' + q.id + '" type="button">✔ تأكيد</button>' +
+            (canVerify ? '' : '<div class="msg-empty" role="alert">⛔ لا يمكن التفعيل: معلومات ناقصة أو غير صالحة — '+esc(missingVerification.join('، '))+'</div>') +
+            '<div class="msg-modbtns"><button class="msg-modbtn" data-mod="verif-ok" data-uid="' + q.id + '" type="button"' + (canVerify ? '' : ' disabled title="أكمل معلومات الهوية المدرسية أولاً"') + '>✔ تأكيد</button>' +
             '<button class="msg-modbtn" data-mod="verif-no" data-uid="' + q.id + '" type="button">⛔ رفض</button></div></div>';
         }).join('');
       }
@@ -664,6 +679,14 @@
       }
       if(mod==='verif-ok' || mod==='verif-no'){
         var uidv = t.getAttribute('data-uid');
+        if(mod==='verif-ok'){
+          var verificationRow = (window.__msgVerificationRows||[]).find(function(row){ return row.id===uidv; });
+          var missingForApproval = verificationMissing(verificationRow);
+          if(missingForApproval.length){
+            window.alert('⛔ لا يمكن تأكيد الطلب قبل استكمال والتحقق من: '+missingForApproval.join('، '));
+            return;
+          }
+        }
         var moderationIdentityEpoch = state.authEpoch;
         window.SB.msgSetVerification(uidv, mod==='verif-ok'?'verifie':'rejete').then(function(r3){
           if(state.authEpoch!==moderationIdentityEpoch) return;
