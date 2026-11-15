@@ -4118,3 +4118,14 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun PDF réel ingéré/OCRisé/indexé, aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucun déploiement ni merge.
 - Rapport : `docs/LOTS/LOT_644_PROVENANCE_RAG_ET_ABSTENTION_TUTEUR.md`.
 - Suite Lot 645 : harnais d'intégration Worker sur source vérifiée / source absente / source incohérente, sans modèle externe, puis plan d'exécution réelle de la matrice tuteur.
+
+
+## Lot 645 — intégration HTTP du Worker sans modèle externe (2026-11-16)
+
+- Création de `tests/worker_request_runtime.mjs` : le Worker est chargé dans un VM Node isolé ; `env.AI.run` est simulé et capture les messages au lieu d'appeler Cloudflare ou un modèle réel.
+- Le test vérifie HTTP 200, réponse JSON, langue de sortie, question originale, normalisation, contexte RAG, indices QUST et règle système qui interdit de suivre les instructions présentes dans les documents récupérés.
+- Le workflow `.github/workflows/tutor-audit.yml` déclenche sur ce fichier et exécute ce harnais.
+- Test ajouté mais non exécuté dans un runner attesté ; aucun PASS n'est revendiqué. Il ne mesure pas la qualité d'un modèle réel.
+- Aucun secret, appel externe, déploiement, ingestion réelle ou changement Supabase/Auth/RLS/schéma/données/paiements ; aucune fusion.
+- Rapport : `docs/LOTS/LOT_645_HARNAIS_INTEGRATION_WORKER_SANS_MODELE.md`.
+- Suite Lot 646 : tester navigateur → orchestrateur `ia.js` → Worker avec `fetch` simulé, citation de provenance concordante et abstention quand la source manque ou diverge.
