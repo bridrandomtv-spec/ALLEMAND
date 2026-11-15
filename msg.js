@@ -377,7 +377,14 @@
       } else h += '<div class="msg-empty">لم ترسل أي دعوة بعد.</div>';
       h += '</section></div>';
     }
-    var isMod = u && (u.role==='prof' || u.role==='admin');
+    var isMod = !!(u && u.role==='admin');
+    if(u && u.role==='prof' && window.SB && typeof window.SB.admMyPerms==='function'){
+      var moderationAccess = await window.SB.admMyPerms();
+      if(renderEpoch!==state.renderEpoch) return;
+      isMod = !!(moderationAccess && moderationAccess.ok &&
+        Array.isArray(moderationAccess.perms) &&
+        moderationAccess.perms.indexOf('messaging.moderate')!==-1);
+    }
     if(isMod){
       var rep0 = await window.SB.msgReportsOpen();
       if(renderEpoch!==state.renderEpoch) return;
