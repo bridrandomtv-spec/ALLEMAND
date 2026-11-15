@@ -193,6 +193,7 @@ def main(dossier):
     index_final = fusionner_index_rag(index_existant, index_nouveau["chunks"], ids_importes)
     corpus_final = {"_meta": {"version": "2.1.0", "nb": len(catalogue)},
                     "documents": catalogue}
+    valider_coherence_catalogue_index(corpus_final, index_final)
     # Les sources et les JSON forment un seul lot : rollback des copies si
     # la publication du catalogue/index échoue.
     os.makedirs(DESTINATION, exist_ok=True)
