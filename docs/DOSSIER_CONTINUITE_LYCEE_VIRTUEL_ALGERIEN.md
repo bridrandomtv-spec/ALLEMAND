@@ -3953,3 +3953,19 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Suite : Lot 633 — rétablir les runners, exécuter les tests, puis unifier les chemins d'ingestion et renforcer le remplacement transactionnel des artefacts.
 
 - Complément Lot 632 : la fusion incrémentale est centralisée dans `tools/corpus_contracts.py::fusionner_index_rag` et partagée par les indexeurs PDF et multi-format. Dernier job observé `132964729277` (run `43763939718`) : `runner_id: 0`, `steps: []`; tests toujours non exécutés faute de runner.
+
+
+---
+
+## Lot 633 — rollback des artefacts et disponibilité CI (2026-11-15)
+
+- Ajout de `tools/corpus_contracts.py::ecrire_json_transactionnel` : préparation temporaire de tous les JSON, flush/fsync, remplacement par `os.replace`, conservation des octets d'origine et rollback si un remplacement ultérieur échoue.
+- `tools/ingest_corpus.py` et `tools/indexer_pdf.py` publient désormais catalogue et index via ce writer commun.
+- Tests ajoutés : publication de deux JSON et simulation d'un échec au second remplacement, avec vérification de la restauration du premier et de l'absence de temporaires.
+- Les imports package et exécution directe du writer ont été vérifiés statiquement. Les tests ne sont pas certifiés : GitHub Actions n'affecte toujours aucun runner.
+- Exemple récent : run `43764379138`, job `132966072695`, `runner_id: 0`, nom vide, `steps: []`, échec en environ deux secondes.
+- Le diagnostic antérieur avait affiché un message GitHub sur les paiements échoués ou le plafond de dépenses. La cause exacte n'est pas renvoyée par l'API du run ; le propriétaire doit vérifier GitHub > Billing & plans et la limite de dépenses Actions. Aucune modification de facturation n'a été effectuée.
+- Limite du writer : rollback sur exception détectée, mais pas atomicité stricte face à un arrêt brutal entre deux remplacements de fichiers. Pour cela, utiliser des générations versionnées et un pointeur unique remplacé atomiquement.
+- Aucun PDF réel, OCR, index réel, changement main, fusion, déploiement, Supabase/Auth/RLS/schéma/données/paiements/secrets. PR #17 non modifiée.
+- Rapport : `docs/LOTS/LOT_633_ROLLBACK_TRANSACTIONNEL_ET_RUNNERS.md`.
+- Suite : Lot 634 — lever le blocage runner/facturation, exécuter les tests, puis passer à des générations versionnées et vérifier la restitution titre/page/source dans le RAG.
