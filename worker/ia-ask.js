@@ -64,7 +64,24 @@ export default {
     const normalized = String(b.normalized_text || q).slice(0, 600);
     const ctx = String(b.ctx || '').slice(0, 3000);
     /* Historique fourni par le client : fenêtre courte, rôles stricts, taille bornée. */
-    const u = b.understanding && typeof b.understanding === 'object' ? b.understanding : {};\n    const allowedIntents = ['compare','summarize','correct_exercise','translate','practice_exercise','explain_rule','explain_word','find_page','explain_lesson'];\n    const allowedLanguages = ['ar','arabizi','darija','fr','de','en'];\n    const understanding = {\n      normalized_question: String(u.normalized_question || '').slice(0, 600),\n      languages: Array.isArray(u.languages) ? u.languages.filter(x => allowedLanguages.includes(String(x))).slice(0, 6) : [],\n      intent: allowedIntents.includes(String(u.intent || '')) ? String(u.intent) : 'unknown',\n      confidence: Math.max(0, Math.min(1, Number(u.confidence) || 0)),\n      entities: {}\n    };\n    if(u.entities && typeof u.entities === 'object' && !Array.isArray(u.entities)){\n      ['subject','level','track','lektion','unit','page','germanWord'].forEach(k => {\n        const v = u.entities[k];\n        if((typeof v === 'string' && v.length <= 80) || (k === 'page' && Number.isInteger(v) && v >= 1 && v <= 999)) understanding.entities[k] = v;\n      });\n      ['grammar','articles','conjunctions'].forEach(k => {\n        if(Array.isArray(u.entities[k])) understanding.entities[k] = u.entities[k].filter(v => typeof v === 'string').slice(0, 8).map(v => v.slice(0, 30));\n      });\n    }\n    const history = Array.isArray(b.history) ? b.history.slice(-8).map(item => {
+    const u = b.understanding && typeof b.understanding === 'object' ? b.understanding : {};\n    const allowedIntents = ['compare','summarize','correct_exercise','translate','practice_exercise','explain_rule','explain_word','find_page','explain_lesson'];
+    const allowedLanguages = ['ar','arabizi','darija','fr','de','en'];
+    const understanding = {
+      normalized_question: String(u.normalized_question || '').slice(0, 600),
+      languages: Array.isArray(u.languages) ? u.languages.filter(x => allowedLanguages.includes(String(x))).slice(0, 6) : [],
+      intent: allowedIntents.includes(String(u.intent || '')) ? String(u.intent) : 'unknown',
+      confidence: Math.max(0, Math.min(1, Number(u.confidence) || 0)),
+      entities: {}
+    };
+    if(u.entities && typeof u.entities === 'object' && !Array.isArray(u.entities)){
+      ['subject','level','track','lektion','unit','page','germanWord'].forEach(k => {
+        const v = u.entities[k];
+        if((typeof v === 'string' && v.length <= 80) || (k === 'page' && Number.isInteger(v) && v >= 1 && v <= 999)) understanding.entities[k] = v;
+      });
+      ['grammar','articles','conjunctions'].forEach(k => {
+        if(Array.isArray(u.entities[k])) understanding.entities[k] = u.entities[k].filter(v => typeof v === 'string').slice(0, 8).map(v => v.slice(0, 30));
+      });
+    }\n    const history = Array.isArray(b.history) ? b.history.slice(-8).map(item => {
       if(!item || (item.role !== 'user' && item.role !== 'assistant')) return null;
       const content = String(item.content || '').slice(0, 1000);
       return content ? { role: item.role, content: content } : null;
