@@ -54,6 +54,10 @@ const checks = [
     /window\.parleSpeak\(rep, window\.__IA_LAST_LANGUAGE/.test(chat) && /window\.parleSpeak = function\(texte, langue\)/.test(voice)],
   ['ia.js calcule et transmet la langue de sortie demandée',
     /const answerLanguage = explicitOutputLanguage/.test(ia) && /output_language: answerLanguage/.test(ia)],
+  ['les lexiques Darija arabe et Arabizi sont nommés et cohérents entre canaux',
+    /const DARJA_AR =/.test(ia) && /const DARJA_LATIN =/.test(ia) &&
+    /const DARJA_AR =/.test(voice) && /const DARJA_LATIN =/.test(voice) &&
+    ia.match(/const DARJA_LATIN = (\/[^\n]+\/i);/)?.[1] === voice.match(/const DARJA_LATIN = (\/[^\n]+\/i);/)?.[1]],
   ['Worker renvoie une métadonnée de langue de réponse validée',
     /answer_language: meta\.output_language/.test(worker) && /LANGUE DE SORTIE EXIGÉE/.test(worker)],
   ['TTS utilise la langue préférée quand le vote lexical est indécis',
