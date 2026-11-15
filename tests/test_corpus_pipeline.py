@@ -411,5 +411,69 @@ class CorpusPipelineContract(unittest.TestCase):
                 self.assertEqual(stream.read(), source_bytes)
             self.assertFalse(os.path.exists(destination))
 
+
+    def test_synthetic_catalogue_to_rag_shards_keeps_provenance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = os.path.join(tmp, "manuel-synthetique.txt")
+            source_bytes = "Hallo Schüler. Guten Morgen.\nIch lerne Deutsch.".encode("utf-8")
+            with open(source, "wb") as stream:
+                stream.write(source_bytes)
+            digest = contracts.sha256_fichier(source)
+            doc = {
+                "id": "fixture-de-2as", "titre": "Manuel synthétique de test",
+                "matiere": "allemand", "niveau": "2AS", "langue": "de",
+                "source_sha256": digest, "source": "fixture synthétique"
+            }
+            pages = ["Hallo Schüler Guten Morgen", "Ich lerne Deutsch heute"]
+            page_parts = contracts.decouper_pages(pages, taille=3)
+            chunks = [
+                contracts.construire_chunk(
+                    gid, doc["id"], numero, part["texte"], digest,
+                    part["page_start"], part["page_end"]
+                )
+                for gid, (numero, part) in enumerate(
+                    (item for item in enumerate(page_parts))
+                )
+            ]
+            index = contracts.fusionner_index_rag(
+                {"_meta": {}, "chunks": []}, chunks, set()
+            )
+            catalogue = {"documents": [doc]}
+            coherence = contracts.valider_coherence_catalogue_index(catalogue, index)
+            self.assertEqual(coherence["documents_indexes"], 1)
+            self.assertEqual(coherence["chunks"], len(page_parts))
+
+            shards, manifest = sharder.build_shards(index, taille=1)
+            self.assertEqual(manifest["version"], "2.0.0")
+            self.assertEqual(manifest["nb_shards"], len(chunks))
+            self.assertRegex(manifest["generation"], r"^[0-9a-f]{64}$")
+            self.assertEqual(
+                [chunk["page_start"] for chunk in index["chunks"]], [1, 1, 2]
+            )
+            for shard in shards:
+                payload = {"_generation": manifest["generation"],
+                           "chunks": shard["chunks"], "termes": shard["termes"]}
+                self.assertEqual(payload["_generation"], manifest["generation"])
+                self.assertTrue(all(c["source_sha256"] == digest
+                                    for c in payload["chunks"]))
+
+            corpus_path = os.path.join(tmp, "corpus.json")
+            index_path = os.path.join(tmp, "corpus_rag_index.json")
+            manifest_path = os.path.join(tmp, "shards_manifest.json")
+            contracts.ecrire_json_transactionnel({
+                corpus_path: catalogue, index_path: index, manifest_path: manifest
+            })
+            with open(corpus_path, encoding="utf-8") as stream:
+                self.assertEqual(json.load(stream)["documents"][0]["source_sha256"], digest)
+            with open(index_path, encoding="utf-8") as stream:
+                stored_index = json.load(stream)
+            with open(manifest_path, encoding="utf-8") as stream:
+                stored_manifest = json.load(stream)
+            self.assertEqual(stored_manifest["generation"], manifest["generation"])
+            self.assertEqual(
+                [c["global_id"] for c in stored_index["chunks"]],
+                [c["global_id"] for shard in shards for c in shard["chunks"]]
+            )
+
 if __name__ == "__main__":
     unittest.main()
