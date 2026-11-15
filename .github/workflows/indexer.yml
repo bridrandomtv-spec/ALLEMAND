@@ -4,8 +4,6 @@ on:
   push:
     paths:
       - 'docs/archive/documents/**'
-      - 'tools/indexer_pdf.py'
-      - '.github/workflows/indexer.yml'
 permissions:
   contents: write
 jobs:
