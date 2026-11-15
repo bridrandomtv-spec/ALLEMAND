@@ -29,6 +29,11 @@
       if(!objet(c) || !idValide(c.global_id) ||
          typeof c.texte !== 'string' || typeof c.doc !== 'string' ||
          ids.has(c.global_id)) return null;
+      if(c.source_sha256 != null && !/^[0-9a-f]{64}$/.test(c.source_sha256)) return null;
+      if(c.page_start != null || c.page_end != null){
+        if(!Number.isSafeInteger(c.page_start) || !Number.isSafeInteger(c.page_end) ||
+           c.page_start < 1 || c.page_end !== c.page_start) return null;
+      }
       ids.add(c.global_id);
     }
     return ids;
