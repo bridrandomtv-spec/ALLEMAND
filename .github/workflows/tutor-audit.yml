@@ -1,0 +1,67 @@
+name: Audit tuteur IA — tests sans déploiement
+
+on:
+  push:
+    branches: ["audit/lot-603-corpus-contract-tests"]
+    paths:
+      - "ia.js"
+      - "parle.js"
+      - "app.js"
+      - "worker/ia-ask.js"
+      - "rag.js"
+      - "tools/sharder_index.py"
+      - "tests/tutor_request_contract.mjs"
+      - "tests/tutor_language_matrix.mjs"
+      - "tests/rag_loader_contract.mjs"
+      - "tests/rag_loader_runtime.mjs"
+      - "tests/sharder_fixture.py"
+      - ".github/workflows/tutor-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tutor-audit:
+    name: Contrats tuteur, TTS, RAG et sharder
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Récupérer la branche d'audit
+        uses: actions/checkout@v5
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Installer Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Vérifier la syntaxe JavaScript
+        run: |
+          set -e
+          node --check app.js
+          node --check ia.js
+          node --check parle.js
+          node --input-type=module --check < worker/ia-ask.js
+
+      - name: Tester le contrat commun chat / voix / Worker
+        run: node tests/tutor_request_contract.mjs
+
+      - name: Tester les heuristiques Darija / Arabizi et la matrice
+        run: node tests/tutor_language_matrix.mjs
+
+      - name: Tester le contrat source du lecteur RAG
+        run: node tests/rag_loader_contract.mjs
+
+      - name: Tester le lecteur RAG en VM isolée
+        run: node tests/rag_loader_runtime.mjs
+
+      - name: Tester le sharder sur fixtures temporaires
+        run: python tests/sharder_fixture.py
+
+      - name: Récapitulatif — aucun déploiement
+        run: echo "Tests d'audit uniquement. Aucun déploiement Cloudflare, aucune écriture Supabase."
