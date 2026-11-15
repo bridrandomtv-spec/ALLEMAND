@@ -41,6 +41,9 @@ assert.equal(german.dialect, 'unknown', 'l’allemand ne doit pas être classé 
 
 const english = window.QUST.understand('What is the difference between present simple and present continuous?', null);
 assert.ok(english.langs.includes('en'), 'anglais non reconnu par QUST');
+assert.ok(!english.langs.includes('fr'), 'une question anglaise ne doit pas être classée française');
+const french = window.QUST.understand('Explique la différence entre les articles', null);
+assert.ok(french.langs.includes('fr'), 'français non reconnu par QUST');
 const spanish = window.QUST.understand('¿Cuál es la diferencia entre ser y estar?', null);
 assert.ok(spanish.langs.includes('es'), 'espagnol non reconnu par QUST');
 const italian = window.QUST.understand('Qual è la differenza tra essere e avere?', null);
