@@ -3807,7 +3807,7 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le chemin local appelle désormais `ontoRoute(rawQuestion)` lorsque `matchType()` ne reconnaît pas la demande, avant le repli QUST. L’ontologie n’est donc plus seulement déclarée : elle est appelée sur le chemin de secours.
 - `index.html` charge le module avant QUST ; `sw.js` précache le nouveau fichier et utilise une nouvelle version de cache ; le workflow d’audit surveille le module et contrôle la syntaxe de QUST/RAG.
 - Tests mis à jour : `tests/qust_runtime_contract.mjs` et `tests/rag_loader_contract.mjs`.
-- Vérification isolée exécutée : syntaxe JS PASS pour normaliseur, QUST et RAG ; QUST exécuté dans un contexte JS isolé sur six questions ciblées. Les intentions de comparaison en espagnol, italien et français sont désormais reconnues dans ces probes.
+- Vérification isolée exécutée : syntaxe JS PASS pour normaliseur, QUST et RAG ; QUST exécuté dans un contexte JS isolé sur six questions ciblées. Les intentions de comparaison en espagnol, italien et français sont désormais reconnues dans ces probes. Une correction complémentaire applique aussi Unicode NFKC avant la normalisation lexicale (commit `59a192b433d5420e7af9c15ea5deb75f23327e29`).
 - Non validé : exécution native des scripts MJS par Node, GitHub Actions, Worker live, corpus RAG complet, microphone et TTS réel. Le dictionnaire Arabizi est une première couverture, pas un lexique exhaustif.
 - Rapport détaillé : `docs/LOTS/LOT_623_NORMALISATION_COMMUNE_ET_ROUTAGE_ONTOLOGIE.md`.
 - HEAD avant documentation : `5e3ada89883977e71a948dd4fac191b637237f1e`.
