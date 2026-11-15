@@ -3916,3 +3916,21 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun test Python/Node, OCR, extraction PDF, Action GitHub ou RAG live exécuté. Aucun PDF converti/copié/indexé, aucun sidecar ni index généré.
 - Aucun changement de `main`, fusion, déploiement ou modification Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste ouverte et indépendante.
 - Suite : Lot 631 — définir et tester sur fixtures synthétiques le schéma page-aware, la fusion non destructive du registre et la propagation des citations à travers sharding puis RAG.
+
+
+---
+
+## Lot 631 — provenance page-aware et fusion documentaire (2026-11-15)
+
+- Ajout de `tools/corpus_contracts.py` : empreinte SHA-256 en flux, découpage par page sans franchissement de frontière, fusion déterministe des fiches par ID et constructeur de chunks avec validation des métadonnées.
+- `tools/indexer_pdf.py` extrait désormais les pages séparément. Chaque chunk PDF nouvellement construit conserve `page_start`, `page_end` et `source_sha256`; chaque fiche PDF porte aussi l'empreinte source.
+- Le catalogue documentaire existant est fusionné avec le lot entrant par identifiant ; les fiches non présentes dans le lot sont conservées. Si aucun chunk autorisé n'est produit, aucun artefact n'est remplacé.
+- `tools/sharder_index.py` conserve les champs supplémentaires et rejette les empreintes SHA-256 mal formées et les plages de pages incohérentes.
+- `rag.js` valide les métadonnées page/hash quand elles existent et expose la page dans la réponse uniquement si elle est valide. Compatibilité conservée avec les anciens chunks sans provenance : aucune page n'est inventée.
+- Tests de contrat ajoutés : segmentation page-aware, absence de fusion entre pages, fusion non destructive des fiches, validation SHA-256/plage de page et conservation de provenance au sharding.
+- Rapport : `docs/LOTS/LOT_631_PROVENANCE_PAGE_AWARE_ET_FUSION_CATALOGUE.md`.
+- Limite : tests ajoutés mais non exécutés dans ce lot. Aucun PDF réel, OCR, index, shard ou manifeste de production généré.
+- `tools/ingest_corpus.py` multi-format n'est pas encore migré et demeure interdit pour les imports de production partiels ; il peut encore remplacer le registre par le seul lot fourni. Sa correction est prioritaire au Lot 632.
+- La preuve et le périmètre vérifiables de l'autorisation documentaire restent à rattacher aux métadonnées avant ingestion réelle.
+- Aucun changement de `main`, fusion, déploiement ou modification Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste ouverte et indépendante.
+- Suite : Lot 632 — sécuriser le pipeline multi-format, ajouter un test PDF synthétique bout en bout, exécuter les tests sur runner et vérifier la restitution titre/page/source dans l'interface RAG.
