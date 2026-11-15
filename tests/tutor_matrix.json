@@ -255,6 +255,70 @@
         "grammar_accuracy",
         "source_unit9_2AS"
       ]
+    },
+    {
+      "id": "ENG-001",
+      "input": "What is the difference between the present simple and the present continuous?",
+      "language": "english",
+      "intent": "explain_grammar",
+      "subject": "anglais",
+      "level": "1AS",
+      "unit": null,
+      "expected": "Répondre en anglais avec une explication correcte et des exemples simples; ne citer une source officielle que si elle est réellement retrouvée.",
+      "checks": [
+        "english_language_detection",
+        "subject_context_anglais",
+        "grammar_accuracy",
+        "source_or_no_source_disclosure"
+      ]
+    },
+    {
+      "id": "ENG-002",
+      "input": "Can you explain when to use much and many?",
+      "language": "english",
+      "intent": "explain_grammar",
+      "subject": "anglais",
+      "level": "1AS",
+      "unit": null,
+      "expected": "Expliquer much/many en anglais avec exemples dénombrable/non dénombrable, sans inventer une référence au manuel.",
+      "checks": [
+        "english_output",
+        "countable_uncountable_accuracy",
+        "example_correct",
+        "source_disclosure"
+      ]
+    },
+    {
+      "id": "ESP-001",
+      "input": "¿Cuál es la diferencia entre ser y estar?",
+      "language": "spanish",
+      "intent": "compare_explain",
+      "subject": "espanol",
+      "level": "2AS",
+      "unit": null,
+      "expected": "Répondre en espagnol avec une distinction pédagogique générale et des exemples; signaler l'absence de ressource officielle si aucune n'est retrouvée.",
+      "checks": [
+        "spanish_language_detection",
+        "subject_context_espanol",
+        "grammar_accuracy",
+        "source_disclosure"
+      ]
+    },
+    {
+      "id": "ITA-001",
+      "input": "Qual è la differenza tra essere e avere?",
+      "language": "italian",
+      "intent": "compare_explain",
+      "subject": "italien",
+      "level": "2AS",
+      "unit": null,
+      "expected": "Répondre en italien avec une distinction pédagogique générale et des exemples; signaler l'absence de ressource officielle si aucune n'est retrouvée.",
+      "checks": [
+        "italian_language_detection",
+        "subject_context_italien",
+        "grammar_accuracy",
+        "source_disclosure"
+      ]
     }
   ],
   "scorecard": {
