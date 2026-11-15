@@ -22,8 +22,9 @@ async function createRag(routes) {
   assert.ok(window.RAG && typeof window.RAG.cherche === 'function', 'API window.RAG absente');
   return window.RAG;
 }
+const GENERATION = 'a'.repeat(64);
 const manifest = shards => ({
-  version: '2.0.0', nb_shards: shards.length,
+  version: '2.0.0', generation: GENERATION, nb_shards: shards.length,
   total_chunks: shards.reduce((n, s) => n + s.nb_chunks, 0), shards
 });
 const chunk = (id, texte, doc='doc-test') => ({ global_id: id, texte, doc });
@@ -48,9 +49,9 @@ await test('le meilleur score global est retenu dans le dernier shard', async ()
   const firstTerms = Object.fromEntries(['alpha','beta','gamma','delta','epsilon'].map(t=>[t,[0]]));
   const laterTerms = Object.fromEntries(['alpha','beta','gamma','delta','epsilon','zeta'].map(t=>[t,[1]]));
   const routes = routesFor(man, {
-    'assets/bdd/shards/shard_00.json':()=>ok({chunks:[chunk(0,'premier-score-5')],termes:firstTerms}),
-    'assets/bdd/shards/shard_01.json':()=>ok({chunks:[chunk(1,'meilleur-score-6')],termes:laterTerms})
-  });
+    'assets/bdd/shards/shard_00.json':()=>ok({_generation:GENERATION,chunks:[chunk(0,'premier-score-5')],termes:firstTerms}),
+    'assets/bdd/shards/shard_01.json':()=>ok({_generation:GENERATION,chunks:[chunk(1,'meilleur-score-6')],termes:laterTerms})
+  }, null);
   const rag = await createRag(routes);
   const found = await rag.cherche('alpha beta gamma delta epsilon zeta');
   assert.equal(found.texte, 'meilleur-score-6');
@@ -68,7 +69,7 @@ await test('un posting orphelin déclenche le repli', async () => {
   const man = manifest([{file:'shard_00.json',nb_chunks:1}]);
   const routes = routesFor(man, {
     'assets/bdd/shards/shard_00.json':()=>ok({
-      chunks:[chunk(1,'shard-invalide')],termes:{alpha:[999],beta:[1]}
+      _generation:GENERATION, chunks:[chunk(1,'shard-invalide')],termes:{alpha:[999],beta:[1]}
     })
   }, index(90));
   const rag = await createRag(routes);
@@ -78,7 +79,7 @@ await test('un posting orphelin déclenche le repli', async () => {
 
 await test('un ID répété entre deux shards déclenche le repli', async () => {
   const man = manifest([{file:'shard_00.json',nb_chunks:1},{file:'shard_01.json',nb_chunks:1}]);
-  const shard = ()=>ok({chunks:[chunk(5,'duplicate')],termes:{alpha:[5],beta:[5]}});
+  const shard = ()=>ok({_generation:GENERATION,chunks:[chunk(5,'duplicate')],termes:{alpha:[5],beta:[5]}});
   const routes = routesFor(man, {
     'assets/bdd/shards/shard_00.json':shard,
     'assets/bdd/shards/shard_01.json':shard
@@ -101,6 +102,22 @@ await test('sans shards valides ni index complet, aucun résultat n’est invent
   const found = await rag.cherche('alpha beta');
   assert.equal(found, null);
 });
+
+
+await test('une génération de shard différente du manifeste déclenche le repli', async () => {
+  const man = manifest([{file:'shard_00.json',nb_chunks:1}]);
+  const routes = routesFor(man, {
+    'assets/bdd/shards/shard_00.json':()=>ok({
+      _generation:'b'.repeat(64),
+      chunks:[chunk(0,'generation-perimee')],
+      termes:{alpha:[0],beta:[0]}
+    })
+  }, index(90));
+  const rag = await createRag(routes);
+  const found = await rag.cherche('alpha beta');
+  assert.equal(found.texte, 'fallback-complet');
+});
+
 
 for (const [name, passed, message] of results) {
   console.log((passed ? 'PASS ' : 'FAIL ') + name + (message ? ' — ' + message : ''));
