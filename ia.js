@@ -140,6 +140,23 @@
       if(/\b(gli|che|di|sono|grazie|ciao)\b/i.test(s)) return 'it';
       return '';
     })(q);
+    /* Langue attendue en sortie : une consigne explicite prime sur la langue
+       de la question. Sert au TTS et est transmise au Worker. */
+    const explicitOutputLanguage = (function(s){
+      if(/(?:بالدارجة|بالدزيرية|بالجزائرية|en darija|darija|derdja)/i.test(s)) return 'ar';
+      if(/(?:en français|en francais|بالفرنسية)/i.test(s)) return 'fr';
+      if(/(?:auf deutsch|en allemand|بالألمانية)/i.test(s)) return 'de';
+      if(/(?:in english|en anglais|بالإنجليزية)/i.test(s)) return 'en';
+      if(/(?:en español|en espagnol|بالإسبانية)/i.test(s)) return 'es';
+      if(/(?:in italiano|en italien|بالإيطالية)/i.test(s)) return 'it';
+      if(/(?:بالعربية|بالفصحى|en arabe)/i.test(s)) return 'ar';
+      return '';
+    })(q);
+    const selectedPrefix = selectedLanguage.toLowerCase().slice(0, 2);
+    const answerLanguage = explicitOutputLanguage ||
+      (['ar','de','fr','es','it','en'].includes(QL) ? QL :
+       (['ar','de','fr','es','it','en'].includes(selectedPrefix) ? selectedPrefix : 'de'));
+    window.__IA_LAST_LANGUAGE = answerLanguage;
     const FB = {
       de: 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung — oder sag « Seite 11 », ich lese sie dir vor.',
       fr: 'Je n\u2019ai pas compris. Demande-moi une conjugaison, un article, un pluriel, un nombre ou un sens — ou dis « page 11 ».',
@@ -216,7 +233,8 @@
         body: JSON.stringify({
           q: q, text: q, raw_text: q, normalized_text: normalized,
           input_mode: inputMode, selected_language: selectedLanguage,
-          detected_language: QL || detectedLanguage || 'unknown', dialect: dialect,
+          detected_language: QL || detectedLanguage || 'unknown',
+          output_language: answerLanguage, dialect: dialect,
           subject: schoolContext.subject, level: schoolContext.level,
           track: schoolContext.track, ctx: ctx,
           history: DIALOGUE.slice(-8)
@@ -231,6 +249,8 @@
           if(r2.ok){
             const j2 = await r2.json();
             if(j2 && j2.ok && j2.rep && j2.rep.length > 10){
+              if(['ar','de','fr','es','it','en'].includes(String(j2.answer_language || '')))
+                window.__IA_LAST_LANGUAGE = j2.answer_language;
               rememberTurn(dialogueUser, q, j2.rep);
               return j2.rep;
             }
@@ -239,6 +259,8 @@
         return sortieFaible(local, 'http-' + r.status);
       }
       const j = await r.json();
+      if(j && ['ar','de','fr','es','it','en'].includes(String(j.answer_language || '')))
+        window.__IA_LAST_LANGUAGE = j.answer_language;
       if(!j.ok){ window.__IA_ERR = j.err || 'http';
         try{ console.warn('🧠 ia-ask :', j.err); }catch(_){}
         window.__IA_WORD = speakWord; return sortieFaible(local, j.err || 'ko'); }
