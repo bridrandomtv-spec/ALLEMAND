@@ -3462,3 +3462,16 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Commit du test : e894af1f87f21cb54854a902d8f311e915fd9b5f.
 - Le lot 603 reste préparatoire : il formalise les contrats et une reproduction synthétique du problème d'identifiants, mais ne prouve pas encore le comportement du script Python en exécution. Le prochain pas est une validation de syntaxe/exécution dans un environnement Node du dépôt, puis une fixture Python isolée du sharder avant toute modification des artefacts de production.
 - Messenger reste non terminé : tests E2E multi-comptes A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime non exécutés.
+
+
+## Lot 604 — reproduction isolée du défaut d'identifiants du sharder (15 novembre 2026)
+
+- Relecture du code exact de `tools/ingest_corpus.py`, `tools/sharder_index.py` et du lecteur `rag.js`. Le producteur enregistre les postings avec `cid = len(index["chunks"])`, donc un identifiant global. Le chunk conserve `n = ci`, qui est un compteur local au document. Le sharder construit `ns = {c["n"] for c in part}` et filtre les postings globaux avec `v in ns`. Le lecteur RAG recherche ensuite un chunk avec `c.n === +cid`.
+- **Reproduction exécutée dans un répertoire temporaire** à partir du contenu actuel de `tools/sharder_index.py`, sans utiliser ni modifier les fichiers `assets/` du dépôt : deux documents, chacun avec deux chunks, numéros locaux 0 et 1, identifiants globaux 0 à 3.
+- Résultat observé : le sharder termine avec code retour 0 et crée un shard de quatre chunks, mais le terme `mot-b`, dont les postings attendus sont `[2, 3]` (document B), disparaît entièrement. Le terme `commun` conserve seulement `[0, 1]`. Les postings conservés 0 et 1 se résolvent sur doc-A ; ceux de doc-B sont perdus. Cela confirme une perte de postings multi-documents dans le chemin de sharding.
+- Un test reproductible `tests/sharder_fixture.py` a été ajouté. Il copie le script de production dans un répertoire temporaire, crée le même index synthétique, exécute le sharder copié et vérifie la conservation des postings et la présence d'une identité globale par chunk. Il est volontairement destiné à échouer sur le code actuel jusqu'à correction du sharder.
+- **Limite d'exécution** : la reproduction a été exécutée ici avec une copie exacte de la logique et du contenu actuel du script récupéré sur GitHub. Le nouveau fichier `tests/sharder_fixture.py` a été créé sur GitHub mais n'a pas encore été lancé depuis un checkout du dépôt. Aucun PASS de la suite du dépôt n'est revendiqué.
+- Aucun fichier de production, corpus, index, shard, manifeste, Worker, configuration, secret, workflow ou ressource Supabase n'a été modifié. Aucun déploiement ni push sur `main`.
+- Commit du test : `2f4761a659ef115fb29ac092598700a4602aacbd`.
+- Messenger reste non terminé : tests E2E multi-comptes A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime restent à exécuter.
+- Suite recommandée : Lot 605 — concevoir la correction du schéma d'identité globale (champ stable `global_id`) et du sharder/lecteur, avec migration compatible et tests verts, sans reconstruire ni publier le corpus avant validation explicite.
