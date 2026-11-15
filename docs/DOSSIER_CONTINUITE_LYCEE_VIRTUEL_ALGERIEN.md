@@ -3012,3 +3012,11 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le contrôle ne modifie aucune permission ni règle RLS. Les permissions actuelles dans la base restent la source d’autorité.
 - Cache Messenger porté à `msg.js?v=3534`, Service Worker à `dz-de-v3.185.0.0.183`, précache synchronisé. Assertion CI ajoutée.
 - Aucun compte, rôle, permission, profil, message, invitation ou dossier réel modifié. CI et déploiement non revendiqués.
+
+
+## Lot 569 — récupération des pièces jointes Messenger en cas d’échec (15 novembre 2026)
+- L’audit du parcours d’envoi a relevé qu’un fichier pouvait rester dans le bucket privé si l’insertion de ses métadonnées ou le rattachement au message échouait après l’upload.
+- Le client vérifie désormais l’état d’une insertion dont la réponse est incertaine avant toute suppression. Après échec de rattachement, il relit le message pour reconnaître un commit serveur réussi ; si le fichier est réellement non lié, il tente de supprimer d’abord la ligne de métadonnées autorisée puis l’objet Storage. Si l’état reste incertain, il conserve le fichier plutôt que de risquer de casser une pièce jointe déjà rattachée et signale le nettoyage non confirmé.
+- Cache Supabase porté à `supabase/supabase.js?v=3528`, Service Worker à `dz-de-v3.185.0.0.184`, précache synchronisé. Assertion CI statique ajoutée.
+- Aucun fichier réel, message, compte, profil, permission, schéma, politique RLS ou règle Storage modifié pendant cette correction. Le nettoyage s’appliquera uniquement aux futurs échecs d’upload.
+- CI et déploiement Cloudflare non revendiqués.
