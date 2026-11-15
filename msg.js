@@ -304,7 +304,7 @@
       h += '<div class="msg-verif">' + (vf.statut==='en_attente'
         ? '⏳ <b>التحقق من الهوية جارٍ</b> — يراجع أستاذ أو مسؤول رقم تسجيلك وشعبتك. تبقى المجموعات الرسمية متاحة، وتُفعّل الرسائل الخاصة بعد المصادقة.'
         : (vf.statut==='rejete' ? '⛔ <b>تم رفض الطلب</b> — صحّح رقم التسجيل المدرسي أو الشعبة ثم أعد إرسال الطلب. ' : '🪪 <b>التحقق من الهوية المدرسية</b> — مطلوب قبل بدء محادثة خاصة. ') +
-          '<div class="msg-vhint">التحقق المدرسي مجاني ولا يتطلب اشتراكاً مدفوعاً. أدخل رقم تسجيلك المدرسي والشعبة لإرسال الطلب إلى فريق الإشراف.</div><div class="msg-vform"><input id="vfMat" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="رقم التسجيل المدرسي (مجاني)" maxlength="20"><input id="vfSec" placeholder="الشعبة / القسم (مثال: 2AS-1)" maxlength="40" value="'+esc(vf.section||'')+'"><button class="msg-send" data-act="verif-req" type="button">إرسال طلب التحقق</button></div>')
+          '<div class="msg-vhint">التحقق المدرسي مجاني. أدخل رقم تسجيلك والشعبة، ثم أرفق صورة واضحة لبطاقتك المدرسية (JPEG أو PNG أو WebP أو PDF، بحد أقصى 5 ميغابايت). لن يطّلع عليها إلا فريق التحقق المخوّل.</div><div class="msg-vform"><input id="vfMat" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="رقم التسجيل المدرسي" maxlength="20"><input id="vfSec" placeholder="الشعبة / القسم (مثال: 2AS-1)" maxlength="40" value="'+esc(vf.section||'')+'"><label class="msg-vhint" for="vfCard">🪪 صورة البطاقة المدرسية أو PDF</label><input id="vfCard" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"><button class="msg-send" data-act="verif-req" type="button">إرسال طلب التحقق</button></div>')+'"><button class="msg-send" data-act="verif-req" type="button">إرسال طلب التحقق</button></div>')
         + '</div>';
     }
     if(!isMod0 && vf.ok && vf.statut==='verifie'){ h += '<div class="msg-verif ok">✔ تم التحقق من الهوية المدرسية — الرسائل الخاصة متاحة ضمن المجموعة الدراسية المشتركة.</div>'; }
@@ -636,11 +636,19 @@
     }
     if(act==='verif-req'){
       var mv = (el('vfMat')||{}).value || '', sv = (el('vfSec')||{}).value || '';
+      var cardInput = el('vfCard'), cardFile = cardInput && cardInput.files && cardInput.files[0];
       var verificationIdentityEpoch = state.authEpoch;
-      window.SB.msgRequestVerification(mv, sv).then(function(r4){
+      if(!cardFile){ window.alert('⛔ أرفق صورة البطاقة المدرسية أو ملف PDF أولاً.'); return; }
+      t.disabled = true;
+      window.SB.msgUploadSchoolCard(cardFile).then(function(uploaded){
         if(state.authEpoch!==verificationIdentityEpoch) return;
-        if(r4 && r4.ok){ renderList(); } else { window.alert('⛔ '+((r4&&r4.err)||'تعذّر إرسال طلب التحقق')); }
-      }).catch(function(error){ if(state.authEpoch!==verificationIdentityEpoch) return; window.alert('⛔ '+String(error && error.message || error)); });
+        if(!uploaded || !uploaded.ok) throw new Error((uploaded&&uploaded.err)||'تعذّر رفع البطاقة');
+        return window.SB.msgRequestVerification(mv,sv,uploaded.path);
+      }).then(function(r4){
+        if(state.authEpoch!==verificationIdentityEpoch) return;
+        if(r4 && r4.ok){ renderList(); }
+        else { t.disabled=false; window.alert('⛔ '+((r4&&r4.err)||'تعذّر إرسال طلب التحقق')); }
+      }).catch(function(error){ if(state.authEpoch!==verificationIdentityEpoch) return; t.disabled=false; window.alert('⛔ '+String(error && error.message || error)); });
       return;
     }
     var mod = t.getAttribute('data-mod');
