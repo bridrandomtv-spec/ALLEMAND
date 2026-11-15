@@ -701,7 +701,7 @@ function rendreCouvertureORG1(mount){
     var first = total ? currentPage*pageSize+1 : 0;
     var last = Math.min((currentPage+1)*pageSize,total);
     box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🪪</span><div><h2>طلبات تفعيل التلاميذ</h2><p class="ad-sub">طلبات الهوية المدرسية المعلّقة · الصلاحية المطلوبة: students.verify</p></div></div>'
-      + '<div class="adm-verif-summary"><b>' + total + '</b> طلب معلّق · عرض ' + first + '–' + last + ' · ' + currentPage + 1 + '/' + totalPages + '</div>'
+      + '<div class="adm-verif-summary"><b>' + total + '</b> طلب معلّق · عرض ' + first + '–' + last + ' · ' + (currentPage+1) + '/' + totalPages + '</div>'
       + (rows.length ? rows.map(function(x){
           return '<article class="card adm-verification-item">'
             + '<div class="adm-verif-head"><b>👤 ' + esq5(x.pseudo||'تلميذ') + '</b><span class="badge">قيد المراجعة</span></div>'
