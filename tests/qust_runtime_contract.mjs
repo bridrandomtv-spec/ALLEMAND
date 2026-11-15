@@ -5,9 +5,11 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 
+const normalizerSource = fs.readFileSync('js/text-normalizer.js', 'utf8');
 const source = fs.readFileSync('js/qust.js', 'utf8');
 const ctx = { subject:'allemand', level:'2AS', track:'langues' };
 const window = { CONTEXT:{ ctx:() => ctx } };
+vm.runInNewContext(normalizerSource, { window, globalThis:window });
 vm.runInNewContext(source, { window });
 assert.equal(typeof window.QUST?.understand, 'function', 'QUST doit exposer understand');
 
@@ -21,10 +23,14 @@ const compare = window.QUST.understand('واش الفرق بين der و die؟', 
 assert.equal(compare.dialect, 'darija');
 assert.equal(compare.intent, 'compare');
 
-const arabizi = window.QUST.understand('wach kifach nsta3mel dativ?', null);
+const arabizi = window.QUST.understand('3lach nsta3mel weil hna?', null);
 assert.equal(arabizi.dialect, 'darija');
 assert.equal(arabizi.intent, 'explain_rule');
-assert.deepEqual(Array.from(arabizi.entities.grammar), ['dativ']);
+assert.deepEqual(Array.from(arabizi.entities.conjunctions), ['weil']);
+assert.ok(arabizi.langs.includes('arabizi'));
+const mixed = window.QUST.understand('wach الفرق بين weil و dass؟', null);
+assert.equal(mixed.intent, 'compare');
+assert.deepEqual(Array.from(mixed.entities.conjunctions), ['weil','dass']);
 
 const correction = window.QUST.understand('صحح هذا التمرين', null);
 assert.equal(correction.intent, 'correct_exercise');
@@ -62,5 +68,6 @@ assert.match(worker, /'ar','arabizi','darija','fr','de','en','es','it'/, 'les si
 assert.match(worker, /INTENTION QUST/);
 assert.match(worker, /ENTITÉS QUST/);
 
+console.log('PASS normaliseur commun : Arabizi, ponctuation arabe, Darija et code-switching');
 console.log('PASS QUST : Darija arabe, Arabizi, MSA, allemand, anglais, espagnol, italien, intentions et entités');
 console.log('PASS intégration ia.js → Worker et validation des métadonnées QUST');
