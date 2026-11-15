@@ -4081,3 +4081,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Rapport : `docs/LOTS/LOT_641_PRESERVATION_ARTEFACTS_REFUS_INGESTION.md`.
 - Commit du test : `9eb4765ce2f8537b0b75f9c4c56372a56d2d0561`.
 - Suite Lot 642 : bâtir un corpus RAG synthétique isolé et vérifier catalogue → index → shards, sans toucher au fonds documentaire réel.
+
+
+## Lot 642 — corpus RAG synthétique isolé (2026-11-16)
+
+- Ajout du test `test_synthetic_catalogue_to_rag_shards_keeps_provenance` dans `tests/test_corpus_pipeline.py`.
+- Le scénario crée une source fictive dans un dossier temporaire, calcule son SHA-256, construit une fiche allemande 2AS, segmente deux pages sans les fusionner, produit les chunks et l'index, vérifie la cohérence catalogue ↔ RAG, construit des shards, contrôle la génération et relit les artefacts temporaires.
+- Aucun fichier du fonds `assets/bdd` ni aucun PDF réel n'est utilisé ou modifié.
+- La suite contient 33 méthodes de test. L'exécution reste non attestée ; aucun PASS n'est annoncé.
+- Ce test valide le pipeline de données synthétiques côté Python, pas le runtime navigateur `rag.js`, ni la pertinence des réponses du tuteur.
+- Rapport : `docs/LOTS/LOT_642_CORPUS_RAG_SYNTHETIQUE_ISOLE.md`.
+- Aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucune ingestion réelle, aucun déploiement, aucune fusion.
+- Suite Lot 643 : tests runtime du lecteur RAG (génération, complétude, postings, fallback), puis contrat de réponse sourcée / absence de source / hors corpus.
