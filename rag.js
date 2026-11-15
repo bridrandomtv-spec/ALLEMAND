@@ -78,7 +78,12 @@
       const sc = scores[cid];
       if(sc < SEUIL || (best && sc <= best.score)) continue;
       const chunk = data.chunks.find(c => c.global_id === Number(cid));
-      if(chunk) best = { score: sc, texte: chunk.texte, doc: chunk.doc };
+      if(chunk) best = {
+        score: sc, texte: chunk.texte, doc: chunk.doc,
+        page_start: Number.isSafeInteger(chunk.page_start) ? chunk.page_start : null,
+        page_end: Number.isSafeInteger(chunk.page_end) ? chunk.page_end : null,
+        source_sha256: typeof chunk.source_sha256 === 'string' ? chunk.source_sha256 : null
+      };
     }
     return best;
   }
@@ -1127,8 +1132,11 @@ async function reponsePedagogique(q){
   function formule(r){
     if(!r) return null;
     const extrait = String(r.texte || '').split(/\s+/).slice(0, 70).join(' ');
+    const page = Number.isSafeInteger(r.page_start) && Number.isSafeInteger(r.page_end)
+      ? ' · صفحة ' + r.page_start + (r.page_end !== r.page_start ? '–' + r.page_end : '')
+      : '';
     return '📚 <b>من قاعدة معرفتك</b> — '
-      + '<span class="rag-src">score ' + r.score + ' · chunk ' + (r.doc || '') + '</span>'
+      + '<span class="rag-src">score ' + r.score + ' · chunk ' + (r.doc || '') + page + '</span>'
       + '<br><span class="rag-x">« ' + esc(extrait) + ' … »</span>'
       + '<br><span class="rag-src">réponse extraite de ta base — jamais inventée.</span>';
   }
