@@ -463,6 +463,7 @@ function rendreCouvertureORG1(mount){
   ];
   var KNOWN = ['admDashCard','admClassesCard','admWilayasCard','admSecurityCard','admSystemCard','admStudentsCard','admVerificationCard','admSettingsCard','admAgentsCard','admQueueCard','admAccordsCard'];
   var state4 = { perms:[], tab:'dash', role:'', wilayas:[] };
+  var verificationQueueEpoch = 0;
   function section(){ return document.querySelector('section[data-view="admin"]'); }
   function cardsOf(tab){
     var h = section(); if(!h) return [];
@@ -675,32 +676,46 @@ function rendreCouvertureORG1(mount){
       + '<button class="btn btn-p btn-sm" data-adm4-search="1" type="button">chercher</button></div>'
       + '<div id="admStuList" style="margin-top:10px"></div><div id="admStuFiche" style="margin-top:10px"></div>';
   }
-  async function renderVerificationQueue(){
+  async function renderVerificationQueue(page){
     var h = section(); if(!h) return;
     var box = document.getElementById('admVerificationCard');
     if(!box){ box = document.createElement('div'); box.id = 'admVerificationCard'; box.className = 'card'; h.appendChild(box); }
+    box.classList.add('adm-verification-card');
     if(state4.perms.indexOf('students.verify') === -1 && state4.role !== 'admin'){ box.hidden = true; return; }
     box.hidden = false;
-    box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ · School verification</h2><p class="ad-load">⏳ تحميل الطلبات المعلّقة…</p>';
+    var pageSize = 50, currentPage = Math.max(0, Math.floor(Number(page)||0));
+    var requestId = ++verificationQueueEpoch;
+    box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ · School verification</h2><p class="ad-load">⏳ تحميل الصفحة…</p>';
     if(!window.SB || typeof SB.msgVerificationQueue !== 'function'){
       box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ</h2><p>⛔ خدمة التحقق غير متاحة في هذا الإصدار.</p>'; return;
     }
-    var q = await SB.msgVerificationQueue();
+    var q = await SB.msgVerificationQueue(currentPage, pageSize);
+    if(requestId !== verificationQueueEpoch) return;
     if(!q || !q.ok){
-      box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ</h2><p>⛔ تعذر تحميل الطلبات: ' + esq5(q && q.err || 'خطأ غير محدد') + '</p><p style="font-size:12px;color:var(--m)">تأكد من صلاحية messaging.moderate ومن سياسات Supabase. لم يتم تغيير أي حالة.</p>'; return;
+      box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ</h2><p>⛔ تعذر تحميل الطلبات: ' + esq5(q && q.err || 'خطأ غير محدد') + '</p><p class="adm-verif-muted">لم يتم تغيير أي حالة.</p>'; return;
     }
     var rows = Array.isArray(q.queue) ? q.queue : [];
-    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🪪</span><div><h2>طلبات تفعيل التلاميذ</h2><p class="ad-sub">طلبات الهوية المدرسية المعلّقة · الصلاحية المطلوبة: students.verify · ' + rows.length + ' طلب</p></div></div>'
+    var total = Math.max(0, Number(q.total)||0);
+    var totalPages = Math.max(1, Math.ceil(total/pageSize));
+    if(currentPage >= totalPages && currentPage > 0) return renderVerificationQueue(totalPages-1);
+    var first = total ? currentPage*pageSize+1 : 0;
+    var last = Math.min((currentPage+1)*pageSize,total);
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🪪</span><div><h2>طلبات تفعيل التلاميذ</h2><p class="ad-sub">طلبات الهوية المدرسية المعلّقة · الصلاحية المطلوبة: students.verify</p></div></div>'
+      + '<div class="adm-verif-summary"><b>' + total + '</b> طلب معلّق · عرض ' + first + '–' + last + ' · ' + currentPage + 1 + '/' + totalPages + '</div>'
       + (rows.length ? rows.map(function(x){
-          return '<article class="card" style="margin:10px 0;padding:12px">'
-            + '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>👤 ' + esq5(x.pseudo||'تلميذ') + '</b><span class="badge">قيد المراجعة</span></div>'
+          return '<article class="card adm-verification-item">'
+            + '<div class="adm-verif-head"><b>👤 ' + esq5(x.pseudo||'تلميذ') + '</b><span class="badge">قيد المراجعة</span></div>'
             + '<div class="rep-row"><span>المستوى: ' + esq5(x.niveau||'—') + ' · الولاية: ' + esq5(x.wilaya||'—') + ' · الشعبة: ' + esq5(x.filiere||'—') + '</span></div>'
             + '<div class="rep-row"><span>رقم التسجيل: ' + esq5(x.matricule||'—') + ' · القسم المصرّح به: ' + esq5(x.section||'—') + '</span></div>'
-            + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'
+            + '<div class="adm-verif-actions">'
             + '<button class="btn btn-sm btn-g" data-adm-verif="' + esq5(x.id) + '" data-status="verifie" type="button">✔ تأكيد التفعيل</button>'
             + '<button class="btn btn-sm btn-r" data-adm-verif="' + esq5(x.id) + '" data-status="rejete" type="button">رفض الطلب</button></div></article>';
-        }).join('') : '<div class="card" style="margin-top:10px"><p>لا توجد طلبات تفعيل معلّقة حالياً.</p></div>')
-      + '<p style="font-size:11.5px;color:var(--m);margin-top:8px">لا يؤدي ظهور الطلب إلى تفعيل تلقائي. القرار يتطلب مراجعة بشرية، وتتحقق قاعدة البيانات من صلاحية المشرف عند تنفيذ الإجراء.</p>';
+        }).join('') : '<div class="card adm-verification-item"><p>لا توجد طلبات تفعيل معلّقة حالياً.</p></div>')
+      + '<nav class="adm-verif-pager" aria-label="صفحات طلبات التفعيل">'
+      + '<button class="btn btn-o btn-sm" data-adm-verif-page="' + Math.max(0,currentPage-1) + '" type="button"' + (currentPage===0?' disabled':'') + '>السابق</button>'
+      + '<span>الصفحة ' + (currentPage+1) + ' من ' + totalPages + '</span>'
+      + '<button class="btn btn-o btn-sm" data-adm-verif-page="' + (currentPage+1) + '" type="button"' + (currentPage+1>=totalPages?' disabled':'') + '>التالي</button></nav>'
+      + '<p class="adm-verif-note">تُحمّل 50 طلباً فقط في كل صفحة. لا يؤدي ظهور الطلب إلى تفعيل تلقائي؛ القرار يتطلب مراجعة بشرية وتتحقق قاعدة البيانات من الصلاحية ونطاق الولاية.</p>';
   }
   async function renderSettings(){
     var h = section(); if(!h) return;
@@ -721,8 +736,10 @@ function rendreCouvertureORG1(mount){
     Array.prototype.forEach.call(rows, function(row){ row.hidden = q !== '' && row.getAttribute('data-wilaya-search').indexOf(q) === -1; });
   });
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu],[data-adm-verif]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu],[data-adm-verif],[data-adm-verif-page]') : null;
     if(!t) return;
+    var verifyPage = t.getAttribute('data-adm-verif-page');
+    if(verifyPage !== null){ renderVerificationQueue(Number(verifyPage)); return; }
     var verifyId = t.getAttribute('data-adm-verif');
     if(verifyId){
       var nextStatus = t.getAttribute('data-status');
