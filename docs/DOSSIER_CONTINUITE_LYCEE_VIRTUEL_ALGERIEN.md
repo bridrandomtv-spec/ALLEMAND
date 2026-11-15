@@ -3635,3 +3635,19 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Messenger reste non terminé : tests E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
 
 - Ajustement de confidentialité : les sessions anonymes ne conservent aucun historique. La mémoire n'est activée que lorsqu'une session `AUTH.session().user` existe ; au logout ou en absence de session, l'historique est vidé et aucune nouvelle question n'est mémorisée. Commit correctif `ia.js` : `3b4ad57266359059f7cc03e3389747ca77e4e0ed`; assertion de test mise à jour dans `tests/tutor_request_contract.mjs` (commit `767e87da89ad22e6b75aeed5d33e72aeeca5a8d6`).
+
+
+## Lot 613 — correction de la purge mémoire et convergence TTS chat/voix (15 novembre 2026)
+
+- Audit ciblé du cycle d'authentification : `auth.js` émet `dz:auth` avec `detail:null` au logout, avec la session lors d'une connexion et lors d'une mise à jour de session.
+- Défaut confirmé : avant ce lot, `ia.js` ne comparait l'identité de session qu'au prochain appel à `reponseIA`. Un logout suivi d'une reconnexion au même compte avant une nouvelle question pouvait laisser l'ancien tableau en RAM.
+- Correction candidate dans `ia.js` : écoute immédiate de `dz:auth`; l'historique est vidé au logout et à chaque changement réel d'utilisateur. Une mise à jour de session pour le même utilisateur ne détruit pas inutilement la continuité.
+- Défaut TTS confirmé : le chat écrit utilisait une seule langue choisie par expressions régulières, tandis que `parle.js` dispose déjà d'un découpage en segments et d'un choix de voix par langue.
+- Correction candidate : `parle.js` expose `window.parleSpeak`; `app.js` l'utilise pour prononcer les réponses du chat avec le même moteur segmenté que le professeur vocal. Un repli natif demeure si le module vocal n'est pas chargé.
+- Détection Darija/Arabizi : les marqueurs latins reconnaissent désormais la ponctuation adjacente (ex. `wach?`, `3lach,`) et la variante `ma fhemtch`. Il s'agit toujours d'un lexique heuristique : il ne comprend pas toutes les variantes régionales, les fautes de transcription ni tous les mélanges de langues.
+- Tests ajoutés à `tests/tutor_request_contract.mjs` : purge immédiate sur événement d'authentification, marqueurs Darija avec ponctuation et partage du TTS segmenté.
+- **État de validation : non exécuté.** Les changements sont enregistrés comme candidats sur la branche d'audit et doivent encore être testés par Node puis dans un navigateur réel. Aucun résultat PASS d'exécution n'est revendiqué.
+- **Limites restantes** : le chat et la voix utilisent le même moteur TTS segmenté uniquement si `parle.js` est chargé ; la sortie n'expose pas encore une métadonnée structurée `answer_language`. La reconnaissance vocale reste dépendante du navigateur et de la langue sélectionnée. Aucun test microphone, mobile, qualité linguistique ou réponse cloud n'a été effectué.
+- Aucun Worker n'a été déployé ; aucune modification de `main`, PR, secret, configuration, ressource ou donnée Supabase n'a été effectuée.
+- **Suite Lot 614** : exécuter réellement les tests de contrat et du lecteur RAG dans un checkout, puis construire une matrice de validation Darija arabe/Arabizi, mélange Darija-allemand/français, arabe standard et questions scolaires. Comparer réponses et TTS sur les deux canaux avant toute livraison.
+- Messenger reste non terminé : tests E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
