@@ -410,8 +410,6 @@ ok(sbjs.includes("rpc('msg_invite_send_by_key',{p_student_key:studentKey})"), 'c
 ok(msgjs.includes('msgStudentSearch(query,12)') && msgjs.includes('msgInviteSend(recipientKey)'), 'recherche reliée à l’envoi de demande de consentement par jeton opaque');
 ok(msgjs.includes('ابحث عن زميل لطلب محادثة خاصة'), 'interface de découverte en arabe');
 
-if (fail.length) { console.error('::error:: check-msg Lot 453 : ' + fail.length + ' échec(s)'); process.exit(1); }
-console.log('== check-msg Lot 453 : TOUT PASSE ==');
 // Lot 556 — justificatif scolaire privé obligatoire pour l'activation.
 ok(sbjs.includes("from('cartes-scolaires').upload") && sbjs.includes('carte_scolaire_path:cardPath'), 'dépôt carte scolaire dans le bucket privé et chemin enregistré au profil');
 ok(msgjs.includes('id="vfCard"') && msgjs.includes('msgUploadSchoolCard(cardFile)'), 'formulaire étudiant : justificatif obligatoire avant envoi');
@@ -419,3 +417,6 @@ ok(adminjs.includes("missing.push('البطاقة المدرسية')") && adminj
 ok(sbjs.includes('createSignedUrl(path,300)'), 'consultation par lien signé limité à 5 minutes');
 ok(idx.includes('msg.js?v=3529') && idx.includes('admin.js?v=3515') && idx.includes('supabase/supabase.js?v=3525'), 'versions des modules de vérification actualisées');
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.171'") && sw.includes("./msg.js?v=3529") && sw.includes("./admin.js?v=3515") && sw.includes("./supabase/supabase.js?v=3525"), 'précache et service worker synchronisés Lot 556');
+
+if (fail.length) { console.error('::error:: check-msg Lot 453 : ' + fail.length + ' échec(s)'); process.exit(1); }
+console.log('== check-msg Lot 453 : TOUT PASSE ==');
