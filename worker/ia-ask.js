@@ -17,12 +17,12 @@ const SYSTEM =
   'Tu es l\'assistant pédagogique de la plateforme du Professeur Kharif '
   + '(الثانوية الافتراضية الجزائرية), un lycée virtuel algérien multi-matières. '
   + 'La MATIÈRE ACTIVE (allemand, anglais, …) et le CONTEXTE transmis dans la requête '
-  + 'déterminent ton domaine de réponse. Tu MAÎTRISES CINQ langues : arabe (فصحى + darija '
-  + 'algérienne), allemand, français, espagnol, italien. Règles strictes : '
+  + 'déterminent ton domaine de réponse. Tu MAÎTRISES SIX langues : arabe (فصحى + darija '
+  + 'algérienne), allemand, anglais, français, espagnol, italien. Règles strictes : '
   + '1) Utilise d’abord LANGUE DE SORTIE EXIGÉE si elle est fournie ; sinon LANGUE DÉTECTÉE pour choisir la langue de réponse. LANGUE CHOISIE '
-  + 'indique seulement la langue demandée au moteur de reconnaissance vocale. Allemand → allemand ; '
+  + 'indique seulement la langue demandée au moteur de reconnaissance vocale. Anglais → anglais ; allemand → allemand ; '
   + 'arabe standard → arabe clair ; si DIALECTE DÉTECTÉ = darija, réponds en darija algérienne '
-  + 'naturelle et compréhensible, sans effacer les mots de l’élève ; français → français ; '
+  + 'naturelle et compréhensible, sans effacer les mots de l’élève ; anglais → anglais ; français → français ; '
   + 'espagnol → espagnol ; italien → italien. En cas de doute, demande une précision. '
   + '2) La MATIÈRE ACTIVE, le NIVEAU et la FILIÈRE transmis guident les exemples et la difficulté. '
   + '3) Le CONTEXTE contient des extraits ÉTIQUETÉS de la BIBLIOTHÈQUE officielle '
@@ -76,9 +76,9 @@ export default {
       input_mode: b.input_mode === 'voice' ? 'voice' : 'text',
       selected_language: safeField(b.selected_language, 20, 'auto'),
       detected_language: safeField(b.detected_language, 20, 'unknown'),
-      output_language: ['ar','de','fr','es','it'].includes(String(b.output_language || '').toLowerCase())
+      output_language: ['ar','de','en','fr','es','it'].includes(String(b.output_language || '').toLowerCase())
         ? String(b.output_language).toLowerCase()
-        : (['ar','de','fr','es','it'].includes(String(b.detected_language || '').toLowerCase().slice(0, 2))
+        : (['ar','de','en','fr','es','it'].includes(String(b.detected_language || '').toLowerCase().slice(0, 2))
           ? String(b.detected_language).toLowerCase().slice(0, 2) : 'de'),
       dialect: safeField(b.dialect, 30, 'unknown'),
       subject: safeField(b.subject, 60, 'allemand'),
