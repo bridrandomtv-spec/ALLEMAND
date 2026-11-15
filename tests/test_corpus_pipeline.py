@@ -158,6 +158,22 @@ class CorpusPipelineContract(unittest.TestCase):
             self.assertEqual(ignored, 1)
             self.assertEqual(copies, [])
 
+
+    def test_shared_index_merge_preserves_unmentioned_documents(self):
+        merged = contracts.fusionner_index_rag(
+            {"_meta": {}, "chunks": [
+                {"global_id": 7, "doc": "ancien", "n": 0, "texte": "ancien texte"},
+                {"global_id": 8, "doc": "remplace", "n": 0, "texte": "ancienne version"}
+            ]},
+            [{"global_id": 0, "doc": "remplace", "n": 0, "texte": "nouvelle version",
+              "page_start": 1, "page_end": 1, "source_sha256": "c" * 64}],
+            {"remplace"}
+        )
+        self.assertEqual([c["doc"] for c in merged["chunks"]], ["ancien", "remplace"])
+        self.assertEqual([c["global_id"] for c in merged["chunks"]], [0, 1])
+        self.assertEqual(merged["termes"]["ancien"], [0])
+        self.assertEqual(merged["termes"]["nouvelle"], [1])
+
     def test_empty_index_is_rejected(self):
         with self.assertRaises(ValueError):
             sharder.build_shards({"chunks": [], "termes": {}})
