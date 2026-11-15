@@ -9,6 +9,7 @@ def load_module(path, name):
 
 indexer = load_module("tools/indexer_pdf.py", "indexer_pdf")
 sharder = load_module("tools/sharder_index.py", "sharder_index")
+rights = load_module("tools/rights_metadata.py", "rights_metadata")
 
 class CorpusPipelineContract(unittest.TestCase):
     def test_pdf_indexer_keeps_biblio_catalogue_separate(self):
@@ -18,6 +19,32 @@ class CorpusPipelineContract(unittest.TestCase):
     def test_missing_license_is_not_an_authorized_default(self):
         self.assertNotIn("", indexer.LICENCES_AUTORISEES)
         self.assertNotIn("document utilisateur", indexer.LICENCES_AUTORISEES)
+
+    def test_license_label_alone_is_not_enough(self):
+        self.assertFalse(rights.valider_metadonnees({"licence": "production_propre"})[0])
+
+    def test_verified_author_declaration_is_accepted(self):
+        meta = {
+            "licence": "production_propre",
+            "source": "Cours rédigé par l'enseignant",
+            "titulaire_droits": "Auteur du cours",
+            "declarant": "Auteur du cours",
+            "date_declaration": "2026-11-15",
+            "declaration_droits": True,
+            "validation": {
+                "statut": "valide", "verificateur": "Responsable pédagogique",
+                "date": "2026-11-15", "reference_preuve": "declaration-interne-001"
+            }
+        }
+        self.assertTrue(rights.valider_metadonnees(meta)[0])
+
+    def test_missing_human_validation_is_rejected(self):
+        meta = {
+            "licence": "production_propre", "source": "cours",
+            "titulaire_droits": "auteur", "declarant": "auteur",
+            "date_declaration": "2026-11-15", "declaration_droits": True
+        }
+        self.assertFalse(rights.valider_metadonnees(meta)[0])
 
     def test_empty_index_is_rejected(self):
         with self.assertRaises(ValueError):
