@@ -204,6 +204,36 @@ class CorpusPipelineContract(unittest.TestCase):
                 self.assertEqual(stream.read(), '{"old":"index"}')
             self.assertEqual(os.listdir(tmp), ["corpus.json", "index.json"])
 
+    def test_multiformat_main_rolls_back_copied_sources_if_json_publish_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source_dir = os.path.join(tmp, "source")
+            destination = os.path.join(tmp, "published")
+            bdd = os.path.join(tmp, "bdd")
+            os.makedirs(source_dir)
+            os.makedirs(bdd)
+            with open(os.path.join(source_dir, "cours.txt"), "w", encoding="utf-8") as stream:
+                stream.write(" ".join(["contenu"] * 35))
+            with open(os.path.join(source_dir, "_cours.json"), "w", encoding="utf-8") as stream:
+                json.dump(self._metadata_authorisee(), stream)
+            corpus_path = os.path.join(bdd, "corpus.json")
+            index_path = os.path.join(bdd, "corpus_rag_index.json")
+            with open(corpus_path, "w", encoding="utf-8") as stream:
+                json.dump({"documents": []}, stream)
+            with open(index_path, "w", encoding="utf-8") as stream:
+                json.dump({"chunks": []}, stream)
+            with patch.object(ingest, "DESTINATION", destination), \
+                 patch.object(ingest, "CORPUS", corpus_path), \
+                 patch.object(ingest, "INDEX", index_path), \
+                 patch.object(ingest, "ecrire_json_transactionnel",
+                              side_effect=OSError("simulation échec publication JSON")):
+                with self.assertRaises(OSError):
+                    ingest.main(source_dir)
+            self.assertEqual(os.listdir(destination), [])
+            with open(corpus_path, encoding="utf-8") as stream:
+                self.assertEqual(json.load(stream), {"documents": []})
+            with open(index_path, encoding="utf-8") as stream:
+                self.assertEqual(json.load(stream), {"chunks": []})
+
     def test_transactional_json_write_creates_both_valid_artifacts(self):
         with tempfile.TemporaryDirectory() as tmp:
             first = os.path.join(tmp, "corpus.json")
