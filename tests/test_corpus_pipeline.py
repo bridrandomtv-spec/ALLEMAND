@@ -1,5 +1,12 @@
 import importlib.util
+import hashlib
+import json
+import os
+import sys
+import tempfile
+import types
 import unittest
+from unittest.mock import patch
 
 def load_module(path, name):
     spec = importlib.util.spec_from_file_location(name, path)
@@ -11,6 +18,7 @@ indexer = load_module("tools/indexer_pdf.py", "indexer_pdf")
 sharder = load_module("tools/sharder_index.py", "sharder_index")
 rights = load_module("tools/rights_metadata.py", "rights_metadata")
 contracts = load_module("tools/corpus_contracts.py", "corpus_contracts")
+ingest = load_module("tools/ingest_corpus.py", "ingest_corpus")
 
 class CorpusPipelineContract(unittest.TestCase):
     def test_pdf_indexer_keeps_biblio_catalogue_separate(self):
@@ -84,6 +92,71 @@ class CorpusPipelineContract(unittest.TestCase):
         bad = dict(chunk, page_end=3)
         with self.assertRaises(ValueError):
             sharder.build_shards({"chunks": [bad], "termes": {"alpha": [0]}})
+
+
+    def _metadata_authorisee(self):
+        return {
+            "licence": "production_propre", "source": "PDF de test synthétique",
+            "titulaire_droits": "Auteur du test", "declarant": "Auteur du test",
+            "date_declaration": "2026-11-15", "declaration_droits": True,
+            "validation": {"statut": "valide", "verificateur": "Test",
+                           "date": "2026-11-15", "reference_preuve": "fixture-test"}
+        }
+
+    def test_multiformat_ingestion_merges_catalogue_and_index(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = os.path.join(tmp, "cours.txt")
+            with open(source, "w", encoding="utf-8") as stream:
+                stream.write(" ".join(["contenu"] * 35))
+            with open(os.path.join(tmp, "_cours.json"), "w", encoding="utf-8") as stream:
+                json.dump(self._metadata_authorisee(), stream)
+            catalogue, index, ignores, copies = ingest.construire(
+                tmp, [{"id": "ancien", "titre": "Conservé"}])
+            self.assertEqual(ignores, 0)
+            self.assertIn("ancien", [d["id"] for d in catalogue])
+            self.assertEqual(len(copies), 1)
+            self.assertTrue(index["chunks"][0]["source_sha256"])
+            merged = ingest.fusionner_index(
+                {"_meta": {}, "chunks": [
+                    {"global_id": 0, "doc": "ancien", "n": 0, "texte": "alpha beta"},
+                    {"global_id": 1, "doc": catalogue[-1]["id"], "n": 0, "texte": "ancienne version"}
+                ]}, index["chunks"], {catalogue[-1]["id"]})
+            self.assertEqual(merged["chunks"][0]["doc"], "ancien")
+            self.assertEqual(len(merged["chunks"]), 2)
+            self.assertEqual([c["global_id"] for c in merged["chunks"]], [0, 1])
+
+    def test_pdf_ingestion_preserves_page_and_sha256_end_to_end(self):
+        class Page:
+            def __init__(self, value): self.value = value
+            def extract_text(self): return self.value
+        class Reader:
+            def __init__(self, _path):
+                self.pages = [Page(" ".join(["pageun"] * 15)),
+                              Page(" ".join(["pagedeux"] * 15))]
+        fake_pypdf = types.SimpleNamespace(PdfReader=Reader)
+        with tempfile.TemporaryDirectory() as tmp:
+            source = os.path.join(tmp, "manuel.pdf")
+            with open(source, "wb") as stream: stream.write(b"synthetic-pdf-fixture")
+            with open(os.path.join(tmp, "_manuel.json"), "w", encoding="utf-8") as stream:
+                json.dump(self._metadata_authorisee(), stream)
+            with patch.dict(sys.modules, {"pypdf": fake_pypdf}):
+                catalogue, index, ignores, _ = ingest.construire(tmp, [])
+            self.assertEqual(ignores, 0)
+            self.assertEqual([c["page_start"] for c in index["chunks"]], [1, 2])
+            self.assertEqual([c["page_end"] for c in index["chunks"]], [1, 2])
+            expected = hashlib.sha256(b"synthetic-pdf-fixture").hexdigest()
+            self.assertEqual(catalogue[0]["source_sha256"], expected)
+            self.assertTrue(all(c["source_sha256"] == expected for c in index["chunks"]))
+
+    def test_unauthorized_multiformat_batch_does_not_build_chunks(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with open(os.path.join(tmp, "sans_droits.txt"), "w", encoding="utf-8") as stream:
+                stream.write(" ".join(["texte"] * 30))
+            docs, index, ignored, copies = ingest.construire(tmp, [{"id": "stable", "titre": "Stable"}])
+            self.assertEqual(docs, [{"id": "stable", "titre": "Stable"}])
+            self.assertEqual(index["chunks"], [])
+            self.assertEqual(ignored, 1)
+            self.assertEqual(copies, [])
 
     def test_empty_index_is_rejected(self):
         with self.assertRaises(ValueError):
