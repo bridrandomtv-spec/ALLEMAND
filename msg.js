@@ -9,7 +9,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   try{ if(typeof VIEWS!=='undefined' && VIEWS.indexOf('msg')===-1) VIEWS.push('msg'); }catch(e){}
   try{ if(typeof NAVSOLO_TOP!=='undefined' && NAVSOLO_TOP.indexOf('msg')===-1) NAVSOLO_TOP.push('msg'); }catch(e){}
-  var state = { conv:null, me:null, authEpoch:0, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, recoveryAttempts:0, updateRefreshTimer:null, inviteCh:null, inviteEpoch:0, inviteRecoveryTimer:null, inviteRecoveryAttempts:0, inviteNeedsRecovery:false, inviteViewActive:false, names:{}, peers:{} };
+  var state = { conv:null, me:null, authEpoch:0, ch:null, channelEpoch:0, renderEpoch:0, recoveryTimer:null, recoveryAttempts:0, updateRefreshTimer:null, inviteCh:null, inviteEpoch:0, inviteRecoveryTimer:null, inviteRecoveryAttempts:0, inviteNeedsRecovery:false, inviteViewActive:false, verificationPage:0, names:{}, peers:{} };
   var authClient = null, authSubscription = null;
   function bindAuthLifecycle(client){
     if(!client || !client.auth || typeof client.auth.onAuthStateChange!=='function' || authClient===client) return;
@@ -254,7 +254,8 @@
       state.ch = ch;
     }catch(e){ state.ch = null; }
   }
-  async function renderList(){
+  async function renderList(verificationPage){
+    if(Number.isFinite(Number(verificationPage))) state.verificationPage = Math.max(0,Math.floor(Number(verificationPage)));
     var renderEpoch = ++state.renderEpoch;
     closeChannel();
     closeInviteChannel();
@@ -397,10 +398,18 @@
             '</div></div>';
         }).join('');
       }
-      var vq = await window.SB.msgVerificationQueue();
+      var vq = await window.SB.msgVerificationQueue(state.verificationPage,50);
       if(renderEpoch!==state.renderEpoch) return;
+      var verificationTotal = vq && vq.ok ? Math.max(0,Number(vq.total)||0) : 0;
+      var verificationPages = Math.max(1,Math.ceil(verificationTotal/50));
+      if(vq && vq.ok && state.verificationPage>=verificationPages && state.verificationPage>0){
+        state.verificationPage=verificationPages-1;
+        return renderList();
+      }
       window.__msgVerificationRows = vq && vq.ok && Array.isArray(vq.queue) ? vq.queue : [];
-      h += '<div class="msg-modrow"><b>طلبات التحقق من الهوية قيد الانتظار:</b> ' + (vq.ok ? vq.queue.length : '⛔') + '</div>';
+      var verificationFirst = verificationTotal ? state.verificationPage*50+1 : 0;
+      var verificationLast = Math.min((state.verificationPage+1)*50,verificationTotal);
+      h += '<div class="msg-modrow"><b>طلبات التحقق من الهوية قيد الانتظار:</b> ' + (vq.ok ? verificationTotal+' · عرض '+verificationFirst+'–'+verificationLast+' · الصفحة '+(state.verificationPage+1)+'/'+verificationPages : '⛔ '+esc(vq.err||'تعذّر تحميل الطلبات')) + '</div>';
       if(vq.ok && vq.queue.length){
         h += vq.queue.map(function(q){
           var missingVerification = verificationMissing(q);
@@ -413,6 +422,9 @@
             '<button class="msg-modbtn" data-mod="verif-ok" data-uid="' + q.id + '" type="button"' + (canVerify ? '' : ' disabled title="أكمل معلومات الهوية المدرسية أولاً"') + '>✔ تأكيد</button>' +
             '<button class="msg-modbtn" data-mod="verif-no" data-uid="' + q.id + '" type="button">⛔ رفض</button></div></div>';
         }).join('');
+      }
+      if(vq && vq.ok){
+        h += '<div class="msg-modbtns"><button class="msg-modbtn" data-verif-page="'+Math.max(0,state.verificationPage-1)+'" type="button"'+(state.verificationPage===0?' disabled':'')+'>السابق</button><span>صفحة '+(state.verificationPage+1)+' من '+verificationPages+'</span><button class="msg-modbtn" data-verif-page="'+(state.verificationPage+1)+'" type="button"'+(state.verificationPage+1>=verificationPages?' disabled':'')+'>التالي</button></div>';
       }
       h += '<div class="msg-modrow"><b>إنشاء مجموعة رسمية</b> (الولاية · المستوى · الشعبة): </div>' +
            '<div class="msg-modform"><input id="mgWil" placeholder="رقم الولاية (مثال: 16)" maxlength="2"><select id="mgNiv"><option value="1AS">1AS</option><option value="2AS">2AS</option><option value="3AS">3AS</option></select><input id="mgFil" placeholder="الشعبة (مثال: علوم)"><button class="msg-modbtn" data-mod="creategroup" type="button">➕ إنشاء</button></div>';
@@ -533,7 +545,7 @@
     });
   });
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-mod]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-verif-page],[data-mod]') : null;
     if(!t) return;
     var msgAct = t.getAttribute('data-msg-act');
     if(msgAct){
@@ -668,6 +680,8 @@
       }).catch(function(error){ if(state.authEpoch!==verificationIdentityEpoch) return; t.disabled=false; window.alert('⛔ '+String(error && error.message || error)); });
       return;
     }
+    var verificationPage = t.getAttribute('data-verif-page');
+    if(verificationPage !== null){ renderList(Number(verificationPage)); return; }
     var mod = t.getAttribute('data-mod');
     if(mod){
       if(mod==='verif-doc'){
