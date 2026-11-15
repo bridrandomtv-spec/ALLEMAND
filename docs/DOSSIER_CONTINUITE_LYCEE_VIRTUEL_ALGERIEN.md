@@ -2933,3 +2933,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Vérification Edge Function : `school-card-retention` active en version 2, `verify_jwt=false` avec authentification par secret dédié ; job `school-card-retention-daily` actif à 02:17 UTC. Le dernier passage cron observé le 15 novembre 2026 a le statut `succeeded` (appel HTTP planifié exécuté, 1 ligne retournée).
 - Vérification agrégée de `profiles` : 0 demande `en_attente` au moment du contrôle. Aucun identifiant de profil, document ou statut individuel n’a été extrait ou modifié.
 - GitHub `main` : dernier commit observé `d1389a128b95fda3123be8ff49c3ee356bbc4df7`. La consultation des workflows PR et des statuts combinés pour ce SHA ne retourne aucun résultat ; cela ne constitue ni une réussite ni un échec CI. Aucun déploiement Cloudflare ni test navigateur n’est confirmé.
+
+- Cache après correction juridique : `legal.js?v=3512` dans `index.html` ; Service Worker `dz-de-v3.185.0.0.176`. Commits : `976f5fd9dcbc79762fe20652532be895388534e6` (HTML), `2ba7037df568a6714b72f7f6c3f3bf0c47ed6bc6` (SW).
