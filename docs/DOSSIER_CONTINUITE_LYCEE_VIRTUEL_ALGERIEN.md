@@ -3770,3 +3770,13 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Limite : les tests Node natifs, GitHub Actions, les réponses réelles du LLM/Worker, le microphone et la voix TTS ne sont pas validés. Le Worker n'a pas été déployé.
 - Aucun merge, aucune modification de `main`, aucun changement Supabase/Auth/RLS/schéma/données/paiement/secrets. Messenger reste ouvert : les scénarios Realtime E2E A/B/C et reconnexion restent à exécuter.
 - Commits du lot : `536192e4e4e013b80c20c9dd914802a5baec36ae`, `d58e22d985b05c5acdc6ab270bc36623f4cda0bd`, `fcc38d89ff97bfb533c74f34df45988ba23d1a38`, `dede5e2075cc027ae9768e2b71090eeab3f74374`, documentation de lot `1040c502a125de35915f9bc653845508cf0bd949`.
+
+
+## Lot 621 — correction du routage du dialecte demandé (15 novembre 2026)
+
+- Défaut : la voix envoyait toujours `dialect: detectDialect(q)`. La valeur `unknown`, pourtant non vide, écrasait le repli vers QUST dans `ia.js`; une consigne « réponds en darija » sans marqueur lexical supplémentaire pouvait alors être classée Fusha par le Worker.
+- Correction : seules les valeurs explicites reconnues (`darija/arabizi`, `fusha/msa`) sont prioritaires. `unknown` déclenche le repli vers QUST et les lexiques ; les formulations explicites `بالدارجة`, `بالدزيرية`, `بالجزائرية`, `en darija`, `darija`, `derdja` forcent le style de sortie darija.
+- Tests : assertions ajoutées dans `tests/tutor_language_matrix.mjs` et `tests/tutor_request_contract.mjs`; cas DAR-007 ajouté à la matrice (question anglaise demandant une réponse en darija).
+- Validation : parsing JSON de la matrice PASS ; vérification des ancres avant écriture. Tests Node et GitHub Actions non exécutés ici ; aucune validation runtime Worker/TTS n'est revendiquée.
+- Aucun merge, déploiement, changement Supabase/Auth/RLS/schéma/données/paiement ; `main` reste inchangée.
+- Commits : `d119cbe438a843107683d9ec860ca73769166d8e`, `7b243f38db3bc9059e805596a152512ce3e21e42`, `4c0df9c566acd9d48859cdf21566f3226d224a78`, `6cc4c50aafdb26765adecb3bfc442f35939185a0` ; rapport de lot `74117319f9b7eeb47956f3ea5b7e28bbb8f460a8`.
