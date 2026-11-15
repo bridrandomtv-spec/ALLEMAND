@@ -22,8 +22,26 @@
       if(el && txt) el.textContent = txt;
     }catch(e){}
   }
-  window.reponseIA = async function(q){
-    q = String(q == null ? '' : q).trim();
+  window.reponseIA = async function(input){
+    const req = input && typeof input === 'object' && !Array.isArray(input)
+      ? input : { raw_text: input };
+    const q = String(req.raw_text == null ? (req.q || '') : req.raw_text).trim();
+    const normalized = String(req.normalized_text || q).trim();
+    const inputMode = req.input_mode === 'voice' ? 'voice' : 'text';
+    const selectedLanguage = String(req.selected_language || 'auto').slice(0, 20);
+    const detectedLanguage = String(req.detected_language || '').slice(0, 20);
+    const dialect = String(req.dialect || 'unknown').slice(0, 30);
+    let schoolContext = { subject: 'allemand', level: 'tous', track: '' };
+    try{
+      if(window.CONTEXT && typeof window.CONTEXT.ctx === 'function'){
+        const c = window.CONTEXT.ctx();
+        if(c && typeof c === 'object') schoolContext = {
+          subject: String(c.subject || 'allemand').slice(0, 60),
+          level: String(c.level || 'tous').slice(0, 30),
+          track: String(c.track || '').slice(0, 60)
+        };
+      }
+    }catch(e){}
     if(!q) return '';
     const fn = window.reponsePedagogique;
     /* ── HTML → texte parlable ─────────────────────────────────────────
@@ -66,6 +84,12 @@
     /* ── langue de la question : une question allemande/fr/es/it ne doit JAMAIS
        recevoir une réponse arabe du moteur local ── */
     const QL = (function(s){
+      const declared = String(detectedLanguage || '').toLowerCase();
+      if(declared.indexOf('ar') === 0) return 'ar';
+      if(declared.indexOf('de') === 0) return 'de';
+      if(declared.indexOf('fr') === 0) return 'fr';
+      if(declared.indexOf('es') === 0) return 'es';
+      if(declared.indexOf('it') === 0) return 'it';
       s = String(s || '');
       if(/[\u0600-\u06FF]/.test(s)) return 'ar';
       if(/[\u00e4\u00f6\u00fc\u00df]/i.test(s) || /\b(der|die|das|und|nicht|ich|du|ist|ein|eine|wo|wie|was|wer|bist|geht|hallo)\b/i.test(s)) return 'de';
@@ -121,19 +145,34 @@
     window.__IA_PROXY = proxy;
     if(!proxy) return sortieFaible(local, 'proxy-absent (config.json)');
     try{
-      let ctx = '';
+      let ctx = 'CONTEXTE SCOLAIRE : matière=' + schoolContext.subject
+        + ' ; niveau=' + schoolContext.level + ' ; filière=' + (schoolContext.track || 'non précisée') + '.\n';
       try{
         if(window.BIBLIO && BIBLIO.context){
-          const bc = await BIBLIO.context(q, 2000);
-          if(bc) ctx = 'BIBLIOTHÈQUE OFFICIELLE (extraits vérifiés, cite la source) :\n' + bc + '\n\n';
+          const bc = await BIBLIO.context(q, 1800);
+          if(bc) ctx += 'BIBLIOTHÈQUE (extraits documentaires) :\n' + bc + '\n\n';
         }
       }catch(e){}
-      if(local && local.indexOf('لا أعرف') === -1) ctx += 'MOTEUR LOCAL (déjà vérifié) :\n' + local.slice(0, 900);
+      /* Le RAG allemand enrichit le prompt ; il ne remplace pas l'explication du professeur. */
+      if(schoolContext.subject === 'allemand' && window.RAG && typeof window.RAG.cherche === 'function'){
+        try{
+          const hit = await window.RAG.cherche(q);
+          if(hit && hit.texte) ctx += 'EXTRAIT RAG — document ' + String(hit.doc || 'non identifié')
+            + ' ; score ' + String(hit.score || '') + ' :\n' + String(hit.texte).slice(0, 900) + '\n\n';
+        }catch(e){}
+      }
+      if(local && local.indexOf('لا أعرف') === -1) ctx += 'RÉPONSE LOCALE :\n' + local.slice(0, 700);
       ctx = ctx.slice(0, 3000);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
         headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ q: q, text: q, ctx: ctx }) }, 25000);
+        body: JSON.stringify({
+          q: q, text: q, raw_text: q, normalized_text: normalized,
+          input_mode: inputMode, selected_language: selectedLanguage,
+          detected_language: QL || detectedLanguage || 'unknown', dialect: dialect,
+          subject: schoolContext.subject, level: schoolContext.level,
+          track: schoolContext.track, ctx: ctx
+        }) }, 25000);
       if(!r.ok){
         let e = {};
         try{ e = await r.json(); }catch(_){}
