@@ -28,8 +28,8 @@
   function dialogueOwner(){
     try{
       const s = window.AUTH && typeof window.AUTH.session === 'function' ? window.AUTH.session() : null;
-      return s && s.user ? String(s.user) : 'anonymous';
-    }catch(e){ return 'anonymous'; }
+      return s && s.user ? String(s.user) : '';
+    }catch(e){ return ''; }
   }
   function prepareDialogue(){
     const owner = dialogueOwner();
@@ -37,8 +37,8 @@
     return owner;
   }
   function rememberTurn(owner, question, answer){
+    if(!owner || !question || !answer) return;
     if(owner !== DIALOGUE_OWNER){ DIALOGUE = []; DIALOGUE_OWNER = owner; }
-    if(!question || !answer) return;
     DIALOGUE.push({ role:'user', content:String(question).slice(0, 600) });
     DIALOGUE.push({ role:'assistant', content:String(answer).slice(0, 1000) });
     if(DIALOGUE.length > 8) DIALOGUE = DIALOGUE.slice(-8);
