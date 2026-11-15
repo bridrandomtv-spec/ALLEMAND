@@ -160,7 +160,7 @@
   const IT_WORDS = /\b(il|lo|gli|che|di|io|tu|lei|sono|grazie|ciao|perch\u00e9|questa|quello)\b/i;
   const LCODE = { ar:'ar-SA', de:'de-DE', fr:'fr-FR', es:'es-ES', it:'it-IT', en:'en-US' };
   const DARJA_AR = /(?:واش|علاش|كيفاش|راني|راك|راكي|بزاف|ما\s*فهمتش|مفهمتش|وش|علاه|نحب|حاب|حابة|تاع|درك|كاين|ماكانش|صح)/i;
-  const DARJA_LATIN = /(?:^|\\s)(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|ma\\s*fhemtch|nheb|hab|habi|ta3|dorka|kayn|makanch|saha)(?:$|\\s)/i;
+  const DARJA_LATIN = /(?:^|\s)(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|ma\s*fhemtch|nheb|hab|habi|ta3|dorka|kayn|makanch|saha)(?:$|\s)/i;
   function detectDialect(t){
     const s = String(t || '');
     return DARJA_AR.test(s) || DARJA_LATIN.test(s) ? 'darija' : 'unknown';
