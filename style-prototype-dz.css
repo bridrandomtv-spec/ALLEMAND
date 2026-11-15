@@ -18264,6 +18264,13 @@ html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-searchbar,
 /* ADM-VERIF-2 · file de vérification : contraste fort et pagination lisible */
 section[data-view="admin"] #admVerificationCard.adm-verification-card{
   color:#fff!important;
+  background:#10291e!important;
+  border-color:#315b42!important;
+}
+section[data-view="admin"] #admVerificationCard.adm-verification-card > .ad-hero{
+  background:#173b2b!important;
+  border:1px solid rgba(255,255,255,.2)!important;
+  color:#fff!important;
 }
 section[data-view="admin"] #admVerificationCard.adm-verification-card h2,
 section[data-view="admin"] #admVerificationCard.adm-verification-card p,
