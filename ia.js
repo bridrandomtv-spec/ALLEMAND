@@ -38,6 +38,13 @@
   }
   function rememberTurn(owner, question, answer){
     if(!owner || !question || !answer) return;
+    /* Une réponse asynchrone arrivée après logout/changement de compte
+       ne doit jamais ressusciter l'historique de l'ancienne session. */
+    if(owner !== dialogueOwner()){
+      DIALOGUE = [];
+      DIALOGUE_OWNER = dialogueOwner() || null;
+      return;
+    }
     if(owner !== DIALOGUE_OWNER){ DIALOGUE = []; DIALOGUE_OWNER = owner; }
     DIALOGUE.push({ role:'user', content:String(question).slice(0, 600) });
     DIALOGUE.push({ role:'assistant', content:String(answer).slice(0, 1000) });
