@@ -62,6 +62,12 @@ export default {
     const q = String(b.raw_text || b.q || b.text || raw || '').slice(0, 600);
     const normalized = String(b.normalized_text || q).slice(0, 600);
     const ctx = String(b.ctx || '').slice(0, 3000);
+    /* Historique fourni par le client : fenêtre courte, rôles stricts, taille bornée. */
+    const history = Array.isArray(b.history) ? b.history.slice(-8).map(item => {
+      if(!item || (item.role !== 'user' && item.role !== 'assistant')) return null;
+      const content = String(item.content || '').slice(0, 1000);
+      return content ? { role: item.role, content: content } : null;
+    }).filter(Boolean) : [];
     const safeField = (v, max, fallback) =>
       String(v == null || v === '' ? fallback : v).replace(/[\r\n]/g, ' ').slice(0, max);
     const meta = {
@@ -91,7 +97,9 @@ export default {
       + (ctx ? '\n\nCONTEXTE DOCUMENTAIRE ET PÉDAGOGIQUE :\n' + ctx : '')
       + '\n\nQUESTION ORIGINALE DE L’ÉLÈVE :\n' + q
       + (normalized !== q ? '\n\nNORMALISATION TECHNIQUE (ne remplace pas la formulation originale) :\n' + normalized : '');
-    const msgs = [{ role:'system', content: SYSTEM }, { role:'user', content: userContent }];
+    const msgs = [{ role:'system', content: SYSTEM }]
+      .concat(history)
+      .concat([{ role:'user', content: userContent }]);
     try{
       let rep = '';
       if(env.AI){
