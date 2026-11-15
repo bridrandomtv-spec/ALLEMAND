@@ -3934,3 +3934,20 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - La preuve et le périmètre vérifiables de l'autorisation documentaire restent à rattacher aux métadonnées avant ingestion réelle.
 - Aucun changement de `main`, fusion, déploiement ou modification Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste ouverte et indépendante.
 - Suite : Lot 632 — sécuriser le pipeline multi-format, ajouter un test PDF synthétique bout en bout, exécuter les tests sur runner et vérifier la restitution titre/page/source dans l'interface RAG.
+
+
+---
+
+## Lot 632 — ingestion incrémentale et diagnostic CI (2026-11-15)
+
+- `tools/ingest_corpus.py` a été refondu pour les formats PDF/DOCX/TXT/MD : validation des sidecars, SHA-256 source, extraction page-aware pour PDF, conservation du catalogue existant et fusion incrémentale de l'index RAG.
+- Les chunks des documents non concernés sont conservés ; les `global_id` et postings lexicaux sont reconstruits. Les lots sans chunk autorisé sont refusés.
+- `tools/corpus_contracts.py` expose maintenant `fusionner_index_rag`. `tools/indexer_pdf.py` l'utilise aussi pour ne pas supprimer les chunks des autres documents lors d'un import PDF partiel.
+- Les chunks préexistants mal structurés sont refusés, pas ignorés silencieusement.
+- Tests ajoutés dans `tests/test_corpus_pipeline.py` : fusion multi-format avec catalogue/index existants, conservation des documents non concernés, fixture PDF synthétique de deux pages avec vérification page/SHA-256, refus d'un lot sans droits.
+- Nouveau workflow `.github/workflows/corpus-contract-tests.yml` : tests seuls, permissions lecture seule, aucun traitement documentaire réel ni déploiement.
+- Le workflow `.github/workflows/indexer.yml` ne se déclenche plus à la modification du script ou du workflow ; l'indexation reste manuelle ou déclenchée par un changement de documents dans `docs/archive/documents/**`.
+- Diagnostic GitHub Actions : les exécutions `43763688204`, `43763794404`, `43763827591` et `43763126164` sont marquées en échec. Les jobs inspectés renvoient `runner_id: 0`, aucun nom de runner et `steps: []`; les journaux de job sont indisponibles (404 BlobNotFound). Cela indique que les jobs n'ont pas obtenu de runner ; aucun résultat de test n'est donc certifié.
+- Aucun PDF réel extrait/OCRisé/indexé ; aucun index de production généré. Aucun changement de `main`, fusion, déploiement, Supabase/Auth/RLS/schéma/données/paiement/secrets ou PR #17.
+- Rapport : `docs/LOTS/LOT_632_INGESTION_INCREMENTALE_ET_DIAGNOSTIC_CI.md`.
+- Suite : Lot 633 — rétablir les runners, exécuter les tests, puis unifier les chemins d'ingestion et renforcer le remplacement transactionnel des artefacts.
