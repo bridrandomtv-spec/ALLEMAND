@@ -32,7 +32,7 @@
     zh: n => '欢迎你，' + n.n + '！你是' + n.r + '。请用德语、阿拉伯语或达尔贾语提问——我会用语音回答。',
     tr: n => 'Hoş geldin, ' + n.n + ' ! Sen bir ' + n.r + '. Almanca, Arapça veya Darica sor — sesimle cevaplarım.'
   };
-  let ON = false, rec = null, lang = 'ar', speaking = false, processing = false, listeningGuard = false, NS = 0, CONT = false, UT = 0, LASTSP = { t: 0, txt: '' }, LASTQ = { q: '', t: 0 }, LASTLANG = '';
+  let ON = false, rec = null, lang = 'ar', speaking = false, processing = false, listeningGuard = false, VOICE_TURN = 0, NS = 0, CONT = false, UT = 0, LASTSP = { t: 0, txt: '' }, LASTQ = { q: '', t: 0 }, LASTLANG = '';
 
   /* ══════════ MOTEUR DE VOIX : FÉMININE NATURELLE prioritaire (mobile + laptop) ══════════ */
   const FEM = /female|femme|woman|frau|weiblich|dame|sara|anna|lena|hedda|katja|vicky|marlene|amelie|clara|zira|hazel|susan|hortense|julie|paulina|monica|lucia|valentina|elsa|petra|gitta|vicki|josephine|amira|nora/i;
@@ -351,6 +351,7 @@
       if(q === LASTQ.q && Date.now() - LASTQ.t < 3000) return;
       LASTQ = { q: q, t: Date.now() };
       processing = true;
+      const turn = ++VOICE_TURN;
       LASTLANG = detectLang(q) || lang;
       setStatus('⏳ ' + q.slice(0, 40));
       const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
@@ -378,7 +379,7 @@
         catch(e){ try{ console.warn('[parle] reponseIA :', e); }catch(_){}} 
       }
       clearInterval(compteur);
-      if(!ON){ processing = false; return; }
+      if(!ON || turn !== VOICE_TURN){ if(turn === VOICE_TURN) processing = false; return; }
       if(rep && typeof rep === 'object') rep = rep.texte || rep.reponse || '';
       rep = String(rep || '');
       if(!rep || rep.indexOf('لا أعرف') !== -1){
@@ -438,6 +439,7 @@
     speak(hello, (LANGS.filter(l => l[0] === lang)[0] || LANGS[0])[2]);
   }
   function off(){
+    VOICE_TURN++;
     ON = false;
     try{ if(rec) rec.stop(); }catch(e){}
     try{ speechSynthesis.cancel(); }catch(e){}
