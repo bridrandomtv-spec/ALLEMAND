@@ -43,6 +43,17 @@
     DIALOGUE.push({ role:'assistant', content:String(answer).slice(0, 1000) });
     if(DIALOGUE.length > 8) DIALOGUE = DIALOGUE.slice(-8);
   }
+  /* Effacement immédiat au logout et à chaque changement réel de compte.
+     Un simple rafraîchissement de profil du même utilisateur ne vide pas le fil. */
+  try{
+    document.addEventListener('dz:auth', function(ev){
+      const next = ev && ev.detail && ev.detail.user ? String(ev.detail.user) : '';
+      if(!next || next !== DIALOGUE_OWNER){
+        DIALOGUE = [];
+        DIALOGUE_OWNER = next || null;
+      }
+    });
+  }catch(e){}
   window.reponseIA = async function(input){
     const req = input && typeof input === 'object' && !Array.isArray(input)
       ? input : { raw_text: input };
