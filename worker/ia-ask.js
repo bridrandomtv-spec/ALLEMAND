@@ -67,7 +67,7 @@ export default {
     /* Historique fourni par le client : fenêtre courte, rôles stricts, taille bornée. */
     const u = b.understanding && typeof b.understanding === 'object' ? b.understanding : {};
     const allowedIntents = ['compare','summarize','correct_exercise','translate','practice_exercise','explain_rule','explain_word','find_page','explain_lesson'];
-    const allowedLanguages = ['ar','arabizi','darija','fr','de','en'];
+    const allowedLanguages = ['ar','arabizi','darija','fr','de','en','es','it'];
     const understanding = {
       normalized_question: String(u.normalized_question || '').slice(0, 600),
       languages: Array.isArray(u.languages) ? u.languages.filter(x => allowedLanguages.includes(String(x))).slice(0, 6) : [],
