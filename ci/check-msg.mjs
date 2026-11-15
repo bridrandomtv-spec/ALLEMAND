@@ -38,13 +38,14 @@ ok(verifyStart >= 0 && verifyEnd > verifyStart &&
    verifyMethod.includes(".range(from,to)") &&
    verifyMethod.includes(".order('id',{ascending:true})"),
    'file de vérification paginée avec total et ordre stable');
+ok(adminjs.includes("if(!/^[0-9]{1,20}$/.test(String(x.matricule||'').trim())) missing.push('رقم التسجيل')") && adminjs.includes('data-status="verifie"') && adminjs.includes('disabled title="أكمل معلومات الهوية المدرسية أولاً"'), 'activation bloquée dans l’interface si informations scolaires absentes');
 ok(adminjs.includes('data-adm-verif-page') &&
    adminjs.includes('renderVerificationQueue(Number(verifyPage))') &&
    adminjs.includes('var pageSize = 50'),
    'navigation de la file par pages de 50 demandes');
 ok(adminCss.includes('#admVerificationCard.adm-verification-card') &&
-   adminCss.includes('color:#fff!important'),
-   'contraste blanc renforcé dans la file de vérification');
+   adminCss.includes('background:var(--p)!important') && adminCss.includes('background:var(--p2)') && adminCss.includes('adm-verif-missing'),
+   'palette standard et alerte des champs manquants dans la file de vérification');
 ok(!/\.from\('msg_/.test(msgjs), 'vue msg.js : aucune écriture directe dans msg_*');
 ok(idx.includes('data-view="msg"') && idx.includes('msg.js?v='), 'vue + script câblés dans index.html');
 ok(app.includes('msg-nav-shortcut') && app.includes('data-go=\"msg\"'), 'Messenger affiché comme raccourci desktop direct');
@@ -70,7 +71,7 @@ ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'ré
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
 ok(idx.includes('msg.js?v=3528'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.169'") && sw.includes("./msg.js?v=3528") && sw.includes("./style-prototype-dz.css?v=203"), 'service worker et précache Messenger synchronisés');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.170'") && sw.includes("./msg.js?v=3528") && sw.includes("./style-prototype-dz.css?v=204"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
