@@ -2891,6 +2891,21 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Versions cache prévues : `legal.js?v=3511`, Service Worker `dz-de-v3.185.0.0.173`. Les contrôles CI de cache sont alignés.
 - Pas d’essai avec une vraie carte, pas de demande réelle modifiée, pas de déploiement Cloudflare. Le premier test de purge a été sans cible éligible ; le parcours de suppression d’un fichier arrivé à échéance reste à tester sur un objet factice.
 
-### Point restant obligatoire avant mise en production
-- Ajouter une table privée de recours avec date d’ouverture et date de clôture, une politique d’accès stricte et une vérification de non-recours dans la fonction de purge. Tant que cela n’existe pas, la clause de suspension en cas de recours est une règle publiée mais non automatisée ; soit implémenter ce contrôle avant publication, soit retirer cette promesse de la notice.
-\n### Addendum Lot 557 — suspension contrôlée en cas de recours\n- Migration `school_card_retention_appeal_holds` : table `private.school_card_retention_holds` non exposée, accessible uniquement au rôle de service ; RPC `school_card_retention_set_hold` et `school_card_retention_release_hold` pour les administrateurs ou modérateurs habilités sur la wilaya du profil ; RPC de lecture du hold réservée à `service_role`.\n- Le modérateur peut depuis la fiche élève enregistrer un motif de 10 à 500 caractères et suspendre la purge de 1 à 90 jours ; la suspension est renouvelable. Le bouton de levée est aussi fourni. Les vérifications d’autorisation sont côté serveur, pas seulement côté interface.\n- Edge Function `school-card-retention` déployée en version 2 : vérifie chaque éventuel hold avant suppression ; en cas d’erreur lors de la vérification, elle conserve le fichier et signale l’échec (fail-closed).\n- Notice juridique et page privacy révisées : la suspension de purge dépend désormais de l’enregistrement effectif par un modérateur habilité, et non d’une détection automatique du dépôt d’un recours.\n- UI cache : `admin.js?v=3517`, `supabase/supabase.js?v=3526`, SW `dz-de-v3.185.0.0.174`.\n
+### Point de vigilance avant mise en production
+- La suspension de purge est disponible par action d’un modérateur depuis la fiche élève. Elle n’est pas déclenchée automatiquement par le simple dépôt d’un recours : le modérateur doit rechercher le profil, consigner un motif et enregistrer le délai. Vérifier que le personnel concerné applique ce geste dès réception d’un recours.
+
+### Addendum Lot 557 — suspension contrôlée en cas de recours
+- Migration `school_card_retention_appeal_holds` : table `private.school_card_retention_holds` non exposée, accessible uniquement au rôle de service ; RPC `school_card_retention_set_hold` et `school_card_retention_release_hold` pour les administrateurs ou modérateurs habilités sur la wilaya du profil ; RPC de lecture du hold réservée à `service_role`.
+- Le modérateur peut depuis la fiche élève enregistrer un motif de 10 à 500 caractères et suspendre la purge de 1 à 90 jours ; la suspension est renouvelable. Le bouton de levée est aussi fourni. Les vérifications d’autorisation sont côté serveur, pas seulement côté interface.
+- Edge Function `school-card-retention` déployée en version 2 : vérifie chaque éventuel hold avant suppression ; en cas d’erreur lors de la vérification, elle conserve le fichier et signale l’échec (fail-closed).
+- Notice juridique et page privacy révisées : la suspension de purge dépend désormais de l’enregistrement effectif par un modérateur habilité, et non d’une détection automatique du dépôt d’un recours.
+- UI cache : `admin.js?v=3517`, `supabase/supabase.js?v=3526`, SW `dz-de-v3.185.0.0.174`.
+
+
+### Finalisation Lot 557 — fichiers de référence et cache
+- Les migrations déjà appliquées à Supabase sont désormais versionnées dans le dépôt : `20261115005416_school_card_private_verification.sql`, `20261115010910_school_card_retention_30_days.sql`, `20261115011056_school_card_retention_appeal_holds.sql`.
+- Le code source de l’Edge Function version 2 est archivé dans `supabase/functions/school-card-retention/index.ts`.
+- La page autonome `privacy.html` indique maintenant la conservation de 30 jours et la suspension manuelle de 1 à 90 jours par un modérateur habilité.
+- Test manuel du worker version 2 via pg_net : HTTP 200, `ok:true`, `scanned:0`, `deleted:0`, `held:0`, `failed:0`. Aucun document réel n’a été supprimé.
+- Cache final : `legal.js?v=3511`, `admin.js?v=3517`, `supabase/supabase.js?v=3526`, Service Worker `dz-de-v3.185.0.0.175`.
+- La syntaxe de `supabase/supabase.js`, `admin.js`, `legal.js`, `sw.js` est validée. L’exécution complète de CI reste à confirmer sur un runner GitHub fonctionnel.
