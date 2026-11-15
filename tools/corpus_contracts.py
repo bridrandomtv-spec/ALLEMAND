@@ -63,3 +63,27 @@ def construire_chunk(global_id, doc_id, numero, texte, sha256, page_start=None, 
             raise ValueError("plage de page invalide : un chunk doit rester dans une seule page")
         chunk.update({"page_start": page_start, "page_end": page_end})
     return chunk
+
+
+def fusionner_index_rag(existant, entrants, docs_remplaces):
+    """Fusionne l'index par document et reconstruit les IDs et postings."""
+    if not isinstance(existant, dict) or not isinstance(existant.get("chunks"), list):
+        raise ValueError("index RAG existant invalide")
+    remplaces = set(docs_remplaces)
+    conserves = [dict(c) for c in existant["chunks"]
+                 if isinstance(c, dict) and c.get("doc") not in remplaces]
+    combines = conserves + [dict(c) for c in entrants]
+    chunks, termes = [], {}
+    for gid, chunk in enumerate(combines):
+        if not isinstance(chunk.get("doc"), str) or not chunk["doc"]:
+            raise ValueError("chunk sans document pendant la fusion")
+        if not isinstance(chunk.get("texte"), str) or not chunk["texte"].strip():
+            raise ValueError("chunk sans texte pendant la fusion")
+        chunk["global_id"] = gid
+        chunks.append(chunk)
+        for terme in set(re.findall(r"[A-Za-zÀ-ÿ\\u0600-\\u06ff]{3,}", chunk["texte"].lower())):
+            termes.setdefault(terme, []).append(gid)
+    meta = dict(existant.get("_meta", {}))
+    meta.update({"version": "2.1.0", "nb_chunks": len(chunks),
+                 "nb_termes": len(termes), "source": "fusion incrémentale"})
+    return {"_meta": meta, "chunks": chunks, "termes": termes}
