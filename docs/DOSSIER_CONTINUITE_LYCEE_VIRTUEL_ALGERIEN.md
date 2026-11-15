@@ -4093,3 +4093,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Rapport : `docs/LOTS/LOT_642_CORPUS_RAG_SYNTHETIQUE_ISOLE.md`.
 - Aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucune ingestion réelle, aucun déploiement, aucune fusion.
 - Suite Lot 643 : tests runtime du lecteur RAG (génération, complétude, postings, fallback), puis contrat de réponse sourcée / absence de source / hors corpus.
+
+
+## Lot 643 — contrat de génération des shards testé réellement en VM (2026-11-16)
+
+- Audit du harnais `tests/rag_loader_runtime.mjs` : les manifestes synthétiques ne portaient pas `generation` et les shards valides n'avaient pas `_generation`, alors que le lecteur `rag.js` exige les deux. Les tests nominaux risquaient donc de tester le fallback au lieu du chemin shardé.
+- Correction du helper de manifeste et des fixtures de shards avec une génération SHA-256 synthétique cohérente.
+- Le scénario de meilleur score entre shards s'exécute maintenant sans index complet de secours ; il démontre le chemin nominal si le test passe.
+- Ajout d'un cas de génération de shard divergente, qui doit déclencher le fallback. Le harnais compte 7 scénarios runtime.
+- Le workflow `.github/workflows/tutor-audit.yml` déclenche sur la modification de ce fichier et exécute le harnais. Le statut combiné consulté pour le commit de correction était vide ; le récupérateur de runs disponible ne liste que les runs PR. Exécution non attestée ici, aucun PASS revendiqué.
+- Aucun index réel, PDF ou shard du fonds modifié ; aucun déploiement ni changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucune fusion.
+- Rapport : `docs/LOTS/LOT_643_VALIDATION_GENERATION_RUNTIME_RAG.md`.
+- Suite Lot 644 : audit du contrat de réponse Worker/RAG, références sourcées et abstention explicite quand aucune source documentaire suffisante n'existe.
