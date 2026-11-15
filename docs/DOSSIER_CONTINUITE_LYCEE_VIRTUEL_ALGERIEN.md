@@ -3004,3 +3004,11 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le clic de pagination repasse par le rendu asynchrone existant, avec contrôle de génération avant publication des lignes, afin qu’une réponse obsolète ne remplace pas la file courante.
 - Cache Messenger porté à `msg.js?v=3533`, Service Worker à `dz-de-v3.185.0.0.182`, précache synchronisé. Contrôle CI statique ajouté pour la pagination.
 - Aucun changement SQL, RLS, Storage, Auth, permission, compte, profil ou document réel. La CI et le déploiement Cloudflare ne sont pas déclarés réussis.
+
+
+## Lot 568 — alignement de l’accès à la modération Messenger (15 novembre 2026)
+- L’audit croisé du code client et des fonctions Supabase actives a révélé que Messenger affichait le panneau de modération à tout profil `prof` ou `admin`, alors que la fonction serveur active `msg_is_moderator()` exige `is_admin()` ou la permission `messaging.moderate`. Un professeur sans cette permission voyait donc une interface qu’il ne pouvait pas utiliser, avec des requêtes refusées par RLS.
+- Le panneau est désormais visible pour le profil administrateur reconnu par le serveur, ou pour un professeur dont `admMyPerms()` confirme explicitement `messaging.moderate`. La réponse asynchrone est protégée par `renderEpoch` pour éviter de publier un panneau après un changement de vue/session.
+- Le contrôle ne modifie aucune permission ni règle RLS. Les permissions actuelles dans la base restent la source d’autorité.
+- Cache Messenger porté à `msg.js?v=3534`, Service Worker à `dz-de-v3.185.0.0.183`, précache synchronisé. Assertion CI ajoutée.
+- Aucun compte, rôle, permission, profil, message, invitation ou dossier réel modifié. CI et déploiement non revendiqués.
