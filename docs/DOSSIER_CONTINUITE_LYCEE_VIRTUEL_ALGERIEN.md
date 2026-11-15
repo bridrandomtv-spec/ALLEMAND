@@ -3551,3 +3551,22 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun contenu BIBLIO, corpus, index, shard, manifeste, Worker, secret, configuration, workflow CI, ressource ou donnée Supabase n'a été modifié. Le changement applicatif candidat se limite au lecteur RAG.
 - **Suite Lot 609** : préparer des tests runtime isolés du lecteur avec serveur/fetch simulé : manifeste v2 valide, shard absent, JSON invalide, posting orphelin, IDs dupliqués entre shards, index complet de repli présent/absent, et sélection du meilleur score global. Ensuite, reprendre le contrat partagé chat/voix et la conservation du texte brut, de la langue, de la darija et du contexte pédagogique.
 - Messenger reste non terminé : scénarios E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
+
+
+## Lot 609 — scénarios runtime isolés préparés pour le lecteur RAG (15 novembre 2026)
+
+- Création de `tests/rag_loader_runtime.mjs`, qui charge le véritable `rag.js` dans un contexte Node VM avec `document` et `fetch` simulés. Le test ne nécessite ni navigateur réel, ni accès réseau, ni corpus de production.
+- Six scénarios sont définis :
+  1. le meilleur score doit être retenu même s'il se trouve dans le dernier shard (contrôle de l'ancien arrêt anticipé) ;
+  2. un shard HTTP absent doit déclencher le repli vers un index complet valide ;
+  3. un posting orphelin doit déclencher le repli ;
+  4. un identifiant global répété entre deux shards doit déclencher le repli ;
+  5. un manifeste v1 incompatible doit déclencher le repli vers l'index complet ;
+  6. si ni shards valides ni index complet ne sont disponibles, le résultat doit être `null`.
+- Le script utilise l'API publique `window.RAG.cherche` et des fixtures JSON synthétiques ; il ne modifie aucun artefact du dépôt.
+- Commit du harnais runtime : `869bcf7d6569775ef67846ae6a0d14c4cc6ecaa2`.
+- **État d'exécution : préparé, non exécuté.** Aucun résultat PASS/FAIL runtime n'est annoncé ; il faut lancer `node tests/rag_loader_runtime.mjs` depuis un checkout complet. La CI consultée ne fournit toujours aucun statut exploitable dans cette session.
+- Le harnais statique du Lot 608 reste distinct : il contrôle des motifs source et ne prouve pas le comportement à l'exécution.
+- Aucun test navigateur réel, aucune requête HTTP, aucun index/shard réel, aucun corpus, aucun Worker, secret, configuration, workflow CI ou ressource Supabase n'a été touché.
+- Suite après exécution : si les six scénarios passent, ajouter les cas de JSON invalide et de manifeste dont la somme des chunks est erronée ; puis reprendre le pipeline commun chat/voix, qui est le chantier déterminant pour obtenir un professeur vocal cohérent.
+- Messenger reste non terminé : scénarios E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
