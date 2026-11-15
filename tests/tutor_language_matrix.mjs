@@ -11,6 +11,9 @@ const worker = read('worker/ia-ask.js');
 const matrix = JSON.parse(read('tests/tutor_matrix.json'));
 const subjects = JSON.parse(read('assets/bdd/subjects.json'));
 const matieres = JSON.parse(read('assets/bdd/matieres.json'));
+const englishPages = JSON.parse(read('assets/bdd/english_pages.json'));
+const englishDevoirs = JSON.parse(read('assets/bdd/english_devoirs.json'));
+const englishMalakhiss = JSON.parse(read('assets/bdd/english_malakhiss.json'));
 
 function extractRegex(source, name) {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -56,6 +59,13 @@ assert.match(ia, /declared.indexOf\('en'\) === 0/, 'anglais absent de la détect
 assert.match(ia, /anglais:'en', espanol:'es', español:'es', italien:'it'/, 'correspondance matière/langue absente');
 assert.match(ia, /in English\|en anglais\|بالإنجليزية/, 'consigne de sortie anglaise absente');
 assert.match(ia, /en: 'I did not fully understand/, 'message de secours anglais absent');
+assert.match(ia, /schoolContext.subject === 'allemand' && typeof fn === 'function'/, 'le moteur local allemand doit être isolé des autres matières');
+assert.match(ia, /schoolContext.subject === 'anglais'[\s\S]*?englishContext\(q\)/, 'les ressources anglaises existantes ne sont pas raccordées au tuteur');
+assert.match(ia, /if\(schoolContext.subject === 'allemand'\)[\s\S]*?BIBLIO.context/, 'BIBLIO allemande doit être limitée à la matière allemande');
+assert.match(worker, /Pour l\\'anglais, l\\'espagnol et l\\'italien[\s\S]*?explication générale/, 'règle de réponse sans source pour les matières linguistiques absente');
+assert.ok(Object.keys(englishPages.pages || {}).length >= 10, 'pages du corpus anglais absentes ou trop peu nombreuses');
+assert.ok((englishDevoirs.items || []).length >= 1, 'devoirs anglais absents');
+assert.ok((englishMalakhiss.malakhiss || []).length >= 1, 'fiches anglaises absentes');
 assert.match(voice, /const EN_VOTE =/, 'vote de langue anglaise absent du TTS');
 assert.match(voice, /en > Math.max\(de, fr, es, it\)/, 'anglais absent du vote TTS');
 assert.match(voice, /en:'en-US'/, 'voix anglaise par défaut absente');
@@ -83,3 +93,4 @@ console.log('PASS contrat de langue de sortie et repli TTS');
 console.log('PASS ' + positivesEnglish.length + ' formulations anglaises reconnues et ' + negativesEnglish.length + ' faux positifs rejetés');
 console.log('PASS anglais partiel et espagnol/italien programmés dans les registres de matières');
 console.log('PASS espagnol et italien référencés dans les parcours langues 2AS/3AS');
+console.log('PASS ressources anglaises pages/devoirs/fiches reliées au tuteur sans contamination allemande');
