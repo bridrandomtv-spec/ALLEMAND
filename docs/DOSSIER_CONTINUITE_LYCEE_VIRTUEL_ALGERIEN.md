@@ -3859,3 +3859,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Rapport : `docs/LOTS/LOT_626_INVENTAIRE_CORPUS_ET_DIAGNOSTIC_RUNNERS.md`.
 - Aucun PDF indexé, aucun OCR, aucun shard produit ; aucun changement main, aucune fusion, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste ouverte et séparée.
 - Suite recommandée : confirmation documentaire des droits, sidecars explicites, OCR sur échantillon autorisé avec contrôle qualité, diagnostic runner minimal puis exécution des tests et génération RAG.
+
+
+---
+
+## Lot 627 — séparation langue de reconnaissance et langue de réponse (2026-11-15)
+
+- Bug : `parle.js` utilisait `detectLang(q) || lang`, ce qui transformait la langue sélectionnée pour la reconnaissance du navigateur en fausse langue détectée de la question quand la détection échouait.
+- Correction : `LASTLANG = detectLang(q)` ; la requête transmet `detected_language: LASTLANG || ''`, `selected_language: 'auto'` et séparément `recognition_language: lang`. Le titre du sélecteur vocal précise qu'il règle la langue de reconnaissance.
+- Effet attendu : si la langue du texte n'est pas reconnue, `ia.js` peut utiliser ses heuristiques Darija/Arabizi, le script et le contexte de la matière, au lieu d'hériter automatiquement de la langue du microphone.
+- Test de non-régression modifié dans `tests/tutor_request_contract.mjs` pour vérifier les trois champs distincts et interdire l'ancien repli `detectLang(q) || lang`.
+- Syntaxe de `parle.js` analysée avec le moteur JS disponible ; les tests Node natifs et GitHub Actions ne sont pas certifiés exécutés (problème de runner documenté Lot 626).
+- Limite : la Web Speech API nécessite toujours une langue de reconnaissance configurée ; cette correction ne crée pas une auto-détection ASR multilingue universelle.
+- Rapport : `docs/LOTS/LOT_627_SEPARATION_LANGUE_RECONNAISSANCE_REPONSE.md`.
+- Aucun changement Worker, Supabase, `main`, déploiement ou fusion ; PR #17 reste ouverte et indépendante.
