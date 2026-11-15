@@ -59,7 +59,7 @@ Les fichiers sans sidecar ou avec une autre valeur sont ignorés. La valeur perm
 
 - Les fichiers sources et workflows ont été modifiés sur la branche d'audit.
 - Les tests Python ont été ajoutés et sont appelés par le workflow indexer avant l'ingestion.
-- L'exécution locale de Python et des tests, ainsi que les résultats GitHub Actions, ne sont pas confirmés dans cet environnement.
+- Après les commits, les workflows GitHub Actions indexer (run 43756829069), sharder (43756820944) et audit tuteur (43756821072) sont apparus en échec. Chaque job s'est terminé en 2 à 3 secondes avec une liste d'étapes vide ; les logs de job ne sont pas disponibles (404). Cela indique un échec avant l'exécution des étapes, mais la cause exacte n'est pas exposée. Il ne faut donc pas interpréter ces runs comme un échec des tests Python ou du code. L'exécution locale de Python n'a pas été faite.
 - Aucun PDF source n'a été réindexé ; aucun artefact documentaire n'a été généré artificiellement.
 - Le traitement OCR des scans est temporairement désactivé dans ce pipeline corrigé : les PDF sans couche texte sont ignorés plutôt que d'être ajoutés comme documents vides. L'OCR sera réintroduit avec des tests et un contrôle de qualité explicite.
 - La construction d'un index complet de production attend des documents autorisés munis de leurs sidecars de métadonnées. Le manifeste actuel n'est pas remplacé par un manifeste vide.
