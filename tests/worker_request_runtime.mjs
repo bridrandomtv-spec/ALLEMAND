@@ -108,6 +108,19 @@ assert.equal(refusedUnit.data.abstained, true);
 assert.equal(refusedUnit.data.abstention_reason, 'rag_scope_unsupported');
 assert.equal(modelCalls, callsBeforeAbstention, 'l’unité non vérifiée ne doit pas atteindre le modèle');
 
+const refusedUnverifiedSource = await ask({
+  raw_text: 'Explique la page 4',
+  output_language: 'fr',
+  subject: 'allemand',
+  rag_source_status: 'unverified',
+  rag_scope_type: 'page',
+  rag_scope_value: 4,
+  rag_scope_status: 'verified'
+});
+assert.equal(refusedUnverifiedSource.data.abstained, true);
+assert.equal(refusedUnverifiedSource.data.abstention_reason, 'rag_source_unverified');
+assert.equal(modelCalls, callsBeforeAbstention, 'une portée annoncée vérifiée ne suffit pas sans provenance vérifiée');
+
 console.log('PASS Worker : page divergente et unité non indexée sont refusées avant tout appel au modèle');
 
 console.log('PASS Worker /ask : question brute, contexte RAG, QUST et langue de sortie transmis');
