@@ -95,6 +95,11 @@ assert.match(ia, /if\(answerLanguage === 'ar' && !\//, 'contrôle arabe appliqu�
 for (const cue of [/بالدارجة/, /en français/, /auf deutsch/, /en español/, /in italiano/, /بالعربية/]) assert.ok(cue.test(ia), 'consigne explicite de langue absente : ' + cue);
 assert.match(ia, /const fixLang = s => \(answerLanguage !== 'ar'/, 'filtre de réponse locale non aligné sur la langue de sortie');
 
+// Lot 621 — une valeur 'unknown' envoyée par la voix ne masque pas QUST.
+assert.match(ia, /requestedDialect === 'darija' \|\| requestedDialect === 'arabizi'/, 'normalisation dialecte explicite absente');
+assert.match(ia, /requestedDialect === 'fusha' \|\| requestedDialect === 'msa'/, 'normalisation Fusha explicite absente');
+assert.match(ia, /understanding && understanding\.dialect === 'darija'/, 'le dialecte QUST doit rester prioritaire sur unknown');
+assert.match(ia, /بالدارجة\|بالدزيرية\|بالجزائرية\|en darija\|darija\|derdja/, 'une demande explicite de sortie en darija doit définir le style');
 // Lot 620 — langue de sortie et style dialectal sont deux dimensions distinctes.
 const darjaCorpus = JSON.parse(read('assets/bdd/darja.json'));
 assert.match(worker, /meta\.output_style = meta\.output_language === 'ar'/, 'style arabe calculé séparément de la langue');
