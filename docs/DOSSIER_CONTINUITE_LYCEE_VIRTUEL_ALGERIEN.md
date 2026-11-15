@@ -2877,3 +2877,19 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le clic sur « ouvrir la carte scolaire » ouvre désormais une fenêtre immédiatement pendant l’interaction utilisateur, puis y redirige vers le lien signé après son obtention. Cela évite le blocage fréquent des fenêtres asynchrones par les navigateurs ; la fenêtre est fermée si la création du lien échoue.
 - Commit `admin.js` : `545dd697b367fd86b9a63aeb9326d88d15d88407`.
 - Cache : `admin.js?v=3516`, Service Worker `dz-de-v3.185.0.0.172`. Assertions de cache `check-msg.mjs` et `check-public-portal.mjs` alignées.
+
+## Lot 557 — confidentialité et purge automatique des cartes scolaires (15 novembre 2026)
+- Déploiement Supabase Edge Function `school-card-retention` version 1, `verify_jwt=false` mais authentification propre par secret aléatoire transmis dans l’en-tête `x-school-card-retention`; la fonction valide ce secret par RPC réservé au rôle `service_role`. La clé de service n’est jamais intégrée au code client ou au dépôt.
+- Secret de déclenchement généré côté PostgreSQL avec `extensions.gen_random_bytes(32)` et stocké dans Supabase Vault sous `school_card_retention_token`; seule la fonction cron lit le secret au moment de l’appel.
+- Activation de `pg_cron` dans `pg_catalog` et `pg_net`; job `school-card-retention-daily` actif chaque jour à 02:17 UTC. Il appelle la fonction Edge.
+- La fonction traite au plus 100 cartes par passage dont le profil est `verifie` ou `rejete` et dont `verif_at` remonte à au moins 30 jours. Elle supprime le fichier via Storage API (`storage.from(...).remove`), puis efface le chemin du profil au moyen d’une RPC service_role bornée au profil, au chemin attendu et à l’âge de 30 jours. Aucun objet n’est supprimé via SQL.
+- Le trigger `profiles_verif_guard()` conserve la barrière d’activation et autorise uniquement le vidage du chemin par `service_role` après 30 jours sur statut final, sans changement du statut, de la date de décision, du matricule ou de la section.
+- Vérification réelle de la fonction par appel `pg_net` manuel : HTTP 200, réponse `ok:true`, `scanned:0`, `deleted:0`, `failed:0`. Aucun fichier étudiant n’a été supprimé pendant ce test.
+- Contrôles SQL : extensions `pg_cron`, `pg_net`, `supabase_vault` présentes ; job actif ; secret présent dans Vault ; RPC `SECURITY DEFINER` avec `search_path` fixé ; exécution refusée à `anon` et `authenticated`.
+- Politique affichée : carte conservée 30 jours après acceptation ou rejet ; si un recours documenté est ouvert avant échéance, la suppression doit être suspendue jusqu’à clôture, puis exécutée sous 7 jours. Important : le mécanisme actuel ne dispose pas encore d’un registre de recours et ne suspend donc pas automatiquement la purge en cas de recours. Ne pas présenter cette suspension comme techniquement appliquée avant ajout de ce registre.
+- Le code juridique `legal.js` et la page autonome `privacy.html` sont mis à jour pour décrire les données, la finalité, les personnes habilitées, l’URL signée 5 minutes et le délai de conservation.
+- Versions cache prévues : `legal.js?v=3511`, Service Worker `dz-de-v3.185.0.0.173`. Les contrôles CI de cache sont alignés.
+- Pas d’essai avec une vraie carte, pas de demande réelle modifiée, pas de déploiement Cloudflare. Le premier test de purge a été sans cible éligible ; le parcours de suppression d’un fichier arrivé à échéance reste à tester sur un objet factice.
+
+### Point restant obligatoire avant mise en production
+- Ajouter une table privée de recours avec date d’ouverture et date de clôture, une politique d’accès stricte et une vérification de non-recours dans la fonction de purge. Tant que cela n’existe pas, la clause de suspension en cas de recours est une règle publiée mais non automatisée ; soit implémenter ce contrôle avant publication, soit retirer cette promesse de la notice.
