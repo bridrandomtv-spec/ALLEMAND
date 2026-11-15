@@ -3,12 +3,28 @@
     "id": "allemand",
     "name": "Allemand",
     "slug": "allemand",
-    "status": "implemented"
+    "status": "implemented",
+    "language": "de"
   },
   {
     "id": "anglais",
     "name": "Anglais",
     "slug": "anglais",
-    "status": "partial"
+    "status": "partial",
+    "language": "en"
+  },
+  {
+    "id": "espanol",
+    "name": "Espagnol",
+    "slug": "espanol",
+    "language": "es",
+    "status": "planned"
+  },
+  {
+    "id": "italien",
+    "name": "Italien",
+    "slug": "italien",
+    "language": "it",
+    "status": "planned"
   }
 ]
