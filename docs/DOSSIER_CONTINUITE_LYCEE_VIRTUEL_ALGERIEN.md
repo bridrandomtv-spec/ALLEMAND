@@ -4042,3 +4042,16 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Tests de ce lot non attestés comme exécutés ; aucune CI verte revendiquée. Aucun changement main, fusion, déploiement, Supabase/Auth/RLS/schéma/données/paiements/secrets.
 - Rapport : `docs/LOTS/LOT_638_SEPARATION_INDEX_BIBLIO_RAG.md`.
 - Suite : Lot 639 — obtenir un runner CI effectif, examiner les preuves de droits document par document, produire un index RAG de test depuis les seules ressources autorisées et bâtir un harnais observable pour les réponses réelles du tuteur.
+
+
+## Lot 639 — périmètre d'exploitation explicite avant ingestion (2026-11-16)
+
+- Le validateur `tools/rights_metadata.py` exige maintenant `usages_autorises` en plus du type de licence, de la provenance, de la déclaration et de la validation humaine.
+- Usages minimaux du pipeline : `hebergement_source`, `extraction_texte`, `indexation_rag`, `restitution_extraits`. Les usages `ocr`, `traduction` et `redistribution_document` sont distincts ; aucun n'est accordé par défaut. La redistribution intégrale ne découle pas d'un droit d'indexation ou de restitution d'extraits.
+- Trois tests supplémentaires couvrent l'absence de périmètre, le périmètre incomplet/inconnu et la non-implication de la redistribution. Les fixtures de tests synthétiques ont été adaptées.
+- État documentaire inchangé : 239 fiches de catalogue avec des étiquettes hétérogènes, 293 PDF dans l'inventaire Lot 629 toujours à qualifier et sans preuve individuelle renseignée ; aucun PDF/OCR/ingestion réel effectué.
+- `corpus_rag_index.json` reste absent et le manifeste de shards indique zéro shard. Aucun index RAG opérationnel n'est revendiqué.
+- Tests non exécutés localement ; le statut réel des runners Actions doit être contrôlé séparément. Aucun résultat PASS n'est annoncé.
+- Rapport : `docs/LOTS/LOT_639_PERIMETRE_DROITS_INGESTION.md`.
+- Aucun changement main, fusion, déploiement, Supabase/Auth/RLS/schéma/données/paiements/secrets.
+- Suite : Lot 640 — vérifier les runs Actions, renforcer les tests de refus d'ingestion, qualifier les preuves de droits, puis préparer un corpus RAG de test isolé et un harnais de requêtes/réponses observables pour le tuteur.
