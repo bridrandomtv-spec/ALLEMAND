@@ -45,6 +45,10 @@ for (const item of matrix.cases) {
 }
 assert.match(ia, /explicitOutputLanguage/, 'langue de sortie explicite absente du tuteur');
 assert.match(voice, /voteLang\(ph\) \|\| preferred \|\| 'de'/, 'repli de langue TTS absent');
+assert.match(ia, /function sortieFaible\(local, cause\)[\s\S]*?if\(answerLanguage === 'de'\)[\s\S]*?else if\(answerLanguage === 'fr'\)/, 'messages de secours non alignés sur la langue de sortie');
+assert.match(ia, /explicitOutputLanguage && explicitOutputLanguage !== QL && !reponseCourteValide/, 'une réponse locale ne doit pas contourner une consigne explicite de langue');
+assert.match(ia, /explicitOutputLanguage && explicitOutputLanguage !== QL\)\) \? loc : ''/, 'un extrait local de langue incompatible ne doit pas être ajouté au secours');
+assert.match(ia, /if\(answerLanguage === 'ar' && !\/\[\\u0600-\\u06FF\]\//, 'contrôle arabe appliqué à la langue de sortie et non à la langue de la question');
 
 console.log('PASS lexiques Darija/Arabizi identiques entre chat et voix');
 console.log('PASS ' + positivesLatin.length + ' exemples Arabizi reconnus et ' + negativesLatin.length + ' faux positifs rejetés');
