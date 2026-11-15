@@ -3844,3 +3844,18 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 
 - Runs observés après les commits : indexer `43756829069`, sharder `43756820944`, audit tuteur `43756821072` — tous en échec avant étapes, jobs de 2–3 secondes et tableau d'étapes vide. Les logs détaillés répondent 404 ; la cause précise n'est donc pas confirmée. Ne pas conclure à un échec du code ou des tests.
 - Les trois workflows ont bien été déclenchés sur `audit/lot-603-corpus-contract-tests`, pas sur `main`. Les artefacts RAG ne sont pas générés tant qu'un run effectif et des PDF autorisés ne sont pas disponibles.
+
+
+---
+
+## Lot 626 — inventaire documentaire, droits et diagnostic des runners CI (2026-11-15)
+
+- Arbre Git : 1 461 chemins ; 293 PDF au total. 264 PDF dans `docs/archive/documents/` (152 195 181 octets, environ 145,1 Mio) et 29 PDF à la racine hors du périmètre du workflow d'indexation.
+- Aucun sidecar JSON `_nom.json` n'existe dans l'arbre ; aucun document DOC/DOCX/TXT/MD dans le dossier d'archives. Aucun PDF n'est donc autorisé automatiquement par la nouvelle procédure. Aucune licence n'a été supposée.
+- `assets/bdd/corpus.json` conserve des libellés historiques tels que `production propre` et `usage pédagogique`, incompatibles avec les identifiants stricts de l'indexeur. Les droits doivent être vérifiés par document avant normalisation.
+- Aucun script/dépendance OCR dédiée détecté. `indexer_pdf.py` repose sur `pypdf` et ignore les PDF avec moins de 60 caractères extraits ; OCR non exécuté.
+- Actions : runs 43756829069 (indexer), 43756820944 (sharder), 43756821072 (audit tuteur) en échec ; les jobs indexer et audit ont `steps: []`, `runner_id: 0` et se terminent en quelques secondes. Les logs ne fournissent pas de message exploitable. Échec avant les étapes, probablement dans l'amorçage runner/environnement, mais cause exacte non établie. Le workflow minimal `diag-runner-provisioning.yml` existe mais n'a pas été déclenché.
+- `shards_manifest.json` reste v1.0.0 avec 0 shard/0 chunk ; `corpus_rag_index.json` n'est pas alimenté ; `corpus_index.json` BIBLIO est préservé. Tests Python non exécutés localement.
+- Rapport : `docs/LOTS/LOT_626_INVENTAIRE_CORPUS_ET_DIAGNOSTIC_RUNNERS.md`.
+- Aucun PDF indexé, aucun OCR, aucun shard produit ; aucun changement main, aucune fusion, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste ouverte et séparée.
+- Suite recommandée : confirmation documentaire des droits, sidecars explicites, OCR sur échantillon autorisé avec contrôle qualité, diagnostic runner minimal puis exécution des tests et génération RAG.
