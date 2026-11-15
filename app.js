@@ -1282,7 +1282,7 @@ async function sendChat(v){
       answered = true;
       if(soundOn && 'speechSynthesis' in window){
         /* Même moteur TTS segmenté que le professeur vocal ; repli si parle.js absent. */
-        if(typeof window.parleSpeak === 'function') window.parleSpeak(rep);
+        if(typeof window.parleSpeak === 'function') window.parleSpeak(rep, window.__IA_LAST_LANGUAGE || null);
         else {
           const utterance = new SpeechSynthesisUtterance(rep);
           utterance.lang = /[\u0600-\u06FF]/.test(rep) ? 'ar-SA'
