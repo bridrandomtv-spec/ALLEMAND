@@ -17,7 +17,7 @@ Ce script :
      OCR via tesseract SEULEMENT si installé et si le PDF est un scan),
   2. REFUSE tout document dont la licence est interdite (manuel éditeur, livre commercial),
   3. découpe en chunks (~1200 mots) pour la recherche et le RAG futur,
-  4. écrit assets/bdd/corpus.json (métadonnées) + assets/bdd/corpus_index.json
+  4. écrit assets/bdd/corpus.json (métadonnées) + assets/bdd/corpus_rag_index.json
      (index inversé plein-texte, utilisable côté client, hors-ligne),
   5. copie les fichiers originaux vers assets/corpus/<id>.<ext>.
 
@@ -90,7 +90,7 @@ def main(dossier):
         })
         for ci, ch in enumerate(chunks(texte)):
             cid = len(index["chunks"])
-            index["chunks"].append({"doc": did, "n": ci, "texte": ch})
+            index["chunks"].append({"global_id": cid, "doc": did, "n": ci, "texte": ch})
             for mot in set(re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06FF]{3,}", ch.lower())):
                 index["termes"].setdefault(mot, []).append(cid)
         os.makedirs("assets/corpus", exist_ok=True)
@@ -100,7 +100,7 @@ def main(dossier):
     json.dump({"_meta": {"version": "1.0.0", "nb": len(docs)}, "documents": docs},
               open("assets/bdd/corpus.json", "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
-    json.dump(index, open("assets/bdd/corpus_index.json", "w", encoding="utf-8"),
+    json.dump(index, open("assets/bdd/corpus_rag_index.json", "w", encoding="utf-8"),
               ensure_ascii=False)
     print("  corpus.json :", len(docs), "documents ·", len(index["chunks"]), "chunks")
 
