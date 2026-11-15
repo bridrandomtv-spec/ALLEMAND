@@ -567,7 +567,7 @@ async function msgRequestVerification(schoolRegistrationNumber, section, cardPat
   const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
   const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
   const number = String(schoolRegistrationNumber || '').trim();
-  if(!/^\d{1,20}$/.test(number) || !Number.isSafeInteger(Number(number)) || Number(number) < 1){
+  if(!/^\d{1,20}$/.test(number)){
     return { ok:false, err:'أدخل رقم تسجيل مدرسي صحيحًا.' };
   }
   if(!cardPath || typeof cardPath!=='string' || !cardPath.startsWith(u.id + '/')){
@@ -619,8 +619,10 @@ async function msgSetVerification(uid, statut){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
   const r = await c.from('profiles')
     .update({ verif_statut:statut, verif_by:u.id, verif_at:new Date().toISOString() })
-    .eq('id', uid).eq('verif_statut','en_attente');
+    .eq('id', uid).eq('verif_statut','en_attente')
+    .select('id').maybeSingle();
   if(r.error) return { ok:false, err:r.error.message };
+  if(!r.data) return { ok:false, err:'لم يعد الطلب قيد الانتظار أو لا تملك صلاحية تحديثه.' };
   return { ok:true };
 }
 Object.assign(window.SB, { msgMyVerification, msgUploadSchoolCard, msgRequestVerification, msgVerificationQueue, msgSchoolCardUrl, msgSetVerification });
