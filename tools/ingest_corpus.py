@@ -13,7 +13,8 @@ import re
 import shutil
 import sys
 
-LICENCES_AUTORISEES = {"production_propre", "domaine_public", "autorisation_ecrite", "licence_libre"}
+from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+
 TAILLE_CHUNK = 1200
 
 
@@ -46,10 +47,11 @@ def construire(dossier):
             continue
         with open(mp, encoding="utf-8") as f:
             meta = json.load(f)
-        licence = str(meta.get("licence", "")).strip().lower()
-        if licence not in LICENCES_AUTORISEES:
-            print("IGNORE (licence non autorisée):", nom)
+        ok_droits, raison_droits = valider_metadonnees(meta)
+        if not ok_droits:
+            print("IGNORE (droits non vérifiés):", nom, "-", raison_droits)
             continue
+        licence = str(meta.get("licence", "")).strip().lower()
         texte = extraire(chemin, ext).strip()
         if len(texte) < 20:
             print("IGNORE (contenu extrait insuffisant):", nom)
@@ -96,7 +98,8 @@ def main(dossier):
             continue
         with open(mp, encoding="utf-8") as f:
             meta = json.load(f)
-        if str(meta.get("licence", "")).strip().lower() in LICENCES_AUTORISEES:
+        ok_droits, _ = valider_metadonnees(meta)
+        if ok_droits:
             did = "c-" + hashlib.sha256(nom.encode("utf-8")).hexdigest()[:16]
             shutil.copy2(chemin, "assets/corpus/" + did + "." + ext)
     corpus = {"_meta": {"version": "2.0.0", "nb": len(docs)}, "documents": docs}
