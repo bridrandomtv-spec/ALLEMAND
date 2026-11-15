@@ -3494,3 +3494,20 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun changement n'a été effectué dans les données BIBLIO, le corpus publié, le Worker, les secrets, les ressources ou politiques Supabase, les workflows CI ou les réglages Cloudflare. Le code modifié reste un candidat sur la branche d'audit.
 - Messenger reste non terminé : les scénarios Realtime multi-comptes A/B/C, INSERT/UPDATE/suppression logique et reconnexion doivent encore être exécutés.
 - Suite recommandée : Lot 606 — ajouter et exécuter des tests de partition sur plusieurs shards, valider la fixture depuis un checkout complet et contrôler le contrat de provenance documentaire avant toute proposition de PR.
+
+
+## Lot 606 — tests de frontière des shards et rejet des index invalides (15 novembre 2026)
+
+- Extension de `tests/sharder_fixture.py` sur la branche isolée `audit/lot-603-corpus-contract-tests`.
+- Quatre scénarios sont maintenant définis :
+  1. conservation des postings globaux entre deux documents, avec compteurs locaux `n` qui se répètent ;
+  2. partition de 252 chunks à la limite de 250 : shard 00 doit contenir les IDs 0–249, shard 01 les IDs 250–251, et le posting [249, 250, 251] doit être réparti sans perte ;
+  3. rejet d'un `global_id` dupliqué ;
+  4. rejet d'un posting orphelin (ici 999), sans supprimer le shard précédent.
+- Les deux scénarios d'index invalide préparent un ancien fichier shard sentinelle dans le répertoire temporaire et vérifient qu'il reste intact après l'échec du script. Cela teste le garde-fou « valider avant suppression » du candidat.
+- Le test copie le véritable `tools/sharder_index.py` depuis le checkout du dépôt dans un répertoire temporaire ; il n'écrit jamais dans `assets/` du dépôt.
+- Commit du test Lot 606 : `99255a31cde1bc5b9554f8a7fbc831362b12d3f6`.
+- **État d'exécution : tests ajoutés, mais non exécutés depuis un checkout complet du dépôt.** Aucun résultat PASS/FAIL de la suite n'est revendiqué. La vérification de cette étape porte sur l'écriture du fichier sur GitHub et la cohérence statique des scénarios.
+- Aucun index RAG réel, shard publié, manifeste, corpus, fichier BIBLIO, Worker, secret, configuration, workflow CI, ressource ou donnée Supabase n'a été modifié. Aucun push sur `main`, aucune PR et aucun déploiement.
+- **Point technique à traiter ensuite** : le sharder valide les IDs et postings, mais il faut encore vérifier le contrat de chargement du manifeste et des shards dans `rag.js` (version, nombre attendu, erreurs réseau/JSON, IDs dupliqués entre shards et correspondance posting→chunk). Il faut également vérifier que le fallback legacy ne masque pas un artefact RAG absent ou incohérent.
+- Messenger demeure non terminé : les scénarios E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime n'ont pas été exécutés.
