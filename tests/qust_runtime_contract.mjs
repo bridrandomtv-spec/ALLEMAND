@@ -54,8 +54,13 @@ assert.ok(french.langs.includes('fr'), 'français non reconnu par QUST');
 assert.ok(!french.langs.includes('es'), 'une phrase française ne doit pas être classée espagnole');
 const spanish = window.QUST.understand('¿Cuál es la diferencia entre ser y estar?', null);
 assert.ok(spanish.langs.includes('es'), 'espagnol non reconnu par QUST');
+assert.equal(spanish.intent, 'compare', 'comparaison espagnole non reconnue');
 const italian = window.QUST.understand('Qual è la differenza tra essere e avere?', null);
 assert.ok(italian.langs.includes('it'), 'italien non reconnu par QUST');
+assert.equal(italian.intent, 'compare', 'comparaison italienne non reconnue');
+const frenchCompare = window.QUST.understand('Explique la différence entre weil et dass', null);
+assert.ok(frenchCompare.langs.includes('fr'));
+assert.equal(frenchCompare.intent, 'compare', 'comparaison française non reconnue');
 
 const ia = fs.readFileSync('ia.js', 'utf8');
 const worker = fs.readFileSync('worker/ia-ask.js', 'utf8');
