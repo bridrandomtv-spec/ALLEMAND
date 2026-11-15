@@ -158,6 +158,7 @@
        (['ar','de','fr','es','it'].includes(selectedPrefix) ? selectedPrefix : 'de'));
     window.__IA_LAST_LANGUAGE = answerLanguage;
     const FB = {
+      ar: 'لم أفهم سؤالك تمامًا. أعد صياغته أو حدّد ما تريد شرحه.',
       de: 'Ich habe das nicht verstanden. Frag mich nach Konjugation, Artikel, Plural, Zahlen oder Bedeutung — oder sag « Seite 11 », ich lese sie dir vor.',
       fr: 'Je n\u2019ai pas compris. Demande-moi une conjugaison, un article, un pluriel, un nombre ou un sens — ou dis « page 11 ».',
       es: 'No lo he entendido. Pregúntame por conjugación, artículo, plural, número o significado — o di « página 11 ».',
@@ -168,7 +169,7 @@
        citations du manuel) ne doivent plus faire jeter une bonne réponse */
     const arR = s => { const c = String(s || '').replace(/\s/g, ''); if(!c.length) return 0;
       return ((c.match(/[\u0600-\u06FF]/g) || []).length) / c.length; };
-    const fixLang = s => (QL && QL !== 'ar' && arR(s) > 0.5) ? (FB[QL] || s) : s;
+    const fixLang = s => (answerLanguage !== 'ar' && arR(s) > 0.5) ? (FB[answerLanguage] || s) : s;
     /* Quand le local est faible ET que le cloud échoue, on ne rend plus un
        « لا أعرف » muet : la cause exacte est nommée, dans la langue de la
        question, avec le geste qui débloque (bouton 🧠). */
@@ -177,10 +178,10 @@
       const utile = (loc && loc.indexOf('لا أعرف') === -1 && loc.length > 3) ? loc : '';
       const c = String(cause || '?');
       let msg;
-      if(QL === 'de') msg = '🤔 Ich habe die Frage nicht ganz verstanden. Grund: ' + c + '. Tipp: Konjugation, Artikel, Plural, Zahl, Bedeutung oder « Seite 11 ». Der 🧠-Knopf unten rechts testet das Cloud-Gehirn.';
-      else if(QL === 'fr') msg = '🤔 Je n’ai pas pleinement compris la question. Cause : ' + c + '. Essaie : conjugaison, article, pluriel, nombre, sens d’un mot, ou « page 11 ». Le bouton 🧠 en bas à droite teste le cerveau cloud.';
-      else if(QL === 'es') msg = '🤔 No entendí del todo la pregunta. Causa: ' + c + '. Prueba: conjugación, artículo, plural, número, significado o « página 11 ». El botón 🧠 prueba el cerebro cloud.';
-      else if(QL === 'it') msg = '🤔 Non ho capito bene la domanda. Causa: ' + c + '. Prova: coniugazione, articolo, plurale, numero, significato o « pagina 11 ». Il pulsante 🧠 testa il cervello cloud.';
+      if(answerLanguage === 'de') msg = '🤔 Ich habe die Frage nicht ganz verstanden. Grund: ' + c + '. Tipp: Konjugation, Artikel, Plural, Zahl, Bedeutung oder « Seite 11 ». Der 🧠-Knopf unten rechts testet das Cloud-Gehirn.';
+      else if(answerLanguage === 'fr') msg = '🤔 Je n’ai pas pleinement compris la question. Cause : ' + c + '. Essaie : conjugaison, article, pluriel, nombre, sens d’un mot, ou « page 11 ». Le bouton 🧠 en bas à droite teste le cerveau cloud.';
+      else if(answerLanguage === 'es') msg = '🤔 No entendí del todo la pregunta. Causa: ' + c + '. Prueba: conjugación, artículo, plural, número, significado o « página 11 ». El botón 🧠 prueba el cerebro cloud.';
+      else if(answerLanguage === 'it') msg = '🤔 Non ho capito bene la domanda. Causa: ' + c + '. Prova: coniugazione, articolo, plurale, numero, significato o « pagina 11 ». Il pulsante 🧠 testa il cervello cloud.';
       else msg = '🤔 لم أفهم سؤالك تمامًا. السبب : ' + c + '. جرّب : تصريف فعل، أداة، جمع، رقم، معنى كلمة، أو « الصفحة 11 ». الزر 🧠 أسفل اليمين يفحص الدماغ السحابي.';
       return utile ? msg + '\n\n📌 ' + utile : msg;
     }
@@ -188,7 +189,8 @@
        ou qu'elle porte un mot à prononcer. On ne la jette plus systématiquement. */
     const weak = !local || local.indexOf('لا أعرف') !== -1 ||
       (local.length < 25 && !reponseCourteValide) ||
-      (QL && QL !== 'ar' && arR(local) > 0.5 && !reponseCourteValide);
+      (answerLanguage !== 'ar' && arR(local) > 0.5 && !reponseCourteValide) ||
+      (explicitOutputLanguage && explicitOutputLanguage !== QL && !reponseCourteValide);
     if(!weak){
       window.__IA_WORD = speakWord;
       const finalLocal = fixLang(local);
@@ -267,7 +269,7 @@
       window.__IA_ERR = ''; statutIA('');
       if(j.rep && j.rep.length > 10){
         /* garde inverse : question arabe → jamais de réponse sans caractères arabes */
-        if(QL === 'ar' && !/[\u0600-\u06FF]/.test(j.rep)){
+        if(answerLanguage === 'ar' && !/[\u0600-\u06FF]/.test(j.rep)){
           const loc = String(local || '');
           return (loc && loc.indexOf('لا أعرف') === -1) ? loc :
             (window.__IA_ERR ? '🧠 تعذّر الوصول إلى الدماغ السحابي (' + String(window.__IA_ERR).slice(0,30) + ') — ' : '') + 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم أو معنى كلمة — أو قل « الصفحة 11 » لأقرأها لك.';
