@@ -14,7 +14,10 @@ import os
 import re
 import sys
 
-from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+try:
+    from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+except ModuleNotFoundError:  # exécution directe: python tools/script.py
+    from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
 
 CORPUS = os.path.join("assets", "bdd", "corpus.json")
 INDEX = os.path.join("assets", "bdd", "corpus_rag_index.json")
