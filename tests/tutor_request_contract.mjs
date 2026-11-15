@@ -34,7 +34,15 @@ const checks = [
     /detected_language: safeField/.test(worker) && /subject: safeField/.test(worker) &&
     /QUESTION ORIGINALE DE L’ÉLÈVE/.test(worker)],
   ['Worker reçoit une consigne pédagogique sensible à la darija',
-    /DIALECTE DÉTECTÉ = darija/.test(worker) && /explique étape par étape/.test(worker)]
+    /DIALECTE DÉTECTÉ = darija/.test(worker) && /explique étape par étape/.test(worker)],
+  ['ia.js garde un historique temporaire isolé par utilisateur',
+    /AUTH\.session\(\)/.test(ia) && /DIALOGUE_OWNER/.test(ia) &&
+    /DIALOGUE\.slice\(-8\)/.test(ia) && !/localStorage.*DIALOGUE/.test(ia)],
+  ['Worker borne l’historique et refuse les rôles non autorisés',
+    /b\.history\.slice\(-8\)/.test(worker) && /item\.role !== 'user' && item\.role !== 'assistant'/.test(worker) &&
+    /slice\(0, 1000\)/.test(worker)],
+  ['Worker utilise les tours précédents pour garder le fil',
+    /Utilise les tours précédents pour conserver le fil/.test(worker)]
 ];
 
 let failures = 0;
