@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.185.0.0.184';
+const VERSION = 'dz-de-v3.186.0.0.185';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -23,6 +23,8 @@ const PRECACHE = [
   './supabase/supabase.js?v=3528',
   './dz-interactions.js?v=5',
   './js/voice-chat.js?v=1',
+  './js/text-normalizer.js?v=1',
+  './js/qust.js?v=3511',
   './unites3as_vitrine.js?v=3510',
   './prof_core.js?v=3510',
   './access.js?v=3510',
