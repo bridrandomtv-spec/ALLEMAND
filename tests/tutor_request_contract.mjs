@@ -10,6 +10,7 @@ const ia = read('ia.js');
 const voice = read('parle.js');
 const chat = read('app.js');
 const worker = read('worker/ia-ask.js');
+const rag = read('rag.js');
 
 const checks = [
   ['ia.js accepte les requêtes structurées et les chaînes historiques',
@@ -68,7 +69,12 @@ const checks = [
   ['la voix transmet la langue de sortie au TTS',
     /speak\(rep\.slice\(0, 2200\), window\.__IA_LAST_LANGUAGE/.test(voice)],
   ['le double nettoyage TTS est supprimé',
-    !/texte = spoken\(texte\);\s*texte = spoken\(texte\);/.test(voice)]
+    !/texte = spoken\(texte\);\s*texte = spoken\(texte\);/.test(voice)],
+  ['ia.js récupère la référence RAG avant de construire le contexte du professeur',
+    /window\.RAG\.source\(hit\)/.test(ia) && /PROVENANCE RAG/.test(ia) && /ragCitation/.test(ia)],
+  ['rag.js ne certifie une référence que si le SHA-256 du chunk et du catalogue concorde',
+    /async function source\(hit\)/.test(rag) && /hit\.source_sha256 !== doc\.source_sha256/.test(rag) &&
+    /source: source/.test(rag)]
 ];
 
 let failures = 0;
