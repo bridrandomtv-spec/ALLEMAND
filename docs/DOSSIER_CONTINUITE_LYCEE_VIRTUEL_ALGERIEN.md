@@ -4105,3 +4105,16 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun index réel, PDF ou shard du fonds modifié ; aucun déploiement ni changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucune fusion.
 - Rapport : `docs/LOTS/LOT_643_VALIDATION_GENERATION_RUNTIME_RAG.md`.
 - Suite Lot 644 : audit du contrat de réponse Worker/RAG, références sourcées et abstention explicite quand aucune source documentaire suffisante n'existe.
+
+
+## Lot 644 — provenance RAG vérifiable dans le parcours professeur (2026-11-16)
+
+- Diagnostic : le lecteur RAG avait l'ID, les pages et le SHA-256, mais le contexte CERVEAU ne résolvait pas l'ID vers le titre et la provenance du catalogue.
+- Ajout de `window.RAG.source(hit)` : une référence structurée n'est retournée que si le hash du chunk et celui de la fiche catalogue sont valides et concordants. Les champs incluent titre, matière, niveau, année, source, format, page, ID et empreinte.
+- `ia.js` transmet les métadonnées de provenance au Worker et ajoute une référence documentaire lisible à la réponse lorsque la concordance est établie. Si la fiche manque ou si le hash diverge, la source n'est pas présentée comme vérifiée.
+- Le prompt Worker traite désormais les extraits et métadonnées récupérés comme des données non fiables et interdit de suivre les instructions éventuellement présentes dans les documents.
+- Tests ajoutés : résolution de source et rejet de hash divergent dans le harnais runtime RAG ; assertions statiques du câblage et de la protection contre l'injection documentaire dans le contrat tuteur.
+- Exécution locale/Actions non attestée ; aucun PASS revendiqué. Le fonds RAG réel reste absent, aucune réponse documentaire réelle n'est certifiée.
+- Aucun PDF réel ingéré/OCRisé/indexé, aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucun déploiement ni merge.
+- Rapport : `docs/LOTS/LOT_644_PROVENANCE_RAG_ET_ABSTENTION_TUTEUR.md`.
+- Suite Lot 645 : harnais d'intégration Worker sur source vérifiée / source absente / source incohérente, sans modèle externe, puis plan d'exécution réelle de la matrice tuteur.
