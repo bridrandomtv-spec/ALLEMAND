@@ -194,12 +194,13 @@
     const eM = t.match(ES_VOTE); if(eM) es += eM.length * 2;
     const iM = t.match(IT_VOTE); if(iM) it += iM.length * 2;
     const best = Math.max(de, fr, es, it);
-    if(best === 0 || de >= best) return 'de';
+    if(best === 0) return '';
+    if(de >= best) return 'de';
     if(fr >= best) return 'fr';
     if(es >= best) return 'es';
     return 'it';
   }
-  function splitByScript(t){
+  function splitByScript(t, preferred){
     /* 1) tokens : arabe | latin | autre (espace/ponctuation suivent le span courant) */
     const toks = String(t).match(/[\u0600-\u06FF][\u0600-\u06FF'’\-]*|[A-Za-z\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df\u00c0-\u00ff\u00bf\u00a1'’]+|[^\sA-Za-z\u0600-\u06FF]+|\s+/g) || [String(t)];
     const spans = [];
@@ -234,7 +235,7 @@
           if(segs.length) segs[segs.length - 1].text += ph;
           continue;
         }
-        push(voteLang(ph), ph);
+        push(voteLang(ph) || preferred || 'de', ph);
       }
     }
     /* 3) micro-fusion SÛRE : un micro-segment (≤ 2 car.) n'est absorbé par le
@@ -262,7 +263,6 @@
   }
   async function speak(texte, lc){
     texte = spoken(texte);
-    texte = spoken(texte);
     const nowMs = Date.now();
     if(texte && texte === LASTSP.txt && nowMs - LASTSP.t < 2500) return;
     LASTSP = { t: nowMs, txt: texte };
@@ -276,7 +276,7 @@
     const ALLV = await voicesReady();
     const rate = +(localStorage.getItem('dz_voix_rate') || 0.95);
     const pitch = +(localStorage.getItem('dz_voix_pitch') || 1);
-    let segs = splitByScript(String(texte).slice(0, 2200));
+    let segs = splitByScript(String(texte).slice(0, 2200), lc);
     if(lc && segs.length === 1 && !detectLang(segs[0].text)) segs[0].lang = lc.slice(0, 2);
     const queue = [];
     for(const s of segs){
@@ -395,7 +395,7 @@
       if(mot && rep.length < 60) rep = mot + '. ' + rep;
       const RL = /[\u0600-\u06FF]/.test(rep) ? 'ar' : (/[\u00e4\u00f6\u00fc\u00df]/i.test(rep) ? 'de' : '');
       setStatus('🌐 ' + (RL === 'ar' ? 'رد بالعربية' : RL === 'de' ? 'Antwort auf Deutsch' : 'réponse'));
-      speak(rep.slice(0, 2200));
+      speak(rep.slice(0, 2200), window.__IA_LAST_LANGUAGE || null);
     };
     rec.onerror = e => { listeningGuard = false;
       const er = (e && e.error) || 'erreur';
