@@ -15,6 +15,7 @@ Le statut `rag_source_status=verified` du Lot 647 atteste la résolution de la f
 - Une page est considérée comme correspondante uniquement si le chunk vérifié commence et se termine sur le numéro exact demandé.
 - Une unité ou un exercice est classé `unsupported` tant que les chunks et le catalogue ne portent pas de métadonnées structurées permettant de prouver cette correspondance.
 - Une question générale sans portée explicite garde le statut `none` et n'est pas bloquée.
+- Une citation documentaire n'est ajoutée à la réponse que si aucune portée précise n'est demandée ou si la portée demandée est vérifiée ; une page voisine ne peut donc pas être citée pour répondre à une autre page.
 
 ### Worker CERVEAU
 
@@ -31,6 +32,7 @@ Le statut `rag_source_status=verified` du Lot 647 atteste la résolution de la f
 - Question générale sur `weil` : aucun blocage de portée.
 - BIBLIO seul sans hit RAG certifié : aucune référence de page considérée comme vérifiée.
 - Worker : vérification que le modèle n'est pas appelé pour une page divergente ou une unité non certifiée.
+- Orchestrateur : vérification qu'aucune citation de page/unité/exercice hors portée n'est ajoutée à la réponse.
 
 ## Limites et validation
 
