@@ -4055,3 +4055,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Rapport : `docs/LOTS/LOT_639_PERIMETRE_DROITS_INGESTION.md`.
 - Aucun changement main, fusion, déploiement, Supabase/Auth/RLS/schéma/données/paiements/secrets.
 - Suite : Lot 640 — vérifier les runs Actions, renforcer les tests de refus d'ingestion, qualifier les preuves de droits, puis préparer un corpus RAG de test isolé et un harnais de requêtes/réponses observables pour le tuteur.
+
+
+## Lot 640 — contrat de refus d'ingestion et cohérence des tests (2026-11-16)
+
+- Diagnostic : `ingest.construire()` refuse un lot sans chunk autorisé par `RuntimeError`; un ancien test attendait à tort un index vide retourné normalement.
+- Correction du test : un lot entièrement non autorisé doit lever l'exception contractuelle.
+- Nouveau test : un sidecar dépourvu de `usages_autorises` est refusé avant tout appel à l'extracteur de texte.
+- La suite contient maintenant 31 méthodes de test. Le workflow de contrat est configuré pour exécuter unittest Python 3.11, puis `node --check rag.js` et `tests/index_paths_contract.mjs`.
+- Aucun run CI ni statut exploitable n'a été remonté pour le dernier commit via les interfaces consultées ; les tests n'ont pas été exécutés dans cette session. Aucun PASS n'est annoncé.
+- Le contrôle de chemins confirme dans le code la séparation de `corpus_index.json` (BIBLIO) et `corpus_rag_index.json` (RAG), mais avertit que l'index RAG et les shards réels sont absents ; aucune réponse RAG documentaire n'est certifiée.
+- Aucun PDF réel copié, extrait, OCRisé ou indexé ; aucune modification Supabase/Auth/RLS/schéma/données/paiements/secrets, aucun déploiement, aucune fusion.
+- Comparaison Git au contrôle du Lot : 294 commits d'avance, 0 en retard ; main SHA `034722b00739c0106cd265eefdd1c933a096217d`.
+- Rapport : `docs/LOTS/LOT_640_CONTRAT_REFUS_INGESTION_TESTS.md`.
+- Suite Lot 641 : obtenir un run Actions vérifiable, exécuter les contrôles, ajouter le test de conservation des anciens artefacts quand un lot est refusé, puis construire un corpus RAG synthétique isolé.
