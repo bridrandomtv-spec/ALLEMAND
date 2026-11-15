@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Validation stricte des déclarations de droits avant ingestion RAG."""
+"""Validation stricte des droits ET du périmètre d'usage avant ingestion RAG."""
 import re
 from datetime import date
 
@@ -8,9 +8,18 @@ LICENCES_AUTORISEES = {
     "production_propre", "domaine_public", "autorisation_ecrite", "licence_libre"
 }
 
+# Usages nécessaires au pipeline actuel. La redistribution du document intégral
+# n'est volontairement PAS implicite et doit faire l'objet d'un droit distinct.
+USAGES_REQUIS_INGESTION = {
+    "hebergement_source", "extraction_texte", "indexation_rag", "restitution_extraits"
+}
+USAGES_AUTORISES_CONNUS = USAGES_REQUIS_INGESTION | {
+    "ocr", "traduction", "redistribution_document"
+}
+
 
 def valider_metadonnees(meta):
-    """Retourne (ok, raison). Une simple étiquette de licence ne suffit pas."""
+    """Retourne (ok, raison). Licence, preuve humaine et périmètre sont obligatoires."""
     if not isinstance(meta, dict):
         return False, "métadonnées non structurées"
     licence = str(meta.get("licence", "")).strip().lower()
@@ -35,6 +44,18 @@ def valider_metadonnees(meta):
         date.fromisoformat(str(validation["date"]))
     except (TypeError, ValueError):
         return False, "date de validation invalide"
+
+    usages = meta.get("usages_autorises")
+    if not isinstance(usages, list) or not usages:
+        return False, "périmètre d'exploitation explicite absent"
+    usages_normalises = {str(x).strip().lower() for x in usages if str(x).strip()}
+    inconnus = usages_normalises - USAGES_AUTORISES_CONNUS
+    if inconnus:
+        return False, "usage non reconnu: " + ", ".join(sorted(inconnus))
+    manquants = USAGES_REQUIS_INGESTION - usages_normalises
+    if manquants:
+        return False, "usages requis pour l'ingestion absents: " + ", ".join(sorted(manquants))
+
     if licence == "licence_libre":
         if not str(meta.get("nom_licence", "")).strip():
             return False, "nom de licence libre absent"
