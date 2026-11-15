@@ -121,6 +121,8 @@ export default {
     HITS = HITS.filter(t => now - t < 60000);
     if(HITS.length >= 20) return json({ ok:false, err:'quota-min' }, 429, org);
     HITS.push(now);
+    meta.output_style = meta.output_language === 'ar'
+      ? (meta.dialect === 'darija' ? 'darija' : 'fusha') : 'natural';
     if(meta.rag_scope_type !== 'none' && meta.rag_scope_status !== 'verified'){
       const refusal = meta.output_language === 'ar'
         ? (meta.dialect === 'darija'
@@ -139,8 +141,6 @@ export default {
         answer_style:meta.output_style || 'natural', abstained:true,
         abstention_reason:'rag_scope_' + meta.rag_scope_status }, 200, org);
     }
-    meta.output_style = meta.output_language === 'ar'
-      ? (meta.dialect === 'darija' ? 'darija' : 'fusha') : 'natural';
     const metadata = [
       'MODE D’ENTRÉE : ' + meta.input_mode,
       'LANGUE CHOISIE POUR LA RECONNAISSANCE : ' + meta.selected_language,
