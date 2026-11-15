@@ -3667,3 +3667,16 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - **Non validé à ce stade** : les tests ne sont pas encore exécutés. Le champ `answer_language` représente la langue demandée/attendue, pas une preuve automatique que le modèle a respecté cette langue. La qualité réelle doit être contrôlée sur les réponses du modèle.
 - Aucune modification de Supabase, authentification, données, configuration Cloudflare ou déploiement. Les modifications restent candidates sur la branche d'audit.
 - **Suite** : exécuter une suite CI strictement non-déployante sur la branche d'audit : syntaxe JavaScript, contrats tuteur, lecteur RAG runtime et fixture sharder. Puis contrôler les 16 cas de `tests/tutor_matrix.json` avec réponses réelles et évaluation pédagogique.
+
+
+### Validation Lot 614 — résultats disponibles
+
+- Suite de contrat `tests/tutor_request_contract.mjs` exécutée dans un harnais V8 isolé, avec les fichiers source récupérés depuis la branche : **22/22 assertions PASS**.
+- Matrice `tests/tutor_language_matrix.mjs` exécutée dans le même harnais : **6/6** formulations Arabizi positives reconnues, **5/5** faux positifs latins rejetés, **4/4** exemples Darija en arabe reconnus, **2/2** phrases MSA rejetées, matrice de **16 cas** structurés et uniques.
+- Contrat source RAG : **8/8 PASS**.
+- Lecteur RAG en VM isolée : **6/6 PASS** (meilleur score inter-shards, shard manquant, posting orphelin, ID dupliqué, manifeste v1 et absence d'index).
+- Compilation syntaxique V8 sans exécution des scripts : `ia.js`, `parle.js`, `app.js` et Worker après adaptation de son enveloppe ESM : **4/4 compilent**.
+- Précision : ces contrôles ont été exécutés dans un harnais V8 avec dépendances simulées, pas avec la commande Node du dépôt. Le test Python `tests/sharder_fixture.py` n'a pas été exécuté.
+- Workflow GitHub Actions non déployant ajouté : `.github/workflows/tutor-audit.yml`, limité à la branche `audit/lot-603-corpus-contract-tests`, permissions `contents: read`, sans étape de publication.
+- Première exécution du workflow : run **43733687927**, conclusion `failure`, job `runner_id=0`, `steps=[]`, aucun journal disponible. Le runner n'a pas commencé les étapes ; ce résultat ne constitue donc ni un échec des tests ni un PASS CI. Il est cohérent avec le blocage de facturation/limite Actions déjà observé dans le dépôt. À relancer lorsque GitHub Actions pourra démarrer un runner.
+- Le contrat de langue de sortie est une indication de langue demandée, pas une détection infaillible de la langue réellement produite par le modèle. Les tests de qualité LLM, les réponses réelles aux 16 cas, la voix navigateur et le microphone restent à effectuer.
