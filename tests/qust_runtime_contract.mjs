@@ -6,38 +6,45 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 
 const source = fs.readFileSync('js/qust.js', 'utf8');
-const window = {};
+const ctx = { subject:'allemand', level:'2AS', track:'langues' };
+const window = { CONTEXT:{ ctx:() => ctx } };
 vm.runInNewContext(source, { window });
 assert.equal(typeof window.QUST?.understand, 'function', 'QUST doit exposer understand');
 
-const ctx = { subject:'allemand', level:'2AS', track:'langues' };
-const arabic = window.QUST.understand('ما فهمتش قاعدة Akkusativ', ctx);
+const arabic = window.QUST.understand('ما فهمتش قاعدة Akkusativ', null);
 assert.equal(arabic.dialect, 'darija');
 assert.equal(arabic.intent, 'explain_rule');
 assert.equal(arabic.entities.level, '2AS');
 assert.deepEqual(Array.from(arabic.entities.grammar), ['akkusativ']);
 
-const compare = window.QUST.understand('واش الفرق بين der و die؟', ctx);
+const compare = window.QUST.understand('واش الفرق بين der و die؟', null);
 assert.equal(compare.dialect, 'darija');
 assert.equal(compare.intent, 'compare');
 
-const arabizi = window.QUST.understand('wach kifach nsta3mel dativ?', ctx);
+const arabizi = window.QUST.understand('wach kifach nsta3mel dativ?', null);
 assert.equal(arabizi.dialect, 'darija');
 assert.equal(arabizi.intent, 'explain_rule');
 assert.deepEqual(Array.from(arabizi.entities.grammar), ['dativ']);
 
-const correction = window.QUST.understand('صحح هذا التمرين', ctx);
+const correction = window.QUST.understand('صحح هذا التمرين', null);
 assert.equal(correction.intent, 'correct_exercise');
 
-const page = window.QUST.understand('Explique la page 12 en 3AS', ctx);
+const page = window.QUST.understand('Explique la page 12 en 3AS', null);
 assert.equal(page.entities.page, 12);
 assert.equal(page.entities.level, '3AS');
 
-const msa = window.QUST.understand('كيف أراجع الدرس؟', ctx);
+const msa = window.QUST.understand('كيف أراجع الدرس؟', null);
 assert.equal(msa.dialect, 'unknown', 'l’arabe standard ne doit pas être classé Darija');
 
-const german = window.QUST.understand('Wie geht es dir?', ctx);
+const german = window.QUST.understand('Wie geht es dir?', null);
 assert.equal(german.dialect, 'unknown', 'l’allemand ne doit pas être classé Darija');
+
+const english = window.QUST.understand('What is the difference between present simple and present continuous?', null);
+assert.ok(english.langs.includes('en'), 'anglais non reconnu par QUST');
+const spanish = window.QUST.understand('¿Cuál es la diferencia entre ser y estar?', null);
+assert.ok(spanish.langs.includes('es'), 'espagnol non reconnu par QUST');
+const italian = window.QUST.understand('Qual è la differenza tra essere e avere?', null);
+assert.ok(italian.langs.includes('it'), 'italien non reconnu par QUST');
 
 const ia = fs.readFileSync('ia.js', 'utf8');
 const worker = fs.readFileSync('worker/ia-ask.js', 'utf8');
@@ -48,5 +55,5 @@ assert.match(worker, /allowedLanguages/);
 assert.match(worker, /INTENTION QUST/);
 assert.match(worker, /ENTITÉS QUST/);
 
-console.log('PASS QUST : Darija arabe, Arabizi, MSA, allemand, intentions et entités');
+console.log('PASS QUST : Darija arabe, Arabizi, MSA, allemand, anglais, espagnol, italien, intentions et entités');
 console.log('PASS intégration ia.js → Worker et validation des métadonnées QUST');
