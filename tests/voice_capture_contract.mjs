@@ -12,8 +12,14 @@ assert.match(voice, /rec\.onresult = async ev => \{\s*if\(processing\) return;/,
   'les résultats vocaux concurrents doivent être ignorés');
 assert.match(voice, /processing = true;\s*LASTLANG = detectLang\(q\) \|\| lang/,
   'le verrou doit être posé avant l’appel asynchrone au tuteur');
-assert.match(voice, /if\(!ON\)\{ processing = false; return; \}/,
-  'un résultat tardif après arrêt du professeur ne doit pas être prononcé');
+assert.match(voice, /const turn = \+\+VOICE_TURN/,
+  'chaque question doit recevoir un identifiant de tour vocal');
+assert.match(voice, /if\(!ON \|\| turn !== VOICE_TURN\)/,
+  'une réponse appartenant à une ancienne session ne doit pas être prononcée');
+assert.match(voice, /VOICE_TURN\+\+;\s*ON = false;/,
+  'arrêter le professeur doit invalider les réponses en attente');
+assert.match(voice, /if\(!ON \|\| turn !== VOICE_TURN\)/,
+  'un résultat tardif après arrêt ou redémarrage ne doit pas être prononcé');
 assert.match(voice, /processing = false;\s*speak\(rep\.slice/,
   'le verrou doit céder au moment où le TTS prend la main');
 assert.match(voice, /if\(ON && !speaking && !processing\) setTimeout\(listen, 800\)/,
