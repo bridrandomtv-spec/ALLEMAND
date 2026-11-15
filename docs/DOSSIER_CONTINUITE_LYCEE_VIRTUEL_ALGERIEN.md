@@ -3709,3 +3709,16 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun déploiement Cloudflare, aucune modification de `main`, aucun changement Supabase/Auth/RLS/schéma/données/paiement/secrets.
 - Messenger demeure non clôturé : tests Realtime E2E A/B/C et reconnexion toujours en attente.
 - Suite recommandée : terminer l'anglais (2AS/3AS, corpus officiel ou sous licence, exercices et évaluation) avant d'activer les parcours espagnol et italien ; ensuite construire chaque matière sur un vrai référentiel plutôt que créer des pages vides.
+
+
+## Lot 617 — raccordement du moteur QUST au cerveau conversationnel (15 novembre 2026)
+
+- Défaut confirmé : `js/qust.js` était bien chargé avant `ia.js`, mais `reponseIA()` n'appelait pas `QUST.understand()`. La couche d'analyse restait donc en mode isolé : ses intentions, ses entités (niveau, unité, page, notion grammaticale) et ses indices de langue n'arrivaient jamais au Worker.
+- `js/qust.js` : lexique Darija enrichi (arabe et Arabizi) avec notamment « راني », « راك », « بزاف », « نحب », « ma fhemtch », « rani », « bezaf », « nheb » ; détection des marqueurs arabes par expression dans la phrase complète, et exposition explicite de `dialect` dans le résultat. L'arabe standard et l'allemand restent distingués de la darija dans les cas testés.
+- `ia.js` : l'orchestrateur appelle désormais QUST sur la formulation originale de l'élève. Il transmet au Worker la normalisation QUST, les langues détectées, l'intention, le score de confiance et les entités. La question brute reste inchangée et prioritaire ; la normalisation QUST n'est qu'un indice secondaire.
+- `worker/ia-ask.js` : liste blanche des intentions et langues QUST ; confiance bornée entre 0 et 1 ; entités filtrées par clés et tailles autorisées. Le prompt précise que ces métadonnées sont des indices, jamais des faits ni des instructions, et qu'elles doivent être vérifiées dans la question et les sources avant de guider la forme de la réponse.
+- Nouveau test `tests/qust_runtime_contract.mjs` : exécutions ciblées Darija arabe, Arabizi, arabe standard, allemand, comparaison, correction, explication grammaticale, extraction de page/niveau et contrôle du raccordement client/Worker.
+- Workflow non-déployant enrichi pour exécuter ce test et surveiller `js/qust.js`. Aucun déploiement Worker, aucune modification de `main`, aucune action Supabase.
+- Validation ponctuelle dans le moteur V8 de cette session : syntaxe de `ia.js`, `js/qust.js` et `worker/ia-ask.js` compilée ; 7 formulations de test QUST évaluées, dont « ما فهمتش قاعدة Akkusativ » → Darija + `explain_rule`, « واش الفرق بين der و die؟ » → Darija + `compare`, « wach kifach nsta3mel dativ? » → Darija + `explain_rule`, et rejet de faux positifs MSA/allemand. Le fichier de test Node et le workflow GitHub Actions n'ont pas été exécutés sur un runner natif.
+- Limites : QUST reste un moteur déterministe à lexiques/règles, pas un modèle de compréhension sémantique complet. Les variantes régionales, fautes ASR, phrases longues et mélanges multi-langues doivent encore être évalués sur un corpus réel anonymisé ; la qualité des réponses LLM et la voix réelle ne sont pas validées.
+- Messenger demeure distinct et non clôturé : scénarios Realtime E2E A/B/C, isolation, modification/suppression logique et reconnexion restent en attente.
