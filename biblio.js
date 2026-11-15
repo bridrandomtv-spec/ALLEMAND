@@ -182,7 +182,7 @@
     })();
     return LOADING;
   }
-  function score(e, qt){
+  function score(e, qt, hints){
     let s = 0;
     const T = String(e.titre || '').toLowerCase();
     const X = String(e.texte || '').toLowerCase();
@@ -191,9 +191,19 @@
       else if(X.indexOf(t) !== -1) s += 2;
       if((e.tags || []).some(g => String(g).toLowerCase().indexOf(t) !== -1)) s += 3;
     }
+    /* QUST fournit les notions grammaticales explicitement repérées.
+       Leur poids évite qu'une longue phrase en arabe noie le terme allemand précis. */
+    const entities = hints && hints.entities && typeof hints.entities === 'object' ? hints.entities : {};
+    const grammar = Array.isArray(entities.grammar) ? entities.grammar.slice(0, 4) : [];
+    grammar.forEach(term => {
+      const g = String(term || '').toLowerCase().trim();
+      if(g.length < 3) return;
+      if(T.indexOf(g) !== -1) s += 18;
+      else if(X.indexOf(g) !== -1) s += 10;
+    });
     return s;
   }
-  async function search(q, k){
+  async function search(q, k, hints){
     const E = await load();
     let qt = toks(q);
     const mp = q.match(/page\s*(\d+)|seite\s*(\d+)|\u0627\u0644\u0635\u0641\u062d\u0629\s*(\d+)/i);
@@ -204,12 +214,12 @@
     }
     const mu = q.match(/unit[eé]\s*(\d+)|\u0627\u0644\u0648\u062d\u062f\u0629\s*(\d+)|lektion\s*(\d+)/i);
     if(mu) qt = qt.concat(['unite' + (mu[1] || mu[2] || mu[3])]);
-    return E.map(e => ({ e: e, s: score(e, qt) })).filter(x => x.s > 0)
+    return E.map(e => ({ e: e, s: score(e, qt, hints) })).filter(x => x.s > 0)
       .sort((a, b) => b.s - a.s).slice(0, k || 4).map(x => x.e);
   }
-  async function context(q, max){
+  async function context(q, max, hints){
     try{
-      const hits = await search(q, 4);
+      const hits = await search(q, 4, hints);
       if(!hits.length) return '';
       return hits.map(h => '[' + h.src.toUpperCase() + ' ' + h.id + ' — ' + String(h.titre || '').slice(0, 60) + ']\n' + String(h.texte || '').slice(0, 700)).join('\n\n').slice(0, max || 2600);
     }catch(e){ return ''; }
