@@ -349,6 +349,21 @@
         "explicit_output_language",
         "no_darija_output"
       ]
+    },
+    {
+      "id": "DAR-007",
+      "input": "Explain the difference between Akkusativ and Dativ in Darija, please.",
+      "language": "english_with_explicit_darija_output",
+      "intent": "compare_explain",
+      "subject": "allemand",
+      "level": "2AS",
+      "unit": 9,
+      "expected": "Répondre en darija algérienne même si la phrase est anglaise, car la demande de style Darija est explicite.",
+      "checks": [
+        "explicit_darija_output",
+        "dialect_not_overridden_by_unknown",
+        "arabic_darija_style"
+      ]
     }
   ],
   "scorecard": {
