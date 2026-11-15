@@ -4129,3 +4129,14 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun secret, appel externe, déploiement, ingestion réelle ou changement Supabase/Auth/RLS/schéma/données/paiements ; aucune fusion.
 - Rapport : `docs/LOTS/LOT_645_HARNAIS_INTEGRATION_WORKER_SANS_MODELE.md`.
 - Suite Lot 646 : tester navigateur → orchestrateur `ia.js` → Worker avec `fetch` simulé, citation de provenance concordante et abstention quand la source manque ou diverge.
+
+
+## Lot 646 — intégration navigateur/orchestrateur RAG (2026-11-16)
+
+- Ajout de `tests/ia_rag_orchestration_runtime.mjs`, qui charge `ia.js` dans un VM Node et simule la session, le contexte scolaire, QUST, BIBLIO, RAG et le endpoint `/ask`.
+- Trois cas vérifient la question originale et le contexte transmis, l'ajout d'une citation titre/page quand la source est vérifiée, et l'absence de citation certifiée quand la source est absente ou non concordante.
+- Le workflow `.github/workflows/tutor-audit.yml` déclenche sur ce test et l'exécute avec Node 22.
+- Test ajouté mais pas exécuté dans un runner attesté ici ; aucun PASS revendiqué. Le endpoint et les dépendances sont simulés, sans modèle externe.
+- Aucun corpus réel ni index de production modifié ; aucune ingestion/OCR, aucun déploiement, aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucune fusion.
+- Rapport : `docs/LOTS/LOT_646_INTEGRATION_ORCHESTRATION_RAG_CITATIONS.md`.
+- Suite Lot 647 : formaliser l'abstention du Worker pour les questions exigeant une page, une unité, un exercice ou une référence officielle sans extrait pertinent ; permettre les explications générales clairement étiquetées.
