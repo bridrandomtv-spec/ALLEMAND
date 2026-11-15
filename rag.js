@@ -4,7 +4,7 @@
    corpus + sa source. Jamais inventé.
    · Si shards_manifest.json existe : recherche shard par shard (mémoire
      bornée à 1 shard, chargement progressif, arrêt précoce si match fort).
-   · Sinon : repli sur l'index unique corpus_index.json.
+   · Sinon : repli sur l'index unique corpus_rag_index.json.
    ══════════════════════════════════════════════════════════════════════ */
 'use strict';
 
@@ -29,7 +29,7 @@
   async function chargeLegacy(){
     if(LEGACY !== null) return LEGACY;
     try{
-      const r = await fetch('assets/bdd/corpus_index.json', { cache:'no-store' });
+      const r = await fetch('assets/bdd/corpus_rag_index.json', { cache:'no-store' });
       LEGACY = r.ok ? await r.json() : null;
     }catch(e){ LEGACY = null; }
     return LEGACY;
@@ -59,7 +59,7 @@
         for(const cid in scores){
           const sc = scores[cid];
           if(sc >= SEUIL && (!best || sc > best.score)){
-            const chunk = (data.chunks || []).filter(c => c.n === +cid)[0];
+            const chunk = (data.chunks || []).find(c => Number(c.global_id) === Number(cid));
             if(chunk) best = { score: sc, texte: chunk.texte, doc: chunk.doc };
           }
         }
@@ -76,7 +76,7 @@
     for(const cid in scores){
       const sc = scores[cid];
       if(sc >= SEUIL && (!best || sc > best.score)){
-        const ch = idx.chunks[+cid];
+        const ch = (idx.chunks || []).find(c => Number(c.global_id) === Number(cid)) || idx.chunks[+cid];
         if(ch) best = { score: sc, texte: ch.texte, doc: ch.doc };
       }
     }
