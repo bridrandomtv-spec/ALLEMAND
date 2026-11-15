@@ -95,6 +95,18 @@ assert.match(ia, /if\(answerLanguage === 'ar' && !\//, 'contrôle arabe appliqu�
 for (const cue of [/بالدارجة/, /en français/, /auf deutsch/, /en español/, /in italiano/, /بالعربية/]) assert.ok(cue.test(ia), 'consigne explicite de langue absente : ' + cue);
 assert.match(ia, /const fixLang = s => \(answerLanguage !== 'ar'/, 'filtre de réponse locale non aligné sur la langue de sortie');
 
+// Lot 620 — langue de sortie et style dialectal sont deux dimensions distinctes.
+const darjaCorpus = JSON.parse(read('assets/bdd/darja.json'));
+assert.match(worker, /meta\.output_style = meta\.output_language === 'ar'/, 'style arabe calculé séparément de la langue');
+assert.match(worker, /meta\.dialect === 'darija' \? 'darija' : 'fusha'/, 'sortie arabe adaptée au dialecte détecté');
+assert.match(worker, /STYLE DE SORTIE : ' \+ meta\.output_style/, 'style de sortie transmis au modèle');
+assert.match(worker, /answer_style: meta\.output_style/, 'style renvoyé séparément de answer_language');
+assert.match(worker, /si l’élève demande le français, réponds en français même s’il a écrit en darija/, 'priorité de la langue explicitement demandée');
+assert.equal(darjaCorpus._meta.version, 3);
+assert.match(darjaCorpus._meta.usage, /suit la langue de l’élève/);
+assert.match(darjaCorpus._meta.note_langue_adaptative, /consigne explicite de langue de sortie reste prioritaire/);
+assert.equal(Object.prototype.hasOwnProperty.call(darjaCorpus._meta, 'note_fus1'), false, 'ancienne règle FUS-1 contradictoire encore présente');
+
 console.log('PASS lexiques Darija/Arabizi identiques entre chat et voix');
 console.log('PASS ' + positivesLatin.length + ' exemples Arabizi reconnus et ' + negativesLatin.length + ' faux positifs rejetés');
 console.log('PASS ' + positivesArabic.length + ' exemples Darija arabes reconnus et ' + negativesArabic.length + ' phrases MSA rejetées');
