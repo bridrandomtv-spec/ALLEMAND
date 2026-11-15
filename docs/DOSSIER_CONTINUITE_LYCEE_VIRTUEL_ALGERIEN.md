@@ -3475,3 +3475,22 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Commit du test : `2f4761a659ef115fb29ac092598700a4602aacbd`.
 - Messenger reste non terminé : tests E2E multi-comptes A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime restent à exécuter.
 - Suite recommandée : Lot 605 — concevoir la correction du schéma d'identité globale (champ stable `global_id`) et du sharder/lecteur, avec migration compatible et tests verts, sans reconstruire ni publier le corpus avant validation explicite.
+
+
+## Lot 605 — correctif candidat isolé BIBLIO/RAG et identité globale (15 novembre 2026)
+
+- Travail réalisé uniquement sur la branche d'audit `audit/lot-603-corpus-contract-tests`. Aucun changement sur `main`, aucun déploiement et aucune reconstruction du corpus publié.
+- **Séparation des artefacts préparée dans le code candidat** :
+  - `biblio.js` continue de charger `assets/bdd/corpus_index.json` (catalogue BIBLIO).
+  - `tools/ingest_corpus.py) écrit désormais l'index inversé dans `assets/bdd/corpus_rag_index.json`.
+  - Chaque chunk produit par l'ingestion reçoit `global_id = cid`, où `cid` est la position globale du chunk dans l'index.
+  - `tools/sharder_index.py` lit le nouvel index RAG, vérifie le schéma, l'unicité des identifiants et la validité des postings, puis filtre chaque shard par son ensemble de `global_id`. Il calcule les shards avant de supprimer les anciens fichiers afin qu'une erreur de validation ne les efface pas.
+  - `rag.js` charge le nouvel index RAG en repli et résout les postings des shards par `global_id`, plus par le compteur local `n`.
+- **Correction de la fixture** : `tests/sharder_fixture.py` cible désormais `corpus_rag_index.json` et vérifie les postings [2, 3], les quatre identifiants globaux et les documents associés. Fichiers relus après écriture sur GitHub.
+- **Vérification locale isolée du principe de correction** : un programme Python temporaire a exécuté la logique candidate du sharder sur deux documents et quatre chunks. Résultat : code retour 0, postings `mot-b=[2,3]` conservés, identifiants globaux `[0,1,2,3]` présents et chunks 2/3 correctement rattachés à doc-B. Cette vérification valide la logique reproduite, mais ne constitue pas l'exécution du fichier GitHub complet ni de `tests/sharder_fixture.py`.
+- **Pas encore validé** : exécution du test depuis un checkout du dépôt, exécution de l'ingestion sur corpus témoin, test de plusieurs shards, test de non-régression BIBLIO, tests navigateur RAG et vérification des chemins de déploiement. Aucun résultat CI exploitable n'est disponible.
+- **Compatibilité / migration** : le manifeste actuellement publié annonce zéro shard. Aucun ancien shard actif n'a été migré. Avant publication, il faudra générer un index témoin dans un environnement isolé, vérifier les comptes de documents/chunks, contrôler les postings et les sources, puis seulement planifier une migration atomique des artefacts.
+- Commits candidats : sharder `deabc88e86a8749db2180a5f50e6d1676c494a52`, ingestion `824ecfb005665fd92468cd5bcda4ddffdd988b70`, lecteur RAG `6dd2e18448d09b465ea2b0278c7db7390c2c6609`, fixture `5db35c24a9d254adf509a3a4cd3cf30400e0fcc0`.
+- Aucun changement n'a été effectué dans les données BIBLIO, le corpus publié, le Worker, les secrets, les ressources ou politiques Supabase, les workflows CI ou les réglages Cloudflare. Le code modifié reste un candidat sur la branche d'audit.
+- Messenger reste non terminé : les scénarios Realtime multi-comptes A/B/C, INSERT/UPDATE/suppression logique et reconnexion doivent encore être exécutés.
+- Suite recommandée : Lot 606 — ajouter et exécuter des tests de partition sur plusieurs shards, valider la fixture depuis un checkout complet et contrôler le contrat de provenance documentaire avant toute proposition de PR.
