@@ -3797,3 +3797,18 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Validation : QUST exécuté isolément sur 146 formulations et sur des probes multilingues ; logique de matching de l’ontologie reproduite ; pas de tests Node natifs, pas de GitHub Actions, pas de Worker live, pas de microphone/TTS réel.
 - Aucun changement applicatif, aucun merge, aucun déploiement, aucune modification de main, aucune écriture Supabase/Auth/RLS/schéma/données/paiement/secrets.
 - HEAD de la branche avant documentation : `f72b80e54871e267b633850ab643c662fba8f6ea`.
+
+
+## Lot 623 — normalisation commune et activation du routage ontologique (15 novembre 2026)
+
+- Création de `js/text-normalizer.js`, module commun `window.DZ_TEXT` : normalisation arabe/Unicode, ponctuation arabe, tokens propres, lexique Arabizi fréquent, conversion des chiffres 3/7/5/9/2 et forme de recherche enrichie. Les caractères latins accentués sont préservés.
+- `js/qust.js` utilise le normaliseur partagé et améliore la détection d’intentions de comparaison en français, anglais, espagnol, italien, allemand, arabe et formulations mixtes.
+- `rag.js` conserve `rawQuestion` avant les réécritures Darija ; QUST et le matching ontologique travaillent sur la formulation originale. `normOnto()` et `tokOnto()` utilisent le module partagé.
+- Le chemin local appelle désormais `ontoRoute(rawQuestion)` lorsque `matchType()` ne reconnaît pas la demande, avant le repli QUST. L’ontologie n’est donc plus seulement déclarée : elle est appelée sur le chemin de secours.
+- `index.html` charge le module avant QUST ; `sw.js` précache le nouveau fichier et utilise une nouvelle version de cache ; le workflow d’audit surveille le module et contrôle la syntaxe de QUST/RAG.
+- Tests mis à jour : `tests/qust_runtime_contract.mjs` et `tests/rag_loader_contract.mjs`.
+- Vérification isolée exécutée : syntaxe JS PASS pour normaliseur, QUST et RAG ; QUST exécuté dans un contexte JS isolé sur six questions ciblées. Les intentions de comparaison en espagnol, italien et français sont désormais reconnues dans ces probes.
+- Non validé : exécution native des scripts MJS par Node, GitHub Actions, Worker live, corpus RAG complet, microphone et TTS réel. Le dictionnaire Arabizi est une première couverture, pas un lexique exhaustif.
+- Rapport détaillé : `docs/LOTS/LOT_623_NORMALISATION_COMMUNE_ET_ROUTAGE_ONTOLOGIE.md`.
+- HEAD avant documentation : `5e3ada89883977e71a948dd4fac191b637237f1e`.
+- Aucun déploiement, merge, changement main, écriture Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste séparée et ouverte ; Messenger reste un chantier distinct.
