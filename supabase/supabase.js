@@ -564,13 +564,20 @@ async function msgRequestVerification(schoolRegistrationNumber, section){
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true };
 }
-async function msgVerificationQueue(){
+async function msgVerificationQueue(page, pageSize){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const size = Math.max(10, Math.min(100, Number(pageSize) || 50));
+  const currentPage = Math.max(0, Math.floor(Number(page) || 0));
+  const from = currentPage * size;
+  const to = from + size - 1;
   const r = await c.from('profiles')
-    .select('id,pseudo,role,niveau,filiere,wilaya,matricule,section,created_at')
-    .eq('verif_statut','en_attente').order('created_at',{ascending:true}).limit(50);
+    .select('id,pseudo,role,niveau,filiere,wilaya,matricule,section,created_at', { count:'exact' })
+    .eq('verif_statut','en_attente')
+    .order('created_at',{ascending:true})
+    .order('id',{ascending:true})
+    .range(from,to);
   if(r.error) return { ok:false, err:r.error.message };
-  return { ok:true, queue:r.data||[] };
+  return { ok:true, queue:r.data||[], total:Number(r.count)||0, page:currentPage, pageSize:size };
 }
 async function msgSetVerification(uid, statut){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
