@@ -720,7 +720,7 @@ function rendreCouvertureORG1(mount){
     Array.prototype.forEach.call(rows, function(row){ row.hidden = q !== '' && row.getAttribute('data-wilaya-search').indexOf(q) === -1; });
   });
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu],[data-adm-verif]') : null;
     if(!t) return;
     var verifyId = t.getAttribute('data-adm-verif');
     if(verifyId){
