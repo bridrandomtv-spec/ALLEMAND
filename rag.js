@@ -1134,16 +1134,27 @@ async function reponsePedagogique(q){
     return null;
   }
 
-  function formule(r){
+  function formule(r, corpus){
     if(!r) return null;
-    const extrait = String(r.texte || '').split(/\s+/).slice(0, 70).join(' ');
+    const extrait = String(r.texte || '').split(/\\s+/).slice(0, 70).join(' ');
     const page = Number.isSafeInteger(r.page_start) && Number.isSafeInteger(r.page_end)
       ? ' · صفحة ' + r.page_start + (r.page_end !== r.page_start ? '–' + r.page_end : '')
       : '';
+    const docs = corpus && Array.isArray(corpus.documents) ? corpus.documents : [];
+    const doc = docs.find(d => d && d.id === r.doc) || null;
+    const titre = doc && doc.titre ? String(doc.titre) : (r.doc || 'document non identifié');
+    const contexte = doc
+      ? [doc.matiere, doc.niveau, doc.annee].filter(Boolean).map(esc).join(' · ')
+      : '';
+    const empreinte = typeof r.source_sha256 === 'string'
+      ? ' · SHA-256 ' + r.source_sha256.slice(0, 12) + '…' : '';
     return '📚 <b>من قاعدة معرفتك</b> — '
-      + '<span class="rag-src">score ' + r.score + ' · chunk ' + (r.doc || '') + page + '</span>'
+      + '<span class="rag-src"><b>' + esc(titre) + '</b>'
+      + (contexte ? ' · ' + contexte : '') + page
+      + '<br>score ' + r.score + ' · ID ' + esc(r.doc || '')
+      + empreinte + '</span>'
       + '<br><span class="rag-x">« ' + esc(extrait) + ' … »</span>'
-      + '<br><span class="rag-src">réponse extraite de ta base — jamais inventée.</span>';
+      + '<br><span class="rag-src">extrait retrouvé dans le corpus documentaire — source traçable.</span>';
   }
 
   async function render(){
@@ -1210,7 +1221,8 @@ async function reponsePedagogique(q){
       }
       out.innerHTML = '<div class="rg-load">⏳ recherche dans les shards…</div>';
       const r = await cherche(q);
-      const f = formule(r);
+      const corpus = r ? await chargeCorp() : null;
+      const f = formule(r, corpus);
       out.innerHTML = f
         ? '<div class="rg-ok">' + f + '</div>'
         : '<div class="rg-non">🤷 <b>لا أعرف / je ne sais pas.</b><br>'
