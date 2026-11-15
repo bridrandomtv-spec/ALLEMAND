@@ -43,7 +43,7 @@ class SharderMultiDocumentFixture(unittest.TestCase):
             bdd = work / "assets" / "bdd"
             bdd.mkdir(parents=True)
             shutil.copy2(SHARDER, work / "tools" / "sharder_index.py")
-            (bdd / "corpus_index.json").write_text(
+            (bdd / "corpus_rag_index.json").write_text(
                 json.dumps(fixture, ensure_ascii=False), encoding="utf-8"
             )
 
