@@ -116,7 +116,7 @@ class CorpusPipelineContract(unittest.TestCase):
             self.assertIn("ancien", [d["id"] for d in catalogue])
             self.assertEqual(len(copies), 1)
             self.assertTrue(index["chunks"][0]["source_sha256"])
-            merged = ingest.fusionner_index(
+            merged = contracts.fusionner_index_rag(
                 {"_meta": {}, "chunks": [
                     {"global_id": 0, "doc": "ancien", "n": 0, "texte": "alpha beta"},
                     {"global_id": 1, "doc": catalogue[-1]["id"], "n": 0, "texte": "ancienne version"}
