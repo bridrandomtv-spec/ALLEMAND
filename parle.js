@@ -352,7 +352,7 @@
       LASTQ = { q: q, t: Date.now() };
       processing = true;
       const turn = ++VOICE_TURN;
-      LASTLANG = detectLang(q) || lang;
+      LASTLANG = detectLang(q);
       setStatus('⏳ ' + q.slice(0, 40));
       const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
       let rep = '';
@@ -370,8 +370,9 @@
             raw_text: q,
             normalized_text: canon(q),
             input_mode: 'voice',
-            selected_language: lang,
-            detected_language: LASTLANG,
+            selected_language: 'auto',
+            recognition_language: lang,
+            detected_language: LASTLANG || '',
             dialect: detectDialect(q)
           };
           rep = fn === window.reponseIA ? await fn(request) : await fn(request.normalized_text);
@@ -454,7 +455,7 @@
     d.id = 'parleBar';
     d.innerHTML = '<div class="pl-row">'
       + '<button id="parleBtn" class="pl-btn" title="تحدث مع المنصة الذكية">🗣️ تحدث</button>'
-      + '<select id="parleLang" class="pl-sel" title="اللغة">' + LANGS.map(l =>
+      + '<select id="parleLang" class="pl-sel" title="لغة التعرّف على الكلام">' + LANGS.map(l =>
           '<option value="' + l[0] + '">' + l[1] + '</option>').join('') + '</select>'
       + '<button id="parleMic" class="pl-cfg" title="تحدث الآن">🎙</button>'
       + '<button id="parleCfg" class="pl-cfg" title="إعدادات الصوت">⚙️</button>'
