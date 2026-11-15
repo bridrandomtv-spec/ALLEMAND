@@ -695,6 +695,7 @@ function rendreCouvertureORG1(mount){
       box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ</h2><p>⛔ تعذر تحميل الطلبات: ' + esq5(q && q.err || 'خطأ غير محدد') + '</p><p class="adm-verif-muted">لم يتم تغيير أي حالة.</p>'; return;
     }
     var rows = Array.isArray(q.queue) ? q.queue : [];
+    window.__admVerificationRows = rows;
     var total = Math.max(0, Number(q.total)||0);
     var totalPages = Math.max(1, Math.ceil(total/pageSize));
     if(currentPage >= totalPages && currentPage > 0) return renderVerificationQueue(totalPages-1);
@@ -710,11 +711,13 @@ function rendreCouvertureORG1(mount){
           if(!String(x.wilaya||'').trim()) missing.push('الولاية');
           if(!String(x.filiere||'').trim()) missing.push('الشعبة');
           if(!String(x.section||'').trim()) missing.push('القسم');
+          if(!String(x.carte_scolaire_path||'').trim()) missing.push('البطاقة المدرسية');
           var canApprove = missing.length === 0;
           return '<article class="card adm-verification-item">'
             + '<div class="adm-verif-head"><b>👤 ' + esq5(x.pseudo||'تلميذ') + '</b><span class="badge">قيد المراجعة</span></div>'
             + '<div class="rep-row"><span>المستوى: ' + esq5(x.niveau||'—') + ' · الولاية: ' + esq5(x.wilaya||'—') + ' · الشعبة: ' + esq5(x.filiere||'—') + '</span></div>'
             + '<div class="rep-row"><span>رقم التسجيل: ' + esq5(x.matricule||'—') + ' · القسم المصرّح به: ' + esq5(x.section||'—') + '</span></div>'
+            + (x.carte_scolaire_path ? '<div class="adm-verif-actions"><button class="btn btn-sm btn-o" data-adm-verif-doc="' + esq5(x.id) + '" type="button">🪪 فتح البطاقة المدرسية</button></div>' : '<div class="adm-verif-missing" role="alert">⛔ لا توجد بطاقة مدرسية مرفقة</div>')
             + (canApprove ? '' : '<div class="adm-verif-missing" role="alert">⛔ لا يمكن التفعيل: معلومات ناقصة أو غير صالحة — ' + esq5(missing.join('، ')) + '</div>')
             + '<div class="adm-verif-actions">'
             + '<button class="btn btn-sm btn-g" data-adm-verif="' + esq5(x.id) + '" data-status="verifie" type="button"' + (canApprove ? '' : ' disabled title="أكمل معلومات الهوية المدرسية أولاً"') + '>✔ تأكيد التفعيل</button>'
@@ -745,8 +748,21 @@ function rendreCouvertureORG1(mount){
     Array.prototype.forEach.call(rows, function(row){ row.hidden = q !== '' && row.getAttribute('data-wilaya-search').indexOf(q) === -1; });
   });
   document.addEventListener('click', function(e){
-    var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu],[data-adm-verif],[data-adm-verif-page]') : null;
+    var t = e.target && e.target.closest ? e.target.closest('[data-adm-tab],[data-adm4-search],[data-adm4-save],[data-adm4-stu],[data-adm-verif],[data-adm-verif-page],[data-adm-verif-doc]') : null;
     if(!t) return;
+    var verifyDoc = t.getAttribute('data-adm-verif-doc');
+    if(verifyDoc){
+      var docRow = (window.__admVerificationRows||[]).find(function(row){ return row.id===verifyDoc; });
+      var docPath = docRow && docRow.carte_scolaire_path;
+      if(!docPath || !window.SB || typeof SB.msgSchoolCardUrl!=='function'){ window.alert('⛔ المستند غير متاح'); return; }
+      t.disabled = true;
+      SB.msgSchoolCardUrl(docPath).then(function(result){
+        t.disabled = false;
+        if(result && result.ok && result.url){ window.open(result.url,'_blank','noopener,noreferrer'); }
+        else window.alert('⛔ '+esq5(result && result.err || 'تعذّر فتح البطاقة'));
+      }).catch(function(err){ t.disabled=false; window.alert('⛔ '+esq5(err && err.message || err)); });
+      return;
+    }
     var verifyPage = t.getAttribute('data-adm-verif-page');
     if(verifyPage !== null){ renderVerificationQueue(Number(verifyPage)); return; }
     var verifyId = t.getAttribute('data-adm-verif');
