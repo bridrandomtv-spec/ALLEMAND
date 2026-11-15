@@ -16,7 +16,7 @@ import sys
 
 try:
     from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
-    from tools.corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag
+    from tools.corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag, ecrire_json_transactionnel
 except ModuleNotFoundError:  # exécution directe: python tools/script.py
     from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
     from corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag
@@ -116,13 +116,6 @@ def construire(dossier, documents_existants=None):
     return {"_meta": {"version": "2.1.0", "nb": len(docs)}, "documents": docs}, index, nb_ignores
 
 
-def ecrire_atomiquement(chemin, valeur):
-    temporaire = chemin + ".tmp"
-    with open(temporaire, "w", encoding="utf-8") as f:
-        json.dump(valeur, f, ensure_ascii=False, separators=(",", ":"))
-    os.replace(temporaire, chemin)
-
-
 def main(dossier):
     os.makedirs(os.path.dirname(CORPUS), exist_ok=True)
     existants = []
@@ -142,8 +135,7 @@ def main(dossier):
             raise ValueError("Index RAG existant invalide : écriture refusée.")
     docs_remplaces = {c["doc"] for c in index["chunks"]}
     index_final = fusionner_index_rag(index_existant, index["chunks"], docs_remplaces)
-    ecrire_atomiquement(INDEX, index_final)
-    ecrire_atomiquement(CORPUS, corpus)
+    ecrire_json_transactionnel({INDEX: index_final, CORPUS: corpus})
     print("PDF indexés:", len(corpus["documents"]), "| chunks:", len(index["chunks"]), "| ignorés:", ignores)
 
 
