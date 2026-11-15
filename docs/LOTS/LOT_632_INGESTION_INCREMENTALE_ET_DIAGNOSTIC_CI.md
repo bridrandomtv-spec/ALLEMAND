@@ -64,3 +64,10 @@ Pour le job récent `132964363940`, l'API GitHub renvoie `runner_id: 0`, `runner
 3. Ajouter une vérification d'intégrité transactionnelle des artefacts (préparation temporaire, validation, remplacement coordonné et sauvegarde).
 4. Unifier le chemin PDF et le chemin multi-format pour éviter deux commandes d'ingestion concurrentes.
 5. Finaliser la preuve documentaire et son périmètre avant toute ingestion de manuels réels.
+
+
+## Mise à jour de vérification après refactor commun
+
+- La fusion RAG est centralisée dans `tools/corpus_contracts.py::fusionner_index_rag` et utilisée par les deux indexeurs (`indexer_pdf.py` et `ingest_corpus.py`).
+- Le test multi-format appelle désormais ce contrat commun.
+- Dernière exécution du workflow de tests : `43763939718`, job `132964729277`, échec avec `runner_id: 0` et `steps: []`. Aucun test n'a été exécuté ; blocage d'allocation du runner toujours présent.
