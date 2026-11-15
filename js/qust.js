@@ -92,7 +92,8 @@ if((m = nq.match(/\b(2as|3as|1as)\b/))) e.level = m[1].toUpperCase();
         }
       }catch(e){ effCtx = null; }
     }
-    var detected = langs(raw, nq);\n    return { norm: nq, langs: detected, dialect: detected.indexOf("darija") !== -1 ? "darija" : "unknown", intent: it[0], entities: entities(raw, nq, effCtx || {}), confidence: it[1] };
+    var detected = langs(raw, nq);
+    return { norm: nq, langs: detected, dialect: detected.indexOf("darija") !== -1 ? "darija" : "unknown", intent: it[0], entities: entities(raw, nq, effCtx || {}), confidence: it[1] };
   }
   if(typeof window!=='undefined') window.QUST = { understand: understand };
   if(typeof module!=='undefined' && module.exports) module.exports = { understand: understand };
