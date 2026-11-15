@@ -831,6 +831,18 @@ async function admStudent(uidCible){
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, fiche:r.data };
 }
+async function admSchoolCardHold(uid, days, reason){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('school_card_retention_set_hold',{p_profile_id:uid,p_days:Number(days),p_reason:String(reason||'').trim()});
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:r.data===true };
+}
+async function admSchoolCardReleaseHold(uid){
+  const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
+  const r = await c.rpc('school_card_retention_release_hold',{p_profile_id:uid});
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:r.data===true };
+}
 async function admSettings(){
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
   const r = await c.from('platform_settings').select('cle,valeur,maj_at').order('cle');
@@ -843,7 +855,7 @@ async function admSetSetting(cle, valeur){
   if(r.error) return { ok:false, err:r.error.message };
   return r.data || { ok:true };
 }
-Object.assign(window.SB, { admDashboard, admSearchStudents, admStudent, admSettings, admSetSetting });
+Object.assign(window.SB, { admDashboard, admSearchStudents, admStudent, admSchoolCardHold, admSchoolCardReleaseHold, admSettings, admSetSetting });
 
 /* ── ADM-5 · comptabilité, rapports, support, notifications (client fin) ── */
 async function admEntries(){
