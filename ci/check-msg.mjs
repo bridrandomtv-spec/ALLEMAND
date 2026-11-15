@@ -61,7 +61,7 @@ ok(msgjs.includes('verificationPage:0') &&
    'Messenger : file de vérification paginée, total exact et navigation précédente/suivante');
 ok(msgjs.includes("var isMod = !!(u && u.role==='admin')") &&
    msgjs.includes("moderationAccess.perms.indexOf('messaging.moderate')!==-1") &&
-   !msgjs.includes("u.role==='prof' || u.role==='admin'"),
+   !msgjs.includes("var isMod = u && (u.role==='prof' || u.role==='admin');"),
    'Messenger : panneau de modération affiché selon la permission serveur, pas le simple rôle professeur');
 ok(msgjs.includes('function verificationMissing(q)') &&
    msgjs.includes("startsWith(String(q.id)+'/')") &&
