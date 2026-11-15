@@ -283,5 +283,41 @@ class CorpusPipelineContract(unittest.TestCase):
         with self.assertRaises(ValueError):
             sharder.build_shards(invalid)
 
+
+    def test_catalogue_index_coherence_accepts_legacy_unindexed_documents(self):
+        catalogue = {"documents": [
+            {"id": "doc-a", "matiere": "allemand", "niveau": "2AS", "langue": "de",
+             "source_sha256": "a" * 64},
+            {"id": "doc-b", "matiere": "anglais", "niveau": "1AS", "langue": "en"}
+        ]}
+        index = {"chunks": [{"doc": "doc-a", "texte": "Hallo", "source_sha256": "a" * 64}]}
+        result = contracts.valider_coherence_catalogue_index(catalogue, index)
+        self.assertEqual(result["documents_indexes"], 1)
+        self.assertEqual(result["documents_sans_chunks"], 1)
+
+    def test_catalogue_index_rejects_orphan_chunk(self):
+        with self.assertRaisesRegex(ValueError, "orphelin"):
+            contracts.valider_coherence_catalogue_index(
+                {"documents": []}, {"chunks": [{"doc": "missing", "texte": "texte"}]})
+
+    def test_catalogue_index_rejects_duplicate_document_ids(self):
+        doc = {"id": "dup", "matiere": "allemand", "niveau": "2AS", "langue": "de"}
+        with self.assertRaisesRegex(ValueError, "dupliqué"):
+            contracts.valider_coherence_catalogue_index(
+                {"documents": [doc, dict(doc)]}, {"chunks": []})
+
+    def test_catalogue_index_rejects_missing_language_metadata(self):
+        with self.assertRaisesRegex(ValueError, "langue"):
+            contracts.valider_coherence_catalogue_index(
+                {"documents": [{"id": "doc-a", "matiere": "allemand", "niveau": "2AS"}]},
+                {"chunks": [{"doc": "doc-a", "texte": "Hallo"}]})
+
+    def test_catalogue_index_rejects_source_hash_mismatch(self):
+        with self.assertRaisesRegex(ValueError, "divergente"):
+            contracts.valider_coherence_catalogue_index(
+                {"documents": [{"id": "doc-a", "matiere": "allemand", "niveau": "2AS",
+                                "langue": "de", "source_sha256": "a" * 64}]},
+                {"chunks": [{"doc": "doc-a", "texte": "Hallo", "source_sha256": "b" * 64}]})
+
 if __name__ == "__main__":
     unittest.main()
