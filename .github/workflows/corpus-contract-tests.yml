@@ -1,0 +1,42 @@
+name: Contrats du pipeline documentaire RAG
+
+on:
+  push:
+    paths:
+      - 'tools/corpus_contracts.py'
+      - 'tools/indexer_pdf.py'
+      - 'tools/ingest_corpus.py'
+      - 'tools/sharder_index.py'
+      - 'tools/rights_metadata.py'
+      - 'tests/test_corpus_pipeline.py'
+      - 'rag.js'
+      - '.github/workflows/corpus-contract-tests.yml'
+  pull_request:
+    paths:
+      - 'tools/corpus_contracts.py'
+      - 'tools/indexer_pdf.py'
+      - 'tools/ingest_corpus.py'
+      - 'tools/sharder_index.py'
+      - 'tools/rights_metadata.py'
+      - 'tests/test_corpus_pipeline.py'
+      - 'rag.js'
+
+permissions:
+  contents: read
+
+jobs:
+  corpus-contracts:
+    name: Tests Python du corpus (sans ingestion ni déploiement)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v5
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Installer le parseur PDF
+        run: python -m pip install --disable-pip-version-check pypdf
+      - name: Exécuter les tests de contrats
+        run: python -m unittest tests/test_corpus_pipeline.py -v
