@@ -3076,3 +3076,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Ces parcours n’emploient ni le même contexte, ni la même stratégie de repli, ni la même détection de langue. Le chat principal n’envoie pas l’historique local qu’il conserve ; le parcours vocal ne transmet pas non plus l’historique ; le formulaire RAG reste local. Le contexte générique du chat principal n’est pas un extrait documentaire vérifié.
 - Le défaut d’index du Lot 574 affecte aussi le premier essai `RAG.cherche()` du chat principal ; son `catch` silencieux le fait basculer vers le Worker sans afficher l’échec du RAG.
 - Aucune modification applicative ; cette note corrige la cartographie des flux IA avant toute proposition de consolidation.
+
+
+## Lot 576 — test ciblé du correcteur local PROF (15 novembre 2026)
+- Exécution isolée de la vraie fonction `PROF.corriger()` (sans navigateur ni données externes) sur des phrases de contrôle :
+  - `Ich bin 16 Jahre alt.` est signalée à tort comme contenant une erreur de majuscule sur « ich » ; le test de début de phrase utilise une comparaison sensible à la casse sur `s`, puis une recherche dans la version minuscule.
+  - `Du gehen nach Hause.` et `Er gehen Schule.` sont déclarées correctes à 100 %, alors que la conjugaison du verbe est incorrecte.
+- Le correcteur est une série de règles regex limitées (sein/haben pour quelques pronoms, âge, kommen aus, wohnen in, ponctuation). L’absence d’une règle déclenchée est interprétée comme « Sehr gut » et non comme « erreur non détectée / vérification insuffisante ».
+- Impact : risque de faux positifs et de faux négatifs dans le chat principal lorsque le Worker cloud échoue et que `PROF.repondre()` sert de secours, mais aussi dans les exercices texte utilisant ce noyau.
+- Aucune modification du correcteur. Correction recommandée : corriger le test de casse, introduire un état « non vérifiable » distinct de « correct », élargir les tests de conjugaison/syntaxe et éviter d’attribuer 100 % sans analyse grammaticale suffisante.
