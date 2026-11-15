@@ -2936,3 +2936,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 
 - Cache après correction juridique : `legal.js?v=3512` dans `index.html` ; Service Worker `dz-de-v3.185.0.0.176`. Commits : `976f5fd9dcbc79762fe20652532be895388534e6` (HTML), `2ba7037df568a6714b72f7f6c3f3bf0c47ed6bc6` (SW).
 - Contrôle de relecture après commit : une seconde occurrence de « منطقة الاتحاد الأوروبي » subsistait dans le paragraphe d’accès à la carte de `privacy.html`; elle a été corrigée elle aussi en « منطقة لندن، المملكة المتحدة (eu-west-2) ». Commit : `36960e6fab7126f337ecbf4d258a8effa124ee14`. Relecture finale à effectuer sur le fichier complet avant clôture.
+## Lot 560 — nettoyage des cartes scolaires remplacées ou non rattachées (15 novembre 2026)
+- Audit Storage : trois règles confirmées pour `cartes-scolaires` (INSERT propriétaire avec taille/MIME, SELECT propriétaire ou modérateur de la wilaya ou administrateur global, DELETE propriétaire). Aucun droit UPDATE ni accès public.
+- Audit des profils : lecture des demandes en attente limitée aux modérateurs `students.verify` de leur wilaya (ou administrateur global) ; mise à jour réservée à ces mêmes acteurs. Le trigger `profiles_verif_guard` vérifie aussi l’existence réelle de l’objet Storage dans le dossier UUID du profil avant activation.
+- Défaut identifié : après rejet, le remplacement de la carte laissait l’ancien objet dans Storage ; un échec d’enregistrement après upload pouvait également laisser un objet orphelin.
+- Correction de `msgRequestVerification` : lecture du chemin précédent du propriétaire ; suppression du nouvel upload si l’enregistrement échoue ; suppression de l’ancienne carte après enregistrement réussi d’un nouveau justificatif. Si la suppression de l’ancien fichier échoue, la demande reste acceptée et un avertissement non bloquant est retourné.
+- Garde CI ajoutée dans `ci/check-msg.mjs`. Aucun profil ni document réel n’a été touché.
+- L’exécution CI et le déploiement Cloudflare restent à confirmer.
+
+- Commits Lot 560 : `bcc3d02d67fa3ef177072571190e7460a0782739` (`supabase/supabase.js`), `22bd1a383e04e822bec24edab4715b0c400fed66` (`ci/check-msg.mjs`).
