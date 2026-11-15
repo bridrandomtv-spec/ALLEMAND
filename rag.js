@@ -1136,7 +1136,7 @@ async function reponsePedagogique(q){
 
   function formule(r, corpus){
     if(!r) return null;
-    const extrait = String(r.texte || '').split(/\\s+/).slice(0, 70).join(' ');
+    const extrait = String(r.texte || '').split(/\s+/).slice(0, 70).join(' ');
     const page = Number.isSafeInteger(r.page_start) && Number.isSafeInteger(r.page_end)
       ? ' · صفحة ' + r.page_start + (r.page_end !== r.page_start ? '–' + r.page_end : '')
       : '';
