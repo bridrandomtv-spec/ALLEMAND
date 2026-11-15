@@ -3973,3 +3973,19 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Vérification de l'état GitHub de PR #17 : elle est déjà fusionnée et fermée depuis le 2026-11-14 à 14:50:08 UTC (merge commit `ef781da525eb4df062841c4362a999811fe35831`). Cette fusion est antérieure au Lot 633 ; aucune opération de fusion n'a été faite pendant ce lot. La branche d'audit est à 248 commits en avance et 0 en retard sur `main` au dernier contrôle.
 
 - Clôture Lot 633 : dernier run `43764431783` toujours en échec sans preuve d'exécution des tests ; vérification statique confirmant que les deux indexeurs appellent le writer transactionnel et que le test de rollback existe. Branche à 250 commits d'avance, 0 en retard sur `main`.
+
+
+---
+
+## Lot 634 — rollback des sources et audit de cohérence des indexeurs (2026-11-15)
+
+- Défaut confirmé dans le pipeline multi-format : les sources étaient copiées vers `assets/corpus/` avant la publication de `corpus.json` et `corpus_rag_index.json`. Une erreur de publication pouvait laisser des fichiers orphelins.
+- Ajout de `publier_sources_et_artefacts()` dans `tools/ingest_corpus.py` : préparation temporaire des copies, sauvegarde des destinations existantes, publication du catalogue/index puis rollback des sources en cas d'exception Python. Une sauvegarde est conservée si sa restauration échoue.
+- Test d'intégration synthétique ajouté dans `tests/test_corpus_pipeline.py` : simulation d'un échec de publication JSON et vérification de la restauration des artefacts et de l'absence de copie source orpheline.
+- Contrôle statique : les indexeurs PDF et multi-format utilisent le helper commun de fusion RAG et le validateur commun de métadonnées de droits.
+- Limite toujours présente : le rollback gère les exceptions détectées, pas une coupure brutale au milieu de la séquence. Une génération versionnée et un pointeur atomique restent nécessaires après audit des consommateurs.
+- Limite des droits : la référence de preuve reste une chaîne de caractères ; l'existence de la pièce et son périmètre exact ne sont pas vérifiés automatiquement.
+- Tests ajoutés mais non exécutés/certifiés : blocage GitHub Actions/runners toujours à lever. Les derniers diagnostics connus montraient `runner_id: 0` et `steps: []`. Le propriétaire doit vérifier Billing & plans / Actions spending limit ; la cause exacte n'est pas confirmée par l'API.
+- Aucun PDF réel traité, aucun OCR, aucune ingestion ni indexation réelle. Aucun changement `main`, merge, déploiement ou changement Supabase/Auth/RLS/schéma/données/paiements/secrets.
+- Rapport : `docs/LOTS/LOT_634_ROLLBACK_SOURCES_ET_AUDIT_INDEXEURS.md`.
+- Suite : Lot 635 — rétablir les runners, exécuter les tests, auditer les consommateurs avant migration versionnée et renforcer la preuve documentaire des droits.
