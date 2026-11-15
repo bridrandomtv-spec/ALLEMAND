@@ -2845,3 +2845,23 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le profil doit référencer le chemin privé du document et le contrôle d’activation doit exiger ce chemin en plus des champs déjà validés. L’interface de modération doit proposer « ouvrir le justificatif » et bloquer l’activation si le document manque.
 - Aucun bucket, objet, colonne, policy ou donnée de compte n’a été modifié durant cet audit. Aucun document réel n’a été consulté.
 - Point de consentement à obtenir avant création : les cartes scolaires contiennent des données personnelles, potentiellement celles de mineurs. Confirmer que l’établissement souhaite collecter et conserver une copie privée de la carte scolaire, avec accès strictement limité aux modérateurs habilités. La conservation doit ensuite être limitée dans le temps et la suppression prévue après décision selon la politique de confidentialité.
+
+## Lot 556 — justificatif scolaire privé obligatoire (15 novembre 2026)
+
+- Consentement explicite de l’utilisateur obtenu pour créer un stockage privé dédié et rendre la carte scolaire obligatoire à la demande de vérification.
+- Supabase actif : création du bucket `cartes-scolaires`, non public, taille maximale 5 MiB, MIME autorisés strictement `image/jpeg`, `image/png`, `image/webp`, `application/pdf`.
+- Schéma : ajout de `public.profiles.carte_scolaire_path` (texte). Aucun profil existant ni statut de vérification n’a été modifié.
+- Policies Storage dédiées :
+  - INSERT : utilisateur authentifié, chemin commençant par son UUID, propriétaire correspondant, taille et MIME contrôlés ;
+  - SELECT : propriétaire du document ou modérateur autorisé par `students.verify` dans le périmètre de sa wilaya, avec accès administrateur global conservé ;
+  - DELETE : propriétaire uniquement.
+  - Bucket privé : aucune lecture par URL publique. Le modérateur obtient un lien signé valable 300 secondes après contrôle RLS.
+- Trigger `profiles_verif_guard()` renforcé : un passage à `verifie` exige maintenant tous les champs scolaires précédents ET un chemin de carte non vide correspondant à un objet réellement présent dans `cartes-scolaires` sous le dossier UUID du compte. Les contrôles d’autorisation, périmètre wilaya et demande `en_attente` sont conservés.
+- Client Supabase : upload aléatoire sous `<uuid>/<token>.<extension>`, contrôle client 5 MiB/MIME en plus des restrictions serveur, puis enregistrement du chemin avec la demande. La demande est refusée côté client si aucune pièce n’est jointe.
+- Messenger : formulaire étudiant enrichi d’un champ de dépôt JPEG/PNG/WebP/PDF et d’une explication de confidentialité. Les groupes officiels restent accessibles pendant l’attente.
+- Administration : file de vérification inclut le chemin de carte dans les données réservées aux modérateurs, affiche « ouvrir la carte scolaire » et désactive la confirmation si la pièce ou un champ requis manque. Le document s’ouvre par URL signée de 5 minutes ; RLS Storage reste l’autorité effective.
+- Commits `main` : `b3515318920461a80408dba8394e28ca31ccfab0` (client Supabase), `5daee85cef0dbf8057f025056d8c0ab8512afafb` (formulaire Messenger initial), `92d0bd0068cb6c4c39e1ff1b9077932a77c0ceb1` (interface admin), `8b6a6c49695f9e76424c4b23a8a1e14b768a9df4` (réparation du balisage formulaire).
+- Versions cache prévues : `msg.js?v=3529`, `admin.js?v=3515`, `supabase/supabase.js?v=3525`, Service Worker `dz-de-v3.185.0.0.171`.
+- Vérifications Supabase confirmées : bucket présent et privé, limites MIME/taille conformes, colonne présente, trois policies Storage présentes, trigger activé et contenant `verification_document_missing`.
+- Syntaxe vérifiée avec `new Function` : `supabase/supabase.js` et `admin.js` valides ; après correction du formulaire, `msg.js` valide. La CI, les tests de navigateur, l’upload réel avec un compte étudiant, l’ouverture réelle par un modérateur et le déploiement Cloudflare restent à exécuter/valider.
+- Aucune carte réelle n’a été chargée ou consultée ; aucune demande n’a été approuvée/rejetée. La conservation/suppression après décision reste à définir dans la politique de confidentialité. Prévoir une purge automatique contrôlée après une durée approuvée, sans suppression prématurée des dossiers en recours.
