@@ -160,7 +160,7 @@ def main(dossier):
     chunks_existants = lire_json_existant(INDEX, "chunks", [])
     index_existant = {"_meta": {}, "chunks": chunks_existants}
     catalogue, index_nouveau, ignores, copies = construire(dossier, docs_existants)
-    ids_importes = {doc["id"] for doc in catalogue if doc["id"].startswith("c-")}
+    ids_importes = {os.path.basename(cible).rsplit(".", 1)[0] for _, cible in copies}
     # N'enlève de l'index que les versions remplacées par ce lot.
     index_final = fusionner_index(index_existant, index_nouveau["chunks"], ids_importes)
     corpus_final = {"_meta": {"version": "2.1.0", "nb": len(catalogue)},
