@@ -1261,48 +1261,53 @@ async function sendChat(v){
   log.appendChild(tp); log.scrollTop = log.scrollHeight;
   let answered = false;
   try{
-    /* 1) Corpus local : réponse exacte prioritaire, sans invention. */
-    if(window.RAG && window.RAG.cherche){
-      try{
-        const rr = await window.RAG.cherche(v);
-        const ff = window.RAG.formule(rr);
-        if(ff){ tp.remove(); addMsg('bot', ff); answered = true; return; }
-      }catch(e){}
+    /* Chat écrit et voix passent désormais par le même orchestrateur pédagogique. */
+    let rep = '';
+    if(typeof window.reponseIA === 'function'){
+      rep = await window.reponseIA({
+        raw_text: String(v),
+        normalized_text: String(v),
+        input_mode: 'text',
+        selected_language: 'auto',
+        detected_language: '',
+        dialect: 'unknown'
+      });
     }
-    /* 2) Tuteur IA distant : URL issue de la configuration publique, jamais de secret côté client. */
-    try{
-      const cfg = await fetch('./assets/bdd/config.json', {cache:'no-cache'}).then(r=>r.ok?r.json():null);
-      const proxy = cfg && typeof cfg.ia_proxy === 'string' ? cfg.ia_proxy.replace(/\/$/,'') : '';
-      if(proxy){
-        const response = await fetch(proxy + '/ask', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({q:String(v).slice(0,600),ctx:'منصة الثانوية الافتراضية الجزائرية. المساعدة التعليمية في اللغة الألمانية، مع شرح مبسط بالعربية والألمانية.'})
-        });
-        const data = await response.json().catch(()=>null);
-        if(response.ok && data && data.ok && typeof data.rep === 'string' && data.rep.trim()){
-          tp.remove();
-          const safe = esc(data.rep.trim()).replace(/\n/g,'<br>');
-          addMsg('bot', safe);
-          answered = true;
-          if(soundOn && 'speechSynthesis' in window){
-            const utterance = new SpeechSynthesisUtterance(data.rep.trim());
-            utterance.lang = /[\u0600-\u06FF]/.test(data.rep) ? 'ar' : (/[äöüß]/i.test(data.rep) ? 'de-DE' : 'fr-FR');
-            speechSynthesis.cancel(); speechSynthesis.speak(utterance);
-          }
-          return;
-        }
+    if(rep && typeof rep === 'object') rep = rep.html || rep.texte || rep.reponse || '';
+    rep = String(rep || '').trim();
+    if(rep){
+      tp.remove();
+      const safe = esc(rep).replace(/\\n/g,'<br>');
+      addMsg('bot', safe);
+      answered = true;
+      if(soundOn && 'speechSynthesis' in window){
+        const utterance = new SpeechSynthesisUtterance(rep);
+        utterance.lang = /[\\u0600-\\u06FF]/.test(rep) ? 'ar-SA'
+          : (/[äöüß]/i.test(rep) ? 'de-DE'
+          : (/\\b(the|what|why|how|you|is|are)\\b/i.test(rep) ? 'en-US' : 'fr-FR'));
+        speechSynthesis.cancel(); speechSynthesis.speak(utterance);
       }
-    }catch(e){}
-    /* 3) Secours local si le réseau ou le Worker IA est indisponible. */
+      return;
+    }
+    /* Secours historique si le moteur commun n'est pas chargé ou ne répond pas. */
     tp.remove();
-    const rep = PROF.repondre(v);
-    addMsg('bot', rep);
-    if(soundOn && /de-in/.test(rep)){
-      const m = rep.match(/<span class="de-in">([^<]+)<\/span>/);
+    const secours = PROF && typeof PROF.repondre === 'function' ? PROF.repondre(v)
+      : 'Je rencontre un problème temporaire. Reformule ta question, s’il te plaît.';
+    addMsg('bot', secours);
+    if(soundOn && /de-in/.test(secours)){
+      const m = secours.match(/<span class="de-in">([^<]+)<\\/span>/);
       if(m) speak(m[1].replace(/<[^>]+>/g,''));
     }
     answered = true;
+  }catch(e){
+    try{ console.warn('[chat] orchestrateur pédagogique :', e); }catch(_){}
+    if(tp.isConnected){
+      tp.remove();
+      const secours = PROF && typeof PROF.repondre === 'function' ? PROF.repondre(v)
+        : 'Je rencontre un problème temporaire. Reformule ta question, s’il te plaît.';
+      addMsg('bot', secours);
+      answered = true;
+    }
   }finally{
     if(!answered && tp.isConnected) tp.remove();
   }
