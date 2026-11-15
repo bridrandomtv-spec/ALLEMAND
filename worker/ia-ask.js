@@ -53,15 +53,39 @@ export default {
     let b = {};
     const raw = await req.text();
     try{ b = raw ? JSON.parse(raw) : {}; }catch(e){ b = {}; }
-    const q = String(b.q || b.text || raw || '').slice(0, 600);
+    const q = String(b.raw_text || b.q || b.text || raw || '').slice(0, 600);
+    const normalized = String(b.normalized_text || q).slice(0, 600);
     const ctx = String(b.ctx || '').slice(0, 3000);
+    const safeField = (v, max, fallback) =>
+      String(v == null || v === '' ? fallback : v).replace(/[\\r\\n]/g, ' ').slice(0, max);
+    const meta = {
+      input_mode: b.input_mode === 'voice' ? 'voice' : 'text',
+      selected_language: safeField(b.selected_language, 20, 'auto'),
+      detected_language: safeField(b.detected_language, 20, 'unknown'),
+      dialect: safeField(b.dialect, 30, 'unknown'),
+      subject: safeField(b.subject, 60, 'allemand'),
+      level: safeField(b.level, 30, 'tous'),
+      track: safeField(b.track, 60, 'non précisée')
+    };
     if(!q) return json({ ok:false, err:'q-vide' }, 400, org);
     const now = Date.now();
     HITS = HITS.filter(t => now - t < 60000);
     if(HITS.length >= 20) return json({ ok:false, err:'quota-min' }, 429, org);
     HITS.push(now);
-    const msgs = [{ role:'system', content: SYSTEM },
-      { role:'user', content: (ctx ? 'CONTEXTE VÉRIFIÉ :\n' + ctx + '\n\nQUESTION : ' : '') + q }];
+    const metadata = [
+      'MODE D’ENTRÉE : ' + meta.input_mode,
+      'LANGUE CHOISIE POUR LA RECONNAISSANCE : ' + meta.selected_language,
+      'LANGUE DÉTECTÉE : ' + meta.detected_language,
+      'DIALECTE DÉTECTÉ : ' + meta.dialect,
+      'MATIÈRE ACTIVE : ' + meta.subject,
+      'NIVEAU : ' + meta.level,
+      'FILIÈRE : ' + meta.track
+    ].join('\\n');
+    const userContent = metadata
+      + (ctx ? '\\n\\nCONTEXTE DOCUMENTAIRE ET PÉDAGOGIQUE :\\n' + ctx : '')
+      + '\\n\\nQUESTION ORIGINALE DE L’ÉLÈVE :\\n' + q
+      + (normalized !== q ? '\\n\\nNORMALISATION TECHNIQUE (ne remplace pas la formulation originale) :\\n' + normalized : '');
+    const msgs = [{ role:'system', content: SYSTEM }, { role:'user', content: userContent }];
     try{
       let rep = '';
       if(env.AI){
