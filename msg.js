@@ -646,7 +646,7 @@
         return window.SB.msgRequestVerification(mv,sv,uploaded.path);
       }).then(function(r4){
         if(state.authEpoch!==verificationIdentityEpoch) return;
-        if(r4 && r4.ok){ renderList(); }
+        if(r4 && r4.ok){ renderList(); if(r4.cleanupWarning) window.alert('⚠️ '+r4.cleanupWarning); }
         else { t.disabled=false; window.alert('⛔ '+((r4&&r4.err)||'تعذّر إرسال طلب التحقق')); }
       }).catch(function(error){ if(state.authEpoch!==verificationIdentityEpoch) return; t.disabled=false; window.alert('⛔ '+String(error && error.message || error)); });
       return;
