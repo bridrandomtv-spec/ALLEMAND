@@ -4005,3 +4005,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun PDF réel traité, aucun OCR, aucune ingestion réelle, aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucun déploiement ni merge. `main` inchangée.
 - Rapport : `docs/LOTS/LOT_635_TRAÇABILITE_REPONSES_RAG.md`.
 - Suite : Lot 636 — audit de cohérence génération catalogue/index/shards, tests de résolution ID → fiche et échappement, puis validation multilingue synthétique.
+
+
+## Lot 636 — cohérence de génération entre index RAG et shards
+- Diagnostic : `assets/bdd/shards_manifest.json` présent sur la branche était en version 1.0.0 avec zéro shard, alors que `rag.js` exige la version 2.0.0 et au moins un shard. Le lecteur basculait donc sur l'index complet.
+- Risque identifié : les shards étaient écrits un par un avant le manifeste ; en cas d'interruption, le manifeste pouvait pointer vers des fichiers d'une génération différente. Le lecteur contrôlait les structures, les comptes et les IDs, mais pas l'appartenance à une même génération.
+- Correction : `tools/sharder_index.py` calcule une empreinte SHA-256 déterministe de l'index canonique, l'inscrit dans le manifeste et dans chaque shard publié (`_generation`).
+- Correction navigateur : `rag.js` exige une empreinte de génération valide dans le manifeste et vérifie l'égalité sur chaque shard. Un seul shard incohérent invalide tout le parcours shardé ; le repli reste l'index complet validé, jamais un résultat partiel.
+- Tests synthétiques ajoutés dans `tests/test_corpus_pipeline.py` pour la présence et la reproductibilité de l'identifiant de génération.
+- Rapport : `docs/LOTS/LOT_636_GENERATION_COHERENTE_SHARDS_RAG.md`.
+- Commits Lot 636 : rapport `17d0d96c3f0c272cc4b7456383e5777fc7148683`; sharder `4050e4bf6e870976a5185151b4cf4f3198bab44f`; lecteur `6b8e7c2210425755c2908ff593000b8987976e14`; tests `64719235ab2049dd67af22984469d84c6a71f627`.
+- Validation : tests non exécutés faute de runner CI confirmé ; ne pas déclarer la CI verte. Le manifeste réel n'a pas été régénéré et aucun corpus n'a été ingéré : le nouveau contrat sera activé lors d'une future génération contrôlée des shards. Aucun PDF/OCR, Supabase/Auth/RLS, paiement, déploiement Cloudflare ou fusion dans main.
+- Suite : ajouter un contrôle de cohérence catalogue ↔ chunks (références documentaires orphelines, métadonnées de langue/matière/niveau) et des tests synthétiques multilingues avant de connecter le RAG au parcours vocal.
