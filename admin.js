@@ -526,6 +526,7 @@ function rendreCouvertureORG1(mount){
       + metric(d.signalements_ouverts||0, 'التبليغات المفتوحة', '🚩')
       + metric(scopeCount, 'نطاق الولايات (وطني أو عدد الولايات المعيّنة)', '🗺️')
       + '</div>'
+      + ((state4.perms.indexOf('students.verify') !== -1 || state4.role === 'admin') ? '<div style="margin-top:12px"><button class="btn btn-p btn-sm" data-adm-tab="students" type="button">🪪 فتح طلبات تفعيل التلاميذ</button></div>' : '')
       + '<div class="card" style="margin-top:14px"><b>📜 آخر إجراءات سجل التدقيق</b>'
       + (au.ok && au.rows && au.rows.length ? auditRows : (au.ok ? '<p>لا توجد إجراءات مسجلة بعد.</p>' : auditRows))
       + '</div>'
