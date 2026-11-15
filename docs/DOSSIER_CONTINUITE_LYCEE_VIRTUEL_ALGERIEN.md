@@ -2793,3 +2793,9 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Ajustement final du contraste : le conteneur principal et le bandeau de la file reçoivent aussi un fond vert très sombre, afin que le texte blanc reste lisible en thème clair comme en thème sombre. Commit : `ad818ce7f506ceb66e37dce428fb7380873d02f6`.
 - GitHub Actions a créé le run CI — ALLEMAND `43658519248` sur ce commit ; état observé : `queued`. Aucun résultat de validation n'est encore disponible.
 - Le déploiement Cloudflare n'a pas été lancé ni vérifié. Les changements sont sur `main`, mais ne doivent pas être considérés comme visibles en production avant déploiement.
+
+
+### État final de validation — Lot 554
+- Le run CI `43658519248` s'est terminé avec `conclusion=failure`. L'API GitHub ne retourne aucune étape (`steps=[]`), aucun runner affecté (`runner_id=0`) et aucun détail de journal exploitable. Il est donc impossible d'attribuer cet échec à une assertion du code ; le statut reste rouge et la validation CI n'est pas acquise.
+- Vérification GitHub après les commits : `main` pointe sur `cd2ad532993b52992ee55c70e30bcdd0f9922e1c`. Les références de cache HTML et Service Worker sont synchronisées sur CSS 203, admin 3513 et Supabase client 3523 ; les marqueurs de pagination et de contraste sont présents dans les fichiers relus.
+- Aucun test navigateur réel et aucun déploiement Cloudflare n'ont été exécutés. Le résultat visuel en production reste à confirmer après déploiement.
