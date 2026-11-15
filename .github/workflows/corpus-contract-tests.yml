@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   corpus-contracts:
-    name: Tests Python du corpus (sans ingestion ni déploiement)
+    name: Contrats Python et syntaxe RAG (sans ingestion ni déploiement)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
