@@ -12,6 +12,13 @@ on:
       - "tools/sharder_index.py"
       - "tests/tutor_request_contract.mjs"
       - "tests/tutor_language_matrix.mjs"
+      - "tests/english_subject_runtime.mjs"
+      - "tests/tutor_matrix.json"
+      - "assets/bdd/subjects.json"
+      - "assets/bdd/matieres.json"
+      - "assets/bdd/english_pages.json"
+      - "assets/bdd/english_devoirs.json"
+      - "assets/bdd/english_malakhiss.json"
       - "tests/rag_loader_contract.mjs"
       - "tests/rag_loader_runtime.mjs"
       - "tests/sharder_fixture.py"
@@ -51,8 +58,11 @@ jobs:
       - name: Tester le contrat commun chat / voix / Worker
         run: node tests/tutor_request_contract.mjs
 
-      - name: Tester les heuristiques Darija / Arabizi et la matrice
+      - name: Tester les heuristiques Darija / Arabizi / anglais / espagnol / italien
         run: node tests/tutor_language_matrix.mjs
+
+      - name: Tester le routage des matières et l’isolation des corpus
+        run: node tests/english_subject_runtime.mjs
 
       - name: Tester le contrat source du lecteur RAG
         run: node tests/rag_loader_contract.mjs
