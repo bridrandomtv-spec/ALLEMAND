@@ -70,8 +70,9 @@ def fusionner_index_rag(existant, entrants, docs_remplaces):
     if not isinstance(existant, dict) or not isinstance(existant.get("chunks"), list):
         raise ValueError("index RAG existant invalide")
     remplaces = set(docs_remplaces)
-    conserves = [dict(c) for c in existant["chunks"]
-                 if isinstance(c, dict) and c.get("doc") not in remplaces]
+    if any(not isinstance(c, dict) for c in existant["chunks"]):
+        raise ValueError("chunk existant invalide : fusion interrompue sans perte silencieuse")
+    conserves = [dict(c) for c in existant["chunks"] if c.get("doc") not in remplaces]
     combines = conserves + [dict(c) for c in entrants]
     chunks, termes = [], {}
     for gid, chunk in enumerate(combines):
@@ -81,7 +82,7 @@ def fusionner_index_rag(existant, entrants, docs_remplaces):
             raise ValueError("chunk sans texte pendant la fusion")
         chunk["global_id"] = gid
         chunks.append(chunk)
-        for terme in set(re.findall(r"[A-Za-zÀ-ÿ\\u0600-\\u06ff]{3,}", chunk["texte"].lower())):
+        for terme in set(re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06ff]{3,}", chunk["texte"].lower())):
             termes.setdefault(terme, []).append(gid)
     meta = dict(existant.get("_meta", {}))
     meta.update({"version": "2.1.0", "nb_chunks": len(chunks),
