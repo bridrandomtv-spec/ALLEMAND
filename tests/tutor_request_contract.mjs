@@ -35,9 +35,10 @@ const checks = [
     /QUESTION ORIGINALE DE L’ÉLÈVE/.test(worker)],
   ['Worker reçoit une consigne pédagogique sensible à la darija',
     /DIALECTE DÉTECTÉ = darija/.test(worker) && /explique étape par étape/.test(worker)],
-  ['ia.js garde un historique temporaire isolé par utilisateur',
+  ['ia.js garde un historique temporaire isolé par utilisateur connecté',
     /AUTH\.session\(\)/.test(ia) && /DIALOGUE_OWNER/.test(ia) &&
-    /DIALOGUE\.slice\(-8\)/.test(ia) && !/localStorage.*DIALOGUE/.test(ia)],
+    /DIALOGUE\.slice\(-8\)/.test(ia) && /if\(!owner \|\| !question \|\| !answer\)/.test(ia) &&
+    !/localStorage.*DIALOGUE/.test(ia)],
   ['Worker borne l’historique et refuse les rôles non autorisés',
     /b\.history\.slice\(-8\)/.test(worker) && /item\.role !== 'user' && item\.role !== 'assistant'/.test(worker) &&
     /slice\(0, 1000\)/.test(worker)],
