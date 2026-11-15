@@ -54,3 +54,8 @@ Le contexte des diagnostics précédents comporte un avertissement GitHub Action
 3. Faire un test d'intégration de bout en bout du chemin PDF et multi-format sur fixtures synthétiques uniquement.
 4. Vérifier l'affichage utilisateur du titre documentaire, de la page et de l'empreinte source dans la réponse RAG.
 5. Maintenir l'interdiction d'ingérer les manuels réels tant que l'autorisation et son périmètre exact ne sont pas rattachés à chaque source.
+
+
+## Vérification complémentaire de PR #17
+
+La lecture de l'état GitHub actuel montre que la PR #17 est déjà `closed` et `merged`, avec fusion le **2026-11-14 à 14:50:08 UTC**, commit de fusion `ef781da525eb4df062841c4362a999811fe35831`. Cette fusion précède les opérations du Lot 633 ; aucun appel de fusion n'a été effectué pendant ce lot. La branche d'audit reste à jour par rapport à `main` au moment du contrôle : 248 commits en avance, 0 en retard.
