@@ -52,6 +52,7 @@ jobs:
         run: |
           set -e
           node --check app.js
+          node --check matieres.js
           node --check ia.js
           node --check parle.js
           node --input-type=module --check < worker/ia-ask.js
