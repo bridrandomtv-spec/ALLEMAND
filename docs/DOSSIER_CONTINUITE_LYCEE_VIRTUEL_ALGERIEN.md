@@ -3308,3 +3308,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun code applicatif, corpus, test, Worker, configuration, donnée Supabase, secret ou déploiement n'a été modifié. Audit statique GitHub uniquement : aucun test Node, navigateur, appel Worker ou test vocal réel n'a été exécuté. Aucun statut CI n'est revendiqué.
 - Messenger : les tests E2E multi-comptes A/B/C, INSERT/UPDATE/suppression logique et reconnexion restent à exécuter ; Messenger n'est pas déclaré terminé.
 - Prochaine étape : Lot 594 — établir une matrice de tests fonctionnels du tuteur (intention attendue, niveau/unité, source, correction attendue, langue de réponse), puis mesurer séparément les parcours chat, RAG et voix avant de proposer une architecture unifiée.
+
+## Lot 594 — matrice fonctionnelle initiale du tuteur IA (15 novembre 2026)
+
+- Création de `tests/tutor_matrix.json`, version 1.0, avec 16 cas ciblés et leurs critères d'acceptation.
+- Couverture initiale : Darija en alphabet arabe, Arabizi, questions multilingues Darija/français/allemand, grammaire allemande, conjugaison, correction, ambiguïtés de niveau/unité, sélection d'exercices et recherche de pages/règles.
+- Cas critiques explicitement inclus : unité 8 sans niveau (doit demander 2AS ou 3AS), unité 7 de 3AS (ne doit pas être confondue avec unité 7 de 2AS), collision « كيف أراجع » (résumé/révision ou méthode), rattachement réel des exercices à l'unité et interdiction d'inventer une page du manuel.
+- Politique de réussite : une réponse non vide ne suffit pas. Chaque cas doit être évalué sur l'intention, la langue/registres, le niveau/unité, l'exactitude pédagogique, la provenance et l'absence d'affirmation non étayée.
+- La matrice est un **jeu de test préparé**, pas un résultat d'exécution. Aucun test automatisé ou navigateur n'a été lancé dans ce lot; les 16 cas ne constituent pas une validation statistique de la compréhension du Darija. Objectif avant validation globale : étendre le corpus à au moins 100 formulations anonymisées et faire annoter les réponses attendues.
+- Commit du fichier de matrice : `0039d179b5a9104791b951488af8067b059e99e3`.
+- Aucun code applicatif, donnée Supabase, politique RLS, Worker, configuration, secret ou déploiement n'a été modifié.
+- Messenger reste non validé en E2E multi-comptes; les vérifications INSERT/UPDATE/suppression logique/reconnexion demeurent en attente.
+- Prochaine étape : Lot 595 — construire un exécuteur de tests isolé pour charger les scripts du tuteur et mesurer séparément RAG/PROF/QUST sans appeler le Worker de production, puis établir les limites du simulateur avant de l'utiliser comme preuve fonctionnelle.
