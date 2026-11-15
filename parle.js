@@ -186,15 +186,17 @@
   const IT_VOTE = /\b(io|lui|lei|noi|voi|loro|il|lo|gli|un|uno|una|che|di|sono|grazie|ciao|questa|questo|quello|molto|anche|per|con|senza|essere|avere|fare|parola|frase|verbo|esempio)\b/gi;
   function voteLang(span){
     const t = String(span || '');
-    let de = 0, fr = 0, es = 0, it = 0;
+    let de = 0, fr = 0, es = 0, it = 0, en = 0;
     const um = t.match(/[äöüßÄÖÜ]/g);
     if(um) de += um.length * 3;
     const dM = t.match(DE_VOTE); if(dM) de += dM.length * 2;
     const fM = t.match(FR_VOTE); if(fM) fr += fM.length * 2;
     const eM = t.match(ES_VOTE); if(eM) es += eM.length * 2;
     const iM = t.match(IT_VOTE); if(iM) it += iM.length * 2;
-    const best = Math.max(de, fr, es, it);
+    const nM = t.match(EN_VOTE); if(nM) en += nM.length * 2;
+    const best = Math.max(de, fr, es, it, en);
     if(best === 0) return '';
+    if(en > Math.max(de, fr, es, it)) return 'en';
     if(de >= best) return 'de';
     if(fr >= best) return 'fr';
     if(es >= best) return 'es';
