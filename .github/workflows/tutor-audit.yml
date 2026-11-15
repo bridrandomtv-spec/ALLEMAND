@@ -7,6 +7,7 @@ on:
       - "ia.js"
       - "parle.js"
       - "app.js"
+      - "matieres.js"
       - "worker/ia-ask.js"
       - "rag.js"
       - "tools/sharder_index.py"
