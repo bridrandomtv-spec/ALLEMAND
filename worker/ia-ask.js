@@ -76,9 +76,10 @@ export default {
       input_mode: b.input_mode === 'voice' ? 'voice' : 'text',
       selected_language: safeField(b.selected_language, 20, 'auto'),
       detected_language: safeField(b.detected_language, 20, 'unknown'),
-      output_language: ['ar','de','fr','es','it','en'].includes(String(b.output_language || '').toLowerCase())
+      output_language: ['ar','de','fr','es','it'].includes(String(b.output_language || '').toLowerCase())
         ? String(b.output_language).toLowerCase()
-        : (String(b.detected_language || '').toLowerCase().slice(0, 2) || 'de'),
+        : (['ar','de','fr','es','it'].includes(String(b.detected_language || '').toLowerCase().slice(0, 2))
+          ? String(b.detected_language).toLowerCase().slice(0, 2) : 'de'),
       dialect: safeField(b.dialect, 30, 'unknown'),
       subject: safeField(b.subject, 60, 'allemand'),
       level: safeField(b.level, 30, 'tous'),
