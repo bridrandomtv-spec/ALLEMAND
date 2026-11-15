@@ -3613,3 +3613,23 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun compte, message, profil, politique RLS, table, donnée, stockage, paiement ou paramètre Supabase n'a été lu ou modifié. Aucun Worker n'a été déployé ; le fichier Worker est seulement un candidat Git.
 - **Suite Lot 612** : ajouter une mémoire conversationnelle temporaire bornée et protégée contre le changement d'utilisateur, après vérification de la forme réelle de `AUTH.session()` et du cycle de déconnexion ; puis tests de parité texte/voix et tests linguistiques darija/Arabizi. Ne pas persister d'historique sans décision explicite de confidentialité.
 - Messenger reste non terminé : tests E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
+
+
+## Lot 612 — mémoire conversationnelle temporaire, limitée et liée à la session (15 novembre 2026)
+
+- Inspection de `auth.js` : `AUTH.session()` expose un objet de session avec la clé utilisateur `user`; `AUTH.logout()` supprime la session locale et émet `dz:auth` avec `detail:null`. Cette clé sert uniquement à isoler la mémoire en RAM ; elle n'est jamais transmise au Worker.
+- `ia.js` possède maintenant un historique éphémère en mémoire vive, partagé par les appels du chat et de la voix puisqu'ils utilisent le même `reponseIA`.
+- L'historique est réinitialisé quand la clé utilisateur de session change. Il n'est pas écrit dans `localStorage`, ni dans Supabase, ni dans un stockage distant.
+- La fenêtre client est limitée aux 8 derniers messages (4 échanges). Chaque question conservée est tronquée à 600 caractères et chaque réponse à 1 000 caractères. Seules les réponses locales jugées valides et les réponses cloud réussies sont mémorisées ; les messages d'erreur ne sont pas ajoutés.
+- `ia.js` transmet ces tours précédents au Worker avec la question actuelle. `worker/ia-ask.js` ne conserve que les 8 derniers éléments, accepte uniquement les rôles `user` et `assistant`, et borne chaque contenu à 1 000 caractères. Le prompt demande de reprendre le fil sans traiter les anciennes réponses comme des sources documentaires infaillibles.
+- `tests/tutor_request_contract.mjs` a été étendu pour vérifier statiquement l'isolation par session, l'absence de persistance de l'historique et les limites/roles appliqués côté Worker.
+- Commits du lot :
+  - mémoire session côté client : `1c74cee04835c47bc432815f695c69684598aa09`
+  - validation/transmission côté Worker : `51db1b32e565369fa5000f239213a13ee4e5770b`
+  - consigne de continuité conversationnelle : `f637edb30d595371b3ab00905cba56dc8f56a779`
+  - assertions statiques : `0e36b58a2c90ef94350886b4fbb1638b75f2ac27`
+- **Limites** : la mémoire disparaît au rechargement de la page ; c'est volontaire à ce stade. L'isolation est fondée sur la clé `AUTH.session().user` actuellement disponible dans l'authentification locale. Elle n'est pas une identité serveur sécurisée et ne doit pas être utilisée comme mécanisme d'autorisation. Le Worker ne stocke pas cet historique.
+- **Validation non exécutée** : aucune session navigateur réelle, aucun changement de compte, aucun appel Worker ni test Node n'a été exécuté. Les modifications sont relues sur GitHub ; aucun PASS runtime n'est revendiqué.
+- Aucun compte, mot de passe, profil, message Messenger, table, policy RLS, donnée Supabase, secret, configuration ou déploiement n'a été touché.
+- **Suite Lot 613** : tests de parité entre chat et voix avec mêmes questions brutes, même contexte scolaire et mêmes sources ; tests Darija/Arabizi (arabe et latin) et mélange darija/allemand ; ensuite, vérifier la qualité réelle des réponses et les sorties TTS sur navigateur et mobile.
+- Messenger reste non terminé : tests E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
