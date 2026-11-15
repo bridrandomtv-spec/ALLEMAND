@@ -14,6 +14,8 @@ import os
 import re
 import sys
 
+from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+
 CORPUS = os.path.join("assets", "bdd", "corpus.json")
 INDEX = os.path.join("assets", "bdd", "corpus_rag_index.json")
 CHUNK_MOTS = 1200
@@ -61,11 +63,12 @@ def construire(dossier, documents_existants=None):
             continue
         with open(sidecar, encoding="utf-8") as f:
             meta = json.load(f)
-        licence = str(meta.get("licence", "")).strip().lower()
-        if licence not in LICENCES_AUTORISEES:
-            print("IGNORE (licence non autorisée):", nom)
+        ok_droits, raison_droits = valider_metadonnees(meta)
+        if not ok_droits:
+            print("IGNORE (droits non vérifiés):", nom, "-", raison_droits)
             nb_ignores += 1
             continue
+        licence = str(meta.get("licence", "")).strip().lower()
 
         texte = lire_texte_pdf(chemin).strip()
         if len(texte) < 60:
