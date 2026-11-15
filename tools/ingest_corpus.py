@@ -122,6 +122,64 @@ def construire(dossier, documents_existants=None):
     return catalogue, index, ignores, fichiers_copies
 
 
+def publier_sources_et_artefacts(copies, artefacts):
+    """Publie les sources puis les JSON ; restaure les sources si une étape échoue."""
+    import tempfile
+
+    temporaires = {}
+    sauvegardes = {}
+    touches = []
+    try:
+        # Préparer toutes les copies avant de toucher aux fichiers de destination.
+        for source, cible in copies:
+            dossier = os.path.dirname(cible) or "."
+            os.makedirs(dossier, exist_ok=True)
+            fd, temporaire = tempfile.mkstemp(
+                prefix=".corpus-source-tmp-", dir=dossier
+            )
+            os.close(fd)
+            temporaires[cible] = temporaire
+            shutil.copy2(source, temporaire)
+
+        # Conserver les anciennes sources pour pouvoir annuler un lot partiel.
+        for cible, temporaire in temporaires.items():
+            if os.path.exists(cible):
+                fd, sauvegarde = tempfile.mkstemp(
+                    prefix=".corpus-source-backup-", dir=os.path.dirname(cible) or "."
+                )
+                os.close(fd)
+                os.remove(sauvegarde)
+                os.replace(cible, sauvegarde)
+                sauvegardes[cible] = sauvegarde
+            else:
+                sauvegardes[cible] = None
+            touches.append(cible)
+            os.replace(temporaire, cible)
+
+        ecrire_json_transactionnel(artefacts)
+    except Exception:
+        for cible in reversed(touches):
+            sauvegarde = sauvegardes.get(cible)
+            try:
+                if os.path.exists(cible):
+                    os.remove(cible)
+                if sauvegarde and os.path.exists(sauvegarde):
+                    os.replace(sauvegarde, cible)
+            except OSError:
+                # Ne pas masquer l'exception initiale ; laisser la sauvegarde
+                # sur disque si la restauration elle-même échoue.
+                pass
+        raise
+    finally:
+        for chemin in list(temporaires.values()) + [
+            p for p in sauvegardes.values() if p
+        ]:
+            try:
+                os.remove(chemin)
+            except FileNotFoundError:
+                pass
+
+
 def main(dossier):
     docs_existants = lire_json_existant(CORPUS, "documents", [])
     chunks_existants = lire_json_existant(INDEX, "chunks", [])
@@ -132,11 +190,12 @@ def main(dossier):
     index_final = fusionner_index_rag(index_existant, index_nouveau["chunks"], ids_importes)
     corpus_final = {"_meta": {"version": "2.1.0", "nb": len(catalogue)},
                     "documents": catalogue}
-    # Les sources ne sont copiées qu'après validation complète des deux artefacts.
+    # Les sources et les JSON forment un seul lot : rollback des copies si
+    # la publication du catalogue/index échoue.
     os.makedirs(DESTINATION, exist_ok=True)
-    for source, cible in copies:
-        shutil.copy2(source, cible)
-    ecrire_json_transactionnel({INDEX: index_final, CORPUS: corpus_final})
+    publier_sources_et_artefacts(
+        copies, {INDEX: index_final, CORPUS: corpus_final}
+    )
     print("Documents:", len(catalogue), "| chunks:", len(index_final["chunks"]),
           "| ignorés:", ignores)
 
