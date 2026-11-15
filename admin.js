@@ -457,7 +457,7 @@ function rendreCouvertureORG1(mount){
     { id:'wilayas', label:'🗺️ الولايات · Wilayas', cards:['admWilayasCard'], perm:'reports.read' },
     { id:'security', label:'🛡️ الوصول والتدقيق · Access & Audit', cards:['admSecurityCard'], perm:'reports.read' },
     { id:'system', label:'🖥️ النظام والبنية التقنية · System', cards:['admSystemCard'], perm:'reports.read' },
-    { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard','admVerificationCard'], perm:'students.read' },
+    { id:'students', label:'👥 التلاميذ والأولياء · Students & Parents', cards:['admStudentsCard','admVerificationCard'], perm:'students.read', altPerm:'students.verify' },
     { id:'ops', label:'🧰 العمليات · Operations', cards:['admAgentsCard','admQueueCard','admAccordsCard','__legacy__'], perm:null },
     { id:'settings', label:'⚙️ الإعدادات · Settings', cards:['admSettingsCard'], perm:'settings.manage' }
   ];
@@ -490,7 +490,7 @@ function rendreCouvertureORG1(mount){
     state4.wilayas = meP.ok && Array.isArray(meP.wilayas) ? meP.wilayas : [];
     var bar = document.getElementById('admTabs');
     if(!bar){ bar = document.createElement('div'); bar.id = 'admTabs'; bar.className = 'tabs'; bar.style.position = 'static'; bar.style.height = 'auto'; bar.style.width = 'auto'; h.insertBefore(bar, h.firstChild); }
-    bar.innerHTML = TABS.filter(function(t){ return !t.perm || state4.perms.indexOf(t.perm) !== -1; })
+    bar.innerHTML = TABS.filter(function(t){ return !t.perm || state4.perms.indexOf(t.perm) !== -1 || (t.altPerm && state4.perms.indexOf(t.altPerm) !== -1) || (t.id==='students' && state4.role==='admin'); })
       .map(function(t){ return '<button class="tab" data-adm-tab="' + t.id + '" type="button">' + t.label + '</button>'; }).join('');
     applyTab(state4.tab);
   }
@@ -678,7 +678,7 @@ function rendreCouvertureORG1(mount){
     var h = section(); if(!h) return;
     var box = document.getElementById('admVerificationCard');
     if(!box){ box = document.createElement('div'); box.id = 'admVerificationCard'; box.className = 'card'; h.appendChild(box); }
-    if(state4.perms.indexOf('messaging.moderate') === -1){ box.hidden = true; return; }
+    if(state4.perms.indexOf('students.verify') === -1 && state4.role !== 'admin'){ box.hidden = true; return; }
     box.hidden = false;
     box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ · School verification</h2><p class="ad-load">⏳ تحميل الطلبات المعلّقة…</p>';
     if(!window.SB || typeof SB.msgVerificationQueue !== 'function'){
@@ -689,7 +689,7 @@ function rendreCouvertureORG1(mount){
       box.innerHTML = '<h2>🪪 طلبات تفعيل التلاميذ</h2><p>⛔ تعذر تحميل الطلبات: ' + esq5(q && q.err || 'خطأ غير محدد') + '</p><p style="font-size:12px;color:var(--m)">تأكد من صلاحية messaging.moderate ومن سياسات Supabase. لم يتم تغيير أي حالة.</p>'; return;
     }
     var rows = Array.isArray(q.queue) ? q.queue : [];
-    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🪪</span><div><h2>طلبات تفعيل التلاميذ</h2><p class="ad-sub">طلبات الهوية المدرسية المعلّقة · الصلاحية المطلوبة: messaging.moderate · ' + rows.length + ' طلب</p></div></div>'
+    box.innerHTML = '<div class="ad-hero"><span class="ad-crest">🪪</span><div><h2>طلبات تفعيل التلاميذ</h2><p class="ad-sub">طلبات الهوية المدرسية المعلّقة · الصلاحية المطلوبة: students.verify · ' + rows.length + ' طلب</p></div></div>'
       + (rows.length ? rows.map(function(x){
           return '<article class="card" style="margin:10px 0;padding:12px">'
             + '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>👤 ' + esq5(x.pseudo||'تلميذ') + '</b><span class="badge">قيد المراجعة</span></div>'
