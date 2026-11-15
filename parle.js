@@ -154,9 +154,9 @@
     return out.length ? out : [String(t)];
   }
   /* ══════════ AGENT 4 (VOIX) : détection de langue + voix native par segment ══════════ */
-  const DE_WORDS = /\b(der|die|das|den|dem|und|oder|nicht|kein|ich|du|er|sie|es|wir|ihr|ist|sind|bin|bist|war|habe|hast|hat|haben|wird|werden|wurde|kann|muss|soll|will|darf|mag|ein|eine|einen|mein|dein|deine|sein|mit|ohne|für|von|zu|aus|bei|nach|um|am|im|auf|über|vor|heiße|wohne|wohnt|komme|kommt|mache|macht|gehe|geht|lerne|lernt|schule|deutsch|bitte|danke|gut|sehr|wie|was|wer|wo|woher|wohin|wann|warum|ja|nein|doch|akkusativ|dativ|perfekt|artikel|plural)\b/i;
+  const DE_WORDS = /\b(der|die|das|den|dem|und|oder|nicht|kein|ich|du|er|sie|wir|ihr|ist|sind|bin|bist|war|habe|hast|hat|haben|wird|werden|wurde|kann|muss|soll|will|darf|mag|ein|eine|einen|mein|dein|deine|sein|mit|ohne|für|von|zu|aus|bei|nach|um|am|im|auf|über|vor|heiße|wohne|wohnt|komme|kommt|mache|macht|gehe|geht|lerne|lernt|schule|deutsch|bitte|danke|gut|sehr|wie|was|wer|wo|woher|wohin|wann|warum|ja|nein|doch|akkusativ|dativ|perfekt|artikel|plural)\b/i;
   const FR_WORDS = /\b(le|les|je|tu|il|elle|ne|pas|est|suis|bonjour|merci|pourquoi|comment|différence|avec|sans|pour|dans|chez|cette|ces)\b/i;
-  const ES_WORDS = /\b(el|los|las|yo|usted|es|ser|estar|diferencia|entre|gracias|hola|buenos|buenas|porque|como|tengo|quiero|puedo|muy|tambien|pero|para|con|sin|cual|cuál)\b/i;
+  const ES_WORDS = /\b(el|los|las|yo|usted|es|ser|estar|diferencia|gracias|hola|buenos|buenas|porque|como|tengo|quiero|puedo|muy|tambien|pero|para|con|sin|cual|cuál)\b/i;
   const IT_WORDS = /\b(il|lo|gli|che|di|io|tu|lei|sono|grazie|ciao|perché|perche|questa|quello|differenza|essere|avere|tra)\b/i;
   const EN_WORDS = /\b(the|this|that|these|those|what|where|when|why|how|who|which|because|with|without|from|have|has|does|did|could|should|would|please|thank|hello|morning|school|lesson|exercise|answer|question|sentence|example|they|we|are|was|were|your|you|my)\b/i;
   const LCODE = { ar:'ar-SA', de:'de-DE', fr:'fr-FR', es:'es-ES', it:'it-IT', en:'en-US' };
