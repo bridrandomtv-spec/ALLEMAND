@@ -59,6 +59,12 @@ ok(msgjs.includes('function verificationMissing(q)') &&
    msgjs.includes('disabled title="أكمل معلومات الهوية المدرسية أولاً"') &&
    msgjs.includes('missingForApproval.length'),
    'Messenger : confirmation bloquée si identité ou carte scolaire absente, côté rendu et clic');
+ok(adminjs.includes("if(!x.id || !String(x.carte_scolaire_path||'').startsWith(String(x.id)+'/')) missing.push('البطاقة المدرسية أو مسارها غير صالح')") &&
+   adminjs.includes("!String(docPath).startsWith(String(verifyDoc)+'/')") &&
+   adminjs.includes("docQueueEpoch !== verificationQueueEpoch") &&
+   adminjs.includes("var verifyRow = (window.__admVerificationRows||[]).find(function(row){ return row.id===verifyId; })") &&
+   adminjs.includes("verifyQueueEpoch !== verificationQueueEpoch"),
+   'Administration : chemin de carte lié à l’UUID et réponses obsolètes neutralisées');
 ok(adminjs.includes("if(!/^[0-9]{1,20}$/.test(String(x.matricule||'').trim())) missing.push('رقم التسجيل')") && adminjs.includes('data-status="verifie"') && adminjs.includes('disabled title="أكمل معلومات الهوية المدرسية أولاً"'), 'activation bloquée dans l’interface si informations scolaires absentes');
 ok(adminjs.includes('data-adm-verif-page') &&
    adminjs.includes('renderVerificationQueue(Number(verifyPage))') &&
@@ -92,7 +98,7 @@ ok(msgjs.includes('إرسال ➤') && msgjs.includes('إرفاق ملف'), 'ré
 ok(!/Messages — compte cloud requis|Groupes officiels|Ouvrir la discussion|Envoyer ➤|Actualiser|Rechercher dans mes conversations|Partage et reçois|Les messages arrivent instantanément|Modération \(signalements/.test(msgjs), 'absence des anciens libellés français visibles prioritaires');
 ok(idx.includes('المراسلة الوطنية — مجموعات دراسية حسب الولاية والمستوى والشعبة'), 'bandeau de la vue messagerie en arabe');
 ok(idx.includes('msg.js?v=3532'), 'version cache du module de messagerie actualisée');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.180'") && sw.includes("./msg.js?v=3532") && sw.includes("./style-prototype-dz.css?v=204"), 'service worker et précache Messenger synchronisés');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.181'") && sw.includes("./msg.js?v=3532") && sw.includes("./style-prototype-dz.css?v=204"), 'service worker et précache Messenger synchronisés');
 ok(!/isميغابايتd0|isميغابايتd|ميغابايتdération/.test(msgjs), 'identifiants JavaScript préservés après traduction');
 
 // Lot 359-C — ne pas réintroduire le dernier libellé français de pièce jointe.
@@ -199,7 +205,7 @@ ok(msgjs.includes('msg-pro-hero') && msgjs.includes('msg-pro-stats'), 'nouvelle 
 ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجموعة '("), 'libellé de groupe construit sans appel de chaîne invalide');
 ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key]')"), 'filtres Messenger accessibles via délégation de clic');
 ok(idx.includes('style-prototype-dz.css?v=204') && idx.includes('msg.js?v=3532'), 'versions de ressources Messenger actualisées');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.180'") && sw.includes('./style-prototype-dz.css?v=204') && sw.includes('./msg.js?v=3532'), 'précache synchronisé avec la nouvelle interface');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.181'") && sw.includes('./style-prototype-dz.css?v=204') && sw.includes('./msg.js?v=3532'), 'précache synchronisé avec la nouvelle interface');
 
 ok(msgjs.includes('msg-thread-topbar') && msgjs.includes('msg-conversation-panel') && msgjs.includes('msg-composer-mark'), 'écran de conversation structuré et zone de rédaction pédagogique');
  
@@ -234,7 +240,7 @@ ok(msgjs.includes('reportIdentityEpoch = state.authEpoch') &&
    msgjs.includes('if(state.authEpoch!==reportIdentityEpoch || !t.isConnected) return;'),
    'signalement utilisateur : aucun callback sur un ancien compte ou un bouton détaché');
 ok(idx.includes('msg.js?v=3532') && sw.includes('msg.js?v=3532') &&
-   sw.includes("dz-de-v3.185.0.0.180"),
+   sw.includes("dz-de-v3.185.0.0.181"),
    'cache module et service worker alignés sur Lot 536');
 // Lot 535 — upload de pièce jointe lié à la conversation et à l'identité initiatrices.
 const uploadStart = msgjs.indexOf("document.addEventListener('change', async function(e){");
@@ -249,7 +255,7 @@ ok(uploadFn.includes('if(!uploadContextCurrent()) return;\n      var uploaded=aw
    uploadFn.includes('input.isConnected'),
    'pièce jointe : pas de transfert Storage démarré après invalidation; erreurs et éléments DOM détachés protégés');
 ok(idx.includes('msg.js?v=3532') && sw.includes('msg.js?v=3532') &&
-   sw.includes("dz-de-v3.185.0.0.180"),
+   sw.includes("dz-de-v3.185.0.0.181"),
    'cache module et service worker alignés sur Lot 537');
 
 // Lot 534 — les réponses de découverte et d'invitation ne traversent pas une transition Auth.
@@ -274,7 +280,7 @@ ok(studentSearchFn.includes('searchIdentityEpoch = state.authEpoch') &&
    studentSearchFn.includes('resultsBox && resultsBox.isConnected'),
    'recherche de camarades : aucune liste de jetons ni erreur injectée par une ancienne session');
 ok(idx.includes('msg.js?v=3532') && sw.includes('msg.js?v=3532') &&
-   sw.includes("dz-de-v3.185.0.0.180"),
+   sw.includes("dz-de-v3.185.0.0.181"),
    'cache module et version service worker alignés sur Lot 534');
 
 // Lot 531 — le canal d'invitations a son propre cycle de reprise.
@@ -446,9 +452,9 @@ ok(msgjs.includes('id="vfCard"') && msgjs.includes('msgUploadSchoolCard(cardFile
 ok(adminjs.includes("missing.push('البطاقة المدرسية')") && adminjs.includes('data-adm-verif-doc'), 'file administrative : pièce obligatoire et bouton de consultation');
 ok(sbjs.includes('createSignedUrl(path,300)'), 'consultation par lien signé limité à 5 minutes');
 ok(msgjs.includes('if(r4.cleanupWarning) window.alert'), 'avertissement de nettoyage de l’ancienne carte affiché à l’élève');
-ok(idx.includes('supabase/supabase.js?v=3527') && sw.includes("'./supabase/supabase.js?v=3527'") && sw.includes("VERSION = 'dz-de-v3.185.0.0.180'"), 'cache Supabase et version du service worker synchronisés Lot 562');
-ok(idx.includes('msg.js?v=3532') && idx.includes('admin.js?v=3517') && idx.includes('supabase/supabase.js?v=3527'), 'versions des modules de vérification actualisées');
-ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.180'") && sw.includes("./msg.js?v=3532") && sw.includes("./admin.js?v=3517") && sw.includes("./supabase/supabase.js?v=3527"), 'précache et service worker synchronisés Lot 556');
+ok(idx.includes('supabase/supabase.js?v=3527') && sw.includes("'./supabase/supabase.js?v=3527'") && sw.includes("VERSION = 'dz-de-v3.185.0.0.181'"), 'cache Supabase et version du service worker synchronisés Lot 562');
+ok(idx.includes('msg.js?v=3532') && idx.includes('admin.js?v=3518') && idx.includes('supabase/supabase.js?v=3527'), 'versions des modules de vérification actualisées');
+ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.181'") && sw.includes("./msg.js?v=3532") && sw.includes("./admin.js?v=3518") && sw.includes("./supabase/supabase.js?v=3527"), 'précache et service worker synchronisés Lot 556');
 
 if (fail.length) { console.error('::error:: check-msg Lot 453 : ' + fail.length + ' échec(s)'); process.exit(1); }
 console.log('== check-msg Lot 453 : TOUT PASSE ==');
