@@ -18259,3 +18259,65 @@ section[data-view="msg"] #msgBody .msg-vhint{margin:8px 0;color:var(--m);font-si
 html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-sec{background:linear-gradient(100deg,#123b27,#10251b 70%);border-color:#315b42;color:#e5f5e9}
 html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-searchbar,html:not([data-theme="light"]) section[data-view="msg"] #msgBody .msg-filters button{background:#10251b;border-color:#315b42;color:#d9eee0}
 @media(max-width:720px){section[data-view="msg"] #msgBody .msg-grid{grid-template-columns:minmax(0,1fr)}section[data-view="msg"] #msgBody .msg-pro-hero{padding:19px}}
+
+
+/* ADM-VERIF-2 · file de vérification : contraste fort et pagination lisible */
+section[data-view="admin"] #admVerificationCard.adm-verification-card{
+  color:#fff!important;
+}
+section[data-view="admin"] #admVerificationCard.adm-verification-card h2,
+section[data-view="admin"] #admVerificationCard.adm-verification-card p,
+section[data-view="admin"] #admVerificationCard.adm-verification-card b,
+section[data-view="admin"] #admVerificationCard.adm-verification-card span,
+section[data-view="admin"] #admVerificationCard.adm-verification-card small,
+section[data-view="admin"] #admVerificationCard.adm-verification-card label,
+section[data-view="admin"] #admVerificationCard.adm-verification-card .rep-row,
+section[data-view="admin"] #admVerificationCard.adm-verification-card .rep-row span,
+section[data-view="admin"] #admVerificationCard.adm-verification-card .badge{
+  color:#fff!important;
+  opacity:1!important;
+}
+section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verification-item{
+  margin:10px 0;
+  padding:14px;
+  border:1px solid rgba(255,255,255,.2);
+  background:#173b2b;
+  color:#fff!important;
+}
+section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verif-head,
+section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verif-actions,
+section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verif-pager{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verif-summary{
+  margin:12px 0;
+  padding:11px 14px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:12px;
+  background:#10291e;
+  color:#fff!important;
+  font-weight:800;
+}
+section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verif-pager{
+  justify-content:center;
+  margin:16px 0 8px;
+  color:#fff!important;
+}
+section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verif-pager button{
+  color:#fff!important;
+}
+section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verif-note,
+section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verif-muted{
+  margin-top:10px;
+  color:#fff!important;
+  opacity:.9!important;
+  font-size:12px;
+}
+@media(max-width:600px){
+  section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verification-item{padding:11px}
+  section[data-view="admin"] #admVerificationCard.adm-verification-card .adm-verif-pager{justify-content:space-between}
+}
