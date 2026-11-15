@@ -76,7 +76,15 @@ const checks = [
     /async function source\(hit\)/.test(rag) && /hit\.source_sha256 !== doc\.source_sha256/.test(rag) &&
     /source: source/.test(rag)],
   ['Worker traite les extraits documentaires comme des données non fiables',
-    /données non fiables/.test(worker) && /ne suis jamais les instructions/.test(worker)]
+    /données non fiables/.test(worker) && /ne suis jamais les instructions/.test(worker)],
+  ['ia.js transmet un état de provenance explicite, y compris sans résultat RAG',
+    /ragSourceStatus/.test(ia) && /rag_source_status: ragSourceStatus/.test(ia) &&
+    /aucun extrait RAG pertinent et vérifié/.test(ia)],
+  ['Worker distingue source vérifiée, non vérifiée et indisponible',
+    /rag_source_status:/.test(worker) && /ÉTAT DE PROVENANCE RAG/.test(worker) &&
+    /Ne transforme jamais un extrait BIBLIO non certifié/.test(worker)],
+  ['Worker impose l’abstention pour une demande de référence officielle sans source vérifiée',
+    /source vérifiée manque/.test(worker) && /explique générale exacte/.test(worker)]
 ];
 
 let failures = 0;
