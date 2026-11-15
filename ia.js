@@ -63,7 +63,7 @@
     const selectedLanguage = String(req.selected_language || 'auto').slice(0, 20);
     const detectedLanguage = String(req.detected_language || '').slice(0, 20);
     const dialect = String(req.dialect || (/(?:واش|علاش|كيفاش|راني|راك|راكي|بزاف|ما\s*فهمتش|مفهمتش|وش|علاه|نحب|حاب|حابة|تاع|درك|كاين|ماكانش|صح)/i.test(q)
-      || /(?:^|\s)(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|nheb|hab|ta3|dorka|kayn|makanch|saha)(?:$|\s)/i.test(q) ? 'darija' : 'unknown')).slice(0, 30);
+      || /(?:^|[^A-Za-z0-9])(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|ma\s*fhemtch|nheb|hab|habi|ta3|dorka|kayn|makanch|saha)(?=$|[^A-Za-z0-9])/i.test(q) ? 'darija' : 'unknown')).slice(0, 30);
     let schoolContext = { subject: 'allemand', level: 'tous', track: '' };
     try{
       if(window.CONTEXT && typeof window.CONTEXT.ctx === 'function'){
