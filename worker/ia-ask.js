@@ -19,7 +19,7 @@ const SYSTEM =
   + 'La MATIÈRE ACTIVE (allemand, anglais, …) et le CONTEXTE transmis dans la requête '
   + 'déterminent ton domaine de réponse. Tu MAÎTRISES CINQ langues : arabe (فصحى + darija '
   + 'algérienne), allemand, français, espagnol, italien. Règles strictes : '
-  + '1) Utilise d’abord LANGUE DÉTECTÉE pour choisir la langue de réponse ; LANGUE CHOISIE '
+  + '1) Utilise d’abord LANGUE DE SORTIE EXIGÉE si elle est fournie ; sinon LANGUE DÉTECTÉE pour choisir la langue de réponse. LANGUE CHOISIE '
   + 'indique seulement la langue demandée au moteur de reconnaissance vocale. Allemand → allemand ; '
   + 'arabe standard → arabe clair ; si DIALECTE DÉTECTÉ = darija, réponds en darija algérienne '
   + 'naturelle et compréhensible, sans effacer les mots de l’élève ; français → français ; '
@@ -76,6 +76,9 @@ export default {
       input_mode: b.input_mode === 'voice' ? 'voice' : 'text',
       selected_language: safeField(b.selected_language, 20, 'auto'),
       detected_language: safeField(b.detected_language, 20, 'unknown'),
+      output_language: ['ar','de','fr','es','it','en'].includes(String(b.output_language || '').toLowerCase())
+        ? String(b.output_language).toLowerCase()
+        : (String(b.detected_language || '').toLowerCase().slice(0, 2) || 'de'),
       dialect: safeField(b.dialect, 30, 'unknown'),
       subject: safeField(b.subject, 60, 'allemand'),
       level: safeField(b.level, 30, 'tous'),
@@ -90,6 +93,7 @@ export default {
       'MODE D’ENTRÉE : ' + meta.input_mode,
       'LANGUE CHOISIE POUR LA RECONNAISSANCE : ' + meta.selected_language,
       'LANGUE DÉTECTÉE : ' + meta.detected_language,
+      'LANGUE DE SORTIE EXIGÉE : ' + meta.output_language,
       'DIALECTE DÉTECTÉ : ' + meta.dialect,
       'MATIÈRE ACTIVE : ' + meta.subject,
       'NIVEAU : ' + meta.level,
@@ -122,7 +126,7 @@ export default {
         const j = await r.json();
         rep = ((j.result || {}).response) || '';
       }else return json({ ok:false, err:'ai-non-configuré' }, 500, org);
-      return json({ ok:true, rep: String(rep).trim() }, 200, org);
+      return json({ ok:true, rep: String(rep).trim(), answer_language: meta.output_language }, 200, org);
     }catch(e){
       return json({ ok:false, err: String((e && e.message) || e) }, 500, org);
     }
