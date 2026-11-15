@@ -108,13 +108,37 @@ export default {
       level: safeField(b.level, 30, 'tous'),
       track: safeField(b.track, 60, 'non précisée'),
       rag_source_status: ['verified','unverified','unavailable','not_applicable'].includes(String(b.rag_source_status || ''))
-        ? String(b.rag_source_status) : 'unavailable'
+        ? String(b.rag_source_status) : 'unavailable',
+      rag_scope_type: ['none','page','unit','exercise'].includes(String(b.rag_scope_type || ''))
+        ? String(b.rag_scope_type) : 'none',
+      rag_scope_value: Number.isSafeInteger(b.rag_scope_value) && b.rag_scope_value > 0
+        ? b.rag_scope_value : null,
+      rag_scope_status: ['none','verified','mismatch','unsupported','unavailable'].includes(String(b.rag_scope_status || ''))
+        ? String(b.rag_scope_status) : 'unavailable'
     };
     if(!q) return json({ ok:false, err:'q-vide' }, 400, org);
     const now = Date.now();
     HITS = HITS.filter(t => now - t < 60000);
     if(HITS.length >= 20) return json({ ok:false, err:'quota-min' }, 429, org);
     HITS.push(now);
+    if(meta.rag_scope_type !== 'none' && meta.rag_scope_status !== 'verified'){
+      const refusal = meta.output_language === 'ar'
+        ? (meta.dialect === 'darija'
+          ? 'ما نقدرش نأكد هذي الصفحة أو الوحدة أو التمرين من مصدر موثّق. ابعثلي الوثيقة أو المرجع باش نتحقق.'
+          : 'لا أستطيع تأكيد هذه الصفحة أو الوحدة أو التمرين من مصدر موثّق. أرسل الوثيقة أو المرجع للتحقق.')
+        : meta.output_language === 'de'
+          ? 'Ich kann diese Seite, Einheit oder Übung nicht anhand einer verifizierten Quelle bestätigen. Bitte sende das Dokument oder die genaue Referenz.'
+          : meta.output_language === 'en'
+            ? 'I cannot verify this page, unit, or exercise from a confirmed source. Please provide the document or exact reference.'
+            : meta.output_language === 'es'
+              ? 'No puedo confirmar esta página, unidad o ejercicio con una fuente verificada. Comparte el documento o la referencia exacta.'
+              : meta.output_language === 'it'
+                ? 'Non posso verificare questa pagina, unità o esercizio con una fonte attendibile. Invia il documento o il riferimento esatto.'
+                : 'Je ne peux pas confirmer cette page, unité ou cet exercice à partir d’une source vérifiée. Merci de fournir le document ou la référence exacte.';
+      return json({ ok:true, rep:refusal, answer_language:meta.output_language,
+        answer_style:meta.output_style || 'natural', abstained:true,
+        abstention_reason:'rag_scope_' + meta.rag_scope_status }, 200, org);
+    }
     meta.output_style = meta.output_language === 'ar'
       ? (meta.dialect === 'darija' ? 'darija' : 'fusha') : 'natural';
     const metadata = [
@@ -128,6 +152,8 @@ export default {
       'NIVEAU : ' + meta.level,
       'FILIÈRE : ' + meta.track,
       'ÉTAT DE PROVENANCE RAG : ' + meta.rag_source_status,
+      'PORTÉE RAG DEMANDÉE : ' + meta.rag_scope_type + (meta.rag_scope_value ? ' ' + meta.rag_scope_value : ''),
+      'ÉTAT DE CORRESPONDANCE DE PORTÉE RAG : ' + meta.rag_scope_status,
       'INTENTION QUST (indice, confiance ' + understanding.confidence + ') : ' + understanding.intent,
       'LANGUES QUST : ' + understanding.languages.join(', '),
       'ENTITÉS QUST : ' + JSON.stringify(understanding.entities)
