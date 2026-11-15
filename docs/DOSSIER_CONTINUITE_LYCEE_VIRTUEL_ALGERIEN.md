@@ -2963,3 +2963,11 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Défaut UX : `msgRequestVerification` renvoyait `cleanupWarning` si la suppression de l’ancienne carte échouait, mais `msg.js` ne l’affichait pas. L’avertissement est maintenant présenté à l’élève après confirmation de l’envoi.
 - Défaut cache : la modification de `supabase/supabase.js` du Lot 561 n’avait pas incrémenté son paramètre de cache. Référence portée à `v=3527` dans `index.html` et `sw.js`, version SW portée à `dz-de-v3.185.0.0.177`, assertions CI synchronisées.
 - Aucune donnée d’élève ni politique Supabase modifiée. Les politiques ont été lues et auditées, pas remplacées. Aucun test d’accès avec deux comptes distincts, aucun déploiement Cloudflare et aucune exécution CI réussie ne sont revendiqués.
+
+
+## Lot 563 — blocage cohérent des confirmations incomplètes dans Messenger (15 novembre 2026)
+- Défaut identifié dans la seconde file de modération intégrée à `msg.js` : contrairement au tableau d’administration `admin.js`, elle affichait un bouton de confirmation actif sans contrôler le numéro scolaire, la section ou le justificatif.
+- Correction : contrôle commun des champs obligatoires (pseudo, numéro de 1 à 20 chiffres, niveau, wilaya, filière, section) et du chemin de carte lié au dossier UUID du profil ; le bouton est désactivé si un élément manque ou est invalide. Le gestionnaire de clic répète le contrôle et échoue en mode fermé si la demande n’est pas dans la file chargée.
+- Le rejet reste disponible pour traiter une demande incomplète. La validation serveur et le trigger Supabase restent l’autorité finale ; aucune policy, table, fonction ou donnée n’a été modifiée.
+- Cache Messenger incrémenté à `msg.js?v=3530` ; Service Worker à `dz-de-v3.185.0.0.178`. Assertions statiques de `ci/check-msg.mjs` ajoutées et références de cache réalignées.
+- Aucun compte de test, document scolaire, profil réel ou statut d’élève n’a été créé, chargé, consulté ou modifié. CI, test navigateur et déploiement Cloudflare restent à confirmer.
