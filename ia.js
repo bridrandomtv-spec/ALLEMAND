@@ -113,7 +113,7 @@
     const inputMode = req.input_mode === 'voice' ? 'voice' : 'text';
     const selectedLanguage = String(req.selected_language || 'auto').slice(0, 20);
     const detectedLanguage = String(req.detected_language || '').slice(0, 20);
-    const dialect = String(req.dialect || (DARJA_AR.test(q) || DARJA_LATIN.test(q) ? 'darija' : 'unknown')).slice(0, 30);
+    let understanding = null;\n    try{\n      if(window.QUST && typeof window.QUST.understand === 'function') understanding = window.QUST.understand(q, null);\n    }catch(e){}\n    const dialect = String(req.dialect || (understanding && understanding.dialect === 'darija' ? 'darija' : (DARJA_AR.test(q) || DARJA_LATIN.test(q) ? 'darija' : 'unknown'))).slice(0, 30);
     let schoolContext = { subject: 'allemand', level: 'tous', track: '' };
     try{
       if(window.CONTEXT && typeof window.CONTEXT.ctx === 'function'){
@@ -295,7 +295,7 @@
           output_language: answerLanguage, dialect: dialect,
           subject: schoolContext.subject, level: schoolContext.level,
           track: schoolContext.track, ctx: ctx,
-          history: DIALOGUE.slice(-8)
+          understanding: understanding ? {\n            normalized_question: String(understanding.norm || '').slice(0, 600),\n            languages: Array.isArray(understanding.langs) ? understanding.langs.slice(0, 6) : [],\n            intent: String(understanding.intent || '').slice(0, 40),\n            confidence: Number(understanding.confidence || 0),\n            entities: understanding.entities && typeof understanding.entities === 'object' ? understanding.entities : {}\n          } : null,\n          history: DIALOGUE.slice(-8)
         }) }, 25000);
       if(!r.ok){
         let e = {};
