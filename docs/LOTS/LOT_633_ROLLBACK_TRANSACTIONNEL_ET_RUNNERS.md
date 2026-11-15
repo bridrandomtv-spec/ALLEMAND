@@ -59,3 +59,11 @@ Le contexte des diagnostics précédents comporte un avertissement GitHub Action
 ## Vérification complémentaire de PR #17
 
 La lecture de l'état GitHub actuel montre que la PR #17 est déjà `closed` et `merged`, avec fusion le **2026-11-14 à 14:50:08 UTC**, commit de fusion `ef781da525eb4df062841c4362a999811fe35831`. Cette fusion précède les opérations du Lot 633 ; aucun appel de fusion n'a été effectué pendant ce lot. La branche d'audit reste à jour par rapport à `main` au moment du contrôle : 248 commits en avance, 0 en retard.
+
+
+## Dernier contrôle de clôture du lot
+
+- Dernier run après les modifications du writer commun : `43764431783` (commit `f82a4388bf72e8d3212e563d975dca4c5696286e`), toujours en échec. Le contrôle précédent des jobs montre le schéma constant `runner_id: 0`, `steps: []` ; aucun test n'est donc attesté.
+- Vérification de présence : les deux indexeurs appellent bien `ecrire_json_transactionnel`, l'import direct du writer est présent dans les deux chemins, et le test de rollback est présent dans le fichier de tests.
+- Vérification Git : branche `ahead` de 250 commits, `behind` de 0 par rapport à `main`.
+- PR #17 : fermée/fusionnée depuis le 14 novembre 2026, avant Lot 633 ; aucun merge n'a été exécuté pendant ce lot.
