@@ -1281,11 +1281,15 @@ async function sendChat(v){
       addMsg('bot', safe);
       answered = true;
       if(soundOn && 'speechSynthesis' in window){
-        const utterance = new SpeechSynthesisUtterance(rep);
-        utterance.lang = /[\u0600-\u06FF]/.test(rep) ? 'ar-SA'
-          : (/[äöüß]/i.test(rep) ? 'de-DE'
-          : (/\b(the|what|why|how|you|is|are)\b/i.test(rep) ? 'en-US' : 'fr-FR'));
-        speechSynthesis.cancel(); speechSynthesis.speak(utterance);
+        /* Même moteur TTS segmenté que le professeur vocal ; repli si parle.js absent. */
+        if(typeof window.parleSpeak === 'function') window.parleSpeak(rep);
+        else {
+          const utterance = new SpeechSynthesisUtterance(rep);
+          utterance.lang = /[\u0600-\u06FF]/.test(rep) ? 'ar-SA'
+            : (/[äöüß]/i.test(rep) ? 'de-DE'
+            : (/\b(the|what|why|how|you|is|are)\b/i.test(rep) ? 'en-US' : 'fr-FR'));
+          speechSynthesis.cancel(); speechSynthesis.speak(utterance);
+        }
       }
       return;
     }
