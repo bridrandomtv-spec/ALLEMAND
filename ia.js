@@ -171,8 +171,8 @@
       return ((c.match(/[\u0600-\u06FF]/g) || []).length) / c.length; };
     const fixLang = s => (answerLanguage !== 'ar' && arR(s) > 0.5) ? (FB[answerLanguage] || s) : s;
     /* Quand le local est faible ET que le cloud échoue, on ne rend plus un
-       « لا أعرف » muet : la cause exacte est nommée, dans la langue de la
-       question, avec le geste qui débloque (bouton 🧠). */
+       « لا أعرف » muet : la cause exacte est nommée dans la langue de sortie
+       demandée, avec le geste qui débloque (bouton 🧠). */
     function sortieFaible(local, cause){
       const loc = String(local || '');
       const utile = (loc && loc.indexOf('لا أعرف') === -1 && loc.length > 3 &&
