@@ -17,70 +17,126 @@
     speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t);
     u.lang = lang || (/[\u0600-\u06FF]/.test(t) ? 'ar-DZ' : 'de-DE'); speechSynthesis.speak(u); } }catch(e){} }
   let MAN = null, LEGACY = null;
+  const MANIFEST_VERSION = '2.0.0';
 
-  async function chargeManifest(){
-    if(MAN !== null) return MAN;
-    try{
-      const r = await fetch('assets/bdd/shards_manifest.json', { cache:'no-store' });
-      MAN = r.ok ? await r.json() : null;
-    }catch(e){ MAN = null; }
-    return MAN;
+  function objet(v){ return !!v && typeof v === 'object' && !Array.isArray(v); }
+  function idValide(v){ return Number.isSafeInteger(v) && v >= 0; }
+
+  function valideChunks(chunks, attendu){
+    if(!Array.isArray(chunks) || (attendu != null && chunks.length !== attendu)) return null;
+    const ids = new Set();
+    for(const c of chunks){
+      if(!objet(c) || !idValide(c.global_id) ||
+         typeof c.texte !== 'string' || typeof c.doc !== 'string' ||
+         ids.has(c.global_id)) return null;
+      ids.add(c.global_id);
+    }
+    return ids;
   }
-  async function chargeLegacy(){
-    if(LEGACY !== null) return LEGACY;
-    try{
-      const r = await fetch('assets/bdd/corpus_rag_index.json', { cache:'no-store' });
-      LEGACY = r.ok ? await r.json() : null;
-    }catch(e){ LEGACY = null; }
-    return LEGACY;
+  function valideTermes(termes, ids){
+    if(!objet(termes)) return false;
+    for(const mot of Object.keys(termes)){
+      const postings = termes[mot];
+      if(!Array.isArray(postings)) return false;
+      const vus = new Set();
+      for(const id of postings){
+        if(!idValide(id) || !ids.has(id) || vus.has(id)) return false;
+        vus.add(id);
+      }
+    }
+    return true;
+  }
+  function valideManifest(m){
+    if(!objet(m) || m.version !== MANIFEST_VERSION ||
+       !Number.isSafeInteger(m.nb_shards) || m.nb_shards < 1 ||
+       !Number.isSafeInteger(m.total_chunks) || m.total_chunks < 1 ||
+       !Array.isArray(m.shards) || m.shards.length !== m.nb_shards) return false;
+    const files = new Set();
+    let total = 0;
+    for(const sh of m.shards){
+      if(!objet(sh) || typeof sh.file !== 'string' ||
+         !/^shard_[0-9]{2,}\.json$/.test(sh.file) || files.has(sh.file) ||
+         !Number.isSafeInteger(sh.nb_chunks) || sh.nb_chunks < 1) return false;
+      files.add(sh.file);
+      total += sh.nb_chunks;
+    }
+    return total === m.total_chunks;
+  }
+  function valideIndex(idx){
+    if(!objet(idx)) return false;
+    const ids = valideChunks(idx.chunks, null);
+    return !!ids && valideTermes(idx.termes, ids);
+  }
+  function meilleur(data, ts){
+    const scores = Object.create(null);
+    ts.forEach(t => {
+      const postings = data.termes[t] || [];
+      postings.forEach(id => { scores[id] = (scores[id] || 0) + 1; });
+    });
+    let best = null;
+    for(const cid of Object.keys(scores)){
+      const sc = scores[cid];
+      if(sc < SEUIL || (best && sc <= best.score)) continue;
+      const chunk = data.chunks.find(c => c.global_id === Number(cid));
+      if(chunk) best = { score: sc, texte: chunk.texte, doc: chunk.doc };
+    }
+    return best;
   }
   function termes(q){
     return Array.from(new Set(
       String(q || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06ff]{3,}/g) || []));
   }
 
-  /* recherche shard par shard : un seul shard en mémoire à la fois */
+  async function chargeManifest(){
+    if(MAN !== null) return MAN;
+    try{
+      const r = await fetch('assets/bdd/shards_manifest.json', { cache:'no-store' });
+      const data = r.ok ? await r.json() : null;
+      MAN = valideManifest(data) ? data : false;
+    }catch(e){ MAN = false; }
+    return MAN || null;
+  }
+  async function chargeLegacy(){
+    if(LEGACY !== null) return LEGACY;
+    try{
+      const r = await fetch('assets/bdd/corpus_rag_index.json', { cache:'no-store' });
+      const data = r.ok ? await r.json() : null;
+      LEGACY = valideIndex(data) ? data : false;
+    }catch(e){ LEGACY = false; }
+    return LEGACY || null;
+  }
+
+  /* Contrat strict : aucun résultat shardé n'est rendu si un shard manque,
+     est invalide ou si les IDs globaux se recouvrent. Dans ce cas, repli
+     sur l'index complet validé ; sinon réponse nulle, jamais partielle. */
   async function cherche(q){
     const ts = termes(q);
     if(!ts.length) return null;
     const man = await chargeManifest();
-    if(man && man.shards && man.shards.length){
-      let best = null;
+    if(man){
+      let best = null, total = 0, complet = true;
+      const idsVus = new Set();
       for(const sh of man.shards){
-        let data = null;
         try{
           const r = await fetch('assets/bdd/shards/' + sh.file, { cache:'no-store' });
-          if(r.ok) data = await r.json();
-        }catch(e){}
-        if(!data) continue;
-        const scores = {};
-        ts.forEach(t => { (data.termes[t] || []).forEach(cid => {
-          scores[cid] = (scores[cid] || 0) + 1; }); });
-        for(const cid in scores){
-          const sc = scores[cid];
-          if(sc >= SEUIL && (!best || sc > best.score)){
-            const chunk = (data.chunks || []).find(c => Number(c.global_id) === Number(cid));
-            if(chunk) best = { score: sc, texte: chunk.texte, doc: chunk.doc };
+          if(!r.ok){ complet = false; break; }
+          const data = await r.json();
+          const ids = objet(data) ? valideChunks(data.chunks, sh.nb_chunks) : null;
+          if(!ids || !valideTermes(data.termes, ids)){ complet = false; break; }
+          for(const id of ids){
+            if(idsVus.has(id)){ complet = false; break; }
+            idsVus.add(id);
           }
-        }
-        if(best && best.score >= SEUIL + 3) break;   /* match fort : arrêt précoce */
+          if(!complet) break;
+          total += data.chunks.length;
+          const candidat = meilleur(data, ts);
+          if(candidat && (!best || candidat.score > best.score)) best = candidat;
+        }catch(e){ complet = false; break; }
       }
-      return best;
+      if(complet && total === man.total_chunks && idsVus.size === man.total_chunks) return best;
     }
     const idx = await chargeLegacy();
-    if(!idx) return null;
-    const scores = {};
-    ts.forEach(t => { (idx.termes[t] || []).forEach(cid => {
-      scores[cid] = (scores[cid] || 0) + 1; }); });
-    let best = null;
-    for(const cid in scores){
-      const sc = scores[cid];
-      if(sc >= SEUIL && (!best || sc > best.score)){
-        const ch = (idx.chunks || []).find(c => Number(c.global_id) === Number(cid)) || idx.chunks[+cid];
-        if(ch) best = { score: sc, texte: ch.texte, doc: ch.doc };
-      }
-    }
-    return best;
+    return idx ? meilleur(idx, ts) : null;
   }
 
 
