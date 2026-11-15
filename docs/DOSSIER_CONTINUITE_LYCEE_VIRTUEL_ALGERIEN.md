@@ -3780,3 +3780,20 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Validation : parsing JSON de la matrice PASS ; vérification des ancres avant écriture. Tests Node et GitHub Actions non exécutés ici ; aucune validation runtime Worker/TTS n'est revendiquée.
 - Aucun merge, déploiement, changement Supabase/Auth/RLS/schéma/données/paiement ; `main` reste inchangée.
 - Commits : `d119cbe438a843107683d9ec860ca73769166d8e`, `7b243f38db3bc9059e805596a152512ce3e21e42`, `4c0df9c566acd9d48859cdf21566f3226d224a78`, `6cc4c50aafdb26765adecb3bfc442f35939185a0` ; rapport de lot `74117319f9b7eeb47956f3ea5b7e28bbb8f460a8`.
+
+
+## Lot 622 — inventaire de l’intelligence, des lexiques et des index (15 novembre 2026)
+
+- Inventaire du dépôt : 1 426 fichiers. Lecture individualisée des sources JavaScript, modules de test, ressources JSON, scripts Python et workflows YAML ; inspection croisée des moteurs, dictionnaires, ontologie, corpus, index et pipelines. Les documents techniques IA directement pertinents ont aussi été consultés.
+- Ressources relevées : ontologie de 25 intentions (313 formulations + 251 expansions), 146 cas d’évaluation (75,3 % exact-intent, 100 % catégorie), 134 motifs de questions, 98 entrées Darija, 490 entrées dans le catalogue lexical `corpus_index.json`, 1 213 entrées dans `biblio_multimatieres.json` (allemand seulement), 761 traductions, 86 règles grammaticales, 19 résumés d’unités et 128 leçons. Le détail approfondi `sharh.json` ne couvre que les unités 1 à 4.
+- Ressources anglaises présentes : 189 entrées lexicales, 23 règles, 20 pages, 5 unités de résumé, 5 devoirs et 283 exercices. `languages.json` ne déclare que allemand/anglais ; espagnol et italien restent planifiés et ne disposent pas de corpus pédagogiques dédiés.
+- Défaut majeur : `ontoRoute()` et `matchOnto()` existent dans `rag.js`, mais `ontoRoute()` n’est jamais appelé. L’ontologie n’alimente donc pas le parcours normal local.
+- Défaut majeur : `corpus_rag_index.json` et les shards réels sont absents ; le manifeste actuel est en version 1.0.0 avec zéro chunk alors que le lecteur exige 2.0.0. `indexer_pdf.py` écrit dans `corpus_index.json` avec un schéma différent ; `ingest_corpus.py` sait créer le bon artefact mais n’est pas exécuté par un workflow. `sharder.yml` se déclenche sur le mauvais fichier.
+- Défauts de compréhension : normalisation Darija/Arabizi fragmentée ; le RAG transforme certains marqueurs dialectaux avant QUST ; les chiffres Arabizi ne sont pas normalisés de façon commune ; les tokeniseurs incluent la ponctuation arabe dans les tokens ; QUST ne classe pas plusieurs demandes naturelles en Arabizi, anglais, espagnol et italien comme intentions de comparaison/explication.
+- Défaut de continuité : le routeur local RAG ne transporte pas l’historique des échanges comme le parcours Worker. Les chemins vocaux sont fragmentés ; `voix.js` ne distingue que français/allemand pour les segments latins.
+- CI : plusieurs fichiers de données déterminants ne déclenchent pas `tutor-audit`. `corpus_contract.mjs`, `qust_unit.mjs`, `rag_qust_probe.mjs` et l’évaluation 146 cas ne sont pas exécutés par ce workflow. `tutor_matrix.json` est encore `prepared_not_executed`. Le harnais P1 référence un `qust_lexicon.json` absent et une ancienne API.
+- Rapport détaillé : `docs/LOTS/LOT_622_INVENTAIRE_AUDIT_INTELLIGENCE_LEXIQUES_INDEX.md`.
+- Suite recommandée Lot 623 : normalisation canonique multilingue, activation et mapping de l’ontologie, réparation du pipeline d’index RAG, couverture CI des données/tests, puis unification TTS. Aucun de ces correctifs n’a été appliqué dans le Lot 622.
+- Validation : QUST exécuté isolément sur 146 formulations et sur des probes multilingues ; logique de matching de l’ontologie reproduite ; pas de tests Node natifs, pas de GitHub Actions, pas de Worker live, pas de microphone/TTS réel.
+- Aucun changement applicatif, aucun merge, aucun déploiement, aucune modification de main, aucune écriture Supabase/Auth/RLS/schéma/données/paiement/secrets.
+- HEAD de la branche avant documentation : `f72b80e54871e267b633850ab643c662fba8f6ea`.
