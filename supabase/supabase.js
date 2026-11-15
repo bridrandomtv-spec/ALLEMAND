@@ -567,14 +567,27 @@ async function msgRequestVerification(schoolRegistrationNumber, section, cardPat
   const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
   const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
   const number = String(schoolRegistrationNumber || '').trim();
-  if(!/^\\d{1,20}$/.test(number) || !Number.isSafeInteger(Number(number)) || Number(number) < 1){
+  if(!/^\d{1,20}$/.test(number) || !Number.isSafeInteger(Number(number)) || Number(number) < 1){
     return { ok:false, err:'أدخل رقم تسجيل مدرسي صحيحًا.' };
   }
-  if(!cardPath || !cardPath.startsWith(u.id + '/')) return { ok:false, err:'أرفق صورة البطاقة المدرسية أولاً.' };
+  if(!cardPath || typeof cardPath!=='string' || !cardPath.startsWith(u.id + '/')){
+    return { ok:false, err:'أرفق صورة البطاقة المدرسية أولاً.' };
+  }
+  const previous = await c.from('profiles').select('carte_scolaire_path')
+    .eq('id',u.id).maybeSingle();
+  if(previous.error) return { ok:false, err:previous.error.message };
+  const oldPath = previous.data && previous.data.carte_scolaire_path;
   const r = await c.from('profiles')
     .update({ verif_statut:'en_attente', matricule:number, section:String(section||'').trim().slice(0,40), carte_scolaire_path:cardPath })
     .eq('id', u.id).or('verif_statut.eq.non_verifie,verif_statut.eq.rejete');
-  if(r.error) return { ok:false, err:r.error.message };
+  if(r.error){
+    await c.storage.from('cartes-scolaires').remove([cardPath]);
+    return { ok:false, err:r.error.message };
+  }
+  if(oldPath && oldPath!==cardPath && oldPath.startsWith(u.id + '/')){
+    const cleanup = await c.storage.from('cartes-scolaires').remove([oldPath]);
+    if(cleanup.error) return { ok:true, cleanupWarning:'تم إرسال الطلب، لكن تعذّر حذف البطاقة السابقة. يرجى إبلاغ الدعم.' };
+  }
   return { ok:true };
 }
 async function msgVerificationQueue(page, pageSize){
