@@ -3812,3 +3812,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Rapport détaillé : `docs/LOTS/LOT_623_NORMALISATION_COMMUNE_ET_ROUTAGE_ONTOLOGIE.md`.
 - HEAD avant documentation : `5e3ada89883977e71a948dd4fac191b637237f1e`.
 - Aucun déploiement, merge, changement main, écriture Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste séparée et ouverte ; Messenger reste un chantier distinct.
+
+
+## Lot 624 — audit du pipeline documentaire RAG (15 novembre 2026)
+
+- Cause racine confirmée : `rag.js` attend un manifeste v2 avec shards et un repli `corpus_rag_index.json`, mais ce dernier fichier est absent et le manifeste existant est en v1 avec zéro shard/zéro chunk.
+- `tools/indexer_pdf.py` écrit les chunks dans `corpus_index.json`, qui est aussi le catalogue lexical utilisé par `biblio.js`; il ne produit pas l'artefact consommé par le RAG.
+- `tools/sharder_index.py` lit `corpus_rag_index.json`, tandis que `sharder.yml` surveille notamment `corpus_index.json` : déclencheur et source ne correspondent pas.
+- `tools/ingest_corpus.py` sait créer `corpus_rag_index.json`, mais le workflow PDF ne l'exécute pas. Son défaut de licence est toutefois permissif (`production propre` si les métadonnées manquent) ; l'indexeur PDF marque automatiquement tous les PDF comme `document utilisateur` sans contrôler les droits. Il faut corriger ce garde-fou avant toute ingestion massive.
+- Aucun PDF n'a été réindexé et aucun artefact fictif n'a été créé. Scripts Python, shards et Actions non exécutés ; aucune validation runtime n'est revendiquée.
+- Rapport : `docs/LOTS/LOT_624_AUDIT_PIPELINE_DOCUMENTAIRE_RAG.md`.
+- Étape suivante : Lot 625, unifier les scripts autour de `corpus_rag_index.json`, garder `corpus_index.json` réservé à BIBLIO, aligner les workflows, imposer une licence explicite et ajouter des tests de contrat.
+- Aucun changement Supabase/Auth/RLS/schéma/données/paiement/secrets ; aucun merge, déploiement ou changement de `main`. PR #17 reste séparée et ouverte.
