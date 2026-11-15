@@ -2996,3 +2996,11 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Les retours asynchrones de confirmation/rejet sont également neutralisés si une autre page de file a été chargée entre-temps.
 - Cache administration porté à `admin.js?v=3518`, Service Worker à `dz-de-v3.185.0.0.181`, précache synchronisé. Assertions de régression ajoutées.
 - Aucun SQL, policy RLS, Storage, compte ou dossier réel modifié. Les contrôles restent des garde-fous d’interface en complément des contrôles serveur ; ils ne prouvent pas qu’un humain a effectivement lu le document. CI et déploiement non revendiqués.
+
+
+## Lot 567 — pagination de la file de vérification dans Messenger (15 novembre 2026)
+- L’audit a trouvé une différence fonctionnelle entre les deux interfaces : l’administration utilisait `msgVerificationQueue(page, 50)` et affichait le total, tandis que le panneau de modération Messenger appelait la fonction sans paramètres. Il ne pouvait donc afficher que la première page (50 demandes au maximum), sans signaler les demandes supplémentaires.
+- Messenger mémorise désormais la page de vérification, demande 50 lignes avec le total exact, affiche la plage et le nombre de pages, et permet de passer à la page précédente/suivante. Si des décisions font disparaître les dernières lignes, la page est automatiquement ramenée à la dernière page encore valide.
+- Le clic de pagination repasse par le rendu asynchrone existant, avec contrôle de génération avant publication des lignes, afin qu’une réponse obsolète ne remplace pas la file courante.
+- Cache Messenger porté à `msg.js?v=3533`, Service Worker à `dz-de-v3.185.0.0.182`, précache synchronisé. Contrôle CI statique ajouté pour la pagination.
+- Aucun changement SQL, RLS, Storage, Auth, permission, compte, profil ou document réel. La CI et le déploiement Cloudflare ne sont pas déclarés réussis.
