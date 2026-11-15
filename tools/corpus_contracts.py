@@ -108,9 +108,11 @@ def ecrire_json_transactionnel(artefacts):
         for destination, valeur in artefacts.items():
             dossier = os.path.dirname(destination) or "."
             os.makedirs(dossier, exist_ok=True)
-            originaux[destination] = (
-                open(destination, "rb").read() if os.path.isfile(destination) else None
-            )
+            if os.path.isfile(destination):
+                with open(destination, "rb") as original:
+                    originaux[destination] = original.read()
+            else:
+                originaux[destination] = None
             fd, temporaire = tempfile.mkstemp(
                 prefix=".corpus-tmp-", suffix=".json", dir=dossier
             )
