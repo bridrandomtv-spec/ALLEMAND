@@ -129,6 +129,7 @@ def publier_sources_et_artefacts(copies, artefacts):
     temporaires = {}
     sauvegardes = {}
     touches = []
+    publication_reussie = False
     try:
         # Préparer toutes les copies avant de toucher aux fichiers de destination.
         for source, cible in copies:
@@ -157,6 +158,7 @@ def publier_sources_et_artefacts(copies, artefacts):
             os.replace(temporaire, cible)
 
         ecrire_json_transactionnel(artefacts)
+        publication_reussie = True
     except Exception:
         for cible in reversed(touches):
             sauvegarde = sauvegardes.get(cible)
@@ -171,9 +173,10 @@ def publier_sources_et_artefacts(copies, artefacts):
                 pass
         raise
     finally:
-        for chemin in list(temporaires.values()) + [
-            p for p in sauvegardes.values() if p
-        ]:
+        chemins_a_supprimer = list(temporaires.values())
+        if publication_reussie:
+            chemins_a_supprimer += [p for p in sauvegardes.values() if p]
+        for chemin in chemins_a_supprimer:
             try:
                 os.remove(chemin)
             except FileNotFoundError:
