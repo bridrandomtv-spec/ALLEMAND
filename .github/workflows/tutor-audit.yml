@@ -5,6 +5,7 @@ on:
     branches: ["audit/lot-603-corpus-contract-tests"]
     paths:
       - "ia.js"
+      - "js/qust.js"
       - "parle.js"
       - "app.js"
       - "matieres.js"
@@ -12,6 +13,7 @@ on:
       - "rag.js"
       - "tools/sharder_index.py"
       - "tests/tutor_request_contract.mjs"
+      - "tests/qust_runtime_contract.mjs"
       - "tests/tutor_language_matrix.mjs"
       - "tests/english_subject_runtime.mjs"
       - "tests/tutor_matrix.json"
@@ -59,6 +61,9 @@ jobs:
 
       - name: Tester le contrat commun chat / voix / Worker
         run: node tests/tutor_request_contract.mjs
+
+      - name: Tester le moteur QUST et son intégration au Worker
+        run: node tests/qust_runtime_contract.mjs
 
       - name: Tester les heuristiques Darija / Arabizi / anglais / espagnol / italien
         run: node tests/tutor_language_matrix.mjs
