@@ -47,7 +47,7 @@ assert.match(ia, /explicitOutputLanguage/, 'langue de sortie explicite absente d
 assert.match(voice, /voteLang\(ph\) \|\| preferred \|\| 'de'/, 'repli de langue TTS absent');
 assert.match(ia, /function sortieFaible\(local, cause\)[\s\S]*?if\(answerLanguage === 'de'\)[\s\S]*?else if\(answerLanguage === 'fr'\)/, 'messages de secours non alignés sur la langue de sortie');
 assert.match(ia, /explicitOutputLanguage && !reponseCourteValide/, 'une réponse locale ne doit pas contourner une consigne explicite de langue');
-assert.match(ia, /explicitOutputLanguage && explicitOutputLanguage !== QL\)\) \? loc : ''/, 'un extrait local de langue incompatible ne doit pas être ajouté au secours');
+assert.match(ia, /!explicitOutputLanguage\) \? loc : ''/, 'un extrait local ne doit pas être ajouté lorsqu’une langue est explicitement demandée');
 assert.match(ia, /if\(answerLanguage === 'ar' && !\//, 'contrôle arabe appliqué à la langue de sortie et non à la langue de la question');
 for (const cue of [/بالدارجة/, /en français/, /auf deutsch/, /en español/, /in italiano/, /بالعربية/]) assert.ok(cue.test(ia), 'consigne explicite de langue absente : ' + cue);
 assert.match(ia, /const fixLang = s => \(answerLanguage !== 'ar'/, 'filtre de réponse locale non aligné sur la langue de sortie');
