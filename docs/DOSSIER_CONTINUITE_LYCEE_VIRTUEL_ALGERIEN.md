@@ -3335,3 +3335,18 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun changement Supabase (données, schéma, Auth, RLS), Worker, configuration, secret, paiement, branche de production ou déploiement.
 - Messenger reste en attente des tests E2E avec comptes A/B/C (INSERT, UPDATE, suppression logique, reconnexion); il n'est pas déclaré terminé.
 - Suite recommandée : Lot 596 — concevoir la suite unitaire QUST indépendante et ses assertions de non-régression, puis seulement après validation de ses critères construire le runner d'intégration RAG/PROF.
+
+
+## Lot 596 — première suite unitaire QUST indépendante (15 novembre 2026)
+
+- Création de `tests/qust_unit.mjs`, exécuteur Node.js natif utilisant `vm` pour charger uniquement `js/qust.js`. Le banc ne crée ni `window` réel, ni DOM, ni `fetch`, ni accès réseau; il injecte seulement un objet `window` minimal et le conteneur CommonJS nécessaire au module.
+- La suite contient 10 contrats ciblés : comparaison Dativ/Akkusativ en Darija, Arabizi avec `weil`, négation `kein/nicht`, demande d'explication sur Konjunktiv II avec contexte 3AS, question française `mit/für`, unité 8 sans niveau, recherche de page, règle Dativ en 3AS, code-switching Darija/français/allemand, et résumé d'une Lektion avec niveau.
+- Assertions par dimension : langues détectées, intention attendue, entités grammaticales, niveau, unité/leçon, page, matière et filière transmises par le contexte. Le script affiche chaque cas PASS/FAIL et retourne un code de sortie non nul si un contrat échoue.
+- Les attentes sont des contrats de comportement visés, pas des résultats déjà obtenus. Plusieurs cas sont volontairement conçus pour révéler les lacunes du classifieur actuel : l'absence de reconnaissance de certaines formulations Arabizi/Darija dans les intentions, le compare français « différence entre », les expressions allemandes composées et les accents français dans « résume ». Il ne faut pas interpréter un échec de cette suite comme un défaut du runner.
+- Le test QST-007 ajoute un numéro de page explicite à sa formulation pour tester l'extraction de l'entité; il ne prétend pas établir que le manuel contient réellement cette information.
+- Commit du test : `45bdcdd68456d7316aa6d6ad239736194214d5ef`.
+- **Exécution non effectuée** : l'environnement de cette opération permet de créer et relire le fichier GitHub, mais pas d'exécuter le dépôt Node du commit. Aucun résultat PASS/FAIL réel, aucune validation CI et aucun statut de workflow ne sont revendiqués.
+- Aucun changement dans `js/qust.js`, `rag.js`, `biblio.js`, `prof_core.js`, le corpus, le Worker, la configuration, les secrets ou les données/politiques Supabase. Aucun déploiement.
+- Cette suite valide uniquement le classifieur déterministe isolé. Elle ne démontre pas que le pipeline RAG/PROF utilise correctement QUST, ni la qualité des réponses finales, ni le fonctionnement chat/voix.
+- Messenger reste en attente des tests E2E multi-comptes A/B/C; il n'est pas déclaré terminé.
+- Suite recommandée : Lot 597 — relire le test et les contrats, puis construire le harnais d'intégration RAG/PROF en instrumentant explicitement la question brute et la question normalisée; conserver l'interdiction réseau et vérifier que QUST reste un simple fallback tant que son routage n'est pas modifié.
