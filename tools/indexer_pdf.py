@@ -16,8 +16,10 @@ import sys
 
 try:
     from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+    from tools.corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk
 except ModuleNotFoundError:  # exécution directe: python tools/script.py
     from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+    from corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk
 
 CORPUS = os.path.join("assets", "bdd", "corpus.json")
 INDEX = os.path.join("assets", "bdd", "corpus_rag_index.json")
@@ -31,10 +33,10 @@ def slug(nom):
     return re.sub(r"[^a-z0-9]+", "-", nom.lower()).strip("-")[:60] or "document"
 
 
-def lire_texte_pdf(chemin):
+def lire_pages_pdf(chemin):
     try:
         from pypdf import PdfReader
-        return "\n".join((page.extract_text() or "") for page in PdfReader(chemin).pages)
+        return [(page.extract_text() or "") for page in PdfReader(chemin).pages]
     except Exception as exc:
         raise RuntimeError("Extraction PDF impossible pour %s: %s" % (chemin, exc))
 
@@ -73,7 +75,8 @@ def construire(dossier, documents_existants=None):
             continue
         licence = str(meta.get("licence", "")).strip().lower()
 
-        texte = lire_texte_pdf(chemin).strip()
+        pages = lire_pages_pdf(chemin)
+        texte = "\n".join(pages).strip()
         if len(texte) < 60:
             print("IGNORE (texte extrait insuffisant; OCR non exécuté):", nom)
             nb_ignores += 1
@@ -88,16 +91,19 @@ def construire(dossier, documents_existants=None):
             "langue": meta.get("langue", "de"),
             "annee": meta.get("annee", "2026/2027"),
             "format": "pdf", "url": chemin,
+            "source_sha256": sha256_fichier(chemin),
             "source": meta.get("source", "document local"),
             "licence": licence, "tags": meta.get("tags", ["pdf"]),
             "extrait": texte[:300].replace("\n", " ")
         }
         docs.append(doc)
-        for numero, morceau in enumerate(decouper(texte)):
+        for numero, partie in enumerate(decouper_pages(pages, CHUNK_MOTS)):
+            morceau = partie["texte"]
             gid = len(index["chunks"])
-            index["chunks"].append({
-                "global_id": gid, "doc": did, "n": numero, "texte": morceau
-            })
+            index["chunks"].append(construire_chunk(
+                gid, did, numero, morceau, doc["source_sha256"],
+                partie["page_start"], partie["page_end"]
+            ))
             for terme in set(re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06ff]{3,}", morceau.lower())):
                 index["termes"].setdefault(terme, []).append(gid)
 
@@ -106,7 +112,8 @@ def construire(dossier, documents_existants=None):
         "nb_termes": len(index["termes"]),
         "source": "PDF avec métadonnées et licence explicite"
     })
-    return {"_meta": {"version": "2.0.0", "nb": len(docs)}, "documents": docs}, index, nb_ignores
+    docs = fusionner_documents(docs, [])
+    return {"_meta": {"version": "2.1.0", "nb": len(docs)}, "documents": docs}, index, nb_ignores
 
 
 def ecrire_atomiquement(chemin, valeur):
@@ -123,6 +130,8 @@ def main(dossier):
         with open(CORPUS, encoding="utf-8") as f:
             existants = json.load(f).get("documents", [])
     corpus, index, ignores = construire(dossier, existants)
+    corpus["documents"] = fusionner_documents(existants, corpus["documents"])
+    corpus["_meta"]["nb"] = len(corpus["documents"])
     if not index["chunks"]:
         raise RuntimeError("Aucun chunk autorisé généré : index existant conservé, aucun artefact remplacé.")
     ecrire_atomiquement(INDEX, index)
