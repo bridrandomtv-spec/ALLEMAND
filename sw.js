@@ -5,7 +5,7 @@
    ══════════════════════════════════════════════════════════════ */
 'use strict';
 
-const VERSION = 'dz-de-v3.185.0.0.170';
+const VERSION = 'dz-de-v3.185.0.0.171';
 const CACHE_STATIC = VERSION + '-static';
 const CACHE_ASSETS = VERSION + '-assets';
 
@@ -19,8 +19,8 @@ const PRECACHE = [
   './auth.js?v=3510',
   './bdd.js?v=3510',
   './app.js?v=3570',
-  './admin.js?v=3514',
-  './supabase/supabase.js?v=3524',
+  './admin.js?v=3515',
+  './supabase/supabase.js?v=3525',
   './dz-interactions.js?v=5',
   './js/voice-chat.js?v=1',
   './unites3as_vitrine.js?v=3510',
@@ -41,7 +41,7 @@ const PRECACHE = [
   './guide.js?v=3511',
   './memoire.js?v=3510',
   './masar.js?v=3516',
-  './msg.js?v=3528',
+  './msg.js?v=3529',
   './billing.js?v=3511',
   './matieres.js?v=3510',
   './public-portal.js?v=10',
