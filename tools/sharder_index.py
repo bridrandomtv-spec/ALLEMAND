@@ -32,6 +32,15 @@ def build_shards(index, taille=TAILLE):
             raise ValueError("global_id absent, invalide ou dupliqué à la position %d" % position)
         if not isinstance(chunk.get("doc"), str) or not chunk["doc"] or not isinstance(chunk.get("texte"), str) or not chunk["texte"].strip():
             raise ValueError("document/texte absent pour le chunk %d" % gid)
+        if "source_sha256" in chunk:
+            import re
+            if not isinstance(chunk["source_sha256"], str) or not re.fullmatch(r"[0-9a-f]{64}", chunk["source_sha256"]):
+                raise ValueError("empreinte source invalide pour le chunk %d" % gid)
+        if "page_start" in chunk or "page_end" in chunk:
+            start, end = chunk.get("page_start"), chunk.get("page_end")
+            if (not isinstance(start, int) or isinstance(start, bool) or start < 1
+                    or end != start):
+                raise ValueError("provenance de page invalide pour le chunk %d" % gid)
         ids.add(gid)
         chunks.append(chunk)
 
