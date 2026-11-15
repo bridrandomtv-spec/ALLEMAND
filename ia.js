@@ -22,6 +22,27 @@
       if(el && txt) el.textContent = txt;
     }catch(e){}
   }
+  /* Mémoire de dialogue éphémère : jamais écrite dans localStorage.
+     Elle est isolée par la clé de session AUTH.user et effacée au changement de compte. */
+  let DIALOGUE = [], DIALOGUE_OWNER = null;
+  function dialogueOwner(){
+    try{
+      const s = window.AUTH && typeof window.AUTH.session === 'function' ? window.AUTH.session() : null;
+      return s && s.user ? String(s.user) : 'anonymous';
+    }catch(e){ return 'anonymous'; }
+  }
+  function prepareDialogue(){
+    const owner = dialogueOwner();
+    if(owner !== DIALOGUE_OWNER){ DIALOGUE = []; DIALOGUE_OWNER = owner; }
+    return owner;
+  }
+  function rememberTurn(owner, question, answer){
+    if(owner !== DIALOGUE_OWNER){ DIALOGUE = []; DIALOGUE_OWNER = owner; }
+    if(!question || !answer) return;
+    DIALOGUE.push({ role:'user', content:String(question).slice(0, 600) });
+    DIALOGUE.push({ role:'assistant', content:String(answer).slice(0, 1000) });
+    if(DIALOGUE.length > 8) DIALOGUE = DIALOGUE.slice(-8);
+  }
   window.reponseIA = async function(input){
     const req = input && typeof input === 'object' && !Array.isArray(input)
       ? input : { raw_text: input };
@@ -44,6 +65,7 @@
       }
     }catch(e){}
     if(!q) return '';
+    const dialogueUser = prepareDialogue();
     const fn = window.reponsePedagogique;
     /* ── HTML → texte parlable ─────────────────────────────────────────
        rag.js retourne { html: '<b>📘 قاعدة …</b><ul><li>…' } (10 chemins).
@@ -132,7 +154,12 @@
     const weak = !local || local.indexOf('لا أعرف') !== -1 ||
       (local.length < 25 && !reponseCourteValide) ||
       (QL && QL !== 'ar' && arR(local) > 0.5 && !reponseCourteValide);
-    if(!weak){ window.__IA_WORD = speakWord; window.__IA_WORD = speakWord; return fixLang(local); }
+    if(!weak){
+      window.__IA_WORD = speakWord;
+      const finalLocal = fixLang(local);
+      rememberTurn(dialogueUser, q, finalLocal);
+      return finalLocal;
+    }
     try{
       const k = 'dz_ia_' + new Date().toDateString();
       const n = +(localStorage.getItem(k) || 0);
@@ -173,7 +200,8 @@
           input_mode: inputMode, selected_language: selectedLanguage,
           detected_language: QL || detectedLanguage || 'unknown', dialect: dialect,
           subject: schoolContext.subject, level: schoolContext.level,
-          track: schoolContext.track, ctx: ctx
+          track: schoolContext.track, ctx: ctx,
+          history: DIALOGUE.slice(-8)
         }) }, 25000);
       if(!r.ok){
         let e = {};
@@ -184,7 +212,10 @@
             headers:{ 'Content-Type':'text/plain' }, body: q }, 15000);
           if(r2.ok){
             const j2 = await r2.json();
-            if(j2 && j2.ok && j2.rep && j2.rep.length > 10) return j2.rep;
+            if(j2 && j2.ok && j2.rep && j2.rep.length > 10){
+              rememberTurn(dialogueUser, q, j2.rep);
+              return j2.rep;
+            }
           }
         }
         return sortieFaible(local, 'http-' + r.status);
@@ -201,6 +232,7 @@
           return (loc && loc.indexOf('لا أعرف') === -1) ? loc :
             (window.__IA_ERR ? '🧠 تعذّر الوصول إلى الدماغ السحابي (' + String(window.__IA_ERR).slice(0,30) + ') — ' : '') + 'لم أفهم تمامًا. اسألني عن تصريف فعل، أداة، جمع، رقم أو معنى كلمة — أو قل « الصفحة 11 » لأقرأها لك.';
         }
+        rememberTurn(dialogueUser, q, j.rep);
         return j.rep;
       }
     }catch(e){
