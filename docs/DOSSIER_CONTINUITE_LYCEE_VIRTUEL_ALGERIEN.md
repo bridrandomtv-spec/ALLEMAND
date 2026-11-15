@@ -2971,3 +2971,10 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le rejet reste disponible pour traiter une demande incomplète. La validation serveur et le trigger Supabase restent l’autorité finale ; aucune policy, table, fonction ou donnée n’a été modifiée.
 - Cache Messenger incrémenté à `msg.js?v=3530` ; Service Worker à `dz-de-v3.185.0.0.178`. Assertions statiques de `ci/check-msg.mjs` ajoutées et références de cache réalignées.
 - Aucun compte de test, document scolaire, profil réel ou statut d’élève n’a été créé, chargé, consulté ou modifié. CI, test navigateur et déploiement Cloudflare restent à confirmer.
+
+
+## Lot 564 — isolation des réponses asynchrones de la file Messenger (15 novembre 2026)
+- Audit de la file de vérification après le Lot 563 : une réponse lente d’un ancien rendu pouvait remplacer la variable globale des demandes utilisées par le garde de confirmation, avant que le rendu obsolète soit rejeté.
+- Correction : le contrôle `renderEpoch` est maintenant effectué immédiatement après le retour de `msgVerificationQueue()`, avant toute publication des lignes dans `window.__msgVerificationRows`. Une réponse d’un rendu précédent ne peut donc plus écraser l’état de contrôle du rendu courant.
+- Assertion de régression ajoutée à `ci/check-msg.mjs`. Cache Messenger porté à `msg.js?v=3531`, Service Worker à `dz-de-v3.185.0.0.179`.
+- Aucun changement Supabase, aucune modification de compte ou de dossier scolaire. CI et déploiement restent non confirmés.
