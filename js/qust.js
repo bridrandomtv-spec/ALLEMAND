@@ -9,7 +9,7 @@
   var AR = /[؀-ۿ]/;
   var DZ = ["wach","wesh","chno","kifach","kifech","klach","had","hadi","ma3na","fehmt","fhemt","fhemtch","mafhemtch","rani","rak","raki","bezaf","nheb","hab","habi","ta3","dorka","kayn","makanch","tini","tamrin","wash","shno","3lach","3tini","saha"];
   var DZ_AR = ["واش","شنو","كيفاش","علاش","هاد","ما فهمتش","مفهمتش","راني","راك","راكي","بزاف","نحب","حاب","حابة","تاع","درك","كاين","ماكانش","عطيني","فهمتش","معناها"];
-  var FR = ["explique","donne","pourquoi","comment","traduis","rsume","resume","exercice","leon","lecon","page","quest","difference","franc"];
+  var FR = ["explique","donne","pourquoi","traduis","résume","résumé","exercice","leon","lecon","leçon","différence","français","francais","merci","bonjour"];
   var DE = ["der","die","das","den","dem","weil","dass","ich","du","ist","und","nicht","bedeutet","heisst","heit","lektion","seite","akkusativ","dativ","nominativ","genitiv"];
   var EN = ["what","where","when","why","how","which","because","without","please","thank","lesson","exercise","grammar","explain","translate","difference","between","present","simple"];
   var ES = ["que","qué","como","cómo","porque","por qué","diferencia","entre","explica","ejercicio","leccion","lección","gracias","escuela","verbo","ser","estar"];
