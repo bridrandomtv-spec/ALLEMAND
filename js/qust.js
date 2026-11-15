@@ -35,7 +35,7 @@
   function intent(nq){
     var semantic = TXT ? TXT.withArabizi(nq) : nq;
     function has(a){ return a.some(function(k){ return semantic.indexOf(k)!==-1; }); }
-    if(has(["فرق","difference","compare","قارن"]) && has(["بين","و","between","entre","tra"])) return ["compare",0.8];
+    if(has(["فرق","difference","différence","diferencia","differenza","unterschied","compare","قارن"]) && has(["بين","و","between","entre","tra","zwischen"])) return ["compare",0.8];
     if(has(["لخص","ملخص","rsume","resume","summarize"])) return ["summarize",0.85];
     if(has(["صحح","corrige","correct","صلح"])) return ["correct_exercise",0.85];
     if(has(["ترجم","traduis","translate","comment on dit","كيفاش نقول"])) return ["translate",0.85];
