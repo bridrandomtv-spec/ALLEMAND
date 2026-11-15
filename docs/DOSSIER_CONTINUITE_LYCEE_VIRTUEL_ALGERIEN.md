@@ -3591,3 +3591,25 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Commit documentaire Lot 610 : à renseigner après enregistrement.
 - **Suite Lot 611** : implémenter progressivement le contrat commun côté client sur la branche d'audit, d'abord avec compatibilité rétroactive des appels chaîne existants ; ensuite faire converger chat et voix, ajouter des tests de parité, puis adapter le Worker. Aucun déploiement avant tests et autorisation.
 - Messenger reste non terminé : scénarios E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
+
+
+## Lot 611 — première convergence du chat et de la voix vers un contrat pédagogique commun (15 novembre 2026)
+
+- Changements candidats réalisés uniquement sur `audit/lot-603-corpus-contract-tests`, sans toucher à `main`, à la configuration, aux secrets ou au déploiement.
+- `ia.js` accepte désormais un objet structuré tout en conservant la compatibilité des appels historiques qui lui passent une chaîne. Il sépare `raw_text` de `normalized_text`, distingue le mode texte/voix, transporte langue choisie, langue détectée et dialecte, et récupère le snapshot existant `CONTEXT.ctx()` (matière, niveau, filière).
+- Quand le moteur local ne suffit pas, `ia.js` enrichit le contexte du Worker avec BIBLIO et, pour la matière allemand, un extrait RAG disponible. Le texte original reste la question principale ; la normalisation est fournie séparément et ne doit pas remplacer les mots de l'élève.
+- `parle.js` transmet maintenant la transcription brute et `canon(q)` séparément, avec `input_mode=voice`, la langue de reconnaissance, la langue détectée et un indicateur Darija. La détection inclut un premier lexique de marqueurs arabes et Arabizi (ex. wach, 3lach, kifach, rani, bezaf). Ce lexique est un premier filtre heuristique, pas un modèle dialectal complet.
+- `app.js::sendChat` passe désormais par `window.reponseIA` au lieu de son ancien appel direct à `RAG.cherche` puis au Worker `/ask`. Le chat et la voix partagent donc le même orchestrateur local/cloud ; le repli historique `PROF.repondre` est conservé si l'orchestrateur n'est pas disponible.
+- `worker/ia-ask.js` consomme et borne les métadonnées (mode, langues, dialecte, matière, niveau, filière) et distingue dans le prompt la question originale de la normalisation technique. Ses consignes demandent de répondre dans la langue détectée, de tenir compte de la darija, d'expliquer étape par étape, de donner un exemple et de vérifier la compréhension lorsque c'est utile.
+- Correction de sincérité pédagogique dans le prompt : le Worker ne doit plus prétendre que la couverture RAG allemand A1–B2 est complète ; il doit reconnaître que la couverture dépend des ressources effectivement chargées et vérifiées.
+- Fichiers finaux relus sur GitHub et derniers commits :
+  - `ia.js` : `d2b3b5ec4cb996d699fe8aa8d630b13ca3d6e076`
+  - `parle.js` : `f02e918e5a4d87a048e6af1ab6e01e2d6cc53d07`
+  - `app.js` : `13730aab0ca8e4ada6ab611b00a0301448f3b172`
+  - `worker/ia-ask.js` : `7482c7f9ebffe46afa2e2bf6489fd1c06871e8b6`
+  - `tests/tutor_request_contract.mjs` : `910af55652dd1b972e16f902ef2d380c5e84ac56`
+- **Validation non exécutée** : les changements et tests source ont été relus sur GitHub, mais aucun test Node, navigateur, microphone, Worker distant ou comparaison de réponses texte/voix n'a été exécuté. Le test de contrat est écrit mais non lancé. Il ne prouve pas encore la qualité des réponses en darija ni la parité runtime.
+- **Ce qui manque pour un vrai professeur conversationnel** : mémoire de dialogue bornée et isolée par session/utilisateur, détection dialectale plus robuste (notamment les variantes régionales et les mélanges darija/allemand/français), réponse structurée avec sources et niveau de confiance, tests audio réels et contrôle de la voix TTS selon la langue. Le code actuel ne transmet pas encore d'historique conversationnel au Worker.
+- Aucun compte, message, profil, politique RLS, table, donnée, stockage, paiement ou paramètre Supabase n'a été lu ou modifié. Aucun Worker n'a été déployé ; le fichier Worker est seulement un candidat Git.
+- **Suite Lot 612** : ajouter une mémoire conversationnelle temporaire bornée et protégée contre le changement d'utilisateur, après vérification de la forme réelle de `AUTH.session()` et du cycle de déconnexion ; puis tests de parité texte/voix et tests linguistiques darija/Arabizi. Ne pas persister d'historique sans décision explicite de confidentialité.
+- Messenger reste non terminé : tests E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
