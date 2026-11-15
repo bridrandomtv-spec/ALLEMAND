@@ -3873,3 +3873,18 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Limite : la Web Speech API nécessite toujours une langue de reconnaissance configurée ; cette correction ne crée pas une auto-détection ASR multilingue universelle.
 - Rapport : `docs/LOTS/LOT_627_SEPARATION_LANGUE_RECONNAISSANCE_REPONSE.md`.
 - Aucun changement Worker, Supabase, `main`, déploiement ou fusion ; PR #17 reste ouverte et indépendante.
+
+
+---
+
+## Lot 628 — contrôle des droits avant conversion et injection RAG (2026-11-15)
+
+- Clarification : convertir un PDF en texte n'accorde aucun droit d'exploitation. Les conversions antérieures des livres 2AS/3AS sont un précédent technique, pas une preuve de droits sur les autres PDF.
+- Lecture de `assets/bdd/corpus.json` : 239 fiches, dont 225 fiches PDF ; les 225 sont étiquetées `document utilisateur`, qui n'est ni une licence reconnue ni une preuve de droits. Répartition globale : 4 `production propre`, 8 `usage pédagogique`, 2 déclarations explicites de documents fournis par l'utilisateur, 225 `document utilisateur`.
+- Les 225 fiches PDF ne sont donc pas automatiquement indexables. Aucun faux sidecar, aucune licence fictive et aucun texte injecté.
+- Ajout de `tools/rights_metadata.py` : validation des droits basée sur licence admise, source, titulaire, déclarant/date, déclaration explicite et validation humaine référencée ; exigences supplémentaires pour licence libre, domaine public et autorisation écrite.
+- `tools/indexer_pdf.py` et `tools/ingest_corpus.py` utilisent ce validateur avant extraction/indexation et avant copie dans `assets/corpus/`.
+- `tests/test_corpus_pipeline.py` ajoute des tests de refus d'une simple étiquette, d'acceptation d'une déclaration propre complète et de refus sans validation humaine.
+- Rapport : `docs/LOTS/LOT_628_CONTROLE_DROITS_INGESTION_RAG.md`.
+- Tests Python et Actions non certifiés : runners toujours bloqués avant première étape dans les exécutions observées. Aucun PDF extrait, OCRisé, copié ou indexé. Aucune modification `main`, fusion, déploiement ou changement Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste ouverte.
+- Suite : classer les documents par provenance réelle ; demander/consigner les autorisations nécessaires ; traiter en premier les productions propres confirmées, puis OCR contrôlé et indexation RAG avec provenance/page dans chaque chunk.
