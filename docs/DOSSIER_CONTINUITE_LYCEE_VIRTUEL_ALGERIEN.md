@@ -3951,3 +3951,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun PDF réel extrait/OCRisé/indexé ; aucun index de production généré. Aucun changement de `main`, fusion, déploiement, Supabase/Auth/RLS/schéma/données/paiement/secrets ou PR #17.
 - Rapport : `docs/LOTS/LOT_632_INGESTION_INCREMENTALE_ET_DIAGNOSTIC_CI.md`.
 - Suite : Lot 633 — rétablir les runners, exécuter les tests, puis unifier les chemins d'ingestion et renforcer le remplacement transactionnel des artefacts.
+
+- Complément Lot 632 : la fusion incrémentale est centralisée dans `tools/corpus_contracts.py::fusionner_index_rag` et partagée par les indexeurs PDF et multi-format. Dernier job observé `132964729277` (run `43763939718`) : `runner_id: 0`, `steps: []`; tests toujours non exécutés faute de runner.
