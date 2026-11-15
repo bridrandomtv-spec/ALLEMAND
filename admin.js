@@ -755,12 +755,15 @@ function rendreCouvertureORG1(mount){
       var docRow = (window.__admVerificationRows||[]).find(function(row){ return row.id===verifyDoc; });
       var docPath = docRow && docRow.carte_scolaire_path;
       if(!docPath || !window.SB || typeof SB.msgSchoolCardUrl!=='function'){ window.alert('⛔ المستند غير متاح'); return; }
+      var docWindow = window.open('about:blank','_blank');
+      if(!docWindow){ window.alert('⛔ اسمح بفتح نافذة جديدة لعرض البطاقة المدرسية.'); return; }
+      try{ docWindow.opener = null; }catch(ignore){}
       t.disabled = true;
       SB.msgSchoolCardUrl(docPath).then(function(result){
         t.disabled = false;
-        if(result && result.ok && result.url){ window.open(result.url,'_blank','noopener,noreferrer'); }
-        else window.alert('⛔ '+esq5(result && result.err || 'تعذّر فتح البطاقة'));
-      }).catch(function(err){ t.disabled=false; window.alert('⛔ '+esq5(err && err.message || err)); });
+        if(result && result.ok && result.url){ docWindow.location.replace(result.url); }
+        else { try{ docWindow.close(); }catch(ignore){} window.alert('⛔ '+esq5(result && result.err || 'تعذّر فتح البطاقة')); }
+      }).catch(function(err){ t.disabled=false; try{ docWindow.close(); }catch(ignore){} window.alert('⛔ '+esq5(err && err.message || err)); });
       return;
     }
     var verifyPage = t.getAttribute('data-adm-verif-page');
