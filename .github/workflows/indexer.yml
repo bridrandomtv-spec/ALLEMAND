@@ -21,6 +21,8 @@ jobs:
           python-version: '3.11'
       - name: Installer le parseur PDF
         run: pip install -q pypdf
+      - name: Tester le contrat du pipeline RAG
+        run: python -m unittest tests/test_corpus_pipeline.py
       - name: Vérifier et indexer uniquement les PDF autorisés
         run: python tools/indexer_pdf.py docs/archive/documents
       - name: Committer le corpus RAG sur la branche courante
