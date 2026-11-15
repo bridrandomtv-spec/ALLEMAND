@@ -7,6 +7,7 @@ on:
       - "ia.js"
       - "biblio.js"
       - "js/qust.js"
+      - "js/text-normalizer.js"
       - "parle.js"
       - "tests/voice_capture_contract.mjs"
       - "app.js"
@@ -57,6 +58,9 @@ jobs:
       - name: Vérifier la syntaxe JavaScript
         run: |
           set -e
+          node --check js/text-normalizer.js
+          node --check js/qust.js
+          node --check rag.js
           node --check app.js
           node --check matieres.js
           node --check ia.js
