@@ -159,8 +159,14 @@
   const ES_WORDS = /\b(el|la|los|las|yo|usted|es|son|mi|su|gracias|hola|buenos|porque)\b/i;
   const IT_WORDS = /\b(il|lo|gli|che|di|io|tu|lei|sono|grazie|ciao|perch\u00e9|questa|quello)\b/i;
   const LCODE = { ar:'ar-SA', de:'de-DE', fr:'fr-FR', es:'es-ES', it:'it-IT', en:'en-US' };
+  const DARJA_AR = /(?:واش|علاش|كيفاش|راني|راك|راكي|بزاف|ما\s*فهمتش|مفهمتش|وش|علاه|نحب|حاب|حابة|تاع|درك|كاين|ماكانش|صح)/i;
+  const DARJA_LATIN = /(?:^|\\s)(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|ma\\s*fhemtch|nheb|hab|habi|ta3|dorka|kayn|makanch|saha)(?:$|\\s)/i;
+  function detectDialect(t){
+    const s = String(t || '');
+    return DARJA_AR.test(s) || DARJA_LATIN.test(s) ? 'darija' : 'unknown';
+  }
   function detectLang(t){
-    if(/[\u0600-\u06FF]/.test(t)) return 'ar';
+    if(/[\u0600-\u06FF]/.test(t) || DARJA_LATIN.test(String(t || ''))) return 'ar';
     if(/[\u00e4\u00f6\u00fc\u00df]/i.test(t) || DE_WORDS.test(t)) return 'de';
     if(/[\u00e0\u00e2\u00e7\u00e8\u00ea\u00eb\u00ee\u00ef\u00f4\u00fb\u00f9]/i.test(t) || FR_WORDS.test(t)) return 'fr';
     if(/[\u00bf\u00a1]/.test(t) || /[\u00e1\u00e9\u00ed\u00f3\u00f1]/i.test(t) || ES_WORDS.test(t)) return 'es';
@@ -333,7 +339,7 @@
       NS = 0;
       if(q === LASTQ.q && Date.now() - LASTQ.t < 3000) return;
       LASTQ = { q: q, t: Date.now() };
-      LASTLANG = detectLang(q) || LASTLANG;
+      LASTLANG = detectLang(q) || lang;
       setStatus('⏳ ' + q.slice(0, 40));
       const fn = window.reponseIA || window.reponsePedagogique || (window.RAG && RAG.reponsePedagogique);
       let rep = '';
@@ -346,7 +352,17 @@
         if(s >= 2) setStatus((st || '🧠 réflexion') + ' · ' + s + 's');
       }, 1000);
       if(typeof fn === 'function'){
-        try{ rep = await fn(canon(q)); }
+        try{
+          const request = {
+            raw_text: q,
+            normalized_text: canon(q),
+            input_mode: 'voice',
+            selected_language: lang,
+            detected_language: LASTLANG,
+            dialect: detectDialect(q)
+          };
+          rep = fn === window.reponseIA ? await fn(request) : await fn(request.normalized_text);
+        }
         catch(e){ try{ console.warn('[parle] reponseIA :', e); }catch(_){}} 
       }
       clearInterval(compteur);
