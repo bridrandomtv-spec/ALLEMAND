@@ -175,7 +175,8 @@
        question, avec le geste qui débloque (bouton 🧠). */
     function sortieFaible(local, cause){
       const loc = String(local || '');
-      const utile = (loc && loc.indexOf('لا أعرف') === -1 && loc.length > 3) ? loc : '';
+      const utile = (loc && loc.indexOf('لا أعرف') === -1 && loc.length > 3 &&
+        !(explicitOutputLanguage && explicitOutputLanguage !== QL)) ? loc : '';
       const c = String(cause || '?');
       let msg;
       if(answerLanguage === 'de') msg = '🤔 Ich habe die Frage nicht ganz verstanden. Grund: ' + c + '. Tipp: Konjugation, Artikel, Plural, Zahl, Bedeutung oder « Seite 11 ». Der 🧠-Knopf unten rechts testet das Cloud-Gehirn.';
