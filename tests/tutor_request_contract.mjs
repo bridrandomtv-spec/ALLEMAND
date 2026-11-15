@@ -43,7 +43,14 @@ const checks = [
     /b\.history\.slice\(-8\)/.test(worker) && /item\.role !== 'user' && item\.role !== 'assistant'/.test(worker) &&
     /slice\(0, 1000\)/.test(worker)],
   ['Worker utilise les tours précédents pour garder le fil',
-    /Utilise les tours précédents pour conserver le fil/.test(worker)]
+    /Utilise les tours précédents pour conserver le fil/.test(worker)],
+  ['ia.js efface immédiatement la mémoire au logout et au changement de compte',
+    /addEventListener\('dz:auth'/.test(ia) && /if\(!next \|\| next !== DIALOGUE_OWNER\)/.test(ia)],
+  ['le détecteur Darija/Arabizi accepte ponctuation et variantes écrites',
+    /\[\^A-Za-z0-9\]/.test(ia) && /ma\\s\*fhemtch/.test(ia) &&
+    /\[\^A-Za-z0-9\]/.test(voice) && /function detectDialect\(t\)/.test(voice)],
+  ['le chat réutilise le moteur TTS segmenté du professeur vocal',
+    /window\.parleSpeak\(rep\)/.test(chat) && /window\.parleSpeak = function\(texte, langue\)/.test(voice)]
 ];
 
 let failures = 0;
