@@ -20,7 +20,7 @@ Le statut `rag_source_status=verified` du Lot 647 atteste la résolution de la f
 ### Worker CERVEAU
 
 - Validation par liste blanche des nouveaux champs de portée.
-- Abstention déterministe avant tout appel au modèle si une page/unité/un exercice est demandé et que la portée n'est pas `verified`.
+- Abstention déterministe avant tout appel au modèle si une page/unité/un exercice est demandé et que la portée ou la provenance n'est pas `verified`.
 - Message de refus localisé en arabe standard, darija, français, allemand, anglais, espagnol ou italien.
 - Le statut de provenance documentaire et le statut de correspondance de portée restent deux contrôles distincts.
 
@@ -37,6 +37,7 @@ Le statut `rag_source_status=verified` du Lot 647 atteste la résolution de la f
 ## Limites et validation
 
 - Les tests sont des fixtures synthétiques et un modèle simulé ; ils vérifient le routage et l'abstention déterministe, pas la pertinence linguistique d'un modèle réel.
+- Limite de confiance : le Worker reçoit encore les statuts de portée calculés par le navigateur. Il exige aussi `rag_source_status=verified`, mais ne peut pas recalculer lui-même la correspondance à partir du corpus, auquel il n'accède pas dans ce parcours. Cette protection ferme les erreurs du flux normal, pas un client modifié qui falsifierait les champs. Une attestation côté serveur ou une preuve signée reste nécessaire pour une garantie anti-falsification.
 - La correspondance exacte des pages est vérifiable avec le schéma actuel ; les unités et exercices ne le sont pas encore. Il faudra enrichir le schéma des chunks avec des identifiants structurés de leçon/unité/exercice avant d'autoriser ces références.
 - Aucun test n'est déclaré PASS tant qu'un run GitHub Actions sur le commit courant n'a pas été consulté.
 - Aucun PDF réel ingéré/OCRisé/indexé ; aucune validation individuelle de droits documentaires nouvelle.
