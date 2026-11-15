@@ -3376,3 +3376,21 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Conclusion : aucun résultat de test ne peut être attribué au Lot 597/598. L'existence du run prouve le déclenchement du workflow, pas l'exécution du code de test.
 - Aucun workflow, script de production, moteur IA, corpus, Worker, secret ou ressource Supabase n'a été modifié dans ce lot. Aucun déploiement n'a été lancé volontairement.
 - Suite recommandée : débloquer l'exécution GitHub Actions au niveau du compte/repository, puis intégrer explicitement `node tests/qust_unit.mjs` et `node tests/rag_qust_probe.mjs` à une étape CI dédiée après validation du harnais. Ne pas confondre les anciennes régressions RAG/PROF avec les nouveaux tests QUST.
+
+
+## Lot 599 — revue statique de la qualité des nouveaux tests QUST (15 novembre 2026)
+
+- Relecture directe de `tests/qust_unit.mjs`, `tests/rag_qust_probe.mjs`, `js/qust.js` et de la fonction `reponsePedagogique()` dans `rag.js`.
+- Clarification importante : les attentes de `qust_unit.mjs` sont présentées dans le script comme un contrat cible, pas comme une photographie du comportement actuel. Les divergences repérées sont donc des lacunes attendues à mesurer, et non automatiquement des erreurs de conception des tests.
+- Cas qui devraient révéler des lacunes selon le code actuel, sans avoir été exécutés :
+  - QST-002 : `weil` est détecté comme entité/conjonction et langue allemande, mais ne déclenche pas à lui seul `explain_rule`.
+  - QST-003 : `wach ... wela ...` détecte Darija et allemand, mais `intent()` n'a pas de déclencheur de choix/comparaison `wela`.
+  - QST-005 : `différence entre mit et für` ne satisfait pas les motifs actuels de comparaison (mot accentué `différence` non listé et connecteur `entre` absent). `mit/für` ne sont pas dans le lexique DE de détection.
+  - QST-007 : le mot `page` est détecté, mais `W-Fragen` ne suffit pas au lexique DE actuel.
+  - QST-010 : la forme accentuée `résume` n'est pas dans les variantes de résumé (`rsume`, `resume`, `summarize`), ce qui peut manquer l'intention et la langue française.
+- QST-001, 004, 006, 008 et 009 semblent cohérents avec les motifs inspectés, mais cela ne vaut pas résultat de test.
+- Défaut d'intégration confirmé statiquement : `reponsePedagogique(q)` exécute `q = darja(q)` avant `QUST.understand(q, _qctx)`. La sonde compare le texte reçu par QUST à la question brute et devrait donc montrer la perte des marqueurs transformés pour les cinq formulations choisies. Le texte brut n'est pas transmis à QUST dans le flux observé.
+- Le classificateur QUST reste une couche d'analyse (langues/intention/entités/confiance) et ne produit pas lui-même la réponse. Son appel a lieu avant les routeurs BIBLIO/Kharif/Artikel/Plural/conversation/lecture/conjugaison/type.
+- La sonde est diagnostique : elle observe l'appel et les ressources locales chargées, mais ne valide ni la justesse de la réponse, ni les sources pédagogiques, ni la cohérence chat/voix. Le blocage réseau est explicite dans son `fetch` simulé.
+- Aucun script n'a été exécuté dans ce lot ; aucune assertion PASS/FAIL réelle n'est revendiquée. Aucun code applicatif, moteur, corpus, Worker, Supabase ou workflow n'a été modifié.
+- Suite recommandée : conserver ces cas comme critères d'acceptation, ajouter un contrat de conservation de `raw_text` distinct de `normalized_text`, puis exécuter la suite quand GitHub Actions est rétabli. Les améliorations du classificateur doivent être faites après mesure et revue du comportement attendu, pas en modifiant les attentes pour faire passer les tests.
