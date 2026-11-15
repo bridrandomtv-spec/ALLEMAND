@@ -4140,3 +4140,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun corpus réel ni index de production modifié ; aucune ingestion/OCR, aucun déploiement, aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucune fusion.
 - Rapport : `docs/LOTS/LOT_646_INTEGRATION_ORCHESTRATION_RAG_CITATIONS.md`.
 - Suite Lot 647 : formaliser l'abstention du Worker pour les questions exigeant une page, une unité, un exercice ou une référence officielle sans extrait pertinent ; permettre les explications générales clairement étiquetées.
+
+
+## Lot 647 — statut de provenance et abstention du professeur (2026-11-16)
+
+- `ia.js` transmet maintenant `rag_source_status` : `verified`, `unverified`, `unavailable` ou `not_applicable`. Le statut n'est pas déduit du seul texte du contexte et survit à sa troncature.
+- Si aucun hit RAG n'existe, le contexte indique explicitement qu'aucun extrait pertinent et vérifié n'a été trouvé.
+- Le Worker valide le statut (valeur inconnue/absente = `unavailable`) et le place dans les métadonnées de prompt.
+- Consigne de comportement : sans provenance vérifiée, ne pas attribuer une réponse à un manuel/page/unité/exercice/programme officiel ; demander la source pour une demande précise ; autoriser une explication générale de grammaire si elle est clairement présentée comme générale et non vérifiée dans le manuel de la plateforme. Un extrait BIBLIO non certifié ne devient pas une citation officielle.
+- Tests renforcés : 4 cas d'orchestration (source vérifiée, hit non certifié, provenance divergente, aucun hit), assertions Worker et contrat statique.
+- Exécution CI non attestée à ce stade ; les tests simulés ne démontrent pas encore le comportement d'un modèle réel. Aucun document réel ingéré/OCRisé/indexé, aucun déploiement, aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucune fusion.
+- Rapport : `docs/LOTS/LOT_647_ETAT_PROVENANCE_ET_ABSTENTION.md`.
+- Suite Lot 648 : matrice adversariale d'abstention puis exécution et analyse des tests CI avant toute ingestion documentaire réelle.
