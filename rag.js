@@ -53,6 +53,7 @@
   }
   function valideManifest(m){
     if(!objet(m) || m.version !== MANIFEST_VERSION ||
+       typeof m.generation !== 'string' || !/^[0-9a-f]{64}$/.test(m.generation) ||
        !Number.isSafeInteger(m.nb_shards) || m.nb_shards < 1 ||
        !Number.isSafeInteger(m.total_chunks) || m.total_chunks < 1 ||
        !Array.isArray(m.shards) || m.shards.length !== m.nb_shards) return false;
@@ -131,7 +132,8 @@
           const r = await fetch('assets/bdd/shards/' + sh.file, { cache:'no-store' });
           if(!r.ok){ complet = false; break; }
           const data = await r.json();
-          const ids = objet(data) ? valideChunks(data.chunks, sh.nb_chunks) : null;
+          const ids = objet(data) && data._generation === man.generation
+            ? valideChunks(data.chunks, sh.nb_chunks) : null;
           if(!ids || !valideTermes(data.termes, ids)){ complet = false; break; }
           for(const id of ids){
             if(idsVus.has(id)){ complet = false; break; }
