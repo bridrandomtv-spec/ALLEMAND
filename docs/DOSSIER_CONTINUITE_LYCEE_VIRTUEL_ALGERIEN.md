@@ -3969,3 +3969,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun PDF réel, OCR, index réel, changement main, fusion, déploiement, Supabase/Auth/RLS/schéma/données/paiements/secrets. PR #17 non modifiée.
 - Rapport : `docs/LOTS/LOT_633_ROLLBACK_TRANSACTIONNEL_ET_RUNNERS.md`.
 - Suite : Lot 634 — lever le blocage runner/facturation, exécuter les tests, puis passer à des générations versionnées et vérifier la restitution titre/page/source dans le RAG.
+
+- Vérification de l'état GitHub de PR #17 : elle est déjà fusionnée et fermée depuis le 2026-11-14 à 14:50:08 UTC (merge commit `ef781da525eb4df062841c4362a999811fe35831`). Cette fusion est antérieure au Lot 633 ; aucune opération de fusion n'a été faite pendant ce lot. La branche d'audit est à 248 commits en avance et 0 en retard sur `main` au dernier contrôle.
