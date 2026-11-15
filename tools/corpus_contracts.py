@@ -88,3 +88,62 @@ def fusionner_index_rag(existant, entrants, docs_remplaces):
     meta.update({"version": "2.1.0", "nb_chunks": len(chunks),
                  "nb_termes": len(termes), "source": "fusion incrémentale"})
     return {"_meta": meta, "chunks": chunks, "termes": termes}
+
+
+def ecrire_json_transactionnel(artefacts):
+    """Prépare plusieurs JSON puis les remplace ; restaure les originaux si un replace échoue.
+
+    Chaque fichier temporaire est créé dans le même répertoire que sa destination,
+    afin que os.replace reste atomique à l'échelle du fichier. En cas d'exception
+    pendant la séquence, les fichiers déjà remplacés sont restaurés.
+    """
+    import json
+    import os
+    import tempfile
+
+    temporaires = {}
+    originaux = {}
+    remplaces = []
+    try:
+        for destination, valeur in artefacts.items():
+            dossier = os.path.dirname(destination) or "."
+            os.makedirs(dossier, exist_ok=True)
+            originaux[destination] = (
+                open(destination, "rb").read() if os.path.isfile(destination) else None
+            )
+            fd, temporaire = tempfile.mkstemp(
+                prefix=".corpus-tmp-", suffix=".json", dir=dossier
+            )
+            temporaires[destination] = temporaire
+            with os.fdopen(fd, "w", encoding="utf-8") as stream:
+                json.dump(valeur, stream, ensure_ascii=False, separators=(",", ":"))
+                stream.flush()
+                os.fsync(stream.fileno())
+        for destination, temporaire in temporaires.items():
+            os.replace(temporaire, destination)
+            remplaces.append(destination)
+    except Exception:
+        for destination in reversed(remplaces):
+            contenu = originaux[destination]
+            if contenu is None:
+                try:
+                    os.remove(destination)
+                except FileNotFoundError:
+                    pass
+            else:
+                dossier = os.path.dirname(destination) or "."
+                fd, restauration = tempfile.mkstemp(
+                    prefix=".corpus-restore-", suffix=".json", dir=dossier
+                )
+                with os.fdopen(fd, "wb") as stream:
+                    stream.write(contenu)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                os.replace(restauration, destination)
+        raise
+    finally:
+        for temporaire in temporaires.values():
+            try:
+                os.remove(temporaire)
+            except FileNotFoundError:
+                pass
