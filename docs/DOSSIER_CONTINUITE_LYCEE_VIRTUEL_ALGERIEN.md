@@ -3633,3 +3633,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun compte, mot de passe, profil, message Messenger, table, policy RLS, donnée Supabase, secret, configuration ou déploiement n'a été touché.
 - **Suite Lot 613** : tests de parité entre chat et voix avec mêmes questions brutes, même contexte scolaire et mêmes sources ; tests Darija/Arabizi (arabe et latin) et mélange darija/allemand ; ensuite, vérifier la qualité réelle des réponses et les sorties TTS sur navigateur et mobile.
 - Messenger reste non terminé : tests E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
+
+- Ajustement de confidentialité : les sessions anonymes ne conservent aucun historique. La mémoire n'est activée que lorsqu'une session `AUTH.session().user` existe ; au logout ou en absence de session, l'historique est vidé et aucune nouvelle question n'est mémorisée. Commit correctif `ia.js` : `3b4ad57266359059f7cc03e3389747ca77e4e0ed`; assertion de test mise à jour dans `tests/tutor_request_contract.mjs` (commit `767e87da89ad22e6b75aeed5d33e72aeeca5a8d6`).
