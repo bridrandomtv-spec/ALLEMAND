@@ -13,7 +13,10 @@ import re
 import shutil
 import sys
 
-from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+try:
+    from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+except ModuleNotFoundError:  # exécution directe: python tools/script.py
+    from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
 
 TAILLE_CHUNK = 1200
 
