@@ -10,7 +10,7 @@ assert.match(voice, /if\(!ON \|\| listeningGuard \|\| processing\) return/,
   'listen() ne doit pas rouvrir le micro pendant une requête IA');
 assert.match(voice, /rec\.onresult = async ev => \{\s*if\(processing\) return;/,
   'les résultats vocaux concurrents doivent être ignorés');
-assert.match(voice, /processing = true;\s*LASTLANG = detectLang\(q\) \|\| lang/,
+assert.match(voice, /processing = true;\s*const turn = \+\+VOICE_TURN;\s*LASTLANG = detectLang\(q\) \|\| lang/,
   'le verrou doit être posé avant l’appel asynchrone au tuteur');
 assert.match(voice, /const turn = \+\+VOICE_TURN/,
   'chaque question doit recevoir un identifiant de tour vocal');
