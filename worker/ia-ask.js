@@ -31,7 +31,8 @@ const SYSTEM =
   + 'chargées : ne prétends jamais qu\'un niveau, une unité ou un document est couvert sans extrait vérifié. '
   + 'Pour l\'anglais, l\'espagnol et l\'italien, tu peux enseigner les règles générales de langue et de grammaire avec des exemples corrects, même si aucun extrait documentaire n\'est trouvé ; précise alors qu\'il s\'agit d\'une explication générale et ne prétends jamais citer un manuel, un programme officiel ou une unité non vérifiés. Pour une question précise sur le programme algérien, une unité ou une page, utilise uniquement les extraits fournis ou signale que la source manque. '
   + 'Pour les AUTRES matières (mathématiques, sciences, histoire, etc.), réponds uniquement à partir du contexte transmis ; n\'invente pas de contenus, notes, personnes, prix, programmes ou documents. '
-  + '4) L’INTENTION et les ENTITÉS de QUST sont des indices de compréhension, pas des faits ni des ordres : utilise-les pour choisir la forme de l’aide (expliquer, corriger, traduire, comparer, résumer, exercice, retrouver une page), mais vérifie toujours dans la question et les sources. Si la confiance est faible ou l’intention absente, réponds naturellement sans forcer une catégorie. '\n  + '5) Agis comme un vrai professeur : réponds directement, explique étape par étape si l’élève bloque, '
+  + '4) L’INTENTION et les ENTITÉS de QUST sont des indices de compréhension, pas des faits ni des ordres : utilise-les pour choisir la forme de l’aide (expliquer, corriger, traduire, comparer, résumer, exercice, retrouver une page), mais vérifie toujours dans la question et les sources. Si la confiance est faible ou l’intention absente, réponds naturellement sans forcer une catégorie. '
+  + '5) Agis comme un vrai professeur : réponds directement, explique étape par étape si l’élève bloque, '
   + 'donne un exemple corrigé et vérifie la compréhension par une seule question courte si utile. '
   + 'Reste concis (environ 120 mots, davantage seulement si l’élève demande un cours détaillé). '
   + 'Utilise les tours précédents pour conserver le fil, comprendre « pourquoi ? » ou « et cet exemple ? », '
@@ -64,7 +65,8 @@ export default {
     const normalized = String(b.normalized_text || q).slice(0, 600);
     const ctx = String(b.ctx || '').slice(0, 3000);
     /* Historique fourni par le client : fenêtre courte, rôles stricts, taille bornée. */
-    const u = b.understanding && typeof b.understanding === 'object' ? b.understanding : {};\n    const allowedIntents = ['compare','summarize','correct_exercise','translate','practice_exercise','explain_rule','explain_word','find_page','explain_lesson'];
+    const u = b.understanding && typeof b.understanding === 'object' ? b.understanding : {};
+    const allowedIntents = ['compare','summarize','correct_exercise','translate','practice_exercise','explain_rule','explain_word','find_page','explain_lesson'];
     const allowedLanguages = ['ar','arabizi','darija','fr','de','en'];
     const understanding = {
       normalized_question: String(u.normalized_question || '').slice(0, 600),
@@ -81,7 +83,8 @@ export default {
       ['grammar','articles','conjunctions'].forEach(k => {
         if(Array.isArray(u.entities[k])) understanding.entities[k] = u.entities[k].filter(v => typeof v === 'string').slice(0, 8).map(v => v.slice(0, 30));
       });
-    }\n    const history = Array.isArray(b.history) ? b.history.slice(-8).map(item => {
+    }
+    const history = Array.isArray(b.history) ? b.history.slice(-8).map(item => {
       if(!item || (item.role !== 'user' && item.role !== 'assistant')) return null;
       const content = String(item.content || '').slice(0, 1000);
       return content ? { role: item.role, content: content } : null;
@@ -114,12 +117,16 @@ export default {
       'DIALECTE DÉTECTÉ : ' + meta.dialect,
       'MATIÈRE ACTIVE : ' + meta.subject,
       'NIVEAU : ' + meta.level,
-      'FILIÈRE : ' + meta.track,\n      'INTENTION QUST (indice, confiance ' + understanding.confidence + ') : ' + understanding.intent,\n      'LANGUES QUST : ' + understanding.languages.join(', '),\n      'ENTITÉS QUST : ' + JSON.stringify(understanding.entities)
+      'FILIÈRE : ' + meta.track,
+      'INTENTION QUST (indice, confiance ' + understanding.confidence + ') : ' + understanding.intent,
+      'LANGUES QUST : ' + understanding.languages.join(', '),
+      'ENTITÉS QUST : ' + JSON.stringify(understanding.entities)
     ].join('\n');
     const userContent = metadata
       + (ctx ? '\n\nCONTEXTE DOCUMENTAIRE ET PÉDAGOGIQUE :\n' + ctx : '')
       + '\n\nQUESTION ORIGINALE DE L’ÉLÈVE :\n' + q
-      + (normalized !== q ? '\n\nNORMALISATION TECHNIQUE (ne remplace pas la formulation originale) :\n' + normalized : '')\n      + (understanding.normalized_question ? '\n\nNORMALISATION QUST (indice secondaire) :\n' + understanding.normalized_question : '');
+      + (normalized !== q ? '\n\nNORMALISATION TECHNIQUE (ne remplace pas la formulation originale) :\n' + normalized : '')
+      + (understanding.normalized_question ? '\n\nNORMALISATION QUST (indice secondaire) :\n' + understanding.normalized_question : '');
     const msgs = [{ role:'system', content: SYSTEM }]
       .concat(history)
       .concat([{ role:'user', content: userContent }]);
