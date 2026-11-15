@@ -16,12 +16,14 @@ import sys
 try:
     from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
     from tools.corpus_contracts import (
-        sha256_fichier, decouper_pages, fusionner_documents, construire_chunk
+        sha256_fichier, decouper_pages, fusionner_documents, construire_chunk,
+        fusionner_index_rag
     )
 except ModuleNotFoundError:  # exécution directe
     from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
     from corpus_contracts import (
-        sha256_fichier, decouper_pages, fusionner_documents, construire_chunk
+        sha256_fichier, decouper_pages, fusionner_documents, construire_chunk,
+        fusionner_index_rag
     )
 
 TAILLE_CHUNK = 1200
@@ -51,33 +53,6 @@ def lire_json_existant(path, cle, valeur_defaut):
     if not isinstance(data, dict) or not isinstance(data.get(cle), type(valeur_defaut)):
         raise ValueError("Artefact existant invalide : " + path)
     return data[cle]
-
-
-def fusionner_index(existant, entrants, docs_remplaces):
-    """Fusionne par document, puis reconstruit IDs et postings sans trous."""
-    if not isinstance(existant, dict):
-        raise ValueError("Index RAG existant invalide")
-    anciens = existant.get("chunks", [])
-    if not isinstance(anciens, list):
-        raise ValueError("chunks existants invalides")
-    remplaces = set(docs_remplaces)
-    conserves = [dict(c) for c in anciens
-                 if isinstance(c, dict) and c.get("doc") not in remplaces]
-    combines = conserves + [dict(c) for c in entrants]
-    chunks, termes = [], {}
-    for gid, chunk in enumerate(combines):
-        if not isinstance(chunk.get("doc"), str) or not chunk["doc"]:
-            raise ValueError("chunk sans document pendant la fusion")
-        if not isinstance(chunk.get("texte"), str) or not chunk["texte"].strip():
-            raise ValueError("chunk sans texte pendant la fusion")
-        chunk["global_id"] = gid
-        chunks.append(chunk)
-        for terme in set(re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06ff]{3,}", chunk["texte"].lower())):
-            termes.setdefault(terme, []).append(gid)
-    meta = dict(existant.get("_meta", {}))
-    meta.update({"version": "2.1.0", "nb_chunks": len(chunks),
-                 "nb_termes": len(termes), "source": "fusion multi-format"})
-    return {"_meta": meta, "chunks": chunks, "termes": termes}
 
 
 def construire(dossier, documents_existants=None):
@@ -142,7 +117,7 @@ def construire(dossier, documents_existants=None):
             ))
     if not index["chunks"]:
         raise RuntimeError("Aucun chunk autorisé : aucun artefact existant ne sera remplacé.")
-    index = fusionner_index({"_meta": {}, "chunks": []}, index["chunks"], [])
+    index = fusionner_index_rag({"_meta": {}, "chunks": []}, index["chunks"], [])
     catalogue = fusionner_documents(documents_existants or [], entrants)
     return catalogue, index, ignores, fichiers_copies
 
@@ -162,7 +137,7 @@ def main(dossier):
     catalogue, index_nouveau, ignores, copies = construire(dossier, docs_existants)
     ids_importes = {os.path.basename(cible).rsplit(".", 1)[0] for _, cible in copies}
     # N'enlève de l'index que les versions remplacées par ce lot.
-    index_final = fusionner_index(index_existant, index_nouveau["chunks"], ids_importes)
+    index_final = fusionner_index_rag(index_existant, index_nouveau["chunks"], ids_importes)
     corpus_final = {"_meta": {"version": "2.1.0", "nb": len(catalogue)},
                     "documents": catalogue}
     # Les sources ne sont copiées qu'après validation complète des deux artefacts.
