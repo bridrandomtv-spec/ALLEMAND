@@ -2804,3 +2804,9 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 ### Addendum — correction du contrôle CI de pagination
 - Relecture du contrôle ajouté : l'ancre de fin de fonction utilisait une séquence de nouvelle ligne littérale dans la chaîne de recherche. Elle a été simplifiée en recherche directe de `async function msgSetVerification(`. Commit : `4ce90029f2bfd22f8ca155708aeddaa74f9a2711`.
 - Le run CI correspondant `43658601490` a lui aussi terminé en échec avant toute étape : `steps=[]`, `runner_id=0`. Il ne fournit donc toujours aucune validation du code ni diagnostic de test. La cause de l'échec reste non attribuée.
+
+
+### Audit lecture seule — index de la file de vérification
+- Après la pagination, consultation de `pg_indexes` pour `public.profiles` : seul l'index `profiles_pkey(id)` est présent ; aucun index ne couvre `verif_statut` avec l'ordre `created_at, id`.
+- La pagination limite bien chaque réponse à 50 dossiers, mais PostgreSQL peut devoir parcourir/ordonner davantage de lignes à chaque page. Pour soutenir une file qui grandit, index partiel candidat : `(created_at, id) WHERE verif_statut='en_attente'`.
+- Aucun index ni autre objet de base n'a été créé. Une migration d'index nécessite une autorisation distincte ; elle n'est pas incluse dans le correctif d'interface.
