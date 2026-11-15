@@ -7,8 +7,8 @@
 (function(){
   'use strict';
   var AR = /[؀-ۿ]/;
-  var DZ = ["wach","chno","kifach","klach","had","hadi","ma3na","fehmt","fhemt","tini","tamrin","wash","shno","3lach"];
-  var DZ_AR = ["واش","شنو","كيفاش","علاش","هاد","ما فهمتش","عطيني","فهمتش","معناها"];
+  var DZ = ["wach","wesh","chno","kifach","kifech","klach","had","hadi","ma3na","fehmt","fhemt","fhemtch","mafhemtch","rani","rak","raki","bezaf","nheb","hab","habi","ta3","dorka","kayn","makanch","tini","tamrin","wash","shno","3lach","3tini","saha"];
+  var DZ_AR = ["واش","شنو","كيفاش","علاش","هاد","ما فهمتش","مفهمتش","راني","راك","راكي","بزاف","نحب","حاب","حابة","تاع","درك","كاين","ماكانش","عطيني","فهمتش","معناها"];
   var FR = ["explique","donne","pourquoi","comment","traduis","rsume","resume","exercice","leon","lecon","page","quest","difference","franc"];
   var DE = ["der","die","das","den","dem","weil","dass","ich","du","ist","und","nicht","bedeutet","heisst","heit","lektion","seite","akkusativ","dativ","nominativ","genitiv"];
   function norm(s){
@@ -23,7 +23,7 @@
     if(AR.test(raw)) out.push("ar");
     if(/[a-z]/.test(nq) && /[3759]/.test(nq) && !AR.test(raw)) out.push("arabizi");
     var t = toks(nq);
-    if(t.some(function(w){return DZ.indexOf(w)!==-1;}) || t.some(function(w){return DZ_AR.indexOf(w)!==-1;})) out.push("darija");
+    if(t.some(function(w){return DZ.indexOf(w)!==-1;}) || DZ_AR.some(function(w){return nq.indexOf(w)!==-1;})) out.push("darija");
     if(t.some(function(w){return FR.indexOf(w)!==-1;})) out.push("fr");
     if(t.some(function(w){return DE.indexOf(w)!==-1;}) || /[äöüß]/.test(nq)) out.push("de");
     return out;
@@ -92,7 +92,7 @@ if((m = nq.match(/\b(2as|3as|1as)\b/))) e.level = m[1].toUpperCase();
         }
       }catch(e){ effCtx = null; }
     }
-    return { norm: nq, langs: langs(raw, nq), intent: it[0], entities: entities(raw, nq, effCtx || {}), confidence: it[1] };
+    var detected = langs(raw, nq);\n    return { norm: nq, langs: detected, dialect: detected.indexOf("darija") !== -1 ? "darija" : "unknown", intent: it[0], entities: entities(raw, nq, effCtx || {}), confidence: it[1] };
   }
   if(typeof window!=='undefined') window.QUST = { understand: understand };
   if(typeof module!=='undefined' && module.exports) module.exports = { understand: understand };
