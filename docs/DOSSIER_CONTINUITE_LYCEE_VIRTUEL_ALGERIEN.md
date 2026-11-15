@@ -3888,3 +3888,16 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Rapport : `docs/LOTS/LOT_628_CONTROLE_DROITS_INGESTION_RAG.md`.
 - Tests Python et Actions non certifiés : runners toujours bloqués avant première étape dans les exécutions observées. Aucun PDF extrait, OCRisé, copié ou indexé. Aucune modification `main`, fusion, déploiement ou changement Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste ouverte.
 - Suite : classer les documents par provenance réelle ; demander/consigner les autorisations nécessaires ; traiter en premier les productions propres confirmées, puis OCR contrôlé et indexation RAG avec provenance/page dans chaque chunk.
+
+
+---
+
+## Lot 629 — inventaire PDF et prise en compte de l'autorisation ministérielle (2026-11-15)
+
+- Le responsable du projet déclare disposer d'une autorisation des titulaires, accordée par le ministère algérien dans l'intérêt pédagogique des étudiants, pour convertir et exploiter les livres 2AS/3AS et les autres documents scolaires dans le RAG. Cette déclaration est prise en compte pour préparer l'ingestion ; l'acte et son périmètre précis restent à référencer dans les métadonnées, sans inventer de numéro, date ou contenu administratif.
+- Nouvel inventaire établi depuis l'arbre Git : 293 PDF au total, dont 264 dans `docs/archive/documents/` et 29 hors de ce dossier.
+- Création de `docs/LOTS/LOT_629_INVENTAIRE_PDF_AUTORISATION_MINISTERIELLE.csv` avec une ligne par fichier. Tous les documents sont conservés au statut « à qualifier / à rapprocher de l'autorisation » : aucun droit n'est inféré du nom de fichier.
+- Création du rapport `docs/LOTS/LOT_629_INVENTAIRE_PDF_AUTORISATION_MINISTERIELLE.md` : procédure de traçabilité, périmètre, échantillon pilote, OCR et validation RAG.
+- Aucun PDF extrait, OCRisé, copié ou indexé pendant ce lot. Aucun shard généré ; les tests Python et Actions restent non certifiés en raison du blocage runner documenté au Lot 626.
+- Aucun changement de `main`, aucune fusion, aucun déploiement ; aucun changement Supabase/Auth/RLS/schéma/données/paiement/secrets. PR #17 reste ouverte.
+- Suite : renseigner la référence exacte, la date, l'autorité émettrice et le périmètre de l'autorisation ; puis traiter un échantillon 2AS/3AS autorisé et mesurer la qualité d'extraction avant indexation à grande échelle.
