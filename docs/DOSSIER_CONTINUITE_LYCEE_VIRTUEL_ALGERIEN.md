@@ -3971,3 +3971,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Suite : Lot 634 — lever le blocage runner/facturation, exécuter les tests, puis passer à des générations versionnées et vérifier la restitution titre/page/source dans le RAG.
 
 - Vérification de l'état GitHub de PR #17 : elle est déjà fusionnée et fermée depuis le 2026-11-14 à 14:50:08 UTC (merge commit `ef781da525eb4df062841c4362a999811fe35831`). Cette fusion est antérieure au Lot 633 ; aucune opération de fusion n'a été faite pendant ce lot. La branche d'audit est à 248 commits en avance et 0 en retard sur `main` au dernier contrôle.
+
+- Clôture Lot 633 : dernier run `43764431783` toujours en échec sans preuve d'exécution des tests ; vérification statique confirmant que les deux indexeurs appellent le writer transactionnel et que le test de rollback existe. Branche à 250 commits d'avance, 0 en retard sur `main`.
