@@ -67,7 +67,8 @@
       "ar": "اللغة الإنجليزية",
       "icon": "🇬🇧",
       "statut": "partiel",
-      "desc": "لغة أجنبية"
+      "desc": "لغة أجنبية",
+      "en": "English"
     },
     {
       "id": "arabe",
@@ -205,7 +206,9 @@
         "philo",
         "allemand",
         "islam",
-        "info"
+        "info",
+        "espanol",
+        "italien"
       ]
     },
     "3AS": {
@@ -270,7 +273,9 @@
         "histgeo",
         "philo",
         "allemand",
-        "islam"
+        "islam",
+        "espanol",
+        "italien"
       ]
     }
   },
