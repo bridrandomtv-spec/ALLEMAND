@@ -16,7 +16,7 @@ import sys
 
 try:
     from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
-    from tools.corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag, ecrire_json_transactionnel
+    from tools.corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag, ecrire_json_transactionnel, valider_coherence_catalogue_index
 except ModuleNotFoundError:  # exécution directe: python tools/script.py
     from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
     from corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag, ecrire_json_transactionnel
@@ -135,6 +135,7 @@ def main(dossier):
             raise ValueError("Index RAG existant invalide : écriture refusée.")
     docs_remplaces = {c["doc"] for c in index["chunks"]}
     index_final = fusionner_index_rag(index_existant, index["chunks"], docs_remplaces)
+    valider_coherence_catalogue_index(corpus, index_final)
     ecrire_json_transactionnel({INDEX: index_final, CORPUS: corpus})
     print("PDF indexés:", len(corpus["documents"]), "| chunks:", len(index["chunks"]), "| ignorés:", ignores)
 
