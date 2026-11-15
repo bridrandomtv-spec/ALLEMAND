@@ -42,6 +42,8 @@ ok(verifyStart >= 0 && verifyEnd > verifyStart &&
    verifyMethod.includes(".range(from,to)") &&
    verifyMethod.includes(".order('id',{ascending:true})"),
    'file de vérification paginée avec total et ordre stable');
+ok(sbjs.includes("if(!/^\\d{1,20}$/.test(number))") && !sbjs.includes("Number.isSafeInteger(Number(number))"), 'numéro scolaire accepté sans conversion numérique risquée');
+ok(sbjs.includes(".eq('id', uid).eq('verif_statut','en_attente')\n    .select('id').maybeSingle()") && sbjs.includes("if(!r.data) return { ok:false"), 'modération confirmée uniquement si une ligne est réellement modifiée');
 ok(adminjs.includes("if(!/^[0-9]{1,20}$/.test(String(x.matricule||'').trim())) missing.push('رقم التسجيل')") && adminjs.includes('data-status="verifie"') && adminjs.includes('disabled title="أكمل معلومات الهوية المدرسية أولاً"'), 'activation bloquée dans l’interface si informations scolaires absentes');
 ok(adminjs.includes('data-adm-verif-page') &&
    adminjs.includes('renderVerificationQueue(Number(verifyPage))') &&
