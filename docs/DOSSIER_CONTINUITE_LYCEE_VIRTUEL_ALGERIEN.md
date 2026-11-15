@@ -3570,3 +3570,24 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun test navigateur réel, aucune requête HTTP, aucun index/shard réel, aucun corpus, aucun Worker, secret, configuration, workflow CI ou ressource Supabase n'a été touché.
 - Suite après exécution : si les six scénarios passent, ajouter les cas de JSON invalide et de manifeste dont la somme des chunks est erronée ; puis reprendre le pipeline commun chat/voix, qui est le chantier déterminant pour obtenir un professeur vocal cohérent.
 - Messenger reste non terminé : scénarios E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
+
+
+## Lot 610 — audit du parcours vocal et divergence avec le chat écrit (15 novembre 2026)
+
+- Relecture ciblée des versions de branche de `parle.js`, `app.js`, `ia.js`, `js/context.js`, `js/subject.js` et `worker/ia-ask.js`.
+- **Écoute vocale existante** : `parle.js` utilise `SpeechRecognition` / `webkitSpeechRecognition`, règle `rec.lang` selon la langue choisie dans l'interface, collecte la transcription dans `q`, puis calcule `LASTLANG = detectLang(q) || LASTLANG`.
+- **Perte de l'entrée originale** : avant l'appel du moteur, le parcours vocal transmet `canon(q)` à `reponseIA`. La formulation originale et la forme normalisée ne sont donc pas conservées comme deux champs distincts. La détection `LASTLANG` et la langue choisie ne sont pas transmises au moteur.
+- **Chat écrit indépendant** : `app.js::sendChat` appelle d'abord `RAG.cherche(v)`, puis appelle directement le Worker `/ask` avec un contexte fixe orienté allemand. Il ne passe pas par `window.reponseIA`, ne transmet pas la matière/le niveau/la filière et ne suit pas le même parcours pédagogique que la voix.
+- **Métadonnées disponibles mais non propagées** : `js/context.js` expose déjà `window.CONTEXT.ctx()` avec `subject`, `level`, `track`. Dans le code inspecté, `ia.js` envoie seulement `q`, `text` et `ctx` textuel au Worker. Le chat écrit n'utilise pas non plus le snapshot de contexte.
+- **Mémoire de dialogue absente du Worker** : `worker/ia-ask.js` construit chaque requête avec un message système et une seule question utilisateur enrichie du contexte textuel. Aucun historique conversationnel borné n'est transmis au modèle. L'historique d'affichage du chat ne constitue donc pas une mémoire de raisonnement du tuteur.
+- **Langues et dialectes** : le détecteur de la voix classe tout texte en caractères arabes sous `ar`; il ne distingue pas la darija de la فصحى. Les séquences Arabizi ne sont pas reconnues comme dialecte par ce détecteur. La langue choisie pour la reconnaissance vocale et la langue réellement détectée peuvent diverger, mais cette distinction n'arrive pas au Worker.
+- **Conclusion produit** : la plateforme sait déjà écouter et prononcer, et possède un moteur local, BIBLIO, QUST et un Worker LLM. Mais ces composants ne forment pas encore un professeur conversationnel cohérent : le texte/voix divergent, le brut est perdu, le contexte pédagogique n'est pas propagé et le modèle ne reçoit pas l'historique.
+- **Contrat cible proposé pour le prochain lot** (non implémenté ici) :
+  - entrée : `raw_text`, `normalized_text`, `input_mode` (`text`/`voice`), `selected_language`, `detected_language`, `dialect`, `subject`, `level`, `track`, `conversation_id` autorisé et historique borné ;
+  - sortie : `answer`, `answer_language`, `intent`, `sources[]`, `confidence`, `needs_clarification`, `model_version`.
+  - le chat et la voix doivent appeler un seul orchestrateur, qui conserve la transcription brute, consulte le moteur local/BIBLIO/RAG, puis appelle le Worker si nécessaire. Le TTS reçoit ensuite la réponse structurée et sa langue, sans refaire une détection fragile à partir du texte.
+- **Garde-fous** : l'historique devra être limité en nombre de tours et en taille, ne contenir que la conversation de l'utilisateur autorisé, et être validé côté Worker. Aucun identifiant de conversation ne doit donner accès à des messages d'un autre utilisateur. Ne pas stocker de nouveaux secrets côté client.
+- Aucun changement de code n'a été effectué dans les six fichiers examinés pour ce lot. Aucun microphone, navigateur, Worker distant ou appel réseau n'a été testé ; constats statiques uniquement.
+- Commit documentaire Lot 610 : à renseigner après enregistrement.
+- **Suite Lot 611** : implémenter progressivement le contrat commun côté client sur la branche d'audit, d'abord avec compatibilité rétroactive des appels chaîne existants ; ensuite faire converger chat et voix, ajouter des tests de parité, puis adapter le Worker. Aucun déploiement avant tests et autorisation.
+- Messenger reste non terminé : scénarios E2E A/B/C, INSERT/UPDATE/suppression logique et reconnexion Realtime toujours non exécutés.
