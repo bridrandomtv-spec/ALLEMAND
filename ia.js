@@ -276,6 +276,23 @@
         + ' ; niveau=' + schoolContext.level + ' ; filière=' + (schoolContext.track || 'non précisée') + '.\n';
       let ragCitation = '';
       let ragSourceStatus = schoolContext.subject === 'allemand' ? 'unavailable' : 'not_applicable';
+      function requestedRagScope(value){
+        const q = String(value || '').toLowerCase()
+          .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+          .replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)));
+        const patterns = [
+          ['page', /(?:\\bpage\\s*|\\bp\\.?\\s*|\\bseite\\s*|الصفحة\\s*|صفحة\\s*)(\\d{1,4})/i],
+          ['unit', /(?:\\bunit(?:é|e)?\\s*|\\blektion\\s*|الوحدة\\s*|وحدة\\s*)(\\d{1,3})/i],
+          ['exercise', /(?:\\bexercice\\s*|\\bexercise\\s*|\\bübung\\s*|تمرين\\s*|التطبيق\\s*)(\\d{1,4})/i]
+        ];
+        for(const entry of patterns){
+          const match = q.match(entry[1]);
+          if(match) return { type:entry[0], value:Number(match[1]) };
+        }
+        return { type:'none', value:null };
+      }
+      const requestedScope = requestedRagScope(q);
+      let ragScopeStatus = requestedScope.type === 'none' ? 'none' : 'unavailable';
       if(schoolContext.subject === 'allemand'){
         try{
           if(window.BIBLIO && BIBLIO.context){
@@ -298,6 +315,11 @@
             if(typeof window.RAG.source === 'function') ref = await window.RAG.source(hit);
             if(ref){
               ragSourceStatus = 'verified';
+              if(requestedScope.type === 'none') ragScopeStatus = 'none';
+              else if(requestedScope.type === 'page'){
+                ragScopeStatus = ref.page_start === requestedScope.value
+                  && ref.page_end === requestedScope.value ? 'verified' : 'mismatch';
+              }else ragScopeStatus = 'unsupported';
               const page = ref.page_start ? ' · p. ' + ref.page_start : '';
               const details = [ref.subject, ref.level, ref.year].filter(Boolean).join(' · ');
               ragCitation = '📚 Source documentaire : ' + ref.title
@@ -330,6 +352,8 @@
           output_language: answerLanguage, dialect: dialect,
           subject: schoolContext.subject, level: schoolContext.level,
           track: schoolContext.track, ctx: ctx, rag_source_status: ragSourceStatus,
+          rag_scope_type: requestedScope.type, rag_scope_value: requestedScope.value,
+          rag_scope_status: ragScopeStatus,
           understanding: understanding ? {
             normalized_question: String(understanding.norm || '').slice(0, 600),
             languages: Array.isArray(understanding.langs) ? understanding.langs.slice(0, 6) : [],
