@@ -269,7 +269,7 @@
       if(schoolContext.subject === 'allemand'){
         try{
           if(window.BIBLIO && BIBLIO.context){
-            const bc = await BIBLIO.context(q, 1800);
+            const bc = await BIBLIO.context(q, 1800, understanding);
             if(bc) ctx += 'BIBLIOTHÈQUE ALLEMANDE (extraits documentaires) :\n' + bc + '\n\n';
           }
         }catch(e){}
