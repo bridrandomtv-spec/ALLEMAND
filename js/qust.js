@@ -11,6 +11,9 @@
   var DZ_AR = ["واش","شنو","كيفاش","علاش","هاد","ما فهمتش","مفهمتش","راني","راك","راكي","بزاف","نحب","حاب","حابة","تاع","درك","كاين","ماكانش","عطيني","فهمتش","معناها"];
   var FR = ["explique","donne","pourquoi","comment","traduis","rsume","resume","exercice","leon","lecon","page","quest","difference","franc"];
   var DE = ["der","die","das","den","dem","weil","dass","ich","du","ist","und","nicht","bedeutet","heisst","heit","lektion","seite","akkusativ","dativ","nominativ","genitiv"];
+  var EN = ["what","where","when","why","how","which","because","without","please","thank","lesson","exercise","grammar","explain","translate","difference","between","present","simple"];
+  var ES = ["que","qué","como","cómo","porque","por qué","diferencia","entre","explica","ejercicio","leccion","lección","gracias","escuela","verbo","ser","estar"];
+  var IT = ["perche","perché","differenza","tra","spiegare","esercizio","lezione","grazie","essere","avere","voglio"];
   function norm(s){
     s = String(s==null?'':s).toLowerCase();
     s = s.replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');
@@ -26,6 +29,9 @@
     if(t.some(function(w){return DZ.indexOf(w)!==-1;}) || DZ_AR.some(function(w){return nq.indexOf(w)!==-1;})) out.push("darija");
     if(t.some(function(w){return FR.indexOf(w)!==-1;})) out.push("fr");
     if(t.some(function(w){return DE.indexOf(w)!==-1;}) || /[äöüß]/.test(nq)) out.push("de");
+    if(t.some(function(w){return EN.indexOf(w)!==-1;})) out.push("en");
+    if(t.some(function(w){return ES.indexOf(w)!==-1;})) out.push("es");
+    if(t.some(function(w){return IT.indexOf(w)!==-1;})) out.push("it");
     return out;
   }
   function intent(nq){
