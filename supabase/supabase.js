@@ -579,10 +579,11 @@ async function msgRequestVerification(schoolRegistrationNumber, section, cardPat
   const oldPath = previous.data && previous.data.carte_scolaire_path;
   const r = await c.from('profiles')
     .update({ verif_statut:'en_attente', matricule:number, section:String(section||'').trim().slice(0,40), carte_scolaire_path:cardPath })
-    .eq('id', u.id).or('verif_statut.eq.non_verifie,verif_statut.eq.rejete');
-  if(r.error){
-    await c.storage.from('cartes-scolaires').remove([cardPath]);
-    return { ok:false, err:r.error.message };
+    .eq('id', u.id).or('verif_statut.eq.non_verifie,verif_statut.eq.rejete')
+    .select('id').maybeSingle();
+  if(r.error || !r.data){
+    if(cardPath!==oldPath) await c.storage.from('cartes-scolaires').remove([cardPath]);
+    return { ok:false, err:(r.error && r.error.message)||'تعذّر إرسال الطلب؛ أعد تحميل الصفحة وتحقق من حالة الطلب.' };
   }
   if(oldPath && oldPath!==cardPath && oldPath.startsWith(u.id + '/')){
     const cleanup = await c.storage.from('cartes-scolaires').remove([oldPath]);
