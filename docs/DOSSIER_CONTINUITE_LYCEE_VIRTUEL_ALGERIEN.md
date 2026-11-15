@@ -2924,3 +2924,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Prochaine vérification : relancer ou observer le contrôle Supabase Preview sur le dernier commit, puis obtenir un runner GitHub fonctionnel pour exécuter les tests structurels. Ne pas fusionner ni déclarer la CI verte avant ces deux résultats.
 
 - Précision de mesure : `list_migrations` n’exposait que 33 lignes dans sa réponse précédente ; la comparaison finale a été faite directement sur `supabase_migrations.schema_migrations`, qui retourne 36 versions, puis comparée aux 36 noms de fichiers du dépôt.
+
+
+## Lot 559 — exactitude de la région d’hébergement et contrôle de la file scolaire (15 novembre 2026)
+- Lecture des métadonnées du projet Supabase actif : région `eu-west-2`, soit Londres, Royaume-Uni. Les pages `privacy.html` et `legal.js` indiquaient à tort « Union européenne ».
+- Correction des deux textes : la région est désormais nommée explicitement « Londres, Royaume-Uni (eu-west-2) ». Aucun changement de région ou transfert de données n’a été effectué.
+- Vérification Storage : bucket `cartes-scolaires` privé (`public=false`), limite 5 MiB ; policies présentes : upload propriétaire (INSERT), lecture propriétaire/modérateur habilité (SELECT), suppression propriétaire (DELETE). Les trois policies sont présentes ; la requête de contrôle précédente qui cherchait le mot « school » dans leur nom ne les comptait pas, car leur libellé contient « cartes scolaires ».
+- Vérification Edge Function : `school-card-retention` active en version 2, `verify_jwt=false` avec authentification par secret dédié ; job `school-card-retention-daily` actif à 02:17 UTC. Le dernier passage cron observé le 15 novembre 2026 a le statut `succeeded` (appel HTTP planifié exécuté, 1 ligne retournée).
+- Vérification agrégée de `profiles` : 0 demande `en_attente` au moment du contrôle. Aucun identifiant de profil, document ou statut individuel n’a été extrait ou modifié.
+- GitHub `main` : dernier commit observé `d1389a128b95fda3123be8ff49c3ee356bbc4df7`. La consultation des workflows PR et des statuts combinés pour ce SHA ne retourne aucun résultat ; cela ne constitue ni une réussite ni un échec CI. Aucun déploiement Cloudflare ni test navigateur n’est confirmé.
