@@ -2787,3 +2787,9 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Commits source et contrôles : `cf86606d24a24338025e7d7d259f108a344d634a`, `06944602203977a9817f098ec54c0ddd6bccf418`, `7e85cfa865ea71b09bca896206aad53e448151e1`, `868e882c3e02a386e84414280128044d7c31e31d`, `a75c7c0e21063d44a2270ec74c67af8d77b7e72f`, `ac27c775b61191b16b721764c0323869c8de4c97`, `97a017d3f7d95106817d43465745f54b92192c6f`, `81028c3184934cc0bbfb43912aae38daf39a4ccb`, `28f80f9c84893f711235cdd71ca48cf37f989ebb`.
 - Aucun changement de schéma, migration, Auth, RLS, rôle, permission, donnée de profil ou statut de vérification. Aucun dossier n'a été approuvé ou rejeté.
 - Validation restante : exécution CI et vérification visuelle après déploiement Cloudflare. Le commit sur `main` ne prouve pas à lui seul que la production sert déjà ces fichiers.
+
+
+### Addendum Lot 554 — fond sombre sous le texte blanc et état CI
+- Ajustement final du contraste : le conteneur principal et le bandeau de la file reçoivent aussi un fond vert très sombre, afin que le texte blanc reste lisible en thème clair comme en thème sombre. Commit : `ad818ce7f506ceb66e37dce428fb7380873d02f6`.
+- GitHub Actions a créé le run CI — ALLEMAND `43658519248` sur ce commit ; état observé : `queued`. Aucun résultat de validation n'est encore disponible.
+- Le déploiement Cloudflare n'a pas été lancé ni vérifié. Les changements sont sur `main`, mais ne doivent pas être considérés comme visibles en production avant déploiement.
