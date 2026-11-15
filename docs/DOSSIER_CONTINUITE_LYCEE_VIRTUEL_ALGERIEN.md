@@ -4028,3 +4028,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Rapport : `docs/LOTS/LOT_637_COHERENCE_CATALOGUE_INDEX_MULTILINGUE.md`.
 - Tests non exécutés faute de runner confirmé. Aucun corpus réel/PDF/OCR ingéré ; aucun manifeste/catalogue de production modifié ; aucune modification Supabase/Auth/RLS/paiement, aucun déploiement, aucune fusion dans main.
 - Suite : Lot 638, clarifier la divergence documentaire des chemins d'index, puis organiser l'exécution réelle des 23 cas et distinguer les réponses fondées sur source de celles sans source disponible.
+
+
+## Lot 638 — séparation explicite des index BIBLIO et RAG (2026-11-16)
+
+- Diagnostic confirmé : `biblio.js` lit `assets/bdd/corpus_index.json` au format `items[]`, tandis que l'ingestion PDF/multi-format produit `assets/bdd/corpus_rag_index.json` (`chunks[]`, `termes{}`), consommé par `rag.js` et `tools/sharder_index.py`. Les deux chemins correspondent à deux responsabilités différentes ; aucun renommage n'est nécessaire.
+- Le catalogue `corpus.json` décrivait encore l'ancien index lexical comme un index plein texte régénéré par l'ingestion. Son bloc `_meta.architecture` a été corrigé pour documenter distinctement le registre, les sources, l'index lexical BIBLIO et l'index documentaire RAG.
+- Ajout de `tests/index_paths_contract.mjs` : vérifie les chemins de BIBLIO, ingestion, indexeur PDF, sharder et lecteur RAG, le format `items[]` de l'index lexical et diagnostique l'absence d'index RAG/shards sans les fabriquer.
+- Le workflow `.github/workflows/corpus-contract-tests.yml` inclut ce contrôle Node et ses chemins dans les déclencheurs push/PR.
+- État documentaire : `corpus_index.json` présent ; `corpus_rag_index.json` absent ; `shards_manifest.json` version 1.0.0 avec zéro shard. Le lecteur RAG ne dispose donc pas d'une génération RAG publiée sur cette branche et ne peut pas fournir de preuve de couverture réelle.
+- Audit catalogue : 239 fiches, dont 225 avec licence déclarée `document utilisateur`, 8 `usage pédagogique`, 4 `production propre`, 2 mentionnant un document fourni par l'utilisateur. Le validateur exige un sidecar et une déclaration/validation détaillées ; ces étiquettes ne suffisent pas à elles seules. Cela ne prouve ni violation ni autorisation. Aucun PDF/OCR/index réel traité.
+- Matrice tuteur : 23 cas, toujours `prepared_not_executed`. `tests/tutor_language_matrix.mjs` vérifie des heuristiques et des éléments statiques, pas la qualité des réponses du LLM ; aucune exécution réelle des 23 requêtes contre le Worker/modèle n'est revendiquée.
+- Tests de ce lot non attestés comme exécutés ; aucune CI verte revendiquée. Aucun changement main, fusion, déploiement, Supabase/Auth/RLS/schéma/données/paiements/secrets.
+- Rapport : `docs/LOTS/LOT_638_SEPARATION_INDEX_BIBLIO_RAG.md`.
+- Suite : Lot 639 — obtenir un runner CI effectif, examiner les preuves de droits document par document, produire un index RAG de test depuis les seules ressources autorisées et bâtir un harnais observable pour les réponses réelles du tuteur.
