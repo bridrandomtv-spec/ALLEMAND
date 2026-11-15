@@ -160,7 +160,7 @@
   const IT_WORDS = /\b(il|lo|gli|che|di|io|tu|lei|sono|grazie|ciao|perch\u00e9|questa|quello)\b/i;
   const LCODE = { ar:'ar-SA', de:'de-DE', fr:'fr-FR', es:'es-ES', it:'it-IT', en:'en-US' };
   const DARJA_AR = /(?:واش|علاش|كيفاش|راني|راك|راكي|بزاف|ما\s*فهمتش|مفهمتش|وش|علاه|نحب|حاب|حابة|تاع|درك|كاين|ماكانش|صح)/i;
-  const DARJA_LATIN = /(?:^|\s)(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|ma\s*fhemtch|nheb|hab|habi|ta3|dorka|kayn|makanch|saha)(?:$|\s)/i;
+  const DARJA_LATIN = /(?:^|[^A-Za-z0-9])(?:wach|wesh|3lach|kifach|kifech|rani|rak|raki|bezaf|mafhamtch|ma\s*fhemtch|nheb|hab|habi|ta3|dorka|kayn|makanch|saha)(?=$|[^A-Za-z0-9])/i;
   function detectDialect(t){
     const s = String(t || '');
     return DARJA_AR.test(s) || DARJA_LATIN.test(s) ? 'darija' : 'unknown';
@@ -305,6 +305,10 @@
     setTimeout(() => { if(ON && my === UT){ speaking = false;
       if(CONT) listen(); else setStatus('🎙 appuie pour parler'); } }, 90000);
   }
+  /* API commune : le chat écrit réutilise exactement le même découpage TTS
+     par langue que le professeur vocal (Darija arabe + allemand/français mélangés). */
+  window.parleSpeak = function(texte, langue){ speak(texte, langue || null); };
+
   /* ══════════ intentions multilingues ══════════ */
   function canon(q){
     let m;
