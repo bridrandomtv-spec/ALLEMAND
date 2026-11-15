@@ -19,7 +19,7 @@ try:
     from tools.corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag, ecrire_json_transactionnel, valider_coherence_catalogue_index
 except ModuleNotFoundError:  # exécution directe: python tools/script.py
     from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
-    from corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag, ecrire_json_transactionnel
+    from corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag, ecrire_json_transactionnel, valider_coherence_catalogue_index
 
 CORPUS = os.path.join("assets", "bdd", "corpus.json")
 INDEX = os.path.join("assets", "bdd", "corpus_rag_index.json")
