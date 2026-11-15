@@ -1,0 +1,272 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Matrice de validation fonctionnelle du tuteur IA. Les attentes sont des critères de test, pas des réponses générées.",
+  "execution_status": "prepared_not_executed",
+  "rules": [
+    "Ne jamais inférer 2AS ou 3AS à partir du seul numéro d’unité lorsque les deux niveaux la possèdent.",
+    "Si niveau, matière ou unité sont nécessaires et absents, demander une clarification plutôt que deviner.",
+    "Conserver le texte brut; normaliser séparément pour la recherche.",
+    "Une réponse fondée sur une ressource doit exposer une source vérifiable; sinon annoncer clairement qu’aucune source n’a été trouvée.",
+    "Ne pas accepter une réponse simplement parce qu’elle est non vide."
+  ],
+  "cases": [
+    {
+      "id": "DAR-001",
+      "input": "واش الفرق بين Dativ و Akkusativ؟",
+      "language": "darija_arabic_script",
+      "intent": "compare_explain",
+      "subject": "allemand",
+      "level": null,
+      "unit": null,
+      "expected": "Répondre en darija algérienne accessible, conserver les termes Dativ/Akkusativ, donner des exemples exacts et demander le niveau uniquement si nécessaire.",
+      "checks": [
+        "raw_text_preserved",
+        "dialect_detected",
+        "intent_compare",
+        "grammar_accuracy",
+        "source_or_no_source_disclosure"
+      ]
+    },
+    {
+      "id": "DAR-002",
+      "input": "3lach le verbe yji f lekher m3a weil ?",
+      "language": "darija_arabizi_mixed_french_german",
+      "intent": "explain_grammar",
+      "subject": "allemand",
+      "level": null,
+      "unit": null,
+      "expected": "Comprendre la demande sur la position du verbe en subordonnée avec weil; expliquer avec exemple allemand correct.",
+      "checks": [
+        "arabizi_detected",
+        "code_switch_preserved",
+        "intent_grammar",
+        "example_correct"
+      ]
+    },
+    {
+      "id": "DAR-003",
+      "input": "ما فهمتش Konjunktiv II، شرحلي ببساطة",
+      "language": "darija_arabic_script_mixed_german",
+      "intent": "stuck_student",
+      "subject": "allemand",
+      "level": "3AS",
+      "unit": 14,
+      "expected": "Explication simplifiée alignée sur l’unité 14 de 3AS, sans basculer automatiquement en arabe classique.",
+      "checks": [
+        "dialect_detected",
+        "level_unit_filter",
+        "source_unit14_3AS",
+        "simple_explanation"
+      ]
+    },
+    {
+      "id": "DAR-004",
+      "input": "wach nsta3mel kein wela nicht ?",
+      "language": "arabizi_mixed_german",
+      "intent": "compare_explain",
+      "subject": "allemand",
+      "level": "2AS",
+      "unit": 2,
+      "expected": "Distinguer négation du nom et négation du verbe/adjectif avec exemples conformes au résumé 2AS unité 2.",
+      "checks": [
+        "arabizi_detected",
+        "intent_compare",
+        "source_unit2_2AS",
+        "grammar_accuracy"
+      ]
+    },
+    {
+      "id": "GER-001",
+      "input": "Konjugiere sein im Präsens",
+      "language": "german",
+      "intent": "explain_grammar",
+      "subject": "allemand",
+      "level": "2AS",
+      "unit": 1,
+      "expected": "Conjugaison complète et exacte de sein au présent, liée à l’unité 1 de 2AS.",
+      "checks": [
+        "conjugation_exact",
+        "source_unit1_2AS",
+        "no_wrong_level"
+      ]
+    },
+    {
+      "id": "GER-002",
+      "input": "Ich helfe ___ (du).",
+      "language": "german",
+      "intent": "correct_exercise",
+      "subject": "allemand",
+      "level": "3AS",
+      "unit": 9,
+      "expected": "Correction attendue avec datif après helfen; unité 9 de 3AS, sans confusion avec l’unité 9 de 2AS.",
+      "checks": [
+        "case_accuracy",
+        "level_unit_filter",
+        "source_unit9_3AS"
+      ]
+    },
+    {
+      "id": "GER-003",
+      "input": "Passiv Präsens und Präteritum erklären",
+      "language": "german",
+      "intent": "compare_explain",
+      "subject": "allemand",
+      "level": "3AS",
+      "unit": 10,
+      "expected": "Comparer wird + Partizip II et wurde + Partizip II selon l’unité 10 de 3AS.",
+      "checks": [
+        "grammar_accuracy",
+        "source_unit10_3AS",
+        "comparison_structure"
+      ]
+    },
+    {
+      "id": "FR-001",
+      "input": "Explique la différence entre mit et für",
+      "language": "french",
+      "intent": "compare_explain",
+      "subject": "allemand",
+      "level": "2AS",
+      "unit": 3,
+      "expected": "Expliquer mit + datif et für + accusatif avec exemples et source unité 3 2AS.",
+      "checks": [
+        "intent_compare",
+        "source_unit3_2AS",
+        "case_accuracy"
+      ]
+    },
+    {
+      "id": "FR-002",
+      "input": "Donne-moi une méthode pour réviser efficacement",
+      "language": "french",
+      "intent": "difficulty_adapt",
+      "subject": "allemand",
+      "level": "2AS",
+      "unit": 4,
+      "expected": "Identifier une demande de méthode et ne pas la confondre avec une demande de résumé ou d’exercice.",
+      "checks": [
+        "intent_disambiguation",
+        "no_first_keyword_collision",
+        "clarify_if_context_missing"
+      ]
+    },
+    {
+      "id": "AR-001",
+      "input": "كيف أراجع درس الشخصية والهوية؟",
+      "language": "arabic",
+      "intent": "summarize_lesson_or_study_method",
+      "subject": "allemand",
+      "level": "3AS",
+      "unit": 7,
+      "expected": "Distinguer si l’élève demande un résumé du cours ou une méthode de révision; clarifier si le sens reste ambigu.",
+      "checks": [
+        "collision_murajaa_tawjih",
+        "clarification_when_ambiguous",
+        "level_unit_filter"
+      ]
+    },
+    {
+      "id": "CTX-001",
+      "input": "اشرحلي الوحدة 8",
+      "language": "arabic_darija_possible",
+      "intent": "explain_lesson",
+      "subject": "allemand",
+      "level": null,
+      "unit": 8,
+      "expected": "Demander si l’élève est en 2AS ou 3AS, car les deux ont une unité 8 différente.",
+      "checks": [
+        "no_level_inference",
+        "clarification_required",
+        "no_wrong_source"
+      ]
+    },
+    {
+      "id": "CTX-002",
+      "input": "Donne-moi des exercices sur les adjectifs",
+      "language": "french",
+      "intent": "adaptive_exercise",
+      "subject": "allemand",
+      "level": "3AS",
+      "unit": 7,
+      "expected": "Ne sélectionner que les exercices rattachés à 3AS unité 7 ou signaler qu’aucun exercice précisément rattaché n’est disponible; ne pas filtrer par compétence seule.",
+      "checks": [
+        "exercise_unit_binding",
+        "level_filter",
+        "source_provenance"
+      ]
+    },
+    {
+      "id": "SRC-001",
+      "input": "À quelle page du manuel trouve-t-on les W-Fragen ?",
+      "language": "french",
+      "intent": "source_lookup",
+      "subject": "allemand",
+      "level": "2AS",
+      "unit": 1,
+      "expected": "Fournir une page vérifiée du manuel si accessible; sinon indiquer explicitement que la page n’a pas été vérifiée.",
+      "checks": [
+        "book_page_source",
+        "no_fabricated_page",
+        "source_identifier"
+      ]
+    },
+    {
+      "id": "SRC-002",
+      "input": "Donne-moi la règle sur les adjectifs épithètes en 3AS",
+      "language": "french",
+      "intent": "explain_grammar",
+      "subject": "allemand",
+      "level": "3AS",
+      "unit": 7,
+      "expected": "Retrouver une règle précise avec son niveau et son unité, ou annoncer l’absence de source exploitable.",
+      "checks": [
+        "grammar_item_indexed",
+        "level_metadata",
+        "source_identifier"
+      ]
+    },
+    {
+      "id": "SAFE-001",
+      "input": "Corrige : Ich habe eine Schwester.",
+      "language": "french_german",
+      "intent": "correct_exercise",
+      "subject": "allemand",
+      "level": "2AS",
+      "unit": 1,
+      "expected": "Évaluer la phrase réellement; ne pas afficher 100% sans contrôles explicites. Ici, la phrase est grammaticalement correcte.",
+      "checks": [
+        "correction_not_blanket_score",
+        "grammar_validation",
+        "explanation"
+      ]
+    },
+    {
+      "id": "MULTI-001",
+      "input": "واش تقدر تشرحلي weil und obwohl en français avec exemples ?",
+      "language": "darija_french_german_mixed",
+      "intent": "compare_explain",
+      "subject": "allemand",
+      "level": "2AS",
+      "unit": 9,
+      "expected": "Comprendre les trois langues, préserver les connecteurs allemands et produire l’explication dans le registre demandé (français).",
+      "checks": [
+        "multilingual_detection",
+        "explicit_output_language",
+        "grammar_accuracy",
+        "source_unit9_2AS"
+      ]
+    }
+  ],
+  "scorecard": {
+    "required_per_case": [
+      "intent_correct",
+      "language_and_register_correct",
+      "level_and_unit_correct",
+      "pedagogical_answer_correct",
+      "source_provenance_correct",
+      "no_unsupported_claim"
+    ],
+    "pass_policy": "Un cas échoue si une dimension obligatoire est incorrecte; une réponse non vide ne suffit pas.",
+    "coverage_note": "Jeu initial ciblé de 16 cas; il devra être étendu à au moins 100 formulations anonymisées avant validation globale de la compréhension Darija/Arabizi."
+  }
+}
