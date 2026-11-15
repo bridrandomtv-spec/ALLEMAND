@@ -16,10 +16,10 @@ import sys
 
 try:
     from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
-    from tools.corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk
+    from tools.corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag
 except ModuleNotFoundError:  # exécution directe: python tools/script.py
     from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
-    from corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk
+    from corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag
 
 CORPUS = os.path.join("assets", "bdd", "corpus.json")
 INDEX = os.path.join("assets", "bdd", "corpus_rag_index.json")
@@ -134,7 +134,15 @@ def main(dossier):
     corpus["_meta"]["nb"] = len(corpus["documents"])
     if not index["chunks"]:
         raise RuntimeError("Aucun chunk autorisé généré : index existant conservé, aucun artefact remplacé.")
-    ecrire_atomiquement(INDEX, index)
+    index_existant = {"_meta": {}, "chunks": []}
+    if os.path.isfile(INDEX):
+        with open(INDEX, encoding="utf-8") as f:
+            index_existant = json.load(f)
+        if not isinstance(index_existant, dict) or not isinstance(index_existant.get("chunks"), list):
+            raise ValueError("Index RAG existant invalide : écriture refusée.")
+    docs_remplaces = {c["doc"] for c in index["chunks"]}
+    index_final = fusionner_index_rag(index_existant, index["chunks"], docs_remplaces)
+    ecrire_atomiquement(INDEX, index_final)
     ecrire_atomiquement(CORPUS, corpus)
     print("PDF indexés:", len(corpus["documents"]), "| chunks:", len(index["chunks"]), "| ignorés:", ignores)
 
