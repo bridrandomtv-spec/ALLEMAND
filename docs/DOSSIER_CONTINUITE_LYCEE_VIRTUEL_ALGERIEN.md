@@ -3350,3 +3350,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Cette suite valide uniquement le classifieur déterministe isolé. Elle ne démontre pas que le pipeline RAG/PROF utilise correctement QUST, ni la qualité des réponses finales, ni le fonctionnement chat/voix.
 - Messenger reste en attente des tests E2E multi-comptes A/B/C; il n'est pas déclaré terminé.
 - Suite recommandée : Lot 597 — relire le test et les contrats, puis construire le harnais d'intégration RAG/PROF en instrumentant explicitement la question brute et la question normalisée; conserver l'interdiction réseau et vérifier que QUST reste un simple fallback tant que son routage n'est pas modifié.
+
+
+## Lot 597 — sonde d'intégration isolée QUST → RAG (15 novembre 2026)
+
+- Création de `tests/rag_qust_probe.mjs`, sonde Node.js utilisant `vm` pour charger successivement `js/qust.js` puis `rag.js` dans un contexte isolé. Elle enveloppe `QUST.understand()` sans remplacer sa logique et journalise le texte exact reçu, le contexte, les langues, l'intention et les entités.
+- La sonde lance cinq formulations ciblées : « واش الفرق بين Dativ و Akkusativ؟ », « كيفاش نستعمل weil؟ », une question Arabizi sur `weil`, une demande d'explication sur Konjunktiv II, et une demande d'exercice sur Dativ.
+- Le stub `fetch` n'autorise que les fichiers situés sous la racine locale du dépôt. Les URL HTTP(S) sont bloquées et journalisées; les ressources locales absentes renvoient 404. Aucun Worker, service externe ou modèle distant n'est appelé.
+- Le but est de comparer l'entrée brute avec l'argument réellement passé à QUST, et d'observer si le contexte `subject/level/track` lui parvient. La sonde distingue l'absence d'appel QUST d'un appel avec texte transformé. Elle ne considère pas une réponse RAG non vide comme preuve de justesse.
+- Le constat statique reste établi : `reponsePedagogique(q)` commence par `q = darja(q)`, puis appelle `QUST.understand(q, _qctx)`. Ainsi, les marqueurs dialectaux convertis par `darja()` ne sont plus présents dans l'entrée QUST. La sonde est précisément destinée à mesurer ce comportement sur le code exécuté.
+- Commit de la sonde : `fc5b6164e2252f98f94f95cd1f3d6a274e81c4ee`.
+- **Exécution non effectuée** : la sonde a été créée et relue via GitHub, mais aucun environnement Node connecté au dépôt n'a été utilisé pour l'exécuter. Aucun résultat d'observation, nombre de fichiers consultés, nombre de blocages réseau, succès syntaxique ou PASS/FAIL n'est revendiqué. La relecture confirme le contenu enregistré, pas son exécution.
+- Aucun changement de `rag.js`, `js/qust.js`, `biblio.js`, `prof_core.js`, du corpus, des workflows, du Worker, des secrets ou des données/politiques Supabase. Aucun déploiement.
+- Messenger reste distinct et non terminé : les tests E2E multi-comptes A/B/C et les événements Realtime n'ont pas été exécutés.
+- Suite recommandée : Lot 598 — exécuter la sonde dans un checkout Node local ou un workflow de test contrôlé, corriger d'abord les éventuels défauts du harnais, puis produire un rapport d'observation; aucune correction du moteur ne sera intégrée sans examiner ces résultats.
