@@ -4069,3 +4069,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Comparaison Git au contrôle du Lot : 294 commits d'avance, 0 en retard ; main SHA `034722b00739c0106cd265eefdd1c933a096217d`.
 - Rapport : `docs/LOTS/LOT_640_CONTRAT_REFUS_INGESTION_TESTS.md`.
 - Suite Lot 641 : obtenir un run Actions vérifiable, exécuter les contrôles, ajouter le test de conservation des anciens artefacts quand un lot est refusé, puis construire un corpus RAG synthétique isolé.
+
+
+## Lot 641 — conservation des artefacts lors d’un refus d’ingestion (2026-11-16)
+
+- Ajout d’un test de régression qui appelle le point d’entrée réel `ingest.main()` avec un lot sans sidecar de droits.
+- Le test établit des octets de référence pour le catalogue et l’index RAG existants, puis vérifie après refus que les deux fichiers sont strictement inchangés, que la source entrante reste intacte et qu’aucun répertoire de publication n’est créé.
+- Le refus attendu est `RuntimeError: Aucun chunk autorisé`; le test confirme ainsi que le rejet survient avant la phase de publication.
+- Suite de tests : 32 méthodes déclarées. Exécution non attestée dans cette session ; aucun PASS n’est revendiqué.
+- Aucun document réel ingéré/OCRisé/indexé ; aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucun déploiement, aucune fusion.
+- Rapport : `docs/LOTS/LOT_641_PRESERVATION_ARTEFACTS_REFUS_INGESTION.md`.
+- Commit du test : `9eb4765ce2f8537b0b75f9c4c56372a56d2d0561`.
+- Suite Lot 642 : bâtir un corpus RAG synthétique isolé et vérifier catalogue → index → shards, sans toucher au fonds documentaire réel.
