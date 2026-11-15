@@ -3989,3 +3989,19 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun PDF réel traité, aucun OCR, aucune ingestion ni indexation réelle. Aucun changement `main`, merge, déploiement ou changement Supabase/Auth/RLS/schéma/données/paiements/secrets.
 - Rapport : `docs/LOTS/LOT_634_ROLLBACK_SOURCES_ET_AUDIT_INDEXEURS.md`.
 - Suite : Lot 635 — rétablir les runners, exécuter les tests, auditer les consommateurs avant migration versionnée et renforcer la preuve documentaire des droits.
+
+
+---
+
+## Lot 635 — traçabilité documentaire des réponses RAG (2026-11-15)
+
+- Audit de `rag.js` : les chunks retrouvaient déjà leur identifiant, leur page éventuelle et leur SHA-256, mais l'élève voyait surtout un ID technique au lieu du titre documentaire.
+- `formule(r, corpus)` résout maintenant l'ID du chunk dans `corpus.documents` et restitue titre, matière, niveau, année, page disponible, source déclarée, format, ID technique et préfixe d'empreinte SHA-256.
+- Les champs textuels du catalogue sont échappés avant rendu HTML. Si la fiche du document manque, le moteur conserve un repli sur l'ID et n'invente pas de titre.
+- Le catalogue est chargé uniquement lorsqu'un résultat RAG existe ; le chargeur déjà présent `chargeCorp()` est réutilisé.
+- Le workflow `.github/workflows/corpus-contract-tests.yml` installe Node.js 22 avec `actions/setup-node@v4` et exécute `node --check rag.js`, en complément des tests Python.
+- Vérification statique du code et de la configuration CI effectuée ; tests Python et vérification Node non exécutés faute de runner attesté. Aucun test n'est déclaré réussi.
+- Les documents non PDF ne reçoivent pas de numéro de page artificiel ; les références page ne sont affichées que si le chunk contient une provenance valide.
+- Aucun PDF réel traité, aucun OCR, aucune ingestion réelle, aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucun déploiement ni merge. `main` inchangée.
+- Rapport : `docs/LOTS/LOT_635_TRAÇABILITE_REPONSES_RAG.md`.
+- Suite : Lot 636 — audit de cohérence génération catalogue/index/shards, tests de résolution ID → fiche et échappement, puis validation multilingue synthétique.
