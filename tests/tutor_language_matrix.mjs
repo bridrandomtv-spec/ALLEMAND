@@ -8,6 +8,7 @@ const read = p => fs.readFileSync(p, 'utf8');
 const ia = read('ia.js');
 const voice = read('parle.js');
 const worker = read('worker/ia-ask.js');
+const subjectPage = read('matieres.js');
 const matrix = JSON.parse(read('tests/tutor_matrix.json'));
 const subjects = JSON.parse(read('assets/bdd/subjects.json'));
 const matieres = JSON.parse(read('assets/bdd/matieres.json'));
@@ -72,6 +73,9 @@ assert.match(worker, /Pour l\\'anglais, l\\'espagnol et l\\'italien[\s\S]*?expli
 assert.ok(Object.keys(englishPages.pages || {}).length >= 10, 'pages du corpus anglais absentes ou trop peu nombreuses');
 assert.ok((englishDevoirs.items || []).length >= 1, 'devoirs anglais absents');
 assert.ok((englishMalakhiss.malakhiss || []).length >= 1, 'fiches anglaises absentes');
+assert.match(subjectPage, /m\.de \|\| m\.en \|\| m\.es \|\| m\.it/, 'les noms natifs anglais/espagnol/italien ne sont pas affichés');
+assert.match(subjectPage, /m\.statut === 'partiel' && m\.id === 'anglais'[\s\S]*?data-go="english"/, 'la carte anglais partiellement disponible ne mène pas à sa page');
+assert.match(subjectPage, /const programmees = liste\.filter/, 'les matières programmées ne sont pas comptées séparément des matières partielles');
 assert.match(voice, /const EN_VOTE =/, 'vote de langue anglaise absent du TTS');
 assert.match(voice, /en > Math.max\(de, fr, es, it\)/, 'anglais absent du vote TTS');
 assert.match(voice, /en:'en-US'/, 'voix anglaise par défaut absente');
