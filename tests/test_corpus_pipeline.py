@@ -170,15 +170,26 @@ class CorpusPipelineContract(unittest.TestCase):
             self.assertEqual(catalogue[0]["source_sha256"], expected)
             self.assertTrue(all(c["source_sha256"] == expected for c in index["chunks"]))
 
-    def test_unauthorized_multiformat_batch_does_not_build_chunks(self):
+    def test_unauthorized_multiformat_batch_is_refused_without_chunks(self):
         with tempfile.TemporaryDirectory() as tmp:
             with open(os.path.join(tmp, "sans_droits.txt"), "w", encoding="utf-8") as stream:
                 stream.write(" ".join(["texte"] * 30))
-            docs, index, ignored, copies = ingest.construire(tmp, [{"id": "stable", "titre": "Stable"}])
-            self.assertEqual(docs, [{"id": "stable", "titre": "Stable"}])
-            self.assertEqual(index["chunks"], [])
-            self.assertEqual(ignored, 1)
-            self.assertEqual(copies, [])
+            with self.assertRaisesRegex(RuntimeError, "Aucun chunk autorisé"):
+                ingest.construire(tmp, [{"id": "stable", "titre": "Stable"}])
+
+    def test_sidecar_without_scope_is_rejected_before_extraction(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = os.path.join(tmp, "manuel.txt")
+            with open(source, "w", encoding="utf-8") as stream:
+                stream.write(" ".join(["texte"] * 30))
+            meta = self._metadata_authorisee()
+            del meta["usages_autorises"]
+            with open(os.path.join(tmp, "_manuel.json"), "w", encoding="utf-8") as stream:
+                json.dump(meta, stream)
+            with patch.object(ingest, "extraire_pages",
+                              side_effect=AssertionError("extraction interdite")):
+                with self.assertRaisesRegex(RuntimeError, "Aucun chunk autorisé"):
+                    ingest.construire(tmp, [{"id": "stable", "titre": "Stable"}])
 
 
     def test_shared_index_merge_preserves_unmentioned_documents(self):
