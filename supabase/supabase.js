@@ -547,19 +547,32 @@ document.dispatchEvent(new CustomEvent('dz:view', { detail:{ view:(location.hash
 async function msgMyVerification(){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
   const c = await sb(); if(!c) return { ok:false, err:'cloud indisponible' };
-  const r = await c.from('profiles').select('verif_statut,matricule,section').eq('id', u.id).maybeSingle();
+  const r = await c.from('profiles').select('verif_statut,matricule,section,carte_scolaire_path').eq('id', u.id).maybeSingle();
   if(r.error) return { ok:false, err:r.error.message };
-  return { ok:true, statut:(r.data && r.data.verif_statut) || 'non_verifie', matricule:(r.data && r.data.matricule) || '', section:(r.data && r.data.section) || '' };
+  return { ok:true, statut:(r.data && r.data.verif_statut) || 'non_verifie', matricule:(r.data && r.data.matricule) || '', section:(r.data && r.data.section) || '', hasCard:!!(r.data && r.data.carte_scolaire_path) };
 }
-async function msgRequestVerification(schoolRegistrationNumber, section){
+async function msgUploadSchoolCard(file){
+  const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  const allowed = {'image/jpeg':'jpg','image/png':'png','image/webp':'webp','application/pdf':'pdf'};
+  if(!file || !allowed[file.type]) return { ok:false, err:'ارفع صورة JPEG أو PNG أو WebP أو ملف PDF فقط.' };
+  if(file.size < 1 || file.size > 5*1024*1024) return { ok:false, err:'الحد الأقصى لحجم البطاقة 5 ميغابايت.' };
+  const token = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
+  const path = u.id + '/' + token + '.' + allowed[file.type];
+  const up = await c.storage.from('cartes-scolaires').upload(path,file,{upsert:false,contentType:file.type});
+  if(up.error) return { ok:false, err:up.error.message };
+  return { ok:true, path:path };
+}
+async function msgRequestVerification(schoolRegistrationNumber, section, cardPath){
   const u = await me(); if(!u) return { ok:false, err:'غير متصل' };
   const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
   const number = String(schoolRegistrationNumber || '').trim();
-  if(!/^\d{1,20}$/.test(number) || !Number.isSafeInteger(Number(number)) || Number(number) < 1){
+  if(!/^\\d{1,20}$/.test(number) || !Number.isSafeInteger(Number(number)) || Number(number) < 1){
     return { ok:false, err:'أدخل رقم تسجيل مدرسي صحيحًا.' };
   }
+  if(!cardPath || !cardPath.startsWith(u.id + '/')) return { ok:false, err:'أرفق صورة البطاقة المدرسية أولاً.' };
   const r = await c.from('profiles')
-    .update({ verif_statut:'en_attente', matricule:number, section:String(section||'').trim().slice(0,40) })
+    .update({ verif_statut:'en_attente', matricule:number, section:String(section||'').trim().slice(0,40), carte_scolaire_path:cardPath })
     .eq('id', u.id).or('verif_statut.eq.non_verifie,verif_statut.eq.rejete');
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true };
@@ -571,13 +584,20 @@ async function msgVerificationQueue(page, pageSize){
   const from = currentPage * size;
   const to = from + size - 1;
   const r = await c.from('profiles')
-    .select('id,pseudo,role,niveau,filiere,wilaya,matricule,section,created_at', { count:'exact' })
+    .select('id,pseudo,role,niveau,filiere,wilaya,matricule,section,carte_scolaire_path,created_at', { count:'exact' })
     .eq('verif_statut','en_attente')
     .order('created_at',{ascending:true})
     .order('id',{ascending:true})
     .range(from,to);
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true, queue:r.data||[], total:Number(r.count)||0, page:currentPage, pageSize:size };
+}
+async function msgSchoolCardUrl(path){
+  const c = await sb(); if(!c) return { ok:false, err:'الخدمة السحابية غير متاحة' };
+  if(!path || typeof path!=='string') return { ok:false, err:'مسار المستند غير صالح' };
+  const r = await c.storage.from('cartes-scolaires').createSignedUrl(path,300);
+  if(r.error) return { ok:false, err:r.error.message };
+  return { ok:true, url:r.data.signedUrl };
 }
 async function msgSetVerification(uid, statut){
   const u = await me(); if(!u) return { ok:false, err:'non connecté' };
@@ -589,7 +609,7 @@ async function msgSetVerification(uid, statut){
   if(r.error) return { ok:false, err:r.error.message };
   return { ok:true };
 }
-Object.assign(window.SB, { msgMyVerification, msgRequestVerification, msgVerificationQueue, msgSetVerification });
+Object.assign(window.SB, { msgMyVerification, msgUploadSchoolCard, msgRequestVerification, msgVerificationQueue, msgSchoolCardUrl, msgSetVerification });
 
 /* ── MSG-8 · centre des invitations — disponible après migration serveur consentement ── */
 async function msgInvites(){
