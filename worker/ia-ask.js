@@ -23,7 +23,7 @@ const SYSTEM =
   + 'indique seulement la langue demandée au moteur de reconnaissance vocale. Anglais → anglais ; allemand → allemand ; '
   + 'arabe standard → arabe clair ; si DIALECTE DÉTECTÉ = darija, réponds en darija algérienne '
   + 'naturelle et compréhensible, sans effacer les mots de l’élève ; anglais → anglais ; français → français ; '
-  + 'espagnol → espagnol ; italien → italien. En cas de doute, demande une précision. '
+  + 'espagnol → espagnol ; italien → italien. Pour une sortie arabe, respecte STYLE DE SORTIE : darija signifie darija algérienne naturelle ; fusha signifie arabe standard clair. Le dialecte décrit l’entrée et ne doit jamais remplacer une LANGUE DE SORTIE explicitement demandée : si l’élève demande le français, réponds en français même s’il a écrit en darija. En cas de doute, demande une précision. '
   + '2) La MATIÈRE ACTIVE, le NIVEAU et la FILIÈRE transmis guident les exemples et la difficulté. '
   + '3) Le CONTEXTE contient des extraits ÉTIQUETÉS de la BIBLIOTHÈQUE officielle '
   + '([LIVRE pN], [DEVOIR id], [GRAMMAIRE], [CORPUS]) : appuie-toi D\'ABORD sur eux, cite la '
@@ -99,7 +99,8 @@ export default {
         ? String(b.output_language).toLowerCase()
         : (['ar','de','en','fr','es','it'].includes(String(b.detected_language || '').toLowerCase().slice(0, 2))
           ? String(b.detected_language).toLowerCase().slice(0, 2) : 'de'),
-      dialect: safeField(b.dialect, 30, 'unknown'),
+      dialect: ['darija','arabizi'].includes(String(b.dialect || '').toLowerCase()) ? 'darija'
+        : (['fusha','msa'].includes(String(b.dialect || '').toLowerCase()) ? 'fusha' : 'unknown'),
       subject: safeField(b.subject, 60, 'allemand'),
       level: safeField(b.level, 30, 'tous'),
       track: safeField(b.track, 60, 'non précisée')
@@ -109,12 +110,15 @@ export default {
     HITS = HITS.filter(t => now - t < 60000);
     if(HITS.length >= 20) return json({ ok:false, err:'quota-min' }, 429, org);
     HITS.push(now);
+    meta.output_style = meta.output_language === 'ar'
+      ? (meta.dialect === 'darija' ? 'darija' : 'fusha') : 'natural';
     const metadata = [
       'MODE D’ENTRÉE : ' + meta.input_mode,
       'LANGUE CHOISIE POUR LA RECONNAISSANCE : ' + meta.selected_language,
       'LANGUE DÉTECTÉE : ' + meta.detected_language,
       'LANGUE DE SORTIE EXIGÉE : ' + meta.output_language,
-      'DIALECTE DÉTECTÉ : ' + meta.dialect,
+      'DIALECTE DÉTECTÉ À L’ENTRÉE : ' + meta.dialect,
+      'STYLE DE SORTIE : ' + meta.output_style,
       'MATIÈRE ACTIVE : ' + meta.subject,
       'NIVEAU : ' + meta.level,
       'FILIÈRE : ' + meta.track,
@@ -150,7 +154,7 @@ export default {
         const j = await r.json();
         rep = ((j.result || {}).response) || '';
       }else return json({ ok:false, err:'ai-non-configuré' }, 500, org);
-      return json({ ok:true, rep: String(rep).trim(), answer_language: meta.output_language }, 200, org);
+      return json({ ok:true, rep: String(rep).trim(), answer_language: meta.output_language, answer_style: meta.output_style }, 200, org);
     }catch(e){
       return json({ ok:false, err: String((e && e.message) || e) }, 500, org);
     }
