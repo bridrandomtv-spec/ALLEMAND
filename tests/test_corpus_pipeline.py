@@ -46,6 +46,7 @@ class CorpusPipelineContract(unittest.TestCase):
             catalogue = {"documents": [
                 {"id": "doc-1", "titre": "Cours", "format": "pdf",
                  "url": "docs/archive/documents/cours.pdf",
+                 "source_sha256": hashlib.sha256(b"synthetic PDF bytes for audit").hexdigest(),
                  "licence": "ancienne étiquette sans preuve"}
             ]}
             path = os.path.join(corpus_path, "corpus.json")
@@ -56,7 +57,7 @@ class CorpusPipelineContract(unittest.TestCase):
             self.assertEqual(row["status"], "eligible_for_review")
             self.assertTrue(row["source_exists"])
             self.assertTrue(row["rights_valid"])
-            self.assertIsNone(row["catalogue_hash_matches"])
+            self.assertTrue(row["catalogue_hash_matches"])
             self.assertTrue(os.path.isfile(pdf))
             self.assertNotIn("droits", catalogue["documents"][0])
 
