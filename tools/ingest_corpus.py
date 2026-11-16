@@ -14,7 +14,7 @@ import shutil
 import sys
 
 try:
-    from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees, projection_preuve_droits
+    from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees, projection_preuve_droits, document_couvert
     from tools.corpus_contracts import (
         sha256_fichier, decouper_pages, fusionner_documents, construire_chunk,
         fusionner_index_rag, ecrire_json_transactionnel,
@@ -91,6 +91,10 @@ def construire(dossier, documents_existants=None):
             continue
         digest = sha256_fichier(chemin)
         did = "c-" + hashlib.sha256(nom.encode("utf-8")).hexdigest()[:16]
+        if not document_couvert(meta, did, digest):
+            print("IGNORE (document hors périmètre de l'autorisation):", nom)
+            ignores += 1
+            continue
         doc = {
             "id": did, "titre": meta.get("titre", nom),
             "matiere": meta.get("matiere", "allemand"),
