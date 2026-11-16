@@ -19,8 +19,78 @@ sharder = load_module("tools/sharder_index.py", "sharder_index")
 rights = load_module("tools/rights_metadata.py", "rights_metadata")
 contracts = load_module("tools/corpus_contracts.py", "corpus_contracts")
 ingest = load_module("tools/ingest_corpus.py", "ingest_corpus")
+audit = load_module("tools/audit_corpus_registry.py", "audit_corpus_registry")
 
 class CorpusPipelineContract(unittest.TestCase):
+    def test_registry_audit_is_read_only_and_distinguishes_source_from_rights(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = os.path.join(tmp, "repo")
+            os.makedirs(os.path.join(root, "docs", "archive", "documents"))
+            pdf = os.path.join(root, "docs", "archive", "documents", "cours.pdf")
+            with open(pdf, "wb") as stream:
+                stream.write(b"synthetic PDF bytes for audit")
+            meta = {
+                "licence": "production_propre", "source": "Cours original",
+                "titulaire_droits": "Auteur", "declarant": "Auteur",
+                "date_declaration": "2026-11-15", "declaration_droits": True,
+                "usages_autorises": ["hebergement_source", "extraction_texte",
+                    "indexation_rag", "restitution_extraits"],
+                "validation": {"statut": "valide", "verificateur": "Relecteur",
+                    "date": "2026-11-15", "reference_preuve": "fixture-001"}
+            }
+            with open(os.path.join(root, "docs", "archive", "documents", "_cours.json"),
+                      "w", encoding="utf-8") as stream:
+                json.dump(meta, stream)
+            corpus_path = os.path.join(root, "assets", "bdd")
+            os.makedirs(corpus_path)
+            catalogue = {"documents": [
+                {"id": "doc-1", "titre": "Cours", "format": "pdf",
+                 "url": "docs/archive/documents/cours.pdf",
+                 "licence": "ancienne étiquette sans preuve"}
+            ]}
+            path = os.path.join(corpus_path, "corpus.json")
+            with open(path, "w", encoding="utf-8") as stream:
+                json.dump(catalogue, stream)
+            report = audit.auditer(path, root)
+            row = report["documents"][0]
+            self.assertEqual(row["status"], "eligible_for_review")
+            self.assertTrue(row["source_exists"])
+            self.assertTrue(row["rights_valid"])
+            self.assertIsNone(row["catalogue_hash_matches"])
+            self.assertTrue(os.path.isfile(pdf))
+            self.assertNotIn("droits", catalogue["documents"][0])
+
+    def test_registry_audit_flags_missing_source_and_path_traversal(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = os.path.join(tmp, "repo")
+            os.makedirs(os.path.join(root, "assets", "bdd"))
+            path = os.path.join(root, "assets", "bdd", "corpus.json")
+            with open(path, "w", encoding="utf-8") as stream:
+                json.dump({"documents": [
+                    {"id": "missing", "url": "docs/absent.pdf", "format": "pdf"},
+                    {"id": "escape", "url": "../outside.pdf", "format": "pdf"}
+                ]}, stream)
+            report = audit.auditer(path, root)
+            self.assertEqual(report["documents"][0]["status"], "source_missing")
+            self.assertEqual(report["documents"][1]["status"], "path_unusable")
+            self.assertFalse(report["documents"][0]["rights_valid"])
+            self.assertFalse(report["documents"][1]["source_exists"])
+
+    def test_registry_audit_detects_catalogue_hash_mismatch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = os.path.join(tmp, "repo")
+            os.makedirs(os.path.join(root, "assets", "bdd"))
+            with open(os.path.join(root, "source.txt"), "wb") as stream:
+                stream.write(b"real bytes")
+            path = os.path.join(root, "assets", "bdd", "corpus.json")
+            with open(path, "w", encoding="utf-8") as stream:
+                json.dump({"documents": [{"id": "d", "url": "source.txt",
+                    "format": "txt", "source_sha256": "0" * 64}]}, stream)
+            report = audit.auditer(path, root)
+            self.assertEqual(report["documents"][0]["status"], "hash_mismatch")
+            self.assertFalse(report["documents"][0]["catalogue_hash_matches"])
+
+
     def test_pdf_indexer_keeps_biblio_catalogue_separate(self):
         self.assertEqual(indexer.INDEX, "assets/bdd/corpus_rag_index.json")
         self.assertNotEqual(indexer.INDEX, "assets/bdd/corpus_index.json")
