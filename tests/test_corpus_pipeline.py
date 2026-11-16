@@ -47,6 +47,10 @@ class CorpusPipelineContract(unittest.TestCase):
             }
         }
         self.assertTrue(rights.valider_metadonnees(meta)[0])
+        preuve = rights.projection_preuve_droits(meta)
+        self.assertEqual(preuve['validation']['reference_preuve'], 'declaration-interne-001')
+        self.assertIn('indexation_rag', preuve['usages_autorises'])
+        self.assertNotIn('redistribution_document', preuve['usages_autorises'])
 
     def test_ingestion_requires_explicit_exploitation_scope(self):
         meta = self._metadata_authorisee()
@@ -138,6 +142,8 @@ class CorpusPipelineContract(unittest.TestCase):
             self.assertIn("ancien", [d["id"] for d in catalogue])
             self.assertEqual(len(copies), 1)
             self.assertTrue(index["chunks"][0]["source_sha256"])
+            self.assertEqual(catalogue[-1]["droits"]["validation"]["statut"], "valide")
+            self.assertIn("restitution_extraits", catalogue[-1]["droits"]["usages_autorises"])
             merged = contracts.fusionner_index_rag(
                 {"_meta": {}, "chunks": [
                     {"global_id": 0, "doc": "ancien", "n": 0, "texte": "alpha beta"},
@@ -168,6 +174,7 @@ class CorpusPipelineContract(unittest.TestCase):
             self.assertEqual([c["page_end"] for c in index["chunks"]], [1, 2])
             expected = hashlib.sha256(b"synthetic-pdf-fixture").hexdigest()
             self.assertEqual(catalogue[0]["source_sha256"], expected)
+            self.assertEqual(catalogue[0]["droits"]["validation"]["reference_preuve"], "declaration-interne-001")
             self.assertTrue(all(c["source_sha256"] == expected for c in index["chunks"]))
 
     def test_unauthorized_multiformat_batch_is_refused_without_chunks(self):
