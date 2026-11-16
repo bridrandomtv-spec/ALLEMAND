@@ -4088,3 +4088,48 @@ Inventaire réalisé sur l'arbre Git complet de la branche `design/prototypes-67
 
 ### Suite logique — Lot 568
 Préparer les tests de contrat et une fixture documentaire temporaire. Puis corriger les trois producteurs de données (ingestion générique, indexation PDF, sharding) pour utiliser le nouvel artefact RAG sans toucher aux deux fichiers historiques. Revoir les workflows en dernier, avec déclenchement manuel et sortie en artefacts/branche de test uniquement ; aucun push automatique vers `main` pendant le pilote.
+
+
+## Lot 568 — état réel de préparation aux essais de l'intelligence IA (16 novembre 2026)
+
+### Objectif
+Établir ce qui peut déjà être testé dans l'interface et les blocages qui empêchent encore de qualifier le professeur IA de « prêt pour un essai complet ».
+
+### 1. Parcours actuellement observé dans le code
+- Le chat de `app.js` tente d'abord `window.RAG.cherche(v)` puis `window.RAG.formule(rr)`.
+- Si aucune réponse locale n'est produite, le chat appelle directement le Worker `/ask` avec un contexte codé en dur centré sur l'allemand. Ce chemin ne transmet pas le contexte dynamique du niveau/matière ni le résultat documentaire BIBLIO/QUST.
+- Le Worker `worker/ia-ask.js` reçoit la question et un champ texte de contexte, puis appelle Workers AI. Il ne réalise pas lui-même de recherche documentaire.
+- `rag.js` annonce encore un repli sur `assets/bdd/corpus_index.json` pour les chunks, alors que le fichier réel est le catalogue lexical DE–AR de BIBLIO (clé `items`, sans contrat `termes/chunks`). Le manifeste de shards est actuellement vide.
+- `biblio.js` lit légitimement `corpus_index.json` comme catalogue lexical. Il ne faut donc pas détourner ce fichier pour y placer les chunks RAG.
+- Le test `tests/regression_rag.mjs` contrôle uniquement le moteur RAG local et les réponses sur les cas qu'il parcourt. Il ne teste ni le Worker réel, ni l'interface complète, ni le microphone, ni la continuité chat/voix.
+
+### 2. Conclusion de maturité
+L'interface dispose déjà de composants pédagogiques locaux, d'un routeur de questions et d'un accès au modèle distant. Toutefois, l'orchestration n'est pas encore unifiée : le chat contourne la chaîne de contexte pédagogique et le chemin RAG documentaire dépend d'un contrat de fichier actuellement incompatible avec les données réelles. Il serait donc prématuré d'annoncer que l'intelligence complète est terminée ou que le test global est prêt.
+
+### 3. Conditions préalables aux essais élèves
+1. Séparer le catalogue lexical historique `corpus_index.json` de l'index RAG à chunks (`corpus_chunks_index.json`) et faire lire ce dernier par RAG.
+2. Corriger les producteurs `ingest_corpus.py`, `indexer_pdf.py` et `sharder_index.py` sans écraser `corpus.json.items` ni `corpus_index.json.items`.
+3. Ajouter des tests de contrat avec fichiers temporaires : intégrité des deux fichiers historiques, métadonnées, correspondance chunk-document et index inversé.
+4. Unifier le parcours chat et le parcours vocal autour d'une même orchestration : contexte actif (matière/niveau), QUST, BIBLIO, RAG, Worker si nécessaire, réponse sourcée et repli explicite.
+5. Ajouter des tests d'intégration du Worker avec réponses simulées et erreurs (quota, réseau, modèle indisponible), sans exposer de secret côté navigateur.
+6. Tester l'entrée vocale réelle sur les navigateurs/appareils cibles, puis la restitution TTS avec choix de langue cohérent ; ne pas confondre synthèse vocale sortante et reconnaissance vocale entrante.
+7. Constituer un jeu d'essai représentatif en arabe standard, darija, Arabizi, français, allemand et anglais, puis espagnol/italien lorsque leurs parcours seront réellement disponibles. Mesurer compréhension d'intention, exactitude pédagogique, citation de source, abstention et latence.
+
+### 4. Protocole de validation fonctionnelle
+- **Test local** : questions connues du cours, vocabulaire, conjugaison, grammaire, exercice et demande de page/unité.
+- **Test documentaire** : question dont la réponse existe dans une page/chunk, question ambiguë, document absent, métadonnées incomplètes et source interdite/non vérifiée.
+- **Test conversationnel** : question de suivi (« pourquoi ? », « donne un autre exemple »), changement de matière/niveau, conversation longue et reprise après erreur.
+- **Test vocal** : autorisation micro, refus d'autorisation, silence/bruit, darija/Arabizi, alternance arabe-français-allemand, transcription erronée, interruption et lecture TTS.
+- **Test de robustesse** : hors sujet, prompt visant à faire inventer une source, réseau coupé, Worker 429/500, JSON invalide et corpus indisponible.
+- **Test de non-régression** : connexion, navigation, contenus et exercices existants ; aucune modification de Supabase/Auth/RLS ou des données de production dans cette phase.
+
+### 5. Décision du lot
+- Les essais manuels de l'interface peuvent vérifier les composants existants, mais ils ne valident pas encore le professeur IA de bout en bout.
+- Le premier blocage prioritaire est le contrat de données RAG, suivi de l'unification chat/voix et du contexte matière/niveau.
+- Les essais élèves contrôlés ne commenceront qu'après les tests automatiques isolés et le passage du protocole fonctionnel sur la branche de prévisualisation.
+- Aucun script d'ingestion, indexeur, sharder ou workflow automatique n'a été exécuté dans ce lot.
+- Aucun fichier de corpus, index, shard, Worker déployé, configuration Supabase, schéma SQL, compte ou donnée de production n'a été modifié.
+- Seul le présent dossier de continuité a été enrichi.
+
+### Suite logique — Lot 569
+Mettre en place le premier test de contrat isolé pour les fichiers corpus et corriger les destinations d'écriture des scripts Python. Garder le chat/voix et les workflows automatiques hors de cette première correction, puis les traiter après validation des artefacts RAG.
