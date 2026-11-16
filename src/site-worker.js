@@ -204,6 +204,8 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if(url.pathname === '/api/rag-evidence'){
+      const origin = request.headers.get('Origin');
+      if(origin && origin !== url.origin) return jsonRes({ ok:false, error:'origin_forbidden' }, 403);
       if(request.method === 'OPTIONS') return new Response(null, {
         status:204, headers:{ 'Access-Control-Allow-Origin':url.origin,
           'Access-Control-Allow-Methods':'POST, OPTIONS',
