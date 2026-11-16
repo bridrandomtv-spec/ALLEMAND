@@ -108,6 +108,8 @@ assert.equal(exactPage.payload.rag_scope_value, 4);
 assert.equal(exactPage.payload.rag_scope_status, 'verified');
 assert.equal(exactPage.payload.rag_evidence_token, 'fixture-signed-rag-evidence-token');
 assert.match(exactPage.context, /vérifiée côté serveur/);
+assert.doesNotMatch(exactPage.context, /RÉPONSE LOCALE/,
+  'le contexte signé doit être transmis sans ajout local qui invaliderait son empreinte');
 assert.match(exactPage.answer, /Source documentaire : Manuel allemand synthétique côté serveur/);
 
 const unknownPage = await runCase('verified', 'Explique la page 42');
