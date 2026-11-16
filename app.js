@@ -1260,13 +1260,18 @@ async function sendChat(v){
   tp.className = 'msg bot typing'; tp.innerHTML = '<i></i><i></i><i></i>';
   log.appendChild(tp); log.scrollTop = log.scrollHeight;
   let answered = false;
+  let ragFallbackHtml = null;
+  let retrievedSources = [];
   try{
-    /* 1) Corpus local : réponse exacte prioritaire, sans invention. */
+    /* 1) RAG local : récupérer l'extrait et sa provenance avant explication IA. */
     if(window.RAG && window.RAG.cherche){
       try{
         const rr = await window.RAG.cherche(v);
-        const ff = window.RAG.formule(rr);
-        if(ff){ tp.remove(); addMsg('bot', ff); answered = true; return; }
+        ragFallbackHtml = window.RAG.formule(rr);
+        if(rr && typeof window.RAG.provenance === 'function'){
+          const source = window.RAG.provenance(rr);
+          if(source) retrievedSources = [source];
+        }
       }catch(e){}
     }
     /* 2) Tuteur IA distant : URL issue de la configuration publique, jamais de secret côté client. */
@@ -1279,7 +1284,7 @@ async function sendChat(v){
           try{ await window.SUBJECT.ready(); }catch(e){}
         }
         const teacherContext = window.TEACHER_CONTEXT && window.TEACHER_CONTEXT.build
-          ? window.TEACHER_CONTEXT.build(v)
+          ? window.TEACHER_CONTEXT.build(v, retrievedSources)
           : JSON.stringify({schema:'teacher-context-v1',trust:'client_unverified',
               question:String(v).slice(0,600),subject:{id:'unknown',status:'unknown'},level:'unknown'});
         const response = await fetch(proxy + '/ask', {
@@ -1302,8 +1307,9 @@ async function sendChat(v){
         }
       }
     }catch(e){}
-    /* 3) Secours local si le réseau ou le Worker IA est indisponible. */
+    /* 3) Secours : restituer l'extrait RAG exact avant le professeur déterministe. */
     tp.remove();
+    if(ragFallbackHtml){ addMsg('bot', ragFallbackHtml); answered = true; return; }
     const rep = PROF.repondre(v);
     addMsg('bot', rep);
     if(soundOn && /de-in/.test(rep)){
