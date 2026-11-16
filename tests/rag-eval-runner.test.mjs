@@ -76,6 +76,9 @@ for (const item of fixture.cases) {
 }
 const eligible = rows.filter(row => row.expectedDocumentId !== null);
 const abstentionRows = rows.filter(row => row.abstentionExpected);
+for (const row of abstentionRows) {
+  assert.equal(row.retrievedDocumentId, null, `unsupported request must not retrieve a misleading synthetic lesson: ${row.caseId}`);
+}
 const summary = {
   benchmark: fixture.schema,
   dataStatus: fixture.datasetStatus,
