@@ -997,8 +997,7 @@
 - Vérification juste avant exécution : historique Supabase sans migration multaqa antérieure ; aucune table `multaqa_posts`, `multaqa_comments`, `multaqa_reactions`, `multaqa_reports` ni RPC `multaqa_*` préexistante. Aucun conflit d'objet détecté.
 - Application réussie via l'opération de migration Supabase, enregistrée sous `20261113201922_multaqa_community_feed`. Le lot crée quatre tables, leurs index, active RLS, révoque tout accès REST direct aux tables pour `anon` et `authenticated`, puis expose huit RPC SECURITY DEFINER exclusivement à `authenticated`.
 - Vérification post-application en lecture seule : les quatre tables sont présentes et RLS est activée ; SELECT/INSERT/UPDATE/DELETE directs sont refusés à anon et authenticated ; les huit RPC ont EXECUTE refusé à anon et accordé à authenticated ; les huit fonctions sont SECURITY DEFINER. L'historique Supabase contient maintenant la migration `multaqa_community_feed`.
-- Les garde-fous serveur contrôlent `auth.uid()`, `profiles.role='eleve'` et `profiles.verif_statut='verifie'` pour le fil, la publication, les commentaires, les réactions et les signalements. Aucun abonnement n'est exigé. Les RPC de lecture ne projettent que le pseudo public et les champs du contenu.
-- Le test PostgreSQL 17 isolé du Lot 446 avait réussi sur des comptes synthétiques avant cette application. Il valide les scénarios inclus dans le harnais, mais ne prouve pas encore le fonctionnement réel avec JWT/Supabase Auth dans le navigateur.
+- Les garde-fous serveur contrôlent `auth.uid()`, `profiles.role='eleve'` et `profiles.verif_statut='verifie'` pour le fil, la publication, les commentaires, les réactions et les signalements. Aucun abonnement n'est exigé. Les RPC de lecture ne projettent que le pseudo public et les champs du contenu.- Le test PostgreSQL 17 isolé du Lot 446 avait réussi sur des comptes synthétiques avant cette application. Il valide les scénarios inclus dans le harnais, mais ne prouve pas encore le fonctionnement réel avec JWT/Supabase Auth dans le navigateur.
 - Aucun profil, compte, message privé, contenu scolaire existant ou autre donnée métier n'a été lu ou modifié. Aucune migration Messenger, modification de paiement, Storage, Auth, Realtime ou table existante n'a été appliquée.
 - État produit : **backend de base installé**, mais l'expérience complète n'est pas encore déclarée opérationnelle. Étape suivante obligatoire : vérifier le raccordement de `multaqa.js` aux RPC dans une session élève vérifié réelle, contrôler l'affichage et les erreurs dans le navigateur, puis tester publication/commentaire/réaction/signalement avec des comptes de test autorisés. Aucun contenu fictif ne doit être ajouté.
 - PR #17 reste ouverte et non fusionnée, base `main`. Aucun changement sur `main`, aucune fusion et aucun déploiement Cloudflare.
@@ -1997,7 +1996,6 @@ Obtenir une exécution GitHub Actions avec étapes/journaux exploitables ou exé
 Sur le même commit, les jobs de trois workflows indépendants ont été interrogés : CI générale (`43591834136`), tests PostgreSQL consentement (`43591834145`) et intégration Supabase locale Messenger (`43591834111`). Tous renvoient une liste d'étapes vide et un téléchargement de logs `BlobNotFound`, comme le workflow Storage #22. Cette convergence confirme que l'absence de journaux n'est pas isolée au seul workflow Storage ; elle ne permet toutefois pas d'identifier la cause sous-jacente ni de conclure que le code a été exécuté.
 
 ## Lot 508 — diagnostic isolé du démarrage des runners (14 novembre 2026)
-
 **Changement de méthode :** ajout de `.github/workflows/diag-runner-provisioning.yml`, workflow minimal sans checkout, sans installation, sans secret et sans accès réseau applicatif. Il lance uniquement trois commandes `echo/date`, sur deux images indépendantes (`ubuntu-latest` et `ubuntu-22.04`). Commit : `cbe97eb31c37aa43a59d0d49f31dbd6bfd3a41ea`.
 
 **Résultat discriminant :** le run diagnostic #1 (`43592180990`) a échoué sur les deux jobs. Pour chacun : `steps=[]`, `logs_url=null`, téléchargement des logs = `BlobNotFound`. Aucun des deux n'a exécuté la première commande `echo`. Au même commit, Storage #27 (`43592180931`) et CI générale #3802 (`43592180902`) montrent le même motif.
@@ -2997,8 +2995,7 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 2. Appliquer les filtres avant le classement lexical ou vectoriel, avec règles explicites pour les ressources multi-niveaux et multi-matières ; ne pas inventer de filière manquante.
 3. Faire passer un snapshot pédagogique unique de l'orchestrateur vers BIBLIO, RAG et Worker. Rejeter ou signaler les résultats hors contexte plutôt que les présenter comme adaptés.
 4. Unifier la vue Corpus et le retrieval du tuteur autour du même registre et du même validateur de métadonnées, sans faire dépendre le moteur de l'état des filtres UI.
-5. Ajouter une politique de cache : version du corpus + contexte + session pour les données privées ; invalidation lors de changement de matière/niveau/filière, changement de compte et mise à jour du corpus.
-6. Corriger prioritairement `PTRAD` : cache par session avec invalidation sur événements auth, et tests de déconnexion/reconnexion de deux comptes dans le même onglet.
+5. Ajouter une politique de cache : version du corpus + contexte + session pour les données privées ; invalidation lors de changement de matière/niveau/filière, changement de compte et mise à jour du corpus.6. Corriger prioritairement `PTRAD` : cache par session avec invalidation sur événements auth, et tests de déconnexion/reconnexion de deux comptes dans le même onglet.
 7. Résoudre les schémas manifest/index et valider l'intégrité de tous les shards avant de les publier ; ne pas lancer le workflow d'indexation actuel qui peut pousser directement sur main.
 
 ### État des opérations
@@ -3997,8 +3994,7 @@ Or le fichier actuellement versionné contient `_meta`, `documents` et `items` (
 **Conséquence : le script actuel est interdit d'exécution sur le dépôt ou sur les documents réels, tant que les deux collisions ne sont pas résolues.** Changer uniquement la destination de `corpus_index.json` ne suffit pas.
 
 ### 3. Contrat de fichiers cible révisé
-Séparation à appliquer sans ambiguïté :
-- `assets/bdd/corpus_index.json` : index de vocabulaire DE–AR, préservé à l'identique pour BIBLIO.
+Séparation à appliquer sans ambiguïté :- `assets/bdd/corpus_index.json` : index de vocabulaire DE–AR, préservé à l'identique pour BIBLIO.
 - `assets/bdd/corpus.json` : registre pédagogique existant ; préserver les trois sections et leurs données actuelles, notamment `items`.
 - `assets/bdd/corpus_documents.json` : registre dédié aux documents ingérés, si le registre existant ne peut pas être étendu sans perte.
 - `assets/bdd/corpus_chunks_index.json` : index lexical RAG des chunks, structure versionnée `{version, schema, termes, chunks}`.
@@ -4749,3 +4745,18 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 - Les requêtes `dz-001` (darija arabe) et `ar-latn-001` (Arabizi) récupèrent désormais le document arabe synthétique attendu.
 - La provenance reste `client_unverified`, comme prévu. Données et index sont synthétiques, uniquement en mémoire ; ce résultat ne valide pas les documents, licences, index de production, génération Worker ni qualité pédagogique réelle.
 - Prochaine étape : exécuter les 7 tests JavaScript de régression du Lot 583/577, puis traiter séparément les tests Python (interpréteur non disponible lors des précédentes vérifications). Aucun merge ni déploiement.
+
+### Lot 583 — validation locale complète des sept tests JavaScript (16 novembre 2026)
+- L'utilisateur a actualisé le worktree isolé sur le commit `f4c2cae3` de `ai/lot-583-darja-arabizi-rag` et exécuté les sept scripts de régression demandés.
+- Résultat communiqué : **7/7 tests réussis**, tous avec code de sortie nul :
+  1. `tests/rag-rights-guard.test.mjs` — 4 scénarios passés.
+  2. `tests/worker-context-trust.test.mjs` — frontière de confiance validée.
+  3. `tests/teacher-context.test.mjs` — enveloppe de contexte pédagogique validée.
+  4. `tests/lot577-rag-context-integration.test.mjs` — contrat RAG vers enseignant validé.
+  5. `tests/rag-eval-contract.test.mjs` — 9 cas et 4 passages synthétiques validés.
+  6. `tests/rag-eval-review-contract.test.mjs` — contrat de la grille de revue humaine validé.
+  7. `tests/rag-eval-runner.test.mjs` — benchmark synthétique exécuté avec `hitAt1 = 1`, 2/2 abstentions correctes et `failures: []`.
+- Les cas darija arabe (`dz-001`) et Arabizi (`ar-latn-001`) retrouvent le passage arabe synthétique attendu. Les cas italien et espagnol s'abstiennent correctement.
+- **Portée exacte :** régression JavaScript locale validée sur fixtures synthétiques. Cela ne valide pas les contrats Python, les documents ou droits réels, les shards de production, la génération de réponses Worker ni la qualité pédagogique/l linguistique. La provenance des fixtures demeure `client_unverified`.
+- Le commit testé est `f4c2cae3`. Aucun changement Supabase, Auth, RLS, SQL, schéma, paiement, données de production, branche `main`, fusion ou déploiement n'a été effectué.
+- **Suite immédiate :** rendre Python 3.12 disponible et exécuter les tests de contrats Python; ensuite seulement préparer un test d'indexation sur copie synthétique ou sur documents dont les droits sont établis. Les index/shards de production ne doivent pas être reconstruits directement.
