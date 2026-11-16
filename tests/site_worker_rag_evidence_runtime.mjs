@@ -16,7 +16,7 @@ const secret = 'fixture-only-site-rag-hmac-secret-32-bytes';
 const sourceHash = 'b'.repeat(64);
 const documentId = 'fixture-deutschbuch';
 const chunk = {
-  global_id:7, doc:documentId,
+  global_id:0, doc:documentId,
   texte:'Explique la règle weil : le verbe conjugué se place à la fin de la subordonnée.',
   page_start:4, page_end:4, source_sha256:sourceHash
 };
@@ -24,7 +24,7 @@ const manifest = { version:'2.0.0', generation:'a'.repeat(64),
   nb_shards:1, total_chunks:1,
   shards:[{ file:'shard_00.json', nb_chunks:1, nb_termes:3 }] };
 const shard = { _generation:manifest.generation, chunks:[chunk],
-  termes:{ explique:[7], weil:[7], verbe:[7] } };
+  termes:{ explique:[0], weil:[0], verbe:[0] } };
 const corpus = { documents:[{ id:documentId, titre:'Grammaire allemande',
   matiere:'allemand', niveau:'2AS', annee:'2026/2027', format:'pdf',
   source:'Cours original', licence:'production_propre', source_sha256:sourceHash,
@@ -75,7 +75,7 @@ const decoded = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
 assert.equal(decoded.iss, 'lycee-virtuel-rag');
 assert.equal(decoded.aud, 'ia-ask');
 assert.equal(decoded.doc_id, documentId);
-assert.equal(decoded.chunk_id, '7');
+assert.equal(decoded.chunk_id, '0');
 assert.equal(decoded.scope_type, 'page');
 assert.equal(decoded.scope_value, 4);
 assert.equal(decoded.source_sha256, sourceHash);
@@ -125,7 +125,7 @@ const missingGlobalId = await evidence('Explique la page 4');
 assert.equal(missingGlobalId.response.status, 503);
 assert.equal(missingGlobalId.data.error, 'rag_generation_incomplete');
 shard.chunks[0] = originalChunk;
-shard.termes = { explique:[7], weil:[7], verbe:[7] };
+shard.termes = { explique:[0], weil:[0], verbe:[0] };
 
 const originalSource = corpus.documents[0].source;
 corpus.documents[0].source = 'Source différente de la preuve';
