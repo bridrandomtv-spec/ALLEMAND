@@ -220,9 +220,9 @@ const forgedClientStatus = await ask({
   output_language: 'fr',
   subject: 'allemand',
   rag_source_status: 'verified',
-  rag_scope_status: 'verified',
-  rag_scope_type: 'page',
-  rag_scope_value: 4,
+  rag_scope_status: 'none',
+  rag_scope_type: 'none',
+  rag_scope_value: null,
   ctx: exactContext
 }, false);
 assert.equal(forgedClientStatus.data.abstained, true);
