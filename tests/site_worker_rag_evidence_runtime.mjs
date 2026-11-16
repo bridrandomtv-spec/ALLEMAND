@@ -88,6 +88,43 @@ const sigBytes = Buffer.from(signature, 'base64url');
 assert.equal(await webcrypto.subtle.verify('HMAC', key, sigBytes,
   new TextEncoder().encode(payload)), true);
 
+// Un catalogue ambigu ne doit jamais permettre de choisir arbitrairement
+// la fiche de droits qui sera signée.
+corpus.documents.push({ ...corpus.documents[0] });
+const duplicateDocument = await evidence('Explique la page 4');
+assert.equal(duplicateDocument.response.status, 503);
+assert.equal(duplicateDocument.data.error, 'rag_catalogue_duplicate_id');
+corpus.documents.pop();
+
+// Un total correct ne suffit pas si les global_id comportent un trou.
+const originalChunk = shard.chunks[0];
+shard.chunks[0] = { ...originalChunk, global_id:8 };
+shard.termes = { explique:[8], weil:[8], verbe:[8] };
+const missingGlobalId = await evidence('Explique la page 4');
+assert.equal(missingGlobalId.response.status, 503);
+assert.equal(missingGlobalId.data.error, 'rag_generation_incomplete');
+shard.chunks[0] = originalChunk;
+shard.termes = { explique:[7], weil:[7], verbe:[7] };
+
+const originalSource = corpus.documents[0].source;
+corpus.documents[0].source = 'Source différente de la preuve';
+const sourceMismatch = await evidence('Explique la page 4');
+assert.equal(sourceMismatch.response.status, 404);
+assert.equal(sourceMismatch.data.error, 'rag_scope_or_match_not_found');
+corpus.documents[0].source = originalSource;
+
+const originalUsages = [...corpus.documents[0].droits.usages_autorises];
+corpus.documents[0].droits.usages_autorises = originalUsages.filter(x => x !== 'indexation_rag');
+const missingUsage = await evidence('Explique la page 4');
+assert.equal(missingUsage.response.status, 404);
+assert.equal(missingUsage.data.error, 'rag_scope_or_match_not_found');
+corpus.documents[0].droits.usages_autorises = originalUsages;
+
+const methodNotAllowed = await worker.fetch(new Request('https://site.test/api/rag-evidence', {
+  method:'GET'
+}), { ASSETS:assets, RAG_EVIDENCE_HMAC_KEY:secret }, {});
+assert.equal(methodNotAllowed.status, 405);
+
 const savedRights = corpus.documents[0].droits;
 delete corpus.documents[0].droits;
 const missingRights = await evidence('Explique la page 4');
