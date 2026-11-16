@@ -122,7 +122,7 @@ async function emettrePreuveRag(request, env){
       if(!objet(descriptor) || typeof descriptor.file !== 'string'
         || !/^shard_[0-9]{2,}\.json$/.test(descriptor.file) || files.has(descriptor.file)
         || !Number.isSafeInteger(descriptor.nb_chunks) || descriptor.nb_chunks < 1
-        || !Number.isSafeInteger(descriptor.nb_termes) || descriptor.nb_termes < 1)
+        || !Number.isSafeInteger(descriptor.nb_termes) || descriptor.nb_termes < 0)
         throw new Error('invalid_shard_descriptor');
       files.add(descriptor.file);
       const shard = await lireJson(env, '/assets/bdd/shards/' + descriptor.file, request.url);
@@ -145,7 +145,8 @@ async function emettrePreuveRag(request, env){
             || chunk.page_end !== chunk.page_start) throw new Error('invalid_page_scope');
         }
         ids.add(chunk.global_id); localIds.add(chunk.global_id);
-        if(doc.licence === doc.droits?.licence && preuveDroitsValide(doc.droits)) chunks.push(chunk);
+        if(doc.licence === doc.droits?.licence && doc.source === doc.droits?.source
+          && preuveDroitsValide(doc.droits)) chunks.push(chunk);
       }
       for(const [term, postings] of Object.entries(shard.termes)){
         if(!term.trim() || !Array.isArray(postings)) throw new Error('invalid_postings');
