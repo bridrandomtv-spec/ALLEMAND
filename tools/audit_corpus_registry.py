@@ -173,6 +173,10 @@ def markdown_report(report):
     ]
     for status, count in report["status_counts"].items():
         lines.append("| %s | %d |" % (status, count))
+    lines += ["", "## Constats cumulables", "", "| Constat | Nombre |",
+              "|---|---:|"]
+    for finding, count in report["finding_counts"].items():
+        lines.append("| %s | %d |" % (finding, count))
     lines += ["", "## Anomalies d'identifiants", "",
               "- IDs dupliqués : %d" % len(report["duplicate_ids"]),
               "- URLs dupliquées : %d" % len(report["duplicate_urls"]),
