@@ -2737,3 +2737,50 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Fichiers inspectés en lecture seule : `assets/bdd/config.json`, `supabase/supabase.js`, `rag.js`, `biblio.js`, `worker/ia-ask.js`, ainsi que la documentation FlagEmbedding/BGE-M3.
 - Aucun fichier applicatif modifié ; aucun index créé ou modifié ; aucune installation de dépendance ; aucun test d'inférence exécuté ; aucune requête Supabase ; aucun commit applicatif ; aucun déploiement ; aucune fusion.
 - Cette entrée documente uniquement l'audit et la décision de préparer une expérimentation isolée.
+
+
+## Lot 549 — défauts structurels de l'indexation PDF et collision des formats de corpus (16 novembre 2026)
+
+### Vérification des artefacts actuellement présents sur la branche
+- `assets/bdd/shards_manifest.json` est valide en JSON mais déclare `nb_shards: 0`, `total_chunks: 0` et une liste `shards` vide.
+- Correction de précision par rapport à une formulation antérieure : `assets/bdd/corpus_index.json` n'est pas un index de fragments vide. Il contient actuellement les clés `_meta` et `items`, avec environ 490 entrées de vocabulaire DE-AR, mais ne contient ni clé `chunks` ni clé `termes`. Il s'agit donc d'un index lexical de vocabulaire consommé par BIBLIO, pas de l'index de fragments attendu par le moteur RAG.
+- `assets/bdd/corpus.json` contient actuellement 239 fiches dans `documents` et 450 entrées dans `items`. Ses métadonnées décrivent explicitement un registre de documents, un stockage des fichiers originaux et un index plein-texte distinct.
+- Le code de `biblio.js` charge `assets/bdd/corpus_index.json` comme source `corpus`, puis lit `C.items` ou `C.index` pour intégrer les entrées de vocabulaire. Le moteur `rag.js`, lui, attend dans le même fichier `corpus_index.json` les clés `chunks` et `termes`, ou des fragments dans les shards. Les deux consommateurs attendent donc actuellement deux formats différents sous le même nom de fichier.
+
+### Défauts confirmés dans les scripts d'ingestion
+1. **Collision destructive de formats — `tools/ingest_corpus.py`** :
+   - le script réécrit `assets/bdd/corpus.json` avec seulement `_meta` et `documents`, ce qui élimine la clé `items` présente dans le fichier actuel ;
+   - il réécrit `assets/bdd/corpus_index.json` avec seulement `termes` et `chunks`, ce qui élimine les entrées `items` actuellement consommées par BIBLIO ;
+   - si ce script est exécuté tel quel sur le corpus actuel, il risque donc de faire disparaître le vocabulaire de BIBLIO et de remplacer la structure du registre documentaire. Ce script n'a pas été exécuté.
+2. **Références de postings non remappées — `tools/indexer_pdf.py`** :
+   - le script filtre les fragments dont `doc` commence par `pdf-` ;
+   - il ne reconstruit pas ensuite les identifiants des postings de `termes` en fonction de la nouvelle position des fragments conservés ;
+   - les listes de postings peuvent donc contenir des indices anciens, pointant vers le mauvais fragment ou hors limites.
+3. **Identifiants de fragments incohérents** :
+   - les nouveaux fragments PDF reçoivent `n = cid`, où `cid` est la position dans la liste globale ;
+   - les fragments conservés peuvent, eux, avoir été créés par un autre outil avec une numérotation locale au document ;
+   - `rag.js` utilise les postings comme identifiants globaux et, dans les shards, retrouve le fragment via `c.n === +cid`. La convention d'identifiant doit être unique, stable et cohérente sur toute la chaîne d'ingestion.
+4. **Métadonnées PDF codées en dur** :
+   - `indexer_pdf.py` attribue systématiquement allemand, niveau 2AS/3AS, langue allemande, année 2026/2027 et licence « document utilisateur » ;
+   - ces valeurs ne peuvent pas être présumées exactes pour des PDF de matières, langues, niveaux ou provenances variés. Le script doit lire des métadonnées validées et signaler les champs manquants, sans fabriquer une licence ou une matière.
+5. **OCR incomplet pour une plateforme multilingue** :
+   - le script OCR n'utilise que les langues Tesseract `deu+ara`. Les documents français, anglais, italien ou espagnol ne bénéficient pas d'un profil OCR adapté ;
+   - le plafond de 40 pages doit être explicite dans le rapport d'ingestion afin de signaler les documents partiellement extraits.
+6. **Automatisation Git à risque** :
+   - `.github/workflows/indexer.yml` peut se déclencher sur un push touchant les PDF, le script ou le workflow ;
+   - il possède `contents: write` et termine par `git pull --rebase origin main` puis `git push`, donc vise directement `main`, au lieu de produire une branche/PR de validation ;
+   - ce workflow n'a pas été lancé. Ne pas le déclencher avant correction et validation de son mode de publication.
+
+### Décision technique
+- Geler l'exécution des scripts d'ingestion et du workflow actuel tant que les collisions de formats, les identifiants de postings et le risque de push direct sur `main` ne sont pas corrigés.
+- Séparer les responsabilités et noms de fichiers : registre documentaire, vocabulaire BIBLIO et index de fragments RAG doivent avoir des schémas distincts et documentés. Ne pas réutiliser `corpus_index.json` pour deux structures incompatibles.
+- Définir un identifiant global de chunk stable (par exemple un ID opaque par fragment) et construire les postings après la constitution finale de la liste de chunks ; valider chaque posting contre un chunk existant.
+- Rendre l'ingestion idempotente : une réindexation ne doit ni décaler les références des fragments conservés ni supprimer les contenus d'autres matières.
+- Exiger les métadonnées vérifiables (matière, niveau, langue, type, année, source, statut de droit/licence et référence d'autorisation le cas échéant). Une valeur absente reste « à vérifier » et n'est jamais transformée en licence fictive.
+- Faire produire à l'automatisation un artefact et un rapport de contrôle sur une branche dédiée/PR, sans droit de pousser directement sur `main`.
+- Ajouter des tests statiques et unitaires : cohérence chunk/posting, absence d'ID orphelin, stabilité après réindexation, conservation du vocabulaire, filtrage par matière/niveau/langue, et couverture OCR/page.
+
+### État des opérations
+- Lecture seule de `tools/ingest_corpus.py`, `tools/indexer_pdf.py`, `tools/sharder_index.py`, `.github/workflows/indexer.yml`, `assets/bdd/corpus.json`, `assets/bdd/corpus_index.json`, `assets/bdd/shards_manifest.json`, `biblio.js` et `rag.js`.
+- Aucun script exécuté ; aucun PDF ingéré ; aucun artefact JSON régénéré ; aucun workflow GitHub Actions lancé ; aucun push, commit applicatif ou changement sur `main`.
+- Aucun accès ni changement Supabase hébergé ; aucun déploiement Cloudflare ; aucune fusion. PR #17 demeure ouverte et non fusionnée.
