@@ -4733,3 +4733,11 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 - Correctif appliqué à `tests/rag-eval-runner.test.mjs` : l'assertion vérifie désormais `مبتدا` et `خبر`. Commit : `c03cb413508b9187ebe5fb806549013620f2f618`.
 - Le correctif n'a pas encore été exécuté localement. Il faut relancer le runner, puis les sept scripts complets; vérifier le résultat des cas `dz-001` et `ar-latn-001` et confirmer `failures: []` avant de considérer le Lot 583 validé.
 - Python n'est pas installé/détecté via `py -3.12` sur le poste Windows; les tests Python restent en attente. Aucun changement de données réelles, production, Supabase, `main`, fusion ou déploiement.
+
+
+### Lot 583 — correction du tokenizer arabe après retest local
+- Retest utilisateur du runner après le commit `1c1caf20` : l'assertion `مبتدا` est désormais franchie, mais `خبر` échoue.
+- Cause identifiée : le tokenizer JS/Python utilisait toute la plage Unicode arabe `U+0600–U+06FF`, qui comprend la ponctuation. Le token `والخبر؟` conservait donc le point d'interrogation et ne normalisait pas vers `خبر`.
+- Correction : segmentation limitée aux plages de lettres arabes, en excluant la ponctuation, dans `rag.js` et `tools/rag_normalization.py`.
+- Commits : `9ca1d7ed0fb0cae776a039ced128b528fce9a2f9` (JS) ; `e91f699b6b03470a571a10944e0967352e7102ce` (Python).
+- Statut : correction poussée sur la branche isolée ; runner et suite complète doivent être retestés localement. Aucun résultat de test post-correction n'est encore confirmé. Python reste à vérifier séparément.
