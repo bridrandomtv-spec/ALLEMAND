@@ -25,7 +25,7 @@ async function runCase(sourceState, question='Explique weil en français') {
         score: 5, page_start: 4, page_end: 4,
         source_sha256: 'a'.repeat(64)
       }),
-      source: async hit => sourceState === 'verified' ? ({
+      source: async hit => ['verified','client-unattested'].includes(sourceState) ? ({
         id: hit.doc, title: 'Manuel allemand synthétique',
         subject: 'allemand', level: '2AS', year: '2026/2027',
         source: 'fixture de test', format: 'pdf',
@@ -47,7 +47,8 @@ async function runCase(sourceState, question='Explique weil en français') {
     if (url === 'https://worker.test/ask') {
       posted = JSON.parse(options.body);
       return { ok: true, json: async () => ({
-        ok: true, rep: responseText, answer_language: 'fr'
+        ok: true, rep: responseText, answer_language: 'fr',
+        rag_evidence_verified: sourceState === 'verified'
       }) };
     }
     throw new Error('URL inattendue dans le test : ' + url);
@@ -112,6 +113,12 @@ assert.doesNotMatch(requestedExercise.answer, /Source documentaire/, 'ne pas cit
 const general = await runCase('verified', 'Explique weil en français');
 assert.equal(general.payload.rag_scope_type, 'none');
 assert.equal(general.payload.rag_scope_status, 'none');
+
+const clientOnly = await runCase('client-unattested', 'Explique la page 4 sans preuve');
+assert.equal(clientOnly.payload.rag_source_status, 'verified');
+assert.equal(clientOnly.payload.rag_scope_status, 'verified');
+assert.doesNotMatch(clientOnly.answer, /Source documentaire/,
+  'une provenance locale déclarée vérifiée ne suffit pas sans attestation Worker');
 
 const biblioOnly = await runCase('biblio-only', 'Donne la page 4 du manuel');
 assert.equal(biblioOnly.payload.rag_source_status, 'unavailable');
