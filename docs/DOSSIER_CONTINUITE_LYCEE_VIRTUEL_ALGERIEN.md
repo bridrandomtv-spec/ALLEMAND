@@ -3179,3 +3179,101 @@ Le Worker doit recevoir un contexte structuré provenant d'un orchestrateur de c
 - Aucune correction applicative ou base de données réalisée.
 - Aucun index actif modifié ; aucune ingestion ni réindexation.
 - Branche `design/prototypes-67-74-alignment` ; PR #17 à maintenir ouverte et non fusionnée ; `main` inchangée.
+
+
+## Lot 557 — traçabilité des sources et fidélité des réponses (16 novembre 2026)
+
+### Périmètre
+- Audit statique en lecture seule de `rag.js`, `biblio.js`, `ia.js`, `app.js`, `worker/ia-ask.js` et du registre `assets/bdd/corpus.json`.
+- Vérification des chemins de réponse du chat principal, du RAG dédié, de l'assistant vocal/local et du Worker IA.
+- Références externes consultées : travaux sur l'évaluation des citations RAG et la distinction entre exactitude d'une citation et fidélité réelle à la source.
+- Aucun changement applicatif, aucune opération Supabase, aucun test d'exécution, aucun workflow, aucun déploiement et aucune fusion.
+
+### Constats confirmés dans le code
+
+#### 1. Le RAG lexical ne transporte pas la provenance complète
+- Dans `rag.js`, `cherche()` calcule un score lexical et construit le résultat avec seulement `score`, `texte` et `doc` (lignes 61–64 pour shards, 78–81 pour le repli legacy).
+- Le résultat ne contient pas de `doc_id` stable explicitement nommé, titre, matière, niveau, langue, type de document, source, statut de droits, page ou section.
+- `formule()` affiche « score » et « chunk » avec `r.doc`, puis affirme que l'extrait vient de la base et n'est jamais inventé (lignes 1067–1073). L'identifiant montré n'est pas transformé en fiche documentaire lisible et vérifiable.
+- Le seuil lexical `SEUIL=2` est un seuil de recouvrement de termes, pas une validation de pertinence documentaire ni une preuve que le passage soutient la réponse.
+
+#### 2. Le chat principal possède un chemin distant sans preuve documentaire
+- Dans `app.js`, `sendChat()` tente d'abord `RAG.cherche(v)` et affiche `RAG.formule(rr)` si un résultat existe (lignes 1264–1270).
+- Si cette recherche ne donne rien, le chat appelle directement `/ask` avec un contexte générique affirmant que l'aide concerne l'allemand et des explications arabe/allemand (lignes 1272–1281).
+- La réponse `data.rep` est ensuite affichée directement, sans bloc de source, référence de document ou localisation (lignes 1282–1287).
+- Ce chemin ne passe pas par `BIBLIO.context()` dans le code observé. Il peut donc produire une réponse du modèle sans preuve documentaire visible.
+- Le contexte générique est en outre susceptible de mal orienter une question portant sur une autre matière.
+
+#### 3. Le Worker génère à partir du texte transmis, sans faire lui-même de retrieval
+- `worker/ia-ask.js` lit `q` et `ctx`, limite leur taille, puis construit les messages du modèle (lignes 53–64).
+- Aucun accès au registre `corpus.json`, aux shards, à BIBLIO, à Supabase ou à un moteur de recherche documentaire n'est présent dans ce chemin.
+- La consigne système demande de s'appuyer sur les extraits étiquetés et de citer la source « quand c'est utile », mais le Worker ne reçoit pas un objet de preuve structuré et n'impose pas de citations obligatoires.
+- La réponse JSON contient essentiellement `ok` et `rep` (ligne 85), sans liste de sources ni statut de grounding.
+- Le Worker ne doit donc pas être décrit comme exécutant un RAG complet par lui-même.
+
+#### 4. Le chemin vocal/local ne garantit pas la restitution de la preuve
+- `ia.js` appelle `window.reponsePedagogique()`, transforme le HTML en texte parlable, puis utilise éventuellement BIBLIO pour constituer un contexte cloud.
+- Le contexte cloud est une chaîne textuelle tronquée à 3000 caractères ; les marqueurs de provenance structurés ne sont pas conservés comme objets de citation dans la réponse finale.
+- La réponse locale peut être retournée directement sans métadonnées séparées de provenance. La voix peut donc prononcer une explication sans que l'élève reçoive une référence exploitable.
+
+#### 5. BIBLIO connaît certaines pages, mais la provenance est hétérogène
+- Les entrées du livre sont construites avec un identifiant de page `pN` et le titre, mais sans propager uniformément les métadonnées complètes du registre documentaire.
+- Les devoirs sont construits avec un identifiant et un titre ; les entrées de grammaire avec un identifiant interne ; les entrées de vocabulaire avec un identifiant de catalogue.
+- Les entrées de traduction éditorialisées peuvent porter `page` et `livre`; les traductions privées et les gloses peuvent n'avoir aucune page.
+- `traduire()` distingue les types `curated`, `page`, `prive`, `gloss` et `none`, ce qui est utile, mais l'interface n'affiche une page que si le champ est présent. Une glose lexicale ne doit pas être présentée comme une citation littérale du manuel.
+- Le registre `corpus.json` possède des métadonnées documentaires, mais elles ne sont pas propagées de bout en bout à chaque chunk et à chaque réponse.
+
+### Conclusion de l'audit
+La plateforme dispose de quelques références locales utiles, notamment pour certaines pages du manuel et traductions éditorialisées, mais elle ne possède pas encore une chaîne de provenance cohérente de bout en bout. L'affirmation globale selon laquelle toutes les réponses du tuteur viennent toujours du corpus est fausse pour le chat principal : le chemin de repli appelle le Worker avec un contexte générique et affiche sa réponse sans source.
+
+Il faut distinguer :
+1. **Extrait documentaire direct** : passage récupéré, affiché verbatim avec sa référence.
+2. **Synthèse pédagogique fondée** : explication reformulée à partir d'un ou plusieurs passages identifiés, chaque affirmation devant rester soutenue par ces passages.
+3. **Contenu pédagogique produit par l'équipe** : exercice, explication ou corrigé créé par la plateforme/enseignant, identifié comme tel et non comme document officiel.
+4. **Génération IA sans source suffisante** : réponse explicitement signalée comme générale/non vérifiée dans le corpus, ou abstention si la question exige une réponse du programme officiel.
+
+### Contrat de provenance cible (recommandé, non implémenté)
+Chaque passage récupéré devrait transporter au minimum :
+- `doc_id`, `chunk_id`, `chunk_index`, `schema_version`.
+- `title`, `document_type`, `subject`, `level`, `track`, `language` lorsque connus.
+- `source`, `rights_status`, `license`, `source_version`, `content_hash`.
+- `page_start`, `page_end`, `section`, `unit`, `lesson` selon les informations réellement présentes.
+- `origin_kind` contrôlé : `official_source`, `teacher_authored`, `platform_authored`, `ai_generated`, `external_reference`.
+- Les champs inconnus restent nuls ou marqués « non renseigné / non vérifié » ; ne jamais fabriquer un numéro de page, une licence ou un statut officiel.
+
+La réponse du tuteur devrait retourner un objet séparant `answer`, `answer_mode` (`grounded`, `partial`, `no_source`), `claims` ou segments de réponse, `citations[]` et `limitations`. Les citations doivent être attachées aux passages réellement fournis au modèle et rendues dans le chat écrit comme dans la transcription vocale. Une citation simplement produite par le modèle ne constitue pas une preuve.
+
+### Politique d'abstention et de conflit
+- Si aucun passage n'est suffisamment pertinent, répondre que la bibliothèque ne contient pas de preuve suffisante pour confirmer la réponse officielle ; demander la matière/niveau ou proposer une explication générale clairement étiquetée.
+- Si un seul passage soutient une partie de la réponse, répondre en mode `partial` et isoler explicitement les éléments non couverts.
+- Si les documents se contredisent, afficher les deux références et leur date/version ; ne pas fusionner silencieusement les informations.
+- Si la page ou la localisation manque, citer le document sans inventer de page et signaler cette limite.
+- Si le contenu est une création pédagogique ou une génération IA, ne jamais le présenter comme un corrigé officiel ou une citation du manuel.
+- Les filtres matière/niveau/filière doivent intervenir avant la sélection top-k, conformément au contrat du lot 556.
+
+### Tests d'acceptation à préparer
+1. Question répondable par un passage précis : réponse et page/section exactes, vérifiables dans le document.
+2. Question hors corpus : abstention explicite, sans référence inventée.
+3. Question dans la mauvaise matière ou le mauvais niveau : aucun passage hors contexte ne doit être utilisé.
+4. Document sans numéro de page : référence au document seulement, sans page fabriquée.
+5. Deux documents contradictoires : conflit signalé, versions/dates visibles.
+6. Exercice produit par la plateforme : origine « contenu pédagogique de la plateforme », pas « officiel ».
+7. Question en darija/Arabizi : même exigence de provenance que pour le français et l'allemand.
+8. Réponse vocale : les sources restent visibles dans le chat/transcript et sont prononcées ou résumées sans perdre les références.
+9. Test contrefactuel : modifier une donnée dans le passage fourni doit modifier la réponse correspondante ou déclencher une réserve ; ce test aide à vérifier que le modèle utilise réellement le contexte.
+10. Vérification manuelle claim-par-claim : chaque citation soutient la proposition à laquelle elle est attachée.
+
+### Priorités
+- **P0** : supprimer la fausse garantie globale « toujours issu du corpus » tant que le chemin Worker sans source existe ; distinguer clairement les circuits.
+- **P0** : unifier chat écrit, RAG dédié et voix autour d'un contrat de réponse commun transportant le statut de preuve et les citations.
+- **P0** : transmettre au Worker uniquement un contexte documentaire structuré et traçable lorsque le mode demandé est « réponse officielle fondée sur la bibliothèque ».
+- **P1** : propager la provenance du registre documentaire jusqu'aux chunks, résultats BIBLIO, prompts, réponses et interface.
+- **P1** : afficher source, titre, type, page/section, année/version et statut de droits dans une fiche de référence consultable.
+- **P1** : séparer dans l'interface source officielle, contenu créé par l'équipe et génération IA.
+- **P2** : évaluer la fidélité des citations, la couverture des preuves et l'abstention sur un jeu multilingue réel avant activation.
+
+### État de réalisation
+- Audit statique terminé ; deux voies sans citation documentaire complète sont confirmées : repli du chat principal vers Worker et affichage RAG réduit à score/identifiant de chunk.
+- Contrat cible, politique d'abstention et matrice de tests rédigés comme recommandations seulement.
+- Aucun code applicatif modifié, aucun test d'exécution, aucune opération Supabase, aucun workflow et aucun déploiement.
+- Branche `design/prototypes-67-74-alignment` conservée ; PR #17 reste ouverte et non fusionnée ; `main` inchangée.
