@@ -3724,3 +3724,65 @@ La plateforme possède une architecture RBAC et des contrôles de périmètre pl
 - Trois priorités P0 identifiées : séparation finance/pédagogie dans admin_student(), liaison parent-enfant vérifiée, affectation enseignant-classe-élève pour notes.
 - Aucun code applicatif ou SQL modifié ; aucune requête à la base active ; aucun test/migration/déploiement.
 - La PR #17 est fusionnée selon les métadonnées GitHub vérifiées dans le rectificatif précédent ; les mises à jour documentaires de continuité sont postérieures à la fusion et restent sur la branche de travail tant qu'elles ne sont pas reportées séparément.
+
+
+## Lot 563 — audit transversal RLS, GRANTS et fonctions SECURITY DEFINER (16 novembre 2026)
+
+### Objectif et périmètre
+Audit statique transversal des SQL du dépôt, au-delà d'une lecture isolée des fichiers : cumul des policies permissives, droits SQL, fonctions SECURITY DEFINER, contrôles d'identité, nouvelles tables et migrations de messagerie/communauté. Sources relues sur `design/prototypes-67-74-alignment` : `schema.sql`, `fix_rls.sql`, `fix_scope_guard.sql`, `grants.sql`, `harden.sql`, `p0_locks.sql`, `billing.sql`, `payments.sql`, `plans.sql`, `adm_schema.sql` à `adm5_schema.sql`, `msg_schema.sql` et les quatre migrations datées de novembre 2026. Audit de dépôt uniquement : aucune connexion ni lecture des catalogues du projet Supabase actif.
+
+### Constats prioritaires
+
+#### P0/P1 — fonctions SECURITY DEFINER sans politique d'exécution explicite dans le dépôt
+PostgreSQL accorde normalement EXECUTE à PUBLIC à la création d'une fonction, sauf privilèges par défaut différents ou révocation ultérieure. Plusieurs fonctions sensibles sont définies sans paire explicite REVOKE PUBLIC/anon puis GRANT au rôle requis dans les fichiers examinés :
+- `public.notify(cible, cle, payload)` dans `adm5_schema.sql` insère une notification pour l'UUID fourni et ne vérifie pas l'identité ni une permission dans son corps.
+- `public.audit_log(...)` dans `adm2_schema.sql` ajoute une entrée d'audit en utilisant `auth.uid()`, sans vérifier que l'appelant est autorisé à produire cet événement.
+- Les helpers `admin_role_of(uid)`, `admin_wilayas(uid)`, `admin_can(uid, perm)` et `admin_sees_wilaya(uid, w)` acceptent un UUID arbitraire ; ils servent aux policies mais ne montrent pas, dans leur corps, une restriction à `auth.uid()`.
+- Plusieurs helpers de messagerie (`msg_is_member`, `msg_can_dm`, `msg_not_blocked`, etc.) acceptent des identifiants explicites et sont appelés par les policies ; leur exposition RPC doit être vérifiée et réduite au strict nécessaire.
+
+Ce constat est un risque de configuration/dépôt, pas la preuve que ces fonctions sont actuellement exécutables par anon : des privilèges par défaut globaux, des REVOKE exécutés ailleurs ou l'état réel de la base peuvent modifier le résultat. À confirmer impérativement par `pg_proc` / `has_function_privilege` dans le projet actif avant toute correction. Les fonctions purement trigger ne sont pas assimilées à des RPC publiques, mais leurs droits doivent aussi être durcis de façon cohérente.
+
+#### P1 — lecture des profils élargie par cumul de policies
+`msg_schema.sql` ajoute sur `profiles` la policy SELECT `profils visibles entre membres`. Elle autorise la lecture de la ligne entière du profil dès que deux comptes partagent une conversation. Une autre policy rend les profils en attente visibles aux modérateurs. Ces policies permissives se cumulent avec les autres policies SELECT de `profiles` : elles ne limitent pas les colonnes au pseudo/niveau nécessaires à la messagerie. Le commentaire du SQL indique pourtant que la messagerie ne devrait exposer qu'une projection minimale. Préférer une RPC de projection ou une vue dédiée, et tester le cumul exact avec les policies personnelles, administratives et de modération.
+
+#### P1 — séparation finance/pédagogie toujours insuffisante
+`admin_student(cible)` dans `adm4_schema.sql` contrôle `students.read` et la wilaya, puis retourne aussi les paiements, reçus et acceptations d'accords. Or `students.read` est attribuée au responsable pédagogique et au responsable régional. Cela contredit la matrice de moindre privilège du Lot 562 : la consultation pédagogique ne doit pas ouvrir les données financières/contractuelles. Scinder les RPC et permissions, avec champs minimaux distincts.
+
+#### P1 — paramètres de plateforme lisibles par tous les comptes authentifiés
+La policy `settings lecture connectes` sur `platform_settings` utilise `USING (true)`. Elle expose toutes les lignes et leur JSON `valeur` à chaque utilisateur authentifié. Si des clés internes, paramètres sensibles ou secrets y sont ajoutés, ils deviennent lisibles par tous. Séparer les paramètres publics des paramètres internes et filtrer les clés par rôle ; ne jamais stocker de secrets applicatifs dans cette table.
+
+#### P1 — upload des métadonnées de pièces jointes insuffisamment lié à l'appartenance
+Dans `msg_schema.sql`, la policy INSERT `msg att upload` vérifie l'identité de `uploader`, le MIME et la taille, mais ne vérifie pas que `message_id` appartient à une conversation dont l'utilisateur est membre. La policy de lecture, elle, vérifie l'appartenance. Il faut lier l'INSERT au message et à la conversation autorisés, et vérifier que `storage_path` correspond au fichier réellement déposé dans le bucket privé. Un test doit tenter de rattacher une pièce jointe à un message d'un autre compte.
+
+#### P1 — notes des enseignants : défaut déjà confirmé au Lot 561
+Les policies de notes ne disposent toujours pas de relation enseignant-classe-élève dans le schéma examiné. La fonction `is_prof()` reconnaît le rôle professeur/admin, pas une affectation pédagogique. Le SELECT/INSERT de notes reste donc trop large si ces policies sont actives. Le correctif exige une table d'affectations vérifiable et des règles symétriques par opération.
+
+### Autres constats importants
+- `schema.sql` et `grants.sql` accordent SELECT à `anon` sur profils, séances, mémoire, notes, documents et abonnements. Les policies RLS observées empêchent en principe l'accès anonyme aux lignes privées, mais ces GRANTS sont inutiles pour ces ressources et augmentent la surface d'exposition en cas de policy permissive ajoutée ultérieurement. Retirer les GRANTS anon non nécessaires ; conserver uniquement les ressources publiques explicitement prévues.
+- `admin_roles` et `admin_permissions` sont lisibles par tous les comptes authentifiés. Cela peut être acceptable pour un catalogue de rôles/permissions non secret, mais doit être confirmé comme choix explicite.
+- `sponsors` autorise un INSERT public avec `WITH CHECK (true)`. À encadrer par validation des champs, limitation de débit et anti-spam côté serveur.
+- `handle_new_user()` est SECURITY DEFINER sans `SET search_path` explicite, contrairement à la majorité des fonctions plus récentes. Les références de tables sont qualifiées, mais normaliser le search_path reste recommandé.
+- Plusieurs scripts historiques créent des policies sans les supprimer d'abord, tandis que d'autres font des DROP/CREATE. L'ordre réel d'exécution n'est pas encodé dans un journal de migrations unique pour tous les scripts. Il est impossible de déduire l'état effectif simplement en concaténant les fichiers.
+- Les quatre migrations récentes de messagerie/communauté ajoutent des contrôles intéressants : tables RLS activées, révocation des accès directs pour le fil communautaire, RPC authentifiées, jetons de découverte à durée limitée, invitations avec consentement. Leur sécurité dépend néanmoins des privilèges effectifs des fonctions et de l'ordre d'application.
+- Aucun répertoire `supabase/tests/` n'a été trouvé dans l'arborescence consultée. Les commentaires des migrations décrivent des tests isolés, mais aucun jeu de tests pgTAP versionné n'a été confirmé dans ce dépôt.
+
+### Inventaire RLS constaté dans les scripts examinés
+Tables explicitement couvertes par `ENABLE ROW LEVEL SECURITY` dans les fichiers consultés : `profiles`, `seances_done`, `memoire_cards`, `notes`, `documents_meta`, `subscriptions`, `sponsors`, `ads`, `payments`, `plans`, `child_links`, `admin_roles`, `admin_permissions`, `wilaya_assignments`, `receipts`, `audit_logs`, `agreements`, `agreement_acceptances`, `platform_settings`, `accounting_entries`, `support_tickets`, `notifications`, `accounting_closures`, les sept tables `msg_*` du schéma de messagerie, `msg_invites`, `msg_discovery_limits`, `msg_discovery_targets`, et les quatre tables `multaqa_*`. Cet inventaire est celui des déclarations présentes dans les scripts, pas une attestation de l'état actif ; les tables Storage relèvent de policies sur `storage.objects`.
+
+### Ordre de remédiation recommandé — sans exécution
+1. Exporter depuis le projet actif les tables/policies de `pg_policies`, `pg_class.relrowsecurity/relforcerowsecurity`, les GRANTS effectifs et les privilèges EXECUTE de toutes les fonctions SECURITY DEFINER.
+2. Révoquer EXECUTE de PUBLIC/anon sur les fonctions sensibles, puis accorder uniquement aux rôles nécessaires. Pour les helpers appelés par les policies, choisir une stratégie qui conserve leur fonctionnement RLS sans les exposer comme API arbitraires.
+3. Scinder `admin_student` en projections/permissions pédagogiques, financières et contractuelles ; protéger `platform_settings` par classification des clés.
+4. Remplacer la lecture directe étendue de `profiles` par une projection minimale pour la messagerie ; sécuriser l'INSERT des pièces jointes par vérification du message et de l'appartenance.
+5. Corriger les notes via affectations pédagogiques ; retirer les GRANTS anon inutiles ; encadrer l'INSERT public des sponsors.
+6. Ajouter des tests pgTAP de refus/autorisation et des tests d'intégration Data API avant toute migration : anon, authentifié sans rôle, élève A/B, parent mauvais enfant, professeur hors classe, agents hors wilaya, modérateur, révocation de rôle, appels RPC directs et appels SECURITY DEFINER avec UUID tiers.
+7. Déployer par migrations petites et réversibles après validation sur une base de test et comparaison des politiques effectives avant/après.
+
+### Limites et état d'exécution
+- Audit statique de la branche uniquement ; l'état réel des policies, GRANTS, privilèges par défaut et migrations appliquées n'a pas été interrogé dans Supabase.
+- Aucun SQL, code applicatif, schéma, migration, test ou déploiement n'a été modifié/exécuté.
+- Les résultats sont des risques à vérifier contre les catalogues actifs, pas une déclaration de compromission.
+- Ce lot est ajouté au dossier de continuité sur la branche de travail postérieure à la fusion de PR #17 ; il n'est pas automatiquement reporté sur `main`.
+
+### Suite logique
+Lot 564 : préparer la requête d'inventaire read-only des catalogues Supabase et la batterie pgTAP correspondant aux constats P1, sans appliquer de correction en production.
