@@ -4259,3 +4259,30 @@ Nouveau module `tools/metadata_contract.py` :
 
 ### Suite logique — Lot 572
 Préparer un petit corpus de fixtures avec documents valides et invalides, puis obtenir une exécution CI isolée des tests de contrat. Ensuite, lancer l'audit en lecture seule sur une copie du registre et produire une liste de régularisation documentaire. Ne réactiver les anciens documents RAG qu'après vérification réelle de leurs droits et ajout des références justificatives.
+
+
+## Lot 572 — tests isolés du garde-fou des droits dans le RAG (16 novembre 2026)
+
+### Contrôle du code existant
+- Relecture de `rag.js` : le contrôle des droits est appliqué avant les deux voies de recherche, index shardé et index chunks non shardé.
+- Le registre de référence est `corpus.json.documents`. Un chunk n'est admissible que si son identifiant de document correspond à une fiche portant `droits_statut: "verifies"` et une référence justificative non vide (au moins trois caractères).
+- Le vocabulaire BIBLIO (`corpus_index.json`) n'est pas utilisé comme registre de droits ni comme index de chunks RAG.
+- Le contrôle reste un filtre technique : il ne prouve pas la validité juridique de la référence documentaire.
+
+### Test ajouté
+- Nouveau fichier `tests/rag-rights-guard.test.mjs`, sans dépendance externe, utilisant le module Node intégré `vm`.
+- Quatre scénarios sont préparés :
+  1. En recherche shardée, un document vérifié doit être retourné même si un document non vérifié correspond aussi à la requête.
+  2. En recherche shardée, si toutes les correspondances sont non vérifiées, le RAG doit s'abstenir.
+  3. Le repli non shardé doit appliquer exactement le même filtre, y compris lorsqu'une fiche porte le statut vérifié mais sans référence justificative.
+  4. En l'absence de fiche documentaire admise, aucun chunk isolé de l'index ne doit être retourné.
+- Commande locale prévue : `node tests/rag-rights-guard.test.mjs`.
+
+### État et limites
+- Commit du test : `8f63eff721ebbd4bdb324d1cdcc7e2aec897a314`.
+- Le test a été ajouté à la branche de prévisualisation, mais **n'a pas été exécuté dans un runtime Node du dépôt** pendant ce lot. Les quatre scénarios sont donc des cas de test définis, pas quatre réussites annoncées.
+- Aucun corpus réel, PDF, manifeste ou shard n'a été modifié ou reconstruit. Aucun workflow d'indexation/sharding n'a été déclenché.
+- Aucun changement sur `main), aucune fusion, aucun déploiement Cloudflare, aucune modification Supabase/Auth/RLS/SQL ou données de production.
+
+### Suite logique — Lot 573
+Obtenir une exécution effective des tests Python et Node sur la branche de prévisualisation, corriger les éventuels échecs, puis exécuter l'audit documentaire en lecture seule sur une copie du registre. Après cette validation, attaquer l'étape d'architecture du professeur IA : pipeline commun chat/voix, contexte matière/niveau, récupération documentaire contrôlée et réponse générative avec provenance explicite.
