@@ -31,7 +31,7 @@ async function boot(files) {
 
 const corpus = {
   documents: [
-    { id: 'doc-valid', droits_statut: 'verifies', droits_reference: 'autorisation-123' },
+    { id: 'doc-valid', titre: 'Leçon sur la liberté', matiere: 'allemand', niveau: '2AS', type: 'cours', langue: 'de+ar', droits_statut: 'verifies', droits_reference: 'autorisation-123' },
     { id: 'doc-unverified', droits_statut: 'a_verifier', droits_reference: 'autorisation-999' },
     { id: 'doc-no-reference', droits_statut: 'verifies', droits_reference: '  ' }
   ]
@@ -55,6 +55,9 @@ const query = 'freiheit schule';
   assert.equal(result.chunk, 1, 'sharded search must preserve the chunk identifier');
   const source = rag.provenance(result);
   assert.equal(source.documentId, 'doc-valid');
+  assert.equal(source.title, 'Leçon sur la liberté');
+  assert.equal(source.subject, 'allemand');
+  assert.equal(source.level, '2AS');
   assert.equal(source.trust, 'client_unverified');
   assert.equal(source.excerpt, 'Verified lesson about Freiheit und Schule.');
 }
