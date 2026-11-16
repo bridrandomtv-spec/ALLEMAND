@@ -4166,3 +4166,18 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun changement Supabase/Auth/RLS/schéma/données/paiements/secrets, aucun déploiement Cloudflare, aucune fusion dans `main`.
 - Rapport : `docs/LOTS/LOT_648_PORTÉE_EXACTE_RAG_ET_ABSTENTION.md`.
 - Suite Lot 649 : vérifier les runs Actions, corriger les éventuels échecs, puis concevoir le schéma de portée structurée unité/leçon/exercice avant toute réindexation réelle.
+
+
+## Lot 649 — preuve RAG HMAC vérifiée côté Worker (2026-11-16)
+
+- Constat : le Worker autonome `worker/ia-ask.js` n'a pas le binding `ASSETS` du Worker de site défini dans `wrangler.toml`. Le manifeste publié `assets/bdd/shards_manifest.json` annonce zéro shard ; `assets/bdd/corpus_rag_index.json` est absent de la branche. Le Worker CERVEAU ne peut donc pas vérifier seul un chunk réel avec l'architecture et les artefacts actuels.
+- Le Worker extrait maintenant la portée (page/unité/exercice) depuis la question originale, y compris les chiffres arabes/persans, et ignore les statuts de provenance/portée fournis par le navigateur.
+- Ajout du vérificateur de jeton HMAC-SHA-256 : émetteur/audience stricts, portée exacte, document/chunk, empreinte SHA-256 source, empreinte du contexte complet, durée maximale de cinq minutes, clé serveur de 32 caractères minimum. Toute erreur échoue fermée.
+- Une demande précise sans preuve signée est refusée avant appel au modèle. Le Worker ne retourne `rag_evidence_verified=true` qu'après validation cryptographique.
+- `ia.js` n'affiche désormais une citation que si le Worker atteste explicitement `rag_evidence_verified=true`.
+- Tests ajoutés : signature valide, contexte altéré, jeton expiré, portée divergente, statuts client falsifiés, chiffres arabes et absence d'appel au modèle lors d'un refus ; test d'orchestration de la citation sans attestation serveur.
+- Limites : aucun émetteur de jeton n'est encore construit ; `RAG_EVIDENCE_HMAC_KEY` n'est pas configurée et aucun secret n'a été ajouté. Le parcours RAG actuel ne peut donc pas produire de preuve : les demandes précises s'abstiennent volontairement jusqu'au Lot 650.
+- Tests synthétiques seulement, clé et modèle simulés ; aucun PASS annoncé avant résultat Actions consultable. Aucun corpus réel ingéré/OCRisé/indexé.
+- Aucun déploiement Cloudflare, aucune modification Supabase/Auth/RLS/schéma/données/paiements/secrets, aucune fusion dans `main`.
+- Rapport : `docs/LOTS/LOT_649_PREUVE_RAG_HMAC_COTE_SERVEUR.md`.
+- Suite Lot 650 : construire l'émetteur de preuve dans le Worker du site via `ASSETS`, sans signer tant que catalogue/manifeste/shards ne sont pas cohérents ; prévoir l'activation de la clé partagée seulement après autorisation et vérification.
