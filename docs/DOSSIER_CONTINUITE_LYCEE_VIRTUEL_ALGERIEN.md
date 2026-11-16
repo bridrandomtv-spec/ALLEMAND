@@ -3567,3 +3567,60 @@ La plateforme a des fondations cloud réelles (Auth Supabase, RLS sur plusieurs 
 - HEAD enregistré dans les métadonnées de la PR au moment de cette vérification : `80a32e49bf4a1250c6e8909b90ad930bece06c46`; base `main) SHA indiqué : `51acfe8c97b6e152208d592dbd2c5bbde5c5c38e`.
 - Cette fusion est antérieure à l'audit du lot 560 et n'a pas été exécutée par l'assistant dans cette opération. Les addenda des lots 559 et 560 sont des commits documentaires postérieurs sur la branche `design/prototypes-67-74-alignment` ; ils ne sont pas réputés intégrés à `main`.
 - Les anciennes mentions « PR #17 ouverte et non fusionnée » dans l'historique décrivent l'état connu auparavant et sont désormais obsolètes. Toute décision future doit partir de l'état GitHub réel, comparer le HEAD de la branche à `main` et vérifier si les commits documentaires post-fusion doivent être reportés séparément. Ne pas tenter de réouvrir ou fusionner quoi que ce soit sans instruction explicite.
+
+
+## Lot 561 — périmètre d'accès des enseignants aux notes (16 novembre 2026)
+
+### Périmètre
+- Audit statique des policies `public.notes` dans `supabase/schema.sql` et `supabase/fix_rls.sql`, de la table `notes`, de `supabase/supabase.js` (`listNotes`, `setRole`), de `admin.js` et des fonctions de périmètre `admin_can` / `admin_sees_wilaya`.
+- Aucun accès à la base active, aucune modification SQL, aucun test, aucun déploiement.
+
+### Constat confirmé dans les scripts du dépôt
+- La table `public.notes` contient `eleve_id`, `prof_id`, `matiere`, `trimestre`, `valeur`, `appreciation`, `at`. Elle ne contient pas de relation classe/section, d'affectation professeur-élève, ni de périmètre wilaya.
+- Dans `schema.sql`, la policy de lecture `prof lit sa classe` autorise la lecture si le profil courant est `prof` ou `admin`, sans condition sur l'élève ou la classe.
+- `fix_rls.sql` remplace cette policy par `auth.uid() = eleve_id or public.is_prof()`. La fonction `is_prof()` retourne vrai pour les rôles `prof` et `admin`. Cette policy permet donc à tout professeur authentifié de lire toutes les lignes de `notes`, et pas uniquement celles de sa classe.
+- La policy d'insertion de `fix_rls.sql` impose `auth.uid() = prof_id` et `public.is_prof()`, mais ne vérifie pas que le professeur est affecté à l'élève `eleve_id). Un professeur peut donc, selon ces règles, insérer une note pour n'importe quel compte élève.
+- Les policies RLS permissives s'additionnent : une policy restrictive d'un autre nom ne réduit pas automatiquement l'accès accordé par cette policy permissive. Le contrat effectif doit être audité sur l'ensemble des policies actives.
+- `supabase/supabase.js` expose `listNotes()` qui sélectionne toutes les notes sans filtre client et `setRole()` qui tente de modifier un rôle. La sécurité doit venir de RLS et des triggers SQL. Le filtre de rôle dans `admin.js` est une protection d'interface, pas une autorisation serveur.
+- `admin.js` ne lance sa vue générale qu'après vérification du rôle admin, mais cela ne corrige pas une policy RLS trop large accessible via l'API Supabase par un professeur.
+- Les tables et fonctions d'administration (`admin_can`, `admin_sees_wilaya`, `admin_student`) appliquent des périmètres wilaya pour certaines vues administratives ; aucune policy correspondante de périmètre classe/professeur n'a été identifiée sur `notes` dans les scripts examinés.
+
+### Évaluation du risque
+- **Confidentialité** : un enseignant pourrait consulter des notes d'élèves qui ne lui sont pas affectés si les policies de `fix_rls.sql` sont actives sur le projet.
+- **Intégrité** : un enseignant pourrait créer des notes pour des élèves hors de son périmètre si seule la policy d'insertion examinée est active.
+- **Exactitude des tableaux** : l'interface d'administration calcule les moyennes à partir de `listNotes()`; elle dépend entièrement des données que RLS laisse remonter.
+- **Limite de preuve** : ce sont des conclusions sur les scripts versionnés. Il reste à vérifier les policies réellement actives dans Supabase avant d'affirmer que le risque existe en production.
+
+### Contrat cible recommandé (non implémenté)
+- Créer une relation explicite et administrée professeur ↔ classe/section ↔ élèves, avec identifiants stables.
+- Ajouter un périmètre matière/année scolaire si plusieurs matières et cohortes sont gérées.
+- Restreindre SELECT sur `notes` à l'élève concerné, au professeur affecté à sa classe/section et aux rôles administratifs disposant d'une permission explicite et d'un périmètre valide.
+- Restreindre INSERT/UPDATE/DELETE : `prof_id = auth.uid()`, rôle valide, affectation active au groupe de l'élève, matière autorisée, période scolaire ouverte ; empêcher qu'un professeur change `eleve_id` ou `prof_id` après création.
+- Préférer des fonctions serveur ou policies fondées sur des relations d'affectation vérifiables, avec `WITH CHECK` pour les écritures.
+- Garder les accès des élèves limités à leurs propres notes ; prévoir une politique séparée et explicite pour les parents, basée sur une liaison vérifiée et les droits de consultation.
+- Ajouter journalisation des consultations/écritures sensibles, tests d'accès négatifs et contrôles de non-régression après chaque changement de policy.
+
+### Matrice minimale de tests RLS à réaliser en environnement de test
+1. Élève A lit ses notes : autorisé ; élève A lit notes de B : refusé.
+2. Professeur affecté à classe A lit les notes des élèves de A : autorisé.
+3. Même professeur lit les notes de classe B : refusé.
+4. Professeur affecté à A insère une note pour un élève de A : autorisé.
+5. Même professeur insère ou modifie une note pour un élève de B : refusé.
+6. Parent lié à A lit uniquement le rapport autorisé de A ; parent non lié : refusé.
+7. Agent régional lit uniquement les élèves et notes de son périmètre si cette permission lui est attribuée.
+8. Compte sans rôle autorisé, compte anonyme et compte suspendu : refusés.
+9. Modification directe de `eleve_id`, `prof_id`, rôle, matière ou périmètre par client : refusée hors procédure autorisée.
+10. Vérifier le comportement des policies lorsqu'elles sont combinées (OR permissif), pas seulement chaque policy isolément.
+
+### Priorités
+- **P0** : ne pas considérer les notes comme cloisonnées par classe tant que la policy globale `is_prof()` reste active.
+- **P0** : confirmer les policies réellement actives et les triggers dans le projet Supabase ; ne pas exécuter de SQL correctif sans autorisation et plan de test.
+- **P1** : définir le modèle d'affectation professeur-classe-élève avant d'écrire la policy finale.
+- **P1** : appliquer des restrictions symétriques en lecture et écriture et documenter les rôles parents/agents.
+- **P2** : ajouter tests RLS automatisés couvrant les cas positifs et négatifs et une vérification périodique des policies.
+
+### État de réalisation
+- Audit statique du périmètre des notes terminé.
+- Risque de lecture et d'écriture professeur hors classe identifié dans les scripts SQL versionnés.
+- État de production Supabase non vérifié ; aucune modification SQL ou applicative effectuée.
+- La PR #17 est fusionnée selon l'état GitHub vérifié le 16 novembre 2026 ; les commits documentaires de continuité de ce lot sont postérieurs à cette fusion et restent sur la branche de travail tant qu'ils ne sont pas reportés séparément.
