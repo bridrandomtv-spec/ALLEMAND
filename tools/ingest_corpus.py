@@ -14,7 +14,7 @@ import shutil
 import sys
 
 try:
-    from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+    from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees, projection_preuve_droits
     from tools.corpus_contracts import (
         sha256_fichier, decouper_pages, fusionner_documents, construire_chunk,
         fusionner_index_rag, ecrire_json_transactionnel,
@@ -101,6 +101,7 @@ def construire(dossier, documents_existants=None):
             "format": ext, "url": "assets/corpus/" + did + "." + ext,
             "source_sha256": digest, "source": meta.get("source", "document local"),
             "licence": str(meta.get("licence", "")).strip().lower(),
+            "droits": projection_preuve_droits(meta),
             "tags": meta.get("tags", []), "extrait": texte[:300].replace("\n", " ")
         }
         entrants.append(doc)
