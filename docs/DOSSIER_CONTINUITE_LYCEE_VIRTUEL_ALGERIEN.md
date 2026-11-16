@@ -3971,3 +3971,65 @@ Règles de sûreté :
 
 ### Suite logique
 Lot 566 : préparer la modification minimale et testable : faire écrire l'ingestion dans `corpus_chunks_index.json`, faire lire ce même fichier par le repli RAG, maintenir BIBLIO sur `corpus_index.json`, puis ajouter les contrôles de métadonnées et tests de non-régression. Avant toute activation sur les documents réels, exécuter les tests sur un corpus temporaire de démonstration et comparer l'index vocabulaire avant/après.
+
+
+## Lot 566 — contrôle d'impact complet avant séparation des index (16 novembre 2026)
+
+### Objectif
+Passer de la conception du Lot 565 à une modification minimale réellement sûre, en vérifiant tous les fichiers touchés par l'ingestion, et pas seulement le nom `corpus_index.json`.
+
+### 1. Contrôles complémentaires effectués
+Fichiers relus sur la branche `design/prototypes-67-74-alignment` :
+- `rag.js` ;
+- `biblio.js` ;
+- `tools/ingest_corpus.py` ;
+- `assets/bdd/corpus_index.json` ;
+- `assets/bdd/corpus.json` ;
+- `assets/bdd/shards_manifest.json` ;
+- `assets/bdd/subjects.json` ;
+- `ci/check-masar.mjs`.
+
+### 2. Deuxième conflit destructif découvert : corpus.json
+Le Lot 565 avait identifié le conflit de `corpus_index.json`. Le contrôle complet montre que le script d'ingestion réécrit aussi `assets/bdd/corpus.json` avec seulement `_meta` et `documents`.
+
+Or le fichier actuellement versionné contient `_meta`, `documents` et `items` (450 éléments dans le tableau `items`). La fonction RAG `chargeCorp()` lit ce fichier pour ses fonctions de recherche documentaire et de préparation bac. Une exécution du script pourrait donc supprimer les éléments `items` existants, en plus d'écraser l'index de vocabulaire déjà identifié.
+
+**Conséquence : le script actuel est interdit d'exécution sur le dépôt ou sur les documents réels, tant que les deux collisions ne sont pas résolues.** Changer uniquement la destination de `corpus_index.json` ne suffit pas.
+
+### 3. Contrat de fichiers cible révisé
+Séparation à appliquer sans ambiguïté :
+- `assets/bdd/corpus_index.json` : index de vocabulaire DE–AR, préservé à l'identique pour BIBLIO.
+- `assets/bdd/corpus.json` : registre pédagogique existant ; préserver les trois sections et leurs données actuelles, notamment `items`.
+- `assets/bdd/corpus_documents.json` : registre dédié aux documents ingérés, si le registre existant ne peut pas être étendu sans perte.
+- `assets/bdd/corpus_chunks_index.json` : index lexical RAG des chunks, structure versionnée `{version, schema, termes, chunks}`.
+- `assets/bdd/shards_manifest.json` : manifeste des seuls shards RAG construits et validés ; rester vide tant qu'aucun shard réel n'existe.
+
+Le choix entre extension non destructive de `corpus.json` et registre séparé `corpus_documents.json` doit être fait après inventaire de tous les consommateurs du champ `documents`. Ne pas choisir par supposition.
+
+### 4. Contrat de métadonnées et droits
+Chaque document doit porter une provenance explicite. Les valeurs par défaut `allemand`, `2AS`, `2026/2027`, `document local` et `production propre` ne constituent pas une preuve. Les champs de classification et de droits doivent être fournis ou validés ; sinon le document est rejeté/quarantainé, pas classé arbitrairement.
+
+Chaque chunk doit conserver au minimum :
+`doc_id, chunk_id, texte, matiere, niveau, filiere, langue, type, unite, lecon, source, licence, droits_statut, page, section, contenu_hash, schema_version`.
+
+Le découpage actuel en blocs de 1200 mots ne conserve pas les pages. Le futur extracteur doit donc préserver la page/section quand la source le permet, et laisser la valeur inconnue explicitement nulle lorsqu'elle ne peut pas être établie.
+
+### 5. Séquence d'implémentation retenue
+1. Cartographier tous les lecteurs/écrivains de `corpus.json`, `corpus_index.json` et du manifeste, y compris scripts, pages et CI.
+2. Geler les SHA des artefacts existants servant de référence.
+3. Modifier le générateur pour écrire uniquement dans les nouveaux artefacts RAG/registre, sans toucher aux deux fichiers historiques.
+4. Faire lire à RAG le nouvel index de chunks ; garder un repli contrôlé et ne jamais retomber sur l'index de vocabulaire.
+5. Ajouter des tests Python/Node sans dépendance supplémentaire : données d'entrée temporaires, champs obligatoires, liens chunk-document, cohérence de l'index inversé, refus de métadonnées absentes, préservation byte-for-byte des fichiers historiques.
+6. Exécuter les tests sur un dossier temporaire de démonstration, comparer les SHA avant/après, puis examiner le diff.
+7. Ne construire des shards qu'après validation du corpus et du contrat.
+
+### 6. État du lot
+- Le deuxième risque d'écrasement (`corpus.json`) est confirmé par lecture du producteur et du fichier réel.
+- Le nouveau nom `corpus_chunks_index.json` reste retenu pour l'index lexical RAG.
+- Le registre de documents ingérés doit être isolé ou étendu sans perte ; décision finale reportée jusqu'à l'inventaire exhaustif des consommateurs.
+- Aucun script d'ingestion exécuté.
+- Aucun code applicatif, index, corpus, Worker, base Supabase, schéma SQL ou déploiement modifié.
+- Seul le présent dossier de continuité a été enrichi dans ce lot.
+
+### Suite logique
+Lot 567 : inventaire exhaustif des références à `corpus.json` et de ses champs (`documents`, `items`, `_meta`) dans les fichiers applicatifs, outils et workflows. Ensuite seulement, implémenter la séparation complète des artefacts, avec tests de préservation des deux fichiers historiques. Le pilote BGE-M3 reste bloqué jusqu'à obtention d'un corpus documentaire filtrable et traçable.
