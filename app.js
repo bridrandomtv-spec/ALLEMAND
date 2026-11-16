@@ -1274,10 +1274,18 @@ async function sendChat(v){
       const cfg = await fetch('./assets/bdd/config.json', {cache:'no-cache'}).then(r=>r.ok?r.json():null);
       const proxy = cfg && typeof cfg.ia_proxy === 'string' ? cfg.ia_proxy.replace(/\/$/,'') : '';
       if(proxy){
+        /* Attendre le registre asynchrone pour éviter un statut "unknown" transitoire. */
+        if(window.SUBJECT && typeof window.SUBJECT.ready === 'function'){
+          try{ await window.SUBJECT.ready(); }catch(e){}
+        }
+        const teacherContext = window.TEACHER_CONTEXT && window.TEACHER_CONTEXT.build
+          ? window.TEACHER_CONTEXT.build(v)
+          : JSON.stringify({schema:'teacher-context-v1',trust:'client_unverified',
+              question:String(v).slice(0,600),subject:{id:'unknown',status:'unknown'},level:'unknown'});
         const response = await fetch(proxy + '/ask', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({q:String(v).slice(0,600),ctx:(window.TEACHER_CONTEXT && window.TEACHER_CONTEXT.build ? window.TEACHER_CONTEXT.build(v) : JSON.stringify({schema:'teacher-context-v1',trust:'client_unverified',question:String(v).slice(0,600),subject:'unknown',level:'unknown'}))})
+          body:JSON.stringify({q:String(v).slice(0,600),ctx:teacherContext})
         });
         const data = await response.json().catch(()=>null);
         if(response.ok && data && data.ok && typeof data.rep === 'string' && data.rep.trim()){
