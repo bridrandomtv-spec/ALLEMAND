@@ -110,7 +110,11 @@ async function emettrePreuveRag(request, env){
     return jsonRes({ ok:false, error:'rag_manifest_or_catalogue_invalid' }, 503);
   const docs = new Map();
   for(const doc of corpus.documents){
-    if(doc && typeof doc.id === 'string' && doc.id) docs.set(doc.id, doc);
+    if(doc && typeof doc.id === 'string' && doc.id){
+      if(docs.has(doc.id))
+        return jsonRes({ ok:false, error:'rag_catalogue_duplicate_id' }, 503);
+      docs.set(doc.id, doc);
+    }
   }
   const queryTerms = termes(q);
   const chunks = [];
@@ -163,6 +167,12 @@ async function emettrePreuveRag(request, env){
   }
   if(total !== manifest.total_chunks || ids.size !== manifest.total_chunks)
     return jsonRes({ ok:false, error:'rag_generation_incomplete' }, 503);
+  // Le manifeste décrit une séquence globale sans trou : 0..total_chunks-1.
+  // Le simple comptage ne suffit pas (ex. un seul chunk portant global_id=7).
+  for(let expectedId = 0; expectedId < manifest.total_chunks; expectedId++){
+    if(!ids.has(expectedId))
+      return jsonRes({ ok:false, error:'rag_generation_incomplete' }, 503);
+  }
 
   const candidates = [];
   for(const chunk of chunks){
