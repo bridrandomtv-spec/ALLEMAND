@@ -113,7 +113,7 @@ def main(dossier):
     termes = {}
     for cid, chunk in enumerate(tous_chunks):
         chunk["n"] = cid
-        for mot in set(re.findall(r"[A-Za-zÀ-ÿ\\u0600-\\u06FF]{3,}", chunk.get("texte", "").lower())):
+        for mot in set(re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06FF]{3,}", chunk.get("texte", "").lower())):
             termes.setdefault(mot, []).append(cid)
     index = {"version": "1.0.0", "schema": "rag-chunks-v1",
              "termes": termes, "chunks": tous_chunks}
