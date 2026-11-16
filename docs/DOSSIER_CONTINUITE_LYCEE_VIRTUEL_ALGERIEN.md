@@ -4367,3 +4367,43 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 2. Vérifier le contrat exact des réponses RAG et créer une structure de provenance qui ne puisse pas transformer une donnée client en preuve serveur.
 3. Faire converger les réponses du chat et de la dictée vers un seul point de traitement, en gardant la validation humaine avant envoi du texte reconnu.
 4. Ajouter des tests de contexte matière/niveau et de sélection de langue, puis seulement ensuite étudier le mode conversation vocale continue.
+
+
+## Lot 575 — fiabilisation du contexte matière et limites de compétence du Worker (16 novembre 2026)
+
+### Contrôle du registre des matières
+- Vérification du contrat réel de `js/subject.js` : le registre expose `SUBJECT.ready()`, `SUBJECT.get(id)` et `SUBJECT.active()`. `CONTEXT.ctx()` délègue bien la matière active à ce registre.
+- Risque identifié : `teacher-context.js` peut être appelé avant la fin du préchargement asynchrone du registre. Dans ce cas, le nom/statut de la matière pourrait être transmis comme `unknown` alors que le registre est simplement encore en chargement.
+- Correction dans `app.js` : avant de construire l'enveloppe envoyée au Worker, le chat attend maintenant `SUBJECT.ready()` si cette API existe. Le repli reste explicitement non authentifié.
+
+### Correction de la déclaration des capacités IA
+- Le prompt Worker prétendait que l'assistant maîtrisait cinq langues et pouvait répondre comme si l'espagnol et l'italien étaient déjà des capacités pédagogiques établies.
+- Cette affirmation a été retirée. Le prompt distingue désormais la capacité générale de communication et la disponibilité réelle des parcours pédagogiques.
+- Les matières/langues autres que l'allemand implémenté et l'anglais partiel ne doivent pas être présentées comme achevées sans ressources effectivement disponibles.
+- Le statut transmis par le navigateur reste une indication non authentifiée ; le Worker ne le traite pas comme une preuve.
+- Pour les contenus officiels, exercices et programmes, le Worker doit s'appuyer sur des extraits fournis et reconnaître leur absence. Une explication générale reste possible si elle est clairement distinguée du contenu du corpus.
+
+### Tests et CI
+- `tests/worker-context-trust.test.mjs` vérifie maintenant également que le prompt ne revendique plus la maîtrise des cinq langues et qu'il traite les statuts partiels comme non probants.
+- Le workflow `.github/workflows/rag-guard-tests.yml` surveille désormais les modifications Worker et applicatives dans les événements `pull_request`, et exécute le test `teacher-context` ajouté au lot précédent.
+- Aucun résultat d'exécution CI n'est encore confirmé. Les tests sont modifiés, pas déclarés réussis.
+
+### Fichiers modifiés
+- `app.js` — attente du registre matières avant sérialisation du contexte.
+- `worker/ia-ask.js` — prompt de compétence et de provenance plus exact.
+- `tests/worker-context-trust.test.mjs` — assertions de non-surpromesse.
+- `.github/workflows/rag-guard-tests.yml` — déclencheurs PR étendus.
+- Ce dossier — journal du lot.
+
+### Ce qui n'est pas fait
+- Pas d'injection d'extraits RAG dans le Worker : la réponse RAG locale prioritaire retourne actuellement directement une réponse formatée et ne fournit pas au Worker de source authentifiée côté serveur.
+- Pas de conversation audio continue ni d'envoi audio brut.
+- Pas de reconnaissance garantie du darija par Web Speech : la disponibilité et la qualité dépendent du navigateur et du service de reconnaissance.
+- Pas de nouvelle matière rendue fonctionnelle par ces modifications.
+- Aucun corpus, PDF, shard, manifeste, Supabase, Auth, RLS ou SQL modifié ; aucune fusion vers `main`, aucun déploiement.
+
+### Suite logique — Lot 576
+1. Ajouter une API RAG de provenance locale qui retourne seulement l'identifiant documentaire et la référence de droits issus du registre admis, sans les qualifier de vérifiés côté Worker.
+2. Distinguer la réponse exacte extraite du corpus de la réponse générée par le modèle, avec une politique d'abstention si la question porte sur un contenu officiel absent.
+3. Unifier le rendu chat et la synthèse vocale derrière une fonction de réponse commune, sans lancer automatiquement la reconnaissance ou envoyer le texte dicté sans validation de l'élève.
+4. Exécuter les tests Node et Python dans un environnement de validation réel avant toute conclusion.
