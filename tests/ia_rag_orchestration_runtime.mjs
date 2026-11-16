@@ -44,6 +44,17 @@ async function runCase(sourceState, question='Explique weil en français') {
     if (url === 'assets/bdd/config.json') return {
       ok: true, json: async () => ({ ia_proxy: 'https://worker.test' })
     };
+    if (url === '/api/rag-evidence') {
+      const request = JSON.parse(options.body);
+      if (sourceState === 'verified' && /page 4/i.test(request.q)) return {
+        ok:true, json:async () => ({
+          ok:true, context:'PROVENANCE RAG vérifiée côté serveur\\nEXTRAIT RAG — page 4',
+          token:'fixture-signed-rag-evidence-token',
+          document_title:'Manuel allemand synthétique côté serveur', page_start:4
+        })
+      };
+      return { ok:false, status:404, json:async () => ({ ok:false }) };
+    }
     if (url === 'https://worker.test/ask') {
       posted = JSON.parse(options.body);
       return { ok: true, json: async () => ({
@@ -95,6 +106,9 @@ const exactPage = await runCase('verified', 'Explique la page 4');
 assert.equal(exactPage.payload.rag_scope_type, 'page');
 assert.equal(exactPage.payload.rag_scope_value, 4);
 assert.equal(exactPage.payload.rag_scope_status, 'verified');
+assert.equal(exactPage.payload.rag_evidence_token, 'fixture-signed-rag-evidence-token');
+assert.match(exactPage.context, /vérifiée côté serveur/);
+assert.match(exactPage.answer, /Source documentaire : Manuel allemand synthétique côté serveur/);
 
 const unknownPage = await runCase('verified', 'Explique la page 42');
 assert.equal(unknownPage.payload.rag_scope_status, 'mismatch');
@@ -117,6 +131,7 @@ assert.equal(general.payload.rag_scope_status, 'none');
 const clientOnly = await runCase('client-unattested', 'Explique la page 4 sans preuve');
 assert.equal(clientOnly.payload.rag_source_status, 'verified');
 assert.equal(clientOnly.payload.rag_scope_status, 'verified');
+assert.equal(clientOnly.payload.rag_evidence_token, '');
 assert.doesNotMatch(clientOnly.answer, /Source documentaire/,
   'une provenance locale déclarée vérifiée ne suffit pas sans attestation Worker');
 
