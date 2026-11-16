@@ -3120,3 +3120,62 @@ Le Worker doit recevoir un contexte structuré provenant d'un orchestrateur de c
 - Audit statique et étude documentaire terminés ; collision de chemin/format confirmée.
 - Aucun code applicatif modifié, aucun index ou embedding généré, aucune opération Supabase, aucune migration, aucun workflow, aucun déploiement.
 - Branche `design/prototypes-67-74-alignment` conservée ; PR #17 doit rester ouverte et non fusionnée ; `main` inchangée.
+
+
+## Lot 556 — contrat documentaire commun du RAG (16 novembre 2026)
+
+### Périmètre
+- Inspection en lecture seule de `tools/ingest_corpus.py`, `rag.js`, `biblio.js`, `assets/bdd/corpus.json` et `assets/bdd/shards_manifest.json`.
+- Vérification documentaire externe : BGE-M3 officiel (FlagEmbedding) et documentation Supabase pgvector / recherche hybride.
+- Aucun changement de code applicatif, aucune ingestion, aucun embedding, aucune requête SQL, aucune opération Supabase et aucun déploiement.
+
+### Contrats observés
+- `assets/bdd/corpus.json` est le registre documentaire : fiches de documents et métadonnées (id, titre, matière, niveau, type, langue, année, format, URL, source, licence, tags, extrait).
+- `biblio.js` déclare actuellement `assets/bdd/corpus_index.json` comme source `corpus` de sa bibliothèque et construit des entrées vocabulaire à partir des données chargées.
+- `tools/ingest_corpus.py` écrit le plein texte inversé `{termes, chunks}` dans le même chemin `assets/bdd/corpus_index.json`.
+- `rag.js` lit ce chemin comme index legacy et attend les propriétés `termes` et `chunks`.
+- Le manifeste existant reste vide : `nb_shards=0`, `total_chunks=0`, `shards=[]`.
+- Conclusion : collision confirmée entre le contrat de données attendu par BIBLIO et celui produit par l'ingestion / attendu par RAG. L'exécution actuelle de l'ingestion peut écraser le catalogue utilisé comme vocabulaire. Ne pas lancer le script avant correction coordonnée des chemins et consommateurs.
+
+### Contrat cible proposé (non implémenté)
+1. `corpus.json` : registre canonique des documents et de leurs métadonnées.
+2. `vocabulaire_index.json` : catalogue vocabulaire consommé exclusivement par BIBLIO.
+3. `corpus_lexical_index.json` : index inversé lexical `{termes,chunks}`, consommé exclusivement par RAG lexical.
+4. `shards_manifest.json` : manifeste versionné des shards et de leurs comptes, avec validation de cohérence.
+5. Index vectoriel BGE-M3 expérimental : stockage distinct de la production et du RAG lexical.
+
+### Schéma minimal proposé pour chaque chunk
+- Identité : `chunk_id`, `doc_id`, `chunk_index`, `schema_version`.
+- Contenu : `text`, `content_hash`, `language`.
+- Pédagogie : `subject`, `level`, `track`, `document_type`, `unit`, `lesson`, lorsque connus.
+- Provenance/droits : `source`, `license`, `rights_status`, `source_page` ou localisation précise, `source_version`.
+- Indexation : `embedding_model`, `embedding_version`, `embedding_dimensions`, `chunking_version` pour les artefacts vectoriels seulement.
+- Ne pas inventer les champs inconnus : valeur nulle ou statut « non vérifié », et exclusion des filtres qui exigent une métadonnée obligatoire.
+
+### Règles de sélection et de réponse
+- Résoudre un snapshot de contexte par requête : matière, niveau, filière, langue de question, langue de réponse.
+- Appliquer les filtres de matière/niveau/filière dans la requête documentaire, avant la limite top-k, et non après un top-k global. La documentation Supabase signale qu'un filtre externe appliqué après le RPC peut produire trop peu de résultats et empêcher le moteur vectoriel d'optimiser la recherche.
+- Conserver pour chaque passage la référence stable au document, le titre, la page/section si disponible, la source et le statut de droits.
+- Séparer réponse issue d'une source, explication pédagogique dérivée de sources et réponse générée sans source. Une réponse officielle ou un corrigé ne doit être présenté comme tel que si la provenance le prouve.
+- Si aucune source suffisante n'est trouvée, le tuteur doit s'abstenir ou demander une précision, au lieu de fabriquer une référence.
+- Revalider les métadonnées de droits à l'ingestion ; la déclaration de licence ne doit pas être une simple valeur par défaut non contrôlée.
+
+### BGE-M3 et recherche hybride
+- La documentation officielle FlagEmbedding décrit BGE-M3 comme multilingue (>100 langues annoncées), dense/sparse/multi-vector, avec longueur maximale 8192 tokens et vecteur dense de 1024 dimensions. Elle précise aussi que les données d'entraînement sont déséquilibrées entre langues ; la qualité en darija/Arabizi doit être mesurée localement.
+- La documentation Supabase pgvector impose de comparer des embeddings issus du même modèle ; les filtres doivent être intégrés au RPC/requête de recherche, et une recherche hybride peut combiner recherche lexicale et vectorielle.
+- Phase initiale recommandée : baseline lexicale propre + dense BGE-M3 isolé + fusion évaluée sur un jeu de référence. Ne pas activer sparse BGE-M3 ou ColBERT avant mesure du gain, du coût et de la latence.
+- Mesures : Recall@5, MRR@10 ou nDCG@10, exactitude matière/niveau, taux de citations vérifiables, taux d'abstention justifiée, latence p50/p95 et coût par 1000 questions.
+
+### Priorités et critères d'acceptation
+- P0 : corriger la collision des chemins et ajouter des validations de schéma pour empêcher qu'une ingestion détruise le catalogue vocabulaire.
+- P0 : rendre obligatoires les métadonnées minimales de matière, niveau, source et statut de droits pour les corpus scolaires qui alimentent des réponses pédagogiques ciblées.
+- P1 : propager les métadonnées au niveau des chunks et appliquer les filtres avant le top-k.
+- P1 : rendre les références de sources visibles et auditables dans les réponses RAG.
+- P2 : pilote BGE-M3 isolé après vérification en lecture seule du contrat de l'index Supabase existant et constitution du jeu de tests multilingue.
+- Acceptation : ingestion de test ne modifie jamais le vocabulaire ; un document hors matière/niveau ne peut pas être renvoyé pour le contexte courant ; chaque passage retenu remonte à un document et une localisation ; un test sans source retourne une abstention explicite.
+
+### État de réalisation
+- Contrat cible rédigé et conflit confirmé par inspection statique.
+- Aucune correction applicative ou base de données réalisée.
+- Aucun index actif modifié ; aucune ingestion ni réindexation.
+- Branche `design/prototypes-67-74-alignment` ; PR #17 à maintenir ouverte et non fusionnée ; `main` inchangée.
