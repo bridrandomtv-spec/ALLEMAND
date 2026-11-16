@@ -29,7 +29,7 @@
   async function chargeLegacy(){
     if(LEGACY !== null) return LEGACY;
     try{
-      const r = await fetch('assets/bdd/corpus_index.json', { cache:'no-store' });
+      const r = await fetch('assets/bdd/corpus_chunks_index.json', { cache:'no-store' });
       LEGACY = r.ok ? await r.json() : null;
     }catch(e){ LEGACY = null; }
     return LEGACY;
