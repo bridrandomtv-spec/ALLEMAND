@@ -27,7 +27,7 @@ const shard = { _generation:manifest.generation, chunks:[chunk],
   termes:{ explique:[7], weil:[7], verbe:[7] } };
 const corpus = { documents:[{ id:documentId, titre:'Grammaire allemande',
   matiere:'allemand', niveau:'2AS', annee:'2026/2027', format:'pdf',
-  source:'Document pédagogique de test', source_sha256:sourceHash,
+  source:'Document pédagogique de test', licence:'production_propre', source_sha256:sourceHash,
   droits:{ licence:'production_propre', source:'Cours original', titulaire_droits:'Auteur du cours',
     declarant:'Auteur du cours', date_declaration:'2026-11-15', declaration_droits:true,
     usages_autorises:['hebergement_source','extraction_texte','indexation_rag','restitution_extraits'],
@@ -87,6 +87,10 @@ delete corpus.documents[0].droits;
 const missingRights = await evidence('Explique la page 4');
 assert.equal(missingRights.response.status, 503);
 assert.equal(missingRights.data.error, 'rag_shards_incoherent');
+corpus.documents[0].droits = { ...savedRights, usages_autorises:[...savedRights.usages_autorises, 'usage_invente'] };
+const unknownUsage = await evidence('Explique la page 4');
+assert.equal(unknownUsage.response.status, 503);
+assert.equal(unknownUsage.data.error, 'rag_shards_incoherent');
 corpus.documents[0].droits = savedRights;
 
 const wrongPage = await evidence('Explique la page 5');
