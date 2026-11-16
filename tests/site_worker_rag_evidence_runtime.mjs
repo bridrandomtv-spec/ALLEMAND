@@ -85,12 +85,12 @@ assert.equal(await webcrypto.subtle.verify('HMAC', key, sigBytes,
 const savedRights = corpus.documents[0].droits;
 delete corpus.documents[0].droits;
 const missingRights = await evidence('Explique la page 4');
-assert.equal(missingRights.response.status, 503);
-assert.equal(missingRights.data.error, 'rag_shards_incoherent');
+assert.equal(missingRights.response.status, 404);
+assert.equal(missingRights.data.error, 'rag_scope_or_match_not_found');
 corpus.documents[0].droits = { ...savedRights, usages_autorises:[...savedRights.usages_autorises, 'usage_invente'] };
 const unknownUsage = await evidence('Explique la page 4');
-assert.equal(unknownUsage.response.status, 503);
-assert.equal(unknownUsage.data.error, 'rag_shards_incoherent');
+assert.equal(unknownUsage.response.status, 404);
+assert.equal(unknownUsage.data.error, 'rag_scope_or_match_not_found');
 corpus.documents[0].droits = savedRights;
 
 const wrongPage = await evidence('Explique la page 5');
