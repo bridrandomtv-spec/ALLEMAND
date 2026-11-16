@@ -7,7 +7,7 @@
     return typeof value === 'string' ? value.trim().slice(0, max) : '';
   }
 
-  function build(question) {
+  function build(question, retrievedSources) {
     var current = {};
     try {
       if (root.CONTEXT && typeof root.CONTEXT.ctx === 'function') {
@@ -29,6 +29,17 @@
       language = clean(selector && selector.value, 12);
     } catch (e) {}
 
+    var sources = Array.isArray(retrievedSources) ? retrievedSources.slice(0, 2).map(function (item) {
+      item = item && typeof item === 'object' ? item : {};
+      return {
+        documentId: clean(item.documentId, 80), title: clean(item.title, 140),
+        subject: clean(item.subject, 40), level: clean(item.level, 30),
+        type: clean(item.type, 40), language: clean(item.language, 30),
+        chunkId: Number.isInteger(item.chunkId) ? item.chunkId : null,
+        excerpt: clean(item.excerpt, 900), trust: 'client_unverified'
+      };
+    }).filter(function (item) { return item.documentId && item.excerpt; }) : [];
+
     var snapshot = {
       schema: 'teacher-context-v1',
       trust: 'client_unverified',
@@ -42,7 +53,7 @@
       track: clean(current.track, 40) || null,
       dictationLanguage: language || null,
       responseLanguage: 'auto',
-      retrievedSources: []
+      retrievedSources: sources
     };
     return JSON.stringify(snapshot);
   }
