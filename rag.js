@@ -72,7 +72,7 @@
           const sc = scores[cid];
           if(sc >= SEUIL && (!best || sc > best.score)){
             const chunk = (data.chunks || []).filter(c => c.n === +cid)[0];
-            if(chunk && admis.has(chunk.doc)) best = { score: sc, texte: chunk.texte, doc: chunk.doc };
+            if(chunk && admis.has(chunk.doc)) best = { score: sc, texte: chunk.texte, doc: chunk.doc, chunk: chunk.n };
           }
         }
         if(best && best.score >= SEUIL + 3) break;   /* match fort : arrêt précoce */
@@ -89,10 +89,35 @@
       const sc = scores[cid];
       if(sc >= SEUIL && (!best || sc > best.score)){
         const ch = idx.chunks[+cid];
-        if(ch && admis.has(ch.doc)) best = { score: sc, texte: ch.texte, doc: ch.doc };
+        if(ch && admis.has(ch.doc)) best = { score: sc, texte: ch.texte, doc: ch.doc, chunk: ch.n };
       }
     }
     return best;
+  }
+
+
+  /* Provenance locale bornée : métadonnées issues du registre navigateur,
+     jamais une attestation serveur. N'expose rien si le document n'est pas
+     encore présent dans le registre admis par le filtre des droits. */
+  function provenance(r){
+    if(!r || !CORP || !Array.isArray(CORP.documents)) return null;
+    const d = CORP.documents.find(x => x && x.id === r.doc);
+    if(!d || d.droits_statut !== 'verifies'
+      || typeof d.droits_reference !== 'string' || d.droits_reference.trim().length < 3) return null;
+    return {
+      documentId: cleanMeta(d.id, 80),
+      title: cleanMeta(d.titre, 140),
+      subject: cleanMeta(d.matiere, 40),
+      level: cleanMeta(d.niveau, 30),
+      type: cleanMeta(d.type, 40),
+      language: cleanMeta(d.langue, 30),
+      chunkId: Number.isInteger(r.chunk) ? r.chunk : null,
+      excerpt: String(r.texte || '').trim().slice(0, 900),
+      trust: 'client_unverified'
+    };
+  }
+  function cleanMeta(value, max){
+    return typeof value === 'string' ? value.trim().slice(0, max) : '';
   }
 
 
@@ -1159,7 +1184,7 @@ async function reponsePedagogique(q){
   }
 
   window.reponsePedagogique = reponsePedagogique;
-  window.RAG = { cherche: cherche, formule: formule, SEUIL: SEUIL, render: render };
+  window.RAG = { cherche: cherche, formule: formule, provenance: provenance, SEUIL: SEUIL, render: render };
   window.renderRag = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'rag') render(); });
 })();
