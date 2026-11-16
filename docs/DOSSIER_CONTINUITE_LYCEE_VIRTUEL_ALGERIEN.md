@@ -3559,3 +3559,11 @@ La plateforme a des fondations cloud réelles (Auth Supabase, RLS sur plusieurs 
 - Aucun accès à la base active ; aucune migration ou modification Supabase ; aucun test ni déploiement.
 - Aucun code applicatif modifié.
 - Branche `design/prototypes-67-74-alignment` conservée ; PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
+
+## Rectificatif d'état GitHub — PR #17 (vérification du 16 novembre 2026)
+- La lecture directe de GitHub `get_pr_info` indique que la PR #17 est **fermée et fusionnée**, avec `merged_at = 2026-11-14T14:50:08Z`.
+- Commit de fusion déclaré par GitHub : `ef781da525eb4df062841c4362a999811fe35831`.
+- HEAD enregistré dans les métadonnées de la PR au moment de cette vérification : `80a32e49bf4a1250c6e8909b90ad930bece06c46`; base `main) SHA indiqué : `51acfe8c97b6e152208d592dbd2c5bbde5c5c38e`.
+- Cette fusion est antérieure à l'audit du lot 560 et n'a pas été exécutée par l'assistant dans cette opération. Les addenda des lots 559 et 560 sont des commits documentaires postérieurs sur la branche `design/prototypes-67-74-alignment` ; ils ne sont pas réputés intégrés à `main`.
+- Les anciennes mentions « PR #17 ouverte et non fusionnée » dans l'historique décrivent l'état connu auparavant et sont désormais obsolètes. Toute décision future doit partir de l'état GitHub réel, comparer le HEAD de la branche à `main` et vérifier si les commits documentaires post-fusion doivent être reportés séparément. Ne pas tenter de réouvrir ou fusionner quoi que ce soit sans instruction explicite.
