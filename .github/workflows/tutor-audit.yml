@@ -114,12 +114,7 @@ jobs:
         run: python -m unittest discover -s tests -p "test_corpus_pipeline.py"
 
       - name: Pré-auditer le registre documentaire sans modification
-        run: |
-          python tools/audit_corpus_registry.py \\
-            --corpus assets/bdd/corpus.json \\
-            --root . \\
-            --json-out audit-corpus-report.json \\
-            --markdown-out audit-corpus-report.md
+        run: python tools/audit_corpus_registry.py --corpus assets/bdd/corpus.json --root . --json-out audit-corpus-report.json --markdown-out audit-corpus-report.md
 
       - name: Publier le rapport de pré-audit comme artefact CI
         uses: actions/upload-artifact@v4
