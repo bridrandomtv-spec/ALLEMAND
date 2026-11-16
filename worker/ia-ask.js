@@ -54,6 +54,69 @@ function cors(res, o){
 }
 const json = (o, st, org) => cors(new Response(JSON.stringify(o),
   { status: st || 200, headers: { 'Content-Type': 'application/json; charset=utf-8' } }), org);
+
+function extrairePorteeDocumentaire(question){
+  const q = String(question || '').toLowerCase()
+    .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+    .replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)));
+  const motifs = [
+    ['page', /(?:\\bpage\\s*|\\bp\\.?\\s*|\\bseite\\s*|الصفحة\\s*|صفحة\\s*)(\\d{1,4})/i],
+    ['unit', /(?:\\bunit(?:é|e)?\\s*|\\blektion\\s*|الوحدة\\s*|وحدة\\s*)(\\d{1,3})/i],
+    ['exercise', /(?:\\bexercice\\s*|\\bexercise\\s*|\\bübung\\s*|تمرين\\s*|التطبيق\\s*)(\\d{1,4})/i]
+  ];
+  for(const [type, pattern] of motifs){
+    const match = q.match(pattern);
+    if(match) return { type:type, value:Number(match[1]) };
+  }
+  return { type:'none', value:null };
+}
+function encoderBase64Url(value){
+  let binary = '';
+  for(const byte of value) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/=/g, '').replace(/\\+/g, '-').replace(/\\//g, '_');
+}
+function decoderBase64Url(value){
+  const normalized = String(value || '').replace(/-/g, '+').replace(/_/g, '/');
+  const padded = normalized + '='.repeat((4 - normalized.length % 4) % 4);
+  const binary = atob(padded);
+  return Uint8Array.from(binary, ch => ch.charCodeAt(0));
+}
+async function verifierPreuveRag(token, secret, context, requestedScope){
+  if(typeof token !== 'string' || token.length > 4096 || !secret
+    || !requestedScope || requestedScope.type === 'none') return null;
+  try{
+    const parts = token.split('.');
+    if(parts.length !== 2) return null;
+    const payloadBytes = decoderBase64Url(parts[0]);
+    const signature = decoderBase64Url(parts[1]);
+    const key = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(String(secret)),
+      { name:'HMAC', hash:'SHA-256' }, false, ['verify']);
+    const valid = await crypto.subtle.verify(
+      'HMAC', key, signature, new TextEncoder().encode(parts[0]));
+    if(!valid) return null;
+    const claims = JSON.parse(new TextDecoder().decode(payloadBytes));
+    const now = Math.floor(Date.now() / 1000);
+    if(!claims || claims.v !== 1 || claims.iss !== 'lycee-virtuel-rag'
+      || claims.aud !== 'ia-ask' || !Number.isSafeInteger(claims.iat)
+      || !Number.isSafeInteger(claims.exp) || claims.iat > now + 30
+      || claims.exp <= now || claims.exp - claims.iat > 300
+      || claims.scope_type !== requestedScope.type
+      || claims.scope_value !== requestedScope.value
+      || typeof claims.doc_id !== 'string' || !claims.doc_id
+      || typeof claims.chunk_id !== 'string' || !claims.chunk_id
+      || typeof claims.source_sha256 !== 'string'
+      || !/^[0-9a-f]{64}$/.test(claims.source_sha256)
+      || typeof claims.context_sha256 !== 'string'
+      || !/^[0-9a-f]{64}$/.test(claims.context_sha256)) return null;
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(context));
+    const actualContextHash = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+    if(actualContextHash !== claims.context_sha256) return null;
+    return { doc_id:claims.doc_id, chunk_id:claims.chunk_id,
+      source_sha256:claims.source_sha256, scope_type:claims.scope_type,
+      scope_value:claims.scope_value };
+  }catch(e){ return null; }
+}
 export default {
   async fetch(req, env){
     const org = ORIGINS.filter(o => (req.headers.get('Origin') || '') === o)[0] || ORIGINS[0];
@@ -107,14 +170,10 @@ export default {
       subject: safeField(b.subject, 60, 'allemand'),
       level: safeField(b.level, 30, 'tous'),
       track: safeField(b.track, 60, 'non précisée'),
-      rag_source_status: ['verified','unverified','unavailable','not_applicable'].includes(String(b.rag_source_status || ''))
-        ? String(b.rag_source_status) : 'unavailable',
-      rag_scope_type: ['none','page','unit','exercise'].includes(String(b.rag_scope_type || ''))
-        ? String(b.rag_scope_type) : 'none',
-      rag_scope_value: Number.isSafeInteger(b.rag_scope_value) && b.rag_scope_value > 0
-        ? b.rag_scope_value : null,
-      rag_scope_status: ['none','verified','mismatch','unsupported','unavailable'].includes(String(b.rag_scope_status || ''))
-        ? String(b.rag_scope_status) : 'unavailable'
+      rag_source_status: 'unverified',
+      rag_scope_type: 'none',
+      rag_scope_value: null,
+      rag_scope_status: 'unavailable'
     };
     if(!q) return json({ ok:false, err:'q-vide' }, 400, org);
     const now = Date.now();
@@ -123,7 +182,15 @@ export default {
     HITS.push(now);
     meta.output_style = meta.output_language === 'ar'
       ? (meta.dialect === 'darija' ? 'darija' : 'fusha') : 'natural';
-    if(meta.rag_scope_type !== 'none' && (meta.rag_scope_status !== 'verified' || meta.rag_source_status !== 'verified')){
+    const requestedScope = extrairePorteeDocumentaire(q);
+    const ragEvidence = await verifierPreuveRag(
+      b.rag_evidence_token, env.RAG_EVIDENCE_HMAC_KEY, ctx, requestedScope);
+    meta.rag_scope_type = requestedScope.type;
+    meta.rag_scope_value = requestedScope.value;
+    meta.rag_scope_status = requestedScope.type === 'none' ? 'none'
+      : (ragEvidence ? 'verified' : 'unavailable');
+    meta.rag_source_status = ragEvidence ? 'verified' : 'unverified';
+    if(requestedScope.type !== 'none' && !ragEvidence){
       const refusal = meta.output_language === 'ar'
         ? (meta.dialect === 'darija'
           ? 'ما نقدرش نأكد هذي الصفحة أو الوحدة أو التمرين من مصدر موثّق. ابعثلي الوثيقة أو المرجع باش نتحقق.'
@@ -137,11 +204,9 @@ export default {
               : meta.output_language === 'it'
                 ? 'Non posso verificare questa pagina, unità o esercizio con una fonte attendibile. Invia il documento o il riferimento esatto.'
                 : 'Je ne peux pas confirmer cette page, unité ou cet exercice à partir d’une source vérifiée. Merci de fournir le document ou la référence exacte.';
-      const reason = meta.rag_scope_status !== 'verified'
-        ? 'rag_scope_' + meta.rag_scope_status : 'rag_source_' + meta.rag_source_status;
       return json({ ok:true, rep:refusal, answer_language:meta.output_language,
         answer_style:meta.output_style || 'natural', abstained:true,
-        abstention_reason:reason }, 200, org);
+        abstention_reason:'rag_evidence_unverified' }, 200, org);
     }
     const metadata = [
       'MODE D’ENTRÉE : ' + meta.input_mode,
