@@ -13,6 +13,8 @@ on:
       - "app.js"
       - "matieres.js"
       - "worker/ia-ask.js"
+      - "src/site-worker.js"
+      - "tests/site_worker_rag_evidence_runtime.mjs"
       - "rag.js"
       - "tools/sharder_index.py"
       - "tests/tutor_request_contract.mjs"
@@ -68,6 +70,7 @@ jobs:
           node --check ia.js
           node --check parle.js
           node --input-type=module --check < worker/ia-ask.js
+          node --input-type=module --check < src/site-worker.js
 
       - name: Tester le verrouillage capture vocale / réponse IA
         run: node tests/voice_capture_contract.mjs
@@ -92,6 +95,9 @@ jobs:
 
       - name: Tester le lecteur RAG en VM isolée
         run: node tests/rag_loader_runtime.mjs
+
+      - name: Tester le signataire RAG du Worker du site avec actifs synthétiques
+        run: node tests/site_worker_rag_evidence_runtime.mjs
 
       - name: Tester le Worker CERVEAU avec modèle simulé
         run: node tests/worker_request_runtime.mjs
