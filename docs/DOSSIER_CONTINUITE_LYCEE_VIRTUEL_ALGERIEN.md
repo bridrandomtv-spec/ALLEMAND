@@ -4169,3 +4169,52 @@ Mettre en place le premier test de contrat isolé pour les fichiers corpus et co
 
 ### Suite logique — Lot 570
 Exécuter le test dans un environnement de dépôt isolé, ajouter les tests de contrat de l'indexeur PDF et du sharder, puis contrôler l'alignement des identifiants chunk/termes. Ensuite seulement, préparer le test navigateur RAG sans lancer les workflows qui poussent vers `main`.
+
+
+## Lot 570 — intégrité des chunks, index inversé et sharding (16 novembre 2026)
+
+### Défauts confirmés pendant la revue
+- Dans `tools/indexer_pdf.py`, les chunks PDF étaient retirés du tableau, mais les postings de l'index inversé conservaient leurs anciens numéros. Le simple filtrage par `i < len(chunks_l)` ne remappait pas les identifiants et pouvait faire pointer un terme vers un autre chunk.
+- Dans `tools/ingest_corpus.py`, chaque nouvelle ingestion initialisait un index vide puis le réécrivait. Une ingestion partielle aurait donc effacé les chunks déjà présents, notamment ceux issus de l'indexeur PDF.
+- Les PDF extraits avec une couche texte étaient enregistrés avec `licence: document utilisateur` sans preuve de droits, et sans `droits_statut` explicite.
+- Les expressions régulières des reconstructions d'index ont également été contrôlées pour conserver les plages Unicode arabe, latin et accentué.
+
+### Corrections apportées sur la branche de prévisualisation
+1. `tools/ingest_corpus.py`
+   - Charge l'index RAG existant avant écriture.
+   - Remplace uniquement les chunks des documents réingérés et conserve ceux des autres documents.
+   - Renumérote tous les chunks après fusion et reconstruit tous les postings depuis le texte réel.
+   - Continue de préserver les fichiers historiques `corpus.json` et `corpus_index.json` selon le contrat du Lot 569.
+2. `tools/indexer_pdf.py`
+   - Après retrait des anciens chunks PDF, renumérote les chunks restants.
+   - Reconstruit intégralement l'index inversé avant d'ajouter les nouveaux PDF.
+   - Les PDF extraits portent désormais `licence: non_verifiee` et `droits_statut: a_verifier`, comme les scans sans OCR exploitable.
+3. `tools/sharder_index.py`
+   - Ajoute un contrôle préalable : chaque `chunks[].n` doit être égal à sa position dans le tableau.
+   - Refuse tout posting qui référence un identifiant négatif ou hors limites avant de supprimer ou reconstruire les shards.
+4. Tests
+   - `tests/test_ingest_corpus_contract.py` vérifie maintenant que l'ingestion conserve un chunk antérieur d'un autre document, renumérote les chunks et reconstruit les postings.
+   - Nouveau `tests/test_rag_index_contract.py` : scénario isolé de remplacement PDF, conservation du registre historique, reconstruction des postings, statut de droits et refus d'un index invalide par le sharder.
+
+### Commits du Lot 570
+- `f5f77bd2cb7d3b4f5e3d97ce7b178dad0ac5afd3` — fusion non destructive des chunks pendant l'ingestion.
+- `9f3f7b9de72ea753dcab076407e72c67d4025fdf` — correction de l'index PDF et provenance des droits.
+- `fd902b5472bcb1da729f3567664bdd67e820ff2c` — précontrôle d'intégrité du sharder.
+- `0b416631b2711a2bb1c87b96f3660f07d0b5e78c` et `149593f303e79b9b4fc6907cf2dc8ce833cdccc7` — correction des plages Unicode dans les reconstructions de postings.
+- `e47d425ac2f07880f33d2fdfe0152f6f2934c80c` — extension du test d'ingestion.
+- `7d6992e1ef6246bdc5c81722c48b92625ff8c346` — ajout des tests PDF et sharder.
+
+### Vérifications et limites
+- Les quatre scripts/tests modifiés ou ajoutés ont été relus après écriture sur la branche ; les destinations, reconstructions de postings, garde-fous et assertions attendus sont présents.
+- La consultation des runs associés au dernier commit n'a retourné aucun workflow PR. Les tests n'ont donc pas été exécutés ni déclarés réussis dans ce lot.
+- Aucun PDF réel n'a été ingéré ; aucun index ou shard de production n'a été reconstruit.
+- Les workflows automatiques indexer/sharder n'ont pas été déclenchés.
+- Aucun changement sur `main`, aucun déploiement, aucune modification Supabase/Auth/RLS/SQL ou donnée de production.
+
+### Point restant avant les essais RAG
+- Les métadonnées de matière, niveau, langue, filière et provenance sont encore en partie attribuées par défaut dans les scripts. Il faut les rendre explicites ou les mettre en quarantaine lorsque la source ne permet pas de les établir ; ne pas confondre valeur par défaut technique et information vérifiée.
+- Il faut obtenir une exécution effective des tests isolés, puis vérifier le parcours de lecture de l'index dans le navigateur avec un petit corpus de test et un manifeste temporaire.
+- Les workflows qui poussent vers `main` restent hors périmètre et doivent être sécurisés séparément.
+
+### Suite logique — Lot 571
+Préparer un contrat de métadonnées obligatoire avec validation/quarantaine, ajouter les tests de rejet des champs absents ou non vérifiés, puis obtenir une exécution contrôlée des tests sur la branche sans lancer les workflows d'indexation de production.
