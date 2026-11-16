@@ -13,6 +13,25 @@ SCRIPT = ROOT / "tools" / "ingest_corpus.py"
 
 
 class IngestionContractTests(unittest.TestCase):
+    def test_missing_metadata_is_quarantined_and_never_indexed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            work = Path(tmp)
+            bdd = work / "assets" / "bdd"
+            docs = work / "input"
+            docs.mkdir()
+            bdd.mkdir(parents=True)
+            (bdd / "corpus.json").write_text(json.dumps({"documents": []}), encoding="utf-8")
+            (docs / "unverified.txt").write_text("Haus Schule lernen " * 30, encoding="utf-8")
+            subprocess.run([sys.executable, str(SCRIPT), str(docs)], cwd=work,
+                           check=True, capture_output=True, text=True)
+            corpus = json.loads((bdd / "corpus.json").read_text(encoding="utf-8"))
+            quarantine = json.loads((bdd / "corpus_quarantaine.json").read_text(encoding="utf-8"))
+            index = json.loads((bdd / "corpus_chunks_index.json").read_text(encoding="utf-8"))
+            self.assertEqual(corpus["documents"], [])
+            self.assertEqual(index["chunks"], [])
+            self.assertEqual(quarantine["documents"][0]["statut"], "a_verifier")
+            self.assertTrue(any("droits non vérifiés" in x for x in quarantine["documents"][0]["motifs"]))
+
     def test_ingestion_preserves_legacy_register_and_vocabulary(self):
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp)
