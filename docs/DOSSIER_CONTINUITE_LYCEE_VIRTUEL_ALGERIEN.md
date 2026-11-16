@@ -4533,3 +4533,39 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 2. Ajouter un adaptateur d'évaluation non destructif qui lance les questions contre le RAG lexical et enregistre les identifiants de documents/chunks retrouvés, sans exposer de document non admis.
 3. Ajouter une grille de revue humaine pour la fidélité au passage, l'exactitude grammaticale, l'adaptation au niveau, la langue de réponse et l'abstention.
 4. Comparer ensuite le RAG lexical à un pilote BGE-M3 isolé, sur le même jeu, sans toucher aux index de production ni aux ressources Supabase.
+
+
+## Lot 579 — exécution isolée du benchmark sur le RAG lexical (16 novembre 2026)
+
+### Adaptateur de test ajouté
+- Nouveau fichier : `tests/rag-eval-runner.test.mjs`.
+- Le runner charge le véritable code `rag.js` dans un environnement VM Node isolé, puis lui fournit uniquement un corpus synthétique, un manifeste et un shard construits en mémoire à partir de `questions-v1.json`.
+- Il lance les neuf questions via l'API réelle `RAG.cherche()`, récupère le document, le numéro de chunk, le score lexical et la provenance via `RAG.provenance()`.
+- Pour les résultats retrouvés, le test exige une provenance admise par le registre synthétique et vérifie que la confiance reste `client_unverified`.
+- Les deux cas planifiés (italien et espagnol) sont désormais des assertions strictes : aucune leçon synthétique hors sujet ne doit être retournée; le moteur doit s'abstenir.
+
+### Isolation et intégration CI
+- Le statut de droits et la référence présents dans le registre VM sont des valeurs de test explicitement marquées `SYNTHETIC-TEST-ONLY-NOT-A-REAL-LICENCE`; ils ne constituent ni une licence ni une preuve de droits.
+- Aucun fichier `assets/bdd` n'est lu ou écrit par le runner; le corpus, le manifeste et le shard sont injectés par un `fetch` simulé dans la VM.
+- Le workflow `.github/workflows/rag-guard-tests.yml` exécute le runner après le test de contrat des métriques.
+- Commits du Lot 579 :
+  - Runner initial : `00079b91e78fc18777dd596d7f4c4d57eb555371`.
+  - Workflow : `7fe257db10214c8b778a68662b8e7531c9a0ba2c`.
+  - Renforcement des assertions d'abstention : `daf2f81c92455bcbf46f26f7558e36d2f53b988f`.
+
+### Mesures disponibles et limites
+- Le rapport JSON calcule hit@1 sur les cas qui attendent un document, le taux d'abstention sur les cas planifiés et expose chaque résultat (langue de requête, document attendu/retourné, chunk, score, provenance).
+- Le RAG actuel ne renvoie qu'un meilleur passage; hit@k n'est donc pas calculable sans modifier son API. Ce lot ne modifie pas cette API.
+- Le runner n'appelle pas le Worker et ne mesure pas la qualité rédactionnelle, la langue générée, l'exactitude pédagogique, la latence ni la voix. Ces dimensions restent à mesurer séparément.
+- Le test est ajouté à la CI, mais son exécution réelle n'a pas encore été confirmée. Aucun score de benchmark n'est revendiqué avant un run observé.
+
+### Périmètre préservé
+- Aucun PDF, manuel, document scolaire réel, corpus, shard, manifeste ou embedding de production n'a été modifié.
+- Aucun appel Supabase, Auth, RLS, SQL, schéma, paiement, branche `main`, fusion ou déploiement Cloudflare.
+- Travail maintenu sur `design/prototypes-67-74-alignment`.
+
+### Suite logique — Lot 580
+1. Obtenir et lire le résultat réel de la CI du runner; corriger les défauts révélés, sans considérer l'absence de statut comme un succès.
+2. Ajouter une sortie d'artefact JSON téléchargeable en CI pour conserver le rapport du benchmark et comparer les commits.
+3. Faire une première revue linguistique humaine des cas arabes, darija, Arabizi, français, allemand et anglais.
+4. Seulement après cette référence, construire l'adaptateur comparatif BGE-M3 hors index de production, sur exactement les mêmes questions et passages synthétiques.
