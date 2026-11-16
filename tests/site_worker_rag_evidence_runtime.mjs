@@ -27,7 +27,12 @@ const shard = { _generation:manifest.generation, chunks:[chunk],
   termes:{ explique:[7], weil:[7], verbe:[7] } };
 const corpus = { documents:[{ id:documentId, titre:'Grammaire allemande',
   matiere:'allemand', niveau:'2AS', annee:'2026/2027', format:'pdf',
-  source:'Document pédagogique de test', source_sha256:sourceHash }] };
+  source:'Document pédagogique de test', source_sha256:sourceHash,
+  droits:{ licence:'production_propre', source:'Cours original', titulaire_droits:'Auteur du cours',
+    declarant:'Auteur du cours', date_declaration:'2026-11-15', declaration_droits:true,
+    usages_autorises:['hebergement_source','extraction_texte','indexation_rag','restitution_extraits'],
+    validation:{ statut:'valide', verificateur:'Responsable pédagogique',
+      date:'2026-11-15', reference_preuve:'fixture-droits-001' } } }] };
 let corrupt = false;
 const assets = {
   fetch: async request => {
