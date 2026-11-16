@@ -17,4 +17,4 @@ assert.ok(rubric.dimensions.some(item => item.id === 'abstention_quality' && ite
 assert.ok(rubric.languageCoverage.includes('arabizi'));
 assert.ok(rubric.languageCoverage.includes('en-partial'));
 assert.ok(rubric.rules.some(rule => rule.includes('automated retrieval metrics')));
-process.stdout.write('RAG human-review rubric contract: OK\\n');
+process.stdout.write('RAG human-review rubric contract: OK\n');
