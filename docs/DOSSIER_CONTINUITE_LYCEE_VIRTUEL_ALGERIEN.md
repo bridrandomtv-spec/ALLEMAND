@@ -4239,3 +4239,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Tests non certifiés en attente d'un runner GitHub Actions opérationnel.
 
 - Correctif de cohérence : fixture du Worker réalignée sur les IDs continus du Lot 652 (`global_id=0` pour le chunk unique ; `8` pour le test de trou). Le workflow du commit `a2e51c3b2fb4fc83a82f426527091660a8085aa4` échoue encore avant runner (`runner_id=0`, `steps=[]`), sans exécution de tests.
+
+
+## Lot 654 — contrôle du périmètre dans tous les indexeurs (16 novembre 2026)
+- Correction de l'import de repli dans `tools/ingest_corpus.py` : `document_couvert` est maintenant importé aussi lors de l'exécution directe depuis le répertoire `tools`.
+- L'indexeur PDF `tools/indexer_pdf.py` applique désormais la même règle de couverture que l'ingestion multi-format. Il calcule ID et SHA-256 puis refuse un document hors périmètre avant l'extraction PDF.
+- Trois tests ajoutés : import direct, refus avant extraction d'un document hors périmètre, acceptation d'un périmètre fondé sur l'empreinte exacte.
+- Les autorisations des tests sont synthétiques. Aucun document réel n'a été ingéré ou indexé et aucune preuve institutionnelle réelle n'a été créée.
+- Validation en attente d'un runner : le dernier job CI connu s'est arrêté avant toute étape et ne fournit aucun log de tests. Aucun PASS n'est revendiqué.
+- Aucun changement sur `main`, aucun merge, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/données/paiement/secrets.
