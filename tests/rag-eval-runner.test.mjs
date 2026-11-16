@@ -1,0 +1,99 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+
+const fixture = JSON.parse(fs.readFileSync(
+  new URL('./fixtures/rag-eval/questions-v1.json', import.meta.url), 'utf8'
+));
+const ragSource = fs.readFileSync(new URL('../rag.js', import.meta.url), 'utf8');
+
+// Build a disposable in-memory corpus and inverted index from synthetic passages.
+// The synthetic rights reference exists only inside this VM test and is not a licence.
+const corpus = {
+  documents: fixture.documents.map(doc => ({
+    id: doc.id, titre: doc.title, matiere: doc.subject, niveau: doc.level,
+    type: 'synthetic-test', langue: doc.language,
+    droits_statut: 'verifies',
+    droits_reference: 'SYNTHETIC-TEST-ONLY-NOT-A-REAL-LICENCE'
+  }))
+};
+const chunks = fixture.documents.map((doc, index) => ({
+  n: index + 1, doc: doc.id, texte: doc.passage
+}));
+const terms = {};
+const tokenize = value => Array.from(new Set(
+  String(value || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06ff]{3,}/g) || []
+));
+for (const chunk of chunks) {
+  for (const term of tokenize(chunk.texte)) {
+    (terms[term] ||= []).push(chunk.n);
+  }
+}
+const shard = { termes: terms, chunks };
+const files = {
+  'assets/bdd/corpus.json': corpus,
+  'assets/bdd/shards_manifest.json': { shards: [{ file: 'benchmark-synthetic.json' }] },
+  'assets/bdd/shards/benchmark-synthetic.json': shard,
+  'assets/bdd/sharh.json': null
+};
+const document = { addEventListener() {}, querySelector() { return null; }, getElementById() { return null; } };
+const window = { document };
+const fetch = async url => Object.prototype.hasOwnProperty.call(files, url)
+  ? { ok: true, json: async () => files[url] }
+  : { ok: false, json: async () => null };
+const sandbox = {
+  window, document, fetch, console, setTimeout, clearTimeout,
+  Object, Array, String, Number, JSON, Math, Set, Map, RegExp
+};
+vm.runInNewContext(ragSource, sandbox, { filename: 'rag.js' });
+
+const rows = [];
+for (const item of fixture.cases) {
+  const result = await window.RAG.cherche(item.query);
+  const source = result ? window.RAG.provenance(result) : null;
+  const retrievedDocumentId = result?.doc || null;
+  const expectedHit = item.abstain
+    ? retrievedDocumentId === null
+    : retrievedDocumentId === item.expectedDocumentId;
+  rows.push({
+    caseId: item.id,
+    queryLanguage: item.queryLanguage,
+    expectedDocumentId: item.expectedDocumentId,
+    retrievedDocumentId,
+    chunkId: result?.chunk ?? null,
+    lexicalScore: result?.score ?? null,
+    abstentionExpected: item.abstain,
+    abstained: result === null,
+    expectedHit,
+    provenanceAvailable: !!source,
+    provenanceTrust: source?.trust || null
+  });
+  if (result) {
+    assert.ok(source, `retrieved document must have admitted provenance: ${item.id}`);
+    assert.equal(source.trust, 'client_unverified');
+    assert.ok(corpus.documents.some(doc => doc.id === source.documentId));
+  }
+}
+const eligible = rows.filter(row => row.expectedDocumentId !== null);
+const abstentionRows = rows.filter(row => row.abstentionExpected);
+const summary = {
+  benchmark: fixture.schema,
+  dataStatus: fixture.datasetStatus,
+  engine: 'existing browser lexical RAG (single best result)',
+  cases: rows.length,
+  retrievalEligible: eligible.length,
+  hitAt1: eligible.filter(row => row.retrievedDocumentId === row.expectedDocumentId).length / eligible.length,
+  expectedAbstentions: abstentionRows.length,
+  correctAbstentions: abstentionRows.filter(row => row.abstained).length,
+  abstentionAccuracy: abstentionRows.length
+    ? abstentionRows.filter(row => row.abstained).length / abstentionRows.length : null,
+  arabiziCase: rows.find(row => row.caseId === 'ar-latn-001') || null,
+  limitations: [
+    'One best result only: hit@k is not measurable with the current RAG API.',
+    'No Worker generation or answer-language evaluation is performed.',
+    'The corpus, rights registry and shard are synthetic and exist only in memory.',
+    'The test does not validate any real textbook, rights record or production index.'
+  ],
+  rows
+};
+process.stdout.write(JSON.stringify(summary, null, 2) + '\\n');
