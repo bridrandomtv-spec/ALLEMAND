@@ -17,8 +17,8 @@ Ce script :
      OCR via tesseract SEULEMENT si installé et si le PDF est un scan),
   2. REFUSE tout document dont la licence est interdite (manuel éditeur, livre commercial),
   3. découpe en chunks (~1200 mots) pour la recherche et le RAG futur,
-  4. écrit assets/bdd/corpus.json (métadonnées) + assets/bdd/corpus_index.json
-     (index inversé plein-texte, utilisable côté client, hors-ligne),
+  4. préserve assets/bdd/corpus.json et écrit les chunks RAG dans
+     assets/bdd/corpus_chunks_index.json, sans toucher au vocabulaire BIBLIO,
   5. copie les fichiers originaux vers assets/corpus/<id>.<ext>.
 
 Aucun fichier protégé n'est téléchargé : tout vient de VOTRE dossier local.
@@ -56,7 +56,7 @@ def chunks(texte):
 
 
 def main(dossier):
-    docs, index = [], {"termes": {}, "chunks": []}
+    docs, index = [], {"version": "1.0.0", "schema": "rag-chunks-v1", "termes": {}, "chunks": []}
     for nom in sorted(os.listdir(dossier)):
         chemin = os.path.join(dossier, nom)
         if not os.path.isfile(chemin):
@@ -97,12 +97,23 @@ def main(dossier):
         shutil.copy(chemin, "assets/corpus/" + did + "." + ext)
         print("  indexé :", nom, "→", did, "·", len(chunks(texte)), "chunks")
     os.makedirs("assets/bdd", exist_ok=True)
-    json.dump({"_meta": {"version": "1.0.0", "nb": len(docs)}, "documents": docs},
-              open("assets/bdd/corpus.json", "w", encoding="utf-8"),
-              ensure_ascii=False, indent=1)
-    json.dump(index, open("assets/bdd/corpus_index.json", "w", encoding="utf-8"),
-              ensure_ascii=False)
-    print("  corpus.json :", len(docs), "documents ·", len(index["chunks"]), "chunks")
+    # Mise à jour additive : préserver les champs historiques du registre.
+    corpus_path = os.path.join("assets", "bdd", "corpus.json")
+    try:
+        with open(corpus_path, encoding="utf-8") as f:
+            registre = json.load(f)
+    except (OSError, ValueError):
+        registre = {"_meta": {"version": "1.0.0"}, "documents": []}
+    anciens = registre.get("documents", [])
+    par_id = {d.get("id"): d for d in anciens if isinstance(d, dict) and d.get("id")}
+    par_id.update({d["id"]: d for d in docs})
+    registre["documents"] = list(par_id.values())
+    with open(corpus_path, "w", encoding="utf-8") as f:
+        json.dump(registre, f, ensure_ascii=False, indent=1)
+    with open(os.path.join("assets", "bdd", "corpus_chunks_index.json"), "w", encoding="utf-8") as f:
+        json.dump(index, f, ensure_ascii=False)
+    print("  corpus.json préservé :", len(registre["documents"]), "documents ·",
+          len(index["chunks"]), "chunks RAG séparés")
 
 
 if __name__ == "__main__":
