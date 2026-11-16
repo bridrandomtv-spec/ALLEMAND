@@ -42,7 +42,7 @@ for (const chunk of chunks) {
   for (const term of window.RAG.termes(chunk.texte)) (terms[term] ||= []).push(chunk.n);
 }
 const normalizationChecks = [
-  ['Darija Arabic', 'واش الفرق بين المبتدأ والخبر؟ عطيني مثال بسيط.', ['مبتدأ', 'خبر']],
+  ['Darija Arabic', 'واش الفرق بين المبتدأ والخبر؟ عطيني مثال بسيط.', ['مبتدا', 'خبر']],
   ['Arabizi', 'Chrahli el-jomla el-ismiya b darja, b exemple sahl.', ['الجملة', 'الاسمية']]
 ];
 for (const [label, query, expected] of normalizationChecks) {
