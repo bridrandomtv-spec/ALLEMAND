@@ -4444,7 +4444,7 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 ### Commits du lot
 - `rag.js` : `b7edce2cc9a7248d3cd1cdeb308b630108f0b82e`.
 - `js/teacher-context.js` : `b03d75eada9ef6a2386a8d06070221292ffd8c16`.
-- `tests/rag-rights-guard.test.mjs` : `55d6382bab1374d5417de41460e2dd2368482395`.
+- `tests/rag-rights-guard.test.mjs` : `55d6382bab1374d5417de41460e2dd2368482395`, puis enrichissement des assertions de métadonnées : `14b4880555e4a40bd90e4894a61cb7b99de0eeb6`.
 - `tests/teacher-context.test.mjs` : `cbd063594d9f3218ae52aa9f451735742f504a7e`.
 - `app.js` : `5d6a3c51bbc04232809cd50768630678873d8f43`.
 
