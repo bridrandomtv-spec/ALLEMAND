@@ -2913,3 +2913,45 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun code applicatif, prompt Worker, modèle de contexte ou configuration de langue modifié.
 - Aucun test navigateur/microphone ou test d'exécution IA effectué ; les constats décrivent le code source et non une mesure de comportement en production.
 - Aucun accès ou changement Supabase ; aucun workflow d'indexation déclenché ; aucun déploiement Cloudflare ; aucune fusion. PR #17 demeure ouverte et non fusionnée.
+
+
+## Lot 553 — ordre de chargement, transitions et désynchronisation matière/niveau (16 novembre 2026)
+
+### Ordre réel des scripts dans index.html
+- `auth.js`, `bdd.js`, `access.js`, `prof_core.js`, puis `js/subject.js` sont chargés comme scripts classiques sans `defer`.
+- `app.js` est ensuite chargé sans `defer` et exécute ses blocs immédiatement, dont la création de `window.VT` (bloc P2).
+- `js/context.js` est chargé après `app.js`, également sans `defer`. Il peut donc lire `VT` lorsqu'il est initialisé ; QUST/RAG/IA et les autres modules déclarés `defer` s'exécutent après l'analyse HTML, dans l'ordre de déclaration, donc après ce contexte.
+- Le commentaire de `subject.js` disant qu'il est chargé avant `app.js` est exact. Son appel `load()` est asynchrone ; `active()` relit VT à chaque appel. Le repli allemand est donc utilisé si `active()` est appelé avant que VT existe ou si le registre n'a pas encore chargé la matière demandée. Ce point est un risque de démarrage, mais ne prouve pas à lui seul une désynchronisation permanente.
+
+### Défaut confirmé : onboarding du niveau non synchronisé avec VT
+- Le bloc onboarding P7/P8 lit et écrit `localStorage.dz_level` (choix 1AS/2AS/3AS), puis appelle `setSubj()`.
+- `setSubj()` appelle `VT.setSubject()`, mais ni le sélecteur matière ni l'onboarding n'appellent `VT.setLevel()`. Dans tout `app.js`, aucune occurrence de `setLevel(` ou `setTrack(` n'a été trouvée.
+- Or le constructeur de `VT` lit son propre espace `vt:level`, indépendant de `dz_level`, et applique par défaut 3AS pour l'allemand et 1AS pour l'anglais.
+- Conséquence déterministe à vérifier en exécution : un élève choisissant 2AS peut avoir `dz_level=2AS`, tandis que `VT.ctx().level` reste 3AS si aucune valeur `vt:level` n'a été enregistrée. La façade `CONTEXT` privilégie VT avant LEGACY et peut donc exposer 3AS malgré le choix 2AS.
+- Le pont P2-A.2 peut ensuite propager le niveau VT allemand vers le niveau legacy, ce qui risque d'écraser le niveau attendu par le parcours historique. Le garde visiteur `tous` et le verrou cloud limitent certains cas, mais ne résolvent pas la divergence entre `dz_level` et `vt:level`.
+
+### Sources de vérité parallèles
+- `app.js` contient aussi `window.CTX`, présenté comme une source de vérité pour `dz_level` et `dz_subject`, mais son commentaire indique explicitement qu'il ne touche pas `niveauActif`, RAG, corpus ou QUST. Il est distinct de `window.VT` et de `window.CONTEXT`.
+- Les changements de matière mettent à jour `dz_subject`, `__SUBJECT__`, `__TARGET_LANG__` et `VT.subject` par plusieurs fonctions historiques. Les événements `vt:ctx` sont émis par les mutateurs VT, mais le pont de niveau est le seul consommateur explicite repéré dans `app.js`; aucun consommateur de `vt:ctx` n'actualise explicitement `CONTEXT`, `RAG`, `BIBLIO` ou l'orchestrateur vocal.
+- Aucun appel `VT.setTrack()` ou `VT.setLevel()` n'a été trouvé dans `app.js`. Le registre VT initialise la filière à `COMMON`, alors que `CONTEXT` décrit la filière absente comme `null` uniquement si VT ne fournit pas de valeur. Le défaut COMMON est donc une valeur par défaut de l'application, pas une filière vérifiée par profil.
+- `CONTEXT.ctx()` assemble matière, niveau et filière en appelant séparément trois lecteurs. Ce n'est pas un snapshot atomique issu d'une seule lecture VT : la matière vient de SUBJECT, le niveau peut venir du verrou/session cloud ou du legacy, et la filière vient de VT. Un état mixte est donc possible en cas de transitions ou d'autorités contradictoires.
+
+### Conséquences fonctionnelles et sécurité pédagogique
+1. Le choix 2AS/3AS peut ne pas être celui consommé par le contexte pédagogique ; c'est un risque direct de sélectionner les mauvaises unités et ressources.
+2. La valeur de niveau cloud est prioritaire dans `CONTEXT` sans condition explicite de matière ; une session allemande peut donc contribuer un niveau à un contexte dont la matière courante est anglaise.
+3. L'interface peut afficher une matière anglaise alors que le niveau lu depuis l'autorité legacy/cloud correspond au modèle allemand.
+4. La filière `COMMON` peut être une valeur par défaut technique et ne doit pas être présentée comme une filière confirmée de l'élève sans validation du profil.
+5. Les événements de changement ne suffisent pas à garantir une invalidation des caches ou une nouvelle sélection documentaire dans les moteurs IA.
+
+### Plan de correction recommandé — sans changement de code dans ce lot
+- Définir une seule autorité de contexte et un seul adaptateur rétrocompatible ; supprimer les écritures concurrentes après migration contrôlée, sans casser les anciennes clés.
+- À chaque changement de matière/niveau/filière, appeler un mutateur central qui valide la combinaison, persiste une seule fois et émet un événement unique avec un snapshot complet.
+- Réconcilier explicitement `dz_level`, `vt:level` et le niveau cloud ; priorité et portée par matière doivent être définies avant toute écriture. Ne pas copier un niveau allemand vers anglais.
+- Construire `CONTEXT.ctx()` à partir d'un snapshot cohérent et inclure un état de validation/provenance (profil cloud, choix utilisateur, défaut), sans faire passer un défaut technique pour une donnée de profil.
+- Faire écouter le même événement à chat, RAG, BIBLIO, QUST et voix ; invalider les caches de retrieval lorsque matière/niveau/filière changent.
+- Ajouter tests automatisés pour : choix 1AS/2AS/3AS, changement allemand↔anglais, visiteur, compte connecté avec niveau verrouillé, stockage local indisponible, chargement lent du registre, et changement de filière.
+
+### État des opérations
+- Lecture seule de `index.html`, `app.js`, `js/subject.js` et `js/context.js` sur `design/prototypes-67-74-alignment`.
+- Les chemins de scripts ont été lus dans le HTML ; aucune exécution navigateur ni test de stockage local n'a été effectuée. Les conséquences indiquées comme déterministes découlent des règles de lecture et des écritures visibles dans le code, et restent à confirmer en test d'intégration.
+- Aucun code applicatif, schéma, donnée, paramètre Supabase ou Worker modifié ; aucun workflow ni déploiement lancé. PR #17 reste ouverte et non fusionnée.
