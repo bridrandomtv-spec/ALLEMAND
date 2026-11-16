@@ -30,6 +30,46 @@ from metadata_contract import valide_metadonnees, ajoute_quarantaine
 INTERDITS = {"manuel_scolaire_editeur", "livre_commercial", "scan_livre_protege"}
 TAILLE_CHUNK = 1200  # mots
 
+# Doit rester aligné sur RAG.termes() dans rag.js : variantes arabes
+# attachées et alias Arabizi explicitement contrôlés (pas de traduction libre).
+ARABIZI = {
+    "chrahli": ["اشرح"], "chrah": ["اشرح"], "fassarli": ["فسر"],
+    "jomla": ["الجملة"], "joumla": ["الجملة"], "eljomla": ["الجملة"],
+    "ismiya": ["الاسمية"], "ismeya": ["الاسمية"],
+    "exemple": ["مثال"], "mithal": ["مثال"], "sahl": ["بسيط"],
+    "darja": ["الدارجة"], "derja": ["الدارجة"],
+}
+
+
+def variantes_arabe(mot):
+    base = re.sub(r"[\u064B-\u065F\u0670\u0640]", "", str(mot or ""))
+    base = re.sub(r"[أإآٱ]", "ا", base).replace("ى", "ي")
+    resultat = {base}
+    racine = base
+    for _ in range(2):
+        if len(racine) > 4 and racine.startswith("ال"):
+            racine = racine[2:]
+            resultat.add(racine)
+        elif len(racine) > 3 and racine[:1] in "وفبكل":
+            racine = racine[1:]
+            resultat.add(racine)
+        else:
+            break
+    return {mot for mot in resultat if len(mot) >= 3}
+
+
+def termes_index(texte):
+    tokens = re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06FF]{3,}", str(texte or "").lower())
+    resultat = set()
+    for token in tokens:
+        if re.search(r"[\u0600-\u06FF]", token):
+            resultat.update(variantes_arabe(token))
+        else:
+            resultat.add(token)
+            for alias in ARABIZI.get(token, []):
+                resultat.update(variantes_arabe(alias))
+    return resultat
+
 
 def texte_pdf(chemin):
     try:
@@ -104,7 +144,7 @@ def main(dossier):
         for ci, ch in enumerate(chunks(texte)):
             cid = len(index["chunks"])
             index["chunks"].append({"doc": did, "n": ci, "texte": ch})
-            for mot in set(re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06FF]{3,}", ch.lower())):
+            for mot in termes_index(ch):
                 index["termes"].setdefault(mot, []).append(cid)
         os.makedirs("assets/corpus", exist_ok=True)
         shutil.copy(chemin, "assets/corpus/" + did + "." + ext)
@@ -125,7 +165,7 @@ def main(dossier):
     termes = {}
     for cid, chunk in enumerate(tous_chunks):
         chunk["n"] = cid
-        for mot in set(re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06FF]{3,}", chunk.get("texte", "").lower())):
+        for mot in termes_index(chunk.get("texte", "")):
             termes.setdefault(mot, []).append(cid)
     index = {"version": "1.0.0", "schema": "rag-chunks-v1",
              "termes": termes, "chunks": tous_chunks}
