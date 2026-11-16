@@ -33,7 +33,9 @@ class IngestionContractTests(unittest.TestCase):
             (docs / "lesson.txt").write_text("Haus Schule lernen " * 80, encoding="utf-8")
             (docs / "_lesson.json").write_text(json.dumps({
                 "titre": "Leçon fixture", "matiere": "allemand", "niveau": "2AS",
-                "type": "cours", "source": "fixture de test", "licence": "fixture"
+                "type": "cours", "langue": "de", "source": "fixture de test",
+                "licence": "production_propre", "droits_verifies": True,
+                "droits_reference": "autorisation-test-001"
             }), encoding="utf-8")
 
             env = dict(os.environ)
@@ -48,6 +50,7 @@ class IngestionContractTests(unittest.TestCase):
             self.assertEqual(after_corpus["_meta"], corpus["_meta"])
             self.assertEqual(len(after_corpus["documents"]), 1)
             self.assertTrue(chunks_path.exists())
+            self.assertTrue((bdd / "corpus_quarantaine.json").exists() is False)
             chunks_index = json.loads(chunks_path.read_text(encoding="utf-8"))
             self.assertEqual(chunks_index["schema"], "rag-chunks-v1")
             self.assertEqual(len(chunks_index["chunks"]), 2)
