@@ -4171,9 +4171,9 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 ## Lot 649 — preuve RAG HMAC vérifiée côté Worker (2026-11-16)
 
 - Constat : le Worker autonome `worker/ia-ask.js` n'a pas le binding `ASSETS` du Worker de site défini dans `wrangler.toml`. Le manifeste publié `assets/bdd/shards_manifest.json` annonce zéro shard ; `assets/bdd/corpus_rag_index.json` est absent de la branche. Le Worker CERVEAU ne peut donc pas vérifier seul un chunk réel avec l'architecture et les artefacts actuels.
-- Le Worker extrait maintenant la portée (page/unité/exercice) depuis la question originale, y compris les chiffres arabes/persans, et ignore les statuts de provenance/portée fournis par le navigateur.
+- Le Worker extrait maintenant la portée (page/unité/leçon/exercice) depuis la question originale, y compris les chiffres arabes/persans et les formulations leçon/lesson/Lektion/الدرس, et ignore les statuts de provenance/portée fournis par le navigateur.
 - Ajout du vérificateur de jeton HMAC-SHA-256 : émetteur/audience stricts, portée exacte, document/chunk, empreinte SHA-256 source, empreinte du contexte complet, durée maximale de cinq minutes, clé serveur de 32 caractères minimum. Toute erreur échoue fermée.
-- Une demande précise sans preuve signée est refusée avant appel au modèle. Le Worker ne retourne `rag_evidence_verified=true` qu'après validation cryptographique.
+- Une demande précise sans preuve signée est refusée avant appel au modèle. Le Worker ne retourne `rag_evidence_verified=true` qu'après validation cryptographique. Le futur émetteur devra retrouver lui-même le chunk publié et reconstruire le contexte canonique ; il ne devra jamais signer un contexte arbitraire fourni par le navigateur.
 - `ia.js` n'affiche désormais une citation que si le Worker atteste explicitement `rag_evidence_verified=true`.
 - Tests ajoutés : signature valide, contexte altéré, jeton expiré, portée divergente, statuts client falsifiés, chiffres arabes et absence d'appel au modèle lors d'un refus ; test d'orchestration de la citation sans attestation serveur.
 - Limites : aucun émetteur de jeton n'est encore construit ; `RAG_EVIDENCE_HMAC_KEY` n'est pas configurée et aucun secret n'a été ajouté. Le parcours RAG actuel ne peut donc pas produire de preuve : les demandes précises s'abstiennent volontairement jusqu'au Lot 650.
