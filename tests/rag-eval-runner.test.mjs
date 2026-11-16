@@ -7,8 +7,7 @@ const fixture = JSON.parse(fs.readFileSync(
 ));
 const ragSource = fs.readFileSync(new URL('../rag.js', import.meta.url), 'utf8');
 
-// Build a disposable in-memory corpus and inverted index from synthetic passages.
-// The synthetic rights reference exists only inside this VM test and is not a licence.
+// All corpus/index data below exists only in memory and is synthetic.
 const corpus = {
   documents: fixture.documents.map(doc => ({
     id: doc.id, titre: doc.title, matiere: doc.subject, niveau: doc.level,
@@ -22,19 +21,15 @@ const chunks = fixture.documents.map((doc, index) => ({
 }));
 const terms = {};
 const tokenize = value => Array.from(new Set(
-  String(value || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06ff]{3,}/g) || []
+  String(value || '').toLowerCase().match(/[a-zà-ÿ\\u0600-\\u06ff]{3,}/g) || []
 ));
 for (const chunk of chunks) {
-  for (const term of tokenize(chunk.texte)) {
-    (terms[term] ||= []).push(chunk.n);
-  }
+  for (const term of tokenize(chunk.texte)) (terms[term] ||= []).push(chunk.n);
 }
-const shard = { termes: terms, chunks };
 const files = {
   'assets/bdd/corpus.json': corpus,
   'assets/bdd/shards_manifest.json': { shards: [{ file: 'benchmark-synthetic.json' }] },
-  'assets/bdd/shards/benchmark-synthetic.json': shard,
-  'assets/bdd/sharh.json': null
+  'assets/bdd/shards/benchmark-synthetic.json': { termes: terms, chunks }
 };
 const document = { addEventListener() {}, querySelector() { return null; }, getElementById() { return null; } };
 const window = { document };
@@ -48,14 +43,16 @@ const sandbox = {
 vm.runInNewContext(ragSource, sandbox, { filename: 'rag.js' });
 
 const rows = [];
+const failures = [];
 for (const item of fixture.cases) {
   const result = await window.RAG.cherche(item.query);
   const source = result ? window.RAG.provenance(result) : null;
   const retrievedDocumentId = result?.doc || null;
+  const abstained = result === null;
   const expectedHit = item.abstain
-    ? retrievedDocumentId === null
+    ? abstained
     : retrievedDocumentId === item.expectedDocumentId;
-  rows.push({
+  const row = {
     caseId: item.id,
     queryLanguage: item.queryLanguage,
     expectedDocumentId: item.expectedDocumentId,
@@ -63,40 +60,58 @@ for (const item of fixture.cases) {
     chunkId: result?.chunk ?? null,
     lexicalScore: result?.score ?? null,
     abstentionExpected: item.abstain,
-    abstained: result === null,
+    abstained,
     expectedHit,
     provenanceAvailable: !!source,
     provenanceTrust: source?.trust || null
-  });
-  if (result) {
-    assert.ok(source, `retrieved document must have admitted provenance: ${item.id}`);
-    assert.equal(source.trust, 'client_unverified');
-    assert.ok(corpus.documents.some(doc => doc.id === source.documentId));
+  };
+  rows.push(row);
+  if (result && !source) failures.push({ caseId: item.id, reason: 'missing_admitted_provenance' });
+  if (source && source.trust !== 'client_unverified') {
+    failures.push({ caseId: item.id, reason: 'unexpected_provenance_trust', actual: source.trust });
+  }
+  if (source && !corpus.documents.some(doc => doc.id === source.documentId)) {
+    failures.push({ caseId: item.id, reason: 'provenance_document_not_in_synthetic_registry' });
+  }
+  if (item.abstain && !abstained) {
+    failures.push({ caseId: item.id, reason: 'expected_abstention_but_retrieved', retrievedDocumentId });
   }
 }
 const eligible = rows.filter(row => row.expectedDocumentId !== null);
 const abstentionRows = rows.filter(row => row.abstentionExpected);
-for (const row of abstentionRows) {
-  assert.equal(row.retrievedDocumentId, null, `unsupported request must not retrieve a misleading synthetic lesson: ${row.caseId}`);
-}
 const summary = {
   benchmark: fixture.schema,
   dataStatus: fixture.datasetStatus,
   engine: 'existing browser lexical RAG (single best result)',
+  environment: 'isolated-node-vm-synthetic-fixture',
   cases: rows.length,
   retrievalEligible: eligible.length,
-  hitAt1: eligible.filter(row => row.retrievedDocumentId === row.expectedDocumentId).length / eligible.length,
+  hitAt1: eligible.length
+    ? eligible.filter(row => row.retrievedDocumentId === row.expectedDocumentId).length / eligible.length
+    : null,
   expectedAbstentions: abstentionRows.length,
   correctAbstentions: abstentionRows.filter(row => row.abstained).length,
   abstentionAccuracy: abstentionRows.length
-    ? abstentionRows.filter(row => row.abstained).length / abstentionRows.length : null,
-  arabiziCase: rows.find(row => row.caseId === 'ar-latn-001') || null,
+    ? abstentionRows.filter(row => row.abstained).length / abstentionRows.length
+    : null,
+  failures,
   limitations: [
     'One best result only: hit@k is not measurable with the current RAG API.',
     'No Worker generation or answer-language evaluation is performed.',
     'The corpus, rights registry and shard are synthetic and exist only in memory.',
-    'The test does not validate any real textbook, rights record or production index.'
+    'The test does not validate any real textbook, rights record or production index.',
+    'A high retrieval score is not a pedagogical or linguistic quality approval.'
   ],
   rows
 };
+
+// CI sets this variable; local runs do not leave generated files in the repository.
+if (process.env.RAG_EVAL_REPORT_PATH) {
+  fs.writeFileSync(
+    process.env.RAG_EVAL_REPORT_PATH,
+    JSON.stringify(summary, null, 2) + '\\n',
+    'utf8'
+  );
+}
 process.stdout.write(JSON.stringify(summary, null, 2) + '\\n');
+assert.deepEqual(failures, [], 'benchmark contract failures are recorded in the JSON report');
