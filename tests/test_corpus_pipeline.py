@@ -105,6 +105,10 @@ class CorpusPipelineContract(unittest.TestCase):
         digest = "a" * 64
         self.assertTrue(rights.document_couvert(meta, "doc-1", digest))
         self.assertFalse(rights.document_couvert(meta, "doc-2", digest))
+        meta["licence"] = " AUTORISATION_ECRITE "
+        self.assertFalse(rights.document_couvert(meta, "doc-2", digest))
+        self.assertTrue(rights.document_couvert(meta, "doc-1", digest))
+        meta["licence"] = "autorisation_ecrite"
         meta["perimetre_documentaire"] = {"identifiants_documents": [],
             "empreintes_sha256": [digest]}
         self.assertTrue(rights.document_couvert(meta, "doc-2", digest))
