@@ -21,7 +21,7 @@ try:
         valider_coherence_catalogue_index
     )
 except ModuleNotFoundError:  # exécution directe
-    from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+    from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees, projection_preuve_droits
     from corpus_contracts import (
         sha256_fichier, decouper_pages, fusionner_documents, construire_chunk,
         fusionner_index_rag, ecrire_json_transactionnel,
