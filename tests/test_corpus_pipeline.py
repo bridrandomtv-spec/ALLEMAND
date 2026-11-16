@@ -22,6 +22,72 @@ ingest = load_module("tools/ingest_corpus.py", "ingest_corpus")
 audit = load_module("tools/audit_corpus_registry.py", "audit_corpus_registry")
 
 class CorpusPipelineContract(unittest.TestCase):
+    def test_direct_ingest_import_fallback_exposes_document_scope_guard(self):
+        import subprocess
+        repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        tools_dir = os.path.join(repo_root, "tools")
+        result = subprocess.run(
+            [sys.executable, "-c",
+             "import ingest_corpus; assert callable(ingest_corpus.document_couvert)"],
+            cwd=tools_dir, capture_output=True, text=True
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_pdf_indexer_rejects_out_of_scope_authorization_before_extraction(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = os.path.join(tmp, "cours.pdf")
+            payload = b"synthetic PDF fixture; extraction must not run"
+            with open(source, "wb") as stream:
+                stream.write(payload)
+            digest = hashlib.sha256(payload).hexdigest()
+            meta = {
+                "licence": "autorisation_ecrite", "source": "Autorité de test",
+                "titulaire_droits": "Titulaire synthétique", "declarant": "Déclarant test",
+                "date_declaration": "2026-11-16", "declaration_droits": True,
+                "reference_autorisation": "FIXTURE-LOT-654",
+                "perimetre_documentaire": {"identifiants_documents": ["autre-document"],
+                    "empreintes_sha256": []},
+                "usages_autorises": ["hebergement_source", "extraction_texte",
+                    "indexation_rag", "restitution_extraits"],
+                "validation": {"statut": "valide", "verificateur": "Test",
+                    "date": "2026-11-16", "reference_preuve": "fixture-lot-654"}
+            }
+            with open(os.path.join(tmp, "_cours.json"), "w", encoding="utf-8") as stream:
+                json.dump(meta, stream)
+            with patch.object(indexer, "lire_pages_pdf", side_effect=AssertionError("extraction interdite")):
+                corpus, index, ignored = indexer.construire(tmp, [])
+            self.assertEqual(ignored, 1)
+            self.assertEqual(corpus["documents"], [])
+            self.assertEqual(index["chunks"], [])
+
+    def test_pdf_indexer_accepts_hash_scoped_authorization(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = os.path.join(tmp, "cours.pdf")
+            payload = b"synthetic PDF fixture authorized by exact hash"
+            with open(source, "wb") as stream:
+                stream.write(payload)
+            digest = hashlib.sha256(payload).hexdigest()
+            meta = {
+                "licence": "autorisation_ecrite", "source": "Autorité de test",
+                "titulaire_droits": "Titulaire synthétique", "declarant": "Déclarant test",
+                "date_declaration": "2026-11-16", "declaration_droits": True,
+                "reference_autorisation": "FIXTURE-LOT-654",
+                "perimetre_documentaire": {"identifiants_documents": [],
+                    "empreintes_sha256": [digest]},
+                "usages_autorises": ["hebergement_source", "extraction_texte",
+                    "indexation_rag", "restitution_extraits"],
+                "validation": {"statut": "valide", "verificateur": "Test",
+                    "date": "2026-11-16", "reference_preuve": "fixture-lot-654"}
+            }
+            with open(os.path.join(tmp, "_cours.json"), "w", encoding="utf-8") as stream:
+                json.dump(meta, stream)
+            with patch.object(indexer, "lire_pages_pdf", return_value=["Hallo Schüler. " * 20]):
+                corpus, index, ignored = indexer.construire(tmp, [])
+            self.assertEqual(ignored, 0)
+            self.assertEqual(len(corpus["documents"]), 1)
+            self.assertEqual(corpus["documents"][0]["source_sha256"], digest)
+            self.assertTrue(index["chunks"])
+
     def test_written_authorization_scope_requires_matching_document_id_or_hash(self):
         meta = {
             "licence": "autorisation_ecrite", "source": "Autorité émettrice",
