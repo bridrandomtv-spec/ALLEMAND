@@ -24,6 +24,7 @@ Ce script :
 Aucun fichier protégé n'est téléchargé : tout vient de VOTRE dossier local.
 """
 import json, os, re, shutil, sys, hashlib
+from metadata_contract import valide_metadonnees, ajoute_quarantaine
 
 INTERDITS = {"manuel_scolaire_editeur", "livre_commercial", "scan_livre_protege"}
 TAILLE_CHUNK = 1200  # mots
@@ -67,13 +68,21 @@ def main(dossier):
         meta = {}
         mp = os.path.join(dossier, "_" + nom.rsplit(".", 1)[0] + ".json")
         if os.path.exists(mp):
-            meta = json.load(open(mp, encoding="utf-8"))
-        licence = meta.get("licence", "non_verifiee")
+            try:
+                meta = json.load(open(mp, encoding="utf-8"))
+            except (OSError, ValueError):
+                meta = None
+        did = "c-" + hashlib.md5(nom.encode()).hexdigest()[:8]
+        erreurs = valide_metadonnees(meta)
+        licence = meta.get("licence", "") if isinstance(meta, dict) else ""
         if licence in INTERDITS:
-            print("  REFUSÉ (licence) :", nom)
+            erreurs.append("catégorie de document interdite")
+        if erreurs:
+            ajoute_quarantaine({"id": did, "fichier": nom, "format": ext,
+                                "statut": "a_verifier", "motifs": erreurs})
+            print("  MIS EN QUARANTAINE :", nom, "·", "; ".join(erreurs))
             continue
         texte = {"pdf": texte_pdf, "docx": texte_docx}.get(ext, texte_brut)(chemin)
-        did = "c-" + hashlib.md5(nom.encode()).hexdigest()[:8]
         docs.append({
             "id": did,
             "titre": meta.get("titre", nom),
@@ -83,9 +92,11 @@ def main(dossier):
             "annee": meta.get("annee", "2026/2027"),
             "format": ext,
             "url": "assets/corpus/" + did + "." + ext,
-            "source": meta.get("source", "document local"),
+            "source": meta["source"],
+            "langue": meta["langue"],
             "licence": licence,
-            "droits_statut": "verifies" if meta.get("droits_verifies") is True else "a_verifier",
+            "droits_statut": "verifies",
+            "droits_reference": meta["droits_reference"],
             "tags": meta.get("tags", []),
             "extrait": texte[:300].replace("\n", " "),
         })
