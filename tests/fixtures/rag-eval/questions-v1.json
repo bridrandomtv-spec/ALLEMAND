@@ -1,0 +1,183 @@
+{
+  "schema": "rag-evaluation-set-v1",
+  "purpose": "Synthetic benchmark contract for multilingual pedagogical RAG evaluation; not official curriculum content.",
+  "datasetStatus": "synthetic_test_only",
+  "authority": "non_official",
+  "scoringPolicy": {
+    "retrieval": "A retrieved document is relevant only when its id matches expectedDocumentId; measure hit@1 and hit@k when ranked results are available.",
+    "grounding": "Every factual claim about the lesson must be supported by one of the supplied synthetic passages.",
+    "abstention": "For abstain=true, the assistant must state that the requested platform content is unavailable and must not fabricate an official lesson.",
+    "language": "The answer should use answerLanguage unless the student explicitly requests another language.",
+    "level": "Use short explanations and vocabulary appropriate to the declared level.",
+    "humanReviewRequired": true
+  },
+  "documents": [
+    {
+      "id": "synthetic-de-a1-01",
+      "title": "Synthetic German A1 — Präsens",
+      "subject": "allemand",
+      "level": "A1",
+      "language": "de",
+      "status": "synthetic_test_only",
+      "passage": "Im Präsens steht das konjugierte Verb im Aussagesatz normalerweise an zweiter Position. Beispiel: Ich lerne heute Deutsch."
+    },
+    {
+      "id": "synthetic-fr-a2-01",
+      "title": "Synthetic French A2 — passé composé",
+      "subject": "français",
+      "level": "A2",
+      "language": "fr",
+      "status": "synthetic_test_only",
+      "passage": "Le passé composé se forme généralement avec l'auxiliaire avoir ou être au présent, suivi du participe passé. Exemple : J'ai appris."
+    },
+    {
+      "id": "synthetic-ar-a2-01",
+      "title": "Synthetic Arabic A2 — الجملة الاسمية",
+      "subject": "arabe",
+      "level": "A2",
+      "language": "ar",
+      "status": "synthetic_test_only",
+      "passage": "تتكوّن الجملة الاسمية في المثال البسيط من مبتدأ وخبر، مثل: العلمُ نورٌ."
+    },
+    {
+      "id": "synthetic-en-a2-01",
+      "title": "Synthetic English A2 — present perfect",
+      "subject": "anglais",
+      "level": "A2",
+      "language": "en",
+      "status": "synthetic_test_only",
+      "passage": "The present perfect is formed with have or has plus the past participle. It often connects a past action to the present."
+    }
+  ],
+  "cases": [
+    {
+      "id": "de-001",
+      "queryLanguage": "de",
+      "query": "Warum steht das Verb in «Ich lerne heute Deutsch» an zweiter Stelle?",
+      "expectedDocumentId": "synthetic-de-a1-01",
+      "answerLanguage": "de",
+      "level": "A1",
+      "expectedConcepts": [
+        "Verb",
+        "zweite Position",
+        "Aussagesatz"
+      ],
+      "abstain": false,
+      "capabilityStatus": "implemented"
+    },
+    {
+      "id": "fr-001",
+      "queryLanguage": "fr",
+      "query": "Comment forme-t-on le passé composé ?",
+      "expectedDocumentId": "synthetic-fr-a2-01",
+      "answerLanguage": "fr",
+      "level": "A2",
+      "expectedConcepts": [
+        "auxiliaire",
+        "participe passé",
+        "avoir ou être"
+      ],
+      "abstain": false,
+      "capabilityStatus": "implemented"
+    },
+    {
+      "id": "ar-001",
+      "queryLanguage": "ar",
+      "query": "اشرح لي مكوّنات الجملة الاسمية مع مثال.",
+      "expectedDocumentId": "synthetic-ar-a2-01",
+      "answerLanguage": "ar",
+      "level": "A2",
+      "expectedConcepts": [
+        "مبتدأ",
+        "خبر",
+        "العلم نور"
+      ],
+      "abstain": false,
+      "capabilityStatus": "implemented"
+    },
+    {
+      "id": "dz-001",
+      "queryLanguage": "ar-DZ",
+      "query": "واش الفرق بين المبتدأ والخبر؟ عطيني مثال بسيط.",
+      "expectedDocumentId": "synthetic-ar-a2-01",
+      "answerLanguage": "ar-DZ",
+      "level": "A2",
+      "expectedConcepts": [
+        "مبتدأ",
+        "خبر",
+        "مثال"
+      ],
+      "abstain": false,
+      "capabilityStatus": "implemented"
+    },
+    {
+      "id": "ar-latn-001",
+      "queryLanguage": "ar-Latn-DZ",
+      "query": "Chrahli el-jomla el-ismiya b darja, b exemple sahl.",
+      "expectedDocumentId": "synthetic-ar-a2-01",
+      "answerLanguage": "ar-DZ",
+      "level": "A2",
+      "expectedConcepts": [
+        "مبتدأ",
+        "خبر",
+        "مثال"
+      ],
+      "abstain": false,
+      "capabilityStatus": "implemented"
+    },
+    {
+      "id": "en-001",
+      "queryLanguage": "en",
+      "query": "How do I form the present perfect?",
+      "expectedDocumentId": "synthetic-en-a2-01",
+      "answerLanguage": "en",
+      "level": "A2",
+      "expectedConcepts": [
+        "have or has",
+        "past participle",
+        "present connection"
+      ],
+      "abstain": false,
+      "capabilityStatus": "partial"
+    },
+    {
+      "id": "mix-001",
+      "queryLanguage": "fr+de",
+      "query": "Explique en français pourquoi on dit «Ich lerne» et pas «Ich lernen».",
+      "expectedDocumentId": "synthetic-de-a1-01",
+      "answerLanguage": "fr",
+      "level": "A1",
+      "expectedConcepts": [
+        "conjugaison",
+        "ich",
+        "lerne"
+      ],
+      "abstain": false,
+      "capabilityStatus": "implemented"
+    },
+    {
+      "id": "it-unsupported-001",
+      "queryLanguage": "it",
+      "query": "Dove trovo il corso ufficiale di italiano per la mia classe?",
+      "expectedDocumentId": null,
+      "answerLanguage": "it",
+      "level": "secondary",
+      "expectedConcepts": [],
+      "abstain": true,
+      "capabilityStatus": "planned",
+      "expectedBehavior": "State that an Italian course is not yet confirmed as available in the platform; do not invent official lessons or links."
+    },
+    {
+      "id": "es-unsupported-001",
+      "queryLanguage": "es",
+      "query": "Dame el programa oficial de español de tercer curso.",
+      "expectedDocumentId": null,
+      "answerLanguage": "es",
+      "level": "secondary",
+      "expectedConcepts": [],
+      "abstain": true,
+      "capabilityStatus": "planned",
+      "expectedBehavior": "State that the official Spanish course content is not confirmed as available; do not invent a syllabus."
+    }
+  ]
+}
