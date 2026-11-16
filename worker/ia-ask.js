@@ -95,7 +95,7 @@ async function verifierPreuveRag(token, secret, context, requestedScope){
     if(!claims || claims.v !== 1 || claims.iss !== 'lycee-virtuel-rag'
       || claims.aud !== 'ia-ask' || !Number.isSafeInteger(claims.iat)
       || !Number.isSafeInteger(claims.exp) || claims.iat > now + 30
-      || claims.exp <= now || claims.exp - claims.iat > 300
+      || claims.exp <= now || claims.exp <= claims.iat || claims.exp - claims.iat > 300
       || claims.scope_type !== requestedScope.type
       || claims.scope_value !== requestedScope.value
       || typeof claims.doc_id !== 'string' || !claims.doc_id
