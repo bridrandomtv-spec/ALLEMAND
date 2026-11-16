@@ -79,6 +79,8 @@ assert.equal(result.response.status, 200);
 assert.equal(result.data.ok, true);
 assert.equal(result.data.rep, 'Réponse synthétique du professeur.');
 assert.equal(result.data.answer_language, 'ar');
+assert.equal(result.data.rag_evidence_verified, false,
+  'le statut client verified ne doit pas devenir une attestation serveur');
 assert.ok(captured && Array.isArray(captured.messages), 'messages du modèle non capturés');
 const systemPrompt = captured.messages[0].content;
 const userPrompt = captured.messages[captured.messages.length - 1].content;
