@@ -19,7 +19,7 @@ function hex(bytes){
 }
 function b64url(bytes){
   let binary = '';
-  for(const b of bytes) binary += String.fromCharCode(b);
+  for(const b of new Uint8Array(bytes)) binary += String.fromCharCode(b);
   return btoa(binary).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
 function termes(q){
