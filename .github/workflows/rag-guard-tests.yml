@@ -49,6 +49,8 @@ jobs:
         run: node tests/lot577-rag-context-integration.test.mjs
       - name: Test multilingual RAG evaluation benchmark
         run: node tests/rag-eval-contract.test.mjs
+      - name: Run benchmark against isolated lexical RAG
+        run: node tests/rag-eval-runner.test.mjs
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
