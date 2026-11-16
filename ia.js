@@ -359,7 +359,7 @@
         }catch(e){}
       }
       if(ragSourceStatus === 'unavailable') ctx += 'PROVENANCE RAG : aucun extrait RAG pertinent et vérifié n’a été trouvé pour cette question. Ne prétends pas citer une page, une unité ou un exercice officiel.\n';
-      if(local && local.indexOf('لا أعرف') === -1) ctx += 'RÉPONSE LOCALE :\n' + local.slice(0, 700);
+      if(local && local.indexOf('لا أعرف') === -1 && !ragEvidenceToken) ctx += 'RÉPONSE LOCALE :\n' + local.slice(0, 700);
       if(!ragEvidenceToken) ctx = ctx.slice(0, 3000);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
