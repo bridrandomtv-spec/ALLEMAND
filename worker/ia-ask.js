@@ -78,7 +78,7 @@ function decoderBase64Url(value){
 }
 async function verifierPreuveRag(token, secret, context, requestedScope){
   if(typeof token !== 'string' || token.length > 4096 || !secret
-    || String(secret).length < 32 || !requestedScope || requestedScope.type === 'none') return null;
+    || String(secret).length < 32 || !requestedScope) return null;
   try{
     const parts = token.split('.');
     if(parts.length !== 2) return null;
