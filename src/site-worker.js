@@ -138,14 +138,14 @@ async function emettrePreuveRag(request, env){
           throw new Error('invalid_chunk');
         const doc = docs.get(chunk.doc);
         if(!doc || !/^[0-9a-f]{64}$/.test(doc.source_sha256 || '')
-          || doc.source_sha256 !== chunk.source_sha256 || doc.licence !== doc.droits?.licence
-          || !preuveDroitsValide(doc.droits))
+          || doc.source_sha256 !== chunk.source_sha256)
           throw new Error('document_provenance_mismatch');
         if(chunk.page_start != null || chunk.page_end != null){
           if(!Number.isSafeInteger(chunk.page_start) || chunk.page_start < 1
             || chunk.page_end !== chunk.page_start) throw new Error('invalid_page_scope');
         }
-        ids.add(chunk.global_id); localIds.add(chunk.global_id); chunks.push(chunk);
+        ids.add(chunk.global_id); localIds.add(chunk.global_id);
+        if(doc.licence === doc.droits?.licence && preuveDroitsValide(doc.droits)) chunks.push(chunk);
       }
       for(const [term, postings] of Object.entries(shard.termes)){
         if(!term.trim() || !Array.isArray(postings)) throw new Error('invalid_postings');
