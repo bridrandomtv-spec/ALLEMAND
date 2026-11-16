@@ -4033,3 +4033,58 @@ Le découpage actuel en blocs de 1200 mots ne conserve pas les pages. Le futur e
 
 ### Suite logique
 Lot 567 : inventaire exhaustif des références à `corpus.json` et de ses champs (`documents`, `items`, `_meta`) dans les fichiers applicatifs, outils et workflows. Ensuite seulement, implémenter la séparation complète des artefacts, avec tests de préservation des deux fichiers historiques. Le pilote BGE-M3 reste bloqué jusqu'à obtention d'un corpus documentaire filtrable et traçable.
+
+
+## Lot 567 — inventaire exhaustif des dépendances corpus (16 novembre 2026)
+
+### Périmètre et méthode
+Inventaire réalisé sur l'arbre Git complet de la branche `design/prototypes-67-74-alignment` (1 374 fichiers), puis lecture des fichiers applicatifs, scripts, tests et workflows pertinents. Les recherches GitHub globales étant indexées sur la branche par défaut, l'inventaire a été effectué à partir de l'arbre exact de la branche et de lectures directes de fichiers.
+
+### 1. Contrats réels des fichiers
+- `assets/bdd/corpus.json` : clés `_meta`, `documents` (239 fiches) et `items` (450 éléments). Il sert de registre de documents et contient également une ancienne collection `items` qu'il faut préserver.
+- `assets/bdd/corpus_index.json` : clés `_meta`, `items` (490 entrées). Il s'agit d'une collection lexicale DE–AR, et non d'un index inversé de chunks.
+- `assets/bdd/shards_manifest.json` : `nb_shards=0`, `total_chunks=0`, tableau `shards` vide.
+- Les deux SHA des fichiers de référence dans cette branche ont été relevés : corpus.json `a55ae7f7b1567ad1f604a3407d093df16fe44251`, corpus_index.json `a665223774cdad6024e4138b2cc415d2d46fa0b0`.
+
+### 2. Lecteurs identifiés
+- `corpus.js` charge `corpus.json`, utilise `D.documents` pour la bibliothèque publique et ses filtres matière/niveau/type/année. Il charge également `corpus_index.json` dans `IDX`, mais aucune lecture de `IDX.items` n'a été trouvée dans ce module.
+- `rag.js` lit le manifeste et les shards ; son repli charge `corpus_index.json` et attend `termes` + `chunks`. Il lit aussi `corpus.json` et utilise `documents` pour la recherche de documents, annales et sujets du bac.
+- `biblio.js` charge `corpus_index.json` comme source `corpus` et lit `C.items || C.index` (jusqu'à 500 éléments) pour construire ses entrées lexicales. Il dépend donc du format vocabulaire actuel.
+- `app.js` comporte des usages de propriétés `items` sans lien direct prouvé avec corpus.json ; ils ne doivent pas être confondus avec les collections corpus.
+- `tests/regression_rag.mjs` valide des questions de réponse RAG, mais ne vérifie pas l'intégrité du registre documentaire ni la préservation du vocabulaire.
+
+### 3. Producteurs et automatismes identifiés
+- `tools/ingest_corpus.py` écrit `corpus.json` avec seulement `_meta` et `documents`, et écrit `corpus_index.json` avec `termes/chunks`. Il écrase donc à la fois `corpus.json.items` (450 éléments) et `corpus_index.json.items` (490 entrées).
+- `tools/indexer_pdf.py` lit puis réécrit les deux mêmes fichiers. Il préserve le tableau `documents` en ajoutant/supprimant les documents PDF de préfixe `pdf-`, mais réécrit `corpus.json` en sérialisant l'objet complet (donc conserve normalement `items`). En revanche il modifie `corpus_index.json` en ajoutant `chunks/termes` à l'objet existant et remplace son `_meta` : le tableau vocabulaire `items` peut rester présent, mais le contrat devient un mélange ambigu vocabulaire + index RAG, et BIBLIO continue à ne lire que `items`.
+- `tools/sharder_index.py` lit `corpus_index.json` et attend `chunks/termes`; il supprime et reconstruit les fichiers `assets/bdd/shards/shard_*.json` puis remplace le manifeste.
+- `.github/workflows/indexer.yml` déclenche l'indexation sur les ajouts/modifications dans `docs/archive/documents/**`, sur le script ou le workflow. Le workflow exécute `tools/indexer_pdf.py`, puis committe `corpus.json` et `corpus_index.json`, effectue `git pull --rebase origin main` et pousse vers `main`.
+- `.github/workflows/sharder.yml` se déclenche sur les changements de l'indexeur, de `corpus_index.json` ou du workflow ; il reconstruit les shards et pousse également après rebase sur `main`.
+
+### 4. Risques prioritaires
+1. **Critique — écrasement vocabulaire :** exécuter `ingest_corpus.py` supprime les 490 entrées consommées par BIBLIO.
+2. **Élevé — collision de contrat :** `indexer_pdf.py` mélange potentiellement vocabulaire et chunks dans un même JSON ; ce format composite n'est pas un contrat déclaré et peut induire des traitements divergents.
+3. **Élevé — automation vers main :** les workflows indexer/sharder possèdent `contents: write` et poussent vers `main`. Un changement dans le dossier surveillé peut donc déclencher des commits automatiques sur main ; ne pas les lancer ni les modifier dans cette étape.
+4. **Élevé — données corpus historique :** `ingest_corpus.py` ne préserve pas `corpus.json.items`.
+5. **Moyen — index RAG vide :** le manifeste vide ne permet pas la recherche shardée ; le repli actuel ne peut pas fonctionner avec le format réel `corpus_index.json`.
+6. **Moyen — tests insuffisants :** aucun test dédié ne garantit les clés, volumes et SHA des collections historiques lors d'une ingestion.
+
+### 5. Décision d'architecture confirmée
+- Ne pas changer la sémantique des fichiers historiques en place.
+- Garder `corpus.json` comme registre historique consommé par `corpus.js` et `rag.js`, y compris sa clé `items`.
+- Garder `corpus_index.json` comme catalogue vocabulaire consommé par `biblio.js`.
+- Introduire un artefact RAG dédié : `corpus_chunks_index.json` pour `{version, schema, termes, chunks}`.
+- Introduire `corpus_documents.json` uniquement si le futur registre d'ingestion doit être isolé ; il ne devra pas remplacer le registre historique sans migration explicitement testée.
+- Adapter ensemble `rag.js`, `ingest_corpus.py`, `indexer_pdf.py`, `sharder_index.py` et les workflows, mais désactiver/neutraliser tout push automatique vers `main` dans le pilote de validation. Les changements de workflow seront soumis à revue séparée.
+- Ajouter des tests qui comparent les SHA des deux fichiers historiques avant/après ingestion de fixture temporaire et valident les consommateurs BIBLIO/RAG.
+
+### 6. État du lot
+- Inventaire de dépendances réalisé sur la branche de travail.
+- Les deux producteurs Python et les deux workflows automatiques ont été identifiés.
+- Les consommateurs réels de `documents` et `items` sont maintenant distingués.
+- Aucun script d'indexation ou de sharding exécuté.
+- Aucun workflow déclenché.
+- Aucun code applicatif, corpus, index, shard, base Supabase, schéma SQL ou déploiement modifié.
+- Seul le dossier de continuité a été enrichi.
+
+### Suite logique — Lot 568
+Préparer les tests de contrat et une fixture documentaire temporaire. Puis corriger les trois producteurs de données (ingestion générique, indexation PDF, sharding) pour utiliser le nouvel artefact RAG sans toucher aux deux fichiers historiques. Revoir les workflows en dernier, avec déclenchement manuel et sortie en artefacts/branche de test uniquement ; aucun push automatique vers `main` pendant le pilote.
