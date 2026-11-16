@@ -4286,3 +4286,41 @@ Préparer un petit corpus de fixtures avec documents valides et invalides, puis 
 
 ### Suite logique — Lot 573
 Obtenir une exécution effective des tests Python et Node sur la branche de prévisualisation, corriger les éventuels échecs, puis exécuter l'audit documentaire en lecture seule sur une copie du registre. Après cette validation, attaquer l'étape d'architecture du professeur IA : pipeline commun chat/voix, contexte matière/niveau, récupération documentaire contrôlée et réponse générative avec provenance explicite.
+
+
+## Lot 573 — tests automatisés et frontière de confiance du professeur IA (16 novembre 2026)
+
+### Validation automatisée préparée
+- Ajout de `.github/workflows/rag-guard-tests.yml`, workflow limité aux tests, avec permission GitHub `contents: read`.
+- Déclencheurs : changements sur la branche de prévisualisation et pull requests vers `main), uniquement pour les chemins RAG, Worker, outils, tests et workflow.
+- Étapes prévues : test Node du filtre RAG navigateur, test Node de la frontière de confiance Worker, puis tests Python de contrats ingestion/index.
+- Le workflow ne contient aucune étape de déploiement, d'indexation, de génération de shards, de push, ni d'écriture Supabase.
+- **Exécution non confirmée** : l'API GitHub consultée après création ne retournait encore aucun workflow run pour le commit de création. Les tests restent à exécuter ; aucun résultat vert n'est revendiqué.
+
+### Correction importante du Worker IA
+- L'audit du chemin `sendChat()` dans `app.js` a révélé que le navigateur envoyait au Worker un contexte pédagogique allemand fixe, sans matière/niveau dynamiques ni extraits RAG, et que le Worker présentait ce contexte client comme « CONTEXTE VÉRIFIÉ ».
+- Ce libellé était incorrect : un navigateur peut envoyer un contexte arbitraire. Le Worker ne doit pas faire passer une donnée client pour une source authentifiée.
+- `worker/ia-ask.js` a été corrigé : le contexte est maintenant explicitement étiqueté « NON AUTHENTIFIÉ » ; le prompt système demande d'ignorer les instructions présentes dans ce contexte et interdit de prétendre que les références fournies ont été vérifiées côté serveur.
+- Ajout de `tests/worker-context-trust.test.mjs`, qui simule un appel au Worker avec un contexte contenant une instruction malveillante et vérifie les libellés réellement transmis au modèle.
+- Le commentaire d'en-tête de `rag.js` a également été corrigé : le repli utilise `corpus_chunks_index.json`, distinct de `corpus_index.json` (vocabulaire BIBLIO).
+
+### Limite architecturale confirmée
+- Le chat de `app.js` essaie le RAG local, puis appelle le Worker avec un contexte allemand fixe. Il ne transmet pas encore une enveloppe pédagogique normalisée (matière, niveau, langue de réponse, intention, historique utile, extraits et provenance).
+- Le chemin vocal n'a pas encore été retrouvé et relié à cette fonction dans `app.js`. Il faut identifier son module réel avant de le modifier : ne pas supposer qu'unifier le chat suffit à unifier la voix.
+- Le Worker ne fait actuellement aucune récupération documentaire serveur. La protection de droits du RAG navigateur ne doit donc pas être confondue avec une validation serveur des sources transmises au Worker.
+- La prochaine architecture doit faire passer chat et voix par un même orchestrateur, avec des données de contexte structurées et une provenance vérifiable. Les langues et matières doivent être déclarées comme disponibles seulement lorsque leur corpus et leurs tests existent.
+
+### Commits du lot
+- Test RAG droits : `8f63eff721ebbd4bdb324d1cdcc7e2aec897a314`.
+- Workflow tests isolés : `ae8c28d48747ab399dc07cfc603b61bc578e8c60`, puis extension Worker : `46fbf032365cccffd54c111d88c70c4150fa7373`.
+- Correction du commentaire RAG : `3e9b57e67e34867c47bd746791f6b32142bd20c5`.
+- Frontière de confiance Worker : `3e7a3f61a55b187bf48ba1eb673fd6a5ffcc4a10`.
+- Test Worker : `6783eb1d1db242a4cf2e9b9dc7e63477369381f4`.
+
+### Suite logique — Lot 574
+1. Obtenir l'exécution effective du workflow ; corriger les échecs éventuels.
+2. Localiser le vrai module d'écoute/reconnaissance vocale et documenter ses entrées/sorties.
+3. Concevoir l'enveloppe pédagogique commune chat/voix et remplacer le contexte allemand fixe par le contexte réel de la matière et du niveau actifs.
+4. Faire transiter uniquement des extraits RAG admis, avec identifiant documentaire et provenance ; ne jamais annoncer « vérifié » pour un contexte client non authentifié.
+
+Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Supabase/Auth/RLS/SQL, aucune reconstruction du corpus ou des shards.
