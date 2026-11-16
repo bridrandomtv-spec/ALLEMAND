@@ -30,7 +30,7 @@ def variantes_arabe(mot):
 
 
 def termes_index(texte):
-    tokens = re.findall(r"[A-Za-zÀ-ÿ\u0600-\u06FF]{3,}", str(texte or "").lower())
+    tokens = re.findall(r"[A-Za-zÀ-ÿ]+|[\u0621-\u064A\u066E-\u06D3\u06FA-\u06FC]+", str(texte or "").lower())
     resultat = set()
     for token in tokens:
         if re.search(r"[\u0600-\u06FF]", token):
