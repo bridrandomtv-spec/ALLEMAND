@@ -1,0 +1,41 @@
+name: RAG rights guard tests
+
+on:
+  push:
+    branches:
+      - design/prototypes-67-74-alignment
+    paths:
+      - "rag.js"
+      - "tools/**"
+      - "tests/**"
+      - ".github/workflows/rag-guard-tests.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "rag.js"
+      - "tools/**"
+      - "tests/**"
+      - ".github/workflows/rag-guard-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  rag-rights-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout preview branch
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Test browser RAG rights allowlist
+        run: node tests/rag-rights-guard.test.mjs
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test ingestion and index contracts
+        run: python -m unittest discover -s tests -p 'test_*contract.py' -v
