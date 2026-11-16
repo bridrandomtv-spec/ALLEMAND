@@ -13,6 +13,20 @@ SCRIPT = ROOT / "tools" / "ingest_corpus.py"
 
 
 class IngestionContractTests(unittest.TestCase):
+    def test_shared_normalizer_handles_arabic_prefixes_and_controlled_arabizi(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        try:
+            from rag_normalization import termes_index
+            darija = termes_index("واش الفرق بين المبتدأ والخبر؟ عطيني مثال بسيط.")
+            arabizi = termes_index("Chrahli el-jomla el-ismiya b darja, b exemple sahl.")
+            self.assertIn("مبتدأ", darija)
+            self.assertIn("خبر", darija)
+            self.assertIn("الجملة", arabizi)
+            self.assertIn("الاسمية", arabizi)
+        finally:
+            if str(ROOT / "tools") in sys.path:
+                sys.path.remove(str(ROOT / "tools"))
+
     def test_missing_metadata_is_quarantined_and_never_indexed(self):
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp)
