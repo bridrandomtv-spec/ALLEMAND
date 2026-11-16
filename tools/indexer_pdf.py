@@ -15,7 +15,7 @@ import re
 import sys
 
 try:
-    from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
+    from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees, projection_preuve_droits
     from tools.corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag, ecrire_json_transactionnel, valider_coherence_catalogue_index
 except ModuleNotFoundError:  # exécution directe: python tools/script.py
     from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees
@@ -93,7 +93,8 @@ def construire(dossier, documents_existants=None):
             "format": "pdf", "url": chemin,
             "source_sha256": sha256_fichier(chemin),
             "source": meta.get("source", "document local"),
-            "licence": licence, "tags": meta.get("tags", ["pdf"]),
+            "licence": licence, "droits": projection_preuve_droits(meta),
+            "tags": meta.get("tags", ["pdf"]),
             "extrait": texte[:300].replace("\n", " ")
         }
         docs.append(doc)
