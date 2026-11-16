@@ -4569,3 +4569,44 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 2. Ajouter une sortie d'artefact JSON téléchargeable en CI pour conserver le rapport du benchmark et comparer les commits.
 3. Faire une première revue linguistique humaine des cas arabes, darija, Arabizi, français, allemand et anglais.
 4. Seulement après cette référence, construire l'adaptateur comparatif BGE-M3 hors index de production, sur exactement les mêmes questions et passages synthétiques.
+
+
+## Lot 580 — rapports benchmark persistants et grille de revue humaine (16 novembre 2026)
+
+### Rapport JSON même en cas d'échec
+- Le runner `tests/rag-eval-runner.test.mjs` rassemble désormais les anomalies au lieu de s'arrêter au premier cas incorrect.
+- Le rapport comprend chaque cas, le document attendu et retrouvé, le chunk, le score lexical, l'abstention attendue/effective, la provenance et les éventuels défauts de contrat.
+- Les échecs d'abstention, de provenance ou de confiance sont enregistrés dans `failures`; le runner écrit ensuite le rapport puis termine en échec si cette liste n'est pas vide.
+- Le fichier n'est écrit que si `RAG_EVAL_REPORT_PATH` est défini, afin de ne pas créer de rapport généré lors d'une exécution locale ordinaire.
+
+### Conservation par GitHub Actions
+- Le workflow définit `RAG_EVAL_REPORT_PATH: rag-eval-report.json` pour l'étape de benchmark.
+- Une étape `actions/upload-artifact@v4`, exécutée avec `if: always()`, conserve le rapport sous `rag-eval-report-<run_number>` pendant 30 jours. Si le runner échoue avant de produire le fichier, l'étape signale l'absence sans masquer l'échec initial.
+- Le rapport est un artefact de test, pas une preuve de qualité pédagogique ou de droits documentaires.
+
+### Grille de revue linguistique humaine
+- Nouveau référentiel : `tests/fixtures/rag-eval/review-rubric-v1.json`.
+- Huit dimensions sont définies : pertinence du passage, fidélité factuelle, exactitude pédagogique, adaptation au niveau, langue de réponse, clarté, qualité de l'abstention, honnêteté sur les sources et les droits.
+- Les dimensions critiques bloquent l'approbation lorsqu'elles reçoivent la note 0. Les notes 0 et 1 exigent une justification.
+- La couverture inclut allemand, français, arabe standard, darija, Arabizi, anglais partiel et les cas italien/espagnol indisponibles. Les deux dernières langues sont évaluées sur l'honnêteté de l'abstention, pas sur une maîtrise linguistique supposée.
+- La grille ne s'auto-valide pas : l'approbation reste réservée à un enseignant ou linguiste compétent dans la langue concernée.
+- Nouveau contrôle de contrat : `tests/rag-eval-review-contract.test.mjs`, ajouté au workflow.
+
+### Commits Lot 580
+- Runner avec rapport et collecte des anomalies : `06c26dddaa4262cc75fc687c6bc7229d616d467d`.
+- Grille humaine : `38d44b51e207ba344fa61c41e9bad8264fc39a9e`.
+- Test de contrat de la grille : `f6fed51a34dca93892a41c0abff9a2132fa43316`.
+- Workflow et archivage d'artefact : `187cd2aa78205add3d3d0c5bda583e17c38b201a`.
+
+### Validation et limites
+- Les fichiers ont été écrits sur `design/prototypes-67-74-alignment`. Leur présence sera contrôlée après écriture.
+- Aucun résultat d'exécution CI n'est encore revendiqué dans ce lot. Le rapport JSON ne sera réellement disponible qu'après un run GitHub Actions déclenché sur cette branche.
+- Aucun jugement humain des réponses n'a encore été réalisé. Aucun score de qualité linguistique n'est annoncé.
+- Le jeu reste entièrement synthétique : aucun manuel, PDF, document réel, index, shard ou embedding de production n'a été modifié.
+- Aucun changement Supabase, Auth, RLS, SQL, schéma, paiement, branche `main`, fusion ou déploiement Cloudflare.
+
+### Suite logique — Lot 581
+1. Vérifier le run GitHub Actions du workflow sur la branche et lire les étapes échouées ou réussies; corriger tout défaut révélé.
+2. Télécharger et examiner le rapport JSON réel, sans extrapoler ses résultats synthétiques à la production.
+3. Préparer les fiches de revue humaine par langue et obtenir une validation compétente des réponses générées par le Worker, séparément du test de retrieval.
+4. Ne lancer la comparaison BGE-M3 qu'après stabilisation du benchmark lexical et de la revue humaine, dans un environnement isolé.
