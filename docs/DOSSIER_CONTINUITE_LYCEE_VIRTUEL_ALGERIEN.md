@@ -2856,3 +2856,60 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Lecture seule de `js/qust.js`, `rag.js` et `biblio.js`, y compris recherche des appels effectifs de `ontoRoute()` et `qustFallback()`.
 - Aucun code applicatif, fichier d'ontologie ou jeu de données modifié ; aucun test d'exécution ou déploiement effectué.
 - Aucun accès/changement Supabase ; aucun workflow d'indexation déclenché ; aucune fusion. PR #17 demeure ouverte et non fusionnée.
+
+
+## Lot 552 — propagation du contexte pédagogique entre chat, RAG, Worker et voix (16 novembre 2026)
+
+### Constat du contexte unifié
+- `js/context.js` expose `window.CONTEXT.ctx()`, un snapshot immuable contenant exactement `subject`, `level` et `track`. Aucun champ de langue de question, de langue de réponse ou de préférence vocale n'est fourni.
+- La matière provient de `SUBJECT.active()` avec repli allemand ; le niveau suit CLOUD > VT > LEGACY > DEFAULT ; la filière provient uniquement de `VT.ctx().track`. La façade ne vérifie pas que les trois valeurs proviennent d'un même snapshot atomique.
+- `app.js` expose aussi `window.VT.ctx()` avec matière, niveau et filière. Ce contexte VT est persisté dans les clés `vt:...`; le module `CONTEXT` est une façade supplémentaire qui combine plusieurs autorités et règles de priorité.
+- Le modèle VT actuellement défini dans `app.js` déclare les matières allemand et anglais, mais les niveaux autorisés sont 2AS/3AS pour allemand et 1AS pour anglais. La filière est un ensemble limité à COMMON, TCLETTRES et TCSCIENCES. Cette configuration ne prouve pas encore une couverture réelle de toutes les matières annoncées.
+
+### Chat écrit : contournement confirmé du contexte
+- Dans `app.js`, `sendChat()` tente d'abord `RAG.cherche(v)`, puis appelle directement le Worker `/ask` si le premier parcours ne répond pas.
+- Cet appel direct transmet un contexte textuel codé en dur qui présente la demande comme une aide en allemand, avec explication en arabe et allemand.
+- Cet appel n'invoque ni `CONTEXT.ctx()`, ni `VT.ctx()`, ni `SUBJECT.active()`. Il ne transmet donc pas la matière, le niveau ou la filière actifs et peut orienter vers l'allemand une question posée depuis une autre matière.
+- Le repli final `PROF.repondre(v)` est encore un troisième parcours, distinct du Worker et du moteur RAG.
+
+### RAG et QUST : contexte partiellement raccordé
+- `rag.js` lit `CONTEXT.ctx()` dans `reponsePedagogique()` et transmet le snapshot à `QUST.understand(q, _qctx)`. Si la façade échoue, il revient à un objet contenant uniquement la matière.
+- Le contexte est donc transmis à QUST, mais pas à l'ensemble des gestionnaires de réponse : le pipeline exécute ensuite BIBLIO, les intentions historiques, la lecture, la conjugaison et `matchType()` sans injecter systématiquement `_qctx` dans leurs appels.
+- Le résultat QUST n'est utilisé qu'en repli lorsque `matchType()` ne reconnaît aucun type ; le fallback actuel ne traite que l'entité page. Le contexte transmis à QUST ne garantit donc pas que la réponse finale soit filtrée par matière, niveau et filière.
+- `RAG.cherche(v)`, utilisé en priorité par le chat écrit, ne reçoit que la question dans cet appel ; le contexte pédagogique n'est pas explicitement passé comme argument.
+
+### Worker et IA distante : perte du contexte structuré
+- `worker/ia-ask.js` accepte `q` et un champ `ctx` textuel, tronqué à 3 000 caractères. Il n'analyse ni ne valide un objet structuré matière/niveau/filière.
+- Le prompt système demande que la matière active et le contexte déterminent le domaine, mais ne reçoit pas de champs structurés garantis. Il annonce cinq langues (arabe, allemand, français, espagnol, italien) et omet l'anglais.
+- Le Worker affirme que l'allemand dispose d'un RAG complet A1–B2, alors que le code Worker examiné ne fait que transmettre les messages au modèle ; il ne réalise lui-même aucune récupération documentaire.
+- `ia.js` construit un contexte textuel depuis BIBLIO et le moteur local, puis l'envoie au Worker. Il n'ajoute pas les valeurs `CONTEXT.ctx()` ou `VT.ctx()`. Le contenu peut donc apporter des extraits sans apporter les filtres structurés qui expliquent à quelle matière/niveau/filière ils appartiennent.
+
+### Voix : orchestration différente et langues incohérentes
+- `parle.js` choisit `window.reponseIA` en priorité ; `ia.js` appelle alors `window.reponsePedagogique(q)` pour le moteur local, puis construit son propre contexte BIBLIO avant l'appel Worker. La voix partage donc une partie du RAG, mais pas une orchestration identique au chat écrit.
+- Le sélecteur de langue de `parle.js` règle la langue de reconnaissance vocale ; il n'est pas ajouté explicitement au contexte transmis au modèle. La détection de langue sert notamment au découpage/TTS, mais ne constitue pas un champ de langue de réponse garanti.
+- `parle.js` propose neuf langues dans l'interface, dont anglais, russe, chinois et turc. La détection automatique explicite couvre arabe, allemand, français, espagnol et italien ; l'anglais ne dispose pas de détecteur explicite et un texte latin sans indice reconnu peut être classé par défaut en allemand.
+- `ia.js` détecte arabe, allemand, français, espagnol et italien, mais pas l'anglais. Pour une question anglaise, `QL` reste vide ; les messages de secours et la correction de langue ne peuvent donc pas garantir une réponse anglaise.
+- `voix.js` (dictée du chat/RAG) propose deux boutons de reconnaissance codés en dur, allemand et arabe. Son TTS segmente arabe/latin et le vote latin ne distingue que français et allemand : espagnol, italien et anglais peuvent être lus avec une voix allemande par défaut.
+- Les chemins TTS du chat écrit, de `parle.js` et de `voix.js` ont donc des règles différentes ; la langue de reconnaissance, la langue de réponse et la langue de synthèse ne sont pas un même contrat partagé.
+
+### Risques fonctionnels confirmés
+1. Un élève peut changer de matière ou de niveau et obtenir, par le chemin direct de `sendChat()`, un contexte Worker qui continue à présenter la demande comme de l'allemand.
+2. Le contexte matière/niveau/filière est présent au niveau QUST, mais il ne contraint pas de manière systématique BIBLIO, les gestionnaires RAG et le Worker.
+3. L'interface expose plus de langues que les détecteurs et les prompts ne savent en traiter de façon cohérente ; l'anglais est notamment absent du prompt Worker et de la détection `ia.js`.
+4. La langue choisie pour la reconnaissance vocale n'est pas garantie comme langue de réponse, et la synthèse vocale peut appliquer une langue latine par défaut inadaptée.
+5. La juxtaposition de `SUBJECT`, `VT`, `CONTEXT` et des niveaux historiques peut produire des valeurs cohérentes dans le cas nominal, mais la cohérence transversale doit être testée lors des changements de matière, niveau, filière, compte cloud et mode visiteur.
+
+### Architecture cible recommandée — sans modification dans ce lot
+1. Définir un contrat de contexte versionné unique : `subject`, `level`, `track`, `question_language`, `response_language`, `channel` et identifiant de session non sensible. Distinguer langue détectée de langue explicitement choisie.
+2. Construire le snapshot une seule fois au début de chaque requête, puis le transmettre à RAG, QUST, BIBLIO, IA locale, Worker et TTS. Ne pas relire plusieurs autorités en milieu de requête.
+3. Faire du chat écrit et de la voix deux interfaces d'entrée du même orchestrateur pédagogique ; seul le canal d'entrée/sortie doit varier.
+4. Remplacer le contexte allemand codé en dur de `sendChat()` par le contexte structuré validé, avec sérialisation contrôlée côté client et validation stricte côté Worker.
+5. Filtrer les documents BIBLIO/RAG par matière, niveau, filière et langue avant génération ; conserver les références de provenance et ne jamais présenter un extrait hors contexte comme une source adaptée.
+6. Définir un registre de capacités linguistiques réel. Une langue affichée dans un sélecteur ne doit être annoncée comme prise en charge que si reconnaissance, détection, compréhension, génération et TTS ont été testés.
+7. Ajouter une matrice de tests croisés : allemand 2AS/3AS, anglais 1AS, chaque filière, visiteur/élève connecté, chat/voix, arabe standard/darija/Arabizi/français/allemand/anglais/espagnol/italien. Vérifier aussi les transitions de matière et les cas où un champ est absent.
+
+### État des opérations
+- Lecture seule de `js/context.js`, `app.js`, `rag.js`, `worker/ia-ask.js`, `ia.js`, `parle.js` et `voix.js), sur la branche `design/prototypes-67-74-alignment`.
+- Aucun code applicatif, prompt Worker, modèle de contexte ou configuration de langue modifié.
+- Aucun test navigateur/microphone ou test d'exécution IA effectué ; les constats décrivent le code source et non une mesure de comportement en production.
+- Aucun accès ou changement Supabase ; aucun workflow d'indexation déclenché ; aucun déploiement Cloudflare ; aucune fusion. PR #17 demeure ouverte et non fusionnée.
