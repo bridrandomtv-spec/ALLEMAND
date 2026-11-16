@@ -45,6 +45,8 @@ jobs:
         run: node tests/worker-context-trust.test.mjs
       - name: Test shared teacher context envelope
         run: node tests/teacher-context.test.mjs
+      - name: Test RAG to teacher integration contract
+        run: node tests/lot577-rag-context-integration.test.mjs
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
