@@ -6,6 +6,13 @@ TAILLE = 250
 def main():
     idx = json.load(open(SRC, encoding='utf-8'))
     chunks = idx.get('chunks', [])
+    # Contrat strict : n doit correspondre à la position utilisée par RAG.
+    for i, chunk in enumerate(chunks):
+        if chunk.get('n') != i:
+            raise ValueError('Index RAG invalide : chunks[].n doit être contigu et égal à sa position')
+    for terme, ids in idx.get('termes', {}).items():
+        if any(not isinstance(cid, int) or cid < 0 or cid >= len(chunks) for cid in ids):
+            raise ValueError('Index RAG invalide : posting hors limites pour le terme ' + terme)
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
         if f.startswith('shard_') and f.endswith('.json'):
