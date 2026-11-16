@@ -1277,7 +1277,7 @@ async function sendChat(v){
         const response = await fetch(proxy + '/ask', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({q:String(v).slice(0,600),ctx:'منصة الثانوية الافتراضية الجزائرية. المساعدة التعليمية في اللغة الألمانية، مع شرح مبسط بالعربية والألمانية.'})
+          body:JSON.stringify({q:String(v).slice(0,600),ctx:(window.TEACHER_CONTEXT && window.TEACHER_CONTEXT.build ? window.TEACHER_CONTEXT.build(v) : JSON.stringify({schema:'teacher-context-v1',trust:'client_unverified',question:String(v).slice(0,600),subject:'unknown',level:'unknown'}))})
         });
         const data = await response.json().catch(()=>null);
         if(response.ok && data && data.ok && typeof data.rep === 'string' && data.rep.trim()){
