@@ -4413,3 +4413,49 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 2. Distinguer la réponse exacte extraite du corpus de la réponse générée par le modèle, avec une politique d'abstention si la question porte sur un contenu officiel absent.
 3. Unifier le rendu chat et la synthèse vocale derrière une fonction de réponse commune, sans lancer automatiquement la reconnaissance ou envoyer le texte dicté sans validation de l'élève.
 4. Exécuter les tests Node et Python dans un environnement de validation réel avant toute conclusion.
+
+## Lot 576 — provenance RAG bornée et transmission au professeur IA (16 novembre 2026)
+
+### Contrat de provenance ajouté
+- `rag.js` conserve maintenant l'identifiant du chunk retrouvé (`chunk`) en mode shardé et dans le repli sur index unique.
+- Nouvelle API `RAG.provenance(result)` : elle retrouve la fiche du document dans le registre local déjà chargé et ne renvoie une provenance que si le document porte `droits_statut === 'verifies'` et une `droits_reference` non vide, conformément au filtre d'admission existant.
+- La provenance exposée est volontairement limitée : identifiant du document, titre, matière, niveau, type, langue, identifiant du chunk et extrait de 900 caractères maximum.
+- Aucune référence de droit n'est transmise au Worker. Le résultat porte toujours `trust: client_unverified` : la vérification effectuée dans le navigateur n'est pas une preuve serveur et ne peut pas être élevée au rang de validation officielle.
+
+### Raccordement du chat
+- `js/teacher-context.js` accepte désormais une liste facultative de deux extraits au maximum. Chaque extrait est borné, les champs sont nettoyés et la confiance est forcée à `client_unverified`, même si l'appelant fournit une autre valeur.
+- `app.js` récupère la provenance RAG avant l'appel au Worker et l'injecte dans l'enveloppe de contexte commune.
+- Le Worker peut donc expliquer un passage effectivement retrouvé par le RAG. Si le Worker ou le réseau échoue, le chat restitue l'extrait RAG original ; si aucun extrait n'existe, le secours déterministe antérieur reste utilisé.
+- Le comportement du RAG local reste un repli exact, sans perte de l'extrait retrouvé. Aucun texte client n'est présenté comme source authentifiée par le serveur.
+
+### Tests ajoutés ou étendus
+- `tests/rag-rights-guard.test.mjs` vérifie la conservation de l'identifiant de chunk, l'exposition de provenance pour un document admis, le refus de provenance pour un document non vérifié et le filtre du mode non shardé.
+- `tests/teacher-context.test.mjs` vérifie la transmission d'un extrait, la neutralisation d'une fausse valeur de confiance, la limite de deux sources et la limite de 900 caractères par extrait.
+- Les tests ont été écrits et intégrés au workflow existant. Leur exécution effective n'a pas été confirmée dans ce lot ; aucun résultat vert n'est revendiqué.
+
+### Fichiers modifiés
+- `rag.js` — identifiant de chunk et API de provenance locale.
+- `js/teacher-context.js` — sérialisation bornée des extraits RAG.
+- `app.js` — transmission des extraits au Worker et repli local.
+- `tests/rag-rights-guard.test.mjs` — tests du contrat de provenance.
+- `tests/teacher-context.test.mjs` — tests de bornage et de confiance.
+- Ce dossier — journal du lot.
+
+### Commits du lot
+- `rag.js` : `b7edce2cc9a7248d3cd1cdeb308b630108f0b82e`.
+- `js/teacher-context.js` : `b03d75eada9ef6a2386a8d06070221292ffd8c16`.
+- `tests/rag-rights-guard.test.mjs` : `55d6382bab1374d5417de41460e2dd2368482395`.
+- `tests/teacher-context.test.mjs` : `cbd063594d9f3218ae52aa9f451735742f504a7e`.
+- `app.js` : `5d6a3c51bbc04232809cd50768630678873d8f43`.
+
+### Limites et sécurité
+- La provenance et les extraits restent fournis par le navigateur : un utilisateur peut modifier les données côté client. Le Worker ne doit jamais les appeler « vérifiés », ni les utiliser comme preuve de droits ou de programme officiel.
+- Le Worker ne réalise toujours pas de recherche documentaire serveur indépendante. Le présent lot ne crée pas de RAG serveur ni de base vectorielle.
+- Aucun document, PDF, shard, manifeste ou embedding n'a été réingéré ou régénéré.
+- Aucun changement Supabase, Auth, RLS, SQL, schéma de base, branche `main`, PR merge ou déploiement Cloudflare.
+
+### Suite logique — Lot 577
+1. Vérifier les tests réellement dans l'environnement CI et corriger tout échec.
+2. Tester sur un document autorisé réel que le passage, son titre et la matière arrivent ensemble au Worker, puis vérifier la qualité de l'explication et le repli local.
+3. Constituer le jeu d'évaluation multilingue (arabe standard, darija, Arabizi, français, allemand ; anglais marqué partiel) avant le pilote BGE-M3.
+4. Ne commencer le pilote BGE-M3 isolé qu'après confirmation du contrat de provenance et de la qualité du RAG lexical de référence.
