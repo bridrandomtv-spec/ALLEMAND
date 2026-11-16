@@ -4210,3 +4210,6 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun PDF converti/OCRisé/indexé ; aucun hash réel inscrit dans le catalogue ; aucun secret, déploiement, changement Supabase/Auth/RLS/schéma/données/paiements ; aucune fusion dans `main`.
 - Rapport : `docs/LOTS/LOT_651_PREAUDIT_NON_DESTRUCTIF_REGISTRE.md`.
 - Suite : obtenir un runner CI exploitable, générer les SHA-256 via le script, vérifier la référence institutionnelle et son périmètre, puis seulement faire un pilote d'ingestion avec droits qualifiés.
+
+
+- Complément Lot 651 : relance du run CI `43831138421` (tentative 2) effectuée. Elle échoue immédiatement elle aussi, avec un nouveau job `runner_id=0`, aucune étape et aucun log. La cause précise du non-démarrage du runner n'est pas exposée par les interfaces consultables ; ne pas imputer cet état aux tests du code sans trace d'exécution.
