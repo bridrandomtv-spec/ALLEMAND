@@ -4621,3 +4621,30 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 - Action bloquante suivante : diagnostiquer le motif de démarrage du job à partir des annotations du check-run ou des paramètres GitHub Actions du dépôt (disponibilité des runners, autorisations Actions, limites/quotas, politique de fork/branche ou configuration du workflow). Ne pas modifier les permissions du dépôt ni activer des runners payants sans décision explicite du propriétaire.
 - Le Lot 580 reste techniquement préparé mais non validé : aucun score du RAG n'est certifié, aucun contrôle Python/Node n'est déclaré réussi et aucun artefact n'est disponible.
 - Aucune modification Supabase/Auth/RLS/SQL, aucune donnée de production, aucune fusion dans `main` et aucun déploiement Cloudflare.
+
+
+## Lot 581 — diagnostic de démarrage CI et nouvelle tentative (16 novembre 2026)
+
+### Actions effectuées
+- Consultation de la liste des exécutions GitHub Actions de la branche `design/prototypes-67-74-alignment`.
+- Inspection du run #32 (`43919353737`) et de son job `rag-rights-guard`.
+- Le job de la première tentative s'est terminé en échec sans étapes publiées (`steps: []`), sans runner attribué (`runner_id: 0`) et sans journal exploitable.
+- Une nouvelle tentative ciblée du job échoué a été lancée via l'API GitHub Actions. Elle a également terminé en échec; le job de la tentative 2 (`133483187763`) ne fournit toujours aucune étape ni journal exploitable.
+- L'API de téléchargement des logs a retourné `BlobNotFound`; la route des annotations n'est pas accessible par l'outil GitHub disponible. Il n'existe donc pas de message précis permettant d'identifier une erreur de syntaxe YAML, un échec Node/Python ou une erreur de test.
+- Les runs #30, #31 et #32 sont observés en échec immédiat. Cela ne prouve pas que le contenu des tests est fautif : l'exécution n'a pas livré d'étapes.
+
+### Conclusion technique
+- Le blocage est situé au niveau de l'exécution/initialisation du job GitHub Actions, ou dans une information de diagnostic non accessible par l'API utilisée. Il serait spéculatif de modifier le workflow ou les permissions sans message d'erreur concret.
+- Le workflow ne doit pas être déclaré vert et le benchmark ne doit pas être considéré comme exécuté.
+- Aucun artefact `rag-eval-report-*` n'a été publié pour le run #32.
+- Aucune modification des permissions GitHub, des runners, des quotas ou des paramètres de sécurité n'a été effectuée.
+
+### Suite requise
+1. Consulter directement dans GitHub Actions le run #32, tentative 2, puis la page du job `rag-rights-guard), afin de vérifier si GitHub affiche une annotation ou un message de démarrage absent de l'API.
+2. Vérifier dans Settings → Actions que les Actions sont autorisées pour le dépôt et que les runners GitHub-hosted sont disponibles pour ce dépôt privé; ne changer aucun paramètre sans accord du propriétaire.
+3. Une fois le motif connu, appliquer la correction minimale et relancer les tests.
+4. Attendre un run complet avec toutes les étapes, un rapport JSON et les tests Node/Python avant de poursuivre la comparaison de moteurs.
+
+### État de fusion
+- Lot 581 ne lève pas le blocage CI. La branche n'est donc pas prête à fusionner.
+- Aucun changement Supabase/Auth/RLS/SQL, aucune modification du corpus réel, aucune fusion dans `main`, aucun déploiement Cloudflare.
