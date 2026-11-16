@@ -52,6 +52,11 @@ const query = 'freiheit schule';
   });
   const result = await rag.cherche(query);
   assert.equal(result.doc, 'doc-valid', 'sharded search must return the verified source');
+  assert.equal(result.chunk, 1, 'sharded search must preserve the chunk identifier');
+  const source = rag.provenance(result);
+  assert.equal(source.documentId, 'doc-valid');
+  assert.equal(source.trust, 'client_unverified');
+  assert.equal(source.excerpt, 'Verified lesson about Freiheit und Schule.');
 }
 
 {
@@ -65,6 +70,8 @@ const query = 'freiheit schule';
   });
   assert.equal(await rag.cherche(query), null,
     'sharded search must abstain when every matching source is unverified');
+  assert.equal(rag.provenance({ doc: 'doc-unverified', texte: 'forbidden' }), null,
+    'provenance must not expose an unverified registry entry');
 }
 
 {
@@ -81,6 +88,7 @@ const query = 'freiheit schule';
   });
   const result = await rag.cherche(query);
   assert.equal(result.doc, 'doc-valid', 'unsharded fallback must apply the same rights filter');
+  assert.equal(rag.provenance(result).documentId, 'doc-valid');
 }
 
 {
