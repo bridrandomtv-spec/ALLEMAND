@@ -18,6 +18,21 @@ USAGES_AUTORISES_CONNUS = USAGES_REQUIS_INGESTION | {
 }
 
 
+def document_couvert(meta, document_id, source_sha256):
+    """Vérifie que la preuve écrite vise explicitement cet ID ou cette empreinte."""
+    if not isinstance(meta, dict) or meta.get("licence") != "autorisation_ecrite":
+        return True
+    scope = meta.get("perimetre_documentaire")
+    if not isinstance(scope, dict):
+        return False
+    ids = scope.get("identifiants_documents", [])
+    hashes = scope.get("empreintes_sha256", [])
+    return (
+        (isinstance(ids, list) and document_id in ids)
+        or (isinstance(hashes, list) and source_sha256 in hashes)
+    )
+
+
 def valider_metadonnees(meta):
     """Retourne (ok, raison). Licence, preuve humaine et périmètre sont obligatoires."""
     if not isinstance(meta, dict):
@@ -69,6 +84,23 @@ def valider_metadonnees(meta):
     elif licence == "autorisation_ecrite":
         if not str(meta.get("reference_autorisation", "")).strip():
             return False, "référence de l'autorisation écrite absente"
+        scope = meta.get("perimetre_documentaire")
+        if not isinstance(scope, dict):
+            return False, "périmètre documentaire de l'autorisation absent"
+        ids = scope.get("identifiants_documents", [])
+        hashes = scope.get("empreintes_sha256", [])
+        if not isinstance(ids, list) or not isinstance(hashes, list):
+            return False, "périmètre documentaire mal structuré"
+        if not ids and not hashes:
+            return False, "périmètre documentaire vide"
+        if any(not isinstance(x, str) or not x.strip() for x in ids):
+            return False, "identifiant documentaire invalide dans le périmètre"
+        if len(ids) != len(set(ids)):
+            return False, "identifiants documentaires dupliqués dans le périmètre"
+        if any(not isinstance(x, str) or not re.fullmatch(r"[0-9a-f]{64}", x) for x in hashes):
+            return False, "empreinte SHA-256 invalide dans le périmètre"
+        if len(hashes) != len(set(hashes)):
+            return False, "empreintes dupliquées dans le périmètre"
     return True, "validé"
 
 
@@ -81,7 +113,8 @@ def projection_preuve_droits(meta):
         "licence", "source", "titulaire_droits", "declarant",
         "date_declaration", "declaration_droits", "usages_autorises",
         "nom_licence", "url_licence", "juridiction",
-        "fondement_juridique", "reference_autorisation"
+        "fondement_juridique", "reference_autorisation",
+        "perimetre_documentaire"
     )
     preuve = {champ: meta[champ] for champ in champs if champ in meta}
     preuve["validation"] = dict(meta["validation"])
