@@ -3070,3 +3070,53 @@ Le Worker doit recevoir un contexte structuré provenant d'un orchestrateur de c
 - Audit statique en lecture seule de `rag.js`, `ia.js`, `worker/ia-ask.js`, `app.js`, `js/qust.js` et `js/context.js`, sur `design/prototypes-67-74-alignment`.
 - Aucun test de réponses avec Workers AI, aucune mesure de précision/recall, aucun test de citation ou de correction pédagogique exécuté ; les constats portent sur les contrats et chemins visibles dans le code.
 - Aucun code applicatif, prompt Worker, contenu, index ou donnée Supabase modifié ; aucun déploiement, workflow ou fusion effectué. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 555 — étude BGE-M3 et compatibilité du RAG documentaire (16 novembre 2026)
+
+### Périmètre et méthode
+- Étude statique en lecture seule de `rag.js`, `biblio.js`, `assets/bdd/corpus.json`, `assets/bdd/corpus_index.json`, `assets/bdd/shards_manifest.json`, `tools/ingest_corpus.py`, `js/context.js` et `worker/ia-ask.js`.
+- Documentation officielle consultée : FlagEmbedding / BAAI-BGE-M3 et documentation Supabase pgvector.
+- Aucun accès SQL, aucune lecture/écriture de base Supabase, aucune génération d'embeddings, aucun téléchargement de modèle, aucune modification de code applicatif et aucun déploiement.
+
+### Constat bloquant : collision de format et de chemin
+- `rag.js` (fonction `cherche()`) attend dans `assets/bdd/corpus_index.json` un objet de type index inversé : `{termes, chunks}`.
+- Le manifeste `assets/bdd/shards_manifest.json` présent dans la branche indique `nb_shards: 0`, `total_chunks: 0`, `shards: []`. La recherche passe donc dans le mode legacy.
+- Or le fichier `assets/bdd/corpus_index.json` actuellement présent est un catalogue lexical allemand-arabe contenant `_meta` et `items`, sans `termes` ni `chunks`. Ce format est consommé par `biblio.js` comme source vocabulaire.
+- `tools/ingest_corpus.py` écrit également son index plein texte `{termes,chunks}` dans ce même chemin `assets/bdd/corpus_index.json`. Une ingestion exécutée telle quelle remplacerait donc le catalogue de vocabulaire attendu par BIBLIO.
+- Dans le RAG, le repli legacy tente `idx.termes[t]` puis `idx.chunks`. Avec le fichier actuel, la structure attendue manque ; le chemin de repli n'est donc pas compatible avec l'artefact présent.
+- Ce conflit de chemin/contrat est une priorité P0 avant tout test BGE-M3. Il ne faut exécuter ni ingestion ni génération d'index avec le script actuel avant séparation des artefacts et vérification des consommateurs.
+
+### État du contexte documentaire et métadonnées
+- `corpus.json` définit des métadonnées de document : `id`, `titre`, `matiere`, `niveau`, `type`, `langue`, `annee`, `source`, `licence`, `tags`, `extrait`.
+- `tools/ingest_corpus.py` propage certaines métadonnées au registre documentaire, mais les chunks qu'il construit ne contiennent que `doc`, numéro local `n` et `texte`. Les attributs pédagogiques ne sont donc pas embarqués dans chaque chunk.
+- La recherche lexicale RAG retourne `score`, `texte` et `doc`, mais n'applique aucun filtre matière/niveau/filière au moment du classement.
+- Le registre documentaire est donc une base utile pour concevoir des filtres, mais le chemin actuel d'indexation ne les transporte pas jusqu'aux chunks.
+
+### État réel de l'intégration BGE-M3
+- Aucun appel à BGE-M3, FlagEmbedding, service d'embedding, RPC vectorielle ou fonction de recherche sémantique n'a été identifié dans les fichiers applicatifs examinés.
+- Le Worker `worker/ia-ask.js` transmet le contexte textuel au modèle génératif Cloudflare AI ; il ne génère pas d'embeddings et n'exécute pas de recherche vectorielle.
+- L'index Supabase actif évoqué dans les échanges antérieurs n'a pas été inspecté dans ce lot. Sa table, son modèle, ses dimensions, sa métrique, son RPC et ses politiques RLS restent à confirmer ; aucune compatibilité avec BGE-M3 ne peut être déclarée.
+- BGE-M3 officiel : vecteur dense de 1024 dimensions, longueur maximale annoncée de 8192 tokens, fonctionnalités dense, sparse lexical et multi-vecteur/ColBERT ; prise en charge multilingue annoncée sur plus de 100 langues. Les auteurs signalent que la quantité de données d'entraînement varie selon les langues : cela ne garantit pas une performance égale en darija algérienne ou en Arabizi.
+- Le dépôt FlagEmbedding présente une implémentation PyTorch et un poids de modèle conséquent ; le modèle ne doit pas être chargé dans le Worker Cloudflare ni présumé exécutable sur le poste local CPU-only. Il faut un service d'inférence séparé, dimensionné et mesuré.
+- Le vecteur dense BGE-M3 de 1024 dimensions est dans les limites pgvector documentées pour `vector` et `halfvec` avec les versions prises en charge. Cela ne le rend pas compatible avec un index déjà alimenté par un autre modèle : les vecteurs de requête et de documents doivent provenir du même modèle/version et du même pipeline de préparation.
+
+### Décision d'architecture recommandée
+1. Séparer les contrats de fichiers sans écraser les données : conserver le catalogue lexical sous un nom explicite (par exemple `vocabulaire_index.json`) et donner au plein texte un chemin dédié (par exemple `corpus_lexical_index.json`). Mettre à jour de manière coordonnée producteurs et consommateurs ; ne pas renommer isolément.
+2. Définir un schéma de chunk versionné : `chunk_id`, `doc_id`, `chunk_index`, `text`, `matiere`, `niveau`, `filiere`, `langue`, `type`, `source`, `licence`, `content_hash`, `embedding_model`, `embedding_version`.
+3. Garder le RAG lexical actuel comme baseline et construire un pilote isolé BGE-M3 dense à 1024 dimensions, avec sa propre table/index expérimental et son propre RPC ; ne jamais écrire dans l'index actif.
+4. Faire calculer embeddings document et requête par le même service BGE-M3 ; appliquer les filtres pédagogiques côté requête avant de remettre les passages au générateur. Le modèle d'embedding ne remplace ni QUST, ni le moteur de correction, ni l'ASR/TTS.
+5. Commencer par le dense + lexical existant. N'ajouter le sparse natif et ColBERT qu'après mesure : ces modes impliquent des structures de stockage, de classement et des coûts supplémentaires.
+6. Constituer un jeu d'évaluation indépendant (questions arabe standard, darija, Arabizi, français, allemand, anglais, italien, espagnol ; variantes de niveaux et matières disponibles) et comparer baseline lexicale / BGE-M3 dense / fusion hybride.
+7. Mesurer Recall@5, MRR@10 ou nDCG@10, taux de résultats avec bonne matière/niveau, exactitude des références documentaires, taux d'abstention quand aucune source pertinente n'existe, latence p50/p95 et coût par 1000 requêtes. Le pilote ne sera promu que s'il améliore les résultats sans dégrader la provenance ni la latence de manière inacceptable.
+
+### Conditions préalables à la phase expérimentale
+- Corriger et tester la collision entre le catalogue vocabulaire et l'index plein texte.
+- Reconstituer le contrat réel de l'index Supabase actif (modèle d'origine, dimension, type vector/halfvec, métrique, index HNSW/IVFFlat, fonction RPC, filtres, RLS) par une inspection explicitement autorisée et en lecture seule.
+- Préparer un jeu de questions/réponses de référence avec passages attendus et critères de notation.
+- Faire tourner le pilote hors production ; aucune migration, aucun re-embedding de production et aucun changement du RAG actif à ce stade.
+
+### État de réalisation
+- Audit statique et étude documentaire terminés ; collision de chemin/format confirmée.
+- Aucun code applicatif modifié, aucun index ou embedding généré, aucune opération Supabase, aucune migration, aucun workflow, aucun déploiement.
+- Branche `design/prototypes-67-74-alignment` conservée ; PR #17 doit rester ouverte et non fusionnée ; `main` inchangée.
