@@ -4133,3 +4133,39 @@ L'interface dispose déjà de composants pédagogiques locaux, d'un routeur de q
 
 ### Suite logique — Lot 569
 Mettre en place le premier test de contrat isolé pour les fichiers corpus et corriger les destinations d'écriture des scripts Python. Garder le chat/voix et les workflows automatiques hors de cette première correction, puis les traiter après validation des artefacts RAG.
+
+
+## Lot 569 — séparation effective des index et premier test de non-régression (16 novembre 2026)
+
+### Modifications effectuées sur la branche de prévisualisation
+1. `tools/ingest_corpus.py`
+   - Écrit désormais les chunks dans `assets/bdd/corpus_chunks_index.json`, avec `schema: rag-chunks-v1`.
+   - Met à jour `corpus.json.documents` de manière additive par identifiant, sans supprimer les autres champs historiques du registre.
+   - Ne réécrit plus `corpus_index.json`, réservé au vocabulaire BIBLIO.
+   - N'attribue plus par défaut la licence « production propre » : la valeur par défaut est `non_verifiee`, avec `droits_statut: a_verifier` sauf déclaration explicite `droits_verifies: true` dans les métadonnées.
+2. `tools/indexer_pdf.py)
+   - Lit et écrit désormais `corpus_chunks_index.json` pour les chunks RAG.
+   - Initialise un index vide conforme au schéma RAG si le fichier dédié n'existe pas.
+   - Les documents PDF nouvellement indexés portent `licence: non_verifiee` et `droits_statut: a_verifier`, au lieu d'être présentés comme une licence utilisateur vérifiée.
+3. `tools/sharder_index.py)
+   - Lit les chunks depuis `corpus_chunks_index.json`, jamais depuis le vocabulaire BIBLIO.
+4. `rag.js)
+   - Son repli non shardé lit maintenant `corpus_chunks_index.json`.
+5. Nouveau test `tests/test_ingest_corpus_contract.py)
+   - Crée un mini-corpus dans un répertoire temporaire.
+   - Vérifie que l'ingestion conserve les champs historiques de `corpus.json`, conserve exactement le vocabulaire de `corpus_index.json`, et crée un index chunks distinct conforme au schéma attendu.
+
+### Vérifications effectuées
+- Les cinq fichiers modifiés/créés ont été relus sur la branche après écriture ; les chaînes et destinations attendues sont présentes.
+- Les SHA de `assets/bdd/corpus.json`, `assets/bdd/corpus_index.json` et `assets/bdd/shards_manifest.json` sont restés strictement identiques à ceux constatés avant le lot : aucune donnée réelle ni shard n'a été touché.
+- Le test Python a été ajouté, mais **n'a pas encore été exécuté dans l'environnement du dépôt**. Il ne faut donc pas annoncer sa réussite. L'exécution isolée et la correction d'éventuelles erreurs constituent la première vérification du lot suivant.
+- Les workflows automatiques d'indexation/sharding n'ont pas été déclenchés ni modifiés ; leur risque de pousser directement sur `main` reste à traiter séparément avant toute automatisation.
+- Aucun fichier PDF n'a été ingéré ; aucun index réel ni manifeste n'a été reconstruit ; aucune modification Supabase, Auth, RLS, schéma SQL ou déploiement.
+
+### Limites et vigilance
+- Le champ `droits_verifies` doit être renseigné uniquement sur la base d'une autorisation réellement vérifiée et documentée ; le script ne constitue pas lui-même une preuve juridique.
+- Le test actuel couvre le contrat de l'ingestion `ingest_corpus.py). Il ne valide pas encore l'indexeur PDF, le sharder, le navigateur ni le Worker.
+- Le traitement des identifiants de termes dans l'indexeur PDF et la robustesse des métadonnées restent à auditer avant de reconstruire des shards.
+
+### Suite logique — Lot 570
+Exécuter le test dans un environnement de dépôt isolé, ajouter les tests de contrat de l'indexeur PDF et du sharder, puis contrôler l'alignement des identifiants chunk/termes. Ensuite seulement, préparer le test navigateur RAG sans lancer les workflows qui poussent vers `main`.
