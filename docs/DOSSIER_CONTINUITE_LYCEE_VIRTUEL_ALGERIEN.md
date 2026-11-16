@@ -997,8 +997,7 @@
 - Vérification juste avant exécution : historique Supabase sans migration multaqa antérieure ; aucune table `multaqa_posts`, `multaqa_comments`, `multaqa_reactions`, `multaqa_reports` ni RPC `multaqa_*` préexistante. Aucun conflit d'objet détecté.
 - Application réussie via l'opération de migration Supabase, enregistrée sous `20261113201922_multaqa_community_feed`. Le lot crée quatre tables, leurs index, active RLS, révoque tout accès REST direct aux tables pour `anon` et `authenticated`, puis expose huit RPC SECURITY DEFINER exclusivement à `authenticated`.
 - Vérification post-application en lecture seule : les quatre tables sont présentes et RLS est activée ; SELECT/INSERT/UPDATE/DELETE directs sont refusés à anon et authenticated ; les huit RPC ont EXECUTE refusé à anon et accordé à authenticated ; les huit fonctions sont SECURITY DEFINER. L'historique Supabase contient maintenant la migration `multaqa_community_feed`.
-- Les garde-fous serveur contrôlent `auth.uid()`, `profiles.role='eleve'` et `profiles.verif_statut='verifie'` pour le fil, la publication, les commentaires, les réactions et les signalements. Aucun abonnement n'est exigé. Les RPC de lecture ne projettent que le pseudo public et les champs du contenu.- Le test PostgreSQL 17 isolé du Lot 446 avait réussi sur des comptes synthétiques avant cette application. Il valide les scénarios inclus dans le harnais, mais ne prouve pas encore le fonctionnement réel avec JWT/Supabase Auth dans le navigateur.
-- Aucun profil, compte, message privé, contenu scolaire existant ou autre donnée métier n'a été lu ou modifié. Aucune migration Messenger, modification de paiement, Storage, Auth, Realtime ou table existante n'a été appliquée.
+- Les garde-fous serveur contrôlent `auth.uid()`, `profiles.role='eleve'` et `profiles.verif_statut='verifie'` pour le fil, la publication, les commentaires, les réactions et les signalements. Aucun abonnement n'est exigé. Les RPC de lecture ne projettent que le pseudo public et les champs du contenu.- Le test PostgreSQL 17 isolé du Lot 446 avait réussi sur des comptes synthétiques avant cette application. Il valide les scénarios inclus dans le harnais, mais ne prouve pas encore le fonctionnement réel avec JWT/Supabase Auth dans le navigateur.- Aucun profil, compte, message privé, contenu scolaire existant ou autre donnée métier n'a été lu ou modifié. Aucune migration Messenger, modification de paiement, Storage, Auth, Realtime ou table existante n'a été appliquée.
 - État produit : **backend de base installé**, mais l'expérience complète n'est pas encore déclarée opérationnelle. Étape suivante obligatoire : vérifier le raccordement de `multaqa.js` aux RPC dans une session élève vérifié réelle, contrôler l'affichage et les erreurs dans le navigateur, puis tester publication/commentaire/réaction/signalement avec des comptes de test autorisés. Aucun contenu fictif ne doit être ajouté.
 - PR #17 reste ouverte et non fusionnée, base `main`. Aucun changement sur `main`, aucune fusion et aucun déploiement Cloudflare.
 
@@ -1997,7 +1996,6 @@ Sur le même commit, les jobs de trois workflows indépendants ont été interro
 
 ## Lot 508 — diagnostic isolé du démarrage des runners (14 novembre 2026)
 **Changement de méthode :** ajout de `.github/workflows/diag-runner-provisioning.yml`, workflow minimal sans checkout, sans installation, sans secret et sans accès réseau applicatif. Il lance uniquement trois commandes `echo/date`, sur deux images indépendantes (`ubuntu-latest` et `ubuntu-22.04`). Commit : `cbe97eb31c37aa43a59d0d49f31dbd6bfd3a41ea`.
-
 **Résultat discriminant :** le run diagnostic #1 (`43592180990`) a échoué sur les deux jobs. Pour chacun : `steps=[]`, `logs_url=null`, téléchargement des logs = `BlobNotFound`. Aucun des deux n'a exécuté la première commande `echo`. Au même commit, Storage #27 (`43592180931`) et CI générale #3802 (`43592180902`) montrent le même motif.
 
 **Conclusion technique :** le problème observé est en amont des commandes YAML, du checkout, de Node, de Supabase CLI, de PostgreSQL et du code Messenger. Le test minimal ne prouve pas à lui seul quelle composante GitHub est en cause, mais il permet d'écarter comme explication immédiate une erreur dans le script Storage ou dans son SQL. L'hypothèse principale devient un échec de dispatch/provisionnement/initialisation des runners hébergés, ou une restriction de service au niveau du dépôt/compte. Seuls les diagnostics côté GitHub peuvent départager ces causes.
@@ -2997,7 +2995,6 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 4. Unifier la vue Corpus et le retrieval du tuteur autour du même registre et du même validateur de métadonnées, sans faire dépendre le moteur de l'état des filtres UI.
 5. Ajouter une politique de cache : version du corpus + contexte + session pour les données privées ; invalidation lors de changement de matière/niveau/filière, changement de compte et mise à jour du corpus.6. Corriger prioritairement `PTRAD` : cache par session avec invalidation sur événements auth, et tests de déconnexion/reconnexion de deux comptes dans le même onglet.
 7. Résoudre les schémas manifest/index et valider l'intégrité de tous les shards avant de les publier ; ne pas lancer le workflow d'indexation actuel qui peut pousser directement sur main.
-
 ### État des opérations
 - Lecture seule de `rag.js`, `biblio.js`, `corpus.js`, `assets/bdd/corpus.json` et `assets/bdd/shards_manifest.json` sur `design/prototypes-67-74-alignment`.
 - Aucun test multi-compte, RLS, navigateur ou performance exécuté ; le risque PTRAD est déduit de la durée et de la portée du cache dans le code, et doit être confirmé par un test contrôlé sans exposer de données.
@@ -3997,8 +3994,7 @@ Or le fichier actuellement versionné contient `_meta`, `documents` et `items` (
 Séparation à appliquer sans ambiguïté :- `assets/bdd/corpus_index.json` : index de vocabulaire DE–AR, préservé à l'identique pour BIBLIO.
 - `assets/bdd/corpus.json` : registre pédagogique existant ; préserver les trois sections et leurs données actuelles, notamment `items`.
 - `assets/bdd/corpus_documents.json` : registre dédié aux documents ingérés, si le registre existant ne peut pas être étendu sans perte.
-- `assets/bdd/corpus_chunks_index.json` : index lexical RAG des chunks, structure versionnée `{version, schema, termes, chunks}`.
-- `assets/bdd/shards_manifest.json` : manifeste des seuls shards RAG construits et validés ; rester vide tant qu'aucun shard réel n'existe.
+- `assets/bdd/corpus_chunks_index.json` : index lexical RAG des chunks, structure versionnée `{version, schema, termes, chunks}`.- `assets/bdd/shards_manifest.json` : manifeste des seuls shards RAG construits et validés ; rester vide tant qu'aucun shard réel n'existe.
 
 Le choix entre extension non destructive de `corpus.json` et registre séparé `corpus_documents.json` doit être fait après inventaire de tous les consommateurs du champ `documents`. Ne pas choisir par supposition.
 
@@ -4760,3 +4756,11 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 - **Portée exacte :** régression JavaScript locale validée sur fixtures synthétiques. Cela ne valide pas les contrats Python, les documents ou droits réels, les shards de production, la génération de réponses Worker ni la qualité pédagogique/l linguistique. La provenance des fixtures demeure `client_unverified`.
 - Le commit testé est `f4c2cae3`. Aucun changement Supabase, Auth, RLS, SQL, schéma, paiement, données de production, branche `main`, fusion ou déploiement n'a été effectué.
 - **Suite immédiate :** rendre Python 3.12 disponible et exécuter les tests de contrats Python; ensuite seulement préparer un test d'indexation sur copie synthétique ou sur documents dont les droits sont établis. Les index/shards de production ne doivent pas être reconstruits directement.
+
+### Lot 583 — diagnostic Python sur le poste Windows (16 novembre 2026)
+- Le diagnostic PowerShell confirme que `where.exe python` ne trouve que le raccourci Microsoft Store `C:\Users\coord\AppData\Local\Microsoft\WindowsApps\python.exe`; aucune installation Python exécutable n'est détectée.
+- La commande `python --version` retourne le message Windows indiquant que Python est introuvable; `py` n'est pas reconnu et aucun `uv` n'est détecté.
+- La tentative de découverte/exécution des tests retourne le code 9009. **Les tests Python n'ont donc pas été exécutés** : ce résultat n'est ni un échec fonctionnel du code Python ni une validation.
+- Les sept tests JavaScript restent réussis au commit `f4c2cae3`; le dossier avait été mis à jour au commit documentaire `460956b9`.
+- Étape suivante : installer un interpréteur Python 3.12 officiel sur le poste, vérifier `python --version` et `python -m pip --version`, puis exécuter les tests de contrats depuis le worktree isolé. Ne pas modifier les index/shards de production avant cette validation.
+- Aucun fichier du corpus réel, aucune base Supabase, Auth, RLS, SQL, schéma, paiement, branche `main`, fusion ou déploiement n'a été modifié.
