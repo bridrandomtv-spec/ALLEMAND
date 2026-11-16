@@ -2694,3 +2694,46 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Fichier modifié : `ci/msg-supabase-local-test.mjs`. Commit : `9a3cae800d36c5c011ac2707d7c442cab7f592d4`.
 - Contrôle effectué par relecture statique de la séquence de test et de la fonction SQL. Aucun test dynamique Node/PostgreSQL/Supabase n'a été exécuté, le runner GitHub Actions étant toujours bloqué avant démarrage pour la restriction de facturation du compte.
 - Aucun changement de migration, schéma, Auth, RLS ou Realtime sur Supabase actif ; aucune modification de `main`, aucune fusion PR #17, aucun déploiement Cloudflare.
+
+
+## Lot 548 — étude d'intégration BGE-M3 et cartographie du raccordement vectoriel (16 novembre 2026)
+
+### Périmètre
+- Poursuite de l'étude des projets open source susceptibles d'améliorer l'intelligence pédagogique, avec priorité à BGE-M3 pour la recherche documentaire multilingue.
+- Audit en lecture seule de `assets/bdd/config.json`, `supabase/supabase.js`, `rag.js`, `biblio.js` et `worker/ia-ask.js` sur la branche `design/prototypes-67-74-alignment`.
+- Aucun appel SQL, aucune requête sur Supabase hébergé, aucune écriture de données, aucun changement Auth/RLS/Realtime/Storage, aucun déploiement et aucune fusion.
+
+### Constat BGE-M3
+- La documentation officielle FlagEmbedding décrit BGE-M3 comme un modèle multilingue prenant en charge plus de 100 langues, avec une longueur de séquence annoncée jusqu'à 8 192 tokens.
+- Le modèle `BAAI/bge-m3` produit des vecteurs denses de 1 024 dimensions et propose également des représentations lexicales sparse et multi-vecteurs.
+- Le dépôt recommande une stratégie de recherche hybride suivie d'un reclassement (reranking). Cette recommandation est pertinente pour les questions scolaires en arabe, darija, français, allemand et anglais.
+- La licence MIT du dépôt FlagEmbedding ne suffit pas à elle seule à établir les conditions de redistribution ou d'exploitation de tous les poids de modèles et composants associés : vérifier la fiche de licence du modèle effectivement retenu.
+- La machine locale connue du projet (Intel HD 520, sans GPU NVIDIA dédié) ne doit pas être considérée comme cible d'inférence confortable pour BGE-M3. Une évaluation sur service d'inférence distant ou machine serveur adaptée sera nécessaire avant décision.
+
+### Cartographie du code existant
+- `assets/bdd/config.json` expose une configuration `ia_proxy` vers le Worker `ia-ask`. Aucune configuration de service d'embeddings ou d'endpoint vectoriel n'y a été identifiée.
+- `worker/ia-ask.js` reçoit une question `q` et un contexte textuel `ctx`, puis transmet ces éléments à Cloudflare Workers AI. Il ne réalise pas lui-même la recherche documentaire ni la génération d'embeddings.
+- `rag.js` charge `assets/bdd/shards_manifest.json` ou, en repli, `assets/bdd/corpus_index.json`; le code examiné effectue une recherche lexicale par termes et scores. Aucun appel RPC Supabase de recherche vectorielle n'y a été identifié.
+- `biblio.js` construit un index lexical local à partir de plusieurs sources pédagogiques (pages de livre, devoirs, grammaire, corpus, darija, explications, bibliothèque multi-matières et traductions). Aucun calcul d'embeddings ni appel de recherche vectorielle n'a été identifié dans ce fichier.
+- `supabase/supabase.js` initialise le client Supabase et gère notamment Auth, synchronisation de mémoire et stockage. Aucun appel de recherche sémantique ou RPC de type `match_documents`/`match_chunks` n'a été identifié dans le fichier examiné.
+- Le fichier de configuration contient une URL de proxy IA, mais aucune indication du modèle d'embedding, de la dimension vectorielle, de la table de chunks, de la fonction RPC ou des filtres de métadonnées utilisés par l'index vectoriel existant.
+- Le propriétaire du projet a précédemment indiqué que l'index vectoriel Supabase avait été créé et vérifié actif. Ce constat utilisateur est conservé. L'audit du code source ne démontre toutefois pas que l'application de cette branche interroge cet index. L'existence de l'index et son utilisation par le code sont deux vérifications distinctes.
+
+### Point documentaire à conserver
+- L'audit antérieur avait relevé `nb_shards: 0`, `total_chunks: 0` dans `assets/bdd/shards_manifest.json`, ainsi que zéro chunk et zéro terme dans `assets/bdd/corpus_index.json` à la révision alors examinée.
+- Ce constat concerne l'index général de fragments RAG et ne signifie pas que toutes les sources séparées de BIBLIO sont vides ou inutilisables.
+- Avant un benchmark représentatif, vérifier la révision actuelle de ces artefacts et la génération effective des fragments. Ne pas confondre métadonnées de documents dans `corpus.json` et fragments indexés réellement interrogeables.
+
+### Décision et protocole recommandé
+1. Ne pas installer BGE-M3 dans le frontend ni dans le Worker `ia-ask`.
+2. Ne pas recréer, modifier ou alimenter l'index Supabase actif pendant la phase d'audit.
+3. Obtenir, à partir des éléments de configuration et du schéma déjà existants, le nom du modèle d'embedding utilisé, la dimension, la table/colonne vectorielle, la fonction RPC, les filtres matière/niveau/filière et la méthode de classement. Ne pas lancer de requête SQL sans autorisation explicite distincte.
+4. Vérifier la compatibilité : un vecteur BGE-M3 dense de 1 024 dimensions n'est directement compatible qu'avec une colonne et un index conçus pour cette dimension et alimentés de façon cohérente avec le même modèle. Les représentations sparse et multi-vecteurs nécessitent une conception de stockage et de recherche adaptée.
+5. Préparer ensuite un corpus expérimental isolé et un jeu de 60 questions couvrant arabe standard, darija, Arabizi, français, allemand, anglais, recherche par unité/page et questions indirectes.
+6. Comparer BIBLIO seul, BGE-M3 dense seul et recherche hybride BIBLIO + BGE-M3, en mesurant pertinence des cinq premiers passages, exactitude de la source, latence et robustesse aux formulations dialectales.
+7. Ne décider de l'intégration qu'après résultats mesurés et vérification des licences des modèles et documents.
+
+### État des opérations
+- Fichiers inspectés en lecture seule : `assets/bdd/config.json`, `supabase/supabase.js`, `rag.js`, `biblio.js`, `worker/ia-ask.js`, ainsi que la documentation FlagEmbedding/BGE-M3.
+- Aucun fichier applicatif modifié ; aucun index créé ou modifié ; aucune installation de dépendance ; aucun test d'inférence exécuté ; aucune requête Supabase ; aucun commit applicatif ; aucun déploiement ; aucune fusion.
+- Cette entrée documente uniquement l'audit et la décision de préparer une expérimentation isolée.
