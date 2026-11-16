@@ -90,4 +90,4 @@ assert.equal(metrics.answerLanguageAccuracy, 1);
 assert.equal(metrics.humanGroundingRate, 0.5);
 assert.equal(metrics.humanReviewed, 2);
 
-process.stdout.write(`RAG evaluation fixture contract: passed (${fixture.cases.length} cases, ${fixture.documents.length} synthetic passages).\\n`);
+process.stdout.write(`RAG evaluation fixture contract: passed (${fixture.cases.length} cases, ${fixture.documents.length} synthetic passages).\n`);
