@@ -7,6 +7,7 @@ Usage : python tools/indexer_pdf.py docs/archive/documents
 """
 import json, os, re, sys
 from metadata_contract import valide_metadonnees, ajoute_quarantaine
+from rag_normalization import termes_index
 CORPUS = os.path.join('assets', 'bdd', 'corpus.json')
 INDEX = os.path.join('assets', 'bdd', 'corpus_chunks_index.json')
 CHUNK_MOTS = 1200
@@ -88,7 +89,7 @@ def main(dossier):
         chunk['n'] = cid
     termes.clear()
     for cid, chunk in enumerate(chunks_l):
-        for mot in set(re.findall(r'[A-Za-z\u00c0-\u00ff\u0600-\u06ff]{3,}', chunk.get('texte', '').lower())):
+        for mot in termes_index(chunk.get('texte', '')):
             termes.setdefault(mot, []).append(cid)
 
     nb_doc = nb_chunk = nb_scan = nb_ocr = 0
@@ -123,7 +124,7 @@ def main(dossier):
             cid = len(chunks_l)
             chunks_l.append({'doc': did, 'n': cid, 'texte': cc})
             nb_chunk += 1
-            for mot in set(re.findall(r'[A-Za-z\u00c0-\u00ff\u0600-\u06ff]{3,}', cc.lower())):
+            for mot in termes_index(cc):
                 termes.setdefault(mot, []).append(cid)
 
     idx['version'] = '1.0.0'
