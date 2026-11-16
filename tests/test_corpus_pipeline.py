@@ -22,6 +22,31 @@ ingest = load_module("tools/ingest_corpus.py", "ingest_corpus")
 audit = load_module("tools/audit_corpus_registry.py", "audit_corpus_registry")
 
 class CorpusPipelineContract(unittest.TestCase):
+    def test_written_authorization_scope_requires_matching_document_id_or_hash(self):
+        meta = {
+            "licence": "autorisation_ecrite", "source": "Autorité émettrice",
+            "titulaire_droits": "Titulaire", "declarant": "Responsable",
+            "date_declaration": "2026-11-16", "declaration_droits": True,
+            "reference_autorisation": "REF-SYNTHETIQUE-TEST",
+            "perimetre_documentaire": {"identifiants_documents": ["doc-1"],
+                "empreintes_sha256": []},
+            "usages_autorises": ["hebergement_source", "extraction_texte",
+                "indexation_rag", "restitution_extraits"],
+            "validation": {"statut": "valide", "verificateur": "Relecteur",
+                "date": "2026-11-16", "reference_preuve": "fixture-002"}
+        }
+        self.assertEqual(rights.valider_metadonnees(meta), (True, "validé"))
+        digest = "a" * 64
+        self.assertTrue(rights.document_couvert(meta, "doc-1", digest))
+        self.assertFalse(rights.document_couvert(meta, "doc-2", digest))
+        meta["perimetre_documentaire"] = {"identifiants_documents": [],
+            "empreintes_sha256": [digest]}
+        self.assertTrue(rights.document_couvert(meta, "doc-2", digest))
+        self.assertFalse(rights.document_couvert(meta, "doc-2", "b" * 64))
+        meta["perimetre_documentaire"] = {"identifiants_documents": [],
+            "empreintes_sha256": []}
+        self.assertFalse(rights.valider_metadonnees(meta)[0])
+
     def test_registry_audit_is_read_only_and_distinguishes_source_from_rights(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = os.path.join(tmp, "repo")
