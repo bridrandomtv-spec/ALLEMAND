@@ -4496,3 +4496,39 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 2. Exécuter un test avec un document scolaire réel dont l'autorisation et la référence de droits sont documentées.
 3. Contrôler les réponses du Worker : fidélité au passage, absence d'invention, bonne langue et adaptation au niveau.
 4. Construire le jeu de questions multilingues de référence avant de comparer le RAG lexical à BGE-M3.
+
+
+## Lot 578 — banc d'essai pédagogique multilingue RAG (16 novembre 2026)
+
+### Jeu de référence créé
+- Nouveau jeu de référence : `tests/fixtures/rag-eval/questions-v1.json`.
+- Le jeu contient 9 questions synthétiques couvrant l'allemand, le français, l'arabe standard, le darija algérien, l'Arabizi, l'anglais (statut partiel), ainsi que deux scénarios de non-disponibilité en italien et en espagnol (statut planifié).
+- Quatre passages courts de test sont fournis : allemand A1, français A2, arabe A2 et anglais A2. Ils sont explicitement marqués `synthetic_test_only` et `non_official`; ils ne proviennent pas des manuels scolaires et ne doivent pas être injectés dans le corpus de production.
+- Chaque question définit la langue d'entrée, la langue attendue pour la réponse, le niveau, le document attendu, les concepts essentiels, le statut de capacité et la conduite attendue en cas d'abstention.
+- Les cas italien/espagnol vérifient notamment que le professeur ne fabrique pas un cours ou un programme officiel lorsque la disponibilité de ces parcours n'est pas confirmée.
+
+### Contrat de validation et métriques
+- Nouveau test : `tests/rag-eval-contract.test.mjs`.
+- Le test valide le schéma du jeu, l'unicité des identifiants, le caractère exclusivement synthétique des passages, les références de documents, la cohérence entre statut de capacité et abstention, ainsi que la présence de critères d'évaluation.
+- Une fonction de score réutilisable calcule hit@1, hit@k, exactitude d'abstention, exactitude de langue de réponse et taux de fidélité évalué par un humain. Le taux de fidélité reste explicitement soumis à une revue humaine; il n'est pas inféré automatiquement du seul classement RAG.
+- Un micro-scénario synthétique vérifie le calcul des métriques. Il ne mesure pas encore la qualité réelle du Worker ou du moteur RAG.
+
+### CI et commits
+- Le workflow `.github/workflows/rag-guard-tests.yml` exécute désormais aussi `node tests/rag-eval-contract.test.mjs`.
+- Commit du jeu de référence : `096fab0e2bbcbfb6fff9ad167d39bc113587f59d`.
+- Commit du test et des métriques : `42b4a2a53f6f01bbb6ef8861e7b2e996d1b4bead`.
+- Commit du workflow : `e4bdd784e9218d47e73f4e10303964a776bb8ec8`.
+- Les fichiers ont été enregistrés sur `design/prototypes-67-74-alignment`. Leur exécution effective n'est pas confirmée dans ce lot; aucun résultat vert n'est revendiqué.
+
+### Périmètre et limites
+- Le jeu est un benchmark de contrat, pas encore un benchmark de qualité linguistique évalué par des professeurs.
+- Le moteur RAG actuel ne fournit pas encore une liste classée complète à ce harnais; hit@k est prêt pour les futures sorties classées, mais l'évaluation opérationnelle nécessitera d'exposer les candidats sans contourner le filtre de droits.
+- Aucun appel réel au modèle Worker n'a été exécuté avec les questions de ce jeu; aucune mesure de fidélité, de latence ou de qualité vocale n'est donc disponible.
+- Aucun PDF, manuel, corpus, shard, manifeste, embedding ou index de production n'a été modifié.
+- Aucun changement Supabase, Auth, RLS, SQL, schéma, paiement, branche `main`, fusion ou déploiement Cloudflare.
+
+### Suite logique — Lot 579
+1. Faire exécuter la CI et relever les résultats réels des tests.
+2. Ajouter un adaptateur d'évaluation non destructif qui lance les questions contre le RAG lexical et enregistre les identifiants de documents/chunks retrouvés, sans exposer de document non admis.
+3. Ajouter une grille de revue humaine pour la fidélité au passage, l'exactitude grammaticale, l'adaptation au niveau, la langue de réponse et l'abstention.
+4. Comparer ensuite le RAG lexical à un pilote BGE-M3 isolé, sur le même jeu, sans toucher aux index de production ni aux ressources Supabase.
