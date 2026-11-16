@@ -82,6 +82,13 @@ const sigBytes = Buffer.from(signature, 'base64url');
 assert.equal(await webcrypto.subtle.verify('HMAC', key, sigBytes,
   new TextEncoder().encode(payload)), true);
 
+const savedRights = corpus.documents[0].droits;
+delete corpus.documents[0].droits;
+const missingRights = await evidence('Explique la page 4');
+assert.equal(missingRights.response.status, 503);
+assert.equal(missingRights.data.error, 'rag_shards_incoherent');
+corpus.documents[0].droits = savedRights;
+
 const wrongPage = await evidence('Explique la page 5');
 assert.equal(wrongPage.response.status, 404);
 assert.equal(wrongPage.data.error, 'rag_scope_or_match_not_found');
