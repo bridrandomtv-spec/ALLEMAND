@@ -2784,3 +2784,38 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Lecture seule de `tools/ingest_corpus.py`, `tools/indexer_pdf.py`, `tools/sharder_index.py`, `.github/workflows/indexer.yml`, `assets/bdd/corpus.json`, `assets/bdd/corpus_index.json`, `assets/bdd/shards_manifest.json`, `biblio.js` et `rag.js`.
 - Aucun script exécuté ; aucun PDF ingéré ; aucun artefact JSON régénéré ; aucun workflow GitHub Actions lancé ; aucun push, commit applicatif ou changement sur `main`.
 - Aucun accès ni changement Supabase hébergé ; aucun déploiement Cloudflare ; aucune fusion. PR #17 demeure ouverte et non fusionnée.
+
+
+## Lot 550 — robustesse du chemin RAG avec shards et automatisation incomplète (16 novembre 2026)
+
+### Chemin de recherche observé dans `rag.js`
+- `chargeManifest()` charge `assets/bdd/shards_manifest.json`.
+- Si `man.shards` existe et contient au moins un élément, `cherche(q)` entre dans le mode shards.
+- Dans ce mode, chaque shard est chargé séparément ; les erreurs réseau/JSON sont absorbées et le shard défaillant est ignoré.
+- À la fin de cette branche, la fonction retourne directement `best`, même si aucun shard n'a pu être chargé ou si aucun résultat n'a été trouvé.
+- Le repli sur `chargeLegacy()` et `corpus_index.json` n'est donc exécuté que si le manifeste est absent, invalide, ou si sa liste de shards est vide. Un manifeste non vide mais inutilisable peut neutraliser le repli historique.
+- Le comportement attendu est un repli contrôlé : si aucun shard valide n'a été lu ou qu'aucun résultat exploitable n'a été trouvé, tenter l'index legacy compatible, puis retourner un état diagnostique explicite si les deux chemins échouent.
+
+### Automatisation de construction : chaîne incomplète
+- `tools/sharder_index.py` lit `corpus_index.json`, découpe `chunks` en lots de 250, filtre les postings sur les identifiants `c.n`, écrit les fichiers de shards puis le manifeste.
+- Le workflow `.github/workflows/indexer.yml` exécute `tools/indexer_pdf.py`, mais n'exécute pas `tools/sharder_index.py`.
+- Par conséquent, même si l'indexeur PDF produit un index de fragments correct, le manifeste des shards n'est pas régénéré par cette automatisation. Le manifeste actuellement observé reste vide (0 shard, 0 chunk).
+- Le script de sharding supprime les anciens fichiers `shard_*.json` avant d'avoir fini de construire et valider les nouveaux fichiers. Une interruption peut donc laisser un ensemble incomplet de shards ou un manifeste obsolète. Recommandation : écrire dans un répertoire/version temporaire, vérifier les comptes et les références, puis publier le manifeste en dernier comme pointeur vers l'ensemble validé.
+- Le script doit également contrôler que chaque posting référence bien un `c.n` présent dans le shard et que chaque fragment apparaît une seule fois dans l'ensemble attendu.
+
+### Nuance de diagnostic sur l'indexeur PDF
+- `indexer_pdf.py` filtre les anciens chunks PDF puis filtre les postings par borne `i < len(chunks_l)`, sans remapper les indices conservés.
+- Le défaut se manifeste si des chunks non-PDF se trouvent après des chunks PDF supprimés : les indices de ces chunks non-PDF peuvent être décalés alors que les postings gardent leurs anciennes valeurs. Si tous les chunks PDF sont strictement à la fin de la liste, ce scénario particulier ne se produit pas. Il faut donc corriger par reconstruction complète des postings plutôt que présumer l'ordre actuel.
+- L'identifiant `n` doit être traité comme identifiant global stable ; le script de sharding dépend de cette convention pour répartir les postings.
+
+### Contrôles à ajouter avant remise en service
+1. Manifeste absent, JSON invalide, liste vide, shard manquant, shard JSON invalide, shard valide sans correspondance : aucun cas ne doit empêcher un repli legacy compatible.
+2. Vérifier la cohérence `nb_shards`, `total_chunks`, compte réel des fragments et présence de tous les fichiers référencés.
+3. Vérifier unicité et stabilité des identifiants `n`, absence de postings orphelins et correspondance exacte entre les postings et les fragments.
+4. Simuler une interruption pendant la construction des shards : la version précédente doit rester exploitable.
+5. Le workflow doit explicitement construire et valider les shards après l'indexation, puis publier les artefacts validés sur une branche/PR, jamais par push direct sur `main`.
+
+### État des opérations
+- Lecture seule de `rag.js`, `tools/sharder_index.py`, `assets/bdd/shards_manifest.json` et `.github/workflows/indexer.yml`.
+- Aucun code applicatif ou script modifié/exécuté ; aucun shard généré ; aucun workflow déclenché.
+- Aucun changement Supabase, aucun déploiement Cloudflare, aucune fusion. PR #17 demeure ouverte et non fusionnée.
