@@ -15,10 +15,10 @@ import re
 import sys
 
 try:
-    from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees, projection_preuve_droits
+    from tools.rights_metadata import LICENCES_AUTORISEES, valider_metadonnees, projection_preuve_droits, document_couvert
     from tools.corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag, ecrire_json_transactionnel, valider_coherence_catalogue_index
 except ModuleNotFoundError:  # exécution directe: python tools/script.py
-    from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees, projection_preuve_droits
+    from rights_metadata import LICENCES_AUTORISEES, valider_metadonnees, projection_preuve_droits, document_couvert
     from corpus_contracts import sha256_fichier, decouper_pages, fusionner_documents, construire_chunk, fusionner_index_rag, ecrire_json_transactionnel, valider_coherence_catalogue_index
 
 CORPUS = os.path.join("assets", "bdd", "corpus.json")
@@ -74,7 +74,14 @@ def construire(dossier, documents_existants=None):
             nb_ignores += 1
             continue
         licence = str(meta.get("licence", "")).strip().lower()
+        did = "pdf-" + hashlib.sha256(nom.encode("utf-8")).hexdigest()[:16]
+        source_sha256 = sha256_fichier(chemin)
+        if not document_couvert(meta, did, source_sha256):
+            print("IGNORE (document hors périmètre de l'autorisation):", nom)
+            nb_ignores += 1
+            continue
 
+        # Le périmètre est contrôlé avant toute extraction du contenu.
         pages = lire_pages_pdf(chemin)
         texte = "\n".join(pages).strip()
         if len(texte) < 60:
@@ -82,7 +89,6 @@ def construire(dossier, documents_existants=None):
             nb_ignores += 1
             continue
 
-        did = "pdf-" + hashlib.sha256(nom.encode("utf-8")).hexdigest()[:16]
         doc = {
             "id": did, "titre": meta.get("titre", nom),
             "matiere": meta.get("matiere", "allemand"),
@@ -91,7 +97,7 @@ def construire(dossier, documents_existants=None):
             "langue": meta.get("langue", "de"),
             "annee": meta.get("annee", "2026/2027"),
             "format": "pdf", "url": chemin,
-            "source_sha256": sha256_fichier(chemin),
+            "source_sha256": source_sha256,
             "source": meta.get("source", "document local"),
             "licence": licence, "droits": projection_preuve_droits(meta),
             "tags": meta.get("tags", ["pdf"]),
