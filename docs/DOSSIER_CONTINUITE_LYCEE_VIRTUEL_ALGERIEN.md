@@ -3277,3 +3277,110 @@ La réponse du tuteur devrait retourner un objet séparant `answer`, `answer_mod
 - Contrat cible, politique d'abstention et matrice de tests rédigés comme recommandations seulement.
 - Aucun code applicatif modifié, aucun test d'exécution, aucune opération Supabase, aucun workflow et aucun déploiement.
 - Branche `design/prototypes-67-74-alignment` conservée ; PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
+
+## Lot 558 — cartographie des capacités pédagogiques par matière et langue (16 novembre 2026)
+
+### Périmètre
+- Audit statique en lecture seule de `js/subject.js`, `assets/bdd/subjects.json`, `js/qust.js`, `rag.js`, `biblio.js`, `ia.js`, `parle.js`, `voix.js`, `assets/bdd/corpus.json`, `assets/bdd/biblio_multimatieres.json`, `assets/bdd/malakhiss.json`, `assets/bdd/contenu_original.json`, `assets/bdd/vocabulaire_eleve.json`, `assets/bdd/questions_eleve.json` et `assets/bdd/intent_ontology.json`.
+- Comptage des fiches documentaires et distribution par matière/niveau/langue/type ; comptage des entrées de bibliothèque par matière.
+- Vérification des langues détectées par QUST et ia.js, des langues proposées par l'interface vocale, et du périmètre du prompt Worker.
+- Références externes : article RAGAS (EACL 2024), ARES (NAACL 2024), Microsoft Learn sur les métriques RAG.
+- Aucun code applicatif modifié, aucun test d'exécution, aucune opération Supabase, aucun workflow, aucun déploiement et aucune fusion.
+
+### 1. Registre des matières
+Le fichier `assets/bdd/subjects.json` ne déclare que :
+- `allemand` : statut `implemented`.
+- `anglais` : statut `partial`.
+
+`js/subject.js` utilise l'allemand comme matière par défaut et comme repli si VT est absent, inconnu ou en erreur. Une matière non enregistrée ne peut donc pas être considérée comme supportée par le registre courant.
+
+### 2. Volume et distribution documentaire
+- `assets/bdd/corpus.json` contient 239 fiches dans `documents`.
+- Le comptage des métadonnées classe 233 fiches en allemand et 6 en anglais.
+- Les 6 fiches anglaises observées sont de niveau 1AS : 5 leçons et 1 exercice.
+- Les fiches allemandes couvrent principalement 2AS et 3AS, avec des contenus documentaires, des documents utilisateurs et des productions pédagogiques.
+- Parmi les 233 fiches allemandes, 225 portent des métadonnées de documents utilisateurs (niveau 2AS/3AS) ; leur statut et leur provenance doivent continuer à être contrôlés selon les champs individuels, et non déduits du seul compte.
+- `assets/bdd/biblio_multimatieres.json` contient 1 213 entrées ; toutes les entrées inspectées sont classées `allemand`, avec niveaux CECRL A1 à B2 et catégories lexicales/grammaticales.
+- `assets/bdd/malakhiss.json` annonce 16 unités et 128 résumés de leçons, rédigés comme production pédagogique originale ; le tableau `malakhiss` contient 19 entrées, dont les unités de parcours.
+- `assets/bdd/contenu_original.json` annonce une production originale (50 exercices, 12 fiches et 2 sujets dans les sections déclarées), essentiellement liée au parcours allemand.
+- `assets/bdd/vocabulaire_eleve.json` déclare 53 mots dans ses métadonnées ; ce fichier ne démontre pas une couverture de matières autres que l'allemand.
+- `assets/bdd/questions_eleve.json` contient les motifs d'intentions utilisés par le routeur ; ce n'est pas une base de cours ou un corpus de connaissances.
+
+### 3. Langues réellement distinguées par les composants
+- QUST (`js/qust.js`) reconnaît explicitement arabe, darija, Arabizi, français et allemand dans `langs()`. Il ne détecte pas explicitement l'anglais, l'espagnol ou l'italien comme langues de question.
+- QUST extrait aussi certaines intentions (comparaison, résumé, correction, traduction, exercice, règle, mot, page, leçon) et des entités (matière fournie par contexte, niveau, unité, page, notions grammaticales allemandes). Cela ne constitue pas une couverture de contenus dans chaque langue.
+- `ia.js` détecte l'arabe, l'allemand, le français, l'espagnol et l'italien pour choisir la langue de réponse/fallback. Il n'a pas de branche de détection anglaise explicite dans le classificateur observé.
+- Le prompt du Worker `worker/ia-ask.js` annonce arabe/darija, allemand, français, espagnol et italien ; l'anglais n'y est pas listé. Le Worker reste un générateur à partir de `q` et `ctx`, sans retrieval documentaire propre.
+- `parle.js` propose neuf choix de reconnaissance/voix : arabe, allemand, anglais, français, espagnol, italien, russe, chinois et turc. Les salutations localisées et la sélection d'une langue ASR/TTS ne prouvent pas l'existence d'un cours, d'un corpus, d'un correcteur ou d'une banque d'exercices dans ces langues.
+- Les messages de bienvenue vocaux encouragent l'élève à demander en allemand, arabe ou darija, ce qui reflète mieux le périmètre annoncé que la liste complète des langues du sélecteur.
+- `voix.js` gère la segmentation et la synthèse de voix selon la langue détectée ; c'est une couche de restitution audio, pas une base de connaissances multilingue.
+
+### 4. Couverture du routage pédagogique
+- `rag.js` contient des fonctions pédagogiques spécialisées : lecture de pages de manuels, résumés d'unités, règles allemandes, articles, pluriels, conjugaison, exercices et certaines conversations.
+- Les données `malakhiss`, `ARTIKEL_BASE`, `CONJ`, les règles et les exercices observés sont structurés autour de l'allemand et des niveaux scolaires 2AS/3AS.
+- `QUST.understand()` est appelé dans `reponsePedagogique()`, mais le repli `qustFallback()` n'exécute qu'une action de lecture de page. Les autres intentions QUST ne pilotent pas directement les handlers dans ce repli.
+- `ontoRoute()` existe dans `rag.js`, avec des intentions de recherche, d'explication, de pratique et de révision, mais l'audit précédent a constaté qu'il n'est pas appelé dans le pipeline principal.
+- Le chat principal et le chemin Worker ne constituent donc pas une preuve que les matières et langues déclarées dans les prompts disposent de contenus pédagogiques adaptés.
+- Les 6 fiches anglaises 1AS ne suffisent pas à déclarer un parcours anglais complet : le registre ne démontre pas encore une couverture équilibrée cours/exercices/corrections/évaluations/niveaux.
+
+### 5. Matrice de capacité retenue pour le projet
+Statuts fondés sur les fichiers examinés, et non sur des essais de qualité en production :
+
+| Domaine | Corpus/ressources constatés | Compréhension/routage constatés | Statut prudent |
+|---|---|---|---|
+| Allemand 2AS/3AS | Livre, unités, résumés, vocabulaire, règles, exercices, sujets et corpus | Handlers spécialisés et parcours local | Matière la plus avancée ; couverture à évaluer par fonction |
+| Anglais 1AS | 6 fiches dans le registre documentaire | Pas de chaîne spécialisée complète démontrée ; Worker prompt sans mention explicite de l'anglais | Partiel |
+| Arabe scolaire | Pas de corpus général structuré démontré dans ce lot | Langue de dialogue/explication, QUST reconnaît le script arabe | Langue d'interaction, matière non démontrée |
+| Darija algérienne | Ressources d'intentions et normalisation de termes | QUST/routeur reconnaissent un sous-ensemble de motifs et variantes | Interface de compréhension partielle, pas matière scolaire |
+| Français | Pas de corpus de matière française démontré | Langue de dialogue et détection partielle | Langue d'interface/explication, matière non démontrée |
+| Italien | Pas de matière ni corpus dédié constaté | Détection de langue dans ia.js et choix vocal | Non démontré comme matière |
+| Espagnol | Pas de matière ni corpus dédié constaté | Détection de langue dans ia.js et choix vocal | Non démontré comme matière |
+| Russe/chinois/turc | Aucun corpus ou matière dédié constaté | Choix de reconnaissance/synthèse et salutations | Voix/interface seulement, non matière |
+
+### 6. Risques fonctionnels
+1. **Surpromesse multilingue** : un sélecteur vocal de neuf langues peut faire croire à une capacité pédagogique complète qui n'existe pas dans le corpus.
+2. **Réponses hors matière** : le contexte matière peut retomber sur allemand par défaut ; un utilisateur d'une matière non enregistrée risque de recevoir une réponse allemande ou générique.
+3. **Faux sentiment de couverture anglaise** : les quelques documents anglais ne prouvent ni un programme complet, ni des corrections robustes, ni un tuteur anglais spécialisé.
+4. **Détection linguistique incomplète** : QUST et ia.js n'ont pas la même liste de langues ; la langue de question, la langue de réponse et la matière doivent être séparées.
+5. **Routage non intégré** : les intentions reconnues par QUST ou l'ontologie ne garantissent pas que les handlers correspondants soient exécutés.
+6. **Voix confondue avec intelligence** : ASR/TTS peut fonctionner dans une langue sans que le moteur puisse enseigner cette langue avec des sources et exercices adaptés.
+
+### 7. Contrat de capacités cible recommandé (non implémenté)
+Pour chaque couple matière × niveau × langue d'enseignement, déclarer explicitement :
+- `status`: `implemented`, `partial`, `planned`, `unsupported`.
+- `curriculum_scope`: niveaux, filières, unités et compétences effectivement couvertes.
+- `knowledge_sources`: identifiants des documents et statut de provenance/droits.
+- `functions`: expliquer, résumer, traduire, corriger, générer des exercices, évaluer, converser, prononcer.
+- `input_languages`, `response_languages`, `voice_input_languages`, `voice_output_languages`.
+- `evidence_level`: réponse fondée sur document, contenu pédagogique original, ou génération générale.
+- `known_gaps` et `last_verified`.
+Le moteur doit consulter ce registre avant de répondre. Si la matière ou le niveau n'est pas couvert, il doit l'annoncer clairement et ne pas basculer silencieusement vers l'allemand.
+
+### 8. Plan d'évaluation à construire
+Établir un jeu de questions de référence séparé pour :
+- matière allemande 2AS et 3AS, anglais 1AS, questions de darija/Arabizi et explications en français ;
+- chaque fonction : explication, résumé, traduction, correction, exercice, lecture de page, conjugaison, conversation ;
+- questions ambiguës, matière inconnue, niveau absent, question hors corpus, document contradictoire et réponse vocale.
+Mesurer au minimum :
+- retrieval : Context Precision, Context Recall, MRR/nDCG et taux de bon couple matière/niveau ;
+- génération : Faithfulness, Answer Relevancy, exactitude par rapport à une réponse de référence ;
+- provenance : taux de citations exactes et localisables, taux de références inventées ;
+- sécurité pédagogique : abstention justifiée hors couverture et absence de bascule silencieuse vers une matière par défaut ;
+- langue : exactitude de détection, langue de réponse, qualité de compréhension darija/Arabizi et conservation du sens à l'oral.
+RAGAS distingue les métriques de retrieval et de génération ; ARES évalue contexte pertinent, fidélité et pertinence de la réponse. Utiliser ces dimensions comme cadre d'évaluation, sans considérer un score automatique comme substitut à la validation d'enseignants.
+
+### 9. Priorités
+- **P0** : publier une matrice honnête des capacités et ne plus confondre langues vocales, langues de dialogue et matières enseignées.
+- **P0** : empêcher le fallback silencieux vers l'allemand lorsqu'une matière non supportée est sélectionnée.
+- **P1** : compléter le contrat `subjects.json` ou son successeur par capacités, niveaux, fonctions et langues réelles ; ne déclarer `implemented` qu'après preuves et tests.
+- **P1** : unifier la détection de langue et le contexte de matière/niveau dans les chemins chat, voix, RAG et Worker.
+- **P1** : intégrer réellement QUST/ontologie au routeur d'actions, avec tests de chaque intention ; ne pas confondre détection et exécution.
+- **P2** : étendre l'anglais seulement après constitution d'un corpus et d'une banque d'évaluation adaptés ; ensuite italien et espagnol par lots documentaires et pédagogiques complets.
+
+### État de réalisation
+- Audit statique, comptage documentaire et matrice de capacités réalisés.
+- Couverture vérifiée : allemand nettement majoritaire ; anglais très partiel ; aucune matière italienne ou espagnole démontrée dans les registres examinés.
+- La liste vocale de neuf langues ne constitue pas une preuve de capacités pédagogiques dans ces neuf langues.
+- Aucun code applicatif modifié, aucun test d'exécution, aucune opération Supabase, aucun workflow, aucun déploiement.
+- Branche `design/prototypes-67-74-alignment` conservée ; PR #17 reste ouverte et non fusionnée ; `main` inchangée.
