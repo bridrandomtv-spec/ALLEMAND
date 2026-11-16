@@ -3624,3 +3624,103 @@ La plateforme a des fondations cloud réelles (Auth Supabase, RLS sur plusieurs 
 - Risque de lecture et d'écriture professeur hors classe identifié dans les scripts SQL versionnés.
 - État de production Supabase non vérifié ; aucune modification SQL ou applicative effectuée.
 - La PR #17 est fusionnée selon l'état GitHub vérifié le 16 novembre 2026 ; les commits documentaires de continuité de ce lot sont postérieurs à cette fusion et restent sur la branche de travail tant qu'ils ne sont pas reportés séparément.
+
+
+## Lot 562 — matrice des rôles, permissions et périmètres de données (16 novembre 2026)
+
+### Périmètre et méthode
+- Audit statique des scripts `supabase/schema.sql`, `fix_rls.sql`, `p0_locks.sql`, `fix_scope_guard.sql`, `plans.sql`, `adm_schema.sql`, `adm2_schema.sql`, `adm3_schema.sql`, `adm4_schema.sql`, `adm5_schema.sql`, `msg_schema.sql`, du client `supabase/supabase.js`, de `access.js`, `admin.js`, `parents.js` et `auth.js`.
+- Distinction systématique entre visibilité de l'interface, fonctions client et autorisations SQL versionnées.
+- Aucune inspection du schéma Supabase actif, aucune modification, aucun test, aucune migration et aucun déploiement.
+
+### 1. Matrice fonctionnelle des rôles
+
+| Rôle | Données/ressources attendues | Permissions/contrats versionnés | Limites et risques observés |
+|---|---|---|---|
+| Visiteur/anon | Vitrine, contenus publics explicitement publiés | Plusieurs GRANT SELECT anon sont présents dans schema.sql, mais les tables protégées ont RLS ; aucune policy anon générale n'a été trouvée dans les extraits de base | Vérifier grants et policies effectives table par table ; ne jamais confondre clé publishable et autorisation |
+| Élève | Son profil, ses séances, sa mémoire, ses notes, ses abonnements/paiements, ses fichiers privés, ses conversations autorisées | Policies own-user sur seances_done, memoire_cards, notes (lecture), documents_meta et stockage privé ; myProfile/mySubs filtrent sur l'UUID | Progression et quiz localement partagés ; notes protégées en lecture par eleve_id ; champs profil et droits associés à vérifier |
+| Parent | Son compte, ses liens enfant validés, rapports strictement limités à l'enfant lié | child_links SELECT par parent/enfant/admin ; link_child et my_linked_children sont des RPC ; child_active_entitlement vérifie lien + abonnement enfant | RPC link_child ne vérifie pas rôle parent/élève ; RPC my_linked_children absent de window.SB ; parents.js attend lie.id alors que RPC renvoie child_id ; rapport dit réel lit localStorage de l'appareil |
+| Enseignant (role profiles.prof) | Ressources pédagogiques et données des élèves effectivement affectés | is_prof() reconnait prof/admin ; notes insert vérifie prof_id = auth.uid() et is_prof() | Aucune relation professeur-classe-élève utilisée dans la policy notes ; SELECT autorise tout is_prof() à lire toutes les notes ; insertion sans contrôle d'affectation |
+| Administrateur général (admin_roles) | Gestion nationale selon permissions explicites | Permissions listées : agents.manage, payments.validate, receipts.issue, students.read, plans.edit, tickets.handle, reports.read, settings.manage ; adm5 ajoute accounting.manage ; autres scripts ajoutent agreements.manage | Rôle administratif séparé du role profiles.admin ; état des assignments actifs et scripts appliqués non vérifié en production |
+| Responsable régional | Élèves, rapports, paiements, tickets de son périmètre wilaya | students.read, reports.read, payments.validate, tickets.handle ; admin_sees_wilaya() applique les wilayas assignées, sauf admin_general | admin_student() renvoie aussi paiements, reçus et accords ; portée excessive pour une mission régionale |
+| Agent de paiement | Validation des paiements et émission de reçus | payments.validate, receipts.issue ; policies et RPC paiement/reçu contrôlent permission et wilaya | Vérifier que l'agent n'obtient pas d'accès aux données pédagogiques par d'autres fonctions |
+| Responsable pédagogique | Lecture des profils élèves et gestion des plans | students.read, plans.edit | admin_student() renvoie aussi données financières et accords ; aucune permission séparée pour les données pédagogiques détaillées |
+| Agent de support | Traitement des tickets | tickets.handle ; tickets et mises à jour sont scopés par wilaya | Vérifier que les fonctions de support n'exposent pas le contenu scolaire ou financier non nécessaire |
+| Modérateur messagerie | Modération des conversations, signalements et journaux | msg_is_moderator() reconnait les rôles profiles.prof et profiles.admin ; policies messagerie ouvrent certains accès de modération | Un enseignant devient aussi modérateur global dans les fonctions concernées ; confirmer si ce périmètre est voulu et si les données privées sont minimisées |
+
+### 2. Séparation des deux systèmes de rôles administratifs
+- Le rôle métier du profil (`profiles.role`: eleve, parent, prof, admin) n'est pas le même que les sous-rôles `admin_roles` et les affectations `wilaya_assignments`.
+- `admin_can(uid, permission)` dépend d'une affectation active dans `wilaya_assignments`, puis de `admin_permissions`. Avoir simplement `profiles.role = 'admin'` ne donne pas automatiquement toutes les permissions de l'administration régionale ; inversement, certaines policies métier utilisent directement `is_prof()` qui inclut le profil admin.
+- `admin_role_of()` sélectionne une affectation selon priorité, alors que `admin_wilayas()` agrège les wilayas actives. Un utilisateur peut donc avoir plusieurs affectations de wilaya, mais un seul rôle prioritaire retourné pour les fonctions qui utilisent `admin_role_of()`.
+- Les cinq sous-rôles sont : `admin_general`, `responsable_regional`, `agent_paiement`, `responsable_pedagogique`, `agent_support`. Les permissions exactes sont définies dans `adm_schema.sql`, puis complétées dans les lots suivants.
+- Les permissions et affectations sont lisibles par les comptes authentifiés selon les policies versionnées ; les écritures d'affectation passent par agents.manage.
+
+### 3. P0 — permission students.read trop large dans admin_student()
+- `admin_student(cible)` vérifie `admin_can(auth.uid(),'students.read')` et `admin_sees_wilaya()`.
+- La fonction retourne le profil élève, mais également ses paiements, reçus et acceptations d'accords.
+- Or `students.read` est attribuée au responsable régional et au responsable pédagogique, en plus de l'administrateur général.
+- Cela crée une violation du principe de minimisation : une permission de consultation d'un dossier élève donne aussi accès à des données financières et contractuelles.
+- Recommandation : séparer les fonctions/permissions `students.read`, `student_academic.read`, `payments.read`, `receipts.read`, `agreements.read` ; retourner uniquement les champs nécessaires à la mission du rôle.
+
+### 4. P0 — rôle parent et liaison enfant non suffisamment contraints
+- `link_child(p_email)` recherche un compte par email, refuse uniquement le compte introuvable et l'auto-liaison, puis crée `child_links`.
+- Dans le code examiné, la fonction ne vérifie ni `profiles.role = 'parent'` pour l'appelant ni `profiles.role = 'eleve'` pour la cible ; elle peut donc créer un lien vers un autre type de compte.
+- Le client `window.SB` n'expose pas `my_linked_children`, bien que `parents.js` tente de l'appeler.
+- Le RPC retourne `child_id`, mais `parents.js` passe `lie.id` à `canAccessParentChild()`. Le contrat de données ne correspond pas.
+- Recommandation : RPC unique de liaison vérifiant le rôle parent, le rôle élève, l'état du compte, une validation de consentement/autorité parentale adaptée, la révocabilité et les protections contre l'énumération d'emails. Exposer une méthode cliente explicite et mapper `child_id` sans ambiguïté.
+
+### 5. P0 — séparation des données pédagogiques, financières et administratives
+- `admin_student()` mélange profil, paiements, reçus et accords derrière une permission unique.
+- `admin_dashboard()` et `admin_report()` produisent des agrégats de portée nationale ou wilaya selon `admin_sees_wilaya()`, ce qui constitue un meilleur modèle de périmètre, à condition que les affectations et scripts soient actifs.
+- `receipts` a une policy de lecture propre utilisateur ou agents ayant `receipts.issue` dans le périmètre ; `audit_logs` est lisible par l'acteur ou les comptes avec `reports.read`.
+- `support_tickets` sépare la lecture/création propre utilisateur de l'update par agents `tickets.handle` scoped.
+- `agreements` est lisible par tous les authentifiés ; les acceptations sont visibles par l'utilisateur concerné, l'accepteur ou `reports.read`. Les métadonnées d'accords doivent être traitées comme données personnelles, pas comme simple contenu public.
+- Recommandation : définir une classification des données (public, pédagogique individuel, parent/enfant, financier, identité, sécurité/audit) et associer à chaque catégorie des permissions distinctes.
+
+### 6. Contrôles positifs identifiés
+- `p0_locks.sql` limite l'auto-inscription aux rôles eleve/parent et verrouille role/niveau via policy et trigger.
+- `fix_scope_guard.sql` empêche un utilisateur de modifier lui-même wilaya/niveau/filière ; le changement est réservé à la console ou à une modération prévue.
+- `wilaya_assignments` possède un indicateur active ; les fonctions admin vérifient les permissions et les wilayas actives.
+- `payment_set_statut`, `issue_receipt`, `ticket_set_statut`, `setting_set`, `admin_student` et les rapports vérifient des permissions serveur.
+- Messagerie : membership des conversations, limites d'envoi, contrôle des DM, signalements, blocages et policies de stockage sont majoritairement traités côté SQL/RLS.
+- Ces éléments sont des contrôles prévus dans le dépôt ; leur activation et leur configuration réelles restent à prouver sur le projet Supabase actif.
+
+### 7. Matrice d'autorisation cible (à implémenter/valider)
+| Ressource | Élève | Parent | Enseignant | Responsable pédagogique | Responsable régional | Agent paiement | Agent support | Admin général |
+|---|---|---|---|---|---|---|---|---|
+| Profil personnel | Lire/modifier champs non sensibles | Lire/modifier champs non sensibles | Lire/modifier champs non sensibles | Lire/modifier champs non sensibles | Lire/modifier champs non sensibles | Lire/modifier champs non sensibles | Lire/modifier champs non sensibles | Administrer selon audit |
+| Profil élève | Son propre profil | Enfant lié, champs minimaux | Élèves affectés, champs pédagogiques minimaux | Élèves affectés, champs pédagogiques minimaux | Élèves de wilayas affectées, champs minimaux | Aucun sauf identité minimale du paiement | Aucun sauf ticket associé | Selon permission et journalisation |
+| Notes et tentatives | Ses résultats | Enfant lié, consentement/abonnement et données minimales | Élèves de classes affectées seulement | Indicateurs pédagogiques de périmètre, pas finance | Agrégats pédagogiques de périmètre, si nécessaire | Aucun | Aucun | Accès exceptionnel, justifié et journalisé |
+| Mémoire/erreurs RAG | Ses cartes | Synthèse de l'enfant si autorisée | Élèves affectés si besoin pédagogique | Indicateurs agrégés | Agrégats uniquement | Aucun | Aucun | Accès exceptionnel |
+| Paiements | Ses paiements/reçus | Paiements de l'enfant si autorité confirmée | Aucun | Aucun | Validation/consultation si permission explicite et wilaya assignée | Validation/reçus du périmètre autorisé | Aucun | Administrer |
+| Accords/consentements | Ses accords | Accepter pour enfant lié selon procédure | Aucun par défaut | Statut minimal si besoin institutionnel | Statut minimal si besoin légal | Aucun | Aucun | Administrer avec journalisation |
+| Tickets support | Ses tickets | Ses tickets | Ses tickets | Aucun par défaut | Tickets du périmètre si permission | Aucun | Tickets assignés/du périmètre | Administrer |
+| Messagerie | Membres et conversations autorisées | Selon politique dédiée | Modération si permission distincte | Aucun par défaut | Aucun par défaut | Aucun | Modération support si permission | Modération complète contrôlée |
+| Paramètres/agents | Aucun | Aucun | Aucun | Aucun | Consultation limitée si besoin | Aucun | Aucun | Gérer si permission explicite |
+
+Cette matrice est une cible de moindre privilège, pas une description de l'état actuellement garanti par le SQL.
+
+### 8. Tests d'autorisation obligatoires
+- Pour chaque table et RPC : tester SELECT, INSERT, UPDATE, DELETE, y compris les tentatives de changement de `user_id`, `eleve_id`, `prof_id`, rôle, wilaya, niveau et filière.
+- Élève A ne lit/modifie jamais les données de B ; parent A ne lit que l'enfant validé et lié ; lien vers un compte parent/prof refusé.
+- Enseignant A ne lit ni n'insère des notes pour un élève hors de ses affectations ; enseignant sans affectation n'obtient aucun résultat.
+- Responsable pédagogique ne reçoit ni paiements, ni reçus, ni identifiants bancaires ; responsable régional ne reçoit que les champs et agrégats nécessaires.
+- Agent paiement n'accède pas aux notes, mémoire, documents privés ou dossiers pédagogiques ; agent support n'accède qu'aux tickets et champs nécessaires.
+- Agent d'une wilaya ne voit pas les profils, paiements, tickets ou rapports d'une autre wilaya ; révocation/suspension prend effet immédiatement.
+- Tester comptes anon, authenticated sans rôle, rôles désactivés, session expirée et appels directs à l'API hors interface.
+- Tester le cumul des policies permissives : plusieurs policies permissives s'additionnent en OR. Vérifier les policies effectives ensemble, pas isolément.
+- Créer des tests SQL pgTAP par table dans `supabase/tests/`, lancer `supabase test db` dans un environnement de test et conserver les résultats.
+
+### 9. Références techniques externes
+- Supabase RLS recommande de vérifier grants et policies pour chaque opération, d'écrire des tests allow/deny par table et de lancer `supabase test db` : https://supabase.com/docs/guides/database/postgres/row-level-security
+- OWASP recommande le moindre privilège, le refus par défaut et la validation des permissions à chaque requête : https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
+- Les policies permissives PostgreSQL s'additionnent ; un accès peut être autorisé par n'importe laquelle des policies permissives applicables : https://supabase.com/docs/guides/observability/advisors
+
+### Conclusion
+La plateforme possède une architecture RBAC et des contrôles de périmètre plus avancés que la simple distinction élève/parent/prof/admin. Cependant, la matrice n'est pas encore cohérente de bout en bout : le rôle parent et le lien enfant ne sont pas assez validés, les droits professeur sur les notes sont trop larges, et la permission students.read donne accès à des données financières/contractuelles. Les droits visibles dans l'interface ne peuvent pas compenser ces écarts serveur.
+
+### État de réalisation
+- Matrice fonctionnelle et cible de moindre privilège documentées.
+- Trois priorités P0 identifiées : séparation finance/pédagogie dans admin_student(), liaison parent-enfant vérifiée, affectation enseignant-classe-élève pour notes.
+- Aucun code applicatif ou SQL modifié ; aucune requête à la base active ; aucun test/migration/déploiement.
+- La PR #17 est fusionnée selon les métadonnées GitHub vérifiées dans le rectificatif précédent ; les mises à jour documentaires de continuité sont postérieures à la fusion et restent sur la branche de travail tant qu'elles ne sont pas reportées séparément.
