@@ -61,7 +61,7 @@ function extrairePorteeDocumentaire(question){
     .replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)));
   const motifs = [
     ['page', /(?:\bpage\s*|\bp\.?\s*|\bseite\s*|الصفحة\s*|صفحة\s*)(\d{1,4})/i],
-    ['unit', /(?:\bunit(?:é|e)?\s*|\blektion\s*|الوحدة\s*|وحدة\s*)(\d{1,3})/i],
+    ['unit', /(?:\bunit(?:é|e)?\s*|\blektion\s*|\blesson\s*|\bleçon\s*|الوحدة\s*|الدرس\s*|درس\s*|وحدة\s*)(\d{1,3})/i],
     ['exercise', /(?:\bexercice\s*|\bexercise\s*|\bübung\s*|تمرين\s*|التطبيق\s*)(\d{1,4})/i]
   ];
   for(const [type, pattern] of motifs){
