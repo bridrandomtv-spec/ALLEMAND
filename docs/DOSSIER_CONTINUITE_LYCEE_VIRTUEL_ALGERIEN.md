@@ -4218,3 +4218,44 @@ Exécuter le test dans un environnement de dépôt isolé, ajouter les tests de 
 
 ### Suite logique — Lot 571
 Préparer un contrat de métadonnées obligatoire avec validation/quarantaine, ajouter les tests de rejet des champs absents ou non vérifiés, puis obtenir une exécution contrôlée des tests sur la branche sans lancer les workflows d'indexation de production.
+
+
+## Lot 571 — contrat de métadonnées et quarantaine documentaire (16 novembre 2026)
+
+### Objectif
+Empêcher l'admission automatique au RAG de documents dont la matière, le niveau, la langue, la provenance ou surtout les droits ne sont pas établis. Une valeur par défaut technique ne constitue pas une preuve.
+
+### Contrat commun
+Nouveau module `tools/metadata_contract.py` :
+- Champs obligatoires : `titre`, `matiere`, `niveau`, `type`, `langue`, `source`, `licence`, `droits_verifies`, `droits_reference`.
+- `droits_verifies` doit être explicitement booléen `true`.
+- `droits_reference` doit être une référence non vide permettant de retrouver la preuve (autorisation, contrat, référence de licence ou pièce justificative).
+- Catégories de licence normalisées admises : `production_propre`, `licence_libre`, `autorisation_titulaire`, `domaine_public`, `usage_pedagogique`.
+- Une catégorie admise n'est pas à elle seule une preuve : les deux champs de vérification et de référence restent obligatoires.
+
+### Changements réalisés
+1. `tools/metadata_contract.py` — validation partagée et écriture idempotente du registre `assets/bdd/corpus_quarantaine.json`.
+2. `tools/ingest_corpus.py` — métadonnées latérales obligatoires `_<nom>.json). Fichier absent, JSON illisible, champs manquants, licence inconnue/interdite ou droits non prouvés : mise en quarantaine et aucune création de document/chunk RAG.
+3. `tools/indexer_pdf.py` — même contrat pour chaque PDF, via `_<nom>.json). Seuls les PDF valides sont remplacés/réindexés. Un PDF non validé est mis en quarantaine sans supprimer l'ancienne fiche ni ses chunks.
+4. `tools/audit_corpus_metadata.py` — audit en lecture seule du registre existant ; produit un rapport des fiches conformes et à revoir, sans modifier les données.
+5. `rag.js` — filtre de sécurité au moment de la recherche : seuls les chunks dont le document correspondant porte `droits_statut: verifies` et une `droits_reference` non vide peuvent être retournés, en mode shards comme en index unique.
+6. Tests — ajout d'un cas d'ingestion sans métadonnées (quarantaine, aucun chunk), d'un cas PDF sans preuve (préservation de l'ancien contenu) et adaptation des fixtures valides avec référence de preuve.
+
+### Fichiers et commits principaux
+- `tools/metadata_contract.py` — `91a53814b986ad5b4611cc21e677d1722e3c9409`
+- `tools/ingest_corpus.py` — `9fd4a6e11f000b35c5a46d27ca66873ee2ff6eb9`, puis documentation du contrat `b9d769b48a3bc8363202cb48fc6a649955f3916e`
+- `tools/indexer_pdf.py` — `8609e04a7b2c144ef6cbf4aa71f5d0c843a5d42f`, correction Unicode `36a84c9b3225d3ef7c27c8ce10dbab0a52afd861`, correction des extraits `e0264ad4f7f1ec589774add8a39f107a2b9bc863`
+- `tools/audit_corpus_metadata.py` — `c5c6d48a5e8d0092b627a6b748a4e37dc9b9981e`
+- `tests/test_ingest_corpus_contract.py` — `64e1696fc26510df7df4b6eff5b7da03cd1176ae`
+- `tests/test_rag_index_contract.py` — `351d7641a23f51962489ba654a4fba19c4c459ba`, puis correction de l'identifiant de remplacement `dd3637943862fb1958ed8ad60d3ba2eb6dae57cd`
+- `rag.js` — `01c46dd9f7c50dd1fcb6104401ef38421c5eb95d`
+
+### Limites importantes
+- Les anciennes fiches de `corpus.json` ne sont pas automatiquement certifiées ni modifiées. L'audit doit être exécuté dans un environnement isolé pour produire la liste exacte à régulariser.
+- Les anciennes entrées sans `droits_statut: verifies` et `droits_reference` sont désormais exclues des résultats de recherche RAG, même si leurs chunks historiques existent encore.
+- Une référence de preuve est une trace de contrôle ; le script ne vérifie pas lui-même la validité juridique du document attaché à cette référence.
+- Les tests ont été écrits et relus, mais aucune exécution de tests n'est confirmée dans ce lot. Aucun PDF réel, corpus actif, index de production ou shard n'a été reconstruit.
+- Aucun workflow d'indexation, déploiement, merge vers `main), ni changement Supabase/Auth/RLS/SQL n'a été effectué.
+
+### Suite logique — Lot 572
+Préparer un petit corpus de fixtures avec documents valides et invalides, puis obtenir une exécution CI isolée des tests de contrat. Ensuite, lancer l'audit en lecture seule sur une copie du registre et produire une liste de régularisation documentaire. Ne réactiver les anciens documents RAG qu'après vérification réelle de leurs droits et ajout des références justificatives.
