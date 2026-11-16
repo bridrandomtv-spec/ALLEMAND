@@ -42,6 +42,31 @@ async function lireJson(env, path, origin){
   if(!response.ok) throw new Error('asset_missing:' + path);
   return response.json();
 }
+function dateISO(value){
+  if(typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;
+  const parsed = new Date(value + 'T00:00:00Z');
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0,10) === value;
+}
+function preuveDroitsValide(rights){
+  if(!objet(rights) || !['production_propre','domaine_public','autorisation_ecrite','licence_libre'].includes(rights.licence)
+    || !String(rights.source || '').trim() || !String(rights.titulaire_droits || '').trim()
+    || !String(rights.declarant || '').trim() || !dateISO(rights.date_declaration)
+    || rights.declaration_droits !== true) return false;
+  const validation = rights.validation;
+  if(!objet(validation) || validation.statut !== 'valide'
+    || !String(validation.verificateur || '').trim()
+    || !dateISO(validation.date) || !String(validation.reference_preuve || '').trim()) return false;
+  const allowed = ['hebergement_source','extraction_texte','indexation_rag','restitution_extraits'];
+  if(!Array.isArray(rights.usages_autorises)
+    || !allowed.every(usage => rights.usages_autorises.includes(usage))) return false;
+  if(rights.licence === 'licence_libre'
+    && (!String(rights.nom_licence || '').trim() || !/^https:\\/\\//i.test(String(rights.url_licence || '')))) return false;
+  if(rights.licence === 'domaine_public'
+    && (!String(rights.juridiction || '').trim() || !String(rights.fondement_juridique || '').trim())) return false;
+  if(rights.licence === 'autorisation_ecrite'
+    && !String(rights.reference_autorisation || '').trim()) return false;
+  return true;
+}
 function scopeMatch(chunk, scope){
   if(scope.type === 'none') return true;
   if(scope.type === 'page') return chunk.page_start === scope.value && chunk.page_end === scope.value;
@@ -111,7 +136,7 @@ async function emettrePreuveRag(request, env){
           throw new Error('invalid_chunk');
         const doc = docs.get(chunk.doc);
         if(!doc || !/^[0-9a-f]{64}$/.test(doc.source_sha256 || '')
-          || doc.source_sha256 !== chunk.source_sha256)
+          || doc.source_sha256 !== chunk.source_sha256 || !preuveDroitsValide(doc.droits))
           throw new Error('document_provenance_mismatch');
         if(chunk.page_start != null || chunk.page_end != null){
           if(!Number.isSafeInteger(chunk.page_start) || chunk.page_start < 1
