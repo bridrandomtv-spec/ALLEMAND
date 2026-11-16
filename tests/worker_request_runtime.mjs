@@ -146,8 +146,8 @@ const arabicDigitPage = await ask({
 });
 assert.equal(arabicDigitPage.data.abstained, true);
 assert.equal(arabicDigitPage.data.abstention_reason, 'rag_evidence_unverified');
-assert.equal(modelCalls, callsBeforeAbstention + 1,
-  'les chiffres arabes doivent déclencher la même protection de portée');
+assert.equal(modelCalls, callsBeforeAbstention,
+  'les chiffres arabes doivent déclencher la même protection de portée sans appeler le modèle');
 
 const exactContext = 'EXTRAIT RAG vérifié pour la page 4.';
 const exactToken = await makeEvidenceToken(exactContext, 'page', 4);
