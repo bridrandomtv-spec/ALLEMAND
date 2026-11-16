@@ -2819,3 +2819,40 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Lecture seule de `rag.js`, `tools/sharder_index.py`, `assets/bdd/shards_manifest.json` et `.github/workflows/indexer.yml`.
 - Aucun code applicatif ou script modifié/exécuté ; aucun shard généré ; aucun workflow déclenché.
 - Aucun changement Supabase, aucun déploiement Cloudflare, aucune fusion. PR #17 demeure ouverte et non fusionnée.
+
+
+## Lot 551 — QUST et ontologie pédagogique : fonctions définies mais orchestration incomplète (16 novembre 2026)
+
+### QUST : compréhension d'intention
+- `js/qust.js` expose `window.QUST.understand(question, context)`.
+- Le classifieur reconnaît notamment : `compare`, `summarize`, `correct_exercise`, `translate`, `practice_exercise`, `explain_rule`, `explain_word`, `find_page` et `explain_lesson`.
+- Il transporte aussi des entités de contexte : matière, niveau, filière, unité/leçon, page, cas grammaticaux et articles.
+- Les langues explicitement détectées dans `langs()` sont arabe, darija/Arabizi, français et allemand ; l'anglais, l'espagnol et l'italien ne sont pas explicitement reconnus dans ce module.
+- `understand()` retourne une intention et une confiance ; il ne réalise pas lui-même l'action pédagogique.
+
+### Raccordement réel dans `rag.js`
+- `reponsePedagogique()` appelle bien `QUST.understand(q, _qctx)`.
+- Le résultat `_qust` est transmis à `qustFallback()` seulement si `matchType(q)` ne reconnaît aucun type.
+- `qustFallback()` ne traite actuellement que `entities.page`, en appelant `intentLecture()`. Toutes les autres intentions QUST reconnues ne sont pas transformées en actions par ce fallback.
+- Si `matchType()` trouve un type, le traitement suit les anciens gestionnaires ; le résultat QUST n'est pas utilisé pour piloter leur sélection ni leur contexte.
+- `matchOnto()` et `ontoRoute()` sont définis dans `rag.js`, mais la recherche des appels montre que `ontoRoute()` n'est référencé qu'à sa propre déclaration : aucune intégration dans le pipeline de réponse n'est démontrée.
+- Plusieurs intentions avancées peuvent donc exister dans le JSON d'ontologie et les fonctions de routage sans être accessibles depuis le parcours normal de question-réponse.
+
+### BIBLIO : recherche lexicale sans seuil de pertinence
+- `biblio.js` construit un index local depuis plusieurs sources et calcule un score lexical : titre (+5), texte (+2) ou tags (+3) par terme.
+- `search()` conserve les entrées dès que le score est strictement supérieur à zéro, puis renvoie les premières correspondances ; aucun seuil minimal de pertinence ni marge entre premier et second résultat n'est appliqué.
+- Une correspondance sur un seul terme générique peut donc être présentée comme résultat, même si elle n'est pas suffisamment pertinente pour la question complète.
+- `context()` assemble jusqu'à quatre extraits et limite la taille finale, mais ne vérifie pas la cohérence matière/niveau/filière avant leur assemblage dans ce module.
+
+### Recommandation d'architecture
+1. Garder QUST comme analyseur d'intention et d'entités, mais définir un orchestrateur unique qui choisit une action réelle à partir de l'intention, du contexte et du niveau de confiance.
+2. Intégrer explicitement le routeur d'ontologie, après validation des règles de priorité et avant les fallbacks génériques ; ne pas l'activer aveuglément car certaines actions sont encore partielles.
+3. Définir un registre d'actions supportées avec leurs prérequis et leur résultat attendu : traduction, explication, correction, comparaison, résumé, exercices, lecture de page, prononciation.
+4. Quand une intention est reconnue mais non supportée ou sans source fiable, répondre honnêtement et demander une précision plutôt que produire une réponse générique présentée comme certaine.
+5. Renforcer BIBLIO par seuil calibré, score relatif, filtrage de métadonnées et conservation des références de source ; tester avec des questions hors sujet et des questions ambiguës.
+6. Ajouter des tests de contrat QUST → orchestrateur → action → réponse, y compris arabe, darija, Arabizi mixte, français, allemand, anglais, italien et espagnol. La couverture linguistique doit être mesurée, pas déduite de la seule présence de libellés.
+
+### État des opérations
+- Lecture seule de `js/qust.js`, `rag.js` et `biblio.js`, y compris recherche des appels effectifs de `ontoRoute()` et `qustFallback()`.
+- Aucun code applicatif, fichier d'ontologie ou jeu de données modifié ; aucun test d'exécution ou déploiement effectué.
+- Aucun accès/changement Supabase ; aucun workflow d'indexation déclenché ; aucune fusion. PR #17 demeure ouverte et non fusionnée.
