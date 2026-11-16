@@ -70,3 +70,22 @@ def valider_metadonnees(meta):
         if not str(meta.get("reference_autorisation", "")).strip():
             return False, "référence de l'autorisation écrite absente"
     return True, "validé"
+
+
+def projection_preuve_droits(meta):
+    """Copie minimale et traçable des droits validés dans la fiche catalogue."""
+    ok, raison = valider_metadonnees(meta)
+    if not ok:
+        raise ValueError("preuve de droits non valide: " + raison)
+    champs = (
+        "licence", "source", "titulaire_droits", "declarant",
+        "date_declaration", "declaration_droits", "usages_autorises",
+        "nom_licence", "url_licence", "juridiction",
+        "fondement_juridique", "reference_autorisation"
+    )
+    preuve = {champ: meta[champ] for champ in champs if champ in meta}
+    preuve["validation"] = dict(meta["validation"])
+    preuve["usages_autorises"] = sorted({
+        str(usage).strip().lower() for usage in meta["usages_autorises"]
+    })
+    return preuve
