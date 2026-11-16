@@ -21,7 +21,7 @@ const chunks = fixture.documents.map((doc, index) => ({
 }));
 const terms = {};
 const tokenize = value => Array.from(new Set(
-  String(value || '').toLowerCase().match(/[a-zà-ÿ\\u0600-\\u06ff]{3,}/g) || []
+  String(value || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06ff]{3,}/g) || []
 ));
 for (const chunk of chunks) {
   for (const term of tokenize(chunk.texte)) (terms[term] ||= []).push(chunk.n);
@@ -66,6 +66,14 @@ for (const item of fixture.cases) {
     provenanceTrust: source?.trust || null
   };
   rows.push(row);
+  if (!item.abstain && retrievedDocumentId !== item.expectedDocumentId) {
+    failures.push({
+      caseId: item.id,
+      reason: 'expected_document_not_retrieved',
+      expectedDocumentId: item.expectedDocumentId,
+      retrievedDocumentId
+    });
+  }
   if (result && !source) failures.push({ caseId: item.id, reason: 'missing_admitted_provenance' });
   if (source && source.trust !== 'client_unverified') {
     failures.push({ caseId: item.id, reason: 'unexpected_provenance_trust', actual: source.trust });
