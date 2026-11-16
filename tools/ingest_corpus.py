@@ -83,16 +83,16 @@ def construire(dossier, documents_existants=None):
             print("IGNORE (droits non vérifiés):", nom, "-", raison)
             ignores += 1
             continue
-        pages = extraire_pages(chemin, ext)
-        texte = "\n".join(pages).strip()
-        if len(texte) < 20:
-            print("IGNORE (contenu extrait insuffisant):", nom)
-            ignores += 1
-            continue
         digest = sha256_fichier(chemin)
         did = "c-" + hashlib.sha256(nom.encode("utf-8")).hexdigest()[:16]
         if not document_couvert(meta, did, digest):
             print("IGNORE (document hors périmètre de l'autorisation):", nom)
+            ignores += 1
+            continue
+        pages = extraire_pages(chemin, ext)
+        texte = "\n".join(pages).strip()
+        if len(texte) < 20:
+            print("IGNORE (contenu extrait insuffisant):", nom)
             ignores += 1
             continue
         doc = {
