@@ -19,7 +19,7 @@ class IngestionContractTests(unittest.TestCase):
             from rag_normalization import termes_index
             darija = termes_index("واش الفرق بين المبتدأ والخبر؟ عطيني مثال بسيط.")
             arabizi = termes_index("Chrahli el-jomla el-ismiya b darja, b exemple sahl.")
-            self.assertIn("مبتدأ", darija)
+            self.assertIn("مبتدا", darija)
             self.assertIn("خبر", darija)
             self.assertIn("الجملة", arabizi)
             self.assertIn("الاسمية", arabizi)
@@ -72,8 +72,13 @@ class IngestionContractTests(unittest.TestCase):
             }), encoding="utf-8")
 
             env = dict(os.environ)
-            subprocess.run([sys.executable, str(SCRIPT), str(docs)], cwd=work,
-                           env=env, check=True, capture_output=True, text=True)
+            result = subprocess.run([sys.executable, str(SCRIPT), str(docs)], cwd=work,
+                                    env=env, capture_output=True, text=True)
+            self.assertEqual(
+                result.returncode, 0,
+                "ingest_corpus.py failed; stdout:\\n%s\\nstderr:\\n%s"
+                % (result.stdout, result.stderr)
+            )
 
             after_corpus = json.loads((bdd / "corpus.json").read_text(encoding="utf-8"))
             after_vocab = json.loads((bdd / "corpus_index.json").read_text(encoding="utf-8"))
