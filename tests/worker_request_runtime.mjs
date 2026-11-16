@@ -149,6 +149,17 @@ assert.equal(arabicDigitPage.data.abstention_reason, 'rag_evidence_unverified');
 assert.equal(modelCalls, callsBeforeAbstention,
   'les chiffres arabes doivent déclencher la même protection de portée sans appeler le modèle');
 
+const arabicLesson = await ask({
+  raw_text: 'اشرح الدرس ٧',
+  output_language: 'ar',
+  dialect: 'fusha',
+  subject: 'allemand'
+});
+assert.equal(arabicLesson.data.abstained, true);
+assert.equal(arabicLesson.data.abstention_reason, 'rag_evidence_unverified');
+assert.equal(modelCalls, callsBeforeAbstention,
+  'la mention arabe du cours doit aussi activer la protection documentaire');
+
 const exactContext = 'EXTRAIT RAG vérifié pour la page 4.';
 const exactToken = await makeEvidenceToken(exactContext, 'page', 4);
 const acceptedEvidence = await ask({
