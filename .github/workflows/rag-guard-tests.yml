@@ -49,8 +49,20 @@ jobs:
         run: node tests/lot577-rag-context-integration.test.mjs
       - name: Test multilingual RAG evaluation benchmark
         run: node tests/rag-eval-contract.test.mjs
+      - name: Validate human linguistic review rubric
+        run: node tests/rag-eval-review-contract.test.mjs
       - name: Run benchmark against isolated lexical RAG
         run: node tests/rag-eval-runner.test.mjs
+        env:
+          RAG_EVAL_REPORT_PATH: rag-eval-report.json
+      - name: Upload benchmark JSON report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rag-eval-report-${{ github.run_number }}
+          path: rag-eval-report.json
+          if-no-files-found: warn
+          retention-days: 30
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
