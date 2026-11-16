@@ -3384,3 +3384,107 @@ RAGAS distingue les métriques de retrieval et de génération ; ARES évalue co
 - La liste vocale de neuf langues ne constitue pas une preuve de capacités pédagogiques dans ces neuf langues.
 - Aucun code applicatif modifié, aucun test d'exécution, aucune opération Supabase, aucun workflow, aucun déploiement.
 - Branche `design/prototypes-67-74-alignment` conservée ; PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
+
+## Lot 559 — audit du moteur de correction, notation et remédiation (16 novembre 2026)
+
+### Périmètre
+- Audit statique en lecture seule de `prof_core.js`, `app.js`, `quiz.js`, `memoire.js`, `masar.js`, `modules.js`, `devoirnote.js`, `officiels.js`, `banque.js`, `rag.js`, `dz-gamification.js`, `tests/regression_prof.mjs` et `tests/questions_regression.json`.
+- Contrôle des modes de correction (QCM/VF, texte court, production écrite), des notes, des cartes d'erreurs, de la progression et des tests existants.
+- Référence de recherche : littérature sur l'évaluation automatisée des réponses libres, les risques des systèmes à mots-clés et l'utilisation de rubriques ; notamment Bexte, Horbach & Zesch (2024), Clauser et al. (2024) et principes GOV.UK sur l'usage de l'IA pour la notation.
+- Aucun test exécuté dans cette opération ; aucun code applicatif modifié, aucune opération Supabase, aucun workflow, aucun déploiement et aucune fusion.
+
+### 1. Correction des phrases par PROF : règles utiles mais couverture étroite
+- `prof_core.js` contient un correcteur déterministe `PROF.corriger()` basé sur expressions régulières.
+- Il couvre plusieurs erreurs de l'unité 1 : accords de `sein` et `haben`, quelques formes de personnes, âge avec `sein`, prépositions après `kommen` et `wohnen`, `Jahre alt`, et ponctuation finale.
+- Le correcteur ne fait pas une analyse syntaxique ou sémantique générale de l'allemand ; les erreurs hors de ces motifs peuvent ne pas être détectées.
+- Si aucune règle ne déclenche, il renvoie « Sehr gut! ... correcte 100% ». Cette formulation est trop forte : absence d'erreur détectée ne signifie pas preuve que toute la phrase est correcte.
+- `PROF.estCopie()` classe certaines phrases déclaratives commençant par une liste de pronoms/déterminants ; il exclut les phrases avec caractères arabes et les questions.
+- `handleTextCheck()` dans `app.js` considère la réponse correcte uniquement si `PROF.repondre()` commence par le marqueur « ✅ ». Il enregistre la valeur et ce booléen dans l'état des séances, mais ne crée pas de carte d'erreur MEMOIRE dans ce chemin.
+- Le moteur est fortement orienté allemand et unités initiales ; il ne constitue pas un correcteur multilingue général.
+
+### 2. Exercices des séances
+- Les QCM de séance sont corrigés par comparaison directe avec `e.a`, affichent `e.why`, enregistrent la réponse dans `loadSeances()/saveSeances()` et rafraîchissent les statistiques.
+- Le handler `handleOpt()` ne fait pas appel à `MEMOIRE.record()` lorsqu'une réponse est fausse.
+- Les exercices texte de séance passent par `PROF.repondre()`, puis enregistrent uniquement `val` et `ok` dans l'état local de séance.
+- Conséquence : des erreurs faites dans les exercices de séance peuvent apparaître dans les statistiques de séance, mais ne rejoignent pas automatiquement la file de révision espacée.
+
+### 3. Quiz interactif
+- `quiz.js` utilise une banque locale à réponses attendues explicites ; une bonne réponse ajoute un point.
+- Une réponse incorrecte appelle `MEMOIRE.record()` avec la question, la réponse choisie, la bonne réponse, la compétence et l'unité.
+- Le module conserve meilleur score et historique dans `localStorage` (clés `dz_de_quiz_best_v1` et `dz_de_quiz_hist_v1`).
+- À la fin, il émet `dz:quiz-complete` avec score et résultats par unité ; `dz-gamification.js` consomme cet événement pour les XP, badges et agrégats locaux.
+- Les résultats du quiz et la gamification sont donc des mécanismes distincts ; l'agrégation des scores ne démontre pas à elle seule une sélection adaptative des prochains exercices.
+
+### 4. Banque d'exercices et RAG-exercices
+- `banque.js` corrige les QCM par comparaison avec `x.a`, affiche `x.why` et enregistre les réponses incorrectes via `MEMOIRE.record()`.
+- `rag.js` utilise également un correcteur QCM similaire pour les exercices générés depuis `B_exercices`, avec score final /20 en mode devoir ; les erreurs y sont enregistrées dans MEMOIRE.
+- Ces corrections déterministes sont fiables pour l'égalité d'index de réponse, sous réserve de la qualité de la clé `a`, de l'énoncé et de l'explication `why`.
+- Le sous-ensemble d'exercices sélectionné dans `rag.js` dépend de la compétence déduite des règles de l'unité et du niveau 2AS/3AS ; cela ne démontre pas encore une adaptation individuelle basée sur l'historique de maîtrise.
+
+### 5. Devoirs notés et simulation : limites des réponses libres
+- `devoirnote.js` corrige automatiquement les VF et QCM. Les réponses de type `phrase` et `prod` sont évaluées par un menu d'auto-attribution de points : le texte libre n'est pas analysé par le moteur pour déterminer sa qualité.
+- Lorsqu'une question VF/QCM est incorrecte, le module crée une carte MEMOIRE ; les items auto-évalués en phrase/production ne produisent pas une carte issue d'une correction automatique.
+- `modules.js` normalise les réponses texte (minuscules, umlauts translittérés, ponctuation retirée) puis cherche si l'une des clés attendues est une sous-chaîne de la réponse. Cela peut rejeter des synonymes/formulations valides et accepter un mot-clé hors contexte ou dans une réponse contradictoire.
+- La production écrite de la simulation est explicitement laissée à l'enseignant (/4) ; la note affichée est calculée sur la partie objective et le texte est présenté séparément.
+- `officiels.js` corrige les questions courtes par comparaison normalisée ou présence d'un mot-clé ; la production écrite est notée par détection de cinq catégories d'informations au moyen d'expressions régulières, puis par critères binaires de conjugaison et de majuscules.
+- La grille de production écrite officielle est donc une approximation à base de motifs, non une analyse sémantique complète : elle peut manquer des paraphrases, ignorer une négation, ou repérer un mot sans vérifier que l'information est correctement exprimée.
+- Dans `officiels.js`, le calcul et l'affichage du détail sont présents, mais l'audit n'a pas trouvé de raccord de cette notation à `MEMOIRE.record()` ; les erreurs sur ces sujets ne sont donc pas automatiquement transformées en cartes par ce chemin.
+
+### 6. Mémoire des erreurs : bonne base, mais métrique et isolation à revoir
+- `memoire.js` implémente une répétition espacée Leitner à quatre boîtes : J+1, J+3, J+7, J+21.
+- Les erreurs provenant des quiz, de la banque, des exercices RAG et de certains devoirs sont enregistrées ; une nouvelle erreur sur la même carte la remet en boîte 1.
+- Les révisions demandent à l'élève de s'auto-évaluer (« je savais » / « je ne savais pas »). `hits` compte les auto-évaluations positives ; `misses` compte les erreurs initiales et les auto-évaluations négatives.
+- `carteErreurs()` calcule `taux = hits / (hits + misses)`. Ce taux mélange des événements de nature différente ; il ne doit pas être présenté comme un taux objectif de réussite aux exercices ni comme une maîtrise validée.
+- La clé `dz_de_memorie_v1` est globale dans le navigateur, sans identifiant de compte. Sur un appareil partagé, les cartes de plusieurs comptes locaux peuvent se mélanger. Le commentaire « aucune donnée ne quitte l'appareil » est exact pour ce stockage, mais l'isolation par utilisateur n'est pas assurée dans ce module.
+- L'identifiant de carte est calculé à partir de la question et de la bonne réponse, sans matière/niveau/compte dans la clé ; des questions identiques entre contextes peuvent se regrouper.
+- Plafond de 400 cartes ; l'élagage trie d'abord par boîte puis par ancienneté, ce qui mérite une politique de rétention explicite.
+- `masar.js` lit les cartes dues et les compétences issues de MEMOIRE et peut signaler une priorité de révision. Il calcule par ailleurs l'avancement des séances.
+- Le parcours `masar.js` ne démontre pas encore un moteur qui sélectionne automatiquement la prochaine activité en fonction des erreurs, de leur fréquence, de la difficulté et de la maîtrise ; il propose notamment de réviser les cartes dues ou de continuer la prochaine séance.
+
+### 7. Tests existants et ce qu'ils prouvent
+- `tests/regression_prof.mjs` vérifie la présence d'un topic via `PROF.trouver()` pour les indices de `moteur_prof` dans `tests/questions_regression.json`.
+- Le test annonce un contrat de 18 questions/topics PROF ; il ne vérifie pas les diagnostics d'erreurs de `PROF.corriger()`, la justesse des corrections, la notation de production écrite, ni la qualité des feedbacks.
+- Le fichier de questions répartit explicitement les cas entre moteur RAG, moteur PROF et moteur cloud. Les cas classés cloud sont des cas non couverts par les connaissances locales selon le commentaire de reclassification ; ils ne prouvent pas une capacité déterministe locale.
+- Aucun test automatisé de non-régression de MEMOIRE, d'isolation multi-comptes, de justesse des notes, de synonymes, de négation ou de biais de notation n'a été exécuté dans ce lot.
+
+### Conclusion
+La plateforme dispose déjà d'une chaîne de pratique utile : banques de QCM, feedback immédiat, notes, suivi de séances, cartes d'erreurs et répétition espacée. Cependant, elle ne possède pas encore un moteur de correction générale des réponses libres. Plusieurs fonctions présentées comme correction automatique sont en réalité des règles lexicales, des motifs réguliers ou une auto-évaluation de l'élève. La mémoire des erreurs n'est alimentée que par certains parcours et son taux de compétence est un indicateur mixte, non une mesure fiable de maîtrise.
+
+### Contrat cible recommandé (non implémenté)
+Pour chaque correction, retourner un résultat structuré :
+- `grading_mode`: `deterministic`, `rule_based`, `semantic_assisted`, `teacher_review`, `self_assessment`.
+- `score`, `max_score`, `confidence`, `needs_teacher_review`.
+- `criteria[]`: critère, points possibles, points attribués, preuve textuelle, explication.
+- `detected_errors[]`: catégorie, segment fautif, correction proposée, règle associée, confiance.
+- `accepted_variants[]` et règles de normalisation versionnées.
+- `student_context`: compte pseudonymisé, matière, niveau, filière, unité, compétence.
+- `evidence_refs[]`: référentiel, exercice, corrigé et version utilisés.
+- Distinguer résultat automatiquement vérifié et auto-déclaration de l'élève dans les statistiques.
+- Si confiance faible, formulation ambiguë, négation, réponse contradictoire ou cas hors couverture : ne pas attribuer arbitrairement la note ; afficher « à vérifier par l'enseignant ».
+- Les évaluations à enjeu certificatif doivent rester sous contrôle enseignant jusqu'à validation empirique de l'accord machine/enseignant.
+
+### Plan de validation recommandé
+1. Constituer un jeu de réponses allemandes réelles par compétence, niveau et unité, incluant réponses correctes, fautes typiques, synonymes, paraphrases, erreurs multiples, négations, formulations en darija/français et réponses adversariales contenant les bons mots hors contexte.
+2. Faire annoter chaque réponse indépendamment par deux enseignants, puis arbitrer les désaccords pour créer une référence.
+3. Mesurer exactitude, précision/rappel par catégorie d'erreur, accord de note (quadratic weighted kappa/ICC selon le barème), taux d'abstention, faux positifs et faux négatifs par niveau.
+4. Comparer la règle déterministe, l'assistance sémantique et la notation humaine ; fixer des seuils selon l'usage formatif ou certificatif.
+5. Vérifier que chaque feedback explique un critère précis et que la correction est pédagogiquement exacte.
+6. Tester l'isolation multi-comptes, la synchronisation inter-appareils, la suppression/export des données et les clés de stockage.
+7. Vérifier qu'une erreur issue de chaque parcours (séance, quiz, banque, devoir, sujet officiel, simulation, voix) arrive dans le bon historique, avec source, contexte et statut de vérification.
+
+### Priorités
+- **P0** : ne plus présenter « absence de motif détecté » comme « phrase correcte à 100 % » ; introduire un état incertain/à vérifier.
+- **P0** : distinguer dans les statistiques erreurs vérifiées, auto-évaluations et notes enseignant.
+- **P0** : isoler les cartes d'erreurs par compte sur les appareils partagés ; examiner aussi les clés de quiz/historique local.
+- **P1** : brancher les erreurs de séances et sujets officiels dans un contrat de remédiation cohérent.
+- **P1** : remplacer les vérifications par simple sous-chaîne par des variantes acceptées contextualisées et des tests de négation/synonymes.
+- **P1** : rendre la notation de production écrite critère-par-critère, avec abstention et revue enseignante quand l'analyse n'est pas fiable.
+- **P2** : construire une évaluation sémantique assistée seulement après constitution du jeu annoté et mesure de l'accord avec les enseignants.
+- **P2** : faire évoluer مسارك d'un affichage de cartes dues vers une sélection adaptative explicable, sans cacher la raison de chaque recommandation.
+
+### État de réalisation
+- Audit statique des mécanismes de correction, notation et remédiation terminé.
+- Limites confirmées : correcteur PROF à règles limitées, auto-évaluation des réponses libres dans certains devoirs, notation textuelle par sous-chaînes/motifs, MEMOIRE alimentée de manière incomplète et indicateur de maîtrise mixte.
+- Aucune exécution de tests dans ce lot ; aucun code applicatif modifié, aucune opération Supabase, aucun workflow et aucun déploiement.
+- Branche `design/prototypes-67-74-alignment` conservée ; PR #17 reste ouverte et non fusionnée ; `main` inchangée.
