@@ -88,6 +88,27 @@ const sigBytes = Buffer.from(signature, 'base64url');
 assert.equal(await webcrypto.subtle.verify('HMAC', key, sigBytes,
   new TextEncoder().encode(payload)), true);
 
+// Une autorisation écrite doit couvrir l'identifiant ou l'empreinte exacte.
+const savedLicence = corpus.documents[0].licence;
+const savedRightsForScope = corpus.documents[0].droits;
+corpus.documents[0].licence = 'autorisation_ecrite';
+corpus.documents[0].droits = { ...savedRightsForScope,
+  licence:'autorisation_ecrite', reference_autorisation:'REF-SYNTHETIQUE',
+  perimetre_documentaire:{ identifiants_documents:[documentId], empreintes_sha256:[] } };
+const scopedAuthorization = await evidence('Explique la page 4');
+assert.equal(scopedAuthorization.response.status, 200);
+corpus.documents[0].droits.perimetre_documentaire.identifiants_documents = ['autre-document'];
+const outsideScope = await evidence('Explique la page 4');
+assert.equal(outsideScope.response.status, 404);
+assert.equal(outsideScope.data.error, 'rag_scope_or_match_not_found');
+corpus.documents[0].droits.perimetre_documentaire = {
+  identifiants_documents:[], empreintes_sha256:[sourceHash]
+};
+const hashScopedAuthorization = await evidence('Explique la page 4');
+assert.equal(hashScopedAuthorization.response.status, 200);
+corpus.documents[0].licence = savedLicence;
+corpus.documents[0].droits = savedRightsForScope;
+
 // Un catalogue ambigu ne doit jamais permettre de choisir arbitrairement
 // la fiche de droits qui sera signée.
 corpus.documents.push({ ...corpus.documents[0] });
