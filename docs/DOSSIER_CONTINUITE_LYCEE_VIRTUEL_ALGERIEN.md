@@ -4143,15 +4143,15 @@ Mettre en place le premier test de contrat isolé pour les fichiers corpus et co
    - Met à jour `corpus.json.documents` de manière additive par identifiant, sans supprimer les autres champs historiques du registre.
    - Ne réécrit plus `corpus_index.json`, réservé au vocabulaire BIBLIO.
    - N'attribue plus par défaut la licence « production propre » : la valeur par défaut est `non_verifiee`, avec `droits_statut: a_verifier` sauf déclaration explicite `droits_verifies: true` dans les métadonnées.
-2. `tools/indexer_pdf.py)
+2. `tools/indexer_pdf.py`
    - Lit et écrit désormais `corpus_chunks_index.json` pour les chunks RAG.
    - Initialise un index vide conforme au schéma RAG si le fichier dédié n'existe pas.
    - Les documents PDF nouvellement indexés portent `licence: non_verifiee` et `droits_statut: a_verifier`, au lieu d'être présentés comme une licence utilisateur vérifiée.
-3. `tools/sharder_index.py)
+3. `tools/sharder_index.py`
    - Lit les chunks depuis `corpus_chunks_index.json`, jamais depuis le vocabulaire BIBLIO.
-4. `rag.js)
+4. `rag.js`
    - Son repli non shardé lit maintenant `corpus_chunks_index.json`.
-5. Nouveau test `tests/test_ingest_corpus_contract.py)
+5. Nouveau test `tests/test_ingest_corpus_contract.py`
    - Crée un mini-corpus dans un répertoire temporaire.
    - Vérifie que l'ingestion conserve les champs historiques de `corpus.json`, conserve exactement le vocabulaire de `corpus_index.json`, et crée un index chunks distinct conforme au schéma attendu.
 
