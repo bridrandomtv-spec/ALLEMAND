@@ -4181,3 +4181,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun déploiement Cloudflare, aucune modification Supabase/Auth/RLS/schéma/données/paiements/secrets, aucune fusion dans `main`.
 - Rapport : `docs/LOTS/LOT_649_PREUVE_RAG_HMAC_COTE_SERVEUR.md`.
 - Suite Lot 650 : construire l'émetteur de preuve dans le Worker du site via `ASSETS`, sans signer tant que catalogue/manifeste/shards ne sont pas cohérents ; prévoir l'activation de la clé partagée seulement après autorisation et vérification.
+
+
+## Lot 650 — émetteur de preuves RAG côté Worker du site (2026-11-16)
+
+- Ajout de `POST /api/rag-evidence` dans `src/site-worker.js`. Le Worker utilise son binding `ASSETS` pour lire le manifeste, le catalogue et les shards ; il choisit lui-même le chunk et reconstruit le contexte à signer. Le navigateur ne fournit aucun contexte signé.
+- Vérifications : manifeste v2, génération des shards, compteurs, IDs globaux, postings, hash chunk/catalogue, preuve de droits structurée, licence et usages, validation humaine et référence de preuve. Les chunks non qualifiés en droits sont exclus ; incohérence structurelle = refus.
+- Signature HMAC-SHA-256 de portée/document/chunk/hash source/hash contexte, durée 180 secondes. La clé `RAG_EVIDENCE_HMAC_KEY` doit être un secret serveur d'au moins 32 caractères. Route same-origin et entrée bornée.
+- `ia.js` demande une preuve au Worker du site pour les demandes précises et transmet le contexte sans le modifier ; `worker/ia-ask.js` vérifie le jeton. La citation est subordonnée à l'attestation explicite du Worker CERVEAU.
+- `tools/rights_metadata.py` expose `projection_preuve_droits` ; `tools/ingest_corpus.py` et `tools/indexer_pdf.py` conservent le dossier de droits validé dans `documents[].droits`. Les imports de mode exécution directe sont alignés.
+- Tests ajoutés/étendus : `tests/site_worker_rag_evidence_runtime.mjs`, `tests/ia_rag_orchestration_runtime.mjs`, `tests/test_corpus_pipeline.py`. Le workflow ajoute syntaxe Worker site, runtime signataire et suite Python. Aucun résultat CI consultable n'a été remonté ; aucun PASS n'est déclaré.
+- Audit effectif du registre : 239 documents, 0 avec `source_sha256`, 0 avec objet `droits` structuré ; manifeste v1 avec zéro shard/chunk ; `corpus_rag_index.json` absent. Le signataire est donc conçu en fail-closed et ne peut pas encore produire de preuve réelle. Les anciennes étiquettes de licence ne sont pas converties en preuves.
+- Aucun secret `RAG_EVIDENCE_HMAC_KEY` créé/configuré dans ce lot ; aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/données/paiements, aucun PDF traité, aucune fusion dans `main`.
+- Rapport : `docs/LOTS/LOT_650_EMETTEUR_PREUVES_RAG_WORKER_SITE.md`.
+- Suite Lot 651 : pré-audit non destructif du registre, fixtures RAG synthétiques complètes et cohérentes, contrôle des runs CI, puis seulement planification de la réingestion autorisée.
