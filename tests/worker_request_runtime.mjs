@@ -168,6 +168,31 @@ assert.equal(tamperedContext.data.abstained, true);
 assert.equal(tamperedContext.data.abstention_reason, 'rag_evidence_unverified');
 assert.equal(tamperedContext.data.rag_evidence_verified, undefined);
 
+const expiredToken = await makeEvidenceToken(exactContext, 'page', 4, {
+  iat: Math.floor(Date.now() / 1000) - 600,
+  exp: Math.floor(Date.now() / 1000) - 300
+});
+const expiredEvidence = await ask({
+  raw_text: 'Explique la page 4',
+  output_language: 'fr',
+  subject: 'allemand',
+  rag_evidence_token: expiredToken,
+  ctx: exactContext
+});
+assert.equal(expiredEvidence.data.abstained, true);
+assert.equal(expiredEvidence.data.abstention_reason, 'rag_evidence_unverified');
+
+const wrongScopeToken = await makeEvidenceToken(exactContext, 'page', 5);
+const wrongScopeEvidence = await ask({
+  raw_text: 'Explique la page 4',
+  output_language: 'fr',
+  subject: 'allemand',
+  rag_evidence_token: wrongScopeToken,
+  ctx: exactContext
+});
+assert.equal(wrongScopeEvidence.data.abstained, true);
+assert.equal(wrongScopeEvidence.data.abstention_reason, 'rag_evidence_unverified');
+
 const forgedClientStatus = await ask({
   raw_text: 'Explique la page 4',
   output_language: 'fr',
