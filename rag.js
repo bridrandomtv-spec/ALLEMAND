@@ -34,9 +34,41 @@
     }catch(e){ LEGACY = null; }
     return LEGACY;
   }
+  /* Normalisation de recherche : formes arabes attachées + alias Arabizi contrôlés.
+     Les chunks et les requêtes doivent passer par les mêmes variantes. */
+  const ARABIZI = {
+    chrahli: ['اشرح'], chrah: ['اشرح'], fassarli: ['فسر'],
+    jomla: ['الجملة'], joumla: ['الجملة'], eljomla: ['الجملة'],
+    ismiya: ['الاسمية'], ismeya: ['الاسمية'],
+    exemple: ['مثال'], mithal: ['مثال'], sahl: ['بسيط'],
+    b: [], darja: ['الدارجة'], derja: ['الدارجة']
+  };
+  function variantesArabe(mot){
+    const base = String(mot || '').replace(/[\u064B-\u065F\u0670\u0640]/g, '')
+      .replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي');
+    const out = new Set([base]);
+    let stem = base;
+    for(let i = 0; i < 2; i++){
+      if(stem.length > 4 && stem.indexOf('ال') === 0){
+        stem = stem.slice(2); out.add(stem);
+      } else if(stem.length > 3 && /^[وفبكل]/.test(stem)){
+        stem = stem.slice(1); out.add(stem);
+      } else break;
+    }
+    return Array.from(out).filter(w => w.length >= 3);
+  }
   function termes(q){
-    return Array.from(new Set(
-      String(q || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06ff]{3,}/g) || []));
+    const tokens = String(q || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06ff]{3,}/g) || [];
+    const out = new Set();
+    tokens.forEach(token => {
+      if(/[\u0600-\u06ff]/.test(token)){
+        variantesArabe(token).forEach(w => out.add(w));
+      } else {
+        out.add(token);
+        (ARABIZI[token] || []).forEach(alias => variantesArabe(alias).forEach(w => out.add(w)));
+      }
+    });
+    return Array.from(out);
   }
 
   /* Seuls les documents dont les droits sont explicitement vérifiés
@@ -1184,7 +1216,7 @@ async function reponsePedagogique(q){
   }
 
   window.reponsePedagogique = reponsePedagogique;
-  window.RAG = { cherche: cherche, formule: formule, provenance: provenance, SEUIL: SEUIL, render: render };
+  window.RAG = { cherche: cherche, formule: formule, provenance: provenance, termes: termes, SEUIL: SEUIL, render: render };
   window.renderRag = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'rag') render(); });
 })();
