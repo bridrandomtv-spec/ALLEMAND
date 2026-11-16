@@ -4225,3 +4225,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le corpus réel reste inchangé : 239 fiches, 225 PDF historiques, 0 SHA-256 documentaires publiés, 0 objet `droits` structuré, aucun sidecar qualifié. Aucun document ingéré/OCRisé/indexé.
 - Aucun secret HMAC configuré, aucune fusion `main`, aucun déploiement, aucune opération Supabase/Auth/RLS/schéma/données/paiements.
 - Suite : rétablir une exécution CI avec runner et logs ; exécuter réellement les suites Node/Python et le pré-audit ; vérifier la pièce institutionnelle et son périmètre ; seulement ensuite préparer le pilote documentaire.
+
+
+## Lot 653 — périmètre documentaire des autorisations écrites (16 novembre 2026)
+
+- Ajout dans `tools/rights_metadata.py` d'un contrat `perimetre_documentaire` pour les preuves `autorisation_ecrite`. Le périmètre doit contenir au moins un ensemble non vide d'IDs exacts et/ou de SHA-256 exacts, sans doublons ni valeurs mal formées.
+- Ajout de `document_couvert(meta, document_id, source_sha256)`. Le pipeline d'ingestion calcule l'ID et l'empreinte puis vérifie la couverture avant extraction du texte. Le pré-audit marque comme non qualifiée toute preuve qui ne couvre pas la fiche.
+- Le Worker `src/site-worker.js` vérifie également que l'ID ou l'empreinte du document couvert correspond au chunk avant d'émettre une preuve HMAC.
+- Tests ajoutés : couverture exacte par ID, couverture par empreinte, refus hors périmètre, périmètre vide et scénarios runtime Worker.
+- Rapport : `docs/LOTS/LOT_653_PERIMETRE_DOCUMENTAIRE_AUTORISATIONS.md`.
+- Aucun numéro d'acte, date, nom d'autorité, référence ou périmètre réel n'a été inventé. Les valeurs des tests sont synthétiques. L'inventaire PDF demeure non qualifié tant que la preuve institutionnelle réelle n'est pas rapprochée de chaque document ou groupe effectivement couvert.
+- Aucun document réel ingéré/OCRisé/indexé, aucun sidecar réel créé, aucun secret HMAC, aucun déploiement, aucune fusion `main`, aucune opération Supabase/Auth/RLS/schéma/données/paiements.
+- Tests non certifiés en attente d'un runner GitHub Actions opérationnel.
