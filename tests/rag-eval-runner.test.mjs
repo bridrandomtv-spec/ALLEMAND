@@ -109,9 +109,9 @@ const summary = {
 if (process.env.RAG_EVAL_REPORT_PATH) {
   fs.writeFileSync(
     process.env.RAG_EVAL_REPORT_PATH,
-    JSON.stringify(summary, null, 2) + '\\n',
+    JSON.stringify(summary, null, 2) + '\n',
     'utf8'
   );
 }
-process.stdout.write(JSON.stringify(summary, null, 2) + '\\n');
+process.stdout.write(JSON.stringify(summary, null, 2) + '\n');
 assert.deepEqual(failures, [], 'benchmark contract failures are recorded in the JSON report');
