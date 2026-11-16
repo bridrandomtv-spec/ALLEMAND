@@ -24,6 +24,12 @@ class PdfIndexerContractTests(unittest.TestCase):
                 bdd.mkdir(parents=True)
                 docs.mkdir()
                 (docs / "sample.pdf").write_bytes(b"fixture PDF")
+                (docs / "_sample.json").write_text(json.dumps({
+                    "titre": "Sample PDF", "matiere": "allemand", "niveau": "2AS",
+                    "type": "cours", "langue": "de", "source": "fixture",
+                    "licence": "autorisation_titulaire", "droits_verifies": True,
+                    "droits_reference": "autorisation-test-002"
+                }), encoding="utf-8")
                 corpus = {"_meta": {"keep": True}, "items": [{"id": "keep"}],
                           "documents": [
                               {"id": "pdf-old", "titre": "Old PDF"},
@@ -60,8 +66,9 @@ class PdfIndexerContractTests(unittest.TestCase):
                 self.assertEqual(after_index["termes"]["andere"], [0])
                 self.assertEqual(after_index["termes"]["neuer"], [1])
                 pdf_doc = next(d for d in after_corpus["documents"] if d["id"] == "pdf-sample-pdf")
-                self.assertEqual(pdf_doc["licence"], "non_verifiee")
-                self.assertEqual(pdf_doc["droits_statut"], "a_verifier")
+                self.assertEqual(pdf_doc["licence"], "autorisation_titulaire")
+                self.assertEqual(pdf_doc["droits_statut"], "verifies")
+                self.assertEqual(pdf_doc["droits_reference"], "autorisation-test-002")
         finally:
             if str(ROOT / "tools") in sys.path:
                 sys.path.remove(str(ROOT / "tools"))
