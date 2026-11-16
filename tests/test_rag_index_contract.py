@@ -13,6 +13,38 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class PdfIndexerContractTests(unittest.TestCase):
+    def test_unverified_pdf_is_quarantined_without_deleting_existing_index(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        try:
+            indexer = importlib.import_module("indexer_pdf")
+            with tempfile.TemporaryDirectory() as tmp:
+                work = Path(tmp)
+                bdd = work / "assets" / "bdd"
+                docs = work / "archive"
+                bdd.mkdir(parents=True)
+                docs.mkdir()
+                (docs / "sample.pdf").write_bytes(b"fixture PDF")
+                corpus = {"documents": [{"id": "pdf-sample-pdf", "titre": "Existing verified record"}]}
+                index = {"chunks": [{"doc": "pdf-sample-pdf", "n": 0, "texte": "Existing verified text"}],
+                         "termes": {"existing": [0]}}
+                (bdd / "corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
+                (bdd / "corpus_chunks_index.json").write_text(json.dumps(index), encoding="utf-8")
+                old_cwd = os.getcwd()
+                try:
+                    os.chdir(work)
+                    indexer.main(str(docs))
+                finally:
+                    os.chdir(old_cwd)
+                after_corpus = json.loads((bdd / "corpus.json").read_text(encoding="utf-8"))
+                after_index = json.loads((bdd / "corpus_chunks_index.json").read_text(encoding="utf-8"))
+                quarantine = json.loads((bdd / "corpus_quarantaine.json").read_text(encoding="utf-8"))
+                self.assertEqual(after_corpus["documents"], corpus["documents"])
+                self.assertEqual(after_index["chunks"], index["chunks"])
+                self.assertEqual(quarantine["documents"][0]["id"], "pdf-sample-pdf")
+        finally:
+            if str(ROOT / "tools") in sys.path:
+                sys.path.remove(str(ROOT / "tools"))
+
     def test_pdf_replacement_rebuilds_chunk_positions_and_rights(self):
         sys.path.insert(0, str(ROOT / "tools"))
         try:
