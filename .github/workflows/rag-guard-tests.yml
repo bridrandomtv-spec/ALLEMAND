@@ -6,6 +6,9 @@ on:
       - design/prototypes-67-74-alignment
     paths:
       - "rag.js"
+      - "app.js"
+      - "index.html"
+      - "js/teacher-context.js"
       - "worker/ia-ask.js"
       - "tools/**"
       - "tests/**"
@@ -15,6 +18,9 @@ on:
       - main
     paths:
       - "rag.js"
+      - "app.js"
+      - "index.html"
+      - "js/teacher-context.js"
       - "tools/**"
       - "tests/**"
       - ".github/workflows/rag-guard-tests.yml"
@@ -36,6 +42,8 @@ jobs:
         run: node tests/rag-rights-guard.test.mjs
       - name: Test Worker context trust boundary
         run: node tests/worker-context-trust.test.mjs
+      - name: Test shared teacher context envelope
+        run: node tests/teacher-context.test.mjs
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
