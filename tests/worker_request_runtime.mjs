@@ -153,6 +153,7 @@ const acceptedEvidence = await ask({
 });
 assert.equal(acceptedEvidence.data.ok, true);
 assert.equal(acceptedEvidence.data.abstained, undefined);
+assert.equal(acceptedEvidence.data.rag_evidence_verified, true);
 assert.equal(modelCalls, callsBeforeAbstention + 1);
 assert.match(captured.messages[captured.messages.length - 1].content, /ÉTAT DE PROVENANCE RAG : verified/);
 
@@ -165,6 +166,7 @@ const tamperedContext = await ask({
 });
 assert.equal(tamperedContext.data.abstained, true);
 assert.equal(tamperedContext.data.abstention_reason, 'rag_evidence_unverified');
+assert.equal(tamperedContext.data.rag_evidence_verified, undefined);
 
 const forgedClientStatus = await ask({
   raw_text: 'Explique la page 4',
