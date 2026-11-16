@@ -3488,3 +3488,74 @@ Pour chaque correction, retourner un résultat structuré :
 - Limites confirmées : correcteur PROF à règles limitées, auto-évaluation des réponses libres dans certains devoirs, notation textuelle par sous-chaînes/motifs, MEMOIRE alimentée de manière incomplète et indicateur de maîtrise mixte.
 - Aucune exécution de tests dans ce lot ; aucun code applicatif modifié, aucune opération Supabase, aucun workflow et aucun déploiement.
 - Branche `design/prototypes-67-74-alignment` conservée ; PR #17 reste ouverte et non fusionnée ; `main` inchangée.
+
+
+## Lot 560 — identité élève, isolation des données et espace parents (16 novembre 2026)
+
+### Périmètre et méthode
+- Audit statique de `auth.js`, `access.js`, `app.js`, `js/context.js`, `memoire.js`, `quiz.js`, `dz-gamification.js`, `parents.js`, `cloud.js`, `supabase/supabase.js`, `supabase/schema.sql`, `supabase/p0_locks.sql`, `supabase/fix_scope_guard.sql`, `supabase/fix_rls.sql`, `supabase/msg_schema.sql`, `supabase/plans.sql`, `supabase/admin.sql`, `supabase/adm4_schema.sql`, `assets/bdd/parents.json`.
+- Le présent audit porte sur le code et les scripts du dépôt de la branche ; aucune connexion ni requête à la base Supabase active n'a été effectuée. La présence d'un script SQL ne prouve pas son exécution.
+- Aucun code applicatif ou SQL modifié, aucune migration exécutée, aucune modification de données, aucun test, aucun déploiement.
+
+### 1. Deux régimes d'identité coexistent
+- `auth.js` implémente une authentification locale de démonstration : comptes et session stockés dans `localStorage` (`dz_de_users_v1`, `dz_de_session_v1`). Le hachage de mot de passe est une fonction DJB2 avec sel statique, pas une fonction de dérivation cryptographique ; ce mode doit rester strictement démo/hors ligne et ne jamais servir d'identité de production.
+- `app.js` indique que Supabase est l'autorité en ligne et que la session locale n'est pas une preuve d'identité lorsque le navigateur est en ligne. Le profil cloud est reconstitué depuis `profiles` et conserve l'UUID dans `uid`.
+- `js/context.js` lit le niveau du compte cloud en priorité puis les sources VT/legacy. Le niveau cloud est donc utilisé comme contexte pédagogique, mais la plupart des états d'apprentissage examinés ne sont pas pour autant rattachés à cet UUID.
+- Les deux modes sont légitimes comme modes distincts, mais leur frontière doit être explicite dans toutes les fonctions de stockage, rapports et synchronisation.
+
+### 2. P0 — états pédagogiques locaux partagés entre les comptes du même navigateur
+- `memoire.js` utilise la clé fixe `dz_de_memorie_v1`, sans namespace par utilisateur ou compte cloud.
+- `quiz.js` utilise `dz_de_quiz_best_v1` et `dz_de_quiz_hist_v1`, également sans identifiant de compte.
+- `app.js` et les séances utilisent des clés globales telles que `dz_de_seances_v1:uN`, `dz_de_devoir_v1`, `dz_de_sim_v1`, `dz_de_chat_v1`.
+- Le logout local de `auth.js` retire la session `dz_de_session_v1`, mais ne purge ni ne cloisonne les données pédagogiques locales. Le logout Supabase appelle `auth.signOut({scope:'local'})`, sans purge générale des clés pédagogiques dans le code examiné.
+- Conséquence : après déconnexion et connexion d'un autre élève sur le même navigateur, les cartes d'erreurs, résultats de quiz et états de séances peuvent rester visibles/réutilisés. Il s'agit d'un risque de confidentialité inter-comptes sur appareil partagé, pas d'une preuve d'accès direct à la base de données d'un autre utilisateur.
+
+### 3. Synchronisation de MEMOIRE : risque de rattachement au mauvais compte
+- `supabase/supabase.js` `pushMemoire()` lit toute la clé locale globale `dz_de_memorie_v1`, puis attribue `user_id = u.id` au compte Supabase actuellement connecté.
+- Donc si le navigateur contient des cartes créées par un compte local précédent, l'action « pousser » peut les envoyer au compte cloud courant.
+- La table `memoire_cards` a une clé primaire `id` seule ; le code fait `upsert(..., {onConflict:'id'})`. Comme l'ID de carte est dérivé de la question et de la bonne réponse, une carte identique entre comptes peut rencontrer un conflit d'identité. La policy RLS `own cards` ne permet pas à un utilisateur de modifier les lignes d'un autre ; l'opération peut donc échouer plutôt que créer une copie propre.
+- `pullMemoire()` filtre bien les lignes distantes par `user_id = u.id`, puis les fusionne dans la même clé locale globale sans supprimer/partitionner les cartes déjà présentes. Le filtrage distant est correct, mais le cache local après fusion reste partagé.
+- La synchronisation est déclenchée manuellement par l'espace Cloud ; aucune synchronisation automatique fiable à chaque tentative n'a été confirmée.
+
+### 4. Progression, quiz et gamification
+- Le schéma contient `seances_done(user_id, unite, seance_n)` avec RLS own-user, mais le flux principal des séances examiné écrit les états dans `localStorage` (`dz_de_seances_v1:uN`). Le fait que la table existe ne prouve pas que les événements de séance sont synchronisés vers elle.
+- Les meilleurs scores et l'historique du quiz sont locaux et globaux au navigateur.
+- `dz-gamification.js` crée un namespace par `AUTH.session().user`, mais pour un compte cloud `cloudAuthority()` affecte `user = pseudo`, et non l'UUID. Ce namespace n'est donc pas une clé d'identité stable garantie ; un pseudo identique peut provoquer une collision.
+- Les événements XP et résultats sont locaux ; aucune persistance cloud durable des scores et de la gamification n'a été établie dans les chemins examinés.
+
+### 5. Espace parents : données de démonstration et rapport « réel »
+- `parents.js` charge `assets/bdd/parents.json`. L'en-tête du tableau de bord marque explicitement les données comme « données expérimentales/illustratives — ne représentent pas les résultats d'un vrai élève ». Les moyennes, présences, examens et exercices des onglets de synthèse sont donc des données de démonstration, pas des dossiers scolaires réels.
+- Le panneau « rapport réel » annonce lire les états locaux des séances, de MEMOIRE et des quiz du navigateur courant, plus une identité enfant cloud. Il ne récupère pas les résultats depuis des tables de l'élève identifié.
+- Dans `parents.js`, l'appel est conditionné à `SB.my_linked_children`, mais cette fonction n'est pas incluse dans l'objet `window.SB` exporté par `supabase/supabase.js`. Le chemin ne récupère donc pas la liaison via ce contrat.
+- Le RPC SQL `my_linked_children()` renvoie `child_id` et `pseudo`, tandis que le code de rapport attend `lie.id` pour appeler `canAccessParentChild()`. Même si l'exposition du RPC était ajoutée, le champ attendu ne correspondrait pas au champ retourné.
+- `ACCESS.canAccessParentChild(childId)` appelle le RPC `child_active_entitlement` avec l'UUID du parent courant et l'UUID enfant ; ce contrat est cohérent lorsqu'il reçoit bien l'UUID enfant.
+- Le rapport « réel » parcourt ensuite les clés `dz_de_seances_v1:uN`, `dz_de_memorie_v1`, `dz_de_quiz_best_v1` et `dz_de_quiz_hist_v1` du navigateur du parent. Il ne filtre pas ces données locales par enfant. Le rapport peut donc afficher les données de l'appareil parent, ou aucune donnée, plutôt que les progrès réels de l'enfant lié. Ne pas présenter cette vue comme un rapport scolaire vérifié.
+- Le RPC `link_child(p_email)` existe dans `supabase/plans.sql` et insère un lien au nom de `auth.uid()`. Le RPC `my_linked_children()` filtre par `parent_id = auth.uid()`. Les policies de `child_links` autorisent la lecture par les deux extrémités et l'insertion par le parent courant ; le contrôle d'identité enfant doit néanmoins être complété par un consentement/validation adapté et un contrôle du rôle enfant.
+
+### 6. RLS et rôles : scripts présents, déploiement non vérifié
+- `supabase/schema.sql` active RLS sur `profiles`, `seances_done`, `memoire_cards`, `notes`, `documents_meta`. Les policies `own seances` et `own cards` filtrent par `auth.uid() = user_id`, et les notes prévoient lecture par l'élève destinataire et insertion par un enseignant/admin.
+- Les scripts `p0_locks.sql` et `msg_schema.sql` contiennent un garde-fou serveur contre l'auto-promotion du rôle ; `p0_locks.sql` verrouille aussi rôle et niveau. `fix_scope_guard.sql` protège les changements de wilaya/niveau/filière. Ces garde-fous sont des éléments positifs du dépôt.
+- Attention : `schema.sql` seul contient une policy initiale `update own` qui autorise l'utilisateur à modifier son profil. Les scripts complémentaires semblent conçus pour verrouiller les colonnes sensibles. Il faut confirmer que les scripts appropriés ont été exécutés et que les triggers/policies actifs correspondent à l'état attendu.
+- `admin.sql` ajoute une policy d'update pour les admins ; `msg_schema.sql` contient aussi un trigger `profiles_role_guard`. La sécurité effective dépend de l'ordre et de l'état réel des migrations/scripts.
+- `notes` contient une policy « prof lit sa classe » qui, dans `schema.sql`, permet à tout profil dont le rôle est `prof` ou `admin` de lire les notes sans condition de classe/élève. Les migrations ADM ultérieures introduisent des périmètres wilaya et permissions pour certains tableaux, mais aucune preuve de policy de portée classe pour cette table de notes n'a été établie dans cet audit. À examiner comme priorité de confidentialité.
+- Le code `supabase/supabase.js` expose `listNotes()` et `listProfiles()` sans filtre client ; la sécurité doit donc être garantie par RLS et fonctions serveur, jamais par le seul écran UI.
+- Les scripts du dépôt ne permettent pas de déclarer que RLS, les rôles, les RPC et les migrations sont actifs sur le projet Supabase en production. Une vérification en lecture seule du schéma actif, des policies, triggers, fonctions et grants est nécessaire avant toute certification.
+
+### 7. Risques et priorités
+- **P0** : partitionner tous les états locaux par UUID de compte (ou utiliser un cache anonyme séparé et purgé à la connexion) ; ne jamais pousser une mémoire locale non attribuée vers le compte courant.
+- **P0** : corriger le contrat parent-enfant : exposer proprement le RPC côté client, utiliser `child_id`, charger les données distantes réellement associées à cet enfant, et empêcher toute lecture d'états locaux du parent comme s'ils appartenaient à l'enfant.
+- **P0** : vérifier l'état réel des policies RLS, notamment `notes` et `profiles`, les triggers rôle/niveau et les périmètres des enseignants. La policy « prof lit sa classe » mérite un périmètre explicite.
+- **P1** : synchroniser séances, tentatives, résultats, erreurs et révisions dans des tables à clé `user_id`, avec RLS et upsert composite adapté ; ne pas se contenter de clés locales globales.
+- **P1** : stabiliser l'identité applicative autour de l'UUID Supabase et éviter le pseudo comme clé de gamification.
+- **P1** : distinguer clairement données de démonstration, données locales de cet appareil et données vérifiées du compte cloud dans chaque tableau de bord.
+- **P2** : définir le cycle de vie des données enfants : information claire, finalité, minimisation, durée de conservation, export, correction, suppression, consentement/assentiment approprié et journalisation des accès parent/enseignant.
+- Référence de gouvernance : UNICEF recommande des protections explicites des données des enfants dans les outils éducatifs, notamment limitation des données, transparence, sécurité, contrôle d'accès et gouvernance de l'usage. Voir les sources citées dans le rapport de lot 560.
+
+### Conclusion
+La plateforme a des fondations cloud réelles (Auth Supabase, RLS sur plusieurs tables, liens parent-enfant et scripts de verrouillage), mais l'expérience pédagogique n'est pas encore isolée et synchronisée de façon cohérente par élève. Le risque le plus immédiat vient des états locaux globaux et de la synchronisation manuelle de MEMOIRE ; le rapport parent dit « réel » ne lit pas les résultats cloud du bon enfant dans le code examiné. Les scripts de protection serveur sont présents, mais leur activation en production et la portée effective des policies ne sont pas vérifiées.
+
+### État de réalisation
+- Audit statique du cloisonnement, de la synchronisation, de l'identité et de l'espace parents terminé.
+- Aucun accès à la base active ; aucune migration ou modification Supabase ; aucun test ni déploiement.
+- Aucun code applicatif modifié.
+- Branche `design/prototypes-67-74-alignment` conservée ; PR #17 reste ouverte et non fusionnée ; `main` inchangée.
