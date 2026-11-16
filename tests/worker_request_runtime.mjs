@@ -138,6 +138,17 @@ assert.equal(refusedUnverifiedSource.data.abstained, true);
 assert.equal(refusedUnverifiedSource.data.abstention_reason, 'rag_evidence_unverified');
 assert.equal(modelCalls, callsBeforeAbstention, 'une portée annoncée vérifiée ne suffit pas sans provenance vérifiée');
 
+const arabicDigitPage = await ask({
+  raw_text: 'اشرح الصفحة ٤',
+  output_language: 'ar',
+  dialect: 'fusha',
+  subject: 'allemand'
+});
+assert.equal(arabicDigitPage.data.abstained, true);
+assert.equal(arabicDigitPage.data.abstention_reason, 'rag_evidence_unverified');
+assert.equal(modelCalls, callsBeforeAbstention + 1,
+  'les chiffres arabes doivent déclencher la même protection de portée');
+
 const exactContext = 'EXTRAIT RAG vérifié pour la page 4.';
 const exactToken = await makeEvidenceToken(exactContext, 'page', 4);
 const acceptedEvidence = await ask({
