@@ -1,5 +1,5 @@
 import json, os
-SRC = os.path.join('assets','bdd','corpus_index.json')
+SRC = os.path.join('assets','bdd','corpus_chunks_index.json')
 OUT = os.path.join('assets','bdd','shards')
 MAN = os.path.join('assets','bdd','shards_manifest.json')
 TAILLE = 250
