@@ -1,0 +1,79 @@
+{
+  "schema": "rag-human-review-rubric-v1",
+  "status": "human_review_required",
+  "datasetStatus": "synthetic_test_only",
+  "scoring": {
+    "0": "non conforme / erreur bloquante",
+    "1": "partiellement conforme / à corriger",
+    "2": "conforme"
+  },
+  "dimensions": [
+    {
+      "id": "retrieval_relevance",
+      "label": "Pertinence du passage retrouvé",
+      "critical": true
+    },
+    {
+      "id": "factual_grounding",
+      "label": "Chaque affirmation est soutenue par le passage",
+      "critical": true
+    },
+    {
+      "id": "pedagogical_correctness",
+      "label": "Exactitude linguistique et pédagogique",
+      "critical": true
+    },
+    {
+      "id": "level_adaptation",
+      "label": "Adaptation au niveau scolaire indiqué",
+      "critical": false
+    },
+    {
+      "id": "answer_language",
+      "label": "Respect de la langue de réponse attendue",
+      "critical": false
+    },
+    {
+      "id": "explanation_clarity",
+      "label": "Clarté de l'explication et exemples utiles",
+      "critical": false
+    },
+    {
+      "id": "abstention_quality",
+      "label": "Abstention explicite si ressource ou compétence indisponible",
+      "critical": true
+    },
+    {
+      "id": "rights_and_source_honesty",
+      "label": "Aucune fausse attribution officielle ou preuve de droits",
+      "critical": true
+    }
+  ],
+  "reviewRecord": {
+    "caseId": "must_match_benchmark_case",
+    "reviewerRole": "enseignant_ou_linguiste",
+    "reviewedAt": "YYYY-MM-DD",
+    "language": "ISO-639-or-description",
+    "scores": "one integer 0, 1 or 2 per dimension",
+    "notes": "required for any score 0 or 1",
+    "criticalFailure": "any critical dimension scored 0 blocks approval",
+    "approval": "not_approved | needs_revision | approved_by_human"
+  },
+  "languageCoverage": [
+    "de",
+    "fr",
+    "ar-standard",
+    "ar-darija",
+    "arabizi",
+    "en-partial",
+    "it-unavailable",
+    "es-unavailable"
+  ],
+  "rules": [
+    "Do not infer a pass from automated retrieval metrics.",
+    "Review the retrieved passage and the generated answer side by side.",
+    "A correct abstention is preferable to an invented official lesson.",
+    "Darija and Arabizi require a reviewer competent in the target variety.",
+    "Italian and Spanish unavailable cases must be reviewed for honest abstention, not language fluency."
+  ]
+}
