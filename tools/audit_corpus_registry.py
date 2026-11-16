@@ -95,12 +95,27 @@ def auditer(corpus_path, repo_root):
         else:
             rights_ok = False
 
+        findings = []
+        if not safe:
+            findings.append("path_unusable")
+        elif not exists:
+            findings.append("source_missing")
+        if exists and not hash_valid:
+            findings.append("catalogue_hash_missing_or_invalid")
+        elif exists and hash_matches is False:
+            findings.append("hash_mismatch")
+        if not sidecar_exists:
+            findings.append("rights_sidecar_missing")
+        elif not rights_ok:
+            findings.append("rights_metadata_invalid")
         if not safe:
             status = "path_unusable"
         elif not exists:
             status = "source_missing"
         elif hash_valid and hash_matches is False:
             status = "hash_mismatch"
+        elif not hash_valid:
+            status = "catalogue_hash_missing"
         elif not rights_ok:
             status = "rights_unverified"
         else:
@@ -119,10 +134,14 @@ def auditer(corpus_path, repo_root):
             "rights_valid": bool(rights_ok),
             "rights_reason": rights_reason,
             "legacy_license_label": str(doc.get("licence") or ""),
+            "findings": findings,
             "status": status
         })
 
     counts = collections.Counter(row["status"] for row in records)
+    finding_counts = collections.Counter(
+        finding for row in records for finding in row.get("findings", [])
+    )
     formats = collections.Counter(row.get("format", "") for row in records)
     legacy = collections.Counter(row.get("legacy_license_label", "") for row in records)
     return {
@@ -131,6 +150,7 @@ def auditer(corpus_path, repo_root):
         "catalogue": str(corpus_path),
         "total_documents": len(records),
         "status_counts": dict(sorted(counts.items())),
+        "finding_counts": dict(sorted(finding_counts.items())),
         "format_counts": dict(sorted(formats.items())),
         "legacy_license_label_counts": dict(sorted(legacy.items())),
         "duplicate_ids": sorted(set(duplicate_ids)),
