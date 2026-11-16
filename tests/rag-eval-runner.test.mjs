@@ -20,12 +20,6 @@ const chunks = fixture.documents.map((doc, index) => ({
   n: index + 1, doc: doc.id, texte: doc.passage
 }));
 const terms = {};
-const tokenize = value => Array.from(new Set(
-  String(value || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06ff]{3,}/g) || []
-));
-for (const chunk of chunks) {
-  for (const term of tokenize(chunk.texte)) (terms[term] ||= []).push(chunk.n);
-}
 const files = {
   'assets/bdd/corpus.json': corpus,
   'assets/bdd/shards_manifest.json': { shards: [{ file: 'benchmark-synthetic.json' }] },
@@ -41,6 +35,22 @@ const sandbox = {
   Object, Array, String, Number, JSON, Math, Set, Map, RegExp
 };
 vm.runInNewContext(ragSource, sandbox, { filename: 'rag.js' });
+
+// Build the synthetic shard with the exact same query/index normalizer exposed
+// by rag.js, so the fixture tests the production matching contract.
+for (const chunk of chunks) {
+  for (const term of window.RAG.termes(chunk.texte)) (terms[term] ||= []).push(chunk.n);
+}
+const normalizationChecks = [
+  ['Darija Arabic', 'واش الفرق بين المبتدأ والخبر؟ عطيني مثال بسيط.', ['مبتدأ', 'خبر']],
+  ['Arabizi', 'Chrahli el-jomla el-ismiya b darja, b exemple sahl.', ['الجملة', 'الاسمية']]
+];
+for (const [label, query, expected] of normalizationChecks) {
+  const normalized = window.RAG.termes(query);
+  for (const term of expected) {
+    assert.ok(normalized.includes(term), label + ' normalization must include ' + term);
+  }
+}
 
 const rows = [];
 const failures = [];
