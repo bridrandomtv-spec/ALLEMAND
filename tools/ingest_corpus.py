@@ -68,7 +68,7 @@ def main(dossier):
         mp = os.path.join(dossier, "_" + nom.rsplit(".", 1)[0] + ".json")
         if os.path.exists(mp):
             meta = json.load(open(mp, encoding="utf-8"))
-        licence = meta.get("licence", "production propre")
+        licence = meta.get("licence", "non_verifiee")
         if licence in INTERDITS:
             print("  REFUSÉ (licence) :", nom)
             continue
@@ -85,6 +85,7 @@ def main(dossier):
             "url": "assets/corpus/" + did + "." + ext,
             "source": meta.get("source", "document local"),
             "licence": licence,
+            "droits_statut": "verifies" if meta.get("droits_verifies") is True else "a_verifier",
             "tags": meta.get("tags", []),
             "extrait": texte[:300].replace("\n", " "),
         })
