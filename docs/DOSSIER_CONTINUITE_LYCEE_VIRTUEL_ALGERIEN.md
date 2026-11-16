@@ -4741,3 +4741,11 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 - Correction : segmentation limitée aux plages de lettres arabes, en excluant la ponctuation, dans `rag.js` et `tools/rag_normalization.py`.
 - Commits : `9ca1d7ed0fb0cae776a039ced128b528fce9a2f9` (JS) ; `e91f699b6b03470a571a10944e0967352e7102ce` (Python).
 - Statut : correction poussée sur la branche isolée ; runner et suite complète doivent être retestés localement. Aucun résultat de test post-correction n'est encore confirmé. Python reste à vérifier séparément.
+
+
+### Lot 583 — runner RAG Darija/Arabizi : retest réussi
+- Résultat local communiqué par l'utilisateur après synchronisation sur `0666f9f8` : `tests/rag-eval-runner.test.mjs` passe.
+- 9 cas synthétiques : 7 récupérations éligibles, hit@1 = 1.0 (7/7), 2 abstentions attendues et correctes (2/2), `failures: []`.
+- Les requêtes `dz-001` (darija arabe) et `ar-latn-001` (Arabizi) récupèrent désormais le document arabe synthétique attendu.
+- La provenance reste `client_unverified`, comme prévu. Données et index sont synthétiques, uniquement en mémoire ; ce résultat ne valide pas les documents, licences, index de production, génération Worker ni qualité pédagogique réelle.
+- Prochaine étape : exécuter les 7 tests JavaScript de régression du Lot 583/577, puis traiter séparément les tests Python (interpréteur non disponible lors des précédentes vérifications). Aucun merge ni déploiement.
