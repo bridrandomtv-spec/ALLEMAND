@@ -70,6 +70,7 @@ Le workflow s'est bien déclenché sur les commits du lot, mais les exécutions 
 - job `133176494256` : `runner_id = 0`, aucune étape déclarée ;
 - aucun log de job récupérable par l'API au moment du contrôle ;
 - aucun artefact produit.
+- Une relance du run (tentative 2) a également échoué immédiatement : nouveau job `runner_id = 0`, aucune étape, aucun log. Le problème paraît situé avant le démarrage du runner ; la cause précise n'est pas exposée par les endpoints disponibles.
 
 Il n'est donc pas possible de conclure que les tests Python ou Node ont échoué : le runner n'a pas fourni de trace d'exécution. Les tests restent non certifiés jusqu'à une exécution réelle avec étapes/logs disponibles.
 
