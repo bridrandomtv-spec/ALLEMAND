@@ -4345,13 +4345,14 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 ### Test ajouté
 - Nouveau `tests/teacher-context.test.mjs` : matière active anglaise marquée partielle, niveau/filière, langue de dictée, étiquette de confiance, sources vides et limitation de longueur.
 - Le test est écrit mais n'a pas été exécuté dans ce lot.
-- Le workflow du Lot 573 a de nouveau été interrogé sur le commit documentaire précédent : aucun run PR ni statut n'est retourné. Cela ne constitue pas une validation des tests.
+- L'outil de consultation disponible ne retourne que les exécutions déclenchées par pull request ; aucun run PR ni statut n'a été retourné. Il ne permet donc pas de conclure sur les déclenchements `push`. Aucun résultat d'exécution n'est confirmé.
 
 ### Fichiers modifiés
 - `js/teacher-context.js` — nouveau constructeur de contexte.
 - `tests/teacher-context.test.mjs` — nouveau test unitaire.
 - `app.js` — remplacement du contexte allemand codé en dur par l'enveloppe.
 - `index.html` — chargement du constructeur après `context.js`.
+- `.github/workflows/rag-guard-tests.yml` — ajout du test de l'enveloppe et inclusion des chemins applicatifs dans les déclencheurs.
 - Ce dossier — journal du lot et limites.
 
 ### Limites et sécurité
