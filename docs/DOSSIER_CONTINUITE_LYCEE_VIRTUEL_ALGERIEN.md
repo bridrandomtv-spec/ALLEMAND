@@ -4610,3 +4610,14 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 2. Télécharger et examiner le rapport JSON réel, sans extrapoler ses résultats synthétiques à la production.
 3. Préparer les fiches de revue humaine par langue et obtenir une validation compétente des réponses générées par le Worker, séparément du test de retrieval.
 4. Ne lancer la comparaison BGE-M3 qu'après stabilisation du benchmark lexical et de la revue humaine, dans un environnement isolé.
+
+
+### Addendum Lot 580 — premier résultat CI réel et blocage de démarrage (16 novembre 2026)
+- Le workflow GitHub Actions a été observé sur les pushes du lot. Les runs #28 à #32, dont le run #32 associé au commit `c671e81d0caab48cf8f47d2a70b223daa9096278`, sont terminés avec la conclusion `failure`.
+- Pour le run #32 (`43919353737`), GitHub retourne un job `rag-rights-guard` terminé en échec, mais avec `steps: []`, `runner_id: 0` et aucun journal récupérable via l'API disponible. Le job n'a donc fourni aucun résultat de test exploitable.
+- Le run #30 du workflow modifié présente le même profil : échec immédiat et aucune étape répertoriée. Il serait incorrect d'attribuer cet échec à un test Node/Python précis sans annotations ou journaux.
+- Le run #32 ne fournit aucun artefact benchmark. L'étape d'archivage est configurée, mais elle ne peut pas produire de rapport si le job ne démarre pas.
+- Le workflow et ses fichiers ont été relus après écriture; le runner et la grille de revue sont bien présents sur la branche. La correction des fins de ligne du rapport a été enregistrée dans les commits `01ebe43ae64dbd11c05f131b2a4e45e98efd6446` et `c671e81d0caab48cf8f47d2a70b223daa9096278`.
+- Action bloquante suivante : diagnostiquer le motif de démarrage du job à partir des annotations du check-run ou des paramètres GitHub Actions du dépôt (disponibilité des runners, autorisations Actions, limites/quotas, politique de fork/branche ou configuration du workflow). Ne pas modifier les permissions du dépôt ni activer des runners payants sans décision explicite du propriétaire.
+- Le Lot 580 reste techniquement préparé mais non validé : aucun score du RAG n'est certifié, aucun contrôle Python/Node n'est déclaré réussi et aucun artefact n'est disponible.
+- Aucune modification Supabase/Auth/RLS/SQL, aucune donnée de production, aucune fusion dans `main` et aucun déploiement Cloudflare.
