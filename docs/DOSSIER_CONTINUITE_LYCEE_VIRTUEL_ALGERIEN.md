@@ -4324,3 +4324,45 @@ Obtenir une exécution effective des tests Python et Node sur la branche de pré
 4. Faire transiter uniquement des extraits RAG admis, avec identifiant documentaire et provenance ; ne jamais annoncer « vérifié » pour un contexte client non authentifié.
 
 Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Supabase/Auth/RLS/SQL, aucune reconstruction du corpus ou des shards.
+
+ 
+## Lot 574 — découverte de la dictée vocale et enveloppe pédagogique commune (16 novembre 2026)
+
+### Découverte du parcours vocal réel
+- Le module de reconnaissance vocale existe : `js/voice-chat.js`, chargé depuis `index.html`.
+- Il utilise l'API Web Speech du navigateur (`SpeechRecognition` / `webkitSpeechRecognition`), avec choix de langue : allemand, arabe algérien, arabe standard, français et anglais.
+- Son rôle actuel est la dictée : le texte reconnu est inséré dans `#chatInput`, puis l'élève doit encore vérifier et envoyer le message. Il ne transmet pas directement l'audio au modèle et ne réalise pas une conversation vocale continue.
+- La synthèse vocale est distincte : `app.js` utilise `speechSynthesis`, avec une voix allemande dédiée pour certaines réponses et une détection rudimentaire de langue pour les réponses du Worker.
+- Le module vocal est donc retrouvé, mais l'entrée micro, le chat et la synthèse ne forment pas encore un orchestrateur temps réel unique.
+
+### Enveloppe pédagogique commune — première étape
+- Nouveau module `js/teacher-context.js`, lecture seule, qui construit une enveloppe JSON `teacher-context-v1` à partir de `CONTEXT.ctx()`, du registre `SUBJECT` et de la langue choisie pour la dictée.
+- Champs : matière (identifiant, nom et statut du registre), niveau, filière si disponible, langue de dictée, langue de réponse laissée en détection automatique, question et liste de sources récupérées vide.
+- L'enveloppe porte explicitement `trust: client_unverified`. Elle ne certifie ni l'identité de l'élève, ni les droits d'un document, ni l'authenticité d'une source.
+- `app.js` n'envoie plus une description allemande fixe au Worker : il transmet désormais cette enveloppe construite depuis le contexte actif. Un repli minimal et explicitement non vérifié est prévu si le module n'est pas disponible.
+- Aucun extrait RAG n'est injecté dans le Worker à ce stade : il faut d'abord définir une représentation de provenance sûre et vérifier l'aller-retour complet. Le RAG local conserve son propre filtre d'admission des documents.
+
+### Test ajouté
+- Nouveau `tests/teacher-context.test.mjs` : matière active anglaise marquée partielle, niveau/filière, langue de dictée, étiquette de confiance, sources vides et limitation de longueur.
+- Le test est écrit mais n'a pas été exécuté dans ce lot.
+- Le workflow du Lot 573 a de nouveau été interrogé sur le commit documentaire précédent : aucun run PR ni statut n'est retourné. Cela ne constitue pas une validation des tests.
+
+### Fichiers modifiés
+- `js/teacher-context.js` — nouveau constructeur de contexte.
+- `tests/teacher-context.test.mjs` — nouveau test unitaire.
+- `app.js` — remplacement du contexte allemand codé en dur par l'enveloppe.
+- `index.html` — chargement du constructeur après `context.js`.
+- Ce dossier — journal du lot et limites.
+
+### Limites et sécurité
+- Le champ matière/niveau envoyé par le navigateur reste une indication non authentifiée ; le Worker doit continuer à le traiter comme donnée client, jamais comme autorité.
+- La matière anglaise reste marquée `partial`. Cette modification ne la rend pas complète.
+- Aucun flux audio brut, reconnaissance serveur, dialogue vocal continu, RAG serveur ou validation documentaire côté Worker n'est ajouté.
+- Aucun corpus, PDF, shard, manifeste, base Supabase, Auth, RLS ou SQL n'a été modifié.
+- Aucun test n'est déclaré réussi ; aucune fusion vers `main`, aucun déploiement Cloudflare.
+
+### Suite logique — Lot 575
+1. Exécuter réellement les tests Node/Python et obtenir un résultat CI vérifiable.
+2. Vérifier le contrat exact des réponses RAG et créer une structure de provenance qui ne puisse pas transformer une donnée client en preuve serveur.
+3. Faire converger les réponses du chat et de la dictée vers un seul point de traitement, en gardant la validation humaine avant envoi du texte reconnu.
+4. Ajouter des tests de contexte matière/niveau et de sélection de langue, puis seulement ensuite étudier le mode conversation vocale continue.
