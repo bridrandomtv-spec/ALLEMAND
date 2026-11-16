@@ -82,7 +82,7 @@ def main(dossier):
             docs.append({'id': did, 'titre': nom, 'matiere': 'allemand',
                          'niveau': '2AS/3AS', 'type': 'scan', 'langue': 'de',
                          'annee': '2026/2027', 'format': 'pdf', 'url': ch,
-                         'source': 'docs archive eleve', 'licence': 'document utilisateur',
+                         'source': 'docs archive eleve', 'licence': 'non_verifiee', 'droits_statut': 'a_verifier',
                          'tags': ['scan'], 'extrait': '(scan sans couche texte - OCR indisponible)'})
             nb_doc += 1
             continue
