@@ -7,7 +7,7 @@ Usage : python tools/indexer_pdf.py docs/archive/documents
 """
 import json, os, re, sys
 CORPUS = os.path.join('assets', 'bdd', 'corpus.json')
-INDEX = os.path.join('assets', 'bdd', 'corpus_index.json')
+INDEX = os.path.join('assets', 'bdd', 'corpus_chunks_index.json')
 CHUNK_MOTS = 1200
 OCR_DISPO = None
 def _init_ocr():
@@ -50,7 +50,10 @@ def chunks(t):
 
 def main(dossier):
     corp = json.load(open(CORPUS, encoding='utf-8'))
-    idx = json.load(open(INDEX, encoding='utf-8'))
+    try:
+        idx = json.load(open(INDEX, encoding='utf-8'))
+    except (OSError, ValueError):
+        idx = {'version': '1.0.0', 'schema': 'rag-chunks-v1', 'termes': {}, 'chunks': []}
     docs = corp.setdefault('documents', [])
     chunks_l = idx.setdefault('chunks', [])
     termes = idx.setdefault('termes', {})
@@ -95,6 +98,8 @@ def main(dossier):
             nb_chunk += 1
             for mot in set(re.findall(r'[A-Za-z\u00c0-\u00ff\u0600-\u06ff]{3,}', cc.lower())):
                 termes.setdefault(mot, []).append(cid)
+    idx['version'] = '1.0.0'
+    idx['schema'] = 'rag-chunks-v1'
     idx['_meta'] = {'version': '3.0.0', 'nb_chunks': len(chunks_l),
                     'nb_termes': len(termes), 'ocr': nb_ocr,
                     'source': 'corpus + docs archive eleve (PDF + OCR)'}
