@@ -6,6 +6,7 @@ on:
       - design/prototypes-67-74-alignment
     paths:
       - "rag.js"
+      - "worker/ia-ask.js"
       - "tools/**"
       - "tests/**"
       - ".github/workflows/rag-guard-tests.yml"
@@ -33,6 +34,8 @@ jobs:
           node-version: "20"
       - name: Test browser RAG rights allowlist
         run: node tests/rag-rights-guard.test.mjs
+      - name: Test Worker context trust boundary
+        run: node tests/worker-context-trust.test.mjs
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
