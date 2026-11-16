@@ -6,6 +6,7 @@ Ne copie AUCUN fichier : url = chemin d'origine.
 Usage : python tools/indexer_pdf.py docs/archive/documents
 """
 import json, os, re, sys
+from metadata_contract import valide_metadonnees, ajoute_quarantaine
 CORPUS = os.path.join('assets', 'bdd', 'corpus.json')
 INDEX = os.path.join('assets', 'bdd', 'corpus_chunks_index.json')
 CHUNK_MOTS = 1200
@@ -57,22 +58,41 @@ def main(dossier):
     docs = corp.setdefault('documents', [])
     chunks_l = idx.setdefault('chunks', [])
     termes = idx.setdefault('termes', {})
-    prefix = 'pdf-'
-    docs[:] = [d for d in docs if not d['id'].startswith(prefix)]
-    chunks_l[:] = [c for c in chunks_l if not c.get('doc', '').startswith(prefix)]
-    # Les positions des chunks changent après suppression : renuméroter puis
-    # reconstruire entièrement l'index inversé depuis le texte conservé.
-    for cid, chunk in enumerate(chunks_l):
-        chunk['n'] = cid
-    termes.clear()
-    for cid, chunk in enumerate(chunks_l):
-        for mot in set(re.findall(r'[A-Za-z\u00c0-\u00ff\u0600-\u06ff]{3,}', chunk.get('texte', '').lower())):
-            termes.setdefault(mot, []).append(cid)
-    nb_doc = nb_chunk = nb_scan = nb_ocr = 0
+
+    # Pré-valider les PDF : un fichier sans preuve de droits ou sans métadonnées
+    # complètes reste en quarantaine et ne remplace pas une version déjà indexée.
+    candidats = []
     for nom in sorted(os.listdir(dossier)):
         if not nom.lower().endswith('.pdf'):
             continue
         ch = os.path.join(dossier, nom)
+        meta_path = os.path.join(dossier, '_' + nom.rsplit('.', 1)[0] + '.json')
+        try:
+            meta = json.load(open(meta_path, encoding='utf-8'))
+        except (OSError, ValueError):
+            meta = None
+        erreurs = valide_metadonnees(meta)
+        did = 'pdf-' + slug(nom)
+        if erreurs:
+            ajoute_quarantaine({'id': did, 'fichier': nom, 'format': 'pdf',
+                                'statut': 'a_verifier', 'motifs': erreurs})
+            print('  MIS EN QUARANTAINE :', nom, '·', '; '.join(erreurs))
+            continue
+        candidats.append((nom, ch, did, meta))
+
+    ids_remplaces = {item[2] for item in candidats}
+    docs[:] = [d for d in docs if d.get('id') not in ids_remplaces]
+    chunks_l[:] = [c for c in chunks_l if c.get('doc') not in ids_remplaces]
+    # Réindexer les chunks conservés avant de créer de nouveaux postings.
+    for cid, chunk in enumerate(chunks_l):
+        chunk['n'] = cid
+    termes.clear()
+    for cid, chunk in enumerate(chunks_l):
+        for mot in set(re.findall(r'[A-Za-z\\u00c0-\\u00ff\\u0600-\\u06ff]{3,}', chunk.get('texte', '').lower())):
+            termes.setdefault(mot, []).append(cid)
+
+    nb_doc = nb_chunk = nb_scan = nb_ocr = 0
+    for nom, ch, did, meta in candidats:
         t = texte_pdf(ch)
         via = 'texte'
         if len(t.strip()) < 60:
@@ -80,36 +100,41 @@ def main(dossier):
             via = 'ocr'
             if len(t.strip()) >= 60:
                 nb_ocr += 1
-        did = prefix + slug(nom)
         if len(t.strip()) < 60:
             nb_scan += 1
-            docs.append({'id': did, 'titre': nom, 'matiere': 'allemand',
-                         'niveau': '2AS/3AS', 'type': 'scan', 'langue': 'de',
-                         'annee': '2026/2027', 'format': 'pdf', 'url': ch,
-                         'source': 'docs archive eleve', 'licence': 'non_verifiee', 'droits_statut': 'a_verifier',
-                         'tags': ['scan'], 'extrait': '(scan sans couche texte - OCR indisponible)'})
+            docs.append({'id': did, 'titre': meta['titre'], 'matiere': meta['matiere'],
+                         'niveau': meta['niveau'], 'type': 'scan', 'langue': meta['langue'],
+                         'annee': meta.get('annee', ''), 'format': 'pdf', 'url': ch,
+                         'source': meta['source'], 'licence': meta['licence'],
+                         'droits_statut': 'verifies', 'droits_reference': meta['droits_reference'],
+                         'tags': meta.get('tags', []) + ['scan'],
+                         'extrait': '(scan sans couche texte - OCR indisponible)'})
             nb_doc += 1
             continue
-        docs.append({'id': did, 'titre': nom, 'matiere': 'allemand',
-                     'niveau': '2AS/3AS', 'type': 'document', 'langue': 'de',
-                     'annee': '2026/2027', 'format': 'pdf', 'url': ch,
-                     'source': 'docs archive eleve', 'licence': 'non_verifiee',
-                     'droits_statut': 'a_verifier', 'tags': ['pdf', via], 'extrait': t[:300].replace('\n', ' ')})
+        docs.append({'id': did, 'titre': meta['titre'], 'matiere': meta['matiere'],
+                     'niveau': meta['niveau'], 'type': meta['type'], 'langue': meta['langue'],
+                     'annee': meta.get('annee', ''), 'format': 'pdf', 'url': ch,
+                     'source': meta['source'], 'licence': meta['licence'],
+                     'droits_statut': 'verifies', 'droits_reference': meta['droits_reference'],
+                     'tags': meta.get('tags', []) + ['pdf', via],
+                     'extrait': t[:300].replace('\\n', ' ')})
         nb_doc += 1
         for cc in chunks(t):
             cid = len(chunks_l)
             chunks_l.append({'doc': did, 'n': cid, 'texte': cc})
             nb_chunk += 1
-            for mot in set(re.findall(r'[A-Za-z\u00c0-\u00ff\u0600-\u06ff]{3,}', cc.lower())):
+            for mot in set(re.findall(r'[A-Za-z\\u00c0-\\u00ff\\u0600-\\u06ff]{3,}', cc.lower())):
                 termes.setdefault(mot, []).append(cid)
+
     idx['version'] = '1.0.0'
     idx['schema'] = 'rag-chunks-v1'
     idx['_meta'] = {'version': '3.0.0', 'nb_chunks': len(chunks_l),
                     'nb_termes': len(termes), 'ocr': nb_ocr,
-                    'source': 'corpus + docs archive eleve (PDF + OCR)'}
+                    'source': 'corpus + documents PDF validés'}
     json.dump(corp, open(CORPUS, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     json.dump(idx, open(INDEX, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
-    print('indexe : %d docs (%d via OCR, %d scans restants), %d chunks' % (nb_doc, nb_ocr, nb_scan, nb_chunk))
+    print('indexe : %d docs (%d via OCR, %d scans restants), %d nouveaux chunks' %
+          (nb_doc, nb_ocr, nb_scan, nb_chunk))
 
 if __name__ == '__main__':
     main(sys.argv[1] if len(sys.argv) > 1 else os.path.join('docs', 'archive', 'documents'))
