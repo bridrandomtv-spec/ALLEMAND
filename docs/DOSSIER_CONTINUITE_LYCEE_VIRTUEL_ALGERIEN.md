@@ -4213,3 +4213,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 
 
 - Complément Lot 651 : relance du run CI `43831138421` (tentative 2) effectuée. Elle échoue immédiatement elle aussi, avec un nouveau job `runner_id=0`, aucune étape et aucun log. La cause précise du non-démarrage du runner n'est pas exposée par les interfaces consultables ; ne pas imputer cet état aux tests du code sans trace d'exécution.
+
+
+## Lot 652 — intégrité stricte du catalogue et des identifiants RAG (16 novembre 2026)
+
+- Le Worker `src/site-worker.js` refuse maintenant les IDs documentaires dupliqués au lieu d'écraser silencieusement une fiche dans sa table de correspondance : réponse `503 rag_catalogue_duplicate_id`.
+- Après contrôle du nombre total de chunks, il exige une séquence globale complète `0..total_chunks-1`. Un manifeste dont le compteur est juste mais dont les `global_id` comportent un trou est refusé (`503 rag_generation_incomplete`).
+- Le test runtime `tests/site_worker_rag_evidence_runtime.mjs` couvre les doublons, les trous d'IDs, la divergence entre la source de la fiche et celle de la preuve de droits, l'absence d'un usage obligatoire et une méthode HTTP interdite. Fixtures synthétiques uniquement.
+- Fichiers modifiés : `src/site-worker.js`, `tests/site_worker_rag_evidence_runtime.mjs`; rapport `docs/LOTS/LOT_652_INTEGRITE_CATALOGUE_IDS_RAG.md`.
+- CI déclenchée sur le commit `dc446e9080754e4784bd8f087a99d16430937fd8`, run `43835144150`, job `133189793602`. Échec immédiat avant exécution : `runner_id=0`, aucun runner nommé, `steps=[]`, aucun log. Cela ne constitue pas un échec des tests et ne valide pas non plus le code. Cause du non-démarrage non déterminée.
+- Le corpus réel reste inchangé : 239 fiches, 225 PDF historiques, 0 SHA-256 documentaires publiés, 0 objet `droits` structuré, aucun sidecar qualifié. Aucun document ingéré/OCRisé/indexé.
+- Aucun secret HMAC configuré, aucune fusion `main`, aucun déploiement, aucune opération Supabase/Auth/RLS/schéma/données/paiements.
+- Suite : rétablir une exécution CI avec runner et logs ; exécuter réellement les suites Node/Python et le pré-audit ; vérifier la pièce institutionnelle et son périmètre ; seulement ensuite préparer le pilote documentaire.
