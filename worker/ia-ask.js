@@ -248,7 +248,8 @@ export default {
         const j = await r.json();
         rep = ((j.result || {}).response) || '';
       }else return json({ ok:false, err:'ai-non-configuré' }, 500, org);
-      return json({ ok:true, rep: String(rep).trim(), answer_language: meta.output_language, answer_style: meta.output_style }, 200, org);
+      return json({ ok:true, rep: String(rep).trim(), answer_language: meta.output_language,
+        answer_style: meta.output_style, rag_evidence_verified: !!ragEvidence }, 200, org);
     }catch(e){
       return json({ ok:false, err: String((e && e.message) || e) }, 500, org);
     }
