@@ -15,8 +15,10 @@ L'état réel du dépôt confirme une seconde limite : `assets/bdd/shards_manife
 - Le Worker extrait lui-même la portée demandée depuis la question originale (page, unité, exercice), y compris les chiffres arabes et persans.
 - Il ignore les statuts `rag_source_status`, `rag_scope_status`, `rag_scope_type` et `rag_scope_value` envoyés par le navigateur.
 - Il accepte une preuve `rag_evidence_token` signée HMAC-SHA-256 uniquement si la clé serveur `RAG_EVIDENCE_HMAC_KEY` est présente et fait au moins 32 caractères.
-- Le jeton doit avoir l'émetteur `lycee-virtuel-rag`, l'audience `ia-ask`, une portée exactement identique à la question, une durée maximale de cinq minutes, un document, un chunk, une empreinte SHA-256 et l'empreinte SHA-256 du contexte exact transmis.
+- Le jeton doit avoir l'émetteur `lycee-virtuel-rag`, l'audience `ia-ask`, une portée exactement identique à la question, une durée maximale de cinq minutes, un document, un chunk, une empreinte SHA-256 et l'empreinte SHA-256 du contexte exact transmis. La détection couvre aussi les formulations « leçon/lesson/Lektion/الدرس ».
+- Exigence pour le futur émetteur : il devra retrouver lui-même le document et le chunk dans les artefacts publiés, vérifier les métadonnées, puis construire le contexte canonique à signer. Il ne devra jamais signer aveuglément un texte ou un hash de contexte fourni par le navigateur.
 - Signature, format, durée, portée, empreintes et contexte sont vérifiés côté Worker. Toute erreur ferme le contrôle.
+- L'orchestrateur ne joint une citation que si le Worker renvoie explicitement `rag_evidence_verified: true`.
 - Une demande précise sans preuve valide est refusée avant tout appel au modèle.
 - Une réponse normale indique `rag_evidence_verified: true` uniquement après validation cryptographique.
 
@@ -31,6 +33,7 @@ L'état réel du dépôt confirme une seconde limite : `assets/bdd/shards_manife
 - Contexte modifié après signature.
 - Jeton expiré.
 - Jeton signé pour une autre page.
+- Demandes de page et de leçon avec chiffres arabes.
 - Statuts falsifiés envoyés par le client sans clé serveur.
 - Demande de page avec chiffres arabes.
 - Contrôle du non-appel au modèle en cas de refus.
