@@ -4237,3 +4237,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun numéro d'acte, date, nom d'autorité, référence ou périmètre réel n'a été inventé. Les valeurs des tests sont synthétiques. L'inventaire PDF demeure non qualifié tant que la preuve institutionnelle réelle n'est pas rapprochée de chaque document ou groupe effectivement couvert.
 - Aucun document réel ingéré/OCRisé/indexé, aucun sidecar réel créé, aucun secret HMAC, aucun déploiement, aucune fusion `main`, aucune opération Supabase/Auth/RLS/schéma/données/paiements.
 - Tests non certifiés en attente d'un runner GitHub Actions opérationnel.
+
+- Correctif de cohérence : fixture du Worker réalignée sur les IDs continus du Lot 652 (`global_id=0` pour le chunk unique ; `8` pour le test de trou). Le workflow du commit `a2e51c3b2fb4fc83a82f426527091660a8085aa4` échoue encore avant runner (`runner_id=0`, `steps=[]`), sans exécution de tests.
