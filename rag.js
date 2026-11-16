@@ -58,7 +58,7 @@
     return Array.from(out).filter(w => w.length >= 3);
   }
   function termes(q){
-    const tokens = String(q || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06ff]{3,}/g) || [];
+    const tokens = String(q || '').toLowerCase().match(/[a-zà-ÿ]+|[\u0621-\u064a\u066e-\u06d3\u06fa-\u06fc]+/g) || [];
     const out = new Set();
     tokens.forEach(token => {
       if(/[\u0600-\u06ff]/.test(token)){
