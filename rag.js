@@ -4,7 +4,7 @@
    corpus + sa source. Jamais inventé.
    · Si shards_manifest.json existe : recherche shard par shard (mémoire
      bornée à 1 shard, chargement progressif, arrêt précoce si match fort).
-   · Sinon : repli sur l'index unique corpus_index.json.
+   · Sinon : repli sur l'index unique corpus_chunks_index.json (distinct de BIBLIO).
    ══════════════════════════════════════════════════════════════════════ */
 'use strict';
 
