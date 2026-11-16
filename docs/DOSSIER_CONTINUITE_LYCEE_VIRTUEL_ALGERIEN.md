@@ -2955,3 +2955,53 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Lecture seule de `index.html`, `app.js`, `js/subject.js` et `js/context.js` sur `design/prototypes-67-74-alignment`.
 - Les chemins de scripts ont été lus dans le HTML ; aucune exécution navigateur ni test de stockage local n'a été effectuée. Les conséquences indiquées comme déterministes découlent des règles de lecture et des écritures visibles dans le code, et restent à confirmer en test d'intégration.
 - Aucun code applicatif, schéma, donnée, paramètre Supabase ou Worker modifié ; aucun workflow ni déploiement lancé. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 554 — sélection documentaire, filtres de contexte et caches BIBLIO/RAG (16 novembre 2026)
+
+### 1. BIBLIO : index global, pas de filtrage pédagogique
+- `biblio.js` charge huit sources dans `SRC` : pages de livre, devoirs, grammaire, `corpus_index.json`, darija, explications, bibliothèque multimatieres et traductions.
+- `load()` construit une seule fois `ENTRIES` et conserve le résultat dans `ENTRIES` / `LOADING`. Les entrées sont globales à l'onglet ; aucune clé de cache par matière, niveau, filière ou session.
+- `search(q,k)` classe les entrées par correspondance lexicale (titre +5, texte +2, tags +3) puis retourne les premiers résultats ayant un score positif. Elle ne lit pas `CONTEXT.ctx()`, `VT.ctx()` ni les filtres du Corpus.
+- Les tags de certaines entrées contiennent un niveau (ex. bibliothèque multimatieres), mais ils ne sont pas utilisés pour éliminer les résultats d'un autre niveau. Les entrées livre, grammaire, vocabulaire, darija, etc. ne portent pas toutes des métadonnées normalisées matière/niveau/filière/langue.
+- `context(q,max)` utilise directement les quatre premiers résultats de `search()`. `ia.js` peut donc envoyer au Worker des extraits lexicalement pertinents mais non validés pour la matière/niveau actifs.
+- Les sources sont chargées avec `cache:'no-store'`, mais cela ne supprime pas le cache applicatif en mémoire `ENTRIES`. Une mise à jour des fichiers ou un changement de contexte ne reconstruit pas automatiquement l'index.
+
+### 2. RAG : cache global et absence de filtres de contexte
+- `rag.js` garde en mémoire `MAN` (manifeste), `LEGACY` (index historique), ainsi que MAL, BAN, VOC, QUEST et CORP. Les fonctions de chargement ne relisent les fichiers qu'une fois tant que la page reste ouverte.
+- `cherche(q)` ne reçoit que la question ; il calcule les termes et compare les postings/chunks. Aucun filtre de matière, niveau ou filière n'est appliqué au chunk candidat.
+- Dans le pipeline pédagogique, `CONTEXT.ctx()` est lu pour QUST, mais la recherche documentaire et `intentBiblio(q)` ne reçoivent pas ce contexte comme contrainte. QUST peut donc connaître le niveau sans que les résultats documentaires soient filtrés par ce niveau.
+- `intentLecture()` choisit les pages 2AS/3AS depuis des marqueurs de question et `getNiveauActif()` legacy ; cette décision ne consomme pas systématiquement le même snapshot que QUST/CONTEXT.
+- Le cache mémoire des données de cours n'est pas invalidé sur `vt:ctx`, changement de matière/niveau, changement de compte ou actualisation des métadonnées.
+
+### 3. Vue Corpus : filtres UI non réutilisés par le tuteur
+- `corpus.js` dispose bien d'un objet `filtres` (matière, niveau, type, année, recherche) et applique ces filtres à `D.documents` dans `resultats()`.
+- Cette logique ne constitue qu'un filtrage de la vue documentaire : le module RAG et BIBLIO ne l'appellent pas et n'en réutilisent pas les critères.
+- Le registre `corpus.json` documente une architecture de métadonnées matière/niveau/type/année, mais le moteur BIBLIO construit son propre index depuis des sources hétérogènes, sans normaliser ces champs dans chaque entrée.
+- Des fiches du corpus échantillonnées contiennent la licence `document utilisateur` et une source d'archive utilisateur. Ce libellé n'est pas une preuve juridique suffisante à lui seul : chaque document doit rester soumis à la vérification de l'autorisation ou de la licence réelle, conformément à la politique documentaire déjà définie.
+
+### 4. Manifeste RAG et incompatibilité déjà identifiée
+- `shards_manifest.json` lu sur cette branche annonce `nb_shards:0`, `total_chunks:0`, `shards:[]`. Le code bascule donc sur `corpus_index.json` en mode legacy.
+- Le lot 549 avait déjà établi que le `corpus_index.json` présent contient notamment des entrées lexicales `items` (vocabulaire), tandis que le RAG legacy attend `termes` et `chunks`. Le mode legacy ne peut donc pas fournir de chunks pédagogiques à partir de ce schéma sans transformation/régénération cohérente.
+- Quand un manifeste contient une liste non vide mais que les shards sont absents ou inutilisables, `cherche()` retourne le meilleur résultat (éventuellement null) sans tenter le fallback legacy ; ce défaut de fallback avait été relevé au lot 550.
+- Les fichiers sont fetchés avec `cache:'no-store'`, mais les variables `MAN` et `LEGACY` conservent néanmoins le premier résultat en mémoire. Le paramètre fetch ne réinitialise pas ces variables.
+
+### 5. Cache privé de traduction : risque lors d'un changement de session
+- `biblio.js` met en cache `PTRAD` et `PTRAD_AT` pendant cinq minutes après une lecture de `lesson_content_trad` soumise au RLS Supabase.
+- Ce cache est global au module et n'est pas indexé par identifiant de session/utilisateur ; aucun effacement sur déconnexion, changement de compte ou événement d'authentification n'apparaît dans le module.
+- Dans le même onglet, après déconnexion puis connexion d'un autre compte, `privateTrad()` peut réutiliser les traductions récupérées sous la session précédente pendant la fenêtre de cinq minutes. C'est un risque potentiel de réutilisation inter-session d'un contenu soumis au RLS, même si la lecture initiale a été autorisée par Supabase.
+- Priorité élevée : vider le cache privé à chaque changement de session et le rattacher à une empreinte de session non sensible ; ne jamais conserver un résultat RLS au-delà de son contexte d'autorisation.
+
+### 6. Priorités de correction
+1. Créer un schéma documentaire canonique par entrée/chunk : identifiant stable, matière, niveau, filière si connue, langue, type, source, licence/autorisation vérifiée, version.
+2. Appliquer les filtres avant le classement lexical ou vectoriel, avec règles explicites pour les ressources multi-niveaux et multi-matières ; ne pas inventer de filière manquante.
+3. Faire passer un snapshot pédagogique unique de l'orchestrateur vers BIBLIO, RAG et Worker. Rejeter ou signaler les résultats hors contexte plutôt que les présenter comme adaptés.
+4. Unifier la vue Corpus et le retrieval du tuteur autour du même registre et du même validateur de métadonnées, sans faire dépendre le moteur de l'état des filtres UI.
+5. Ajouter une politique de cache : version du corpus + contexte + session pour les données privées ; invalidation lors de changement de matière/niveau/filière, changement de compte et mise à jour du corpus.
+6. Corriger prioritairement `PTRAD` : cache par session avec invalidation sur événements auth, et tests de déconnexion/reconnexion de deux comptes dans le même onglet.
+7. Résoudre les schémas manifest/index et valider l'intégrité de tous les shards avant de les publier ; ne pas lancer le workflow d'indexation actuel qui peut pousser directement sur main.
+
+### État des opérations
+- Lecture seule de `rag.js`, `biblio.js`, `corpus.js`, `assets/bdd/corpus.json` et `assets/bdd/shards_manifest.json` sur `design/prototypes-67-74-alignment`.
+- Aucun test multi-compte, RLS, navigateur ou performance exécuté ; le risque PTRAD est déduit de la durée et de la portée du cache dans le code, et doit être confirmé par un test contrôlé sans exposer de données.
+- Aucun code, contenu documentaire, index, métadonnée ou donnée Supabase modifié ; aucun workflow, déploiement ou fusion effectué. PR #17 reste ouverte et non fusionnée.
