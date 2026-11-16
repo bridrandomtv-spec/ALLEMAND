@@ -46,3 +46,7 @@ L'inventaire Lot 629 reste donc à qualifier. Aucune des 225 entrées PDF préc�
 3. Obtenir la référence réelle de l'acte et son périmètre (catégories, fichiers, usages, dates, titulaire/autorité).
 4. Constituer une liste d'IDs ou SHA-256 seulement après rapprochement avec cette preuve.
 5. Préparer ensuite un pilote d'ingestion limité aux documents effectivement couverts.
+
+
+### Contrôle de cohérence de la fixture Worker
+La fixture runtime du signataire a également été réalignée sur la règle du Lot 652 : son unique chunk utilise désormais `global_id=0` (et les postings correspondants), au lieu d'un identifiant isolé `7`. Le scénario de refus conserve un ID discontinu `8`. Cette correction évite qu'une fixture de test valide soit elle-même rejetée par le contrôle de continuité. Le workflow déclenché sur le commit `a2e51c3b2fb4fc83a82f426527091660a8085aa4` échoue encore avant démarrage du runner (`runner_id=0`, `steps=[]`) : aucun test n'a été exécuté.
