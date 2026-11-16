@@ -3893,3 +3893,81 @@ Le point le plus bloquant n'est pas le choix d'un nouveau modèle IA : c'est l'a
 
 ### Suite logique
 Lot 565 : concevoir puis implémenter, après validation des points de compatibilité, la séparation non destructive des index vocabulaire/chunks et le contrat d'orchestration partagé. Première étape : tests de non-régression et plan de modification minimal ; aucun écrasement de l'index actuel.
+
+
+## Lot 565 — validation du contrat des index et sécurité de l'ingestion RAG (16 novembre 2026)
+
+### Objectif
+Vérifier concrètement comment le moteur RAG, la bibliothèque BIBLIO et le script d'ingestion lisent et écrivent les index, afin de définir une séparation non destructive avant toute modification applicative.
+
+### 1. Vérifications dans les fichiers de la branche
+Fichiers relus sur `design/prototypes-67-74-alignment` :
+- `rag.js` ;
+- `biblio.js` ;
+- `tools/ingest_corpus.py` ;
+- `assets/bdd/corpus_index.json` ;
+- `assets/bdd/shards_manifest.json`.
+
+**Contrat BIBLIO**
+- `biblio.js` charge explicitement `assets/bdd/corpus_index.json` dans sa source `corpus`.
+- La logique de construction des entrées attend un tableau `items` (ou un tableau/objet de vocabulaire compatible), et exploite les champs lexicaux tels que `mot`, `titre` ou `de`.
+- Le fichier actuel possède les clés `_meta` et `items`, avec 490 entrées.
+- Son champ `_meta` identifie cet artefact comme index de vocabulaire DE–AR. Il doit être conservé et ne doit pas être remplacé par un index de chunks.
+
+**Contrat RAG**
+- `rag.js` charge `shards_manifest.json`. Si le manifeste contient des shards, il charge chaque fichier déclaré et attend `termes` et `chunks`.
+- Si aucun shard n'est déclaré, le repli actuel charge `assets/bdd/corpus_index.json` et attend également `termes` et `chunks`.
+- Le manifeste versionné contient actuellement `nb_shards: 0`, `total_chunks: 0` et `shards: []`.
+- Le repli RAG et l'index BIBLIO ont donc des contrats incompatibles sur le même chemin de fichier.
+
+**Contrat d'ingestion**
+- `tools/ingest_corpus.py` construit `{"termes": {}, "chunks": []}`.
+- Il écrit cette structure directement dans `assets/bdd/corpus_index.json`.
+- Exécuter ce script dans son état actuel écraserait l'index DE–AR consommé par BIBLIO. Le script n'a pas été exécuté.
+
+### 2. Risques supplémentaires identifiés dans l'ingestion
+- Sans fichier de métadonnées `_nom.json`, le script attribue par défaut `matiere: "allemand"` et `niveau: "2AS"`. Cela peut classer à tort un document d'une autre matière ou d'un autre niveau.
+- Sans licence explicite, il attribue `licence: "production propre"`. Cette valeur ne prouve ni l'auteur ni l'autorisation d'exploitation du document.
+- Le schéma des chunks actuel est limité à `doc`, `n` et `texte`. Il ne conserve pas directement les métadonnées matière/niveau/filière/langue/type/source/licence/page du document parent.
+- Les identifiants de document sont dérivés du seul nom de fichier par MD5 tronqué. Deux fichiers de même nom dans des dossiers ou lots différents peuvent donc entrer en collision si les corpus sont fusionnés.
+
+### 3. Décision technique retenue — séparation stricte
+Ne pas modifier ni réutiliser le fichier de vocabulaire existant pour le RAG.
+
+Noms de fichiers proposés :
+- `assets/bdd/corpus_index.json` : réservé à l'index de vocabulaire DE–AR déjà consommé par BIBLIO ; contenu existant à préserver.
+- `assets/bdd/corpus_chunks_index.json` : nouvel index lexical des chunks, consommé par RAG ; structure initiale `{version, schema, termes, chunks}`.
+- `assets/bdd/shards_manifest.json` : manifeste de shards RAG ; il ne doit référencer que des fichiers de chunks existants et validés.
+
+Contrat cible minimal d'un chunk :
+`{doc_id, chunk_id, texte, matiere, niveau, filiere, langue, type, unite, lecon, source, licence, droits_statut, page, section, contenu_hash, schema_version}`.
+
+Règles de sûreté :
+1. Ne jamais écrire dans `corpus_index.json` depuis l'ingestion RAG.
+2. Refuser ou mettre en quarantaine les documents dont la matière, le niveau ou les droits ne sont pas établis ; ne pas compléter ces champs par une valeur scolaire arbitraire.
+3. Conserver les métadonnées de provenance au niveau document et les recopier explicitement dans chaque chunk.
+4. Générer le nouvel index dans un fichier temporaire, valider JSON, nombre de documents/chunks et cohérence des références, puis effectuer un remplacement atomique du seul fichier RAG.
+5. Garder le manifeste vide tant qu'aucun shard réel n'a été construit et vérifié.
+6. Ne pas lancer d'ingestion sur les documents de production pendant la phase de développement.
+
+### 4. Tests de non-régression obligatoires avant activation
+- Vérifier que le SHA/contenu de `corpus_index.json` ne change pas après une ingestion de test.
+- Vérifier que le nouvel index RAG expose `version`, `schema`, `termes` et `chunks`.
+- Vérifier que chaque identifiant référencé dans `termes` pointe vers un chunk existant.
+- Vérifier que chaque chunk pointe vers un document existant et conserve les métadonnées attendues.
+- Vérifier qu'un document sans matière/niveau/droits établis est refusé ou isolé, et jamais automatiquement étiqueté allemand 2AS / production propre.
+- Vérifier qu'une recherche RAG retourne un extrait et une provenance cohérents.
+- Vérifier que BIBLIO continue à charger les 490 entrées de vocabulaire après génération du nouvel index RAG.
+- Vérifier le repli avec manifeste vide, puis le chargement d'un shard valide.
+- Vérifier l'absence de résultat lorsqu'aucun chunk pertinent n'existe.
+
+### 5. Portée et état du lot
+- Audit statique des trois contrats réalisé à partir des fichiers de la branche.
+- Collision d'écriture confirmée ; le risque n'est plus une simple hypothèse.
+- Risques de métadonnées par défaut et de collision d'identifiants documentés.
+- Aucun script d'ingestion exécuté.
+- Aucun index, corpus, code applicatif, Worker, schéma Supabase, donnée de production ou déploiement modifié.
+- Seul le présent dossier de continuité est mis à jour dans ce lot.
+
+### Suite logique
+Lot 566 : préparer la modification minimale et testable : faire écrire l'ingestion dans `corpus_chunks_index.json`, faire lire ce même fichier par le repli RAG, maintenir BIBLIO sur `corpus_index.json`, puis ajouter les contrôles de métadonnées et tests de non-régression. Avant toute activation sur les documents réels, exécuter les tests sur un corpus temporaire de démonstration et comparer l'index vocabulaire avant/après.
