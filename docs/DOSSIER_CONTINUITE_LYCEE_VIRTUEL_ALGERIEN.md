@@ -4459,3 +4459,40 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 2. Tester sur un document autorisé réel que le passage, son titre et la matière arrivent ensemble au Worker, puis vérifier la qualité de l'explication et le repli local.
 3. Constituer le jeu d'évaluation multilingue (arabe standard, darija, Arabizi, français, allemand ; anglais marqué partiel) avant le pilote BGE-M3.
 4. Ne commencer le pilote BGE-M3 isolé qu'après confirmation du contrat de provenance et de la qualité du RAG lexical de référence.
+
+## Lot 577 — test d'intégration RAG → contexte professeur (16 novembre 2026)
+
+### Contrôle technique effectué
+- Relecture du contrat de `RAG.cherche()` : les modes shardé et index unique renvoient désormais l'identifiant du chunk avec le document et le texte.
+- Vérification de `RAG.provenance()` : la fonction utilise le registre `CORP`, chargé par le filtre documentaire `idsDocumentsAdmis()`; elle ne renvoie pas de provenance si le document est absent, non admis ou sans référence de droits.
+- Vérification du contexte professeur : les extraits sont limités à deux, chaque extrait à 900 caractères, et leur confiance est forcée à `client_unverified`.
+- Vérification du Worker : il reçoit l'enveloppe complète sous la mention « CONTEXTE FOURNI PAR LE CLIENT — NON AUTHENTIFIÉ » et traite ce contexte comme un matériau possible, jamais comme une attestation serveur.
+- Vérification du chat : en cas d'échec du Worker, l'extrait RAG local est restitué ; si aucun extrait n'existe, le secours déterministe reste actif.
+
+### Nouveau test d'intégration
+- Création de `tests/lot577-rag-context-integration.test.mjs`.
+- Le scénario simulé charge un document autorisé de test, retrouve un chunk dans un shard, produit sa provenance, construit l'enveloppe du professeur et vérifie la continuité du titre, du chunk, de la matière, du niveau et de l'extrait.
+- Le test vérifie également que la confiance reste `client_unverified` tout au long du transfert.
+- Ajout de ce test au workflow `.github/workflows/rag-guard-tests.yml`.
+
+### Exécution et limites
+- Le test d'intégration et son étape CI sont enregistrés, mais leur exécution effective n'a pas pu être confirmée pendant ce lot.
+- La vérification GitHub des statuts ne renvoie aucun statut exploitable pour le commit contrôlé ; l'outil de consultation des exécutions disponible filtre les exécutions déclenchées par pull request et ne permet donc pas de conclure qu'une exécution push n'existe pas.
+- Une tentative de récupération du dépôt par réseau depuis l'environnement de travail a échoué faute de résolution DNS. Aucun test local n'est donc revendiqué comme exécuté.
+- Le test utilise un document synthétique de contrat : il ne valide pas encore un PDF réel ni les droits réels d'un document scolaire.
+
+### Commits du lot
+- `tests/lot577-rag-context-integration.test.mjs` : `ee8a32a070c10521d68d9039a0fd82420a93d839`.
+- Workflow CI enrichi : `0dba0fdd577c7517def942a13613d7dbaa8a12e9`.
+
+### Périmètre préservé
+- Aucun document réel, PDF, chunk, shard, manifeste ou embedding de production n'a été modifié.
+- Aucun changement Supabase, Auth, RLS, SQL, schéma ou index vectoriel.
+- Aucune fusion dans `main`, aucun déploiement Cloudflare, aucune modification de production.
+- Travail maintenu sur `design/prototypes-67-74-alignment`.
+
+### Suite logique — Lot 578
+1. Obtenir les résultats CI complets et corriger les échecs éventuels avant de qualifier le contrat comme validé.
+2. Exécuter un test avec un document scolaire réel dont l'autorisation et la référence de droits sont documentées.
+3. Contrôler les réponses du Worker : fidélité au passage, absence d'invention, bonne langue et adaptation au niveau.
+4. Construire le jeu de questions multilingues de référence avant de comparer le RAG lexical à BGE-M3.
