@@ -4648,3 +4648,39 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 ### État de fusion
 - Lot 581 ne lève pas le blocage CI. La branche n'est donc pas prête à fusionner.
 - Aucun changement Supabase/Auth/RLS/SQL, aucune modification du corpus réel, aucune fusion dans `main`, aucun déploiement Cloudflare.
+
+
+## Lot 582 — diagnostic du benchmark multilingue et correction du runner (16 novembre 2026)
+
+### Résultats locaux observés avant correction
+- Le dépôt local principal `C:\\Users\\coord\\Desktop\\ALLEMAND-redesign-v2` pointe vers `bridrandomtv-spec/ALLEMAND`, branche `design-prototype-v1-main`, commit `233d795`; son arbre de travail est propre.
+- La branche distante `design/prototypes-67-74-alignment` a été récupérée avec succès jusqu'au commit `f080ca09`.
+- Un worktree détaché de test a été créé dans `C:\\Users\\coord\\Desktop\\ALLEMAND-RAG-TESTS`, au commit `f080ca09`; le dépôt principal n'a pas changé de branche ni de contenu.
+- Sur Node `v24.22.1`, les sept scripts JavaScript du workflow ont terminé avec un code de sortie nul avant la correction du runner.
+- Le rapport synthétique initial affichait `hit@1 = 0,5714` (4 récupérations correctes sur 7 cas éligibles), deux abstentions correctes sur deux pour l'italien et l'espagnol, et aucune entrée dans `failures`.
+- Les tests Python n'ont pas été exécutés : aucun lanceur `py` n'est disponible dans l'environnement Windows testé.
+
+### Diagnostic du faux vert du benchmark
+- Le runner construisait son index synthétique avec une expression régulière mal échappée : la plage Unicode arabe était écrite avec des antislashs doublés dans un littéral regex.
+- Le tokenizer de production dans `rag.js` utilise correctement la plage `\u0600-\u06ff`; le défaut identifié concerne donc le tokenizer du banc d'essai synthétique, pas une preuve d'un défaut équivalent dans le moteur de production.
+- Le runner calculait le score `hit@1`, mais ne signalait pas comme échec un document attendu qui n'était pas retrouvé. Le processus pouvait ainsi sortir avec succès malgré un rappel insuffisant.
+- L'absence de correspondance entre la question Arabizi en caractères latins et le passage arabe est distincte : le jeu synthétique ne contient pas de translittération ni de normalisation Arabizi permettant d'établir cette correspondance.
+
+### Correction enregistrée sur la branche de travail
+- Dans `tests/rag-eval-runner.test.mjs`, correction de la plage Unicode du tokenizer synthétique afin de reconnaître les caractères arabes.
+- Ajout d'une anomalie `expected_document_not_retrieved` dès qu'un cas non abstentionniste ne retourne pas le document attendu. Le rapport doit désormais conserver ces échecs avant l'assertion finale.
+- Commit : `a723b94527e4dcf936e12d57057ffc956a324a49`.
+- Cette correction vient d'être enregistrée sur `design/prototypes-67-74-alignment`; son exécution locale après mise à jour reste à faire. Aucun résultat vert post-correction n'est revendiqué.
+
+### Limites et suite
+1. Actualiser le worktree de test sur le nouveau commit et relancer les sept tests JavaScript.
+2. Vérifier que l'arabe standard et le darija retrouvent maintenant le passage synthétique; conserver l'Arabizi comme échec explicite tant qu'une stratégie de translittération testable n'est pas implémentée.
+3. Concevoir ensuite une normalisation Arabizi explicite et évaluée, sans faire passer artificiellement le benchmark en ajoutant des correspondances opportunistes au jeu de test.
+4. Installer ou rendre disponible Python 3.12, puis exécuter les deux tests de contrat Python.
+5. La revue humaine, le test Worker réel sur document autorisé et la validation de la qualité pédagogique restent à effectuer.
+
+### Périmètre préservé
+- Aucun PDF, manuel, document réel, corpus, shard, manifeste ou embedding de production n'a été modifié.
+- Aucun changement Supabase, Auth, RLS, SQL, schéma, paiement, branche `main`, fusion ou déploiement Cloudflare.
+- Le worktree de test reste séparé; le dépôt local principal reste sur `design-prototype-v1-main`.
+- Le blocage GitHub Actions lié au démarrage des runners/quotas n'est pas résolu par ce lot.
