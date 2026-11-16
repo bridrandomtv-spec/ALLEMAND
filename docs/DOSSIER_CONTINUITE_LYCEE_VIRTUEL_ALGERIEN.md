@@ -4517,6 +4517,7 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 - Le workflow `.github/workflows/rag-guard-tests.yml` exécute désormais aussi `node tests/rag-eval-contract.test.mjs`.
 - Commit du jeu de référence : `096fab0e2bbcbfb6fff9ad167d39bc113587f59d`.
 - Commit du test et des métriques : `42b4a2a53f6f01bbb6ef8861e7b2e996d1b4bead`.
+- Ajustement mineur du message de sortie du test : `f53fef4557a6ff997736b2944678ffaad6360cbf`.
 - Commit du workflow : `e4bdd784e9218d47e73f4e10303964a776bb8ec8`.
 - Les fichiers ont été enregistrés sur `design/prototypes-67-74-alignment`. Leur exécution effective n'est pas confirmée dans ce lot; aucun résultat vert n'est revendiqué.
 
