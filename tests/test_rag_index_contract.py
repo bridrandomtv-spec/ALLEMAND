@@ -64,12 +64,12 @@ class PdfIndexerContractTests(unittest.TestCase):
                 }), encoding="utf-8")
                 corpus = {"_meta": {"keep": True}, "items": [{"id": "keep"}],
                           "documents": [
-                              {"id": "pdf-old", "titre": "Old PDF"},
+                              {"id": "pdf-sample-pdf", "titre": "Old PDF"},
                               {"id": "manual-other", "titre": "Other"}
                           ]}
                 chunks = [
                     {"doc": "manual-other", "n": 0, "texte": "Andere Quelle bleibt"},
-                    {"doc": "pdf-old", "n": 1, "texte": "Veralteter PDF Inhalt"}
+                    {"doc": "pdf-sample-pdf", "n": 1, "texte": "Veralteter PDF Inhalt"}
                 ]
                 terms = {"andere": [0], "quelle": [0], "bleibt": [0],
                          "veralteter": [1], "inhalt": [1]}
