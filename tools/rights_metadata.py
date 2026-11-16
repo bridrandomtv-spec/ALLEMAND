@@ -20,7 +20,7 @@ USAGES_AUTORISES_CONNUS = USAGES_REQUIS_INGESTION | {
 
 def document_couvert(meta, document_id, source_sha256):
     """Vérifie que la preuve écrite vise explicitement cet ID ou cette empreinte."""
-    if not isinstance(meta, dict) or meta.get("licence") != "autorisation_ecrite":
+    if not isinstance(meta, dict) or str(meta.get("licence", "")).strip().lower() != "autorisation_ecrite":
         return True
     scope = meta.get("perimetre_documentaire")
     if not isinstance(scope, dict):
