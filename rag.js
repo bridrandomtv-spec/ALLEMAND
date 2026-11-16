@@ -39,10 +39,22 @@
       String(q || '').toLowerCase().match(/[a-zà-ÿ\u0600-\u06ff]{3,}/g) || []));
   }
 
+  /* Seuls les documents dont les droits sont explicitement vérifiés
+     et référencés peuvent alimenter le RAG public. */
+  async function idsDocumentsAdmis(){
+    const corpus = await chargeCorp();
+    return new Set(((corpus && corpus.documents) || [])
+      .filter(d => d && d.droits_statut === 'verifies'
+        && typeof d.droits_reference === 'string' && d.droits_reference.trim().length >= 3)
+      .map(d => d.id));
+  }
+
   /* recherche shard par shard : un seul shard en mémoire à la fois */
   async function cherche(q){
     const ts = termes(q);
     if(!ts.length) return null;
+    const admis = await idsDocumentsAdmis();
+    if(!admis.size) return null;
     const man = await chargeManifest();
     if(man && man.shards && man.shards.length){
       let best = null;
@@ -60,7 +72,7 @@
           const sc = scores[cid];
           if(sc >= SEUIL && (!best || sc > best.score)){
             const chunk = (data.chunks || []).filter(c => c.n === +cid)[0];
-            if(chunk) best = { score: sc, texte: chunk.texte, doc: chunk.doc };
+            if(chunk && admis.has(chunk.doc)) best = { score: sc, texte: chunk.texte, doc: chunk.doc };
           }
         }
         if(best && best.score >= SEUIL + 3) break;   /* match fort : arrêt précoce */
@@ -77,7 +89,7 @@
       const sc = scores[cid];
       if(sc >= SEUIL && (!best || sc > best.score)){
         const ch = idx.chunks[+cid];
-        if(ch) best = { score: sc, texte: ch.texte, doc: ch.doc };
+        if(ch && admis.has(ch.doc)) best = { score: sc, texte: ch.texte, doc: ch.doc };
       }
     }
     return best;
