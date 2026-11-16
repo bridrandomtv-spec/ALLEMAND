@@ -60,10 +60,14 @@ def main(dossier):
     prefix = 'pdf-'
     docs[:] = [d for d in docs if not d['id'].startswith(prefix)]
     chunks_l[:] = [c for c in chunks_l if not c.get('doc', '').startswith(prefix)]
-    for k in list(termes):
-        termes[k] = [i for i in termes[k] if i < len(chunks_l)]
-        if not termes[k]:
-            del termes[k]
+    # Les positions des chunks changent après suppression : renuméroter puis
+    # reconstruire entièrement l'index inversé depuis le texte conservé.
+    for cid, chunk in enumerate(chunks_l):
+        chunk['n'] = cid
+    termes.clear()
+    for cid, chunk in enumerate(chunks_l):
+        for mot in set(re.findall(r'[A-Za-z\\u00c0-\\u00ff\\u0600-\\u06ff]{3,}', chunk.get('texte', '').lower())):
+            termes.setdefault(mot, []).append(cid)
     nb_doc = nb_chunk = nb_scan = nb_ocr = 0
     for nom in sorted(os.listdir(dossier)):
         if not nom.lower().endswith('.pdf'):
@@ -89,8 +93,8 @@ def main(dossier):
         docs.append({'id': did, 'titre': nom, 'matiere': 'allemand',
                      'niveau': '2AS/3AS', 'type': 'document', 'langue': 'de',
                      'annee': '2026/2027', 'format': 'pdf', 'url': ch,
-                     'source': 'docs archive eleve', 'licence': 'document utilisateur',
-                     'tags': ['pdf', via], 'extrait': t[:300].replace('\n', ' ')})
+                     'source': 'docs archive eleve', 'licence': 'non_verifiee',
+                     'droits_statut': 'a_verifier', 'tags': ['pdf', via], 'extrait': t[:300].replace('\n', ' ')})
         nb_doc += 1
         for cc in chunks(t):
             cid = len(chunks_l)
