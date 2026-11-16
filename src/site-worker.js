@@ -56,9 +56,11 @@ function preuveDroitsValide(rights){
   if(!objet(validation) || validation.statut !== 'valide'
     || !String(validation.verificateur || '').trim()
     || !dateISO(validation.date) || !String(validation.reference_preuve || '').trim()) return false;
-  const allowed = ['hebergement_source','extraction_texte','indexation_rag','restitution_extraits'];
+  const allowed = ['hebergement_source','extraction_texte','indexation_rag','restitution_extraits','ocr','traduction','redistribution_document'];
   if(!Array.isArray(rights.usages_autorises)
-    || !allowed.every(usage => rights.usages_autorises.includes(usage))) return false;
+    || !allowed.every(usage => rights.usages_autorises.includes(usage) || !rights.usages_autorises.includes(usage))
+    || !['hebergement_source','extraction_texte','indexation_rag','restitution_extraits'].every(usage => rights.usages_autorises.includes(usage))
+    || rights.usages_autorises.some(usage => !allowed.includes(usage))) return false;
   if(rights.licence === 'licence_libre'
     && (!String(rights.nom_licence || '').trim() || !/^https:\/\//i.test(String(rights.url_licence || '')))) return false;
   if(rights.licence === 'domaine_public'
@@ -120,13 +122,14 @@ async function emettrePreuveRag(request, env){
     for(const descriptor of manifest.shards){
       if(!objet(descriptor) || typeof descriptor.file !== 'string'
         || !/^shard_[0-9]{2,}\.json$/.test(descriptor.file) || files.has(descriptor.file)
-        || !Number.isSafeInteger(descriptor.nb_chunks) || descriptor.nb_chunks < 1)
+        || !Number.isSafeInteger(descriptor.nb_chunks) || descriptor.nb_chunks < 1
+        || !Number.isSafeInteger(descriptor.nb_termes) || descriptor.nb_termes < 1)
         throw new Error('invalid_shard_descriptor');
       files.add(descriptor.file);
       const shard = await lireJson(env, '/assets/bdd/shards/' + descriptor.file, request.url);
       if(!objet(shard) || shard._generation !== manifest.generation
         || !Array.isArray(shard.chunks) || shard.chunks.length !== descriptor.nb_chunks
-        || !objet(shard.termes)) throw new Error('invalid_shard');
+        || !objet(shard.termes) || Object.keys(shard.termes).length !== descriptor.nb_termes) throw new Error('invalid_shard');
       const localIds = new Set();
       for(const chunk of shard.chunks){
         if(!objet(chunk) || !Number.isSafeInteger(chunk.global_id) || chunk.global_id < 0
@@ -136,7 +139,8 @@ async function emettrePreuveRag(request, env){
           throw new Error('invalid_chunk');
         const doc = docs.get(chunk.doc);
         if(!doc || !/^[0-9a-f]{64}$/.test(doc.source_sha256 || '')
-          || doc.source_sha256 !== chunk.source_sha256 || !preuveDroitsValide(doc.droits))
+          || doc.source_sha256 !== chunk.source_sha256 || doc.licence !== doc.droits?.licence
+          || !preuveDroitsValide(doc.droits))
           throw new Error('document_provenance_mismatch');
         if(chunk.page_start != null || chunk.page_end != null){
           if(!Number.isSafeInteger(chunk.page_start) || chunk.page_start < 1
