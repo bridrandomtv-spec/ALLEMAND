@@ -4244,7 +4244,7 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 ## Lot 654 — contrôle du périmètre dans tous les indexeurs (16 novembre 2026)
 - Correction de l'import de repli dans `tools/ingest_corpus.py` : `document_couvert` est maintenant importé aussi lors de l'exécution directe depuis le répertoire `tools`.
 - L'indexeur PDF `tools/indexer_pdf.py` applique désormais la même règle de couverture que l'ingestion multi-format. Il calcule ID et SHA-256 puis refuse un document hors périmètre avant l'extraction PDF.
-- Trois tests ajoutés : import direct, refus avant extraction d'un document hors périmètre, acceptation d'un périmètre fondé sur l'empreinte exacte.
+- Trois tests ajoutés : import direct, refus avant extraction d'un document hors périmètre, acceptation d'un périmètre fondé sur l'empreinte exacte. Le contrôle de couverture normalise également la casse et les espaces du champ licence pour éviter qu'une variante textuelle contourne le contrôle spécifique aux autorisations écrites.
 - Les autorisations des tests sont synthétiques. Aucun document réel n'a été ingéré ou indexé et aucune preuve institutionnelle réelle n'a été créée.
-- Validation en attente d'un runner : le dernier job CI connu s'est arrêté avant toute étape et ne fournit aucun log de tests. Aucun PASS n'est revendiqué.
+- Validation en attente d'un runner : les workflows `43843641257` et `43843634363` se sont arrêtés avant toute étape (`steps=null`), et le téléchargement des logs renvoie 404. Aucun test n'a été exécuté/confirmé par CI et aucun PASS n'est revendiqué.
 - Aucun changement sur `main`, aucun merge, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/données/paiement/secrets.
