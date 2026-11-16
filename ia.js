@@ -275,6 +275,7 @@
       let ctx = 'CONTEXTE SCOLAIRE : matière=' + schoolContext.subject
         + ' ; niveau=' + schoolContext.level + ' ; filière=' + (schoolContext.track || 'non précisée') + '.\n';
       let ragCitation = '';
+      let ragEvidenceToken = '';
       let ragSourceStatus = schoolContext.subject === 'allemand' ? 'unavailable' : 'not_applicable';
       function requestedRagScope(value){
         const q = String(value || '').toLowerCase()
@@ -339,9 +340,27 @@
           }
         }catch(e){}
       }
+      if(schoolContext.subject === 'allemand' && requestedScope.type !== 'none'){
+        try{
+          const evidenceResponse = await fetchTimeout('/api/rag-evidence', {
+            method:'POST', headers:{ 'Content-Type':'application/json' },
+            body:JSON.stringify({ q:q })
+          }, 10000);
+          const evidence = evidenceResponse.ok ? await evidenceResponse.json() : null;
+          if(evidence && evidence.ok && typeof evidence.context === 'string'
+            && typeof evidence.token === 'string' && evidence.token.length > 20){
+            ctx = evidence.context;
+            ragEvidenceToken = evidence.token;
+            ragSourceStatus = 'verified';
+            ragScopeStatus = 'verified';
+            ragCitation = '📚 Source documentaire : ' + String(evidence.document_title || 'document vérifié')
+              + (Number.isSafeInteger(evidence.page_start) ? ' · p. ' + evidence.page_start : '');
+          }
+        }catch(e){}
+      }
       if(ragSourceStatus === 'unavailable') ctx += 'PROVENANCE RAG : aucun extrait RAG pertinent et vérifié n’a été trouvé pour cette question. Ne prétends pas citer une page, une unité ou un exercice officiel.\n';
       if(local && local.indexOf('لا أعرف') === -1) ctx += 'RÉPONSE LOCALE :\n' + local.slice(0, 700);
-      ctx = ctx.slice(0, 3000);
+      if(!ragEvidenceToken) ctx = ctx.slice(0, 3000);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
         headers:{ 'Content-Type':'application/json' },
@@ -353,7 +372,7 @@
           subject: schoolContext.subject, level: schoolContext.level,
           track: schoolContext.track, ctx: ctx, rag_source_status: ragSourceStatus,
           rag_scope_type: requestedScope.type, rag_scope_value: requestedScope.value,
-          rag_scope_status: ragScopeStatus,
+          rag_scope_status: ragScopeStatus, rag_evidence_token: ragEvidenceToken,
           understanding: understanding ? {
             normalized_question: String(understanding.norm || '').slice(0, 600),
             languages: Array.isArray(understanding.langs) ? understanding.langs.slice(0, 6) : [],
