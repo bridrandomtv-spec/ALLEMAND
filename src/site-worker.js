@@ -47,7 +47,7 @@ function dateISO(value){
   const parsed = new Date(value + 'T00:00:00Z');
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0,10) === value;
 }
-function preuveDroitsValide(rights){
+function preuveDroitsValide(rights, documentId, sourceHash){
   if(!objet(rights) || !['production_propre','domaine_public','autorisation_ecrite','licence_libre'].includes(rights.licence)
     || !String(rights.source || '').trim() || !String(rights.titulaire_droits || '').trim()
     || !String(rights.declarant || '').trim() || !dateISO(rights.date_declaration)
@@ -64,8 +64,20 @@ function preuveDroitsValide(rights){
     && (!String(rights.nom_licence || '').trim() || !/^https:\/\//i.test(String(rights.url_licence || '')))) return false;
   if(rights.licence === 'domaine_public'
     && (!String(rights.juridiction || '').trim() || !String(rights.fondement_juridique || '').trim())) return false;
-  if(rights.licence === 'autorisation_ecrite'
-    && !String(rights.reference_autorisation || '').trim()) return false;
+  if(rights.licence === 'autorisation_ecrite'){
+    if(!String(rights.reference_autorisation || '').trim()) return false;
+    const scope = rights.perimetre_documentaire;
+    if(!objet(scope)) return false;
+    const docIds = scope.identifiants_documents || [];
+    const hashes = scope.empreintes_sha256 || [];
+    if(!Array.isArray(docIds) || !Array.isArray(hashes)
+      || (!docIds.length && !hashes.length)
+      || docIds.some(x => typeof x !== 'string' || !x.trim())
+      || hashes.some(x => typeof x !== 'string' || !/^[0-9a-f]{64}$/.test(x))
+      || new Set(docIds).size !== docIds.length
+      || new Set(hashes).size !== hashes.length) return false;
+    if(!docIds.includes(documentId) && !hashes.includes(sourceHash)) return false;
+  }
   return true;
 }
 function scopeMatch(chunk, scope){
@@ -150,7 +162,7 @@ async function emettrePreuveRag(request, env){
         }
         ids.add(chunk.global_id); localIds.add(chunk.global_id);
         if(doc.licence === doc.droits?.licence && doc.source === doc.droits?.source
-          && preuveDroitsValide(doc.droits)) chunks.push(chunk);
+          && preuveDroitsValide(doc.droits, doc.id, doc.source_sha256)) chunks.push(chunk);
       }
       for(const [term, postings] of Object.entries(shard.termes)){
         if(!term.trim() || !Array.isArray(postings)) throw new Error('invalid_postings');
