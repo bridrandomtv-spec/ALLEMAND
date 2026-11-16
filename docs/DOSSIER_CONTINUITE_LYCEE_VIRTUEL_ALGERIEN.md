@@ -4725,3 +4725,11 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 3. Si un test échoue, corriger avant toute PR vers la branche de travail principale.
 4. Après validation, préparer une réindexation de test sur copie des données, jamais directement sur les shards de production.
 5. Mesurer ensuite les réponses Worker et leur qualité pédagogique avec revue humaine; ne pas confondre hit@1 lexical et qualité de réponse.
+
+
+### Correctif après le premier test local du Lot 583
+- Le 16 novembre 2026, le worktree Windows a été actualisé sur `ba2f24d3`. Six scripts JavaScript sur sept ont réussi; le runner échouait avant le calcul du benchmark sur l'assertion `Darija Arabic normalization must include مبتدأ`.
+- Diagnostic confirmé dans `rag.js` : `variantesArabe()` normalise `أ` en `ا` et retire ensuite l'article défini. La forme attendue après normalisation de `المبتدأ` est donc `مبتدا`, non `مبتدأ`. Il s'agissait d'une assertion incohérente avec le contrat de normalisation, pas encore d'une preuve d'échec de récupération du document.
+- Correctif appliqué à `tests/rag-eval-runner.test.mjs` : l'assertion vérifie désormais `مبتدا` et `خبر`. Commit : `c03cb413508b9187ebe5fb806549013620f2f618`.
+- Le correctif n'a pas encore été exécuté localement. Il faut relancer le runner, puis les sept scripts complets; vérifier le résultat des cas `dz-001` et `ar-latn-001` et confirmer `failures: []` avant de considérer le Lot 583 validé.
+- Python n'est pas installé/détecté via `py -3.12` sur le poste Windows; les tests Python restent en attente. Aucun changement de données réelles, production, Supabase, `main`, fusion ou déploiement.
