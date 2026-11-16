@@ -25,6 +25,11 @@ class IngestionContractTests(unittest.TestCase):
             corpus = {"_meta": {"version": "historic"}, "documents": [], "items": historic_items}
             (bdd / "corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
             (bdd / "corpus_index.json").write_text(json.dumps(vocabulary), encoding="utf-8")
+            (bdd / "corpus_chunks_index.json").write_text(json.dumps({
+                "version": "1.0.0", "schema": "rag-chunks-v1",
+                "chunks": [{"doc": "pdf-existing", "n": 0, "texte": "Altes Dokument erhalten"}],
+                "termes": {"altes": [0], "dokument": [0], "erhalten": [0]}
+            }), encoding="utf-8")
             (docs / "lesson.txt").write_text("Haus Schule lernen " * 80, encoding="utf-8")
             (docs / "_lesson.json").write_text(json.dumps({
                 "titre": "Leçon fixture", "matiere": "allemand", "niveau": "2AS",
@@ -45,8 +50,11 @@ class IngestionContractTests(unittest.TestCase):
             self.assertTrue(chunks_path.exists())
             chunks_index = json.loads(chunks_path.read_text(encoding="utf-8"))
             self.assertEqual(chunks_index["schema"], "rag-chunks-v1")
-            self.assertTrue(chunks_index["chunks"])
-            self.assertTrue(chunks_index["termes"])
+            self.assertEqual(len(chunks_index["chunks"]), 2)
+            self.assertEqual(chunks_index["chunks"][0]["doc"], "pdf-existing")
+            self.assertEqual([c["n"] for c in chunks_index["chunks"]], [0, 1])
+            self.assertIn(0, chunks_index["termes"]["altes"])
+            self.assertIn(1, chunks_index["termes"]["haus"])
 
 
 if __name__ == "__main__":
