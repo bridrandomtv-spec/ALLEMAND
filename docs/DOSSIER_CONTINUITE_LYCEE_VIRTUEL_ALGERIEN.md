@@ -4195,3 +4195,18 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun secret `RAG_EVIDENCE_HMAC_KEY` créé/configuré dans ce lot ; aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/données/paiements, aucun PDF traité, aucune fusion dans `main`.
 - Rapport : `docs/LOTS/LOT_650_EMETTEUR_PREUVES_RAG_WORKER_SITE.md`.
 - Suite Lot 651 : pré-audit non destructif du registre, fixtures RAG synthétiques complètes et cohérentes, contrôle des runs CI, puis seulement planification de la réingestion autorisée.
+
+
+## Lot 651 — pré-audit non destructif du registre documentaire (2026-11-16)
+
+- Contrôle de l'arbre Git et du catalogue : 239 fiches (225 PDF, 8 JSON, 6 HTML). Les 225 chemins PDF sont présents dans `docs/archive/documents/`; les 8 chemins JSON sont présents. Les 6 entrées HTML pointent vers l'ancre applicative `#english`, pas vers des fichiers autonomes.
+- Les 225 PDF représentent 129 697 189 octets (~123,69 Mio) selon les tailles Git. Attention : le SHA Git d'un blob n'est pas le SHA-256 du contenu PDF.
+- 0/239 fiches avec `source_sha256`, 0/239 avec objet `droits` structuré. Aucun sidecar `_<nom>.json` détecté à côté des 225 PDF.
+- Étiquettes historiques : 225 `document utilisateur`, 8 `usage pédagogique`, 4 `production propre`, 2 déclarations d'intégration utilisateur. Elles ne constituent pas, à elles seules, une preuve de droits.
+- L'utilisateur a indiqué disposer d'une autorisation institutionnelle pédagogique ; le dépôt inspecté ne contient pas de pièce/référence/périmètre vérifiable permettant de rattacher cette autorisation aux 225 PDF. Cela ne nie pas l'autorisation annoncée, mais interdit de fabriquer une preuve ou d'en déduire une redistribution intégrale.
+- Ajout de `tools/audit_corpus_registry.py`, audit strictement en lecture seule : contrôle chemins, présence, SHA-256 calculé par blocs, hash catalogue, sidecar, validation droits, constats cumulables et rapports JSON/Markdown.
+- Tests ajoutés dans `tests/test_corpus_pipeline.py` : source + preuve + hash concordants, source manquante, traversal de chemin, hash divergent. Workflow ajoute l'exécution et publie un artefact `audit-corpus-registry`.
+- CI observée : run `43831138421` en échec ; job `133176494256` avec `runner_id=0`, aucune étape et aucun log récupérable. L'échec intervient avant exécution des tests ; il ne prouve donc pas un échec des tests eux-mêmes. Aucun artefact d'audit n'a été produit.
+- Aucun PDF converti/OCRisé/indexé ; aucun hash réel inscrit dans le catalogue ; aucun secret, déploiement, changement Supabase/Auth/RLS/schéma/données/paiements ; aucune fusion dans `main`.
+- Rapport : `docs/LOTS/LOT_651_PREAUDIT_NON_DESTRUCTIF_REGISTRE.md`.
+- Suite : obtenir un runner CI exploitable, générer les SHA-256 via le script, vérifier la référence institutionnelle et son périmètre, puis seulement faire un pilote d'ingestion avec droits qualifiés.
