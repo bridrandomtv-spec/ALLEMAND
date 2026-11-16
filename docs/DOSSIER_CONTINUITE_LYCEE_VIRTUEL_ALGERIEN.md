@@ -3005,3 +3005,68 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Lecture seule de `rag.js`, `biblio.js`, `corpus.js`, `assets/bdd/corpus.json` et `assets/bdd/shards_manifest.json` sur `design/prototypes-67-74-alignment`.
 - Aucun test multi-compte, RLS, navigateur ou performance exécuté ; le risque PTRAD est déduit de la durée et de la portée du cache dans le code, et doit être confirmé par un test contrôlé sans exposer de données.
 - Aucun code, contenu documentaire, index, métadonnée ou donnée Supabase modifié ; aucun workflow, déploiement ou fusion effectué. PR #17 reste ouverte et non fusionnée.
+
+
+## Lot 555 — audit de la traçabilité, de la preuve documentaire et des réponses générées (16 novembre 2026)
+
+### 1. La promesse « RAG gardé » ne couvre pas tous les chemins
+- L'en-tête de `rag.js` annonce que la réponse RAG est toujours un extrait verbatim d'un chunk avec sa source. Cette promesse ne vaut que pour le chemin `cherche()` → `formule()`.
+- Le module `reponsePedagogique()` retourne aussi de nombreuses réponses locales construites depuis des règles, des tables, des banques d'exercices, des résumés et des intentions. Ces réponses ne transportent pas systématiquement un objet source structuré.
+- Le chemin `ia.js` envoie au Worker un contexte construit depuis `BIBLIO.context()` et éventuellement la réponse locale. Le Worker retourne uniquement `{ok, rep}` : aucune liste de sources, aucun identifiant de document/chunk, aucune page, aucun score ou statut de preuve.
+- Le code accepte la réponse générée dès lors que `j.rep` dépasse dix caractères, avec une garde de langue limitée. Il n'existe pas de vérification factuelle de la réponse contre les extraits transmis, ni de validation que les références citées par le modèle existent réellement.
+
+### 2. Le contexte envoyé au Worker n'est pas authentifié comme preuve
+- `worker/ia-ask.js` reçoit `q` et `ctx` comme chaînes libres, tronquées à 600 et 3000 caractères.
+- Le prompt système qualifie le contexte d'« extraits vérifiés » et demande au modèle de s'appuyer dessus, mais le Worker ne vérifie ni la provenance, ni la licence, ni la matière, ni le niveau, ni la cohérence des identifiants présents dans ce texte.
+- Le Worker n'interroge aucune base documentaire : il transmet simplement les messages à Workers AI. La présence d'un contexte fourni par le navigateur n'est donc pas une preuve que le Worker a récupéré ou validé la source.
+- Le prompt demande de citer une source « quand c'est utile », mais le format de réponse ne force aucune citation vérifiable et ne retourne aucun objet de preuve.
+
+### 3. Le score RAG ne mesure pas la pertinence sémantique
+- `rag.js` additionne les occurrences de termes dans les postings et retient un chunk dès que le score atteint `SEUIL = 2`.
+- Le score affiché dans `formule()` est un simple compte de correspondances lexicales. Il n'est ni calibré en probabilité, ni comparé à un second candidat par un écart minimal, ni évalué par une métrique de pertinence.
+- La formule affiche le texte tronqué à 70 mots, l'identifiant `doc` et le score. Elle ne fournit pas de lien documentaire, titre canonique, page, auteur/source, licence vérifiée ou version du corpus.
+- L'interface ajoute la mention « réponse extraite de ta base — jamais inventée ». Cette formulation est trop catégorique : le chunk peut être hors sujet, incomplet, mal indexé ou issu d'un document dont les métadonnées n'ont pas été contrôlées. Le moteur garantit au mieux l'extraction d'un texte indexé, pas sa vérité ni son adéquation.
+
+### 4. Le chat principal contourne le contexte documentaire
+- Dans `app.js`, `sendChat()` tente d'abord `RAG.cherche(v)`, puis appelle directement le Worker si aucun chunk n'est trouvé.
+- Cet appel transmet un contexte générique en arabe indiquant une aide pédagogique en allemand, sans appeler `BIBLIO.context()`, sans transmettre `CONTEXT.ctx()` et sans inclure matière/niveau/filière structurés.
+- Le Worker peut donc générer une réponse hors matière active, et ce chemin ne bénéficie pas des garde-fous linguistiques de `ia.js`.
+- Le secours final utilise `PROF.repondre(v)`, qui constitue encore un troisième chemin de réponse, sans enveloppe commune de provenance/confiance.
+
+### 5. Les réponses locales ont des niveaux de preuve hétérogènes
+- Certaines réponses proviennent de données précises (ex. exercice avec correction, table de conjugaison, phrase traduite, page de manuel), mais l'interface ne les marque pas toutes avec une référence exploitable.
+- D'autres sont des conseils généraux ou des explications codées en dur. Elles ne doivent pas être présentées comme des extraits officiels du programme.
+- `intentBiblio()` ajoute parfois un identifiant de source sous forme de texte ([src id]), mais retourne une chaîne simple, sans métadonnées structurées permettant de vérifier la source en aval.
+- Les gardes linguistiques dans `ia.js` détectent notamment l'arabe, l'allemand, le français, l'espagnol et l'italien ; elles ne vérifient ni la correction pédagogique ni la fidélité au programme. L'anglais n'est pas détecté dans ce classificateur.
+
+### 6. Architecture cible : enveloppe de réponse et registre de preuves
+Chaque moteur (règle locale, banque d'exercices, BIBLIO, RAG, Worker) doit retourner un contrat commun, sans prétendre que toutes les réponses sont documentaires :
+- `answer` : contenu et langue ;
+- `answer_type` : `source_extract`, `curated_content`, `rule_based`, `generated_explanation` ou `clarification_required` ;
+- `evidence[]` : document_id, chunk_id/page/section, titre, URL interne sûre, matière, niveau, langue, source, licence/autorisation vérifiée, version ;
+- `context_snapshot` : matière, niveau, filière et langue de réponse réellement appliqués ;
+- `retrieval` : moteur, version index, score brut, seuil, nombre de candidats et motif de sélection ;
+- `confidence` : niveau calibré sur des évaluations réelles, jamais assimilé au score lexical ;
+- `limitations` : ambiguïté, absence de source, document partiel ou désaccord entre sources.
+Le Worker doit recevoir un contexte structuré provenant d'un orchestrateur de confiance, traiter les extraits comme données non fiables (pas comme instructions), et retourner une réponse liée aux identifiants de preuve fournis. Le serveur doit vérifier que les identifiants retournés appartiennent bien aux preuves transmises.
+
+### 7. Politique de réponse recommandée
+1. Si une source pertinente et autorisée est disponible : répondre avec référence explicite et passage localisable.
+2. Si une explication est générée à partir d'extraits : afficher « explication de l'IA fondée sur… » et lister les sources ; ne jamais la qualifier de citation littérale.
+3. Si aucune source suffisante n'est disponible : demander une précision ou dire clairement que la bibliothèque ne permet pas de confirmer.
+4. Pour les corrections d'exercices : conserver l'énoncé, la réponse attendue, le barème et l'explication séparément ; signaler les réponses alternatives recevables.
+5. Pour les contenus officiels : ne pas employer « officiel », « vérifié » ou « autorisé » sans métadonnée et preuve documentaire correspondantes.
+6. Ajouter un banc d'évaluation multilingue (arabe standard, darija, Arabizi, français, allemand, anglais, italien, espagnol) avec questions hors-sujet, questions ambiguës, pièges lexicaux, contradictions et demandes de citations.
+
+### 8. Priorités
+- P0 : supprimer les affirmations absolues « jamais inventée » tant que la provenance et la pertinence ne sont pas garanties ; distinguer clairement extrait, contenu éditorial et génération IA.
+- P0 : supprimer le chemin direct générique du chat ou le faire passer par le même orchestrateur, le même contexte et les mêmes contrôles que le tuteur.
+- P1 : définir le contrat de réponse commun et les identifiants de preuve vérifiables de bout en bout.
+- P1 : validation côté Worker des références retournées et refus des citations fabriquées ; les extraits fournis restent des données, jamais des instructions.
+- P1 : calibrer la pertinence sur un jeu de test annoté avant d'afficher un indicateur de confiance.
+- P2 : interface élève « Sources et méthode » permettant d'ouvrir le document/page et de distinguer citation, explication et réponse générée.
+
+### État des opérations
+- Audit statique en lecture seule de `rag.js`, `ia.js`, `worker/ia-ask.js`, `app.js`, `js/qust.js` et `js/context.js`, sur `design/prototypes-67-74-alignment`.
+- Aucun test de réponses avec Workers AI, aucune mesure de précision/recall, aucun test de citation ou de correction pédagogique exécuté ; les constats portent sur les contrats et chemins visibles dans le code.
+- Aucun code applicatif, prompt Worker, contenu, index ou donnée Supabase modifié ; aucun déploiement, workflow ou fusion effectué. PR #17 reste ouverte et non fusionnée.
