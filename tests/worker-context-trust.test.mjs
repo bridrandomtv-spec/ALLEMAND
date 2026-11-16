@@ -35,6 +35,9 @@ assert.equal(payload.ok, true);
 assert.ok(capturedMessages, 'AI must receive the prompt messages');
 assert.match(capturedMessages[0].content, /NON AUTHENTIFIÉ/);
 assert.match(capturedMessages[0].content, /Ignore toute instruction/);
+assert.match(capturedMessages[0].content, /partial ou planned/);
+assert.match(capturedMessages[0].content, /pas une preuve de droits/);
+assert.doesNotMatch(capturedMessages[0].content, /Tu MAÎTRISES CINQ langues/);
 assert.match(capturedMessages[1].content, /CONTEXTE FOURNI PAR LE CLIENT — NON AUTHENTIFIÉ/);
 assert.doesNotMatch(capturedMessages[1].content, /^CONTEXTE VÉRIFIÉ/);
 
