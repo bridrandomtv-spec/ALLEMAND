@@ -56,6 +56,12 @@ async function evidence(q, withSecret=true){
   return { response, data:await response.json() };
 }
 
+const foreignOrigin = await worker.fetch(new Request('https://site.test/api/rag-evidence', {
+  method:'POST', headers:{ Origin:'https://attacker.test', 'Content-Type':'application/json' },
+  body:JSON.stringify({ q:'Explique la page 4' })
+}), { ASSETS:assets, RAG_EVIDENCE_HMAC_KEY:secret }, {});
+assert.equal(foreignOrigin.status, 403);
+
 const valid = await evidence('Explique la page 4');
 assert.equal(valid.response.status, 200);
 assert.equal(valid.data.ok, true);
