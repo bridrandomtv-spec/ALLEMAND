@@ -117,7 +117,7 @@ def main(dossier):
                      'source': meta['source'], 'licence': meta['licence'],
                      'droits_statut': 'verifies', 'droits_reference': meta['droits_reference'],
                      'tags': meta.get('tags', []) + ['pdf', via],
-                     'extrait': t[:300].replace('\\n', ' ')})
+                     'extrait': t[:300].replace('\n', ' ')})
         nb_doc += 1
         for cc in chunks(t):
             cid = len(chunks_l)
