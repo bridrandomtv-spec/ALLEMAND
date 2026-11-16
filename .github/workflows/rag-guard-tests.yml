@@ -18,6 +18,10 @@ on:
       - main
     paths:
       - "rag.js"
+      - "worker/ia-ask.js"
+      - "app.js"
+      - "index.html"
+      - "js/teacher-context.js"
       - "app.js"
       - "index.html"
       - "js/teacher-context.js"
