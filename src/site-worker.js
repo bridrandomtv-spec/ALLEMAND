@@ -91,7 +91,7 @@ async function emettrePreuveRag(request, env){
     if(raw.length > 4096) return jsonRes({ ok:false, error:'request_too_large' }, 413);
     body = raw ? JSON.parse(raw) : {};
   }catch(e){ return jsonRes({ ok:false, error:'invalid_json' }, 400); }
-  const q = typeof body.q === 'string' ? body.q.trim().slice(0, 1200) : '';
+  const q = typeof body.q === 'string' ? body.q.trim().slice(0, 600) : '';
   if(!q) return jsonRes({ ok:false, error:'question_required' }, 400);
   const requested = portee(q);
   let manifest, corpus;
