@@ -3786,3 +3786,110 @@ Tables explicitement couvertes par `ENABLE ROW LEVEL SECURITY` dans les fichiers
 
 ### Suite logique
 Lot 564 : préparer la requête d'inventaire read-only des catalogues Supabase et la batterie pgTAP correspondant aux constats P1, sans appliquer de correction en production.
+
+
+## Lot 564 — reprise du chantier intelligence : audit du pipeline réel QUST → RAG/BIBLIO → IA → Messenger/voix (16 novembre 2026)
+
+### Réponse à la question du propriétaire
+Oui, l'objectif central reste bien l'intelligence pédagogique de la plateforme. Les Lots 560–563 étaient un détour nécessaire de sécurité des données et des accès ; ils n'avaient pas encore amélioré le moteur pédagogique. Le présent lot revient explicitement au cerveau IA. Audit statique du dépôt, sans modification de code ni de données.
+
+### 1. Architecture réellement présente
+
+**QUST — compréhension déterministe**
+- `js/qust.js` normalise la question, tente de détecter langue, intention et entités, puis renvoie une confiance.
+- Il ne répond pas, ne fait pas de réseau et n'oriente pas lui-même vers une action.
+- Les langues explicitement repérées dans ce fichier sont arabe, darija/Arabizi, français et allemand. La détection anglaise, espagnole et italienne n'est pas complète.
+- Le vocabulaire d'intentions est réduit à compare, summarize, correct_exercise, translate, practice_exercise, explain_rule, explain_word, find_page et explain_lesson.
+
+**RAG — réponses locales et spécialisées**
+- `rag.js` contient des gestionnaires pédagogiques locaux (pages, grammaire, conjugaison, vocabulaire, résumés, exercices, etc.).
+- La recherche lexicale du corpus attend `shards_manifest.json` avec des shards `{termes,chunks}`, ou un index historique `corpus_index.json` de forme `{termes,chunks}`.
+- Le manifeste actuellement versionné déclare `nb_shards: 0`, `total_chunks: 0`, `shards: []`.
+- Le repli `corpus_index.json` versionné est actuellement un index de vocabulaire DE–AR `{_meta,items}`, pas un index de chunks. Il n'a donc pas la structure attendue par `rag.js`.
+
+**BIBLIO — bibliothèque et contexte envoyé au modèle**
+- `biblio.js` charge livres, devoirs, grammaire, corpus, darija, sharh, bibliothèque multimatieres et traductions.
+- Son moteur classe lexicalement les entrées (titre +5, texte +2, tags +3) et retourne jusqu'à quatre résultats avec score strictement positif ; aucun seuil minimal de pertinence ni écart minimal entre le premier et le second résultat n'est appliqué.
+- `BIBLIO.context()` transforme les résultats en extraits étiquetés, mais le filtrage par matière, niveau et filière n'est pas imposé dans la recherche elle-même.
+- Le fichier `corpus_index.json` est également chargé par BIBLIO comme vocabulaire. Il est donc partagé par deux contrats incompatibles.
+
+**IA distante — Worker Cloudflare**
+- `ia.js` appelle d'abord `reponsePedagogique()`, puis, si la réponse locale est jugée faible, envoie la question et un contexte textuel de BIBLIO au Worker.
+- `worker/ia-ask.js` reçoit seulement `q` et `ctx` (texte libre tronqué à 3000 caractères), puis transmet ces messages à Workers AI ou à l'API Cloudflare. Le Worker n'effectue lui-même aucune recherche RAG, ne reçoit pas de contexte structuré matière/niveau/filière, et ne retourne pas de citations structurées.
+- Le prompt système décrit un RAG allemand A1–B2, mais le code Worker ne fait pas de retrieval. Il dépend entièrement du contexte fourni par le client.
+
+**Messenger / chat écrit**
+- `app.js` `sendChat()` appelle directement `RAG.cherche()`, puis `RAG.formule()`.
+- Si aucun résultat n'est formulé, il appelle directement le Worker `/ask` avec un contexte allemand codé en dur, sans passer par `reponseIA()`, `BIBLIO.context()` ni `CONTEXT.ctx()`.
+- Le chat écrit ne partage donc pas le même orchestrateur ni le même contexte pédagogique que la voix. Cela peut provoquer une réponse allemande hors matière active, ou une réponse cloud non ancrée dans la bibliothèque.
+
+**Voix**
+- `parle.js` utilise `reponseIA()` puis la synthèse vocale ; c'est un chemin différent du chat écrit.
+- Le navigateur fournit la reconnaissance vocale via Web Speech API. Les langues proposées par l'interface ne prouvent pas une compréhension pédagogique complète dans chacune.
+- La détection vocale explicite identifie arabe, allemand, français, espagnol et italien ; l'anglais reste imparfaitement détecté dans la logique observée.
+- L'orchestration voix peut produire un texte local ou cloud, mais les citations structurées et les preuves documentaires ne sont pas conservées comme contrat de sortie.
+
+### 2. Évaluation d'intentions : résultat mesuré présent dans le dépôt
+`assets/bdd/intent_eval_set.json` contient 146 exemples. `intent_eval_results.json` rapporte :
+- exactitude d'intention : **75,3 %** ;
+- exactitude de catégorie : **100 %** selon la définition du fichier ;
+- catégorie EXPLAIN : 70 % ;
+- PRACTICE : 69 % ;
+- REVISION : 73 % ;
+- SEARCH : 78 % ;
+- CORRECTION, NAVIGATION et TRANSLATE : 100 % dans ce jeu.
+
+Ce résultat est un artefact de test versionné, pas une nouvelle exécution indépendante. Les exemples comportent plusieurs formulations identiques réutilisées pour des intentions différentes ; la catégorie est souvent correcte alors que l'intention exacte reste ambiguë. Il faut dédupliquer, séparer train/dev/test et enrichir les cas réels Darija/Arabizi avant de prendre 75,3 % comme référence fiable.
+
+### 3. Défaut de conception prioritaire confirmé
+Le point le plus bloquant n'est pas le choix d'un nouveau modèle IA : c'est l'absence d'un **orchestrateur unique** et d'un **contrat de corpus cohérent**.
+- Le chat écrit contourne le cerveau `reponseIA()`.
+- Le moteur vocal utilise `reponseIA()`, mais ne partage pas le même chemin que Messenger.
+- QUST reconnaît des intentions mais son fallback dans `rag.js` ne traite effectivement que la page (`entities.page`) ; la plupart des intentions QUST ne sont pas routées vers des actions dédiées.
+- BIBLIO et RAG attendent deux structures incompatibles dans le même fichier `corpus_index.json`.
+- Le Worker est un générateur de texte conditionné par un contexte client, pas un moteur RAG.
+- Les réponses n'ont pas de contrat uniforme de preuve : source, document, page/section, niveau, matière, statut de couverture et degré de confiance.
+
+### 4. Priorité de réalisation proposée — ordre technique
+**P0 — sécuriser le contrat de connaissance**
+1. Ne pas lancer `tools/ingest_corpus.py` en l'état : il écrirait `{termes,chunks}` dans `corpus_index.json` et écraserait l'index vocabulaire utilisé par BIBLIO.
+2. Séparer les artefacts : index lexical de chunks distinct, index vocabulaire conservé, manifeste de shards versionné.
+3. Enrichir chaque chunk avec `doc_id`, `chunk_id`, matière, niveau, filière, langue, type, unité/leçon, source, licence/état des droits, page/section, hash et version du découpage.
+4. Ajouter des filtres stricts matière/niveau/filière avant classement ; si le contexte manque, ne pas inventer ces métadonnées.
+
+**P0 — orchestrateur partagé**
+5. Créer une seule entrée logique de réponse appelée par Messenger, voix et autres surfaces : snapshot de contexte → QUST → routage/action → BIBLIO/RAG → réponse locale ou LLM → validation de preuve → format texte/voix.
+6. Remplacer le contexte allemand codé en dur de `app.js` par le contexte réel du compte et de la matière active.
+7. Faire transiter les réponses du chat écrit par le même orchestrateur que la voix ; conserver une seule logique de langue, d'abstention, de source et d'erreur.
+
+**P1 — qualité pédagogique**
+8. Connecter explicitement chaque intention QUST à une action existante ou à un état « non pris en charge » ; ne pas confondre reconnaissance d'intention et exécution.
+9. Réviser BIBLIO avec seuil de pertinence, marge entre résultats, filtres metadata et abstention si les résultats sont faibles ou contradictoires.
+10. Ajouter un format de réponse commun : `answer`, `answer_mode` (grounded/partial/ungrounded), `sources[]`, `confidence`, `language`, `subject_context`, `next_action`. Les sources doivent rester visibles dans Messenger et être prononçables/résumables dans la voix.
+11. Évaluer séparément les langues d'interaction et les matières réellement couvertes. Allemand reste le domaine le plus avancé ; anglais est partiel ; espagnol/italien ne doivent pas être présentés comme des matières pédagogiques complètes.
+
+**P2 — modèle et voix**
+12. Après stabilisation du retrieval et des évaluations, comparer les modèles sur un jeu de questions identique ; ne pas remplacer le modèle avant d'avoir une base de référence.
+13. Tester reconnaissance vocale et synthèse vocale par navigateur/appareil/langue, en séparant erreurs ASR, erreurs de compréhension, erreurs de retrieval et erreurs de synthèse.
+14. Construire un dialogue pédagogique multi-tours avec mémoire de session limitée et consentie : question de clarification, explication adaptée, exercice, correction, remédiation, sans mélanger les données de comptes.
+
+### 5. Tests d'acceptation à créer
+- Même question et même contexte → même intention, même source et même réponse de fond dans Messenger et en voix.
+- Un élève anglais ne reçoit jamais par défaut le contexte allemand.
+- Une requête hors matière ou hors niveau ne récupère pas un document allemand par défaut.
+- Question Darija/Arabizi → langue comprise correctement, mais matière déterminée par le contexte de l'élève.
+- Réponse documentaire → source et page vérifiables ; aucune page ni licence inventée.
+- Corpus vide ou score faible → réponse d'abstention utile, pas hallucination.
+- Questions ambiguës → clarification avant réponse définitive.
+- Index vocabulaire et index chunks restent distincts après ingestion.
+- Tests pour 1AS/2AS/3AS, matières et langues réellement déclarées dans `subjects.json`.
+
+### 6. État de réalisation
+- Audit IA du code réel effectué sur la branche `design/prototypes-67-74-alignment`.
+- Défaut prioritaire identifié : orchestration divergente chat/voix et conflit de contrat `corpus_index.json`.
+- Évaluation d'intentions existante relevée : 146 exemples, 75,3 % d'exactitude d'intention (résultat déjà stocké, non recalculé dans ce lot).
+- Aucun fichier applicatif, corpus, index, modèle, Worker, SQL ou déploiement modifié.
+- Aucun nouvel outil IA externe installé : la priorité est de rendre cohérent et testable le pipeline déjà présent.
+
+### Suite logique
+Lot 565 : concevoir puis implémenter, après validation des points de compatibilité, la séparation non destructive des index vocabulaire/chunks et le contrat d'orchestration partagé. Première étape : tests de non-régression et plan de modification minimal ; aucun écrasement de l'index actuel.
