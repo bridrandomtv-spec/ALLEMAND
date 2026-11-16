@@ -4395,6 +4395,12 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 - `.github/workflows/rag-guard-tests.yml` — déclencheurs PR étendus.
 - Ce dossier — journal du lot.
 
+### Commits du lot
+- `app.js` : `be65ee0dec92a5fd90c6601407dee53eb76bd0fc`.
+- `worker/ia-ask.js` : `35e53e60f666ad7fb48e695f65b7df9adab9d22a`.
+- `tests/worker-context-trust.test.mjs` : `04bac2e8a9a0411466e0130bc05878a479c1d987`.
+- Workflow CI : `e1e99b47f6bfb3dc29956f1ba342437b45e89715`, puis nettoyage des filtres de chemins.
+
 ### Ce qui n'est pas fait
 - Pas d'injection d'extraits RAG dans le Worker : la réponse RAG locale prioritaire retourne actuellement directement une réponse formatée et ne fournit pas au Worker de source authentifiée côté serveur.
 - Pas de conversation audio continue ni d'envoi audio brut.
