@@ -88,7 +88,7 @@ def main(dossier):
         chunk['n'] = cid
     termes.clear()
     for cid, chunk in enumerate(chunks_l):
-        for mot in set(re.findall(r'[A-Za-z\\u00c0-\\u00ff\\u0600-\\u06ff]{3,}', chunk.get('texte', '').lower())):
+        for mot in set(re.findall(r'[A-Za-z\u00c0-\u00ff\u0600-\u06ff]{3,}', chunk.get('texte', '').lower())):
             termes.setdefault(mot, []).append(cid)
 
     nb_doc = nb_chunk = nb_scan = nb_ocr = 0
@@ -123,7 +123,7 @@ def main(dossier):
             cid = len(chunks_l)
             chunks_l.append({'doc': did, 'n': cid, 'texte': cc})
             nb_chunk += 1
-            for mot in set(re.findall(r'[A-Za-z\\u00c0-\\u00ff\\u0600-\\u06ff]{3,}', cc.lower())):
+            for mot in set(re.findall(r'[A-Za-z\u00c0-\u00ff\u0600-\u06ff]{3,}', cc.lower())):
                 termes.setdefault(mot, []).append(cid)
 
     idx['version'] = '1.0.0'
