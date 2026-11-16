@@ -4684,3 +4684,44 @@ Aucune fusion vers `main), aucun déploiement Cloudflare, aucune modification Su
 - Aucun changement Supabase, Auth, RLS, SQL, schéma, paiement, branche `main`, fusion ou déploiement Cloudflare.
 - Le worktree de test reste séparé; le dépôt local principal reste sur `design-prototype-v1-main`.
 - Le blocage GitHub Actions lié au démarrage des runners/quotas n'est pas résolu par ce lot.
+
+
+
+## Lot 583 — normalisation de recherche arabe, darija et Arabizi (16 novembre 2026)
+
+### Diagnostic repris
+- Le benchmark local du commit `0cf70a51` a montré que l'arabe standard retrouvait le passage synthétique, tandis que les requêtes darija en écriture arabe et Arabizi ne le retrouvaient pas.
+- Le runner corrigé signale désormais ces deux cas comme des échecs bloquants; le score `hit@1 = 0,7143` observé avant le Lot 583 n'est pas considéré comme une validation du benchmark.
+- La cause technique traitée est le manque de variantes communes entre les tokens des questions et ceux des chunks indexés, notamment les préfixes arabes attachés et les expressions Arabizi latines contrôlées.
+
+### Changements préparés sur une branche isolée
+- Nouvelle branche : `ai/lot-583-darja-arabizi-rag`, créée depuis `design/prototypes-67-74-alignment`. La branche de travail initiale et `main` ne sont pas modifiées.
+- `rag.js` : normalisation des signes diacritiques, du tatweel, des variantes d'alif et de l'alif maqṣūra; génération prudente de variantes pour l'article `ال` et les préfixes `و/ف/ب/ك/ل); expansion Arabizi limitée à un petit dictionnaire explicite (ex. `jomla` → `الجملة`, `ismiya` → `الاسمية`). L'API expose aussi `RAG.termes()` pour permettre au banc synthétique de construire un index conforme au même tokenizer.
+- Nouveau module partagé `tools/rag_normalization.py` pour garantir la même normalisation pendant l'indexation Python.
+- `tools/ingest_corpus.py` et `tools/indexer_pdf.py` utilisent le module partagé pour construire les postings. Les index de production existants ne sont pas reconstruits automatiquement.
+- `tests/rag-eval-runner.test.mjs` construit désormais son shard synthétique avec `RAG.termes()` et ajoute des assertions explicites pour les variantes darija et Arabizi.
+- `tests/test_ingest_corpus_contract.py` vérifie les variantes arabes attachées et les alias Arabizi dans le module Python.
+
+### Commits du Lot 583
+- Normalisation runtime RAG : `5afd6275762405678874e9ddf083ebbdc6e60559`.
+- Première intégration de normalisation dans l'ingestion, ensuite factorisée : `6162808e201236bcfecf97a03fb3062893437384`.
+- Runner synthétique aligné sur le tokenizer RAG : `d071d63739f299e3d69cac83d396c1161039346c`.
+- Module Python partagé : `87505b23855361c23cc23ba954dc82ef0ea10758`.
+- Ingestion générique raccordée au module partagé : `6738eb7bd77b40bf2ca8f34b4b15733ef1668d9d`.
+- Indexeur PDF raccordé au module partagé : `c665d8c43ca7f14cc465becf3071a15a21e1709d`.
+- Contrat Python de normalisation : `170653cd0131825ecf80aa5acaed448c2c3ec040`.
+
+### Validation et limites
+- Les changements sont écrits sur `ai/lot-583-darja-arabizi-rag`; aucune exécution post-changement de Node ou Python n'est encore revendiquée.
+- Le poste Windows observé ne disposait pas de lanceur Python `py`; les deux contrats Python restent donc à exécuter dans un environnement Python disponible.
+- Le benchmark reste synthétique. Les alias Arabizi sont volontairement limités et ne constituent pas une translittération universelle ni un modèle de compréhension du dialecte algérien.
+- Les index/shards de production déjà générés ne sont pas mis à jour par ces commits. Une réindexation contrôlée, après sauvegarde et audit de droits, sera nécessaire pour bénéficier des nouvelles variantes dans les vrais documents.
+- Aucun corpus réel, PDF, manuel, shard ou embedding de production n'a été modifié. Aucun changement Supabase/Auth/RLS/SQL/schéma/paiement, aucune modification de `main`, aucune fusion, aucun déploiement Cloudflare.
+- Le dépôt principal local `ALLEMAND-redesign-v2` reste sur `design-prototype-v1-main`; le worktree `ALLEMAND-RAG-TESTS` existant n'a pas été modifié depuis les tests du Lot 582.
+
+### Suite requise
+1. Actualiser le worktree isolé sur `ai/lot-583-darja-arabizi-rag` et exécuter les sept tests JavaScript; le runner doit terminer avec zéro échec et retrouver le même passage pour darija et Arabizi.
+2. Installer ou rendre disponible Python 3.12, puis exécuter `python -m unittest discover -s tests -p "test_*contract.py" -v`; vérifier les deux indexeurs et leurs contrats.
+3. Si un test échoue, corriger avant toute PR vers la branche de travail principale.
+4. Après validation, préparer une réindexation de test sur copie des données, jamais directement sur les shards de production.
+5. Mesurer ensuite les réponses Worker et leur qualité pédagogique avec revue humaine; ne pas confondre hit@1 lexical et qualité de réponse.
