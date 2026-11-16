@@ -15,9 +15,9 @@ import re
 from pathlib import Path
 
 try:
-    from tools.rights_metadata import valider_metadonnees
+    from tools.rights_metadata import valider_metadonnees, document_couvert
 except ModuleNotFoundError:
-    from rights_metadata import valider_metadonnees
+    from rights_metadata import valider_metadonnees, document_couvert
 
 
 HASH_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -90,6 +90,8 @@ def auditer(corpus_path, repo_root):
                 with open(sidecar, encoding="utf-8") as stream:
                     rights = json.load(stream)
                 rights_ok, rights_reason = valider_metadonnees(rights)
+                if rights_ok and not document_couvert(rights, did, source_hash):
+                    rights_ok, rights_reason = False, "document hors périmètre de l'autorisation"
             except (OSError, UnicodeError, json.JSONDecodeError) as exc:
                 rights_ok, rights_reason = False, "sidecar illisible: " + str(exc)
         else:
