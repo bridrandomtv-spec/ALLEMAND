@@ -6,11 +6,12 @@ tools/ingest_corpus.py — construit le corpus pédagogique depuis UN dossier lo
 Usage :
     python tools/ingest_corpus.py ./mes_documents
 
-Le dossier doit contenir des fichiers .pdf / .docx / .txt / .md, et OPTIONNELLEMENT
-un fichier _meta.json par document :
-    {"titre": "...", "matiere": "allemand", "niveau": "2AS", "type": "cours",
-     "annee": "2026/2027", "source": "...", "licence": "production propre",
-     "tags": ["..."]}
+Chaque document doit être accompagné d'un fichier _<nom>.json contenant au minimum :
+    {"titre":"...", "matiere":"allemand", "niveau":"2AS", "type":"cours",
+     "langue":"de", "source":"...", "licence":"production_propre",
+     "droits_verifies":true, "droits_reference":"référence vérifiable"}
+Les métadonnées absentes, incomplètes ou sans preuve explicite de droits sont
+placées dans assets/bdd/corpus_quarantaine.json et ne sont pas indexées.
 
 Ce script :
   1. extrait le texte (pypdf pour PDF, python-docx pour DOCX, brut pour txt/md ;
