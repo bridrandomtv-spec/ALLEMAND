@@ -58,7 +58,6 @@ function preuveDroitsValide(rights){
     || !dateISO(validation.date) || !String(validation.reference_preuve || '').trim()) return false;
   const allowed = ['hebergement_source','extraction_texte','indexation_rag','restitution_extraits','ocr','traduction','redistribution_document'];
   if(!Array.isArray(rights.usages_autorises)
-    || !allowed.every(usage => rights.usages_autorises.includes(usage) || !rights.usages_autorises.includes(usage))
     || !['hebergement_source','extraction_texte','indexation_rag','restitution_extraits'].every(usage => rights.usages_autorises.includes(usage))
     || rights.usages_autorises.some(usage => !allowed.includes(usage))) return false;
   if(rights.licence === 'licence_libre'
