@@ -97,6 +97,27 @@ def main(dossier):
         os.makedirs("assets/corpus", exist_ok=True)
         shutil.copy(chemin, "assets/corpus/" + did + "." + ext)
         print("  indexé :", nom, "→", did, "·", len(chunks(texte)), "chunks")
+    # Fusionner les chunks existants : une ingestion partielle ne doit pas effacer
+    # les documents indexés par l'indexeur PDF ou une ingestion précédente.
+    index_path = os.path.join("assets", "bdd", "corpus_chunks_index.json")
+    try:
+        with open(index_path, encoding="utf-8") as f:
+            existant = json.load(f)
+    except (OSError, ValueError):
+        existant = {"version": "1.0.0", "schema": "rag-chunks-v1", "termes": {}, "chunks": []}
+    ids_remplaces = {d["id"] for d in docs}
+    conserves = [c for c in existant.get("chunks", []) if c.get("doc") not in ids_remplaces]
+    tous_chunks = conserves + index["chunks"]
+    # Les postings sont reconstruits depuis les chunks, jamais recopiés avec
+    # des positions devenues obsolètes après suppression/remplacement.
+    termes = {}
+    for cid, chunk in enumerate(tous_chunks):
+        chunk["n"] = cid
+        for mot in set(re.findall(r"[A-Za-zÀ-ÿ\\u0600-\\u06FF]{3,}", chunk.get("texte", "").lower())):
+            termes.setdefault(mot, []).append(cid)
+    index = {"version": "1.0.0", "schema": "rag-chunks-v1",
+             "termes": termes, "chunks": tous_chunks}
+
     os.makedirs("assets/bdd", exist_ok=True)
     # Mise à jour additive : préserver les champs historiques du registre.
     corpus_path = os.path.join("assets", "bdd", "corpus.json")
@@ -111,7 +132,7 @@ def main(dossier):
     registre["documents"] = list(par_id.values())
     with open(corpus_path, "w", encoding="utf-8") as f:
         json.dump(registre, f, ensure_ascii=False, indent=1)
-    with open(os.path.join("assets", "bdd", "corpus_chunks_index.json"), "w", encoding="utf-8") as f:
+    with open(index_path, "w", encoding="utf-8") as f:
         json.dump(index, f, ensure_ascii=False)
     print("  corpus.json préservé :", len(registre["documents"]), "documents ·",
           len(index["chunks"]), "chunks RAG séparés")
