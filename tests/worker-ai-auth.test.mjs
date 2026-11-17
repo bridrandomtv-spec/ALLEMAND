@@ -465,7 +465,7 @@ test('le Worker récupère côté serveur uniquement le contenu gratuit 3AS unit
   }), h.env);
   assert.equal(response.status, 200);
   assert.ok(h.calls.some(x => x.url === 'https://allemand.brid-randomtv.workers.dev/unite3as1_free.js'));
-  assert.match(h.messages[1].content, /CONTENU PÉDAGOGIQUE GRATUIT VÉRIFIÉ/);
+  assert.match(h.messages[1].content, /CONTENU PÉDAGOGIQUE AUTORISÉ — SOURCE GRATUITE PUBLIQUE/);
   assert.ok(h.messages[1].content.includes(freeSource));
   assert.equal(h.calls.some(x => x.url.includes('/rest/v1/subscriptions')), false);
 });
