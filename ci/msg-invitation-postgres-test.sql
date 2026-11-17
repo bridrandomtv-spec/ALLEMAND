@@ -208,6 +208,7 @@ end $$;
 -- Les transitions d'expiration par le destinataire/l'expéditeur sont signalées comme réussies.
 select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
 create temporary table expired_cancel_invite(id uuid);
+grant select on expired_cancel_invite to authenticated;
 insert into expired_cancel_invite select public.msg_invite_send('20000000-0000-4000-8000-000000000003');
 reset role;
 update public.msg_invites set created_at=now()-interval '8 days'
@@ -224,6 +225,7 @@ end $$;
 
 select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001',false);
 create temporary table expired_decline_invite(id uuid);
+grant select on expired_decline_invite to authenticated;
 insert into expired_decline_invite select public.msg_invite_send('20000000-0000-4000-8000-000000000004');
 reset role;
 update public.msg_invites set created_at=now()-interval '8 days'
