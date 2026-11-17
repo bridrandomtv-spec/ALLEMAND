@@ -47,6 +47,30 @@
     }catch(e){ return null; }
     return { type:'book_page', page:page, level:level };
   }
+  function lessonResource(question){
+    const text = String(question || '');
+    const sessionMatch = text.match(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس)\\s*[:#-]?\\s*(\\d{1,2})/i);
+    if(!sessionMatch) return null;
+    const explicit3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(text);
+    const explicit2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(text);
+    let level = '';
+    try{ level = window.getNiveauActif ? window.getNiveauActif() : ''; }catch(e){}
+    if(explicit3) level = '3AS';
+    else if(explicit2) level = '2AS';
+    if(level !== '3AS') return null;
+    const unitMatch = text.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\\s*[:#-]?\\s*(\\d{1,2})/i);
+    let unit = unitMatch ? Number(unitMatch[1]) : null;
+    if(unit == null){
+      try{
+        const active = window.uniteActive && window.uniteActive();
+        if(active && Number.isInteger(+active.n)) unit = +active.n;
+      }catch(e){}
+    }
+    if(unit != null && unit >= 10 && unit <= 19) unit -= 9;
+    const lesson = Number(sessionMatch[1]);
+    if(unit !== 1 || ![1,2].includes(lesson)) return null;
+    return { type:'free_unit_lesson', level:'3AS', unit:1, lesson:lesson };
+  }
   window.reponseIA = async function(q, meta){
     q = String(q == null ? '' : q).trim();
     if(!q) return '';
@@ -153,7 +177,7 @@
     const accessToken = authState && authState.ok && authState.session && authState.session.access_token;
     if(!accessToken) return sortieFaible(local, 'session-supabase-requise');
     try{
-      const resource = await pageResource(q);
+      const resource = await pageResource(q) || lessonResource(q);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
         headers:{
