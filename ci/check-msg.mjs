@@ -225,7 +225,7 @@ if (fail.length) { console.error('::error:: check-msg Lot 360 : ' + fail.length 
 
 ok(msgjs.includes('msg-pro-hero') && msgjs.includes('msg-pro-stats'), 'nouvelle hiérarchie pédagogique Messenger');
 ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجموعة '("), 'libellé de groupe construit sans appel de chaîne invalide');
-ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key]')"), 'filtres Messenger accessibles via délégation de clic');
+ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-verif-page],[data-mod]')"), 'filtres Messenger accessibles via délégation de clic');
 ok(idx.includes('style-prototype-dz.css?v=204') && idx.includes('msg.js?v=3534'), 'versions de ressources Messenger actualisées');
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.184'") && sw.includes('./style-prototype-dz.css?v=204') && sw.includes('./msg.js?v=3534'), 'précache synchronisé avec la nouvelle interface');
 
@@ -326,7 +326,7 @@ ok(msgjs.includes('scheduleInviteRecovery();') &&
 ok(/client\.auth\.onAuthStateChange\(function\(event\)/.test(msgjs) &&
    msgjs.includes("if(event!=='SIGNED_IN' && event!=='SIGNED_OUT') return;"),
    'Messenger observe les changements de session sans intercepter le renouvellement normal du jeton');
-ok(msgjs.includes('if(authClient!==client) return;') &&
+ok(msgjs.includes('if(authClient!==client || state.authEpoch!==transitionEpoch) return;') &&
    msgjs.includes("if(event==='SIGNED_OUT'){"),
    'changement de compte : ancien client ignoré et déconnexion traitée');
 ok(msgjs.includes('if(state.inviteViewActive) renderList();') &&
@@ -409,7 +409,7 @@ ok(/create table if not exists public\.msg_messages \([\s\S]*?id bigint generate
 const sendStart = msgjs.indexOf('async function send(){');
 const sendEnd = msgjs.indexOf('\n  function scheduleThreadRecovery()', sendStart);
 const sendFn = msgjs.slice(sendStart, sendEnd);
-ok(sendStart >= 0 && sendEnd > sendStart && /if\(state\.conv!==conv\) return;/.test(sendFn),
+ok(sendStart >= 0 && sendEnd > sendStart && /if\(state\.conv!==conv \|\| state\.authEpoch!==identityEpoch\) return;/.test(sendFn),
    'envoi terminé après navigation : aucun retour forcé à l’ancienne conversation');
 ok(sendFn.includes('try{') && sendFn.includes('catch(error)') && sendFn.includes('currentButton.disabled=false'),
    'erreur réseau d’envoi traitée sans laisser le bouton bloqué');
@@ -428,9 +428,9 @@ ok(/epoch!==state\.channelEpoch \|\| state\.conv!==id/.test(msgjs),
    'présence ignore un canal obsolète');
 ok(msgjs.includes("st2==='CHANNEL_ERROR' || st2==='TIMED_OUT' || st2==='CLOSED'"),
    'états CHANNEL_ERROR, TIMED_OUT et CLOSED signalés');
-ok(msgjs.includes("window.addEventListener('online', scheduleThreadRecovery)") &&
-   msgjs.includes("window.addEventListener('pageshow', scheduleThreadRecovery)") &&
-   msgjs.includes("document.addEventListener('visibilitychange'"),
+ok(msgjs.includes("window.addEventListener('online', function(){\n    scheduleThreadRecovery();\n    scheduleInviteRecovery();\n  });") &&
+   msgjs.includes("window.addEventListener('pageshow', function(){\n    scheduleThreadRecovery();\n    scheduleInviteRecovery();\n  });") &&
+   msgjs.includes("document.addEventListener('visibilitychange', function(){\n    if(document.visibilityState==='visible'){\n      scheduleThreadRecovery();\n      scheduleInviteRecovery();\n    }\n  });"),
    'reprise réseau, retour de page et visibilité déclenchent une réconciliation');
 ok(msgjs.includes('renderThread(id).catch(function(){})'),
    'retour au premier plan recharge le fil et recrée le canal');
