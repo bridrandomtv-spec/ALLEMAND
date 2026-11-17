@@ -179,7 +179,12 @@ export default {
     if(typeof b.q !== 'string' || !b.q.trim() || b.q.length > 600) return json({ ok:false, err:'invalid-question' }, 400, org);
     if(b.ctx !== undefined && (typeof b.ctx !== 'string' || b.ctx.length > 3000)) return json({ ok:false, err:'invalid-context' }, 400, org);
     const q = b.q.trim();
-    const ctx = b.ctx || '';
+    /* SECURITY: ctx est du texte libre fourni par le navigateur. Il peut contenir
+       des extraits payants, des réponses locales ou des métadonnées falsifiées.
+       Sans identifiant de ressource vérifié côté serveur via le JWT/RLS, il ne
+       constitue jamais une preuve d'accès. On l'accepte pour compatibilité du
+       client, mais on ne le transmet jamais au modèle. */
+    const ctx = '';
 
     const now = Date.now();
     HITS = HITS.filter(t => now - t.at < 60000);
