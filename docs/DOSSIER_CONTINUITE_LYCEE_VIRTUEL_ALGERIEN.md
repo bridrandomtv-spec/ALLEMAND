@@ -3751,3 +3751,31 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - Aucun changement Supabase (SQL, RLS, Auth, schéma, données, abonnements), aucune fusion, aucun déploiement Cloudflare.
 
 - Relecture du motif regex après enregistrement : les espaces optionnels/obligatoires des formulations « ما فهمتش », « was ist » et « what is » ont été corrigés pour être interprétés comme des espaces (et non comme les caractères littéraux « \\s »). Les tests couvrent maintenant également ces variantes.
+
+
+## Lot 607 — revue de clôture CI/E2E et limite du contrôle Worker (17 novembre 2026)
+
+### État vérifié dans le dépôt
+- PR #21 toujours ouverte ; comparaison `main...ai/lot-601-worker-jwt` : 101 commits en avance, 0 en retard. Aucun merge effectué.
+- Le workflow `.github/workflows/deploy.yml` est une CI de validation uniquement : il contient bien les étapes `node --test tests/worker-ai-auth.test.mjs` et `node --test tests/qust-darja.test.mjs`. Aucun job de déploiement n'est défini.
+- La suite `worker-ai-auth.test.mjs` contient maintenant 23 tests, dont les cas Darija/Arabizi ajoutés au Lot 606.
+- Les anciens identifiants de runs #44180351576 et #44182635559 ne renvoient plus de jobs via l'API Actions consultée. Cela ne permet pas de conclure à une réussite ni à un échec ; la CI courante reste non confirmée dans cette vérification.
+- Aucun test E2E réel navigateur/Cloudflare n'est démontré par les tests Node : ceux-ci exécutent le Worker dans un `vm` avec des réponses Auth/subscriptions simulées.
+
+### Limite de sécurité supplémentaire constatée
+- Le Worker classe actuellement `q` avec `isLockedContentQuestion(q)`, puis transmet aussi `ctx` au modèle comme contexte documentaire non authentifié.
+- Le contenu de `ctx` n'est pas inspecté par le garde d'accès. Un appel direct authentifié pourrait donc envoyer une question générique et placer dans `ctx` un extrait ou une consigne provenant d'une ressource verrouillée ; le marqueur « NON AUTHENTIFIÉ » protège contre la confiance/injection d'instructions, mais ne prouve pas le droit d'accès au document.
+- La classification par liste de mots-clés de `q` ne constitue pas une autorisation documentaire : elle peut aussi bloquer une règle réellement gratuite ou manquer une ressource payante non répertoriée.
+- Conclusion : le Lot 606 ferme plusieurs formulations de contournement, mais ne suffit pas à certifier l'étanchéité complète des contenus payants.
+
+### Suite recommandée — sans migration ni changement Supabase
+1. Tracer précisément la construction de `ctx` dans `app.js` et `ia.js` et identifier si elle transporte un identifiant de ressource, un extrait brut ou les deux.
+2. Faire vérifier côté Worker toute ressource documentaire demandée en utilisant le JWT de l'utilisateur et les endpoints/tableaux déjà existants soumis à RLS ; ne jamais considérer un extrait libre fourni par le navigateur comme preuve d'accès.
+3. Conserver l'accès au professeur IA pour tout compte authentifié et les ressources gratuites déclarées (`malakhiss/resume`, banque générale, séances gratuites).
+4. Ajouter des tests directs Worker : question générique + contexte contenant une ressource verrouillée, identifiant de ressource falsifié, document gratuit autorisé, document payant refusé sans entitlement, document payant autorisé avec entitlement.
+5. Exécuter la CI sur le dernier commit de la branche, puis effectuer le test navigateur/Worker Cloudflare en préproduction après vérification des bindings existants. Aucun déploiement ou changement Supabase sans autorisation explicite.
+
+### Garde-fous
+- Aucun changement de code applicatif dans ce lot ; constat et plan documentés uniquement.
+- Aucun appel d'écriture Supabase, migration, modification RLS/Auth/schéma/données/abonnement.
+- Aucun déploiement Cloudflare, aucune fusion, aucune modification de `main`.
