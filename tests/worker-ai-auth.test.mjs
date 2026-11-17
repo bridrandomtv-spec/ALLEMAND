@@ -181,3 +181,46 @@ test('ACCESS résout les séances gratuites par niveau et refuse les listes vide
   assert.match(accessSource, /function isFreeLesson\(u, n\)\{ var l = freeUnitsFor\(u\)\[String\(u\)\]/);
   assert.match(accessSource, /canAccessUnit: function\(u\)\{ var l = freeUnitsFor\(u\)\[String\(u\)\]/);
 });
+
+
+test('le garde de cadenas distingue séance gratuite, séance payante, conjugaison et synthèse', async () => {
+  const ragSource = fs.readFileSync(new URL('../rag.js', import.meta.url), 'utf8');
+  const malakhiss = JSON.parse(fs.readFileSync(new URL('../assets/bdd/malakhiss.json', import.meta.url), 'utf8'));
+  const questions = JSON.parse(fs.readFileSync(new URL('../assets/bdd/questions_eleve.json', import.meta.url), 'utf8'));
+  const access = {
+    refresh:async () => ({ ok:true }),
+    entitlement:() => ({ ok:false, src:'backend' }),
+    canAccessLesson:(unit, lesson) => unit === 1 && lesson <= 2,
+    canAccessQuiz:unit => unit === 1,
+    canAccessUnit:unit => unit === 1,
+    paywall:() => {}
+  };
+  const windowStub = {
+    ACCESS:access,
+    getNiveauActif:() => '2AS',
+    uniteActive:() => ({ n:1 }),
+    SUBJECT:{ active:() => ({ id:'allemand', niveau:'2AS' }) }
+  };
+  const documentStub = { addEventListener:() => {}, querySelector:() => null };
+  const fetchStub = async url => {
+    const value = String(url).includes('malakhiss.json') ? malakhiss
+      : String(url).includes('questions_eleve.json') ? questions
+      : { unites:{} };
+    return { ok:true, json:async() => value };
+  };
+  const context = { window:windowStub, document:documentStub, ACCESS:access, fetch:fetchStub,
+    console, setTimeout, clearTimeout, Promise, String, Number, Array, Object, Math, RegExp };
+  vm.runInNewContext(ragSource, context, { filename:'rag.js' });
+  const guard = windowStub.verifieAccesContenuIA;
+  assert.equal(typeof guard, 'function');
+  const freeLesson = await guard('اشرح الحصة 1 الوحدة 1');
+  assert.equal(freeLesson, null);
+  const lockedLesson = await guard('اشرح الحصة 3 الوحدة 1');
+  assert.equal(lockedLesson.locked, true);
+  const lockedVerb = await guard('conjugaison sein');
+  assert.equal(lockedVerb.locked, true);
+  const lockedSummary = await guard('اشرح الوحدة 2');
+  assert.equal(lockedSummary.locked, true);
+  const freeBank = await guard('تمارين الوحدة 2');
+  assert.equal(freeBank, null);
+});
