@@ -1236,3 +1236,19 @@ jobs:
           echo "   https://allemand.brid-randomtv.workers.dev"
           echo "(build automatique à chaque push via la connexion OAuth Cloudflare)"
           echo "Les fichiers privés (scans, sujets, données élèves) ne sortent JAMAIS du dépôt."
+
+  # Tests IA autonomes : ne dépendent pas des validations d'autres domaines.
+  professor-ai:
+    name: Tests autonomes — Professeur IA
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Tester le Worker IA et les contrôles d'accès
+        run: node --test tests/worker-ai-auth.test.mjs
+      - name: Tester QUST et la compréhension Darija/Arabizi
+        run: node --test tests/qust-darja.test.mjs
