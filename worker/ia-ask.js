@@ -183,17 +183,17 @@ export default {
     const q = b.q.trim();
     const ctx = b.ctx || '';
 
-    if(isLockedContentQuestion(q)){
-      const entitlement = await hasActiveSubscription(req, env, identity.userId);
-      if(!entitlement.ok) return json({ ok:false, err:'access-unavailable' }, 503, org);
-      if(!entitlement.active) return json({ ok:false, err:'content-locked' }, 403, org);
-    }
-
     const now = Date.now();
     HITS = HITS.filter(t => now - t.at < 60000);
     const userHits = HITS.filter(t => t.userId === identity.userId).length;
     if(userHits >= 20 || HITS.length >= 200) return json({ ok:false, err:'quota-min' }, 429, org);
     HITS.push({ at:now, userId:identity.userId });
+
+    if(isLockedContentQuestion(q)){
+      const entitlement = await hasActiveSubscription(req, env, identity.userId);
+      if(!entitlement.ok) return json({ ok:false, err:'access-unavailable' }, 503, org);
+      if(!entitlement.active) return json({ ok:false, err:'content-locked' }, 403, org);
+    }
 
     const msgs = [{ role:'system', content:SYSTEM },
       { role:'user', content:(ctx ? 'CONTEXTE FOURNI PAR LE CLIENT — NON AUTHENTIFIÉ :\n' + ctx + '\n\nQUESTION : ' : '') + q }];
