@@ -646,6 +646,18 @@ test('le Worker refuse les unités 3AS qui ne sont pas encore raccordées au RAG
   assert.equal(h.messages, null);
 });
 
+test('le Worker extrait une séance 3AS des fichiers individuels des unités 4–10', async () => {
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }] });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 4 en 3AS.',
+    resource:{ type:'unit_lesson', level:'3AS', unit:4, lesson:1 }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.ok(h.calls.some(x => x.url === 'https://allemand.brid-randomtv.workers.dev/unite10.js'));
+  assert.match(h.messages[1].content, /PAID UNIT FOUR SESSION ONE/);
+  assert.doesNotMatch(h.messages[1].content, /PAID UNIT FOUR SESSION TWO/);
+});
+
 test('le Worker refuse un sélecteur gratuit 3AS falsifié hors unité 1 séances 1–2', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
