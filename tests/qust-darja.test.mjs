@@ -23,6 +23,15 @@ test('comprend les formulations Darija/Arabizi sur Perfekt', () => {
 test('ne classe pas une pagination comme Arabizi', () => {
   assert.ok(!understand('page 3', {}).langs.includes('arabizi'));
 });
+test('préserve la compatibilité de l’API historique à deux arguments et le contexte', () => {
+  const r = understand('page 3', { subject: 'allemand', level: '2AS' });
+  assert.equal(r.norm, 'page 3');
+  assert.equal(r.raw_text, 'page 3');
+  assert.equal(r.normalized_text, 'page 3');
+  assert.equal(r.entities.subject, 'allemand');
+  assert.equal(r.entities.level, '2AS');
+  assert.equal(r.entities.page, 3);
+});
 test('détecte Arabizi dans un mot, pas dans un chiffre isolé', () => {
   assert.ok(understand('3lach', {}).langs.includes('arabizi'));
   assert.ok(!understand('page 3', {}).langs.includes('arabizi'));
