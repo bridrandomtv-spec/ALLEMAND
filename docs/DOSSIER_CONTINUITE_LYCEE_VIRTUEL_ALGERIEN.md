@@ -3798,8 +3798,9 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 ### Validation et limites
 - Commits de code : Worker `650aa85d2db27220ef6ee802e95d3909325182c4`, tests `73679b9739b85edcfbb1737e8cf2a6d9d3c6bde9`.
 - Relecture GitHub après écriture : le Worker contient bien `const ctx = ''` ; le modèle reçoit la question sans le texte de `ctx`.
-- **Exécution des tests non confirmée** : l'API Actions consultée ne renvoie actuellement aucun workflow run pour le commit des tests. Ne pas annoncer PASS avant un résultat CI réel.
+- **CI exécutée avec succès** sur le commit de tête `f9fca5266fd00a1198b6a89b921e0ff906852c2b` : workflow `CI — ALLEMAND` run `44184551511` terminé `success`. Les étapes `Tester l'authentification JWT du Worker IA`, `Tester la compréhension Darija/Arabizi et la conservation du transcript (Lot 602)`, `Valider le moteur IA du professeur (9 cas de référence)` et `Test de régression 3 niveaux (rag · prof · union)` sont toutes `success`.
 - Aucun test navigateur E2E effectué dans ce lot.
+- Runs PostgreSQL isolés associés au même commit : Multaqa `44184551619`, découverte Messenger `44184551545` et consentement Messenger `44184551674` terminés `success`. Ces jobs utilisent une base jetable de test ; aucune écriture sur le Supabase actif n'est démontrée ni effectuée.
 - Aucun changement Supabase (SQL, RLS, Auth, schéma, données, abonnements), aucun déploiement, aucune fusion, aucune modification de `main`.
 
 ## Lot 609 — périmètre réel de la PR IA (17 novembre 2026)
