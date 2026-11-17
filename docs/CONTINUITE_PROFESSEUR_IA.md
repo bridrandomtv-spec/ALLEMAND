@@ -62,3 +62,11 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - `pageResource` ne filtre plus les pages selon le marqueur `locked` du navigateur : toute page présente dans l'index peut être demandée au Worker. Le Worker relit le corps avec le JWT utilisateur ; le RLS renvoie les pages gratuites et refuse les pages payantes aux comptes sans abonnement. Les pages du manuel 2AS et 3AS utilisent donc le même chemin sécurisé.
 
 - Les séances 2AS sont maintenant résolues à partir des tableaux `SEANCES_U1` à `SEANCES_U9` déjà présents dans le client : le sélecteur envoie la ou les pages du manuel associées à la séance (`book_page`/`book_pages`). Le Worker récupère chaque page avec le JWT et RLS ; les deux premières séances de l'unité 1 correspondent aux pages gratuites 5–6 et 7–10–25, tandis que les autres pages restent payantes selon RLS. Le test confirme la récupération multi-pages 5 et 6.
+
+
+### Durcissement des demandes de conjugaison génériques — 18/11/2026
+- Le contrôle Worker ne dépend plus uniquement de la liste historique de neuf verbes : toute demande explicite de conjugaison sans sélecteur de leçon vérifiable (`book_page`, `book_pages`, `free_unit_lesson`, `unit_lesson`) est maintenant soumise au contrôle d'abonnement.
+- La banque générale d'exercices reste utilisable gratuitement pour une demande explicitement formulée comme exercice ; un simple sélecteur de banque ne permet pas de demander une conjugaison libre hors de ce contexte.
+- Les demandes utilisant l'artefact gratuit 3AS doivent aussi préciser l'unité et la séance dans la question ; les verbes/règles déjà identifiés comme verrouillés restent refusés même si une séance gratuite est mentionnée.
+- Régression ajoutée pour « Konjugiere arbeiten », « Conjugate bleiben in the present tense » et « كيفاش نصرف arbeiten؟ » : un compte sans abonnement reçoit `content-locked` et aucun message n'est envoyé au modèle.
+- Ce durcissement ne modifie ni les ressources libres déclarées, ni Supabase, ni les droits RLS. Validation CI à effectuer sur le nouveau commit.
