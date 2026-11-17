@@ -83,6 +83,7 @@ function isLockedContentQuestion(question, resource){
   const lessonMatch = q.match(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس)\s*[:#-]?\s*(\d{1,2})/i);
   let unit = unitMatch ? Number(unitMatch[1]) : null;
   const lesson = lessonMatch ? Number(lessonMatch[1]) : null;
+  if(lesson !== null && !resource) return true;
   /* Les unités 3AS visibles 10–19 correspondent aux clés pédagogiques 1–10.
      Seul le sélecteur gratuit borné peut lever l'ambiguïté pour l'unité visible 10. */
   if(resource && resource.level === '3AS' && unit === 10
