@@ -460,10 +460,10 @@ ok(sbjs.includes("select('carte_scolaire_path')") && sbjs.includes('remove([card
 ok(sbjs.includes(".select('id').maybeSingle()") && sbjs.includes("if(r.error || !r.data)"), 'demande de vérification confirmée uniquement si une ligne profil a été mise à jour');
 ok(msgjs.includes('id="vfCard"') && msgjs.includes('msgUploadSchoolCard(cardFile)'), 'formulaire étudiant : justificatif obligatoire avant envoi');
 ok(adminjs.includes("missing.push('البطاقة المدرسية')") && adminjs.includes('data-adm-verif-doc'), 'file administrative : pièce obligatoire et bouton de consultation');
-const uploadStart = sbjs.indexOf('async function msgUpload(');
-const uploadEnd = sbjs.indexOf('async function msgAttachmentInfos(', uploadStart);
-const uploadMethod = sbjs.slice(uploadStart, uploadEnd);
-ok(uploadStart >= 0 && uploadEnd > uploadStart &&
+const uploadMethodStart = sbjs.indexOf('async function msgUpload(');
+const uploadMethodEnd = sbjs.indexOf('async function msgAttachmentInfos(', uploadMethodStart);
+const uploadMethod = sbjs.slice(uploadMethodStart, uploadMethodEnd);
+ok(uploadMethodStart >= 0 && uploadMethodEnd > uploadMethodStart &&
    uploadMethod.includes("storage.from('prive').remove([path])") &&
    uploadMethod.includes("probeMessage.data.attachment_id===attachmentId") &&
    uploadMethod.includes("from('msg_attachments').delete()"),
