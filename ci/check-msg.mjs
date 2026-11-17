@@ -472,7 +472,7 @@ ok(sbjs.includes("from('cartes-scolaires').upload") && sbjs.includes('carte_scol
 ok(sbjs.includes("select('carte_scolaire_path')") && sbjs.includes('remove([cardPath])') && sbjs.includes('remove([oldPath])'), 'nettoyage du nouvel upload si échec et remplacement de l’ancienne carte');
 ok(sbjs.includes(".select('id').maybeSingle()") && sbjs.includes("if(r.error || !r.data)"), 'demande de vérification confirmée uniquement si une ligne profil a été mise à jour');
 ok(msgjs.includes('id="vfCard"') && msgjs.includes('msgUploadSchoolCard(cardFile)'), 'formulaire étudiant : justificatif obligatoire avant envoi');
-ok(adminjs.includes("missing.push('البطاقة المدرسية')") && adminjs.includes('data-adm-verif-doc'), 'file administrative : pièce obligatoire et bouton de consultation');
+ok(adminjs.includes("missing.push('البطاقة المدرسية أو مسارها غير صالح')") && adminjs.includes('data-adm-verif-doc'), 'file administrative : pièce obligatoire et bouton de consultation');
 const uploadMethodStart = sbjs.indexOf('async function msgUpload(');
 const uploadMethodEnd = sbjs.indexOf('async function msgAttachmentInfos(', uploadMethodStart);
 const uploadMethod = sbjs.slice(uploadMethodStart, uploadMethodEnd);
