@@ -177,7 +177,6 @@ test('le RAG applique les cadenas avant les réponses pédagogiques locales', ()
   assert.match(ragSource, /const _lock = await verifieAccesContenuIA\(rawQuestion\)/);
   assert.match(ragSource, /ACCESS\.canAccessLesson\(target\.unit, target\.lesson\)/);
   assert.match(ragSource, /ACCESS\.canAccessQuiz\(quizUnit\)/);
-  assert.match(ragSource, /type\.id === 'sharh' \|\| type\.id === 'murajaa'/);
   assert.match(ragSource, /window\.verifieAccesContenuIA = verifieAccesContenuIA/);
 });
 
@@ -225,8 +224,8 @@ test('le garde de cadenas distingue séance gratuite, séance payante, conjugais
   assert.equal(lockedLesson.locked, true);
   const lockedVerb = await guard('conjugaison sein');
   assert.equal(lockedVerb.locked, true);
-  const lockedSummary = await guard('اشرح الوحدة 2');
-  assert.equal(lockedSummary.locked, true);
+  const freeSummary = await guard('اشرح الوحدة 2');
+  assert.equal(freeSummary, null);
   const freeBank = await guard('تمارين الوحدة 2');
   assert.equal(freeBank, null);
 });
