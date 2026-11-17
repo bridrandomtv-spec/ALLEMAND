@@ -90,7 +90,7 @@ test('échoue fermé si Supabase Auth est indisponible', async () => {
 test('accepte un utilisateur Auth valide et marque le contexte comme non authentifié', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
-    q:'Explique le Perfekt.',
+    q:'Propose une méthode de révision efficace.',
     ctx:'Extrait client : page 42'
   }), h.env);
   const payload = await response.json();
@@ -108,7 +108,7 @@ test('accepte tout compte authentifié même sans abonnement actif', async () =>
     id:'user-free-123',
     user_metadata:{ plan:'free', subscription_status:'inactive' }
   }), { status:200, headers:{ 'Content-Type':'application/json' } }) });
-  const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
+  const response = await h.context.__worker.fetch(request({ q:'Propose une méthode de révision efficace.' }), h.env);
   const payload = await response.json();
   assert.equal(response.status, 200);
   assert.equal(payload.ok, true);
@@ -142,7 +142,7 @@ test('limite le quota à 20 appels par utilisateur et par minute dans un isolate
   const h = harness();
   let last;
   for(let i=0;i<21;i++){
-    last = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
+    last = await h.context.__worker.fetch(request({ q:'Propose une méthode de révision efficace.' }), h.env);
   }
   assert.equal(last.status, 429);
 });
