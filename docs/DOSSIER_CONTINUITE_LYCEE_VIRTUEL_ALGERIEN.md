@@ -3558,3 +3558,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Vérification du code réel : le formulaire présente bien la gratuité et le numéro scolaire ; l'appel transmet bien le chemin du justificatif. Les assertions ont été réalignées sur ces contrats présents, sans modification du parcours applicatif.
 - Correction test uniquement dans `ci/check-msg.mjs` : commit `42b97f569cae5de618ede63a8398700c95160e92`. La prochaine CI doit confirmer que les tests de messagerie passent entièrement et laisser s'exécuter les tests JWT/QUST.
 - Aucune modification de `msg.js`, `supabase/supabase.js`, migration, Worker ou configuration Supabase. Aucun déploiement ni fusion.
+
+
+### Suite Lot 603 — délégation, transitions Auth et workflow ملتقى الطلاب (17 novembre 2026)
+
+- Le run CI #44166702288 a validé le bloc principal `check-msg` et le Lot 450 (vérification scolaire gratuite avec justificatif), mais a ensuite révélé quatre assertions statiques obsolètes dans les lots historiques Messenger :
+  1. le sélecteur délégué comprend désormais `data-msg-act`, `data-verif-page` et `data-mod` en plus des filtres initiaux ;
+  2. la garde du callback Auth vérifie ensemble `authClient` et `transitionEpoch` ;
+  3. le retour d'envoi vérifie à la fois la conversation et `identityEpoch` ;
+  4. les événements `online`, `pageshow` et `visibilitychange` utilisent des wrappers qui relancent la reprise du fil et celle des invitations.
+- Les assertions ont été adaptées à ces contrats réels dans `ci/check-msg.mjs`, sans modification de `msg.js`.
+- Le même run a révélé que `ci/check-multaqa.mjs` lisait un ancien nom de migration absent. Le fichier réellement versionné dans la branche est `supabase/migrations/20261113201922_multaqa_community_feed.sql`. Le chemin du contrôle a été corrigé vers ce fichier existant ; aucune migration n'a été créée ou exécutée.
+- Commits de correction : `cdc0fcc52aea86f14b5b1fe89faab83a2f405955` (`check-msg.mjs`) et `e6bf6490fee1beb97398f35dfb43b6e6bc3c7135` (`check-multaqa.mjs`). La CI correspondante #44166994784 et les jobs PostgreSQL associés sont en cours au dernier contrôle.
+- Les tests JWT Worker et Darija/Arabizi restent bloqués derrière la validation complète de `check-msg.mjs`; ils ne sont pas encore déclarés exécutés.
+- Aucun code applicatif Messenger/IA, aucun SQL de migration, aucune donnée, aucun secret et aucune configuration Supabase n'ont été modifiés. Aucun déploiement ni fusion.
