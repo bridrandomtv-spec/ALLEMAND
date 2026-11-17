@@ -97,6 +97,25 @@ test('accepte un utilisateur Auth valide et marque le contexte comme non authent
   assert.doesNotMatch(h.messages[1].content, /CONTEXTE VÉRIFIÉ/);
 });
 
+test('accepte tout compte authentifié même sans abonnement actif', async () => {
+  const h = harness({ authResponse:new Response(JSON.stringify({
+    id:'user-free-123',
+    user_metadata:{ plan:'free', subscription_status:'inactive' }
+  }), { status:200, headers:{ 'Content-Type':'application/json' } }) });
+  const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(payload.ok, true);
+  assert.equal(payload.rep, 'Réponse pédagogique.');
+  assert.equal(h.calls[0].url, 'https://project.supabase.co/auth/v1/user');
+});
+
+test('le chat direct app.js impose le même timeout de 25 s que ia.js', () => {
+  assert.match(appSource, /setTimeout\(function\(\)\{ controller\.abort\(\); \}, 25000\)/);
+  assert.match(appSource, /signal:controller\.signal/);
+  assert.match(appSource, /finally\(function\(\)\{ clearTimeout\(timeout\); \}\)/);
+});
+
 test('rejette les champs supplémentaires envoyés par le navigateur', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
