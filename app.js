@@ -1261,6 +1261,11 @@ async function sendChat(v){
   log.appendChild(tp); log.scrollTop = log.scrollHeight;
   let answered = false;
   try{
+    /* AI-LOCK-1 : contrôle des cadenas avant le corpus et le Worker distant. */
+    if(typeof window.verifieAccesContenuIA === 'function'){
+      const lock = await window.verifieAccesContenuIA(v);
+      if(lock && lock.locked){ tp.remove(); addMsg('bot', lock.html); return; }
+    }
     /* 1) Corpus local : réponse exacte prioritaire, sans invention. */
     if(window.RAG && window.RAG.cherche){
       try{
