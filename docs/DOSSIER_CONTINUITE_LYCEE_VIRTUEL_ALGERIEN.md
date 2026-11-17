@@ -3616,3 +3616,39 @@ Cette section remplace les constats CI historiques indiquant que les tests IA n'
 - Aucun SQL n'a été exécuté sur le projet Supabase actif ; aucune migration de production, politique RLS, configuration Auth, donnée, abonnement, paiement ou secret n'a été modifié.
 - Aucun déploiement Cloudflare ni test E2E sur le Worker Cloudflare réel n'a été effectué. La validation CI ne prouve donc pas encore la présence des bindings Cloudflare `SUPABASE_URL` et `SUPABASE_ANON_KEY`, ni le comportement en navigateur/microphone réel.
 - Limites déjà identifiées pour le Lot 601 : quota par isolate non distribué/durable et absence de contrôle d'entitlement d'abonnement dans le Worker. À traiter comme lots distincts avant une mise en production globale.
+
+
+## Revue de préparation à la fusion — intégration IA (17 novembre 2026)
+
+### Vérification de l'étendue du PR
+
+- Comparaison `main...0f37df500c259ec2723890092657f62d11dd0eb9` : branche en avance de 58 commits, sans retard sur `main`.
+- Le diff consolidé contient 18 fichiers : Worker IA, clients `app.js`/`ia.js`, QUST/RAG/parole, tests IA, checkers CI et bancs PostgreSQL Messenger/ملتقى الطلاب, plus ce dossier.
+- Les 58 commits listés concernent les Lots 601/602 et les corrections de leurs tests/checkers/CI ; aucun fichier applicatif non lié n'apparaît dans le diff final consulté.
+- Le workflow `.github/workflows/deploy.yml` reste une CI seulement : le test JWT et le test Darija/Arabizi y sont ajoutés, aucun job `deploy` n'est introduit.
+
+### Contrôle de l'architecture d'exécution
+
+- `assets/bdd/config.json` pointe le client vers le Worker IA séparé `https://ia-ask.brid-randomtv.workers.dev`.
+- `wrangler.toml` et `src/site-worker.js` concernent le Worker du site ; ils ne prouvent pas le déploiement ni les bindings du Worker IA séparé.
+- `worker/ia-ask.js` vérifie le JWT Supabase, mais ne vérifie pas l'état d'abonnement. `access_config.json` ne définit actuellement aucune règle de gratuité/paiement pour la fonctionnalité IA et les appels distants de `app.js`/`ia.js` ne consultent pas `ACCESS.canAccessFeature` avant l'appel. Ne pas ajouter une restriction d'abonnement sans décision produit explicite.
+- Deux parcours distants coexistent : `ia.js` impose un timeout de 25 s ; le chemin direct du chat dans `app.js` ne définit pas de timeout explicite. À harmoniser avant une validation UX complète.
+- Le commentaire d'en-tête de `ia.js` annonce 40 appels/jour, alors que le garde local du fichier est à 150/jour. Ce compteur navigateur est contournable ; le Worker applique 20 appels/minute par utilisateur et 200/minute par isolate, sans quota journalier distribué. La politique de quota attend une décision explicite avant modification.
+
+### Dernier état de la CI sur HEAD documentaire
+
+- HEAD : `0f37df500c259ec2723890092657f62d11dd0eb9`.
+- CI ALLEMAND #44169520784 : succès.
+- PostgreSQL découverte Messenger #44169520791 : succès.
+- PostgreSQL consentement Messenger #44169520709 : succès.
+- PostgreSQL ملتقى الطلاب #44169520979 : toujours `in_progress` au dernier contrôle, bloqué sur `actions/checkout@v5` avant l'installation du client PostgreSQL et avant le script SQL. Aucun échec de test SQL n'est observé ; les mêmes tests ont réussi sur le HEAD code précédent via #44169244472.
+- PR #21 reste ouvert, brouillon, `mergeable=true`, non fusionné. Pas de déploiement.
+
+### Décisions restantes avant une fusion responsable
+
+1. Confirmer si l'assistant IA distant est ouvert à tout compte authentifié ou réservé aux abonnés actifs.
+2. Fixer une seule politique de quota (journalier et minute), appliquée côté Worker plutôt que seulement dans le navigateur.
+3. Harmoniser le timeout du chat direct et de l'assistant vocal.
+4. Vérifier les secrets/bindings du Worker IA et effectuer un test réel navigateur/voix sur l'environnement de préproduction.
+
+Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, Auth, schéma, abonnement, paiement, secret, déploiement ou fusion n'a été modifié.
