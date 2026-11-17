@@ -22,6 +22,19 @@
       if(el && txt) el.textContent = txt;
     }catch(e){}
   }
+  function pageResource(question){
+    const match = String(question || '').match(/(?:seite|page|صفحة|صفحه)\\s*[:#-]?\\s*(\\d{1,3})/i);
+    if(!match) return null;
+    const page = Number(match[1]);
+    const explicit3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(question);
+    const explicit2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(question);
+    let active = '';
+    try{ active = window.getNiveauActif ? window.getNiveauActif() : ''; }catch(e){}
+    const level = explicit3 || (!explicit2 && active === '3AS') ? '3AS' : '2AS';
+    const maxPage = level === '3AS' ? 175 : 223;
+    if(!Number.isInteger(page) || page < 1 || page > maxPage) return null;
+    return { type:'book_page', page:page, level:level };
+  }
   window.reponseIA = async function(q, meta){
     q = String(q == null ? '' : q).trim();
     if(!q) return '';
@@ -128,22 +141,14 @@
     const accessToken = authState && authState.ok && authState.session && authState.session.access_token;
     if(!accessToken) return sortieFaible(local, 'session-supabase-requise');
     try{
-      let ctx = '';
-      try{
-        if(window.BIBLIO && BIBLIO.context){
-          const bc = await BIBLIO.context(q, 2000);
-          if(bc) ctx = 'EXTRAITS DOCUMENTAIRES FOURNIS PAR LE CLIENT (non authentifiés côté serveur) :\n' + bc + '\n\n';
-        }
-      }catch(e){}
-      if(local && local.indexOf('لا أعرف') === -1) ctx += 'RÉSULTAT DU MOTEUR LOCAL (non attesté par le serveur) :\n' + local.slice(0, 900);
-      ctx = ctx.slice(0, 3000);
+      const resource = pageResource(q);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
         headers:{
           'Content-Type':'application/json',
           'Authorization':'Bearer ' + accessToken
         },
-        body: JSON.stringify({ q: q, ctx: ctx }) }, 25000);
+        body: JSON.stringify({ q: q, resource: resource }) }, 25000);
       if(!r.ok){
         let e = {};
         try{ e = await r.json(); }catch(_){}
