@@ -151,3 +151,31 @@ test('les parcours chat et voix transmettent le jeton Supabase et respectent le 
   assert.doesNotMatch(iaSource, /JSON\.stringify\(\{\s*q\s*:\s*q\s*,\s*text\s*:/);
   assert.doesNotMatch(iaSource, /Content-Type['"]?\s*:\s*['"]text\/plain/);
 });
+
+
+test('le chat direct vérifie les cadenas avant le RAG et le Worker distant', () => {
+  const start = appSource.indexOf('async function sendChat(v)');
+  const end = appSource.indexOf('\nfunction ', start + 20);
+  const body = appSource.slice(start, end > start ? end : start + 9000);
+  const guard = body.indexOf('window.verifieAccesContenuIA(v)');
+  const rag = body.indexOf('window.RAG.cherche(v)');
+  const cloud = body.indexOf("fetch(proxy + '/ask'");
+  assert.ok(guard >= 0, 'le contrôle des cadenas doit exister dans sendChat');
+  assert.ok(rag < 0 || guard < rag, 'le contrôle doit précéder le RAG');
+  assert.ok(cloud < 0 || guard < cloud, 'le contrôle doit précéder le Worker');
+});
+
+test('le RAG applique les cadenas avant les réponses pédagogiques locales', () => {
+  const ragSource = fs.readFileSync(new URL('../rag.js', import.meta.url), 'utf8');
+  assert.match(ragSource, /async function verifieAccesContenuIA\(question\)/);
+  assert.match(ragSource, /const _lock = await verifieAccesContenuIA\(rawQuestion\)/);
+  assert.match(ragSource, /ACCESS\.canAccessLesson\(target\.unit, target\.lesson\)/);
+  assert.match(ragSource, /ACCESS\.canAccessQuiz\(quizUnit\)/);
+  assert.match(ragSource, /window\.verifieAccesContenuIA = verifieAccesContenuIA/);
+});
+
+test('ACCESS résout les séances gratuites par niveau et refuse les listes vides', () => {
+  const accessSource = fs.readFileSync(new URL('../access.js', import.meta.url), 'utf8');
+  assert.match(accessSource, /function isFreeLesson\(u, n\)\{ var l = freeUnitsFor\(u\)\[String\(u\)\]/);
+  assert.match(accessSource, /canAccessUnit: function\(u\)\{ var l = freeUnitsFor\(u\)\[String\(u\)\]/);
+});
