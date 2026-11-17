@@ -89,7 +89,7 @@ assert.match(html,/sd-ai-capabilities/,'repères des fonctions du professeur IA 
 assert.match(html,/data-go="prof">فتح مساحة الأستاذ الذكي/,'accès à l’espace professeur IA absent');
 assert.match(css,/\.sd-ai-capabilities/,'styles des fonctions du professeur IA absents');
 
-assert.equal((html.match(/class="sd-quick-card"/g)||[]).length,5,'les cinq accès rapides du prototype ne sont pas présents');
+assert.equal((html.match(/class="sd-quick-card"/g)||[]).length,6,'les six accès rapides du tableau de bord ne sont pas présents');
 assert.match(html,/class="sd-quick-card" data-go="msg"/,'accès rapide aux messages absent');
 assert.match(css,/\.sd-quick\{display:grid;grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/,'grille desktop à cinq accès rapides absente');
 assert.match(css,/\.sd-quick\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,'grille mobile des accès rapides absente');
