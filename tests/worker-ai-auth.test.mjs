@@ -5,6 +5,7 @@ import test from 'node:test';
 
 const workerSource = fs.readFileSync(new URL('../worker/ia-ask.js', import.meta.url), 'utf8');
 const appSource = fs.readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+const iaSource = fs.readFileSync(new URL('../ia.js', import.meta.url), 'utf8');
 const TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEyMyJ9.signature';
 const ORIGIN = 'https://allemand.brid-randomtv.workers.dev';
 
@@ -121,9 +122,13 @@ test('limite le quota à 20 appels par utilisateur et par minute dans un isolate
   assert.equal(last.status, 429);
 });
 
-test('le client transmet uniquement le jeton de session Supabase, jamais un identifiant déclaré', () => {
-  assert.match(appSource, /window\.SB/);
-  assert.match(appSource, /getSession\(\)/);
-  assert.match(appSource, /Authorization['"]?\s*:\s*['"]Bearer ['"]\s*\+\s*accessToken/);
-  assert.doesNotMatch(appSource, /Authorization['"]?\s*:\s*.*localStorage/);
+test('les parcours chat et voix transmettent le jeton Supabase et respectent le schéma q/ctx', () => {
+  for(const source of [appSource, iaSource]){
+    assert.match(source, /window\.SB/);
+    assert.match(source, /getSession\(\)/);
+    assert.match(source, /Authorization['"]?\s*:\s*['"]Bearer ['"]\s*\+\s*accessToken/);
+    assert.doesNotMatch(source, /Authorization['"]?\s*:\s*.*localStorage/);
+  }
+  assert.doesNotMatch(iaSource, /JSON\.stringify\(\{\s*q\s*:\s*q\s*,\s*text\s*:/);
+  assert.doesNotMatch(iaSource, /Content-Type['"]?\s*:\s*['"]text\/plain/);
 });
