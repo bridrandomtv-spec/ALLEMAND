@@ -169,6 +169,7 @@ async function fetchAuthorizedBookPage(resource, req, env){
     endpoint = new URL('/rest/v1/lesson_content', env.SUPABASE_URL);
     if(endpoint.protocol !== 'https:') return { ok:false, status:503, error:'access-unavailable' };
     endpoint.searchParams.set('select','body,titre');
+    endpoint.searchParams.set('subject','eq.allemand');
     endpoint.searchParams.set('page','eq.' + resource.page);
     endpoint.searchParams.set('level','eq.' + resource.level);
     endpoint.searchParams.set('limit','1');
