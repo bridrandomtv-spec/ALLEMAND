@@ -249,6 +249,33 @@ test('refuse aussi une demande d’explication d’une règle verrouillée sans 
   assert.equal(payload.err, 'content-locked');
 });
 
+test('refuse les explications de règles verrouillées formulées en Darija arabe et Arabizi', async () => {
+  for (const q of [
+    '3lach ma fhemtch Perfekt?',
+    'علاش ما فهمتش Perfekt؟',
+    'fassarli Dativ',
+    'شرحلي Perfekt'
+  ]) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({ q }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status, 403, q);
+    assert.equal(payload.err, 'content-locked', q);
+    assert.equal(h.messages, null, q);
+  }
+});
+
+test('refuse une conjugaison verrouillée demandée en Darija/Arabizi', async () => {
+  for (const q of ['kifach nsarref sein?', 'كيفاش نصرف sein؟']) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({ q }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status, 403, q);
+    assert.equal(payload.err, 'content-locked', q);
+    assert.equal(h.messages, null, q);
+  }
+});
+
 test("un abonné actif conserve l'accès à une conjugaison verrouillée", async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:null }] });
   const response = await h.context.__worker.fetch(request({ q:'conjugaison sein' }), h.env);
