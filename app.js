@@ -1261,6 +1261,11 @@ async function sendChat(v){
   log.appendChild(tp); log.scrollTop = log.scrollHeight;
   let answered = false;
   try{
+    /* AI-LOCK-1 : contrôle des cadenas avant le corpus et le Worker distant. */
+    if(typeof window.verifieAccesContenuIA === 'function'){
+      const lock = await window.verifieAccesContenuIA(v);
+      if(lock && lock.locked){ tp.remove(); addMsg('bot', lock.html); return; }
+    }
     /* 1) Corpus local : réponse exacte prioritaire, sans invention. */
     if(window.RAG && window.RAG.cherche){
       try{
@@ -1274,11 +1279,22 @@ async function sendChat(v){
       const cfg = await fetch('./assets/bdd/config.json', {cache:'no-cache'}).then(r=>r.ok?r.json():null);
       const proxy = cfg && typeof cfg.ia_proxy === 'string' ? cfg.ia_proxy.replace(/\/$/,'') : '';
       if(proxy){
+        const sbApi = window.SB;
+        if(!sbApi || typeof sbApi.getSession !== 'function') throw new Error('Session Supabase indisponible');
+        const authState = await sbApi.getSession();
+        const accessToken = authState && authState.ok && authState.session && authState.session.access_token;
+        if(!accessToken) throw new Error('Session Supabase requise');
+        const controller = new AbortController();
+        const timeout = setTimeout(function(){ controller.abort(); }, 25000);
         const response = await fetch(proxy + '/ask', {
           method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({q:String(v).slice(0,600),ctx:'منصة الثانوية الافتراضية الجزائرية. المساعدة التعليمية في اللغة الألمانية، مع شرح مبسط بالعربية والألمانية.'})
-        });
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + accessToken
+          },
+          body:JSON.stringify({q:String(v).slice(0,600),ctx:'منصة الثانوية الافتراضية الجزائرية. المساعدة التعليمية في اللغة الألمانية، مع شرح مبسط بالعربية والألمانية.'}),
+          signal:controller.signal
+        }).finally(function(){ clearTimeout(timeout); });
         const data = await response.json().catch(()=>null);
         if(response.ok && data && data.ok && typeof data.rep === 'string' && data.rep.trim()){
           tp.remove();
