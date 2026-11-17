@@ -3711,3 +3711,5 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 
 ### Précision complémentaire Lot 604
 - `freeUnitsFor` tient également compte de `getNiveauActif() === '3AS'` avant de choisir `units_3as`, afin que les séances gratuites du premier module 3AS ne soient pas évaluées avec la liste 2AS.
+
+- Complément : une demande de synthèse complète d'une unité est refusée sans entitlement actif, car la synthèse agrège aussi les séances verrouillées. Une séance gratuite peut toujours être demandée individuellement.
