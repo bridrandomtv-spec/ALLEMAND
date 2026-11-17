@@ -21,7 +21,7 @@ Livrer uniquement les changements liés au professeur IA : authentification du W
 
 ## Récupération documentaire sécurisée — pages du manuel
 - `ia.js` transmet uniquement un sélecteur `{type:'book_page', page, level}` pour une page dont l'index public indique `locked:true` ; les pages statiques gratuites ne partent pas vers le Worker. Il ne transmet plus les extraits BIBLIO ni la réponse locale dans `ctx`.
-- Le Worker valide strictement le type, le niveau et les bornes de page, puis effectue un GET en lecture seule sur `public.lesson_content`, filtré par `subject=allemand`, `level` et `page`, avec l'anon key et le JWT de l'utilisateur.
+- Le Worker valide strictement le type, le niveau et les bornes de page. Il applique d'abord le quota utilisateur, puis effectue un GET en lecture seule sur `public.lesson_content`, filtré par `subject=allemand`, `level` et `page`, avec l'anon key et le JWT de l'utilisateur. Le test vérifie qu'aucune lecture documentaire n'est effectuée après le quota.
 - La décision d'accès au corps de page dépend du RLS existant ; aucune clé service-role n'est utilisée. Si aucun corps n'est renvoyé, le Worker refuse avec `content-locked`. Si la lecture échoue, il échoue fermé avec `access-unavailable`.
 - Seul le contenu récupéré côté Worker est marqué `CONTENU PÉDAGOGIQUE AUTORISÉ` et transmis au modèle. Le champ `ctx` libre du navigateur reste ignoré.
 - Limite restante : ce premier connecteur couvre les pages du manuel (`lesson_content`, colonnes `page`, `level`, `body`, `titre`). Les devoirs, exercices et autres documents de BIBLIO ne sont pas encore récupérés côté Worker ; ils nécessitent chacun un identifiant de ressource stable et une lecture serveur protégée par le RLS déjà en place.
@@ -32,7 +32,7 @@ Livrer uniquement les changements liés au professeur IA : authentification du W
 Cette branche est créée depuis `main` pour isoler les changements IA de la PR #21, qui contient également des changements Messenger, Multaqa, Masar et Gamification. La PR #21 reste ouverte et en brouillon ; elle ne doit pas être fusionnée dans le cadre de cette livraison IA seule.
 
 ## Validation
-- Après ajout du connecteur `lesson_content`, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44187491020` : Worker JWT/RLS (29 tests), QUST/Darja/Arabizi et régression RAG/prof/union tous `success`.
+- Après ajout du connecteur `lesson_content`, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44187491020` : Worker JWT/RLS (30 tests), QUST/Darja/Arabizi et régression RAG/prof/union tous `success`.
 - Le job global `Validation structurelle & pédagogique` échoue toujours avant les tests IA sur une erreur de syntaxe préexistante dans `ci/check-msg.mjs:231` (`SyntaxError: missing ) after argument list`). Les étapes IA du job global sont donc sautées, mais le job IA indépendant du même run est vert. Les cas de référence du professeur (9/9) et la suite T1-T6 sont également `success` avant l'étape Messenger.
 - Les workflows PostgreSQL hors périmètre Messenger/Multaqa restent séparés ; leurs échecs ne sont pas des échecs du code IA. Le run global n'est pas déclaré vert.
 - Aucun test E2E navigateur n'est déclaré réussi ici.
