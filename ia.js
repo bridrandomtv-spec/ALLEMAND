@@ -57,7 +57,6 @@
     try{ level = window.getNiveauActif ? window.getNiveauActif() : ''; }catch(e){}
     if(explicit3) level = '3AS';
     else if(explicit2) level = '2AS';
-    if(level !== '3AS') return null;
     const unitMatch = text.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
     let unit = unitMatch ? Number(unitMatch[1]) : null;
     if(unit == null){
@@ -66,8 +65,22 @@
         if(active && Number.isInteger(+active.n)) unit = +active.n;
       }catch(e){}
     }
-    if(unit != null && unit >= 10 && unit <= 19) unit -= 9;
     const lesson = Number(sessionMatch[1]);
+    if(level === '2AS'){
+      if(!Number.isInteger(unit) || unit < 1 || unit > 9 || lesson < 1 || lesson > 12) return null;
+      let sessions = window['SEANCES_U' + unit];
+      if(unit === 1){
+        try{ if(typeof SEANCES_U1 !== 'undefined') sessions = SEANCES_U1; }catch(e){}
+      }
+      if(!Array.isArray(sessions) && window['UNITE' + unit])
+        sessions = window['UNITE' + unit].seances;
+      const session = Array.isArray(sessions) ? sessions.find(x => x && Number(x.n) === lesson) : null;
+      const page = session && (Number(session.page) || (Array.isArray(session.pages) ? Number(session.pages[0]) : 0));
+      if(!Number.isInteger(page) || page < 1 || page > 223) return null;
+      return { type:'book_page', page:page, level:'2AS' };
+    }
+    if(level !== '3AS') return null;
+    if(unit != null && unit >= 10 && unit <= 19) unit -= 9;
     if(unit === 1 && [1,2].includes(lesson))
       return { type:'free_unit_lesson', level:'3AS', unit:1, lesson:lesson };
     if(unit >= 1 && unit <= 10 && lesson >= 1 && lesson <= 6)
