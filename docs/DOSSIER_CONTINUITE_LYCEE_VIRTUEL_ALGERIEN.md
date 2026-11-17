@@ -3801,3 +3801,12 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - **Exécution des tests non confirmée** : l'API Actions consultée ne renvoie actuellement aucun workflow run pour le commit des tests. Ne pas annoncer PASS avant un résultat CI réel.
 - Aucun test navigateur E2E effectué dans ce lot.
 - Aucun changement Supabase (SQL, RLS, Auth, schéma, données, abonnements), aucun déploiement, aucune fusion, aucune modification de `main`.
+
+## Lot 609 — périmètre réel de la PR IA (17 novembre 2026)
+
+- Vérification GitHub après Lot 608 : PR #21 ouverte, en brouillon, non fusionnée, techniquement mergeable ; branche `ai/lot-601-worker-jwt` en avance de 104 commits sur `main`, 0 en retard ; 19 fichiers modifiés.
+- Les fichiers relevant directement du professeur IA comprennent `worker/ia-ask.js`, `ia.js`, `rag.js`, `access.js`, `app.js`, `js/qust.js`, `parle.js`, les deux tests IA/QUST et le workflow qui les lance.
+- La même PR contient aussi des changements hors périmètre IA : `ci/check-gamification.mjs`, `ci/check-masar.mjs`, `ci/check-msg.mjs`, `ci/check-multaqa.mjs`, `ci/check-public-portal.mjs`, ainsi que trois fichiers SQL de tests Messenger/Multaqa. Ce sont des fichiers de contrôle/tests, pas une preuve d'exécution ni une migration Supabase ; ils ne doivent pas être confondus avec le travail IA.
+- Décision de prudence : ne pas fusionner la PR en l'état si l'objectif est de ne fusionner que l'intelligence de la plateforme. Il faudra isoler les changements IA des modifications CI/Messenger/Multaqa, après revue des diffs exacts, sans supprimer ni perdre ces travaux hors périmètre.
+- Le commit de tête vérifié après Lot 608 est `01c9717e7e261b545e3ff17b3eba6e7c73747835`. La PR reste ouverte et en brouillon.
+- Aucun changement Supabase, aucune fusion, aucun déploiement, aucune modification de `main`.
