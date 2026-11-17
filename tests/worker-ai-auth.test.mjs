@@ -349,6 +349,7 @@ test('récupère une page du manuel côté Worker via JWT et RLS, sans utiliser 
   assert.equal(response.status, 200);
   assert.equal(payload.ok, true);
   assert.ok(lookup);
+  assert.match(lookup.url, /subject=eq\.allemand/);
   assert.match(lookup.url, /page=eq\.42/);
   assert.match(lookup.url, /level=eq\.2AS/);
   assert.equal(lookup.init.headers.Authorization, 'Bearer ' + TOKEN);
