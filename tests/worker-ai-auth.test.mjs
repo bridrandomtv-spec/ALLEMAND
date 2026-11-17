@@ -412,6 +412,22 @@ test('échoue fermé si la lecture RLS de lesson_content est indisponible', asyn
   assert.equal(h.messages, null);
 });
 
+test('le fichier public 3AS ne contient que les deux séances gratuites de l’unité 1', () => {
+  const freeSource = fs.readFileSync(new URL('../unite3as1_free.js', import.meta.url), 'utf8');
+  const sandbox = { window:{} };
+  vm.runInNewContext(freeSource, sandbox);
+  const units = sandbox.window.UNITES_3AS_A;
+  assert.equal(units.length, 1);
+  assert.equal(units[0].meta.n, 1);
+  assert.equal(units[0].meta.niveau, '3AS');
+  assert.deepEqual(Array.from(units[0].seances, s => s.n), [1, 2]);
+  assert.equal(units[0].devoir, null);
+  assert.equal(units[0].corrige, null);
+  assert.doesNotMatch(freeSource, /Staatsbürgerschaft|Leben in der Gesellschaft|Konsolidierung|Evaluation|Évaluation|corrige:/i);
+  assert.match(appSource, /unite3as1_free\.js/);
+  assert.match(appSource, /'unite3as1_free\.js','unite2\.js'/);
+});
+
 test('le client transmet un sélecteur de page uniquement si l’index public la marque verrouillée', () => {
   assert.ok(iaSource.includes('async function pageResource(question)'));
   assert.ok(iaSource.includes('entry.locked !== true'));
