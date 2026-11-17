@@ -233,10 +233,6 @@ export default {
        Sans identifiant de ressource vérifié côté serveur via le JWT/RLS, il ne
        constitue jamais une preuve d'accès. On l'accepte pour compatibilité du
        client, mais on ne le transmet jamais au modèle. */
-    const document = await fetchAuthorizedBookPage(b.resource, req, env);
-    if(!document.ok) return json({ ok:false, err:document.error }, document.status, org);
-    const ctx = document.context;
-
     const now = Date.now();
     HITS = HITS.filter(t => now - t.at < 60000);
     const userHits = HITS.filter(t => t.userId === identity.userId).length;
@@ -248,6 +244,10 @@ export default {
       if(!entitlement.ok) return json({ ok:false, err:'access-unavailable' }, 503, org);
       if(!entitlement.active) return json({ ok:false, err:'content-locked' }, 403, org);
     }
+
+    const document = await fetchAuthorizedBookPage(b.resource, req, env);
+    if(!document.ok) return json({ ok:false, err:document.error }, document.status, org);
+    const ctx = document.context;
 
     const msgs = [{ role:'system', content:SYSTEM },
       { role:'user', content:(ctx ? ctx + '\n\nQUESTION : ' : '') + q }];
