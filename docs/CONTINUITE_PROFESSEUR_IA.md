@@ -70,3 +70,10 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Les demandes utilisant l'artefact gratuit 3AS doivent aussi préciser l'unité et la séance dans la question ; les verbes/règles déjà identifiés comme verrouillés restent refusés même si une séance gratuite est mentionnée.
 - Régression ajoutée pour « Konjugiere arbeiten », « Conjugate bleiben in the present tense » et « كيفاش نصرف arbeiten؟ » : un compte sans abonnement reçoit `content-locked` et aucun message n'est envoyé au modèle.
 - Ce durcissement ne modifie ni les ressources libres déclarées, ni Supabase, ni les droits RLS. Validation CI à effectuer sur le nouveau commit.
+
+
+### Correction du test Worker — fixture de séance gratuite 3AS — 18/11/2026
+- Analyse du run CI `44199281414` : le job autonome IA échouait à 55/56 tests, au test `refuse côté Worker une séance verrouillée et laisse passer les deux séances gratuites` (ligne 414). Le Worker répondait `503` au lieu de `200` pour une séance gratuite.
+- Cause démontrée : la fixture simulée par `tests/worker-ai-auth.test.mjs` ne contenait pas le marqueur `duree_totale:120`, alors que `fetchFreeUnitLesson` vérifie explicitement ce marqueur dans l'artefact public réel `unite3as1_free.js`. Le fichier réel contient bien ce marqueur dans `meta`.
+- Correction limitée au test : la fixture simulée inclut maintenant `meta.duree_totale:120`. Aucun changement du Worker, des règles d'accès, de Supabase, de `main` ou du déploiement.
+- À revalider sur le nouveau commit : les 56 tests Worker, puis QUST/Darja/Arabizi et les régressions RAG/professeur. Le correctif est une correction de fixture, pas une modification de sécurité en production.
