@@ -906,8 +906,11 @@ async function qustFallback(qu){
   }catch(err){}
   return null;
 }
-async function reponsePedagogique(q){
-    q = darja(q);
+async function reponsePedagogique(q, meta){
+    var rawQuestion = String(q == null ? "" : q);
+    var normalizedQuestion = meta && typeof meta.normalized_text === "string" && meta.normalized_text.trim()
+      ? meta.normalized_text : rawQuestion;
+    q = darja(normalizedQuestion);
     var _qust = null;
     /* ── P2-G.1 : contexte unifié transmis à QUST ─────────────────────────
        Variable de contexte UNIQUE : _qctx. Variable de résultat UNIQUE : _qust
@@ -939,7 +942,7 @@ async function reponsePedagogique(q){
     }
     try{
       if(window.QUST && window.QUST.understand){
-        _qust = window.QUST.understand(q, _qctx);
+        _qust = window.QUST.understand(rawQuestion, _qctx, q);
       }
     }catch(e){ _qust = null; }
     const _bib = await intentBiblio(q);
