@@ -393,3 +393,10 @@ test('échoue fermé si la lecture RLS de lesson_content est indisponible', asyn
   assert.equal(payload.err, 'access-unavailable');
   assert.equal(h.messages, null);
 });
+
+test('le client transmet un sélecteur de page uniquement si l’index public la marque verrouillée', () => {
+  assert.ok(iaSource.includes('async function pageResource(question)'));
+  assert.ok(iaSource.includes('entry.locked !== true'));
+  assert.ok(iaSource.includes('await pageResource(q)'));
+  assert.ok(iaSource.includes('resource: resource'));
+});
