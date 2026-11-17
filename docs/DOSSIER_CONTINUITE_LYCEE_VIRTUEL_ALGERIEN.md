@@ -3473,3 +3473,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Conclusion : échec du job avant toute étape observable ; impossible d'attribuer cet échec aux tests du Lot 601/602. La suite Node n'est donc pas déclarée exécutée ni validée sur GitHub Actions.
 - Deux autres workflows PostgreSQL indépendants (#300 Messenger et #361 ملتقى الطلاب) sont également en échec sans étapes/journaux disponibles. Aucun changement de base de données n'a été effectué par cette intervention.
 - Comparaison Git : branche `ai/lot-601-worker-jwt` en avance de 22 commits et 0 en retard sur `main` au moment du contrôle. Les fichiers touchés restent limités au Worker IA, clients IA/voix, QUST/RAG, tests, workflow CI et ce dossier.
+
+
+### Suite — compatibilité QUST et relance CI
+
+- Ajout d'un test de non-régression pour l'API historique `QUST.understand(question, context)` : conservation de `norm`, résolution du sujet, niveau 2AS et extraction de la page 3.
+- PR #21 mise à jour : description consolidée avec les Lots 601/602, validations réellement effectuées et limites connues.
+- Relance manuelle du job CI #4130 acceptée par GitHub. Nouvelle tentative #4131 : même échec au niveau du job avant les étapes (`steps: null`), aucun journal disponible.
+- Les workflows indépendants PostgreSQL déclenchés par le même commit (#301, #362 et #283) échouent également sans étapes ni logs. Cela renforce l'hypothèse d'un problème d'exécution des jobs GitHub Actions, sans permettre d'en établir la cause.
+- La PR #21 reste ouverte, brouillon, non fusionnée, avec `main` comme base. Au dernier contrôle : 24 commits, 10 fichiers modifiés, branche à jour de la base ; ne pas fusionner tant que CI et tests réels ne sont pas vérifiés.
