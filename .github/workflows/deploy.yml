@@ -1252,3 +1252,8 @@ jobs:
         run: node --test tests/worker-ai-auth.test.mjs
       - name: Tester QUST et la compréhension Darija/Arabizi
         run: node --test tests/qust-darja.test.mjs
+      - name: Tester la régression RAG, professeur et parcours combinés
+        run: |
+          node tests/regression_rag.mjs
+          node tests/regression_prof.mjs
+          node tests/regression.mjs
