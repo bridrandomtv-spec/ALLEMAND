@@ -3536,3 +3536,16 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - À la dernière observation, le run #44165944625 avait échoué à l'étape Messenger sur le doublon `uploadStart`; les étapes suivantes (dont les tests JWT et Darija/Arabizi) étaient ignorées. Ne pas déclarer ces tests passés.
 - Les workflows PostgreSQL indépendants déclenchés par le premier commit de correction étaient encore en cours lors du dernier relevé ; leurs résultats doivent être contrôlés séparément.
 - Aucun code applicatif, Worker, corpus, donnée, secret, schéma, Auth, RLS, abonnement ou paiement Supabase n'a été modifié. Aucun déploiement ni fusion. PR #21 reste à maintenir ouverte et en brouillon jusqu'à validation complète.
+
+
+### Suite Lot 603 — assertions Messenger réalignées sur le code réel (17 novembre 2026)
+
+- Le run CI #44166138351 a confirmé que le renommage des variables du test supprimait l'erreur de compilation, mais a révélé quatre assertions statiques obsolètes/inexactes dans `ci/check-msg.mjs`.
+- Vérification du code réel : le garde `renderEpoch` est bien exécuté après la lecture de la file, avant l'écriture dans `window.__msgVerificationRows`. L'assertion cherchait à tort une affectation immédiatement sur la ligne suivante ; elle a été remplacée par un contrôle d'ordre lecture → garde → écriture.
+- Le sélecteur de délégation réel inclut aussi `[data-verif-page]`. L'assertion avait omis ce sélecteur et a été alignée sur la chaîne réellement présente ; le contrôle des actions de document reste conservé.
+- La migration utilise correctement les délimiteurs PostgreSQL `as $$ ... $$;`. L'ancien test détectait à tort le préfixe valide `as $$` comme un `as $` mal formé ; la regex a été corrigée pour ne rejeter que le délimiteur isolé incomplet.
+- La logique d'idempotence est bien présente dans `msg_invite_send` : recherche d'une invitation pendante du même expéditeur/destinataire, retour de son identifiant, puis seulement ensuite calcul du quota 24 h. L'assertion cherchait un commentaire qui n'existait pas ; elle vérifie maintenant l'ordre réel des instructions.
+- Sur le run #44166400597 (HEAD `64085099392d929cca2d0abf1d09d9c9c05725ca`), ces trois derniers contrôles sont passés après correction ; une seule assertion restait en échec car le test cherchait une signature sans les arguments de pagination alors que le code appelle `msgVerificationQueue(state.verificationPage,50)`.
+- Dernière correction : signature exacte de la lecture paginée dans l'assertion. Commit : `e3f27189c69373cc5a95a352ddb00e7a46718c13`. Nouvelle exécution CI à confirmer.
+- Ces corrections sont limitées au script de validation ; aucune modification de `msg.js`, de la migration SQL ou de la logique serveur n'a été faite.
+- Les tests JWT Worker et Darija/Arabizi ne sont pas encore déclarés exécutés : ils ne commencent qu'après la validation Messenger.
