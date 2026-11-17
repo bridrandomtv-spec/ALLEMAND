@@ -243,7 +243,7 @@ test('refuse côté Worker une conjugaison verrouillée pour un compte sans abon
 
 test('refuse aussi une demande d’explication d’une règle verrouillée sans mot « conjugaison »', async () => {
   const h = harness();
-  const response = await h.context.__worker.fetch(request({ q:'Explique sein.' }), h.env);
+  const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
   const payload = await response.json();
   assert.equal(response.status, 403);
   assert.equal(payload.err, 'content-locked');
