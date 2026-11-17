@@ -35,9 +35,9 @@ Livrer uniquement les changements liés au professeur IA : authentification du W
 Cette branche est créée depuis `main` pour isoler les changements IA de la PR #21, qui contient également des changements Messenger, Multaqa, Masar et Gamification. La PR #21 reste ouverte et en brouillon ; elle ne doit pas être fusionnée dans le cadre de cette livraison IA seule.
 
 ## Validation
-- Après ajout du connecteur `lesson_content`, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44187832982` : Worker JWT/RLS (32 tests ; dernier correctif anti-contournement en attente CI), QUST/Darja/Arabizi et régression RAG/prof/union tous `success`.
+- Après ajout du connecteur `lesson_content`, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44187832982` : Worker JWT/RLS (32 tests, 32 réussis), QUST/Darja/Arabizi et régression RAG/prof/union tous `success`.
 - Le job global `Validation structurelle & pédagogique` échoue toujours avant les tests IA sur une erreur de syntaxe préexistante dans `ci/check-msg.mjs:231` (`SyntaxError: missing ) after argument list`). Les étapes IA du job global sont donc sautées, mais le job IA indépendant du même run est vert. Les cas de référence du professeur (9/9) et la suite T1-T6 sont également `success` avant l'étape Messenger.
 - Les workflows PostgreSQL hors périmètre Messenger/Multaqa restent séparés ; leurs échecs ne sont pas des échecs du code IA. Le run global n'est pas déclaré vert.
-- Run `44188962330` : job autonome IA `success` ; Worker JWT/RLS 31/31, QUST/Darja/Arabizi 9/9 et régression RAG/prof/union `success`. Le job global échoue sur la validation Messenger hors périmètre, après succès des 9 cas de référence du professeur et de la suite T1-T6.
+- Run `44189436952` : job autonome IA `success` ; Worker JWT/RLS 31/31, QUST/Darja/Arabizi 9/9 et régression RAG/prof/union `success`. Le job global échoue sur la validation Messenger hors périmètre, après succès des 9 cas de référence du professeur et de la suite T1-T6.
 - Aucun test E2E navigateur n'est déclaré réussi ici.
 - Aucun déploiement, aucune fusion et aucune écriture Supabase.
