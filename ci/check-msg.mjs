@@ -44,9 +44,13 @@ ok(verifyStart >= 0 && verifyEnd > verifyStart &&
    'file de vérification paginée avec total et ordre stable');
 ok(sbjs.includes("if(!/^\\d{1,20}$/.test(number))") && !sbjs.includes("Number.isSafeInteger(Number(number))"), 'numéro scolaire accepté sans conversion numérique risquée');
 ok(sbjs.includes(".eq('id', uid).eq('verif_statut','en_attente')\n    .select('id').maybeSingle()") && sbjs.includes("if(!r.data) return { ok:false"), 'modération confirmée uniquement si une ligne est réellement modifiée');
-ok(msgjs.indexOf('if(renderEpoch!==state.renderEpoch) return;\\n      window.__msgVerificationRows = vq') > msgjs.indexOf('var vq = await window.SB.msgVerificationQueue()'),
+const verificationQueueReadAt = msgjs.indexOf('var vq = await window.SB.msgVerificationQueue()');
+const verificationQueueGuardAt = msgjs.indexOf('if(renderEpoch!==state.renderEpoch) return;', verificationQueueReadAt);
+const verificationQueueWriteAt = msgjs.indexOf('window.__msgVerificationRows = vq', verificationQueueReadAt);
+ok(verificationQueueReadAt >= 0 && verificationQueueGuardAt > verificationQueueReadAt &&
+   verificationQueueWriteAt > verificationQueueGuardAt,
    'Messenger : réponse asynchrone obsolète ignorée avant remplacement des données de contrôle');
-ok(msgjs.includes("t.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-mod]')") &&
+ok(msgjs.includes("t.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-verif-page],[data-mod]')") &&
    msgjs.includes('data-mod="verif-doc"') &&
    msgjs.includes("if(mod==='verif-doc')") &&
    msgjs.includes("startsWith(String(docUid)+'/')") &&
@@ -134,7 +138,7 @@ ok(inviteSql.includes('msg_pair_blocked') && /create or replace function public\
    'blocage bilatéral appliqué aux accès DM');
 
 
-ok(!/^as \$/m.test(inviteSql) && !/^\$;$/m.test(inviteSql),
+ok(!/^as \$(?!\$)\s*$/m.test(inviteSql) && !/^\$;$/m.test(inviteSql),
    'quotage dollar SQL valide pour toutes les fonctions');
 ok(!/^do \$(?!\$)/m.test(postgresSql) && !/^end \$(?!\$);$/m.test(postgresSql),
    'blocs PL/pgSQL du test PostgreSQL correctement délimités');
@@ -152,7 +156,15 @@ ok(/status='expired'[\s\S]*?return null/.test(inviteSql) &&
 
 ok(/msg_invite_send[\s\S]*?pg_advisory_xact_lock\(hashtextextended\(v_sender::text, 0\)\)/.test(inviteSql),
    'limite 24 h sérialisée contre les envois concurrents');
-ok(/demande pendante identique reste idempotente[\s\S]*?if v_id is not null then return v_id; end if;[\s\S]*?select count\(\*\) into v_count/.test(inviteSql),
+const inviteSendStart = inviteSql.indexOf('create or replace function public.msg_invite_send(');
+const inviteSendEnd = inviteSql.indexOf('create or replace function public.msg_invite_decline(', inviteSendStart);
+const inviteSendBody = inviteSql.slice(inviteSendStart, inviteSendEnd);
+const pendingInviteLookupAt = inviteSendBody.indexOf('select id into v_id from public.msg_invites');
+const pendingInviteReturnAt = inviteSendBody.indexOf('if v_id is not null then return v_id; end if;', pendingInviteLookupAt);
+const inviteQuotaCountAt = inviteSendBody.indexOf('select count(*) into v_count', pendingInviteReturnAt);
+ok(inviteSendStart >= 0 && inviteSendEnd > inviteSendStart &&
+   pendingInviteLookupAt >= 0 && pendingInviteReturnAt > pendingInviteLookupAt &&
+   inviteQuotaCountAt > pendingInviteReturnAt,
    'répétition idempotente vérifiée avant la limite 24 h');
 ok(postgresSql.includes('pending_invite_retry_blocked_by_rate_limit'),
    'test PostgreSQL : répétition pendante autorisée au plafond du quota');
