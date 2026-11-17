@@ -346,7 +346,7 @@
         if(s >= 2) setStatus((st || '🧠 réflexion') + ' · ' + s + 's');
       }, 1000);
       if(typeof fn === 'function'){
-        try{ rep = await fn(canon(q)); }
+        try{ rep = await fn(q, { normalized_text: canon(q) }); }
         catch(e){ try{ console.warn('[parle] reponseIA :', e); }catch(_){}} 
       }
       clearInterval(compteur);
