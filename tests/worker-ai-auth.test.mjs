@@ -31,6 +31,12 @@ function harness(options = {}){
       }
       if(String(url).includes('/rest/v1/lesson_content')){
         if(options.lessonContentThrows) throw new Error('lesson content lookup failed');
+        if(options.lessonContentByPage){
+          const page = new URL(String(url)).searchParams.get('page')?.replace('eq.','');
+          return new Response(JSON.stringify(options.lessonContentByPage[page] || []), {
+            status:200, headers:{ 'Content-Type':'application/json' }
+          });
+        }
         return options.lessonContentResponse || new Response(JSON.stringify(options.lessonContent || []), {
           status:200, headers:{ 'Content-Type':'application/json' }
         });
@@ -482,7 +488,8 @@ test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS'
   assert.ok(iaSource.includes('if(!entry) return null;'));
   assert.ok(iaSource.includes("if(level === '2AS')"));
   assert.ok(iaSource.includes("window['SEANCES_U' + unit]"));
-  assert.ok(iaSource.includes("type:'book_page', page:page, level:'2AS'"));
+  assert.ok(iaSource.includes("type:'book_page', page:pages[0], level:'2AS'"));
+  assert.ok(iaSource.includes("type:'book_pages', pages:pages, level:'2AS'"));
   assert.doesNotMatch(iaSource, /entry\.locked !== true/);
   assert.ok(iaSource.includes('function lessonResource(question)'));
   assert.ok(iaSource.includes("type:'free_unit_lesson', level:'3AS', unit:1"));
@@ -493,6 +500,23 @@ test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS'
   assert.ok(iaSource.includes("type:'free_exercise_bank', level:level"));
   assert.ok(iaSource.includes('await pageResource(q) || lessonResource(q) || summaryResource(q) || exerciseBankResource(q)'));
   assert.ok(iaSource.includes('resource: resource'));
+});
+
+test('le Worker récupère toutes les pages gratuites d’une séance 2AS via RLS', async () => {
+  const h = harness({ lessonContentByPage:{
+    '5':[{ titre:'L1 p5', body:'Ich heiße Amira.' }],
+    '6':[{ titre:'L1 p6', body:'Das deutsche Alphabet.' }]
+  }});
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 1 en 2AS.',
+    resource:{ type:'book_pages', pages:[5,6], level:'2AS' }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.match(h.messages[1].content, /PAGE 5/);
+  assert.match(h.messages[1].content, /PAGE 6/);
+  assert.match(h.messages[1].content, /Ich heiße Amira/);
+  assert.match(h.messages[1].content, /Das deutsche Alphabet/);
+  assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/lesson_content')).length, 2);
 });
 
 test('le Worker peut transmettre une page gratuite 2AS via RLS pour une séance de l’unité 1', async () => {
