@@ -84,7 +84,7 @@ function isLockedContentQuestion(question){
   const unit = unitMatch ? Number(unitMatch[1]) : null;
   const lesson = lessonMatch ? Number(lessonMatch[1]) : null;
   const assessment = /(?:فرض|اختبار|امتحان|quiz|test|devoir|evaluation|évaluation)/i.test(q);
-  if(unit !== null && lesson !== null) return !(unit === 1 && lesson <= 2);
+  if(unit !== null && lesson !== null && !(unit === 1 && lesson <= 2)) return true;
   if(lesson !== null && lesson > 2) return true;
   if(unit !== null && assessment && unit !== 1) return true;
   const conjugationIntent = /(?:conjug|konjug|تصريف|صرف|verbe|verb|nsarref|nsarraf|sarref|saref|tsarref|kifach|كيفاش|كيف)/i.test(q)
