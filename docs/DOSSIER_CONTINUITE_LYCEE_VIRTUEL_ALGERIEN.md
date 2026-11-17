@@ -3652,3 +3652,30 @@ Cette section remplace les constats CI historiques indiquant que les tests IA n'
 4. Vérifier les secrets/bindings du Worker IA et effectuer un test réel navigateur/voix sur l'environnement de préproduction.
 
 Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, Auth, schéma, abonnement, paiement, secret, déploiement ou fusion n'a été modifié.
+
+
+## Lot 603 — décision d'accès au professeur IA distant et harmonisation du timeout (17 novembre 2026)
+
+### Décision produit confirmée
+- Le propriétaire confirme : **tout utilisateur connecté peut utiliser le professeur IA distant, même sans abonnement actif**.
+- Le Worker continue d'exiger un JWT Supabase valide. L'authentification reste obligatoire ; aucun statut d'abonnement n'est exigé ni vérifié par le Worker.
+- Aucun contrôle d'accès payant ne doit être ajouté sur les chemins du professeur IA distant. Cette décision ne modifie pas les règles d'accès aux autres contenus payants (corpus, bibliothèque ou autres vues).
+
+### Corrections limitées au client et aux tests
+- Le chemin de chat direct dans `app.js` dispose désormais du même timeout de 25 secondes que `ia.js`, via `AbortController`; le timer est toujours nettoyé dans `finally`.
+- Le commentaire d'en-tête de `ia.js` est corrigé : le quota navigateur réellement codé est 150 appels/jour, indicatif et contournable ; le Worker applique actuellement 20 appels/minute/utilisateur et 200 appels/minute/isolate. Aucun quota journalier distribué n'est prétendu.
+- Test Worker ajouté : un compte authentifié dont les métadonnées indiquent un plan gratuit et un abonnement inactif est accepté. Test statique ajouté pour vérifier le timeout de 25 secondes du chat direct.
+- Aucun contrôle d'abonnement n'est introduit. Aucun quota Worker n'est modifié, faute de décision distincte sur une politique journalière/minute côté serveur.
+
+### CI sur le HEAD précédent
+- Sur le commit documentaire précédent `17e48629961c4239815baa9282ae8b457f558e9f`, les quatre workflows lancés sont maintenant tous terminés avec succès :
+  - CI ALLEMAND #44171921654 : succès.
+  - PostgreSQL découverte Messenger #44171921655 : succès.
+  - PostgreSQL consentement Messenger #44171921659 : succès.
+  - PostgreSQL ملتقى الطلاب #44171921683 : succès.
+- Ces résultats portent sur le HEAD précédent ; les nouveaux tests Lot 603 doivent encore être exécutés sur le commit qui contient les corrections.
+
+### Limites et garde-fous
+- Les bindings et secrets réels du Worker IA séparé, ainsi qu'un test navigateur/voix en préproduction, ne sont pas vérifiés par ces tests simulés.
+- Aucun changement Supabase, SQL, RLS, Auth, schéma, paiement, secret, configuration Cloudflare, déploiement ou fusion.
+- PR #21 reste ouverte et en brouillon ; aucune modification de `main`.
