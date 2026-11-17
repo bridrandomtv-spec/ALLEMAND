@@ -3506,3 +3506,13 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Runs déclenchés : #44159847454 (CI ALLEMAND), #44159847402 (Messenger PostgreSQL), #44159847668 (ملتقى الطلاب PostgreSQL), #44159847485 (consentement Messenger PostgreSQL).
 - Les quatre runs sont terminés en échec ; chaque job retourne encore `steps: null`. Le problème persiste donc sur le nouveau commit, y compris pour la CI ALLEMAND, sans preuve permettant d'en déterminer la cause.
 - Comparaison après cette mise à jour : 26 commits en avance, 0 en retard sur `main`, 10 fichiers modifiés. PR #21 toujours ouverte, brouillon, non fusionnée.
+
+
+### Lot 602 — tests d'intégration ciblés RAG/IA (17 novembre 2026)
+
+- Ajout dans `tests/qust-darja.test.mjs` de deux tests d'intégration isolés :
+  1. chargement réel de `rag.js` dans `vm`, avec QUST espionné, puis appel de `window.reponsePedagogique` ; contrôle du transcript brut, du texte normalisé et du contexte matière ;
+  2. chargement réel de `ia.js` dans `vm`, avec un RAG local simulé ; contrôle que `window.reponseIA` transmet sans altération la question brute et les métadonnées, et retourne la réponse locale.
+- Les deux chemins ont été exécutés manuellement dans le runtime JavaScript de travail : RAG → QUST a reçu `3lach ma fhemtch Perfekt?`, `شرحلي perfekt`, `subject=allemand` ; IA → RAG a reçu le même transcript brut et le même champ `normalized_text`, et a retourné la réponse locale attendue.
+- Le fichier de test complet a passé le contrôle de parsing JavaScript. Ce contrôle ne prétend pas être une exécution de `node --test` ; celle-ci reste à confirmer par un runner GitHub fonctionnel ou un environnement Node local.
+- Aucun test micro réel, aucune requête Worker Cloudflare réelle, aucun déploiement.
