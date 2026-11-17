@@ -3415,3 +3415,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun navigateur, micro, service SpeechRecognition, haut-parleur, Worker ni scénario E2E n'a été exécuté. Les constats sont issus de la lecture du code uniquement ; aucune performance réelle de reconnaissance Darija ne peut être affirmée.
 - Aucun code applicatif, configuration, Worker, corpus, secret, Supabase ou schéma n'a été modifié dans ce lot. Aucun correctif n'a été appliqué.
 - Recommandations prioritaires : (1) définir un contrat unique de transcription `raw_text` + langue/dialecte détectés + langue choisie, (2) faire converger les parcours vocaux vers le même pipeline de réponse, (3) conserver les marqueurs Darija/Arabizi avant normalisation, (4) compléter/limiter honnêtement les langues réellement supportées, (5) supprimer l'insertion HTML directe dans `ecoute.js`, (6) ajouter des tests navigateur séparant reconnaissance, routage IA, rendu et TTS.
+
+
+## Lot 609 — diagnostic CI du professeur IA et correction de fixture (18 novembre 2026)
+
+- Reprise à partir de la PR #22 (`ai/intelligence-only-lots-601-608`), HEAD initial `6bab1ac59983c6ecda6cbde0e4e44efc090978ab`. La PR est restée ouverte, en brouillon et non fusionnée.
+- Lecture des jobs et journaux du run CI `44199281414` : le job autonome « Tests autonomes — Professeur IA » échouait sur `tests/worker-ai-auth.test.mjs`, avec 55 tests réussis et 1 échec. Le test fautif était « refuse côté Worker une séance verrouillée et laisse passer les deux séances gratuites » (ligne 405, assertion ligne 414) : HTTP 503 obtenu au lieu de 200.
+- Cause précise : la fixture simulée par le test pour `unite3as1_free.js` contenait `window.UNITES_3AS_A` mais pas `duree_totale:120`, alors que `fetchFreeUnitLesson` valide explicitement les deux marqueurs. Vérification du vrai `unite3as1_free.js` sur la branche : `meta` contient bien `duree_totale:120`.
+- Correctif limité à la fixture du test : ajout de `meta:{duree_totale:120}` dans la ressource simulée. Aucun changement du Worker, des règles d'accès, des fichiers Supabase, de `main` ou du déploiement.
+- Commit test : `8cd4e993ddef5f51c973398bc56911c161c294e4`. Commit de la documentation IA : `db9858f8649bf3252769c015e00ee4721b8d4fec`.
+- `docs/CONTINUITE_PROFESSEUR_IA.md` a aussi été complété avec le diagnostic détaillé. Le présent dossier principal est mis à jour pour conserver le fil des lots.
+- À la vérification immédiatement après le commit documentaire, aucun workflow associé au nouveau HEAD n'était encore remonté et le statut combiné ne contenait aucun check. Le correctif n'est donc pas déclaré validé CI à ce stade.
+- Autre constat indépendant : dans le run `44199281414`, la CI globale échoue aussi dans `ci/check-msg.mjs` (ligne 231), sur une chaîne JavaScript mal échappée : `SyntaxError: missing ) after argument list`. Cette erreur Messenger est hors périmètre IA ; elle provoque l'arrêt anticipé du job global et le saut des étapes suivantes.
+- Prochaine étape : obtenir une exécution réelle du job autonome IA sur le nouveau HEAD, confirmer les 56 tests Worker puis les suites QUST/Darja/Arabizi et RAG/professeur. Ensuite reprendre l'audit des sélecteurs de règles grammaticales verrouillées et des chemins ressources/exercices. Aucun audit déjà validé ne doit être recommencé sans régression démontrée.
+
