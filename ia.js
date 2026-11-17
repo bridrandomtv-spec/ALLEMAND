@@ -93,6 +93,25 @@
     if(!Number.isInteger(unit) || unit < 1 || unit > (level === '2AS' ? 9 : 10)) return null;
     return { type:'free_summary', level:level, unit:unit };
   }
+  function exerciseBankResource(question){
+    const text = String(question || '');
+    if(!/(?:تمرين|تمارين|exercice|exercices|exercise|exercises|übung|übungen|tamarin|tamrin|banque\s*(?:d['’ ]?)?exercices)/i.test(text)) return null;
+    const explicit3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(text);
+    const explicit2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(text);
+    let level = '';
+    try{ level = window.getNiveauActif ? window.getNiveauActif() : ''; }catch(e){}
+    if(explicit3) level = '3AS';
+    else if(explicit2) level = '2AS';
+    if(!['2AS','3AS'].includes(level)) return null;
+    if(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس)\s*[:#-]?\s*\d{1,2}/i.test(text)) return null;
+    const unitMatch = text.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
+    if(unitMatch){
+      let unit = Number(unitMatch[1]);
+      if(level === '3AS' && unit >= 10 && unit <= 19) unit -= 9;
+      if(unit !== 1) return null;
+    }
+    return { type:'free_exercise_bank', level:level };
+  }
   window.reponseIA = async function(q, meta){
     q = String(q == null ? '' : q).trim();
     if(!q) return '';
@@ -199,7 +218,7 @@
     const accessToken = authState && authState.ok && authState.session && authState.session.access_token;
     if(!accessToken) return sortieFaible(local, 'session-supabase-requise');
     try{
-      const resource = await pageResource(q) || lessonResource(q) || summaryResource(q);
+      const resource = await pageResource(q) || lessonResource(q) || summaryResource(q) || exerciseBankResource(q);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
         headers:{
