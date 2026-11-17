@@ -28,7 +28,10 @@ insert into public.profiles values
  ('10000000-0000-4000-8000-000000000005','eleve','verifie','Other Class','16','3AS','Maths');
 
 create function public.msg_pair_blocked(a uuid,b uuid) returns boolean
-language sql stable security definer set search_path=pg_catalog,public as $$ select false $$;
+language sql stable security definer set search_path=pg_catalog,public as $ select false $;
+create or replace function public.msg_invite_send(p_recipient uuid) returns uuid
+language sql security definer set search_path=pg_catalog,public
+as $ select p_recipient $;
 \i supabase/migrations/202611130003_msg_student_discovery.sql
 
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',false);
@@ -46,8 +49,9 @@ end $$;
 
 set role authenticated;
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',false);
-do $$ declare n integer; i integer; begin
- select count(*) into n from public.msg_student_search('Beta',12);
+create temporary table discovery_keys as select student_key from public.msg_student_search('Beta',12);
+do $ declare n integer; i integer; begin
+ select count(*) into n from discovery_keys;
  if n<>1 then raise exception 'discovery_expected_one_verified_peer_got_%',n; end if;
  select count(*) into n from public.msg_student_search('Gamma',12);
  if n<>0 then raise exception 'unverified_profile_leaked'; end if;
@@ -68,7 +72,36 @@ do $$ declare n integer; i integer; begin
    if sqlerrm='search_quota_not_enforced' then raise; end if;
    if sqlerrm<>'search_rate_limit' then raise; end if;
  end;
-end $$;
+end $;
+
+-- Le jeton opaque est lié au compte demandeur et à usage unique.
+select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000002',false);
+do $ declare k uuid; begin
+ select student_key into k from discovery_keys limit 1;
+ begin
+   perform public.msg_invite_send_by_key(k);
+   raise exception 'foreign_discovery_token_accepted';
+ exception when others then
+   if sqlerrm='foreign_discovery_token_accepted' then raise; end if;
+   if sqlerrm<>'discovery_result_expired' then raise; end if;
+ end;
+end $;
+select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',false);
+do $ declare k uuid; recipient uuid; begin
+ select student_key into k from discovery_keys limit 1;
+ recipient := public.msg_invite_send_by_key(k);
+ if recipient<>'10000000-0000-4000-8000-000000000002' then
+   raise exception 'discovery_token_wrong_recipient';
+ end if;
+ begin
+   perform public.msg_invite_send_by_key(k);
+   raise exception 'discovery_token_replay_allowed';
+ exception when others then
+   if sqlerrm='discovery_token_replay_allowed' then raise; end if;
+   if sqlerrm<>'discovery_result_expired' then raise; end if;
+ end;
+end $;
+
 -- Le compte non vérifié ne peut pas lancer de recherche.
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000003',false);
 do $$ begin
