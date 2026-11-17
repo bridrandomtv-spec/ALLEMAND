@@ -21,6 +21,7 @@ Livrer uniquement les changements liés au professeur IA : authentification du W
 
 ## Récupération documentaire sécurisée — pages du manuel
 - `rag.js` ne fait plus confiance à `ACCESS.entitlement().ok` côté navigateur pour révéler un corps de page marqué verrouillé dans l'index public. Même si l'état local est falsifié, le corps doit provenir de la lecture `lesson_content` protégée par RLS. La requête locale filtre également `subject='allemand'` afin d'éviter toute collision entre matières.
+- Le fichier public `unite3as1_free.js` est désormais extrait de `unites3as_a.js` et ne contient que les séances 1 et 2 de l'unité 1 3AS (sans devoir ni corrigé). `app.js` le charge avant le lot complet protégé : pour un compte gratuit, le Worker refuse toujours `unites3as_a.js` et l'application ne reçoit que l'artefact limité ; pour un abonné, le lot complet peut ensuite remplacer l'aperçu limité. Le test vérifie l'exécution de l'artefact, les séances `[1,2]`, l'absence de devoir/corrigé et l'absence de marqueurs d'unités/séances payantes.
 - `worker/ia-ask.js` ne retourne plus immédiatement « accès gratuit » dès qu'une demande mentionne unité 1 / séance 1 ou 2 : les autres contrôles continuent, notamment les conjugaisons explicitement verrouillées. Un test couvre `Conjugaison sein unité 1 séance 1`, tentative de contournement qui était auparavant acceptée par le Worker.
 - `ia.js` transmet uniquement un sélecteur `{type:'book_page', page, level}` pour une page dont l'index public indique `locked:true` ; les pages statiques gratuites ne partent pas vers le Worker. Il ne transmet plus les extraits BIBLIO ni la réponse locale dans `ctx`.
 - Le Worker valide strictement le type, le niveau et les bornes de page. Il applique d'abord le quota utilisateur, puis effectue un GET en lecture seule sur `public.lesson_content`, filtré par `subject=allemand`, `level` et `page`, avec l'anon key et le JWT de l'utilisateur. Le test vérifie qu'aucune lecture documentaire n'est effectuée après le quota.
@@ -35,9 +36,15 @@ Livrer uniquement les changements liés au professeur IA : authentification du W
 Cette branche est créée depuis `main` pour isoler les changements IA de la PR #21, qui contient également des changements Messenger, Multaqa, Masar et Gamification. La PR #21 reste ouverte et en brouillon ; elle ne doit pas être fusionnée dans le cadre de cette livraison IA seule.
 
 ## Validation
-- Après ajout du connecteur `lesson_content`, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44187832982` : Worker JWT/RLS (32 tests, 32 réussis), QUST/Darja/Arabizi et régression RAG/prof/union tous `success`.
+- Après ajout du connecteur `lesson_content`, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44187832982` : Worker JWT/RLS (33 tests ; nouveau test d'isolation 3AS en attente CI), QUST/Darja/Arabizi et régression RAG/prof/union tous `success`.
 - Le job global `Validation structurelle & pédagogique` échoue toujours avant les tests IA sur une erreur de syntaxe préexistante dans `ci/check-msg.mjs:231` (`SyntaxError: missing ) after argument list`). Les étapes IA du job global sont donc sautées, mais le job IA indépendant du même run est vert. Les cas de référence du professeur (9/9) et la suite T1-T6 sont également `success` avant l'étape Messenger.
 - Les workflows PostgreSQL hors périmètre Messenger/Multaqa restent séparés ; leurs échecs ne sont pas des échecs du code IA. Le run global n'est pas déclaré vert.
 - Run `44189436952` : job autonome IA `success` ; Worker JWT/RLS 31/31, QUST/Darja/Arabizi 9/9 et régression RAG/prof/union `success`. Le job global échoue sur la validation Messenger hors périmètre, après succès des 9 cas de référence du professeur et de la suite T1-T6.
 - Aucun test E2E navigateur n'est déclaré réussi ici.
 - Aucun déploiement, aucune fusion et aucune écriture Supabase.
+
+
+### Isolation du contenu gratuit 3AS — en attente CI
+- Nouveau fichier `unite3as1_free.js` généré uniquement à partir de `U3AS_1.meta` et des séances 1 et 2. Il n'embarque ni séances 3–6, ni devoir, ni corrigé, ni unités 2–3.
+- Le chargeur `CONTENT1` le récupère avant `unites3as_a.js`. Le Worker du site continue de protéger le lot complet avec le contrôle RLS existant ; aucune règle d'accès Supabase n'a été modifiée.
+- Test ajouté dans `tests/worker-ai-auth.test.mjs` pour exécuter le fichier et vérifier strictement le contenu exposé.
