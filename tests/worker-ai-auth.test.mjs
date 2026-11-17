@@ -474,7 +474,9 @@ test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS'
   assert.ok(iaSource.includes("type:'free_unit_lesson', level:'3AS', unit:1"));
   assert.ok(iaSource.includes('function summaryResource(question)'));
   assert.ok(iaSource.includes("type:'free_summary', level:level, unit:unit"));
-  assert.ok(iaSource.includes('await pageResource(q) || lessonResource(q) || summaryResource(q)'));
+  assert.ok(iaSource.includes('function exerciseBankResource(question)'));
+  assert.ok(iaSource.includes("type:'free_exercise_bank', level:level"));
+  assert.ok(iaSource.includes('await pageResource(q) || lessonResource(q) || summaryResource(q) || exerciseBankResource(q)'));
   assert.ok(iaSource.includes('resource: resource'));
 });
 
