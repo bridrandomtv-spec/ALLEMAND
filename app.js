@@ -1279,14 +1279,17 @@ async function sendChat(v){
         const authState = await sbApi.getSession();
         const accessToken = authState && authState.ok && authState.session && authState.session.access_token;
         if(!accessToken) throw new Error('Session Supabase requise');
+        const controller = new AbortController();
+        const timeout = setTimeout(function(){ controller.abort(); }, 25000);
         const response = await fetch(proxy + '/ask', {
           method:'POST',
           headers:{
             'Content-Type':'application/json',
             'Authorization':'Bearer ' + accessToken
           },
-          body:JSON.stringify({q:String(v).slice(0,600),ctx:'منصة الثانوية الافتراضية الجزائرية. المساعدة التعليمية في اللغة الألمانية، مع شرح مبسط بالعربية والألمانية.'})
-        });
+          body:JSON.stringify({q:String(v).slice(0,600),ctx:'منصة الثانوية الافتراضية الجزائرية. المساعدة التعليمية في اللغة الألمانية، مع شرح مبسط بالعربية والألمانية.'}),
+          signal:controller.signal
+        }).finally(function(){ clearTimeout(timeout); });
         const data = await response.json().catch(()=>null);
         if(response.ok && data && data.ok && typeof data.rep === 'string' && data.rep.trim()){
           tp.remove();
