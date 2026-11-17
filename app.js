@@ -3697,7 +3697,7 @@ try{ document.addEventListener('DOMContentLoaded', function(){ var s=document.cr
    Ce chargeur prend le jeton de la session courante, fetch chaque fichier,
    et l'exécute en portée globale (les fichiers exposent window.UNITE*). */
 (function(){
-  var FILES = ['unite2.js','unite3.js','unite4.js','unite5.js','unite6.js',
+  var FILES = ['unite3as1_free.js','unite2.js','unite3.js','unite4.js','unite5.js','unite6.js',
     'unite10.js','unite11.js','unite12.js','unite13.js','unite14.js','unite15.js','unite16.js',
     'unites3as_a.js','devoirs_unite.js'];
   var loaded = false, loading = null;
