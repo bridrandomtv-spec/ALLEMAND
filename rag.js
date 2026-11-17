@@ -390,7 +390,7 @@
       const e = P[pg[1]];
       if(e && e.locked && (e.lignes || e.texte)){
         let okEnt = false;
-        try{ okEnt = !!(window.ACCESS && ACCESS.entitlement && ACCESS.entitlement().ok); }catch(err){}
+        try{ if(window.ACCESS && ACCESS.refresh) await ACCESS.refresh(); okEnt = !!(window.ACCESS && ACCESS.entitlement && ACCESS.entitlement().ok); }catch(err){}
         if(okEnt){
           let ls = Array.isArray(e.lignes) ? e.lignes : [e.texte || ''];
           const clean = ls.map(l => String(l).replace(/\((?:page|p\.)\s*\d+\)/gi,'').replace(/\s*·\s*/g,'. ').replace(/\s*→\s*/g,' ')).filter(x => x.trim());
@@ -906,8 +906,103 @@ async function qustFallback(qu){
   }catch(err){}
   return null;
 }
-async function reponsePedagogique(q){
-    q = darja(q);
+/* ── AI-LOCK-1 : l'assistant respecte les mêmes cadenas que l'interface ──
+   Les contrôles sont faits avant toute réponse locale ou appel cloud.
+   La décision d'abonnement reste ACCESS (Backend/RLS), jamais un flag client. */
+function niveauIAActif(){
+  try{ var n = window.getNiveauActif && window.getNiveauActif(); if(n === '2AS' || n === '3AS') return n; }catch(e){}
+  try{ var s = window.SUBJECT && window.SUBJECT.active && window.SUBJECT.active(); if(s && (s.niveau === '2AS' || s.niveau === '3AS')) return s.niveau; }catch(e){}
+  return '2AS';
+}
+function texteIA(s){ return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function sessionIA(q){
+  var m = String(q || '').match(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس|dourous)\s*[:#-]?\s*(\d{1,2})/i);
+  return m ? +m[1] : null;
+}
+function uniteExpliciteIA(q){
+  var m = String(q || '').match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
+  return m ? +m[1] : null;
+}
+function uniteCouranteIA(){
+  try{ var u = window.uniteActive && window.uniteActive(); if(u && Number.isFinite(+u.n)) return +u.n; }catch(e){}
+  return null;
+}
+function trouverLeconRegleIA(mal, level, term, preferConjugation){
+  var key = texteIA(term);
+  if(!key || !mal) return null;
+  var units = (mal.malakhiss || []).filter(function(u){ return u.niveau === level; });
+  for(var i=0;i<units.length;i++){
+    var u = units[i];
+    var gs = (u.grammaire || []).map(texteIA).join(' ');
+    var title = texteIA(u.titre_de || '');
+    if(gs.indexOf(key) === -1 && title.indexOf(key) === -1) continue;
+    var lessons = (mal.dourous || []).filter(function(d){
+      if(d.unite !== u.unite) return false;
+      if(u.unite >= 7 && u.unite <= 9) return level === '2AS' ? d.n % 2 === 1 : d.n % 2 === 0;
+      return level === '2AS' ? u.unite <= 9 : u.unite >= 7;
+    });
+    var lesson = lessons.find(function(d){
+      var content = texteIA([d.titre_de,d.titre_ar,d.regle,d.idee].join(' '));
+      return content.indexOf(key) !== -1
+        && (!preferConjugation || /\bverb\b|verbe|تصريف|konjug/i.test(content));
+    });
+    if(lesson) return { unit:u.unite, lesson:lesson.n };
+    return { unit:u.unite, lesson:null };
+  }
+  return null;
+}
+async function verifieAccesContenuIA(question){
+  var q = String(question || '').trim();
+  if(!q || !window.ACCESS) return null;
+  var unit = uniteExpliciteIA(q);
+  var lesson = sessionIA(q);
+  if(unit == null && lesson != null) unit = uniteCouranteIA();
+
+  if(/(?:seite|page|صفحة|ص)\s*\d+/i.test(q)){
+    var pageResult = await intentLecture(q);
+    if(typeof pageResult === 'string' && pageResult.indexOf('🔒') !== -1)
+      return {locked:true,html:'<b>' + esc(pageResult) + '</b>'};
+  }
+  try{ if(typeof ACCESS.refresh === 'function') await ACCESS.refresh(); }catch(e){}
+  if(unit != null && lesson != null && typeof ACCESS.canAccessLesson === 'function'
+     && !ACCESS.canAccessLesson(unit, lesson)){
+    try{ ACCESS.paywall({type:'seance',unite:unit,seance:lesson}); }catch(e){}
+    return {locked:true,html:'<b>🔒 هذه الحصة ضمن محتوى المشتركين. الأستاذ الذكي متاح لك، لكن لا يمكنه شرح محتوى هذه الحصة قبل فتحها.</b>'};
+  }
+  var type = await matchType(q);
+  if(type && type.id === 'fard'){
+    var quizUnit = unit != null ? unit : uniteCouranteIA();
+    if(quizUnit != null && typeof ACCESS.canAccessQuiz === 'function' && !ACCESS.canAccessQuiz(quizUnit)){
+      try{ ACCESS.paywall({type:'quiz',unite:quizUnit}); }catch(e){}
+      return {locked:true,html:'<b>🔒 هذا الفرض/الاختبار ضمن محتوى المشتركين. لا يمكن للأستاذ الذكي كشف أسئلته أو تصحيحه قبل فتحه.</b>'};
+    }
+  }
+  var label = trouveRegle(q);
+  var verb = trouveVerbe(q);
+  var target = null;
+  var conjugationRequest = !!verb && (CONJ_INTENT.test(q) || q.toLowerCase() === verb);
+  if(conjugationRequest){
+    target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), verb, true);
+  }else if(label){
+    target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), label, false);
+  }
+  if(target){
+    var allowed = target.lesson != null
+      ? ACCESS.canAccessLesson(target.unit, target.lesson)
+      : !!(ACCESS.entitlement && ACCESS.entitlement().ok);
+    if(!allowed){
+      try{ ACCESS.paywall({type:'lesson',unite:target.unit,seance:target.lesson||null}); }catch(e){}
+      return {locked:true,html:'<b>🔒 هذه القاعدة/التصريف مرتبط بحصة محمية. الأستاذ الذكي متاح، لكن لا يمكنه تقديم شرح هذا المحتوى قبل فتح الحصة.</b>'};
+    }
+  }
+  return null;
+}
+
+async function reponsePedagogique(q, meta){
+    var rawQuestion = String(q == null ? "" : q);
+    var normalizedQuestion = meta && typeof meta.normalized_text === "string" && meta.normalized_text.trim()
+      ? meta.normalized_text : rawQuestion;
+    q = darja(normalizedQuestion);
     var _qust = null;
     /* ── P2-G.1 : contexte unifié transmis à QUST ─────────────────────────
        Variable de contexte UNIQUE : _qctx. Variable de résultat UNIQUE : _qust
@@ -939,9 +1034,11 @@ async function reponsePedagogique(q){
     }
     try{
       if(window.QUST && window.QUST.understand){
-        _qust = window.QUST.understand(q, _qctx);
+        _qust = window.QUST.understand(rawQuestion, _qctx, q);
       }
     }catch(e){ _qust = null; }
+    const _lock = await verifieAccesContenuIA(rawQuestion);
+    if(_lock) return _lock;
     const _bib = await intentBiblio(q);
     if(_bib) return _bib;
     const _kh = intentKharif(q);
@@ -1148,6 +1245,7 @@ async function reponsePedagogique(q){
 
   window.reponsePedagogique = reponsePedagogique;
   window.RAG = { cherche: cherche, formule: formule, SEUIL: SEUIL, render: render };
+  window.verifieAccesContenuIA = verifieAccesContenuIA;
   window.renderRag = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'rag') render(); });
 })();
