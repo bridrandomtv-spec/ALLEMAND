@@ -41,6 +41,16 @@ function harness(options = {}){
           status:200, headers:{ 'Content-Type':'text/javascript' }
         });
       }
+      if(String(url).includes('/assets/bdd/malakhiss.json')){
+        if(options.freeSummaryThrows) throw new Error('free summary lookup failed');
+        return options.freeSummaryResponse || new Response(JSON.stringify(options.freeSummaryData || {
+          malakhiss:[
+            { id:'MK-2AS-U7', niveau:'2AS', unite:7, titre_de:'2AS summary U7', idee:'Résumé libre 2AS.' },
+            { id:'m07', niveau:'3AS', unite:7, titre_de:'3AS summary U1', idee:'Résumé libre 3AS unité 1.' },
+            { id:'m08', niveau:'3AS', unite:8, titre_de:'3AS summary U2', idee:'Résumé libre 3AS unité 2.' }
+          ]
+        }), { status:200, headers:{ 'Content-Type':'application/json' } });
+      }
       return options.cloudflareResponse || new Response(JSON.stringify({
         success:true, result:{ response:'Réponse distante.' }
       }), { status:200, headers:{ 'Content-Type':'application/json' } });
@@ -452,7 +462,9 @@ test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS'
   assert.ok(iaSource.includes('entry.locked !== true'));
   assert.ok(iaSource.includes('function lessonResource(question)'));
   assert.ok(iaSource.includes("type:'free_unit_lesson', level:'3AS', unit:1"));
-  assert.ok(iaSource.includes('await pageResource(q) || lessonResource(q)'));
+  assert.ok(iaSource.includes('function summaryResource(question)'));
+  assert.ok(iaSource.includes("type:'free_summary', level:level, unit:unit"));
+  assert.ok(iaSource.includes('await pageResource(q) || lessonResource(q) || summaryResource(q)'));
   assert.ok(iaSource.includes('resource: resource'));
 });
 
@@ -478,6 +490,42 @@ test('une autre unité 3AS ne devient pas gratuite par falsification du sélecte
   }), h.env);
   assert.equal(response.status, 403);
   assert.equal(h.calls.some(x => x.url.includes('/unite3as1_free.js')), false);
+  assert.equal(h.messages, null);
+});
+
+test('le Worker récupère le résumé gratuit 3AS unité 1 via le bon enregistrement m07', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Donne-moi le résumé de l’unité 1 en 3AS.',
+    resource:{ type:'free_summary', level:'3AS', unit:1 }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.ok(h.calls.some(x => x.url === 'https://allemand.brid-randomtv.workers.dev/assets/bdd/malakhiss.json'));
+  assert.match(h.messages[1].content, /RÉSUMÉ GRATUIT — 3AS, UNITÉ 1/);
+  assert.match(h.messages[1].content, /3AS summary U1/);
+  assert.doesNotMatch(h.messages[1].content, /2AS summary U7|3AS summary U2/);
+  assert.equal(h.calls.some(x => x.url.includes('/rest/v1/subscriptions')), false);
+});
+
+test('le Worker distingue les résumés 2AS et 3AS malgré les numéros d’unité qui se chevauchent', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Résumé de l’unité 7 en 2AS.',
+    resource:{ type:'free_summary', level:'2AS', unit:7 }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.match(h.messages[1].content, /2AS summary U7/);
+  assert.doesNotMatch(h.messages[1].content, /3AS summary U1|3AS summary U2/);
+});
+
+test('le Worker refuse un résumé hors des bornes pédagogiques configurées', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Résumé de cette unité.',
+    resource:{ type:'free_summary', level:'3AS', unit:11 }
+  }), h.env);
+  assert.equal(response.status, 400);
+  assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/malakhiss.json')), false);
   assert.equal(h.messages, null);
 });
 
