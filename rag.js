@@ -388,16 +388,9 @@
       const P0 = is3 ? await loadPages3as() : await loadPages();
       const P = (P0 && P0.pages) ? P0.pages : (P0 || {});
       const e = P[pg[1]];
-      if(e && e.locked && (e.lignes || e.texte)){
-        let okEnt = false;
-        try{ if(window.ACCESS && ACCESS.refresh) await ACCESS.refresh(); okEnt = !!(window.ACCESS && ACCESS.entitlement && ACCESS.entitlement().ok); }catch(err){}
-        if(okEnt){
-          let ls = Array.isArray(e.lignes) ? e.lignes : [e.texte || ''];
-          const clean = ls.map(l => String(l).replace(/\((?:page|p\.)\s*\d+\)/gi,'').replace(/\s*·\s*/g,'. ').replace(/\s*→\s*/g,' ')).filter(x => x.trim());
-          const tit = String(e.titre || '').replace(/\((?:page|p\.)\s*\d+\)/gi,'').trim();
-          return ('Seite ' + pg[1] + '. ' + tit + '. ' + clean.join('. ')).slice(0, 2200);
-        }
-      }
+      /* Une page verrouillée n'est jamais révélée depuis l'index public, même si
+         ACCESS annonce un abonnement côté navigateur. Le corps vient uniquement
+         de la requête Supabase authentifiée ci-dessous, filtrée par RLS. */
       if(e && (e.lignes || e.texte) && !e.locked){
         let ls = Array.isArray(e.lignes) ? e.lignes : [e.texte || ''];
         const clean = ls.map(l => String(l)
@@ -417,7 +410,7 @@
           if(window.SB && window.SB.sb){
             const sb = await window.SB.sb();
             if(sb){
-              const r = await sb.from('lesson_content').select('body,titre').eq('page', +pg[1]).eq('level', is3 ? '3AS' : '2AS').maybeSingle();
+              const r = await sb.from('lesson_content').select('body,titre').eq('subject', 'allemand').eq('page', +pg[1]).eq('level', is3 ? '3AS' : '2AS').maybeSingle();
               const row = r && r.data;
               if(row && row.body){
                 const clean = String(row.body).split('\n').map(l => String(l)
