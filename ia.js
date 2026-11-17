@@ -22,7 +22,7 @@
       if(el && txt) el.textContent = txt;
     }catch(e){}
   }
-  window.reponseIA = async function(q){
+  window.reponseIA = async function(q, meta){
     q = String(q == null ? '' : q).trim();
     if(!q) return '';
     const fn = window.reponsePedagogique;
@@ -51,7 +51,7 @@
         .trim();
     }
     let localObj = null, local = '', speakWord = '', reponseCourteValide = false;
-    if(typeof fn === 'function'){ try{ localObj = await fn(q); }catch(e){} }
+    if(typeof fn === 'function'){ try{ localObj = await fn(q, meta || null); }catch(e){} }
     if(localObj && typeof localObj === 'object'){
       local     = html2txt(localObj.html || localObj.texte || localObj.reponse || '');
       speakWord = String(localObj.speakWord || '');
