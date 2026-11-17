@@ -253,8 +253,11 @@ test('refuse les explications de règles verrouillées formulées en Darija arab
   for (const q of [
     '3lach ma fhemtch Perfekt?',
     'علاش ما فهمتش Perfekt؟',
+    'ما فهمتش Perfekt',
     'fassarli Dativ',
-    'شرحلي Perfekt'
+    'شرحلي Perfekt',
+    'Was ist Perfekt?',
+    'What is Perfekt?'
   ]) {
     const h = harness();
     const response = await h.context.__worker.fetch(request({ q }), h.env);
