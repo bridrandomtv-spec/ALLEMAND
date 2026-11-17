@@ -95,6 +95,13 @@ function isLockedContentQuestion(question, resource){
   if(unit !== null && assessment && unit !== 1) return true;
   const conjugationIntent = /(?:conjug|konjug|تصريف|صرف|verbe|verb|nsarref|nsarraf|sarref|saref|tsarref|kifach|كيفاش|كيف)/i.test(q)
     || LOCKED_CONJUGATIONS.some(v => q.trim() === v);
+  const verifiedLessonResource = resource && ['book_page','book_pages','free_unit_lesson','unit_lesson'].includes(resource.type);
+  /* Une demande de conjugaison générique ne doit pas contourner les cadenas
+     simplement parce que le verbe n'appartient pas à la petite liste historique.
+     Il faut une ressource de leçon vérifiable (RLS ou artefact gratuit borné),
+     ou une demande explicite d'exercices de la banque générale libre. */
+  if(conjugationIntent && !verifiedLessonResource && !(resource && resource.type === 'free_exercise_bank' && assessment)) return true;
+  if(conjugationIntent && resource && resource.type === 'free_unit_lesson' && (unit === null || lesson === null)) return true;
   if(conjugationIntent && LOCKED_CONJUGATIONS.some(v => new RegExp('(?:^|[^a-zäöüß])' + v + '(?:$|[^a-zäöüß])','i').test(q))) return true;
   const grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|difference|différence|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
   if(grammarIntent && LOCKED_RULES.some(v => q.indexOf(v) !== -1)) return true;
