@@ -323,6 +323,18 @@ test('refuse côté Worker une conjugaison verrouillée pour un compte sans abon
   assert.equal(h.messages, null);
 });
 
+test('le Worker verrouille toute conjugaison générique sans ressource pédagogique vérifiée', async () => {
+  for (const q of ['Konjugiere arbeiten.', 'Conjugate bleiben in the present tense.', 'كيفاش نصرف arbeiten؟']) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({ q }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status, 403, q);
+    assert.equal(payload.err, 'content-locked', q);
+    assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/subscriptions')).length, 1, q);
+    assert.equal(h.messages, null, q);
+  }
+});
+
 test('le Worker refuse une demande de séance numérotée sans ressource vérifiable', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
