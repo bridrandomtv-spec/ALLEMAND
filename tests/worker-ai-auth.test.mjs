@@ -276,3 +276,13 @@ test('échoue fermé si la vérification read-only de l’abonnement est indispo
   assert.equal(payload.err, 'access-unavailable');
   assert.equal(h.messages, null);
 });
+
+test('les demandes verrouillées sont elles aussi soumises au quota avant la lecture d’abonnement', async () => {
+  const h = harness();
+  let last;
+  for(let i=0;i<21;i++){
+    last = await h.context.__worker.fetch(request({ q:'conjugaison sein' }), h.env);
+  }
+  assert.equal(last.status, 429);
+  assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/subscriptions')).length, 20);
+});
