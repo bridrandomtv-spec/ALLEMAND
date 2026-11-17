@@ -3707,3 +3707,7 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - Le contrôle est appliqué aux chemins normaux de l'interface. Le Worker `/ask` ne possède pas encore de décision serveur indépendante sur l'identifiant exact d'une ressource verrouillée ; un appel direct au Worker qui contourne l'interface reste une limite à traiter avant de revendiquer une protection anti-contournement complète.
 - Aucune modification Supabase (SQL, Auth, RLS, schéma, données), aucun secret, déploiement ou fusion.
 - PR #21 reste ouverte et en brouillon.
+
+
+### Précision complémentaire Lot 604
+- `freeUnitsFor` tient également compte de `getNiveauActif() === '3AS'` avant de choisir `units_3as`, afin que les séances gratuites du premier module 3AS ne soient pas évaluées avec la liste 2AS.
