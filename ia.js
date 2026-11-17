@@ -23,7 +23,7 @@
     }catch(e){}
   }
   function pageResource(question){
-    const match = String(question || '').match(/(?:seite|page|صفحة|صفحه)\\s*[:#-]?\\s*(\\d{1,3})/i);
+    const match = String(question || '').match(/(?:seite|page|صفحة|صفحه)\s*[:#-]?\s*(\d{1,3})/i);
     if(!match) return null;
     const page = Number(match[1]);
     const explicit3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(question);
