@@ -3498,3 +3498,11 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Les quatre runs sont terminés en échec. Pour chacun, le job est terminé avec `steps: null` ; aucune étape n'a été exposée par l'API GitHub. La cause demeure indéterminée et aucun échec de test applicatif précis ne peut être affirmé.
 - Comparaison actuelle de la branche `ai/lot-601-worker-jwt` avec `main` : 25 commits en avance, 0 en retard, 10 fichiers modifiés. La PR #21 reste brouillon et non fusionnée.
 - Décision inchangée : ne pas fusionner ni déployer ; aucun changement Supabase/Auth/RLS/schéma/paiement.
+
+
+### CI déclenchée par la dernière mise à jour documentaire — 17 novembre 2026
+
+- HEAD documentaire : `ad49a070af351d5ccc034acd1b42ed4bf83475ac`.
+- Runs déclenchés : #44159847454 (CI ALLEMAND), #44159847402 (Messenger PostgreSQL), #44159847668 (ملتقى الطلاب PostgreSQL), #44159847485 (consentement Messenger PostgreSQL).
+- Les quatre runs sont terminés en échec ; chaque job retourne encore `steps: null`. Le problème persiste donc sur le nouveau commit, y compris pour la CI ALLEMAND, sans preuve permettant d'en déterminer la cause.
+- Comparaison après cette mise à jour : 26 commits en avance, 0 en retard sur `main`, 10 fichiers modifiés. PR #21 toujours ouverte, brouillon, non fusionnée.
