@@ -49,3 +49,56 @@ test('IA et voix transmettent le transcript brut et sa normalisation distincte',
   assert.match(ia, /localObj = await fn\(q, meta \|\| null\)/);
   assert.match(parle, /fn\(q, \{ normalized_text: canon\(q\) \}\)/);
 });
+
+test('exécute le passage réel RAG → QUST avec transcript brut et normalisé', async () => {
+  const rag = fs.readFileSync('rag.js', 'utf8');
+  const calls = [];
+  const sandbox = {
+    window: {
+      QUST: { understand: (raw, context, normalized) => {
+        calls.push({ raw, context, normalized });
+        return null;
+      } },
+      SUBJECT: { active: () => ({ id: 'allemand' }) }
+    },
+    document: { addEventListener() {}, querySelector() { return null; } },
+    fetch: async () => ({ ok: false, json: async () => null })
+  };
+  vm.runInNewContext(rag, sandbox, { filename: 'rag.js' });
+  await sandbox.window.reponsePedagogique('3lach ma fhemtch Perfekt?', {
+    normalized_text: 'شرحلي perfekt'
+  });
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].raw, '3lach ma fhemtch Perfekt?');
+  assert.equal(calls[0].normalized, 'شرحلي perfekt');
+  assert.equal(calls[0].context.subject, 'allemand');
+});
+
+test('exécute le passage réel reponseIA → RAG sans perdre les métadonnées', async () => {
+  const ia = fs.readFileSync('ia.js', 'utf8');
+  let received = null;
+  const sandbox = {
+    window: {
+      reponsePedagogique: async (q, meta) => {
+        received = { q, meta };
+        return { html: 'Dies ist eine ausreichend lange lokale Erklärung zum Perfekt.' };
+      }
+    },
+    document: {
+      getElementById() { return null; },
+      readyState: 'loading',
+      addEventListener() {}
+    },
+    fetch: async () => ({ ok: false }),
+    setTimeout,
+    clearTimeout,
+    AbortController
+  };
+  vm.runInNewContext(ia, sandbox, { filename: 'ia.js' });
+  const response = await sandbox.window.reponseIA('3lach ma fhemtch Perfekt?', {
+    normalized_text: 'شرحلي perfekt'
+  });
+  assert.equal(received.q, '3lach ma fhemtch Perfekt?');
+  assert.equal(received.meta.normalized_text, 'شرحلي perfekt');
+  assert.match(response, /Erklärung zum Perfekt/);
+});
