@@ -75,9 +75,12 @@
       if(!Array.isArray(sessions) && window['UNITE' + unit])
         sessions = window['UNITE' + unit].seances;
       const session = Array.isArray(sessions) ? sessions.find(x => x && Number(x.n) === lesson) : null;
-      const page = session && (Number(session.page) || (Array.isArray(session.pages) ? Number(session.pages[0]) : 0));
-      if(!Number.isInteger(page) || page < 1 || page > 223) return null;
-      return { type:'book_page', page:page, level:'2AS' };
+      const pages = session && (Array.isArray(session.pages) ? session.pages.map(Number) : [Number(session.page)]);
+      if(!Array.isArray(pages) || pages.length < 1 || pages.length > 5
+         || pages.some(page => !Number.isInteger(page) || page < 1 || page > 223)) return null;
+      return pages.length === 1
+        ? { type:'book_page', page:pages[0], level:'2AS' }
+        : { type:'book_pages', pages:pages, level:'2AS' };
     }
     if(level !== '3AS') return null;
     if(unit != null && unit >= 10 && unit <= 19) unit -= 9;
