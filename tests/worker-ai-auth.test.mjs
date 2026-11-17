@@ -582,6 +582,19 @@ test('le Worker refuse un niveau non reconnu pour la banque libre', async () => 
   assert.equal(h.messages, null);
 });
 
+test('le Worker extrait une séance 3AS payante après validation de l’abonnement et du Worker du site', async () => {
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }] });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 3 de l’unité 1 en 3AS.',
+    resource:{ type:'unit_lesson', level:'3AS', unit:1, lesson:3 }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.ok(h.calls.some(x => x.url === 'https://allemand.brid-randomtv.workers.dev/unites3as_a.js'));
+  assert.match(h.messages[1].content, /PAID SESSION THREE/);
+  assert.doesNotMatch(h.messages[1].content, /PAID SESSION FOUR/);
+  assert.match(h.messages[1].content, /CONTENU PÉDAGOGIQUE AUTORISÉ/);
+});
+
 test('le Worker refuse un sélecteur gratuit 3AS falsifié hors unité 1 séances 1–2', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
