@@ -208,11 +208,23 @@ test('les pages verrouillées ne sont jamais révélées depuis l’index public
   assert.match(ragSource, /Le corps vient uniquement[\s\S]*?filtrée par RLS/);
 });
 
-test('ACCESS résout les séances gratuites par niveau et refuse les listes vides', () => {
+test('ACCESS mappe les identifiants visibles 3AS 10–19 vers les clés gratuites 1–10', async () => {
   const accessSource = fs.readFileSync(new URL('../access.js', import.meta.url), 'utf8');
-  assert.match(accessSource, /if\(window\.getNiveauActif && window\.getNiveauActif\(\) === '3AS'\) niv = '3AS'/);
-  assert.match(accessSource, /function isFreeLesson\(u, n\)\{ var l = freeUnitsFor\(u\)\[String\(u\)\]/);
-  assert.match(accessSource, /canAccessUnit: function\(u\)\{ var l = freeUnitsFor\(u\)\[String\(u\)\]/);
+  const sandbox = {
+    window:{ getNiveauActif:() => '3AS' },
+    navigator:{ onLine:true },
+    fetch:async () => new Response(JSON.stringify({
+      free:{ units:{ '1':[1,2] }, units_3as:{ '1':[1,2] }, quizzes:['u1'], devoirs:[], features:[] }
+    }), { status:200, headers:{ 'Content-Type':'application/json' } })
+  };
+  vm.runInNewContext(accessSource, sandbox, { filename:'access.js' });
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(sandbox.window.ACCESS.isFreeLesson(10, 1), true);
+  assert.equal(sandbox.window.ACCESS.isFreeLesson(10, 2), true);
+  assert.equal(sandbox.window.ACCESS.isFreeLesson(10, 3), false);
+  assert.equal(sandbox.window.ACCESS.isFreeLesson(11, 1), false);
+  assert.equal(sandbox.window.ACCESS.canAccessUnit(10), true);
+  assert.equal(sandbox.window.ACCESS.canAccessUnit(11), false);
 });
 
 
