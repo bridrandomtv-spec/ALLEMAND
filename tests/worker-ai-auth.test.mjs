@@ -201,6 +201,13 @@ test('le RAG applique les cadenas avant les réponses pédagogiques locales', ()
   assert.match(ragSource, /window\.verifieAccesContenuIA = verifieAccesContenuIA/);
 });
 
+test('les pages verrouillées ne sont jamais révélées depuis l’index public via un entitlement client falsifiable', () => {
+  const ragSource = fs.readFileSync(new URL('../rag.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(ragSource, /if\(e && e\.locked && \(e\.lignes \|\| e\.texte\)\)/);
+  assert.match(ragSource, /\.eq\('subject', 'allemand'\)\.eq\('page', \+pg\[1\]\)\.eq\('level'/);
+  assert.match(ragSource, /Le corps vient uniquement[\s\S]*?filtrée par RLS/);
+});
+
 test('ACCESS résout les séances gratuites par niveau et refuse les listes vides', () => {
   const accessSource = fs.readFileSync(new URL('../access.js', import.meta.url), 'utf8');
   assert.match(accessSource, /if\(window\.getNiveauActif && window\.getNiveauActif\(\) === '3AS'\) niv = '3AS'/);
