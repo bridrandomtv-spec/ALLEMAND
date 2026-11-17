@@ -52,6 +52,11 @@ function harness(options = {}){
         }), { status:200, headers:{ 'Content-Type':'application/json' } });
       }
 
+      if(String(url).includes('/unite10.js')){
+        return options.paidUnit10Response || new Response(options.paidUnit10Source || "const UNITE10_META = { n:10, niveau:'3AS', de:'Wissenschaft und Technologie' }; const SEANCES_U10 = [{n:1,de:'PAID UNIT FOUR SESSION ONE'},{n:2,de:'PAID UNIT FOUR SESSION TWO'}];", {
+          status:200, headers:{ 'Content-Type':'text/javascript' }
+        });
+      }
       if(String(url).includes('/unites3as_a.js')){
         return options.paidUnitResponse || new Response(options.paidUnitSource || "const U3AS_1 = { meta:{n:1,niveau:'3AS',de:'Unit One'}, seances:[{n:1,de:'FREE SESSION ONE'},{n:2,de:'FREE SESSION TWO'},{n:3,de:'PAID SESSION THREE',gram:{t:'Relativsätze'}},{n:4,de:'PAID SESSION FOUR'}] };", {
           status:200, headers:{ 'Content-Type':'text/javascript' }
