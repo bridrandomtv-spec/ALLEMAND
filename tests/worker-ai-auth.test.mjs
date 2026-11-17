@@ -596,6 +596,18 @@ test('le Worker extrait une séance 3AS payante après validation de l’abonnem
   assert.match(h.messages[1].content, /CONTENU PÉDAGOGIQUE AUTORISÉ/);
 });
 
+test('le parseur extrait une séance réelle de unites3as_a.js sans inclure les autres séances', async () => {
+  const paidUnitSource = fs.readFileSync(new URL('../unites3as_a.js', import.meta.url), 'utf8');
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], paidUnitSource });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 3 de l’unité 1 en 3AS.',
+    resource:{ type:'unit_lesson', level:'3AS', unit:1, lesson:3 }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.match(h.messages[1].content, /Partizip I und II als Adjektiv/);
+  assert.doesNotMatch(h.messages[1].content, /Textverständnis : «Identität in zwei Kulturen»|Konsolidierung \+ Évaluation/);
+});
+
 test('un compte gratuit ne reçoit jamais une séance 3AS payante', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
