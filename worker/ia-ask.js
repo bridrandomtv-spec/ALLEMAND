@@ -88,10 +88,10 @@ function isLockedContentQuestion(question){
   if(unit !== null && lesson !== null) return !(unit === 1 && lesson <= 2);
   if(lesson !== null && lesson > 2) return true;
   if(unit !== null && assessment && unit !== 1) return true;
-  const conjugationIntent = /(?:conjug|konjug|تصريف|صرف|verbe|verb)/i.test(q)
+  const conjugationIntent = /(?:conjug|konjug|تصريف|صرف|verbe|verb|nsarref|nsarraf|sarref|saref|tsarref|kifach|كيفاش|كيف)/i.test(q)
     || LOCKED_CONJUGATIONS.some(v => q.trim() === v);
   if(conjugationIntent && LOCKED_CONJUGATIONS.some(v => new RegExp('(?:^|[^a-zäöüß])' + v + '(?:$|[^a-zäöüß])','i').test(q))) return true;
-  const grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|explique|explain|erkläre)/i.test(q);
+  const grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\\s*فهمتش|ما\\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\\s+ist|what\\s+is|what\\s+does|why|how\\s+does|how\\s+do|warum|wie|was\\s+bedeutet|difference|différence|chrah|fassar|3lach|3lah|fhemtch|ma\\s*fhemt)/i.test(q);
   if(grammarIntent && LOCKED_RULES.some(v => q.indexOf(v) !== -1)) return true;
   return LOCKED_RULES.some(v => q.trim() === v);
 }
