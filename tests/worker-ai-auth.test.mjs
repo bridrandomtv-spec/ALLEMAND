@@ -606,6 +606,17 @@ test('un compte gratuit ne reçoit jamais une séance 3AS payante', async () => 
   assert.equal(h.messages, null);
 });
 
+test('le contrôle RLS du Worker du site bloque aussi un sélecteur de séance sans contexte explicite', async () => {
+  const h = harness({ paidUnitResponse:new Response('{"error":"abonnement_requis"}', { status:403 }) });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique cette séance.',
+    resource:{ type:'unit_lesson', level:'3AS', unit:2, lesson:1 }
+  }), h.env);
+  assert.equal(response.status, 403);
+  assert.equal(h.calls.some(x => x.url.includes('/unites3as_a.js')), true);
+  assert.equal(h.messages, null);
+});
+
 test('le Worker refuse un sélecteur gratuit 3AS falsifié hors unité 1 séances 1–2', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
