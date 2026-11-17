@@ -22,7 +22,7 @@
     var out = [];
     if(AR.test(raw)) out.push("ar");
     /* Un chiffre isolé (ex. « page 3 ») ne suffit pas à signaler l’Arabizi. */
-    if(!AR.test(raw) && /[a-z]/i.test(nq) && /[a-z][3759][a-z]/i.test(nq)) out.push("arabizi");
+    if(!AR.test(raw) && /[a-z]/i.test(nq) && /(?:^|[^a-z])[3759][a-z]|[a-z][3759][a-z]/i.test(nq)) out.push("arabizi");
     var t = toks(nq);
     if(t.some(function(w){return DZ.indexOf(w)!==-1;}) || DZ_AR.some(function(w){return nq.indexOf(w)!==-1;})) out.push("darija");
     if(t.some(function(w){return FR.indexOf(w)!==-1;})) out.push("fr");
