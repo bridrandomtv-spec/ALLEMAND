@@ -3749,3 +3749,5 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - Modifications enregistrées sur `ai/lot-601-worker-jwt`, PR #21.
 - **Exécution des nouveaux tests non encore confirmée** au moment de cette note ; attendre le workflow CI déclenché par ces commits.
 - Aucun changement Supabase (SQL, RLS, Auth, schéma, données, abonnements), aucune fusion, aucun déploiement Cloudflare.
+
+- Relecture du motif regex après enregistrement : les espaces optionnels/obligatoires des formulations « ما فهمتش », « was ist » et « what is » ont été corrigés pour être interprétés comme des espaces (et non comme les caractères littéraux « \\s »). Les tests couvrent maintenant également ces variantes.
