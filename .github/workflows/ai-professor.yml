@@ -1,0 +1,36 @@
+name: Tests autonomes — Professeur IA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'worker/ia-ask.js'
+      - 'ia.js'
+      - 'app.js'
+      - 'rag.js'
+      - 'access.js'
+      - 'js/qust.js'
+      - 'parle.js'
+      - 'tests/worker-ai-auth.test.mjs'
+      - 'tests/qust-darja.test.mjs'
+      - '.github/workflows/ai-professor.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  professor-ai:
+    name: Auth JWT, cadenas et Darija/Arabizi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Tester le Worker IA et les contrôles d'accès
+        run: node --test tests/worker-ai-auth.test.mjs
+      - name: Tester QUST et la compréhension Darija/Arabizi
+        run: node --test tests/qust-darja.test.mjs
