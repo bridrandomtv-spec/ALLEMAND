@@ -927,7 +927,7 @@ function uniteCouranteIA(){
   try{ var u = window.uniteActive && window.uniteActive(); if(u && Number.isFinite(+u.n)) return +u.n; }catch(e){}
   return null;
 }
-function trouverLeconRegleIA(mal, level, term){
+function trouverLeconRegleIA(mal, level, term, preferConjugation){
   var key = texteIA(term);
   if(!key || !mal) return null;
   var units = (mal.malakhiss || []).filter(function(u){ return u.niveau === level; });
@@ -943,7 +943,8 @@ function trouverLeconRegleIA(mal, level, term){
     });
     var lesson = lessons.find(function(d){
       var content = texteIA([d.titre_de,d.titre_ar,d.regle,d.idee].join(' '));
-      return content.indexOf(key) !== -1;
+      return content.indexOf(key) !== -1
+        && (!preferConjugation || /\\bverb\\b|verbe|تصريف|konjug/i.test(content));
     });
     if(lesson) return { unit:u.unite, lesson:lesson.n };
     return { unit:u.unite, lesson:null };
@@ -990,9 +991,12 @@ async function verifieAccesContenuIA(question){
   var label = trouveRegle(q);
   var verb = trouveVerbe(q);
   var target = null;
-  if(label) target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), label);
-  if(!target && verb && (CONJ_INTENT.test(q) || q.toLowerCase() === verb))
-    target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), verb);
+  var conjugationRequest = !!verb && (CONJ_INTENT.test(q) || q.toLowerCase() === verb);
+  if(conjugationRequest){
+    target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), verb, true);
+  }else if(label){
+    target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), label, false);
+  }
   if(target){
     var allowed = target.lesson != null
       ? ACCESS.canAccessLesson(target.unit, target.lesson)
