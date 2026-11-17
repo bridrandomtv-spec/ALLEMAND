@@ -22,8 +22,8 @@
       if(el && txt) el.textContent = txt;
     }catch(e){}
   }
-  function pageResource(question){
-    const match = String(question || '').match(/(?:seite|page|صفحة|صفحه)\s*[:#-]?\s*(\d{1,3})/i);
+  async function pageResource(question){
+    const match = String(question || '').match(/(?:seite|page|صفحة|صفحه)\\s*[:#-]?\\s*(\\d{1,3})/i);
     if(!match) return null;
     const page = Number(match[1]);
     const explicit3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(question);
@@ -33,6 +33,18 @@
     const level = explicit3 || (!explicit2 && active === '3AS') ? '3AS' : '2AS';
     const maxPage = level === '3AS' ? 175 : 223;
     if(!Number.isInteger(page) || page < 1 || page > maxPage) return null;
+    /* Le navigateur ne décide pas de l'accès : il ne fait que lire le marqueur
+       public "locked" pour éviter d'envoyer au Worker les pages statiques gratuites.
+       Le Worker revalide toujours le corps via JWT + RLS. */
+    try{
+      const path = level === '3AS' ? 'assets/bdd/buch3as_pages.json' : 'assets/bdd/buch_pages.json';
+      const response = await fetchTimeout(path, { cache:'no-store' }, 8000);
+      if(!response.ok) return null;
+      const data = await response.json();
+      const pages = data && data.pages ? data.pages : data;
+      const entry = pages && pages[String(page)];
+      if(!entry || entry.locked !== true) return null;
+    }catch(e){ return null; }
     return { type:'book_page', page:page, level:level };
   }
   window.reponseIA = async function(q, meta){
@@ -141,7 +153,7 @@
     const accessToken = authState && authState.ok && authState.session && authState.session.access_token;
     if(!accessToken) return sortieFaible(local, 'session-supabase-requise');
     try{
-      const resource = pageResource(q);
+      const resource = await pageResource(q);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
         headers:{
