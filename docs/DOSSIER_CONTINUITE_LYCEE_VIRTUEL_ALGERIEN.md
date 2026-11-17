@@ -3516,3 +3516,10 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Les deux chemins ont été exécutés manuellement dans le runtime JavaScript de travail : RAG → QUST a reçu `3lach ma fhemtch Perfekt?`, `شرحلي perfekt`, `subject=allemand` ; IA → RAG a reçu le même transcript brut et le même champ `normalized_text`, et a retourné la réponse locale attendue.
 - Le fichier de test complet a passé le contrôle de parsing JavaScript. Ce contrôle ne prétend pas être une exécution de `node --test` ; celle-ci reste à confirmer par un runner GitHub fonctionnel ou un environnement Node local.
 - Aucun test micro réel, aucune requête Worker Cloudflare réelle, aucun déploiement.
+
+
+### Suivi CI après ajout des tests d'intégration — 17 novembre 2026
+
+- Le commit `1e5d893c0fc7ba4a14e4f08c5d703ed486aeb5b4` a déclenché #44160943030 (CI ALLEMAND), #44160942895 (Messenger PostgreSQL), #44160942921 (ملتقى الطلاب PostgreSQL) et #44160942938 (consentement Messenger PostgreSQL).
+- Les quatre runs sont terminés en échec ; les jobs retournent tous `steps: null`. Les étapes ne sont pas disponibles et les journaux restent introuvables. Cela confirme que l'obstacle d'exécution CI persiste après l'ajout des tests RAG/IA ; cela ne démontre pas que ces tests échouent.
+- À ce point, le compare `main...ai/lot-601-worker-jwt` donne 29 commits en avance, 0 en retard et 10 fichiers modifiés. PR #21 ouverte, brouillon et non fusionnée.
