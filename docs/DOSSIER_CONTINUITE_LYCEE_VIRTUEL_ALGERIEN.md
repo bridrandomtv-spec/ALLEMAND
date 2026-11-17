@@ -3713,3 +3713,12 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - `freeUnitsFor` tient également compte de `getNiveauActif() === '3AS'` avant de choisir `units_3as`, afin que les séances gratuites du premier module 3AS ne soient pas évaluées avec la liste 2AS.
 
 - Complément : une demande de synthèse complète d'une unité est refusée sans entitlement actif, car la synthèse agrège aussi les séances verrouillées. Une séance gratuite peut toujours être demandée individuellement.
+
+
+### Lot 605 — garde serveur du Worker IA pour les ressources verrouillées
+- Le Worker classe désormais les demandes explicites visant les séances payantes, évaluations verrouillées et règles/conjugaisons pédagogiques connues comme protégées.
+- Pour ces demandes uniquement, il lit `subscriptions` via l'API REST avec le JWT de l'utilisateur (lecture seule, même accès que `SB.mySubs()`). Aucun changement SQL, RLS, Auth, schéma ou donnée Supabase.
+- Sans abonnement actif : réponse HTTP 403 `content-locked`. Si la lecture d'entitlement échoue : HTTP 503 `access-unavailable` (échec fermé). Avec abonnement actif : la demande continue vers le modèle.
+- Les questions générales restent accessibles à tout compte authentifié, même sans abonnement. Les deux premières séances de l'unité 1 restent gratuites.
+- Tests Worker ajoutés : refus d'une conjugaison verrouillée sans abonnement, accès abonné, séances gratuites vs verrouillées, échec fermé si la vérification d'abonnement échoue.
+- La classification serveur est une liste déterministe de ressources connues et de formes de requête explicites ; elle doit être étendue si de nouveaux contenus verrouillés ou de nouvelles formulations sont ajoutés. La garde de l'interface demeure plus précise car elle connaît l'unité active et les métadonnées du RAG.
