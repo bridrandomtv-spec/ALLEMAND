@@ -420,6 +420,7 @@ test('le fichier public 3AS ne contient que les deux séances gratuites de l’u
   assert.equal(units.length, 1);
   assert.equal(units[0].meta.n, 1);
   assert.equal(units[0].meta.niveau, '3AS');
+  assert.equal(units[0].meta.duree_totale, 120);
   assert.deepEqual(Array.from(units[0].seances, s => s.n), [1, 2]);
   assert.equal(units[0].devoir, null);
   assert.equal(units[0].corrige, null);
