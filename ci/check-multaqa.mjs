@@ -28,7 +28,7 @@ has(/function esc\(/.test(communityClient) && /esc\(p\.body\)/.test(communityCli
 has(/function waitForSupabase\(\)/.test(communityClient) && /dz:sbready/.test(communityClient), 'multaqa.js : attente du client Supabase absente');
 has(/function updateProfileCard\(\)/.test(communityClient) && /updateProfileCard\(\)/.test(communityClient), 'multaqa.js : profil du membre vérifié non affiché');
 has(/multaqa\.js\?v=4/.test(sw), 'sw.js : client communautaire absent du précache');
-has(sw.includes("VERSION = 'dz-de-v3.185.0.0.168'") && sw.includes('./app.js?v=3570'), 'sw.js : version et cache du compte synchronisés');
+has(sw.includes("VERSION = 'dz-de-v3.185.0.0.184'") && sw.includes('./app.js?v=3570'), 'sw.js : version et cache du compte synchronisés');
 
 
 const communitySql = fs.readFileSync('supabase/migrations/20261113201922_multaqa_community_feed.sql', 'utf8');
