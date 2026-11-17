@@ -3482,3 +3482,19 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Relance manuelle du job CI #4130 acceptée par GitHub. Nouvelle tentative #4131 : même échec au niveau du job avant les étapes (`steps: null`), aucun journal disponible.
 - Les workflows indépendants PostgreSQL déclenchés par le même commit (#301, #362 et #283) échouent également sans étapes ni logs. Cela renforce l'hypothèse d'un problème d'exécution des jobs GitHub Actions, sans permettre d'en établir la cause.
 - La PR #21 reste ouverte, brouillon, non fusionnée, avec `main` comme base. Au dernier contrôle : 24 commits, 10 fichiers modifiés, branche à jour de la base ; ne pas fusionner tant que CI et tests réels ne sont pas vérifiés.
+
+
+### Contrôle complémentaire — QUST et chaîne voix/RAG (17 novembre 2026)
+
+- Réexécution du moteur `js/qust.js` directement dans un runtime JavaScript isolé à partir du contenu de la branche : export navigateur `window.QUST.understand` et export CommonJS présents.
+- Cas contrôlés : « 3lach ma fhemtch Perfekt? », « علاش ما فهمتش Perfekt؟ » et « wach kifach nsta3mel Perfekt? » retournent tous `explain_rule` et détectent Darija ; les variantes Arabizi sont détectées lorsqu'elles sont écrites en alphabet latin.
+- Compatibilité deux arguments confirmée en exécution isolée : `subject=allemand`, `level=2AS`, `page=3`, avec conservation de `norm`. Le troisième argument sépare bien `raw_text` et `normalized_text`.
+- Contrôle du chemin d'appel dans les fichiers de la branche : la voix appelle `reponseIA(q, meta)`, `reponseIA` transmet les métadonnées à `reponsePedagogique`, et le RAG capture la question brute avant `darja()`. Le parcours direct vers le RAG conserve également le couple brut/normalisé.
+- Cette vérification est une exécution isolée ciblée du moteur QUST et une inspection statique des appels ; elle ne remplace pas `node --test`, un navigateur réel ou un test micro/Worker Cloudflare.
+
+### Nouveaux runs GitHub Actions observés
+
+- Le commit documentaire de référence `6e418d11a36a373bfc8f500a281043a8e0ea289f` est associé aux runs #44156253785 (CI ALLEMAND), #44156253801 (Messenger PostgreSQL), #44156253846 (ملتقى الطلاب PostgreSQL) et #44156253938 (consentement Messenger PostgreSQL).
+- Les quatre runs sont terminés en échec. Pour chacun, le job est terminé avec `steps: null` ; aucune étape n'a été exposée par l'API GitHub. La cause demeure indéterminée et aucun échec de test applicatif précis ne peut être affirmé.
+- Comparaison actuelle de la branche `ai/lot-601-worker-jwt` avec `main` : 25 commits en avance, 0 en retard, 10 fichiers modifiés. La PR #21 reste brouillon et non fusionnée.
+- Décision inchangée : ne pas fusionner ni déployer ; aucun changement Supabase/Auth/RLS/schéma/paiement.
