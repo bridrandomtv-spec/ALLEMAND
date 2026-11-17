@@ -192,8 +192,8 @@ async function fetchAuthorizedBookPage(resource, req, env){
     if(!row || typeof row.body !== 'string' || !row.body.trim())
       return { ok:false, status:403, error:'content-locked' };
     return { ok:true, context:'[CONTENU PÉDAGOGIQUE AUTORISÉ — MANUEL ' + resource.level
-      + ', PAGE ' + resource.page + ']\\n' + String(row.titre || '').slice(0,200)
-      + '\\n' + row.body.slice(0,6000) };
+      + ', PAGE ' + resource.page + ']\n' + String(row.titre || '').slice(0,200)
+      + '\n' + row.body.slice(0,6000) };
   }catch(e){
     return { ok:false, status:503, error:'access-unavailable' };
   }finally{
