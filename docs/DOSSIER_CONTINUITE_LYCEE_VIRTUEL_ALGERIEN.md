@@ -3722,3 +3722,9 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - Les questions générales restent accessibles à tout compte authentifié, même sans abonnement. Les deux premières séances de l'unité 1 restent gratuites.
 - Tests Worker ajoutés : refus d'une conjugaison verrouillée sans abonnement, accès abonné, séances gratuites vs verrouillées, échec fermé si la vérification d'abonnement échoue.
 - La classification serveur est une liste déterministe de ressources connues et de formes de requête explicites ; elle doit être étendue si de nouveaux contenus verrouillés ou de nouvelles formulations sont ajoutés. La garde de l'interface demeure plus précise car elle connaît l'unité active et les métadonnées du RAG.
+
+
+### Ajustement après relecture de `access_config.json`
+- La configuration déclare explicitement `malakhiss` et `resume` parmi les fonctions gratuites. Le contrôle ne bloque donc plus les synthèses générales d'unité ; elles restent disponibles.
+- Les règles/conjugaisons dont la correspondance à une séance précise ne peut pas être établie sont désormais refusées sans entitlement actif (échec fermé), au lieu d'être autorisées simplement parce qu'une autre séance de l'unité est gratuite.
+- La protection vise les ressources portant réellement un cadenas : séance payante, quiz/évaluation payant et règle/conjugaison associée à une séance verrouillée.
