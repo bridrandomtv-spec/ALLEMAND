@@ -49,7 +49,7 @@
   }
   function lessonResource(question){
     const text = String(question || '');
-    const sessionMatch = text.match(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس)\\s*[:#-]?\\s*(\\d{1,2})/i);
+    const sessionMatch = text.match(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس)\s*[:#-]?\s*(\d{1,2})/i);
     if(!sessionMatch) return null;
     const explicit3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(text);
     const explicit2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(text);
@@ -58,7 +58,7 @@
     if(explicit3) level = '3AS';
     else if(explicit2) level = '2AS';
     if(level !== '3AS') return null;
-    const unitMatch = text.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\\s*[:#-]?\\s*(\\d{1,2})/i);
+    const unitMatch = text.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
     let unit = unitMatch ? Number(unitMatch[1]) : null;
     if(unit == null){
       try{
