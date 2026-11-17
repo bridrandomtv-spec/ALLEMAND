@@ -3549,3 +3549,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Dernière correction : signature exacte de la lecture paginée dans l'assertion. Commit : `e3f27189c69373cc5a95a352ddb00e7a46718c13`. Nouvelle exécution CI à confirmer.
 - Ces corrections sont limitées au script de validation ; aucune modification de `msg.js`, de la migration SQL ou de la logique serveur n'a été faite.
 - Les tests JWT Worker et Darija/Arabizi ne sont pas encore déclarés exécutés : ils ne commencent qu'après la validation Messenger.
+
+
+### Suite Lot 603 — validation Messenger franchit les assertions précédentes (17 novembre 2026)
+
+- Le run CI #44166554912 sur HEAD `e3f27189c69373cc5a95a352ddb00e7a46718c13` confirme que les quatre assertions corrigées précédemment sont désormais satisfaites. Le contrôle général `check-msg` atteint son message `TOUT PASSE`.
+- Le même run révèle ensuite deux assertions Lot 450 devenues obsolètes : l'interface affiche `التحقق المدرسي مجاني` au lieu du libellé historique `رقم التسجيل المدرسي (مجاني)`, et la fonction `msgRequestVerification` exige désormais trois paramètres dont `cardPath` (justificatif uploadé), pas deux.
+- Vérification du code réel : le formulaire présente bien la gratuité et le numéro scolaire ; l'appel transmet bien le chemin du justificatif. Les assertions ont été réalignées sur ces contrats présents, sans modification du parcours applicatif.
+- Correction test uniquement dans `ci/check-msg.mjs` : commit `42b97f569cae5de618ede63a8398700c95160e92`. La prochaine CI doit confirmer que les tests de messagerie passent entièrement et laisser s'exécuter les tests JWT/QUST.
+- Aucune modification de `msg.js`, `supabase/supabase.js`, migration, Worker ou configuration Supabase. Aucun déploiement ni fusion.
