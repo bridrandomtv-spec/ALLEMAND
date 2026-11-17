@@ -3582,3 +3582,37 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Modifications des contrôles de cycle de vie Messenger et du chemin de migration déjà décrites ci-dessus ; correctifs supplémentaires des bancs PostgreSQL : `ci/msg-invitation-postgres-test.sql` et `ci/multaqa-postgres-test.sql`. Commits : `753c107f735cdf8817eba57300280f8255e79dab` et `60d2d40aa0562ecc2ef63e6a160a05c26387aba4`.
 - À ce stade, le test Messenger principal a passé ses assertions jusqu'au contrôle de communauté ; les tests PostgreSQL de consentement et de ملتقى الطلاب avaient échoué sur les problèmes de banc/chemin identifiés. Les nouveaux correctifs doivent encore être confirmés par les workflows suivants.
 - Aucun SQL n'a été exécuté sur le projet Supabase actif. Les seuls changements SQL concernent le fichier de test jetable, pas les migrations de production. Aucun déploiement ni fusion ; PR #21 reste brouillon.
+
+
+## État de validation consolidé — 17 novembre 2026, HEAD `9ab60147611e9e98bd2bcc6ecbc31aa2853f3f06`
+
+Cette section remplace les constats CI historiques indiquant que les tests IA n'étaient pas exécutés ou que les workflows PostgreSQL échouaient sans étapes. Ces constats correspondaient à des exécutions antérieures, avant les corrections ci-dessous.
+
+### Corrections de bancs de tests et de CI
+
+- `ci/check-msg.mjs` : correction de la chaîne de l'assertion Realtime, des déclarations `const` dupliquées, puis réalignement des assertions sur les gardes Auth/identityEpoch, la délégation d'événements, la reprise réseau, les signatures de vérification scolaire et les messages administratifs réels.
+- Le contrôle de découverte utilisait une variable `test` non déclarée. Elle est maintenant remplacée par une lecture explicite du test SQL de découverte et une assertion sur les scénarios de jeton à usage unique.
+- `tests/qust-darja.test.mjs` : conversion des imports CommonJS vers les imports ESM, nécessaire car le fichier `.mjs` est exécuté par Node 24.
+- `ci/msg-discovery-postgres-test.sql` : ajout d'un test réel du jeton opaque lié au compte, de son échange et du rejet du rejeu ; correction des délimiteurs PL/pgSQL avec tags `$fn$` et `$test$`.
+- `ci/msg-invitation-postgres-test.sql` : droits de lecture ajoutés aux seules tables temporaires du banc de test utilisées après `SET ROLE authenticated`, dont les fixtures d'expiration et de refus.
+- `ci/multaqa-postgres-test.sql` et `ci/check-multaqa.mjs` : référence corrigée vers la migration réellement versionnée `20261113201922_multaqa_community_feed.sql`.
+- Checkers de cache réalignés sur les versions effectivement livrées : CSS portail `v204`, Service Worker `dz-de-v3.185.0.0.184`, `app.js?v=3570`, `admin.js?v=3518`, `supabase/supabase.js?v=3528`. `ci/check-masar.mjs`, `ci/check-public-portal.mjs` et `ci/check-gamification.mjs` contrôlent maintenant ces versions.
+- Le test du tableau de bord vérifie six cartes d'accès rapide, conformément au HTML livré (dont la carte d'identité scolaire), au lieu de l'ancien total de cinq.
+
+### Résultats confirmés sur le HEAD ci-dessus
+
+- CI ALLEMAND #44169244372 : **success**. Toutes les étapes du job structurel/pédagogique ont réussi, y compris les contrôles Messenger, administration, Worker JWT, Darija/Arabizi, RAG, portail public, Masar, accès, navigation et parcours.
+- PostgreSQL découverte Messenger #44169244492 : **success**.
+- PostgreSQL consentement Messenger #44169244502 : **success**, y compris le test concurrent acceptation/annulation sur deux sessions.
+- PostgreSQL ملتقى الطلاب #44169244472 : **success**.
+- Dans la CI principale, les tests Worker JWT et QUST Darija/Arabizi sont exécutés et passent ; les assertions de conservation du transcript brut/normalisé passent également.
+- Le contrôle d'accès et le test de fuite de contenu `access.js / config` passent sur cette exécution.
+
+### État du PR et limites restantes
+
+- PR #21 : ouverte, brouillon, non fusionnée ; GitHub indique `mergeable=true` sur le HEAD contrôlé. La fusion n'a pas été effectuée.
+- Branche : `ai/lot-601-worker-jwt`. Base : `main`. Aucun commit sur `main`.
+- Les modifications de cette session ont porté sur les checkers CI, tests Node et scripts PostgreSQL jetables. Aucun changement de code applicatif du Worker IA, `ia.js`, `rag.js`, `js/qust.js`, `msg.js` ou `admin.js` n'a été nécessaire pour obtenir ces validations.
+- Aucun SQL n'a été exécuté sur le projet Supabase actif ; aucune migration de production, politique RLS, configuration Auth, donnée, abonnement, paiement ou secret n'a été modifié.
+- Aucun déploiement Cloudflare ni test E2E sur le Worker Cloudflare réel n'a été effectué. La validation CI ne prouve donc pas encore la présence des bindings Cloudflare `SUPABASE_URL` et `SUPABASE_ANON_KEY`, ni le comportement en navigateur/microphone réel.
+- Limites déjà identifiées pour le Lot 601 : quota par isolate non distribué/durable et absence de contrôle d'entitlement d'abonnement dans le Worker. À traiter comme lots distincts avant une mise en production globale.
