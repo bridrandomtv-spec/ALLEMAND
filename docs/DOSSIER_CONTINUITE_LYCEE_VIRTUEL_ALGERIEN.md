@@ -3703,16 +3703,16 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - Contrat statique : les séances gratuites sont résolues via la configuration du niveau actif.
 - Ces contrats ne remplacent pas encore un test navigateur complet avec comptes gratuits et abonnés.
 
-### Limite de sécurité restante
-- Le contrôle est appliqué aux chemins normaux de l'interface. Le Worker `/ask` ne possède pas encore de décision serveur indépendante sur l'identifiant exact d'une ressource verrouillée ; un appel direct au Worker qui contourne l'interface reste une limite à traiter avant de revendiquer une protection anti-contournement complète.
+### État à la fin du Lot604 (limite levée au Lot605)
+- À ce stade intermédiaire, la protection était appliquée aux chemins normaux de l'interface ; le Worker ne contrôlait pas encore indépendamment les ressources verrouillées.
+- Cette limite a été traitée au Lot605 par une vérification serveur read-only de l'abonnement pour les demandes classées comme contenu verrouillé.
 - Aucune modification Supabase (SQL, Auth, RLS, schéma, données), aucun secret, déploiement ou fusion.
 - PR #21 reste ouverte et en brouillon.
-
 
 ### Précision complémentaire Lot 604
 - `freeUnitsFor` tient également compte de `getNiveauActif() === '3AS'` avant de choisir `units_3as`, afin que les séances gratuites du premier module 3AS ne soient pas évaluées avec la liste 2AS.
 
-- Complément : une demande de synthèse complète d'une unité est refusée sans entitlement actif, car la synthèse agrège aussi les séances verrouillées. Une séance gratuite peut toujours être demandée individuellement.
+- Une restriction temporaire des synthèses complètes a été retirée après relecture de `access_config.json` : `malakhiss` et `resume` figurent parmi les fonctions gratuites ; les synthèses générales restent donc accessibles.
 
 
 ### Lot 605 — garde serveur du Worker IA pour les ressources verrouillées
@@ -3728,3 +3728,5 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - La configuration déclare explicitement `malakhiss` et `resume` parmi les fonctions gratuites. Le contrôle ne bloque donc plus les synthèses générales d'unité ; elles restent disponibles.
 - Les règles/conjugaisons dont la correspondance à une séance précise ne peut pas être établie sont désormais refusées sans entitlement actif (échec fermé), au lieu d'être autorisées simplement parce qu'une autre séance de l'unité est gratuite.
 - La protection vise les ressources portant réellement un cadenas : séance payante, quiz/évaluation payant et règle/conjugaison associée à une séance verrouillée.
+
+- Le Lot605 remplace explicitement la limite provisoire du Lot604 : le Worker contrôle maintenant les requêtes ciblées sur les ressources verrouillées, tandis que les synthèses `malakhiss/resume` et la banque générale restent gratuites.
