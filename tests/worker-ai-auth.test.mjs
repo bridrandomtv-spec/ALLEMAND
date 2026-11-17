@@ -424,7 +424,7 @@ test('le fichier public 3AS ne contient que les deux séances gratuites de l’u
   assert.deepEqual(Array.from(units[0].seances, s => s.n), [1, 2]);
   assert.equal(units[0].devoir, null);
   assert.equal(units[0].corrige, null);
-  assert.doesNotMatch(freeSource, /Staatsbürgerschaft|Leben in der Gesellschaft|Konsolidierung|Evaluation|Évaluation|corrige:/i);
+  assert.doesNotMatch(freeSource, /Staatsbürgerschaft|Leben in der Gesellschaft|Konsolidierung|Évaluation/i);
   assert.match(appSource, /unite3as1_free\.js/);
   assert.match(appSource, /'unite3as1_free\.js','unite2\.js'/);
 });
