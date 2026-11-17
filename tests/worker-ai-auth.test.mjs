@@ -176,6 +176,6 @@ test('le RAG applique les cadenas avant les réponses pédagogiques locales', ()
 
 test('ACCESS résout les séances gratuites par niveau et refuse les listes vides', () => {
   const accessSource = fs.readFileSync(new URL('../access.js', import.meta.url), 'utf8');
-  assert.match(accessSource, /function isFreeLesson\(u, n\)\{ var l = freeUnitsFor\(u\)\[String\(u\)\]/);
+  assert.match(accessSource, /if\(window\.getNiveauActif && window\.getNiveauActif\(\) === '3AS'\) niv = '3AS'/);\n  assert.match(accessSource, /function isFreeLesson\(u, n\)\{ var l = freeUnitsFor\(u\)\[String\(u\)\]/);
   assert.match(accessSource, /canAccessUnit: function\(u\)\{ var l = freeUnitsFor\(u\)\[String\(u\)\]/);
 });
