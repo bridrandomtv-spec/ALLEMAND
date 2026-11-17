@@ -33,9 +33,9 @@
     const level = explicit3 || (!explicit2 && active === '3AS') ? '3AS' : '2AS';
     const maxPage = level === '3AS' ? 175 : 223;
     if(!Number.isInteger(page) || page < 1 || page > maxPage) return null;
-    /* Le navigateur ne décide pas de l'accès : il ne fait que lire le marqueur
-       public "locked" pour éviter d'envoyer au Worker les pages statiques gratuites.
-       Le Worker revalide toujours le corps via JWT + RLS. */
+    /* L'index public sert uniquement à vérifier que la page existe.
+       Il ne décide jamais de son accès : le Worker relit le corps avec le JWT
+       utilisateur et laisse le RLS distinguer pages gratuites et payantes. */
     try{
       const path = level === '3AS' ? 'assets/bdd/buch3as_pages.json' : 'assets/bdd/buch_pages.json';
       const response = await fetchTimeout(path, { cache:'no-store' }, 8000);
@@ -43,7 +43,7 @@
       const data = await response.json();
       const pages = data && data.pages ? data.pages : data;
       const entry = pages && pages[String(page)];
-      if(!entry || entry.locked !== true) return null;
+      if(!entry) return null;
     }catch(e){ return null; }
     return { type:'book_page', page:page, level:level };
   }
