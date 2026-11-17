@@ -516,7 +516,7 @@ test('lessonResource résout les séances 2AS vers toutes leurs pages RLS et les
       SEANCES_U1:extras.SEANCES_U1
     };
     vm.runInNewContext(fn + '\nresult = lessonResource(' + JSON.stringify(question) + ');', sandbox);
-    return sandbox.result;
+    return JSON.parse(JSON.stringify(sandbox.result));
   }
   assert.deepEqual(resolve('2AS',1,'Explique la séance 1.',{
     SEANCES_U1:[{n:1,pages:[5,6]},{n:2,pages:[7,10,25]}]
