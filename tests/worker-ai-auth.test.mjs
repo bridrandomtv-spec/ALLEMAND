@@ -646,6 +646,18 @@ test('le Worker refuse les unités 3AS qui ne sont pas encore raccordées au RAG
   assert.equal(h.messages, null);
 });
 
+test('le parseur extrait une vraie séance depuis unite10.js sans inclure les autres séances', async () => {
+  const paidUnit10Source = fs.readFileSync(new URL('../unite10.js', import.meta.url), 'utf8');
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], paidUnit10Source });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 4 en 3AS.',
+    resource:{ type:'unit_lesson', level:'3AS', unit:4, lesson:1 }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.match(h.messages[1].content, /Wortschatz: Wissenschaft und Technik/);
+  assert.doesNotMatch(h.messages[1].content, /Passiv mit Modalverben|Kausal- und Finalsätze/);
+});
+
 test('le Worker extrait une séance 3AS des fichiers individuels des unités 4–10', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }] });
   const response = await h.context.__worker.fetch(request({
