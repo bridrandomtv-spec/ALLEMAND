@@ -50,7 +50,7 @@ end $$;
 set role authenticated;
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',false);
 create temporary table discovery_keys as select student_key from public.msg_student_search('Beta',12);
-do $ declare n integer; i integer; begin
+do $test$ declare n integer; i integer; begin
  select count(*) into n from discovery_keys;
  if n<>1 then raise exception 'discovery_expected_one_verified_peer_got_%',n; end if;
  select count(*) into n from public.msg_student_search('Gamma',12);
@@ -72,11 +72,11 @@ do $ declare n integer; i integer; begin
    if sqlerrm='search_quota_not_enforced' then raise; end if;
    if sqlerrm<>'search_rate_limit' then raise; end if;
  end;
-end $;
+end $test$;
 
 -- Le jeton opaque est lié au compte demandeur et à usage unique.
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000002',false);
-do $ declare k uuid; begin
+do $test$ declare k uuid; begin
  select student_key into k from discovery_keys limit 1;
  begin
    perform public.msg_invite_send_by_key(k);
@@ -85,9 +85,9 @@ do $ declare k uuid; begin
    if sqlerrm='foreign_discovery_token_accepted' then raise; end if;
    if sqlerrm<>'discovery_result_expired' then raise; end if;
  end;
-end $;
+end $test$;
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',false);
-do $ declare k uuid; recipient uuid; begin
+do $test$ declare k uuid; recipient uuid; begin
  select student_key into k from discovery_keys limit 1;
  recipient := public.msg_invite_send_by_key(k);
  if recipient<>'10000000-0000-4000-8000-000000000002' then
@@ -100,7 +100,7 @@ do $ declare k uuid; recipient uuid; begin
    if sqlerrm='discovery_token_replay_allowed' then raise; end if;
    if sqlerrm<>'discovery_result_expired' then raise; end if;
  end;
-end $;
+end $test$;
 
 -- Le compte non vérifié ne peut pas lancer de recherche.
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000003',false);
