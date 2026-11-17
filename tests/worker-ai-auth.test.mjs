@@ -23,6 +23,12 @@ function harness(options = {}){
           status:200, headers:{ 'Content-Type':'application/json' }
         });
       }
+      if(String(url).includes('/rest/v1/subscriptions')){
+        if(options.subscriptionThrows) throw new Error('subscription lookup failed');
+        return options.subscriptionResponse || new Response(JSON.stringify(options.subscriptions || []), {
+          status:200, headers:{ 'Content-Type':'application/json' }
+        });
+      }
       return options.cloudflareResponse || new Response(JSON.stringify({
         success:true, result:{ response:'Réponse distante.' }
       }), { status:200, headers:{ 'Content-Type':'application/json' } });
@@ -53,7 +59,7 @@ function request(body, token = TOKEN){
 
 test('refuse /ask sans JWT avant tout appel Auth ou modèle', async () => {
   const h = harness();
-  const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }, null), h.env);
+  const response = await h.context.__worker.fetch(request({ q:'Propose une méthode de révision efficace.' }, null), h.env);
   assert.equal(response.status, 401);
   assert.equal(h.calls.length, 0);
 });
@@ -223,4 +229,42 @@ test('le garde de cadenas distingue séance gratuite, séance payante, conjugais
   assert.equal(lockedSummary.locked, true);
   const freeBank = await guard('تمارين الوحدة 2');
   assert.equal(freeBank, null);
+});
+
+
+test('refuse côté Worker une conjugaison verrouillée pour un compte sans abonnement', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({ q:'conjugaison sein' }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 403);
+  assert.equal(payload.err, 'content-locked');
+  assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/subscriptions')).length, 1);
+  assert.equal(h.messages, null);
+});
+
+test('un abonné actif conserve l'accès à une conjugaison verrouillée', async () => {
+  const h = harness({ subscriptions:[{ statut:'actif', fin:null }] });
+  const response = await h.context.__worker.fetch(request({ q:'conjugaison sein' }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(payload.ok, true);
+  assert.equal(h.calls.some(x => x.url.includes('/rest/v1/subscriptions')), true);
+});
+
+test('refuse côté Worker une séance verrouillée et laisse passer les deux séances gratuites', async () => {
+  const blocked = harness();
+  const denied = await blocked.context.__worker.fetch(request({ q:'Explique la leçon 3 de l’unité 1.' }), blocked.env);
+  assert.equal(denied.status, 403);
+  const free = harness();
+  const allowed = await free.context.__worker.fetch(request({ q:'Explique la leçon 1 de l’unité 1.' }), free.env);
+  assert.equal(allowed.status, 200);
+});
+
+test('échoue fermé si la vérification read-only de l’abonnement est indisponible', async () => {
+  const h = harness({ subscriptionThrows:true });
+  const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 503);
+  assert.equal(payload.err, 'access-unavailable');
+  assert.equal(h.messages, null);
 });
