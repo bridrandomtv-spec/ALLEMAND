@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 var meta = { n:1, niveau:'3AS', de:'Persönlichkeit und Identität', ar:'الشخصية والهوية',
-    trimestre:1, periode:'سبتمبر — أكتوبر', duree_totale:240, cecrl:'B1',
+    trimestre:1, periode:'سبتمبر — أكتوبر', duree_totale:120, cecrl:'B1',
     icon:'🪞',
     objectifs:['وصف الشخصية والصفات','استعمال الجمل الموصولة في كل الحالات',
                'فهم نص حول الهوية المزدوجة','إنتاج نص وصفي-تحليلي من 12 سطراً'],
