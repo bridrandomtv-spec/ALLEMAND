@@ -3679,3 +3679,31 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - Les bindings et secrets réels du Worker IA séparé, ainsi qu'un test navigateur/voix en préproduction, ne sont pas vérifiés par ces tests simulés.
 - Aucun changement Supabase, SQL, RLS, Auth, schéma, paiement, secret, configuration Cloudflare, déploiement ou fusion.
 - PR #21 reste ouverte et en brouillon ; aucune modification de `main`.
+
+
+## Lot 604 — respect des cadenas par le professeur IA (17 novembre 2026)
+
+### Règle produit
+- Le professeur IA distant reste accessible à tout compte authentifié, sans abonnement actif.
+- Il ne doit pas servir de contournement aux cadenas : leçons/séances, exercices d'évaluation et règles/conjugaisons associées à une séance verrouillée restent protégés.
+- Les exercices originaux de la banque générale restent gratuits conformément à `access_config.json` ; le contrôle ne verrouille pas indistinctement toute la banque.
+
+### Audit et corrections appliquées
+- Le moteur pédagogique local pouvait répondre avec des règles/conjugaisons et des exercices sans consulter systématiquement `ACCESS`.
+- Le chat direct interrogeait le RAG puis le Worker sans passer par le même contrôle que le parcours vocal `ia.js`.
+- Ajout d'un contrôle commun `verifieAccesContenuIA` dans `rag.js`, exécuté avant les réponses pédagogiques locales et avant le RAG/Worker dans `app.js`.
+- Le contrôle vérifie les séances explicites, les évaluations par unité et relie les règles/conjugaisons aux séances du programme quand la correspondance est présente.
+- Les pages du manuel réutilisent le contrôle existant et actualisent l'entitlement avant de servir des lignes embarquées.
+- Correction de `ACCESS.isFreeLesson` pour lire la configuration gratuite du niveau actif (2AS/3AS) ; `canAccessUnit` ne traite plus une liste vide comme une autorisation.
+- La banque d'exercices originaux reste libre ; seuls les contrôles identifiés comme verrouillés sont refusés.
+
+### Tests ajoutés
+- Contrat statique : le chat direct appelle le contrôle avant RAG et Worker.
+- Contrat statique : le RAG appelle le contrôle avant les réponses pédagogiques locales et vérifie les séances/évaluations.
+- Contrat statique : les séances gratuites sont résolues via la configuration du niveau actif.
+- Ces contrats ne remplacent pas encore un test navigateur complet avec comptes gratuits et abonnés.
+
+### Limite de sécurité restante
+- Le contrôle est appliqué aux chemins normaux de l'interface. Le Worker `/ask` ne possède pas encore de décision serveur indépendante sur l'identifiant exact d'une ressource verrouillée ; un appel direct au Worker qui contourne l'interface reste une limite à traiter avant de revendiquer une protection anti-contournement complète.
+- Aucune modification Supabase (SQL, Auth, RLS, schéma, données), aucun secret, déploiement ou fusion.
+- PR #21 reste ouverte et en brouillon.
