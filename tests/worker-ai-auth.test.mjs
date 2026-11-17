@@ -635,11 +635,11 @@ test('le contrôle RLS du Worker du site bloque aussi un sélecteur de séance s
   assert.equal(h.messages, null);
 });
 
-test('le Worker refuse les unités 3AS qui ne sont pas encore raccordées au RAG serveur', async () => {
+test('le Worker refuse les unités 3AS hors des bornes du RAG serveur', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
     q:'Explique la séance 1.',
-    resource:{ type:'unit_lesson', level:'3AS', unit:4, lesson:1 }
+    resource:{ type:'unit_lesson', level:'3AS', unit:11, lesson:1 }
   }), h.env);
   assert.equal(response.status, 400);
   assert.equal(h.calls.some(x => x.url.includes('/unites3as_a.js')), false);
@@ -655,7 +655,7 @@ test('le parseur extrait une vraie séance depuis unite10.js sans inclure les au
   }), h.env);
   assert.equal(response.status, 200);
   assert.match(h.messages[1].content, /Wortschatz: Wissenschaft und Technik/);
-  assert.doesNotMatch(h.messages[1].content, /Passiv mit Modalverben|Kausal- und Finalsätze/);
+  assert.doesNotMatch(h.messages[1].content, /de:'Passiv mit Modalverben'|de:'Kausal- und Finalsätze'/);
 });
 
 test('le Worker extrait une séance 3AS des fichiers individuels des unités 4–10', async () => {
