@@ -250,7 +250,7 @@ test('refuse aussi une demande d’explication d’une règle verrouillée sans 
   assert.equal(payload.err, 'content-locked');
 });
 
-test('un abonné actif conserve l'accès à une conjugaison verrouillée', async () => {
+test("un abonné actif conserve l'accès à une conjugaison verrouillée", async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:null }] });
   const response = await h.context.__worker.fetch(request({ q:'conjugaison sein' }), h.env);
   const payload = await response.json();
