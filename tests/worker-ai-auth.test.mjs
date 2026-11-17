@@ -564,6 +564,17 @@ test('la banque libre ne déverrouille pas un exercice rattaché à une unité p
   assert.equal(h.messages, null);
 });
 
+test('le Worker refuse un niveau non reconnu pour la banque libre', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Donne-moi des exercices.',
+    resource:{ type:'free_exercise_bank', level:'1AS' }
+  }), h.env);
+  assert.equal(response.status, 400);
+  assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/contenu_original.json')), false);
+  assert.equal(h.messages, null);
+});
+
 test('le Worker refuse un sélecteur gratuit 3AS falsifié hors unité 1 séances 1–2', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
