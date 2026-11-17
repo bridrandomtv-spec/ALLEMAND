@@ -202,6 +202,28 @@ async function fetchAuthorizedBookPage(resource, req, env){
   }
 }
 
+async function fetchFreeUnitLesson(resource){
+  if(!resource || typeof resource !== 'object' || Array.isArray(resource)
+     || Object.keys(resource).some(k => !['type','level','unit','lesson'].includes(k))
+     || resource.type !== 'free_unit_lesson' || resource.level !== '3AS'
+     || resource.unit !== 1 || ![1,2].includes(resource.lesson)){
+    return { ok:false, status:400, error:'invalid-resource' };
+  }
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 5000);
+  try{
+    const response = await fetch('https://allemand.brid-randomtv.workers.dev/unite3as1_free.js', {
+      method:'GET', headers:{ 'Accept':'text/javascript' }, redirect:'error', signal:controller.signal
+    });
+    if(!response.ok) return { ok:false, status:503, error:'access-unavailable' };
+    const source = await response.text();
+    if(!source || source.length > 9000 || !source.includes('window.UNITES_3AS_A') || !source.includes('duree_totale:120'))
+      return { ok:false, status:503, error:'access-unavailable' };
+    return { ok:true, context:'[CONTENU PÉDAGOGIQUE GRATUIT VÉRIFIÉ — 3AS, UNITÉ 1, SÉANCES 1 ET 2]\n' + source };
+  }catch(e){ return { ok:false, status:503, error:'access-unavailable' }; }
+  finally{ clearTimeout(timer); }
+}
+
 export default {
   async fetch(req, env){
     const requestOrigin = req.headers.get('Origin') || '';
@@ -245,7 +267,9 @@ export default {
       if(!entitlement.active) return json({ ok:false, err:'content-locked' }, 403, org);
     }
 
-    const document = await fetchAuthorizedBookPage(b.resource, req, env);
+    const document = b.resource && b.resource.type === 'free_unit_lesson'
+      ? await fetchFreeUnitLesson(b.resource)
+      : await fetchAuthorizedBookPage(b.resource, req, env);
     if(!document.ok) return json({ ok:false, err:document.error }, document.status, org);
     const ctx = document.context;
 
