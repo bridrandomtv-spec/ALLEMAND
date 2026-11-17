@@ -460,7 +460,7 @@ test('le Worker récupère côté serveur uniquement le contenu gratuit 3AS unit
   const freeSource = 'window.UNITES_3AS_A = [{meta:{n:1,niveau:"3AS",duree_totale:120},seances:[{n:1},{n:2}]}];';
   const h = harness({ freeLessonText:freeSource });
   const response = await h.context.__worker.fetch(request({
-    q:'Explique la séance 1 de l’unité 1 en 3AS.',
+    q:'Explique la séance 1 de l’unité 10 en 3AS.',
     resource:{ type:'free_unit_lesson', level:'3AS', unit:1, lesson:1 }
   }), h.env);
   assert.equal(response.status, 200);
@@ -468,6 +468,17 @@ test('le Worker récupère côté serveur uniquement le contenu gratuit 3AS unit
   assert.match(h.messages[1].content, /CONTENU PÉDAGOGIQUE AUTORISÉ — SOURCE GRATUITE PUBLIQUE/);
   assert.ok(h.messages[1].content.includes(freeSource));
   assert.equal(h.calls.some(x => x.url.includes('/rest/v1/subscriptions')), false);
+});
+
+test('une autre unité 3AS ne devient pas gratuite par falsification du sélecteur unité 1', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 11 en 3AS.',
+    resource:{ type:'free_unit_lesson', level:'3AS', unit:1, lesson:1 }
+  }), h.env);
+  assert.equal(response.status, 403);
+  assert.equal(h.calls.some(x => x.url.includes('/unite3as1_free.js')), false);
+  assert.equal(h.messages, null);
 });
 
 test('le Worker refuse un sélecteur gratuit 3AS falsifié hors unité 1 séances 1–2', async () => {
