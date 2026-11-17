@@ -29,6 +29,12 @@ function harness(options = {}){
           status:200, headers:{ 'Content-Type':'application/json' }
         });
       }
+      if(String(url).includes('/rest/v1/lesson_content')){
+        if(options.lessonContentThrows) throw new Error('lesson content lookup failed');
+        return options.lessonContentResponse || new Response(JSON.stringify(options.lessonContent || []), {
+          status:200, headers:{ 'Content-Type':'application/json' }
+        });
+      }
       return options.cloudflareResponse || new Response(JSON.stringify({
         success:true, result:{ response:'Réponse distante.' }
       }), { status:200, headers:{ 'Content-Type':'application/json' } });
@@ -329,4 +335,60 @@ test('les demandes verrouillées sont elles aussi soumises au quota avant la lec
   }
   assert.equal(last.status, 429);
   assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/subscriptions')).length, 20);
+});
+
+test('récupère une page du manuel côté Worker via JWT et RLS, sans utiliser ctx client', async () => {
+  const h = harness({ lessonContent:[{ titre:'Perfekt', body:'Das Perfekt wird mit haben oder sein gebildet.' }] });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique cette page.',
+    ctx:'TEXTE CLIENT FALSIFIÉ',
+    resource:{ type:'book_page', page:42, level:'2AS' }
+  }), h.env);
+  const payload = await response.json();
+  const lookup = h.calls.find(x => x.url.includes('/rest/v1/lesson_content'));
+  assert.equal(response.status, 200);
+  assert.equal(payload.ok, true);
+  assert.ok(lookup);
+  assert.match(lookup.url, /page=eq\.42/);
+  assert.match(lookup.url, /level=eq\.2AS/);
+  assert.equal(lookup.init.headers.Authorization, 'Bearer ' + TOKEN);
+  assert.match(h.messages[1].content, /CONTENU PÉDAGOGIQUE AUTORISÉ/);
+  assert.match(h.messages[1].content, /Das Perfekt wird mit haben oder sein gebildet/);
+  assert.doesNotMatch(h.messages[1].content, /TEXTE CLIENT FALSIFIÉ/);
+});
+
+test('refuse une page dont le RLS ne retourne aucun contenu', async () => {
+  const h = harness({ lessonContent:[] });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique cette page.',
+    resource:{ type:'book_page', page:42, level:'2AS' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 403);
+  assert.equal(payload.err, 'content-locked');
+  assert.equal(h.messages, null);
+});
+
+test('refuse un identifiant de page falsifié hors des bornes du manuel', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique cette page.',
+    resource:{ type:'book_page', page:999, level:'2AS' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 400);
+  assert.equal(payload.err, 'invalid-resource');
+  assert.equal(h.calls.some(x => x.url.includes('/rest/v1/lesson_content')), false);
+});
+
+test('échoue fermé si la lecture RLS de lesson_content est indisponible', async () => {
+  const h = harness({ lessonContentThrows:true });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique cette page.',
+    resource:{ type:'book_page', page:42, level:'3AS' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 503);
+  assert.equal(payload.err, 'access-unavailable');
+  assert.equal(h.messages, null);
 });
