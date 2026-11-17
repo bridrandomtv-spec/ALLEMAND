@@ -501,6 +501,37 @@ test('le fichier public 3AS ne contient que les deux séances gratuites de l’u
   assert.match(appSource, /'unite3as1_free\.js','unite2\.js'/);
 });
 
+test('lessonResource résout les séances 2AS vers toutes leurs pages RLS et les séances 3AS vers leur ressource bornée', () => {
+  const start = iaSource.indexOf('  function lessonResource(question){');
+  const end = iaSource.indexOf('  function summaryResource(question){', start);
+  assert.ok(start >= 0 && end > start);
+  const fn = iaSource.slice(start, end);
+  function resolve(level, activeUnit, question, extras={}){
+    const sandbox = {
+      window:{
+        getNiveauActif:() => level,
+        uniteActive:() => ({ n:activeUnit }),
+        ...extras.window
+      },
+      SEANCES_U1:extras.SEANCES_U1
+    };
+    vm.runInNewContext(fn + '\nresult = lessonResource(' + JSON.stringify(question) + ');', sandbox);
+    return sandbox.result;
+  }
+  assert.deepEqual(resolve('2AS',1,'Explique la séance 1.',{
+    SEANCES_U1:[{n:1,pages:[5,6]},{n:2,pages:[7,10,25]}]
+  }),{ type:'book_pages', pages:[5,6], level:'2AS' });
+  assert.deepEqual(resolve('2AS',2,'Explique la séance 1.',{
+    window:{ SEANCES_U2:[{n:1,page:31}] }
+  }),{ type:'book_page', page:31, level:'2AS' });
+  assert.deepEqual(resolve('3AS',10,'Explique la séance 1.'),{
+    type:'free_unit_lesson', level:'3AS', unit:1, lesson:1
+  });
+  assert.deepEqual(resolve('3AS',13,'Explique la séance 1.'),{
+    type:'unit_lesson', level:'3AS', unit:4, lesson:1
+  });
+});
+
 test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS', () => {
   assert.ok(iaSource.includes('async function pageResource(question)'));
   assert.ok(iaSource.includes('if(!entry) return null;'));
