@@ -393,3 +393,10 @@ test('échoue fermé si la lecture RLS de lesson_content est indisponible', asyn
   assert.equal(payload.err, 'access-unavailable');
   assert.equal(h.messages, null);
 });
+
+test('le client ne transmet au Worker que les pages explicitement verrouillées du manuel', () => {
+  assert.match(iaSource, /async function pageResource\\(question\\)/);
+  assert.match(iaSource, /entry\\.locked !== true/);
+  assert.match(iaSource, /await pageResource\\(q\\)/);
+  assert.match(iaSource, /resource: resource/);
+});
