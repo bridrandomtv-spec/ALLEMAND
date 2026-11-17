@@ -3523,3 +3523,16 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le commit `1e5d893c0fc7ba4a14e4f08c5d703ed486aeb5b4` a déclenché #44160943030 (CI ALLEMAND), #44160942895 (Messenger PostgreSQL), #44160942921 (ملتقى الطلاب PostgreSQL) et #44160942938 (consentement Messenger PostgreSQL).
 - Les quatre runs sont terminés en échec ; les jobs retournent tous `steps: null`. Les étapes ne sont pas disponibles et les journaux restent introuvables. Cela confirme que l'obstacle d'exécution CI persiste après l'ajout des tests RAG/IA ; cela ne démontre pas que ces tests échouent.
 - À ce point, le compare `main...ai/lot-601-worker-jwt` donne 29 commits en avance, 0 en retard et 10 fichiers modifiés. PR #21 ouverte, brouillon et non fusionnée.
+
+
+### Lot 603 — corrections CI Messenger révélées par la relance (17 novembre 2026)
+
+- Contrôle de la branche `ai/lot-601-worker-jwt` et de `ci/check-msg.mjs` après les échecs du run CI #44161037194.
+- Première erreur corrigée : assertion Realtime ligne 231, dont les guillemets imbriqués rendaient le module invalide. Le motif de recherche a été conservé dans une chaîne de gabarit. Commit : `26428a78657db7d95db9e72b6048dbf248b63acf`.
+- Le run #44165944625 a confirmé que les contrôles précédents passent désormais : fichiers requis, YAML/JSON, corpus 684 fiches, archive BAC 68 sujets, données pédagogiques, réservation, builds T1-T6 et syntaxe des 37 fichiers JS.
+- Le même run a ensuite révélé une seconde erreur de compilation dans `ci/check-msg.mjs` : `const uploadStart` et `const uploadEnd` étaient déclarés une deuxième fois (collision avec les variables de l'assertion d'upload côté interface). L'erreur se produisait avant l'exécution des tests de messagerie et avant les tests IA JWT/QUST.
+- Correction ciblée : renommage des variables de la seconde assertion en `uploadMethodStart` et `uploadMethodEnd`, sans changement des assertions ni du code applicatif. Commit : `72dce65a19277679e777ce37a09d12e870289685`.
+- La vérification statique des déclarations top-level du fichier ne relève plus de doublon pour ces noms après le renommage. La correction du deuxième défaut doit encore être confirmée par une nouvelle exécution CI sur le HEAD courant.
+- À la dernière observation, le run #44165944625 avait échoué à l'étape Messenger sur le doublon `uploadStart`; les étapes suivantes (dont les tests JWT et Darija/Arabizi) étaient ignorées. Ne pas déclarer ces tests passés.
+- Les workflows PostgreSQL indépendants déclenchés par le premier commit de correction étaient encore en cours lors du dernier relevé ; leurs résultats doivent être contrôlés séparément.
+- Aucun code applicatif, Worker, corpus, donnée, secret, schéma, Auth, RLS, abonnement ou paiement Supabase n'a été modifié. Aucun déploiement ni fusion. PR #21 reste à maintenir ouverte et en brouillon jusqu'à validation complète.
