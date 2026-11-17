@@ -944,7 +944,7 @@ function trouverLeconRegleIA(mal, level, term, preferConjugation){
     var lesson = lessons.find(function(d){
       var content = texteIA([d.titre_de,d.titre_ar,d.regle,d.idee].join(' '));
       return content.indexOf(key) !== -1
-        && (!preferConjugation || /\\bverb\\b|verbe|تصريف|konjug/i.test(content));
+        && (!preferConjugation || /\bverb\b|verbe|تصريف|konjug/i.test(content));
     });
     if(lesson) return { unit:u.unite, lesson:lesson.n };
     return { unit:u.unite, lesson:null };
