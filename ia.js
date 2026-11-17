@@ -120,32 +120,34 @@
     }catch(e){}
     window.__IA_PROXY = proxy;
     if(!proxy) return sortieFaible(local, 'proxy-absent (config.json)');
+    const sbApi = window.SB;
+    if(!sbApi || typeof sbApi.getSession !== 'function'){
+      return sortieFaible(local, 'session-supabase-requise');
+    }
+    const authState = await sbApi.getSession();
+    const accessToken = authState && authState.ok && authState.session && authState.session.access_token;
+    if(!accessToken) return sortieFaible(local, 'session-supabase-requise');
     try{
       let ctx = '';
       try{
         if(window.BIBLIO && BIBLIO.context){
           const bc = await BIBLIO.context(q, 2000);
-          if(bc) ctx = 'BIBLIOTHÈQUE OFFICIELLE (extraits vérifiés, cite la source) :\n' + bc + '\n\n';
+          if(bc) ctx = 'EXTRAITS DOCUMENTAIRES FOURNIS PAR LE CLIENT (non authentifiés côté serveur) :\n' + bc + '\n\n';
         }
       }catch(e){}
-      if(local && local.indexOf('لا أعرف') === -1) ctx += 'MOTEUR LOCAL (déjà vérifié) :\n' + local.slice(0, 900);
+      if(local && local.indexOf('لا أعرف') === -1) ctx += 'RÉSULTAT DU MOTEUR LOCAL (non attesté par le serveur) :\n' + local.slice(0, 900);
       ctx = ctx.slice(0, 3000);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ q: q, text: q, ctx: ctx }) }, 25000);
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer ' + accessToken
+        },
+        body: JSON.stringify({ q: q, ctx: ctx }) }, 25000);
       if(!r.ok){
         let e = {};
         try{ e = await r.json(); }catch(_){}
         try{ console.warn('🧠 ia-ask HTTP ' + r.status + ' : ' + (e.err || '?')); }catch(_){}
-        if(r.status === 400 || r.status === 415){
-          const r2 = await fetchTimeout(proxy + '/ask', { method:'POST',
-            headers:{ 'Content-Type':'text/plain' }, body: q }, 15000);
-          if(r2.ok){
-            const j2 = await r2.json();
-            if(j2 && j2.ok && j2.rep && j2.rep.length > 10) return j2.rep;
-          }
-        }
         return sortieFaible(local, 'http-' + r.status);
       }
       const j = await r.json();
@@ -199,11 +201,23 @@
       else { try{ const j = JSON.parse(hb); if(j.ai === false) out.push('=> liaison AI absente : ia-ask → Settings → Bindings → Workers AI → nom AI'); }catch(e){} }
     }catch(e){ out.push('/health : ERREUR ' + ((e && e.name === 'AbortError') ? 'timeout-12s' : ((e && e.message) || e))); }
     try{
-      const a = await fetchTimeout(proxy + '/ask', { method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ q:'Erkläre den Akkusativ in einem Satz.' }) }, 30000);
-      const ab = await a.text();
-      out.push('/ask : HTTP ' + a.status + ' · ' + ab.slice(0, 150));
+      let accessToken = '';
+      try{
+        const auth = window.SB && await window.SB.getSession();
+        accessToken = auth && auth.ok && auth.session && auth.session.access_token || '';
+      }catch(e){}
+      if(!accessToken){
+        out.push('/ask : JWT Supabase absent (connecte-toi pour tester le Worker)');
+      }else{
+        const a = await fetchTimeout(proxy + '/ask', { method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + accessToken
+          },
+          body: JSON.stringify({ q:'Erkläre den Akkusativ in einem Satz.' }) }, 30000);
+        const ab = await a.text();
+        out.push('/ask : HTTP ' + a.status + ' · ' + ab.slice(0, 150));
+      }
     }catch(e){ out.push('/ask : ERREUR ' + ((e && e.name === 'AbortError') ? 'timeout-30s' : ((e && e.message) || e))); }
     out.push('dernière erreur ia.js : ' + (window.__IA_ERR || 'aucune'));
     panneauTest(out);
