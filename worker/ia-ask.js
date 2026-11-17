@@ -373,6 +373,25 @@ async function fetchFreeSummary(resource){
   finally{ clearTimeout(timer); }
 }
 
+async function fetchAuthorizedBookPages(resource, req, env){
+  if(!resource || typeof resource !== 'object' || Array.isArray(resource)
+     || Object.keys(resource).some(k => !['type','pages','level'].includes(k))
+     || resource.type !== 'book_pages'
+     || !['2AS','3AS'].includes(resource.level)
+     || !Array.isArray(resource.pages) || resource.pages.length < 1 || resource.pages.length > 5
+     || resource.pages.some((p,i) => !Number.isInteger(p) || p < 1 || p > (resource.level === '2AS' ? 223 : 175)
+       || resource.pages.indexOf(p) !== i)){
+    return { ok:false, status:400, error:'invalid-resource' };
+  }
+  const contexts = [];
+  for(const page of resource.pages){
+    const result = await fetchAuthorizedBookPage({ type:'book_page', page:page, level:resource.level }, req, env);
+    if(!result.ok) return result;
+    contexts.push(result.context);
+  }
+  return { ok:true, context:contexts.join('\n\n') };
+}
+
 async function fetchFreeUnitLesson(resource){
   if(!resource || typeof resource !== 'object' || Array.isArray(resource)
      || Object.keys(resource).some(k => !['type','level','unit','lesson'].includes(k))
@@ -440,7 +459,9 @@ export default {
 
     const document = b.resource && b.resource.type === 'free_unit_lesson'
       ? await fetchFreeUnitLesson(b.resource)
-      : b.resource && b.resource.type === 'unit_lesson'
+      : b.resource && b.resource.type === 'book_pages'
+        ? await fetchAuthorizedBookPages(b.resource, req, env)
+        : b.resource && b.resource.type === 'unit_lesson'
         ? await fetchAuthorizedUnitLesson(b.resource, req)
         : b.resource && b.resource.type === 'free_summary'
           ? await fetchFreeSummary(b.resource)
