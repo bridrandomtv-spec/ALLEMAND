@@ -1104,6 +1104,9 @@ jobs:
       - name: Valider l'administration EduDZ (schéma ADM + permissions)
         run: |
           node tests/adm_test.mjs
+      - name: Tester l'authentification JWT du Worker IA
+        run: |
+          node --test tests/worker-ai-auth.test.mjs
       - name: Tester le prototype CSV du registre des lycées (Lot 315)
         run: |
           node --test prototypes/registry-import-core.test.mjs
