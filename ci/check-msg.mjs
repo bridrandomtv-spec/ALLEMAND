@@ -44,7 +44,7 @@ ok(verifyStart >= 0 && verifyEnd > verifyStart &&
    'file de vérification paginée avec total et ordre stable');
 ok(sbjs.includes("if(!/^\\d{1,20}$/.test(number))") && !sbjs.includes("Number.isSafeInteger(Number(number))"), 'numéro scolaire accepté sans conversion numérique risquée');
 ok(sbjs.includes(".eq('id', uid).eq('verif_statut','en_attente')\n    .select('id').maybeSingle()") && sbjs.includes("if(!r.data) return { ok:false"), 'modération confirmée uniquement si une ligne est réellement modifiée');
-const verificationQueueReadAt = msgjs.indexOf('var vq = await window.SB.msgVerificationQueue()');
+const verificationQueueReadAt = msgjs.indexOf('var vq = await window.SB.msgVerificationQueue(state.verificationPage,50)');
 const verificationQueueGuardAt = msgjs.indexOf('if(renderEpoch!==state.renderEpoch) return;', verificationQueueReadAt);
 const verificationQueueWriteAt = msgjs.indexOf('window.__msgVerificationRows = vq', verificationQueueReadAt);
 ok(verificationQueueReadAt >= 0 && verificationQueueGuardAt > verificationQueueReadAt &&
