@@ -3779,3 +3779,25 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - Aucun changement de code applicatif dans ce lot ; constat et plan documentés uniquement.
 - Aucun appel d'écriture Supabase, migration, modification RLS/Auth/schéma/données/abonnement.
 - Aucun déploiement Cloudflare, aucune fusion, aucune modification de `main`.
+
+## Lot 608 — neutralisation du contexte client non vérifié dans le Worker (17 novembre 2026)
+
+### Constat confirmé
+- `biblio.js::context(q, max)` assemble jusqu'à quatre extraits à partir de fichiers documentaires chargés côté navigateur ; les marqueurs `src/id/titre` sont du texte, pas une preuve d'autorisation.
+- `ia.js` transmet ce texte dans `ctx` et peut y ajouter un résultat du moteur local.
+- Le chat principal `app.js::sendChat()` transmet aussi un contexte statique dans `ctx`.
+- Le Worker ne dispose d'aucun identifiant de ressource ni d'un mécanisme serveur existant qui permette de recharger et d'autoriser ces extraits individuellement via le JWT/RLS. Le contrôle de `q` seul ne sécurise donc pas le contenu injecté dans `ctx`.
+
+### Correction enregistrée sur la branche de la PR #21
+- `worker/ia-ask.js` continue d'accepter le champ `ctx` pour compatibilité avec les clients existants, mais le remplace par une chaîne vide avant la construction du message envoyé au modèle.
+- Aucun extrait, résultat local, document verrouillé ou métadonnée libre du navigateur n'est donc transmis au modèle via `ctx`.
+- Les demandes générales restent accessibles à tout compte authentifié ; le contrôle existant des demandes reconnues comme verrouillées et la lecture d'abonnement en lecture seule restent inchangés.
+- Le RAG et les réponses pédagogiques locales conservent leurs gardes d'accès côté interface. Cette correction ne prétend pas remplacer une future récupération documentaire serveur vérifiée ; elle ferme le canal de contournement par contexte arbitraire.
+- `tests/worker-ai-auth.test.mjs` : test existant adapté pour vérifier que le contexte client n'est pas transmis ; nouveau test « question générique + extrait verrouillé injecté dans ctx » ; total constaté dans le fichier : 24 tests.
+
+### Validation et limites
+- Commits de code : Worker `650aa85d2db27220ef6ee802e95d3909325182c4`, tests `73679b9739b85edcfbb1737e8cf2a6d9d3c6bde9`.
+- Relecture GitHub après écriture : le Worker contient bien `const ctx = ''` ; le modèle reçoit la question sans le texte de `ctx`.
+- **Exécution des tests non confirmée** : l'API Actions consultée ne renvoie actuellement aucun workflow run pour le commit des tests. Ne pas annoncer PASS avant un résultat CI réel.
+- Aucun test navigateur E2E effectué dans ce lot.
+- Aucun changement Supabase (SQL, RLS, Auth, schéma, données, abonnements), aucun déploiement, aucune fusion, aucune modification de `main`.
