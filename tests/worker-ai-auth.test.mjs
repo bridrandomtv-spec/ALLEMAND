@@ -477,6 +477,7 @@ test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS'
   assert.ok(iaSource.includes('entry.locked !== true'));
   assert.ok(iaSource.includes('function lessonResource(question)'));
   assert.ok(iaSource.includes("type:'free_unit_lesson', level:'3AS', unit:1"));
+  assert.ok(iaSource.includes("type:'unit_lesson', level:'3AS', unit:unit"));
   assert.ok(iaSource.includes('function summaryResource(question)'));
   assert.ok(iaSource.includes("type:'free_summary', level:level, unit:unit"));
   assert.ok(iaSource.includes('function exerciseBankResource(question)'));
@@ -614,6 +615,17 @@ test('le contrôle RLS du Worker du site bloque aussi un sélecteur de séance s
   }), h.env);
   assert.equal(response.status, 403);
   assert.equal(h.calls.some(x => x.url.includes('/unites3as_a.js')), true);
+  assert.equal(h.messages, null);
+});
+
+test('le Worker refuse les unités 3AS qui ne sont pas encore raccordées au RAG serveur', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1.',
+    resource:{ type:'unit_lesson', level:'3AS', unit:4, lesson:1 }
+  }), h.env);
+  assert.equal(response.status, 400);
+  assert.equal(h.calls.some(x => x.url.includes('/unites3as_a.js')), false);
   assert.equal(h.messages, null);
 });
 
