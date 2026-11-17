@@ -43,7 +43,7 @@ function harness(options = {}){
       }
       if(String(url).includes('/unite3as1_free.js')){
         if(options.freeLessonThrows) throw new Error('free lesson lookup failed');
-        return options.freeLessonResponse || new Response(options.freeLessonText || 'window.UNITES_3AS_A = [{seances:[{n:1},{n:2}]}];', {
+        return options.freeLessonResponse || new Response(options.freeLessonText || 'window.UNITES_3AS_A = [{meta:{duree_totale:120},seances:[{n:1},{n:2}]}];', {
           status:200, headers:{ 'Content-Type':'text/javascript' }
         });
       }
