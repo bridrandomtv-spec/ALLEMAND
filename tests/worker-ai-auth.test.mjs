@@ -595,6 +595,17 @@ test('le Worker extrait une séance 3AS payante après validation de l’abonnem
   assert.match(h.messages[1].content, /CONTENU PÉDAGOGIQUE AUTORISÉ/);
 });
 
+test('un compte gratuit ne reçoit jamais une séance 3AS payante', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 3 de l’unité 1 en 3AS.',
+    resource:{ type:'unit_lesson', level:'3AS', unit:1, lesson:3 }
+  }), h.env);
+  assert.equal(response.status, 403);
+  assert.equal(h.calls.some(x => x.url.includes('/unites3as_a.js')), false);
+  assert.equal(h.messages, null);
+});
+
 test('le Worker refuse un sélecteur gratuit 3AS falsifié hors unité 1 séances 1–2', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
