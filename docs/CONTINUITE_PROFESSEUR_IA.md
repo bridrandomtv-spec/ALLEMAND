@@ -20,12 +20,12 @@ Livrer uniquement les changements liés au professeur IA : authentification du W
 - Aucun changement Supabase : ni Auth, ni RLS, ni schéma, ni données, ni abonnements, ni migrations.
 
 ## Récupération documentaire sécurisée — pages du manuel
-- `ia.js` transmet uniquement un sélecteur `{type:'book_page', page, level}` extrait de la question ; il ne transmet plus les extraits BIBLIO ni la réponse locale dans `ctx`.
+- `ia.js` transmet uniquement un sélecteur `{type:'book_page', page, level}` pour une page dont l'index public indique `locked:true` ; les pages statiques gratuites ne partent pas vers le Worker. Il ne transmet plus les extraits BIBLIO ni la réponse locale dans `ctx`.
 - Le Worker valide strictement le type, le niveau et les bornes de page, puis effectue un GET en lecture seule sur `public.lesson_content`, filtré par `subject=allemand`, `level` et `page`, avec l'anon key et le JWT de l'utilisateur.
 - La décision d'accès au corps de page dépend du RLS existant ; aucune clé service-role n'est utilisée. Si aucun corps n'est renvoyé, le Worker refuse avec `content-locked`. Si la lecture échoue, il échoue fermé avec `access-unavailable`.
 - Seul le contenu récupéré côté Worker est marqué `CONTENU PÉDAGOGIQUE AUTORISÉ` et transmis au modèle. Le champ `ctx` libre du navigateur reste ignoré.
 - Limite restante : ce premier connecteur couvre les pages du manuel (`lesson_content`, colonnes `page`, `level`, `body`, `titre`). Les devoirs, exercices et autres documents de BIBLIO ne sont pas encore récupérés côté Worker ; ils nécessitent chacun un identifiant de ressource stable et une lecture serveur protégée par le RLS déjà en place.
-- Vérification Supabase en lecture seule du projet actif : `public.lesson_content` existe, RLS est activé, 375 lignes recensées, colonnes `subject`, `level`, `page`, `titre`, `body`, `free` présentes. La politique SELECT `lc lecture selon entitlement` s'applique à `public` avec `free OR active_entitlement(auth.uid()) OR is_admin()` ; le privilège SELECT existe pour `anon` et `authenticated`. La policy d'écriture admin est distincte.
+- Vérification Supabase en lecture seule du projet actif : `public.lesson_content` existe, RLS est activé, 375 lignes recensées : 2AS = 212 (5 marquées `free`), 3AS = 163 (0 marquée `free`) ; colonnes `subject`, `level`, `page`, `titre`, `body`, `free` présentes. La politique SELECT `lc lecture selon entitlement` s'applique à `public` avec `free OR active_entitlement(auth.uid()) OR is_admin()` ; le privilège SELECT existe pour `anon` et `authenticated`. La policy d'écriture admin est distincte.
 - Les tests automatisés simulent les réponses REST/RLS ; ils vérifient que le Worker utilise le JWT et que l'absence de ligne bloque, mais ne simulent pas le moteur RLS PostgreSQL lui-même. Aucun test de lecture avec une session utilisateur réelle n'a été effectué. Aucune écriture Supabase, aucun changement de schéma ou de politique n'a été effectué.
 
 ## Livraison
