@@ -76,8 +76,8 @@ async function verifySupabaseUser(req, env){
    direct de l'interface. La lecture subscriptions est strictement read-only :
    aucune écriture ni modification du schéma Supabase. */
 const LOCKED_CONJUGATIONS = ['sein','haben','werden','spielen','fahren','essen','trinken','helfen','müssen'];
-const LOCKED_RULES = ['perfekt','akkusativ','dativ','komparativ','konjunktiv','passiv',
-  'futur','weil','obwohl','um zu','beim','präteritum','modalverben'];
+const LOCKED_RULES = ['sein','haben','werden','spielen','fahren','essen','trinken','helfen','müssen',
+  'perfekt','akkusativ','dativ','komparativ','konjunktiv','passiv','futur','weil','obwohl','um zu','beim','präteritum','modalverben'];
 function isLockedContentQuestion(question){
   const q = String(question || '').toLowerCase();
   const unitMatch = q.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
