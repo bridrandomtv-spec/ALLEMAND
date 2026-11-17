@@ -194,6 +194,7 @@ end $$;
 
 -- Le destinataire peut refuser, l'expéditeur ne le peut pas.
 create temporary table decline_invite(id uuid);
+grant select on decline_invite to authenticated;
 insert into decline_invite select public.msg_invite_send('20000000-0000-4000-8000-000000000004');
 select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000004',false);
 do $$ begin
