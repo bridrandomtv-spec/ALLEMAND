@@ -480,6 +480,9 @@ test('le fichier public 3AS ne contient que les deux séances gratuites de l’u
 test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS', () => {
   assert.ok(iaSource.includes('async function pageResource(question)'));
   assert.ok(iaSource.includes('if(!entry) return null;'));
+  assert.ok(iaSource.includes("if(level === '2AS')"));
+  assert.ok(iaSource.includes("window['SEANCES_U' + unit]"));
+  assert.ok(iaSource.includes("type:'book_page', page:page, level:'2AS'"));
   assert.doesNotMatch(iaSource, /entry\.locked !== true/);
   assert.ok(iaSource.includes('function lessonResource(question)'));
   assert.ok(iaSource.includes("type:'free_unit_lesson', level:'3AS', unit:1"));
@@ -490,6 +493,17 @@ test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS'
   assert.ok(iaSource.includes("type:'free_exercise_bank', level:level"));
   assert.ok(iaSource.includes('await pageResource(q) || lessonResource(q) || summaryResource(q) || exerciseBankResource(q)'));
   assert.ok(iaSource.includes('resource: resource'));
+});
+
+test('le Worker peut transmettre une page gratuite 2AS via RLS pour une séance de l’unité 1', async () => {
+  const h = harness({ lessonContent:[{ titre:'L1 p5 — Guten Tag', body:'Ich heiße Amira. Ich komme aus Algerien.' }] });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 1 en 2AS.',
+    resource:{ type:'book_page', page:5, level:'2AS' }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.match(h.messages[1].content, /PAGE 5/);
+  assert.match(h.messages[1].content, /Ich heiße Amira/);
 });
 
 test('le Worker récupère côté serveur uniquement le contenu gratuit 3AS unité 1 séances 1–2', async () => {
