@@ -35,6 +35,12 @@ function harness(options = {}){
           status:200, headers:{ 'Content-Type':'application/json' }
         });
       }
+      if(String(url).includes('/unite3as1_free.js')){
+        if(options.freeLessonThrows) throw new Error('free lesson lookup failed');
+        return options.freeLessonResponse || new Response(options.freeLessonText || 'window.UNITES_3AS_A = [{seances:[{n:1},{n:2}]}];', {
+          status:200, headers:{ 'Content-Type':'text/javascript' }
+        });
+      }
       return options.cloudflareResponse || new Response(JSON.stringify({
         success:true, result:{ response:'Réponse distante.' }
       }), { status:200, headers:{ 'Content-Type':'application/json' } });
@@ -441,11 +447,59 @@ test('le fichier public 3AS ne contient que les deux séances gratuites de l’u
   assert.match(appSource, /'unite3as1_free\.js','unite2\.js'/);
 });
 
-test('le client transmet un sélecteur de page uniquement si l’index public la marque verrouillée', () => {
+test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS', () => {
   assert.ok(iaSource.includes('async function pageResource(question)'));
   assert.ok(iaSource.includes('entry.locked !== true'));
-  assert.ok(iaSource.includes('await pageResource(q)'));
+  assert.ok(iaSource.includes('function lessonResource(question)'));
+  assert.ok(iaSource.includes("type:'free_unit_lesson', level:'3AS', unit:1"));
+  assert.ok(iaSource.includes('await pageResource(q) || lessonResource(q)'));
   assert.ok(iaSource.includes('resource: resource'));
+});
+
+test('le Worker récupère côté serveur uniquement le contenu gratuit 3AS unité 1 séances 1–2', async () => {
+  const freeSource = 'window.UNITES_3AS_A = [{meta:{n:1,niveau:"3AS",duree_totale:120},seances:[{n:1},{n:2}]}];';
+  const h = harness({ freeLessonText:freeSource });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 1 en 3AS.',
+    resource:{ type:'free_unit_lesson', level:'3AS', unit:1, lesson:1 }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.ok(h.calls.some(x => x.url === 'https://allemand.brid-randomtv.workers.dev/unite3as1_free.js'));
+  assert.match(h.messages[1].content, /CONTENU PÉDAGOGIQUE GRATUIT VÉRIFIÉ/);
+  assert.ok(h.messages[1].content.includes(freeSource));
+  assert.equal(h.calls.some(x => x.url.includes('/rest/v1/subscriptions')), false);
+});
+
+test('le Worker refuse un sélecteur gratuit 3AS falsifié hors unité 1 séances 1–2', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique cette leçon.',
+    resource:{ type:'free_unit_lesson', level:'3AS', unit:2, lesson:1 }
+  }), h.env);
+  assert.equal(response.status, 400);
+  assert.equal(h.calls.some(x => x.url.includes('/unite3as1_free.js')), false);
+  assert.equal(h.messages, null);
+});
+
+test('une question sur une séance verrouillée reste refusée même avec un sélecteur gratuit falsifié', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 3 de l’unité 1 en 3AS.',
+    resource:{ type:'free_unit_lesson', level:'3AS', unit:1, lesson:2 }
+  }), h.env);
+  assert.equal(response.status, 403);
+  assert.equal(h.calls.some(x => x.url.includes('/unite3as1_free.js')), false);
+  assert.equal(h.messages, null);
+});
+
+test('le Worker échoue fermé si l’artefact gratuit 3AS est indisponible', async () => {
+  const h = harness({ freeLessonThrows:true });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 1 en 3AS.',
+    resource:{ type:'free_unit_lesson', level:'3AS', unit:1, lesson:1 }
+  }), h.env);
+  assert.equal(response.status, 503);
+  assert.equal(h.messages, null);
 });
 
 test('le quota est appliqué avant toute lecture RLS du document', async () => {
