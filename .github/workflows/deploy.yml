@@ -1107,6 +1107,9 @@ jobs:
       - name: Tester l'authentification JWT du Worker IA
         run: |
           node --test tests/worker-ai-auth.test.mjs
+      - name: Tester la compréhension Darija/Arabizi et la conservation du transcript (Lot 602)
+        run: |
+          node --test tests/qust-darja.test.mjs
       - name: Tester le prototype CSV du registre des lycées (Lot 315)
         run: |
           node --test prototypes/registry-import-core.test.mjs
