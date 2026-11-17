@@ -479,7 +479,8 @@ test('le fichier public 3AS ne contient que les deux séances gratuites de l’u
 
 test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS', () => {
   assert.ok(iaSource.includes('async function pageResource(question)'));
-  assert.ok(iaSource.includes('entry.locked !== true'));
+  assert.ok(iaSource.includes('if(!entry) return null;'));
+  assert.doesNotMatch(iaSource, /entry\.locked !== true/);
   assert.ok(iaSource.includes('function lessonResource(question)'));
   assert.ok(iaSource.includes("type:'free_unit_lesson', level:'3AS', unit:1"));
   assert.ok(iaSource.includes("type:'unit_lesson', level:'3AS', unit:unit"));
