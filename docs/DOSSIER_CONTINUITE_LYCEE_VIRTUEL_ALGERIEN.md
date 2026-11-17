@@ -3730,3 +3730,22 @@ Aucune de ces décisions n'a été appliquée par supposition. Aucun SQL, RLS, A
 - La protection vise les ressources portant réellement un cadenas : séance payante, quiz/évaluation payant et règle/conjugaison associée à une séance verrouillée.
 
 - Le Lot605 remplace explicitement la limite provisoire du Lot604 : le Worker contrôle maintenant les requêtes ciblées sur les ressources verrouillées, tandis que les synthèses `malakhiss/resume` et la banque générale restent gratuites.
+
+
+## Lot 606 — fermeture du contournement des cadenas par Darija/Arabizi (17 novembre 2026)
+
+### Défaut confirmé dans le Worker
+- Relecture du code réel de `worker/ia-ask.js` sur `ai/lot-601-worker-jwt` après les Lots 601–605.
+- Le contrôle serveur reconnaissait les formulations françaises, allemandes et arabes explicites pour les règles/conjugaisons verrouillées, mais ne reconnaissait pas plusieurs formulations Darija/Arabizi pourtant couvertes par QUST : `3lach ma fhemtch Perfekt?`, `علاش ما فهمتش Perfekt؟`, `fassarli Dativ` et `kifach nsarref sein?`.
+- Conséquence : un appel direct au Worker pouvait contourner le garde client pour ces formulations. C'est un défaut de sécurité fonctionnelle, même si le chemin normal de l'interface dispose aussi de `verifieAccesContenuIA`.
+
+### Correction appliquée sur la branche PR #21
+- Extension des motifs d'intention de grammaire et de conjugaison dans `isLockedContentQuestion()` pour reconnaître les formulations Darija arabe et Arabizi.
+- Aucun changement de l'authentification JWT, du contrôle d'abonnement, des règles de gratuité, de Supabase, des contenus, des quotas ou du client.
+- Ajout de tests Worker qui vérifient le refus HTTP 403 sans abonnement et l'absence d'appel au modèle pour les formulations Darija/Arabizi de règle et de conjugaison.
+- Les tests existants conservent les assertions d'accès général pour tout compte connecté, de gratuité des deux premières séances de l'unité 1, d'accès abonné, de fail-closed HTTP 503, et de gratuité de la banque/synthèses côté garde client.
+
+### État de validation
+- Modifications enregistrées sur `ai/lot-601-worker-jwt`, PR #21.
+- **Exécution des nouveaux tests non encore confirmée** au moment de cette note ; attendre le workflow CI déclenché par ces commits.
+- Aucun changement Supabase (SQL, RLS, Auth, schéma, données, abonnements), aucune fusion, aucun déploiement Cloudflare.
