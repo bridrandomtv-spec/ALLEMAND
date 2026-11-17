@@ -70,7 +70,7 @@
     const lesson = Number(sessionMatch[1]);
     if(unit === 1 && [1,2].includes(lesson))
       return { type:'free_unit_lesson', level:'3AS', unit:1, lesson:lesson };
-    if(unit >= 1 && unit <= 3 && lesson >= 1 && lesson <= 6)
+    if(unit >= 1 && unit <= 10 && lesson >= 1 && lesson <= 6)
       return { type:'unit_lesson', level:'3AS', unit:unit, lesson:lesson };
     return null;
   }
