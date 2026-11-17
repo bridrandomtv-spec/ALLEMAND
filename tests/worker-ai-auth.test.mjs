@@ -553,6 +553,17 @@ test('le Worker récupère la banque générale gratuite filtrée sur le niveau 
   assert.equal(h.calls.some(x => x.url.includes('/rest/v1/subscriptions')), false);
 });
 
+test('la banque libre ne déverrouille pas un exercice rattaché à une unité payante', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique un exercice de l’unité 11 en 3AS.',
+    resource:{ type:'free_exercise_bank', level:'3AS' }
+  }), h.env);
+  assert.equal(response.status, 403);
+  assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/contenu_original.json')), false);
+  assert.equal(h.messages, null);
+});
+
 test('le Worker refuse un sélecteur gratuit 3AS falsifié hors unité 1 séances 1–2', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
