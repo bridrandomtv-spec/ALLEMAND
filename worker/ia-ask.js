@@ -231,41 +231,59 @@ function matchingSourceDelimiter(source, start, open, close){
   return -1;
 }
 function extract3asLesson(source, unit, lesson){
-  const declaration = 'const U3AS_' + unit + ' = {';
-  const declarationAt = source.indexOf(declaration);
-  if(declarationAt < 0) return null;
-  const objectStart = source.indexOf('{', declarationAt);
-  const objectEnd = matchingSourceDelimiter(source, objectStart, '{', '}');
-  if(objectEnd < 0) return null;
-  const unitSource = source.slice(objectStart, objectEnd + 1);
-  const metaKey = unitSource.indexOf('meta:');
-  const metaStart = unitSource.indexOf('{', metaKey);
-  const metaEnd = metaStart >= 0 ? matchingSourceDelimiter(unitSource, metaStart, '{', '}') : -1;
-  const sessionsKey = unitSource.indexOf('seances:');
-  const sessionsStart = unitSource.indexOf('[', sessionsKey);
-  const sessionsEnd = sessionsStart >= 0 ? matchingSourceDelimiter(unitSource, sessionsStart, '[', ']') : -1;
-  if(metaStart < 0 || metaEnd < 0 || sessionsStart < 0 || sessionsEnd < 0) return null;
-  for(let i=sessionsStart+1;i<sessionsEnd;){
-    while(i<sessionsEnd && /[\s,]/.test(unitSource[i])) i++;
-    if(i>=sessionsEnd) break;
-    if(unitSource[i] !== '{') return null;
-    const end = matchingSourceDelimiter(unitSource, i, '{', '}');
-    if(end < 0 || end > sessionsEnd) return null;
-    const session = unitSource.slice(i, end + 1);
+  let meta = '', sessions = '';
+  if(unit >= 1 && unit <= 3){
+    const declaration = 'const U3AS_' + unit + ' = {';
+    const declarationAt = source.indexOf(declaration);
+    if(declarationAt < 0) return null;
+    const objectStart = source.indexOf('{', declarationAt);
+    const objectEnd = matchingSourceDelimiter(source, objectStart, '{', '}');
+    if(objectEnd < 0) return null;
+    const unitSource = source.slice(objectStart, objectEnd + 1);
+    const metaKey = unitSource.indexOf('meta:');
+    const metaStart = unitSource.indexOf('{', metaKey);
+    const metaEnd = metaStart >= 0 ? matchingSourceDelimiter(unitSource, metaStart, '{', '}') : -1;
+    const sessionsKey = unitSource.indexOf('seances:');
+    const sessionsStart = unitSource.indexOf('[', sessionsKey);
+    const sessionsEnd = sessionsStart >= 0 ? matchingSourceDelimiter(unitSource, sessionsStart, '[', ']') : -1;
+    if(metaStart < 0 || metaEnd < 0 || sessionsStart < 0 || sessionsEnd < 0) return null;
+    meta = unitSource.slice(metaStart, metaEnd + 1);
+    sessions = unitSource.slice(sessionsStart + 1, sessionsEnd);
+  }else if(unit >= 4 && unit <= 10){
+    const fileUnit = unit + 6;
+    const metaDeclaration = 'const UNITE' + fileUnit + '_META = {';
+    const metaAt = source.indexOf(metaDeclaration);
+    const metaStart = metaAt >= 0 ? source.indexOf('{', metaAt) : -1;
+    const metaEnd = metaStart >= 0 ? matchingSourceDelimiter(source, metaStart, '{', '}') : -1;
+    const sessionsDeclaration = 'const SEANCES_U' + fileUnit + ' = [';
+    const sessionsAt = source.indexOf(sessionsDeclaration);
+    const sessionsStart = sessionsAt >= 0 ? source.indexOf('[', sessionsAt) : -1;
+    const sessionsEnd = sessionsStart >= 0 ? matchingSourceDelimiter(source, sessionsStart, '[', ']') : -1;
+    if(metaStart < 0 || metaEnd < 0 || sessionsStart < 0 || sessionsEnd < 0) return null;
+    meta = source.slice(metaStart, metaEnd + 1);
+    sessions = source.slice(sessionsStart + 1, sessionsEnd);
+  }else return null;
+  for(let i=0;i<sessions.length;){
+    while(i<sessions.length && /[\s,]/.test(sessions[i])) i++;
+    if(i>=sessions.length) break;
+    if(sessions[i] !== '{') return null;
+    const end = matchingSourceDelimiter(sessions, i, '{', '}');
+    if(end < 0) return null;
+    const session = sessions.slice(i, end + 1);
     const number = session.match(/\bn\s*:\s*(\d{1,2})/);
     if(number && Number(number[1]) === lesson){
-      return '[UNITÉ]\n' + unitSource.slice(metaStart, metaEnd + 1)
-        + '\n[SÉANCE]\n' + session;
+      return '[UNITÉ]\n' + meta + '\n[SÉANCE]\n' + session;
     }
     i = end + 1;
   }
   return null;
 }
+
 async function fetchAuthorizedUnitLesson(resource, req){
   if(!resource || typeof resource !== 'object' || Array.isArray(resource)
      || Object.keys(resource).some(k => !['type','level','unit','lesson'].includes(k))
      || resource.type !== 'unit_lesson' || resource.level !== '3AS'
-     || !Number.isInteger(resource.unit) || resource.unit < 1 || resource.unit > 3
+     || !Number.isInteger(resource.unit) || resource.unit < 1 || resource.unit > 10
      || !Number.isInteger(resource.lesson) || resource.lesson < 1 || resource.lesson > 6
      || (resource.unit === 1 && resource.lesson <= 2)){
     return { ok:false, status:400, error:'invalid-resource' };
@@ -273,7 +291,8 @@ async function fetchAuthorizedUnitLesson(resource, req){
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 7000);
   try{
-    const response = await fetch('https://allemand.brid-randomtv.workers.dev/unites3as_a.js', {
+    const path = resource.unit <= 3 ? '/unites3as_a.js' : '/unite' + (resource.unit + 6) + '.js';
+    const response = await fetch('https://allemand.brid-randomtv.workers.dev' + path, {
       method:'GET',
       headers:{ 'Authorization':req.headers.get('Authorization') || '', 'Accept':'text/javascript' },
       redirect:'error',
