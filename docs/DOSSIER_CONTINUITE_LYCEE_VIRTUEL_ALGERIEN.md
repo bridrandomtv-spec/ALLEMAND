@@ -3464,3 +3464,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Champs contrôlés : `raw_text`, `normalized_text` et `norm` sont présents et distincts comme attendu.
 - Contrôle syntaxique : `rag.js`, `ia.js`, `parle.js` et le nouveau fichier de test passent l'analyse syntaxique JavaScript.
 - Nature de la validation : test fonctionnel isolé du moteur QUST et contrôles statiques, pas encore une exécution de `node --test` sur GitHub Actions ni un test navigateur/Worker Cloudflare réel. Ne pas présenter la CI comme verte.
+
+
+### CI après intégration du Lot 602 — état observé
+
+- Le commit documentaire `7f8cf37399e5fb06be7492fa3a1a95ea1b62a194` a déclenché le run CI #4130.
+- Résultat GitHub Actions : `failure`, job unique `Validation structurelle & pédagogique`, mais GitHub renvoie `steps: null` et aucun journal exploitable (récupération des logs en 404 BlobNotFound).
+- Conclusion : échec du job avant toute étape observable ; impossible d'attribuer cet échec aux tests du Lot 601/602. La suite Node n'est donc pas déclarée exécutée ni validée sur GitHub Actions.
+- Deux autres workflows PostgreSQL indépendants (#300 Messenger et #361 ملتقى الطلاب) sont également en échec sans étapes/journaux disponibles. Aucun changement de base de données n'a été effectué par cette intervention.
+- Comparaison Git : branche `ai/lot-601-worker-jwt` en avance de 22 commits et 0 en retard sur `main` au moment du contrôle. Les fichiers touchés restent limités au Worker IA, clients IA/voix, QUST/RAG, tests, workflow CI et ce dossier.
