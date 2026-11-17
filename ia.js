@@ -1,5 +1,5 @@
 /* ia.js — couche « cerveau » : réponse locale d'abord (hors-ligne), puis LLM grounded
-   (Workers AI gratuit) si la réponse locale est faible. Quota client : 40 appels/jour. */
+   (Workers AI gratuit) si la réponse locale est faible. Quota client indicatif : 150 appels/jour (contournable) ; limite Worker : 20/minute/utilisateur/isolate. */
 'use strict';
 (function(){
   /* ── fetch avec TIMEOUT (AbortController) : le worker LLM peut mettre 30 s
