@@ -969,6 +969,17 @@ async function verifieAccesContenuIA(question){
     return {locked:true,html:'<b>🔒 هذه الحصة ضمن محتوى المشتركين. الأستاذ الذكي متاح لك، لكن لا يمكنه شرح محتوى هذه الحصة قبل فتحها.</b>'};
   }
   var type = await matchType(q);
+  /* Une synthèse complète d'unité ne doit pas révéler les séances verrouillées
+     qui composent cette unité. Les séances gratuites restent accessibles
+     lorsqu'elles sont demandées précisément. */
+  if(type && (type.id === 'sharh' || type.id === 'murajaa') && unit != null){
+    var fullUnitOpen = false;
+    try{ fullUnitOpen = !!(ACCESS.entitlement && ACCESS.entitlement().ok); }catch(e){}
+    if(!fullUnitOpen){
+      try{ ACCESS.paywall({type:'unit-summary',unite:unit}); }catch(e){}
+      return {locked:true,html:'<b>🔒 ملخص الوحدة الكامل يتضمن دروسًا محمية. يمكنك طلب شرح الحصة المجانية برقمها، أو فتح الوحدة بالاشتراك.</b>'};
+    }
+  }
   if(type && type.id === 'fard'){
     var quizUnit = unit != null ? unit : uniteCouranteIA();
     if(quizUnit != null && typeof ACCESS.canAccessQuiz === 'function' && !ACCESS.canAccessQuiz(quizUnit)){
