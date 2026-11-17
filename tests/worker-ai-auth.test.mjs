@@ -269,6 +269,17 @@ test('refuse côté Worker une conjugaison verrouillée pour un compte sans abon
   assert.equal(h.messages, null);
 });
 
+test('une séance gratuite ne court-circuite pas le verrou d’une conjugaison rattachée à une séance payante', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Conjugaison sein unité 1 séance 1'
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 403);
+  assert.equal(payload.err, 'content-locked');
+  assert.equal(h.messages, null);
+});
+
 test('refuse aussi une demande d’explication d’une règle verrouillée sans mot « conjugaison »', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
