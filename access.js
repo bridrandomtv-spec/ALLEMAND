@@ -36,6 +36,7 @@
   function freeUnitsFor(u){
     var f = freeCfg(); var niv = '2AS';
     try{
+      if(window.getNiveauActif && window.getNiveauActif() === '3AS') niv = '3AS';
       var g = window['UNITE' + u] || window['U3AS_' + u] || null;
       if(g && g.meta && g.meta.niveau) niv = g.meta.niveau;
       else if(window.UNITES_3AS_A && window.UNITES_3AS_A.some && window.UNITES_3AS_A.some(function(x){ return x && x.meta && x.meta.n === u; })) niv = '3AS';
