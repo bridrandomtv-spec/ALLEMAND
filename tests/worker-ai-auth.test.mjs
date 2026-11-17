@@ -51,7 +51,17 @@ function harness(options = {}){
           ]
         }), { status:200, headers:{ 'Content-Type':'application/json' } });
       }
-      return options.cloudflareResponse || new Response(JSON.stringify({
+
+      if(String(url).includes('/assets/bdd/contenu_original.json')){
+        if(options.freeBankThrows) throw new Error('free bank lookup failed');
+        return options.freeBankResponse || new Response(JSON.stringify(options.freeBankData || {
+          B_exercices:[
+            { id:'b01', niveau:'2AS', comp:'conjugaison', q:'Ich ___ müde.', opts:['bin','bist'], a:0, why:'ich → bin.' },
+            { id:'b11', niveau:'3AS', comp:'vocabulaire', q:'Die Identität bedeutet …', opts:['Identität','Haus'], a:0, why:'Vocabulaire 3AS.' },
+            { id:'b12', niveau:'3AS', comp:'Perfekt', q:'Wir ___ gelernt.', opts:['haben','hat'], a:0, why:'Perfekt 3AS.' }
+          ]
+        }), { status:200, headers:{ 'Content-Type':'application/json' } });
+      }      return options.cloudflareResponse || new Response(JSON.stringify({
         success:true, result:{ response:'Réponse distante.' }
       }), { status:200, headers:{ 'Content-Type':'application/json' } });
     }
