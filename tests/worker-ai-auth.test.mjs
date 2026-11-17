@@ -87,7 +87,7 @@ test('échoue fermé si Supabase Auth est indisponible', async () => {
   assert.equal(JSON.stringify(payload).includes('network detail'), false);
 });
 
-test('accepte un utilisateur Auth valide et marque le contexte comme non authentifié', async () => {
+test('accepte un utilisateur Auth valide mais ne transmet aucun contexte client au modèle', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
     q:'Propose une méthode de révision efficace.',
@@ -99,8 +99,23 @@ test('accepte un utilisateur Auth valide et marque le contexte comme non authent
   assert.equal(h.calls[0].url, 'https://project.supabase.co/auth/v1/user');
   assert.equal(h.calls[0].init.headers.apikey, 'sb_publishable_test');
   assert.equal(h.calls[0].init.headers.Authorization, 'Bearer ' + TOKEN);
-  assert.match(h.messages[1].content, /NON AUTHENTIFIÉ/);
-  assert.doesNotMatch(h.messages[1].content, /CONTEXTE VÉRIFIÉ/);
+  assert.equal(h.messages[1].content, 'Propose une méthode de révision efficace.');
+  assert.doesNotMatch(h.messages[1].content, /page 42|NON AUTHENTIFIÉ|CONTEXTE VÉRIFIÉ/);
+});
+
+test('ignore un extrait de leçon verrouillée injecté dans ctx avec une question générique', async () => {
+  const h = harness();
+  const secret = 'CONTENU PAYANT CONFIDENTIEL — explication complète du Perfekt';
+  const response = await h.context.__worker.fetch(request({
+    q:'Peux-tu me proposer une méthode de révision ?',
+    ctx:secret
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(payload.ok, true);
+  assert.equal(h.messages[1].content, 'Peux-tu me proposer une méthode de révision ?');
+  assert.doesNotMatch(h.messages[1].content, /CONTENU PAYANT CONFIDENTIEL|Perfekt/);
+  assert.equal(h.calls.some(x => x.url.includes('/rest/v1/subscriptions')), false);
 });
 
 test('accepte tout compte authentifié même sans abonnement actif', async () => {
