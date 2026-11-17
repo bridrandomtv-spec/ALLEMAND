@@ -72,6 +72,66 @@ async function verifySupabaseUser(req, env){
   }
 }
 
+/* AI-LOCK-2 : classification minimale côté Worker pour empêcher le contournement
+   direct de l'interface. La lecture subscriptions est strictement read-only :
+   aucune écriture ni modification du schéma Supabase. */
+const LOCKED_CONJUGATIONS = ['sein','haben','werden','spielen','fahren','essen','trinken','helfen','müssen'];
+const LOCKED_RULES = ['perfekt','akkusativ','dativ','komparativ','konjunktiv','passiv',
+  'futur','weil','obwohl','um zu','beim','präteritum','modalverben'];
+function isLockedContentQuestion(question){
+  const q = String(question || '').toLowerCase();
+  const unitMatch = q.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
+  const lessonMatch = q.match(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس)\s*[:#-]?\s*(\d{1,2})/i);
+  const unit = unitMatch ? Number(unitMatch[1]) : null;
+  const lesson = lessonMatch ? Number(lessonMatch[1]) : null;
+  const assessment = /(?:فرض|اختبار|امتحان|quiz|test|devoir|evaluation|évaluation)/i.test(q);
+  const summary = /(?:ملخص|لخص|résumé|resume|revision|révision|مراجعة|شرح الوحدة|اشرح الوحدة|explain unit|unit summary)/i.test(q);
+  if(unit !== null && lesson !== null) return !(unit === 1 && lesson <= 2);
+  if(lesson !== null && lesson > 2) return true;
+  if(unit !== null && assessment && unit !== 1) return true;
+  if(unit !== null && summary) return unit !== 1 || !/الحصة|lesson|leçon|séance/i.test(q);
+  const conjugationIntent = /(?:conjug|konjug|تصريف|صرف|verbe|verb)/i.test(q)
+    || LOCKED_CONJUGATIONS.some(v => q.trim() === v);
+  if(conjugationIntent && LOCKED_CONJUGATIONS.some(v => new RegExp('(?:^|[^a-zäöüß])' + v + '(?:$|[^a-zäöüß])','i').test(q))) return true;
+  const grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|explique|explain|erkläre)/i.test(q);
+  if(grammarIntent && LOCKED_RULES.some(v => q.indexOf(v) !== -1)) return true;
+  return LOCKED_RULES.some(v => q.trim() === v);
+}
+async function hasActiveSubscription(req, env, userId){
+  const bearer = req.headers.get('Authorization') || '';
+  let endpoint;
+  try{
+    endpoint = new URL('/rest/v1/subscriptions', env.SUPABASE_URL);
+    if(endpoint.protocol !== 'https:') return { ok:false, active:false };
+    endpoint.searchParams.set('select','statut,fin');
+    endpoint.searchParams.set('user_id','eq.' + userId);
+  }catch(e){ return { ok:false, active:false }; }
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 5000);
+  try{
+    const response = await fetch(endpoint.toString(), {
+      method:'GET',
+      headers:{
+        'apikey':String(env.SUPABASE_ANON_KEY),
+        'Authorization':bearer,
+        'Accept':'application/json'
+      },
+      signal:controller.signal
+    });
+    if(!response.ok) return { ok:false, active:false };
+    const rows = await response.json();
+    if(!Array.isArray(rows)) return { ok:false, active:false };
+    const now = Date.now();
+    const active = rows.some(row => row && row.statut === 'actif'
+      && (!row.fin || (Number.isFinite(Date.parse(row.fin)) && Date.parse(row.fin) > now)));
+    return { ok:true, active:active };
+  }catch(e){
+    return { ok:false, active:false };
+  }finally{
+    clearTimeout(timer);
+  }
+}
+
 async function readLimitedBody(req, maxBytes){
   const declared = Number(req.headers.get('Content-Length') || 0);
   if(Number.isFinite(declared) && declared > maxBytes) return { tooLarge:true };
@@ -122,6 +182,12 @@ export default {
     if(b.ctx !== undefined && (typeof b.ctx !== 'string' || b.ctx.length > 3000)) return json({ ok:false, err:'invalid-context' }, 400, org);
     const q = b.q.trim();
     const ctx = b.ctx || '';
+
+    if(isLockedContentQuestion(q)){
+      const entitlement = await hasActiveSubscription(req, env, identity.userId);
+      if(!entitlement.ok) return json({ ok:false, err:'access-unavailable' }, 503, org);
+      if(!entitlement.active) return json({ ok:false, err:'content-locked' }, 403, org);
+    }
 
     const now = Date.now();
     HITS = HITS.filter(t => now - t.at < 60000);
