@@ -445,6 +445,7 @@ await import('./check-multaqa.mjs');
 
 
 const discoverySql = readFileSync('supabase/migrations/202611130003_msg_student_discovery.sql', 'utf8');
+const discoveryTest = readFileSync('ci/msg-discovery-postgres-test.sql', 'utf8');
 ok(discoverySql.includes('create function public.msg_student_search'), 'RPC de recherche scolaire versionnée');
 ok(discoverySql.includes("pa.verif_statut = 'verifie'") && discoverySql.includes("pb.verif_statut = 'verifie'"), 'DM exige deux identités vérifiées côté serveur');
 ok(/create or replace function public\.msg_can_dm\(a uuid, b uuid\)[\s\S]*?auth\.uid\(\) is not null[\s\S]*?auth\.uid\(\) in \(a, b\)/.test(discoverySql),
@@ -458,7 +459,7 @@ ok(msgjs.includes('data-peer-key') && msgjs.includes('state.peers[key]=p.student
 ok(discoverySql.includes('returns table(student_key uuid') && discoverySql.includes('msg_discovery_targets'), 'recherche retourne un jeton opaque stocké côté serveur');
 ok(discoverySql.includes('expires_at>now()') && discoverySql.includes('actor_id=v_actor'), 'jeton de découverte expirant et lié au compte demandeur');
 ok(discoverySql.includes('used_at=now()') && discoverySql.includes('used_at is null') && discoverySql.includes('returning student_id into v_recipient'), 'jeton de découverte consommé atomiquement une seule fois');
-ok(test.includes('Le jeton est à usage unique') && test.includes('expected: false'), 'test d’intégration du rejeu de jeton');
+ok(discoveryTest.includes('msg_invite_send_by_key') && discoveryTest.includes('discovery_result_expired') && discoveryTest.includes('discovery_token_replay_allowed'), 'test PostgreSQL : jeton de découverte lié au compte et à usage unique');
 ok(discoverySql.includes('msg_discovery_targets_expiry_idx') && discoverySql.includes('where expires_at <= now()'), 'jetons expirés nettoyés avec index de rétention');
 ok(/create or replace function public\.msg_invite_send_by_key\(p_student_key uuid\)/.test(discoverySql) && discoverySql.includes('return public.msg_invite_send(v_recipient)'), 'RPC serveur dédiée à la conversion du jeton opaque');
 ok(discoverySql.includes('grant execute on function public.msg_invite_send_by_key(uuid) to authenticated'), 'conversion du jeton autorisée uniquement aux comptes connectés');
