@@ -3456,3 +3456,11 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Compatibilité : `norm` est conservé ; les appels existants à un seul argument restent valides ; les transformations locales historiques continuent d'être utilisées pour le routage.
 - Tests automatisés ajoutés dans `tests/qust-darja.test.mjs` et branchés dans la CI. Résultats d'exécution à confirmer sur un runner GitHub opérationnel.
 - Périmètre : aucun changement Supabase/Auth/RLS/schéma/paiement, aucun secret consulté, aucun déploiement, aucune fusion. Lot 601 reste une PR brouillon ; ce lot est ajouté sur la même branche de travail.
+
+
+### Vérification du Lot 602 — 17/11/2026
+
+- Exécution isolée de `js/qust.js` dans un runtime JavaScript : les trois formulations de référence retournent `explain_rule` (confiance 0,86–0,88) et détectent Darija ; l'Arabizi est détecté pour « 3lach » et « page 3 » n'est plus classé Arabizi.
+- Champs contrôlés : `raw_text`, `normalized_text` et `norm` sont présents et distincts comme attendu.
+- Contrôle syntaxique : `rag.js`, `ia.js`, `parle.js` et le nouveau fichier de test passent l'analyse syntaxique JavaScript.
+- Nature de la validation : test fonctionnel isolé du moteur QUST et contrôles statiques, pas encore une exécution de `node --test` sur GitHub Actions ni un test navigateur/Worker Cloudflare réel. Ne pas présenter la CI comme verte.
