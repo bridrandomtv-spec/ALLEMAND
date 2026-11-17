@@ -323,6 +323,15 @@ test('refuse côté Worker une conjugaison verrouillée pour un compte sans abon
   assert.equal(h.messages, null);
 });
 
+test('le Worker refuse une demande de séance numérotée sans ressource vérifiable', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1.'
+  }), h.env);
+  assert.equal(response.status, 403);
+  assert.equal(h.messages, null);
+});
+
 test('une séance gratuite ne court-circuite pas le verrou d’une conjugaison rattachée à une séance payante', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({
