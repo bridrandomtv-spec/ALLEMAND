@@ -400,3 +400,16 @@ test('le client transmet un sélecteur de page uniquement si l’index public la
   assert.ok(iaSource.includes('await pageResource(q)'));
   assert.ok(iaSource.includes('resource: resource'));
 });
+
+test('le quota est appliqué avant toute lecture RLS du document', async () => {
+  const h = harness({ lessonContent:[{ titre:'Page', body:'Contenu autorisé.' }] });
+  let last;
+  for(let i=0;i<21;i++){
+    last = await h.context.__worker.fetch(request({
+      q:'Explique cette page.',
+      resource:{ type:'book_page', page:42, level:'2AS' }
+    }), h.env);
+  }
+  assert.equal(last.status, 429);
+  assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/lesson_content')).length, 20);
+});
