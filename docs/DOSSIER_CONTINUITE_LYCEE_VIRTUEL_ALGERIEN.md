@@ -3415,3 +3415,16 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun navigateur, micro, service SpeechRecognition, haut-parleur, Worker ni scénario E2E n'a été exécuté. Les constats sont issus de la lecture du code uniquement ; aucune performance réelle de reconnaissance Darija ne peut être affirmée.
 - Aucun code applicatif, configuration, Worker, corpus, secret, Supabase ou schéma n'a été modifié dans ce lot. Aucun correctif n'a été appliqué.
 - Recommandations prioritaires : (1) définir un contrat unique de transcription `raw_text` + langue/dialecte détectés + langue choisie, (2) faire converger les parcours vocaux vers le même pipeline de réponse, (3) conserver les marqueurs Darija/Arabizi avant normalisation, (4) compléter/limiter honnêtement les langues réellement supportées, (5) supprimer l'insertion HTML directe dans `ecoute.js`, (6) ajouter des tests navigateur séparant reconnaissance, routage IA, rendu et TTS.
+
+
+
+## Lot 601 — authentification serveur du tuteur IA (17 novembre 2026)
+
+- Branche de travail isolée : `ai/lot-601-worker-jwt`, créée depuis `main`. Aucun changement sur `main`, aucune fusion et aucun déploiement.
+- Constat vérifié sur la version de `main` au démarrage du lot : `worker/ia-ask.js` acceptait `POST /ask` sans JWT Supabase ; le contexte client était étiqueté « CONTEXTE VÉRIFIÉ ». Le client `app.js` appelait le Worker sans en-tête `Authorization`.
+- Correctif préparé sur la branche : vérification serveur du Bearer JWT via Supabase Auth `/auth/v1/user`, clé publishable/anon fournie par binding `SUPABASE_ANON_KEY`, URL via `SUPABASE_URL`, timeout Auth de 5 secondes et refus fermé en cas d'indisponibilité.
+- Le Worker limite le corps brut à 8 Kio avant parsing, impose un JSON objet avec uniquement `q` et `ctx`, valide leurs types/longueurs, refuse les identifiants/roles fournis par le navigateur et applique un quota provisoire de 20 appels/utilisateur/minute dans l'isolate (avec plafond global 200/minute).
+- Le contexte transmis est explicitement traité comme non authentifié ; les erreurs Auth/IA ne révèlent pas les détails internes. Le client récupère le jeton via `window.SB.getSession()` et le transmet en Bearer ; une session locale/démo sans JWT ne peut pas appeler le Worker.
+- Tests ajoutés : absence de JWT, Bearer mal formé, JWT refusé, panne Auth, utilisateur valide, contexte non authentifié, champs forgés, corps > 8 Kio, quota et contrat d'envoi du JWT côté client. La CI exécute `node --test tests/worker-ai-auth.test.mjs`.
+- Limites restantes : quota encore en mémoire par isolate (pas une limite globale durable) ; aucun contrôle d'abonnement n'est ajouté au Worker ; aucune validation runtime sur le Worker Cloudflare ni test navigateur réel à ce stade. Les bindings Cloudflare `SUPABASE_URL` et `SUPABASE_ANON_KEY` doivent être configurés avant tout déploiement.
+- Périmètre respecté : aucune migration, requête d'écriture, modification Auth/RLS/schéma/paiement ou donnée Supabase ; aucun secret consulté ; aucun déploiement.
