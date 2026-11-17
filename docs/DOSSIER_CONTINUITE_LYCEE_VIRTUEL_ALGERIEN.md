@@ -3429,3 +3429,17 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Contrôle syntaxique statique du Worker et de `app.js` : réussi. Run GitHub Actions CI #4118 créé pour la PR #21, mais le job a échoué avant la première étape (`steps=null`, `logs_url=null`) ; ce n'est pas un résultat d'échec des tests et la suite n'est donc pas déclarée passée.
 - Limites restantes : quota encore en mémoire par isolate (pas une limite globale durable) ; aucun contrôle d'abonnement n'est ajouté au Worker ; aucune validation runtime sur le Worker Cloudflare ni test navigateur réel à ce stade. Les bindings Cloudflare `SUPABASE_URL` et `SUPABASE_ANON_KEY` doivent être configurés avant tout déploiement.
 - Périmètre respecté : aucune migration, requête d'écriture, modification Auth/RLS/schéma/paiement ou donnée Supabase ; aucun secret consulté ; aucun déploiement.
+
+
+
+## Préparation du Lot 602 — conservation raw_text et compréhension Darija/Arabizi (audit, non implémenté)
+
+- Reproduction directe de `QUST.understand()` sur le code de `main`, sans navigateur ni réseau :
+  - `3lach ma fhemtch Perfekt?` → langues `arabizi,darija`, mais intention `null`, confiance `0.1`.
+  - `علاش ما فهمتش Perfekt؟` → langues `ar,darija`, mais intention `null`, confiance `0.1`.
+  - `wach kifach nsta3mel Perfekt?` → langues `arabizi,darija`, mais intention `null`, confiance `0.1`.
+  - `page 3` → détection erronée supplémentaire `arabizi` à cause de la présence du chiffre `3`.
+- Perte de transcription brute confirmée dans le code : `reponsePedagogique(q)` remplace immédiatement `q` par `darja(q)` avant `QUST.understand(q, _qctx)`. Le parcours vocal applique en amont `canon(q)` puis transmet uniquement le texte transformé.
+- Le résultat QUST expose `norm`, mais pas de champs explicites `raw_text` et `normalized_text`.
+- Prochaine implémentation proposée : conserver le transcript brut, transmettre séparément le texte normalisé utilisé par les routeurs existants, enrichir les formulations Darija/Arabizi d'incompréhension et de demande d'explication, détecter les expressions arabes multi-mots sans les fragmenter, et éviter de classer une simple pagination comme Arabizi.
+- Aucun changement QUST/RAG/voix n'est inclus dans la PR #21 ; ce lot reste à réaliser après validation de la tranche sécurité.
