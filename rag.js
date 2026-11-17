@@ -972,7 +972,7 @@ async function verifieAccesContenuIA(question){
   /* Une synthèse complète d'unité ne doit pas révéler les séances verrouillées
      qui composent cette unité. Les séances gratuites restent accessibles
      lorsqu'elles sont demandées précisément. */
-  if(type && (type.id === 'sharh' || type.id === 'murajaa') && unit != null){
+  if(type && (type.id === 'sharh' || type.id === 'murajaa') && unit != null && lesson == null){
     var fullUnitOpen = false;
     try{ fullUnitOpen = !!(ACCESS.entitlement && ACCESS.entitlement().ok); }catch(e){}
     if(!fullUnitOpen){
