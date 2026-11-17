@@ -395,8 +395,17 @@ test('refuse côté Worker une séance verrouillée et laisse passer les deux s�
   const denied = await blocked.context.__worker.fetch(request({ q:'Explique la leçon 3 de l’unité 1.' }), blocked.env);
   assert.equal(denied.status, 403);
   const free = harness();
-  const allowed = await free.context.__worker.fetch(request({ q:'Explique la leçon 1 de l’unité 1.' }), free.env);
+  const allowed = await free.context.__worker.fetch(request({
+    q:'Explique la leçon 1 de l’unité 1.',
+    resource:{ type:'free_unit_lesson', level:'3AS', unit:1, lesson:1 }
+  }), free.env);
   assert.equal(allowed.status, 200);
+  const free2 = harness();
+  const allowed2 = await free2.context.__worker.fetch(request({
+    q:'Explique la leçon 2 de l’unité 1.',
+    resource:{ type:'free_unit_lesson', level:'3AS', unit:1, lesson:2 }
+  }), free2.env);
+  assert.equal(allowed2.status, 200);
 });
 
 test('échoue fermé si la vérification read-only de l’abonnement est indisponible', async () => {
