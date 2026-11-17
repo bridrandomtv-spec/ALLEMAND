@@ -28,10 +28,10 @@ insert into public.profiles values
  ('10000000-0000-4000-8000-000000000005','eleve','verifie','Other Class','16','3AS','Maths');
 
 create function public.msg_pair_blocked(a uuid,b uuid) returns boolean
-language sql stable security definer set search_path=pg_catalog,public as $ select false $;
+language sql stable security definer set search_path=pg_catalog,public as $fn$ select false $fn$;
 create or replace function public.msg_invite_send(p_recipient uuid) returns uuid
 language sql security definer set search_path=pg_catalog,public
-as $ select p_recipient $;
+as $fn$ select p_recipient $fn$;
 \i supabase/migrations/202611130003_msg_student_discovery.sql
 
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',false);
