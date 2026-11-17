@@ -77,12 +77,16 @@ async function verifySupabaseUser(req, env){
 const LOCKED_CONJUGATIONS = ['sein','haben','werden','spielen','fahren','essen','trinken','helfen','müssen'];
 const LOCKED_RULES = ['perfekt','akkusativ','dativ','komparativ','konjunktiv','passiv',
   'futur','weil','obwohl','um zu','beim','präteritum','modalverben'];
-function isLockedContentQuestion(question){
+function isLockedContentQuestion(question, resource){
   const q = String(question || '').toLowerCase();
   const unitMatch = q.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
   const lessonMatch = q.match(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس)\s*[:#-]?\s*(\d{1,2})/i);
-  const unit = unitMatch ? Number(unitMatch[1]) : null;
+  let unit = unitMatch ? Number(unitMatch[1]) : null;
   const lesson = lessonMatch ? Number(lessonMatch[1]) : null;
+  /* Les unités 3AS visibles 10–19 correspondent aux clés pédagogiques 1–10.
+     Seul le sélecteur gratuit borné peut lever l'ambiguïté pour l'unité visible 10. */
+  if(resource && resource.type === 'free_unit_lesson' && resource.level === '3AS'
+     && resource.unit === 1 && unit === 10) unit = 1;
   const assessment = /(?:فرض|اختبار|امتحان|quiz|test|devoir|evaluation|évaluation)/i.test(q);
   if(unit !== null && lesson !== null && !(unit === 1 && lesson <= 2)) return true;
   if(lesson !== null && lesson > 2) return true;
@@ -261,7 +265,7 @@ export default {
     if(userHits >= 20 || HITS.length >= 200) return json({ ok:false, err:'quota-min' }, 429, org);
     HITS.push({ at:now, userId:identity.userId });
 
-    if(isLockedContentQuestion(q)){
+    if(isLockedContentQuestion(q, b.resource)){
       const entitlement = await hasActiveSubscription(req, env, identity.userId);
       if(!entitlement.ok) return json({ ok:false, err:'access-unavailable' }, 503, org);
       if(!entitlement.active) return json({ ok:false, err:'content-locked' }, 403, org);
