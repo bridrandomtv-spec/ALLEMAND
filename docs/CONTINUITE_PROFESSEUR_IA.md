@@ -8,7 +8,7 @@ Livrer uniquement les changements liés au professeur IA : authentification du W
 ## Périmètre de cette branche
 - `.github/workflows/deploy.yml` : exécution des deux suites de tests IA.
 - `access.js`, `app.js`, `ia.js`, `rag.js` : contrôles d'accès aux ressources pédagogiques dans les chemins locaux et distants.
-- `worker/ia-ask.js` : validation du JWT Supabase, contrôle des demandes reconnues comme verrouillées, refus des contextes arbitraires fournis dans `ctx`.
+- `worker/ia-ask.js` : validation du JWT Supabase, contrôle des demandes reconnues comme verrouillées, refus du `ctx` client et récupération serveur des pages du manuel via `lesson_content` avec le JWT utilisateur.
 - `js/qust.js`, `parle.js` : compréhension Darija/Arabizi et conservation du transcript brut/normalisé.
 - `tests/worker-ai-auth.test.mjs`, `tests/qust-darja.test.mjs` : tests de sécurité et de compréhension linguistique.
 
@@ -19,14 +19,20 @@ Livrer uniquement les changements liés au professeur IA : authentification du W
 - Les utilisateurs abonnés actifs conservent l'accès aux contenus payants.
 - Aucun changement Supabase : ni Auth, ni RLS, ni schéma, ni données, ni abonnements, ni migrations.
 
-## Limite de sécurité connue
-Le navigateur peut fournir du texte arbitraire dans `ctx`. La branche neutralise ce champ côté Worker : aucun extrait client n'est transmis au modèle. Cela ferme le contournement par contexte injecté, mais le Worker ne récupère pas encore les documents pédagogiques depuis une source serveur authentifiée. La future récupération documentaire doit identifier les ressources et vérifier leurs droits côté serveur avant transmission au modèle.
+## Récupération documentaire sécurisée — pages du manuel
+- `ia.js` transmet uniquement un sélecteur `{type:'book_page', page, level}` extrait de la question ; il ne transmet plus les extraits BIBLIO ni la réponse locale dans `ctx`.
+- Le Worker valide strictement le type, le niveau et les bornes de page, puis effectue un GET en lecture seule sur `public.lesson_content` avec l'anon key et le JWT de l'utilisateur.
+- La décision d'accès au corps de page dépend du RLS existant ; aucune clé service-role n'est utilisée. Si aucun corps n'est renvoyé, le Worker refuse avec `content-locked`. Si la lecture échoue, il échoue fermé avec `access-unavailable`.
+- Seul le contenu récupéré côté Worker est marqué `CONTENU PÉDAGOGIQUE AUTORISÉ` et transmis au modèle. Le champ `ctx` libre du navigateur reste ignoré.
+- Limite restante : ce premier connecteur couvre les pages du manuel (`lesson_content`, colonnes `page`, `level`, `body`, `titre`). Les devoirs, exercices et autres documents de BIBLIO ne sont pas encore récupérés côté Worker ; ils nécessitent chacun un identifiant de ressource stable et une lecture serveur protégée par le RLS déjà en place.
+- Les tests automatisés simulent les réponses REST/RLS ; ils ne prouvent pas encore la configuration effective des politiques RLS du projet actif. Aucun accès ni changement de données Supabase n'a été effectué.
 
 ## Livraison
 Cette branche est créée depuis `main` pour isoler les changements IA de la PR #21, qui contient également des changements Messenger, Multaqa, Masar et Gamification. La PR #21 reste ouverte et en brouillon ; elle ne doit pas être fusionnée dans le cadre de cette livraison IA seule.
 
 ## Validation
-- Les tests IA JWT, Darija/Arabizi et la régression RAG/prof/union ont réussi dans la CI de la branche source `ai/lot-601-worker-jwt`.
-- La CI propre à cette branche doit encore être exécutée et vérifiée.
+- Sur la branche isolée, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44185665306` pour les suites JWT, QUST et régression RAG/prof/union avant l'ajout du connecteur documentaire.
+- Après l'ajout du connecteur `lesson_content`, la suite Worker compte 28 tests ; le nouveau run CI doit être confirmé avant de déclarer le lot validé.
+- Le job de validation global peut échouer plus tôt sur des contrôles Messenger hors périmètre IA ; les tests autonomes permettent de valider les régressions IA indépendamment.
 - Aucun test E2E navigateur n'est déclaré réussi ici.
 - Aucun déploiement, aucune fusion et aucune écriture Supabase.
