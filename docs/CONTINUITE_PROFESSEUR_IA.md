@@ -36,7 +36,7 @@ Livrer uniquement les changements liés au professeur IA : authentification du W
 Cette branche est créée depuis `main` pour isoler les changements IA de la PR #21, qui contient également des changements Messenger, Multaqa, Masar et Gamification. La PR #21 reste ouverte et en brouillon ; elle ne doit pas être fusionnée dans le cadre de cette livraison IA seule.
 
 ## Validation
-- Après ajout du connecteur `lesson_content`, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44187832982` : Worker JWT/RLS (33 tests ; nouveau test d'isolation 3AS en attente CI), QUST/Darja/Arabizi et régression RAG/prof/union tous `success`.
+- Après ajout du connecteur `lesson_content`, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44187832982` : Worker JWT/RLS (37 tests ; récupération RAG gratuite 3AS et mapping d'accès en attente CI), QUST/Darja/Arabizi et régression RAG/prof/union tous `success`.
 - Le job global `Validation structurelle & pédagogique` échoue toujours avant les tests IA sur une erreur de syntaxe préexistante dans `ci/check-msg.mjs:231` (`SyntaxError: missing ) after argument list`). Les étapes IA du job global sont donc sautées, mais le job IA indépendant du même run est vert. Les cas de référence du professeur (9/9) et la suite T1-T6 sont également `success` avant l'étape Messenger.
 - Les workflows PostgreSQL hors périmètre Messenger/Multaqa restent séparés ; leurs échecs ne sont pas des échecs du code IA. Le run global n'est pas déclaré vert.
 - Run `44189436952` : job autonome IA `success` ; Worker JWT/RLS 31/31, QUST/Darja/Arabizi 9/9 et régression RAG/prof/union `success`. Le job global échoue sur la validation Messenger hors périmètre, après succès des 9 cas de référence du professeur et de la suite T1-T6.
@@ -44,7 +44,10 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Aucun déploiement, aucune fusion et aucune écriture Supabase.
 
 
-### Isolation du contenu gratuit 3AS — en attente CI
+### Isolation et RAG distant du contenu gratuit 3AS — en attente CI
 - Nouveau fichier `unite3as1_free.js` généré uniquement à partir de `U3AS_1.meta` et des séances 1 et 2. Il n'embarque ni séances 3–6, ni devoir, ni corrigé, ni unités 2–3.
 - Le chargeur `CONTENT1` le récupère avant `unites3as_a.js`. Le Worker du site continue de protéger le lot complet avec le contrôle RLS existant ; aucune règle d'accès Supabase n'a été modifiée.
+- `access.js` mappe désormais les identifiants visibles 3AS `10→19` vers les clés de configuration `1→10`. Sans cette correspondance, `ACCESS.canAccessLesson(10,1)` n'appliquait pas les deux séances gratuites configurées sous la clé `1`.
+- `ia.js` transmet un sélecteur `free_unit_lesson` uniquement pour 3AS unité 1 séances 1–2 (niveau actif + unité active ou référence explicite). Le Worker IA n'accepte que cette combinaison exacte, récupère lui-même `unite3as1_free.js` depuis l'origine fixe du site, vérifie la taille et les marqueurs attendus, puis transmet le contenu au modèle. Le client ne transmet aucun extrait libre ; le champ `ctx` reste ignoré.
+- Tests ajoutés : récupération serveur du contenu gratuit, refus d'un sélecteur falsifié hors unité/séances gratuites, refus d'une question sur séance 3 même avec sélecteur falsifié, et échec fermé si l'artefact est indisponible.
 - Test ajouté dans `tests/worker-ai-auth.test.mjs` pour exécuter le fichier et vérifier strictement le contenu exposé.
