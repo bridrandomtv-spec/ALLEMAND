@@ -31,8 +31,8 @@ Livrer uniquement les changements liés au professeur IA : authentification du W
 Cette branche est créée depuis `main` pour isoler les changements IA de la PR #21, qui contient également des changements Messenger, Multaqa, Masar et Gamification. La PR #21 reste ouverte et en brouillon ; elle ne doit pas être fusionnée dans le cadre de cette livraison IA seule.
 
 ## Validation
-- Sur la branche isolée, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44185665306` pour les suites JWT, QUST et régression RAG/prof/union avant l'ajout du connecteur documentaire.
-- Après l'ajout du connecteur `lesson_content`, la suite Worker compte 28 tests ; le nouveau run CI doit être confirmé avant de déclarer le lot validé.
-- Le job de validation global peut échouer plus tôt sur des contrôles Messenger hors périmètre IA ; les tests autonomes permettent de valider les régressions IA indépendamment.
+- Après ajout du connecteur `lesson_content`, le job indépendant `Tests autonomes — Professeur IA` a réussi au run `44186565677` : Worker JWT/RLS (28 tests), QUST/Darja/Arabizi et régression RAG/prof/union tous `success`.
+- Le job global `Validation structurelle & pédagogique` échoue toujours avant les tests IA sur une erreur de syntaxe préexistante dans `ci/check-msg.mjs:231` (`SyntaxError: missing ) after argument list`). Les étapes IA du job global sont donc sautées, mais le job IA indépendant est vert.
+- Les workflows PostgreSQL hors périmètre Messenger/Multaqa restent séparés ; leurs échecs ne sont pas des échecs du code IA. Le run global n'est pas déclaré vert.
 - Aucun test E2E navigateur n'est déclaré réussi ici.
 - Aucun déploiement, aucune fusion et aucune écriture Supabase.
