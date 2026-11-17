@@ -3444,3 +3444,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le résultat QUST expose `norm`, mais pas de champs explicites `raw_text` et `normalized_text`.
 - Prochaine implémentation proposée : conserver le transcript brut, transmettre séparément le texte normalisé utilisé par les routeurs existants, enrichir les formulations Darija/Arabizi d'incompréhension et de demande d'explication, détecter les expressions arabes multi-mots sans les fragmenter, et éviter de classer une simple pagination comme Arabizi.
 - Aucun changement QUST/RAG/voix n'est inclus dans la PR #21 ; ce lot reste à réaliser après validation de la tranche sécurité.
+
+
+## Lot 602 — conservation du transcript et compréhension Darija/Arabizi (implémentation)
+
+- QUST expose maintenant `raw_text` et `normalized_text`, tout en conservant `norm` pour compatibilité.
+- Détection Arabizi affinée : un chiffre seul dans « page 3 » ne déclenche plus la langue Arabizi ; un chiffre au milieu d'un mot latin (ex. « 3lach ») reste détectable.
+- Détection Darija élargie aux formulations de compréhension et d'usage : « ma fhemtch », « 3lach ma fhemtch », « wach kifach nsta3mel », « علاش ما فهمتش », « كيفاش نستعمل ». Les expressions arabes multi-mots sont recherchées dans la chaîne normalisée complète.
+- RAG garde la question d'origine avant normalisation/darja et la transmet à QUST ; le texte normalisé continue d'alimenter les routeurs existants.
+- `reponseIA` accepte des métadonnées optionnelles et les transmet au moteur local ; le parcours vocal transmet désormais le transcript brut avec `normalized_text: canon(q)`.
+- Compatibilité : `norm` est conservé ; les appels existants à un seul argument restent valides ; les transformations locales historiques continuent d'être utilisées pour le routage.
+- Tests automatisés ajoutés dans `tests/qust-darja.test.mjs` et branchés dans la CI. Résultats d'exécution à confirmer sur un runner GitHub opérationnel.
+- Périmètre : aucun changement Supabase/Auth/RLS/schéma/paiement, aucun secret consulté, aucun déploiement, aucune fusion. Lot 601 reste une PR brouillon ; ce lot est ajouté sur la même branche de travail.
