@@ -165,3 +165,9 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Validateur des droits : 10/10 ; ingestion PDF : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde du Worker de site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
 - Le job structurel global était encore en cours au moment de la vérification ; ce succès autonome ne vaut pas validation globale.
 - Aucun PDF réel n'a été indexé et aucun embedding n'a été généré. Le drapeau vectoriel reste désactivé par défaut.
+
+
+## Complément Lot 628 — preuve compagnon vérifiée
+- Le validateur ne se contente plus des valeurs CSV : lorsqu'une ligne est confirmée, il exige le fichier compagnon JSON réel, un JSON valide, `droits_confirmes: true` et une licence identique à celle de l'inventaire.
+- Cette vérification empêche de qualifier d'admissible un document que l'ingestion existante ne pourrait pas sélectionner. Aucun compagnon n'est créé automatiquement.
+- La suite de tests passe à 14 cas. Le run 44282039020 (10/10) valide uniquement la version précédente ; le durcissement doit passer une nouvelle CI avant d'être déclaré validé.
