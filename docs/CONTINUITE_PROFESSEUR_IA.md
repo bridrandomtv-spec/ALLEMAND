@@ -567,3 +567,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commit Worker : `172f500b27774af274785416d28231c20b6e8f5c`. Commit tests : `91bc8247e7367f7c60b88cf6399206a87ffcba84`.
 - Validation CI du nouveau HEAD à attendre. Ne pas déclarer le Lot 634 validé avant le job autonome Professeur IA.
 - Aucun PDF n'est ajouté au corpus ; aucune extraction OCR, indexation, génération réelle de vecteurs, modification Supabase/Auth/RLS, merge ou déploiement.
+## Lot 634 — correction des fixtures et relance CI (18 novembre 2026)
+- Le premier run `44334853192` a révélé trois fixtures de tests PDF qui ne respectaient pas le nouveau contrat d'identifiants obligatoires : deux jeux de chunks de recherche et le chunk du test de licence n'avaient pas d'ID stable. Le Worker répondait correctement en fail-closed (503) à ces données mal formées ; les fixtures ont été corrigées pour refléter le format attendu, sans assouplir la validation serveur.
+- Commit de tests : `e5387cec29a1965fe345426d0c74ef288ecb9eb3`.
+- Le même run a révélé une erreur de syntaxe préexistante dans l'assertion de `ci/check-msg.mjs:231`. L'expression de recherche du sélecteur DOM a été réécrite en template literal, sans modifier le code fonctionnel Messenger.
+- Commit CI : `926483f4168824f1b4545527250e309d65092e3c`.
+- La nouvelle exécution CI sur le HEAD `926483f4168824f1b4545527250e309d65092e3c` est en attente/en cours. Ne pas fusionner avant réussite des tests autonomes IA et des contrôles requis du PR.
+- Corpus réel toujours vide (0 document, 0 chunk) ; aucun droit PDF confirmé. Aucun OCR, indexation, embedding réel, modification Supabase/Auth/RLS, déploiement ou fusion effectués.
