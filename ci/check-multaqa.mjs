@@ -31,7 +31,7 @@ has(/multaqa\.js\?v=4/.test(sw), 'sw.js : client communautaire absent du précac
 has(sw.includes("VERSION = 'dz-de-v3.185.0.0.168'") && sw.includes('./app.js?v=3570'), 'sw.js : version et cache du compte synchronisés');
 
 
-const communitySql = fs.readFileSync('supabase/migrations/202611130002_multaqa_community_feed.sql', 'utf8');
+const communitySql = fs.readFileSync('supabase/migrations/20261113201922_multaqa_community_feed.sql', 'utf8');
 for (const table of ['multaqa_posts','multaqa_comments','multaqa_reactions','multaqa_reports']) {
   has(communitySql.includes('create table if not exists public.' + table), 'migration communauté : table ' + table + ' absente');
   has(new RegExp('alter table public\\.' + table + '\\s+enable row level security').test(communitySql), 'migration communauté : RLS absent pour ' + table);
