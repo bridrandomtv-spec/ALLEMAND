@@ -3596,3 +3596,8 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le garde des sujets verrouillés normalise désormais les signes diacritiques arabes (harakat), le tatweel et plusieurs variantes d'alif/ya avant de comparer les alias. Une règle payante ne peut donc pas être demandée avec des voyelles ajoutées pour contourner la détection.
 - Tests négatifs ajoutés pour « الماضي المركب », sa forme vocalisée « المَاضِي المُرَكَّب » et une variante d'alif, en plus des formulations françaises/arabe déjà couvertes. Le Worker doit refuser en 403 sans transmettre le contenu au modèle.
 - Cette normalisation ne change pas les règles d'accès ni l'accès général au professeur IA ; elle rend uniquement la détection des sujets déjà verrouillés plus robuste.
+
+
+### Validation Lot 620 — verrouillage arabe vocalisé
+- Normalisation arabe corrigée et validée par CI après une première erreur de syntaxe détectée et corrigée. Le contrôle retire harakat/tatweel et normalise certaines variantes de lettres.
+- Run `44213809534` : tests autonomes Professeur IA réussis sur le commit `ce2e58a3e6d5b96d1190467e9e3a45d2c647eefe`. La CI globale reste rouge sur le contrôle de messagerie EduDZ, hors périmètre IA.
