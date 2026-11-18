@@ -1248,6 +1248,12 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 24
+      - name: Setup Python pour l'ingestion PDF
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Tester extraction PDF, OCR optionnel et contrôle des droits
+        run: python -m unittest discover -s tests -p 'test_ingest_corpus_rag.py' -v
       - name: Tester le Worker IA et les contrôles d'accès
         run: node --test tests/worker-ai-auth.test.mjs
       - name: Tester la protection serveur des devoirs et annales
