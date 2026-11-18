@@ -1,9 +1,14 @@
 import csv
+import importlib.util
 import tempfile
 import unittest
 from pathlib import Path
 
-from tools_validate_pdf_rights_inventory import validate_inventory
+SCRIPT = Path(__file__).resolve().parents[1] / "tools" / "validate_pdf_rights_inventory.py"
+SPEC = importlib.util.spec_from_file_location("validate_pdf_rights_inventory", SCRIPT)
+MODULE = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(MODULE)
+validate_inventory = MODULE.validate_inventory
 
 
 class PdfRightsInventoryTests(unittest.TestCase):
