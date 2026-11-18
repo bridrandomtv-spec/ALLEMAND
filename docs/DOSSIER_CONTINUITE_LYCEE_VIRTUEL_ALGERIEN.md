@@ -3773,3 +3773,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - La suite de 10 tests est ajoutée au job CI autonome `professor-ai`.
 - Audit actuel : 293 PDF au total (264 dans `docs/archive/documents/`, 29 à la racine), aucun compagnon de droits détecté, manifeste RAG toujours à 0 document / 0 chunk. Le nombre de 225 mentionné dans des notes précédentes est un relevé historique partiel.
 - CI de ce nouveau HEAD à vérifier. Aucun changement Supabase, Auth, RLS, schéma, abonnement, `main`, ni déploiement Cloudflare. PR #22 reste ouverte et en brouillon.
+
+
+### Résultat CI du Lot 628 — run 44282039020
+- Job autonome Professeur IA : `success` sur le commit de code `8ce4dc01ae6c066d247b753819e780cc4aaabce2`.
+- Validateur des droits : 10/10 ; ingestion PDF : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde du Worker de site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
+- Le job structurel global était encore en cours au moment de la rédaction ; son résultat n'est pas présumé.
+- Les modifications de documentation suivantes ne changent pas le code validé. Aucun PDF réel n'a été ingéré et aucun embedding documentaire n'a été généré.
