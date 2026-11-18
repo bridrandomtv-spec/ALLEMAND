@@ -113,6 +113,35 @@ class PdfTextReadinessTests(unittest.TestCase):
         finally:
             inventory.unlink(missing_ok=True)
 
+    def test_csv_report_writes_joined_rights_rows_and_orphan_paths(self):
+        inventory = self.root.parent / (self.root.name + "-csv-rights.csv")
+        output = self.root.parent / (self.root.name + "-joined.csv")
+        inventory.write_text(
+            "pdf_path,expected_companion_metadata,rights_confirmed,license,review_status\\n"
+            "lesson.pdf,_lesson.json,,,à vérifier\\n"
+            "missing.pdf,_missing.json,,,à examiner\\n",
+            encoding="utf-8",
+        )
+        result = {"files": [{
+            "pdf_path": "lesson.pdf", "status": "extractable", "pages": 3,
+            "pages_with_text": 3, "pages_without_text": 0,
+            "extractable_chars": 900, "error": "",
+        }]}
+        try:
+            MODULE.write_csv_report(result, output, self.root, inventory)
+            with output.open(encoding="utf-8", newline="") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual(len(rows), 2)
+            lesson = next(row for row in rows if row["pdf_path"] == "lesson.pdf")
+            orphan = next(row for row in rows if row["pdf_path"] == "missing.pdf")
+            self.assertEqual(lesson["rights_inventory_match"], "présent_dans_inventaire")
+            self.assertEqual(lesson["rights_confirmed"], "")
+            self.assertEqual(orphan["status"], "pdf_absent_du_corpus_audite")
+            self.assertEqual(orphan["rights_inventory_match"], "présent_dans_inventaire")
+        finally:
+            inventory.unlink(missing_ok=True)
+            output.unlink(missing_ok=True)
+
     def test_rights_inventory_rejects_duplicate_paths(self):
         inventory = self.root.parent / (self.root.name + "-duplicate-rights.csv")
         inventory.write_text(

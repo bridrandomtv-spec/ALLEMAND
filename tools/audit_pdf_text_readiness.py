@@ -195,7 +195,7 @@ def write_csv_report(result, output_path, source_dir, rights_inventory=None):
     with target.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore")
         writer.writeheader()
-        for item in result["files"]:
+        for item in rows:
             writer.writerow(item)
     return target
 
