@@ -3601,3 +3601,9 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 ### Validation Lot 620 — verrouillage arabe vocalisé
 - Normalisation arabe corrigée et validée par CI après une première erreur de syntaxe détectée et corrigée. Le contrôle retire harakat/tatweel et normalise certaines variantes de lettres.
 - Run `44213809534` : tests autonomes Professeur IA réussis sur le commit `ce2e58a3e6d5b96d1190467e9e3a45d2c647eefe`. La CI globale reste rouge sur le contrôle de messagerie EduDZ, hors périmètre IA.
+
+
+### Lot 621 — normalisation des requêtes PDF vocalisées
+- Le même normaliseur arabe que celui du garde des cadenas est maintenant appliqué à la tokenisation BM25. Les harakat/tatweel et variantes d'alif/ya sont traités de façon identique côté question et côté chunk.
+- Le test de recherche PDF interlingue utilise désormais une question arabe vocalisée pour vérifier que « الماضي المركب » retrouve toujours le passage allemand sur Perfekt.
+- Cette évolution reste du BM25 lexical avec expansion de concepts ; elle ne prétend pas être une recherche vectorielle.
