@@ -195,3 +195,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - 106 fichiers contiennent donc au moins une page potentiellement à OCR. Aucun OCR n'a été lancé ; cette classification ne prouve pas la qualité d'une future reconnaissance.
 - Aucun texte n'a été conservé, aucun PDF n'a été converti en artefact, aucun document n'a été indexé et aucun embedding n'a été généré. Le manifeste reste vide en attente des droits.
 - La validation globale échoue encore sur le contrôle Messenger EduDZ, hors périmètre du RAG ; le job IA autonome est vert.
+
+
+## Lot 630 — rapport technique PDF par fichier
+- Le script d'audit peut produire un CSV ne contenant que des métadonnées techniques : chemin relatif, classe, pages, pages avec/sans texte, compteur de caractères extractibles et type d'erreur. Le contenu du PDF n'est jamais écrit.
+- La cible CSV est obligatoirement extérieure au dossier source ; le contrôle empêche d'écrire un rapport dans le corpus lui-même.
+- La CI publie le rapport comme artefact temporaire (14 jours), run `44286206424`, artefact `pdf-text-readiness`, ID `14418154476`.
+- Validation autonome IA réussie : ingestion 9/9, droits 15/15, audit PDF 8/8, builder vectoriel 8/8, Worker IA/JWT/RAG 75/75, garde Worker 14/14, QUST 9/9, régressions RAG 12/12 et PROF 18/18.
+- Le rapport ne constitue ni une validation de droits ni une instruction d'indexation ; aucun OCR ni embedding n'est exécuté.
