@@ -278,3 +278,9 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Ajout des alias « الماضي المركب », « الماضي التام », « حالة النصب », « حالة الجر », « المبني للمجهول », « صيغة الشرط », « الماضي البسيط », « المضارع », « صيغة المقارنة » et des formes françaises courantes à LOCKED_RULES.
 - Tests négatifs : compte gratuit + alias arabe/français + sélecteur de résumé gratuit ou page gratuite → 403 content-locked, aucun message transmis au modèle. Le test de recherche arabe PDF utilise désormais un abonnement actif pour vérifier le résultat documentaire sans affaiblir le cadenas.
 - La règle reste : tout compte authentifié utilise le professeur distant, mais les notions et ressources verrouillées restent protégées côté Worker.
+
+
+### Complément sécurité — normalisation arabe (Lot 620)
+- Le garde des sujets verrouillés normalise désormais les signes diacritiques arabes (harakat), le tatweel et plusieurs variantes d'alif/ya avant de comparer les alias. Une règle payante ne peut donc pas être demandée avec des voyelles ajoutées pour contourner la détection.
+- Tests négatifs ajoutés pour « الماضي المركب », sa forme vocalisée « المَاضِي المُرَكَّب » et une variante d'alif, en plus des formulations françaises/arabe déjà couvertes. Le Worker doit refuser en 403 sans transmettre le contenu au modèle.
+- Cette normalisation ne change pas les règles d'accès ni l'accès général au professeur IA ; elle rend uniquement la détection des sujets déjà verrouillés plus robuste.
