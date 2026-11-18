@@ -359,7 +359,10 @@ test('refuse les règles grammaticales du programme absentes de l’ancienne lis
   const cases = [
     { q:'Explique le Genitiv.', resource:{ type:'free_summary', level:'3AS', unit:1 } },
     { q:'Explain Nomen-Verb-Verbindungen.', resource:{ type:'free_exercise_bank', level:'3AS' } },
-    { q:'اشرح التحويل الاسمي.', resource:{ type:'free_unit_lesson', level:'3AS', unit:1, lesson:1 } }
+    { q:'اشرح التحويل الاسمي.', resource:{ type:'free_unit_lesson', level:'3AS', unit:1, lesson:1 } },
+    { q:'Explique le Genitiv.', resource:{ type:'book_page', page:42, level:'2AS' } },
+    { q:'Explique le Genitiv.', resource:{ type:'book_pages', pages:[42], level:'2AS' } },
+    { q:'Explique le Genitiv.', resource:{ type:'unit_lesson', level:'3AS', unit:2, lesson:1 } }
   ];
   for (const item of cases) {
     const h = harness();
