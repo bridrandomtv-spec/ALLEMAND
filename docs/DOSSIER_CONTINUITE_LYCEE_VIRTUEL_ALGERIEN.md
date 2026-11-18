@@ -3780,3 +3780,9 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Validateur des droits : 10/10 ; ingestion PDF : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde du Worker de site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
 - Le job structurel global était encore en cours au moment de la rédaction ; son résultat n'est pas présumé.
 - Les modifications de documentation suivantes ne changent pas le code validé. Aucun PDF réel n'a été ingéré et aucun embedding documentaire n'a été généré.
+
+
+### Complément Lot 628 — cohérence CSV / compagnon JSON
+- Le validateur a été renforcé : pour déclarer un PDF admissible, il vérifie aussi le compagnon JSON réel, son parsing, `droits_confirmes: true` et l'identité exacte de la licence entre CSV et JSON.
+- Un compagnon absent, illisible, non confirmé ou incohérent bloque l'admissibilité. Le contrôle correspond maintenant aux métadonnées effectivement lues par l'ingestion RAG.
+- La suite comporte 14 tests. Le run 44282039020 (10/10) concerne la version antérieure du validateur ; une nouvelle CI est requise pour cette extension.
