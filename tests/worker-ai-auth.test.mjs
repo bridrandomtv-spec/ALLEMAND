@@ -1326,6 +1326,29 @@ test('un index vectoriel contenant un chunk dupliqué est ignoré sans écraseme
   assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
 });
 
+test('une collision de document_id sur un chunk candidat invalide tout l’index vectoriel', async () => {
+  const chunkId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0';
+  const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      vectors:[
+        { chunk_id:chunkId, document_id:'pdf-document-contradictoire', embedding:[0,1,...new Array(254).fill(0)] },
+        { chunk_id:chunkId, document_id:documentId, embedding:[1,...new Array(255).fill(0)] }
+      ]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.match(h.messages[1].content,/Der Perfekt wird/);
+  assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
+});
+
 test('un vecteur de norme nulle invalide l’index vectoriel et conserve BM25', async () => {
   const chunkId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0';
   const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
