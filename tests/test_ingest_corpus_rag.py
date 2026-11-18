@@ -47,6 +47,17 @@ class PdfIngestionTests(unittest.TestCase):
         self.assertEqual(pages, [])
         self.assertIn("aucun_texte_exploitable", status)
 
+    def test_ocr_unavailable_keeps_other_pages_with_valid_text(self):
+        good = " ".join(["Deutschunterricht"] * 30)
+        fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(
+            pages=[FakePage(good), FakePage("")]
+        ))
+        with patch.dict(sys.modules, {"pypdf": fake}):
+            with patch.object(MODULE, "_ocr_pages", side_effect=RuntimeError("tesseract_absent")):
+                pages, status = MODULE.extract_pdf("mixed.pdf", use_ocr=True)
+        self.assertEqual(pages, [(1, good)])
+        self.assertIn("ok_partiel:tesseract_absent", status)
+
     def test_corrupt_glyph_encoding_is_rejected(self):
         self.assertFalse(MODULE.text_quality("/g39/g72/g91 " * 20)["ok"])
 
