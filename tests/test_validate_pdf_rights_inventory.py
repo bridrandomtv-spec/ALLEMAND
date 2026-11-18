@@ -84,6 +84,17 @@ class PdfRightsInventoryTests(unittest.TestCase):
         result = validate_inventory(self.csv_path, self.root)
         self.assertTrue(any("licence_compagnon_incoherente" in item for item in result["errors"]))
 
+    def test_companion_symlink_cannot_escape_repository(self):
+        outside = self.root.parent / (self.root.name + "-outside.json")
+        outside.write_text('{"droits_confirmes":true,"licence":"cc_by"}', encoding="utf-8")
+        try:
+            (self.pdf.parent / "_lesson.json").symlink_to(outside)
+            self.write_rows([self.row(rights_confirmed="true", license="cc_by")])
+            result = validate_inventory(self.csv_path, self.root)
+            self.assertTrue(any("chemin_compagnon_invalide" in item for item in result["errors"]))
+        finally:
+            outside.unlink(missing_ok=True)
+
     def test_invalid_companion_json_is_rejected(self):
         (self.pdf.parent / "_lesson.json").write_text("{invalid", encoding="utf-8")
         self.write_rows([self.row(rights_confirmed="true", license="cc_by")])
