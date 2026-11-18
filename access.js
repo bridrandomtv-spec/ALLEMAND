@@ -36,13 +36,20 @@
   function freeUnitsFor(u){
     var f = freeCfg(); var niv = '2AS';
     try{
+      if(window.getNiveauActif && window.getNiveauActif() === '3AS') niv = '3AS';
       var g = window['UNITE' + u] || window['U3AS_' + u] || null;
       if(g && g.meta && g.meta.niveau) niv = g.meta.niveau;
       else if(window.UNITES_3AS_A && window.UNITES_3AS_A.some && window.UNITES_3AS_A.some(function(x){ return x && x.meta && x.meta.n === u; })) niv = '3AS';
     }catch(e){}
-    return (niv === '3AS') ? (f.units_3as || f.units || {}) : (f.units || {});
+    /* Le registre pédagogique affiche les unités 3AS sous les identifiants 10→19,
+       tandis que access_config.json conserve les numéros pédagogiques 1→10. */
+    var key = String(u);
+    var num = Number(u);
+    if(niv === '3AS' && Number.isInteger(num) && num >= 10 && num <= 19) key = String(num - 9);
+    var source = (niv === '3AS') ? (f.units_3as || f.units || {}) : (f.units || {});
+    return (key === String(u)) ? source : Object.assign({}, source, { [String(u)]: source[key] });
   }
-  function isFreeLesson(u, n){ var l = freeCfg().units[String(u)]; return !!(l && l.indexOf(n) !== -1); }
+  function isFreeLesson(u, n){ var l = freeUnitsFor(u)[String(u)]; return !!(Array.isArray(l) && l.indexOf(n) !== -1); }
   function isFreeQuiz(u){ return freeCfg().quizzes.indexOf('u' + u) !== -1; }
   function isFreeDevoir(id){ return freeCfg().devoirs.indexOf(id) !== -1; }
   function isFreeFeature(role, feat){
@@ -141,7 +148,7 @@
     role: role,
     isFreeLesson: isFreeLesson,
     canAccessLesson: function(u, n){ if(isFreeLesson(u, n)) return true; return entActive(); },
-    canAccessUnit: function(u){ if(freeUnitsFor(u)[String(u)]) return true; return entActive(); },
+    canAccessUnit: function(u){ var l = freeUnitsFor(u)[String(u)]; if(Array.isArray(l) && l.length) return true; return entActive(); },
     canAccessQuiz: function(u){ if(isFreeQuiz(u)) return true; return entActive(); },
     canAccessDevoir: function(id){ if(isFreeDevoir(id)) return true; return entActive(); },
     canAccessCorrection: function(){ return entActive(); },

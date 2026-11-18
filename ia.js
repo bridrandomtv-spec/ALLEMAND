@@ -1,5 +1,5 @@
 /* ia.js — couche « cerveau » : réponse locale d'abord (hors-ligne), puis LLM grounded
-   (Workers AI gratuit) si la réponse locale est faible. Quota client : 40 appels/jour. */
+   (Workers AI gratuit) si la réponse locale est faible. Quota client indicatif : 150 appels/jour (contournable) ; limite Worker : 20/minute/utilisateur/isolate. */
 'use strict';
 (function(){
   /* ── fetch avec TIMEOUT (AbortController) : le worker LLM peut mettre 30 s
@@ -22,7 +22,133 @@
       if(el && txt) el.textContent = txt;
     }catch(e){}
   }
-  window.reponseIA = async function(q){
+  async function pageResource(question){
+    const match = String(question || '').match(/(?:seite|page|صفحة|صفحه)\s*[:#-]?\s*(\d{1,3})/i);
+    if(!match) return null;
+    const page = Number(match[1]);
+    const explicit3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(question);
+    const explicit2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(question);
+    let active = '';
+    try{ active = window.getNiveauActif ? window.getNiveauActif() : ''; }catch(e){}
+    const level = explicit3 || (!explicit2 && active === '3AS') ? '3AS' : '2AS';
+    const maxPage = level === '3AS' ? 175 : 223;
+    if(!Number.isInteger(page) || page < 1 || page > maxPage) return null;
+    /* L'index public sert uniquement à vérifier que la page existe.
+       Il ne décide jamais de son accès : le Worker relit le corps avec le JWT
+       utilisateur et laisse le RLS distinguer pages gratuites et payantes. */
+    try{
+      const path = level === '3AS' ? 'assets/bdd/buch3as_pages.json' : 'assets/bdd/buch_pages.json';
+      const response = await fetchTimeout(path, { cache:'no-store' }, 8000);
+      if(!response.ok) return null;
+      const data = await response.json();
+      const pages = data && data.pages ? data.pages : data;
+      const entry = pages && pages[String(page)];
+      if(!entry) return null;
+    }catch(e){ return null; }
+    return { type:'book_page', page:page, level:level };
+  }
+  function lessonResource(question){
+    const text = String(question || '');
+    const sessionMatch = text.match(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس)\s*[:#-]?\s*(\d{1,2})/i);
+    if(!sessionMatch) return null;
+    const explicit3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(text);
+    const explicit2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(text);
+    let level = '';
+    try{ level = window.getNiveauActif ? window.getNiveauActif() : ''; }catch(e){}
+    if(explicit3) level = '3AS';
+    else if(explicit2) level = '2AS';
+    const unitMatch = text.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
+    let unit = unitMatch ? Number(unitMatch[1]) : null;
+    if(unit == null){
+      try{
+        const active = window.uniteActive && window.uniteActive();
+        if(active && Number.isInteger(+active.n)) unit = +active.n;
+      }catch(e){}
+    }
+    const lesson = Number(sessionMatch[1]);
+    if(level === '2AS'){
+      if(!Number.isInteger(unit) || unit < 1 || unit > 9 || lesson < 1 || lesson > 12) return null;
+      let sessions = window['SEANCES_U' + unit];
+      if(unit === 1){
+        try{ if(typeof SEANCES_U1 !== 'undefined') sessions = SEANCES_U1; }catch(e){}
+      }
+      if(!Array.isArray(sessions) && window['UNITE' + unit])
+        sessions = window['UNITE' + unit].seances;
+      const session = Array.isArray(sessions) ? sessions.find(x => x && Number(x.n) === lesson) : null;
+      const pages = session && (Array.isArray(session.pages) ? session.pages.map(Number) : [Number(session.page)]);
+      if(!Array.isArray(pages) || pages.length < 1 || pages.length > 5
+         || pages.some(page => !Number.isInteger(page) || page < 1 || page > 223)) return null;
+      return pages.length === 1
+        ? { type:'book_page', page:pages[0], level:'2AS' }
+        : { type:'book_pages', pages:pages, level:'2AS' };
+    }
+    if(level !== '3AS') return null;
+    if(unit != null && unit >= 10 && unit <= 19) unit -= 9;
+    if(unit === 1 && [1,2].includes(lesson))
+      return { type:'free_unit_lesson', level:'3AS', unit:1, lesson:lesson };
+    if(unit >= 1 && unit <= 10 && lesson >= 1 && lesson <= 6)
+      return { type:'unit_lesson', level:'3AS', unit:unit, lesson:lesson };
+    return null;
+  }
+  function summaryResource(question){
+    const text = String(question || '');
+    if(!/(?:résum|resume|summary|summari[sz]|ملخص|لخص|لخّص|تلخيص|اشرح\s*(?:الوحدة|الوحده)|اشرحلي\s*(?:الوحدة|الوحده)|شرح\s*(?:الوحدة|الوحده))/i.test(text)) return null;
+    const explicit3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(text);
+    const explicit2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(text);
+    let level = '';
+    try{ level = window.getNiveauActif ? window.getNiveauActif() : ''; }catch(e){}
+    if(explicit3) level = '3AS';
+    else if(explicit2) level = '2AS';
+    if(!['2AS','3AS'].includes(level)) return null;
+    const unitMatch = text.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
+    let unit = unitMatch ? Number(unitMatch[1]) : null;
+    if(unit == null){
+      try{
+        const active = window.uniteActive && window.uniteActive();
+        if(active && Number.isInteger(+active.n)) unit = +active.n;
+      }catch(e){}
+    }
+    if(level === '3AS' && unit != null && unit >= 10 && unit <= 19) unit -= 9;
+    if(!Number.isInteger(unit) || unit < 1 || unit > (level === '2AS' ? 9 : 10)) return null;
+    return { type:'free_summary', level:level, unit:unit };
+  }
+  function corpusDocumentResource(question){
+    const match = String(question || '').match(/\b(pdf-[a-f0-9]{16})\b/i);
+    if(!match) return null;
+    return { type:'corpus_document', id:match[1].toLowerCase() };
+  }
+  function corpusSearchResource(question){
+    const text = String(question || '');
+    if(!/(?:\bpdfs?\b|\bdocument(?:s)?\b|\bfichier(?:s)?\b|\barchive(?:s)?\b|ملف(?:ات)?|وثيقة|وثائق|مستند(?:ات)?)/i.test(text)) return null;
+    if(!/(?:dans|from|inside|بحث|ابحث|في|اشرح|شرح|لخص|تلخيص|résum|resume|explique|explain|analyse|analys|find|cherche)/i.test(text)) return null;
+    return { type:'corpus_search' };
+  }
+  function officialDocumentResource(question){
+    const match = String(question || '').match(/\b(CP|AN)-\d{4}-[1-3]-\d{4}\b/i);
+    if(!match) return null;
+    const collection = match[1].toUpperCase() === 'CP' ? 'compositions' : 'annales';
+    return { type:'official_document', collection:collection, id:match[0].toUpperCase() };
+  }
+  function exerciseBankResource(question){
+    const text = String(question || '');
+    if(!/(?:تمرين|تمارين|exercice|exercices|exercise|exercises|übung|übungen|tamarin|tamrin|banque\s*(?:d['’ ]?)?exercices)/i.test(text)) return null;
+    const explicit3 = /3as|الثالثة|troisi[eè]me|3[eè]me/i.test(text);
+    const explicit2 = /2as|الثانية|deuxi[eè]me|2[eè]me/i.test(text);
+    let level = '';
+    try{ level = window.getNiveauActif ? window.getNiveauActif() : ''; }catch(e){}
+    if(explicit3) level = '3AS';
+    else if(explicit2) level = '2AS';
+    if(!['2AS','3AS'].includes(level)) return null;
+    if(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس)\s*[:#-]?\s*\d{1,2}/i.test(text)) return null;
+    const unitMatch = text.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
+    if(unitMatch){
+      let unit = Number(unitMatch[1]);
+      if(level === '3AS' && unit >= 10 && unit <= 19) unit -= 9;
+      if(unit !== 1) return null;
+    }
+    return { type:'free_exercise_bank', level:level };
+  }
+  window.reponseIA = async function(q, meta){
     q = String(q == null ? '' : q).trim();
     if(!q) return '';
     const fn = window.reponsePedagogique;
@@ -51,7 +177,7 @@
         .trim();
     }
     let localObj = null, local = '', speakWord = '', reponseCourteValide = false;
-    if(typeof fn === 'function'){ try{ localObj = await fn(q); }catch(e){} }
+    if(typeof fn === 'function'){ try{ localObj = await fn(q, meta || null); }catch(e){} }
     if(localObj && typeof localObj === 'object'){
       local     = html2txt(localObj.html || localObj.texte || localObj.reponse || '');
       speakWord = String(localObj.speakWord || '');
@@ -103,10 +229,11 @@
     }
     /* Une réponse locale est valable dès qu'elle dépasse 25 caractères UTILES,
        ou qu'elle porte un mot à prononcer. On ne la jette plus systématiquement. */
+    const forceCorpusCloud = Boolean(corpusDocumentResource(q) || corpusSearchResource(q));
     const weak = !local || local.indexOf('لا أعرف') !== -1 ||
       (local.length < 25 && !reponseCourteValide) ||
       (QL && QL !== 'ar' && arR(local) > 0.5 && !reponseCourteValide);
-    if(!weak){ window.__IA_WORD = speakWord; window.__IA_WORD = speakWord; return fixLang(local); }
+    if(!weak && !forceCorpusCloud){ window.__IA_WORD = speakWord; window.__IA_WORD = speakWord; return fixLang(local); }
     try{
       const k = 'dz_ia_' + new Date().toDateString();
       const n = +(localStorage.getItem(k) || 0);
@@ -120,32 +247,26 @@
     }catch(e){}
     window.__IA_PROXY = proxy;
     if(!proxy) return sortieFaible(local, 'proxy-absent (config.json)');
+    const sbApi = window.SB;
+    if(!sbApi || typeof sbApi.getSession !== 'function'){
+      return sortieFaible(local, 'session-supabase-requise');
+    }
+    const authState = await sbApi.getSession();
+    const accessToken = authState && authState.ok && authState.session && authState.session.access_token;
+    if(!accessToken) return sortieFaible(local, 'session-supabase-requise');
     try{
-      let ctx = '';
-      try{
-        if(window.BIBLIO && BIBLIO.context){
-          const bc = await BIBLIO.context(q, 2000);
-          if(bc) ctx = 'BIBLIOTHÈQUE OFFICIELLE (extraits vérifiés, cite la source) :\n' + bc + '\n\n';
-        }
-      }catch(e){}
-      if(local && local.indexOf('لا أعرف') === -1) ctx += 'MOTEUR LOCAL (déjà vérifié) :\n' + local.slice(0, 900);
-      ctx = ctx.slice(0, 3000);
+      const resource = corpusDocumentResource(q) || corpusSearchResource(q) || officialDocumentResource(q) || await pageResource(q) || lessonResource(q) || summaryResource(q) || exerciseBankResource(q);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ q: q, text: q, ctx: ctx }) }, 25000);
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer ' + accessToken
+        },
+        body: JSON.stringify({ q: q, resource: resource }) }, 25000);
       if(!r.ok){
         let e = {};
         try{ e = await r.json(); }catch(_){}
         try{ console.warn('🧠 ia-ask HTTP ' + r.status + ' : ' + (e.err || '?')); }catch(_){}
-        if(r.status === 400 || r.status === 415){
-          const r2 = await fetchTimeout(proxy + '/ask', { method:'POST',
-            headers:{ 'Content-Type':'text/plain' }, body: q }, 15000);
-          if(r2.ok){
-            const j2 = await r2.json();
-            if(j2 && j2.ok && j2.rep && j2.rep.length > 10) return j2.rep;
-          }
-        }
         return sortieFaible(local, 'http-' + r.status);
       }
       const j = await r.json();
@@ -199,11 +320,23 @@
       else { try{ const j = JSON.parse(hb); if(j.ai === false) out.push('=> liaison AI absente : ia-ask → Settings → Bindings → Workers AI → nom AI'); }catch(e){} }
     }catch(e){ out.push('/health : ERREUR ' + ((e && e.name === 'AbortError') ? 'timeout-12s' : ((e && e.message) || e))); }
     try{
-      const a = await fetchTimeout(proxy + '/ask', { method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ q:'Erkläre den Akkusativ in einem Satz.' }) }, 30000);
-      const ab = await a.text();
-      out.push('/ask : HTTP ' + a.status + ' · ' + ab.slice(0, 150));
+      let accessToken = '';
+      try{
+        const auth = window.SB && await window.SB.getSession();
+        accessToken = auth && auth.ok && auth.session && auth.session.access_token || '';
+      }catch(e){}
+      if(!accessToken){
+        out.push('/ask : JWT Supabase absent (connecte-toi pour tester le Worker)');
+      }else{
+        const a = await fetchTimeout(proxy + '/ask', { method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + accessToken
+          },
+          body: JSON.stringify({ q:'Erkläre den Akkusativ in einem Satz.' }) }, 30000);
+        const ab = await a.text();
+        out.push('/ask : HTTP ' + a.status + ' · ' + ab.slice(0, 150));
+      }
     }catch(e){ out.push('/ask : ERREUR ' + ((e && e.name === 'AbortError') ? 'timeout-30s' : ((e && e.message) || e))); }
     out.push('dernière erreur ia.js : ' + (window.__IA_ERR || 'aucune'));
     panneauTest(out);

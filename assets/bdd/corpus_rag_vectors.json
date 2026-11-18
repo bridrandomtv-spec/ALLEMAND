@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "model": "@cf/google/embeddinggemma-2",
+  "dimensions": 256,
+  "normalization": "l2",
+  "vectors": []
+}

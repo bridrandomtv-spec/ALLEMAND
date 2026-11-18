@@ -7,8 +7,8 @@
 (function(){
   'use strict';
   var AR = /[؀-ۿ]/;
-  var DZ = ["wach","chno","kifach","klach","had","hadi","ma3na","fehmt","fhemt","tini","tamrin","wash","shno","3lach"];
-  var DZ_AR = ["واش","شنو","كيفاش","علاش","هاد","ما فهمتش","عطيني","فهمتش","معناها"];
+  var DZ = ["wach","chno","kifach","klach","had","hadi","ma3na","fehmt","fhemt","fhemtch","fhamt","fhamtch","tini","tamrin","wash","shno","3lach","nsta3mel","nesta3mel","ma fhemtch","mafhemtch"];
+  var DZ_AR = ["واش","شنو","كيفاش","علاش","هاد","ما فهمتش","علاش ما فهمتش","فهمني","عطيني","فهمتش","معناها","نستعمل","نستعمله"];
   var FR = ["explique","donne","pourquoi","comment","traduis","rsume","resume","exercice","leon","lecon","page","quest","difference","franc"];
   var DE = ["der","die","das","den","dem","weil","dass","ich","du","ist","und","nicht","bedeutet","heisst","heit","lektion","seite","akkusativ","dativ","nominativ","genitiv"];
   function norm(s){
@@ -21,15 +21,20 @@
   function langs(raw, nq){
     var out = [];
     if(AR.test(raw)) out.push("ar");
-    if(/[a-z]/.test(nq) && /[3759]/.test(nq) && !AR.test(raw)) out.push("arabizi");
+    /* Un chiffre isolé (ex. « page 3 ») ne suffit pas à signaler l’Arabizi. */
+    if(!AR.test(raw) && /[a-z]/i.test(nq) && /(?:^|[^a-z])[3759][a-z]|[a-z][3759][a-z]/i.test(nq)) out.push("arabizi");
     var t = toks(nq);
-    if(t.some(function(w){return DZ.indexOf(w)!==-1;}) || t.some(function(w){return DZ_AR.indexOf(w)!==-1;})) out.push("darija");
+    if(t.some(function(w){return DZ.indexOf(w)!==-1;}) || DZ_AR.some(function(w){return nq.indexOf(w)!==-1;})) out.push("darija");
     if(t.some(function(w){return FR.indexOf(w)!==-1;})) out.push("fr");
     if(t.some(function(w){return DE.indexOf(w)!==-1;}) || /[äöüß]/.test(nq)) out.push("de");
     return out;
   }
   function intent(nq){
     function has(a){ return a.some(function(k){ return nq.indexOf(k)!==-1; }); }
+    /* Formulations algériennes fréquentes : expressions complètes, y compris arabe multi-mots. */
+    if(has(["ما فهمتش","mafhemtch","ma fhemtch","ma fhemt","fhemtch","fhamtch"]) && has(["perfekt","akkusativ","dativ","regel","قاعدة","قواعد","فعل"])) return ["explain_rule",0.88];
+    if(has(["wach kifach nsta3mel","kifach nsta3mel","كيفاش نستعمل","كيف استعمل","كيف أستعمل","كيفاش نطبق","كيف نطبق"])) return ["explain_rule",0.86];
+    if(has(["شرحلي","فهمني","اشرحلي","فسرلي","شرح لي","علاش","3lach"]) && has(["perfekt","akkusativ","dativ","قاعد","regel","درس","lesson"])) return ["explain_rule",0.82];
     if(has(["فرق","difference","compare","قارن"]) && has(["بين","و"])) return ["compare",0.8];
     if(has(["لخص","ملخص","rsume","resume","summarize"])) return ["summarize",0.85];
     if(has(["صحح","corrige","correct","صلح"])) return ["correct_exercise",0.85];
@@ -75,7 +80,9 @@ if((m = nq.match(/\b(2as|3as|1as)\b/))) e.level = m[1].toUpperCase();
   function understand(question, context){
     var raw = String(question==null?'':question);
     var nq = norm(raw);
+    var normalized = norm(arguments.length > 2 && arguments[2] != null ? arguments[2] : raw);
     var it = intent(nq);
+    if(!it[0] && normalized !== nq) it = intent(normalized);
     /* ── P2-D : résolution du contexte effectif ──────────────────────────
        Priorité stricte (conforme au contrat P2-D) :
          1. contexte EXPLICITEMENT fourni par l'appelant → jamais écrasé ;
@@ -92,7 +99,9 @@ if((m = nq.match(/\b(2as|3as|1as)\b/))) e.level = m[1].toUpperCase();
         }
       }catch(e){ effCtx = null; }
     }
-    return { norm: nq, langs: langs(raw, nq), intent: it[0], entities: entities(raw, nq, effCtx || {}), confidence: it[1] };
+    return { raw_text: raw, normalized_text: normalized, norm: nq,
+      langs: langs(raw, nq + " " + normalized), intent: it[0],
+      entities: entities(raw, nq + " " + normalized, effCtx || {}), confidence: it[1] };
   }
   if(typeof window!=='undefined') window.QUST = { understand: understand };
   if(typeof module!=='undefined' && module.exports) module.exports = { understand: understand };

@@ -1,0 +1,231 @@
+# Lot 622 — préparation de la recherche vectorielle multilingue (18 novembre 2026)
+
+## État vérifié avant conception
+- Le code de `worker/ia-ask.js` utilise déjà la liaison Cloudflare Workers AI `env.AI` pour la génération des réponses.
+- Le RAG PDF récupère les chunks depuis `corpus_rag_chunks.json` après lecture protégée par JWT/RLS, puis applique BM25 et expansion terminologique FR/AR/Darija → allemand.
+- `corpus_rag_chunks.json` et `corpus_rag_manifest.json` sont actuellement vides : 0 document, 0 chunk. Les 293 PDF inventoriés restent exclus faute de droits confirmés.
+- La suite autonome Professeur IA du run `44214054953` est réussie sur le commit applicatif `27b1aa308a755c9d17ecf254effec09fbe7c6c87`. La CI globale échoue sur la validation Messenger EduDZ, hors périmètre IA.
+
+## Modèle candidat étudié
+- `@cf/google/embeddinggemma-2` est disponible dans Workers AI depuis le 12 novembre 2026. Cloudflare annonce plus de 100 langues, une sortie de 768 dimensions par défaut et des dimensions configurables de 128, 256 ou 512. Le tarif publié est de 0,0017 USD par million de tokens d'entrée.
+- Workers AI est inclus dans les plans Workers Free et Paid avec une allocation commune de 10 000 Neurons par jour. Au-delà, un plan Paid facture 0,011 USD par 1 000 Neurons ; sur le plan Free, les opérations au-delà de la limite échouent. L'usage d'embeddings n'est donc pas illimité ni garanti sans coût.
+- Ce modèle réutiliserait la liaison `env.AI` déjà présente : aucun fournisseur ou service vectoriel externe supplémentaire n'est nécessaire. Les appels d'embedding consommeraient toutefois le quota Workers AI partagé avec la génération existante.
+
+## Architecture proposée — non activée
+1. Ingestion : après validation des métadonnées de droits et de la licence, calculer les embeddings des chunks approuvés ; ne jamais vectoriser un document rejeté par le contrôle de droits.
+2. Modèle : `@cf/google/embeddinggemma-2`, dimension initiale proposée 256 pour limiter le stockage, avec les mêmes paramètres et préfixes de tâche pour les documents et les requêtes.
+3. Versionnement : enregistrer modèle, dimensions, version de schéma, stratégie de normalisation, identifiant/hash du chunk et empreinte du corpus. Rejeter les vecteurs d'un modèle, d'une dimension ou d'une version incompatible.
+4. Stockage : artefact vectoriel séparé, statique et protégé par le Worker du site avec le même JWT/RLS que les chunks. Aucun stockage Supabase, aucune table et aucune migration.
+5. Recherche : authentifier l'utilisateur ; récupérer les documents/chunks via le Worker protégé ; filtrer les licences et droits confirmés ; seulement ensuite classer les chunks autorisés par similarité cosinus. BM25 reste disponible et sert de repli si les vecteurs sont absents, incompatibles ou si l'embedding échoue.
+6. Recherche hybride : comparer sur un corpus de test contrôlé la fusion BM25 + vectorielle (RRF) avec BM25 seul avant de choisir les seuils et le nombre d'extraits. Ne pas supposer qu'un score vectoriel constitue une autorisation.
+7. Activation : drapeau `RAG_VECTOR_ENABLED` désactivé par défaut. Aucun appel d'embedding en production tant que le drapeau n'est pas explicitement activé et que le quota/coût n'a pas été vérifié.
+
+## Tests exigés avant activation
+- Validation de la forme, de la dimension, de la normalisation et de la version des vecteurs.
+- Recherche croisée arabe/Darija/Arabizi/français ↔ allemand sur des documents de test dont les droits sont explicitement autorisés.
+- Vérification que les documents non autorisés sont exclus avant classement et qu'aucun de leurs extraits n'est transmis au modèle.
+- Repli BM25 si l'IA d'embedding est indisponible, si le vecteur est absent ou si la version diffère.
+- Vérification que le drapeau désactivé n'appelle jamais le modèle d'embedding.
+- Mesure de taille des artefacts et du coût/Neurons sur un petit corpus autorisé avant toute indexation large.
+
+## Décision et limites
+- Lot 622 est une étude d'architecture et de coût ; aucun embedding n'a été généré, aucun PDF utilisateur n'a été débloqué et aucune recherche vectorielle n'est activée.
+- Le candidat recommandé est EmbeddingGemma 2 sur la liaison Workers AI déjà utilisée, sous réserve de respecter le quota gratuit et de garder l'activation désactivée par défaut.
+- Le prochain travail de code devra être isolé derrière le drapeau, testé avec des fixtures synthétiques/explicitement autorisées et ne devra pas modifier Supabase, main, les abonnements ou le déploiement.
+- PR #22 reste ouverte en brouillon, non fusionnée.
+
+
+# Lot 623 — première implémentation de la recherche vectorielle facultative (18 novembre 2026)
+
+## Modifications de code
+- `worker/ia-ask.js` accepte maintenant une recherche vectorielle facultative pour `corpus_search` / `corpus_document`, derrière le drapeau strict `env.RAG_VECTOR_ENABLED === 'true'`.
+- Sans ce drapeau, aucun chargement du fichier vectoriel et aucun appel d'embedding ne sont effectués : le comportement reste BM25.
+- Lorsque le drapeau est activé et que l'index contient des vecteurs valides, le Worker calcule l'embedding de la question avec `@cf/google/embeddinggemma-2` (256 dimensions), calcule la similarité cosinus et fusionne le classement sémantique et BM25 par Reciprocal Rank Fusion (RRF).
+- Si le fichier vectoriel est absent/invalide, si le binding AI est absent, ou si l'inférence échoue, le Worker revient au classement BM25. Aucun échec d'embedding ne bloque une recherche lexicale valide.
+- Le classement vectoriel ne voit que les chunks déjà filtrés par `rights_confirmed`, licence autorisée et sélection documentaire serveur. Un vecteur n'est jamais une preuve d'autorisation.
+
+## Protection de l'index
+- `src/site-worker.js` protège désormais `/assets/bdd/corpus_rag_vectors.json` avec le même contrôle JWT/RLS existant que `corpus_rag_chunks.json`.
+- Tests ajoutés pour refuser la lecture directe sans JWT / sans entitlement RLS et autoriser la lecture uniquement après validation RLS.
+- Nouveau fichier `assets/bdd/corpus_rag_vectors.json` versionné : modèle `@cf/google/embeddinggemma-2`, 256 dimensions, normalisation L2, zéro vecteur. Aucun document utilisateur n'a été vectorisé.
+
+## Tests ajoutés
+- Récupération sémantique d'un passage allemand depuis une question arabe sans correspondance lexicale, avec exclusion d'un document sans licence autorisée.
+- Vérification que le drapeau désactivé n'effectue aucune requête vers l'index vectoriel.
+- Vérification du repli BM25 en cas d'échec du modèle d'embedding.
+- Vérification du contrôle JWT/RLS pour l'artefact vectoriel.
+
+## Limites et état de validation
+- Cette première étape implémente le chemin de recherche côté Worker, pas encore la génération des embeddings documentaires à l'ingestion. L'index reste vide (0 vecteur) et BM25 reste le seul mode opérationnel par défaut.
+- Le drapeau n'est pas activé dans la configuration de production. Aucun appel d'embedding ni coût d'inférence n'a été déclenché par cette modification.
+- Aucun changement de `wrangler.toml`, Supabase, Auth, RLS, SQL, abonnements, `main` ou Cloudflare déployé.
+- PR #22 reste ouverte en brouillon, non fusionnée. Les tests CI du nouveau HEAD doivent être vérifiés avant de déclarer ce lot validé.
+
+## Prochaine étape
+Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks autorisés, avec préfixes de tâche document, batch contrôlé, normalisation L2, empreinte/version de modèle, tests de dimension et sans déclencher d'indexation des 225 PDF non autorisés.
+
+
+# Lot 624 — générateur reproductible des embeddings documentaires (18 novembre 2026)
+
+## Audit réel du corpus
+- `assets/bdd/corpus_rag_chunks.json` : 0 document et 0 chunk.
+- `assets/bdd/corpus_rag_manifest.json` : 0 document, 0 chunk ; aucune source n'est actuellement admissible à la vectorisation.
+- Conséquence : aucun appel Workers AI n'a été exécuté et aucun vecteur documentaire n'a été généré. Les PDF sans droits confirmés restent exclus.
+
+## Implémentation
+- Nouveau script `tools/build_corpus_rag_vectors.py` : lit uniquement les deux artefacts RAG existants ; vérifie versions, cohérence des compteurs du manifeste, `rights_confirmed === true` et appartenance à la liste des licences autorisées avant de construire les entrées API.
+- Le texte envoyé au modèle utilise le préfixe documentaire officiel `title: ... | text: ...` ; le Worker conserve son préfixe de requête `task: search result | query: ...`.
+- Lots bornés (8 par défaut, 32 maximum), validation stricte du nombre et des indices de réponse, dimension exacte 256, valeurs finies et normalisation L2.
+- Le schéma de sortie reprend exactement les identifiants attendus par le Worker : `chunk_id`, `document_id`, `embedding`. Cette correspondance a été vérifiée dans `worker/ia-ask.js`.
+- Empreintes SHA-256 du fichier de chunks et du manifeste enregistrées dans l'artefact pour tracer la provenance. Écriture atomique uniquement après réussite de tous les lots.
+- Aucun package Python supplémentaire ; API Cloudflare REST documentée, secrets uniquement via `CLOUDFLARE_ACCOUNT_ID` et `CLOUDFLARE_API_TOKEN` en variables d'environnement.
+
+## Barrières de coût et de sécurité
+- Mode par défaut : dry-run local, zéro requête réseau, zéro écriture du fichier vectoriel.
+- L'exécution réelle exige à la fois `--execute` et `--confirm-cloudflare-billing`, plus des identifiants Cloudflare valides.
+- Un corpus vide provoque un arrêt explicite en mode exécution ; aucune génération d'embeddings vides ou aucun coût inutile.
+- Aucun PDF sans droits confirmés ne peut entrer dans le lot envoyé au modèle.
+- Aucun changement Supabase, Auth, RLS, SQL, abonnement, `wrangler.toml`, `main` ou déploiement Cloudflare.
+
+## Tests et validation
+- Nouveau fichier `tests/test_build_corpus_rag_vectors.py` : filtre de droits, incohérence manifeste, dimension, NaN/Inf, normalisation, index API, batching, métadonnées et dry-run sans appel API.
+- La CI `professor-ai` est étendue pour exécuter ces tests en plus des tests d'ingestion PDF existants.
+- Les tests sont ajoutés à la CI mais ne sont pas encore déclarés réussis : le nouveau HEAD doit être exécuté par GitHub Actions.
+
+## Suite
+- Attendre l'exécution CI du nouveau HEAD.
+- Dès que le propriétaire fournit des documents avec licences et droits vérifiables, générer un petit lot autorisé seulement après validation explicite du coût/quota Workers AI.
+- Comparer ensuite la qualité retrieval BM25 vs hybride sur un jeu d'évaluation multilingue autorisé avant toute activation du drapeau en production.
+
+
+## Contrôle CI après le Lot 624 — 18 novembre 2026
+- Run `44216234225` sur le HEAD `e941fb60094fc71c89f94c484eae42c2c1c63e70` : les 8 tests d'ingestion PDF passent et les 8 tests du nouveau générateur vectoriel passent.
+- Dans `tests/worker-ai-auth.test.mjs`, 73 tests sur 74 passent. L'unique échec était une assertion de fixture qui attendait `Das Perfekt wird` alors que le corpus de test fournit `Der Perfekt wird`. Le test a été corrigé dans le commit `7f9aadd6230e44deb8534a0bcfd9549aa3880663` ; il s'agissait d'une attente textuelle incorrecte, pas d'une panne du repli BM25.
+- Le job global échoue aussi sur une erreur de syntaxe préexistante et hors périmètre dans `ci/check-msg.mjs:231` (Messenger EduDZ). Les étapes de validation structurelle précédentes, dont YAML/JSON, moteur IA 9 cas, suite de build T1–T6 et syntaxe JS 37/37, étaient réussies. Ce chantier IA ne modifie pas Messenger.
+- Le correctif `7f9aadd` n'a pas encore de nouveau run CI associé au moment de cette mise à jour. Il n'est donc pas présenté comme validé.
+- Le job Worker doit être rejoué sur ce nouveau HEAD pour confirmer les 74/74 tests et reprendre les étapes RAG/QUST/PROF qui ont été sautées après le premier échec.
+
+
+## Lot 625 — tests multilingues et validation CI (18 novembre 2026)
+- Ajout d'un test de contrat de recherche hybride sur quatre formulations : arabe standard, darija, Arabizi et français, toutes ciblant un extrait allemand. Le test vérifie le passage par le modèle d'embedding et le préfixe de requête Cloudflare exact `task: search result | query: ...`. Il s'agit d'un test de pipeline avec vecteurs contrôlés, pas d'une mesure de qualité réelle du modèle.
+- Correctif de l'assertion BM25 de repli inclus ; la recherche reste fonctionnelle si l'inférence d'embedding échoue.
+- CI `44278364370` sur le commit `4662bb36f9a79049c8800d5c93a563ef31d25fb9` : job autonome Professeur IA `success`.
+- Résultats confirmés dans les logs :
+  - Ingestion PDF/OCR/droits : 8/8.
+  - Générateur d'embeddings : 8/8.
+  - Worker IA/JWT/RAG : 75/75.
+  - Garde d'accès du Worker du site : 14/14.
+  - QUST Darija/Arabizi : 9/9.
+  - Régressions : RAG 12/12, PROF 18/18, suite combinée exécutée.
+- Le job structurel global échoue toujours sur l'erreur indépendante de Messenger `ci/check-msg.mjs:231` (SyntaxError, expression `currentThread.querySelector`), sans rapport avec le professeur IA. Les validations antérieures de ce job étaient réussies. Aucun changement Messenger n'est inclus dans cette branche IA.
+- Aucun benchmark de rappel/précision sur documents réels n'est possible : le manifeste PDF contient toujours zéro document et zéro chunk. Les tests multilingues actuels valident le câblage et la sécurité du classement avec des fixtures synthétiques.
+- Le dernier HEAD applicatif testé est `4662bb36f9a79049c8800d5c93a563ef31d25fb9`. Les commits documentaires qui suivent ne modifient pas le code testé. La PR reste ouverte et en brouillon, sans fusion ni déploiement.
+
+
+## Lot 626 — inventaire PDF réel et découverte récursive (18 novembre 2026)
+- Audit de l'arbre Git complet du dépôt : 293 fichiers PDF versionnés, dont 264 dans `docs/archive/documents/` et 29 à la racine.
+- Aucun des 293 PDF ne possède le compagnon de droits attendu par l'ingestion (`_<nom_du_pdf>.json`) dans son propre dossier. Le pipeline ne peut donc en indexer aucun sans validation explicite des droits.
+- Le manifeste RAG reste inchangé à 0 document / 0 chunk. Aucun PDF n'a été envoyé au modèle d'embedding, et aucune licence n'a été supposée à partir du nom, du dossier ou du contenu.
+- Défaut de couverture corrigé : `tools/ingest_corpus_rag.py` parcourait uniquement les PDF du premier niveau (`glob`). Il utilise maintenant une découverte récursive déterministe (`rglob`) et conserve le chemin relatif dans `source_file` et les rapports d'exclusion, pour éviter les collisions entre fichiers de même nom.
+- Nouveau test : un PDF situé dans un sous-dossier n'est ingéré que si son compagnon local confirme `droits_confirmes: true` et une licence autorisée ; son chemin relatif est conservé.
+- Ce changement améliore la couverture technique, mais ne change pas la politique de droits : les 293 PDF restent exclus tant que leurs preuves ne sont pas fournies.
+- Validation CI du Lot 626 en attente sur le nouveau HEAD ; ne pas annoncer les tests comme réussis avant le résultat du job autonome Professeur IA.
+
+
+## Résultat CI du Lot 626 — 18 novembre 2026
+- Run `44278714245` sur le commit applicatif `dccec914d60bb7af6c24e2ab52a34ea8d91b3686` : job autonome Professeur IA `success`.
+- Ingestion PDF : 9/9 tests réussis, y compris la découverte récursive d'un PDF imbriqué avec compagnon de droits.
+- Générateur vectoriel : 8/8 tests réussis.
+- Worker IA/JWT/RAG : 75/75 ; garde d'accès Worker du site : 14/14 ; QUST Darija/Arabizi : 9/9.
+- Régressions : RAG 12/12, PROF 18/18 et suite combinée exécutées sans erreur dans le job autonome.
+- Le job global reste en échec uniquement sur l'erreur de syntaxe Messenger déjà identifiée dans `ci/check-msg.mjs:231`. Le job autonome IA, qui est le périmètre de cette PR, est vert.
+- Le code de Lot 626 est validé. Les trois commits documentaires postérieurs ne modifient pas le code testé. Aucun index PDF réel n'a été créé : les 293 fichiers restent sans compagnon de droits.
+
+
+## Lot 627 — inventaire exploitable des droits PDF
+- Création de `docs/inventaire_pdf_droits.csv` avec une ligne par PDF détecté dans l'arbre Git : 293 lignes.
+- Chaque ligne fournit le chemin du PDF et le nom exact du compagnon attendu (`_<nom>.json`), avec les champs de licence et de confirmation laissés volontairement vides et un statut « à vérifier ».
+- Cet inventaire sert de feuille de revue des droits ; il ne constitue pas une autorisation et ne doit pas être rempli automatiquement à partir des noms de fichiers.
+- Les 293 documents restent exclus de l'index tant que la preuve n'est pas confirmée.
+
+
+# Lot 628 — validation contrôlée de l'inventaire de droits (18 novembre 2026)
+- L'audit récursif complet recense 293 PDF versionnés : 264 dans `docs/archive/documents/` et 29 à la racine. Aucun des 293 n'a le compagnon de droits attendu ; le manifeste RAG demeure vide.
+- Le validateur `tools/validate_pdf_rights_inventory.py` vérifie l'inventaire CSV en lecture seule : chemins relatifs confinés au dépôt, présence du PDF, nom du compagnon, absence de doublons, valeur explicite de confirmation et licence autorisée.
+- L'admissibilité exige simultanément `rights_confirmed=true` et une licence de la liste fermée partagée avec l'ingestion. Les champs vides restent en attente ; les licences inconnues et incohérences sont des erreurs.
+- Le validateur ne crée pas de métadonnées de droits et ne modifie pas le CSV. Il ne lance ni ingestion, ni OCR, ni génération d'embeddings.
+- Dix tests couvrent les cas positifs et négatifs. Leur exécution est intégrée au job CI autonome Professeur IA.
+- Le total de 225 PDF indiqué dans les notes initiales des Lots 619–624 était basé sur un inventaire partiel ; le décompte récursif complet du Lot 626 (293) est la référence actuelle.
+- Aucun embedding réel n'a été généré. `RAG_VECTOR_ENABLED` reste désactivé par défaut ; aucune consommation Workers AI supplémentaire n'a été déclenchée.
+- Validation CI du Lot 628 en attente sur le nouveau HEAD. PR #22 reste ouverte en brouillon, sans merge ni déploiement.
+
+
+## Résultat CI du Lot 628 — run 44282039020
+- Job autonome « Tests autonomes — Professeur IA » : `success` sur le commit applicatif `8ce4dc01ae6c066d247b753819e780cc4aaabce2`.
+- Validateur des droits : 10/10 ; ingestion PDF : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde du Worker de site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
+- Le job structurel global était encore en cours au moment de la vérification ; ce succès autonome ne vaut pas validation globale.
+- Aucun PDF réel n'a été indexé et aucun embedding n'a été généré. Le drapeau vectoriel reste désactivé par défaut.
+
+
+## Complément Lot 628 — preuve compagnon vérifiée
+- Le validateur ne se contente plus des valeurs CSV : lorsqu'une ligne est confirmée, il exige le fichier compagnon JSON réel, un JSON valide, `droits_confirmes: true` et une licence identique à celle de l'inventaire.
+- Cette vérification empêche de qualifier d'admissible un document que l'ingestion existante ne pourrait pas sélectionner. Aucun compagnon n'est créé automatiquement.
+- La suite de tests passe à 14 cas. Le run 44282039020 (10/10) valide uniquement la version précédente ; le durcissement doit passer une nouvelle CI avant d'être déclaré validé.
+
+
+## Validation finale du Lot 628 durci — 18 novembre 2026
+- Run `44282741104`, commit applicatif `4665f8ce55b4f2eec3a9bb910ce567246ca817e9` : job autonome Professeur IA = `success`.
+- Validateur des droits : 15/15 ; ingestion PDF/OCR : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde Worker du site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
+- La CI globale reste en échec sur le contrôle Messenger `ci/check-msg.mjs:231` (`SyntaxError: missing ) after argument list`), sans changement Messenger dans cette PR.
+- Aucun PDF réel n'a été intégré au corpus ; le manifeste demeure vide et le drapeau vectoriel reste désactivé.
+
+
+## Lot 629 — diagnostic d'extractibilité PDF
+- Ajout d'un audit récursif qui mesure la disponibilité du texte PDF sans conserver les contenus, sans OCR et sans écriture de corpus : pages totales, pages extractibles, pages sans texte et classes de fichiers.
+- Les fichiers sont classés `extractable`, `mixed`, `ocr_candidate`, `encrypted`, `empty` ou `unreadable`. Les symlinks sortant du périmètre sont ignorés et signalés.
+- Six tests couvrent les classes et le fait que l'audit ne prétend ni vérifier les droits ni indexer les documents.
+- Exécution sur le dépôt ajoutée à la CI autonome. Résultat du run HEAD `7fbb15d8fccac8eb54b87718b2b262e0b732e042` en attente.
+- Cet audit est préparatoire uniquement : il ne contourne pas le contrôle des licences et ne modifie pas le manifeste RAG vide.
+
+
+## Résultats du diagnostic PDF — Lot 629 (CI 44285230823)
+- Job autonome Professeur IA : `success`. Suites Python : ingestion 9/9, droits 15/15, audit PDF 6/6, builder vectoriel 8/8 ; Worker IA/JWT/RAG 75/75 ; garde Worker du site 14/14 ; QUST 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
+- Mesure des 293 PDF : 1 173 pages ; 767 pages avec texte extractible ; 406 pages sans texte extractible ; 747 140 caractères extractibles mesurés, non enregistrés.
+- Classification : 186 `extractable`, 28 `mixed`, 78 `ocr_candidate`, 1 `encrypted`, 0 `empty`, 0 `unreadable`, 0 `outside_root`.
+- 106 fichiers contiennent donc au moins une page potentiellement à OCR. Aucun OCR n'a été lancé ; cette classification ne prouve pas la qualité d'une future reconnaissance.
+- Aucun texte n'a été conservé, aucun PDF n'a été converti en artefact, aucun document n'a été indexé et aucun embedding n'a été généré. Le manifeste reste vide en attente des droits.
+- La validation globale échoue encore sur le contrôle Messenger EduDZ, hors périmètre du RAG ; le job IA autonome est vert.
+
+
+## Lot 630 — rapport technique PDF par fichier
+- Le script d'audit peut produire un CSV ne contenant que des métadonnées techniques : chemin relatif, classe, pages, pages avec/sans texte, compteur de caractères extractibles et type d'erreur. Le contenu du PDF n'est jamais écrit.
+- La cible CSV est obligatoirement extérieure au dossier source ; le contrôle empêche d'écrire un rapport dans le corpus lui-même.
+- La CI publie le rapport comme artefact temporaire (14 jours), run `44286206424`, artefact `pdf-text-readiness`, ID `14418154476`.
+- Validation autonome IA réussie : ingestion 9/9, droits 15/15, audit PDF 8/8, builder vectoriel 8/8, Worker IA/JWT/RAG 75/75, garde Worker 14/14, QUST 9/9, régressions RAG 12/12 et PROF 18/18.
+- Le rapport ne constitue ni une validation de droits ni une instruction d'indexation ; aucun OCR ni embedding n'est exécuté.
+
+
+## Lot 631 — jointure de l'audit et des droits
+- Le rapport CSV joint l'audit technique à l'inventaire des droits sur pdf_path exact. Les champs de droits restent inchangés ; les valeurs absentes restent vides.
+- Les PDF non présents dans l'inventaire et les entrées d'inventaire sans PDF correspondant sont signalés. Les doublons sont rejetés.
+- Le rapport est une aide de revue, jamais une preuve de licence ni une autorisation RAG. Aucun document n'est indexé par cette étape.
+- Artefact CI : pdf-rights-and-readiness, rétention 14 jours. Aucun OCR ni embedding réel n'est déclenché.
+
+
+### Lot 631 — état validé du registre unifié
+- Export CSV corrigé et testé : l'écriture parcourt les lignes fusionnées, pas les seules lignes d'audit. Le test vérifie les métadonnées de droits et le PDF référencé dans l'inventaire mais absent du corpus audité.
+- Run CI `44289483381` sur `697bb55b7c2160cc0a0aeb585e0dff16e9c64949` : job autonome IA réussi ; ingestion 9/9, validation droits 15/15, audit 11/11, vector builder 8/8 ; Worker 75/75, site guard 14/14, QUST 9/9 ; contrats RAG 12/12 et PROF 18/18.
+- 293 PDF, 1 173 pages, 747 140 caractères mesurés sans sauvegarde ; 186 fichiers extractibles, 28 mixtes, 78 candidats OCR, 1 chiffré. 406 pages sans texte extractible.
+- Jointure exacte : 293/293 appariés, aucun orphelin. Aucun droit confirmé ; les 293 lignes restent à vérifier et sans licence renseignée.
+- Artefact `pdf-rights-and-readiness` (ID `14421110680`) : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44289483381/artifacts/14421110680
+- L'audit n'effectue ni OCR, ni sauvegarde de texte, ni indexation RAG, ni génération d'embeddings. Les droits restent une barrière obligatoire avant ingestion.
+- La validation structurelle générale reste bloquée par la syntaxe de `ci/check-msg.mjs:231`, hors périmètre IA. Aucun changement Supabase, merge ou déploiement.
+
+
+## Lot 632 — verrouillage de l'ingestion par inventaire central
+- `ingest_corpus_rag.py` exige le compagnon local ET l'autorisation de l'inventaire central sur le chemin exact. `rights_confirmed=true` et la licence doivent être identiques dans les deux sources ; les entrées absentes, incohérentes, dupliquées ou hors racine sont rejetées.
+- Le paramètre CLI `--rights-inventory` est fourni par défaut vers `docs/inventaire_pdf_droits.csv`; `--repo-root` définit la base de résolution. Sans inventaire, aucun PDF muni d'un simple compagnon n'est indexé.
+- CI `44290732499` : ingestion 13/13, droits 15/15, audit 11/11, builder vecteur 8/8 ; Worker 75/75, site guard 14/14, QUST 9/9, contrats RAG 12/12, PROF 18/18. Job IA autonome vert.
+- 293 documents rapprochés, 0 droit confirmé. Manifeste et vecteurs réels inchangés ; pas d'OCR, de conversion persistante ni d'embedding.
+- Artefact `pdf-rights-and-readiness` ID `14420923665` : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44290732499/artifacts/14420923665
+- Le check structurel global reste bloqué sur `ci/check-msg.mjs:231` ; aucun changement Supabase, merge ou déploiement.

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "status": "connected_protected",
+  "document_count": 0,
+  "chunk_count": 0,
+  "skipped": [],
+  "note": "Aucun PDF n'est indexé. L'artefact est raccordé au RAG serveur et n'est lisible qu'à travers le Worker du site protégé par JWT/RLS. Les documents exigent des métadonnées de droits confirmés."
+}

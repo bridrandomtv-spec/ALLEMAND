@@ -31,7 +31,7 @@ insert into public.profiles(id,role,verif_statut,pseudo) values
  ('10000000-0000-4000-8000-000000000002','eleve','en_attente','EleveAttente'),
  ('10000000-0000-4000-8000-000000000003','professeur','verifie','ProfesseurTest');
 
-\i supabase/migrations/202611130002_multaqa_community_feed.sql
+\i supabase/migrations/20261113201922_multaqa_community_feed.sql
 
 -- Vérification des privilèges : aucun accès direct aux tables, RPC réservées
 -- aux comptes authentifiés.

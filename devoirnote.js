@@ -49,12 +49,16 @@ function ecouterDE(t, lang){
   const esc = s => String(s==null?'':s).replace(/[&<>"']/g,
       c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   let MAL = null, BAN = null, DV = null;
-  async function cj(u){ try{ const r = await fetch(u, { cache:'no-store' });
-      return r.ok ? await r.json() : null; }catch(e){ return null; } }
+  async function cj(u, protectedContent){ try{
+      const headers = protectedContent && window.CONTENT1 && typeof CONTENT1.authHeaders === 'function'
+        ? await CONTENT1.authHeaders() : {};
+      const r = await fetch(u, { cache:'no-store', headers:headers });
+      return r.ok ? await r.json() : null;
+    }catch(e){ return null; } }
   async function data(){
     if(MAL === null) MAL = await cj('assets/bdd/malakhiss.json');
     if(BAN === null) BAN = await cj('assets/bdd/contenu_original.json');
-    if(DV === null) DV = await cj('assets/bdd/devoirs.json');
+    if(DV === null) DV = await cj('assets/bdd/devoirs.json', true);
     return { mal: MAL || {}, ban: BAN || {}, dv: (DV && DV.items) || [] };
   }
   /* faits grammaticaux vérifiés (pour Vrai/Faux en allemand) */

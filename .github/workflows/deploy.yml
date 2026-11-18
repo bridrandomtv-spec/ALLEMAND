@@ -51,7 +51,7 @@ jobs:
                    assets/bdd/bac_archive.json assets/bdd/live.json \
                    assets/bdd/parents.json assets/bdd/devoirs_officiels.json \
                    assets/bdd/wilayas_geo.json assets/bdd/plan_projet.json \
-                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json assets/bdd/onboarding.json assets/bdd/config.json assets/bdd/corpus.json assets/bdd/corpus_index.json assets/bdd/malakhiss.json; do
+                   assets/bdd/journee.json assets/bdd/reservation.json assets/bdd/matieres.json assets/bdd/wilaya.json assets/bdd/onboarding.json assets/bdd/config.json assets/bdd/corpus.json assets/bdd/corpus_index.json assets/bdd/corpus_rag_chunks.json assets/bdd/corpus_rag_manifest.json assets/bdd/malakhiss.json; do
               test -f "$a" || { echo "::error::Asset manquant : $a"; exit 1; }
           done
           echo "✅ 51 fichiers racine + assets présents"
@@ -1104,6 +1104,12 @@ jobs:
       - name: Valider l'administration EduDZ (schéma ADM + permissions)
         run: |
           node tests/adm_test.mjs
+      - name: Tester l'authentification JWT du Worker IA
+        run: |
+          node --test tests/worker-ai-auth.test.mjs
+      - name: Tester la compréhension Darija/Arabizi et la conservation du transcript (Lot 602)
+        run: |
+          node --test tests/qust-darja.test.mjs
       - name: Tester le prototype CSV du registre des lycées (Lot 315)
         run: |
           node --test prototypes/registry-import-core.test.mjs
@@ -1230,3 +1236,48 @@ jobs:
           echo "   https://allemand.brid-randomtv.workers.dev"
           echo "(build automatique à chaque push via la connexion OAuth Cloudflare)"
           echo "Les fichiers privés (scans, sujets, données élèves) ne sortent JAMAIS du dépôt."
+
+  # Tests IA autonomes : ne dépendent pas des validations d'autres domaines.
+  professor-ai:
+    name: Tests autonomes — Professeur IA
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Setup Python pour l'ingestion PDF
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Installer le lecteur PDF pour l'audit technique
+        run: python -m pip install --quiet pypdf
+      - name: Tester extraction PDF, OCR optionnel, droits et audit technique
+        run: |
+          python -m unittest discover -s tests -p 'test_ingest_corpus_rag.py' -v
+          python -m unittest discover -s tests -p 'test_validate_pdf_rights_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_audit_pdf_text_readiness.py' -v
+          python -m unittest discover -s tests -p 'test_build_corpus_rag_vectors.py' -v
+      - name: Auditer les PDF et produire un rapport technique sans contenu pédagogique
+        run: |
+          python tools/audit_pdf_text_readiness.py . --summary-only --rights-inventory docs/inventaire_pdf_droits.csv --csv-output "${{ runner.temp }}/pdf-rights-and-readiness.csv"
+      - name: Publier le rapport technique PDF comme artefact CI
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-rights-and-readiness
+          path: ${{ runner.temp }}/pdf-rights-and-readiness.csv
+          if-no-files-found: error
+          retention-days: 14
+      - name: Tester le Worker IA et les contrôles d'accès
+        run: node --test tests/worker-ai-auth.test.mjs
+      - name: Tester la protection serveur des devoirs et annales
+        run: node --test tests/site-worker-content-guard.test.mjs
+      - name: Tester QUST et la compréhension Darija/Arabizi
+        run: node --test tests/qust-darja.test.mjs
+      - name: Tester la régression RAG, professeur et parcours combinés
+        run: |
+          node tests/regression_rag.mjs
+          node tests/regression_prof.mjs
+          node tests/regression.mjs

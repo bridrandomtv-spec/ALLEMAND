@@ -15,6 +15,7 @@ const billing = readFileSync('billing.js', 'utf8');
 const idx = readFileSync('index.html', 'utf8');
 const sw = readFileSync('sw.js', 'utf8');
 const app = readFileSync('app.js', 'utf8');
+const test = readFileSync('ci/msg-supabase-local-test.mjs', 'utf8');
 const TABLES = ['msg_conversations','msg_members','msg_messages','msg_attachments','msg_reports','msg_blocks','msg_log'];
 for (const t of TABLES) {
   ok(sql.includes('create table if not exists public.' + t), 'table ' + t);
@@ -44,9 +45,11 @@ ok(verifyStart >= 0 && verifyEnd > verifyStart &&
    'file de vérification paginée avec total et ordre stable');
 ok(sbjs.includes("if(!/^\\d{1,20}$/.test(number))") && !sbjs.includes("Number.isSafeInteger(Number(number))"), 'numéro scolaire accepté sans conversion numérique risquée');
 ok(sbjs.includes(".eq('id', uid).eq('verif_statut','en_attente')\n    .select('id').maybeSingle()") && sbjs.includes("if(!r.data) return { ok:false"), 'modération confirmée uniquement si une ligne est réellement modifiée');
-ok(msgjs.indexOf('if(renderEpoch!==state.renderEpoch) return;\\n      window.__msgVerificationRows = vq') > msgjs.indexOf('var vq = await window.SB.msgVerificationQueue()'),
+const verificationGuardIndex = msgjs.indexOf('if(renderEpoch!==state.renderEpoch) return;', msgjs.indexOf('var vq = await window.SB.msgVerificationQueue()'));
+const verificationRowsIndex = msgjs.indexOf('window.__msgVerificationRows = vq');
+ok(verificationGuardIndex > msgjs.indexOf('var vq = await window.SB.msgVerificationQueue()') && verificationRowsIndex > verificationGuardIndex,
    'Messenger : réponse asynchrone obsolète ignorée avant remplacement des données de contrôle');
-ok(msgjs.includes("t.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-mod]')") &&
+ok(msgjs.includes("t.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-verif-page],[data-mod]')") &&
    msgjs.includes('data-mod="verif-doc"') &&
    msgjs.includes("if(mod==='verif-doc')") &&
    msgjs.includes("startsWith(String(docUid)+'/')") &&
@@ -134,7 +137,7 @@ ok(inviteSql.includes('msg_pair_blocked') && /create or replace function public\
    'blocage bilatéral appliqué aux accès DM');
 
 
-ok(!/^as \$/m.test(inviteSql) && !/^\$;$/m.test(inviteSql),
+ok(!/^as \$(?!\$)/m.test(inviteSql) && !/^\$;$/m.test(inviteSql),
    'quotage dollar SQL valide pour toutes les fonctions');
 ok(!/^do \$(?!\$)/m.test(postgresSql) && !/^end \$(?!\$);$/m.test(postgresSql),
    'blocs PL/pgSQL du test PostgreSQL correctement délimités');
@@ -152,7 +155,7 @@ ok(/status='expired'[\s\S]*?return null/.test(inviteSql) &&
 
 ok(/msg_invite_send[\s\S]*?pg_advisory_xact_lock\(hashtextextended\(v_sender::text, 0\)\)/.test(inviteSql),
    'limite 24 h sérialisée contre les envois concurrents');
-ok(/demande pendante identique reste idempotente[\s\S]*?if v_id is not null then return v_id; end if;[\s\S]*?select count\(\*\) into v_count/.test(inviteSql),
+ok(/Une nouvelle tentative sur une demande déjà pendante reste idempotente[\s\S]*?if v_id is not null then return v_id; end if;[\s\S]*?select count\(\*\) into v_count/.test(inviteSql),
    'répétition idempotente vérifiée avant la limite 24 h');
 ok(postgresSql.includes('pending_invite_retry_blocked_by_rate_limit'),
    'test PostgreSQL : répétition pendante autorisée au plafond du quota');
@@ -193,8 +196,8 @@ if (fail.length) { console.error('::error:: check-msg : ' + fail.length + ' éch
 console.log('== check-msg : TOUT PASSE ==');
 
 // Lot 450 — vérification scolaire gratuite, indépendante de l'abonnement.
-ok(msgjs.includes('رقم التسجيل المدرسي (مجاني)'), 'formulaire Messenger indique la vérification scolaire gratuite');
-ok(sbjs.includes('async function msgRequestVerification(schoolRegistrationNumber, section)'), 'fonction de demande de vérification scolaire présente');
+ok(msgjs.includes('رقم التسجيل المدرسي') && msgjs.includes('التحقق المدرسي مجاني'), 'formulaire Messenger indique la vérification scolaire gratuite');
+ok(sbjs.includes('async function msgRequestVerification(schoolRegistrationNumber, section, cardPath)'), 'fonction de demande de vérification scolaire présente');
 ok(sbjs.includes("update({ verif_statut:'en_attente', matricule:number"), 'demande déposée sur le profil du compte courant');
 ok(!msgjs.includes('رقم الاشتراك') && !msgjs.includes('رقم اشتراك'), 'aucun ancien libellé abonnement dans le parcours de vérification');
 ok(msgjs.includes('رقم التسجيل المدرسي') && msgjs.includes('التحقق المدرسي مجاني'), 'parcours de vérification gratuit et libellé scolaire cohérent');
@@ -213,7 +216,7 @@ if (fail.length) { console.error('::error:: check-msg Lot 360 : ' + fail.length 
 
 ok(msgjs.includes('msg-pro-hero') && msgjs.includes('msg-pro-stats'), 'nouvelle hiérarchie pédagogique Messenger');
 ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجموعة '("), 'libellé de groupe construit sans appel de chaîne invalide');
-ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key]')"), 'filtres Messenger accessibles via délégation de clic');
+ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-verif-page],[data-mod]')"), 'filtres Messenger accessibles via délégation de clic');
 ok(idx.includes('style-prototype-dz.css?v=204') && idx.includes('msg.js?v=3534'), 'versions de ressources Messenger actualisées');
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.184'") && sw.includes('./style-prototype-dz.css?v=204') && sw.includes('./msg.js?v=3534'), 'précache synchronisé avec la nouvelle interface');
 
@@ -228,7 +231,7 @@ ok(insertStart >= 0 && insertEnd > insertStart &&
    insertHandler.includes('eventRenderEpoch!==state.renderEpoch') &&
    insertHandler.includes("el('msgBody').querySelector('.msg-thread')") &&
    insertHandler.includes('currentThread.isConnected') &&
-   insertHandler.includes("currentThread.querySelector('[data-mid="'+m.id+'"]')"),
+   insertHandler.includes(`currentThread.querySelector('[data-mid="'+m.id+'"]')`),
    'INSERT Realtime : DOM courant revalidé après les lectures asynchrones, sans écriture dans un fil détaché');
 
 
@@ -314,7 +317,7 @@ ok(msgjs.includes('scheduleInviteRecovery();') &&
 ok(/client\.auth\.onAuthStateChange\(function\(event\)/.test(msgjs) &&
    msgjs.includes("if(event!=='SIGNED_IN' && event!=='SIGNED_OUT') return;"),
    'Messenger observe les changements de session sans intercepter le renouvellement normal du jeton');
-ok(msgjs.includes('if(authClient!==client) return;') &&
+ok(msgjs.includes('if(authClient!==client || state.authEpoch!==transitionEpoch) return;') &&
    msgjs.includes("if(event==='SIGNED_OUT'){"),
    'changement de compte : ancien client ignoré et déconnexion traitée');
 ok(msgjs.includes('if(state.inviteViewActive) renderList();') &&
@@ -397,7 +400,7 @@ ok(/create table if not exists public\.msg_messages \([\s\S]*?id bigint generate
 const sendStart = msgjs.indexOf('async function send(){');
 const sendEnd = msgjs.indexOf('\n  function scheduleThreadRecovery()', sendStart);
 const sendFn = msgjs.slice(sendStart, sendEnd);
-ok(sendStart >= 0 && sendEnd > sendStart && /if\(state\.conv!==conv\) return;/.test(sendFn),
+ok(sendStart >= 0 && sendEnd > sendStart && /if\(state\.conv!==conv \|\| state\.authEpoch!==identityEpoch\) return;/.test(sendFn),
    'envoi terminé après navigation : aucun retour forcé à l’ancienne conversation');
 ok(sendFn.includes('try{') && sendFn.includes('catch(error)') && sendFn.includes('currentButton.disabled=false'),
    'erreur réseau d’envoi traitée sans laisser le bouton bloqué');
@@ -416,8 +419,8 @@ ok(/epoch!==state\.channelEpoch \|\| state\.conv!==id/.test(msgjs),
    'présence ignore un canal obsolète');
 ok(msgjs.includes("st2==='CHANNEL_ERROR' || st2==='TIMED_OUT' || st2==='CLOSED'"),
    'états CHANNEL_ERROR, TIMED_OUT et CLOSED signalés');
-ok(msgjs.includes("window.addEventListener('online', scheduleThreadRecovery)") &&
-   msgjs.includes("window.addEventListener('pageshow', scheduleThreadRecovery)") &&
+ok(msgjs.includes("window.addEventListener('online', function(){\n    scheduleThreadRecovery();\n    scheduleInviteRecovery();\n  })") &&
+   msgjs.includes("window.addEventListener('pageshow', function(){\n    scheduleThreadRecovery();\n    scheduleInviteRecovery();\n  })") &&
    msgjs.includes("document.addEventListener('visibilitychange'"),
    'reprise réseau, retour de page et visibilité déclenchent une réconciliation');
 ok(msgjs.includes('renderThread(id).catch(function(){})'),
@@ -459,11 +462,11 @@ ok(sbjs.includes("from('cartes-scolaires').upload") && sbjs.includes('carte_scol
 ok(sbjs.includes("select('carte_scolaire_path')") && sbjs.includes('remove([cardPath])') && sbjs.includes('remove([oldPath])'), 'nettoyage du nouvel upload si échec et remplacement de l’ancienne carte');
 ok(sbjs.includes(".select('id').maybeSingle()") && sbjs.includes("if(r.error || !r.data)"), 'demande de vérification confirmée uniquement si une ligne profil a été mise à jour');
 ok(msgjs.includes('id="vfCard"') && msgjs.includes('msgUploadSchoolCard(cardFile)'), 'formulaire étudiant : justificatif obligatoire avant envoi');
-ok(adminjs.includes("missing.push('البطاقة المدرسية')") && adminjs.includes('data-adm-verif-doc'), 'file administrative : pièce obligatoire et bouton de consultation');
-const uploadStart = sbjs.indexOf('async function msgUpload(');
-const uploadEnd = sbjs.indexOf('async function msgAttachmentInfos(', uploadStart);
-const uploadMethod = sbjs.slice(uploadStart, uploadEnd);
-ok(uploadStart >= 0 && uploadEnd > uploadStart &&
+ok(adminjs.includes("missing.push('البطاقة المدرسية أو مسارها غير صالح')") && adminjs.includes('data-adm-verif-doc'), 'file administrative : pièce obligatoire et bouton de consultation');
+const uploadCleanupStart = sbjs.indexOf('async function msgUpload(');
+const uploadCleanupEnd = sbjs.indexOf('async function msgAttachmentInfos(', uploadCleanupStart);
+const uploadMethod = sbjs.slice(uploadCleanupStart, uploadCleanupEnd);
+ok(uploadCleanupStart >= 0 && uploadCleanupEnd > uploadCleanupStart &&
    uploadMethod.includes("storage.from('prive').remove([path])") &&
    uploadMethod.includes("probeMessage.data.attachment_id===attachmentId") &&
    uploadMethod.includes("from('msg_attachments').delete()"),
