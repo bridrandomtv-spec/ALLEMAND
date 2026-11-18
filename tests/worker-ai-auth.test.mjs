@@ -92,12 +92,12 @@ function harness(options = {}){
         if(options.corpusVectorResponse) return options.corpusVectorResponse;
         const corpusData = options.corpusDocumentData || {
           version:1,
-          documents:[{ id:'pdf-0123456789abcdef', title:'Cours allemand autorisé',
+          documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Cours allemand autorisé',
             license:'production_propre', rights_confirmed:true }],
           chunks:[
-            { id:'pdf-0123456789abcdef-p1-c0', document_id:'pdf-0123456789abcdef',
+            { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:1, part:0, text:'Der Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
-            { id:'pdf-0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef',
+            { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:2, part:0, text:'Die Familie und die Schule sind wichtige Themen.' }
           ]
         };
@@ -118,12 +118,12 @@ function harness(options = {}){
         if(options.corpusDocumentResponse) return options.corpusDocumentResponse;
         return new Response(JSON.stringify(options.corpusDocumentData || {
           version:1,
-          documents:[{ id:'pdf-0123456789abcdef', title:'Cours allemand autorisé',
+          documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Cours allemand autorisé',
             license:'production_propre', rights_confirmed:true }],
           chunks:[
-            { id:'pdf-0123456789abcdef-p1-c0', document_id:'pdf-0123456789abcdef',
+            { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:1, part:0, text:'Der Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
-            { id:'pdf-0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef',
+            { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:2, part:0, text:'Die Familie und die Schule sind wichtige Themen.' }
           ]
         }), { status:200, headers:{ 'Content-Type':'application/json' } });
@@ -824,7 +824,7 @@ test('le Worker refuse un document officiel si le Worker du site signale un verr
 test('ia.js résout un identifiant PDF et déclenche une recherche naturelle sans identifiant', () => {
   const resolvers = loadCorpusDocumentResolvers();
   assert.deepEqual(JSON.parse(JSON.stringify(resolvers.document('Explique le PDF pdf-0123456789ABCDEF.'))), {
-    type:'corpus_document', id:'pdf-0123456789abcdef'
+    type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
   });
   assert.equal(resolvers.document('Explique ce document.'), null);
   assert.deepEqual(JSON.parse(JSON.stringify(resolvers.search('Explique le Perfekt dans les documents PDF.'))), { type:'corpus_search' });
@@ -835,8 +835,8 @@ test('ia.js résout un identifiant PDF et déclenche une recherche naturelle san
 test('le Worker récupère les chunks PDF côté serveur avec JWT et limite le contexte', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }] });
   const response = await h.context.__worker.fetch(request({
-    q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef.',
-    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+    q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   assert.equal(response.status, 200);
   const call = h.calls.find(x => x.url.includes('/assets/bdd/corpus_rag_chunks.json'));
@@ -850,14 +850,14 @@ test('le Worker récupère les chunks PDF côté serveur avec JWT et limite le c
 test('le Worker recherche naturellement dans tous les PDF autorisés sans identifiant technique', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
     documents:[
-      { id:'pdf-0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
-      { id:'pdf-aaaaaaaaaaaaaaaa', title:'Identité et école', license:'production_propre', rights_confirmed:true },
-      { id:'pdf-bbbbbbbbbbbbbbbb', title:'Document utilisateur', license:'document_utilisateur', rights_confirmed:true }
+      { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
+      { id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', title:'Identité et école', license:'production_propre', rights_confirmed:true },
+      { id:'pdf-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', title:'Document utilisateur', license:'document_utilisateur', rights_confirmed:true }
     ],
     chunks:[
-      { id:'chunk-perfekt', document_id:'pdf-0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
-      { id:'chunk-family', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Familie und die Schule sind wichtige Themen.' },
-      { id:'chunk-unallowed', document_id:'pdf-bbbbbbbbbbbbbbbb', page:1, text:'Das Perfekt wird mit haben oder sein gebildet. Unberechtigtes Dokument.' }
+      { id:'chunk-perfekt', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
+      { id:'chunk-family', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', page:2, text:'Die Familie und die Schule sind wichtige Themen.' },
+      { id:'chunk-unallowed', document_id:'pdf-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', page:1, text:'Das Perfekt wird mit haben oder sein gebildet. Unberechtigtes Dokument.' }
     ]
   }});
   const response = await h.context.__worker.fetch(request({
@@ -879,22 +879,22 @@ test('la recherche vectorielle hybride retrouve un passage sémantique sans corr
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
     corpusDocumentData:{
       documents:[
-        { id:'pdf-0123456789abcdef', title:'Identité et appartenance', license:'cc_by', rights_confirmed:true },
-        { id:'pdf-aaaaaaaaaaaaaaaa', title:'École et famille', license:'production_propre', rights_confirmed:true },
-        { id:'pdf-bbbbbbbbbbbbbbbb', title:'Document non autorisé', license:'document_utilisateur', rights_confirmed:true }
+        { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Identité et appartenance', license:'cc_by', rights_confirmed:true },
+        { id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', title:'École et famille', license:'production_propre', rights_confirmed:true },
+        { id:'pdf-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', title:'Document non autorisé', license:'document_utilisateur', rights_confirmed:true }
       ],
       chunks:[
-        { id:'chunk-identity', document_id:'pdf-0123456789abcdef', page:3, text:'Die persönliche Identität wird durch Sprache und Zugehörigkeit geprägt.' },
-        { id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Schule und die Familie begleiten die Jugendlichen.' },
-        { id:'chunk-private', document_id:'pdf-bbbbbbbbbbbbbbbb', page:1, text:'Private Identitätsdaten dürfen nicht veröffentlicht werden.' }
+        { id:'chunk-identity', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:3, text:'Die persönliche Identität wird durch Sprache und Zugehörigkeit geprägt.' },
+        { id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', page:2, text:'Die Schule und die Familie begleiten die Jugendlichen.' },
+        { id:'chunk-private', document_id:'pdf-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', page:1, text:'Private Identitätsdaten dürfen nicht veröffentlicht werden.' }
       ]
     },
     corpusVectorData:{
       version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
       vectors:[
-        { chunk_id:'chunk-identity', document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
-        { chunk_id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', embedding:[0,1,...new Array(254).fill(0)] },
-        { chunk_id:'chunk-private', document_id:'pdf-bbbbbbbbbbbbbbbb', embedding:[1,...new Array(255).fill(0)] }
+        { chunk_id:'chunk-identity', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
+        { chunk_id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', embedding:[0,1,...new Array(254).fill(0)] },
+        { chunk_id:'chunk-private', document_id:'pdf-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', embedding:[1,...new Array(255).fill(0)] }
       ]
     }
   });
@@ -923,19 +923,19 @@ test('la recherche hybride accepte des questions arabe, darija, arabizi et fran�
       subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
       corpusDocumentData:{
         documents:[
-          { id:'pdf-0123456789abcdef', title:'Identité et appartenance', license:'cc_by', rights_confirmed:true },
-          { id:'pdf-aaaaaaaaaaaaaaaa', title:'École et famille', license:'production_propre', rights_confirmed:true }
+          { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Identité et appartenance', license:'cc_by', rights_confirmed:true },
+          { id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', title:'École et famille', license:'production_propre', rights_confirmed:true }
         ],
         chunks:[
-          { id:'chunk-identity', document_id:'pdf-0123456789abcdef', page:3, text:'Die persönliche Identität wird durch Sprache und Zugehörigkeit geprägt.' },
-          { id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Schule und die Familie begleiten die Jugendlichen.' }
+          { id:'chunk-identity', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:3, text:'Die persönliche Identität wird durch Sprache und Zugehörigkeit geprägt.' },
+          { id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', page:2, text:'Die Schule und die Familie begleiten die Jugendlichen.' }
         ]
       },
       corpusVectorData:{
         version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
         vectors:[
-          { chunk_id:'chunk-identity', document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
-          { chunk_id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', embedding:[0,1,...new Array(254).fill(0)] }
+          { chunk_id:'chunk-identity', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
+          { chunk_id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', embedding:[0,1,...new Array(254).fill(0)] }
         ]
       }
     });
@@ -967,10 +967,10 @@ test('le RAG refuse deux documents portant le même identifiant', async () => {
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
     corpusDocumentData:{
       documents:[
-        { id:'pdf-0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true },
-        { id:'pdf-0123456789abcdef', title:'Document non autorisé', license:'document_utilisateur', rights_confirmed:false }
+        { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true },
+        { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Document non autorisé', license:'document_utilisateur', rights_confirmed:false }
       ],
-      chunks:[{ id:'chunk-1', document_id:'pdf-0123456789abcdef', page:1, text:'Texte.' }]
+      chunks:[{ id:'chunk-1', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:1, text:'Texte.' }]
     }
   });
   const response = await h.context.__worker.fetch(request({
@@ -985,10 +985,10 @@ test('le RAG refuse deux chunks portant le même identifiant', async () => {
   const h = harness({
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
     corpusDocumentData:{
-      documents:[{ id:'pdf-0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true }],
+      documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true }],
       chunks:[
-        { id:'chunk-duplicate', document_id:'pdf-0123456789abcdef', page:1, text:'Texte initial.' },
-        { id:'chunk-duplicate', document_id:'pdf-0123456789abcdef', page:2, text:'Texte ambigu.' }
+        { id:'chunk-duplicate', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:1, text:'Texte initial.' },
+        { id:'chunk-duplicate', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:2, text:'Texte ambigu.' }
       ]
     }
   });
@@ -1007,8 +1007,8 @@ test('un artefact vectoriel périmé est ignoré et BM25 reste disponible', asyn
     corpusVectorData:{
       version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
       source_chunks_sha256:'0'.repeat(64),
-      vectors:[{ chunk_id:'pdf-0123456789abcdef-p1-c0',
-        document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] }]
+      vectors:[{ chunk_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0',
+        document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', embedding:[1,...new Array(255).fill(0)] }]
     }
   });
   const response = await h.context.__worker.fetch(request({
@@ -1026,13 +1026,13 @@ test('une panne des embeddings conserve le repli BM25', async () => {
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
     corpusVectorData:{
       version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
-      vectors:[{ chunk_id:'pdf-0123456789abcdef-p1-c0',
-        document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] }]
+      vectors:[{ chunk_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0',
+        document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', embedding:[1,...new Array(255).fill(0)] }]
     }
   });
   const response = await h.context.__worker.fetch(request({
-    q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef.',
-    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+    q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   assert.equal(response.status,200);
   assert.match(h.messages[1].content,/Der Perfekt wird/);
@@ -1057,12 +1057,12 @@ test('les alias arabes et français ne contournent pas les règles grammaticales
 test('la recherche PDF relie les formulations arabes et françaises aux termes allemands', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
     documents:[
-      { id:'pdf-0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
-      { id:'pdf-aaaaaaaaaaaaaaaa', title:'Präsens', license:'production_propre', rights_confirmed:true }
+      { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
+      { id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', title:'Präsens', license:'production_propre', rights_confirmed:true }
     ],
     chunks:[
-      { id:'chunk-perfekt-fr', document_id:'pdf-0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
-      { id:'chunk-prasens-fr', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Das Präsens beschreibt Handlungen in der Gegenwart.' }
+      { id:'chunk-perfekt-fr', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
+      { id:'chunk-prasens-fr', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', page:2, text:'Das Präsens beschreibt Handlungen in der Gegenwart.' }
     ]
   }});
   const response = await h.context.__worker.fetch(request({
@@ -1089,7 +1089,7 @@ test('la recherche naturelle PDF refuse un sélecteur avec identifiant ou champ 
   const h = harness();
   const response = await h.context.__worker.fetch(request({
     q:'Explique ce document.',
-    resource:{ type:'corpus_search', id:'pdf-0123456789abcdef' }
+    resource:{ type:'corpus_search', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   assert.equal(response.status, 400);
   assert.equal(h.messages, null);
@@ -1099,8 +1099,8 @@ test('la recherche naturelle PDF refuse un sélecteur avec identifiant ou champ 
 test('le Worker refuse un PDF verrouillé par le Worker du site avant le modèle', async () => {
   const h = harness({ corpusDocumentResponse:new Response('{"error":"abonnement_requis"}', { status:403 }) });
   const response = await h.context.__worker.fetch(request({
-    q:'Explique le PDF pdf-0123456789abcdef.',
-    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+    q:'Explique le PDF pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   const payload = await response.json();
   assert.equal(response.status, 403);
@@ -1110,12 +1110,12 @@ test('le Worker refuse un PDF verrouillé par le Worker du site avant le modèle
 
 test('le Worker refuse un PDF sans licence autorisée', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
-    documents:[{ id:'pdf-0123456789abcdef', title:'Livre éditeur', license:'document_utilisateur', rights_confirmed:true }],
-    chunks:[{ id:'chunk-unlicensed', document_id:'pdf-0123456789abcdef', page:1, text:'Contenu privé suffisamment long.' }]
+    documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Livre éditeur', license:'document_utilisateur', rights_confirmed:true }],
+    chunks:[{ id:'chunk-unlicensed', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:1, text:'Contenu privé suffisamment long.' }]
   }});
   const response = await h.context.__worker.fetch(request({
-    q:'Explique le PDF pdf-0123456789abcdef.',
-    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+    q:'Explique le PDF pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   assert.equal(response.status, 404);
   assert.equal(h.messages, null);
@@ -1125,7 +1125,7 @@ test('le Worker rejette un sélecteur PDF falsifié avec champ supplémentaire',
   const h = harness();
   const response = await h.context.__worker.fetch(request({
     q:'Explique ce PDF.',
-    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef', url:'https://evil.example/file.pdf' }
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', url:'https://evil.example/file.pdf' }
   }), h.env);
   assert.equal(response.status, 400);
   assert.equal(h.messages, null);
