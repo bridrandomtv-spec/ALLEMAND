@@ -75,6 +75,8 @@ class VectorBuilderTests(unittest.TestCase):
         )
         self.assertEqual(len(seen), 1)
         self.assertEqual(artifact["vectors"][0]["chunk_id"], "c1")
+        self.assertEqual(artifact["vectors"][0]["document_id"], "doc-ok")
+        self.assertNotIn("doc_id", artifact["vectors"][0])
         self.assertEqual(artifact["normalization"], "l2")
         self.assertEqual(artifact["source_chunks_sha256"], MODULE.sha256_bytes(b"chunks"))
 
