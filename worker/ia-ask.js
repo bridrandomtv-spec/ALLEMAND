@@ -498,7 +498,7 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 7000);
   try{
-    const response = await fetch('https://allemand.bridrandomtv.workers.dev/assets/bdd/corpus_rag_chunks.json', {
+    const response = await fetch('https://allemand.brid-randomtv.workers.dev/assets/bdd/corpus_rag_chunks.json', {
       method:'GET',
       headers:{ 'Authorization':req.headers.get('Authorization') || '', 'Accept':'application/json' },
       redirect:'error', signal:controller.signal
@@ -508,9 +508,25 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
     if(!response.ok) return { ok:false, status:503, error:'access-unavailable' };
     const raw = await response.text();
     if(!raw || raw.length > 1500000) return { ok:false, status:503, error:'access-unavailable' };
+    /* Le manifeste est le marqueur de cohérence du couple publié. */
+    const manifestResponse = await fetch('https://allemand.brid-randomtv.workers.dev/assets/bdd/corpus_rag_manifest.json', {
+      method:'GET',
+      headers:{ 'Authorization':req.headers.get('Authorization') || '', 'Accept':'application/json' },
+      redirect:'error', signal:controller.signal
+    });
+    if(!manifestResponse.ok) return { ok:false, status:503, error:'access-unavailable' };
+    const manifestRaw = await manifestResponse.text();
+    if(!manifestRaw || manifestRaw.length > 200000) return { ok:false, status:503, error:'access-unavailable' };
+    const manifest = JSON.parse(manifestRaw);
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+    const chunksHash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2,'0')).join('');
+    if(!manifest || manifest.version !== 1 || manifest.chunks_sha256 !== chunksHash)
+      return { ok:false, status:503, error:'access-unavailable' };
     const data = JSON.parse(raw);
     const docs = data && Array.isArray(data.documents) ? data.documents : [];
     const chunks = data && Array.isArray(data.chunks) ? data.chunks : [];
+    if(manifest.document_count !== docs.length || manifest.chunk_count !== chunks.length)
+      return { ok:false, status:503, error:'access-unavailable' };
     if(chunks.length > 12000) return { ok:false, status:503, error:'access-unavailable' };
     /* Les identifiants servent de clé de jointure entre documents, chunks et
        vecteurs. Toute collision rendrait la provenance ambiguë : refus fermé. */
