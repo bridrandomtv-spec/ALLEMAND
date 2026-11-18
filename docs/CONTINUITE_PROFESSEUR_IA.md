@@ -725,3 +725,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le Worker invalide maintenant l'index vectoriel complet dès qu'un chunk candidat est associé à un document différent de celui du corpus, ou qu'un identifiant candidat est dupliqué. Il conserve le repli BM25 et n'appelle pas le modèle d'embedding.
 - Test de régression ajouté : une entrée contradictoire suivie d'une entrée apparemment valide pour le même chunk doit invalider l'index complet.
 - Modifications limitées à `worker/ia-ask.js`, `tests/worker-ai-auth.test.mjs` et ce dossier de continuité. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucun OCR, aucun embedding réel, aucune fusion et aucun déploiement.
+
+
+### Lot 646 — cohérence cryptographique entre corpus et manifeste — 18/11/2026
+- L'ingestion remplace deux fichiers distincts ; une interruption entre les opérations peut laisser un état intermédiaire. Deux renommages indépendants ne constituent pas une transaction atomique.
+- Le générateur calcule `chunks_sha256` sur les octets UTF-8 exacts du corpus et l'inscrit dans le manifeste avec les compteurs de documents et chunks.
+- Le Worker récupère le manifeste avec le JWT, recalcule l'empreinte du corpus brut et refuse en `503 access-unavailable` si l'empreinte, la version ou les compteurs diffèrent. Un état intermédiaire n'est donc pas servi comme corpus valide. Ce contrôle fail-closed ne prétend pas rendre le système de fichiers atomique.
+- Le harnais Worker génère un manifeste cohérent pour ses fixtures ; un test d'ingestion vérifie l'empreinte exacte des octets écrits.
+- Aucun OCR ni embedding réel, aucun droit documentaire présumé, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement, aucune fusion et aucun déploiement.
