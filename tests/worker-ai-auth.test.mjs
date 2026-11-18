@@ -839,6 +839,27 @@ test('le Worker recherche naturellement dans tous les PDF autorisés sans identi
   assert.doesNotMatch(h.messages[1].content, /Unberechtigtes Dokument|Document utilisateur/);
 });
 
+test('la recherche PDF relie les formulations arabes et françaises aux termes allemands', async () => {
+  const h = harness({ corpusDocumentData:{
+    documents:[
+      { id:'pdf-0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
+      { id:'pdf-aaaaaaaaaaaaaaaa', title:'Präsens', license:'production_propre', rights_confirmed:true }
+    ],
+    chunks:[
+      { document_id:'pdf-0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
+      { document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Das Präsens beschreibt Handlungen in der Gegenwart.' }
+    ]
+  }});
+  const response = await h.context.__worker.fetch(request({
+    q:'اشرح الماضي المركب في ملفات PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.match(h.messages[1].content, /Grammaire Perfekt/);
+  assert.match(h.messages[1].content, /Das Perfekt wird mit haben oder sein/);
+  assert.doesNotMatch(h.messages[1].content, /Das Präsens beschreibt/);
+});
+
 test('la recherche naturelle PDF refuse tout accès si le Worker du site bloque le corpus', async () => {
   const h = harness({ corpusDocumentResponse:new Response('{"error":"abonnement_requis"}', { status:403 }) });
   const response = await h.context.__worker.fetch(request({
