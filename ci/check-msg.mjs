@@ -228,7 +228,7 @@ ok(insertStart >= 0 && insertEnd > insertStart &&
    insertHandler.includes('eventRenderEpoch!==state.renderEpoch') &&
    insertHandler.includes("el('msgBody').querySelector('.msg-thread')") &&
    insertHandler.includes('currentThread.isConnected') &&
-   insertHandler.includes("currentThread.querySelector('[data-mid="'+m.id+'"]')"),
+   insertHandler.includes(`currentThread.querySelector('[data-mid="'+m.id+'"]')`),
    'INSERT Realtime : DOM courant revalidé après les lectures asynchrones, sans écriture dans un fil détaché');
 
 
