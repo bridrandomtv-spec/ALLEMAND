@@ -962,37 +962,71 @@ async function verifieAccesContenuIA(question){
   var unit = uniteExpliciteIA(q);
   var lesson = sessionIA(q);
   if(unit == null && lesson != null) unit = uniteCouranteIA();
+  var label = trouveRegle(q);
+  var unitScoped = unit != null && lesson == null;
+  var lessonScoped = unit != null && lesson != null;
+
+  /* Une unité entière ou une règle non rattachée à une séance exige une
+     preuve d'accès. Le professeur IA reste disponible, mais ne remplace
+     jamais le contrôle d'accès aux contenus. */
+  if(!window.ACCESS){
+    if(conjugationRequest || unitScoped || lessonScoped || label){
+      return {locked:true,html:'<b>🔒 لا يمكن شرح هذا المحتوى قبل التحقق من صلاحية الوصول إلى الوحدة أو الدرس المرتبط به.</b>'};
+    }
+    return null;
+  }
 
   if(/(?:seite|page|صفحة|ص)\s*\d+/i.test(q)){
     var pageResult = await intentLecture(q);
     if(typeof pageResult === 'string' && pageResult.indexOf('🔒') !== -1)
       return {locked:true,html:'<b>' + esc(pageResult) + '</b>'};
   }
-  try{ if(typeof ACCESS.refresh === 'function') await ACCESS.refresh(); }catch(e){}
-  if(unit != null && lesson != null && typeof ACCESS.canAccessLesson === 'function'
-     && !ACCESS.canAccessLesson(unit, lesson)){
-    try{ ACCESS.paywall({type:'seance',unite:unit,seance:lesson}); }catch(e){}
-    return {locked:true,html:'<b>🔒 هذه الحصة ضمن محتوى المشتركين. الأستاذ الذكي متاح لك، لكن لا يمكنه شرح محتوى هذه الحصة قبل فتحها.</b>'};
+  var accessReady = false;
+  try{
+    if(typeof ACCESS.refresh === 'function'){
+      await ACCESS.refresh();
+      accessReady = true;
+    }
+  }catch(e){}
+  if((unitScoped || lessonScoped || label || conjugationRequest) && !accessReady){
+    return {locked:true,html:'<b>🔒 تعذّر التحقق من صلاحية الوصول. لا يمكن كشف هذا المحتوى الآن.</b>'};
+  }
+  if(lessonScoped){
+    if(typeof ACCESS.canAccessLesson !== 'function' || !ACCESS.canAccessLesson(unit, lesson)){
+      try{ if(ACCESS.paywall) ACCESS.paywall({type:'seance',unite:unit,seance:lesson}); }catch(e){}
+      return {locked:true,html:'<b>🔒 هذه الحصة ضمن محتوى المشتركين. الأستاذ الذكي متاح لك، لكن لا يمكنه شرح محتوى هذه الحصة قبل فتحها.</b>'};
+    }
+  }
+  if(unitScoped){
+    var unitEnt = typeof ACCESS.entitlement === 'function' ? ACCESS.entitlement() : null;
+    if(!unitEnt || unitEnt.ok !== true || unitEnt.src !== 'backend'){
+      try{ if(ACCESS.paywall) ACCESS.paywall({type:'lesson',unite:unit,seance:null}); }catch(e){}
+      return {locked:true,html:'<b>🔒 شرح الوحدة كاملة متاح بعد التحقق من اشتراك فعّال. يمكن للأستاذ مساعدتك في الأسئلة العامة.</b>'};
+    }
   }
   var type = await matchType(q);
   if(type && type.id === 'fard'){
     var quizUnit = unit != null ? unit : uniteCouranteIA();
-    if(quizUnit != null && typeof ACCESS.canAccessQuiz === 'function' && !ACCESS.canAccessQuiz(quizUnit)){
-      try{ ACCESS.paywall({type:'quiz',unite:quizUnit}); }catch(e){}
-      return {locked:true,html:'<b>🔒 هذا الفرض/الاختبار ضمن محتوى المشتركين. لا يمكن للأستاذ الذكي كشف أسئلته أو تصحيحه قبل فتحه.</b>'};
+    if(quizUnit != null && (typeof ACCESS.canAccessQuiz !== 'function' || !ACCESS.canAccessQuiz(quizUnit))){
+      try{ if(ACCESS.paywall) ACCESS.paywall({type:'quiz',unite:quizUnit}); }catch(e){}
+      return {locked:true,html:'<b>🔒 هذا الفرض/الاختبار ضمن محتوى المشتركين. لا يمكن للأستاذ الذكي كشف أسئلته أو تصحيحه قبل فتحها.</b>'};
     }
   }
-  var label = trouveRegle(q);
   var target = null;
   if(conjugationRequest){
     target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), verb, true);
   }else if(label){
     target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), label, false);
   }
+  if(label && !target){
+    try{ if(ACCESS.paywall) ACCESS.paywall({type:'lesson',unite:unit,seance:lesson}); }catch(e){}
+    return {locked:true,html:'<b>🔒 لم أتمكن من ربط هذه القاعدة بدرس يمكن التحقق من صلاحية الوصول إليه. لن أكشف محتواها دون تحقق.</b>'};
+  }
   if(target){
+    var ent = typeof ACCESS.entitlement === 'function' ? ACCESS.entitlement() : null;
     var allowed = target.lesson != null
-      ? ACCESS.canAccessLesson(target.unit, target.lesson)
-      : !!(ACCESS.entitlement && ACCESS.entitlement().ok);
+      ? (typeof ACCESS.canAccessLesson === 'function' && ACCESS.canAccessLesson(target.unit, target.lesson))
+      : !!(ent && ent.ok === true && ent.src === 'backend');
     if(!allowed){
       try{ ACCESS.paywall({type:'lesson',unite:target.unit,seance:target.lesson||null}); }catch(e){}
       return {locked:true,html:'<b>🔒 هذه القاعدة/التصريف مرتبط بحصة محمية. الأستاذ الذكي متاح، لكن لا يمكنه تقديم شرح هذا المحتوى قبل فتح الحصة.</b>'};
