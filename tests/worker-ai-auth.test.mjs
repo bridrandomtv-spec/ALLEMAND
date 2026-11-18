@@ -36,7 +36,8 @@ function harness(options = {}){
       ...doc, chunk_count:Object.prototype.hasOwnProperty.call(doc,'chunk_count') ? doc.chunk_count : (counts.get(doc.id) || 0)
     })) };
   };
-  const calls = [];\n  let corpusRaw = null;
+  const calls = [];
+  let corpusRaw = null;
   const aiCalls = [];
   let messages = null;
   const context = {
