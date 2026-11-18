@@ -809,3 +809,5 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les résumés `free_summary` explicitement gratuits restent exclus de cette règle de blocage, conformément au Worker et à ses tests existants.
 - Tests RAG ajoutés pour Genitiv en français, nominalisation en arabe avec diacritiques, absence d'ACCESS, absence d'entitlement actif et conservation d'un résumé gratuit. La validation CI du dernier commit reste à obtenir.
 - Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion ni déploiement. PR #23 reste ouverte et en brouillon.
+
+- Extension Lot 651 après CI : la suite existante attendait que `تمارين الوحدة 2` soit autorisé côté client, alors que le Worker le classe comme exercice d'une unité payante. Le garde local utilise maintenant `ACCESS.canAccessQuiz` pour toute demande d'exercices/évaluation rattachée à une unité. Le test distingue explicitement l'unité 1 gratuite (autorisée) de l'unité 2 payante (refusée). La banque générale gratuite sans unité reste disponible.
