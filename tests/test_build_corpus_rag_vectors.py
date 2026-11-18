@@ -134,6 +134,22 @@ class VectorBuilderTests(unittest.TestCase):
             self.assertEqual(chunks, [])
             api.assert_not_called()
 
+    def test_cli_refuses_output_path_that_would_overwrite_chunks_source(self):
+        corpus, manifest = fixture()
+        with tempfile.TemporaryDirectory() as tmp:
+            chunks_path, manifest_path = Path(tmp)/"chunks.json", Path(tmp)/"manifest.json"
+            chunks_path.write_text(json.dumps(corpus), encoding="utf-8")
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            original_chunks = chunks_path.read_bytes()
+            with patch.object(MODULE, "call_cloudflare") as api:
+                code = MODULE.main([
+                    "--chunks", str(chunks_path), "--manifest", str(manifest_path),
+                    "--output", str(chunks_path)
+                ])
+            self.assertEqual(code, 1)
+            self.assertEqual(chunks_path.read_bytes(), original_chunks)
+            api.assert_not_called()
+
     def test_default_cli_is_dry_run_and_never_calls_api(self):
         corpus, manifest = fixture()
         with tempfile.TemporaryDirectory() as tmp:
