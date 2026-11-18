@@ -1119,6 +1119,15 @@ async function reponsePedagogique(q, meta){
     }catch(e){ _qust = null; }
     const _lock = await verifieAccesContenuIA(rawQuestion);
     if(_lock) return _lock;
+    /* Ontologie activée en mode abstention seulement : aucune réponse statique
+       n'est produite ici. Un ex aequo demande une précision à l'élève. */
+    const _intentMatch = await matchOnto(q);
+    if(_intentMatch && _intentMatch.ambiguous){
+      return {
+        ambiguousIntent:true,
+        html:'<b>🤔 سؤالك يحتمل أكثر من طلب.</b><div>هل تريد شرح درس، تلخيصه، أم أمثلة أو تمارين؟ حدّد طلبك والوحدة أو الحصة حتى أجيبك بدقة.</div>'
+      };
+    }
     const _bib = await intentBiblio(q);
     if(_bib) return _bib;
     const _kh = intentKharif(q);
