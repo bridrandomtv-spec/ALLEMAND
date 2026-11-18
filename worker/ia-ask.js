@@ -486,7 +486,7 @@ async function fetchAuthorizedOfficialDocument(resource, req){
   finally{ clearTimeout(timer); }
 }
 
-async function fetchAuthorizedCorpusDocument(resource, req, question){
+async function fetchAuthorizedCorpusDocument(resource, req, question, env){
   const isSearch = resource && resource.type === 'corpus_search';
   if(!resource || typeof resource !== 'object' || Array.isArray(resource)
      || Object.keys(resource).some(k => !['type','id'].includes(k))
@@ -568,7 +568,7 @@ async function fetchAuthorizedCorpusDocument(resource, req, question){
       documentFrequency.set(term, candidates.reduce((sum,item) =>
         sum + (item.frequencies.has(term) ? 1 : 0),0));
     }
-    const ranked = candidates.map(item => {
+    const lexicalRanked = candidates.map(item => {
       let score = 0;
       for(const [term,weight] of queryTerms){
         const tf = item.frequencies.get(term) || 0;
@@ -580,8 +580,85 @@ async function fetchAuthorizedCorpusDocument(resource, req, question){
       }
       return { chunk:item.chunk, doc:item.doc, score };
     }).filter(item => item.score > 0)
-      .sort((a,b) => b.score - a.score || Number(a.chunk.page || 0) - Number(b.chunk.page || 0))
-      .slice(0,4);
+      .sort((a,b) => b.score - a.score || Number(a.chunk.page || 0) - Number(b.chunk.page || 0));
+    let ranked = lexicalRanked.slice(0,4);
+
+    /* Recherche vectorielle strictement facultative. Le drapeau est absent/désactivé
+       par défaut : aucune inférence d'embedding ni consommation de quota en production.
+       Les vecteurs ne sont jamais une preuve de droit ; seuls les chunks déjà filtrés
+       par licence + rights_confirmed peuvent entrer dans le classement. */
+    if(env && env.RAG_VECTOR_ENABLED === 'true' && env.AI
+       && typeof env.AI.run === 'function' && candidates.length){
+      try{
+        const vectorResponse = await fetch('https://allemand.brid-randomtv.workers.dev/assets/bdd/corpus_rag_vectors.json', {
+          method:'GET',
+          headers:{ 'Authorization':req.headers.get('Authorization') || '', 'Accept':'application/json' },
+          redirect:'error', signal:controller.signal
+        });
+        if(vectorResponse.ok){
+          const vectorRaw = await vectorResponse.text();
+          if(vectorRaw && vectorRaw.length <= 20000000){
+            const vectorData = JSON.parse(vectorRaw);
+            const candidateById = new Map(candidates.map(item => [item.chunk.id, item]));
+            const vectorById = new Map();
+            if(vectorData && vectorData.version === 1
+               && vectorData.model === '@cf/google/embeddinggemma-2'
+               && vectorData.dimensions === 256
+               && Array.isArray(vectorData.vectors) && vectorData.vectors.length <= 12000){
+              for(const item of vectorData.vectors){
+                if(!item || typeof item.chunk_id !== 'string'
+                   || !candidateById.has(item.chunk_id)
+                   || item.document_id !== candidateById.get(item.chunk_id).doc.id
+                   || !Array.isArray(item.embedding) || item.embedding.length !== 256
+                   || !item.embedding.every(Number.isFinite)) continue;
+                vectorById.set(item.chunk_id, item.embedding);
+              }
+            }
+            if(vectorById.size){
+              const embedded = await env.AI.run('@cf/google/embeddinggemma-2', {
+                input:['task: search result | query: ' + String(question || '').slice(0,600)],
+                dimensions:256
+              });
+              const queryVector = embedded && embedded.data && embedded.data[0]
+                && embedded.data[0].embedding;
+              if(Array.isArray(queryVector) && queryVector.length === 256
+                 && queryVector.every(Number.isFinite)){
+                const norm = vector => Math.sqrt(vector.reduce((sum,value) => sum + value * value,0));
+                const queryNorm = norm(queryVector);
+                if(queryNorm > 0){
+                  const vectorRanked = [];
+                  for(const [chunkId,vector] of vectorById){
+                    const vectorNorm = norm(vector);
+                    if(!vectorNorm) continue;
+                    let similarity = 0;
+                    for(let i=0;i<256;i++) similarity += (queryVector[i] / queryNorm) * (vector[i] / vectorNorm);
+                    if(similarity > 0) vectorRanked.push({ ...candidateById.get(chunkId), similarity });
+                  }
+                  vectorRanked.sort((a,b) => b.similarity - a.similarity
+                    || Number(a.chunk.page || 0) - Number(b.chunk.page || 0));
+                  if(vectorRanked.length){
+                    const fused = new Map();
+                    const addRank = (items, key) => items.forEach((item,index) => {
+                      const id = item.chunk.id;
+                      const current = fused.get(id) || { chunk:item.chunk, doc:item.doc, score:0 };
+                      current.score += 1 / (60 + index + 1);
+                      current[key] = key === 'semantic' ? item.similarity : item.score;
+                      fused.set(id,current);
+                    });
+                    addRank(lexicalRanked,'lexical');
+                    addRank(vectorRanked,'semantic');
+                    ranked = Array.from(fused.values()).sort((a,b) => b.score - a.score
+                      || Number(a.chunk.page || 0) - Number(b.chunk.page || 0)).slice(0,4);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }catch(e){
+        /* Repli volontaire vers BM25 : indisponibilité, vecteur invalide ou quota. */
+      }
+    }
     if(!ranked.length) return { ok:false, status:404, error:'resource-not-found' };
     const excerpt = ranked.map(x => '[DOCUMENT ' + String(x.doc.title || x.doc.id).slice(0,120)
       + ' — PAGE ' + Number(x.chunk.page || 0) + '] ' + x.chunk.text.slice(0,1800))
@@ -663,7 +740,7 @@ export default {
     const document = b.resource && b.resource.type === 'official_document'
       ? await fetchAuthorizedOfficialDocument(b.resource, req)
       : b.resource && (b.resource.type === 'corpus_document' || b.resource.type === 'corpus_search')
-        ? await fetchAuthorizedCorpusDocument(b.resource, req, q)
+        ? await fetchAuthorizedCorpusDocument(b.resource, req, q, env)
         : b.resource && b.resource.type === 'free_unit_lesson'
       ? await fetchFreeUnitLesson(b.resource)
       : b.resource && b.resource.type === 'book_pages'
