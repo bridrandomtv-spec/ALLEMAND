@@ -90,9 +90,9 @@ class PdfTextReadinessTests(unittest.TestCase):
     def test_rights_inventory_is_joined_by_exact_path_without_inference(self):
         inventory = self.root.parent / (self.root.name + "-rights.csv")
         inventory.write_text(
-            "pdf_path,expected_companion_metadata,rights_confirmed,license,review_status\\n"
-            "lesson.pdf,_lesson.json,,,à vérifier\\n"
-            "missing.pdf,_missing.json,true,cc_by,confirmé\\n",
+            "pdf_path,expected_companion_metadata,rights_confirmed,license,review_status\n"
+            "lesson.pdf,_lesson.json,,,à vérifier\n"
+            "missing.pdf,_missing.json,true,cc_by,confirmé\n",
             encoding="utf-8",
         )
         try:
@@ -116,9 +116,9 @@ class PdfTextReadinessTests(unittest.TestCase):
     def test_rights_inventory_rejects_duplicate_paths(self):
         inventory = self.root.parent / (self.root.name + "-duplicate-rights.csv")
         inventory.write_text(
-            "pdf_path,expected_companion_metadata,rights_confirmed,license,review_status\\n"
-            "lesson.pdf,_lesson.json,,,à vérifier\\n"
-            "lesson.pdf,_lesson.json,true,cc_by,confirmé\\n",
+            "pdf_path,expected_companion_metadata,rights_confirmed,license,review_status\n"
+            "lesson.pdf,_lesson.json,,,à vérifier\n"
+            "lesson.pdf,_lesson.json,true,cc_by,confirmé\n",
             encoding="utf-8",
         )
         try:
