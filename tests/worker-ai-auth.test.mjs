@@ -962,6 +962,44 @@ test('la recherche vectorielle reste inactive sans drapeau et ne déclenche aucu
   assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
 });
 
+test('le RAG refuse deux documents portant le même identifiant', async () => {
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusDocumentData:{
+      documents:[
+        { id:'pdf-0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true },
+        { id:'pdf-0123456789abcdef', title:'Document non autorisé', license:'document_utilisateur', rights_confirmed:false }
+      ],
+      chunks:[{ id:'chunk-1', document_id:'pdf-0123456789abcdef', page:1, text:'Texte.' }]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(h.messages,null);
+});
+
+test('le RAG refuse deux chunks portant le même identifiant', async () => {
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusDocumentData:{
+      documents:[{ id:'pdf-0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true }],
+      chunks:[
+        { id:'chunk-duplicate', document_id:'pdf-0123456789abcdef', page:1, text:'Texte initial.' },
+        { id:'chunk-duplicate', document_id:'pdf-0123456789abcdef', page:2, text:'Texte ambigu.' }
+      ]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(h.messages,null);
+});
+
 test('un artefact vectoriel périmé est ignoré et BM25 reste disponible', async () => {
   const h = harness({
     ragVectorEnabled:true,
