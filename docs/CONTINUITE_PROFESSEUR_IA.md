@@ -465,3 +465,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le comptage de 225 PDF présent dans certaines notes antérieures correspond à un inventaire partiel historique ; l'audit récursif complet du Lot 626 établit le total actuel à 293.
 - Validation CI de ce nouveau lot en attente : ne pas annoncer les tests comme passés avant le résultat du job autonome.
 - PR #22 reste ouverte en brouillon, non fusionnée ; aucune modification Supabase, de `main`, aucun déploiement Cloudflare.
+
+
+### Résultat CI du Lot 628 — run 44282039020
+- Job autonome « Tests autonomes — Professeur IA » : `success` sur le commit de code `8ce4dc01ae6c066d247b753819e780cc4aaabce2`.
+- Validateur d'inventaire : 10/10 ; ingestion PDF : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde du Worker de site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
+- Le job « Validation structurelle & pédagogique » était encore en cours au moment de cette note. Ce succès autonome IA ne vaut pas feu vert global du dépôt.
+- Les commits documentaires qui suivent ne modifient pas le code testé. Aucun PDF réel ni embedding n'a été ajouté.
