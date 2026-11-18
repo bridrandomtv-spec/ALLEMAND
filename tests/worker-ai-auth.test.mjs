@@ -86,6 +86,12 @@ function harness(options = {}){
           status:200, headers:{ 'Content-Type':'text/javascript' }
         });
       }
+      if(String(url).includes('/assets/bdd/corpus_rag_vectors.json')){
+        if(options.corpusVectorResponse) return options.corpusVectorResponse;
+        return new Response(JSON.stringify(options.corpusVectorData || {
+          version:1, model:'@cf/google/embeddinggemma-2', dimensions:256, vectors:[]
+        }), { status:200, headers:{ 'Content-Type':'application/json' } });
+      }
       if(String(url).includes('/assets/bdd/corpus_rag_chunks.json')){
         if(options.corpusDocumentResponse) return options.corpusDocumentResponse;
         return new Response(JSON.stringify(options.corpusDocumentData || {
@@ -126,11 +132,16 @@ function harness(options = {}){
     SUPABASE_URL:'https://project.supabase.co',
     SUPABASE_ANON_KEY:'sb_publishable_test',
     AI:{
-      async run(_model, input){
+      async run(model, input){
+        if(model === '@cf/google/embeddinggemma-2'){
+          if(options.embeddingThrows) throw new Error('embedding unavailable');
+          return options.embeddingResponse || { data:[{ embedding:options.queryEmbedding || [1,...new Array(255).fill(0)] }] };
+        }
         messages = input.messages;
         return { response:'Réponse pédagogique.' };
       }
-    }
+    },
+    RAG_VECTOR_ENABLED:options.ragVectorEnabled ? 'true' : 'false'
   };
   return { context, env, calls, get messages(){ return messages; } };
 }
@@ -837,6 +848,65 @@ test('le Worker recherche naturellement dans tous les PDF autorisés sans identi
   assert.match(h.messages[1].content, /Grammaire Perfekt/);
   assert.match(h.messages[1].content, /Das Perfekt wird mit haben oder sein/);
   assert.doesNotMatch(h.messages[1].content, /Unberechtigtes Dokument|Document utilisateur/);
+});
+
+test('la recherche vectorielle hybride retrouve un passage sémantique sans correspondance lexicale et exclut les PDF non autorisés', async () => {
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusDocumentData:{
+      documents:[
+        { id:'pdf-0123456789abcdef', title:'Identité et appartenance', license:'cc_by', rights_confirmed:true },
+        { id:'pdf-aaaaaaaaaaaaaaaa', title:'École et famille', license:'production_propre', rights_confirmed:true },
+        { id:'pdf-bbbbbbbbbbbbbbbb', title:'Document non autorisé', license:'document_utilisateur', rights_confirmed:true }
+      ],
+      chunks:[
+        { id:'chunk-identity', document_id:'pdf-0123456789abcdef', page:3, text:'Die persönliche Identität wird durch Sprache und Zugehörigkeit geprägt.' },
+        { id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Schule und die Familie begleiten die Jugendlichen.' },
+        { id:'chunk-private', document_id:'pdf-bbbbbbbbbbbbbbbb', page:1, text:'Private Identitätsdaten dürfen nicht veröffentlicht werden.' }
+      ]
+    },
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      vectors:[
+        { chunk_id:'chunk-identity', document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
+        { chunk_id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', embedding:[0,1,...new Array(254).fill(0)] },
+        { chunk_id:'chunk-private', document_id:'pdf-bbbbbbbbbbbbbbbb', embedding:[1,...new Array(255).fill(0)] }
+      ]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'اشرح مفهوم الانتماء والهوية الشخصية.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.ok(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_vectors.json')));
+  assert.match(h.messages[1].content,/Identité et appartenance/);
+  assert.match(h.messages[1].content,/Die persönliche Identität/);
+  assert.doesNotMatch(h.messages[1].content,/Private Identitätsdaten|Document non autorisé/);
+});
+
+test('la recherche vectorielle reste inactive sans drapeau et ne déclenche aucun embedding', async () => {
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }] });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_vectors.json')),false);
+});
+
+test('une panne des embeddings conserve le repli BM25', async () => {
+  const h = harness({
+    ragVectorEnabled:true, embeddingThrows:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }]
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.match(h.messages[1].content,/Das Perfekt wird/);
 });
 
 test('les alias arabes et français ne contournent pas les règles grammaticales verrouillées', async () => {
