@@ -795,7 +795,7 @@ test('ia.js résout un identifiant PDF stable et ignore les questions sans ident
 });
 
 test('le Worker récupère les chunks PDF côté serveur avec JWT et limite le contexte', async () => {
-  const h = harness();
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }] });
   const response = await h.context.__worker.fetch(request({
     q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef.',
     resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
@@ -822,7 +822,7 @@ test('le Worker refuse un PDF verrouillé par le Worker du site avant le modèle
 });
 
 test('le Worker refuse un PDF sans licence autorisée', async () => {
-  const h = harness({ corpusDocumentData:{
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
     documents:[{ id:'pdf-0123456789abcdef', title:'Livre éditeur', license:'document_utilisateur', rights_confirmed:true }],
     chunks:[{ document_id:'pdf-0123456789abcdef', page:1, text:'Contenu privé suffisamment long.' }]
   }});
