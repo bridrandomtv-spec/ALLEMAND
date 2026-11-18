@@ -899,7 +899,12 @@ test('la recherche vectorielle reste inactive sans drapeau et ne déclenche aucu
 test('une panne des embeddings conserve le repli BM25', async () => {
   const h = harness({
     ragVectorEnabled:true, embeddingThrows:true,
-    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }]
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      vectors:[{ chunk_id:'pdf-0123456789abcdef-p1-c0',
+        document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] }]
+    }
   });
   const response = await h.context.__worker.fetch(request({
     q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef.',
