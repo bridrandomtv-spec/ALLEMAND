@@ -18,23 +18,25 @@ defg('speechSynthesis', { speak(){}, cancel(){}, getVoices: () => [] });
 vm.runInThisContext(read('rag.js'), { filename: 'rag.js' });
 const fn = globalThis.reponsePedagogique || (globalThis.RAG && globalThis.RAG.reponsePedagogique);
 if (typeof fn !== 'function') { console.log('::error::regression_rag : reponsePedagogique absente'); process.exit(1); }
-const matcher = globalThis.matchOnto;
-if (typeof matcher === 'function') {
-  const ambiguous = await matcher('عطيني الخلاصة وعطيني مثال');
-  const candidates = new Set((ambiguous && ambiguous.candidates) || []);
-  if (!ambiguous || ambiguous.ambiguous !== true
-      || !candidates.has('summarize_lesson')
-      || !candidates.has('explain_with_examples')) {
-    console.log('::error::ONTO : une égalité entre intentions doit provoquer une abstention');
-    process.exit(1);
-  }
-  const unique = await matcher('شرحلي هاد الدرس');
-  if (!unique || unique.ambiguous || !unique.it || unique.it.intent !== 'explain_lesson') {
-    console.log('::error::ONTO : une formulation non ambiguë doit conserver son intention');
-    process.exit(1);
-  }
-  console.log('✅ ONTO : égalité détectée sans choix arbitraire ; intention unique conservée');
+const matcher = globalThis.RAG && globalThis.RAG.matchOnto;
+if (typeof matcher !== 'function') {
+  console.log('::error::ONTO : matchOnto absent du contrat de test RAG');
+  process.exit(1);
 }
+const ambiguous = await matcher('عطيني الخلاصة وعطيني مثال');
+const candidates = new Set((ambiguous && ambiguous.candidates) || []);
+if (!ambiguous || ambiguous.ambiguous !== true
+    || !candidates.has('summarize_lesson')
+    || !candidates.has('explain_with_examples')) {
+  console.log('::error::ONTO : une égalité entre intentions doit provoquer une abstention');
+  process.exit(1);
+}
+const unique = await matcher('شرحلي هاد الدرس');
+if (!unique || unique.ambiguous || !unique.it || unique.it.intent !== 'explain_lesson') {
+  console.log('::error::ONTO : une formulation non ambiguë doit conserver son intention');
+  process.exit(1);
+}
+console.log('✅ ONTO : égalité détectée sans choix arbitraire ; intention unique conservée');
 const valide = rep => { const t = typeof rep === 'string' ? rep : (rep && (rep.html || rep.texte || rep.reponse)) || ''; return !!t && t.indexOf('لا أعرف') === -1 && t.indexOf('لا اعرف') === -1; };
 const fails = []; let ok = 0;
 for (const i of contrat) {
