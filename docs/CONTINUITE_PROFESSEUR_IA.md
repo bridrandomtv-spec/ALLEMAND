@@ -709,3 +709,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commits : générateur `ccc27fc8353e86f10da82d579cd6bbecc096611c` ; test `beca71accde35ca0fdda1a46dba870af7524c88a`.
 - CI sur le HEAD `beca71accde35ca0fdda1a46dba870af7524c88a`, run `44405260871` : terminé avec `success`. Les jobs « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont réussis. Les trois workflows PostgreSQL isolés `44405260965`, `44405260915`, `44405260898` sont également réussis. Le build Worker `allemand` sur le commit documentaire `cff7833b0b32a1bd1a383c4c640eb38d5c89bbdb` est lui aussi terminé avec `success`.
 - PR #23 reste ouverte en brouillon, non fusionnée. Aucun changement sur `main`, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement. Aucun OCR ni embedding réel n'a été exécuté et aucun droit documentaire n'a été présumé.
+
+
+### Lot 644 — empêcher l'écrasement des sources par le générateur vectoriel — 18/11/2026
+- L'audit du CLI a identifié un risque destructif de configuration : l'option `--output` pouvait désigner le même chemin que `--chunks` ou `--manifest`. En mode exécution, le générateur aurait alors remplacé le corpus source ou son manifeste par l'artefact vectoriel.
+- Le CLI résout et compare les trois chemins avant toute lecture/génération et refuse les collisions avec `sortie_confondue_avec_source`. La garde s'applique aussi au dry-run et avant tout appel à Cloudflare.
+- Test de régression ajouté : sortie identique au fichier chunks, code retour 1, contenu source inchangé et aucun appel API.
+- Commits : garde CLI `9e7d7ee8f8776e186c0e45038272ac36497a4b20` ; test `7e4883d42567330e0867050a30a6ec4c63bbe940`.
+- CI du lot 643 (HEAD `beca71accde35ca0fdda1a46dba870af7524c88a`, run `44405260871`) : succès complet. Le build Worker et les validations lancés par la mise à jour documentaire précédente ont également réussi. CI du lot 644 à confirmer.
+- PR #23 reste ouverte en brouillon, non fusionnée ; aucun changement sur `main`, aucun déploiement et aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement.
