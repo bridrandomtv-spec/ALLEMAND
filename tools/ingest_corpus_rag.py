@@ -4,10 +4,10 @@
 
 N'écrase jamais corpus.json ni corpus_index.json (index vocabulaire).
 Usage: python tools/ingest_corpus_rag.py DOSSIER --output-dir . --rights-inventory docs/inventaire_pdf_droits.csv
-Chaque PDF doit avoir un fichier compagnon _NOM.json avec:
+Chaque PDF doit avoir un compagnon _NOM.json ET une ligne confirmée dans l'inventaire central.
   {"titre":"...", "licence":"production_propre", "droits_confirmes":true}
 Licences admises: production_propre, domaine_public, cc_by, cc_by_sa,
-autorisation_ecrite. Sans preuve explicite, le document est ignoré.
+autorisation_ecrite. Les droits et la licence doivent correspondre dans les deux sources ; sinon le document est ignoré.
 OCR: option --ocr ; nécessite tesseract, pdf2image, Poppler et les langues Tesseract.
 """
 import argparse

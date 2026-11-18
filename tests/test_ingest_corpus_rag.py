@@ -130,14 +130,24 @@ class PdfIngestionTests(unittest.TestCase):
             (source / "_lesson.json").write_text(json.dumps({
                 "titre": "Lesson", "licence": "cc_by", "droits_confirmes": True
             }), encoding="utf-8")
-            inventory = source / "rights.csv"
-            inventory.write_text(
-                "pdf_path,expected_companion_metadata,rights_confirmed,license\n",
-                encoding="utf-8",
-            )
-            result = MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
+            result = MODULE.ingest(source, output, repo_root=source)
             self.assertEqual(result["document_count"], 0)
             self.assertEqual(result["skipped"][0]["reason"], "inventaire_droits_absent")
+
+    def test_duplicate_inventory_paths_abort_before_writing_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            source.mkdir(parents=True)
+            inventory = source / "rights.csv"
+            inventory.write_text(
+                "pdf_path,expected_companion_metadata,rights_confirmed,license\n"
+                "lesson.pdf,_lesson.json,true,cc_by\n"
+                "lesson.pdf,_lesson.json,true,cc_by\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "pdf_droits_inventaire_duplique"):
+                MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
+            self.assertFalse((output / "assets/bdd/corpus_rag_manifest.json").exists())
 
     def test_inventory_and_companion_must_confirm_same_license(self):
         with tempfile.TemporaryDirectory() as tmp:
