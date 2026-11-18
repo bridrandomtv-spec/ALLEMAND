@@ -8,7 +8,7 @@ const appSource = fs.readFileSync(new URL('../app.js', import.meta.url), 'utf8')
 const iaSource = fs.readFileSync(new URL('../ia.js', import.meta.url), 'utf8');
 function loadOfficialDocumentResolver(){
   const start = iaSource.indexOf('  function officialDocumentResource(question){');
-  const end = iaSource.indexOf('\\n  function exerciseBankResource(question){', start);
+  const end = iaSource.indexOf('function exerciseBankResource(question){', start);
   assert.ok(start >= 0 && end > start, 'officialDocumentResource must exist');
   const sandbox = {};
   vm.runInNewContext(iaSource.slice(start, end) + '; globalThis.resolve = officialDocumentResource;', sandbox);
