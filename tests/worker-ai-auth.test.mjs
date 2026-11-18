@@ -855,9 +855,9 @@ test('le Worker recherche naturellement dans tous les PDF autorisés sans identi
       { id:'pdf-bbbbbbbbbbbbbbbb', title:'Document utilisateur', license:'document_utilisateur', rights_confirmed:true }
     ],
     chunks:[
-      { document_id:'pdf-0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
-      { document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Familie und die Schule sind wichtige Themen.' },
-      { document_id:'pdf-bbbbbbbbbbbbbbbb', page:1, text:'Das Perfekt wird mit haben oder sein gebildet. Unberechtigtes Dokument.' }
+      { id:'chunk-perfekt', document_id:'pdf-0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
+      { id:'chunk-family', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Familie und die Schule sind wichtige Themen.' },
+      { id:'chunk-unallowed', document_id:'pdf-bbbbbbbbbbbbbbbb', page:1, text:'Das Perfekt wird mit haben oder sein gebildet. Unberechtigtes Dokument.' }
     ]
   }});
   const response = await h.context.__worker.fetch(request({
@@ -1061,8 +1061,8 @@ test('la recherche PDF relie les formulations arabes et françaises aux termes a
       { id:'pdf-aaaaaaaaaaaaaaaa', title:'Präsens', license:'production_propre', rights_confirmed:true }
     ],
     chunks:[
-      { document_id:'pdf-0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
-      { document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Das Präsens beschreibt Handlungen in der Gegenwart.' }
+      { id:'chunk-perfekt-fr', document_id:'pdf-0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
+      { id:'chunk-prasens-fr', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Das Präsens beschreibt Handlungen in der Gegenwart.' }
     ]
   }});
   const response = await h.context.__worker.fetch(request({
@@ -1111,7 +1111,7 @@ test('le Worker refuse un PDF verrouillé par le Worker du site avant le modèle
 test('le Worker refuse un PDF sans licence autorisée', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
     documents:[{ id:'pdf-0123456789abcdef', title:'Livre éditeur', license:'document_utilisateur', rights_confirmed:true }],
-    chunks:[{ document_id:'pdf-0123456789abcdef', page:1, text:'Contenu privé suffisamment long.' }]
+    chunks:[{ id:'chunk-unlicensed', document_id:'pdf-0123456789abcdef', page:1, text:'Contenu privé suffisamment long.' }]
   }});
   const response = await h.context.__worker.fetch(request({
     q:'Explique le PDF pdf-0123456789abcdef.',
