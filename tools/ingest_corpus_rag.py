@@ -206,7 +206,7 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara",
     manifest_path = output_dir / "assets/bdd/corpus_rag_manifest.json"
     chunks_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {"version": 1, "documents": documents, "chunks": chunks}
-    chunks_serialized = json.dumps(payload, ensure_ascii=False, indent=2) + "\\n"
+    chunks_serialized = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
     chunks_bytes = chunks_serialized.encode("utf-8")
     manifest = {
         "version": 1, "status": "connected_protected",
@@ -218,7 +218,7 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara",
     chunks_tmp = chunks_path.with_suffix(chunks_path.suffix + ".tmp")
     manifest_tmp = manifest_path.with_suffix(manifest_path.suffix + ".tmp")
     try:
-        chunks_tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        chunks_tmp.write_bytes(chunks_bytes)
         manifest_tmp.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         # Les deux fichiers sont entièrement sérialisés avant le remplacement des actifs.
         chunks_tmp.replace(chunks_path)
