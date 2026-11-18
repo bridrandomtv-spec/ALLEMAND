@@ -517,8 +517,7 @@ async function fetchAuthorizedCorpusDocument(resource, req, question){
       && allowedLicenses.includes(x.license) && (!resource.id || x.id === resource.id));
     if(!eligibleDocs.length) return { ok:false, status:404, error:'resource-not-found' };
     const eligibleById = new Map(eligibleDocs.map(x => [x.id,x]));
-    const normalize = value => String(value || '').toLowerCase().normalize('NFD')
-      .replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,' ');
+    const normalize = value => normalizeLockText(value).replace(/[’']/g,' ');
     const tokenize = value => normalize(value).match(/[a-zäöüßà-ÿ\u0600-\u06ff]{2,}/g) || [];
     /* Glossaire de rappel interlingue : il ne fournit aucun contenu au modèle.
        Il relie seulement les formulations FR/AR/Darija aux termes allemands
