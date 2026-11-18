@@ -514,12 +514,12 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
     if(chunks.length > 12000) return { ok:false, status:503, error:'access-unavailable' };
     /* Les identifiants servent de clé de jointure entre documents, chunks et
        vecteurs. Toute collision rendrait la provenance ambiguë : refus fermé. */
-    const documentIds = new Set();
+    const documentsById = new Map();
     for(const doc of docs){
       if(!doc || typeof doc.id !== 'string' || !doc.id
-         || documentIds.has(doc.id))
+         || documentsById.has(doc.id))
         return { ok:false, status:503, error:'access-unavailable' };
-      documentIds.add(doc.id);
+      documentsById.set(doc.id, doc);
     }
     const expectedChunkCounts = new Map();
     for(const doc of docs){
@@ -531,13 +531,13 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
     for(const chunk of chunks){
       if(!chunk || typeof chunk.id !== 'string' || !chunk.id
          || typeof chunk.document_id !== 'string' || !chunk.document_id
-         || !documentIds.has(chunk.document_id) || chunkIds.has(chunk.id))
+         || !documentsById.has(chunk.document_id) || chunkIds.has(chunk.id))
         return { ok:false, status:503, error:'access-unavailable' };
       chunkIds.add(chunk.id);
       expectedChunkCounts.set(chunk.document_id, expectedChunkCounts.get(chunk.document_id) + 1);
     }
     for(const [documentId, expected] of expectedChunkCounts){
-      const document = docs.find(doc => doc.id === documentId);
+      const document = documentsById.get(documentId);
       if(!document || expected !== document.chunk_count)
         return { ok:false, status:503, error:'access-unavailable' };
     }
