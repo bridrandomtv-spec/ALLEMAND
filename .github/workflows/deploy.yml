@@ -1253,8 +1253,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Tester extraction PDF, OCR optionnel et contrôle des droits
-        run: python -m unittest discover -s tests -p 'test_ingest_corpus_rag.py' -v
-          run: python -m unittest discover -s tests -p 'test_build_corpus_rag_vectors.py' -v
+        run: |
+          python -m unittest discover -s tests -p 'test_ingest_corpus_rag.py' -v
+          python -m unittest discover -s tests -p 'test_build_corpus_rag_vectors.py' -v
       - name: Tester le Worker IA et les contrôles d'accès
         run: node --test tests/worker-ai-auth.test.mjs
       - name: Tester la protection serveur des devoirs et annales
