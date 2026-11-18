@@ -925,7 +925,7 @@ test('la recherche hybride accepte des questions arabe, darija, arabizi et fran�
     assert.match(h.messages[1].content,/Die persönliche Identität/, q);
     assert.equal(h.aiCalls.filter(x => x.model === '@cf/google/embeddinggemma-2').length,1, q);
     const embedCall = h.aiCalls.find(x => x.model === '@cf/google/embeddinggemma-2');
-    assert.match(embedCall.input.input[0], /^task: search result \\| query: /, q);
+    assert.match(embedCall.input.input[0], /^task: search result \| query: /, q);
     assert.ok(embedCall.input.input[0].includes(q), q);
   }
 });
