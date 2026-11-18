@@ -106,7 +106,10 @@ def normalize_embedding(values):
     for value in values:
         if isinstance(value, bool) or not isinstance(value, (int, float)):
             raise ValueError("embedding_valeur_invalide")
-        number = float(value)
+        try:
+            number = float(value)
+        except (OverflowError, ValueError) as exc:
+            raise ValueError("embedding_valeur_invalide") from exc
         if not math.isfinite(number):
             raise ValueError("embedding_non_fini")
         vector.append(number)
