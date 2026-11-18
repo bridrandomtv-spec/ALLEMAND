@@ -167,7 +167,7 @@ def build_artifact(chunks, chunks_bytes, manifest_bytes, embed_batch=None, batch
         for item, embedding in zip(batch, embeddings):
             vectors.append({
                 "chunk_id": item["chunk_id"],
-                "doc_id": item["doc_id"],
+                "document_id": item["doc_id"],
                 "embedding": normalize_embedding(embedding),
             })
     return {
@@ -196,6 +196,8 @@ def main(argv=None):
         chunks_bytes, manifest_bytes = chunks_path.read_bytes(), manifest_path.read_bytes()
         corpus = json.loads(chunks_bytes.decode("utf-8"))
         manifest = json.loads(manifest_bytes.decode("utf-8"))
+        if not 1 <= args.batch_size <= MAX_BATCH_SIZE:
+            raise ValueError("taille_lot_invalide")
         chunks = eligible_chunks(corpus, manifest)
         if not args.execute:
             print(json.dumps({
@@ -211,8 +213,8 @@ def main(argv=None):
             raise ValueError("confirmation_facturation_cloudflare_requise")
         account_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "").strip()
         token = os.environ.get("CLOUDFLARE_API_TOKEN", "").strip()
-        if not account_id or not token:
-            raise ValueError("identifiants_cloudflare_absents")
+        if not account_id or not token or len(account_id) != 32 or any(c not in "0123456789abcdefABCDEF" for c in account_id):
+            raise ValueError("identifiants_cloudflare_absents_ou_invalides")
         if not chunks:
             raise ValueError("aucun_chunk_avec_droits_confirmes")
         def embed(inputs):
