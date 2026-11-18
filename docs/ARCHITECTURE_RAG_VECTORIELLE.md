@@ -158,3 +158,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le total de 225 PDF indiqué dans les notes initiales des Lots 619–624 était basé sur un inventaire partiel ; le décompte récursif complet du Lot 626 (293) est la référence actuelle.
 - Aucun embedding réel n'a été généré. `RAG_VECTOR_ENABLED` reste désactivé par défaut ; aucune consommation Workers AI supplémentaire n'a été déclenchée.
 - Validation CI du Lot 628 en attente sur le nouveau HEAD. PR #22 reste ouverte en brouillon, sans merge ni déploiement.
+
+
+## Résultat CI du Lot 628 — run 44282039020
+- Job autonome « Tests autonomes — Professeur IA » : `success` sur le commit applicatif `8ce4dc01ae6c066d247b753819e780cc4aaabce2`.
+- Validateur des droits : 10/10 ; ingestion PDF : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde du Worker de site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
+- Le job structurel global était encore en cours au moment de la vérification ; ce succès autonome ne vaut pas validation globale.
+- Aucun PDF réel n'a été indexé et aucun embedding n'a été généré. Le drapeau vectoriel reste désactivé par défaut.
