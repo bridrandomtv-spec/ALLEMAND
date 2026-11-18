@@ -99,9 +99,12 @@ const LOCKED_RULES = [
   'comparatif'
 ];
 function normalizeLockText(value){
+  const marks = new RegExp('[' + String.fromCharCode(0x0300) + '-'
+    + String.fromCharCode(0x036f) + String.fromCharCode(0x064b) + '-'
+    + String.fromCharCode(0x065f) + String.fromCharCode(0x0670) + ']','g');
+  const tatweel = new RegExp(String.fromCharCode(0x0640),'g');
   return String(value || '').toLowerCase().normalize('NFD')
-    .replace(/[\\u0300-\\u036f\\u064b-\\u065f\\u0670]/g,'')
-    .replace(/\\u0640/g,'')
+    .replace(marks,'').replace(tatweel,'')
     .replace(/[أإآ]/g,'ا').replace(/ى/g,'ي');
 }
 function isLockedContentQuestion(question, resource){
