@@ -120,6 +120,11 @@ class PdfIngestionTests(unittest.TestCase):
             self.assertEqual(result["document_count"], 1)
             data = json.loads((output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8"))
             self.assertEqual(data["documents"][0]["source_file"], "archive/unit/lesson.pdf")
+            manifest = json.loads((output / "assets/bdd/corpus_rag_manifest.json").read_text(encoding="utf-8"))
+            chunks_raw = (output / "assets/bdd/corpus_rag_chunks.json").read_bytes()
+            self.assertEqual(manifest["chunks_sha256"], MODULE.hashlib.sha256(chunks_raw).hexdigest())
+            self.assertEqual(manifest["document_count"], len(data["documents"]))
+            self.assertEqual(manifest["chunk_count"], len(data["chunks"]))
 
     def test_companion_alone_never_authorizes_without_inventory_row(self):
         with tempfile.TemporaryDirectory() as tmp:
