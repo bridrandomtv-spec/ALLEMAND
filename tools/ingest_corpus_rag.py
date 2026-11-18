@@ -101,23 +101,24 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara"):
     chunks, documents, skipped = [], [], []
     if not source_dir.is_dir():
         raise ValueError("dossier_source_invalide")
-    for pdf in sorted(source_dir.glob("*.pdf")):
+    for pdf in sorted(source_dir.rglob("*.pdf")):
+        source_label = pdf.relative_to(source_dir).as_posix()
         meta = read_metadata(pdf)
         if not isinstance(meta, dict):
-            skipped.append({"file": pdf.name, "reason": "metadonnees_absentes"})
+            skipped.append({"file": source_label, "reason": "metadonnees_absentes"})
             continue
         license_name = str(meta.get("licence", "")).strip().lower()
         if meta.get("droits_confirmes") is not True or license_name not in ALLOWED_LICENSES:
-            skipped.append({"file": pdf.name, "reason": "droits_non_confirmes"})
+            skipped.append({"file": source_label, "reason": "droits_non_confirmes"})
             continue
         pages, status = extract_pdf(pdf, use_ocr=use_ocr, languages=languages)
         if not status.startswith("ok"):
-            skipped.append({"file": pdf.name, "reason": status})
+            skipped.append({"file": source_label, "reason": status})
             continue
         digest = hashlib.sha256(pdf.read_bytes()).hexdigest()
         doc_id = "pdf-" + digest[:16]
         if not re.fullmatch(r"pdf-[a-f0-9]{16}", doc_id):
-            skipped.append({"file": pdf.name, "reason": "identifiant_invalide"})
+            skipped.append({"file": source_label, "reason": "identifiant_invalide"})
             continue
         doc_chunks = 0
         for page_number, page_text in pages:
@@ -130,7 +131,7 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara"):
                 doc_chunks += 1
         documents.append({
             "id": doc_id, "title": str(meta.get("titre") or pdf.stem)[:240],
-            "source_file": pdf.name, "sha256": digest,
+            "source_file": source_label, "sha256": digest,
             "license": license_name, "rights_confirmed": True,
             "subject": str(meta.get("matiere") or "allemand")[:80],
             "level": str(meta.get("niveau") or "")[:40],
