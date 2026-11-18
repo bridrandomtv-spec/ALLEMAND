@@ -48,7 +48,8 @@ function request(path, token) {
 for (const path of [
   '/assets/bdd/devoirs.json',
   '/assets/bdd/compositions.json',
-  '/assets/bdd/annales.json'
+  '/assets/bdd/annales.json',
+  '/assets/bdd/corpus_rag_chunks.json'
 ]) {
   test('refuse sans JWT l’accès direct à ' + path, async () => {
     const h = harness();
