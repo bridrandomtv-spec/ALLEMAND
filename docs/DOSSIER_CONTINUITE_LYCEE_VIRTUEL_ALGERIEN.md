@@ -3720,3 +3720,19 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le job global échoue aussi sur une erreur de syntaxe préexistante et hors périmètre dans `ci/check-msg.mjs:231` (Messenger EduDZ). Les étapes de validation structurelle précédentes, dont YAML/JSON, moteur IA 9 cas, suite de build T1–T6 et syntaxe JS 37/37, étaient réussies. Ce chantier IA ne modifie pas Messenger.
 - Le correctif `7f9aadd` n'a pas encore de nouveau run CI associé au moment de cette mise à jour. Il n'est donc pas présenté comme validé.
 - Le job Worker doit être rejoué sur ce nouveau HEAD pour confirmer les 74/74 tests et reprendre les étapes RAG/QUST/PROF qui ont été sautées après le premier échec.
+
+
+## Lot 625 — tests multilingues et validation CI (18 novembre 2026)
+- Ajout d'un test de contrat de recherche hybride sur quatre formulations : arabe standard, darija, Arabizi et français, toutes ciblant un extrait allemand. Le test vérifie le passage par le modèle d'embedding et le préfixe de requête Cloudflare exact `task: search result | query: ...`. Il s'agit d'un test de pipeline avec vecteurs contrôlés, pas d'une mesure de qualité réelle du modèle.
+- Correctif de l'assertion BM25 de repli inclus ; la recherche reste fonctionnelle si l'inférence d'embedding échoue.
+- CI `44278364370` sur le commit `4662bb36f9a79049c8800d5c93a563ef31d25fb9` : job autonome Professeur IA `success`.
+- Résultats confirmés dans les logs :
+  - Ingestion PDF/OCR/droits : 8/8.
+  - Générateur d'embeddings : 8/8.
+  - Worker IA/JWT/RAG : 75/75.
+  - Garde d'accès du Worker du site : 14/14.
+  - QUST Darija/Arabizi : 9/9.
+  - Régressions : RAG 12/12, PROF 18/18, suite combinée exécutée.
+- Le job structurel global échoue toujours sur l'erreur indépendante de Messenger `ci/check-msg.mjs:231` (SyntaxError, expression `currentThread.querySelector`), sans rapport avec le professeur IA. Les validations antérieures de ce job étaient réussies. Aucun changement Messenger n'est inclus dans cette branche IA.
+- Aucun benchmark de rappel/précision sur documents réels n'est possible : le manifeste PDF contient toujours zéro document et zéro chunk. Les tests multilingues actuels valident le câblage et la sécurité du classement avec des fixtures synthétiques.
+- Le dernier HEAD applicatif testé est `4662bb36f9a79049c8800d5c93a563ef31d25fb9`. Les commits documentaires qui suivent ne modifient pas le code testé. La PR reste ouverte et en brouillon, sans fusion ni déploiement.
