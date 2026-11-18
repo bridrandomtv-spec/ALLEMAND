@@ -6,13 +6,14 @@ import test from 'node:test';
 const workerSource = fs.readFileSync(new URL('../worker/ia-ask.js', import.meta.url), 'utf8');
 const appSource = fs.readFileSync(new URL('../app.js', import.meta.url), 'utf8');
 const iaSource = fs.readFileSync(new URL('../ia.js', import.meta.url), 'utf8');
-function loadCorpusDocumentResolver(){
+function loadCorpusDocumentResolvers(){
   const start = iaSource.indexOf('  function corpusDocumentResource(question){');
   const end = iaSource.indexOf('  function officialDocumentResource(question){', start);
-  assert.ok(start >= 0 && end > start, 'corpusDocumentResource must exist');
+  assert.ok(start >= 0 && end > start, 'corpus document/search resolvers must exist');
   const sandbox = {};
-  vm.runInNewContext(iaSource.slice(start, end) + '; globalThis.resolve = corpusDocumentResource;', sandbox);
-  return sandbox.resolve;
+  vm.runInNewContext(iaSource.slice(start, end)
+    + '; globalThis.resolveDocument = corpusDocumentResource; globalThis.resolveSearch = corpusSearchResource;', sandbox);
+  return { document:sandbox.resolveDocument, search:sandbox.resolveSearch };
 }
 function loadOfficialDocumentResolver(){
   const start = iaSource.indexOf('  function officialDocumentResource(question){');
@@ -786,12 +787,15 @@ test('le Worker refuse un document officiel si le Worker du site signale un verr
 });
 
 
-test('ia.js résout un identifiant PDF stable et ignore les questions sans identifiant', () => {
-  const resolve = loadCorpusDocumentResolver();
-  assert.deepEqual(JSON.parse(JSON.stringify(resolve('Explique le PDF pdf-0123456789abcdef.'))), {
+test('ia.js résout un identifiant PDF et déclenche une recherche naturelle sans identifiant', () => {
+  const resolvers = loadCorpusDocumentResolvers();
+  assert.deepEqual(JSON.parse(JSON.stringify(resolvers.document('Explique le PDF pdf-0123456789ABCDEF.'))), {
     type:'corpus_document', id:'pdf-0123456789abcdef'
   });
-  assert.equal(resolve('Explique-moi un document PDF sur le Perfekt.'), null);
+  assert.equal(resolvers.document('Explique ce document.'), null);
+  assert.deepEqual(JSON.parse(JSON.stringify(resolvers.search('Explique le Perfekt dans les documents PDF.'))), { type:'corpus_search' });
+  assert.deepEqual(JSON.parse(JSON.stringify(resolvers.search('اشرح لي قاعدة Perfekt في الملفات'))), { type:'corpus_search' });
+  assert.equal(resolvers.search('Explique le Perfekt.'), null);
 });
 
 test('le Worker récupère les chunks PDF côté serveur avec JWT et limite le contexte', async () => {
@@ -807,6 +811,53 @@ test('le Worker récupère les chunks PDF côté serveur avec JWT et limite le c
   assert.match(h.messages[1].content, /CONTENU PÉDAGOGIQUE AUTORISÉ — CORPUS PDF/);
   assert.match(h.messages[1].content, /Perfekt/);
   assert.doesNotMatch(h.messages[1].content, /Die Familie und die Schule/);
+});
+
+test('le Worker recherche naturellement dans tous les PDF autorisés sans identifiant technique', async () => {
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
+    documents:[
+      { id:'pdf-0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
+      { id:'pdf-aaaaaaaaaaaaaaaa', title:'Identité et école', license:'production_propre', rights_confirmed:true },
+      { id:'pdf-bbbbbbbbbbbbbbbb', title:'Document utilisateur', license:'document_utilisateur', rights_confirmed:true }
+    ],
+    chunks:[
+      { document_id:'pdf-0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
+      { document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Familie und die Schule sind wichtige Themen.' },
+      { document_id:'pdf-bbbbbbbbbbbbbbbb', page:1, text:'Das Perfekt wird mit haben oder sein gebildet. Unberechtigtes Dokument.' }
+    ]
+  }});
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt avec haben oder sein.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status, 200);
+  const call = h.calls.find(x => x.url.includes('/assets/bdd/corpus_rag_chunks.json'));
+  assert.ok(call);
+  assert.equal(call.init.headers.Authorization, 'Bearer ' + TOKEN);
+  assert.match(h.messages[1].content, /Grammaire Perfekt/);
+  assert.match(h.messages[1].content, /Das Perfekt wird mit haben oder sein/);
+  assert.doesNotMatch(h.messages[1].content, /Unberechtigtes Dokument|Document utilisateur/);
+});
+
+test('la recherche naturelle PDF refuse tout accès si le Worker du site bloque le corpus', async () => {
+  const h = harness({ corpusDocumentResponse:new Response('{"error":"abonnement_requis"}', { status:403 }) });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status, 403);
+  assert.equal(h.messages, null);
+});
+
+test('la recherche naturelle PDF refuse un sélecteur avec identifiant ou champ forgé', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique ce document.',
+    resource:{ type:'corpus_search', id:'pdf-0123456789abcdef' }
+  }), h.env);
+  assert.equal(response.status, 400);
+  assert.equal(h.messages, null);
+  assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_chunks.json')), false);
 });
 
 test('le Worker refuse un PDF verrouillé par le Worker du site avant le modèle', async () => {
