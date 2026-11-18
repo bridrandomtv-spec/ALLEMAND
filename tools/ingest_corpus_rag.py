@@ -142,10 +142,10 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara"):
     chunks_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {"version": 1, "documents": documents, "chunks": chunks}
     manifest = {
-        "version": 1, "status": "staged_not_connected",
+        "version": 1, "status": "connected_protected",
         "document_count": len(documents), "chunk_count": len(chunks),
         "skipped": skipped,
-        "note": "Artefact hors ligne ; ne pas servir au Worker avant validation d'accès et de provenance.",
+        "note": "Artefact raccorde au RAG serveur ; lecture uniquement via le Worker du site protege par JWT/RLS. Les documents restent soumis a la validation de provenance et de licence.",
     }
     chunks_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
