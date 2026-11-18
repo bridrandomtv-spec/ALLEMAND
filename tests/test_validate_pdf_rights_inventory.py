@@ -31,6 +31,16 @@ class PdfRightsInventoryTests(unittest.TestCase):
             writer.writeheader()
             writer.writerows(rows)
 
+    def write_companion(self, license_name="cc_by", rights=True):
+        companion = self.pdf.parent / "_lesson.json"
+        companion.write_text(
+            __import__("json").dumps({
+                "titre": "Lesson", "licence": license_name,
+                "droits_confirmes": rights,
+            }),
+            encoding="utf-8",
+        )
+
     def row(self, **updates):
         value = {
             "pdf_path": "docs/lesson.pdf",
@@ -49,11 +59,35 @@ class PdfRightsInventoryTests(unittest.TestCase):
         self.assertEqual(result["pending_count"], 1)
         self.assertEqual(result["errors"], [])
 
-    def test_explicit_confirmation_and_allowed_license_are_eligible(self):
+    def test_explicit_confirmation_and_matching_companion_are_eligible(self):
+        self.write_companion("cc_by", True)
         self.write_rows([self.row(rights_confirmed="true", license="cc_by")])
         result = validate_inventory(self.csv_path, self.root)
         self.assertEqual(result["approved_count"], 1)
         self.assertEqual(result["approved"][0]["license"], "cc_by")
+
+    def test_confirmed_csv_without_companion_is_rejected(self):
+        self.write_rows([self.row(rights_confirmed="true", license="cc_by")])
+        result = validate_inventory(self.csv_path, self.root)
+        self.assertTrue(any("compagnon_absent" in item for item in result["errors"]))
+
+    def test_companion_must_confirm_rights(self):
+        self.write_companion("cc_by", False)
+        self.write_rows([self.row(rights_confirmed="true", license="cc_by")])
+        result = validate_inventory(self.csv_path, self.root)
+        self.assertTrue(any("confirmation_compagnon_absente" in item for item in result["errors"]))
+
+    def test_companion_license_must_match_inventory(self):
+        self.write_companion("cc_by_sa", True)
+        self.write_rows([self.row(rights_confirmed="true", license="cc_by")])
+        result = validate_inventory(self.csv_path, self.root)
+        self.assertTrue(any("licence_compagnon_incoherente" in item for item in result["errors"]))
+
+    def test_invalid_companion_json_is_rejected(self):
+        (self.pdf.parent / "_lesson.json").write_text("{invalid", encoding="utf-8")
+        self.write_rows([self.row(rights_confirmed="true", license="cc_by")])
+        result = validate_inventory(self.csv_path, self.root)
+        self.assertTrue(any("compagnon_illisible" in item for item in result["errors"]))
 
     def test_true_without_license_is_an_error(self):
         self.write_rows([self.row(rights_confirmed="true")])
