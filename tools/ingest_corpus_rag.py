@@ -115,8 +115,8 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara"):
             skipped.append({"file": pdf.name, "reason": status})
             continue
         digest = hashlib.sha256(pdf.read_bytes()).hexdigest()
-        doc_id = str(meta.get("id") or ("pdf-" + digest[:16]))
-        if not re.fullmatch(r"[A-Za-z0-9_-]{3,80}", doc_id):
+        doc_id = "pdf-" + digest[:16]
+        if not re.fullmatch(r"pdf-[a-f0-9]{16}", doc_id):
             skipped.append({"file": pdf.name, "reason": "identifiant_invalide"})
             continue
         doc_chunks = 0
