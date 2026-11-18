@@ -49,7 +49,8 @@ for (const path of [
   '/assets/bdd/devoirs.json',
   '/assets/bdd/compositions.json',
   '/assets/bdd/annales.json',
-  '/assets/bdd/corpus_rag_chunks.json'
+  '/assets/bdd/corpus_rag_chunks.json',
+  '/assets/bdd/corpus_rag_vectors.json'
 ]) {
   test('refuse sans JWT l’accès direct à ' + path, async () => {
     const h = harness();
@@ -59,6 +60,22 @@ for (const path of [
     assert.equal(h.assets.length, 0);
   });
 }
+
+test('refuse les vecteurs PDF sans entitlement RLS', async () => {
+  const h = harness({ rlsRows:[] });
+  const response = await h.context.__worker.fetch(request('/assets/bdd/corpus_rag_vectors.json','user-without-entitlement'), h.env);
+  assert.equal(response.status,403);
+  assert.equal(h.assets.length,0);
+});
+
+test('sert les vecteurs PDF uniquement après validation RLS', async () => {
+  const h = harness({ rlsRows:[{ id:'visible-paid-lesson' }] });
+  const response = await h.context.__worker.fetch(request('/assets/bdd/corpus_rag_vectors.json','subscribed-user'), h.env);
+  assert.equal(response.status,200);
+  assert.equal(h.assets.length,1);
+  assert.equal(h.assets[0].url,'https://allemand.bridrandomtv.workers.dev/assets/bdd/corpus_rag_vectors.json');
+  assert.equal(h.assets[0].headers.get('Authorization'),'Bearer subscribed-user');
+});
 
 test('refuse un compte sans entitlement RLS pour les compositions', async () => {
   const h = harness({ rlsRows:[] });
