@@ -117,6 +117,12 @@
     if(!match) return null;
     return { type:'corpus_document', id:match[1].toLowerCase() };
   }
+  function corpusSearchResource(question){
+    const text = String(question || '');
+    if(!/(?:\bpdfs?\b|\bdocument(?:s)?\b|\bfichier(?:s)?\b|\barchive(?:s)?\b|ملف(?:ات)?|وثيقة|وثائق|مستند(?:ات)?)/i.test(text)) return null;
+    if(!/(?:dans|from|inside|بحث|ابحث|في|اشرح|شرح|لخص|تلخيص|résum|resume|explique|explain|analyse|analys|find|cherche)/i.test(text)) return null;
+    return { type:'corpus_search' };
+  }
   function officialDocumentResource(question){
     const match = String(question || '').match(/\b(CP|AN)-\d{4}-[1-3]-\d{4}\b/i);
     if(!match) return null;
@@ -223,10 +229,11 @@
     }
     /* Une réponse locale est valable dès qu'elle dépasse 25 caractères UTILES,
        ou qu'elle porte un mot à prononcer. On ne la jette plus systématiquement. */
+    const forceCorpusCloud = Boolean(corpusDocumentResource(q) || corpusSearchResource(q));
     const weak = !local || local.indexOf('لا أعرف') !== -1 ||
       (local.length < 25 && !reponseCourteValide) ||
       (QL && QL !== 'ar' && arR(local) > 0.5 && !reponseCourteValide);
-    if(!weak){ window.__IA_WORD = speakWord; window.__IA_WORD = speakWord; return fixLang(local); }
+    if(!weak && !forceCorpusCloud){ window.__IA_WORD = speakWord; window.__IA_WORD = speakWord; return fixLang(local); }
     try{
       const k = 'dz_ia_' + new Date().toDateString();
       const n = +(localStorage.getItem(k) || 0);
@@ -248,7 +255,7 @@
     const accessToken = authState && authState.ok && authState.session && authState.session.access_token;
     if(!accessToken) return sortieFaible(local, 'session-supabase-requise');
     try{
-      const resource = corpusDocumentResource(q) || officialDocumentResource(q) || await pageResource(q) || lessonResource(q) || summaryResource(q) || exerciseBankResource(q);
+      const resource = corpusDocumentResource(q) || corpusSearchResource(q) || officialDocumentResource(q) || await pageResource(q) || lessonResource(q) || summaryResource(q) || exerciseBankResource(q);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
         headers:{
