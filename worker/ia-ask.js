@@ -599,9 +599,18 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
           const vectorRaw = await vectorResponse.text();
           if(vectorRaw && vectorRaw.length <= 20000000){
             const vectorData = JSON.parse(vectorRaw);
+            /* Un index vectoriel doit provenir exactement du fichier de chunks
+               actuellement servi. Les identifiants seuls ne détectent pas un
+               artefact périmé dont certains chunks auraient conservé leur ID. */
+            const chunksDigest = await crypto.subtle.digest(
+              'SHA-256', new TextEncoder().encode(raw)
+            );
+            const chunksHash = Array.from(new Uint8Array(chunksDigest),
+              byte => byte.toString(16).padStart(2,'0')).join('');
             const candidateById = new Map(candidates.map(item => [item.chunk.id, item]));
             const vectorById = new Map();
             if(vectorData && vectorData.version === 1
+               && vectorData.source_chunks_sha256 === chunksHash
                && vectorData.model === '@cf/google/embeddinggemma-2'
                && vectorData.dimensions === 256
                && Array.isArray(vectorData.vectors) && vectorData.vectors.length <= 12000){
