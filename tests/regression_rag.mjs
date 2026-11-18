@@ -37,6 +37,17 @@ if (!unique || unique.ambiguous || !unique.it || unique.it.intent !== 'explain_l
   process.exit(1);
 }
 console.log('✅ ONTO : égalité détectée sans choix arbitraire ; intention unique conservée');
+const ambiguousLive = await fn('هاد الدرس');
+if (!ambiguousLive || ambiguousLive.ambiguousIntent !== true) {
+  console.log('::error::ONTO : le parcours réel doit demander une précision en cas d’intention ambiguë');
+  process.exit(1);
+}
+const uniqueLive = await fn('شرحلي هاد الدرس');
+if (uniqueLive && uniqueLive.ambiguousIntent === true) {
+  console.log('::error::ONTO : une intention unique ne doit pas déclencher la clarification');
+  process.exit(1);
+}
+console.log('✅ ONTO live : clarification dans le parcours réel, sans activer de réponse statique');
 const valide = rep => { const t = typeof rep === 'string' ? rep : (rep && (rep.html || rep.texte || rep.reponse)) || ''; return !!t && t.indexOf('لا أعرف') === -1 && t.indexOf('لا اعرف') === -1; };
 const fails = []; let ok = 0;
 for (const i of contrat) {
