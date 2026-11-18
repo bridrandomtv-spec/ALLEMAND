@@ -3541,3 +3541,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Suite : attendre les résultats CI, puis valider les droits d’un petit échantillon de PDF produits par l’équipe, exécuter l’ingestion et contrôler les textes avant toute activation.
 
 - Complément tests Lot 616 : scénarios explicites pour entitlement RLS du nouvel asset PDF, refus 403 du Worker de site, récupération avec JWT, vérification licence, et sélecteur falsifié.
+
+- Audit de licence des 225 PDF référencés : 225/225 sont marqués « document utilisateur » (source « docs archive eleve »). Aucun n’est admissible automatiquement dans le nouvel index ; il reste vide jusqu’à validation documentée des droits ou apport de contenus produits par l’équipe.
