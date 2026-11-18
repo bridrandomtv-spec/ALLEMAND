@@ -670,3 +670,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Après correction du motif dans `ia.js`, la CI a révélé que la fixture de test contenait encore un identifiant court en majuscules (`pdf-0123456789ABCDEF`) tout en attendant un identifiant long. Le code se comportait correctement en refusant cet identifiant désormais invalide ; c'était le test qui ne représentait pas le nouveau contrat.
 - La question de test utilise maintenant le SHA-256 complet en majuscules, et vérifie donc à la fois la détection insensible à la casse et la normalisation en minuscules.
 - Commit : `93bd96d`. Nouvelle CI déclenchée.
+
+
+
+### Lot 640 — contrôle d'intégrité des compteurs de chunks dans le Worker — 18/11/2026
+- La revue du chemin de lecture RAG a révélé que le Worker contrôlait déjà les identifiants uniques et les références documentaires, mais ne comparait pas le nombre de chunks réellement chargés avec `documents[].chunk_count`.
+- Le Worker refuse maintenant le corpus avec une réponse fail-closed (`503 access-unavailable`) si un document du manifeste n'a pas un compteur entier positif ou nul, si un chunk référence un document absent, ou si le nombre réel de chunks diffère du compteur déclaré. La vérification est appliquée au manifeste complet, avant toute transmission au modèle.
+- Un test de régression couvre un manifeste qui déclare deux chunks alors qu'un seul est fourni. Les fixtures de test complètent automatiquement les compteurs absents pour préserver les scénarios historiques qui ne testaient pas ce contrat.
+- Commits : `1bdda02452a0d602302610a423703ff1b4b1f5eb` (Worker) et `296fd07dc2506d8329fcf9ccbb73d7de73f87f80` (tests).
+- CI sur le HEAD `296fd07dc2506d8329fcf9ccbb73d7de73f87f80`, run `44399677539` : succès. Les jobs « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont tous deux terminés avec `success`. Les trois workflows PostgreSQL isolés du même HEAD sont également terminés avec succès (runs `44399677636`, `44399677646`, `44399677638`).
+- PR #23 reste ouverte en brouillon, non fusionnée ; GitHub indique `mergeable=true`, `mergeable_state=clean`. Aucun changement sur `main`, aucun déploiement.
+- Aucun PDF réel n'a été ingéré, aucun OCR ni embedding documentaire n'a été exécuté, et aucun droit n'a été présumé. Aucune modification Supabase, Auth, RLS, schéma, abonnement ou paiement.
