@@ -89,6 +89,22 @@ def validate_inventory(csv_path, repo_root):
                 errors.append(f"ligne_{line_number}:licence_manquante:{normalized_path}")
                 continue
             if rights == "true" and license_name in ALLOWED_LICENSES:
+                companion = pdf.parent / ("_" + pdf.stem + ".json")
+                if not companion.is_file():
+                    errors.append(f"ligne_{line_number}:compagnon_absent:{normalized_path}")
+                    continue
+                try:
+                    metadata = json.loads(companion.read_text(encoding="utf-8"))
+                except (OSError, json.JSONDecodeError):
+                    errors.append(f"ligne_{line_number}:compagnon_illisible:{normalized_path}")
+                    continue
+                if not isinstance(metadata, dict) or metadata.get("droits_confirmes") is not True:
+                    errors.append(f"ligne_{line_number}:confirmation_compagnon_absente:{normalized_path}")
+                    continue
+                companion_license = str(metadata.get("licence", "")).strip().lower()
+                if companion_license != license_name:
+                    errors.append(f"ligne_{line_number}:licence_compagnon_incoherente:{normalized_path}")
+                    continue
                 approved.append({
                     "pdf_path": normalized_path,
                     "companion_metadata": expected,
