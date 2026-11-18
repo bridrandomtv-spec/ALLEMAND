@@ -91,6 +91,10 @@ class VectorBuilderTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "dimension"):
             MODULE.normalize_embedding([0.1] * 255)
 
+    def test_embedding_integer_overflow_fails_with_controlled_error(self):
+        with self.assertRaisesRegex(ValueError, "embedding_valeur_invalide"):
+            MODULE.normalize_embedding([10 ** 400] + [0] * 255)
+
     def test_api_indices_are_checked_and_ordered(self):
         a, b = [1.0] + [0.0] * 255, [0.0, 1.0] + [0.0] * 254
         parsed = MODULE.parse_embeddings({"data": [
