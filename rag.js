@@ -953,12 +953,6 @@ async function verifieAccesContenuIA(question){
   if(!q) return null;
   var verb = trouveVerbe(q);
   var conjugationRequest = !!verb && (CONJ_INTENT.test(q) || q.toLowerCase() === verb);
-  /* Fail closed : une conjugaison locale n'est jamais révélée sans contrôle
-     d'accès disponible, même si le catalogue ne sait pas rattacher le verbe. */
-  if(!window.ACCESS){
-    if(conjugationRequest) return {locked:true,html:'<b>🔒 لا يمكن شرح هذا التصريف دون التحقق من صلاحية الوصول إلى الدرس المرتبط به.</b>'};
-    return null;
-  }
   var unit = uniteExpliciteIA(q);
   var lesson = sessionIA(q);
   var unitSummaryRequest = /(?:résum|resume|summary|summari[sz]|ملخص|لخص|لخّص|تلخيص|شرح\s*(?:الوحدة|الوحده)|اشرح\s*(?:الوحدة|الوحده)|اشرحلي\s*(?:الوحدة|الوحده))/i.test(q);
