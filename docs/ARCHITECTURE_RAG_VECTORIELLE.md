@@ -3,7 +3,7 @@
 ## État vérifié avant conception
 - Le code de `worker/ia-ask.js` utilise déjà la liaison Cloudflare Workers AI `env.AI` pour la génération des réponses.
 - Le RAG PDF récupère les chunks depuis `corpus_rag_chunks.json` après lecture protégée par JWT/RLS, puis applique BM25 et expansion terminologique FR/AR/Darija → allemand.
-- `corpus_rag_chunks.json` et `corpus_rag_manifest.json` sont actuellement vides : 0 document, 0 chunk. Les 225 PDF du corpus utilisateur restent exclus faute de droits confirmés.
+- `corpus_rag_chunks.json` et `corpus_rag_manifest.json` sont actuellement vides : 0 document, 0 chunk. Les 293 PDF inventoriés restent exclus faute de droits confirmés.
 - La suite autonome Professeur IA du run `44214054953` est réussie sur le commit applicatif `27b1aa308a755c9d17ecf254effec09fbe7c6c87`. La CI globale échoue sur la validation Messenger EduDZ, hors périmètre IA.
 
 ## Modèle candidat étudié
@@ -147,3 +147,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Chaque ligne fournit le chemin du PDF et le nom exact du compagnon attendu (`_<nom>.json`), avec les champs de licence et de confirmation laissés volontairement vides et un statut « à vérifier ».
 - Cet inventaire sert de feuille de revue des droits ; il ne constitue pas une autorisation et ne doit pas être rempli automatiquement à partir des noms de fichiers.
 - Les 293 documents restent exclus de l'index tant que la preuve n'est pas confirmée.
+
+
+# Lot 628 — validation contrôlée de l'inventaire de droits (18 novembre 2026)
+- L'audit récursif complet recense 293 PDF versionnés : 264 dans `docs/archive/documents/` et 29 à la racine. Aucun des 293 n'a le compagnon de droits attendu ; le manifeste RAG demeure vide.
+- Le validateur `tools/validate_pdf_rights_inventory.py` vérifie l'inventaire CSV en lecture seule : chemins relatifs confinés au dépôt, présence du PDF, nom du compagnon, absence de doublons, valeur explicite de confirmation et licence autorisée.
+- L'admissibilité exige simultanément `rights_confirmed=true` et une licence de la liste fermée partagée avec l'ingestion. Les champs vides restent en attente ; les licences inconnues et incohérences sont des erreurs.
+- Le validateur ne crée pas de métadonnées de droits et ne modifie pas le CSV. Il ne lance ni ingestion, ni OCR, ni génération d'embeddings.
+- Dix tests couvrent les cas positifs et négatifs. Leur exécution est intégrée au job CI autonome Professeur IA.
+- Le total de 225 PDF indiqué dans les notes initiales des Lots 619–624 était basé sur un inventaire partiel ; le décompte récursif complet du Lot 626 (293) est la référence actuelle.
+- Aucun embedding réel n'a été généré. `RAG_VECTOR_ENABLED` reste désactivé par défaut ; aucune consommation Workers AI supplémentaire n'a été déclenchée.
+- Validation CI du Lot 628 en attente sur le nouveau HEAD. PR #22 reste ouverte en brouillon, sans merge ni déploiement.
