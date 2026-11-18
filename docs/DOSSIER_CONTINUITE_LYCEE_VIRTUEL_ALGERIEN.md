@@ -3543,3 +3543,12 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Complément tests Lot 616 : scénarios explicites pour entitlement RLS du nouvel asset PDF, refus 403 du Worker de site, récupération avec JWT, vérification licence, et sélecteur falsifié.
 
 - Audit de licence des 225 PDF référencés : 225/225 sont marqués « document utilisateur » (source « docs archive eleve »). Aucun n’est admissible automatiquement dans le nouvel index ; il reste vide jusqu’à validation documentée des droits ou apport de contenus produits par l’équipe.
+
+
+## Lot 617 — validation CI du professeur IA et cohérence du corpus PDF — 18 novembre 2026
+
+- Sur le commit `6a2a798d93eb9681a045f8db41a429bc1dab5e6f`, le job autonome Professeur IA est vert (run `44208219325`) : ingestion PDF/OCR et contrôle des licences, tests Worker JWT/RLS, protection des documents officiels et du corpus, Darija/Arabizi et régressions IA réussissent.
+- La CI globale reste rouge sur l’étape de validation de la messagerie EduDZ, hors périmètre IA. Les étapes structurelles précédentes et les 9 cas de référence du professeur IA sont vertes. Les tests PostgreSQL isolés Multaqa et consentement Messenger échouent également ; découverte Messenger réussit. Aucun changement sur le Supabase actif.
+- Le statut du manifeste PDF a été corrigé : `connected_protected` au lieu de `staged_not_connected`, car le Worker IA consomme désormais cet artefact par le Worker de site protégé par JWT/RLS. Le manifeste reste à 0 document / 0 chunk : les 225 PDF de l’archive sont marqués « document utilisateur » et restent exclus faute de preuve de droits.
+- Un test vérifie le statut du manifeste généré. Ces commits étant postérieurs au run cité, la tête actuelle doit encore passer une nouvelle CI ; ne pas confondre le succès du job IA sur le commit précédent avec la validation de la tête actuelle.
+- PR #22 et PR #21 restent ouvertes, en brouillon et non fusionnées. Aucun changement Supabase, main ou déploiement Cloudflare.
