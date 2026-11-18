@@ -3818,3 +3818,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Run `44286206424`, artefact `pdf-text-readiness`, ID `14418154476`.
 - CI autonome IA réussie : ingestion 9/9, droits 15/15, audit PDF 8/8, builder vectoriel 8/8, Worker IA/JWT/RAG 75/75, garde site 14/14, QUST 9/9, régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
 - Aucun PDF n'a été OCRisé ou indexé. Les droits restent à confirmer avant toute intégration au corpus.
+
+
+## Lot 631 — rapprochement technique et droits PDF (18 novembre 2026)
+- Le rapport PDF CI joint l'audit d'extractibilité à l'inventaire des droits par chemin relatif exact.
+- Les champs compagnon attendu, confirmation brute, licence et statut de revue sont reproduits sans inférer une autorisation. Les champs vides restent vides.
+- Les écarts sont visibles : PDF sans ligne d'inventaire et lignes d'inventaire sans PDF audité ; les chemins dupliqués sont rejetés.
+- Artefact CI : pdf-rights-and-readiness, rétention 14 jours. Le rapport ne contient aucun texte pédagogique et n'autorise pas l'indexation.
+- Aucun OCR, conversion persistante, ingestion RAG, embedding ou consommation payante n'est lancé. Le manifeste reste vide tant que les droits ne sont pas confirmés.
+- Résultat CI du Lot 631 à consigner après validation du nouveau HEAD. PR #22 reste ouverte en brouillon ; aucun merge, déploiement, changement main ou modification Supabase.

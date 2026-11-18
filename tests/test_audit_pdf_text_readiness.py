@@ -87,6 +87,46 @@ class PdfTextReadinessTests(unittest.TestCase):
         finally:
             output.unlink(missing_ok=True)
 
+    def test_rights_inventory_is_joined_by_exact_path_without_inference(self):
+        inventory = self.root.parent / (self.root.name + "-rights.csv")
+        inventory.write_text(
+            "pdf_path,expected_companion_metadata,rights_confirmed,license,review_status\\n"
+            "lesson.pdf,_lesson.json,,,à vérifier\\n"
+            "missing.pdf,_missing.json,true,cc_by,confirmé\\n",
+            encoding="utf-8",
+        )
+        try:
+            rows, summary = MODULE.merge_rights_inventory(
+                [{"pdf_path": "lesson.pdf", "status": "extractable", "pages": 2}],
+                inventory,
+            )
+            self.assertEqual(len(rows), 2)
+            lesson = next(row for row in rows if row["pdf_path"] == "lesson.pdf")
+            missing = next(row for row in rows if row["pdf_path"] == "missing.pdf")
+            self.assertEqual(lesson["rights_confirmed"], "")
+            self.assertEqual(lesson["license"], "")
+            self.assertEqual(lesson["rights_inventory_match"], "présent_dans_inventaire")
+            self.assertEqual(missing["status"], "pdf_absent_du_corpus_audite")
+            self.assertEqual(summary["matched_paths"], 1)
+            self.assertEqual(summary["inventory_without_pdf"], 1)
+            self.assertFalse(summary["rights_inferred"])
+        finally:
+            inventory.unlink(missing_ok=True)
+
+    def test_rights_inventory_rejects_duplicate_paths(self):
+        inventory = self.root.parent / (self.root.name + "-duplicate-rights.csv")
+        inventory.write_text(
+            "pdf_path,expected_companion_metadata,rights_confirmed,license,review_status\\n"
+            "lesson.pdf,_lesson.json,,,à vérifier\\n"
+            "lesson.pdf,_lesson.json,true,cc_by,confirmé\\n",
+            encoding="utf-8",
+        )
+        try:
+            with self.assertRaisesRegex(ValueError, "chemin_inventaire_duplique"):
+                MODULE.merge_rights_inventory([], inventory)
+        finally:
+            inventory.unlink(missing_ok=True)
+
     def test_csv_report_refuses_to_write_inside_pdf_source(self):
         result = {"files": []}
         with self.assertRaisesRegex(ValueError, "rapport_doit_rester_hors_corpus"):

@@ -510,3 +510,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le job CI publie ce rapport comme artefact GitHub Actions pendant 14 jours : run `44286206424`, artefact `pdf-text-readiness`, ID `14418154476`.
 - CI autonome Professeur IA : succès. Tests Python : ingestion 9/9, droits 15/15, audit PDF 8/8, builder vectoriel 8/8 ; Worker IA/JWT/RAG 75/75 ; garde Worker 14/14 ; QUST 9/9 ; régressions RAG 12/12 et PROF 18/18 ; suite combinée exécutée.
 - Le diagnostic du dépôt reste 293 PDF / 1 173 pages : 186 extractibles, 28 mixtes, 78 candidats OCR, 1 chiffré. Aucune extraction de texte n'est conservée dans le rapport, aucun OCR ni indexation n'est lancé.
+
+
+## Lot 631 — registre PDF unifié (18 novembre 2026)
+- Le CSV d'audit technique est enrichi par jointure exacte avec docs/inventaire_pdf_droits.csv.
+- Les valeurs rights_confirmed, license, review_status et le compagnon attendu sont reproduites sans attribution automatique de droits.
+- Les écarts de chemins sont signalés ; les doublons d'inventaire sont une erreur bloquante.
+- Artefact CI : pdf-rights-and-readiness (14 jours), limité aux chemins et métadonnées, sans texte extrait.
+- Aucun PDF n'est rendu admissible par ce rapport. OCR, indexation et embeddings restent suspendus à une preuve de droits vérifiée.
+- Résultat du nouveau run CI à consigner après validation du HEAD Lot 631.

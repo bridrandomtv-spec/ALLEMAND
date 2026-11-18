@@ -203,3 +203,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - La CI publie le rapport comme artefact temporaire (14 jours), run `44286206424`, artefact `pdf-text-readiness`, ID `14418154476`.
 - Validation autonome IA réussie : ingestion 9/9, droits 15/15, audit PDF 8/8, builder vectoriel 8/8, Worker IA/JWT/RAG 75/75, garde Worker 14/14, QUST 9/9, régressions RAG 12/12 et PROF 18/18.
 - Le rapport ne constitue ni une validation de droits ni une instruction d'indexation ; aucun OCR ni embedding n'est exécuté.
+
+
+## Lot 631 — jointure de l'audit et des droits
+- Le rapport CSV joint l'audit technique à l'inventaire des droits sur pdf_path exact. Les champs de droits restent inchangés ; les valeurs absentes restent vides.
+- Les PDF non présents dans l'inventaire et les entrées d'inventaire sans PDF correspondant sont signalés. Les doublons sont rejetés.
+- Le rapport est une aide de revue, jamais une preuve de licence ni une autorisation RAG. Aucun document n'est indexé par cette étape.
+- Artefact CI : pdf-rights-and-readiness, rétention 14 jours. Aucun OCR ni embedding réel n'est déclenché.
