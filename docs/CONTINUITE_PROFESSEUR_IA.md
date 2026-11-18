@@ -736,3 +736,6 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 
 - Correctif de sérialisation du lot : le fichier chunks est écrit depuis les mêmes octets UTF-8 que ceux utilisés pour calculer `chunks_sha256` (commit `388254b2f949768725d1198d3b51a4510eba70a1`). La sérialisation conserve le saut de ligne final ; l'empreinte couvre donc exactement le contenu publié.
 - CI déclenchée sur ce commit : run `44407671878` en attente au moment de la mise à jour ; résultats à confirmer.
+
+- Diagnostic CI intermédiaire : le run `44407613737` a détecté deux défauts dans les nouveaux changements du lot 646 : le test d'ingestion comparait une empreinte calculée sur une sérialisation différente des octets réellement écrits ; le harnais Node contenait un séparateur de ligne littéral invalide. Correctifs appliqués : sérialisation unique suivie d'une écriture binaire (commit `388254b2f949768725d1198d3b51a4510eba70a1`) et déclaration du cache de fixture sur deux lignes (commit `7158567c1d40cbdcd21fc1fedc21ebbfb83b67dd`).
+- Nouvelle CI sur le commit correctif : run `44407794088` (CI — ALLEMAND) en attente ; trois workflows PostgreSQL associés sont également en cours. Ne pas déclarer le lot 646 validé avant leur résultat final.
