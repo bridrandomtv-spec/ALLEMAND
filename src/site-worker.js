@@ -2,7 +2,7 @@
    Rôle 1 : servir les actifs statiques (binding ASSETS) en imposant
    Cache-Control: no-store sur les chemins sensibles (sw, entrée, JSON bdd).
    Rôle 2 (CONTENT-1) : GARDE server-side des contenus payants — les fichiers
-   d'unités et les JSON de livres/traductions ne partent qu'avec un jeton
+   d'unités et les JSON de livres, traductions, devoirs et annales ne partent qu'avec un jeton
    Supabase dont l'entitlement est vérifié PAR LE RLS EXISTANT (lesson_content).
    Variables CF requises : SUPABASE_URL, SUPABASE_ANON_KEY.
    Si elles sont absentes : fail-closed (503), aucun fichier protégé n'est servi. */
