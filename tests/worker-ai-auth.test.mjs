@@ -68,6 +68,12 @@ function harness(options = {}){
           status:200, headers:{ 'Content-Type':'text/javascript' }
         });
       }
+      if(String(url).includes('/assets/bdd/compositions.json') || String(url).includes('/assets/bdd/annales.json')){
+        if(options.officialDocumentResponse) return options.officialDocumentResponse;
+        return new Response(JSON.stringify(options.officialDocumentData || { items:[
+          { id:'CP-2023-2-0312', type:'composition', titre:'Sujet environnement', titre_de:'Umwelt und Natur', niveau:'2AS', unite:15, unite_de:'Sich vorstellen', annee:2023, source:'MEN', tags:['Umwelt'], sujet:'Sujet officiel sur Umwelt.', corrige:'Corrigé détaillé.', parties:[] }
+        ] }), { status:200, headers:{ 'Content-Type':'application/json' } });
+      }
       if(String(url).includes('/assets/bdd/contenu_original.json')){
         if(options.freeBankThrows) throw new Error('free bank lookup failed');
         return options.freeBankResponse || new Response(JSON.stringify(options.freeBankData || {
@@ -578,6 +584,8 @@ test('le client transmet des sélecteurs de page RLS et de séance gratuite 3AS'
   assert.ok(iaSource.includes('function summaryResource(question)'));
   assert.ok(iaSource.includes("type:'free_summary', level:level, unit:unit"));
   assert.ok(iaSource.includes('function exerciseBankResource(question)'));
+  assert.ok(iaSource.includes('function officialDocumentResource(question)'));
+  assert.ok(iaSource.includes("type:'official_document', collection:collection"));
   assert.ok(iaSource.includes("type:'free_exercise_bank', level:level"));
   assert.ok(iaSource.includes('await pageResource(q) || lessonResource(q) || summaryResource(q) || exerciseBankResource(q)'));
   assert.ok(iaSource.includes('resource: resource'));
@@ -705,6 +713,44 @@ test('le Worker refuse un niveau non reconnu pour la banque libre', async () => 
   }), h.env);
   assert.equal(response.status, 400);
   assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/contenu_original.json')), false);
+  assert.equal(h.messages, null);
+});
+
+test('le Worker récupère un document officiel exact via le Worker du site avec le JWT', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le sujet CP-2023-2-0312 et son corrigé.',
+    resource:{ type:'official_document', collection:'compositions', id:'CP-2023-2-0312' }
+  }), h.env);
+  assert.equal(response.status, 200);
+  assert.ok(h.calls.some(x => x.url === 'https://allemand.bridrandomtv.workers.dev/assets/bdd/compositions.json'));
+  const call = h.calls.find(x => x.url.endsWith('/assets/bdd/compositions.json'));
+  assert.equal(call.init.headers.Authorization, 'Bearer ' + TOKEN);
+  assert.match(h.messages[1].content, /CP-2023-2-0312/);
+  assert.match(h.messages[1].content, /Corrigé détaillé/);
+  assert.doesNotMatch(h.messages[1].content, /OTHER-PRIVATE-DOCUMENT/);
+});
+
+test('le Worker refuse un document officiel si le Worker du site signale un verrou', async () => {
+  const h = harness({ officialDocumentResponse:new Response('{"error":"abonnement_requis"}', { status:403 }) });
+  const response = await h.context.__worker.fetch(request({
+    q:'Corrige le sujet CP-2023-2-0312.',
+    resource:{ type:'official_document', collection:'compositions', id:'CP-2023-2-0312' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 403);
+  assert.equal(payload.err, 'content-locked');
+  assert.equal(h.messages, null);
+});
+
+test('le Worker rejette un sélecteur de document officiel falsifié', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Corrige ce sujet.',
+    resource:{ type:'official_document', collection:'compositions', id:'AN-2023-2-0559', extra:'forged' }
+  }), h.env);
+  assert.equal(response.status, 400);
+  assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/compositions.json') || x.url.includes('/assets/bdd/annales.json')), false);
   assert.equal(h.messages, null);
 });
 
