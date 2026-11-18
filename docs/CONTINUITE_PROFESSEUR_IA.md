@@ -700,3 +700,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - CI sur le HEAD `03b21ec0da14f90649cbe687e97d4998ea1c8040`, run `44401824398` : succès. « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont terminés avec `success`, sans étape en échec. Les trois workflows PostgreSQL isolés sont également réussis : `44401824349`, `44401824410`, `44401824405`.
 - Le PR #23 reste ouvert en brouillon, non fusionné ; GitHub indique `mergeable=true`, `mergeable_state=clean`. Aucun déploiement n'a été effectué.
 - Aucun PDF réel n'a été intégré au corpus pédagogique par ce lot ; aucun OCR ni embedding documentaire réel n'a été exécuté et aucun droit d'utilisation n'a été présumé. Aucune modification Supabase, Auth, RLS, schéma, abonnement ou paiement.
+
+
+### Lot 643 — gestion des débordements numériques dans les embeddings — 18/11/2026
+- L'audit du générateur vectoriel a identifié un cas limite : une valeur entière JSON extrêmement grande peut provoquer une exception Python `OverflowError` lors de sa conversion en flottant. Cette exception n'était pas convertie en erreur métier contrôlée et pouvait interrompre le CLI avec une trace technique.
+- `normalize_embedding` intercepte maintenant `OverflowError` et `ValueError` pendant la conversion et renvoie `ValueError("embedding_valeur_invalide")`. Le flux CLI conserve ainsi son comportement d'échec contrôlé, sans écrire d'artefact incomplet.
+- Test de régression ajouté avec un entier de très grande taille (`10 ** 400`).
+- Commits : générateur `ccc27fc8353e86f10da82d579cd6bbecc096611c` ; test `beca71accde35ca0fdda1a46dba870af7524c88a`.
+- CI déclenchée sur le HEAD `beca71accde35ca0fdda1a46dba870af7524c88a`, run `44405260871` : validation structurelle terminée avec succès ; job de tests autonomes toujours en cours au moment de cette note (étape d'audit technique PDF). Les trois workflows PostgreSQL isolés `44405260965`, `44405260915`, `44405260898` sont réussis.
+- PR #23 reste ouverte en brouillon, non fusionnée. Aucun changement sur `main`, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement. Aucun OCR ni embedding réel n'a été exécuté et aucun droit documentaire n'a été présumé.
