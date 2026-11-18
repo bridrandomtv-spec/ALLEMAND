@@ -3552,3 +3552,10 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le statut du manifeste PDF a été corrigé : `connected_protected` au lieu de `staged_not_connected`, car le Worker IA consomme désormais cet artefact par le Worker de site protégé par JWT/RLS. Le manifeste reste à 0 document / 0 chunk : les 225 PDF de l’archive sont marqués « document utilisateur » et restent exclus faute de preuve de droits.
 - Un test vérifie le statut du manifeste généré. Ces commits étant postérieurs au run cité, la tête actuelle doit encore passer une nouvelle CI ; ne pas confondre le succès du job IA sur le commit précédent avec la validation de la tête actuelle.
 - PR #22 et PR #21 restent ouvertes, en brouillon et non fusionnées. Aucun changement Supabase, main ou déploiement Cloudflare.
+
+
+### Résultat final CI Lot 617 — tête 2d2e37fec208e31520573ff0bb4e75cc6169cfa5
+
+- Run GitHub Actions `44209920032` terminé : job `Tests autonomes — Professeur IA` = `success`. Les tests d’ingestion PDF/OCR/droits, Worker IA JWT/RLS, garde corpus et documents officiels, QUST/Darja/Arabizi et régressions sont tous passés sur la tête actuelle.
+- Job global = `failure` sur l’étape `Valider la messagerie EduDZ (schéma RLS + client + vue)`, avant l’exécution des autres suites conditionnelles. Cette erreur reste hors périmètre du professeur IA et n’a pas été modifiée.
+- Conclusion : la suite autonome du professeur IA est validée sur la tête actuelle ; la CI globale du dépôt ne l’est pas. Aucun test E2E navigateur réel ni validation avec une vraie session utilisateur n’est revendiqué.
