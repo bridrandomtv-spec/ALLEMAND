@@ -3539,3 +3539,5 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Ajout d’un artefact de chunks vide et d’un manifeste staged_not_connected. Aucun PDF existant n’est indexé. CI vérifie la présence des artefacts et exécute les tests d’ingestion PDF et les tests de garde.
 - Recherche actuelle lexicale, sans embeddings. Les droits du Corpus restent contrôlés par le RLS existant ; aucune modification Supabase/RLS/Auth/abonnement, aucun changement main, merge ou déploiement. CI non encore confirmée sur la tête actuelle.
 - Suite : attendre les résultats CI, puis valider les droits d’un petit échantillon de PDF produits par l’équipe, exécuter l’ingestion et contrôler les textes avant toute activation.
+
+- Complément tests Lot 616 : scénarios explicites pour entitlement RLS du nouvel asset PDF, refus 403 du Worker de site, récupération avec JWT, vérification licence, et sélecteur falsifié.
