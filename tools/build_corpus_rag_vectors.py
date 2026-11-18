@@ -214,6 +214,9 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         chunks_path, manifest_path = Path(args.chunks), Path(args.manifest)
+        output = Path(args.output)
+        if output.resolve() in {chunks_path.resolve(), manifest_path.resolve()}:
+            raise ValueError("sortie_confondue_avec_source")
         chunks_bytes, manifest_bytes = chunks_path.read_bytes(), manifest_path.read_bytes()
         corpus = json.loads(chunks_bytes.decode("utf-8"))
         manifest = json.loads(manifest_bytes.decode("utf-8"))
@@ -242,7 +245,6 @@ def main(argv=None):
             response = call_cloudflare(inputs, account_id, token)
             return parse_embeddings(response, len(inputs))
         artifact = build_artifact(chunks, chunks_bytes, manifest_bytes, embed, args.batch_size)
-        output = Path(args.output)
         output.parent.mkdir(parents=True, exist_ok=True)
         temporary = output.with_suffix(output.suffix + ".tmp")
         temporary.write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
