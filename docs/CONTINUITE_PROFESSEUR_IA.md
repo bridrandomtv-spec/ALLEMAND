@@ -271,3 +271,10 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Cette amélioration est une recherche lexicale BM25 avec expansion terminologique, pas un modèle d'embeddings ni une recherche vectorielle. Le Worker possède déjà un chemin d'inférence AI, mais aucun index vectoriel ni vecteur de chunk n'est configuré dans cette branche. Une vraie recherche sémantique nécessitera une étape d'embedding à l'ingestion et une politique de coût/stockage explicite ; elle ne doit pas être simulée en prétendant que BM25 est vectoriel.
 - Le corpus PDF réel reste vide : les 225 PDF précédemment recensés sont étiquetés « document utilisateur » et aucun n'a encore de preuve de droits validée. Aucun document n'a été indexé.
 - Aucune modification Supabase, Auth, RLS, paiement, main, aucun merge ni déploiement Cloudflare.
+
+
+### Complément Lot 619 — verrouillage des alias traduits
+- Revue de sécurité après ajout du glossaire de recherche : les formulations arabes/françaises des mêmes règles payantes pouvaient sinon éviter la liste de termes allemands.
+- Ajout des alias « الماضي المركب », « الماضي التام », « حالة النصب », « حالة الجر », « المبني للمجهول », « صيغة الشرط », « الماضي البسيط », « المضارع », « صيغة المقارنة » et des formes françaises courantes à LOCKED_RULES.
+- Tests négatifs : compte gratuit + alias arabe/français + sélecteur de résumé gratuit ou page gratuite → 403 content-locked, aucun message transmis au modèle. Le test de recherche arabe PDF utilise désormais un abonnement actif pour vérifier le résultat documentaire sans affaiblir le cadenas.
+- La règle reste : tout compte authentifié utilise le professeur distant, mais les notions et ressources verrouillées restent protégées côté Worker.
