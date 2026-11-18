@@ -499,17 +499,70 @@ async function fetchAuthorizedCorpusDocument(resource, req, question){
       && allowedLicenses.includes(x.license) && (!resource.id || x.id === resource.id));
     if(!eligibleDocs.length) return { ok:false, status:404, error:'resource-not-found' };
     const eligibleById = new Map(eligibleDocs.map(x => [x.id,x]));
-    const terms = String(question || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-      .match(/[a-zäöüßà-ÿ\u0600-\u06ff]{3,}/g) || [];
-    const uniqueTerms = Array.from(new Set(terms)).slice(0,80);
-    const ranked = chunks.filter(x => x && eligibleById.has(x.document_id)
-      && typeof x.text === 'string' && x.text.trim())
-      .map(x => {
-        const body = x.text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-        const score = uniqueTerms.reduce((n, term) => n + (body.includes(term) ? 1 : 0), 0);
-        return { chunk:x, score, doc:eligibleById.get(x.document_id) };
-      })
-      .filter(x => x.score > 0)
+    const normalize = value => String(value || '').toLowerCase().normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,' ');
+    const tokenize = value => normalize(value).match(/[a-zäöüßà-ÿ\u0600-\u06ff]{2,}/g) || [];
+    /* Glossaire de rappel interlingue : il ne fournit aucun contenu au modèle.
+       Il relie seulement les formulations FR/AR/Darija aux termes allemands
+       présents dans les documents. Le classement reste calculé sur les chunks
+       autorisés récupérés côté serveur. */
+    const concepts = [
+      { keys:['perfekt','الماضي المركب','الماضي التام','passé composé','passe compose','el passe compose'],
+        terms:['perfekt','partizip','partizip ii','haben','sein'] },
+      { keys:['akkusativ','accusatif','حالة النصب','المفعول به'],
+        terms:['akkusativ','accusative','den','einen'] },
+      { keys:['dativ','datif','حالة الجر'],
+        terms:['dativ','dative','dem','einem'] },
+      { keys:['passiv','passive','المبني للمجهول','مبني للمجهول'],
+        terms:['passiv','passive','werden','worden'] },
+      { keys:['konjunktiv ii','konjunktiv 2','صيغة الشرط','الشرط الافتراضي'],
+        terms:['konjunktiv','würde','wurde','hätte','ware'] },
+      { keys:['präteritum','prateritum','imperfekt','الماضي البسيط'],
+        terms:['präteritum','prateritum','imperfekt'] },
+      { keys:['präsens','prasens','المضارع','présent','present tense'],
+        terms:['präsens','prasens','gegenwart'] },
+      { keys:['komparativ','comparatif','comparative','صيغة المقارنة'],
+        terms:['komparativ','comparative','als','wie'] }
+    ];
+    const weightedTerms = new Map();
+    for(const term of tokenize(question)) weightedTerms.set(term, Math.max(weightedTerms.get(term) || 0, 1));
+    const normalizedQuestion = normalize(question);
+    for(const concept of concepts){
+      if(concept.keys.some(key => normalizedQuestion.includes(normalize(key)))){
+        for(const term of concept.terms){
+          for(const token of tokenize(term)){
+            weightedTerms.set(token, Math.max(weightedTerms.get(token) || 0, 0.55));
+          }
+        }
+      }
+    }
+    const queryTerms = Array.from(weightedTerms.entries()).slice(0,100);
+    const candidates = chunks.filter(x => x && eligibleById.has(x.document_id)
+      && typeof x.text === 'string' && x.text.trim()).map(chunk => {
+        const tokens = tokenize(chunk.text);
+        const frequencies = new Map();
+        for(const token of tokens) frequencies.set(token, (frequencies.get(token) || 0) + 1);
+        return { chunk, doc:eligibleById.get(chunk.document_id), frequencies, length:tokens.length };
+      });
+    const averageLength = candidates.length
+      ? candidates.reduce((sum,item) => sum + item.length,0) / candidates.length : 0;
+    const documentFrequency = new Map();
+    for(const [term] of queryTerms){
+      documentFrequency.set(term, candidates.reduce((sum,item) =>
+        sum + (item.frequencies.has(term) ? 1 : 0),0));
+    }
+    const ranked = candidates.map(item => {
+      let score = 0;
+      for(const [term,weight] of queryTerms){
+        const tf = item.frequencies.get(term) || 0;
+        if(!tf) continue;
+        const df = documentFrequency.get(term) || 0;
+        const idf = Math.log(1 + (candidates.length - df + 0.5) / (df + 0.5));
+        const denominator = tf + 1.2 * (0.25 + 0.75 * item.length / Math.max(averageLength,1));
+        score += weight * idf * (tf * 2.2) / denominator;
+      }
+      return { chunk:item.chunk, doc:item.doc, score };
+    }).filter(item => item.score > 0)
       .sort((a,b) => b.score - a.score || Number(a.chunk.page || 0) - Number(b.chunk.page || 0))
       .slice(0,4);
     if(!ranked.length) return { ok:false, status:404, error:'resource-not-found' };
