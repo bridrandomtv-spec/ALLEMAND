@@ -93,3 +93,13 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Pour une demande de règle verrouillée (`Genitiv`), chaque sélecteur doit être rejeté en HTTP 403 avant toute lecture documentaire et avant tout appel au modèle. Le but est de vérifier que le type de ressource déclaré par le navigateur ne peut pas neutraliser la classification de la question.
 - Le run #4313 a validé 57/57 tests Worker, 9/9 tests QUST/Darja/Arabizi et les trois suites de régression. Le job autonome IA est `success`. Le job global reste `failure` sur `ci/check-msg.mjs` / messagerie EduDZ, hors périmètre IA.
 - Le test élargi à six sélecteurs vient d'être ajouté et doit être validé par le prochain run CI ; aucun résultat n'est anticipé.
+
+
+### Résultats confirmés — CI #4314 — 18/11/2026
+- Run `44204308402` : job autonome « Tests autonomes — Professeur IA » terminé `success`.
+- `tests/worker-ai-auth.test.mjs` : **57/57 PASS**, dont le test de règles grammaticales verrouillées avec les six sélecteurs `free_summary`, `free_exercise_bank`, `free_unit_lesson`, `book_page`, `book_pages` et `unit_lesson`. Aucun document n'est lu et aucun appel modèle n'est fait pour les demandes refusées.
+- `tests/qust-darja.test.mjs` : **9/9 PASS**.
+- Régressions : RAG **12/12**, PROF **18/18**, union combinée exécutée avec succès.
+- Le job global « Validation structurelle & pédagogique » reste `failure` sur `ci/check-msg.mjs:231` : `SyntaxError: missing ) after argument list`. Les étapes IA globales sont sautées après cette erreur, mais le job IA autonome a exécuté ses propres tests et est vert. Ce défaut Messenger est hors périmètre de cette PR IA ; aucune modification Messenger n'a été faite.
+- Les tests automatisés restent des simulations REST/RLS : pas de session Supabase utilisateur réelle ni de test E2E navigateur sur un déploiement correspondant à cette branche.
+- Le test de six sélecteurs a été exécuté sur le commit de test `7aa6eb2c6b315efdc82d4a51562f17948142eb90`. Les commits suivants ne changent que les deux documents de continuité ; le code testé est identique au code actuel de la branche.
