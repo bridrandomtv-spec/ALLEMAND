@@ -51,23 +51,30 @@ def eligible_chunks(corpus, manifest):
         raise ValueError("manifest_chunk_count_incoherent")
 
     approved = {}
+    seen_documents = set()
     for doc in documents:
-        if not isinstance(doc, dict) or not isinstance(doc.get("id"), str):
-            continue
+        if not isinstance(doc, dict) or not isinstance(doc.get("id"), str) or not doc["id"].strip():
+            raise ValueError("document_id_absent_ou_invalide")
+        document_id = doc["id"]
+        if document_id in seen_documents:
+            raise ValueError("document_id_duplique")
+        seen_documents.add(document_id)
         if doc.get("rights_confirmed") is True and doc.get("license") in ALLOWED_LICENSES:
-            approved[doc["id"]] = str(doc.get("title") or "none")[:240]
-    result, seen = [], set()
+            approved[document_id] = str(doc.get("title") or "none")[:240]
+    result, seen_chunks = [], set()
     for chunk in chunks:
         if not isinstance(chunk, dict):
-            continue
+            raise ValueError("chunk_entree_invalide")
         chunk_id, doc_id, body = chunk.get("id"), chunk.get("document_id"), chunk.get("text")
+        if not isinstance(chunk_id, str) or not chunk_id.strip() or chunk_id in seen_chunks:
+            raise ValueError("chunk_id_absent_ou_duplique")
+        if not isinstance(doc_id, str) or not doc_id.strip():
+            raise ValueError("chunk_document_id_absent_ou_invalide")
+        seen_chunks.add(chunk_id)
         if doc_id not in approved:
             continue
-        if not isinstance(chunk_id, str) or not chunk_id or chunk_id in seen:
-            raise ValueError("chunk_id_absent_ou_duplique")
         if not isinstance(body, str) or not body.strip():
             raise ValueError("chunk_texte_vide")
-        seen.add(chunk_id)
         result.append({
             "chunk_id": chunk_id,
             "doc_id": doc_id,
