@@ -3517,3 +3517,15 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - CI du commit audité 1fc6ebd : job autonome IA 60/61 (assertion d’URL du document officiel) ; job global bloqué aussi par une syntaxe incorrecte dans ci/check-msg.mjs:231, hors périmètre. L’assertion du test IA a été rendue tolérante au format d’URL et attend une nouvelle validation.
 - Aucun changement Supabase, RLS, Auth, paiement, main, merge ou déploiement. PR #22 reste ouverte et en brouillon.
 - Suite : Lot 615, pipeline d’ingestion PDF testable, index documentaire dédié et raccordement sécurisé au RAG serveur, en commençant uniquement par les documents dont les droits sont confirmés.
+
+## Lot 615 — pipeline d’ingestion PDF dédié au RAG — 18 novembre 2026
+
+- Ajout de tools/ingest_corpus_rag.py, sans toucher à l’ancien index vocabulaire : sorties dédiées corpus_rag_chunks.json et corpus_rag_manifest.json (statut staged_not_connected).
+- Extraction page par page via pypdf, contrôle qualité du texte, rejet des pages corrompues et chunking traçable par document/page.
+- OCR optionnel réel via Tesseract, pdf2image et Poppler, langues configurables. Si l’OCR n’est pas disponible, les pages déjà lisibles sont conservées et les pages scannées illisibles sont ignorées ; un document sans texte exploitable est rejeté.
+- Aucun document sans métadonnées explicites de droits confirmés et licence autorisée n’est indexé. L’outil n’a pas traité automatiquement les 225 PDF du corpus.
+- Tests Python ajoutés pour PDF textuel, scan/OCR, scan sans OCR, glyphes corrompus, caractères de contrôle, provenance/licence, absence d’écrasement de corpus_index.json et conservation des pages lisibles.
+- CI autonome professor-ai enrichie pour exécuter les tests d’ingestion avec Python 3.12.
+- Le nouvel index n’est pas encore connecté au RAG distant : statut staged_not_connected. L’accès Corpus reste soumis à la règle existante (vue Corpus payante) ; aucune voie client ne doit injecter le texte.
+- Aucune exécution CI verte confirmée sur la tête de branche à la date de cette note. Aucun changement Supabase, RLS, Auth, abonnement, main, merge ou déploiement.
+- Suite : Lot 616, lecteur sécurisé des chunks côté Worker, sélection stricte par ID et application de l’accès Corpus, après validation CI et droits documentaires.
