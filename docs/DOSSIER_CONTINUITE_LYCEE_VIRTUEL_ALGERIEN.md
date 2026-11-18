@@ -3746,3 +3746,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Nouveau test : un PDF situé dans un sous-dossier n'est ingéré que si son compagnon local confirme `droits_confirmes: true` et une licence autorisée ; son chemin relatif est conservé.
 - Ce changement améliore la couverture technique, mais ne change pas la politique de droits : les 293 PDF restent exclus tant que leurs preuves ne sont pas fournies.
 - Validation CI du Lot 626 en attente sur le nouveau HEAD ; ne pas annoncer les tests comme réussis avant le résultat du job autonome Professeur IA.
+
+
+## Résultat CI du Lot 626 — 18 novembre 2026
+- Run `44278714245` sur le commit applicatif `dccec914d60bb7af6c24e2ab52a34ea8d91b3686` : job autonome Professeur IA `success`.
+- Ingestion PDF : 9/9 tests réussis, y compris la découverte récursive d'un PDF imbriqué avec compagnon de droits.
+- Générateur vectoriel : 8/8 tests réussis.
+- Worker IA/JWT/RAG : 75/75 ; garde d'accès Worker du site : 14/14 ; QUST Darija/Arabizi : 9/9.
+- Régressions : RAG 12/12, PROF 18/18 et suite combinée exécutées sans erreur dans le job autonome.
+- Le job global reste en échec uniquement sur l'erreur de syntaxe Messenger déjà identifiée dans `ci/check-msg.mjs:231`. Le job autonome IA, qui est le périmètre de cette PR, est vert.
+- Le code de Lot 626 est validé. Les trois commits documentaires postérieurs ne modifient pas le code testé. Aucun index PDF réel n'a été créé : les 293 fichiers restent sans compagnon de droits.
