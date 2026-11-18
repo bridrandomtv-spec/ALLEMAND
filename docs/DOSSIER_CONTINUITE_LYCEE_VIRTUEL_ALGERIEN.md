@@ -3801,3 +3801,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Six tests ajoutés et intégrés à la CI autonome Professeur IA. Le job installe `pypdf`, exécute les tests et lance un audit résumé sur le dépôt.
 - Run sur le HEAD `7fbb15d8fccac8eb54b87718b2b262e0b732e042` en cours ; résultats chiffrés à confirmer avant toute décision OCR/conversion.
 - Les droits demeurent indépendants de ce diagnostic : aucun PDF ne peut être intégré au RAG sans preuve de droits valide.
+
+
+### Résultats réels du diagnostic PDF — Lot 629 (CI 44285230823)
+- Job autonome Professeur IA : `success`. Tests : ingestion 9/9, validateur droits 15/15, audit texte PDF 6/6, builder vectoriel 8/8, Worker IA/JWT/RAG 75/75, garde site 14/14, QUST 9/9, régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
+- Mesure sur les 293 PDF du dépôt : 1 173 pages, 767 pages extractibles, 406 pages sans texte extractible, 747 140 caractères mesurés sans sauvegarde.
+- 186 PDF sont entièrement extractibles ; 28 sont mixtes ; 78 sont candidats OCR ; 1 est chiffré ; 0 vide, 0 illisible, 0 lien symbolique sortant.
+- 106 fichiers ont donc des pages nécessitant potentiellement un OCR (28 mixtes + 78 candidats OCR). C'est un indicateur de préparation, pas une garantie de qualité OCR.
+- Aucun OCR réel, aucune conversion persistante, aucune intégration RAG et aucun embedding n'ont été lancés. Les droits des 293 PDF restent à vérifier.
+- Le job structurel global reste bloqué par la validation Messenger EduDZ hors périmètre ; le job autonome IA est vert.

@@ -186,3 +186,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Six tests couvrent les classes et le fait que l'audit ne prétend ni vérifier les droits ni indexer les documents.
 - Exécution sur le dépôt ajoutée à la CI autonome. Résultat du run HEAD `7fbb15d8fccac8eb54b87718b2b262e0b732e042` en attente.
 - Cet audit est préparatoire uniquement : il ne contourne pas le contrôle des licences et ne modifie pas le manifeste RAG vide.
+
+
+## Résultats du diagnostic PDF — Lot 629 (CI 44285230823)
+- Job autonome Professeur IA : `success`. Suites Python : ingestion 9/9, droits 15/15, audit PDF 6/6, builder vectoriel 8/8 ; Worker IA/JWT/RAG 75/75 ; garde Worker du site 14/14 ; QUST 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
+- Mesure des 293 PDF : 1 173 pages ; 767 pages avec texte extractible ; 406 pages sans texte extractible ; 747 140 caractères extractibles mesurés, non enregistrés.
+- Classification : 186 `extractable`, 28 `mixed`, 78 `ocr_candidate`, 1 `encrypted`, 0 `empty`, 0 `unreadable`, 0 `outside_root`.
+- 106 fichiers contiennent donc au moins une page potentiellement à OCR. Aucun OCR n'a été lancé ; cette classification ne prouve pas la qualité d'une future reconnaissance.
+- Aucun texte n'a été conservé, aucun PDF n'a été converti en artefact, aucun document n'a été indexé et aucun embedding n'a été généré. Le manifeste reste vide en attente des droits.
+- La validation globale échoue encore sur le contrôle Messenger EduDZ, hors périmètre du RAG ; le job IA autonome est vert.
