@@ -398,7 +398,9 @@ test('le garde de cadenas distingue séance gratuite, séance payante, conjugais
   assert.equal(lockedVerb.locked, true);
   const freeSummary = await guard('اشرح الوحدة 2');
   assert.equal(freeSummary, null);
-  const freeBank = await guard('تمارين الوحدة 2');
+  const lockedBank = await guard('تمارين الوحدة 2');
+  assert.equal(lockedBank.locked, true);
+  const freeBank = await guard('تمارين الوحدة 1');
   assert.equal(freeBank, null);
 });
 
