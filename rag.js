@@ -1252,7 +1252,7 @@ async function reponsePedagogique(q, meta){
   }
 
   window.reponsePedagogique = reponsePedagogique;
-  window.RAG = { cherche: cherche, formule: formule, SEUIL: SEUIL, render: render, matchOnto: matchOnto, ontoRoute: ontoRoute };
+  window.RAG = { cherche: cherche, formule: formule, SEUIL: SEUIL, render: render, matchOnto: matchOnto };
   window.verifieAccesContenuIA = verifieAccesContenuIA;
   window.renderRag = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'rag') render(); });
