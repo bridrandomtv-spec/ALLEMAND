@@ -1250,6 +1250,8 @@ jobs:
           node-version: 24
       - name: Tester le Worker IA et les contrôles d'accès
         run: node --test tests/worker-ai-auth.test.mjs
+      - name: Tester la protection serveur des devoirs et annales
+        run: node --test tests/site-worker-content-guard.test.mjs
       - name: Tester QUST et la compréhension Darija/Arabizi
         run: node --test tests/qust-darja.test.mjs
       - name: Tester la régression RAG, professeur et parcours combinés
