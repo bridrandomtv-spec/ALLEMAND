@@ -59,7 +59,9 @@ const DEVOIRS_UNITE = (function(){
     
     for(const f of FICHIERS){
       try{
-        const r = await fetch(f.url, { cache:'no-store' });
+        const headers = (window.CONTENT1 && typeof CONTENT1.authHeaders === 'function')
+          ? await CONTENT1.authHeaders() : {};
+        const r = await fetch(f.url, { cache:'no-store', headers:headers });
         if(!r.ok) continue;
         const data = await r.json();
         const items = (data && data.items) ? data.items : [];
