@@ -718,3 +718,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commits : garde CLI `9e7d7ee8f8776e186c0e45038272ac36497a4b20` ; test `7e4883d42567330e0867050a30a6ec4c63bbe940`.
 - CI du lot 643 (HEAD `beca71accde35ca0fdda1a46dba870af7524c88a`, run `44405260871`) : succès complet. Le build Worker et les validations lancés par la mise à jour documentaire précédente ont également réussi. CI du lot 644 à confirmer.
 - PR #23 reste ouverte en brouillon, non fusionnée ; aucun changement sur `main`, aucun déploiement et aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+
+### Lot 645 — refuser les associations documentaires contradictoires dans l’index vectoriel — 18/11/2026
+- L'audit du chargement des vecteurs a relevé un cas subtil : une entrée portant l'identifiant d'un chunk candidat mais un `document_id` contradictoire était ignorée. Une seconde entrée portant le même chunk et le bon document pouvait ensuite être acceptée. Cela masquait une collision de provenance au lieu d'invalider l'artefact.
+- Le Worker invalide maintenant l'index vectoriel complet dès qu'un chunk candidat est associé à un document différent de celui du corpus, ou qu'un identifiant candidat est dupliqué. Il conserve le repli BM25 et n'appelle pas le modèle d'embedding.
+- Test de régression ajouté : une entrée contradictoire suivie d'une entrée apparemment valide pour le même chunk doit invalider l'index complet.
+- Modifications limitées à `worker/ia-ask.js`, `tests/worker-ai-auth.test.mjs` et ce dossier de continuité. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucun OCR, aucun embedding réel, aucune fusion et aucun déploiement.
