@@ -981,6 +981,22 @@ test('le RAG refuse deux documents portant le même identifiant', async () => {
   assert.equal(h.messages,null);
 });
 
+test('le RAG refuse un chunk qui référence un document absent', async () => {
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusDocumentData:{
+      documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true }],
+      chunks:[{ id:'chunk-orphan', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', page:1, text:'Texte orphelin.' }]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(h.messages,null);
+});
+
 test('le RAG refuse deux chunks portant le même identifiant', async () => {
   const h = harness({
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
