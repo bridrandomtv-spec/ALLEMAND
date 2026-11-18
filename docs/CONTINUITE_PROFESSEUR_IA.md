@@ -793,3 +793,5 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Une règle grammaticale qui ne peut pas être rattachée à une ressource vérifiable est désormais refusée plutôt que renvoyée depuis le corpus local sans preuve d'accès. Les vérifications de quiz échouent également fermées si la fonction d'accès est absente.
 - Le test de régression couvre : absence d'ACCESS, absence d'entitlement actif et exception de rafraîchissement backend pour `résume unité 3`. Le professeur IA distant reste accessible aux utilisateurs connectés sans abonnement pour les questions générales ; seuls les contenus pédagogiques verrouillés sont refusés.
 - Aucun changement Supabase, Auth, RLS, schéma, abonnement ou paiement. Aucun changement sur `main`, aucune fusion ni déploiement. PR #23 reste ouverte et en brouillon.
+
+- Extension Lot 650 : la garde couvre aussi une séance explicitement demandée sans unité déterminable, ainsi que le résumé de l'unité actuellement active (si le contexte de navigation la fournit). Ces cas échouent fermés en l'absence de preuve. Les tests couvrent maintenant l'unité active sans ACCESS et une séance sans unité vérifiable.
