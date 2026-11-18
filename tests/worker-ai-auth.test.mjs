@@ -1380,3 +1380,21 @@ test('un vecteur de norme nulle invalide l’index vectoriel et conserve BM25', 
   assert.match(h.messages[1].content,/Der Perfekt wird/);
   assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
 });
+
+test('un manifeste dont l’empreinte ne correspond pas au corpus bloque le RAG avant le modèle', async () => {
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusManifestResponse:new Response(JSON.stringify({
+      version:1, document_count:1, chunk_count:2, chunks_sha256:'0'.repeat(64)
+    }), { status:200, headers:{ 'Content-Type':'application/json' } })
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status,503);
+  assert.equal(payload.err,'access-unavailable');
+  assert.equal(h.messages,null);
+  assert.equal(h.aiCalls.length,0);
+});
