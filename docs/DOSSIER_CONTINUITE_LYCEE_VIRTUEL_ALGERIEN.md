@@ -3786,3 +3786,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le validateur a été renforcé : pour déclarer un PDF admissible, il vérifie aussi le compagnon JSON réel, son parsing, `droits_confirmes: true` et l'identité exacte de la licence entre CSV et JSON.
 - Un compagnon absent, illisible, non confirmé ou incohérent bloque l'admissibilité. Le contrôle correspond maintenant aux métadonnées effectivement lues par l'ingestion RAG.
 - La suite comporte 14 tests. Le run 44282039020 (10/10) concerne la version antérieure du validateur ; une nouvelle CI est requise pour cette extension.
+
+
+### Validation finale du Lot 628 durci — 18 novembre 2026
+- Run `44282741104` sur le commit applicatif `4665f8ce55b4f2eec3a9bb910ce567246ca817e9` : job autonome Professeur IA = `success`.
+- Résultats : validateur des droits 15/15 ; ingestion PDF/OCR 9/9 ; générateur vectoriel 8/8 ; Worker IA/JWT/RAG 75/75 ; garde Worker du site 14/14 ; QUST 9/9 ; régressions RAG 12/12 et PROF 18/18 ; suite combinée exécutée.
+- La CI globale échoue sur l'erreur indépendante Messenger `ci/check-msg.mjs:231` : `SyntaxError: missing ) after argument list`. Ce défaut n'a pas été modifié dans le périmètre IA.
+- Le commit applicatif testé est `4665f8c`. Les commits documentaires suivants n'ont pas modifié le code.
