@@ -820,3 +820,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Comparaison automatisée de `LOCKED_RULES` Worker et `LOCKED_RULES_IA` locale : 74 entrées de chaque côté, aucune entrée manquante ou supplémentaire.
 - Les résumés `free_summary` et la banque générale gratuite restent autorisés ; les séances, règles et exercices rattachés à des ressources payantes restent soumis aux contrôles d'accès correspondants.
 - Le commit de documentation qui consigne ces résultats déclenche sa propre CI ; celle-ci reste à vérifier séparément. PR #23 demeure ouverte, en brouillon et non fusionnée.
+
+
+### Lot 652 — première activation sûre de l’ontologie dans le parcours réel — 18/11/2026
+- `matchOnto()` était jusque-là uniquement testée comme fonction isolée ; `ontoRoute()` demeure volontairement non appelée car elle contient encore des réponses pédagogiques statiques sans contrôle uniforme des ressources.
+- Activation minimale dans `reponsePedagogique()` : après le garde d'accès et avant toute réponse locale, l'ontologie est interrogée. Si le meilleur score est partagé entre plusieurs intentions, le moteur s'abstient et demande à l'élève de préciser (expliquer, résumer, exemples/exercices, unité ou séance). Aucun contenu pédagogique n'est délivré dans ce cas.
+- Une intention unique ne déclenche pas cette clarification et continue dans le pipeline existant. Cette étape active donc uniquement la désambiguïsation ; elle ne branche pas encore les routes statiques de `ontoRoute()`.
+- Tests de régression ajoutés sur le parcours réel : `هاد الدرس` doit produire une demande de précision ; `شرحلي هاد الدرس` ne doit pas être déclaré ambigu.
+- Les contrôles d'accès Lot 650–651 restent exécutés avant l'ontologie. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion ni déploiement. CI du nouveau commit à confirmer.
