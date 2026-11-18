@@ -236,3 +236,10 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 ### Prochaine étape
 - Vérifier le nouveau run CI déclenché par les commits du Lot 617. Si le job autonome IA échoue, corriger uniquement les erreurs de ce job. L’échec Messenger/Multaqa doit rester identifié comme externe au périmètre IA et ne doit pas déclencher une modification de ces modules.
 - Obtenir des PDF produits par l’équipe ou une preuve écrite de droits pour les documents à intégrer ; ne pas indexer automatiquement les 225 archives utilisateur.
+
+
+### Résultat final CI Lot 617 — tête 2d2e37fec208e31520573ff0bb4e75cc6169cfa5
+
+- Run GitHub Actions `44209920032` terminé : job `Tests autonomes — Professeur IA` = `success`. Les tests d’ingestion PDF/OCR/droits, Worker IA JWT/RLS, garde corpus et documents officiels, QUST/Darja/Arabizi et régressions sont tous passés sur la tête actuelle.
+- Job global = `failure` sur l’étape `Valider la messagerie EduDZ (schéma RLS + client + vue)`, avant l’exécution des autres suites conditionnelles. Cette erreur reste hors périmètre du professeur IA et n’a pas été modifiée.
+- Conclusion : la suite autonome du professeur IA est validée sur la tête actuelle ; la CI globale du dépôt ne l’est pas. Aucun test E2E navigateur réel ni validation avec une vraie session utilisateur n’est revendiqué.
