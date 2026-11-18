@@ -785,7 +785,7 @@ function tokOnto(s){ return s.split(/[^\w\u0600-\u06FF]+/).filter(w => w.length 
 async function matchOnto(q){
   const O = await chargeOnto();
   const nq = normOnto(q);
-  let best = null, bestScore = 0;
+  let best = null, bestScore = 0, tied = [];
   for(const it of (O.intents || [])){
     let score = 0;
     const srcs = Object.values(it.patterns || {}).concat(Object.values(it.expansion || {})); for(const arr of srcs){
@@ -802,14 +802,18 @@ async function matchOnto(q){
     }
     const kw = (it.keywords || []).filter(k => nq.indexOf(normOnto(k)) !== -1).length;
     if(kw) score = Math.max(score, 30 + kw * 10);
-    if(score > bestScore){ bestScore = score; best = it; }
+    if(score > bestScore){ bestScore = score; best = it; tied = [it]; }
+    else if(score === bestScore && score >= 65){ tied.push(it); }
   }
-  return (best && bestScore >= 65) ? { it: best, score: bestScore } : null;
+  if(!best || bestScore < 65) return null;
+  if(tied.length > 1) return { ambiguous:true, score:bestScore, candidates:tied.map(it => it.intent) };
+  return { it:best, score:bestScore };
 }
 async function ontoRoute(q){
   try{
     const m = await matchOnto(q);
-    if(!m) return null;
+    /* Une égalité de score n'autorise jamais un choix arbitraire. */
+    if(!m || m.ambiguous) return null;
     const id = m.it.intent;
     const n = numeroUnite(q);
     if(id === 'explain_word' || id === 'translate'){
