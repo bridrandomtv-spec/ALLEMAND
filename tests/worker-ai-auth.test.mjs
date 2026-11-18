@@ -29,6 +29,7 @@ const ORIGIN = 'https://allemand.brid-randomtv.workers.dev';
 
 function harness(options = {}){
   const calls = [];
+  const aiCalls = [];
   let messages = null;
   const context = {
     URL, Request, Response, Headers, TextDecoder, Uint8Array, AbortController,
@@ -133,6 +134,7 @@ function harness(options = {}){
     SUPABASE_ANON_KEY:'sb_publishable_test',
     AI:{
       async run(model, input){
+        aiCalls.push({ model, input });
         if(model === '@cf/google/embeddinggemma-2'){
           if(options.embeddingThrows) throw new Error('embedding unavailable');
           return options.embeddingResponse || { data:[{ embedding:options.queryEmbedding || [1,...new Array(255).fill(0)] }] };
@@ -143,7 +145,7 @@ function harness(options = {}){
     },
     RAG_VECTOR_ENABLED:options.ragVectorEnabled ? 'true' : 'false'
   };
-  return { context, env, calls, get messages(){ return messages; } };
+  return { context, env, calls, aiCalls, get messages(){ return messages; } };
 }
 
 function request(body, token = TOKEN){
@@ -881,6 +883,7 @@ test('la recherche vectorielle hybride retrouve un passage sémantique sans corr
   }), h.env);
   assert.equal(response.status,200);
   assert.ok(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_vectors.json')));
+  assert.equal(h.aiCalls.filter(x => x.model === '@cf/google/embeddinggemma-2').length,1);
   assert.match(h.messages[1].content,/Identité et appartenance/);
   assert.match(h.messages[1].content,/Die persönliche Identität/);
   assert.doesNotMatch(h.messages[1].content,/Private Identitätsdaten|Document non autorisé/);
@@ -894,6 +897,7 @@ test('la recherche vectorielle reste inactive sans drapeau et ne déclenche aucu
   }), h.env);
   assert.equal(response.status,200);
   assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_vectors.json')),false);
+  assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
 });
 
 test('une panne des embeddings conserve le repli BM25', async () => {
