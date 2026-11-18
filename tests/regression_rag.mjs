@@ -23,11 +23,11 @@ if (typeof matcher !== 'function') {
   console.log('::error::ONTO : matchOnto absent du contrat de test RAG');
   process.exit(1);
 }
-const ambiguous = await matcher('عطيني الخلاصة وعطيني مثال');
+const ambiguous = await matcher('هاد الدرس');
 const candidates = new Set((ambiguous && ambiguous.candidates) || []);
 if (!ambiguous || ambiguous.ambiguous !== true
     || !candidates.has('summarize_lesson')
-    || !candidates.has('explain_with_examples')) {
+    || !candidates.has('explain_lesson')) {
   console.log('::error::ONTO : une égalité entre intentions doit provoquer une abstention');
   process.exit(1);
 }
