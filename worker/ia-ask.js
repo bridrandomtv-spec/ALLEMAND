@@ -512,6 +512,23 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
     const docs = data && Array.isArray(data.documents) ? data.documents : [];
     const chunks = data && Array.isArray(data.chunks) ? data.chunks : [];
     if(chunks.length > 12000) return { ok:false, status:503, error:'access-unavailable' };
+    /* Les identifiants servent de clé de jointure entre documents, chunks et
+       vecteurs. Toute collision rendrait la provenance ambiguë : refus fermé. */
+    const documentIds = new Set();
+    for(const doc of docs){
+      if(!doc || typeof doc.id !== 'string' || !doc.id
+         || documentIds.has(doc.id))
+        return { ok:false, status:503, error:'access-unavailable' };
+      documentIds.add(doc.id);
+    }
+    const chunkIds = new Set();
+    for(const chunk of chunks){
+      if(!chunk || typeof chunk.id !== 'string' || !chunk.id
+         || typeof chunk.document_id !== 'string' || !chunk.document_id
+         || chunkIds.has(chunk.id))
+        return { ok:false, status:503, error:'access-unavailable' };
+      chunkIds.add(chunk.id);
+    }
     const allowedLicenses = ['production_propre','domaine_public','cc_by','cc_by_sa','autorisation_ecrite'];
     const eligibleDocs = docs.filter(x => x && x.rights_confirmed === true
       && allowedLicenses.includes(x.license) && (!resource.id || x.id === resource.id));
