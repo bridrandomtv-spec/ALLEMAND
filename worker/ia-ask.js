@@ -521,6 +521,12 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
         return { ok:false, status:503, error:'access-unavailable' };
       documentIds.add(doc.id);
     }
+    const expectedChunkCounts = new Map();
+    for(const doc of docs){
+      if(!Number.isInteger(doc.chunk_count) || doc.chunk_count < 0)
+        return { ok:false, status:503, error:'access-unavailable' };
+      expectedChunkCounts.set(doc.id, 0);
+    }
     const chunkIds = new Set();
     for(const chunk of chunks){
       if(!chunk || typeof chunk.id !== 'string' || !chunk.id
@@ -528,6 +534,12 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
          || !documentIds.has(chunk.document_id) || chunkIds.has(chunk.id))
         return { ok:false, status:503, error:'access-unavailable' };
       chunkIds.add(chunk.id);
+      expectedChunkCounts.set(chunk.document_id, expectedChunkCounts.get(chunk.document_id) + 1);
+    }
+    for(const [documentId, expected] of expectedChunkCounts){
+      const document = docs.find(doc => doc.id === documentId);
+      if(!document || expected !== document.chunk_count)
+        return { ok:false, status:503, error:'access-unavailable' };
     }
     const allowedLicenses = ['production_propre','domaine_public','cc_by','cc_by_sa','autorisation_ecrite'];
     const eligibleDocs = docs.filter(x => x && x.rights_confirmed === true
