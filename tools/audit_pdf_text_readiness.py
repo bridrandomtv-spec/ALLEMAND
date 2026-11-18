@@ -3,10 +3,12 @@
 """Audit technique PDF sans conserver le texte ni produire de corpus RAG.
 
 Le script mesure uniquement les pages et la présence de texte extractible.
-Il ne lance pas l'OCR, n'écrit aucun fichier et n'indexe aucun document.
+Il ne lance pas l'OCR et n'indexe aucun document. Le rapport CSV optionnel
+contient uniquement des chemins et compteurs techniques, jamais le texte PDF.
 Les droits ne sont pas évalués ici : l'audit ne vaut jamais autorisation.
 """
 import argparse
+import csv
 import json
 import re
 import sys
@@ -115,14 +117,37 @@ def audit_directory(source_dir):
     return {"summary": summary, "files": files}
 
 
+def write_csv_report(result, output_path, source_dir):
+    root = Path(source_dir).resolve()
+    target = Path(output_path).resolve()
+    if target == root or root in target.parents:
+        raise ValueError("rapport_doit_rester_hors_corpus")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    fields = (
+        "pdf_path", "status", "pages", "pages_with_text",
+        "pages_without_text", "extractable_chars", "error",
+    )
+    with target.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore")
+        writer.writeheader()
+        for item in result["files"]:
+            writer.writerow(item)
+    return target
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source_dir", help="Dossier racine à auditer récursivement")
     parser.add_argument("--summary-only", action="store_true",
                         help="N'affiche que les compteurs agrégés")
+    parser.add_argument("--csv-output",
+                        help="Écrit un rapport de chemins et compteurs hors du dossier source")
     args = parser.parse_args(argv)
     try:
         result = audit_directory(args.source_dir)
+        if args.csv_output:
+            report_path = write_csv_report(result, args.csv_output, args.source_dir)
+            print(f"Rapport technique CSV écrit : {report_path}", file=sys.stderr)
     except (OSError, ValueError) as exc:
         print("ERREUR:", exc, file=sys.stderr)
         return 1

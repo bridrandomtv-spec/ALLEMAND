@@ -1,3 +1,4 @@
+import csv
 import importlib.util
 import sys
 import tempfile
@@ -69,6 +70,27 @@ class PdfTextReadinessTests(unittest.TestCase):
             result = MODULE.audit_pdf(self.root / "lesson.pdf")
         self.assertEqual(result["status"], "unreadable")
         self.assertEqual(result["error"], "ValueError")
+
+    def test_csv_report_contains_metadata_only_and_stays_outside_source(self):
+        text = " ".join(["Deutschunterricht"] * 30)
+        fake = types.SimpleNamespace(PdfReader=lambda *_a, **_k: self.fake_reader([FakePage(text)]))
+        output = self.root.parent / (self.root.name + "-audit.csv")
+        try:
+            with patch.dict(sys.modules, {"pypdf": fake}):
+                result = MODULE.audit_directory(self.root)
+            MODULE.write_csv_report(result, output, self.root)
+            with output.open(encoding="utf-8", newline="") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual(rows[0]["pdf_path"], "lesson.pdf")
+            self.assertEqual(rows[0]["status"], "extractable")
+            self.assertNotIn("Deutschunterricht", output.read_text(encoding="utf-8"))
+        finally:
+            output.unlink(missing_ok=True)
+
+    def test_csv_report_refuses_to_write_inside_pdf_source(self):
+        result = {"files": []}
+        with self.assertRaisesRegex(ValueError, "rapport_doit_rester_hors_corpus"):
+            MODULE.write_csv_report(result, self.root / "report.csv", self.root)
 
     def test_recursive_audit_counts_files_and_never_claims_rights_or_indexing(self):
         (self.root / "nested").mkdir()
