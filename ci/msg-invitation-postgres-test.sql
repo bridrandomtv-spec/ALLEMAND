@@ -210,6 +210,7 @@ select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001'
 create temporary table expired_cancel_invite(id uuid);
 insert into expired_cancel_invite select public.msg_invite_send('20000000-0000-4000-8000-000000000003');
 reset role;
+grant select on expired_cancel_invite to authenticated;
 update public.msg_invites set created_at=now()-interval '8 days'
  where id=(select id from expired_cancel_invite);
 set role authenticated;
@@ -226,6 +227,7 @@ select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000001'
 create temporary table expired_decline_invite(id uuid);
 insert into expired_decline_invite select public.msg_invite_send('20000000-0000-4000-8000-000000000004');
 reset role;
+grant select on expired_decline_invite to authenticated;
 update public.msg_invites set created_at=now()-interval '8 days'
  where id=(select id from expired_decline_invite);
 set role authenticated;
