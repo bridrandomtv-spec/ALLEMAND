@@ -785,6 +785,9 @@ function tokOnto(s){ return s.split(/[^\w\u0600-\u06FF]+/).filter(w => w.length 
 async function matchOnto(q){
   const O = await chargeOnto();
   const nq = normOnto(q);
+  /* Évite qu'un fragment latin très court ("was", "ich", etc.) soit pris
+     pour une sous-chaîne de dizaines de formulations de l'ontologie. */
+  if(nq.length < 4 && !/[\u0600-\u06FF]/.test(nq)) return null;
   let best = null, bestScore = 0, tied = [];
   for(const it of (O.intents || [])){
     let score = 0;
