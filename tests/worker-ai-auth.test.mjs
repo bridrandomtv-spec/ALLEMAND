@@ -839,8 +839,24 @@ test('le Worker recherche naturellement dans tous les PDF autorisés sans identi
   assert.doesNotMatch(h.messages[1].content, /Unberechtigtes Dokument|Document utilisateur/);
 });
 
+test('les alias arabes et français ne contournent pas les règles grammaticales verrouillées', async () => {
+  for (const q of ['اشرح الماضي المركب.', 'Explique le passé composé.', 'اشرح حالة الجر.', 'Explique le passif.']) {
+    for (const resource of [
+      { type:'free_summary', level:'3AS', unit:1 },
+      { type:'book_page', page:5, level:'2AS' }
+    ]) {
+      const h = harness();
+      const response = await h.context.__worker.fetch(request({ q, resource }), h.env);
+      const payload = await response.json();
+      assert.equal(response.status, 403, q);
+      assert.equal(payload.err, 'content-locked', q);
+      assert.equal(h.messages, null, q);
+    }
+  }
+});
+
 test('la recherche PDF relie les formulations arabes et françaises aux termes allemands', async () => {
-  const h = harness({ corpusDocumentData:{
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
     documents:[
       { id:'pdf-0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
       { id:'pdf-aaaaaaaaaaaaaaaa', title:'Präsens', license:'production_propre', rights_confirmed:true }
