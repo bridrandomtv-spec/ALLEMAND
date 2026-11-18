@@ -3,7 +3,7 @@
 """Ingestion PDF dédiée au RAG distant.
 
 N'écrase jamais corpus.json ni corpus_index.json (index vocabulaire).
-Usage: python tools/ingest_corpus_rag.py DOSSIER --output-dir .
+Usage: python tools/ingest_corpus_rag.py DOSSIER --output-dir . --rights-inventory docs/inventaire_pdf_droits.csv
 Chaque PDF doit avoir un fichier compagnon _NOM.json avec:
   {"titre":"...", "licence":"production_propre", "droits_confirmes":true}
 Licences admises: production_propre, domaine_public, cc_by, cc_by_sa,
@@ -11,13 +11,14 @@ autorisation_ecrite. Sans preuve explicite, le document est ignoré.
 OCR: option --ocr ; nécessite tesseract, pdf2image, Poppler et les langues Tesseract.
 """
 import argparse
+import csv
 import hashlib
 import json
 import os
 import re
 import shutil
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 ALLOWED_LICENSES = {
     "production_propre", "domaine_public", "cc_by", "cc_by_sa",
@@ -96,11 +97,63 @@ def read_metadata(pdf_path):
         return None
 
 
-def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara"):
+
+def load_rights_inventory(inventory_path):
+    """Charge les autorisations humaines, en échouant fermé sur un inventaire ambigu."""
+    if not inventory_path:
+        return {}
+    path = Path(inventory_path)
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        reader = csv.DictReader(handle)
+        required = {"pdf_path", "expected_companion_metadata", "rights_confirmed", "license"}
+        if not required.issubset(set(reader.fieldnames or [])):
+            raise ValueError("colonnes_inventaire_droits_invalides")
+        rows = {}
+        for row in reader:
+            pdf_label = (row.get("pdf_path") or "").strip()
+            parsed = PurePosixPath(pdf_label)
+            if not pdf_label or parsed.is_absolute() or ".." in parsed.parts or "\\" in pdf_label:
+                raise ValueError("chemin_inventaire_droits_invalide")
+            if pdf_label in rows:
+                raise ValueError("pdf_droits_inventaire_duplique:" + pdf_label)
+            rows[pdf_label] = row
+    return rows
+
+
+def inventory_authorizes_pdf(pdf, repo_root, rights_rows, companion_license):
+    """Exige une ligne d'inventaire explicite, cohérente avec le compagnon."""
+    try:
+        pdf_label = pdf.resolve().relative_to(Path(repo_root).resolve()).as_posix()
+    except ValueError:
+        return False, "pdf_hors_racine_inventaire"
+    row = rights_rows.get(pdf_label)
+    if row is None:
+        return False, "inventaire_droits_absent"
+    expected_companion = (pdf.parent / ("_" + pdf.stem + ".json")).resolve()
+    try:
+        expected_label = expected_companion.relative_to(Path(repo_root).resolve()).as_posix()
+    except ValueError:
+        return False, "compagnon_hors_racine_inventaire"
+    supplied_companion = (row.get("expected_companion_metadata") or "").strip()
+    if supplied_companion != expected_label:
+        return False, "compagnon_inventaire_incoherent"
+    if (row.get("rights_confirmed") or "").strip().lower() != "true":
+        return False, "droits_non_confirmes_dans_inventaire"
+    inventory_license = (row.get("license") or "").strip().lower()
+    if inventory_license not in ALLOWED_LICENSES:
+        return False, "licence_inventaire_non_autorisee"
+    if inventory_license != companion_license:
+        return False, "licence_inventaire_incoherente"
+    return True, "ok"
+
+
+def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara",
+           rights_inventory=None, repo_root="."):
     source_dir, output_dir = Path(source_dir), Path(output_dir)
     chunks, documents, skipped = [], [], []
     if not source_dir.is_dir():
         raise ValueError("dossier_source_invalide")
+    rights_rows = load_rights_inventory(rights_inventory)
     for pdf in sorted(source_dir.rglob("*.pdf")):
         source_label = pdf.relative_to(source_dir).as_posix()
         meta = read_metadata(pdf)
@@ -110,6 +163,12 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara"):
         license_name = str(meta.get("licence", "")).strip().lower()
         if meta.get("droits_confirmes") is not True or license_name not in ALLOWED_LICENSES:
             skipped.append({"file": source_label, "reason": "droits_non_confirmes"})
+            continue
+        authorized, authorization_status = inventory_authorizes_pdf(
+            pdf, repo_root, rights_rows, license_name
+        )
+        if not authorized:
+            skipped.append({"file": source_label, "reason": authorization_status})
             continue
         pages, status = extract_pdf(pdf, use_ocr=use_ocr, languages=languages)
         if not status.startswith("ok"):
@@ -159,9 +218,14 @@ def main(argv=None):
     parser.add_argument("--output-dir", default=".")
     parser.add_argument("--ocr", action="store_true")
     parser.add_argument("--ocr-languages", default="deu+fra+ara")
+    parser.add_argument("--rights-inventory", default="docs/inventaire_pdf_droits.csv",
+                        help="Inventaire humain des droits ; sans ligne confirmée, le PDF est ignoré")
+    parser.add_argument("--repo-root", default=".",
+                        help="Racine utilisée pour faire correspondre pdf_path à l’inventaire")
     args = parser.parse_args(argv)
     try:
-        result = ingest(args.source_dir, args.output_dir, args.ocr, args.ocr_languages)
+        result = ingest(args.source_dir, args.output_dir, args.ocr, args.ocr_languages,
+                        args.rights_inventory, args.repo_root)
     except (OSError, ValueError) as exc:
         print("ERREUR:", exc, file=sys.stderr)
         return 1

@@ -1,3 +1,4 @@
+import csv
 import importlib.util
 import json
 import sys
@@ -21,6 +22,27 @@ class FakePage:
 
 
 class PdfIngestionTests(unittest.TestCase):
+    def write_rights_inventory(self, source, pdf_paths, license_name="cc_by", rights="true"):
+        inventory = source / "rights-inventory.csv"
+        with inventory.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=[
+                "pdf_path", "expected_companion_metadata", "rights_confirmed", "license",
+                "review_status",
+            ])
+            writer.writeheader()
+            for pdf_path in pdf_paths:
+                pdf = source / pdf_path
+                writer.writerow({
+                    "pdf_path": pdf_path,
+                    "expected_companion_metadata": (
+                        (pdf.parent / ("_" + pdf.stem + ".json")).relative_to(source).as_posix()
+                    ),
+                    "rights_confirmed": rights,
+                    "license": license_name,
+                    "review_status": "confirmé" if rights == "true" else "à vérifier",
+                })
+        return inventory
+
     def test_text_pdf_extracts_pages_and_preserves_page_numbers(self):
         page_text = " ".join(["Deutschunterricht"] * 30)
         fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(pages=[FakePage(page_text)]))
@@ -92,11 +114,58 @@ class PdfIngestionTests(unittest.TestCase):
             fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(
                 pages=[FakePage(" ".join(["Deutschunterricht"] * 30))]
             ))
+            inventory = self.write_rights_inventory(source, ["archive/unit/lesson.pdf"])
             with patch.dict(sys.modules, {"pypdf": fake}):
-                result = MODULE.ingest(source, output)
+                result = MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
             self.assertEqual(result["document_count"], 1)
             data = json.loads((output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8"))
             self.assertEqual(data["documents"][0]["source_file"], "archive/unit/lesson.pdf")
+
+    def test_companion_alone_never_authorizes_without_inventory_row(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            source.mkdir(parents=True)
+            pdf = source / "lesson.pdf"
+            pdf.write_bytes(b"lesson")
+            (source / "_lesson.json").write_text(json.dumps({
+                "titre": "Lesson", "licence": "cc_by", "droits_confirmes": True
+            }), encoding="utf-8")
+            inventory = source / "rights.csv"
+            inventory.write_text(
+                "pdf_path,expected_companion_metadata,rights_confirmed,license\n",
+                encoding="utf-8",
+            )
+            result = MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
+            self.assertEqual(result["document_count"], 0)
+            self.assertEqual(result["skipped"][0]["reason"], "inventaire_droits_absent")
+
+    def test_inventory_and_companion_must_confirm_same_license(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            source.mkdir(parents=True)
+            pdf = source / "lesson.pdf"
+            pdf.write_bytes(b"lesson")
+            (source / "_lesson.json").write_text(json.dumps({
+                "titre": "Lesson", "licence": "cc_by", "droits_confirmes": True
+            }), encoding="utf-8")
+            inventory = self.write_rights_inventory(source, ["lesson.pdf"], license_name="cc_by_sa")
+            result = MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
+            self.assertEqual(result["document_count"], 0)
+            self.assertEqual(result["skipped"][0]["reason"], "licence_inventaire_incoherente")
+
+    def test_inventory_blank_confirmation_blocks_companion_claim(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            source.mkdir(parents=True)
+            pdf = source / "lesson.pdf"
+            pdf.write_bytes(b"lesson")
+            (source / "_lesson.json").write_text(json.dumps({
+                "titre": "Lesson", "licence": "cc_by", "droits_confirmes": True
+            }), encoding="utf-8")
+            inventory = self.write_rights_inventory(source, ["lesson.pdf"], rights="")
+            result = MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
+            self.assertEqual(result["document_count"], 0)
+            self.assertEqual(result["skipped"][0]["reason"], "droits_non_confirmes_dans_inventaire")
 
     def test_confirmed_license_indexes_only_approved_document(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -111,8 +180,9 @@ class PdfIngestionTests(unittest.TestCase):
             fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(
                 pages=[FakePage(" ".join(["Deutschunterricht"] * 30))]
             ))
+            inventory = self.write_rights_inventory(source, ["lesson.pdf"], license_name="production_propre")
             with patch.dict(sys.modules, {"pypdf": fake}):
-                result = MODULE.ingest(source, output)
+                result = MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
             self.assertEqual(result["document_count"], 1)
             self.assertEqual(result["status"], "connected_protected")
             data = json.loads((output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8"))
