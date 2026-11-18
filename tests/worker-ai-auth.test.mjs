@@ -840,7 +840,7 @@ test('le Worker recherche naturellement dans tous les PDF autorisés sans identi
 });
 
 test('les alias arabes et français ne contournent pas les règles grammaticales verrouillées', async () => {
-  for (const q of ['اشرح الماضي المركب.', 'Explique le passé composé.', 'اشرح حالة الجر.', 'Explique le passif.']) {
+  for (const q of ['اشرح الماضي المركب.', 'اشرح المَاضِي المُرَكَّب.', 'اشرح المآضي المركب.', 'Explique le passé composé.', 'اشرح حالة الجر.', 'Explique le passif.']) {
     for (const resource of [
       { type:'free_summary', level:'3AS', unit:1 },
       { type:'book_page', page:5, level:'2AS' }
