@@ -681,3 +681,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - CI sur le HEAD `296fd07dc2506d8329fcf9ccbb73d7de73f87f80`, run `44399677539` : succès. Les jobs « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont tous deux terminés avec `success`. Les trois workflows PostgreSQL isolés du même HEAD sont également terminés avec succès (runs `44399677636`, `44399677646`, `44399677638`).
 - PR #23 reste ouverte en brouillon, non fusionnée ; GitHub indique `mergeable=true`, `mergeable_state=clean`. Aucun changement sur `main`, aucun déploiement.
 - Aucun PDF réel n'a été ingéré, aucun OCR ni embedding documentaire n'a été exécuté, et aucun droit n'a été présumé. Aucune modification Supabase, Auth, RLS, schéma, abonnement ou paiement.
+
+
+### Lot 641 — optimisation des contrôles référentiels du corpus — 18/11/2026
+- La validation du manifeste et des chunks effectuait des recherches répétées dans le tableau des documents. Pour un corpus volumineux, la recherche d'un document pour chaque chunk et pour chaque compteur pouvait entraîner un coût quadratique.
+- Le Worker construit désormais une table `Map` indexée par identifiant de document pendant la validation des identifiants uniques. Les contrôles de référence des chunks et de cohérence des compteurs réutilisent cette table. La logique de sécurité et le comportement fail-closed restent inchangés ; l'objectif est de ramener ces recherches à un coût moyen linéaire en fonction du nombre de documents et de chunks.
+- Commit du lot : `6ce08555413fb9d4976a878f222fc91132984f90`.
+- CI sur ce HEAD, run `44400539473` : succès. « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont terminés avec `success`. Les trois workflows PostgreSQL isolés sont également terminés avec succès : `44400539391`, `44400539460` et `44400539546`.
+- Le PR #23 (`ai/rag-corpus-integrity-lot-635`) reste ouvert en brouillon et non fusionné ; GitHub indique `mergeable=true` et `mergeable_state=clean` au moment de cette mise à jour. Aucun déploiement n'a été effectué.
+- Le travail ne signifie pas que les PDF sont intégrés au savoir pédagogique : aucun OCR ni embedding documentaire réel n'a été exécuté et aucun droit d'utilisation n'a été présumé. La génération vectorielle reste conditionnée à la validation des droits et à une exécution contrôlée. Aucune modification Supabase, Auth, RLS, schéma, abonnement ou paiement.
