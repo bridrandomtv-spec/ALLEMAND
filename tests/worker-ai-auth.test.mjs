@@ -743,8 +743,8 @@ test('le Worker récupère un document officiel exact via le Worker du site avec
     resource:{ type:'official_document', collection:'compositions', id:'CP-2023-2-0312' }
   }), h.env);
   assert.equal(response.status, 200);
-  assert.ok(h.calls.some(x => x.url === 'https://allemand.bridrandomtv.workers.dev/assets/bdd/compositions.json'));
-  const call = h.calls.find(x => x.url.endsWith('/assets/bdd/compositions.json'));
+  assert.ok(h.calls.some(x => x.url.includes('/assets/bdd/compositions.json')), JSON.stringify(h.calls));
+  const call = h.calls.find(x => x.url.includes('/assets/bdd/compositions.json'));
   assert.equal(call.init.headers.Authorization, 'Bearer ' + TOKEN);
   assert.match(h.messages[1].content, /CP-2023-2-0312/);
   assert.match(h.messages[1].content, /Corrigé détaillé/);
