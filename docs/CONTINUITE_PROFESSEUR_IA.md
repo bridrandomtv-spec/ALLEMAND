@@ -152,3 +152,29 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Aucune protection supplémentaire n'a été ajoutée à ces trois fichiers et aucune vue n'a été modifiée : il faut confirmer la règle produit avant de bloquer ces archives, afin de ne pas transformer par erreur des ressources publiques en contenus payants.
 - Aucun changement Supabase, `main`, merge ou déploiement.
 - Point de décision requis avant Lot 614 : préciser si les vues `examen` (68+79 sujets BAC) et `officiels` (55 devoirs) sont gratuites pour tous les utilisateurs connectés ou réservées aux abonnés actifs. Dès cette règle fixée, l'implémentation sera cohérente dans `access_config.json`, les chargeurs et le Worker du site.
+
+## Lot 614 — audit de l’ingestion PDF et de son raccordement au professeur IA — 18 novembre 2026
+
+### Constat vérifié sur la tête de branche
+- assets/bdd/corpus.json référence 239 documents, dont 225 PDF. Les PDF sont référencés principalement dans docs/archive/documents ; corpus.js les ouvre dans PDF.js pour la lecture visuelle. Cette ouverture n’extrait pas leur texte pour le professeur IA.
+- La bibliothèque et le RAG local ne constituent pas le RAG distant : rag.js charge corpus.json pour afficher/rechercher des métadonnées, tandis que ia.js ne construit aucun sélecteur corpus_document ou PDF. worker/ia-ask.js ne récupère donc pas les PDF ni leurs chunks avant l’appel au modèle.
+- assets/bdd/shards_manifest.json annonce nb_shards=0 et total_chunks=0. Le assets/bdd/corpus_index.json actuel contient _meta et items de vocabulaire, pas les clés termes/chunks attendues par le moteur RAG. Le générateur tools/ingest_corpus.py écrirait dans ce même fichier et risquerait donc d’écraser l’index de vocabulaire.
+- Audit qualitatif des extraits PDF déjà enregistrés : 16 extraits contiennent de nombreux caractères de contrôle ; 11 contiennent des séquences de glyphes de type /g39/g72/... (ces groupes peuvent se chevaucher). Exemples : comparatif.pdf, prep.genetif.pdf, substantifs heit.pdf, superlatif.pdf. D’autres PDF ont déjà un extrait texte lisible : le problème n’est donc pas une absence totale de conversion, mais une conversion incomplète et non validée.
+- tools/ingest_corpus.py annonce un OCR Tesseract pour les scans, mais texte_pdf() appelle uniquement pypdf.PdfReader(...).pages[].extract_text() ; aucun appel Tesseract, rendu de page ou OCR n’existe. Le script ajoute aussi une fiche même si le texte extrait est vide ou illisible.
+- Le script écrit corpus_index.json au format termes/chunks, alors que le fichier actuel est un index de vocabulaire items : collision de responsabilités à corriger avant toute nouvelle ingestion.
+
+### Décision technique pour l’intégration
+- Ne pas injecter le PDF brut dans le prompt et ne pas faire confiance à un extrait envoyé par le navigateur.
+- Créer un artefact documentaire distinct du vocabulaire, avec des chunks traçables (document_id, numéro de page, texte, empreinte/source et métadonnées de licence), puis un index RAG dédié. Ne pas remplacer corpus_index.json tant que ses consommateurs vocabulaire ne sont pas migrés.
+- Le client doit envoyer uniquement un identifiant documentaire stable ; le Worker IA doit retrouver lui-même les chunks autorisés côté serveur, appliquer les règles d’accès de la vue Corpus (actuellement déclarée payante), borner le nombre de chunks et leur taille, puis seulement les joindre au prompt. Pas de chemin, URL, texte ou licence fourni par le navigateur.
+- Corriger l’ingestion : extraction PDF texte, détection de qualité (texte vide, caractères de contrôle, encodage glyphes), OCR réel uniquement si l’outil est installé et autorisé, sinon marquer le document needs_ocr et ne pas l’indexer. Ajouter des tests avec PDF texte, PDF image/scanné, PDF mal encodé et PDF vide.
+- Vérifier la licence et la provenance avant indexation. Les fiches existantes portent des valeurs comme document utilisateur ; elles ne constituent pas à elles seules une autorisation de republier ou d’indexer un ouvrage tiers. Les contenus éditeur/commerciaux ou sans droit clair restent exclus.
+
+### Validation et périmètre
+- Aucun PDF binaire n’a été téléchargé ni converti durant cet audit ; les chiffres de qualité portent sur les extraits déjà présents dans corpus.json, pas sur une nouvelle extraction des fichiers source.
+- Aucune modification Supabase, RLS, Auth, abonnement, main ou déploiement Cloudflare.
+- La PR #22 reste ouverte, en brouillon et non fusionnée.
+- CI observée sur le commit 1fc6ebda76dbcab4976e3e607aea0a57738c1819 : le job autonome IA échoue à 60/61 sur l’assertion d’URL du test du document officiel ; le job global échoue aussi sur une erreur de syntaxe de ci/check-msg.mjs:231 (hors périmètre IA). Une correction limitée à l’assertion du test IA a été poussée ; elle doit être revalidée par une nouvelle CI.
+
+### Prochaine étape
+- Lot 615 : construire et tester le pipeline d’ingestion PDF sans collision avec l’index vocabulaire, puis connecter un sélecteur documentaire strict au RAG serveur avec contrôle d’accès Corpus. Commencer par les PDF de production propre/droits confirmés ; ne pas indexer automatiquement l’ensemble des 225 PDF.
