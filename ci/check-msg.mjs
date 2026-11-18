@@ -418,8 +418,8 @@ ok(/epoch!==state\.channelEpoch \|\| state\.conv!==id/.test(msgjs),
    'présence ignore un canal obsolète');
 ok(msgjs.includes("st2==='CHANNEL_ERROR' || st2==='TIMED_OUT' || st2==='CLOSED'"),
    'états CHANNEL_ERROR, TIMED_OUT et CLOSED signalés');
-ok(msgjs.includes("window.addEventListener('online', function(){\n    scheduleThreadRecovery();\n  })") &&
-   msgjs.includes("window.addEventListener('pageshow', function(){\n    scheduleThreadRecovery();\n  })") &&
+ok(msgjs.includes("window.addEventListener('online', function(){\n    scheduleThreadRecovery();\n    scheduleInviteRecovery();\n  })") &&
+   msgjs.includes("window.addEventListener('pageshow', function(){\n    scheduleThreadRecovery();\n    scheduleInviteRecovery();\n  })") &&
    msgjs.includes("document.addEventListener('visibilitychange'"),
    'reprise réseau, retour de page et visibilité déclenchent une réconciliation');
 ok(msgjs.includes('renderThread(id).catch(function(){})'),
