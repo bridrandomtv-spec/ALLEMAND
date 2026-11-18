@@ -36,6 +36,11 @@ if (!unique || unique.ambiguous || !unique.it || unique.it.intent !== 'explain_l
   console.log('::error::ONTO : une formulation non ambiguë doit conserver son intention');
   process.exit(1);
 }
+const shortFragment = await matcher('was');
+if (shortFragment !== null) {
+  console.log('::error::ONTO : un fragment latin court ne doit pas créer de faux ex aequo');
+  process.exit(1);
+}
 console.log('✅ ONTO : égalité détectée sans choix arbitraire ; intention unique conservée');
 const ambiguousLive = await fn('هاد الدرس');
 if (!ambiguousLive || ambiguousLive.ambiguousIntent !== true) {
