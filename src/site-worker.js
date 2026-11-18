@@ -10,6 +10,9 @@ const PROT = [
   /^\/unite(2|3|4|5|6|10|11|12|13|14|15|16)\.js$/,
   /^\/unites3as_[ab]\.js$/,
   /^\/devoirs_unite\.js$/,
+  /* Les documents utilisés par DEVOIRS_UNITE sont eux aussi payants :
+     protéger les JSON directement, pas seulement le script qui les affiche. */
+  /^\/assets\/bdd\/(devoirs|compositions|annales)\.json$/,
   /^\/assets\/bdd\/buch_3as_.*\.json$/,
   /^\/assets\/bdd\/traductions_livre\.json$/
 ];
