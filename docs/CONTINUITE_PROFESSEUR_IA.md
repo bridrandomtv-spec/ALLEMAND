@@ -595,3 +595,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le rapport d'audit du run `44376445359` confirme 293 PDF, 293 entrées d'inventaire, 293 chemins appariés, zéro droit confirmé, 767 pages extractibles et 406 pages sans texte extractible. Aucun PDF n'est indexé : 0 document autorisé / 0 chunk. Aucun OCR persistant ni embedding documentaire réel.
 - La PR #22 est prête à être marquée Ready for review puis fusionnée si le nouveau HEAD documentaire conserve tous les contrôles verts. Le HEAD validé avant cette mise à jour est `ea692ad27d0a80a2ba38f16f0d080b413d060650`; `main` est toujours `034722b00739c0106cd265eefdd1c933a096217d`.
 - Aucun déploiement de production. Le build Cloudflare est une prévisualisation de la branche. Aucune écriture Supabase, aucun changement de schéma, Auth, RLS, abonnements ou paiement.
+
+
+## Fusion de la PR #22 — 18 novembre 2026
+- Autorisation explicite de l'utilisateur reçue avant la fusion, après avertissement que le push sur `main` pouvait déclencher le build/déploiement Cloudflare de production.
+- PR #22 passée de brouillon à prête pour revue, puis fusionnée par squash.
+- Tête fusionnée : `39ae574f028f29e58c414bfff6106e3ae818156b` ; commit squash sur `main` : `24186d10a9fa9f85c0eff208ee29e94fb1600c29`.
+- Vérification GitHub : PR #22 fermée avec `merged=true`, et branche `main` pointe sur le commit squash ci-dessus.
+- CI post-fusion déclenchée par push : run `44390411300` (`CI — ALLEMAND`) sur le commit `24186d10a9fa9f85c0eff208ee29e94fb1600c29`. Au moment de cette note, les jobs `Validation structurelle & pédagogique` et `Tests autonomes — Professeur IA` sont encore en cours ; aucun résultat final n'est revendiqué.
+- La fusion a bien eu lieu. Le déploiement Cloudflare de production n'est pas encore confirmé par un statut de déploiement vérifié ; ne pas annoncer le site en production avant confirmation.
+- Les limites PDF restent inchangées : 293 PDF inventoriés, zéro droit confirmé, zéro document/chunk indexé, pas d'OCR persistant ni d'embeddings documentaires réels.
+- Aucun changement de schéma, Auth, RLS, migration SQL, abonnement ou paiement n'a été introduit dans cette fusion.
