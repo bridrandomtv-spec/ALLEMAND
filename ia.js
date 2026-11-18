@@ -112,6 +112,12 @@
     if(!Number.isInteger(unit) || unit < 1 || unit > (level === '2AS' ? 9 : 10)) return null;
     return { type:'free_summary', level:level, unit:unit };
   }
+  function officialDocumentResource(question){
+    const match = String(question || '').match(/\\b(CP|AN)-\\d{4}-[1-3]-\\d{4}\\b/i);
+    if(!match) return null;
+    const collection = match[1].toUpperCase() === 'CP' ? 'compositions' : 'annales';
+    return { type:'official_document', collection:collection, id:match[0].toUpperCase() };
+  }
   function exerciseBankResource(question){
     const text = String(question || '');
     if(!/(?:تمرين|تمارين|exercice|exercices|exercise|exercises|übung|übungen|tamarin|tamrin|banque\s*(?:d['’ ]?)?exercices)/i.test(text)) return null;
@@ -237,7 +243,7 @@
     const accessToken = authState && authState.ok && authState.session && authState.session.access_token;
     if(!accessToken) return sortieFaible(local, 'session-supabase-requise');
     try{
-      const resource = await pageResource(q) || lessonResource(q) || summaryResource(q) || exerciseBankResource(q);
+      const resource = officialDocumentResource(q) || await pageResource(q) || lessonResource(q) || summaryResource(q) || exerciseBankResource(q);
       statutIA('🧠 réflexion… (cerveau cloud)');
       const r = await fetchTimeout(proxy + '/ask', { method:'POST',
         headers:{
