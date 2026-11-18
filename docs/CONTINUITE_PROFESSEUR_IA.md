@@ -478,3 +478,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Durcissement après revue : une ligne CSV confirmée ne suffit plus. Le validateur exige maintenant que le fichier compagnon JSON existe, soit lisible, contienne `droits_confirmes: true` et déclare exactement la même licence que le CSV.
 - Un compagnon absent, JSON invalide, non confirmé ou avec licence divergente est refusé. Cette règle aligne le rapport d'admissibilité avec ce que `tools/ingest_corpus_rag.py` peut réellement ingérer.
 - La suite comprend désormais 14 tests. Le premier run 44282039020 validait la version précédente à 10/10 ; la version durcie doit encore être validée par une nouvelle CI.
+
+
+### Validation finale du Lot 628 durci — 18 novembre 2026
+- Run CI `44282741104`, commit de code `4665f8ce55b4f2eec3a9bb910ce567246ca817e9` : job autonome Professeur IA = `success`.
+- Validateur des droits PDF : 15/15 ; ingestion PDF/OCR : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde Worker du site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
+- Le job structurel global échoue sur `ci/check-msg.mjs:231`, `SyntaxError: missing ) after argument list`, dans la validation Messenger hors périmètre IA. Aucun fichier Messenger n'est modifié dans cette PR.
+- Le commit `4665f8c` contient le dernier durcissement applicatif testé. Les notes de continuité ajoutées ensuite sont documentaires uniquement.
