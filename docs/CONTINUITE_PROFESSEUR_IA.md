@@ -290,3 +290,9 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Une première exécution CI a détecté une expression régulière mal échappée dans la normalisation arabe ; elle a été corrigée en construisant les plages Unicode avec `String.fromCharCode`, sans séquence échappée ambiguë dans le littéral regex.
 - Run `44213809534` sur le commit `ce2e58a3e6d5b96d1190467e9e3a45d2c647eefe` : job `Tests autonomes — Professeur IA` = `success`, incluant ingestion PDF/OCR/droits, Worker IA, garde des documents officiels, QUST/Darja/Arabizi et régressions RAG/professeur.
 - La CI globale reste `failure` uniquement sur `Valider la messagerie EduDZ (schéma RLS + client + vue)`, hors périmètre du Professeur IA. Les tests autonomes IA sont verts.
+
+
+### Lot 621 — normalisation des requêtes PDF vocalisées
+- Le même normaliseur arabe que celui du garde des cadenas est maintenant appliqué à la tokenisation BM25. Les harakat/tatweel et variantes d'alif/ya sont traités de façon identique côté question et côté chunk.
+- Le test de recherche PDF interlingue utilise désormais une question arabe vocalisée pour vérifier que « الماضي المركب » retrouve toujours le passage allemand sur Perfekt.
+- Cette évolution reste du BM25 lexical avec expansion de concepts ; elle ne prétend pas être une recherche vectorielle.
