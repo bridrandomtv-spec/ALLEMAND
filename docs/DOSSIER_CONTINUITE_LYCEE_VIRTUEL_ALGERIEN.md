@@ -3793,3 +3793,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Résultats : validateur des droits 15/15 ; ingestion PDF/OCR 9/9 ; générateur vectoriel 8/8 ; Worker IA/JWT/RAG 75/75 ; garde Worker du site 14/14 ; QUST 9/9 ; régressions RAG 12/12 et PROF 18/18 ; suite combinée exécutée.
 - La CI globale échoue sur l'erreur indépendante Messenger `ci/check-msg.mjs:231` : `SyntaxError: missing ) after argument list`. Ce défaut n'a pas été modifié dans le périmètre IA.
 - Le commit applicatif testé est `4665f8c`. Les commits documentaires suivants n'ont pas modifié le code.
+
+
+## Lot 629 — diagnostic technique des 293 PDF
+- Ajout d'un audit non destructif `tools/audit_pdf_text_readiness.py` qui distingue les PDF extractibles, mixtes (texte + pages sans texte), candidats OCR, chiffrés, vides et illisibles.
+- Il ne sauvegarde aucun texte, n'exécute pas l'OCR et n'indexe aucun document. Il compte seulement les pages et les caractères extraits, et refuse de suivre un lien symbolique sortant du dossier racine.
+- Six tests ajoutés et intégrés à la CI autonome Professeur IA. Le job installe `pypdf`, exécute les tests et lance un audit résumé sur le dépôt.
+- Run sur le HEAD `7fbb15d8fccac8eb54b87718b2b262e0b732e042` en cours ; résultats chiffrés à confirmer avant toute décision OCR/conversion.
+- Les droits demeurent indépendants de ce diagnostic : aucun PDF ne peut être intégré au RAG sans preuve de droits valide.
