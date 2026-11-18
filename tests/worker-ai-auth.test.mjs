@@ -823,7 +823,7 @@ test('le Worker refuse un document officiel si le Worker du site signale un verr
 
 test('ia.js résout un identifiant PDF et déclenche une recherche naturelle sans identifiant', () => {
   const resolvers = loadCorpusDocumentResolvers();
-  assert.deepEqual(JSON.parse(JSON.stringify(resolvers.document('Explique le PDF pdf-0123456789ABCDEF.'))), {
+  assert.deepEqual(JSON.parse(JSON.stringify(resolvers.document('Explique le PDF pdf-0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF.'))), {
     type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
   });
   assert.equal(resolvers.document('Explique ce document.'), null);
