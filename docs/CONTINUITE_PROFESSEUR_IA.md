@@ -606,3 +606,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - La fusion a bien eu lieu. Le déploiement Cloudflare de production n'est pas encore confirmé par un statut de déploiement vérifié ; ne pas annoncer le site en production avant confirmation.
 - Les limites PDF restent inchangées : 293 PDF inventoriés, zéro droit confirmé, zéro document/chunk indexé, pas d'OCR persistant ni d'embeddings documentaires réels.
 - Aucun changement de schéma, Auth, RLS, migration SQL, abonnement ou paiement n'a été introduit dans cette fusion.
+
+
+## Audit de la PR #21 après fusion de la PR #22 — 18 novembre 2026
+- PR #21 (ai/lot-601-worker-jwt) reste ouverte en brouillon, non fusionnée. Son HEAD est d5e36a2a2bf0f33f5b3ad4953360a9fe3aa5c9c2.
+- Comparaison avec main (6547105ba95186785f348c837e58076ef8148612) : branche divergente, 107 commits en avance depuis l'ancêtre commun et 2 commits en retard ; GitHub indique mergeable=false.
+- Audit des fichiers : les fonctions de la PR #21 sont déjà présentes dans main après la PR #22 : authentification JWT Supabase, envoi du Bearer par le chat et la voix, garde des cadenas avant RAG/Worker, conservation du transcript brut et de sa normalisation Darija/Arabizi, correction des accès gratuits 3AS et tests associés.
+- Les fichiers de la PR #21 sont des versions anciennes par rapport à main. En particulier, son worker/ia-ask.js (13 Ko) est nettement antérieur au Worker actuel (45 Ko), qui contient les contrôles RAG supplémentaires : empreinte SHA-256 des chunks, identifiants document/chunk uniques et obligatoires, normalisation renforcée des verrous et contrôles fail-closed.
+- Conclusion : ne pas fusionner la PR #21 directement. Une telle fusion risquerait de réintroduire une version antérieure du Worker et d'écraser des protections livrées par la PR #22. Commentaire d'audit publié dans la discussion de la PR #21 (18 novembre 2026). La PR #21 est considérée comme supersédée ; sa fermeture reste à décider.
+- CI de la PR #21 sur son ancien HEAD : succès, mais ce résultat ne valide pas sa compatibilité avec le main actuel.
+- CI post-fusion sur le commit 24186d10a9fa9f85c0eff208ee29e94fb1600c29, run 44390411300 : succès. CI après mise à jour documentaire, HEAD 6547105ba95186785f348c837e58076ef8148612, run 44390498930 : succès pour les jobs Validation structurelle & pédagogique et Tests autonomes — Professeur IA.
+- Aucun changement Supabase, schéma, Auth, RLS, migration SQL, abonnement ou paiement n'a été effectué pendant cet audit.
