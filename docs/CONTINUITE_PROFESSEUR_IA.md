@@ -519,3 +519,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Artefact CI : pdf-rights-and-readiness (14 jours), limité aux chemins et métadonnées, sans texte extrait.
 - Aucun PDF n'est rendu admissible par ce rapport. OCR, indexation et embeddings restent suspendus à une preuve de droits vérifiée.
 - Résultat du nouveau run CI à consigner après validation du HEAD Lot 631.
+
+
+### Lot 631 — validation et rapport CSV droits + extractibilité
+- Correctif CSV validé : l'export écrit la sortie fusionnée, y compris les entrées d'inventaire sans fichier correspondant ; un test de bout en bout du writer couvre ces lignes.
+- CI run `44289483381`, commit `697bb55b7c2160cc0a0aeb585e0dff16e9c64949` : job autonome IA réussi. Ingestion 9/9, droits 15/15, audit PDF 11/11, builder vecteur 8/8, Worker IA/JWT/RAG 75/75, garde site 14/14, QUST 9/9, RAG 12/12, PROF 18/18.
+- Audit : 293 PDF / 1 173 pages ; 186 extractibles, 28 mixtes, 78 candidats OCR, 1 chiffré. 767 pages avec texte et 406 sans texte extractible. Aucun texte n'est sauvegardé.
+- Rapprochement exact : 293 correspondances sur 293, aucun orphelin. Zéro droit confirmé ; les 293 licences et confirmations restent vides / à vérifier.
+- Artefact CI `pdf-rights-and-readiness`, ID `14421110680`, rétention 14 jours : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44289483381/artifacts/14421110680
+- OCR, indexation et embeddings réels non exécutés. Le rapport n'accorde aucun droit et ne rend aucun document admissible.
+- Échec structurel global toujours isolé à `ci/check-msg.mjs:231` (Messenger). Job autonome Professeur IA vert ; PR #22 ouverte, brouillon, non fusionnée.

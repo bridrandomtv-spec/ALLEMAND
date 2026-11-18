@@ -210,3 +210,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les PDF non présents dans l'inventaire et les entrées d'inventaire sans PDF correspondant sont signalés. Les doublons sont rejetés.
 - Le rapport est une aide de revue, jamais une preuve de licence ni une autorisation RAG. Aucun document n'est indexé par cette étape.
 - Artefact CI : pdf-rights-and-readiness, rétention 14 jours. Aucun OCR ni embedding réel n'est déclenché.
+
+
+### Lot 631 — état validé du registre unifié
+- Export CSV corrigé et testé : l'écriture parcourt les lignes fusionnées, pas les seules lignes d'audit. Le test vérifie les métadonnées de droits et le PDF référencé dans l'inventaire mais absent du corpus audité.
+- Run CI `44289483381` sur `697bb55b7c2160cc0a0aeb585e0dff16e9c64949` : job autonome IA réussi ; ingestion 9/9, validation droits 15/15, audit 11/11, vector builder 8/8 ; Worker 75/75, site guard 14/14, QUST 9/9 ; contrats RAG 12/12 et PROF 18/18.
+- 293 PDF, 1 173 pages, 747 140 caractères mesurés sans sauvegarde ; 186 fichiers extractibles, 28 mixtes, 78 candidats OCR, 1 chiffré. 406 pages sans texte extractible.
+- Jointure exacte : 293/293 appariés, aucun orphelin. Aucun droit confirmé ; les 293 lignes restent à vérifier et sans licence renseignée.
+- Artefact `pdf-rights-and-readiness` (ID `14421110680`) : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44289483381/artifacts/14421110680
+- L'audit n'effectue ni OCR, ni sauvegarde de texte, ni indexation RAG, ni génération d'embeddings. Les droits restent une barrière obligatoire avant ingestion.
+- La validation structurelle générale reste bloquée par la syntaxe de `ci/check-msg.mjs:231`, hors périmètre IA. Aucun changement Supabase, merge ou déploiement.

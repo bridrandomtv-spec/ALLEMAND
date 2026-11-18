@@ -3827,3 +3827,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Artefact CI : pdf-rights-and-readiness, rétention 14 jours. Le rapport ne contient aucun texte pédagogique et n'autorise pas l'indexation.
 - Aucun OCR, conversion persistante, ingestion RAG, embedding ou consommation payante n'est lancé. Le manifeste reste vide tant que les droits ne sont pas confirmés.
 - Résultat CI du Lot 631 à consigner après validation du nouveau HEAD. PR #22 reste ouverte en brouillon ; aucun merge, déploiement, changement main ou modification Supabase.
+
+
+### Lot 631 — validation finale et rapport unifié (18 novembre 2026)
+- Correctif final : le CSV écrit désormais les lignes réellement fusionnées (et non le seul tableau technique). Un test de sortie vérifie explicitement les colonnes de droits et une entrée d'inventaire sans PDF ; fixtures CSV corrigées.
+- Run CI `44289483381`, HEAD `697bb55b7c2160cc0a0aeb585e0dff16e9c64949` : job autonome Professeur IA réussi. Tests Python : ingestion PDF 9/9, validation droits 15/15, audit PDF 11/11, builder vectoriel 8/8. Worker IA/JWT/RAG 75/75, garde site 14/14, QUST 9/9 ; contrats RAG 12/12 et PROF 18/18 ; régression combinée exécutée.
+- Audit réel : 293 PDF, 1 173 pages, 767 pages avec texte, 406 sans texte extractible, 747 140 caractères mesurés sans sauvegarde. Répartition : 186 extractibles, 28 mixtes, 78 candidats OCR, 1 chiffré ; 0 vide, 0 illisible.
+- Jointure : 293/293 chemins appariés, 0 PDF sans ligne d'inventaire, 0 entrée sans PDF. Confirmation des droits : 0 ; 293 lignes restent sans confirmation ni licence. `rights_inferred=false`.
+- Artefact `pdf-rights-and-readiness`, ID `14421110680`, run `44289483381`, rétention jusqu'au 2 décembre 2026 : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44289483381/artifacts/14421110680
+- Le rapport contient chemins et métadonnées seulement, aucun texte pédagogique. Aucun OCR, indexation RAG ou embedding réel n'a été lancé ; le manifeste vectoriel reste vide et la génération Cloudflare payante désactivée.
+- La validation structurelle générale reste en échec sur `ci/check-msg.mjs:231` (SyntaxError Messenger, hors périmètre). Le job autonome IA est vert. PR #22 reste ouverte en brouillon et non fusionnée ; `main` reste à `034722b00739c0106cd265eefdd1c933a096217d`. Aucun changement Supabase ni déploiement.
