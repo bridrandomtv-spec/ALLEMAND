@@ -86,3 +86,10 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Limite de preuve : le catalogue `grammaire.json` ne porte pas de métadonnée de verrouillage par fiche et `grammaire.js` le charge sans contrôle d'accès visible. La liste élargie est donc une défense du Worker fondée sur les notions du programme, pas une preuve que chacune des 86 fiches est payante. Les règles de gratuité déclarées et le RLS existant ne sont pas modifiés.
 - Tests non encore exécutés sur le nouveau HEAD : le précédent run avait révélé un défaut de fixture corrigé au Lot 609 ; le run automatique ne s'est pas déclenché après les commits API. Ne pas déclarer les nouveaux tests réussis avant une exécution réelle.
 - Aucun changement Supabase, `main`, PR fusionnée ou déploiement.
+
+
+### Complément de vérification des sélecteurs — 18/11/2026
+- Le test anti-contournement couvre maintenant les six types de sélecteurs acceptés : `free_summary`, `free_exercise_bank`, `free_unit_lesson`, `book_page`, `book_pages` et `unit_lesson`.
+- Pour une demande de règle verrouillée (`Genitiv`), chaque sélecteur doit être rejeté en HTTP 403 avant toute lecture documentaire et avant tout appel au modèle. Le but est de vérifier que le type de ressource déclaré par le navigateur ne peut pas neutraliser la classification de la question.
+- Le run #4313 a validé 57/57 tests Worker, 9/9 tests QUST/Darja/Arabizi et les trois suites de régression. Le job autonome IA est `success`. Le job global reste `failure` sur `ci/check-msg.mjs` / messagerie EduDZ, hors périmètre IA.
+- Le test élargi à six sélecteurs vient d'être ajouté et doit être validé par le prochain run CI ; aucun résultat n'est anticipé.
