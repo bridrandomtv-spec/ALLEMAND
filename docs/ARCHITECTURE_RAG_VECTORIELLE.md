@@ -178,3 +178,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Validateur des droits : 15/15 ; ingestion PDF/OCR : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde Worker du site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
 - La CI globale reste en échec sur le contrôle Messenger `ci/check-msg.mjs:231` (`SyntaxError: missing ) after argument list`), sans changement Messenger dans cette PR.
 - Aucun PDF réel n'a été intégré au corpus ; le manifeste demeure vide et le drapeau vectoriel reste désactivé.
+
+
+## Lot 629 — diagnostic d'extractibilité PDF
+- Ajout d'un audit récursif qui mesure la disponibilité du texte PDF sans conserver les contenus, sans OCR et sans écriture de corpus : pages totales, pages extractibles, pages sans texte et classes de fichiers.
+- Les fichiers sont classés `extractable`, `mixed`, `ocr_candidate`, `encrypted`, `empty` ou `unreadable`. Les symlinks sortant du périmètre sont ignorés et signalés.
+- Six tests couvrent les classes et le fait que l'audit ne prétend ni vérifier les droits ni indexer les documents.
+- Exécution sur le dépôt ajoutée à la CI autonome. Résultat du run HEAD `7fbb15d8fccac8eb54b87718b2b262e0b732e042` en attente.
+- Cet audit est préparatoire uniquement : il ne contourne pas le contrôle des licences et ne modifie pas le manifeste RAG vide.
