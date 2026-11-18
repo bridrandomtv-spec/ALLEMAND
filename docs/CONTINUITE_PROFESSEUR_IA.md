@@ -574,3 +574,9 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commit CI : `926483f4168824f1b4545527250e309d65092e3c`.
 - La nouvelle exécution CI sur le HEAD `926483f4168824f1b4545527250e309d65092e3c` est en attente/en cours. Ne pas fusionner avant réussite des tests autonomes IA et des contrôles requis du PR.
 - Corpus réel toujours vide (0 document, 0 chunk) ; aucun droit PDF confirmé. Aucun OCR, indexation, embedding réel, modification Supabase/Auth/RLS, déploiement ou fusion effectués.
+### Lot 634 — état de validation après correction CI
+- Sur le HEAD `e5387cec29a1965fe345426d0c74ef288ecb9eb3`, le job `Tests autonomes — Professeur IA` est vert : Worker IA/RAG 78/78, garde d'accès 14/14 et QUST 9/9. Les tests de collision d'ID document/chunk passent également.
+- Le contrôle structurel du HEAD `94670492ff6ebfe0c9611c363e686d2180d8ee04` passe désormais la syntaxe JavaScript ; `ci/check-msg.mjs` reste rouge sur quatre assertions Messenger fonctionnelles (réponses asynchrones obsolètes, actions de modération, validation SQL dollar-quoting et idempotence de l'invitation). Ce périmètre n'est pas lié au Professeur IA.
+- Les workflows PostgreSQL indépendants restent partiellement rouges : le test consentement Messenger échoue sur une permission de table de fixture ; le test Multaqa ne trouve pas `supabase/migrations/202611130002_multaqa_community_feed.sql`. Le workflow découverte Messenger a réussi sur le HEAD `f3880e3a...` ; son run le plus récent était encore en cours au dernier contrôle.
+- Le build Cloudflare Preview du HEAD `94670492ff6ebfe0c9611c363e686d2180d8ee04` est réussi. Aucun déploiement de production n'a été effectué.
+- Décision : PR #22 reste ouverte et en brouillon, non fusionnée. Les échecs hors IA ne sont ni masqués ni corrigés en modifiant Supabase/Messenger dans ce lot. `main` reste inchangée.
