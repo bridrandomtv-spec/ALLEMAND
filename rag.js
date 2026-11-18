@@ -956,10 +956,14 @@ async function verifieAccesContenuIA(question){
   var unit = uniteExpliciteIA(q);
   var lesson = sessionIA(q);
   var unitSummaryRequest = /(?:résum|resume|summary|summari[sz]|ملخص|لخص|لخّص|تلخيص|شرح\s*(?:الوحدة|الوحده)|اشرح\s*(?:الوحدة|الوحده)|اشرحلي\s*(?:الوحدة|الوحده))/i.test(q);
-  if(unit == null && (lesson != null || unitSummaryRequest)) unit = uniteCouranteIA();
+  var unitExplanationRequest = /(?:explain|explique|erklär|erklar|erkläre|شرحلي|فسرلي|اشرحلي)\s*(?:(?:this|the|cette|la|die|diese)\s*)?(?:unit|lesson|unité|unite|lektion|الوحدة|الوحده|الدرس|درس)/i.test(q);
+  if(unit == null && (lesson != null || unitExplanationRequest)) unit = uniteCouranteIA();
   var label = trouveRegle(q);
-  var unitScoped = unit != null && lesson == null
-    && (uniteExpliciteIA(q) != null || unitSummaryRequest);
+  /* Les résumés explicitement publiés comme free_summary restent gratuits.
+     Une demande d'explication pédagogique complète d'une unité, elle, exige
+     un entitlement backend ou une séance précise vérifiable. */
+  var unitScoped = unit != null && lesson == null && !unitSummaryRequest
+    && (uniteExpliciteIA(q) != null || unitExplanationRequest);
   var lessonScoped = lesson != null;
 
   /* Une unité entière ou une règle non rattachée à une séance exige une
