@@ -89,7 +89,10 @@ def validate_inventory(csv_path, repo_root):
                 errors.append(f"ligne_{line_number}:licence_manquante:{normalized_path}")
                 continue
             if rights == "true" and license_name in ALLOWED_LICENSES:
-                companion = pdf.parent / ("_" + pdf.stem + ".json")
+                companion = _safe_repo_file(repo_root, expected)
+                if companion is None:
+                    errors.append(f"ligne_{line_number}:chemin_compagnon_invalide:{normalized_path}")
+                    continue
                 if not companion.is_file():
                     errors.append(f"ligne_{line_number}:compagnon_absent:{normalized_path}")
                     continue
