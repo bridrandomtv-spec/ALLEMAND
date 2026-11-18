@@ -75,8 +75,22 @@ async function verifySupabaseUser(req, env){
    direct de l'interface. La lecture subscriptions est strictement read-only :
    aucune écriture ni modification du schéma Supabase. */
 const LOCKED_CONJUGATIONS = ['sein','haben','werden','spielen','fahren','essen','trinken','helfen','müssen'];
-const LOCKED_RULES = ['perfekt','akkusativ','dativ','komparativ','konjunktiv','passiv',
-  'futur','weil','obwohl','um zu','beim','präteritum','modalverben'];
+const LOCKED_RULES = [
+  /* Règles déjà protégées par les lots précédents. */
+  'perfekt','akkusativ','dativ','komparativ','konjunktiv','passiv','futur','weil','obwohl','um zu','beim','präteritum','modalverben',
+  /* Règles du programme 2AS/3AS insuffisamment couvertes par l'ancienne liste. */
+  'genitiv','partizip','infinitiv','nominalisierung','verbalisierung','nomen-verb-verbindungen',
+  'zweiteilige konnektoren','konzessivsätze','relativsätze','imperativ','reflexive verben',
+  'adjektivdeklination','adjektive mit präpositionen','komposita','subjektive modalverben',
+  'wechselpräpositionen','satzklammer','trennbare verben','untrennbare verben',
+  'nebensatz mit dass','nebensatz mit wenn','verbletztstellung','präpositionen mit dativ',
+  'präpositionen mit akkusativ','temporale präpositionen','zustandspassiv','passiversatzformen',
+  /* Formulations arabes usuelles des mêmes notions. */
+  'حالة الملكية','التحويل الاسمي','التحويل الفعلي','التراكيب الاسمية الفعلية',
+  'الجمل الموصولة','صيغة الأمر','الأفعال الانعكاسية','حروف الجر المتغيرة',
+  'المصدر مع zu','أدوات الربط الثنائية','الكلام غير المباشر',
+  'الجمل الشرطية غير الحقيقية','الأفعال الناقصة الذاتية','المبني للمجهول الوصفي'
+];
 function isLockedContentQuestion(question, resource){
   const q = String(question || '').toLowerCase();
   const unitMatch = q.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
