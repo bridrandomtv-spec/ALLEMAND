@@ -78,6 +78,26 @@ class PdfIngestionTests(unittest.TestCase):
             self.assertEqual(json.loads(legacy.read_text(encoding="utf-8"))["items"][0]["word"], "Haus")
             self.assertTrue((output / "assets/bdd/corpus_rag_chunks.json").is_file())
 
+    def test_recursive_scan_indexes_nested_pdf_with_companion_rights_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            nested = source / "archive" / "unit"
+            nested.mkdir(parents=True)
+            pdf = nested / "lesson.pdf"
+            pdf.write_bytes(b"nested-pdf")
+            (nested / "_lesson.json").write_text(json.dumps({
+                "titre": "Nested lesson", "licence": "cc_by",
+                "droits_confirmes": True, "niveau": "3AS"
+            }), encoding="utf-8")
+            fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(
+                pages=[FakePage(" ".join(["Deutschunterricht"] * 30))]
+            ))
+            with patch.dict(sys.modules, {"pypdf": fake}):
+                result = MODULE.ingest(source, output)
+            self.assertEqual(result["document_count"], 1)
+            data = json.loads((output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8"))
+            self.assertEqual(data["documents"][0]["source_file"], "archive/unit/lesson.pdf")
+
     def test_confirmed_license_indexes_only_approved_document(self):
         with tempfile.TemporaryDirectory() as tmp:
             source, output = Path(tmp) / "source", Path(tmp) / "out"
