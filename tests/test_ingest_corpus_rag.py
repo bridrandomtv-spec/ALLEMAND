@@ -94,6 +94,7 @@ class PdfIngestionTests(unittest.TestCase):
             with patch.dict(sys.modules, {"pypdf": fake}):
                 result = MODULE.ingest(source, output)
             self.assertEqual(result["document_count"], 1)
+            self.assertEqual(result["status"], "connected_protected")
             data = json.loads((output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8"))
             self.assertEqual(data["documents"][0]["license"], "production_propre")
             self.assertEqual(data["chunks"][0]["page"], 1)
