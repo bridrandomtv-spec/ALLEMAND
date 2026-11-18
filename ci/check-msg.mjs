@@ -44,7 +44,9 @@ ok(verifyStart >= 0 && verifyEnd > verifyStart &&
    'file de vérification paginée avec total et ordre stable');
 ok(sbjs.includes("if(!/^\\d{1,20}$/.test(number))") && !sbjs.includes("Number.isSafeInteger(Number(number))"), 'numéro scolaire accepté sans conversion numérique risquée');
 ok(sbjs.includes(".eq('id', uid).eq('verif_statut','en_attente')\n    .select('id').maybeSingle()") && sbjs.includes("if(!r.data) return { ok:false"), 'modération confirmée uniquement si une ligne est réellement modifiée');
-ok(msgjs.indexOf('if(renderEpoch!==state.renderEpoch) return;\n      window.__msgVerificationRows = vq') > msgjs.indexOf('var vq = await window.SB.msgVerificationQueue()'),
+const verificationGuardIndex = msgjs.indexOf('if(renderEpoch!==state.renderEpoch) return;', msgjs.indexOf('var vq = await window.SB.msgVerificationQueue()'));
+const verificationRowsIndex = msgjs.indexOf('window.__msgVerificationRows = vq');
+ok(verificationGuardIndex > msgjs.indexOf('var vq = await window.SB.msgVerificationQueue()') && verificationRowsIndex > verificationGuardIndex,
    'Messenger : réponse asynchrone obsolète ignorée avant remplacement des données de contrôle');
 ok(msgjs.includes("t.closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-verif-page],[data-mod]')") &&
    msgjs.includes('data-mod="verif-doc"') &&
