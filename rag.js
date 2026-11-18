@@ -961,10 +961,12 @@ async function verifieAccesContenuIA(question){
   }
   var unit = uniteExpliciteIA(q);
   var lesson = sessionIA(q);
-  if(unit == null && lesson != null) unit = uniteCouranteIA();
+  var unitSummaryRequest = /(?:résum|resume|summary|summari[sz]|ملخص|لخص|لخّص|تلخيص|شرح\s*(?:الوحدة|الوحده)|اشرح\s*(?:الوحدة|الوحده)|اشرحلي\s*(?:الوحدة|الوحده))/i.test(q);
+  if(unit == null && (lesson != null || unitSummaryRequest)) unit = uniteCouranteIA();
   var label = trouveRegle(q);
-  var unitScoped = unit != null && lesson == null;
-  var lessonScoped = unit != null && lesson != null;
+  var unitScoped = unit != null && lesson == null
+    && (uniteExpliciteIA(q) != null || unitSummaryRequest);
+  var lessonScoped = lesson != null;
 
   /* Une unité entière ou une règle non rattachée à une séance exige une
      preuve d'accès. Le professeur IA reste disponible, mais ne remplace
@@ -992,7 +994,7 @@ async function verifieAccesContenuIA(question){
     return {locked:true,html:'<b>🔒 تعذّر التحقق من صلاحية الوصول. لا يمكن كشف هذا المحتوى الآن.</b>'};
   }
   if(lessonScoped){
-    if(typeof ACCESS.canAccessLesson !== 'function' || !ACCESS.canAccessLesson(unit, lesson)){
+    if(unit == null || typeof ACCESS.canAccessLesson !== 'function' || !ACCESS.canAccessLesson(unit, lesson)){
       try{ if(ACCESS.paywall) ACCESS.paywall({type:'seance',unite:unit,seance:lesson}); }catch(e){}
       return {locked:true,html:'<b>🔒 هذه الحصة ضمن محتوى المشتركين. الأستاذ الذكي متاح لك، لكن لا يمكنه شرح محتوى هذه الحصة قبل فتحها.</b>'};
     }
