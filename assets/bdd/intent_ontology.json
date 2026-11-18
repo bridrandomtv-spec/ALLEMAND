@@ -177,13 +177,9 @@
         ],
         "mix_fr": [
           "explique-moi ça simplement",
-          "ça veut dire quoi ?",
-          "c'est quoi ça ?",
           "je comprends pas cette leçon"
         ],
         "mix_de": [
-          "was bedeutet das?",
-          "was heißt das?",
           "erklär mir das bitte",
           "ich verstehe das nicht"
         ]
@@ -286,14 +282,8 @@
           "fhmny balmثal",
           "3طyny mثal"
         ],
-        "mix_fr": [
-          "ça veut dire quoi ?",
-          "c'est quoi ça ?"
-        ],
-        "mix_de": [
-          "was bedeutet das?",
-          "was heißt das?"
-        ]
+        "mix_fr": [],
+        "mix_de": []
       }
     },
     {
@@ -338,14 +328,8 @@
           "kyfach nst3mlha؟",
           "wyn nst3mlha؟"
         ],
-        "mix_fr": [
-          "ça veut dire quoi ?",
-          "c'est quoi ça ?"
-        ],
-        "mix_de": [
-          "was bedeutet das?",
-          "was heißt das?"
-        ]
+        "mix_fr": [],
+        "mix_de": []
       }
     },
     {
@@ -398,14 +382,8 @@
           "wch alfr9 bynha wbyn hady؟",
           "fr9ly bynathm"
         ],
-        "mix_fr": [
-          "ça veut dire quoi ?",
-          "c'est quoi ça ?"
-        ],
-        "mix_de": [
-          "was bedeutet das?",
-          "was heißt das?"
-        ]
+        "mix_fr": [],
+        "mix_de": []
       }
     },
     {
@@ -455,12 +433,8 @@
           "wch hw mwضw3 aldrs؟",
           "3lى wach rah aldrs؟"
         ],
-        "mix_fr": [
-          "où je trouve ça ?"
-        ],
-        "mix_de": [
-          "wo finde ich das?"
-        ]
+        "mix_fr": [],
+        "mix_de": []
       }
     },
     {
@@ -508,9 +482,7 @@
           "wch mmkn yjy fy ala5tbar؟"
         ],
         "mix_fr": [],
-        "mix_de": [
-          "was ist wichtig?"
-        ]
+        "mix_de": []
       }
     },
     {
@@ -744,14 +716,8 @@
           "had alklma kyfach ttnط9؟",
           "kyfach n9raha؟"
         ],
-        "mix_fr": [
-          "ça veut dire quoi ?",
-          "c'est quoi ça ?"
-        ],
-        "mix_de": [
-          "was bedeutet das?",
-          "was heißt das?"
-        ]
+        "mix_fr": [],
+        "mix_de": []
       }
     },
     {
@@ -842,7 +808,6 @@
           "ديرلي تمارين على القاعدة",
           "اختبرني في القاعدة",
           "وش هي القاعدة؟",
-          "وش لازم نحفظ؟",
           "عطيني القاعدة باختصار",
           "فسرها بالدارجة",
           "شرحها بطريقة سهلة"
@@ -888,14 +853,8 @@
           "chr7ly al9a3da",
           "fhmny al9a3da"
         ],
-        "mix_fr": [
-          "ça veut dire quoi ?",
-          "c'est quoi ça ?"
-        ],
-        "mix_de": [
-          "was bedeutet das?",
-          "was heißt das?"
-        ]
+        "mix_fr": [],
+        "mix_de": []
       }
     },
     {
@@ -1077,9 +1036,7 @@
           "mnyn nbdأ؟"
         ],
         "mix_fr": [],
-        "mix_de": [
-          "was ist wichtig?"
-        ]
+        "mix_de": []
       }
     },
     {
@@ -1131,14 +1088,8 @@
           "had aldrs ص3yb؟",
           "fsrly bطry9a أshl"
         ],
-        "mix_fr": [
-          "ça veut dire quoi ?",
-          "c'est quoi ça ?"
-        ],
-        "mix_de": [
-          "was bedeutet das?",
-          "was heißt das?"
-        ]
+        "mix_fr": [],
+        "mix_de": []
       }
     },
     {
@@ -1254,12 +1205,8 @@
           "had alm3lwma fy أy drs؟",
           "had almثal mnyn jbtwh؟"
         ],
-        "mix_fr": [
-          "où je trouve ça ?"
-        ],
-        "mix_de": [
-          "wo finde ich das?"
-        ]
+        "mix_fr": [],
+        "mix_de": []
       }
     },
     {
@@ -1289,7 +1236,6 @@
           "ما فهمتش والو منها",
           "واش ندير هنا؟",
           "كيفاه نحلها؟",
-          "منين نبدا؟",
           "وش ندير؟",
           "علاه هكا؟",
           "كيفاش جات هكا؟"
@@ -1325,14 +1271,8 @@
           "5wya fhmny hady",
           "3awnّy nfhm"
         ],
-        "mix_fr": [
-          "ça veut dire quoi ?",
-          "c'est quoi ça ?"
-        ],
-        "mix_de": [
-          "was bedeutet das?",
-          "was heißt das?"
-        ]
+        "mix_fr": [],
+        "mix_de": []
       }
     },
     {
@@ -1454,7 +1394,6 @@
           "وش الدروس اللي ما قريتهمش؟",
           "وش نقاط ضعفي؟",
           "في واش نغلط بزاف؟",
-          "وش لازم نراجع؟",
           "وين ناقص؟",
           "شنو لازم نحسن؟",
           "ديرلي تقييم",
@@ -1486,9 +1425,7 @@
           "wch ba9yly؟"
         ],
         "mix_fr": [],
-        "mix_de": [
-          "was ist wichtig?"
-        ]
+        "mix_de": []
       }
     },
     {
@@ -1539,9 +1476,7 @@
           "wch 9ra alywm؟"
         ],
         "mix_fr": [],
-        "mix_de": [
-          "was ist wichtig?"
-        ]
+        "mix_de": []
       }
     },
     {
