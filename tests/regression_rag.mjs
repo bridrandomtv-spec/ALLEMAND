@@ -110,6 +110,7 @@ try {
   if (!activeUnitWithoutAccess || activeUnitWithoutAccess.locked !== true) {
     throw new Error('résumé de l’unité active révélé sans ACCESS');
   }
+  globalThis.uniteActive = () => null;
   const lessonWithoutUnit = await fn('explique la séance 2');
   if (!lessonWithoutUnit || lessonWithoutUnit.locked !== true) {
     throw new Error('séance explicite révélée sans unité vérifiable ni ACCESS');
@@ -131,4 +132,5 @@ try {
 } finally {
   if (priorAccess650 === undefined) delete globalThis.ACCESS;
   else globalThis.ACCESS = priorAccess650;
+  delete globalThis.uniteActive;
 }
