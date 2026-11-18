@@ -198,3 +198,18 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 
 ### Prochaine étape
 - Lot 616 : valider l’exécution CI, puis concevoir un lecteur Worker côté serveur du nouvel artefact, avec sélection par ID strict, vérification d’accès Corpus existante, limite de taille/chunks et tests anti-forgery. Ne pas activer tant que la provenance/licence des documents n’est pas validée.
+
+## Lot 616 — raccordement sécurisé du corpus PDF au RAG distant — 18 novembre 2026
+
+- Le Worker du site protège désormais /assets/bdd/corpus_rag_chunks.json dans PROT : sans JWT, 401 ; avec JWT sans ligne lesson_content free=false visible via le RLS existant, 403 ; l’asset n’est servi qu’après cette vérification. Le test site-worker inclut ce chemin.
+- worker/ia-ask.js accepte un sélecteur strict {type:"corpus_document", id:"pdf-<16 hex>"} ; tout champ supplémentaire, identifiant non conforme ou type falsifié est refusé. Il récupère lui-même l’artefact protégé avec le JWT, jamais depuis un URL ou texte transmis par le navigateur.
+- Le Worker vérifie la présence du document, rights_confirmed=true et une licence dans la même allowlist que l’ingestion. Il classe les chunks du document par recouvrement lexical avec la question, ne retient que 4 chunks maximum, borne chaque extrait à 1 800 caractères et le contexte à 7 200 caractères. Les textes du document restent non fiables et ne peuvent pas devenir des instructions système.
+- ia.js reconnaît uniquement les identifiants générés pdf-<16 hex> explicitement présents dans la question. L’outil d’ingestion génère maintenant cet identifiant depuis SHA-256 du PDF ; il ne reprend pas un ID libre fourni dans les métadonnées.
+- Ajout d’un conteneur JSON vide corpus_rag_chunks.json et d’un manifeste corpus_rag_manifest.json au statut staged_not_connected. Aucun PDF réel n’est publié/indexé pour l’instant.
+- CI vérifie désormais la présence de ces artefacts et exécute les tests Python d’ingestion, ainsi que les tests Worker IA et garde d’accès. La CI de la nouvelle tête n’est pas encore visible/confirmée.
+- Limite : le ranking est lexical (pas d’embeddings/vector DB). Il s’agit d’une première récupération déterministe par document explicite, pas encore d’une recherche sémantique globale. Pas d’activation automatique des PDF ni de changement des règles d’accès Corpus.
+
+### Validation attendue
+- Vérifier dans CI les tests Python, les tests worker-ai-auth et site-worker-content-guard.
+- Après CI verte, sélectionner un petit lot de PDF produits par l’équipe et confirmer leurs droits, puis lancer l’ingestion locale et contrôler les extraits avant de les committer.
+- Ne pas fusionner ni déployer tant que les tests et les droits des documents ne sont pas confirmés.
