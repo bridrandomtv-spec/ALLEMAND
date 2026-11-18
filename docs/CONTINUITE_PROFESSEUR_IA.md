@@ -538,3 +538,15 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le CSV réel confirme 293/293 correspondances, zéro droit confirmé et 293 documents en attente. Aucun OCR, indexation ou embedding réel.
 - Artefact `pdf-rights-and-readiness`, ID `14420923665` : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44290732499/artifacts/14420923665
 - L'échec structurel général reste le parseur Messenger `ci/check-msg.mjs:231`, hors périmètre. PR #22 reste brouillon et non fusionnée.
+
+
+## Lot 633 — cohérence de version de l'index vectoriel (18 novembre 2026)
+- Durcissement de `worker/ia-ask.js` : avant d'utiliser les vecteurs, le Worker calcule SHA-256 du JSON exact des chunks récupérés côté serveur.
+- L'artefact `corpus_rag_vectors.json` n'est accepté que si `source_chunks_sha256` correspond à cette empreinte, en plus des contrôles existants de version, modèle, dimension, ID de chunk et ID de document.
+- Un index absent, périmé ou incohérent est ignoré ; le classement BM25 reste disponible. Aucun vecteur ne peut introduire un chunk qui n'est pas déjà présent dans les documents autorisés après contrôle JWT/RLS/licence.
+- Test de régression ajouté : un artefact vectoriel portant une empreinte périmée ne déclenche pas l'inférence d'embedding et conserve la réponse BM25.
+- Commits applicatifs : `6348f8776d9dabdf29cc6364f5931669417c962c` (Worker), puis `b7870d51519ea7a1cc73cf80d4ff5e9aea5fade5` (test).
+- HEAD PR #22 constaté après les modifications : `b7870d51519ea7a1cc73cf80d4ff5e9aea5fade5`.
+- Validation CI du nouveau HEAD non encore remontée par GitHub au moment de cette note ; ne pas déclarer le Lot 633 validé avant le job autonome Professeur IA.
+- Aucun embedding réel, OCR, accès PDF supplémentaire, appel Workers AI de production, changement Supabase/Auth/RLS, merge ou déploiement.
+- La validation structurelle globale précédente reste distinctement bloquée par `ci/check-msg.mjs:231` (syntaxe Messenger EduDZ, hors périmètre IA).
