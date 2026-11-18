@@ -1276,6 +1276,8 @@ jobs:
         run: node --test tests/site-worker-content-guard.test.mjs
       - name: Tester QUST et la compréhension Darija/Arabizi
         run: node --test tests/qust-darja.test.mjs
+      - name: Vérifier l’intégrité de l’ontologie et du jeu d’intentions
+        run: node --test tests/intent-ontology-integrity.test.mjs
       - name: Tester la régression RAG, professeur et parcours combinés
         run: |
           node tests/regression_rag.mjs
