@@ -989,10 +989,11 @@ async function verifieAccesContenuIA(question){
   if(unit == null && (lesson != null || unitExplanationRequest)) unit = uniteCouranteIA();
   var label = trouveRegle(q);
   var lockedRuleRequest = demandeRegleVerrouilleeIA(q);
-  /* Les résumés explicitement publiés comme free_summary restent gratuits.
-     Une demande d'explication pédagogique complète d'une unité, elle, exige
-     un entitlement backend ou une séance précise vérifiable. */
-  var unitScoped = unit != null && lesson == null && !unitSummaryRequest
+  var exerciseRequest = /(?:تمرين|تمارين|exercice|exercices|exercise|exercises|übung|übungen|tamarin|tamrin|banque\s*(?:d['’ ]?)?exercices)/i.test(q);
+  /* Les résumés free_summary et la banque générale gratuite restent gratuits.
+     Une explication complète d'unité, hors résumé/exercice libre, exige un
+     entitlement backend ou une séance précise vérifiable. */
+  var unitScoped = unit != null && lesson == null && !unitSummaryRequest && !exerciseRequest
     && (uniteExpliciteIA(q) != null || unitExplanationRequest);
   var lessonScoped = lesson != null;
 
@@ -1000,7 +1001,7 @@ async function verifieAccesContenuIA(question){
      preuve d'accès. Le professeur IA reste disponible, mais ne remplace
      jamais le contrôle d'accès aux contenus. */
   if(!window.ACCESS){
-    if(conjugationRequest || unitScoped || lessonScoped || label || lockedRuleRequest){
+    if(conjugationRequest || unitScoped || lessonScoped || label || lockedRuleRequest || (exerciseRequest && unit != null)){
       return {locked:true,html:'<b>🔒 لا يمكن شرح هذا المحتوى قبل التحقق من صلاحية الوصول إلى الوحدة أو الدرس المرتبط به.</b>'};
     }
     return null;
@@ -1042,11 +1043,11 @@ async function verifieAccesContenuIA(question){
     }
   }
   var type = await matchType(q);
-  if(type && type.id === 'fard'){
+  if(exerciseRequest){
     var quizUnit = unit != null ? unit : uniteCouranteIA();
     if(quizUnit != null && (typeof ACCESS.canAccessQuiz !== 'function' || !ACCESS.canAccessQuiz(quizUnit))){
       try{ if(ACCESS.paywall) ACCESS.paywall({type:'quiz',unite:quizUnit}); }catch(e){}
-      return {locked:true,html:'<b>🔒 هذا الفرض/الاختبار ضمن محتوى المشتركين. لا يمكن للأستاذ الذكي كشف أسئلته أو تصحيحه قبل فتحها.</b>'};
+      return {locked:true,html:'<b>🔒 تمارين/فروض هذه الوحدة ضمن المحتوى المحمي. لا يمكن للأستاذ كشفها أو تصحيحها قبل فتحها.</b>'};
     }
   }
   var target = null;
