@@ -51,17 +51,22 @@ def eligible_chunks(corpus, manifest):
         raise ValueError("manifest_chunk_count_incoherent")
 
     approved = {}
-    seen_documents = set()
+    known_documents = set()
+    expected_chunk_counts = {}
     for doc in documents:
         if not isinstance(doc, dict) or not isinstance(doc.get("id"), str) or not doc["id"].strip():
             raise ValueError("document_id_absent_ou_invalide")
         document_id = doc["id"]
-        if document_id in seen_documents:
+        if document_id in known_documents:
             raise ValueError("document_id_duplique")
-        seen_documents.add(document_id)
+        known_documents.add(document_id)
+        declared_count = doc.get("chunk_count")
+        if isinstance(declared_count, bool) or not isinstance(declared_count, int) or declared_count < 0:
+            raise ValueError("document_chunk_count_absent_ou_invalide")
+        expected_chunk_counts[document_id] = declared_count
         if doc.get("rights_confirmed") is True and doc.get("license") in ALLOWED_LICENSES:
             approved[document_id] = str(doc.get("title") or "none")[:240]
-    result, seen_chunks = [], set()
+    result, seen_chunks, actual_chunk_counts = [], set(), {doc_id: 0 for doc_id in known_documents}
     for chunk in chunks:
         if not isinstance(chunk, dict):
             raise ValueError("chunk_entree_invalide")
@@ -70,7 +75,10 @@ def eligible_chunks(corpus, manifest):
             raise ValueError("chunk_id_absent_ou_duplique")
         if not isinstance(doc_id, str) or not doc_id.strip():
             raise ValueError("chunk_document_id_absent_ou_invalide")
+        if doc_id not in known_documents:
+            raise ValueError("chunk_document_id_inconnu")
         seen_chunks.add(chunk_id)
+        actual_chunk_counts[doc_id] += 1
         if doc_id not in approved:
             continue
         if not isinstance(body, str) or not body.strip():
@@ -81,6 +89,9 @@ def eligible_chunks(corpus, manifest):
             "title": approved[doc_id],
             "text": body.strip(),
         })
+    for doc_id, expected in expected_chunk_counts.items():
+        if actual_chunk_counts[doc_id] != expected:
+            raise ValueError("document_chunk_count_incoherent:" + doc_id)
     return result
 
 
