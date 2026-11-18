@@ -104,6 +104,21 @@ try {
   if (!noEntitlementUnit || noEntitlementUnit.locked !== true) {
     throw new Error('résumé d’unité révélé sans entitlement actif');
   }
+  globalThis.uniteActive = () => ({ n:3 });
+  delete globalThis.ACCESS;
+  const activeUnitWithoutAccess = await fn('résume cette unité');
+  if (!activeUnitWithoutAccess || activeUnitWithoutAccess.locked !== true) {
+    throw new Error('résumé de l’unité active révélé sans ACCESS');
+  }
+  const lessonWithoutUnit = await fn('explique la séance 2');
+  if (!lessonWithoutUnit || lessonWithoutUnit.locked !== true) {
+    throw new Error('séance explicite révélée sans unité vérifiable ni ACCESS');
+  }
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ ok:false, src:'backend' }),
+    paywall: () => {}
+  };
   globalThis.ACCESS.refresh = async () => { throw new Error('backend unavailable'); };
   const backendUnavailable = await fn('résume unité 3');
   if (!backendUnavailable || backendUnavailable.locked !== true) {
