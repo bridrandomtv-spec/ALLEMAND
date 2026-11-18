@@ -63,3 +63,36 @@
 
 ## Prochaine étape
 Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks autorisés, avec préfixes de tâche document, batch contrôlé, normalisation L2, empreinte/version de modèle, tests de dimension et sans déclencher d'indexation des 225 PDF non autorisés.
+
+
+# Lot 624 — générateur reproductible des embeddings documentaires (18 novembre 2026)
+
+## Audit réel du corpus
+- `assets/bdd/corpus_rag_chunks.json` : 0 document et 0 chunk.
+- `assets/bdd/corpus_rag_manifest.json` : 0 document, 0 chunk ; aucune source n'est actuellement admissible à la vectorisation.
+- Conséquence : aucun appel Workers AI n'a été exécuté et aucun vecteur documentaire n'a été généré. Les PDF sans droits confirmés restent exclus.
+
+## Implémentation
+- Nouveau script `tools/build_corpus_rag_vectors.py` : lit uniquement les deux artefacts RAG existants ; vérifie versions, cohérence des compteurs du manifeste, `rights_confirmed === true` et appartenance à la liste des licences autorisées avant de construire les entrées API.
+- Le texte envoyé au modèle utilise le préfixe documentaire officiel `title: ... | text: ...` ; le Worker conserve son préfixe de requête `task: search result | query: ...`.
+- Lots bornés (8 par défaut, 32 maximum), validation stricte du nombre et des indices de réponse, dimension exacte 256, valeurs finies et normalisation L2.
+- Le schéma de sortie reprend exactement les identifiants attendus par le Worker : `chunk_id`, `document_id`, `embedding`. Cette correspondance a été vérifiée dans `worker/ia-ask.js`.
+- Empreintes SHA-256 du fichier de chunks et du manifeste enregistrées dans l'artefact pour tracer la provenance. Écriture atomique uniquement après réussite de tous les lots.
+- Aucun package Python supplémentaire ; API Cloudflare REST documentée, secrets uniquement via `CLOUDFLARE_ACCOUNT_ID` et `CLOUDFLARE_API_TOKEN` en variables d'environnement.
+
+## Barrières de coût et de sécurité
+- Mode par défaut : dry-run local, zéro requête réseau, zéro écriture du fichier vectoriel.
+- L'exécution réelle exige à la fois `--execute` et `--confirm-cloudflare-billing`, plus des identifiants Cloudflare valides.
+- Un corpus vide provoque un arrêt explicite en mode exécution ; aucune génération d'embeddings vides ou aucun coût inutile.
+- Aucun PDF sans droits confirmés ne peut entrer dans le lot envoyé au modèle.
+- Aucun changement Supabase, Auth, RLS, SQL, abonnement, `wrangler.toml`, `main` ou déploiement Cloudflare.
+
+## Tests et validation
+- Nouveau fichier `tests/test_build_corpus_rag_vectors.py` : filtre de droits, incohérence manifeste, dimension, NaN/Inf, normalisation, index API, batching, métadonnées et dry-run sans appel API.
+- La CI `professor-ai` est étendue pour exécuter ces tests en plus des tests d'ingestion PDF existants.
+- Les tests sont ajoutés à la CI mais ne sont pas encore déclarés réussis : le nouveau HEAD doit être exécuté par GitHub Actions.
+
+## Suite
+- Attendre l'exécution CI du nouveau HEAD.
+- Dès que le propriétaire fournit des documents avec licences et droits vérifiables, générer un petit lot autorisé seulement après validation explicite du coût/quota Workers AI.
+- Comparer ensuite la qualité retrieval BM25 vs hybride sur un jeu d'évaluation multilingue autorisé avant toute activation du drapeau en production.
