@@ -646,9 +646,12 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
               let vectorIndexValid = true;
               for(const item of vectorData.vectors){
                 if(!item || typeof item.chunk_id !== 'string'
-                   || !candidateById.has(item.chunk_id)
-                   || item.document_id !== candidateById.get(item.chunk_id).doc.id) continue;
-                if(vectorById.has(item.chunk_id) || !Array.isArray(item.embedding)
+                   || !candidateById.has(item.chunk_id)) continue;
+                /* Un ID de chunk candidat est une clé de jointure de confiance :
+                   une association documentaire contradictoire invalide l'index,
+                   elle ne doit pas être ignorée avant une éventuelle entrée valide. */
+                if(item.document_id !== candidateById.get(item.chunk_id).doc.id
+                   || vectorById.has(item.chunk_id) || !Array.isArray(item.embedding)
                    || item.embedding.length !== 256
                    || !item.embedding.every(Number.isFinite)){
                   vectorIndexValid = false;
