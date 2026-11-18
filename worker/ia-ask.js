@@ -643,14 +643,30 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
                && vectorData.model === '@cf/google/embeddinggemma-2'
                && vectorData.dimensions === 256
                && Array.isArray(vectorData.vectors) && vectorData.vectors.length <= 12000){
+              let vectorIndexValid = true;
               for(const item of vectorData.vectors){
                 if(!item || typeof item.chunk_id !== 'string'
                    || !candidateById.has(item.chunk_id)
-                   || item.document_id !== candidateById.get(item.chunk_id).doc.id
-                   || !Array.isArray(item.embedding) || item.embedding.length !== 256
-                   || !item.embedding.every(Number.isFinite)) continue;
+                   || item.document_id !== candidateById.get(item.chunk_id).doc.id) continue;
+                if(vectorById.has(item.chunk_id) || !Array.isArray(item.embedding)
+                   || item.embedding.length !== 256
+                   || !item.embedding.every(Number.isFinite)){
+                  vectorIndexValid = false;
+                  break;
+                }
+                const vectorNorm = Math.sqrt(item.embedding.reduce(
+                  (sum,value) => sum + value * value, 0
+                ));
+                if(!Number.isFinite(vectorNorm) || vectorNorm <= 0){
+                  vectorIndexValid = false;
+                  break;
+                }
                 vectorById.set(item.chunk_id, item.embedding);
               }
+              /* Une collision ou un vecteur numérique dégénéré invalide l'index
+                 complet : ne jamais laisser une entrée écraser silencieusement
+                 une autre. Les entrées étrangères/non autorisées restent ignorées. */
+              if(!vectorIndexValid) vectorById.clear();
             }
             if(vectorById.size){
               const embedded = await env.AI.run('@cf/google/embeddinggemma-2', {
