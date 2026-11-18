@@ -36,7 +36,7 @@ function harness(options = {}){
       ...doc, chunk_count:Object.prototype.hasOwnProperty.call(doc,'chunk_count') ? doc.chunk_count : (counts.get(doc.id) || 0)
     })) };
   };
-  const calls = [];
+  const calls = [];\n  let corpusRaw = null;
   const aiCalls = [];
   let messages = null;
   const context = {
@@ -121,8 +121,7 @@ function harness(options = {}){
         });
       }
       if(String(url).includes('/assets/bdd/corpus_rag_chunks.json')){
-        if(options.corpusDocumentResponse) return options.corpusDocumentResponse;
-        return new Response(JSON.stringify(corpusWithChunkCounts(options.corpusDocumentData || {
+        const corpusData = corpusWithChunkCounts(options.corpusDocumentData || {
           version:1,
           documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Cours allemand autorisé',
             license:'production_propre', rights_confirmed:true }],
@@ -132,7 +131,19 @@ function harness(options = {}){
             { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:2, part:0, text:'Die Familie und die Schule sind wichtige Themen.' }
           ]
-        })), { status:200, headers:{ 'Content-Type':'application/json' } });
+        });
+        corpusRaw = JSON.stringify(corpusData);
+        if(options.corpusDocumentResponse) return options.corpusDocumentResponse;
+        return new Response(corpusRaw, { status:200, headers:{ 'Content-Type':'application/json' } });
+      }
+      if(String(url).includes('/assets/bdd/corpus_rag_manifest.json')){
+        if(options.corpusManifestResponse) return options.corpusManifestResponse;
+        if(!corpusRaw) return new Response('',{status:503});
+        const data = JSON.parse(corpusRaw);
+        return new Response(JSON.stringify({
+          version:1, document_count:data.documents.length, chunk_count:data.chunks.length,
+          chunks_sha256:createHash('sha256').update(corpusRaw,'utf8').digest('hex')
+        }), { status:200, headers:{ 'Content-Type':'application/json' } });
       }
       if(String(url).includes('/assets/bdd/compositions.json') || String(url).includes('/assets/bdd/annales.json')){
         if(options.officialDocumentResponse) return options.officialDocumentResponse;
