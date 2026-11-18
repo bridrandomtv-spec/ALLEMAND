@@ -3837,3 +3837,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Artefact `pdf-rights-and-readiness`, ID `14421110680`, run `44289483381`, rétention jusqu'au 2 décembre 2026 : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44289483381/artifacts/14421110680
 - Le rapport contient chemins et métadonnées seulement, aucun texte pédagogique. Aucun OCR, indexation RAG ou embedding réel n'a été lancé ; le manifeste vectoriel reste vide et la génération Cloudflare payante désactivée.
 - La validation structurelle générale reste en échec sur `ci/check-msg.mjs:231` (SyntaxError Messenger, hors périmètre). Le job autonome IA est vert. PR #22 reste ouverte en brouillon et non fusionnée ; `main` reste à `034722b00739c0106cd265eefdd1c933a096217d`. Aucun changement Supabase ni déploiement.
+
+
+## Lot 632 — double validation des droits avant ingestion (18 novembre 2026)
+- Le script `tools/ingest_corpus_rag.py` exige désormais deux autorisations cohérentes : compagnon `_NOM.json` avec `droits_confirmes=true` et licence autorisée, ET ligne exacte dans `docs/inventaire_pdf_droits.csv` avec `rights_confirmed=true`, même licence et chemin compagnon attendu.
+- Le rapprochement est relatif à la racine du dépôt. Les PDF hors racine, entrées absentes, compagnons incohérents, licences divergentes, chemins invalides et doublons sont rejetés. Inventaire absent/ligne non confirmée = aucun chunk produit pour le PDF.
+- CLI : `python tools/ingest_corpus_rag.py . --output-dir . --rights-inventory docs/inventaire_pdf_droits.csv --repo-root .`. Sans inventaire central, un compagnon isolé ne suffit plus.
+- Tests du run `44290732499` sur HEAD `72d081496446e3dcd5061058149e84ae307f68c1` : ingestion 13/13, validation droits 15/15, audit 11/11, builder vectoriel 8/8 ; Worker IA/JWT/RAG 75/75, garde site 14/14, QUST 9/9 ; contrats RAG 12/12, PROF 18/18 et régression combinée exécutée. Job autonome IA vert.
+- Rapport de ce run : 293 PDF / 293 lignes / 293 chemins appariés ; 0 droit confirmé, 293 lignes à vérifier. 1 173 pages ; 186 extractibles, 28 mixtes, 78 candidats OCR, 1 chiffré ; aucun OCR ni indexation effectués.
+- Artefact `pdf-rights-and-readiness`, ID `14420923665`, run `44290732499`, rétention jusqu'au 2 décembre 2026 : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44290732499/artifacts/14420923665
+- Le contrôle structurel général échoue toujours uniquement sur `ci/check-msg.mjs:231` (SyntaxError Messenger hors périmètre IA). Aucun changement Supabase, merge ou déploiement ; `main` reste `034722b00739c0106cd265eefdd1c933a096217d`.

@@ -529,3 +529,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Artefact CI `pdf-rights-and-readiness`, ID `14421110680`, rétention 14 jours : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44289483381/artifacts/14421110680
 - OCR, indexation et embeddings réels non exécutés. Le rapport n'accorde aucun droit et ne rend aucun document admissible.
 - Échec structurel global toujours isolé à `ci/check-msg.mjs:231` (Messenger). Job autonome Professeur IA vert ; PR #22 ouverte, brouillon, non fusionnée.
+
+
+## Lot 632 — double verrou d'autorisation à l'ingestion
+- L'ingestion RAG ne fait plus confiance au seul compagnon `_NOM.json`. Elle exige une ligne correspondante dans `docs/inventaire_pdf_droits.csv`, avec `rights_confirmed=true`, le même nom de licence autorisée et le chemin exact du compagnon.
+- Absence d'inventaire ou de ligne, confirmation vide/fausse, licence divergente, chemin hors racine/incohérent ou doublon : refus d'ingestion (fail closed).
+- Tests CI `44290732499` : ingestion 13/13, droits 15/15, audit PDF 11/11, vector builder 8/8, Worker 75/75, site guard 14/14, QUST 9/9, RAG 12/12, PROF 18/18 ; job autonome IA vert.
+- Le CSV réel confirme 293/293 correspondances, zéro droit confirmé et 293 documents en attente. Aucun OCR, indexation ou embedding réel.
+- Artefact `pdf-rights-and-readiness`, ID `14420923665` : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44290732499/artifacts/14420923665
+- L'échec structurel général reste le parseur Messenger `ci/check-msg.mjs:231`, hors périmètre. PR #22 reste brouillon et non fusionnée.

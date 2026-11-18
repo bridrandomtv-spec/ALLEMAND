@@ -220,3 +220,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Artefact `pdf-rights-and-readiness` (ID `14421110680`) : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44289483381/artifacts/14421110680
 - L'audit n'effectue ni OCR, ni sauvegarde de texte, ni indexation RAG, ni génération d'embeddings. Les droits restent une barrière obligatoire avant ingestion.
 - La validation structurelle générale reste bloquée par la syntaxe de `ci/check-msg.mjs:231`, hors périmètre IA. Aucun changement Supabase, merge ou déploiement.
+
+
+## Lot 632 — verrouillage de l'ingestion par inventaire central
+- `ingest_corpus_rag.py` exige le compagnon local ET l'autorisation de l'inventaire central sur le chemin exact. `rights_confirmed=true` et la licence doivent être identiques dans les deux sources ; les entrées absentes, incohérentes, dupliquées ou hors racine sont rejetées.
+- Le paramètre CLI `--rights-inventory` est fourni par défaut vers `docs/inventaire_pdf_droits.csv`; `--repo-root` définit la base de résolution. Sans inventaire, aucun PDF muni d'un simple compagnon n'est indexé.
+- CI `44290732499` : ingestion 13/13, droits 15/15, audit 11/11, builder vecteur 8/8 ; Worker 75/75, site guard 14/14, QUST 9/9, contrats RAG 12/12, PROF 18/18. Job IA autonome vert.
+- 293 documents rapprochés, 0 droit confirmé. Manifeste et vecteurs réels inchangés ; pas d'OCR, de conversion persistante ni d'embedding.
+- Artefact `pdf-rights-and-readiness` ID `14420923665` : https://github.com/bridrandomtv-spec/ALLEMAND/actions/runs/44290732499/artifacts/14420923665
+- Le check structurel global reste bloqué sur `ci/check-msg.mjs:231` ; aucun changement Supabase, merge ou déploiement.
