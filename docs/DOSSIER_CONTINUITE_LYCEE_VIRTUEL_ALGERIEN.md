@@ -3577,3 +3577,11 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Run `44211660464` sur le commit applicatif `1eec9512557feec9c0b782e22b3c33d7891b88e2` terminé : `Tests autonomes — Professeur IA` = `success`. Les nouveaux tests de recherche PDF naturelle et les tests existants du professeur IA passent.
 - La CI globale = `failure` uniquement sur `Valider la messagerie EduDZ (schéma RLS + client + vue)`. Les jobs conditionnels ultérieurs sont ignorés par le workflow après cette erreur.
 - Les commits ultérieurs `ed59f21` et `47154cc` ne contiennent que les deux mises à jour de continuité ; le run applicatif ci-dessus valide le code IA du Lot 618, mais le SHA exact de tête documentaire n’a pas de run distinct visible.
+
+
+## Lot 619 — rappel documentaire interlingue du Professeur IA (18 novembre 2026)
+- Le Worker IA classe désormais les chunks PDF autorisés avec un score BM25 léger plutôt qu'un simple compteur de sous-chaînes. Le filtre JWT/RLS, la validation de licence et la limite de contexte sont appliqués avant et après ce classement.
+- Un glossaire de rappel FR/AR/Darija vers les termes allemands couvre les notions Perfekt, Akkusativ, Dativ, Passiv, Konjunktiv II, Präteritum, Präsens et Komparativ. Exemple testé : « اشرح الماضي المركب في ملفات PDF » retrouve un passage contenant « Perfekt ».
+- Il s'agit de recherche lexicale BM25 avec expansion terminologique, pas d'embeddings/vector search. Aucun index vectoriel ni vecteur de chunk n'existe actuellement ; l'embedding à l'ingestion et son coût devront être cadrés avant d'ajouter cette couche.
+- Le corpus PDF reste vide tant que les droits des 225 PDF « document utilisateur » ne sont pas confirmés. Aucun contenu n'a été ingéré.
+- Aucun changement Supabase/Auth/RLS/paiement, aucun changement sur main, aucune fusion ni déploiement.
