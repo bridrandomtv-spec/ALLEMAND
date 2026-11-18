@@ -785,3 +785,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Ajustement du scénario de collision : la requête de test est `هاد الدرس`, fragment réellement présent dans plusieurs formulations de l’ontologie et donnant un score de sous-chaîne identique (75) à plusieurs intentions. Le précédent scénario combinant deux demandes n’atteignait pas le seuil de confiance du classifieur et testait un non-match plutôt qu’une égalité. Le cas retenu vérifie donc bien l’abstention sur un ex aequo réel.
 
 - Revue de surface d'API : seul `matchOnto` est exposé dans `window.RAG` pour le test du classifieur. `ontoRoute` reste privé et non appelé ; il n'est volontairement pas exposé car ses réponses pédagogiques statiques ne sont pas encore protégées par une vérification uniforme des droits et de la ressource ciblée. Aucun raccordement production n'est activé dans ce lot.
+
+
+### Lot 650 — fermeture du contournement des unités entières — 18/11/2026
+- L'audit de `verifieAccesContenuIA()` a montré que les séances explicites et les conjugaisons étaient contrôlées, mais qu'une requête portant sur une unité entière (ex. résumé complet d'une unité) pouvait continuer sans objet `ACCESS`.
+- Le garde vérifie maintenant les demandes d'unité/séance et les règles identifiées avant toute réponse pédagogique locale. Sans `ACCESS`, ces demandes échouent fermées. Une unité complète exige un entitlement backend actif (`src === backend`), tandis qu'une séance précise passe par `canAccessLesson`. Un contrôle backend absent ou en erreur bloque également la réponse.
+- Une règle grammaticale qui ne peut pas être rattachée à une ressource vérifiable est désormais refusée plutôt que renvoyée depuis le corpus local sans preuve d'accès. Les vérifications de quiz échouent également fermées si la fonction d'accès est absente.
+- Le test de régression couvre : absence d'ACCESS, absence d'entitlement actif et exception de rafraîchissement backend pour `résume unité 3`. Le professeur IA distant reste accessible aux utilisateurs connectés sans abonnement pour les questions générales ; seuls les contenus pédagogiques verrouillés sont refusés.
+- Aucun changement Supabase, Auth, RLS, schéma, abonnement ou paiement. Aucun changement sur `main`, aucune fusion ni déploiement. PR #23 reste ouverte et en brouillon.
