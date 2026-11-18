@@ -828,3 +828,5 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Une intention unique ne déclenche pas cette clarification et continue dans le pipeline existant. Cette étape active donc uniquement la désambiguïsation ; elle ne branche pas encore les routes statiques de `ontoRoute()`.
 - Tests de régression ajoutés sur le parcours réel : `هاد الدرس` doit produire une demande de précision ; `شرحلي هاد الدرس` ne doit pas être déclaré ambigu.
 - Les contrôles d'accès Lot 650–651 restent exécutés avant l'ontologie. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion ni déploiement. CI du nouveau commit à confirmer.
+
+- Garde anti-faux positifs Lot 652 : `matchOnto()` ignore maintenant les fragments latins de moins de quatre caractères (ex. `was`, `ich`) qui pouvaient correspondre comme sous-chaînes à de nombreuses formulations et déclencher une clarification injustifiée. Les fragments arabes restent évalués, car certains termes courts peuvent porter une intention. Test ajouté.
