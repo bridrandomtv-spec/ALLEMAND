@@ -452,3 +452,16 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Chaque ligne fournit le chemin du PDF et le nom exact du compagnon attendu (`_<nom>.json`), avec les champs de licence et de confirmation laissés volontairement vides et un statut « à vérifier ».
 - Cet inventaire sert de feuille de revue des droits ; il ne constitue pas une autorisation et ne doit pas être rempli automatiquement à partir des noms de fichiers.
 - Les 293 documents restent exclus de l'index tant que la preuve n'est pas confirmée.
+
+
+## Lot 628 — validation contrôlée de l'inventaire des droits PDF (18 novembre 2026)
+- Ajout de `tools/validate_pdf_rights_inventory.py`, validateur local en lecture seule de `docs/inventaire_pdf_droits.csv`.
+- Le validateur exige les cinq colonnes attendues, vérifie que chaque PDF existe dans le dépôt, rejette les chemins absolus / traversées de répertoire, contrôle le nom exact du compagnon attendu, les doublons et les valeurs de confirmation.
+- Une ligne n'est admissible que si `rights_confirmed=true` ET si `license` appartient strictement à la liste déjà admise par l'ingestion : `production_propre`, `domaine_public`, `cc_by`, `cc_by_sa`, `autorisation_ecrite`.
+- Les lignes vides restent en attente. Une confirmation sans licence, une licence inconnue, un chemin incohérent ou un PDF absent déclenche une erreur.
+- Le script ne modifie aucun CSV, ne crée aucun compagnon JSON, ne déduit aucun droit et ne lance ni extraction PDF ni embedding.
+- Ajout de 10 tests unitaires couvrant les lignes en attente, les licences admises/refusées, les confirmations invalides, les chemins, les doublons et les fichiers absents. La suite est ajoutée au job autonome Professeur IA.
+- État du corpus : 293 PDF inventoriés, 0 compagnon de droits trouvé lors de l'audit, 0 document / 0 chunk dans le manifeste RAG. Aucun PDF réel indexé et aucun appel Workers AI supplémentaire.
+- Le comptage de 225 PDF présent dans certaines notes antérieures correspond à un inventaire partiel historique ; l'audit récursif complet du Lot 626 établit le total actuel à 293.
+- Validation CI de ce nouveau lot en attente : ne pas annoncer les tests comme passés avant le résultat du job autonome.
+- PR #22 reste ouverte en brouillon, non fusionnée ; aucune modification Supabase, de `main`, aucun déploiement Cloudflare.
