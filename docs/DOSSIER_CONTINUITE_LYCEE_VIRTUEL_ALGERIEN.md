@@ -3736,3 +3736,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le job structurel global échoue toujours sur l'erreur indépendante de Messenger `ci/check-msg.mjs:231` (SyntaxError, expression `currentThread.querySelector`), sans rapport avec le professeur IA. Les validations antérieures de ce job étaient réussies. Aucun changement Messenger n'est inclus dans cette branche IA.
 - Aucun benchmark de rappel/précision sur documents réels n'est possible : le manifeste PDF contient toujours zéro document et zéro chunk. Les tests multilingues actuels valident le câblage et la sécurité du classement avec des fixtures synthétiques.
 - Le dernier HEAD applicatif testé est `4662bb36f9a79049c8800d5c93a563ef31d25fb9`. Les commits documentaires qui suivent ne modifient pas le code testé. La PR reste ouverte et en brouillon, sans fusion ni déploiement.
+
+
+## Lot 626 — inventaire PDF réel et découverte récursive (18 novembre 2026)
+- Audit de l'arbre Git complet du dépôt : 293 fichiers PDF versionnés, dont 264 dans `docs/archive/documents/` et 29 à la racine.
+- Aucun des 293 PDF ne possède le compagnon de droits attendu par l'ingestion (`_<nom_du_pdf>.json`) dans son propre dossier. Le pipeline ne peut donc en indexer aucun sans validation explicite des droits.
+- Le manifeste RAG reste inchangé à 0 document / 0 chunk. Aucun PDF n'a été envoyé au modèle d'embedding, et aucune licence n'a été supposée à partir du nom, du dossier ou du contenu.
+- Défaut de couverture corrigé : `tools/ingest_corpus_rag.py` parcourait uniquement les PDF du premier niveau (`glob`). Il utilise maintenant une découverte récursive déterministe (`rglob`) et conserve le chemin relatif dans `source_file` et les rapports d'exclusion, pour éviter les collisions entre fichiers de même nom.
+- Nouveau test : un PDF situé dans un sous-dossier n'est ingéré que si son compagnon local confirme `droits_confirmes: true` et une licence autorisée ; son chemin relatif est conservé.
+- Ce changement améliore la couverture technique, mais ne change pas la politique de droits : les 293 PDF restent exclus tant que leurs preuves ne sont pas fournies.
+- Validation CI du Lot 626 en attente sur le nouveau HEAD ; ne pas annoncer les tests comme réussis avant le résultat du job autonome Professeur IA.
