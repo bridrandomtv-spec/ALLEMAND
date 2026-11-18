@@ -915,7 +915,7 @@ test('une panne des embeddings conserve le repli BM25', async () => {
     resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
   }), h.env);
   assert.equal(response.status,200);
-  assert.match(h.messages[1].content,/Das Perfekt wird/);
+  assert.match(h.messages[1].content,/Der Perfekt wird/);
 });
 
 test('les alias arabes et français ne contournent pas les règles grammaticales verrouillées', async () => {
