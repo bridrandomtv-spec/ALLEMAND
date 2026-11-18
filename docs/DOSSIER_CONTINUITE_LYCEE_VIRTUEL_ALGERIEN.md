@@ -3607,3 +3607,8 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le même normaliseur arabe que celui du garde des cadenas est maintenant appliqué à la tokenisation BM25. Les harakat/tatweel et variantes d'alif/ya sont traités de façon identique côté question et côté chunk.
 - Le test de recherche PDF interlingue utilise désormais une question arabe vocalisée pour vérifier que « الماضي المركب » retrouve toujours le passage allemand sur Perfekt.
 - Cette évolution reste du BM25 lexical avec expansion de concepts ; elle ne prétend pas être une recherche vectorielle.
+
+
+### Validation Lot 621 — BM25 arabe vocalisé
+- Run `44214054953` sur le commit applicatif `27b1aa308a755c9d17ecf254effec09fbe7c6c87` : `Tests autonomes — Professeur IA` = `success`. Les tests d'ingestion PDF/OCR/droits, Worker IA, documents officiels, QUST/Darja/Arabizi et régressions RAG/professeur passent.
+- La CI globale reste `failure` sur `Valider la messagerie EduDZ (schéma RLS + client + vue)` ; les contrôles conditionnels après ce point sont sautés. Aucun changement n'a été apporté à Messenger/Multaqa pour masquer cet échec.
