@@ -6,6 +6,14 @@ import test from 'node:test';
 const workerSource = fs.readFileSync(new URL('../worker/ia-ask.js', import.meta.url), 'utf8');
 const appSource = fs.readFileSync(new URL('../app.js', import.meta.url), 'utf8');
 const iaSource = fs.readFileSync(new URL('../ia.js', import.meta.url), 'utf8');
+function loadCorpusDocumentResolver(){
+  const start = iaSource.indexOf('  function corpusDocumentResource(question){');
+  const end = iaSource.indexOf('  function officialDocumentResource(question){', start);
+  assert.ok(start >= 0 && end > start, 'corpusDocumentResource must exist');
+  const sandbox = {};
+  vm.runInNewContext(iaSource.slice(start, end) + '; globalThis.resolve = corpusDocumentResource;', sandbox);
+  return sandbox.resolve;
+}
 function loadOfficialDocumentResolver(){
   const start = iaSource.indexOf('  function officialDocumentResource(question){');
   const end = iaSource.indexOf('function exerciseBankResource(question){', start);
@@ -76,6 +84,20 @@ function harness(options = {}){
         return options.paidUnitResponse || new Response(options.paidUnitSource || "const U3AS_1 = { meta:{n:1,niveau:'3AS',de:'Unit One'}, seances:[{n:1,de:'FREE SESSION ONE'},{n:2,de:'FREE SESSION TWO'},{n:3,de:'PAID SESSION THREE',gram:{t:'Relativsätze'}},{n:4,de:'PAID SESSION FOUR'}] };", {
           status:200, headers:{ 'Content-Type':'text/javascript' }
         });
+      }
+      if(String(url).includes('/assets/bdd/corpus_rag_chunks.json')){
+        if(options.corpusDocumentResponse) return options.corpusDocumentResponse;
+        return new Response(JSON.stringify(options.corpusDocumentData || {
+          version:1,
+          documents:[{ id:'pdf-0123456789abcdef', title:'Cours allemand autorisé',
+            license:'production_propre', rights_confirmed:true }],
+          chunks:[
+            { id:'pdf-0123456789abcdef-p1-c0', document_id:'pdf-0123456789abcdef',
+              page:1, part:0, text:'Der Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
+            { id:'pdf-0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef',
+              page:2, part:0, text:'Die Familie und die Schule sind wichtige Themen.' }
+          ]
+        }), { status:200, headers:{ 'Content-Type':'application/json' } });
       }
       if(String(url).includes('/assets/bdd/compositions.json') || String(url).includes('/assets/bdd/annales.json')){
         if(options.officialDocumentResponse) return options.officialDocumentResponse;
@@ -761,6 +783,66 @@ test('le Worker refuse un document officiel si le Worker du site signale un verr
   assert.equal(response.status, 403);
   assert.equal(payload.err, 'content-locked');
   assert.equal(h.messages, null);
+});
+
+
+test('ia.js résout un identifiant PDF stable et ignore les questions sans identifiant', () => {
+  const resolve = loadCorpusDocumentResolver();
+  assert.deepEqual(JSON.parse(JSON.stringify(resolve('Explique le PDF pdf-0123456789abcdef.'))), {
+    type:'corpus_document', id:'pdf-0123456789abcdef'
+  });
+  assert.equal(resolve('Explique-moi un document PDF sur le Perfekt.'), null);
+});
+
+test('le Worker récupère les chunks PDF côté serveur avec JWT et limite le contexte', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+  }), h.env);
+  assert.equal(response.status, 200);
+  const call = h.calls.find(x => x.url.includes('/assets/bdd/corpus_rag_chunks.json'));
+  assert.ok(call);
+  assert.equal(call.init.headers.Authorization, 'Bearer ' + TOKEN);
+  assert.match(h.messages[1].content, /CONTENU PÉDAGOGIQUE AUTORISÉ — CORPUS PDF/);
+  assert.match(h.messages[1].content, /Perfekt/);
+  assert.doesNotMatch(h.messages[1].content, /Die Familie und die Schule/);
+});
+
+test('le Worker refuse un PDF verrouillé par le Worker du site avant le modèle', async () => {
+  const h = harness({ corpusDocumentResponse:new Response('{"error":"abonnement_requis"}', { status:403 }) });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le PDF pdf-0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 403);
+  assert.equal(payload.err, 'content-locked');
+  assert.equal(h.messages, null);
+});
+
+test('le Worker refuse un PDF sans licence autorisée', async () => {
+  const h = harness({ corpusDocumentData:{
+    documents:[{ id:'pdf-0123456789abcdef', title:'Livre éditeur', license:'document_utilisateur', rights_confirmed:true }],
+    chunks:[{ document_id:'pdf-0123456789abcdef', page:1, text:'Contenu privé suffisamment long.' }]
+  }});
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le PDF pdf-0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+  }), h.env);
+  assert.equal(response.status, 404);
+  assert.equal(h.messages, null);
+});
+
+test('le Worker rejette un sélecteur PDF falsifié avec champ supplémentaire', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique ce PDF.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef', url:'https://evil.example/file.pdf' }
+  }), h.env);
+  assert.equal(response.status, 400);
+  assert.equal(h.messages, null);
+  assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_chunks.json')), false);
 });
 
 test('le Worker rejette un sélecteur de document officiel falsifié', async () => {
