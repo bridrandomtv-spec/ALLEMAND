@@ -99,6 +99,14 @@ try {
   if (freeSummaryWithoutAccess && freeSummaryWithoutAccess.locked === true) {
     throw new Error('résumé explicitement gratuit bloqué à tort');
   }
+  const noAccessRule = await fn('Explique le Genitiv.');
+  if (!noAccessRule || noAccessRule.locked !== true) {
+    throw new Error('règle Genitiv révélée localement sans ACCESS');
+  }
+  const noAccessArabicRule = await fn('اشرح التَّحْوِيلَ الاسْمِيَّ');
+  if (!noAccessArabicRule || noAccessArabicRule.locked !== true) {
+    throw new Error('règle arabe révélée localement malgré les diacritiques');
+  }
   globalThis.ACCESS = {
     refresh: async () => {},
     entitlement: () => ({ ok:false, src:'backend' }),
@@ -107,6 +115,10 @@ try {
   const noEntitlementUnit = await fn('explique unité 3');
   if (!noEntitlementUnit || noEntitlementUnit.locked !== true) {
     throw new Error('résumé d’unité révélé sans entitlement actif');
+  }
+  const noEntitlementRule = await fn('Explique le Genitiv.');
+  if (!noEntitlementRule || noEntitlementRule.locked !== true) {
+    throw new Error('règle Genitiv révélée sans entitlement backend');
   }
   globalThis.uniteActive = () => ({ n:3 });
   delete globalThis.ACCESS;
