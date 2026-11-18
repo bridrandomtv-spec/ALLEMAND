@@ -867,7 +867,7 @@ test('la recherche PDF relie les formulations arabes et françaises aux termes a
     ]
   }});
   const response = await h.context.__worker.fetch(request({
-    q:'اشرح الماضي المركب في ملفات PDF.',
+    q:'اِشْرَح الماضي المُرَكَّب في ملفات PDF.',
     resource:{ type:'corpus_search' }
   }), h.env);
   assert.equal(response.status, 200);
