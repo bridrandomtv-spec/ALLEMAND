@@ -6,6 +6,14 @@ import test from 'node:test';
 const workerSource = fs.readFileSync(new URL('../worker/ia-ask.js', import.meta.url), 'utf8');
 const appSource = fs.readFileSync(new URL('../app.js', import.meta.url), 'utf8');
 const iaSource = fs.readFileSync(new URL('../ia.js', import.meta.url), 'utf8');
+function loadOfficialDocumentResolver(){
+  const match = iaSource.match(/  function officialDocumentResource\\(question\\)\\{[\\s\\S]*?\\n  \\}/);
+  assert.ok(match, 'officialDocumentResource must exist');
+  const sandbox = {};
+  vm.runInNewContext(match[0] + '; globalThis.resolve = officialDocumentResource;', sandbox);
+  return sandbox.resolve;
+}
+
 const TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEyMyJ9.signature';
 const ORIGIN = 'https://allemand.brid-randomtv.workers.dev';
 
@@ -714,6 +722,17 @@ test('le Worker refuse un niveau non reconnu pour la banque libre', async () => 
   assert.equal(response.status, 400);
   assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/contenu_original.json')), false);
   assert.equal(h.messages, null);
+});
+
+test('ia.js résout les identifiants exacts de compositions et annales', () => {
+  const resolve = loadOfficialDocumentResolver();
+  assert.deepEqual(resolve('Corrige le sujet CP-2023-2-0312.'), {
+    type:'official_document', collection:'compositions', id:'CP-2023-2-0312'
+  });
+  assert.deepEqual(resolve('Explique AN-2022-3-0558.'), {
+    type:'official_document', collection:'annales', id:'AN-2022-3-0558'
+  });
+  assert.equal(resolve('Explique un exercice sur Umwelt.'), null);
 });
 
 test('le Worker récupère un document officiel exact via le Worker du site avec le JWT', async () => {
