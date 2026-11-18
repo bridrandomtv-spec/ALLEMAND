@@ -148,6 +148,7 @@ def merge_rights_inventory(files, inventory_path):
     merged = []
     for key in sorted(set(audit_by_path) | set(rights_by_path)):
         technical = dict(audit_by_path.get(key, {}))
+        technical["pdf_path"] = key
         rights = rights_by_path.get(key)
         if rights is None:
             technical.update({"rights_inventory_match": "absent_de_inventaire",
