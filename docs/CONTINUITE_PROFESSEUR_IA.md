@@ -261,3 +261,13 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Run `44211660464` sur le commit applicatif `1eec9512557feec9c0b782e22b3c33d7891b88e2` terminé : `Tests autonomes — Professeur IA` = `success`. Les nouveaux tests de recherche PDF naturelle et les tests existants du professeur IA passent.
 - La CI globale = `failure` uniquement sur `Valider la messagerie EduDZ (schéma RLS + client + vue)`. Les jobs conditionnels ultérieurs sont ignorés par le workflow après cette erreur.
 - Les commits ultérieurs `ed59f21` et `47154cc` ne contiennent que les deux mises à jour de continuité ; le run applicatif ci-dessus valide le code IA du Lot 618, mais le SHA exact de tête documentaire n’a pas de run distinct visible.
+
+
+### Lot 619 — rappel documentaire interlingue (18 novembre 2026)
+- Le classement PDF ne repose plus sur le simple nombre de sous-chaînes présentes : il utilise un score BM25 léger, calculé uniquement sur les chunks dont le document a déjà passé le filtre de droits/licence et le contrôle JWT/RLS.
+- Ajout d'un petit glossaire de rappel FR/AR vers les termes allemands pour les notions courantes du programme (Perfekt, Akkusativ, Dativ, Passiv, Konjunktiv II, Präteritum, Präsens, Komparativ). Une question en arabe « الماضي المركب » peut ainsi retrouver un passage qui ne contient que « Perfekt ».
+- Le glossaire sert uniquement à retrouver des extraits autorisés ; il ne déverrouille aucun contenu, ne fournit pas de texte documentaire et ne modifie pas la décision d'accès. Les extraits restent limités à quatre chunks et 7 200 caractères.
+- Test de régression ajouté : recherche arabe « اشرح الماضي المركب في ملفات PDF » → passage allemand Perfekt, sans sélectionner le document non pertinent sur Präsens.
+- Cette amélioration est une recherche lexicale BM25 avec expansion terminologique, pas un modèle d'embeddings ni une recherche vectorielle. Le Worker possède déjà un chemin d'inférence AI, mais aucun index vectoriel ni vecteur de chunk n'est configuré dans cette branche. Une vraie recherche sémantique nécessitera une étape d'embedding à l'ingestion et une politique de coût/stockage explicite ; elle ne doit pas être simulée en prétendant que BM25 est vectoriel.
+- Le corpus PDF réel reste vide : les 225 PDF précédemment recensés sont étiquetés « document utilisateur » et aucun n'a encore de preuve de droits validée. Aucun document n'a été indexé.
+- Aucune modification Supabase, Auth, RLS, paiement, main, aucun merge ni déploiement Cloudflare.
