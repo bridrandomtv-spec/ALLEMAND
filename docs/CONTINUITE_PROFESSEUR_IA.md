@@ -218,3 +218,6 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Les tests du Worker IA couvrent maintenant : résolution client de l’ID PDF, récupération des chunks avec JWT, sélection lexicale, refus 403 du Worker de site, refus de licence non autorisée et rejet d’un sélecteur falsifié avec URL supplémentaire.
 - Les tests du Worker de site couvrent explicitement le nouvel asset PDF : absence de JWT, absence d’entitlement RLS et accès après entitlement RLS.
 - Le scénario de récupération avec le mot-clé Perfekt utilise un abonnement actif de test afin de franchir le garde de règle grammaticale ; cela ne change pas la règle d’accès réelle.
+
+### Audit des droits — corpus existant
+- Vérification complète de assets/bdd/corpus.json : les 225 PDF portent tous licence="document utilisateur" et source="docs archive eleve". Aucun PDF existant ne satisfait l’allowlist explicite du nouvel outil. En conséquence, le nouvel index reste vide ; aucun de ces fichiers n’a été intégré au RAG. Il faut obtenir une preuve de droits ou utiliser des documents produits par l’équipe.
