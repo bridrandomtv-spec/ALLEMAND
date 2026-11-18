@@ -3712,3 +3712,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Attendre l'exécution CI du nouveau HEAD.
 - Dès que le propriétaire fournit des documents avec licences et droits vérifiables, générer un petit lot autorisé seulement après validation explicite du coût/quota Workers AI.
 - Comparer ensuite la qualité retrieval BM25 vs hybride sur un jeu d'évaluation multilingue autorisé avant toute activation du drapeau en production.
+
+
+## Contrôle CI après le Lot 624 — 18 novembre 2026
+- Run `44216234225` sur le HEAD `e941fb60094fc71c89f94c484eae42c2c1c63e70` : les 8 tests d'ingestion PDF passent et les 8 tests du nouveau générateur vectoriel passent.
+- Dans `tests/worker-ai-auth.test.mjs`, 73 tests sur 74 passent. L'unique échec était une assertion de fixture qui attendait `Das Perfekt wird` alors que le corpus de test fournit `Der Perfekt wird`. Le test a été corrigé dans le commit `7f9aadd6230e44deb8534a0bcfd9549aa3880663` ; il s'agissait d'une attente textuelle incorrecte, pas d'une panne du repli BM25.
+- Le job global échoue aussi sur une erreur de syntaxe préexistante et hors périmètre dans `ci/check-msg.mjs:231` (Messenger EduDZ). Les étapes de validation structurelle précédentes, dont YAML/JSON, moteur IA 9 cas, suite de build T1–T6 et syntaxe JS 37/37, étaient réussies. Ce chantier IA ne modifie pas Messenger.
+- Le correctif `7f9aadd` n'a pas encore de nouveau run CI associé au moment de cette mise à jour. Il n'est donc pas présenté comme validé.
+- Le job Worker doit être rejoué sur ce nouveau HEAD pour confirmer les 74/74 tests et reprendre les étapes RAG/QUST/PROF qui ont été sautées après le premier échec.
