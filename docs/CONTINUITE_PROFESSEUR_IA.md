@@ -178,3 +178,23 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 
 ### Prochaine étape
 - Lot 615 : construire et tester le pipeline d’ingestion PDF sans collision avec l’index vocabulaire, puis connecter un sélecteur documentaire strict au RAG serveur avec contrôle d’accès Corpus. Commencer par les PDF de production propre/droits confirmés ; ne pas indexer automatiquement l’ensemble des 225 PDF.
+
+## Lot 615 — pipeline d’ingestion PDF dédié au RAG — 18 novembre 2026
+
+### Implémentation sur la branche de la PR #22
+- Ajout de tools/ingest_corpus_rag.py, séparé de l’ancien tools/ingest_corpus.py.
+- L’outil ne modifie jamais corpus.json ni corpus_index.json : il écrit dans assets/bdd/corpus_rag_chunks.json et assets/bdd/corpus_rag_manifest.json, avec statut staged_not_connected.
+- Extraction page par page via pypdf ; contrôle de qualité (texte trop court, caractères de contrôle, glyphes /gNN/) ; chunking avec conservation du numéro de page et d’un identifiant stable.
+- OCR réel optionnel via Tesseract + pdf2image + Poppler + pytesseract (langues par défaut deu+fra+ara). Si OCR indisponible, les pages déjà extraites et lisibles sont conservées ; les pages illisibles ne sont pas indexées. Un PDF sans aucune page exploitable est rejeté.
+- Sécurité de provenance : aucun PDF n’est indexé sans fichier compagnon _NOM.json contenant droits_confirmes=true et une licence dans l’allowlist (production_propre, domaine_public, cc_by, cc_by_sa, autorisation_ecrite). Pas de licence implicite par défaut.
+- Ajout de tests Python : PDF texte, scan avec OCR simulé, scan sans OCR, encodage glyphes, caractères de contrôle, refus sans métadonnées/licence, préservation de corpus_index.json, indexation d’un document explicitement autorisé, et préservation des pages lisibles si l’OCR est absent.
+- CI professor-ai enrichie d’une étape Python 3.12 pour exécuter ces tests avant les tests Worker IA.
+
+### Limites assumées
+- Aucun des 225 PDF existants n’a été automatiquement ingéré : il faut d’abord examiner les droits, compléter les métadonnées explicites et exécuter l’outil sur un dossier local autorisé.
+- Le RAG distant n’est pas encore connecté à corpus_rag_chunks.json. Le manifeste indique volontairement staged_not_connected : aucun client ne peut fournir du texte ou des chunks non vérifiés au modèle.
+- Le verrou Corpus et les accès existants doivent être appliqués au Worker avant toute activation de ce nouvel index. La politique actuelle déclare Corpus payant ; elle ne doit pas être contournée.
+- Les tests viennent d’être ajoutés ; aucune exécution CI verte n’est encore confirmée sur la tête de branche au moment de cette note.
+
+### Prochaine étape
+- Lot 616 : valider l’exécution CI, puis concevoir un lecteur Worker côté serveur du nouvel artefact, avec sélection par ID strict, vérification d’accès Corpus existante, limite de taille/chunks et tests anti-forgery. Ne pas activer tant que la provenance/licence des documents n’est pas validée.
