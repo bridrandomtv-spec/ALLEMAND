@@ -177,6 +177,27 @@ class PdfIngestionTests(unittest.TestCase):
             self.assertEqual(result["document_count"], 0)
             self.assertEqual(result["skipped"][0]["reason"], "droits_non_confirmes_dans_inventaire")
 
+    def test_identical_pdf_content_is_deduplicated_before_corpus_write(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            source.mkdir(parents=True)
+            for name in ("lesson-a.pdf", "lesson-b.pdf"):
+                pdf = source / name
+                pdf.write_bytes(b"identical-pdf-bytes")
+                (source / ("_" + pdf.stem + ".json")).write_text(json.dumps({
+                    "titre": name, "licence": "cc_by", "droits_confirmes": True
+                }), encoding="utf-8")
+            fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(
+                pages=[FakePage(" ".join(["Deutschunterricht"] * 30))]
+            ))
+            inventory = self.write_rights_inventory(source, ["lesson-a.pdf", "lesson-b.pdf"])
+            with patch.dict(sys.modules, {"pypdf": fake}):
+                result = MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
+            self.assertEqual(result["document_count"], 1)
+            self.assertEqual(result["skipped"][0]["reason"], "contenu_pdf_duplique")
+            data = json.loads((output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8"))
+            self.assertEqual(data["documents"][0]["id"], "pdf-" + MODULE.hashlib.sha256(b"identical-pdf-bytes").hexdigest())
+
     def test_confirmed_license_indexes_only_approved_document(self):
         with tempfile.TemporaryDirectory() as tmp:
             source, output = Path(tmp) / "source", Path(tmp) / "out"
