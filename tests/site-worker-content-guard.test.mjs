@@ -79,6 +79,23 @@ test('sert les annales à un abonné validé par le RLS existant', async () => {
   assert.equal(h.assets[0].headers.get('Authorization'), 'Bearer active-user-token');
 });
 
+test('refuse les chunks PDF sans entitlement RLS', async () => {
+  const h = harness({ rlsRows:[] });
+  const response = await h.context.__worker.fetch(request('/assets/bdd/corpus_rag_chunks.json','user-without-entitlement'), h.env);
+  assert.equal(response.status, 403);
+  assert.equal(h.assets.length, 0);
+  assert.equal(h.calls[0].init.headers.Authorization, 'Bearer user-without-entitlement');
+});
+
+test('sert les chunks PDF uniquement après validation RLS', async () => {
+  const h = harness({ rlsRows:[{ id:'visible-paid-lesson' }] });
+  const response = await h.context.__worker.fetch(request('/assets/bdd/corpus_rag_chunks.json','subscribed-user'), h.env);
+  assert.equal(response.status, 200);
+  assert.equal(h.assets.length, 1);
+  assert.equal(h.assets[0].url, 'https://allemand.bridrandomtv.workers.dev/assets/bdd/corpus_rag_chunks.json');
+  assert.equal(h.assets[0].headers.get('Authorization'), 'Bearer subscribed-user');
+});
+
 test('échoue fermé si la configuration Supabase du Worker du site manque', async () => {
   const h = harness({ configured:false });
   const response = await h.context.__worker.fetch(request('/assets/bdd/compositions.json','active-user-token'), h.env);
