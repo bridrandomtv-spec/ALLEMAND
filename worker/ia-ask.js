@@ -89,7 +89,14 @@ const LOCKED_RULES = [
   'حالة الملكية','التحويل الاسمي','التحويل الفعلي','التراكيب الاسمية الفعلية',
   'الجمل الموصولة','صيغة الأمر','الأفعال الانعكاسية','حروف الجر المتغيرة',
   'المصدر مع zu','أدوات الربط الثنائية','الكلام غير المباشر',
-  'الجمل الشرطية غير الحقيقية','الأفعال الناقصة الذاتية','المبني للمجهول الوصفي'
+  'الجمل الشرطية غير الحقيقية','الأفعال الناقصة الذاتية','المبني للمجهول الوصفي',
+  /* Alias arabes et françaises des règles déjà payantes : les formulations
+     multilingues ne doivent pas contourner le verrou par traduction. */
+  'الماضي المركب','الماضي التام','حالة النصب','المفعول به','حالة الجر',
+  'المبني للمجهول','صيغة الشرط','الشرط الافتراضي','الماضي البسيط',
+  'المضارع','صيغة المقارنة','passé composé','passe compose',
+  'accusatif','datif','passif','prétérit','präterit','présent',
+  'comparatif'
 ];
 function isLockedContentQuestion(question, resource){
   const q = String(question || '').toLowerCase();
