@@ -221,3 +221,18 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 
 ### Audit des droits — corpus existant
 - Vérification complète de assets/bdd/corpus.json : les 225 PDF portent tous licence="document utilisateur" et source="docs archive eleve". Aucun PDF existant ne satisfait l’allowlist explicite du nouvel outil. En conséquence, le nouvel index reste vide ; aucun de ces fichiers n’a été intégré au RAG. Il faut obtenir une preuve de droits ou utiliser des documents produits par l’équipe.
+
+
+## Lot 617 — cohérence du manifeste RAG PDF et validation CI — 18 novembre 2026
+
+- Audit du dernier run GitHub Actions sur le commit précédent `6a2a798d93eb9681a045f8db41a429bc1dab5e6f` : le job autonome `Tests autonomes — Professeur IA` est `success` (run `44208219325`), avec succès des tests Python d’ingestion PDF/OCR/droits, Worker IA JWT/RLS, protection du corpus et documents officiels, QUST/Darja/Arabizi et régressions RAG/professeur.
+- Le job global `Validation structurelle & pédagogique` échoue uniquement à l’étape `Valider la messagerie EduDZ (schéma RLS + client + vue)`; les étapes précédentes, y compris les 9 cas de référence IA, le build T1-T6 et la syntaxe JavaScript, sont réussies. Les étapes suivantes sont ignorées à cause de cette dépendance. Échec hors périmètre IA, non corrigé ici.
+- Le workflow CI déclenche aussi des jobs PostgreSQL isolés Multaqa et consentement Messenger en échec sur ce même commit ; ils concernent des domaines hors périmètre IA. Le job PostgreSQL de découverte Messenger est réussi. Aucun de ces tests n’écrit dans le Supabase actif.
+- Correction de cohérence : le pipeline PDF écrivait encore `staged_not_connected` alors que le Worker IA récupère déjà l’artefact via le Worker de site protégé JWT/RLS. Le statut est désormais `connected_protected`, avec une note explicite sur le chemin protégé. Le manifeste livré reste vide : 0 document, 0 chunk, car aucun des 225 PDF existants n’a de droits confirmés.
+- Le test d’ingestion vérifie maintenant le statut `connected_protected` pour éviter cette régression.
+- Ces trois modifications sont postérieures au run `44208219325` et nécessitent donc une nouvelle exécution CI sur la tête actuelle. Ne pas déclarer cette nouvelle tête validée avant le résultat.
+- PR #22 reste ouverte, en brouillon et non fusionnée. PR #21 reste également ouverte et en brouillon. Aucun changement Supabase, main, merge ou déploiement Cloudflare.
+
+### Prochaine étape
+- Vérifier le nouveau run CI déclenché par les commits du Lot 617. Si le job autonome IA échoue, corriger uniquement les erreurs de ce job. L’échec Messenger/Multaqa doit rester identifié comme externe au périmètre IA et ne doit pas déclencher une modification de ces modules.
+- Obtenir des PDF produits par l’équipe ou une preuve écrite de droits pour les documents à intégrer ; ne pas indexer automatiquement les 225 archives utilisateur.
