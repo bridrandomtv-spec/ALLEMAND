@@ -625,3 +625,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Aucun code applicatif ni configuration Supabase n'a été modifié lors de cette clôture.
 - CI du commit documentaire précédent `523a7720fa8f1ebfaea60ee15a44f0e7d53e93b3`, run `44392224029` : `success`.
 - État courant : poursuivre les prochains lots d'intelligence directement depuis `main`, après vérification de son HEAD et des contrôles CI.
+
+
+## Lot 635 — intégrité de l'ingestion documentaire et du générateur vectoriel (18 novembre 2026)
+- Branche de travail : `ai/rag-corpus-integrity-lot-635`, créée depuis le HEAD `fadae5ee13fa89c47dd6a567d6db4c15df34a19c`. Aucun changement sur `main`.
+- Le générateur d'embeddings échoue maintenant fermé si le corpus contient des identifiants documentaires absents/invalides ou dupliqués, des identifiants de chunks absents/dupliqués (y compris dans les documents non autorisés), ou un `document_id` absent/invalide. Les chunks non autorisés ne sont toujours jamais transmis au modèle.
+- L'ingestion utilise désormais le SHA-256 complet du PDF dans l'identifiant documentaire, au lieu de tronquer à 16 caractères. Les PDF de contenu strictement identique ne créent plus de collision documentaire : le doublon est ignoré et signalé `contenu_pdf_duplique`.
+- Les deux artefacts (chunks et manifeste) sont sérialisés dans des fichiers temporaires avant remplacement des fichiers actifs ; les temporaires sont nettoyés en cas d'erreur.
+- Tests de régression ajoutés pour collisions d'identifiants documents/chunks, références documentaires absentes et PDF identiques. Résultats CI à confirmer sur la PR dédiée.
+- Aucun embedding n'a été généré, aucun OCR n'a été exécuté, aucun droit documentaire n'a été ajouté ou présumé. Aucune modification Supabase/Auth/RLS, aucune fusion et aucun déploiement.
