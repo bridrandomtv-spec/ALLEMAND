@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash, webcrypto } from 'node:crypto';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import test from 'node:test';
@@ -32,8 +33,8 @@ function harness(options = {}){
   const aiCalls = [];
   let messages = null;
   const context = {
-    URL, Request, Response, Headers, TextDecoder, Uint8Array, AbortController,
-    setTimeout, clearTimeout, Date, JSON, String,
+    URL, Request, Response, Headers, TextDecoder, TextEncoder, Uint8Array, AbortController,
+    crypto:webcrypto, setTimeout, clearTimeout, Date, JSON, String,
     fetch: async (url, init = {}) => {
       calls.push({ url:String(url), init });
       if(String(url).includes('/auth/v1/user')){
@@ -89,9 +90,29 @@ function harness(options = {}){
       }
       if(String(url).includes('/assets/bdd/corpus_rag_vectors.json')){
         if(options.corpusVectorResponse) return options.corpusVectorResponse;
-        return new Response(JSON.stringify(options.corpusVectorData || {
-          version:1, model:'@cf/google/embeddinggemma-2', dimensions:256, vectors:[]
-        }), { status:200, headers:{ 'Content-Type':'application/json' } });
+        const corpusData = options.corpusDocumentData || {
+          version:1,
+          documents:[{ id:'pdf-0123456789abcdef', title:'Cours allemand autorisé',
+            license:'production_propre', rights_confirmed:true }],
+          chunks:[
+            { id:'pdf-0123456789abcdef-p1-c0', document_id:'pdf-0123456789abcdef',
+              page:1, part:0, text:'Der Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
+            { id:'pdf-0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef',
+              page:2, part:0, text:'Die Familie und die Schule sind wichtige Themen.' }
+          ]
+        };
+        const vectorData = {
+          ...(options.corpusVectorData || {
+            version:1, model:'@cf/google/embeddinggemma-2', dimensions:256, vectors:[]
+          })
+        };
+        if(!Object.prototype.hasOwnProperty.call(vectorData,'source_chunks_sha256')){
+          vectorData.source_chunks_sha256 = createHash('sha256')
+            .update(JSON.stringify(corpusData),'utf8').digest('hex');
+        }
+        return new Response(JSON.stringify(vectorData), {
+          status:200, headers:{ 'Content-Type':'application/json' }
+        });
       }
       if(String(url).includes('/assets/bdd/corpus_rag_chunks.json')){
         if(options.corpusDocumentResponse) return options.corpusDocumentResponse;
@@ -938,6 +959,26 @@ test('la recherche vectorielle reste inactive sans drapeau et ne déclenche aucu
   }), h.env);
   assert.equal(response.status,200);
   assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_vectors.json')),false);
+  assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
+});
+
+test('un artefact vectoriel périmé est ignoré et BM25 reste disponible', async () => {
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      source_chunks_sha256:'0'.repeat(64),
+      vectors:[{ chunk_id:'pdf-0123456789abcdef-p1-c0',
+        document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] }]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.match(h.messages[1].content,/Der Perfekt wird/);
   assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
 });
 
