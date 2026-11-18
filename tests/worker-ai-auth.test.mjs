@@ -29,6 +29,13 @@ const TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEyMyJ9.signature';
 const ORIGIN = 'https://allemand.brid-randomtv.workers.dev';
 
 function harness(options = {}){
+  const corpusWithChunkCounts = data => {
+    const counts = new Map();
+    for(const chunk of data.chunks || []) counts.set(chunk.document_id, (counts.get(chunk.document_id) || 0) + 1);
+    return { ...data, documents:(data.documents || []).map(doc => ({
+      ...doc, chunk_count:Object.prototype.hasOwnProperty.call(doc,'chunk_count') ? doc.chunk_count : (counts.get(doc.id) || 0)
+    })) };
+  };
   const calls = [];
   const aiCalls = [];
   let messages = null;
@@ -90,7 +97,7 @@ function harness(options = {}){
       }
       if(String(url).includes('/assets/bdd/corpus_rag_vectors.json')){
         if(options.corpusVectorResponse) return options.corpusVectorResponse;
-        const corpusData = options.corpusDocumentData || {
+        const corpusData = corpusWithChunkCounts(options.corpusDocumentData || {
           version:1,
           documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Cours allemand autorisé',
             license:'production_propre', rights_confirmed:true }],
@@ -100,8 +107,7 @@ function harness(options = {}){
             { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:2, part:0, text:'Die Familie und die Schule sind wichtige Themen.' }
           ]
-        };
-        const vectorData = {
+        });        const vectorData = {
           ...(options.corpusVectorData || {
             version:1, model:'@cf/google/embeddinggemma-2', dimensions:256, vectors:[]
           })
@@ -116,7 +122,7 @@ function harness(options = {}){
       }
       if(String(url).includes('/assets/bdd/corpus_rag_chunks.json')){
         if(options.corpusDocumentResponse) return options.corpusDocumentResponse;
-        return new Response(JSON.stringify(options.corpusDocumentData || {
+        return new Response(JSON.stringify(corpusWithChunkCounts(options.corpusDocumentData || {
           version:1,
           documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Cours allemand autorisé',
             license:'production_propre', rights_confirmed:true }],
@@ -126,7 +132,7 @@ function harness(options = {}){
             { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:2, part:0, text:'Die Familie und die Schule sind wichtige Themen.' }
           ]
-        }), { status:200, headers:{ 'Content-Type':'application/json' } });
+        })), { status:200, headers:{ 'Content-Type':'application/json' } });
       }
       if(String(url).includes('/assets/bdd/compositions.json') || String(url).includes('/assets/bdd/annales.json')){
         if(options.officialDocumentResponse) return options.officialDocumentResponse;
@@ -977,6 +983,16 @@ test('le RAG refuse deux documents portant le même identifiant', async () => {
     q:'Cherche dans les documents PDF.',
     resource:{ type:'corpus_search' }
   }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(h.messages,null);
+});
+
+test('le RAG refuse un manifeste dont le nombre de chunks déclaré est incohérent', async () => {
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
+    documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true, chunk_count:2 }],
+    chunks:[{ id:'chunk-1', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:1, text:'Texte pédagogique suffisamment long.' }]
+  }});
+  const response = await h.context.__worker.fetch(request({ q:'Cherche dans les documents PDF.', resource:{ type:'corpus_search' } }), h.env);
   assert.equal(response.status,503);
   assert.equal(h.messages,null);
 });
