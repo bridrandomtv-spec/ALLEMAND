@@ -28,3 +28,41 @@ for (const i of contrat) {
 }
 console.log('✅ RAG contrat : ' + ok + '/' + contrat.length + ' questions répondues par rag.js');
 if (fails.length) { fails.forEach(f => console.log('::error::REG-RAG · ' + f)); process.exit(1); }
+
+/* Garde de sécurité : un verbe du tableau local ne doit pas être révélé
+   lorsque le contrôle d'accès manque ou que le catalogue ne rattache le
+   verbe à aucune ressource pédagogique vérifiable. */
+const savedFetch = globalThis.fetch;
+const hadAccess = Object.prototype.hasOwnProperty.call(globalThis, 'ACCESS');
+const savedAccess = globalThis.ACCESS;
+try {
+  delete globalThis.ACCESS;
+  const withoutAccess = await fn('konjugiere mögen');
+  if (!withoutAccess || withoutAccess.locked !== true) {
+    throw new Error('conjugaison locale révélée sans contrôle ACCESS');
+  }
+
+  globalThis.fetch = async () => ({
+    ok: false, status: 404,
+    json: async () => ({}), text: async () => ''
+  });
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    canAccessLesson: () => false,
+    canAccessQuiz: () => false,
+    entitlement: () => ({ ok: false }),
+    paywall: () => {}
+  };
+  const withoutResource = await fn('konjugiere mögen');
+  if (!withoutResource || withoutResource.locked !== true) {
+    throw new Error('conjugaison locale révélée sans ressource vérifiable');
+  }
+  console.log('✅ RAG lock : conjugaison refusée sans ACCESS et sans ressource vérifiable');
+} catch (e) {
+  console.log('::error::RAG lock · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  globalThis.fetch = savedFetch;
+  if (hadAccess) globalThis.ACCESS = savedAccess;
+  else delete globalThis.ACCESS;
+}
