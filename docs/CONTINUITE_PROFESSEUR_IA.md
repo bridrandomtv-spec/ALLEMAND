@@ -663,3 +663,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - La première exécution CI sur le lot 637 avait échoué sur ce seul test : 78/79 tests Worker passaient, y compris les nouveaux contrôles de chunks orphelins, collisions, filtrage des droits, BM25 et repli vectoriel. Le job structurel a également échoué sur le même test d'authentification qui exécute la suite Worker.
 - Correction appliquée dans `ia.js`, commit `a5c1089`. Une nouvelle exécution CI sur la tête actuelle est nécessaire avant toute conclusion.
 - Aucun document réel ingéré, aucun OCR/embedding exécuté, aucun droit présumé. Aucun changement Supabase/Auth/RLS/paiement, aucune fusion, aucun déploiement.
+
+
+
+### Lot 639 — correction de la fixture de résolution PDF — 18/11/2026
+- Après correction du motif dans `ia.js`, la CI a révélé que la fixture de test contenait encore un identifiant court en majuscules (`pdf-0123456789ABCDEF`) tout en attendant un identifiant long. Le code se comportait correctement en refusant cet identifiant désormais invalide ; c'était le test qui ne représentait pas le nouveau contrat.
+- La question de test utilise maintenant le SHA-256 complet en majuscules, et vérifie donc à la fois la détection insensible à la casse et la normalisation en minuscules.
+- Commit : `93bd96d`. Nouvelle CI déclenchée.
