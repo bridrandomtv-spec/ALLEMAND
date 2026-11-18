@@ -3763,3 +3763,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Chaque ligne fournit le chemin du PDF et le nom exact du compagnon attendu (`_<nom>.json`), avec les champs de licence et de confirmation laissés volontairement vides et un statut « à vérifier ».
 - Cet inventaire sert de feuille de revue des droits ; il ne constitue pas une autorisation et ne doit pas être rempli automatiquement à partir des noms de fichiers.
 - Les 293 documents restent exclus de l'index tant que la preuve n'est pas confirmée.
+
+
+## Lot 628 — validateur humain de l'inventaire des droits PDF (18 novembre 2026)
+- Ajout du script en lecture seule `tools/validate_pdf_rights_inventory.py` et de ses tests `tests/test_validate_pdf_rights_inventory.py`.
+- Le contrôle vérifie les colonnes, l'existence et la sûreté des chemins PDF, le compagnon attendu, les doublons, le booléen de confirmation et la liste fermée des licences acceptées par l'ingestion.
+- Seules les lignes explicitement confirmées (`rights_confirmed=true`) avec une licence autorisée sont déclarées admissibles. Les lignes incomplètes restent en attente ; les contradictions et chemins invalides sont signalés.
+- Aucun droit n'est inféré. Le script ne modifie pas l'inventaire, ne crée pas les fichiers compagnons JSON, n'extrait pas les PDF et ne déclenche aucun embedding.
+- La suite de 10 tests est ajoutée au job CI autonome `professor-ai`.
+- Audit actuel : 293 PDF au total (264 dans `docs/archive/documents/`, 29 à la racine), aucun compagnon de droits détecté, manifeste RAG toujours à 0 document / 0 chunk. Le nombre de 225 mentionné dans des notes précédentes est un relevé historique partiel.
+- CI de ce nouveau HEAD à vérifier. Aucun changement Supabase, Auth, RLS, schéma, abonnement, `main`, ni déploiement Cloudflare. PR #22 reste ouverte et en brouillon.
