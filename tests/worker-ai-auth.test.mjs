@@ -355,6 +355,23 @@ test('une séance gratuite ne court-circuite pas le verrou d’une conjugaison r
   assert.equal(h.messages, null);
 });
 
+test('refuse les règles grammaticales du programme absentes de l’ancienne liste, même avec un sélecteur gratuit falsifié', async () => {
+  const cases = [
+    { q:'Explique le Genitiv.', resource:{ type:'free_summary', level:'3AS', unit:1 } },
+    { q:'Explain Nomen-Verb-Verbindungen.', resource:{ type:'free_exercise_bank', level:'3AS' } },
+    { q:'اشرح التحويل الاسمي.', resource:{ type:'free_unit_lesson', level:'3AS', unit:1, lesson:1 } }
+  ];
+  for (const item of cases) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request(item), h.env);
+    const payload = await response.json();
+    assert.equal(response.status, 403, item.q);
+    assert.equal(payload.err, 'content-locked', item.q);
+    assert.equal(h.messages, null, item.q);
+    assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/malakhiss.json') || x.url.includes('/assets/bdd/contenu_original.json') || x.url.includes('/unite3as1_free.js')), false, item.q);
+  }
+});
+
 test('refuse aussi une demande d’explication d’une règle verrouillée sans mot « conjugaison »', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
