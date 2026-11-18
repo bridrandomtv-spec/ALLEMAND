@@ -3590,3 +3590,9 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 ### Complément Lot 619 — protection des règles traduites
 - Les alias arabes et français des règles grammaticales payantes sont ajoutés aux contrôles Worker ; ils ne peuvent plus contourner les cadenas en utilisant une traduction sur une page/résumé gratuit.
 - Tests négatifs exigent 403 content-locked sans appel au modèle pour les formulations arabes et françaises ; recherche PDF arabe testée avec un abonnement actif.
+
+
+### Complément sécurité — normalisation arabe (Lot 620)
+- Le garde des sujets verrouillés normalise désormais les signes diacritiques arabes (harakat), le tatweel et plusieurs variantes d'alif/ya avant de comparer les alias. Une règle payante ne peut donc pas être demandée avec des voyelles ajoutées pour contourner la détection.
+- Tests négatifs ajoutés pour « الماضي المركب », sa forme vocalisée « المَاضِي المُرَكَّب » et une variante d'alif, en plus des formulations françaises/arabe déjà couvertes. Le Worker doit refuser en 403 sans transmettre le contenu au modèle.
+- Cette normalisation ne change pas les règles d'accès ni l'accès général au professeur IA ; elle rend uniquement la détection des sujets déjà verrouillés plus robuste.
