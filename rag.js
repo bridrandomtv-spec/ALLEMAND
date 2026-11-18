@@ -946,7 +946,15 @@ function trouverLeconRegleIA(mal, level, term, preferConjugation){
 }
 async function verifieAccesContenuIA(question){
   var q = String(question || '').trim();
-  if(!q || !window.ACCESS) return null;
+  if(!q) return null;
+  var verb = trouveVerbe(q);
+  var conjugationRequest = !!verb && (CONJ_INTENT.test(q) || q.toLowerCase() === verb);
+  /* Fail closed : une conjugaison locale n'est jamais révélée sans contrôle
+     d'accès disponible, même si le catalogue ne sait pas rattacher le verbe. */
+  if(!window.ACCESS){
+    if(conjugationRequest) return {locked:true,html:'<b>🔒 لا يمكن شرح هذا التصريف دون التحقق من صلاحية الوصول إلى الدرس المرتبط به.</b>'};
+    return null;
+  }
   var unit = uniteExpliciteIA(q);
   var lesson = sessionIA(q);
   if(unit == null && lesson != null) unit = uniteCouranteIA();
@@ -971,9 +979,7 @@ async function verifieAccesContenuIA(question){
     }
   }
   var label = trouveRegle(q);
-  var verb = trouveVerbe(q);
   var target = null;
-  var conjugationRequest = !!verb && (CONJ_INTENT.test(q) || q.toLowerCase() === verb);
   if(conjugationRequest){
     target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), verb, true);
   }else if(label){
@@ -987,6 +993,11 @@ async function verifieAccesContenuIA(question){
       try{ ACCESS.paywall({type:'lesson',unite:target.unit,seance:target.lesson||null}); }catch(e){}
       return {locked:true,html:'<b>🔒 هذه القاعدة/التصريف مرتبط بحصة محمية. الأستاذ الذكي متاح، لكن لا يمكنه تقديم شرح هذا المحتوى قبل فتح الحصة.</b>'};
     }
+  }
+  /* Un verbe du tableau local sans ressource vérifiable n'est pas réputé libre. */
+  if(conjugationRequest && !target){
+    try{ ACCESS.paywall({type:'lesson',unite:unit,seance:lesson}); }catch(e){}
+    return {locked:true,html:'<b>🔒 هذا التصريف غير مرتبط بدرس متاح يمكن التحقق منه. لا يمكن للأستاذ الذكي كشفه قبل التحقق من صلاحية المحتوى.</b>'};
   }
   return null;
 }
