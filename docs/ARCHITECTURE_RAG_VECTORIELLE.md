@@ -171,3 +171,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le validateur ne se contente plus des valeurs CSV : lorsqu'une ligne est confirmée, il exige le fichier compagnon JSON réel, un JSON valide, `droits_confirmes: true` et une licence identique à celle de l'inventaire.
 - Cette vérification empêche de qualifier d'admissible un document que l'ingestion existante ne pourrait pas sélectionner. Aucun compagnon n'est créé automatiquement.
 - La suite de tests passe à 14 cas. Le run 44282039020 (10/10) valide uniquement la version précédente ; le durcissement doit passer une nouvelle CI avant d'être déclaré validé.
+
+
+## Validation finale du Lot 628 durci — 18 novembre 2026
+- Run `44282741104`, commit applicatif `4665f8ce55b4f2eec3a9bb910ce567246ca817e9` : job autonome Professeur IA = `success`.
+- Validateur des droits : 15/15 ; ingestion PDF/OCR : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde Worker du site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
+- La CI globale reste en échec sur le contrôle Messenger `ci/check-msg.mjs:231` (`SyntaxError: missing ) after argument list`), sans changement Messenger dans cette PR.
+- Aucun PDF réel n'a été intégré au corpus ; le manifeste demeure vide et le drapeau vectoriel reste désactivé.
