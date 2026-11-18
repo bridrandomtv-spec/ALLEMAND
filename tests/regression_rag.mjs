@@ -91,7 +91,7 @@ try {
 const priorAccess650 = globalThis.ACCESS;
 try {
   delete globalThis.ACCESS;
-  const noAccessUnit = await fn('résume unité 3');
+  const noAccessUnit = await fn('explique unité 3');
   if (!noAccessUnit || noAccessUnit.locked !== true) {
     throw new Error('résumé d’unité révélé sans ACCESS');
   }
@@ -100,15 +100,15 @@ try {
     entitlement: () => ({ ok:false, src:'backend' }),
     paywall: () => {}
   };
-  const noEntitlementUnit = await fn('résume unité 3');
+  const noEntitlementUnit = await fn('explique unité 3');
   if (!noEntitlementUnit || noEntitlementUnit.locked !== true) {
     throw new Error('résumé d’unité révélé sans entitlement actif');
   }
   globalThis.uniteActive = () => ({ n:3 });
   delete globalThis.ACCESS;
-  const activeUnitWithoutAccess = await fn('résume cette unité');
+  const activeUnitWithoutAccess = await fn('explique cette unité');
   if (!activeUnitWithoutAccess || activeUnitWithoutAccess.locked !== true) {
-    throw new Error('résumé de l’unité active révélé sans ACCESS');
+    throw new Error('explication de l’unité active révélée sans ACCESS');
   }
   globalThis.uniteActive = () => null;
   const lessonWithoutUnit = await fn('explique la séance 2');
@@ -121,7 +121,7 @@ try {
     paywall: () => {}
   };
   globalThis.ACCESS.refresh = async () => { throw new Error('backend unavailable'); };
-  const backendUnavailable = await fn('résume unité 3');
+  const backendUnavailable = await fn('explique unité 3');
   if (!backendUnavailable || backendUnavailable.locked !== true) {
     throw new Error('résumé d’unité révélé quand le contrôle backend échoue');
   }
