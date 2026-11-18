@@ -727,10 +727,10 @@ test('le Worker refuse un niveau non reconnu pour la banque libre', async () => 
 
 test('ia.js résout les identifiants exacts de compositions et annales', () => {
   const resolve = loadOfficialDocumentResolver();
-  assert.deepEqual(resolve('Corrige le sujet CP-2023-2-0312.'), {
+  assert.deepEqual(JSON.parse(JSON.stringify(resolve('Corrige le sujet CP-2023-2-0312.'))), {
     type:'official_document', collection:'compositions', id:'CP-2023-2-0312'
   });
-  assert.deepEqual(resolve('Explique AN-2022-3-0558.'), {
+  assert.deepEqual(JSON.parse(JSON.stringify(resolve('Explique AN-2022-3-0558.'))), {
     type:'official_document', collection:'annales', id:'AN-2022-3-0558'
   });
   assert.equal(resolve('Explique un exercice sur Umwelt.'), null);
