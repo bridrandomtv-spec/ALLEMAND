@@ -213,3 +213,8 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Vérifier dans CI les tests Python, les tests worker-ai-auth et site-worker-content-guard.
 - Après CI verte, sélectionner un petit lot de PDF produits par l’équipe et confirmer leurs droits, puis lancer l’ingestion locale et contrôler les extraits avant de les committer.
 - Ne pas fusionner ni déployer tant que les tests et les droits des documents ne sont pas confirmés.
+
+### Complément Lot 616 — couverture des tests
+- Les tests du Worker IA couvrent maintenant : résolution client de l’ID PDF, récupération des chunks avec JWT, sélection lexicale, refus 403 du Worker de site, refus de licence non autorisée et rejet d’un sélecteur falsifié avec URL supplémentaire.
+- Les tests du Worker de site couvrent explicitement le nouvel asset PDF : absence de JWT, absence d’entitlement RLS et accès après entitlement RLS.
+- Le scénario de récupération avec le mot-clé Perfekt utilise un abonnement actif de test afin de franchir le garde de règle grammaticale ; cela ne change pas la règle d’accès réelle.
