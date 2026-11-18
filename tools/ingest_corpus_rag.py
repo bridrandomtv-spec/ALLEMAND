@@ -206,9 +206,12 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara",
     manifest_path = output_dir / "assets/bdd/corpus_rag_manifest.json"
     chunks_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {"version": 1, "documents": documents, "chunks": chunks}
+    chunks_serialized = json.dumps(payload, ensure_ascii=False, indent=2) + "\\n"
+    chunks_bytes = chunks_serialized.encode("utf-8")
     manifest = {
         "version": 1, "status": "connected_protected",
         "document_count": len(documents), "chunk_count": len(chunks),
+        "chunks_sha256": hashlib.sha256(chunks_bytes).hexdigest(),
         "skipped": skipped,
         "note": "Artefact raccorde au RAG serveur ; lecture uniquement via le Worker du site protege par JWT/RLS. Les documents restent soumis a la validation de provenance et de licence.",
     }
