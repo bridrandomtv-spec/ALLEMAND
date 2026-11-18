@@ -316,7 +316,7 @@ ok(msgjs.includes('scheduleInviteRecovery();') &&
 ok(/client\.auth\.onAuthStateChange\(function\(event\)/.test(msgjs) &&
    msgjs.includes("if(event!=='SIGNED_IN' && event!=='SIGNED_OUT') return;"),
    'Messenger observe les changements de session sans intercepter le renouvellement normal du jeton');
-ok(msgjs.includes('if(authClient!==client) return;') &&
+ok(msgjs.includes('if(authClient!==client || state.authEpoch!==transitionEpoch) return;') &&
    msgjs.includes("if(event==='SIGNED_OUT'){"),
    'changement de compte : ancien client ignoré et déconnexion traitée');
 ok(msgjs.includes('if(state.inviteViewActive) renderList();') &&
