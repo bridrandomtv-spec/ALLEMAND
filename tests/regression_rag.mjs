@@ -95,6 +95,10 @@ try {
   if (!noAccessUnit || noAccessUnit.locked !== true) {
     throw new Error('résumé d’unité révélé sans ACCESS');
   }
+  const freeSummaryWithoutAccess = await fn('اشرح الوحدة 2');
+  if (freeSummaryWithoutAccess && freeSummaryWithoutAccess.locked === true) {
+    throw new Error('résumé explicitement gratuit bloqué à tort');
+  }
   globalThis.ACCESS = {
     refresh: async () => {},
     entitlement: () => ({ ok:false, src:'backend' }),
