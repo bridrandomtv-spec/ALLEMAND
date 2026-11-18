@@ -492,7 +492,7 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
      || Object.keys(resource).some(k => !['type','id'].includes(k))
      || (isSearch && resource.id !== undefined)
      || (!isSearch && (resource.type !== 'corpus_document'
-       || typeof resource.id !== 'string' || !/^pdf-[a-f0-9]{16}$/.test(resource.id)))){
+       || typeof resource.id !== 'string' || !/^pdf-[a-f0-9]{64}$/.test(resource.id)))){
     return { ok:false, status:400, error:'invalid-resource' };
   }
   const controller = new AbortController();
@@ -525,7 +525,7 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
     for(const chunk of chunks){
       if(!chunk || typeof chunk.id !== 'string' || !chunk.id
          || typeof chunk.document_id !== 'string' || !chunk.document_id
-         || chunkIds.has(chunk.id))
+         || !documentIds.has(chunk.document_id) || chunkIds.has(chunk.id))
         return { ok:false, status:503, error:'access-unavailable' };
       chunkIds.add(chunk.id);
     }
