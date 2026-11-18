@@ -485,3 +485,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Validateur des droits PDF : 15/15 ; ingestion PDF/OCR : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde Worker du site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
 - Le job structurel global échoue sur `ci/check-msg.mjs:231`, `SyntaxError: missing ) after argument list`, dans la validation Messenger hors périmètre IA. Aucun fichier Messenger n'est modifié dans cette PR.
 - Le commit `4665f8c` contient le dernier durcissement applicatif testé. Les notes de continuité ajoutées ensuite sont documentaires uniquement.
+
+
+## Lot 629 — audit de disponibilité du texte PDF (18 novembre 2026)
+- Ajout de `tools/audit_pdf_text_readiness.py` : audit récursif en lecture seule des PDF, avec classification `extractable`, `mixed`, `ocr_candidate`, `encrypted`, `empty` ou `unreadable`.
+- Le script compte les pages, pages contenant du texte exploitable et caractères extractibles ; il ne conserve aucun extrait de texte, ne lance pas l'OCR, ne modifie aucun PDF et ne produit aucun artefact RAG.
+- Les liens symboliques qui sortent du dossier racine sont signalés et ne sont pas lus. L'audit n'établit aucun droit et ne rend aucun document admissible.
+- Six tests unitaires ajoutés ; la CI installe `pypdf`, exécute les tests puis audite le dépôt complet en mode résumé uniquement.
+- Résultat du run déclenché sur HEAD `7fbb15d8fccac8eb54b87718b2b262e0b732e042` en attente au moment de cette note. Ne pas annoncer les compteurs PDF avant le résultat du job.
