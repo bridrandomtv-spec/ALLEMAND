@@ -85,3 +85,35 @@ try {
   if (hadAccess) globalThis.ACCESS = savedAccess;
   else delete globalThis.ACCESS;
 }
+
+/* Lot 650 : les demandes portant sur une unité complète ne passent jamais
+   sans preuve d'entitlement backend, même si le professeur cloud est ouvert. */
+const priorAccess650 = globalThis.ACCESS;
+try {
+  delete globalThis.ACCESS;
+  const noAccessUnit = await fn('résume unité 3');
+  if (!noAccessUnit || noAccessUnit.locked !== true) {
+    throw new Error('résumé d’unité révélé sans ACCESS');
+  }
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ ok:false, src:'backend' }),
+    paywall: () => {}
+  };
+  const noEntitlementUnit = await fn('résume unité 3');
+  if (!noEntitlementUnit || noEntitlementUnit.locked !== true) {
+    throw new Error('résumé d’unité révélé sans entitlement actif');
+  }
+  globalThis.ACCESS.refresh = async () => { throw new Error('backend unavailable'); };
+  const backendUnavailable = await fn('résume unité 3');
+  if (!backendUnavailable || backendUnavailable.locked !== true) {
+    throw new Error('résumé d’unité révélé quand le contrôle backend échoue');
+  }
+  console.log('✅ RAG lock : unité complète refusée sans ACCESS, sans entitlement et si le backend échoue');
+} catch (e) {
+  console.log('::error::RAG lock unité · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  if (priorAccess650 === undefined) delete globalThis.ACCESS;
+  else globalThis.ACCESS = priorAccess650;
+}
