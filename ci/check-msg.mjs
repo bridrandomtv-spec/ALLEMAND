@@ -15,6 +15,7 @@ const billing = readFileSync('billing.js', 'utf8');
 const idx = readFileSync('index.html', 'utf8');
 const sw = readFileSync('sw.js', 'utf8');
 const app = readFileSync('app.js', 'utf8');
+const test = readFileSync('ci/msg-supabase-local-test.mjs', 'utf8');
 const TABLES = ['msg_conversations','msg_members','msg_messages','msg_attachments','msg_reports','msg_blocks','msg_log'];
 for (const t of TABLES) {
   ok(sql.includes('create table if not exists public.' + t), 'table ' + t);
