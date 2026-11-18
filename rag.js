@@ -948,6 +948,35 @@ function trouverLeconRegleIA(mal, level, term, preferConjugation){
   }
   return null;
 }
+const LOCKED_RULES_IA = [
+  'perfekt','akkusativ','dativ','komparativ','konjunktiv','passiv','futur','weil','obwohl','um zu','beim','präteritum','modalverben',
+  'genitiv','partizip','infinitiv','nominalisierung','verbalisierung','nomen-verb-verbindungen',
+  'zweiteilige konnektoren','konzessivsätze','relativsätze','imperativ','reflexive verben',
+  'adjektivdeklination','adjektive mit präpositionen','komposita','subjektive modalverben',
+  'wechselpräpositionen','satzklammer','trennbare verben','untrennbare verben',
+  'nebensatz mit dass','nebensatz mit wenn','verbletztstellung','präpositionen mit dativ',
+  'präpositionen mit akkusativ','temporale präpositionen','zustandspassiv','passiversatzformen',
+  'حالة الملكية','التحويل الاسمي','التحويل الفعلي','التراكيب الاسمية الفعلية',
+  'الجمل الموصولة','صيغة الأمر','الأفعال الانعكاسية','حروف الجر المتغيرة',
+  'المصدر مع zu','أدوات الربط الثنائية','الكلام غير المباشر',
+  'الجمل الشرطية غير الحقيقية','الأفعال الناقصة الذاتية','المبني للمجهول الوصفي',
+  'الماضي المركب','الماضي التام','حالة النصب','المفعول به','حالة الجر',
+  'المبني للمجهول','صيغة الشرط','الشرط الافتراضي','الماضي البسيط',
+  'المضارع','صيغة المقارنة','passé composé','passe compose',
+  'accusatif','datif','passif','prétérit','präterit','présent','comparatif'
+];
+function normaliseRegleVerrouIA(value){
+  return String(value || '').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f\u064b-\u065f\u0670]/g,'')
+    .replace(/\u0640/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي');
+}
+function demandeRegleVerrouilleeIA(question){
+  var q = normaliseRegleVerrouIA(question);
+  var grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|difference|différence|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
+  return grammarIntent && LOCKED_RULES_IA.some(function(rule){
+    return q.indexOf(normaliseRegleVerrouIA(rule)) !== -1;
+  });
+}
 async function verifieAccesContenuIA(question){
   var q = String(question || '').trim();
   if(!q) return null;
@@ -959,6 +988,7 @@ async function verifieAccesContenuIA(question){
   var unitExplanationRequest = /(?:explain|explique|erklär|erklar|erkläre|شرحلي|فسرلي|اشرحلي)\s*(?:(?:this|the|cette|la|die|diese)\s*)?(?:unit|lesson|unité|unite|lektion|الوحدة|الوحده|الدرس|درس)/i.test(q);
   if(unit == null && (lesson != null || unitExplanationRequest)) unit = uniteCouranteIA();
   var label = trouveRegle(q);
+  var lockedRuleRequest = demandeRegleVerrouilleeIA(q);
   /* Les résumés explicitement publiés comme free_summary restent gratuits.
      Une demande d'explication pédagogique complète d'une unité, elle, exige
      un entitlement backend ou une séance précise vérifiable. */
@@ -970,7 +1000,7 @@ async function verifieAccesContenuIA(question){
      preuve d'accès. Le professeur IA reste disponible, mais ne remplace
      jamais le contrôle d'accès aux contenus. */
   if(!window.ACCESS){
-    if(conjugationRequest || unitScoped || lessonScoped || label){
+    if(conjugationRequest || unitScoped || lessonScoped || label || lockedRuleRequest){
       return {locked:true,html:'<b>🔒 لا يمكن شرح هذا المحتوى قبل التحقق من صلاحية الوصول إلى الوحدة أو الدرس المرتبط به.</b>'};
     }
     return null;
@@ -988,13 +1018,20 @@ async function verifieAccesContenuIA(question){
       accessReady = true;
     }
   }catch(e){}
-  if((unitScoped || lessonScoped || label || conjugationRequest) && !accessReady){
+  if((unitScoped || lessonScoped || label || conjugationRequest || lockedRuleRequest) && !accessReady){
     return {locked:true,html:'<b>🔒 تعذّر التحقق من صلاحية الوصول. لا يمكن كشف هذا المحتوى الآن.</b>'};
   }
   if(lessonScoped){
     if(unit == null || typeof ACCESS.canAccessLesson !== 'function' || !ACCESS.canAccessLesson(unit, lesson)){
       try{ if(ACCESS.paywall) ACCESS.paywall({type:'seance',unite:unit,seance:lesson}); }catch(e){}
       return {locked:true,html:'<b>🔒 هذه الحصة ضمن محتوى المشتركين. الأستاذ الذكي متاح لك، لكن لا يمكنه شرح محتوى هذه الحصة قبل فتحها.</b>'};
+    }
+  }
+  if(lockedRuleRequest){
+    var ruleEnt = typeof ACCESS.entitlement === 'function' ? ACCESS.entitlement() : null;
+    if(!ruleEnt || ruleEnt.ok !== true || ruleEnt.src !== 'backend'){
+      try{ if(ACCESS.paywall) ACCESS.paywall({type:'lesson',unite:unit,seance:lesson}); }catch(e){}
+      return {locked:true,html:'<b>🔒 هذه القاعدة النحوية من المحتوى المحمي. لا يمكن للأستاذ كشفها قبل التحقق من اشتراك فعّال.</b>'};
     }
   }
   if(unitScoped){
