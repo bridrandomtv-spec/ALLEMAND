@@ -889,6 +889,47 @@ test('la recherche vectorielle hybride retrouve un passage sémantique sans corr
   assert.doesNotMatch(h.messages[1].content,/Private Identitätsdaten|Document non autorisé/);
 });
 
+test('la recherche hybride accepte des questions arabe, darija, arabizi et français sur un extrait allemand', async () => {
+  const queries = [
+    'اشرح مفهوم الانتماء والهوية الشخصية.',
+    'واش معنى الانتماء والهوية الشخصية؟',
+    'wach ma3na l-intima2 w l-houwiya chakhsiya?',
+    'Explique le concept d’identité et d’appartenance.'
+  ];
+  for (const q of queries) {
+    const h = harness({
+      ragVectorEnabled:true,
+      subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+      corpusDocumentData:{
+        documents:[
+          { id:'pdf-0123456789abcdef', title:'Identité et appartenance', license:'cc_by', rights_confirmed:true },
+          { id:'pdf-aaaaaaaaaaaaaaaa', title:'École et famille', license:'production_propre', rights_confirmed:true }
+        ],
+        chunks:[
+          { id:'chunk-identity', document_id:'pdf-0123456789abcdef', page:3, text:'Die persönliche Identität wird durch Sprache und Zugehörigkeit geprägt.' },
+          { id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Schule und die Familie begleiten die Jugendlichen.' }
+        ]
+      },
+      corpusVectorData:{
+        version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+        vectors:[
+          { chunk_id:'chunk-identity', document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
+          { chunk_id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', embedding:[0,1,...new Array(254).fill(0)] }
+        ]
+      }
+    });
+    const response = await h.context.__worker.fetch(request({
+      q, resource:{ type:'corpus_search' }
+    }), h.env);
+    assert.equal(response.status,200, q);
+    assert.match(h.messages[1].content,/Die persönliche Identität/, q);
+    assert.equal(h.aiCalls.filter(x => x.model === '@cf/google/embeddinggemma-2').length,1, q);
+    const embedCall = h.aiCalls.find(x => x.model === '@cf/google/embeddinggemma-2');
+    assert.match(embedCall.input.input[0], /^task: search result \\| query: /, q);
+    assert.ok(embedCall.input.input[0].includes(q), q);
+  }
+});
+
 test('la recherche vectorielle reste inactive sans drapeau et ne déclenche aucun embedding', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }] });
   const response = await h.context.__worker.fetch(request({
