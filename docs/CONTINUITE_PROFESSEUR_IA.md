@@ -243,3 +243,14 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Run GitHub Actions `44209920032` terminé : job `Tests autonomes — Professeur IA` = `success`. Les tests d’ingestion PDF/OCR/droits, Worker IA JWT/RLS, garde corpus et documents officiels, QUST/Darja/Arabizi et régressions sont tous passés sur la tête actuelle.
 - Job global = `failure` sur l’étape `Valider la messagerie EduDZ (schéma RLS + client + vue)`, avant l’exécution des autres suites conditionnelles. Cette erreur reste hors périmètre du professeur IA et n’a pas été modifiée.
 - Conclusion : la suite autonome du professeur IA est validée sur la tête actuelle ; la CI globale du dépôt ne l’est pas. Aucun test E2E navigateur réel ni validation avec une vraie session utilisateur n’est revendiqué.
+
+
+## Lot 618 — recherche naturelle dans le corpus PDF protégé — 18 novembre 2026
+
+- Le professeur IA ne dépend plus exclusivement d’un identifiant technique `pdf-<hash>` : les questions qui mentionnent explicitement un PDF, un document, un fichier ou une archive, avec une intention de recherche/explication/résumé, déclenchent désormais `corpus_search`.
+- Le client force le passage cloud pour cette intention documentaire, même si le moteur local produit déjà une réponse ; il ne fournit aucun extrait ni identifiant choisi par lui.
+- Le Worker récupère l’index uniquement via le Worker du site avec le JWT de l’utilisateur. Il ne retient que les documents dont `rights_confirmed === true` et dont la licence figure dans l’allowlist. Il classe les chunks lexicalement sur la question, renvoie au maximum quatre extraits / 7 200 caractères et étiquette document + page. Les sélecteurs `corpus_document` exacts restent compatibles.
+- Tests ajoutés : détection française et arabe, refus sans intention documentaire, récupération naturelle multi-documents, exclusion d’un document utilisateur sans licence, refus si le Worker du site retourne 403 et rejet des sélecteurs forgés.
+- Limite maintenue : classement lexical, pas encore embeddings/vector search. L’index de production reste vide (0 PDF / 0 chunk) tant qu’aucun document avec droits confirmés n’est fourni ; les 225 PDF utilisateur ne sont pas inclus.
+- La nouvelle tête de branche est `1eec9512557feec9c0b782e22b3c33d7891b88e2`. CI run `44211660464` déclenché et en cours au moment de cette note ; aucun résultat n’est présumé.
+- Aucun changement Supabase, main, fusion ou déploiement. PR #22 reste ouverte et en brouillon.
