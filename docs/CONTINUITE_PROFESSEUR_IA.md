@@ -811,3 +811,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion ni déploiement. PR #23 reste ouverte et en brouillon.
 
 - Extension Lot 651 après CI : la suite existante attendait que `تمارين الوحدة 2` soit autorisé côté client, alors que le Worker le classe comme exercice d'une unité payante. Le garde local utilise maintenant `ACCESS.canAccessQuiz` pour toute demande d'exercices/évaluation rattachée à une unité. Le test distingue explicitement l'unité 1 gratuite (autorisée) de l'unité 2 payante (refusée). La banque générale gratuite sans unité reste disponible.
+
+
+### Résultats de validation — Lots 650–651 — 18/11/2026
+- CI complète du commit `1ba1ab5973b5c5398ec02e1fd81d45df13bd899e` : run `44415987029` terminé avec succès. Validation structurelle/pédagogique et tests autonomes Professeur IA tous réussis.
+- Suite Worker IA : 84 tests réussis, 0 échec. Les tests RAG/QUST/intégration et les tests d'intégrité d'intentions ont également réussi ; les journaux confirment l'abstention sur les intentions ex aequo, la conservation des intentions uniques, le refus de conjugaison sans ACCESS/ressource et le refus d'explication d'unité sans entitlement ou si le backend échoue.
+- Trois workflows PostgreSQL isolés du même commit : `44415987056`, `44415987066`, `44415986989` — tous réussis.
+- Comparaison automatisée de `LOCKED_RULES` Worker et `LOCKED_RULES_IA` locale : 74 entrées de chaque côté, aucune entrée manquante ou supplémentaire.
+- Les résumés `free_summary` et la banque générale gratuite restent autorisés ; les séances, règles et exercices rattachés à des ressources payantes restent soumis aux contrôles d'accès correspondants.
+- Le commit de documentation qui consigne ces résultats déclenche sa propre CI ; celle-ci reste à vérifier séparément. PR #23 demeure ouverte, en brouillon et non fusionnée.
