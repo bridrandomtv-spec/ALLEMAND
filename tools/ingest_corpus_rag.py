@@ -151,6 +151,7 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara",
            rights_inventory=None, repo_root="."):
     source_dir, output_dir = Path(source_dir), Path(output_dir)
     chunks, documents, skipped = [], [], []
+    seen_document_ids = set()
     if not source_dir.is_dir():
         raise ValueError("dossier_source_invalide")
     rights_rows = load_rights_inventory(rights_inventory)
@@ -175,10 +176,14 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara",
             skipped.append({"file": source_label, "reason": status})
             continue
         digest = hashlib.sha256(pdf.read_bytes()).hexdigest()
-        doc_id = "pdf-" + digest[:16]
-        if not re.fullmatch(r"pdf-[a-f0-9]{16}", doc_id):
+        doc_id = "pdf-" + digest
+        if not re.fullmatch(r"pdf-[a-f0-9]{64}", doc_id):
             skipped.append({"file": source_label, "reason": "identifiant_invalide"})
             continue
+        if doc_id in seen_document_ids:
+            skipped.append({"file": source_label, "reason": "contenu_pdf_duplique"})
+            continue
+        seen_document_ids.add(doc_id)
         doc_chunks = 0
         for page_number, page_text in pages:
             for part_number, body in enumerate(split_chunks(page_text)):
@@ -207,8 +212,17 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara",
         "skipped": skipped,
         "note": "Artefact raccorde au RAG serveur ; lecture uniquement via le Worker du site protege par JWT/RLS. Les documents restent soumis a la validation de provenance et de licence.",
     }
-    chunks_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    chunks_tmp = chunks_path.with_suffix(chunks_path.suffix + ".tmp")
+    manifest_tmp = manifest_path.with_suffix(manifest_path.suffix + ".tmp")
+    try:
+        chunks_tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        manifest_tmp.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        # Les deux fichiers sont entièrement sérialisés avant le remplacement des actifs.
+        chunks_tmp.replace(chunks_path)
+        manifest_tmp.replace(manifest_path)
+    finally:
+        chunks_tmp.unlink(missing_ok=True)
+        manifest_tmp.unlink(missing_ok=True)
     return manifest
 
 
