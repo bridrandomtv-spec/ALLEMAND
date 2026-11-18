@@ -617,3 +617,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - CI de la PR #21 sur son ancien HEAD : succès, mais ce résultat ne valide pas sa compatibilité avec le main actuel.
 - CI post-fusion sur le commit 24186d10a9fa9f85c0eff208ee29e94fb1600c29, run 44390411300 : succès. CI après mise à jour documentaire, HEAD 6547105ba95186785f348c837e58076ef8148612, run 44390498930 : succès pour les jobs Validation structurelle & pédagogique et Tests autonomes — Professeur IA.
 - Aucun changement Supabase, schéma, Auth, RLS, migration SQL, abonnement ou paiement n'a été effectué pendant cet audit.
+
+
+## Clôture de la PR #21 — 18 novembre 2026
+- Sur confirmation explicite de l'utilisateur, PR #21 a été fermée sans fusion (state=closed, merged=false).
+- Motif : ses changements fonctionnels sont déjà intégrés dans main par la PR #22 ; la branche est ancienne et divergente. Elle ne doit pas être fusionnée telle quelle.
+- Aucun code applicatif ni configuration Supabase n'a été modifié lors de cette clôture.
+- CI du commit documentaire précédent `523a7720fa8f1ebfaea60ee15a44f0e7d53e93b3`, run `44392224029` : `success`.
+- État courant : poursuivre les prochains lots d'intelligence directement depuis `main`, après vérification de son HEAD et des contrôles CI.
