@@ -67,6 +67,7 @@ def extract_pdf(path, use_ocr=False, languages="deu+fra+ara"):
     except Exception as exc:
         return [], "lecture_pdf_echec:" + type(exc).__name__
     quality = [text_quality(value) for value in pages]
+    ocr_status = ""
     if use_ocr and any(not item["ok"] for item in quality):
         try:
             scanned = _ocr_pages(path, len(pages), languages)
@@ -75,14 +76,14 @@ def extract_pdf(path, use_ocr=False, languages="deu+fra+ara"):
                     pages[i] = value
                     quality[i] = text_quality(value)
         except RuntimeError as exc:
-            return [], str(exc)
+            ocr_status = str(exc)
         except Exception as exc:
-            return [], "ocr_echec:" + type(exc).__name__
+            ocr_status = "ocr_echec:" + type(exc).__name__
     usable = [(i + 1, value) for i, value in enumerate(pages) if text_quality(value)["ok"]]
     if not usable:
         reasons = sorted({item["reason"] for item in quality})
-        return [], "aucun_texte_exploitable:" + ",".join(reasons)
-    return usable, "ok"
+        return [], ocr_status or ("aucun_texte_exploitable:" + ",".join(reasons))
+    return usable, ("ok" if not ocr_status else "ok_partiel:" + ocr_status)
 
 
 def read_metadata(pdf_path):
@@ -110,7 +111,7 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara"):
             skipped.append({"file": pdf.name, "reason": "droits_non_confirmes"})
             continue
         pages, status = extract_pdf(pdf, use_ocr=use_ocr, languages=languages)
-        if status != "ok":
+        if not status.startswith("ok"):
             skipped.append({"file": pdf.name, "reason": status})
             continue
         digest = hashlib.sha256(pdf.read_bytes()).hexdigest()
@@ -133,7 +134,7 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara"):
             "license": license_name, "rights_confirmed": True,
             "subject": str(meta.get("matiere") or "allemand")[:80],
             "level": str(meta.get("niveau") or "")[:40],
-            "chunk_count": doc_chunks,
+            "chunk_count": doc_chunks, "extraction_status": status,
         })
     output_dir.mkdir(parents=True, exist_ok=True)
     chunks_path = output_dir / "assets/bdd/corpus_rag_chunks.json"
