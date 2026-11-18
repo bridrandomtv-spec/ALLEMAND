@@ -16,8 +16,8 @@ def fixture():
     corpus = {
         "version": 1,
         "documents": [
-            {"id": "doc-ok", "title": "Deutsch", "license": "production_propre", "rights_confirmed": True},
-            {"id": "doc-no", "title": "Locked", "license": "inconnue", "rights_confirmed": False},
+            {"id": "doc-ok", "title": "Deutsch", "license": "production_propre", "rights_confirmed": True, "chunk_count": 1},
+            {"id": "doc-no", "title": "Locked", "license": "inconnue", "rights_confirmed": False, "chunk_count": 1},
         ],
         "chunks": [
             {"id": "c1", "document_id": "doc-ok", "text": "Ein deutscher Beispielsatz."},
@@ -49,6 +49,24 @@ class VectorBuilderTests(unittest.TestCase):
         corpus, manifest = fixture()
         del corpus["chunks"][1]["document_id"]
         with self.assertRaisesRegex(ValueError, "chunk_document_id_absent"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_chunk_referencing_unknown_document_fails_closed(self):
+        corpus, manifest = fixture()
+        corpus["chunks"][1]["document_id"] = "doc-missing"
+        with self.assertRaisesRegex(ValueError, "chunk_document_id_inconnu"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_document_chunk_count_mismatch_fails_closed(self):
+        corpus, manifest = fixture()
+        corpus["documents"][0]["chunk_count"] = 2
+        with self.assertRaisesRegex(ValueError, "document_chunk_count_incoherent"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_document_without_chunk_count_fails_closed(self):
+        corpus, manifest = fixture()
+        del corpus["documents"][0]["chunk_count"]
+        with self.assertRaisesRegex(ValueError, "document_chunk_count_absent"):
             MODULE.eligible_chunks(corpus, manifest)
 
     def test_rights_filter_happens_before_embedding(self):
