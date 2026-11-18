@@ -550,3 +550,20 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Validation CI du nouveau HEAD non encore remontée par GitHub au moment de cette note ; ne pas déclarer le Lot 633 validé avant le job autonome Professeur IA.
 - Aucun embedding réel, OCR, accès PDF supplémentaire, appel Workers AI de production, changement Supabase/Auth/RLS, merge ou déploiement.
 - La validation structurelle globale précédente reste distinctement bloquée par `ci/check-msg.mjs:231` (syntaxe Messenger EduDZ, hors périmètre IA).
+
+
+## Lot 633 — validation CI finale
+- HEAD testé : `01a72e7ba17626f6fd2d2134bc10fe96177b6f1a`.
+- Run GitHub Actions `44333454974` : job `Tests autonomes — Professeur IA` = `success`. Le test d'index vectoriel périmé et le repli BM25 ont donc été exécutés dans le job autonome.
+- Le job `Validation structurelle & pédagogique` est en échec à l'étape `Valider la messagerie EduDZ (schéma RLS + client + vue)`; les validations antérieures, dont le moteur IA et la syntaxe JavaScript, ont réussi. Les étapes postérieures conditionnelles ont été ignorées. Ce défaut Messenger reste hors périmètre et n'a pas été modifié.
+- PR #22 vérifiée via l'API GitHub : ouverte, brouillon, non fusionnée, fusionnable ; base `main` à `034722b00739c0106cd265eefdd1c933a096217d`, tête `01a72e7ba17626f6fd2d2134bc10fe96177b6f1a`.
+- Corpus réel toujours vide : 0 document, 0 chunk ; aucun PDF autorisé, OCR ou embedding documentaire réel. Le drapeau vectoriel reste désactivé par défaut.
+- Aucun merge, déploiement, changement Supabase/Auth/RLS ou écriture de données.
+
+## Lot 634 — intégrité des identifiants RAG (en validation)
+- Le Worker refuse désormais le corpus si deux documents partagent le même identifiant, ou si deux chunks partagent le même identifiant. Il refuse aussi les entrées sans identifiant document/chunk exploitable.
+- Motif : les IDs sont les clés de jointure entre documents, chunks et vecteurs. Une collision pourrait rendre la provenance d'un extrait ambiguë ou associer un vecteur au mauvais chunk ; le Worker échoue maintenant fermé au lieu de choisir arbitrairement.
+- Tests de régression ajoutés pour collision d'ID document (dont un doublon autorisé/non autorisé) et collision d'ID chunk ; les deux attendent HTTP 503 et aucune transmission au modèle.
+- Commit Worker : `172f500b27774af274785416d28231c20b6e8f5c`. Commit tests : `91bc8247e7367f7c60b88cf6399206a87ffcba84`.
+- Validation CI du nouveau HEAD à attendre. Ne pas déclarer le Lot 634 validé avant le job autonome Professeur IA.
+- Aucun PDF n'est ajouté au corpus ; aucune extraction OCR, indexation, génération réelle de vecteurs, modification Supabase/Auth/RLS, merge ou déploiement.
