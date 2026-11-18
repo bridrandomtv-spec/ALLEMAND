@@ -117,9 +117,9 @@ class PdfTextReadinessTests(unittest.TestCase):
         inventory = self.root.parent / (self.root.name + "-csv-rights.csv")
         output = self.root.parent / (self.root.name + "-joined.csv")
         inventory.write_text(
-            "pdf_path,expected_companion_metadata,rights_confirmed,license,review_status\\n"
-            "lesson.pdf,_lesson.json,,,à vérifier\\n"
-            "missing.pdf,_missing.json,,,à examiner\\n",
+            "pdf_path,expected_companion_metadata,rights_confirmed,license,review_status\n"
+            "lesson.pdf,_lesson.json,,,à vérifier\n"
+            "missing.pdf,_missing.json,,,à examiner\n",
             encoding="utf-8",
         )
         result = {"files": [{
