@@ -3756,3 +3756,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Régressions : RAG 12/12, PROF 18/18 et suite combinée exécutées sans erreur dans le job autonome.
 - Le job global reste en échec uniquement sur l'erreur de syntaxe Messenger déjà identifiée dans `ci/check-msg.mjs:231`. Le job autonome IA, qui est le périmètre de cette PR, est vert.
 - Le code de Lot 626 est validé. Les trois commits documentaires postérieurs ne modifient pas le code testé. Aucun index PDF réel n'a été créé : les 293 fichiers restent sans compagnon de droits.
+
+
+## Lot 627 — inventaire exploitable des droits PDF
+- Création de `docs/inventaire_pdf_droits.csv` avec une ligne par PDF détecté dans l'arbre Git : 293 lignes.
+- Chaque ligne fournit le chemin du PDF et le nom exact du compagnon attendu (`_<nom>.json`), avec les champs de licence et de confirmation laissés volontairement vides et un statut « à vérifier ».
+- Cet inventaire sert de feuille de revue des droits ; il ne constitue pas une autorisation et ne doit pas être rempli automatiquement à partir des noms de fichiers.
+- Les 293 documents restent exclus de l'index tant que la preuve n'est pas confirmée.
