@@ -254,3 +254,10 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Limite maintenue : classement lexical, pas encore embeddings/vector search. L’index de production reste vide (0 PDF / 0 chunk) tant qu’aucun document avec droits confirmés n’est fourni ; les 225 PDF utilisateur ne sont pas inclus.
 - La nouvelle tête de branche est `1eec9512557feec9c0b782e22b3c33d7891b88e2`. CI run `44211660464` déclenché et en cours au moment de cette note ; aucun résultat n’est présumé.
 - Aucun changement Supabase, main, fusion ou déploiement. PR #22 reste ouverte et en brouillon.
+
+
+### Résultat CI Lot 618
+
+- Run `44211660464` sur le commit applicatif `1eec9512557feec9c0b782e22b3c33d7891b88e2` terminé : `Tests autonomes — Professeur IA` = `success`. Les nouveaux tests de recherche PDF naturelle et les tests existants du professeur IA passent.
+- La CI globale = `failure` uniquement sur `Valider la messagerie EduDZ (schéma RLS + client + vue)`. Les jobs conditionnels ultérieurs sont ignorés par le workflow après cette erreur.
+- Les commits ultérieurs `ed59f21` et `47154cc` ne contiennent que les deux mises à jour de continuité ; le run applicatif ci-dessus valide le code IA du Lot 618, mais le SHA exact de tête documentaire n’a pas de run distinct visible.
