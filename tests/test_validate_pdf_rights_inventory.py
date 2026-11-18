@@ -1,5 +1,6 @@
 import csv
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -34,7 +35,7 @@ class PdfRightsInventoryTests(unittest.TestCase):
     def write_companion(self, license_name="cc_by", rights=True):
         companion = self.pdf.parent / "_lesson.json"
         companion.write_text(
-            __import__("json").dumps({
+            json.dumps({
                 "titre": "Lesson", "licence": license_name,
                 "droits_confirmes": rights,
             }),
