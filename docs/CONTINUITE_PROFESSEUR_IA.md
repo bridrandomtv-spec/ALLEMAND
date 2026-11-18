@@ -284,3 +284,9 @@ Cette branche est créée depuis `main` pour isoler les changements IA de la PR 
 - Le garde des sujets verrouillés normalise désormais les signes diacritiques arabes (harakat), le tatweel et plusieurs variantes d'alif/ya avant de comparer les alias. Une règle payante ne peut donc pas être demandée avec des voyelles ajoutées pour contourner la détection.
 - Tests négatifs ajoutés pour « الماضي المركب », sa forme vocalisée « المَاضِي المُرَكَّب » et une variante d'alif, en plus des formulations françaises/arabe déjà couvertes. Le Worker doit refuser en 403 sans transmettre le contenu au modèle.
 - Cette normalisation ne change pas les règles d'accès ni l'accès général au professeur IA ; elle rend uniquement la détection des sujets déjà verrouillés plus robuste.
+
+
+### Validation finale Lot 620
+- Une première exécution CI a détecté une expression régulière mal échappée dans la normalisation arabe ; elle a été corrigée en construisant les plages Unicode avec `String.fromCharCode`, sans séquence échappée ambiguë dans le littéral regex.
+- Run `44213809534` sur le commit `ce2e58a3e6d5b96d1190467e9e3a45d2c647eefe` : job `Tests autonomes — Professeur IA` = `success`, incluant ingestion PDF/OCR/droits, Worker IA, garde des documents officiels, QUST/Darja/Arabizi et régressions RAG/professeur.
+- La CI globale reste `failure` uniquement sur `Valider la messagerie EduDZ (schéma RLS + client + vue)`, hors périmètre du Professeur IA. Les tests autonomes IA sont verts.
