@@ -472,3 +472,9 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Validateur d'inventaire : 10/10 ; ingestion PDF : 9/9 ; générateur vectoriel : 8/8 ; Worker IA/JWT/RAG : 75/75 ; garde du Worker de site : 14/14 ; QUST : 9/9 ; régressions RAG 12/12 et PROF 18/18, suite combinée exécutée.
 - Le job « Validation structurelle & pédagogique » était encore en cours au moment de cette note. Ce succès autonome IA ne vaut pas feu vert global du dépôt.
 - Les commits documentaires qui suivent ne modifient pas le code testé. Aucun PDF réel ni embedding n'a été ajouté.
+
+
+### Complément Lot 628 — vérification du compagnon de droits réel
+- Durcissement après revue : une ligne CSV confirmée ne suffit plus. Le validateur exige maintenant que le fichier compagnon JSON existe, soit lisible, contienne `droits_confirmes: true` et déclare exactement la même licence que le CSV.
+- Un compagnon absent, JSON invalide, non confirmé ou avec licence divergente est refusé. Cette règle aligne le rapport d'admissibilité avec ce que `tools/ingest_corpus_rag.py` peut réellement ingérer.
+- La suite comprend désormais 14 tests. Le premier run 44282039020 validait la version précédente à 10/10 ; la version durcie doit encore être validée par une nouvelle CI.
