@@ -3529,3 +3529,13 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Le nouvel index n’est pas encore connecté au RAG distant : statut staged_not_connected. L’accès Corpus reste soumis à la règle existante (vue Corpus payante) ; aucune voie client ne doit injecter le texte.
 - Aucune exécution CI verte confirmée sur la tête de branche à la date de cette note. Aucun changement Supabase, RLS, Auth, abonnement, main, merge ou déploiement.
 - Suite : Lot 616, lecteur sécurisé des chunks côté Worker, sélection stricte par ID et application de l’accès Corpus, après validation CI et droits documentaires.
+
+## Lot 616 — raccordement sécurisé du corpus PDF au RAG distant — 18 novembre 2026
+
+- Le Worker du site protège maintenant corpus_rag_chunks.json via le contrôle RLS existant : JWT obligatoire et ligne lesson_content free=false visible pour l’utilisateur. Le test de garde couvre le nouvel asset.
+- Le Worker IA accepte uniquement le sélecteur corpus_document avec un identifiant pdf-<16 hex>, récupère lui-même l’index protégé avec le JWT et ne fait jamais confiance à un texte/URL transmis par le client.
+- Vérifications côté Worker : document présent, droits_confirmes=true, licence autorisée ; classement lexical dans le document demandé ; maximum 4 chunks, 1 800 caractères par extrait et 7 200 caractères au total.
+- ia.js ne construit la ressource que si la question contient l’identifiant exact. Les identifiants sont calculés à partir du SHA-256 du PDF.
+- Ajout d’un artefact de chunks vide et d’un manifeste staged_not_connected. Aucun PDF existant n’est indexé. CI vérifie la présence des artefacts et exécute les tests d’ingestion PDF et les tests de garde.
+- Recherche actuelle lexicale, sans embeddings. Les droits du Corpus restent contrôlés par le RLS existant ; aucune modification Supabase/RLS/Auth/abonnement, aucun changement main, merge ou déploiement. CI non encore confirmée sur la tête actuelle.
+- Suite : attendre les résultats CI, puis valider les droits d’un petit échantillon de PDF produits par l’équipe, exécuter l’ingestion et contrôler les textes avant toute activation.
