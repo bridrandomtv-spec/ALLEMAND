@@ -644,3 +644,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Tests de régression ajoutés : document référencé inexistant, compteur de chunks divergent et compteur absent. Les fixtures déclarent désormais explicitement leurs comptes.
 - Aucun PDF n'a été ingéré, aucun OCR/embedding n'a été exécuté, aucun droit n'a été présumé. Aucun changement Supabase/Auth/RLS/paiement, aucun changement de `main`, aucune fusion et aucun déploiement.
 - Commits du lot : `2d872ea` (validation builder) et `2adca14` (tests). CI à revalider sur la nouvelle tête de PR #23.
+
+
+
+### Lot 637 — alignement Worker avec les identifiants PDF SHA-256 — 18/11/2026
+- La revue croisée ingestion → Worker a révélé une incompatibilité bloquante : l'ingestion du lot 635 produit désormais `pdf-` suivi des 64 caractères du SHA-256, tandis que le Worker acceptait encore uniquement 16 caractères. Les nouveaux documents ingérés auraient donc été rejetés lors d'une demande ciblée `corpus_document`.
+- Le Worker accepte maintenant le format complet `pdf-[a-f0-9]{64}`. Les fixtures des tests Worker ont été migrées vers ce format, ce qui valide aussi les chemins de recherche PDF avec les identifiants réellement produits par l'ingestion.
+- Le Worker vérifie désormais également que chaque chunk référence un document présent dans le manifeste, en plus de l'unicité des identifiants de document et de chunk. Un chunk orphelin déclenche un refus fermé avant transmission au modèle.
+- Régression ajoutée pour un chunk orphelin. Les tests existants de collisions document/chunk et de filtrage droits sont conservés.
+- Commits : `19a1f35` (Worker), `3da5506` (fixtures SHA-256), `9673597` (test chunk orphelin). CI à revalider sur la tête actuelle de PR #23.
+- Aucun document n'a été ingéré, aucun embedding/OCR exécuté, aucun droit présumé, aucune modification Supabase/Auth/RLS/paiement, aucune fusion ni aucun déploiement.
