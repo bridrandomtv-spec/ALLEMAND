@@ -113,7 +113,7 @@
     return { type:'free_summary', level:level, unit:unit };
   }
   function officialDocumentResource(question){
-    const match = String(question || '').match(/\\b(CP|AN)-\\d{4}-[1-3]-\\d{4}\\b/i);
+    const match = String(question || '').match(/\b(CP|AN)-\d{4}-[1-3]-\d{4}\b/i);
     if(!match) return null;
     const collection = match[1].toUpperCase() === 'CP' ? 'compositions' : 'annales';
     return { type:'official_document', collection:collection, id:match[0].toUpperCase() };
