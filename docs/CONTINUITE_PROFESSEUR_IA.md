@@ -634,3 +634,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les deux artefacts (chunks et manifeste) sont sérialisés dans des fichiers temporaires avant remplacement des fichiers actifs ; les temporaires sont nettoyés en cas d'erreur.
 - Tests de régression ajoutés pour collisions d'identifiants documents/chunks, références documentaires absentes et PDF identiques. Résultats CI à confirmer sur la PR dédiée.
 - Aucun embedding n'a été généré, aucun OCR n'a été exécuté, aucun droit documentaire n'a été ajouté ou présumé. Aucune modification Supabase/Auth/RLS, aucune fusion et aucun déploiement.
+
+
+
+### Lot 636 — cohérence référentielle corpus/manifeste/chunks — 18/11/2026
+- La revue du builder RAG a révélé une lacune distincte de l'intégrité des identifiants : un chunk pouvait référencer un document inexistant, et le nombre de chunks réellement présents pouvait diverger de `documents[].chunk_count` sans que le générateur d'embeddings ne le détecte.
+- `eligible_chunks` valide maintenant que chaque document possède un `chunk_count` entier positif ou nul, que chaque chunk référence un document existant, et que le nombre de chunks observé correspond exactement au nombre déclaré pour chaque document.
+- Ces contrôles couvrent aussi les documents non autorisés : leur contenu reste exclu des embeddings, mais leurs références et leurs comptes doivent être structurellement cohérents. Une anomalie entraîne un refus fermé avant tout appel à Cloudflare.
+- Tests de régression ajoutés : document référencé inexistant, compteur de chunks divergent et compteur absent. Les fixtures déclarent désormais explicitement leurs comptes.
+- Aucun PDF n'a été ingéré, aucun OCR/embedding n'a été exécuté, aucun droit n'a été présumé. Aucun changement Supabase/Auth/RLS/paiement, aucun changement de `main`, aucune fusion et aucun déploiement.
+- Commits du lot : `2d872ea` (validation builder) et `2adca14` (tests). CI à revalider sur la nouvelle tête de PR #23.
