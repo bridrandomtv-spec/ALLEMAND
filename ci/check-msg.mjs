@@ -195,8 +195,8 @@ if (fail.length) { console.error('::error:: check-msg : ' + fail.length + ' éch
 console.log('== check-msg : TOUT PASSE ==');
 
 // Lot 450 — vérification scolaire gratuite, indépendante de l'abonnement.
-ok(msgjs.includes('رقم التسجيل المدرسي (مجاني)'), 'formulaire Messenger indique la vérification scolaire gratuite');
-ok(sbjs.includes('async function msgRequestVerification(schoolRegistrationNumber, section)'), 'fonction de demande de vérification scolaire présente');
+ok(msgjs.includes('رقم التسجيل المدرسي') && msgjs.includes('التحقق المدرسي مجاني'), 'formulaire Messenger indique la vérification scolaire gratuite');
+ok(sbjs.includes('async function msgRequestVerification(schoolRegistrationNumber, section, cardPath)'), 'fonction de demande de vérification scolaire présente');
 ok(sbjs.includes("update({ verif_statut:'en_attente', matricule:number"), 'demande déposée sur le profil du compte courant');
 ok(!msgjs.includes('رقم الاشتراك') && !msgjs.includes('رقم اشتراك'), 'aucun ancien libellé abonnement dans le parcours de vérification');
 ok(msgjs.includes('رقم التسجيل المدرسي') && msgjs.includes('التحقق المدرسي مجاني'), 'parcours de vérification gratuit et libellé scolaire cohérent');
