@@ -29,6 +29,28 @@ def fixture():
 
 
 class VectorBuilderTests(unittest.TestCase):
+    def test_duplicate_document_ids_fail_closed_even_when_rights_differ(self):
+        corpus, manifest = fixture()
+        corpus["documents"].append({
+            "id": "doc-ok", "title": "Collision", "license": "inconnue",
+            "rights_confirmed": False,
+        })
+        manifest["document_count"] = len(corpus["documents"])
+        with self.assertRaisesRegex(ValueError, "document_id_duplique"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_duplicate_chunk_ids_fail_closed_across_authorized_and_locked_docs(self):
+        corpus, manifest = fixture()
+        corpus["chunks"][1]["id"] = "c1"
+        with self.assertRaisesRegex(ValueError, "chunk_id_absent_ou_duplique"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_chunk_without_document_id_fails_closed(self):
+        corpus, manifest = fixture()
+        del corpus["chunks"][1]["document_id"]
+        with self.assertRaisesRegex(ValueError, "chunk_document_id_absent"):
+            MODULE.eligible_chunks(corpus, manifest)
+
     def test_rights_filter_happens_before_embedding(self):
         corpus, manifest = fixture()
         chunks = MODULE.eligible_chunks(corpus, manifest)
