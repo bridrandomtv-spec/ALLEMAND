@@ -3466,3 +3466,31 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucun changement de `LOCKED_RULES` n'a été appliqué : supprimer ou conserver ces blocages sans une décision explicite sur la gratuité de la bibliothèque créerait soit un faux refus, soit un risque d'accès indu. Aucun fichier Supabase, schéma, RLS, Auth, abonnement, `main`, Worker déployé ou production n'a été modifié.
 - Décision technique nécessaire pour la suite : soit confirmer que les 86 fiches de grammaire sont gratuites et aligner le professeur IA sur cette règle ; soit définir explicitement les fiches payantes par identifiant, puis les servir via un chemin protégé existant (JWT/RLS) au lieu de les laisser dans le JSON public. Une simple liste de mots-clés dans le Worker ne peut pas remplacer cette matrice de droits.
 - Prochaine tâche proposée : Lot 612 — construire la matrice de droits à partir des identifiants de fiches et des ressources réellement protégées, sans écrire dans Supabase ; ensuite corriger uniquement les faux refus démontrés et ajouter des tests positifs/négatifs.
+
+
+## Lot 612 — protection des archives d'exercices et première récupération RAG distante — 18 novembre 2026
+
+### 1. Protection des fichiers sources
+- Constat confirmé : `src/site-worker.js` protégeait le script `/devoirs_unite.js`, mais pas les fichiers JSON que ce script charge : `assets/bdd/compositions.json` (171 documents) et `assets/bdd/annales.json` (126 documents). `access_config.json` déclare `free.devoirs=[]`. Un accès direct aux URL JSON contournait donc la protection du script.
+- Ajout de `/assets/bdd/(devoirs|compositions|annales).json` à la liste `PROT` du Worker du site. L'accès nécessite désormais un JWT et une ligne `lesson_content free=false` visible par ce JWT via le RLS existant. Le Worker reste fail-closed si la configuration Supabase manque ou si la vérification RLS échoue.
+- `devoirs_unite.js` transmet maintenant `CONTENT1.authHeaders()` lors du chargement des trois archives. `devoirnote.js` transmet aussi le JWT pour `devoirs.json` (actuellement vide). Les contenus publics `malakhiss.json` et `contenu_original.json` restent chargés sans exigence d'abonnement.
+- Nouveau test `tests/site-worker-content-guard.test.mjs` : refus sans JWT sur les trois chemins, refus sans ligne RLS, autorisation simulée d'un abonné, échec fermé si configuration absente, maintien de l'accès public à `grammaire.json` et vérification des en-têtes des chargeurs. Le workflow ajoute cette suite au job autonome IA.
+
+### 2. Première extension du RAG distant aux documents officiels
+- Ajout d'un sélecteur strict `official_document` limité aux collections `compositions` et `annales` et à un identifiant exact (`CP-YYYY-T-NNNN` ou `AN-YYYY-T-NNNN`). Aucun chemin de fichier, URL ou champ libre n'est accepté depuis le navigateur.
+- `ia.js` reconnaît ces identifiants exacts et les transmet au Worker IA. Le Worker IA relit le JSON côté serveur avec le même JWT via le Worker du site ; le RLS du site décide de l'accès. Un refus 401/403 devient `content-locked` avant tout appel au modèle. Le Worker ne renvoie au modèle que le document identifié et un ensemble limité de champs (`sujet`, `corrige`, métadonnées, parties).
+- Tests ajoutés : résolution des identifiants CP/AN côté client, récupération exacte avec JWT, refus si le Worker du site signale un verrou, rejet d'un sélecteur falsifié. Les documents ne sont pas choisis par un numéro d'unité tant que les métadonnées ne sont pas corrigées.
+
+### 3. Anomalies de rattachement des archives — blocage du filtrage par unité
+- Audit des 171 compositions : 51 entrées déclarées `niveau=2AS` portent `unite` entre 10 et 18, hors plage 2AS (1–9). Plusieurs ont en plus `unite_de='Sich vorstellen'` alors que leur titre concerne Umwelt, Kultur, Wissenschaft, Arbeit ou Medien.
+- Audit des 126 annales : 76 entrées déclarées `niveau=2AS` portent `unite` entre 10 et 18. Les titres et `unite_de` sont parfois contradictoires (ex. thème Umwelt avec `unite_de='Sich vorstellen'`).
+- Total : 127/297 documents présentent un rattachement niveau/unité incohérent. Il serait dangereux de sélectionner un exercice « unité 15 » sur la seule base de ces champs. Le RAG distant ne prend donc pour l'instant que l'identifiant exact comme clé ; aucune correction automatique de niveau/unité n'est appliquée.
+
+### 4. État de validation et limites
+- Les modifications sont enregistrées sur `ai/intelligence-only-lots-601-608`. Le test CI de ces nouveaux changements n'a pas encore été observé ; aucun résultat de réussite n'est revendiqué pour les tests du Lot 612.
+- La CI #4314 antérieure reste la preuve des 57/57 tests Worker, 9/9 QUST, 12/12 RAG et 18/18 PROF sur le code antérieur à ces nouveaux ajouts.
+- Aucun changement Supabase (SQL, RLS, Auth, abonnement ou données), aucune modification de `main`, aucun merge et aucun déploiement Cloudflare.
+- Audit distinct à poursuivre avant toute extension supplémentaire : `examen.js` charge `bac_archive.json` et `bac.json` sans en-tête visible ; `officiels.js` charge `devoirs_officiels.json` sans en-tête visible. Le statut payant/gratuit de ces deux parcours doit être confronté à `access_config.json` et aux fonctions d'accès avant d'ajouter des protections, pour éviter de casser un contenu réellement gratuit.
+
+### 5. Prochaine étape
+- Lot 613 : établir une table de correspondance fiable pour les 127 documents mal classés (titre, sujet, tags, niveau, unité), corriger les données seulement après vérification de chaque groupe ; ensuite permettre une recherche distante par thème/unité sans utiliser des métadonnées erronées. En parallèle, auditer les droits des archives BAC et `devoirs_officiels.json` avant toute modification.
