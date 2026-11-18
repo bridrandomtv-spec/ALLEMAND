@@ -733,3 +733,6 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le Worker récupère le manifeste avec le JWT, recalcule l'empreinte du corpus brut et refuse en `503 access-unavailable` si l'empreinte, la version ou les compteurs diffèrent. Un état intermédiaire n'est donc pas servi comme corpus valide. Ce contrôle fail-closed ne prétend pas rendre le système de fichiers atomique.
 - Le harnais Worker génère un manifeste cohérent pour ses fixtures ; un test d'ingestion vérifie l'empreinte exacte des octets écrits.
 - Aucun OCR ni embedding réel, aucun droit documentaire présumé, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement, aucune fusion et aucun déploiement.
+
+- Correctif de sérialisation du lot : le fichier chunks est écrit depuis les mêmes octets UTF-8 que ceux utilisés pour calculer `chunks_sha256` (commit `388254b2f949768725d1198d3b51a4510eba70a1`). La sérialisation conserve le saut de ligne final ; l'empreinte couvre donc exactement le contenu publié.
+- CI déclenchée sur ce commit : run `44407671878` en attente au moment de la mise à jour ; résultats à confirmer.
