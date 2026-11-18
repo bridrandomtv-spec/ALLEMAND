@@ -3585,3 +3585,8 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Il s'agit de recherche lexicale BM25 avec expansion terminologique, pas d'embeddings/vector search. Aucun index vectoriel ni vecteur de chunk n'existe actuellement ; l'embedding à l'ingestion et son coût devront être cadrés avant d'ajouter cette couche.
 - Le corpus PDF reste vide tant que les droits des 225 PDF « document utilisateur » ne sont pas confirmés. Aucun contenu n'a été ingéré.
 - Aucun changement Supabase/Auth/RLS/paiement, aucun changement sur main, aucune fusion ni déploiement.
+
+
+### Complément Lot 619 — protection des règles traduites
+- Les alias arabes et français des règles grammaticales payantes sont ajoutés aux contrôles Worker ; ils ne peuvent plus contourner les cadenas en utilisant une traduction sur une page/résumé gratuit.
+- Tests négatifs exigent 403 content-locked sans appel au modèle pour les formulations arabes et françaises ; recherche PDF arabe testée avec un abonnement actif.
