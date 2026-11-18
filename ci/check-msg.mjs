@@ -399,7 +399,7 @@ ok(/create table if not exists public\.msg_messages \([\s\S]*?id bigint generate
 const sendStart = msgjs.indexOf('async function send(){');
 const sendEnd = msgjs.indexOf('\n  function scheduleThreadRecovery()', sendStart);
 const sendFn = msgjs.slice(sendStart, sendEnd);
-ok(sendStart >= 0 && sendEnd > sendStart && /if\(state\.conv!==conv\) return;/.test(sendFn),
+ok(sendStart >= 0 && sendEnd > sendStart && /if\(state\.conv!==conv \|\| state\.authEpoch!==identityEpoch\) return;/.test(sendFn),
    'envoi terminé après navigation : aucun retour forcé à l’ancienne conversation');
 ok(sendFn.includes('try{') && sendFn.includes('catch(error)') && sendFn.includes('currentButton.disabled=false'),
    'erreur réseau d’envoi traitée sans laisser le bouton bloqué');
@@ -418,8 +418,8 @@ ok(/epoch!==state\.channelEpoch \|\| state\.conv!==id/.test(msgjs),
    'présence ignore un canal obsolète');
 ok(msgjs.includes("st2==='CHANNEL_ERROR' || st2==='TIMED_OUT' || st2==='CLOSED'"),
    'états CHANNEL_ERROR, TIMED_OUT et CLOSED signalés');
-ok(msgjs.includes("window.addEventListener('online', scheduleThreadRecovery)") &&
-   msgjs.includes("window.addEventListener('pageshow', scheduleThreadRecovery)") &&
+ok(msgjs.includes("window.addEventListener('online', function(){\n    scheduleThreadRecovery();\n  })") &&
+   msgjs.includes("window.addEventListener('pageshow', function(){\n    scheduleThreadRecovery();\n  })") &&
    msgjs.includes("document.addEventListener('visibilitychange'"),
    'reprise réseau, retour de page et visibilité déclenchent une réconciliation');
 ok(msgjs.includes('renderThread(id).catch(function(){})'),
