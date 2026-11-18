@@ -654,3 +654,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Régression ajoutée pour un chunk orphelin. Les tests existants de collisions document/chunk et de filtrage droits sont conservés.
 - Commits : `19a1f35` (Worker), `3da5506` (fixtures SHA-256), `9673597` (test chunk orphelin). CI à revalider sur la tête actuelle de PR #23.
 - Aucun document n'a été ingéré, aucun embedding/OCR exécuté, aucun droit présumé, aucune modification Supabase/Auth/RLS/paiement, aucune fusion ni aucun déploiement.
+
+
+
+### Lot 638 — propagation des identifiants PDF complets dans le client — 18/11/2026
+- La CI a isolé une dernière incompatibilité de format : `ia.js` extrayait encore uniquement `pdf-[a-f0-9]{16}` des questions, alors que l'ingestion et le Worker utilisent désormais les 64 caractères SHA-256.
+- Le motif de détection dans `ia.js` accepte maintenant les 64 caractères. Le test d'intégration existant, dont l'identifiant attendu avait été migré au format long, couvre ce chemin de bout en bout.
+- La première exécution CI sur le lot 637 avait échoué sur ce seul test : 78/79 tests Worker passaient, y compris les nouveaux contrôles de chunks orphelins, collisions, filtrage des droits, BM25 et repli vectoriel. Le job structurel a également échoué sur le même test d'authentification qui exécute la suite Worker.
+- Correction appliquée dans `ia.js`, commit `a5c1089`. Une nouvelle exécution CI sur la tête actuelle est nécessaire avant toute conclusion.
+- Aucun document réel ingéré, aucun OCR/embedding exécuté, aucun droit présumé. Aucun changement Supabase/Auth/RLS/paiement, aucune fusion, aucun déploiement.
