@@ -3504,3 +3504,16 @@ Validation : relecture statique du cycle readiness/INSERT, des erreurs de protoc
 - Aucune protection supplémentaire n'a été ajoutée à ces trois fichiers et aucune vue n'a été modifiée : il faut confirmer la règle produit avant de bloquer ces archives, afin de ne pas transformer par erreur des ressources publiques en contenus payants.
 - Aucun changement Supabase, `main`, merge ou déploiement.
 - Point de décision requis avant Lot 614 : préciser si les vues `examen` (68+79 sujets BAC) et `officiels` (55 devoirs) sont gratuites pour tous les utilisateurs connectés ou réservées aux abonnés actifs. Dès cette règle fixée, l'implémentation sera cohérente dans `access_config.json`, les chargeurs et le Worker du site.
+
+## Lot 614 — audit de l’ingestion PDF et de son raccordement au professeur IA — 18 novembre 2026
+
+- corpus.json référence 239 documents, dont 225 PDF. Leur lecteur corpus.js ouvre les fichiers via PDF.js pour consultation visuelle ; cela ne les rend pas automatiquement disponibles dans le prompt du professeur IA.
+- Le RAG distant (ia.js + worker/ia-ask.js) n’a aucun sélecteur PDF/corpus. rag.js n’utilise corpus.json que pour des métadonnées de bibliothèque. Le manifeste de shards indique 0 shard / 0 chunk ; corpus_index.json contient actuellement un index de vocabulaire items, pas les chunks attendus par le RAG.
+- Les extraits des PDF existants montrent des défauts mesurables : 16 extraits avec caractères de contrôle et 11 avec séquences glyphes /g... (groupes potentiellement chevauchants). D’autres PDF ont un texte lisible : conversion partielle, mais absence de contrôle qualité fiable.
+- tools/ingest_corpus.py prétend faire un OCR Tesseract des scans, mais son implémentation n’appelle que pypdf.extract_text(). Aucun OCR réel ni filtre de texte vide/corrompu. Le générateur écrit également dans corpus_index.json, qui est déjà utilisé comme index de vocabulaire : risque d’écrasement.
+- Architecture à mettre en place : artefact de chunks dédié avec identifiant, page et provenance ; index distinct du vocabulaire ; ingestion avec détection de qualité et OCR effectif optionnel ; sélecteur strict par ID ; récupération des chunks côté Worker, jamais depuis le texte fourni par le navigateur ; application du verrou Corpus avant envoi au modèle.
+- Les licences doivent être vérifiées document par document. Une mention document utilisateur n’est pas une preuve suffisante de droit de republication/indexation. Ne pas lancer une ingestion globale des 225 PDF.
+- Aucun fichier PDF source n’a été converti durant cet audit ; les anomalies sont mesurées dans les extraits déjà présents dans le JSON.
+- CI du commit audité 1fc6ebd : job autonome IA 60/61 (assertion d’URL du document officiel) ; job global bloqué aussi par une syntaxe incorrecte dans ci/check-msg.mjs:231, hors périmètre. L’assertion du test IA a été rendue tolérante au format d’URL et attend une nouvelle validation.
+- Aucun changement Supabase, RLS, Auth, paiement, main, merge ou déploiement. PR #22 reste ouverte et en brouillon.
+- Suite : Lot 615, pipeline d’ingestion PDF testable, index documentaire dédié et raccordement sécurisé au RAG serveur, en commençant uniquement par les documents dont les droits sont confirmés.
