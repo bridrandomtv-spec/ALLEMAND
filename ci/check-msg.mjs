@@ -215,7 +215,7 @@ if (fail.length) { console.error('::error:: check-msg Lot 360 : ' + fail.length 
 
 ok(msgjs.includes('msg-pro-hero') && msgjs.includes('msg-pro-stats'), 'nouvelle hiérarchie pédagogique Messenger');
 ok(msgjs.includes("x.titre || ('مجموعة '+") && !msgjs.includes("('مجموعة '("), 'libellé de groupe construit sans appel de chaîne invalide');
-ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key]')"), 'filtres Messenger accessibles via délégation de clic');
+ok(msgjs.includes("closest('[data-conv],[data-act],[data-report],[data-msg-filter],[data-invite-act],[data-peer-key],[data-msg-act],[data-verif-page],[data-mod]')"), 'filtres Messenger accessibles via délégation de clic');
 ok(idx.includes('style-prototype-dz.css?v=204') && idx.includes('msg.js?v=3534'), 'versions de ressources Messenger actualisées');
 ok(sw.includes("VERSION = 'dz-de-v3.185.0.0.184'") && sw.includes('./style-prototype-dz.css?v=204') && sw.includes('./msg.js?v=3534'), 'précache synchronisé avec la nouvelle interface');
 
