@@ -27,6 +27,67 @@ const SYSTEM =
   + '(الأستاذ خريف أحمد), enseignant d\'allemand algérien, créateur et professeur de la plateforme '
   + '« الثانوية الافتراضية الجزائرية » ; toute question « wer ist / qui est / من هو Kharif Ahmed » '
   + '→ réponds avec ces faits, dans la langue de la question.';
+/* JSON statique du RAG : JSON.parse seul masque les clés dupliquées.
+   Ce parseur vérifie la structure et l'unicité des clés avant le décodage natif. */
+function parseJsonWithoutDuplicateKeys(source){
+  if(typeof source !== 'string') throw new TypeError('json-source-invalid');
+  let index = 0;
+  const whitespace = () => { while(index < source.length && /[\\t\\n\\r ]/.test(source[index])) index++; };
+  const parseString = () => {
+    const start = index++;
+    while(index < source.length){
+      const char = source[index++];
+      if(char === '\\\\'){ index++; continue; }
+      if(char === '"') return JSON.parse(source.slice(start,index));
+    }
+    throw new SyntaxError('json-string-invalid');
+  };
+  const parseValue = () => {
+    whitespace();
+    const char = source[index];
+    if(char === '"'){ parseString(); return; }
+    if(char === '{'){
+      index++; whitespace();
+      const keys = new Set();
+      if(source[index] === '}'){ index++; return; }
+      while(index < source.length){
+        whitespace();
+        if(source[index] !== '"') throw new SyntaxError('json-object-key-invalid');
+        const key = parseString();
+        if(keys.has(key)) throw new SyntaxError('json-duplicate-key:' + key);
+        keys.add(key);
+        whitespace();
+        if(source[index++] !== ':') throw new SyntaxError('json-object-colon-invalid');
+        parseValue(); whitespace();
+        const delimiter = source[index++];
+        if(delimiter === '}') return;
+        if(delimiter !== ',') throw new SyntaxError('json-object-delimiter-invalid');
+      }
+      throw new SyntaxError('json-object-invalid');
+    }
+    if(char === '['){
+      index++; whitespace();
+      if(source[index] === ']'){ index++; return; }
+      while(index < source.length){
+        parseValue(); whitespace();
+        const delimiter = source[index++];
+        if(delimiter === ']') return;
+        if(delimiter !== ',') throw new SyntaxError('json-array-delimiter-invalid');
+      }
+      throw new SyntaxError('json-array-invalid');
+    }
+    const rest = source.slice(index);
+    const literal = /^(?:true|false|null)/.exec(rest);
+    if(literal){ index += literal[0].length; return; }
+    const number = /^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?/.exec(rest);
+    if(number){ index += number[0].length; return; }
+    throw new SyntaxError('json-value-invalid');
+  };
+  parseValue(); whitespace();
+  if(index !== source.length) throw new SyntaxError('json-trailing-data');
+  return JSON.parse(source);
+}
+
 function cors(res, o){
   if(o) res.headers.set('Access-Control-Allow-Origin', o);
   res.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -370,7 +431,7 @@ async function fetchFreeExerciseBank(resource){
     if(!response.ok) return { ok:false, status:503, error:'access-unavailable' };
     const raw = await response.text();
     if(!raw || raw.length > 30000) return { ok:false, status:503, error:'access-unavailable' };
-    const data = JSON.parse(raw);
+    const data = parseJsonWithoutDuplicateKeys(raw);
     const all = data && Array.isArray(data.B_exercices) ? data.B_exercices : [];
     const exercises = all.filter(x => x && x.niveau === resource.level);
     if(!exercises.length) return { ok:false, status:404, error:'resource-not-found' };
@@ -402,7 +463,7 @@ async function fetchFreeSummary(resource){
     if(!response.ok) return { ok:false, status:503, error:'access-unavailable' };
     const raw = await response.text();
     if(!raw || raw.length > 90000) return { ok:false, status:503, error:'access-unavailable' };
-    const data = JSON.parse(raw);
+    const data = parseJsonWithoutDuplicateKeys(raw);
     const rows = data && Array.isArray(data.malakhiss) ? data.malakhiss : [];
     const row = rows.find(x => x && x.niveau === resource.level && x.unite === sourceUnit);
     if(!row) return { ok:false, status:404, error:'resource-not-found' };
@@ -463,7 +524,7 @@ async function fetchAuthorizedOfficialDocument(resource, req){
     if(!response.ok) return { ok:false, status:503, error:'access-unavailable' };
     const raw = await response.text();
     if(!raw || raw.length > 800000) return { ok:false, status:503, error:'access-unavailable' };
-    const data = JSON.parse(raw);
+    const data = parseJsonWithoutDuplicateKeys(raw);
     const items = data && Array.isArray(data.items) ? data.items : [];
     const doc = items.find(x => x && x.id === resource.id);
     if(!doc || !['2AS','3AS'].includes(doc.niveau))
@@ -519,12 +580,12 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
     if(!manifestResponse.ok) return { ok:false, status:503, error:'access-unavailable' };
     const manifestRaw = await manifestResponse.text();
     if(!manifestRaw || manifestRaw.length > 200000) return { ok:false, status:503, error:'access-unavailable' };
-    const manifest = JSON.parse(manifestRaw);
+    const manifest = parseJsonWithoutDuplicateKeys(manifestRaw);
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
     const chunksHash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2,'0')).join('');
     if(!manifest || manifest.version !== 1 || manifest.chunks_sha256 !== chunksHash)
       return { ok:false, status:503, error:'access-unavailable' };
-    const data = JSON.parse(raw);
+    const data = parseJsonWithoutDuplicateKeys(raw);
     const docs = data && Array.isArray(data.documents) ? data.documents : [];
     const chunks = data && Array.isArray(data.chunks) ? data.chunks : [];
     if(manifest.document_count !== docs.length || manifest.chunk_count !== chunks.length)
@@ -653,7 +714,7 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
         if(vectorResponse.ok){
           const vectorRaw = await vectorResponse.text();
           if(vectorRaw && vectorRaw.length <= 20000000){
-            const vectorData = JSON.parse(vectorRaw);
+            const vectorData = parseJsonWithoutDuplicateKeys(vectorRaw);
             /* Un index vectoriel doit provenir exactement du fichier de chunks
                actuellement servi. Les identifiants seuls ne détectent pas un
                artefact périmé dont certains chunks auraient conservé leur ID. */
