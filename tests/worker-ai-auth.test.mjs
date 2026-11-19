@@ -1064,6 +1064,40 @@ test('le RAG refuse un chunk qui référence un document absent', async () => {
   assert.equal(h.messages,null);
 });
 
+test('le RAG refuse les références de page et le texte de chunk invalides', async () => {
+  const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  for (const invalid of [
+    { page:0, text:'Texte exploitable.' },
+    { page:-1, text:'Texte exploitable.' },
+    { page:1.5, text:'Texte exploitable.' },
+    { page:'2', text:'Texte exploitable.' },
+    { page:4, text:'Texte exploitable.', page_count:3 },
+    { page:1, text:'   ' },
+    { page:1, text:'x'.repeat(20001) }
+  ]) {
+    const h = harness({
+      subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+      corpusDocumentData:{
+        documents:[{
+          id:documentId, title:'Document autorisé', license:'cc_by',
+          rights_confirmed:true, chunk_count:1,
+          ...(invalid.page_count ? { page_count:invalid.page_count } : {})
+        }],
+        chunks:[{
+          id:'chunk-invalid', document_id:documentId,
+          page:invalid.page, text:invalid.text
+        }]
+      }
+    });
+    const response = await h.context.__worker.fetch(request({
+      q:'Cherche dans les documents PDF.',
+      resource:{ type:'corpus_search' }
+    }), h.env);
+    assert.equal(response.status,503);
+    assert.equal(h.messages,null);
+  }
+});
+
 test('le RAG refuse deux chunks portant le même identifiant', async () => {
   const h = harness({
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
