@@ -959,6 +959,48 @@ test('le Worker recherche naturellement dans tous les PDF autorisés sans identi
   assert.doesNotMatch(h.messages[1].content, /Unberechtigtes Dokument|Document utilisateur/);
 });
 
+test('la recherche vectorielle refuse un manifeste source différent et retombe sur BM25', async () => {
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      normalization:'l2', source_manifest_sha256:'0'.repeat(64),
+      vectors:[]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Perfekt haben sein Partizip II',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.equal(h.aiCalls.filter(x => x.model === '@cf/google/embeddinggemma-2').length,0);
+  assert.equal(h.aiCalls.filter(x => x.model !== '@cf/google/embeddinggemma-2').length,1);
+});
+
+test('la recherche vectorielle refuse un index incomplet des chunks autorisés', async () => {
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      normalization:'l2',
+      vectors:[{
+        chunk_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0',
+        document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+        embedding:[1,...new Array(255).fill(0)]
+      }]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Perfekt haben sein Partizip II',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.equal(h.aiCalls.filter(x => x.model === '@cf/google/embeddinggemma-2').length,0);
+  assert.equal(h.aiCalls.filter(x => x.model !== '@cf/google/embeddinggemma-2').length,1);
+});
+
 test('la recherche vectorielle hybride retrouve un passage sémantique sans correspondance lexicale et exclut les PDF non autorisés', async () => {
   const h = harness({
     ragVectorEnabled:true,
