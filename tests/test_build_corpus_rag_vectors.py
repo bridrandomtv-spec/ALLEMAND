@@ -107,6 +107,16 @@ class VectorBuilderTests(unittest.TestCase):
                 {"index": 0, "embedding": a}, {"index": 0, "embedding": b}
             ]}, 2)
 
+    def test_build_artifact_rejects_invalid_manifest_json_before_embedding(self):
+        called = []
+        with self.assertRaisesRegex(ValueError, "manifest_json_invalide"):
+            MODULE.build_artifact(
+                [{"chunk_id":"c1", "doc_id":"doc-ok", "title":"Deutsch", "text":"Satz"}],
+                b"chunks", b"[]",
+                lambda _inputs: called.append(True) or [[1.0] + [0.0] * 255],
+            )
+        self.assertEqual(called, [])
+
     def test_build_artifact_rejects_stale_manifest_before_embedding_callback(self):
         called = []
         chunks_bytes = b"chunks"
