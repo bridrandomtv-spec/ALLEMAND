@@ -306,3 +306,18 @@ try {
   if (priorBiblio655 === undefined) delete globalThis.BIBLIO;
   else globalThis.BIBLIO = priorBiblio655;
 }
+
+/* Lot 656 : une page absente du manuel 2AS ne doit jamais être remplacée
+   par une page 3AS de même numéro (les pages 3-4 du 3AS sont verrouillées). */
+try {
+  const wrongLevelPage = await fn('lis la page 3 (2AS)');
+  const wrongLevelText = typeof wrongLevelPage === 'string'
+    ? wrongLevelPage : (wrongLevelPage && (wrongLevelPage.html || wrongLevelPage.texte || wrongLevelPage.reponse)) || '';
+  if (/Inhalt 3AS|L1 3AS p3|Lektion 1.*3AS/i.test(wrongLevelText)) {
+    throw new Error('la page 3 du manuel 3AS a été restituée à la place de la page 2AS absente');
+  }
+  console.log('✅ RAG lock : aucun repli de page entre les manuels 2AS et 3AS');
+} catch (e) {
+  console.log('::error::RAG page niveau · ' + e.message);
+  process.exitCode = 1;
+}
