@@ -65,3 +65,21 @@ test('la route d’intentions reste protégée et ne sert aucun contenu pédagog
   assert.doesNotMatch(rag, /window\.RAG\s*=\s*\{[^}]*ontoRoute/,
     'la route statique ne doit pas être exposée sur l’API publique de test');
 });
+
+test('la bibliothèque du Professeur IA vérifie l’entitlement avant toute restitution', () => {
+  const rag = fs.readFileSync(new URL('../rag.js', import.meta.url), 'utf8');
+  const start = rag.indexOf('async function intentBiblio(q){');
+  const end = rag.indexOf('/* ── خطوة 2 : Intent Ontology', start);
+  assert.ok(start >= 0 && end > start, 'intentBiblio doit être identifiable');
+  const route = rag.slice(start, end);
+  assert.ok(route.indexOf('await verifieAccesBibliothequeIA()') >= 0,
+    'intentBiblio doit vérifier le backend avant stats/search');
+  assert.ok(route.indexOf('await verifieAccesBibliothequeIA()') < route.indexOf('BIBLIO.stats()'),
+    'le contrôle doit précéder les statistiques');
+  assert.ok(route.indexOf('await verifieAccesBibliothequeIA()') < route.indexOf('BIBLIO.search(q, 2)'),
+    'le contrôle doit précéder la recherche documentaire');
+  const trad = rag.indexOf('const tr = await BIBLIO.traduire(mDe[0]);');
+  const guard = rag.indexOf('await verifieAccesBibliothequeIA()', trad);
+  assert.ok(trad >= 0 && guard > trad && guard < rag.indexOf("out.innerHTML = '<div class=\"rg-ok rg-ped\"><b>📖", trad),
+    'le raccourci de traduction doit vérifier l’accès avant restitution');
+});
