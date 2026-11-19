@@ -391,7 +391,7 @@
       /* Une page verrouillée n'est jamais révélée depuis l'index public, même si
          ACCESS annonce un abonnement côté navigateur. Le corps vient uniquement
          de la requête Supabase authentifiée ci-dessous, filtrée par RLS. */
-      if(e && (e.lignes || e.texte) && !e.locked){
+      if(e && (e.lignes || e.texte) && e.locked === false){
         let ls = Array.isArray(e.lignes) ? e.lignes : [e.texte || ''];
         const clean = ls.map(l => String(l)
           .replace(/\((?:page|p\.)\s*\d+\)/gi, '')
