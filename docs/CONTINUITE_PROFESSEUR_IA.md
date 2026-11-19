@@ -932,7 +932,7 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Correction Worker : extension de grammarIntent aux verbes et formulations d'aide/apprentissage (help, teach, show, hilf, hilfe, erklär, erklar, bitte, aide, apprends, علمني, علّمني, تعلم). La correspondance reste conditionnée à la présence d'une notion de LOCKED_RULES ; les questions générales sans notion verrouillée ne sont pas bloquées par ces mots seuls.
 - Tests Worker ajoutés pour huit formulations en anglais, allemand, français et arabe, avec les deux sélecteurs gratuits free_summary et free_exercise_bank. Chaque combinaison exige HTTP 403 / content-locked, aucun contexte envoyé au modèle, zéro appel modèle et aucune lecture des fichiers de résumé ou de banque générale.
 - Commits : Worker c64e17b0568fc87cdc6672894b2d2da4d18b2a4c ; tests c86943c20c002da56bae65d6d80cac8817ebc662.
-- Validation CI : les workflows ont été déclenchés sur le commit de tests c86943c20c002da56bae65d6d80cac8817ebc662. À l'instant de cette mise à jour, le workflow principal 44587904122 est pending et les trois workflows PostgreSQL isolés sont in_progress. Aucun résultat de test n'est anticipé ; mettre à jour ce statut après achèvement.
+- Validation CI Lot 663 : le workflow principal 44587904122 sur c86943c20c002da56bae65d6d80cac8817ebc662 a été annulé (cancelled) lors de l'actualisation suivante de la branche ; aucun résultat de tests Worker n'est donc disponible pour ce lot. Ne pas interpréter cette annulation comme un succès ni comme un échec des tests.
 - Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de main, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
 
 
@@ -942,3 +942,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Régressions ajoutées : une demande de règle verrouillée formulée comme « Explain Perfekt in lesson 1 » avec free_summary et « Genitiv exercises lesson 1 » avec free_exercise_bank doit être refusée pour un compte sans abonnement, avant toute lecture documentaire et tout appel au modèle.
 - Commit Worker : 8fe05acd7497b20919e964b8bdd44ba45fa12df0. Les tests de ce lot sont ajoutés ensuite dans le commit de tests final pour déclencher une CI sur un HEAD complet.
 - Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de main, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### État CI consolidé après Lots 663–664 — 19/11/2026
+- HEAD code/tests : 1beae9104d3c557139398e3cae6038964d7b8351. Les trois workflows PostgreSQL isolés liés à ce HEAD sont terminés success : Multaqa (44588250950), découverte Messenger (44588250916) et consentement Messenger (44588250853).
+- Le contrôle Supabase Preview est skipped (branche non associée à un Supabase Branch). Il ne constitue pas un test applicatif.
+- Aucun workflow principal CI — ALLEMAND n'apparaît dans les check-runs du HEAD 1beae9104d3c557139398e3cae6038964d7b8351. Les tests Worker des Lots 663 et 664 ne sont donc pas déclarés validés. Le run principal précédent 44587904122 est cancelled.
+- PR #23 est toujours ouverte, en brouillon et non fusionnée. Aucun déploiement n'a été effectué ; aucune modification de main ou de Supabase/Auth/RLS/schéma/abonnement/paiement.
