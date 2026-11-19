@@ -321,3 +321,22 @@ try {
   console.log('::error::RAG page niveau · ' + e.message);
   process.exitCode = 1;
 }
+
+/* Lot 657 : l'accès aux corps statiques du manuel exige un marqueur explicite
+   locked:false. Les cinq pages gratuites historiques sont annotées explicitement. */
+try {
+  const freePage = await fn('lis la page 5 (2AS)');
+  const freeText = typeof freePage === 'string' ? freePage : (freePage && (freePage.html || freePage.texte || freePage.reponse)) || '';
+  if (!freeText || freeText.indexOf('Guten Tag!') === -1 || freeText.indexOf('🔒') !== -1) {
+    throw new Error('la page 5 explicitement gratuite n’est plus accessible');
+  }
+  const lockedPage = await fn('lis la page 8 (2AS)');
+  const lockedText = typeof lockedPage === 'string' ? lockedPage : (lockedPage && (lockedPage.html || lockedPage.texte || lockedPage.reponse)) || '';
+  if (!lockedText || lockedText.indexOf('🔒') === -1 || lockedText.indexOf('Übt zu zweit') !== -1) {
+    throw new Error('la page 8 verrouillée a révélé son corps statique');
+  }
+  console.log('✅ RAG lock : seules les pages avec locked:false explicite sont servies statiquement');
+} catch (e) {
+  console.log('::error::RAG page marker · ' + e.message);
+  process.exitCode = 1;
+}
