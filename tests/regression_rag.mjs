@@ -76,11 +76,11 @@ const priorQuerySelector667 = document.querySelector;
 const priorReponseIA667 = globalThis.reponseIA;
 const priorPed667 = globalThis.reponsePedagogique;
 let submit667 = null;
-let query667 = 'Explique le PDF pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+let query667 = 'cherche dans le fichier PDF le passage sur die Familie';
 let forwarded667 = '';
 const box667 = { innerHTML:'' };
 const input667 = { get value(){ return query667; } };
-const out667 = { innerHTML:'' };
+const out667 = { innerHTML:'', querySelectorAll(){ return []; }, querySelector(){ return null; } };
 const form667 = { addEventListener(type, fn){ if(type === 'submit') submit667 = fn; } };
 try {
   document.querySelector = selector => ({
