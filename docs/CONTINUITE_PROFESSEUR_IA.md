@@ -1008,3 +1008,5 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Tests Worker ajoutés pour page nulle, négative, décimale, chaîne, dépassement de page_count, texte vide et chunk dépassant la limite ; chaque cas exige HTTP 503 et aucun message transmis au modèle.
 - Portée : validation de cohérence/provenance des extraits, sans modifier l'algorithme de classement, l'accès général au Professeur IA ni les contrôles de droits/abonnement. Aucun OCR ni ingestion PDF réelle. Aucun changement Supabase/Auth/RLS/schéma/paiement, aucune modification de main, aucune fusion, aucun déploiement.
 - CI du HEAD contenant ce lot : à vérifier avant de déclarer le Lot 669 validé.
+
+- Précision ajoutée pendant la revue du Lot 669 : un `page_count` présent mais mal typé (ex. chaîne) ou inférieur à 1 est lui-même invalide et ne doit pas désactiver la comparaison. Le Worker exige maintenant un entier strictement positif dès que le champ est fourni ; deux cas de test supplémentaires couvrent zéro et chaîne. La CI précédente est à considérer comme obsolète pour ce HEAD modifié ; validation à refaire sur le commit final.
