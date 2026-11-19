@@ -1164,3 +1164,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commit Worker : `258fcd9`. Le test de dépassement du corpus ajouté au Lot 681 couvre maintenant ce chemin borné. CI du HEAD final à vérifier.
 - Aucun appel réel à Workers AI, aucune ingestion/OCR/vectorisation, aucun déploiement. PR #23 reste non fusionnée ; `main`, Supabase/Auth/RLS/schéma/abonnement/paiement inchangés.
 - Test complémentaire : le chemin Cloudflare AI direct (sans binding `env.AI`) reçoit un flux de 262 145 octets, doit l'annuler au plafond de 262 144 octets et répondre 503 sans transmettre une sortie partielle. Commit de test complémentaire : `f4693ff`.
+
+## Lot 684 — annulation des réponses déclarées trop volumineuses
+
+- `readTextLimited()` annule maintenant explicitement `response.body` lorsque l’en-tête `Content-Length` est invalide ou annonce une taille supérieure à la limite, avant de créer le lecteur et sans lire le corps.
+- Test Worker ajouté : une réponse RAG annonçant 1 500 001 octets est rejetée en 503, son flux est annulé et aucun contexte n’atteint le modèle.
+- Commits : Worker `47290b1`, test `fcca7f1`.
+- Audit associé : authentification Supabase et lecture d’abonnement ont déjà un délai maximal de 5 secondes avec `AbortController`, une lecture plafonnée à 65 536 octets et un échec fermé sur erreur/JSON invalide.
+- Aucun appel d’embedding, OCR ou ingestion réelle. Aucun changement Supabase, Auth, RLS, abonnement ou paiement. `main` reste inchangée ; PR #23 non fusionnée et aucun déploiement.
