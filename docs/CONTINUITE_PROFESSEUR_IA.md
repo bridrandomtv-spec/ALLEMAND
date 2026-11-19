@@ -1136,3 +1136,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le Worker exige désormais explicitement `Number.isFinite(queryNorm) && queryNorm > 0` avant toute normalisation et tout classement vectoriel. Si le contrôle échoue, le classement lexical conservé reste la voie de secours.
 - Le scénario `Number.MAX_VALUE` introduit au Lot 679 couvre ce cas. Commit Worker : `98f129fc2ff82486ac006a31b131cbbfb314cf31`. Validation CI complète du HEAD final requise.
 - Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 681 — bornage des lectures des artefacts RAG en octets
+
+- L'audit des limites a identifié que le Worker appelait response.text() avant de contrôler la taille des artefacts. Le contrôle de longueur intervenait donc après lecture complète et utilisait des caractères JavaScript, pas le nombre réel d'octets reçus.
+- Ajout de readTextLimited(response, maxBytes) : contrôle précoce de Content-Length lorsqu'il est disponible, lecture progressive du flux, arrêt et annulation immédiate au dépassement, puis décodage UTF-8 strict.
+- Les artefacts chunks (1 500 000 octets), manifeste (200 000 octets) et vecteurs (20 000 000 octets) passent désormais par ce lecteur borné. Une réponse trop grande ou un UTF-8 invalide est refusé sans poursuivre le parsing ni appeler le modèle.
+- Test ajouté : flux de corpus dépassant 1 500 000 octets ; le Worker renvoie 503, annule le flux et n'appelle pas le modèle.
+- Commits Worker/test : a80032d, 8f2170a. Validation CI complète du HEAD final requise.
+- Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de main, Supabase/Auth/RLS/schéma/abonnement/paiement.
