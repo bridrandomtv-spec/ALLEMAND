@@ -751,6 +751,19 @@
     return 'Il professor Kharif Ahmed è il fondatore e insegnante della mia piattaforma — il « Liceo Virtuale Algerino ». Insegnante di tedesco algerino, mi ha creata perché tutti gli studenti imparino il tedesco: leggere le lezioni, spiegare la grammatica e allenarsi ai compiti — in arabo, tedesco, francese, spagnolo e italiano.';
   }
 
+  /* La bibliothèque (pages, devoirs, corpus, explications et traductions indexées)
+     est une vue payante dans access_config. Ne pas confondre disponibilité du
+     Professeur IA et droit de lecture des documents. Backend = seule preuve. */
+  async function verifieAccesBibliothequeIA(){
+    if(!window.ACCESS || typeof ACCESS.refresh !== 'function'
+       || typeof ACCESS.entitlement !== 'function') return false;
+    try{
+      await ACCESS.refresh();
+      const ent = ACCESS.entitlement();
+      return !!(ent && ent.ok === true && ent.src === 'backend');
+    }catch(e){ return false; }
+  }
+
   /* ── AGENT BIBLIOTHÈQUE : « donne-moi un devoir/exercice sur X » + « combien de documents ? » ── */
   async function intentBiblio(q){
     const wantDevoir = /(donne|donnez|apporte|zeige|gib|give|dame|voglio|\u0627\u0639\u0637\u0646\u064a|\u0647\u0627\u062a|\u062c\u064a\u0628|\u0648\u0631\u064a|\u062d\u0637)/i.test(q)
@@ -759,6 +772,10 @@
       && /(document|page|devoir|exercice|fiche|leçon|lecon|\u0645\u0633\u062a\u0646\u062f|\u0635\u0641\u062d\u0629|\u0641\u0631\u0636|\u062f\u0631\u0633)/i.test(q);
     if(!wantDevoir && !wantStats) return null;
     if(!window.BIBLIO) return null;
+    if(!(await verifieAccesBibliothequeIA())){
+      try{ if(window.ACCESS && ACCESS.paywall) ACCESS.paywall({type:'view',view:'biblio'}); }catch(e){}
+      return {locked:true,html:'<b>🔒 مكتبة الوثائق والتمارين المصنفة ضمن المحتوى المحمي. الأستاذ الذكي متاح للأسئلة العامة، لكن لا يمكنه عرض وثائق المكتبة دون اشتراك فعّال مؤكد.</b>'};
+    }
     const isAr = /[\u0600-\u06FF]/.test(q);
     const isDe = !isAr && /\b(der|die|das|und|gib|zeige|wie viele)\b/i.test(q);
     const isFr = !isAr && !isDe && /\b(combien|donne|le|la|les)\b/i.test(q);
@@ -1272,6 +1289,11 @@ async function reponsePedagogique(q, meta){
         if(mDe && (mTr || pureDe)){
           const tr = await BIBLIO.traduire(mDe[0]);
           if(tr && (tr.type === 'curated' || tr.type === 'page' || tr.type === 'prive' || (mTr && tr.type === 'gloss'))){
+            if(!(await verifieAccesBibliothequeIA())){
+              try{ if(window.ACCESS && ACCESS.paywall) ACCESS.paywall({type:'view',view:'biblio'}); }catch(e){}
+              out.innerHTML = '<div class="rg-ok rg-ped"><b>🔒 هذه الترجمة مستخرجة من مكتبة المنصة المحمية. يمكن للأستاذ ترجمة الجمل التي تكتبها، لكن لا يمكنه كشف الترجمة المودعة دون اشتراك فعّال.</b></div>';
+              return;
+            }
             out.innerHTML = '<div class="rg-ok rg-ped"><b>📖 الترجمة المعتمدة</b>'
               + '<div class="rag-x de-in">' + esc(tr.de) + '</div>'
               + '<div class="rag-x">' + esc(tr.ar) + '</div>'
