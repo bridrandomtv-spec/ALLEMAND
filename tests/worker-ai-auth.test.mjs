@@ -1466,3 +1466,36 @@ test('refuse aussi les feuilles de travail et demandes de pratique sur une règl
     assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/malakhiss.json')), false, q);
   }
 });
+
+
+test('refuse les formulations naturelles de demande d’aide sur une règle verrouillée avec un sélecteur gratuit', async () => {
+  const questions = [
+    'Can you help me with Perfekt?',
+    'Help with Genitiv, please',
+    'Can you teach me the Dativ?',
+    'Kannst du mir Perfekt erklären?',
+    'Hilf mir bitte mit Genitiv',
+    'Aide-moi avec le Dativ',
+    'علمني Perfekt',
+    'تعلمّني قاعدة Genitiv'
+  ];
+  const resources = [
+    { type:'free_summary', level:'3AS', unit:1 },
+    { type:'free_exercise_bank', level:'3AS' }
+  ];
+  for (const resource of resources) {
+    for (const q of questions) {
+      const h = harness();
+      const response = await h.context.__worker.fetch(request({ q, resource }), h.env);
+      const payload = await response.json();
+      assert.equal(response.status,403, q + ' / ' + resource.type);
+      assert.equal(payload.err,'content-locked', q + ' / ' + resource.type);
+      assert.equal(h.messages,null, q + ' / ' + resource.type);
+      assert.equal(h.aiCalls.length,0, q + ' / ' + resource.type);
+      assert.equal(h.calls.some(x =>
+        x.url.includes('/assets/bdd/malakhiss.json')
+        || x.url.includes('/assets/bdd/contenu_original.json')
+      ),false, q + ' / ' + resource.type);
+    }
+  }
+});
