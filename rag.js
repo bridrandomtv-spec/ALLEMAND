@@ -966,7 +966,7 @@ function normaliseRegleVerrouIA(value){
 }
 function demandeRegleVerrouilleeIA(question){
   var q = normaliseRegleVerrouIA(question);
-  var grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|difference|différence|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
+  var grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|difference|différence|example|exemple|exemples|phrase\\s+d['’ ]?exemple|beispiel|beispielsatz|beispielsätze|übung|übungen|übungsaufgaben|aufgabe|aufgaben|arbeitsblatt|übungsblatt|exercise|exercises|exercice|exercices|practice|worksheet|test|quiz|تمرين|تمارين|تطبيق|تطبيقات|تدريب|تدريبات|حل|حلول|corrigé|corrige|مثال|امثلة|أمثلة|جمل\\s+مثال|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
   return grammarIntent && LOCKED_RULES_IA.some(function(rule){
     return q.indexOf(normaliseRegleVerrouIA(rule)) !== -1;
   });
@@ -983,7 +983,7 @@ async function verifieAccesContenuIA(question){
   if(unit == null && (lesson != null || unitExplanationRequest)) unit = uniteCouranteIA();
   var label = trouveRegle(q);
   var lockedRuleRequest = demandeRegleVerrouilleeIA(q);
-  var exerciseRequest = /(?:تمرين|تمارين|exercice|exercices|exercise|exercises|übung|übungen|tamarin|tamrin|banque\s*(?:d['’ ]?)?exercices)/i.test(q);
+  var exerciseRequest = /(?:تمرين|تمارين|تطبيق|تطبيقات|تدريب|تدريبات|exercice|exercices|exercise|exercises|übung|übungen|übungsaufgaben|aufgabe|aufgaben|arbeitsblatt|übungsblatt|practice|worksheet|test|quiz|tamarin|tamrin|banque\s*(?:d['’ ]?)?exercices)/i.test(q);
   /* Les résumés free_summary et la banque générale gratuite restent gratuits.
      Une explication complète d'unité, hors résumé/exercice libre, exige un
      entitlement backend ou une séance précise vérifiable. */
