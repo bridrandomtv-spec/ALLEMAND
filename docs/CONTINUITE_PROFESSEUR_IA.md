@@ -1069,3 +1069,7 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commits : `453782805d757befe153e8c2ba9053496d4f5995`, `8f442a537dbd4e8ba66e55136319615312270368`, `19d6974a11ea516f39bf023a77fb9641279c04e4`, `0c6ca6f3ca375afcfa8af3b9440a4206491d88e4`.
 - Ce lot doit être validé par la CI complète du HEAD courant. Aucun appel Cloudflare, aucun embedding réel, aucun OCR et aucune ingestion de PDF n'ont été exécutés.
 - Les lots précédents restent inchangés : Professeur IA général accessible à tout utilisateur authentifié ; ressources verrouillées toujours protégées. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucune modification de `main`, aucune fusion et aucun déploiement.
+
+
+- Première CI du Lot 673 sur le commit intermédiaire `8f442a537dbd4e8ba66e55136319615312270368` : échec d'une assertion de test uniquement. Le test nominal comparait encore `source_chunks_sha256` au hash de l'ancien fixture `b"chunks"`, alors qu'il utilise maintenant les octets JSON réels du corpus pour satisfaire le nouveau contrôle de provenance. Les autres tests de la suite vector builder, les 17 tests d'ingestion, les 16 tests de droits et les 11 tests d'audit PDF ont réussi.
+- Correction de l'assertion pour comparer avec `chunks_bytes` : commit `2888472bb0b5d44420e0f212b46125ba5465c8e3`. Cet échec intermédiaire est conservé dans le suivi et n'est pas compté comme validation. Attendre la CI du HEAD final `2f768c0b1754946e7215353b0c8675da893b2e1f` ou de son successeur.
