@@ -909,3 +909,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Contrôle de la banque générale `B_exercices` : 50 entrées (31 en 2AS, 19 en 3AS), avec seulement les champs pédagogiques et le niveau, sans identifiant d'unité/séance ni marqueur d'accès. Le Worker la traite comme banque générale libre ; les demandes explicitement rattachées à une unité ou règle verrouillée restent filtrées par le garde.
 - Première CI après ajout des tests locaux : échec ciblé sur le premier cas allemand, révélant le décalage NFD/umlaut. Le motif a été corrigé et les variantes ASCII ont été ajoutées. Une nouvelle exécution CI est en cours sur la branche pour valider le garde local et les nouveaux cas Worker ; ne pas déclarer le lot 660 validé avant son achèvement.
 - Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+### Lot 661 — couverture des formulations « règle / phrase / tableau » — 19/11/2026
+- Extension complémentaire du détecteur local et du Worker aux formulations pédagogiques courantes qui ne contiennent ni « expliquer » ni « exercice » : `rule/rules`, `Regel/Regeln`, `règle(s)`, `sentence(s)`, `Satz/Sätze`, `phrase(s)`, `Tabelle/tableau/table`, `fiche(s)`, ainsi que les équivalents arabes `جملة/جمل/جدول`.
+- La règle ne se déclenche que si la question contient aussi une notion de `LOCKED_RULES` ; les demandes générales sans notion verrouillée restent hors de ce garde.
+- Ajout de cas de régression local et Worker : `Perfekt Sätze`, `Genitiv rules`, `Règles du Genitiv`, `جدول Dativ`. Les tests Worker exigent un refus `403 content-locked`, aucun chargement de résumé et aucun appel au modèle.
+- Validation CI de ces nouveaux cas en attente sur le HEAD courant. Ne pas considérer le lot 661 comme validé avant le résultat de la CI principale et des trois workflows PostgreSQL.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
