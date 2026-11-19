@@ -211,6 +211,20 @@ try {
   if (!freeBook || freeBook.locked !== true) {
     throw new Error('dialogue de l’unité 2 révélé à un compte gratuit');
   }
+  const freeVocab = await fn('lis le vocabulaire 3');
+  if (!freeVocab || freeVocab.locked !== true) {
+    throw new Error('vocabulaire de l’unité 3 révélé à un compte gratuit');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => { throw new Error('backend unavailable'); },
+    entitlement: () => ({ ok:true, src:'backend' }),
+    paywall: () => {}
+  };
+  const backendDownBook = await fn('lis le texte 3');
+  if (!backendDownBook || backendDownBook.locked !== true) {
+    throw new Error('texte révélé alors que le contrôle backend échoue');
+  }
 
   globalThis.ACCESS = {
     refresh: async () => {},
