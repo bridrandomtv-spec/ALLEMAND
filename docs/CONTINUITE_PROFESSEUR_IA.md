@@ -947,5 +947,5 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 ### État CI consolidé après Lots 663–664 — 19/11/2026
 - HEAD code/tests : 1beae9104d3c557139398e3cae6038964d7b8351. Les trois workflows PostgreSQL isolés liés à ce HEAD sont terminés success : Multaqa (44588250950), découverte Messenger (44588250916) et consentement Messenger (44588250853).
 - Le contrôle Supabase Preview est skipped (branche non associée à un Supabase Branch). Il ne constitue pas un test applicatif.
-- Aucun workflow principal CI — ALLEMAND n'apparaît dans les check-runs du HEAD 1beae9104d3c557139398e3cae6038964d7b8351. Les tests Worker des Lots 663 et 664 ne sont donc pas déclarés validés. Le run principal précédent 44587904122 est cancelled.
+- Le workflow principal CI — ALLEMAND du HEAD 1beae9104d3c557139398e3cae6038964d7b8351 a été créé sous le run 44588250861 puis annulé (cancelled) avant de produire des jobs. Le run précédent 44587904122 est également cancelled. Les tests Worker des Lots 663 et 664 ne sont donc pas déclarés validés.
 - PR #23 est toujours ouverte, en brouillon et non fusionnée. Aucun déploiement n'a été effectué ; aucune modification de main ou de Supabase/Auth/RLS/schéma/abonnement/paiement.
