@@ -119,6 +119,21 @@ class VectorBuilderTests(unittest.TestCase):
                 {"index": 0, "embedding": a}, {"index": 0, "embedding": b}
             ]}, 2)
 
+    def test_duplicate_json_keys_are_rejected_in_manifest_before_embedding(self):
+        called = []
+        duplicate_manifest = b'{"chunks_sha256":"' + b'0' * 64 + b'","chunks_sha256":"' + b'0' * 64 + b'"}'
+        with self.assertRaisesRegex(ValueError, "cle_json_duplique:chunks_sha256"):
+            MODULE.build_artifact(
+                [], b'{"version":1,"documents":[],"chunks":[]}',
+                duplicate_manifest,
+                lambda _inputs: called.append(True) or [],
+            )
+        self.assertEqual(called, [])
+
+    def test_strict_json_loader_rejects_nested_duplicate_keys(self):
+        with self.assertRaisesRegex(ValueError, "cle_json_duplique:rights_confirmed"):
+            MODULE.strict_json_loads('{"documents":[{"rights_confirmed":false,"rights_confirmed":true}]}')
+
     def test_manifest_hash_guard_distinguishes_non_object_json(self):
         with self.assertRaisesRegex(ValueError, "manifest_json_invalide"):
             MODULE.validate_manifest_chunks_hash(b"chunks", [])
