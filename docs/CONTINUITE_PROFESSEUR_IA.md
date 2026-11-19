@@ -830,3 +830,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les contrôles d'accès Lot 650–651 restent exécutés avant l'ontologie. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion ni déploiement. CI du nouveau commit à confirmer.
 
 - Garde anti-faux positifs Lot 652 : `matchOnto()` ignore maintenant les fragments latins de moins de quatre caractères (ex. `was`, `ich`) qui pouvaient correspondre comme sous-chaînes à de nombreuses formulations et déclencher une clarification injustifiée. Les fragments arabes restent évalués, car certains termes courts peuvent porter une intention. Test ajouté.
+
+
+### Lot 653 — mesure réelle du classifieur d'intentions — 19/11/2026
+- Ajout dans `tests/regression_rag.mjs` d'une évaluation des 103 exemples étiquetés de `assets/bdd/intent_eval_set.json` en appelant directement `window.RAG.matchOnto()` issue de `rag.js`. Aucun score n'est réimplémenté dans le test.
+- Le rapport CI sépare les classifications correctes, erronées, les ambiguïtés (abstention volontaire) et les absences de correspondance ; il calcule la couverture, l'exactitude sur les cas classés et l'exactitude stricte sur l'ensemble. Les résultats par intention sont également consignés dans les logs CI.
+- Cette mesure ne prétend pas évaluer la qualité de la réponse RAG, la sécurité des ressources, ni la compréhension sémantique hors jeu de test. Les chiffres seront reportés après exécution du CI.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion ni déploiement. PR #23 reste ouverte.
