@@ -723,20 +723,26 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
             );
             const chunksHash = Array.from(new Uint8Array(chunksDigest),
               byte => byte.toString(16).padStart(2,'0')).join('');
+            const manifestDigest = await crypto.subtle.digest(
+              'SHA-256', new TextEncoder().encode(manifestRaw)
+            );
+            const manifestHash = Array.from(new Uint8Array(manifestDigest),
+              byte => byte.toString(16).padStart(2,'0')).join('');
             const candidateById = new Map(candidates.map(item => [item.chunk.id, item]));
             const vectorById = new Map();
             if(vectorData && vectorData.version === 1
                && vectorData.source_chunks_sha256 === chunksHash
+               && vectorData.source_manifest_sha256 === manifestHash
                && vectorData.model === '@cf/google/embeddinggemma-2'
                && vectorData.dimensions === 256
+               && vectorData.normalization === 'l2'
                && Array.isArray(vectorData.vectors) && vectorData.vectors.length <= 12000){
               let vectorIndexValid = true;
               for(const item of vectorData.vectors){
                 if(!item || typeof item.chunk_id !== 'string'
                    || !candidateById.has(item.chunk_id)) continue;
-                /* Un ID de chunk candidat est une clé de jointure de confiance :
-                   une association documentaire contradictoire invalide l'index,
-                   elle ne doit pas être ignorée avant une éventuelle entrée valide. */
+                /* Les vecteurs des chunks autorisés doivent être uniques,
+                   rattachés au bon document et numériquement exploitables. */
                 if(item.document_id !== candidateById.get(item.chunk_id).doc.id
                    || vectorById.has(item.chunk_id) || !Array.isArray(item.embedding)
                    || item.embedding.length !== 256
@@ -753,10 +759,10 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
                 }
                 vectorById.set(item.chunk_id, item.embedding);
               }
-              /* Une collision ou un vecteur numérique dégénéré invalide l'index
-                 complet : ne jamais laisser une entrée écraser silencieusement
-                 une autre. Les entrées étrangères/non autorisées restent ignorées. */
-              if(!vectorIndexValid) vectorById.clear();
+              /* L'index n'est exploitable que s'il couvre tous les chunks
+                 autorisés. Un artefact partiel ou contradictoire retombe sur BM25. */
+              if(!vectorIndexValid || vectorById.size !== candidateById.size)
+                vectorById.clear();
             }
             if(vectorById.size){
               const embedded = await env.AI.run('@cf/google/embeddinggemma-2', {
