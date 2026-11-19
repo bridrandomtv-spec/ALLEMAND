@@ -134,7 +134,7 @@ function isLockedContentQuestion(question, resource){
   if(conjugationIntent && !verifiedLessonResource && !(resource && resource.type === 'free_exercise_bank' && assessment)) return true;
   if(conjugationIntent && resource && resource.type === 'free_unit_lesson' && (unit === null || lesson === null)) return true;
   if(conjugationIntent && LOCKED_CONJUGATIONS.some(v => new RegExp('(?:^|[^a-zäöüß])' + v + '(?:$|[^a-zäöüß])','i').test(q))) return true;
-  const grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|difference|différence|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
+  const grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|difference|différence|example|beispiel|beispielsatz|beispielsätze|exemple|phrase\s+d['’ ]?exemple|مثال|امثلة|أمثلة|جمل\s+مثال|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
   if(grammarIntent && LOCKED_RULES.some(v =>
     normalizedQuestion.includes(normalizeLockText(v)))) return true;
   return LOCKED_RULES.some(v => normalizedQuestion.trim() === normalizeLockText(v));
