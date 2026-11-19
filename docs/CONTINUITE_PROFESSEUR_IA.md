@@ -1049,3 +1049,6 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commits : `72a4de7278ba0fb3d21039b5883b9f3d282dca12` (outil), `1f625ce4519f0fe2da7d60bdb8e9d7a855954a51` (test).
 - Le Lot 672 et les corrections finales des fixtures 671 doivent être validés par la CI du nouveau HEAD avant clôture. Aucun embedding réel ni appel Cloudflare n'a été effectué par ce lot.
 - Rappel : aucune ingestion PDF, aucun OCR ni vectorisation réelle sans droits confirmés. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucune modification de `main`, aucune fusion et aucun déploiement.
+
+
+- Durcissement complémentaire du Lot 672 : le garde d'empreinte vérifie d'abord que le manifeste JSON est bien un objet avant d'accéder à ses champs. Un manifeste JSON valide mais de type tableau est refusé proprement avec le code d'erreur contrôlé du CLI, sans appel API ni écriture. Test ajouté. Commits : `b7c896a12b891650d440919b7a3d0876301c0d62` et `c0adadaec9be3bfe519943602df90201fe9498d8`. La CI précédente du Lot 672 ne couvre pas ce durcissement ; attendre celle du HEAD mis à jour.
