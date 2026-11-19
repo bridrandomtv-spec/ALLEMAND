@@ -857,7 +857,7 @@ export default {
     catch(e){ return json({ ok:false, err:'invalid-body' }, 400, org); }
     if(body.tooLarge) return json({ ok:false, err:'body-too-large' }, 413, org);
     let b;
-    try{ b = body.text ? JSON.parse(body.text) : null; }
+    try{ b = body.text ? parseJsonWithoutDuplicateKeys(body.text) : null; }
     catch(e){ return json({ ok:false, err:'invalid-json' }, 400, org); }
     if(!b || typeof b !== 'object' || Array.isArray(b)) return json({ ok:false, err:'invalid-body' }, 400, org);
     if(Object.keys(b).some(k => !['q','ctx','resource'].includes(k))) return json({ ok:false, err:'invalid-fields' }, 400, org);
