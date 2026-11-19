@@ -108,15 +108,24 @@ function harness(options = {}){
             { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:2, part:0, text:'Die Familie und die Schule sind wichtige Themen.' }
           ]
-        });        const vectorData = {
+        });        const manifestData = {
+          version:1, document_count:corpusData.documents.length,
+          chunk_count:corpusData.chunks.length,
+          chunks_sha256:createHash('sha256').update(JSON.stringify(corpusData),'utf8').digest('hex')
+        };
+        const vectorData = {
           ...(options.corpusVectorData || {
-            version:1, model:'@cf/google/embeddinggemma-2', dimensions:256, vectors:[]
+            version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+            normalization:'l2', vectors:[]
           })
         };
-        if(!Object.prototype.hasOwnProperty.call(vectorData,'source_chunks_sha256')){
-          vectorData.source_chunks_sha256 = createHash('sha256')
-            .update(JSON.stringify(corpusData),'utf8').digest('hex');
-        }
+        if(!Object.prototype.hasOwnProperty.call(vectorData,'source_chunks_sha256'))
+          vectorData.source_chunks_sha256 = manifestData.chunks_sha256;
+        if(!Object.prototype.hasOwnProperty.call(vectorData,'source_manifest_sha256'))
+          vectorData.source_manifest_sha256 = createHash('sha256')
+            .update(JSON.stringify(manifestData),'utf8').digest('hex');
+        if(!Object.prototype.hasOwnProperty.call(vectorData,'normalization'))
+          vectorData.normalization = 'l2';
         return new Response(JSON.stringify(vectorData), {
           status:200, headers:{ 'Content-Type':'application/json' }
         });
@@ -141,10 +150,13 @@ function harness(options = {}){
         if(options.corpusManifestResponse) return options.corpusManifestResponse;
         if(!corpusRaw) return new Response('',{status:503});
         const data = JSON.parse(corpusRaw);
-        return new Response(JSON.stringify({
+        const manifestData = {
           version:1, document_count:data.documents.length, chunk_count:data.chunks.length,
           chunks_sha256:createHash('sha256').update(corpusRaw,'utf8').digest('hex')
-        }), { status:200, headers:{ 'Content-Type':'application/json' } });
+        };
+        return new Response(JSON.stringify(manifestData), {
+          status:200, headers:{ 'Content-Type':'application/json' }
+        });
       }
       if(String(url).includes('/assets/bdd/compositions.json') || String(url).includes('/assets/bdd/annales.json')){
         if(options.officialDocumentResponse) return options.officialDocumentResponse;
