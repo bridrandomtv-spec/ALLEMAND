@@ -1437,3 +1437,23 @@ test('un manifeste dont l’empreinte ne correspond pas au corpus bloque le RAG 
   assert.equal(h.messages,null);
   assert.equal(h.aiCalls.length,0);
 });
+
+test('refuse aussi les feuilles de travail et demandes de pratique sur une règle verrouillée', async () => {
+  for (const q of [
+    'Nomen-Verb-Verbindungen Arbeitsblatt',
+    'Passiversatzformen worksheet',
+    'Genitiv practice',
+    'Nomen-Verb-Verbindungen Übungsblatt'
+  ]) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({
+      q,
+      resource:{ type:'free_summary', level:'3AS', unit:1 }
+    }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status, 403, q);
+    assert.equal(payload.err, 'content-locked', q);
+    assert.equal(h.messages, null, q);
+    assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/malakhiss.json')), false, q);
+  }
+});
