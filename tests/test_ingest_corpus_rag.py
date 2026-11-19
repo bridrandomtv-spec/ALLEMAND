@@ -43,6 +43,23 @@ class PdfIngestionTests(unittest.TestCase):
                 })
         return inventory
 
+    def test_duplicate_rights_keys_in_companion_metadata_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp)
+            companion = source / "_lesson.json"
+            companion.write_text(
+                '{"titre":"Lesson","licence":"cc_by",'
+                '"droits_confirmes":false,"droits_confirmes":true}',
+                encoding="utf-8",
+            )
+            self.assertIsNone(MODULE.read_metadata(source / "lesson.pdf"))
+
+    def test_strict_json_loader_rejects_duplicate_nested_keys(self):
+        with self.assertRaisesRegex(ValueError, "cle_json_duplique:droits_confirmes"):
+            MODULE.strict_json_loads(
+                '{"meta":{"droits_confirmes":false,"droits_confirmes":true}}'
+            )
+
     def test_text_pdf_extracts_pages_and_preserves_page_numbers(self):
         page_text = " ".join(["Deutschunterricht"] * 30)
         fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(pages=[FakePage(page_text)]))
