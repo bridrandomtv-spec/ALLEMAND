@@ -1155,3 +1155,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commits : Worker `f21df5a`, test `09eddfa`. CI du HEAD final à vérifier.
 - Le binding `env.AI.run` ne fournit pas de signal d'annulation dans cette interface : aucun faux engagement d'annulation n'est revendiqué pour ce chemin. Les limites de taille de sortie sont néanmoins appliquées après résolution.
 - Aucun appel IA réel, aucune vectorisation/OCR/ingestion, aucun déploiement. PR #23 reste non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 683 — généralisation des limites de lecture à toutes les sources Worker
+
+- La relecture exhaustive des appels de lecture a montré qu'il restait des `response.text()` / `response.json()` non bornés dans les résolveurs de pages, séances, résumés, documents officiels, banque libre, authentification et vérification d'abonnement. Ils sont maintenant remplacés par `readTextLimited()` puis le parseur JSON strict lorsque nécessaire.
+- Limites appliquées : réponses Auth/abonnement/pages 65 536 octets ; séance 3AS 100 000 ; résumé libre 90 000 ; archives officielles 800 000 ; chunks RAG 1 500 000 ; banque libre 1 500 000 (puis plafond utile de contenu 30 000 caractères) ; séance gratuite 9 000 ; index vecteur 20 000 000 ; réponse API Cloudflare AI 262 144 octets.
+- Cette relecture a également corrigé un remplacement incomplet du lot précédent : le flux des chunks RAG lui-même passe maintenant effectivement par le lecteur borné, et non plus par `response.text()`.
+- Commit Worker : `258fcd9`. Le test de dépassement du corpus ajouté au Lot 681 couvre maintenant ce chemin borné. CI du HEAD final à vérifier.
+- Aucun appel réel à Workers AI, aucune ingestion/OCR/vectorisation, aucun déploiement. PR #23 reste non fusionnée ; `main`, Supabase/Auth/RLS/schéma/abonnement/paiement inchangés.
