@@ -256,6 +256,28 @@ test('annule un corps entrant déclaré trop volumineux avant toute lecture', as
   assert.equal(h.aiCalls.length,0);
 });
 
+test('accepte un Content-Length décimal valide pour le corps entrant', async () => {
+  const payload = JSON.stringify({ q:'Explique le Perfekt.' });
+  const body = new ReadableStream({
+    start(controller){ controller.enqueue(new TextEncoder().encode(payload)); controller.close(); }
+  });
+  const req = new Request('https://teacher.example/ask', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json', Origin:ORIGIN,
+      Authorization:'Bearer ' + TOKEN,
+      'Content-Length':String(new TextEncoder().encode(payload).byteLength)
+    },
+    body,
+    duplex:'half'
+  });
+  const h = harness();
+  const response = await h.context.__worker.fetch(req, h.env);
+  assert.equal(response.status,200);
+  assert.equal((await response.json()).ok,true);
+  assert.ok(h.aiCalls.some(call => call.model !== '@cf/google/embeddinggemma-2'));
+});
+
 test('refuse un corps entrant contenant une séquence UTF-8 invalide', async () => {
   const body = new ReadableStream({
     start(controller){ controller.enqueue(new Uint8Array([0x7b,0x22,0x71,0x22,0x3a,0x22,0xc3,0x28,0x22,0x7d])); controller.close(); }
