@@ -1271,6 +1271,37 @@ test('un index complet atteint le modèle de requête et conserve le classement 
   assert.match(h.messages[1].content,/Der Perfekt wird/);
 });
 
+test('un embedding de requête malformé ou nul conserve le classement BM25', async () => {
+  const chunkId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0';
+  const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  const invalidEmbeddings = [
+    [1, 0],
+    new Array(256).fill(0),
+    [NaN, ...new Array(255).fill(0)]
+  ];
+  for(const invalidEmbedding of invalidEmbeddings){
+    const h = harness({
+      ragVectorEnabled:true,
+      subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+      embeddingResponse:{ data:[{ embedding:invalidEmbedding }] },
+      corpusVectorData:{
+        version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+        vectors:[
+          { chunk_id:chunkId, document_id:documentId, embedding:[1,...new Array(255).fill(0)] },
+          { chunk_id:chunkId.replace('-p1-c0','-p2-c0'), document_id:documentId, embedding:[0,1,...new Array(254).fill(0)] }
+        ]
+      }
+    });
+    const response = await h.context.__worker.fetch(request({
+      q:'Explique le Perfekt dans les documents PDF.',
+      resource:{ type:'corpus_search' }
+    }), h.env);
+    assert.equal(response.status,200);
+    assert.match(h.messages[1].content,/Der Perfekt wird/);
+    assert.ok(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'));
+  }
+});
+
 test('une panne des embeddings conserve le repli BM25', async () => {
   const h = harness({
     ragVectorEnabled:true, embeddingThrows:true,
