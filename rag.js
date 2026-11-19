@@ -40,49 +40,15 @@
   }
 
   /* recherche shard par shard : un seul shard en mémoire à la fois */
+  /* Le corpus documentaire local n'est pas une source d'autorisation.
+     Les shards statiques ne portent pas de preuve de droits par document et
+     ne doivent jamais être lus directement depuis le navigateur. La recherche
+     PDF passe exclusivement par le Worker authentifié, qui vérifie le manifeste,
+     rights_confirmed et la licence avant de transmettre un extrait au modèle.
+     Tant que l'interface RAG n'utilise pas ce chemin serveur, abstention. */
   async function cherche(q){
-    const ts = termes(q);
-    if(!ts.length) return null;
-    const man = await chargeManifest();
-    if(man && man.shards && man.shards.length){
-      let best = null;
-      for(const sh of man.shards){
-        let data = null;
-        try{
-          const r = await fetch('assets/bdd/shards/' + sh.file, { cache:'no-store' });
-          if(r.ok) data = await r.json();
-        }catch(e){}
-        if(!data) continue;
-        const scores = {};
-        ts.forEach(t => { (data.termes[t] || []).forEach(cid => {
-          scores[cid] = (scores[cid] || 0) + 1; }); });
-        for(const cid in scores){
-          const sc = scores[cid];
-          if(sc >= SEUIL && (!best || sc > best.score)){
-            const chunk = (data.chunks || []).filter(c => c.n === +cid)[0];
-            if(chunk) best = { score: sc, texte: chunk.texte, doc: chunk.doc };
-          }
-        }
-        if(best && best.score >= SEUIL + 3) break;   /* match fort : arrêt précoce */
-      }
-      return best;
-    }
-    const idx = await chargeLegacy();
-    if(!idx) return null;
-    const scores = {};
-    ts.forEach(t => { (idx.termes[t] || []).forEach(cid => {
-      scores[cid] = (scores[cid] || 0) + 1; }); });
-    let best = null;
-    for(const cid in scores){
-      const sc = scores[cid];
-      if(sc >= SEUIL && (!best || sc > best.score)){
-        const ch = idx.chunks[+cid];
-        if(ch) best = { score: sc, texte: ch.texte, doc: ch.doc };
-      }
-    }
-    return best;
+    return null;
   }
-
 
   /* ══════════════════════════════════════════════════════════════════════
      Routeur pédagogique v3 — مكتبة أسئلة الطالب الجزائري
@@ -1320,14 +1286,12 @@ async function reponsePedagogique(q, meta){
         if(ped.speak === 'de') parler((out.querySelector('.rag-x') || out).textContent, 'de-DE');
         return;
       }
-      out.innerHTML = '<div class="rg-load">⏳ recherche dans les shards…</div>';
-      const r = await cherche(q);
-      const f = formule(r);
-      out.innerHTML = f
-        ? '<div class="rg-ok">' + f + '</div>'
-        : '<div class="rg-non">🤷 <b>لا أعرف / je ne sais pas.</b><br>'
-          + 'Aucun extrait du corpus ne répond avec assez de confiance. '
-          + 'Je n’invente jamais.</div>';
+      /* Aucun repli vers des shards statiques : ils ne prouvent pas les
+         droits du document. Le Worker authentifié reste l'unique chemin PDF. */
+      out.innerHTML = '<div class="rg-non">🔒 <b>البحث الوثائقي غير متاح مؤقتًا.</b><br>'
+        + 'La recherche dans les PDF sera activée uniquement via le Worker authentifié, '
+        + 'après confirmation des droits de chaque document. Les questions générales '
+        + 'restent disponibles avec le Professeur IA.</div>';
     });
   }
 
