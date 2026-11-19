@@ -1321,6 +1321,8 @@ test('une panne des embeddings conserve le repli BM25', async () => {
     resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   assert.equal(response.status,200);
+  assert.ok(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),
+    'le test doit atteindre l’appel d’embedding avant de vérifier le repli BM25');
   assert.match(h.messages[1].content,/Der Perfekt wird/);
 });
 
