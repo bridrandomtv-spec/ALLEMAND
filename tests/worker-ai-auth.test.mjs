@@ -1499,3 +1499,32 @@ test('refuse les formulations naturelles de demande d’aide sur une règle verr
     }
   }
 });
+
+
+test('un sélecteur de résumé ou de banque libre ne déverrouille pas une séance numérotée', async () => {
+  const cases = [
+    {
+      q:'Explain Perfekt in lesson 1',
+      resource:{ type:'free_summary', level:'2AS', unit:4 },
+      forbidden:'/assets/bdd/malakhiss.json'
+    },
+    {
+      q:'Genitiv exercises lesson 1',
+      resource:{ type:'free_exercise_bank', level:'3AS' },
+      forbidden:'/assets/bdd/contenu_original.json'
+    }
+  ];
+  for (const item of cases) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({
+      q:item.q,
+      resource:item.resource
+    }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status,403,item.q);
+    assert.equal(payload.err,'content-locked',item.q);
+    assert.equal(h.messages,null,item.q);
+    assert.equal(h.aiCalls.length,0,item.q);
+    assert.equal(h.calls.some(x => x.url.includes(item.forbidden)),false,item.q);
+  }
+});
