@@ -135,6 +135,23 @@ class VectorBuilderTests(unittest.TestCase):
             )
         self.assertEqual(called, [])
 
+    def test_build_artifact_rejects_unapproved_chunks_before_embedding(self):
+        corpus, manifest = fixture()
+        chunks_bytes = json.dumps(corpus).encode("utf-8")
+        manifest["chunks_sha256"] = MODULE.sha256_bytes(chunks_bytes)
+        manifest_bytes = json.dumps(manifest).encode("utf-8")
+        unauthorized = [{
+            "chunk_id": "c2", "doc_id": "doc-no",
+            "title": "Locked", "text": "Ne doit jamais être vectorisé"
+        }]
+        called = []
+        with self.assertRaisesRegex(ValueError, "chunks_non_conformes_au_corpus_autorise"):
+            MODULE.build_artifact(
+                unauthorized, chunks_bytes, manifest_bytes,
+                lambda _inputs: called.append(True) or [[1.0] + [0.0] * 255],
+            )
+        self.assertEqual(called, [])
+
     def test_batching_and_output_metadata(self):
         corpus, manifest = fixture()
         chunks = MODULE.eligible_chunks(corpus, manifest)
@@ -142,10 +159,9 @@ class VectorBuilderTests(unittest.TestCase):
         def fake_embed(inputs):
             seen.extend(inputs)
             return [[1.0] + [0.0] * 255 for _ in inputs]
-        chunks_bytes = b"chunks"
-        manifest_bytes = json.dumps({
-            "chunks_sha256": MODULE.sha256_bytes(chunks_bytes)
-        }).encode("utf-8")
+        chunks_bytes = json.dumps(corpus).encode("utf-8")
+        manifest["chunks_sha256"] = MODULE.sha256_bytes(chunks_bytes)
+        manifest_bytes = json.dumps(manifest).encode("utf-8")
         artifact = MODULE.build_artifact(
             chunks, chunks_bytes, manifest_bytes, fake_embed, batch_size=1
         )
