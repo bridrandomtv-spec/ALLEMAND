@@ -869,3 +869,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Trois workflows PostgreSQL du même HEAD réussis : `44572087314` (consentement Messenger), `44572087420` (ملتقى الطلاب), `44572087584` (découverte Messenger).
 - Audit PDF CI reconfirmé : 293 PDF analysés, 293 lignes d'inventaire appariées, 0 fichier orphelin, **0 droit confirmé / 293 droits non confirmés ou vides** ; aucune inférence de droits. Rapport technique `pdf-rights-and-readiness`, artefact CI `14554093236`. OCR et ingestion/embeddings réels non exécutés.
 - PR #23 reste ouverte, en brouillon, non fusionnée et mergeable. Aucun changement sur `main`, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+
+### Lots 656–657 — intégrité des pages du manuel et refus fermé — 19/11/2026
+- Lot 656 : suppression du repli automatique vers le manuel de l'autre niveau lorsqu'une page est absente du niveau demandé. Une demande 2AS ne peut donc plus récupérer par défaut la page de même numéro du manuel 3AS (et inversement). Une page absente est signalée comme non indexée pour le niveau demandé.
+- Lot 657 : le moteur local ne restitue le corps d'une page que si son entrée porte explicitement `locked === false`. Une propriété `locked` absente ne vaut plus autorisation ; le comportement est fail-closed.
+- Inventaire vérifié après correction : `buch_pages.json` contient 212 pages, aucun marqueur de verrouillage manquant, aucun corps sur une page verrouillée ; seules les pages 5, 6, 7, 10 et 25 sont explicitement gratuites. `buch3as_pages.json` contient 163 pages, aucun marqueur manquant, aucun corps sur une page verrouillée et aucune page explicitement gratuite.
+- Régressions ajoutées : page 5 2AS (gratuite) reste lisible ; page 8 2AS (verrouillée) ne révèle pas son corps ; page 3 2AS ne renvoie pas le contenu 3AS correspondant. Les assertions structurelles vérifient l'absence de repli inter-niveaux, l'exigence `locked === false` et le message de page non indexée.
+- Le premier CI a échoué sur une syntaxe invalide dans le test structurel, pas dans le moteur. Le test a été réparé sur le commit `19953866143a2a2847d66d34547ad8e7441afe5d`, puis la CI complète a été relancée.
+- Validation confirmée sur ce HEAD : CI principale run `44573507037` = success ; workflows PostgreSQL isolés `44573506105` (ملتقى الطلاب), `44573506074` (découverte Messenger) et `44573506115` (consentement Messenger) = success.
+- Limite : les tests vérifient les données et les chemins locaux simulés ; ils ne remplacent pas un E2E avec une session réelle sur un déploiement de cette branche. Les droits des PDF restent non confirmés (0/293) ; aucun OCR, ingestion réelle ni embedding documentaire n'a été exécuté.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucun changement de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte, en brouillon et non fusionnée.
