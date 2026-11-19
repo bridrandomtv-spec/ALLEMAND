@@ -1104,3 +1104,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Ce lot corrige la couverture des tests, sans changement de comportement de production. Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion ni déploiement.
 - Commit test : 3bf99f91652c43fb087cc3dacfe5b9281070f47f. La CI complète du nouveau HEAD doit confirmer ce lot.
 - Contraintes inchangées : PR #23 reste non fusionnée ; aucune modification de main, Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun déploiement.
+
+## Lot 677 — repli BM25 sur embedding de requête invalide
+
+- Audit du chemin hybride confirmé : le Worker conserve le classement lexical si le modèle d'embedding échoue, renvoie une dimension incorrecte ou un vecteur de norme nulle. La validation des valeurs non finies est également couverte.
+- Ajout d'une régression paramétrée couvrant trois réponses d'embedding de requête invalides : vecteur de dimension 2, vecteur nul de 256 dimensions et vecteur contenant NaN. Pour chaque cas, le test utilise un index vectoriel complet et vérifie que l'appel d'embedding a réellement eu lieu, que la réponse pédagogique BM25 reste disponible et que la requête ne tombe pas en erreur.
+- Aucun changement du Worker de production : le comportement de repli existant est désormais réellement testé sur un index conforme.
+- Commit test : 13d0f39cce595e431417c86a24693ce5b2a6feae. CI complète du HEAD suivant requise.
+- Aucun appel Workers AI réel, aucune vectorisation, OCR, ingestion ou déploiement. PR #23 non fusionnée ; aucune modification de main ni de Supabase/Auth/RLS/schéma/abonnement/paiement.
