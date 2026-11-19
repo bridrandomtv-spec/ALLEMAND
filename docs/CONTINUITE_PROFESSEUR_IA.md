@@ -1163,3 +1163,4 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Cette relecture a également corrigé un remplacement incomplet du lot précédent : le flux des chunks RAG lui-même passe maintenant effectivement par le lecteur borné, et non plus par `response.text()`.
 - Commit Worker : `258fcd9`. Le test de dépassement du corpus ajouté au Lot 681 couvre maintenant ce chemin borné. CI du HEAD final à vérifier.
 - Aucun appel réel à Workers AI, aucune ingestion/OCR/vectorisation, aucun déploiement. PR #23 reste non fusionnée ; `main`, Supabase/Auth/RLS/schéma/abonnement/paiement inchangés.
+- Test complémentaire : le chemin Cloudflare AI direct (sans binding `env.AI`) reçoit un flux de 262 145 octets, doit l'annuler au plafond de 262 144 octets et répondre 503 sans transmettre une sortie partielle. Commit de test complémentaire : `f4693ff`.
