@@ -191,7 +191,7 @@ function harness(options = {}){
           return options.embeddingResponse || { data:[{ embedding:options.queryEmbedding || [1,...new Array(255).fill(0)] }] };
         }
         messages = input.messages;
-        return { response:'Réponse pédagogique.' };
+        return options.modelResponse || { response:'Réponse pédagogique.' };
       }
     },
     RAG_VECTOR_ENABLED:options.ragVectorEnabled ? 'true' : 'false'
@@ -206,6 +206,19 @@ function request(body, token = TOKEN){
     method:'POST', headers, body:typeof body === 'string' ? body : JSON.stringify(body)
   });
 }
+
+test('le Worker refuse une réponse du modèle non textuelle ou hors limite', async () => {
+  for(const modelResponse of [
+    { response:123 },
+    { response:'x'.repeat(6001) }
+  ]){
+    const h = harness({ modelResponse });
+    const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
+    assert.equal(response.status,503);
+    assert.deepEqual(await response.json(), { ok:false, err:'ai-unavailable' });
+    assert.ok(h.aiCalls.some(call => call.model !== '@cf/google/embeddinggemma-2'));
+  }
+});
 
 test('refuse un corps de requête Worker contenant une clé JSON dupliquée après authentification', async () => {
   const h = harness();
