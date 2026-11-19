@@ -43,6 +43,33 @@ if (shortFragment !== null) {
 }
 console.log('✅ ONTO : égalité détectée sans choix arbitraire ; intention unique conservée');
 
+/* Lot 666 : les shards locaux ne peuvent pas autoriser un document.
+   Fixture volontairement piégée : même avec un chunk correspondant, la
+   recherche navigateur doit s'abstenir tant que les droits ne sont pas vérifiés
+   par le Worker authentifié. */
+const savedCorpusFetch = globalThis.fetch;
+try {
+  globalThis.fetch = async url => {
+    const path = String(url);
+    if (path.includes('shards_manifest.json')) return {
+      ok:true, json:async()=>({ nb_shards:1, total_chunks:1,
+        shards:[{ file:'fixture.json' }] })
+    };
+    if (path.includes('fixture.json')) return {
+      ok:true, json:async()=>({ termes:{ secret:[1], contenu:[1] },
+        chunks:[{ n:1, texte:'CONTENU VERROUILLE SECRET', doc:'pdf-non-authorise' }] })
+    };
+    return { ok:false, status:404, json:async()=>({}) };
+  };
+  const localCorpusHit = await globalThis.RAG.cherche('secret contenu');
+  if (localCorpusHit !== null) {
+    throw new Error('un shard local a révélé un document sans preuve de droits');
+  }
+  console.log('✅ RAG corpus lock : shard piégé refusé sans autorisation Worker');
+} finally {
+  globalThis.fetch = savedCorpusFetch;
+}
+
 /* Mesure du classifieur réel sur le jeu étiqueté, sans réimplémenter son score.
    Les abstentions et ambiguïtés restent distinctes des erreurs de classification. */
 const intentEval = JSON.parse(read('assets/bdd/intent_eval_set.json'));
