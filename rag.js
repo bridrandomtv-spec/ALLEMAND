@@ -814,6 +814,11 @@ async function matchOnto(q){
 }
 async function ontoRoute(q){
   try{
+    /* Cette route dormante ne doit jamais contourner le garde pédagogique.
+       Les intentions qui nécessitent un contenu de cours restent au pipeline
+       principal, qui possède ses propres contrôles de ressource et d'entitlement. */
+    const accessGuard = await verifieAccesContenuIA(q);
+    if(accessGuard) return accessGuard;
     const m = await matchOnto(q);
     /* Une égalité de score n'autorise jamais un choix arbitraire. */
     if(!m || m.ambiguous) return null;
@@ -836,59 +841,18 @@ async function ontoRoute(q){
       if(w) return { html: '<b>🔊 النطق</b><div class="rag-x de-in">' + esc(w) + '</div>', speakWord: w };
       return null;
     }
-    if(id === 'summarize_lesson' || id === 'important_points' || id === 'explain_lesson'
-       || id === 'explain_rule' || id === 'stuck_student' || id === 'usage_question'
-       || id === 'explain_with_examples'){
-      const mal = await chargeMalakhiss();
-      const un = (mal && mal.malakhiss || []).filter(x => x.unite === n)[0];
-      if(un){
-        const ex = (un.structures || []).slice(0, 3);
-        return { html: '<b>📗 الوحدة ' + n + ' — ' + esc(un.titre_de || '') + '</b>'
-          + '<div class="rag-x">' + esc(un.titre_ar || '') + '</div>'
-          + '<div class="rg-sec"><b>الملخص</b> ' + esc((un.resume_ar || un.resume || '').slice(0, 400)) + '</div>'
-          + (ex.length ? '<div class="rg-sec"><b>أمثلة</b><ul>' + ex.map(e2 => '<li class="de-in">' + esc(e2) + '</li>').join('') + '</ul></div>' : '')
-          + '<div class="rag-src">للتفاصيل افتح 📑 الملخصات — الوحدة ' + n + '</div>' };
-      }
-      return null;
-    }
-    if(id === 'compare_explain'){
-      const pairs = [['sein','haben'],['der','das'],['weil','dass'],['akkusativ','dativ'],
-        ['müssen','sollen'],['können','dürfen'],['mussen','sollen'],['konnen','durfen']];
-      for(const pr of pairs){
-        if(String(q).toLowerCase().indexOf(pr[0]) !== -1 && String(q).toLowerCase().indexOf(pr[1]) !== -1){
-          if(pr[0]==='sein'||pr[1]==='haben') return { html: '<b>⚖️ sein مقابل haben</b><ul>'
-            + '<li class="de-in">sein = يكون (حالة/هوية) : ich bin, du bist, er ist</li>'
-            + '<li class="de-in">haben = يملك : ich habe, du hast, er hat</li>'
-            + '<li>Perfekt : أفعال الحركة والحالة مع sein، والبقية مع haben</li></ul>' };
-          return { html: '<b>⚖️ ' + esc(pr[0]) + ' مقابل ' + esc(pr[1]) + '</b>'
-            + '<div class="rg-sec">افتح 📘 القواعد للمقارنة الكاملة مع الأمثلة.</div>' };
-        }
-      }
-      return null;
-    }
-    if(id === 'quiz_generate' || id === 'generate_exam' || id === 'adaptive_exercise'){
-      return { html: '<b>📝 تدريب</b><div class="rg-sec">افتح ✍️ Banque أو 📝 الفروض — الوحدة ' + (n || '')
-        + ' : فرض مولَّد بتصحيح فوري + كل خطأ يعود في 🧠 مسارك.</div>' };
-    }
-    if(id === 'bac_preparation'){
-      const corp = await chargeCorp();
-      const suj = (corp && corp.documents || []).filter(x => x.type==='sujet'||x.type==='annale').slice(0,8);
-      return { html: '<b>🎓 تحضير الباك</b><ul>' + suj.map(s2 => '<li>' + esc(s2.titre) + '</li>').join('')
-        + '</ul><div class="rg-sec">افتح 🎓 البكالوريا للتدريب بتوقيت رسمي 180 د.</div>' };
-    }
-    if(id === 'search_library' || id === 'find_lesson' || id === 'find_page' || id === 'find_exercise'
-       || id === 'find_exam' || id === 'find_document' || id === 'source_lookup'){
-      const corp = await chargeCorp();
-      const kw2 = tokOnto(normOnto(q)).filter(w => w.length > 2).slice(0, 4);
-      const res = (corp && corp.documents || []).filter(x => {
-        const hay = normOnto((x.titre||'') + ' ' + (x.extrait||''));
-        return kw2.some(w => hay.indexOf(w) !== -1);
-      }).slice(0, 8);
-      if(res.length) return { html: '<b>🔎 نتائج المكتبة</b><ul>' + res.map(x => '<li>' + esc(x.titre)
-        + ' <span class="rag-src">[' + esc(x.type) + ']</span></li>').join('') + '</ul>'
-        + '<div class="rag-src">المصادر : official_book → lesson_content → official_exam → pedagogical_document</div>' };
-      return null;
-    }
+    /* Pas de réponse pédagogique statique ici : résumé, leçon, règle,
+       comparaison grammaticale, exercice, examen et recherche documentaire
+       doivent rester dans le pipeline qui vérifie la ressource exacte. */
+    const contentIntents = new Set([
+      'summarize_lesson','important_points','explain_lesson','explain_rule',
+      'stuck_student','usage_question','explain_with_examples','compare_explain',
+      'quiz_generate','generate_exam','adaptive_exercise','bac_preparation',
+      'search_library','find_lesson','find_page','find_exercise','find_exam',
+      'find_document','source_lookup','correct_exercise','exam_prediction',
+      'lesson_overview','difficulty_adapt'
+    ]);
+    if(contentIntents.has(id)) return null;
     if(id === 'conversation_practice') return null; /* يُترك للمعالج الموجود */
     if(id === 'progress_report') return { html: '<b>📈 مستواك</b><div class="rg-sec">افتح 🧭 مسارك : نقاط القوة/الضعف والبطاقات المستحقة.</div>' };
     if(id === 'parent_report') return { html: '<b>👨👩‍👦 تقرير الولي</b><div class="rg-sec">افتح 👨‍👩‍👦 الأولياء لمتابعة النتائج.</div>' };
