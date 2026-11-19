@@ -120,7 +120,7 @@ function isLockedContentQuestion(question, resource){
   if(resource && resource.level === '3AS' && unit === 10
      && ((resource.type === 'free_unit_lesson' && resource.unit === 1)
        || resource.type === 'free_exercise_bank')) unit = 1;
-  const assessment = /(?:فرض|اختبار|امتحان|quiz|test|devoir|evaluation|évaluation|exercice|exercise|übungen?|تمرين|تمارين|corrig|correction|solve|solution)/i.test(q);
+  const assessment = /(?:فرض|اختبار|امتحان|quiz|test|devoir|evaluation|évaluation|exercice|exercise|übungen?|übungsblatt|arbeitsblatt|practice|worksheet|تمرين|تمارين|corrig|correction|solve|solution)/i.test(q);
   if(unit !== null && lesson !== null && !(unit === 1 && lesson <= 2)) return true;
   if(lesson !== null && lesson > 2) return true;
   if(unit !== null && assessment && unit !== 1) return true;
@@ -134,7 +134,7 @@ function isLockedContentQuestion(question, resource){
   if(conjugationIntent && !verifiedLessonResource && !(resource && resource.type === 'free_exercise_bank' && assessment)) return true;
   if(conjugationIntent && resource && resource.type === 'free_unit_lesson' && (unit === null || lesson === null)) return true;
   if(conjugationIntent && LOCKED_CONJUGATIONS.some(v => new RegExp('(?:^|[^a-zäöüß])' + v + '(?:$|[^a-zäöüß])','i').test(q))) return true;
-  const grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|difference|différence|example|exemple|exemples|phrase\s+d['’ ]?exemple|beispiel|beispielsatz|beispielsätze|übung|übungen|übungsaufgaben|aufgabe|aufgaben|exercise|exercises|exercice|exercices|test|quiz|aufgaben|تمرين|تمارين|تطبيق|تطبيقات|تدريب|تدريبات|حل|حلول|corrigé|corrige|مثال|امثلة|أمثلة|جمل\s+مثال|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
+  const grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|difference|différence|example|exemple|exemples|phrase\s+d['’ ]?exemple|beispiel|beispielsatz|beispielsätze|übung|übungen|übungsaufgaben|übungsblatt|arbeitsblatt|aufgabe|aufgaben|practice|worksheet|exercise|exercises|exercice|exercices|test|quiz|aufgaben|تمرين|تمارين|تطبيق|تطبيقات|تدريب|تدريبات|حل|حلول|corrigé|corrige|مثال|امثلة|أمثلة|جمل\s+مثال|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
   if(grammarIntent && LOCKED_RULES.some(v =>
     normalizedQuestion.includes(normalizeLockText(v)))) return true;
   return LOCKED_RULES.some(v => normalizedQuestion.trim() === normalizeLockText(v));
