@@ -31,6 +31,19 @@ GLYPH_RE = re.compile(r"(?:/g\d{1,4}){3,}", re.I)
 MOJIBAKE_RE = re.compile(r"(?:Ã[\u0080-\u00bf]|Â[\u0080-\u00bf]|â€|ï¿½|ðŸ)")
 
 
+def reject_duplicate_json_keys(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("cle_json_duplique:" + str(key))
+        result[key] = value
+    return result
+
+
+def strict_json_loads(value):
+    return json.loads(value, object_pairs_hook=reject_duplicate_json_keys)
+
+
 def text_quality(text):
     value = str(text or "")
     compact = re.sub(r"\s+", "", value)
@@ -118,8 +131,8 @@ def read_metadata(pdf_path):
     if not meta_path.is_file():
         return None
     try:
-        return json.loads(meta_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+        return strict_json_loads(meta_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError, ValueError):
         return None
 
 
