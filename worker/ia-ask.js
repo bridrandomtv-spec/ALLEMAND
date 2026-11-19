@@ -549,7 +549,14 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
     for(const chunk of chunks){
       if(!chunk || typeof chunk.id !== 'string' || !chunk.id
          || typeof chunk.document_id !== 'string' || !chunk.document_id
-         || !documentsById.has(chunk.document_id) || chunkIds.has(chunk.id))
+         || !documentsById.has(chunk.document_id) || chunkIds.has(chunk.id)
+         || !Number.isInteger(chunk.page) || chunk.page < 1
+         || typeof chunk.text !== 'string' || !chunk.text.trim() || chunk.text.length > 20000)
+        return { ok:false, status:503, error:'access-unavailable' };
+      const owner = documentsById.get(chunk.document_id);
+      if(Number.isInteger(owner.page_count) && (owner.page_count < 1 || chunk.page > owner.page_count))
+        return { ok:false, status:503, error:'access-unavailable' };
+      if(chunk.part !== undefined && (!Number.isInteger(chunk.part) || chunk.part < 0))
         return { ok:false, status:503, error:'access-unavailable' };
       chunkIds.add(chunk.id);
       expectedChunkCounts.set(chunk.document_id, expectedChunkCounts.get(chunk.document_id) + 1);
