@@ -1128,3 +1128,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le Worker calcule une norme non finie ; les similarités ne produisent alors aucun candidat sémantique exploitable et le classement lexical demeure le résultat de secours. Ce lot ajoute une preuve de non-régression sans modifier le Worker.
 - Commit du test : `feb10f2763fe8bbce659953c48827b1eae980c6c`. Validation CI complète du HEAD final requise.
 - Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 680 — rejet explicite d'une norme de requête non finie
+
+- L'audit du chemin hybride a confirmé que les composantes de l'embedding de requête étaient vérifiées individuellement avec `Number.isFinite`, mais que la norme calculée n'était testée que par `queryNorm > 0`.
+- Un vecteur de composantes finies mais très grandes peut produire une norme `Infinity`. Le classement sémantique poursuivait alors une normalisation non valide, même si le repli BM25 évitait une erreur visible.
+- Le Worker exige désormais explicitement `Number.isFinite(queryNorm) && queryNorm > 0` avant toute normalisation et tout classement vectoriel. Si le contrôle échoue, le classement lexical conservé reste la voie de secours.
+- Le scénario `Number.MAX_VALUE` introduit au Lot 679 couvre ce cas. Commit Worker : `98f129fc2ff82486ac006a31b131cbbfb314cf31`. Validation CI complète du HEAD final requise.
+- Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
