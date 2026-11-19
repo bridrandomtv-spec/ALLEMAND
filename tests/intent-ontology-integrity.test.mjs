@@ -91,6 +91,7 @@ test('le lecteur de page ne bascule jamais vers le manuel de l’autre niveau', 
   assert.ok(start >= 0 && end > start, 'intentLecture doit rester identifiable');
   const route = rag.slice(start, end);
   assert.doesNotMatch(route, /is3\s*\?\s*await loadPages\(\)\s*:\s*await loadPages3as\(\)/,
+    'une page absente ne doit pas déclencher un repli vers l’autre manuel');
   assert.match(route, /e\.locked === false/,
     'un corps statique doit avoir un marqueur explicite locked:false');
   assert.match(route, /nicht indexiert/,
