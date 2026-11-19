@@ -1083,7 +1083,7 @@ test('le RAG refuse les références de page et le texte de chunk invalides', as
         documents:[{
           id:documentId, title:'Document autorisé', license:'cc_by',
           rights_confirmed:true, chunk_count:1,
-          ...(invalid.page_count ? { page_count:invalid.page_count } : {})
+          ...(Object.hasOwn(invalid, 'page_count') ? { page_count:invalid.page_count } : {})
         }],
         chunks:[{
           id:'chunk-invalid', document_id:documentId,
