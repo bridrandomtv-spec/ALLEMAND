@@ -71,6 +71,10 @@ def eligible_chunks(corpus, manifest):
         declared_count = doc.get("chunk_count")
         if isinstance(declared_count, bool) or not isinstance(declared_count, int) or declared_count < 0:
             raise ValueError("document_chunk_count_absent_ou_invalide")
+        page_count = doc.get("page_count")
+        if page_count is not None and (
+                isinstance(page_count, bool) or not isinstance(page_count, int) or page_count < 1):
+            raise ValueError("document_page_count_invalide")
         expected_chunk_counts[document_id] = declared_count
         if doc.get("rights_confirmed") is True and doc.get("license") in ALLOWED_LICENSES:
             approved[document_id] = str(doc.get("title") or "none")[:240]
@@ -89,8 +93,17 @@ def eligible_chunks(corpus, manifest):
         actual_chunk_counts[doc_id] += 1
         if doc_id not in approved:
             continue
-        if not isinstance(body, str) or not body.strip():
-            raise ValueError("chunk_texte_vide")
+        owner = next(doc for doc in documents if doc["id"] == doc_id)
+        page = chunk.get("page")
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            raise ValueError("chunk_page_invalide")
+        if owner.get("page_count") is not None and page > owner["page_count"]:
+            raise ValueError("chunk_page_hors_document")
+        part = chunk.get("part")
+        if part is not None and (isinstance(part, bool) or not isinstance(part, int) or part < 0):
+            raise ValueError("chunk_part_invalide")
+        if not isinstance(body, str) or not body.strip() or len(body) > 20000:
+            raise ValueError("chunk_texte_vide_ou_trop_long")
         result.append({
             "chunk_id": chunk_id,
             "doc_id": doc_id,
