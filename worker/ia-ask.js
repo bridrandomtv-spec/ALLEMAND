@@ -40,7 +40,7 @@ async function readTextLimited(response, maxBytes){
     while(true){
       const result = await reader.read();
       if(result.done) break;
-      if(!(result.value instanceof Uint8Array)) return null;
+      if(!(result.value instanceof Uint8Array)){ try{ await reader.cancel(); }catch(e){} return null; }
       total += result.value.byteLength;
       if(total > maxBytes){
         try{ await reader.cancel(); }catch(e){}
@@ -951,16 +951,23 @@ export default {
         }
         if(!rep) return json({ ok:false, err:'ai-unavailable' }, 503, org);
       }else if(env.CF_AI_TOKEN && env.CF_ACCOUNT_ID){
-        const response = await fetch('https://api.cloudflare.com/client/v4/accounts/' + env.CF_ACCOUNT_ID
-          + '/ai/run/@cf/meta/llama-3.1-8b-instruct', { method:'POST',
-            headers:{ 'Authorization':'Bearer ' + env.CF_AI_TOKEN, 'Content-Type':'application/json' },
-            body:JSON.stringify({ messages:msgs, max_tokens:320 }) });
-        if(!response.ok) return json({ ok:false, err:'ai-unavailable' }, 503, org);
-        const result = await response.json();
-        rep = result && result.success !== false && result.result && result.result.response || '';
-        if(!rep) return json({ ok:false, err:'ai-unavailable' }, 503, org);
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 20000);
+        try{
+          const response = await fetch('https://api.cloudflare.com/client/v4/accounts/' + env.CF_ACCOUNT_ID
+            + '/ai/run/@cf/meta/llama-3.1-8b-instruct', { method:'POST',
+              headers:{ 'Authorization':'Bearer ' + env.CF_AI_TOKEN, 'Content-Type':'application/json' },
+              body:JSON.stringify({ messages:msgs, max_tokens:320 }), signal:controller.signal });
+          if(!response.ok) return json({ ok:false, err:'ai-unavailable' }, 503, org);
+          const raw = await readTextLimited(response, 262144);
+          if(!raw) return json({ ok:false, err:'ai-unavailable' }, 503, org);
+          const result = parseJsonWithoutDuplicateKeys(raw);
+          rep = result && result.success !== false && result.result && result.result.response || '';
+        }finally{ clearTimeout(timer); }
       }else return json({ ok:false, err:'ai-not-configured' }, 503, org);
-      return json({ ok:true, rep:String(rep).trim() }, 200, org);
+      if(typeof rep !== 'string' || !rep.trim() || rep.length > 6000)
+        return json({ ok:false, err:'ai-unavailable' }, 503, org);
+      return json({ ok:true, rep:rep.trim() }, 200, org);
     }catch(e){
       return json({ ok:false, err:'ai-unavailable' }, 503, org);
     }
