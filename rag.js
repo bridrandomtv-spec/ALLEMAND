@@ -1286,12 +1286,24 @@ async function reponsePedagogique(q, meta){
         if(ped.speak === 'de') parler((out.querySelector('.rag-x') || out).textContent, 'de-DE');
         return;
       }
-      /* Aucun repli vers des shards statiques : ils ne prouvent pas les
-         droits du document. Le Worker authentifié reste l'unique chemin PDF. */
-      out.innerHTML = '<div class="rg-non">🔒 <b>البحث الوثائقي غير متاح مؤقتًا.</b><br>'
-        + 'La recherche dans les PDF sera activée uniquement via le Worker authentifié, '
-        + 'après confirmation des droits de chaque document. Les questions générales '
-        + 'restent disponibles avec le Professeur IA.</div>';
+      /* Lot 667 : le moteur local n'a pas de réponse. On délègue alors au
+         cerveau IA central ; ia.js détecte corpus_search/corpus_document,
+         transmet le JWT Supabase et laisse le Worker contrôler les droits.
+         Aucun shard ni extrait documentaire n'est lu dans le navigateur. */
+      if(typeof window.reponseIA === 'function'){
+        out.innerHTML = '<div class="rg-load">🧠 الأستاذ يراجع المصادر المسموح بها…</div>';
+        const answer = await window.reponseIA(q, { source:'rag-interface' });
+        if(answer && String(answer).trim()){
+          out.innerHTML = '<div class="rg-ok rg-ped">' + esc(String(answer)).replace(/\\n/g,'<br>') + '</div>';
+        }else{
+          out.innerHTML = '<div class="rg-non">🔒 <b>لم أتمكن من تقديم إجابة موثوقة.</b><br>'
+            + 'Aucun extrait autorisé n’a pu être récupéré. Vérifie ta connexion et tes droits d’accès, '
+            + 'puis réessaie. Aucun contenu PDF local n’est utilisé.</div>';
+        }
+        return;
+      }
+      out.innerHTML = '<div class="rg-non">🔒 <b>الأستاذ الذكي غير متاح مؤقتًا.</b><br>'
+        + 'Le moteur IA central est indisponible. Aucun contenu documentaire local ne sera consulté.</div>';
     });
   }
 
