@@ -1055,3 +1055,7 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 
 
 - Portée interne du Lot 672 renforcée : le contrôle de hash est également appliqué dans `build_artifact()`, et pas seulement dans le CLI. Un appel direct à l'API Python ne peut donc pas contourner la vérification avant le callback d'embedding. Le test vérifie que le callback n'est jamais appelé si le manifeste ne correspond pas aux octets du corpus. Commits : `88ab7e266b39447f0634087819da02b76f728c4f` et `a08993ca75559dfdc865b98e3b4993191b5c6fbf`. Attendre la CI finale.
+
+
+- Résultat de la première CI du Lot 672 sur `9c2b014a8f23fb96ae0d52fcd14b2a935738906c` : FAILURE dans un seul test. Le manifeste `[]` était correctement rejeté, mais le helper renvoyait `manifest_chunks_sha256_invalide` alors que le test attendait le code de schéma `manifest_json_invalide`. Les suites ingestion PDF (17 tests), inventaire des droits (16 tests) et audit de disponibilité PDF (11 tests) étaient vertes ; la suite vector builder avait uniquement cette assertion divergente.
+- Correction : `validate_manifest_chunks_hash` distingue maintenant explicitement un manifeste qui n'est pas un objet JSON (`manifest_json_invalide`) d'un manifeste objet dont l'empreinte manque ou diffère (`manifest_chunks_sha256_invalide`). Commit : `7ca838595597f30522c090fc1be1113330a032dc`. Cette CI FAILURE est conservée dans l'historique et n'est pas comptée comme validation.
