@@ -182,7 +182,7 @@ class VectorBuilderTests(unittest.TestCase):
         self.assertEqual(artifact["vectors"][0]["document_id"], "doc-ok")
         self.assertNotIn("doc_id", artifact["vectors"][0])
         self.assertEqual(artifact["normalization"], "l2")
-        self.assertEqual(artifact["source_chunks_sha256"], MODULE.sha256_bytes(b"chunks"))
+        self.assertEqual(artifact["source_chunks_sha256"], MODULE.sha256_bytes(chunks_bytes))
 
     def test_empty_authorized_corpus_does_not_call_embedding(self):
         corpus, manifest = fixture()
