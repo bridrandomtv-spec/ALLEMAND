@@ -1226,6 +1226,27 @@ test('le RAG annule la lecture dès que le corpus dépasse sa limite en octets',
   assert.equal(h.messages,null);
 });
 
+test('le RAG annule aussi un flux dont Content-Length dépasse la limite avant lecture', async () => {
+  let cancelled = false;
+  const body = new ReadableStream({
+    start(controller){ controller.enqueue(new TextEncoder().encode('{"chunks":[]}')); },
+    cancel(){ cancelled = true; }
+  });
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusDocumentResponse:new Response(body, {
+      status:200, headers:{ 'Content-Type':'application/json', 'Content-Length':'1500001' }
+    })
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(cancelled,true,'le flux déclaré trop volumineux doit être annulé sans lecture');
+  assert.equal(h.messages,null);
+});
+
 test('le RAG refuse les références de page et le texte de chunk invalides', async () => {
   const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
   for (const invalid of [
