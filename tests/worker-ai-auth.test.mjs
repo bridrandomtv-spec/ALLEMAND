@@ -1277,7 +1277,8 @@ test('un embedding de requête malformé ou nul conserve le classement BM25', as
   const invalidEmbeddings = [
     [1, 0],
     new Array(256).fill(0),
-    [NaN, ...new Array(255).fill(0)]
+    [NaN, ...new Array(255).fill(0)],
+    [Number.MAX_VALUE, ...new Array(255).fill(0)]
   ];
   for(const invalidEmbedding of invalidEmbeddings){
     const h = harness({
