@@ -340,3 +340,32 @@ try {
   console.log('::error::RAG page marker · ' + e.message);
   process.exitCode = 1;
 }
+
+/* Lot 660 : les demandes d'exemples et d'exercices d'une règle verrouillée
+   doivent être bloquées par le garde local, même si REGLES ne connaît pas
+   encore l'alias et avant tout appel au Worker. */
+const priorAccess660 = globalThis.ACCESS;
+try {
+  delete globalThis.ACCESS;
+  const lockedRulePrompts = [
+    'Nomen-Verb-Verbindungen Übungen',
+    'Passiversatzformen Beispiele',
+    'Genitiv practice',
+    'Arbeitsblatt zu Wechselpräpositionen',
+    'التحويل الاسمي تمارين',
+    'تطبيقات على المبني للمجهول'
+  ];
+  for (const question of lockedRulePrompts) {
+    const result = await fn(question);
+    if (!result || result.locked !== true) {
+      throw new Error('demande pédagogique verrouillée révélée sans ACCESS : ' + question);
+    }
+  }
+  console.log('✅ RAG lock Lot 660 : exemples, exercices, pratiques et feuilles de travail refusés sans ACCESS');
+} catch (e) {
+  console.log('::error::RAG lock Lot 660 · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  if (priorAccess660 === undefined) delete globalThis.ACCESS;
+  else globalThis.ACCESS = priorAccess660;
+}
