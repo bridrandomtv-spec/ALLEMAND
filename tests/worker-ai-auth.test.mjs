@@ -238,6 +238,10 @@ test('accepte un utilisateur Auth valide mais ne transmet aucun contexte client 
   assert.equal(h.calls[0].init.headers.apikey, 'sb_publishable_test');
   assert.equal(h.calls[0].init.headers.Authorization, 'Bearer ' + TOKEN);
   assert.equal(h.messages[1].content, 'Propose une méthode de révision efficace.');
+  assert.equal(h.calls.some(x => x.url.includes('/rest/v1/subscriptions')), false,
+    'une question générale ne doit pas déclencher le contrôle d’abonnement');
+  assert.equal(h.aiCalls.filter(x => x.model !== '@cf/google/embeddinggemma-2').length, 1,
+    'le modèle doit répondre à un utilisateur authentifié sans abonnement');
   assert.doesNotMatch(h.messages[1].content, /page 42|NON AUTHENTIFIÉ|CONTEXTE VÉRIFIÉ/);
 });
 
