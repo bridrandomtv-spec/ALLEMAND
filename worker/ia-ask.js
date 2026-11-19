@@ -775,7 +775,7 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
                  && queryVector.every(Number.isFinite)){
                 const norm = vector => Math.sqrt(vector.reduce((sum,value) => sum + value * value,0));
                 const queryNorm = norm(queryVector);
-                if(queryNorm > 0){
+                if(Number.isFinite(queryNorm) && queryNorm > 0){
                   const vectorRanked = [];
                   for(const [chunkId,vector] of vectorById){
                     const vectorNorm = norm(vector);
