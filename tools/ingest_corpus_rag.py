@@ -131,8 +131,11 @@ def load_rights_inventory(inventory_path):
     path = Path(inventory_path)
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
+        fieldnames = reader.fieldnames or []
+        if len(fieldnames) != len(set(fieldnames)):
+            raise ValueError("entetes_inventaire_droits_dupliquees")
         required = {"pdf_path", "expected_companion_metadata", "rights_confirmed", "license"}
-        if not required.issubset(set(reader.fieldnames or [])):
+        if not required.issubset(set(fieldnames)):
             raise ValueError("colonnes_inventaire_droits_invalides")
         rows = {}
         for row in reader:
