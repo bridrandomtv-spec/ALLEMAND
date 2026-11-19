@@ -150,12 +150,36 @@ class VectorBuilderTests(unittest.TestCase):
             self.assertEqual(chunks_path.read_bytes(), original_chunks)
             api.assert_not_called()
 
+    def test_cli_rejects_stale_manifest_before_any_cloudflare_embedding(self):
+        corpus, manifest = fixture()
+        with tempfile.TemporaryDirectory() as tmp:
+            chunks_path, manifest_path = Path(tmp)/"chunks.json", Path(tmp)/"manifest.json"
+            output = Path(tmp)/"vectors.json"
+            chunks_raw = json.dumps(corpus).encode("utf-8")
+            manifest["chunks_sha256"] = "0" * 64
+            chunks_path.write_bytes(chunks_raw)
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            with patch.dict(MODULE.os.environ, {
+                "CLOUDFLARE_ACCOUNT_ID": "a" * 32,
+                "CLOUDFLARE_API_TOKEN": "test-token",
+            }):
+                with patch.object(MODULE, "call_cloudflare") as api:
+                    code = MODULE.main([
+                        "--chunks", str(chunks_path), "--manifest", str(manifest_path),
+                        "--output", str(output), "--execute", "--confirm-cloudflare-billing"
+                    ])
+            self.assertEqual(code, 1)
+            api.assert_not_called()
+            self.assertFalse(output.exists())
+
     def test_default_cli_is_dry_run_and_never_calls_api(self):
         corpus, manifest = fixture()
         with tempfile.TemporaryDirectory() as tmp:
             chunks_path, manifest_path = Path(tmp)/"chunks.json", Path(tmp)/"manifest.json"
             output = Path(tmp)/"vectors.json"
-            chunks_path.write_text(json.dumps(corpus), encoding="utf-8")
+            chunks_raw = json.dumps(corpus).encode("utf-8")
+            manifest["chunks_sha256"] = MODULE.sha256_bytes(chunks_raw)
+            chunks_path.write_bytes(chunks_raw)
             manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
             with patch.object(MODULE, "call_cloudflare") as api:
                 code = MODULE.main([
