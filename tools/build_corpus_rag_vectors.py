@@ -220,6 +220,8 @@ def main(argv=None):
         chunks_bytes, manifest_bytes = chunks_path.read_bytes(), manifest_path.read_bytes()
         corpus = json.loads(chunks_bytes.decode("utf-8"))
         manifest = json.loads(manifest_bytes.decode("utf-8"))
+        if not isinstance(manifest.get("chunks_sha256"), str) or manifest["chunks_sha256"] != sha256_bytes(chunks_bytes):
+            raise ValueError("manifest_chunks_sha256_invalide")
         if not 1 <= args.batch_size <= MAX_BATCH_SIZE:
             raise ValueError("taille_lot_invalide")
         chunks = eligible_chunks(corpus, manifest)
