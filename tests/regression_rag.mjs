@@ -354,7 +354,11 @@ try {
     'Arbeitsblatt zu Wechselpräpositionen',
     'Nomen-Verb-Verbindungen Übungsblatt',
     'التحويل الاسمي تمارين',
-    'تطبيقات على المبني للمجهول'
+    'تطبيقات على المبني للمجهول',
+    'Perfekt Sätze',
+    'Genitiv rules',
+    'Règles du Genitiv',
+    'جدول Dativ'
   ];
   for (const question of lockedRulePrompts) {
     const result = await fn(question);
