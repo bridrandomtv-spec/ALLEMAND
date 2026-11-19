@@ -183,7 +183,7 @@ function harness(options = {}){
   const env = {
     SUPABASE_URL:'https://project.supabase.co',
     SUPABASE_ANON_KEY:'sb_publishable_test',
-    AI:{
+    ...(!options.disableAiBinding ? { AI:{
       async run(model, input){
         aiCalls.push({ model, input });
         if(model === '@cf/google/embeddinggemma-2'){
@@ -193,7 +193,8 @@ function harness(options = {}){
         messages = input.messages;
         return options.modelResponse || { response:'Réponse pédagogique.' };
       }
-    },
+    } } : {}),
+    ...(options.cfAiToken ? { CF_AI_TOKEN:'test-token', CF_ACCOUNT_ID:'account-123' } : {}),
     RAG_VECTOR_ENABLED:options.ragVectorEnabled ? 'true' : 'false'
   };
   return { context, env, calls, aiCalls, get messages(){ return messages; } };
@@ -206,6 +207,23 @@ function request(body, token = TOKEN){
     method:'POST', headers, body:typeof body === 'string' ? body : JSON.stringify(body)
   });
 }
+
+test('le chemin Cloudflare AI direct annule une réponse dépassant sa limite en octets', async () => {
+  let cancelled = false;
+  const oversizedBody = new ReadableStream({
+    start(controller){ controller.enqueue(new Uint8Array(262145)); },
+    cancel(){ cancelled = true; }
+  });
+  const h = harness({
+    disableAiBinding:true,
+    cfAiToken:true,
+    cloudflareResponse:new Response(oversizedBody,{status:200})
+  });
+  const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
+  assert.equal(response.status,503);
+  assert.deepEqual(await response.json(),{ ok:false, err:'ai-unavailable' });
+  assert.equal(cancelled,true);
+});
 
 test('le Worker refuse une réponse du modèle non textuelle ou hors limite', async () => {
   for(const modelResponse of [
