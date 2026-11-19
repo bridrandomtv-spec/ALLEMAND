@@ -238,6 +238,41 @@ test('le Worker refuse une réponse du modèle non textuelle ou hors limite', as
   }
 });
 
+test('annule un corps entrant déclaré trop volumineux avant toute lecture', async () => {
+  let cancelled = false;
+  let reads = 0;
+  const body = new ReadableStream({
+    pull(controller){ reads++; controller.enqueue(new TextEncoder().encode('{"q":"Explique le Perfekt."}')); },
+    cancel(){ cancelled = true; }
+  });
+  const headers = new Headers({ 'Content-Type':'application/json', Origin:ORIGIN, Authorization:'Bearer ' + TOKEN, 'Content-Length':'8193' });
+  const req = new Request('https://teacher.example/ask', { method:'POST', headers, body, duplex:'half' });
+  const h = harness();
+  const response = await h.context.__worker.fetch(req, h.env);
+  assert.equal(response.status,413);
+  assert.equal((await response.json()).err,'body-too-large');
+  assert.equal(cancelled,true);
+  assert.equal(reads,0);
+  assert.equal(h.aiCalls.length,0);
+});
+
+test('refuse un corps entrant contenant une séquence UTF-8 invalide', async () => {
+  const body = new ReadableStream({
+    start(controller){ controller.enqueue(new Uint8Array([0x7b,0x22,0x71,0x22,0x3a,0x22,0xc3,0x28,0x22,0x7d])); controller.close(); }
+  });
+  const req = new Request('https://teacher.example/ask', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', Origin:ORIGIN, Authorization:'Bearer ' + TOKEN },
+    body,
+    duplex:'half'
+  });
+  const h = harness();
+  const response = await h.context.__worker.fetch(req, h.env);
+  assert.equal(response.status,400);
+  assert.equal((await response.json()).err,'invalid-body');
+  assert.equal(h.aiCalls.length,0);
+});
+
 test('refuse un corps de requête Worker contenant une clé JSON dupliquée après authentification', async () => {
   const h = harness();
   const response = await h.context.__worker.fetch(
