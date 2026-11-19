@@ -1202,3 +1202,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - `fetchAuthorizedBookPages()` traite au plus cinq pages séquentiellement ; chaque lecture de page a son propre délai de 5 s. Le pire cumul théorique est donc de 25 s avant échec/succès du lot. Le comportement reste atomique : une page manquante ou inaccessible empêche la transmission d’un contexte partiel. Point de performance à traiter dans un lot séparé, sans affaiblir RLS ni les contrôles de contenu.
 - CI principale du HEAD précédent toujours en état GitHub `pending`, sans job retourné par l’API GitHub ; les trois validations PostgreSQL isolées et le check de build Cloudflare du HEAD `91863b5` sont réussis. Ce statut ne prouve ni échec de test ni validation complète ; diagnostic de planification GitHub encore ouvert.
 - Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion de PDF, aucun déploiement. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 reste ouverte, en brouillon et non fusionnée.
+
+
+## Lot 688 — tests d’intégrité atomique des lots de pages RLS
+
+- Deux tests de régression ont été ajoutés dans `tests/worker-ai-auth.test.mjs` : (1) un lot 2AS contenant deux pages échoue en `403 content-locked` si la seconde page ne retourne aucune ligne RLS, sans transmettre la première page au modèle ; (2) une liste de pages contenant un doublon est rejetée en `400 invalid-resource` avant toute lecture RLS.
+- Ces tests renforcent explicitement l’invariant « toutes les pages demandées ou aucune » et le rejet des sélecteurs dupliqués. Ils n’appellent pas Workers AI réel et ne touchent pas Supabase ; les réponses RLS sont simulées dans le harness autonome.
+- Commit de tests : `1bde404`. Exécution CI associée à vérifier ; aucun résultat de test n’est revendiqué avant la fin du workflow sur le HEAD correspondant.
+- Aucun changement de logique Worker, de droits d’accès ou de configuration. Aucun OCR, embedding, vectorisation, ingestion réelle ou déploiement. `main` inchangée ; PR #23 ouverte, en brouillon et non fusionnée.
