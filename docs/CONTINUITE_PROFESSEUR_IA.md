@@ -1026,3 +1026,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Aucun changement de logique Worker, d’accès aux contenus, de configuration Supabase ou de droits n’est introduit dans ce lot ; il s’agit d’une protection de non-régression du contrat d’accès demandé.
 - Commit du test : `1161ae004e3b493d2c2daad7ccb985d5be4d8786`. CI de ce nouveau HEAD à vérifier avant validation du Lot 670.
 - Rappel permanent : le Professeur IA général est accessible à tout utilisateur authentifié, avec ou sans abonnement ; les contenus pédagogiques verrouillés restent soumis à leurs contrôles dédiés. Aucun OCR, aucune ingestion réelle de PDF sans droits confirmés.
+
+
+### Lot 671 — rejet des en-têtes CSV ambigus dans l’inventaire des droits — 19/11/2026
+- Audit complémentaire des deux chemins qui consomment l’inventaire humain : `tools/validate_pdf_rights_inventory.py` et `tools/ingest_corpus_rag.py`.
+- Défaut identifié : `csv.DictReader` accepte des noms de colonnes dupliqués et conserve silencieusement une seule valeur pour la clé répétée. Un CSV pouvait donc afficher deux colonnes `rights_confirmed` contradictoires, tandis que le programme n'en lisait qu'une. Pour une preuve de droits, une telle ambiguïté doit être bloquante.
+- Correctif : le validateur retourne désormais une erreur `entetes_csv_dupliquees` avant toute approbation ; le chargeur d'ingestion lève `entetes_inventaire_droits_dupliquees` avant toute écriture d'artefact. Les colonnes requises et les contrôles précédents restent inchangés.
+- Régressions ajoutées dans `tests/test_validate_pdf_rights_inventory.py` et `tests/test_ingest_corpus_rag.py`, avec deux colonnes `rights_confirmed` contradictoires. Le test d'ingestion vérifie qu'aucun artefact n'est écrit.
+- Commits du Lot 671 : `9913fe809629b7f7cb46640914e4280064beb962`, `1bc5386d188491902ac9f7d53883f55916c000b4`, `5a3e350c6ce9068d11945879ccf9a47ab02ec747`, `759aed4357684bd48439a4d0d5f84ee1001f5fcd`.
+- Les lots 670 et 671 doivent être considérés comme non validés tant que la CI complète du HEAD qui les contient n'est pas terminée avec succès.
+- Aucun PDF n'a été OCRisé ou indexé ; aucune ligne de droits n'a été confirmée par ce lot. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucune modification de `main`, aucune fusion et aucun déploiement.
