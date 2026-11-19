@@ -140,8 +140,8 @@ class PdfRightsInventoryTests(unittest.TestCase):
     def test_duplicate_csv_headers_are_rejected_before_approval(self):
         self.write_companion("cc_by", True)
         self.csv_path.write_text(
-            "pdf_path,expected_companion_metadata,rights_confirmed,rights_confirmed,license,review_status\\n"
-            "docs/lesson.pdf,docs/_lesson.json,false,true,cc_by,confirmé\\n",
+            "pdf_path,expected_companion_metadata,rights_confirmed,rights_confirmed,license,review_status\n"
+            "docs/lesson.pdf,docs/_lesson.json,false,true,cc_by,confirmé\n",
             encoding="utf-8",
         )
         result = validate_inventory(self.csv_path, self.root)
