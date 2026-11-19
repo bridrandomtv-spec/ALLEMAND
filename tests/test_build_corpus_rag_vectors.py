@@ -107,6 +107,12 @@ class VectorBuilderTests(unittest.TestCase):
                 {"index": 0, "embedding": a}, {"index": 0, "embedding": b}
             ]}, 2)
 
+    def test_manifest_hash_guard_distinguishes_non_object_json(self):
+        with self.assertRaisesRegex(ValueError, "manifest_json_invalide"):
+            MODULE.validate_manifest_chunks_hash(b"chunks", [])
+        with self.assertRaisesRegex(ValueError, "manifest_chunks_sha256_invalide"):
+            MODULE.validate_manifest_chunks_hash(b"chunks", {})
+
     def test_build_artifact_rejects_invalid_manifest_json_before_embedding(self):
         called = []
         with self.assertRaisesRegex(ValueError, "manifest_json_invalide"):
