@@ -848,6 +848,36 @@ test('le Worker récupère toutes les pages gratuites d’une séance 2AS via RL
   assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/lesson_content')).length, 2);
 });
 
+test('un lot de pages 2AS échoue entièrement si une seule page manque dans RLS', async () => {
+  const h = harness({ lessonContentByPage:{
+    '5':[{ titre:'L1 p5', body:'Ich heiße Amira.' }],
+    '6':[]
+  }});
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 1 en 2AS.',
+    resource:{ type:'book_pages', pages:[5,6], level:'2AS' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 403);
+  assert.equal(payload.err, 'content-locked');
+  assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/lesson_content')).length, 2);
+  assert.equal(h.messages, null);
+  assert.equal(h.aiCalls.length, 0);
+});
+
+test('un lot de pages 2AS rejette les doublons avant toute lecture RLS', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 1 en 2AS.',
+    resource:{ type:'book_pages', pages:[5,5], level:'2AS' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 400);
+  assert.equal(payload.err, 'invalid-resource');
+  assert.equal(h.calls.some(x => x.url.includes('/rest/v1/lesson_content')), false);
+  assert.equal(h.messages, null);
+});
+
 test('le Worker peut transmettre une page gratuite 2AS via RLS pour une séance de l’unité 1', async () => {
   const h = harness({ lessonContent:[{ titre:'L1 p5 — Guten Tag', body:'Ich heiße Amira. Ich komme aus Algerien.' }] });
   const response = await h.context.__worker.fetch(request({
