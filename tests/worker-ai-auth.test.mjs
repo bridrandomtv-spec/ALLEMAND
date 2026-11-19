@@ -1023,6 +1023,43 @@ test('la recherche vectorielle reste inactive sans drapeau et ne déclenche aucu
   assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
 });
 
+test('le Worker refuse les clés de droits dupliquées dans le corpus JSON', async () => {
+  const id = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  const raw = `{"version":1,"documents":[{"id":"${id}","title":"Document","license":"cc_by","rights_confirmed":false,"rights_confirmed":true,"chunk_count":1}],"chunks":[{"id":"chunk-1","document_id":"${id}","page":1,"text":"Texte pédagogique."}]}`;
+  const manifest = JSON.stringify({
+    version:1, document_count:1, chunk_count:1,
+    chunks_sha256:createHash('sha256').update(raw,'utf8').digest('hex')
+  });
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusDocumentResponse:new Response(raw,{status:200}),
+    corpusManifestResponse:new Response(manifest,{status:200})
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(h.messages,null);
+});
+
+test('le Worker refuse les clés dupliquées dans le manifeste RAG', async () => {
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusManifestResponse:new Response(
+      '{"version":1,"chunks_sha256":"' + '0'.repeat(64)
+        + '","chunks_sha256":"' + '0'.repeat(64) + '"}',
+      {status:200}
+    )
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(h.messages,null);
+});
+
 test('le RAG refuse deux documents portant le même identifiant', async () => {
   const h = harness({
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
