@@ -934,3 +934,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commits : Worker c64e17b0568fc87cdc6672894b2d2da4d18b2a4c ; tests c86943c20c002da56bae65d6d80cac8817ebc662.
 - Validation CI : les workflows ont été déclenchés sur le commit de tests c86943c20c002da56bae65d6d80cac8817ebc662. À l'instant de cette mise à jour, le workflow principal 44587904122 est pending et les trois workflows PostgreSQL isolés sont in_progress. Aucun résultat de test n'est anticipé ; mettre à jour ce statut après achèvement.
 - Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de main, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 664 — un sélecteur gratuit ne prouve pas l'accès à une séance — 19/11/2026
+- Audit complémentaire du garde Worker : la condition historique laissait passer toute mention de séance 1 ou 2 dès qu'un objet resource quelconque était présent. Cela pouvait laisser une demande telle que « Explain Perfekt in lesson 1 » atteindre le modèle avec un sélecteur free_summary ou free_exercise_bank, alors que ces sélecteurs ne prouvent aucun droit sur une séance.
+- Correction : les ressources free_summary et free_exercise_bank ne peuvent plus neutraliser une demande explicitement rattachée à une séance numérotée. Le contrôle d'abonnement est alors exécuté avant le chargement du résumé ou de la banque. Les séances gratuites 3AS 1–2 restent sur leur sélecteur dédié free_unit_lesson, strictement limité à l'unité 1 et aux séances 1–2 ; les ressources book_page/book_pages et unit_lesson continuent de suivre leurs contrôles RLS existants.
+- Régressions ajoutées : une demande de règle verrouillée formulée comme « Explain Perfekt in lesson 1 » avec free_summary et « Genitiv exercises lesson 1 » avec free_exercise_bank doit être refusée pour un compte sans abonnement, avant toute lecture documentaire et tout appel au modèle.
+- Commit Worker : 8fe05acd7497b20919e964b8bdd44ba45fa12df0. Les tests de ce lot sont ajoutés ensuite dans le commit de tests final pour déclencher une CI sur un HEAD complet.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de main, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
