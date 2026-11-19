@@ -170,8 +170,8 @@ class PdfIngestionTests(unittest.TestCase):
             source.mkdir(parents=True)
             inventory = source / "rights.csv"
             inventory.write_text(
-                "pdf_path,expected_companion_metadata,rights_confirmed,rights_confirmed,license\\n"
-                "lesson.pdf,_lesson.json,false,true,cc_by\\n",
+                "pdf_path,expected_companion_metadata,rights_confirmed,rights_confirmed,license\n"
+                "lesson.pdf,_lesson.json,false,true,cc_by\n",
                 encoding="utf-8",
             )
             with self.assertRaisesRegex(ValueError, "entetes_inventaire_droits_dupliquees"):
