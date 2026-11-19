@@ -110,8 +110,8 @@ function normalizeLockText(value){
 function isLockedContentQuestion(question, resource){
   const q = String(question || '').toLowerCase();
   const normalizedQuestion = normalizeLockText(q);
-  const unitMatch = q.match(/(?:الوحدة|وحدة|unit|unité|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
-  const lessonMatch = q.match(/(?:الحصة|حصه|séance|seance|session|lesson|leçon|درس)\s*[:#-]?\s*(\d{1,2})/i);
+  const unitMatch = normalizedQuestion.match(/(?:الوحدة|وحدة|unit|unite|lektion|u)\s*[:#-]?\s*(\d{1,2})/i);
+  const lessonMatch = normalizedQuestion.match(/(?:الحصة|حصه|seance|session|lesson|lecon|درس)\s*[:#-]?\s*(\d{1,2})/i);
   let unit = unitMatch ? Number(unitMatch[1]) : null;
   const lesson = lessonMatch ? Number(lessonMatch[1]) : null;
   if(lesson !== null && !resource) return true;
