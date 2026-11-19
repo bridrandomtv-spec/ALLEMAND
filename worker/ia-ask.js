@@ -554,7 +554,8 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
          || typeof chunk.text !== 'string' || !chunk.text.trim() || chunk.text.length > 20000)
         return { ok:false, status:503, error:'access-unavailable' };
       const owner = documentsById.get(chunk.document_id);
-      if(Number.isInteger(owner.page_count) && (owner.page_count < 1 || chunk.page > owner.page_count))
+      if(owner.page_count !== undefined
+         && (!Number.isInteger(owner.page_count) || owner.page_count < 1 || chunk.page > owner.page_count))
         return { ok:false, status:503, error:'access-unavailable' };
       if(chunk.part !== undefined && (!Number.isInteger(chunk.part) || chunk.part < 0))
         return { ok:false, status:503, error:'access-unavailable' };
