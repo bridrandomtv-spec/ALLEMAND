@@ -1073,3 +1073,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 
 - Première CI du Lot 673 sur le commit intermédiaire `8f442a537dbd4e8ba66e55136319615312270368` : échec d'une assertion de test uniquement. Le test nominal comparait encore `source_chunks_sha256` au hash de l'ancien fixture `b"chunks"`, alors qu'il utilise maintenant les octets JSON réels du corpus pour satisfaire le nouveau contrôle de provenance. Les autres tests de la suite vector builder, les 17 tests d'ingestion, les 16 tests de droits et les 11 tests d'audit PDF ont réussi.
 - Correction de l'assertion pour comparer avec `chunks_bytes` : commit `2888472bb0b5d44420e0f212b46125ba5465c8e3`. Cet échec intermédiaire est conservé dans le suivi et n'est pas compté comme validation. Attendre la CI du HEAD final `2f768c0b1754946e7215353b0c8675da893b2e1f` ou de son successeur.
+
+## Lot 674 — rejet des clés JSON dupliquées dans les entrées RAG
+
+- Risque identifié : le parseur JSON standard de Python accepte les clés dupliquées dans un même objet et conserve silencieusement la dernière valeur. Un fichier de métadonnées pouvait donc contenir deux valeurs contradictoires pour `droits_confirmes` ou `license`, tandis qu'un manifeste pouvait présenter des champs de contrôle ambigus.
+- `tools/build_corpus_rag_vectors.py` utilise maintenant un parseur strict avec `object_pairs_hook` : toute clé répétée, y compris dans un objet imbriqué, provoque un refus explicite `cle_json_duplique:<clé>`. Ce contrôle s'applique au corpus et au manifeste, en CLI comme dans `build_artifact()`.
+- `tools/ingest_corpus_rag.py` applique le même principe aux fichiers compagnons JSON. Une métadonnée ambiguë est traitée comme absente/invalide et ne peut jamais autoriser l'indexation.
+- Tests ajoutés : doublon de `chunks_sha256` dans le manifeste avant callback d'embedding, doublon imbriqué de `rights_confirmed`, et refus d'un compagnon PDF présentant deux valeurs contradictoires.
+- Aucun OCR, aucune ingestion réelle, aucun embedding, aucun appel Cloudflare et aucune modification Supabase n'ont été exécutés.
+- Validation CI de ce lot : en attente sur le HEAD de branche après les commits de code et de tests.
