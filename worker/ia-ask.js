@@ -115,6 +115,8 @@ function isLockedContentQuestion(question, resource){
   let unit = unitMatch ? Number(unitMatch[1]) : null;
   const lesson = lessonMatch ? Number(lessonMatch[1]) : null;
   if(lesson !== null && !resource) return true;
+  /* Un résumé ou la banque générale ne peut pas servir de preuve d'accès à une séance. */
+  if(lesson !== null && resource && ['free_summary','free_exercise_bank'].includes(resource.type)) return true;
   /* Les unités 3AS visibles 10–19 correspondent aux clés pédagogiques 1–10.
      Seul le sélecteur gratuit borné peut lever l'ambiguïté pour l'unité visible 10. */
   if(resource && resource.level === '3AS' && unit === 10
