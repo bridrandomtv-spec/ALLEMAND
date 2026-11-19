@@ -1172,3 +1172,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commits : Worker `47290b1`, test `fcca7f1`.
 - Audit associé : authentification Supabase et lecture d’abonnement ont déjà un délai maximal de 5 secondes avec `AbortController`, une lecture plafonnée à 65 536 octets et un échec fermé sur erreur/JSON invalide.
 - Aucun appel d’embedding, OCR ou ingestion réelle. Aucun changement Supabase, Auth, RLS, abonnement ou paiement. `main` reste inchangée ; PR #23 non fusionnée et aucun déploiement.
+
+## Lot 685 — validation stricte du corps des requêtes entrantes
+
+- `readLimitedBody()` valide maintenant strictement `Content-Length` : valeur décimale sûre obligatoire lorsqu’il est présent ; dépassement de 8 192 octets rejeté en 413 avec annulation du flux avant lecture.
+- Chaque fragment du flux doit être un `Uint8Array`. Le lecteur est annulé sur dépassement ou erreur, puis son verrou est libéré dans `finally`.
+- Décodage UTF-8 désormais fatal : les séquences invalides sont rejetées en 400 (`invalid-body`) avant le parsing JSON et avant tout appel au modèle.
+- Tests ajoutés pour l’annulation d’un corps déclaré à 8 193 octets sans lecture et le rejet d’un corps contenant une séquence UTF-8 invalide.
+- Commits : Worker `0393438`, tests `5c7428b`.
+- Aucun changement Supabase/Auth/RLS/schéma/paiement, aucun OCR/embedding/ingestion réelle. `main` inchangée ; PR #23 ouverte, non fusionnée ; aucun déploiement.
