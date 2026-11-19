@@ -965,3 +965,15 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commits : Worker f68912cffca227546342c02ee897de3efab2f2dc ; tests 883bd977f15110e4c8c5240b1c1ed1c45de6f35b.
 - Validation : workflow principal 44591681987 sur le HEAD 883bd977f15110e4c8c5240b1c1ed1c45de6f35b est pending au moment de cette note ; tests non déclarés validés avant la fin du workflow.
 - Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucune modification de main, aucune fusion, aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 666 — fermeture du repli RAG documentaire local — 19/11/2026
+- L'audit du parcours `🔎 اسأل المنصة` confirme que les questions passent d'abord par `reponsePedagogique()`, puis, si aucune réponse pédagogique n'est produite, le formulaire appelait directement `cherche(q)` dans les shards statiques du navigateur.
+- Ce chemin local ne vérifie ni les droits du document ni son entitlement et ne peut pas s'appuyer sur le contrôle serveur du Worker. Le fait que les shards soient actuellement vides réduit le risque présent, mais ne constitue pas une protection durable si des chunks sont publiés ultérieurement.
+- Correctif : `cherche()` s'abstient désormais systématiquement. Le formulaire RAG affiche une indisponibilité documentaire explicite au lieu de lire un shard local. La recherche PDF doit passer exclusivement par le Worker authentifié, qui valide le manifeste, `rights_confirmed === true` et une licence autorisée avant de transmettre un extrait au modèle.
+- Une régression a été ajoutée dans `tests/regression_rag.mjs` : elle fournit une fixture de shard contenant volontairement un extrait marqué non autorisé et exige que la recherche locale s'abstienne.
+- Commits Lot 666 : `b4041336f430d5a38344c6c51710db6870f5a797` (fermeture du chemin local) et `7370a4c6761f9875e94d96be55e942b463c0b3de` (test de régression).
+- CI du HEAD `7370a4c6761f9875e94d96be55e942b463c0b3de` : workflow principal `44593318470` et trois workflows PostgreSQL `44593318529`, `44593318537`, `44593318548` lancés et encore `in_progress` au moment de cette note. Aucun test du Lot 666 n'est déclaré réussi avant la fin du workflow principal.
+- Limite fonctionnelle assumée : la recherche RAG documentaire dans l'interface est temporairement désactivée tant que son raccordement au Worker authentifié n'est pas réalisé. Le Worker possède déjà un chemin `corpus_search` avec contrôle de licence/droits ; le prochain lot devra raccorder l'interface à ce chemin sans réintroduire de lecture statique locale.
+- Corpus PDF : les droits restent à confirmer (0/293 selon le dernier audit), OCR non exécuté et indexation/embeddings réels toujours absents. Aucun document n'est autorisé par défaut.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte, en brouillon et non fusionnée.
