@@ -1112,3 +1112,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Aucun changement du Worker de production : le comportement de repli existant est désormais réellement testé sur un index conforme.
 - Commit test : 13d0f39cce595e431417c86a24693ce5b2a6feae. CI complète du HEAD suivant requise.
 - Aucun appel Workers AI réel, aucune vectorisation, OCR, ingestion ou déploiement. PR #23 non fusionnée ; aucune modification de main ni de Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 678 — prouver que le test de panne atteint réellement l'embedding
+
+- Relecture du test `une panne des embeddings conserve le repli BM25` après le Lot 677 : le fixture est désormais complet, mais l'assertion vérifiait seulement la réponse finale. Une régression dans le harness ou dans le chemin d'activation aurait pu faire réussir le test sans atteindre `env.AI.run()`.
+- Ajout d'une assertion explicite sur `h.aiCalls` pour exiger l'appel au modèle `@cf/google/embeddinggemma-2` avant de conclure que BM25 a assuré le repli après l'exception simulée.
+- Ce lot renforce uniquement la preuve du test ; aucun changement de comportement Worker en production.
+- Commit du test : `aea302145442e6bac62996051cb9acef214f54ba`. Validation CI complète du HEAD final requise.
+- Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
