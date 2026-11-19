@@ -1095,3 +1095,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Tests ajoutés : manifeste source contradictoire et index incomplet doivent éviter tout appel d'embedding et utiliser le classement lexical ; les tests hybrides existants continuent de vérifier l'exclusion des documents non autorisés.
 - Aucun appel Workers AI réel, aucune vectorisation, aucune ingestion, aucun OCR et aucune modification Supabase n'ont été exécutés.
 - Validation CI de ce lot : en attente sur le HEAD actualisé.
+
+## Lot 676 — tester réellement le chemin vectoriel complet et son repli
+
+- La revue après le Lot 675 a révélé un faux sentiment de couverture dans le test historique « une panne des embeddings conserve le repli BM25 » : son fixture ne contenait qu'un vecteur alors que le corpus de test comporte deux chunks autorisés. Depuis l'exigence de couverture complète du Lot 675, le Worker rejetait donc l'index avant d'appeler le modèle d'embedding ; le test passait sans exercer la panne simulée.
+- Le fixture du test de panne contient maintenant les deux vecteurs requis. Il atteint donc bien l'appel env.AI.run() de l'embedding de requête, déclenche l'exception simulée, puis vérifie que le classement BM25 permet toujours de répondre.
+- Ajout d'un test nominal complémentaire avec un index couvrant les deux chunks autorisés : il vérifie que le Worker appelle effectivement le modèle d'embedding de requête et poursuit jusqu'à la réponse pédagogique.
+- Ce lot corrige la couverture des tests, sans changement de comportement de production. Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion ni déploiement.
+- Commit test : 3bf99f91652c43fb087cc3dacfe5b9281070f47f. La CI complète du nouveau HEAD doit confirmer ce lot.
+- Contraintes inchangées : PR #23 reste non fusionnée ; aucune modification de main, Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun déploiement.
