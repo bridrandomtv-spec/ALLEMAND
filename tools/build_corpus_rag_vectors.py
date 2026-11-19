@@ -188,6 +188,13 @@ def build_artifact(chunks, chunks_bytes, manifest_bytes, embed_batch=None, batch
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError("manifest_json_invalide") from exc
     validate_manifest_chunks_hash(chunks_bytes, source_manifest)
+    try:
+        source_corpus = json.loads(chunks_bytes.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("corpus_json_invalide") from exc
+    approved_source_chunks = eligible_chunks(source_corpus, source_manifest)
+    if chunks != approved_source_chunks:
+        raise ValueError("chunks_non_conformes_au_corpus_autorise")
     if not 1 <= batch_size <= MAX_BATCH_SIZE:
         raise ValueError("taille_lot_invalide")
     vectors = []
