@@ -190,3 +190,43 @@ try {
   else globalThis.ACCESS = priorAccess650;
   delete globalThis.uniteActive;
 }
+
+/* Lot 654 : les anciens fichiers buch_lN.json contiennent des unités entières.
+   Le lecteur de texte/dialogue ne doit pas les charger sans entitlement backend,
+   même si la question ne nomme pas explicitement « unité » ou « Lektion ». */
+const priorAccess654 = globalThis.ACCESS;
+try {
+  delete globalThis.ACCESS;
+  const noAccessBook = await fn('lis le texte 2');
+  if (!noAccessBook || noAccessBook.locked !== true) {
+    throw new Error('texte de l’unité 2 révélé sans ACCESS');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ ok:false, src:'backend' }),
+    paywall: () => {}
+  };
+  const freeBook = await fn('lis le dialogue 2');
+  if (!freeBook || freeBook.locked !== true) {
+    throw new Error('dialogue de l’unité 2 révélé à un compte gratuit');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ ok:true, src:'backend' }),
+    paywall: () => {}
+  };
+  const paidBook = await fn('lis le texte 2');
+  const paidText = typeof paidBook === 'string' ? paidBook : (paidBook && paidBook.html) || '';
+  if (!paidBook || paidBook.locked === true || !paidText.includes('Lektion 2')) {
+    throw new Error('un abonné validé ne récupère plus le texte autorisé de l’unité 2');
+  }
+  console.log('✅ RAG lock : texte/dialogue depuis buch_lN refusés sans entitlement backend');
+} catch (e) {
+  console.log('::error::RAG lock buch_lN · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  if (priorAccess654 === undefined) delete globalThis.ACCESS;
+  else globalThis.ACCESS = priorAccess654;
+}
