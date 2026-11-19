@@ -1000,3 +1000,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - CI du nouveau HEAD : en attente de déclenchement/fin d'exécution ; ne pas déclarer le Lot 668 validé avant succès sur le commit qui contient le code et les tests.
 
 - Correctif de test en cours de lot : la première CI du Lot 668 a révélé que le contrôle U+FFFD contenait un antislash littéral supplémentaire ; deux tests ont donc échoué sur le commit intermédiaire `690591ab29d45d3a62dcda68032427d5523f95ff`. Le contrôle a été corrigé dans `43fa16e20a1962720a96f03c6ec54f63c423d389`. Cette première CI est explicitement considérée comme FAILURE, et non comme validation. Une nouvelle CI sur le HEAD corrigé est requise.
+
+
+### Lot 669 — validation stricte des références de page RAG — 19/11/2026
+- Après validation CI du Lot 668, audit de bout en bout du Worker RAG : le manifeste vérifiait le SHA-256, les nombres de documents/chunks, les IDs uniques, les références documentaires et les comptes de chunks. En revanche, le schéma de chaque chunk ne vérifiait pas explicitement le numéro de page ni la nature/longueur du texte ; le Worker convertissait ensuite la page avec `Number(...)` pour l'afficher dans les références.
+- Correctif : chaque chunk doit maintenant porter une page entière strictement positive, un texte non vide de type chaîne et de longueur maximale 20 000 caractères. Si le document fournit `page_count`, la page du chunk ne peut pas le dépasser. Le champ optionnel `part`, lorsqu'il existe, doit être un entier positif ou nul. Tout artefact incohérent est refusé en mode fermé avant le classement et l'appel au modèle.
+- Tests Worker ajoutés pour page nulle, négative, décimale, chaîne, dépassement de page_count, texte vide et chunk dépassant la limite ; chaque cas exige HTTP 503 et aucun message transmis au modèle.
+- Portée : validation de cohérence/provenance des extraits, sans modifier l'algorithme de classement, l'accès général au Professeur IA ni les contrôles de droits/abonnement. Aucun OCR ni ingestion PDF réelle. Aucun changement Supabase/Auth/RLS/schéma/paiement, aucune modification de main, aucune fusion, aucun déploiement.
+- CI du HEAD contenant ce lot : à vérifier avant de déclarer le Lot 669 validé.
