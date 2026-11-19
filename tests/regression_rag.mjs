@@ -70,6 +70,46 @@ try {
   globalThis.fetch = savedCorpusFetch;
 }
 
+/* Lot 667 : l'interface doit transmettre les demandes documentaires au cerveau
+   central (ia.js -> Worker /ask) et afficher sa réponse comme texte échappé. */
+const priorQuerySelector667 = document.querySelector;
+const priorReponseIA667 = globalThis.reponseIA;
+const priorPed667 = globalThis.reponsePedagogique;
+let submit667 = null;
+let query667 = 'Explique le PDF pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+let forwarded667 = '';
+const box667 = { innerHTML:'' };
+const input667 = { get value(){ return query667; } };
+const out667 = { innerHTML:'' };
+const form667 = { addEventListener(type, fn){ if(type === 'submit') submit667 = fn; } };
+try {
+  document.querySelector = selector => ({
+    '#ragBody':box667, '#ragForm':form667, '#ragQ':input667, '#ragOut':out667
+  })[selector] || null;
+  globalThis.reponsePedagogique = async () => null;
+  globalThis.reponseIA = async q => {
+    forwarded667 = q;
+    return 'Réponse vérifiée <script>alert(1)</script>';
+  };
+  await globalThis.RAG.render();
+  if(typeof submit667 !== 'function') throw new Error('formulaire RAG non initialisé');
+  await submit667({ preventDefault(){} });
+  if(forwarded667 !== query667) throw new Error('la question documentaire ne rejoint pas reponseIA');
+  if(!out667.innerHTML.includes('Réponse vérifiée &lt;script&gt;')
+      || out667.innerHTML.includes('<script>')) {
+    throw new Error('la réponse Worker n’est pas affichée comme texte échappé');
+  }
+  console.log('✅ RAG Lot 667 : interface raccordée à reponseIA et sortie échappée');
+} catch (e) {
+  console.log('::error::RAG Lot 667 · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  document.querySelector = priorQuerySelector667;
+  if(priorReponseIA667 === undefined) delete globalThis.reponseIA;
+  else globalThis.reponseIA = priorReponseIA667;
+  globalThis.reponsePedagogique = priorPed667;
+}
+
 /* Mesure du classifieur réel sur le jeu étiqueté, sans réimplémenter son score.
    Les abstentions et ambiguïtés restent distinctes des erreurs de classification. */
 const intentEval = JSON.parse(read('assets/bdd/intent_eval_set.json'));
