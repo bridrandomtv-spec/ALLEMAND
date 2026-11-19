@@ -475,6 +475,24 @@ test('refuse aussi une demande d’explication d’une règle verrouillée sans 
   assert.equal(payload.err, 'content-locked');
 });
 
+test('refuse les exemples et phrases modèles d’une règle verrouillée, même sans verbe « expliquer »', async () => {
+  for (const q of [
+    'Perfekt Beispiele',
+    'Perfekt Beispielsätze',
+    'Exemples de Perfekt',
+    'Genitiv example sentences',
+    'أمثلة على Perfekt',
+    'جمل مثال عن Dativ'
+  ]) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({ q }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status, 403, q);
+    assert.equal(payload.err, 'content-locked', q);
+    assert.equal(h.messages, null, q);
+  }
+});
+
 test('refuse les explications de règles verrouillées formulées en Darija arabe et Arabizi', async () => {
   for (const q of [
     '3lach ma fhemtch Perfekt?',
