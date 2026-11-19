@@ -164,6 +164,20 @@ class PdfIngestionTests(unittest.TestCase):
             self.assertEqual(result["document_count"], 0)
             self.assertEqual(result["skipped"][0]["reason"], "inventaire_droits_absent")
 
+    def test_duplicate_inventory_headers_abort_before_writing_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            source.mkdir(parents=True)
+            inventory = source / "rights.csv"
+            inventory.write_text(
+                "pdf_path,expected_companion_metadata,rights_confirmed,rights_confirmed,license\\n"
+                "lesson.pdf,_lesson.json,false,true,cc_by\\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "entetes_inventaire_droits_dupliquees"):
+                MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
+            self.assertFalse((output / "assets/bdd/corpus_rag_chunks.json").exists())
+
     def test_duplicate_inventory_paths_abort_before_writing_output(self):
         with tempfile.TemporaryDirectory() as tmp:
             source, output = Path(tmp) / "source", Path(tmp) / "out"
