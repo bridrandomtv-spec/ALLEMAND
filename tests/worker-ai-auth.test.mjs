@@ -1447,7 +1447,12 @@ test('refuse aussi les feuilles de travail et demandes de pratique sur une règl
     'Perfekt Sätze',
     'Genitiv rules',
     'Règles du Genitiv',
-    'جدول Dativ'
+    'جدول Dativ',
+    'u\\u0308bungen Perfekt',
+    'u\\u0308bungsblatt Genitiv',
+    't\\u0303amarin Dativ',
+    'تَمارِين Perfekt',
+    'Perfekt beispiels\\u0061tze'
   ]) {
     const h = harness();
     const response = await h.context.__worker.fetch(request({
