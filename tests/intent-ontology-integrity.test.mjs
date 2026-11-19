@@ -47,3 +47,21 @@ test('le jeu d’évaluation ne contient aucune question à étiquettes contradi
   assert.equal(new Set(dataset.eval.map(sample => sample.intent)).size, known.size,
     'chaque intention doit conserver au moins un exemple non ambigu');
 });
+
+test('la route d’intentions reste protégée et ne sert aucun contenu pédagogique statique', () => {
+  const rag = fs.readFileSync(new URL('../rag.js', import.meta.url), 'utf8');
+  const start = rag.indexOf('async function ontoRoute(q){');
+  const end = rag.indexOf('/* P5-A : repli QUST', start);
+  assert.ok(start >= 0 && end > start, 'ontoRoute doit rester identifiable pour audit');
+  const route = rag.slice(start, end);
+  assert.match(route, /await verifieAccesContenuIA\(q\)/,
+    'la route doit appliquer le garde d’accès avant toute décision');
+  assert.match(route, /contentIntents\.has\(id\)\) return null/,
+    'les intentions de contenu doivent revenir au pipeline pédagogique sécurisé');
+  assert.doesNotMatch(route, /chargeMalakhiss\(|chargeCorp\(|map\(e2 =>|suj\.map/,
+    'la route ne doit pas construire de réponses depuis des corpus statiques');
+  assert.doesNotMatch(rag, /await ontoRoute\(/,
+    'ontoRoute reste dormante tant que son routage complet n’est pas validé');
+  assert.doesNotMatch(rag, /window\.RAG\s*=\s*\{[^}]*ontoRoute/,
+    'la route statique ne doit pas être exposée sur l’API publique de test');
+});
