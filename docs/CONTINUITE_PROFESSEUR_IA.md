@@ -1036,3 +1036,6 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Commits du Lot 671 : `9913fe809629b7f7cb46640914e4280064beb962`, `1bc5386d188491902ac9f7d53883f55916c000b4`, `5a3e350c6ce9068d11945879ccf9a47ab02ec747`, `759aed4357684bd48439a4d0d5f84ee1001f5fcd`.
 - Les lots 670 et 671 doivent être considérés comme non validés tant que la CI complète du HEAD qui les contient n'est pas terminée avec succès.
 - Aucun PDF n'a été OCRisé ou indexé ; aucune ligne de droits n'a été confirmée par ce lot. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucune modification de `main`, aucune fusion et aucun déploiement.
+
+
+- Correction de fixture du Lot 671 : la première écriture des deux CSV de test contenait un antislash supplémentaire avant le séparateur de ligne, ce qui empêchait de tester réellement les en-têtes dupliqués. Les deux fixtures ont été corrigées pour écrire de vraies lignes CSV distinctes dans `e64bac55633df4c5ab026caf26d30b8690ef948f` et `b05f08de2d4f0ca943cb10e4206f31f2a3feb179`. Les validations antérieures ne couvrent pas ces corrections ; attendre la CI du HEAD final.
