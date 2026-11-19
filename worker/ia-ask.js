@@ -273,26 +273,42 @@ async function hasActiveSubscription(req, env, userId){
 }
 
 async function readLimitedBody(req, maxBytes){
-  const declared = Number(req.headers.get('Content-Length') || 0);
-  if(Number.isFinite(declared) && declared > maxBytes) return { tooLarge:true };
+  const declaredHeader = req.headers.get('Content-Length');
+  if(declaredHeader !== null){
+    if(!/^\\d+$/.test(declaredHeader) || !Number.isSafeInteger(Number(declaredHeader)))
+      throw new TypeError('invalid content length');
+    if(Number(declaredHeader) > maxBytes){
+      try{ if(req.body) await req.body.cancel(); }catch(e){}
+      return { tooLarge:true };
+    }
+  }
   if(!req.body) return { text:'' };
   const reader = req.body.getReader();
   const chunks = [];
   let total = 0;
-  while(true){
-    const part = await reader.read();
-    if(part.done) break;
-    total += part.value.byteLength;
-    if(total > maxBytes){
-      try{ await reader.cancel(); }catch(e){}
-      return { tooLarge:true };
+  try{
+    while(true){
+      const part = await reader.read();
+      if(part.done) break;
+      if(!(part.value instanceof Uint8Array))
+        throw new TypeError('invalid request body chunk');
+      total += part.value.byteLength;
+      if(total > maxBytes){
+        try{ await reader.cancel(); }catch(e){}
+        return { tooLarge:true };
+      }
+      chunks.push(part.value);
     }
-    chunks.push(part.value);
+    const bytes = new Uint8Array(total);
+    let offset = 0;
+    for(const chunk of chunks){ bytes.set(chunk, offset); offset += chunk.byteLength; }
+    return { text:new TextDecoder('utf-8', { fatal:true }).decode(bytes) };
+  }catch(e){
+    try{ await reader.cancel(); }catch(ignore){}
+    throw e;
+  }finally{
+    try{ reader.releaseLock(); }catch(e){}
   }
-  const bytes = new Uint8Array(total);
-  let offset = 0;
-  for(const chunk of chunks){ bytes.set(chunk, offset); offset += chunk.byteLength; }
-  return { text:new TextDecoder().decode(bytes) };
 }
 
 async function fetchAuthorizedBookPage(resource, req, env){
