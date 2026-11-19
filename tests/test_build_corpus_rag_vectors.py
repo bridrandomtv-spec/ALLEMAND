@@ -150,6 +150,22 @@ class VectorBuilderTests(unittest.TestCase):
             self.assertEqual(chunks_path.read_bytes(), original_chunks)
             api.assert_not_called()
 
+    def test_cli_rejects_non_object_manifest_with_controlled_error(self):
+        corpus, _manifest = fixture()
+        with tempfile.TemporaryDirectory() as tmp:
+            chunks_path, manifest_path = Path(tmp)/"chunks.json", Path(tmp)/"manifest.json"
+            output = Path(tmp)/"vectors.json"
+            chunks_path.write_text(json.dumps(corpus), encoding="utf-8")
+            manifest_path.write_text("[]", encoding="utf-8")
+            with patch.object(MODULE, "call_cloudflare") as api:
+                code = MODULE.main([
+                    "--chunks", str(chunks_path), "--manifest", str(manifest_path),
+                    "--output", str(output)
+                ])
+            self.assertEqual(code, 1)
+            api.assert_not_called()
+            self.assertFalse(output.exists())
+
     def test_cli_rejects_stale_manifest_before_any_cloudflare_embedding(self):
         corpus, manifest = fixture()
         with tempfile.TemporaryDirectory() as tmp:
