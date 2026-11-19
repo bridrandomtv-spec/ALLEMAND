@@ -83,3 +83,15 @@ test('la bibliothèque du Professeur IA vérifie l’entitlement avant toute res
   assert.ok(trad >= 0 && guard > trad && guard < rag.indexOf("out.innerHTML = '<div class=\"rg-ok rg-ped\"><b>📖", trad),
     'le raccourci de traduction doit vérifier l’accès avant restitution');
 });
+
+test('le lecteur de page ne bascule jamais vers le manuel de l’autre niveau', () => {
+  const rag = fs.readFileSync(new URL('../rag.js', import.meta.url), 'utf8');
+  const start = rag.indexOf('async function intentLecture(q){');
+  const end = rag.indexOf('const lec = q.match', start);
+  assert.ok(start >= 0 && end > start, 'intentLecture doit rester identifiable');
+  const route = rag.slice(start, end);
+  assert.doesNotMatch(route, /is3\s*\?\s*await loadPages\(\)\s*:\s*await loadPages3as\(\)/,
+    'une page absente ne doit pas déclencher un repli vers l’autre manuel');
+  assert.match(route, /nicht indexiert/,
+    'une page absente doit être signalée comme non indexée dans le niveau demandé');
+});
