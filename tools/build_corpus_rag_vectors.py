@@ -32,6 +32,19 @@ def sha256_bytes(value):
     return hashlib.sha256(value).hexdigest()
 
 
+def reject_duplicate_json_keys(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("cle_json_duplique:" + str(key))
+        result[key] = value
+    return result
+
+
+def strict_json_loads(value):
+    return json.loads(value, object_pairs_hook=reject_duplicate_json_keys)
+
+
 def validate_manifest_chunks_hash(chunks_bytes, manifest):
     if not isinstance(manifest, dict):
         raise ValueError("manifest_json_invalide")
@@ -41,7 +54,7 @@ def validate_manifest_chunks_hash(chunks_bytes, manifest):
 
 
 def load_json(path):
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    return strict_json_loads(Path(path).read_text(encoding="utf-8"))
 
 
 def eligible_chunks(corpus, manifest):
@@ -197,12 +210,12 @@ def call_cloudflare(inputs, account_id, token, timeout=45, opener=None):
 
 def build_artifact(chunks, chunks_bytes, manifest_bytes, embed_batch=None, batch_size=DEFAULT_BATCH_SIZE):
     try:
-        source_manifest = json.loads(manifest_bytes.decode("utf-8"))
+        source_manifest = strict_json_loads(manifest_bytes.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError("manifest_json_invalide") from exc
     validate_manifest_chunks_hash(chunks_bytes, source_manifest)
     try:
-        source_corpus = json.loads(chunks_bytes.decode("utf-8"))
+        source_corpus = strict_json_loads(chunks_bytes.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError("corpus_json_invalide") from exc
     approved_source_chunks = eligible_chunks(source_corpus, source_manifest)
@@ -251,8 +264,8 @@ def main(argv=None):
         if output.resolve() in {chunks_path.resolve(), manifest_path.resolve()}:
             raise ValueError("sortie_confondue_avec_source")
         chunks_bytes, manifest_bytes = chunks_path.read_bytes(), manifest_path.read_bytes()
-        corpus = json.loads(chunks_bytes.decode("utf-8"))
-        manifest = json.loads(manifest_bytes.decode("utf-8"))
+        corpus = strict_json_loads(chunks_bytes.decode("utf-8"))
+        manifest = strict_json_loads(manifest_bytes.decode("utf-8"))
         validate_manifest_chunks_hash(chunks_bytes, manifest)
         if not 1 <= args.batch_size <= MAX_BATCH_SIZE:
             raise ValueError("taille_lot_invalide")
