@@ -493,6 +493,25 @@ test('refuse les exemples et phrases modèles d’une règle verrouillée, même
   }
 });
 
+test('refuse aussi exercices, applications et tests portant sur une règle verrouillée', async () => {
+  for (const q of [
+    'Perfekt Übungen',
+    'Übungen zum Genitiv',
+    'Perfekt Übungsaufgaben',
+    'Exercices sur le Dativ',
+    'Perfekt test',
+    'تمارين على Perfekt',
+    'تطبيقات على حالة الجر'
+  ]) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({ q }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status, 403, q);
+    assert.equal(payload.err, 'content-locked', q);
+    assert.equal(h.messages, null, q);
+  }
+});
+
 test('refuse les explications de règles verrouillées formulées en Darija arabe et Arabizi', async () => {
   for (const q of [
     '3lach ma fhemtch Perfekt?',
