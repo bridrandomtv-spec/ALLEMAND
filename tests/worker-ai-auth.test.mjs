@@ -1443,7 +1443,11 @@ test('refuse aussi les feuilles de travail et demandes de pratique sur une règl
     'Nomen-Verb-Verbindungen Arbeitsblatt',
     'Passiversatzformen worksheet',
     'Genitiv practice',
-    'Nomen-Verb-Verbindungen Übungsblatt'
+    'Nomen-Verb-Verbindungen Übungsblatt',
+    'Perfekt Sätze',
+    'Genitiv rules',
+    'Règles du Genitiv',
+    'جدول Dativ'
   ]) {
     const h = harness();
     const response = await h.context.__worker.fetch(request({
