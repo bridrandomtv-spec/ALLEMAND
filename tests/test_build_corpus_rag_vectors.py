@@ -107,6 +107,18 @@ class VectorBuilderTests(unittest.TestCase):
                 {"index": 0, "embedding": a}, {"index": 0, "embedding": b}
             ]}, 2)
 
+    def test_build_artifact_rejects_stale_manifest_before_embedding_callback(self):
+        called = []
+        chunks_bytes = b"chunks"
+        manifest_bytes = json.dumps({"chunks_sha256": "0" * 64}).encode("utf-8")
+        with self.assertRaisesRegex(ValueError, "manifest_chunks_sha256_invalide"):
+            MODULE.build_artifact(
+                [{"chunk_id":"c1", "doc_id":"doc-ok", "title":"Deutsch", "text":"Satz"}],
+                chunks_bytes, manifest_bytes,
+                lambda _inputs: called.append(True) or [[1.0] + [0.0] * 255],
+            )
+        self.assertEqual(called, [])
+
     def test_batching_and_output_metadata(self):
         corpus, manifest = fixture()
         chunks = MODULE.eligible_chunks(corpus, manifest)
@@ -114,8 +126,12 @@ class VectorBuilderTests(unittest.TestCase):
         def fake_embed(inputs):
             seen.extend(inputs)
             return [[1.0] + [0.0] * 255 for _ in inputs]
+        chunks_bytes = b"chunks"
+        manifest_bytes = json.dumps({
+            "chunks_sha256": MODULE.sha256_bytes(chunks_bytes)
+        }).encode("utf-8")
         artifact = MODULE.build_artifact(
-            chunks, b"chunks", b"manifest", fake_embed, batch_size=1
+            chunks, chunks_bytes, manifest_bytes, fake_embed, batch_size=1
         )
         self.assertEqual(len(seen), 1)
         self.assertEqual(artifact["vectors"][0]["chunk_id"], "c1")
