@@ -1085,3 +1085,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Validation CI du code et des tests sur le commit `c59819c1e02728482a85b1a9bb1ccb6b196b6411` : CI principale et les trois workflows PostgreSQL réussis. Le contrôle structurel/pédagogique et les tests autonomes du Professeur IA ont également réussi.
 
 - Extension du lot après le premier passage CI vert : le parseur strict est maintenant appliqué aussi au JSON entrant `/ask`, avec un test garantissant le refus après Auth JWT et avant le modèle. Une nouvelle validation CI est en cours sur le HEAD actualisé.
+
+## Lot 675 — intégrité complète de l'index vectoriel côté Worker
+
+- Audit du chemin de recherche hybride : l'index vectoriel était déjà lié au SHA-256 du corpus de chunks, mais pas au SHA-256 du manifeste qui accompagne ce corpus.
+- Le Worker calcule maintenant aussi le hash exact des octets du manifeste reçu et exige que `source_manifest_sha256` corresponde à ce manifeste.
+- Le Worker exige le modèle attendu, 256 dimensions et la normalisation `l2`, en cohérence avec le générateur.
+- Un index vectoriel n'est désormais utilisé que si chaque chunk actuellement autorisé possède exactement un vecteur valide (document propriétaire identique, 256 valeurs finies, norme non nulle). Les entrées étrangères restent exclues ; les doublons, rattachements contradictoires, vecteurs invalides ou couverture partielle désactivent l'index complet et déclenchent le repli BM25.
+- Tests ajoutés : manifeste source contradictoire et index incomplet doivent éviter tout appel d'embedding et utiliser le classement lexical ; les tests hybrides existants continuent de vérifier l'exclusion des documents non autorisés.
+- Aucun appel Workers AI réel, aucune vectorisation, aucune ingestion, aucun OCR et aucune modification Supabase n'ont été exécutés.
+- Validation CI de ce lot : en attente sur le HEAD actualisé.
