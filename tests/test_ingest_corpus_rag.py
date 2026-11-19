@@ -86,6 +86,27 @@ class PdfIngestionTests(unittest.TestCase):
     def test_control_characters_are_rejected(self):
         self.assertFalse(MODULE.text_quality(("\x01" * 20) + ("Deutsch " * 30))["ok"])
 
+    def test_replacement_character_and_mojibake_are_rejected(self):
+        self.assertEqual(MODULE.text_quality(("Deutsch " * 20) + "\ufffd")["reason"],
+                         "caractere_remplacement_unicode")
+        self.assertEqual(MODULE.text_quality(("Deutsch " * 20) + " Ã© Â© â€")["reason"],
+                         "encodage_mojibake")
+
+    def test_extraction_report_lists_omitted_pages_and_reasons(self):
+        good = " ".join(["Deutschunterricht"] * 30)
+        fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(
+            pages=[FakePage(good), FakePage(""), FakePage(("Deutsch " * 20) + "\ufffd")]
+        ))
+        with patch.dict(sys.modules, {"pypdf": fake}):
+            pages, status, report = MODULE.extract_pdf_report("mixed.pdf")
+        self.assertEqual(status, "ok")
+        self.assertEqual(pages, [(1, good)])
+        self.assertEqual(report["page_count"], 3)
+        self.assertEqual(report["indexed_pages"], [1])
+        self.assertEqual(report["omitted_pages"], [2, 3])
+        self.assertEqual(report["quality"][2]["reason"], "caractere_remplacement_unicode")
+        self.assertFalse(report["ocr_attempted"])
+
     def test_no_rights_metadata_means_no_indexing_and_no_legacy_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
             source, output = Path(tmp) / "source", Path(tmp) / "out"
