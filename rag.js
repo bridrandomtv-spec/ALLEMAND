@@ -45,7 +45,7 @@
      ne doivent jamais être lus directement depuis le navigateur. La recherche
      PDF passe exclusivement par le Worker authentifié, qui vérifie le manifeste,
      rights_confirmed et la licence avant de transmettre un extrait au modèle.
-     Tant que l'interface RAG n'utilise pas ce chemin serveur, abstention. */
+     L'interface délègue les demandes documentaires à ia.js et au Worker. */
   async function cherche(q){
     return null;
   }
@@ -1223,13 +1223,13 @@ async function reponsePedagogique(q, meta){
     const box = $('#ragBody'); if(!box) return;
     const man = await chargeManifest();
     const info = man
-      ? (man.nb_shards + ' shards · ' + man.total_chunks + ' chunks · chargement progressif')
-      : 'index unique (repli)';
+      ? (man.nb_shards + ' shards · ' + man.total_chunks + ' chunks disponibles côté client')
+      : 'recherche documentaire via le serveur authentifié';
     box.innerHTML =
         '<div class="rg-hero"><span class="rg-crest">🔎</span><div>'
       + '<h2>اسأل المنصة (RAG gardé)</h2>'
-      + '<p class="rg-sub">la réponse vient TOUJOURS d’un extrait de ton corpus — '
-      + 'jamais inventée · ' + info + '</p></div></div>'
+      + '<p class="rg-sub">questions pédagogiques et recherche documentaire sécurisée · '
+      + 'les PDF sont vérifiés côté serveur · ' + info + '</p></div></div>'
       + '<div class="card rg-box">'
       + '<form id="ragForm"><input type="search" id="ragQ" '
       + 'placeholder="مثال : Was ist die Meinungsfreiheit ? · Die Kontrolle · Heimat"></form>'
