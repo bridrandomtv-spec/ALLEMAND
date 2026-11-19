@@ -1528,3 +1528,22 @@ test('un sélecteur de résumé ou de banque libre ne déverrouille pas une séa
     assert.equal(h.calls.some(x => x.url.includes(item.forbidden)),false,item.q);
   }
 });
+
+
+test('normalise les marqueurs accentués de séance et d’unité avant de refuser les contenus verrouillés', async () => {
+  const questions = [
+    'Perfekt le\u0301con 3',
+    'Genitiv se\u0301ance 3',
+    'Perfekt الحِصّة 3',
+    'Genitiv الوِحدة 2 الحِصّة 3'
+  ];
+  for (const q of questions) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({ q }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status,403,q);
+    assert.equal(payload.err,'content-locked',q);
+    assert.equal(h.messages,null,q);
+    assert.equal(h.aiCalls.length,0,q);
+  }
+});
