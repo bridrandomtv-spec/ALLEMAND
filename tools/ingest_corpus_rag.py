@@ -28,19 +28,29 @@ CHUNK_WORDS = 850
 MIN_PAGE_CHARS = 80
 CONTROL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 GLYPH_RE = re.compile(r"(?:/g\d{1,4}){3,}", re.I)
+MOJIBAKE_RE = re.compile(r"(?:Ã[\u0080-\u00bf]|Â[\u0080-\u00bf]|â€|ï¿½|ðŸ)")
 
 
 def text_quality(text):
     value = str(text or "")
     compact = re.sub(r"\s+", "", value)
+    base = {"chars": len(compact)}
     if len(compact) < MIN_PAGE_CHARS:
-        return {"ok": False, "reason": "texte_insuffisant", "chars": len(compact)}
+        return {**base, "ok": False, "reason": "texte_insuffisant"}
     controls = len(CONTROL_RE.findall(value))
     if controls / max(len(value), 1) > 0.01:
-        return {"ok": False, "reason": "caracteres_controle", "chars": len(compact)}
+        return {**base, "ok": False, "reason": "caracteres_controle"}
     if GLYPH_RE.search(value):
-        return {"ok": False, "reason": "encodage_glyphes", "chars": len(compact)}
-    return {"ok": True, "reason": "texte_exploitable", "chars": len(compact)}
+        return {**base, "ok": False, "reason": "encodage_glyphes"}
+    if "\\ufffd" in value:
+        return {**base, "ok": False, "reason": "caractere_remplacement_unicode"}
+    private_use = sum(1 for char in value if 0xE000 <= ord(char) <= 0xF8FF)
+    if private_use / max(len(compact), 1) > 0.002:
+        return {**base, "ok": False, "reason": "glyphes_unicode_prives"}
+    mojibake = len(MOJIBAKE_RE.findall(value))
+    if mojibake >= 2 or mojibake / max(len(compact), 1) > 0.01:
+        return {**base, "ok": False, "reason": "encodage_mojibake"}
+    return {**base, "ok": True, "reason": "texte_exploitable"}
 
 
 def split_chunks(text, size=CHUNK_WORDS):
@@ -60,16 +70,20 @@ def _ocr_pages(path, page_count, languages):
     return [pytesseract.image_to_string(img, lang=languages) for img in images]
 
 
-def extract_pdf(path, use_ocr=False, languages="deu+fra+ara"):
+def extract_pdf_report(path, use_ocr=False, languages="deu+fra+ara"):
     try:
         from pypdf import PdfReader
         reader = PdfReader(str(path))
         pages = [(page.extract_text() or "") for page in reader.pages]
     except Exception as exc:
-        return [], "lecture_pdf_echec:" + type(exc).__name__
+        return [], "lecture_pdf_echec:" + type(exc).__name__, {
+            "page_count": 0, "indexed_pages": [], "omitted_pages": [], "quality": [],
+            "ocr_attempted": False,
+        }
     quality = [text_quality(value) for value in pages]
+    ocr_attempted = bool(use_ocr and any(not item["ok"] for item in quality))
     ocr_status = ""
-    if use_ocr and any(not item["ok"] for item in quality):
+    if ocr_attempted:
         try:
             scanned = _ocr_pages(path, len(pages), languages)
             for i, value in enumerate(scanned[:len(pages)]):
@@ -80,11 +94,23 @@ def extract_pdf(path, use_ocr=False, languages="deu+fra+ara"):
             ocr_status = str(exc)
         except Exception as exc:
             ocr_status = "ocr_echec:" + type(exc).__name__
-    usable = [(i + 1, value) for i, value in enumerate(pages) if text_quality(value)["ok"]]
+    usable = [(i + 1, value) for i, value in enumerate(pages) if quality[i]["ok"]]
+    report = {
+        "page_count": len(pages),
+        "indexed_pages": [number for number, _ in usable],
+        "omitted_pages": [i + 1 for i, item in enumerate(quality) if not item["ok"]],
+        "quality": [{"page": i + 1, **item} for i, item in enumerate(quality)],
+        "ocr_attempted": ocr_attempted,
+    }
     if not usable:
         reasons = sorted({item["reason"] for item in quality})
-        return [], ocr_status or ("aucun_texte_exploitable:" + ",".join(reasons))
-    return usable, ("ok" if not ocr_status else "ok_partiel:" + ocr_status)
+        return [], ocr_status or ("aucun_texte_exploitable:" + ",".join(reasons)), report
+    return usable, ("ok" if not ocr_status else "ok_partiel:" + ocr_status), report
+
+
+def extract_pdf(path, use_ocr=False, languages="deu+fra+ara"):
+    pages, status, _report = extract_pdf_report(path, use_ocr, languages)
+    return pages, status
 
 
 def read_metadata(pdf_path):
@@ -171,9 +197,14 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara",
         if not authorized:
             skipped.append({"file": source_label, "reason": authorization_status})
             continue
-        pages, status = extract_pdf(pdf, use_ocr=use_ocr, languages=languages)
+        pages, status, extraction_report = extract_pdf_report(
+            pdf, use_ocr=use_ocr, languages=languages
+        )
         if not status.startswith("ok"):
-            skipped.append({"file": source_label, "reason": status})
+            skipped.append({
+                "file": source_label, "reason": status,
+                "extraction": extraction_report,
+            })
             continue
         digest = hashlib.sha256(pdf.read_bytes()).hexdigest()
         doc_id = "pdf-" + digest
@@ -200,6 +231,11 @@ def ingest(source_dir, output_dir, use_ocr=False, languages="deu+fra+ara",
             "subject": str(meta.get("matiere") or "allemand")[:80],
             "level": str(meta.get("niveau") or "")[:40],
             "chunk_count": doc_chunks, "extraction_status": status,
+            "page_count": extraction_report["page_count"],
+            "indexed_pages": extraction_report["indexed_pages"],
+            "omitted_pages": extraction_report["omitted_pages"],
+            "page_quality": extraction_report["quality"],
+            "ocr_attempted": extraction_report["ocr_attempted"],
         })
     output_dir.mkdir(parents=True, exist_ok=True)
     chunks_path = output_dir / "assets/bdd/corpus_rag_chunks.json"
