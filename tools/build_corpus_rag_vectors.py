@@ -33,8 +33,9 @@ def sha256_bytes(value):
 
 
 def validate_manifest_chunks_hash(chunks_bytes, manifest):
-    if (not isinstance(manifest, dict)
-            or not isinstance(manifest.get("chunks_sha256"), str)
+    if not isinstance(manifest, dict):
+        raise ValueError("manifest_json_invalide")
+    if (not isinstance(manifest.get("chunks_sha256"), str)
             or manifest["chunks_sha256"] != sha256_bytes(chunks_bytes)):
         raise ValueError("manifest_chunks_sha256_invalide")
 
