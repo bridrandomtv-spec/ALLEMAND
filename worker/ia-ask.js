@@ -32,12 +32,12 @@ const SYSTEM =
 function parseJsonWithoutDuplicateKeys(source){
   if(typeof source !== 'string') throw new TypeError('json-source-invalid');
   let index = 0;
-  const whitespace = () => { while(index < source.length && /[\\t\\n\\r ]/.test(source[index])) index++; };
+  const whitespace = () => { while(index < source.length && /[\t\n\r ]/.test(source[index])) index++; };
   const parseString = () => {
     const start = index++;
     while(index < source.length){
       const char = source[index++];
-      if(char === '\\\\'){ index++; continue; }
+      if(char === '\\'){ index++; continue; }
       if(char === '"') return JSON.parse(source.slice(start,index));
     }
     throw new SyntaxError('json-string-invalid');
@@ -79,7 +79,7 @@ function parseJsonWithoutDuplicateKeys(source){
     const rest = source.slice(index);
     const literal = /^(?:true|false|null)/.exec(rest);
     if(literal){ index += literal[0].length; return; }
-    const number = /^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?/.exec(rest);
+    const number = /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/.exec(rest);
     if(number){ index += number[0].length; return; }
     throw new SyntaxError('json-value-invalid');
   };
