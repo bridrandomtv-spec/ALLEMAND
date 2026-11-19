@@ -1052,3 +1052,6 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 
 
 - Durcissement complémentaire du Lot 672 : le garde d'empreinte vérifie d'abord que le manifeste JSON est bien un objet avant d'accéder à ses champs. Un manifeste JSON valide mais de type tableau est refusé proprement avec le code d'erreur contrôlé du CLI, sans appel API ni écriture. Test ajouté. Commits : `b7c896a12b891650d440919b7a3d0876301c0d62` et `c0adadaec9be3bfe519943602df90201fe9498d8`. La CI précédente du Lot 672 ne couvre pas ce durcissement ; attendre celle du HEAD mis à jour.
+
+
+- Portée interne du Lot 672 renforcée : le contrôle de hash est également appliqué dans `build_artifact()`, et pas seulement dans le CLI. Un appel direct à l'API Python ne peut donc pas contourner la vérification avant le callback d'embedding. Le test vérifie que le callback n'est jamais appelé si le manifeste ne correspond pas aux octets du corpus. Commits : `88ab7e266b39447f0634087819da02b76f728c4f` et `a08993ca75559dfdc865b98e3b4993191b5c6fbf`. Attendre la CI finale.
