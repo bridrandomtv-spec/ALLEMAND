@@ -32,7 +32,7 @@ const SYSTEM =
 async function readTextLimited(response, maxBytes){
   if(!response || !response.body || !Number.isInteger(maxBytes) || maxBytes < 1) return null;
   const declaredLength = response.headers && response.headers.get('content-length');
-  if(declaredLength && (!/^\d+$/.test(declaredLength) || Number(declaredLength) > maxBytes)) return null;
+  if(declaredLength && (!/^\\d+$/.test(declaredLength) || Number(declaredLength) > maxBytes)) {\n    try{ await response.body.cancel(); }catch(e){}\n    return null;\n  }
   const reader = response.body.getReader();
   const parts = [];
   let total = 0;
