@@ -244,3 +244,65 @@ try {
   if (priorAccess654 === undefined) delete globalThis.ACCESS;
   else globalThis.ACCESS = priorAccess654;
 }
+
+/* Lot 655 : aucune restitution de la bibliothèque documentaire sans entitlement
+   backend, y compris statistiques, devoirs et raccourci de traduction indexée. */
+const priorAccess655 = globalThis.ACCESS;
+const priorBiblio655 = globalThis.BIBLIO;
+let biblioCalls655 = 0;
+try {
+  globalThis.BIBLIO = {
+    stats: async () => { biblioCalls655++; return {livre:1,devoirs:1,grammaire:1,corpus:1}; },
+    search: async () => { biblioCalls655++; return [{src:'devoir',id:'locked-1',titre:'Sujet protégé',texte:'CORRIGE CONFIDENTIEL'}]; },
+    traduire: async () => ({type:'curated',de:'Der Satz',ar:'الترجمة المحمية'})
+  };
+  delete globalThis.ACCESS;
+  let blocked = await fn('donne-moi un devoir sur le Dativ');
+  if (!blocked || blocked.locked !== true || biblioCalls655 !== 0) {
+    throw new Error('bibliothèque consultée ou restituée sans ACCESS');
+  }
+  blocked = await fn('combien de documents dans la bibliothèque ?');
+  if (!blocked || blocked.locked !== true || biblioCalls655 !== 0) {
+    throw new Error('statistiques de la bibliothèque exposées sans ACCESS');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ok:false,src:'backend'}),
+    paywall: () => {}
+  };
+  blocked = await fn('donne-moi un devoir sur le Dativ');
+  if (!blocked || blocked.locked !== true || biblioCalls655 !== 0) {
+    throw new Error('documents exposés à un compte sans abonnement');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => { throw new Error('backend unavailable'); },
+    entitlement: () => ({ok:true,src:'backend'}),
+    paywall: () => {}
+  };
+  blocked = await fn('donne-moi un devoir sur le Dativ');
+  if (!blocked || blocked.locked !== true || biblioCalls655 !== 0) {
+    throw new Error('documents exposés malgré une panne du contrôle backend');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ok:true,src:'backend'}),
+    paywall: () => {}
+  };
+  const allowed = await fn('donne-moi un devoir sur le Dativ');
+  if (!allowed || allowed.locked === true || biblioCalls655 < 1
+      || !String(allowed).includes('CORRIGE CONFIDENTIEL')) {
+    throw new Error('bibliothèque inaccessible malgré entitlement backend actif');
+  }
+  console.log('✅ RAG lock : bibliothèque refusée sans entitlement backend');
+} catch (e) {
+  console.log('::error::RAG lock bibliothèque · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  if (priorAccess655 === undefined) delete globalThis.ACCESS;
+  else globalThis.ACCESS = priorAccess655;
+  if (priorBiblio655 === undefined) delete globalThis.BIBLIO;
+  else globalThis.BIBLIO = priorBiblio655;
+}
