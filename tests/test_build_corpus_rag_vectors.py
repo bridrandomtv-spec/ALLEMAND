@@ -16,12 +16,12 @@ def fixture():
     corpus = {
         "version": 1,
         "documents": [
-            {"id": "doc-ok", "title": "Deutsch", "license": "production_propre", "rights_confirmed": True, "chunk_count": 1},
+            {"id": "doc-ok", "title": "Deutsch", "license": "production_propre", "rights_confirmed": True, "chunk_count": 1, "page_count": 1},
             {"id": "doc-no", "title": "Locked", "license": "inconnue", "rights_confirmed": False, "chunk_count": 1},
         ],
         "chunks": [
-            {"id": "c1", "document_id": "doc-ok", "text": "Ein deutscher Beispielsatz."},
-            {"id": "c2", "document_id": "doc-no", "text": "Ne doit pas être envoyé."},
+            {"id": "c1", "document_id": "doc-ok", "text": "Ein deutscher Beispielsatz.", "page": 1},
+            {"id": "c2", "document_id": "doc-no", "text": "Ne doit pas être envoyé.", "page": 1},
         ],
     }
     manifest = {"version": 1, "document_count": 2, "chunk_count": 2}
@@ -68,6 +68,18 @@ class VectorBuilderTests(unittest.TestCase):
         del corpus["documents"][0]["chunk_count"]
         with self.assertRaisesRegex(ValueError, "document_chunk_count_absent"):
             MODULE.eligible_chunks(corpus, manifest)
+
+    def test_invalid_page_or_oversized_text_fails_closed_for_approved_document(self):
+        for mutation, expected in [
+            (lambda c: c["chunks"][0].update({"page": 0}), "chunk_page_invalide"),
+            (lambda c: c["chunks"][0].update({"page": 2}), "chunk_page_hors_document"),
+            (lambda c: c["chunks"][0].update({"part": -1}), "chunk_part_invalide"),
+            (lambda c: c["chunks"][0].update({"text": "x" * 20001}), "chunk_texte_vide_ou_trop_long"),
+        ]:
+            corpus, manifest = fixture()
+            mutation(corpus)
+            with self.assertRaisesRegex(ValueError, expected):
+                MODULE.eligible_chunks(corpus, manifest)
 
     def test_rights_filter_happens_before_embedding(self):
         corpus, manifest = fixture()
