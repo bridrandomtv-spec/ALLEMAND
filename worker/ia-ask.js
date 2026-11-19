@@ -29,6 +29,37 @@ const SYSTEM =
   + '→ réponds avec ces faits, dans la langue de la question.';
 /* JSON statique du RAG : JSON.parse seul masque les clés dupliquées.
    Ce parseur vérifie la structure et l'unicité des clés avant le décodage natif. */
+async function readTextLimited(response, maxBytes){
+  if(!response || !response.body || !Number.isInteger(maxBytes) || maxBytes < 1) return null;
+  const declaredLength = response.headers && response.headers.get('content-length');
+  if(declaredLength && (!/^\d+$/.test(declaredLength) || Number(declaredLength) > maxBytes)) return null;
+  const reader = response.body.getReader();
+  const parts = [];
+  let total = 0;
+  try{
+    while(true){
+      const result = await reader.read();
+      if(result.done) break;
+      if(!(result.value instanceof Uint8Array)) return null;
+      total += result.value.byteLength;
+      if(total > maxBytes){
+        try{ await reader.cancel(); }catch(e){}
+        return null;
+      }
+      parts.push(result.value);
+    }
+    const bytes = new Uint8Array(total);
+    let offset = 0;
+    for(const part of parts){ bytes.set(part, offset); offset += part.byteLength; }
+    return new TextDecoder('utf-8', { fatal:true }).decode(bytes);
+  }catch(e){
+    try{ await reader.cancel(); }catch(ignore){}
+    return null;
+  }finally{
+    try{ reader.releaseLock(); }catch(e){}
+  }
+}
+
 function parseJsonWithoutDuplicateKeys(source){
   if(typeof source !== 'string') throw new TypeError('json-source-invalid');
   let index = 0;
@@ -429,7 +460,7 @@ async function fetchFreeExerciseBank(resource){
       method:'GET', headers:{ 'Accept':'application/json' }, redirect:'error', signal:controller.signal
     });
     if(!response.ok) return { ok:false, status:503, error:'access-unavailable' };
-    const raw = await response.text();
+    const raw = await readTextLimited(response, 1500000);
     if(!raw || raw.length > 30000) return { ok:false, status:503, error:'access-unavailable' };
     const data = parseJsonWithoutDuplicateKeys(raw);
     const all = data && Array.isArray(data.B_exercices) ? data.B_exercices : [];
@@ -570,7 +601,7 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
       return { ok:false, status:403, error:'content-locked' };
     if(!response.ok) return { ok:false, status:503, error:'access-unavailable' };
     const raw = await response.text();
-    if(!raw || raw.length > 1500000) return { ok:false, status:503, error:'access-unavailable' };
+    if(!raw) return { ok:false, status:503, error:'access-unavailable' };
     /* Le manifeste est le marqueur de cohérence du couple publié. */
     const manifestResponse = await fetch('https://allemand.brid-randomtv.workers.dev/assets/bdd/corpus_rag_manifest.json', {
       method:'GET',
@@ -578,8 +609,8 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
       redirect:'error', signal:controller.signal
     });
     if(!manifestResponse.ok) return { ok:false, status:503, error:'access-unavailable' };
-    const manifestRaw = await manifestResponse.text();
-    if(!manifestRaw || manifestRaw.length > 200000) return { ok:false, status:503, error:'access-unavailable' };
+    const manifestRaw = await readTextLimited(manifestResponse, 200000);
+    if(!manifestRaw) return { ok:false, status:503, error:'access-unavailable' };
     const manifest = parseJsonWithoutDuplicateKeys(manifestRaw);
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
     const chunksHash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2,'0')).join('');
@@ -712,8 +743,8 @@ async function fetchAuthorizedCorpusDocument(resource, req, question, env){
           redirect:'error', signal:controller.signal
         });
         if(vectorResponse.ok){
-          const vectorRaw = await vectorResponse.text();
-          if(vectorRaw && vectorRaw.length <= 20000000){
+          const vectorRaw = await readTextLimited(vectorResponse, 20000000);
+          if(vectorRaw){
             const vectorData = parseJsonWithoutDuplicateKeys(vectorRaw);
             /* Un index vectoriel doit provenir exactement du fichier de chunks
                actuellement servi. Les identifiants seuls ne détectent pas un
