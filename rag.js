@@ -443,6 +443,24 @@
     const lec = q.match(/(?:lis|lire|lies|lese|read|vorlesen|قرأ|اقرأ)\s+(?:le\s+|den\s+|das\s+|the\s+)?(texte|text|dialog|dialogue|vocabulaire|wortschatz|النص|الحوار|المفردات)[^\d]*(\d)?/i);
     if(lec){
       const nn = +(lec[2] || 1);
+      /* buch_lN.json contient le contenu complet de l'unité, pas seulement les
+         séances gratuites. canAccessUnit() est insuffisant pour l'unité 1 :
+         il autorise la vitrine, alors que ce fichier dépasse les deux séances
+         gratuites. Exiger une preuve backend fraîche avant toute lecture. */
+      let fullBookAllowed = false;
+      try{
+        if(window.ACCESS && typeof ACCESS.refresh === 'function'
+           && typeof ACCESS.entitlement === 'function'){
+          await ACCESS.refresh();
+          const entitlement = ACCESS.entitlement();
+          fullBookAllowed = !!(entitlement && entitlement.ok === true
+            && entitlement.src === 'backend');
+        }
+      }catch(e){ fullBookAllowed = false; }
+      if(!fullBookAllowed){
+        try{ if(window.ACCESS && ACCESS.paywall) ACCESS.paywall({ type:'view', view:'buch', unite:nn }); }catch(e){}
+        return { locked:true, html:'<b>🔒 هذا النص أو الحوار جزء من محتوى الوحدة المحمي. الأستاذ الذكي متاح للأسئلة العامة، لكن لا يمكنه قراءة محتوى الوحدة قبل التحقق من اشتراك فعّال.</b>' };
+      }
       const L = await loadBuch(nn);
       const wantD = /dialog|الحوار/i.test(lec[1]);
       const wantV = /vocab|wortschatz|المفردات/i.test(lec[1]);
