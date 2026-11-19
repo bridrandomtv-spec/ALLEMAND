@@ -42,7 +42,7 @@ def text_quality(text):
         return {**base, "ok": False, "reason": "caracteres_controle"}
     if GLYPH_RE.search(value):
         return {**base, "ok": False, "reason": "encodage_glyphes"}
-    if "\\ufffd" in value:
+    if "\ufffd" in value:
         return {**base, "ok": False, "reason": "caractere_remplacement_unicode"}
     private_use = sum(1 for char in value if 0xE000 <= ord(char) <= 0xF8FF)
     if private_use / max(len(compact), 1) > 0.002:
