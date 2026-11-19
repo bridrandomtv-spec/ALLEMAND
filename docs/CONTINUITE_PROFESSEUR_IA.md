@@ -1012,3 +1012,17 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Précision ajoutée pendant la revue du Lot 669 : un `page_count` présent mais mal typé (ex. chaîne) ou inférieur à 1 est lui-même invalide et ne doit pas désactiver la comparaison. Le Worker exige maintenant un entier strictement positif dès que le champ est fourni ; deux cas de test supplémentaires couvrent zéro et chaîne. La CI précédente est à considérer comme obsolète pour ce HEAD modifié ; validation à refaire sur le commit final.
 
 - Relecture des fixtures : correction de la construction du cas `page_count: 0` afin que la valeur zéro soit bien transmise au Worker (test conditionnel sur la présence de propriété, et non sur sa vérité). Ce test vérifie désormais réellement le rejet du zéro. Le commit précédent reste non final pour la validation ; attendre la CI du dernier HEAD.
+
+
+### Validation finale du Lot 669 — 19/11/2026
+- HEAD validé : `ed56ab7397b08fb57972bb4538f27295aef04b2d`.
+- CI principale `44598579361` : SUCCESS. Les jobs « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont SUCCESS.
+- Workflows PostgreSQL sur le même HEAD : `44598579117` (ملتقى الطلاب), `44598578863` (découverte Messenger) et `44598578941` (consentement Messenger) : SUCCESS tous les trois.
+- Le Lot 669 est donc validé sur son HEAD final. Aucun changement de périmètre : pas de fusion, pas de déploiement, pas de modification de `main`, Supabase, Auth, RLS, schéma ou paiement.
+
+### Lot 670 — verrouillage de non-régression de l’accès général au Professeur IA — 19/11/2026
+- Audit ciblé du handler `/ask` et des tests d’authentification : une question générale d’un utilisateur authentifié sans ressource pédagogique doit parvenir au modèle sans déclencher de contrôle d’abonnement. Les contenus identifiés comme verrouillés continuent, eux, à passer par le garde d’accès et le contrôle d’abonnement.
+- Le comportement était déjà implémenté dans le Worker et couvert partiellement par le test « accepte un utilisateur Auth valide mais ne transmet aucun contexte client au modèle ». Le test est renforcé pour affirmer explicitement qu’aucune lecture de `subscriptions` n’est effectuée et qu’un appel au modèle a bien lieu pour cette question générale.
+- Aucun changement de logique Worker, d’accès aux contenus, de configuration Supabase ou de droits n’est introduit dans ce lot ; il s’agit d’une protection de non-régression du contrat d’accès demandé.
+- Commit du test : `1161ae004e3b493d2c2daad7ccb985d5be4d8786`. CI de ce nouveau HEAD à vérifier avant validation du Lot 670.
+- Rappel permanent : le Professeur IA général est accessible à tout utilisateur authentifié, avec ou sans abonnement ; les contenus pédagogiques verrouillés restent soumis à leurs contrôles dédiés. Aucun OCR, aucune ingestion réelle de PDF sans droits confirmés.
