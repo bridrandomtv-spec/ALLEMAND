@@ -42,6 +42,30 @@ if (shortFragment !== null) {
   process.exit(1);
 }
 console.log('✅ ONTO : égalité détectée sans choix arbitraire ; intention unique conservée');
+
+/* Mesure du classifieur réel sur le jeu étiqueté, sans réimplémenter son score.
+   Les abstentions et ambiguïtés restent distinctes des erreurs de classification. */
+const intentEval = JSON.parse(read('assets/bdd/intent_eval_set.json'));
+const evalRows = intentEval.eval || [];
+if (evalRows.length !== Number(intentEval._meta && intentEval._meta.n)) {
+  console.log('::error::ONTO EVAL : nombre d’exemples incohérent avec les métadonnées');
+  process.exit(1);
+}
+const evalStats = { total: evalRows.length, correct: 0, wrong: 0, ambiguous: 0, abstain: 0, byIntent: {} };
+for (const row of evalRows) {
+  const got = await matcher(row.q);
+  const bucket = evalStats.byIntent[row.intent] || (evalStats.byIntent[row.intent] = { total: 0, correct: 0, wrong: 0, ambiguous: 0, abstain: 0 });
+  bucket.total++;
+  if (!got) { evalStats.abstain++; bucket.abstain++; }
+  else if (got.ambiguous) { evalStats.ambiguous++; bucket.ambiguous++; }
+  else if (got.it && got.it.intent === row.intent) { evalStats.correct++; bucket.correct++; }
+  else { evalStats.wrong++; bucket.wrong++; }
+}
+const classified = evalStats.correct + evalStats.wrong;
+evalStats.coverage = Number((classified / evalStats.total).toFixed(4));
+evalStats.accuracyOnClassified = classified ? Number((evalStats.correct / classified).toFixed(4)) : 0;
+evalStats.exactAccuracy = Number((evalStats.correct / evalStats.total).toFixed(4));
+console.log('📊 ONTO EVAL 103 : ' + JSON.stringify(evalStats));
 const ambiguousLive = await fn('هاد الدرس');
 if (!ambiguousLive || ambiguousLive.ambiguousIntent !== true) {
   console.log('::error::ONTO : le parcours réel doit demander une précision en cas d’intention ambiguë');
