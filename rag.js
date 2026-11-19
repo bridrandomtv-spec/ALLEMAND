@@ -966,7 +966,7 @@ function normaliseRegleVerrouIA(value){
 }
 function demandeRegleVerrouilleeIA(question){
   var q = normaliseRegleVerrouIA(question);
-  var grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|difference|différence|example|exemple|exemples|phrase\s+d['’ ]?exemple|beispiel|beispielsatz|beispielsätze|beispielsatze|ubung|ubungen|ubungsaufgaben|ubungsblatt|aufgabe|aufgaben|arbeitsblatt|übungsblatt|exercise|exercises|exercice|exercices|practice|worksheet|test|quiz|تمرين|تمارين|تطبيق|تطبيقات|تدريب|تدريبات|حل|حلول|corrigé|corrige|مثال|امثلة|أمثلة|جمل\s+مثال|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
+  var grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|regel|regeln|rule|rules|regle|regles|sentence|sentences|satz|satze|phrase|phrases|tabelle|tableau|table|fiche|fiches|جملة|جمل|جدول|difference|différence|example|exemple|exemples|phrase\s+d['’ ]?exemple|beispiel|beispielsatz|beispielsätze|beispielsatze|ubung|ubungen|ubungsaufgaben|ubungsblatt|aufgabe|aufgaben|arbeitsblatt|übungsblatt|exercise|exercises|exercice|exercices|practice|worksheet|test|quiz|تمرين|تمارين|تطبيق|تطبيقات|تدريب|تدريبات|حل|حلول|corrigé|corrige|مثال|امثلة|أمثلة|جمل\s+مثال|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
   return grammarIntent && LOCKED_RULES_IA.some(function(rule){
     return q.indexOf(normaliseRegleVerrouIA(rule)) !== -1;
   });
