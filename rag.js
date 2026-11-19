@@ -427,18 +427,10 @@
         try{ if(window.ACCESS && ACCESS.paywall) ACCESS.paywall({ type:'page', page:+pg[1] }); }catch(err){}
         return '🔒 الصفحة ' + pg[1] + ' من الكتاب ضمن محتوى المشتركين — أكمل المسار المجاني أو اشترك لفتح كل الصفحات.';
       }
-      try{
-          const O0 = is3 ? await loadPages() : await loadPages3as();
-          const O = (O0 && O0.pages) ? O0.pages : (O0 || {});
-          const e2 = O[pg[1]];
-          if(e2 && (e2.lignes || e2.texte)){
-            let ls2 = Array.isArray(e2.lignes) ? e2.lignes : [e2.texte || ''];
-            const cl2 = ls2.map(l => String(l).replace(/\((?:page|p\.)\s*\d+\)/gi,'').replace(/\s*·\s*/g,'. ').replace(/\s*→\s*/g,' ')).filter(x => x.trim());
-            const ti2 = String(e2.titre || '').replace(/\((?:page|p\.)\s*\d+\)/gi,'').trim();
-            return '📚 هذه الصفحة من كتاب ' + (is3 ? '2AS' : '3AS') + ' — Seite ' + pg[1] + '. ' + ti2 + '. ' + cl2.join('. ').slice(0, 2200);
-          }
-        }catch(err){}
-        return '📖 الصفحة ' + pg[1] + ' غير موجودة بعد في فهرس هذا المستوى — Seite ' + pg[1] + ' ist für dieses Niveau noch nicht indexiert. ' + 'Essaie : « lis le texte de la Lektion 1 », « lies den Dialog Lektion 2 », « vocabulaire Lektion 3 ».';
+      /* Aucun repli vers l'index de l'autre niveau : les numéros de pages
+         se recouvrent entre 2AS et 3AS. Un repli pourrait révéler une page
+         verrouillée de l'autre manuel ou présenter un contenu faux. */
+      return '📖 الصفحة ' + pg[1] + ' غير موجودة في فهرس هذا المستوى — Seite ' + pg[1] + ' ist für dieses Niveau nicht indexiert.';
     }
     const lec = q.match(/(?:lis|lire|lies|lese|read|vorlesen|قرأ|اقرأ)\s+(?:le\s+|den\s+|das\s+|the\s+)?(texte|text|dialog|dialogue|vocabulaire|wortschatz|النص|الحوار|المفردات)[^\d]*(\d)?/i);
     if(lec){
