@@ -120,12 +120,12 @@ function isLockedContentQuestion(question, resource){
   if(resource && resource.level === '3AS' && unit === 10
      && ((resource.type === 'free_unit_lesson' && resource.unit === 1)
        || resource.type === 'free_exercise_bank')) unit = 1;
-  const assessment = /(?:فرض|اختبار|امتحان|quiz|test|devoir|evaluation|évaluation|exercice|exercise|übungen?|übungsblatt|arbeitsblatt|practice|worksheet|تمرين|تمارين|corrig|correction|solve|solution)/i.test(q);
+  const assessment = /(?:فرض|اختبار|امتحان|quiz|test|devoir|evaluation|évaluation|exercice|exercise|ubungen?|ubungsblatt|arbeitsblatt|practice|worksheet|تمرين|تمارين|corrig|correction|solve|solution)/i.test(normalizedQuestion);
   if(unit !== null && lesson !== null && !(unit === 1 && lesson <= 2)) return true;
   if(lesson !== null && lesson > 2) return true;
   if(unit !== null && assessment && unit !== 1) return true;
-  const conjugationIntent = /(?:conjug|konjug|تصريف|صرف|verbe|verb|nsarref|nsarraf|sarref|saref|tsarref|kifach|كيفاش|كيف)/i.test(q)
-    || LOCKED_CONJUGATIONS.some(v => q.trim() === v);
+  const conjugationIntent = /(?:conjug|konjug|تصريف|صرف|verbe|verb|nsarref|nsarraf|sarref|saref|tsarref|kifach|كيف)/i.test(normalizedQuestion)
+    || LOCKED_CONJUGATIONS.some(v => normalizeLockText(normalizedQuestion.trim()) === normalizeLockText(v));
   const verifiedLessonResource = resource && ['book_page','book_pages','free_unit_lesson','unit_lesson'].includes(resource.type);
   /* Une demande de conjugaison générique ne doit pas contourner les cadenas
      simplement parce que le verbe n'appartient pas à la petite liste historique.
