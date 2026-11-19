@@ -48,7 +48,11 @@ def validate_inventory(csv_path, repo_root):
 
     with handle:
         reader = csv.DictReader(handle)
-        headers = set(reader.fieldnames or [])
+        fieldnames = reader.fieldnames or []
+        if len(fieldnames) != len(set(fieldnames)):
+            return {"total": 0, "approved_count": 0, "pending_count": 0,
+                    "errors": ["entetes_csv_dupliquees"], "approved": []}
+        headers = set(fieldnames)
         missing = sorted(REQUIRED_COLUMNS - headers)
         if missing:
             return {"total": 0, "approved_count": 0, "pending_count": 0,
