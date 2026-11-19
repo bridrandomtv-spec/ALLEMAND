@@ -1072,6 +1072,8 @@ test('le RAG refuse les références de page et le texte de chunk invalides', as
     { page:1.5, text:'Texte exploitable.' },
     { page:'2', text:'Texte exploitable.' },
     { page:4, text:'Texte exploitable.', page_count:3 },
+    { page:1, text:'Texte exploitable.', page_count:0 },
+    { page:1, text:'Texte exploitable.', page_count:'3' },
     { page:1, text:'   ' },
     { page:1, text:'x'.repeat(20001) }
   ]) {
