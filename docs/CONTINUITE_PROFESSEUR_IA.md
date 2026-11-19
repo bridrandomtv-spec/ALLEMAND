@@ -1181,3 +1181,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Tests ajoutés pour l’annulation d’un corps déclaré à 8 193 octets sans lecture et le rejet d’un corps contenant une séquence UTF-8 invalide.
 - Commits : Worker `0393438`, tests `5c7428b`.
 - Aucun changement Supabase/Auth/RLS/schéma/paiement, aucun OCR/embedding/ingestion réelle. `main` inchangée ; PR #23 ouverte, non fusionnée ; aucun déploiement.
+
+
+## Lot 686 — correction du contrôle décimal de Content-Length
+
+- La relecture du lecteur borné a détecté une double échappement dans les expressions régulières de validation de `Content-Length`, à deux endroits : `readTextLimited()` (réponses HTTP) et `readLimitedBody()` (requêtes entrantes).
+- La forme erronée pouvait rejeter des longueurs décimales pourtant valides. Elle est remplacée par le contrôle `/^\\d+$/` dans les deux fonctions ; les limites en octets, l’annulation des flux et les réponses d’échec fermé restent inchangées.
+- Test de régression ajouté : un corps de requête avec un `Content-Length` décimal valide et égal à sa taille réelle doit être accepté et atteindre le modèle. Les tests existants couvrent également le rejet/annulation d’un corps déclaré trop volumineux et d’un flux RAG au-delà de sa limite.
+- Commits : Worker `20301ec`, test `1bd90c5`. Validation CI du HEAD final encore à obtenir ; le commit Worker a lancé les contrôles PostgreSQL et un contrôle Cloudflare, tandis que la suite CI complète a été annulée lors de l’arrivée du commit suivant et n’apparaît pas encore comme relancée.
+- Le workflow GitHub `.github/workflows/deploy.yml` est une CI de validation sans job `deploy` et sans permissions de publication Pages/OIDC. Le contrôle Cloudflare du commit Worker est signalé comme build sous le chemin `production/builds` ; son statut ne suffit pas à lui seul à établir si un déploiement a eu lieu. Aucun déploiement manuel n’a été déclenché.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun OCR, embedding ou ingestion réelle. `main` inchangée ; PR #23 ouverte, en brouillon et non fusionnée.
