@@ -1010,3 +1010,5 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - CI du HEAD contenant ce lot : à vérifier avant de déclarer le Lot 669 validé.
 
 - Précision ajoutée pendant la revue du Lot 669 : un `page_count` présent mais mal typé (ex. chaîne) ou inférieur à 1 est lui-même invalide et ne doit pas désactiver la comparaison. Le Worker exige maintenant un entier strictement positif dès que le champ est fourni ; deux cas de test supplémentaires couvrent zéro et chaîne. La CI précédente est à considérer comme obsolète pour ce HEAD modifié ; validation à refaire sur le commit final.
+
+- Relecture des fixtures : correction de la construction du cas `page_count: 0` afin que la valeur zéro soit bien transmise au Worker (test conditionnel sur la présence de propriété, et non sur sa vérité). Ce test vérifie désormais réellement le rejet du zéro. Le commit précédent reste non final pour la validation ; attendre la CI du dernier HEAD.
