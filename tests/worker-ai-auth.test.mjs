@@ -1271,7 +1271,7 @@ test('un index complet atteint le modèle de requête et conserve le classement 
   assert.match(h.messages[1].content,/Der Perfekt wird/);
 });
 
-test('un embedding de requête malformé ou nul conserve le classement BM25', async () => {
+test('un embedding de requête malformé, nul ou de norme débordante conserve le classement BM25', async () => {
   const chunkId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0';
   const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
   const invalidEmbeddings = [
