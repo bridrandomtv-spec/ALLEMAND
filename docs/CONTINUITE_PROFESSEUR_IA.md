@@ -1145,3 +1145,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Test ajouté : flux de corpus dépassant 1 500 000 octets ; le Worker renvoie 503, annule le flux et n'appelle pas le modèle.
 - Commits Worker/test : a80032d, 8f2170a. Validation CI complète du HEAD final requise.
 - Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de main, Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 682 — limites et validation des réponses du modèle
+
+- Le Worker valide désormais la sortie de l'AI binding : elle doit être une chaîne non vide et ne pas dépasser 6 000 caractères. Les réponses mal typées ou excessives sont refusées avec une erreur générique `ai-unavailable`, sans renvoyer de contenu anormal au navigateur.
+- Le chemin Cloudflare AI direct (token + account ID) utilise maintenant un délai d'attente de 20 secondes, lit le corps progressivement avec une limite de 262 144 octets, puis applique le parseur JSON strict avant d'extraire la réponse.
+- Le lecteur de flux annule aussi explicitement le flux si un bloc reçu n'a pas le type binaire attendu.
+- Test ajouté pour les réponses AI non textuelles et supérieures à 6 000 caractères.
+- Commits : Worker `f21df5a`, test `09eddfa`. CI du HEAD final à vérifier.
+- Le binding `env.AI.run` ne fournit pas de signal d'annulation dans cette interface : aucun faux engagement d'annulation n'est revendiqué pour ce chemin. Les limites de taille de sortie sont néanmoins appliquées après résolution.
+- Aucun appel IA réel, aucune vectorisation/OCR/ingestion, aucun déploiement. PR #23 reste non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
