@@ -1120,3 +1120,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Ce lot renforce uniquement la preuve du test ; aucun changement de comportement Worker en production.
 - Commit du test : `aea302145442e6bac62996051cb9acef214f54ba`. Validation CI complète du HEAD final requise.
 - Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 679 — couvrir le débordement numérique de la norme d'embedding
+
+- Extension des cas d'embedding de requête invalides : des composantes peuvent être individuellement finies tout en provoquant un débordement lors du calcul de la norme euclidienne (par exemple `Number.MAX_VALUE`).
+- Ajout de ce cas à la régression paramétrée du repli BM25. Le test exige toujours que l'appel d'embedding soit atteint et que la réponse lexicale reste disponible.
+- Le Worker calcule une norme non finie ; les similarités ne produisent alors aucun candidat sémantique exploitable et le classement lexical demeure le résultat de secours. Ce lot ajoute une preuve de non-régression sans modifier le Worker.
+- Commit du test : `feb10f2763fe8bbce659953c48827b1eae980c6c`. Validation CI complète du HEAD final requise.
+- Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
