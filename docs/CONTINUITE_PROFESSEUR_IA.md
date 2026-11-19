@@ -1039,3 +1039,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 
 
 - Correction de fixture du Lot 671 : la première écriture des deux CSV de test contenait un antislash supplémentaire avant le séparateur de ligne, ce qui empêchait de tester réellement les en-têtes dupliqués. Les deux fixtures ont été corrigées pour écrire de vraies lignes CSV distinctes dans `e64bac55633df4c5ab026caf26d30b8690ef948f` et `b05f08de2d4f0ca943cb10e4206f31f2a3feb179`. Les validations antérieures ne couvrent pas ces corrections ; attendre la CI du HEAD final.
+
+
+### Lot 672 — vérifier l’empreinte du corpus avant les embeddings Cloudflare — 19/11/2026
+- Audit de `tools/build_corpus_rag_vectors.py` : le générateur vérifiait les comptes document/chunk et les droits déclarés, puis calculait l'empreinte du corpus pour l'artefact vectoriel. Il ne comparait toutefois pas cette empreinte au champ `chunks_sha256` du manifeste avant de lancer les appels d'embedding.
+- Risque : un manifeste périmé ou incohérent pouvait déclencher des appels Workers AI potentiellement facturables pour produire un index qui serait ensuite rejeté par le Worker RAG en production.
+- Correctif : le mode CLI, y compris le dry-run, exige désormais un `chunks_sha256` présent et strictement égal au SHA-256 des octets du corpus. Le refus intervient avant toute demande Cloudflare et avant l'écriture de l'artefact.
+- Test ajouté : manifeste à empreinte erronée avec `--execute` et confirmation explicite de facturation ; l'appel Cloudflare est simulé et doit rester absent, le code doit échouer et aucun fichier de vecteurs ne doit être créé. Le test de dry-run fournit désormais un manifeste cohérent.
+- Commits : `72a4de7278ba0fb3d21039b5883b9f3d282dca12` (outil), `1f625ce4519f0fe2da7d60bdb8e9d7a855954a51` (test).
+- Le Lot 672 et les corrections finales des fixtures 671 doivent être validés par la CI du nouveau HEAD avant clôture. Aucun embedding réel ni appel Cloudflare n'a été effectué par ce lot.
+- Rappel : aucune ingestion PDF, aucun OCR ni vectorisation réelle sans droits confirmés. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucune modification de `main`, aucune fusion et aucun déploiement.
