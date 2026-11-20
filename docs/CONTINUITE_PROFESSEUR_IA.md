@@ -1210,3 +1210,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Ces tests renforcent explicitement l’invariant « toutes les pages demandées ou aucune » et le rejet des sélecteurs dupliqués. Ils n’appellent pas Workers AI réel et ne touchent pas Supabase ; les réponses RLS sont simulées dans le harness autonome.
 - Commit de tests : `1bde404`. Exécution CI associée à vérifier ; aucun résultat de test n’est revendiqué avant la fin du workflow sur le HEAD correspondant.
 - Aucun changement de logique Worker, de droits d’accès ou de configuration. Aucun OCR, embedding, vectorisation, ingestion réelle ou déploiement. `main` inchangée ; PR #23 ouverte, en brouillon et non fusionnée.
+
+
+## Lot 689 — isolation de la concurrence CI par PR
+
+- Diagnostic GitHub : le workflow principal `CI — ALLEMAND` était bloqué en `pending` parce qu’une exécution ancienne du même workflow, sur le SHA `21ab20c93a1033888da245501d4c6fbc7d5c4b3b`, restait `in_progress` depuis le 19 novembre à 22:35 UTC. Ses deux jobs étaient encore actifs à l’étape des tests Worker IA, tandis que la nouvelle exécution sur `cd3b753` n’avait aucun job démarré.
+- Cause dans `.github/workflows/deploy.yml` : groupe de concurrence global constant `pages` avec `cancel-in-progress: false`, ce qui sérialisait les PR et la branche principale dans le même groupe et laissait une ancienne exécution bloquer les suivantes.
+- Correction sur la branche PR uniquement : groupe désormais distinct par numéro de PR (ou ref hors PR) avec `cancel-in-progress: true`. Une nouvelle mise à jour de la même PR remplace ainsi son exécution obsolète, sans annuler les workflows d’autres PR ni celui de `main`.
+- Le workflow reste un CI de validation ; aucun job `deploy`, permission `pages: write` ou `id-token: write` n’a été ajouté. La modification ne touche ni Cloudflare configuration ni Supabase.
+- Commit du correctif concurrence : `96c98cf`. Vérifier le nouveau workflow déclenché sur ce HEAD avant de considérer le lot validé.
+- `main` reste inchangée ; PR #23 reste ouverte, en brouillon et non fusionnée. Aucun changement Auth/RLS/schéma/abonnement/paiement ; aucun OCR, embedding, vectorisation ou ingestion réelle.
