@@ -142,7 +142,7 @@
     const note = n ? noter(d).total : null;
     return '<article class="off-card" data-devoir="' + esc(d.id) + '">' +
       '<div class="oc-h"><span class="oc-badge">' + esc(d.numero) + '</span>' +
-        '<div class="oc-t"><b>' + esc(d.titre) + '</b>' +
+        '<div class="oc-t"><b>' + esc(String(d.titre || '').replace(/رسمي/g, 'تدريبي')) + '</b>' +
         '<i>' + '' + ' - ' + '' + ' • ' + esc(d.niveau) + '</i></div></div>' +
       '<div class="oc-m">' +
         '<span class="mchip">📖 الوحدة ' + d.unite + ' · ' + esc(d.unite_ar) + '</span>' +
