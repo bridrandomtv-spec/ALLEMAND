@@ -1036,6 +1036,21 @@ test('ia.js résout un identifiant PDF et déclenche une recherche naturelle san
   assert.equal(resolvers.search('Explique le Perfekt.'), null);
 });
 
+test('un corpus RAG PDF vide ne transmet aucun contexte au modèle', async () => {
+  const h = harness({ corpusDocumentData:{ version:1, documents:[], chunks:[] } });
+  const response = await h.context.__worker.fetch(request({
+    q:'Quels documents PDF sont disponibles ?',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status,404);
+  assert.equal(payload.err,'resource-not-found');
+  assert.ok(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_chunks.json')));
+  assert.ok(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_manifest.json')));
+  assert.equal(h.aiCalls.length,0);
+  assert.equal(h.messages,null);
+});
+
 test('le Worker récupère les chunks PDF côté serveur avec JWT et limite le contexte', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }] });
   const response = await h.context.__worker.fetch(request({
