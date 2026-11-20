@@ -1524,7 +1524,7 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 
 
 ### Lot 716 — audit ciblé des JSON publics — 20/11/2026
-- L'arbre Git récursif contient 63 fichiers JSON sous `assets/bdd/`, contre 58 indiqués dans l'inventaire du Lot 713. L'inventaire précédent était donc incomplet ; le Lot 716 documente l'écart sans prétendre à un audit exhaustif des 63 fichiers.
+- Correction de comptage : l'arbre Git récursif contient 58 fichiers JSON sous `assets/bdd/`, ce qui confirme le décompte du Lot 713. La mention de 63 dans la première version du rapport Lot 716 était erronée ; le rapport a été corrigé. L'audit du Lot 716 reste ciblé et non exhaustif.
 - Contrôles ciblés : `questions_eleve.json`, `vocabulaire_eleve.json`, `onboarding.json`, `intent_eval_set.json`, `intent_eval_results.json`, `corpus_rag_manifest.json`, `shards_manifest.json`, `access_config.json`, `journee.json`, `reservation.json`, `sujet14_farid.json`.
 - `journee.json` est explicitement qualifié de démonstration ; `journee.js` affiche cette qualification et neutralise les boutons d'action du planning de maquette.
 - `reservation.json` est chargé par `reservation.js` et ses contacts sont réutilisés dans le récapitulatif et le lien WhatsApp ; son exposition est fonctionnelle et doit être validée comme publication intentionnelle.
