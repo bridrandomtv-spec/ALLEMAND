@@ -4,6 +4,7 @@ import fs from 'node:fs';
 
 const corpus = fs.readFileSync(new URL('../corpus.js', import.meta.url), 'utf8');
 const registry = JSON.parse(fs.readFileSync(new URL('../assets/bdd/corpus.json', import.meta.url), 'utf8'));
+const assetsIgnore = fs.readFileSync(new URL('../.assetsignore', import.meta.url), 'utf8');
 
 test('les PDF historiques ne sont plus exposés par GitHub Raw', () => {
   assert.match(corpus, /function urlDoc\(u\)/);
@@ -27,4 +28,10 @@ test('les fiches PDF du registre public ne divulguent plus leurs extraits', () =
     String(d.format || '').toLowerCase() !== 'pdf' && typeof d.extrait === 'string' && d.extrait.length > 0
   );
   assert.ok(nonPdfWithExcerpt.length > 0, 'les extraits non PDF doivent rester préservés');
+});
+
+test('les PDF du dépôt restent exclus du bundle statique Cloudflare', () => {
+  const rules = assetsIgnore.split(/\\r?\\n/).map(line => line.trim()).filter(Boolean);
+  assert.ok(rules.includes('docs/archive'));
+  assert.ok(rules.includes('dzexams-*.pdf'));
 });
