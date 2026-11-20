@@ -1510,3 +1510,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Risque confirmé : lecture directe des quatre JSON sans authentification, malgré les déclarations de confidentialité et les gardes d'interface. Risque de données personnelles réelles conditionnel à confirmer par le propriétaire.
 - Rapport : `docs/CONTINUITE_LOT_714_AUDIT_FIXTURES_CLASSE_LIVE.md`.
 - Aucun JSON, JS ou Worker modifié ; aucun changement Supabase/Auth/RLS/schéma/paiement, aucune modification de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 715 — audit des configurations de paiement et documents de projet — 20/11/2026
+- Découverte critique : `assets/bdd/config.json` est public et non protégé par `PROT`. Il contient des coordonnées de paiement et l'identité du titulaire. Les valeurs ne sont pas reproduites dans les rapports ni commentaires.
+- Le seul chargement trouvé dans `app.js` lit `ia_proxy`, pas les champs de paiement. Les coordonnées de paiement ne sont donc pas nécessaires à ce flux vérifié.
+- `assets/bdd/plan_projet.json` est marqué « Document confidentiel », présente des informations de marché, revenus, équipe, tarifs et feuille de route ; `projet.js` le charge directement sans garde de rôle côté serveur. Exposition à confirmer comme voulue ou non par le propriétaire.
+- `assets/bdd/reservation.json` est chargé par `reservation.js` pour une interface publique de réservation et affiche un canal de contact. Le caractère public de ces coordonnées doit être validé, sans changement unilatéral.
+- Le Worker ne protège aucun de ces trois chemins ; `no-store` ne bloque pas l'accès direct ou GitHub Raw/API.
+- Rapport : `docs/CONTINUITE_LOT_715_AUDIT_CONFIG_PAIEMENT_ET_PROJET.md`.
+- Audit documentaire uniquement : aucun code/configuration/donnée modifié ; aucun changement Supabase/Auth/RLS/schéma/paiement, aucune modification de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
