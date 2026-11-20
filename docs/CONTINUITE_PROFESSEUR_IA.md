@@ -1368,3 +1368,26 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Correction de l'état vide de `corpus.js` : le message ne recommande plus `tools/ingest_corpus.py`, désormais désactivé. Il indique que l'import est suspendu jusqu'à validation des droits et migration vers le pipeline sécurisé.
 - Commits du lot : garde du manifeste `57dbf20`, tests `8ee0e5b`, instruction UI `5a4b89c`. Validation CI du HEAD final requise.
 - Aucun PDF n'a été extrait/OCRisé/indexé ; aucun embedding ni appel Cloudflare AI ; aucun contenu du catalogue historique n'a été modifié. `main` reste inchangée ; PR #23 non fusionnée ; aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+
+## Lot 704 — audit des chemins de lecture, du verrouillage et des ressources statiques
+
+### Contrôles réalisés
+- Vérification du routage navigateur dans `ia.js` : les ressources documentaires explicites (`corpus_document`, `corpus_search`) forcent le passage cloud ; le navigateur transmet le JWT Supabase et ne transmet pas de contexte libre au Worker.
+- Vérification de `worker/ia-ask.js` : identité Supabase vérifiée avant traitement ; consultation de `subscriptions` uniquement lorsque `isLockedContentQuestion()` classe la demande comme verrouillée. Les demandes générales ne sont donc pas bloquées systématiquement par l'abonnement.
+- Vérification de `fetchAuthorizedCorpusDocument()` : lecture des chunks et du manifeste via le Worker du site avec JWT ; contrôle SHA-256, compteurs, unicité des IDs, correspondance document/chunk, pages, licence autorisée et `rights_confirmed === true` avant classement. Les vecteurs restent facultatifs et désactivés par défaut ; ils ne servent jamais de preuve de droits.
+- Vérification des ressources gratuites : `free_summary` ne renvoie qu'un résumé d'unité identifié et borné ; `free_exercise_bank` ne renvoie que les exercices du niveau demandé, avec plafonds de taille. Les métadonnées de `malakhiss.json` et `contenu_original.json` déclarent explicitement une production originale. Les ressources gratuites déclarées restent accessibles sans abonnement.
+- Vérification des contenus de leçon 3AS : seules les séances 1 et 2 de l'unité 1 utilisent la ressource gratuite dédiée ; les autres séances passent par `fetchAuthorizedUnitLesson()` et le Worker du site protégé par RLS. Les pages de manuel passent par `lesson_content` et RLS.
+- Vérification des workflows : seuls les workflows de validation CI et les tests PostgreSQL restent présents ; les anciens workflows d'indexation OCR et de génération/push d'index ont été retirés dans les lots précédents. Aucun workflow restant n'exécute les scripts d'ingestion RAG ou de génération vectorielle.
+- Vérification des scripts : `ingest_corpus.py` et `indexer_pdf.py` s'arrêtent avant toute lecture/écriture d'ingestion ; `ingest_corpus_rag.py` exige un compagnon, une licence autorisée et une ligne d'inventaire centrale confirmée et cohérente ; `build_corpus_rag_vectors.py` reste en dry-run par défaut et exige `--execute` ET `--confirm-cloudflare-billing` pour appeler Cloudflare.
+
+### Point de risque confirmé et non modifié
+- `corpus.js` transforme les chemins `docs/archive/...pdf` en URL `raw.githubusercontent.com/.../main/...`. Comme le dépôt est public et que `.assetsignore` exclut ces PDF du bundle Worker, le contrôle RLS du Worker ne protège pas ces liens GitHub Raw : les fichiers d'archive et leurs extraits catalogue sont publiquement accessibles indépendamment de l'authentification.
+- Les 225 fiches PDF historiques du catalogue utilisent la mention `document utilisateur`, qui ne constitue pas à elle seule une licence vérifiée. L'inventaire central conserve 293 PDF sans preuve de droits confirmée.
+- Aucune suppression, masquage, modification des PDF ou désactivation de lien n'a été faite : cette décision affecterait la disponibilité documentaire et reste à arbitrer explicitement.
+
+### Résultat et périmètre
+- Aucun contournement identifié dans le chemin serveur RAG contrôlé par JWT/RLS ; aucun verrou d'abonnement global ajouté.
+- Les ressources explicitement déclarées originales/gratuites restent gratuites ; les documents RAG ne sont admissibles qu'après validation centrale des droits.
+- Aucun changement de code applicatif, aucune modification Supabase/Auth/RLS/schéma/paiement, aucun OCR, aucune extraction PDF, aucun embedding, aucun appel Workers AI et aucun déploiement.
+- `main` reste inchangée ; PR #23 reste ouverte, draft et non fusionnée.
