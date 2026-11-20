@@ -1269,3 +1269,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le générateur `tools/build_corpus_rag_vectors.py` filtre les documents non autorisés avant embedding ; l’exécution réelle exige `--execute`, `--confirm-cloudflare-billing`, des identifiants Cloudflare valides et au moins un chunk autorisé. Aucun de ces appels de facturation ou embeddings réels n’a été lancé.
 - Conclusion précise : le Professeur IA peut répondre par le modèle général et utiliser d’autres contextes autorisés déjà fournis par le Worker, mais la recherche RAG documentaire issue des 293 PDF n’est pas encore opérationnelle car son corpus protégé est vide. Les extraits de 300 caractères du catalogue historique ne remplacent pas l’ingestion RAG.
 - Aucun OCR, aucune extraction enregistrée, aucun embedding, aucune vectorisation ni ingestion réelle effectués. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 695 — test explicite du RAG PDF vide
+
+- Ajout dans `tests/worker-ai-auth.test.mjs` d’un test où le Worker reçoit un manifeste et un artefact de chunks cohérents mais vides (`documents: []`, `chunks: []`). La recherche `corpus_search` doit retourner `404 resource-not-found`, ne transmettre aucun contexte et ne lancer aucun appel au modèle ni embedding.
+- Ce test documente le comportement actuel du RAG vide : échec explicite de recherche documentaire, sans fabriquer un passage ni laisser le modèle croire qu’un PDF a été retrouvé. Il ne modifie pas le Worker ni la réponse HTTP.
+- Commit de test : `995f1ff`. Validation CI sur le nouveau HEAD à attendre.
+- Aucun OCR, aucune ingestion, aucun embedding ou vectorisation réels ; aucun changement de droits ni de configuration Supabase. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
