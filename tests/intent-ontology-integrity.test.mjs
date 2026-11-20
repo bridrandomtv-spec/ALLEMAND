@@ -3,11 +3,13 @@ import fs from 'node:fs';
 import test from 'node:test';
 
 const readJson = path => JSON.parse(fs.readFileSync(new URL(path, import.meta.url), 'utf8'));
-const normalize = value => String(value || '').toLowerCase().normalize('NFKC')
-  .replace(/[أإآٱ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي')
-  .replace(/[\u064B-\u065F\u0670]/g, '')
-  .replace(/[؟?!.,،؛:()\[\]{}"'«»]/g, ' ')
-  .replace(/\s+/g, ' ').trim();
+const normalize = value => String(value || '').toLowerCase().normalize('NFKD')
+  .replace(/[\\u0300-\\u036f\\u064B-\\u065F\\u0670]/g, '')
+  .replace(/\\u0640/g, '')
+  .replace(/[أإآٱ]/g, 'ا').replace(/[ؤئ]/g, 'ء')
+  .replace(/ة/g, 'ه').replace(/ى/g, 'ي')
+  .replace(/[؟?!.,،؛:()\\[\\]{}"'«»]/g, ' ')
+  .replace(/\\s+/g, ' ').trim();
 
 test('les formulations de l’ontologie ne désignent pas plusieurs intentions', () => {
   const ontology = readJson('../assets/bdd/intent_ontology.json');
@@ -96,4 +98,43 @@ test('le lecteur de page ne bascule jamais vers le manuel de l’autre niveau', 
     'un corps statique doit avoir un marqueur explicite locked:false');
   assert.match(route, /nicht indexiert/,
     'une page absente doit être signalée comme non indexée dans le niveau demandé');
+});
+
+
+test('les métadonnées de l’ontologie et les catégories du jeu d’évaluation sont cohérentes', () => {
+  const ontology = readJson('../assets/bdd/intent_ontology.json');
+  const dataset = readJson('../assets/bdd/intent_eval_set.json');
+  const allowedCategories = new Set([
+    'EXPLAIN', 'TRANSLATE', 'SEARCH', 'PRACTICE',
+    'CORRECTION', 'REVISION', 'NAVIGATION'
+  ]);
+  const knownLevels = new Set(['2AS', '3AS']);
+  const byIntent = new Map();
+
+  for (const item of ontology.intents || []) {
+    assert.ok(item.intent && typeof item.intent === 'string', 'identifiant d’intention absent');
+    assert.ok(!byIntent.has(item.intent), 'identifiant d’intention dupliqué : ' + item.intent);
+    assert.ok(allowedCategories.has(item.category), 'catégorie inconnue : ' + item.category);
+    assert.ok(typeof item.action === 'string' && /^[A-Z][A-Z0-9_]*$/.test(item.action),
+      'action invalide pour ' + item.intent);
+    assert.ok(Array.isArray(item.niveau) && item.niveau.length > 0,
+      'niveaux absents pour ' + item.intent);
+    assert.ok(item.niveau.every(level => knownLevels.has(level)),
+      'niveau inconnu pour ' + item.intent);
+    byIntent.set(item.intent, item);
+  }
+
+  for (const sample of dataset.eval || []) {
+    const item = byIntent.get(sample.intent);
+    assert.ok(item, 'intention inconnue : ' + sample.intent);
+    assert.equal(sample.category, item.category,
+      'catégorie d’évaluation incohérente pour ' + sample.intent);
+  }
+
+  assert.equal(dataset._meta.n, dataset.eval.length,
+    'le compteur du jeu d’évaluation doit refléter le nombre réel de questions');
+  for (const item of byIntent.values()) {
+    assert.ok(dataset.eval.some(sample => sample.intent === item.intent),
+      'intention sans exemple d’évaluation : ' + item.intent);
+  }
 });
