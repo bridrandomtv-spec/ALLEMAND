@@ -1391,3 +1391,26 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les ressources explicitement déclarées originales/gratuites restent gratuites ; les documents RAG ne sont admissibles qu'après validation centrale des droits.
 - Aucun changement de code applicatif, aucune modification Supabase/Auth/RLS/schéma/paiement, aucun OCR, aucune extraction PDF, aucun embedding, aucun appel Workers AI et aucun déploiement.
 - `main` reste inchangée ; PR #23 reste ouverte, draft et non fusionnée.
+
+
+## Lot 705 — qualité des corrigés et fiabilité des sources d'évaluation
+
+### Anomalies de contenu confirmées
+- `assets/bdd/annales.json` contient 126 fiches, toutes marquées `corrige_inclus: true`. L'audit a détecté 22 textes de corrigé distincts seulement ; les 126 fiches contiennent les marqueurs de corrigé générique (ex. « Vrai/Faux selon le texte officiel », réponses-types de présentation personnelle et bloc `ich bin / du hast`) plutôt que des réponses propres à chaque sujet.
+- `assets/bdd/compositions.json` contient 171 fiches, toutes marquées `corrige_inclus: true`. 162 corrigés correspondent aux modèles génériques détectés et 6 fiches ont un champ `corrige` vide ; au total, 168 fiches sont donc signalées comme nécessitant une vérification. Le texte n'a que 26 variantes distinctes pour 171 fiches.
+- `assets/bdd/corriges_gen.json` contient 22 entrées pour 11 modèles textuels distincts ; certains corrigés réutilisent une trame générale et non une réponse individualisée.
+- Les champs `source` des annales/compositions indiquent parfois ONEC, MEN, Goethe-Institut ou inspection pédagogique, mais aucune référence primaire (URL d'archive, identifiant de document source ou pièce justificative) n'est enregistrée au niveau de chaque fiche. L'attribution ne peut donc pas être confirmée par les seules métadonnées.
+- `bac_archive.json` déclare 68 sujets sur 17 années et attribue la source ONEC aux 68 fiches, avec `officiel: true`. L'auteur indiqué dans les métadonnées est le professeur, mais aucun lien ou identifiant de publication ONEC n'accompagne chaque fiche : provenance officielle non vérifiable à ce stade, sans conclure que chaque sujet est faux.
+
+### Correction de présentation appliquée
+- `devoirs_unite.js` n'affiche plus un simple ✓ sur les fiches dont le corrigé est vide ou contient les modèles génériques identifiés. Elles affichent maintenant « ⚠️ corrigé à vérifier » ; les autres affichent « corrigé présent », ce qui indique uniquement la présence d'un texte et non sa validation officielle.
+- Ajout de `tests/devoirs-unite-correction-quality.test.mjs` : teste les cas génériques/vides et les données historiques (126/126 annales et 168/171 compositions signalées).
+- Les textes sources et leurs attributions n'ont pas été réécrits, supprimés ou requalifiés. Aucune correction pédagogique n'a été inventée.
+
+### Portée IA
+- Le Worker IA `worker/ia-ask.js` ne charge pas directement `annales.json`, `compositions.json` ou `corriges_gen.json` dans le contexte RAG actuel ; la banque libre IA provient de `contenu_original.json`, tandis que les documents PDF passent par le manifeste RAG et les contrôles JWT/RLS/droits.
+- Les annales et compositions restent toutefois consommées par `devoirs_unite.js` et peuvent être présentées aux élèves : le risque est donc pédagogique et éditorial même sans injection directe dans le RAG.
+
+### Hors périmètre et protections
+- Aucun changement de Supabase/Auth/RLS/schéma/paiement, aucune modification de PDF, aucun OCR, aucune extraction, aucun embedding, aucun appel Cloudflare AI et aucun déploiement.
+- `main` reste inchangée ; PR #23 reste ouverte, draft et non fusionnée.
