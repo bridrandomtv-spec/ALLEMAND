@@ -1277,3 +1277,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Ce test documente le comportement actuel du RAG vide : échec explicite de recherche documentaire, sans fabriquer un passage ni laisser le modèle croire qu’un PDF a été retrouvé. Il ne modifie pas le Worker ni la réponse HTTP.
 - Commit de test : `995f1ff`. Validation CI sur le nouveau HEAD à attendre.
 - Aucun OCR, aucune ingestion, aucun embedding ou vectorisation réels ; aucun changement de droits ni de configuration Supabase. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 696 — validation du test de corpus vide et qualité des extraits historiques
+
+- Le test du lot 695 est réussi dans la CI du HEAD `7566eb4` : `tests/worker-ai-auth.test.mjs` totalise maintenant 108 tests réussis, 0 échec. Le test confirme qu’un corpus RAG vide retourne `404 resource-not-found`, sans contexte, sans appel au modèle et sans embedding.
+- Analyse des 225 extraits PDF du catalogue historique `corpus.json` : 220 sont exactement limités à 300 caractères ; 4 sont plus courts ; 17 contiennent des caractères de contrôle. Aucun n’a de propriété `droits_confirmes: true`. Ces champs sont des aperçus historiques, pas un texte intégral validé pour le RAG.
+- CI complète du HEAD `7566eb4` réussie : jobs `Validation structurelle & pédagogique` et `Tests autonomes — Professeur IA` réussis ; build Cloudflare de prévisualisation réussi ; trois validations PostgreSQL isolées réussies. Artefact PDF `pdf-rights-and-readiness` produit et conservé jusqu’au 4 décembre 2026.
+- La PR reste ouverte et en brouillon, non fusionnée. `main` est toujours à `fadae5e`. Aucun déploiement de production, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement. L’ingestion PDF et la vectorisation attendent toujours une confirmation de droits document par document.
