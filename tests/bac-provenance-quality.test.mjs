@@ -8,6 +8,7 @@ const bac = json('assets/bdd/bac.json');
 const devoirs = json('assets/bdd/devoirs_officiels.json');
 const examenSource = fs.readFileSync(new URL('../examen.js', import.meta.url), 'utf8');
 const officielsSource = fs.readFileSync(new URL('../officiels.js', import.meta.url), 'utf8');
+const workflowSource = fs.readFileSync(new URL('../.github/workflows/deploy.yml', import.meta.url), 'utf8');
 
 function distinctContent(items, subjectKey, correctionKey) {
   return new Set(items.map(item => JSON.stringify([
@@ -23,6 +24,8 @@ test('les 68 fiches BAC archivées ne sont pas présentées comme officiellement
   assert.equal(archive.sujets.every(item => item.provenance_verifiee === false), true);
   assert.equal(archive._meta.provenance_verifiee, false);
   assert.match(archive._meta.note_provenance, /aucune URL|référence primaire/i);
+  assert.match(workflowSource, /provenance globale doit rester non verifiee/);
+  assert.doesNotMatch(workflowSource, /source ONEC manquante/);
   assert.match(examenSource, /archive pédagogique/);
   assert.match(examenSource, /المصدر المعلن/);
 });
