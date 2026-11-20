@@ -1422,3 +1422,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le test `tests/devoirs-unite-correction-quality.test.mjs` couvre la classification, le filtrage, le KPI, le masquage en bibliothèque et les volumes historiques.
 - Audit d'accès complémentaire : `bdd.js` chargeait les fichiers protégés `devoirs.json`, `compositions.json` et `annales.json` sans transmettre les en-têtes Supabase. Le Worker du site exige pourtant un JWT pour ces chemins. Le chargeur transmet maintenant `CONTENT1.authHeaders()`, comme `devoirs_unite.js`, afin que les utilisateurs autorisés puissent récupérer les données tout en conservant la garde RLS. Test statique ajouté.
 - Le test de qualité des corrigés est maintenant branché dans le workflow `CI — ALLEMAND` (job de validation structurelle), pour empêcher la régression de l'indicateur trompeur.
+
+
+### Lot 705 — extension à l'archive BAC
+- `examen.js` charge `assets/bdd/bac_archive.json`, dont les 68 fiches portent une attribution ONEC et `officiel: true`, mais sans identifiant/lien de publication primaire par fiche. Le fichier est donc conservé comme archive pédagogique à provenance déclarée, pas comme archive officiellement authentifiée.
+- Le repli vers `bac.json` marquait auparavant systématiquement chaque fiche `officiel: true`, y compris une fiche dont la source déclarée est « photos professeur ». Le repli attribue maintenant `officiel: false`.
+- Les libellés de l'interface ont été neutralisés : « archive pédagogique », « source annoncée », durée/barème enregistrés dans les fiches, « simulation » et « correction de l'archive ». Aucun sujet ni corrigé n'a été supprimé ou réécrit.
+- Le test dédié vérifie que le module BAC ne réintroduit pas les anciennes affirmations officielles non prouvées.
