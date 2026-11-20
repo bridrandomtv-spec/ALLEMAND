@@ -16,28 +16,31 @@ def load_tool(name, path):
 
 
 class LegacyPdfIngestionGuardTests(unittest.TestCase):
-    def test_legacy_ingest_skips_pdf_without_extracting_or_copying_it(self):
+    def test_legacy_ingest_refuses_all_formats_before_extracting_or_writing(self):
         module = load_tool("legacy_ingest_corpus", "tools/ingest_corpus.py")
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             source = root / "source"
             source.mkdir()
-            pdf = source / "unverified.pdf"
-            pdf.write_bytes(b"%PDF-1.4 fake")
+            for name in ("unverified.pdf", "unverified.docx", "unverified.txt", "unverified.md"):
+                (source / name).write_bytes(b"unverified document")
             previous = Path.cwd()
             try:
                 os.chdir(root)
                 with patch.object(module, "texte_pdf",
-                                  side_effect=AssertionError("PDF extraction must not run")) as extract:
-                    module.main(str(source))
-                extract.assert_not_called()
+                                  side_effect=AssertionError("PDF extraction must not run")) as pdf_extract, \
+                     patch.object(module, "texte_docx",
+                                  side_effect=AssertionError("DOCX extraction must not run")) as docx_extract, \
+                     patch.object(module, "texte_brut",
+                                  side_effect=AssertionError("text extraction must not run")) as text_extract:
+                    with self.assertRaisesRegex(SystemExit, "ingest_corpus_desactive"):
+                        module.main(str(source))
+                pdf_extract.assert_not_called()
+                docx_extract.assert_not_called()
+                text_extract.assert_not_called()
                 self.assertFalse((root / "assets/corpus").exists())
-                self.assertEqual(
-                    __import__("json").loads(
-                        (root / "assets/bdd/corpus.json").read_text(encoding="utf-8")
-                    )["documents"],
-                    [],
-                )
+                self.assertFalse((root / "assets/bdd/corpus.json").exists())
+                self.assertFalse((root / "assets/bdd/corpus_index.json").exists())
             finally:
                 os.chdir(previous)
 
