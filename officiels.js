@@ -1,9 +1,9 @@
 /* ══════════════════════════════════════════════════════════════
    الثانوية الافتراضية الجزائرية — officiels.js
-   📄 الفروض الرسمية · Offizielle Kontrollarbeiten
-   Archive fidèle : ثانوية الأمير (وهران) · ثانوية منصور (قسنطينة) · + 8 lycées
+   📄 بنك الفروض والاختبارات · Pädagogische Aufgabenbank
+   Banque pédagogique : provenance documentaire à vérifier ; établissements non identifiés dans les fiches
    Onglets 📄 الفرض / ✅ الحل · saisie interactive · notation I/8 + II/8 + III/4 = /20
-   Grille officielle : مضمون 2ن (5 معلومات = 0,4/معلومة) · لغة 2ن
+   Grille de notation enregistrée : مضمون 2ن (5 معلومات = 0,4/معلومة) · لغة 2ن
    Réponses strictement locales (localStorage)
    ══════════════════════════════════════════════════════════════ */
 'use strict';
@@ -29,7 +29,7 @@
   async function boot(){
     const box = $('#officielsBody'); if(!box) return;
     if(!D){
-      box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل الفروض الرسمية…</div>';
+      box.innerHTML = '<div class="bdd-status">⏳ جارٍ تحميل بنك الفروض والاختبارات…</div>';
       try{
         const r = await fetch(SRC, { cache:'no-store' });
         if(!r.ok) throw new Error('HTTP ' + r.status);
@@ -71,13 +71,13 @@
   function entete(){
     const ds = D.devoirs || [];
     return '<div class="card off-hero">' +
-      '<div><div class="ch-badge">📄 الفروض الرسمية — ' + esc(D._meta.annee_scolaire) + '</div>' +
-      '<h2>فروض واختبارات ثانويات الوطن</h2>' +
+      '<div><div class="ch-badge">📄 بنك الفروض والاختبارات — مصدر الوثائق قيد التحقق · ' + esc(D._meta.annee_scolaire) + '</div>' +
+      '<h2>بنك الفروض والاختبارات</h2>' +
       '<div class="ch-sub">' + esc(D._meta.titre_de) + ' · تجميع الأستاذ خريف أحمد</div>' +
       '<div class="chips" style="margin-top:10px">' +
         '<span class="sec-pill">📄 ' + ds.length + ' فرض</span>' +
-        '<span class="sec-pill or">🏫 مصادر رسمية</span>' +
-        '<span class="sec-pill rg">📍 وطني</span>' +
+        '<span class="sec-pill or">⚠️ مصدر الوثائق قيد التحقق</span>' +
+        '<span class="sec-pill">🏫 المؤسسات غير محددة</span>' +
         '<span class="sec-pill">🧮 السلّم /' + D._meta.bareme_officiel.total + '</span>' +
       '</div></div>' +
       '<div class="oh-bar">' +
@@ -85,7 +85,7 @@
         '<div class="oh-b"><b>II</b><span>قسم اللغة</span><i>/8</i></div>' +
         '<div class="oh-b"><b>III</b><span>إنتاج كتابي</span><i>/4</i></div>' +
       '</div></div>' +
-      '<div class="privacy">🧮 <b>السلّم الرسمي</b> : ' +
+      '<div class="privacy">🧮 <b>سلّم التنقيط المسجّل</b> : ' +
         esc(D._meta.structure_langue.join(' · ')) +
         '<br>✍️ <b>إنتاج كتابي /4</b> : مضمون 2ن (5 معلومات = 0,4/معلومة) · ' +
         'لغة 2ن (قواعد / ترتيب الكلمات / إملاء)' +
@@ -168,7 +168,7 @@
     return '<div class="card off-head">' +
       '<button class="btn btn-o btn-sm" id="offBack">↩️ كل الفروض</button>' +
       '<div class="oh-t"><span class="oc-badge">' + esc(d.numero) + '</span>' +
-        '<div><h2>' + esc(d.titre) + '</h2>' +
+        '<div><h2>' + esc(String(d.titre || '').replace(/رسمي/g, 'تدريبي')) + '</h2>' +
         '<div class="ch-sub">' + '' + ' - ' + '' + ' • ' + esc(d.niveau) +
         ' • ' + esc(d.annee_scolaire) + ' • ⏱️ ' + d.duree_minutes + ' دقيقة</div></div></div>' +
       '<div class="oh-note"><div class="ohn-n ' + (n.total >= PRET ? 'ok' : n.total >= CONS ? 'mid' : 'ko') + '">' +
