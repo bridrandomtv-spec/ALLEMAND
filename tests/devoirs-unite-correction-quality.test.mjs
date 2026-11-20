@@ -41,6 +41,6 @@ test('la bibliothèque masque le texte générique et utilise le statut central'
 });
 
 test('le filtre et le KPI comptent uniquement les textes de correction présents', () => {
-  assert.match(bddSource, /correctionStatus\\(it\\) !== 'present'/);
-  assert.match(bddSource, /correctionStatus\\(i\\) === 'present'/);
+  assert.match(bddSource, /correctionStatus\(it\) !== 'present'/);
+  assert.match(bddSource, /correctionStatus\(i\) === 'present'/);
 });
