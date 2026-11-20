@@ -1573,3 +1573,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Conclusion : les artefacts du Lot 719 préexistent sur main ; les commits documentaires récents de PR #23 ne les ont pas introduits. Le risque demeure réel, mais sa correction relève d'un chantier distinct coordonné avec le propriétaire. Aucun changement main.
 - Rapport : docs/CONTINUITE_LOT_720_COMPARAISON_EXPOSITION_MAIN.md.
 - Comparaison des arbres seulement ; pas d'audit exhaustif des objets orphelins, forks, clones, caches externes ou artefacts CI. Aucune suppression, privatisation, réécriture Git, modification Worker/Supabase/Auth/RLS/schéma/paiement ni déploiement.
+
+
+### Lot 721 — releases, tags et artefacts GitHub Actions — 20/11/2026
+- Releases GitHub : aucune release publiée retournée. Références refs/tags : liste vide au contrôle.
+- Inspection des artefacts des quatre workflows du HEAD 9133fe5845f59c54010500711fcec2bb093db21d : un artefact CI principal `pdf-rights-and-readiness` (ID 14668693491, 4 781 octets, expiration annoncée 04/12/2026 20:57 UTC, rétention 14 jours) ; aucun artefact dans les trois workflows PostgreSQL.
+- Archive téléchargée et inspectée : CSV 293 lignes, chemins et compteurs techniques uniquement, pas de texte PDF. Les 293 entrées sont sans preuve compagnon trouvée, 0 droit confirmé, 0 licence renseignée, 0 erreur renseignée. Accès via la connexion GitHub active confirmé ; accès anonyme direct à l'archive non testé séparément.
+- `.github/workflows/deploy.yml` génère le CSV via tools/audit_pdf_text_readiness.py en mode summary-only et le publie avec actions/upload-artifact@v4, retention-days 14.
+- CI du HEAD 9133fe5845f59c54010500711fcec2bb093db21d : Workers Builds, Professeur IA autonome, validation structurelle/pédagogique et les trois workflows PostgreSQL réussis ; Supabase Preview ignoré.
+- Rapport : docs/CONTINUITE_LOT_721_AUDIT_RELEASES_TAGS_ARTEFACTS.md.
+- Aucun artefact, release, tag, PDF, JSON, historique ou réglage de rétention modifié. Aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/paiement. PR #23 toujours ouverte/en brouillon/non fusionnée.
