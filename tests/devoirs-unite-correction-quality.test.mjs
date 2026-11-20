@@ -37,10 +37,10 @@ test('la bibliothèque masque le texte générique et utilise le statut central'
   assert.equal(correctionStatus({ corrige_inclus: true, corrige: 'Ich heiße Omar. Ich bin 16 Jahre alt.' }), 'unverified');
   assert.equal(correctionStatus({ corrige_inclus: true, corrige: 'Corrigé littéral : Antworten passend zum Text.' }), 'present');
   assert.match(librarySource, /BDD\.correctionStatus\(f\) === 'present'/);
-  assert.match(librarySource, /texte général ou non complet|texte عام أو غير مكتمل/);
+  assert.match(librarySource, /النص عام أو غير مكتمل/);
 });
 
 test('le filtre et le KPI comptent uniquement les textes de correction présents', () => {
-  assert.match(bddSource, /correctionStatus\(i\) === 'present'/);
+  assert.match(bddSource, /correctionStatus\\(it\\) !== 'present'/);
   assert.match(bddSource, /correctionStatus\\(i\\) === 'present'/);
 });
