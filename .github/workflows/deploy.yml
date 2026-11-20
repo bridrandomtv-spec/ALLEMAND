@@ -1256,6 +1256,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_validate_pdf_rights_inventory.py' -v
           python -m unittest discover -s tests -p 'test_audit_pdf_text_readiness.py' -v
           python -m unittest discover -s tests -p 'test_build_corpus_rag_vectors.py' -v
+          python -m unittest discover -s tests -p 'test_legacy_pdf_ingestion_guard.py' -v
       - name: Auditer les PDF et produire un rapport technique sans contenu pédagogique
         run: |
           python tools/audit_pdf_text_readiness.py . --summary-only --rights-inventory docs/inventaire_pdf_droits.csv --csv-output "${{ runner.temp }}/pdf-rights-and-readiness.csv"

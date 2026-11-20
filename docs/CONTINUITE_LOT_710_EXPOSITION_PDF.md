@@ -13,8 +13,9 @@ Date : 20 novembre 2026
 - Suppression du seul champ `extrait` pour les 225 enregistrements dont `format=pdf` dans `assets/bdd/corpus.json`.
 - Conservation des identifiants, titres, matières, niveaux, dates, types, licences déclarées, URLs de référence et de tous les champs des documents non PDF.
 - Aucun fichier PDF n'a été supprimé, déplacé ou modifié.
-- Extension de `tests/corpus-public-pdf-access.test.mjs` : le test vérifie désormais qu'il existe toujours 225 fiches PDF, qu'aucune ne republie un champ `extrait`, que les extraits des documents non PDF restent présents, et que `.assetsignore` conserve les règles d'exclusion `docs/archive` et `dzexams-*.pdf`. Les 225 URLs de ces fiches doivent aussi conserver une extension PDF identifiable.
-- Commits de code : `78144ff3d73aacac2b3eeb36b7acfb41032476f6` (registre), `94070b190069b5d9009a95303e0211a9126d63e4` (test extraits), `65524d7b70955f1eabbac008f2bf87d58f322ed8` (test exclusion des PDF du bundle). Le dernier contrôle vérifie également que les 225 URL PDF sont reconnues par leur extension.
+- Extension de `tests/corpus-public-pdf-access.test.mjs` : le test vérifie désormais qu'il existe toujours 225 fiches PDF, qu'aucune ne republie un champ `extrait`, que les extraits des documents non PDF restent présents, que `.assetsignore` conserve les règles d'exclusion `docs/archive` et `dzexams-*.pdf`, et que les 225 URLs sont reconnaissables comme PDF.
+- Ajout de `test_legacy_pdf_ingestion_guard.py` à la CI du workflow principal : les anciens scripts `ingest_corpus.py` et `indexer_pdf.py` doivent rester désactivés et ne doivent ni extraire ni réécrire le corpus.
+- Commits de code : `78144ff3d73aacac2b3eeb36b7acfb41032476f6` (registre), `94070b190069b5d9009a95303e0211a9126d63e4` (test extraits), `65524d7b70955f1eabbac008f2bf87d58f322ed8` (tests de non-régression PDF). Le test de garde d'ingestion historique est désormais inclus dans le workflow principal.
 
 ## Limite résiduelle
 - Les 293 PDF restent présents dans le dépôt GitHub public ; un utilisateur qui connaît une URL Raw peut encore demander directement le fichier. Ni le retrait des boutons, ni l'exclusion du bundle Cloudflare ne révoquent l'accès au dépôt.
