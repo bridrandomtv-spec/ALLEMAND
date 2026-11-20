@@ -1599,3 +1599,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - La présence répétée des mêmes blobs sur plusieurs références confirme qu'une suppression sur une seule branche ne révoquerait pas leur visibilité. .assetsignore ne protège que le bundle Cloudflare, pas le dépôt GitHub public.
 - Rapport : docs/CONTINUITE_LOT_723_CARTOGRAPHIE_BRANCHES_ET_BLOBS.md.
 - Audit documentaire en lecture seule : aucune donnée, branche, permission, règle, référence ou historique modifié ; aucune purge, privatisation ou migration. Aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/paiement/infrastructure. PR #23 reste ouverte/en brouillon/non fusionnée.
+
+
+### Lot 724 — vérification Raw des JSON ciblés et comparaison main/PR — 20/11/2026
+- 18/18 requêtes directes Raw ont retourné un contenu lisible au HEAD PR : configuration, projet, réservation, fixtures élèves/parents/live/classe, journee, sujet14_farid, livres 2AS/3AS et sauvegarde docs/private/buch_pages_full.json. Les contenus ont été traités sans reproduction ni extraction de données personnelles.
+- Comparaison des arbres récursifs complets main (fadae5ee13fa89c47dd6a567d6db4c15df34a19c) et PR (HEAD Lot 723) : les 18 chemins existent dans les deux arbres et les 18 blobs SHA sont identiques. Ces versions préexistent donc sur main et n'ont pas été introduites par les commits documentaires récents.
+- Les PDF binaires n'ont pas été téléchargés par ce contrôle ; leur présence dans les arbres publics reste établie par les lots précédents. La lecture Raw ne tranche pas la qualification confidentielle/fictive/licenciée des contenus.
+- Rapport : docs/CONTINUITE_LOT_724_VERIFICATION_RAW_ET_COMPARAISON_MAIN.md.
+- Audit en lecture seule : aucun JSON, PDF, blob, historique, branche, règle d'accès ou réglage modifié. Aucun changement main, aucune purge/privatisation/réécriture Git/migration/déploiement, aucun changement Supabase/Auth/RLS/schéma/paiement/infrastructure. PR #23 reste ouverte/en brouillon/non fusionnée.
