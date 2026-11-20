@@ -49,7 +49,8 @@ for (const path of [
   '/assets/bdd/%64evoirs.json',
   '/%61ssets/bdd/devoirs.json',
   '/assets%2Fbdd%2Fdevoirs.json',
-  '/assets/bdd/%2564evoirs.json'
+  '/assets/bdd/%2564evoirs.json',
+  '/public/%252e%252e/assets/bdd/devoirs.json'
 ]) {
   test('refuse sans JWT le chemin protégé encodé ' + path, async () => {
     const h = harness();
