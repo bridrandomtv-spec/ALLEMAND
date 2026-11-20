@@ -1316,3 +1316,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Ce test couvre la frontière critique : l'extraction/OCR n'est pas seulement empêchée de publier des contenus non autorisés ; elle ne doit même pas être exécutée avant que les deux sources de droits concordent.
 - Commit du test : `03bc9a1`. Validation Python et CI complète à attendre sur ce commit ou le HEAD documentaire qui le suit.
 - Aucun PDF du dépôt n'a été modifié ou extrait. Aucun OCR, embedding, vectorisation ou ingestion réelle n'a été exécuté. Aucun changement de droits dans l'inventaire, ni de Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 700 — fermeture des anciens chemins d'ingestion PDF sans contrôle de droits
+
+- Audit du dépôt : `tools/ingest_corpus.py` attribuait par défaut `production propre`, extrayait les PDF et écrivait dans le corpus historique sans exiger la confirmation centrale des droits. `tools/indexer_pdf.py` extrayait les PDF, lançait automatiquement l'OCR pour les scans et indexait les contenus sous la licence générique `document utilisateur`.
+- Ces deux outils ne sont pas le pipeline RAG distant sécurisé et ne contrôlaient pas la concordance entre compagnon et inventaire central. Ils constituaient donc des chemins de contournement potentiels, même si le Worker ne consomme pas directement ces fichiers historiques pour la recherche documentaire distante.
+- `tools/ingest_corpus.py` refuse maintenant les PDF et conserve le traitement historique des formats non-PDF. Les PDF doivent être traités exclusivement par `tools/ingest_corpus_rag.py`, qui vérifie les deux sources de droits.
+- `tools/indexer_pdf.py` est désactivé explicitement avant toute lecture ou mutation du corpus : son fonctionnement historique ne peut pas être rendu conforme sans migration vers le pipeline sécurisé.
+- Nouveau test `tests/test_legacy_pdf_ingestion_guard.py` : vérifie que l'ancien ingest ignore un PDF sans appeler l'extraction ni copier le fichier, et que l'ancien indexeur s'arrête avant de lire ou modifier les artefacts corpus.
+- Commits : blocage ancien ingest `8fe7104`, désactivation indexeur `3c71b0a`, tests `e896ed4`. CI du HEAD final à attendre avant clôture du lot.
+- Aucun PDF du dépôt n'a été ouvert ou extrait par ces changements. Aucun OCR, embedding, vectorisation ou ingestion réelle. Aucun droit n'a été marqué comme confirmé. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
