@@ -1459,3 +1459,4 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Nouveau test autonome : `tests/test_devoirs_provenance.py` ; il vérifie le compteur, les statuts des 55 fiches, l'absence d'établissements/wilayas renseignés et le caractère purement historique du schéma `officiel_v1`.
 - Commits du lot : `2d9c525d` (test de provenance), `fee60dfb` (workflow CI). Les validations GitHub déclenchées par ces commits restent à confirmer avant de clore le lot.
 - Aucun contenu de sujet ou corrigé n'a été modifié. Aucun changement Supabase, Auth, RLS, schéma, abonnement ou paiement ; aucune modification de `main`, aucune fusion et aucun déploiement.
+- Correctif complémentaire du résumé CI : commit `4c178b0c` ; l'ancien message « 10 devoirs · 10 lycées » a été supprimé. La CI du HEAD final doit confirmer le contrôle complet.
