@@ -1238,3 +1238,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Correction appliquée dans `worker/ia-ask.js` : rétablissement des vrais retours à la ligne autour de l’annulation du body et du `return null`. La logique de sécurité et les limites ne changent pas.
 - Commit correctif : `8be5e38`. Le résultat CI du nouveau HEAD doit être vérifié avant clôture ; la détection prouve que les vérifications de build seules ne suffisaient pas à détecter cette erreur d’analyse dans le harness.
 - Aucun changement Auth/RLS/schéma/abonnement/paiement, aucun OCR/embedding/vectorisation/ingestion réelle. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 692 — correction des fixtures des tests HTTP du Worker
+
+- Après correction syntaxique, la suite Worker a exécuté 107 tests : 103 réussis et 4 échecs. L’analyse des assertions montre que trois tests qui attendaient le passage au modèle utilisaient la question « Explique le Perfekt », désormais correctement classée comme notion payante ; le Worker répondait donc `403 content-locked` avant d’atteindre le chemin HTTP/modèle. Le contrôle d’accès est correct et n’a pas été affaibli.
+- Les trois fixtures ont été remplacées par une question non verrouillée sur les salutations afin de tester le comportement HTTP demandé sans contourner le contrôle d’abonnement.
+- Le quatrième test mesurait `reads === 0` sur un `ReadableStream` avec `highWaterMark` par défaut : le runtime pouvait appeler `pull()` de manière anticipée avant toute lecture du Worker. Le flux de test utilise désormais `highWaterMark: 0`, de sorte que le compteur mesure bien une lecture déclenchée par le consommateur. L’attente de réponse `413` et l’annulation du corps restent inchangées.
+- Commit des fixtures corrigées : `cfcf90a`. Résultat CI correspondant à attendre ; aucune modification des règles de contenu premium ni de l’accès gratuit au Professeur IA.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun OCR, embedding, vectorisation ou ingestion réelle. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
