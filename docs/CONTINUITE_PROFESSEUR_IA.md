@@ -1556,3 +1556,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Rapport : docs/CONTINUITE_LOT_718_MATRICE_ACCES_PUBLICS.md.
 - Décisions propriétaires nécessaires : publication des coordonnées paiement/contact, confidentialité du plan projet, certification des fixtures comme synthétiques, statut d'accès des livres 2AS, licences des extraits 3AS et stratégie de retrait des fichiers/historique du dépôt public.
 - Audit documentaire uniquement : aucun fichier applicatif, JSON, PDF, Worker, secret, politique d'accès, Supabase/Auth/RLS/schéma/paiement ou infrastructure modifié. Aucun changement main, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 719 — vérification des artefacts suivis et de l'historique Git — 20/11/2026
+- Arbre Git complet du HEAD précédent : 1 445 blobs, 293 PDF suivis, 834 blobs sous docs/archive/ et docs/private/buch_pages_full.json (197 523 octets dans l'arbre).
+- Métadonnées GitHub : dépôt bridrandomtv-spec/ALLEMAND toujours public (private=false). Test Raw textuel de docs/private/buch_pages_full.json au SHA du HEAD précédent réussi ; le corps a été reçu mais non reproduit. Son historique par chemin indique un commit d'introduction le 29/09/2026 comme sauvegarde intégrale avant migration lesson_content. Le fichier reste suivi et récupérable depuis Raw.
+- Les exclusions .assetsignore (docs/archive, docs/private, dzexams-*.pdf) concernent le bundle Cloudflare, pas les objets du dépôt GitHub. 293 PDF sont encore suivis ; un PDF d'exemple de docs/archive/documents reste dans l'arbre au HEAD et son historique montre un commit de classement, pas une purge globale.
+- Aucun téléchargement/affichage de contenu PDF binaire n'a été utilisé comme preuve Raw. Le constat d'exposition des PDF repose sur leur présence dans l'arbre d'un dépôt public.
+- Rapport : docs/CONTINUITE_LOT_719_AUDIT_HISTORIQUE_ET_ARTEFACTS.md.
+- Blocages : décider du retrait de la sauvegarde livre et de ses versions historiques, du sort/licences des 293 PDF et du maintien éventuel du dépôt public. Une purge Git éventuelle affecterait clones/forks/PR/SHA et requiert une autorisation explicite ; aucune purge, suppression, privatisation ou réécriture n'a été faite.
+- Audit en lecture seule ; aucun code, fichier de données, blob, historique, visibilité, Supabase/Auth/RLS/schéma/paiement ou infrastructure modifié. Aucun changement main, aucune fusion et aucun déploiement. CI du HEAD bdbe32bf3dd0dcec7369e0f8eee9dba17e69f6a8 : Workers Builds, validation structurelle/pédagogique, tests autonomes Professeur IA et trois workflows PostgreSQL réussis ; Supabase Preview ignoré.
