@@ -1500,3 +1500,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les 569 images d'archive sont dénombrées mais non classifiées visuellement ; aucune affirmation sur leur contenu n'est faite.
 - Rapport : `docs/CONTINUITE_LOT_713_AUDIT_FIXTURES_ET_IMAGES.md`.
 - Aucun JSON/image/PDF modifié ; aucun changement Worker, Supabase/Auth/RLS/schéma, `main` ou déploiement. PR #23 reste ouverte, brouillon, non fusionnée.
+
+
+### Lot 714 — exposition des fixtures de classe et de session live — 20/11/2026
+- Vérification du Worker et des consommateurs : `classe.json`, `live.json`, `eleves.json` et `parents.json` ne correspondent à aucun motif `PROT`. Le Worker applique seulement `no-store` à `/assets/bdd/` puis transmet les requêtes à ASSETS ; ce n'est pas une autorisation.
+- `classe.js` et `live.js` chargent leurs JSON sans contrôle de rôle préalable. `prof.js` et `parents.js` ont des contrôles de rôle côté client, mais les fichiers restent directement lisibles. L'interface parents qualifie explicitement ses données de démonstration.
+- `eleves.json` présente des marqueurs forts de données synthétiques (noms génériques, matricules DZ-DEMO, emails demo.invalid, lieux de démonstration et dates artificielles). `parents.json` présente également des marqueurs explicites de démonstration.
+- `live.json` expose 32 entrées avec identités, matricules, villes, présence/retard, état micro/caméra, latence et participation ; les métadonnées ne certifient pas que ces données statiques sont fictives. `classe.json` est décrit comme une maquette mais contient des notes, présences, messages et une mention de justificatif médical ; le caractère synthétique de chaque entrée n'est pas certifié.
+- Risque confirmé : lecture directe des quatre JSON sans authentification, malgré les déclarations de confidentialité et les gardes d'interface. Risque de données personnelles réelles conditionnel à confirmer par le propriétaire.
+- Rapport : `docs/CONTINUITE_LOT_714_AUDIT_FIXTURES_CLASSE_LIVE.md`.
+- Aucun JSON, JS ou Worker modifié ; aucun changement Supabase/Auth/RLS/schéma/paiement, aucune modification de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
