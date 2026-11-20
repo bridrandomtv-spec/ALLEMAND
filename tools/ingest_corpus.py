@@ -13,8 +13,8 @@ un fichier _meta.json par document :
      "tags": ["..."]}
 
 Ce script :
-  1. extrait le texte (pypdf pour PDF, python-docx pour DOCX, brut pour txt/md ;
-     OCR via tesseract SEULEMENT si installé et si le PDF est un scan),
+  1. extrait le texte DOCX/TXT/MD ; les PDF sont refusés par cet ancien outil
+     et doivent passer par ingest_corpus_rag.py avec inventaire de droits confirmé ;
   2. REFUSE tout document dont la licence est interdite (manuel éditeur, livre commercial),
   3. découpe en chunks (~1200 mots) pour la recherche et le RAG futur,
   4. écrit assets/bdd/corpus.json (métadonnées) + assets/bdd/corpus_index.json
@@ -63,6 +63,10 @@ def main(dossier):
             continue
         ext = nom.rsplit(".", 1)[-1].lower()
         if ext not in ("pdf", "docx", "txt", "md"):
+            continue
+        if ext == "pdf":
+            print("  REFUSÉ (PDF) :", nom,
+                  "— utiliser tools/ingest_corpus_rag.py après confirmation des droits")
             continue
         meta = {}
         mp = os.path.join(dossier, "_" + nom.rsplit(".", 1)[0] + ".json")
