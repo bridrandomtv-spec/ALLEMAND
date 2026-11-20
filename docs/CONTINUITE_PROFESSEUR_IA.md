@@ -1591,3 +1591,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le contrôle détaillé porte sur cinq branches, pas sur les arbres de toutes les 30 branches. Il ne couvre pas forks, clones, caches, objets inaccessibles ou copies tierces.
 - Rapport : docs/CONTINUITE_LOT_722_INVENTAIRE_BRANCHES_GIT.md.
 - Aucune branche supprimée ou protégée, aucun historique réécrit. Aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/paiement.
+
+
+### Lot 723 — cartographie des blobs documentaires sur les 30 branches — 20/11/2026
+- Inspection récursive des 25 branches restantes après le Lot 722 : 25/25 arbres complets (non tronqués). Dans les 25 : 293 PDF, 834 blobs docs/archive, le fichier docs/private/buch_pages_full.json avec le même blob SHA 3114e3024995b7c7a9f22fcbdfc78218742f2084, et les 18 chemins JSON ciblés (configuration, projet, réservation, fixtures, récit pédagogique et livres 2AS/3AS).
+- Consolidation avec les cinq branches anciennes du Lot 722 : les 30 branches du dépôt ont maintenant été contrôlées pour la présence des 293 PDF et du blob de sauvegarde du livre ; les cinq branches du Lot 722 avaient déjà confirmé ces deux éléments. Le contrôle des 18 JSON du présent lot ne s'étend pas aux cinq arbres précédents.
+- La présence répétée des mêmes blobs sur plusieurs références confirme qu'une suppression sur une seule branche ne révoquerait pas leur visibilité. .assetsignore ne protège que le bundle Cloudflare, pas le dépôt GitHub public.
+- Rapport : docs/CONTINUITE_LOT_723_CARTOGRAPHIE_BRANCHES_ET_BLOBS.md.
+- Audit documentaire en lecture seule : aucune donnée, branche, permission, règle, référence ou historique modifié ; aucune purge, privatisation ou migration. Aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/paiement/infrastructure. PR #23 reste ouverte/en brouillon/non fusionnée.
