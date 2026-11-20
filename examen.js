@@ -400,7 +400,7 @@
           v = Math.min(4, Math.round(v * 2) / 2);
           sc[p.id] += v;
           detail.push({ id:qq.id, type:'redac', ok:v >= 2.5, got:v.toFixed(1) + '/4',
-                        rep:'grille officielle', mots:mots, rel:rel, k2:k2, pas:pas });
+                        rep:'grille indiquée dans la fiche', mots:mots, rel:rel, k2:k2, pas:pas });
           return;
         }
         if(ok) sc[p.id] += qq.pts;
@@ -554,7 +554,7 @@
       c.innerHTML = '<div class="modal-h"><div><span class="badge bac">🎓 BAC ' +
         sujetSel.annee + ' · ' + esc(sujetSel.session_label) + '</span>' +
         '<h2 style="margin:9px 0 3px;font-family:var(--ff-ar-display);font-size:19px">' +
-        '✅ التصحيح النموذجي الرسمي</h2><div class="fiche-de">' + esc(sujetSel.theme_de) +
+        '✅ التصحيح المدرج في الأرشيف</h2><div class="fiche-de">' + esc(sujetSel.theme_de) +
         '</div></div><button class="close-x" id="mClose">✕</button></div>' +
         '<div class="modal-b"><div class="sujet-box">' + esc(sujetSel.corrige) + '</div>' +
         '<div class="privacy" style="margin-top:13px">💡 النصيحة : حاول الإجابة بنفسك أولاً، ' +
