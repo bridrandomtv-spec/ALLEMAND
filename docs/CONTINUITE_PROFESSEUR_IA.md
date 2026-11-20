@@ -1414,3 +1414,9 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 ### Hors périmètre et protections
 - Aucun changement de Supabase/Auth/RLS/schéma/paiement, aucune modification de PDF, aucun OCR, aucune extraction, aucun embedding, aucun appel Cloudflare AI et aucun déploiement.
 - `main` reste inchangée ; PR #23 reste ouverte, draft et non fusionnée.
+
+
+### Renforcement de l'interface de la bibliothèque — Lot 705 (complément)
+- Le premier garde visuel dans `devoirs_unite.js` a été étendu au moteur `bdd.js` et à `library.js` : le filtre « avec corrigé » et le KPI ne comptent plus les champs génériques/vides ; la fiche détaillée n'affiche plus leur texte comme « corrigé modèle » et montre un avertissement explicite.
+- Un texte non détecté comme modèle générique est désormais qualifié de « texte de correction présent », et non de corrigé vérifié ou officiel. L'exactitude pédagogique et la provenance de ces autres textes restent à contrôler.
+- Le test `tests/devoirs-unite-correction-quality.test.mjs` couvre la classification, le filtrage, le KPI, le masquage en bibliothèque et les volumes historiques.
