@@ -1545,3 +1545,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les autres JSON examinés sont principalement des ressources linguistiques, exercices, taxonomies et référentiels géographiques ; aucun secret d'authentification ni profil individuel détecté dans leurs structures. Les droits d'accès attendus pour les sujets/corrigés anglais restent à confirmer.
 - Rapport détaillé : `docs/CONTINUITE_LOT_717_AUDIT_JSON_PEDAGOGIQUES.md`.
 - Aucun JSON, JS, Worker, donnée pédagogique, accès, Supabase/Auth/RLS/schéma, paiement ou infrastructure modifié. Aucun changement `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 718 — matrice consolidée des accès publics et des gardes Worker — 20/11/2026
+- Relecture croisée du Worker, des tests de garde, de wrangler.toml, .assetsignore, .gitignore et des consommateurs JavaScript.
+- PROT protège actuellement les scripts d'unités sélectionnés, devoirs.json, compositions.json, annales.json, les trois artefacts RAG, buch_3as_*.json et traductions_livre.json. Les tests confirment les refus 401/403/503, les chemins encodés et le refus avant appel ASSETS.
+- Plusieurs fichiers sensibles ou à statut à confirmer ne sont pas dans PROT : config.json, plan_projet.json, reservation.json, fixtures eleves/parents/live/classe, journee.json, sujet14_farid.json, ainsi que buch_2as.json, buch_l2.json, buch_l3.json. Leurs consommateurs les chargent directement sans preuve d'autorisation serveur dans les fetch examinés. Ne pas verrouiller les livres 2AS sans confirmation du statut gratuit/payé.
+- no-store n'est pas une autorisation. .assetsignore exclut certains fichiers du bundle Cloudflare, mais ni .gitignore ni .assetsignore ne retirent les fichiers déjà suivis du dépôt GitHub public. Les protections Worker n'empêchent pas non plus la lecture GitHub Raw/API.
+- Les tests Worker couvrent les routes protégées listées et un exemple public (grammaire.json), mais ne cartographient pas exhaustivement les routes publiques sensibles relevées ci-dessus.
+- Rapport : docs/CONTINUITE_LOT_718_MATRICE_ACCES_PUBLICS.md.
+- Décisions propriétaires nécessaires : publication des coordonnées paiement/contact, confidentialité du plan projet, certification des fixtures comme synthétiques, statut d'accès des livres 2AS, licences des extraits 3AS et stratégie de retrait des fichiers/historique du dépôt public.
+- Audit documentaire uniquement : aucun fichier applicatif, JSON, PDF, Worker, secret, politique d'accès, Supabase/Auth/RLS/schéma/paiement ou infrastructure modifié. Aucun changement main, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
