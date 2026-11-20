@@ -35,4 +35,16 @@ Date : 20 novembre 2026
 - Ajout d'une normalisation avec décodage borné à quatre passes avant les contrôles `PROT` et `Cache-Control`. Les segments `.` et `..` sont aussi résolus après décodage ; les encodages mal formés, ambigus ou résiduels sont refusés en `400`.
 - Tests ajoutés dans `tests/site-worker-content-guard.test.mjs` pour les chemins `%64`, `%61`, les séparateurs `%2F`, le double encodage `%2564`, la traversée encodée `%252e%252e` et un encodage invalide. Ils vérifient qu'aucun actif ni appel RLS n'est atteint sans JWT.
 - Le Worker transmet toujours la requête d'origine au binding ASSETS ; la normalisation sert à appliquer le garde sur un chemin canonique, sans modifier les URL de contenu servies.
-- Validation CI de ce lot en attente sur le HEAD qui inclura le correctif.
+- Tests du garde Worker sur le HEAD validé : 23 tests, 0 échec. Les chemins encodés `%64`, `%61`, `%2F`, `%2564`, la traversée `%252e%252e` et l'encodage invalide sont refusés avant l'accès à ASSETS ou l'appel RLS.
+
+
+## Résultats finaux de l'audit PDF et de la CI
+- Audit technique CI du dépôt : 293 PDF, 1 173 pages, 767 pages avec texte exploitable, 406 pages sans texte exploitable, 747 140 caractères extraits et comptabilisés (aucun texte conservé dans le rapport).
+- Répartition des fichiers : 186 `extractable`, 28 `mixed`, 78 `ocr_candidate`, 1 `encrypted`, 0 `unreadable`.
+- Rapprochement inventaire : 293 PDF audités, 293 lignes d'inventaire, 293 chemins rapprochés, 0 absent de l'inventaire, 0 PDF sans correspondance. Droits confirmés : 0 ; droits vides/non confirmés : 293. Aucun droit n'a été inféré.
+- Le rapport CSV technique est produit comme artefact CI, avec chemins et compteurs seulement ; aucun texte PDF n'y est inclus.
+- CI principale `44784903552` : les deux jobs « Validation structurelle & pédagogique » et « Tests autonomes — Professeur IA » ont réussi. La validation structurelle a terminé ses 47 étapes sans échec ; l'audit PDF, les tests d'ingestion et les tests Worker/RAG sont réussis.
+- Workflows PostgreSQL `44784903563`, `44784903565`, `44784903569` : tous réussis.
+- Test de garde d'ingestion historique exécuté dans la suite autonome : les anciens scripts `ingest_corpus.py` et `indexer_pdf.py` restent inertes et n'écrivent pas le corpus.
+- Le contrôle `Supabase Preview` est ignoré ; aucun déploiement n'a eu lieu.
+- HEAD validé : `c0f518faa2453802186fe9d858006815be494915`. Cette section est documentaire ; le commit de mise à jour du présent rapport pourra déclencher une nouvelle CI.
