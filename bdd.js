@@ -54,7 +54,9 @@ const BDD = (function(){
     let ok = 0;
     await Promise.all(SOURCES.map(async src => {
       try{
-        const res = await fetch(src.file, { cache:'force-cache' });
+        const headers = (window.CONTENT1 && typeof CONTENT1.authHeaders === 'function')
+          ? await CONTENT1.authHeaders() : {};
+        const res = await fetch(src.file, { cache:'force-cache', headers:headers });
         if(!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         (data.items || []).forEach(it => { it._src = src.id; S.items.push(it); });
