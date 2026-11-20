@@ -201,6 +201,7 @@ const DEVOIRS_UNITE = (function(){
         html += '        <span style="font-size:11px;opacity:.7;white-space:nowrap;">' + corrige + '</span>';
         html += '      </div>';
         html += '      <div style="display:flex;flex-wrap:wrap;gap:6px;font-size:11px;opacity:.8;margin-bottom:8px;">';
+        if(d.provenance_verifiee !== true) html += '<span style="color:var(--or)">⚠️ مصدر الوثيقة غير متحقق</span>';
         if(annee) html += '<span>📅 ' + annee + '</span>';
         if(wilaya) html += '<span>📍 ' + wilaya + '</span>';
         html += '<span>⏱️ ' + duree + ' د</span>';
