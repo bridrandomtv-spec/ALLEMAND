@@ -27,7 +27,7 @@ test('les lots historiques connus signalent les modèles génériques', () => {
   assert.equal(annales.length, 126);
   assert.equal(annales.filter(x => statutCorrige(x) === '⚠️ corrigé à vérifier').length, 126);
   assert.equal(compositions.length, 171);
-  assert.equal(compositions.filter(x => statutCorrige(x) === '⚠️ corrigé à vérifier').length, 168);
+  assert.equal(compositions.filter(x => statutCorrige(x) === '⚠️ corrigé à vérifier').length, 162);
 });
 
 test('la bibliothèque masque le texte générique et utilise le statut central', () => {
