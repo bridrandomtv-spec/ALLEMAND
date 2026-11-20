@@ -1307,3 +1307,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les trois artefacts `corpus_rag_manifest.json`, `corpus_rag_chunks.json` et `corpus_rag_vectors.json` restent vides (0 document, 0 chunk, 0 vecteur). Le test Worker du corpus vide garantit une réponse explicite `404 resource-not-found`, sans contexte ni appel au modèle/embedding. Le catalogue historique de 225 fiches PDF et ses extraits de 300 caractères ne sont pas une source d'ingestion RAG.
 - Aucune extraction de contenu sauvegardée, aucun OCR, aucun chunk, embedding, appel Cloudflare facturable ou ingestion réelle n'a été effectué. Le prochain travail sûr est de préparer une revue des droits et la liste des preuves à fournir, pas de fabriquer des confirmations ou de convertir automatiquement des PDF dont les droits sont inconnus.
 - Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée ; aucun déploiement de production.
+
+
+## Lot 699 — verrou OCR avant confirmation explicite des droits
+
+- Ajout de `test_unconfirmed_rights_prevent_ocr_and_pdf_extraction` dans `tests/test_ingest_corpus_rag.py`.
+- Le scénario utilise un PDF scanné, un compagnon qui revendique `droits_confirmes: true`, mais une ligne d'inventaire dont `rights_confirmed` est vide. Même lorsque l'option OCR est activée, le test exige que `extract_pdf_report` ne soit jamais appelée, que le document soit ignoré avec `droits_non_confirmes_dans_inventaire` et qu'aucun chunk ne soit créé.
+- Ce test couvre la frontière critique : l'extraction/OCR n'est pas seulement empêchée de publier des contenus non autorisés ; elle ne doit même pas être exécutée avant que les deux sources de droits concordent.
+- Commit du test : `03bc9a1`. Validation Python et CI complète à attendre sur ce commit ou le HEAD documentaire qui le suit.
+- Aucun PDF du dépôt n'a été modifié ou extrait. Aucun OCR, embedding, vectorisation ou ingestion réelle n'a été exécuté. Aucun changement de droits dans l'inventaire, ni de Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
