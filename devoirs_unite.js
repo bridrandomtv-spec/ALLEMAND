@@ -18,7 +18,7 @@ const DEVOIRS_UNITE = (function(){
   function statutCorrige(doc){
     if(!doc || doc.corrige_inclus !== true) return '—';
     const texte = String(doc.corrige || '').trim();
-    if(!texte || /Vrai\\/Faux selon le texte officiel|réponses en phrases complètes \\(Sie heißt|Ich heiße Omar|II\\.1 ich bin · du hast · wir sind · er hat/i.test(texte)){
+    if(!texte || /Vrai[/]Faux selon le texte officiel|réponses en phrases complètes [(]Sie heißt|Ich heiße Omar|II[.]1 ich bin · du hast · wir sind · er hat/i.test(texte)){
       return '⚠️ corrigé à vérifier';
     }
     return '✅ corrigé présent';
