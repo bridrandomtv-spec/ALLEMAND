@@ -1336,3 +1336,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le journal du run confirme explicitement le message du garde-fou et l'absence d'exécution de l'étape de commit. Aucun OCR ou index PDF n'a été produit par ce workflow.
 - Le workflow `.github/workflows/indexer.yml` a été supprimé de la branche PR par le commit `4e3171d` afin d'éviter qu'une modification future du chemin historique ne réactive le pipeline OCR non sécurisé.
 - Les validations de sécurité du lot doivent être considérées réussies uniquement si les tests dédiés passent dans la CI principale du HEAD final. La suppression du workflow n'est pas une validation du nouveau code.
+
+
+## Lot 701 — fermeture des imports historiques non-PDF et du sharder auto-push
+
+- L'audit des points d'entrée a confirmé que `tools/ingest_corpus.py` pouvait encore ingérer DOCX/TXT/MD avec une licence implicite `production propre` en l'absence de métadonnées, puis écrire dans `corpus.json`, `corpus_index.json` et `assets/corpus`. Le garde PDF seul ne suffisait donc pas à protéger toutes les voies d'alimentation du corpus client.
+- L'outil historique `tools/ingest_corpus.py` est désormais désactivé avant toute lecture/extraction/écriture, quel que soit le format. Sa réactivation nécessite un pipeline de droits explicites et un inventaire central couvrant chaque type de document. Test étendu à PDF, DOCX, TXT et MD : aucun extracteur n'est appelé et aucun artefact corpus n'est créé.
+- L'audit de `.github/workflows/sharder.yml` a révélé un workflow déclenché par des changements du script ou de `corpus_index.json`, avec `contents: write`, qui committait les shards puis exécutait `git pull --rebase origin main` et `git push`. Il pouvait donc modifier `main` automatiquement, à l'encontre de la règle de travail de cette PR.
+- Incohérence supplémentaire : `tools/sharder_index.py` attend `chunks` et `termes`, alors que le fichier actuel `assets/bdd/corpus_index.json` est un index lexical DE-AR avec `items`. Le workflow pouvait produire un manifeste vide/inadapté tout en tentant de pousser le résultat sur `main`.
+- Suppression du workflow dangereux `.github/workflows/sharder.yml` de la branche PR par le commit `4385172`. Le script de sharding n'est pas exécuté ; aucune génération de shards ni push n'a été lancé.
+- Commits du lot : désactivation complète de l'ingestion historique `7a5f025`, test tous formats `8378edf`, suppression du sharder auto-push `4385172`. Validation CI du HEAD final encore requise.
+- Aucun contenu documentaire n'a été extrait, OCRisé ou indexé. Aucun embedding ni ingestion réelle. Aucun droit modifié. `main` n'a reçu aucun push de notre part ; aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; PR #23 reste ouverte et non fusionnée.
