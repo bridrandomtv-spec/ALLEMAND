@@ -1471,5 +1471,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le Worker ne présente désormais un document comme officiel que si les deux indicateurs sont explicitement vrais et qu'une référence primaire (`source_url` HTTPS ou `document_id`) est fournie. Dans le cas contraire, le contexte du modèle indique « DOCUMENT PÉDAGOGIQUE — PROVENANCE NON VÉRIFIÉE » et conserve la source uniquement comme attribution déclarée.
 - La bibliothèque et les cartes de devoirs par unité affichent un avertissement de provenance non vérifiée.
 - Nouveau test `tests/official-document-provenance.test.mjs`, ajouté au workflow principal ; le test Worker vérifie aussi que les documents sans preuve ne sont plus étiquetés officiels.
-- Commits du lot 708 : `5f24822a`, `e30fc130`, `230f28ba`, `74e7e750`, `e5b08cdb`, `61a789fb`, `73331932`, `4af92c80`. La CI doit être confirmée sur le HEAD final.
+- Commits du lot 708 : `5f24822a`, `e30fc130`, `230f28ba`, `74e7e750`, `e5b08cdb`, `61a789fb`, `73331932`, `4af92c80`. Validation finale sur le HEAD `be8b12cf9794d017f31df14d94d03b6c61f95c86` : CI principale #4769 réussie (validation structurelle et tests autonomes Professeur IA, y compris Worker/RAG) ; workflows PostgreSQL isolés `44776008355`, `44776008571` et `44776008860` réussis. Aucun job en échec.
 - Aucun contenu de sujet/corrigé n'a été réécrit. Aucun changement Supabase, Auth, RLS, schéma, abonnement ou paiement ; aucune modification de `main`, aucune fusion et aucun déploiement.
+
+
+### Clôture de validation du Lot 708 — 20/11/2026
+- Revue GitHub du HEAD `be8b12cf9794d017f31df14d94d03b6c61f95c86` : CI `44776008496` terminée avec `success`. Les jobs `Validation structurelle & pédagogique` et `Tests autonomes — Professeur IA` sont tous deux réussis ; les étapes de test Worker, protections d'accès, régression RAG, QUST et ontologie sont terminées avec succès.
+- Les trois workflows PostgreSQL du même HEAD (`44776008355`, `44776008571`, `44776008860`) sont également réussis.
+- Comparaison `main...ai/rag-corpus-integrity-lot-635` : 352 commits d'avance, 0 en retard ; la base et le HEAD de PR sont inchangés par cette vérification. PR #23 ouverte, brouillon, non fusionnée et sans fil de revue/commentaire enregistré.
+- Cette clôture documentaire ne constitue pas une autorisation de fusion. Aucun déploiement et aucune modification de `main` ou de Supabase/Auth/RLS/schéma/abonnement/paiement.
