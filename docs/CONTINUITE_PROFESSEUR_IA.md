@@ -1520,3 +1520,16 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le Worker ne protège aucun de ces trois chemins ; `no-store` ne bloque pas l'accès direct ou GitHub Raw/API.
 - Rapport : `docs/CONTINUITE_LOT_715_AUDIT_CONFIG_PAIEMENT_ET_PROJET.md`.
 - Audit documentaire uniquement : aucun code/configuration/donnée modifié ; aucun changement Supabase/Auth/RLS/schéma/paiement, aucune modification de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+
+### Lot 716 — audit ciblé des JSON publics — 20/11/2026
+- L'arbre Git récursif contient 63 fichiers JSON sous `assets/bdd/`, contre 58 indiqués dans l'inventaire du Lot 713. L'inventaire précédent était donc incomplet ; le Lot 716 documente l'écart sans prétendre à un audit exhaustif des 63 fichiers.
+- Contrôles ciblés : `questions_eleve.json`, `vocabulaire_eleve.json`, `onboarding.json`, `intent_eval_set.json`, `intent_eval_results.json`, `corpus_rag_manifest.json`, `shards_manifest.json`, `access_config.json`, `journee.json`, `reservation.json`, `sujet14_farid.json`.
+- `journee.json` est explicitement qualifié de démonstration ; `journee.js` affiche cette qualification et neutralise les boutons d'action du planning de maquette.
+- `reservation.json` est chargé par `reservation.js` et ses contacts sont réutilisés dans le récapitulatif et le lien WhatsApp ; son exposition est fonctionnelle et doit être validée comme publication intentionnelle.
+- `sujet14_farid.json` contient un récit pédagogique avec un personnage nommé et des détails familiaux/scolaires ; la licence indique une intégration autorisée, mais le caractère entièrement fictif n'est pas certifié. Aucune donnée du récit n'est reproduite dans les rapports.
+- Les jeux d'intention et les manifestes RAG examinés ne contiennent pas de profils personnels ; le manifeste RAG annonce 0 document et 0 chunk. `access_config.json` expose les règles de parcours gratuit/payant sans secret d'authentification identifié.
+- Le Worker ne protège pas les chemins `config.json`, `plan_projet.json`, `sujet14_farid.json`, `journee.json` et `reservation.json`. `no-store` ne bloque pas la lecture anonyme.
+- Rapport : `docs/CONTINUITE_LOT_716_AUDIT_JSON_PUBLICS.md`.
+- Audit documentaire uniquement : aucun JSON, JS, Worker, règle d'accès, paiement, Supabase/Auth/RLS/schéma ou infrastructure modifié ; aucune modification de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
