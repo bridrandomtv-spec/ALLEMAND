@@ -1229,3 +1229,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le groupe de concurrence par PR du lot 689 est conservé. Les workflows PostgreSQL isolés ont leur propre workflow et n’ont pas été modifiés.
 - Commit de la borne de durée : `2ff6468`. Le déclenchement d’un nouveau workflow sur le HEAD courant doit encore être confirmé : l’exécution précédente `44634989792` reste une exécution en attente créée sous l’ancienne configuration de concurrence.
 - Aucun changement de code Worker, d’accès, de données Supabase ou de déploiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 691 — correction du défaut syntaxique révélé par la CI
+
+- La première CI complète du nouveau HEAD `f3b11fd` a démarré et a fait échouer le job `Validation structurelle & pédagogique` à l’étape `node --test tests/worker-ai-auth.test.mjs`.
+- Le journal GitHub identifie précisément `worker/ia-ask.js:35` : le bloc de rejet du `Content-Length` contenait les deux caractères littéraux `\\n` au lieu de vrais retours à la ligne. Le harness charge le Worker avec `vm.runInNewContext`, ce qui provoquait `SyntaxError: Invalid or unexpected token` et faisait échouer les tests qui importent le Worker.
+- Correction appliquée dans `worker/ia-ask.js` : rétablissement des vrais retours à la ligne autour de l’annulation du body et du `return null`. La logique de sécurité et les limites ne changent pas.
+- Commit correctif : `8be5e38`. Le résultat CI du nouveau HEAD doit être vérifié avant clôture ; la détection prouve que les vérifications de build seules ne suffisaient pas à détecter cette erreur d’analyse dans le harness.
+- Aucun changement Auth/RLS/schéma/abonnement/paiement, aucun OCR/embedding/vectorisation/ingestion réelle. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
