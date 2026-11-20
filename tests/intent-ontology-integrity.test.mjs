@@ -4,12 +4,12 @@ import test from 'node:test';
 
 const readJson = path => JSON.parse(fs.readFileSync(new URL(path, import.meta.url), 'utf8'));
 const normalize = value => String(value || '').toLowerCase().normalize('NFKD')
-  .replace(/[\\u0300-\\u036f\\u064B-\\u065F\\u0670]/g, '')
-  .replace(/\\u0640/g, '')
+  .replace(/[\u0300-\u036f\u064B-\u065F\u0670]/g, '')
+  .replace(/\u0640/g, '')
   .replace(/[أإآٱ]/g, 'ا').replace(/[ؤئ]/g, 'ء')
   .replace(/ة/g, 'ه').replace(/ى/g, 'ي')
-  .replace(/[؟?!.,،؛:()\\[\\]{}"'«»]/g, ' ')
-  .replace(/\\s+/g, ' ').trim();
+  .replace(/[؟?!.,،؛:()\[\]{}"'«»]/g, ' ')
+  .replace(/\s+/g, ' ').trim();
 
 test('les formulations de l’ontologie ne désignent pas plusieurs intentions', () => {
   const ontology = readJson('../assets/bdd/intent_ontology.json');
