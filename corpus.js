@@ -92,8 +92,7 @@ let D = null, IDX = null;
 
       if(!res.length){
         h += '<div class="card cp-vide"><div class="cp-vi">🗂️</div>'
-          + '<h3>aucun document</h3><p>Élargis les filtres, ou ajoute des documents via '
-          + '<code>tools/ingest_corpus.py</code>.</p></div>';
+          + '<h3>aucun document</h3><p>Élargis les filtres. L’import documentaire est suspendu jusqu’à validation des droits et migration vers le pipeline sécurisé.</p></div>';
       }else{
         h += '<div class="cp-grid">' + res.map(d =>
             '<div class="cp-c">'
