@@ -1480,3 +1480,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les trois workflows PostgreSQL du même HEAD (`44776008355`, `44776008571`, `44776008860`) sont également réussis.
 - Comparaison `main...ai/rag-corpus-integrity-lot-635` : 352 commits d'avance, 0 en retard ; la base et le HEAD de PR sont inchangés par cette vérification. PR #23 ouverte, brouillon, non fusionnée et sans fil de revue/commentaire enregistré.
 - Cette clôture documentaire ne constitue pas une autorisation de fusion. Aucun déploiement et aucune modification de `main` ou de Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+
+### Lot 712 — audit des sources de livres et sauvegardes — 20/11/2026
+- CI vérifiée sur le HEAD précédent `bf0ac7a45b1ecb99a1d7510c463d8fa2a080dfb6` : validation structurelle et pédagogique réussie ; tests autonomes Professeur IA, audit PDF et Worker/RAG réussis ; trois workflows PostgreSQL réussis.
+- Audit Git des sources de livres : `docs/private/buch_pages_full.json` est présent dans le dépôt public et lisible via l'API de contenu GitHub. Il contient 212 pages du manuel 2AS. Le fait que `docs/private` soit listé dans `.assetsignore` ne protège pas contre les accès directs au dépôt GitHub.
+- Les métadonnées de `assets/bdd/buch_pages.json` confirment que les corps payants ont été retirés du catalogue et que la sauvegarde intégrale est placée dans ce fichier privé : exposition résiduelle confirmée.
+- Les fichiers `buch_2as.json`, `buch_l2.json` et `buch_l3.json` contiennent des champs pédagogiques structurés et sont chargés par `buch.js` sans JWT. Ils ne correspondent pas aux motifs `PROT` actuels. Leur caractère gratuit ou payant doit être confirmé avant toute extension de la garde afin de ne pas interrompre les contenus gratuits.
+- `buch3as_pages.json` est un index 3AS dont les métadonnées indiquent que les corps résident dans `public.lesson_content` sous RLS. Les fichiers `buch_3as_l4.json` à `buch_3as_l8.json` correspondent au motif protégé du Worker.
+- Rapport détaillé : `docs/CONTINUITE_LOT_712_AUDIT_SOURCES_LIVRES.md`.
+- Aucun fichier pédagogique supprimé ou modifié ; aucun changement Worker, Supabase/Auth/RLS/schéma, `main` ou déploiement. PR #23 reste ouverte, brouillon et non fusionnée. L'exposition GitHub directe demeure un blocage à résoudre par décision explicite sur le retrait du fichier et son historique.
