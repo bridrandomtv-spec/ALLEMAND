@@ -1490,3 +1490,13 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - `buch3as_pages.json` est un index 3AS dont les métadonnées indiquent que les corps résident dans `public.lesson_content` sous RLS. Les fichiers `buch_3as_l4.json` à `buch_3as_l8.json` correspondent au motif protégé du Worker.
 - Rapport détaillé : `docs/CONTINUITE_LOT_712_AUDIT_SOURCES_LIVRES.md`.
 - Aucun fichier pédagogique supprimé ou modifié ; aucun changement Worker, Supabase/Auth/RLS/schéma, `main` ou déploiement. PR #23 reste ouverte, brouillon et non fusionnée. L'exposition GitHub directe demeure un blocage à résoudre par décision explicite sur le retrait du fichier et son historique.
+
+
+### Lot 713 — audit des fixtures élèves et archives visuelles — 20/11/2026
+- Validation complète du HEAD précédent `1a9c8c08647544cbc6de368cfafb4d692f535885` : CI principale `44788376113` réussie (validation structurelle/pédagogique et tests autonomes Professeur IA, audit PDF, Worker/RAG) ; trois workflows PostgreSQL `44788376133`, `44788376187`, `44788376240` réussis.
+- Inventaire Git : 58 JSON sous `assets/bdd/`, 293 PDF et 569 images sous `docs/archive/images/`. Les exclusions `.assetsignore` ne protègent pas contre l'accès direct au dépôt public.
+- `eleves.json` contient 32 enregistrements avec champs identifiants (matricule, prénom, nom, naissance, localisation, téléphone parent, email) renseignés ; `parents.json` contient 2 fiches enfant avec données similaires ; `live.json` contient 32 entrées élèves et informations de présence/connexion. Les métadonnées déclarent un usage localStorage, mais les JSON sont publiquement accessibles et non couverts par les motifs `PROT` du Worker.
+- La présence de placeholders est probable dans certains champs, mais le caractère intégralement fictif de toutes les données n'est pas prouvé. Les fichiers sont donc traités comme potentiellement identifiants jusqu'à confirmation du propriétaire. Aucune valeur personnelle n'a été reproduite dans le rapport.
+- Les 569 images d'archive sont dénombrées mais non classifiées visuellement ; aucune affirmation sur leur contenu n'est faite.
+- Rapport : `docs/CONTINUITE_LOT_713_AUDIT_FIXTURES_ET_IMAGES.md`.
+- Aucun JSON/image/PDF modifié ; aucun changement Worker, Supabase/Auth/RLS/schéma, `main` ou déploiement. PR #23 reste ouverte, brouillon, non fusionnée.
