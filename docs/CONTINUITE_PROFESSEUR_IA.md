@@ -1450,3 +1450,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Test intégré au workflow `CI — ALLEMAND`.
 - Aucun sujet, texte ou corrigé supprimé ou réécrit. Aucun changement Supabase/Auth/RLS/schéma/paiement, aucun OCR, aucune extraction PDF, aucun embedding, aucun appel Cloudflare AI et aucun déploiement.
 - `main` reste inchangée ; PR #23 reste ouverte, draft et non fusionnée.
+
+### Lot 707 — alignement de la CI sur la provenance non vérifiée des devoirs — 20/11/2026
+- La revue finale du diff a révélé que le workflow principal conservait un contrôle historique nommé « devoirs officiels ». Il comptait les 10 fiches au schéma `officiel_v1` comme des fiches officielles sans vérifier les champs `officiel`, `provenance_verifiee` ou `statut_provenance`, alors que les 55 fiches sont désormais explicitement non vérifiées.
+- Le contrôle CI a été renommé et recentré sur la structure pédagogique et la provenance : il exige exactement 55 fiches, `_meta.nombre=55`, `_meta.provenance_verifiee=false`, et pour chacune `officiel=false`, `provenance_verifiee=false`, `statut_provenance=non_verifiee`. Il vérifie également que les établissements et wilayas restent non renseignés.
+- Le schéma `officiel_v1` est désormais traité comme un identifiant de format historique uniquement ; les dix fiches correspondantes ne sont plus comptabilisées ni décrites comme des sujets officiels. Les contrôles pédagogiques utiles (notation, répartition des points, groupes de compréhension, exercices, grille de production écrite et couverture des unités) sont conservés.
+- Le message de synthèse historique « 10 devoirs · 10 lycées » a été remplacé par une formulation indiquant explicitement que la provenance documentaire n'est pas vérifiée.
+- Nouveau test autonome : `tests/test_devoirs_provenance.py` ; il vérifie le compteur, les statuts des 55 fiches, l'absence d'établissements/wilayas renseignés et le caractère purement historique du schéma `officiel_v1`.
+- Commits du lot : `2d9c525d` (test de provenance), `fee60dfb` (workflow CI). Les validations GitHub déclenchées par ces commits restent à confirmer avant de clore le lot.
+- Aucun contenu de sujet ou corrigé n'a été modifié. Aucun changement Supabase, Auth, RLS, schéma, abonnement ou paiement ; aucune modification de `main`, aucune fusion et aucun déploiement.
