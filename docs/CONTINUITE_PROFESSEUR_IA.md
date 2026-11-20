@@ -1533,3 +1533,15 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le Worker ne protège pas les chemins `config.json`, `plan_projet.json`, `sujet14_farid.json`, `journee.json` et `reservation.json`. `no-store` ne bloque pas la lecture anonyme.
 - Rapport : `docs/CONTINUITE_LOT_716_AUDIT_JSON_PUBLICS.md`.
 - Audit documentaire uniquement : aucun JSON, JS, Worker, règle d'accès, paiement, Supabase/Auth/RLS/schéma ou infrastructure modifié ; aucune modification de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+
+### Lot 717 — audit complémentaire des JSON pédagogiques et du corpus — 20/11/2026
+- Audit documentaire en lecture seule des 30 JSON restants de `assets/bdd/`, avec vérification structurelle et consommateurs JavaScript.
+- `devoirs.json` : lecture complète de 379 entrées ; le compteur `_meta.nombre` annonce 363 (écart +16) et la redistribution v3 annonce 350 (113 2AS + 237 3AS). Répartition réelle : 131 entrées 2AS, 246 entrées 3AS et deux autres niveaux. Les 379 entrées ont un champ source mais aucune `source_url` ni `document_id` ; les attributions institutionnelles/génériques ne constituent pas une preuve primaire. Le Worker protège ce chemin en runtime, mais GitHub Raw/API reste accessible tant que le dépôt est public.
+- `biblio_multimatieres.json` : 1 213 entrées, compteur conforme, identifiants uniques et traductions DE/FR/AR renseignées. `corpus_index.json` : 490 éléments, deux groupes de numéros dupliqués et métadonnée obsolète. `corriges_gen.json` : 22 entrées. `traductions_livre.json` : 761 entrées, métadonnées de validation sans référence primaire indépendante par entrée.
+- `buch_3as_l4.json` à `buch_3as_l8.json` contiennent des extraits renvoyant à des pages de manuel, sans licence/autorisation jointe dans les métadonnées. Le Worker protège ces chemins en runtime, mais pas les blobs GitHub Raw/API. Justification des droits ou retrait du dépôt public à décider avant fusion.
+- `corpus_rag_chunks.json` contient 0 document et 0 chunk ; `corpus_rag_vectors.json` contient 0 vecteur. Aucun embedding effectif n'est présent dans ces artefacts.
+- Les autres JSON examinés sont principalement des ressources linguistiques, exercices, taxonomies et référentiels géographiques ; aucun secret d'authentification ni profil individuel détecté dans leurs structures. Les droits d'accès attendus pour les sujets/corrigés anglais restent à confirmer.
+- Rapport détaillé : `docs/CONTINUITE_LOT_717_AUDIT_JSON_PEDAGOGIQUES.md`.
+- Aucun JSON, JS, Worker, donnée pédagogique, accès, Supabase/Auth/RLS/schéma, paiement ou infrastructure modifié. Aucun changement `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
