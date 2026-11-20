@@ -32,7 +32,7 @@ Date : 20 novembre 2026
 
 ## Lot 711 — normalisation des chemins du Worker
 - Audit du garde `src/site-worker.js` : les expressions de protection testaient directement `URL.pathname`, qui peut conserver des segments encodés (lettres, séparateurs et encodages successifs).
-- Ajout d'une normalisation avec décodage borné à quatre passes avant les contrôles `PROT` et `Cache-Control`. Les encodages mal formés, ambigus ou résiduels sont refusés en `400`.
-- Tests ajoutés dans `tests/site-worker-content-guard.test.mjs` pour les chemins `%64`, `%61`, les séparateurs `%2F`, le double encodage `%2564` et un encodage invalide. Ils vérifient qu'aucun actif ni appel RLS n'est atteint sans JWT.
+- Ajout d'une normalisation avec décodage borné à quatre passes avant les contrôles `PROT` et `Cache-Control`. Les segments `.` et `..` sont aussi résolus après décodage ; les encodages mal formés, ambigus ou résiduels sont refusés en `400`.
+- Tests ajoutés dans `tests/site-worker-content-guard.test.mjs` pour les chemins `%64`, `%61`, les séparateurs `%2F`, le double encodage `%2564`, la traversée encodée `%252e%252e` et un encodage invalide. Ils vérifient qu'aucun actif ni appel RLS n'est atteint sans JWT.
 - Le Worker transmet toujours la requête d'origine au binding ASSETS ; la normalisation sert à appliquer le garde sur un chemin canonique, sans modifier les URL de contenu servies.
 - Validation CI de ce lot en attente sur le HEAD qui inclura le correctif.
