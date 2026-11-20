@@ -179,7 +179,7 @@ const BDD = (function(){
     SOURCES:SOURCES, state:S, load:load, search:search, page:page, pages:pages,
     setPage:setPage, kpis:kpis, countByType:countByType, facet:facet, get:get,
     setFiltre:setFiltre, setQuery:setQuery, setTri:setTri, setPerPage:setPerPage,
-    reset:reset, logVue:logVue, vuesLocales:vuesLocales, normalise:normalise
+    reset:reset, logVue:logVue, vuesLocales:vuesLocales, normalise:normalise, correctionStatus:correctionStatus
   };
 })();
 
