@@ -1247,3 +1247,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le quatrième test mesurait `reads === 0` sur un `ReadableStream` avec `highWaterMark` par défaut : le runtime pouvait appeler `pull()` de manière anticipée avant toute lecture du Worker. Le flux de test utilise désormais `highWaterMark: 0`, de sorte que le compteur mesure bien une lecture déclenchée par le consommateur. L’attente de réponse `413` et l’annulation du corps restent inchangées.
 - Commit des fixtures corrigées : `cfcf90a`. Résultat CI correspondant à attendre ; aucune modification des règles de contenu premium ni de l’accès gratuit au Professeur IA.
 - Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun OCR, embedding, vectorisation ou ingestion réelle. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 693 — résultats réels de l’inventaire PDF CI
+
+- L’artefact `pdf-rights-and-readiness` du workflow réussi `44643313708` a été téléchargé et analysé. Il couvre 293 fichiers PDF et 1 173 pages, sans conserver le texte extrait.
+- Résultats : 186 PDF `extractable` (566 pages, 601 078 caractères extractibles) ; 28 PDF `mixed` (252 pages, dont 201 avec texte et 51 sans texte) ; 78 PDF `ocr_candidate` (355 pages sans texte extractible) ; 1 PDF `encrypted` (138? non, 0 page lisible par pypdf). Total : 767 pages avec texte et 406 pages sans texte extractible ; 747 140 caractères extractibles.
+- L’inventaire des droits est présent pour les 293 chemins, mais `rights_confirmed` et `license` sont vides sur les 293 lignes ; le statut de revue est `à vérifier — aucune preuve compagnon trouvée`. Aucune autorisation d’ingestion ne peut être déduite de la présence d’un PDF ni de son caractère extractible.
+- Conséquence pour le chantier : l’extraction technique est possible pour 186 PDF, partielle pour 28, et 78 nécessiteraient une OCR si les droits sont confirmés ; le PDF chiffré doit être traité séparément. Aucun OCR n’a été lancé, aucun texte n’a été sauvegardé, aucun chunk/embedding n’a été produit à partir de ces fichiers et aucun document n’a été intégré au RAG de production.
+- Rapport disponible comme artefact CI `pdf-rights-and-readiness` (run `44643313708`, conservation jusqu’au 4 décembre 2026). Il contient les chemins, compteurs techniques et colonnes de droits, pas le contenu pédagogique.
+- Le workflow complet sur le HEAD `6769ed4` est réussi : validation structurelle/pédagogique, suite autonome Professeur IA, audit PDF, contrôles d’accès et trois workflows PostgreSQL isolés. Le build Cloudflare est une prévisualisation uniquement.
+- `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun déploiement.
