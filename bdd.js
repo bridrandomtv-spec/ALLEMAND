@@ -23,6 +23,16 @@ const BDD = (function(){
     tri: 'recent', page: 1, perPage: 12, resultats: []
   };
 
+  /* Distinguer un texte de correction présent d'un modèle générique non fiable. */
+  function correctionStatus(it){
+    if(!it || it.corrige_inclus !== true) return 'absent';
+    const texte = String(it.corrige || '').trim();
+    if(!texte || /Vrai[/]Faux selon le texte officiel|réponses en phrases complètes [(]Sie heißt|Ich heiße Omar|II[.]1 ich bin · du hast · wir sind · er hat/i.test(texte)){
+      return 'unverified';
+    }
+    return 'present';
+  }
+
   /* ── Normalisation pour la recherche ── */
   const ARAB_MAP = { 'أ':'ا','إ':'ا','آ':'ا','ٱ':'ا','ة':'ه','ى':'ي','ؤ':'و','ئ':'ي','ء':'' };
   function normalise(t){
@@ -86,8 +96,8 @@ const BDD = (function(){
       if(f.trimestre  !== 'tous' && String(it.trimestre) !== f.trimestre) return false;
       if(f.unite      !== 'tous' && String(it.unite) !== f.unite)  return false;
       if(f.difficulte !== 'tous' && String(it.difficulte) !== f.difficulte) return false;
-      if(f.corrige === 'oui' && !it.corrige_inclus) return false;
-      if(f.corrige === 'non' &&  it.corrige_inclus) return false;
+      if(f.corrige === 'oui' && correctionStatus(it) !== 'present') return false;
+      if(f.corrige === 'non' &&  correctionStatus(it) === 'present') return false;
       if(terms.length && !terms.every(t => e.txt.indexOf(t) !== -1)) return false;
       return true;
     });
@@ -135,7 +145,7 @@ const BDD = (function(){
       bac:c.bac, annales:c.annales, wilayas: wil,
       annees: S.items.length ? (Math.min.apply(null,S.items.map(i=>i.annee)) + '→' +
                                  Math.max.apply(null,S.items.map(i=>i.annee))) : '—',
-      corriges: S.items.filter(i => i.corrige_inclus).length,
+      corriges: S.items.filter(i => correctionStatus(i) === 'present').length,
       unites: new Set(S.items.map(i => i.unite_de)).size,
       moyenne: S.items.length ? (S.items.reduce((a,i)=>a+(i.note_moyenne||0),0)/S.items.length).toFixed(1) : '—'
     };
