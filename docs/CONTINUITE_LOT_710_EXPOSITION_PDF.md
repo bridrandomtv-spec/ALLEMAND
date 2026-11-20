@@ -13,8 +13,8 @@ Date : 20 novembre 2026
 - Suppression du seul champ `extrait` pour les 225 enregistrements dont `format=pdf` dans `assets/bdd/corpus.json`.
 - Conservation des identifiants, titres, matières, niveaux, dates, types, licences déclarées, URLs de référence et de tous les champs des documents non PDF.
 - Aucun fichier PDF n'a été supprimé, déplacé ou modifié.
-- Extension de `tests/corpus-public-pdf-access.test.mjs` : le test vérifie désormais qu'il existe toujours 225 fiches PDF, qu'aucune ne republie un champ `extrait`, que les extraits des documents non PDF restent présents, et que `.assetsignore` conserve les règles d'exclusion `docs/archive` et `dzexams-*.pdf`.
-- Commits de code : `78144ff3d73aacac2b3eeb36b7acfb41032476f6` (registre), `94070b190069b5d9009a95303e0211a9126d63e4` (test extraits), `65524d7b70955f1eabbac008f2bf87d58f322ed8` (test exclusion des PDF du bundle).
+- Extension de `tests/corpus-public-pdf-access.test.mjs` : le test vérifie désormais qu'il existe toujours 225 fiches PDF, qu'aucune ne republie un champ `extrait`, que les extraits des documents non PDF restent présents, et que `.assetsignore` conserve les règles d'exclusion `docs/archive` et `dzexams-*.pdf`. Les 225 URLs de ces fiches doivent aussi conserver une extension PDF identifiable.
+- Commits de code : `78144ff3d73aacac2b3eeb36b7acfb41032476f6` (registre), `94070b190069b5d9009a95303e0211a9126d63e4` (test extraits), `65524d7b70955f1eabbac008f2bf87d58f322ed8` (test exclusion des PDF du bundle). Le dernier contrôle vérifie également que les 225 URL PDF sont reconnues par leur extension.
 
 ## Limite résiduelle
 - Les 293 PDF restent présents dans le dépôt GitHub public ; un utilisateur qui connaît une URL Raw peut encore demander directement le fichier. Ni le retrait des boutons, ni l'exclusion du bundle Cloudflare ne révoquent l'accès au dépôt.
@@ -26,4 +26,4 @@ Date : 20 novembre 2026
 - Branche : `ai/rag-corpus-integrity-lot-635`.
 - PR #23 reste ouverte, en brouillon, non fusionnée.
 - Aucune modification de `main`, aucun déploiement de production.
-- La validation structurelle sur le commit documentaire intermédiaire `a752ddf9227bff451dea6f835661250ed0da214e` a terminé avec succès, y compris le test PDF ajouté. Le commit final `65524d7b70955f1eabbac008f2bf87d58f322ed8` doit encore être validé par la CI avant de déclarer le Lot 710 terminé.
+- Les premières validations structurelles ont réussi, mais les exécutions CI suivantes ont été annulées lors de nouvelles mises à jour de la PR. Le commit consolidé du test et de ce rapport doit être validé sur son propre HEAD avant de déclarer le Lot 710 terminé.

@@ -23,6 +23,7 @@ test('les deux rendus du catalogue signalent la suspension des PDF', () => {
 test('les fiches PDF du registre public ne divulguent plus leurs extraits', () => {
   const pdfs = (registry.documents || []).filter(d => String(d.format || '').toLowerCase() === 'pdf');
   assert.equal(pdfs.length, 225);
+  assert.ok(pdfs.every(d => typeof d.url === 'string' && /\\.pdf(?:[?#]|$)/i.test(d.url)));
   assert.ok(pdfs.every(d => !Object.hasOwn(d, 'extrait') || d.extrait === ''));
   const nonPdfWithExcerpt = (registry.documents || []).filter(d =>
     String(d.format || '').toLowerCase() !== 'pdf' && typeof d.extrait === 'string' && d.extrait.length > 0
@@ -31,7 +32,7 @@ test('les fiches PDF du registre public ne divulguent plus leurs extraits', () =
 });
 
 test('les PDF du dépôt restent exclus du bundle statique Cloudflare', () => {
-  const rules = assetsIgnore.split(/\\r?\\n/).map(line => line.trim()).filter(Boolean);
+  const rules = assetsIgnore.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
   assert.ok(rules.includes('docs/archive'));
   assert.ok(rules.includes('dzexams-*.pdf'));
 });
