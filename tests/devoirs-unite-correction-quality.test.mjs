@@ -6,6 +6,7 @@ import vm from 'node:vm';
 const source = fs.readFileSync(new URL('../devoirs_unite.js', import.meta.url), 'utf8');
 const bddSource = fs.readFileSync(new URL('../bdd.js', import.meta.url), 'utf8');
 const librarySource = fs.readFileSync(new URL('../library.js', import.meta.url), 'utf8');
+const examSource = fs.readFileSync(new URL('../examen.js', import.meta.url), 'utf8');
 const bddMatch = bddSource.match(/function correctionStatus\(it\)\{[\s\S]*?\n  \}/);
 assert.ok(bddMatch, 'correctionStatus doit être défini dans bdd.js');
 const correctionStatus = vm.runInNewContext('(' + bddMatch[0] + ')');
@@ -45,4 +46,11 @@ test('la bibliothèque masque le texte générique et utilise le statut central'
 test('le filtre et le KPI comptent uniquement les textes de correction présents', () => {
   assert.match(bddSource, /correctionStatus\(it\) !== 'present'/);
   assert.match(bddSource, /correctionStatus\(i\) === 'present'/);
+});
+
+test('le module BAC ne présente plus les sources non vérifiées comme officielles', () => {
+  assert.match(examSource, /archive pédagogique/);
+  assert.match(examSource, /source déclaré|source annoncé|المصدر المعلن/);
+  assert.match(examSource, /officiel: false/);
+  assert.doesNotMatch(examSource, /archive officielle|التصحيح النموذجي الرسمي|ظروف الامتحان الرسمية/);
 });
