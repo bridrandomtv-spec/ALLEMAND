@@ -18,6 +18,7 @@ jobs:
   validate:
     name: Validation structurelle & pédagogique
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -1241,6 +1242,7 @@ jobs:
   professor-ai:
     name: Tests autonomes — Professeur IA
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v5
