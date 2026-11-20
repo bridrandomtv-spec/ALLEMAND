@@ -219,7 +219,7 @@ test('le chemin Cloudflare AI direct annule une réponse dépassant sa limite en
     cfAiToken:true,
     cloudflareResponse:new Response(oversizedBody,{status:200})
   });
-  const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
+  const response = await h.context.__worker.fetch(request({ q:'Explique les salutations en allemand.' }), h.env);
   assert.equal(response.status,503);
   assert.deepEqual(await response.json(),{ ok:false, err:'ai-unavailable' });
   assert.equal(cancelled,true);
@@ -231,7 +231,7 @@ test('le Worker refuse une réponse du modèle non textuelle ou hors limite', as
     { response:'x'.repeat(6001) }
   ]){
     const h = harness({ modelResponse });
-    const response = await h.context.__worker.fetch(request({ q:'Explique le Perfekt.' }), h.env);
+    const response = await h.context.__worker.fetch(request({ q:'Explique les salutations en allemand.' }), h.env);
     assert.equal(response.status,503);
     assert.deepEqual(await response.json(), { ok:false, err:'ai-unavailable' });
     assert.ok(h.aiCalls.some(call => call.model !== '@cf/google/embeddinggemma-2'));
@@ -244,7 +244,7 @@ test('annule un corps entrant déclaré trop volumineux avant toute lecture', as
   const body = new ReadableStream({
     pull(controller){ reads++; controller.enqueue(new TextEncoder().encode('{"q":"Explique le Perfekt."}')); },
     cancel(){ cancelled = true; }
-  });
+  }, { highWaterMark:0 });
   const headers = new Headers({ 'Content-Type':'application/json', Origin:ORIGIN, Authorization:'Bearer ' + TOKEN, 'Content-Length':'8193' });
   const req = new Request('https://teacher.example/ask', { method:'POST', headers, body, duplex:'half' });
   const h = harness();
@@ -257,7 +257,7 @@ test('annule un corps entrant déclaré trop volumineux avant toute lecture', as
 });
 
 test('accepte un Content-Length décimal valide pour le corps entrant', async () => {
-  const payload = JSON.stringify({ q:'Explique le Perfekt.' });
+  const payload = JSON.stringify({ q:'Explique les salutations en allemand.' });
   const body = new ReadableStream({
     start(controller){ controller.enqueue(new TextEncoder().encode(payload)); controller.close(); }
   });
