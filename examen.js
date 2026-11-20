@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════════
    الثانوية الافتراضية الجزائرية — examen.js
-   🎓 MODULE BAC : archive officielle 2010 → 2026 (68 sujets)
-   Minuteur officiel 180′ · correction automatique I/8 + II/8 + III/4
+   🎓 MODULE BAC : archive pédagogique 2010 → 2026 (68 sujets, provenance à vérifier)
+   Simulation paramétrée selon les fiches · barème déclaré I/8 + II/8 + III/4
    Seuils de préparation (Séance 7) : ≥10 prêt · 7–9,9 à consolider · <7 non prêt
    Résultats strictement locaux (localStorage) — aucune transmission
    ══════════════════════════════════════════════════════════════ */
@@ -44,7 +44,7 @@
               duree_minutes: (b.duree_minutes || 180), bareme: (b.bareme || 20),
               coefficient: (b.niveau === '3AS' ? 3 : 2), grammaire: (b.tags || []).join(', '),
               niveau_cefr: 'B1', parties: [], corrige: b.corrige, corrige_inclus: true,
-              source: b.source, officiel: true, tags: b.tags,
+              source: b.source, officiel: false, tags: b.tags,
               _lecture: true, _full: b.sujet }); });
             if(D._meta) D._meta.nombre_sujets = D.sujets.length;
           }
@@ -96,10 +96,10 @@
     const notes = h.map(x => x.note);
     const moy = notes.length ? (notes.reduce((a,b)=>a+b,0)/notes.length) : null;
     return '<div class="card exam-hero">' +
-      '<div><div class="ch-badge">🎓 أرشيف البكالوريا — ' + esc(m.source) + '</div>' +
+      '<div><div class="ch-badge">🎓 أرشيف تدريبي للبكالوريا — المصدر المعلن : ' + esc(m.source) + '</div>' +
         '<h2><span class="de-display">Abitur-Archiv</span> · ' + m.annee_min + ' → ' + m.annee_max + '</h2>' +
         '<div class="ch-sub">' + m.nombre_sujets + ' موضوعاً · 4 مواضيع لكل سنة · ' +
-        'المدة الرسمية ' + Math.round(m.duree_officielle/60) + ' ساعات · السلّم /' + m.bareme.total + '</div></div>' +
+        'المدة المسجلة في الأرشيف ' + Math.round(m.duree_officielle/60) + ' ساعات · السلّم /' + m.bareme.total + '</div></div>' +
       '<div class="eh-stats">' +
         st('📚', m.nombre_sujets, 'موضوع') +
         st('🗓️', m.nombre_annees, 'دورة') +
@@ -113,7 +113,7 @@
         (sujetSel ? ong('epreuve','✍️ الإجابة') : '') +
       '</div>' +
       '<div class="privacy">🔒 <b>سرّية تامة</b> (منهج الحصة 7) — نتائجك تُحفظ على جهازك فقط. ' +
-        'العتبات الرسمية : <b>≥' + PRET + ' جاهز ✅</b> · <b>' + CONS + '–' + (PRET-0.1) +
+        'عتبات الاستعداد المقترحة : <b>≥' + PRET + ' جاهز ✅</b> · <b>' + CONS + '–' + (PRET-0.1) +
         ' يحتاج تثبيت ⚠️</b> · <b>&lt;' + CONS + ' غير جاهز ❌</b></div>';
     function st(i,n,l){ return '<div class="eh-st"><div class="eh-n">' + n + '</div>' +
       '<div class="eh-l">' + l + '</div><div>' + i + '</div></div>'; }
@@ -269,18 +269,18 @@
       '<div style="display:flex;gap:9px;flex-wrap:wrap">' +
         '<button class="btn btn-o btn-sm" data-exong="sujets">↩️ المواضيع</button>' +
         '<button class="btn btn-g btn-sm" id="xCorrige">✅ التصحيح النموذجي</button>' +
-        (SIM.started ? '' : '<button class="btn btn-p btn-sm" id="xStart">⏱️ ابدأ بظروف حقيقية (180 د)</button>') +
+        (SIM.started ? '' : '<button class="btn btn-p btn-sm" id="xStart">⏱️ ابدأ المحاكاة (180 د)</button>') +
       '</div></div>';
 
     if(SIM.started){
-      h += '<div class="timer"><div><b>🎓 ظروف الامتحان الرسمية</b>' +
+      h += '<div class="timer"><div><b>🎓 محاكاة وفق بيانات الأرشيف</b>' +
         '<div style="font-size:11.5px;color:var(--m)">المدة ' + Math.round(s.duree_minutes/60) +
         ' ساعات · لا يمكن الإيقاف المؤقت</div></div>' +
         '<div class="timer-t" id="clock">' + fmt(SIM.left) + '</div>' +
         '<button class="btn btn-g btn-sm" id="xSubmit">📤 سلّم الورقة</button></div>';
     } else {
       h += '<div class="privacy">📖 وضع <b>المطالعة</b> : اقرأ الموضوع بحرية. اضغط ' +
-        '« ⏱️ ابدأ بظروف حقيقية » لتشغيل المؤقّت الرسمي (180 دقيقة) والتصحيح الآلي.</div>';
+        '« ⏱️ ابدأ بظروف حقيقية » لتشغيل المؤقّت وفق المدة المسجلة في الموضوع والتصحيح الآلي.</div>';
     }
 
     if(s._lecture){ h += '<div class="part"><div class="part-h"><b>📖 الموضوع الكامل</b>' +
@@ -309,7 +309,7 @@
         } else if(qq.type === 'redac'){
           h += '<textarea class="txt-in" data-xred="' + qq.id + '" placeholder="In Algerien diskutieren viele Menschen…">' +
             esc(a || '') + '</textarea>';
-          if(qq.grille) h += '<table class="bareme"><tr><th>معيار التصحيح الرسمي</th><th>النقطة</th></tr>' +
+          if(qq.grille) h += '<table class="bareme"><tr><th>معيار التنقيط المدرج</th><th>النقطة</th></tr>' +
             qq.grille.map(g => '<tr><td>' + esc(g[0]) + '</td><td>' + g[1] + '</td></tr>').join('') +
             '<tr style="background:rgba(61,220,132,.1)"><td><b>المجموع</b></td><td><b>4</b></td></tr></table>';
         }
@@ -343,7 +343,7 @@
       }
       if(SIM.left <= 0){
         clearInterval(SIM.tick);
-        if(window.DZ && DZ.toast) DZ.toast('⏰ انتهى الوقت الرسمي!','ko');
+        if(window.DZ && DZ.toast) DZ.toast('⏰ انتهى وقت المحاكاة!','ko');
         corriger(true);
       }
     }, 1000);
@@ -383,7 +383,7 @@
           ok = (qq.key || []).some(k => n.indexOf(norm(k)) !== -1);
           got = a || '—';
         } else if(qq.type === 'redac'){
-          /* auto-évaluation guidée sur la grille officielle */
+          /* auto-évaluation guidée sur la grille indiquée dans la fiche */
           const txt = String(a || '');
           const mots = txt.trim().split(/\s+/).filter(Boolean).length;
           const rel = /,?\s*(der|die|das)\s+\w+\s*(ist|hat|war|wird|kann|muss)/i.test(txt) ||
@@ -447,7 +447,7 @@
       '<div class="secret">🔒 نتيجة سرّية — محفوظة على جهازك فقط، لم تُرسل لأي خادم</div>' +
       '</div>';
 
-    h += '<div class="card"><h2>📊 التفصيل حسب السلّم الرسمي</h2>' +
+    h += '<div class="card"><h2>📊 التفصيل حسب السلّم المسجل</h2>' +
       '<div class="bareme-strip">' +
         ['I','II','III'].map(k => '<span class="bs' + (k==='III'?' tot':'') + '"><b class="de-in">' + k +
           '</b> ' + ({I:'فهم المكتوب',II:'اللغة',III:'إنتاج كتابي'}[k]) + ' <i>' +
@@ -470,7 +470,7 @@
         '<td>' + (d.pts !== undefined ? (d.ok ? d.pts : 0) + '/' + d.pts : d.got) + '</td></tr>').join('') +
       '</table></div>';
 
-    h += '<div class="corrige"><h3>✅ التصحيح النموذجي الرسمي</h3>' +
+    h += '<div class="corrige"><h3>✅ التصحيح المدرج في الأرشيف</h3>' +
       '<div class="sujet-box" style="background:transparent;border:none;padding:0">' +
       esc(s.corrige) + '</div></div>';
 
