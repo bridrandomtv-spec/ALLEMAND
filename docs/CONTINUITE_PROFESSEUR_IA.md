@@ -1583,3 +1583,11 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - CI du HEAD 9133fe5845f59c54010500711fcec2bb093db21d : Workers Builds, Professeur IA autonome, validation structurelle/pédagogique et les trois workflows PostgreSQL réussis ; Supabase Preview ignoré.
 - Rapport : docs/CONTINUITE_LOT_721_AUDIT_RELEASES_TAGS_ARTEFACTS.md.
 - Aucun artefact, release, tag, PDF, JSON, historique ou réglage de rétention modifié. Aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/paiement. PR #23 toujours ouverte/en brouillon/non fusionnée.
+
+
+### Lot 722 — inventaire des branches Git publiques — 20/11/2026
+- API GitHub : 30 branches, 30/30 marquées protected=false. Cela ne prouve pas que tout utilisateur peut les modifier ; les permissions d'accès et règles d'organisation ne sont pas déduites de ce seul champ.
+- Comparaison récursive de cinq branches anciennes (ai/lot-583-darja-arabizi-rag, ai/lot-601-worker-jwt, audit/lot-603-corpus-contract-tests, design/prototypes-67-74-alignment, security/pr10-confirmed-links-fix) : arbres complets, 293 PDF dans chacune, sauvegarde docs/private/buch_pages_full.json présente dans chacune avec le même blob SHA 3114e3024995b7c7a9f22fcbdfc78218742f2084 que main et la PR.
+- Le contrôle détaillé porte sur cinq branches, pas sur les arbres de toutes les 30 branches. Il ne couvre pas forks, clones, caches, objets inaccessibles ou copies tierces.
+- Rapport : docs/CONTINUITE_LOT_722_INVENTAIRE_BRANCHES_GIT.md.
+- Aucune branche supprimée ou protégée, aucun historique réécrit. Aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/paiement.
