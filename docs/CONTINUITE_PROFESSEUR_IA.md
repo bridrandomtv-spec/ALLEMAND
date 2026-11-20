@@ -1429,3 +1429,24 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le repli vers `bac.json` marquait auparavant systématiquement chaque fiche `officiel: true`, y compris une fiche dont la source déclarée est « photos professeur ». Le repli attribue maintenant `officiel: false`.
 - Les libellés de l'interface ont été neutralisés : « archive pédagogique », « source annoncée », durée/barème enregistrés dans les fiches, « simulation » et « correction de l'archive ». Aucun sujet ni corrigé n'a été supprimé ou réécrit.
 - Le test dédié vérifie que le module BAC ne réintroduit pas les anciennes affirmations officielles non prouvées.
+
+
+## Lot 706 — audit de provenance des banques BAC et devoirs
+
+### Constat documentaire
+- `assets/bdd/bac.json` contient 79 fiches mais seulement 13 couples sujet/corrigé distincts ; 77 fiches appartiennent à des groupes de contenu strictement identiques, réattribués à des années, niveaux ou filières différents. Les 79 fiches déclaraient une source MEN/ONEC ou photos enseignant, sans URL ni identifiant documentaire primaire.
+- `assets/bdd/bac_archive.json` contient 68 fiches sur 17 années, mais seulement 12 contenus distincts. Les 68 fiches portaient `officiel: true` et une source ONEC, sans URL ni référence primaire par fiche.
+- `assets/bdd/devoirs_officiels.json` contient 55 fiches alors que `_meta.nombre` indiquait 10. Les 55 fiches ont `lycee: "—"` et `wilaya: "—"`, sans champ `source_url` ni `document_id` ; 45 n'ont aucun champ source individuel. Les métadonnées et l'interface revendiquaient pourtant des sources officielles et une archive fidèle à plusieurs lycées.
+- Ces éléments ne permettent pas d'établir que les documents sont faux ; ils établissent que leur statut officiel et leur provenance ne sont pas vérifiables à partir du dépôt.
+
+### Corrections appliquées sans perte de contenu
+- Les 68 fiches de `bac_archive.json`, les 79 fiches de `bac.json` et les 55 fiches de `devoirs_officiels.json` portent désormais `officiel: false`, `provenance_verifiee: false` et `statut_provenance: "non_verifiee"`. Les sources déclarées sont conservées comme déclarations, non comme preuves.
+- Les métadonnées de `devoirs_officiels.json` annoncent maintenant 55 fiches et précisent que la provenance est à vérifier.
+- L'interface `officiels.js` n'annonce plus « sources officielles », ne prétend plus que les fiches proviennent d'établissements identifiés, et affiche les titres comportant « رسمي » sous une forme pédagogique neutre. Les sujets, textes, questions et corrigés restent inchangés.
+- Le module BAC conserve les sujets et les corrigés ; ses entrées de repli sont également explicitement non officielles. Le module principal annonce déjà une archive pédagogique et une source déclarée.
+
+### Tests et périmètre
+- Nouveau test `tests/bac-provenance-quality.test.mjs` : vérifie les décomptes 79/13, 68/12, 55/55, les drapeaux de provenance et l'absence de revendication d'officialité dans l'interface.
+- Test intégré au workflow `CI — ALLEMAND`.
+- Aucun sujet, texte ou corrigé supprimé ou réécrit. Aucun changement Supabase/Auth/RLS/schéma/paiement, aucun OCR, aucune extraction PDF, aucun embedding, aucun appel Cloudflare AI et aucun déploiement.
+- `main` reste inchangée ; PR #23 reste ouverte, draft et non fusionnée.
