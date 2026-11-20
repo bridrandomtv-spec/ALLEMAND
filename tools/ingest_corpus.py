@@ -6,7 +6,7 @@ tools/ingest_corpus.py — construit le corpus pédagogique depuis UN dossier lo
 Usage :
     python tools/ingest_corpus.py ./mes_documents
 
-Le dossier doit contenir des fichiers .pdf / .docx / .txt / .md, et OPTIONNELLEMENT
+Le pipeline historique est désactivé ; ne pas l'utiliser pour importer des documents. Le dossier devait contenir des fichiers .pdf / .docx / .txt / .md, et OPTIONNELLEMENT
 un fichier _meta.json par document :
     {"titre": "...", "matiere": "allemand", "niveau": "2AS", "type": "cours",
      "annee": "2026/2027", "source": "...", "licence": "production propre",
@@ -56,6 +56,14 @@ def chunks(texte):
 
 
 def main(dossier):
+    # Pipeline historique retiré : aucune ingestion ne doit pouvoir attribuer
+    # implicitement une licence ou écrire dans le corpus client sans preuve.
+    # Réactiver uniquement après migration vers un inventaire de droits central
+    # couvrant tous les formats et une validation explicite par document.
+    raise SystemExit(
+        "ingest_corpus_desactive: ingestion historique suspendue ; "
+        "utiliser un pipeline avec droits explicites et inventaire central"
+    )
     docs, index = [], {"termes": {}, "chunks": []}
     for nom in sorted(os.listdir(dossier)):
         chemin = os.path.join(dossier, nom)
