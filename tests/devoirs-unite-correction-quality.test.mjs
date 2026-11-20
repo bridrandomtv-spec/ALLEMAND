@@ -37,6 +37,8 @@ test('la bibliothèque masque le texte générique et utilise le statut central'
   assert.equal(correctionStatus({ corrige_inclus: true, corrige: 'Ich heiße Omar. Ich bin 16 Jahre alt.' }), 'unverified');
   assert.equal(correctionStatus({ corrige_inclus: true, corrige: 'Corrigé littéral : Antworten passend zum Text.' }), 'present');
   assert.match(librarySource, /BDD\.correctionStatus\(f\) === 'present'/);
+  assert.match(bddSource, /CONTENT1\.authHeaders/);
+  assert.match(bddSource, /headers:headers/);
   assert.match(librarySource, /النص عام أو غير مكتمل/);
 });
 
