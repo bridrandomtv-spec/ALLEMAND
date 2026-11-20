@@ -1397,14 +1397,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 
 ### Anomalies de contenu confirmées
 - `assets/bdd/annales.json` contient 126 fiches, toutes marquées `corrige_inclus: true`. L'audit a détecté 22 textes de corrigé distincts seulement ; les 126 fiches contiennent les marqueurs de corrigé générique (ex. « Vrai/Faux selon le texte officiel », réponses-types de présentation personnelle et bloc `ich bin / du hast`) plutôt que des réponses propres à chaque sujet.
-- `assets/bdd/compositions.json` contient 171 fiches, toutes marquées `corrige_inclus: true`. 162 corrigés correspondent aux modèles génériques détectés et 6 fiches ont un champ `corrige` vide ; au total, 168 fiches sont donc signalées comme nécessitant une vérification. Le texte n'a que 26 variantes distinctes pour 171 fiches.
+- `assets/bdd/compositions.json` contient 171 fiches, toutes marquées `corrige_inclus: true`. 162 fiches ont un corrigé générique et sont signalées comme nécessitant une vérification ; 6 autres fiches n'ont pas de texte de correction et portent déjà `corrige_inclus: false`. Les 3 fiches restantes ont un texte de correction non détecté comme modèle générique, sans que cela constitue une validation de son exactitude. Le texte n'a que 26 variantes distinctes pour 171 fiches.
 - `assets/bdd/corriges_gen.json` contient 22 entrées pour 11 modèles textuels distincts ; certains corrigés réutilisent une trame générale et non une réponse individualisée.
 - Les champs `source` des annales/compositions indiquent parfois ONEC, MEN, Goethe-Institut ou inspection pédagogique, mais aucune référence primaire (URL d'archive, identifiant de document source ou pièce justificative) n'est enregistrée au niveau de chaque fiche. L'attribution ne peut donc pas être confirmée par les seules métadonnées.
 - `bac_archive.json` déclare 68 sujets sur 17 années et attribue la source ONEC aux 68 fiches, avec `officiel: true`. L'auteur indiqué dans les métadonnées est le professeur, mais aucun lien ou identifiant de publication ONEC n'accompagne chaque fiche : provenance officielle non vérifiable à ce stade, sans conclure que chaque sujet est faux.
 
 ### Correction de présentation appliquée
 - `devoirs_unite.js` n'affiche plus un simple ✓ sur les fiches dont le corrigé est vide ou contient les modèles génériques identifiés. Elles affichent maintenant « ⚠️ corrigé à vérifier » ; les autres affichent « corrigé présent », ce qui indique uniquement la présence d'un texte et non sa validation officielle.
-- Ajout de `tests/devoirs-unite-correction-quality.test.mjs` : teste les cas génériques/vides et les données historiques (126/126 annales et 168/171 compositions signalées).
+- Ajout de `tests/devoirs-unite-correction-quality.test.mjs` : teste les cas génériques/vides et les données historiques (126/126 annales et 162/171 compositions signalées).
 - Les textes sources et leurs attributions n'ont pas été réécrits, supprimés ou requalifiés. Aucune correction pédagogique n'a été inventée.
 
 ### Portée IA
