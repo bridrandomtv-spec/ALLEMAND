@@ -1285,3 +1285,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Analyse des 225 extraits PDF du catalogue historique `corpus.json` : 220 sont exactement limités à 300 caractères ; 4 sont plus courts ; 17 contiennent des caractères de contrôle. Aucun n’a de propriété `droits_confirmes: true`. Ces champs sont des aperçus historiques, pas un texte intégral validé pour le RAG.
 - CI complète du HEAD `7566eb4` réussie : jobs `Validation structurelle & pédagogique` et `Tests autonomes — Professeur IA` réussis ; build Cloudflare de prévisualisation réussi ; trois validations PostgreSQL isolées réussies. Artefact PDF `pdf-rights-and-readiness` produit et conservé jusqu’au 4 décembre 2026.
 - La PR reste ouverte et en brouillon, non fusionnée. `main` est toujours à `fadae5e`. Aucun déploiement de production, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement. L’ingestion PDF et la vectorisation attendent toujours une confirmation de droits document par document.
+
+
+## Lot 697 — normalisation multilingue et intégrité des métadonnées d’intention
+
+- Renforcement du normaliseur de l’audit d’ontologie : normalisation Unicode NFKD, suppression des diacritiques latins et arabes, du tatweel, harmonisation des variantes d’alif, de hamza, de ta marbuta et d’alif maqsura.
+- Le contrôle élargi a été exécuté sur les formulations de l’ontologie et les 103 questions d’évaluation : aucune collision inter-intentions n’a été détectée avec cette normalisation plus stricte.
+- Vérification structurelle des 25 intentions : identifiants uniques, catégories parmi les sept catégories déclarées, actions au format attendu, niveaux limités à 2AS/3AS et au moins un exemple d’évaluation par intention.
+- Vérification des 103 échantillons : aucune intention inconnue, aucune catégorie d’évaluation différente de la catégorie de l’ontologie, compteur `_meta.n` cohérent.
+- Le test `tests/intent-ontology-integrity.test.mjs` a été renforcé pour rendre ces invariants exécutables en CI. Une première écriture du normaliseur contenait des échappements doublés ; ils ont été corrigés avant de considérer le changement comme prêt à valider.
+- Commits du test et du correctif d’échappement : `f37762e` puis `d5059d7`. Le résultat CI du nouveau HEAD doit être contrôlé avant clôture du lot.
+- Aucun changement du moteur de décision en production, des droits, de l’authentification ou de la configuration Supabase. Aucun OCR, embedding, vectorisation ou ingestion réelle. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
