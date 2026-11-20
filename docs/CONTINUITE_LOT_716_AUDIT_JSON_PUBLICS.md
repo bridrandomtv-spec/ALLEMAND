@@ -7,7 +7,7 @@ Portée : lecture seule, vérification ciblée des ressources JSON récemment re
 
 ## 1. Inventaire réconcilié
 
-L'arbre Git récursif du HEAD `e91f0a474030f33a18290e66db458fb16dc239df` contient **63 fichiers JSON sous `assets/bdd/`**. Le précédent rapport Lot 713 indiquait 58. L'écart signifie que l'ancien inventaire n'est plus exhaustif ; le présent lot ne prétend pas avoir audité en profondeur les 63 fichiers individuellement.
+L'arbre Git récursif du HEAD `e91f0a474030f33a18290e66db458fb16dc239df` contient **58 fichiers JSON sous `assets/bdd/`**, ce qui confirme le décompte du Lot 713. La mention antérieure de 63 était une erreur de comptage et est corrigée ici. Le présent lot reste un audit ciblé et ne prétend pas avoir audité en profondeur les 58 fichiers individuellement.
 
 ## 2. Ressources examinées sans anomalie personnelle évidente
 
@@ -59,7 +59,7 @@ Le chargement de `plan_projet.json` par `projet.js` est direct (`fetch` statique
 2. **Plan de projet — priorité haute :** confirmer si le document marqué confidentiel est destiné à être accessible à tout visiteur. Si non, définir une stratégie de retrait de la surface publique et de l'historique Git ; l'ajout aveugle à `PROT` casserait le chargement actuel sans garantir l'accès aux bons rôles.
 3. **Exercice Farid — priorité à confirmer :** confirmer qu'il s'agit d'un personnage entièrement fictif ou d'un texte pédagogique autorisé à être publié avec ces détails.
 4. **Réservation — décision produit :** confirmer que les coordonnées de contact et le catalogue enseignants sont bien destinés au public.
-5. **Inventaire :** réconcilier la différence 58 → 63 dans la documentation de continuité, puis achever l'examen des JSON restants.
+5. **Inventaire :** conserver le total vérifié de 58 JSON sous `assets/bdd/` et poursuivre l'examen ciblé des ressources non encore étudiées.
 
 ## 8. État des modifications
 
