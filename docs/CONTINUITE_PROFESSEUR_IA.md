@@ -1220,3 +1220,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Le workflow reste un CI de validation ; aucun job `deploy`, permission `pages: write` ou `id-token: write` n’a été ajouté. La modification ne touche ni Cloudflare configuration ni Supabase.
 - Commit du correctif concurrence : `96c98cf`. Vérifier le nouveau workflow déclenché sur ce HEAD avant de considérer le lot validé.
 - `main` reste inchangée ; PR #23 reste ouverte, en brouillon et non fusionnée. Aucun changement Auth/RLS/schéma/abonnement/paiement ; aucun OCR, embedding, vectorisation ou ingestion réelle.
+
+
+## Lot 690 — durée maximale des jobs CI
+
+- Le diagnostic du workflow ancien `44629991744` a montré deux jobs toujours `in_progress` plus de 90 minutes après leur lancement. Dans le job Professeur IA, l’étape `node --test tests/worker-ai-auth.test.mjs` restait active ; dans le job de validation, l’étape `node --test tests/worker-ai-auth.test.mjs` était également active.
+- Pour empêcher une régression de bloquer indéfiniment le groupe CI, `validate` et `professor-ai` ont maintenant `timeout-minutes: 30`. Cela borne la durée du job ; cela ne remplace pas un diagnostic des tests s’ils atteignent ce délai.
+- Le groupe de concurrence par PR du lot 689 est conservé. Les workflows PostgreSQL isolés ont leur propre workflow et n’ont pas été modifiés.
+- Commit de la borne de durée : `2ff6468`. Le déclenchement d’un nouveau workflow sur le HEAD courant doit encore être confirmé : l’exécution précédente `44634989792` reste une exécution en attente créée sous l’ancienne configuration de concurrence.
+- Aucun changement de code Worker, d’accès, de données Supabase ou de déploiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
