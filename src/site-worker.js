@@ -28,7 +28,15 @@ function normalizePath(path){
   }
   // Un encodage résiduel après quatre passes est ambigu : refus par défaut.
   if (/%[0-9a-f]{2}/i.test(value) || value.indexOf('\\') !== -1 || value.indexOf('\0') !== -1) return null;
-  return value.replace(/\/{2,}/g, '/');
+  // Résout aussi les segments . et .. après décodage, pas seulement avant URL().
+  const segments = [];
+  for (const segment of value.split('/')) {
+    if (!segment || segment === '.') continue;
+    if (segment === '..') { if (segments.length) segments.pop(); continue; }
+    segments.push(segment);
+  }
+  const normalized = '/' + segments.join('/');
+  return value.endsWith('/') && normalized !== '/' ? normalized + '/' : normalized;
 }
 function jsonRes(o, status){
   return new Response(JSON.stringify(o), { status: status,
