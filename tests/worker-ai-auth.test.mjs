@@ -1009,6 +1009,8 @@ test('le Worker récupère un document officiel exact via le Worker du site avec
   assert.equal(call.init.headers.Authorization, 'Bearer ' + TOKEN);
   assert.match(h.messages[1].content, /CP-2023-2-0312/);
   assert.match(h.messages[1].content, /Corrigé détaillé/);
+  assert.match(h.messages[1].content, /DOCUMENT PÉDAGOGIQUE — PROVENANCE NON VÉRIFIÉE/);
+  assert.doesNotMatch(h.messages[1].content, /DOCUMENT OFFICIEL À PROVENANCE VÉRIFIÉE/);
   assert.doesNotMatch(h.messages[1].content, /OTHER-PRIVATE-DOCUMENT/);
 });
 
