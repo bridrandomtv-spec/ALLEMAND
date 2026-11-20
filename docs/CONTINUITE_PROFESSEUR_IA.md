@@ -1347,3 +1347,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Suppression du workflow dangereux `.github/workflows/sharder.yml` de la branche PR par le commit `4385172`. Le script de sharding n'est pas exécuté ; aucune génération de shards ni push n'a été lancé.
 - Commits du lot : désactivation complète de l'ingestion historique `7a5f025`, test tous formats `8378edf`, suppression du sharder auto-push `4385172`. Validation CI du HEAD final encore requise.
 - Aucun contenu documentaire n'a été extrait, OCRisé ou indexé. Aucun embedding ni ingestion réelle. Aucun droit modifié. `main` n'a reçu aucun push de notre part ; aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; PR #23 reste ouverte et non fusionnée.
+
+
+## Lot 702 — distinction entre catalogue client historique et RAG distant
+
+- Audit de `corpus.js` : l'interface charge directement `assets/bdd/corpus.json` et `assets/bdd/corpus_index.json` côté navigateur. Elle ne lit pas `corpus_rag_manifest.json`, `corpus_rag_chunks.json` ni `corpus_rag_vectors.json` pour cette vue.
+- `corpus.json` est un catalogue historique distinct, qui contient des fiches et extraits courts ; `corpus_index.json` est actuellement un index lexical DE-AR (`items`), pas l'index plein-texte décrit dans l'ancien commentaire et pas l'artefact de chunks RAG.
+- Pour les PDF, `corpus.js` construit des liens `raw.githubusercontent.com/bridrandomtv-spec/ALLEMAND/main/...`. Les PDF de l'archive ne sont pas intégrés au bundle Worker via `.assetsignore`, mais restent accessibles par le dépôt GitHub public si celui-ci est public. C'est un chemin de consultation/distribution statique préexistant, distinct du RAG et de l'ingestion.
+- Cette observation interdit d'affirmer que les PDF ne sont pas accessibles ou référencés dans l'application ; la formulation exacte est : aucun PDF n'est ingéré dans le RAG distant, tandis que le catalogue client historique référence encore des fichiers PDF via GitHub Raw. Les droits de ces 293 documents restent non confirmés dans l'inventaire.
+- Aucun changement de `corpus.js`, `corpus.json`, des PDF ou des liens publics n'a été fait dans ce lot : cela modifierait l'expérience documentaire et la disponibilité existante, et doit être traité séparément après décision sur la politique de publication. Aucun changement sur `main`.
