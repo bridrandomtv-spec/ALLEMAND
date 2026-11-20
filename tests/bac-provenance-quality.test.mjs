@@ -49,5 +49,6 @@ test('l’interface des devoirs ne revendique plus de sources officielles non do
   assert.match(officielsSource, /مصدر الوثائق قيد التحقق/);
   assert.match(officielsSource, /المؤسسات غير محددة/);
   assert.match(officielsSource, /replace\(\/رسمي\/g, 'تدريبي'\)/);
+  assert.equal((officielsSource.match(/replace\\(\\/رسمي\\/g, 'تدريبي'\\)/g) || []).length, 2);
   assert.doesNotMatch(officielsSource, /مصادر رسمية|Archive fidèle/);
 });
