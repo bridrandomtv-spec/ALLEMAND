@@ -1566,3 +1566,10 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Rapport : docs/CONTINUITE_LOT_719_AUDIT_HISTORIQUE_ET_ARTEFACTS.md.
 - Blocages : décider du retrait de la sauvegarde livre et de ses versions historiques, du sort/licences des 293 PDF et du maintien éventuel du dépôt public. Une purge Git éventuelle affecterait clones/forks/PR/SHA et requiert une autorisation explicite ; aucune purge, suppression, privatisation ou réécriture n'a été faite.
 - Audit en lecture seule ; aucun code, fichier de données, blob, historique, visibilité, Supabase/Auth/RLS/schéma/paiement ou infrastructure modifié. Aucun changement main, aucune fusion et aucun déploiement. CI du HEAD bdbe32bf3dd0dcec7369e0f8eee9dba17e69f6a8 : Workers Builds, validation structurelle/pédagogique, tests autonomes Professeur IA et trois workflows PostgreSQL réussis ; Supabase Preview ignoré.
+
+
+### Lot 720 — comparaison des artefacts avec main — 20/11/2026
+- Comparaison des arbres Git complets : main (SHA fadae5ee13fa89c47dd6a567d6db4c15df34a19c) contient déjà 1 431 blobs, 293 PDF, 834 blobs docs/archive et docs/private/buch_pages_full.json (197 523 octets). Le HEAD PR comparé (bd14967319c17bb7c7533f7578d2a2f085adf785) contient les mêmes 293 PDF, 834 archives et le même blob de sauvegarde du livre (3114e3024995b7c7a9f22fcbdfc78218742f2084).
+- Conclusion : les artefacts du Lot 719 préexistent sur main ; les commits documentaires récents de PR #23 ne les ont pas introduits. Le risque demeure réel, mais sa correction relève d'un chantier distinct coordonné avec le propriétaire. Aucun changement main.
+- Rapport : docs/CONTINUITE_LOT_720_COMPARAISON_EXPOSITION_MAIN.md.
+- Comparaison des arbres seulement ; pas d'audit exhaustif des objets orphelins, forks, clones, caches externes ou artefacts CI. Aucune suppression, privatisation, réécriture Git, modification Worker/Supabase/Auth/RLS/schéma/paiement ni déploiement.
