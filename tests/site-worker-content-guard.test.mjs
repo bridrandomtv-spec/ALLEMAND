@@ -11,7 +11,7 @@ function harness(options = {}) {
   const calls = [];
   const assets = [];
   const context = {
-    URL, Headers, Response, Request,
+    URL, Headers, Response, Request, decodeURIComponent,
     fetch: async (url, init = {}) => {
       calls.push({ url:String(url), init });
       if (String(url).includes('/rest/v1/lesson_content')) {
@@ -44,6 +44,29 @@ function request(path, token) {
   if (token) headers.Authorization = 'Bearer ' + token;
   return new Request('https://allemand.bridrandomtv.workers.dev' + path, { headers });
 }
+
+for (const path of [
+  '/assets/bdd/%64evoirs.json',
+  '/%61ssets/bdd/devoirs.json',
+  '/assets%2Fbdd%2Fdevoirs.json',
+  '/assets/bdd/%2564evoirs.json'
+]) {
+  test('refuse sans JWT le chemin protégé encodé ' + path, async () => {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request(path), h.env);
+    assert.equal(response.status, 401);
+    assert.equal(h.calls.length, 0);
+    assert.equal(h.assets.length, 0);
+  });
+}
+
+test('refuse un chemin mal encodé avant de servir un actif', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request('/assets/bdd/%ZZdevoirs.json'), h.env);
+  assert.equal(response.status, 400);
+  assert.equal(h.calls.length, 0);
+  assert.equal(h.assets.length, 0);
+});
 
 for (const path of [
   '/assets/bdd/devoirs.json',
