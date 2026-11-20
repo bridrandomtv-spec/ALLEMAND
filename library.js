@@ -283,7 +283,10 @@
         mchip('🧮', '/' + f.bareme) +
       '</div>' +
       '<div class="fiche-foot">' +
-        '<div class="fiche-src">📌 ' + esc(f.source) + '</div>' +
+        '<div class="fiche-src">📌 المصدر المعلن : ' + esc(f.source) + '</div>' +
+        (f.provenance_verifiee === true
+          ? '<div class="mchip">✅ provenance vérifiée</div>'
+          : '<div class="mchip" style="color:var(--or)">⚠️ provenance documentaire non vérifiée</div>') +
         '<div style="display:flex;gap:11px;align-items:center;flex-wrap:wrap">' +
           '<span class="diff" title="الصعوبة">' + d + '</span>' +
           '<span class="mchip">👁️ ' + f.vues + '</span>' +
@@ -347,8 +350,9 @@
           '<a class="btn btn-w btn-sm" target="_blank" rel="noopener" href="https://wa.me/213555577931?text=' +
             encodeURIComponent('السلام عليكم أستاذ، أريد شرح ' + f.titre) + '">💬 اطلب شرح الأستاذ</a>' +
         '</div>' +
-        '<div class="fiche-src" style="margin-top:13px;text-align:center">🔖 ' + esc(f.id) +
-          ' · المصدر : ' + esc(f.source) + '</div>' +
+        '<div class="privacy" style="margin-top:13px">⚠️ المصدر المعلن : ' + esc(f.source) +
+          ' — provenance documentaire non vérifiée ; cette attribution ne constitue pas une référence primaire.</div>' +
+        '<div class="fiche-src" style="margin-top:9px;text-align:center">🔖 ' + esc(f.id) + '</div>' +
       '</div>';
 
     m.hidden = false; document.body.style.overflow = 'hidden';
