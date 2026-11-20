@@ -259,6 +259,33 @@ class PdfIngestionTests(unittest.TestCase):
             data = json.loads((output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8"))
             self.assertEqual(data["documents"][0]["id"], "pdf-" + MODULE.hashlib.sha256(b"identical-pdf-bytes").hexdigest())
 
+    def test_unconfirmed_rights_prevent_ocr_and_pdf_extraction(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            source.mkdir()
+            pdf = source / "scanned.pdf"
+            pdf.write_bytes(b"scanned-pdf")
+            (source / "_scanned.json").write_text(json.dumps({
+                "titre": "Scanned lesson", "licence": "cc_by",
+                "droits_confirmes": True
+            }), encoding="utf-8")
+            inventory = self.write_rights_inventory(
+                source, ["scanned.pdf"], rights=""
+            )
+            with patch.object(MODULE, "extract_pdf_report",
+                              side_effect=AssertionError("extraction/OCR must not run")) as extract:
+                result = MODULE.ingest(
+                    source, output, use_ocr=True,
+                    rights_inventory=inventory, repo_root=source
+                )
+            self.assertEqual(result["document_count"], 0)
+            self.assertEqual(result["skipped"][0]["reason"],
+                             "droits_non_confirmes_dans_inventaire")
+            extract.assert_not_called()
+            self.assertEqual(json.loads(
+                (output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8")
+            )["chunks"], [])
+
     def test_confirmed_license_indexes_only_approved_document(self):
         with tempfile.TemporaryDirectory() as tmp:
             source, output = Path(tmp) / "source", Path(tmp) / "out"
