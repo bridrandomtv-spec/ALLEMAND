@@ -177,12 +177,19 @@ jobs:
               fails.append('archive : toutes les annees n ont pas 4 sujets')
           if len(ids) != len(sj):
               fails.append('archive : identifiants non uniques')
-          if not all(s['source'].startswith('الديوان') for s in sj):
-              fails.append('archive : source ONEC manquante')
+          if ar['_meta'].get('provenance_verifiee') is not False:
+              fails.append('archive : provenance globale doit rester non verifiee')
+          for sujet in sj:
+              if sujet.get('officiel') is not False:
+                  fails.append(str(sujet.get('id', '?')) + ' : officialite non neutralisee')
+              if sujet.get('provenance_verifiee') is not False:
+                  fails.append(str(sujet.get('id', '?')) + ' : provenance non neutralisee')
+              if sujet.get('statut_provenance') != 'non_verifiee':
+                  fails.append(str(sujet.get('id', '?')) + ' : statut_provenance incoherent')
           themes = set(s['theme_de'] for s in sj)
           if len(themes) < 10:
               fails.append('archive : ' + str(len(themes)) + ' themes < 10')
-          print('✅ Archive BAC : ' + str(len(sj)) + ' sujets · ' + str(len(ar['annees']))
+          print('✅ Archive pédagogique BAC : ' + str(len(sj)) + ' sujets · provenance non vérifiée · ' + str(len(ar['annees']))
                 + ' cycles (2010-2026) · 4 sujets/annee · 180 min · I/8+II/8+III/4=20')
           print('   themes : ' + str(len(themes)) + ' · grammaire : '
                 + str(len(ar['grammaire_ciblee'])) + ' · filieres : ' + str(len(ar['filieres'])))
