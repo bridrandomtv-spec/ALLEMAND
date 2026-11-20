@@ -1327,3 +1327,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Nouveau test `tests/test_legacy_pdf_ingestion_guard.py` : vérifie que l'ancien ingest ignore un PDF sans appeler l'extraction ni copier le fichier, et que l'ancien indexeur s'arrête avant de lire ou modifier les artefacts corpus.
 - Commits : blocage ancien ingest `8fe7104`, désactivation indexeur `3c71b0a`, tests `e896ed4`. CI du HEAD final à attendre avant clôture du lot.
 - Aucun PDF du dépôt n'a été ouvert ou extrait par ces changements. Aucun OCR, embedding, vectorisation ou ingestion réelle. Aucun droit n'a été marqué comme confirmé. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+### Complément Lot 700 — workflow automatique OCR neutralisé
+
+- L'audit des exécutions GitHub a découvert `.github/workflows/indexer.yml`, déclenché sur les changements des PDF d'archives, de `tools/indexer_pdf.py` et du workflow lui-même. Il installait Tesseract/Poppler, lançait l'indexeur et disposait de `contents: write` pour committer les corpus produits.
+- Le run `44722245987` sur le commit `3c71b0a` a bien installé les dépendances système et Python, mais l'étape `python tools/indexer_pdf.py docs/archive/documents` a immédiatement échoué sur le garde-fou `indexer_pdf_desactive`. Les étapes OCR/indexation n'ont donc pas été exécutées et le commit automatique du corpus a été ignoré.
+- Le journal du run confirme explicitement le message du garde-fou et l'absence d'exécution de l'étape de commit. Aucun OCR ou index PDF n'a été produit par ce workflow.
+- Le workflow `.github/workflows/indexer.yml` a été supprimé de la branche PR par le commit `4e3171d` afin d'éviter qu'une modification future du chemin historique ne réactive le pipeline OCR non sécurisé.
+- Les validations de sécurité du lot doivent être considérées réussies uniquement si les tests dédiés passent dans la CI principale du HEAD final. La suppression du workflow n'est pas une validation du nouveau code.
