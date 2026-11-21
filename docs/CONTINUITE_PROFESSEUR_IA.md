@@ -1630,3 +1630,14 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les blocages de gouvernance du Lot 725 demeurent : visibilité publique du dépôt, droits des 293 PDF, sauvegarde complète du manuel, extraits 3AS, classification des livres 2AS, certification des fixtures et publication de config/projet/réservation. Les constats Raw des Lots 719–724 ne sont pas corrigés par la réussite CI.
 - Rapport : `docs/CONTINUITE_LOT_726_REVUE_DIFF_SECURITE.md` (commit `356283ec1bda658322d26502a2d8fc08cdaf2f8f`).
 - Revue en lecture seule : aucun code/donnée pédagogique modifié, aucun changement `main`, aucune fusion, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement/infrastructure. PR #23 reste ouverte/en brouillon/non fusionnée.
+
+
+### Lot 728 — publication cohérente des artefacts RAG — 21/11/2026
+- Vérification PR #23 au HEAD `f5dc510845563e2909ff75f160b5667b26d4d69c` : ouverte, brouillon, non fusionnée, mergeable ; 408 commits en avance, 0 en retard, 59 fichiers modifiés ; base/main `fadae5ee13fa89c47dd6a567d6db4c15df34a19c`.
+- CI du HEAD exact : CI principale run `44892601622` réussie ; PostgreSQL runs `44892601633`, `44892601645`, `44892601683` réussis. 4/4 workflows réussis.
+- Analyse de `tools/ingest_corpus_rag.py` : chunks et manifeste sont écrits dans deux temporaires puis activés par deux appels `replace` séparés. Une interruption entre eux peut créer un couple de générations incohérent ; le Worker détecte l'incohérence et échoue fermé, avec risque d'indisponibilité.
+- Couverture de tests : droits, inventaire, extraction, intégrité et vecteurs couverts ; aucun test d'arrêt brutal entre les deux remplacements ni de reprise atomique identifié.
+- Décision : aucun changement de code dans ce lot. Un simple rollback ne garantit pas la cohérence après arrêt brutal. Cible recommandée à étudier : générations immuables + pointeur actif atomique lu une fois par le Worker ; alternative : artefact corpus unique si la taille et les limites Worker/Assets le permettent.
+- Lot 729 à venir : cartographier tous les consommateurs/URL, mesurer les tailles et limites, définir cache et format, ajouter tests d'interruption à chaque étape et démontrer l'impossibilité de mélanger les générations. Aucun OCR/embedding réel.
+- Rapport : `docs/CONTINUITE_LOT_728_PUBLICATION_COHERENTE_RAG.md` (commit `f6780bbd45196484ef73405abc4118c10e17ce06`).
+- Aucun changement main, aucune fusion, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement, aucun retrait de fichiers ni réécriture d'historique. PR #23 reste ouverte/en brouillon.
