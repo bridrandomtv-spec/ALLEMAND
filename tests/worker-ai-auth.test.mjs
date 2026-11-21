@@ -29,7 +29,15 @@ const TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEyMyJ9.signature';
 const ORIGIN = 'https://allemand.brid-randomtv.workers.dev';
 
 function harness(options = {}){
+  const corpusWithChunkCounts = data => {
+    const counts = new Map();
+    for(const chunk of data.chunks || []) counts.set(chunk.document_id, (counts.get(chunk.document_id) || 0) + 1);
+    return { ...data, documents:(data.documents || []).map(doc => ({
+      ...doc, chunk_count:Object.prototype.hasOwnProperty.call(doc,'chunk_count') ? doc.chunk_count : (counts.get(doc.id) || 0)
+    })) };
+  };
   const calls = [];
+  let corpusRaw = null;
   const aiCalls = [];
   let messages = null;
   const context = {
@@ -90,43 +98,65 @@ function harness(options = {}){
       }
       if(String(url).includes('/assets/bdd/corpus_rag_vectors.json')){
         if(options.corpusVectorResponse) return options.corpusVectorResponse;
-        const corpusData = options.corpusDocumentData || {
+        const corpusData = corpusWithChunkCounts(options.corpusDocumentData || {
           version:1,
-          documents:[{ id:'pdf-0123456789abcdef', title:'Cours allemand autorisé',
+          documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Cours allemand autorisé',
             license:'production_propre', rights_confirmed:true }],
           chunks:[
-            { id:'pdf-0123456789abcdef-p1-c0', document_id:'pdf-0123456789abcdef',
+            { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:1, part:0, text:'Der Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
-            { id:'pdf-0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef',
+            { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:2, part:0, text:'Die Familie und die Schule sind wichtige Themen.' }
           ]
+        });        const manifestData = {
+          version:1, document_count:corpusData.documents.length,
+          chunk_count:corpusData.chunks.length,
+          chunks_sha256:createHash('sha256').update(JSON.stringify(corpusData),'utf8').digest('hex')
         };
         const vectorData = {
           ...(options.corpusVectorData || {
-            version:1, model:'@cf/google/embeddinggemma-2', dimensions:256, vectors:[]
+            version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+            normalization:'l2', vectors:[]
           })
         };
-        if(!Object.prototype.hasOwnProperty.call(vectorData,'source_chunks_sha256')){
-          vectorData.source_chunks_sha256 = createHash('sha256')
-            .update(JSON.stringify(corpusData),'utf8').digest('hex');
-        }
+        if(!Object.prototype.hasOwnProperty.call(vectorData,'source_chunks_sha256'))
+          vectorData.source_chunks_sha256 = manifestData.chunks_sha256;
+        if(!Object.prototype.hasOwnProperty.call(vectorData,'source_manifest_sha256'))
+          vectorData.source_manifest_sha256 = createHash('sha256')
+            .update(JSON.stringify(manifestData),'utf8').digest('hex');
+        if(!Object.prototype.hasOwnProperty.call(vectorData,'normalization'))
+          vectorData.normalization = 'l2';
         return new Response(JSON.stringify(vectorData), {
           status:200, headers:{ 'Content-Type':'application/json' }
         });
       }
       if(String(url).includes('/assets/bdd/corpus_rag_chunks.json')){
-        if(options.corpusDocumentResponse) return options.corpusDocumentResponse;
-        return new Response(JSON.stringify(options.corpusDocumentData || {
+        const corpusData = corpusWithChunkCounts(options.corpusDocumentData || {
           version:1,
-          documents:[{ id:'pdf-0123456789abcdef', title:'Cours allemand autorisé',
+          documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Cours allemand autorisé',
             license:'production_propre', rights_confirmed:true }],
           chunks:[
-            { id:'pdf-0123456789abcdef-p1-c0', document_id:'pdf-0123456789abcdef',
+            { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:1, part:0, text:'Der Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
-            { id:'pdf-0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef',
+            { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p2-c0', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
               page:2, part:0, text:'Die Familie und die Schule sind wichtige Themen.' }
           ]
-        }), { status:200, headers:{ 'Content-Type':'application/json' } });
+        });
+        corpusRaw = JSON.stringify(corpusData);
+        if(options.corpusDocumentResponse) return options.corpusDocumentResponse;
+        return new Response(corpusRaw, { status:200, headers:{ 'Content-Type':'application/json' } });
+      }
+      if(String(url).includes('/assets/bdd/corpus_rag_manifest.json')){
+        if(options.corpusManifestResponse) return options.corpusManifestResponse;
+        if(!corpusRaw) return new Response('',{status:503});
+        const data = JSON.parse(corpusRaw);
+        const manifestData = {
+          version:1, document_count:data.documents.length, chunk_count:data.chunks.length,
+          chunks_sha256:createHash('sha256').update(corpusRaw,'utf8').digest('hex')
+        };
+        return new Response(JSON.stringify(manifestData), {
+          status:200, headers:{ 'Content-Type':'application/json' }
+        });
       }
       if(String(url).includes('/assets/bdd/compositions.json') || String(url).includes('/assets/bdd/annales.json')){
         if(options.officialDocumentResponse) return options.officialDocumentResponse;
@@ -153,7 +183,7 @@ function harness(options = {}){
   const env = {
     SUPABASE_URL:'https://project.supabase.co',
     SUPABASE_ANON_KEY:'sb_publishable_test',
-    AI:{
+    ...(!options.disableAiBinding ? { AI:{
       async run(model, input){
         aiCalls.push({ model, input });
         if(model === '@cf/google/embeddinggemma-2'){
@@ -161,9 +191,10 @@ function harness(options = {}){
           return options.embeddingResponse || { data:[{ embedding:options.queryEmbedding || [1,...new Array(255).fill(0)] }] };
         }
         messages = input.messages;
-        return { response:'Réponse pédagogique.' };
+        return options.modelResponse || { response:'Réponse pédagogique.' };
       }
-    },
+    } } : {}),
+    ...(options.cfAiToken ? { CF_AI_TOKEN:'test-token', CF_ACCOUNT_ID:'account-123' } : {}),
     RAG_VECTOR_ENABLED:options.ragVectorEnabled ? 'true' : 'false'
   };
   return { context, env, calls, aiCalls, get messages(){ return messages; } };
@@ -176,6 +207,106 @@ function request(body, token = TOKEN){
     method:'POST', headers, body:typeof body === 'string' ? body : JSON.stringify(body)
   });
 }
+
+test('le chemin Cloudflare AI direct annule une réponse dépassant sa limite en octets', async () => {
+  let cancelled = false;
+  const oversizedBody = new ReadableStream({
+    start(controller){ controller.enqueue(new Uint8Array(262145)); },
+    cancel(){ cancelled = true; }
+  });
+  const h = harness({
+    disableAiBinding:true,
+    cfAiToken:true,
+    cloudflareResponse:new Response(oversizedBody,{status:200})
+  });
+  const response = await h.context.__worker.fetch(request({ q:'Explique les salutations en allemand.' }), h.env);
+  assert.equal(response.status,503);
+  assert.deepEqual(await response.json(),{ ok:false, err:'ai-unavailable' });
+  assert.equal(cancelled,true);
+});
+
+test('le Worker refuse une réponse du modèle non textuelle ou hors limite', async () => {
+  for(const modelResponse of [
+    { response:123 },
+    { response:'x'.repeat(6001) }
+  ]){
+    const h = harness({ modelResponse });
+    const response = await h.context.__worker.fetch(request({ q:'Explique les salutations en allemand.' }), h.env);
+    assert.equal(response.status,503);
+    assert.deepEqual(await response.json(), { ok:false, err:'ai-unavailable' });
+    assert.ok(h.aiCalls.some(call => call.model !== '@cf/google/embeddinggemma-2'));
+  }
+});
+
+test('annule un corps entrant déclaré trop volumineux avant toute lecture', async () => {
+  let cancelled = false;
+  let reads = 0;
+  const body = new ReadableStream({
+    pull(controller){ reads++; controller.enqueue(new TextEncoder().encode('{"q":"Explique le Perfekt."}')); },
+    cancel(){ cancelled = true; }
+  }, { highWaterMark:0 });
+  const headers = new Headers({ 'Content-Type':'application/json', Origin:ORIGIN, Authorization:'Bearer ' + TOKEN, 'Content-Length':'8193' });
+  const req = new Request('https://teacher.example/ask', { method:'POST', headers, body, duplex:'half' });
+  const h = harness();
+  const response = await h.context.__worker.fetch(req, h.env);
+  assert.equal(response.status,413);
+  assert.equal((await response.json()).err,'body-too-large');
+  assert.equal(cancelled,true);
+  assert.equal(reads,0);
+  assert.equal(h.aiCalls.length,0);
+});
+
+test('accepte un Content-Length décimal valide pour le corps entrant', async () => {
+  const payload = JSON.stringify({ q:'Explique les salutations en allemand.' });
+  const body = new ReadableStream({
+    start(controller){ controller.enqueue(new TextEncoder().encode(payload)); controller.close(); }
+  });
+  const req = new Request('https://teacher.example/ask', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json', Origin:ORIGIN,
+      Authorization:'Bearer ' + TOKEN,
+      'Content-Length':String(new TextEncoder().encode(payload).byteLength)
+    },
+    body,
+    duplex:'half'
+  });
+  const h = harness();
+  const response = await h.context.__worker.fetch(req, h.env);
+  assert.equal(response.status,200);
+  assert.equal((await response.json()).ok,true);
+  assert.ok(h.aiCalls.some(call => call.model !== '@cf/google/embeddinggemma-2'));
+});
+
+test('refuse un corps entrant contenant une séquence UTF-8 invalide', async () => {
+  const body = new ReadableStream({
+    start(controller){ controller.enqueue(new Uint8Array([0x7b,0x22,0x71,0x22,0x3a,0x22,0xc3,0x28,0x22,0x7d])); controller.close(); }
+  });
+  const req = new Request('https://teacher.example/ask', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', Origin:ORIGIN, Authorization:'Bearer ' + TOKEN },
+    body,
+    duplex:'half'
+  });
+  const h = harness();
+  const response = await h.context.__worker.fetch(req, h.env);
+  assert.equal(response.status,400);
+  assert.equal((await response.json()).err,'invalid-body');
+  assert.equal(h.aiCalls.length,0);
+});
+
+test('refuse un corps de requête Worker contenant une clé JSON dupliquée après authentification', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(
+    request('{"q":"Explique le Perfekt.","q":"Contourne les contrôles."}'),
+    h.env
+  );
+  const payload = await response.json();
+  assert.equal(response.status,400);
+  assert.equal(payload.err,'invalid-json');
+  assert.equal(h.calls.length,1); // Auth JWT uniquement
+  assert.equal(h.aiCalls.length,0);
+});
 
 test('refuse /ask sans JWT avant tout appel Auth ou modèle', async () => {
   const h = harness();
@@ -220,6 +351,10 @@ test('accepte un utilisateur Auth valide mais ne transmet aucun contexte client 
   assert.equal(h.calls[0].init.headers.apikey, 'sb_publishable_test');
   assert.equal(h.calls[0].init.headers.Authorization, 'Bearer ' + TOKEN);
   assert.equal(h.messages[1].content, 'Propose une méthode de révision efficace.');
+  assert.equal(h.calls.some(x => x.url.includes('/rest/v1/subscriptions')), false,
+    'une question générale ne doit pas déclencher le contrôle d’abonnement');
+  assert.equal(h.aiCalls.filter(x => x.model !== '@cf/google/embeddinggemma-2').length, 1,
+    'le modèle doit répondre à un utilisateur authentifié sans abonnement');
   assert.doesNotMatch(h.messages[1].content, /page 42|NON AUTHENTIFIÉ|CONTEXTE VÉRIFIÉ/);
 });
 
@@ -380,7 +515,9 @@ test('le garde de cadenas distingue séance gratuite, séance payante, conjugais
   assert.equal(lockedVerb.locked, true);
   const freeSummary = await guard('اشرح الوحدة 2');
   assert.equal(freeSummary, null);
-  const freeBank = await guard('تمارين الوحدة 2');
+  const lockedBank = await guard('تمارين الوحدة 2');
+  assert.equal(lockedBank.locked, true);
+  const freeBank = await guard('تمارين الوحدة 1');
   assert.equal(freeBank, null);
 });
 
@@ -453,6 +590,43 @@ test('refuse aussi une demande d’explication d’une règle verrouillée sans 
   const payload = await response.json();
   assert.equal(response.status, 403);
   assert.equal(payload.err, 'content-locked');
+});
+
+test('refuse les exemples et phrases modèles d’une règle verrouillée, même sans verbe « expliquer »', async () => {
+  for (const q of [
+    'Perfekt Beispiele',
+    'Perfekt Beispielsätze',
+    'Exemples de Perfekt',
+    'Genitiv example sentences',
+    'أمثلة على Perfekt',
+    'جمل مثال عن Dativ'
+  ]) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({ q }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status, 403, q);
+    assert.equal(payload.err, 'content-locked', q);
+    assert.equal(h.messages, null, q);
+  }
+});
+
+test('refuse aussi exercices, applications et tests portant sur une règle verrouillée', async () => {
+  for (const q of [
+    'Perfekt Übungen',
+    'Übungen zum Genitiv',
+    'Perfekt Übungsaufgaben',
+    'Exercices sur le Dativ',
+    'Perfekt test',
+    'تمارين على Perfekt',
+    'تطبيقات على حالة الجر'
+  ]) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({ q }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status, 403, q);
+    assert.equal(payload.err, 'content-locked', q);
+    assert.equal(h.messages, null, q);
+  }
 });
 
 test('refuse les explications de règles verrouillées formulées en Darija arabe et Arabizi', async () => {
@@ -674,6 +848,36 @@ test('le Worker récupère toutes les pages gratuites d’une séance 2AS via RL
   assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/lesson_content')).length, 2);
 });
 
+test('un lot de pages 2AS échoue entièrement si une seule page manque dans RLS', async () => {
+  const h = harness({ lessonContentByPage:{
+    '5':[{ titre:'L1 p5', body:'Ich heiße Amira.' }],
+    '6':[]
+  }});
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 1 en 2AS.',
+    resource:{ type:'book_pages', pages:[5,6], level:'2AS' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 403);
+  assert.equal(payload.err, 'content-locked');
+  assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/lesson_content')).length, 2);
+  assert.equal(h.messages, null);
+  assert.equal(h.aiCalls.length, 0);
+});
+
+test('un lot de pages 2AS rejette les doublons avant toute lecture RLS', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique la séance 1 de l’unité 1 en 2AS.',
+    resource:{ type:'book_pages', pages:[5,5], level:'2AS' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status, 400);
+  assert.equal(payload.err, 'invalid-resource');
+  assert.equal(h.calls.some(x => x.url.includes('/rest/v1/lesson_content')), false);
+  assert.equal(h.messages, null);
+});
+
 test('le Worker peut transmettre une page gratuite 2AS via RLS pour une séance de l’unité 1', async () => {
   const h = harness({ lessonContent:[{ titre:'L1 p5 — Guten Tag', body:'Ich heiße Amira. Ich komme aus Algerien.' }] });
   const response = await h.context.__worker.fetch(request({
@@ -805,6 +1009,8 @@ test('le Worker récupère un document officiel exact via le Worker du site avec
   assert.equal(call.init.headers.Authorization, 'Bearer ' + TOKEN);
   assert.match(h.messages[1].content, /CP-2023-2-0312/);
   assert.match(h.messages[1].content, /Corrigé détaillé/);
+  assert.match(h.messages[1].content, /DOCUMENT PÉDAGOGIQUE — PROVENANCE NON VÉRIFIÉE/);
+  assert.doesNotMatch(h.messages[1].content, /DOCUMENT OFFICIEL À PROVENANCE VÉRIFIÉE/);
   assert.doesNotMatch(h.messages[1].content, /OTHER-PRIVATE-DOCUMENT/);
 });
 
@@ -823,8 +1029,8 @@ test('le Worker refuse un document officiel si le Worker du site signale un verr
 
 test('ia.js résout un identifiant PDF et déclenche une recherche naturelle sans identifiant', () => {
   const resolvers = loadCorpusDocumentResolvers();
-  assert.deepEqual(JSON.parse(JSON.stringify(resolvers.document('Explique le PDF pdf-0123456789ABCDEF.'))), {
-    type:'corpus_document', id:'pdf-0123456789abcdef'
+  assert.deepEqual(JSON.parse(JSON.stringify(resolvers.document('Explique le PDF pdf-0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF.'))), {
+    type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
   });
   assert.equal(resolvers.document('Explique ce document.'), null);
   assert.deepEqual(JSON.parse(JSON.stringify(resolvers.search('Explique le Perfekt dans les documents PDF.'))), { type:'corpus_search' });
@@ -832,11 +1038,26 @@ test('ia.js résout un identifiant PDF et déclenche une recherche naturelle san
   assert.equal(resolvers.search('Explique le Perfekt.'), null);
 });
 
+test('un corpus RAG PDF vide ne transmet aucun contexte au modèle', async () => {
+  const h = harness({ corpusDocumentData:{ version:1, documents:[], chunks:[] } });
+  const response = await h.context.__worker.fetch(request({
+    q:'Quels documents PDF sont disponibles ?',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status,404);
+  assert.equal(payload.err,'resource-not-found');
+  assert.ok(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_chunks.json')));
+  assert.ok(h.calls.some(x => x.url.includes('/assets/bdd/corpus_rag_manifest.json')));
+  assert.equal(h.aiCalls.length,0);
+  assert.equal(h.messages,null);
+});
+
 test('le Worker récupère les chunks PDF côté serveur avec JWT et limite le contexte', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }] });
   const response = await h.context.__worker.fetch(request({
-    q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef.',
-    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+    q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   assert.equal(response.status, 200);
   const call = h.calls.find(x => x.url.includes('/assets/bdd/corpus_rag_chunks.json'));
@@ -850,14 +1071,14 @@ test('le Worker récupère les chunks PDF côté serveur avec JWT et limite le c
 test('le Worker recherche naturellement dans tous les PDF autorisés sans identifiant technique', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
     documents:[
-      { id:'pdf-0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
-      { id:'pdf-aaaaaaaaaaaaaaaa', title:'Identité et école', license:'production_propre', rights_confirmed:true },
-      { id:'pdf-bbbbbbbbbbbbbbbb', title:'Document utilisateur', license:'document_utilisateur', rights_confirmed:true }
+      { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
+      { id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', title:'Identité et école', license:'production_propre', rights_confirmed:true },
+      { id:'pdf-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', title:'Document utilisateur', license:'document_utilisateur', rights_confirmed:true }
     ],
     chunks:[
-      { id:'chunk-perfekt', document_id:'pdf-0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
-      { id:'chunk-family', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Familie und die Schule sind wichtige Themen.' },
-      { id:'chunk-unallowed', document_id:'pdf-bbbbbbbbbbbbbbbb', page:1, text:'Das Perfekt wird mit haben oder sein gebildet. Unberechtigtes Dokument.' }
+      { id:'chunk-perfekt', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
+      { id:'chunk-family', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', page:2, text:'Die Familie und die Schule sind wichtige Themen.' },
+      { id:'chunk-unallowed', document_id:'pdf-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', page:1, text:'Das Perfekt wird mit haben oder sein gebildet. Unberechtigtes Dokument.' }
     ]
   }});
   const response = await h.context.__worker.fetch(request({
@@ -873,28 +1094,70 @@ test('le Worker recherche naturellement dans tous les PDF autorisés sans identi
   assert.doesNotMatch(h.messages[1].content, /Unberechtigtes Dokument|Document utilisateur/);
 });
 
+test('la recherche vectorielle refuse un manifeste source différent et retombe sur BM25', async () => {
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      normalization:'l2', source_manifest_sha256:'0'.repeat(64),
+      vectors:[]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Perfekt haben sein Partizip II',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.equal(h.aiCalls.filter(x => x.model === '@cf/google/embeddinggemma-2').length,0);
+  assert.equal(h.aiCalls.filter(x => x.model !== '@cf/google/embeddinggemma-2').length,1);
+});
+
+test('la recherche vectorielle refuse un index incomplet des chunks autorisés', async () => {
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      normalization:'l2',
+      vectors:[{
+        chunk_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0',
+        document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+        embedding:[1,...new Array(255).fill(0)]
+      }]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Perfekt haben sein Partizip II',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.equal(h.aiCalls.filter(x => x.model === '@cf/google/embeddinggemma-2').length,0);
+  assert.equal(h.aiCalls.filter(x => x.model !== '@cf/google/embeddinggemma-2').length,1);
+});
+
 test('la recherche vectorielle hybride retrouve un passage sémantique sans correspondance lexicale et exclut les PDF non autorisés', async () => {
   const h = harness({
     ragVectorEnabled:true,
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
     corpusDocumentData:{
       documents:[
-        { id:'pdf-0123456789abcdef', title:'Identité et appartenance', license:'cc_by', rights_confirmed:true },
-        { id:'pdf-aaaaaaaaaaaaaaaa', title:'École et famille', license:'production_propre', rights_confirmed:true },
-        { id:'pdf-bbbbbbbbbbbbbbbb', title:'Document non autorisé', license:'document_utilisateur', rights_confirmed:true }
+        { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Identité et appartenance', license:'cc_by', rights_confirmed:true },
+        { id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', title:'École et famille', license:'production_propre', rights_confirmed:true },
+        { id:'pdf-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', title:'Document non autorisé', license:'document_utilisateur', rights_confirmed:true }
       ],
       chunks:[
-        { id:'chunk-identity', document_id:'pdf-0123456789abcdef', page:3, text:'Die persönliche Identität wird durch Sprache und Zugehörigkeit geprägt.' },
-        { id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Schule und die Familie begleiten die Jugendlichen.' },
-        { id:'chunk-private', document_id:'pdf-bbbbbbbbbbbbbbbb', page:1, text:'Private Identitätsdaten dürfen nicht veröffentlicht werden.' }
+        { id:'chunk-identity', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:3, text:'Die persönliche Identität wird durch Sprache und Zugehörigkeit geprägt.' },
+        { id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', page:2, text:'Die Schule und die Familie begleiten die Jugendlichen.' },
+        { id:'chunk-private', document_id:'pdf-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', page:1, text:'Private Identitätsdaten dürfen nicht veröffentlicht werden.' }
       ]
     },
     corpusVectorData:{
       version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
       vectors:[
-        { chunk_id:'chunk-identity', document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
-        { chunk_id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', embedding:[0,1,...new Array(254).fill(0)] },
-        { chunk_id:'chunk-private', document_id:'pdf-bbbbbbbbbbbbbbbb', embedding:[1,...new Array(255).fill(0)] }
+        { chunk_id:'chunk-identity', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
+        { chunk_id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', embedding:[0,1,...new Array(254).fill(0)] },
+        { chunk_id:'chunk-private', document_id:'pdf-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', embedding:[1,...new Array(255).fill(0)] }
       ]
     }
   });
@@ -923,19 +1186,19 @@ test('la recherche hybride accepte des questions arabe, darija, arabizi et fran�
       subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
       corpusDocumentData:{
         documents:[
-          { id:'pdf-0123456789abcdef', title:'Identité et appartenance', license:'cc_by', rights_confirmed:true },
-          { id:'pdf-aaaaaaaaaaaaaaaa', title:'École et famille', license:'production_propre', rights_confirmed:true }
+          { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Identité et appartenance', license:'cc_by', rights_confirmed:true },
+          { id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', title:'École et famille', license:'production_propre', rights_confirmed:true }
         ],
         chunks:[
-          { id:'chunk-identity', document_id:'pdf-0123456789abcdef', page:3, text:'Die persönliche Identität wird durch Sprache und Zugehörigkeit geprägt.' },
-          { id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Die Schule und die Familie begleiten die Jugendlichen.' }
+          { id:'chunk-identity', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:3, text:'Die persönliche Identität wird durch Sprache und Zugehörigkeit geprägt.' },
+          { id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', page:2, text:'Die Schule und die Familie begleiten die Jugendlichen.' }
         ]
       },
       corpusVectorData:{
         version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
         vectors:[
-          { chunk_id:'chunk-identity', document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
-          { chunk_id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaa', embedding:[0,1,...new Array(254).fill(0)] }
+          { chunk_id:'chunk-identity', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
+          { chunk_id:'chunk-school', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', embedding:[0,1,...new Array(254).fill(0)] }
         ]
       }
     });
@@ -962,15 +1225,52 @@ test('la recherche vectorielle reste inactive sans drapeau et ne déclenche aucu
   assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
 });
 
+test('le Worker refuse les clés de droits dupliquées dans le corpus JSON', async () => {
+  const id = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  const raw = `{"version":1,"documents":[{"id":"${id}","title":"Document","license":"cc_by","rights_confirmed":false,"rights_confirmed":true,"chunk_count":1}],"chunks":[{"id":"chunk-1","document_id":"${id}","page":1,"text":"Texte pédagogique."}]}`;
+  const manifest = JSON.stringify({
+    version:1, document_count:1, chunk_count:1,
+    chunks_sha256:createHash('sha256').update(raw,'utf8').digest('hex')
+  });
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusDocumentResponse:new Response(raw,{status:200}),
+    corpusManifestResponse:new Response(manifest,{status:200})
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(h.messages,null);
+});
+
+test('le Worker refuse les clés dupliquées dans le manifeste RAG', async () => {
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusManifestResponse:new Response(
+      '{"version":1,"chunks_sha256":"' + '0'.repeat(64)
+        + '","chunks_sha256":"' + '0'.repeat(64) + '"}',
+      {status:200}
+    )
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(h.messages,null);
+});
+
 test('le RAG refuse deux documents portant le même identifiant', async () => {
   const h = harness({
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
     corpusDocumentData:{
       documents:[
-        { id:'pdf-0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true },
-        { id:'pdf-0123456789abcdef', title:'Document non autorisé', license:'document_utilisateur', rights_confirmed:false }
+        { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true },
+        { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Document non autorisé', license:'document_utilisateur', rights_confirmed:false }
       ],
-      chunks:[{ id:'chunk-1', document_id:'pdf-0123456789abcdef', page:1, text:'Texte.' }]
+      chunks:[{ id:'chunk-1', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:1, text:'Texte.' }]
     }
   });
   const response = await h.context.__worker.fetch(request({
@@ -981,14 +1281,120 @@ test('le RAG refuse deux documents portant le même identifiant', async () => {
   assert.equal(h.messages,null);
 });
 
+test('le RAG refuse un manifeste dont le nombre de chunks déclaré est incohérent', async () => {
+  const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
+    documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true, chunk_count:2 }],
+    chunks:[{ id:'chunk-1', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:1, text:'Texte pédagogique suffisamment long.' }]
+  }});
+  const response = await h.context.__worker.fetch(request({ q:'Cherche dans les documents PDF.', resource:{ type:'corpus_search' } }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(h.messages,null);
+});
+
+test('le RAG refuse un chunk qui référence un document absent', async () => {
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusDocumentData:{
+      documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true }],
+      chunks:[{ id:'chunk-orphan', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', page:1, text:'Texte orphelin.' }]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(h.messages,null);
+});
+
+test('le RAG annule la lecture dès que le corpus dépasse sa limite en octets', async () => {
+  let cancelled = false;
+  const oversizedBody = new ReadableStream({
+    start(controller){
+      controller.enqueue(new Uint8Array(1500001));
+    },
+    cancel(){ cancelled = true; }
+  });
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusDocumentResponse:new Response(oversizedBody, {
+      status:200, headers:{ 'Content-Type':'application/json' }
+    })
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(cancelled,true,'le flux doit être annulé au dépassement de la limite');
+  assert.equal(h.messages,null);
+});
+
+test('le RAG annule aussi un flux dont Content-Length dépasse la limite avant lecture', async () => {
+  let cancelled = false;
+  const body = new ReadableStream({
+    start(controller){ controller.enqueue(new TextEncoder().encode('{"chunks":[]}')); },
+    cancel(){ cancelled = true; }
+  });
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusDocumentResponse:new Response(body, {
+      status:200, headers:{ 'Content-Type':'application/json', 'Content-Length':'1500001' }
+    })
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Cherche dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,503);
+  assert.equal(cancelled,true,'le flux déclaré trop volumineux doit être annulé sans lecture');
+  assert.equal(h.messages,null);
+});
+
+test('le RAG refuse les références de page et le texte de chunk invalides', async () => {
+  const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  for (const invalid of [
+    { page:0, text:'Texte exploitable.' },
+    { page:-1, text:'Texte exploitable.' },
+    { page:1.5, text:'Texte exploitable.' },
+    { page:'2', text:'Texte exploitable.' },
+    { page:4, text:'Texte exploitable.', page_count:3 },
+    { page:1, text:'Texte exploitable.', page_count:0 },
+    { page:1, text:'Texte exploitable.', page_count:'3' },
+    { page:1, text:'   ' },
+    { page:1, text:'x'.repeat(20001) }
+  ]) {
+    const h = harness({
+      subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+      corpusDocumentData:{
+        documents:[{
+          id:documentId, title:'Document autorisé', license:'cc_by',
+          rights_confirmed:true, chunk_count:1,
+          ...(Object.hasOwn(invalid, 'page_count') ? { page_count:invalid.page_count } : {})
+        }],
+        chunks:[{
+          id:'chunk-invalid', document_id:documentId,
+          page:invalid.page, text:invalid.text
+        }]
+      }
+    });
+    const response = await h.context.__worker.fetch(request({
+      q:'Cherche dans les documents PDF.',
+      resource:{ type:'corpus_search' }
+    }), h.env);
+    assert.equal(response.status,503);
+    assert.equal(h.messages,null);
+  }
+});
+
 test('le RAG refuse deux chunks portant le même identifiant', async () => {
   const h = harness({
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
     corpusDocumentData:{
-      documents:[{ id:'pdf-0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true }],
+      documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Document autorisé', license:'cc_by', rights_confirmed:true }],
       chunks:[
-        { id:'chunk-duplicate', document_id:'pdf-0123456789abcdef', page:1, text:'Texte initial.' },
-        { id:'chunk-duplicate', document_id:'pdf-0123456789abcdef', page:2, text:'Texte ambigu.' }
+        { id:'chunk-duplicate', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:1, text:'Texte initial.' },
+        { id:'chunk-duplicate', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:2, text:'Texte ambigu.' }
       ]
     }
   });
@@ -1007,8 +1413,8 @@ test('un artefact vectoriel périmé est ignoré et BM25 reste disponible', asyn
     corpusVectorData:{
       version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
       source_chunks_sha256:'0'.repeat(64),
-      vectors:[{ chunk_id:'pdf-0123456789abcdef-p1-c0',
-        document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] }]
+      vectors:[{ chunk_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0',
+        document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', embedding:[1,...new Array(255).fill(0)] }]
     }
   });
   const response = await h.context.__worker.fetch(request({
@@ -1020,21 +1426,83 @@ test('un artefact vectoriel périmé est ignoré et BM25 reste disponible', asyn
   assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
 });
 
+test('un index complet atteint le modèle de requête et conserve le classement hybride', async () => {
+  const chunkId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0';
+  const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    queryEmbedding:[0,1,...new Array(254).fill(0)],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      vectors:[
+        { chunk_id:chunkId, document_id:documentId, embedding:[1,...new Array(255).fill(0)] },
+        { chunk_id:chunkId.replace('-p1-c0','-p2-c0'), document_id:documentId, embedding:[0,1,...new Array(254).fill(0)] }
+      ]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.ok(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'));
+  assert.match(h.messages[1].content,/Der Perfekt wird/);
+});
+
+test('un embedding de requête malformé, nul ou de norme débordante conserve le classement BM25', async () => {
+  const chunkId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0';
+  const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  const invalidEmbeddings = [
+    [1, 0],
+    new Array(256).fill(0),
+    [NaN, ...new Array(255).fill(0)],
+    [Number.MAX_VALUE, ...new Array(255).fill(0)]
+  ];
+  for(const invalidEmbedding of invalidEmbeddings){
+    const h = harness({
+      ragVectorEnabled:true,
+      subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+      embeddingResponse:{ data:[{ embedding:invalidEmbedding }] },
+      corpusVectorData:{
+        version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+        vectors:[
+          { chunk_id:chunkId, document_id:documentId, embedding:[1,...new Array(255).fill(0)] },
+          { chunk_id:chunkId.replace('-p1-c0','-p2-c0'), document_id:documentId, embedding:[0,1,...new Array(254).fill(0)] }
+        ]
+      }
+    });
+    const response = await h.context.__worker.fetch(request({
+      q:'Explique le Perfekt dans les documents PDF.',
+      resource:{ type:'corpus_search' }
+    }), h.env);
+    assert.equal(response.status,200);
+    assert.match(h.messages[1].content,/Der Perfekt wird/);
+    assert.ok(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'));
+  }
+});
+
 test('une panne des embeddings conserve le repli BM25', async () => {
   const h = harness({
     ragVectorEnabled:true, embeddingThrows:true,
     subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
     corpusVectorData:{
       version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
-      vectors:[{ chunk_id:'pdf-0123456789abcdef-p1-c0',
-        document_id:'pdf-0123456789abcdef', embedding:[1,...new Array(255).fill(0)] }]
+      vectors:[
+        { chunk_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0',
+          document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', embedding:[1,...new Array(255).fill(0)] },
+        { chunk_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p2-c0',
+          document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', embedding:[0,1,...new Array(254).fill(0)] }
+      ]
     }
   });
   const response = await h.context.__worker.fetch(request({
-    q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef.',
-    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+    q:'Explique le Perfekt dans le PDF pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   assert.equal(response.status,200);
+  assert.ok(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),
+    'le test doit atteindre l’appel d’embedding avant de vérifier le repli BM25');
   assert.match(h.messages[1].content,/Der Perfekt wird/);
 });
 
@@ -1057,12 +1525,12 @@ test('les alias arabes et français ne contournent pas les règles grammaticales
 test('la recherche PDF relie les formulations arabes et françaises aux termes allemands', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
     documents:[
-      { id:'pdf-0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
-      { id:'pdf-aaaaaaaaaaaaaaaa', title:'Präsens', license:'production_propre', rights_confirmed:true }
+      { id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Grammaire Perfekt', license:'cc_by', rights_confirmed:true },
+      { id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', title:'Präsens', license:'production_propre', rights_confirmed:true }
     ],
     chunks:[
-      { id:'chunk-perfekt-fr', document_id:'pdf-0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
-      { id:'chunk-prasens-fr', document_id:'pdf-aaaaaaaaaaaaaaaa', page:2, text:'Das Präsens beschreibt Handlungen in der Gegenwart.' }
+      { id:'chunk-perfekt-fr', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:4, text:'Das Perfekt wird mit haben oder sein und dem Partizip II gebildet.' },
+      { id:'chunk-prasens-fr', document_id:'pdf-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', page:2, text:'Das Präsens beschreibt Handlungen in der Gegenwart.' }
     ]
   }});
   const response = await h.context.__worker.fetch(request({
@@ -1089,7 +1557,7 @@ test('la recherche naturelle PDF refuse un sélecteur avec identifiant ou champ 
   const h = harness();
   const response = await h.context.__worker.fetch(request({
     q:'Explique ce document.',
-    resource:{ type:'corpus_search', id:'pdf-0123456789abcdef' }
+    resource:{ type:'corpus_search', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   assert.equal(response.status, 400);
   assert.equal(h.messages, null);
@@ -1099,8 +1567,8 @@ test('la recherche naturelle PDF refuse un sélecteur avec identifiant ou champ 
 test('le Worker refuse un PDF verrouillé par le Worker du site avant le modèle', async () => {
   const h = harness({ corpusDocumentResponse:new Response('{"error":"abonnement_requis"}', { status:403 }) });
   const response = await h.context.__worker.fetch(request({
-    q:'Explique le PDF pdf-0123456789abcdef.',
-    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+    q:'Explique le PDF pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   const payload = await response.json();
   assert.equal(response.status, 403);
@@ -1110,12 +1578,12 @@ test('le Worker refuse un PDF verrouillé par le Worker du site avant le modèle
 
 test('le Worker refuse un PDF sans licence autorisée', async () => {
   const h = harness({ subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }], corpusDocumentData:{
-    documents:[{ id:'pdf-0123456789abcdef', title:'Livre éditeur', license:'document_utilisateur', rights_confirmed:true }],
-    chunks:[{ id:'chunk-unlicensed', document_id:'pdf-0123456789abcdef', page:1, text:'Contenu privé suffisamment long.' }]
+    documents:[{ id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', title:'Livre éditeur', license:'document_utilisateur', rights_confirmed:true }],
+    chunks:[{ id:'chunk-unlicensed', document_id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', page:1, text:'Contenu privé suffisamment long.' }]
   }});
   const response = await h.context.__worker.fetch(request({
-    q:'Explique le PDF pdf-0123456789abcdef.',
-    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef' }
+    q:'Explique le PDF pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef.',
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef' }
   }), h.env);
   assert.equal(response.status, 404);
   assert.equal(h.messages, null);
@@ -1125,7 +1593,7 @@ test('le Worker rejette un sélecteur PDF falsifié avec champ supplémentaire',
   const h = harness();
   const response = await h.context.__worker.fetch(request({
     q:'Explique ce PDF.',
-    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef', url:'https://evil.example/file.pdf' }
+    resource:{ type:'corpus_document', id:'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', url:'https://evil.example/file.pdf' }
   }), h.env);
   assert.equal(response.status, 400);
   assert.equal(h.messages, null);
@@ -1268,4 +1736,199 @@ test('le quota est appliqué avant toute lecture RLS du document', async () => {
   }
   assert.equal(last.status, 429);
   assert.equal(h.calls.filter(x => x.url.includes('/rest/v1/lesson_content')).length, 20);
+});
+
+
+test('un index vectoriel contenant un chunk dupliqué est ignoré sans écrasement silencieux', async () => {
+  const chunkId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0';
+  const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      vectors:[
+        { chunk_id:chunkId, document_id:documentId, embedding:[1,...new Array(255).fill(0)] },
+        { chunk_id:chunkId, document_id:documentId, embedding:[0,1,...new Array(254).fill(0)] }
+      ]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.match(h.messages[1].content,/Der Perfekt wird/);
+  assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
+});
+
+test('une collision de document_id sur un chunk candidat invalide tout l’index vectoriel', async () => {
+  const chunkId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0';
+  const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      vectors:[
+        { chunk_id:chunkId, document_id:'pdf-document-contradictoire', embedding:[0,1,...new Array(254).fill(0)] },
+        { chunk_id:chunkId, document_id:documentId, embedding:[1,...new Array(255).fill(0)] }
+      ]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.match(h.messages[1].content,/Der Perfekt wird/);
+  assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
+});
+
+test('un vecteur de norme nulle invalide l’index vectoriel et conserve BM25', async () => {
+  const chunkId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef-p1-c0';
+  const documentId = 'pdf-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  const h = harness({
+    ragVectorEnabled:true,
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusVectorData:{
+      version:1, model:'@cf/google/embeddinggemma-2', dimensions:256,
+      vectors:[{ chunk_id:chunkId, document_id:documentId, embedding:new Array(256).fill(0) }]
+    }
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  assert.equal(response.status,200);
+  assert.match(h.messages[1].content,/Der Perfekt wird/);
+  assert.equal(h.aiCalls.some(x => x.model === '@cf/google/embeddinggemma-2'),false);
+});
+
+test('un manifeste dont l’empreinte ne correspond pas au corpus bloque le RAG avant le modèle', async () => {
+  const h = harness({
+    subscriptions:[{ statut:'actif', fin:'2099-12-31T00:00:00Z' }],
+    corpusManifestResponse:new Response(JSON.stringify({
+      version:1, document_count:1, chunk_count:2, chunks_sha256:'0'.repeat(64)
+    }), { status:200, headers:{ 'Content-Type':'application/json' } })
+  });
+  const response = await h.context.__worker.fetch(request({
+    q:'Explique le Perfekt dans les documents PDF.',
+    resource:{ type:'corpus_search' }
+  }), h.env);
+  const payload = await response.json();
+  assert.equal(response.status,503);
+  assert.equal(payload.err,'access-unavailable');
+  assert.equal(h.messages,null);
+  assert.equal(h.aiCalls.length,0);
+});
+
+test('refuse aussi les feuilles de travail et demandes de pratique sur une règle verrouillée', async () => {
+  for (const q of [
+    'Nomen-Verb-Verbindungen Arbeitsblatt',
+    'Passiversatzformen worksheet',
+    'Genitiv practice',
+    'Nomen-Verb-Verbindungen Übungsblatt',
+    'Perfekt Sätze',
+    'Genitiv rules',
+    'Règles du Genitiv',
+    'جدول Dativ',
+    'u\u0308bungen Perfekt',
+    'u\u0308bungsblatt Genitiv',
+    't\u0303amarin Dativ',
+    'تَمارِين Perfekt',
+    'Perfekt beispielsatze'
+  ]) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({
+      q,
+      resource:{ type:'free_summary', level:'3AS', unit:1 }
+    }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status, 403, q);
+    assert.equal(payload.err, 'content-locked', q);
+    assert.equal(h.messages, null, q);
+    assert.equal(h.calls.some(x => x.url.includes('/assets/bdd/malakhiss.json')), false, q);
+  }
+});
+
+
+test('refuse les formulations naturelles de demande d’aide sur une règle verrouillée avec un sélecteur gratuit', async () => {
+  const questions = [
+    'Can you help me with Perfekt?',
+    'Help with Genitiv, please',
+    'Can you teach me the Dativ?',
+    'Kannst du mir Perfekt erklären?',
+    'Hilf mir bitte mit Genitiv',
+    'Aide-moi avec le Dativ',
+    'علمني Perfekt',
+    'تعلمّني قاعدة Genitiv'
+  ];
+  const resources = [
+    { type:'free_summary', level:'3AS', unit:1 },
+    { type:'free_exercise_bank', level:'3AS' }
+  ];
+  for (const resource of resources) {
+    for (const q of questions) {
+      const h = harness();
+      const response = await h.context.__worker.fetch(request({ q, resource }), h.env);
+      const payload = await response.json();
+      assert.equal(response.status,403, q + ' / ' + resource.type);
+      assert.equal(payload.err,'content-locked', q + ' / ' + resource.type);
+      assert.equal(h.messages,null, q + ' / ' + resource.type);
+      assert.equal(h.aiCalls.length,0, q + ' / ' + resource.type);
+      assert.equal(h.calls.some(x =>
+        x.url.includes('/assets/bdd/malakhiss.json')
+        || x.url.includes('/assets/bdd/contenu_original.json')
+      ),false, q + ' / ' + resource.type);
+    }
+  }
+});
+
+
+test('un sélecteur de résumé ou de banque libre ne déverrouille pas une séance numérotée', async () => {
+  const cases = [
+    {
+      q:'Explain Perfekt in lesson 1',
+      resource:{ type:'free_summary', level:'2AS', unit:4 },
+      forbidden:'/assets/bdd/malakhiss.json'
+    },
+    {
+      q:'Genitiv exercises lesson 1',
+      resource:{ type:'free_exercise_bank', level:'3AS' },
+      forbidden:'/assets/bdd/contenu_original.json'
+    }
+  ];
+  for (const item of cases) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({
+      q:item.q,
+      resource:item.resource
+    }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status,403,item.q);
+    assert.equal(payload.err,'content-locked',item.q);
+    assert.equal(h.messages,null,item.q);
+    assert.equal(h.aiCalls.length,0,item.q);
+    assert.equal(h.calls.some(x => x.url.includes(item.forbidden)),false,item.q);
+  }
+});
+
+
+test('normalise les marqueurs accentués de séance et d’unité avant de refuser les contenus verrouillés', async () => {
+  const questions = [
+    'Perfekt le\u0301con 3',
+    'Genitiv se\u0301ance 3',
+    'Perfekt الحِصّة 3',
+    'Genitiv الوِحدة 2 الحِصّة 3'
+  ];
+  for (const q of questions) {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request({ q }), h.env);
+    const payload = await response.json();
+    assert.equal(response.status,403,q);
+    assert.equal(payload.err,'content-locked',q);
+    assert.equal(h.messages,null,q);
+    assert.equal(h.aiCalls.length,0,q);
+  }
 });

@@ -13,6 +13,17 @@
 
 const DEVOIRS_UNITE = (function(){
   
+  /* Les anciens lots contiennent des corrigés génériques qui ne répondent pas
+     aux questions réelles. Ne pas les présenter comme des corrigés validés. */
+  function statutCorrige(doc){
+    if(!doc || doc.corrige_inclus !== true) return '—';
+    const texte = String(doc.corrige || '').trim();
+    if(!texte || /Vrai[/]Faux selon le texte officiel|réponses en phrases complètes [(]Sie heißt|Ich heiße Omar|II[.]1 ich bin · du hast · wir sind · er hat/i.test(texte)){
+      return '⚠️ corrigé à vérifier';
+    }
+    return '✅ corrigé présent';
+  }
+
   /* ── Cache des documents chargés ── */
   let _cache = null;
   let _loading = false;
@@ -178,7 +189,7 @@ const DEVOIRS_UNITE = (function(){
         const wilaya = d.wilaya || '';
         const bareme = d.bareme || 20;
         const duree = d.duree_minutes || 45;
-        const corrige = d.corrige_inclus ? '✅' : '—';
+        const corrige = statutCorrige(d);
         const diff = d.difficulte || 0;
         const diffEtoiles = '★'.repeat(Math.min(5, diff)) + '☆'.repeat(Math.max(0, 5 - diff));
         
@@ -190,6 +201,7 @@ const DEVOIRS_UNITE = (function(){
         html += '        <span style="font-size:11px;opacity:.7;white-space:nowrap;">' + corrige + '</span>';
         html += '      </div>';
         html += '      <div style="display:flex;flex-wrap:wrap;gap:6px;font-size:11px;opacity:.8;margin-bottom:8px;">';
+        if(d.provenance_verifiee !== true) html += '<span style="color:var(--or)">⚠️ مصدر الوثيقة غير متحقق</span>';
         if(annee) html += '<span>📅 ' + annee + '</span>';
         if(wilaya) html += '<span>📍 ' + wilaya + '</span>';
         html += '<span>⏱️ ' + duree + ' د</span>';

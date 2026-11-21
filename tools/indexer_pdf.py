@@ -49,6 +49,13 @@ def chunks(t):
     return [' '.join(m[i:i+CHUNK_MOTS]) for i in range(0, len(m), CHUNK_MOTS)]
 
 def main(dossier):
+    # Cet indexeur historique n'applique pas l'inventaire central des droits.
+    # Il est donc désactivé pour les PDF tant que la migration vers le pipeline
+    # ingest_corpus_rag.py n'est pas effectuée et les droits explicitement confirmés.
+    raise SystemExit(
+        'indexer_pdf_desactive: les PDF doivent passer par tools/ingest_corpus_rag.py '
+        'avec compagnon et inventaire central des droits confirmés'
+    )
     corp = json.load(open(CORPUS, encoding='utf-8'))
     idx = json.load(open(INDEX, encoding='utf-8'))
     docs = corp.setdefault('documents', [])

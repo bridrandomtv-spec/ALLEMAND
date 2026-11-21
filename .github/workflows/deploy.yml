@@ -11,13 +11,14 @@ permissions:
   contents: read
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
 
 jobs:
   validate:
     name: Validation structurelle & pédagogique
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -176,12 +177,19 @@ jobs:
               fails.append('archive : toutes les annees n ont pas 4 sujets')
           if len(ids) != len(sj):
               fails.append('archive : identifiants non uniques')
-          if not all(s['source'].startswith('الديوان') for s in sj):
-              fails.append('archive : source ONEC manquante')
+          if ar['_meta'].get('provenance_verifiee') is not False:
+              fails.append('archive : provenance globale doit rester non verifiee')
+          for sujet in sj:
+              if sujet.get('officiel') is not False:
+                  fails.append(str(sujet.get('id', '?')) + ' : officialite non neutralisee')
+              if sujet.get('provenance_verifiee') is not False:
+                  fails.append(str(sujet.get('id', '?')) + ' : provenance non neutralisee')
+              if sujet.get('statut_provenance') != 'non_verifiee':
+                  fails.append(str(sujet.get('id', '?')) + ' : statut_provenance incoherent')
           themes = set(s['theme_de'] for s in sj)
           if len(themes) < 10:
               fails.append('archive : ' + str(len(themes)) + ' themes < 10')
-          print('✅ Archive BAC : ' + str(len(sj)) + ' sujets · ' + str(len(ar['annees']))
+          print('✅ Archive pédagogique BAC : ' + str(len(sj)) + ' sujets · provenance non vérifiée · ' + str(len(ar['annees']))
                 + ' cycles (2010-2026) · 4 sujets/annee · 180 min · I/8+II/8+III/4=20')
           print('   themes : ' + str(len(themes)) + ' · grammaire : '
                 + str(len(ar['grammaire_ciblee'])) + ' · filieres : ' + str(len(ar['filieres'])))
@@ -439,7 +447,7 @@ jobs:
           print('✅ Quiz interactif : 30 questions, 6 unites, series de 5, feedback immediat')
           print('✅ Moteur IA : 9 cas de reference du professeur + estCopie + texte Lena officiel')
           print('✅ Donnees geographiques des wilayas : fichier de reference valide (sans vue de statistiques nationales)')
-          print('✅ Devoirs officiels : 10 devoirs · 10 lycees · onglets sujet/solution · notation /20')
+          print('✅ Banque pédagogique de devoirs : provenance documentaire non vérifiée · contrôles CI dédiés')
           print('✅ Espace parents : ' + str(len(enf)) + ' enfants · '
                 + str(len(pa['prochaines_seances'])) + ' seances a venir · '
                 + str(len(pa['messages_profs'])) + ' messages · '
@@ -482,110 +490,89 @@ jobs:
               print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
           PY
 
-      - name: Valider les devoirs officiels (devoirs_officiels.json)
+      - name: Valider la structure pédagogique et la provenance des devoirs
         run: |
           python - <<'PY'
           import json, sys
           fails = []
           do = json.load(open('assets/bdd/devoirs_officiels.json', encoding='utf-8'))
           m = do['_meta']; ds = do['devoirs']
-          if m['bareme_officiel'] != {'I': 8, 'II': 8, 'III': 4, 'total': 20}:
-              fails.append('officiels : bareme officiel != 8+8+4=20')
-          if len(ds) < 10:
-              fails.append('officiels : ' + str(len(ds)) + ' devoirs < 10')
-          off = [d for d in ds if d.get('schema') == 'officiel_v1']
-          if len(off) < 10:
-              fails.append('officiels : ' + str(len(off)) + ' devoirs schema officiel v1 < 10')
-          for dv in ds:
-              if dv.get('bareme') != 20:
-                  fails.append(dv['id'] + ' : bareme != 20')
-              if sum(p.get('points', 0) for p in dv.get('parties') or []) != 20:
-                  fails.append(dv['id'] + ' : parties != 20 pts')
+          if len(ds) != 55 or m.get('nombre') != 55:
+              fails.append('banque devoirs : nombre de fiches/metadonnees incoherent')
+          if m.get('provenance_verifiee') is not False:
+              fails.append('banque devoirs : la metadonnee ne declare pas la provenance non verifiee')
+          if m.get('bareme_officiel') != {'I': 8, 'II': 8, 'III': 4, 'total': 20}:
+              fails.append('banque devoirs : structure du bareme pedagogique != 8+8+4')
           ids = set()
-          for dv in off:
-              for k in ('id', 'numero', 'titre', 'lycee', 'wilaya', 'code_wilaya',
-                        'niveau', 'unite', 'trimestre', 'duree_minutes', 'bareme',
-                        'parties', 'source'):
-                  if k not in dv:
-                      fails.append('devoir ' + str(dv.get('id', '?')) + ' : ' + k + ' absent')
-              if dv['id'] in ids:
-                  fails.append('officiels : id duplique ' + dv['id'])
-              ids.add(dv['id'])
-              if dv['duree_minutes'] != 45 or dv['bareme'] != 20:
-                  fails.append(dv['id'] + ' : duree/bareme non officiels')
-              if len(dv['parties']) != 3:
-                  fails.append(dv['id'] + ' : ' + str(len(dv['parties'])) + ' parties != 3'); continue
-              pts = dict((p['id'], p['points']) for p in dv['parties'])
+          for dv in ds:
+              ident = str(dv.get('id', '?'))
+              if not ident or ident in ids:
+                  fails.append('banque devoirs : identifiant absent ou duplique ' + ident)
+              ids.add(ident)
+              if dv.get('officiel') is not False or dv.get('provenance_verifiee') is not False:
+                  fails.append(ident + ' : statut officiel/provenance non neutralise')
+              if dv.get('statut_provenance') != 'non_verifiee':
+                  fails.append(ident + ' : statut_provenance != non_verifiee')
+              if dv.get('lycee') not in (None, '', '—') or dv.get('wilaya') not in (None, '', '—'):
+                  fails.append(ident + ' : etablissement/wilaya presente sans verification')
+              if dv.get('bareme') != 20:
+                  fails.append(ident + ' : bareme pedagogique != 20')
+              if sum(p.get('points', 0) for p in dv.get('parties') or []) != 20:
+                  fails.append(ident + ' : parties != 20 points')
+          legacy = [d for d in ds if d.get('schema') == 'officiel_v1']
+          if len(legacy) != 10:
+              fails.append('banque devoirs : nombre de fiches au schema historique != 10')
+          for dv in legacy:
+              ident = str(dv.get('id', '?'))
+              for key in ('id', 'numero', 'titre', 'niveau', 'unite', 'trimestre',
+                          'duree_minutes', 'bareme', 'parties', 'source'):
+                  if key not in dv:
+                      fails.append(ident + ' : champ structurel absent ' + key)
+              if dv.get('duree_minutes') != 45 or dv.get('bareme') != 20:
+                  fails.append(ident + ' : duree/notation pedagogique incoherente')
+              parties = dv.get('parties') or []
+              if len(parties) != 3:
+                  fails.append(ident + ' : nombre de parties != 3')
+                  continue
+              pts = {p.get('id'): p.get('points') for p in parties}
               if pts != {'I': 8, 'II': 8, 'III': 4}:
-                  fails.append(dv['id'] + ' : repartition ' + str(pts))
-              pI = dv['parties'][0]
-              if 'texte' not in pI or 'Lena Fischer' not in pI['texte']:
-                  fails.append(dv['id'] + ' : texte de comprehension absent')
-              if len(pI.get('questions') or []) != 2:
-                  fails.append(dv['id'] + ' : comprehension != 2 groupes')
-              tot_q = sum(q['points'] for q in pI['questions'])
-              if tot_q != 8:
-                  fails.append(dv['id'] + ' : comprehension ' + str(tot_q) + ' pts != 8')
-              pII = dv['parties'][1]
-              ex = pII.get('exercises') or []
-              if len(ex) != 4:
-                  fails.append(dv['id'] + ' : ' + str(len(ex)) + ' exercices != 4')
-              titres = [e['titre'] for e in ex]
-              if dv['id'].startswith('DO-2AS-F'):
-                  attendus = ['صرّف الأفعال', 'أداة الاستفهام W',
-                              'رتّب الكلمات لتكوين جمل', 'التحية المناسبة']
-                  if titres != attendus:
-                      fails.append(dv['id'] + ' : titres exercices non conformes a la maquette')
-                  baremes = [e['bareme'] for e in ex]
-                  if baremes != ['2 نقطة = 0.5/عنصر', '2 نقطة = 0.5/عنصر',
-                                 '2 نقطة = 1/جملة', '2 نقطة = 0.5/عنصر']:
-                      fails.append(dv['id'] + ' : baremes exercices non conformes')
-                  corriges = [[it['rep'] for it in e['items']] for e in ex]
-                  if corriges[0] != ['bin', 'hast', 'sind', 'hat']:
-                      fails.append(dv['id'] + ' : corriges exercice 1 ' + str(corriges[0]))
-                  if corriges[1] != ['Wie', 'Woher', 'Wo', 'Wie']:
-                      fails.append(dv['id'] + ' : corriges exercice 2 ' + str(corriges[1]))
-                  if corriges[2] != ['Ich bin 16 Jahre alt.', 'Ich komme aus Algerien.']:
-                      fails.append(dv['id'] + ' : corriges exercice 3 ' + str(corriges[2]))
-                  if corriges[3] != ['Guten Morgen', 'Tschüs', 'Guten Abend', 'Auf Wiedersehen']:
-                      fails.append(dv['id'] + ' : corriges exercice 4 ' + str(corriges[3]))
-              for e in ex:
-                  for it in e['items']:
-                      if not it.get('key') or not it.get('regle'):
-                          fails.append(dv['id'] + ' : item sans key/regle')
-                      if e['type'] == 'order' and not it.get('mots'):
-                          fails.append(dv['id'] + ' : exercice ordre sans mots')
-              pIII = dv['parties'][2]
-              gr = pIII.get('grille') or {}
-              if 'مضمون' not in gr or 'لغة' not in gr:
-                  fails.append(dv['id'] + ' : grille sans مضمون/لغة')
+                  fails.append(ident + ' : repartition pedagogique ' + str(pts))
+              p1 = parties[0]
+              if 'texte' not in p1 or 'Lena Fischer' not in p1['texte']:
+                  fails.append(ident + ' : texte de comprehension absent')
+              if len(p1.get('questions') or []) != 2:
+                  fails.append(ident + ' : comprehension != 2 groupes')
+              if sum(q.get('points', 0) for q in p1.get('questions') or []) != 8:
+                  fails.append(ident + ' : comprehension != 8 points')
+              exercises = parties[1].get('exercises') or []
+              if len(exercises) != 4:
+                  fails.append(ident + ' : nombre d exercices != 4')
+              for exercise in exercises:
+                  for item in exercise.get('items') or []:
+                      if not item.get('key') or not item.get('regle'):
+                          fails.append(ident + ' : item sans key/regle')
+                      if exercise.get('type') == 'order' and not item.get('mots'):
+                          fails.append(ident + ' : exercice ordre sans mots')
+              grid = parties[2].get('grille') or {}
+              if set(('مضمون', 'لغة')) - set(grid):
+                  fails.append(ident + ' : grille مضمون/لغة absente')
               else:
-                  if gr['مضمون']['points'] != 2 or gr['لغة']['points'] != 2:
-                      fails.append(dv['id'] + ' : grille != مضمون 2 + لغة 2')
-                  if '0,4' not in gr['مضمون']['detail']:
-                      fails.append(dv['id'] + ' : grille sans 0,4/معلومة')
-              if 'Ich heiße Omar' not in pIII.get('modele', ''):
-                  fails.append(dv['id'] + ' : modele officiel absent')
-          if len(set(x['code_wilaya'] for x in off if x.get('code_wilaya'))) < 8:
-              fails.append('officiels : moins de 8 wilayas')
-          if len(set(x['unite'] for x in ds if x.get('unite'))) < 6:
-              fails.append('officiels : moins de 6 unites')
-          d1 = off[0]
-          if d1['code_wilaya'] != '31' or d1['numero'] != 'ف1':
-              fails.append('officiels : devoir 1 != maquette (wilaya 31 / ف1)')
-          if off[1]['code_wilaya'] != '25' or off[1]['numero'] != 'ف2':
-              fails.append('officiels : devoir 2 != maquette (wilaya 25 / ف2)')
-          print('✅ Devoirs officiels : ' + str(len(ds)) + ' devoirs · '
-                + str(len(off)) + ' officiels v1 · '
-                + str(len(set(x['code_wilaya'] for x in off if x.get('code_wilaya')))) + ' wilayas · '
-                + str(len(set(x['unite'] for x in ds))) + ' unites · 3 trimestres')
-          print('   maquette : ' + 'wilaya ' + d1['code_wilaya'] + ' ' + d1['numero']
-                + ' · wilaya ' + off[1]['code_wilaya'] + ' ' + off[1]['numero'])
-          print('   bareme : I/8 + II/8 (4 exercices 2+2+2+2) + III/4'
-                + ' · grille مضمون 2 + لغة 2')
+                  if grid['مضمون'].get('points') != 2 or grid['لغة'].get('points') != 2:
+                      fails.append(ident + ' : grille pedagogique != 2+2')
+                  if '0,4' not in grid['مضمون'].get('detail', ''):
+                      fails.append(ident + ' : grille sans 0,4 par information')
+          if len(set(d.get('unite') for d in ds if d.get('unite'))) < 6:
+              fails.append('banque devoirs : couverture de moins de 6 unites')
+          print('✅ Banque pédagogique : ' + str(len(ds)) +
+                ' fiches · provenance non vérifiée · ' + str(len(legacy)) +
+                ' fiches au schéma historique · aucune fiche déclarée officielle')
           if fails:
-              print('::error::' + ' | '.join(fails[:8])); sys.exit(1)
+              print('::error::' + ' | '.join(fails[:10])); sys.exit(1)
           PY
+
+      - name: Tester explicitement la provenance non vérifiée des devoirs
+        run: |
+          python tests/test_devoirs_provenance.py
 
       - name: Valider le référentiel géographique des wilayas
         run: |
@@ -1107,6 +1094,14 @@ jobs:
       - name: Tester l'authentification JWT du Worker IA
         run: |
           node --test tests/worker-ai-auth.test.mjs
+      - name: Vérifier la qualité des corrigés de la bibliothèque
+        run: |
+          node --test tests/devoirs-unite-correction-quality.test.mjs
+      - name: Vérifier la provenance des banques d'évaluation
+        run: |
+          node --test tests/bac-provenance-quality.test.mjs
+          node --test tests/official-document-provenance.test.mjs
+          node --test tests/corpus-public-pdf-access.test.mjs
       - name: Tester la compréhension Darija/Arabizi et la conservation du transcript (Lot 602)
         run: |
           node --test tests/qust-darja.test.mjs
@@ -1241,6 +1236,7 @@ jobs:
   professor-ai:
     name: Tests autonomes — Professeur IA
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -1260,6 +1256,8 @@ jobs:
           python -m unittest discover -s tests -p 'test_validate_pdf_rights_inventory.py' -v
           python -m unittest discover -s tests -p 'test_audit_pdf_text_readiness.py' -v
           python -m unittest discover -s tests -p 'test_build_corpus_rag_vectors.py' -v
+          # Les indexeurs historiques ne doivent pas réintroduire de PDF sans droits vérifiés.
+          python -m unittest discover -s tests -p 'test_legacy_pdf_ingestion_guard.py' -v
       - name: Auditer les PDF et produire un rapport technique sans contenu pédagogique
         run: |
           python tools/audit_pdf_text_readiness.py . --summary-only --rights-inventory docs/inventaire_pdf_droits.csv --csv-output "${{ runner.temp }}/pdf-rights-and-readiness.csv"
@@ -1276,6 +1274,8 @@ jobs:
         run: node --test tests/site-worker-content-guard.test.mjs
       - name: Tester QUST et la compréhension Darija/Arabizi
         run: node --test tests/qust-darja.test.mjs
+      - name: Vérifier l’intégrité de l’ontologie et du jeu d’intentions
+        run: node --test tests/intent-ontology-integrity.test.mjs
       - name: Tester la régression RAG, professeur et parcours combinés
         run: |
           node tests/regression_rag.mjs

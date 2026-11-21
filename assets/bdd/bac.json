@@ -3,10 +3,15 @@
     "type": "sujets de BAC",
     "nombre": 79,
     "version": "1.0.0",
-    "source": "تجميع الأستاذ خريف أحمد — ثانويات الوطن"
+    "source": "تجميع الأستاذ خريف أحمد — ثانويات الوطن",
+    "provenance_verifiee": false,
+    "note_provenance": "Sources MEN/ONEC ou photos enseignant déclarées, sans référence primaire jointe. Plusieurs fiches réutilisent exactement les mêmes sujets et corrigés sous des années/filières différentes."
   },
   "items": [
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-EXP-MAI-001",
       "type": "bac_blanc",
       "hash": "bac2026expmai",
@@ -106,6 +111,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (immer mehr) · 2. falsch (auch Risiken) · 3. richtig · 4. richtig\nI.2) a) Zeit sparen, flexibel arbeiten, Familie und Beruf verbinden. b) Einsamkeit ; Angst, dass Roboter die Arbeit übernehmen. c) Weil die Technik nie stillsteht.\nII.1) anpassungsfähig · ohne Kontakt · der Arbeiter · sich nicht bewegen\nII.2) a) wurden … gemacht b) würde c) dass … muss d) weil e) Als f) den\nIII) Beispiel : Ich würde gern im Homeoffice arbeiten, weil es ruhig ist. Obwohl ich Kollegen vermisse, wäre es produktiv. In der Zukunft werde ich vielleicht ganz zu Hause arbeiten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2023-3-0480",
       "type": "bac",
       "hash": "86afc2e834f0",
@@ -197,6 +205,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2023-3-0481",
       "type": "bac",
       "hash": "56c3f211e8cf",
@@ -288,6 +299,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2015-3-0482",
       "type": "bac",
       "hash": "40492d8a444b",
@@ -379,6 +393,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (sie schaden dem Klima) · 2. richtig · 3. falsch (viele, nicht alle) · 4. richtig\nI.2) a) Nach Spanien, Italien oder in die Türkei, weil das Wetter warm und das Meer schön ist. b) Weil Flugzeuge viel CO2 produzieren und dem Klima schaden. c) Neue Kulturen, fremdes Essen und andere Sprachen.\nII.1) angenehm und ohne Stress · mit Absicht · negativ beeinflussen · der Zug\nII.2) a) wird … erreicht b) würde … reisen c) Obwohl d) Als e) kennenzulernen f) das\nIII) Beispiel : Ich finde Reisen wichtig, weil man die Welt kennenlernt. Obwohl Flugzeuge dem Klima schaden, kann man mit dem Zug fahren. Letzten Sommer war ich am Meer in Bejaia. Das war schön und billig.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2017-3-0483",
       "type": "bac",
       "hash": "b6a9827e7fd5",
@@ -469,6 +486,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2020-3-0484",
       "type": "bac",
       "hash": "d375cf043e3b",
@@ -560,6 +580,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. richtig\nI.2) a) Texte übersetzen, Gesichter erkennen, Filme vorschlagen (+ Medizin/Schule). b) Manipulation ; Verlust der Privatsphäre. c) Ohne Regeln (Ampeln) entsteht Chaos — KI braucht Regeln.\nII.1) der private Bereich · beeinflussen/steuern · der kritische, informierte Mensch · anpassen\nII.2) a) werden … übersetzt b) hätte … entstünde c) wie d) weil e) zu erkennen f) die\nIII) Beispiel : KI ist eine Chance, weil sie Zeit spart. Aber sie ist eine Gefahr, weil Daten gestohlen werden können. Man sollte KI Regeln geben wie dem Verkehr.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0485",
       "type": "bac",
       "hash": "5eda16b45f19",
@@ -651,6 +674,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (schneller) · 2. richtig · 3. richtig · 4. falsch (man sollte es können)\nI.2) a) Kontakt mit Freunden, Neues lernen, Meinung frei sagen. b) Fake News ; das Internet vergisst nichts. c) Man soll überlegen, bevor man etwas veröffentlicht, weil es Folgen haben kann.\nII.1) falsche Nachrichten · veröffentlichen · abhängig · beschämend\nII.2) a) werden … geteilt b) würde c) dass … vergisst d) bevor e) dem f) gefährlicher\nIII) Beispiel : Soziale Netzwerke sind nützlich, weil man schnell informiert ist. Aber sie sind gefährlich, weil Fake News sich schnell verbreiten. Ich würde meinem Bruder raten, weniger zu posten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2018-3-0486",
       "type": "bac",
       "hash": "8de7a4343430",
@@ -742,6 +768,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (wird gefordert)\nI.2) a) Weil sie schneller und oft kostenlos sind. b) Viele klicken auf das Lauteste, nicht auf das Richtigste. c) Weil Qualität Geld kostet und Demokratie seriöse Medien braucht.\nII.1) verlässlich · der Titel/Headline · der Ursprung einer Nachricht · differenzieren\nII.2) a) müssen … geprüft werden b) sollte … werden c) weil d) Obwohl e) zu prüfen f) Wenn\nIII) Beispiel : Die Zeitung ist seriöser als das Internet. Das Internet ist schneller und billiger. Ich lese Nachrichten auf dem Handy. Man sollte aber beide Quellen vergleichen.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2018-3-0487",
       "type": "bac",
       "hash": "b5503c7a86b1",
@@ -833,6 +862,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (manchmal unpünktlich) · 2. richtig · 3. richtig · 4. falsch (Milliarden)\nI.2) a) Weil die Preise steigen, je näher der Reisetag kommt. b) Man kann lesen, arbeiten oder schlafen. c) Über Verspätungen und volle Waggons.\nII.1) der Zug kommt zu spät · der Passagier · das Gleis/die Strecke · Geld geben für die Zukunft\nII.2) a) wurde … gekauft b) hätte … würde … fahren c) desto d) weil e) fahrenden f) Worüber\nIII) Beispiel : Der Zug ist bequemer als das Auto. Man kann lesen und schlafen. Er ist besser für die Umwelt. Ein Nachteil ist die Verspätung. Wenn ich könnte, würde ich immer mit dem Zug fahren.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2015-3-0488",
       "type": "bac",
       "hash": "0b2b453e267b",
@@ -924,6 +956,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. falsch (eine Stunde vorher weglegen)\nI.2) a) Sie sitzen den ganzen Tag, essen Fastfood, schauen bis Mitternacht aufs Handy. b) Übergewicht, Diabetes, Herzkrankheiten. c) 30 Minuten Bewegung, fünf Portionen Obst/Gemüse, Handy eine Stunde vor dem Schlaf weglegen.\nII.1) quantifizierbar · zu viel Körpergewicht · wichtig/teuer · beiseite legen\nII.2) a) sollte … weggelegt werden b) würde c) weil d) Obwohl e) Als f) schlechter\nIII) Beispiel : Ich würde weniger Cola trinken und mehr Wasser. Ich würde jeden Abend 30 Minuten spazieren, weil es den Kopf frei macht. Ich lege das Handy um 22 Uhr weg.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2023-3-0489",
       "type": "bac",
       "hash": "dc602a5ecb3b",
@@ -1015,6 +1050,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (höchstens zehn)\nI.2) a) Nachhilfe geben, im Café arbeiten, Kleidung im Internet verkaufen. b) Für ein Studium oder ein Auto ; andere helfen ihren Familien. c) Höchstens zehn Stunden pro Woche, weil die Schule der erste Beruf ist.\nII.1) kleine Arbeit neben der Schule · Geld zurücklegen · Pflicht/Bewusstsein · raten\nII.2) a) wird … verkauft b) hätte … würde … kaufen c) zu übernehmen d) weil e) Obwohl f) der\nIII) Beispiel : Ich würde gern im Café arbeiten, weil ich Menschen mag. Ich würde sechs Stunden pro Woche arbeiten. Mit dem Geld würde ich Bücher kaufen. Das wäre gut für meine Unabhängigkeit.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0490",
       "type": "bac",
       "hash": "0785d0cda514",
@@ -1106,6 +1144,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (schneller) · 2. richtig · 3. richtig · 4. falsch (man sollte es können)\nI.2) a) Kontakt mit Freunden, Neues lernen, Meinung frei sagen. b) Fake News ; das Internet vergisst nichts. c) Man soll überlegen, bevor man etwas veröffentlicht, weil es Folgen haben kann.\nII.1) falsche Nachrichten · veröffentlichen · abhängig · beschämend\nII.2) a) werden … geteilt b) würde c) dass … vergisst d) bevor e) dem f) gefährlicher\nIII) Beispiel : Soziale Netzwerke sind nützlich, weil man schnell informiert ist. Aber sie sind gefährlich, weil Fake News sich schnell verbreiten. Ich würde meinem Bruder raten, weniger zu posten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2019-3-0491",
       "type": "bac",
       "hash": "a5acaa718983",
@@ -1198,6 +1239,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2021-3-0492",
       "type": "bac",
       "hash": "c68c1a4c233e",
@@ -1288,6 +1332,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. richtig\nI.2) a) Texte übersetzen, Gesichter erkennen, Filme vorschlagen (+ Medizin/Schule). b) Manipulation ; Verlust der Privatsphäre. c) Ohne Regeln (Ampeln) entsteht Chaos — KI braucht Regeln.\nII.1) der private Bereich · beeinflussen/steuern · der kritische, informierte Mensch · anpassen\nII.2) a) werden … übersetzt b) hätte … entstünde c) wie d) weil e) zu erkennen f) die\nIII) Beispiel : KI ist eine Chance, weil sie Zeit spart. Aber sie ist eine Gefahr, weil Daten gestohlen werden können. Man sollte KI Regeln geben wie dem Verkehr.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0493",
       "type": "bac",
       "hash": "88ad6c4cd594",
@@ -1379,6 +1426,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (wird gefordert)\nI.2) a) Weil sie schneller und oft kostenlos sind. b) Viele klicken auf das Lauteste, nicht auf das Richtigste. c) Weil Qualität Geld kostet und Demokratie seriöse Medien braucht.\nII.1) verlässlich · der Titel/Headline · der Ursprung einer Nachricht · differenzieren\nII.2) a) müssen … geprüft werden b) sollte … werden c) weil d) Obwohl e) zu prüfen f) Wenn\nIII) Beispiel : Die Zeitung ist seriöser als das Internet. Das Internet ist schneller und billiger. Ich lese Nachrichten auf dem Handy. Man sollte aber beide Quellen vergleichen.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2022-3-0494",
       "type": "bac",
       "hash": "4c5fbf9ee521",
@@ -1470,6 +1520,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2021-3-0495",
       "type": "bac",
       "hash": "c0f04cd1c8af",
@@ -1560,6 +1613,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. falsch · 4. richtig\nI.2) a) Genäht in Bangladesch, gekauft in Berlin, getragen in Algier. b) Gewinner : Fabriken/Jobs, Verbraucher ; Verlierer : Arbeiter mit Niedriglöhnen, Bauern. c) Man kann Globalisierung nicht stoppen, aber mit Regeln (Ufern) steuern.\nII.1) staatliche Unterstützung · im Wettbewerb stehen · der Käufer · gerecht\nII.2) a) wurde … genäht b) wäre … würden … gewinnen c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Globalisierung ist gut, weil wir billig einkaufen. Aber sie ist schlecht, weil lokale Fabriken leiden. Algerien sollte eigene Produkte fördern und faire Verträge schließen.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2020-3-0496",
       "type": "bac",
       "hash": "4c352b4d25ea",
@@ -1651,6 +1707,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. falsch (eine Stunde vorher weglegen)\nI.2) a) Sie sitzen den ganzen Tag, essen Fastfood, schauen bis Mitternacht aufs Handy. b) Übergewicht, Diabetes, Herzkrankheiten. c) 30 Minuten Bewegung, fünf Portionen Obst/Gemüse, Handy eine Stunde vor dem Schlaf weglegen.\nII.1) quantifizierbar · zu viel Körpergewicht · wichtig/teuer · beiseite legen\nII.2) a) sollte … weggelegt werden b) würde c) weil d) Obwohl e) Als f) schlechter\nIII) Beispiel : Ich würde weniger Cola trinken und mehr Wasser. Ich würde jeden Abend 30 Minuten spazieren, weil es den Kopf frei macht. Ich lege das Handy um 22 Uhr weg.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0497",
       "type": "bac",
       "hash": "b934aef52f30",
@@ -1742,6 +1801,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. richtig\nI.2) a) Texte übersetzen, Gesichter erkennen, Filme vorschlagen (+ Medizin/Schule). b) Manipulation ; Verlust der Privatsphäre. c) Ohne Regeln (Ampeln) entsteht Chaos — KI braucht Regeln.\nII.1) der private Bereich · beeinflussen/steuern · der kritische, informierte Mensch · anpassen\nII.2) a) werden … übersetzt b) hätte … entstünde c) wie d) weil e) zu erkennen f) die\nIII) Beispiel : KI ist eine Chance, weil sie Zeit spart. Aber sie ist eine Gefahr, weil Daten gestohlen werden können. Man sollte KI Regeln geben wie dem Verkehr.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0498",
       "type": "bac",
       "hash": "e6c22f433257",
@@ -1833,6 +1895,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (immer mehr) · 2. falsch (auch Risiken) · 3. richtig · 4. richtig\nI.2) a) Zeit sparen, flexibel arbeiten, Familie und Beruf verbinden. b) Einsamkeit ; Angst, dass Roboter die Arbeit übernehmen. c) Weil die Technik nie stillsteht.\nII.1) anpassungsfähig · ohne Kontakt · der Arbeiter · sich nicht bewegen\nII.2) a) wurden … gemacht b) würde c) dass … muss d) weil e) Als f) den\nIII) Beispiel : Ich würde gern im Homeoffice arbeiten, weil es ruhig ist. Obwohl ich Kollegen vermisse, wäre es produktiv. In der Zukunft werde ich vielleicht ganz zu Hause arbeiten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0499",
       "type": "bac",
       "hash": "b3ccf49fe550",
@@ -1924,6 +1989,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (steigen) · 2. richtig · 3. richtig · 4. falsch (Millionen, die unperfekt anfangen)\nI.2) a) CO2 aus Autos, Fabriken und Flugzeugen. b) Erneuerbare Energien, weniger Fleisch, mehr Bäume, kürzere Wege. c) Klimaneutral sein.\nII.1) zu Eis werden und verschwinden · die große Aufgabe · regenerativ · mithelfen\nII.2) a) wird … getrennt b) würden … wäre c) weil d) Obwohl e) zu sparen f) die\nIII) Beispiel : Ich fahre mit dem Rad zur Schule, weil es die Luft schont. Obwohl es anstrengend ist, mache ich es gern. Ich trenne den Müll und spare Wasser. Fang auch du an !\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2020-3-0500",
       "type": "bac",
       "hash": "27f102dec54e",
@@ -2014,6 +2082,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. falsch · 4. richtig\nI.2) a) Genäht in Bangladesch, gekauft in Berlin, getragen in Algier. b) Gewinner : Fabriken/Jobs, Verbraucher ; Verlierer : Arbeiter mit Niedriglöhnen, Bauern. c) Man kann Globalisierung nicht stoppen, aber mit Regeln (Ufern) steuern.\nII.1) staatliche Unterstützung · im Wettbewerb stehen · der Käufer · gerecht\nII.2) a) wurde … genäht b) wäre … würden … gewinnen c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Globalisierung ist gut, weil wir billig einkaufen. Aber sie ist schlecht, weil lokale Fabriken leiden. Algerien sollte eigene Produkte fördern und faire Verträge schließen.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2022-3-0501",
       "type": "bac",
       "hash": "e8fee15a9dec",
@@ -2105,6 +2176,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2025-3-0502",
       "type": "bac",
       "hash": "017644f3011d",
@@ -2196,6 +2270,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0503",
       "type": "bac",
       "hash": "38d978aef4e0",
@@ -2287,6 +2364,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (Aid) · 2. richtig · 3. falsch (Sicherheitsgürtel, kein Luxus) · 4. richtig\nI.2) a) Weihnachten : Tannenbaum + Geschenke ; Aid : Couscous, Süßigkeiten, Familienbesuche. b) Zusammen essen, einander vergeben, Freude teilen. c) Wer die Feste des anderen kennt, hat weniger Angst — Dialog schützt die Gesellschaft.\nII.1) der Vertreter einer Kultur · verzeihen · gemeinsam haben · der Schutz\nII.2) a) werden … gefeiert b) würde c) weil d) Obwohl e) Als f) das\nIII) Beispiel : Weihnachten feiert man im Winter mit Tannenbaum. Aid feiert man mit der ganzen Familie und Couscous. Beide Feste verbinden Menschen. Ich finde Dialog wichtig, weil er Angst abbaut.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2021-3-0504",
       "type": "bac",
       "hash": "ef7d5878964f",
@@ -2379,6 +2459,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2020-3-0505",
       "type": "bac",
       "hash": "57d5ef2ed05d",
@@ -2470,6 +2553,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (höchstens zehn)\nI.2) a) Nachhilfe geben, im Café arbeiten, Kleidung im Internet verkaufen. b) Für ein Studium oder ein Auto ; andere helfen ihren Familien. c) Höchstens zehn Stunden pro Woche, weil die Schule der erste Beruf ist.\nII.1) kleine Arbeit neben der Schule · Geld zurücklegen · Pflicht/Bewusstsein · raten\nII.2) a) wird … verkauft b) hätte … würde … kaufen c) zu übernehmen d) weil e) Obwohl f) der\nIII) Beispiel : Ich würde gern im Café arbeiten, weil ich Menschen mag. Ich würde sechs Stunden pro Woche arbeiten. Mit dem Geld würde ich Bücher kaufen. Das wäre gut für meine Unabhängigkeit.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2020-3-0506",
       "type": "bac",
       "hash": "26536fe4478c",
@@ -2561,6 +2647,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. falsch (eine Stunde vorher weglegen)\nI.2) a) Sie sitzen den ganzen Tag, essen Fastfood, schauen bis Mitternacht aufs Handy. b) Übergewicht, Diabetes, Herzkrankheiten. c) 30 Minuten Bewegung, fünf Portionen Obst/Gemüse, Handy eine Stunde vor dem Schlaf weglegen.\nII.1) quantifizierbar · zu viel Körpergewicht · wichtig/teuer · beiseite legen\nII.2) a) sollte … weggelegt werden b) würde c) weil d) Obwohl e) Als f) schlechter\nIII) Beispiel : Ich würde weniger Cola trinken und mehr Wasser. Ich würde jeden Abend 30 Minuten spazieren, weil es den Kopf frei macht. Ich lege das Handy um 22 Uhr weg.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2019-3-0507",
       "type": "bac",
       "hash": "fb3db6ef4155",
@@ -2652,6 +2741,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. falsch (eine Stunde vorher weglegen)\nI.2) a) Sie sitzen den ganzen Tag, essen Fastfood, schauen bis Mitternacht aufs Handy. b) Übergewicht, Diabetes, Herzkrankheiten. c) 30 Minuten Bewegung, fünf Portionen Obst/Gemüse, Handy eine Stunde vor dem Schlaf weglegen.\nII.1) quantifizierbar · zu viel Körpergewicht · wichtig/teuer · beiseite legen\nII.2) a) sollte … weggelegt werden b) würde c) weil d) Obwohl e) Als f) schlechter\nIII) Beispiel : Ich würde weniger Cola trinken und mehr Wasser. Ich würde jeden Abend 30 Minuten spazieren, weil es den Kopf frei macht. Ich lege das Handy um 22 Uhr weg.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2022-3-0508",
       "type": "bac",
       "hash": "c3d93f585926",
@@ -2743,6 +2835,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (immer mehr) · 2. falsch (auch Risiken) · 3. richtig · 4. richtig\nI.2) a) Zeit sparen, flexibel arbeiten, Familie und Beruf verbinden. b) Einsamkeit ; Angst, dass Roboter die Arbeit übernehmen. c) Weil die Technik nie stillsteht.\nII.1) anpassungsfähig · ohne Kontakt · der Arbeiter · sich nicht bewegen\nII.2) a) wurden … gemacht b) würde c) dass … muss d) weil e) Als f) den\nIII) Beispiel : Ich würde gern im Homeoffice arbeiten, weil es ruhig ist. Obwohl ich Kollegen vermisse, wäre es produktiv. In der Zukunft werde ich vielleicht ganz zu Hause arbeiten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2019-3-0509",
       "type": "bac",
       "hash": "d79484885b38",
@@ -2834,6 +2929,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. falsch (eine Stunde vorher weglegen)\nI.2) a) Sie sitzen den ganzen Tag, essen Fastfood, schauen bis Mitternacht aufs Handy. b) Übergewicht, Diabetes, Herzkrankheiten. c) 30 Minuten Bewegung, fünf Portionen Obst/Gemüse, Handy eine Stunde vor dem Schlaf weglegen.\nII.1) quantifizierbar · zu viel Körpergewicht · wichtig/teuer · beiseite legen\nII.2) a) sollte … weggelegt werden b) würde c) weil d) Obwohl e) Als f) schlechter\nIII) Beispiel : Ich würde weniger Cola trinken und mehr Wasser. Ich würde jeden Abend 30 Minuten spazieren, weil es den Kopf frei macht. Ich lege das Handy um 22 Uhr weg.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0510",
       "type": "bac",
       "hash": "19297cf6760c",
@@ -2924,6 +3022,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. richtig\nI.2) a) Texte übersetzen, Gesichter erkennen, Filme vorschlagen (+ Medizin/Schule). b) Manipulation ; Verlust der Privatsphäre. c) Ohne Regeln (Ampeln) entsteht Chaos — KI braucht Regeln.\nII.1) der private Bereich · beeinflussen/steuern · der kritische, informierte Mensch · anpassen\nII.2) a) werden … übersetzt b) hätte … entstünde c) wie d) weil e) zu erkennen f) die\nIII) Beispiel : KI ist eine Chance, weil sie Zeit spart. Aber sie ist eine Gefahr, weil Daten gestohlen werden können. Man sollte KI Regeln geben wie dem Verkehr.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2021-3-0511",
       "type": "bac",
       "hash": "b24cb55f6746",
@@ -3015,6 +3116,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (schneller) · 2. richtig · 3. richtig · 4. falsch (man sollte es können)\nI.2) a) Kontakt mit Freunden, Neues lernen, Meinung frei sagen. b) Fake News ; das Internet vergisst nichts. c) Man soll überlegen, bevor man etwas veröffentlicht, weil es Folgen haben kann.\nII.1) falsche Nachrichten · veröffentlichen · abhängig · beschämend\nII.2) a) werden … geteilt b) würde c) dass … vergisst d) bevor e) dem f) gefährlicher\nIII) Beispiel : Soziale Netzwerke sind nützlich, weil man schnell informiert ist. Aber sie sind gefährlich, weil Fake News sich schnell verbreiten. Ich würde meinem Bruder raten, weniger zu posten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2020-3-0512",
       "type": "bac",
       "hash": "2bd847b1cacd",
@@ -3106,6 +3210,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0513",
       "type": "bac",
       "hash": "86e523248800",
@@ -3197,6 +3304,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2021-3-0514",
       "type": "bac",
       "hash": "1e97e2d97115",
@@ -3288,6 +3398,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (steigen) · 2. richtig · 3. richtig · 4. falsch (Millionen, die unperfekt anfangen)\nI.2) a) CO2 aus Autos, Fabriken und Flugzeugen. b) Erneuerbare Energien, weniger Fleisch, mehr Bäume, kürzere Wege. c) Klimaneutral sein.\nII.1) zu Eis werden und verschwinden · die große Aufgabe · regenerativ · mithelfen\nII.2) a) wird … getrennt b) würden … wäre c) weil d) Obwohl e) zu sparen f) die\nIII) Beispiel : Ich fahre mit dem Rad zur Schule, weil es die Luft schont. Obwohl es anstrengend ist, mache ich es gern. Ich trenne den Müll und spare Wasser. Fang auch du an !\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0515",
       "type": "bac",
       "hash": "683c15b9139c",
@@ -3379,6 +3492,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2023-3-0516",
       "type": "bac",
       "hash": "c5f5994ec877",
@@ -3470,6 +3586,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2016-3-0517",
       "type": "bac",
       "hash": "279f5d3581df",
@@ -3561,6 +3680,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2021-3-0518",
       "type": "bac",
       "hash": "660c5ce235d5",
@@ -3652,6 +3774,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (steigen) · 2. richtig · 3. richtig · 4. falsch (Millionen, die unperfekt anfangen)\nI.2) a) CO2 aus Autos, Fabriken und Flugzeugen. b) Erneuerbare Energien, weniger Fleisch, mehr Bäume, kürzere Wege. c) Klimaneutral sein.\nII.1) zu Eis werden und verschwinden · die große Aufgabe · regenerativ · mithelfen\nII.2) a) wird … getrennt b) würden … wäre c) weil d) Obwohl e) zu sparen f) die\nIII) Beispiel : Ich fahre mit dem Rad zur Schule, weil es die Luft schont. Obwohl es anstrengend ist, mache ich es gern. Ich trenne den Müll und spare Wasser. Fang auch du an !\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2015-3-0519",
       "type": "bac",
       "hash": "d9d778ea0169",
@@ -3743,6 +3868,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (höchstens zehn)\nI.2) a) Nachhilfe geben, im Café arbeiten, Kleidung im Internet verkaufen. b) Für ein Studium oder ein Auto ; andere helfen ihren Familien. c) Höchstens zehn Stunden pro Woche, weil die Schule der erste Beruf ist.\nII.1) kleine Arbeit neben der Schule · Geld zurücklegen · Pflicht/Bewusstsein · raten\nII.2) a) wird … verkauft b) hätte … würde … kaufen c) zu übernehmen d) weil e) Obwohl f) der\nIII) Beispiel : Ich würde gern im Café arbeiten, weil ich Menschen mag. Ich würde sechs Stunden pro Woche arbeiten. Mit dem Geld würde ich Bücher kaufen. Das wäre gut für meine Unabhängigkeit.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0520",
       "type": "bac",
       "hash": "ee6bb3a9868e",
@@ -3834,6 +3962,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. falsch (eine Stunde vorher weglegen)\nI.2) a) Sie sitzen den ganzen Tag, essen Fastfood, schauen bis Mitternacht aufs Handy. b) Übergewicht, Diabetes, Herzkrankheiten. c) 30 Minuten Bewegung, fünf Portionen Obst/Gemüse, Handy eine Stunde vor dem Schlaf weglegen.\nII.1) quantifizierbar · zu viel Körpergewicht · wichtig/teuer · beiseite legen\nII.2) a) sollte … weggelegt werden b) würde c) weil d) Obwohl e) Als f) schlechter\nIII) Beispiel : Ich würde weniger Cola trinken und mehr Wasser. Ich würde jeden Abend 30 Minuten spazieren, weil es den Kopf frei macht. Ich lege das Handy um 22 Uhr weg.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0521",
       "type": "bac",
       "hash": "8f07a9423a4a",
@@ -3925,6 +4056,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (wird gefordert)\nI.2) a) Weil sie schneller und oft kostenlos sind. b) Viele klicken auf das Lauteste, nicht auf das Richtigste. c) Weil Qualität Geld kostet und Demokratie seriöse Medien braucht.\nII.1) verlässlich · der Titel/Headline · der Ursprung einer Nachricht · differenzieren\nII.2) a) müssen … geprüft werden b) sollte … werden c) weil d) Obwohl e) zu prüfen f) Wenn\nIII) Beispiel : Die Zeitung ist seriöser als das Internet. Das Internet ist schneller und billiger. Ich lese Nachrichten auf dem Handy. Man sollte aber beide Quellen vergleichen.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2023-3-0522",
       "type": "bac",
       "hash": "98620c982739",
@@ -4016,6 +4150,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (schneller) · 2. richtig · 3. richtig · 4. falsch (man sollte es können)\nI.2) a) Kontakt mit Freunden, Neues lernen, Meinung frei sagen. b) Fake News ; das Internet vergisst nichts. c) Man soll überlegen, bevor man etwas veröffentlicht, weil es Folgen haben kann.\nII.1) falsche Nachrichten · veröffentlichen · abhängig · beschämend\nII.2) a) werden … geteilt b) würde c) dass … vergisst d) bevor e) dem f) gefährlicher\nIII) Beispiel : Soziale Netzwerke sind nützlich, weil man schnell informiert ist. Aber sie sind gefährlich, weil Fake News sich schnell verbreiten. Ich würde meinem Bruder raten, weniger zu posten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2015-3-0523",
       "type": "bac",
       "hash": "043109fb2503",
@@ -4107,6 +4244,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (immer mehr) · 2. falsch (auch Risiken) · 3. richtig · 4. richtig\nI.2) a) Zeit sparen, flexibel arbeiten, Familie und Beruf verbinden. b) Einsamkeit ; Angst, dass Roboter die Arbeit übernehmen. c) Weil die Technik nie stillsteht.\nII.1) anpassungsfähig · ohne Kontakt · der Arbeiter · sich nicht bewegen\nII.2) a) wurden … gemacht b) würde c) dass … muss d) weil e) Als f) den\nIII) Beispiel : Ich würde gern im Homeoffice arbeiten, weil es ruhig ist. Obwohl ich Kollegen vermisse, wäre es produktiv. In der Zukunft werde ich vielleicht ganz zu Hause arbeiten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0524",
       "type": "bac",
       "hash": "2ef05e62f884",
@@ -4198,6 +4338,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. falsch · 4. falsch (der nach dem Sturz aufsteht)\nI.2) a) Stärken kennen, Schwächen akzeptieren, aus Fehlern lernen. b) Aus wenig viel machen, auch unter schwierigen Bedingungen wachsen. c) Wer Gefühle zeigt, ist ehrlich, und Ehrlichkeit baut Vertrauen.\nII.1) die innere Einstellung · annehmen · das Modell/Beispiel · das Fallen\nII.2) a) wird … gelernt b) wäre c) weil d) Obwohl e) Als f) der\nIII) Beispiel : Mein Vorbild ist meine Mutter. Sie ist geduldig, ehrlich und stark. Als mein Vater krank war, hat sie alles getragen. Von ihr lerne ich, nie aufzugeben.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2018-3-0525",
       "type": "bac",
       "hash": "4fdcd0dd8ea1",
@@ -4289,6 +4432,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (steigen) · 2. richtig · 3. richtig · 4. falsch (Millionen, die unperfekt anfangen)\nI.2) a) CO2 aus Autos, Fabriken und Flugzeugen. b) Erneuerbare Energien, weniger Fleisch, mehr Bäume, kürzere Wege. c) Klimaneutral sein.\nII.1) zu Eis werden und verschwinden · die große Aufgabe · regenerativ · mithelfen\nII.2) a) wird … getrennt b) würden … wäre c) weil d) Obwohl e) zu sparen f) die\nIII) Beispiel : Ich fahre mit dem Rad zur Schule, weil es die Luft schont. Obwohl es anstrengend ist, mache ich es gern. Ich trenne den Müll und spare Wasser. Fang auch du an !\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0526",
       "type": "bac",
       "hash": "7b9991d03faa",
@@ -4380,6 +4526,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (wird gefordert)\nI.2) a) Weil sie schneller und oft kostenlos sind. b) Viele klicken auf das Lauteste, nicht auf das Richtigste. c) Weil Qualität Geld kostet und Demokratie seriöse Medien braucht.\nII.1) verlässlich · der Titel/Headline · der Ursprung einer Nachricht · differenzieren\nII.2) a) müssen … geprüft werden b) sollte … werden c) weil d) Obwohl e) zu prüfen f) Wenn\nIII) Beispiel : Die Zeitung ist seriöser als das Internet. Das Internet ist schneller und billiger. Ich lese Nachrichten auf dem Handy. Man sollte aber beide Quellen vergleichen.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0527",
       "type": "bac",
       "hash": "7df9f00f5b29",
@@ -4470,6 +4619,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0528",
       "type": "bac",
       "hash": "13a9288b900a",
@@ -4561,6 +4713,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (höchstens zehn)\nI.2) a) Nachhilfe geben, im Café arbeiten, Kleidung im Internet verkaufen. b) Für ein Studium oder ein Auto ; andere helfen ihren Familien. c) Höchstens zehn Stunden pro Woche, weil die Schule der erste Beruf ist.\nII.1) kleine Arbeit neben der Schule · Geld zurücklegen · Pflicht/Bewusstsein · raten\nII.2) a) wird … verkauft b) hätte … würde … kaufen c) zu übernehmen d) weil e) Obwohl f) der\nIII) Beispiel : Ich würde gern im Café arbeiten, weil ich Menschen mag. Ich würde sechs Stunden pro Woche arbeiten. Mit dem Geld würde ich Bücher kaufen. Das wäre gut für meine Unabhängigkeit.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2020-3-0529",
       "type": "bac",
       "hash": "c4371c08f399",
@@ -4652,6 +4807,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (steigen) · 2. richtig · 3. richtig · 4. falsch (Millionen, die unperfekt anfangen)\nI.2) a) CO2 aus Autos, Fabriken und Flugzeugen. b) Erneuerbare Energien, weniger Fleisch, mehr Bäume, kürzere Wege. c) Klimaneutral sein.\nII.1) zu Eis werden und verschwinden · die große Aufgabe · regenerativ · mithelfen\nII.2) a) wird … getrennt b) würden … wäre c) weil d) Obwohl e) zu sparen f) die\nIII) Beispiel : Ich fahre mit dem Rad zur Schule, weil es die Luft schont. Obwohl es anstrengend ist, mache ich es gern. Ich trenne den Müll und spare Wasser. Fang auch du an !\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2022-3-0530",
       "type": "bac",
       "hash": "3b5f6f08cd66",
@@ -4743,6 +4901,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (immer mehr) · 2. falsch (auch Risiken) · 3. richtig · 4. richtig\nI.2) a) Zeit sparen, flexibel arbeiten, Familie und Beruf verbinden. b) Einsamkeit ; Angst, dass Roboter die Arbeit übernehmen. c) Weil die Technik nie stillsteht.\nII.1) anpassungsfähig · ohne Kontakt · der Arbeiter · sich nicht bewegen\nII.2) a) wurden … gemacht b) würde c) dass … muss d) weil e) Als f) den\nIII) Beispiel : Ich würde gern im Homeoffice arbeiten, weil es ruhig ist. Obwohl ich Kollegen vermisse, wäre es produktiv. In der Zukunft werde ich vielleicht ganz zu Hause arbeiten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0531",
       "type": "bac",
       "hash": "7c60dbe9a55e",
@@ -4834,6 +4995,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (steigen) · 2. richtig · 3. richtig · 4. falsch (Millionen, die unperfekt anfangen)\nI.2) a) CO2 aus Autos, Fabriken und Flugzeugen. b) Erneuerbare Energien, weniger Fleisch, mehr Bäume, kürzere Wege. c) Klimaneutral sein.\nII.1) zu Eis werden und verschwinden · die große Aufgabe · regenerativ · mithelfen\nII.2) a) wird … getrennt b) würden … wäre c) weil d) Obwohl e) zu sparen f) die\nIII) Beispiel : Ich fahre mit dem Rad zur Schule, weil es die Luft schont. Obwohl es anstrengend ist, mache ich es gern. Ich trenne den Müll und spare Wasser. Fang auch du an !\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2021-3-0532",
       "type": "bac",
       "hash": "e7901737ea3d",
@@ -4926,6 +5090,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2017-3-0533",
       "type": "bac",
       "hash": "74fd90781263",
@@ -5017,6 +5184,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (schneller) · 2. richtig · 3. richtig · 4. falsch (man sollte es können)\nI.2) a) Kontakt mit Freunden, Neues lernen, Meinung frei sagen. b) Fake News ; das Internet vergisst nichts. c) Man soll überlegen, bevor man etwas veröffentlicht, weil es Folgen haben kann.\nII.1) falsche Nachrichten · veröffentlichen · abhängig · beschämend\nII.2) a) werden … geteilt b) würde c) dass … vergisst d) bevor e) dem f) gefährlicher\nIII) Beispiel : Soziale Netzwerke sind nützlich, weil man schnell informiert ist. Aber sie sind gefährlich, weil Fake News sich schnell verbreiten. Ich würde meinem Bruder raten, weniger zu posten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2021-3-0534",
       "type": "bac",
       "hash": "9602cbd5bf94",
@@ -5108,6 +5278,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2022-3-0535",
       "type": "bac",
       "hash": "4b88bf7da59e",
@@ -5199,6 +5372,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2017-3-0536",
       "type": "bac",
       "hash": "f78ebbcd1ea3",
@@ -5290,6 +5466,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0537",
       "type": "bac",
       "hash": "78ffa38e1109",
@@ -5381,6 +5560,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (Aid) · 2. richtig · 3. falsch (Sicherheitsgürtel, kein Luxus) · 4. richtig\nI.2) a) Weihnachten : Tannenbaum + Geschenke ; Aid : Couscous, Süßigkeiten, Familienbesuche. b) Zusammen essen, einander vergeben, Freude teilen. c) Wer die Feste des anderen kennt, hat weniger Angst — Dialog schützt die Gesellschaft.\nII.1) der Vertreter einer Kultur · verzeihen · gemeinsam haben · der Schutz\nII.2) a) werden … gefeiert b) würde c) weil d) Obwohl e) Als f) das\nIII) Beispiel : Weihnachten feiert man im Winter mit Tannenbaum. Aid feiert man mit der ganzen Familie und Couscous. Beide Feste verbinden Menschen. Ich finde Dialog wichtig, weil er Angst abbaut.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2019-3-0538",
       "type": "bac",
       "hash": "51835c148d3b",
@@ -5472,6 +5654,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (wird gefordert)\nI.2) a) Weil sie schneller und oft kostenlos sind. b) Viele klicken auf das Lauteste, nicht auf das Richtigste. c) Weil Qualität Geld kostet und Demokratie seriöse Medien braucht.\nII.1) verlässlich · der Titel/Headline · der Ursprung einer Nachricht · differenzieren\nII.2) a) müssen … geprüft werden b) sollte … werden c) weil d) Obwohl e) zu prüfen f) Wenn\nIII) Beispiel : Die Zeitung ist seriöser als das Internet. Das Internet ist schneller und billiger. Ich lese Nachrichten auf dem Handy. Man sollte aber beide Quellen vergleichen.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2018-3-0539",
       "type": "bac",
       "hash": "1aa99a402ae0",
@@ -5563,6 +5748,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (höchstens zehn)\nI.2) a) Nachhilfe geben, im Café arbeiten, Kleidung im Internet verkaufen. b) Für ein Studium oder ein Auto ; andere helfen ihren Familien. c) Höchstens zehn Stunden pro Woche, weil die Schule der erste Beruf ist.\nII.1) kleine Arbeit neben der Schule · Geld zurücklegen · Pflicht/Bewusstsein · raten\nII.2) a) wird … verkauft b) hätte … würde … kaufen c) zu übernehmen d) weil e) Obwohl f) der\nIII) Beispiel : Ich würde gern im Café arbeiten, weil ich Menschen mag. Ich würde sechs Stunden pro Woche arbeiten. Mit dem Geld würde ich Bücher kaufen. Das wäre gut für meine Unabhängigkeit.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2020-3-0540",
       "type": "bac",
       "hash": "de3e1f5424f6",
@@ -5654,6 +5842,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2016-3-0541",
       "type": "bac",
       "hash": "a998da76d1dd",
@@ -5745,6 +5936,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2017-3-0542",
       "type": "bac",
       "hash": "f050d49d6ffd",
@@ -5836,6 +6030,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (Aid) · 2. richtig · 3. falsch (Sicherheitsgürtel, kein Luxus) · 4. richtig\nI.2) a) Weihnachten : Tannenbaum + Geschenke ; Aid : Couscous, Süßigkeiten, Familienbesuche. b) Zusammen essen, einander vergeben, Freude teilen. c) Wer die Feste des anderen kennt, hat weniger Angst — Dialog schützt die Gesellschaft.\nII.1) der Vertreter einer Kultur · verzeihen · gemeinsam haben · der Schutz\nII.2) a) werden … gefeiert b) würde c) weil d) Obwohl e) Als f) das\nIII) Beispiel : Weihnachten feiert man im Winter mit Tannenbaum. Aid feiert man mit der ganzen Familie und Couscous. Beide Feste verbinden Menschen. Ich finde Dialog wichtig, weil er Angst abbaut.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0543",
       "type": "bac",
       "hash": "9cae7998c1d5",
@@ -5927,6 +6124,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. falsch (eine Stunde vorher weglegen)\nI.2) a) Sie sitzen den ganzen Tag, essen Fastfood, schauen bis Mitternacht aufs Handy. b) Übergewicht, Diabetes, Herzkrankheiten. c) 30 Minuten Bewegung, fünf Portionen Obst/Gemüse, Handy eine Stunde vor dem Schlaf weglegen.\nII.1) quantifizierbar · zu viel Körpergewicht · wichtig/teuer · beiseite legen\nII.2) a) sollte … weggelegt werden b) würde c) weil d) Obwohl e) Als f) schlechter\nIII) Beispiel : Ich würde weniger Cola trinken und mehr Wasser. Ich würde jeden Abend 30 Minuten spazieren, weil es den Kopf frei macht. Ich lege das Handy um 22 Uhr weg.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0544",
       "type": "bac",
       "hash": "e22d2167b77a",
@@ -6018,6 +6218,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2019-3-0545",
       "type": "bac",
       "hash": "078c06ccfdce",
@@ -6110,6 +6313,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2026-3-0546",
       "type": "bac",
       "hash": "00b1c31855d4",
@@ -6201,6 +6407,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2025-3-0547",
       "type": "bac",
       "hash": "8c52f1e71a27",
@@ -6291,6 +6500,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch · 3. richtig · 4. richtig\nI.2) a) Texte übersetzen, Gesichter erkennen, Filme vorschlagen (+ Medizin/Schule). b) Manipulation ; Verlust der Privatsphäre. c) Ohne Regeln (Ampeln) entsteht Chaos — KI braucht Regeln.\nII.1) der private Bereich · beeinflussen/steuern · der kritische, informierte Mensch · anpassen\nII.2) a) werden … übersetzt b) hätte … entstünde c) wie d) weil e) zu erkennen f) die\nIII) Beispiel : KI ist eine Chance, weil sie Zeit spart. Aber sie ist eine Gefahr, weil Daten gestohlen werden können. Man sollte KI Regeln geben wie dem Verkehr.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2023-3-0548",
       "type": "bac",
       "hash": "862c87404a94",
@@ -6382,6 +6594,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (immer mehr) · 2. falsch (auch Risiken) · 3. richtig · 4. richtig\nI.2) a) Zeit sparen, flexibel arbeiten, Familie und Beruf verbinden. b) Einsamkeit ; Angst, dass Roboter die Arbeit übernehmen. c) Weil die Technik nie stillsteht.\nII.1) anpassungsfähig · ohne Kontakt · der Arbeiter · sich nicht bewegen\nII.2) a) wurden … gemacht b) würde c) dass … muss d) weil e) Als f) den\nIII) Beispiel : Ich würde gern im Homeoffice arbeiten, weil es ruhig ist. Obwohl ich Kollegen vermisse, wäre es produktiv. In der Zukunft werde ich vielleicht ganz zu Hause arbeiten.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2022-3-0549",
       "type": "bac",
       "hash": "206c42667701",
@@ -6473,6 +6688,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch · 2. richtig · 3. richtig · 4. falsch (höchstens zehn)\nI.2) a) Nachhilfe geben, im Café arbeiten, Kleidung im Internet verkaufen. b) Für ein Studium oder ein Auto ; andere helfen ihren Familien. c) Höchstens zehn Stunden pro Woche, weil die Schule der erste Beruf ist.\nII.1) kleine Arbeit neben der Schule · Geld zurücklegen · Pflicht/Bewusstsein · raten\nII.2) a) wird … verkauft b) hätte … würde … kaufen c) zu übernehmen d) weil e) Obwohl f) der\nIII) Beispiel : Ich würde gern im Café arbeiten, weil ich Menschen mag. Ich würde sechs Stunden pro Woche arbeiten. Mit dem Geld würde ich Bücher kaufen. Das wäre gut für meine Unabhängigkeit.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2015-3-0550",
       "type": "bac",
       "hash": "ea7c103ea925",
@@ -6564,6 +6782,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2019-3-0551",
       "type": "bac",
       "hash": "fd514f8893ac",
@@ -6655,6 +6876,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (Aid) · 2. richtig · 3. falsch (Sicherheitsgürtel, kein Luxus) · 4. richtig\nI.2) a) Weihnachten : Tannenbaum + Geschenke ; Aid : Couscous, Süßigkeiten, Familienbesuche. b) Zusammen essen, einander vergeben, Freude teilen. c) Wer die Feste des anderen kennt, hat weniger Angst — Dialog schützt die Gesellschaft.\nII.1) der Vertreter einer Kultur · verzeihen · gemeinsam haben · der Schutz\nII.2) a) werden … gefeiert b) würde c) weil d) Obwohl e) Als f) das\nIII) Beispiel : Weihnachten feiert man im Winter mit Tannenbaum. Aid feiert man mit der ganzen Familie und Couscous. Beide Feste verbinden Menschen. Ich finde Dialog wichtig, weil er Angst abbaut.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2022-3-0552",
       "type": "bac",
       "hash": "aef38d313cca",
@@ -6746,6 +6970,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2022-3-0553",
       "type": "bac",
       "hash": "2426cc32a31d",
@@ -6837,6 +7064,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2018-3-0554",
       "type": "bac",
       "hash": "cd4ea382345b",
@@ -6928,6 +7158,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (sie schaden dem Klima) · 2. richtig · 3. falsch (viele, nicht alle) · 4. richtig\nI.2) a) Nach Spanien, Italien oder in die Türkei, weil das Wetter warm und das Meer schön ist. b) Weil Flugzeuge viel CO2 produzieren und dem Klima schaden. c) Neue Kulturen, fremdes Essen und andere Sprachen.\nII.1) angenehm und ohne Stress · mit Absicht · negativ beeinflussen · der Zug\nII.2) a) wird … erreicht b) würde … reisen c) Obwohl d) Als e) kennenzulernen f) das\nIII) Beispiel : Ich finde Reisen wichtig, weil man die Welt kennenlernt. Obwohl Flugzeuge dem Klima schaden, kann man mit dem Zug fahren. Letzten Sommer war ich am Meer in Bejaia. Das war schön und billig.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2016-3-0555",
       "type": "bac",
       "hash": "583b69a55634",
@@ -7019,6 +7252,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. richtig · 2. falsch (ohne Bezahlung) · 3. richtig · 4. falsch (der Text sagt das Gegenteil)\nI.2) a) In Vereinen, bei der Feuerwehr, in Nachbarschaftshilfen. b) Man trifft Menschen, lernt Neues, fühlt sich gebraucht. c) Wer hilft, lebt gesünder.\nII.1) sich einsetzen · nützlich/notwendig · das Bindemittel · ehrenamtlich\nII.2) a) wird … geholfen b) würde c) weil d) Obwohl e) Als f) die\nIII) Beispiel : Letzten Ramadan habe ich alten Nachbarn Einkäufe gebracht. Obwohl ich müde war, war ich glücklich. Weil Helfen ansteckt, machen es jetzt auch meine Freunde.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2015-3-0556",
       "type": "bac",
       "hash": "c61bfa169895",
@@ -7110,6 +7346,9 @@
       "corrige": "Corrigé littéral :\nI.1) 1. falsch (Aid) · 2. richtig · 3. falsch (Sicherheitsgürtel, kein Luxus) · 4. richtig\nI.2) a) Weihnachten : Tannenbaum + Geschenke ; Aid : Couscous, Süßigkeiten, Familienbesuche. b) Zusammen essen, einander vergeben, Freude teilen. c) Wer die Feste des anderen kennt, hat weniger Angst — Dialog schützt die Gesellschaft.\nII.1) der Vertreter einer Kultur · verzeihen · gemeinsam haben · der Schutz\nII.2) a) werden … gefeiert b) würde c) weil d) Obwohl e) Als f) das\nIII) Beispiel : Weihnachten feiert man im Winter mit Tannenbaum. Aid feiert man mit der ganzen Familie und Couscous. Beide Feste verbinden Menschen. Ich finde Dialog wichtig, weil er Angst abbaut.\nBarème : I/8 · II/8 · III/4 = /20."
     },
     {
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee",
       "id": "BAC-2024-3-0557",
       "type": "bac",
       "hash": "d52818f445b7",

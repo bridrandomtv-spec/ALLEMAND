@@ -137,6 +137,17 @@ class PdfRightsInventoryTests(unittest.TestCase):
         result = validate_inventory(self.csv_path, self.root)
         self.assertTrue(any("chemin_pdf_invalide" in item for item in result["errors"]))
 
+    def test_duplicate_csv_headers_are_rejected_before_approval(self):
+        self.write_companion("cc_by", True)
+        self.csv_path.write_text(
+            "pdf_path,expected_companion_metadata,rights_confirmed,rights_confirmed,license,review_status\n"
+            "docs/lesson.pdf,docs/_lesson.json,false,true,cc_by,confirmé\n",
+            encoding="utf-8",
+        )
+        result = validate_inventory(self.csv_path, self.root)
+        self.assertEqual(result["approved_count"], 0)
+        self.assertEqual(result["errors"], ["entetes_csv_dupliquees"])
+
     def test_duplicate_pdf_rows_are_rejected(self):
         self.write_rows([self.row(), self.row()])
         result = validate_inventory(self.csv_path, self.root)

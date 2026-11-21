@@ -26,7 +26,10 @@
       },
       "total_2as": 54,
       "total_3as": 114
-    }
+    },
+    "provenance_verifiee": false,
+    "statut_provenance": "non_verifiee",
+    "note_provenance": "171 fiches conservées. Les sources inscrites dans les fiches sont des attributions déclarées, sans URL ni identifiant de document primaire vérifiable dans la banque. Les contenus ne doivent pas être présentés comme des documents officiels vérifiés."
   },
   "items": [
     {
@@ -94,7 +97,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-3-0313",
@@ -157,7 +163,10 @@
         "Reflexivverben"
       ],
       "sujet": "« Persönlichkeit und Identität » (الشخصية والهوية) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Persönlichkeit und Identität ».\nالكفاءات المستهدفة : Adjektive, Charakter, Reflexivverben.",
-      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-2-0314",
@@ -224,7 +233,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-3-0315",
@@ -291,7 +303,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-3-0316",
@@ -354,7 +369,10 @@
         "Reflexivverben"
       ],
       "sujet": "« Persönlichkeit und Identität » (الشخصية والهوية) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Persönlichkeit und Identität ».\nالكفاءات المستهدفة : Adjektive, Charakter, Reflexivverben.",
-      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-1-0317",
@@ -421,7 +439,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-2-0318",
@@ -484,7 +505,10 @@
         "Nachhaltigkeit"
       ],
       "sujet": "« Umweltprobleme » (مشاكل البيئة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Umweltprobleme ».\nالكفاءات المستهدفة : Passiversatz, Umwelt, Nachhaltigkeit.",
-      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2017-1-0319",
@@ -551,7 +575,10 @@
       "pages_livre": [
         207,
         223
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-1-0320",
@@ -619,7 +646,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-2-0321",
@@ -686,7 +716,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-2-0322",
@@ -754,7 +787,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-2-0323",
@@ -816,7 +852,10 @@
         "Sozialbeziehungen"
       ],
       "sujet": "« Leben in der Gesellschaft » (الحياة في المجتمع) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Leben in der Gesellschaft ».\nالكفاءات المستهدفة : Genitiv, Sozialbeziehungen.",
-      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-1-0324",
@@ -883,7 +922,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-1-0325",
@@ -945,7 +987,10 @@
         "Forschung"
       ],
       "sujet": "« Wissenschaft und Technologie » (العلوم والتكنولوجيا) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wissenschaft und Technologie ».\nالكفاءات المستهدفة : Nebensätze mit weil/dass, Forschung.",
-      "corrige": "التصحيح النموذجي — الوحدة 4 « Wissenschaft und Technologie » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 4 « Wissenschaft und Technologie » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-1-0326",
@@ -1012,7 +1057,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-2-0327",
@@ -1079,7 +1127,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2026-1-0328",
@@ -1146,7 +1197,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-1-0329",
@@ -1208,7 +1262,10 @@
         "Globalisierung"
       ],
       "sujet": "« Globalisierung » (العولمة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Globalisierung ».\nالكفاءات المستهدفة : Nomen-Verb-Verbindungen, Globalisierung.",
-      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-1-0330",
@@ -1275,7 +1332,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-2-0331",
@@ -1338,7 +1398,10 @@
         "Sport"
       ],
       "sujet": "« Gesundheit und Lebensweise » (الصحة ونمط الحياة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Gesundheit und Lebensweise ».\nالكفاءات المستهدفة : Imperativ, Ernährung, Sport.",
-      "corrige": "التصحيح النموذجي — الوحدة 7 « Gesundheit und Lebensweise » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 7 « Gesundheit und Lebensweise » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-3-0332",
@@ -1405,7 +1468,10 @@
       "pages_livre": [
         151,
         180
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2017-1-0333",
@@ -1467,7 +1533,10 @@
         "Sozialbeziehungen"
       ],
       "sujet": "« Leben in der Gesellschaft » (الحياة في المجتمع) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Leben in der Gesellschaft ».\nالكفاءات المستهدفة : Genitiv, Sozialbeziehungen.",
-      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-2-0334",
@@ -1529,7 +1598,10 @@
         "Forschung"
       ],
       "sujet": "« Wissenschaft und Technologie » (العلوم والتكنولوجيا) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wissenschaft und Technologie ».\nالكفاءات المستهدفة : Nebensätze mit weil/dass, Forschung.",
-      "corrige": "التصحيح النموذجي — الوحدة 4 « Wissenschaft und Technologie » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 4 « Wissenschaft und Technologie » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-3-0335",
@@ -1596,7 +1668,10 @@
       "pages_livre": [
         151,
         180
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-3-0336",
@@ -1664,7 +1739,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-1-0337",
@@ -1731,7 +1809,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-2-0338",
@@ -1798,7 +1879,10 @@
       "pages_livre": [
         151,
         180
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-1-0339",
@@ -1860,7 +1944,10 @@
         "Globalisierung"
       ],
       "sujet": "« Globalisierung » (العولمة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Globalisierung ».\nالكفاءات المستهدفة : Nomen-Verb-Verbindungen, Globalisierung.",
-      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-1-0340",
@@ -1922,7 +2009,10 @@
         "Globalisierung"
       ],
       "sujet": "« Globalisierung » (العولمة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Globalisierung ».\nالكفاءات المستهدفة : Nomen-Verb-Verbindungen, Globalisierung.",
-      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-2-0341",
@@ -1989,7 +2079,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-2-0342",
@@ -2051,7 +2144,10 @@
         "Globalisierung"
       ],
       "sujet": "« Globalisierung » (العولمة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Globalisierung ».\nالكفاءات المستهدفة : Nomen-Verb-Verbindungen, Globalisierung.",
-      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-2-0343",
@@ -2114,7 +2210,10 @@
         "Reflexivverben"
       ],
       "sujet": "« Persönlichkeit und Identität » (الشخصية والهوية) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Persönlichkeit und Identität ».\nالكفاءات المستهدفة : Adjektive, Charakter, Reflexivverben.",
-      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2017-3-0344",
@@ -2177,7 +2276,10 @@
         "Nachhaltigkeit"
       ],
       "sujet": "« Umweltprobleme » (مشاكل البيئة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Umweltprobleme ».\nالكفاءات المستهدفة : Passiversatz, Umwelt, Nachhaltigkeit.",
-      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-3-0345",
@@ -2240,7 +2342,10 @@
         "Nachhaltigkeit"
       ],
       "sujet": "« Umweltprobleme » (مشاكل البيئة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Umweltprobleme ».\nالكفاءات المستهدفة : Passiversatz, Umwelt, Nachhaltigkeit.",
-      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-2-0346",
@@ -2307,7 +2412,10 @@
       "pages_livre": [
         57,
         76
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-3-0347",
@@ -2374,7 +2482,10 @@
       "pages_livre": [
         103,
         127
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-1-0348",
@@ -2441,7 +2552,10 @@
       "pages_livre": [
         207,
         223
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-1-0349",
@@ -2503,7 +2617,10 @@
         "Globalisierung"
       ],
       "sujet": "« Globalisierung » (العولمة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Globalisierung ».\nالكفاءات المستهدفة : Nomen-Verb-Verbindungen, Globalisierung.",
-      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-2-0350",
@@ -2570,7 +2687,10 @@
       "pages_livre": [
         151,
         180
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-3-0351",
@@ -2632,7 +2752,10 @@
         "Sozialbeziehungen"
       ],
       "sujet": "« Leben in der Gesellschaft » (الحياة في المجتمع) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Leben in der Gesellschaft ».\nالكفاءات المستهدفة : Genitiv, Sozialbeziehungen.",
-      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2017-3-0352",
@@ -2699,7 +2822,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-3-0353",
@@ -2762,7 +2888,10 @@
         "Internet"
       ],
       "sujet": "« Medienwelt » (عالم الإعلام) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Medienwelt ».\nالكفاءات المستهدفة : indirekte Rede, Medien, Internet.",
-      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-2-0354",
@@ -2829,7 +2958,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-2-0355",
@@ -2896,7 +3028,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-3-0356",
@@ -2958,7 +3093,10 @@
         "Forschung"
       ],
       "sujet": "« Wissenschaft und Technologie » (العلوم والتكنولوجيا) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wissenschaft und Technologie ».\nالكفاءات المستهدفة : Nebensätze mit weil/dass, Forschung.",
-      "corrige": "التصحيح النموذجي — الوحدة 4 « Wissenschaft und Technologie » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 4 « Wissenschaft und Technologie » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2026-2-0357",
@@ -3021,7 +3159,10 @@
         "Internet"
       ],
       "sujet": "« Medienwelt » (عالم الإعلام) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Medienwelt ».\nالكفاءات المستهدفة : indirekte Rede, Medien, Internet.",
-      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-1-0358",
@@ -3088,7 +3229,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-3-0359",
@@ -3156,7 +3300,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-2-0360",
@@ -3223,7 +3370,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-2-0361",
@@ -3290,7 +3440,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-1-0362",
@@ -3357,7 +3510,10 @@
       "pages_livre": [
         103,
         127
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-1-0363",
@@ -3424,7 +3580,10 @@
       "pages_livre": [
         151,
         180
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-1-0364",
@@ -3487,7 +3646,10 @@
         "Internet"
       ],
       "sujet": "« Medienwelt » (عالم الإعلام) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Medienwelt ».\nالكفاءات المستهدفة : indirekte Rede, Medien, Internet.",
-      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-1-0365",
@@ -3549,7 +3711,10 @@
         "Globalisierung"
       ],
       "sujet": "« Globalisierung » (العولمة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Globalisierung ».\nالكفاءات المستهدفة : Nomen-Verb-Verbindungen, Globalisierung.",
-      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-1-0366",
@@ -3612,7 +3777,10 @@
         "Berufsleben"
       ],
       "sujet": "« Wirtschaft und Arbeit » (الاقتصاد والعمل) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wirtschaft und Arbeit ».\nالكفاءات المستهدفة : Konjunktiv II, Wirtschaft, Berufsleben.",
-      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2026-2-0367",
@@ -3675,7 +3843,10 @@
         "Internet"
       ],
       "sujet": "« Medienwelt » (عالم الإعلام) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Medienwelt ».\nالكفاءات المستهدفة : indirekte Rede, Medien, Internet.",
-      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-2-0368",
@@ -3738,7 +3909,10 @@
         "Dialog"
       ],
       "sujet": "« Kultureller Dialog » (الحوار الثقافي) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Kultureller Dialog ».\nالكفاءات المستهدفة : Relativsätze, Kultur, Dialog.",
-      "corrige": "التصحيح النموذجي — الوحدة 10 « Kultureller Dialog » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 10 « Kultureller Dialog » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-3-0369",
@@ -3805,7 +3979,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-3-0370",
@@ -3868,7 +4045,10 @@
         "Nachhaltigkeit"
       ],
       "sujet": "« Umweltprobleme » (مشاكل البيئة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Umweltprobleme ».\nالكفاءات المستهدفة : Passiversatz, Umwelt, Nachhaltigkeit.",
-      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-1-0371",
@@ -3935,7 +4115,10 @@
       "pages_livre": [
         207,
         223
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-1-0372",
@@ -4002,7 +4185,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-1-0373",
@@ -4065,7 +4251,10 @@
         "Reflexivverben"
       ],
       "sujet": "« Persönlichkeit und Identität » (الشخصية والهوية) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Persönlichkeit und Identität ».\nالكفاءات المستهدفة : Adjektive, Charakter, Reflexivverben.",
-      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-3-0374",
@@ -4132,7 +4321,10 @@
       "pages_livre": [
         151,
         180
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-3-0375",
@@ -4199,7 +4391,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-1-0376",
@@ -4267,7 +4462,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-1-0377",
@@ -4329,7 +4527,10 @@
         "Globalisierung"
       ],
       "sujet": "« Globalisierung » (العولمة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Globalisierung ».\nالكفاءات المستهدفة : Nomen-Verb-Verbindungen, Globalisierung.",
-      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-1-0378",
@@ -4396,7 +4597,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2017-3-0379",
@@ -4459,7 +4663,10 @@
         "Reflexivverben"
       ],
       "sujet": "« Persönlichkeit und Identität » (الشخصية والهوية) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Persönlichkeit und Identität ».\nالكفاءات المستهدفة : Adjektive, Charakter, Reflexivverben.",
-      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-3-0380",
@@ -4526,7 +4733,10 @@
       "pages_livre": [
         207,
         223
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-3-0381",
@@ -4593,7 +4803,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2017-3-0382",
@@ -4656,7 +4869,10 @@
         "Berufsleben"
       ],
       "sujet": "« Wirtschaft und Arbeit » (الاقتصاد والعمل) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wirtschaft und Arbeit ».\nالكفاءات المستهدفة : Konjunktiv II, Wirtschaft, Berufsleben.",
-      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-1-0383",
@@ -4724,7 +4940,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-2-0384",
@@ -4786,7 +5005,10 @@
         "Forschung"
       ],
       "sujet": "« Wissenschaft und Technologie » (العلوم والتكنولوجيا) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wissenschaft und Technologie ».\nالكفاءات المستهدفة : Nebensätze mit weil/dass, Forschung.",
-      "corrige": null
+      "corrige": null,
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-3-0385",
@@ -4853,7 +5075,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-2-0386",
@@ -4920,7 +5145,10 @@
       "pages_livre": [
         207,
         223
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-3-0387",
@@ -4987,7 +5215,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-2-0388",
@@ -5050,7 +5281,10 @@
         "Pflichten"
       ],
       "sujet": "« Staatsbürgerschaft » (المواطنة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Staatsbürgerschaft ».\nالكفاءات المستهدفة : Passiv, Rechte, Pflichten.",
-      "corrige": "التصحيح النموذجي — الوحدة 2 « Staatsbürgerschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 2 « Staatsbürgerschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-2-0389",
@@ -5113,7 +5347,10 @@
         "Berufsleben"
       ],
       "sujet": "« Wirtschaft und Arbeit » (الاقتصاد والعمل) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wirtschaft und Arbeit ».\nالكفاءات المستهدفة : Konjunktiv II, Wirtschaft, Berufsleben.",
-      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-2-0390",
@@ -5176,7 +5413,10 @@
         "Internet"
       ],
       "sujet": "« Medienwelt » (عالم الإعلام) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Medienwelt ».\nالكفاءات المستهدفة : indirekte Rede, Medien, Internet.",
-      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-3-0391",
@@ -5239,7 +5479,10 @@
         "Pflichten"
       ],
       "sujet": "« Staatsbürgerschaft » (المواطنة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Staatsbürgerschaft ».\nالكفاءات المستهدفة : Passiv, Rechte, Pflichten.",
-      "corrige": "التصحيح النموذجي — الوحدة 2 « Staatsbürgerschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 2 « Staatsbürgerschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-1-0392",
@@ -5302,7 +5545,10 @@
         "Pflichten"
       ],
       "sujet": "« Staatsbürgerschaft » (المواطنة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Staatsbürgerschaft ».\nالكفاءات المستهدفة : Passiv, Rechte, Pflichten.",
-      "corrige": "التصحيح النموذجي — الوحدة 2 « Staatsbürgerschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 2 « Staatsbürgerschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-1-0393",
@@ -5369,7 +5615,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-1-0394",
@@ -5437,7 +5686,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-1-0395",
@@ -5504,7 +5756,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2026-2-0396",
@@ -5571,7 +5826,10 @@
       "pages_livre": [
         103,
         127
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-3-0397",
@@ -5638,7 +5896,10 @@
       "pages_livre": [
         103,
         127
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-1-0398",
@@ -5701,7 +5962,10 @@
         "Sport"
       ],
       "sujet": "« Gesundheit und Lebensweise » (الصحة ونمط الحياة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Gesundheit und Lebensweise ».\nالكفاءات المستهدفة : Imperativ, Ernährung, Sport.",
-      "corrige": "التصحيح النموذجي — الوحدة 7 « Gesundheit und Lebensweise » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 7 « Gesundheit und Lebensweise » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-3-0399",
@@ -5768,7 +6032,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-3-0400",
@@ -5831,7 +6098,10 @@
         "Sport"
       ],
       "sujet": "« Gesundheit und Lebensweise » (الصحة ونمط الحياة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Gesundheit und Lebensweise ».\nالكفاءات المستهدفة : Imperativ, Ernährung, Sport.",
-      "corrige": "التصحيح النموذجي — الوحدة 7 « Gesundheit und Lebensweise » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 7 « Gesundheit und Lebensweise » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-2-0401",
@@ -5894,7 +6164,10 @@
         "Internet"
       ],
       "sujet": "« Medienwelt » (عالم الإعلام) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Medienwelt ».\nالكفاءات المستهدفة : indirekte Rede, Medien, Internet.",
-      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-3-0402",
@@ -5956,7 +6229,10 @@
         "Forschung"
       ],
       "sujet": "« Wissenschaft und Technologie » (العلوم والتكنولوجيا) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wissenschaft und Technologie ».\nالكفاءات المستهدفة : Nebensätze mit weil/dass, Forschung.",
-      "corrige": "التصحيح النموذجي — الوحدة 4 « Wissenschaft und Technologie » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 4 « Wissenschaft und Technologie » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-3-0403",
@@ -6023,7 +6299,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-3-0404",
@@ -6090,7 +6369,10 @@
       "pages_livre": [
         103,
         127
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-3-0405",
@@ -6152,7 +6434,10 @@
         "Sozialbeziehungen"
       ],
       "sujet": "« Leben in der Gesellschaft » (الحياة في المجتمع) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Leben in der Gesellschaft ».\nالكفاءات المستهدفة : Genitiv, Sozialbeziehungen.",
-      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-2-0406",
@@ -6219,7 +6504,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-1-0407",
@@ -6281,7 +6569,10 @@
         "Sozialbeziehungen"
       ],
       "sujet": "« Leben in der Gesellschaft » (الحياة في المجتمع) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Leben in der Gesellschaft ».\nالكفاءات المستهدفة : Genitiv, Sozialbeziehungen.",
-      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-2-0408",
@@ -6348,7 +6639,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-2-0409",
@@ -6415,7 +6709,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-3-0410",
@@ -6482,7 +6779,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-3-0411",
@@ -6549,7 +6849,10 @@
       "pages_livre": [
         151,
         180
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2017-2-0412",
@@ -6616,7 +6919,10 @@
       "pages_livre": [
         129,
         149
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-1-0413",
@@ -6679,7 +6985,10 @@
         "Berufsleben"
       ],
       "sujet": "« Wirtschaft und Arbeit » (الاقتصاد والعمل) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wirtschaft und Arbeit ».\nالكفاءات المستهدفة : Konjunktiv II, Wirtschaft, Berufsleben.",
-      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2026-3-0414",
@@ -6746,7 +7055,10 @@
       "pages_livre": [
         103,
         127
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-3-0415",
@@ -6814,7 +7126,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-2-0416",
@@ -6876,7 +7191,10 @@
         "Globalisierung"
       ],
       "sujet": "« Globalisierung » (العولمة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Globalisierung ».\nالكفاءات المستهدفة : Nomen-Verb-Verbindungen, Globalisierung.",
-      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-2-0417",
@@ -6939,7 +7257,10 @@
         "Internet"
       ],
       "sujet": "« Medienwelt » (عالم الإعلام) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Medienwelt ».\nالكفاءات المستهدفة : indirekte Rede, Medien, Internet.",
-      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 9 « Medienwelt » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-2-0418",
@@ -7006,7 +7327,10 @@
       "pages_livre": [
         103,
         127
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-3-0419",
@@ -7073,7 +7397,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-1-0420",
@@ -7140,7 +7467,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-3-0421",
@@ -7207,7 +7537,10 @@
       "pages_livre": [
         151,
         180
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-1-0422",
@@ -7274,7 +7607,10 @@
       "pages_livre": [
         151,
         180
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-3-0423",
@@ -7341,7 +7677,10 @@
       "pages_livre": [
         151,
         180
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-2-0424",
@@ -7408,7 +7747,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-3-0425",
@@ -7475,7 +7817,10 @@
       "pages_livre": [
         129,
         149
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2026-3-0426",
@@ -7538,7 +7883,10 @@
         "Nachhaltigkeit"
       ],
       "sujet": "« Umweltprobleme » (مشاكل البيئة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Umweltprobleme ».\nالكفاءات المستهدفة : Passiversatz, Umwelt, Nachhaltigkeit.",
-      "corrige": null
+      "corrige": null,
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-2-0427",
@@ -7605,7 +7953,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-2-0428",
@@ -7672,7 +8023,10 @@
       "pages_livre": [
         57,
         76
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-1-0429",
@@ -7735,7 +8089,10 @@
         "Nachhaltigkeit"
       ],
       "sujet": "« Umweltprobleme » (مشاكل البيئة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Umweltprobleme ».\nالكفاءات المستهدفة : Passiversatz, Umwelt, Nachhaltigkeit.",
-      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-3-0430",
@@ -7797,7 +8154,10 @@
         "Globalisierung"
       ],
       "sujet": "« Globalisierung » (العولمة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Globalisierung ».\nالكفاءات المستهدفة : Nomen-Verb-Verbindungen, Globalisierung.",
-      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-2-0431",
@@ -7864,7 +8224,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-3-0432",
@@ -7931,7 +8294,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-3-0433",
@@ -7993,7 +8359,10 @@
         "Sozialbeziehungen"
       ],
       "sujet": "« Leben in der Gesellschaft » (الحياة في المجتمع) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Leben in der Gesellschaft ».\nالكفاءات المستهدفة : Genitiv, Sozialbeziehungen.",
-      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-2-0434",
@@ -8060,7 +8429,10 @@
       "pages_livre": [
         207,
         223
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-1-0435",
@@ -8127,7 +8499,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2022-1-0436",
@@ -8190,7 +8565,10 @@
         "Pflichten"
       ],
       "sujet": "« Staatsbürgerschaft » (المواطنة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Staatsbürgerschaft ».\nالكفاءات المستهدفة : Passiv, Rechte, Pflichten.",
-      "corrige": null
+      "corrige": null,
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-1-0437",
@@ -8257,7 +8635,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-3-0438",
@@ -8324,7 +8705,10 @@
       "pages_livre": [
         207,
         223
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-3-0439",
@@ -8387,7 +8771,10 @@
         "Berufsleben"
       ],
       "sujet": "« Wirtschaft und Arbeit » (الاقتصاد والعمل) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wirtschaft und Arbeit ».\nالكفاءات المستهدفة : Konjunktiv II, Wirtschaft, Berufsleben.",
-      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-1-0440",
@@ -8450,7 +8837,10 @@
         "Dialog"
       ],
       "sujet": "« Kultureller Dialog » (الحوار الثقافي) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Kultureller Dialog ».\nالكفاءات المستهدفة : Relativsätze, Kultur, Dialog.",
-      "corrige": "التصحيح النموذجي — الوحدة 10 « Kultureller Dialog » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 10 « Kultureller Dialog » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-3-0441",
@@ -8517,7 +8907,10 @@
       "pages_livre": [
         129,
         149
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-1-0442",
@@ -8584,7 +8977,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-3-0443",
@@ -8651,7 +9047,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2017-2-0444",
@@ -8714,7 +9113,10 @@
         "Nachhaltigkeit"
       ],
       "sujet": "« Umweltprobleme » (مشاكل البيئة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Umweltprobleme ».\nالكفاءات المستهدفة : Passiversatz, Umwelt, Nachhaltigkeit.",
-      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 6 « Umweltprobleme » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-1-0445",
@@ -8781,7 +9183,10 @@
       "pages_livre": [
         129,
         149
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2024-2-0446",
@@ -8848,7 +9253,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-3-0447",
@@ -8911,7 +9319,10 @@
         "Sport"
       ],
       "sujet": "« Gesundheit und Lebensweise » (الصحة ونمط الحياة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Gesundheit und Lebensweise ».\nالكفاءات المستهدفة : Imperativ, Ernährung, Sport.",
-      "corrige": "التصحيح النموذجي — الوحدة 7 « Gesundheit und Lebensweise » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 7 « Gesundheit und Lebensweise » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-2-0448",
@@ -8978,7 +9389,10 @@
       "pages_livre": [
         129,
         149
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2026-1-0449",
@@ -9046,7 +9460,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-2-0450",
@@ -9109,7 +9526,10 @@
         "Berufsleben"
       ],
       "sujet": "« Wirtschaft und Arbeit » (الاقتصاد والعمل) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wirtschaft und Arbeit ».\nالكفاءات المستهدفة : Konjunktiv II, Wirtschaft, Berufsleben.",
-      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 5 « Wirtschaft und Arbeit » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-2-0451",
@@ -9176,7 +9596,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-3-0452",
@@ -9238,7 +9661,10 @@
         "Sozialbeziehungen"
       ],
       "sujet": "« Leben in der Gesellschaft » (الحياة في المجتمع) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Leben in der Gesellschaft ».\nالكفاءات المستهدفة : Genitiv, Sozialbeziehungen.",
-      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2026-3-0453",
@@ -9305,7 +9731,10 @@
       "pages_livre": [
         207,
         223
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-2-0454",
@@ -9372,7 +9801,10 @@
       "pages_livre": [
         103,
         127
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-1-0455",
@@ -9434,7 +9866,10 @@
         "Sozialbeziehungen"
       ],
       "sujet": "« Leben in der Gesellschaft » (الحياة في المجتمع) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Leben in der Gesellschaft ».\nالكفاءات المستهدفة : Genitiv, Sozialbeziehungen.",
-      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2018-2-0456",
@@ -9502,7 +9937,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-3-0457",
@@ -9569,7 +10007,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-2-0458",
@@ -9636,7 +10077,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2026-2-0459",
@@ -9698,7 +10142,10 @@
         "Globalisierung"
       ],
       "sujet": "« Globalisierung » (العولمة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Globalisierung ».\nالكفاءات المستهدفة : Nomen-Verb-Verbindungen, Globalisierung.",
-      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 8 « Globalisierung » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-2-0460",
@@ -9765,7 +10212,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-3-0461",
@@ -9832,7 +10282,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2017-3-0462",
@@ -9899,7 +10352,10 @@
       "pages_livre": [
         57,
         76
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-2-0463",
@@ -9962,7 +10418,10 @@
         "Pflichten"
       ],
       "sujet": "« Staatsbürgerschaft » (المواطنة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Staatsbürgerschaft ».\nالكفاءات المستهدفة : Passiv, Rechte, Pflichten.",
-      "corrige": "التصحيح النموذجي — الوحدة 2 « Staatsbürgerschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 2 « Staatsbürgerschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-1-0464",
@@ -10029,7 +10488,10 @@
       "pages_livre": [
         103,
         127
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-3-0465",
@@ -10092,7 +10554,10 @@
         "Berufsleben"
       ],
       "sujet": "« Wirtschaft und Arbeit » (الاقتصاد والعمل) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Wirtschaft und Arbeit ».\nالكفاءات المستهدفة : Konjunktiv II, Wirtschaft, Berufsleben.",
-      "corrige": null
+      "corrige": null,
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2019-3-0466",
@@ -10159,7 +10624,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-2-0467",
@@ -10221,7 +10689,10 @@
         "Sozialbeziehungen"
       ],
       "sujet": "« Leben in der Gesellschaft » (الحياة في المجتمع) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Leben in der Gesellschaft ».\nالكفاءات المستهدفة : Genitiv, Sozialbeziehungen.",
-      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 3 « Leben in der Gesellschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-3-0468",
@@ -10288,7 +10759,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2023-3-0469",
@@ -10355,7 +10829,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-1-0470",
@@ -10422,7 +10899,10 @@
       "pages_livre": [
         103,
         127
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-2-0471",
@@ -10490,7 +10970,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2025-3-0472",
@@ -10553,7 +11036,10 @@
         "Pflichten"
       ],
       "sujet": "« Staatsbürgerschaft » (المواطنة) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Staatsbürgerschaft ».\nالكفاءات المستهدفة : Passiv, Rechte, Pflichten.",
-      "corrige": "التصحيح النموذجي — الوحدة 2 « Staatsbürgerschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 2 « Staatsbürgerschaft » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-2-0473",
@@ -10616,7 +11102,10 @@
         "Reflexivverben"
       ],
       "sujet": "« Persönlichkeit und Identität » (الشخصية والهوية) — مستوى 3AS.\nI. Leseverstehen (8 pts) : نص حول الموضوع، 4 أسئلة Vrai/Faux + سؤالان بجمل كاملة.\nII. Sprachbausteine (8 pts) : تصريف الأفعال، أدوات الاستفهام W-Fragen، ترتيب الكلمات، ترجمة.\nIII. Textproduktion (4 pts) : اكتب 5 جمل حول « Persönlichkeit und Identität ».\nالكفاءات المستهدفة : Adjektive, Charakter, Reflexivverben.",
-      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1)."
+      "corrige": "التصحيح النموذجي — الوحدة 1 « Persönlichkeit und Identität » :\nI.1 Vrai/Faux selon le texte officiel · I.2 réponses en phrases complètes (Sie heißt… / Er wohnt in…).\nII.1 ich bin · du hast · wir sind · er hat — II.2 Wie · Woher · Wo · Wie alt — II.3 Ich bin 16 Jahre alt. / Ich komme aus Algerien. — II.4 Guten Morgen · Tschüs · Guten Abend · Auf Wiedersehen.\nIII. Modèle : « Ich heiße Omar. Ich bin 16 Jahre alt. Ich komme aus Algerien. Ich wohne in Blida. Ich lerne Deutsch. »\nBarème III : contenu 2 pts (0,4/info) + langue 2 pts (conjugaison 1 + majuscules/ponctuation 1).",
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2026-1-0474",
@@ -10683,7 +11172,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2021-1-0475",
@@ -10750,7 +11242,10 @@
       "pages_livre": [
         31,
         55
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2020-1-0476",
@@ -10817,7 +11312,10 @@
       "pages_livre": [
         5,
         29
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2015-1-0477",
@@ -10884,7 +11382,10 @@
       "pages_livre": [
         129,
         149
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2016-3-0478",
@@ -10951,7 +11452,10 @@
       "pages_livre": [
         57,
         76
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-2017-3-0479",
@@ -11018,7 +11522,10 @@
       "pages_livre": [
         129,
         149
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-GEN-U4-01",
@@ -11090,7 +11597,10 @@
       "pages_livre": [
         77,
         101
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-GEN-U6-01",
@@ -11162,7 +11672,10 @@
       "pages_livre": [
         129,
         149
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     },
     {
       "id": "CP-GEN-U8-01",
@@ -11234,7 +11747,10 @@
       "pages_livre": [
         181,
         205
-      ]
+      ],
+      "officiel": false,
+      "provenance_verifiee": false,
+      "statut_provenance": "non_verifiee"
     }
   ]
 }

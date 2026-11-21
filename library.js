@@ -49,7 +49,7 @@
       st.className = 'bdd-status ok';
       st.innerHTML = '✅ قاعدة البيانات جاهزة — <b class="de-in">' + k.total + '</b> fiche · ' +
                      k.wilayas + ' ولاية · ' + k.unites + ' وحدة · ' + k.annees + ' · ' +
-                     k.corriges + ' تصحيح نموذجي';
+                     k.corriges + ' تصحيح حاضر';
     }
     const box = $('#biblioBody'); if(!box) return;
     BDD.search();
@@ -283,12 +283,18 @@
         mchip('🧮', '/' + f.bareme) +
       '</div>' +
       '<div class="fiche-foot">' +
-        '<div class="fiche-src">📌 ' + esc(f.source) + '</div>' +
+        '<div class="fiche-src">📌 المصدر المعلن : ' + esc(f.source) + '</div>' +
+        (f.provenance_verifiee === true
+          ? '<div class="mchip">✅ provenance vérifiée</div>'
+          : '<div class="mchip" style="color:var(--or)">⚠️ provenance documentaire non vérifiée</div>') +
         '<div style="display:flex;gap:11px;align-items:center;flex-wrap:wrap">' +
           '<span class="diff" title="الصعوبة">' + d + '</span>' +
           '<span class="mchip">👁️ ' + f.vues + '</span>' +
           '<span class="mchip">⭐ ' + f.note_moyenne + '</span>' +
-          (f.corrige_inclus ? '<span class="mchip" style="color:var(--g)">✅ تصحيح</span>' : '') +
+          (BDD.correctionStatus(f) === 'present'
+            ? '<span class="mchip" style="color:var(--g)">✅ تصحيح حاضر</span>'
+            : (BDD.correctionStatus(f) === 'unverified'
+              ? '<span class="mchip" style="color:var(--or)">⚠️ يحتاج مراجعة</span>' : '')) +
         '</div>' +
       '</div></article>';
     function mchip(i,v){ return '<span class="mchip">' + i + ' <b>' + esc(v) + '</b></span>'; }
@@ -332,18 +338,21 @@
           '</div></div>' +
         '<div style="margin-bottom:9px"><b>📄 نص الموضوع</b></div>' +
         '<div class="sujet-box">' + esc(f.sujet) + '</div>' +
-        (f.corrige_inclus
-          ? '<button class="btn btn-g btn-block" id="mCorrige">✅ عرض التصحيح النموذجي</button>' +
+        (BDD.correctionStatus(f) === 'present'
+          ? '<button class="btn btn-g btn-block" id="mCorrige">✅ عرض نص التصحيح</button>' +
             '<div class="corrige-box" id="mCorrigeBox" hidden style="margin-top:13px">' +
             esc(f.corrige) + '</div>'
-          : '<div class="privacy">⚠️ لا يتوفّر تصحيح نموذجي لهذه الوثيقة.</div>') +
+          : (BDD.correctionStatus(f) === 'unverified'
+            ? '<div class="privacy">⚠️ تشير البيانات إلى تصحيح، لكن النص عام أو غير مكتمل ولا ينبغي الاعتماد عليه. التصحيح قيد المراجعة.</div>'
+            : '<div class="privacy">⚠️ لا يتوفّر نص تصحيح لهذه الوثيقة.</div>')) +
         '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:15px">' +
           '<button class="btn btn-o btn-sm" id="mPrint">🖨️ طباعة</button>' +
           '<a class="btn btn-w btn-sm" target="_blank" rel="noopener" href="https://wa.me/213555577931?text=' +
             encodeURIComponent('السلام عليكم أستاذ، أريد شرح ' + f.titre) + '">💬 اطلب شرح الأستاذ</a>' +
         '</div>' +
-        '<div class="fiche-src" style="margin-top:13px;text-align:center">🔖 ' + esc(f.id) +
-          ' · المصدر : ' + esc(f.source) + '</div>' +
+        '<div class="privacy" style="margin-top:13px">⚠️ المصدر المعلن : ' + esc(f.source) +
+          ' — provenance documentaire non vérifiée ; cette attribution ne constitue pas une référence primaire.</div>' +
+        '<div class="fiche-src" style="margin-top:9px;text-align:center">🔖 ' + esc(f.id) + '</div>' +
       '</div>';
 
     m.hidden = false; document.body.style.overflow = 'hidden';

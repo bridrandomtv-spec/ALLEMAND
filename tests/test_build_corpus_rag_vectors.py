@@ -16,12 +16,12 @@ def fixture():
     corpus = {
         "version": 1,
         "documents": [
-            {"id": "doc-ok", "title": "Deutsch", "license": "production_propre", "rights_confirmed": True},
-            {"id": "doc-no", "title": "Locked", "license": "inconnue", "rights_confirmed": False},
+            {"id": "doc-ok", "title": "Deutsch", "license": "production_propre", "rights_confirmed": True, "chunk_count": 1, "page_count": 1},
+            {"id": "doc-no", "title": "Locked", "license": "inconnue", "rights_confirmed": False, "chunk_count": 1},
         ],
         "chunks": [
-            {"id": "c1", "document_id": "doc-ok", "text": "Ein deutscher Beispielsatz."},
-            {"id": "c2", "document_id": "doc-no", "text": "Ne doit pas être envoyé."},
+            {"id": "c1", "document_id": "doc-ok", "text": "Ein deutscher Beispielsatz.", "page": 1},
+            {"id": "c2", "document_id": "doc-no", "text": "Ne doit pas être envoyé.", "page": 1},
         ],
     }
     manifest = {"version": 1, "document_count": 2, "chunk_count": 2}
@@ -29,6 +29,58 @@ def fixture():
 
 
 class VectorBuilderTests(unittest.TestCase):
+    def test_duplicate_document_ids_fail_closed_even_when_rights_differ(self):
+        corpus, manifest = fixture()
+        corpus["documents"].append({
+            "id": "doc-ok", "title": "Collision", "license": "inconnue",
+            "rights_confirmed": False,
+        })
+        manifest["document_count"] = len(corpus["documents"])
+        with self.assertRaisesRegex(ValueError, "document_id_duplique"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_duplicate_chunk_ids_fail_closed_across_authorized_and_locked_docs(self):
+        corpus, manifest = fixture()
+        corpus["chunks"][1]["id"] = "c1"
+        with self.assertRaisesRegex(ValueError, "chunk_id_absent_ou_duplique"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_chunk_without_document_id_fails_closed(self):
+        corpus, manifest = fixture()
+        del corpus["chunks"][1]["document_id"]
+        with self.assertRaisesRegex(ValueError, "chunk_document_id_absent"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_chunk_referencing_unknown_document_fails_closed(self):
+        corpus, manifest = fixture()
+        corpus["chunks"][1]["document_id"] = "doc-missing"
+        with self.assertRaisesRegex(ValueError, "chunk_document_id_inconnu"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_document_chunk_count_mismatch_fails_closed(self):
+        corpus, manifest = fixture()
+        corpus["documents"][0]["chunk_count"] = 2
+        with self.assertRaisesRegex(ValueError, "document_chunk_count_incoherent"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_document_without_chunk_count_fails_closed(self):
+        corpus, manifest = fixture()
+        del corpus["documents"][0]["chunk_count"]
+        with self.assertRaisesRegex(ValueError, "document_chunk_count_absent"):
+            MODULE.eligible_chunks(corpus, manifest)
+
+    def test_invalid_page_or_oversized_text_fails_closed_for_approved_document(self):
+        for mutation, expected in [
+            (lambda c: c["chunks"][0].update({"page": 0}), "chunk_page_invalide"),
+            (lambda c: c["chunks"][0].update({"page": 2}), "chunk_page_hors_document"),
+            (lambda c: c["chunks"][0].update({"part": -1}), "chunk_part_invalide"),
+            (lambda c: c["chunks"][0].update({"text": "x" * 20001}), "chunk_texte_vide_ou_trop_long"),
+        ]:
+            corpus, manifest = fixture()
+            mutation(corpus)
+            with self.assertRaisesRegex(ValueError, expected):
+                MODULE.eligible_chunks(corpus, manifest)
+
     def test_rights_filter_happens_before_embedding(self):
         corpus, manifest = fixture()
         chunks = MODULE.eligible_chunks(corpus, manifest)
@@ -51,6 +103,10 @@ class VectorBuilderTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "dimension"):
             MODULE.normalize_embedding([0.1] * 255)
 
+    def test_embedding_integer_overflow_fails_with_controlled_error(self):
+        with self.assertRaisesRegex(ValueError, "embedding_valeur_invalide"):
+            MODULE.normalize_embedding([10 ** 400] + [0] * 255)
+
     def test_api_indices_are_checked_and_ordered(self):
         a, b = [1.0] + [0.0] * 255, [0.0, 1.0] + [0.0] * 254
         parsed = MODULE.parse_embeddings({"data": [
@@ -63,6 +119,66 @@ class VectorBuilderTests(unittest.TestCase):
                 {"index": 0, "embedding": a}, {"index": 0, "embedding": b}
             ]}, 2)
 
+    def test_duplicate_json_keys_are_rejected_in_manifest_before_embedding(self):
+        called = []
+        duplicate_manifest = b'{"chunks_sha256":"' + b'0' * 64 + b'","chunks_sha256":"' + b'0' * 64 + b'"}'
+        with self.assertRaisesRegex(ValueError, "cle_json_duplique:chunks_sha256"):
+            MODULE.build_artifact(
+                [], b'{"version":1,"documents":[],"chunks":[]}',
+                duplicate_manifest,
+                lambda _inputs: called.append(True) or [],
+            )
+        self.assertEqual(called, [])
+
+    def test_strict_json_loader_rejects_nested_duplicate_keys(self):
+        with self.assertRaisesRegex(ValueError, "cle_json_duplique:rights_confirmed"):
+            MODULE.strict_json_loads('{"documents":[{"rights_confirmed":false,"rights_confirmed":true}]}')
+
+    def test_manifest_hash_guard_distinguishes_non_object_json(self):
+        with self.assertRaisesRegex(ValueError, "manifest_json_invalide"):
+            MODULE.validate_manifest_chunks_hash(b"chunks", [])
+        with self.assertRaisesRegex(ValueError, "manifest_chunks_sha256_invalide"):
+            MODULE.validate_manifest_chunks_hash(b"chunks", {})
+
+    def test_build_artifact_rejects_invalid_manifest_json_before_embedding(self):
+        called = []
+        with self.assertRaisesRegex(ValueError, "manifest_json_invalide"):
+            MODULE.build_artifact(
+                [{"chunk_id":"c1", "doc_id":"doc-ok", "title":"Deutsch", "text":"Satz"}],
+                b"chunks", b"[]",
+                lambda _inputs: called.append(True) or [[1.0] + [0.0] * 255],
+            )
+        self.assertEqual(called, [])
+
+    def test_build_artifact_rejects_stale_manifest_before_embedding_callback(self):
+        called = []
+        chunks_bytes = b"chunks"
+        manifest_bytes = json.dumps({"chunks_sha256": "0" * 64}).encode("utf-8")
+        with self.assertRaisesRegex(ValueError, "manifest_chunks_sha256_invalide"):
+            MODULE.build_artifact(
+                [{"chunk_id":"c1", "doc_id":"doc-ok", "title":"Deutsch", "text":"Satz"}],
+                chunks_bytes, manifest_bytes,
+                lambda _inputs: called.append(True) or [[1.0] + [0.0] * 255],
+            )
+        self.assertEqual(called, [])
+
+    def test_build_artifact_rejects_unapproved_chunks_before_embedding(self):
+        corpus, manifest = fixture()
+        chunks_bytes = json.dumps(corpus).encode("utf-8")
+        manifest["chunks_sha256"] = MODULE.sha256_bytes(chunks_bytes)
+        manifest_bytes = json.dumps(manifest).encode("utf-8")
+        unauthorized = [{
+            "chunk_id": "c2", "doc_id": "doc-no",
+            "title": "Locked", "text": "Ne doit jamais être vectorisé"
+        }]
+        called = []
+        with self.assertRaisesRegex(ValueError, "chunks_non_conformes_au_corpus_autorise"):
+            MODULE.build_artifact(
+                unauthorized, chunks_bytes, manifest_bytes,
+                lambda _inputs: called.append(True) or [[1.0] + [0.0] * 255],
+            )
+        self.assertEqual(called, [])
+
     def test_batching_and_output_metadata(self):
         corpus, manifest = fixture()
         chunks = MODULE.eligible_chunks(corpus, manifest)
@@ -70,15 +186,18 @@ class VectorBuilderTests(unittest.TestCase):
         def fake_embed(inputs):
             seen.extend(inputs)
             return [[1.0] + [0.0] * 255 for _ in inputs]
+        chunks_bytes = json.dumps(corpus).encode("utf-8")
+        manifest["chunks_sha256"] = MODULE.sha256_bytes(chunks_bytes)
+        manifest_bytes = json.dumps(manifest).encode("utf-8")
         artifact = MODULE.build_artifact(
-            chunks, b"chunks", b"manifest", fake_embed, batch_size=1
+            chunks, chunks_bytes, manifest_bytes, fake_embed, batch_size=1
         )
         self.assertEqual(len(seen), 1)
         self.assertEqual(artifact["vectors"][0]["chunk_id"], "c1")
         self.assertEqual(artifact["vectors"][0]["document_id"], "doc-ok")
         self.assertNotIn("doc_id", artifact["vectors"][0])
         self.assertEqual(artifact["normalization"], "l2")
-        self.assertEqual(artifact["source_chunks_sha256"], MODULE.sha256_bytes(b"chunks"))
+        self.assertEqual(artifact["source_chunks_sha256"], MODULE.sha256_bytes(chunks_bytes))
 
     def test_empty_authorized_corpus_does_not_call_embedding(self):
         corpus, manifest = fixture()
@@ -90,12 +209,88 @@ class VectorBuilderTests(unittest.TestCase):
             self.assertEqual(chunks, [])
             api.assert_not_called()
 
+    def test_cli_refuses_output_path_that_would_overwrite_chunks_source(self):
+        corpus, manifest = fixture()
+        with tempfile.TemporaryDirectory() as tmp:
+            chunks_path, manifest_path = Path(tmp)/"chunks.json", Path(tmp)/"manifest.json"
+            chunks_path.write_text(json.dumps(corpus), encoding="utf-8")
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            original_chunks = chunks_path.read_bytes()
+            with patch.object(MODULE, "call_cloudflare") as api:
+                code = MODULE.main([
+                    "--chunks", str(chunks_path), "--manifest", str(manifest_path),
+                    "--output", str(chunks_path)
+                ])
+            self.assertEqual(code, 1)
+            self.assertEqual(chunks_path.read_bytes(), original_chunks)
+            api.assert_not_called()
+
+    def test_cli_rejects_duplicate_manifest_keys_before_output_or_api(self):
+        corpus, _manifest = fixture()
+        with tempfile.TemporaryDirectory() as tmp:
+            chunks_path, manifest_path = Path(tmp)/"chunks.json", Path(tmp)/"manifest.json"
+            output = Path(tmp)/"vectors.json"
+            chunks_path.write_text(json.dumps(corpus), encoding="utf-8")
+            manifest_path.write_text(
+                '{"version":1,"chunks_sha256":"' + "0" * 64
+                + '","chunks_sha256":"' + "0" * 64 + '"}',
+                encoding="utf-8",
+            )
+            with patch.object(MODULE, "call_cloudflare") as api:
+                code = MODULE.main([
+                    "--chunks", str(chunks_path), "--manifest", str(manifest_path),
+                    "--output", str(output)
+                ])
+            self.assertEqual(code, 1)
+            api.assert_not_called()
+            self.assertFalse(output.exists())
+
+    def test_cli_rejects_non_object_manifest_with_controlled_error(self):
+        corpus, _manifest = fixture()
+        with tempfile.TemporaryDirectory() as tmp:
+            chunks_path, manifest_path = Path(tmp)/"chunks.json", Path(tmp)/"manifest.json"
+            output = Path(tmp)/"vectors.json"
+            chunks_path.write_text(json.dumps(corpus), encoding="utf-8")
+            manifest_path.write_text("[]", encoding="utf-8")
+            with patch.object(MODULE, "call_cloudflare") as api:
+                code = MODULE.main([
+                    "--chunks", str(chunks_path), "--manifest", str(manifest_path),
+                    "--output", str(output)
+                ])
+            self.assertEqual(code, 1)
+            api.assert_not_called()
+            self.assertFalse(output.exists())
+
+    def test_cli_rejects_stale_manifest_before_any_cloudflare_embedding(self):
+        corpus, manifest = fixture()
+        with tempfile.TemporaryDirectory() as tmp:
+            chunks_path, manifest_path = Path(tmp)/"chunks.json", Path(tmp)/"manifest.json"
+            output = Path(tmp)/"vectors.json"
+            chunks_raw = json.dumps(corpus).encode("utf-8")
+            manifest["chunks_sha256"] = "0" * 64
+            chunks_path.write_bytes(chunks_raw)
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            with patch.dict(MODULE.os.environ, {
+                "CLOUDFLARE_ACCOUNT_ID": "a" * 32,
+                "CLOUDFLARE_API_TOKEN": "test-token",
+            }):
+                with patch.object(MODULE, "call_cloudflare") as api:
+                    code = MODULE.main([
+                        "--chunks", str(chunks_path), "--manifest", str(manifest_path),
+                        "--output", str(output), "--execute", "--confirm-cloudflare-billing"
+                    ])
+            self.assertEqual(code, 1)
+            api.assert_not_called()
+            self.assertFalse(output.exists())
+
     def test_default_cli_is_dry_run_and_never_calls_api(self):
         corpus, manifest = fixture()
         with tempfile.TemporaryDirectory() as tmp:
             chunks_path, manifest_path = Path(tmp)/"chunks.json", Path(tmp)/"manifest.json"
             output = Path(tmp)/"vectors.json"
-            chunks_path.write_text(json.dumps(corpus), encoding="utf-8")
+            chunks_raw = json.dumps(corpus).encode("utf-8")
+            manifest["chunks_sha256"] = MODULE.sha256_bytes(chunks_raw)
+            chunks_path.write_bytes(chunks_raw)
             manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
             with patch.object(MODULE, "call_cloudflare") as api:
                 code = MODULE.main([

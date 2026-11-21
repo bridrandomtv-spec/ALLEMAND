@@ -12,10 +12,32 @@ const PROT = [
   /^\/devoirs_unite\.js$/,
   /* Les documents utilisés par DEVOIRS_UNITE sont eux aussi payants :
      protéger les JSON directement, pas seulement le script qui les affiche. */
-  /^\/assets\/bdd\/(devoirs|compositions|annales|corpus_rag_chunks|corpus_rag_vectors)\.json$/,
+  /^\/assets\/bdd\/(devoirs|compositions|annales|corpus_rag_chunks|corpus_rag_manifest|corpus_rag_vectors)\.json$/,
   /^\/assets\/bdd\/buch_3as_.*\.json$/,
   /^\/assets\/bdd\/traductions_livre\.json$/
 ];
+function normalizePath(path){
+  let value = String(path || '');
+  // Décode les encodages successifs avant tout contrôle d'accès.
+  for (let i = 0; i < 4; i++) {
+    let decoded;
+    try { decoded = decodeURIComponent(value); }
+    catch (e) { return null; }
+    if (decoded === value) break;
+    value = decoded;
+  }
+  // Un encodage résiduel après quatre passes est ambigu : refus par défaut.
+  if (/%[0-9a-f]{2}/i.test(value) || value.indexOf('\\') !== -1 || value.indexOf('\0') !== -1) return null;
+  // Résout aussi les segments . et .. après décodage, pas seulement avant URL().
+  const segments = [];
+  for (const segment of value.split('/')) {
+    if (!segment || segment === '.') continue;
+    if (segment === '..') { if (segments.length) segments.pop(); continue; }
+    segments.push(segment);
+  }
+  const normalized = '/' + segments.join('/');
+  return value.endsWith('/') && normalized !== '/' ? normalized + '/' : normalized;
+}
 function jsonRes(o, status){
   return new Response(JSON.stringify(o), { status: status,
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -23,7 +45,9 @@ function jsonRes(o, status){
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    if (PROT.some(function(re){ return re.test(url.pathname); })) {
+    const pathname = normalizePath(url.pathname);
+    if (pathname === null) return jsonRes({ error: 'invalid_path' }, 400);
+    if (PROT.some(function(re){ return re.test(pathname); })) {
       if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
         return jsonRes({ error: 'content_guard_not_configured' }, 503);
       }
@@ -40,10 +64,10 @@ export default {
     }
     const response = await env.ASSETS.fetch(request);
     const noStore =
-      url.pathname === '/sw.js' ||
-      url.pathname === '/' ||
-      url.pathname === '/index.html' ||
-      url.pathname.startsWith('/assets/bdd/');
+      pathname === '/sw.js' ||
+      pathname === '/' ||
+      pathname === '/index.html' ||
+      pathname.startsWith('/assets/bdd/');
     if (noStore) {
       const headers = new Headers(response.headers);
       headers.set('Cache-Control', 'no-store');

@@ -625,3 +625,1032 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Aucun code applicatif ni configuration Supabase n'a été modifié lors de cette clôture.
 - CI du commit documentaire précédent `523a7720fa8f1ebfaea60ee15a44f0e7d53e93b3`, run `44392224029` : `success`.
 - État courant : poursuivre les prochains lots d'intelligence directement depuis `main`, après vérification de son HEAD et des contrôles CI.
+
+
+## Lot 635 — intégrité de l'ingestion documentaire et du générateur vectoriel (18 novembre 2026)
+- Branche de travail : `ai/rag-corpus-integrity-lot-635`, créée depuis le HEAD `fadae5ee13fa89c47dd6a567d6db4c15df34a19c`. Aucun changement sur `main`.
+- Le générateur d'embeddings échoue maintenant fermé si le corpus contient des identifiants documentaires absents/invalides ou dupliqués, des identifiants de chunks absents/dupliqués (y compris dans les documents non autorisés), ou un `document_id` absent/invalide. Les chunks non autorisés ne sont toujours jamais transmis au modèle.
+- L'ingestion utilise désormais le SHA-256 complet du PDF dans l'identifiant documentaire, au lieu de tronquer à 16 caractères. Les PDF de contenu strictement identique ne créent plus de collision documentaire : le doublon est ignoré et signalé `contenu_pdf_duplique`.
+- Les deux artefacts (chunks et manifeste) sont sérialisés dans des fichiers temporaires avant remplacement des fichiers actifs ; les temporaires sont nettoyés en cas d'erreur.
+- Tests de régression ajoutés pour collisions d'identifiants documents/chunks, références documentaires absentes et PDF identiques. Résultats CI à confirmer sur la PR dédiée.
+- Aucun embedding n'a été généré, aucun OCR n'a été exécuté, aucun droit documentaire n'a été ajouté ou présumé. Aucune modification Supabase/Auth/RLS, aucune fusion et aucun déploiement.
+
+
+
+### Lot 636 — cohérence référentielle corpus/manifeste/chunks — 18/11/2026
+- La revue du builder RAG a révélé une lacune distincte de l'intégrité des identifiants : un chunk pouvait référencer un document inexistant, et le nombre de chunks réellement présents pouvait diverger de `documents[].chunk_count` sans que le générateur d'embeddings ne le détecte.
+- `eligible_chunks` valide maintenant que chaque document possède un `chunk_count` entier positif ou nul, que chaque chunk référence un document existant, et que le nombre de chunks observé correspond exactement au nombre déclaré pour chaque document.
+- Ces contrôles couvrent aussi les documents non autorisés : leur contenu reste exclu des embeddings, mais leurs références et leurs comptes doivent être structurellement cohérents. Une anomalie entraîne un refus fermé avant tout appel à Cloudflare.
+- Tests de régression ajoutés : document référencé inexistant, compteur de chunks divergent et compteur absent. Les fixtures déclarent désormais explicitement leurs comptes.
+- Aucun PDF n'a été ingéré, aucun OCR/embedding n'a été exécuté, aucun droit n'a été présumé. Aucun changement Supabase/Auth/RLS/paiement, aucun changement de `main`, aucune fusion et aucun déploiement.
+- Commits du lot : `2d872ea` (validation builder) et `2adca14` (tests). CI à revalider sur la nouvelle tête de PR #23.
+
+
+
+### Lot 637 — alignement Worker avec les identifiants PDF SHA-256 — 18/11/2026
+- La revue croisée ingestion → Worker a révélé une incompatibilité bloquante : l'ingestion du lot 635 produit désormais `pdf-` suivi des 64 caractères du SHA-256, tandis que le Worker acceptait encore uniquement 16 caractères. Les nouveaux documents ingérés auraient donc été rejetés lors d'une demande ciblée `corpus_document`.
+- Le Worker accepte maintenant le format complet `pdf-[a-f0-9]{64}`. Les fixtures des tests Worker ont été migrées vers ce format, ce qui valide aussi les chemins de recherche PDF avec les identifiants réellement produits par l'ingestion.
+- Le Worker vérifie désormais également que chaque chunk référence un document présent dans le manifeste, en plus de l'unicité des identifiants de document et de chunk. Un chunk orphelin déclenche un refus fermé avant transmission au modèle.
+- Régression ajoutée pour un chunk orphelin. Les tests existants de collisions document/chunk et de filtrage droits sont conservés.
+- Commits : `19a1f35` (Worker), `3da5506` (fixtures SHA-256), `9673597` (test chunk orphelin). CI à revalider sur la tête actuelle de PR #23.
+- Aucun document n'a été ingéré, aucun embedding/OCR exécuté, aucun droit présumé, aucune modification Supabase/Auth/RLS/paiement, aucune fusion ni aucun déploiement.
+
+
+
+### Lot 638 — propagation des identifiants PDF complets dans le client — 18/11/2026
+- La CI a isolé une dernière incompatibilité de format : `ia.js` extrayait encore uniquement `pdf-[a-f0-9]{16}` des questions, alors que l'ingestion et le Worker utilisent désormais les 64 caractères SHA-256.
+- Le motif de détection dans `ia.js` accepte maintenant les 64 caractères. Le test d'intégration existant, dont l'identifiant attendu avait été migré au format long, couvre ce chemin de bout en bout.
+- La première exécution CI sur le lot 637 avait échoué sur ce seul test : 78/79 tests Worker passaient, y compris les nouveaux contrôles de chunks orphelins, collisions, filtrage des droits, BM25 et repli vectoriel. Le job structurel a également échoué sur le même test d'authentification qui exécute la suite Worker.
+- Correction appliquée dans `ia.js`, commit `a5c1089`. Une nouvelle exécution CI sur la tête actuelle est nécessaire avant toute conclusion.
+- Aucun document réel ingéré, aucun OCR/embedding exécuté, aucun droit présumé. Aucun changement Supabase/Auth/RLS/paiement, aucune fusion, aucun déploiement.
+
+
+
+### Lot 639 — correction de la fixture de résolution PDF — 18/11/2026
+- Après correction du motif dans `ia.js`, la CI a révélé que la fixture de test contenait encore un identifiant court en majuscules (`pdf-0123456789ABCDEF`) tout en attendant un identifiant long. Le code se comportait correctement en refusant cet identifiant désormais invalide ; c'était le test qui ne représentait pas le nouveau contrat.
+- La question de test utilise maintenant le SHA-256 complet en majuscules, et vérifie donc à la fois la détection insensible à la casse et la normalisation en minuscules.
+- Commit : `93bd96d`. Nouvelle CI déclenchée.
+
+
+
+### Lot 640 — contrôle d'intégrité des compteurs de chunks dans le Worker — 18/11/2026
+- La revue du chemin de lecture RAG a révélé que le Worker contrôlait déjà les identifiants uniques et les références documentaires, mais ne comparait pas le nombre de chunks réellement chargés avec `documents[].chunk_count`.
+- Le Worker refuse maintenant le corpus avec une réponse fail-closed (`503 access-unavailable`) si un document du manifeste n'a pas un compteur entier positif ou nul, si un chunk référence un document absent, ou si le nombre réel de chunks diffère du compteur déclaré. La vérification est appliquée au manifeste complet, avant toute transmission au modèle.
+- Un test de régression couvre un manifeste qui déclare deux chunks alors qu'un seul est fourni. Les fixtures de test complètent automatiquement les compteurs absents pour préserver les scénarios historiques qui ne testaient pas ce contrat.
+- Commits : `1bdda02452a0d602302610a423703ff1b4b1f5eb` (Worker) et `296fd07dc2506d8329fcf9ccbb73d7de73f87f80` (tests).
+- CI sur le HEAD `296fd07dc2506d8329fcf9ccbb73d7de73f87f80`, run `44399677539` : succès. Les jobs « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont tous deux terminés avec `success`. Les trois workflows PostgreSQL isolés du même HEAD sont également terminés avec succès (runs `44399677636`, `44399677646`, `44399677638`).
+- PR #23 reste ouverte en brouillon, non fusionnée ; GitHub indique `mergeable=true`, `mergeable_state=clean`. Aucun changement sur `main`, aucun déploiement.
+- Aucun PDF réel n'a été ingéré, aucun OCR ni embedding documentaire n'a été exécuté, et aucun droit n'a été présumé. Aucune modification Supabase, Auth, RLS, schéma, abonnement ou paiement.
+
+
+### Lot 641 — optimisation des contrôles référentiels du corpus — 18/11/2026
+- La validation du manifeste et des chunks effectuait des recherches répétées dans le tableau des documents. Pour un corpus volumineux, la recherche d'un document pour chaque chunk et pour chaque compteur pouvait entraîner un coût quadratique.
+- Le Worker construit désormais une table `Map` indexée par identifiant de document pendant la validation des identifiants uniques. Les contrôles de référence des chunks et de cohérence des compteurs réutilisent cette table. La logique de sécurité et le comportement fail-closed restent inchangés ; l'objectif est de ramener ces recherches à un coût moyen linéaire en fonction du nombre de documents et de chunks.
+- Commit du lot : `6ce08555413fb9d4976a878f222fc91132984f90`.
+- CI sur ce HEAD, run `44400539473` : succès. « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont terminés avec `success`. Les trois workflows PostgreSQL isolés sont également terminés avec succès : `44400539391`, `44400539460` et `44400539546`.
+- Le PR #23 (`ai/rag-corpus-integrity-lot-635`) reste ouvert en brouillon et non fusionné ; GitHub indique `mergeable=true` et `mergeable_state=clean` au moment de cette mise à jour. Aucun déploiement n'a été effectué.
+- Le travail ne signifie pas que les PDF sont intégrés au savoir pédagogique : aucun OCR ni embedding documentaire réel n'a été exécuté et aucun droit d'utilisation n'a été présumé. La génération vectorielle reste conditionnée à la validation des droits et à une exécution contrôlée. Aucune modification Supabase, Auth, RLS, schéma, abonnement ou paiement.
+
+
+### Lot 642 — intégrité stricte de l’index vectoriel — 18/11/2026
+- Le Worker refusait déjà les artefacts vectoriels dont la version, le modèle, les dimensions ou l’empreinte des chunks ne correspondaient pas au corpus courant. L’audit a révélé deux cas insuffisamment stricts : deux entrées pouvaient partager le même `chunk_id` et la seconde écraser la première dans la table de correspondance ; un vecteur de norme nulle pouvait aussi être accepté.
+- Le Worker invalide maintenant l’index vectoriel complet si une entrée liée à un chunk autorisé a un identifiant dupliqué, une dimension incorrecte, une valeur non finie ou une norme nulle/non finie. Il vide alors la table vectorielle et conserve le classement BM25. Les entrées étrangères ou associées à des chunks non candidats restent ignorées, sans pouvoir injecter du contenu non autorisé.
+- Tests de régression ajoutés : collision de `chunk_id` et vecteur de norme nulle ; les deux cas doivent laisser la recherche BM25 répondre sans appeler le modèle d’embedding.
+- Commits : Worker `f5c16f4e2166297037fbd8a7538c668a69c97bf5`, tests `03b21ec0da14f90649cbe687e97d4998ea1c8040`.
+- CI sur le HEAD `03b21ec0da14f90649cbe687e97d4998ea1c8040`, run `44401824398` : succès. « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont terminés avec `success`, sans étape en échec. Les trois workflows PostgreSQL isolés sont également réussis : `44401824349`, `44401824410`, `44401824405`.
+- Le PR #23 reste ouvert en brouillon, non fusionné ; GitHub indique `mergeable=true`, `mergeable_state=clean`. Aucun déploiement n'a été effectué.
+- Aucun PDF réel n'a été intégré au corpus pédagogique par ce lot ; aucun OCR ni embedding documentaire réel n'a été exécuté et aucun droit d'utilisation n'a été présumé. Aucune modification Supabase, Auth, RLS, schéma, abonnement ou paiement.
+
+
+### Lot 643 — gestion des débordements numériques dans les embeddings — 18/11/2026
+- L'audit du générateur vectoriel a identifié un cas limite : une valeur entière JSON extrêmement grande peut provoquer une exception Python `OverflowError` lors de sa conversion en flottant. Cette exception n'était pas convertie en erreur métier contrôlée et pouvait interrompre le CLI avec une trace technique.
+- `normalize_embedding` intercepte maintenant `OverflowError` et `ValueError` pendant la conversion et renvoie `ValueError("embedding_valeur_invalide")`. Le flux CLI conserve ainsi son comportement d'échec contrôlé, sans écrire d'artefact incomplet.
+- Test de régression ajouté avec un entier de très grande taille (`10 ** 400`).
+- Commits : générateur `ccc27fc8353e86f10da82d579cd6bbecc096611c` ; test `beca71accde35ca0fdda1a46dba870af7524c88a`.
+- CI sur le HEAD `beca71accde35ca0fdda1a46dba870af7524c88a`, run `44405260871` : terminé avec `success`. Les jobs « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont réussis. Les trois workflows PostgreSQL isolés `44405260965`, `44405260915`, `44405260898` sont également réussis. Le build Worker `allemand` sur le commit documentaire `cff7833b0b32a1bd1a383c4c640eb38d5c89bbdb` est lui aussi terminé avec `success`.
+- PR #23 reste ouverte en brouillon, non fusionnée. Aucun changement sur `main`, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement. Aucun OCR ni embedding réel n'a été exécuté et aucun droit documentaire n'a été présumé.
+
+
+### Lot 644 — empêcher l'écrasement des sources par le générateur vectoriel — 18/11/2026
+- L'audit du CLI a identifié un risque destructif de configuration : l'option `--output` pouvait désigner le même chemin que `--chunks` ou `--manifest`. En mode exécution, le générateur aurait alors remplacé le corpus source ou son manifeste par l'artefact vectoriel.
+- Le CLI résout et compare les trois chemins avant toute lecture/génération et refuse les collisions avec `sortie_confondue_avec_source`. La garde s'applique aussi au dry-run et avant tout appel à Cloudflare.
+- Test de régression ajouté : sortie identique au fichier chunks, code retour 1, contenu source inchangé et aucun appel API.
+- Commits : garde CLI `9e7d7ee8f8776e186c0e45038272ac36497a4b20` ; test `7e4883d42567330e0867050a30a6ec4c63bbe940`.
+- CI du lot 643 (HEAD `beca71accde35ca0fdda1a46dba870af7524c88a`, run `44405260871`) : succès complet. Le build Worker et les validations lancés par la mise à jour documentaire précédente ont également réussi. CI du lot 644 à confirmer.
+- PR #23 reste ouverte en brouillon, non fusionnée ; aucun changement sur `main`, aucun déploiement et aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+
+### Lot 645 — refuser les associations documentaires contradictoires dans l’index vectoriel — 18/11/2026
+- L'audit du chargement des vecteurs a relevé un cas subtil : une entrée portant l'identifiant d'un chunk candidat mais un `document_id` contradictoire était ignorée. Une seconde entrée portant le même chunk et le bon document pouvait ensuite être acceptée. Cela masquait une collision de provenance au lieu d'invalider l'artefact.
+- Le Worker invalide maintenant l'index vectoriel complet dès qu'un chunk candidat est associé à un document différent de celui du corpus, ou qu'un identifiant candidat est dupliqué. Il conserve le repli BM25 et n'appelle pas le modèle d'embedding.
+- Test de régression ajouté : une entrée contradictoire suivie d'une entrée apparemment valide pour le même chunk doit invalider l'index complet.
+- Modifications limitées à `worker/ia-ask.js`, `tests/worker-ai-auth.test.mjs` et ce dossier de continuité. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucun OCR, aucun embedding réel, aucune fusion et aucun déploiement.
+
+
+### Lot 646 — cohérence cryptographique entre corpus et manifeste — 18/11/2026
+- L'ingestion remplace deux fichiers distincts ; une interruption entre les opérations peut laisser un état intermédiaire. Deux renommages indépendants ne constituent pas une transaction atomique.
+- Le générateur calcule `chunks_sha256` sur les octets UTF-8 exacts du corpus et l'inscrit dans le manifeste avec les compteurs de documents et chunks.
+- Le Worker récupère le manifeste avec le JWT, recalcule l'empreinte du corpus brut et refuse en `503 access-unavailable` si l'empreinte, la version ou les compteurs diffèrent. Un état intermédiaire n'est donc pas servi comme corpus valide. Ce contrôle fail-closed ne prétend pas rendre le système de fichiers atomique.
+- Le harnais Worker génère un manifeste cohérent pour ses fixtures ; un test d'ingestion vérifie l'empreinte exacte des octets écrits.
+- Aucun OCR ni embedding réel, aucun droit documentaire présumé, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement, aucune fusion et aucun déploiement.
+
+- Correctif de sérialisation du lot : le fichier chunks est écrit depuis les mêmes octets UTF-8 que ceux utilisés pour calculer `chunks_sha256` (commit `388254b2f949768725d1198d3b51a4510eba70a1`). La sérialisation conserve le saut de ligne final ; l'empreinte couvre donc exactement le contenu publié.
+- CI déclenchée sur ce commit : run `44407671878` en attente au moment de la mise à jour ; résultats à confirmer.
+
+- Diagnostic CI intermédiaire : le run `44407613737` a détecté deux défauts dans les nouveaux changements du lot 646 : le test d'ingestion comparait une empreinte calculée sur une sérialisation différente des octets réellement écrits ; le harnais Node contenait un séparateur de ligne littéral invalide. Correctifs appliqués : sérialisation unique suivie d'une écriture binaire (commit `388254b2f949768725d1198d3b51a4510eba70a1`) et déclaration du cache de fixture sur deux lignes (commit `7158567c1d40cbdcd21fc1fedc21ebbfb83b67dd`).
+- Nouvelle CI sur le commit correctif : run `44407794088` (CI — ALLEMAND) en attente ; trois workflows PostgreSQL associés sont également en cours. Ne pas déclarer le lot 646 validé avant leur résultat final.
+
+- Test Worker supplémentaire ajouté sur la tête `a8547d0064aa65591651087bc539526a96103fad` : un manifeste dont `chunks_sha256` ne correspond pas aux octets réellement reçus doit provoquer `503 access-unavailable`, sans message envoyé au modèle ni appel Workers AI. Commit du test : `a8547d0064aa65591651087bc539526a96103fad`.
+- CI complète sur ce HEAD : run `44408193841` terminé avec `success`. Les deux jobs « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont réussis ; les tests Worker/RAG et la régression combinée sont inclus dans le job autonome. Les trois workflows PostgreSQL isolés sont également réussis : `44408193713`, `44408193691`, `44408193933`.
+- Conclusion du lot 646 : intégrité cryptographique du couple corpus/manifeste couverte par tests d'ingestion et Worker, y compris le scénario de désynchronisation. Cette réussite CI valide les tests et contrôles automatisés, pas l'intégration de PDF réels ni la qualité pédagogique du RAG.
+- PR #23 toujours ouverte, brouillon, non fusionnée ; aucune modification de `main`, aucun déploiement, aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement. Aucun OCR ou embedding réel n'a été exécuté et aucun droit documentaire n'a été présumé.
+
+
+### Lot 647 — audit technique réel des PDF et réconciliation des droits — 18/11/2026
+- Le workflow CI du HEAD documentaire `3ef01603c8a77347750be6ed70fbd82e84821bc1` a terminé avec succès : run `44408600341`. Les jobs « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont tous deux `success`. Les trois workflows PostgreSQL isolés `44408600248`, `44408600107` et `44408600170` sont également `success`.
+- L'audit a examiné les métadonnées techniques des PDF sans conserver ni publier leur contenu pédagogique. Réconciliation : 293 PDF détectés, 293 lignes d'inventaire, 293 chemins appariés, aucun PDF sans ligne d'inventaire et aucune ligne orpheline.
+- Résultat des droits : 0/293 PDF confirmés ; 293/293 restent non confirmés ou vides. Aucun droit n'a été inféré. En conséquence, aucun de ces PDF n'est éligible à l'ingestion RAG actuellement.
+- Extraction textuelle : 767 pages avec texte exploitable et 406 pages sans texte exploitable. 78 PDF sont signalés comme candidats OCR. L'OCR n'a pas été exécuté (`ocr_executed=false`) ; ces chiffres sont un diagnostic de préparation, pas une validation pédagogique.
+- Le rapport CSV technique sans contenu pédagogique a été publié comme artefact CI `pdf-rights-and-readiness`, ID `14475377504`, run `44408600341` (conservation annoncée jusqu'au 02/12/2026).
+- Les tests de l'ingestion PDF (14), de validation de l'inventaire des droits (15) et d'audit de préparation textuelle (10) sont réussis. Les tests Worker/RAG et les contrôles d'accès du même workflow sont également réussis.
+- Conclusion opérationnelle : le pipeline d'audit et les garde-fous sont testés, mais le corpus PDF reste vide/non éligible faute de preuves de droits. La prochaine étape documentaire est la vérification humaine des licences/autorisations, PDF par PDF ; ensuite seulement, les documents admissibles pourront être extraits, et les pages sans texte pourront être traitées par OCR après autorisation.
+- PR #23 reste ouverte en brouillon, non fusionnée ; aucun changement sur `main`, aucun déploiement et aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement. Aucun OCR ni embedding documentaire réel n'a été exécuté.
+
+
+### Lot 648 — fermeture du contournement de conjugaison locale et audit du routage d'intentions — 18/11/2026
+- Défaut identifié dans `rag.js` : `verifieAccesContenuIA()` ne bloquait pas une conjugaison connue du tableau local lorsque le catalogue ne pouvait pas rattacher le verbe à une ressource pédagogique vérifiable. Le contrôle retournait alors `null`, puis `reponsePedagogique()` pouvait renvoyer le tableau local.
+- Correctif : le moteur local échoue désormais de manière fermée pour les demandes de conjugaison si `ACCESS` est absent, ou si aucun rattachement pédagogique vérifiable n'est trouvé. Lorsqu'une ressource est trouvée, les contrôles d'accès existants continuent de décider selon la séance et l'entitlement. Aucun changement au Worker distant, à Supabase, Auth ou RLS.
+- Test de régression ajouté dans `tests/regression_rag.mjs` : le verbe `mögen` doit rester verrouillé sans `ACCESS` et sans ressource catalogue, même s'il existe dans le tableau de conjugaison local.
+- CI finale sur le HEAD `e83e4feaf47430262b3b21aa13e5f15992b20635` : run `44410678663` réussi. Validation structurelle/pédagogique et tests autonomes Professeur IA réussis. Logs : `RAG contrat : 12/12`, `RAG lock : conjugaison refusée sans ACCESS et sans ressource vérifiable`. Les trois workflows PostgreSQL isolés `44410678660`, `44410678681`, `44410678851` sont également réussis.
+- Audit complémentaire du routage : `assets/bdd/intent_ontology.json` est chargé par `rag.js`, et `matchOnto()` / `ontoRoute()` sont définis, mais aucun appel à `ontoRoute()` n'existe dans le chemin `reponsePedagogique()` / `render()`. Ni `ia.js` ni `worker/ia-ask.js` ne consomment cette ontologie. Elle ne doit donc pas être considérée comme active en production.
+- L'évaluation d'intentions annonce 146 exemples, 75,3 % d'exactitude d'intention et 100 % de routage de catégorie. L'inspection du jeu révèle cependant des formulations génériques identiques étiquetées pour plusieurs intentions (ex. « explique-moi ça simplement », « was bedeutet das? », « résume-moi la leçon », « donne-moi un exercice »). Ces collisions rendent l'exactitude exacte d'intention ambiguë et imposent de nettoyer le jeu d'évaluation avant de l'utiliser comme mesure de qualité.
+- La fonction `ontoRoute()` contient des réponses statiques de résumé/recherche/exercices ; elle ne doit pas être activée telle quelle avant de lui appliquer les contrôles de ressources et de cadenas. Prochaine étape : concevoir un routage d'intentions réellement branché, avec détection des ambiguïtés, clarification ou repli sûr, et vérification des droits avant tout accès au contenu.
+- PR #23 reste ouverte, en brouillon et non fusionnée ; aucun changement sur `main`, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement. Aucun OCR ou embedding documentaire réel n'a été exécuté.
+
+
+### Lot 649 — nettoyage des collisions d’intentions et garde CI — 18/11/2026
+- L’audit a confirmé 22 formulations partagées entre plusieurs intentions de l’ontologie, dont des expressions génériques françaises, allemandes et darija. Le moteur de correspondance choisissait auparavant le premier meilleur score en cas d’égalité ; ces formulations pouvaient donc orienter arbitrairement une question.
+- Nettoyage de `assets/bdd/intent_ontology.json` : les formulations génériques conservées sont affectées à une seule intention sémantiquement appropriée ; les associations contradictoires sont retirées. La vérification après normalisation Unicode, ponctuation, diacritiques arabes et variantes de lettres donne 0 collision entre intentions.
+- Nettoyage de `assets/bdd/intent_eval_set.json` : 43 lignes appartenant à 8 formulations répétées sous plusieurs intentions ont été exclues. Le jeu conserve 103 questions non ambiguës, couvrant les 25 intentions.
+- Les anciennes métriques `75,3 %` d’exactitude d’intention et `100 %` de catégorie ont été invalidées dans `intent_eval_results.json`. Aucune nouvelle précision n’est annoncée : il n’existe pas encore d’évaluateur fidèle du routeur réel, et l’ontologie n’est toujours pas branchée au chemin de réponse.
+- Nouveau test `tests/intent-ontology-integrity.test.mjs` : contrôle les collisions après normalisation arabe/Unicode, les étiquettes contradictoires, les intentions inconnues et la présence d’au moins un exemple par intention. Le test est ajouté à la CI autonome du Professeur IA.
+- Vérification statique sur le commit de correction : 0 collision dans l’ontologie, 0 collision dans le jeu d’évaluation, 103 exemples pour 25 intentions. L’exécution CI du nouveau test reste à confirmer par le workflow GitHub.
+- Cette étape ne branche pas encore `ontoRoute()` et n’active aucune réponse statique. Le routage en production devra ensuite gérer les scores ex aequo par abstention/clarification et faire passer chaque réponse documentaire par les vérifications de ressource et de cadenas. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucun changement sur `main`, aucune fusion et aucun déploiement.
+- PR #23 reste ouverte, en brouillon et non fusionnée.
+
+- Complément de sécurité Lot 649 : `matchOnto()` ne choisit plus le premier résultat lorsqu'au moins deux intentions atteignent le même meilleur score. Il renvoie un résultat explicitement ambigu avec la liste des candidats ; `ontoRoute()` s'abstient et ne produit aucune réponse statique dans ce cas. Le test RAG combine une question contenant deux demandes distinctes pour vérifier l'abstention, ainsi qu'une question univoque pour vérifier la conservation de l'intention. Cette protection ne branche pas encore l'ontologie au chemin utilisateur.
+
+- Correction du test de non-régression après revue du premier CI : le classifieur était lexical dans `rag.js`, mais non exposé ; le test conditionnel pouvait donc être sauté. `window.RAG.matchOnto` expose maintenant explicitement la fonction au banc de test, et `tests/regression_rag.mjs` échoue si elle est absente. Les deux cas (égalité ambiguë et intention unique) sont désormais obligatoires. Le résultat CI précédent ne valide pas ce test de comportement ; le nouveau commit doit repasser la CI.
+
+- Ajustement du scénario de collision : la requête de test est `هاد الدرس`, fragment réellement présent dans plusieurs formulations de l’ontologie et donnant un score de sous-chaîne identique (75) à plusieurs intentions. Le précédent scénario combinant deux demandes n’atteignait pas le seuil de confiance du classifieur et testait un non-match plutôt qu’une égalité. Le cas retenu vérifie donc bien l’abstention sur un ex aequo réel.
+
+- Revue de surface d'API : seul `matchOnto` est exposé dans `window.RAG` pour le test du classifieur. `ontoRoute` reste privé et non appelé ; il n'est volontairement pas exposé car ses réponses pédagogiques statiques ne sont pas encore protégées par une vérification uniforme des droits et de la ressource ciblée. Aucun raccordement production n'est activé dans ce lot.
+
+
+### Lot 650 — fermeture du contournement des unités entières — 18/11/2026
+- L'audit de `verifieAccesContenuIA()` a montré que les séances explicites et les conjugaisons étaient contrôlées, mais qu'une requête portant sur une unité entière (ex. résumé complet d'une unité) pouvait continuer sans objet `ACCESS`.
+- Le garde vérifie maintenant les demandes d'unité/séance et les règles identifiées avant toute réponse pédagogique locale. Sans `ACCESS`, ces demandes échouent fermées. Une unité complète exige un entitlement backend actif (`src === backend`), tandis qu'une séance précise passe par `canAccessLesson`. Un contrôle backend absent ou en erreur bloque également la réponse.
+- Une règle grammaticale qui ne peut pas être rattachée à une ressource vérifiable est désormais refusée plutôt que renvoyée depuis le corpus local sans preuve d'accès. Les vérifications de quiz échouent également fermées si la fonction d'accès est absente.
+- Le test de régression couvre : absence d'ACCESS, absence d'entitlement actif et exception de rafraîchissement backend pour `résume unité 3`. Le professeur IA distant reste accessible aux utilisateurs connectés sans abonnement pour les questions générales ; seuls les contenus pédagogiques verrouillés sont refusés.
+- Aucun changement Supabase, Auth, RLS, schéma, abonnement ou paiement. Aucun changement sur `main`, aucune fusion ni déploiement. PR #23 reste ouverte et en brouillon.
+
+- Extension Lot 650 : la garde couvre aussi une séance explicitement demandée sans unité déterminable, ainsi que le résumé de l'unité actuellement active (si le contexte de navigation la fournit). Ces cas échouent fermés en l'absence de preuve. Les tests couvrent maintenant l'unité active sans ACCESS et une séance sans unité vérifiable.
+
+- Revue du test après insertion : suppression du retour anticipé historique qui quittait `verifieAccesContenuIA()` avant même de classifier les unités et séances lorsqu'`ACCESS` était absent. Sans cette suppression, le nouveau garde et ses tests n'auraient pas été atteints. Le flux exécute maintenant la classification de portée avant de décider le refus fail-closed.
+
+- Précision de périmètre après vérification du Worker : `free_summary` est un type de ressource explicitement gratuit, servi par `fetchFreeSummary()`. Le garde Lot 650 ne doit donc pas bloquer les résumés gratuits déjà prévus. Il bloque les demandes d'explication pédagogique complète d'une unité (y compris depuis l'unité active), les séances sans unité vérifiable et les règles sans ressource liée. Les tests ont été ajustés pour vérifier ce périmètre : explication d'unité refusée sans preuve, sans entitlement et si le backend échoue ; le résumé gratuit n'est pas assimilé à une leçon verrouillée.
+
+- Test complémentaire Lot 650 : le banc RAG vérifie explicitement qu'un résumé déclaré gratuit (`اشرح الوحدة 2`) n'est pas transformé en réponse verrouillée en l'absence d'ACCESS. La protection vise l'explication complète d'une unité non classée comme résumé gratuit, sans dégrader le parcours gratuit existant.
+
+
+### Lot 651 — alignement du verrouillage grammatical local et Worker — 18/11/2026
+- Comparaison de `LOCKED_RULES` du Worker avec `REGLES` de `rag.js` : le Worker protège plusieurs notions absentes de la liste locale (Genitiv, nominalisation, Partizip, propositions relatives, déclinaisons adjectivales, prépositions, etc.). Le navigateur pouvait donc fournir une réponse locale avant que le contrôle Worker n'intervienne.
+- Ajout dans `rag.js` d'une classification des mêmes règles protégées et d'une détection de l'intention grammaticale multilingue (arabe, français, allemand, anglais, Darija/Arabizi), avec normalisation des diacritiques arabes, tatweel et variantes d'alif/ya. Une règle protégée exige maintenant un entitlement backend actif avant toute réponse locale ; sans ACCESS, sans preuve backend ou si le rafraîchissement échoue, la réponse est verrouillée.
+- Les résumés `free_summary` explicitement gratuits restent exclus de cette règle de blocage, conformément au Worker et à ses tests existants.
+- Tests RAG ajoutés pour Genitiv en français, nominalisation en arabe avec diacritiques, absence d'ACCESS, absence d'entitlement actif et conservation d'un résumé gratuit. La validation CI du dernier commit reste à obtenir.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion ni déploiement. PR #23 reste ouverte et en brouillon.
+
+- Extension Lot 651 après CI : la suite existante attendait que `تمارين الوحدة 2` soit autorisé côté client, alors que le Worker le classe comme exercice d'une unité payante. Le garde local utilise maintenant `ACCESS.canAccessQuiz` pour toute demande d'exercices/évaluation rattachée à une unité. Le test distingue explicitement l'unité 1 gratuite (autorisée) de l'unité 2 payante (refusée). La banque générale gratuite sans unité reste disponible.
+
+
+### Résultats de validation — Lots 650–651 — 18/11/2026
+- CI complète du commit `1ba1ab5973b5c5398ec02e1fd81d45df13bd899e` : run `44415987029` terminé avec succès. Validation structurelle/pédagogique et tests autonomes Professeur IA tous réussis.
+- Suite Worker IA : 84 tests réussis, 0 échec. Les tests RAG/QUST/intégration et les tests d'intégrité d'intentions ont également réussi ; les journaux confirment l'abstention sur les intentions ex aequo, la conservation des intentions uniques, le refus de conjugaison sans ACCESS/ressource et le refus d'explication d'unité sans entitlement ou si le backend échoue.
+- Trois workflows PostgreSQL isolés du même commit : `44415987056`, `44415987066`, `44415986989` — tous réussis.
+- Comparaison automatisée de `LOCKED_RULES` Worker et `LOCKED_RULES_IA` locale : 74 entrées de chaque côté, aucune entrée manquante ou supplémentaire.
+- Les résumés `free_summary` et la banque générale gratuite restent autorisés ; les séances, règles et exercices rattachés à des ressources payantes restent soumis aux contrôles d'accès correspondants.
+- Le commit de documentation qui consigne ces résultats déclenche sa propre CI ; celle-ci reste à vérifier séparément. PR #23 demeure ouverte, en brouillon et non fusionnée.
+
+
+### Lot 652 — première activation sûre de l’ontologie dans le parcours réel — 18/11/2026
+- `matchOnto()` était jusque-là uniquement testée comme fonction isolée ; `ontoRoute()` demeure volontairement non appelée car elle contient encore des réponses pédagogiques statiques sans contrôle uniforme des ressources.
+- Activation minimale dans `reponsePedagogique()` : après le garde d'accès et avant toute réponse locale, l'ontologie est interrogée. Si le meilleur score est partagé entre plusieurs intentions, le moteur s'abstient et demande à l'élève de préciser (expliquer, résumer, exemples/exercices, unité ou séance). Aucun contenu pédagogique n'est délivré dans ce cas.
+- Une intention unique ne déclenche pas cette clarification et continue dans le pipeline existant. Cette étape active donc uniquement la désambiguïsation ; elle ne branche pas encore les routes statiques de `ontoRoute()`.
+- Tests de régression ajoutés sur le parcours réel : `هاد الدرس` doit produire une demande de précision ; `شرحلي هاد الدرس` ne doit pas être déclaré ambigu.
+- Les contrôles d'accès Lot 650–651 restent exécutés avant l'ontologie. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion ni déploiement. CI du nouveau commit à confirmer.
+
+- Garde anti-faux positifs Lot 652 : `matchOnto()` ignore maintenant les fragments latins de moins de quatre caractères (ex. `was`, `ich`) qui pouvaient correspondre comme sous-chaînes à de nombreuses formulations et déclencher une clarification injustifiée. Les fragments arabes restent évalués, car certains termes courts peuvent porter une intention. Test ajouté.
+
+
+### Lot 653 — mesure réelle du classifieur d'intentions — 19/11/2026
+- Ajout dans `tests/regression_rag.mjs` d'une évaluation des 103 exemples étiquetés de `assets/bdd/intent_eval_set.json` en appelant directement `window.RAG.matchOnto()` issue de `rag.js`. Aucun score n'est réimplémenté dans le test.
+- Le rapport CI sépare les classifications correctes, erronées, les ambiguïtés (abstention volontaire) et les absences de correspondance ; il calcule la couverture, l'exactitude sur les cas classés et l'exactitude stricte sur l'ensemble. Les résultats par intention sont également consignés dans les logs CI.
+- Cette mesure ne prétend pas évaluer la qualité de la réponse RAG, la sécurité des ressources, ni la compréhension sémantique hors jeu de test. Les chiffres seront reportés après exécution du CI.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion ni déploiement. PR #23 reste ouverte.
+
+### Résultats confirmés — Lot 653 — 19/11/2026
+- CI principale du HEAD `16d6274926857f4fb20fd54f7e9b028627f085c1` : run `44556644937` terminé avec succès. Les jobs « Validation structurelle & pédagogique » et « Tests autonomes — Professeur IA » sont tous deux `success`.
+- Évaluation exécutée par le classifieur réel `window.RAG.matchOnto()` sur le jeu nettoyé : **103/103 corrects**, 0 erreur, 0 ambiguïté et 0 abstention ; couverture 100 %, exactitude sur les cas classés 100 %, exactitude stricte 100 %. Les 25 intentions sont représentées et chacune obtient le résultat attendu dans ce jeu.
+- Ces chiffres décrivent exclusivement les 103 exemples non ambigus du jeu de test préparé. Ils ne mesurent ni les questions inédites des élèves, ni la qualité des réponses générées, ni la justesse pédagogique, ni la sécurité documentaire en conditions réelles. Les formulations génériques ambiguës ont été retirées du score exact et doivent continuer à déclencher une clarification en production.
+- Régressions RAG/professeur : **84/84 tests Worker** réussis ; QUST/Darja/Arabizi **9/9** ; intégrité de l’ontologie **2/2** ; vérifications RAG/contrat et protections de cadenas réussies. Le journal confirme notamment que la recherche vectorielle reste inactive sans drapeau et n'appelle aucun embedding.
+- Trois workflows PostgreSQL isolés du même HEAD sont terminés avec succès : `44556644431` (ملتقى الطلاب), `44556644706` (consentement Messenger) et `44556644596` (découverte Messenger). Ils ne constituent pas une modification du schéma ou des politiques.
+- PR #23 reste ouverte, en brouillon, non fusionnée et mergeable. Aucun changement sur `main`, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement. Aucun OCR ni embedding documentaire réel n'a été exécuté.
+
+### Lot 654 — fermeture du contournement du lecteur local de manuel et sécurisation de la route d'intentions — 19/11/2026
+- Audit du parcours réel : `intentLecture()` chargeait directement `assets/bdd/buch_lN.json` pour les demandes de texte, dialogue ou vocabulaire (ex. « lis le dialogue 2 »). Ces fichiers contiennent le contenu complet d'une unité, alors que `access_config.json` ne déclare gratuites que les séances 1 et 2 de l'unité 1 ; le code de `buch.js` indique également que les Lektionen 2/3 sont réservées aux abonnés. Les formulations qui nommaient explicitement « unité/Lektion » étaient déjà interceptées, mais pas les demandes génériques « texte 2 » / « dialogue 2 ».
+- Correctif dans `rag.js` : avant tout appel à `loadBuch()`, le moteur exige maintenant `ACCESS.refresh()` réussi puis un entitlement `ok === true` et `src === 'backend'`. Absence d'ACCESS, compte gratuit, exception backend ou entitlement non confirmé = refus fermé et paywall. `canAccessUnit()` n'est volontairement pas utilisé seul : il autorise l'unité 1 en raison de ses séances gratuites, alors que `buch_2as.json` contient plus que ces deux séances.
+- Les deux séances gratuites restent servies par les chemins dédiés et bornés existants (Worker/RLS/artefact gratuit) ; le lecteur complet `buch_2as.json` est désormais réservé à un entitlement backend actif, même pour l'unité 1.
+- Régressions ajoutées : lecture texte unité 2 sans ACCESS, dialogue unité 2 et vocabulaire unité 3 avec compte gratuit, contrôle backend en panne, puis lecture texte unité 2 avec entitlement backend actif. Le cas abonné vérifie que le contenu reste accessible après validation.
+- Durcissement complémentaire de `ontoRoute()`, qui reste volontairement non appelée et non exposée : elle exécute d'abord `verifieAccesContenuIA()` et ne produit plus de réponses statiques pour les intentions de leçon, règle, comparaison grammaticale, exercice, examen ou recherche documentaire. Ces demandes reviennent au pipeline principal, seul responsable de la vérification de la ressource et des droits. Le test d'intégrité garantit que cette route ne sera ni appelée ni exposée par inadvertance.
+- CI sur le HEAD `5b6fc7b5196efbaed8c4be94a8d4f5a878b0ba05` : run `44568569991` terminé avec succès. Les jobs « Validation structurelle & pédagogique » et « Tests autonomes — Professeur IA » sont tous deux `success`.
+- Résultats des tests autonomes : Worker IA **84/84**, Worker de contenu du site **14/14**, QUST/Darja/Arabizi **9/9**, intégrité de l'ontologie et des routes **3/3** ; les régressions RAG/professeur et le nouveau test `RAG lock : texte/dialogue depuis buch_lN refusés sans entitlement backend` sont réussis. Le journal confirme également l'évaluation du classifieur : 103/103 sur le jeu interne non ambigu, mesure limitée à ce jeu et non assimilable à une précision générale en production.
+- Trois workflows PostgreSQL isolés du même HEAD sont réussis : `44568570290` (consentement Messenger), `44568570209` (ملتقى الطلاب) et `44568569993` (découverte Messenger).
+- PR #23 reste ouverte, en brouillon, non fusionnée et mergeable. Aucun changement sur `main`, aucun déploiement Cloudflare, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement. Aucun OCR ni embedding documentaire réel n'a été exécuté ; les PDF restent soumis à la confirmation des droits.
+
+### Lot 655 — fermeture du contournement BIBLIO et du raccourci de traduction documentaire — 19/11/2026
+- Audit du flux réel : `intentBiblio()` recherchait des pages de manuel, devoirs corrigés, grammaire, corpus, vocabulaire et explications d'unités dans les index statiques. Il pouvait restituer des extraits et statistiques depuis le Professeur IA sans appliquer la règle `paid_views: ["corpus", "biblio"]` de `access_config.json`.
+- Un second chemin indépendant existait dans le formulaire RAG : `BIBLIO.traduire()` était appelé avant `reponsePedagogique()` et donc avant `verifieAccesContenuIA()`. Les traductions `curated`, `page`, `prive` et `gloss` pouvaient être rendues directement depuis le raccourci.
+- Ajout de `verifieAccesBibliothequeIA()` : exige `ACCESS.refresh()` et un entitlement `ok === true`, `src === "backend"`. Absence d'ACCESS, erreur réseau/backend, compte sans abonnement ou résultat non confirmé = refus fermé.
+- `intentBiblio()` vérifie ce droit avant toute lecture des statistiques ou appel à `BIBLIO.search()`; les demandes générales au Professeur IA restent disponibles, mais ne peuvent pas restituer les documents de la bibliothèque payante.
+- Le raccourci de traduction conserve les traductions fournies par le corpus seulement après le même contrôle. Si le contrôle échoue, le texte documentaire n'est pas affiché et un message de verrouillage est rendu. Les traductions génériques de phrases saisies par l'élève restent dans le pipeline général, sans accès au contenu documentaire.
+- Régressions ajoutées : bibliothèque sans ACCESS, compte gratuit, backend indisponible, accès abonné autorisé ; vérification que ni `BIBLIO.stats()` ni `BIBLIO.search()` ne sont appelés avant autorisation. Test structurel de l'ordre des contrôles pour la recherche, les statistiques et le raccourci de traduction.
+- CI sur le HEAD `2a64060dfacb632154bf8494dc918f1c7857ca2e` : run `44572087395` terminé avec succès ; validation structurelle & pédagogique et tests autonomes Professeur IA tous deux `success`.
+- Journal de régression : Worker IA **84/84**, QUST/Darja/Arabizi **9/9**, intégrité ontologie **8/8**, autres suites autonomes **5/5**, **4/4**, **1/1**, **10/10**, **1/1**, **3/3** ; RAG contrat **12/12** ; message confirmé `RAG lock : bibliothèque refusée sans entitlement backend`. Évaluation du classifieur toujours 103/103 sur le jeu interne préparé, sans généralisation à la production.
+- Trois workflows PostgreSQL du même HEAD réussis : `44572087314` (consentement Messenger), `44572087420` (ملتقى الطلاب), `44572087584` (découverte Messenger).
+- Audit PDF CI reconfirmé : 293 PDF analysés, 293 lignes d'inventaire appariées, 0 fichier orphelin, **0 droit confirmé / 293 droits non confirmés ou vides** ; aucune inférence de droits. Rapport technique `pdf-rights-and-readiness`, artefact CI `14554093236`. OCR et ingestion/embeddings réels non exécutés.
+- PR #23 reste ouverte, en brouillon, non fusionnée et mergeable. Aucun changement sur `main`, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+
+### Lots 656–657 — intégrité des pages du manuel et refus fermé — 19/11/2026
+- Lot 656 : suppression du repli automatique vers le manuel de l'autre niveau lorsqu'une page est absente du niveau demandé. Une demande 2AS ne peut donc plus récupérer par défaut la page de même numéro du manuel 3AS (et inversement). Une page absente est signalée comme non indexée pour le niveau demandé.
+- Lot 657 : le moteur local ne restitue le corps d'une page que si son entrée porte explicitement `locked === false`. Une propriété `locked` absente ne vaut plus autorisation ; le comportement est fail-closed.
+- Inventaire vérifié après correction : `buch_pages.json` contient 212 pages, aucun marqueur de verrouillage manquant, aucun corps sur une page verrouillée ; seules les pages 5, 6, 7, 10 et 25 sont explicitement gratuites. `buch3as_pages.json` contient 163 pages, aucun marqueur manquant, aucun corps sur une page verrouillée et aucune page explicitement gratuite.
+- Régressions ajoutées : page 5 2AS (gratuite) reste lisible ; page 8 2AS (verrouillée) ne révèle pas son corps ; page 3 2AS ne renvoie pas le contenu 3AS correspondant. Les assertions structurelles vérifient l'absence de repli inter-niveaux, l'exigence `locked === false` et le message de page non indexée.
+- Le premier CI a échoué sur une syntaxe invalide dans le test structurel, pas dans le moteur. Le test a été réparé sur le commit `19953866143a2a2847d66d34547ad8e7441afe5d`, puis la CI complète a été relancée.
+- Validation confirmée sur ce HEAD : CI principale run `44573507037` = success ; workflows PostgreSQL isolés `44573506105` (ملتقى الطلاب), `44573506074` (découverte Messenger) et `44573506115` (consentement Messenger) = success.
+- Limite : les tests vérifient les données et les chemins locaux simulés ; ils ne remplacent pas un E2E avec une session réelle sur un déploiement de cette branche. Les droits des PDF restent non confirmés (0/293) ; aucun OCR, ingestion réelle ni embedding documentaire n'a été exécuté.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucun changement de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte, en brouillon et non fusionnée.
+
+
+### Audit complémentaire — recherche RAG autonome et routes de réponse — 19/11/2026
+- Revue du chemin `🔎 اسأل المنصة` : le formulaire appelle `cherche()` directement, sans passer par le garde pédagogique `verifieAccesContenuIA()`. Cette observation imposait de vérifier la nature exacte des données accessibles avant de qualifier le chemin de fuite.
+- Vérification des artefacts actuellement publiés : `assets/bdd/shards_manifest.json` annonce `nb_shards=0` et `total_chunks=0`. Le repli `assets/bdd/corpus_index.json` contient un objet `items` de vocabulaire allemand-arabe, et non le schéma de recherche attendu (`termes` + `chunks`). Dans l'état actuel, `cherche()` ne peut donc retourner aucun extrait de corpus via ce chemin ; aucun contenu documentaire verrouillé n'est exposé par les shards actuels.
+- Le corpus RAG distant dédié est également vide : `corpus_rag_manifest.json` indique 0 document / 0 chunk et `corpus_rag_chunks.json` contient des listes vides. Le Worker vérifie le hash SHA-256 du fichier de chunks contre le manifeste avant toute recherche distante.
+- Conclusion limitée à l'état du HEAD audité : pas de fuite démontrée via la recherche RAG autonome, mais son index legacy est incompatible avec le schéma attendu et l'interface ne dispose actuellement d'aucun shard. Il s'agit d'une fonction RAG locale inactive/incomplète, pas d'une source documentaire utilisable.
+- Revue des chemins de réponse de `reponsePedagogique()` : le garde d'accès est exécuté avant les réponses locales de conjugaison, règles, bibliothèque, pages, exercices et avant le repli QUST. Les chemins serveur de pages, séances et corpus récupèrent les ressources avec le JWT et échouent fermés en cas d'indisponibilité ou de refus RLS. Aucun correctif de code n'a été appliqué sur la seule base d'un soupçon non confirmé.
+- Prochaine vérification technique : tester les chemins RAG avec des données factices autorisées et verrouillées, puis ajouter une garde dédiée à la recherche autonome avant que des shards non vides ne soient publiés. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucune fusion ni déploiement.
+
+
+### Lots 658–659 — verrouillage des demandes de grammaire, exemples et exercices — 19/11/2026
+- Lot 658 : extension du détecteur Worker `isLockedContentQuestion()` aux formulations de demandes d'exemples et de phrases modèles sur les règles grammaticales verrouillées : allemand (`Beispiele`, `Beispielsätze`), français et arabe. Le garde reste avant tout appel au modèle et la réponse refusée n'envoie aucun contenu pédagogique au modèle.
+- Lot 659 : extension du même détecteur aux demandes d'exercices, applications, tests et corrigés associés à une règle verrouillée (allemand, français, arabe). Le verrou s'applique lorsque le nom d'une règle verrouillée apparaît dans la question avec une intention pédagogique reconnue ; les questions générales ne sont pas bloquées par le seul fait de mentionner un terme grammatical.
+- Régressions ajoutées dans `tests/worker-ai-auth.test.mjs` : exemples `Perfekt Beispiele`, `Perfekt Beispielsätze`, `Exemples de Perfekt`, `Genitiv example sentences`, formulations arabes ; exercices `Perfekt Übungen`, `Übungen zum Genitiv`, `Perfekt Übungsaufgaben`, `Exercices sur le Dativ`, `Perfekt test`, formulations arabes. Chaque cas vérifie le statut 403, `content-locked` et l'absence d'appel au modèle.
+- La première exécution du jeu de tests a exposé un vrai défaut : le pluriel français `Exemples` n'était pas reconnu. Le détecteur a été corrigé pour reconnaître `exemple`, `exemples` et `phrase d'exemple`. La correction est sur le commit `370943fa3a5c5adf85f321b2deed9161735efdc6`.
+- Validation ciblée sur ce commit : suite Worker IA = 86/86 réussis ; validation structurelle et pédagogique = success. Workflows PostgreSQL isolés Multaqa, découverte Messenger et consentement Messenger : les deux premiers success, le troisième encore en cours au moment de cette mise à jour. CI principale globale encore en cours (audit technique PDF en cours) ; ne pas déclarer le lot 659 entièrement validé avant son achèvement.
+- Le commit antérieur `6f52aa4d` avait échoué uniquement sur le cas français `Exemples de Perfekt`, ce qui a permis de corriger le pluriel avant la validation du HEAD courant.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion et aucun déploiement manuel.
+
+### Lot 660 — alignement des gardes locaux et Worker pour exemples et exercices — 19/11/2026
+- Audit du garde local `rag.js` : le classifieur `demandeRegleVerrouilleeIA()` ne reconnaissait pas explicitement plusieurs formulations d'exemples, d'exercices et de pratique. Pour certaines règles non couvertes par les alias de `trouveRegle()`, une demande telle que « Nomen-Verb-Verbindungen Übungen » pouvait ne pas être refusée par le garde local en l'absence d'ACCESS.
+- Extension de l'intention grammaticale locale aux exemples (FR/DE/AR), exercices, tests, pratique et feuilles de travail (Arbeitsblatt/Übungsblatt/worksheet). Extension parallèle de `exerciseRequest` pour les demandes contextualisées.
+- Correction de l'interaction avec la normalisation Unicode NFD : les motifs allemands utilisent aussi les formes ASCII normalisées (`ubung`, `ubungen`, `ubungsaufgaben`, `ubungsblatt`, `beispielsatze`) puisque les accents combinatoires sont retirés avant classification.
+- Régressions ajoutées à `tests/regression_rag.mjs` pour vérifier, sans ACCESS, que les formulations allemandes, anglaises et arabes associées à des règles verrouillées retournent un refus avant toute réponse pédagogique.
+- Audit du Worker : ajout des mêmes intentions `Arbeitsblatt`, `Übungsblatt`, `practice` et `worksheet` au détecteur de règles verrouillées et à la classification d'évaluation. Ajout de tests directs Worker vérifiant HTTP 403 / `content-locked`, aucun contexte de résumé chargé et aucun appel au modèle.
+- Contrôle de la banque générale `B_exercices` : 50 entrées (31 en 2AS, 19 en 3AS), avec seulement les champs pédagogiques et le niveau, sans identifiant d'unité/séance ni marqueur d'accès. Le Worker la traite comme banque générale libre ; les demandes explicitement rattachées à une unité ou règle verrouillée restent filtrées par le garde.
+- Première CI après ajout des tests locaux : échec ciblé sur le premier cas allemand, révélant le décalage NFD/umlaut. Le motif a été corrigé et les variantes ASCII ont été ajoutées. Validation confirmée ensuite sur le commit `522079ed46bb93c11d46a1b6b17a9260b9e64700` : CI principale run `44581581060` = success ; Worker IA `87/87` ; suites complémentaires `14/14`, `9/9` et `5/5` ; validation structurelle = success ; workflows PostgreSQL `44581581047`, `44581581196`, `44581581068` = success. Le garde local a aussi passé ses cas Lot 660 sur le run `44581272312`.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+### Lot 661 — couverture des formulations « règle / phrase / tableau » — 19/11/2026
+- Extension complémentaire du détecteur local et du Worker aux formulations pédagogiques courantes qui ne contiennent ni « expliquer » ni « exercice » : `rule/rules`, `Regel/Regeln`, `règle(s)`, `sentence(s)`, `Satz/Sätze`, `phrase(s)`, `Tabelle/tableau/table`, `fiche(s)`, ainsi que les équivalents arabes `جملة/جمل/جدول`.
+- La règle ne se déclenche que si la question contient aussi une notion de `LOCKED_RULES` ; les demandes générales sans notion verrouillée restent hors de ce garde.
+- Ajout de cas de régression local et Worker : `Perfekt Sätze`, `Genitiv rules`, `Règles du Genitiv`, `جدول Dativ`. Les tests Worker exigent un refus `403 content-locked`, aucun chargement de résumé et aucun appel au modèle.
+- Validation confirmée sur le commit `6f782aac17fa9e613a76d51bd6477e56744588d4` : CI principale run `44582245595` = success ; validation structurelle = success ; job autonome Professeur IA = success ; suite Worker IA = `87/87`, `0` échec ; régressions RAG locales = success ; workflows PostgreSQL `44582245601` (découverte Messenger), `44582245658` (consentement Messenger) et `44582245710` (ملتقى الطلاب) = success. Le test Worker de Lot 660 inclut également les variantes Lot 661 et vérifie `403 content-locked`, absence de chargement de résumé et absence d'appel au modèle.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+### Lot 662 — classifier les intentions après normalisation Unicode — 19/11/2026
+- Nouveau contournement trouvé pendant l'audit : `isLockedContentQuestion()` normalisait le texte pour comparer les noms de règles, mais testait encore les intentions `grammarIntent`, `assessment` et `conjugationIntent` sur le texte brut. Des caractères décomposés (umlaut allemand sous forme base + marque combinatoire, diacritiques arabes) pouvaient donc ne pas activer le garde alors que le nom de règle était reconnu après normalisation.
+- Correction : les intentions sont maintenant évaluées sur `normalizedQuestion`. Les alias ASCII attendus après NFD sont pris en compte (`ubungen`, `ubungsblatt`, `beispielsatze`, `satz/saetze`, etc.) ; les alias de translittération `tamarin/tamrin` sont également reconnus. Les noms de conjugaisons verrouillées sont comparés dans la même forme normalisée.
+- Tests Worker ajoutés pour les formes décomposées allemandes (`u\\u0308bungen`, `u\\u0308bungsblatt`), arabes (`تَمارِين`) et translittérées. Ils exigent le refus `403 content-locked`, aucun chargement de résumé et aucun appel au modèle.
+- Commits du lot : `f39ffc3e3a592a956fdd866ad65017d061388525`, `588d4d79ad81277d263827cb73d244e69810d123`, `6db6640168e8cceb74e751a1e15e53ae610298da`, `c81a0441d7c61dfbff0f35ad4135b57795eae665`, `627edd9944465e1febcd3ecc0baf2f48c26b6fa4`.
+- État de validation : le dernier commit de code du lot est `627edd9944465e1febcd3ecc0baf2f48c26b6fa4` et la mise à jour documentaire est `b8866b269c57e36e0d68d26d8375220c76a7b615`. L'API GitHub ne retourne aucun workflow Actions associé à ces HEAD (`total_count=0`) ; le seul contrôle visible pour le commit de code est Supabase Preview, marqué `skipped`. Les tests Lot 662 ne sont donc pas déclarés validés par CI. Attendre une exécution réelle avant de conclure.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 663 — formulations naturelles d’aide sur les règles verrouillées — 19/11/2026
+- Audit de l'ordre Worker confirmé : isLockedContentQuestion(q, b.resource) s'exécute avant toute récupération documentaire et avant tout appel au modèle. Les ressources free_summary, free_exercise_bank et free_unit_lesson restent des chemins explicitement bornés ; leur existence ne doit pas neutraliser la classification d'une question portant sur une règle verrouillée.
+- Contournement identifié : les formulations naturelles « Can you help me with Perfekt? », « Hilf mir bitte mit Genitiv », « Kannst du mir Perfekt erklären? », « Aide-moi avec le Dativ » et « علمني Perfekt » ne contenaient pas toujours les marqueurs d'intention déjà reconnus. Avec un sélecteur gratuit fourni par le client, le garde pouvait donc ne pas demander l'entitlement.
+- Correction Worker : extension de grammarIntent aux verbes et formulations d'aide/apprentissage (help, teach, show, hilf, hilfe, erklär, erklar, bitte, aide, apprends, علمني, علّمني, تعلم). La correspondance reste conditionnée à la présence d'une notion de LOCKED_RULES ; les questions générales sans notion verrouillée ne sont pas bloquées par ces mots seuls.
+- Tests Worker ajoutés pour huit formulations en anglais, allemand, français et arabe, avec les deux sélecteurs gratuits free_summary et free_exercise_bank. Chaque combinaison exige HTTP 403 / content-locked, aucun contexte envoyé au modèle, zéro appel modèle et aucune lecture des fichiers de résumé ou de banque générale.
+- Commits : Worker c64e17b0568fc87cdc6672894b2d2da4d18b2a4c ; tests c86943c20c002da56bae65d6d80cac8817ebc662.
+- Validation CI Lot 663 : le workflow principal 44587904122 sur c86943c20c002da56bae65d6d80cac8817ebc662 a été annulé (cancelled) lors de l'actualisation suivante de la branche ; aucun résultat de tests Worker n'est donc disponible pour ce lot. Ne pas interpréter cette annulation comme un succès ni comme un échec des tests.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de main, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 664 — un sélecteur gratuit ne prouve pas l'accès à une séance — 19/11/2026
+- Audit complémentaire du garde Worker : la condition historique laissait passer toute mention de séance 1 ou 2 dès qu'un objet resource quelconque était présent. Cela pouvait laisser une demande telle que « Explain Perfekt in lesson 1 » atteindre le modèle avec un sélecteur free_summary ou free_exercise_bank, alors que ces sélecteurs ne prouvent aucun droit sur une séance.
+- Correction : les ressources free_summary et free_exercise_bank ne peuvent plus neutraliser une demande explicitement rattachée à une séance numérotée. Le contrôle d'abonnement est alors exécuté avant le chargement du résumé ou de la banque. Les séances gratuites 3AS 1–2 restent sur leur sélecteur dédié free_unit_lesson, strictement limité à l'unité 1 et aux séances 1–2 ; les ressources book_page/book_pages et unit_lesson continuent de suivre leurs contrôles RLS existants.
+- Régressions ajoutées : une demande de règle verrouillée formulée comme « Explain Perfekt in lesson 1 » avec free_summary et « Genitiv exercises lesson 1 » avec free_exercise_bank doit être refusée pour un compte sans abonnement, avant toute lecture documentaire et tout appel au modèle.
+- Commit Worker : 8fe05acd7497b20919e964b8bdd44ba45fa12df0. Les tests de ce lot sont ajoutés ensuite dans le commit de tests final pour déclencher une CI sur un HEAD complet.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de main, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### État CI consolidé après Lots 663–664 — 19/11/2026
+- HEAD code/tests : 1beae9104d3c557139398e3cae6038964d7b8351. Les trois workflows PostgreSQL isolés liés à ce HEAD sont terminés success : Multaqa (44588250950), découverte Messenger (44588250916) et consentement Messenger (44588250853).
+- Le contrôle Supabase Preview est skipped (branche non associée à un Supabase Branch). Il ne constitue pas un test applicatif.
+- Le workflow principal CI — ALLEMAND du HEAD 1beae9104d3c557139398e3cae6038964d7b8351 a été créé sous le run 44588250861 puis annulé (cancelled) avant de produire des jobs. Le run précédent 44587904122 est également cancelled. Les tests Worker des Lots 663 et 664 ne sont donc pas déclarés validés.
+- PR #23 est toujours ouverte, en brouillon et non fusionnée. Aucun déploiement n'a été effectué ; aucune modification de main ou de Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+### Validation complète Lots 663–664 — CI du 19/11/2026
+- HEAD testé : adc2e15af53e5d81072b2f000dfe7148293fee1e ; workflow principal CI — ALLEMAND 44588593390 terminé SUCCESS. Jobs Tests autonomes — Professeur IA et Validation structurelle & pédagogique tous deux SUCCESS. Build Cloudflare Workers Workers Builds: allemand également SUCCESS. Supabase Preview SKIPPED, sans modification ni opération Supabase.
+- Tests Worker : tests/worker-ai-auth.test.mjs 89 tests, tous réussis. Les nouveaux cas Lot 663 (formulations naturelles en anglais, allemand, français et arabe avec sélecteurs gratuits) et Lot 664 (sélecteur de résumé/banque gratuite ne pouvant pas déverrouiller une séance numérotée) apparaissent explicitement dans le journal et passent.
+- Protection de contenu serveur : tests/site-worker-content-guard.test.mjs 14 tests, tous réussis. QUST/Darija/Arabizi : 9 tests, zéro échec. Intégrité ontologie : 5 tests, tous réussis. Évaluation du classifieur sur 103 exemples : 103 corrects, 0 faux, 0 ambigu, couverture 100 %, exactitude 100 %. Contrat RAG : 12/12 questions.
+- Contrôles PostgreSQL isolés sur le même HEAD : Multaqa (44588593252), découverte Messenger (44588593506) et consentement Messenger (44588593324) tous terminés SUCCESS.
+- Audit PDF : 293 PDF, 1 173 pages ; 767 pages avec texte extractible, 406 sans texte ; 186 fichiers extractibles, 28 mixtes, 78 candidats OCR et 1 chiffré. Les 293 chemins sont rapprochés de l'inventaire sans orphelin. Droits confirmés : 0/293 ; OCR non exécuté ; texte extrait non sauvegardé ; aucun document indexé dans le RAG. Artefact CSV pdf-rights-and-readiness, ID 14562116496.
+- Conclusion : Lots 663–664 techniquement validés par CI. Cela ne signifie pas que le corpus PDF est disponible au Professeur IA : les droits ne sont confirmés pour aucun PDF et l'index RAG PDF reste vide. Aucun OCR ni ingestion réelle n'a été lancé.
+- Fusion : PR #23 reste ouverte, brouillon et non fusionnée. La fusion n'interviendra qu'après audit final de la PR et confirmation explicite de l'utilisateur. Aucun déploiement, aucune modification de main ni de Supabase/Auth/RLS/schéma/abonnement/paiement.
+### Lot 665 — normalisation des marqueurs de séance et d'unité — 19/11/2026
+- Audit du garde Worker : les noms de règles et les marqueurs d'intention étaient normalisés, mais les expressions de détection de séance/unité étaient encore appliquées au texte brut. Les accents décomposés et diacritiques arabes pouvaient empêcher la détection de « leçon 3 », « séance 3 », « الحِصّة 3 » ou « الوِحدة 2 ».
+- Correction : unitMatch et lessonMatch utilisent désormais normalizedQuestion. Les variantes françaises désaccentuées lecon/seance sont explicitement reconnues après normalisation ; les marqueurs arabes sont reconnus après retrait des diacritiques et du tatweel.
+- Régressions ajoutées : quatre variantes accentuées/décomposées (français et arabe) exigent 403 content-locked, aucun contexte envoyé au modèle et zéro appel modèle.
+- Commits : Worker f68912cffca227546342c02ee897de3efab2f2dc ; tests 883bd977f15110e4c8c5240b1c1ed1c45de6f35b.
+- Validation : workflow principal 44591681987 sur le HEAD 883bd977f15110e4c8c5240b1c1ed1c45de6f35b est pending au moment de cette note ; tests non déclarés validés avant la fin du workflow.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucune modification de main, aucune fusion, aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 666 — fermeture du repli RAG documentaire local — 19/11/2026
+- L'audit du parcours `🔎 اسأل المنصة` confirme que les questions passent d'abord par `reponsePedagogique()`, puis, si aucune réponse pédagogique n'est produite, le formulaire appelait directement `cherche(q)` dans les shards statiques du navigateur.
+- Ce chemin local ne vérifie ni les droits du document ni son entitlement et ne peut pas s'appuyer sur le contrôle serveur du Worker. Le fait que les shards soient actuellement vides réduit le risque présent, mais ne constitue pas une protection durable si des chunks sont publiés ultérieurement.
+- Correctif : `cherche()` s'abstient désormais systématiquement. Le formulaire RAG affiche une indisponibilité documentaire explicite au lieu de lire un shard local. La recherche PDF doit passer exclusivement par le Worker authentifié, qui valide le manifeste, `rights_confirmed === true` et une licence autorisée avant de transmettre un extrait au modèle.
+- Une régression a été ajoutée dans `tests/regression_rag.mjs` : elle fournit une fixture de shard contenant volontairement un extrait marqué non autorisé et exige que la recherche locale s'abstienne.
+- Commits Lot 666 : `b4041336f430d5a38344c6c51710db6870f5a797` (fermeture du chemin local) et `7370a4c6761f9875e94d96be55e942b463c0b3de` (test de régression).
+- CI du HEAD `7370a4c6761f9875e94d96be55e942b463c0b3de` : workflow principal `44593318470` et trois workflows PostgreSQL `44593318529`, `44593318537`, `44593318548` lancés et encore `in_progress` au moment de cette note. Aucun test du Lot 666 n'est déclaré réussi avant la fin du workflow principal.
+- Limite fonctionnelle assumée : la recherche RAG documentaire dans l'interface est temporairement désactivée tant que son raccordement au Worker authentifié n'est pas réalisé. Le Worker possède déjà un chemin `corpus_search` avec contrôle de licence/droits ; le prochain lot devra raccorder l'interface à ce chemin sans réintroduire de lecture statique locale.
+- Corpus PDF : les droits restent à confirmer (0/293 selon le dernier audit), OCR non exécuté et indexation/embeddings réels toujours absents. Aucun document n'est autorisé par défaut.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte, en brouillon et non fusionnée.
+
+
+### Lot 667 — raccordement de l'interface RAG au cerveau IA central — 19/11/2026
+- L'audit du parcours de recherche a confirmé que le Worker possédait déjà le traitement serveur `corpus_search` / `corpus_document` : authentification JWT Supabase, lecture du corpus et de son manifeste, vérification SHA-256, intégrité documents/chunks, filtre `rights_confirmed === true` et licences autorisées, classement lexical BM25 ; le classement vectoriel reste facultatif et désactivé par défaut.
+- Le défaut se situait dans l'interface `rag.js` : après abstention du moteur local, elle affichait un message d'indisponibilité sans appeler `window.reponseIA`. Le Worker sécurisé existait donc, mais le formulaire `اسأل المنصة` ne lui transmettait pas les recherches documentaires.
+- Correctif : en cas d'absence de réponse locale, le formulaire délègue maintenant à `window.reponseIA(q, {source:'rag-interface'})`. `ia.js` détecte les demandes `corpus_search` ou `corpus_document`, récupère la session Supabase et transmet le JWT au Worker `/ask`. Aucun extrait ni shard PDF n'est chargé dans le navigateur.
+- La réponse du cerveau est affichée comme texte échappé, avec un message d'abstention si aucun extrait autorisé ne peut être récupéré. Le libellé de l'écran a été corrigé : il ne prétend plus que chaque réponse provient toujours d'un extrait du corpus ni que les shards sont chargés côté client.
+- Régression ajoutée dans `tests/regression_rag.mjs` : simule une question PDF, vérifie qu'elle est transmise à `reponseIA`, et vérifie qu'une réponse contenant du HTML est affichée sans exécution de balises.
+- Commits Lot 667 : `5edd2afb` (raccordement initial), `3b204923` (libellés et commentaire cohérents), `d2e5a142` (test de raccordement et échappement).
+- État de validation au moment de cette note : le HEAD de la PR est `d2e5a142582e8eb6cff91ff91e99cc8815d8ac33`. Les workflows associés à ce HEAD ne sont pas encore remontés par l'API GitHub ; les workflows précédents ne valident pas ce nouveau test. Ne pas déclarer le Lot 667 validé avant une CI verte sur ce HEAD.
+- Le raccordement n'active pas l'ingestion des PDF : inventaire précédent toujours 293 PDF, droits confirmés 0/293, indexation réelle 0, OCR réel non exécuté, vecteurs réels 0. Le Worker renverra une abstention si aucun document admissible n'est publié.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun changement de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte, en brouillon et non fusionnée.
+
+
+### Lot 668 — qualité d'extraction et traçabilité des pages — 19/11/2026
+- Vérification préalable : CI principale du HEAD `1a5f621fb3440268eced7e2e45110825f75853b7` terminée SUCCESS ; jobs « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » SUCCESS. Les trois workflows PostgreSQL associés au même HEAD sont SUCCESS.
+- Audit de `tools/ingest_corpus_rag.py` : la qualité de page contrôlait déjà la longueur, les caractères de contrôle et les glyphes PDF bruts, mais ne rejetait pas explicitement le caractère de remplacement Unicode U+FFFD ni plusieurs signatures courantes de mojibake. En cas d'extraction partielle, les pages écartées n'étaient pas détaillées dans les métadonnées du document.
+- Correctif : contrôle explicite de U+FFFD, des caractères Unicode de zone privée et de signatures de mojibake ; ajout de `extract_pdf_report` qui conserve l'API historique `extract_pdf` tout en fournissant nombre de pages, pages indexées, pages omises, motif qualité par page et indicateur d'OCR réellement tenté. Ces données sont enregistrées dans les métadonnées des documents ; les PDF entièrement inexploitable conservent aussi leur rapport dans la liste des éléments ignorés.
+- Tests ajoutés : rejet U+FFFD/mojibake et rapport de pages mixtes avec numéros de page et motifs. Aucun OCR n'a été exécuté pendant ce lot ; l'indicateur `ocr_attempted` n'est renseigné à true que si l'option OCR est explicitement utilisée par l'outil.
+- Portée inchangée : seuls les PDF confirmés dans l'inventaire central et le fichier compagnon cohérent peuvent être traités ; aucun droit n'est présumé. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucun changement de `main`, aucune fusion et aucun déploiement.
+- CI du nouveau HEAD : en attente de déclenchement/fin d'exécution ; ne pas déclarer le Lot 668 validé avant succès sur le commit qui contient le code et les tests.
+
+- Correctif de test en cours de lot : la première CI du Lot 668 a révélé que le contrôle U+FFFD contenait un antislash littéral supplémentaire ; deux tests ont donc échoué sur le commit intermédiaire `690591ab29d45d3a62dcda68032427d5523f95ff`. Le contrôle a été corrigé dans `43fa16e20a1962720a96f03c6ec54f63c423d389`. Cette première CI est explicitement considérée comme FAILURE, et non comme validation. Une nouvelle CI sur le HEAD corrigé est requise.
+
+
+### Lot 669 — validation stricte des références de page RAG — 19/11/2026
+- Après validation CI du Lot 668, audit de bout en bout du Worker RAG : le manifeste vérifiait le SHA-256, les nombres de documents/chunks, les IDs uniques, les références documentaires et les comptes de chunks. En revanche, le schéma de chaque chunk ne vérifiait pas explicitement le numéro de page ni la nature/longueur du texte ; le Worker convertissait ensuite la page avec `Number(...)` pour l'afficher dans les références.
+- Correctif : chaque chunk doit maintenant porter une page entière strictement positive, un texte non vide de type chaîne et de longueur maximale 20 000 caractères. Si le document fournit `page_count`, la page du chunk ne peut pas le dépasser. Le champ optionnel `part`, lorsqu'il existe, doit être un entier positif ou nul. Tout artefact incohérent est refusé en mode fermé avant le classement et l'appel au modèle.
+- Tests Worker ajoutés pour page nulle, négative, décimale, chaîne, dépassement de page_count, texte vide et chunk dépassant la limite ; chaque cas exige HTTP 503 et aucun message transmis au modèle.
+- Portée : validation de cohérence/provenance des extraits, sans modifier l'algorithme de classement, l'accès général au Professeur IA ni les contrôles de droits/abonnement. Aucun OCR ni ingestion PDF réelle. Aucun changement Supabase/Auth/RLS/schéma/paiement, aucune modification de main, aucune fusion, aucun déploiement.
+- CI du HEAD contenant ce lot : à vérifier avant de déclarer le Lot 669 validé.
+
+- Précision ajoutée pendant la revue du Lot 669 : un `page_count` présent mais mal typé (ex. chaîne) ou inférieur à 1 est lui-même invalide et ne doit pas désactiver la comparaison. Le Worker exige maintenant un entier strictement positif dès que le champ est fourni ; deux cas de test supplémentaires couvrent zéro et chaîne. La CI précédente est à considérer comme obsolète pour ce HEAD modifié ; validation à refaire sur le commit final.
+
+- Relecture des fixtures : correction de la construction du cas `page_count: 0` afin que la valeur zéro soit bien transmise au Worker (test conditionnel sur la présence de propriété, et non sur sa vérité). Ce test vérifie désormais réellement le rejet du zéro. Le commit précédent reste non final pour la validation ; attendre la CI du dernier HEAD.
+
+
+### Validation finale du Lot 669 — 19/11/2026
+- HEAD validé : `ed56ab7397b08fb57972bb4538f27295aef04b2d`.
+- CI principale `44598579361` : SUCCESS. Les jobs « Tests autonomes — Professeur IA » et « Validation structurelle & pédagogique » sont SUCCESS.
+- Workflows PostgreSQL sur le même HEAD : `44598579117` (ملتقى الطلاب), `44598578863` (découverte Messenger) et `44598578941` (consentement Messenger) : SUCCESS tous les trois.
+- Le Lot 669 est donc validé sur son HEAD final. Aucun changement de périmètre : pas de fusion, pas de déploiement, pas de modification de `main`, Supabase, Auth, RLS, schéma ou paiement.
+
+### Lot 670 — verrouillage de non-régression de l’accès général au Professeur IA — 19/11/2026
+- Audit ciblé du handler `/ask` et des tests d’authentification : une question générale d’un utilisateur authentifié sans ressource pédagogique doit parvenir au modèle sans déclencher de contrôle d’abonnement. Les contenus identifiés comme verrouillés continuent, eux, à passer par le garde d’accès et le contrôle d’abonnement.
+- Le comportement était déjà implémenté dans le Worker et couvert partiellement par le test « accepte un utilisateur Auth valide mais ne transmet aucun contexte client au modèle ». Le test est renforcé pour affirmer explicitement qu’aucune lecture de `subscriptions` n’est effectuée et qu’un appel au modèle a bien lieu pour cette question générale.
+- Aucun changement de logique Worker, d’accès aux contenus, de configuration Supabase ou de droits n’est introduit dans ce lot ; il s’agit d’une protection de non-régression du contrat d’accès demandé.
+- Commit du test : `1161ae004e3b493d2c2daad7ccb985d5be4d8786`. CI de ce nouveau HEAD à vérifier avant validation du Lot 670.
+- Rappel permanent : le Professeur IA général est accessible à tout utilisateur authentifié, avec ou sans abonnement ; les contenus pédagogiques verrouillés restent soumis à leurs contrôles dédiés. Aucun OCR, aucune ingestion réelle de PDF sans droits confirmés.
+
+
+### Lot 671 — rejet des en-têtes CSV ambigus dans l’inventaire des droits — 19/11/2026
+- Audit complémentaire des deux chemins qui consomment l’inventaire humain : `tools/validate_pdf_rights_inventory.py` et `tools/ingest_corpus_rag.py`.
+- Défaut identifié : `csv.DictReader` accepte des noms de colonnes dupliqués et conserve silencieusement une seule valeur pour la clé répétée. Un CSV pouvait donc afficher deux colonnes `rights_confirmed` contradictoires, tandis que le programme n'en lisait qu'une. Pour une preuve de droits, une telle ambiguïté doit être bloquante.
+- Correctif : le validateur retourne désormais une erreur `entetes_csv_dupliquees` avant toute approbation ; le chargeur d'ingestion lève `entetes_inventaire_droits_dupliquees` avant toute écriture d'artefact. Les colonnes requises et les contrôles précédents restent inchangés.
+- Régressions ajoutées dans `tests/test_validate_pdf_rights_inventory.py` et `tests/test_ingest_corpus_rag.py`, avec deux colonnes `rights_confirmed` contradictoires. Le test d'ingestion vérifie qu'aucun artefact n'est écrit.
+- Commits du Lot 671 : `9913fe809629b7f7cb46640914e4280064beb962`, `1bc5386d188491902ac9f7d53883f55916c000b4`, `5a3e350c6ce9068d11945879ccf9a47ab02ec747`, `759aed4357684bd48439a4d0d5f84ee1001f5fcd`.
+- Les lots 670 et 671 doivent être considérés comme non validés tant que la CI complète du HEAD qui les contient n'est pas terminée avec succès.
+- Aucun PDF n'a été OCRisé ou indexé ; aucune ligne de droits n'a été confirmée par ce lot. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucune modification de `main`, aucune fusion et aucun déploiement.
+
+
+- Correction de fixture du Lot 671 : la première écriture des deux CSV de test contenait un antislash supplémentaire avant le séparateur de ligne, ce qui empêchait de tester réellement les en-têtes dupliqués. Les deux fixtures ont été corrigées pour écrire de vraies lignes CSV distinctes dans `e64bac55633df4c5ab026caf26d30b8690ef948f` et `b05f08de2d4f0ca943cb10e4206f31f2a3feb179`. Les validations antérieures ne couvrent pas ces corrections ; attendre la CI du HEAD final.
+
+
+### Lot 672 — vérifier l’empreinte du corpus avant les embeddings Cloudflare — 19/11/2026
+- Audit de `tools/build_corpus_rag_vectors.py` : le générateur vérifiait les comptes document/chunk et les droits déclarés, puis calculait l'empreinte du corpus pour l'artefact vectoriel. Il ne comparait toutefois pas cette empreinte au champ `chunks_sha256` du manifeste avant de lancer les appels d'embedding.
+- Risque : un manifeste périmé ou incohérent pouvait déclencher des appels Workers AI potentiellement facturables pour produire un index qui serait ensuite rejeté par le Worker RAG en production.
+- Correctif : le mode CLI, y compris le dry-run, exige désormais un `chunks_sha256` présent et strictement égal au SHA-256 des octets du corpus. Le refus intervient avant toute demande Cloudflare et avant l'écriture de l'artefact.
+- Test ajouté : manifeste à empreinte erronée avec `--execute` et confirmation explicite de facturation ; l'appel Cloudflare est simulé et doit rester absent, le code doit échouer et aucun fichier de vecteurs ne doit être créé. Le test de dry-run fournit désormais un manifeste cohérent.
+- Commits : `72a4de7278ba0fb3d21039b5883b9f3d282dca12` (outil), `1f625ce4519f0fe2da7d60bdb8e9d7a855954a51` (test).
+- Le Lot 672 et les corrections finales des fixtures 671 doivent être validés par la CI du nouveau HEAD avant clôture. Aucun embedding réel ni appel Cloudflare n'a été effectué par ce lot.
+- Rappel : aucune ingestion PDF, aucun OCR ni vectorisation réelle sans droits confirmés. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucune modification de `main`, aucune fusion et aucun déploiement.
+
+
+- Durcissement complémentaire du Lot 672 : le garde d'empreinte vérifie d'abord que le manifeste JSON est bien un objet avant d'accéder à ses champs. Un manifeste JSON valide mais de type tableau est refusé proprement avec le code d'erreur contrôlé du CLI, sans appel API ni écriture. Test ajouté. Commits : `b7c896a12b891650d440919b7a3d0876301c0d62` et `c0adadaec9be3bfe519943602df90201fe9498d8`. La CI précédente du Lot 672 ne couvre pas ce durcissement ; attendre celle du HEAD mis à jour.
+
+
+- Portée interne du Lot 672 renforcée : le contrôle de hash est également appliqué dans `build_artifact()`, et pas seulement dans le CLI. Un appel direct à l'API Python ne peut donc pas contourner la vérification avant le callback d'embedding. Le test vérifie que le callback n'est jamais appelé si le manifeste ne correspond pas aux octets du corpus. Commits : `88ab7e266b39447f0634087819da02b76f728c4f` et `a08993ca75559dfdc865b98e3b4993191b5c6fbf`. Attendre la CI finale.
+
+
+- Résultat de la première CI du Lot 672 sur `9c2b014a8f23fb96ae0d52fcd14b2a935738906c` : FAILURE dans un seul test. Le manifeste `[]` était correctement rejeté, mais le helper renvoyait `manifest_chunks_sha256_invalide` alors que le test attendait le code de schéma `manifest_json_invalide`. Les suites ingestion PDF (17 tests), inventaire des droits (16 tests) et audit de disponibilité PDF (11 tests) étaient vertes ; la suite vector builder avait uniquement cette assertion divergente.
+- Correction : `validate_manifest_chunks_hash` distingue maintenant explicitement un manifeste qui n'est pas un objet JSON (`manifest_json_invalide`) d'un manifeste objet dont l'empreinte manque ou diffère (`manifest_chunks_sha256_invalide`). Commit : `7ca838595597f30522c090fc1be1113330a032dc`. Cette CI FAILURE est conservée dans l'historique et n'est pas comptée comme validation.
+
+
+### Lot 673 — lier les vecteurs aux chunks approuvés et valider leur provenance — 19/11/2026
+- Audit de l'API Python `build_artifact()` : le contrôle SHA-256 du manifeste était nécessaire, mais un appelant interne pouvait encore fournir une liste `chunks` arbitraire différente du corpus dont le hash était valide. Le CLI passait la liste filtrée, mais la fonction publique ne garantissait pas elle-même ce lien.
+- Correctif : `build_artifact()` relit les octets du corpus, vérifie le manifeste et recalcule la liste exacte des chunks admissibles avec `eligible_chunks()`. Toute liste fournie qui diffère de cette liste est refusée avant l'appel du callback d'embedding.
+- Alignement des validations de métadonnées sur le Worker RAG : page entière >= 1, page ne dépassant pas `page_count` lorsqu'il est présent, `page_count` valide, `part` entier >= 0 lorsqu'il est fourni, texte non vide et <= 20 000 caractères.
+- Tests ajoutés : appel direct avec un chunk provenant d'un document dont les droits ne sont pas confirmés (callback jamais appelé), pages nulles/hors document, partie négative et texte trop long. Le test de construction nominale utilise maintenant un corpus et un manifeste cohérents.
+- Commits : `453782805d757befe153e8c2ba9053496d4f5995`, `8f442a537dbd4e8ba66e55136319615312270368`, `19d6974a11ea516f39bf023a77fb9641279c04e4`, `0c6ca6f3ca375afcfa8af3b9440a4206491d88e4`.
+- Ce lot doit être validé par la CI complète du HEAD courant. Aucun appel Cloudflare, aucun embedding réel, aucun OCR et aucune ingestion de PDF n'ont été exécutés.
+- Les lots précédents restent inchangés : Professeur IA général accessible à tout utilisateur authentifié ; ressources verrouillées toujours protégées. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement, aucune modification de `main`, aucune fusion et aucun déploiement.
+
+
+- Première CI du Lot 673 sur le commit intermédiaire `8f442a537dbd4e8ba66e55136319615312270368` : échec d'une assertion de test uniquement. Le test nominal comparait encore `source_chunks_sha256` au hash de l'ancien fixture `b"chunks"`, alors qu'il utilise maintenant les octets JSON réels du corpus pour satisfaire le nouveau contrôle de provenance. Les autres tests de la suite vector builder, les 17 tests d'ingestion, les 16 tests de droits et les 11 tests d'audit PDF ont réussi.
+- Correction de l'assertion pour comparer avec `chunks_bytes` : commit `2888472bb0b5d44420e0f212b46125ba5465c8e3`. Cet échec intermédiaire est conservé dans le suivi et n'est pas compté comme validation. Attendre la CI du HEAD final `2f768c0b1754946e7215353b0c8675da893b2e1f` ou de son successeur.
+
+## Lot 674 — rejet des clés JSON dupliquées dans les entrées RAG
+
+- Risque identifié : le parseur JSON standard de Python accepte les clés dupliquées dans un même objet et conserve silencieusement la dernière valeur. Un fichier de métadonnées pouvait donc contenir deux valeurs contradictoires pour `droits_confirmes` ou `license`, tandis qu'un manifeste pouvait présenter des champs de contrôle ambigus.
+- `tools/build_corpus_rag_vectors.py` utilise maintenant un parseur strict avec `object_pairs_hook` : toute clé répétée, y compris dans un objet imbriqué, provoque un refus explicite `cle_json_duplique:<clé>`. Ce contrôle s'applique au corpus et au manifeste, en CLI comme dans `build_artifact()`.
+- `tools/ingest_corpus_rag.py` applique le même principe aux fichiers compagnons JSON. Une métadonnée ambiguë est traitée comme absente/invalide et ne peut jamais autoriser l'indexation.
+- `worker/ia-ask.js` vérifie également les clés uniques avant de décoder les artefacts statiques du RAG (corpus, manifeste, vecteurs), les autres JSON pédagogiques servis côté Worker et le corps JSON de la requête `/ask`. Une requête contenant deux valeurs pour la même clé est refusée en `400 invalid-json` après validation du JWT mais avant tout appel au modèle ; les artefacts ambigus sont refusés dans le chemin d'erreur fermé du Worker.
+- Tests ajoutés : doublon de `chunks_sha256` dans le manifeste avant callback d'embedding, doublon imbriqué de `rights_confirmed`, et refus d'un compagnon PDF présentant deux valeurs contradictoires.
+- Aucun OCR, aucune ingestion réelle, aucun embedding, aucun appel Cloudflare et aucune modification Supabase n'ont été exécutés.
+- Validation CI du code et des tests sur le commit `c59819c1e02728482a85b1a9bb1ccb6b196b6411` : CI principale et les trois workflows PostgreSQL réussis. Le contrôle structurel/pédagogique et les tests autonomes du Professeur IA ont également réussi.
+
+- Extension du lot après le premier passage CI vert : le parseur strict est maintenant appliqué aussi au JSON entrant `/ask`, avec un test garantissant le refus après Auth JWT et avant le modèle. Une nouvelle validation CI est en cours sur le HEAD actualisé.
+
+## Lot 675 — intégrité complète de l'index vectoriel côté Worker
+
+- Audit du chemin de recherche hybride : l'index vectoriel était déjà lié au SHA-256 du corpus de chunks, mais pas au SHA-256 du manifeste qui accompagne ce corpus.
+- Le Worker calcule maintenant aussi le hash exact des octets du manifeste reçu et exige que `source_manifest_sha256` corresponde à ce manifeste.
+- Le Worker exige le modèle attendu, 256 dimensions et la normalisation `l2`, en cohérence avec le générateur.
+- Un index vectoriel n'est désormais utilisé que si chaque chunk actuellement autorisé possède exactement un vecteur valide (document propriétaire identique, 256 valeurs finies, norme non nulle). Les entrées étrangères restent exclues ; les doublons, rattachements contradictoires, vecteurs invalides ou couverture partielle désactivent l'index complet et déclenchent le repli BM25.
+- Tests ajoutés : manifeste source contradictoire et index incomplet doivent éviter tout appel d'embedding et utiliser le classement lexical ; les tests hybrides existants continuent de vérifier l'exclusion des documents non autorisés.
+- Aucun appel Workers AI réel, aucune vectorisation, aucune ingestion, aucun OCR et aucune modification Supabase n'ont été exécutés.
+- Validation CI de ce lot : en attente sur le HEAD actualisé.
+
+## Lot 676 — tester réellement le chemin vectoriel complet et son repli
+
+- La revue après le Lot 675 a révélé un faux sentiment de couverture dans le test historique « une panne des embeddings conserve le repli BM25 » : son fixture ne contenait qu'un vecteur alors que le corpus de test comporte deux chunks autorisés. Depuis l'exigence de couverture complète du Lot 675, le Worker rejetait donc l'index avant d'appeler le modèle d'embedding ; le test passait sans exercer la panne simulée.
+- Le fixture du test de panne contient maintenant les deux vecteurs requis. Il atteint donc bien l'appel env.AI.run() de l'embedding de requête, déclenche l'exception simulée, puis vérifie que le classement BM25 permet toujours de répondre.
+- Ajout d'un test nominal complémentaire avec un index couvrant les deux chunks autorisés : il vérifie que le Worker appelle effectivement le modèle d'embedding de requête et poursuit jusqu'à la réponse pédagogique.
+- Ce lot corrige la couverture des tests, sans changement de comportement de production. Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion ni déploiement.
+- Commit test : 3bf99f91652c43fb087cc3dacfe5b9281070f47f. La CI complète du nouveau HEAD doit confirmer ce lot.
+- Contraintes inchangées : PR #23 reste non fusionnée ; aucune modification de main, Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun déploiement.
+
+## Lot 677 — repli BM25 sur embedding de requête invalide
+
+- Audit du chemin hybride confirmé : le Worker conserve le classement lexical si le modèle d'embedding échoue, renvoie une dimension incorrecte ou un vecteur de norme nulle. La validation des valeurs non finies est également couverte.
+- Ajout d'une régression paramétrée couvrant trois réponses d'embedding de requête invalides : vecteur de dimension 2, vecteur nul de 256 dimensions et vecteur contenant NaN. Pour chaque cas, le test utilise un index vectoriel complet et vérifie que l'appel d'embedding a réellement eu lieu, que la réponse pédagogique BM25 reste disponible et que la requête ne tombe pas en erreur.
+- Aucun changement du Worker de production : le comportement de repli existant est désormais réellement testé sur un index conforme.
+- Commit test : 13d0f39cce595e431417c86a24693ce5b2a6feae. CI complète du HEAD suivant requise.
+- Aucun appel Workers AI réel, aucune vectorisation, OCR, ingestion ou déploiement. PR #23 non fusionnée ; aucune modification de main ni de Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 678 — prouver que le test de panne atteint réellement l'embedding
+
+- Relecture du test `une panne des embeddings conserve le repli BM25` après le Lot 677 : le fixture est désormais complet, mais l'assertion vérifiait seulement la réponse finale. Une régression dans le harness ou dans le chemin d'activation aurait pu faire réussir le test sans atteindre `env.AI.run()`.
+- Ajout d'une assertion explicite sur `h.aiCalls` pour exiger l'appel au modèle `@cf/google/embeddinggemma-2` avant de conclure que BM25 a assuré le repli après l'exception simulée.
+- Ce lot renforce uniquement la preuve du test ; aucun changement de comportement Worker en production.
+- Commit du test : `aea302145442e6bac62996051cb9acef214f54ba`. Validation CI complète du HEAD final requise.
+- Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 679 — couvrir le débordement numérique de la norme d'embedding
+
+- Extension des cas d'embedding de requête invalides : des composantes peuvent être individuellement finies tout en provoquant un débordement lors du calcul de la norme euclidienne (par exemple `Number.MAX_VALUE`).
+- Ajout de ce cas à la régression paramétrée du repli BM25. Le test exige toujours que l'appel d'embedding soit atteint et que la réponse lexicale reste disponible.
+- Le Worker calcule une norme non finie ; les similarités ne produisent alors aucun candidat sémantique exploitable et le classement lexical demeure le résultat de secours. Ce lot ajoute une preuve de non-régression sans modifier le Worker.
+- Commit du test : `feb10f2763fe8bbce659953c48827b1eae980c6c`. Validation CI complète du HEAD final requise.
+- Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 680 — rejet explicite d'une norme de requête non finie
+
+- L'audit du chemin hybride a confirmé que les composantes de l'embedding de requête étaient vérifiées individuellement avec `Number.isFinite`, mais que la norme calculée n'était testée que par `queryNorm > 0`.
+- Un vecteur de composantes finies mais très grandes peut produire une norme `Infinity`. Le classement sémantique poursuivait alors une normalisation non valide, même si le repli BM25 évitait une erreur visible.
+- Le Worker exige désormais explicitement `Number.isFinite(queryNorm) && queryNorm > 0` avant toute normalisation et tout classement vectoriel. Si le contrôle échoue, le classement lexical conservé reste la voie de secours.
+- Le scénario `Number.MAX_VALUE` introduit au Lot 679 couvre ce cas. Commit Worker : `98f129fc2ff82486ac006a31b131cbbfb314cf31`. Validation CI complète du HEAD final requise.
+- Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 681 — bornage des lectures des artefacts RAG en octets
+
+- L'audit des limites a identifié que le Worker appelait response.text() avant de contrôler la taille des artefacts. Le contrôle de longueur intervenait donc après lecture complète et utilisait des caractères JavaScript, pas le nombre réel d'octets reçus.
+- Ajout de readTextLimited(response, maxBytes) : contrôle précoce de Content-Length lorsqu'il est disponible, lecture progressive du flux, arrêt et annulation immédiate au dépassement, puis décodage UTF-8 strict.
+- Les artefacts chunks (1 500 000 octets), manifeste (200 000 octets) et vecteurs (20 000 000 octets) passent désormais par ce lecteur borné. Une réponse trop grande ou un UTF-8 invalide est refusé sans poursuivre le parsing ni appeler le modèle.
+- Test ajouté : flux de corpus dépassant 1 500 000 octets ; le Worker renvoie 503, annule le flux et n'appelle pas le modèle.
+- Commits Worker/test : a80032d, 8f2170a. Validation CI complète du HEAD final requise.
+- Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion, aucun déploiement. PR #23 non fusionnée ; aucune modification de main, Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 682 — limites et validation des réponses du modèle
+
+- Le Worker valide désormais la sortie de l'AI binding : elle doit être une chaîne non vide et ne pas dépasser 6 000 caractères. Les réponses mal typées ou excessives sont refusées avec une erreur générique `ai-unavailable`, sans renvoyer de contenu anormal au navigateur.
+- Le chemin Cloudflare AI direct (token + account ID) utilise maintenant un délai d'attente de 20 secondes, lit le corps progressivement avec une limite de 262 144 octets, puis applique le parseur JSON strict avant d'extraire la réponse.
+- Le lecteur de flux annule aussi explicitement le flux si un bloc reçu n'a pas le type binaire attendu.
+- Test ajouté pour les réponses AI non textuelles et supérieures à 6 000 caractères.
+- Commits : Worker `f21df5a`, test `09eddfa`. CI du HEAD final à vérifier.
+- Le binding `env.AI.run` ne fournit pas de signal d'annulation dans cette interface : aucun faux engagement d'annulation n'est revendiqué pour ce chemin. Les limites de taille de sortie sont néanmoins appliquées après résolution.
+- Aucun appel IA réel, aucune vectorisation/OCR/ingestion, aucun déploiement. PR #23 reste non fusionnée ; aucune modification de `main`, Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+## Lot 683 — généralisation des limites de lecture à toutes les sources Worker
+
+- La relecture exhaustive des appels de lecture a montré qu'il restait des `response.text()` / `response.json()` non bornés dans les résolveurs de pages, séances, résumés, documents officiels, banque libre, authentification et vérification d'abonnement. Ils sont maintenant remplacés par `readTextLimited()` puis le parseur JSON strict lorsque nécessaire.
+- Limites appliquées : réponses Auth/abonnement/pages 65 536 octets ; séance 3AS 100 000 ; résumé libre 90 000 ; archives officielles 800 000 ; chunks RAG 1 500 000 ; banque libre 1 500 000 (puis plafond utile de contenu 30 000 caractères) ; séance gratuite 9 000 ; index vecteur 20 000 000 ; réponse API Cloudflare AI 262 144 octets.
+- Cette relecture a également corrigé un remplacement incomplet du lot précédent : le flux des chunks RAG lui-même passe maintenant effectivement par le lecteur borné, et non plus par `response.text()`.
+- Commit Worker : `258fcd9`. Le test de dépassement du corpus ajouté au Lot 681 couvre maintenant ce chemin borné. CI du HEAD final à vérifier.
+- Aucun appel réel à Workers AI, aucune ingestion/OCR/vectorisation, aucun déploiement. PR #23 reste non fusionnée ; `main`, Supabase/Auth/RLS/schéma/abonnement/paiement inchangés.
+- Test complémentaire : le chemin Cloudflare AI direct (sans binding `env.AI`) reçoit un flux de 262 145 octets, doit l'annuler au plafond de 262 144 octets et répondre 503 sans transmettre une sortie partielle. Commit de test complémentaire : `f4693ff`.
+
+## Lot 684 — annulation des réponses déclarées trop volumineuses
+
+- `readTextLimited()` annule maintenant explicitement `response.body` lorsque l’en-tête `Content-Length` est invalide ou annonce une taille supérieure à la limite, avant de créer le lecteur et sans lire le corps.
+- Test Worker ajouté : une réponse RAG annonçant 1 500 001 octets est rejetée en 503, son flux est annulé et aucun contexte n’atteint le modèle.
+- Commits : Worker `47290b1`, test `fcca7f1`.
+- Audit associé : authentification Supabase et lecture d’abonnement ont déjà un délai maximal de 5 secondes avec `AbortController`, une lecture plafonnée à 65 536 octets et un échec fermé sur erreur/JSON invalide.
+- Aucun appel d’embedding, OCR ou ingestion réelle. Aucun changement Supabase, Auth, RLS, abonnement ou paiement. `main` reste inchangée ; PR #23 non fusionnée et aucun déploiement.
+
+## Lot 685 — validation stricte du corps des requêtes entrantes
+
+- `readLimitedBody()` valide maintenant strictement `Content-Length` : valeur décimale sûre obligatoire lorsqu’il est présent ; dépassement de 8 192 octets rejeté en 413 avec annulation du flux avant lecture.
+- Chaque fragment du flux doit être un `Uint8Array`. Le lecteur est annulé sur dépassement ou erreur, puis son verrou est libéré dans `finally`.
+- Décodage UTF-8 désormais fatal : les séquences invalides sont rejetées en 400 (`invalid-body`) avant le parsing JSON et avant tout appel au modèle.
+- Tests ajoutés pour l’annulation d’un corps déclaré à 8 193 octets sans lecture et le rejet d’un corps contenant une séquence UTF-8 invalide.
+- Commits : Worker `0393438`, tests `5c7428b`.
+- Aucun changement Supabase/Auth/RLS/schéma/paiement, aucun OCR/embedding/ingestion réelle. `main` inchangée ; PR #23 ouverte, non fusionnée ; aucun déploiement.
+
+
+## Lot 686 — correction du contrôle décimal de Content-Length
+
+- La relecture du lecteur borné a détecté une double échappement dans les expressions régulières de validation de `Content-Length`, à deux endroits : `readTextLimited()` (réponses HTTP) et `readLimitedBody()` (requêtes entrantes).
+- La forme erronée pouvait rejeter des longueurs décimales pourtant valides. Elle est remplacée par le contrôle `/^\\d+$/` dans les deux fonctions ; les limites en octets, l’annulation des flux et les réponses d’échec fermé restent inchangées.
+- Test de régression ajouté : un corps de requête avec un `Content-Length` décimal valide et égal à sa taille réelle doit être accepté et atteindre le modèle. Les tests existants couvrent également le rejet/annulation d’un corps déclaré trop volumineux et d’un flux RAG au-delà de sa limite.
+- Commits : Worker `20301ec`, test `1bd90c5`. Validation CI du HEAD final encore à obtenir ; le commit Worker a lancé les contrôles PostgreSQL et un contrôle Cloudflare, tandis que la suite CI complète a été annulée lors de l’arrivée du commit suivant et n’apparaît pas encore comme relancée.
+- Le workflow GitHub `.github/workflows/deploy.yml` est une CI de validation sans job `deploy` et sans permissions de publication Pages/OIDC. Le contrôle Cloudflare du commit Worker est signalé comme build sous le chemin `production/builds` ; son statut ne suffit pas à lui seul à établir si un déploiement a eu lieu. Aucun déploiement manuel n’a été déclenché.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun OCR, embedding ou ingestion réelle. `main` inchangée ; PR #23 ouverte, en brouillon et non fusionnée.
+
+
+## Lot 687 — limites réelles d’annulation du binding Workers AI et délais des lots de pages
+
+- Vérification de la documentation Cloudflare officielle des Workers AI bindings : l’interface documentée est `env.AI.run(model, inputs)`, avec `stream` comme option d’entrée documentée ; aucun paramètre `AbortSignal` n’est documenté pour annuler une inférence non-streamée. Référence : https://developers.cloudflare.com/workers-ai/configuration/bindings/ (consultée le 20 novembre 2026).
+- En conséquence, aucun `Promise.race` présenté comme un arrêt du calcul distant n’a été ajouté : une course locale pourrait seulement cesser d’attendre, sans prouver l’annulation de l’inférence ni empêcher les appels de fallback de se chevaucher.
+- Le Worker conserve un chemin API HTTP direct avec délai de 20 s et `AbortController`; cette garantie ne doit pas être confondue avec le binding `env.AI.run`.
+- Le `compatibility_date` de `wrangler.toml` est `2024-09-01`. La propagation de l’annulation client via `Request.signal` est activée par défaut seulement à partir du 17 novembre 2026, ou par le drapeau `enable_request_signal` pour les dates antérieures. Référence Cloudflare : https://developers.cloudflare.com/workers/configuration/compatibility-flags/ . Aucun changement de compatibilité n’a été fait dans ce lot : ce serait une modification de comportement plus large, à tester séparément.
+- `fetchAuthorizedBookPages()` traite au plus cinq pages séquentiellement ; chaque lecture de page a son propre délai de 5 s. Le pire cumul théorique est donc de 25 s avant échec/succès du lot. Le comportement reste atomique : une page manquante ou inaccessible empêche la transmission d’un contexte partiel. Point de performance à traiter dans un lot séparé, sans affaiblir RLS ni les contrôles de contenu.
+- CI principale du HEAD précédent toujours en état GitHub `pending`, sans job retourné par l’API GitHub ; les trois validations PostgreSQL isolées et le check de build Cloudflare du HEAD `91863b5` sont réussis. Ce statut ne prouve ni échec de test ni validation complète ; diagnostic de planification GitHub encore ouvert.
+- Aucun appel Workers AI réel, aucune vectorisation, aucun OCR, aucune ingestion de PDF, aucun déploiement. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 reste ouverte, en brouillon et non fusionnée.
+
+
+## Lot 688 — tests d’intégrité atomique des lots de pages RLS
+
+- Deux tests de régression ont été ajoutés dans `tests/worker-ai-auth.test.mjs` : (1) un lot 2AS contenant deux pages échoue en `403 content-locked` si la seconde page ne retourne aucune ligne RLS, sans transmettre la première page au modèle ; (2) une liste de pages contenant un doublon est rejetée en `400 invalid-resource` avant toute lecture RLS.
+- Ces tests renforcent explicitement l’invariant « toutes les pages demandées ou aucune » et le rejet des sélecteurs dupliqués. Ils n’appellent pas Workers AI réel et ne touchent pas Supabase ; les réponses RLS sont simulées dans le harness autonome.
+- Commit de tests : `1bde404`. Exécution CI associée à vérifier ; aucun résultat de test n’est revendiqué avant la fin du workflow sur le HEAD correspondant.
+- Aucun changement de logique Worker, de droits d’accès ou de configuration. Aucun OCR, embedding, vectorisation, ingestion réelle ou déploiement. `main` inchangée ; PR #23 ouverte, en brouillon et non fusionnée.
+
+
+## Lot 689 — isolation de la concurrence CI par PR
+
+- Diagnostic GitHub : le workflow principal `CI — ALLEMAND` était bloqué en `pending` parce qu’une exécution ancienne du même workflow, sur le SHA `21ab20c93a1033888da245501d4c6fbc7d5c4b3b`, restait `in_progress` depuis le 19 novembre à 22:35 UTC. Ses deux jobs étaient encore actifs à l’étape des tests Worker IA, tandis que la nouvelle exécution sur `cd3b753` n’avait aucun job démarré.
+- Cause dans `.github/workflows/deploy.yml` : groupe de concurrence global constant `pages` avec `cancel-in-progress: false`, ce qui sérialisait les PR et la branche principale dans le même groupe et laissait une ancienne exécution bloquer les suivantes.
+- Correction sur la branche PR uniquement : groupe désormais distinct par numéro de PR (ou ref hors PR) avec `cancel-in-progress: true`. Une nouvelle mise à jour de la même PR remplace ainsi son exécution obsolète, sans annuler les workflows d’autres PR ni celui de `main`.
+- Le workflow reste un CI de validation ; aucun job `deploy`, permission `pages: write` ou `id-token: write` n’a été ajouté. La modification ne touche ni Cloudflare configuration ni Supabase.
+- Commit du correctif concurrence : `96c98cf`. Vérifier le nouveau workflow déclenché sur ce HEAD avant de considérer le lot validé.
+- `main` reste inchangée ; PR #23 reste ouverte, en brouillon et non fusionnée. Aucun changement Auth/RLS/schéma/abonnement/paiement ; aucun OCR, embedding, vectorisation ou ingestion réelle.
+
+
+## Lot 690 — durée maximale des jobs CI
+
+- Le diagnostic du workflow ancien `44629991744` a montré deux jobs toujours `in_progress` plus de 90 minutes après leur lancement. Dans le job Professeur IA, l’étape `node --test tests/worker-ai-auth.test.mjs` restait active ; dans le job de validation, l’étape `node --test tests/worker-ai-auth.test.mjs` était également active.
+- Pour empêcher une régression de bloquer indéfiniment le groupe CI, `validate` et `professor-ai` ont maintenant `timeout-minutes: 30`. Cela borne la durée du job ; cela ne remplace pas un diagnostic des tests s’ils atteignent ce délai.
+- Le groupe de concurrence par PR du lot 689 est conservé. Les workflows PostgreSQL isolés ont leur propre workflow et n’ont pas été modifiés.
+- Commit de la borne de durée : `2ff6468`. Le déclenchement d’un nouveau workflow sur le HEAD courant doit encore être confirmé : l’exécution précédente `44634989792` reste une exécution en attente créée sous l’ancienne configuration de concurrence.
+- Aucun changement de code Worker, d’accès, de données Supabase ou de déploiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 691 — correction du défaut syntaxique révélé par la CI
+
+- La première CI complète du nouveau HEAD `f3b11fd` a démarré et a fait échouer le job `Validation structurelle & pédagogique` à l’étape `node --test tests/worker-ai-auth.test.mjs`.
+- Le journal GitHub identifie précisément `worker/ia-ask.js:35` : le bloc de rejet du `Content-Length` contenait les deux caractères littéraux `\\n` au lieu de vrais retours à la ligne. Le harness charge le Worker avec `vm.runInNewContext`, ce qui provoquait `SyntaxError: Invalid or unexpected token` et faisait échouer les tests qui importent le Worker.
+- Correction appliquée dans `worker/ia-ask.js` : rétablissement des vrais retours à la ligne autour de l’annulation du body et du `return null`. La logique de sécurité et les limites ne changent pas.
+- Commit correctif : `8be5e38`. Le résultat CI du nouveau HEAD doit être vérifié avant clôture ; la détection prouve que les vérifications de build seules ne suffisaient pas à détecter cette erreur d’analyse dans le harness.
+- Aucun changement Auth/RLS/schéma/abonnement/paiement, aucun OCR/embedding/vectorisation/ingestion réelle. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 692 — correction des fixtures des tests HTTP du Worker
+
+- Après correction syntaxique, la suite Worker a exécuté 107 tests : 103 réussis et 4 échecs. L’analyse des assertions montre que trois tests qui attendaient le passage au modèle utilisaient la question « Explique le Perfekt », désormais correctement classée comme notion payante ; le Worker répondait donc `403 content-locked` avant d’atteindre le chemin HTTP/modèle. Le contrôle d’accès est correct et n’a pas été affaibli.
+- Les trois fixtures ont été remplacées par une question non verrouillée sur les salutations afin de tester le comportement HTTP demandé sans contourner le contrôle d’abonnement.
+- Le quatrième test mesurait `reads === 0` sur un `ReadableStream` avec `highWaterMark` par défaut : le runtime pouvait appeler `pull()` de manière anticipée avant toute lecture du Worker. Le flux de test utilise désormais `highWaterMark: 0`, de sorte que le compteur mesure bien une lecture déclenchée par le consommateur. L’attente de réponse `413` et l’annulation du corps restent inchangées.
+- Commit des fixtures corrigées : `cfcf90a`. Résultat CI correspondant à attendre ; aucune modification des règles de contenu premium ni de l’accès gratuit au Professeur IA.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun OCR, embedding, vectorisation ou ingestion réelle. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 693 — résultats réels de l’inventaire PDF CI
+
+- L’artefact `pdf-rights-and-readiness` du workflow réussi `44643313708` a été téléchargé et analysé. Il couvre 293 fichiers PDF et 1 173 pages, sans conserver le texte extrait.
+- Résultats : 186 PDF `extractable` (566 pages, 601 078 caractères extractibles) ; 28 PDF `mixed` (252 pages, dont 201 avec texte et 51 sans texte) ; 78 PDF `ocr_candidate` (355 pages sans texte extractible) ; 1 PDF `encrypted` (aucune page lisible par pypdf). Total : 767 pages avec texte et 406 pages sans texte extractible ; 747 140 caractères extractibles.
+- L’inventaire des droits est présent pour les 293 chemins, mais `rights_confirmed` et `license` sont vides sur les 293 lignes ; le statut de revue est `à vérifier — aucune preuve compagnon trouvée`. Aucune autorisation d’ingestion ne peut être déduite de la présence d’un PDF ni de son caractère extractible.
+- Conséquence pour le chantier : l’extraction technique est possible pour 186 PDF, partielle pour 28, et 78 nécessiteraient une OCR si les droits sont confirmés ; le PDF chiffré doit être traité séparément. Aucun OCR n’a été lancé, aucun texte n’a été sauvegardé, aucun chunk/embedding n’a été produit à partir de ces fichiers et aucun document n’a été intégré au RAG de production.
+- Rapport disponible comme artefact CI `pdf-rights-and-readiness` (run `44643313708`, conservation jusqu’au 4 décembre 2026). Il contient les chemins, compteurs techniques et colonnes de droits, pas le contenu pédagogique.
+- Le workflow complet sur le HEAD `6769ed4` est réussi : validation structurelle/pédagogique, suite autonome Professeur IA, audit PDF, contrôles d’accès et trois workflows PostgreSQL isolés. Le build Cloudflare est une prévisualisation uniquement.
+- `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; aucun déploiement.
+
+
+## Lot 694 — état réel du corpus RAG et distinction avec le catalogue historique
+
+- Lecture directe de `assets/bdd/corpus_rag_manifest.json` : statut `connected_protected`, mais `document_count = 0` et `chunk_count = 0`. `assets/bdd/corpus_rag_chunks.json` contient 0 document et 0 chunk ; `assets/bdd/corpus_rag_vectors.json` contient 0 vecteur (modèle déclaré `@cf/google/embeddinggemma-2`, 256 dimensions). Le RAG PDF protégé est donc raccordé techniquement au Worker mais ne dispose actuellement d’aucun document PDF indexé.
+- Le catalogue historique `assets/bdd/corpus.json` contient 239 fiches documentaires, dont 225 entrées PDF. Ces 225 entrées ont `licence = "document utilisateur"`, aucune propriété `droits_confirmes: true`, et un extrait historique limité à 300 caractères. Elles ne constituent pas un corpus RAG complet ; `assets/bdd/corpus_index.json` est un index de vocabulaire DE-AR (490 entrées), pas l’index plein-texte des PDF.
+- L’inventaire technique CI dénombre 293 PDF : 68 ne sont pas représentés parmi les 225 entrées PDF du catalogue historique. Les 293 lignes de l’inventaire des droits ont confirmation et licence vides.
+- La chaîne `tools/ingest_corpus_rag.py` exige cumulativement un compagnon JSON `_NOM.json`, `droits_confirmes is True`, une licence dans la liste autorisée (`production_propre`, `domaine_public`, `cc_by`, `cc_by_sa`, `autorisation_ecrite`), une ligne d’inventaire exacte avec `rights_confirmed=true`, un compagnon correspondant et la même licence. La valeur historique `document utilisateur` n’est pas autorisée. Les tests vérifient le refus en l’absence de droits ou d’inventaire.
+- Le générateur `tools/build_corpus_rag_vectors.py` filtre les documents non autorisés avant embedding ; l’exécution réelle exige `--execute`, `--confirm-cloudflare-billing`, des identifiants Cloudflare valides et au moins un chunk autorisé. Aucun de ces appels de facturation ou embeddings réels n’a été lancé.
+- Conclusion précise : le Professeur IA peut répondre par le modèle général et utiliser d’autres contextes autorisés déjà fournis par le Worker, mais la recherche RAG documentaire issue des 293 PDF n’est pas encore opérationnelle car son corpus protégé est vide. Les extraits de 300 caractères du catalogue historique ne remplacent pas l’ingestion RAG.
+- Aucun OCR, aucune extraction enregistrée, aucun embedding, aucune vectorisation ni ingestion réelle effectués. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 695 — test explicite du RAG PDF vide
+
+- Ajout dans `tests/worker-ai-auth.test.mjs` d’un test où le Worker reçoit un manifeste et un artefact de chunks cohérents mais vides (`documents: []`, `chunks: []`). La recherche `corpus_search` doit retourner `404 resource-not-found`, ne transmettre aucun contexte et ne lancer aucun appel au modèle ni embedding.
+- Ce test documente le comportement actuel du RAG vide : échec explicite de recherche documentaire, sans fabriquer un passage ni laisser le modèle croire qu’un PDF a été retrouvé. Il ne modifie pas le Worker ni la réponse HTTP.
+- Commit de test : `995f1ff`. Validation CI sur le nouveau HEAD à attendre.
+- Aucun OCR, aucune ingestion, aucun embedding ou vectorisation réels ; aucun changement de droits ni de configuration Supabase. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 696 — validation du test de corpus vide et qualité des extraits historiques
+
+- Le test du lot 695 est réussi dans la CI du HEAD `7566eb4` : `tests/worker-ai-auth.test.mjs` totalise maintenant 108 tests réussis, 0 échec. Le test confirme qu’un corpus RAG vide retourne `404 resource-not-found`, sans contexte, sans appel au modèle et sans embedding.
+- Analyse des 225 extraits PDF du catalogue historique `corpus.json` : 220 sont exactement limités à 300 caractères ; 4 sont plus courts ; 17 contiennent des caractères de contrôle. Aucun n’a de propriété `droits_confirmes: true`. Ces champs sont des aperçus historiques, pas un texte intégral validé pour le RAG.
+- CI complète du HEAD `7566eb4` réussie : jobs `Validation structurelle & pédagogique` et `Tests autonomes — Professeur IA` réussis ; build Cloudflare de prévisualisation réussi ; trois validations PostgreSQL isolées réussies. Artefact PDF `pdf-rights-and-readiness` produit et conservé jusqu’au 4 décembre 2026.
+- La PR reste ouverte et en brouillon, non fusionnée. `main` est toujours à `fadae5e`. Aucun déploiement de production, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement. L’ingestion PDF et la vectorisation attendent toujours une confirmation de droits document par document.
+
+
+## Lot 697 — normalisation multilingue et intégrité des métadonnées d’intention
+
+- Renforcement du normaliseur de l’audit d’ontologie : normalisation Unicode NFKD, suppression des diacritiques latins et arabes, du tatweel, harmonisation des variantes d’alif, de hamza, de ta marbuta et d’alif maqsura.
+- Le contrôle élargi a été exécuté sur les formulations de l’ontologie et les 103 questions d’évaluation : aucune collision inter-intentions n’a été détectée avec cette normalisation plus stricte.
+- Vérification structurelle des 25 intentions : identifiants uniques, catégories parmi les sept catégories déclarées, actions au format attendu, niveaux limités à 2AS/3AS et au moins un exemple d’évaluation par intention.
+- Vérification des 103 échantillons : aucune intention inconnue, aucune catégorie d’évaluation différente de la catégorie de l’ontologie, compteur `_meta.n` cohérent.
+- Le test `tests/intent-ontology-integrity.test.mjs` a été renforcé pour rendre ces invariants exécutables en CI. Une première écriture du normaliseur contenait des échappements doublés ; ils ont été corrigés avant de considérer le changement comme prêt à valider.
+- Commits du test et du correctif d’échappement : `f37762e` puis `d5059d7`. Le résultat CI du nouveau HEAD doit être contrôlé avant clôture du lot.
+- Aucun changement du moteur de décision en production, des droits, de l’authentification ou de la configuration Supabase. Aucun OCR, embedding, vectorisation ou ingestion réelle. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 698 — revalidation du rapport PDF sur le HEAD courant
+
+- La CI complète du HEAD `00e904315453ee28d50e7e2f11895f9717259f04` est réussie (workflow `44646321566`) ; les trois workflows PostgreSQL isolés du même HEAD sont également réussis (`44646321419`, `44646321537`, `44646321602`). Le build Cloudflare rapporté par la CI reste un contrôle de prévisualisation, pas un déploiement de production.
+- Téléchargement et analyse du nouvel artefact `pdf-rights-and-readiness` (`14588198019`, run `44646321566`) : 293 lignes, une par PDF. Répartition technique inchangée : 186 `extractable` (566 pages, 601 078 caractères), 28 `mixed` (252 pages, 201 avec texte et 51 sans), 78 `ocr_candidate` (355 pages sans texte extractible) et 1 `encrypted`. Total de pages lisibles/analysées par l'outil : 1 173 ; 767 pages avec texte, 406 sans texte extractible ; 747 140 caractères extractibles.
+- Reconciliation indépendante de l'arbre Git au même HEAD : 293 PDF au total, 293 chemins de compagnon attendus, mais zéro fichier compagnon JSON correspondant présent dans le dépôt. Le CSV `docs/inventaire_pdf_droits.csv` contient 293 lignes ; `rights_confirmed` et `license` sont vides pour les 293, et chaque ligne reste au statut `à vérifier — aucune preuve compagnon trouvée`.
+- Point de précision : `expected_companion_metadata` est un chemin attendu, pas une preuve que le fichier compagnon existe. Le contrôle d'ingestion vérifie séparément l'existence du compagnon, sa confirmation explicite et la concordance de licence entre compagnon et inventaire. Aucun des 293 PDF ne satisfait actuellement cette chaîne d'autorisation.
+- Les trois artefacts `corpus_rag_manifest.json`, `corpus_rag_chunks.json` et `corpus_rag_vectors.json` restent vides (0 document, 0 chunk, 0 vecteur). Le test Worker du corpus vide garantit une réponse explicite `404 resource-not-found`, sans contexte ni appel au modèle/embedding. Le catalogue historique de 225 fiches PDF et ses extraits de 300 caractères ne sont pas une source d'ingestion RAG.
+- Aucune extraction de contenu sauvegardée, aucun OCR, aucun chunk, embedding, appel Cloudflare facturable ou ingestion réelle n'a été effectué. Le prochain travail sûr est de préparer une revue des droits et la liste des preuves à fournir, pas de fabriquer des confirmations ou de convertir automatiquement des PDF dont les droits sont inconnus.
+- Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée ; aucun déploiement de production.
+
+
+## Lot 699 — verrou OCR avant confirmation explicite des droits
+
+- Ajout de `test_unconfirmed_rights_prevent_ocr_and_pdf_extraction` dans `tests/test_ingest_corpus_rag.py`.
+- Le scénario utilise un PDF scanné, un compagnon qui revendique `droits_confirmes: true`, mais une ligne d'inventaire dont `rights_confirmed` est vide. Même lorsque l'option OCR est activée, le test exige que `extract_pdf_report` ne soit jamais appelée, que le document soit ignoré avec `droits_non_confirmes_dans_inventaire` et qu'aucun chunk ne soit créé.
+- Ce test couvre la frontière critique : l'extraction/OCR n'est pas seulement empêchée de publier des contenus non autorisés ; elle ne doit même pas être exécutée avant que les deux sources de droits concordent.
+- Commit du test : `03bc9a1`. Validation Python et CI complète à attendre sur ce commit ou le HEAD documentaire qui le suit.
+- Aucun PDF du dépôt n'a été modifié ou extrait. Aucun OCR, embedding, vectorisation ou ingestion réelle n'a été exécuté. Aucun changement de droits dans l'inventaire, ni de Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+## Lot 700 — fermeture des anciens chemins d'ingestion PDF sans contrôle de droits
+
+- Audit du dépôt : `tools/ingest_corpus.py` attribuait par défaut `production propre`, extrayait les PDF et écrivait dans le corpus historique sans exiger la confirmation centrale des droits. `tools/indexer_pdf.py` extrayait les PDF, lançait automatiquement l'OCR pour les scans et indexait les contenus sous la licence générique `document utilisateur`.
+- Ces deux outils ne sont pas le pipeline RAG distant sécurisé et ne contrôlaient pas la concordance entre compagnon et inventaire central. Ils constituaient donc des chemins de contournement potentiels, même si le Worker ne consomme pas directement ces fichiers historiques pour la recherche documentaire distante.
+- `tools/ingest_corpus.py` refuse maintenant les PDF et conserve le traitement historique des formats non-PDF. Les PDF doivent être traités exclusivement par `tools/ingest_corpus_rag.py`, qui vérifie les deux sources de droits.
+- `tools/indexer_pdf.py` est désactivé explicitement avant toute lecture ou mutation du corpus : son fonctionnement historique ne peut pas être rendu conforme sans migration vers le pipeline sécurisé.
+- Nouveau test `tests/test_legacy_pdf_ingestion_guard.py` : vérifie que l'ancien ingest ignore un PDF sans appeler l'extraction ni copier le fichier, et que l'ancien indexeur s'arrête avant de lire ou modifier les artefacts corpus.
+- Commits : blocage ancien ingest `8fe7104`, désactivation indexeur `3c71b0a`, tests `e896ed4`. CI du HEAD final à attendre avant clôture du lot.
+- Aucun PDF du dépôt n'a été ouvert ou extrait par ces changements. Aucun OCR, embedding, vectorisation ou ingestion réelle. Aucun droit n'a été marqué comme confirmé. Aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement. `main` inchangée ; PR #23 ouverte, brouillon, non fusionnée.
+
+
+### Complément Lot 700 — workflow automatique OCR neutralisé
+
+- L'audit des exécutions GitHub a découvert `.github/workflows/indexer.yml`, déclenché sur les changements des PDF d'archives, de `tools/indexer_pdf.py` et du workflow lui-même. Il installait Tesseract/Poppler, lançait l'indexeur et disposait de `contents: write` pour committer les corpus produits.
+- Le run `44722245987` sur le commit `3c71b0a` a bien installé les dépendances système et Python, mais l'étape `python tools/indexer_pdf.py docs/archive/documents` a immédiatement échoué sur le garde-fou `indexer_pdf_desactive`. Les étapes OCR/indexation n'ont donc pas été exécutées et le commit automatique du corpus a été ignoré.
+- Le journal du run confirme explicitement le message du garde-fou et l'absence d'exécution de l'étape de commit. Aucun OCR ou index PDF n'a été produit par ce workflow.
+- Le workflow `.github/workflows/indexer.yml` a été supprimé de la branche PR par le commit `4e3171d` afin d'éviter qu'une modification future du chemin historique ne réactive le pipeline OCR non sécurisé.
+- Les validations de sécurité du lot doivent être considérées réussies uniquement si les tests dédiés passent dans la CI principale du HEAD final. La suppression du workflow n'est pas une validation du nouveau code.
+
+
+## Lot 701 — fermeture des imports historiques non-PDF et du sharder auto-push
+
+- L'audit des points d'entrée a confirmé que `tools/ingest_corpus.py` pouvait encore ingérer DOCX/TXT/MD avec une licence implicite `production propre` en l'absence de métadonnées, puis écrire dans `corpus.json`, `corpus_index.json` et `assets/corpus`. Le garde PDF seul ne suffisait donc pas à protéger toutes les voies d'alimentation du corpus client.
+- L'outil historique `tools/ingest_corpus.py` est désormais désactivé avant toute lecture/extraction/écriture, quel que soit le format. Sa réactivation nécessite un pipeline de droits explicites et un inventaire central couvrant chaque type de document. Test étendu à PDF, DOCX, TXT et MD : aucun extracteur n'est appelé et aucun artefact corpus n'est créé.
+- L'audit de `.github/workflows/sharder.yml` a révélé un workflow déclenché par des changements du script ou de `corpus_index.json`, avec `contents: write`, qui committait les shards puis exécutait `git pull --rebase origin main` et `git push`. Il pouvait donc modifier `main` automatiquement, à l'encontre de la règle de travail de cette PR.
+- Incohérence supplémentaire : `tools/sharder_index.py` attend `chunks` et `termes`, alors que le fichier actuel `assets/bdd/corpus_index.json` est un index lexical DE-AR avec `items`. Le workflow pouvait produire un manifeste vide/inadapté tout en tentant de pousser le résultat sur `main`.
+- Suppression du workflow dangereux `.github/workflows/sharder.yml` de la branche PR par le commit `4385172`. Le script de sharding n'est pas exécuté ; aucune génération de shards ni push n'a été lancé.
+- Commits du lot : désactivation complète de l'ingestion historique `7a5f025`, test tous formats `8378edf`, suppression du sharder auto-push `4385172`. Validation CI du HEAD final encore requise.
+- Aucun contenu documentaire n'a été extrait, OCRisé ou indexé. Aucun embedding ni ingestion réelle. Aucun droit modifié. `main` n'a reçu aucun push de notre part ; aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement ; PR #23 reste ouverte et non fusionnée.
+
+
+## Lot 702 — distinction entre catalogue client historique et RAG distant
+
+- Audit de `corpus.js` : l'interface charge directement `assets/bdd/corpus.json` et `assets/bdd/corpus_index.json` côté navigateur. Elle ne lit pas `corpus_rag_manifest.json`, `corpus_rag_chunks.json` ni `corpus_rag_vectors.json` pour cette vue.
+- `corpus.json` est un catalogue historique distinct, qui contient des fiches et extraits courts ; `corpus_index.json` est actuellement un index lexical DE-AR (`items`), pas l'index plein-texte décrit dans l'ancien commentaire et pas l'artefact de chunks RAG.
+- Pour les PDF, `corpus.js` construit des liens `raw.githubusercontent.com/bridrandomtv-spec/ALLEMAND/main/...`. Les PDF de l'archive ne sont pas intégrés au bundle Worker via `.assetsignore`, mais restent accessibles par le dépôt GitHub public si celui-ci est public. C'est un chemin de consultation/distribution statique préexistant, distinct du RAG et de l'ingestion.
+- Cette observation interdit d'affirmer que les PDF ne sont pas accessibles ou référencés dans l'application ; la formulation exacte est : aucun PDF n'est ingéré dans le RAG distant, tandis que le catalogue client historique référence encore des fichiers PDF via GitHub Raw. Les droits de ces 293 documents restent non confirmés dans l'inventaire.
+- Aucun changement de `corpus.js`, `corpus.json`, des PDF ou des liens publics n'a été fait dans ce lot : cela modifierait l'expérience documentaire et la disponibilité existante, et doit être traité séparément après décision sur la politique de publication. Aucun changement sur `main`.
+
+
+## Lot 703 — vérification du garde des artefacts RAG et exposition du catalogue historique
+
+- Rectification de l'analyse initiale : les fichiers RAG ne sont pas servis sans contrôle par le Worker du site. `wrangler.toml` utilise bien `src/site-worker.js` comme Worker d'entrée, et sa liste `PROT` exige un JWT puis une ligne visible `lesson_content.free=false` via le RLS existant avant de servir les chunks et vecteurs. Les tests `tests/site-worker-content-guard.test.mjs` couvraient déjà ces deux artefacts. Le garde de ressources payantes est donc bien effectif sur ces chemins.
+- Une omission subsistait : `corpus_rag_manifest.json` n'était pas dans `PROT`. Or le Worker IA le lit pour vérifier le hash des chunks ; son champ `skipped` peut contenir des noms de fichiers et motifs de rejet. Il était donc publiquement consultable alors que les chunks/vecteurs étaient protégés.
+- Correction : ajout de `corpus_rag_manifest` à la regex `PROT`, avec tests qui vérifient le refus sans JWT (401), le refus sans entitlement RLS (403) et la livraison seulement après validation RLS (200). Aucun changement de schéma ou de politique RLS ; réutilisation du garde existant.
+- Le contrôle du dépôt public confirme un risque distinct et préexistant dans le catalogue historique : `assets/bdd/corpus.json` contient 239 fiches, dont 225 PDF. Les 225 portent tous `licence: "document utilisateur"`, `source: "docs archive eleve"` et un lien vers `docs/archive/documents/...`. `corpus.js` convertit ces chemins en URL GitHub Raw vers `main`. Puisque le dépôt GitHub est public, ces fichiers et les extraits du catalogue sont publiquement accessibles indépendamment du garde du Worker.
+- Ces 225 fiches ne constituent pas des autorisations : `document utilisateur` n'est pas une licence de réutilisation vérifiée et les 293 PDF de l'inventaire global restent sans preuve de droits. Aucun PDF ni extrait n'a été supprimé ou modifié dans ce lot ; la mise en privé, le retrait des liens ou la suspension d'accès au catalogue nécessite une décision explicite sur la disponibilité documentaire.
+- Correction de l'état vide de `corpus.js` : le message ne recommande plus `tools/ingest_corpus.py`, désormais désactivé. Il indique que l'import est suspendu jusqu'à validation des droits et migration vers le pipeline sécurisé.
+- Commits du lot : garde du manifeste `57dbf20`, tests `8ee0e5b`, instruction UI `5a4b89c`. Validation CI du HEAD final requise.
+- Aucun PDF n'a été extrait/OCRisé/indexé ; aucun embedding ni appel Cloudflare AI ; aucun contenu du catalogue historique n'a été modifié. `main` reste inchangée ; PR #23 non fusionnée ; aucun changement Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+
+## Lot 704 — audit des chemins de lecture, du verrouillage et des ressources statiques
+
+### Contrôles réalisés
+- Vérification du routage navigateur dans `ia.js` : les ressources documentaires explicites (`corpus_document`, `corpus_search`) forcent le passage cloud ; le navigateur transmet le JWT Supabase et ne transmet pas de contexte libre au Worker.
+- Vérification de `worker/ia-ask.js` : identité Supabase vérifiée avant traitement ; consultation de `subscriptions` uniquement lorsque `isLockedContentQuestion()` classe la demande comme verrouillée. Les demandes générales ne sont donc pas bloquées systématiquement par l'abonnement.
+- Vérification de `fetchAuthorizedCorpusDocument()` : lecture des chunks et du manifeste via le Worker du site avec JWT ; contrôle SHA-256, compteurs, unicité des IDs, correspondance document/chunk, pages, licence autorisée et `rights_confirmed === true` avant classement. Les vecteurs restent facultatifs et désactivés par défaut ; ils ne servent jamais de preuve de droits.
+- Vérification des ressources gratuites : `free_summary` ne renvoie qu'un résumé d'unité identifié et borné ; `free_exercise_bank` ne renvoie que les exercices du niveau demandé, avec plafonds de taille. Les métadonnées de `malakhiss.json` et `contenu_original.json` déclarent explicitement une production originale. Les ressources gratuites déclarées restent accessibles sans abonnement.
+- Vérification des contenus de leçon 3AS : seules les séances 1 et 2 de l'unité 1 utilisent la ressource gratuite dédiée ; les autres séances passent par `fetchAuthorizedUnitLesson()` et le Worker du site protégé par RLS. Les pages de manuel passent par `lesson_content` et RLS.
+- Vérification des workflows : seuls les workflows de validation CI et les tests PostgreSQL restent présents ; les anciens workflows d'indexation OCR et de génération/push d'index ont été retirés dans les lots précédents. Aucun workflow restant n'exécute les scripts d'ingestion RAG ou de génération vectorielle.
+- Vérification des scripts : `ingest_corpus.py` et `indexer_pdf.py` s'arrêtent avant toute lecture/écriture d'ingestion ; `ingest_corpus_rag.py` exige un compagnon, une licence autorisée et une ligne d'inventaire centrale confirmée et cohérente ; `build_corpus_rag_vectors.py` reste en dry-run par défaut et exige `--execute` ET `--confirm-cloudflare-billing` pour appeler Cloudflare.
+
+### Point de risque confirmé et non modifié
+- `corpus.js` transforme les chemins `docs/archive/...pdf` en URL `raw.githubusercontent.com/.../main/...`. Comme le dépôt est public et que `.assetsignore` exclut ces PDF du bundle Worker, le contrôle RLS du Worker ne protège pas ces liens GitHub Raw : les fichiers d'archive et leurs extraits catalogue sont publiquement accessibles indépendamment de l'authentification.
+- Les 225 fiches PDF historiques du catalogue utilisent la mention `document utilisateur`, qui ne constitue pas à elle seule une licence vérifiée. L'inventaire central conserve 293 PDF sans preuve de droits confirmée.
+- Aucune suppression, masquage, modification des PDF ou désactivation de lien n'a été faite : cette décision affecterait la disponibilité documentaire et reste à arbitrer explicitement.
+
+### Résultat et périmètre
+- Aucun contournement identifié dans le chemin serveur RAG contrôlé par JWT/RLS ; aucun verrou d'abonnement global ajouté.
+- Les ressources explicitement déclarées originales/gratuites restent gratuites ; les documents RAG ne sont admissibles qu'après validation centrale des droits.
+- Aucun changement de code applicatif, aucune modification Supabase/Auth/RLS/schéma/paiement, aucun OCR, aucune extraction PDF, aucun embedding, aucun appel Workers AI et aucun déploiement.
+- `main` reste inchangée ; PR #23 reste ouverte, draft et non fusionnée.
+
+
+## Lot 705 — qualité des corrigés et fiabilité des sources d'évaluation
+
+### Anomalies de contenu confirmées
+- `assets/bdd/annales.json` contient 126 fiches, toutes marquées `corrige_inclus: true`. L'audit a détecté 22 textes de corrigé distincts seulement ; les 126 fiches contiennent les marqueurs de corrigé générique (ex. « Vrai/Faux selon le texte officiel », réponses-types de présentation personnelle et bloc `ich bin / du hast`) plutôt que des réponses propres à chaque sujet.
+- `assets/bdd/compositions.json` contient 171 fiches, toutes marquées `corrige_inclus: true`. 162 fiches ont un corrigé générique et sont signalées comme nécessitant une vérification ; 6 autres fiches n'ont pas de texte de correction et portent déjà `corrige_inclus: false`. Les 3 fiches restantes ont un texte de correction non détecté comme modèle générique, sans que cela constitue une validation de son exactitude. Le texte n'a que 26 variantes distinctes pour 171 fiches.
+- `assets/bdd/corriges_gen.json` contient 22 entrées pour 11 modèles textuels distincts ; certains corrigés réutilisent une trame générale et non une réponse individualisée.
+- Les champs `source` des annales/compositions indiquent parfois ONEC, MEN, Goethe-Institut ou inspection pédagogique, mais aucune référence primaire (URL d'archive, identifiant de document source ou pièce justificative) n'est enregistrée au niveau de chaque fiche. L'attribution ne peut donc pas être confirmée par les seules métadonnées.
+- `bac_archive.json` déclare 68 sujets sur 17 années et attribue la source ONEC aux 68 fiches, avec `officiel: true`. L'auteur indiqué dans les métadonnées est le professeur, mais aucun lien ou identifiant de publication ONEC n'accompagne chaque fiche : provenance officielle non vérifiable à ce stade, sans conclure que chaque sujet est faux.
+
+### Correction de présentation appliquée
+- `devoirs_unite.js` n'affiche plus un simple ✓ sur les fiches dont le corrigé est vide ou contient les modèles génériques identifiés. Elles affichent maintenant « ⚠️ corrigé à vérifier » ; les autres affichent « corrigé présent », ce qui indique uniquement la présence d'un texte et non sa validation officielle.
+- Ajout de `tests/devoirs-unite-correction-quality.test.mjs` : teste les cas génériques/vides et les données historiques (126/126 annales et 162/171 compositions signalées).
+- Les textes sources et leurs attributions n'ont pas été réécrits, supprimés ou requalifiés. Aucune correction pédagogique n'a été inventée.
+
+### Portée IA
+- Le Worker IA `worker/ia-ask.js` ne charge pas directement `annales.json`, `compositions.json` ou `corriges_gen.json` dans le contexte RAG actuel ; la banque libre IA provient de `contenu_original.json`, tandis que les documents PDF passent par le manifeste RAG et les contrôles JWT/RLS/droits.
+- Les annales et compositions restent toutefois consommées par `devoirs_unite.js` et peuvent être présentées aux élèves : le risque est donc pédagogique et éditorial même sans injection directe dans le RAG.
+
+### Hors périmètre et protections
+- Aucun changement de Supabase/Auth/RLS/schéma/paiement, aucune modification de PDF, aucun OCR, aucune extraction, aucun embedding, aucun appel Cloudflare AI et aucun déploiement.
+- `main` reste inchangée ; PR #23 reste ouverte, draft et non fusionnée.
+
+
+### Renforcement de l'interface de la bibliothèque — Lot 705 (complément)
+- Le premier garde visuel dans `devoirs_unite.js` a été étendu au moteur `bdd.js` et à `library.js` : le filtre « avec corrigé » et le KPI ne comptent plus les champs génériques/vides ; la fiche détaillée n'affiche plus leur texte comme « corrigé modèle » et montre un avertissement explicite.
+- Un texte non détecté comme modèle générique est désormais qualifié de « texte de correction présent », et non de corrigé vérifié ou officiel. L'exactitude pédagogique et la provenance de ces autres textes restent à contrôler.
+- Le test `tests/devoirs-unite-correction-quality.test.mjs` couvre la classification, le filtrage, le KPI, le masquage en bibliothèque et les volumes historiques.
+- Audit d'accès complémentaire : `bdd.js` chargeait les fichiers protégés `devoirs.json`, `compositions.json` et `annales.json` sans transmettre les en-têtes Supabase. Le Worker du site exige pourtant un JWT pour ces chemins. Le chargeur transmet maintenant `CONTENT1.authHeaders()`, comme `devoirs_unite.js`, afin que les utilisateurs autorisés puissent récupérer les données tout en conservant la garde RLS. Test statique ajouté.
+- Le test de qualité des corrigés est maintenant branché dans le workflow `CI — ALLEMAND` (job de validation structurelle), pour empêcher la régression de l'indicateur trompeur.
+
+
+### Lot 705 — extension à l'archive BAC
+- `examen.js` charge `assets/bdd/bac_archive.json`, dont les 68 fiches portent une attribution ONEC et `officiel: true`, mais sans identifiant/lien de publication primaire par fiche. Le fichier est donc conservé comme archive pédagogique à provenance déclarée, pas comme archive officiellement authentifiée.
+- Le repli vers `bac.json` marquait auparavant systématiquement chaque fiche `officiel: true`, y compris une fiche dont la source déclarée est « photos professeur ». Le repli attribue maintenant `officiel: false`.
+- Les libellés de l'interface ont été neutralisés : « archive pédagogique », « source annoncée », durée/barème enregistrés dans les fiches, « simulation » et « correction de l'archive ». Aucun sujet ni corrigé n'a été supprimé ou réécrit.
+- Le test dédié vérifie que le module BAC ne réintroduit pas les anciennes affirmations officielles non prouvées.
+
+
+## Lot 706 — audit de provenance des banques BAC et devoirs
+
+### Constat documentaire
+- `assets/bdd/bac.json` contient 79 fiches mais seulement 13 couples sujet/corrigé distincts ; 77 fiches appartiennent à des groupes de contenu strictement identiques, réattribués à des années, niveaux ou filières différents. Les 79 fiches déclaraient une source MEN/ONEC ou photos enseignant, sans URL ni identifiant documentaire primaire.
+- `assets/bdd/bac_archive.json` contient 68 fiches sur 17 années, mais seulement 12 contenus distincts. Les 68 fiches portaient `officiel: true` et une source ONEC, sans URL ni référence primaire par fiche.
+- `assets/bdd/devoirs_officiels.json` contient 55 fiches alors que `_meta.nombre` indiquait 10. Les 55 fiches ont `lycee: "—"` et `wilaya: "—"`, sans champ `source_url` ni `document_id` ; 45 n'ont aucun champ source individuel. Les métadonnées et l'interface revendiquaient pourtant des sources officielles et une archive fidèle à plusieurs lycées.
+- Ces éléments ne permettent pas d'établir que les documents sont faux ; ils établissent que leur statut officiel et leur provenance ne sont pas vérifiables à partir du dépôt.
+
+### Corrections appliquées sans perte de contenu
+- Les 68 fiches de `bac_archive.json`, les 79 fiches de `bac.json` et les 55 fiches de `devoirs_officiels.json` portent désormais `officiel: false`, `provenance_verifiee: false` et `statut_provenance: "non_verifiee"`. Les sources déclarées sont conservées comme déclarations, non comme preuves.
+- Les métadonnées de `devoirs_officiels.json` annoncent maintenant 55 fiches et précisent que la provenance est à vérifier.
+- L'interface `officiels.js` n'annonce plus « sources officielles », ne prétend plus que les fiches proviennent d'établissements identifiés, et affiche les titres comportant « رسمي » sous une forme pédagogique neutre. Les sujets, textes, questions et corrigés restent inchangés.
+- Le module BAC conserve les sujets et les corrigés ; ses entrées de repli sont également explicitement non officielles. Le module principal annonce déjà une archive pédagogique et une source déclarée.
+
+### Tests et périmètre
+- Nouveau test `tests/bac-provenance-quality.test.mjs` : vérifie les décomptes 79/13, 68/12, 55/55, les drapeaux de provenance et l'absence de revendication d'officialité dans l'interface.
+- Test intégré au workflow `CI — ALLEMAND`.
+- Aucun sujet, texte ou corrigé supprimé ou réécrit. Aucun changement Supabase/Auth/RLS/schéma/paiement, aucun OCR, aucune extraction PDF, aucun embedding, aucun appel Cloudflare AI et aucun déploiement.
+- `main` reste inchangée ; PR #23 reste ouverte, draft et non fusionnée.
+
+### Lot 707 — alignement de la CI sur la provenance non vérifiée des devoirs — 20/11/2026
+- La revue finale du diff a révélé que le workflow principal conservait un contrôle historique nommé « devoirs officiels ». Il comptait les 10 fiches au schéma `officiel_v1` comme des fiches officielles sans vérifier les champs `officiel`, `provenance_verifiee` ou `statut_provenance`, alors que les 55 fiches sont désormais explicitement non vérifiées.
+- Le contrôle CI a été renommé et recentré sur la structure pédagogique et la provenance : il exige exactement 55 fiches, `_meta.nombre=55`, `_meta.provenance_verifiee=false`, et pour chacune `officiel=false`, `provenance_verifiee=false`, `statut_provenance=non_verifiee`. Il vérifie également que les établissements et wilayas restent non renseignés.
+- Le schéma `officiel_v1` est désormais traité comme un identifiant de format historique uniquement ; les dix fiches correspondantes ne sont plus comptabilisées ni décrites comme des sujets officiels. Les contrôles pédagogiques utiles (notation, répartition des points, groupes de compréhension, exercices, grille de production écrite et couverture des unités) sont conservés.
+- Le message de synthèse historique « 10 devoirs · 10 lycées » a été remplacé par une formulation indiquant explicitement que la provenance documentaire n'est pas vérifiée.
+- Nouveau test autonome : `tests/test_devoirs_provenance.py` ; il vérifie le compteur, les statuts des 55 fiches, l'absence d'établissements/wilayas renseignés et le caractère purement historique du schéma `officiel_v1`.
+- Commits du lot : `2d9c525d` (test de provenance), `fee60dfb` (workflow CI). Les validations GitHub déclenchées par ces commits restent à confirmer avant de clore le lot.
+- Aucun contenu de sujet ou corrigé n'a été modifié. Aucun changement Supabase, Auth, RLS, schéma, abonnement ou paiement ; aucune modification de `main`, aucune fusion et aucun déploiement.
+- Correctif complémentaire du résumé CI : commit `4c178b0c` ; l'ancien message « 10 devoirs · 10 lycées » a été supprimé. La CI du HEAD final doit confirmer le contrôle complet.
+- Revue d'interface complémentaire : les cartes de la liste affichaient encore le mot « رسمي » dans le titre, alors que la vue détaillée le remplaçait déjà par « تدريبي ». Le titre des cartes applique maintenant la même neutralisation ; le test de provenance BAC vérifie les deux rendus.
+- Complément Lot 707 : la revue a aussi détecté que le workflow BAC exigeait encore une chaîne de source ONEC comme condition de validation. Ce contrôle a été remplacé par des assertions explicites sur les 68 statuts `officiel=false`, `provenance_verifiee=false` et `statut_provenance=non_verifiee`, sans supprimer l'attribution déclarée dans les fiches. Le test BAC vérifie désormais que le workflow ne réintroduit pas l'ancienne exigence « source ONEC manquante ».
+- Commits complémentaires : `f729ef95` (validation CI BAC), `0d02c3d7` (test de non-régression BAC). La validation CI complète doit être relancée sur ce HEAD.
+
+### Lot 708 — extension de l'audit de provenance aux compositions et annales — 20/11/2026
+- La revue finale du Worker a révélé que `fetchAuthorizedOfficialDocument` ajoutait encore l'étiquette « DOCUMENT OFFICIEL » aux documents de `compositions.json` et `annales.json`, sans vérifier leur provenance.
+- Contrôle des deux banques : `compositions.json` contient 171 fiches pour 30 contenus distincts ; `annales.json` contient 126 fiches pour 22 contenus distincts. Les 297 fiches ne possèdent ni URL de source primaire ni identifiant de document primaire. Les champs `source` sont des attributions déclarées (MEN, inspection, Goethe-Institut, ONEC ou compilation), non des preuves.
+- Les 297 fiches sont conservées et portent maintenant `officiel=false`, `provenance_verifiee=false`, `statut_provenance=non_verifiee`. Les métadonnées globales indiquent également la provenance non vérifiée. Les textes, corrigés, identifiants et attributions déclarées sont conservés.
+- Le Worker ne présente désormais un document comme officiel que si les deux indicateurs sont explicitement vrais et qu'une référence primaire (`source_url` HTTPS ou `document_id`) est fournie. Dans le cas contraire, le contexte du modèle indique « DOCUMENT PÉDAGOGIQUE — PROVENANCE NON VÉRIFIÉE » et conserve la source uniquement comme attribution déclarée.
+- La bibliothèque et les cartes de devoirs par unité affichent un avertissement de provenance non vérifiée.
+- Nouveau test `tests/official-document-provenance.test.mjs`, ajouté au workflow principal ; le test Worker vérifie aussi que les documents sans preuve ne sont plus étiquetés officiels.
+- Commits du lot 708 : `5f24822a`, `e30fc130`, `230f28ba`, `74e7e750`, `e5b08cdb`, `61a789fb`, `73331932`, `4af92c80`. Validation finale sur le HEAD `be8b12cf9794d017f31df14d94d03b6c61f95c86` : CI principale #4769 réussie (validation structurelle et tests autonomes Professeur IA, y compris Worker/RAG) ; workflows PostgreSQL isolés `44776008355`, `44776008571` et `44776008860` réussis. Aucun job en échec.
+- Aucun contenu de sujet/corrigé n'a été réécrit. Aucun changement Supabase, Auth, RLS, schéma, abonnement ou paiement ; aucune modification de `main`, aucune fusion et aucun déploiement.
+
+
+### Clôture de validation du Lot 708 — 20/11/2026
+- Revue GitHub du HEAD `be8b12cf9794d017f31df14d94d03b6c61f95c86` : CI `44776008496` terminée avec `success`. Les jobs `Validation structurelle & pédagogique` et `Tests autonomes — Professeur IA` sont tous deux réussis ; les étapes de test Worker, protections d'accès, régression RAG, QUST et ontologie sont terminées avec succès.
+- Les trois workflows PostgreSQL du même HEAD (`44776008355`, `44776008571`, `44776008860`) sont également réussis.
+- Comparaison `main...ai/rag-corpus-integrity-lot-635` : 352 commits d'avance, 0 en retard ; la base et le HEAD de PR sont inchangés par cette vérification. PR #23 ouverte, brouillon, non fusionnée et sans fil de revue/commentaire enregistré.
+- Cette clôture documentaire ne constitue pas une autorisation de fusion. Aucun déploiement et aucune modification de `main` ou de Supabase/Auth/RLS/schéma/abonnement/paiement.
+
+
+### Lot 712 — audit des sources de livres et sauvegardes — 20/11/2026
+- CI vérifiée sur le HEAD précédent `bf0ac7a45b1ecb99a1d7510c463d8fa2a080dfb6` : validation structurelle et pédagogique réussie ; tests autonomes Professeur IA, audit PDF et Worker/RAG réussis ; trois workflows PostgreSQL réussis.
+- Audit Git des sources de livres : `docs/private/buch_pages_full.json` est présent dans le dépôt public et lisible via l'API de contenu GitHub. Il contient 212 pages du manuel 2AS. Le fait que `docs/private` soit listé dans `.assetsignore` ne protège pas contre les accès directs au dépôt GitHub.
+- Les métadonnées de `assets/bdd/buch_pages.json` confirment que les corps payants ont été retirés du catalogue et que la sauvegarde intégrale est placée dans ce fichier privé : exposition résiduelle confirmée.
+- Les fichiers `buch_2as.json`, `buch_l2.json` et `buch_l3.json` contiennent des champs pédagogiques structurés et sont chargés par `buch.js` sans JWT. Ils ne correspondent pas aux motifs `PROT` actuels. Leur caractère gratuit ou payant doit être confirmé avant toute extension de la garde afin de ne pas interrompre les contenus gratuits.
+- `buch3as_pages.json` est un index 3AS dont les métadonnées indiquent que les corps résident dans `public.lesson_content` sous RLS. Les fichiers `buch_3as_l4.json` à `buch_3as_l8.json` correspondent au motif protégé du Worker.
+- Rapport détaillé : `docs/CONTINUITE_LOT_712_AUDIT_SOURCES_LIVRES.md`.
+- Aucun fichier pédagogique supprimé ou modifié ; aucun changement Worker, Supabase/Auth/RLS/schéma, `main` ou déploiement. PR #23 reste ouverte, brouillon et non fusionnée. L'exposition GitHub directe demeure un blocage à résoudre par décision explicite sur le retrait du fichier et son historique.
+
+
+### Lot 713 — audit des fixtures élèves et archives visuelles — 20/11/2026
+- Validation complète du HEAD précédent `1a9c8c08647544cbc6de368cfafb4d692f535885` : CI principale `44788376113` réussie (validation structurelle/pédagogique et tests autonomes Professeur IA, audit PDF, Worker/RAG) ; trois workflows PostgreSQL `44788376133`, `44788376187`, `44788376240` réussis.
+- Inventaire Git : 58 JSON sous `assets/bdd/`, 293 PDF et 569 images sous `docs/archive/images/`. Les exclusions `.assetsignore` ne protègent pas contre l'accès direct au dépôt public.
+- `eleves.json` contient 32 enregistrements avec champs identifiants (matricule, prénom, nom, naissance, localisation, téléphone parent, email) renseignés ; `parents.json` contient 2 fiches enfant avec données similaires ; `live.json` contient 32 entrées élèves et informations de présence/connexion. Les métadonnées déclarent un usage localStorage, mais les JSON sont publiquement accessibles et non couverts par les motifs `PROT` du Worker.
+- La présence de placeholders est probable dans certains champs, mais le caractère intégralement fictif de toutes les données n'est pas prouvé. Les fichiers sont donc traités comme potentiellement identifiants jusqu'à confirmation du propriétaire. Aucune valeur personnelle n'a été reproduite dans le rapport.
+- Les 569 images d'archive sont dénombrées mais non classifiées visuellement ; aucune affirmation sur leur contenu n'est faite.
+- Rapport : `docs/CONTINUITE_LOT_713_AUDIT_FIXTURES_ET_IMAGES.md`.
+- Aucun JSON/image/PDF modifié ; aucun changement Worker, Supabase/Auth/RLS/schéma, `main` ou déploiement. PR #23 reste ouverte, brouillon, non fusionnée.
+
+
+### Lot 714 — exposition des fixtures de classe et de session live — 20/11/2026
+- Vérification du Worker et des consommateurs : `classe.json`, `live.json`, `eleves.json` et `parents.json` ne correspondent à aucun motif `PROT`. Le Worker applique seulement `no-store` à `/assets/bdd/` puis transmet les requêtes à ASSETS ; ce n'est pas une autorisation.
+- `classe.js` et `live.js` chargent leurs JSON sans contrôle de rôle préalable. `prof.js` et `parents.js` ont des contrôles de rôle côté client, mais les fichiers restent directement lisibles. L'interface parents qualifie explicitement ses données de démonstration.
+- `eleves.json` présente des marqueurs forts de données synthétiques (noms génériques, matricules DZ-DEMO, emails demo.invalid, lieux de démonstration et dates artificielles). `parents.json` présente également des marqueurs explicites de démonstration.
+- `live.json` expose 32 entrées avec identités, matricules, villes, présence/retard, état micro/caméra, latence et participation ; les métadonnées ne certifient pas que ces données statiques sont fictives. `classe.json` est décrit comme une maquette mais contient des notes, présences, messages et une mention de justificatif médical ; le caractère synthétique de chaque entrée n'est pas certifié.
+- Risque confirmé : lecture directe des quatre JSON sans authentification, malgré les déclarations de confidentialité et les gardes d'interface. Risque de données personnelles réelles conditionnel à confirmer par le propriétaire.
+- Rapport : `docs/CONTINUITE_LOT_714_AUDIT_FIXTURES_CLASSE_LIVE.md`.
+- Aucun JSON, JS ou Worker modifié ; aucun changement Supabase/Auth/RLS/schéma/paiement, aucune modification de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 715 — audit des configurations de paiement et documents de projet — 20/11/2026
+- Découverte critique : `assets/bdd/config.json` est public et non protégé par `PROT`. Il contient des coordonnées de paiement et l'identité du titulaire. Les valeurs ne sont pas reproduites dans les rapports ni commentaires.
+- Le seul chargement trouvé dans `app.js` lit `ia_proxy`, pas les champs de paiement. Les coordonnées de paiement ne sont donc pas nécessaires à ce flux vérifié.
+- `assets/bdd/plan_projet.json` est marqué « Document confidentiel », présente des informations de marché, revenus, équipe, tarifs et feuille de route ; `projet.js` le charge directement sans garde de rôle côté serveur. Exposition à confirmer comme voulue ou non par le propriétaire.
+- `assets/bdd/reservation.json` est chargé par `reservation.js` pour une interface publique de réservation et affiche un canal de contact. Le caractère public de ces coordonnées doit être validé, sans changement unilatéral.
+- Le Worker ne protège aucun de ces trois chemins ; `no-store` ne bloque pas l'accès direct ou GitHub Raw/API.
+- Rapport : `docs/CONTINUITE_LOT_715_AUDIT_CONFIG_PAIEMENT_ET_PROJET.md`.
+- Audit documentaire uniquement : aucun code/configuration/donnée modifié ; aucun changement Supabase/Auth/RLS/schéma/paiement, aucune modification de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+
+### Lot 716 — audit ciblé des JSON publics — 20/11/2026
+- Correction de comptage : l'arbre Git récursif contient 58 fichiers JSON sous `assets/bdd/`, ce qui confirme le décompte du Lot 713. La mention de 63 dans la première version du rapport Lot 716 était erronée ; le rapport a été corrigé. L'audit du Lot 716 reste ciblé et non exhaustif.
+- Contrôles ciblés : `questions_eleve.json`, `vocabulaire_eleve.json`, `onboarding.json`, `intent_eval_set.json`, `intent_eval_results.json`, `corpus_rag_manifest.json`, `shards_manifest.json`, `access_config.json`, `journee.json`, `reservation.json`, `sujet14_farid.json`.
+- `journee.json` est explicitement qualifié de démonstration ; `journee.js` affiche cette qualification et neutralise les boutons d'action du planning de maquette.
+- `reservation.json` est chargé par `reservation.js` et ses contacts sont réutilisés dans le récapitulatif et le lien WhatsApp ; son exposition est fonctionnelle et doit être validée comme publication intentionnelle.
+- `sujet14_farid.json` contient un récit pédagogique avec un personnage nommé et des détails familiaux/scolaires ; la licence indique une intégration autorisée, mais le caractère entièrement fictif n'est pas certifié. Aucune donnée du récit n'est reproduite dans les rapports.
+- Les jeux d'intention et les manifestes RAG examinés ne contiennent pas de profils personnels ; le manifeste RAG annonce 0 document et 0 chunk. `access_config.json` expose les règles de parcours gratuit/payant sans secret d'authentification identifié.
+- Le Worker ne protège pas les chemins `config.json`, `plan_projet.json`, `sujet14_farid.json`, `journee.json` et `reservation.json`. `no-store` ne bloque pas la lecture anonyme.
+- Rapport : `docs/CONTINUITE_LOT_716_AUDIT_JSON_PUBLICS.md`.
+- Audit documentaire uniquement : aucun JSON, JS, Worker, règle d'accès, paiement, Supabase/Auth/RLS/schéma ou infrastructure modifié ; aucune modification de `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+
+### Lot 717 — audit complémentaire des JSON pédagogiques et du corpus — 20/11/2026
+- Audit documentaire en lecture seule des 30 JSON restants de `assets/bdd/`, avec vérification structurelle et consommateurs JavaScript.
+- `devoirs.json` : lecture complète de 379 entrées ; le compteur `_meta.nombre` annonce 363 (écart +16) et la redistribution v3 annonce 350 (113 2AS + 237 3AS). Répartition réelle : 131 entrées 2AS, 246 entrées 3AS et deux autres niveaux. Les 379 entrées ont un champ source mais aucune `source_url` ni `document_id` ; les attributions institutionnelles/génériques ne constituent pas une preuve primaire. Le Worker protège ce chemin en runtime, mais GitHub Raw/API reste accessible tant que le dépôt est public.
+- `biblio_multimatieres.json` : 1 213 entrées, compteur conforme, identifiants uniques et traductions DE/FR/AR renseignées. `corpus_index.json` : 490 éléments, deux groupes de numéros dupliqués et métadonnée obsolète. `corriges_gen.json` : 22 entrées. `traductions_livre.json` : 761 entrées, métadonnées de validation sans référence primaire indépendante par entrée.
+- `buch_3as_l4.json` à `buch_3as_l8.json` contiennent des extraits renvoyant à des pages de manuel, sans licence/autorisation jointe dans les métadonnées. Le Worker protège ces chemins en runtime, mais pas les blobs GitHub Raw/API. Justification des droits ou retrait du dépôt public à décider avant fusion.
+- `corpus_rag_chunks.json` contient 0 document et 0 chunk ; `corpus_rag_vectors.json` contient 0 vecteur. Aucun embedding effectif n'est présent dans ces artefacts.
+- Les autres JSON examinés sont principalement des ressources linguistiques, exercices, taxonomies et référentiels géographiques ; aucun secret d'authentification ni profil individuel détecté dans leurs structures. Les droits d'accès attendus pour les sujets/corrigés anglais restent à confirmer.
+- Rapport détaillé : `docs/CONTINUITE_LOT_717_AUDIT_JSON_PEDAGOGIQUES.md`.
+- Aucun JSON, JS, Worker, donnée pédagogique, accès, Supabase/Auth/RLS/schéma, paiement ou infrastructure modifié. Aucun changement `main`, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 718 — matrice consolidée des accès publics et des gardes Worker — 20/11/2026
+- Relecture croisée du Worker, des tests de garde, de wrangler.toml, .assetsignore, .gitignore et des consommateurs JavaScript.
+- PROT protège actuellement les scripts d'unités sélectionnés, devoirs.json, compositions.json, annales.json, les trois artefacts RAG, buch_3as_*.json et traductions_livre.json. Les tests confirment les refus 401/403/503, les chemins encodés et le refus avant appel ASSETS.
+- Plusieurs fichiers sensibles ou à statut à confirmer ne sont pas dans PROT : config.json, plan_projet.json, reservation.json, fixtures eleves/parents/live/classe, journee.json, sujet14_farid.json, ainsi que buch_2as.json, buch_l2.json, buch_l3.json. Leurs consommateurs les chargent directement sans preuve d'autorisation serveur dans les fetch examinés. Ne pas verrouiller les livres 2AS sans confirmation du statut gratuit/payé.
+- no-store n'est pas une autorisation. .assetsignore exclut certains fichiers du bundle Cloudflare, mais ni .gitignore ni .assetsignore ne retirent les fichiers déjà suivis du dépôt GitHub public. Les protections Worker n'empêchent pas non plus la lecture GitHub Raw/API.
+- Les tests Worker couvrent les routes protégées listées et un exemple public (grammaire.json), mais ne cartographient pas exhaustivement les routes publiques sensibles relevées ci-dessus.
+- Rapport : docs/CONTINUITE_LOT_718_MATRICE_ACCES_PUBLICS.md.
+- Décisions propriétaires nécessaires : publication des coordonnées paiement/contact, confidentialité du plan projet, certification des fixtures comme synthétiques, statut d'accès des livres 2AS, licences des extraits 3AS et stratégie de retrait des fichiers/historique du dépôt public.
+- Audit documentaire uniquement : aucun fichier applicatif, JSON, PDF, Worker, secret, politique d'accès, Supabase/Auth/RLS/schéma/paiement ou infrastructure modifié. Aucun changement main, aucune fusion et aucun déploiement. PR #23 reste ouverte et en brouillon.
+
+
+### Lot 719 — vérification des artefacts suivis et de l'historique Git — 20/11/2026
+- Arbre Git complet du HEAD précédent : 1 445 blobs, 293 PDF suivis, 834 blobs sous docs/archive/ et docs/private/buch_pages_full.json (197 523 octets dans l'arbre).
+- Métadonnées GitHub : dépôt bridrandomtv-spec/ALLEMAND toujours public (private=false). Test Raw textuel de docs/private/buch_pages_full.json au SHA du HEAD précédent réussi ; le corps a été reçu mais non reproduit. Son historique par chemin indique un commit d'introduction le 29/09/2026 comme sauvegarde intégrale avant migration lesson_content. Le fichier reste suivi et récupérable depuis Raw.
+- Les exclusions .assetsignore (docs/archive, docs/private, dzexams-*.pdf) concernent le bundle Cloudflare, pas les objets du dépôt GitHub. 293 PDF sont encore suivis ; un PDF d'exemple de docs/archive/documents reste dans l'arbre au HEAD et son historique montre un commit de classement, pas une purge globale.
+- Aucun téléchargement/affichage de contenu PDF binaire n'a été utilisé comme preuve Raw. Le constat d'exposition des PDF repose sur leur présence dans l'arbre d'un dépôt public.
+- Rapport : docs/CONTINUITE_LOT_719_AUDIT_HISTORIQUE_ET_ARTEFACTS.md.
+- Blocages : décider du retrait de la sauvegarde livre et de ses versions historiques, du sort/licences des 293 PDF et du maintien éventuel du dépôt public. Une purge Git éventuelle affecterait clones/forks/PR/SHA et requiert une autorisation explicite ; aucune purge, suppression, privatisation ou réécriture n'a été faite.
+- Audit en lecture seule ; aucun code, fichier de données, blob, historique, visibilité, Supabase/Auth/RLS/schéma/paiement ou infrastructure modifié. Aucun changement main, aucune fusion et aucun déploiement. CI du HEAD bdbe32bf3dd0dcec7369e0f8eee9dba17e69f6a8 : Workers Builds, validation structurelle/pédagogique, tests autonomes Professeur IA et trois workflows PostgreSQL réussis ; Supabase Preview ignoré.
+
+
+### Lot 720 — comparaison des artefacts avec main — 20/11/2026
+- Comparaison des arbres Git complets : main (SHA fadae5ee13fa89c47dd6a567d6db4c15df34a19c) contient déjà 1 431 blobs, 293 PDF, 834 blobs docs/archive et docs/private/buch_pages_full.json (197 523 octets). Le HEAD PR comparé (bd14967319c17bb7c7533f7578d2a2f085adf785) contient les mêmes 293 PDF, 834 archives et le même blob de sauvegarde du livre (3114e3024995b7c7a9f22fcbdfc78218742f2084).
+- Conclusion : les artefacts du Lot 719 préexistent sur main ; les commits documentaires récents de PR #23 ne les ont pas introduits. Le risque demeure réel, mais sa correction relève d'un chantier distinct coordonné avec le propriétaire. Aucun changement main.
+- Rapport : docs/CONTINUITE_LOT_720_COMPARAISON_EXPOSITION_MAIN.md.
+- Comparaison des arbres seulement ; pas d'audit exhaustif des objets orphelins, forks, clones, caches externes ou artefacts CI. Aucune suppression, privatisation, réécriture Git, modification Worker/Supabase/Auth/RLS/schéma/paiement ni déploiement.
+
+
+### Lot 721 — releases, tags et artefacts GitHub Actions — 20/11/2026
+- Releases GitHub : aucune release publiée retournée. Références refs/tags : liste vide au contrôle.
+- Inspection des artefacts des quatre workflows du HEAD 9133fe5845f59c54010500711fcec2bb093db21d : un artefact CI principal `pdf-rights-and-readiness` (ID 14668693491, 4 781 octets, expiration annoncée 04/12/2026 20:57 UTC, rétention 14 jours) ; aucun artefact dans les trois workflows PostgreSQL.
+- Archive téléchargée et inspectée : CSV 293 lignes, chemins et compteurs techniques uniquement, pas de texte PDF. Les 293 entrées sont sans preuve compagnon trouvée, 0 droit confirmé, 0 licence renseignée, 0 erreur renseignée. Accès via la connexion GitHub active confirmé ; accès anonyme direct à l'archive non testé séparément.
+- `.github/workflows/deploy.yml` génère le CSV via tools/audit_pdf_text_readiness.py en mode summary-only et le publie avec actions/upload-artifact@v4, retention-days 14.
+- CI du HEAD 9133fe5845f59c54010500711fcec2bb093db21d : Workers Builds, Professeur IA autonome, validation structurelle/pédagogique et les trois workflows PostgreSQL réussis ; Supabase Preview ignoré.
+- Rapport : docs/CONTINUITE_LOT_721_AUDIT_RELEASES_TAGS_ARTEFACTS.md.
+- Aucun artefact, release, tag, PDF, JSON, historique ou réglage de rétention modifié. Aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/paiement. PR #23 toujours ouverte/en brouillon/non fusionnée.
+
+
+### Lot 722 — inventaire des branches Git publiques — 20/11/2026
+- API GitHub : 30 branches, 30/30 marquées protected=false. Cela ne prouve pas que tout utilisateur peut les modifier ; les permissions d'accès et règles d'organisation ne sont pas déduites de ce seul champ.
+- Comparaison récursive de cinq branches anciennes (ai/lot-583-darja-arabizi-rag, ai/lot-601-worker-jwt, audit/lot-603-corpus-contract-tests, design/prototypes-67-74-alignment, security/pr10-confirmed-links-fix) : arbres complets, 293 PDF dans chacune, sauvegarde docs/private/buch_pages_full.json présente dans chacune avec le même blob SHA 3114e3024995b7c7a9f22fcbdfc78218742f2084 que main et la PR.
+- Le contrôle détaillé porte sur cinq branches, pas sur les arbres de toutes les 30 branches. Il ne couvre pas forks, clones, caches, objets inaccessibles ou copies tierces.
+- Rapport : docs/CONTINUITE_LOT_722_INVENTAIRE_BRANCHES_GIT.md.
+- Aucune branche supprimée ou protégée, aucun historique réécrit. Aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/paiement.
+
+
+### Lot 723 — cartographie des blobs documentaires sur les 30 branches — 20/11/2026
+- Inspection récursive des 25 branches restantes après le Lot 722 : 25/25 arbres complets (non tronqués). Dans les 25 : 293 PDF, 834 blobs docs/archive, le fichier docs/private/buch_pages_full.json avec le même blob SHA 3114e3024995b7c7a9f22fcbdfc78218742f2084, et les 18 chemins JSON ciblés (configuration, projet, réservation, fixtures, récit pédagogique et livres 2AS/3AS).
+- Consolidation avec les cinq branches anciennes du Lot 722 : les 30 branches du dépôt ont maintenant été contrôlées pour la présence des 293 PDF et du blob de sauvegarde du livre ; les cinq branches du Lot 722 avaient déjà confirmé ces deux éléments. Le contrôle des 18 JSON du présent lot ne s'étend pas aux cinq arbres précédents.
+- La présence répétée des mêmes blobs sur plusieurs références confirme qu'une suppression sur une seule branche ne révoquerait pas leur visibilité. .assetsignore ne protège que le bundle Cloudflare, pas le dépôt GitHub public.
+- Rapport : docs/CONTINUITE_LOT_723_CARTOGRAPHIE_BRANCHES_ET_BLOBS.md.
+- Audit documentaire en lecture seule : aucune donnée, branche, permission, règle, référence ou historique modifié ; aucune purge, privatisation ou migration. Aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/paiement/infrastructure. PR #23 reste ouverte/en brouillon/non fusionnée.
+
+
+### Lot 724 — vérification Raw des JSON ciblés et comparaison main/PR — 20/11/2026
+- 18/18 requêtes directes Raw ont retourné un contenu lisible au HEAD PR : configuration, projet, réservation, fixtures élèves/parents/live/classe, journee, sujet14_farid, livres 2AS/3AS et sauvegarde docs/private/buch_pages_full.json. Les contenus ont été traités sans reproduction ni extraction de données personnelles.
+- Comparaison des arbres récursifs complets main (fadae5ee13fa89c47dd6a567d6db4c15df34a19c) et PR (HEAD Lot 723) : les 18 chemins existent dans les deux arbres et les 18 blobs SHA sont identiques. Ces versions préexistent donc sur main et n'ont pas été introduites par les commits documentaires récents.
+- Les PDF binaires n'ont pas été téléchargés par ce contrôle ; leur présence dans les arbres publics reste établie par les lots précédents. La lecture Raw ne tranche pas la qualification confidentielle/fictive/licenciée des contenus.
+- Rapport : docs/CONTINUITE_LOT_724_VERIFICATION_RAW_ET_COMPARAISON_MAIN.md.
+- Audit en lecture seule : aucun JSON, PDF, blob, historique, branche, règle d'accès ou réglage modifié. Aucun changement main, aucune purge/privatisation/réécriture Git/migration/déploiement, aucun changement Supabase/Auth/RLS/schéma/paiement/infrastructure. PR #23 reste ouverte/en brouillon/non fusionnée.
+
+
+### Lot 725 — registre des décisions bloquantes avant fusion — 21/11/2026
+- Vérification du dépôt : visibilité publique, non archivé, forks autorisés ; métadonnées GitHub indiquent 0 fork et network_count=0 au contrôle. 30 branches visibles ; main toujours au SHA fadae5ee13fa89c47dd6a567d6db4c15df34a19c.
+- HEAD PR #23 au contrôle : 2a54dce3624e1ea81e718bd42af49d54aa211ff7. PR ouverte, brouillon, non fusionnée, techniquement mergeable ; 403 commits, 57 fichiers modifiés. Mergeable n'est pas équivalent à prêt sécurité.
+- CI du HEAD Lot 724 : 4/4 workflows terminés avec succès.
+- Consolidation des décisions pré-fusion : visibilité dépôt, droits des 293 PDF, sauvegarde du manuel, extraits 3AS, classification des livres 2AS, certification des fixtures, publication des fichiers config/projet/réservation, fictivité/autorisation du récit pédagogique et éventuel retrait global de l'historique.
+- Rapport : docs/CONTINUITE_LOT_725_REGISTRE_DECISIONS_PRE_FUSION.md.
+- Lot documentaire seulement. Aucune privatisation, purge, réécriture Git, suppression de données, changement main, déploiement ou modification Supabase/Auth/RLS/schéma/paiement. PR #23 reste ouverte/en brouillon/non fusionnée.
+
+
+### Lot 726 — revue du diff et des contrôles de sécurité de PR #23 — 21/11/2026
+- Comparaison GitHub base/main `fadae5ee13fa89c47dd6a567d6db4c15df34a19c` → HEAD `8d8836d649d7c9817644171ddafb9ffe4c49e238` : 405 commits en avance, 0 en retard, 58 fichiers modifiés.
+- PR #23 confirmée ouverte, en brouillon, non fusionnée, techniquement mergeable. `main` reste inchangée au SHA de base.
+- CI HEAD : CI principale run `44890081991` (workflow #4821) réussie ; trois workflows PostgreSQL `44890081992`, `44890081983`, `44890082019` réussis.
+- Revue du diff : durcissement du parseur JSON (clés dupliquées), lecture bornée et annulable des flux, validation des empreintes chunks/manifeste/vecteurs, cohérence des identifiants/pages/comptages, filtrage droits/licences avant modèle, normalisation des chemins Worker, provenance documentaire neutralisée et corrections génériques signalées.
+- Les workflows historiques `.github/workflows/indexer.yml` et `.github/workflows/sharder.yml` ont été supprimés ; ils disposaient de `contents: write` et pouvaient OCRiser/indexer puis pousser automatiquement. Le workflow principal reste de validation ; aucun job de déploiement n'a été ajouté dans le diff.
+- Réserve disponibilité : `tools/ingest_corpus_rag.py` remplace successivement chunks et manifeste, pas comme une transaction atomique unique. Une interruption entre les deux remplacements produit un couple incohérent ; le Worker détecte l'empreinte invalide et échoue fermé (503). À traiter ou accepter explicitement avant ingestion réelle.
+- Réserve validation : les tests Worker utilisent des simulations Auth/REST/RLS ; aucun test E2E sur un Worker déployé avec JWT utilisateur réel n'a été lancé. La CI verte n'est pas une preuve de validation de production.
+- La recherche documentaire PDF locale dans `rag.js` est désactivée et les requêtes documentaires passent par `ia.js`/Worker authentifié. Ce choix est cohérent avec le contrôle serveur, mais exige un test navigateur en préproduction avant activation opérationnelle.
+- Les blocages de gouvernance du Lot 725 demeurent : visibilité publique du dépôt, droits des 293 PDF, sauvegarde complète du manuel, extraits 3AS, classification des livres 2AS, certification des fixtures et publication de config/projet/réservation. Les constats Raw des Lots 719–724 ne sont pas corrigés par la réussite CI.
+- Rapport : `docs/CONTINUITE_LOT_726_REVUE_DIFF_SECURITE.md` (commit `356283ec1bda658322d26502a2d8fc08cdaf2f8f`).
+- Revue en lecture seule : aucun code/donnée pédagogique modifié, aucun changement `main`, aucune fusion, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement/infrastructure. PR #23 reste ouverte/en brouillon/non fusionnée.
+
+
+### Lot 728 — publication cohérente des artefacts RAG — 21/11/2026
+- Vérification PR #23 au HEAD `f5dc510845563e2909ff75f160b5667b26d4d69c` : ouverte, brouillon, non fusionnée, mergeable ; 408 commits en avance, 0 en retard, 59 fichiers modifiés ; base/main `fadae5ee13fa89c47dd6a567d6db4c15df34a19c`.
+- CI du HEAD exact : CI principale run `44892601622` réussie ; PostgreSQL runs `44892601633`, `44892601645`, `44892601683` réussis. 4/4 workflows réussis.
+- Analyse de `tools/ingest_corpus_rag.py` : chunks et manifeste sont écrits dans deux temporaires puis activés par deux appels `replace` séparés. Une interruption entre eux peut créer un couple de générations incohérent ; le Worker détecte l'incohérence et échoue fermé, avec risque d'indisponibilité.
+- Couverture de tests : droits, inventaire, extraction, intégrité et vecteurs couverts ; aucun test d'arrêt brutal entre les deux remplacements ni de reprise atomique identifié.
+- Décision : aucun changement de code dans ce lot. Un simple rollback ne garantit pas la cohérence après arrêt brutal. Cible recommandée à étudier : générations immuables + pointeur actif atomique lu une fois par le Worker ; alternative : artefact corpus unique si la taille et les limites Worker/Assets le permettent.
+- Lot 729 à venir : cartographier tous les consommateurs/URL, mesurer les tailles et limites, définir cache et format, ajouter tests d'interruption à chaque étape et démontrer l'impossibilité de mélanger les générations. Aucun OCR/embedding réel.
+- Rapport : `docs/CONTINUITE_LOT_728_PUBLICATION_COHERENTE_RAG.md` (commit `f6780bbd45196484ef73405abc4118c10e17ce06`).
+- Aucun changement main, aucune fusion, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement, aucun retrait de fichiers ni réécriture d'historique. PR #23 reste ouverte/en brouillon.
+
+
+### Lot 729 — cartographie des consommateurs et dépendances RAG — 21/11/2026
+- HEAD audité avant documentation : `b3366aed1c88242b8a8fc1c319a8455cb9f89fae`; PR #23 ouverte, brouillon, non fusionnée, mergeable ; base/main `fadae5ee13fa89c47dd6a567d6db4c15df34a19c`, 410 commits en avance, 0 en retard, 60 fichiers modifiés.
+- Artefacts au HEAD : `corpus_rag_chunks.json` 0 document/0 chunk ; `corpus_rag_manifest.json` 0 document/0 chunk ; `corpus_rag_vectors.json` 0 vecteur ; `shards_manifest.json` 0 shard. Aucun PDF RAG ni embedding réel publié.
+- Consommateur serveur : `worker/ia-ask.js` lit chunks + manifeste, vérifie SHA-256 et métadonnées, filtre les droits avant BM25 ; vecteurs uniquement si `RAG_VECTOR_ENABLED=true` et `env.AI.run` est disponible, avec validation de provenance et couverture ; repli lexical sinon.
+- Navigateur : `rag.js` conserve les chargeurs historiques de shards/index, mais `cherche()` retourne `null` ; le code indique que les demandes PDF doivent passer par le Worker authentifié. Ne pas confondre `corpus_index.json` lexical avec le corpus PDF RAG.
+- Générateurs : `tools/ingest_corpus_rag.py` écrit chunks/manifeste ; `tools/build_corpus_rag_vectors.py` lit les deux, mode par défaut dry-run sans écriture/API ; exécution réelle demande `--execute`, confirmation de facturation et secrets Cloudflare.
+- Deux écarts confirmés : (1) `.github/workflows/deploy.yml` liste chunks et manifeste comme assets requis mais omet `corpus_rag_vectors.json`, alors que le Worker le récupère si le drapeau vectoriel est activé ; (2) Worker utilise des URL absolues de production `https://allemand.brid-randomtv.workers.dev/assets/bdd/...`, ce qui peut faire qu'une preview lise les assets production au lieu de ceux de la preview. À corriger avant activation vectorielle/E2E.
+- Publication chunks/manifeste toujours non atomique (Lot 728) ; hash Worker échoue fermé mais peut rendre le service indisponible.
+- CI sur HEAD `b3366aed` au contrôle : PostgreSQL ملتقى الطلاب run `44898568654` réussi ; consentement Messenger `44898568632` réussi ; découverte Messenger `44898568684` réussie ; CI principale run `44898568637` encore en cours. Ne pas déclarer 4/4 tant que la CI principale n'est pas terminée.
+- Rapport : `docs/CONTINUITE_LOT_729_CARTOGRAPHIE_CONSOMMATEURS_RAG.md` (commit `c4f5284c3c9b3758868ebf3842b2818ab7340a0f`).
+- Aucun code/donnée/infrastructure modifié ; aucun OCR/ingestion/embedding réel ; aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement, aucun retrait de fichiers ni réécriture historique. PR #23 reste ouverte/en brouillon.

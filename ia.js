@@ -113,7 +113,7 @@
     return { type:'free_summary', level:level, unit:unit };
   }
   function corpusDocumentResource(question){
-    const match = String(question || '').match(/\b(pdf-[a-f0-9]{16})\b/i);
+    const match = String(question || '').match(/\b(pdf-[a-f0-9]{64})\b/i);
     if(!match) return null;
     return { type:'corpus_document', id:match[1].toLowerCase() };
   }

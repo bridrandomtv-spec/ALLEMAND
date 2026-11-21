@@ -1,1 +1,10 @@
-{"_meta":{"eval_n":146,"intent_accuracy":75.3,"category_accuracy":100.0,"note":"category_accuracy = routage vers la bonne catégorie (le choix exact d'intent parmi frères ambigus se fait ensuite par entités/unité)"},"per_category":{"CORRECTION":[6,6,100],"EXPLAIN":[38,54,70],"NAVIGATION":[6,6,100],"PRACTICE":[18,26,69],"REVISION":[22,30,73],"SEARCH":[14,18,78],"TRANSLATE":[6,6,100]},"cross_category_failures":[],"unmatched":[]}
+{
+  "_meta": {
+    "eval_n": 103,
+    "status": "invalidated_pending_recomputation",
+    "note": "Les anciennes métriques 75,3 % / 100 % sont retirées : le jeu précédent contenait des formulations identiques étiquetées pour plusieurs intentions. Aucune nouvelle précision n’est annoncée sans exécuter un évaluateur réel du routeur."
+  },
+  "per_category": {},
+  "cross_category_failures": [],
+  "unmatched": []
+}

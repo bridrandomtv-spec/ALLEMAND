@@ -18,6 +18,132 @@ defg('speechSynthesis', { speak(){}, cancel(){}, getVoices: () => [] });
 vm.runInThisContext(read('rag.js'), { filename: 'rag.js' });
 const fn = globalThis.reponsePedagogique || (globalThis.RAG && globalThis.RAG.reponsePedagogique);
 if (typeof fn !== 'function') { console.log('::error::regression_rag : reponsePedagogique absente'); process.exit(1); }
+const matcher = globalThis.RAG && globalThis.RAG.matchOnto;
+if (typeof matcher !== 'function') {
+  console.log('::error::ONTO : matchOnto absent du contrat de test RAG');
+  process.exit(1);
+}
+const ambiguous = await matcher('هاد الدرس');
+const candidates = new Set((ambiguous && ambiguous.candidates) || []);
+if (!ambiguous || ambiguous.ambiguous !== true
+    || !candidates.has('summarize_lesson')
+    || !candidates.has('explain_lesson')) {
+  console.log('::error::ONTO : une égalité entre intentions doit provoquer une abstention');
+  process.exit(1);
+}
+const unique = await matcher('شرحلي هاد الدرس');
+if (!unique || unique.ambiguous || !unique.it || unique.it.intent !== 'explain_lesson') {
+  console.log('::error::ONTO : une formulation non ambiguë doit conserver son intention');
+  process.exit(1);
+}
+const shortFragment = await matcher('was');
+if (shortFragment !== null) {
+  console.log('::error::ONTO : un fragment latin court ne doit pas créer de faux ex aequo');
+  process.exit(1);
+}
+console.log('✅ ONTO : égalité détectée sans choix arbitraire ; intention unique conservée');
+
+/* Lot 666 : les shards locaux ne peuvent pas autoriser un document.
+   Fixture volontairement piégée : même avec un chunk correspondant, la
+   recherche navigateur doit s'abstenir tant que les droits ne sont pas vérifiés
+   par le Worker authentifié. */
+const savedCorpusFetch = globalThis.fetch;
+try {
+  globalThis.fetch = async url => {
+    const path = String(url);
+    if (path.includes('shards_manifest.json')) return {
+      ok:true, json:async()=>({ nb_shards:1, total_chunks:1,
+        shards:[{ file:'fixture.json' }] })
+    };
+    if (path.includes('fixture.json')) return {
+      ok:true, json:async()=>({ termes:{ secret:[1], contenu:[1] },
+        chunks:[{ n:1, texte:'CONTENU VERROUILLE SECRET', doc:'pdf-non-authorise' }] })
+    };
+    return { ok:false, status:404, json:async()=>({}) };
+  };
+  const localCorpusHit = await globalThis.RAG.cherche('secret contenu');
+  if (localCorpusHit !== null) {
+    throw new Error('un shard local a révélé un document sans preuve de droits');
+  }
+  console.log('✅ RAG corpus lock : shard piégé refusé sans autorisation Worker');
+} finally {
+  globalThis.fetch = savedCorpusFetch;
+}
+
+/* Lot 667 : l'interface doit transmettre les demandes documentaires au cerveau
+   central (ia.js -> Worker /ask) et afficher sa réponse comme texte échappé. */
+const priorQuerySelector667 = document.querySelector;
+const priorReponseIA667 = globalThis.reponseIA;
+const priorPed667 = globalThis.reponsePedagogique;
+let submit667 = null;
+let query667 = 'cherche dans le fichier PDF le passage sur die Familie';
+let forwarded667 = '';
+const box667 = { innerHTML:'' };
+const input667 = { get value(){ return query667; } };
+const out667 = { innerHTML:'', querySelectorAll(){ return []; }, querySelector(){ return null; } };
+const form667 = { addEventListener(type, fn){ if(type === 'submit') submit667 = fn; } };
+try {
+  document.querySelector = selector => ({
+    '#ragBody':box667, '#ragForm':form667, '#ragQ':input667, '#ragOut':out667
+  })[selector] || null;
+  globalThis.reponsePedagogique = async () => null;
+  globalThis.reponseIA = async q => {
+    forwarded667 = q;
+    return 'Réponse vérifiée <script>alert(1)</script>';
+  };
+  await globalThis.RAG.render();
+  if(typeof submit667 !== 'function') throw new Error('formulaire RAG non initialisé');
+  await submit667({ preventDefault(){} });
+  if(forwarded667 !== query667) throw new Error('la question documentaire ne rejoint pas reponseIA');
+  if(!out667.innerHTML.includes('Réponse vérifiée &lt;script&gt;')
+      || out667.innerHTML.includes('<script>')) {
+    throw new Error('la réponse Worker n’est pas affichée comme texte échappé');
+  }
+  console.log('✅ RAG Lot 667 : interface raccordée à reponseIA et sortie échappée');
+} catch (e) {
+  console.log('::error::RAG Lot 667 · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  document.querySelector = priorQuerySelector667;
+  if(priorReponseIA667 === undefined) delete globalThis.reponseIA;
+  else globalThis.reponseIA = priorReponseIA667;
+  globalThis.reponsePedagogique = priorPed667;
+}
+
+/* Mesure du classifieur réel sur le jeu étiqueté, sans réimplémenter son score.
+   Les abstentions et ambiguïtés restent distinctes des erreurs de classification. */
+const intentEval = JSON.parse(read('assets/bdd/intent_eval_set.json'));
+const evalRows = intentEval.eval || [];
+if (evalRows.length !== Number(intentEval._meta && intentEval._meta.n)) {
+  console.log('::error::ONTO EVAL : nombre d’exemples incohérent avec les métadonnées');
+  process.exit(1);
+}
+const evalStats = { total: evalRows.length, correct: 0, wrong: 0, ambiguous: 0, abstain: 0, byIntent: {} };
+for (const row of evalRows) {
+  const got = await matcher(row.q);
+  const bucket = evalStats.byIntent[row.intent] || (evalStats.byIntent[row.intent] = { total: 0, correct: 0, wrong: 0, ambiguous: 0, abstain: 0 });
+  bucket.total++;
+  if (!got) { evalStats.abstain++; bucket.abstain++; }
+  else if (got.ambiguous) { evalStats.ambiguous++; bucket.ambiguous++; }
+  else if (got.it && got.it.intent === row.intent) { evalStats.correct++; bucket.correct++; }
+  else { evalStats.wrong++; bucket.wrong++; }
+}
+const classified = evalStats.correct + evalStats.wrong;
+evalStats.coverage = Number((classified / evalStats.total).toFixed(4));
+evalStats.accuracyOnClassified = classified ? Number((evalStats.correct / classified).toFixed(4)) : 0;
+evalStats.exactAccuracy = Number((evalStats.correct / evalStats.total).toFixed(4));
+console.log('📊 ONTO EVAL 103 : ' + JSON.stringify(evalStats));
+const ambiguousLive = await fn('هاد الدرس');
+if (!ambiguousLive || ambiguousLive.ambiguousIntent !== true) {
+  console.log('::error::ONTO : le parcours réel doit demander une précision en cas d’intention ambiguë');
+  process.exit(1);
+}
+const uniqueLive = await fn('شرحلي هاد الدرس');
+if (uniqueLive && uniqueLive.ambiguousIntent === true) {
+  console.log('::error::ONTO : une intention unique ne doit pas déclencher la clarification');
+  process.exit(1);
+}
+console.log('✅ ONTO live : clarification dans le parcours réel, sans activer de réponse statique');
 const valide = rep => { const t = typeof rep === 'string' ? rep : (rep && (rep.html || rep.texte || rep.reponse)) || ''; return !!t && t.indexOf('لا أعرف') === -1 && t.indexOf('لا اعرف') === -1; };
 const fails = []; let ok = 0;
 for (const i of contrat) {
@@ -28,3 +154,290 @@ for (const i of contrat) {
 }
 console.log('✅ RAG contrat : ' + ok + '/' + contrat.length + ' questions répondues par rag.js');
 if (fails.length) { fails.forEach(f => console.log('::error::REG-RAG · ' + f)); process.exit(1); }
+
+/* Garde de sécurité : un verbe du tableau local ne doit pas être révélé
+   lorsque le contrôle d'accès manque ou que le catalogue ne rattache le
+   verbe à aucune ressource pédagogique vérifiable. */
+const savedFetch = globalThis.fetch;
+const hadAccess = Object.prototype.hasOwnProperty.call(globalThis, 'ACCESS');
+const savedAccess = globalThis.ACCESS;
+try {
+  delete globalThis.ACCESS;
+  const withoutAccess = await fn('konjugiere mögen');
+  if (!withoutAccess || withoutAccess.locked !== true) {
+    throw new Error('conjugaison locale révélée sans contrôle ACCESS');
+  }
+
+  globalThis.fetch = async () => ({
+    ok: false, status: 404,
+    json: async () => ({}), text: async () => ''
+  });
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    canAccessLesson: () => false,
+    canAccessQuiz: () => false,
+    entitlement: () => ({ ok: false }),
+    paywall: () => {}
+  };
+  const withoutResource = await fn('konjugiere mögen');
+  if (!withoutResource || withoutResource.locked !== true) {
+    throw new Error('conjugaison locale révélée sans ressource vérifiable');
+  }
+  console.log('✅ RAG lock : conjugaison refusée sans ACCESS et sans ressource vérifiable');
+} catch (e) {
+  console.log('::error::RAG lock · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  globalThis.fetch = savedFetch;
+  if (hadAccess) globalThis.ACCESS = savedAccess;
+  else delete globalThis.ACCESS;
+}
+
+/* Lot 650 : les demandes portant sur une unité complète ne passent jamais
+   sans preuve d'entitlement backend, même si le professeur cloud est ouvert. */
+const priorAccess650 = globalThis.ACCESS;
+try {
+  delete globalThis.ACCESS;
+  const noAccessUnit = await fn('explique unité 3');
+  if (!noAccessUnit || noAccessUnit.locked !== true) {
+    throw new Error('résumé d’unité révélé sans ACCESS');
+  }
+  const freeSummaryWithoutAccess = await fn('اشرح الوحدة 2');
+  if (freeSummaryWithoutAccess && freeSummaryWithoutAccess.locked === true) {
+    throw new Error('résumé explicitement gratuit bloqué à tort');
+  }
+  const noAccessRule = await fn('Explique le Genitiv.');
+  if (!noAccessRule || noAccessRule.locked !== true) {
+    throw new Error('règle Genitiv révélée localement sans ACCESS');
+  }
+  const noAccessArabicRule = await fn('اشرح التَّحْوِيلَ الاسْمِيَّ');
+  if (!noAccessArabicRule || noAccessArabicRule.locked !== true) {
+    throw new Error('règle arabe révélée localement malgré les diacritiques');
+  }
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ ok:false, src:'backend' }),
+    paywall: () => {}
+  };
+  const noEntitlementUnit = await fn('explique unité 3');
+  if (!noEntitlementUnit || noEntitlementUnit.locked !== true) {
+    throw new Error('résumé d’unité révélé sans entitlement actif');
+  }
+  const noEntitlementRule = await fn('Explique le Genitiv.');
+  if (!noEntitlementRule || noEntitlementRule.locked !== true) {
+    throw new Error('règle Genitiv révélée sans entitlement backend');
+  }
+  globalThis.uniteActive = () => ({ n:3 });
+  delete globalThis.ACCESS;
+  const activeUnitWithoutAccess = await fn('explique cette unité');
+  if (!activeUnitWithoutAccess || activeUnitWithoutAccess.locked !== true) {
+    throw new Error('explication de l’unité active révélée sans ACCESS');
+  }
+  globalThis.uniteActive = () => null;
+  const lessonWithoutUnit = await fn('explique la séance 2');
+  if (!lessonWithoutUnit || lessonWithoutUnit.locked !== true) {
+    throw new Error('séance explicite révélée sans unité vérifiable ni ACCESS');
+  }
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ ok:false, src:'backend' }),
+    paywall: () => {}
+  };
+  globalThis.ACCESS.refresh = async () => { throw new Error('backend unavailable'); };
+  const backendUnavailable = await fn('explique unité 3');
+  if (!backendUnavailable || backendUnavailable.locked !== true) {
+    throw new Error('résumé d’unité révélé quand le contrôle backend échoue');
+  }
+  console.log('✅ RAG lock : unité complète refusée sans ACCESS, sans entitlement et si le backend échoue');
+} catch (e) {
+  console.log('::error::RAG lock unité · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  if (priorAccess650 === undefined) delete globalThis.ACCESS;
+  else globalThis.ACCESS = priorAccess650;
+  delete globalThis.uniteActive;
+}
+
+/* Lot 654 : les anciens fichiers buch_lN.json contiennent des unités entières.
+   Le lecteur de texte/dialogue ne doit pas les charger sans entitlement backend,
+   même si la question ne nomme pas explicitement « unité » ou « Lektion ». */
+const priorAccess654 = globalThis.ACCESS;
+try {
+  delete globalThis.ACCESS;
+  const noAccessBook = await fn('lis le texte 2');
+  if (!noAccessBook || noAccessBook.locked !== true) {
+    throw new Error('texte de l’unité 2 révélé sans ACCESS');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ ok:false, src:'backend' }),
+    paywall: () => {}
+  };
+  const freeBook = await fn('lis le dialogue 2');
+  if (!freeBook || freeBook.locked !== true) {
+    throw new Error('dialogue de l’unité 2 révélé à un compte gratuit');
+  }
+  const freeVocab = await fn('lis le vocabulaire 3');
+  if (!freeVocab || freeVocab.locked !== true) {
+    throw new Error('vocabulaire de l’unité 3 révélé à un compte gratuit');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => { throw new Error('backend unavailable'); },
+    entitlement: () => ({ ok:true, src:'backend' }),
+    paywall: () => {}
+  };
+  const backendDownBook = await fn('lis le texte 3');
+  if (!backendDownBook || backendDownBook.locked !== true) {
+    throw new Error('texte révélé alors que le contrôle backend échoue');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ ok:true, src:'backend' }),
+    paywall: () => {}
+  };
+  const paidBook = await fn('lis le texte 2');
+  const paidText = typeof paidBook === 'string' ? paidBook : (paidBook && paidBook.html) || '';
+  if (!paidBook || paidBook.locked === true || !paidText.includes('Lektion 2')) {
+    throw new Error('un abonné validé ne récupère plus le texte autorisé de l’unité 2');
+  }
+  console.log('✅ RAG lock : texte/dialogue depuis buch_lN refusés sans entitlement backend');
+} catch (e) {
+  console.log('::error::RAG lock buch_lN · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  if (priorAccess654 === undefined) delete globalThis.ACCESS;
+  else globalThis.ACCESS = priorAccess654;
+}
+
+/* Lot 655 : aucune restitution de la bibliothèque documentaire sans entitlement
+   backend, y compris statistiques, devoirs et raccourci de traduction indexée. */
+const priorAccess655 = globalThis.ACCESS;
+const priorBiblio655 = globalThis.BIBLIO;
+let biblioCalls655 = 0;
+try {
+  globalThis.BIBLIO = {
+    stats: async () => { biblioCalls655++; return {livre:1,devoirs:1,grammaire:1,corpus:1}; },
+    search: async () => { biblioCalls655++; return [{src:'devoir',id:'locked-1',titre:'Sujet protégé',texte:'CORRIGE CONFIDENTIEL'}]; },
+    traduire: async () => ({type:'curated',de:'Der Satz',ar:'الترجمة المحمية'})
+  };
+  delete globalThis.ACCESS;
+  let blocked = await fn('donne-moi un devoir sur le Dativ');
+  if (!blocked || blocked.locked !== true || biblioCalls655 !== 0) {
+    throw new Error('bibliothèque consultée ou restituée sans ACCESS');
+  }
+  blocked = await fn('combien de documents dans la bibliothèque ?');
+  if (!blocked || blocked.locked !== true || biblioCalls655 !== 0) {
+    throw new Error('statistiques de la bibliothèque exposées sans ACCESS');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ok:false,src:'backend'}),
+    paywall: () => {}
+  };
+  blocked = await fn('donne-moi un devoir sur le Dativ');
+  if (!blocked || blocked.locked !== true || biblioCalls655 !== 0) {
+    throw new Error('documents exposés à un compte sans abonnement');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => { throw new Error('backend unavailable'); },
+    entitlement: () => ({ok:true,src:'backend'}),
+    paywall: () => {}
+  };
+  blocked = await fn('donne-moi un devoir sur le Dativ');
+  if (!blocked || blocked.locked !== true || biblioCalls655 !== 0) {
+    throw new Error('documents exposés malgré une panne du contrôle backend');
+  }
+
+  globalThis.ACCESS = {
+    refresh: async () => {},
+    entitlement: () => ({ok:true,src:'backend'}),
+    paywall: () => {}
+  };
+  const allowed = await fn('donne-moi un devoir sur le Dativ');
+  if (!allowed || allowed.locked === true || biblioCalls655 < 1
+      || !String(allowed).includes('CORRIGE CONFIDENTIEL')) {
+    throw new Error('bibliothèque inaccessible malgré entitlement backend actif');
+  }
+  console.log('✅ RAG lock : bibliothèque refusée sans entitlement backend');
+} catch (e) {
+  console.log('::error::RAG lock bibliothèque · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  if (priorAccess655 === undefined) delete globalThis.ACCESS;
+  else globalThis.ACCESS = priorAccess655;
+  if (priorBiblio655 === undefined) delete globalThis.BIBLIO;
+  else globalThis.BIBLIO = priorBiblio655;
+}
+
+/* Lot 656 : une page absente du manuel 2AS ne doit jamais être remplacée
+   par une page 3AS de même numéro (les pages 3-4 du 3AS sont verrouillées). */
+try {
+  const wrongLevelPage = await fn('lis la page 3 (2AS)');
+  const wrongLevelText = typeof wrongLevelPage === 'string'
+    ? wrongLevelPage : (wrongLevelPage && (wrongLevelPage.html || wrongLevelPage.texte || wrongLevelPage.reponse)) || '';
+  if (/Inhalt 3AS|L1 3AS p3|Lektion 1.*3AS/i.test(wrongLevelText)) {
+    throw new Error('la page 3 du manuel 3AS a été restituée à la place de la page 2AS absente');
+  }
+  console.log('✅ RAG lock : aucun repli de page entre les manuels 2AS et 3AS');
+} catch (e) {
+  console.log('::error::RAG page niveau · ' + e.message);
+  process.exitCode = 1;
+}
+
+/* Lot 657 : l'accès aux corps statiques du manuel exige un marqueur explicite
+   locked:false. Les cinq pages gratuites historiques sont annotées explicitement. */
+try {
+  const freePage = await fn('lis la page 5 (2AS)');
+  const freeText = typeof freePage === 'string' ? freePage : (freePage && (freePage.html || freePage.texte || freePage.reponse)) || '';
+  if (!freeText || freeText.indexOf('Guten Tag!') === -1 || freeText.indexOf('🔒') !== -1) {
+    throw new Error('la page 5 explicitement gratuite n’est plus accessible');
+  }
+  const lockedPage = await fn('lis la page 8 (2AS)');
+  const lockedText = typeof lockedPage === 'string' ? lockedPage : (lockedPage && (lockedPage.html || lockedPage.texte || lockedPage.reponse)) || '';
+  if (!lockedText || lockedText.indexOf('🔒') === -1 || lockedText.indexOf('Übt zu zweit') !== -1) {
+    throw new Error('la page 8 verrouillée a révélé son corps statique');
+  }
+  console.log('✅ RAG lock : seules les pages avec locked:false explicite sont servies statiquement');
+} catch (e) {
+  console.log('::error::RAG page marker · ' + e.message);
+  process.exitCode = 1;
+}
+
+/* Lot 660 : les demandes d'exemples et d'exercices d'une règle verrouillée
+   doivent être bloquées par le garde local, même si REGLES ne connaît pas
+   encore l'alias et avant tout appel au Worker. */
+const priorAccess660 = globalThis.ACCESS;
+try {
+  delete globalThis.ACCESS;
+  const lockedRulePrompts = [
+    'Nomen-Verb-Verbindungen Übungen',
+    'Passiversatzformen Beispiele',
+    'Genitiv practice',
+    'Arbeitsblatt zu Wechselpräpositionen',
+    'Nomen-Verb-Verbindungen Übungsblatt',
+    'التحويل الاسمي تمارين',
+    'تطبيقات على المبني للمجهول',
+    'Perfekt Sätze',
+    'Genitiv rules',
+    'Règles du Genitiv',
+    'جدول Dativ'
+  ];
+  for (const question of lockedRulePrompts) {
+    const result = await fn(question);
+    if (!result || result.locked !== true) {
+      throw new Error('demande pédagogique verrouillée révélée sans ACCESS : ' + question);
+    }
+  }
+  console.log('✅ RAG lock Lot 660 : exemples, exercices, pratiques et feuilles de travail refusés sans ACCESS');
+} catch (e) {
+  console.log('::error::RAG lock Lot 660 · ' + e.message);
+  process.exitCode = 1;
+} finally {
+  if (priorAccess660 === undefined) delete globalThis.ACCESS;
+  else globalThis.ACCESS = priorAccess660;
+}

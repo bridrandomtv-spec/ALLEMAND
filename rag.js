@@ -40,49 +40,15 @@
   }
 
   /* recherche shard par shard : un seul shard en mémoire à la fois */
+  /* Le corpus documentaire local n'est pas une source d'autorisation.
+     Les shards statiques ne portent pas de preuve de droits par document et
+     ne doivent jamais être lus directement depuis le navigateur. La recherche
+     PDF passe exclusivement par le Worker authentifié, qui vérifie le manifeste,
+     rights_confirmed et la licence avant de transmettre un extrait au modèle.
+     L'interface délègue les demandes documentaires à ia.js et au Worker. */
   async function cherche(q){
-    const ts = termes(q);
-    if(!ts.length) return null;
-    const man = await chargeManifest();
-    if(man && man.shards && man.shards.length){
-      let best = null;
-      for(const sh of man.shards){
-        let data = null;
-        try{
-          const r = await fetch('assets/bdd/shards/' + sh.file, { cache:'no-store' });
-          if(r.ok) data = await r.json();
-        }catch(e){}
-        if(!data) continue;
-        const scores = {};
-        ts.forEach(t => { (data.termes[t] || []).forEach(cid => {
-          scores[cid] = (scores[cid] || 0) + 1; }); });
-        for(const cid in scores){
-          const sc = scores[cid];
-          if(sc >= SEUIL && (!best || sc > best.score)){
-            const chunk = (data.chunks || []).filter(c => c.n === +cid)[0];
-            if(chunk) best = { score: sc, texte: chunk.texte, doc: chunk.doc };
-          }
-        }
-        if(best && best.score >= SEUIL + 3) break;   /* match fort : arrêt précoce */
-      }
-      return best;
-    }
-    const idx = await chargeLegacy();
-    if(!idx) return null;
-    const scores = {};
-    ts.forEach(t => { (idx.termes[t] || []).forEach(cid => {
-      scores[cid] = (scores[cid] || 0) + 1; }); });
-    let best = null;
-    for(const cid in scores){
-      const sc = scores[cid];
-      if(sc >= SEUIL && (!best || sc > best.score)){
-        const ch = idx.chunks[+cid];
-        if(ch) best = { score: sc, texte: ch.texte, doc: ch.doc };
-      }
-    }
-    return best;
+    return null;
   }
-
 
   /* ══════════════════════════════════════════════════════════════════════
      Routeur pédagogique v3 — مكتبة أسئلة الطالب الجزائري
@@ -391,7 +357,7 @@
       /* Une page verrouillée n'est jamais révélée depuis l'index public, même si
          ACCESS annonce un abonnement côté navigateur. Le corps vient uniquement
          de la requête Supabase authentifiée ci-dessous, filtrée par RLS. */
-      if(e && (e.lignes || e.texte) && !e.locked){
+      if(e && (e.lignes || e.texte) && e.locked === false){
         let ls = Array.isArray(e.lignes) ? e.lignes : [e.texte || ''];
         const clean = ls.map(l => String(l)
           .replace(/\((?:page|p\.)\s*\d+\)/gi, '')
@@ -427,22 +393,32 @@
         try{ if(window.ACCESS && ACCESS.paywall) ACCESS.paywall({ type:'page', page:+pg[1] }); }catch(err){}
         return '🔒 الصفحة ' + pg[1] + ' من الكتاب ضمن محتوى المشتركين — أكمل المسار المجاني أو اشترك لفتح كل الصفحات.';
       }
-      try{
-          const O0 = is3 ? await loadPages() : await loadPages3as();
-          const O = (O0 && O0.pages) ? O0.pages : (O0 || {});
-          const e2 = O[pg[1]];
-          if(e2 && (e2.lignes || e2.texte)){
-            let ls2 = Array.isArray(e2.lignes) ? e2.lignes : [e2.texte || ''];
-            const cl2 = ls2.map(l => String(l).replace(/\((?:page|p\.)\s*\d+\)/gi,'').replace(/\s*·\s*/g,'. ').replace(/\s*→\s*/g,' ')).filter(x => x.trim());
-            const ti2 = String(e2.titre || '').replace(/\((?:page|p\.)\s*\d+\)/gi,'').trim();
-            return '📚 هذه الصفحة من كتاب ' + (is3 ? '2AS' : '3AS') + ' — Seite ' + pg[1] + '. ' + ti2 + '. ' + cl2.join('. ').slice(0, 2200);
-          }
-        }catch(err){}
-        return '📖 الصفحة ' + pg[1] + ' غير موجودة بعد في فهرس هذا المستوى — Seite ' + pg[1] + ' ist für dieses Niveau noch nicht indexiert. ' + 'Essaie : « lis le texte de la Lektion 1 », « lies den Dialog Lektion 2 », « vocabulaire Lektion 3 ».';
+      /* Aucun repli vers l'index de l'autre niveau : les numéros de pages
+         se recouvrent entre 2AS et 3AS. Un repli pourrait révéler une page
+         verrouillée de l'autre manuel ou présenter un contenu faux. */
+      return '📖 الصفحة ' + pg[1] + ' غير موجودة في فهرس هذا المستوى — Seite ' + pg[1] + ' ist für dieses Niveau nicht indexiert.';
     }
     const lec = q.match(/(?:lis|lire|lies|lese|read|vorlesen|قرأ|اقرأ)\s+(?:le\s+|den\s+|das\s+|the\s+)?(texte|text|dialog|dialogue|vocabulaire|wortschatz|النص|الحوار|المفردات)[^\d]*(\d)?/i);
     if(lec){
       const nn = +(lec[2] || 1);
+      /* buch_lN.json contient le contenu complet de l'unité, pas seulement les
+         séances gratuites. canAccessUnit() est insuffisant pour l'unité 1 :
+         il autorise la vitrine, alors que ce fichier dépasse les deux séances
+         gratuites. Exiger une preuve backend fraîche avant toute lecture. */
+      let fullBookAllowed = false;
+      try{
+        if(window.ACCESS && typeof ACCESS.refresh === 'function'
+           && typeof ACCESS.entitlement === 'function'){
+          await ACCESS.refresh();
+          const entitlement = ACCESS.entitlement();
+          fullBookAllowed = !!(entitlement && entitlement.ok === true
+            && entitlement.src === 'backend');
+        }
+      }catch(e){ fullBookAllowed = false; }
+      if(!fullBookAllowed){
+        try{ if(window.ACCESS && ACCESS.paywall) ACCESS.paywall({ type:'view', view:'buch', unite:nn }); }catch(e){}
+        return { locked:true, html:'<b>🔒 هذا النص أو الحوار جزء من محتوى الوحدة المحمي. الأستاذ الذكي متاح للأسئلة العامة، لكن لا يمكنه قراءة محتوى الوحدة قبل التحقق من اشتراك فعّال.</b>' };
+      }
       const L = await loadBuch(nn);
       const wantD = /dialog|الحوار/i.test(lec[1]);
       const wantV = /vocab|wortschatz|المفردات/i.test(lec[1]);
@@ -733,6 +709,19 @@
     return 'Il professor Kharif Ahmed è il fondatore e insegnante della mia piattaforma — il « Liceo Virtuale Algerino ». Insegnante di tedesco algerino, mi ha creata perché tutti gli studenti imparino il tedesco: leggere le lezioni, spiegare la grammatica e allenarsi ai compiti — in arabo, tedesco, francese, spagnolo e italiano.';
   }
 
+  /* La bibliothèque (pages, devoirs, corpus, explications et traductions indexées)
+     est une vue payante dans access_config. Ne pas confondre disponibilité du
+     Professeur IA et droit de lecture des documents. Backend = seule preuve. */
+  async function verifieAccesBibliothequeIA(){
+    if(!window.ACCESS || typeof ACCESS.refresh !== 'function'
+       || typeof ACCESS.entitlement !== 'function') return false;
+    try{
+      await ACCESS.refresh();
+      const ent = ACCESS.entitlement();
+      return !!(ent && ent.ok === true && ent.src === 'backend');
+    }catch(e){ return false; }
+  }
+
   /* ── AGENT BIBLIOTHÈQUE : « donne-moi un devoir/exercice sur X » + « combien de documents ? » ── */
   async function intentBiblio(q){
     const wantDevoir = /(donne|donnez|apporte|zeige|gib|give|dame|voglio|\u0627\u0639\u0637\u0646\u064a|\u0647\u0627\u062a|\u062c\u064a\u0628|\u0648\u0631\u064a|\u062d\u0637)/i.test(q)
@@ -741,6 +730,10 @@
       && /(document|page|devoir|exercice|fiche|leçon|lecon|\u0645\u0633\u062a\u0646\u062f|\u0635\u0641\u062d\u0629|\u0641\u0631\u0636|\u062f\u0631\u0633)/i.test(q);
     if(!wantDevoir && !wantStats) return null;
     if(!window.BIBLIO) return null;
+    if(!(await verifieAccesBibliothequeIA())){
+      try{ if(window.ACCESS && ACCESS.paywall) ACCESS.paywall({type:'view',view:'biblio'}); }catch(e){}
+      return {locked:true,html:'<b>🔒 مكتبة الوثائق والتمارين المصنفة ضمن المحتوى المحمي. الأستاذ الذكي متاح للأسئلة العامة، لكن لا يمكنه عرض وثائق المكتبة دون اشتراك فعّال مؤكد.</b>'};
+    }
     const isAr = /[\u0600-\u06FF]/.test(q);
     const isDe = !isAr && /\b(der|die|das|und|gib|zeige|wie viele)\b/i.test(q);
     const isFr = !isAr && !isDe && /\b(combien|donne|le|la|les)\b/i.test(q);
@@ -785,7 +778,10 @@ function tokOnto(s){ return s.split(/[^\w\u0600-\u06FF]+/).filter(w => w.length 
 async function matchOnto(q){
   const O = await chargeOnto();
   const nq = normOnto(q);
-  let best = null, bestScore = 0;
+  /* Évite qu'un fragment latin très court ("was", "ich", etc.) soit pris
+     pour une sous-chaîne de dizaines de formulations de l'ontologie. */
+  if(nq.length < 4 && !/[\u0600-\u06FF]/.test(nq)) return null;
+  let best = null, bestScore = 0, tied = [];
   for(const it of (O.intents || [])){
     let score = 0;
     const srcs = Object.values(it.patterns || {}).concat(Object.values(it.expansion || {})); for(const arr of srcs){
@@ -802,14 +798,23 @@ async function matchOnto(q){
     }
     const kw = (it.keywords || []).filter(k => nq.indexOf(normOnto(k)) !== -1).length;
     if(kw) score = Math.max(score, 30 + kw * 10);
-    if(score > bestScore){ bestScore = score; best = it; }
+    if(score > bestScore){ bestScore = score; best = it; tied = [it]; }
+    else if(score === bestScore && score >= 65){ tied.push(it); }
   }
-  return (best && bestScore >= 65) ? { it: best, score: bestScore } : null;
+  if(!best || bestScore < 65) return null;
+  if(tied.length > 1) return { ambiguous:true, score:bestScore, candidates:tied.map(it => it.intent) };
+  return { it:best, score:bestScore };
 }
 async function ontoRoute(q){
   try{
+    /* Cette route dormante ne doit jamais contourner le garde pédagogique.
+       Les intentions qui nécessitent un contenu de cours restent au pipeline
+       principal, qui possède ses propres contrôles de ressource et d'entitlement. */
+    const accessGuard = await verifieAccesContenuIA(q);
+    if(accessGuard) return accessGuard;
     const m = await matchOnto(q);
-    if(!m) return null;
+    /* Une égalité de score n'autorise jamais un choix arbitraire. */
+    if(!m || m.ambiguous) return null;
     const id = m.it.intent;
     const n = numeroUnite(q);
     if(id === 'explain_word' || id === 'translate'){
@@ -829,59 +834,18 @@ async function ontoRoute(q){
       if(w) return { html: '<b>🔊 النطق</b><div class="rag-x de-in">' + esc(w) + '</div>', speakWord: w };
       return null;
     }
-    if(id === 'summarize_lesson' || id === 'important_points' || id === 'explain_lesson'
-       || id === 'explain_rule' || id === 'stuck_student' || id === 'usage_question'
-       || id === 'explain_with_examples'){
-      const mal = await chargeMalakhiss();
-      const un = (mal && mal.malakhiss || []).filter(x => x.unite === n)[0];
-      if(un){
-        const ex = (un.structures || []).slice(0, 3);
-        return { html: '<b>📗 الوحدة ' + n + ' — ' + esc(un.titre_de || '') + '</b>'
-          + '<div class="rag-x">' + esc(un.titre_ar || '') + '</div>'
-          + '<div class="rg-sec"><b>الملخص</b> ' + esc((un.resume_ar || un.resume || '').slice(0, 400)) + '</div>'
-          + (ex.length ? '<div class="rg-sec"><b>أمثلة</b><ul>' + ex.map(e2 => '<li class="de-in">' + esc(e2) + '</li>').join('') + '</ul></div>' : '')
-          + '<div class="rag-src">للتفاصيل افتح 📑 الملخصات — الوحدة ' + n + '</div>' };
-      }
-      return null;
-    }
-    if(id === 'compare_explain'){
-      const pairs = [['sein','haben'],['der','das'],['weil','dass'],['akkusativ','dativ'],
-        ['müssen','sollen'],['können','dürfen'],['mussen','sollen'],['konnen','durfen']];
-      for(const pr of pairs){
-        if(String(q).toLowerCase().indexOf(pr[0]) !== -1 && String(q).toLowerCase().indexOf(pr[1]) !== -1){
-          if(pr[0]==='sein'||pr[1]==='haben') return { html: '<b>⚖️ sein مقابل haben</b><ul>'
-            + '<li class="de-in">sein = يكون (حالة/هوية) : ich bin, du bist, er ist</li>'
-            + '<li class="de-in">haben = يملك : ich habe, du hast, er hat</li>'
-            + '<li>Perfekt : أفعال الحركة والحالة مع sein، والبقية مع haben</li></ul>' };
-          return { html: '<b>⚖️ ' + esc(pr[0]) + ' مقابل ' + esc(pr[1]) + '</b>'
-            + '<div class="rg-sec">افتح 📘 القواعد للمقارنة الكاملة مع الأمثلة.</div>' };
-        }
-      }
-      return null;
-    }
-    if(id === 'quiz_generate' || id === 'generate_exam' || id === 'adaptive_exercise'){
-      return { html: '<b>📝 تدريب</b><div class="rg-sec">افتح ✍️ Banque أو 📝 الفروض — الوحدة ' + (n || '')
-        + ' : فرض مولَّد بتصحيح فوري + كل خطأ يعود في 🧠 مسارك.</div>' };
-    }
-    if(id === 'bac_preparation'){
-      const corp = await chargeCorp();
-      const suj = (corp && corp.documents || []).filter(x => x.type==='sujet'||x.type==='annale').slice(0,8);
-      return { html: '<b>🎓 تحضير الباك</b><ul>' + suj.map(s2 => '<li>' + esc(s2.titre) + '</li>').join('')
-        + '</ul><div class="rg-sec">افتح 🎓 البكالوريا للتدريب بتوقيت رسمي 180 د.</div>' };
-    }
-    if(id === 'search_library' || id === 'find_lesson' || id === 'find_page' || id === 'find_exercise'
-       || id === 'find_exam' || id === 'find_document' || id === 'source_lookup'){
-      const corp = await chargeCorp();
-      const kw2 = tokOnto(normOnto(q)).filter(w => w.length > 2).slice(0, 4);
-      const res = (corp && corp.documents || []).filter(x => {
-        const hay = normOnto((x.titre||'') + ' ' + (x.extrait||''));
-        return kw2.some(w => hay.indexOf(w) !== -1);
-      }).slice(0, 8);
-      if(res.length) return { html: '<b>🔎 نتائج المكتبة</b><ul>' + res.map(x => '<li>' + esc(x.titre)
-        + ' <span class="rag-src">[' + esc(x.type) + ']</span></li>').join('') + '</ul>'
-        + '<div class="rag-src">المصادر : official_book → lesson_content → official_exam → pedagogical_document</div>' };
-      return null;
-    }
+    /* Pas de réponse pédagogique statique ici : résumé, leçon, règle,
+       comparaison grammaticale, exercice, examen et recherche documentaire
+       doivent rester dans le pipeline qui vérifie la ressource exacte. */
+    const contentIntents = new Set([
+      'summarize_lesson','important_points','explain_lesson','explain_rule',
+      'stuck_student','usage_question','explain_with_examples','compare_explain',
+      'quiz_generate','generate_exam','adaptive_exercise','bac_preparation',
+      'search_library','find_lesson','find_page','find_exercise','find_exam',
+      'find_document','source_lookup','correct_exercise','exam_prediction',
+      'lesson_overview','difficulty_adapt'
+    ]);
+    if(contentIntents.has(id)) return null;
     if(id === 'conversation_practice') return null; /* يُترك للمعالج الموجود */
     if(id === 'progress_report') return { html: '<b>📈 مستواك</b><div class="rg-sec">افتح 🧭 مسارك : نقاط القوة/الضعف والبطاقات المستحقة.</div>' };
     if(id === 'parent_report') return { html: '<b>👨👩‍👦 تقرير الولي</b><div class="rg-sec">افتح 👨‍👩‍👦 الأولياء لمتابعة النتائج.</div>' };
@@ -944,49 +908,132 @@ function trouverLeconRegleIA(mal, level, term, preferConjugation){
   }
   return null;
 }
+const LOCKED_RULES_IA = [
+  'perfekt','akkusativ','dativ','komparativ','konjunktiv','passiv','futur','weil','obwohl','um zu','beim','präteritum','modalverben',
+  'genitiv','partizip','infinitiv','nominalisierung','verbalisierung','nomen-verb-verbindungen',
+  'zweiteilige konnektoren','konzessivsätze','relativsätze','imperativ','reflexive verben',
+  'adjektivdeklination','adjektive mit präpositionen','komposita','subjektive modalverben',
+  'wechselpräpositionen','satzklammer','trennbare verben','untrennbare verben',
+  'nebensatz mit dass','nebensatz mit wenn','verbletztstellung','präpositionen mit dativ',
+  'präpositionen mit akkusativ','temporale präpositionen','zustandspassiv','passiversatzformen',
+  'حالة الملكية','التحويل الاسمي','التحويل الفعلي','التراكيب الاسمية الفعلية',
+  'الجمل الموصولة','صيغة الأمر','الأفعال الانعكاسية','حروف الجر المتغيرة',
+  'المصدر مع zu','أدوات الربط الثنائية','الكلام غير المباشر',
+  'الجمل الشرطية غير الحقيقية','الأفعال الناقصة الذاتية','المبني للمجهول الوصفي',
+  'الماضي المركب','الماضي التام','حالة النصب','المفعول به','حالة الجر',
+  'المبني للمجهول','صيغة الشرط','الشرط الافتراضي','الماضي البسيط',
+  'المضارع','صيغة المقارنة','passé composé','passe compose',
+  'accusatif','datif','passif','prétérit','präterit','présent','comparatif'
+];
+function normaliseRegleVerrouIA(value){
+  return String(value || '').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f\u064b-\u065f\u0670]/g,'')
+    .replace(/\u0640/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي');
+}
+function demandeRegleVerrouilleeIA(question){
+  var q = normaliseRegleVerrouIA(question);
+  var grammarIntent = /(?:grammaire|grammar|قاعدة|القاعدة|اشرح|شرح|فسر|علاش|لماذا|كيفاش|كيف|ما\s*فهمتش|ما\s*فهمت|فهمني|explique|explain|erkl[aä]re|was\s+ist|what\s+is|what\s+does|why|how\s+does|how\s+do|warum|wie|was\s+bedeutet|regel|regeln|rule|rules|regle|regles|sentence|sentences|satz|satze|phrase|phrases|tabelle|tableau|table|fiche|fiches|جملة|جمل|جدول|difference|différence|example|exemple|exemples|phrase\s+d['’ ]?exemple|beispiel|beispielsatz|beispielsätze|beispielsatze|ubung|ubungen|ubungsaufgaben|ubungsblatt|aufgabe|aufgaben|arbeitsblatt|übungsblatt|exercise|exercises|exercice|exercices|practice|worksheet|test|quiz|تمرين|تمارين|تطبيق|تطبيقات|تدريب|تدريبات|حل|حلول|corrigé|corrige|مثال|امثلة|أمثلة|جمل\s+مثال|chrah|fassar|3lach|3lah|fhemtch|ma\s*fhemt)/i.test(q);
+  return grammarIntent && LOCKED_RULES_IA.some(function(rule){
+    return q.indexOf(normaliseRegleVerrouIA(rule)) !== -1;
+  });
+}
 async function verifieAccesContenuIA(question){
   var q = String(question || '').trim();
-  if(!q || !window.ACCESS) return null;
+  if(!q) return null;
+  var verb = trouveVerbe(q);
+  var conjugationRequest = !!verb && (CONJ_INTENT.test(q) || q.toLowerCase() === verb);
   var unit = uniteExpliciteIA(q);
   var lesson = sessionIA(q);
-  if(unit == null && lesson != null) unit = uniteCouranteIA();
+  var unitSummaryRequest = /(?:résum|resume|summary|summari[sz]|ملخص|لخص|لخّص|تلخيص|شرح\s*(?:الوحدة|الوحده)|اشرح\s*(?:الوحدة|الوحده)|اشرحلي\s*(?:الوحدة|الوحده))/i.test(q);
+  var unitExplanationRequest = /(?:explain|explique|erklär|erklar|erkläre|شرحلي|فسرلي|اشرحلي)\s*(?:(?:this|the|cette|la|die|diese)\s*)?(?:unit|lesson|unité|unite|lektion|الوحدة|الوحده|الدرس|درس)/i.test(q);
+  if(unit == null && (lesson != null || unitExplanationRequest)) unit = uniteCouranteIA();
+  var label = trouveRegle(q);
+  var lockedRuleRequest = demandeRegleVerrouilleeIA(q);
+  var exerciseRequest = /(?:تمرين|تمارين|تطبيق|تطبيقات|تدريب|تدريبات|exercice|exercices|exercise|exercises|übung|übungen|übungsaufgaben|aufgabe|aufgaben|arbeitsblatt|übungsblatt|practice|worksheet|test|quiz|tamarin|tamrin|banque\s*(?:d['’ ]?)?exercices)/i.test(q);
+  /* Les résumés free_summary et la banque générale gratuite restent gratuits.
+     Une explication complète d'unité, hors résumé/exercice libre, exige un
+     entitlement backend ou une séance précise vérifiable. */
+  var unitScoped = unit != null && lesson == null && !unitSummaryRequest && !exerciseRequest
+    && (uniteExpliciteIA(q) != null || unitExplanationRequest);
+  var lessonScoped = lesson != null;
+
+  /* Une unité entière ou une règle non rattachée à une séance exige une
+     preuve d'accès. Le professeur IA reste disponible, mais ne remplace
+     jamais le contrôle d'accès aux contenus. */
+  if(!window.ACCESS){
+    if(conjugationRequest || unitScoped || lessonScoped || label || lockedRuleRequest || (exerciseRequest && unit != null)){
+      return {locked:true,html:'<b>🔒 لا يمكن شرح هذا المحتوى قبل التحقق من صلاحية الوصول إلى الوحدة أو الدرس المرتبط به.</b>'};
+    }
+    return null;
+  }
 
   if(/(?:seite|page|صفحة|ص)\s*\d+/i.test(q)){
     var pageResult = await intentLecture(q);
     if(typeof pageResult === 'string' && pageResult.indexOf('🔒') !== -1)
       return {locked:true,html:'<b>' + esc(pageResult) + '</b>'};
   }
-  try{ if(typeof ACCESS.refresh === 'function') await ACCESS.refresh(); }catch(e){}
-  if(unit != null && lesson != null && typeof ACCESS.canAccessLesson === 'function'
-     && !ACCESS.canAccessLesson(unit, lesson)){
-    try{ ACCESS.paywall({type:'seance',unite:unit,seance:lesson}); }catch(e){}
-    return {locked:true,html:'<b>🔒 هذه الحصة ضمن محتوى المشتركين. الأستاذ الذكي متاح لك، لكن لا يمكنه شرح محتوى هذه الحصة قبل فتحها.</b>'};
+  var accessReady = false;
+  try{
+    if(typeof ACCESS.refresh === 'function'){
+      await ACCESS.refresh();
+      accessReady = true;
+    }
+  }catch(e){}
+  if((unitScoped || lessonScoped || label || conjugationRequest || lockedRuleRequest) && !accessReady){
+    return {locked:true,html:'<b>🔒 تعذّر التحقق من صلاحية الوصول. لا يمكن كشف هذا المحتوى الآن.</b>'};
   }
-  var type = await matchType(q);
-  if(type && type.id === 'fard'){
-    var quizUnit = unit != null ? unit : uniteCouranteIA();
-    if(quizUnit != null && typeof ACCESS.canAccessQuiz === 'function' && !ACCESS.canAccessQuiz(quizUnit)){
-      try{ ACCESS.paywall({type:'quiz',unite:quizUnit}); }catch(e){}
-      return {locked:true,html:'<b>🔒 هذا الفرض/الاختبار ضمن محتوى المشتركين. لا يمكن للأستاذ الذكي كشف أسئلته أو تصحيحه قبل فتحه.</b>'};
+  if(lessonScoped){
+    if(unit == null || typeof ACCESS.canAccessLesson !== 'function' || !ACCESS.canAccessLesson(unit, lesson)){
+      try{ if(ACCESS.paywall) ACCESS.paywall({type:'seance',unite:unit,seance:lesson}); }catch(e){}
+      return {locked:true,html:'<b>🔒 هذه الحصة ضمن محتوى المشتركين. الأستاذ الذكي متاح لك، لكن لا يمكنه شرح محتوى هذه الحصة قبل فتحها.</b>'};
     }
   }
-  var label = trouveRegle(q);
-  var verb = trouveVerbe(q);
+  if(lockedRuleRequest){
+    var ruleEnt = typeof ACCESS.entitlement === 'function' ? ACCESS.entitlement() : null;
+    if(!ruleEnt || ruleEnt.ok !== true || ruleEnt.src !== 'backend'){
+      try{ if(ACCESS.paywall) ACCESS.paywall({type:'lesson',unite:unit,seance:lesson}); }catch(e){}
+      return {locked:true,html:'<b>🔒 هذه القاعدة النحوية من المحتوى المحمي. لا يمكن للأستاذ كشفها قبل التحقق من اشتراك فعّال.</b>'};
+    }
+  }
+  if(unitScoped){
+    var unitEnt = typeof ACCESS.entitlement === 'function' ? ACCESS.entitlement() : null;
+    if(!unitEnt || unitEnt.ok !== true || unitEnt.src !== 'backend'){
+      try{ if(ACCESS.paywall) ACCESS.paywall({type:'lesson',unite:unit,seance:null}); }catch(e){}
+      return {locked:true,html:'<b>🔒 شرح الوحدة كاملة متاح بعد التحقق من اشتراك فعّال. يمكن للأستاذ مساعدتك في الأسئلة العامة.</b>'};
+    }
+  }
+  var type = await matchType(q);
+  if(exerciseRequest){
+    var quizUnit = unit != null ? unit : uniteCouranteIA();
+    if(quizUnit != null && (typeof ACCESS.canAccessQuiz !== 'function' || !ACCESS.canAccessQuiz(quizUnit))){
+      try{ if(ACCESS.paywall) ACCESS.paywall({type:'quiz',unite:quizUnit}); }catch(e){}
+      return {locked:true,html:'<b>🔒 تمارين/فروض هذه الوحدة ضمن المحتوى المحمي. لا يمكن للأستاذ كشفها أو تصحيحها قبل فتحها.</b>'};
+    }
+  }
   var target = null;
-  var conjugationRequest = !!verb && (CONJ_INTENT.test(q) || q.toLowerCase() === verb);
   if(conjugationRequest){
     target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), verb, true);
   }else if(label){
     target = trouverLeconRegleIA(await chargeMalakhiss(), niveauIAActif(), label, false);
   }
+  if(label && !target){
+    try{ if(ACCESS.paywall) ACCESS.paywall({type:'lesson',unite:unit,seance:lesson}); }catch(e){}
+    return {locked:true,html:'<b>🔒 لم أتمكن من ربط هذه القاعدة بدرس يمكن التحقق من صلاحية الوصول إليه. لن أكشف محتواها دون تحقق.</b>'};
+  }
   if(target){
+    var ent = typeof ACCESS.entitlement === 'function' ? ACCESS.entitlement() : null;
     var allowed = target.lesson != null
-      ? ACCESS.canAccessLesson(target.unit, target.lesson)
-      : !!(ACCESS.entitlement && ACCESS.entitlement().ok);
+      ? (typeof ACCESS.canAccessLesson === 'function' && ACCESS.canAccessLesson(target.unit, target.lesson))
+      : !!(ent && ent.ok === true && ent.src === 'backend');
     if(!allowed){
       try{ ACCESS.paywall({type:'lesson',unite:target.unit,seance:target.lesson||null}); }catch(e){}
       return {locked:true,html:'<b>🔒 هذه القاعدة/التصريف مرتبط بحصة محمية. الأستاذ الذكي متاح، لكن لا يمكنه تقديم شرح هذا المحتوى قبل فتح الحصة.</b>'};
     }
+  }
+  /* Un verbe du tableau local sans ressource vérifiable n'est pas réputé libre. */
+  if(conjugationRequest && !target){
+    try{ ACCESS.paywall({type:'lesson',unite:unit,seance:lesson}); }catch(e){}
+    return {locked:true,html:'<b>🔒 هذا التصريف غير مرتبط بدرس متاح يمكن التحقق منه. لا يمكن للأستاذ الذكي كشفه قبل التحقق من صلاحية المحتوى.</b>'};
   }
   return null;
 }
@@ -1032,6 +1079,15 @@ async function reponsePedagogique(q, meta){
     }catch(e){ _qust = null; }
     const _lock = await verifieAccesContenuIA(rawQuestion);
     if(_lock) return _lock;
+    /* Ontologie activée en mode abstention seulement : aucune réponse statique
+       n'est produite ici. Un ex aequo demande une précision à l'élève. */
+    const _intentMatch = await matchOnto(q);
+    if(_intentMatch && _intentMatch.ambiguous){
+      return {
+        ambiguousIntent:true,
+        html:'<b>🤔 سؤالك يحتمل أكثر من طلب.</b><div>هل تريد شرح درس، تلخيصه، أم أمثلة أو تمارين؟ حدّد طلبك والوحدة أو الحصة حتى أجيبك بدقة.</div>'
+      };
+    }
     const _bib = await intentBiblio(q);
     if(_bib) return _bib;
     const _kh = intentKharif(q);
@@ -1167,13 +1223,13 @@ async function reponsePedagogique(q, meta){
     const box = $('#ragBody'); if(!box) return;
     const man = await chargeManifest();
     const info = man
-      ? (man.nb_shards + ' shards · ' + man.total_chunks + ' chunks · chargement progressif')
-      : 'index unique (repli)';
+      ? (man.nb_shards + ' shards · ' + man.total_chunks + ' chunks disponibles côté client')
+      : 'recherche documentaire via le serveur authentifié';
     box.innerHTML =
         '<div class="rg-hero"><span class="rg-crest">🔎</span><div>'
       + '<h2>اسأل المنصة (RAG gardé)</h2>'
-      + '<p class="rg-sub">la réponse vient TOUJOURS d’un extrait de ton corpus — '
-      + 'jamais inventée · ' + info + '</p></div></div>'
+      + '<p class="rg-sub">questions pédagogiques et recherche documentaire sécurisée · '
+      + 'les PDF sont vérifiés côté serveur · ' + info + '</p></div></div>'
       + '<div class="card rg-box">'
       + '<form id="ragForm"><input type="search" id="ragQ" '
       + 'placeholder="مثال : Was ist die Meinungsfreiheit ? · Die Kontrolle · Heimat"></form>'
@@ -1191,6 +1247,11 @@ async function reponsePedagogique(q, meta){
         if(mDe && (mTr || pureDe)){
           const tr = await BIBLIO.traduire(mDe[0]);
           if(tr && (tr.type === 'curated' || tr.type === 'page' || tr.type === 'prive' || (mTr && tr.type === 'gloss'))){
+            if(!(await verifieAccesBibliothequeIA())){
+              try{ if(window.ACCESS && ACCESS.paywall) ACCESS.paywall({type:'view',view:'biblio'}); }catch(e){}
+              out.innerHTML = '<div class="rg-ok rg-ped"><b>🔒 هذه الترجمة مستخرجة من مكتبة المنصة المحمية. يمكن للأستاذ ترجمة الجمل التي تكتبها، لكن لا يمكنه كشف الترجمة المودعة دون اشتراك فعّال.</b></div>';
+              return;
+            }
             out.innerHTML = '<div class="rg-ok rg-ped"><b>📖 الترجمة المعتمدة</b>'
               + '<div class="rag-x de-in">' + esc(tr.de) + '</div>'
               + '<div class="rag-x">' + esc(tr.ar) + '</div>'
@@ -1225,19 +1286,29 @@ async function reponsePedagogique(q, meta){
         if(ped.speak === 'de') parler((out.querySelector('.rag-x') || out).textContent, 'de-DE');
         return;
       }
-      out.innerHTML = '<div class="rg-load">⏳ recherche dans les shards…</div>';
-      const r = await cherche(q);
-      const f = formule(r);
-      out.innerHTML = f
-        ? '<div class="rg-ok">' + f + '</div>'
-        : '<div class="rg-non">🤷 <b>لا أعرف / je ne sais pas.</b><br>'
-          + 'Aucun extrait du corpus ne répond avec assez de confiance. '
-          + 'Je n’invente jamais.</div>';
+      /* Lot 667 : le moteur local n'a pas de réponse. On délègue alors au
+         cerveau IA central ; ia.js détecte corpus_search/corpus_document,
+         transmet le JWT Supabase et laisse le Worker contrôler les droits.
+         Aucun shard ni extrait documentaire n'est lu dans le navigateur. */
+      if(typeof window.reponseIA === 'function'){
+        out.innerHTML = '<div class="rg-load">🧠 الأستاذ يراجع المصادر المسموح بها…</div>';
+        const answer = await window.reponseIA(q, { source:'rag-interface' });
+        if(answer && String(answer).trim()){
+          out.innerHTML = '<div class="rg-ok rg-ped">' + esc(String(answer)).replace(/\\n/g,'<br>') + '</div>';
+        }else{
+          out.innerHTML = '<div class="rg-non">🔒 <b>لم أتمكن من تقديم إجابة موثوقة.</b><br>'
+            + 'Aucun extrait autorisé n’a pu être récupéré. Vérifie ta connexion et tes droits d’accès, '
+            + 'puis réessaie. Aucun contenu PDF local n’est utilisé.</div>';
+        }
+        return;
+      }
+      out.innerHTML = '<div class="rg-non">🔒 <b>الأستاذ الذكي غير متاح مؤقتًا.</b><br>'
+        + 'Le moteur IA central est indisponible. Aucun contenu documentaire local ne sera consulté.</div>';
     });
   }
 
   window.reponsePedagogique = reponsePedagogique;
-  window.RAG = { cherche: cherche, formule: formule, SEUIL: SEUIL, render: render };
+  window.RAG = { cherche: cherche, formule: formule, SEUIL: SEUIL, render: render, matchOnto: matchOnto };
   window.verifieAccesContenuIA = verifieAccesContenuIA;
   window.renderRag = render;
   document.addEventListener('dz:view', e => { if(e.detail === 'rag') render(); });

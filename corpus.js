@@ -19,8 +19,10 @@
 function urlDoc(u){
   u = String(u || '');
   if(!u) return '#';
-  if(u.indexOf('docs/archive') === 0 || u.indexOf('dzexams-') === 0 || /\.pdf$/i.test(u)){
-    return 'https://raw.githubusercontent.com/bridrandomtv-spec/ALLEMAND/main/' + encodeURI(u);
+  // Les PDF historiques ne doivent plus être exposés via GitHub Raw public.
+  // Leur consultation restera suspendue jusqu'à mise en place d'un stockage protégé.
+  if(u.indexOf('docs/archive') === 0 || u.indexOf('dzexams-') === 0 || /\.pdf(?:[?#]|$)/i.test(u)){
+    return '#';
   }
   return u;
 }
@@ -92,8 +94,7 @@ let D = null, IDX = null;
 
       if(!res.length){
         h += '<div class="card cp-vide"><div class="cp-vi">🗂️</div>'
-          + '<h3>aucun document</h3><p>Élargis les filtres, ou ajoute des documents via '
-          + '<code>tools/ingest_corpus.py</code>.</p></div>';
+          + '<h3>aucun document</h3><p>Élargis les filtres. L’import documentaire est suspendu jusqu’à validation des droits et migration vers le pipeline sécurisé.</p></div>';
       }else{
         h += '<div class="cp-grid">' + res.map(d =>
             '<div class="cp-c">'
@@ -106,7 +107,7 @@ let D = null, IDX = null;
           + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
           + '<div class="cp-btns">' + (String(d.format || '').toLowerCase() === 'json'
             ? '<button class="btn btn-p btn-sm" data-go="' + vuePour(d) + '">📂 ouvrir dans l’application</button>'
-            : '<button class="btn btn-p btn-sm" data-open="' + esc(ouvreUrl(d)) + '" data-titre="' + esc(d.titre) + '">📂 ouvrir</button>')
+            : (ouvreUrl(d) === '#' ? '<span class="btn btn-o btn-sm" aria-disabled="true">🔒 PDF suspendu — accès protégé en préparation</span>' : '<button class="btn btn-p btn-sm" data-open="' + esc(ouvreUrl(d)) + '" data-titre="' + esc(d.titre) + '">📂 ouvrir</button>'))
           + ('<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>')
           + '</div>').join('') + '</div>';
       }
@@ -153,7 +154,7 @@ let D = null, IDX = null;
       + '<div class="cp-lic">© ' + esc(d.licence || '—') + '</div>'
       + '<div class="cp-btns">' + (String(d.format || '').toLowerCase() === 'json'
       ? '<button class="btn btn-p btn-sm" data-go="' + vuePour(d) + '">📂 ouvrir dans l’application</button>'
-      : '<button class="btn btn-p btn-sm" data-open="' + esc(ouvreUrl(d)) + '" data-titre="' + esc(d.titre) + '">📂 ouvrir</button>')
+      : (ouvreUrl(d) === '#' ? '<span class="btn btn-o btn-sm" aria-disabled="true">🔒 PDF suspendu — accès protégé en préparation</span>' : '<button class="btn btn-p btn-sm" data-open="' + esc(ouvreUrl(d)) + '" data-titre="' + esc(d.titre) + '">📂 ouvrir</button>'))
       + ('<span class="btn btn-o btn-sm" style="opacity:.55;cursor:not-allowed">🔒 consultation seule</span></div>')
       + '</div>').join('');
     if(grid.classList.contains('cp-vide')){

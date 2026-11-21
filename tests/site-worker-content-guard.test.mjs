@@ -11,7 +11,7 @@ function harness(options = {}) {
   const calls = [];
   const assets = [];
   const context = {
-    URL, Headers, Response, Request,
+    URL, Headers, Response, Request, decodeURIComponent,
     fetch: async (url, init = {}) => {
       calls.push({ url:String(url), init });
       if (String(url).includes('/rest/v1/lesson_content')) {
@@ -46,10 +46,35 @@ function request(path, token) {
 }
 
 for (const path of [
+  '/assets/bdd/%64evoirs.json',
+  '/%61ssets/bdd/devoirs.json',
+  '/assets%2Fbdd%2Fdevoirs.json',
+  '/assets/bdd/%2564evoirs.json',
+  '/public/%252e%252e/assets/bdd/devoirs.json'
+]) {
+  test('refuse sans JWT le chemin protégé encodé ' + path, async () => {
+    const h = harness();
+    const response = await h.context.__worker.fetch(request(path), h.env);
+    assert.equal(response.status, 401);
+    assert.equal(h.calls.length, 0);
+    assert.equal(h.assets.length, 0);
+  });
+}
+
+test('refuse un chemin mal encodé avant de servir un actif', async () => {
+  const h = harness();
+  const response = await h.context.__worker.fetch(request('/assets/bdd/%ZZdevoirs.json'), h.env);
+  assert.equal(response.status, 400);
+  assert.equal(h.calls.length, 0);
+  assert.equal(h.assets.length, 0);
+});
+
+for (const path of [
   '/assets/bdd/devoirs.json',
   '/assets/bdd/compositions.json',
   '/assets/bdd/annales.json',
   '/assets/bdd/corpus_rag_chunks.json',
+  '/assets/bdd/corpus_rag_manifest.json',
   '/assets/bdd/corpus_rag_vectors.json'
 ]) {
   test('refuse sans JWT l’accès direct à ' + path, async () => {
@@ -60,6 +85,22 @@ for (const path of [
     assert.equal(h.assets.length, 0);
   });
 }
+
+test('refuse le manifeste RAG sans entitlement RLS', async () => {
+  const h = harness({ rlsRows:[] });
+  const response = await h.context.__worker.fetch(request('/assets/bdd/corpus_rag_manifest.json','user-without-entitlement'), h.env);
+  assert.equal(response.status,403);
+  assert.equal(h.assets.length,0);
+});
+
+test('sert le manifeste RAG uniquement après validation RLS', async () => {
+  const h = harness({ rlsRows:[{ id:'visible-paid-lesson' }] });
+  const response = await h.context.__worker.fetch(request('/assets/bdd/corpus_rag_manifest.json','subscribed-user'), h.env);
+  assert.equal(response.status,200);
+  assert.equal(h.assets.length,1);
+  assert.equal(h.assets[0].url,'https://allemand.bridrandomtv.workers.dev/assets/bdd/corpus_rag_manifest.json');
+  assert.equal(h.assets[0].headers.get('Authorization'),'Bearer subscribed-user');
+});
 
 test('refuse les vecteurs PDF sans entitlement RLS', async () => {
   const h = harness({ rlsRows:[] });

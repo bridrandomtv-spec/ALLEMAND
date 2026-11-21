@@ -43,6 +43,23 @@ class PdfIngestionTests(unittest.TestCase):
                 })
         return inventory
 
+    def test_duplicate_rights_keys_in_companion_metadata_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp)
+            companion = source / "_lesson.json"
+            companion.write_text(
+                '{"titre":"Lesson","licence":"cc_by",'
+                '"droits_confirmes":false,"droits_confirmes":true}',
+                encoding="utf-8",
+            )
+            self.assertIsNone(MODULE.read_metadata(source / "lesson.pdf"))
+
+    def test_strict_json_loader_rejects_duplicate_nested_keys(self):
+        with self.assertRaisesRegex(ValueError, "cle_json_duplique:droits_confirmes"):
+            MODULE.strict_json_loads(
+                '{"meta":{"droits_confirmes":false,"droits_confirmes":true}}'
+            )
+
     def test_text_pdf_extracts_pages_and_preserves_page_numbers(self):
         page_text = " ".join(["Deutschunterricht"] * 30)
         fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(pages=[FakePage(page_text)]))
@@ -86,6 +103,27 @@ class PdfIngestionTests(unittest.TestCase):
     def test_control_characters_are_rejected(self):
         self.assertFalse(MODULE.text_quality(("\x01" * 20) + ("Deutsch " * 30))["ok"])
 
+    def test_replacement_character_and_mojibake_are_rejected(self):
+        self.assertEqual(MODULE.text_quality(("Deutsch " * 20) + "\ufffd")["reason"],
+                         "caractere_remplacement_unicode")
+        self.assertEqual(MODULE.text_quality(("Deutsch " * 20) + " Ã© Â© â€")["reason"],
+                         "encodage_mojibake")
+
+    def test_extraction_report_lists_omitted_pages_and_reasons(self):
+        good = " ".join(["Deutschunterricht"] * 30)
+        fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(
+            pages=[FakePage(good), FakePage(""), FakePage(("Deutsch " * 20) + "\ufffd")]
+        ))
+        with patch.dict(sys.modules, {"pypdf": fake}):
+            pages, status, report = MODULE.extract_pdf_report("mixed.pdf")
+        self.assertEqual(status, "ok")
+        self.assertEqual(pages, [(1, good)])
+        self.assertEqual(report["page_count"], 3)
+        self.assertEqual(report["indexed_pages"], [1])
+        self.assertEqual(report["omitted_pages"], [2, 3])
+        self.assertEqual(report["quality"][2]["reason"], "caractere_remplacement_unicode")
+        self.assertFalse(report["ocr_attempted"])
+
     def test_no_rights_metadata_means_no_indexing_and_no_legacy_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
             source, output = Path(tmp) / "source", Path(tmp) / "out"
@@ -120,6 +158,15 @@ class PdfIngestionTests(unittest.TestCase):
             self.assertEqual(result["document_count"], 1)
             data = json.loads((output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8"))
             self.assertEqual(data["documents"][0]["source_file"], "archive/unit/lesson.pdf")
+            self.assertEqual(data["documents"][0]["page_count"], 1)
+            self.assertEqual(data["documents"][0]["indexed_pages"], [1])
+            self.assertEqual(data["documents"][0]["omitted_pages"], [])
+            self.assertFalse(data["documents"][0]["ocr_attempted"])
+            manifest = json.loads((output / "assets/bdd/corpus_rag_manifest.json").read_text(encoding="utf-8"))
+            chunks_raw = (output / "assets/bdd/corpus_rag_chunks.json").read_bytes()
+            self.assertEqual(manifest["chunks_sha256"], MODULE.hashlib.sha256(chunks_raw).hexdigest())
+            self.assertEqual(manifest["document_count"], len(data["documents"]))
+            self.assertEqual(manifest["chunk_count"], len(data["chunks"]))
 
     def test_companion_alone_never_authorizes_without_inventory_row(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -133,6 +180,20 @@ class PdfIngestionTests(unittest.TestCase):
             result = MODULE.ingest(source, output, repo_root=source)
             self.assertEqual(result["document_count"], 0)
             self.assertEqual(result["skipped"][0]["reason"], "inventaire_droits_absent")
+
+    def test_duplicate_inventory_headers_abort_before_writing_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            source.mkdir(parents=True)
+            inventory = source / "rights.csv"
+            inventory.write_text(
+                "pdf_path,expected_companion_metadata,rights_confirmed,rights_confirmed,license\n"
+                "lesson.pdf,_lesson.json,false,true,cc_by\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "entetes_inventaire_droits_dupliquees"):
+                MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
+            self.assertFalse((output / "assets/bdd/corpus_rag_chunks.json").exists())
 
     def test_duplicate_inventory_paths_abort_before_writing_output(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -176,6 +237,54 @@ class PdfIngestionTests(unittest.TestCase):
             result = MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
             self.assertEqual(result["document_count"], 0)
             self.assertEqual(result["skipped"][0]["reason"], "droits_non_confirmes_dans_inventaire")
+
+    def test_identical_pdf_content_is_deduplicated_before_corpus_write(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            source.mkdir(parents=True)
+            for name in ("lesson-a.pdf", "lesson-b.pdf"):
+                pdf = source / name
+                pdf.write_bytes(b"identical-pdf-bytes")
+                (source / ("_" + pdf.stem + ".json")).write_text(json.dumps({
+                    "titre": name, "licence": "cc_by", "droits_confirmes": True
+                }), encoding="utf-8")
+            fake = types.SimpleNamespace(PdfReader=lambda _path: types.SimpleNamespace(
+                pages=[FakePage(" ".join(["Deutschunterricht"] * 30))]
+            ))
+            inventory = self.write_rights_inventory(source, ["lesson-a.pdf", "lesson-b.pdf"])
+            with patch.dict(sys.modules, {"pypdf": fake}):
+                result = MODULE.ingest(source, output, rights_inventory=inventory, repo_root=source)
+            self.assertEqual(result["document_count"], 1)
+            self.assertEqual(result["skipped"][0]["reason"], "contenu_pdf_duplique")
+            data = json.loads((output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8"))
+            self.assertEqual(data["documents"][0]["id"], "pdf-" + MODULE.hashlib.sha256(b"identical-pdf-bytes").hexdigest())
+
+    def test_unconfirmed_rights_prevent_ocr_and_pdf_extraction(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "out"
+            source.mkdir()
+            pdf = source / "scanned.pdf"
+            pdf.write_bytes(b"scanned-pdf")
+            (source / "_scanned.json").write_text(json.dumps({
+                "titre": "Scanned lesson", "licence": "cc_by",
+                "droits_confirmes": True
+            }), encoding="utf-8")
+            inventory = self.write_rights_inventory(
+                source, ["scanned.pdf"], rights=""
+            )
+            with patch.object(MODULE, "extract_pdf_report",
+                              side_effect=AssertionError("extraction/OCR must not run")) as extract:
+                result = MODULE.ingest(
+                    source, output, use_ocr=True,
+                    rights_inventory=inventory, repo_root=source
+                )
+            self.assertEqual(result["document_count"], 0)
+            self.assertEqual(result["skipped"][0]["reason"],
+                             "droits_non_confirmes_dans_inventaire")
+            extract.assert_not_called()
+            self.assertEqual(json.loads(
+                (output / "assets/bdd/corpus_rag_chunks.json").read_text(encoding="utf-8")
+            )["chunks"], [])
 
     def test_confirmed_license_indexes_only_approved_document(self):
         with tempfile.TemporaryDirectory() as tmp:

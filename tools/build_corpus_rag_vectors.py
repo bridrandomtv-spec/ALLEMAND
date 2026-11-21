@@ -32,8 +32,29 @@ def sha256_bytes(value):
     return hashlib.sha256(value).hexdigest()
 
 
+def reject_duplicate_json_keys(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("cle_json_duplique:" + str(key))
+        result[key] = value
+    return result
+
+
+def strict_json_loads(value):
+    return json.loads(value, object_pairs_hook=reject_duplicate_json_keys)
+
+
+def validate_manifest_chunks_hash(chunks_bytes, manifest):
+    if not isinstance(manifest, dict):
+        raise ValueError("manifest_json_invalide")
+    if (not isinstance(manifest.get("chunks_sha256"), str)
+            or manifest["chunks_sha256"] != sha256_bytes(chunks_bytes)):
+        raise ValueError("manifest_chunks_sha256_invalide")
+
+
 def load_json(path):
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    return strict_json_loads(Path(path).read_text(encoding="utf-8"))
 
 
 def eligible_chunks(corpus, manifest):
@@ -51,29 +72,60 @@ def eligible_chunks(corpus, manifest):
         raise ValueError("manifest_chunk_count_incoherent")
 
     approved = {}
+    known_documents = set()
+    expected_chunk_counts = {}
     for doc in documents:
-        if not isinstance(doc, dict) or not isinstance(doc.get("id"), str):
-            continue
+        if not isinstance(doc, dict) or not isinstance(doc.get("id"), str) or not doc["id"].strip():
+            raise ValueError("document_id_absent_ou_invalide")
+        document_id = doc["id"]
+        if document_id in known_documents:
+            raise ValueError("document_id_duplique")
+        known_documents.add(document_id)
+        declared_count = doc.get("chunk_count")
+        if isinstance(declared_count, bool) or not isinstance(declared_count, int) or declared_count < 0:
+            raise ValueError("document_chunk_count_absent_ou_invalide")
+        page_count = doc.get("page_count")
+        if page_count is not None and (
+                isinstance(page_count, bool) or not isinstance(page_count, int) or page_count < 1):
+            raise ValueError("document_page_count_invalide")
+        expected_chunk_counts[document_id] = declared_count
         if doc.get("rights_confirmed") is True and doc.get("license") in ALLOWED_LICENSES:
-            approved[doc["id"]] = str(doc.get("title") or "none")[:240]
-    result, seen = [], set()
+            approved[document_id] = str(doc.get("title") or "none")[:240]
+    result, seen_chunks, actual_chunk_counts = [], set(), {doc_id: 0 for doc_id in known_documents}
     for chunk in chunks:
         if not isinstance(chunk, dict):
-            continue
+            raise ValueError("chunk_entree_invalide")
         chunk_id, doc_id, body = chunk.get("id"), chunk.get("document_id"), chunk.get("text")
+        if not isinstance(chunk_id, str) or not chunk_id.strip() or chunk_id in seen_chunks:
+            raise ValueError("chunk_id_absent_ou_duplique")
+        if not isinstance(doc_id, str) or not doc_id.strip():
+            raise ValueError("chunk_document_id_absent_ou_invalide")
+        if doc_id not in known_documents:
+            raise ValueError("chunk_document_id_inconnu")
+        seen_chunks.add(chunk_id)
+        actual_chunk_counts[doc_id] += 1
         if doc_id not in approved:
             continue
-        if not isinstance(chunk_id, str) or not chunk_id or chunk_id in seen:
-            raise ValueError("chunk_id_absent_ou_duplique")
-        if not isinstance(body, str) or not body.strip():
-            raise ValueError("chunk_texte_vide")
-        seen.add(chunk_id)
+        owner = next(doc for doc in documents if doc["id"] == doc_id)
+        page = chunk.get("page")
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            raise ValueError("chunk_page_invalide")
+        if owner.get("page_count") is not None and page > owner["page_count"]:
+            raise ValueError("chunk_page_hors_document")
+        part = chunk.get("part")
+        if part is not None and (isinstance(part, bool) or not isinstance(part, int) or part < 0):
+            raise ValueError("chunk_part_invalide")
+        if not isinstance(body, str) or not body.strip() or len(body) > 20000:
+            raise ValueError("chunk_texte_vide_ou_trop_long")
         result.append({
             "chunk_id": chunk_id,
             "doc_id": doc_id,
             "title": approved[doc_id],
             "text": body.strip(),
         })
+    for doc_id, expected in expected_chunk_counts.items():
+        if actual_chunk_counts[doc_id] != expected:
+            raise ValueError("document_chunk_count_incoherent:" + doc_id)
     return result
 
 
@@ -88,7 +140,10 @@ def normalize_embedding(values):
     for value in values:
         if isinstance(value, bool) or not isinstance(value, (int, float)):
             raise ValueError("embedding_valeur_invalide")
-        number = float(value)
+        try:
+            number = float(value)
+        except (OverflowError, ValueError) as exc:
+            raise ValueError("embedding_valeur_invalide") from exc
         if not math.isfinite(number):
             raise ValueError("embedding_non_fini")
         vector.append(number)
@@ -154,6 +209,18 @@ def call_cloudflare(inputs, account_id, token, timeout=45, opener=None):
 
 
 def build_artifact(chunks, chunks_bytes, manifest_bytes, embed_batch=None, batch_size=DEFAULT_BATCH_SIZE):
+    try:
+        source_manifest = strict_json_loads(manifest_bytes.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("manifest_json_invalide") from exc
+    validate_manifest_chunks_hash(chunks_bytes, source_manifest)
+    try:
+        source_corpus = strict_json_loads(chunks_bytes.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("corpus_json_invalide") from exc
+    approved_source_chunks = eligible_chunks(source_corpus, source_manifest)
+    if chunks != approved_source_chunks:
+        raise ValueError("chunks_non_conformes_au_corpus_autorise")
     if not 1 <= batch_size <= MAX_BATCH_SIZE:
         raise ValueError("taille_lot_invalide")
     vectors = []
@@ -193,9 +260,13 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         chunks_path, manifest_path = Path(args.chunks), Path(args.manifest)
+        output = Path(args.output)
+        if output.resolve() in {chunks_path.resolve(), manifest_path.resolve()}:
+            raise ValueError("sortie_confondue_avec_source")
         chunks_bytes, manifest_bytes = chunks_path.read_bytes(), manifest_path.read_bytes()
-        corpus = json.loads(chunks_bytes.decode("utf-8"))
-        manifest = json.loads(manifest_bytes.decode("utf-8"))
+        corpus = strict_json_loads(chunks_bytes.decode("utf-8"))
+        manifest = strict_json_loads(manifest_bytes.decode("utf-8"))
+        validate_manifest_chunks_hash(chunks_bytes, manifest)
         if not 1 <= args.batch_size <= MAX_BATCH_SIZE:
             raise ValueError("taille_lot_invalide")
         chunks = eligible_chunks(corpus, manifest)
@@ -221,7 +292,6 @@ def main(argv=None):
             response = call_cloudflare(inputs, account_id, token)
             return parse_embeddings(response, len(inputs))
         artifact = build_artifact(chunks, chunks_bytes, manifest_bytes, embed, args.batch_size)
-        output = Path(args.output)
         output.parent.mkdir(parents=True, exist_ok=True)
         temporary = output.with_suffix(output.suffix + ".tmp")
         temporary.write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
