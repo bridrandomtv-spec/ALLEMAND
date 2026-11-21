@@ -1616,3 +1616,17 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Consolidation des décisions pré-fusion : visibilité dépôt, droits des 293 PDF, sauvegarde du manuel, extraits 3AS, classification des livres 2AS, certification des fixtures, publication des fichiers config/projet/réservation, fictivité/autorisation du récit pédagogique et éventuel retrait global de l'historique.
 - Rapport : docs/CONTINUITE_LOT_725_REGISTRE_DECISIONS_PRE_FUSION.md.
 - Lot documentaire seulement. Aucune privatisation, purge, réécriture Git, suppression de données, changement main, déploiement ou modification Supabase/Auth/RLS/schéma/paiement. PR #23 reste ouverte/en brouillon/non fusionnée.
+
+
+### Lot 726 — revue du diff et des contrôles de sécurité de PR #23 — 21/11/2026
+- Comparaison GitHub base/main `fadae5ee13fa89c47dd6a567d6db4c15df34a19c` → HEAD `8d8836d649d7c9817644171ddafb9ffe4c49e238` : 405 commits en avance, 0 en retard, 58 fichiers modifiés.
+- PR #23 confirmée ouverte, en brouillon, non fusionnée, techniquement mergeable. `main` reste inchangée au SHA de base.
+- CI HEAD : CI principale run `44890081991` (workflow #4821) réussie ; trois workflows PostgreSQL `44890081992`, `44890081983`, `44890082019` réussis.
+- Revue du diff : durcissement du parseur JSON (clés dupliquées), lecture bornée et annulable des flux, validation des empreintes chunks/manifeste/vecteurs, cohérence des identifiants/pages/comptages, filtrage droits/licences avant modèle, normalisation des chemins Worker, provenance documentaire neutralisée et corrections génériques signalées.
+- Les workflows historiques `.github/workflows/indexer.yml` et `.github/workflows/sharder.yml` ont été supprimés ; ils disposaient de `contents: write` et pouvaient OCRiser/indexer puis pousser automatiquement. Le workflow principal reste de validation ; aucun job de déploiement n'a été ajouté dans le diff.
+- Réserve disponibilité : `tools/ingest_corpus_rag.py` remplace successivement chunks et manifeste, pas comme une transaction atomique unique. Une interruption entre les deux remplacements produit un couple incohérent ; le Worker détecte l'empreinte invalide et échoue fermé (503). À traiter ou accepter explicitement avant ingestion réelle.
+- Réserve validation : les tests Worker utilisent des simulations Auth/REST/RLS ; aucun test E2E sur un Worker déployé avec JWT utilisateur réel n'a été lancé. La CI verte n'est pas une preuve de validation de production.
+- La recherche documentaire PDF locale dans `rag.js` est désactivée et les requêtes documentaires passent par `ia.js`/Worker authentifié. Ce choix est cohérent avec le contrôle serveur, mais exige un test navigateur en préproduction avant activation opérationnelle.
+- Les blocages de gouvernance du Lot 725 demeurent : visibilité publique du dépôt, droits des 293 PDF, sauvegarde complète du manuel, extraits 3AS, classification des livres 2AS, certification des fixtures et publication de config/projet/réservation. Les constats Raw des Lots 719–724 ne sont pas corrigés par la réussite CI.
+- Rapport : `docs/CONTINUITE_LOT_726_REVUE_DIFF_SECURITE.md` (commit `356283ec1bda658322d26502a2d8fc08cdaf2f8f`).
+- Revue en lecture seule : aucun code/donnée pédagogique modifié, aucun changement `main`, aucune fusion, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement/infrastructure. PR #23 reste ouverte/en brouillon/non fusionnée.
