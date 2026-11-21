@@ -1641,3 +1641,16 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Lot 729 à venir : cartographier tous les consommateurs/URL, mesurer les tailles et limites, définir cache et format, ajouter tests d'interruption à chaque étape et démontrer l'impossibilité de mélanger les générations. Aucun OCR/embedding réel.
 - Rapport : `docs/CONTINUITE_LOT_728_PUBLICATION_COHERENTE_RAG.md` (commit `f6780bbd45196484ef73405abc4118c10e17ce06`).
 - Aucun changement main, aucune fusion, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement, aucun retrait de fichiers ni réécriture d'historique. PR #23 reste ouverte/en brouillon.
+
+
+### Lot 729 — cartographie des consommateurs et dépendances RAG — 21/11/2026
+- HEAD audité avant documentation : `b3366aed1c88242b8a8fc1c319a8455cb9f89fae`; PR #23 ouverte, brouillon, non fusionnée, mergeable ; base/main `fadae5ee13fa89c47dd6a567d6db4c15df34a19c`, 410 commits en avance, 0 en retard, 60 fichiers modifiés.
+- Artefacts au HEAD : `corpus_rag_chunks.json` 0 document/0 chunk ; `corpus_rag_manifest.json` 0 document/0 chunk ; `corpus_rag_vectors.json` 0 vecteur ; `shards_manifest.json` 0 shard. Aucun PDF RAG ni embedding réel publié.
+- Consommateur serveur : `worker/ia-ask.js` lit chunks + manifeste, vérifie SHA-256 et métadonnées, filtre les droits avant BM25 ; vecteurs uniquement si `RAG_VECTOR_ENABLED=true` et `env.AI.run` est disponible, avec validation de provenance et couverture ; repli lexical sinon.
+- Navigateur : `rag.js` conserve les chargeurs historiques de shards/index, mais `cherche()` retourne `null` ; le code indique que les demandes PDF doivent passer par le Worker authentifié. Ne pas confondre `corpus_index.json` lexical avec le corpus PDF RAG.
+- Générateurs : `tools/ingest_corpus_rag.py` écrit chunks/manifeste ; `tools/build_corpus_rag_vectors.py` lit les deux, mode par défaut dry-run sans écriture/API ; exécution réelle demande `--execute`, confirmation de facturation et secrets Cloudflare.
+- Deux écarts confirmés : (1) `.github/workflows/deploy.yml` liste chunks et manifeste comme assets requis mais omet `corpus_rag_vectors.json`, alors que le Worker le récupère si le drapeau vectoriel est activé ; (2) Worker utilise des URL absolues de production `https://allemand.brid-randomtv.workers.dev/assets/bdd/...`, ce qui peut faire qu'une preview lise les assets production au lieu de ceux de la preview. À corriger avant activation vectorielle/E2E.
+- Publication chunks/manifeste toujours non atomique (Lot 728) ; hash Worker échoue fermé mais peut rendre le service indisponible.
+- CI sur HEAD `b3366aed` au contrôle : PostgreSQL ملتقى الطلاب run `44898568654` réussi ; consentement Messenger `44898568632` réussi ; découverte Messenger `44898568684` réussie ; CI principale run `44898568637` encore en cours. Ne pas déclarer 4/4 tant que la CI principale n'est pas terminée.
+- Rapport : `docs/CONTINUITE_LOT_729_CARTOGRAPHIE_CONSOMMATEURS_RAG.md` (commit `c4f5284c3c9b3758868ebf3842b2818ab7340a0f`).
+- Aucun code/donnée/infrastructure modifié ; aucun OCR/ingestion/embedding réel ; aucun changement main, aucun déploiement, aucune modification Supabase/Auth/RLS/schéma/abonnement/paiement, aucun retrait de fichiers ni réécriture historique. PR #23 reste ouverte/en brouillon.
