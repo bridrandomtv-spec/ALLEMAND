@@ -78,3 +78,12 @@ La revue du diff n'a pas identifié de modification Supabase/Auth/RLS/schéma/pa
 - Aucun changement `main`, aucune fusion, aucun déploiement.
 - Aucune modification Supabase, Auth, RLS, schéma, abonnement, paiement ou infrastructure.
 - PR #23 conservée ouverte et en brouillon.
+
+
+## Addendum — état après commits documentaires du Lot 726
+
+- Rapport de revue créé au commit `356283ec1bda658322d26502a2d8fc08cdaf2f8f`.
+- Dossier général de continuité actualisé au commit `c285a86b12984fdb8bd429d499c69df323973a19`.
+- Le HEAD courant de PR est donc `c285a86b12984fdb8bd429d499c69df323973a19`. Les métadonnées PR affichent 407 commits et 59 fichiers modifiés : le 59e fichier est le nouveau rapport documentaire ; aucun changement applicatif supplémentaire n'a été ajouté après la revue du diff à 58 fichiers.
+- La recherche des workflows associés au nouveau HEAD documentaire `c285a86b` n'a retourné aucun run au moment du contrôle. Les quatre succès CI cités dans ce rapport concernent le HEAD précédent `8d8836d6`, pas le nouveau commit documentaire. Une nouvelle validation sur le HEAD courant reste donc à confirmer si GitHub ne déclenche pas automatiquement les workflows pour ces commits API.
+- PR toujours ouverte, en brouillon et non fusionnée ; base/main inchangée à `fadae5ee13fa89c47dd6a567d6db4c15df34a19c`.
