@@ -1607,3 +1607,12 @@ Lot 624 — construire l'ingestion vectorielle reproductible des seuls chunks au
 - Les PDF binaires n'ont pas été téléchargés par ce contrôle ; leur présence dans les arbres publics reste établie par les lots précédents. La lecture Raw ne tranche pas la qualification confidentielle/fictive/licenciée des contenus.
 - Rapport : docs/CONTINUITE_LOT_724_VERIFICATION_RAW_ET_COMPARAISON_MAIN.md.
 - Audit en lecture seule : aucun JSON, PDF, blob, historique, branche, règle d'accès ou réglage modifié. Aucun changement main, aucune purge/privatisation/réécriture Git/migration/déploiement, aucun changement Supabase/Auth/RLS/schéma/paiement/infrastructure. PR #23 reste ouverte/en brouillon/non fusionnée.
+
+
+### Lot 725 — registre des décisions bloquantes avant fusion — 21/11/2026
+- Vérification du dépôt : visibilité publique, non archivé, forks autorisés ; métadonnées GitHub indiquent 0 fork et network_count=0 au contrôle. 30 branches visibles ; main toujours au SHA fadae5ee13fa89c47dd6a567d6db4c15df34a19c.
+- HEAD PR #23 au contrôle : 2a54dce3624e1ea81e718bd42af49d54aa211ff7. PR ouverte, brouillon, non fusionnée, techniquement mergeable ; 403 commits, 57 fichiers modifiés. Mergeable n'est pas équivalent à prêt sécurité.
+- CI du HEAD Lot 724 : 4/4 workflows terminés avec succès.
+- Consolidation des décisions pré-fusion : visibilité dépôt, droits des 293 PDF, sauvegarde du manuel, extraits 3AS, classification des livres 2AS, certification des fixtures, publication des fichiers config/projet/réservation, fictivité/autorisation du récit pédagogique et éventuel retrait global de l'historique.
+- Rapport : docs/CONTINUITE_LOT_725_REGISTRE_DECISIONS_PRE_FUSION.md.
+- Lot documentaire seulement. Aucune privatisation, purge, réécriture Git, suppression de données, changement main, déploiement ou modification Supabase/Auth/RLS/schéma/paiement. PR #23 reste ouverte/en brouillon/non fusionnée.
